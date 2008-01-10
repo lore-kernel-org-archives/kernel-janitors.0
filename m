@@ -1,21 +1,25 @@
-From: Andi Kleen <andi@firstfloor.org>
-Date: Thu, 10 Jan 2008 10:06:57 +0000
+From: Alasdair G Kergon <agk@redhat.com>
+Date: Thu, 10 Jan 2008 11:39:54 +0000
 Subject: Re: [JANITOR PROPOSAL] Switch ioctl functions to ->unlocked_ioctl
-Message-Id: <20080110100657.GB25292@one.firstfloor.org>
+Message-Id: <20080110113954.GL3510@agk.fab.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080108164015.GC31504@one.firstfloor.org> <200801100952.55039.eike-kernel@sf-tec.de> <20080110092528.GA25076@one.firstfloor.org> <200801101102.16971.eike-kernel@sf-tec.de>
-In-Reply-To: <200801101102.16971.eike-kernel@sf-tec.de>
+References: <20080108164015.GC31504@one.firstfloor.org> <1199909560.6245.67.camel@cinder.waste.org> <20080109224026.GA4039@agk.fab.redhat.com> <200801100149.16301.phillips@phunq.net>
+In-Reply-To: <200801100149.16301.phillips@phunq.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rolf Eike Beer <eike-kernel@sf-tec.de>
-Cc: Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, paolo.ciarrocchi@gmail.com, gorcunov@gmail.com
+To: Daniel Phillips <phillips@phunq.net>
+Cc: Matt Mackall <mpm@selenic.com>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, gorcunov@gmail.com
 
-> So if I write my own driver and have never heard of ioctls running on BKL 
-> before I can rather be sure that I just can change the interface of the ioctl 
-> function, put it in unlocked_ioctl and are fine? Cool.
+On Thu, Jan 10, 2008 at 01:49:15AM -0800, Daniel Phillips wrote:
+> So what stops you from changing to unlocked_ioctl for the main device 
+> mapper ctl_ioctl?  
 
-If you know the BKL is not needed in your code you should use unlocked_ioctl
-correct.
+Nothing - patches to do this are queued for 2.6.25:
 
--Andi
+  http://www.kernel.org/pub/linux/kernel/people/agk/patches/2.6/editing/dm-ioctl-remove-lock_kernel.patch
+  http://www.kernel.org/pub/linux/kernel/people/agk/patches/2.6/editing/dm-ioctl-move-compat-code.patch
+
+Alasdair
+-- 
+agk@redhat.com
