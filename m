@@ -1,32 +1,31 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 06 Jan 2008 03:05:43 +0000
-Subject: [PATCH 33b/33] include/scsi/scsi_tcq.h: Correct the parameter-name
-Message-Id: <20080106030543.30002.43965.sendpatchset@thinktank.campus.ltu.se>
+From: Nikanth Karthikesan <knikanth@suse.de>
+Date: Fri, 11 Jan 2008 03:38:44 +0000
+Subject: [PATCH 11/11 ] Change drm_ioctl as an unlocked_ioctl function : via
+Message-Id: <1200022004.3844.20.camel@nikanth-laptop.blr.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com
-Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: airlied@linux.ie, dri-devel@lists.sourceforge.net, benh@kernel.crashing.org, paulus@samba.org, thomas@winischhofer.net, adaplas@gmail.com, sylvain.meyer@worldonline.fr
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Change to the correct argument-name.
+Register drm_ioctl as an unlocked_ioctl function.
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
----
+Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
+
+--- 
+diff --git a/drivers/char/drm/via_drv.c b/drivers/char/drm/via_drv.c
+index 2d4957a..a8041c5 100644
+--- a/drivers/char/drm/via_drv.c
++++ b/drivers/char/drm/via_drv.c
+@@ -62,7 +62,7 @@ static struct drm_driver driver = {
+ 		 .owner = THIS_MODULE,
+ 		 .open = drm_open,
+ 		 .release = drm_release,
+-		 .ioctl = drm_ioctl,
++		 .unlocked_ioctl = drm_ioctl,
+ 		 .mmap = drm_mmap,
+ 		 .poll = drm_poll,
+ 		 .fasync = drm_fasync,
 
 
-diff --git a/include/scsi/scsi_tcq.h b/include/scsi/scsi_tcq.h
-index cf4c219..341ed5a 100644
---- a/include/scsi/scsi_tcq.h
-+++ b/include/scsi/scsi_tcq.h
-@@ -86,7 +86,7 @@ static inline void scsi_deactivate_tcq(struct scsi_device *sdev, int depth)
- 
- /**
-  * scsi_populate_tag_msg - place a tag message in a buffer
-- * @SCpnt:	pointer to the scsi_cmnd for the tag
-+ * @cmd:	pointer to the scsi_cmnd for the tag
-  * @msg:	pointer to the area to place the tag
-  *
-  * Notes:
