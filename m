@@ -1,62 +1,51 @@
-From: Andre Noll <maan@systemlinux.org>
-Date: Thu, 10 Jan 2008 20:40:20 +0000
-Subject: Re: [patch 1/1] Switch ioctl functions of drivers/scsi/sg.c to unlocked_ioctl
-Message-Id: <20080110204020.GC20152@skl-net.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="xesSdrSSBC0PokLI"
+From: Nikanth Karthikesan <knikanth@suse.de>
+Date: Fri, 11 Jan 2008 11:51:52 +0000
+Subject: [PATCH] Random number driver: make random_ioctl as an
+Message-Id: <1200051592.3844.63.camel@nikanth-laptop.blr.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080110180529.GA32640@skl-net.de> <1199991298.3141.75.camel@localhost.localdomain> <20080110185944.GA1690@one.firstfloor.org> <20080110190748.GA20152@skl-net.de> <20080110192950.GG747@one.firstfloor.org> <20080110194550.GB20152@skl-net.de> <47867C7E.3000100@panasas.com>
-In-Reply-To: <47867C7E.3000100@panasas.com>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: Andi Kleen <andi@firstfloor.org>, James Bottomley <James.Bottomley@HansenPartnership.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mpm@selenic.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+The random_ioctl is registered as an ioctl function but it does not
+require BKL to be held when called. Changing it as an unlocked_ioctl
+function.
+
+Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
+
+---
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 5fee056..2446e14 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1065,9 +1065,8 @@ random_write(struct file * file, const char __user * buffer,
+ 	return (ssize_t)count;
+ }
+ 
+-static int
+-random_ioctl(struct inode * inode, struct file * file,
+-	     unsigned int cmd, unsigned long arg)
++static long
++random_ioctl(struct file * file, unsigned int cmd, unsigned long arg)
+ {
+ 	int size, ent_count;
+ 	int __user *p = (int __user *)arg;
+@@ -1131,13 +1130,13 @@ const struct file_operations random_fops = {
+ 	.read  = random_read,
+ 	.write = random_write,
+ 	.poll  = random_poll,
+-	.ioctl = random_ioctl,
++	.unlocked_ioctl = random_ioctl,
+ };
+ 
+ const struct file_operations urandom_fops = {
+ 	.read  = urandom_read,
+ 	.write = random_write,
+-	.ioctl = random_ioctl,
++	.unlocked_ioctl = random_ioctl,
+ };
+ 
+ /***************************************************************
 
 
---xesSdrSSBC0PokLI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 22:13, Boaz Harrosh wrote:
-
-> All the scsi calls do not need any locks. The scsi LLDS never
-> see these threads since commands are queued through the block
-> layer.
-
-That's what everybody believes, but nobody seems to know for sure.
-Therefore I did what Andi suggested: Make a zero-semantics change
-that moves the lock_kernel() to sg_ioctl() to make people aware of
-the fact that this function runs under the BKL. At least the latter
-has already succeeded.
-
-> What's left is what you see, here in sg.c. you must have the best=20
-> knowledge about the possible races between ioctl and open/release
-> and probe/remove. And all these put_user() copy_user() etc...
-> Why don't you have a hard look and fix them properly.
-
-Because that requires much more knowledge. Al is looking into this
-which indicates that it is non-trivial issue. I am clearly not the
-right person to decide this question.
-
-> please don't *lock_kernel();* for scsi's sake.
-
-The BKL was there all the time. My patch just made it more visable
-to the scsi people by moving it into sg.c.
-
-Andre
---=20
-The only person who always got his work done by Friday was Robinson Crusoe
-
---xesSdrSSBC0PokLI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQFHhoK0Wto1QDEAkw8RAkcKAJ4+vNpx4NrOss6bK2yatia7dHNz1gCfXeCe
-37GBqDPeAUgRejyC1oXJ7fw=
-=IJPr
------END PGP SIGNATURE-----
-
---xesSdrSSBC0PokLI--
