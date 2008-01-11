@@ -1,8 +1,10 @@
 From: Nikanth Karthikesan <knikanth@suse.de>
-Date: Thu, 10 Jan 2008 15:46:49 +0000
+Date: Fri, 11 Jan 2008 03:36:58 +0000
 Subject: [PATCH 1/11 ] Change drm_ioctl as an unlocked_ioctl function
-Message-Id: <1199980146.9154.14.camel@nikanth-laptop.blr.novell.com>
+Message-Id: <1200021898.3844.1.camel@nikanth-laptop.blr.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1199980146.9154.14.camel@nikanth-laptop.blr.novell.com>
+In-Reply-To: <1199980146.9154.14.camel@nikanth-laptop.blr.novell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
