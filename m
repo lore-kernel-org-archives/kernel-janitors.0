@@ -1,33 +1,31 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 06 Jan 2008 03:04:27 +0000
-Subject: [PATCH 19/33][SCSI] ibmvscsi: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
-Message-Id: <20080106030427.30002.30771.sendpatchset@thinktank.campus.ltu.se>
+From: Nikanth Karthikesan <knikanth@suse.de>
+Date: Fri, 11 Jan 2008 03:38:33 +0000
+Subject: [PATCH 9/11 ] Change drm_ioctl as an unlocked_ioctl function : sis
+Message-Id: <1200021993.3844.16.camel@nikanth-laptop.blr.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: airlied@linux.ie, dri-devel@lists.sourceforge.net, benh@kernel.crashing.org, paulus@samba.org, thomas@winischhofer.net, adaplas@gmail.com, sylvain.meyer@worldonline.fr
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
+Register drm_ioctl as an unlocked_ioctl function.
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
----
-Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
+Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
+
+--- 
+diff --git a/drivers/char/drm/sis_drv.c b/drivers/char/drm/sis_drv.c
+index 7dacc64..1bbde29 100644
+--- a/drivers/char/drm/sis_drv.c
++++ b/drivers/char/drm/sis_drv.c
+@@ -80,7 +80,7 @@ static struct drm_driver driver = {
+ 		 .owner = THIS_MODULE,
+ 		 .open = drm_open,
+ 		 .release = drm_release,
+-		 .ioctl = drm_ioctl,
++		 .unlocked_ioctl = drm_ioctl,
+ 		 .mmap = drm_mmap,
+ 		 .poll = drm_poll,
+ 		 .fasync = drm_fasync,
 
 
-diff --git a/drivers/scsi/ibmvscsi/ibmvscsi.c b/drivers/scsi/ibmvscsi/ibmvscsi.c
-index 5f2396c..d517f32 100644
---- a/drivers/scsi/ibmvscsi/ibmvscsi.c
-+++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
-@@ -375,7 +375,7 @@ static int map_sg_list(struct scsi_cmnd *cmd, int nseg,
- 
- /**
-  * map_sg_data: - Maps dma for a scatterlist and initializes decriptor fields
-- * @cmd:	Scsi_Cmnd with the scatterlist
-+ * @cmd:	scsi_cmnd with the scatterlist
-  * @srp_cmd:	srp_cmd that contains the memory descriptor
-  * @dev:	device for which to map dma memory
-  *
