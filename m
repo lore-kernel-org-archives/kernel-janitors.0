@@ -1,42 +1,31 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 06 Jan 2008 03:04:42 +0000
-Subject: [PATCH 22/33][SCSI] mca_53c9x: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
-Message-Id: <20080106030442.30002.81459.sendpatchset@thinktank.campus.ltu.se>
+From: Nikanth Karthikesan <knikanth@suse.de>
+Date: Fri, 11 Jan 2008 03:38:39 +0000
+Subject: [PATCH 10/11 ] Change drm_ioctl as an unlocked_ioctl function :
+Message-Id: <1200021999.3844.18.camel@nikanth-laptop.blr.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com
-Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: airlied@linux.ie, dri-devel@lists.sourceforge.net, benh@kernel.crashing.org, paulus@samba.org, thomas@winischhofer.net, adaplas@gmail.com, sylvain.meyer@worldonline.fr
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
+Register drm_ioctl as an unlocked_ioctl function.
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
----
-Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
+Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
+
+--- 
+diff --git a/drivers/char/drm/tdfx_drv.c b/drivers/char/drm/tdfx_drv.c
+index 012ff2e..ec5a43e 100644
+--- a/drivers/char/drm/tdfx_drv.c
++++ b/drivers/char/drm/tdfx_drv.c
+@@ -48,7 +48,7 @@ static struct drm_driver driver = {
+ 		 .owner = THIS_MODULE,
+ 		 .open = drm_open,
+ 		 .release = drm_release,
+-		 .ioctl = drm_ioctl,
++		 .unlocked_ioctl = drm_ioctl,
+ 		 .mmap = drm_mmap,
+ 		 .poll = drm_poll,
+ 		 .fasync = drm_fasync,
 
 
-diff --git a/drivers/scsi/mca_53c9x.c b/drivers/scsi/mca_53c9x.c
-index d693d0f..5dbc259 100644
---- a/drivers/scsi/mca_53c9x.c
-+++ b/drivers/scsi/mca_53c9x.c
-@@ -77,7 +77,7 @@
-                         }
- 
- static int  dma_bytes_sent(struct NCR_ESP *, int);
--static int  dma_can_transfer(struct NCR_ESP *, Scsi_Cmnd *);
-+static int  dma_can_transfer(struct NCR_ESP *, struct scsi_cmnd *);
- static void dma_dump_state(struct NCR_ESP *);
- static void dma_init_read(struct NCR_ESP *, __u32, int);
- static void dma_init_write(struct NCR_ESP *, __u32, int);
-@@ -313,7 +313,7 @@ static int dma_bytes_sent(struct NCR_ESP *esp, int fifo_count)
- 	return fifo_count;
- }
- 
--static int dma_can_transfer(struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+static int dma_can_transfer(struct NCR_ESP *esp, struct scsi_cmnd *sp)
- {
- 	/* 
- 	 * The MCA dma channels can only do up to 128K bytes at a time.
