@@ -1,7 +1,7 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Sun, 13 Jan 2008 22:03:49 +0000
+From: "Paolo Ciarrocchi" <paolo.ciarrocchi@gmail.com>
+Date: Sun, 13 Jan 2008 22:13:59 +0000
 Subject: Re: Statistics with checkpatch.pl
-Message-Id: <20080113220348.GG18741@parisc-linux.org>
+Message-Id: <4d8e3fd30801131413t5fbaea7bkf7dbe67e1a20d67a@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4d8e3fd30801131326n263c3b57t32289bcb49303e35@mail.gmail.com>
 In-Reply-To: <4d8e3fd30801131326n263c3b57t32289bcb49303e35@mail.gmail.com>
@@ -10,13 +10,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 13, 2008 at 10:50:19PM +0100, Paolo Ciarrocchi wrote:
-> Looks like sort is only looking at the first digit.
+On Jan 13, 2008 11:03 PM, Matthew Wilcox <matthew@wil.cx> wrote:
+> On Sun, Jan 13, 2008 at 10:50:19PM +0100, Paolo Ciarrocchi wrote:
+> > Looks like sort is only looking at the first digit.
+>
+> Try sort -n
 
-Try sort -n
+Yes
+cat /home/paolo/Desktop/checkpatch_output.txt |sort -n  --key=2| tail -n 10
+works like a charm.
 
+Thank you Matthew.
+
+Ciao,
 -- 
-Intel are signing my paycheques ... these opinions are still mine
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+Paolo
+http://paolo.ciarrocchi.googlepages.com/
