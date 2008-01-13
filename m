@@ -1,7 +1,7 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Date: Sun, 13 Jan 2008 21:42:12 +0000
+From: "Paolo Ciarrocchi" <paolo.ciarrocchi@gmail.com>
+Date: Sun, 13 Jan 2008 21:50:19 +0000
 Subject: Re: Statistics with checkpatch.pl
-Message-Id: <9a8748490801131342u2997a537k217aff9a94d25b0@mail.gmail.com>
+Message-Id: <4d8e3fd30801131350l7ab54c9ci2bcf2ba5c23d8fe7@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4d8e3fd30801131326n263c3b57t32289bcb49303e35@mail.gmail.com>
 In-Reply-To: <4d8e3fd30801131326n263c3b57t32289bcb49303e35@mail.gmail.com>
@@ -10,73 +10,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 13/01/2008, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com> wrote:
-> Hi all,
-> I wrote the following script based on checkpatch.pl:
+On Jan 13, 2008 10:42 PM, Jesper Juhl <jesper.juhl@gmail.com> wrote:
+[...]
+> Hmm, something along the lines of this should do...
 >
-> find . -name '*.c' |xargs ../../scripts/checkpatch.pl --file |grep -B
-> 1 ^total | awk '/^total/{ errors+=$2; warnings+=$4; lines+=$6; } {
-> print } END  {print ""; print "--- Report ---";print "number of files
-> "(NR+1)/3; print "number of errors: "errors; print "number of
-> warnings: "warnings; print "number of lines: "lines; print "% errors:
-> "errors/lines*100;print "% warning: "warnings/lines*100;}'
->
-> For example, I run it in the /arch/x86/ dir in the mm branch of the
-> x86 git tree.
->
-> What I got is the following:
-> ...
-> ...
-> ...
-> ...
-> ./xen/mmu.c
-> total: 0 errors, 0 warnings, 644 lines checked
-> --
-> ./xen/multicalls.c
-> total: 2 errors, 2 warnings, 138 lines checked
-> --
-> ./xen/setup.c
-> total: 0 errors, 7 warnings, 110 lines checked
-> --
-> ./xen/smp.c
-> total: 1 errors, 1 warnings, 421 lines checked
-> --
-> ./xen/time.c
-> total: 3 errors, 3 warnings, 599 lines checked
->
-> --- Report ---
-> number of files 314
-> number of errors: 3498
-> number of warnings: 2421
-> number of lines: 115226
-> % errors: 3.03577
-> % warning: 2.10109
->
-> This is after applying the following patch to checkpatch.pl (probabily
-> wordwrapped, but that's just to give you an idea):
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 579f50f..079c73c 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -1580,6 +1580,7 @@ sub process {
->
->         print report_dump();
->         if ($summary) {
-> +               print "$filename \n";
->                 print "total: $cnt_error errors, $cnt_warn warnings, " .
->                         (($check)? "$cnt_chk checks, " : "") .
->                         "$cnt_lines lines checked\n";
->
-> Does anybody have an idea on how to get the 10 most offenders file
-> from the output of my script?
+> yourscript | grep "total:" | sort --key=2 | tail -n 10
 >
 
-Hmm, something along the lines of this should do...
+Not really:
+paolo@paolo-desktop:~/linux-2.6/arch/x86$ cat
+/home/paolo/Desktop/checkpatch_output.txt |grep "total:" | sort
+--key=2 | tail -n 10
+total: 8 errors, 46 warnings, 763 lines checked
+total: 8 errors, 4 warnings, 125 lines checked
+total: 97 errors, 69 warnings, 2889 lines checked
+total: 9 errors, 34 warnings, 423 lines checked
+total: 9 errors, 6 warnings, 194 lines checked
+total: 9 errors, 6 warnings, 440 lines checked
+total: 9 errors, 8 warnings, 175 lines checked
+total: 9 errors, 8 warnings, 544 lines checked
+total: 9 errors, 9 warnings, 307 lines checked
+total: 9 errors, 9 warnings, 422 lines checked
 
-yourscript | grep "total:" | sort --key=2 | tail -n 10
+Looks like sort is only looking at the first digit.
 
+Thanks!
 
+Ciao,
 -- 
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+Paolo
+http://paolo.ciarrocchi.googlepages.com/
