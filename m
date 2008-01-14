@@ -1,7 +1,7 @@
-From: "Paolo Ciarrocchi" <paolo.ciarrocchi@gmail.com>
-Date: Sun, 13 Jan 2008 22:13:59 +0000
+From: "Jesper Juhl" <jesper.juhl@gmail.com>
+Date: Mon, 14 Jan 2008 00:12:25 +0000
 Subject: Re: Statistics with checkpatch.pl
-Message-Id: <4d8e3fd30801131413t5fbaea7bkf7dbe67e1a20d67a@mail.gmail.com>
+Message-Id: <9a8748490801131612v6b8362dfxe01d2c7c961d0424@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4d8e3fd30801131326n263c3b57t32289bcb49303e35@mail.gmail.com>
 In-Reply-To: <4d8e3fd30801131326n263c3b57t32289bcb49303e35@mail.gmail.com>
@@ -10,19 +10,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Jan 13, 2008 11:03 PM, Matthew Wilcox <matthew@wil.cx> wrote:
-> On Sun, Jan 13, 2008 at 10:50:19PM +0100, Paolo Ciarrocchi wrote:
-> > Looks like sort is only looking at the first digit.
+On 13/01/2008, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com> wrote:
+> On Jan 13, 2008 10:42 PM, Jesper Juhl <jesper.juhl@gmail.com> wrote:
+> [...]
+> > Hmm, something along the lines of this should do...
+> >
+> > yourscript | grep "total:" | sort --key=2 | tail -n 10
+> >
 >
-> Try sort -n
+> Not really:
+> paolo@paolo-desktop:~/linux-2.6/arch/x86$ cat
+> /home/paolo/Desktop/checkpatch_output.txt |grep "total:" | sort
+> --key=2 | tail -n 10
+> total: 8 errors, 46 warnings, 763 lines checked
+> total: 8 errors, 4 warnings, 125 lines checked
+> total: 97 errors, 69 warnings, 2889 lines checked
+> total: 9 errors, 34 warnings, 423 lines checked
+> total: 9 errors, 6 warnings, 194 lines checked
+> total: 9 errors, 6 warnings, 440 lines checked
+> total: 9 errors, 8 warnings, 175 lines checked
+> total: 9 errors, 8 warnings, 544 lines checked
+> total: 9 errors, 9 warnings, 307 lines checked
+> total: 9 errors, 9 warnings, 422 lines checked
+>
+> Looks like sort is only looking at the first digit.
+>
 
-Yes
-cat /home/paolo/Desktop/checkpatch_output.txt |sort -n  --key=2| tail -n 10
-works like a charm.
+Yes, 'sort' does a lexicographic sort by default, to get a numeric
+sort, use 'sort -n'.
 
-Thank you Matthew.
+I didn't test what I wrote, hence the "something along the lines of",
+I assumed you could work out the details when pointed in the general
+direction :-)
 
-Ciao,
 -- 
-Paolo
-http://paolo.ciarrocchi.googlepages.com/
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
