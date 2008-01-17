@@ -1,87 +1,34 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 01 Jan 2008 21:05:50 +0000
-Subject: [PATCH] drivers/pcmcia: Add missing iounmap
-Message-Id: <Pine.LNX.4.64.0801012205020.19803@ask.diku.dk>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Thu, 17 Jan 2008 15:54:36 +0000
+Subject: "memset(..., 0, PAGE_SIZE)" replaceable by "clear_page()"?
+Message-Id: <alpine.LFD.1.00.0801171050220.11265@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org, vbordug@ru.mvista.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-From: Julia Lawall <julia@diku.dk>
-
-of_iomap calls ioremap, and so should be matched with an iounmap.  At the
-two error returns, the result of calling of_iomap is only stored in a local
-variable, so these error paths need to call iounmap.  Furthermore, this
-function ultimately stores the result of of_iomap in an array that is local
-to the file.  These values should be iounmapped at some point.  I have
-added a corresponding call to iounmap at the end of the function m8xx_remove.
+To: kernel-janitors@vger.kernel.org
 
 
+  i recall a discussion about this once upon a time, but there are
+numerous invocations of the form:
 
-The problem was found using the following semantic match.
-(http://www.emn.fr/x-info/coccinelle/)
+  memset(addr, 0, PAGE_SIZE)
 
-// <smpl>
-@@
-type T,T1,T2;
-identifier E;
-statement S;
-expression x1,x2,x3;
-int ret;
-@@
+for which *some* of those could probably be replaced by a call to
+clear_page() instead.  just to see the possibilities:
 
-  T E;
-  ...
-* E = of_iomap(...);
-  if (E = NULL) S
-  ... when != iounmap(...,(T1)E,...)
-      when != if (E != NULL) { ... iounmap(...,(T1)E,...); ...}
-      when != x1 = (T1)E
-      when != E = x3;
-      when any
-  if (...) {
-    ... when != iounmap(...,(T2)E,...)
-        when != if (E != NULL) { ... iounmap(...,(T2)E,...); ...}
-        when != x2 = (T2)E
-(
-*   return;
-|
-*   return ret;
-)
-  }
-// </smpl>
+grep -Er "memset ?\([^,]+, ?0, ?PAGE_SIZE\)" ${DIR} | grep -v "#define clear_page" .
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-diff -u -p a/drivers/pcmcia/m8xx_pcmcia.c b/drivers/pcmcia/m8xx_pcmcia.c
---- a/drivers/pcmcia/m8xx_pcmcia.c	2007-10-22 11:25:20.000000000 +0200
-+++ b/drivers/pcmcia/m8xx_pcmcia.c	2008-01-01 14:31:36.000000000 +0100
-@@ -1174,8 +1174,10 @@ static int __init m8xx_probe(struct of_d
- 
- 	pcmcia_schlvl = irq_of_parse_and_map(np, 0);
- 	hwirq = irq_map[pcmcia_schlvl].hwirq;
--	if (pcmcia_schlvl < 0)
-+	if (pcmcia_schlvl < 0) {
-+		iounmap(pcmcia);
- 		return -EINVAL;
-+	}
- 
- 	m8xx_pgcrx[0] = &pcmcia->pcmc_pgcra;
- 	m8xx_pgcrx[1] = &pcmcia->pcmc_pgcrb;
-@@ -1189,6 +1191,7 @@ static int __init m8xx_probe(struct of_d
- 			driver_name, socket)) {
- 		pcmcia_error("Cannot allocate IRQ %u for SCHLVL!\n",
- 			     pcmcia_schlvl);
-+		iounmap(pcmcia);
- 		return -1;
- 	}
- 
-@@ -1284,6 +1287,7 @@ static int m8xx_remove(struct of_device 
- 	}
- 	for (i = 0; i < PCMCIA_SOCKETS_NO; i++)
- 		pcmcia_unregister_socket(&socket[i].socket);
-+	iounmap(pcmcia);
- 
- 	free_irq(pcmcia_schlvl, NULL);
- 
+  if someone wanted to poke around there, they're welcome to it.
+
+rday
+--
+
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+Home page:                                         http://crashcourse.ca
+Fedora Cookbook:    http://crashcourse.ca/wiki/index.php/Fedora_Cookbook
+====================================
