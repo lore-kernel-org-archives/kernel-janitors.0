@@ -1,46 +1,58 @@
-From: "Nish Aravamudan" <nish.aravamudan@gmail.com>
-Date: Sat, 16 Feb 2008 19:04:20 +0000
-Subject: Re: [PATCH] ARRAY_SIZE in linux-2.6.25-rc2/scripts/mod/modpost.c
-Message-Id: <29495f1d0802161104o26eda00ar6cfb0b7be0b6f9cd@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 10 Feb 2008 20:08:49 +0000
+Subject: [PATCH 2/8] drivers/block: Use FIELD_SIZEOF
+Message-Id: <Pine.LNX.4.64.0802102108000.23906@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47B729C0.5060602@googlemail.com>
-In-Reply-To: <47B729C0.5060602@googlemail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: sfr@canb.auug.org.au, axboe@kernel.dk
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2/16/08, Mark Pearson <devnull.port@googlemail.com> wrote:
-> Hi
->
-> I was looking through the TODO list at kernel janitors and thought I
-> would see if there was any clean-up work I could do. I found a message
-> about replacing sizeof code for array structures with the ARRAY_SIZE
-> macro. If this is useful, I can go through the list of modules I found
-> to require this patch.
->
-> As this is the first time I'm delivering a patch, could someone comment
-> if the format, etc. is ok? If so I will continue with the other modules.
-> BTW: I'm check on the mailing archives to ensure I'm not repeating work
-> already completed by someone else.
+From: Julia Lawall <julia@diku.dk>
 
-Missing Signed-off-by and a real commit message.
+Robert P.J. Day proposed to use the macro FIELD_SIZEOF in replace of code
+that matches its definition.
 
-> --- linux-2.6.25-rc2-mpe/scripts/mod/modpost.c  2008-02-16
-> 19:06:58.000000000 +0100
-> +++ linux-2.6.25-rc2/scripts/mod/modpost.c      2008-02-15
-> 21:57:20.000000000 +0100
+The modification was made using the following semantic patch
+(http://www.emn.fr/x-info/coccinelle/)
 
-Patch is word-wrapped.
+// <smpl>
+@haskernel@
+@@
 
-> @@ -882,7 +882,7 @@
->  static int section_mismatch(const char *fromsec, const char *tosec)
->  {
->         int i;
-> -       int elems = ARRAY_SIZE(sectioncheck);
-> +       int elems = sizeof(sectioncheck) / sizeof(struct sectioncheck);
+#include <linux/kernel.h>
 
-And looks to be reversed (want to be adding ARRAY_SIZE(), not removing it).
+@depends on haskernel@
+type t;
+identifier f;
+@@
 
-Thanks,
-Nish
+- (sizeof(((t*)0)->f))
++ FIELD_SIZEOF(t, f)
+
+@depends on haskernel@
+type t;
+identifier f;
+@@
+
+- sizeof(((t*)0)->f)
++ FIELD_SIZEOF(t, f)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/drivers/block/viodasd.c b/drivers/block/viodasd.c
+--- a/drivers/block/viodasd.c 2008-02-02 15:28:17.000000000 +0100
++++ b/drivers/block/viodasd.c 2008-02-10 17:42:42.000000000 +0100
+@@ -69,7 +69,7 @@ MODULE_LICENSE("GPL");
+ enum {
+ 	PARTITION_SHIFT = 3,
+ 	MAX_DISKNO = HVMAXARCHITECTEDVIRTUALDISKS,
+-	MAX_DISK_NAME = sizeof(((struct gendisk *)0)->disk_name)
++	MAX_DISK_NAME = FIELD_SIZEOF(struct gendisk, disk_name)
+ };
+ 
+ static DEFINE_SPINLOCK(viodasd_spinlock);
