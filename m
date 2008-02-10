@@ -1,43 +1,58 @@
-From: Jon Schindler <jkschind@gmail.com>
-Date: Thu, 28 Feb 2008 07:30:50 +0000
-Subject: [PATCH 4/9] /drivers/net/appletalk/cops.c replaced init_module&cleanup_module
-Message-Id: <47C6632A.2000505@watson.wustl.edu>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 10 Feb 2008 20:12:29 +0000
+Subject: [PATCH 4/8] : Use FIELD_SIZEOF
+Message-Id: <Pine.LNX.4.64.0802102111270.23906@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
+To: e1000-devel@lists.sourceforge.net, john.ronciak@intel.com, jeffrey.t.kirsher@intel.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Replaced init_module and cleanup_module with static functions and module_init/module_exit.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Jon Schindler <jkschind@gmail.com>
+Robert P.J. Day proposed to use the macro FIELD_SIZEOF in replace of code
+that matches its definition.
+
+The modification was made using the following semantic patch
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@haskernel@
+@@
+
+#include <linux/kernel.h>
+
+@depends on haskernel@
+type t;
+identifier f;
+@@
+
+- (sizeof(((t*)0)->f))
++ FIELD_SIZEOF(t, f)
+
+@depends on haskernel@
+type t;
+identifier f;
+@@
+
+- sizeof(((t*)0)->f)
++ FIELD_SIZEOF(t, f)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/net/appletalk/cops.c b/drivers/net/appletalk/cops.c
-index 92c3a4c..65b901e 100644
---- a/drivers/net/appletalk/cops.c
-+++ b/drivers/net/appletalk/cops.c
-@@ -1010,7 +1010,7 @@ module_param(io, int, 0);
- module_param(irq, int, 0);
- module_param(board_type, int, 0);
+
+diff -u -p a/drivers/net/ixgb/ixgb_ethtool.c b/drivers/net/ixgb/ixgb_ethtool.c
+--- a/drivers/net/ixgb/ixgb_ethtool.c 2007-11-08 18:33:36.000000000 +0100
++++ b/drivers/net/ixgb/ixgb_ethtool.c 2008-02-10 17:59:49.000000000 +0100
+@@ -49,7 +49,7 @@ struct ixgb_stats {
+ 	int stat_offset;
+ };
  
--int __init init_module(void)
-+static int __init cops_module_init(void)
- {
- 	if (io = 0)
- 		printk(KERN_WARNING "%s: You shouldn't autoprobe with insmod\n",
-@@ -1021,12 +1021,14 @@ int __init init_module(void)
-         return 0;
- }
- 
--void __exit cleanup_module(void)
-+static void __exit cops_module_exit(void)
- {
- 	unregister_netdev(cops_dev);
- 	cleanup_card(cops_dev);
- 	free_netdev(cops_dev);
- }
-+module_init(cops_module_init);
-+module_exit(cops_module_exit);
- #endif /* MODULE */
- 
- /*
+-#define IXGB_STAT(m) sizeof(((struct ixgb_adapter *)0)->m), \
++#define IXGB_STAT(m) FIELD_SIZEOF(struct ixgb_adapter, m), \
+ 		      offsetof(struct ixgb_adapter, m)
+ static struct ixgb_stats ixgb_gstrings_stats[] = {
+ 	{"rx_packets", IXGB_STAT(net_stats.rx_packets)},
