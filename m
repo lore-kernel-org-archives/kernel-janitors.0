@@ -1,72 +1,38 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 14 Feb 2008 15:15:45 +0000
-Subject: [PATCH 4/6] fs/udf: Use DIV_ROUND_UP
-Message-Id: <Pine.LNX.4.58.0802141615240.1185@pc-041.diku.dk>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Mon, 11 Feb 2008 21:10:17 +0000
+Subject: [PATCH] block/genhd.c: compilation warning fix
+Message-Id: <200802112210.17467.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jack@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: axboe@kernel.dk, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
-(d)) but is perhaps more readable.
+Added a check for the class_register() return value.
 
-An extract of the semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@haskernel@
-@@
-
-#include <linux/kernel.h>
-
-@depends on haskernel@
-expression n,d;
-@@
-
-(
-- (n + d - 1) / d
-+ DIV_ROUND_UP(n,d)
-|
-- (n + (d - 1)) / d
-+ DIV_ROUND_UP(n,d)
-)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP((n),d)
-+ DIV_ROUND_UP(n,d)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP(n,(d))
-+ DIV_ROUND_UP(n,d)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
 ---
 
-diff -u -p a/fs/udf/super.c b/fs/udf/super.c
---- a/fs/udf/super.c	2008-02-10 17:13:55.000000000 +0100
-+++ b/fs/udf/super.c	2008-02-14 07:32:31.000000000 +0100
-@@ -1025,10 +1025,9 @@ static void udf_load_fileset(struct supe
- int udf_compute_nr_groups(struct super_block *sb, u32 partition)
- {
- 	struct udf_part_map *map = &UDF_SB(sb)->s_partmaps[partition];
--	return (map->s_partition_len +
--		(sizeof(struct spaceBitmapDesc) << 3) +
--		(sb->s_blocksize * 8) - 1) /
--		(sb->s_blocksize * 8);
-+	return DIV_ROUND_UP(map->s_partition_len +
-+			    (sizeof(struct spaceBitmapDesc) << 3),
-+			    sb->s_blocksize * 8);
- }
+The aim of this patch is to remove the following warning message:
+block/genhd.c: In function 'genhd_device_init':
+block/genhd.c:361: warning: ignoring return value of 'class_register', declared with attribute warn_unused_result
 
- static struct udf_bitmap *udf_sb_alloc_bitmap(struct super_block *sb, u32 index)
+--- linux-2.6.orig/block/genhd.c
++++ linux-2.6/block/genhd.c
+@@ -358,7 +358,12 @@ static struct kobject *base_probe(dev_t 
+ 
+ static int __init genhd_device_init(void)
+ {
+-	class_register(&block_class);
++	int ret;
++
++	ret = class_register(&block_class);
++	if (ret != 0)
++		return ret;
++
+ 	bdev_map = kobj_map_init(base_probe, &block_class_lock);
+ 	blk_dev_init();
+ 
