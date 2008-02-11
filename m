@@ -1,67 +1,80 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 14 Feb 2008 15:14:04 +0000
-Subject: [PATCH 1/6] arch/x86/xen: Use DIV_ROUND_UP
-Message-Id: <Pine.LNX.4.58.0802141613300.1185@pc-041.diku.dk>
+From: "Kok, Auke" <auke-jan.h.kok@intel.com>
+Date: Mon, 11 Feb 2008 17:15:49 +0000
+Subject: Re: [E1000-devel] [PATCH 6/8] drivers/net/igb: Use FIELD_SIZEOF
+Message-Id: <47B082C5.5080207@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0802102113480.23906@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0802102113480.23906@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jeremy@xensource.com, xen-devel@lists.xensource.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: e1000-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Robert P.J. Day proposed to use the macro FIELD_SIZEOF in replace of code
+> that matches its definition.
 
-The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
-(d)) but is perhaps more readable.
 
-An extract of the semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+thanks for the (3) patches, I'll make sure they get merged.
 
-// <smpl>
-@haskernel@
-@@
+Cheers,
 
-#include <linux/kernel.h>
+Auke
 
-@depends on haskernel@
-expression n,d;
-@@
 
-(
-- (n + d - 1) / d
-+ DIV_ROUND_UP(n,d)
-|
-- (n + (d - 1)) / d
-+ DIV_ROUND_UP(n,d)
-)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP((n),d)
-+ DIV_ROUND_UP(n,d)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP(n,(d))
-+ DIV_ROUND_UP(n,d)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-
-diff -u -p a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
---- a/arch/x86/xen/enlighten.c 2008-02-02 15:28:17.000000000 +0100
-+++ b/arch/x86/xen/enlighten.c 2008-02-13 20:48:15.000000000 +0100
-@@ -293,7 +293,7 @@ static void xen_load_gdt(const struct de
- 	unsigned long *frames;
- 	unsigned long va = dtr->address;
- 	unsigned int size = dtr->size + 1;
--	unsigned pages = (size + PAGE_SIZE - 1) / PAGE_SIZE;
-+	unsigned pages = DIV_ROUND_UP(size, PAGE_SIZE);
- 	int f;
- 	struct multicall_space mcs;
+> 
+> The modification was made using the following semantic patch
+> (http://www.emn.fr/x-info/coccinelle/)
+> 
+> // <smpl>
+> @haskernel@
+> @@
+> 
+> #include <linux/kernel.h>
+> 
+> @depends on haskernel@
+> type t;
+> identifier f;
+> @@
+> 
+> - (sizeof(((t*)0)->f))
+> + FIELD_SIZEOF(t, f)
+> 
+> @depends on haskernel@
+> type t;
+> identifier f;
+> @@
+> 
+> - sizeof(((t*)0)->f)
+> + FIELD_SIZEOF(t, f)
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+> 
+> diff -u -p a/drivers/net/igb/igb_ethtool.c b/drivers/net/igb/igb_ethtool.c
+> --- a/drivers/net/igb/igb_ethtool.c 2008-02-02 15:28:20.000000000 +0100
+> +++ b/drivers/net/igb/igb_ethtool.c 2008-02-10 18:06:35.000000000 +0100
+> @@ -43,7 +43,7 @@ struct igb_stats {
+>  	int stat_offset;
+>  };
+>  
+> -#define IGB_STAT(m) sizeof(((struct igb_adapter *)0)->m), \
+> +#define IGB_STAT(m) FIELD_SIZEOF(struct igb_adapter, m), \
+>  		      offsetof(struct igb_adapter, m)
+>  static const struct igb_stats igb_gstrings_stats[] = {
+>  	{ "rx_packets", IGB_STAT(stats.gprc) },
+> 
+> -------------------------------------------------------------------------
+> This SF.net email is sponsored by: Microsoft
+> Defy all challenges. Microsoft(R) Visual Studio 2008.
+> http://clk.atdmt.com/MRT/go/vse0120000070mrt/direct/01/
+> _______________________________________________
+> E1000-devel mailing list
+> E1000-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/e1000-devel
 
