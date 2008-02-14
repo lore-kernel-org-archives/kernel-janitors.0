@@ -1,20 +1,19 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 10 Feb 2008 20:11:24 +0000
-Subject: [PATCH 3/8] drivers/net/e1000: Use FIELD_SIZEOF
-Message-Id: <Pine.LNX.4.64.0802102110110.23906@ask.diku.dk>
+Date: Thu, 14 Feb 2008 15:15:45 +0000
+Subject: [PATCH 4/6] fs/udf: Use DIV_ROUND_UP
+Message-Id: <Pine.LNX.4.58.0802141615240.1185@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: e1000-devel@lists.sourceforge.net, cramerj@intel.com, john.ronciak@intel.com, jeffrey.t.kirsher@intel.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jack@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Robert P.J. Day proposed to use the macro FIELD_SIZEOF in replace of code
-that matches its definition.
+The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
+(d)) but is perhaps more readable.
 
-The modification was made using the following semantic patch
+An extract of the semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
@@ -24,35 +23,50 @@ The modification was made using the following semantic patch
 #include <linux/kernel.h>
 
 @depends on haskernel@
-type t;
-identifier f;
+expression n,d;
 @@
 
-- (sizeof(((t*)0)->f))
-+ FIELD_SIZEOF(t, f)
+(
+- (n + d - 1) / d
++ DIV_ROUND_UP(n,d)
+|
+- (n + (d - 1)) / d
++ DIV_ROUND_UP(n,d)
+)
 
 @depends on haskernel@
-type t;
-identifier f;
+expression n,d;
 @@
 
-- sizeof(((t*)0)->f)
-+ FIELD_SIZEOF(t, f)
+- DIV_ROUND_UP((n),d)
++ DIV_ROUND_UP(n,d)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP(n,(d))
++ DIV_ROUND_UP(n,d)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
 
-diff -u -p a/drivers/net/e1000/e1000_ethtool.c b/drivers/net/e1000/e1000_ethtool.c
---- a/drivers/net/e1000/e1000_ethtool.c 2008-02-02 15:28:19.000000000 +0100
-+++ b/drivers/net/e1000/e1000_ethtool.c 2008-02-10 17:58:20.000000000 +0100
-@@ -50,7 +50,7 @@ struct e1000_stats {
- 	int stat_offset;
- };
- 
--#define E1000_STAT(m) sizeof(((struct e1000_adapter *)0)->m), \
-+#define E1000_STAT(m) FIELD_SIZEOF(struct e1000_adapter, m), \
- 		      offsetof(struct e1000_adapter, m)
- static const struct e1000_stats e1000_gstrings_stats[] = {
- 	{ "rx_packets", E1000_STAT(stats.gprc) },
+diff -u -p a/fs/udf/super.c b/fs/udf/super.c
+--- a/fs/udf/super.c	2008-02-10 17:13:55.000000000 +0100
++++ b/fs/udf/super.c	2008-02-14 07:32:31.000000000 +0100
+@@ -1025,10 +1025,9 @@ static void udf_load_fileset(struct supe
+ int udf_compute_nr_groups(struct super_block *sb, u32 partition)
+ {
+ 	struct udf_part_map *map = &UDF_SB(sb)->s_partmaps[partition];
+-	return (map->s_partition_len +
+-		(sizeof(struct spaceBitmapDesc) << 3) +
+-		(sb->s_blocksize * 8) - 1) /
+-		(sb->s_blocksize * 8);
++	return DIV_ROUND_UP(map->s_partition_len +
++			    (sizeof(struct spaceBitmapDesc) << 3),
++			    sb->s_blocksize * 8);
+ }
+
+ static struct udf_bitmap *udf_sb_alloc_bitmap(struct super_block *sb, u32 index)
