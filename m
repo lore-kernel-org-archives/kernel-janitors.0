@@ -1,31 +1,67 @@
-From: Nikanth Karthikesan <knikanth@suse.de>
-Date: Fri, 11 Jan 2008 03:38:39 +0000
-Subject: [PATCH 10/11 ] Change drm_ioctl as an unlocked_ioctl function :
-Message-Id: <1200021999.3844.18.camel@nikanth-laptop.blr.novell.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 14 Feb 2008 15:16:31 +0000
+Subject: [PATCH 6/6] drivers/hid: Use DIV_ROUND_UP
+Message-Id: <Pine.LNX.4.58.0802141616120.1185@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie, dri-devel@lists.sourceforge.net, benh@kernel.crashing.org, paulus@samba.org, thomas@winischhofer.net, adaplas@gmail.com, sylvain.meyer@worldonline.fr
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jkosina@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Register drm_ioctl as an unlocked_ioctl function.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
+The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
+(d)) but is perhaps more readable.
 
---- 
-diff --git a/drivers/char/drm/tdfx_drv.c b/drivers/char/drm/tdfx_drv.c
-index 012ff2e..ec5a43e 100644
---- a/drivers/char/drm/tdfx_drv.c
-+++ b/drivers/char/drm/tdfx_drv.c
-@@ -48,7 +48,7 @@ static struct drm_driver driver = {
- 		 .owner = THIS_MODULE,
- 		 .open = drm_open,
- 		 .release = drm_release,
--		 .ioctl = drm_ioctl,
-+		 .unlocked_ioctl = drm_ioctl,
- 		 .mmap = drm_mmap,
- 		 .poll = drm_poll,
- 		 .fasync = drm_fasync,
+An extract of the semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@haskernel@
+@@
 
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression n,d;
+@@
+
+(
+- (n + d - 1) / d
++ DIV_ROUND_UP(n,d)
+|
+- (n + (d - 1)) / d
++ DIV_ROUND_UP(n,d)
+)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP((n),d)
++ DIV_ROUND_UP(n,d)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP(n,(d))
++ DIV_ROUND_UP(n,d)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/drivers/hid/usbhid/hid-core.c b/drivers/hid/usbhid/hid-core.c
+--- a/drivers/hid/usbhid/hid-core.c 2007-11-08 18:33:32.000000000 +0100
++++ b/drivers/hid/usbhid/hid-core.c 2008-02-13 20:51:00.000000000 +0100
+@@ -278,7 +278,7 @@ static int hid_submit_ctrl(struct hid_de
+ 		usbhid->urbctrl->pipe = usb_rcvctrlpipe(hid_to_usb_dev(hid), 0);
+ 		maxpacket = usb_maxpacket(hid_to_usb_dev(hid), usbhid->urbctrl->pipe, 0);
+ 		if (maxpacket > 0) {
+-			padlen = (len + maxpacket - 1) / maxpacket;
++			padlen = DIV_ROUND_UP(len, maxpacket);
+ 			padlen *= maxpacket;
+ 			if (padlen > usbhid->bufsize)
+ 				padlen = usbhid->bufsize;
