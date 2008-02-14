@@ -1,35 +1,67 @@
-From: Jon Schindler <jkschind@gmail.com>
-Date: Thu, 28 Feb 2008 07:31:00 +0000
-Subject: [PATCH 5/9] /drivers/net/appletalk/ltpc.c replaced init_module&cleanup_module
-Message-Id: <47C66334.7080003@watson.wustl.edu>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 14 Feb 2008 15:14:04 +0000
+Subject: [PATCH 1/6] arch/x86/xen: Use DIV_ROUND_UP
+Message-Id: <Pine.LNX.4.58.0802141613300.1185@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
+To: jeremy@xensource.com, xen-devel@lists.xensource.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Replaced init_module and cleanup_module with static functions and module_init/module_exit.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Jon Schindler <jkschind@gmail.com>
+The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
+(d)) but is perhaps more readable.
+
+An extract of the semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@haskernel@
+@@
+
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression n,d;
+@@
+
+(
+- (n + d - 1) / d
++ DIV_ROUND_UP(n,d)
+|
+- (n + (d - 1)) / d
++ DIV_ROUND_UP(n,d)
+)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP((n),d)
++ DIV_ROUND_UP(n,d)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP(n,(d))
++ DIV_ROUND_UP(n,d)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/net/appletalk/ltpc.c b/drivers/net/appletalk/ltpc.c
-index 6ab2c2d..fef5560 100644
---- a/drivers/net/appletalk/ltpc.c
-+++ b/drivers/net/appletalk/ltpc.c
-@@ -1252,7 +1252,7 @@ module_param(irq, int, 0);
- module_param(dma, int, 0);
- 
- 
--int __init init_module(void)
-+static int __init ltpc_module_init(void)
- {
-         if(io = 0)
- 		printk(KERN_NOTICE
-@@ -1263,6 +1263,7 @@ int __init init_module(void)
- 		return PTR_ERR(dev_ltpc);
- 	return 0;
- }
-+module_init(ltpc_module_init);
- #endif
- 
- static void __exit ltpc_cleanup(void)
+
+diff -u -p a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
+--- a/arch/x86/xen/enlighten.c 2008-02-02 15:28:17.000000000 +0100
++++ b/arch/x86/xen/enlighten.c 2008-02-13 20:48:15.000000000 +0100
+@@ -293,7 +293,7 @@ static void xen_load_gdt(const struct de
+ 	unsigned long *frames;
+ 	unsigned long va = dtr->address;
+ 	unsigned int size = dtr->size + 1;
+-	unsigned pages = (size + PAGE_SIZE - 1) / PAGE_SIZE;
++	unsigned pages = DIV_ROUND_UP(size, PAGE_SIZE);
+ 	int f;
+ 	struct multicall_space mcs;
+
