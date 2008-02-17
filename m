@@ -1,44 +1,40 @@
-From: Jon Schindler <jkschind@gmail.com>
-Date: Thu, 28 Feb 2008 07:31:12 +0000
-Subject: [PATCH 8/9] /drivers/net/at1700.c replaced init_module&cleanup_module
-Message-Id: <47C66340.6030704@watson.wustl.edu>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Sun, 17 Feb 2008 18:07:50 +0000
+Subject: [PATCH resend] drivers/video/aty/radeon_base.c: compilation warning fix
+Message-Id: <200802171907.50497.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: benh@kernel.crashing.org, linux-kernel@vger.kernel.org
 
-Replaced init_module and cleanup_module with static functions and module_init/module_exit.
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-Signed-off-by: Jon Schindler <jkschind@gmail.com>
+Add a check for the sysfs_create_bin_file() return value.
+In case of error the framebuffer creation is not aborted, but a warning message is generated instead.
+
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
 ---
-diff --git a/drivers/net/at1700.c b/drivers/net/at1700.c
-index 24d81f9..7e874d4 100644
---- a/drivers/net/at1700.c
-+++ b/drivers/net/at1700.c
-@@ -881,7 +881,7 @@ MODULE_PARM_DESC(io, "AT1700/FMV18X I/O base address");
- MODULE_PARM_DESC(irq, "AT1700/FMV18X IRQ number");
- MODULE_PARM_DESC(net_debug, "AT1700/FMV18X debug level (0-6)");
+
+The aim of this patch is to remove the following warning messages:
+drivers/video/aty/radeon_base.c: In function 'radeonfb_pci_register':
+drivers/video/aty/radeon_base.c:2334: warning: ignoring return value of 'sysfs_create_bin_file', declared with attribute warn_unused_result
+drivers/video/aty/radeon_base.c:2336: warning: ignoring return value of 'sysfs_create_bin_file', declared with attribute warn_unused_result
+
+The patch was already acknowledged by Benjamin Herrenschmidt, but I realised that I did not cc the LKML (sorry for that).
+
+--- linux-2.6.orig/drivers/video/aty/radeon_base.c
++++ linux-2.6/drivers/video/aty/radeon_base.c
+@@ -2331,9 +2331,9 @@ static int __devinit radeonfb_pci_regist
  
--int __init init_module(void)
-+static int __init at1700_module_init(void)
- {
- 	if (io = 0)
- 		printk("at1700: You should not use auto-probing with insmod!\n");
-@@ -891,13 +891,14 @@ int __init init_module(void)
- 	return 0;
- }
+ 	/* Register some sysfs stuff (should be done better) */
+ 	if (rinfo->mon1_EDID)
+-		sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid1_attr);
++		WARN_ON(sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid1_attr));
+ 	if (rinfo->mon2_EDID)
+-		sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid2_attr);
++		WARN_ON(sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid2_attr));
  
--void __exit
--cleanup_module(void)
-+static void __exit at1700_module_exit(void)
- {
- 	unregister_netdev(dev_at1700);
- 	cleanup_card(dev_at1700);
- 	free_netdev(dev_at1700);
- }
-+module_init(at1700_module_init);
-+module_exit(at1700_module_exit);
- #endif /* MODULE */
- MODULE_LICENSE("GPL");
- 
+ 	/* save current mode regs before we switch into the new one
+ 	 * so we can restore this upon __exit
