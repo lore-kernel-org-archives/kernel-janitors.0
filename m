@@ -1,35 +1,68 @@
-From: Jiri Olsa <olsajiri@gmail.com>
-Date: Thu, 21 Feb 2008 06:13:22 +0000
-Subject: [PATCH] fs: removing unused fops from struct char_device_struct -
-Message-Id: <47BD1682.906@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 17 Feb 2008 17:56:52 +0000
+Subject: [PATCH 5/7] net/rxrpc: Use BUG_ON
+Message-Id: <Pine.LNX.4.64.0802171856240.28055@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47BC9433.8020905@gmail.com>
-In-Reply-To: <47BC9433.8020905@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dhowells@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+From: Julia Lawall <julia@diku.dk>
 
-seems char_device_struct::fops is no longer used, removing it.
-I checked with "make allyesconfig" and got proper build.
+if (...) BUG(); should be replaced with BUG_ON(...) when the test has no
+side-effects to allow a definition of BUG_ON that drops the code completely.
 
-Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@ disable unlikely @ expression E,f; @@
+
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (unlikely(E)) { BUG(); }
++ BUG_ON(E);
+)
+
+@@ expression E,f; @@
+
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (E) { BUG(); }
++ BUG_ON(E);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- fs/char_dev.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff --git a/fs/char_dev.c b/fs/char_dev.c
-index c3bfa76..e4527fb 100644
---- a/fs/char_dev.c
-+++ b/fs/char_dev.c
-@@ -55,7 +55,6 @@ static struct char_device_struct {
- 	unsigned int baseminor;
- 	int minorct;
- 	char name[64];
--	struct file_operations *fops;
- 	struct cdev *cdev;		/* will die */
- } *chrdevs[CHRDEV_MAJOR_HASH_SIZE];
+diff -u -p a/net/rxrpc/ar-accept.c b/net/rxrpc/ar-accept.c
+--- a/net/rxrpc/ar-accept.c 2007-06-02 22:32:46.000000000 +0200
++++ b/net/rxrpc/ar-accept.c 2008-02-17 16:42:48.000000000 +0100
+@@ -156,8 +156,7 @@ static int rxrpc_accept_incoming_call(st
+ 						  false);
+ 			spin_unlock(&call->lock);
+ 			notification = NULL;
+-			if (ret < 0)
+-				BUG();
++			BUG_ON(ret < 0);
+ 		}
+ 		spin_unlock(&call->conn->state_lock);
  
-
+diff -u -p a/net/rxrpc/ar-ack.c b/net/rxrpc/ar-ack.c
+--- a/net/rxrpc/ar-ack.c 2007-06-02 22:32:46.000000000 +0200
++++ b/net/rxrpc/ar-ack.c 2008-02-17 16:42:54.000000000 +0100
+@@ -814,8 +814,7 @@ static int rxrpc_post_message(struct rxr
+ 		spin_lock_bh(&call->lock);
+ 		ret = rxrpc_queue_rcv_skb(call, skb, true, fatal);
+ 		spin_unlock_bh(&call->lock);
+-		if (ret < 0)
+-			BUG();
++		BUG_ON(ret < 0);
+ 	}
+ 
+ 	return 0;
