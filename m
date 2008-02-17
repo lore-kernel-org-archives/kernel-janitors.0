@@ -1,61 +1,55 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 29 Feb 2008 21:33:20 +0000
-Subject: Re: [PATCH 2/9] drivers/acpi/asus_acpi.c: Correct use of.and &
-Message-Id: <20080229133320.1ec95e84.akpm@linux-foundation.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 17 Feb 2008 17:57:58 +0000
+Subject: [PATCH 7/7] net/9p/trans_virtio.c: Use BUG_ON
+Message-Id: <Pine.LNX.4.64.0802171857310.28055@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0802262142120.18200@ask.diku.dk>
-	<7C626792-02A6-4BE6-B5F2-D75899F3990C@hell.org.pl>
-	<47C5ABFB.3050607@googlemail.com>
-	<20080228215503.b942bb3c.akpm@linux-foundation.org>
-	<47C849B8.1000902@googlemail.com>
-In-Reply-To: <47C849B8.1000902@googlemail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Pearson <devnull.port@googlemail.com>
-Cc: sziwan@hell.org.pl, julia@diku.dk, corentincj@iksaif.net, sziwan@users.sourceforge.net, acpi4asus-user@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, lenb@kernel.org
+To: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net, v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 29 Feb 2008 19:06:48 +0100
-Mark Pearson <devnull.port@googlemail.com> wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Andrew Morton wrote:
-> >> Seems an odd way of doing:
-> >>
-> >> 	led_out ^= 0x01;
-> > 
-> > It does.
-> > 
-> >> It this due to some optimisation?
-> > 
-> > Surely not ;)
-> >
-> ;) Thought so - one doesn't like to be too presumptuous ;)
-> 
-> > That code has been there for many years.
-> > 
-> > I changed the patch to this:
-> > 
-> > --- a/drivers/acpi/asus_acpi.c~drivers-acpi-asus_acpic-correct-use-of-and
-> > +++ a/drivers/acpi/asus_acpi.c
-> > @@ -610,7 +610,7 @@ write_led(const char __user * buffer, un
-> >  	    (led_out) ? (hotk->status | ledmask) : (hotk->status & ~ledmask);
-> >  
-> >  	if (invert)		/* invert target value */
-> > -		led_out = !led_out & 0x1;
-> > +		led_out = !led_out;
-> >  
-> >  	if (!write_acpi_int(hotk->handle, ledname, led_out, NULL))
-> >  		printk(KERN_WARNING "Asus ACPI: LED (%s) write failed\n",
-> > _
-> > 
-> > 
-> 
-> Is the ! operator architecture/compiler dependent?
+if (...) BUG(); should be replaced with BUG_ON(...) when the test has no
+side-effects to allow a definition of BUG_ON that drops the code completely.
 
-It shouldn't be.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-> or can one always say that
-> !NON_ZERO_VALUE = 0 and !0 = 1?
-> 
+// <smpl>
+@ disable unlikely @ expression E,f; @@
 
-I always have ;)  I expect it's in the C standard somewhere.
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (unlikely(E)) { BUG(); }
++ BUG_ON(E);
+)
+
+@@ expression E,f; @@
+
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (E) { BUG(); }
++ BUG_ON(E);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+--- a/net/9p/trans_virtio.c 2008-02-10 22:34:18.000000000 +0100
++++ b/net/9p/trans_virtio.c 2008-02-17 16:43:18.000000000 +0100
+@@ -183,8 +183,7 @@ pack_sg_list(struct scatterlist *sg, int
+ 		sg_set_buf(&sg[index++], data, s);
+ 		count -= s;
+ 		data += s;
+-		if (index > limit)
+-			BUG();
++		BUG_ON(index > limit);
+ 	}
+ 
+ 	return index-start;
