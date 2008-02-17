@@ -1,49 +1,55 @@
-From: Mark Fasheh <mark.fasheh@oracle.com>
-Date: Mon, 18 Feb 2008 20:14:53 +0000
-Subject: Re: [PATCH 3/7] fs/ocfs2: Use BUG_ON
-Message-Id: <20080218201453.GA22671@ca-server1.us.oracle.com>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Sun, 17 Feb 2008 17:23:15 +0000
+Subject: [PATCH] drivers/net/cs89x0.c: compilation warning fix
+Message-Id: <200802171823.15759.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0802171855070.28055@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0802171855070.28055@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kurt.hackel@oracle.com, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2008 at 06:55:49PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> if (...) BUG(); should be replaced with BUG_ON(...) when the test has no
-> side-effects to allow a definition of BUG_ON that drops the code completely.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @ disable unlikely @ expression E,f; @@
-> 
-> (
->   if (<... f(...) ...>) { BUG(); }
-> |
-> - if (unlikely(E)) { BUG(); }
-> + BUG_ON(E);
-> )
-> 
-> @@ expression E,f; @@
-> 
-> (
->   if (<... f(...) ...>) { BUG(); }
-> |
-> - if (E) { BUG(); }
-> + BUG_ON(E);
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-Acked-by: Mark Fasheh <mark.fasheh@oracle.com>
+From: Leonardo Potenza <lpotenza@inwind.it>
 
---
-Mark Fasheh
-Principal Software Developer, Oracle
-mark.fasheh@oracle.com
+Suppress the warning message about the 'netcard_portlist' defined but not used.
+
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+---
+
+When building cs89x0 as a module, the following warning message is generated:
+drivers/net/cs89x0.c:198: warning: 'netcard_portlist' defined but not used
+
+Since the netcard_portlist is not so big, I just marked the array as __used.
+
+--- linux-2.6.orig/drivers/net/cs89x0.c
++++ linux-2.6/drivers/net/cs89x0.c
+@@ -172,30 +172,30 @@ static char version[] __initdata     them to system IRQ numbers. This mapping is card specific and is set to
+    the configuration of the Cirrus Eval board for this chip. */
+ #ifdef CONFIG_ARCH_CLPS7500
+-static unsigned int netcard_portlist[] __initdata +static unsigned int netcard_portlist[] __used __initdata     { 0x80090303, 0x300, 0x320, 0x340, 0x360, 0x200, 0x220, 0x240, 0x260, 0x280, 0x2a0, 0x2c0, 0x2e0, 0};
+ static unsigned int cs8900_irq_map[] = {12,0,0,0};
+ #elif defined(CONFIG_SH_HICOSH4)
+-static unsigned int netcard_portlist[] __initdata +static unsigned int netcard_portlist[] __used __initdata     { 0x0300, 0};
+ static unsigned int cs8900_irq_map[] = {1,0,0,0};
+ #elif defined(CONFIG_MACH_IXDP2351)
+-static unsigned int netcard_portlist[] __initdata = {IXDP2351_VIRT_CS8900_BASE, 0};
++static unsigned int netcard_portlist[] __used __initdata = {IXDP2351_VIRT_CS8900_BASE, 0};
+ static unsigned int cs8900_irq_map[] = {IRQ_IXDP2351_CS8900, 0, 0, 0};
+ #include <asm/irq.h>
+ #elif defined(CONFIG_ARCH_IXDP2X01)
+ #include <asm/irq.h>
+-static unsigned int netcard_portlist[] __initdata = {IXDP2X01_CS8900_VIRT_BASE, 0};
++static unsigned int netcard_portlist[] __used __initdata = {IXDP2X01_CS8900_VIRT_BASE, 0};
+ static unsigned int cs8900_irq_map[] = {IRQ_IXDP2X01_CS8900, 0, 0, 0};
+ #elif defined(CONFIG_ARCH_PNX010X)
+ #include <asm/irq.h>
+ #include <asm/arch/gpio.h>
+ #define CIRRUS_DEFAULT_BASE	IO_ADDRESS(EXT_STATIC2_s0_BASE + 0x200000)	/* = Physical address 0x48200000 */
+ #define CIRRUS_DEFAULT_IRQ	VH_INTC_INT_NUM_CASCADED_INTERRUPT_1 /* Event inputs bank 1 - ID 35/bit 3 */
+-static unsigned int netcard_portlist[] __initdata = {CIRRUS_DEFAULT_BASE, 0};
++static unsigned int netcard_portlist[] __used __initdata = {CIRRUS_DEFAULT_BASE, 0};
+ static unsigned int cs8900_irq_map[] = {CIRRUS_DEFAULT_IRQ, 0, 0, 0};
+ #else
+-static unsigned int netcard_portlist[] __initdata +static unsigned int netcard_portlist[] __used __initdata     { 0x300, 0x320, 0x340, 0x360, 0x200, 0x220, 0x240, 0x260, 0x280, 0x2a0, 0x2c0, 0x2e0, 0};
+ static unsigned int cs8900_irq_map[] = {10,11,12,5};
+ #endif
