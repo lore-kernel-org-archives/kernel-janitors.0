@@ -1,71 +1,98 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sun, 10 Feb 2008 22:22:24 +0000
-Subject: Re: [PATCH 2/8] drivers/block: Use FIELD_SIZEOF
-Message-Id: <20080211092224.4181928b.sfr@canb.auug.org.au>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Signature=_Mon__11_Feb_2008_09_22_24_+1100_VqWY6yVHBSQ4eUZw"
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 17 Feb 2008 17:57:30 +0000
+Subject: [PATCH 6/7] sound: Use BUG_ON
+Message-Id: <Pine.LNX.4.64.0802171856530.28055@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0802102108000.23906@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0802102108000.23906@ask.diku.dk>
-To: Julia Lawall <julia@diku.dk>
-Cc: axboe@kernel.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: perex@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---Signature=_Mon__11_Feb_2008_09_22_24_+1100_VqWY6yVHBSQ4eUZw
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Julia Lawall <julia@diku.dk>
 
-On Sun, 10 Feb 2008 21:08:49 +0100 (CET) Julia Lawall <julia@diku.dk> wrote:
->
-> From: Julia Lawall <julia@diku.dk>
->=20
-> Robert P.J. Day proposed to use the macro FIELD_SIZEOF in replace of code
-> that matches its definition.
->=20
-> The modification was made using the following semantic patch
-> (http://www.emn.fr/x-info/coccinelle/)
->=20
-> // <smpl>
-> @haskernel@
-> @@
->=20
-> #include <linux/kernel.h>
->=20
-> @depends on haskernel@
-> type t;
-> identifier f;
-> @@
->=20
-> - (sizeof(((t*)0)->f))
-> + FIELD_SIZEOF(t, f)
->=20
-> @depends on haskernel@
-> type t;
-> identifier f;
-> @@
->=20
-> - sizeof(((t*)0)->f)
-> + FIELD_SIZEOF(t, f)
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+if (...) BUG(); should be replaced with BUG_ON(...) when the test has no
+side-effects to allow a definition of BUG_ON that drops the code completely.
 
-Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+// <smpl>
+@ disable unlikely @ expression E,f; @@
 
---Signature=_Mon__11_Feb_2008_09_22_24_+1100_VqWY6yVHBSQ4eUZw
-Content-Type: application/pgp-signature
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (unlikely(E)) { BUG(); }
++ BUG_ON(E);
+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+@@ expression E,f; @@
 
-iD8DBQFHr3kkTgG2atn1QN8RAsIIAJoC1YVTppVwPlh/POyn59J6fpQEQgCfb6gy
-20Lr+YFGUZNp/UemKhsA874=
-=DbZf
------END PGP SIGNATURE-----
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (E) { BUG(); }
++ BUG_ON(E);
+)
+// </smpl>
 
---Signature=_Mon__11_Feb_2008_09_22_24_+1100_VqWY6yVHBSQ4eUZw--
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/sound/core/seq/oss/seq_oss_synth.c b/sound/core/seq/oss/seq_oss_synth.c
+--- a/sound/core/seq/oss/seq_oss_synth.c 2006-11-30 19:05:47.000000000 +0100
++++ b/sound/core/seq/oss/seq_oss_synth.c 2008-02-17 16:43:24.000000000 +0100
+@@ -245,8 +245,7 @@ snd_seq_oss_synth_setup(struct seq_oss_d
+ 		info->nr_voices = rec->nr_voices;
+ 		if (info->nr_voices > 0) {
+ 			info->ch = kcalloc(info->nr_voices, sizeof(struct seq_oss_chinfo), GFP_KERNEL);
+-			if (!info->ch)
+-				BUG();
++			BUG_ON(!info->ch);
+ 			reset_channels(info);
+ 		}
+ 		debug_printk(("synth %d assigned\n", i));
+diff -u -p a/sound/oss/trident.c b/sound/oss/trident.c
+--- a/sound/oss/trident.c 2008-02-10 22:34:18.000000000 +0100
++++ b/sound/oss/trident.c 2008-02-17 16:43:27.000000000 +0100
+@@ -3076,8 +3076,7 @@ ali_ac97_get(struct trident_card *card, 
+ 	u16 wcontrol;
+ 	unsigned long flags;
+ 
+-	if (!card)
+-		BUG();
++	BUG_ON(!card);
+ 
+ 	address = ALI_AC97_READ;
+ 	if (card->revision = ALI_5451_V02) {
+@@ -3148,8 +3147,7 @@ ali_ac97_set(struct trident_card *card, 
+ 
+ 	data = ((u32) val) << 16;
+ 
+-	if (!card)
+-		BUG();
++	BUG_ON(!card);
+ 
+ 	address = ALI_AC97_WRITE;
+ 	mask = ALI_AC97_WRITE_ACTION | ALI_AC97_AUDIO_BUSY;
+@@ -3213,8 +3211,7 @@ ali_ac97_read(struct ac97_codec *codec, 
+ 	struct trident_card *card = NULL;
+ 
+ 	/* Added by Matt Wu */
+-	if (!codec)
+-		BUG();
++	BUG_ON(!codec);
+ 
+ 	card = (struct trident_card *) codec->private_data;
+ 
+@@ -3240,8 +3237,7 @@ ali_ac97_write(struct ac97_codec *codec,
+ 	struct trident_card *card;
+ 
+ 	/*  Added by Matt Wu */
+-	if (!codec)
+-		BUG();
++	BUG_ON(!codec);
+ 
+ 	card = (struct trident_card *) codec->private_data;
+ 
