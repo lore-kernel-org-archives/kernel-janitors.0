@@ -1,71 +1,65 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 14 Feb 2008 23:37:59 +0000
-Subject: Re: [PATCH 2/6] fs/direct-io.c: Use DIV_ROUND_UP
-Message-Id: <20080214233759.GA30902@us.ibm.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 17 Feb 2008 17:56:18 +0000
+Subject: [PATCH 4/7] fs/udf/truncate.c: Use BUG_ON
+Message-Id: <Pine.LNX.4.64.0802171855510.28055@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0802141614050.1185@pc-041.diku.dk> <84144f020802141018i235d3adfu13a84d124dc3964e@mail.gmail.com> <Pine.LNX.4.64.0802142049510.19977@ask.diku.dk> <200802142316.44985.m.kozlowski@tuxland.pl>
-In-Reply-To: <200802142316.44985.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: Julia Lawall <julia@diku.dk>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: bfennema@falcon.csc.calpoly.edu, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 14.02.2008 [23:16:44 +0100], Mariusz Kozlowski wrote:
-> Hello,
-> 
-> > > >  Is it just me, or does
-> > > >
-> > > >         ((user_addr + iov[seg].iov_len + PAGE_SIZE - 1)/PAGE_SIZE - user_addr/PAGE_SIZE)
-> > > >
-> > > >  not simplify to
-> > > >
-> > > >         = ((iov[seg].iov_len + PAGE_SIZE - 1)/PAGE_SIZE + user_addr/PAGE_SIZE - user_addr/PAGE_SIZE)
-> > > >
-> > > >         = ((iov[seg].iov_len + PAGE_SIZE - 1)/PAGE_SIZE)
-> > > >
-> > > >         = DIV_ROUND_UP(iov[seg].iov_len, PAGE_SIZE)
-> > > >
-> > > >  CMIIW.
-> > > 
-> > > I double-checked this and I believe you're correct. It's simpler to
-> > > see when you do:
-> > > 
-> > >   x = user_addr
-> > >   y = iov[seg].iov_len
-> > >   z = PAGE_SIZE
-> > > 
-> > > So
-> > > 
-> > >   (x + y + z - 1)/z - x/z
-> > > 
-> > >   = [x + (y + z - 1)]/z - x/z
-> > > 
-> > >   = [xz + z(y + z - 1)]/z^2 - x/z
-> > > 
-> > >   = x/z + (y + z - 1)/z - x/z
-> > > 
-> > > And the rest follows from your simplifications.
-> > 
-> > It doesn't work:
-> > 
-> >  ((3+4+5-1)/5) - (3/5) = 2
-> >  ((4+5-1)/5) = 1
-> 
-> Logic was wrong but conclusion was right :) and so was Nishanth:
+From: Julia Lawall <julia@diku.dk>
 
-<snip>
+if (...) BUG(); should be replaced with BUG_ON(...) when the test has no
+side-effects to allow a definition of BUG_ON that drops the code completely.
 
-As I replied to Julia off-list -- the math I and others have given is
-correct, but assumes we're dealing with real-typed values. However, we
-only have integer types in the kernel, meaning the divisions truncate.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Thus, while mathematically equivalent, the simplification is not
-computationally so.
+// <smpl>
+@ disable unlikely @ expression E,f; @@
 
-Thanks,
-Nish
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (unlikely(E)) { BUG(); }
++ BUG_ON(E);
+)
 
--- 
-Nishanth Aravamudan <nacc@us.ibm.com>
-IBM Linux Technology Center
+@@ expression E,f; @@
+
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (E) { BUG(); }
++ BUG_ON(E);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/fs/udf/truncate.c b/fs/udf/truncate.c
+--- a/fs/udf/truncate.c 2008-02-10 22:34:15.000000000 +0100
++++ b/fs/udf/truncate.c 2008-02-17 16:41:19.000000000 +0100
+@@ -224,8 +224,7 @@ void udf_truncate_extents(struct inode *
+ 				if (indirect_ext_len) {
+ 					/* We managed to free all extents in the
+ 					 * indirect extent - free it too */
+-					if (!epos.bh)
+-						BUG();
++					BUG_ON(!epos.bh);
+ 					udf_free_blocks(sb, inode, epos.block,
+ 							0, indirect_ext_len);
+ 				} else {
+@@ -272,8 +271,7 @@ void udf_truncate_extents(struct inode *
+ 		}
+ 
+ 		if (indirect_ext_len) {
+-			if (!epos.bh)
+-				BUG();
++			BUG_ON(!epos.bh);
+ 			udf_free_blocks(sb, inode, epos.block, 0,
+ 					indirect_ext_len);
+ 		} else {
