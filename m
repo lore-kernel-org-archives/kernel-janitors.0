@@ -1,50 +1,101 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Mon, 11 Feb 2008 16:23:46 +0000
-Subject: Re: what happened to the fsdev.net/wiki janitors TODO list?
-Message-Id: <alpine.LFD.1.00.0802111123060.4416@localhost.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 17 Feb 2008 17:55:06 +0000
+Subject: [PATCH 2/7] fs/ext{2,3,4}: Use BUG_ON
+Message-Id: <Pine.LNX.4.64.0802171854270.28055@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.1.00.0802040717200.949@localhost.localdomain>
-In-Reply-To: <alpine.LFD.1.00.0802040717200.949@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: sct@redhat.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 11 Feb 2008, Alexey Dobriyan wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Mon, Feb 04, 2008 at 02:18:08PM -0800, Chris Miller wrote:
-> > On Feb 4, 2008 4:19 AM, Robert P. J. Day <rpjday@crashcourse.ca> wrote:
-> > >   it's been a while since i've checked in on the KJ TODO list that i
-> > > was working on at fsdev.net, and now i don't see how to get to the
-> > > wiki.  can someone clue me in on where that's gone?  thanks.
-> >
-> > It still comes up at wiki.fsdev.net just fine for me. I haven't
-> > touched it in a long while.  The last thing I did to it was about four
-> > months or more ago when I ended up using phpMyAdmin to delete a ton of
-> > spam accounts.  It still worked, so I guess it's pretty forgiving
-> > about deleted accounts.  I use some software which can't deal with
-> > permenently deleted accounts... sort of odd.
-> >
-> > I've been considering installing some kind of further anti-spam
-> > measures, since the previous ones didn't work.
->
-> I want to make TODO much more bugfix orientied, namely look at last
-> many bugfixes, find patterns and spell them out. None of this "run
-> checkpatch.pl" crap.
->
-> Oh, and put it back in CVS/git. Wiki's visual layout and markup
-> language is absolutely horrible.
+if (...) BUG(); should be replaced with BUG_ON(...) when the test has no
+side-effects to allow a definition of BUG_ON that drops the code completely.
 
-keep in mind that that wiki-based TO DO list was strictly informal and
-wasn't tied to anything else.
+ fs/ext2/balloc.c |    3 +--
+ fs/ext2/dir.c    |    3 +--
+ fs/ext3/balloc.c |    3 +--
+ fs/ext4/balloc.c |    3 +--
+ 4 files changed, 4 insertions(+), 8 deletions(-)
 
-rday
---
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Home page:                                         http://crashcourse.ca
-Fedora Cookbook:    http://crashcourse.ca/wiki/index.php/Fedora_Cookbook
-====================================
+// <smpl>
+@ disable unlikely @ expression E,f; @@
+
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (unlikely(E)) { BUG(); }
++ BUG_ON(E);
+)
+
+@@ expression E,f; @@
+
+(
+  if (<... f(...) ...>) { BUG(); }
+|
+- if (E) { BUG(); }
++ BUG_ON(E);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/fs/ext2/balloc.c b/fs/ext2/balloc.c
+--- a/fs/ext2/balloc.c 2008-02-10 22:34:14.000000000 +0100
++++ b/fs/ext2/balloc.c 2008-02-17 16:39:35.000000000 +0100
+@@ -245,8 +245,7 @@ restart:
+ 		prev = rsv;
+ 	}
+ 	printk("Window map complete.\n");
+-	if (bad)
+-		BUG();
++	BUG_ON(bad);
+ }
+ #define rsv_window_dump(root, verbose) \
+ 	__rsv_window_dump((root), (verbose), __FUNCTION__)
+diff -u -p a/fs/ext2/dir.c b/fs/ext2/dir.c
+--- a/fs/ext2/dir.c 2008-02-10 22:34:14.000000000 +0100
++++ b/fs/ext2/dir.c 2008-02-17 16:39:36.000000000 +0100
+@@ -41,8 +41,8 @@ static inline __le16 ext2_rec_len_to_dis
+ {
+ 	if (len = (1 << 16))
+ 		return cpu_to_le16(EXT2_MAX_REC_LEN);
+-	else if (len > (1 << 16))
+-		BUG();
++	else
++		BUG_ON(len > (1 << 16));
+ 	return cpu_to_le16(len);
+ }
+ 
+diff -u -p a/fs/ext3/balloc.c b/fs/ext3/balloc.c
+--- a/fs/ext3/balloc.c 2008-02-10 22:34:14.000000000 +0100
++++ b/fs/ext3/balloc.c 2008-02-17 16:39:38.000000000 +0100
+@@ -232,8 +232,7 @@ restart:
+ 		prev = rsv;
+ 	}
+ 	printk("Window map complete.\n");
+-	if (bad)
+-		BUG();
++	BUG_ON(bad);
+ }
+ #define rsv_window_dump(root, verbose) \
+ 	__rsv_window_dump((root), (verbose), __FUNCTION__)
+diff -u -p a/fs/ext4/balloc.c b/fs/ext4/balloc.c
+--- a/fs/ext4/balloc.c 2008-02-10 22:34:14.000000000 +0100
++++ b/fs/ext4/balloc.c 2008-02-17 16:39:39.000000000 +0100
+@@ -356,8 +356,7 @@ restart:
+ 		prev = rsv;
+ 	}
+ 	printk("Window map complete.\n");
+-	if (bad)
+-		BUG();
++	BUG_ON(bad);
+ }
+ #define rsv_window_dump(root, verbose) \
+ 	__rsv_window_dump((root), (verbose), __FUNCTION__)
