@@ -1,19 +1,35 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Date: Wed, 27 Feb 2008 01:29:49 +0000
-Subject: Re: [PATCH 1/9] arch/sh/drivers/dma/dma-sh.c: Correct use of.and &
-Message-Id: <20080227012949.GB20577@linux-sh.org>
+From: Jiri Olsa <olsajiri@gmail.com>
+Date: Tue, 19 Feb 2008 21:49:33 +0000
+Subject: [PATCH] uml: use DIV_ROUND_UP
+Message-Id: <47BB4EED.7020109@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0802262141450.18200@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0802262141450.18200@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 26, 2008 at 09:42:11PM +0100, Julia Lawall wrote:
-> In commit e6bafba5b4765a5a252f1b8d31cbf6d2459da337, a bug was fixed that
-> involved converting !x & y to !(x & y).  The code below shows the same
-> pattern, and thus should perhaps be fixed in the same way.
-> 
-Indeed. Applied, thanks.
+Hi,
+
+I just saw similar patches in the janitor kernel's list,
+and spotted place it fits.
+
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+---
+ arch/um/drivers/ubd_kern.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
+index b1a77b1..1e579e4 100644
+--- a/arch/um/drivers/ubd_kern.c
++++ b/arch/um/drivers/ubd_kern.c
+@@ -1020,8 +1020,7 @@ static void cowify_bitmap(__u64 io_offset, int length, unsigned long *cow_mask,
+ 	 * by one word.  Thanks to Lynn Kerby for the fix and James McMechan
+ 	 * for the original diagnosis.
+ 	 */
+-	if(*cow_offset = ((bitmap_len + sizeof(unsigned long) - 1) /
+-			   sizeof(unsigned long) - 1))
++	if(*cow_offset = (DIV_ROUND_UP(bitmap_len, sizeof(unsigned long)) - 1))
+ 		(*cow_offset)--;
+ 
+ 	bitmap_words[0] = bitmap[*cow_offset];
+
