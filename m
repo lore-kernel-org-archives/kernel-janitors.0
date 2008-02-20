@@ -1,75 +1,33 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sun, 10 Feb 2008 23:54:14 +0000
-Subject: Re: more cleanup -- using FIELD_SIZEOF() macro
-Message-Id: <alpine.LFD.1.00.0802101851170.16389@localhost.localdomain>
+From: Jiri Olsa <olsajiri@gmail.com>
+Date: Wed, 20 Feb 2008 20:57:23 +0000
+Subject: [PATCH] fs: removing unused fops from struct char_device_struct
+Message-Id: <47BC9433.8020905@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.1.00.0802100637001.9465@localhost.localdomain>
-In-Reply-To: <alpine.LFD.1.00.0802100637001.9465@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@suse.de
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 10 Feb 2008, Julia Lawall wrote:
+Hi,
 
-> On Sun, 10 Feb 2008, Randy Dunlap wrote:
->
-> > On Sun, 10 Feb 2008 21:56:38 +0100 (CET) Julia Lawall wrote:
-> >
-> > > On Sun, 10 Feb 2008, Robert P. J. Day wrote:
-> > >
-> > > >
-> > > >   the header file include/linux/kernel.h defines:
-> > > >
-> > > >   #define FIELD_SIZEOF(t, f) (sizeof(((t*)0)->f))
-> > > >
-> > > > which is a much more pleasant way of calculating the size of a
-> > > > structure member.  and there's plenty of places in the tree where that
-> > > > change can be made, which you can see if you search for the
-> > > > appropriate pattern:
-> > > >
-> > > > $ grep -Er "sizeof ?\( ?\( ?\([^\*]*[^ ] ?\*\) ?0 ?\)->[^\)]+\)" *
-> > >
-> > > What about these (also in kernel.h)?
-> > >
-> > > #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
-> > > #define roundup(x, y) ((((x) + ((y) - 1)) / (y)) * (y))
-> >
-> > What about them?  What is your question?
->
-> Sorry for not being more clear.  The original suggestion was to
-> replace occurrences of a macro by a call to the macro itself.
-> These two macros are defined on the two lines after the definition
-> of FIELD_SIZEOF.  There are many occurrences of expressions of the
-> form (((n) + (d) - 1) / (d)) and ((((x) + ((y) - 1)) / (y)) * (y)),
-> so I was wondering if it would be interesting to replace them as
-> well.
+seems struct char_device_struct::fops is no longer used, removing it.
+I checked with "make allyesconfig" and got proper compile.
 
-stuff like that is simply an ongoing chore -- if you see potential
-simplifications, submit a patch.
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+---
+ fs/char_dev.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-having said that, i have to confess that i *despise* those two roundup
-macro definitions.  surely there could have been a more consistent
-design for those.  gack.  barf.
-
-rday
-
-p.s.  what i would like to see is a breakout of some of the content of
-kernel.h into smaller, more targeted header files.  it's pretty silly
-for the kernel source tree to have a header file named "kernel.h".
-i'd think it would make *far* more sense to have smaller,
-kernel-specific headers like stdint.h, align.h and so on.
-
-p.p.s.  another obvious cleanup is, given the macros in kernel.h, to
-peruse the source tree and remove the numerous redefinitions of those
-same macros.
-
---
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-Home page:                                         http://crashcourse.ca
-Fedora Cookbook:    http://crashcourse.ca/wiki/index.php/Fedora_Cookbook
-====================================
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index c3bfa76..e4527fb 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -55,7 +55,6 @@ static struct char_device_struct {
+ 	unsigned int baseminor;
+ 	int minorct;
+ 	char name[64];
+-	struct file_operations *fops;
+ 	struct cdev *cdev;		/* will die */
+ } *chrdevs[CHRDEV_MAJOR_HASH_SIZE];
+ 
