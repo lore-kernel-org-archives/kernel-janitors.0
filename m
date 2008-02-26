@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 26 Feb 2008 20:45:31 +0000
-Subject: [PATCH 7/9] drivers/serial/m32r_sio.c: Correct use of.and &
-Message-Id: <Pine.LNX.4.64.0802262144320.18200@ask.diku.dk>
+Date: Tue, 26 Feb 2008 20:46:19 +0000
+Subject: [PATCH 9/9] fs/reiserfs/super.c: Correct use of.and &
+Message-Id: <Pine.LNX.4.64.0802262145580.18200@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: takata@linux-m32r.org, linux-m32r@ml.linux-m32r.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -34,15 +34,15 @@ Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
 
-diff -u -p a/drivers/serial/m32r_sio.c b/drivers/serial/m32r_sio.c
---- a/drivers/serial/m32r_sio.c 2007-10-22 11:25:24.000000000 +0200
-+++ b/drivers/serial/m32r_sio.c 2008-02-26 08:12:18.000000000 +0100
-@@ -421,7 +421,7 @@ static void transmit_chars(struct uart_s
- 		up->port.icount.tx++;
- 		if (uart_circ_empty(xmit))
- 			break;
--		while (!serial_in(up, UART_LSR) & UART_LSR_THRE);
-+		while (!(serial_in(up, UART_LSR) & UART_LSR_THRE));
- 
- 	} while (--count > 0);
- 
+diff -u -p a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+--- a/fs/reiserfs/super.c 2008-02-16 18:06:38.000000000 +0100
++++ b/fs/reiserfs/super.c 2008-02-26 08:17:07.000000000 +0100
+@@ -2031,7 +2031,7 @@ static int reiserfs_quota_on(struct supe
+ 		return -EXDEV;
+ 	}
+ 	/* We must not pack tails for quota files on reiserfs for quota IO to work */
+-	if (!REISERFS_I(nd.path.dentry->d_inode)->i_flags & i_nopack_mask) {
++	if (!(REISERFS_I(nd.path.dentry->d_inode)->i_flags & i_nopack_mask)) {
+ 		reiserfs_warning(sb,
+ 				 "reiserfs: Quota file must have tail packing disabled.");
+ 		path_put(&nd.path);
