@@ -1,44 +1,48 @@
-From: Jon Schindler <jkschind@gmail.com>
-Date: Thu, 28 Feb 2008 07:30:25 +0000
-Subject: [PATCH 2/9] /drivers/net/8390.c replaced init_module&cleanup_module
-Message-Id: <47C66311.7020000@watson.wustl.edu>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 26 Feb 2008 20:45:56 +0000
+Subject: [PATCH 8/9] fs/ocfs2/aops.c: Correct use of.and &
+Message-Id: <Pine.LNX.4.64.0802262145321.18200@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
+To: mark.fasheh@oracle.com, kurt.hackel@oracle.com, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Replaced init_module and cleanup_module with static functions and module_init/module_exit.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Jon Schindler <jkschind@gmail.com>
+In commit e6bafba5b4765a5a252f1b8d31cbf6d2459da337, a bug was fixed that
+involved converting !x & y to !(x & y).  The code below shows the same
+pattern, and thus should perhaps be fixed in the same way.
+
+This is not tested and clearly changes the semantics, so it is only
+something to consider.
+
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@ expression E1,E2; @@
+(
+  !E1 & !E2
+|
+- !E1 & E2
++ !(E1 & E2)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/net/ac3200.c b/drivers/net/ac3200.c
-index 5136d94..b144863 100644
---- a/drivers/net/ac3200.c
-+++ b/drivers/net/ac3200.c
-@@ -369,7 +369,7 @@ MODULE_PARM_DESC(mem, "Memory base address(es)");
- MODULE_DESCRIPTION("Ansel AC3200 EISA ethernet driver");
- MODULE_LICENSE("GPL");
+
+diff -u -p a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+--- a/fs/ocfs2/aops.c 2008-02-05 20:56:02.000000000 +0100
++++ b/fs/ocfs2/aops.c 2008-02-26 08:16:47.000000000 +0100
+@@ -257,7 +257,7 @@ static int ocfs2_readpage_inline(struct 
+ 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
  
--int __init init_module(void)
-+static int __init ac3200_module_init(void)
- {
- 	struct net_device *dev;
- 	int this_dev, found = 0;
-@@ -404,8 +404,7 @@ static void cleanup_card(struct net_device *dev)
- 	iounmap(ei_status.mem);
- }
+ 	BUG_ON(!PageLocked(page));
+-	BUG_ON(!OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL);
++	BUG_ON(!(OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL));
  
--void __exit
--cleanup_module(void)
-+static void __exit ac3200_module_exit(void)
- {
- 	int this_dev;
- 
-@@ -418,4 +417,6 @@ cleanup_module(void)
- 		}
- 	}
- }
-+module_init(ac3200_module_init);
-+module_exit(ac3200_module_exit);
- #endif /* MODULE */
+ 	ret = ocfs2_read_block(osb, OCFS2_I(inode)->ip_blkno, &di_bh,
+ 			       OCFS2_BH_CACHED, inode);
