@@ -1,66 +1,44 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 18 Feb 2008 14:01:04 +0000
-Subject: Re: [PATCH 6/7] sound: Use BUG_ON
-Message-Id: <s5h4pc6uzxb.wl%tiwai@suse.de>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Thu, 28 Feb 2008 07:30:25 +0000
+Subject: [PATCH 2/9] /drivers/net/8390.c replaced init_module&cleanup_module
+Message-Id: <47C66311.7020000@watson.wustl.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0802171856530.28055@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0802171856530.28055@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: perex@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
 
-At Sun, 17 Feb 2008 18:57:30 +0100 (CET),
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> if (...) BUG(); should be replaced with BUG_ON(...) when the test has no
-> side-effects to allow a definition of BUG_ON that drops the code completely.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @ disable unlikely @ expression E,f; @@
-> 
-> (
->   if (<... f(...) ...>) { BUG(); }
-> |
-> - if (unlikely(E)) { BUG(); }
-> + BUG_ON(E);
-> )
-> 
-> @@ expression E,f; @@
-> 
-> (
->   if (<... f(...) ...>) { BUG(); }
-> |
-> - if (E) { BUG(); }
-> + BUG_ON(E);
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
-> 
-> diff -u -p a/sound/core/seq/oss/seq_oss_synth.c b/sound/core/seq/oss/seq_oss_synth.c
-> --- a/sound/core/seq/oss/seq_oss_synth.c 2006-11-30 19:05:47.000000000 +0100
-> +++ b/sound/core/seq/oss/seq_oss_synth.c 2008-02-17 16:43:24.000000000 +0100
-> @@ -245,8 +245,7 @@ snd_seq_oss_synth_setup(struct seq_oss_d
->  		info->nr_voices = rec->nr_voices;
->  		if (info->nr_voices > 0) {
->  			info->ch = kcalloc(info->nr_voices, sizeof(struct seq_oss_chinfo), GFP_KERNEL);
-> -			if (!info->ch)
-> -				BUG();
-> +			BUG_ON(!info->ch);
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-Actually this shouldn't be BUG() but do error-processing properly...
-Will fix this later.
-
-
-thanks,
-
-Takashi
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
+---
+diff --git a/drivers/net/ac3200.c b/drivers/net/ac3200.c
+index 5136d94..b144863 100644
+--- a/drivers/net/ac3200.c
++++ b/drivers/net/ac3200.c
+@@ -369,7 +369,7 @@ MODULE_PARM_DESC(mem, "Memory base address(es)");
+ MODULE_DESCRIPTION("Ansel AC3200 EISA ethernet driver");
+ MODULE_LICENSE("GPL");
+ 
+-int __init init_module(void)
++static int __init ac3200_module_init(void)
+ {
+ 	struct net_device *dev;
+ 	int this_dev, found = 0;
+@@ -404,8 +404,7 @@ static void cleanup_card(struct net_device *dev)
+ 	iounmap(ei_status.mem);
+ }
+ 
+-void __exit
+-cleanup_module(void)
++static void __exit ac3200_module_exit(void)
+ {
+ 	int this_dev;
+ 
+@@ -418,4 +417,6 @@ cleanup_module(void)
+ 		}
+ 	}
+ }
++module_init(ac3200_module_init);
++module_exit(ac3200_module_exit);
+ #endif /* MODULE */
