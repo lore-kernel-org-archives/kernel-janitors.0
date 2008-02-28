@@ -1,48 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 26 Feb 2008 20:43:56 +0000
-Subject: [PATCH 5/9] drivers/media/video/em28xx: Correct use of.and &
-Message-Id: <Pine.LNX.4.64.0802262143320.18200@ask.diku.dk>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Thu, 28 Feb 2008 07:31:00 +0000
+Subject: [PATCH 5/9] /drivers/net/appletalk/ltpc.c replaced init_module&cleanup_module
+Message-Id: <47C66334.7080003@watson.wustl.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@infradead.org, v4l-dvb-maintainer@linuxtv.org, video4linux-list@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-In commit e6bafba5b4765a5a252f1b8d31cbf6d2459da337, a bug was fixed that
-involved converting !x & y to !(x & y).  The code below shows the same
-pattern, and thus should perhaps be fixed in the same way.
-
-This is not tested and clearly changes the semantics, so it is only
-something to consider.
-
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@ expression E1,E2; @@
-(
-  !E1 & !E2
-|
-- !E1 & E2
-+ !(E1 & E2)
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
 ---
-
-diff -u -p a/drivers/media/video/em28xx/em28xx-core.c b/drivers/media/video/em28xx/em28xx-core.c
---- a/drivers/media/video/em28xx/em28xx-core.c 2008-02-20 22:09:26.000000000 +0100
-+++ b/drivers/media/video/em28xx/em28xx-core.c 2008-02-26 08:05:10.000000000 +0100
-@@ -267,7 +267,7 @@ static int em28xx_write_ac97(struct em28
- 	for (i = 0; i < 10; i++) {
- 		if ((ret = em28xx_read_reg(dev, AC97BUSY_REG)) < 0)
- 			return ret;
--		if (!((u8) ret) & 0x01)
-+		if (!(((u8)ret) & 0x01))
- 			return 0;
- 		msleep(5);
- 	}
+diff --git a/drivers/net/appletalk/ltpc.c b/drivers/net/appletalk/ltpc.c
+index 6ab2c2d..fef5560 100644
+--- a/drivers/net/appletalk/ltpc.c
++++ b/drivers/net/appletalk/ltpc.c
+@@ -1252,7 +1252,7 @@ module_param(irq, int, 0);
+ module_param(dma, int, 0);
+ 
+ 
+-int __init init_module(void)
++static int __init ltpc_module_init(void)
+ {
+         if(io = 0)
+ 		printk(KERN_NOTICE
+@@ -1263,6 +1263,7 @@ int __init init_module(void)
+ 		return PTR_ERR(dev_ltpc);
+ 	return 0;
+ }
++module_init(ltpc_module_init);
+ #endif
+ 
+ static void __exit ltpc_cleanup(void)
