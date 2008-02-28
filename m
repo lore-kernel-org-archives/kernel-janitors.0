@@ -1,48 +1,44 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sun, 10 Feb 2008 19:22:08 +0000
-Subject: removing arrays of "SPIN_LOCK_UNLOCKED"
-Message-Id: <alpine.LFD.1.00.0802101418510.14421@localhost.localdomain>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Thu, 28 Feb 2008 07:31:18 +0000
+Subject: [PATCH 9/9] /drivers/net/atarilance.c replaced init_module&cleanup_module
+Message-Id: <47C66346.80108@watson.wustl.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
 
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-  given that explicit usage of SPIN_LOCK_UNLOCKED is deprecated, i
-just want to clarify that getting rid of the few remaining
-declarations of arrays of those would be represented by the general
-patch:
-
-==diff --git a/arch/cris/arch-v32/kernel/smp.c b/arch/cris/arch-v32/kernel/smp.c
-index 77e655f..f5aa705 100644
---- a/arch/cris/arch-v32/kernel/smp.c
-+++ b/arch/cris/arch-v32/kernel/smp.c
-@@ -24,7 +24,7 @@
- #define FLUSH_ALL (void*)0xffffffff
-
- /* Vector of locks used for various atomic operations */
--spinlock_t cris_atomic_locks[] = { [0 ... LOCK_COUNT - 1] = SPIN_LOCK_UNLOCKED};
-+raw_spinlock_t cris_atomic_locks[] = { [0 ... LOCK_COUNT - 1] = __RAW_SPIN_LOCK_UNLOCKED};
-
- /* CPU masks */
- cpumask_t cpu_online_map = CPU_MASK_NONE;
-==
-  that is, you obviously can't use the preferred DEFINE_SPINLOCK since
-you have an array, so the only other option is to use
-__RAW_SPIN_LOCK_UNLOCKED, is that correct?
-
-  there's only a few instances of that left and i can easily submit
-patches to take care of that.
-
-rday
---
-
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-Home page:                                         http://crashcourse.ca
-Fedora Cookbook:    http://crashcourse.ca/wiki/index.php/Fedora_Cookbook
-====================================
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
+---
+diff --git a/drivers/net/atarilance.c b/drivers/net/atarilance.c
+index b74dbee..8422e3b 100644
+--- a/drivers/net/atarilance.c
++++ b/drivers/net/atarilance.c
+@@ -1156,7 +1156,7 @@ static int lance_set_mac_address( struct net_device *dev, void *addr )
+ #ifdef MODULE
+ static struct net_device *atarilance_dev;
+ 
+-int __init init_module(void)
++static int __init atarilance_module_init(void)
+ {
+ 	atarilance_dev = atarilance_probe(-1);
+ 	if (IS_ERR(atarilance_dev))
+@@ -1164,13 +1164,14 @@ int __init init_module(void)
+ 	return 0;
+ }
+ 
+-void __exit cleanup_module(void)
++static void __exit atarilance_module_exit(void)
+ {
+ 	unregister_netdev(atarilance_dev);
+ 	free_irq(atarilance_dev->irq, atarilance_dev);
+ 	free_netdev(atarilance_dev);
+ }
+-
++module_init(atarilance_module_init);
++module_exit(atarilance_module_exit);
+ #endif /* MODULE */
+ 
+ 
