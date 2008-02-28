@@ -1,58 +1,40 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 10 Feb 2008 20:13:11 +0000
-Subject: [PATCH 5/8] drivers/net/mv643xx_eth.c: Use FIELD_SIZEOF
-Message-Id: <Pine.LNX.4.64.0802102112330.23906@ask.diku.dk>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Thu, 28 Feb 2008 07:31:05 +0000
+Subject: [PATCH 6/9] /drivers/net/arcnet/capmode.c replaced init_module&cleanup_module
+Message-Id: <47C66339.9090607@watson.wustl.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dale@farnsworth.org, mlachwani@mvista.com, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-Robert P.J. Day proposed to use the macro FIELD_SIZEOF in replace of code
-that matches its definition.
-
-The modification was made using the following semantic patch
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@haskernel@
-@@
-
-#include <linux/kernel.h>
-
-@depends on haskernel@
-type t;
-identifier f;
-@@
-
-- (sizeof(((t*)0)->f))
-+ FIELD_SIZEOF(t, f)
-
-@depends on haskernel@
-type t;
-identifier f;
-@@
-
-- sizeof(((t*)0)->f)
-+ FIELD_SIZEOF(t, f)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
 ---
-
-diff -u -p a/drivers/net/mv643xx_eth.c b/drivers/net/mv643xx_eth.c
---- a/drivers/net/mv643xx_eth.c 2008-02-08 08:58:12.000000000 +0100
-+++ b/drivers/net/mv643xx_eth.c 2008-02-10 18:00:09.000000000 +0100
-@@ -3155,7 +3155,7 @@ struct mv643xx_stats {
- 	int stat_offset;
- };
+diff --git a/drivers/net/arcnet/capmode.c b/drivers/net/arcnet/capmode.c
+index cc4610d..02cb8f1 100644
+--- a/drivers/net/arcnet/capmode.c
++++ b/drivers/net/arcnet/capmode.c
+@@ -80,17 +80,19 @@ void arcnet_cap_init(void)
  
--#define MV643XX_STAT(m) sizeof(((struct mv643xx_private *)0)->m), \
-+#define MV643XX_STAT(m) FIELD_SIZEOF(struct mv643xx_private, m), \
- 					offsetof(struct mv643xx_private, m)
+ #ifdef MODULE
  
- static const struct mv643xx_stats mv643xx_gstrings_stats[] = {
+-int __init init_module(void)
++static int __init capmode_module_init(void)
+ {
+ 	printk(VERSION);
+ 	arcnet_cap_init();
+ 	return 0;
+ }
+ 
+-void cleanup_module(void)
++static void __exit capmode_module_exit(void)
+ {
+ 	arcnet_unregister_proto(&capmode_proto);
+ }
++module_init(capmode_module_init);
++module_exit(capmode_module_exit);
+ 
+ MODULE_LICENSE("GPL");
+ #endif				/* MODULE */
