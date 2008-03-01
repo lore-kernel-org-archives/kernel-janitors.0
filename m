@@ -1,33 +1,31 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sun, 23 Mar 2008 09:43:54 +0000
-Subject: Re: any local implementations of linked lists?
-Message-Id: <alpine.LFD.1.00.0803230543060.5307@localhost.localdomain>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Sat, 01 Mar 2008 02:32:50 +0000
+Subject: Re: [PATCH 2/9] /drivers/net/8390.c replaced init_module&cleanup_module
+Message-Id: <47C8C052.2040509@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.1.00.0803230232220.1223@localhost.localdomain>
-In-Reply-To: <alpine.LFD.1.00.0803230232220.1223@localhost.localdomain>
+References: <47C66311.7020000@watson.wustl.edu> <20080229172406.ec0f0cd9.akpm@linux-foundation.org>
+In-Reply-To: <20080229172406.ec0f0cd9.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 23 Mar 2008, Julia Lawall wrote:
+I'm sorry, ns8390_init_module should be ns8390_module_init.  I'll resend it in the next reply.
+Andrew Morton wrote:
+> On Thu, 28 Feb 2008 01:30:25 -0600
+> Jon Schindler <jkschind@gmail.com> wrote:
+> 
+>> Replaced init_module and cleanup_module with static functions and module_init/module_exit.
+> 
+> I get
+> 
+> drivers/net/8390.c: In function '__inittest':
+> drivers/net/8390.c:60: error: 'ns8390_init_module' undeclared (first use in this function)
+> drivers/net/8390.c:60: error: (Each undeclared identifier is reported only once
+> drivers/net/8390.c:60: error: for each function it appears in.)
+> drivers/net/8390.c: At top level:
+> drivers/net/8390.c:60: error: 'init_module' aliased to undefined symbol 'ns8390_init_module'
+> 
+> 
 
-> The question still stands, though.  list_head has both next and prev
-> fields.  Is it desirable to convert a singly linked list to a doubly
-> linked list just for the benefit of using the functions in list.h,
-> at a cost of more memory?
-
-i'm guessing no.  given how many potential places there are for
-converting *doubly* linked lists, i would leave singly linked lists
-alone.
-
-rday
---
-
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry:
-    Have classroom, will lecture.
-
-http://crashcourse.ca                          Waterloo, Ontario, CANADA
-====================================
