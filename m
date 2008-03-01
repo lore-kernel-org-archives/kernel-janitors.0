@@ -1,50 +1,39 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Fri, 28 Mar 2008 18:04:14 +0000
-Subject: Re: another KJ project:  trashing obsolete documentation
-Message-Id: <alpine.LFD.1.00.0803281402350.22830@localhost.localdomain>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Sat, 01 Mar 2008 06:20:22 +0000
+Subject: [PATCH 1/9] /drivers/net/8390.c replaced init_module&cleanup_module
+Message-Id: <47C8F5A6.6010701@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.1.00.0803281341540.14382@localhost.localdomain>
-In-Reply-To: <alpine.LFD.1.00.0803281341540.14382@localhost.localdomain>
+References: <47C66306.7020006@watson.wustl.edu>
+In-Reply-To: <47C66306.7020006@watson.wustl.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, 28 Mar 2008, Adrian Bunk wrote:
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-> On Fri, Mar 28, 2008 at 01:43:30PM -0400, Robert P. J. Day wrote:
-> >
-> >   it occurs to me that a useful project would be to identify anything
-> > under the Documentation/ directory that no longer has any value and
-> > can be removed, just to keep readers from being misled by out-of-date
-> > documentation.
-> >
-> >   anything there that looks eminently removable?
->
-> That should not be a KJ project.
->
-> I've already removed some of the worst documentation.
->
-> The problem is that most documentation still contains some valuable
-> bits.
->
-> And letting janitors judge what "no longer has any value" could
-> easily result in a fiasco similar to what happened when janitors
-> discovered checkpatch.
-
-i understand the potential for over-enthusiasm, which is why i started
-off just by *asking* if people knew of anything that was removable,
-whereupon there could be a discussion.  but your point is well-taken
-so let's just pretend i'd worded that differently in the first place.
-:-)
-
-rday
---
-
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry:
-    Have classroom, will lecture.
-
-http://crashcourse.ca                          Waterloo, Ontario, CANADA
-====================================
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
+---
+diff --git a/drivers/net/8390.c b/drivers/net/8390.c
+index a828076..0ed41a3 100644
+--- a/drivers/net/8390.c
++++ b/drivers/net/8390.c
+@@ -48,14 +48,16 @@ EXPORT_SYMBOL(__alloc_ei_netdev);
+ 
+ #if defined(MODULE)
+ 
+-int init_module(void)
++static int __init ns8390_module_init(void)
+ {
+ 	return 0;
+ }
+ 
+-void cleanup_module(void)
++static void __exit ns8390_module_exit(void)
+ {
+ }
+ 
++module_init(ns8390_module_init);
++module_exit(ns8390_module_exit);
+ #endif /* MODULE */
+ MODULE_LICENSE("GPL");
