@@ -1,50 +1,44 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sun, 23 Mar 2008 16:59:37 +0000
-Subject: [PATCH] Add "const" qualifier to first arg of list_splice()
-Message-Id: <alpine.LFD.1.00.0803231256520.27678@localhost.localdomain>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Sat, 01 Mar 2008 06:20:43 +0000
+Subject: [PATCH 2/9] /drivers/net/ac3200.c replaced init_module&cleanup_module
+Message-Id: <47C8F5BB.3080500@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-Since neither the list_splice() nor __list_splice() routines modify
-their first argument, might as well declare them "const".
-
-Signed-off-by: Robert P. J. Day <rpjday@crashcourse.ca>
-
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
 ---
-
-  compile-tested on x86 with "make defconfig".
-
-diff --git a/include/linux/list.h b/include/linux/list.h
-index 75ce2cb..57ad73e 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -319,7 +319,7 @@ static inline int list_empty_careful(const struct list_head *head)
- 	return (next = head) && (next = head->prev);
+diff --git a/drivers/net/ac3200.c b/drivers/net/ac3200.c
+index 5136d94..b144863 100644
+--- a/drivers/net/ac3200.c
++++ b/drivers/net/ac3200.c
+@@ -369,7 +369,7 @@ MODULE_PARM_DESC(mem, "Memory base address(es)");
+ MODULE_DESCRIPTION("Ansel AC3200 EISA ethernet driver");
+ MODULE_LICENSE("GPL");
+ 
+-int __init init_module(void)
++static int __init ac3200_module_init(void)
+ {
+ 	struct net_device *dev;
+ 	int this_dev, found = 0;
+@@ -404,8 +404,7 @@ static void cleanup_card(struct net_device *dev)
+ 	iounmap(ei_status.mem);
  }
-
--static inline void __list_splice(struct list_head *list,
-+static inline void __list_splice(const struct list_head *list,
- 				 struct list_head *head)
+ 
+-void __exit
+-cleanup_module(void)
++static void __exit ac3200_module_exit(void)
  {
- 	struct list_head *first = list->next;
-@@ -338,7 +338,7 @@ static inline void __list_splice(struct list_head *list,
-  * @list: the new list to add.
-  * @head: the place to add it in the first list.
-  */
--static inline void list_splice(struct list_head *list, struct list_head *head)
-+static inline void list_splice(const struct list_head *list, struct list_head *head)
- {
- 	if (!list_empty(list))
- 		__list_splice(list, head);
-
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry:
-    Have classroom, will lecture.
-
-http://crashcourse.ca                          Waterloo, Ontario, CANADA
-====================================
+ 	int this_dev;
+ 
+@@ -418,4 +417,6 @@ cleanup_module(void)
+ 		}
+ 	}
+ }
++module_init(ac3200_module_init);
++module_exit(ac3200_module_exit);
+ #endif /* MODULE */
