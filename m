@@ -1,81 +1,55 @@
-From: Jesper Nilsson <jesper.nilsson@axis.com>
-Date: Thu, 06 Mar 2008 18:08:04 +0000
-Subject: Re: [PATCH] arch/cris: Use mutex_unlock rather than spin_unlock
-Message-Id: <20080306180804.GJ27716@axis.com>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Wed, 05 Mar 2008 05:49:26 +0000
+Subject: [PATCH 3/11] /drivers/char/ip2/ip2main.c replaced init_module&cleanup_module
+Message-Id: <47CE3466.5050306@watson.wustl.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0803061823370.1669@pc-041.diku.dk>
-In-Reply-To: <Pine.LNX.4.58.0803061823370.1669@pc-041.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: mikael.starvik@axis.com, dev-etrax@axis.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Thu, Mar 06, 2008 at 06:24:05PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> It looks at least odd to apply spin_unlock to a mutex.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @def@
-> declarer DEFINE_MUTEX;
-> identifier m;
-> @@
-> 
-> DEFINE_MUTEX(m);
-> 
-> @@
-> identifier def.m;
-> @@
-> 
-> (
-> - spin_lock(&m)
-> + mutex_lock(&m)
-> |
-> - spin_unlock(&m)
-> + mutex_unlock(&m)
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  arch/cris/arch-v10/drivers/pcf8563.c |    2 +-
->  arch/cris/arch-v32/drivers/pcf8563.c |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff -u -p a/arch/cris/arch-v10/drivers/pcf8563.c b/arch/cris/arch-v10/drivers/pcf8563.c
-> --- a/arch/cris/arch-v10/drivers/pcf8563.c 2008-02-10 22:34:04.000000000 +0100
-> +++ b/arch/cris/arch-v10/drivers/pcf8563.c 2008-03-05 22:06:18.000000000 +0100
-> @@ -233,7 +233,7 @@ int pcf8563_ioctl(struct inode *inode, s
-> 
->  		if (copy_to_user((struct rtc_time *) arg, &tm,
->  				 sizeof tm)) {
-> -			spin_unlock(&rtc_lock);
-> +			mutex_unlock(&rtc_lock);
->  			return -EFAULT;
->  		}
-> 
-> diff -u -p a/arch/cris/arch-v32/drivers/pcf8563.c b/arch/cris/arch-v32/drivers/pcf8563.c
-> --- a/arch/cris/arch-v32/drivers/pcf8563.c 2008-02-10 22:34:04.000000000 +0100
-> +++ b/arch/cris/arch-v32/drivers/pcf8563.c 2008-03-05 22:06:18.000000000 +0100
-> @@ -229,7 +229,7 @@ int pcf8563_ioctl(struct inode *inode, s
-> 
->  		if (copy_to_user((struct rtc_time *) arg, &tm,
->  				 sizeof tm)) {
-> -			spin_unlock(&rtc_lock);
-> +			mutex_unlock(&rtc_lock);
->  			return -EFAULT;
->  		}
-> 
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-Quite correct, I'll add it to my queue.
-
-Thanks,
-
-/^JN - Jesper Nilsson
---
-               Jesper Nilsson -- jesper.nilsson@axis.com
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
+---
+diff --git a/drivers/char/ip2/ip2main.c b/drivers/char/ip2/ip2main.c
+index b1d6cad..048e7c8 100644
+--- a/drivers/char/ip2/ip2main.c
++++ b/drivers/char/ip2/ip2main.c
+@@ -354,14 +354,15 @@ have_requested_irq( char irq )
+ /* the driver initialisation function and returns what it returns.            */
+ /******************************************************************************/
+ #ifdef MODULE
+-int
+-init_module(void)
++static int __init
++ip2_init_module(void)
+ {
+ #ifdef IP2DEBUG_INIT
+ 	printk (KERN_DEBUG "Loading module ...\n" );
+ #endif
+     return 0;
+ }
++module_init(ip2_init_module);
+ #endif /* MODULE */
+ 
+ /******************************************************************************/
+@@ -380,8 +381,8 @@ init_module(void)
+ /* driver should be returned since it may be unloaded from memory.            */
+ /******************************************************************************/
+ #ifdef MODULE
+-void
+-cleanup_module(void)
++void __exit
++ip2_cleanup_module(void)
+ {
+ 	int err;
+ 	int i;
+@@ -451,6 +452,7 @@ cleanup_module(void)
+ 	printk (KERN_DEBUG "IP2 Unloaded\n" );
+ #endif
+ }
++module_exit(ip2_cleanup_module);
+ #endif /* MODULE */
+ 
+ static const struct tty_operations ip2_ops = {
