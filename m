@@ -1,46 +1,52 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Mon, 17 Mar 2008 11:58:38 +0000
-Subject: Re: [PATCH 6/7] drivers/net/ipg.c: remove unused variable
-Message-Id: <47DE5CEE.5070200@pobox.com>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Wed, 05 Mar 2008 05:49:36 +0000
+Subject: [PATCH 4/11] /drivers/ide/ide.c replaced init_module&cleanup_module
+Message-Id: <47CE3470.90400@watson.wustl.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0803151704150.24178@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0803151704150.24178@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: jesse@icplus.com.tw, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The variable gig is initialized but never used otherwise.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> type T;
-> identifier i;
-> constant C;
-> @@
-> 
-> (
-> extern T i;
-> |
-> - T i;
->   <+... when != i
-> - i = C;
->   ...+>
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> ---
->  drivers/net/ipg.c |    3 ---
->  1 file changed, 3 deletions(-)
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-applied
-
-
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
+---
+diff --git a/drivers/ide/ide.c b/drivers/ide/ide.c
+index 477833f..cff8da2 100644
+--- a/drivers/ide/ide.c
++++ b/drivers/ide/ide.c
+@@ -1641,7 +1641,7 @@ static char *options = NULL;
+ module_param(options, charp, 0);
+ MODULE_LICENSE("GPL");
+ 
+-static void __init parse_options (char *line)
++static void __init parse_options(char *line)
+ {
+ 	char *next = line;
+ 
+@@ -1655,13 +1655,14 @@ static void __init parse_options (char *line)
+ 	}
+ }
+ 
+-int __init init_module (void)
++static int __init ide_module_init(void)
+ {
+ 	parse_options(options);
+ 	return ide_init();
+ }
++module_init(ide_module_init);
+ 
+-void __exit cleanup_module (void)
++static void __exit ide_module_exit(void)
+ {
+ 	int index;
+ 
+@@ -1672,6 +1673,7 @@ void __exit cleanup_module (void)
+ 
+ 	bus_unregister(&ide_bus_type);
+ }
++module_exit(ide_module_exit);
+ 
+ #else /* !MODULE */
+ 
