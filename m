@@ -1,59 +1,39 @@
-From: Adrian Bunk <bunk@kernel.org>
-Date: Mon, 31 Mar 2008 17:53:57 +0000
-Subject: Re: [PATCH] Remove empty function from arch/arm/mach-pxa/trizeps4.c
-Message-Id: <20080331175357.GA23259@cs181133002.pp.htv.fi>
+From: Ingo Molnar <mingo@elte.hu>
+Date: Wed, 05 Mar 2008 06:38:42 +0000
+Subject: Re: [PATCH 6/9] drivers/net/wireless/iwlwifi/iwl-4965.c: Correct
+Message-Id: <20080305063842.GA24495@elte.hu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200803311803.19734.dron@infosec.ru>
-In-Reply-To: <200803311803.19734.dron@infosec.ru>
+References: <Pine.LNX.4.64.0802262143570.18200@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0802262143570.18200-QfmoRoYWmW9knbxzx/v8hQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
+Cc: yi.zhu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ipw3945-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Harvey Harrison <harvey.harrison-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-rfM+Q5joDG/XmaaqVzeoHQ@public.gmane.org>, linux-sparse-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Josh Triplett <josh-CC+yJ3UmIYqDUpFQwHEjaQ@public.gmane.org>
 
-On Mon, Mar 31, 2008 at 06:03:19PM +0400, Andrey Valyaev wrote:
-> Remove empty function from arch/arm/mach-pxa/trizeps4.c
-> It's valid Janitor patch?
 
-Does anyone call pxaohci_platform_data->exit unconditionally assuming it 
-is always present?
+* Julia Lawall <julia@diku.dk> wrote:
 
->  trizeps4.c |    6 ------
->  1 file changed, 6 deletions(-)
+> From: Julia Lawall <julia@diku.dk>
 > 
-> ========
-> diff --git a/arch/arm/mach-pxa/trizeps4.c b/arch/arm/mach-pxa/trizeps4.c
-> index f207fcd..5df658f 100644
-> --- a/arch/arm/mach-pxa/trizeps4.c
-> +++ b/arch/arm/mach-pxa/trizeps4.c
-> @@ -333,15 +333,9 @@ static int trizeps4_ohci_init(struct device *dev)
->         return 0;
->  }
-> 
-> -static void trizeps4_ohci_exit(struct device *dev)
-> -{
-> -       ;
-> -}
-> -
->  static struct pxaohci_platform_data trizeps4_ohci_platform_data = {
->         .port_mode      = PMM_PERPORT_MODE,
->         .init           = trizeps4_ohci_init,
-> -       .exit           = trizeps4_ohci_exit,
->  };
-> 
->  static struct map_desc trizeps4_io_desc[] __initdata = {
-> ========
-> 
-> -- 
-> 
-> 	Andrey Valyaev <dron@infosec.ru>
+> In commit e6bafba5b4765a5a252f1b8d31cbf6d2459da337, a bug was fixed 
+> that involved converting !x & y to !(x & y).  The code below shows the 
+> same pattern, and thus should perhaps be fixed in the same way.
 
-cu
-Adrian
+>  	if (sta_ht_inf) {
+>  		if ((!sta_ht_inf->ht_supported) ||
+> -		   (!sta_ht_inf->cap & IEEE80211_HT_CAP_SUP_WIDTH))
+> +		   (!(sta_ht_inf->cap & IEEE80211_HT_CAP_SUP_WIDTH)))
+>  			return 0;
 
--- 
+i'm wondering, could Sparse be extended to check for such patterns? 
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+People are regularly running "make C=1" and are sending fixes to make 
+entire subsystems sparse-warning-free, so Sparse is a nice mechanism 
+that works and it keeps code clean in the long run.
 
+I dont think the "!X & Y" pattern is ever used legitimately [and even if 
+it were used legitimately, it's easy to avoid the sparse false positive 
+- while in the buggy case we have a clear bug].
+
+	Ingo
