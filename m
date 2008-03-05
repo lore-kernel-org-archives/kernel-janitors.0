@@ -1,7 +1,7 @@
 From: Jon Schindler <jkschind@gmail.com>
-Date: Wed, 05 Mar 2008 05:49:12 +0000
-Subject: [PATCH 2/11] /drivers/block/ps2esdi.c replaced init_module&cleanup_module
-Message-Id: <47CE3458.3010906@watson.wustl.edu>
+Date: Wed, 05 Mar 2008 05:49:47 +0000
+Subject: [PATCH 5/11] /drivers/net/3c501.c replaced init_module&cleanup_module
+Message-Id: <47CE347B.3070309@watson.wustl.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,49 +12,39 @@ Replaced init_module and cleanup_module with static functions and module_init/mo
 
 Signed-off-by: Jon Schindler <jkschind@gmail.com>
 ---
-diff --git a/drivers/block/ps2esdi.c b/drivers/block/ps2esdi.c
-index 3c796e2..edcd150 100644
---- a/drivers/block/ps2esdi.c
-+++ b/drivers/block/ps2esdi.c
-@@ -135,7 +135,7 @@ static struct block_device_operations ps2esdi_fops  
- static struct gendisk *ps2esdi_gendisk[2];
+diff --git a/drivers/net/3c501.c b/drivers/net/3c501.c
+index 7d25368..537b4e7 100644
+--- a/drivers/net/3c501.c
++++ b/drivers/net/3c501.c
+@@ -867,13 +867,14 @@ MODULE_PARM_DESC(irq, "EtherLink IRQ number");
+  * here also causes the module to be unloaded
+  */
  
--/* initialization routine called by ll_rw_blk.c   */
-+/* initialization routine used when compiled into kernel   */
- static int __init ps2esdi_init(void)
+-int __init init_module(void)
++static int __init tc501_module_init(void)
  {
- 
-@@ -180,7 +180,10 @@ module_param_array(head, int, NULL, 0);
- module_param_array(sect, int, NULL, 0);
- MODULE_LICENSE("GPL");
- 
--int init_module(void) {
-+/* extra work needs to be done in addition to ps2esdi_init
-+ * when compiled as a module */
-+static int __init ps2esdi_init_module(void)
-+{
- 	int drive;
- 
- 	for(drive = 0; drive < MAX_HD; drive++) {
-@@ -198,9 +201,10 @@ int init_module(void) {
- 	}
- 	return ps2esdi_init();
+ 	dev_3c501 = el1_probe(-1);
+ 	if (IS_ERR(dev_3c501))
+ 		return PTR_ERR(dev_3c501);
+ 	return 0;
  }
-+module_init(ps2esdi_init_module);
++module_init(tc501_module_init);
  
--void
--cleanup_module(void) {
-+static void __exit ps2esdi_cleanup_module(void)
-+{
- 	int i;
- 	if(ps2esdi_slot) {
- 		mca_mark_as_unused(ps2esdi_slot);
-@@ -216,6 +220,8 @@ cleanup_module(void) {
- 		put_disk(ps2esdi_gendisk[i]);
- 	}
+ /**
+  * cleanup_module:
+@@ -882,13 +883,14 @@ int __init init_module(void)
+  * and then free up the resources we took when the card was found.
+  */
+ 
+-void __exit cleanup_module(void)
++static void __exit tc501_module_exit(void)
+ {
+ 	struct net_device *dev = dev_3c501;
+ 	unregister_netdev(dev);
+ 	release_region(dev->base_addr, EL1_IO_EXTENT);
+ 	free_netdev(dev);
  }
-+module_exit(ps2esdi_cleanup_module);
-+
++module_exit(tc501_module_exit);
+ 
  #endif /* MODULE */
  
- /* handles boot time command line parameters */
