@@ -1,90 +1,47 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Mar 2008 18:10:51 +0000
-Subject: [PATCH 5/5] drivers/misc: elide a non-zero test on a result that is
-Message-Id: <Pine.LNX.4.64.0803241910080.32740@ask.diku.dk>
+From: Jon Schindler <jkschind@gmail.com>
+Date: Wed, 05 Mar 2008 05:51:01 +0000
+Subject: [PATCH 11/11] /drivers/net/82596.c replaced init_module&cleanup_module
+Message-Id: <47CE34C5.6010805@watson.wustl.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rubini@vision.unipv.it, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-From: Julia Lawall <julia@diku.dk>
+Replaced init_module and cleanup_module with static functions and module_init/module_exit.
 
-The function thermal_cooling_device_register always returns either a valid
-pointer or a value made with ERR_PTR, so a test for non-zero on the result
-will always succeed.
-
-
-The problem was found using the following semantic match.
-(http://www.emn.fr/x-info/coccinelle/)
-
-//<smpl>
-@a@
-expression E, E1;
-statement S,S1;
-position p;
-@@
-
-E = thermal_cooling_device_register(...)
-... when != E = E1
-if@p (E) S else S1
-
-@n@
-position a.p;
-expression E,E1;
-statement S,S1;
-@@
-
-E = NULL
-... when != E = E1
-if@p (E) S else S1
-
-@depends on !n@
-expression E;
-statement S,S1;
-position a.p;
-@@
-
-* if@p (E)
-  S else S1
-//</smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Jon Schindler <jkschind@gmail.com>
 ---
- drivers/misc/intel_menlow.c |   24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
-
-diff -u -p a/drivers/misc/intel_menlow.c b/drivers/misc/intel_menlow.c
---- a/drivers/misc/intel_menlow.c	2008-03-12 14:13:13.000000000 +0100
-+++ b/drivers/misc/intel_menlow.c	2008-03-24 16:18:06.000000000 +0100
-@@ -175,19 +175,17 @@ static int intel_menlow_memory_add(struc
- 		goto end;
- 	}
+diff --git a/drivers/net/82596.c b/drivers/net/82596.c
+index 2797da7..344308a 100644
+--- a/drivers/net/82596.c
++++ b/drivers/net/82596.c
+@@ -1567,7 +1567,7 @@ static int debug = -1;
+ module_param(debug, int, 0);
+ MODULE_PARM_DESC(debug, "i82596 debug mask");
  
--	if (cdev) {
--		acpi_driver_data(device) = cdev;
--		result = sysfs_create_link(&device->dev.kobj,
--					&cdev->device.kobj, "thermal_cooling");
--		if (result)
--			goto unregister;
+-int __init init_module(void)
++static int __init i82596_module_init(void)
+ {
+ 	if (debug >= 0)
+ 		i596_debug = debug;
+@@ -1576,8 +1576,9 @@ int __init init_module(void)
+ 		return PTR_ERR(dev_82596);
+ 	return 0;
+ }
++module_init(i82596_module_init);
+ 
+-void __exit cleanup_module(void)
++static void __exit i82596_module_exit(void)
+ {
+ 	unregister_netdev(dev_82596);
+ #ifdef __mc68000__
+@@ -1595,7 +1596,7 @@ void __exit cleanup_module(void)
+ #endif
+ 	free_netdev(dev_82596);
+ }
 -
--		result = sysfs_create_link(&cdev->device.kobj,
--					&device->dev.kobj, "device");
--		if (result) {
--			sysfs_remove_link(&device->dev.kobj, "thermal_cooling");
--			goto unregister;
--		}
-+	acpi_driver_data(device) = cdev;
-+	result = sysfs_create_link(&device->dev.kobj,
-+				&cdev->device.kobj, "thermal_cooling");
-+	if (result)
-+		goto unregister;
-+
-+	result = sysfs_create_link(&cdev->device.kobj,
-+				&device->dev.kobj, "device");
-+	if (result) {
-+		sysfs_remove_link(&device->dev.kobj, "thermal_cooling");
-+		goto unregister;
- 	}
++module_exit(i82596_module_exit);
+ #endif				/* MODULE */
  
-  end:
+ /*
