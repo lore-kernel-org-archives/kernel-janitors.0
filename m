@@ -1,84 +1,46 @@
-From: "Kok, Auke" <auke-jan.h.kok@intel.com>
-Date: Thu, 06 Mar 2008 18:07:54 +0000
+From: Joe Perches <joe@perches.com>
+Date: Fri, 07 Mar 2008 18:20:33 +0000
 Subject: Re: [E1000-devel] [PATCH] drivers/net: convert & to &&
-Message-Id: <47D032FA.9000909@intel.com>
+Message-Id: <1204914033.5541.74.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0803061841000.1669@pc-041.diku.dk> <1204826347.5541.20.camel@localhost>
-In-Reply-To: <1204826347.5541.20.camel@localhost>
+References: <Pine.LNX.4.58.0803061841000.1669@pc-041.diku.dk>
+	 <1204826347.5541.20.camel@localhost>  <47D032FA.9000909@intel.com>
+In-Reply-To: <47D032FA.9000909@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
+To: "Kok, Auke" <auke-jan.h.kok@intel.com>
 Cc: Julia Lawall <julia@diku.dk>, e1000-devel@lists.sourceforge.net, xfs-masters <xfs-masters@oss.sgi.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Joe Perches wrote:
-> On Thu, 2008-03-06 at 18:41 +0100, Julia Lawall wrote:
->> diff -u -p a/drivers/net/e1000/e1000_main.c b/drivers/net/e1000/e1000_main.c
->> --- a/drivers/net/e1000/e1000_main.c	2008-02-20 22:09:26.000000000 +0100
->> +++ b/drivers/net/e1000/e1000_main.c	2008-03-06 17:30:20.000000000 +0100
->> @@ -3872,10 +3872,12 @@ e1000_intr_msi(int irq, void *data)
->>  	adapter->total_tx_packets = 0;
->>  	adapter->total_rx_packets = 0;
->>
->> -	for (i = 0; i < E1000_MAX_INTR; i++)
->> -		if (unlikely(!adapter->clean_rx(adapter, adapter->rx_ring) &
->> -		   !e1000_clean_tx_irq(adapter, adapter->tx_ring)))
->> +	for (i = 0; i < E1000_MAX_INTR; i++) {
->> +		boolean_t c1 = adapter->clean_rx(adapter, adapter->rx_ring);
->> +		boolean_t c2 = e1000_clean_tx_irq(adapter, adapter->tx_ring);
->> +		if (unlikely(!c1 && !c2))
->>  			break;
->> +	}
-> 
-> Perhaps also a s/boolean_t/bool/g kernel wide?
+On Thu, 2008-03-06 at 10:07 -0800, Kok, Auke wrote:
+> (which, BTW also could use the uint32_t -> u32 (etc) changes... while you're at it)
 
-send me a patch for e1000 and for ixgb and I'll happily apply those :)
+I think this does what you want:
 
-(which, BTW also could use the uint32_t -> u32 (etc) changes... while you're at it)
+for size in "8" "16" "32" "64" ; do \
+sed -r -i -e 's/\bu_{0,1}int'$size'_t\b/u'$size'/g' \
+$(grep -rPlw --include=*.[ch] 'u_{0,1}int'$size'_t' drivers/net/e1000 drivers/net/ixgb); done
 
-Auke
+But why?  boolean_t is used by 3 subsystems with local typedefs.
+These others are much more frequently used by kernel source.
 
+$ grep -rPlw --include=*.[ch] "u{0,1}_{0,1}int(8|16|32|64)_t" * | wc -l
+876
 
-> 
-> $ grep -wrl boolean_t *
-> 
-> drivers/net/e1000/e1000.h
-> drivers/net/e1000/e1000_ethtool.c
-> drivers/net/e1000/e1000_hw.c
-> drivers/net/e1000/e1000_hw.h
-> drivers/net/e1000/e1000_main.c
-> drivers/net/e1000/e1000_osdep.h
-> drivers/net/ixgb/ixgb.h
-> drivers/net/ixgb/ixgb_ee.c
-> drivers/net/ixgb/ixgb_ee.h
-> drivers/net/ixgb/ixgb_ethtool.c
-> drivers/net/ixgb/ixgb_hw.c
-> drivers/net/ixgb/ixgb_hw.h
-> drivers/net/ixgb/ixgb_main.c
-> drivers/net/ixgb/ixgb_osdep.h
-> fs/xfs/quota/xfs_dquot.c
-> fs/xfs/quota/xfs_qm.c
-> fs/xfs/quota/xfs_qm.h
-> fs/xfs/quota/xfs_qm_syscalls.c
-> fs/xfs/quota/xfs_trans_dquot.c
-> fs/xfs/xfs_ialloc.c
-> fs/xfs/xfs_ialloc.h
-> fs/xfs/xfs_inode.c
-> fs/xfs/xfs_inode.h
-> fs/xfs/xfs_log.c
-> fs/xfs/xfs_vfsops.c
-> fs/xfs/xfs_utils.c
-> fs/xfs/xfs_types.h
-> fs/xfs/xfs_vnodeops.c
-> 
-> 
-> 
-> -------------------------------------------------------------------------
-> This SF.net email is sponsored by: Microsoft
-> Defy all challenges. Microsoft(R) Visual Studio 2008.
-> http://clk.atdmt.com/MRT/go/vse0120000070mrt/direct/01/
-> _______________________________________________
-> E1000-devel mailing list
-> E1000-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/e1000-devel
+include/linux/types.h has typedefs for these but not boolean_t
+
+include/linux/types.h:typedef           __u8            u_int8_t;
+include/linux/types.h:typedef           __s8            int8_t;
+include/linux/types.h:typedef           __u16           u_int16_t;
+include/linux/types.h:typedef           __s16           int16_t;
+include/linux/types.h:typedef           __u32           u_int32_t;
+include/linux/types.h:typedef           __s32           int32_t;
+include/linux/types.h:typedef           __u8            uint8_t;
+include/linux/types.h:typedef           __u16           uint16_t;
+include/linux/types.h:typedef           __u32           uint32_t;
+include/linux/types.h:typedef           __u64           uint64_t;
+include/linux/types.h:typedef           __u64           u_int64_t;
+include/linux/types.h:typedef           __s64           int64_t;
+
+cheers, Joe
 
