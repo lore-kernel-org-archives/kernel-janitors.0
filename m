@@ -1,80 +1,57 @@
-From: "Kok, Auke" <auke-jan.h.kok@intel.com>
-Date: Mon, 11 Feb 2008 17:15:49 +0000
-Subject: Re: [E1000-devel] [PATCH 6/8] drivers/net/igb: Use FIELD_SIZEOF
-Message-Id: <47B082C5.5080207@intel.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 Mar 2008 16:04:13 +0000
+Subject: [PATCH 5/7] drivers/net/ixgb/ixgb_main.c: remove unused variable
+Message-Id: <Pine.LNX.4.64.0803151703520.24178@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0802102113480.23906@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0802102113480.23906@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: e1000-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jeffrey.t.kirsher@intel.com, ayyappan.veeraiyan@intel.com, john.ronciak@intel.com, jesse.brandeburg@intel.com, auke-jan.h.kok@intel.com, e1000-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Robert P.J. Day proposed to use the macro FIELD_SIZEOF in replace of code
-> that matches its definition.
+From: Julia Lawall <julia@diku.dk>
 
+The variable num_group_tail_writes is initialized but never used otherwise.
 
-thanks for the (3) patches, I'll make sure they get merged.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Cheers,
+// <smpl>
+@@
+type T;
+identifier i;
+constant C;
+@@
 
-Auke
+(
+extern T i;
+|
+- T i;
+  <+... when != i
+- i = C;
+  ...+>
+)
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/net/ixgb/ixgb_main.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-> 
-> The modification was made using the following semantic patch
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @haskernel@
-> @@
-> 
-> #include <linux/kernel.h>
-> 
-> @depends on haskernel@
-> type t;
-> identifier f;
-> @@
-> 
-> - (sizeof(((t*)0)->f))
-> + FIELD_SIZEOF(t, f)
-> 
-> @depends on haskernel@
-> type t;
-> identifier f;
-> @@
-> 
-> - sizeof(((t*)0)->f)
-> + FIELD_SIZEOF(t, f)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
-> 
-> diff -u -p a/drivers/net/igb/igb_ethtool.c b/drivers/net/igb/igb_ethtool.c
-> --- a/drivers/net/igb/igb_ethtool.c 2008-02-02 15:28:20.000000000 +0100
-> +++ b/drivers/net/igb/igb_ethtool.c 2008-02-10 18:06:35.000000000 +0100
-> @@ -43,7 +43,7 @@ struct igb_stats {
->  	int stat_offset;
->  };
->  
-> -#define IGB_STAT(m) sizeof(((struct igb_adapter *)0)->m), \
-> +#define IGB_STAT(m) FIELD_SIZEOF(struct igb_adapter, m), \
->  		      offsetof(struct igb_adapter, m)
->  static const struct igb_stats igb_gstrings_stats[] = {
->  	{ "rx_packets", IGB_STAT(stats.gprc) },
-> 
-> -------------------------------------------------------------------------
-> This SF.net email is sponsored by: Microsoft
-> Defy all challenges. Microsoft(R) Visual Studio 2008.
-> http://clk.atdmt.com/MRT/go/vse0120000070mrt/direct/01/
-> _______________________________________________
-> E1000-devel mailing list
-> E1000-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/e1000-devel
-
+diff -u -p a/drivers/net/ixgb/ixgb_main.c b/drivers/net/ixgb/ixgb_main.c
+--- a/drivers/net/ixgb/ixgb_main.c 2008-03-12 14:13:13.000000000 +0100
++++ b/drivers/net/ixgb/ixgb_main.c 2008-03-15 11:16:23.000000000 +0100
+@@ -2088,14 +2088,12 @@ ixgb_alloc_rx_buffers(struct ixgb_adapte
+ 	struct ixgb_buffer *buffer_info;
+ 	struct sk_buff *skb;
+ 	unsigned int i;
+-	int num_group_tail_writes;
+ 	long cleancount;
+ 
+ 	i = rx_ring->next_to_use;
+ 	buffer_info = &rx_ring->buffer_info[i];
+ 	cleancount = IXGB_DESC_UNUSED(rx_ring);
+ 
+-	num_group_tail_writes = IXGB_RX_BUFFER_WRITE;
+ 
+ 	/* leave three descriptors unused */
+ 	while(--cleancount > 2) {
