@@ -1,59 +1,82 @@
-From: walter harms <WHarms@bfs.de>
-Date: Mon, 10 Mar 2008 12:20:21 +0000
-Subject: Re: [E1000-devel] [PATCH] drivers/net: convert & to &&
-Message-Id: <47D52785.80907@bfs.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 Mar 2008 16:03:51 +0000
+Subject: [PATCH 4/7] sound/pci: remove unused variable
+Message-Id: <Pine.LNX.4.64.0803151703210.24178@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0803061841000.1669@pc-041.diku.dk>	 <1204826347.5541.20.camel@localhost>  <47D032FA.9000909@intel.com> <1204914033.5541.74.camel@localhost>
-In-Reply-To: <1204914033.5541.74.camel@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: e1000-devel@lists.sourceforge.net, xfs-masters <xfs-masters@oss.sgi.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sailer@ife.ee.ethz.ch, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
+The variables change and is_capture are initialized but never used otherwise.
 
-Joe Perches wrote:
-> On Thu, 2008-03-06 at 10:07 -0800, Kok, Auke wrote:
->> (which, BTW also could use the uint32_t -> u32 (etc) changes... while you're at it)
-> 
-> I think this does what you want:
-> 
-> for size in "8" "16" "32" "64" ; do \
-> sed -r -i -e 's/\bu_{0,1}int'$size'_t\b/u'$size'/g' \
-> $(grep -rPlw --include=*.[ch] 'u_{0,1}int'$size'_t' drivers/net/e1000 drivers/net/ixgb); done
-> 
-> But why?  boolean_t is used by 3 subsystems with local typedefs.
-> These others are much more frequently used by kernel source.
-> 
-> $ grep -rPlw --include=*.[ch] "u{0,1}_{0,1}int(8|16|32|64)_t" * | wc -l
-> 876
-> 
-> include/linux/types.h has typedefs for these but not boolean_t
-> 
-> include/linux/types.h:typedef           __u8            u_int8_t;
-> include/linux/types.h:typedef           __s8            int8_t;
-> include/linux/types.h:typedef           __u16           u_int16_t;
-> include/linux/types.h:typedef           __s16           int16_t;
-> include/linux/types.h:typedef           __u32           u_int32_t;
-> include/linux/types.h:typedef           __s32           int32_t;
-> include/linux/types.h:typedef           __u8            uint8_t;
-> include/linux/types.h:typedef           __u16           uint16_t;
-> include/linux/types.h:typedef           __u32           uint32_t;
-> include/linux/types.h:typedef           __u64           uint64_t;
-> include/linux/types.h:typedef           __u64           u_int64_t;
-> include/linux/types.h:typedef           __s64           int64_t;
-> 
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Why not the other way around ?
-inttypes.h is C99 and defines int16_t (or uint16_t). i do not see any reason
-not to use them or any other type (like __u8) that does actually the same.
+// <smpl>
+@@
+type T;
+identifier i;
+constant C;
+@@
 
-In that case we do not need different type names for userspace/kernelspace, or is there an other name
-for int ? in that case we can remove the whole heap of typedef's.
+(
+extern T i;
+|
+- T i;
+  <+... when != i
+- i = C;
+  ...+>
+)
+// </smpl>
 
-re,
- wh
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ sound/pci/ice1712/pontis.c |    2 --
+ sound/pci/pcxhr/pcxhr.c    |    3 ---
+ 2 files changed, 5 deletions(-)
 
-
-
+diff -u -p a/sound/pci/ice1712/pontis.c b/sound/pci/ice1712/pontis.c
+--- a/sound/pci/ice1712/pontis.c 2008-03-12 14:13:15.000000000 +0100
++++ b/sound/pci/ice1712/pontis.c 2008-03-15 07:32:24.000000000 +0100
+@@ -440,14 +440,12 @@ static int cs_source_put(struct snd_kcon
+ {
+ 	struct snd_ice1712 *ice = snd_kcontrol_chip(kcontrol);
+ 	unsigned char val;
+-	int change = 0;
+ 
+ 	mutex_lock(&ice->gpio_mutex);
+ 	if (ucontrol->value.enumerated.item[0] != ice->gpio.saved[0]) {
+ 		ice->gpio.saved[0] = ucontrol->value.enumerated.item[0] & 3;
+ 		val = 0x80 | (ice->gpio.saved[0] << 3);
+ 		spi_write(ice, CS_DEV, 0x04, val);
+-		change = 1;
+ 	}
+ 	mutex_unlock(&ice->gpio_mutex);
+ 	return 0;
+diff -u -p a/sound/pci/pcxhr/pcxhr.c b/sound/pci/pcxhr/pcxhr.c
+--- a/sound/pci/pcxhr/pcxhr.c 2008-03-12 14:13:15.000000000 +0100
++++ b/sound/pci/pcxhr/pcxhr.c 2008-03-15 07:36:12.000000000 +0100
+@@ -846,7 +846,6 @@ static int pcxhr_open(struct snd_pcm_sub
+ 	struct pcxhr_mgr       *mgr = chip->mgr;
+ 	struct snd_pcm_runtime *runtime = subs->runtime;
+ 	struct pcxhr_stream    *stream;
+-	int                 is_capture;
+ 
+ 	mutex_lock(&mgr->setup_mutex);
+ 
+@@ -856,12 +855,10 @@ static int pcxhr_open(struct snd_pcm_sub
+ 	if( subs->stream = SNDRV_PCM_STREAM_PLAYBACK ) {
+ 		snd_printdd("pcxhr_open playback chip%d subs%d\n",
+ 			    chip->chip_idx, subs->number);
+-		is_capture = 0;
+ 		stream = &chip->playback_stream[subs->number];
+ 	} else {
+ 		snd_printdd("pcxhr_open capture chip%d subs%d\n",
+ 			    chip->chip_idx, subs->number);
+-		is_capture = 1;
+ 		if (mgr->mono_capture)
+ 			runtime->hw.channels_max = 1;
+ 		else
