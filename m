@@ -1,29 +1,58 @@
-From: Steven Whitehouse <swhiteho@redhat.com>
-Date: Mon, 31 Mar 2008 10:35:43 +0000
-Subject: Re: [PATCH 1/5] fs/gfs2: test for IS_ERR rather than 0
-Message-Id: <1206959743.3635.123.camel@quoit>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 Mar 2008 16:02:58 +0000
+Subject: [PATCH 2/7] net/9p/trans_fd.c: remove unused variable
+Message-Id: <Pine.LNX.4.64.0803151702380.24178@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0803241908210.32740@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0803241908210.32740@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org
+To: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net, v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+From: Julia Lawall <julia@diku.dk>
 
-On Mon, 2008-03-24 at 19:08 +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The function gfs2_inode_lookup always returns either a valid pointer or a
-> value made with ERR_PTR, so its result should be tested with IS_ERR, not
-> with a test for 0.
-> 
-Sorry for the delay - I've just got back from holiday. Its now in the
-GFS2 -nmw git tree. Also I updated the tree to the latest Linus git tree
-at the same time. Thanks,
+The variable cb is initialized but never used otherwise.
 
-Steve.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@@
+type T;
+identifier i;
+constant C;
+@@
 
+(
+extern T i;
+|
+- T i;
+  <+... when != i
+- i = C;
+  ...+>
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ net/9p/trans_fd.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff -u -p a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+--- a/net/9p/trans_fd.c 2008-03-12 14:13:15.000000000 +0100
++++ b/net/9p/trans_fd.c 2008-03-15 07:27:23.000000000 +0100
+@@ -861,7 +861,6 @@ static void p9_mux_free_request(struct p
+ 
+ static void p9_mux_flush_cb(struct p9_req *freq, void *a)
+ {
+-	p9_conn_req_callback cb;
+ 	int tag;
+ 	struct p9_conn *m;
+ 	struct p9_req *req, *rreq, *rptr;
+@@ -872,7 +871,6 @@ static void p9_mux_flush_cb(struct p9_re
+ 		freq->tcall->params.tflush.oldtag);
+ 
+ 	spin_lock(&m->lock);
+-	cb = NULL;
+ 	tag = freq->tcall->params.tflush.oldtag;
+ 	req = NULL;
+ 	list_for_each_entry_safe(rreq, rptr, &m->req_list, req_list) {
