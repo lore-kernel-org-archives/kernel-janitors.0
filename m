@@ -1,23 +1,50 @@
-From: "=?BIG5?B?pP2rSLnn?=" <cl33zn2197k@gmail.com>
-Date: Thu, 20 Mar 2008 19:11:25 +0000
-Subject: =?BIG5?B?obpQSFDByqqrqK646q7Grne69K+4sU2u1yCh9Q==?=
-Message-Id: <9682bfc20803201211n51b633e9v632a96430a349909@mail.gmail.com>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Sun, 23 Mar 2008 16:59:37 +0000
+Subject: [PATCH] Add "const" qualifier to first arg of list_splice()
+Message-Id: <alpine.LFD.1.00.0803231256520.27678@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-2008-3-21
-������
-���s���������������������������������]���p
-���z���������S���������@���������M���������������������~���������������������H
 
-���s���������������������������XPHP���������������������������������w���������������M������
-���u���n���C���������������A������������������
-���e���|���������D���������~���D���q���������������������w......���������f
-���A���e���@���~100MB���������������y���q���������������D������
+Since neither the list_splice() nor __list_splice() routines modify
+their first argument, might as well declare them "const".
 
-���������������������p���������W������������������
-���s���������������������������T���������������������q
-���������������q���������������������M���������G0938764395
+Signed-off-by: Robert P. J. Day <rpjday@crashcourse.ca>
 
-3:11:18
-������������{.n���+���������������������+%���������������������������w������{.n���+���������z������������������+h���������������^n���r���������z���������h���������������&���������z������z������������+������+zf���������h���������~������������i���������������������������z_���������j:+v���������)���������m
+---
+
+  compile-tested on x86 with "make defconfig".
+
+diff --git a/include/linux/list.h b/include/linux/list.h
+index 75ce2cb..57ad73e 100644
+--- a/include/linux/list.h
++++ b/include/linux/list.h
+@@ -319,7 +319,7 @@ static inline int list_empty_careful(const struct list_head *head)
+ 	return (next = head) && (next = head->prev);
+ }
+
+-static inline void __list_splice(struct list_head *list,
++static inline void __list_splice(const struct list_head *list,
+ 				 struct list_head *head)
+ {
+ 	struct list_head *first = list->next;
+@@ -338,7 +338,7 @@ static inline void __list_splice(struct list_head *list,
+  * @list: the new list to add.
+  * @head: the place to add it in the first list.
+  */
+-static inline void list_splice(struct list_head *list, struct list_head *head)
++static inline void list_splice(const struct list_head *list, struct list_head *head)
+ {
+ 	if (!list_empty(list))
+ 		__list_splice(list, head);
+
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry:
+    Have classroom, will lecture.
+
+http://crashcourse.ca                          Waterloo, Ontario, CANADA
+====================================
