@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sun, 23 Mar 2008 09:40:11 +0000
+Date: Sun, 23 Mar 2008 09:43:54 +0000
 Subject: Re: any local implementations of linked lists?
-Message-Id: <alpine.LFD.1.00.0803230539020.5285@localhost.localdomain>
+Message-Id: <alpine.LFD.1.00.0803230543060.5307@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.LFD.1.00.0803230232220.1223@localhost.localdomain>
 In-Reply-To: <alpine.LFD.1.00.0803230232220.1223@localhost.localdomain>
@@ -10,23 +10,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, 23 Mar 2008, Alexey Dobriyan wrote:
+On Sun, 23 Mar 2008, Julia Lawall wrote:
 
-> On Sun, Mar 23, 2008 at 09:06:12AM +0100, Julia Lawall wrote:
-> > There are a lot of occurrences of structures that have a field of type
-> > pointer to the structure, often with the suggestive name "next".  But at
-> > least some of them have only a next field and no prev field.
->
-> Which suggests that they're single-linked lists on purpose.
+> The question still stands, though.  list_head has both next and prev
+> fields.  Is it desirable to convert a singly linked list to a doubly
+> linked list just for the benefit of using the functions in list.h,
+> at a cost of more memory?
 
-right, i was going to mention that.  my original query related to
-local implementations of linked lists that deserve to be replaced by
-the in-kernel implementation, and that would normally apply only to
-doubly-linked lists.
+i'm guessing no.  given how many potential places there are for
+converting *doubly* linked lists, i would leave singly linked lists
+alone.
 
 rday
 --
-
 
 ====================================
 Robert P. J. Day
