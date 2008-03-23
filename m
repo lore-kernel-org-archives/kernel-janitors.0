@@ -1,7 +1,7 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 23 Mar 2008 08:06:12 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sun, 23 Mar 2008 09:03:09 +0000
 Subject: Re: any local implementations of linked lists?
-Message-Id: <Pine.LNX.4.64.0803230856530.20694@ask.diku.dk>
+Message-Id: <20080323090309.GB4216@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.LFD.1.00.0803230232220.1223@localhost.localdomain>
 In-Reply-To: <alpine.LFD.1.00.0803230232220.1223@localhost.localdomain>
@@ -10,28 +10,10 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, 23 Mar 2008, Robert P. J. Day wrote:
+On Sun, Mar 23, 2008 at 09:06:12AM +0100, Julia Lawall wrote:
+> There are a lot of occurrences of structures that have a field of type 
+> pointer to the structure, often with the suggestive name "next".  But at 
+> least some of them have only a next field and no prev field.
 
-> 
->   as i'm currently perusing the implementation of the kernel linked
-> list, it occurred to me to wonder if there are still parts of the
-> kernel that insist on implementing their own design unnecessarily
-> (which they're not supposed to do).  anyone know of any such examples,
-> out of curiosity?  thanks.
-
-There are a lot of occurrences of structures that have a field of type 
-pointer to the structure, often with the suggestive name "next".  But at 
-least some of them have only a next field and no prev field.  Are you 
-interested in them anyway?
-
-An example is:
-
-arch/um/include/aio.h
-
- struct aio_context {
-        int reply_fd;
-        struct aio_context *next;
- };
-
-julia
+Which suggests that they're single-linked lists on purpose.
 
