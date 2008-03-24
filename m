@@ -1,45 +1,90 @@
-From: Jon Schindler <jkschind@gmail.com>
-Date: Wed, 05 Mar 2008 05:50:37 +0000
-Subject: [PATCH 9/11] /drivers/net/3c523.c replaced init_module&cleanup_module
-Message-Id: <47CE34AD.2040504@watson.wustl.edu>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Mar 2008 18:10:51 +0000
+Subject: [PATCH 5/5] drivers/misc: elide a non-zero test on a result that is
+Message-Id: <Pine.LNX.4.64.0803241910080.32740@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: rubini@vision.unipv.it, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Replaced init_module and cleanup_module with static functions and module_init/module_exit.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Jon Schindler <jkschind@gmail.com>
+The function thermal_cooling_device_register always returns either a valid
+pointer or a value made with ERR_PTR, so a test for non-zero on the result
+will always succeed.
+
+
+The problem was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
+
+//<smpl>
+@a@
+expression E, E1;
+statement S,S1;
+position p;
+@@
+
+E = thermal_cooling_device_register(...)
+... when != E = E1
+if@p (E) S else S1
+
+@n@
+position a.p;
+expression E,E1;
+statement S,S1;
+@@
+
+E = NULL
+... when != E = E1
+if@p (E) S else S1
+
+@depends on !n@
+expression E;
+statement S,S1;
+position a.p;
+@@
+
+* if@p (E)
+  S else S1
+//</smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-diff --git a/drivers/net/3c523.c b/drivers/net/3c523.c
-index 239fc42..cb4beba 100644
---- a/drivers/net/3c523.c
-+++ b/drivers/net/3c523.c
-@@ -1268,7 +1268,7 @@ MODULE_PARM_DESC(io, "EtherLink/MC I/O base address(es)");
- MODULE_PARM_DESC(irq, "EtherLink/MC IRQ number(s)");
- MODULE_LICENSE("GPL");
- 
--int __init init_module(void)
-+static int __init tc523_module_init(void)
- {
- 	int this_dev,found = 0;
- 
-@@ -1295,8 +1295,9 @@ int __init init_module(void)
- 		return -ENXIO;
- 	} else return 0;
- }
-+module_init(tc523_module_init);
- 
--void __exit cleanup_module(void)
-+static void __exit tc523_module_exit(void)
- {
- 	int this_dev;
- 	for (this_dev=0; this_dev<MAX_3C523_CARDS; this_dev++) {
-@@ -1308,5 +1309,6 @@ void __exit cleanup_module(void)
- 		}
+ drivers/misc/intel_menlow.c |   24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+diff -u -p a/drivers/misc/intel_menlow.c b/drivers/misc/intel_menlow.c
+--- a/drivers/misc/intel_menlow.c	2008-03-12 14:13:13.000000000 +0100
++++ b/drivers/misc/intel_menlow.c	2008-03-24 16:18:06.000000000 +0100
+@@ -175,19 +175,17 @@ static int intel_menlow_memory_add(struc
+ 		goto end;
  	}
- }
-+module_exit(tc523_module_exit);
  
- #endif				/* MODULE */
+-	if (cdev) {
+-		acpi_driver_data(device) = cdev;
+-		result = sysfs_create_link(&device->dev.kobj,
+-					&cdev->device.kobj, "thermal_cooling");
+-		if (result)
+-			goto unregister;
+-
+-		result = sysfs_create_link(&cdev->device.kobj,
+-					&device->dev.kobj, "device");
+-		if (result) {
+-			sysfs_remove_link(&device->dev.kobj, "thermal_cooling");
+-			goto unregister;
+-		}
++	acpi_driver_data(device) = cdev;
++	result = sysfs_create_link(&device->dev.kobj,
++				&cdev->device.kobj, "thermal_cooling");
++	if (result)
++		goto unregister;
++
++	result = sysfs_create_link(&cdev->device.kobj,
++				&device->dev.kobj, "device");
++	if (result) {
++		sysfs_remove_link(&device->dev.kobj, "thermal_cooling");
++		goto unregister;
+ 	}
+ 
+  end:
