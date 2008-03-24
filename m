@@ -1,47 +1,82 @@
-From: Jon Schindler <jkschind@gmail.com>
-Date: Wed, 05 Mar 2008 05:50:15 +0000
-Subject: [PATCH 7/11] /drivers/net/3c507.c replaced init_module&cleanup_module
-Message-Id: <47CE3497.4000403@watson.wustl.edu>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Mar 2008 18:09:15 +0000
+Subject: [PATCH 2/5] fs/ocfs2/aops.c: test for IS_ERR rather than 0
+Message-Id: <Pine.LNX.4.64.0803241908490.32740@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: mark.fasheh@oracle.com, kurt.hackel@oracle.com, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Replaced init_module and cleanup_module with static functions and module_init/module_exit.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Jon Schindler <jkschind@gmail.com>
+The function ocfs2_start_trans always returns either a valid pointer or a
+value made with ERR_PTR, so its result should be tested with IS_ERR, not
+with a test for 0.
+
+
+The problem was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
+
+//<smpl>
+@a@
+expression E, E1;
+statement S,S1;
+position p;
+@@
+
+E = ocfs2_start_trans(...)
+... when != E = E1
+if@p (E) S else S1
+
+@n@
+position a.p;
+expression E,E1;
+statement S,S1;
+@@
+
+E = NULL
+... when != E = E1
+if@p (E) S else S1
+
+@depends on !n@
+expression E;
+statement S,S1;
+position a.p;
+@@
+
+* if@p (E)
+  S else S1
+//</smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-diff --git a/drivers/net/3c507.c b/drivers/net/3c507.c
-index 030c147..07b6d7d 100644
---- a/drivers/net/3c507.c
-+++ b/drivers/net/3c507.c
-@@ -918,16 +918,16 @@ module_param(irq, int, 0);
- MODULE_PARM_DESC(io, "EtherLink16 I/O base address");
- MODULE_PARM_DESC(irq, "(ignored)");
- 
--int __init init_module(void)
-+static int __init tc507_module_init(void)
+ fs/ocfs2/aops.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff -u -p a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+--- a/fs/ocfs2/aops.c	2008-03-24 17:50:26.000000000 +0100
++++ b/fs/ocfs2/aops.c	2008-03-24 17:52:02.000000000 +0100
+@@ -467,11 +467,11 @@ handle_t *ocfs2_start_walk_page_trans(st
+ 							 unsigned to)
  {
- 	if (io = 0)
- 		printk("3c507: You should not use auto-probing with insmod!\n");
- 	dev_3c507 = el16_probe(-1);
- 	return IS_ERR(dev_3c507) ? PTR_ERR(dev_3c507) : 0;
- }
-+module_init(tc507_module_init);
+ 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+-	handle_t *handle = NULL;
++	handle_t *handle;
+ 	int ret = 0;
  
--void __exit
--cleanup_module(void)
-+static void __exit tc507_module_exit(void)
- {
- 	struct net_device *dev = dev_3c507;
- 	unregister_netdev(dev);
-@@ -936,6 +936,8 @@ cleanup_module(void)
- 	release_region(dev->base_addr, EL16_IO_EXTENT);
- 	free_netdev(dev);
- }
-+module_exit(tc507_module_exit);
-+
- #endif /* MODULE */
- MODULE_LICENSE("GPL");
- 
+ 	handle = ocfs2_start_trans(osb, OCFS2_INODE_UPDATE_CREDITS);
+-	if (!handle) {
++	if (IS_ERR(handle)) {
+ 		ret = -ENOMEM;
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -487,7 +487,7 @@ handle_t *ocfs2_start_walk_page_trans(st
+ 	}
+ out:
+ 	if (ret) {
+-		if (handle)
++		if (!IS_ERR(handle))
+ 			ocfs2_commit_trans(osb, handle);
+ 		handle = ERR_PTR(ret);
+ 	}
