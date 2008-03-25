@@ -1,204 +1,159 @@
-From: "Zhang, Rui" <rui.zhang@intel.com>
-Date: Tue, 25 Mar 2008 08:31:21 +0000
-Subject: Re: [PATCH 4/5] drivers/acpi: elide a non-zero test on a result
-Message-Id: <1206433881.3047.51.camel@acpi-hp-zz.sh.intel.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 25 Mar 2008 08:35:10 +0000
+Subject: Re: [PATCH 4/5] drivers/acpi: elide a non-zero test on a result that
+Message-Id: <Pine.LNX.4.64.0803250931440.22289@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0803241909420.32740@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0803241909420.32740@ask.diku.dk>
+ <1206431411.3047.45.camel@acpi-hp-zz.sh.intel.com>
+In-Reply-To: <1206431411.3047.45.camel@acpi-hp-zz.sh.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
+To: "Zhang, Rui" <rui.zhang@intel.com>
 Cc: "Brown, Len" <len.brown@intel.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+On Tue, 25 Mar 2008, Zhang, Rui wrote:
 
-On Tue, 2008-03-25 at 02:10 +0800, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
 > 
-> The function thermal_cooling_device_register always returns either a
-> valid
-> pointer or a value made with ERR_PTR, so a test for non-zero on the
-> result
-> will always succeed.
+> On Tue, 2008-03-25 at 02:10 +0800, Julia Lawall wrote:
+> > From: Julia Lawall <julia@diku.dk>
+> > 
+> > The function thermal_cooling_device_register always returns either a
+> > valid
+> > pointer or a value made with ERR_PTR, so a test for non-zero on the
+> > result
+> > will always succeed.
+> >
+> > The problem was found using the following semantic match.
+> > (http://www.emn.fr/x-info/coccinelle/)
+> > //<smpl>
+> > @a@
+> > expression E, E1;
+> > statement S,S1;
+> > position p;
+> > @@
+> > 
+> > E = thermal_cooling_device_register(...)
+> > ... when != E = E1
+> > if@p (E) S else S1
+> > 
+> > @n@
+> > position a.p;
+> > expression E,E1;
+> > statement S,S1;
+> > @@
+> > 
+> > E = NULL
+> > ... when != E = E1
+> > if@p (E) S else S1
+> > 
+> > @depends on !n@
+> > expression E;
+> > statement S,S1;
+> > position a.p;
+> > @@
+> > 
+> > * if@p (E)
+> >   S else S1
+> > //</smpl>
+> > 
+> > Signed-off-by: Julia Lawall <julia@diku.dk>
+> Patch looks correct. Thanks, Julia.
+> But it misses the same problem in driver/misc/intel_menlow.c.
+
+I did that one in a separate patch ([PATCH 5/5]), since it is in a 
+different directory.
+
+Your patch is certainly more concise, but perhaps it is a little strange 
+to put an "else" on an if where the "then" branch ends with a return or 
+goto?  That doesn't seem to be done very often anyway.
+
+julia
+
+> And the return value of thermal_zone_device_register is also misused.
+> How about this refreshed patch? :)
 > 
 > 
-> The problem was found using the following semantic match.
-> (http://www.emn.fr/x-info/coccinelle/)
+> Check the return value of thermal zone/cooling device registration correctly.
 > 
-> //<smpl>
-> @a@
-> expression E, E1;
-> statement S,S1;
-> position p;
-> @@
-> 
-> E = thermal_cooling_device_register(...)
-> ... when != E = E1
-> if@p (E) S else S1
-> 
-> @n@
-> position a.p;
-> expression E,E1;
-> statement S,S1;
-> @@
-> 
-> E = NULL
-> ... when != E = E1
-> if@p (E) S else S1
-> 
-> @depends on !n@
-> expression E;
-> statement S,S1;
-> position a.p;
-> @@
-> 
-> * if@p (E)
->   S else S1
-> //</smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 > ---
->  drivers/acpi/fan.c            |   34
-> ++++++++++++++++------------------
->  drivers/acpi/processor_core.c |   30 ++++++++++++++----------------
->  drivers/acpi/video.c          |   28 +++++++++++++---------------
->  3 files changed, 43 insertions(+), 49 deletions(-)
+>  drivers/acpi/fan.c            |    3 +--
+>  drivers/acpi/processor_core.c |    3 +--
+>  drivers/acpi/thermal.c        |    2 +-
+>  drivers/acpi/video.c          |    3 +--
+>  drivers/misc/intel_menlow.c   |    4 +---
+>  5 files changed, 5 insertions(+), 10 deletions(-)
 > 
-> diff -u -p a/drivers/acpi/fan.c b/drivers/acpi/fan.c
-> --- a/drivers/acpi/fan.c        2008-03-12 14:13:13.000000000 +0100
-> +++ b/drivers/acpi/fan.c        2008-03-24 16:14:50.000000000 +0100
-> @@ -260,24 +260,22 @@ static int acpi_fan_add(struct acpi_devi
->                 result = PTR_ERR(cdev);
->                 goto end;
->         }
-> -       if (cdev) {
-> -               printk(KERN_INFO PREFIX
-> -                       "%s is registered as cooling_device%d\n",
-> -                       device->dev.bus_id, cdev->id);
+> Index: linux-2.6/drivers/acpi/fan.c
+> =================================> --- linux-2.6.orig/drivers/acpi/fan.c
+> +++ linux-2.6/drivers/acpi/fan.c
+> @@ -259,8 +259,7 @@ static int acpi_fan_add(struct acpi_devi
+>  	if (IS_ERR(cdev)) {
+>  		result = PTR_ERR(cdev);
+>  		goto end;
+> -	}
+> -	if (cdev) {
+> +	} else {
+>  		printk(KERN_INFO PREFIX
+>  			"%s is registered as cooling_device%d\n",
+>  			device->dev.bus_id, cdev->id);
+> Index: linux-2.6/drivers/acpi/processor_core.c
+> =================================> --- linux-2.6.orig/drivers/acpi/processor_core.c
+> +++ linux-2.6/drivers/acpi/processor_core.c
+> @@ -673,8 +673,7 @@ static int __cpuinit acpi_processor_star
+>  	if (IS_ERR(pr->cdev)) {
+>  		result = PTR_ERR(pr->cdev);
+>  		goto end;
+> -	}
+> -	if (pr->cdev) {
+> +	} else {
+>  		printk(KERN_INFO PREFIX
+>  			"%s is registered as cooling_device%d\n",
+>  			device->dev.bus_id, pr->cdev->id);
+> Index: linux-2.6/drivers/acpi/thermal.c
+> =================================> --- linux-2.6.orig/drivers/acpi/thermal.c
+> +++ linux-2.6/drivers/acpi/thermal.c
+> @@ -1125,7 +1125,7 @@ static int acpi_thermal_register_thermal
+>  			tz->trips.active[i].flags.valid; i++, trips++);
+>  	tz->thermal_zone = thermal_zone_device_register("ACPI thermal zone",
+>  					trips, tz, &acpi_thermal_zone_ops);
+> -	if (!tz->thermal_zone)
+> +	if (IS_ERR(tz->thermal_zone))
+>  		return -ENODEV;
+>  
+>  	result = sysfs_create_link(&tz->device->dev.kobj,
+> Index: linux-2.6/drivers/acpi/video.c
+> =================================> --- linux-2.6.orig/drivers/acpi/video.c
+> +++ linux-2.6/drivers/acpi/video.c
+> @@ -733,8 +733,7 @@ static void acpi_video_device_find_cap(s
+>  					device->dev, &video_cooling_ops);
+>  		if (IS_ERR(device->cdev))
+>  			return;
 > -
-> -               acpi_driver_data(device) = cdev;
-> -               result = sysfs_create_link(&device->dev.kobj,
-> -                                          &cdev->device.kobj,
-> -                                          "thermal_cooling");
-> -               if (result)
-> -                       return result;
+> -		if (device->cdev) {
+> +		else {
+>  			printk(KERN_INFO PREFIX
+>  				"%s is registered as cooling_device%d\n",
+>  				device->dev->dev.bus_id, device->cdev->id);
+> Index: linux-2.6/drivers/misc/intel_menlow.c
+> =================================> --- linux-2.6.orig/drivers/misc/intel_menlow.c
+> +++ linux-2.6/drivers/misc/intel_menlow.c
+> @@ -173,9 +173,7 @@ static int intel_menlow_memory_add(struc
+>  	if (IS_ERR(cdev)) {
+>  		result = PTR_ERR(cdev);
+>  		goto end;
+> -	}
 > -
-> -               result = sysfs_create_link(&cdev->device.kobj,
-> -                                          &device->dev.kobj,
-> -                                          "device");
-> -               if (result)
-> -                       return result;
-> -       }
-> +       printk(KERN_INFO PREFIX
-> +               "%s is registered as cooling_device%d\n",
-> +               device->dev.bus_id, cdev->id);
-> +
-> +       acpi_driver_data(device) = cdev;
-> +       result = sysfs_create_link(&device->dev.kobj,
-> +                                  &cdev->device.kobj,
-> +                                  "thermal_cooling");
-> +       if (result)
-> +               return result;
-> +
-> +       result = sysfs_create_link(&cdev->device.kobj,
-> +                                  &device->dev.kobj,
-> +                                  "device");
-> +       if (result)
-> +               return result;
+> -	if (cdev) {
+> +	} else {
+>  		acpi_driver_data(device) = cdev;
+>  		result = sysfs_create_link(&device->dev.kobj,
+>  					&cdev->device.kobj, "thermal_cooling");
 > 
->         result = acpi_fan_add_fs(device);
->         if (result)
-> diff -u -p a/drivers/acpi/processor_core.c
-> b/drivers/acpi/processor_core.c
-> --- a/drivers/acpi/processor_core.c     2008-03-12 14:13:13.000000000
-> +0100
-> +++ b/drivers/acpi/processor_core.c     2008-03-24 16:15:53.000000000
-> +0100
-> @@ -674,22 +674,20 @@ static int __cpuinit acpi_processor_star
->                 result = PTR_ERR(pr->cdev);
->                 goto end;
->         }
-> -       if (pr->cdev) {
-> -               printk(KERN_INFO PREFIX
-> -                       "%s is registered as cooling_device%d\n",
-> -                       device->dev.bus_id, pr->cdev->id);
-> -
-> -               result = sysfs_create_link(&device->dev.kobj,
-> -                                          &pr->cdev->device.kobj,
-> -                                          "thermal_cooling");
-> -               if (result)
-> -                       return result;
-> -               result = sysfs_create_link(&pr->cdev->device.kobj,
-> -                                          &device->dev.kobj,
-> -                                          "device");
-> -               if (result)
-> -                       return result;
-> -       }
-> +       printk(KERN_INFO PREFIX
-> +               "%s is registered as cooling_device%d\n",
-> +               device->dev.bus_id, pr->cdev->id);
-> +
-> +       result = sysfs_create_link(&device->dev.kobj,
-> +                                  &pr->cdev->device.kobj,
-> +                                  "thermal_cooling");
-> +       if (result)
-> +               return result;
-> +       result = sysfs_create_link(&pr->cdev->device.kobj,
-> +                                  &device->dev.kobj,
-> +                                  "device");
-> +       if (result)
-> +               return result;
 > 
->         if (pr->flags.throttling) {
->                 printk(KERN_INFO PREFIX "%s [%s] (supports",
-> diff -u -p a/drivers/acpi/video.c b/drivers/acpi/video.c
-> --- a/drivers/acpi/video.c      2008-03-12 14:13:13.000000000 +0100
-> +++ b/drivers/acpi/video.c      2008-03-24 16:17:17.000000000 +0100
-> @@ -734,21 +734,19 @@ static void acpi_video_device_find_cap(s
->                 if (IS_ERR(device->cdev))
->                         return;
-> 
-> -               if (device->cdev) {
-> -                       printk(KERN_INFO PREFIX
-> -                               "%s is registered as cooling_device%d
-> \n",
-> -                               device->dev->dev.bus_id,
-> device->cdev->id);
-> -                       result > sysfs_create_link(&device->dev->dev.kobj,
-> -                                         &device->cdev->device.kobj,
-> -                                         "thermal_cooling");
-> -                       if (result)
-> -                               printk(KERN_ERR PREFIX "Create sysfs
-> link\n");
-> -                       result > sysfs_create_link(&device->cdev->device.kobj,
-> -                                         &device->dev->dev.kobj,
-> -                                         "device");
-> -                        if (result)
-> -                               printk(KERN_ERR PREFIX "Create sysfs
-> link\n");
-> -               }
-> +               printk(KERN_INFO PREFIX
-> +                       "%s is registered as cooling_device%d\n",
-> +                       device->dev->dev.bus_id, device->cdev->id);
-> +               result = sysfs_create_link(&device->dev->dev.kobj,
-> +                                 &device->cdev->device.kobj,
-> +                                 "thermal_cooling");
-> +               if (result)
-> +                       printk(KERN_ERR PREFIX "Create sysfs link\n");
-> +               result = sysfs_create_link(&device->cdev->device.kobj,
-> +                                 &device->dev->dev.kobj,
-> +                                 "device");
-> +               if (result)
-> +                       printk(KERN_ERR PREFIX "Create sysfs link\n");
->         }
->         if (device->cap._DCS && device->cap._DSS){
->                 static int count = 0;
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi"
-> in
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> 
-
