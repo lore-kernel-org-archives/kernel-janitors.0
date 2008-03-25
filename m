@@ -1,64 +1,37 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 25 Mar 2008 08:41:16 +0000
+Date: Tue, 25 Mar 2008 08:51:20 +0000
 Subject: Re: [PATCH 4/5] drivers/acpi: elide a non-zero test on a result that
-Message-Id: <Pine.LNX.4.64.0803250940270.22289@ask.diku.dk>
+Message-Id: <Pine.LNX.4.64.0803250950170.22289@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0803241909420.32740@ask.diku.dk>
  <1206431411.3047.45.camel@acpi-hp-zz.sh.intel.com>
-In-Reply-To: <1206431411.3047.45.camel@acpi-hp-zz.sh.intel.com>
+ <Pine.LNX.4.64.0803250931440.22289@ask.diku.dk> <1206433818.3047.50.camel@acpi-hp-zz.sh.intel.com>
+In-Reply-To: <1206433818.3047.50.camel@acpi-hp-zz.sh.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: "Zhang, Rui" <rui.zhang@intel.com>
 Cc: "Brown, Len" <len.brown@intel.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> And the return value of thermal_zone_device_register is also misused.
+> > > And the return value of thermal_zone_device_register is also
+> > misused.
+> I guess you didn't fix this one, right?
+> Len, please apply this patch.:)
 
-Indeed, I missed that one.
+Indeed, I did not fix this one.  So your patch should be used in this 
+case.
 
 julia
 
-
-> How about this refreshed patch? :)
 > 
 > 
-> Check the return value of thermal zone/cooling device registration correctly.
+> Check the return value of thermal zone device registration correctly.
 > 
 > Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 > ---
->  drivers/acpi/fan.c            |    3 +--
->  drivers/acpi/processor_core.c |    3 +--
->  drivers/acpi/thermal.c        |    2 +-
->  drivers/acpi/video.c          |    3 +--
->  drivers/misc/intel_menlow.c   |    4 +---
->  5 files changed, 5 insertions(+), 10 deletions(-)
+>  drivers/acpi/thermal.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Index: linux-2.6/drivers/acpi/fan.c
-> =================================> --- linux-2.6.orig/drivers/acpi/fan.c
-> +++ linux-2.6/drivers/acpi/fan.c
-> @@ -259,8 +259,7 @@ static int acpi_fan_add(struct acpi_devi
->  	if (IS_ERR(cdev)) {
->  		result = PTR_ERR(cdev);
->  		goto end;
-> -	}
-> -	if (cdev) {
-> +	} else {
->  		printk(KERN_INFO PREFIX
->  			"%s is registered as cooling_device%d\n",
->  			device->dev.bus_id, cdev->id);
-> Index: linux-2.6/drivers/acpi/processor_core.c
-> =================================> --- linux-2.6.orig/drivers/acpi/processor_core.c
-> +++ linux-2.6/drivers/acpi/processor_core.c
-> @@ -673,8 +673,7 @@ static int __cpuinit acpi_processor_star
->  	if (IS_ERR(pr->cdev)) {
->  		result = PTR_ERR(pr->cdev);
->  		goto end;
-> -	}
-> -	if (pr->cdev) {
-> +	} else {
->  		printk(KERN_INFO PREFIX
->  			"%s is registered as cooling_device%d\n",
->  			device->dev.bus_id, pr->cdev->id);
 > Index: linux-2.6/drivers/acpi/thermal.c
 > =================================> --- linux-2.6.orig/drivers/acpi/thermal.c
 > +++ linux-2.6/drivers/acpi/thermal.c
@@ -71,33 +44,6 @@ julia
 >  		return -ENODEV;
 >  
 >  	result = sysfs_create_link(&tz->device->dev.kobj,
-> Index: linux-2.6/drivers/acpi/video.c
-> =================================> --- linux-2.6.orig/drivers/acpi/video.c
-> +++ linux-2.6/drivers/acpi/video.c
-> @@ -733,8 +733,7 @@ static void acpi_video_device_find_cap(s
->  					device->dev, &video_cooling_ops);
->  		if (IS_ERR(device->cdev))
->  			return;
-> -
-> -		if (device->cdev) {
-> +		else {
->  			printk(KERN_INFO PREFIX
->  				"%s is registered as cooling_device%d\n",
->  				device->dev->dev.bus_id, device->cdev->id);
-> Index: linux-2.6/drivers/misc/intel_menlow.c
-> =================================> --- linux-2.6.orig/drivers/misc/intel_menlow.c
-> +++ linux-2.6/drivers/misc/intel_menlow.c
-> @@ -173,9 +173,7 @@ static int intel_menlow_memory_add(struc
->  	if (IS_ERR(cdev)) {
->  		result = PTR_ERR(cdev);
->  		goto end;
-> -	}
-> -
-> -	if (cdev) {
-> +	} else {
->  		acpi_driver_data(device) = cdev;
->  		result = sysfs_create_link(&device->dev.kobj,
->  					&cdev->device.kobj, "thermal_cooling");
 > 
 > 
 > --
@@ -105,3 +51,4 @@ julia
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
+
