@@ -1,16 +1,31 @@
-From: Jeff Garzik <jeff@garzik.org>
-Date: Wed, 05 Mar 2008 11:21:00 +0000
-Subject: Re: [PATCH 1/9] /drivers/net/8390.c replaced init_module&cleanup_module
-Message-Id: <47CE821C.80600@garzik.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 25 Mar 2008 08:55:38 +0000
+Subject: useless variable initializations
+Message-Id: <Pine.LNX.4.64.0803250951380.22289@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47C66306.7020006@watson.wustl.edu>
-In-Reply-To: <47C66306.7020006@watson.wustl.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jon Schindler <jkschind@gmail.com>
-Cc: linux-kernel@vger.kernel.org, trivial@kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-applied 1-9
+Is there any policy about useless variable intializations, such as:
 
+struct foo *x = NULL;
+...
+x = kmalloc(...);
+
+where the original value of x is never used?
+
+
+Another example is (fs/nfs/client.c):
+
+struct rpc_clnt *clnt = NULL;
+...
+clnt = rpc_create(&args);
+
+This could actually be slightly misleading, because rpc_create returns 
+either a valid pointer or a value created with ERR_PTR, never NULL, so 
+NULL is not really in the set of reasonable values for clnt.
+
+julia
 
