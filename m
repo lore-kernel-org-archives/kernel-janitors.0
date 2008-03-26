@@ -1,31 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 25 Mar 2008 08:55:38 +0000
-Subject: useless variable initializations
-Message-Id: <Pine.LNX.4.64.0803250951380.22289@ask.diku.dk>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Wed, 26 Mar 2008 00:43:00 +0000
+Subject: Re: useless variable initializations
+Message-Id: <200803260143.00157.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0803250951380.22289@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0803250951380.22289@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Is there any policy about useless variable intializations, such as:
+Hello,
 
-struct foo *x = NULL;
-...
-x = kmalloc(...);
+> Is there any policy about useless variable intializations, such as:
+> 
+> struct foo *x = NULL;
+> ...
+> x = kmalloc(...);
+> 
+> where the original value of x is never used?
 
-where the original value of x is never used?
+Once upon a time I send a few patches regarding this issue and they
+were accepted although -02 flag makes both versions be the same
+in the end. I'd say it is a cleanup. As you said useless variable
+initializations are misleading. Methinks it decreases code readability
+as well.
 
-
-Another example is (fs/nfs/client.c):
-
-struct rpc_clnt *clnt = NULL;
-...
-clnt = rpc_create(&args);
-
-This could actually be slightly misleading, because rpc_create returns 
-either a valid pointer or a value created with ERR_PTR, never NULL, so 
-NULL is not really in the set of reasonable values for clnt.
-
-julia
-
+	Mariusz
