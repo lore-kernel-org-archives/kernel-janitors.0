@@ -1,20 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 24 Mar 2008 05:43:19 +0000
-Subject: Re: [PATCH] net: removing unused variable
-Message-Id: <20080323.224319.141536241.davem@davemloft.net>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Fri, 28 Mar 2008 17:43:30 +0000
+Subject: another KJ project:  trashing obsolete documentation
+Message-Id: <alpine.LFD.1.00.0803281341540.14382@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47DA7E96.6000704@gmail.com>
-In-Reply-To: <47DA7E96.6000704@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Jiri Olsa <olsajiri@gmail.com>
-Date: Fri, 14 Mar 2008 14:33:10 +0100
 
-> removing unused variable
-> 
-> Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+  it occurs to me that a useful project would be to identify anything
+under the Documentation/ directory that no longer has any value and
+can be removed, just to keep readers from being misled by out-of-date
+documentation.
 
-Applied to net-2.6.26, thanks.
+  anything there that looks eminently removable?
+
+rday
+--
+
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry:
+    Have classroom, will lecture.
+
+http://crashcourse.ca                          Waterloo, Ontario, CANADA
+====================================
