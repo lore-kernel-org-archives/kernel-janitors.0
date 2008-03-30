@@ -1,39 +1,24 @@
-From: Steve <steve@lonetwin.net>
-Date: Fri, 14 Mar 2008 17:20:28 +0000
-Subject: A ToDo list item ?
-Message-Id: <46036.1205515228@lonetwin.net>
+From: "=?BIG5?B?p/Wnu7C2?=" <af11uh98m09nam@gmail.com>
+Date: Sun, 30 Mar 2008 05:53:07 +0000
+Subject: =?BIG5?B?ofSq8aG9qNOhvqzdob+kRqG/tE6hvaq+ofK5RKHi?=
+Message-Id: <bce1088c0803292253l401987ccsbe6ba384e9ef3341@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="ibm866"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-
-I recently started working my way through the 'Linux Device Driver' book (3rd edition)[1] and in Chapter 3, 'Char Drivers', page 57, i noticed the following paragraph:
-
-"""
-The Older Way
-If you dig through much driver code in the 2.6 kernel, you may notice that quite a
-few char drivers do not use the cdev interface that we have just described. What you
-are seeing is older code that has not yet been upgraded to the 2.6 interface. Since that
-code works as it is, this upgrade may not happen for a long time. For completeness,
-we describe the older char device registration interface, but new code should not use
-it; this mechanism will likely go away in a future kernel.
-The classic way to register a char device driver is with:
-      int register_chrdev(unsigned int major, const char *name,
-                          struct file_operations *fops);
-"""
-
-Now, considering that ...
-$ grep -r "register_chrdev" drivers/* | wc -l
-217
-
-...in the latest and greatest linus kernel, is this a janitor-worthy task ? If it is, I'd like to get started on this, since it would go well along with my current study.
-
-regards,
-- steve
-
-[1] http://lwn.net/Kernel/LDD3/
- 
-
+MjY4MzY3NjkyNTUwMDkyMTMxNzEwNDY4NDg4NTM4MDEyNzA2ODYKCr9XofWuYaG/vPah+L3mCgoo
+rMMtr10ttrUtweUtwqctsrApLaTpLaW7LaRFLaZ7LarFLblCLajTLaV4Cgq69Kd9pmKzb6H3MjAz
+LjcwLjE3OS4zOS9qdaH2vca7c7Nvpua69Kd9tkukV6dZpWkKCqHjoeOh46HjoeOh46HjoeOh46Hj
+oeOh46HjoeOh46HjoeOh46HjoeOh46HjoeMKCrdRsGWl969Tp0+qusKnqquhQbW5sXqzzK9Tp0+q
+urGhpEi23KFICrFxt3PCQbBGtN+kpKj6pVisw69dqrqouqO4q2KhQbCjpEa3ULDKu1C/s77EpX4K
+qNOt079FsaGqur7WqeqnYaFJoUkKCqHjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh
+46HjoeOh46HjoeMKCsHKtlKk6KahpECr36VIpnawdLNmqOylSbTapOimoaVYs2ahQaS1pOmtccHK
+qfqk6adZpWmmrKjsISEKCqHjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh
+46HjoeMKCgoKCkt2RG5pY1hFSWVjRlZLeFFrNnlGM2dtY2xDWEpMRXJhM3ZCNjNDQTZmTTNDaG5W
+aFRECgp3TWhhSG9kN3IyNUZXZm5JWHU3NmlRTHp1TjFmWEpSRHJyVmF1RnlHVG52U1ZDN1ptUgoK
+a0lMOE1WRUgxQmFPSGxOS00yMW5GTVhNellrT2twd3pVc3FaVVZhcDM4bXV1YTBTMHgK//Tounsu
+bscribefromthislisv/sendthelinf/unsubscribekernel/janitors/inthebodyofamessa
+getomajordomo/vger/kernel/orgMoremajordomoinfoathttp///vger/kernel/org/major
+domo/info/htCg==
