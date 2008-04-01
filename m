@@ -1,29 +1,45 @@
-From: su17171@freesurf.fr
-Date: Sat, 05 Apr 2008 20:35:15 +0000
-Subject: Dear Friend
-Message-Id: <20080405223515.26673ya8h0yff5wk@webmail-html.freesurf.fr>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Tue, 01 Apr 2008 21:49:29 +0000
+Subject: [PATCH] drivers/atm/iphase.c: compilation warning fix
+Message-Id: <200804012349.29836.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080405223510.65231h8jjfpzpvgg@webmail-html.freesurf.fr>
-In-Reply-To: <20080405223510.65231h8jjfpzpvgg@webmail-html.freesurf.fr>
+References: <200712232159.29844.lpotenza@inwind.it>
+In-Reply-To: <200712232159.29844.lpotenza@inwind.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: chas@cmf.nrl.navy.mil, linux-kernel@vger.kernel.org
 
-Dear Friend
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-I could not get connected to you on phone so I decided to send this  
-email to you.Presently, I am out of the country.Since, I could not  
-reach you before I travelled I lodged your money including the  
-interest with the correspondent Bank Cotonou-Benin, in respect of the  
-little assistance you rendered to me during the cost of transfering my  
-sum.
+Removed the warning messages:
+drivers/atm/iphase.c:961: warning: 'tcnter' defined but not used
+drivers/atm/iphase.c:963: warning: 'xdump' defined but not used
 
-The Account Officer Name,Dr. Ken Ibru is informed on this contact him  
-to receive your fund. His email is:
-( ken55@sify.com )
+tcnter and xdump() are used only in debug build
 
-Please I may not have time to respond your email, just contact Dr Ken  
-Ibru to release your payment.
-Best Regards,
-Dr.Andrew And Partners
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+---
 
+iphase.c |    2 ++
+1 file changed, 2 insertions(+)
+
+--- linux-2.6.orig/drivers/atm/iphase.c
++++ linux-2.6/drivers/atm/iphase.c
+@@ -958,6 +958,7 @@ static void ia_suni_pm7345_init (IADEV *
+ 
+ /***************************** IA_LIB END *****************************/
+     
++#ifdef CONFIG_ATM_IA_DEBUG
+ static int tcnter = 0;
+ static void xdump( u_char*  cp, int  length, char*  prefix )
+ {
+@@ -992,6 +993,7 @@ static void xdump( u_char*  cp, int  len
+     }
+ 
+ }  /* close xdump(... */
++#endif /* CONFIG_ATM_IA_DEBUG */
+ 
+   
+ static struct atm_dev *ia_boards = NULL;  
