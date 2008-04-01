@@ -1,33 +1,276 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 29 Apr 2008 14:07:38 +0000
-Subject: Re: [PATCH] crypto: Correct kzalloc error test
-Message-Id: <E1JqqUc-0005Rg-00@gondolin.me.apana.org.au>
+From: Denys Vlasenko <vda.linux@googlemail.com>
+Date: Tue, 01 Apr 2008 01:14:58 +0000
+Subject: [PATCH] drivers/atm/ambassador.c: stop inlining largish static functions
+Message-Id: <200804010314.58117.vda.linux@googlemail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Boundary-00=_SyY8H2N+EQZIBwC"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0804291536220.1185@pc-041.diku.dk>
-In-Reply-To: <Pine.LNX.4.58.0804291536220.1185@pc-041.diku.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Julia Lawall <julia@diku.dk>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chas Williams <chas@cmf.nrl.navy.mil>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SnVsaWEgTGF3YWxsIDxqdWxpYUBkaWt1LmRrPiB3cm90ZToKPiBGcm9tOiBKdWxpYSBMYXdhbGwg
-PGp1bGlhQGRpa3UuZGs+Cj4gCj4gTm9ybWFsbHksIGt6YWxsb2MgcmV0dXJucyBOVUxMIG9yIGEg
-dmFsaWQgcG9pbnRlciB2YWx1ZSwgbm90IGEgdmFsdWUgdG8gYmUKPiB0ZXN0ZWQgdXNpbmcgSVNf
-RVJSLgoKT3VjaCA6KQoKPiBkaWZmIC11IC1wICBhL2NyeXB0by9jcnlwdGQuYyBiL2NyeXB0by9j
-cnlwdGQuYwo+IC0tLSBhL2NyeXB0by9jcnlwdGQuYyAgIDIwMDgtMDQtMTYgMTM6Mjc6NTYuMDAw
-MDAwMDAwICswMjAwCj4gKysrIGIvY3J5cHRvL2NyeXB0ZC5jICAgMjAwOC0wNC0yOSAxNToyOTo1
-NC4wMDAwMDAwMDAgKzAyMDAKPiBAQCAtMTkwLDcgKzE5MCw3IEBAIHN0YXRpYyBzdHJ1Y3QgY3J5
-cHRvX2luc3RhbmNlICpjcnlwdGRfYWwKPiAgICAgICAgaW50IGVycjsKPiAKPiAgICAgICAgaW5z
-dCA9IGt6YWxsb2Moc2l6ZW9mKCppbnN0KSArIHNpemVvZigqY3R4KSwgR0ZQX0tFUk5FTCk7Cj4g
-LSAgICAgICBpZiAoSVNfRVJSKGluc3QpKQo+ICsgICAgICAgaWYgKCFpbnN0KQo+ICAgICAgICAg
-ICAgICAgIGdvdG8gb3V0OwoKSG93ZXZlciwgdGhpcyBmdW5jdGlvbiBpcyBleHBlY3RlZCB0byBy
-ZXR1cm4gYW4gRVJSX1BUUiBzbyB5b3UnbGwKbmVlZCBzZXQgaXQgdG8gRU5PTUVNIGZpcnN0LgoK
-VGhhbmtzLAotLSAKVmlzaXQgT3BlbnN3YW4gYXQgaHR0cDovL3d3dy5vcGVuc3dhbi5vcmcvCkVt
-YWlsOiBIZXJiZXJ0IFh1IH57UG1WPkhJfn0gPGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9yZy5hdT4K
-SG9tZSBQYWdlOiBodHRwOi8vZ29uZG9yLmFwYW5hLm9yZy5hdS9+aGVyYmVydC8KUEdQIEtleTog
-aHR0cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvcHVia2V5LnR4dAotLQpUbyB1bnN1
-YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVs
-LWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2Vy
-bmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21h
-am9yZG9tby1pbmZvLmh0bWw=
+--Boundary-00=_SyY8H2N+EQZIBwC
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+Hi John,
+
+Can you please take a look at this patch?
+
+drivers/atm/ambassador.c has unusually large number
+of static inline functions - 22.
+
+I looked through them and half of them seem to be too big
+to warrant inlining.
+
+This patch removes "inline" from these static functions
+(regardless of number of callsites - gcc nowadays auto-inlines
+statics with one callsite).
+
+Size difference for 32bit x86:
+   text    data     bss     dec     hex filename
+  10209    8488       4   18701    490d linux-2.6-ALLYES/drivers/atm/ambassador.o
+   9462    8488       4   17954    4622 linux-2.6.inline-ALLYES/drivers/atm/ambassador.o
+
+Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+--
+vda
+
+--Boundary-00=_SyY8H2N+EQZIBwC
+Content-Type: text/x-diff;
+  charset="us-ascii";
+  name="deinline_ambassador.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="deinline_ambassador.diff"
+
+diff -urp -U 10 linux-2.6/drivers/atm/ambassador.c linux-2.6.inline/drivers/atm/ambassador.c
+--- linux-2.6/drivers/atm/ambassador.c	2008-03-30 03:27:42.000000000 +0200
++++ linux-2.6.inline/drivers/atm/ambassador.c	2008-04-01 03:09:12.000000000 +0200
+@@ -430,50 +430,50 @@ static inline void dump_skb (char * pref
+   (void) vc;
+   (void) skb;
+ #endif
+   return;
+ }
+ 
+ /********** check memory areas for use by Ambassador **********/
+ 
+ /* see limitations under Hardware Features */
+ 
+-static inline int check_area (void * start, size_t length) {
++static int check_area (void * start, size_t length) {
+   // assumes length > 0
+   const u32 fourmegmask = -1 << 22;
+   const u32 twofivesixmask = -1 << 8;
+   const u32 starthole = 0xE0000000;
+   u32 startaddress = virt_to_bus (start);
+   u32 lastaddress = startaddress+length-1;
+   if ((startaddress ^ lastaddress) & fourmegmask ||
+       (startaddress & twofivesixmask) == starthole) {
+     PRINTK (KERN_ERR, "check_area failure: [%x,%x] - mail maintainer!",
+ 	    startaddress, lastaddress);
+     return -1;
+   } else {
+     return 0;
+   }
+ }
+ 
+ /********** free an skb (as per ATM device driver documentation) **********/
+ 
+-static inline void amb_kfree_skb (struct sk_buff * skb) {
++static void amb_kfree_skb (struct sk_buff * skb) {
+   if (ATM_SKB(skb)->vcc->pop) {
+     ATM_SKB(skb)->vcc->pop (ATM_SKB(skb)->vcc, skb);
+   } else {
+     dev_kfree_skb_any (skb);
+   }
+ }
+ 
+ /********** TX completion **********/
+ 
+-static inline void tx_complete (amb_dev * dev, tx_out * tx) {
++static void tx_complete (amb_dev * dev, tx_out * tx) {
+   tx_simple * tx_descr = bus_to_virt (tx->handle);
+   struct sk_buff * skb = tx_descr->skb;
+   
+   PRINTD (DBG_FLOW|DBG_TX, "tx_complete %p %p", dev, tx);
+   
+   // VC layer stats
+   atomic_inc(&ATM_SKB(skb)->vcc->stats->tx);
+   
+   // free the descriptor
+   kfree (tx_descr);
+@@ -636,21 +636,21 @@ static int command_do (amb_dev * dev, co
+   } else {
+     cq->filled++;
+     spin_unlock (&cq->lock);
+     return -EAGAIN;
+   }
+   
+ }
+ 
+ /********** TX queue pair **********/
+ 
+-static inline int tx_give (amb_dev * dev, tx_in * tx) {
++static int tx_give (amb_dev * dev, tx_in * tx) {
+   amb_txq * txq = &dev->txq;
+   unsigned long flags;
+   
+   PRINTD (DBG_FLOW|DBG_TX, "tx_give %p", dev);
+ 
+   if (test_bit (dead, &dev->flags))
+     return 0;
+   
+   spin_lock_irqsave (&txq->lock, flags);
+   
+@@ -668,21 +668,21 @@ static inline int tx_give (amb_dev * dev
+       txq->high = txq->pending;
+     spin_unlock_irqrestore (&txq->lock, flags);
+     return 0;
+   } else {
+     txq->filled++;
+     spin_unlock_irqrestore (&txq->lock, flags);
+     return -EAGAIN;
+   }
+ }
+ 
+-static inline int tx_take (amb_dev * dev) {
++static int tx_take (amb_dev * dev) {
+   amb_txq * txq = &dev->txq;
+   unsigned long flags;
+   
+   PRINTD (DBG_FLOW|DBG_TX, "tx_take %p", dev);
+   
+   spin_lock_irqsave (&txq->lock, flags);
+   
+   if (txq->pending && txq->out.ptr->handle) {
+     // deal with TX completion
+     tx_complete (dev, txq->out.ptr);
+@@ -696,21 +696,21 @@ static inline int tx_take (amb_dev * dev
+     return 0;
+   } else {
+     
+     spin_unlock_irqrestore (&txq->lock, flags);
+     return -1;
+   }
+ }
+ 
+ /********** RX queue pairs **********/
+ 
+-static inline int rx_give (amb_dev * dev, rx_in * rx, unsigned char pool) {
++static int rx_give (amb_dev * dev, rx_in * rx, unsigned char pool) {
+   amb_rxq * rxq = &dev->rxq[pool];
+   unsigned long flags;
+   
+   PRINTD (DBG_FLOW|DBG_RX, "rx_give %p[%hu]", dev, pool);
+   
+   spin_lock_irqsave (&rxq->lock, flags);
+   
+   if (rxq->pending < rxq->maximum) {
+     PRINTD (DBG_RX, "RX in slot %p", rxq->in.ptr);
+ 
+@@ -721,21 +721,21 @@ static inline int rx_give (amb_dev * dev
+     wr_mem (dev, offsetof(amb_mem, mb.adapter.rx_address[pool]), virt_to_bus (rxq->in.ptr));
+     
+     spin_unlock_irqrestore (&rxq->lock, flags);
+     return 0;
+   } else {
+     spin_unlock_irqrestore (&rxq->lock, flags);
+     return -1;
+   }
+ }
+ 
+-static inline int rx_take (amb_dev * dev, unsigned char pool) {
++static int rx_take (amb_dev * dev, unsigned char pool) {
+   amb_rxq * rxq = &dev->rxq[pool];
+   unsigned long flags;
+   
+   PRINTD (DBG_FLOW|DBG_RX, "rx_take %p[%hu]", dev, pool);
+   
+   spin_lock_irqsave (&rxq->lock, flags);
+   
+   if (rxq->pending && (rxq->out.ptr->status || rxq->out.ptr->length)) {
+     // deal with RX completion
+     rx_complete (dev, rxq->out.ptr);
+@@ -754,21 +754,21 @@ static inline int rx_take (amb_dev * dev
+     if (!rxq->pending && rxq->buffers_wanted)
+       rxq->emptied++;
+     spin_unlock_irqrestore (&rxq->lock, flags);
+     return -1;
+   }
+ }
+ 
+ /********** RX Pool handling **********/
+ 
+ /* pre: buffers_wanted = 0, post: pending = 0 */
+-static inline void drain_rx_pool (amb_dev * dev, unsigned char pool) {
++static void drain_rx_pool (amb_dev * dev, unsigned char pool) {
+   amb_rxq * rxq = &dev->rxq[pool];
+   
+   PRINTD (DBG_FLOW|DBG_POOL, "drain_rx_pool %p %hu", dev, pool);
+   
+   if (test_bit (dead, &dev->flags))
+     return;
+   
+   /* we are not quite like the fill pool routines as we cannot just
+      remove one buffer, we have to remove all of them, but we might as
+      well pretend... */
+@@ -789,21 +789,21 @@ static inline void drain_rx_pool (amb_de
+ 
+ static void drain_rx_pools (amb_dev * dev) {
+   unsigned char pool;
+   
+   PRINTD (DBG_FLOW|DBG_POOL, "drain_rx_pools %p", dev);
+   
+   for (pool = 0; pool < NUM_RX_POOLS; ++pool)
+     drain_rx_pool (dev, pool);
+ }
+ 
+-static inline void fill_rx_pool (amb_dev * dev, unsigned char pool,
++static void fill_rx_pool (amb_dev * dev, unsigned char pool,
+                                  gfp_t priority)
+ {
+   rx_in rx;
+   amb_rxq * rxq;
+   
+   PRINTD (DBG_FLOW|DBG_POOL, "fill_rx_pool %p %hu %x", dev, pool, priority);
+   
+   if (test_bit (dead, &dev->flags))
+     return;
+   
+@@ -839,29 +839,29 @@ static void fill_rx_pools (amb_dev * dev
+   PRINTD (DBG_FLOW|DBG_POOL, "fill_rx_pools %p", dev);
+   
+   for (pool = 0; pool < NUM_RX_POOLS; ++pool)
+     fill_rx_pool (dev, pool, GFP_ATOMIC);
+   
+   return;
+ }
+ 
+ /********** enable host interrupts **********/
+ 
+-static inline void interrupts_on (amb_dev * dev) {
++static void interrupts_on (amb_dev * dev) {
+   wr_plain (dev, offsetof(amb_mem, interrupt_control),
+ 	    rd_plain (dev, offsetof(amb_mem, interrupt_control))
+ 	    | AMB_INTERRUPT_BITS);
+ }
+ 
+ /********** disable host interrupts **********/
+ 
+-static inline void interrupts_off (amb_dev * dev) {
++static void interrupts_off (amb_dev * dev) {
+   wr_plain (dev, offsetof(amb_mem, interrupt_control),
+ 	    rd_plain (dev, offsetof(amb_mem, interrupt_control))
+ 	    &~ AMB_INTERRUPT_BITS);
+ }
+ 
+ /********** interrupt handling **********/
+ 
+ static irqreturn_t interrupt_handler(int irq, void *dev_id) {
+   amb_dev * dev = dev_id;
+   
+
+--Boundary-00=_SyY8H2N+EQZIBwC--
