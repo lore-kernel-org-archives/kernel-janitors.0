@@ -1,82 +1,48 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Sat, 19 Apr 2008 14:17:52 +0000
-Subject: u14-3f incorrect unsigned test
-Message-Id: <20080419141752.GK20637@parisc-linux.org>
+From: Dan Noe <dpn@isomerica.net>
+Date: Fri, 04 Apr 2008 13:21:53 +0000
+Subject: [PATCH] cxgb3: Fix __must_check warning from call to sysfs_create_group.
+Message-Id: <120731531392-git-send-email-dpn@isomerica.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4808C90A.5040600@tiscali.nl> <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, linux-scsi@vger.kernel.org
-Cc: Roel Kluin <12o3l@tiscali.nl>, kernel-janitors@vger.kernel.org, kernelnewbies-bounce@nl.linux.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Dan Noe <dpn@isomerica.net>
 
-On Fri, Apr 18, 2008 at 09:08:55PM +0200, Julia Lawall wrote:
-> I found 63 occurrences of this problem with the following semantic match
-> (http://www.emn.fr/x-info/coccinelle/):
-> 
-> @@ unsigned int i; @@
-> 
-> * i < 0
-> 
-> I looked through all of the results by hand, and they all seem to be 
-> problems.  In many cases, it seems like the variable should not be 
-> unsigned as it is used to hold the return value of a function that might 
-> return a negative error code, but I haven't looked into this in detail.
-> 
-> In the output below, the lines that begin with a single start contain a 
-> test of whether an unsigned variable or structure field is less than 0.
-> The output is actually generated with diff, but I converted the -s to *s 
-> to avoid confusion.
+Fix the warning:
+drivers/net/cxgb3/cxgb3_main.c: In function ‘offload_open’:
+drivers/net/cxgb3/cxgb3_main.c:936: warning: ignoring return value of
+ ‘sysfs_create_group’, declared with attribute warn_unused_result
 
-> diff -u -p a/drivers/scsi/u14-34f.c b/drivers/scsi/u14-34f.c
-> *** a/drivers/scsi/u14-34f.c 2008-03-12 14:13:14.000000000 +0100
-> @@ -1126,7 +1126,7 @@ static void map_dma(unsigned int i, unsi
->  
->     if (scsi_bufflen(SCpnt)) {
->  	   count = scsi_dma_map(SCpnt);
-> *	   BUG_ON(count < 0);
->  
->  	   scsi_for_each_sg(SCpnt, sg, count, k) {
->  		   cpp->sglist[k].address = H2DEV(sg_dma_address(sg));
+Now the return value is checked; if sysfs_create_group() returns failure,
+a warning is printed using dev_dbg, and the code continues as before.  Use
+of dev_dbg ensures printk is not needlessly included unless desired for
+debugging.  The original driver code chose to ignore failure of
+sysfs_create_group, and this has not been changed beyond a warning when
+DEBUG is enabled.
 
-----
+Signed-off-by: Dan Noe <dpn@isomerica.net>
+---
+ drivers/net/cxgb3/cxgb3_main.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-u14-34f: Correct unsigned comparison against 0
+Applies against linux-2.6.git.
 
-scsi_dma_map() can return an error.  The current situation of BUG_ON for
-an out of memory condition is far from ideal, but it's better than the
-current situation where running out of memory will lead to the driver
-trying to walk through 4 billion sg entries.
-
-Discovered-by: Julia Lawall <julia@diku.dk>
-Signed-off-by: Matthew Wilcox <willy@linux.intel.com>
-
-diff --git a/drivers/scsi/u14-34f.c b/drivers/scsi/u14-34f.c
-index 58d7eee..11df071 100644
---- a/drivers/scsi/u14-34f.c
-+++ b/drivers/scsi/u14-34f.c
-@@ -1110,7 +1110,7 @@ static int u14_34f_detect(struct scsi_host_template *tpnt) {
+diff --git a/drivers/net/cxgb3/cxgb3_main.c b/drivers/net/cxgb3/cxgb3_main.c
+index fd2e05b..05e5f59 100644
+--- a/drivers/net/cxgb3/cxgb3_main.c
++++ b/drivers/net/cxgb3/cxgb3_main.c
+@@ -1014,8 +1014,8 @@ static int offload_open(struct net_device *dev)
+ 		     adapter->port[0]->mtu : 0xffff);
+ 	init_smt(adapter);
  
- static void map_dma(unsigned int i, unsigned int j) {
-    unsigned int data_len = 0;
--   unsigned int k, count, pci_dir;
-+   unsigned int k, pci_dir;
-    struct scatterlist *sg;
-    struct mscp *cpp;
-    struct scsi_cmnd *SCpnt;
-@@ -1125,7 +1125,7 @@ static void map_dma(unsigned int i, unsigned int j) {
-    cpp->sense_len = SCSI_SENSE_BUFFERSIZE;
+-	/* Never mind if the next step fails */
+-	sysfs_create_group(&tdev->lldev->dev.kobj, &offload_attr_group);
++	if (sysfs_create_group(&tdev->lldev->dev.kobj, &offload_attr_group))
++		dev_dbg(&dev->dev, "cannot create sysfs group\n");
  
-    if (scsi_bufflen(SCpnt)) {
--	   count = scsi_dma_map(SCpnt);
-+	   int count = scsi_dma_map(SCpnt);
- 	   BUG_ON(count < 0);
- 
- 	   scsi_for_each_sg(SCpnt, sg, count, k) {
-
+ 	/* Call back all registered clients */
+ 	cxgb3_add_clients(tdev);
 -- 
-Intel are signing my paycheques ... these opinions are still mine
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+1.5.2.5
+
