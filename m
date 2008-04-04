@@ -1,42 +1,39 @@
-From: "Vegard Nossum" <vegard.nossum@gmail.com>
-Date: Sat, 12 Apr 2008 11:28:53 +0000
-Subject: Re: trying to avoid "#ifdef CONFIG_NUMA"?
-Message-Id: <19f34abd0804120428h2cdbe498o14a52f6d510e0b7e@mail.gmail.com>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Fri, 04 Apr 2008 13:18:45 +0000
+Subject: any value to numerous checks of "#ifdef __GNUC__"?
+Message-Id: <alpine.LFD.1.00.0804040916040.24121@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.1.00.0804070741520.23945@localhost.localdomain>
-In-Reply-To: <alpine.LFD.1.00.0804070741520.23945@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 7, 2008 at 2:56 PM, Robert P. J. Day <rpjday@crashcourse.ca> wrote:
-> On Mon, 7 Apr 2008, Matthew Wilcox wrote:
->
->  > On Mon, Apr 07, 2008 at 07:45:01AM -0400, Robert P. J. Day wrote:
->  > > /* This helps us to avoid #ifdef CONFIG_NUMA */
->  > > #ifdef CONFIG_NUMA
->  > > #define NUMA_BUILD 1
->  > > #else
->  > > #define NUMA_BUILD 0
->  > > #endif
->  >
->  > > mm/page_alloc.c:                if (NUMA_BUILD && zlc_active &&
->  > >
->  > >   not a lot of avoiding going on there, i'd say.
->  >
->  > but it's important where it happens.  it would uglify the code
->  > significantly to replace the if (NUMA_BUILD) with #ifdef
->  > CONFIG_NUMA. Maybe NUMA_BUILD should be used in more places, but how
->  > about doing something useful instead?
->
->  i wasn't planning on changing any of that, i was just trying to figure
->  out why the comment promoted "avoiding" the #ifdef when there was so
->  much of it still around.
 
-It avoids it in the sense that you can now use NUMA_BUILD in
-expression, as opposed to CONFIG_NUMA, which won't take the value 0 if
-it's =n. It is not intended to replace CONFIG_NUMA when it is not used
-inside expressions. (That's my understanding of it anyway).
+  there are numerous header files that contain a check of the form
 
-Vegard
+    #ifdef __GNUC__
+
+but <linux/compiler.h> already insists on a GNU C-flavoured compiler:
+
+#if __GNUC__ >= 4
+# include <linux/compiler-gcc4.h>
+#elif __GNUC__ = 3 && __GNUC_MINOR__ >= 2
+# include <linux/compiler-gcc3.h>
+#else
+# error Sorry, your compiler is too old/not recognized.
+#endif
+
+  so is there any point in keeping all those checks around?  is it
+even remotely feasible that the kernel might someday support a non-GNU
+C compiler, given the numerous gcc extensions that are used?
+
+rday
+--
+
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry:
+    Have classroom, will lecture.
+
+http://crashcourse.ca                          Waterloo, Ontario, CANADA
+====================================
