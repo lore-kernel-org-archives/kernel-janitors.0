@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Fri, 04 Apr 2008 15:28:05 +0000
+From: "Darren Jenkins" <darrenrjenkins@gmail.com>
+Date: Sat, 05 Apr 2008 01:05:19 +0000
 Subject: Re: any value to numerous checks of "#ifdef __GNUC__"?
-Message-Id: <alpine.LFD.1.00.0804041126500.25503@localhost.localdomain>
+Message-Id: <82faac5b0804041805ia0f47abmbe33dd09e0472cab@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.LFD.1.00.0804040916040.24121@localhost.localdomain>
 In-Reply-To: <alpine.LFD.1.00.0804040916040.24121@localhost.localdomain>
@@ -10,23 +10,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 4 Apr 2008, walter harms wrote:
+On Sat, Apr 5, 2008 at 12:18 AM, Robert P. J. Day <rpjday@crashcourse.ca> wrote:
+>  is it
+>  even remotely feasible that the kernel might someday support a non-GNU
+>  C compiler, given the numerous gcc extensions that are used?
 
-> hi, so far i know the intel compiler can compile a linux kernel.
-> ntl. this is most likely crap since the compiler is checked much
-> more early. (or at least should).
+I think people are working on getting tinycc to compile an un-modified
+kernel, and I think LLVM is close-ish, also some BSD guys are working
+on PCC so it might be able to compile the kernel in the
+(distant?)future.
 
-actually, those checks could be reasonable for content exported to
-userspace, but if it's not exported, i don't see any value to those
-tests.
+It concerns me a little that GCC is the only OSS compiler that can
+compile the kernel.
 
-rday
---
 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry:
-    Have classroom, will lecture.
-
-http://crashcourse.ca                          Waterloo, Ontario, CANADA
-====================================
+Darren J.
