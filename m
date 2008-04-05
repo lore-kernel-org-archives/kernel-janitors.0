@@ -1,8 +1,10 @@
 From: su17171@freesurf.fr
-Date: Sat, 05 Apr 2008 20:35:10 +0000
+Date: Sat, 05 Apr 2008 20:35:15 +0000
 Subject: Dear Friend
-Message-Id: <20080405223510.65231h8jjfpzpvgg@webmail-html.freesurf.fr>
+Message-Id: <20080405223515.26673ya8h0yff5wk@webmail-html.freesurf.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080405223510.65231h8jjfpzpvgg@webmail-html.freesurf.fr>
+In-Reply-To: <20080405223510.65231h8jjfpzpvgg@webmail-html.freesurf.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
