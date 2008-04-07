@@ -1,62 +1,50 @@
-From: David Brownell <david-b@pacbell.net>
-Date: Mon, 21 Apr 2008 20:14:09 +0000
-Subject: Re: ehci tests unsigned variables against 0
-Message-Id: <200804211314.09537.david-b@pacbell.net>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Mon, 07 Apr 2008 11:45:01 +0000
+Subject: trying to avoid "#ifdef CONFIG_NUMA"?
+Message-Id: <alpine.LFD.1.00.0804070741520.23945@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080419145812.GN20637@parisc-linux.org>
-In-Reply-To: <20080419145812.GN20637@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Monday 21 April 2008, Matthew Wilcox wrote:
-> > -ENOPATCH
-> 
-> Yeah ... I didn't bother with one.  Let's try now:
 
-If you send this as a proper patch to linux-usb@vger,
-you can add
+  from <linux/kernel.h>:
 
-Acked-by: David Brownell <dbrownell@users.sourceforge.net>
+/* This helps us to avoid #ifdef CONFIG_NUMA */
+#ifdef CONFIG_NUMA
+#define NUMA_BUILD 1
+#else
+#define NUMA_BUILD 0
+#endif
 
-> 
-> diff --git a/drivers/usb/host/ehci-dbg.c b/drivers/usb/host/ehci-dbg.c
-> index 64ebfc5..55a2c73 100644
-> --- a/drivers/usb/host/ehci-dbg.c
-> +++ b/drivers/usb/host/ehci-dbg.c
-> @@ -454,9 +454,7 @@ static void qh_lines (
->  				(scratch >> 16) & 0x7fff,
->  				scratch,
->  				td->urb);
-> -		if (temp < 0)
-> -			temp = 0;
-> -		else if (size < temp)
-> +		if (size < temp)
->  			temp = size;
->  		size -= temp;
->  		next += temp;
-> @@ -465,9 +463,7 @@ static void qh_lines (
->  	}
->  
->  	temp = snprintf (next, size, "\n");
-> -	if (temp < 0)
-> -		temp = 0;
-> -	else if (size < temp)
-> +	if (size < temp)
->  		temp = size;
->  	size -= temp;
->  	next += temp;
-> 
-> > ... although if that's the case, I'd think that the *snprintf()
-> > signatures are incorrect:  they should return "unsigned" not "int".
-> > If that were done, I think even GCC could be made to report such
-> > issues; one wouldn't need less-common tools like coccinelle.
-> 
-> We can take it up with ANSI, but I'm not sure they'll be interested in
-> changing the return type of snprintf ...
+  however, there's still a pile of that preprocessor directive
+scattered throughout the kernel.  what kind of "avoidance" are we
+talking about here?
 
-I don't care so much about ANSI as about <linux/kernel.h>,
-at least in this context...
+$ grep -r "#ifdef CONFIG_NUMA" * | wc -l
+159
 
-- Dave
+$ grep -rw NUMA_BUILD *
+include/linux/kernel.h:#define NUMA_BUILD 1
+include/linux/kernel.h:#define NUMA_BUILD 0
+mm/page_alloc.c:                if (NUMA_BUILD && zlc_active &&
+mm/page_alloc.c:                if (NUMA_BUILD)
+mm/page_alloc.c:                if (NUMA_BUILD && !did_zlc_setup) {
+mm/page_alloc.c:        if (unlikely(NUMA_BUILD && page = NULL && zlc_active)) {
+mm/page_alloc.c:        if (NUMA_BUILD && (gfp_mask & GFP_THISNODE) = GFP_THISNODE)
+mm/page_alloc.c:        if (NUMA_BUILD)
+$
+
+  not a lot of avoiding going on there, i'd say.
+
+rday
+--
+
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry:
+    Have classroom, will lecture.
+
+http://crashcourse.ca                          Waterloo, Ontario, CANADA
+====================================
