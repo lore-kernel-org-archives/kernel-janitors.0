@@ -1,36 +1,24 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sun, 20 Apr 2008 11:09:35 +0000
-Subject: [PATCH] Generate a slightly more informative error msg for bad HZ.
-Message-Id: <alpine.LFD.1.00.0804200708290.6686@localhost.localdomain>
+From: "=?BIG5?B?tsCqWb7s?=" <r13b7jy542z@gmail.com>
+Date: Tue, 15 Apr 2008 04:06:04 +0000
+Subject: =?BIG5?B?vdDFVMCzpmGyecD0q0+k5LSpLKZopmik5Kv5pEek4q7R?=
+Message-Id: <c2e968d00804142106j3124c61ai901f1d695710a56d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+������?������������������������������������
 
-Signed-off-by: Robert P. J. Day <rpjday@crashcourse.ca>
+������SAM���������������������������G������������������-���w���������A���������M���_������
 
----
+http://tw.wrs.yahoo.com/_ylt���tUzKdIJARIZpkA7Chr1gt.;_ylu=X3oDMTExbzdzNmJvBHNlYwNzcgRwb3MDMQRjb2xvA3RwYwR2dGlkAwRxdANkcQ--/SIGb8f5rpa/EXP08317384/**http%3A//book.sam.com.tw/
 
-diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
-index e0b5b68..8f4aa72 100644
---- a/include/linux/jiffies.h
-+++ b/include/linux/jiffies.h
-@@ -36,7 +36,7 @@
- #elif HZ >= 6144 && HZ < 12288
- # define SHIFT_HZ	13
- #else
--# error You lose.
-+# error Invalid value of HZ.
- #endif
+���o���O���@���������������������K���O���}���������������G���������������R���������������x
+���{���b���������U���������e1,000���I���������U������(���������������������x������$1,000������)
 
- /* LATCH is used in the interval timer and ftape setup. */
+���������������n���X���M���������w������PO���W���������������a^.^
 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry:
-    Have classroom, will lecture.
+���������M���Q���R���������������H���]���w���������W���������M���_������^^
 
-http://crashcourse.ca                          Waterloo, Ontario, CANADA
-====================================
+���p���G���s���������W���������}���b���o���G���@book.sam.com.tw
+
+������������������������?������������������
+������������{.n���+���������������������+%���������������������������w������{.n���+���������z������������������+h���������������^n���r���������z���������h���������������&���������z������z������������+������+zf���������h���������~������������i���������������������������z_���������j:+v���������)���������m
