@@ -1,7 +1,7 @@
-From: "M. Asselstine" <asselsm@mcmaster.ca>
-Date: Wed, 16 Apr 2008 16:41:44 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Wed, 16 Apr 2008 16:55:16 +0000
 Subject: Re: cli()/sti() removal
-Message-Id: <919fe2b30804160941n7291691eqe474a402b71d7bb9@mail.gmail.com>
+Message-Id: <20080416165515.GN9191@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <919fe2b30804141238g45bd323er9929d54ff5dcfa8e@mail.gmail.com>
 In-Reply-To: <919fe2b30804141238g45bd323er9929d54ff5dcfa8e@mail.gmail.com>
@@ -10,96 +10,92 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 14, 2008 at 4:17 PM, Matthew Wilcox <matthew@wil.cx> wrote:
->
-> On Mon, Apr 14, 2008 at 03:38:27PM -0400, M. Asselstine wrote:
->  > Looking at Documentation/cli-sti-removal.txt and grepping for these
->  > macros in the kernel tree reveal that things are close to allowing
->  > this task to be completed. I would like to propose that the remainder
->  > of this work be completed, cleaning up documentation and code related
->  > to this deprecation. I am willing to do the work but just wanted to
->  > put a feeler out there to determine if there is any reason not to
->  > proceed. I also wanted to make sure there wasn't anyone else doing
->  > this already.
->
->  People who suggest this usually don't realise just how hard the problem
->  is.  Let's see how we're doing ...
->
-I definitely see the complexity and respect it. With some careful
-thought and guidance however do you not feel we can finish this up?
+On Wed, Apr 16, 2008 at 12:41:44PM -0400, M. Asselstine wrote:
+> I definitely see the complexity and respect it. With some careful
+> thought and guidance however do you not feel we can finish this up?
 
->  drivers/atm/nicstar.c:    save_flags(nsdsf); cli();\
->  drivers/atm/nicstar.c:    save_flags(nsdsf); cli();\
->  drivers/atm/nicstar.c:    save_flags(nsdsf); cli();\
->  drivers/isdn/hysdn/boardergo.c:               cli();          /* no further ints */
->  drivers/net/hamradio/dmascc.c:                cli();
->  drivers/net/tulip/xircom_tulip_cb.c:          cli();
->  drivers/net/tulip/xircom_tulip_cb.c:          cli();
->  drivers/net/tulip/xircom_tulip_cb.c:          save_flags(flags); cli();
->  drivers/net/tulip/xircom_tulip_cb.c:    cli();
->  include/asm-frv/system.h:     cli();                                  \
->
->  Wow.  That's a big improvement over where we were.  Just some of the
->  nastiest bits of the kernel still using it ;-)
->
->  ok ... the three occurrences in nicstar look like they can be deleted.
->  Replacing 'restore_flags(nsdsf);' with local_irq_restore(flags) would be
->  a nice touch, but to be honest the generic lockdep code we have these
->  days should do even better, so killing the nicstar NS_DEBUG_SPINLOCKS
->  code would be a good idea.
->
-I am thinking this is a good strategy. There is really no need for the
-NS_DEBUG_SPINLOCKS code as far as I can tell even any documentation
-for NS_DEBUG_SPINLOCKS use seems to of been pulled from the header.
+I do, now the task is so small ;-)
 
->  boardergo looks like it needs its locking reviewed.  It has the
->  card->hysdn_lock already, so I don't quite understand what the sti()
->  and cli() are doing in ergo_irq_bh()
+> >  ok ... the three occurrences in nicstar look like they can be deleted.
+> >  Replacing 'restore_flags(nsdsf);' with local_irq_restore(flags) would be
+> >  a nice touch, but to be honest the generic lockdep code we have these
+> >  days should do even better, so killing the nicstar NS_DEBUG_SPINLOCKS
+> >  code would be a good idea.
+> >
+> I am thinking this is a good strategy. There is really no need for the
+> NS_DEBUG_SPINLOCKS code as far as I can tell even any documentation
+> for NS_DEBUG_SPINLOCKS use seems to of been pulled from the header.
+
+We're in agreement then.  Please propose a patch.
+
+> >  boardergo looks like it needs its locking reviewed.  It has the
+> >  card->hysdn_lock already, so I don't quite understand what the sti()
+> >  and cli() are doing in ergo_irq_bh()
+> >
+> It looks like Thomas Gleixner and Amol Lad did the initial legwork
+> (2bd7e20e0d24325b0799544bc8105cc57cc8e2aa and
+> 0d9ba869e103d91d471146378ad85bf1fb8e74b4) but a bunch of sti() and one
+> cli() survived. This is going to be a tough one to finish as I do not
+> have any way to test it.
+
+I don't think anyone else does either.  It's going to require careful
+analysis of the driver to check they're simply obsolete.  It might be
+worth asking Thomas and Amol why they were left (it may be a simple
+oversight).
+
+> >  dmascc appears to be calling cli() while it's already in interrupt
+> >  context.  If so, it already has the register_lock and so this is
+> >  unnecessary.  Someone should dig into the driver to verify that this
+> >  is true.
 >
-It looks like Thomas Gleixner and Amol Lad did the initial legwork
-(2bd7e20e0d24325b0799544bc8105cc57cc8e2aa and
-0d9ba869e103d91d471146378ad85bf1fb8e74b4) but a bunch of sti() and one
-cli() survived. This is going to be a tough one to finish as I do not
-have any way to test it.
+> Upon examination the only existing cli()/sti() is found in
+> start_timer() which as you say is called only when we are already in
+> an interrupt (scc_isr()) which already has the register_lock with the
+> exception of one call to start_timer() in scc_send_packet() which
+> again already has the register_lock. So I think these instances will
+> be safe to remove.
 
->  dmascc appears to be calling cli() while it's already in interrupt
->  context.  If so, it already has the register_lock and so this is
->  unnecessary.  Someone should dig into the driver to verify that this
->  is true.
+Great!  Please send a patch.
+
+> >  xircom_tulip_cb also has a per-device spinlock.  Again, someone needs to
+> >  verify why the various places calling cli() aren't grabbing the spinlock.
 >
-Upon examination the only existing cli()/sti() is found in
-start_timer() which as you say is called only when we are already in
-an interrupt (scc_isr()) which already has the register_lock with the
-exception of one call to start_timer() in scc_send_packet() which
-again already has the register_lock. So I think these instances will
-be safe to remove.
+> This one looks like it was just neglected and the save_flags();cli()
+> were just never moved over to
+> spin_lock_irqsave()/spin_unlock_irqrestore(). Do you not think this
+> would be a straight forward translation? as it looks like many other
+> places in the kernel these were done with only compile testing.
 
->  xircom_tulip_cb also has a per-device spinlock.  Again, someone needs to
->  verify why the various places calling cli() aren't grabbing the spinlock.
->
-This one looks like it was just neglected and the save_flags();cli()
-were just never moved over to
-spin_lock_irqsave()/spin_unlock_irqrestore(). Do you not think this
-would be a straight forward translation? as it looks like many other
-places in the kernel these were done with only compile testing.
+Compile testing and a great deal of thinking.  For example, outl_CSR6() is
+called from xircom_init_one() a few lines before we call spin_lock_init(),
+so grabbing the spinlock in outl_CSR6() would cause a lockup.  Also, the
+device isn't open at this point, so the interrupt routine can't be
+called.
 
->  I actually have a card which I believe to be a xircom_tulip_cb.
->  Unfortunately, it's twice as tall as any cardbus slot I have in any
->  functioning computers here, so I can't even plug it in to check it.
->  I also note that there's a xircom_cb that appears to be replacing
->  xircom_tulip_cb, so maybe deleting xircom_tulip_cb is possible?
->
-I wouldn't even know where to start to propose this removal.
+But simply deleting 'cli()' might cause trouble when it's called from,
+for example xircom_tx_timeout().
 
-There are a few in sound/oss, would these be of interest or is this
-code maintained outside of the kernel?
+> There are a few in sound/oss, would these be of interest or is this
+> code maintained outside of the kernel?
 
-Regards,
-Mark
+I think you're wrong:
 
->  --
->  Intel are signing my paycheques ... these opinions are still mine
->  "Bill, look, we understand that you're interested in selling us this
->  operating system, but compare it to ours.  We can't possibly take such
->  a retrograde step."
->
+$ grep -wr cli sound
+sound/oss/dmabuf.c:/* No kernel lock - DMAbuf_activate_recording protected by global cli/sti */
+sound/oss/midibuf.c:                    /* yes, think the same, so I removed the cli() brackets 
+sound/oss/midibuf.c:                    /* yes removed the cli() brackets again
+sound/oss/midi_synth.c: cli(); 
+
+Initially, that looks like only one user, but examining the context:
+
+        /* save_flags(flags);
+        cli(); 
+        don't know against what irqhandler to protect*/
+
+it's actually commented out.  So I don't see any users in sound/oss.
+
+-- 
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
