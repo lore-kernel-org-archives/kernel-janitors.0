@@ -1,26 +1,150 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 29 Apr 2008 16:27:58 +0000
-Subject: Re: [revised PATCH] crypto: Correct kzalloc error test
-Message-Id: <20080429162758.GA21883@gondor.apana.org.au>
+From: Mark Asselstine <mark.asselstine@windriver.com>
+Date: Fri, 18 Apr 2008 14:49:38 +0000
+Subject: [PATCH] Removal of debug code containing deprecated calls to cli()/sti()
+Message-Id: <1208530178-8533-1-git-send-email-mark.asselstine@windriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1JqqUc-0005Rg-00@gondolin.me.apana.org.au> <Pine.LNX.4.58.0804291617210.1185@pc-041.diku.dk>
-In-Reply-To: <Pine.LNX.4.58.0804291617210.1185@pc-041.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Julia Lawall <julia@diku.dk>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-T24gVHVlLCBBcHIgMjksIDIwMDggYXQgMDQ6MTg6MDhQTSArMDIwMCwgSnVsaWEgTGF3YWxsIHdy
-b3RlOgo+IEZyb206IEp1bGlhIExhd2FsbCA8anVsaWFAZGlrdS5kaz4KPiAKPiBOb3JtYWxseSwg
-a3phbGxvYyByZXR1cm5zIE5VTEwgb3IgYSB2YWxpZCBwb2ludGVyIHZhbHVlLCBub3QgYSB2YWx1
-ZSB0byBiZQo+IHRlc3RlZCB1c2luZyBJU19FUlIuCj4gCj4gU2lnbmVkLW9mZi1ieTogSnVsaWEg
-TGF3YWxsIDxqdWxpYUBkaWt1LmRrPgoKUGF0Y2ggYXBwbGllZC4gIFRoYW5rcyBKdWxpYSEKLS0g
-ClZpc2l0IE9wZW5zd2FuIGF0IGh0dHA6Ly93d3cub3BlbnN3YW4ub3JnLwpFbWFpbDogSGVyYmVy
-dCBYdSB+e1BtVj5ISX59IDxoZXJiZXJ0QGdvbmRvci5hcGFuYS5vcmcuYXU+CkhvbWUgUGFnZTog
-aHR0cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvClBHUCBLZXk6IGh0dHA6Ly9nb25k
-b3IuYXBhbmEub3JnLmF1L35oZXJiZXJ0L3B1YmtleS50eHQKLS0KVG8gdW5zdWJzY3JpYmUgZnJv
-bSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIg
-aW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9y
-ZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5m
-by5odG1s
+Code within NS_DEBUG_SPINLOCKS contained deprecated cli()/sti() function calls.
+NS_DEBUG_SPINLOCKS and the associated code seems to be of little use these days
+so the strategy of removing this code rather then updating it to use spinlocks
+has been taken.
+
+Signed-off-by: Mark Asselstine <mark.asselstine@windriver.com>
+---
+ drivers/atm/nicstar.c |   72 -------------------------------------------------
+ drivers/atm/nicstar.h |   12 --------
+ 2 files changed, 0 insertions(+), 84 deletions(-)
+
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index 0c205b0..230ccc5 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -125,84 +125,12 @@
+ #define ATM_SKB(s) (&(s)->atm)
+ #endif
+ 
+-   /* Spinlock debugging stuff */
+-#ifdef NS_DEBUG_SPINLOCKS /* See nicstar.h */
+-#define ns_grab_int_lock(card,flags) \
+- do { \
+-    unsigned long nsdsf, nsdsf2; \
+-    local_irq_save(flags); \
+-    save_flags(nsdsf); cli();\
+-    if (nsdsf & (1<<9)) printk ("nicstar.c: ints %sabled -> enabled.\n", \
+-                                (flags)&(1<<9)?"en":"dis"); \
+-    if (spin_is_locked(&(card)->int_lock) && \
+-        (card)->cpu_int = smp_processor_id()) { \
+-       printk("nicstar.c: line %d (cpu %d) int_lock already locked at line %d (cpu %d)\n", \
+-              __LINE__, smp_processor_id(), (card)->has_int_lock, \
+-              (card)->cpu_int); \
+-       printk("nicstar.c: ints were %sabled.\n", ((flags)&(1<<9)?"en":"dis")); \
+-    } \
+-    if (spin_is_locked(&(card)->res_lock) && \
+-        (card)->cpu_res = smp_processor_id()) { \
+-       printk("nicstar.c: line %d (cpu %d) res_lock locked at line %d (cpu %d)(trying int)\n", \
+-              __LINE__, smp_processor_id(), (card)->has_res_lock, \
+-              (card)->cpu_res); \
+-       printk("nicstar.c: ints were %sabled.\n", ((flags)&(1<<9)?"en":"dis")); \
+-    } \
+-    spin_lock_irq(&(card)->int_lock); \
+-    (card)->has_int_lock = __LINE__; \
+-    (card)->cpu_int = smp_processor_id(); \
+-    restore_flags(nsdsf); } while (0)
+-#define ns_grab_res_lock(card,flags) \
+- do { \
+-    unsigned long nsdsf, nsdsf2; \
+-    local_irq_save(flags); \
+-    save_flags(nsdsf); cli();\
+-    if (nsdsf & (1<<9)) printk ("nicstar.c: ints %sabled -> enabled.\n", \
+-                                (flags)&(1<<9)?"en":"dis"); \
+-    if (spin_is_locked(&(card)->res_lock) && \
+-        (card)->cpu_res = smp_processor_id()) { \
+-       printk("nicstar.c: line %d (cpu %d) res_lock already locked at line %d (cpu %d)\n", \
+-              __LINE__, smp_processor_id(), (card)->has_res_lock, \
+-              (card)->cpu_res); \
+-       printk("nicstar.c: ints were %sabled.\n", ((flags)&(1<<9)?"en":"dis")); \
+-    } \
+-    spin_lock_irq(&(card)->res_lock); \
+-    (card)->has_res_lock = __LINE__; \
+-    (card)->cpu_res = smp_processor_id(); \
+-    restore_flags(nsdsf); } while (0)
+-#define ns_grab_scq_lock(card,scq,flags) \
+- do { \
+-    unsigned long nsdsf, nsdsf2; \
+-    local_irq_save(flags); \
+-    save_flags(nsdsf); cli();\
+-    if (nsdsf & (1<<9)) printk ("nicstar.c: ints %sabled -> enabled.\n", \
+-                                (flags)&(1<<9)?"en":"dis"); \
+-    if (spin_is_locked(&(scq)->lock) && \
+-        (scq)->cpu_lock = smp_processor_id()) { \
+-       printk("nicstar.c: line %d (cpu %d) this scq_lock already locked at line %d (cpu %d)\n", \
+-              __LINE__, smp_processor_id(), (scq)->has_lock, \
+-              (scq)->cpu_lock); \
+-       printk("nicstar.c: ints were %sabled.\n", ((flags)&(1<<9)?"en":"dis")); \
+-    } \
+-    if (spin_is_locked(&(card)->res_lock) && \
+-        (card)->cpu_res = smp_processor_id()) { \
+-       printk("nicstar.c: line %d (cpu %d) res_lock locked at line %d (cpu %d)(trying scq)\n", \
+-              __LINE__, smp_processor_id(), (card)->has_res_lock, \
+-              (card)->cpu_res); \
+-       printk("nicstar.c: ints were %sabled.\n", ((flags)&(1<<9)?"en":"dis")); \
+-    } \
+-    spin_lock_irq(&(scq)->lock); \
+-    (scq)->has_lock = __LINE__; \
+-    (scq)->cpu_lock = smp_processor_id(); \
+-    restore_flags(nsdsf); } while (0)
+-#else /* !NS_DEBUG_SPINLOCKS */
+ #define ns_grab_int_lock(card,flags) \
+         spin_lock_irqsave(&(card)->int_lock,(flags))
+ #define ns_grab_res_lock(card,flags) \
+         spin_lock_irqsave(&(card)->res_lock,(flags))
+ #define ns_grab_scq_lock(card,scq,flags) \
+         spin_lock_irqsave(&(scq)->lock,flags)
+-#endif /* NS_DEBUG_SPINLOCKS */
+ 
+ 
+ /* Function declarations ******************************************************/
+diff --git a/drivers/atm/nicstar.h b/drivers/atm/nicstar.h
+index 5997bcb..6010e3d 100644
+--- a/drivers/atm/nicstar.h
++++ b/drivers/atm/nicstar.h
+@@ -28,8 +28,6 @@
+ 
+ /* Options ********************************************************************/
+ 
+-#undef NS_DEBUG_SPINLOCKS
+-
+ #define NS_MAX_CARDS 4		/* Maximum number of NICStAR based cards
+ 				   controlled by the device driver. Must
+                                    be <= 5 */
+@@ -721,10 +719,6 @@ typedef struct scq_info
+    wait_queue_head_t scqfull_waitq;
+    volatile char full;			/* SCQ full indicator */
+    spinlock_t lock;			/* SCQ spinlock */
+-#ifdef NS_DEBUG_SPINLOCKS
+-   volatile long has_lock;
+-   volatile int cpu_lock;
+-#endif /* NS_DEBUG_SPINLOCKS */
+ } scq_info;
+ 
+ 
+@@ -810,12 +804,6 @@ typedef struct ns_dev
+    unsigned intcnt;			/* Interrupt counter */
+    spinlock_t int_lock;		/* Interrupt lock */
+    spinlock_t res_lock;		/* Card resource lock */
+-#ifdef NS_DEBUG_SPINLOCKS
+-   volatile long has_int_lock;
+-   volatile int cpu_int;
+-   volatile long has_res_lock;
+-   volatile int cpu_res;
+-#endif /* NS_DEBUG_SPINLOCKS */
+ } ns_dev;
+ 
+ 
+-- 
+1.5.4.3
+
