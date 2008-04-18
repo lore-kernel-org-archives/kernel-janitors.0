@@ -1,12 +1,15 @@
 From: Mark Asselstine <mark.asselstine@windriver.com>
-Date: Fri, 18 Apr 2008 14:49:38 +0000
+Date: Fri, 18 Apr 2008 14:51:02 +0000
 Subject: [PATCH] Removal of debug code containing deprecated calls to cli()/sti()
-Message-Id: <1208530178-8533-1-git-send-email-mark.asselstine@windriver.com>
+Message-Id: <1208530262-8555-1-git-send-email-mark.asselstine@windriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <>
+In-Reply-To: <>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: chas@cmf.nrl.navy.mil, netdev@vger.kernel.org, asselsm@gmail.com, Mark Asselstine <mark.asselstine@windriver.com>
 
 Code within NS_DEBUG_SPINLOCKS contained deprecated cli()/sti() function calls.
 NS_DEBUG_SPINLOCKS and the associated code seems to be of little use these days
