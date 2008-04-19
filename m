@@ -1,16 +1,15 @@
 From: Matthew Wilcox <matthew@wil.cx>
-Date: Sat, 19 Apr 2008 14:24:44 +0000
+Date: Sat, 19 Apr 2008 14:49:52 +0000
 Subject: Re: script to find incorrect tests on unsigneds
-Message-Id: <20080419142444.GL20637@parisc-linux.org>
+Message-Id: <20080419144952.GM20637@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4808C90A.5040600@tiscali.nl>
-	<Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0804182101200.14832-QfmoRoYWmW9knbxzx/v8hQ@public.gmane.org>
+References: <4808C90A.5040600@tiscali.nl> <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Ben Dooks <ben-Y5A6D6n0/KfQXOPxS62xeg@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Roel Kluin <12o3l-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, kernelnewbies-bounce-qDhp9YYfzQpg9hUCZPvPmw@public.gmane.org
+To: Julia Lawall <julia@diku.dk>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Cc: Roel Kluin <12o3l@tiscali.nl>, kernel-janitors@vger.kernel.org, kernelnewbies-bounce@nl.linux.org
 
 On Fri, Apr 18, 2008 at 09:08:55PM +0200, Julia Lawall wrote:
 > I found 63 occurrences of this problem with the following semantic match
@@ -30,41 +29,148 @@ On Fri, Apr 18, 2008 at 09:08:55PM +0200, Julia Lawall wrote:
 > The output is actually generated with diff, but I converted the -s to *s 
 > to avoid confusion.
 
-> diff -u -p a/drivers/spi/spi_s3c24xx.c b/drivers/spi/spi_s3c24xx.c
-> *** a/drivers/spi/spi_s3c24xx.c 2008-03-12 14:13:14.000000000 +0100
-> @@ -127,7 +127,7 @@ static int s3c24xx_spi_setupxfer(struct 
+> diff -u -p a/fs/ext3/inode.c b/fs/ext3/inode.c
+> *** a/fs/ext3/inode.c 2008-03-12 14:13:14.000000000 +0100
+> @@ -1263,7 +1263,7 @@ static int ext3_ordered_write_end(struct
+>  			EXT3_I(inode)->i_disksize = new_i_size;
+>  		copied = ext3_generic_write_end(file, mapping, pos, len, copied,
+>  							page, fsdata);
+> *		if (copied < 0)
+>  			ret = copied;
+>  	}
+>  	ret2 = ext3_journal_stop(handle);
+> @@ -1291,7 +1291,7 @@ static int ext3_writeback_write_end(stru
 >  
->  	div = (div / 2) - 1;
+>  	copied = ext3_generic_write_end(file, mapping, pos, len, copied,
+>  							page, fsdata);
+> *	if (copied < 0)
+>  		ret = copied;
 >  
-> *	if (div < 0)
->  		div = 1;
+>  	ret2 = ext3_journal_stop(handle);
+> diff -u -p a/fs/ext4/inode.c b/fs/ext4/inode.c
+> *** a/fs/ext4/inode.c 2008-03-12 14:13:14.000000000 +0100
+> @@ -1303,7 +1303,7 @@ static int ext4_ordered_write_end(struct
+>  			EXT4_I(inode)->i_disksize = new_i_size;
+>  		copied = ext4_generic_write_end(file, mapping, pos, len, copied,
+>  							page, fsdata);
+> *		if (copied < 0)
+>  			ret = copied;
+>  	}
+>  	ret2 = ext4_journal_stop(handle);
+> @@ -1331,7 +1331,7 @@ static int ext4_writeback_write_end(stru
 >  
->  	if (div > 255)
+>  	copied = ext4_generic_write_end(file, mapping, pos, len, copied,
+>  							page, fsdata);
+> *	if (copied < 0)
+>  		ret = copied;
+>  
+>  	ret2 = ext4_journal_stop(handle);
 
-Since this one's always in the range 0-255, it could probably be made
-signed, but it's just as easy to make it work unsigned.
+Fix comparisons of an unsigned int against 0
+
+It's not really feasible to change 'copied' into a signed int, and while
+we could cast it for the purposes of this comparison, I think this
+rearrangement of the tests is actually clearer than the original.
 
 Reported-by: Julia Lawall <julia@diku.dk>
 Signed-off-by: Matthew Wilcox <willy@linux.intel.com>
 
-diff --git a/drivers/spi/spi_s3c24xx.c b/drivers/spi/spi_s3c24xx.c
-index b7476b8..b398cc9 100644
---- a/drivers/spi/spi_s3c24xx.c
-+++ b/drivers/spi/spi_s3c24xx.c
-@@ -125,10 +125,10 @@ static int s3c24xx_spi_setupxfer(struct spi_device *spi,
- 	/* is clk = pclk / (2 * (pre+1)), or is it
- 	 *    clk = (pclk * 2) / ( pre + 1) */
+diff --git a/fs/ext3/inode.c b/fs/ext3/inode.c
+index eb95670..60f504b 100644
+--- a/fs/ext3/inode.c
++++ b/fs/ext3/inode.c
+@@ -1261,18 +1261,16 @@ static int ext3_ordered_write_end(struct file *file,
+ 		new_i_size = pos + copied;
+ 		if (new_i_size > EXT3_I(inode)->i_disksize)
+ 			EXT3_I(inode)->i_disksize = new_i_size;
+-		copied = ext3_generic_write_end(file, mapping, pos, len, copied,
++		ret = ext3_generic_write_end(file, mapping, pos, len, copied,
+ 							page, fsdata);
+-		if (copied < 0)
+-			ret = copied;
+ 	}
+ 	ret2 = ext3_journal_stop(handle);
+-	if (!ret)
++	if (ret >= 0 && ret2)
+ 		ret = ret2;
+ 	unlock_page(page);
+ 	page_cache_release(page);
  
--	div = (div / 2) - 1;
-+	div /= 2;
+-	return ret ? ret : copied;
++	return ret;
+ }
  
--	if (div < 0)
--		div = 1;
-+	if (div > 0)
-+		div -= 1;
+ static int ext3_writeback_write_end(struct file *file,
+@@ -1289,18 +1287,15 @@ static int ext3_writeback_write_end(struct file *file,
+ 	if (new_i_size > EXT3_I(inode)->i_disksize)
+ 		EXT3_I(inode)->i_disksize = new_i_size;
  
- 	if (div > 255)
- 		div = 255;
+-	copied = ext3_generic_write_end(file, mapping, pos, len, copied,
++	ret = ext3_generic_write_end(file, mapping, pos, len, copied,
+ 							page, fsdata);
+-	if (copied < 0)
+-		ret = copied;
+-
+ 	ret2 = ext3_journal_stop(handle);
+-	if (!ret)
++	if (ret >= 0 && ret2)
+ 		ret = ret2;
+ 	unlock_page(page);
+ 	page_cache_release(page);
+ 
+-	return ret ? ret : copied;
++	return ret;
+ }
+ 
+ static int ext3_journalled_write_end(struct file *file,
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 945cbf6..69b29c6 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1301,18 +1301,16 @@ static int ext4_ordered_write_end(struct file *file,
+ 		new_i_size = pos + copied;
+ 		if (new_i_size > EXT4_I(inode)->i_disksize)
+ 			EXT4_I(inode)->i_disksize = new_i_size;
+-		copied = ext4_generic_write_end(file, mapping, pos, len, copied,
++		ret = ext4_generic_write_end(file, mapping, pos, len, copied,
+ 							page, fsdata);
+-		if (copied < 0)
+-			ret = copied;
+ 	}
+ 	ret2 = ext4_journal_stop(handle);
+-	if (!ret)
++	if (ret >= 0 && ret2)
+ 		ret = ret2;
+ 	unlock_page(page);
+ 	page_cache_release(page);
+ 
+-	return ret ? ret : copied;
++	return ret;
+ }
+ 
+ static int ext4_writeback_write_end(struct file *file,
+@@ -1329,18 +1327,16 @@ static int ext4_writeback_write_end(struct file *file,
+ 	if (new_i_size > EXT4_I(inode)->i_disksize)
+ 		EXT4_I(inode)->i_disksize = new_i_size;
+ 
+-	copied = ext4_generic_write_end(file, mapping, pos, len, copied,
++	ret = ext4_generic_write_end(file, mapping, pos, len, copied,
+ 							page, fsdata);
+-	if (copied < 0)
+-		ret = copied;
+ 
+ 	ret2 = ext4_journal_stop(handle);
+-	if (!ret)
++	if (ret >= 0 && ret2)
+ 		ret = ret2;
+ 	unlock_page(page);
+ 	page_cache_release(page);
+ 
+-	return ret ? ret : copied;
++	return ret;
+ }
+ 
+ static int ext4_journalled_write_end(struct file *file,
 
 -- 
 Intel are signing my paycheques ... these opinions are still mine
