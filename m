@@ -1,29 +1,82 @@
-From: "=?BIG5?B?u6/C16X6?=" <elc7r3a7iv@gmail.com>
-Date: Tue, 22 Apr 2008 17:31:36 +0000
-Subject: =?BIG5?B?ofWxesHZqFOms6RArdOxTcTdqrql+Ld+uvSvuLbcoUiiSg==?=
-Message-Id: <2efc9f300804221031k63a8e09ejdd4198f4986748cd@mail.gmail.com>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sat, 19 Apr 2008 14:17:52 +0000
+Subject: u14-3f incorrect unsigned test
+Message-Id: <20080419141752.GK20637@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <4808C90A.5040600@tiscali.nl> <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <julia@diku.dk>, linux-scsi@vger.kernel.org
+Cc: Roel Kluin <12o3l@tiscali.nl>, kernel-janitors@vger.kernel.org, kernelnewbies-bounce@nl.linux.org
 
-2008-4-23  -  1:31
+On Fri, Apr 18, 2008 at 09:08:55PM +0200, Julia Lawall wrote:
+> I found 63 occurrences of this problem with the following semantic match
+> (http://www.emn.fr/x-info/coccinelle/):
+> 
+> @@ unsigned int i; @@
+> 
+> * i < 0
+> 
+> I looked through all of the results by hand, and they all seem to be 
+> problems.  In many cases, it seems like the variable should not be 
+> unsigned as it is used to hold the return value of a function that might 
+> return a negative error code, but I haven't looked into this in detail.
+> 
+> In the output below, the lines that begin with a single start contain a 
+> test of whether an unsigned variable or structure field is less than 0.
+> The output is actually generated with diff, but I converted the -s to *s 
+> to avoid confusion.
 
-���s���������������������������������]���p
+> diff -u -p a/drivers/scsi/u14-34f.c b/drivers/scsi/u14-34f.c
+> *** a/drivers/scsi/u14-34f.c 2008-03-12 14:13:14.000000000 +0100
+> @@ -1126,7 +1126,7 @@ static void map_dma(unsigned int i, unsi
+>  
+>     if (scsi_bufflen(SCpnt)) {
+>  	   count = scsi_dma_map(SCpnt);
+> *	   BUG_ON(count < 0);
+>  
+>  	   scsi_for_each_sg(SCpnt, sg, count, k) {
+>  		   cpp->sglist[k].address = H2DEV(sg_dma_address(sg));
 
-���������������������v���������G���������������������C���������������p���������������A���������O���s���������������j������������
+----
 
-���������������{���b���������X���������~���������H���������������]���t���e���x���������������������u+���������x���������z���{������
+u14-34f: Correct unsigned comparison against 0
 
-���������������������q���M���������������u���n$24,900  (���b���e���������~100MB���������������y���q������������������������)
+scsi_dma_map() can return an error.  The current situation of BUG_ON for
+an out of memory condition is far from ideal, but it's better than the
+current situation where running out of memory will lead to the driver
+trying to walk through 4 billion sg entries.
 
-���������������������������������u���O���������������A���������O���z���������~���������J���f
+Discovered-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Matthew Wilcox <willy@linux.intel.com>
 
-���������������n���������������~���������������������������Y���������������s���������t���������O���������������n������
+diff --git a/drivers/scsi/u14-34f.c b/drivers/scsi/u14-34f.c
+index 58d7eee..11df071 100644
+--- a/drivers/scsi/u14-34f.c
++++ b/drivers/scsi/u14-34f.c
+@@ -1110,7 +1110,7 @@ static int u14_34f_detect(struct scsi_host_template *tpnt) {
+ 
+ static void map_dma(unsigned int i, unsigned int j) {
+    unsigned int data_len = 0;
+-   unsigned int k, count, pci_dir;
++   unsigned int k, pci_dir;
+    struct scatterlist *sg;
+    struct mscp *cpp;
+    struct scsi_cmnd *SCpnt;
+@@ -1125,7 +1125,7 @@ static void map_dma(unsigned int i, unsigned int j) {
+    cpp->sense_len = SCSI_SENSE_BUFFERSIZE;
+ 
+    if (scsi_bufflen(SCpnt)) {
+-	   count = scsi_dma_map(SCpnt);
++	   int count = scsi_dma_map(SCpnt);
+ 	   BUG_ON(count < 0);
+ 
+ 	   scsi_for_each_sg(SCpnt, sg, count, k) {
 
-���������~���������������������~���������������������A���������y���z������������������������������
-
-���������������s���������������N���z���������������Q
-
-���w���������������q���������������������M���������G0*9*8*0*1*1*9*8*1*2
-
-ZzfICG22RItm
-������������{.n���+���������������������+%���������������������������w������{.n���+���������z������������������+h���������������^n���r���������z���������h���������������&���������z������z������������+������+zf���������h���������~������������i���������������������������z_���������j:+v���������)���������m
+-- 
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
