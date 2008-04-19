@@ -1,7 +1,7 @@
-From: walter harms <WHarms@bfs.de>
-Date: Sat, 19 Apr 2008 13:29:53 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sat, 19 Apr 2008 13:43:16 +0000
 Subject: Re: script to find incorrect tests on unsigneds
-Message-Id: <4809F3D1.7040606@bfs.de>
+Message-Id: <20080419134316.GH20637@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4808C90A.5040600@tiscali.nl>
 In-Reply-To: <4808C90A.5040600@tiscali.nl>
@@ -10,67 +10,35 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-i guess the idea of using unsigned int = -1 is to set all bit.
-so you do not need something linux =UINT_MAX. That would fail if someone
-changes int to long and not UINT_MAX.
-
-IMHO the use of 'result' is not need. snd_sbdsp_get_byte will return int
-i am worried because snd_sbdsp_get_byte() may return -ENODEV. what will
-short do and why ?
-
-maybe the autor wants this (not tested):
-
-
-static int snd_sbdsp_version(sb_t * chip)
-{
-	int major,minor;
-	if ( snd_sbdsp_command(chip, SB_DSP_GET_VERSION) =0)
-	 return -ENODEV;
-
-        major=snd_sbdsp_get_byte(chip) ;
-	if( major<0)
-		return -ENODEV;
-
-	minor=snd_sbdsp_get_byte(chip) ;
-	if( minor <0)
-		return -ENODEV;
-
-	return (major<<8)|minor ;
-
-}
-
-btw: is ANYONE using sb isa card these days ?
-
-re,
- wh
-
-
-
-Julia Lawall wrote:
-> Does the initialization of result in the following code serve any purpose?
+On Fri, Apr 18, 2008 at 09:08:55PM +0200, Julia Lawall wrote:
+> I found 63 occurrences of this problem with the following semantic match
+> (http://www.emn.fr/x-info/coccinelle/):
 > 
-> sound/isa/sb/sb_common.c:
+> @@ unsigned int i; @@
 > 
->  static int snd_sbdsp_version(struct snd_sb * chip)
->  {
->         unsigned int result = -ENODEV;
-> 
->         snd_sbdsp_command(chip, SB_DSP_GET_VERSION);
->         result = (short) snd_sbdsp_get_byte(chip) << 8;
-> 
-> If result is unsigned, its value will never be -ENODEV, and anyway the 
-> value is overwritten before it is ever used.
-> 
-> There are a couple of other cases like this.  There are also 
-> initializations of unsigned variables to -1, which seem prevalent 
-> enough that perhaps they serve some purpose.
-> 
-> julia
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+> * i < 0
+
+Could you also look for unsigned long?
+
+> I looked through all of the results by hand, and they all seem to be 
+> problems.  In many cases, it seems like the variable should not be 
+> unsigned as it is used to hold the return value of a function that might 
+> return a negative error code, but I haven't looked into this in detail.
+
+The problem will be if the variable is supposed to be unsigned in some
+uses and signed in others.  The IS_ERR_VALUE() macro from linux/err.h
+may be useful for this.
+
+> In the output below, the lines that begin with a single start contain a 
+> test of whether an unsigned variable or structure field is less than 0.
+> The output is actually generated with diff, but I converted the -s to *s 
+> to avoid confusion.
+
+I'll respond to some of these, cc'ing the appropriate people.  Thanks
+for doing this.
+
+-- 
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
