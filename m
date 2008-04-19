@@ -1,50 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 20 Apr 2008 00:59:13 +0000
-Subject: Re: esp_scsi incorrect unsigned test
-Message-Id: <20080419.175913.166084026.davem@davemloft.net>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sat, 19 Apr 2008 14:58:13 +0000
+Subject: ehci tests unsigned variables against 0
+Message-Id: <20080419145812.GN20637@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
-	<20080419140555.GJ20637@parisc-linux.org>
-	<1208614598.3280.11.camel@localhost.localdomain>
-In-Reply-To: <1208614598.3280.11.camel@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@HansenPartnership.com
-Cc: matthew@wil.cx, julia@diku.dk, linux-scsi@vger.kernel.org, 12o3l@tiscali.nl, kernel-janitors@vger.kernel.org, kernelnewbies-bounce@nl.linux.org
+To: kernel-janitors@vger.kernel.org
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Date: Sat, 19 Apr 2008 09:16:38 -0500
+On Fri, Apr 18, 2008 at 09:08:55PM +0200, Julia Lawall wrote:
+> I found 63 occurrences of this problem with the following semantic match
+> (http://www.emn.fr/x-info/coccinelle/):
+> 
+> @@ unsigned int i; @@
+> 
+> * i < 0
+> 
+> I looked through all of the results by hand, and they all seem to be 
+> problems.  In many cases, it seems like the variable should not be 
+> unsigned as it is used to hold the return value of a function that might 
+> return a negative error code, but I haven't looked into this in detail.
+> 
+> In the output below, the lines that begin with a single start contain a 
+> test of whether an unsigned variable or structure field is less than 0.
+> The output is actually generated with diff, but I converted the -s to *s 
+> to avoid confusion.
 
-> It look fine to me ... although an alternative (and possibly simpler)
-> fix would just be to remove the unsigned from the two residue
-> definitions in the struct.
+> diff -u -p a/drivers/usb/host/ehci-dbg.c b/drivers/usb/host/ehci-dbg.c
+> *** a/drivers/usb/host/ehci-dbg.c 2008-03-12 14:13:14.000000000 +0100
+> @@ -454,7 +454,7 @@ static void qh_lines (
+>  				(scratch >> 16) & 0x7fff,
+>  				scratch,
+>  				td->urb);
+> *		if (temp < 0)
+>  			temp = 0;
+>  		else if (size < temp)
+>  			temp = size;
+> @@ -465,7 +465,7 @@ static void qh_lines (
+>  	}
+>  
+>  	temp = snprintf (next, size, "\n");
+> *	if (temp < 0)
+>  		temp = 0;
+>  	else if (size < temp)
+>  		temp = size;
 
-I think that's the better approach too.  James, please
-apply.
+These tests will never trigger and should simply be removed.  Linux's
+kernel snprintf function conforms to C99 and never returns 0.
 
-esp_scsi: Make cur_residue and tot_residue signed.
-
-Many of the overflow checks test whether the value has
-gone negative, and we want to retain such checks.
-
-Reported by Julia Lawall.
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
-
-diff --git a/drivers/scsi/esp_scsi.h b/drivers/scsi/esp_scsi.h
-index d5576d5..9367a88 100644
---- a/drivers/scsi/esp_scsi.h
-+++ b/drivers/scsi/esp_scsi.h
-@@ -240,9 +240,9 @@ struct esp_cmd_priv {
- 		int		num_sg;
- 	} u;
- 
--	unsigned int		cur_residue;
-+	int			cur_residue;
- 	struct scatterlist	*cur_sg;
--	unsigned int		tot_residue;
-+	int			tot_residue;
- };
- #define ESP_CMD_PRIV(CMD)	((struct esp_cmd_priv *)(&(CMD)->SCp))
- 
+-- 
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
