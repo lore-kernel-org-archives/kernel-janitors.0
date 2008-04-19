@@ -1,44 +1,90 @@
-From: "M. Asselstine" <asselsm@mcmaster.ca>
-Date: Mon, 28 Apr 2008 18:41:48 +0000
-Subject: Re: cli()/sti() removal
-Message-Id: <919fe2b30804281141l403dfa86gb9d5b3c989d08b4d@mail.gmail.com>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sat, 19 Apr 2008 14:05:56 +0000
+Subject: esp_scsi incorrect unsigned test
+Message-Id: <20080419140555.GJ20637@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <919fe2b30804141238g45bd323er9929d54ff5dcfa8e@mail.gmail.com>
-In-Reply-To: <919fe2b30804141238g45bd323er9929d54ff5dcfa8e@mail.gmail.com>
+References: <4808C90A.5040600@tiscali.nl> <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0804182101200.14832@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, David Miller <davem@davemloft.net>, linux-scsi@vger.kernel.org
+Cc: Roel Kluin <12o3l@tiscali.nl>, kernel-janitors@vger.kernel.org, kernelnewbies-bounce@nl.linux.org
 
-On Wed, Apr 16, 2008 at 1:41 PM, M. Asselstine <asselsm@mcmaster.ca> wrote:
-> On Wed, Apr 16, 2008 at 12:55 PM, Matthew Wilcox <matthew@wil.cx> wrote:
-[...]
->  >  > >  boardergo looks like it needs its locking reviewed.  It has the
->  >  > >  card->hysdn_lock already, so I don't quite understand what the sti()
->  >  > >  and cli() are doing in ergo_irq_bh()
->  >  > >
->  >  > It looks like Thomas Gleixner and Amol Lad did the initial legwork
->  >  > (2bd7e20e0d24325b0799544bc8105cc57cc8e2aa and
->  >  > 0d9ba869e103d91d471146378ad85bf1fb8e74b4) but a bunch of sti() and one
->  >  > cli() survived. This is going to be a tough one to finish as I do not
->  >  > have any way to test it.
->  >
->  >  I don't think anyone else does either.  It's going to require careful
->  >  analysis of the driver to check they're simply obsolete.  It might be
->  >  worth asking Thomas and Amol why they were left (it may be a simple
->  >  oversight).
->  Yep a simple email to them might provide an answer or at minimum some insight.
->
-I have analyzed this driver for more time that I am willing to admit
-(thankfully my EeePC allows me to spend this time while in transit on
-the bus). I do not see any use for the cli()/sit() calls in the bottom
-half handler as the register IO is protected by the spinlock and
-somewhat by card->hw_lock. And as for the other three sti() calls
-found in the various board bringup functions I also see no need as
-there is no matching disabling of interrupts anywhere in the driver. I
-really wish I had access to this hardware so I could cook up a patch
-and try things out.
+On Fri, Apr 18, 2008 at 09:08:55PM +0200, Julia Lawall wrote:
+> I found 63 occurrences of this problem with the following semantic match
+> (http://www.emn.fr/x-info/coccinelle/):
+> 
+> @@ unsigned int i; @@
+> 
+> * i < 0
+> 
+> I looked through all of the results by hand, and they all seem to be 
+> problems.  In many cases, it seems like the variable should not be 
+> unsigned as it is used to hold the return value of a function that might 
+> return a negative error code, but I haven't looked into this in detail.
+> 
+> In the output below, the lines that begin with a single start contain a 
+> test of whether an unsigned variable or structure field is less than 0.
+> The output is actually generated with diff, but I converted the -s to *s 
+> to avoid confusion.
 
-Mark
+> diff -u -p a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
+> *** a/drivers/scsi/esp_scsi.c 2008-03-12 14:13:14.000000000 +0100
+> @@ -380,7 +380,7 @@ static void esp_advance_dma(struct esp *
+>  
+>  	p->cur_residue -= len;
+>  	p->tot_residue -= len;
+> *	if (p->cur_residue < 0 || p->tot_residue < 0) {
+>  		printk(KERN_ERR PFX "esp%d: Data transfer overflow.\n",
+>  		       esp->host->unique_id);
+>  		printk(KERN_ERR PFX "esp%d: cur_residue[%d] tot_residue[%d] "
 
-[...]
+This is clearly buggy.  A residue is, though, inherently unsigned, so I
+don't think we should change the type of the variable.  Rather, we
+should test it before subtraction.  Dave, what do you think?
+
+----
+
+Fix ESP data transfer overflow checks
+
+The current code attempts to detect data transfer overflow by checking
+whether an unsigned variable is negative.  Instead, we should
+compare the two variables before subtracting them.
+
+Reported-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Matthew Wilcox <willy@linux.intel.com>
+
+diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
+index bfdee59..b5e8a94 100644
+--- a/drivers/scsi/esp_scsi.c
++++ b/drivers/scsi/esp_scsi.c
+@@ -378,9 +378,7 @@ static void esp_advance_dma(struct esp *esp, struct esp_cmd_entry *ent,
+ 		return;
+ 	}
+ 
+-	p->cur_residue -= len;
+-	p->tot_residue -= len;
+-	if (p->cur_residue < 0 || p->tot_residue < 0) {
++	if (unlikely(p->cur_residue < len || p->tot_residue < len)) {
+ 		printk(KERN_ERR PFX "esp%d: Data transfer overflow.\n",
+ 		       esp->host->unique_id);
+ 		printk(KERN_ERR PFX "esp%d: cur_residue[%d] tot_residue[%d] "
+@@ -389,7 +387,11 @@ static void esp_advance_dma(struct esp *esp, struct esp_cmd_entry *ent,
+ 		       p->cur_residue, p->tot_residue, len);
+ 		p->cur_residue = 0;
+ 		p->tot_residue = 0;
++	} else {
++		p->cur_residue -= len;
++		p->tot_residue -= len;
+ 	}
++
+ 	if (!p->cur_residue && p->tot_residue) {
+ 		p->cur_sg++;
+ 		p->cur_residue = sg_dma_len(p->cur_sg);
+
+-- 
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
