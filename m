@@ -1,41 +1,46 @@
-From: "Chris Miller" <lordsauronthegreat@gmail.com>
-Date: Fri, 18 Apr 2008 03:20:46 +0000
-Subject: Re: Wiki Migration Pending
-Message-Id: <e5a3e9ac0804172020h3f0d2e01vaf916cfdbe49d99c@mail.gmail.com>
+From: Mark Asselstine <mark.asselstine@windriver.com>
+Date: Mon, 21 Apr 2008 19:49:10 +0000
+Subject: [PATCH] Remove unneeded and deprecated cli()/sti() calls.
+Message-Id: <1208807350-10618-1-git-send-email-mark.asselstine@windriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e5a3e9ac0804171429v402e5bbbqc94749b11d192bc2@mail.gmail.com>
-In-Reply-To: <e5a3e9ac0804171429v402e5bbbqc94749b11d192bc2@mail.gmail.com>
+References: <>
+In-Reply-To: <>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: netdev@vger.kernel.org, asselsm@gmail.com, klaus.kudielka@ieee.org, linux-hams@vger.kernel.org, Mark Asselstine <mark.asselstine@windriver.com>
 
-On Thu, Apr 17, 2008 at 6:38 PM, Matthew Wilcox <matthew@wil.cx> wrote:
-> On Thu, Apr 17, 2008 at 02:29:22PM -0700, Chris Miller wrote:
->  > I am thinking about not installing the wiki on the VPS system, since
->  > it seems to do a good job of collecting spam.  I will, however, have a
->  > tool called GForge(1) on the site.  I will be using it to track my own
->  > projects, though kernel janitors are perfectly welcome to use it if
->  > you want.  It has a built-in wiki, though it also has a tracking
->  > system (for bug reports and to-do list items), which I would think
->  > would make it a better tool for the job.  Unfortunately, I haven't
->  > been able to do hardly any kernel hacking, so I'm not very qualified
->  > at all to make that kind of a decision.
->  >
->  > If you're really adverse to the idea of using something other than
->  > MediaWiki I can try to install it on the new VPS system, that's no
->  > problem either.  It's just a bit harder for me, since this is the
->  > first time I've really had to configure all this software from the
->  > ground up.
->
->  Since there's a mediawiki on kernel.org now, perhaps we should migrate
->  to using that instead.  Any thoughts?
+These cli()/sti() calls are made in start_timer() and are therefor
+redundant since the register_lock is now used to protect register
+io from within scc_isr() and write_scc() (where all calls to
+start_timer() originate).
 
-That's actually a very good idea.  The kernel site can deliver far
-better uptime than my one-man IT circus can ever hope to provide.  I
-can provide any migration dumps you need for the migration.
+Signed-off-by: Mark Asselstine <mark.asselstine@windriver.com>
+---
+ drivers/net/hamradio/dmascc.c |    3 ---
+ 1 files changed, 0 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/hamradio/dmascc.c b/drivers/net/hamradio/dmascc.c
+index e04bf99..0b94833 100644
+--- a/drivers/net/hamradio/dmascc.c
++++ b/drivers/net/hamradio/dmascc.c
+@@ -1083,15 +1083,12 @@ static void start_timer(struct scc_priv *priv, int t, int r15)
+ 	if (t = 0) {
+ 		tm_isr(priv);
+ 	} else if (t > 0) {
+-		save_flags(flags);
+-		cli();
+ 		outb(t & 0xFF, priv->tmr_cnt);
+ 		outb((t >> 8) & 0xFF, priv->tmr_cnt);
+ 		if (priv->type != TYPE_TWIN) {
+ 			write_scc(priv, R15, r15 | CTSIE);
+ 			priv->rr0 |= CTS;
+ 		}
+-		restore_flags(flags);
+ 	}
+ }
+ 
 -- 
-Registered Linux Addict #431495
-http://profile.xfire.com/mrstalinman | John 3:16!
-http://www.fsdev.net/ | http://lordsauron.wordpress.com/
+1.5.4.3
+
