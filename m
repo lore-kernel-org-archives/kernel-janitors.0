@@ -1,7 +1,7 @@
-From: Adrian Bunk <bunk@kernel.org>
-Date: Tue, 22 Apr 2008 15:58:39 +0000
+From: Grant Grundler <grundler@parisc-linux.org>
+Date: Wed, 23 Apr 2008 01:04:21 +0000
 Subject: Re: cli()/sti() removal
-Message-Id: <20080422155838.GA28933@cs181133002.pp.htv.fi>
+Message-Id: <20080423010421.GD21544@colo.lackof.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <919fe2b30804141238g45bd323er9929d54ff5dcfa8e@mail.gmail.com>
 In-Reply-To: <919fe2b30804141238g45bd323er9929d54ff5dcfa8e@mail.gmail.com>
@@ -10,37 +10,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 22, 2008 at 09:47:22AM -0600, Matthew Wilcox wrote:
-> On Fri, Apr 18, 2008 at 07:18:14PM +0300, Adrian Bunk wrote:
-> > On Mon, Apr 14, 2008 at 02:17:50PM -0600, Matthew Wilcox wrote:
->...
-> > > I also note that there's a xircom_cb that appears to be replacing
-> > > xircom_tulip_cb, so maybe deleting xircom_tulip_cb is possible?
-> > >...
-> > 
-> > I beat you by 3 months.  ;)
-> > 
-> > Patch is in the net tree and should go into Linus' tree within the next
-> > two weeks.
+On Tue, Apr 22, 2008 at 06:58:39PM +0300, Adrian Bunk wrote:
+> > Why do the tulip maintainers not know about this?
 > 
-> Why do the tulip maintainers not know about this?
+> tulip has a separate maintainer?
 
-tulip has a separate maintainer?
+Yes :)
+Kyle and I adopted tulip becuase parisc port entirely depends on them.
 
-/me checks MAINTAINERS
+But it's fine. I'm not doing much with either of the xircom
+drivers yet. I've only got two of those cards and have been
+promised a few more (different ones).
 
-Sorry, there seem to still be parts of MAINTAINERS I am not aware of.
+> /me checks MAINTAINERS
+> 
+> Sorry, there seem to still be parts of MAINTAINERS I am not aware of.
+> 
+> The patch went to Jeff and netdev, and Jeff applied it (perhaps 
+> wrongly assuming I was aware that there are tulip maintainers?).
 
-The patch went to Jeff and netdev, and Jeff applied it (perhaps 
-wrongly assuming I was aware that there are tulip maintainers?).
+Sending it to netdev+jeff is in general sufficient.
+But I'm not on netdev since I just don't have the BW.
+(which also partially answers willy's question).
 
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
+thanks,
+grant
