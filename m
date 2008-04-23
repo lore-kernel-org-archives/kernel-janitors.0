@@ -1,7 +1,7 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 23 Apr 2008 14:24:53 +0000
+From: Roel Kluin <12o3l@tiscali.nl>
+Date: Wed, 23 Apr 2008 16:01:30 +0000
 Subject: Re: script to find incorrect tests on unsigneds
-Message-Id: <Pine.LNX.4.58.0804231608000.1185@pc-041.diku.dk>
+Message-Id: <480F5D5A.9040105@tiscali.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4808C90A.5040600@tiscali.nl>
 In-Reply-To: <4808C90A.5040600@tiscali.nl>
@@ -10,50 +10,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 23 Apr 2008, Roel Kluin wrote:
+ok I tested it and these are in fact correct:
 
-> Julia Lawall wrote:
->
-> >> and besides your evaluated the tests:
-> >>
-> >> * i < [any negative value]
-> >> * i >= [0 or any negative value]
-> >> * i = [any negative value]
-> >> * i != [any negative value]
-> >> * [0 or any negative value] <= i
-> >> * [0 or any negative value] > i
-> >
-> > We do 0 > i via the isomoprhisms.  But I have never seen such code.
-> >
-> > As you mention, we could consider more kinds of comparison to 0 by writing
-> > more patterns, eg;
-> >
-> > (
-> >  i < 0
-> > |
-> >  i <= 0
-> > |
-> >  i = -C
-> > |
-> >  i < -C
-> > |
-> >  i <= -C
-> > )
-> >
-> > where C was previously declared to be any constant.
->
-> this should be different:
->
->  (
-> * i < 0
-> |
-> * i = -C
-> |
-> * i < -C
-> |
-> * i >= -C
-> )
+* i = -C
+* i != -C
 
-Agreed.  But maybe i <= -C should be there too?  And i > -C.
+Also correct when someone fears that 'i' may become signed in the future:
+* i <= 0
+* i >= 0
 
-julia
+But the latter, does not make sense when used as a test in a for or while
+loop. Also an else branch indicates a signed assumption.
+
+So the spatch could contain for the basic matches:
+
+(
+* i < 0
+|
+* i < -C
+|
+* i > -C
+|
+* i <= -C
+|
+* i >= -C
+)
