@@ -1,27 +1,21 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 02 Apr 2008 07:03:34 +0000
-Subject: Re: [PATCH] drivers/atm/iphase.c: compilation warning fix
-Message-Id: <20080402.000334.14012482.davem@davemloft.net>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Fri, 25 Apr 2008 18:27:35 +0000
+Subject: Re: [PATCH] The function register_chrdev_region() for count=0 returns a false success.This patch pre
+Message-Id: <20080425182734.GJ14990@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200804012349.29836.lpotenza@inwind.it>
-In-Reply-To: <200804012349.29836.lpotenza@inwind.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lpotenza@inwind.it
-Cc: kernel-janitors@vger.kernel.org, chas@cmf.nrl.navy.mil, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Leonardo Potenza <lpotenza@inwind.it>
-Date: Tue, 1 Apr 2008 23:49:29 +0200
+On Fri, Apr 25, 2008 at 11:55:25PM +0530, anubhav rakshit wrote:
+> +	if(unlikely(count = 0))
 
-> From: Leonardo Potenza <lpotenza@inwind.it>
-> 
-> Removed the warning messages:
-> drivers/atm/iphase.c:961: warning: 'tcnter' defined but not used
-> drivers/atm/iphase.c:963: warning: 'xdump' defined but not used
-> 
-> tcnter and xdump() are used only in debug build
-> 
-> Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+A space between 'if' and '(', please.  scripts/checkpatch.pl can warn
+you about this kind of thing.
 
-Applied, thanks.
+-- 
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
