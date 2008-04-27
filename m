@@ -1,48 +1,83 @@
-From: Dan Noe <dpn@isomerica.net>
-Date: Fri, 04 Apr 2008 13:21:53 +0000
-Subject: [PATCH] cxgb3: Fix __must_check warning from call to sysfs_create_group.
-Message-Id: <120731531392-git-send-email-dpn@isomerica.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 27 Apr 2008 10:46:22 +0000
+Subject: [PATCH] drivers/video/pnx4008: eliminate double free
+Message-Id: <Pine.LNX.4.64.0804271245510.7217@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Dan Noe <dpn@isomerica.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix the warning:
-drivers/net/cxgb3/cxgb3_main.c: In function ‘offload_open’:
-drivers/net/cxgb3/cxgb3_main.c:936: warning: ignoring return value of
- ‘sysfs_create_group’, declared with attribute warn_unused_result
+From: Julia Lawall <julia@diku.dk>
 
-Now the return value is checked; if sysfs_create_group() returns failure,
-a warning is printed using dev_dbg, and the code continues as before.  Use
-of dev_dbg ensures printk is not needlessly included unless desired for
-debugging.  The original driver code chose to ignore failure of
-sysfs_create_group, and this has not been changed beyond a warning when
-DEBUG is enabled.
+The function framebuffer_release just calls kfree, so calling kfree
+subsequently on the same argument represents a double free.  The
+comments with the definition of framebuffer_release
+in drivers/video/fbsysfs.c suggest that a more elaborate definition of this
+function is planned, such that the splitting up of framebuffer_release and
+kfree as done in the second instance might someday make sense, but it does
+not make sense now. 
 
-Signed-off-by: Dan Noe <dpn@isomerica.net>
+This was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E;
+@@
+
+* kfree(E);
+...
+* framebuffer_release(E);
+
+@@
+expression E;
+@@
+
+* framebuffer_release(E);
+...
+* kfree(E);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/net/cxgb3/cxgb3_main.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Applies against linux-2.6.git.
-
-diff --git a/drivers/net/cxgb3/cxgb3_main.c b/drivers/net/cxgb3/cxgb3_main.c
-index fd2e05b..05e5f59 100644
---- a/drivers/net/cxgb3/cxgb3_main.c
-+++ b/drivers/net/cxgb3/cxgb3_main.c
-@@ -1014,8 +1014,8 @@ static int offload_open(struct net_device *dev)
- 		     adapter->port[0]->mtu : 0xffff);
- 	init_smt(adapter);
+diff -u -p a/drivers/video/pnx4008/pnxrgbfb.c b/drivers/video/pnx4008/pnxrgbfb.c
+--- a/drivers/video/pnx4008/pnxrgbfb.c	2008-04-07 13:50:27.000000000 +0200
++++ b/drivers/video/pnx4008/pnxrgbfb.c	2008-04-27 12:25:52.000000000 +0200
+@@ -100,7 +100,6 @@ static int rgbfb_remove(struct platform_
+ 		fb_dealloc_cmap(&info->cmap);
+ 		framebuffer_release(info);
+ 		platform_set_drvdata(pdev, NULL);
+-		kfree(info);
+ 	}
  
--	/* Never mind if the next step fails */
--	sysfs_create_group(&tdev->lldev->dev.kobj, &offload_attr_group);
-+	if (sysfs_create_group(&tdev->lldev->dev.kobj, &offload_attr_group))
-+		dev_dbg(&dev->dev, "cannot create sysfs group\n");
+ 	pnx4008_free_dum_channel(channel_owned, pdev->id);
+@@ -168,23 +167,21 @@ static int __devinit rgbfb_probe(struct 
  
- 	/* Call back all registered clients */
- 	cxgb3_add_clients(tdev);
--- 
-1.5.2.5
-
+ 	ret = fb_alloc_cmap(&info->cmap, 256, 0);
+ 	if (ret < 0)
+-		goto err2;
++		goto err1;
+ 
+ 	ret = register_framebuffer(info);
+ 	if (ret < 0)
+-		goto err3;
++		goto err2;
+ 	platform_set_drvdata(pdev, info);
+ 
+ 	return 0;
+ 
+-err3:
+-	fb_dealloc_cmap(&info->cmap);
+ err2:
+-	framebuffer_release(info);
++	fb_dealloc_cmap(&info->cmap);
+ err1:
+ 	pnx4008_free_dum_channel(channel_owned, pdev->id);
+ err0:
+-	kfree(info);
++	framebuffer_release(info);
+ err:
+ 	return ret;
+ }
