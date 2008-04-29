@@ -1,29 +1,33 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 29 Apr 2008 13:38:15 +0000
-Subject: [PATCH] crypto: Correct kzalloc error test
-Message-Id: <Pine.LNX.4.58.0804291536220.1185@pc-041.diku.dk>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Tue, 29 Apr 2008 14:07:38 +0000
+Subject: Re: [PATCH] crypto: Correct kzalloc error test
+Message-Id: <E1JqqUc-0005Rg-00@gondolin.me.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.58.0804291536220.1185@pc-041.diku.dk>
+In-Reply-To: <Pine.LNX.4.58.0804291536220.1185@pc-041.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au, davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="hz-gb-2312"
+Content-Transfer-Encoding: base64
+To: Julia Lawall <julia@diku.dk>
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-
-Normally, kzalloc returns NULL or a valid pointer value, not a value to be
-tested using IS_ERR.
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-diff -u -p  a/crypto/cryptd.c b/crypto/cryptd.c
---- a/crypto/cryptd.c	2008-04-16 13:27:56.000000000 +0200
-+++ b/crypto/cryptd.c	2008-04-29 15:29:54.000000000 +0200
-@@ -190,7 +190,7 @@ static struct crypto_instance *cryptd_al
- 	int err;
-
- 	inst = kzalloc(sizeof(*inst) + sizeof(*ctx), GFP_KERNEL);
--	if (IS_ERR(inst))
-+	if (!inst)
- 		goto out;
-
- 	err = -ENAMETOOLONG;
+SnVsaWEgTGF3YWxsIDxqdWxpYUBkaWt1LmRrPiB3cm90ZToKPiBGcm9tOiBKdWxpYSBMYXdhbGwg
+PGp1bGlhQGRpa3UuZGs+Cj4gCj4gTm9ybWFsbHksIGt6YWxsb2MgcmV0dXJucyBOVUxMIG9yIGEg
+dmFsaWQgcG9pbnRlciB2YWx1ZSwgbm90IGEgdmFsdWUgdG8gYmUKPiB0ZXN0ZWQgdXNpbmcgSVNf
+RVJSLgoKT3VjaCA6KQoKPiBkaWZmIC11IC1wICBhL2NyeXB0by9jcnlwdGQuYyBiL2NyeXB0by9j
+cnlwdGQuYwo+IC0tLSBhL2NyeXB0by9jcnlwdGQuYyAgIDIwMDgtMDQtMTYgMTM6Mjc6NTYuMDAw
+MDAwMDAwICswMjAwCj4gKysrIGIvY3J5cHRvL2NyeXB0ZC5jICAgMjAwOC0wNC0yOSAxNToyOTo1
+NC4wMDAwMDAwMDAgKzAyMDAKPiBAQCAtMTkwLDcgKzE5MCw3IEBAIHN0YXRpYyBzdHJ1Y3QgY3J5
+cHRvX2luc3RhbmNlICpjcnlwdGRfYWwKPiAgICAgICAgaW50IGVycjsKPiAKPiAgICAgICAgaW5z
+dCA9IGt6YWxsb2Moc2l6ZW9mKCppbnN0KSArIHNpemVvZigqY3R4KSwgR0ZQX0tFUk5FTCk7Cj4g
+LSAgICAgICBpZiAoSVNfRVJSKGluc3QpKQo+ICsgICAgICAgaWYgKCFpbnN0KQo+ICAgICAgICAg
+ICAgICAgIGdvdG8gb3V0OwoKSG93ZXZlciwgdGhpcyBmdW5jdGlvbiBpcyBleHBlY3RlZCB0byBy
+ZXR1cm4gYW4gRVJSX1BUUiBzbyB5b3UnbGwKbmVlZCBzZXQgaXQgdG8gRU5PTUVNIGZpcnN0LgoK
+VGhhbmtzLAotLSAKVmlzaXQgT3BlbnN3YW4gYXQgaHR0cDovL3d3dy5vcGVuc3dhbi5vcmcvCkVt
+YWlsOiBIZXJiZXJ0IFh1IH57UG1WPkhJfn0gPGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9yZy5hdT4K
+SG9tZSBQYWdlOiBodHRwOi8vZ29uZG9yLmFwYW5hLm9yZy5hdS9+aGVyYmVydC8KUEdQIEtleTog
+aHR0cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvcHVia2V5LnR4dAotLQpUbyB1bnN1
+YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVs
+LWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2Vy
+bmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21h
+am9yZG9tby1pbmZvLmh0bWw=
