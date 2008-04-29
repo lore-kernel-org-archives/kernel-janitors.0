@@ -1,91 +1,35 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Sat, 26 Apr 2008 18:26:48 +0000
-Subject: Re: [PATCH] headerdep: a tool for detecting inclusion cycles in header file
-Message-Id: <20080426182648.GA18578@uranus.ravnborg.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 29 Apr 2008 14:18:08 +0000
+Subject: Re: [revised PATCH] crypto: Correct kzalloc error test
+Message-Id: <Pine.LNX.4.58.0804291617210.1185@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080426134554.GA20727@damson.getinternet.no>
-In-Reply-To: <20080426134554.GA20727@damson.getinternet.no>
+References: <E1JqqUc-0005Rg-00@gondolin.me.apana.org.au>
+In-Reply-To: <E1JqqUc-0005Rg-00@gondolin.me.apana.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Adrian Bunk <bunk@kernel.org>, linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Apr 26, 2008 at 03:45:54PM +0200, Vegard Nossum wrote:
-> Hi Sam,
-> 
-> Maybe something like this could be useful for cleaning up headers (and
-> maintaining that cleanliness once it has been achieved). What do you think?
-Hi Vegard.
+From: Julia Lawall <julia@diku.dk>
 
-I really like the idea to use some automated checks to increase the
-quality of our headers.
-And that raises the question about what is the most important
-issue we have with our headers and how do we detect them in the
-best possible way?
+Normally, kzalloc returns NULL or a valid pointer value, not a value to be
+tested using IS_ERR.
 
-To detect inclusion cycles in a configured kernel I really think
-sparse is the better place to detect it. We have sparse as an
-advenced sanity check tool and adding the possibility to detect
-inclusion cycles should be easier than it was to cook up this
-perl script.
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+diff -u -p  a/crypto/cryptd.c b/crypto/cryptd.c
+--- a/crypto/cryptd.c	2008-04-16 13:27:56.000000000 +0200
++++ b/crypto/cryptd.c	2008-04-29 16:13:10.000000000 +0200
+@@ -190,8 +190,10 @@ static struct crypto_instance *cryptd_al
+ 	int err;
 
-But we have much more important issues.
-In general we have far to many dependencies in the current headers
-and too much code rely on headers being implicitly pulled.
+ 	inst = kzalloc(sizeof(*inst) + sizeof(*ctx), GFP_KERNEL);
+-	if (IS_ERR(inst))
++	if (!inst) {
++		inst = ERR_PTR(-ENOMEM);
+ 		goto out;
++	}
 
-We have headers that uses types we actually do not want to use
-in the kernel.
-
-We have headers that export stuff to userspace they shouldnt.
-
-We have heders defining prototypes for non existing functions.
-
-We have headers defining extern variables that no longer exists.
-
-You could continue the list.
-And some of the above topics are really newbies material to fix.
-
-If you then decide to automate it then I would need a good
-explanation why we did not use sparse before considering
-including the tool in the kernel.
-
-So I do not plan to apply this patch because this should be
-done in sparse and not in a random perl script.
-
-> 
-> (One thing which might or might not be good is that 'make headerdep' will
->  also compile using CC if they're not already compiled. If this should be
->  fixed, I think you'd know how to do it.)
-
-Not a big deal - we neither support this for sparse.
-
-
-> +# Output dependency graph in GraphViz language.
-> +sub graph {
-> +	printf "digraph {\n";
-> +
-> +	printf "\t/* vertices */\n";
-> +	for my $header (keys %deps) {
-> +		printf "\t%s [label=\"%s\"];\n",
-> +			mangle($header), escape($header);
-> +	}
-> +
-> +	printf "\n";
-> +
-> +	printf "\t/* edges */\n";
-> +	for my $header (keys %deps) {
-> +		for my $dep (@{$deps{$header}}) {
-> +			printf "\t%s -> %s;\n",
-> +				mangle($header), mangle($dep);
-> +		}
-> +	}
-> +
-> +	printf "}\n";
-> +}
-
-I like this part. I would be nice to see a full dependency graph
-for any file that kbuild builds.
-But again maybe we should do this as a sparse backend?
-
-	Sam
+ 	err = -ENAMETOOLONG;
+ 	if (snprintf(inst->alg.cra_driver_name, CRYPTO_MAX_ALG_NAME,
