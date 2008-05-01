@@ -1,72 +1,54 @@
-From: Ricardo Martins <ricardo@scarybox.net>
-Date: Thu, 01 May 2008 19:54:48 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Thu, 01 May 2008 20:25:33 +0000
 Subject: Re: [PATCH 1/1] mmap: fix uninitialized entities warnings.
-Message-Id: <20080501195448.GA954@macbookpro>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="45Z9DzgjV8m4Oswq"
+Message-Id: <20080501202533.GX14976@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1209668812-17641-1-git-send-email-ricardo@scarybox.net>
 In-Reply-To: <1209668812-17641-1-git-send-email-ricardo@scarybox.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Thu, May 01, 2008 at 10:43:25PM +0300, Adrian Bunk wrote:
+> > > -	struct vm_area_struct *vma, *prev;
+> > > +	struct vm_area_struct *vma, *prev = NULL;
+> > 
+> > gcc bug -- it's failing to notice that find_vma_prepare() will always
+> > initialise pprev.
+> >...
+> 
+> You miss the "return" inside the while() loop in find_vma_prepare().
+> 
+> I do not know whether the code is correct, but the answer is not that 
+> easy.
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You're right, it isn't that easy.
 
-On Thu, 01 May 2008 13:16, Matthew Wilcox wrote:
-> On Thu, May 01, 2008 at 08:06:52PM +0100, Ricardo Martins wrote:
-> > This is my first patch for the Linux kernel. It fixes the following
-> > warnings given by gcc 4.3.0 about uninitialzed entities in mmap.c:
->
-> First, it's generally a bad idea to fix these warnings.  They sometimes
-> obscure real bugs.
+However, the code is not buggy.  Just compare:
 
-I see.
+                        vma = vma_tmp;
+                        if (vma_tmp->vm_start <= addr)
+                                return vma;
 
-> > I'd appreciate some feedback.
->
-> >   *		x: (no) no	x: (no) yes	x: (no) yes	x: (yes) yes
-> > - *
-> > + *
->
-> Don't mix whitespace changes with other changes.
+with
 
-Ok, it won't happen again.
+munmap_back:
+        vma = find_vma_prepare(mm, addr, &prev, &rb_link, &rb_parent);
+        if (vma && vma->vm_start < addr + len) {
+                if (do_munmap(mm, addr, len))
+                        return -ENOMEM;
+                goto munmap_back;
+        }
 
-> > -	struct vm_area_struct *vma, *prev;
-> > +	struct vm_area_struct *vma, *prev = NULL;
->
-> gcc bug -- it's failing to notice that find_vma_prepare() will always
-> initialise pprev.
->
-> > -	struct rb_node **rb_link, *rb_parent;
-> > +	struct rb_node **rb_link = NULL, *rb_parent = NULL;
->
-> Likewise.
+Now, we know that addr + len does not wrap, and that len > 0, so we know
+that this warning is incorrect.  But it's not reasonable to expect gcc to
+be able to deduce this.
 
-Hmm, that crossed my mind and I thought it was weird that gcc was
-complaining about it.
+See also the CERT warning threads recently on the GCC lists ;-)
 
-> The other changes in your patch are either whitespace or fixes for the
-> same gcc problem.
-
-Thanks for your feedback; it was very helpful, since I'm a C newbie.
-
-Regards,
---
- Ricardo Martins  *  scarybox.net  *  GPG key: 0x1308F1B4
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkgaIAgACgkQkH81LRMI8bRGHQCcCXuRAbpn2Dzy2Aw8G93IUFUC
-YpgAnRfWtr4GE4YZBY9BhOWQrKtCXp3C
-=AilR
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
+-- 
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
