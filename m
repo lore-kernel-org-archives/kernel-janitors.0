@@ -1,109 +1,46 @@
-From: Ricardo Martins <ricardo@scarybox.net>
-Date: Thu, 01 May 2008 19:06:52 +0000
-Subject: [PATCH 1/1] mmap: fix uninitialized entities warnings.
-Message-Id: <1209668812-17641-1-git-send-email-ricardo@scarybox.net>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Thu, 01 May 2008 19:16:27 +0000
+Subject: Re: [PATCH 1/1] mmap: fix uninitialized entities warnings.
+Message-Id: <20080501191626.GW14976@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1209668812-17641-1-git-send-email-ricardo@scarybox.net>
+In-Reply-To: <1209668812-17641-1-git-send-email-ricardo@scarybox.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is my first patch for the Linux kernel. It fixes the following
-warnings given by gcc 4.3.0 about uninitialzed entities in mmap.c:
+On Thu, May 01, 2008 at 08:06:52PM +0100, Ricardo Martins wrote:
+> This is my first patch for the Linux kernel. It fixes the following
+> warnings given by gcc 4.3.0 about uninitialzed entities in mmap.c:
 
-mm/mmap.c: In function ‘insert_vm_struct’:
-mm/mmap.c:2079: warning: ‘rb_parent’ may be used uninitialized in this function
-mm/mmap.c:2079: warning: ‘rb_link’ may be used uninitialized in this function
-mm/mmap.c:2078: warning: ‘prev’ may be used uninitialized in this function
-mm/mmap.c: In function ‘copy_vma’:
-mm/mmap.c:2118: warning: ‘rb_parent’ may be used uninitialized in this function
-mm/mmap.c:2118: warning: ‘rb_link’ may be used uninitialized in this function
-mm/mmap.c:2117: warning: ‘prev’ may be used uninitialized in this function
-mm/mmap.c: In function ‘do_brk’:
-mm/mmap.c:1945: warning: ‘rb_parent’ may be used uninitialized in this function
-mm/mmap.c:1945: warning: ‘rb_link’ may be used uninitialized in this function
-mm/mmap.c:1943: warning: ‘prev’ may be used uninitialized in this function
-mm/mmap.c: In function ‘mmap_region’:
-mm/mmap.c:1086: warning: ‘rb_parent’ may be used uninitialized in this function
-mm/mmap.c:1086: warning: ‘rb_link’ may be used uninitialized in this function
-mm/mmap.c:1083: warning: ‘prev’ may be used uninitialized in this function
+First, it's generally a bad idea to fix these warnings.  They sometimes
+obscure real bugs.
 
-I'd appreciate some feedback.
+> I'd appreciate some feedback.
 
-Signed-off-by: Ricardo Martins <ricardo@scarybox.net>
----
- mm/mmap.c |   20 ++++++++++----------
- 1 files changed, 10 insertions(+), 10 deletions(-)
+>   *		x: (no) no	x: (no) yes	x: (no) yes	x: (yes) yes
+> - *		
+> + *
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index fac6633..64b7df1 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -59,7 +59,7 @@ static void unmap_region(struct mm_struct *mm,
-  * MAP_SHARED	r: (no) no	r: (yes) yes	r: (no) yes	r: (no) yes
-  *		w: (no) no	w: (no) no	w: (yes) yes	w: (no) no
-  *		x: (no) no	x: (no) yes	x: (no) yes	x: (yes) yes
-- *		
-+ *
-  * MAP_PRIVATE	r: (no) no	r: (yes) yes	r: (no) yes	r: (no) yes
-  *		w: (no) no	w: (no) no	w: (copy) copy	w: (no) no
-  *		x: (no) no	x: (no) yes	x: (no) yes	x: (yes) yes
-@@ -1080,10 +1080,10 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 			  int accountable)
- {
- 	struct mm_struct *mm = current->mm;
--	struct vm_area_struct *vma, *prev;
-+	struct vm_area_struct *vma, *prev = NULL;
- 	int correct_wcount = 0;
- 	int error;
--	struct rb_node **rb_link, *rb_parent;
-+	struct rb_node **rb_link = NULL, *rb_parent = NULL;
- 	unsigned long charged = 0;
- 	struct inode *inode =  file ? file->f_path.dentry->d_inode : NULL;
- 
-@@ -1299,7 +1299,7 @@ full_search:
- 		addr = vma->vm_end;
- 	}
- }
--#endif	
-+#endif
- 
- void arch_unmap_area(struct mm_struct *mm, unsigned long addr)
- {
-@@ -1940,9 +1940,9 @@ static inline void verify_mm_writelocked(struct mm_struct *mm)
- unsigned long do_brk(unsigned long addr, unsigned long len)
- {
- 	struct mm_struct * mm = current->mm;
--	struct vm_area_struct * vma, * prev;
-+	struct vm_area_struct * vma, * prev = NULL;
- 	unsigned long flags;
--	struct rb_node ** rb_link, * rb_parent;
-+	struct rb_node ** rb_link = NULL, * rb_parent = NULL;
- 	pgoff_t pgoff = addr >> PAGE_SHIFT;
- 	int error;
- 
-@@ -2075,8 +2075,8 @@ void exit_mmap(struct mm_struct *mm)
-  */
- int insert_vm_struct(struct mm_struct * mm, struct vm_area_struct * vma)
- {
--	struct vm_area_struct * __vma, * prev;
--	struct rb_node ** rb_link, * rb_parent;
-+	struct vm_area_struct * __vma, * prev = NULL;
-+	struct rb_node ** rb_link = NULL, * rb_parent = NULL;
- 
- 	/*
- 	 * The vm_pgoff of a purely anonymous vma should be irrelevant
-@@ -2114,8 +2114,8 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
- 	struct vm_area_struct *vma = *vmap;
- 	unsigned long vma_start = vma->vm_start;
- 	struct mm_struct *mm = vma->vm_mm;
--	struct vm_area_struct *new_vma, *prev;
--	struct rb_node **rb_link, *rb_parent;
-+	struct vm_area_struct *new_vma, *prev = NULL;
-+	struct rb_node **rb_link = NULL, *rb_parent = NULL;
- 	struct mempolicy *pol;
- 
- 	/*
+Don't mix whitespace changes with other changes.
+
+> -	struct vm_area_struct *vma, *prev;
+> +	struct vm_area_struct *vma, *prev = NULL;
+
+gcc bug -- it's failing to notice that find_vma_prepare() will always
+initialise pprev.
+
+> -	struct rb_node **rb_link, *rb_parent;
+> +	struct rb_node **rb_link = NULL, *rb_parent = NULL;
+
+Likewise.
+
+The other changes in your patch are either whitespace or fixes for the
+same gcc problem.
+
 -- 
-1.5.5.1
-
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
