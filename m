@@ -1,38 +1,36 @@
-From: "debian developer" <debiandev@gmail.com>
-Date: Sat, 03 May 2008 05:21:23 +0000
-Subject: Resend: [Patch 1/1] kernel/time/ntp.c : fix warning
-Message-Id: <f24d23310805022209l58e3f227t2ced788a4115139e@mail.gmail.com>
+From: Ricardo Martins <ricardo@scarybox.net>
+Date: Fri, 02 May 2008 16:29:21 +0000
+Subject: Re: warning: =?utf-8?B?4oCYcGNpX2ZpbmRf?=
+Message-Id: <20080502162921.GA1678@macbookpro>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="PEIAKu/WMn1b1Hv9"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>, kernelnewbies@nl.linux.org, kernel-janitors@vger.kernel.org
-Cc: dmitri.vorobiev@gmail.com
+To: kernel-janitors@vger.kernel.org
 
-Mailer spoilt the previous send... just realized that copy does'nt
-work, sorry for that
-Hello,
 
-On compiling on a Xeon machine i get the following warning
+--PEIAKu/WMn1b1Hv9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-kernel/time/ntp.c: In function `do_adjtimex':
-kernel/time/ntp.c:328: warning: comparison of distinct pointer types
-lacks a cast
-kernel/time/ntp.c:329: warning: comparison of distinct pointer types
-lacks a cast
+Disregard that email, I finally found an up-to-date archive of the
+mailing list. According to Greg KH, this isn't as easy as a search and
+replace [1]. Sorry for the noise.
 
-This is with gcc version 3.4.3. The following patch fixes this...
+[1] http://marc.info/?l=3Dkernel-janitors&m=3D119221598328151&w=3D2
+--=20
+ Ricardo Martins  *  scarybox.net  *  GPG key: 0x1308F1B4
 
---- linux-2.6.25/kernel/time/ntp.c.orig	2008-05-03 04:27:20.000000000 +0530
-+++ linux-2.6.25/kernel/time/ntp.c	2008-05-03 04:45:06.000000000 +0530
-@@ -325,8 +325,8 @@ int do_adjtimex(struct timex *txc)
- 		     * Scale the phase adjustment and
- 		     * clamp to the operating range.
- 		     */
--		    time_offset = min(time_offset, (s64)MAXPHASE * NSEC_PER_USEC);
--		    time_offset = max(time_offset, (s64)-MAXPHASE * NSEC_PER_USEC);
-+		    time_offset = min(time_offset, (s64)(MAXPHASE * NSEC_PER_USEC));
-+		    time_offset = max(time_offset, (s64)(-MAXPHASE * NSEC_PER_USEC));
+--PEIAKu/WMn1b1Hv9
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
- 		    /*
- 		     * Select whether the frequency is to be controlled
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkgbQWEACgkQkH81LRMI8bSKxACfb6C/erLr8+ZARCyiF8vlqhtp
+QqUAnj15fi3MW2kzhy9cIQIbaPS3guNf
+=BW4+
+-----END PGP SIGNATURE-----
+
+--PEIAKu/WMn1b1Hv9--
