@@ -1,44 +1,40 @@
-From: Ricardo Martins <ricardo@scarybox.net>
-Date: Fri, 02 May 2008 16:19:40 +0000
-Subject: warning: =?utf-8?B?4oCYcGNpX2ZpbmRfZGV2?=
-Message-Id: <20080502161940.GA27311@macbookpro>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="gKMricLos+KVdGMg"
+From: "debian developer" <debiandev@gmail.com>
+Date: Fri, 02 May 2008 18:52:19 +0000
+Subject: Resend [Patch 1/1] Trivial - kernel/time/ntp.c: fix warning
+Message-Id: <f24d23310805021140r5704cb70ubd3d11ff60344d67@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernelnewbies@nl.linux.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
+Mailer spoilt the previous send... sorry for that
 Hello,
 
-There are 14 drivers in drivers/isdn/hisax/ still using calls to
-pci_find_device() instead of the pci_get_device(). From what I gather, a
-simple sed 's|pci_find_device|pci_get_device|' is enough to fix this,
-since both functions use the same input and give the same output.
-Is this correct?
+On compiling on a Xeon machine i get the following warning
 
-Also, since there are 14 drivers with only those 1-line changes, should each
-driver have its own patch or could I send a single patch covering all of
-them?
+kernel/time/ntp.c: In function `do_adjtimex':
+kernel/time/ntp.c:328: warning: comparison of distinct pointer types
+lacks a cast
+kernel/time/ntp.c:329: warning: comparison of distinct pointer types
+lacks a cast
 
-Regards,
---=20
- Ricardo Martins  *  scarybox.net  *  GPG key: 0x1308F1B4
+This is with gcc version 3.4.3. The following patch fixes this...
 
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+--- linux-2.6.25/kernel/time/ntp.c.orig 2008-05-03 04:27:20.000000000 +0530
++++ linux-2.6.25/kernel/time/ntp.c      2008-05-03 04:45:06.000000000 +0530
+@@ -325,8 +325,8 @@ int do_adjtimex(struct timex *txc)
+                    * Scale the phase adjustment and
+                    * clamp to the operating range.
+                    */
+-                   time_offset = min(time_offset, (s64)MAXPHASE *
+NSEC_PER_USEC);
+-                   time_offset = max(time_offset, (s64)-MAXPHASE *
+NSEC_PER_USEC);
++                   time_offset = min(time_offset, (s64)(MAXPHASE *
+NSEC_PER_USEC));
++                   time_offset = max(time_offset, (s64)(-MAXPHASE *
+NSEC_PER_USEC));
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkgbPxwACgkQkH81LRMI8bR/rwCfVn2BHpQspfJKUoZCR4MAH9m5
-yiYAnRX1oWV+Too7RRq26K8tdPolX2D7
-=6Yqt
------END PGP SIGNATURE-----
-
---gKMricLos+KVdGMg--
+                   /*
+                    * Select whether the frequency is to be controlled
