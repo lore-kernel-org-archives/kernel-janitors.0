@@ -1,60 +1,37 @@
-From: Adrian Bunk <bunk@kernel.org>
-Date: Thu, 01 May 2008 21:13:56 +0000
-Subject: Re: [PATCH 1/1] mmap: fix uninitialized entities warnings.
-Message-Id: <20080501211356.GR29330@cs181133002.pp.htv.fi>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Fri, 02 May 2008 16:25:39 +0000
+Subject: Re: warning: ???pci_find_device??? is deprecated
+Message-Id: <20080502162539.GG14976@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1209668812-17641-1-git-send-email-ricardo@scarybox.net>
-In-Reply-To: <1209668812-17641-1-git-send-email-ricardo@scarybox.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, May 01, 2008 at 03:05:19PM -0600, Matthew Wilcox wrote:
-> On Thu, May 01, 2008 at 11:40:37PM +0300, Adrian Bunk wrote:
-> > On Thu, May 01, 2008 at 02:25:33PM -0600, Matthew Wilcox wrote:
-> > > However, the code is not buggy.  Just compare:
-> > > 
-> > >                         vma = vma_tmp;
-> > >                         if (vma_tmp->vm_start <= addr)
-> > >                                 return vma;
-> > > 
-> > > with
-> > > 
-> > > munmap_back:
-> > >         vma = find_vma_prepare(mm, addr, &prev, &rb_link, &rb_parent);
-> > >         if (vma && vma->vm_start < addr + len) {
-> > >                 if (do_munmap(mm, addr, len))
-> > >                         return -ENOMEM;
-> > >                 goto munmap_back;
-> > >         }
-> > > 
-> > > Now, we know that addr + len does not wrap, and that len > 0, so we know
-> > > that this warning is incorrect.  But it's not reasonable to expect gcc to
-> > > be able to deduce this.
-> > >...
-> > 
-> > Can you submit a patch with your explanation that uses 
-> > uninitialized_var() to silence these warnings?
-> 
-> I could, but I don't know if I want to.  Suppose somebody changes the
-> code later to actually make prev used before it's initialised?  Then we
-> would have GCC not warning about a problem.
+On Fri, May 02, 2008 at 05:19:40PM +0100, Ricardo Martins wrote:
+> There are 14 drivers in drivers/isdn/hisax/ still using calls to
+> pci_find_device() instead of the pci_get_device(). From what I gather, a
+> simple sed 's|pci_find_device|pci_get_device|' is enough to fix this,
+> since both functions use the same input and give the same output.
+> Is this correct?
 
-That's why we silence the warnings with uninitialized_var() - simply 
-change the #define and you'll see all silenced warnings.
+It's never correct.  If it were that easy (a) there wouldn't be a rename
+in the first place and (b) it would have been done with a shell-script
+already.
 
-The problem is that these warnings for which we know that the code is OK 
-today make it harder to spot where new warnings get added that might 
-indicate real bugs.
+pci_get_device increments a refcount on the pci_dev.  pci_find_device
+does not.  Your patch must include calls to pci_dev_put() *when
+appropriate*.  Note, for example, that pci_get_device decrements the
+refcount on the device passed in.
 
-cu
-Adrian
+> Also, since there are 14 drivers with only those 1-line changes, should each
+> driver have its own patch or could I send a single patch covering all of
+> them?
+
+It's not going to be a 1-line patch, so one per driver.
 
 -- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
