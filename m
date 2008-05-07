@@ -1,62 +1,137 @@
-From: Ricardo Martins <ricardo@scarybox.net>
-Date: Fri, 02 May 2008 16:42:19 +0000
-Subject: Re: warning: ???pci_find_device??? is deprecated
-Message-Id: <20080502164219.GA6237@macbookpro>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
+From: Adrian Bunk <bunk@kernel.org>
+Date: Wed, 07 May 2008 19:58:30 +0000
+Subject: kernel-testers - finding regressions in the kernel
+Message-Id: <20080507195830.GC32750@cs181133002.pp.htv.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080502162539.GG14976@parisc-linux.org>
-In-Reply-To: <20080502162539.GG14976@parisc-linux.org>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, kernel-testers@vger.kernel.org, kernelnewbies@nl.linux.org, kernel-janitors@vger.kernel.org
+
+[ Please send further questions only on the kernel-testers list. ]
+
+One big problem we face in kernel development are regressions - a kernel 
+that worked for the user and a more recent kernel no longer works for 
+the user.
+
+Another problem is for newbies to get into kernel development.
+There aren't many useful coding tasks for newbies available.
+
+Testing the kernel and learning how to debug problems both brings 
+immediate value to the kernel and can be a good way to get started
+with kernel development.
 
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Regressions are bad since they make it harder for users to upgrade the 
+kernel. They cause problems for people when upgrading the kernel and 
+result in many people running old kernels with known security holes.
 
-On Fri, 02 May 2008 18:28, Julia Lawall wrote:
-> On Fri, 2 May 2008, Matthew Wilcox wrote:
->=20
-> > On Fri, May 02, 2008 at 05:19:40PM +0100, Ricardo Martins wrote:
-> > > There are 14 drivers in drivers/isdn/hisax/ still using calls to
-> > > pci_find_device() instead of the pci_get_device(). From what I gather=
-, a
-> > > simple sed 's|pci_find_device|pci_get_device|' is enough to fix this,
-> > > since both functions use the same input and give the same output.
-> > > Is this correct?
-> >
-> > It's never correct.  If it were that easy (a) there wouldn't be a rename
-> > in the first place and (b) it would have been done with a shell-script
-> > already.
-> >
-> > pci_get_device increments a refcount on the pci_dev.  pci_find_device
-> > does not.  Your patch must include calls to pci_dev_put() *when
-> > appropriate*.  Note, for example, that pci_get_device decrements the
-> > refcount on the device passed in.
->=20
-> I looked at this briefly at one point.  To my recollection, many of the
-> files that use pci_find_device store the result in a global variable.  So
-> one would have to think carefully about the useful lifetime of the value
-> of that variable to know where to put the puts.
->=20
-> julia
+There are easy to find regressions like compile errors, but the real 
+problems are things like for example:
+- system doesn't boot
+- system crashes with a specific workload
+- mp3 playback now stutters when copying files in the background
+- when doing this or that the system feels worse
 
-I see. Thank you both for shedding some light on this.
+Automated tests can find some of these problems, but many of the 
+problems that affect only some specific hardware or the interactive 
+feeling of the computer can not be found automatically.
 
---=20
- Ricardo Martins  *  scarybox.net  *  GPG key: 0x1308F1B4
+And a helpful property of regressions is that for a reproducible 
+regression it's relatively easy to figure out what broke it through 
+bisection.
 
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+There are usually two months between some kernel developer adding a new 
+regression to the kernel and the regression reaching a stable kernel, 
+and it's important to catch as many of them as early as possible.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+The next step will be to also test -next and -mm kernels for identifying 
+regressions even before they reach Linus' tree.
 
-iEYEARECAAYFAkgbRGsACgkQkH81LRMI8bQhKwCffGNhf5u8gwKrcj1ynKGaMwXs
-UMwAoJodpb5Ol/yJ9YAHgfJescDws9Tp
-=PLrv
------END PGP SIGNATURE-----
 
---vkogqOf2sHV7VnPd--
+
+Mailing list:
+http://vger.kernel.org/vger-lists.html#kernel-testers
+
+The list is primarily for people starting at testing kernels, but if 
+people with experiences in kernel testing and/or kernel debugging want 
+to join that's highly appreciated.
+
+
+Webpage:
+http://kernelnewbies.org/KernelTesters
+
+
+FAQ:
+
+
+Q:
+What will be discussed on the mailing list?
+
+A:
+- which kernels to test
+- how to test them
+- how to turn observed problems into proper bugreports
+
+
+Q:
+What are the prerequisites for participating?
+
+A:
+You should already know how to build and install your own kernel
+(http://www.kroah.com/lkn/ is a good introduction).
+
+And be willing to spend quite some time with debugging problems
+you discover.
+
+
+Q:
+How to start?
+
+A:
+Run 2.6.25 for a week.
+If you already did this, check what the latest snapshot listed at
+http://www.kernel.org/ is and try this kernel.
+
+
+Q:
+The snapshot worked just fine for some days.
+
+A:
+The kernel was less broken than expected. :-)
+(Well, this actually should be the normal case...)
+
+Try a more recent snapshot and follow the discussions on the mailing 
+list what to test next.
+
+
+Q:
+Is it dangerous to test such kernels?
+
+A:
+Most of the times there are no problems.
+
+But your system might crash, and in the worst case it might turn the 
+contents of your disks into garbage.
+
+But you anyway have a backup, don't you?
+
+If you need your system to work for reaching some deadline in real life 
+you obviously shouldn't test any kernels.
+
+
+Q:
+I found a regression!
+
+A:
+Great!
+
+Please tell the details on the mailing list.
+
+
+Q:
+What about bugs that are not regressions?
+
+A:
+Such bugs can also be discussed, but they are not the primary target.
+
