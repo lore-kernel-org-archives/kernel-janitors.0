@@ -1,137 +1,36 @@
-From: Adrian Bunk <bunk@kernel.org>
-Date: Wed, 07 May 2008 19:58:30 +0000
-Subject: kernel-testers - finding regressions in the kernel
-Message-Id: <20080507195830.GC32750@cs181133002.pp.htv.fi>
+From: "Peter Teoh" <htmldeveloper@gmail.com>
+Date: Thu, 08 May 2008 14:12:02 +0000
+Subject: Re: kernel-testers - finding regressions in the kernel
+Message-Id: <804dabb00805080712h6d8c282dy5efff381298acfeb@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080507195830.GC32750@cs181133002.pp.htv.fi>
+In-Reply-To: <20080507195830.GC32750@cs181133002.pp.htv.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-testers@vger.kernel.org, kernelnewbies@nl.linux.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-[ Please send further questions only on the kernel-testers list. ]
+Recently, I had two different problems:
 
-One big problem we face in kernel development are regressions - a kernel 
-that worked for the user and a more recent kernel no longer works for 
-the user.
+a.   For a problem that started since somewher after 2.6.24-rc9 till
+now, even with the sched-devel git version, the keyboard on entry on
+my laptop will jump/skip some characters.   Sometimes even repeating
+many times SUDDENLY when I just entered once.   That is for Dell
+Inspiron 9300 (Intel ICH6 chipset, ie, already > 3 years old, with FC7
+as the OS).   But no such problem for desktop (Intel/AMD alike).   But
+I don't know what to capture in the kernel when such thing happened.
 
-Another problem is for newbies to get into kernel development.
-There aren't many useful coding tasks for newbies available.
+b.   For my Intel desktop (FC7, 2.6.25 as the kernel), few days ago it
+just go into an extreme sluggish response mode....both mouse/keyboard
+input will take a long time to response.   I really don't know how to
+capture a snapshot of the kernel at that point.   It only happened
+after running some heavy stuff like database server + firefox
+downloading etc.
 
-Testing the kernel and learning how to debug problems both brings 
-immediate value to the kernel and can be a good way to get started
-with kernel development.
+c.   Occasionally, my swap device will get disconnected, or corrupted,
+and then the system (after some use) go into an extreme sluggish
+response mode as well.   What happened?
 
-
-Regressions are bad since they make it harder for users to upgrade the 
-kernel. They cause problems for people when upgrading the kernel and 
-result in many people running old kernels with known security holes.
-
-There are easy to find regressions like compile errors, but the real 
-problems are things like for example:
-- system doesn't boot
-- system crashes with a specific workload
-- mp3 playback now stutters when copying files in the background
-- when doing this or that the system feels worse
-
-Automated tests can find some of these problems, but many of the 
-problems that affect only some specific hardware or the interactive 
-feeling of the computer can not be found automatically.
-
-And a helpful property of regressions is that for a reproducible 
-regression it's relatively easy to figure out what broke it through 
-bisection.
-
-There are usually two months between some kernel developer adding a new 
-regression to the kernel and the regression reaching a stable kernel, 
-and it's important to catch as many of them as early as possible.
-
-The next step will be to also test -next and -mm kernels for identifying 
-regressions even before they reach Linus' tree.
-
-
-
-Mailing list:
-http://vger.kernel.org/vger-lists.html#kernel-testers
-
-The list is primarily for people starting at testing kernels, but if 
-people with experiences in kernel testing and/or kernel debugging want 
-to join that's highly appreciated.
-
-
-Webpage:
-http://kernelnewbies.org/KernelTesters
-
-
-FAQ:
-
-
-Q:
-What will be discussed on the mailing list?
-
-A:
-- which kernels to test
-- how to test them
-- how to turn observed problems into proper bugreports
-
-
-Q:
-What are the prerequisites for participating?
-
-A:
-You should already know how to build and install your own kernel
-(http://www.kroah.com/lkn/ is a good introduction).
-
-And be willing to spend quite some time with debugging problems
-you discover.
-
-
-Q:
-How to start?
-
-A:
-Run 2.6.25 for a week.
-If you already did this, check what the latest snapshot listed at
-http://www.kernel.org/ is and try this kernel.
-
-
-Q:
-The snapshot worked just fine for some days.
-
-A:
-The kernel was less broken than expected. :-)
-(Well, this actually should be the normal case...)
-
-Try a more recent snapshot and follow the discussions on the mailing 
-list what to test next.
-
-
-Q:
-Is it dangerous to test such kernels?
-
-A:
-Most of the times there are no problems.
-
-But your system might crash, and in the worst case it might turn the 
-contents of your disks into garbage.
-
-But you anyway have a backup, don't you?
-
-If you need your system to work for reaching some deadline in real life 
-you obviously shouldn't test any kernels.
-
-
-Q:
-I found a regression!
-
-A:
-Great!
-
-Please tell the details on the mailing list.
-
-
-Q:
-What about bugs that are not regressions?
-
-A:
-Such bugs can also be discussed, but they are not the primary target.
-
+Key question:   How to debug such problem?   How to capture kernel's
+state when everything hanged?   How to capture the bootup message when
+it crashed upon bootup?   (I used my digital camera)
