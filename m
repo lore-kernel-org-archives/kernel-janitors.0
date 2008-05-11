@@ -1,110 +1,111 @@
-From: "Claudio Fontana" <claudio.fontana@gmail.com>
-Date: Wed, 21 May 2008 22:09:26 +0000
-Subject: [PATCH 1/1] lib: fix some obvious whitespace errors in lib/crc32.c
-Message-Id: <2c04dc350805211509p6bb409eenac9b72b369c20dcb@mail.gmail.com>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Sun, 11 May 2008 17:08:43 +0000
+Subject: [PATCH 2/2] fs/ocfs2/dlm: compilation warning fix
+Message-Id: <200805111908.43488.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: mfasheh@suse.com, joel.becker@oracle.com, linux-kernel@vger.kernel.org
 
-From: Claudio Fontana <claudio.fontana@gmail.com>
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-Fix some obvious whitespace errors in lib/crc32.c .
+Removed the warning messages:
+fs/ocfs2/dlm/dlmdebug.h:64: warning: 'dlm_debug_init' defined but not used
+fs/ocfs2/dlm/dlmdebug.h:68: warning: 'dlm_debug_shutdown' defined but not used
+fs/ocfs2/dlm/dlmdebug.h:71: warning: 'dlm_create_debugfs_subroot' defined but not used
+fs/ocfs2/dlm/dlmdebug.h:75: warning: 'dlm_destroy_debugfs_subroot' defined but not used
+fs/ocfs2/dlm/dlmdebug.h:78: warning: 'dlm_create_debugfs_root' defined but not used
+fs/ocfs2/dlm/dlmdebug.h:82: warning: 'dlm_destroy_debugfs_root' defined but not used
 
-Signed-off-by: Claudio Fontana <claudio.fontana@gmail.com>
+If not in debug build (CONFIG_DEBUG_FS), the definition of those functions
+has been moved from 'dlmdebug.h' to 'dlmdebug.c'.
 
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
 ---
 
---- linux-2.6.25.4/lib/crc32.c	2008-05-15 17:00:12.000000000 +0200
-+++ linux-2.6.25.4-claudio/lib/crc32.c	2008-05-19 22:07:32.000000000 +0200
-@@ -72,25 +72,25 @@ u32 __pure crc32_le(u32 crc, unsigned ch
- u32 __pure crc32_le(u32 crc, unsigned char const *p, size_t len)
- {
- # if CRC_LE_BITS = 8
--	const u32      *b =(u32 *)p;
-+	const u32      *b = (u32 *)p;
- 	const u32      *tab = crc32table_le;
+ dlmdebug.c |   30 ++++++++++++++++++++++++++++++
+ dlmdebug.h |   27 ---------------------------
+ 2 files changed, 30 insertions(+), 27 deletions(-)
 
- # ifdef __LITTLE_ENDIAN
--#  define DO_CRC(x) crc = tab[ (crc ^ (x)) & 255 ] ^ (crc>>8)
-+#  define DO_CRC(x) crc = tab[(crc ^ (x)) & 255] ^ (crc >> 8)
- # else
--#  define DO_CRC(x) crc = tab[ ((crc >> 24) ^ (x)) & 255] ^ (crc<<8)
-+#  define DO_CRC(x) crc = tab[((crc >> 24) ^ (x)) & 255] ^ (crc << 8)
- # endif
-
- 	crc = __cpu_to_le32(crc);
- 	/* Align it */
--	if(unlikely(((long)b)&3 && len)){
-+	if (unlikely(((long)b) & 3 && len)) {
- 		do {
- 			u8 *p = (u8 *)b;
- 			DO_CRC(*p++);
- 			b = (void *)p;
--		} while ((--len) && ((long)b)&3 );
-+		} while ((--len) && ((long)b) & 3);
- 	}
--	if(likely(len >= 4)){
-+	if (likely(len >= 4)) {
- 		/* load data 32 bits wide, xor data 32 bits wide. */
- 		size_t save_len = len & 3;
- 	        len = len >> 2;
-@@ -106,7 +106,7 @@ u32 __pure crc32_le(u32 crc, unsigned ch
- 		len = save_len;
- 	}
- 	/* And the last few bytes */
--	if(len){
-+	if (len) {
- 		do {
- 			u8 *p = (u8 *)b;
- 			DO_CRC(*p++);
-@@ -170,25 +170,25 @@ u32 __pure crc32_be(u32 crc, unsigned ch
- u32 __pure crc32_be(u32 crc, unsigned char const *p, size_t len)
- {
- # if CRC_BE_BITS = 8
--	const u32      *b =(u32 *)p;
-+	const u32      *b = (u32 *)p;
- 	const u32      *tab = crc32table_be;
-
- # ifdef __LITTLE_ENDIAN
--#  define DO_CRC(x) crc = tab[ (crc ^ (x)) & 255 ] ^ (crc>>8)
-+#  define DO_CRC(x) crc = tab[(crc ^ (x)) & 255] ^ (crc >> 8)
- # else
--#  define DO_CRC(x) crc = tab[ ((crc >> 24) ^ (x)) & 255] ^ (crc<<8)
-+#  define DO_CRC(x) crc = tab[((crc >> 24) ^ (x)) & 255] ^ (crc << 8)
- # endif
-
- 	crc = __cpu_to_be32(crc);
- 	/* Align it */
--	if(unlikely(((long)b)&3 && len)){
-+	if (unlikely(((long)b) & 3 && len)) {
- 		do {
- 			u8 *p = (u8 *)b;
- 			DO_CRC(*p++);
- 			b = (u32 *)p;
- 		} while ((--len) && ((long)b)&3 );
- 	}
--	if(likely(len >= 4)){
-+	if (likely(len >= 4)) {
- 		/* load data 32 bits wide, xor data 32 bits wide. */
- 		size_t save_len = len & 3;
- 	        len = len >> 2;
-@@ -204,7 +204,7 @@ u32 __pure crc32_be(u32 crc, unsigned ch
- 		len = save_len;
- 	}
- 	/* And the last few bytes */
--	if(len){
-+	if (len) {
- 		do {
- 			u8 *p = (u8 *)b;
- 			DO_CRC(*p++);
-@@ -370,7 +370,7 @@ EXPORT_SYMBOL(crc32_be);
- #include <stdlib.h>
- #include <stdio.h>
-
--#if 0				/*Not used at present */
-+#if 0				/* Not used at present */
- static void
- buf_dump(char const *prefix, unsigned char const *buf, size_t len)
- {
+Index: linux-2.6/fs/ocfs2/dlm/dlmdebug.c
+=================================--- linux-2.6.orig/fs/ocfs2/dlm/dlmdebug.c
++++ linux-2.6/fs/ocfs2/dlm/dlmdebug.c
+@@ -1034,4 +1034,34 @@ void dlm_destroy_debugfs_root(void)
+ 	if (dlm_debugfs_root)
+ 		debugfs_remove(dlm_debugfs_root);
+ }
++
++#else
++
++int dlm_debug_init(struct dlm_ctxt *dlm)
++{
++	return 0;
++}
++
++void dlm_debug_shutdown(struct dlm_ctxt *dlm)
++{
++}
++
++int dlm_create_debugfs_subroot(struct dlm_ctxt *dlm)
++{
++	return 0;
++}
++
++void dlm_destroy_debugfs_subroot(struct dlm_ctxt *dlm)
++{
++}
++
++int dlm_create_debugfs_root(void)
++{
++	return 0;
++}
++
++void dlm_destroy_debugfs_root(void)
++{
++}
++
+ #endif	/* CONFIG_DEBUG_FS */
+Index: linux-2.6/fs/ocfs2/dlm/dlmdebug.h
+=================================--- linux-2.6.orig/fs/ocfs2/dlm/dlmdebug.h
++++ linux-2.6/fs/ocfs2/dlm/dlmdebug.h
+@@ -27,8 +27,6 @@
+ 
+ void dlm_print_one_mle(struct dlm_master_list_entry *mle);
+ 
+-#ifdef CONFIG_DEBUG_FS
+-
+ struct dlm_debug_ctxt {
+ 	struct kref debug_refcnt;
+ 	struct dentry *debug_state_dentry;
+@@ -58,29 +56,4 @@ void dlm_destroy_debugfs_subroot(struct 
+ int dlm_create_debugfs_root(void);
+ void dlm_destroy_debugfs_root(void);
+ 
+-#else
+-
+-static int dlm_debug_init(struct dlm_ctxt *dlm)
+-{
+-	return 0;
+-}
+-static void dlm_debug_shutdown(struct dlm_ctxt *dlm)
+-{
+-}
+-static int dlm_create_debugfs_subroot(struct dlm_ctxt *dlm)
+-{
+-	return 0;
+-}
+-static void dlm_destroy_debugfs_subroot(struct dlm_ctxt *dlm)
+-{
+-}
+-static int dlm_create_debugfs_root(void)
+-{
+-	return 0;
+-}
+-static void dlm_destroy_debugfs_root(void)
+-{
+-}
+-
+-#endif	/* CONFIG_DEBUG_FS */
+ #endif	/* DLMDEBUG_H */
