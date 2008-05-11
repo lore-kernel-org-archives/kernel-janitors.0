@@ -1,74 +1,121 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 12 May 2008 14:37:46 +0000
-Subject: Re: [PATCH 1/6] arch/ia64/kernel: remove null pointer dereference
-Message-Id: <Pine.LNX.4.64.0805121637180.3694@ask.diku.dk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="-511516320-175496707-1210603066=:3694"
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Sun, 11 May 2008 17:08:05 +0000
+Subject: [PATCH 1/2] fs/ocfs2/cluster: compilation warning fix
+Message-Id: <200805111908.06046.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0805121536370.3694@ask.diku.dk>
- <1210603050.25310.9.camel@odie.local>
-In-Reply-To: <1210603050.25310.9.camel@odie.local>
-To: Simon Holm =?ISO-8859-1?Q?Th=F8gersen?= <odie@cs.aau.dk>
-Cc: tony.luck@intel.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: mfasheh@suse.com, joel.becker@oracle.com, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Leonardo Potenza <lpotenza@inwind.it>
 
----511516320-175496707-1210603066=:3694
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Removed the warning messages:
+fs/ocfs2/cluster/tcp.h:132: warning: 'o2net_debugfs_init' defined but not used
+fs/ocfs2/cluster/tcp.h:136: warning: 'o2net_debugfs_exit' defined but not used
+fs/ocfs2/cluster/tcp.h:139: warning: 'o2net_debug_add_nst' defined but not used
+fs/ocfs2/cluster/tcp.h:142: warning: 'o2net_debug_del_nst' defined but not used
+fs/ocfs2/cluster/tcp.h:145: warning: 'o2net_debug_add_sc' defined but not used
+fs/ocfs2/cluster/tcp.h:148: warning: 'o2net_debug_del_sc' defined but not used
 
-On Mon, 12 May 2008, Simon Holm Th=F8gersen wrote:
+If not in debug build (CONFIG_DEBUG_FS), the definition of those functions
+has been moved from 'tcp.h' to 'netdebug.c'.
 
-> man, 12 05 2008 kl. 15:37 +0200, skrev Julia Lawall:
-> > From: Julia Lawall <julia@diku.dk>
-> >=20
-> > If data is NULL, it is not possible to access data->ret.
-> >=20
-> > The problem was detected using the following semantic match
-> > (http://www.emn.fr/x-info/coccinelle/)
-> >=20
-> > // <smpl>
-> > @@
-> > expression E, E1;
-> > identifier f;
-> > statement S1,S2,S3;
-> > @@
-> >=20
-> > * if (E =3D=3D NULL)
-> > {
-> >   ... when !=3D if (E =3D=3D NULL) S1 else S2
-> >       when !=3D E =3D E1
-> > * E->f
-> >   ... when any
-> >   return ...;
-> > }
-> > else S3
-> > // </smpl>
-> >=20
-> > Signed-off-by: Julia Lawall <julia@diku.dk>
-> >=20
-> > ---
-> >=20
-> > diff -u -p a/arch/ia64/kernel/palinfo.c b/arch/ia64/kernel/palinfo.c
-> > --- a/arch/ia64/kernel/palinfo.c	2008-05-09 16:46:57.000000000 +0200
-> > +++ b/arch/ia64/kernel/palinfo.c	2008-05-12 08:43:35.000000000 +0200
-> > @@ -902,7 +902,6 @@ palinfo_smp_call(void *info)
-> >  	palinfo_smp_data_t *data =3D (palinfo_smp_data_t *)info;
-> >  	if (data =3D=3D NULL) {
-> >  		printk(KERN_ERR "palinfo: data pointer is NULL\n");
-> > -		data->ret =3D 0; /* no output */
-> >  		return;
-> >  	}
-> >  	/* does this actual call */
-> > --
->=20
-> The whole if block should just be deleted, as info is never NULL. There
-> is only palinfo_handle_smp as (indirect) user of palinfo_smp_call (by
-> way of smp_call_function_single) and surely palinfo_smp_call never pass
-> NULL.
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+---
 
-OK.  Will you fix it?
+ netdebug.c |   31 +++++++++++++++++++++++++++++--
+ tcp.h      |   22 ----------------------
+ 2 files changed, 29 insertions(+), 24 deletions(-)
 
-julia
----511516320-175496707-1210603066=:3694--
+Index: linux-2.6/fs/ocfs2/cluster/netdebug.c
+=================================--- linux-2.6.orig/fs/ocfs2/cluster/netdebug.c
++++ linux-2.6/fs/ocfs2/cluster/netdebug.c
+@@ -24,8 +24,6 @@
+  *
+  */
+ 
+-#ifdef CONFIG_DEBUG_FS
+-
+ #include <linux/module.h>
+ #include <linux/types.h>
+ #include <linux/slab.h>
+@@ -43,6 +41,8 @@
+ 
+ #include "tcp_internal.h"
+ 
++#ifdef CONFIG_DEBUG_FS
++
+ #define O2NET_DEBUG_DIR		"o2net"
+ #define SC_DEBUG_NAME		"sock_containers"
+ #define NST_DEBUG_NAME		"send_tracking"
+@@ -438,4 +438,31 @@ void o2net_debugfs_exit(void)
+ 		debugfs_remove(o2net_dentry);
+ }
+ 
++#else
++
++int o2net_debugfs_init(void)
++{
++	return 0;
++}
++
++void o2net_debugfs_exit(void)
++{
++}
++
++void o2net_debug_add_nst(struct o2net_send_tracking *nst)
++{
++}
++
++void o2net_debug_del_nst(struct o2net_send_tracking *nst)
++{
++}
++
++void o2net_debug_add_sc(struct o2net_sock_container *sc)
++{
++}
++
++void o2net_debug_del_sc(struct o2net_sock_container *sc)
++{
++}
++
+ #endif	/* CONFIG_DEBUG_FS */
+Index: linux-2.6/fs/ocfs2/cluster/tcp.h
+=================================--- linux-2.6.orig/fs/ocfs2/cluster/tcp.h
++++ linux-2.6/fs/ocfs2/cluster/tcp.h
+@@ -120,33 +120,11 @@ void o2net_exit(void);
+ struct o2net_send_tracking;
+ struct o2net_sock_container;
+ 
+-#ifdef CONFIG_DEBUG_FS
+ int o2net_debugfs_init(void);
+ void o2net_debugfs_exit(void);
+ void o2net_debug_add_nst(struct o2net_send_tracking *nst);
+ void o2net_debug_del_nst(struct o2net_send_tracking *nst);
+ void o2net_debug_add_sc(struct o2net_sock_container *sc);
+ void o2net_debug_del_sc(struct o2net_sock_container *sc);
+-#else
+-static int o2net_debugfs_init(void)
+-{
+-	return 0;
+-}
+-static void o2net_debugfs_exit(void)
+-{
+-}
+-static void o2net_debug_add_nst(struct o2net_send_tracking *nst)
+-{
+-}
+-static void o2net_debug_del_nst(struct o2net_send_tracking *nst)
+-{
+-}
+-static void o2net_debug_add_sc(struct o2net_sock_container *sc)
+-{
+-}
+-static void o2net_debug_del_sc(struct o2net_sock_container *sc)
+-{
+-}
+-#endif	/* CONFIG_DEBUG_FS */
+ 
+ #endif /* O2CLUSTER_TCP_H */
