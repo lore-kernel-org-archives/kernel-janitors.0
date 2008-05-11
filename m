@@ -1,40 +1,37 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Thu, 22 May 2008 10:22:22 +0000
-Subject: Re: [PATCH] au1000_eth: remove useless check
-Message-Id: <4835495E.8020506@pobox.com>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Sun, 11 May 2008 17:15:34 +0000
+Subject: [PATCH] fs/dlm: section mismatch warning fix
+Message-Id: <200805111915.34911.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0805121537320.3694@ask.diku.dk> <20080512161734.GA22190@electric-eye.fr.zoreil.com> <Pine.LNX.4.64.0805121852510.16384@ask.diku.dk> <20080512164421.GB22190@electric-eye.fr.zoreil.com>
-In-Reply-To: <20080512164421.GB22190@electric-eye.fr.zoreil.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Francois Romieu <romieu@fr.zoreil.com>
-Cc: Julia Lawall <julia@diku.dk>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: ccaulfie@redhat.com, teigland@redhat.com, linux-kernel@vger.kernel.org
 
-Francois Romieu wrote:
-> The lifespan of the device covers the request_irq .. free_irq interval.
-> 
-> The cast of a void * pointer is not needed either.
-> 
-> Signed-off-by: Francois Romieu <romieu@fr.zoreil.com>
-> 
-> diff --git a/drivers/net/au1000_eth.c b/drivers/net/au1000_eth.c
-> index 3634b5f..7023d77 100644
-> --- a/drivers/net/au1000_eth.c
-> +++ b/drivers/net/au1000_eth.c
-> @@ -1239,12 +1239,7 @@ static int au1000_rx(struct net_device *dev)
->   */
->  static irqreturn_t au1000_interrupt(int irq, void *dev_id)
->  {
-> -	struct net_device *dev = (struct net_device *) dev_id;
-> -
-> -	if (dev = NULL) {
-> -		printk(KERN_ERR "%s: isr: null dev ptr\n", dev->name);
-> -		return IRQ_RETVAL(1);
-> -	}
-> +	struct net_device *dev = dev_id;
->  
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-applied
+Removed the section mismatch message:
+WARNING: fs/dlm/dlm.o(.init.text+0x132): Section mismatch in reference from the function init_module() to the function .exit.text:dlm_netlink_exit()
 
+Since dlm_netlink_exit() is called in the init_dlm() error handling,
+the __exit annotation has been removed.
 
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+---
+
+ netlink.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6/fs/dlm/netlink.c
+=================================--- linux-2.6.orig/fs/dlm/netlink.c
++++ linux-2.6/fs/dlm/netlink.c
+@@ -95,7 +95,7 @@ int __init dlm_netlink_init(void)
+ 	return rv;
+ }
+ 
+-void __exit dlm_netlink_exit(void)
++void dlm_netlink_exit(void)
+ {
+ 	genl_unregister_ops(&family, &dlm_nl_ops);
+ 	genl_unregister_family(&family);
