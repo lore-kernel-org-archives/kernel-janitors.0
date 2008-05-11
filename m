@@ -1,54 +1,84 @@
-From: "Roberto A. Foglietta" <roberto.foglietta@gmail.com>
-Date: Thu, 15 May 2008 14:12:02 +0000
-Subject: Fwd: bad_page_fault oops
-Message-Id: <e4c675870805150712r2c58e630i7d350a40f5c06521@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 11 May 2008 12:52:09 +0000
+Subject: [PATCH 4/4] sound/usb: use unsigned for loop index
+Message-Id: <Pine.LNX.4.64.0805111451380.29620@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: perex@perex.cz, ricardo@scarybox.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi all folks,
+From: Julia Lawall <julia@diku.dk>
 
- before writing here I tried opening a thread in linuxnewbies and
-somebody tried to help me but...
- I still have the problem and I have no any other idea how to face it... :-(
- So I decide to write here hoping not having done wrong!
+A few more cases in the spirit of the patch "Trivial: Replacement of always
+>0 ints with unsigned ints" submitted by Ricardo Martins <ricardo@scarybox.net>
 
- I think if I could reproduce following Oops I would be at half of my way.
- It happens in the first 30-60 seconds after boot or it does not happen at all.
- At this time I need to force around 1500 reboots to see it once.
+The transformation was made using the following semantic patch
+(http://www.emn.fr/x-info/coccinelle/)
 
- It was running a 2.6.21.7 on PPC MPC8247 CPU when this Oops happens
+// <smpl>
+@r exists@ // find anything that might decrement the variable
+identifier i;
+expression E;
+position p;
+@@
 
+  int i@p;
+  ...
+(
+  &i
+|
+  i--
+|
+  --i
+|
+  i-=E
+|
+  i+=E
+)
 
-Oops: kernel access of bad area, sig: 11 [#1]
-PREEMPT
-NIP: 00000000 LR: 00000000 CTR: 00000000
-REGS: ced69dd0 TRAP: 0400   Not tainted  (2.6.21.7)
-MSR: 20009032 <EE,ME,IR,DR>  CR: 24004228  XER: 20000000
-TASK = cfb614c0[1747] 'df' THREAD: ced68000
-GPR00: 00000000 CED69E80 CFB614C0 C02F5630 C0400000 10005000 10000000 C0541580
-GPR08: 10004000 C02F0000 0000F52C 00000000 44004222 10089214 0FFC4000 00000001
-GPR16: FFFFFFFF 007FFF00 0FFBF6D8 00000000 00000000 C02F5630 00000001 CED69E9C
-GPR24: 00000000 CED69E98 00000000 00000001 FFFFFFFF 10070000 10005000 CE973B00
-NIP [00000000] 0x0
-LR [00000000] 0x0
-Call Trace:
-Instruction dump:
-XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-Fixing recursive fault but reboot is needed!
-BUG: scheduling while atomic: df/0x00000001/1747
-Call Trace:
-[CED69CD0] [C000C174] show_stack+0x4c/0x194 (unreliable)
-[CED69D10] [C0238ADC] schedule+0x6a4/0x6a8
-[CED69D50] [C001B490] do_exit+0x440/0x480
-[CED69D80] [C0004AD8] die+0xc4/0xcc
-[CED69DA0] [C000E1B0] bad_page_fault+0x5c/0x60
-[CED69DC0] [C000459C] handle_page_fault+0x7c/0x80
-[CED69E80] [00000000] 0x0
+@x disable decl_init@
+identifier r.i;
+expression E;
+position p1 != r.p;
+@@
 
- Best regards,
--- 
-/roberto
+(
+  volatile int i = 0;
+|
+  volatile int i;
+|
++ unsigned
+  int i@p1 = 0;
+|
++ unsigned
+  int i@p1;
+)
+  <... when != i = E      
+(
+  i = 0
+|
+  i = 1
+)
+  ...>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+ sound/usb/usbaudio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/sound/usb/usbaudio.c b/sound/usb/usbaudio.c
+--- a/sound/usb/usbaudio.c 2008-04-27 11:41:12.000000000 +0200
++++ b/sound/usb/usbaudio.c 2008-05-11 12:20:14.000000000 +0200
+@@ -2835,7 +2835,7 @@ static int parse_audio_endpoints(struct 
+  */
+ static void snd_usb_stream_disconnect(struct list_head *head)
+ {
+-	int idx;
++	unsigned int idx;
+ 	struct snd_usb_stream *as;
+ 	struct snd_usb_substream *subs;
+ 
