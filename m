@@ -1,55 +1,74 @@
-From: Jeff Garzik <jeff@garzik.org>
-Date: Thu, 22 May 2008 10:27:10 +0000
-Subject: Re: [PATCH 4/6] drivers/net/fs_enet: remove null pointer dereference
-Message-Id: <48354A7E.5070105@garzik.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 12 May 2008 20:21:25 +0000
+Subject: [PATCH 6/6, revised] drivers/net/pppol2tp.c: remove null pointer
+Message-Id: <Pine.LNX.4.64.0805122220350.27663@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0805121537590.3694@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0805121537590.3694@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, vbordug@ru.mvista.com
+To: netdev@vger.kernel.org, jchapman@katalix.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The following code appears in the function fs_init_instance in the file drivers/net/fs_enet/fs_enet-main.c.
-> 
-> 	if (fep->ops = NULL) {
-> 		printk(KERN_ERR DRV_MODULE_NAME
-> 		       ": %s No matching ops found (%d).\n",
-> 		       ndev->name, fpi->fs_no);
-> 		err = -EINVAL;
-> 		goto err;
-> 	}
-> 
-> This code implies that at the point of err, fep->ops can be NULL, so an
-> extra test is needed before dereferencing this value.
-> 
-> 
-> This problem was found using the following semantic match
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> expression E, E1;
-> identifier f;
-> statement S1,S2,S3;
-> @@
-> 
-> * if (E = NULL)
-> {
->   ... when != if (E = NULL) S1 else S2
->       when != E = E1
-> * E->f
->   ... when any
->   return ...;
-> }
-> else S3
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-applied
+If session is NULL, it is not possible to access its name field.  So I have
+split apart the printing of the error message to drop the printing of the
+name field in this case.
 
+The macro PRINTK actually only evaluates its arguments starting with the
+third one if the bitwise conjunction of the first two is non-zero.
+Normally, this conjunction would only be non-zero if debugging mode were
+turned on, but when session is NULL, the first argument in both the old and
+new code is -1, and thus the bitwise conjunction is true.  Perhaps a
+different strategy is desired, such as using tunnel->debug, which
+session->debug is initialized to, but tunnel can also be NULL, so this does
+not completely solve the problem.
+
+
+This problem was found using the following semantic match
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
+@@
+
+* if (E = NULL)
+{
+  ... when != if (E = NULL) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/drivers/net/pppol2tp.c b/drivers/net/pppol2tp.c
+--- a/drivers/net/pppol2tp.c	2008-05-09 16:46:57.000000000 +0200
++++ b/drivers/net/pppol2tp.c	2008-05-12 15:30:52.000000000 +0200
+@@ -1621,9 +1621,16 @@ out_no_ppp:
+ end:
+ 	release_sock(sk);
+ 
+-	if (error != 0)
+-		PRINTK(session ? session->debug : -1, PPPOL2TP_MSG_CONTROL, KERN_WARNING,
+-		       "%s: connect failed: %d\n", session->name, error);
++	if (error != 0) {
++		if (session)
++			PRINTK(session->debug,
++				PPPOL2TP_MSG_CONTROL, KERN_WARNING,
++				"%s: connect failed: %d\n",
++				session->name, error);
++		else
++			PRINTK(-1, PPPOL2TP_MSG_CONTROL, KERN_WARNING,
++				"connect failed: %d\n", error);
++	}
+ 
+ 	return error;
+ }
