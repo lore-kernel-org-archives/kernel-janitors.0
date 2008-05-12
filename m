@@ -1,90 +1,36 @@
-From: Vitaly Bordug <vbordug@ru.mvista.com>
-Date: Mon, 12 May 2008 15:37:54 +0000
+From: Francois Romieu <romieu@fr.zoreil.com>
+Date: Mon, 12 May 2008 16:51:42 +0000
 Subject: Re: [PATCH 4/6] drivers/net/fs_enet: remove null pointer
-Message-Id: <20080512193754.70c65c5d@vitb-lp>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/hmiGCmnL3XGsfEJx71+1DdR"
+Message-Id: <20080512165142.GC22190@electric-eye.fr.zoreil.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0805121537590.3694@ask.diku.dk>
 In-Reply-To: <Pine.LNX.4.64.0805121537590.3694@ask.diku.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia@diku.dk>
-Cc: linuxppc-dev@ozlabs.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, vbordug@ru.mvista.com, jgarzik@pobox.com
 
---Sig_/hmiGCmnL3XGsfEJx71+1DdR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 12 May 2008 15:38:26 +0200 (CEST)
-Julia Lawall wrote:
-
-> From: Julia Lawall <julia@diku.dk>
-Acked-by: Vitaly Bordug <vitb@kernel.crashing.org>
-
->=20
-> The following code appears in the function fs_init_instance in the
-> file drivers/net/fs_enet/fs_enet-main.c.
->=20
-> 	if (fep->ops =3D=3D NULL) {
-> 		printk(KERN_ERR DRV_MODULE_NAME
-> 		       ": %s No matching ops found (%d).\n",
-> 		       ndev->name, fpi->fs_no);
-> 		err =3D -EINVAL;
-> 		goto err;
-> 	}
->=20
-> This code implies that at the point of err, fep->ops can be NULL, so
-> an extra test is needed before dereferencing this value.
->=20
-
->=20
-> This problem was found using the following semantic match
-> (http://www.emn.fr/x-info/coccinelle/)
->=20
-> // <smpl>
-> @@
-> expression E, E1;
-> identifier f;
-> statement S1,S2,S3;
-> @@
->=20
-> * if (E =3D=3D NULL)
-> {
->   ... when !=3D if (E =3D=3D NULL) S1 else S2
->       when !=3D E =3D E1
-> * E->f
->   ... when any
->   return ...;
-> }
-> else S3
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
->=20
-> ---
->=20
-> diff -u -p a/drivers/net/fs_enet/fs_enet-main.c
-> b/drivers/net/fs_enet/fs_enet-main.c ---
-> a/drivers/net/fs_enet/fs_enet-main.c	2008-04-27
-> 11:41:11.000000000 +0200 +++
-> b/drivers/net/fs_enet/fs_enet-main.c	2008-05-12
-> 09:41:52.000000000 +0200 @@ -1093,7 +1093,7 @@ err: if (registered)
-> unregister_netdev(ndev);=20
-> -		if (fep !=3D NULL) {
+Julia Lawall <julia@diku.dk> :
+[...]
+> diff -u -p a/drivers/net/fs_enet/fs_enet-main.c b/drivers/net/fs_enet/fs_enet-main.c
+> --- a/drivers/net/fs_enet/fs_enet-main.c	2008-04-27 11:41:11.000000000 +0200
+> +++ b/drivers/net/fs_enet/fs_enet-main.c	2008-05-12 09:41:52.000000000 +0200
+> @@ -1093,7 +1093,7 @@ err:
+>  		if (registered)
+>  			unregister_netdev(ndev);
+>  
+> -		if (fep != NULL) {
 > +		if (fep && fep->ops) {
 >  			(*fep->ops->free_bd)(ndev);
 >  			(*fep->ops->cleanup_data)(ndev);
 >  		}
 
---Sig_/hmiGCmnL3XGsfEJx71+1DdR
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Extra cookies for the nice soul who:
+- removes the 'if (registered)' test (it can not happen)
+- uses different error lablels and unrolls the error path. I can not claim
+  that the current error path is wrong but it would not hurt if it was more
+  trivially balanced.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-
-iEYEARECAAYFAkgoZFoACgkQe8XNc4YXvvj24ACg2SAPJFHf8Clq0jMQJ4ks/qQp
-RH0AniPgTxfpG+GBzSI2xN+xgIT5CMuR
-=QP9p
------END PGP SIGNATURE-----
-
---Sig_/hmiGCmnL3XGsfEJx71+1DdR--
+-- 
+Ueimor
