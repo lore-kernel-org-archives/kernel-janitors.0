@@ -1,37 +1,63 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Fri, 30 May 2008 22:11:22 +0000
-Subject: Re: [PATCH v2.6.26-rc4] ata: Convert deprecated static spinlock_t
-Message-Id: <48407B8A.4030507@pobox.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 12 May 2008 13:38:26 +0000
+Subject: [PATCH 4/6] drivers/net/fs_enet: remove null pointer dereference
+Message-Id: <Pine.LNX.4.64.0805121537590.3694@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080529175814.GB4926@kernelpanic>
-In-Reply-To: <20080529175814.GB4926@kernelpanic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pradeep Singh Rautela <rautelap@gmail.com>
-Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: pantelis.antoniou@gmail.com, vbordug@ru.mvista.com, linuxppc-dev@ozlabs.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Pradeep Singh Rautela wrote:
-> Replace deprecated static spinlock_t instance to static DEFINE_SPINLOCK(lock).
-> 
-> Signed-off-by: Pradeep Singh <rautelap@gmail.com>
-> ---
->  drivers/ata/libata-core.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-> index 3c89f20..cc816ca 100644
-> --- a/drivers/ata/libata-core.c
-> +++ b/drivers/ata/libata-core.c
-> @@ -5403,7 +5403,7 @@ static void ata_host_stop(struct device *gendev, void *res)
->   */
->  static void ata_finalize_port_ops(struct ata_port_operations *ops)
->  {
-> -	static spinlock_t lock = SPIN_LOCK_UNLOCKED;
-> +	static DEFINE_SPINLOCK(lock);
->  	const struct ata_port_operations *cur;
->  	void **begin = (void **)ops;
+From: Julia Lawall <julia@diku.dk>
 
-applied
+The following code appears in the function fs_init_instance in the file drivers/net/fs_enet/fs_enet-main.c.
+
+	if (fep->ops = NULL) {
+		printk(KERN_ERR DRV_MODULE_NAME
+		       ": %s No matching ops found (%d).\n",
+		       ndev->name, fpi->fs_no);
+		err = -EINVAL;
+		goto err;
+	}
+
+This code implies that at the point of err, fep->ops can be NULL, so an
+extra test is needed before dereferencing this value.
 
 
+This problem was found using the following semantic match
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
+@@
+
+* if (E = NULL)
+{
+  ... when != if (E = NULL) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/drivers/net/fs_enet/fs_enet-main.c b/drivers/net/fs_enet/fs_enet-main.c
+--- a/drivers/net/fs_enet/fs_enet-main.c	2008-04-27 11:41:11.000000000 +0200
++++ b/drivers/net/fs_enet/fs_enet-main.c	2008-05-12 09:41:52.000000000 +0200
+@@ -1093,7 +1093,7 @@ err:
+ 		if (registered)
+ 			unregister_netdev(ndev);
+ 
+-		if (fep != NULL) {
++		if (fep && fep->ops) {
+ 			(*fep->ops->free_bd)(ndev);
+ 			(*fep->ops->cleanup_data)(ndev);
+ 		}
