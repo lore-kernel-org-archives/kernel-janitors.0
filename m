@@ -1,45 +1,65 @@
-From: Joel Becker <Joel.Becker@oracle.com>
-Date: Mon, 12 May 2008 21:54:22 +0000
-Subject: Re: [PATCH 1/2] fs/ocfs2/cluster: compilation warning fix
-Message-Id: <20080512215422.GG12100@mail.oracle.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 12 May 2008 13:39:11 +0000
+Subject: [PATCH 6/6] drivers/net/pppol2tp.c: remove null pointer dereference
+Message-Id: <Pine.LNX.4.64.0805121538510.3694@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200805111908.06046.lpotenza@inwind.it>
-In-Reply-To: <200805111908.06046.lpotenza@inwind.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leonardo Potenza <lpotenza@inwind.it>
-Cc: kernel-janitors@vger.kernel.org, mfasheh@suse.com, linux-kernel@vger.kernel.org, sunil.mushran@oracle.com
+To: jchapman@katalix.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, May 11, 2008 at 07:08:05PM +0200, Leonardo Potenza wrote:
-> From: Leonardo Potenza <lpotenza@inwind.it>
-> 
-> Removed the warning messages:
-> fs/ocfs2/cluster/tcp.h:132: warning: 'o2net_debugfs_init' defined but not used
-> fs/ocfs2/cluster/tcp.h:136: warning: 'o2net_debugfs_exit' defined but not used
-> fs/ocfs2/cluster/tcp.h:139: warning: 'o2net_debug_add_nst' defined but not used
-> fs/ocfs2/cluster/tcp.h:142: warning: 'o2net_debug_del_nst' defined but not used
-> fs/ocfs2/cluster/tcp.h:145: warning: 'o2net_debug_add_sc' defined but not used
-> fs/ocfs2/cluster/tcp.h:148: warning: 'o2net_debug_del_sc' defined but not used
-> 
-> If not in debug build (CONFIG_DEBUG_FS), the definition of those functions
-> has been moved from 'tcp.h' to 'netdebug.c'.
+From: Julia Lawall <julia@diku.dk>
 
-	They should stay in tcp.h but be static inline.  That's the
-problem.
+If session is NULL, it is not possible to access its name field.  So I have
+split apart the printing of the error message to drop the printing of the
+name field in this case.
 
-Joel
 
--- 
+This problem was found using the following semantic match
+(http://www.emn.fr/x-info/coccinelle/)
 
-"Too much walking shoes worn thin.
- Too much trippin' and my soul's worn thin.
- Time to catch a ride it leaves today
- Her name is what it means.
- Too much walking shoes worn thin."
+// <smpl>
+@@
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
+@@
 
-Joel Becker
-Principal Software Developer
-Oracle
-E-mail: joel.becker@oracle.com
-Phone: (650) 506-8127
+* if (E = NULL)
+{
+  ... when != if (E = NULL) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/drivers/net/pppol2tp.c b/drivers/net/pppol2tp.c
+--- linux-2.6/drivers/net/pppol2tp.c	2008-05-09 16:46:57.000000000 +0200
++++ linuxcopy/drivers/net/pppol2tp.c	2008-05-12 15:30:52.000000000 +0200
+@@ -1621,9 +1621,16 @@ out_no_ppp:
+ end:
+ 	release_sock(sk);
+ 
+-	if (error != 0)
+-		PRINTK(session ? session->debug : -1, PPPOL2TP_MSG_CONTROL, KERN_WARNING,
+-		       "%s: connect failed: %d\n", session->name, error);
++	if (error != 0) {
++		if (session)
++			PRINTK(session->debug,
++				PPPOL2TP_MSG_CONTROL, KERN_WARNING,
++				"%s: connect failed: %d\n",
++				session->name, error);
++		else
++			PRINTK(-1, PPPOL2TP_MSG_CONTROL, KERN_WARNING,
++				"connect failed: %d\n", error);
++	}
+ 
+ 	return error;
+ }
