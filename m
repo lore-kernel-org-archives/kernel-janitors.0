@@ -1,40 +1,37 @@
-From: "Mark Asselstine" <asselsm@gmail.com>
-Date: Fri, 23 May 2008 20:35:19 +0000
-Subject: Re: bad_page_fault oops
-Message-Id: <919fe2b30805231335v67baa813ve4a38530f8fec962@mail.gmail.com>
+From: Francois Romieu <romieu@fr.zoreil.com>
+Date: Mon, 12 May 2008 16:44:21 +0000
+Subject: [PATCH] au1000_eth: remove useless check
+Message-Id: <20080512164421.GB22190@electric-eye.fr.zoreil.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <919fe2b30805160525q565f929t46067c1d0e7d98dc@mail.gmail.com>
-In-Reply-To: <919fe2b30805160525q565f929t46067c1d0e7d98dc@mail.gmail.com>
+References: <Pine.LNX.4.64.0805121537320.3694@ask.diku.dk> <20080512161734.GA22190@electric-eye.fr.zoreil.com> <Pine.LNX.4.64.0805121852510.16384@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0805121852510.16384@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: jgarzik@pobox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 23, 2008 at 10:43 AM, Roberto A. Foglietta
-<roberto.foglietta@gmail.com> wrote:
-> 2008/5/16 M. Asselstine <asselsm@mcmaster.ca>:
->
->>
->> Have you tried to attach a JTAG or use other tools such as LKCD. Do a
->> search for "linux kernel crash panic howto" and you will find lots of
->> useful information. When you are really stuck then try the mailing
->> lists again.
->>
->
->  AFAIK the LKCD patch exist for 2.6.10 but no any later kernel version.
->  I did not found any alter. Is it right?
->
-Ya, you are correct. To be honest I would probably use the system.map
-method to narrow down the place that is causing the crash and then
-strategically place some printks to take me the rest of the way in
-discovering the error. Once you have the offending function you can
-often spot the defect with some code inspection.
+The lifespan of the device covers the request_irq .. free_irq interval.
 
-Regards,
-Mark
+The cast of a void * pointer is not needed either.
 
+Signed-off-by: Francois Romieu <romieu@fr.zoreil.com>
 
->  Thanks,
-> --
-> /roberto
->
+diff --git a/drivers/net/au1000_eth.c b/drivers/net/au1000_eth.c
+index 3634b5f..7023d77 100644
+--- a/drivers/net/au1000_eth.c
++++ b/drivers/net/au1000_eth.c
+@@ -1239,12 +1239,7 @@ static int au1000_rx(struct net_device *dev)
+  */
+ static irqreturn_t au1000_interrupt(int irq, void *dev_id)
+ {
+-	struct net_device *dev = (struct net_device *) dev_id;
+-
+-	if (dev = NULL) {
+-		printk(KERN_ERR "%s: isr: null dev ptr\n", dev->name);
+-		return IRQ_RETVAL(1);
+-	}
++	struct net_device *dev = dev_id;
+ 
+ 	/* Handle RX interrupts first to minimize chance of overrun */
+ 
