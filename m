@@ -1,36 +1,50 @@
-From: "Peter Teoh" <htmldeveloper@gmail.com>
-Date: Thu, 08 May 2008 14:12:02 +0000
-Subject: Re: kernel-testers - finding regressions in the kernel
-Message-Id: <804dabb00805080712h6d8c282dy5efff381298acfeb@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 12 May 2008 13:37:09 +0000
+Subject: [PATCH 1/6] arch/ia64/kernel: remove null pointer dereference
+Message-Id: <Pine.LNX.4.64.0805121536370.3694@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080507195830.GC32750@cs181133002.pp.htv.fi>
-In-Reply-To: <20080507195830.GC32750@cs181133002.pp.htv.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Recently, I had two different problems:
+From: Julia Lawall <julia@diku.dk>
 
-a.   For a problem that started since somewher after 2.6.24-rc9 till
-now, even with the sched-devel git version, the keyboard on entry on
-my laptop will jump/skip some characters.   Sometimes even repeating
-many times SUDDENLY when I just entered once.   That is for Dell
-Inspiron 9300 (Intel ICH6 chipset, ie, already > 3 years old, with FC7
-as the OS).   But no such problem for desktop (Intel/AMD alike).   But
-I don't know what to capture in the kernel when such thing happened.
+If data is NULL, it is not possible to access data->ret.
 
-b.   For my Intel desktop (FC7, 2.6.25 as the kernel), few days ago it
-just go into an extreme sluggish response mode....both mouse/keyboard
-input will take a long time to response.   I really don't know how to
-capture a snapshot of the kernel at that point.   It only happened
-after running some heavy stuff like database server + firefox
-downloading etc.
+The problem was detected using the following semantic match
+(http://www.emn.fr/x-info/coccinelle/)
 
-c.   Occasionally, my swap device will get disconnected, or corrupted,
-and then the system (after some use) go into an extreme sluggish
-response mode as well.   What happened?
+// <smpl>
+@@
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
+@@
 
-Key question:   How to debug such problem?   How to capture kernel's
-state when everything hanged?   How to capture the bootup message when
-it crashed upon bootup?   (I used my digital camera)
+* if (E = NULL)
+{
+  ... when != if (E = NULL) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/arch/ia64/kernel/palinfo.c b/arch/ia64/kernel/palinfo.c
+--- a/arch/ia64/kernel/palinfo.c	2008-05-09 16:46:57.000000000 +0200
++++ b/arch/ia64/kernel/palinfo.c	2008-05-12 08:43:35.000000000 +0200
+@@ -902,7 +902,6 @@ palinfo_smp_call(void *info)
+ 	palinfo_smp_data_t *data = (palinfo_smp_data_t *)info;
+ 	if (data = NULL) {
+ 		printk(KERN_ERR "palinfo: data pointer is NULL\n");
+-		data->ret = 0; /* no output */
+ 		return;
+ 	}
+ 	/* does this actual call */
