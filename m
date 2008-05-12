@@ -1,38 +1,53 @@
-From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Sat, 31 May 2008 19:08:46 +0000
-Subject: [PATCH] ext4 : Remove redundant condition in ext4_free_blocks_sb()
-Message-Id: <ea11fea30805311156vff13c10mdb2d5e399112d0bc@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 12 May 2008 13:37:58 +0000
+Subject: [PATCH 3/6] drivers/net: remove null pointer dereference
+Message-Id: <Pine.LNX.4.64.0805121537320.3694@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jgarzik@pobox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-For two unsigned values the check "block+count < block"  is always
-false. Thus the below patch removes that condition.
+From: Julia Lawall <julia@diku.dk>
 
-==============================
-Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
-
---- a/fs/ext4/balloc.c  2008-05-18 18:07:45.000000000 +0530
-+++ b/fs/ext4/balloc.c  2008-06-01 00:05:48.000000000 +0530
-@@ -619,7 +619,6 @@
-        sbi = EXT4_SB(sb);
-        es = sbi->s_es;
-        if (block < le32_to_cpu(es->s_first_data_block) ||
--           block + count < block ||
-            block + count > ext4_blocks_count(es)) {
-                ext4_error (sb, "ext4_free_blocks",
-                            "Freeing blocks not in datazone - "
+If dev is NULL, it is not possible to access its name field.  So I have
+simply modified the error message to drop the printing of the name field.
 
 
-==============================
--- 
-Thanks & Regards,
-********************************************
-Manish Katiyar ( http://mkatiyar.googlepages.com )
-3rd Floor, Fair Winds Block
-EGL Software Park
-Off Intermediate Ring Road
-Bangalore 560071, India
-***********************************************
+This problem was found using the following semantic match
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
+@@
+
+* if (E = NULL)
+{
+  ... when != if (E = NULL) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/drivers/net/au1000_eth.c b/drivers/net/au1000_eth.c
+--- a/drivers/net/au1000_eth.c	2008-04-27 11:41:11.000000000 +0200
++++ b/drivers/net/au1000_eth.c	2008-05-12 09:32:54.000000000 +0200
+@@ -1242,7 +1242,7 @@ static irqreturn_t au1000_interrupt(int 
+ 	struct net_device *dev = (struct net_device *) dev_id;
+ 
+ 	if (dev = NULL) {
+-		printk(KERN_ERR "%s: isr: null dev ptr\n", dev->name);
++		printk(KERN_ERR "isr: null dev ptr\n");
+ 		return IRQ_RETVAL(1);
+ 	}
+ 
