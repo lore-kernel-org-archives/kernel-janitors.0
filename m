@@ -1,45 +1,46 @@
-From: "Pranith Kumar" <bobby.prani@gmail.com>
-Date: Mon, 12 May 2008 09:34:26 +0000
-Subject: [Patch 1/1] Trivial - 2.6.26-rc2, arch/x86/mm/pat.c - fix warning
-Message-Id: <430c80e90805120222u45dac846j96c4a1810114b94d@mail.gmail.com>
+From: "Manish Katiyar" <mkatiyar@gmail.com>
+Date: Sat, 17 May 2008 04:23:10 +0000
+Subject: [PATCH] Remove "unused variable" warning in arch/x86/xen/setup.c on UP systems.
+Message-Id: <ea11fea30805162111v42f86555i816ec6915a89da3e@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@elte.hu>
-Cc: trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>, Kernel List <kernelnewbies@nl.linux.org>, kernel-janitors@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>, trivial@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+On UP systems cpu_data is defined as boot_cpu_data, due to which we
+get the below error while compiling xen.
 
-I get this warning when i compile the latest rc2
-arch/x86/mm/pat.c: In function `phys_mem_access_prot_allowed':
-arch/x86/mm/pat.c:558: warning: long long unsigned int format, long
-unsigned int arg (arg 6)
-arch/x86/mm/pat.c: In function `map_devmem':
-arch/x86/mm/pat.c:580: warning: long long unsigned int format, long
-unsigned int arg (arg 6)
+CC      arch/x86/xen/setup.o
+arch/x86/xen/setup.c: In function 'xen_enable_sysenter':
+arch/x86/xen/setup.c:74: warning: unused variable 'cpu'
 
-The following patch fixes this warning
+The below patch defines the variable only when SMP is defined.
 
-Signed-Off-by: D Pranith Kumar <bobby.prani@gmail.com>
 
---- linux-2.6.26-rc2/arch/x86/mm/pat.c.orig	2008-05-12 14:25:16.000000000 +0530
-+++ linux-2.6.26-rc2/arch/x86/mm/pat.c	2008-05-12 14:24:05.000000000 +0530
-@@ -555,7 +555,7 @@ int phys_mem_access_prot_allowed(struct
- 		"%s:%d /dev/mem ioremap_change_attr failed %s for %Lx-%Lx\n",
- 			current->comm, current->pid,
- 			cattr_name(flags),
--			offset, offset + size);
-+			offset, (unsigned long long)(offset + size));
- 		return 0;
- 	}
+Signed-off-by : Manish Katiyar <mkatiyar@gmail.com>
 
-@@ -576,7 +576,7 @@ void map_devmem(unsigned long pfn, unsig
- 		"%s:%d /dev/mem expected mapping type %s for %Lx-%Lx, got %s\n",
- 			current->comm, current->pid,
- 			cattr_name(want_flags),
--			addr, addr + size,
-+			addr, (unsigned long long)(addr + size),
- 			cattr_name(flags));
- 	}
- }
+diff -Nur a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
+--- a/arch/x86/xen/setup.c       2008-04-26 20:36:15.000000000 +0530
++++ b/arch/x86/xen/setup.c        2008-05-17 09:30:12.000000000 +0530
+@@ -71,7 +71,9 @@
+
+ void xen_enable_sysenter(void)
+ {
++#ifdef CONFIG_SMP
+        int cpu = smp_processor_id();
++#endif
+        extern void xen_sysenter_target(void);
+        /* Mask events on entry, even though they get enabled immediately */
+        static struct callback_register sysenter = {
+
+
+-- 
+Thanks & Regards,
+********************************************
+Manish Katiyar ( http://mkatiyar.googlepages.com )
+3rd Floor, Fair Winds Block
+EGL Software Park
+Off Intermediate Ring Road
+Bangalore 560071, India
+***********************************************
