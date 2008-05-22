@@ -1,7 +1,7 @@
-From: "Kyle Spaans" <3lucid@gmail.com>
-Date: Thu, 22 May 2008 21:43:16 +0000
+From: Nick Andrew <nick@nick-andrew.net>
+Date: Thu, 22 May 2008 23:43:48 +0000
 Subject: Re: [KJ] time for a KJ wiki cleanup, i think
-Message-Id: <5a1205b30805221443n1da03bcap28e2b7c7d0878e05@mail.gmail.com>
+Message-Id: <20080522234347.GA13280@tull.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0706231016470.10610@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0706231016470.10610@localhost.localdomain>
@@ -10,5 +10,13 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Could I be added as a member as well please?
-Kyle Spaans --> 3lucid@gmail.com
+On Thu, May 22, 2008 at 06:22:06PM +0530, Milind Arun Choudhary wrote:
+> I have created a new project @ google-code
+> http://code.google.com/p/kernel-janitors/
+
+Thanks, can you add me to the team please.
+
+Nick.
+-- 
+PGP Key ID = 0x418487E7                      http://www.nick-andrew.net/
+PGP Key fingerprint = B3ED 6894 8E49 1770 C24A  67E3 6266 6EB9 4184 87E7
