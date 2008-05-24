@@ -1,35 +1,274 @@
-From: Pradeep Singh Rautela <rautelap@gmail.com>
-Date: Thu, 29 May 2008 19:09:27 +0000
-Subject: Change deprecated SPIN_LOCK_UNLOCKED for static intialization of
-Message-Id: <20080529185727.GA6516@kernelpanic>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Sat, 24 May 2008 15:48:19 +0000
+Subject: some numbers on macros
+Message-Id: <200805241748.19607.m.kozlowski@tuxland.pl>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Boundary-00=_DjDOIyr5A7ojsRE"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080529174502.GA4926@kernelpanic>
-In-Reply-To: <20080529174502.GA4926@kernelpanic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Convert deprecated SPIN_LOCK_UNLOCKED for static intialization of lock to .lock = __SPIN_LOCK_UNLOCKED.
+--Boundary-00=_DjDOIyr5A7ojsRE
+Content-Type: text/plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Signed-off-by: Pradeep Singh <rautelap@gmail.com>
----
- arch/arm/kernel/irq.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Hello,
 
-diff --git a/arch/arm/kernel/irq.c b/arch/arm/kernel/irq.c
-index 11dcd52..8d3188e 100644
---- a/arch/arm/kernel/irq.c
-+++ b/arch/arm/kernel/irq.c
-@@ -100,7 +100,7 @@ unlock:
- /* Handle bad interrupts */
- static struct irq_desc bad_irq_desc = {
- 	.handle_irq = handle_bad_irq,
--	.lock = SPIN_LOCK_UNLOCKED
-+	.lock = __SPIN_LOCK_UNLOCKED(bad_irq_desc.lock),
- };
- 
- /*
--- 
-1.5.5.1
+	I wrote a rather dumb script to see some numbers on macros I was
+interested in. The script basically parses *.c file, finds macro definitions
+and counts how many times each macro was used in this source file. The script
+doesn't see any context so it can produce false positives - that is one of
+the reasons it doesn't look into header files - it's simply too dumb.
 
+The macros I was interested in were these which are:
+- defined and unused
+- defined and used only once
+- defined more than once
+
+I dont want to start another cleanup-patches-storm so first I'd like to
+know if this excersise is worth it as unused macros do not do much harm.
+
+Would such patches be accepted?
+
+	Mariusz
+
+
+
+example on recent linux-2.6 snapshot:
+
+$ ./find_interesting_macros.php linux-2.6
+[snip]
+10189 files to parse
+
+used  defined   macro
+[snip]
+0       1       'Tracev'                        /home/mariusz/linux/linux-2.6/init/initramfs.c +400
+0       1       'Tracevv'                       /home/mariusz/linux/linux-2.6/init/initramfs.c +401
+0       1       'Tracec'                        /home/mariusz/linux/linux-2.6/init/initramfs.c +402
+0       1       'Tracecv'                       /home/mariusz/linux/linux-2.6/init/initramfs.c +403
+1       1       'version_string'                /home/mariusz/linux/linux-2.6/init/version.c +17
+8       2       'DBG'                           /home/mariusz/linux/linux-2.6/sound/soc/at91/at91-ssc.c +39
+4       2       'DBG'                           /home/mariusz/linux/linux-2.6/sound/soc/at91/at91-pcm.c +37
+8       2       'DBG'                           /home/mariusz/linux/linux-2.6/sound/soc/at91/eti_b1_wm8731.c +44
+25      2       'DBG'                           /home/mariusz/linux/linux-2.6/sound/soc/s3c24xx/s3c2412-i2s.c +49
+21      2       'DBG'                           /home/mariusz/linux/linux-2.6/sound/soc/s3c24xx/s3c24xx-i2s.c +49
+19      2       'DBG'                           /home/mariusz/linux/linux-2.6/sound/soc/s3c24xx/s3c24xx-pcm.c +42
+0       2       'dbg'                           /home/mariusz/linux/linux-2.6/sound/soc/codecs/wm8750.c +41
+1       1       'info'                          /home/mariusz/linux/linux-2.6/sound/soc/codecs/wm8750.c +48
+0       1       'warn'                          /home/mariusz/linux/linux-2.6/sound/soc/codecs/wm8750.c +50
+1       1       'wm8750_reset'                  /home/mariusz/linux/linux-2.6/sound/soc/codecs/wm8750.c +120
+0       2       'dbg'                           /home/mariusz/linux/linux-2.6/sound/soc/codecs/wm8731.c +41
+1       1       'info'                          /home/mariusz/linux/linux-2.6/sound/soc/codecs/wm8731.c +48
+0       1       'warn'                          /home/mariusz/linux/linux-2.6/sound/soc/codecs/wm8731.c +50
+1       1       'wm8731_reset'                  /home/mariusz/linux/linux-2.6/sound/soc/codecs/wm8731.c +120
+...
+
+BTW. How many unused macros are in *.c files?
+
+$ ./find_interesting_macros.php linux-2.6 | grep "^0" | wc -l
+1340
+
+Well ... since it produces some false positives the real number can differ a little.
+This is an example of a macro that will cause false positive:
+
+scripts/kconfig/kconfig_load.c +7
+#define P(name,type,arg)        type (*name ## _p) arg
+#include "lkc_proto.h"
+#undef P
+
+
+--Boundary-00=_DjDOIyr5A7ojsRE
+Content-Type: application/x-php;
+  name="find_interesting_macros.php"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="find_interesting_macros.php"
+
+#!/usr/bin/php
+<?
+	$src = $_SERVER["argv"][1];
+	if ($src == "")
+		die("you need to specify source directory as a first argument\n");
+
+	$tree = array();
+
+	get_files($src);
+
+	echo "this script looks at macros within single *.c file scope\n";
+	echo "it is rather dumb and it CAN produce false-positives\n";
+	echo "as it doesn't see any context - feel free to improve it\n";
+	echo "used - how many times a macro was used in given file\n";
+	echo "defined - how many times #define foo() was found in given file\n";
+	echo "\n";
+	echo count($tree)." files to parse\n\n";
+	echo "used  defined\tmacro\n";
+
+	foreach ($tree as $file)
+		parse_file($file);
+
+	function get_files($path)
+	{
+		global $tree;
+
+		$dir = opendir($path);
+		if ($dir === false)
+			return;
+
+		while ($file = readdir($dir)) {
+			if ($file[0] == '.')
+				continue;
+
+			$tmp = $path;
+			if ($tmp[strlen($tmp) - 1] != '/')
+				$tmp .= "/";
+
+			$tmp .= $file;
+
+			if (is_dir($tmp))
+				get_files($tmp);
+			else if (preg_match("/\.c$/", $tmp))
+				$tree[] = $tmp;
+		}
+
+		closedir($dir);
+	}
+
+	/*
+	 * Tokens statistics are per file here. Thus it is possible that the macro used
+	 * in wider context will be shown here as unused etc. Hence we parse only *.c files
+	 * as those are rarely included into other *.c files.
+	 */
+	function parse_file($path)
+	{	
+		$line_nr = 0;
+		$comment = false;
+
+		$token = array();
+		$tc = 0;
+
+		$cache = array();
+		$cc = 0;
+
+		$file = fopen($path, "r");
+		if (!$file)
+			return;
+
+		while (!feof($file)) {
+			$line = fgets($file, 256);
+			$line_nr++;
+
+			if (preg_match("/\/\*/", $line))
+				$comment = true;
+
+			if ($comment && strstr($line, "*/"))
+				$comment = false;
+
+			if ($comment)
+				continue;
+
+			if (!preg_match("/^#define/", $line)) {
+				if (preg_match("/^#/", $line))
+					continue; /* not interested in other cpp stuff */
+
+				if (strlen($line) > 5) {
+					/* this line we should cache */
+					$cache[$cc] = $line;
+					$cc++;
+				}
+
+				continue;
+			}
+
+			/* the line starts with #define so lets find the token now */
+			$a = 7;
+			$b;
+
+			for (; $a < strlen($line); $a++)
+				if (in_array(ord($line[$a]), array(32, 9)))
+					break;
+			$a++;
+
+			for ($b = $a; $b < strlen($line); $b++)
+				if (in_array(ord($line[$b]), array(32, 9, 40)))
+					break;
+			if (ord($line[$b]) != 40)
+				continue;
+			$b -= $a;
+
+			$text = substr($line, $a, $b);
+			if (!strlen($text))
+				continue;
+
+			/* update stats in case macro was defined twice or more */
+			for ($i = 0; $i < $tc; $i++)
+				if ($token[$i]['text'] == $text) {
+					$token[$i]['defined']++;
+					break;
+				}
+
+			if ($i != $tc)
+				continue; /* token already known */
+					
+			/* add new token to known tokens */
+			$token[$i]['text'] = $text;
+			$token[$i]['line'] = $line;
+			$token[$i]['path'] = $path;
+			$token[$i]['line'] = $line_nr;
+			$token[$i]['used'] = 0;
+			$token[$i]['defined'] = 1;
+			$tc++;
+		}
+
+		fclose($file);
+
+		for ($i = 0; $i < $tc; $i++) {
+			for ($j = 0; $j < $cc; $j++)
+				if (strstr($cache[$j], $token[$i]['text']))
+					 $token[$i]['used']++;
+
+			/*
+			 * Interesting tokens arer these which are:
+			 * - defined but unused
+			 * - defined and used once
+			 * - defined more than once
+			 */
+			if ($token[$i]['used'] > 1 && $token[$i]['defined'] == 1)
+				continue;
+
+			echo $token[$i]['used']."\t".$token[$i]['defined']."\t'";
+
+			/* make the output pretty :) */
+			echo chr(0x1b).chr(0x5b);
+			switch ($token[$i]['used']) {
+			case 0:
+				echo "31m";
+				break;
+			case 1:
+				echo "33m";
+				break;
+			default:
+				echo "32m";
+			}
+
+			echo $token[$i]['text'].chr(0x1b).chr(0x5b)."m'\t";
+
+			$len = strlen($token[$i]['text']);
+			if ($len < 6)
+				echo "\t";
+			if ($len < 14)
+				echo "\t";
+			if ($len < 22)
+				echo "\t";
+
+			/*
+			 * the '+' makes vim go to the line where macro was defined
+			 * $ vim /some/path/to/some/file.c +1234
+			 */
+			echo $token[$i]['path']." +".$token[$i]['line']."\n";
+		}
+	}
+?>
+
+--Boundary-00=_DjDOIyr5A7ojsRE--
