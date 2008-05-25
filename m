@@ -1,7 +1,7 @@
 From: Matthew Wilcox <matthew@wil.cx>
-Date: Sun, 25 May 2008 21:56:53 +0000
+Date: Sun, 25 May 2008 21:59:01 +0000
 Subject: Re: sema_init fail in 2.6
-Message-Id: <20080525215653.GB30894@parisc-linux.org>
+Message-Id: <20080525215901.GC30894@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <41f748550805251313n5f1c9579k52060a940a911cc5@mail.gmail.com>
 In-Reply-To: <41f748550805251313n5f1c9579k52060a940a911cc5@mail.gmail.com>
@@ -11,15 +11,9 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 On Mon, May 26, 2008 at 03:13:43AM +0700, Iwan Budi Kusnanto wrote:
-> Hello, i recently porting my driver from 2.4.35 to 2.6.X kernel.
-> I meet some strange behaviour with sema_init. This is the code snippet
-> 
 > /**
 >  * this code is compiled & working in 2.4 kernel.
 >  * Compiled in 2.6 but fail in module initialization.
-
-How does it fail?  What error messages do you get?
-
 >  */
 > static struct semaphore sem_fail;
 > 
@@ -27,28 +21,13 @@ How does it fail?  What error messages do you get?
 > {
 >         sema_init (&sem_fail, 1);
 > }
-> 
-> /**
->  * this code compiled & work in 2.6
->  */
-> struct semaphore *sem;
-> 
-> static init __init my_module_init(void)
-> {
->         sem = (struct semaphore *) kmalloc (sizeof (struct semaphore
-> ), GFP_KERNEL);
->         sema_init (sem, 1);
-> }
-> 
-> Any idea?
-> Thx
-> 
-> -- 
-> Iwan Budi Kusnanto
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+I forgot to say that the intended way for you to do this in 2.6 is:
+
+static DECLARE_MUTEX(sem_fail);
+
+BTW, have you considered using a struct mutex instead of a struct
+semaphore?
 
 -- 
 Intel are signing my paycheques ... these opinions are still mine
