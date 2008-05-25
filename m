@@ -1,28 +1,41 @@
-From: David Teigland <teigland@redhat.com>
-Date: Mon, 12 May 2008 15:21:29 +0000
-Subject: Re: [PATCH] fs/dlm: section mismatch warning fix
-Message-Id: <20080512152129.GB31873@redhat.com>
+From: "Iwan Budi Kusnanto" <iwanbk@gmail.com>
+Date: Sun, 25 May 2008 20:13:43 +0000
+Subject: sema_init fail in 2.6
+Message-Id: <41f748550805251313n5f1c9579k52060a940a911cc5@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200805111915.34911.lpotenza@inwind.it>
-In-Reply-To: <200805111915.34911.lpotenza@inwind.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leonardo Potenza <lpotenza@inwind.it>
-Cc: kernel-janitors@vger.kernel.org, ccaulfie@redhat.com, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, May 11, 2008 at 07:15:34PM +0200, Leonardo Potenza wrote:
-> From: Leonardo Potenza <lpotenza@inwind.it>
-> 
-> Removed the section mismatch message:
-> WARNING: fs/dlm/dlm.o(.init.text+0x132): Section mismatch in reference from the function init_module() to the function .exit.text:dlm_netlink_exit()
-> 
-> Since dlm_netlink_exit() is called in the init_dlm() error handling,
-> the __exit annotation has been removed.
-> 
-> Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+Hello, i recently porting my driver from 2.4.35 to 2.6.X kernel.
+I meet some strange behaviour with sema_init. This is the code snippet
 
-Thanks, I've added this to dlm.git.
+/**
+ * this code is compiled & working in 2.4 kernel.
+ * Compiled in 2.6 but fail in module initialization.
+ */
+static struct semaphore sem_fail;
 
-Dave
+static init __init my_module_init_fail(void)
+{
+        sema_init (&sem_fail, 1);
+}
 
+/**
+ * this code compiled & work in 2.6
+ */
+struct semaphore *sem;
+
+static init __init my_module_init(void)
+{
+        sem = (struct semaphore *) kmalloc (sizeof (struct semaphore
+), GFP_KERNEL);
+        sema_init (sem, 1);
+}
+
+Any idea?
+Thx
+
+-- 
+Iwan Budi Kusnanto
