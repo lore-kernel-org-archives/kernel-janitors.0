@@ -1,36 +1,36 @@
-From: Ricardo Martins <ricardo@scarybox.net>
-Date: Fri, 02 May 2008 16:29:21 +0000
-Subject: Re: warning: =?utf-8?B?4oCYcGNpX2ZpbmRf?=
-Message-Id: <20080502162921.GA1678@macbookpro>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PEIAKu/WMn1b1Hv9"
+From: David Woodhouse <dwmw2@infradead.org>
+Date: Thu, 29 May 2008 16:19:19 +0000
+Subject: TODO: Converting drivers to use request_firmware()
+Message-Id: <1212077959.26088.86.camel@shinybook.infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+One of the reasons we haven't yet converted all drivers to use
+request_firmware() is because it would have forced people to use an
+initrd or udev in some cases where it wouldn't have been necessary
+before.
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+At git.infradead.org/users/dwmw2/firmware-2.6.git I've fixed that, by
+adding support for including firmware files directly in the kernel
+image, and letting request_firmware() find them there.
 
-Disregard that email, I finally found an up-to-date archive of the
-mailing list. According to Greg KH, this isn't as easy as a search and
-replace [1]. Sorry for the noise.
+So now it would be useful for people to help out by finding drivers
+which have their firmware built in by some other means, and converting
+them to use request_firmware() instead. 
 
-[1] http://marc.info/?l=3Dkernel-janitors&m=3D119221598328151&w=3D2
---=20
- Ricardo Martins  *  scarybox.net  *  GPG key: 0x1308F1B4
+A convenient list of such drivers can be found at
+http://www.fsfla.org/svn/fsfla/software/linux-libre/scripts/deblob-2.6.25 -- although a few of those seem to be false positives; the two 'offending' video drivers, at least, seem to be just a table of {register,value} settings for initialisation.
 
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+For now, we're converting the firmware to ihex files in the firmware/
+directory -- I'm hoping to move the entire firmware/ directory out into
+a separate tarball at some point in the future.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+If anyone feels like following the examples in the above git tree and
+cleaning up some extra drivers, that would be greatly appreciated.
 
-iEYEARECAAYFAkgbQWEACgkQkH81LRMI8bSKxACfb6C/erLr8+ZARCyiF8vlqhtp
-QqUAnj15fi3MW2kzhy9cIQIbaPS3guNf
-=BW4+
------END PGP SIGNATURE-----
+-- 
+dwmw2
 
---PEIAKu/WMn1b1Hv9--
