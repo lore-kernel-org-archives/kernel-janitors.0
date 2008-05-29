@@ -1,19 +1,16 @@
 From: Pradeep Singh Rautela <rautelap@gmail.com>
-Date: Thu, 29 May 2008 17:57:02 +0000
+Date: Thu, 29 May 2008 19:09:27 +0000
 Subject: Change deprecated SPIN_LOCK_UNLOCKED for static intialization of
-Message-Id: <20080529174502.GA4926@kernelpanic>
+Message-Id: <20080529185727.GA6516@kernelpanic>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080529174502.GA4926@kernelpanic>
+In-Reply-To: <20080529174502.GA4926@kernelpanic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-arm: Replace deprecated SPIN_LOCK_UNLOCKED for static initialization of 
-lock to .lock = __SPIN_LOCK_UNLOCKED.
-
-PATCH FOLLOWS
-
-KernelVersion: 2.6.26-rc4
+Convert deprecated SPIN_LOCK_UNLOCKED for static intialization of lock to .lock = __SPIN_LOCK_UNLOCKED.
 
 Signed-off-by: Pradeep Singh <rautelap@gmail.com>
 ---
