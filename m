@@ -1,87 +1,102 @@
-From: "Iwan Budi Kusnanto" <iwanbk@gmail.com>
-Date: Mon, 26 May 2008 04:33:28 +0000
-Subject: Re: sema_init fail in 2.6
-Message-Id: <41f748550805252133q568a2f9ah38743d51e6cf47d4@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 29 May 2008 13:05:07 +0000
+Subject: [PATCH 2/2] Eliminate double kfree
+Message-Id: <Pine.LNX.4.64.0805291504400.26229@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <41f748550805251313n5f1c9579k52060a940a911cc5@mail.gmail.com>
-In-Reply-To: <41f748550805251313n5f1c9579k52060a940a911cc5@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello, i forget to mention that i have some dirty hack in build process.
-In compilation, there is error message.
+From: Julia Lawall <julia@diku.dk>
 
-/data/maribaya/kernel_src/include/asm/processor.h:80: error:
-`CONFIG_X86_L1_CACHE_SHIFT' undeclared here (not in a function)
-/data/maribaya/kernel_src/include/asm/processor.h:80: error: requested
-alignment is not a constant
-In file included from /data/maribaya/kernel_src/include/linux/list.h:8,
-                 from /data/maribaya/kernel_src/include/linux/lockdep.h:12,
-                 from
-/data/maribaya/kernel_src/include/linux/spinlock_types.h:12,
-                 from /data/maribaya/src/include/linux/spinlock.h:78,
-                 from /data/maribaya/kernel_src/include/linux/mmzone.h:7,
-                 from /data/maribaya/kernel_src/include/linux/gfp.h:4,
-                 from /data/maribaya/kernel_src/include/linux/slab.h:14,
+The variable report is only non-NULL and non-freed in a small region of
+code, so it should only be freed in error handling code that comes from
+that region.
 
-It seems strange for me , because kernel build is successfull & my PC
-running with this kernel. I build my kernel from clean kernel.
-So, in makefile i add :
-   CFLAGS += -DCONFIG_X86_L1_CACHE_SHIFT=7
+This was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
 
-Thx
+// <smpl>
+@r1@
+expression E;
+position p1,p2;
+@@
 
-On Mon, May 26, 2008 at 4:56 AM, Matthew Wilcox <matthew@wil.cx> wrote:
-> On Mon, May 26, 2008 at 03:13:43AM +0700, Iwan Budi Kusnanto wrote:
->> Hello, i recently porting my driver from 2.4.35 to 2.6.X kernel.
->> I meet some strange behaviour with sema_init. This is the code snippet
->>
->> /**
->>  * this code is compiled & working in 2.4 kernel.
->>  * Compiled in 2.6 but fail in module initialization.
->
-> How does it fail?  What error messages do you get?
->
->>  */
->> static struct semaphore sem_fail;
->>
->> static init __init my_module_init_fail(void)
->> {
->>         sema_init (&sem_fail, 1);
->> }
->>
->> /**
->>  * this code compiled & work in 2.6
->>  */
->> struct semaphore *sem;
->>
->> static init __init my_module_init(void)
->> {
->>         sem = (struct semaphore *) kmalloc (sizeof (struct semaphore
->> ), GFP_KERNEL);
->>         sema_init (sem, 1);
->> }
->>
->> Any idea?
->> Thx
->>
->> --
->> Iwan Budi Kusnanto
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-> --
-> Intel are signing my paycheques ... these opinions are still mine
-> "Bill, look, we understand that you're interested in selling us this
-> operating system, but compare it to ours.  We can't possibly take such
-> a retrograde step."
->
+kfree@p1(E);
+...
+kfree@p2(E);
 
+@subexps@
+expression E1;
+position r1.p1,p;
+@@
 
+kfree@p1(<+... E1@p ...+>);
 
+@recollect@
+position subexps.p;
+expression E1;
+@@
+
+E1@p
+
+@doublekfree@
+position r1.p1,r1.p2;
+expression recollect.E1,E2,E;
+position p;
+statement S;
+@@
+
+kfree@p1(E);
+<+... E1@p=E2 ...+> // the actual semantic match contains other assignments
+kfree@p2(E);
+
+@notdoublekfree@
+position r1.p1,r1.p2;
+position any doublekfree.p;
+expression E,E1,E2;
+@@
+
+* kfree@p1(E);
+... when !=3D E1@p
+    when !=3D E1@p =3D E2 // needed to match a variable decl
+* kfree@p2(E);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -u -p a/drivers/input/tablet/gtco.c b/drivers/input/tablet/gtco.c
+--- a/drivers/input/tablet/gtco.c	2008-05-09 16:46:57.000000000 +0200
++++ b/drivers/input/tablet/gtco.c	2008-05-29 14:12:31.000000000 +0200
+@@ -926,7 +926,7 @@ static int gtco_probe(struct usb_interfa
+ 		err("Failed to get HID Report Descriptor of size: %d",
+ 		    hid_desc->wDescriptorLength);
+ 		error =3D -EIO;
+-		goto err_free_urb;
++		goto err_free_report;
+ 	}
+=20
+ 	/* Now we parse the report */
+@@ -982,13 +982,14 @@ static int gtco_probe(struct usb_interfa
+=20
+ 	return 0;
+=20
++ err_free_report:
++	kfree(report);
+  err_free_urb:
+ 	usb_free_urb(gtco->urbinfo);
+  err_free_buf:
+ 	usb_buffer_free(gtco->usbdev, REPORT_MAX_SIZE,
+ 			gtco->buffer, gtco->buf_dma);
+  err_free_devs:
+-	kfree(report);
+ 	input_free_device(input_dev);
+ 	kfree(gtco);
+ 	return error;
 --
-Iwan Budi Kusnanto
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
