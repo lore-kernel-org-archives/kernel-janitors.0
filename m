@@ -1,40 +1,38 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 29 May 2008 16:14:23 +0000
-Subject: Re: [PATCH 2/2] Eliminate double kfree
-Message-Id: <20080529121315.ZZRA012@mailhub.coreip.homeip.net>
+From: Pradeep Singh Rautela <rautelap@gmail.com>
+Date: Thu, 29 May 2008 17:57:02 +0000
+Subject: Change deprecated SPIN_LOCK_UNLOCKED for static intialization of
+Message-Id: <20080529174502.GA4926@kernelpanic>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0805291504400.26229@ask.diku.dk> <20080529101012.ZZRA012@mailhub.coreip.homeip.net> <Pine.LNX.4.64.0805291754480.26229@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0805291754480.26229@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, May 29, 2008 at 05:57:50PM +0200, Julia Lawall wrote:
-> On Thu, 29 May 2008, Dmitry Torokhov wrote:
-> 
-> > Hi Julia,
-> > 
-> > On Thu, May 29, 2008 at 03:05:07PM +0200, Julia Lawall wrote:
-> > > From: Julia Lawall <julia@diku.dk>
-> > > 
-> > > The variable report is only non-NULL and non-freed in a small region of
-> > > code, so it should only be freed in error handling code that comes from
-> > > that region.
-> > > 
-> > 
-> > Thank you for your patch. There isn't a double-kfree though, as far
-> > as I can see.
-> 
-> There was a double free because the error handling at the end of the 
-> function (for input_register_device) would fall through to the 
-> kfree(report) under err_free_devs, even though report is already freed at 
-> that point.
-> 
+arm: Replace deprecated SPIN_LOCK_UNLOCKED for static initialization of 
+lock to .lock = __SPIN_LOCK_UNLOCKED.
 
-Ah, yes, indeed.. Well, that decides what branch the patch gets
-applied then ;)
+PATCH FOLLOWS
 
+KernelVersion: 2.6.26-rc4
+
+Signed-off-by: Pradeep Singh <rautelap@gmail.com>
+---
+ arch/arm/kernel/irq.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/kernel/irq.c b/arch/arm/kernel/irq.c
+index 11dcd52..8d3188e 100644
+--- a/arch/arm/kernel/irq.c
++++ b/arch/arm/kernel/irq.c
+@@ -100,7 +100,7 @@ unlock:
+ /* Handle bad interrupts */
+ static struct irq_desc bad_irq_desc = {
+ 	.handle_irq = handle_bad_irq,
+-	.lock = SPIN_LOCK_UNLOCKED
++	.lock = __SPIN_LOCK_UNLOCKED(bad_irq_desc.lock),
+ };
+ 
+ /*
 -- 
-Dmitry
+1.5.5.1
+
