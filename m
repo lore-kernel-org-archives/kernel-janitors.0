@@ -1,64 +1,84 @@
-From: Mark Asselstine <mark.asselstine@windriver.com>
-Date: Thu, 08 May 2008 11:53:16 +0000
-Subject: Re: [PATCH] Remove cli()/sti() calls from HYSDN driver.
-Message-Id: <200805080753.16950.mark.asselstine@windriver.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 29 May 2008 13:04:38 +0000
+Subject: [PATCH 1/2] Eliminate double kfree
+Message-Id: <Pine.LNX.4.64.0805291504030.26229@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1209673012-10500-1-git-send-email-mark.asselstine@windriver.com> <20080507153800.16537fbc.akpm@linux-foundation.org> <20080508083353.GA18187@pingi.kke.suse.de>
-In-Reply-To: <20080508083353.GA18187@pingi.kke.suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Karsten Keil <kkeil@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thursday 08 May 2008 04:33:53 Karsten Keil wrote:
-> On Wed, May 07, 2008 at 03:38:00PM -0700, Andrew Morton wrote:
-> > On Thu,  1 May 2008 16:16:52 -0400
-> >
-> > Mark Asselstine <mark.asselstine@windriver.com> wrote:
-> > > >From looking at this driver the use of cli()/sti() within the do/while
-> > >
-> > > was a way to ensure interrupts were only disabled for short periods of
-> > > time while the bulk of the time interrupts were free to occur. The
-> > > use of the spin lock has eliminated the need to play with interrupts
-> > > in this way while still allowing for IO to be protected.
-> >
-> > OK.  If we still want the interrupt-latency optimisation then we should
-> > switch over to using local_irq_disable().  But probably nobody cares.
-> >
+From: Julia Lawall <julia@diku.dk>
 
-I had thought about using local_irq_disable() but it never progressed past a 
-thought.
+The destination of goto error also does a kfree(g_iommus), so it is not
+correct to do one here.
 
-> > > The remaining 3 sti() calls seem unneeded now that at no other point
-> > > in the driver is there a call to cli().
-> > >
-> > > Signed-off-by: Mark Asselstine <mark.asselstine@windriver.com>
-> > > ---
-> > >  drivers/isdn/hysdn/boardergo.c |   14 +++++---------
-> >
-> > So... can we now do this?
->
-> I think so.
->
+This was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
 
-I am in agreement here too. From my poking around this driver I see no reason 
-why not.
+// <smpl>
+@r1@
+expression E;
+position p1,p2;
+@@
 
-Regards,
-Mark
+kfree@p1(E);
+...
+kfree@p2(E);
 
-> > --- a/drivers/isdn/hysdn/Kconfig~a
-> > +++ a/drivers/isdn/hysdn/Kconfig
-> > @@ -3,7 +3,7 @@
-> >  #
-> >  config HYSDN
-> >  	tristate "Hypercope HYSDN cards (Champ, Ergo, Metro) support (module
-> > only)" -	depends on m && PROC_FS && PCI && BROKEN_ON_SMP
-> > +	depends on m && PROC_FS && PCI
-> >  	help
-> >  	  Say Y here if you have one of Hypercope's active PCI ISDN cards
-> >  	  Champ, Ergo and Metro. You will then get a module called hysdn.
-> > _
+@subexps@
+expression E1;
+position r1.p1,p;
+@@
 
+kfree@p1(<+... E1@p ...+>);
 
+@recollect@
+position subexps.p;
+expression E1;
+@@
+
+E1@p
+
+@doublekfree@
+position r1.p1,r1.p2;
+expression recollect.E1,E2,E;
+position p;
+statement S;
+@@
+
+kfree@p1(E);
+<+... E1@p=E2 ...+> // the actual semantic match contains other assignments
+kfree@p2(E);
+
+@notdoublekfree@
+position r1.p1,r1.p2;
+position any doublekfree.p;
+expression E,E1,E2;
+@@
+
+* kfree@p1(E);
+... when !=3D E1@p
+    when !=3D E1@p =3D E2 // needed to match a variable decl
+* kfree@p2(E);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -u -p a/drivers/pci/intel-iommu.c b/drivers/pci/intel-iommu.c
+--- a/drivers/pci/intel-iommu.c	2008-05-15 18:11:35.000000000 +0200
++++ b/drivers/pci/intel-iommu.c	2008-05-24 21:20:24.000000000 +0200
+@@ -1725,7 +1725,6 @@ int __init init_dmars(void)
+ 	deferred_flush =3D kzalloc(g_num_of_iommus *
+ 		sizeof(struct deferred_flush_tables), GFP_KERNEL);
+ 	if (!deferred_flush) {
+-		kfree(g_iommus);
+ 		ret =3D -ENOMEM;
+ 		goto error;
+ 	}
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
