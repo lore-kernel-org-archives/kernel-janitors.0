@@ -1,55 +1,41 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 12 May 2008 13:37:31 +0000
-Subject: [PATCH 2/6] drivers/md: remove null pointer dereference
-Message-Id: <Pine.LNX.4.64.0805121537100.3694@ask.diku.dk>
+From: "Manish Katiyar" <mkatiyar@gmail.com>
+Date: Sat, 31 May 2008 18:27:56 +0000
+Subject: [PATCH] ext2 : correct comments in fs/ext2/balloc.c
+Message-Id: <ea11fea30805311115t72773c4u66999762bb53d157@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+This patch corrects the wrong function name mentioned in the comments
+of ext2_free_blocks()  function
 
-If pgpath->pg->ps.type is NULL, it is not possible to access its name
-field.  So I have simply modified the error message to drop the printing of
-the name field.
+============================
+
+Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
+
+--- a/fs/ext2/balloc.c   2008-05-11 23:54:40.000000000 +0530
++++ b/fs/ext2/balloc.c        2008-05-31 23:44:20.000000000 +0530
+@@ -478,7 +478,7 @@
+ }
+
+ /**
+- * ext2_free_blocks_sb() -- Free given blocks and update quota and i_blocks
++ * ext2_free_blocks() -- Free given blocks and update quota and i_blocks
+  * @inode:             inode
+  * @block:             start physcial block to free
+  * @count:             number of blocks to free
 
 
-This problem was found using the following semantic match
-(http://www.emn.fr/x-info/coccinelle/)
+=============================
 
-// <smpl>
-@@
-expression E, E1;
-identifier f;
-statement S1,S2,S3;
-@@
-
-* if (E = NULL)
-{
-  ... when != if (E = NULL) S1 else S2
-      when != E = E1
-* E->f
-  ... when any
-  return ...;
-}
-else S3
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-
-diff -u -p a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
---- a/drivers/md/dm-mpath.c	2008-04-16 13:27:57.000000000 +0200
-+++ b/drivers/md/dm-mpath.c	2008-05-12 09:19:35.000000000 +0200
-@@ -884,8 +884,7 @@ static int reinstate_path(struct pgpath 
- 		goto out;
- 
- 	if (!pgpath->pg->ps.type) {
--		DMWARN("Reinstate path not supported by path selector %s",
--		       pgpath->pg->ps.type->name);
-+		DMWARN("Reinstate path not supported by path selector");
- 		r = -EINVAL;
- 		goto out;
- 	}
+-- 
+Thanks & Regards,
+********************************************
+Manish Katiyar ( http://mkatiyar.googlepages.com )
+3rd Floor, Fair Winds Block
+EGL Software Park
+Off Intermediate Ring Road
+Bangalore 560071, India
+***********************************************
