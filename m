@@ -1,28 +1,38 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Sun, 25 May 2008 09:11:36 +0000
-Subject: Re: some numbers on macros
-Message-Id: <200805251111.36932.m.kozlowski@tuxland.pl>
+From: "Manish Katiyar" <mkatiyar@gmail.com>
+Date: Sat, 31 May 2008 19:08:46 +0000
+Subject: [PATCH] ext4 : Remove redundant condition in ext4_free_blocks_sb()
+Message-Id: <ea11fea30805311156vff13c10mdb2d5e399112d0bc@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200805241748.19607.m.kozlowski@tuxland.pl> <200805250141.09195.m.kozlowski@tuxland.pl> <20080524164615.0ed80f85@infradead.org>
-In-Reply-To: <20080524164615.0ed80f85@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arjan van de Ven <arjan@infradead.org>
-Cc: Matthew Wilcox <matthew@wil.cx>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+For two unsigned values the check "block+count < block"  is always
+false. Thus the below patch removes that condition.
 
-> On Sun, 25 May 2008 01:41:09 +0200
-> Mariusz Kozlowski <m.kozlowski@tuxland.pl> wrote:
-> > 
-> > Interesting part would be to write a 'parser' that actually sees the
-> > context and understands cpp directives, that could 'walk' the tree.
-> 
-> you could approach it from the opposite angle... I mean, lxr.linux.no
-> already has all this data in some database.. maybe you can turn it into
-> a set of database queries ;)
+==============================
+Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
 
-Good point :) Will look into this.
+--- a/fs/ext4/balloc.c  2008-05-18 18:07:45.000000000 +0530
++++ b/fs/ext4/balloc.c  2008-06-01 00:05:48.000000000 +0530
+@@ -619,7 +619,6 @@
+        sbi = EXT4_SB(sb);
+        es = sbi->s_es;
+        if (block < le32_to_cpu(es->s_first_data_block) ||
+-           block + count < block ||
+            block + count > ext4_blocks_count(es)) {
+                ext4_error (sb, "ext4_free_blocks",
+                            "Freeing blocks not in datazone - "
 
-	Mariusz
+
+==============================
+-- 
+Thanks & Regards,
+********************************************
+Manish Katiyar ( http://mkatiyar.googlepages.com )
+3rd Floor, Fair Winds Block
+EGL Software Park
+Off Intermediate Ring Road
+Bangalore 560071, India
+***********************************************
