@@ -1,34 +1,58 @@
-From: Pavel Machek <pavel@suse.cz>
-Date: Tue, 17 Jun 2008 12:51:04 +0000
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Message-Id: <20080617125103.GA4211@ucw.cz>
+From: Kari Hurtta <hurtta+gmane@siilo.fmi.fi>
+Date: Sun, 01 Jun 2008 06:25:19 +0000
+Subject: Re: [PATCH] ext4 : Remove redundant condition in ext4_free_blocks_sb()
+Message-Id: <5d4p8du0xc.fsf@Hurtta06k.keh.iki.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080610190540.GA25066@kroah.com>
-In-Reply-To: <20080610190540.GA25066@kroah.com>
+References: <ea11fea30805311156vff13c10mdb2d5e399112d0bc@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi!
+"Manish Katiyar" <mkatiyar@gmail.com> writes in
+gmane.linux.file-systems:
 
-> What this tree is not:
-> 	- it is not a place to dump code and then run away, hoping that
-> 	  someone else will do the cleanup work for you.  While there
-> 	  are developers available to do this kind of work, you need to
-> 	  get someone to agree to "babysit" the code.
+> For two unsigned values the check "block+count < block"  is always
+> false. Thus the below patch removes that condition.
+> 
+> ==============================> 
+> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
+> 
+> --- a/fs/ext4/balloc.c  2008-05-18 18:07:45.000000000 +0530
+> +++ b/fs/ext4/balloc.c  2008-06-01 00:05:48.000000000 +0530
+> @@ -619,7 +619,6 @@
+>         sbi = EXT4_SB(sb);
+>         es = sbi->s_es;
+>         if (block < le32_to_cpu(es->s_first_data_block) ||
+> -           block + count < block ||
+>             block + count > ext4_blocks_count(es)) {
+>                 ext4_error (sb, "ext4_free_blocks",
+>                             "Freeing blocks not in datazone - "
+> 
+> 
+> ==============================
+Hmm. Consider situation where   block + count > max unsigned value
+     mathematically
 
-Hmm, how do I tap into that developer pool? :-)
+     in that case 
+           block + count < block
+     expression may be true
 
-Kohjinsha wifi driver is in state where it was ported to mac80211, and
-it still works with minimum features, but it needs dead code removal
-and rewriting the rest. That code is really very ugly.
+ 
+> -- 
+> Thanks & Regards,
+> ********************************************
+> Manish Katiyar ( http://mkatiyar.googlepages.com )
+> 3rd Floor, Fair Winds Block
+> EGL Software Park
+> Off Intermediate Ring Road
+> Bangalore 560071, India
+> ***********************************************
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-I can do the handholding; I can probably do the rewrite, too (its
-10000LoC), but it will take time...
+/ Kari Hurtta
 
-							Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
