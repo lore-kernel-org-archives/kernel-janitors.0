@@ -1,69 +1,41 @@
 From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Tue, 03 Jun 2008 12:31:05 +0000
-Subject: Re: [PATCH] ext2 : correct comments in fs/ext2/balloc.c
-Message-Id: <ea11fea30806030519w4a94efc8wa2d8adebd8ce7b48@mail.gmail.com>
+Date: Tue, 03 Jun 2008 12:37:08 +0000
+Subject: [PATCH] ext2 : correct comments in fs/ext2/balloc.c
+Message-Id: <ea11fea30806030525j3112c599ra1ce6429906c7a69@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ea11fea30805311115t72773c4u66999762bb53d157@mail.gmail.com>
-	 <919fe2b30806030516l4e7ba605kd9a01a18865cbdcc@mail.gmail.com>
-In-Reply-To: <919fe2b30806030516l4e7ba605kd9a01a18865cbdcc@mail.gmail.com>
+In-Reply-To: <ea11fea30805311115t72773c4u66999762bb53d157@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Asselstine <asselsm@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 3, 2008 at 5:46 PM, Mark Asselstine <asselsm@gmail.com> wrote:
-> On Sat, May 31, 2008 at 2:15 PM, Manish Katiyar <mkatiyar@gmail.com> wrote:
->> This patch corrects the wrong function name mentioned in the comments
->> of ext2_free_blocks()  function
->>
->> ============================
->>
->> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
-> Reviewed-by: Mark Asselstine <mark.asselstine@windriver.com>
->
-> One comment, lose the timestamps  they add no value.
+Resending with Mark's comment incorporated.
 
-OK Mark,... Will resend the patch with timestamp removed.
+This patch corrects the wrong function name mentioned in the comments
+of ext2_free_blocks()  function
 
-Thanks -
-Manish
+=============================
 
+Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
+Reviewed-by: Mark Asselstine <mark.asselstine@windriver.com>
 
->>
->> --- a/fs/ext2/balloc.c   2008-05-11 23:54:40.000000000 +0530
->> +++ b/fs/ext2/balloc.c        2008-05-31 23:44:20.000000000 +0530
->> @@ -478,7 +478,7 @@
->>  }
->>
->>  /**
->> - * ext2_free_blocks_sb() -- Free given blocks and update quota and i_blocks
->> + * ext2_free_blocks() -- Free given blocks and update quota and i_blocks
->>  * @inode:             inode
->>  * @block:             start physcial block to free
->>  * @count:             number of blocks to free
->>
->>
->> =============================
->>
->> --
->> Thanks & Regards,
->> ********************************************
->> Manish Katiyar ( http://mkatiyar.googlepages.com )
->> 3rd Floor, Fair Winds Block
->> EGL Software Park
->> Off Intermediate Ring Road
->> Bangalore 560071, India
->> ***********************************************
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
+diff --git a/fs/ext2/balloc.c b/fs/ext2/balloc.c
+index 10bb02c..12a24c0 100644
+--- a/fs/ext2/balloc.c
++++ b/fs/ext2/balloc.c
+@@ -478,7 +478,7 @@ void ext2_discard_reservation(struct inode *inode)
+ }
+
+ /**
+- * ext2_free_blocks_sb() -- Free given blocks and update quota and i_blocks
++ * ext2_free_blocks() -- Free given blocks and update quota and i_blocks
+  * @inode:             inode
+  * @block:             start physcial block to free
+  * @count:             number of blocks to free
 
 
-
+==============================
 -- 
 Thanks & Regards,
 ********************************************
