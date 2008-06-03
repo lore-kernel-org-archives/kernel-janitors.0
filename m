@@ -1,25 +1,53 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Tue, 03 Jun 2008 13:20:30 +0000
-Subject: Re: [PATCH] ext3 : Remove redundant condition in ext3_free_blocks_sb()
-Message-Id: <20080603132030.GD8434@parisc-linux.org>
+From: "Mark Asselstine" <asselsm@gmail.com>
+Date: Tue, 03 Jun 2008 12:33:20 +0000
+Subject: Re: [PATCH] ext2 : Remove redundant condition in ext2_free_blocks()
+Message-Id: <919fe2b30806030533yce91ceds67b942f3adf88afb@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30805311156q7488714ftf8b0b8b8cea85b76@mail.gmail.com> <20080531190527.GG28946@ZenIV.linux.org.uk> <ea11fea30805311210o15de2373m71d91228356f9bfd@mail.gmail.com>
-In-Reply-To: <ea11fea30805311210o15de2373m71d91228356f9bfd@mail.gmail.com>
+References: <ea11fea30805311156o3715d3f9ibd4ea8b44a8f3223@mail.gmail.com>
+In-Reply-To: <ea11fea30805311156o3715d3f9ibd4ea8b44a8f3223@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Manish Katiyar <mkatiyar@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Jun 01, 2008 at 12:40:32AM +0530, Manish Katiyar wrote:
-> Oooops....my bad, but I doubt if we pass such values in ext* code anywhere.
+On Sat, May 31, 2008 at 2:56 PM, Manish Katiyar <mkatiyar@gmail.com> wrote:
+> For two unsigned values the check "block+count < block"  is always
+> false. Thus the below patch removes that condition.
+>
+Always? What about "ULONG_MAX + 5"? I believe the answer is 4, but I
+may be wrong. You might want to rethink this one.
 
-If we have a corrupt filesystem, we can pass total garbage here.  This
-check prevents that from corrupting the filesystem further.  Patch NAKed
-with extreme prejudice.
+RE/
+Mark
 
--- 
-Intel are signing my paycheques ... these opinions are still mine
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+> ==============================>
+> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
+>
+> --- a/fs/ext2/balloc.c  2008-05-11 23:54:40.000000000 +0530
+> +++ b/fs/ext2/balloc.c  2008-06-01 00:03:44.000000000 +0530
+> @@ -499,7 +499,6 @@
+>        unsigned freed = 0, group_freed;
+>
+>        if (block < le32_to_cpu(es->s_first_data_block) ||
+> -           block + count < block ||
+>            block + count > le32_to_cpu(es->s_blocks_count)) {
+>                ext2_error (sb, "ext2_free_blocks",
+>                            "Freeing blocks not in datazone - "
+>
+>
+> ==============================>
+> --
+> Thanks & Regards,
+> ********************************************
+> Manish Katiyar ( http://mkatiyar.googlepages.com )
+> 3rd Floor, Fair Winds Block
+> EGL Software Park
+> Off Intermediate Ring Road
+> Bangalore 560071, India
+> ***********************************************
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
