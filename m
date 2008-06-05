@@ -1,21 +1,22 @@
-From: David Howells <dhowells@redhat.com>
-Date: Tue, 24 Jun 2008 10:21:16 +0000
-Subject: Re: [PATCH 2/14] arch/frv: Eliminate NULL test and memset after alloc_bootmem
-Message-Id: <7115.1214302876@redhat.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Date: Thu, 05 Jun 2008 20:58:02 +0000
+Subject: Re: [PATCH 1/2] Eliminate double kfree
+Message-Id: <200806051358.02217.jbarnes@virtuousgeek.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0806241021080.26777@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0806241021080.26777@ask.diku.dk>
+References: <Pine.LNX.4.64.0805291504030.26229@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0805291504030.26229@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia@diku.dk>
-Cc: dhowells@redhat.com, akinobu.mita@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall <julia@diku.dk> wrote:
+On Thursday, May 29, 2008 6:04 am Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+>
+> The destination of goto error also does a kfree(g_iommus), so it is not
+> correct to do one here.
 
-> As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
-> alloc_bootmem and related functions never return NULL and always return a
-> zeroed region of memory.  Thus a NULL test or memset after calls to these
-> functions is unnecessary.
+Thanks Julia, I'll put this in linux-next.
 
-Acked-by: David Howells <dhowells@redhat.com>
+Jesse
