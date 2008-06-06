@@ -1,74 +1,57 @@
-From: Grant Grundler <grundler@parisc-linux.org>
-Date: Sat, 28 Jun 2008 17:54:49 +0000
-Subject: Re: [PATCH 6/14] arch/parisc: Eliminate NULL test and memset after
-Message-Id: <20080628175449.GB12265@colo.lackof.org>
+From: "yoann padioleau" <yoann.padioleau@gmail.com>
+Date: Fri, 06 Jun 2008 15:50:48 +0000
+Subject: Full git history of Linux
+Message-Id: <390282f40806060850v106f8defid2694dade6ba2135@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0806241023080.26777@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0806241023080.26777@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: akinobu.mita@gmail.com, kyle@mcmartin.ca, matthew@wil.cx, grundler@parisc-linux.org, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 24, 2008 at 10:23:28AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
-> alloc_bootmem and related functions never return NULL and always return a
-> zeroed region of memory.  Thus a NULL test or memset after calls to these
-> functions is unnecessary.
-> 
->  arch/parisc/mm/init.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> This was fixed using the following semantic patch.
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> expression E;
-> statement S;
-> @@
-> 
-> E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
-> ... when != E
-> (
-> - BUG_ON (E = NULL);
-> |
-> - if (E = NULL) S
-> )
-> 
-> @@
-> expression E,E1;
-> @@
-> 
-> E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
-> ... when != E
-> - memset(E,0,E1);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Hi,
 
-Acked-by: Grant Grundler <grundler@parisc-linux.org>
+If anyone is interested, I have put on my website[1] a git repository
+containing the full history of Linux, from 0.01 to now.
+It's built from 3 other git repositories:
+ - the one from Dave Jones from 0.01 to 2.4.0,
+ - the one from tglx from 2.4.0 to 2.6.12,
+ - the one from Linus Torvalds from 2.6.12 to now.
 
-thanks,
-grant
+I used the "graft" feature of git (thanks to Junio and people
+on #git for the tip) to link them together. I also modified
+(via a git-filter-branch) the dates of some commits as for
+instance all commits from the Dave Jones's repo had the
+same date (23 Nov 2007). For this I mainly used the timestamp info
+of files on kernel.org. The script and info I used are also
+available on my website[2].
 
-> ---
-> 
-> diff -u -p a/arch/parisc/mm/init.c b/arch/parisc/mm/init.c
-> --- a/arch/parisc/mm/init.c
-> +++ b/arch/parisc/mm/init.c
-> @@ -765,7 +765,6 @@ static void __init pagetable_init(void)
->  #endif
->  
->  	empty_zero_page = alloc_bootmem_pages(PAGE_SIZE);
-> -	memset(empty_zero_page, 0, PAGE_SIZE);
->  }
->  
->  static void __init gateway_init(void)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-parisc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Note that because I used the graft feature, this repo is
+really just a superset of the one from Torvalds so you can
+pull as you would do with the Torvalds repo to get the
+latest Linux version.
+
+The reason why I built this repo is that I wanted to study
+the history of source code comments in Linux and git annotate
+could answer most of my questions automatically. For instance
+I wanted to know what comments were written before 1995 that are
+still present unmodified in the current Linux version.
+But for git annotate to work I needed a git repo with the
+full history of Linux. Other people may find my repo useful for other
+purpose.
+
+[1] full git repo:
+    http://aryx.kicks-ass.org/~pad/linux/full-history-linux.git.tar
+    Then untar it and do a git checkout -f  to populate it
+
+
+[2] script to build the git repo from scratch:
+    http://aryx.kicks-ass.org/~pad/linux/make-full-linux-history.tgz
+    Then untar it; make; ./make-full-kernel-history full
+    Note: you will need to install OCaml first.
+
+PS: Is there a way to put it on kernel.org?
+
+PS2: Some commits have only an approximate date. It was good
+enough for what I wanted. If you want more precise date, tell
+me, the script is easy to modify.
