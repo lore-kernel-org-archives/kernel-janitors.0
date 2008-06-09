@@ -1,71 +1,70 @@
-From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Tue, 03 Jun 2008 13:40:43 +0000
-Subject: Re: [PATCH] ext2 : Remove redundant condition in ext2_free_blocks()
-Message-Id: <ea11fea30806030628y58a13b6bv924ada281c55defe@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 09 Jun 2008 12:20:04 +0000
+Subject: [PATCH 1/4] arch/powerpc: add missing of_node_put
+Message-Id: <Pine.LNX.4.64.0806091418340.16009@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30805311156o3715d3f9ibd4ea8b44a8f3223@mail.gmail.com>
-	 <919fe2b30806030533yce91ceds67b942f3adf88afb@mail.gmail.com>
-In-Reply-To: <919fe2b30806030533yce91ceds67b942f3adf88afb@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Asselstine <asselsm@gmail.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: paulus@samba.org, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 3, 2008 at 6:03 PM, Mark Asselstine <asselsm@gmail.com> wrote:
-> On Sat, May 31, 2008 at 2:56 PM, Manish Katiyar <mkatiyar@gmail.com> wrote:
->> For two unsigned values the check "block+count < block"  is always
->> false. Thus the below patch removes that condition.
->>
-> Always? What about "ULONG_MAX + 5"? I believe the answer is 4, but I
-> may be wrong. You might want to rethink this one.
+From: Julia Lawall <julia@diku.dk>
 
-Yeah.... it is a total crap patch .... sorry for making the noise.
+of_node_put is needed before discarding a value received from
+of_find_node_by_type, eg in error handling code.
 
->
-> RE/
-> Mark
->
->> ==============================>>
->> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
->>
->> --- a/fs/ext2/balloc.c  2008-05-11 23:54:40.000000000 +0530
->> +++ b/fs/ext2/balloc.c  2008-06-01 00:03:44.000000000 +0530
->> @@ -499,7 +499,6 @@
->>        unsigned freed = 0, group_freed;
->>
->>        if (block < le32_to_cpu(es->s_first_data_block) ||
->> -           block + count < block ||
->>            block + count > le32_to_cpu(es->s_blocks_count)) {
->>                ext2_error (sb, "ext2_free_blocks",
->>                            "Freeing blocks not in datazone - "
->>
->>
->> ==============================>>
->> --
->> Thanks & Regards,
->> ********************************************
->> Manish Katiyar ( http://mkatiyar.googlepages.com )
->> 3rd Floor, Fair Winds Block
->> EGL Software Park
->> Off Intermediate Ring Road
->> Bangalore 560071, India
->> ***********************************************
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
+The semantic patch that makes the change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@@
+struct device_node *n;
+struct device_node *n1;
+struct device_node *n2;
+statement S;
+identifier f1,f2;
+expression E1,E2;
+constant C;
+@@
 
+n = of_find_node_by_type(...)
+...
+if (!n) S
+... when != of_node_put(n)
+    when != n1 = f1(n,...)
+    when != E1 = n
+    when any
+    when strict
+(
++ of_node_put(n);
+  return -C;
+|
+  of_node_put(n);
+|
+  n2 = f2(n,...)
+|
+  E2 = n
+|
+  return ...;
+)
+// </smpl>
 
--- 
-Thanks & Regards,
-********************************************
-Manish Katiyar ( http://mkatiyar.googlepages.com )
-3rd Floor, Fair Winds Block
-EGL Software Park
-Off Intermediate Ring Road
-Bangalore 560071, India
-***********************************************
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff -u -p a/arch/powerpc/platforms/pseries/nvram.c b/arch/powerpc/platforms/pseries/nvram.c
+--- a/arch/powerpc/platforms/pseries/nvram.c
++++ b/arch/powerpc/platforms/pseries/nvram.c
+@@ -131,8 +131,10 @@ int __init pSeries_nvram_init(void)
+ 		return -ENODEV;
+ 
+ 	nbytes_p = of_get_property(nvram, "#bytes", &proplen);
+-	if (nbytes_p = NULL || proplen != sizeof(unsigned int))
++	if (nbytes_p = NULL || proplen != sizeof(unsigned int)) {
++		of_node_put(nvram);
+ 		return -EIO;
++	}
+ 
+ 	nvram_size = *nbytes_p;
+ 
