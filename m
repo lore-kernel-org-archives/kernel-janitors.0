@@ -1,60 +1,32 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 24 Jun 2008 08:22:35 +0000
-Subject: [PATCH 4/14] arch/m68k/mm/motorola.c: Eliminate NULL test and memset
-Message-Id: <Pine.LNX.4.64.0806241022060.26777@ask.diku.dk>
+From: Krzysztof Helt <krzysztof.h1@poczta.fm>
+Date: Mon, 09 Jun 2008 18:06:41 +0000
+Subject: Re: [Linux-fbdev-devel] [PATCH 3/4] drivers/video/fsl-diu-fb.c: add
+Message-Id: <20080609200641.9544b500.krzysztof.h1@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0806091420450.16009@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0806091420450.16009@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akinobu.mita@gmail.com, geert@linux-m68k.org, zippel@linux-m68k.org, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Mon, 9 Jun 2008 14:21:18 +0200 (CEST)
+Julia Lawall <julia@diku.dk> wrote:
 
-As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
-alloc_bootmem and related functions never return NULL and always return a
-zeroed region of memory.  Thus a NULL test or memset after calls to these
-functions is unnecessary.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> of_node_put is needed before discarding a value received from
+> of_find_node_by_type, eg in error handling code.
+> 
+(...)
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
 
- arch/m68k/mm/motorola.c |    1 -
- 1 file changed, 1 deletion(-)
+Acked-by: Krzysztof Helt <krzysztof.h1@wp.pl>
 
-This was fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
+---------------------------------------------------------------
+Sprawdz jak zdobyc zdrowy usmiech!
+Kliknij >> http://link.interia.pl/f1e26
 
-// <smpl>
-@@
-expression E;
-statement S;
-@@
-
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
-... when != E
-(
-- BUG_ON (E = NULL);
-|
-- if (E = NULL) S
-)
-
-@@
-expression E,E1;
-@@
-
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
-... when != E
-- memset(E,0,E1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-
-diff -u -p a/arch/m68k/mm/motorola.c b/arch/m68k/mm/motorola.c
---- a/arch/m68k/mm/motorola.c
-+++ b/arch/m68k/mm/motorola.c
-@@ -285,7 +285,6 @@ void __init paging_init(void)
- 	 * to a couple of allocated pages
- 	 */
- 	empty_zero_page = alloc_bootmem_pages(PAGE_SIZE);
--	memset(empty_zero_page, 0, PAGE_SIZE);
- 
- 	/*
- 	 * Set up SFC/DFC registers
