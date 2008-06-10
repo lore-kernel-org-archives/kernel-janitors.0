@@ -1,59 +1,132 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 08 Jun 2008 12:58:17 +0000
-Subject: [PATCH 2/2] drivers/isdn/sc/ioctl.c: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0806081456570.10294@ask.diku.dk>
+From: Greg KH <greg@kroah.com>
+Date: Tue, 10 Jun 2008 19:06:31 +0000
+Subject: linux-staging status for June 10, 2008
+Message-Id: <20080610190631.GB25066@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080610190540.GA25066@kroah.com>
+In-Reply-To: <20080610190540.GA25066@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kkeil@suse.de, isdn4linux@listserv.isdn4linux.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-From: Julia Lawall <julia@diku.dk>
+Here is a list of the current patches in the linux-staging tree, and
+their current status.
 
-spid has been allocated in this function and so should be freed before 
-leaving it, as in the other error handling cases.
+ - 17 patches
+ - 192 files changed, 131073 insertions(+), 651 deletions(-)
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+---------
+Patch: aectc: add the aectc driver
+Contact: Brandon Philips <brandon@ifup.org>
 
-@r exists@
-expression E,E1;
-statement S;
-position p1,p2,p3;
-@@
+Status:
+  Being reworked to use the UIO interface instead of char driver
+  Part of the linuxdriverproject.org development effort.
 
-E =@p1 \(kmalloc\|kcalloc\|kzalloc\)(...)
-... when != E = E1
-if (E = NULL || ...) S
-... when != E = E1
-if@p2 (...) {
- ... when != kfree(E)
- }
-... when != E = E1
-kfree@p3(E);
+---------
+Patch: DVB: add firesat driver
+Contact: Manu Abraham <manu@linuxtv.org> and Greg KH <greg@kroah.com>
 
-@forall@
-position r.p2;
-expression r.E;
-int E1 != 0;
-@@
+Status:
+  Currently waiting for more DVB tuner development to finish off the
+  remaining features.  Will be submitted to the DVB developers for
+  inclusion in the kernel tree soon, as waiting for that effort might be
+  a while.
+  Part of the linuxdriverproject.org development effort.
 
-* if@p2 (...) {
- ... when != kfree(E)
-     when strict
-return E1; }
+---------
+Patch: Framebuffer: add the VIA framebuffer driver
+Contact: Benjamin Pan <BenjaminPan@viatech.com> and Greg Kroah-Hartman <greg@kroah.com>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
+Status:
+  many TODOs still left to finish (see patch for details)
+  Part of the linuxdriverproject.org development effort.
 
-diff -u -p a/drivers/isdn/sc/ioctl.c b/drivers/isdn/sc/ioctl.c
---- a/drivers/isdn/sc/ioctl.c
-+++ b/drivers/isdn/sc/ioctl.c
-@@ -226,6 +226,7 @@ int sc_ioctl(int card, scs_ioctl *data)
- 		 */
- 		if (copy_from_user(spid, data->dataptr, SCIOC_SPIDSIZE)) {
- 			kfree(rcvmsg);
-+			kfree(spid);
- 			return -EFAULT;
- 		}
- 
+---------
+Patch: Input: add appleir driver
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  looks like this is not needed at all, but still need to determine the
+  proper HID quirk.
+  Part of the linuxdriverproject.org development effort.
+
+---------
+Patch: me4000: add pci data collection driver
+Patch: me4000 firmware file
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  many TODOs still left to finish (see patch for details)
+  Part of the linuxdriverproject.org development effort.
+
+---------
+Patch: NET: add Alacritech slicoss driver
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  many TODOs still left to finish (see patch for details)
+  Part of the linuxdriverproject.org development effort.
+
+---------
+Patch: NET: add et131x driver
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  many TODOs still left to finish (see patch for details)
+  Part of the linuxdriverproject.org development effort.
+
+---------
+Patch: novfs: Add the Novell filesystem client kernel module
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  many TODOs still left to finish (see patch for details)
+  Part of the linuxdriverproject.org development effort.
+
+---------
+Patch: OMS: add OMS MAXp driver
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  many TODOs still left to finish (see patch for details)
+  Part of the linuxdriverproject.org development effort.
+
+---------
+Patch: USB: add USB test and measurement class drive
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  many TODOs still left to finish (see patch for details)
+  Part of the linuxdriverproject.org development effort.
+
+---------
+Patch: USB: add option HSO driver
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  Minor bugfixes waiting to be merged in
+  will be resubmited to the netdev list afterward
+  Part of the linuxdriverproject.org development effort.
+
+---------
+Patch: USB: add Sensoray 2255 v4l driver
+Contact: Dean Anderson <dean@sensoray.com> and Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  review cycle cleanup already happened, will be resubmitted to v4l
+  developers shortly.
+
+---------
+Patch: via agp driver (3 patches)
+Contact: Greg Kroah-Hartman <greg@kroah.com>
+
+Status:
+  Still waiting for VIA to produce their xorg driver
+  portions have already gone into the drm and agp tree
+  Part of the linuxdriverproject.org development effort.
+
+---------
+
