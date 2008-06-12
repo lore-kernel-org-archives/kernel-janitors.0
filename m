@@ -1,103 +1,69 @@
-From: "Gross, Mark" <mark.gross@intel.com>
-Date: Thu, 05 Jun 2008 22:32:31 +0000
-Subject: RE: [PATCH 1/2] Eliminate double kfree
-Message-Id: <5389061B65D50446B1783B97DFDB392D0A275662@orsmsx411.amr.corp.intel.com>
+From: Vegard Nossum <vegard.nossum@gmail.com>
+Date: Thu, 12 Jun 2008 21:23:10 +0000
+Subject: [PATCH] net: remove initialization of static per-cpu variables
+Message-Id: <20080612212310.GF3283@damson.getinternet.no>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0805291504030.26229@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0805291504030.26229@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia@diku.dk>, jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
+From: Vegard Nossum <vegard.nossum@gmail.com>
+Date: Thu, 12 Jun 2008 22:15:58 +0200
+Subject: [PATCH] net: remove initialization of static per-cpu variables
 
+Cc: netdev@vger.kernel.org
+Signed-off-by: Vegard Nossum <vegard.nossum@gmail.com>
+---
+ net/core/flow.c |    6 +++---
+ net/socket.c    |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
->-----Original Message-----
->From: Julia Lawall [mailto:julia@diku.dk]
->Sent: Thursday, May 29, 2008 6:05 AM
->To: jbarnes@virtuousgeek.org; linux-pci@vger.kernel.org; linux-
->kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
->Subject: [PATCH 1/2] Eliminate double kfree
->
->From: Julia Lawall <julia@diku.dk>
->
->The destination of goto error also does a kfree(g_iommus), so it is not
->correct to do one here.
->
->This was found using the following semantic match.
->(http://www.emn.fr/x-info/coccinelle/)
->
->// <smpl>
->@r1@
->expression E;
->position p1,p2;
->@@
->
->kfree@p1(E);
->...
->kfree@p2(E);
->
->@subexps@
->expression E1;
->position r1.p1,p;
->@@
->
->kfree@p1(<+... E1@p ...+>);
->
->@recollect@
->position subexps.p;
->expression E1;
->@@
->
->E1@p
->
->@doublekfree@
->position r1.p1,r1.p2;
->expression recollect.E1,E2,E;
->position p;
->statement S;
->@@
->
->kfree@p1(E);
-><+... E1@p=E2 ...+> // the actual semantic match contains other
-assignments
->kfree@p2(E);
->
->@notdoublekfree@
->position r1.p1,r1.p2;
->position any doublekfree.p;
->expression E,E1,E2;
->@@
->
->* kfree@p1(E);
->... when !=3D E1@p
->    when !=3D E1@p =3D E2 // needed to match a variable decl
->* kfree@p2(E);
->// </smpl>
->
->Signed-off-by: Julia Lawall <julia@diku.dk>
->---
->
->diff -u -p a/drivers/pci/intel-iommu.c b/drivers/pci/intel-iommu.c
->--- a/drivers/pci/intel-iommu.c	2008-05-15 18:11:35.000000000
-+0200
->+++ b/drivers/pci/intel-iommu.c	2008-05-24 21:20:24.000000000
-+0200
->@@ -1725,7 +1725,6 @@ int __init init_dmars(void)
-> 	deferred_flush =3D kzalloc(g_num_of_iommus *
-> 		sizeof(struct deferred_flush_tables), GFP_KERNEL);
-> 	if (!deferred_flush) {
->-		kfree(g_iommus);
-> 		ret =3D -ENOMEM;
-> 		goto error;
-> 	}
-ACK.
+diff --git a/net/core/flow.c b/net/core/flow.c
+index 1999117..9375bb9 100644
+--- a/net/core/flow.c
++++ b/net/core/flow.c
+@@ -39,7 +39,7 @@ atomic_t flow_cache_genid = ATOMIC_INIT(0);
+ 
+ static u32 flow_hash_shift;
+ #define flow_hash_size	(1 << flow_hash_shift)
+-static DEFINE_PER_CPU(struct flow_cache_entry **, flow_tables) = { NULL };
++static DEFINE_PER_CPU(struct flow_cache_entry **, flow_tables);
+ 
+ #define flow_table(cpu) (per_cpu(flow_tables, cpu))
+ 
+@@ -52,7 +52,7 @@ struct flow_percpu_info {
+ 	u32 hash_rnd;
+ 	int count;
+ };
+-static DEFINE_PER_CPU(struct flow_percpu_info, flow_hash_info) = { 0 };
++static DEFINE_PER_CPU(struct flow_percpu_info, flow_hash_info);
+ 
+ #define flow_hash_rnd_recalc(cpu) \
+ 	(per_cpu(flow_hash_info, cpu).hash_rnd_recalc)
+@@ -69,7 +69,7 @@ struct flow_flush_info {
+ 	atomic_t cpuleft;
+ 	struct completion completion;
+ };
+-static DEFINE_PER_CPU(struct tasklet_struct, flow_flush_tasklets) = { NULL };
++static DEFINE_PER_CPU(struct tasklet_struct, flow_flush_tasklets);
+ 
+ #define flow_flush_tasklet(cpu) (&per_cpu(flow_flush_tasklets, cpu))
+ 
+diff --git a/net/socket.c b/net/socket.c
+index 66c4a8c..c8375ec 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -151,7 +151,7 @@ static const struct net_proto_family *net_families[NPROTO] __read_mostly;
+  *	Statistics counters of the socket lists
+  */
+ 
+-static DEFINE_PER_CPU(int, sockets_in_use) = 0;
++static DEFINE_PER_CPU(int, sockets_in_use);
+ 
+ /*
+  * Support routines.
+-- 
+1.5.4.1
 
-Thanks,
-
---mgross
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
