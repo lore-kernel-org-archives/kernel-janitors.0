@@ -1,24 +1,23 @@
-From: "Darren Jenkins" <darrenrjenkins@gmail.com>
-Date: Sun, 15 Jun 2008 01:46:22 +0000
-Subject: Kernel Janitors List archive
-Message-Id: <82faac5b0806141846p2977e17dr3e4cf24fe5d968a8@mail.gmail.com>
+From: Georgy Berdyshev -
+Date: Sun, 15 Jun 2008 02:44:38 +0000
+Subject: Re: Kernel Janitors List archive
+Message-Id: <1213497878.8255.64.camel@venus>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <82faac5b0806141846p2977e17dr3e4cf24fe5d968a8@mail.gmail.com>
+In-Reply-To: <82faac5b0806141846p2977e17dr3e4cf24fe5d968a8@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8-sig"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-G'day people,
-
-I was looking for an archive of a posting on the janitors list and
-noticed that the google groups page doesn't seem to have up to date
-emails
-http://groups.google.com/group/linux_kernel_janitors
-and that the old archive stoped archiving mails in october last year
-https://lists.linux-foundation.org/pipermail/kernel-janitors/
-
-I was wondering if someone could either, (1) show me how to view the newer
-mails on th google group site, (2) fix the google group site, or (3) show me
-where an alternate archive of the kernel janitors mailing list is.
-
-Darren J.
+77u/SGVsbG8gRGFycmVuLAoKeW91IGNhbiBmaW5kIGFyY2hpdmVzIG9mIHRoZSBrZXJuZWwgamFu
+aXRvcnMgbGlzdCBoZXJlOgpodHRwOi8vbWFyYy5pbmZvLz9sPWtlcm5lbC1qYW5pdG9ycyZyPTEm
+dz0yCmh0dHA6Ly9kaXIuZ21hbmUub3JnL2dtYW5lLmxpbnV4Lmtlcm5lbC5qYW5pdG9ycwoKQ2hl
+Y2sgYWxzbzoKaHR0cDovL3ZnZXIua2VybmVsLm9yZy92Z2VyLWxpc3RzLmh0bWwKCktpbmQgcmVn
+YXJkcywgR2Vvcmd5IEJlcmR5c2hldgotLSAKR2Vvcmd5IEJlcmR5c2hldiAtINCT0LXQvtGA0LPQ
+uNC5INCR0LXRgNC00YvRiNC10LIKCkdQRyBrZXk6IDgzMEY2OEM1CkZpbmdlcnByaW50OiAwMzc5
+IEVENUEgQkVFNSA2NUE4IDdCRDUgMzFFNyBGNUI0IDFFQzcgODMwRiA2OEM1CgotLQpUbyB1bnN1
+YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVs
+LWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2Vy
+bmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21h
+am9yZG9tby1pbmZvLmh0bWw=
