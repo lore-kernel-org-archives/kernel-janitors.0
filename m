@@ -1,132 +1,35 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 10 Jun 2008 19:06:31 +0000
-Subject: linux-staging status for June 10, 2008
-Message-Id: <20080610190631.GB25066@kroah.com>
+From: Andre Haupt <andre@bitwigglers.org>
+Date: Fri, 20 Jun 2008 12:51:45 +0000
+Subject: [PATCH 2/2] parport: make parport_cs_release static.
+Message-Id: <554789e3ddac9c52e5d843b9c6bc5aeb1191f2d2.1213965527.git.andre@bitwigglers.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080610190540.GA25066@kroah.com>
-In-Reply-To: <20080610190540.GA25066@kroah.com>
+References: <cover.1213965527.git.andre@bitwigglers.org>
+ <15ef717cf17bfbbcdd49599ed9c99cc655b610fa.1213965527.git.andre@bitwigglers.org>
+In-Reply-To: <15ef717cf17bfbbcdd49599ed9c99cc655b610fa.1213965527.git.andre@bitwigglers.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
-Cc: devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: kernel-janitors@vger.kernel.org, Andre Haupt <andre@bitwigglers.org>
 
-Here is a list of the current patches in the linux-staging tree, and
-their current status.
+Signed-off-by: Andre Haupt <andre@bitwigglers.org>
+---
+ drivers/parport/parport_cs.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
- - 17 patches
- - 192 files changed, 131073 insertions(+), 651 deletions(-)
-
----------
-Patch: aectc: add the aectc driver
-Contact: Brandon Philips <brandon@ifup.org>
-
-Status:
-  Being reworked to use the UIO interface instead of char driver
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: DVB: add firesat driver
-Contact: Manu Abraham <manu@linuxtv.org> and Greg KH <greg@kroah.com>
-
-Status:
-  Currently waiting for more DVB tuner development to finish off the
-  remaining features.  Will be submitted to the DVB developers for
-  inclusion in the kernel tree soon, as waiting for that effort might be
-  a while.
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: Framebuffer: add the VIA framebuffer driver
-Contact: Benjamin Pan <BenjaminPan@viatech.com> and Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  many TODOs still left to finish (see patch for details)
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: Input: add appleir driver
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  looks like this is not needed at all, but still need to determine the
-  proper HID quirk.
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: me4000: add pci data collection driver
-Patch: me4000 firmware file
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  many TODOs still left to finish (see patch for details)
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: NET: add Alacritech slicoss driver
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  many TODOs still left to finish (see patch for details)
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: NET: add et131x driver
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  many TODOs still left to finish (see patch for details)
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: novfs: Add the Novell filesystem client kernel module
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  many TODOs still left to finish (see patch for details)
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: OMS: add OMS MAXp driver
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  many TODOs still left to finish (see patch for details)
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: USB: add USB test and measurement class drive
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  many TODOs still left to finish (see patch for details)
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: USB: add option HSO driver
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  Minor bugfixes waiting to be merged in
-  will be resubmited to the netdev list afterward
-  Part of the linuxdriverproject.org development effort.
-
----------
-Patch: USB: add Sensoray 2255 v4l driver
-Contact: Dean Anderson <dean@sensoray.com> and Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  review cycle cleanup already happened, will be resubmitted to v4l
-  developers shortly.
-
----------
-Patch: via agp driver (3 patches)
-Contact: Greg Kroah-Hartman <greg@kroah.com>
-
-Status:
-  Still waiting for VIA to produce their xorg driver
-  portions have already gone into the drm and agp tree
-  Part of the linuxdriverproject.org development effort.
-
----------
+diff --git a/drivers/parport/parport_cs.c b/drivers/parport/parport_cs.c
+index 802a81d..00e1d96 100644
+--- a/drivers/parport/parport_cs.c
++++ b/drivers/parport/parport_cs.c
+@@ -235,7 +235,7 @@ failed:
+     
+ ===================================*/
+ 
+-void parport_cs_release(struct pcmcia_device *link)
++static void parport_cs_release(struct pcmcia_device *link)
+ {
+ 	parport_info_t *info = link->priv;
+ 
+-- 
+1.5.5.GIT
 
