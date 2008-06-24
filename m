@@ -1,48 +1,61 @@
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Date: Thu, 12 Jun 2008 21:24:08 +0000
-Subject: [PATCH] mm: remove initialization of static per-cpu variables
-Message-Id: <20080612212408.GG3283@damson.getinternet.no>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 24 Jun 2008 08:24:24 +0000
+Subject: [PATCH 8/14] arch/s390: Eliminate NULL test and memset after
+Message-Id: <Pine.LNX.4.64.0806241023580.26777@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: akinobu.mita@gmail.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Date: Thu, 12 Jun 2008 22:21:29 +0200
-Subject: [PATCH] mm: remove initialization of static per-cpu variables
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Vegard Nossum <vegard.nossum@gmail.com>
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
+
+ arch/s390/kernel/topology.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E;
+statement S;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
+
+@@
+expression E,E1;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+- memset(E,0,E1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- mm/swap.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/mm/swap.c b/mm/swap.c
-index 45c9f25..dd89234 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -34,9 +34,9 @@
- /* How many pages do we try to swap or page in/out together? */
- int page_cluster;
+diff -u -p a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+--- a/arch/s390/kernel/topology.c
++++ b/arch/s390/kernel/topology.c
+@@ -313,8 +313,6 @@ void __init s390_init_cpu_topology(void)
+ 		machine_has_topology_irq = 1;
  
--static DEFINE_PER_CPU(struct pagevec, lru_add_pvecs) = { 0, };
--static DEFINE_PER_CPU(struct pagevec, lru_add_active_pvecs) = { 0, };
--static DEFINE_PER_CPU(struct pagevec, lru_rotate_pvecs) = { 0, };
-+static DEFINE_PER_CPU(struct pagevec, lru_add_pvecs);
-+static DEFINE_PER_CPU(struct pagevec, lru_add_active_pvecs);
-+static DEFINE_PER_CPU(struct pagevec, lru_rotate_pvecs);
+ 	tl_info = alloc_bootmem_pages(PAGE_SIZE);
+-	if (!tl_info)
+-		goto error;
+ 	info = tl_info;
+ 	stsi(info, 15, 1, 2);
  
- /*
-  * This path almost never happens for VM activity - pages are normally
-@@ -493,7 +493,7 @@ EXPORT_SYMBOL(pagevec_lookup_tag);
-  */
- #define ACCT_THRESHOLD	max(16, NR_CPUS * 2)
- 
--static DEFINE_PER_CPU(long, committed_space) = 0;
-+static DEFINE_PER_CPU(long, committed_space);
- 
- void vm_acct_memory(long pages)
- {
--- 
-1.5.4.1
-
