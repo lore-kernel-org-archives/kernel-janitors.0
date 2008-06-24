@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 24 Jun 2008 08:25:54 +0000
-Subject: [PATCH 11/14] drivers/s390: Eliminate NULL test and memset after
-Message-Id: <Pine.LNX.4.64.0806241025280.26777@ask.diku.dk>
+Date: Tue, 24 Jun 2008 08:24:57 +0000
+Subject: [PATCH 9/14] arch/sparc64: Eliminate NULL test and memset after
+Message-Id: <Pine.LNX.4.64.0806241024340.26777@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akinobu.mita@gmail.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: akinobu.mita@gmail.com, davem@davemloft.net, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -15,9 +15,8 @@ alloc_bootmem and related functions never return NULL and always return a
 zeroed region of memory.  Thus a NULL test or memset after calls to these
 functions is unnecessary.
 
- drivers/s390/char/raw3270.c  |   11 +----------
- drivers/s390/char/sclp_con.c |    2 --
- 2 files changed, 1 insertion(+), 12 deletions(-)
+ arch/sparc64/kernel/irq.c |    8 --------
+ 1 file changed, 8 deletions(-)
 
 This was fixed using the following semantic patch.
 (http://www.emn.fr/x-info/coccinelle/)
@@ -48,39 +47,28 @@ E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_p
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -u -p a/drivers/s390/char/raw3270.c b/drivers/s390/char/raw3270.c
---- a/drivers/s390/char/raw3270.c
-+++ b/drivers/s390/char/raw3270.c
-@@ -153,19 +153,10 @@ struct raw3270_request __init *raw3270_r
- 	struct raw3270_request *rq;
+diff -u -p a/arch/sparc64/kernel/irq.c b/arch/sparc64/kernel/irq.c
+--- a/arch/sparc64/kernel/irq.c
++++ b/arch/sparc64/kernel/irq.c
+@@ -882,10 +882,6 @@ static void __init init_cpu_send_mondo_i
+ 	BUILD_BUG_ON((NR_CPUS * sizeof(u16)) > (PAGE_SIZE - 64));
  
- 	rq = alloc_bootmem_low(sizeof(struct raw3270));
--	if (!rq)
--		return ERR_PTR(-ENOMEM);
--	memset(rq, 0, sizeof(struct raw3270_request));
- 
- 	/* alloc output buffer. */
--	if (size > 0) {
-+	if (size > 0)
- 		rq->buffer = alloc_bootmem_low(size);
--		if (!rq->buffer) {
--			free_bootmem((unsigned long) rq,
--				     sizeof(struct raw3270));
--			return ERR_PTR(-ENOMEM);
--		}
+ 	page = alloc_bootmem_pages(PAGE_SIZE);
+-	if (!page) {
+-		prom_printf("SUN4V: Error, cannot allocate cpu mondo page.\n");
+-		prom_halt();
 -	}
- 	rq->size = size;
- 	INIT_LIST_HEAD(&rq->list);
  
-diff -u -p a/drivers/s390/char/sclp_con.c b/drivers/s390/char/sclp_con.c
---- a/drivers/s390/char/sclp_con.c
-+++ b/drivers/s390/char/sclp_con.c
-@@ -222,8 +222,6 @@ sclp_console_init(void)
- 	INIT_LIST_HEAD(&sclp_con_pages);
- 	for (i = 0; i < MAX_CONSOLE_PAGES; i++) {
- 		page = alloc_bootmem_low_pages(PAGE_SIZE);
--		if (page = NULL)
--			return -ENOMEM;
- 		list_add_tail((struct list_head *) page, &sclp_con_pages);
- 	}
- 	INIT_LIST_HEAD(&sclp_con_outqueue);
+ 	tb->cpu_mondo_block_pa = __pa(page);
+ 	tb->cpu_list_pa = __pa(page + 64);
+@@ -929,10 +925,6 @@ void __init init_IRQ(void)
+ 
+ 	size = sizeof(struct ino_bucket) * NUM_IVECS;
+ 	ivector_table = alloc_bootmem(size);
+-	if (!ivector_table) {
+-		prom_printf("Fatal error, cannot allocate ivector_table\n");
+-		prom_halt();
+-	}
+ 	__flush_dcache_range((unsigned long) ivector_table,
+ 			     ((unsigned long) ivector_table) + size);
+ 
