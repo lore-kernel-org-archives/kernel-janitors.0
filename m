@@ -1,47 +1,86 @@
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Date: Thu, 12 Jun 2008 21:12:56 +0000
-Subject: [PATCH] taskstats: remove initialization of static per-cpu variable
-Message-Id: <20080612211256.GD3283@damson.getinternet.no>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 24 Jun 2008 08:25:54 +0000
+Subject: [PATCH 11/14] drivers/s390: Eliminate NULL test and memset after
+Message-Id: <Pine.LNX.4.64.0806241025280.26777@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: akinobu.mita@gmail.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Andrew,
+From: Julia Lawall <julia@diku.dk>
 
-The e-mail address of the maintainer (as listed in MAINTAINERS) gave me an
-error, so it goes to you instead.
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
 
-Thanks.
+ drivers/s390/char/raw3270.c  |   11 +----------
+ drivers/s390/char/sclp_con.c |    2 --
+ 2 files changed, 1 insertion(+), 12 deletions(-)
 
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
 
-Vegard
+// <smpl>
+@@
+expression E;
+statement S;
+@@
 
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
 
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Date: Thu, 12 Jun 2008 22:08:45 +0200
-Subject: [PATCH] taskstats: remove initialization of static per-cpu variable
+@@
+expression E,E1;
+@@
 
-Cc: Shailabh Nagar <nagar@watson.ibm.com>
-Signed-off-by: Vegard Nossum <vegard.nossum@gmail.com>
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+- memset(E,0,E1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- kernel/taskstats.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/kernel/taskstats.c b/kernel/taskstats.c
-index 4a23517..e80788b 100644
---- a/kernel/taskstats.c
-+++ b/kernel/taskstats.c
-@@ -35,7 +35,7 @@
-  */
- #define TASKSTATS_CPUMASK_MAXLEN	(100+6*NR_CPUS)
+diff -u -p a/drivers/s390/char/raw3270.c b/drivers/s390/char/raw3270.c
+--- a/drivers/s390/char/raw3270.c
++++ b/drivers/s390/char/raw3270.c
+@@ -153,19 +153,10 @@ struct raw3270_request __init *raw3270_r
+ 	struct raw3270_request *rq;
  
--static DEFINE_PER_CPU(__u32, taskstats_seqnum) = { 0 };
-+static DEFINE_PER_CPU(__u32, taskstats_seqnum);
- static int family_registered;
- struct kmem_cache *taskstats_cache;
+ 	rq = alloc_bootmem_low(sizeof(struct raw3270));
+-	if (!rq)
+-		return ERR_PTR(-ENOMEM);
+-	memset(rq, 0, sizeof(struct raw3270_request));
  
--- 
-1.5.4.1
-
+ 	/* alloc output buffer. */
+-	if (size > 0) {
++	if (size > 0)
+ 		rq->buffer = alloc_bootmem_low(size);
+-		if (!rq->buffer) {
+-			free_bootmem((unsigned long) rq,
+-				     sizeof(struct raw3270));
+-			return ERR_PTR(-ENOMEM);
+-		}
+-	}
+ 	rq->size = size;
+ 	INIT_LIST_HEAD(&rq->list);
+ 
+diff -u -p a/drivers/s390/char/sclp_con.c b/drivers/s390/char/sclp_con.c
+--- a/drivers/s390/char/sclp_con.c
++++ b/drivers/s390/char/sclp_con.c
+@@ -222,8 +222,6 @@ sclp_console_init(void)
+ 	INIT_LIST_HEAD(&sclp_con_pages);
+ 	for (i = 0; i < MAX_CONSOLE_PAGES; i++) {
+ 		page = alloc_bootmem_low_pages(PAGE_SIZE);
+-		if (page = NULL)
+-			return -ENOMEM;
+ 		list_add_tail((struct list_head *) page, &sclp_con_pages);
+ 	}
+ 	INIT_LIST_HEAD(&sclp_con_outqueue);
