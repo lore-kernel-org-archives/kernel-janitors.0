@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 24 Jun 2008 08:25:17 +0000
-Subject: [PATCH 10/14] arch/um: Eliminate NULL test and memset after
-Message-Id: <Pine.LNX.4.64.0806241024580.26777@ask.diku.dk>
+Date: Tue, 24 Jun 2008 08:22:35 +0000
+Subject: [PATCH 4/14] arch/m68k/mm/motorola.c: Eliminate NULL test and memset
+Message-Id: <Pine.LNX.4.64.0806241022060.26777@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akinobu.mita@gmail.com, jdike@addtoit.com, user-mode-linux-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: akinobu.mita@gmail.com, geert@linux-m68k.org, zippel@linux-m68k.org, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -15,10 +15,8 @@ alloc_bootmem and related functions never return NULL and always return a
 zeroed region of memory.  Thus a NULL test or memset after calls to these
 functions is unnecessary.
 
- arch/um/drivers/net_kern.c |    4 ----
- arch/um/kernel/initrd.c    |    2 --
- arch/um/kernel/physmem.c   |    3 ---
- 3 files changed, 9 deletions(-)
+ arch/m68k/mm/motorola.c |    1 -
+ 1 file changed, 1 deletion(-)
 
 This was fixed using the following semantic patch.
 (http://www.emn.fr/x-info/coccinelle/)
@@ -49,45 +47,14 @@ E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_p
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -u -p a/arch/um/drivers/net_kern.c b/arch/um/drivers/net_kern.c
---- a/arch/um/drivers/net_kern.c
-+++ b/arch/um/drivers/net_kern.c
-@@ -668,10 +668,6 @@ static int __init eth_setup(char *str)
- 	}
+diff -u -p a/arch/m68k/mm/motorola.c b/arch/m68k/mm/motorola.c
+--- a/arch/m68k/mm/motorola.c
++++ b/arch/m68k/mm/motorola.c
+@@ -285,7 +285,6 @@ void __init paging_init(void)
+ 	 * to a couple of allocated pages
+ 	 */
+ 	empty_zero_page = alloc_bootmem_pages(PAGE_SIZE);
+-	memset(empty_zero_page, 0, PAGE_SIZE);
  
- 	new = alloc_bootmem(sizeof(*new));
--	if (new = NULL) {
--		printk(KERN_ERR "eth_init : alloc_bootmem failed\n");
--		return 1;
--	}
- 
- 	INIT_LIST_HEAD(&new->list);
- 	new->index = n;
-diff -u -p a/arch/um/kernel/initrd.c b/arch/um/kernel/initrd.c
---- a/arch/um/kernel/initrd.c
-+++ b/arch/um/kernel/initrd.c
-@@ -37,8 +37,6 @@ static int __init read_initrd(void)
- 	}
- 
- 	area = alloc_bootmem(size);
--	if (area = NULL)
--		return 0;
- 
- 	if (load_initrd(initrd, area, size) = -1)
- 		return 0;
-diff -u -p a/arch/um/kernel/physmem.c b/arch/um/kernel/physmem.c
---- a/arch/um/kernel/physmem.c
-+++ b/arch/um/kernel/physmem.c
-@@ -41,12 +41,9 @@ int __init init_maps(unsigned long physm
- 	total_len = phys_len + iomem_len + highmem_len;
- 
- 	map = alloc_bootmem_low_pages(total_len);
--	if (map = NULL)
--		return -ENOMEM;
- 
- 	for (i = 0; i < total_pages; i++) {
- 		p = &map[i];
--		memset(p, 0, sizeof(struct page));
- 		SetPageReserved(p);
- 		INIT_LIST_HEAD(&p->lru);
- 	}
+ 	/*
+ 	 * Set up SFC/DFC registers
