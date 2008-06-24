@@ -1,37 +1,61 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Fri, 27 Jun 2008 05:33:30 +0000
-Subject: Re: [PATCH] drivers/net/r6040.c: Eliminate double sizeof
-Message-Id: <48647BAA.8060308@pobox.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 24 Jun 2008 08:22:05 +0000
+Subject: [PATCH 3/14] arch/ia64: Eliminate NULL test and memset after
+Message-Id: <Pine.LNX.4.64.0806241021360.26777@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0806232311570.13402@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0806232311570.13402@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: florian.fainelli@telecomint.eu, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: akinobu.mita@gmail.com, tony.luck@intel.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Taking sizeof the result of sizeof is quite strange and does not seem to be
-> what is wanted here.
-> 
-> This was fixed using the following semantic patch.
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> expression E;
-> @@
-> 
-> - sizeof (
->   sizeof (E)
-> - )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-applied
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
 
+ arch/ia64/kernel/iosapic.c |    2 --
+ 1 file changed, 2 deletions(-)
 
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E;
+statement S;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
+
+@@
+expression E,E1;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+- memset(E,0,E1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -u -p a/arch/ia64/kernel/iosapic.c b/arch/ia64/kernel/iosapic.c
+--- a/arch/ia64/kernel/iosapic.c
++++ b/arch/ia64/kernel/iosapic.c
+@@ -558,8 +558,6 @@ static struct iosapic_rte_info * __init_
+ 	if (!iosapic_kmalloc_ok && list_empty(&free_rte_list)) {
+ 		rte = alloc_bootmem(sizeof(struct iosapic_rte_info) *
+ 				    NR_PREALLOCATE_RTE_ENTRIES);
+-		if (!rte)
+-			return NULL;
+ 		for (i = 0; i < NR_PREALLOCATE_RTE_ENTRIES; i++, rte++)
+ 			list_add(&rte->rte_list, &free_rte_list);
+ 	}
