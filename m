@@ -1,61 +1,84 @@
-From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Mon, 30 Jun 2008 18:58:47 +0000
-Subject: [PATCH] ext2 : Use __func__ for function names in ext2_error messages
-Message-Id: <ea11fea30806301156vadc53fenfbfc0ed6978e456@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 24 Jun 2008 08:26:20 +0000
+Subject: [PATCH 12/14] kernel: Eliminate NULL test and memset after alloc_bootmem
+Message-Id: <Pine.LNX.4.64.0806241025550.26777@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: akinobu.mita@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-==============================
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by : Manish Katiyar <mkatiyar@gmail.com>
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
 
+ kernel/pid.c    |    2 --
+ kernel/printk.c |    5 -----
+ 2 files changed, 7 deletions(-)
+
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E;
+statement S;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
+
+@@
+expression E,E1;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+- memset(E,0,E1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- fs/ext2/dir.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
-index a78c6b4..bf3c467 100644
---- a/fs/ext2/dir.c
-+++ b/fs/ext2/dir.c
-@@ -146,7 +146,7 @@ out:
-        /* Too bad, we had an error */
-
- Ebadsize:
--       ext2_error(sb, "ext2_check_page",
-+       ext2_error(sb, __func__,
-                "size of directory #%lu is not a multiple of chunk size",
-                dir->i_ino
-        );
-@@ -166,7 +166,7 @@ Espan:
- Einumber:
-        error = "inode out of bounds";
- bad_entry:
--       ext2_error (sb, "ext2_check_page", "bad entry in directory #%lu: %s - "
-+       ext2_error (sb, __func__, "bad entry in directory #%lu: %s - "
-                "offset=%lu, inode=%lu, rec_len=%d, name_len=%d",
-                dir->i_ino, error, (page->index<<PAGE_CACHE_SHIFT)+offs,
-                (unsigned long) le32_to_cpu(p->inode),
-@@ -174,7 +174,7 @@ bad_entry:
-        goto fail;
- Eend:
-        p = (ext2_dirent *)(kaddr + offs);
--       ext2_error (sb, "ext2_check_page",
-+	ext2_error (sb, __func__,
- 		"entry in directory #%lu spans the page boundary"
- 		"offset=%lu, inode=%lu",
- 		dir->i_ino, (page->index<<PAGE_CACHE_SHIFT)+offs,
--- 
-1.5.4.3
-
-================================-- 
-Thanks & Regards,
-********************************************
-Manish Katiyar ( http://mkatiyar.googlepages.com )
-3rd Floor, Fair Winds Block
-EGL Software Park
-Off Intermediate Ring Road
-Bangalore 560071, India
-***********************************************
+diff -u -p a/kernel/pid.c b/kernel/pid.c
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -517,8 +517,6 @@ void __init pidhash_init(void)
+ 		pidhash_size * sizeof(struct hlist_head));
+ 
+ 	pid_hash = alloc_bootmem(pidhash_size *	sizeof(*(pid_hash)));
+-	if (!pid_hash)
+-		panic("Could not alloc pidhash!\n");
+ 	for (i = 0; i < pidhash_size; i++)
+ 		INIT_HLIST_HEAD(&pid_hash[i]);
+ }
+diff -u -p a/kernel/printk.c b/kernel/printk.c
+--- a/kernel/printk.c
++++ b/kernel/printk.c
+@@ -144,10 +144,6 @@ static int __init log_buf_len_setup(char
+ 		char *new_log_buf;
+ 
+ 		new_log_buf = alloc_bootmem(size);
+-		if (!new_log_buf) {
+-			printk(KERN_WARNING "log_buf_len: allocation failed\n");
+-			goto out;
+-		}
+ 
+ 		spin_lock_irqsave(&logbuf_lock, flags);
+ 		log_buf_len = size;
+@@ -167,7 +163,6 @@ static int __init log_buf_len_setup(char
+ 
+ 		printk(KERN_NOTICE "log_buf_len: %d\n", log_buf_len);
+ 	}
+-out:
+ 	return 1;
+ }
+ 
