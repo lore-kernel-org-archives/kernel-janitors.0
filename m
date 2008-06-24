@@ -1,34 +1,61 @@
-From: Andre Haupt <andre@bitwigglers.org>
-Date: Fri, 20 Jun 2008 12:51:44 +0000
-Subject: [PATCH 1/2] parport: remove superfluous local variable.
-Message-Id: <15ef717cf17bfbbcdd49599ed9c99cc655b610fa.1213965527.git.andre@bitwigglers.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 24 Jun 2008 08:27:10 +0000
+Subject: [PATCH 14/14] mm: Eliminate NULL test and memset after alloc_bootmem
+Message-Id: <Pine.LNX.4.64.0806241026490.26777@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1213965527.git.andre@bitwigglers.org>
-In-Reply-To: <cover.1213965527.git.andre@bitwigglers.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andre Haupt <andre@bitwigglers.org>
+To: akinobu.mita@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Andre Haupt <andre@bitwigglers.org>
+From: Julia Lawall <julia@diku.dk>
+
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
+
+ mm/sparse.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E;
+statement S;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
+
+@@
+expression E,E1;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\)(...)
+... when != E
+- memset(E,0,E1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/parport/ieee1284.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/parport/ieee1284.c b/drivers/parport/ieee1284.c
-index 0338b09..e970594 100644
---- a/drivers/parport/ieee1284.c
-+++ b/drivers/parport/ieee1284.c
-@@ -199,8 +199,6 @@ int parport_wait_peripheral(struct parport *port,
- 	/* 40ms of slow polling. */
- 	deadline = jiffies + msecs_to_jiffies(40);
- 	while (time_before (jiffies, deadline)) {
--		int ret;
--
- 		if (signal_pending (current))
- 			return -EINTR;
+diff -u -p a/mm/sparse.c b/mm/sparse.c
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -324,8 +324,6 @@ void __init sparse_init(void)
+ 	 */
+ 	size = sizeof(unsigned long *) * NR_MEM_SECTIONS;
+ 	usemap_map = alloc_bootmem(size);
+-	if (!usemap_map)
+-		panic("can not allocate usemap_map\n");
  
--- 
-1.5.5.GIT
-
+ 	for (pnum = 0; pnum < NR_MEM_SECTIONS; pnum++) {
+ 		if (!present_section_nr(pnum))
