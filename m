@@ -1,43 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 23 Jun 2008 21:12:31 +0000
-Subject: [PATCH] drivers/net/r6040.c: Eliminate double sizeof
-Message-Id: <Pine.LNX.4.64.0806232311570.13402@ask.diku.dk>
+From: Florian Fainelli <florian.fainelli@telecomint.eu>
+Date: Tue, 24 Jun 2008 08:54:18 +0000
+Subject: Re: [PATCH] drivers/net/r6040.c: Eliminate double sizeof
+Message-Id: <200806241054.19392.florian.fainelli@telecomint.eu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0806232311570.13402@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0806232311570.13402@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: florian.fainelli@telecomint.eu, jgarzik@pobox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Julia Lawall <julia@diku.dk>
+Cc: jgarzik@pobox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Hello Julia,
 
-Taking sizeof the result of sizeof is quite strange and does not seem to be
-what is wanted here.
+Le Monday 23 June 2008 23:12:31 Julia Lawall, vous avez =E9crit=A0:
+> From: Julia Lawall <julia@diku.dk>
+>
+> Taking sizeof the result of sizeof is quite strange and does not seem to =
+be
+> what is wanted here.
 
-This was fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
+Yes, definitively.
 
-// <smpl>
-@@
-expression E;
-@@
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-- sizeof (
-  sizeof (E)
-- )
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-
-diff -u -p a/drivers/net/r6040.c b/drivers/net/r6040.c
---- a/drivers/net/r6040.c 2008-06-17 19:46:52.000000000 +0200
-+++ b/drivers/net/r6040.c 2008-06-23 22:55:11.000000000 +0200
-@@ -273,7 +273,7 @@ static void r6040_init_ring_desc(struct 
- 	dma_addr_t mapping = desc_dma;
- 
- 	while (size-- > 0) {
--		mapping += sizeof(sizeof(*desc));
-+		mapping += sizeof(*desc);
- 		desc->ndesc = cpu_to_le32(mapping);
- 		desc->vndescp = desc + 1;
- 		desc++;
+Acked-by: Florian Fainelli <florian.fainelli@telecomint.eu>
+--=20
+Cordialement, Florian Fainelli
+------------------------------
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
