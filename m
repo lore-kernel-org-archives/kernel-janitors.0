@@ -1,35 +1,37 @@
-From: Florian Fainelli <florian.fainelli@telecomint.eu>
-Date: Tue, 24 Jun 2008 08:54:18 +0000
+From: Jeff Garzik <jgarzik@pobox.com>
+Date: Fri, 27 Jun 2008 05:33:30 +0000
 Subject: Re: [PATCH] drivers/net/r6040.c: Eliminate double sizeof
-Message-Id: <200806241054.19392.florian.fainelli@telecomint.eu>
+Message-Id: <48647BAA.8060308@pobox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0806232311570.13402@ask.diku.dk>
 In-Reply-To: <Pine.LNX.4.64.0806232311570.13402@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia@diku.dk>
-Cc: jgarzik@pobox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: florian.fainelli@telecomint.eu, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Julia,
-
-Le Monday 23 June 2008 23:12:31 Julia Lawall, vous avez =E9crit=A0:
+Julia Lawall wrote:
 > From: Julia Lawall <julia@diku.dk>
->
-> Taking sizeof the result of sizeof is quite strange and does not seem to =
-be
+> 
+> Taking sizeof the result of sizeof is quite strange and does not seem to be
 > what is wanted here.
-
-Yes, definitively.
-
+> 
+> This was fixed using the following semantic patch.
+> (http://www.emn.fr/x-info/coccinelle/)
+> 
+> // <smpl>
+> @@
+> expression E;
+> @@
+> 
+> - sizeof (
+>   sizeof (E)
+> - )
+> // </smpl>
+> 
 > Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Acked-by: Florian Fainelli <florian.fainelli@telecomint.eu>
---=20
-Cordialement, Florian Fainelli
-------------------------------
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+applied
+
+
