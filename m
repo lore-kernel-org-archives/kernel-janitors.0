@@ -1,46 +1,37 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Wed, 30 Jul 2008 21:23:50 +0000
-Subject: Re: [PATCH 2/7] drivers/net/ehea/ehea_main.c: Release mutex in error
-Message-Id: <4890DBE6.4080408@pobox.com>
+From: Greg KH <greg@kroah.com>
+Date: Wed, 02 Jul 2008 23:11:18 +0000
+Subject: Re: [ANNOUNCE] linux-staging tree created
+Message-Id: <20080702231118.GB20129@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0807210957060.24625@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0807210957060.24625@ask.diku.dk>
+References: <20080610190540.GA25066@kroah.com> <20080617125103.GA4211@ucw.cz>
+In-Reply-To: <20080617125103.GA4211@ucw.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: raisch@de.ibm.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pavel Machek <pavel@suse.cz>
+Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
+On Tue, Jun 17, 2008 at 02:51:04PM +0200, Pavel Machek wrote:
+> Hi!
 > 
-> The mutex is released on a successful return, so it would seem that it
-> should be released on an error return as well.
+> > What this tree is not:
+> > 	- it is not a place to dump code and then run away, hoping that
+> > 	  someone else will do the cleanup work for you.  While there
+> > 	  are developers available to do this kind of work, you need to
+> > 	  get someone to agree to "babysit" the code.
 > 
-> The semantic patch finds this problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
+> Hmm, how do I tap into that developer pool? :-)
 > 
-> // <smpl>
-> @@
-> expression l;
-> @@
+> Kohjinsha wifi driver is in state where it was ported to mac80211, and
+> it still works with minimum features, but it needs dead code removal
+> and rewriting the rest. That code is really very ugly.
 > 
-> mutex_lock(l);
-> ... when != mutex_unlock(l)
->     when any
->     when strict
-> (
-> if (...) { ... when != mutex_unlock(l)
-> +   mutex_unlock(l);
->     return ...;
-> }
-> |
-> mutex_unlock(l);
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+> I can do the handholding; I can probably do the rewrite, too (its
+> 10000LoC), but it will take time...
 
-applied
+If the patch at least builds, send it to me for inclusion in -staging if
+you want to get some exposure for it.
 
+thanks,
 
+greg k-h
