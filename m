@@ -1,30 +1,51 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Mon, 14 Jul 2008 15:22:16 +0000
-Subject: Re: [PATCH] advansys: use request_firmware
-Message-Id: <1216048936.27455.38.camel@shinybook.infradead.org>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Wed, 02 Jul 2008 23:41:38 +0000
+Subject: [PATCH] drivers/net/wireless/iwlwifi/iwl-3945.c Fix type issue on
+Message-Id: <1215042098.8635.14.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1215770322.2733.12.camel@jaswinder.satnam>
-	 <20080712162921.GZ14894@parisc-linux.org>
-	 <1215882548.19076.57.camel@jaswinder.satnam>
-	 <20080714145033.GD14894@parisc-linux.org>
-	 <1216047404.27455.31.camel@shinybook.infradead.org>
-	 <20080714151543.GE14894@parisc-linux.org>
-In-Reply-To: <20080714151543.GE14894@parisc-linux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: Jaswinder Singh <jaswinder@infradead.org>, LKML <linux-kernel@vger.kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernel-janitors <kernel-janitors@vger.kernel.org>, kernelnewbies <kernelnewbies@nl.linux.org>, linux-scsi@vger.kernel.org, hch@infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linville@tuxdriver.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, ipw2100-admin@linux.intel.com, yi.zhu@intel.com
 
-On Mon, 2008-07-14 at 09:15 -0600, Matthew Wilcox wrote:
-> Something I'd like to get rid of in the driver is the decompression
-> of the firmware files.  I don't think AdvLoadMicrocode() should have
-> a custom decompresser built into it.  Do your future plans include the
-> ability to gzip the data and transparently decompress it when the
-> driver calls request_firmware()?
+>> What about the format line in the IWL_DEBUG_RX that uses rate?
 
-It's something we'd thought about, certainly.
+I had figured that as rate was only positive it would work as is.
+However you are dead right, there is no point in a patch removing one
+example of bad programming only to introduce another.
 
--- 
-dwmw2
+Here is the updated patch:
+
+
+Coverity CID: 2265 NEGATIVE_RETURNS
+
+"rate" is of an unsigned type, and the code requires a signed type.
+The following patch makes it so.
+
+﻿﻿Signed-off-by: Darren Jenkins <darrenrjenkins@gmailcom>
+
+diff --git a/drivers/net/wireless/iwlwifi/iwl-3945.c b/drivers/net/wireless/iwlwifi/iwl-3945.c
+index 62a3d8f..d97c025 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-3945.c
++++ b/drivers/net/wireless/iwlwifi/iwl-3945.c
+@@ -449,7 +449,7 @@ static void iwl3945_dbg_report_frame(struct iwl3945_priv *priv,
+ 
+ 	if (print_summary) {
+ 		char *title;
+-		u32 rate;
++		int rate;
+ 
+ 		if (hundred)
+ 			title = "100Frames";
+@@ -487,7 +487,7 @@ static void iwl3945_dbg_report_frame(struct iwl3945_priv *priv,
+ 		 *    but you can hack it to show more, if you'd like to. */
+ 		if (dataframe)
+ 			IWL_DEBUG_RX("%s: mhd=0x%04x, dst=0x%02x, "
+-				     "len=%u, rssi=%d, chnl=%d, rate=%u, \n",
++				     "len=%u, rssi=%d, chnl=%d, rate=%d, \n",
+ 				     title, fc, header->addr1[5],
+ 				     length, rssi, channel, rate);
+ 		else {
+
 
