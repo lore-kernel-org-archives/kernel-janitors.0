@@ -1,7 +1,7 @@
-From: Filippo Zangheri <filippo.zangheri@yahoo.it>
-Date: Wed, 02 Jul 2008 14:25:19 +0000
+From: "John W. Linville" <linville@tuxdriver.com>
+Date: Wed, 02 Jul 2008 19:24:57 +0000
 Subject: Re: [PATCH]  drivers/net/wireless/iwlwifi/iwl-3945.c
-Message-Id: <486B8FCF.8080201@yahoo.it>
+Message-Id: <20080702192457.GB31288@tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1214962647.18261.15.camel@localhost.localdomain>
 In-Reply-To: <1214962647.18261.15.camel@localhost.localdomain>
@@ -9,11 +9,18 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: Darren Jenkins <darrenrjenkins@gmail.com>
-Cc: kernel Janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, ipw2100-admin@linux.intel.com, yi.zhu@intel.com, reinette.chatre@intel.com, linux-wireless@vger.kernel.org
+Cc: kernel Janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, ipw2100-admin@linux.intel.com, yi.zhu@intel.com, reinette.chatre@intel.com
 
-(Cc'ing linux-wireless)
+What about the format line in the IWL_DEBUG_RX that uses rate?
 
-On 02/07/2008 03:37, Darren Jenkins\ wrote:
+Also, please use an email subject that is more descriptive than just
+the filename.  You should probably drop the "G'day..." line as well.
+
+Thanks!
+
+John
+
+On Wed, Jul 02, 2008 at 11:37:27AM +1000, Darren Jenkins" wrote:
 > G'day people
 >=20
 > Coverity CID: 2265 NEGATIVE_RETURNS
@@ -40,12 +47,17 @@ riv *priv,
 > =20
 >  		if (hundred)
 >  			title =3D "100Frames";
+>=20
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
 --=20
-Filippo Zangheri
-
-GPG key ID: 0x6C1F2F2F
-
+John W. Linville
+linville@tuxdriver.com
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
