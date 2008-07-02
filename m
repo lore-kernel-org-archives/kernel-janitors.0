@@ -1,49 +1,44 @@
-From: Jaswinder Singh <jaswinder@infradead.org>
-Date: Tue, 15 Jul 2008 16:11:38 +0000
-Subject: Re: [PATCH] x86: Introducing asm-x86/syscalls.h
-Message-Id: <1216137578.2747.16.camel@jaswinder.satnam>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Wed, 02 Jul 2008 01:37:27 +0000
+Subject: [PATCH]  drivers/net/wireless/iwlwifi/iwl-3945.c
+Message-Id: <1214962647.18261.15.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1216114072.21749.1.camel@jaswinder.satnam>
-	 <1216127174.30096.3.camel@jaswinder.satnam>
-	 <1216133883.27455.252.camel@shinybook.infradead.org>
-In-Reply-To: <1216133883.27455.252.camel@shinybook.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel Janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: ipw2100-admin@linux.intel.com, yi.zhu@intel.com, reinette.chatre@intel.com
 
-Hello David,
+G'day people
 
-On Tue, 2008-07-15 at 07:58 -0700, David Woodhouse wrote:
+Coverity CID: 2265 NEGATIVE_RETURNS
 
-> I don't like this bit though:
-> 
-> > --- a/include/linux/syscalls.h
-> > +++ b/include/linux/syscalls.h
-> > @@ -65,6 +65,10 @@ struct getcpu_cache;
-> >  #include <linux/quota.h>
-> >  #include <linux/key.h>
-> >  
-> > +#ifdef CONFIG_X86
-> > +#include <asm/syscalls.h>
-> > +#endif
-> > +
-> >  asmlinkage long sys_time(time_t __user *tloc);
-> >  asmlinkage long sys_stime(time_t __user *tptr);
-> >  asmlinkage long sys_gettimeofday(struct timeval __user *tv,
-> 
-> We're going to want to do this for all architectures, aren't we? Perhaps
-> it's better to provide <asm/syscalls.h> for all architectures from the
-> beginning, and not bother with the ifdef? Or if you must have an ifdef,
-> perhaps make it on something like ARCH_HAS_ASM_SYSCALLS_H rather than
-> having to change it every time an architecture adds its own
-> <asm/syscalls.h> file?
-> 
+"rate" is of an unsigned type, and the code requires a signed type.
+The following patch makes it so.
 
-OK, I will also create asm/syscalls.h for all the architectures.
+Only compile tested.
 
-Thank you,
+=EF=BB=BFSigned-off-by: Darren Jenkins <darrenrjenkins@gmailcom>
 
-Jaswinder Singh.
+diff --git a/drivers/net/wireless/iwlwifi/iwl-3945.c b/drivers/net/wireless=
+/iwlwifi/iwl-3945.c
+index 62a3d8f..31d38cd 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-3945.c
++++ b/drivers/net/wireless/iwlwifi/iwl-3945.c
+@@ -449,7 +449,7 @@ static void iwl3945_dbg_report_frame(struct iwl3945_pri=
+v *priv,
+=20
+ 	if (print_summary) {
+ 		char *title;
+-		u32 rate;
++		int rate;
+=20
+ 		if (hundred)
+ 			title =3D "100Frames";
 
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
