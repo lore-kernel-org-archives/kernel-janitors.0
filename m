@@ -1,39 +1,45 @@
-From: Jaswinder Singh <jaswinder@infradead.org>
-Date: Tue, 15 Jul 2008 15:59:37 +0000
-Subject: Re: [PATCH] x86: traps and do_traps under one hood
-Message-Id: <1216137250.2747.12.camel@jaswinder.satnam>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Date: Sun, 06 Jul 2008 16:13:49 +0000
+Subject: [PATCH] x86 setup.c: cleanup includes
+Message-Id: <a4423d670807060913red9187bj7bcc886d1fb20ad3@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1216119158.21749.5.camel@jaswinder.satnam>
-	 <1216129914.20462.1263591561@webmail.messagingengine.com>
-In-Reply-To: <1216129914.20462.1263591561@webmail.messagingengine.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Alexander van Heukelum <heukelum@fastmail.fm>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@elte.hu>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mingo@elte.hu, yhlu.kernel@gmail.com, tglx@linutronix.de, hpa@zytor.com, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hello ﻿Alexander,
+From: Alexander Beregalov <a.beregalov@gmail.com>
 
-On Tue, 2008-07-15 at 15:51 +0200, Alexander van Heukelum wrote:
+The patch applies to the linux-next tree.
 
-> 
-> I think moving the declarations to a header file is a good thing,
-> but I don't think mach_traps.h is a suitable place. 
 
-﻿I CC new patch to you : [PATCH] x86: Introducing asm-x86/traps.h
+x86: remove double includes in setup.c
 
-> The definitions
-> of the functions are in entry_32.S and entry_64.S, so I would suggest
-> making a new header include/asm-x86/entry.h. Some other ENTRY's
-> (like system_call and some xen-specific ones) would then also fit
-> in this header.
-> 
-> What do you think?
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
 
-I did this for traps_32.c and traps_64.c because they are complaining
-that traps are defined but not declared.
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 3c98693..f4c9b58 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -57,12 +57,8 @@
+ #include <linux/slab.h>
+ #include <linux/user.h>
+ #include <linux/delay.h>
+-#include <linux/highmem.h>
 
-Thank you,
+ #include <linux/kallsyms.h>
+-#include <linux/edd.h>
+-#include <linux/iscsi_ibft.h>
+-#include <linux/kexec.h>
+ #include <linux/cpufreq.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/ctype.h>
+@@ -104,7 +100,6 @@
+ #include <asm/paravirt.h>
 
-Jaswinder Singh.
-
+ #include <asm/percpu.h>
+-#include <asm/sections.h>
+ #include <asm/topology.h>
+ #include <asm/apicdef.h>
+ #ifdef CONFIG_X86_64
