@@ -1,33 +1,45 @@
-From: Michael Borisov <niro@tut.by>
-Date: Sat, 26 Jul 2008 19:45:13 +0000
-Subject: [PATCH 12/14] drivers/isdn/hisax/gazel.c: fix warning
-Message-Id: <1217101513.6107.138.camel@inlin>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Sun, 06 Jul 2008 22:52:38 +0000
+Subject: [PATCH][RE-SEND] drivers/isdn/i4l/isdn_common.c fix small resource
+Message-Id: <1215384758.11092.23.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>, kernel Janitors <kernel-janitors@vger.kernel.org>, kkeil@suse.de, isdn4linux@listserv.isdn4linux.de
 
-This patch fixes the following compile warning:
+G'day people,
 
-drivers/isdn/hisax/gazel.c: In function ‘setup_gazelpci’:
-drivers/isdn/hisax/gazel.c:549: warning: ‘pci_find_device’ is deprecated
-(declared at include/linux/pci.h:535)
 
-Signed-off-by: Michael Borisov <niro@tut.by>
----
-diff --git a/drivers/isdn/hisax/gazel.c b/drivers/isdn/hisax/gazel.c
-index 0ea3b46..16fe01c 100644
---- a/drivers/isdn/hisax/gazel.c
-+++ b/drivers/isdn/hisax/gazel.c
-@@ -546,7 +546,7 @@ setup_gazelpci(struct IsdnCardState *cs)
- 	found = 0;
- 	seekcard = PCI_DEVICE_ID_PLX_R685;
- 	for (nbseek = 0; nbseek < 4; nbseek++) {
--		if ((dev_tel = pci_find_device(PCI_VENDOR_ID_PLX,
-+		if ((dev_tel = pci_get_device(PCI_VENDOR_ID_PLX,
- 					seekcard, dev_tel))) {
- 			if (pci_enable_device(dev_tel))
- 				return 1;
+Coverity CID: 1356 RESOURCE_LEAK
+
+
+I found a very old patch for this that was Acked but did not get applied
+https://lists.linux-foundation.org/pipermail/kernel-janitors/2006-September/016362.html
+
+
+There looks to be a small leak in isdn_writebuf_stub() in isdn_common.c,
+when copy_from_user() returns an un-copied data length (length != 0).
+The below patch should be a minimally invasive fix.
+
+﻿﻿﻿Signed-off-by: Darren Jenkins <darrenrjenkins@gmailcom>
+Acked-by: Karsten Keil <kkeil@suse.de>
+
+diff --git a/drivers/isdn/i4l/isdn_common.c b/drivers/isdn/i4l/isdn_common.c
+index 0f3c66d..8d8c6b7 100644
+--- a/drivers/isdn/i4l/isdn_common.c
++++ b/drivers/isdn/i4l/isdn_common.c
+@@ -1977,8 +1977,10 @@ isdn_writebuf_stub(int drvidx, int chan, const u_char __user * buf, int len)
+ 	if (!skb)
+ 		return -ENOMEM;
+ 	skb_reserve(skb, hl);
+-	if (copy_from_user(skb_put(skb, len), buf, len))
++	if (copy_from_user(skb_put(skb, len), buf, len)) {
++		dev_kfree_skb(skb);
+ 		return -EFAULT;
++	}
+ 	ret = dev->drv[drvidx]->interface->writebuf_skb(drvidx, chan, 1, skb);
+ 	if (ret <= 0)
+ 		dev_kfree_skb(skb);
 
 
