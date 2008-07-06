@@ -1,36 +1,31 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 10 Jul 2008 23:06:37 +0000
-Subject: Re: ioctl conversion
-Message-Id: <20080710160637.ee5eb1e6.rdunlap@xenotime.net>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Date: Sun, 06 Jul 2008 15:58:36 +0000
+Subject: [PATCH] [ARM] Tosa: remove double inclusion of linux/delay.h
+Message-Id: <a4423d670807060858nf8ec980gcd0475ccdc55b94d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6d291e080807101427y47045935h909a6b20b3ee1b7e@mail.gmail.com>
-In-Reply-To: <6d291e080807101427y47045935h909a6b20b3ee1b7e@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: rmk+kernel@arm.linux.org.uk, dbaryshkov@gmail.com, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Thu, 10 Jul 2008 17:35:58 -0500 Stoyan Gaydarov wrote:
+From: Alexander Beregalov <a.beregalov@gmail.com>
 
-> On Thu, Jul 10, 2008 at 4:27 PM, Stoyan Gaydarov <stoyboyker@gmail.com> wrote:
-> > My question is based on the following: http://lkml.org/lkml/2008/1/8/213
-> >
-> > I have looked at that message and have also tried to create a patch
-> > based on it, I have submitted it and I am not sure that anyone really
-> > cared to apply it since no one really responded to it. My question is,
-> > who do I send these patches to since I obviously got it wrong the
-> > first time. Should I just send them to the kernel-list or the
-> > kernel-janitors list? or the specific maintainers of the code I am
-> > looking at? or maybe all of the above?
-> >
-> > -Stoyan G
-> >
-> 
-> On the same note, where is lock_kernel() and unlock_kernel() defined.
+The patch applies to the linux-next tree.
 
-lib/kernel_lock.c
+[ARM] Tosa: Remove double inclusion of linux/delay.h
 
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 ---
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+
+diff --git a/arch/arm/mach-pxa/tosa.c b/arch/arm/mach-pxa/tosa.c
+index 86f1ea5..f4d9d77 100644
+--- a/arch/arm/mach-pxa/tosa.c
++++ b/arch/arm/mach-pxa/tosa.c
+@@ -26,7 +26,6 @@
+ #include <linux/mtd/nand.h>
+ #include <linux/mtd/partitions.h>
+ #include <linux/pm.h>
+-#include <linux/delay.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/input.h>
+ #include <linux/gpio.h>
