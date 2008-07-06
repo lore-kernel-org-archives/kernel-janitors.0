@@ -1,40 +1,39 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 08 Jul 2008 08:22:49 +0000
-Subject: Re: [PATCH] crypto/tcrypt.c fix resource leak
-Message-Id: <20080708082248.GA25297@gondor.apana.org.au>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Sun, 06 Jul 2008 22:18:10 +0000
+Subject: [PATCH] drivers/char/pcmcia/ipwireless/hardware.c fix resource leak
+Message-Id: <1215382690.11092.11.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1215458654.8316.16.camel@localhost.localdomain>
-In-Reply-To: <1215458654.8316.16.camel@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: "Darren Jenkins\"" <darrenrjenkins@gmail.com>
-Cc: kernel Janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net, linux-crypto@vger.kernel.org, jmorris@intercode.com.au, jef@linuxbe.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel Janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, jkosina@suse.cz, dsterba@suse.cz
 
-On Tue, Jul 08, 2008 at 05:24:14AM +1000, Darren Jenkins" wrote:
-> G'day people,
->=20
-> Coverity CID: 2306 & 2307 RESOURCE_LEAK
->=20
-> In the second for loop in test_cipher(), data is allocated space with
-> kzalloc() and is only ever freed in an error case.
-> Looking at this loop, data is written to this memory but nothing seems
-> to read from it.=20
-> So here is a patch removing the allocation, I think this is the right
-> fix.
->=20
-> Only compile tested.
->=20
-> =EF=BB=BFSigned-off-by: Darren Jenkins <darrenrjenkins@gmailcom>
+G'day people,
 
-Patch applied.  Thanks!
---=20
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Coverity CID: 2172 RESOURCE_LEAK
+
+When pool_allocate() tries to enlarge a packet, if it can not allocate
+enough memory, it returns NULL without first freeing the old packet.
+
+This patch just frees the packet first.
+
+﻿﻿﻿Signed-off-by: Darren Jenkins <darrenrjenkins@gmailcom>
+
+diff --git a/drivers/char/pcmcia/ipwireless/hardware.c b/drivers/char/pcmcia/ipwireless/hardware.c
+index ba6340a..929101e 100644
+--- a/drivers/char/pcmcia/ipwireless/hardware.c
++++ b/drivers/char/pcmcia/ipwireless/hardware.c
+@@ -590,8 +590,10 @@ static struct ipw_rx_packet *pool_allocate(struct ipw_hardware *hw,
+ 		packet = kmalloc(sizeof(struct ipw_rx_packet) +
+ 				old_packet->length + minimum_free_space,
+ 				GFP_ATOMIC);
+-		if (!packet)
++		if (!packet) {
++			kfree(old_packet);
+ 			return NULL;
++		}
+ 		memcpy(packet, old_packet,
+ 				sizeof(struct ipw_rx_packet)
+ 					+ old_packet->length);
+ 
+
