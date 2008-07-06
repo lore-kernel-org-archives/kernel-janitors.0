@@ -1,57 +1,33 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Tue, 22 Jul 2008 17:10:06 +0000
-Subject: Re: [PATCH 2/2] : Add local_irq_restore in error handling code
-Message-Id: <20080722171006.GA32742@linux-mips.org>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Date: Sun, 06 Jul 2008 11:31:55 +0000
+Subject: [PATCH] drm_memory.h: remove double inclusion of linux/vmalloc.h
+Message-Id: <a4423d670807060431w639f0b1ajcbad6471d50ef802@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0807221844250.2670@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0807221844250.2670@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, airlied@linux.ie, dri-devel@lists.sourceforge.net, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Julia,
+From: Alexander Beregalov <a.beregalov@gmail.com>
 
-On Tue, Jul 22, 2008 at 06:44:48PM +0200, Julia Lawall wrote:
+Remove double inclusion of linux/vmalloc.h
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> There is a call to local_irq_restore in the normal exit case, so it would
-> seem that there should be one on an error return as well.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
+drivers/char/drm/drm_memory.h |    2 --
+1 files changed, 0 insertions(+), 2 deletions(-)
 
-Correctly spotted - but I decieded to go for below patch instead.
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
 
-Thanks,
+diff --git a/drivers/char/drm/drm_memory.h b/drivers/char/drm/drm_memory.h
+index 63e425b..15af9b3 100644
+--- a/drivers/char/drm/drm_memory.h
++++ b/drivers/char/drm/drm_memory.h
+@@ -44,8 +44,6 @@
 
-  Ralf
+ #if __OS_HAS_AGP
 
-From: Ralf Baechle <ralf@linux-mips.org>
-
-[MIPS] tlb-r4k: Nuke broken paranoia error test.
-
-Bug originally found and reported by Julia Lawall <julia@diku.dk>.  I
-decieded that the whole error check was mostly useless paranoia and should
-be discarded.  It would only ever trigger if r3k_have_wired_reg has a wrong
-value.
-
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
-
-diff --git a/arch/mips/mm/tlb-r3k.c b/arch/mips/mm/tlb-r3k.c
-index a782549..f0cf46a 100644
---- a/arch/mips/mm/tlb-r3k.c
-+++ b/arch/mips/mm/tlb-r3k.c
-@@ -246,10 +246,6 @@ void __init add_wired_entry(unsigned long entrylo0, unsigned long entrylo1,
- 		old_pagemask = read_c0_pagemask();
- 		w = read_c0_wired();
- 		write_c0_wired(w + 1);
--		if (read_c0_wired() != w + 1) {
--			printk("[tlbwired] No WIRED reg?\n");
--			return;
--		}
- 		write_c0_index(w << 8);
- 		write_c0_pagemask(pagemask);
- 		write_c0_entryhi(entryhi);
+-#include <linux/vmalloc.h>
+-
+ #ifdef HAVE_PAGE_AGP
+ #include <asm/agp.h>
+ #else
