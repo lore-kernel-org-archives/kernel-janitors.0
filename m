@@ -1,190 +1,118 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Date: Mon, 21 Jul 2008 19:21:58 +0000
-Subject: Re: [PATCH] v4l: replace __FUNCTION__ with __func__
-Message-Id: <20080721192158.GC18891@orion>
+From: Oliver Endriss <o.endriss@gmx.de>
+Date: Sun, 06 Jul 2008 01:15:50 +0000
+Subject: Re: [linux-dvb] [PATCH] Remove fdump tool for av7110 firmware
+Message-Id: <200807060315.51736@orion.escape-edv.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080720223108.GC31640@orion>
-In-Reply-To: <20080720223108.GC31640@orion>
+References: <1214139259.2994.8.camel@jaswinder.satnam>
+In-Reply-To: <1214139259.2994.8.camel@jaswinder.satnam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-dvb@linuxtv.org
+Cc: Jaswinder Singh <jaswinder@infradead.org>, LKML <linux-kernel@vger.kernel.org>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, David Woodhouse <dwmw2@infradead.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
 
-From: Alexander Beregalov <a.beregalov@gmail.com>
+Jaswinder Singh wrote:
+> There's no point in this, since the user can use the BUILTIN_FIRMWARE
+> option to include arbitrary firmware files directly in the kernel image.
 
-v4l/drx397xD: replace __FUNCTION__ with __func__
+NAK! This option allows to compile the firmware into the _driver_,
+which is very useful if you want to test various driver/firmware
+combinations. Having the firmware in the _kernel_ does not help!
 
+Well, I am tired to fight for this option in the kernel every other
+month. :-(
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+@Mauro:
+Is there a way to strip this stuff from Kconfig/Makefile/av7110*.[ch]
+for submission to the kernel? Basically I don't care whether and how
+they cripple the driver in the kernel. But I would like to keep the code
+'as is' in the linuxtv repositories.
 
----
+CU
+Oliver
 
- drivers/media/dvb/frontends/drx397xD.c |   34 ++++++++++++++++----------------
- drivers/media/dvb/frontends/drx397xD.h |    2 +-
- 2 files changed, 18 insertions(+), 18 deletions(-)
+>
+> Thanks to David Woodhouse for help.
+> 
+> Signed-off-by: Jaswinder Singh <jaswinder@infradead.org>
+> --
+> drivers/media/dvb/ttpci/Kconfig  |   23 +++----------------
+> drivers/media/dvb/ttpci/Makefile |    9 -------
+> drivers/media/dvb/ttpci/av7110.c |   16 -------------
+> drivers/media/dvb/ttpci/fdump.c    |   44 -------------------------------------
+> 4 files changed, 4 insertions(+), 88 deletions(-)
+> diff --git a/drivers/media/dvb/ttpci/Kconfig b/drivers/media/dvb/ttpci/Kconfig
+> index e0bbcaf..6b7a586 100644
+> --- a/drivers/media/dvb/ttpci/Kconfig
+> +++ b/drivers/media/dvb/ttpci/Kconfig
+> @@ -6,7 +6,7 @@ config DVB_AV7110
+>  	tristate "AV7110 cards"
+>  	depends on DVB_CORE && PCI && I2C
+>  	depends on HOTPLUG
+> -	select FW_LOADER if !DVB_AV7110_FIRMWARE
+> +	select FW_LOADER
+>  	select TTPCI_EEPROM
+>  	select VIDEO_SAA7146_VV
+>  	depends on VIDEO_DEV	# dependencies of VIDEO_SAA7146_VV
+> @@ -30,6 +30,9 @@ config DVB_AV7110
+>  	  download/extract it, and then copy it to /usr/lib/hotplug/firmware
+>  	  or /lib/firmware (depending on configuration of firmware hotplug).
+>  
+> +	  Alternatively, you can download the file and use the 
+> +	  BUILTIN_FIRMWARE option to build it into your kernel image.
+> +
+>  	  Say Y if you own such a card and want to use it.
+>  
+>  config DVB_AV7110_BOOTCODE
+> @@ -39,24 +42,6 @@ config DVB_AV7110_BOOTCODE
+>  	  This includes firmware for AV7110 bootcode
+>  	  Say 'N' and let it get loaded from userspace on demand 
+>  
+> -config DVB_AV7110_FIRMWARE
+> -	bool "Compile AV7110 firmware into the driver"
+> -	depends on DVB_AV7110 && !STANDALONE
+> -	default y if DVB_AV7110=y
+> -	help
+> -	  The AV7110 firmware is normally loaded by the firmware hotplug manager.
+> -	  If you want to compile the firmware into the driver you need to say
+> -	  Y here and provide the correct path of the firmware. You need this
+> -	  option if you want to compile the whole driver statically into the
+> -	  kernel.
+> -
+> -	  All other people say N.
+> -
+> -config DVB_AV7110_FIRMWARE_FILE
+> -	string "Full pathname of av7110 firmware file"
+> -	depends on DVB_AV7110_FIRMWARE
+> -	default "/usr/lib/hotplug/firmware/dvb-ttpci-01.fw"
+> -
+>  config DVB_AV7110_OSD
+>  	bool "AV7110 OSD support"
+>  	depends on DVB_AV7110
+> diff --git a/drivers/media/dvb/ttpci/Makefile b/drivers/media/dvb/ttpci/Makefile
+> index d7483f1..a7ff3cd 100644
+> --- a/drivers/media/dvb/ttpci/Makefile
+> +++ b/drivers/media/dvb/ttpci/Makefile
+> @@ -14,12 +14,3 @@ obj-$(CONFIG_DVB_BUDGET_PATCH) += budget-patch.o
+>  obj-$(CONFIG_DVB_AV7110) += dvb-ttpci.o
+>  
+>  EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core/ -Idrivers/media/dvb/frontends/
+> -
+> -hostprogs-y	:= fdump
+> -
+> -ifeq ($(CONFIG_DVB_AV7110_FIRMWARE),y)
+> -$(obj)/av7110.o: $(obj)/av7110_firm.h
+> -
+> -$(obj)/av7110_firm.h: $(obj)/fdump
+> -	$(obj)/fdump $(CONFIG_DVB_AV7110_FIRMWARE_FILE) dvb_ttpci_fw $@
+> -endif
+> diff --git a/drivers/media/dvb/ttpci/av7110.c b/drivers/media/dvb/ttpci/av7110.c
+> index 747e7f1..c11a13c 100644
+> --- a/drivers/media/dvb/ttpci/av7110.c
+> +++ b/drivers/media/dvb/ttpci/av7110.c
+> ...
 
-diff --git a/drivers/media/dvb/frontends/drx397xD.c b/drivers/media/dvb/frontends/drx397xD.c
-index 3cbed87..e19147b 100644
---- a/drivers/media/dvb/frontends/drx397xD.c
-+++ b/drivers/media/dvb/frontends/drx397xD.c
-@@ -96,7 +96,7 @@ static void drx_release_fw(struct drx397xD_state *s)
- {
- 	fw_ix_t ix = s->chip_rev;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	write_lock(&fw[ix].lock);
- 	if (fw[ix].refcnt) {
-@@ -113,7 +113,7 @@ static int drx_load_fw(struct drx397xD_state *s, fw_ix_t ix)
- 	size_t size, len;
- 	int i = 0, j, rc = -EINVAL;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	if (ix < 0 || ix >= ARRAY_SIZE(fw))
- 		return -EINVAL;
-@@ -197,10 +197,10 @@ static int write_fw(struct drx397xD_state *s, blob_ix_t ix)
- 	int len, rc = 0, i = 0;
- 
- 	if (ix < 0 || ix >= ARRAY_SIZE(blob_name)) {
--		pr_debug("%s drx_fw_ix_t out of range\n", __FUNCTION__);
-+		pr_debug("%s drx_fw_ix_t out of range\n", __func__);
- 		return -EINVAL;
- 	}
--	pr_debug("%s %s\n", __FUNCTION__, blob_name[ix]);
-+	pr_debug("%s %s\n", __func__, blob_name[ix]);
- 
- 	read_lock(&fw[s->chip_rev].lock);
- 	data = fw[s->chip_rev].data[ix];
-@@ -305,7 +305,7 @@ static int PLL_Set(struct drx397xD_state *s,
- 	u32 f_tuner, f = fep->frequency;
- 	int rc;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	if ((f > s->frontend.ops.tuner_ops.info.frequency_max) ||
- 	    (f < s->frontend.ops.tuner_ops.info.frequency_min))
-@@ -325,7 +325,7 @@ static int PLL_Set(struct drx397xD_state *s,
- 		return rc;
- 
- 	*df_tuner = f_tuner - f;
--	pr_debug("%s requested %d [Hz] tuner %d [Hz]\n", __FUNCTION__, f,
-+	pr_debug("%s requested %d [Hz] tuner %d [Hz]\n", __func__, f,
- 		 f_tuner);
- 
- 	return 0;
-@@ -340,7 +340,7 @@ static int SC_WaitForReady(struct drx397xD_state *s)
- 	int cnt = 1000;
- 	int rc;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	while (cnt--) {
- 		rc = RD16(s, 0x820043);
-@@ -354,7 +354,7 @@ static int SC_SendCommand(struct drx397xD_state *s, int cmd)
- {
- 	int rc;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	WR16(s, 0x820043, cmd);
- 	SC_WaitForReady(s);
-@@ -368,7 +368,7 @@ static int HI_Command(struct drx397xD_state *s, u16 cmd)
- {
- 	int rc, cnt = 1000;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	rc = WR16(s, 0x420032, cmd);
- 	if (rc < 0)
-@@ -389,7 +389,7 @@ static int HI_Command(struct drx397xD_state *s, u16 cmd)
- static int HI_CfgCommand(struct drx397xD_state *s)
- {
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	WR16(s, 0x420033, 0x3973);
- 	WR16(s, 0x420034, s->config.w50);	// code 4, log 4
-@@ -419,7 +419,7 @@ static int SetCfgIfAgc(struct drx397xD_state *s, struct drx397xD_CfgIfAgc *agc)
- 	u16 w0C = agc->w0C;
- 	int quot, rem, i, rc = -EINVAL;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	if (agc->w04 > 0x3ff)
- 		goto exit_rc;
-@@ -478,7 +478,7 @@ static int SetCfgRfAgc(struct drx397xD_state *s, struct drx397xD_CfgRfAgc *agc)
- 	u16 w06 = agc->w06;
- 	int rc = -1;
- 
--	pr_debug("%s %d 0x%x 0x%x\n", __FUNCTION__, agc->d00, w04, w06);
-+	pr_debug("%s %d 0x%x 0x%x\n", __func__, agc->d00, w04, w06);
- 
- 	if (w04 > 0x3ff)
- 		goto exit_rc;
-@@ -554,7 +554,7 @@ static int CorrectSysClockDeviation(struct drx397xD_state *s)
- 	int lockstat;
- 	u32 clk, clk_limit;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	if (s->config.d5C = 0) {
- 		EXIT_RC(WR16(s, 0x08200e8, 0x010));
-@@ -598,7 +598,7 @@ static int CorrectSysClockDeviation(struct drx397xD_state *s)
- 
- 	if (clk - s->config.f_osc * 1000 + clk_limit <= 2 * clk_limit) {
- 		s->f_osc = clk;
--		pr_debug("%s: osc %d %d [Hz]\n", __FUNCTION__,
-+		pr_debug("%s: osc %d %d [Hz]\n", __func__,
- 			 s->config.f_osc * 1000, clk - s->config.f_osc * 1000);
- 	}
- 	rc = WR16(s, 0x08200e8, 0);
-@@ -610,7 +610,7 @@ static int ConfigureMPEGOutput(struct drx397xD_state *s, int type)
- {
- 	int rc, si, bp;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	si = s->config.wA0;
- 	if (s->config.w98 = 0) {
-@@ -646,7 +646,7 @@ static int drx_tune(struct drx397xD_state *s,
- 
- 	int rc, df_tuner;
- 	int a, b, c, d;
--	pr_debug("%s %d\n", __FUNCTION__, s->config.d60);
-+	pr_debug("%s %d\n", __func__, s->config.d60);
- 
- 	if (s->config.d60 != 2)
- 		goto set_tuner;
-@@ -1082,7 +1082,7 @@ static int drx397x_init(struct dvb_frontend *fe)
- 	struct drx397xD_state *s = fe->demodulator_priv;
- 	int rc;
- 
--	pr_debug("%s\n", __FUNCTION__);
-+	pr_debug("%s\n", __func__);
- 
- 	s->config.rfagc.d00 = 2;	/* 0x7c */
- 	s->config.rfagc.w04 = 0;
-diff --git a/drivers/media/dvb/frontends/drx397xD.h b/drivers/media/dvb/frontends/drx397xD.h
-index ddc7a07..2ad1ea0 100644
---- a/drivers/media/dvb/frontends/drx397xD.h
-+++ b/drivers/media/dvb/frontends/drx397xD.h
-@@ -122,7 +122,7 @@ extern struct dvb_frontend* drx397xD_attach(const struct drx397xD_config *config
- static inline struct dvb_frontend* drx397xD_attach(const struct drx397xD_config *config,
- 					   struct i2c_adapter *i2c)
- {
--	printk(KERN_WARNING "%s: driver disabled by Kconfig\n", __FUNCTION__);
-+	printk(KERN_WARNING "%s: driver disabled by Kconfig\n", __func__);
- 	return NULL;
- }
- #endif /* CONFIG_DVB_DRX397XD */
+-- 
+----------------------------------------------------------------
+VDR Remote Plugin 0.4.0: http://www.escape-edv.de/endriss/vdr/
+----------------------------------------------------------------
