@@ -1,29 +1,39 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Date: Sun, 06 Jul 2008 20:32:29 +0000
-Subject: Re: [PATCH] [ARM] Tosa: remove double inclusion of linux/delay.h
-Message-Id: <a4423d670807061332y62eb0024g396cf21d3549d855@mail.gmail.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sat, 12 Jul 2008 07:35:04 +0000
+Subject: Re: [PATCH] init: fix sparse warnings
+Message-Id: <20080712073504.GA31600@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a4423d670807060858nf8ec980gcd0475ccdc55b94d@mail.gmail.com>
-	 <bc64b4640807061226m16f597a8m585ef2101bd6b7a1@mail.gmail.com>
-In-Reply-To: <bc64b4640807061226m16f597a8m585ef2101bd6b7a1@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry <dbaryshkov@gmail.com>
-Cc: rmk+kernel@arm.linux.org.uk, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-2008/7/6 Dmitry <dbaryshkov@gmail.com>:
-> 2008/7/6 Alexander Beregalov <a.beregalov@gmail.com>:
->> From: Alexander Beregalov <a.beregalov@gmail.com>
->>
->> The patch applies to the linux-next tree.
->>
->> [ARM] Tosa: Remove double inclusion of linux/delay.h
->>
->> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
->
-> Acked-by: Dmitry Baryshkov <dbaryshkov@gmail.com>
->
-> Will you submit to the Russell's patch tracker or shoud I do it?
+On Sat, Jul 12, 2008 at 01:00:40PM +0530, Jaswinder Singh wrote:
+> --- a/init/do_mounts_initrd.c
+> +++ b/init/do_mounts_initrd.c
+> @@ -16,6 +16,26 @@ unsigned int real_root_dev;	/* do_proc_dointvec cannot handle kdev_t */
+>  static int __initdata old_fd, root_fd;
+>  static int __initdata mount_initrd = 1;
+>  
+> +const char __user cuold[] = "/old";
+> +char __user uold[] = "/old";
+> +const char __user curoot[] = "/";
+> +char __user uroot[] = "/";
+> +const char __user curootroot[] = "/root";
+> +char __user urootroot[] = "/root";
+> +const char __user cudot[] = ".";
+> +char __user udot[] = ".";
+> +const char __user cuinitrd[] = "/root/initrd";
+> +char __user uinitrd[] = "/root/initrd";
+> +/* devs */
+> +const char __user cudevram[] = "/dev/ram";
+> +char __user udevram[] = "/dev/ram";
+> +const char __user cudevconsole[] = "/dev/console";
+> +char __user udevconsole[] = "/dev/console";
+> +const char __user cudevroot[] = "/dev/root";
+> +char __user udevroot[] = "/dev/root";
+> +const char __user cudevrootold[] = "/dev/root.old";
+> +char __user udevrootold[] = "/dev/root.old";
 
-I do not know what it is, please do it if you can.
+Oh, c'mon!
+
