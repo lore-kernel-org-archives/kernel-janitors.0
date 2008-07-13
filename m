@@ -1,178 +1,111 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Date: Thu, 31 Jul 2008 11:43:02 +0000
-Subject: Re: [RFC][PATCH] kernel/profile.c: fix warnings
-Message-Id: <a4423d670807310443j593ef7f5p9d4f1fa553de1b6d@mail.gmail.com>
+From: Jaswinder Singh <jaswinder@infradead.org>
+Date: Sun, 13 Jul 2008 01:49:31 +0000
+Subject: [PATCH] x86-rest: fix sparse warnings
+Message-Id: <1215913730.2711.1.camel@jaswinder.satnam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080729190026.GA32433@orion>
-In-Reply-To: <20080729190026.GA32433@orion>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, mingo@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: LKML <linux-kernel@vger.kernel.org>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>
 
-2008/7/29 Alexander Beregalov <a.beregalov@gmail.com>:
-> Hi
->
-> Moved these three functions under ifdef CONFIG_PROC_FS, separated
-> profile_hits. Perhaps it would be better to join two ifdef-CONFIG_PROC_FS
-> blocks.
-> This patch is on top of 2.6.27-rc1.
->
-> From: Alexander Beregalov <a.beregalov@gmail.com>
->
-> kernel/profile.c: fix warnings:
->
-> kernel/profile.c:245: warning: 'profile_flip_buffers' defined but not
-> used
-> kernel/profile.c:268: warning: 'profile_discard_flip_buffers' defined
-> but not used
-> kernel/profile.c:335: warning: 'profile_cpu_callback' defined but not
-> used
->
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
->
-> ---
->
->  kernel/profile.c |  107 ++++++++++++++++++++++++++++--------------------------
->  1 files changed, 56 insertions(+), 51 deletions(-)
->
-> diff --git a/kernel/profile.c b/kernel/profile.c
-> index cd26bed..0f377d9 100644
-> --- a/kernel/profile.c
-> +++ b/kernel/profile.c
-> @@ -202,6 +202,7 @@ void unregister_timer_hook(int (*hook)(struct pt_regs *))
->  EXPORT_SYMBOL_GPL(unregister_timer_hook);
->
->
-> +#ifdef CONFIG_PROC_FS
->  #ifdef CONFIG_SMP
->  /*
->  * Each cpu has a pair of open-addressed hashtables for pending
-> @@ -279,57 +280,6 @@ static void profile_discard_flip_buffers(void)
->        mutex_unlock(&profile_flip_mutex);
->  }
->
-> -void profile_hits(int type, void *__pc, unsigned int nr_hits)
-> -{
-> -       unsigned long primary, secondary, flags, pc = (unsigned long)__pc;
-> -       int i, j, cpu;
-> -       struct profile_hit *hits;
-> -
-> -       if (prof_on != type || !prof_buffer)
-> -               return;
-> -       pc = min((pc - (unsigned long)_stext) >> prof_shift, prof_len - 1);
-> -       i = primary = (pc & (NR_PROFILE_GRP - 1)) << PROFILE_GRPSHIFT;
-> -       secondary = (~(pc << 1) & (NR_PROFILE_GRP - 1)) << PROFILE_GRPSHIFT;
-> -       cpu = get_cpu();
-> -       hits = per_cpu(cpu_profile_hits, cpu)[per_cpu(cpu_profile_flip, cpu)];
-> -       if (!hits) {
-> -               put_cpu();
-> -               return;
-> -       }
-> -       /*
-> -        * We buffer the global profiler buffer into a per-CPU
-> -        * queue and thus reduce the number of global (and possibly
-> -        * NUMA-alien) accesses. The write-queue is self-coalescing:
-> -        */
-> -       local_irq_save(flags);
-> -       do {
-> -               for (j = 0; j < PROFILE_GRPSZ; ++j) {
-> -                       if (hits[i + j].pc = pc) {
-> -                               hits[i + j].hits += nr_hits;
-> -                               goto out;
-> -                       } else if (!hits[i + j].hits) {
-> -                               hits[i + j].pc = pc;
-> -                               hits[i + j].hits = nr_hits;
-> -                               goto out;
-> -                       }
-> -               }
-> -               i = (i + secondary) & (NR_PROFILE_HIT - 1);
-> -       } while (i != primary);
-> -
-> -       /*
-> -        * Add the current hit(s) and flush the write-queue out
-> -        * to the global buffer:
-> -        */
-> -       atomic_add(nr_hits, &prof_buffer[pc]);
-> -       for (i = 0; i < NR_PROFILE_HIT; ++i) {
-> -               atomic_add(hits[i].hits, &prof_buffer[hits[i].pc]);
-> -               hits[i].pc = hits[i].hits = 0;
-> -       }
-> -out:
-> -       local_irq_restore(flags);
-> -       put_cpu();
-> -}
-> -
->  static int __devinit profile_cpu_callback(struct notifier_block *info,
->                                        unsigned long action, void *__cpu)
->  {
-> @@ -390,7 +340,62 @@ out_free:
->  #define profile_flip_buffers()         do { } while (0)
->  #define profile_discard_flip_buffers() do { } while (0)
->  #define profile_cpu_callback           NULL
-> +#endif
-> +#endif /* CONFIG_PROC_FS */
->
-> +#ifdef CONFIG_SMP
-> +void profile_hits(int type, void *__pc, unsigned int nr_hits)
-> +{
-> +       unsigned long primary, secondary, flags, pc = (unsigned long)__pc;
-> +       int i, j, cpu;
-> +       struct profile_hit *hits;
-> +
-> +       if (prof_on != type || !prof_buffer)
-> +               return;
-> +       pc = min((pc - (unsigned long)_stext) >> prof_shift, prof_len - 1);
-> +       i = primary = (pc & (NR_PROFILE_GRP - 1)) << PROFILE_GRPSHIFT;
-> +       secondary = (~(pc << 1) & (NR_PROFILE_GRP - 1)) << PROFILE_GRPSHIFT;
-> +       cpu = get_cpu();
-> +       hits = per_cpu(cpu_profile_hits, cpu)[per_cpu(cpu_profile_flip, cpu)];
-> +       if (!hits) {
-> +               put_cpu();
-> +               return;
-> +       }
-> +       /*
-> +        * We buffer the global profiler buffer into a per-CPU
-> +        * queue and thus reduce the number of global (and possibly
-> +        * NUMA-alien) accesses. The write-queue is self-coalescing:
-> +        */
-> +       local_irq_save(flags);
-> +       do {
-> +               for (j = 0; j < PROFILE_GRPSZ; ++j) {
-> +                       if (hits[i + j].pc = pc) {
-> +                               hits[i + j].hits += nr_hits;
-> +                               goto out;
-> +                       } else if (!hits[i + j].hits) {
-> +                               hits[i + j].pc = pc;
-> +                               hits[i + j].hits = nr_hits;
-> +                               goto out;
-> +                       }
-> +               }
-> +               i = (i + secondary) & (NR_PROFILE_HIT - 1);
-> +       } while (i != primary);
-> +
-> +       /*
-> +        * Add the current hit(s) and flush the write-queue out
-> +        * to the global buffer:
-> +        */
-> +       atomic_add(nr_hits, &prof_buffer[pc]);
-> +       for (i = 0; i < NR_PROFILE_HIT; ++i) {
-> +               atomic_add(hits[i].hits, &prof_buffer[hits[i].pc]);
-> +               hits[i].pc = hits[i].hits = 0;
-> +       }
-> +out:
-> +       local_irq_restore(flags);
-> +       put_cpu();
-> +}
-> +
-> +#else /* !CONFIG_SMP */
->  void profile_hits(int type, void *__pc, unsigned int nr_hits)
->  {
->        unsigned long pc;
->
 
-Hi Andrew,
-Can you also have a look at this?
-Is there a better way to fix it?
+CHECK   arch/x86/mm/init_32.c
+arch/x86/mm/init_32.c:290:13: warning: symbol 'add_one_highpage_init' was n=
+ot declared. Should it be static?
+arch/x86/mm/init_32.c:437:6: warning: symbol 'zap_low_mappings' was not dec=
+lared. Should it be static?
+arch/x86/mm/init_32.c:774:6: warning: symbol 'free_initmem' was not declare=
+d. Should it be static?
 
-Thanks
+CHECK   arch/x86/mm/fault.c
+arch/x86/mm/fault.c:581:16: warning: symbol 'do_page_fault' was not declare=
+d. Should it be static?
+
+CHECK   arch/x86/mm/pat.c
+arch/x86/mm/pat.c:566:6: warning: symbol 'map_devmem' was not declared. Sho=
+uld it be static?
+arch/x86/mm/pat.c:583:6: warning: symbol 'unmap_devmem' was not declared. S=
+hould it be static?
+
+CHECK   arch/x86/mm/pgtable_32.c
+arch/x86/mm/pgtable_32.c:115:6: warning: symbol 'set_pmd_pfn' was not decla=
+red. Should it be static?
+
+CHECK   arch/x86/mach-default/setup.c
+arch/x86/mach-default/setup.c:19:5: warning: symbol 'no_broadcast' was not =
+declared. Should it be static?
+
+Signed-off-by: Jaswinder Singh <jaswinder@infradead.org>
+---
+ arch/x86/mach-default/setup.c |    2 +-
+ include/asm-x86/pat.h         |    3 +++
+ include/asm-x86/pgtable_32.h  |    6 ++++++
+ include/asm-x86/setup.h       |    1 +
+ 4 files changed, 11 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/mach-default/setup.c b/arch/x86/mach-default/setup.c
+index 0c28a07..dac2bd9 100644
+--- a/arch/x86/mach-default/setup.c
++++ b/arch/x86/mach-default/setup.c
+@@ -16,7 +16,7 @@
+ #define DEFAULT_SEND_IPI	(0)
+ #endif
+=20
+-int no_broadcast=DEFAULT_SEND_IPI;
++int no_broadcast =3D DEFAULT_SEND_IPI;
+=20
+ /**
+  * pre_intr_init_hook - initialisation prior to setting up interrupt vecto=
+rs
+diff --git a/include/asm-x86/pat.h b/include/asm-x86/pat.h
+index 88f60cc..e17830e 100644
+--- a/include/asm-x86/pat.h
++++ b/include/asm-x86/pat.h
+@@ -20,5 +20,8 @@ extern int free_memtype(u64 start, u64 end);
+=20
+ extern void pat_disable(char *reason);
+=20
++extern void map_devmem(unsigned long, unsigned long, pgprot_t);
++extern void unmap_devmem(unsigned long, unsigned long, pgprot_t);
++
+ #endif
+=20
+diff --git a/include/asm-x86/pgtable_32.h b/include/asm-x86/pgtable_32.h
+index 32ca031..2f3322c 100644
+--- a/include/asm-x86/pgtable_32.h
++++ b/include/asm-x86/pgtable_32.h
+@@ -31,6 +31,12 @@ static inline void pgtable_cache_init(void) { }
+ static inline void check_pgt_cache(void) { }
+ void paging_init(void);
+=20
++void __init add_one_highpage_init(struct page *, int pfn, int);
++void zap_low_mappings(void);
++void free_initmem(void);
++void do_page_fault(struct pt_regs *regs, unsigned long error_code);
++
++void set_pmd_pfn(unsigned long, unsigned long, pgprot_t);
+=20
+ /*
+  * The Linux x86 paging architecture is 'compile-time dual-mode', it
+diff --git a/include/asm-x86/setup.h b/include/asm-x86/setup.h
+index b9b6494..1997ee6 100644
+--- a/include/asm-x86/setup.h
++++ b/include/asm-x86/setup.h
+@@ -8,6 +8,7 @@
+ /* Interrupt control for vSMPowered x86_64 systems */
+ void vsmp_init(void);
+=20
++extern int no_broadcast;
+ char *machine_specific_memory_setup(void);
+=20
+ extern unsigned long saved_video_mode;
+--=20
+1.5.5.1
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
