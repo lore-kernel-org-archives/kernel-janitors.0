@@ -1,36 +1,39 @@
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Date: Wed, 30 Jul 2008 15:04:15 +0000
-Subject: Re: [PATCH] fs/fat/dir.c fix resource leak
-Message-Id: <87wsj3l8gg.fsf@devron.myhome.or.jp>
+From: Jes Sorensen <jes@sgi.com>
+Date: Mon, 14 Jul 2008 09:29:23 +0000
+Subject: Re: [PATCH] qla1280: use request_firmware
+Message-Id: <487B1C73.5000202@sgi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1217289813.9367.9.camel@localhost.localdomain>
-	<87hca8alz6.fsf@devron.myhome.or.jp>
-	<87d4kwalh1.fsf@devron.myhome.or.jp>
-	<82faac5b0807300215j6cd9d938t7058080a65ffff74@mail.gmail.com>
-In-Reply-To: <82faac5b0807300215j6cd9d938t7058080a65ffff74@mail.gmail.com>
-	(Darren Jenkins's message of "Wed, 30 Jul 2008 19:15:46 +1000")
+References: <1215770284.2733.10.camel@jaswinder.satnam>
+In-Reply-To: <1215770284.2733.10.camel@jaswinder.satnam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Darren Jenkins <darrenrjenkins@gmail.com>
-Cc: kernel Janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaswinder Singh <jaswinder@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernel-janitors <kernel-janitors@vger.kernel.org>, kernelnewbies <kernelnewbies@nl.linux.org>, linux-scsi@vger.kernel.org, hch@infradead.org
 
-"Darren Jenkins" <darrenrjenkins@gmail.com> writes:
+Jaswinder Singh wrote:
+> this is a first draft; please be kind :)
+> 
+> Firmware blob is little endian looks like this...
+> 	unsigned char  Version1
+> 	unsigned char  Version2
+> 	unsigned char  Version3
+> 	unsigned char  Padding
+> 	unsigned short start_address
+> 	unsigned short data
 
-> bufname is not used anymore ? I'm not sure what you mean? are you
-> talking about an external tree ?
+Hello,
 
-http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux-2.6.git;a=3Dblob=
-;f=3Dfs/fat/dir.c;h=CD4a0162e10d6dea7507507cf25a13fd93d93f04;hb=3DHEAD#l356
+As the maintainer of this driver I am going to say that I think this is
+a stupid change. Yes I know that politically there's a move to make
+everything use request firmware. However for my boot device, this is
+going to be a royal pain in the butt for developers who wish to boot
+test kernels with a / sitting on a 1280.
 
-No, about current Linus tree. I meant, bufname is used actually, but
-it's not allocated dynamically by __getname().
+IMHO this patch brings us nothing, but provides a lot of unnecessary
+hassle for users.
 
-Thanks.
---=20
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Nacked-By: Jes Sorensen <jes@sgi.com>
+
+Regards,
+Jes
