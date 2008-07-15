@@ -1,31 +1,39 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Tue, 15 Jul 2008 14:21:43 +0000
+From: Jaswinder Singh <jaswinder@infradead.org>
+Date: Tue, 15 Jul 2008 15:59:37 +0000
 Subject: Re: [PATCH] x86: traps and do_traps under one hood
-Message-Id: <1216131703.27455.245.camel@shinybook.infradead.org>
+Message-Id: <1216137250.2747.12.camel@jaswinder.satnam>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1216119158.21749.5.camel@jaswinder.satnam>
-In-Reply-To: <1216119158.21749.5.camel@jaswinder.satnam>
+	 <1216129914.20462.1263591561@webmail.messagingengine.com>
+In-Reply-To: <1216129914.20462.1263591561@webmail.messagingengine.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jaswinder Singh <jaswinder@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, andi@firstfloor.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Alexander van Heukelum <heukelum@fastmail.fm>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@elte.hu>
 
-On Tue, 2008-07-15 at 16:22 +0530, Jaswinder Singh wrote:
-> Declaring x86 traps under one hood.
-> Declaring x86 do_traps before defining them.
+Hello ﻿Alexander,
 
-> arch/x86/kernel/traps_32.c                |   20 ---------
-> arch/x86/kernel/traps_64.c                |   21 ----------
-> include/asm-x86/mach-default/mach_traps.h |   62 +++++++++++++++++++++++++++++
+On Tue, 2008-07-15 at 15:51 +0200, Alexander van Heukelum wrote:
 
-You put these back in mach-default/mach_traps.h but does that cover all
-possibilities? What about other machine types?
+> 
+> I think moving the declarations to a header file is a good thing,
+> but I don't think mach_traps.h is a suitable place. 
 
-Looking at the ifdefs you introduced in that header, it seems there's
-more scope for unification here (although it makes sense for that to
-come later).
+﻿I CC new patch to you : [PATCH] x86: Introducing asm-x86/traps.h
 
--- 
-dwmw2
+> The definitions
+> of the functions are in entry_32.S and entry_64.S, so I would suggest
+> making a new header include/asm-x86/entry.h. Some other ENTRY's
+> (like system_call and some xen-specific ones) would then also fit
+> in this header.
+> 
+> What do you think?
+
+I did this for traps_32.c and traps_64.c because they are complaining
+that traps are defined but not declared.
+
+Thank you,
+
+Jaswinder Singh.
 
