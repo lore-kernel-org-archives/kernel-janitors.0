@@ -1,58 +1,160 @@
-From: "Mark Asselstine" <asselsm@gmail.com>
-Date: Wed, 09 Jul 2008 00:28:07 +0000
-Subject: Re: [PATCH] drm_memory.h: remove double inclusion of linux/vmalloc.h
-Message-Id: <919fe2b30807081728n1ce1d0eckf1172386c22a0cf7@mail.gmail.com>
+From: Jaswinder Singh <jaswinder@infradead.org>
+Date: Tue, 15 Jul 2008 10:56:42 +0000
+Subject: [PATCH] x86: traps and do_traps under one hood
+Message-Id: <1216119158.21749.5.camel@jaswinder.satnam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a4423d670807060431w639f0b1ajcbad6471d50ef802@mail.gmail.com>
-	 <919fe2b30807080529j71ae1816sc035c90b5eee555c@mail.gmail.com>
-	 <20080708152225.GA9028@q7.q7.com>
-	 <a4423d670807080956m4aa548b7vf5557892aae81432@mail.gmail.com>
-In-Reply-To: <a4423d670807080956m4aa548b7vf5557892aae81432@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Ian Romanick <ianr@q7.com>, airlied@linux.ie, dri-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, andi@firstfloor.org
 
-On Tue, Jul 8, 2008 at 12:56 PM, Alexander Beregalov
-<a.beregalov@gmail.com> wrote:
-> 2008/7/8 Ian Romanick <ianr@q7.com>:
->> On Tue, Jul 08, 2008 at 08:29:57AM -0400, Mark Asselstine wrote:
->>> On Sun, Jul 6, 2008 at 7:31 AM, Alexander Beregalov
->>> <a.beregalov@gmail.com> wrote:
->>> > From: Alexander Beregalov <a.beregalov@gmail.com>
->>> >
->>> >  #if __OS_HAS_AGP
->>> >
->>> > -#include <linux/vmalloc.h>
->>> > -
->>>
->>> Why remove this one and not the one at the top of the file? As well
->>
->> I would assume this one is removed because it is inside additional
->> ifdefs.
-> Yes, it does not change functionality of the code.
 
-I guess I even question if this include should actually be anywhere in
-this file.
+Declaring x86 traps under one hood.
+Declaring x86 do_traps before defining them.
 
->>
->>> this file has #include of drmP.h, yet drmP.h is the only file I can
->>> find that includes drm_memory.h. Based on this I would think there is
->>> some additional cleanup that can go on here.
-> How it can be cleaned up? Do you mean to move `define PAGE_AGP` to drmP.h?
->
+Signed-off-by: Jaswinder Singh <jaswinder@infradead.org>
+---
+ arch/x86/kernel/traps_32.c                |   20 ---------
+ arch/x86/kernel/traps_64.c                |   21 ----------
+ include/asm-x86/mach-default/mach_traps.h |   62 +++++++++++++++++++++++++++++
+ 3 files changed, 62 insertions(+), 41 deletions(-)
 
-It looks to me like this file at one time was meant to be included by
-files other then drmP.h. Including drmP.h ensured __OS_HAS_AGP was
-defined and a circular dependence was prevented by ifdefs surrounding
-the bulk of drmP.h. As far as I can tell none of the includes in this
-file are necessary anymore and a quick x86 compile seems to back me up
-(please double check however). Once these are removed there is very
-little functionality left and it might make more sense to just put in
-into drmP.h. If in the future there is a need for this type of include
-it can be started from scratch but for now I would say it should go
-away.
+diff --git a/arch/x86/kernel/traps_32.c b/arch/x86/kernel/traps_32.c
+index 8a76897..9107ef7 100644
+--- a/arch/x86/kernel/traps_32.c
++++ b/arch/x86/kernel/traps_32.c
+@@ -77,26 +77,6 @@ char ignore_fpu_irq;
+ gate_desc idt_table[256]
+ 	__attribute__((__section__(".data.idt"))) = { { { { 0, 0 } } }, };
+ 
+-asmlinkage void divide_error(void);
+-asmlinkage void debug(void);
+-asmlinkage void nmi(void);
+-asmlinkage void int3(void);
+-asmlinkage void overflow(void);
+-asmlinkage void bounds(void);
+-asmlinkage void invalid_op(void);
+-asmlinkage void device_not_available(void);
+-asmlinkage void coprocessor_segment_overrun(void);
+-asmlinkage void invalid_TSS(void);
+-asmlinkage void segment_not_present(void);
+-asmlinkage void stack_segment(void);
+-asmlinkage void general_protection(void);
+-asmlinkage void page_fault(void);
+-asmlinkage void coprocessor_error(void);
+-asmlinkage void simd_coprocessor_error(void);
+-asmlinkage void alignment_check(void);
+-asmlinkage void spurious_interrupt_bug(void);
+-asmlinkage void machine_check(void);
+-
+ int panic_on_unrecovered_nmi;
+ int kstack_depth_to_print = 24;
+ static unsigned int code_bytes = 64;
+diff --git a/arch/x86/kernel/traps_64.c b/arch/x86/kernel/traps_64.c
+index 2696a68..56c413c 100644
+--- a/arch/x86/kernel/traps_64.c
++++ b/arch/x86/kernel/traps_64.c
+@@ -54,27 +54,6 @@
+ 
+ #include <mach_traps.h>
+ 
+-asmlinkage void divide_error(void);
+-asmlinkage void debug(void);
+-asmlinkage void nmi(void);
+-asmlinkage void int3(void);
+-asmlinkage void overflow(void);
+-asmlinkage void bounds(void);
+-asmlinkage void invalid_op(void);
+-asmlinkage void device_not_available(void);
+-asmlinkage void double_fault(void);
+-asmlinkage void coprocessor_segment_overrun(void);
+-asmlinkage void invalid_TSS(void);
+-asmlinkage void segment_not_present(void);
+-asmlinkage void stack_segment(void);
+-asmlinkage void general_protection(void);
+-asmlinkage void page_fault(void);
+-asmlinkage void coprocessor_error(void);
+-asmlinkage void simd_coprocessor_error(void);
+-asmlinkage void alignment_check(void);
+-asmlinkage void spurious_interrupt_bug(void);
+-asmlinkage void machine_check(void);
+-
+ int panic_on_unrecovered_nmi;
+ int kstack_depth_to_print = 12;
+ static unsigned int code_bytes = 64;
+diff --git a/include/asm-x86/mach-default/mach_traps.h b/include/asm-x86/mach-default/mach_traps.h
+index 2fe7705..e803b1d 100644
+--- a/include/asm-x86/mach-default/mach_traps.h
++++ b/include/asm-x86/mach-default/mach_traps.h
+@@ -36,4 +36,66 @@ static inline void reassert_nmi(void)
+ 		unlock_cmos();
+ }
+ 
++/* traps */
++
++/* Common in X86_32 and X86_64 */
++asmlinkage void divide_error(void);
++asmlinkage void debug(void);
++asmlinkage void nmi(void);
++asmlinkage void int3(void);
++asmlinkage void overflow(void);
++asmlinkage void bounds(void);
++asmlinkage void invalid_op(void);
++asmlinkage void device_not_available(void);
++asmlinkage void coprocessor_segment_overrun(void);
++asmlinkage void invalid_TSS(void);
++asmlinkage void segment_not_present(void);
++asmlinkage void stack_segment(void);
++asmlinkage void general_protection(void);
++asmlinkage void page_fault(void);
++asmlinkage void coprocessor_error(void);
++asmlinkage void simd_coprocessor_error(void);
++asmlinkage void alignment_check(void);
++asmlinkage void spurious_interrupt_bug(void);
++asmlinkage void machine_check(void);
++
++void do_divide_error(struct pt_regs *, long);
++void do_overflow(struct pt_regs *, long);
++void do_bounds(struct pt_regs *, long);
++void do_coprocessor_segment_overrun(struct pt_regs *, long);
++void do_invalid_TSS(struct pt_regs *, long);
++void do_segment_not_present(struct pt_regs *, long);
++void do_stack_segment(struct pt_regs *, long);
++void do_alignment_check(struct pt_regs *, long);
++void do_invalid_op(struct pt_regs *, long);
++void do_general_protection(struct pt_regs *, long);
++void do_nmi(struct pt_regs *, long);
++
++extern int panic_on_unrecovered_nmi;
++extern int kstack_depth_to_print;
++
++#ifdef CONFIG_X86_32
++
++void do_iret_error(struct pt_regs *, long);
++void do_int3(struct pt_regs *, long);
++void do_debug(struct pt_regs *, long);
++void math_error(void __user *);
++void do_coprocessor_error(struct pt_regs *, long);
++void do_simd_coprocessor_error(struct pt_regs *, long);
++void do_spurious_interrupt_bug(struct pt_regs *, long);
++unsigned long patch_espfix_desc(unsigned long, unsigned long);
++asmlinkage void math_emulate(long);
++
++#else /* CONFIG_X86_32 */
++
++asmlinkage void double_fault(void);
++
++asmlinkage void do_int3(struct pt_regs *, long);
++asmlinkage void do_stack_segment(struct pt_regs *, long);
++asmlinkage void do_debug(struct pt_regs *, unsigned long);
++asmlinkage void do_coprocessor_error(struct pt_regs *);
++asmlinkage void do_simd_coprocessor_error(struct pt_regs *);
++asmlinkage void do_spurious_interrupt_bug(struct pt_regs *);
++
++#endif /* CONFIG_X86_32 */
+ #endif /* !_MACH_TRAPS_H */
+-- 
+1.5.5.1
 
-Regards,
-Mark
+
+
