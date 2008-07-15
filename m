@@ -1,45 +1,195 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Date: Mon, 07 Jul 2008 21:02:22 +0000
-Subject: Re: [linux-dvb] [PATCH] Remove fdump tool for av7110 firmware
-Message-Id: <20080707180222.4b4a53a9@gaivota>
+From: Jaswinder Singh <jaswinder@infradead.org>
+Date: Tue, 15 Jul 2008 09:39:52 +0000
+Subject: [PATCH] x86: Introducing asm-x86/syscalls.h
+Message-Id: <1216114072.21749.1.camel@jaswinder.satnam>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1214139259.2994.8.camel@jaswinder.satnam>
-	<200807060315.51736@orion.escape-edv.de>
-In-Reply-To: <200807060315.51736@orion.escape-edv.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oliver Endriss <o.endriss@gmx.de>
-Cc: kernelnewbies <kernelnewbies@nl.linux.org>, David Woodhouse <dwmw2@infradead.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Jaswinder Singh <jaswinder@infradead.org>, linux-dvb@linuxtv.org, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>
 
-Hi Oliver,
 
-> @Mauro:
-> Is there a way to strip this stuff from Kconfig/Makefile/av7110*.[ch]
-> for submission to the kernel? Basically I don't care whether and how
-> they cripple the driver in the kernel. But I would like to keep the code
-> 'as is' in the linuxtv repositories.
+declaring arch-dependent syscalls for x86 under one hood
 
-Having a binary firmware inside a GPL'd file seems to be (at least for some
-people) a GPL violation, since the firmware source code should also be released
-with GPL (please read [1] for a good article about this).
+Signed-off-by: Jaswinder Singh <jaswinder@infradead.org>
+---
+ arch/x86/kernel/ldt.c        |    1 +
+ arch/x86/kernel/process_32.c |    1 +
+ arch/x86/kernel/signal_32.c  |    1 +
+ arch/x86/kernel/tls.c        |    1 +
+ arch/x86/kernel/vm86_32.c    |    1 +
+ include/asm-x86/syscalls.h   |   84 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/syscalls.h     |    4 ++
+ 7 files changed, 93 insertions(+), 0 deletions(-)
+ create mode 100644 include/asm-x86/syscalls.h
 
-This seems to be one of the reasons for moving all firmwares that are still in
-kernel into a separate dir. A latter step seems to move those files to a cousin
-tree, hosted together with kernel tree, and clearly stating that those
-firmwares are not GPL, but are allowed to be used with Linux. 
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index 21f2bae..a278afc 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -12,6 +12,7 @@
+ #include <linux/mm.h>
+ #include <linux/smp.h>
+ #include <linux/vmalloc.h>
++#include <linux/syscalls.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/system.h>
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 0c3927a..8e46d82 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -37,6 +37,7 @@
+ #include <linux/tick.h>
+ #include <linux/percpu.h>
+ #include <linux/prctl.h>
++#include <linux/syscalls.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/pgtable.h>
+diff --git a/arch/x86/kernel/signal_32.c b/arch/x86/kernel/signal_32.c
+index d923736..954a3b8 100644
+--- a/arch/x86/kernel/signal_32.c
++++ b/arch/x86/kernel/signal_32.c
+@@ -20,6 +20,7 @@
+ #include <linux/elf.h>
+ #include <linux/smp.h>
+ #include <linux/mm.h>
++#include <linux/syscalls.h>
+ 
+ #include <asm/processor.h>
+ #include <asm/ucontext.h>
+diff --git a/arch/x86/kernel/tls.c b/arch/x86/kernel/tls.c
+index ab6bf37..90bc24c 100644
+--- a/arch/x86/kernel/tls.c
++++ b/arch/x86/kernel/tls.c
+@@ -3,6 +3,7 @@
+ #include <linux/sched.h>
+ #include <linux/user.h>
+ #include <linux/regset.h>
++#include <linux/syscalls.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/desc.h>
+diff --git a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
+index 38f566f..d77e312 100644
+--- a/arch/x86/kernel/vm86_32.c
++++ b/arch/x86/kernel/vm86_32.c
+@@ -41,6 +41,7 @@
+ #include <linux/ptrace.h>
+ #include <linux/audit.h>
+ #include <linux/stddef.h>
++#include <linux/syscalls.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/io.h>
+diff --git a/include/asm-x86/syscalls.h b/include/asm-x86/syscalls.h
+new file mode 100644
+index 0000000..0960d97
+--- /dev/null
++++ b/include/asm-x86/syscalls.h
+@@ -0,0 +1,84 @@
++#ifndef _ASM_X86_SYSCALLS_H
++#define _ASM_X86_SYSCALLS_H
++#ifdef __KERNEL__
++
++#include <linux/compiler.h>
++#include <linux/linkage.h>
++#include <linux/types.h>
++#include <linux/signal.h>
++#include <linux/utsname.h>
++
++/* Common in X86_32 and X86_64 */
++/* kernel/ioport.c */
++asmlinkage long sys_ioperm(unsigned long, unsigned long, int);
++
++/* X86_32 only */
++#ifdef CONFIG_X86_32
++/* kernel/process_32.c */
++asmlinkage int sys_fork(struct pt_regs);
++asmlinkage int sys_clone(struct pt_regs);
++asmlinkage int sys_vfork(struct pt_regs);
++asmlinkage int sys_execve(struct pt_regs);
++
++/* kernel/signal_32.c */
++asmlinkage int sys_sigsuspend(int, int, old_sigset_t);
++asmlinkage int sys_sigaction(int, const struct old_sigaction __user *,
++			     struct old_sigaction __user *);
++asmlinkage int sys_sigaltstack(unsigned long);
++asmlinkage unsigned long sys_sigreturn(unsigned long);
++asmlinkage int sys_rt_sigreturn(unsigned long);
++
++/* kernel/ioport.c */
++asmlinkage long sys_iopl(unsigned long);
++
++/* kernel/ldt.c */
++asmlinkage int sys_modify_ldt(int, void __user *, unsigned long);
++
++/* kernel/sys_i386_32.c */
++asmlinkage long sys_mmap2(unsigned long, unsigned long, unsigned long,
++			  unsigned long, unsigned long, unsigned long);
++struct mmap_arg_struct;
++asmlinkage int old_mmap(struct mmap_arg_struct __user *);
++struct sel_arg_struct;
++asmlinkage int old_select(struct sel_arg_struct __user *);
++asmlinkage int sys_ipc(uint, int, int, int, void __user *, long);
++asmlinkage int sys_uname(struct old_utsname __user *);
++asmlinkage int sys_olduname(struct oldold_utsname __user *);
++
++/* kernel/tls.c */
++asmlinkage int sys_set_thread_area(struct user_desc __user *);
++asmlinkage int sys_get_thread_area(struct user_desc __user *);
++
++/* kernel/vm86_32.c */
++asmlinkage int sys_vm86old(struct pt_regs);
++asmlinkage int sys_vm86(struct pt_regs);
++
++#else /* CONFIF_X86_32 */
++
++/* X86_64 only */
++/* kernel/process_64.c */
++asmlinkage long sys_fork(struct pt_regs *);
++asmlinkage long sys_clone(unsigned long, unsigned long,
++			  void __user *, void __user *,
++			  struct pt_regs *);
++asmlinkage long sys_vfork(struct pt_regs *);
++asmlinkage long sys_execve(char __user *, char __user * __user *,
++			   char __user * __user *,
++			   struct pt_regs *);
++
++/* kernel/ioport.c */
++asmlinkage long sys_iopl(unsigned int, struct pt_regs *);
++
++/* kernel/signal_64.c */
++asmlinkage long sys_sigaltstack(const stack_t __user *, stack_t __user *,
++				struct pt_regs *);
++asmlinkage long sys_rt_sigreturn(struct pt_regs *);
++
++/* kernel/sys_x86_64.c */
++asmlinkage long sys_mmap(unsigned long, unsigned long, unsigned long,
++			 unsigned long, unsigned long, unsigned long);
++asmlinkage long sys_uname(struct new_utsname __user *);
++
++#endif /* CONFIF_X86_32 */
++#endif /* __KERNEL__ */
++#endif /* _ASM_X86_SYSCALLS_H */
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 0522f36..dfd6744 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -65,6 +65,10 @@ struct getcpu_cache;
+ #include <linux/quota.h>
+ #include <linux/key.h>
+ 
++#ifdef CONFIG_X86
++#include <asm/syscalls.h>
++#endif
++
+ asmlinkage long sys_time(time_t __user *tloc);
+ asmlinkage long sys_stime(time_t __user *tptr);
+ asmlinkage long sys_gettimeofday(struct timeval __user *tv,
+-- 
+1.5.5.1
 
-IANAL, but, if the firmware is violating GPL at Kernel, the same violation also
-affects our tree. So, from legal POV, I think we ought to do the same thing at
-V4L/DVB. 
 
-Probably, it is safe to keep the firmware files into a separate dir,
-if we state clearly that the firmwares are not GPL.
 
-Anyway, let's see how we can handle it after having those patches merged at
-mainstream.
-
-[1] http://lwn.net/Articles/284932/
-
-Cheers,
-Mauro
