@@ -1,13 +1,17 @@
 From: Jaswinder Singh <jaswinder@infradead.org>
-Date: Tue, 15 Jul 2008 09:39:52 +0000
-Subject: [PATCH] x86: Introducing asm-x86/syscalls.h
-Message-Id: <1216114072.21749.1.camel@jaswinder.satnam>
+Date: Tue, 15 Jul 2008 13:18:14 +0000
+Subject: Re: [PATCH] x86: Introducing asm-x86/syscalls.h
+Message-Id: <1216127174.30096.3.camel@jaswinder.satnam>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1216114072.21749.1.camel@jaswinder.satnam>
+In-Reply-To: <1216114072.21749.1.camel@jaswinder.satnam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, kernelnewbies <kernelnewbies@nl.linux.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>
 
+Updated Patch:
 
 declaring arch-dependent syscalls for x86 under one hood
 
@@ -15,12 +19,14 @@ Signed-off-by: Jaswinder Singh <jaswinder@infradead.org>
 ---
  arch/x86/kernel/ldt.c        |    1 +
  arch/x86/kernel/process_32.c |    1 +
+ arch/x86/kernel/process_64.c |    1 +
  arch/x86/kernel/signal_32.c  |    1 +
+ arch/x86/kernel/signal_64.c  |    1 +
  arch/x86/kernel/tls.c        |    1 +
  arch/x86/kernel/vm86_32.c    |    1 +
  include/asm-x86/syscalls.h   |   84 ++++++++++++++++++++++++++++++++++++++++++
  include/linux/syscalls.h     |    4 ++
- 7 files changed, 93 insertions(+), 0 deletions(-)
+ 9 files changed, 95 insertions(+), 0 deletions(-)
  create mode 100644 include/asm-x86/syscalls.h
 
 diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
@@ -47,6 +53,18 @@ index 0c3927a..8e46d82 100644
  
  #include <asm/uaccess.h>
  #include <asm/pgtable.h>
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index a8e5362..f99381b 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -37,6 +37,7 @@
+ #include <linux/kdebug.h>
+ #include <linux/tick.h>
+ #include <linux/prctl.h>
++#include <linux/syscalls.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/pgtable.h>
 diff --git a/arch/x86/kernel/signal_32.c b/arch/x86/kernel/signal_32.c
 index d923736..954a3b8 100644
 --- a/arch/x86/kernel/signal_32.c
@@ -59,6 +77,18 @@ index d923736..954a3b8 100644
  
  #include <asm/processor.h>
  #include <asm/ucontext.h>
+diff --git a/arch/x86/kernel/signal_64.c b/arch/x86/kernel/signal_64.c
+index e53b267..12c0ab5 100644
+--- a/arch/x86/kernel/signal_64.c
++++ b/arch/x86/kernel/signal_64.c
+@@ -19,6 +19,7 @@
+ #include <linux/stddef.h>
+ #include <linux/personality.h>
+ #include <linux/compiler.h>
++#include <linux/syscalls.h>
+ #include <asm/processor.h>
+ #include <asm/ucontext.h>
+ #include <asm/uaccess.h>
 diff --git a/arch/x86/kernel/tls.c b/arch/x86/kernel/tls.c
 index ab6bf37..90bc24c 100644
 --- a/arch/x86/kernel/tls.c
