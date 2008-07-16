@@ -1,132 +1,70 @@
-From: Denis ChengRq <crquan@gmail.com>
-Date: Fri, 25 Jul 2008 02:45:45 +0000
-Subject: [PATCH 1/5] drivers/scsi/megaraid/: replace __FUNCTION__ with __func__
-Message-Id: <1216953945-31873-1-git-send-email-crquan@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 16 Jul 2008 14:34:54 +0000
+Subject: [PATCH 2/2] net/ieee80211: adjust error handling
+Message-Id: <Pine.LNX.4.64.0807161634310.28783@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Neela Syam Kolli <megaraidlinux@lsi.com>
-Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jeff@garzik.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Denis ChengRq <crquan@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+
+Converts a test in error handling code to a sequence of labels.
+
+The semantic match that found the problem is:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E,E1,E2;
+@@
+
+E = alloc_etherdev(...)
+... when != E = E1
+if (...) { ... free_netdev(E); ... return ...; }
+... when != E = E2
+(
+  if (...)
+   {
+   ... when != free_netdev(E);
+   return dev; }
+|
+* if (...)
+   {
+   ... when != free_netdev(E);
+   return ...; }
+|
+register_netdev(E)
+)
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/scsi/megaraid/mega_common.h   |    2 +-
- drivers/scsi/megaraid/megaraid_mbox.c |   16 ++++++++--------
- drivers/scsi/megaraid/megaraid_mm.c   |    4 ++--
- 3 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/scsi/megaraid/mega_common.h b/drivers/scsi/megaraid/mega_common.h
-index f62ed46..5ead128 100644
---- a/drivers/scsi/megaraid/mega_common.h
-+++ b/drivers/scsi/megaraid/mega_common.h
-@@ -265,7 +265,7 @@ typedef struct {
- #define ASSERT(expression)						\
- 	if (!(expression)) {						\
- 	ASSERT_ACTION("assertion failed:(%s), file: %s, line: %d:%s\n",	\
--			#expression, __FILE__, __LINE__, __FUNCTION__);	\
-+			#expression, __FILE__, __LINE__, __func__);	\
+diff -u -p a/net/ieee80211/ieee80211_module.c b/net/ieee80211/ieee80211_module.c
+--- a/net/ieee80211/ieee80211_module.c
++++ b/net/ieee80211/ieee80211_module.c
+@@ -157,7 +157,7 @@ struct net_device *alloc_ieee80211(int s
+ 	err = ieee80211_networks_allocate(ieee);
+ 	if (err) {
+ 		IEEE80211_ERROR("Unable to allocate beacon storage: %d\n", err);
+-		goto failed;
++		goto failed_free_netdev;
  	}
- #else
- #define ASSERT(expression)
-diff --git a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
-index 70a0f11..805bb61 100644
---- a/drivers/scsi/megaraid/megaraid_mbox.c
-+++ b/drivers/scsi/megaraid/megaraid_mbox.c
-@@ -458,7 +458,7 @@ megaraid_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	ieee80211_networks_initialize(ieee);
  
- 	if (adapter = NULL) {
- 		con_log(CL_ANN, (KERN_WARNING
--		"megaraid: out of memory, %s %d.\n", __FUNCTION__, __LINE__));
-+		"megaraid: out of memory, %s %d.\n", __func__, __LINE__));
+@@ -193,9 +193,9 @@ struct net_device *alloc_ieee80211(int s
  
- 		goto out_probe_one;
- 	}
-@@ -1002,7 +1002,7 @@ megaraid_alloc_cmd_packets(adapter_t *adapter)
+ 	return dev;
  
- 	if (!raid_dev->una_mbox64) {
- 		con_log(CL_ANN, (KERN_WARNING
--			"megaraid: out of memory, %s %d\n", __FUNCTION__,
-+			"megaraid: out of memory, %s %d\n", __func__,
- 			__LINE__));
- 		return -1;
- 	}
-@@ -1030,7 +1030,7 @@ megaraid_alloc_cmd_packets(adapter_t *adapter)
- 	if (!adapter->ibuf) {
+-      failed:
+-	if (dev)
+-		free_netdev(dev);
++failed_free_netdev:
++	free_netdev(dev);
++failed:
+ 	return NULL;
+ }
  
- 		con_log(CL_ANN, (KERN_WARNING
--			"megaraid: out of memory, %s %d\n", __FUNCTION__,
-+			"megaraid: out of memory, %s %d\n", __func__,
- 			__LINE__));
- 
- 		goto out_free_common_mbox;
-@@ -1052,7 +1052,7 @@ megaraid_alloc_cmd_packets(adapter_t *adapter)
- 
- 	if (adapter->kscb_list = NULL) {
- 		con_log(CL_ANN, (KERN_WARNING
--			"megaraid: out of memory, %s %d\n", __FUNCTION__,
-+			"megaraid: out of memory, %s %d\n", __func__,
- 			__LINE__));
- 		goto out_free_ibuf;
- 	}
-@@ -1060,7 +1060,7 @@ megaraid_alloc_cmd_packets(adapter_t *adapter)
- 	// memory allocation for our command packets
- 	if (megaraid_mbox_setup_dma_pools(adapter) != 0) {
- 		con_log(CL_ANN, (KERN_WARNING
--			"megaraid: out of memory, %s %d\n", __FUNCTION__,
-+			"megaraid: out of memory, %s %d\n", __func__,
- 			__LINE__));
- 		goto out_free_scb_list;
- 	}
-@@ -2981,7 +2981,7 @@ megaraid_mbox_product_info(adapter_t *adapter)
- 
- 	if (pinfo = NULL) {
- 		con_log(CL_ANN, (KERN_WARNING
--			"megaraid: out of memory, %s %d\n", __FUNCTION__,
-+			"megaraid: out of memory, %s %d\n", __func__,
- 			__LINE__));
- 
- 		return -1;
-@@ -3508,7 +3508,7 @@ megaraid_cmm_register(adapter_t *adapter)
- 
- 	if (adapter->uscb_list = NULL) {
- 		con_log(CL_ANN, (KERN_WARNING
--			"megaraid: out of memory, %s %d\n", __FUNCTION__,
-+			"megaraid: out of memory, %s %d\n", __func__,
- 			__LINE__));
- 		return -1;
- 	}
-@@ -3879,7 +3879,7 @@ megaraid_sysfs_alloc_resources(adapter_t *adapter)
- 		!raid_dev->sysfs_buffer) {
- 
- 		con_log(CL_ANN, (KERN_WARNING
--			"megaraid: out of memory, %s %d\n", __FUNCTION__,
-+			"megaraid: out of memory, %s %d\n", __func__,
- 			__LINE__));
- 
- 		rval = -ENOMEM;
-diff --git a/drivers/scsi/megaraid/megaraid_mm.c b/drivers/scsi/megaraid/megaraid_mm.c
-index ac3b280..f680561 100644
---- a/drivers/scsi/megaraid/megaraid_mm.c
-+++ b/drivers/scsi/megaraid/megaraid_mm.c
-@@ -929,7 +929,7 @@ mraid_mm_register_adp(mraid_mmadp_t *lld_adp)
- 			!adapter->pthru_dma_pool) {
- 
- 		con_log(CL_ANN, (KERN_WARNING
--			"megaraid cmm: out of memory, %s %d\n", __FUNCTION__,
-+			"megaraid cmm: out of memory, %s %d\n", __func__,
- 			__LINE__));
- 
- 		rval = (-ENOMEM);
-@@ -957,7 +957,7 @@ mraid_mm_register_adp(mraid_mmadp_t *lld_adp)
- 
- 			con_log(CL_ANN, (KERN_WARNING
- 				"megaraid cmm: out of memory, %s %d\n",
--					__FUNCTION__, __LINE__));
-+					__func__, __LINE__));
- 
- 			rval = (-ENOMEM);
- 
--- 
-1.5.6.3
-
