@@ -1,35 +1,89 @@
-From: Michael Borisov <niro@tut.by>
-Date: Sat, 26 Jul 2008 19:44:53 +0000
-Subject: [PATCH 5/14] drivers/isdn/hisax/sedlbauer.c: fix warning
-Message-Id: <1217101493.6107.131.camel@inlin>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 16 Jul 2008 16:00:42 +0000
+Subject: [PATCH retry] drivers/usb/class/usblp.c: adjust error handling code
+Message-Id: <Pine.LNX.4.64.0807161758520.28783@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0807161717220.28783@ask.diku.dk>
+ <200807161744.59137.oliver@neukum.org>
+In-Reply-To: <200807161744.59137.oliver@neukum.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Oliver Neukum <oliver@neukum.org>
+Cc: zaitcev@redhat.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch fixes the following compile warnings:
+From: Julia Lawall <julia@diku.dk>
 
-drivers/isdn/hisax/sedlbauer.c: In function ‘setup_sedlbauer_pci’:
-drivers/isdn/hisax/sedlbauer.c:612: warning: ‘pci_find_device’ is
-deprecated (declared at include/linux/pci.h:535)
+In this code, it is possible to tell statically whether usblp will be NULL
+in the error handling code.
 
+Oliver Neukum suggested to make a goto to the final return rather than 
+return directly.
 
-Signed-off-by: Michael Borisov <niro@tut.by>
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+identifier f,err,l,l1;
+type T;
+expression x,E;
+statement S;
+@@
+
+x = NULL
+... when != goto l1;
+* x = f(...)
+... when != x
+err = E;
+goto l;
+...
+* if (x != NULL)
+  S
+return err;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/isdn/hisax/sedlbauer.c
-b/drivers/isdn/hisax/sedlbauer.c
-index a10dfa8..9d8bca6 100644
---- a/drivers/isdn/hisax/sedlbauer.c
-+++ b/drivers/isdn/hisax/sedlbauer.c
-@@ -609,7 +609,7 @@ setup_sedlbauer_pci(struct IsdnCard *card)
- 	struct IsdnCardState *cs = card->cs;
- 	u16 sub_vendor_id, sub_id;
+diff -u -p a/drivers/usb/class/usblp.c b/drivers/usb/class/usblp.c
+--- a/drivers/usb/class/usblp.c
++++ b/drivers/usb/class/usblp.c
+@@ -1076,15 +1076,16 @@ static int usblp_probe(struct usb_interf
+ 		       const struct usb_device_id *id)
+ {
+ 	struct usb_device *dev = interface_to_usbdev (intf);
+-	struct usblp *usblp = NULL;
++	struct usblp *usblp;
+ 	int protocol;
+ 	int retval;
  
--	if ((dev_sedl = pci_find_device(PCI_VENDOR_ID_TIGERJET,
-+	if ((dev_sedl = pci_get_device(PCI_VENDOR_ID_TIGERJET,
- 			PCI_DEVICE_ID_TIGERJET_100, dev_sedl))) {
- 		if (pci_enable_device(dev_sedl))
- 			return(0);
-
-
+ 	/* Malloc and start initializing usblp structure so we can use it
+ 	 * directly. */
+-	if (!(usblp = kzalloc(sizeof(struct usblp), GFP_KERNEL))) {
++	usblp = kzalloc(sizeof(struct usblp), GFP_KERNEL);
++	if (!usblp) {
+ 		retval = -ENOMEM;
+-		goto abort;
++		goto abort_ret;
+ 	}
+ 	usblp->dev = dev;
+ 	mutex_init(&usblp->wmut);
+@@ -1179,12 +1180,11 @@ abort_intfdata:
+ 	usb_set_intfdata (intf, NULL);
+ 	device_remove_file(&intf->dev, &dev_attr_ieee1284_id);
+ abort:
+-	if (usblp) {
+-		kfree(usblp->readbuf);
+-		kfree(usblp->statusbuf);
+-		kfree(usblp->device_id_string);
+-		kfree(usblp);
+-	}
++	kfree(usblp->readbuf);
++	kfree(usblp->statusbuf);
++	kfree(usblp->device_id_string);
++	kfree(usblp);
++abort_ret:
+ 	return retval;
+ }
+ 
