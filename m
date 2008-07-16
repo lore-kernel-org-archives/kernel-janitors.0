@@ -1,60 +1,59 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 21 Jul 2008 07:58:11 +0000
-Subject: [PATCH 4/7] drivers/net/wireless/ipw2100.c: Release mutex in error
-Message-Id: <Pine.LNX.4.64.0807210957490.24625@ask.diku.dk>
+Date: Wed, 16 Jul 2008 14:34:29 +0000
+Subject: [PATCH 1/2] drivers/net/r6040.c: adjust error handling
+Message-Id: <Pine.LNX.4.64.0807161633570.28783@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: yi.zhu@intel.com, jketreno@linux.intel.com, reinette.chatre@intel.com, linux-wireless@vger.kernel.org, ipw2100-devel@lists.sourceforge.net, jgarzik@pobox.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, netdev@vger.kernel.org, jeff@garzik.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The mutex is released on a successful return, so it would seem that it
-should be released on an error return as well.
+The just preceding error case does a lot of error handling, so it seems
+like this one should as well.
 
-The semantic patch finds this problem is as follows:
+The semantic match that found the problem is:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
 @@
-expression l;
+expression E,E1,E2;
 @@
 
-mutex_lock(l);
-... when != mutex_unlock(l)
-    when any
-    when strict
+E = alloc_etherdev(...)
+... when != E = E1
+if (...) { ... free_netdev(E); ... return ...; }
+... when != E = E2
 (
-if (...) { ... when != mutex_unlock(l)
-+   mutex_unlock(l);
-    return ...;
-}
+  if (...)
+   {
+   ... when != free_netdev(E);
+   return dev; }
 |
-mutex_unlock(l);
+* if (...)
+   {
+   ... when != free_netdev(E);
+   return ...; }
+|
+register_netdev(E)
 )
+
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-diff -u -p a/drivers/net/wireless/ipw2100.c b/drivers/net/wireless/ipw2100.c
---- a/drivers/net/wireless/ipw2100.c
-+++ b/drivers/net/wireless/ipw2100.c
-@@ -6442,6 +6442,7 @@ static int ipw2100_resume(struct pci_dev
- 	if (err) {
- 		printk(KERN_ERR "%s: pci_enable_device failed on resume\n",
- 		       dev->name);
-+		mutex_unlock(&priv->action_mutex);
- 		return err;
- 	}
- 	pci_restore_state(pci_dev);
-@@ -7146,7 +7147,7 @@ static int ipw2100_wx_get_rate(struct ne
- 	err = ipw2100_get_ordinal(priv, IPW_ORD_CURRENT_TX_RATE, &val, &len);
- 	if (err) {
- 		IPW_DEBUG_WX("failed querying ordinals.\n");
--		return err;
-+		goto done;
+diff -u -p a/drivers/net/r6040.c b/drivers/net/r6040.c
+--- a/drivers/net/r6040.c
++++ b/drivers/net/r6040.c
+@@ -1029,7 +1029,8 @@ static int __devinit r6040_init_one(stru
+ 	if (!ioaddr) {
+ 		printk(KERN_ERR "ioremap failed for device %s\n",
+ 			pci_name(pdev));
+-		return -EIO;
++		err = -EIO;
++		goto err_out_res;
  	}
  
- 	switch (val & TX_RATE_MASK) {
+ 	/* Init system & device */
