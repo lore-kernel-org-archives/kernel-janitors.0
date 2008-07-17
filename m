@@ -1,102 +1,54 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 28 Jul 2008 14:10:09 +0000
-Subject: [PATCH] drivers/isdn/capi/kcapi.c: Adjust error handling code
-Message-Id: <Pine.LNX.4.64.0807281609190.15369@ask.diku.dk>
+From: batxi kvhud <jmpvmg1uns1z8@yahoo.com.sg>
+Date: Thu, 17 Jul 2008 16:13:25 +0000
+Subject: =?utf-8?B?44CAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGw2?=
+Message-Id: <259001.65102.qm@web76009.mail.sg1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kkeil@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+巨乳妹妹SM的初體驗~白皙肌膚被繩子綁起來搞
 
-After calling capi_ctr_get, error handling code should call
-capi_ctr_put.
+ http://do.my/av-buy/
 
-The semantic match that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+看辣妹囉，穿低胸Ｔ恤逛大街，我用手機把它拍下來了，粉嫩哦
 
-// <smpl>
-@r@
-expression x,E;
-statement S;
-position p1,p2,p3;
-@@
 
-(
-if ((x = capi_ctr_get@p1(...)) = NULL || ...) S
-|
-x = capi_ctr_get@p1(...)
-... when != x
-if (x = NULL || ...) S
-)
-<...
-if@p3 (...) { ... when != capi_ctr_put(x)
-                  when != if (x) { ... capi_ctr_put(x); ...}
-    return@p2 ...;
-}
-...>
-(
-return x;
-|
-return 0;
-|
-x = E
-|
-E = x
-|
-capi_ctr_put(x)
-)
 
-@exists@
-position r.p1,r.p2,r.p3;
-expression x;
-int ret != 0;
-statement S;
-@@
 
-* x = capi_ctr_get@p1(...)
-  <...
-* if@p3 (...)
-  S
-  ...>
-* return@p2 \(NULL\|ret\);
-// </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
 
----
- drivers/isdn/capi/kcapi.c     |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/isdn/capi/kcapi.c b/drivers/isdn/capi/kcapi.c
-index 75726ea..5360c4f 100644
---- a/drivers/isdn/capi/kcapi.c
-+++ b/drivers/isdn/capi/kcapi.c
-@@ -828,15 +828,18 @@ static int old_capi_manufacturer(unsigned int cmd, void __user *data)
- 			return -ESRCH;
- 		if (card->load_firmware = NULL) {
- 			printk(KERN_DEBUG "kcapi: load: no load function\n");
-+			capi_ctr_put(card);
- 			return -ESRCH;
- 		}
- 
- 		if (ldef.t4file.len <= 0) {
- 			printk(KERN_DEBUG "kcapi: load: invalid parameter: length of t4file is %d ?\n", ldef.t4file.len);
-+			capi_ctr_put(card);
- 			return -EINVAL;
- 		}
- 		if (ldef.t4file.data = NULL) {
- 			printk(KERN_DEBUG "kcapi: load: invalid parameter: dataptr is 0\n");
-+			capi_ctr_put(card);
- 			return -EINVAL;
- 		}
- 
-@@ -849,6 +852,7 @@ static int old_capi_manufacturer(unsigned int cmd, void __user *data)
- 
- 		if (card->cardstate != CARD_DETECTED) {
- 			printk(KERN_INFO "kcapi: load: contr=%d not in detect state\n", ldef.contr);
-+			capi_ctr_put(card);
- 			return -EBUSY;
- 		}
- 		card->cardstate = CARD_LOADING;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+kgewk
+vso5853fu
+q1xiiv21
+b205l82
+fs6787
+
+
+      New Email addresses available on Yahoo!
+Get the Email name you&#39;ve always wanted on the new @ymail and @rocketmail. 
+Hurry before someone else does!
+http://mail.promotions.yahoo.com/newdomains/sg/
+
