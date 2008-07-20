@@ -1,29 +1,47 @@
-From: Ondrej Zajicek <santiago@crfreenet.org>
-Date: Tue, 22 Jul 2008 08:34:36 +0000
-Subject: Re: [Linux-fbdev-devel] [PATCH 6/7] drivers/video: Release mutex in error handling code
-Message-Id: <20080722083436.GB10834@localhost.localdomain>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Date: Sun, 20 Jul 2008 20:06:19 +0000
+Subject: [PATCH] libata.h: replace __FUNCTION__ with __func__
+Message-Id: <48839ABB.3070503@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0807210958320.24625@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0807210958320.24625@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, adaplas@gmail.com
+To: jgarzik@pobox.com, linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jul 21, 2008 at 09:58:55AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The mutex is released on a successful return, so it would seem that it
-> should be released on an error return as well.
-... 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Alexander Beregalov <a.beregalov@gmail.com>
 
-Acked-by: Ondrej Zajicek <santiago@crfreenet.org>
+libata.h: replace __FUNCTION__ with __func__
 
--- 
-Elen sila lumenn' omentielvo
 
-Ondrej 'SanTiago' Zajicek (email: santiago@crfreenet.org)
-OpenPGP encrypted e-mails preferred (KeyID 0x11DEADC3, wwwkeys.pgp.net)
-"To err is human -- to blame it on a computer is even more so."
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+
+---
+
+ include/linux/libata.h |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index 5b247b8..d4b8e5f 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -60,9 +60,9 @@
+
+ /* note: prints function name for you */
+ #ifdef ATA_DEBUG
+-#define DPRINTK(fmt, args...) printk(KERN_ERR "%s: " fmt, __FUNCTION__, ## args)
++#define DPRINTK(fmt, args...) printk(KERN_ERR "%s: " fmt, __func__, ## args)
+ #ifdef ATA_VERBOSE_DEBUG
+-#define VPRINTK(fmt, args...) printk(KERN_ERR "%s: " fmt, __FUNCTION__, ## args)
++#define VPRINTK(fmt, args...) printk(KERN_ERR "%s: " fmt, __func__, ## args)
+ #else
+ #define VPRINTK(fmt, args...)
+ #endif /* ATA_VERBOSE_DEBUG */
+@@ -71,7 +71,7 @@
+ #define VPRINTK(fmt, args...)
+ #endif /* ATA_DEBUG */
+
+-#define BPRINTK(fmt, args...) if (ap->flags & ATA_FLAG_DEBUGMSG) printk(KERN_ERR "%s: " fmt, __FUNCTION__, ## args)
++#define BPRINTK(fmt, args...) if (ap->flags & ATA_FLAG_DEBUGMSG) printk(KERN_ERR "%s: " fmt, __func__, ## args)
+
+ /* NEW: debug levels */
+ #define HAVE_LIBATA_MSG 1
