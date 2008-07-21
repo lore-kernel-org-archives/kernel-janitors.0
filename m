@@ -1,70 +1,63 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 16 Jul 2008 14:34:54 +0000
-Subject: [PATCH 2/2] net/ieee80211: adjust error handling
-Message-Id: <Pine.LNX.4.64.0807161634310.28783@ask.diku.dk>
+From: Michael Buesch <mb@bu3sch.de>
+Date: Mon, 21 Jul 2008 09:29:34 +0000
+Subject: [PATCH] b43legacy: Release mutex in error handling code
+Message-Id: <200807211129.34610.mb@bu3sch.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jeff@garzik.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: John Linville <linville@tuxdriver.com>
+Cc: Larry.Finger@lwfinger.net, stefano.brivio@polimi.it, linux-wireless@vger.kernel.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
 From: Julia Lawall <julia@diku.dk>
 
-Converts a test in error handling code to a sequence of labels.
+The mutex is released on a successful return, so it would seem that it
+should be released on an error return as well.
 
-The semantic match that found the problem is:
+The semantic patch finds this problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
 @@
-expression E,E1,E2;
+expression l;
 @@
 
-E = alloc_etherdev(...)
-... when != E = E1
-if (...) { ... free_netdev(E); ... return ...; }
-... when != E = E2
+mutex_lock(l);
+... when != mutex_unlock(l)
+    when any
+    when strict
 (
-  if (...)
-   {
-   ... when != free_netdev(E);
-   return dev; }
+if (...) { ... when != mutex_unlock(l)
++   mutex_unlock(l);
+    return ...;
+}
 |
-* if (...)
-   {
-   ... when != free_netdev(E);
-   return ...; }
-|
-register_netdev(E)
+mutex_unlock(l);
 )
-
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Michael Buesch <mb@bu3sch.de>
+Cc: stable <stable@kernel.org>
 
 ---
-diff -u -p a/net/ieee80211/ieee80211_module.c b/net/ieee80211/ieee80211_module.c
---- a/net/ieee80211/ieee80211_module.c
-+++ b/net/ieee80211/ieee80211_module.c
-@@ -157,7 +157,7 @@ struct net_device *alloc_ieee80211(int s
- 	err = ieee80211_networks_allocate(ieee);
- 	if (err) {
- 		IEEE80211_ERROR("Unable to allocate beacon storage: %d\n", err);
--		goto failed;
-+		goto failed_free_netdev;
+
+John, please apply this bugfix to the next bugfix release.
+
+diff -u -p a/drivers/net/wireless/b43legacy/main.c b/drivers/net/wireless/b43legacy/main.c
+--- a/drivers/net/wireless/b43legacy/main.c
++++ b/drivers/net/wireless/b43legacy/main.c
+@@ -3862,10 +3862,10 @@ static int b43legacy_resume(struct ssb_d
+ 			goto out;
+ 		}
  	}
- 	ieee80211_networks_initialize(ieee);
+-	mutex_unlock(&wl->mutex);
  
-@@ -193,9 +193,9 @@ struct net_device *alloc_ieee80211(int s
- 
- 	return dev;
- 
--      failed:
--	if (dev)
--		free_netdev(dev);
-+failed_free_netdev:
-+	free_netdev(dev);
-+failed:
- 	return NULL;
+ 	b43legacydbg(wl, "Device resumed.\n");
+ out:
++	mutex_unlock(&wl->mutex);
+ 	return err;
  }
  
+-- 
+Greetings Michael.
