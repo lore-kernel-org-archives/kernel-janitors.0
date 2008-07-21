@@ -1,33 +1,60 @@
-From: Michael Borisov <niro@tut.by>
-Date: Sat, 26 Jul 2008 19:45:02 +0000
-Subject: [PATCH 8/14] drivers/isdn/hisax/hfc_pci.c: fix warning
-Message-Id: <1217101502.6107.134.camel@inlin>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 21 Jul 2008 07:58:11 +0000
+Subject: [PATCH 4/7] drivers/net/wireless/ipw2100.c: Release mutex in error
+Message-Id: <Pine.LNX.4.64.0807210957490.24625@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: yi.zhu@intel.com, jketreno@linux.intel.com, reinette.chatre@intel.com, linux-wireless@vger.kernel.org, ipw2100-devel@lists.sourceforge.net, jgarzik@pobox.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch fixes the following compile warning:
+From: Julia Lawall <julia@diku.dk>
 
-drivers/isdn/hisax/hfc_pci.c: In function ‘setup_hfcpci’:
-drivers/isdn/hisax/hfc_pci.c:1661: warning: ‘pci_find_device’ is
-deprecated (declared at include/linux/pci.h:535)
+The mutex is released on a successful return, so it would seem that it
+should be released on an error return as well.
 
-Signed-off-by: Michael Borisov <niro@tut.by>
+The semantic patch finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression l;
+@@
+
+mutex_lock(l);
+... when != mutex_unlock(l)
+    when any
+    when strict
+(
+if (...) { ... when != mutex_unlock(l)
++   mutex_unlock(l);
+    return ...;
+}
+|
+mutex_unlock(l);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
-index f126566..64b9dc8 100644
---- a/drivers/isdn/hisax/hfc_pci.c
-+++ b/drivers/isdn/hisax/hfc_pci.c
-@@ -1658,7 +1658,7 @@ setup_hfcpci(struct IsdnCard *card)
+diff -u -p a/drivers/net/wireless/ipw2100.c b/drivers/net/wireless/ipw2100.c
+--- a/drivers/net/wireless/ipw2100.c
++++ b/drivers/net/wireless/ipw2100.c
+@@ -6442,6 +6442,7 @@ static int ipw2100_resume(struct pci_dev
+ 	if (err) {
+ 		printk(KERN_ERR "%s: pci_enable_device failed on resume\n",
+ 		       dev->name);
++		mutex_unlock(&priv->action_mutex);
+ 		return err;
+ 	}
+ 	pci_restore_state(pci_dev);
+@@ -7146,7 +7147,7 @@ static int ipw2100_wx_get_rate(struct ne
+ 	err = ipw2100_get_ordinal(priv, IPW_ORD_CURRENT_TX_RATE, &val, &len);
+ 	if (err) {
+ 		IPW_DEBUG_WX("failed querying ordinals.\n");
+-		return err;
++		goto done;
+ 	}
  
- 	i = 0;
- 	while (id_list[i].vendor_id) {
--		tmp_hfcpci = pci_find_device(id_list[i].vendor_id,
-+		tmp_hfcpci = pci_get_device(id_list[i].vendor_id,
- 					     id_list[i].device_id,
- 					     dev_hfcpci);
- 		i++;
-
-
+ 	switch (val & TX_RATE_MASK) {
