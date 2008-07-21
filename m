@@ -1,53 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 21 Jul 2008 07:59:15 +0000
-Subject: [PATCH 7/7] fs/ocfs2/file.c: Release mutex in error handling code
-Message-Id: <Pine.LNX.4.64.0807210958570.24625@ask.diku.dk>
+From: Joel Becker <Joel.Becker@oracle.com>
+Date: Mon, 21 Jul 2008 20:36:08 +0000
+Subject: Re: [PATCH 7/7] fs/ocfs2/file.c: Release mutex in error handling
+Message-Id: <20080721203608.GB31671@ca-server1.us.oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0807210958570.24625@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0807210958570.24625@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mfasheh@suse.com, joel.becker@oracle.com, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: mfasheh@suse.com, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Mon, Jul 21, 2008 at 09:59:15AM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The mutex is released on a successful return, so it would seem that it
+> should be released on an error return as well.
 
-The mutex is released on a successful return, so it would seem that it
-should be released on an error return as well.
+	This patch looks right to me.  Mark?
 
-The semantic patch finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Joel
 
-// <smpl>
-@@
-expression l;
-@@
 
-mutex_lock(l);
-... when != mutex_unlock(l)
-    when any
-    when strict
-(
-if (...) { ... when != mutex_unlock(l)
-+   mutex_unlock(l);
-    return ...;
-}
-|
-mutex_unlock(l);
-)
-// </smpl>
+-- 
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+"If you are ever in doubt as to whether or not to kiss a pretty girl, 
+ give her the benefit of the doubt"
+                                        -Thomas Carlyle
 
----
-diff -u -p a/fs/ocfs2/file.c b/fs/ocfs2/file.c
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -1766,8 +1766,8 @@ out_inode_unlock:
- out_rw_unlock:
- 	ocfs2_rw_unlock(inode, 1);
- 
--	mutex_unlock(&inode->i_mutex);
- out:
-+	mutex_unlock(&inode->i_mutex);
- 	return ret;
- }
- 
+Joel Becker
+Principal Software Developer
+Oracle
+E-mail: joel.becker@oracle.com
+Phone: (650) 506-8127
