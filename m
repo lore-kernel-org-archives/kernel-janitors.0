@@ -1,43 +1,55 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Date: Sun, 06 Jul 2008 17:31:38 +0000
-Subject: Re: [PATCH] drivers/net/cs89x0.c: remove unnecessary includes.
-Message-Id: <4871017A.8070208@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 21 Jul 2008 07:57:26 +0000
+Subject: [PATCH 2/7] drivers/net/ehea/ehea_main.c: Release mutex in error
+Message-Id: <Pine.LNX.4.64.0807210957060.24625@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a4423d670807060930p73465b1bj9c2e4eea01fb5b7a@mail.gmail.com>
-In-Reply-To: <a4423d670807060930p73465b1bj9c2e4eea01fb5b7a@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jgarzik@pobox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: jgarzik@pobox.com, raisch@de.ibm.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Sorry for wrapping lines, resend.
+From: Julia Lawall <julia@diku.dk>
 
-From: Alexander Beregalov <a.beregalov@gmail.com>
+The mutex is released on a successful return, so it would seem that it
+should be released on an error return as well.
 
-The patch applies to the linux-next tree.
+The semantic patch finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-drivers/net/cs89x0.c: remove unnecessary includes.
-asm/irq.h is already included unconditionally at 151 string.
+// <smpl>
+@@
+expression l;
+@@
 
- 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+mutex_lock(l);
+... when != mutex_unlock(l)
+    when any
+    when strict
+(
+if (...) { ... when != mutex_unlock(l)
++   mutex_unlock(l);
+    return ...;
+}
+|
+mutex_unlock(l);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-
-diff --git a/drivers/net/cs89x0.c b/drivers/net/cs89x0.c
-index fba87ab..5a9d118 100644
---- a/drivers/net/cs89x0.c
-+++ b/drivers/net/cs89x0.c
-@@ -182,13 +182,10 @@ static unsigned int cs8900_irq_map[] = {1,0,0,0};
- #elif defined(CONFIG_MACH_IXDP2351)
- static unsigned int netcard_portlist[] __used __initdata = {IXDP2351_VIRT_CS8900_BASE, 0};
- static unsigned int cs8900_irq_map[] = {IRQ_IXDP2351_CS8900, 0, 0, 0};
--#include <asm/irq.h>
- #elif defined(CONFIG_ARCH_IXDP2X01)
--#include <asm/irq.h>
- static unsigned int netcard_portlist[] __used __initdata = {IXDP2X01_CS8900_VIRT_BASE, 0};
- static unsigned int cs8900_irq_map[] = {IRQ_IXDP2X01_CS8900, 0, 0, 0};
- #elif defined(CONFIG_ARCH_PNX010X)
--#include <asm/irq.h>
- #include <asm/arch/gpio.h>
- #define CIRRUS_DEFAULT_BASE    IO_ADDRESS(EXT_STATIC2_s0_BASE + 0x200000)      /* = Physical address 0x48200000 */
- #define CIRRUS_DEFAULT_IRQ     VH_INTC_INT_NUM_CASCADED_INTERRUPT_1 /* Event inputs bank 1 - ID 35/bit 3 */
+diff -u -p a/drivers/net/ehea/ehea_main.c b/drivers/net/ehea/ehea_main.c
+--- a/drivers/net/ehea/ehea_main.c
++++ b/drivers/net/ehea/ehea_main.c
+@@ -2937,9 +2937,9 @@ static void ehea_rereg_mrs(struct work_s
+ 				}
+ 			}
+ 		}
+-       mutex_unlock(&dlpar_mem_lock);
+-       ehea_info("re-initializing driver complete");
++	ehea_info("re-initializing driver complete");
+ out:
++	mutex_unlock(&dlpar_mem_lock);
+ 	return;
+ }
+ 
