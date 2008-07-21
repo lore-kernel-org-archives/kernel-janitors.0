@@ -1,33 +1,98 @@
-From: Michael Borisov <niro@tut.by>
-Date: Sat, 26 Jul 2008 19:44:40 +0000
-Subject: [PATCH 2/14]  drivers/isdn/hisax/avm_pci.c: fix warning
-Message-Id: <1217101480.6107.128.camel@inlin>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 21 Jul 2008 07:58:55 +0000
+Subject: [PATCH 6/7] drivers/video: Release mutex in error handling code
+Message-Id: <Pine.LNX.4.64.0807210958320.24625@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch fixes the following compile warning:
+From: Julia Lawall <julia@diku.dk>
 
-drivers/isdn/hisax/avm_pci.c: In function ‘avm_pci_setup’:
-drivers/isdn/hisax/avm_pci.c:838: warning: ‘pci_find_device’ is
-deprecated (declared at include/linux/pci.h:535)
+The mutex is released on a successful return, so it would seem that it
+should be released on an error return as well.
 
-Signed-off-by: Michael Borisov <niro@tut.by>
+The semantic patch finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression l;
+@@
+
+mutex_lock(l);
+... when != mutex_unlock(l)
+    when any
+    when strict
+(
+if (...) { ... when != mutex_unlock(l)
++   mutex_unlock(l);
+    return ...;
+}
+|
+mutex_unlock(l);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/isdn/hisax/avm_pci.c b/drivers/isdn/hisax/avm_pci.c
-index 7cabc5a..21e4d32 100644
---- a/drivers/isdn/hisax/avm_pci.c
-+++ b/drivers/isdn/hisax/avm_pci.c
-@@ -835,7 +835,7 @@ static struct pci_dev *dev_avm __devinitdata = NULL;
- 
- static int __devinit avm_pci_setup(struct IsdnCardState *cs)
- {
--	if ((dev_avm = pci_find_device(PCI_VENDOR_ID_AVM,
-+	if ((dev_avm = pci_get_device(PCI_VENDOR_ID_AVM,
- 		PCI_DEVICE_ID_AVM_A1, dev_avm))) {
- 
- 		if (pci_enable_device(dev_avm))
+ drivers/video/arkfb.c    |    9 +++------
+ drivers/video/vt8623fb.c |    9 +++------
+ 2 files changed, 6 insertions(+), 12 deletions(-)
 
-
+diff -u -p a/drivers/video/arkfb.c b/drivers/video/arkfb.c
+--- a/drivers/video/arkfb.c
++++ b/drivers/video/arkfb.c
+@@ -1126,11 +1126,8 @@ static int ark_pci_resume (struct pci_de
+ 	acquire_console_sem();
+ 	mutex_lock(&(par->open_lock));
+ 
+-	if (par->ref_count = 0) {
+-		mutex_unlock(&(par->open_lock));
+-		release_console_sem();
+-		return 0;
+-	}
++	if (par->ref_count = 0)
++		goto fail;
+ 
+ 	pci_set_power_state(dev, PCI_D0);
+ 	pci_restore_state(dev);
+@@ -1143,8 +1140,8 @@ static int ark_pci_resume (struct pci_de
+ 	arkfb_set_par(info);
+ 	fb_set_suspend(info, 0);
+ 
+-	mutex_unlock(&(par->open_lock));
+ fail:
++	mutex_unlock(&(par->open_lock));
+ 	release_console_sem();
+ 	return 0;
+ }
+diff -u -p a/drivers/video/vt8623fb.c b/drivers/video/vt8623fb.c
+--- a/drivers/video/vt8623fb.c
++++ b/drivers/video/vt8623fb.c
+@@ -853,11 +853,8 @@ static int vt8623_pci_resume(struct pci_
+ 	acquire_console_sem();
+ 	mutex_lock(&(par->open_lock));
+ 
+-	if (par->ref_count = 0) {
+-		mutex_unlock(&(par->open_lock));
+-		release_console_sem();
+-		return 0;
+-	}
++	if (par->ref_count = 0)
++		goto fail;
+ 
+ 	pci_set_power_state(dev, PCI_D0);
+ 	pci_restore_state(dev);
+@@ -870,8 +867,8 @@ static int vt8623_pci_resume(struct pci_
+ 	vt8623fb_set_par(info);
+ 	fb_set_suspend(info, 0);
+ 
+-	mutex_unlock(&(par->open_lock));
+ fail:
++	mutex_unlock(&(par->open_lock));
+ 	release_console_sem();
+ 
+ 	return 0;
