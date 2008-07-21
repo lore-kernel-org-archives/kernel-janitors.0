@@ -1,33 +1,55 @@
-From: Michael Borisov <niro@tut.by>
-Date: Sat, 26 Jul 2008 19:45:08 +0000
-Subject: [PATCH 10/14] drivers/isdn/hisax/bkm_a4t.c: fix warning
-Message-Id: <1217101508.6107.136.camel@inlin>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 21 Jul 2008 07:57:47 +0000
+Subject: [PATCH 3/7] drivers/net/wireless/b43legacy/main.c: Release mutex in
+Message-Id: <Pine.LNX.4.64.0807210957270.24625@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Larry.Finger@lwfinger.net, stefano.brivio@polimi.it, linux-wireless@vger.kernel.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch fixes the following compile warning:
+From: Julia Lawall <julia@diku.dk>
 
-drivers/isdn/hisax/bkm_a4t.c: In function ‘setup_bkm_a4t’:
-drivers/isdn/hisax/bkm_a4t.c:343: warning: ‘pci_find_device’ is
-deprecated (declared at include/linux/pci.h:535)
+The mutex is released on a successful return, so it would seem that it
+should be released on an error return as well.
 
-Signed-off-by: Michael Borisov <niro@tut.by>
+The semantic patch finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression l;
+@@
+
+mutex_lock(l);
+... when != mutex_unlock(l)
+    when any
+    when strict
+(
+if (...) { ... when != mutex_unlock(l)
++   mutex_unlock(l);
+    return ...;
+}
+|
+mutex_unlock(l);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/isdn/hisax/bkm_a4t.c b/drivers/isdn/hisax/bkm_a4t.c
-index 9ca2ee5..fca0acb 100644
---- a/drivers/isdn/hisax/bkm_a4t.c
-+++ b/drivers/isdn/hisax/bkm_a4t.c
-@@ -340,7 +340,7 @@ setup_bkm_a4t(struct IsdnCard *card)
- 	} else
- 		return (0);
+diff -u -p a/drivers/net/wireless/b43legacy/main.c b/drivers/net/wireless/b43legacy/main.c
+--- a/drivers/net/wireless/b43legacy/main.c
++++ b/drivers/net/wireless/b43legacy/main.c
+@@ -3862,10 +3862,10 @@ static int b43legacy_resume(struct ssb_d
+ 			goto out;
+ 		}
+ 	}
+-	mutex_unlock(&wl->mutex);
  
--	while ((dev_a4t = pci_find_device(PCI_VENDOR_ID_ZORAN,
-+	while ((dev_a4t = pci_get_device(PCI_VENDOR_ID_ZORAN,
- 		PCI_DEVICE_ID_ZORAN_36120, dev_a4t))) {
- 		ret = a4t_pci_probe(dev_a4t, cs, &found, &pci_memaddr);
- 		if (!ret)
-
-
+ 	b43legacydbg(wl, "Device resumed.\n");
+ out:
++	mutex_unlock(&wl->mutex);
+ 	return err;
+ }
+ 
