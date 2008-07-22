@@ -1,87 +1,26 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Jul 2008 19:38:18 +0000
-Subject: [PATCH retry] arch/ia64/kvm/kvm-ia64.c: Add local_irq_restore in
-Message-Id: <Pine.LNX.4.64.0807222137350.2670@ask.diku.dk>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Tue, 22 Jul 2008 19:53:30 +0000
+Subject: Re: [PATCH retry] arch/ia64/kvm/kvm-ia64.c: Add local_irq_restore in error handling code
+Message-Id: <20080722195329.GG7337@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0807222137350.2670@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0807222137350.2670@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: avi@qumranet.com, kvm@vger.kernel.org, xiantao.zhang@intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: avi@qumranet.com, kvm@vger.kernel.org, xiantao.zhang@intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Tue, Jul 22, 2008 at 09:38:18PM +0200, Julia Lawall wrote:
+> There is a call to local_irq_restore in the normal exit case, so it would
+> seem that there should be one on an error return as well.
 
-There is a call to local_irq_restore in the normal exit case, so it would
-seem that there should be one on an error return as well.
+Patch looks good to me:
 
-The semantic patch that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Reviewed-by: Matthew Wilcox <willy@linux.intel.com>
 
-// <smpl>
-@@
-expression l;
-expression E,E1,E2;
-@@
-
-local_irq_save(l);
-... when != local_irq_restore(l)
-    when != spin_unlock_irqrestore(E,l)
-    when any
-    when strict
-(
-if (...) { ... when != local_irq_restore(l)
-               when != spin_unlock_irqrestore(E1,l)
-+   local_irq_restore(l);
-    return ...;
-}
-|
-if (...)
-+   {local_irq_restore(l);
-    return ...;
-+   }
-|
-spin_unlock_irqrestore(E2,l);
-|
-local_irq_restore(l);
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- .../julia/linuxcopy}/arch/ia64/kvm/kvm-ia64.c      |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/home/julia/linux-2.6/arch/ia64/kvm/kvm-ia64.c b/var/julia/linuxcopy/arch/ia64/kvm/kvm-ia64.c
-index 2672f4d..7a37d06 100644
---- a/home/julia/linux-2.6/arch/ia64/kvm/kvm-ia64.c
-+++ b/var/julia/linuxcopy/arch/ia64/kvm/kvm-ia64.c
-@@ -125,9 +125,9 @@ void kvm_arch_hardware_enable(void *garbage)
- 				PAGE_KERNEL));
- 	local_irq_save(saved_psr);
- 	slot = ia64_itr_entry(0x3, KVM_VMM_BASE, pte, KVM_VMM_SHIFT);
-+	local_irq_restore(saved_psr);
- 	if (slot < 0)
- 		return;
--	local_irq_restore(saved_psr);
- 
- 	spin_lock(&vp_lock);
- 	status = ia64_pal_vp_init_env(kvm_vsa_base ?
-@@ -160,9 +160,9 @@ void kvm_arch_hardware_disable(void *garbage)
- 
- 	local_irq_save(saved_psr);
- 	slot = ia64_itr_entry(0x3, KVM_VMM_BASE, pte, KVM_VMM_SHIFT);
-+	local_irq_restore(saved_psr);
- 	if (slot < 0)
- 		return;
--	local_irq_restore(saved_psr);
- 
- 	status = ia64_pal_vp_exit_env(host_iva);
- 	if (status)
-@@ -1253,6 +1253,7 @@ static int vti_vcpu_setup(struct kvm_vcpu *vcpu, int id)
- uninit:
- 	kvm_vcpu_uninit(vcpu);
- fail:
-+	local_irq_restore(psr);
- 	return r;
- }
- 
+-- 
+Intel are signing my paycheques ... these opinions are still mine
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
