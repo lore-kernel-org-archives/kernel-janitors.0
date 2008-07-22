@@ -1,65 +1,57 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Jul 2008 16:44:48 +0000
-Subject: [PATCH 2/2] : Add local_irq_restore in error handling code
-Message-Id: <Pine.LNX.4.64.0807221844250.2670@ask.diku.dk>
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Tue, 22 Jul 2008 17:10:06 +0000
+Subject: Re: [PATCH 2/2] : Add local_irq_restore in error handling code
+Message-Id: <20080722171006.GA32742@linux-mips.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0807221844250.2670@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0807221844250.2670@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ralf@linux-mips.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Hi Julia,
 
-There is a call to local_irq_restore in the normal exit case, so it would
-seem that there should be one on an error return as well.
+On Tue, Jul 22, 2008 at 06:44:48PM +0200, Julia Lawall wrote:
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+> From: Julia Lawall <julia@diku.dk>
+> 
+> There is a call to local_irq_restore in the normal exit case, so it would
+> seem that there should be one on an error return as well.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
 
-// <smpl>
-@@
-expression l;
-expression E,E1,E2;
-@@
+Correctly spotted - but I decieded to go for below patch instead.
 
-local_irq_save(l);
-... when != local_irq_restore(l)
-    when != spin_unlock_irqrestore(E,l)
-    when any
-    when strict
-(
-if (...) { ... when != local_irq_restore(l)
-               when != spin_unlock_irqrestore(E1,l)
-+   local_irq_restore(l);
-    return ...;
-}
-|
-if (...)
-+   {local_irq_restore(l);
-    return ...;
-+   }
-|
-spin_unlock_irqrestore(E2,l);
-|
-local_irq_restore(l);
-)
-// </smpl>
+Thanks,
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+  Ralf
 
----
- arch/mips/mm/tlb-r3k.c        |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+From: Ralf Baechle <ralf@linux-mips.org>
+
+[MIPS] tlb-r4k: Nuke broken paranoia error test.
+
+Bug originally found and reported by Julia Lawall <julia@diku.dk>.  I
+decieded that the whole error check was mostly useless paranoia and should
+be discarded.  It would only ever trigger if r3k_have_wired_reg has a wrong
+value.
+
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 
 diff --git a/arch/mips/mm/tlb-r3k.c b/arch/mips/mm/tlb-r3k.c
-index a782549..7d7e822 100644
+index a782549..f0cf46a 100644
 --- a/arch/mips/mm/tlb-r3k.c
 +++ b/arch/mips/mm/tlb-r3k.c
-@@ -247,6 +247,7 @@ void __init add_wired_entry(unsigned long entrylo0, unsigned long entrylo1,
+@@ -246,10 +246,6 @@ void __init add_wired_entry(unsigned long entrylo0, unsigned long entrylo1,
+ 		old_pagemask = read_c0_pagemask();
  		w = read_c0_wired();
  		write_c0_wired(w + 1);
- 		if (read_c0_wired() != w + 1) {
-+			local_irq_restore(flags);
- 			printk("[tlbwired] No WIRED reg?\n");
- 			return;
- 		}
+-		if (read_c0_wired() != w + 1) {
+-			printk("[tlbwired] No WIRED reg?\n");
+-			return;
+-		}
+ 		write_c0_index(w << 8);
+ 		write_c0_pagemask(pagemask);
+ 		write_c0_entryhi(entryhi);
