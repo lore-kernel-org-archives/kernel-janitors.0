@@ -1,41 +1,53 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Mon, 07 Jul 2008 10:19:09 +0000
-Subject: Re: mixing interupts and threads.
-Message-Id: <20080707101908.GX14894@parisc-linux.org>
+From: Krzysztof Helt <krzysztof.h1@poczta.fm>
+Date: Tue, 22 Jul 2008 04:19:14 +0000
+Subject: Re: [Linux-fbdev-devel] [PATCH 6/7] drivers/video: Release mutex in
+Message-Id: <20080722061914.301275a8.krzysztof.h1@poczta.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <48719C96.6010503@gmail.com>
-In-Reply-To: <48719C96.6010503@gmail.com>
+References: <Pine.LNX.4.64.0807210958320.24625@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0807210958320.24625@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jul 07, 2008 at 10:03:26AM +0530, ravikumar wrote:
-> 1. Lets suppose i've some critical section and it is synchronized with 
-> locks. A thread came and  it's  execution  is in the middle of critical 
-> section, at this time an interrupt was occurred which  also executes 
-> critical section. As interrupts can't wait on any lock it will get lock 
-> and try to execute the critical section and above thread was not yet 
-> completed. So inconsistency . How this was handled in Linux.
+On Mon, 21 Jul 2008 09:58:55 +0200 (CEST)
+Julia Lawall <julia@diku.dk> wrote:
 
-I recommend you read the excellent
-Documentation/DocBook/kernel-locking.tmpl.  If you run 'make pdfdocs',
-you can read it as a pdf (other output formats also available).
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The mutex is released on a successful return, so it would seem that it
+> should be released on an error return as well.
+> 
+> The semantic patch finds this problem is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+> 
+> // <smpl>
+> @@
+> expression l;
+> @@
+> 
+> mutex_lock(l);
+> ... when != mutex_unlock(l)
+>     when any
+>     when strict
+> (
+> if (...) { ... when != mutex_unlock(l)
+> +   mutex_unlock(l);
+>     return ...;
+> }
+> |
+> mutex_unlock(l);
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
 
-The short answer to your question is that interrupts should be disabled
-while the thread is holding the spinlock.
+Acked-by: Krzysztof Helt <krzysztof.h1@wp.pl>
 
-> 2.Some process is running in kernel mode, at this a kill was sent to 
-> this process, does this signal will delivered to the process while it is 
-> in kernel mode.
+----------------------------------------------------------------------
+Partyjka w Chinczyka?
+Graj >>> http://link.interia.pl/f1e67
 
-Yes.  If you examine the implementation of, say,
-mutex_lock_interruptible(), you'll see how it checks to see whether
-signals are pending.  Other functions ending in _interruptible() will
-likely do similar checks.
-
--- 
-Intel are signing my paycheques ... these opinions are still mine
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
