@@ -1,21 +1,11 @@
-From: Pete Zaitcev <zaitcev@redhat.com>
-Date: Wed, 16 Jul 2008 16:44:51 +0000
-Subject: Re: [PATCH] drivers/usb/class/usblp.c: adjust error handling code
-Message-Id: <20080716104451.a4c6d06c.zaitcev@redhat.com>
+From: Denis ChengRq <crquan@gmail.com>
+Date: Thu, 24 Jul 2008 16:37:33 +0000
+Subject: Why kernel-janitors stopped on Oct 2007?
+Message-Id: <4888afcf.0c486e0a.4fe3.7e59@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0807161717220.28783@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0807161717220.28783@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 16 Jul 2008 17:17:42 +0200 (CEST), Julia Lawall <julia@diku.dk> wrote:
-
-> In this code, it is possible to tell statically whether usblp will
-> be NULL in the error handling code.
-
-I think it's fine. Not much benefit IMHO.
-
--- Pete
+https://lists.linux-foundation.org/pipermail/kernel-janitors/
