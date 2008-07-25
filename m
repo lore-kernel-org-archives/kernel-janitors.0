@@ -1,7 +1,7 @@
-From: "rae l" <crquan@gmail.com>
-Date: Fri, 25 Jul 2008 02:06:30 +0000
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Fri, 25 Jul 2008 15:23:16 +0000
 Subject: Re: Why kernel-janitors stopped on Oct 2007?
-Message-Id: <91b13c310807241906sc382fffs356446521a790f37@mail.gmail.com>
+Message-Id: <20080725082316.38d42f0b.rdunlap@xenotime.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4888afcf.0c486e0a.4fe3.7e59@mx.google.com>
 In-Reply-To: <4888afcf.0c486e0a.4fe3.7e59@mx.google.com>
@@ -10,16 +10,25 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 25, 2008 at 8:46 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
->> and that also stopped on Oct 2007:
->>
->> http://vger.kernel.org/vger-lists.html#kernel-janitors
->> http://dir.gmane.org/gmane.linux.kernel.janitors
->> http://blog.gmane.org/gmane.linux.kernel.janitors
->
->
-> so use this mail archive instead:
-> http://marc.info/?l=kernel-janitors&r=1&w=2
-That's good, and please someone update the archives link info here:
+On Fri, 25 Jul 2008 10:06:30 +0800 rae l wrote:
 
-http://vger.kernel.org/vger-lists.html#kernel-janitors
+> On Fri, Jul 25, 2008 at 8:46 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
+> >> and that also stopped on Oct 2007:
+> >>
+> >> http://vger.kernel.org/vger-lists.html#kernel-janitors
+> >> http://dir.gmane.org/gmane.linux.kernel.janitors
+> >> http://blog.gmane.org/gmane.linux.kernel.janitors
+> >
+> >
+> > so use this mail archive instead:
+> > http://marc.info/?l=kernel-janitors&r=1&w=2
+> That's good, and please someone update the archives link info here:
+> 
+> http://vger.kernel.org/vger-lists.html#kernel-janitors
+
+OK, I requested that change.
+
+---
+~Randy
+Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
+http://linuxplumbersconf.org/
