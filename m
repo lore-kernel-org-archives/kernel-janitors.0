@@ -1,8 +1,10 @@
 From: Denis ChengRq <crquan@gmail.com>
-Date: Fri, 25 Jul 2008 02:47:14 +0000
+Date: Fri, 25 Jul 2008 02:48:33 +0000
 Subject: [PATCH 2/5] drivers/scsi/aic94xx/: replace __FUNCTION__ with __func__
-Message-Id: <1216954035-31897-1-git-send-email-crquan@gmail.com>
+Message-Id: <1216954114-31949-1-git-send-email-crquan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1216954035-31897-1-git-send-email-crquan@gmail.com>
+In-Reply-To: <1216954035-31897-1-git-send-email-crquan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
