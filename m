@@ -1,55 +1,132 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 02 Jul 2008 19:38:24 +0000
-Subject: [PATCH resend] drivers/md: remove null pointer dereference
-Message-Id: <Pine.LNX.4.64.0807022136520.4854@ask.diku.dk>
+From: Denis ChengRq <crquan@gmail.com>
+Date: Fri, 25 Jul 2008 02:45:45 +0000
+Subject: [PATCH 1/5] drivers/scsi/megaraid/: replace __FUNCTION__ with __func__
+Message-Id: <1216953945-31873-1-git-send-email-crquan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: agk@redhat.com, dm-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Neela Syam Kolli <megaraidlinux@lsi.com>
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-
-If pgpath->pg->ps.type is NULL, it is not possible to access its name
-field.  Alasdair G Kergon suggested that the field type is actually known
-never to be NULL; instead it is its field reinstate_path that is supposed
-to be tested.
-
-
-This problem was found using the following semantic match
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-expression E, E1;
-identifier f;
-statement S1,S2,S3;
-@@
-
-* if (E = NULL)
-{
-  ... when != if (E = NULL) S1 else S2
-      when != E = E1
-* E->f
-  ... when any
-  return ...;
-}
-else S3
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Denis ChengRq <crquan@gmail.com>
 ---
+ drivers/scsi/megaraid/mega_common.h   |    2 +-
+ drivers/scsi/megaraid/megaraid_mbox.c |   16 ++++++++--------
+ drivers/scsi/megaraid/megaraid_mm.c   |    4 ++--
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
-diff -u -p a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -883,7 +883,7 @@ static int reinstate_path(struct pgpath 
- 	if (pgpath->path.is_active)
- 		goto out;
+diff --git a/drivers/scsi/megaraid/mega_common.h b/drivers/scsi/megaraid/mega_common.h
+index f62ed46..5ead128 100644
+--- a/drivers/scsi/megaraid/mega_common.h
++++ b/drivers/scsi/megaraid/mega_common.h
+@@ -265,7 +265,7 @@ typedef struct {
+ #define ASSERT(expression)						\
+ 	if (!(expression)) {						\
+ 	ASSERT_ACTION("assertion failed:(%s), file: %s, line: %d:%s\n",	\
+-			#expression, __FILE__, __LINE__, __FUNCTION__);	\
++			#expression, __FILE__, __LINE__, __func__);	\
+ 	}
+ #else
+ #define ASSERT(expression)
+diff --git a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
+index 70a0f11..805bb61 100644
+--- a/drivers/scsi/megaraid/megaraid_mbox.c
++++ b/drivers/scsi/megaraid/megaraid_mbox.c
+@@ -458,7 +458,7 @@ megaraid_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
  
--	if (!pgpath->pg->ps.type) {
-+	if (!pgpath->pg->ps.type->reinstate_path) {
- 		DMWARN("Reinstate path not supported by path selector %s",
- 		       pgpath->pg->ps.type->name);
- 		r = -EINVAL;
+ 	if (adapter = NULL) {
+ 		con_log(CL_ANN, (KERN_WARNING
+-		"megaraid: out of memory, %s %d.\n", __FUNCTION__, __LINE__));
++		"megaraid: out of memory, %s %d.\n", __func__, __LINE__));
+ 
+ 		goto out_probe_one;
+ 	}
+@@ -1002,7 +1002,7 @@ megaraid_alloc_cmd_packets(adapter_t *adapter)
+ 
+ 	if (!raid_dev->una_mbox64) {
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid: out of memory, %s %d\n", __FUNCTION__,
++			"megaraid: out of memory, %s %d\n", __func__,
+ 			__LINE__));
+ 		return -1;
+ 	}
+@@ -1030,7 +1030,7 @@ megaraid_alloc_cmd_packets(adapter_t *adapter)
+ 	if (!adapter->ibuf) {
+ 
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid: out of memory, %s %d\n", __FUNCTION__,
++			"megaraid: out of memory, %s %d\n", __func__,
+ 			__LINE__));
+ 
+ 		goto out_free_common_mbox;
+@@ -1052,7 +1052,7 @@ megaraid_alloc_cmd_packets(adapter_t *adapter)
+ 
+ 	if (adapter->kscb_list = NULL) {
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid: out of memory, %s %d\n", __FUNCTION__,
++			"megaraid: out of memory, %s %d\n", __func__,
+ 			__LINE__));
+ 		goto out_free_ibuf;
+ 	}
+@@ -1060,7 +1060,7 @@ megaraid_alloc_cmd_packets(adapter_t *adapter)
+ 	// memory allocation for our command packets
+ 	if (megaraid_mbox_setup_dma_pools(adapter) != 0) {
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid: out of memory, %s %d\n", __FUNCTION__,
++			"megaraid: out of memory, %s %d\n", __func__,
+ 			__LINE__));
+ 		goto out_free_scb_list;
+ 	}
+@@ -2981,7 +2981,7 @@ megaraid_mbox_product_info(adapter_t *adapter)
+ 
+ 	if (pinfo = NULL) {
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid: out of memory, %s %d\n", __FUNCTION__,
++			"megaraid: out of memory, %s %d\n", __func__,
+ 			__LINE__));
+ 
+ 		return -1;
+@@ -3508,7 +3508,7 @@ megaraid_cmm_register(adapter_t *adapter)
+ 
+ 	if (adapter->uscb_list = NULL) {
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid: out of memory, %s %d\n", __FUNCTION__,
++			"megaraid: out of memory, %s %d\n", __func__,
+ 			__LINE__));
+ 		return -1;
+ 	}
+@@ -3879,7 +3879,7 @@ megaraid_sysfs_alloc_resources(adapter_t *adapter)
+ 		!raid_dev->sysfs_buffer) {
+ 
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid: out of memory, %s %d\n", __FUNCTION__,
++			"megaraid: out of memory, %s %d\n", __func__,
+ 			__LINE__));
+ 
+ 		rval = -ENOMEM;
+diff --git a/drivers/scsi/megaraid/megaraid_mm.c b/drivers/scsi/megaraid/megaraid_mm.c
+index ac3b280..f680561 100644
+--- a/drivers/scsi/megaraid/megaraid_mm.c
++++ b/drivers/scsi/megaraid/megaraid_mm.c
+@@ -929,7 +929,7 @@ mraid_mm_register_adp(mraid_mmadp_t *lld_adp)
+ 			!adapter->pthru_dma_pool) {
+ 
+ 		con_log(CL_ANN, (KERN_WARNING
+-			"megaraid cmm: out of memory, %s %d\n", __FUNCTION__,
++			"megaraid cmm: out of memory, %s %d\n", __func__,
+ 			__LINE__));
+ 
+ 		rval = (-ENOMEM);
+@@ -957,7 +957,7 @@ mraid_mm_register_adp(mraid_mmadp_t *lld_adp)
+ 
+ 			con_log(CL_ANN, (KERN_WARNING
+ 				"megaraid cmm: out of memory, %s %d\n",
+-					__FUNCTION__, __LINE__));
++					__func__, __LINE__));
+ 
+ 			rval = (-ENOMEM);
+ 
+-- 
+1.5.6.3
+
