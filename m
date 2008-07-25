@@ -1,63 +1,92 @@
-From: Zhu Yi <yi.zhu@intel.com>
-Date: Thu, 03 Jul 2008 01:51:52 +0000
-Subject: Re: [PATCH]  drivers/net/wireless/iwlwifi/iwl-3945.c
-Message-Id: <1215049912.14590.525.camel@debian.sh.intel.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 25 Jul 2008 19:33:25 +0000
+Subject: [PATCH] fs/suse/inode.c: Add missing fuse_request_alloc
+Message-Id: <Pine.LNX.4.64.0807252131280.1602@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1214962647.18261.15.camel@localhost.localdomain>
-	 <20080702192457.GB31288@tuxdriver.com>
-In-Reply-To: <20080702192457.GB31288@tuxdriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Darren Jenkins <darrenrjenkins@gmail.com>, kernel Janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, ipw2100-admin@linux.intel.com, reinette.chatre@intel.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: miklos@szeredi.hu, fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2008-07-02 at 15:24 -0400, John W. Linville wrote:
-> What about the format line in the IWL_DEBUG_RX that uses rate?
->=20
-> Also, please use an email subject that is more descriptive than just
-> the filename.  You should probably drop the "G'day..." line as well.
+From: Julia Lawall <julia@diku.dk>
 
-Side with John.
+The error handling code for the second call to fuse_request_alloc should
+include freeing the result of the first one.
 
-> On Wed, Jul 02, 2008 at 11:37:27AM +1000, Darren Jenkins" wrote:
-> > G'day people
-> >=20
-> > Coverity CID: 2265 NEGATIVE_RETURNS
-> >=20
-> > "rate" is of an unsigned type, and the code requires a signed type.
-> > The following patch makes it so.
-> >=20
-> > Only compile tested.
-> >=20
-> > =EF=BB=BFSigned-off-by: Darren Jenkins <darrenrjenkins@gmailcom>
-> >=20
-> > diff --git a/drivers/net/wireless/iwlwifi/iwl-3945.c b/drivers/net/wire=
-less/iwlwifi/iwl-3945.c
-> > index 62a3d8f..31d38cd 100644
-> > --- a/drivers/net/wireless/iwlwifi/iwl-3945.c
-> > +++ b/drivers/net/wireless/iwlwifi/iwl-3945.c
-> > @@ -449,7 +449,7 @@ static void iwl3945_dbg_report_frame(struct iwl3945=
-_priv *priv,
-> > =20
-> >  	if (print_summary) {
-> >  		char *title;
-> > -		u32 rate;
-> > +		int rate;
-> > =20
-> >  		if (hundred)
-> >  			title =3D "100Frames";
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-The rate variable here takes two roles: one for calculate the index
-(singed) and the other for the actual rate (unsigned). I think if you do
-want to fix this, create another local variable int idx to hold the
-index result.
+// <smpl>
+@r@
+expression x,E;
+statement S;
+position p1,p2,p3;
+@@
 
-Thanks,
--yi
+(
+if ((x = fuse_request_alloc@p1(...)) = NULL || ...) S
+|
+x = fuse_request_alloc@p1(...)
+... when != x
+if (x = NULL || ...) S
+)
+<...
+if@p3 (...) { ... when != fuse_request_free(x)
+    return@p2 ...;
+}
+...>
+(
+return x;
+|
+return 0;
+|
+x = E
+|
+E = x
+|
+fuse_request_free(x)
+)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+@exists@
+position r.p1,r.p2,r.p3;
+expression x;
+int ret != 0;
+statement S;
+@@
+
+* x = fuse_request_alloc@p1(...)
+  <...
+* if@p3 (...)
+  S
+  ...>
+* return@p2 \(NULL\|ret\);
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/fuse/inode.c               |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 3141690..ae1d4fd 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -690,7 +690,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (is_bdev) {
+ 		fc->destroy_req = fuse_request_alloc();
+ 		if (!fc->destroy_req)
+-			goto err_put_root;
++			goto err_free_init_req;
+ 	}
+ 
+ 	mutex_lock(&fuse_mutex);
+@@ -720,6 +720,7 @@ static int fuse_fill_super(struct super_block *sb, void *data, int silent)
+ 
+  err_unlock:
+ 	mutex_unlock(&fuse_mutex);
++ err_free_init_req:
+ 	fuse_request_free(init_req);
+  err_put_root:
+ 	dput(root_dentry);
