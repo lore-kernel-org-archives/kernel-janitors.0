@@ -1,23 +1,34 @@
-From: Ingo Molnar <mingo@elte.hu>
-Date: Fri, 18 Jul 2008 17:25:46 +0000
-Subject: Re: [PATCH -next] arch/x86/kernel/cpu/common_64.c: remove double
-Message-Id: <20080718172546.GN6875@elte.hu>
+From: Michael Borisov <niro@tut.by>
+Date: Sat, 26 Jul 2008 16:50:07 +0000
+Subject: [PATCH] fix warning in arch/x86/mm/pgtable.c
+Message-Id: <1217091007.6107.8.camel@inlin>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a4423d670807091128t3a03b739y66fcffcfcf961f8@mail.gmail.com>
-In-Reply-To: <a4423d670807091128t3a03b739y66fcffcfcf961f8@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: yhlu.kernel@gmail.com, tglx@linutronix.de, hpa@zytor.com, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+
+This patch fixes the following compile warning:
+
+arch/x86/mm/pgtable.c: In function ‘pgd_mop_up_pmds’:
+arch/x86/mm/pgtable.c:194: warning: unused variable ‘pmd’
+
+Signed-off-by: Michael Borisov <niro@tut.by>
+---
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 557b2ab..2d57735 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -163,7 +163,8 @@ static int preallocate_pmds(pmd_t *pmds[])
+        bool failed = false;
+ 
+        for(i = 0; i < PREALLOCATED_PMDS; i++) {
+-               pmd_t *pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL|
+__GFP_REPEAT);
++               pmd_t *pmd;
++               pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL|__GFP_REPEAT);
+                if (pmd = NULL)
+                        failed = true;
+                pmds[i] = pmd;
 
 
-* Alexander Beregalov <a.beregalov@gmail.com> wrote:
-
-> From: Alexander Beregalov <a.beregalov@gmail.com>
-> 
-> x86: remove double inclusions in arch/x86/kernel/cpu/common_64.c
-
-applied to tip/x86/cleanups, thanks.
-
-	Ingo
