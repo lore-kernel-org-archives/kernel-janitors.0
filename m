@@ -1,134 +1,36 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 25 Jul 2008 20:44:53 +0000
-Subject: [PATCH] drivers/cpufreq/cpufreq.c: Adjust error handling code
-Message-Id: <Pine.LNX.4.64.0807252243510.1602@ask.diku.dk>
+From: Michael Borisov <niro@tut.by>
+Date: Sat, 26 Jul 2008 08:52:14 +0000
+Subject: [PATCH] fix warning in drivers/hwmon/w83791d.c
+Message-Id: <1217062334.25013.9.camel@inlin>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: davej@codemonkey.org.uk, cpufreq@lists.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+This patch fixes the following compile warning:
 
-After calling cpufreq_cpu_get, error handling code should call
-cpufreq_cpu_put.
+drivers/hwmon/w83791d.c: In function ‘w83791d_probe’:
+drivers/hwmon/w83791d.c:1049: warning: unused variable ‘val1’
 
-The semantic match that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r@
-expression x,E;
-statement S;
-position p1,p2,p3;
-@@
-
-(
-if ((x = cpufreq_cpu_get@p1(...)) = NULL || ...) S
-|
-x = cpufreq_cpu_get@p1(...)
-... when != x
-if (x = NULL || ...) S
-)
-<...
-if@p3 (...) { ... when != cpufreq_cpu_put(x)
-                  when != if (x) { ... cpufreq_cpu_put(x); ...}
-    return@p2 ...;
-}
-...>
-(
-return x;
-|
-return 0;
-|
-x = E
-|
-E = x
-|
-cpufreq_cpu_put(x)
-)
-
-@exists@
-position r.p1,r.p2,r.p3;
-expression x;
-int ret != 0;
-statement S;
-@@
-
-* x = cpufreq_cpu_get@p1(...)
-  <...
-* if@p3 (...)
-  S
-  ...>
-* return@p2 \(NULL\|ret\);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Michael Borisov <niro@tut.by>
 ---
- drivers/cpufreq/cpufreq.c     |   24 +++++++++++++------
- 1 files changed, 16 insertions(+), 8 deletions(-)
+diff --git a/drivers/hwmon/w83791d.c b/drivers/hwmon/w83791d.c
+index e4e91c9..1e2dff3 100644
+--- a/drivers/hwmon/w83791d.c
++++ b/drivers/hwmon/w83791d.c
+@@ -1046,9 +1046,10 @@ static int w83791d_probe(struct i2c_client
+*client,
+ {
+        struct w83791d_data *data;
+        struct device *dev = &client->dev;
+-       int i, val1, err;
++       int i, err;
+ 
+ #ifdef DEBUG
++        int val1;
+        val1 = w83791d_read(client, W83791D_REG_DID_VID4);
+        dev_dbg(dev, "Device ID version: %d.%d (0x%02x)\n",
+                        (val1 >> 5) & 0x07, (val1 >> 1) & 0x0f, val1);
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 8d6a3ff..d4de015 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1464,20 +1464,22 @@ int cpufreq_driver_target(struct cpufreq_policy *policy,
- 			  unsigned int target_freq,
- 			  unsigned int relation)
- {
--	int ret;
-+	int ret = -EINVAL;
- 
- 	policy = cpufreq_cpu_get(policy->cpu);
- 	if (!policy)
--		return -EINVAL;
-+		goto no_policy;
- 
- 	if (unlikely(lock_policy_rwsem_write(policy->cpu)))
--		return -EINVAL;
-+		goto fail;
- 
- 	ret = __cpufreq_driver_target(policy, target_freq, relation);
- 
- 	unlock_policy_rwsem_write(policy->cpu);
- 
-+fail:
- 	cpufreq_cpu_put(policy);
-+no_policy:
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(cpufreq_driver_target);
-@@ -1714,13 +1716,17 @@ int cpufreq_update_policy(unsigned int cpu)
- {
- 	struct cpufreq_policy *data = cpufreq_cpu_get(cpu);
- 	struct cpufreq_policy policy;
--	int ret = 0;
-+	int ret;
- 
--	if (!data)
--		return -ENODEV;
-+	if (!data) {
-+		ret = -ENODEV;
-+		goto no_policy;
-+	}
- 
--	if (unlikely(lock_policy_rwsem_write(cpu)))
--		return -EINVAL;
-+	if (unlikely(lock_policy_rwsem_write(cpu))) {
-+		ret = -EINVAL;
-+		goto fail;
-+	}
- 
- 	dprintk("updating policy for CPU %u\n", cpu);
- 	memcpy(&policy, data, sizeof(struct cpufreq_policy));
-@@ -1747,7 +1753,9 @@ int cpufreq_update_policy(unsigned int cpu)
- 
- 	unlock_policy_rwsem_write(cpu);
- 
-+fail:
- 	cpufreq_cpu_put(data);
-+no_policy:
- 	return ret;
- }
- EXPORT_SYMBOL(cpufreq_update_policy);
+
