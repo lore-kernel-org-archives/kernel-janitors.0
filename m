@@ -1,63 +1,43 @@
-From: Michael Buesch <mb@bu3sch.de>
-Date: Mon, 21 Jul 2008 09:29:34 +0000
-Subject: [PATCH] b43legacy: Release mutex in error handling code
-Message-Id: <200807211129.34610.mb@bu3sch.de>
+From: Michael Borisov <niro@tut.by>
+Date: Sat, 26 Jul 2008 19:44:46 +0000
+Subject: [PATCH 3/14] drivers/isdn/hisax/elsa.c: fix warnings
+Message-Id: <1217101486.6107.129.camel@inlin>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: John Linville <linville@tuxdriver.com>
-Cc: Larry.Finger@lwfinger.net, stefano.brivio@polimi.it, linux-wireless@vger.kernel.org, jgarzik@pobox.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+This patch fixes the following compile warnings:
 
-The mutex is released on a successful return, so it would seem that it
-should be released on an error return as well.
+drivers/isdn/hisax/elsa.c: In function ‘setup_elsa_pci’:
+drivers/isdn/hisax/elsa.c:1038: warning: ‘pci_find_device’ is deprecated
+(declared at include/linux/pci.h:535)
+drivers/isdn/hisax/elsa.c:1046: warning: ‘pci_find_device’ is deprecated
+(declared at include/linux/pci.h:535)
 
-The semantic patch finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-expression l;
-@@
-
-mutex_lock(l);
-... when != mutex_unlock(l)
-    when any
-    when strict
-(
-if (...) { ... when != mutex_unlock(l)
-+   mutex_unlock(l);
-    return ...;
-}
-|
-mutex_unlock(l);
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-Signed-off-by: Michael Buesch <mb@bu3sch.de>
-Cc: stable <stable@kernel.org>
-
+Signed-off-by: Michael Borisov <niro@tut.by>
 ---
-
-John, please apply this bugfix to the next bugfix release.
-
-diff -u -p a/drivers/net/wireless/b43legacy/main.c b/drivers/net/wireless/b43legacy/main.c
---- a/drivers/net/wireless/b43legacy/main.c
-+++ b/drivers/net/wireless/b43legacy/main.c
-@@ -3862,10 +3862,10 @@ static int b43legacy_resume(struct ssb_d
- 			goto out;
- 		}
- 	}
--	mutex_unlock(&wl->mutex);
+diff --git a/drivers/isdn/hisax/elsa.c b/drivers/isdn/hisax/elsa.c
+index aa29d1c..be8b613 100644
+--- a/drivers/isdn/hisax/elsa.c
++++ b/drivers/isdn/hisax/elsa.c
+@@ -1035,7 +1035,7 @@ setup_elsa_pci(struct IsdnCard *card)
+ 	struct IsdnCardState *cs = card->cs;
  
- 	b43legacydbg(wl, "Device resumed.\n");
- out:
-+	mutex_unlock(&wl->mutex);
- 	return err;
- }
- 
--- 
-Greetings Michael.
+ 	cs->subtyp = 0;
+-	if ((dev_qs1000 = pci_find_device(PCI_VENDOR_ID_ELSA,
++	if ((dev_qs1000 = pci_get_device(PCI_VENDOR_ID_ELSA,
+ 		PCI_DEVICE_ID_ELSA_MICROLINK, dev_qs1000))) {
+ 		if (pci_enable_device(dev_qs1000))
+ 			return(0);
+@@ -1043,7 +1043,7 @@ setup_elsa_pci(struct IsdnCard *card)
+ 		cs->irq = dev_qs1000->irq;
+ 		cs->hw.elsa.cfg = pci_resource_start(dev_qs1000, 1);
+ 		cs->hw.elsa.base = pci_resource_start(dev_qs1000, 3);
+-	} else if ((dev_qs3000 = pci_find_device(PCI_VENDOR_ID_ELSA,
++	} else if ((dev_qs3000 = pci_get_device(PCI_VENDOR_ID_ELSA,
+ 		PCI_DEVICE_ID_ELSA_QS3000, dev_qs3000))) {
+ 		if (pci_enable_device(dev_qs3000))
+ 			return(0);
+
