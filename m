@@ -1,54 +1,33 @@
-From: batxi kvhud <jmpvmg1uns1z8@yahoo.com.sg>
-Date: Thu, 17 Jul 2008 16:13:25 +0000
-Subject: =?utf-8?B?44CAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGw2?=
-Message-Id: <259001.65102.qm@web76009.mail.sg1.yahoo.com>
+From: Michael Borisov <niro@tut.by>
+Date: Sat, 26 Jul 2008 19:44:40 +0000
+Subject: [PATCH 2/14]  drivers/isdn/hisax/avm_pci.c: fix warning
+Message-Id: <1217101480.6107.128.camel@inlin>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-巨乳妹妹SM的初體驗~白皙肌膚被繩子綁起來搞
+This patch fixes the following compile warning:
 
- http://do.my/av-buy/
+drivers/isdn/hisax/avm_pci.c: In function ‘avm_pci_setup’:
+drivers/isdn/hisax/avm_pci.c:838: warning: ‘pci_find_device’ is
+deprecated (declared at include/linux/pci.h:535)
 
-看辣妹囉，穿低胸Ｔ恤逛大街，我用手機把它拍下來了，粉嫩哦
+Signed-off-by: Michael Borisov <niro@tut.by>
+---
+diff --git a/drivers/isdn/hisax/avm_pci.c b/drivers/isdn/hisax/avm_pci.c
+index 7cabc5a..21e4d32 100644
+--- a/drivers/isdn/hisax/avm_pci.c
++++ b/drivers/isdn/hisax/avm_pci.c
+@@ -835,7 +835,7 @@ static struct pci_dev *dev_avm __devinitdata = NULL;
+ 
+ static int __devinit avm_pci_setup(struct IsdnCardState *cs)
+ {
+-	if ((dev_avm = pci_find_device(PCI_VENDOR_ID_AVM,
++	if ((dev_avm = pci_get_device(PCI_VENDOR_ID_AVM,
+ 		PCI_DEVICE_ID_AVM_A1, dev_avm))) {
+ 
+ 		if (pci_enable_device(dev_avm))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-kgewk
-vso5853fu
-q1xiiv21
-b205l82
-fs6787
-
-
-      New Email addresses available on Yahoo!
-Get the Email name you&#39;ve always wanted on the new @ymail and @rocketmail. 
-Hurry before someone else does!
-http://mail.promotions.yahoo.com/newdomains/sg/
 
