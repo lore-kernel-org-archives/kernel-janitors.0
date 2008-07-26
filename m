@@ -1,22 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 27 Jul 2008 00:45:20 +0000
-Subject: Re: [PATCH 2/14] drivers/isdn/hisax/avm_pci.c: fix warning
-Message-Id: <20080726.174520.79980351.davem@davemloft.net>
+From: Michael Borisov <niro@tut.by>
+Date: Sat, 26 Jul 2008 19:45:02 +0000
+Subject: [PATCH 8/14] drivers/isdn/hisax/hfc_pci.c: fix warning
+Message-Id: <1217101502.6107.134.camel@inlin>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-RnJvbTogTWljaGFlbCBCb3Jpc292IDxuaXJvQHR1dC5ieT4KRGF0ZTogU2F0LCAyNiBKdWwgMjAw
-OCAyMjo0NDo0MCArMDMwMAoKPiBUaGlzIHBhdGNoIGZpeGVzIHRoZSBmb2xsb3dpbmcgY29tcGls
-ZSB3YXJuaW5nOgo+IAo+IGRyaXZlcnMvaXNkbi9oaXNheC9hdm1fcGNpLmM6IEluIGZ1bmN0aW9u
-IOKAmGF2bV9wY2lfc2V0dXDigJk6Cj4gZHJpdmVycy9pc2RuL2hpc2F4L2F2bV9wY2kuYzo4Mzg6
-IHdhcm5pbmc6IOKAmHBjaV9maW5kX2RldmljZeKAmSBpcwo+IGRlcHJlY2F0ZWQgKGRlY2xhcmVk
-IGF0IGluY2x1ZGUvbGludXgvcGNpLmg6NTM1KQo+IAo+IFNpZ25lZC1vZmYtYnk6IE1pY2hhZWwg
-Qm9yaXNvdiA8bmlyb0B0dXQuYnk+CgpTYW1lIGNvbW1lbnRzIGFzIEkgbWFkZSBmb3IgcGF0Y2gg
-MSwgeW91IGNhbid0IGp1c3QgY2hhbmdlCnRoZSBmdW5jdGlvbiBiZWluZyBjYWxsZWQsIHRoZXJl
-IGFyZSBmdXJ0aGVyIHNlbWFudGljCmNoYW5nZXMgeW91J2xsIG5lZWQgdG8gbWFrZSBpbiBvcmRl
-ciBmb3IgdGhpcyB0byBiZSBjb3JyZWN0Lgr/9Oi6ey5uxyuJt5+uia2GKyWKy/+x6d22F6WKd/+6
-ey5uxyuJt6R6ud6X+NqeK2iuz+Ke2F5uh3Kh9qZ6yxqB62iZqOit2iaj++B6v+R6ud6X+iuAyit6
-ZqOit2iaiKd+hq2G22n//++B6v+R6ud6X+iuD+ZqOit2iaj+Kd+j+G0K
+This patch fixes the following compile warning:
+
+drivers/isdn/hisax/hfc_pci.c: In function ‘setup_hfcpci’:
+drivers/isdn/hisax/hfc_pci.c:1661: warning: ‘pci_find_device’ is
+deprecated (declared at include/linux/pci.h:535)
+
+Signed-off-by: Michael Borisov <niro@tut.by>
+---
+diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
+index f126566..64b9dc8 100644
+--- a/drivers/isdn/hisax/hfc_pci.c
++++ b/drivers/isdn/hisax/hfc_pci.c
+@@ -1658,7 +1658,7 @@ setup_hfcpci(struct IsdnCard *card)
+ 
+ 	i = 0;
+ 	while (id_list[i].vendor_id) {
+-		tmp_hfcpci = pci_find_device(id_list[i].vendor_id,
++		tmp_hfcpci = pci_get_device(id_list[i].vendor_id,
+ 					     id_list[i].device_id,
+ 					     dev_hfcpci);
+ 		i++;
+
+
