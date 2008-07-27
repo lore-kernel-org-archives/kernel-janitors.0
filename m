@@ -1,26 +1,38 @@
-From: Mark Fasheh <mfasheh@suse.com>
-Date: Tue, 22 Jul 2008 00:07:12 +0000
-Subject: Re: [PATCH 7/7] fs/ocfs2/file.c: Release mutex in error handling code
-Message-Id: <20080722000711.GT28014@wotan.suse.de>
+From: Michael Borisov <niro@tut.by>
+Date: Sun, 27 Jul 2008 07:51:38 +0000
+Subject: [PATCH 1/14 v2] drivers/isdn/hisax/telespci.c: fix warning
+Message-Id: <1217145098.6042.2.camel@inlin>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0807210958570.24625@ask.diku.dk> <20080721203608.GB31671@ca-server1.us.oracle.com>
-In-Reply-To: <20080721203608.GB31671@ca-server1.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 21, 2008 at 01:36:08PM -0700, Joel Becker wrote:
-> On Mon, Jul 21, 2008 at 09:59:15AM +0200, Julia Lawall wrote:
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > The mutex is released on a successful return, so it would seem that it
-> > should be released on an error return as well.
-> 
-> 	This patch looks right to me.  Mark?
+Probably now it is correct ? 
+This patch fixes the following compile warning:
 
-Yeah, that looks good. Thanks Julia.
-	--Mark
+drivers/isdn/hisax/telespci.c: In function ‘setup_telespci’:
+drivers/isdn/hisax/telespci.c:303: warning: ‘pci_find_device’ is
+deprecated (declared at include/linux/pci.h:535)
 
---
-Mark Fasheh
+Signed-off-by: Michael Borisov <niro@tut.by>
+---
+diff --git a/drivers/isdn/hisax/telespci.c
+b/drivers/isdn/hisax/telespci.c
+index 28b08de..1142f35 100644
+--- a/drivers/isdn/hisax/telespci.c
++++ b/drivers/isdn/hisax/telespci.c
+@@ -300,7 +300,9 @@ setup_telespci(struct IsdnCard *card)
+ 	if (cs->typ != ISDN_CTYPE_TELESPCI)
+ 		return (0);
+ 
+-	if ((dev_tel = pci_find_device (PCI_VENDOR_ID_ZORAN,
+PCI_DEVICE_ID_ZORAN_36120, dev_tel))) {
++	dev_tel = pci_get_device (PCI_VENDOR_ID_ZORAN,
+PCI_DEVICE_ID_ZORAN_36120, NULL);
++	if (dev_tel) {
++		pci_dev_put(dev_tel);
+ 		if (pci_enable_device(dev_tel))
+ 			return(0);
+ 		cs->irq = dev_tel->irq;
+
