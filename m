@@ -1,37 +1,25 @@
-From: Michael Borisov <niro@tut.by>
-Date: Sat, 26 Jul 2008 19:44:34 +0000
-Subject: [PATCH 1/14] drivers/isdn/hisax/telespci.c: fix warning
-Message-Id: <1217101474.6107.127.camel@inlin>
+From: David Miller <davem@davemloft.net>
+Date: Sun, 27 Jul 2008 00:44:48 +0000
+Subject: Re: [PATCH 1/14] drivers/isdn/hisax/telespci.c: fix warning
+Message-Id: <20080726.174448.205464779.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1217101474.6107.127.camel@inlin>
+In-Reply-To: <1217101474.6107.127.camel@inlin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-This patch fixes the following compile warning:
-
-drivers/isdn/hisax/telespci.c: In function ‘setup_telespci’:
-drivers/isdn/hisax/telespci.c:303: warning: ‘pci_find_device’ is
-deprecated (declared at include/linux/pci.h:535)
-
-Signed-off-by: Michael Borisov <niro@tut.by>
----
-diff --git a/drivers/isdn/hisax/telespci.c
-b/drivers/isdn/hisax/telespci.c
-index 28b08de..9ed0862 100644
---- a/drivers/isdn/hisax/telespci.c
-+++ b/drivers/isdn/hisax/telespci.c
-@@ -300,7 +300,8 @@ setup_telespci(struct IsdnCard *card)
-        if (cs->typ != ISDN_CTYPE_TELESPCI)
-                return (0);
- 
--       if ((dev_tel = pci_find_device (PCI_VENDOR_ID_ZORAN,
-PCI_DEVICE_ID_ZORAN_36120, dev_tel))) {
-+       if ((dev_tel = pci_get_device(PCI_VENDOR_ID_ZORAN,
-+               PCI_DEVICE_ID_ZORAN_36120, dev_tel))) {
-                if (pci_enable_device(dev_tel))
-                        return(0);
-                cs->irq = dev_tel->irq;
-
-
-
+RnJvbTogTWljaGFlbCBCb3Jpc292IDxuaXJvQHR1dC5ieT4KRGF0ZTogU2F0LCAyNiBKdWwgMjAw
+OCAyMjo0NDozNCArMDMwMAoKPiBUaGlzIHBhdGNoIGZpeGVzIHRoZSBmb2xsb3dpbmcgY29tcGls
+ZSB3YXJuaW5nOgo+IAo+IGRyaXZlcnMvaXNkbi9oaXNheC90ZWxlc3BjaS5jOiBJbiBmdW5jdGlv
+biDigJhzZXR1cF90ZWxlc3BjaeKAmToKPiBkcml2ZXJzL2lzZG4vaGlzYXgvdGVsZXNwY2kuYzoz
+MDM6IHdhcm5pbmc6IOKAmHBjaV9maW5kX2RldmljZeKAmSBpcwo+IGRlcHJlY2F0ZWQgKGRlY2xh
+cmVkIGF0IGluY2x1ZGUvbGludXgvcGNpLmg6NTM1KQo+IAo+IFNpZ25lZC1vZmYtYnk6IE1pY2hh
+ZWwgQm9yaXNvdiA8bmlyb0B0dXQuYnk+CgpJZiB5b3UgImdldCIgdGhlIGRldmljZSwgeW91J3Jl
+IGdvaW5nIHRvIGhhdmUgdG8gInB1dCIKaXQgc29tZXdoZXJlIGRvd24gdGhlIGxpbmUgdG8gcmVs
+ZWFzZSB0aGUgcmVmZXJlbmNlCmNvdW50LgoKVGhhdCdzIHdoeSB0aGlzIGhhc24ndCBiZWVuIGZp
+eGVkIHlldCwgaXQncyBub3Qgc3VjaAphIHRyaXZpYWwgbWF0dGVyIHRvIGNvbnZlcnQuCgr/9Oi6
+ey5uxyuJt5+uia2GKyWKy/+x6d22F6WKd/+6ey5uxyuJt6R6ud6X+NqeK2iuz+Ke2F5uh3Kh9qZ6
+yxqB62iZqOit2iaj++B6v+R6ud6X+iuAyit6ZqOit2iaiKd+hq2G22n//++B6v+R6ud6X+iuD+Zq
+Oit2iaj+Kd+j+G0K
