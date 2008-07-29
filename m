@@ -1,72 +1,44 @@
-From: "M. Asselstine" <asselsm@mcmaster.ca>
-Date: Thu, 31 Jul 2008 01:14:53 +0000
-Subject: Re: [PATCH] atyfb_base.c: fix warning
-Message-Id: <919fe2b30807301814t5973fa29gb092890bbd135f6e@mail.gmail.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Date: Tue, 29 Jul 2008 01:54:31 +0000
+Subject: [PATCH] usb/core/driver: fix warning
+Message-Id: <20080729015431.GA28952@orion>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080730210352.GA29355@orion>
-In-Reply-To: <20080730210352.GA29355@orion>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: syrjala@sci.fi, adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@suse.de, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 30, 2008 at 5:03 PM, Alexander Beregalov
-<a.beregalov@gmail.com> wrote:
-> From: Alexander Beregalov <a.beregalov@gmail.com>
->
-> atyfb_base.c: fix warning
->
-> drivers/video/aty/atyfb_base.c:2663: warning: 'aty_resume_chip' defined
-> but not used
->
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> Cc: Ville Syrjala <syrjala@sci.fi>
-> Cc: Antonino A. Daplas <adaplas@pol.net>
+From: Alexander Beregalov <a.beregalov@gmail.com>
 
-Looks good, should you maybe move the aty_resume_chip() up into the
-existing #if defined(CONFIG_PM) &&... that atyfb_pci_resume() is in?
-Not sure, just a thought.
+usb/core/driver: fix warning:
+drivers/usb/core/driver.c:834: warning: 'do_unbind_rebind' defined but not used
 
-Reviewed-by: Mark Asselstine <asselsm@gmail.com>
 
-> ---
->
->  drivers/video/aty/atyfb_base.c |    4 ++++
->  1 files changed, 4 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/video/aty/atyfb_base.c b/drivers/video/aty/atyfb_base.c
-> index 620ba81..9e5dfb1 100644
-> --- a/drivers/video/aty/atyfb_base.c
-> +++ b/drivers/video/aty/atyfb_base.c
-> @@ -244,7 +244,9 @@ static int atyfb_sync(struct fb_info *info);
->      */
->
->  static int aty_init(struct fb_info *info);
-> +#if defined(CONFIG_PM) && defined(CONFIG_PCI)
->  static void aty_resume_chip(struct fb_info *info);
-> +#endif
->  #ifdef CONFIG_ATARI
->  static int store_video_par(char *videopar, unsigned char m64_num);
->  #endif
-> @@ -2659,6 +2661,7 @@ aty_init_exit:
->        return ret;
->  }
->
-> +#if defined(CONFIG_PM) && defined(CONFIG_PCI)
->  static void aty_resume_chip(struct fb_info *info)
->  {
->        struct atyfb_par *par = info->par;
-> @@ -2671,6 +2674,7 @@ static void aty_resume_chip(struct fb_info *info)
->        if (par->aux_start)
->                aty_st_le32(BUS_CNTL, aty_ld_le32(BUS_CNTL, par) | BUS_APER_REG_DIS, par);
->  }
-> +#endif /* defined(CONFIG_PM) && defined(CONFIG_PCI) */
->
->  #ifdef CONFIG_ATARI
->  static int __devinit store_video_par(char *video_str, unsigned char m64_num)
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+
+---
+
+ drivers/usb/core/driver.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index ddb54e1..6618bc8 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -774,6 +774,7 @@ void usb_deregister(struct usb_driver *driver)
+ }
+ EXPORT_SYMBOL_GPL(usb_deregister);
+ 
++#ifdef CONFIG_PM
+ 
+ /* Forced unbinding of a USB interface driver, either because
+  * it doesn't support pre_reset/post_reset/reset_resume or
+@@ -872,8 +873,6 @@ static void do_unbind_rebind(struct usb_device *udev, int action)
+ 	}
+ }
+ 
+-#ifdef CONFIG_PM
+-
+ /* Caller has locked udev's pm_mutex */
+ static int usb_suspend_device(struct usb_device *udev, pm_message_t msg)
+ {
