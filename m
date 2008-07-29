@@ -1,97 +1,168 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Jul 2008 19:18:27 +0000
-Subject: Re: [PATCH 1/2] arch/ia64/kvm/kvm-ia64.c: Add local_irq_restore in
-Message-Id: <Pine.LNX.4.64.0807222115210.2670@ask.diku.dk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="-511516320-1442744024-1216754307=:2670"
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Date: Tue, 29 Jul 2008 19:00:26 +0000
+Subject: [RFC][PATCH] kernel/profile.c: fix warnings
+Message-Id: <20080729190026.GA32433@orion>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0807221843140.2670@ask.diku.dk>
- <1216753864.28082.11.camel@odie.local>
-In-Reply-To: <1216753864.28082.11.camel@odie.local>
-To: Simon Holm =?ISO-8859-1?Q?Th=F8gersen?= <odie@cs.aau.dk>
-Cc: avi@qumranet.com, kvm@vger.kernel.org, xiantao.zhang@intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mingo@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi
 
----511516320-1442744024-1216754307=:2670
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Moved these three functions under ifdef CONFIG_PROC_FS, separated
+profile_hits. Perhaps it would be better to join two ifdef-CONFIG_PROC_FS
+blocks. 
+This patch is on top of 2.6.27-rc1.
 
-On Tue, 22 Jul 2008, Simon Holm Th=F8gersen wrote:
+From: Alexander Beregalov <a.beregalov@gmail.com>
 
-> tir, 22 07 2008 kl. 18:44 +0200, skrev Julia Lawall:
-> > From: Julia Lawall <julia@diku.dk>
-> >=20
-> > There is a call to local_irq_restore in the normal exit case, so it wou=
-ld
-> > seem that there should be one on an error return as well.
-> >=20
-> > The semantic patch that makes this change is as follows:
-> > (http://www.emn.fr/x-info/coccinelle/)
-> >=20
-> > // <smpl>
-> > @@
-> > expression l;
-> > expression E,E1,E2;
-> > @@
-> >=20
-> > local_irq_save(l);
-> > ... when !=3D local_irq_restore(l)
-> >     when !=3D spin_unlock_irqrestore(E,l)
-> >     when any
-> >     when strict
-> > (
-> > if (...) { ... when !=3D local_irq_restore(l)
-> >                when !=3D spin_unlock_irqrestore(E1,l)
-> > +   local_irq_restore(l);
-> >     return ...;
-> > }
-> > |
-> > if (...)
-> > +   {local_irq_restore(l);
-> >     return ...;
-> > +   }
-> > |
-> > spin_unlock_irqrestore(E2,l);
-> > |
-> > local_irq_restore(l);
-> > )
-> > // </smpl>
-> >=20
-> > Signed-off-by: Julia Lawall <julia@diku.dk>
-> >=20
-> > ---
-> >  arch/ia64/kvm/kvm-ia64.c      |    9 +++++++--
-> >  1 files changed, 7 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/arch/ia64/kvm/kvm-ia64.c b/arch/ia64/kvm/kvm-ia64.c
-> > index 318b811..14e5c99 100644
-> > --- a/arch/ia64/kvm/kvm-ia64.c
-> > +++ b/arch/ia64/kvm/kvm-ia64.c
-> > @@ -125,8 +125,10 @@ void kvm_arch_hardware_enable(void *garbage)
-> >  				PAGE_KERNEL));
-> >  	local_irq_save(saved_psr);
-> >  	slot =3D ia64_itr_entry(0x3, KVM_VMM_BASE, pte, KVM_VMM_SHIFT);
-> > -	if (slot < 0)
-> > +	if (slot < 0) {
-> > +		local_irq_restore(saved_psr);
-> >  		return;
-> > +	}
-> >  	local_irq_restore(saved_psr);
->=20
-> If this change makes sense, how about merging the two local_irq_restore
-> calls and put them before the if? And shouldn't your checker be able to
-> figure this?
+kernel/profile.c: fix warnings:
 
-No, it pretty much only does what it's told, which is to put a
-local_irq_restore before the return. =20
+kernel/profile.c:245: warning: 'profile_flip_buffers' defined but not
+used
+kernel/profile.c:268: warning: 'profile_discard_flip_buffers' defined
+but not used
+kernel/profile.c:335: warning: 'profile_cpu_callback' defined but not
+used
 
-Since slot is a local variable, it does seem like the call to=20
-local_irq_restore could be safely moved upwards, so I will do that=20
-instead.
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
-thanks,
-julia
+---
 
----511516320-1442744024-1216754307=:2670--
+ kernel/profile.c |  107 ++++++++++++++++++++++++++++--------------------------
+ 1 files changed, 56 insertions(+), 51 deletions(-)
+
+diff --git a/kernel/profile.c b/kernel/profile.c
+index cd26bed..0f377d9 100644
+--- a/kernel/profile.c
++++ b/kernel/profile.c
+@@ -202,6 +202,7 @@ void unregister_timer_hook(int (*hook)(struct pt_regs *))
+ EXPORT_SYMBOL_GPL(unregister_timer_hook);
+ 
+ 
++#ifdef CONFIG_PROC_FS
+ #ifdef CONFIG_SMP
+ /*
+  * Each cpu has a pair of open-addressed hashtables for pending
+@@ -279,57 +280,6 @@ static void profile_discard_flip_buffers(void)
+ 	mutex_unlock(&profile_flip_mutex);
+ }
+ 
+-void profile_hits(int type, void *__pc, unsigned int nr_hits)
+-{
+-	unsigned long primary, secondary, flags, pc = (unsigned long)__pc;
+-	int i, j, cpu;
+-	struct profile_hit *hits;
+-
+-	if (prof_on != type || !prof_buffer)
+-		return;
+-	pc = min((pc - (unsigned long)_stext) >> prof_shift, prof_len - 1);
+-	i = primary = (pc & (NR_PROFILE_GRP - 1)) << PROFILE_GRPSHIFT;
+-	secondary = (~(pc << 1) & (NR_PROFILE_GRP - 1)) << PROFILE_GRPSHIFT;
+-	cpu = get_cpu();
+-	hits = per_cpu(cpu_profile_hits, cpu)[per_cpu(cpu_profile_flip, cpu)];
+-	if (!hits) {
+-		put_cpu();
+-		return;
+-	}
+-	/*
+-	 * We buffer the global profiler buffer into a per-CPU
+-	 * queue and thus reduce the number of global (and possibly
+-	 * NUMA-alien) accesses. The write-queue is self-coalescing:
+-	 */
+-	local_irq_save(flags);
+-	do {
+-		for (j = 0; j < PROFILE_GRPSZ; ++j) {
+-			if (hits[i + j].pc = pc) {
+-				hits[i + j].hits += nr_hits;
+-				goto out;
+-			} else if (!hits[i + j].hits) {
+-				hits[i + j].pc = pc;
+-				hits[i + j].hits = nr_hits;
+-				goto out;
+-			}
+-		}
+-		i = (i + secondary) & (NR_PROFILE_HIT - 1);
+-	} while (i != primary);
+-
+-	/*
+-	 * Add the current hit(s) and flush the write-queue out
+-	 * to the global buffer:
+-	 */
+-	atomic_add(nr_hits, &prof_buffer[pc]);
+-	for (i = 0; i < NR_PROFILE_HIT; ++i) {
+-		atomic_add(hits[i].hits, &prof_buffer[hits[i].pc]);
+-		hits[i].pc = hits[i].hits = 0;
+-	}
+-out:
+-	local_irq_restore(flags);
+-	put_cpu();
+-}
+-
+ static int __devinit profile_cpu_callback(struct notifier_block *info,
+ 					unsigned long action, void *__cpu)
+ {
+@@ -390,7 +340,62 @@ out_free:
+ #define profile_flip_buffers()		do { } while (0)
+ #define profile_discard_flip_buffers()	do { } while (0)
+ #define profile_cpu_callback		NULL
++#endif
++#endif /* CONFIG_PROC_FS */
+ 
++#ifdef CONFIG_SMP
++void profile_hits(int type, void *__pc, unsigned int nr_hits)
++{
++	unsigned long primary, secondary, flags, pc = (unsigned long)__pc;
++	int i, j, cpu;
++	struct profile_hit *hits;
++
++	if (prof_on != type || !prof_buffer)
++		return;
++	pc = min((pc - (unsigned long)_stext) >> prof_shift, prof_len - 1);
++	i = primary = (pc & (NR_PROFILE_GRP - 1)) << PROFILE_GRPSHIFT;
++	secondary = (~(pc << 1) & (NR_PROFILE_GRP - 1)) << PROFILE_GRPSHIFT;
++	cpu = get_cpu();
++	hits = per_cpu(cpu_profile_hits, cpu)[per_cpu(cpu_profile_flip, cpu)];
++	if (!hits) {
++		put_cpu();
++		return;
++	}
++	/*
++	 * We buffer the global profiler buffer into a per-CPU
++	 * queue and thus reduce the number of global (and possibly
++	 * NUMA-alien) accesses. The write-queue is self-coalescing:
++	 */
++	local_irq_save(flags);
++	do {
++		for (j = 0; j < PROFILE_GRPSZ; ++j) {
++			if (hits[i + j].pc = pc) {
++				hits[i + j].hits += nr_hits;
++				goto out;
++			} else if (!hits[i + j].hits) {
++				hits[i + j].pc = pc;
++				hits[i + j].hits = nr_hits;
++				goto out;
++			}
++		}
++		i = (i + secondary) & (NR_PROFILE_HIT - 1);
++	} while (i != primary);
++
++	/*
++	 * Add the current hit(s) and flush the write-queue out
++	 * to the global buffer:
++	 */
++	atomic_add(nr_hits, &prof_buffer[pc]);
++	for (i = 0; i < NR_PROFILE_HIT; ++i) {
++		atomic_add(hits[i].hits, &prof_buffer[hits[i].pc]);
++		hits[i].pc = hits[i].hits = 0;
++	}
++out:
++	local_irq_restore(flags);
++	put_cpu();
++}
++
++#else /* !CONFIG_SMP */
+ void profile_hits(int type, void *__pc, unsigned int nr_hits)
+ {
+ 	unsigned long pc;
