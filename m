@@ -1,7 +1,7 @@
-From: Johannes Weiner <hannes@saeurebad.de>
-Date: Tue, 29 Jul 2008 20:51:03 +0000
+From: Marcin Slusarz <marcin.slusarz@gmail.com>
+Date: Tue, 29 Jul 2008 21:02:57 +0000
 Subject: Re: How to fix warning 'control reaches end of non-void function'
-Message-Id: <87fxpsct3c.fsf@saeurebad.de>
+Message-Id: <20080729210236.GB30067@joi>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20080729191738.GA32506@orion>
 In-Reply-To: <20080729191738.GA32506@orion>
@@ -10,14 +10,11 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-
-Alexander Beregalov <a.beregalov@gmail.com> writes:
-
+On Tue, Jul 29, 2008 at 11:17:38PM +0400, Alexander Beregalov wrote:
 > Hi
->
+> 
 > What is it a right way to fix these warnings?
->
+> 
 > smth function()
 > {
 > 	switch (var) {
@@ -27,10 +24,14 @@ Alexander Beregalov <a.beregalov@gmail.com> writes:
 > 		BUG();
 > 	}
 > }
->
+> 
 > warning: control reaches end of non-void function
 
-Uhm, make sure there is always a value returned...?  You don't do that
-when var is not one.
+If BUG() would be normal function it could be marked as __attribute__((noreturn)).
+But it's a macro defined differently depending on architecture and CONFIG_*.
+Sometimes it calls panic() which is annotated properly and sometimes it calls
+other code....
 
-	Hannes
+If you are brave, you could fix all implementations.
+
+Marcin
