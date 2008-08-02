@@ -1,89 +1,82 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 16 Jul 2008 16:00:42 +0000
-Subject: [PATCH retry] drivers/usb/class/usblp.c: adjust error handling code
-Message-Id: <Pine.LNX.4.64.0807161758520.28783@ask.diku.dk>
+Date: Sat, 02 Aug 2008 15:13:09 +0000
+Subject: [PATCH 3/10] drivers/ieee1394: Use DIV_ROUND_UP
+Message-Id: <Pine.LNX.4.64.0808021712460.20095@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0807161717220.28783@ask.diku.dk>
- <200807161744.59137.oliver@neukum.org>
-In-Reply-To: <200807161744.59137.oliver@neukum.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oliver Neukum <oliver@neukum.org>
-Cc: zaitcev@redhat.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ben.collins@ubuntu.com, stefanr@s5r6.in-berlin.de, linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-In this code, it is possible to tell statically whether usblp will be NULL
-in the error handling code.
+The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
+(d)) but is perhaps more readable.
 
-Oliver Neukum suggested to make a goto to the final return rather than 
-return directly.
-
-The semantic match that finds this problem is as follows:
+An extract of the semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-identifier f,err,l,l1;
-type T;
-expression x,E;
-statement S;
+@haskernel@
 @@
 
-x = NULL
-... when != goto l1;
-* x = f(...)
-... when != x
-err = E;
-goto l;
-...
-* if (x != NULL)
-  S
-return err;
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression n,d;
+@@
+
+(
+- (n + d - 1) / d
++ DIV_ROUND_UP(n,d)
+|
+- (n + (d - 1)) / d
++ DIV_ROUND_UP(n,d)
+)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP((n),d)
++ DIV_ROUND_UP(n,d)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP(n,(d))
++ DIV_ROUND_UP(n,d)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-diff -u -p a/drivers/usb/class/usblp.c b/drivers/usb/class/usblp.c
---- a/drivers/usb/class/usblp.c
-+++ b/drivers/usb/class/usblp.c
-@@ -1076,15 +1076,16 @@ static int usblp_probe(struct usb_interf
- 		       const struct usb_device_id *id)
- {
- 	struct usb_device *dev = interface_to_usbdev (intf);
--	struct usblp *usblp = NULL;
-+	struct usblp *usblp;
- 	int protocol;
- 	int retval;
+ drivers/ieee1394/csr1212.c |    2 +-
+ drivers/ieee1394/eth1394.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/ieee1394/csr1212.c b/drivers/ieee1394/csr1212.c
+--- a/drivers/ieee1394/csr1212.c
++++ b/drivers/ieee1394/csr1212.c
+@@ -84,7 +84,7 @@ static const u8 csr1212_key_id_type_map[
  
- 	/* Malloc and start initializing usblp structure so we can use it
- 	 * directly. */
--	if (!(usblp = kzalloc(sizeof(struct usblp), GFP_KERNEL))) {
-+	usblp = kzalloc(sizeof(struct usblp), GFP_KERNEL);
-+	if (!usblp) {
- 		retval = -ENOMEM;
--		goto abort;
-+		goto abort_ret;
+ 
+ #define quads_to_bytes(_q) ((_q) * sizeof(u32))
+-#define bytes_to_quads(_b) (((_b) + sizeof(u32) - 1) / sizeof(u32))
++#define bytes_to_quads(_b) DIV_ROUND_UP(_b, sizeof(u32))
+ 
+ static void free_keyval(struct csr1212_keyval *kv)
+ {
+diff -u -p a/drivers/ieee1394/eth1394.c b/drivers/ieee1394/eth1394.c
+--- a/drivers/ieee1394/eth1394.c
++++ b/drivers/ieee1394/eth1394.c
+@@ -1361,7 +1361,7 @@ static unsigned int ether1394_encapsulat
+ 		hdr->ff.dgl = dgl;
+ 		adj_max_payload = max_payload - hdr_type_len[ETH1394_HDR_LF_FF];
  	}
- 	usblp->dev = dev;
- 	mutex_init(&usblp->wmut);
-@@ -1179,12 +1180,11 @@ abort_intfdata:
- 	usb_set_intfdata (intf, NULL);
- 	device_remove_file(&intf->dev, &dev_attr_ieee1284_id);
- abort:
--	if (usblp) {
--		kfree(usblp->readbuf);
--		kfree(usblp->statusbuf);
--		kfree(usblp->device_id_string);
--		kfree(usblp);
--	}
-+	kfree(usblp->readbuf);
-+	kfree(usblp->statusbuf);
-+	kfree(usblp->device_id_string);
-+	kfree(usblp);
-+abort_ret:
- 	return retval;
+-	return (dg_size + adj_max_payload - 1) / adj_max_payload;
++	return DIV_ROUND_UP(dg_size, adj_max_payload);
  }
  
+ static unsigned int ether1394_encapsulate(struct sk_buff *skb,
