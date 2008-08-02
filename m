@@ -1,74 +1,69 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 23 Aug 2008 16:00:19 +0000
-Subject: [PATCH 1/2] drivers/serial/crisv10.c: add missing put_tty_driver
-Message-Id: <Pine.LNX.4.64.0808231759540.3162@ask.diku.dk>
+Date: Sat, 02 Aug 2008 15:15:05 +0000
+Subject: [PATCH 7/10] drivers/net/wan: Use DIV_ROUND_UP
+Message-Id: <Pine.LNX.4.64.0808021714220.20095@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: starvik@axis.com, jesper.nilsson@axis.com, dev-etrax@axis.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jgarzik@pobox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-alloc_tty_driver is called at the beginning of the function containing the
-lines of code shown in the patch.  Thus, put_tty_driver is needed before
-returning in the error handling code.
+The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
+(d)) but is perhaps more readable.
 
-The semantic match that finds this problem is as follows:
+An extract of the semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@nr exists@
-local idexpression x;
-expression E,f;
-position p1,p2,p3;
-identifier l;
-statement S;
+@haskernel@
 @@
 
-x = alloc_tty_driver@p1(...)
-...
-if (x = NULL) S
-... when != E = x
-    when != put_tty_driver(x)
-    when != goto l;
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression n,d;
+@@
+
 (
-return \(0\|x\);
+- (n + d - 1) / d
++ DIV_ROUND_UP(n,d)
 |
-return@p3 ...;
+- (n + (d - 1)) / d
++ DIV_ROUND_UP(n,d)
 )
 
-@script:python@
-p1 << nr.p1;
-p3 << nr.p3;
+@depends on haskernel@
+expression n,d;
 @@
 
-print "%s: call on line %s not freed or saved before return on line %s" % (p1[0].file,p1[0].line,p3[0].line)
+- DIV_ROUND_UP((n),d)
++ DIV_ROUND_UP(n,d)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP(n,(d))
++ DIV_ROUND_UP(n,d)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/serial/crisv10.c      |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ drivers/net/wan/sbni.c     |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/serial/crisv10.c b/drivers/serial/crisv10.c
-index bf94a77..a467c77 100644
---- a/drivers/serial/crisv10.c
-+++ b/drivers/serial/crisv10.c
-@@ -4419,6 +4419,7 @@ rs_init(void)
- 			rs485_pa_bit)) {
- 		printk(KERN_CRIT "ETRAX100LX serial: Could not allocate "
- 			"RS485 pin\n");
-+		put_tty_driver(driver);
- 		return -EBUSY;
- 	}
- #endif
-@@ -4427,6 +4428,7 @@ rs_init(void)
- 			rs485_port_g_bit)) {
- 		printk(KERN_CRIT "ETRAX100LX serial: Could not allocate "
- 			"RS485 pin\n");
-+		put_tty_driver(driver);
- 		return -EBUSY;
- 	}
- #endif
+diff -u -p a/drivers/net/wan/sbni.c b/drivers/net/wan/sbni.c
+--- a/drivers/net/wan/sbni.c
++++ b/drivers/net/wan/sbni.c
+@@ -856,7 +856,7 @@ prepare_to_send( struct sk_buff  *skb,  
+ 		len = SBNI_MIN_LEN;
+ 
+ 	nl->tx_buf_p	= skb;
+-	nl->tx_frameno	= (len + nl->maxframe - 1) / nl->maxframe;
++	nl->tx_frameno	= DIV_ROUND_UP(len, nl->maxframe);
+ 	nl->framelen	= len < nl->maxframe  ?  len  :  nl->maxframe;
+ 
+ 	outb( inb( dev->base_addr + CSR0 ) | TR_REQ,  dev->base_addr + CSR0 );
