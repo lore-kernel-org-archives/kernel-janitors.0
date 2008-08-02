@@ -1,27 +1,69 @@
-From: Artem Bityutskiy <dedekind@infradead.org>
-Date: Fri, 29 Aug 2008 10:35:14 +0000
-Subject: Re: [PATCH] fs/ubifs: Use an IS_ERR test rather than a NULL test
-Message-Id: <1220006114.4036.16.camel@sauron>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 Aug 2008 15:15:49 +0000
+Subject: [PATCH 9/10] drivers/scsi/megaraid: Use DIV_ROUND_UP
+Message-Id: <Pine.LNX.4.64.0808021715270.20095@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200808291108.32958.brunel@diku.dk>
-In-Reply-To: <200808291108.32958.brunel@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julien Brunel <brunel@diku.dk>
-Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: megaraidlinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 2008-08-29 at 11:08 +0200, Julien Brunel wrote:
-> In case of error, the function kthread_create returns an ERR pointer,
-> but never returns a NULL pointer. So a NULL test that comes before an
-> IS_ERR test should be deleted.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
+From: Julia Lawall <julia@diku.dk>
 
-Pushed to ubifs-2.6.git, thanks.
+The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
+(d)) but is perhaps more readable.
 
--- 
-Best regards,
-Artem Bityutskiy (Битюцкий Артём)
+An extract of the semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@haskernel@
+@@
+
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression n,d;
+@@
+
+(
+- (n + d - 1) / d
++ DIV_ROUND_UP(n,d)
+|
+- (n + (d - 1)) / d
++ DIV_ROUND_UP(n,d)
+)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP((n),d)
++ DIV_ROUND_UP(n,d)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP(n,(d))
++ DIV_ROUND_UP(n,d)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/megaraid/megaraid_sas.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/scsi/megaraid/megaraid_sas.c b/drivers/scsi/megaraid/megaraid_sas.c
+--- a/drivers/scsi/megaraid/megaraid_sas.c
++++ b/drivers/scsi/megaraid/megaraid_sas.c
+@@ -1615,7 +1615,7 @@ static int megasas_create_frame_pool(str
+ 	 * Calculated the number of 64byte frames required for SGL
+ 	 */
+ 	sgl_sz = sge_sz * instance->max_num_sge;
+-	frame_count = (sgl_sz + MEGAMFI_FRAME_SIZE - 1) / MEGAMFI_FRAME_SIZE;
++	frame_count = DIV_ROUND_UP(sgl_sz, MEGAMFI_FRAME_SIZE);
+ 
+ 	/*
+ 	 * We need one extra frame for the MFI command
