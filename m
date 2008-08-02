@@ -1,70 +1,113 @@
-From: Zhu Yi <yi.zhu@intel.com>
-Date: Mon, 04 Aug 2008 02:41:18 +0000
-Subject: Re: [PATCH 4/7] drivers/net/wireless/ipw2100.c: Release mutex in
-Message-Id: <1217817678.3107.11.camel@debian.sh.intel.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 Aug 2008 15:13:34 +0000
+Subject: [PATCH 4/10] drivers/media/video: Use DIV_ROUND_UP
+Message-Id: <Pine.LNX.4.64.0808021713100.20095@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0807210957490.24625@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0807210957490.24625@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: jketreno@linux.intel.com, reinette.chatre@intel.com, linux-wireless@vger.kernel.org, ipw2100-devel@lists.sourceforge.net, jgarzik@pobox.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mchehab@infradead.org, v4l-dvb-maintainer@linuxtv.org, video4linux-list@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2008-07-21 at 09:58 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The mutex is released on a successful return, so it would seem that it
-> should be released on an error return as well.
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Zhu Yi <yi.zhu@intel.com>
+The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
+(d)) but is perhaps more readable.
 
-Thanks,
--yi
+An extract of the semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-> The semantic patch finds this problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> expression l;
-> @@
-> 
-> mutex_lock(l);
-> ... when != mutex_unlock(l)
->     when any
->     when strict
-> (
-> if (...) { ... when != mutex_unlock(l)
-> +   mutex_unlock(l);
->     return ...;
-> }
-> |
-> mutex_unlock(l);
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
-> diff -u -p a/drivers/net/wireless/ipw2100.c b/drivers/net/wireless/ipw2100.c
-> --- a/drivers/net/wireless/ipw2100.c
-> +++ b/drivers/net/wireless/ipw2100.c
-> @@ -6442,6 +6442,7 @@ static int ipw2100_resume(struct pci_dev
->  	if (err) {
->  		printk(KERN_ERR "%s: pci_enable_device failed on resume\n",
->  		       dev->name);
-> +		mutex_unlock(&priv->action_mutex);
->  		return err;
->  	}
->  	pci_restore_state(pci_dev);
-> @@ -7146,7 +7147,7 @@ static int ipw2100_wx_get_rate(struct ne
->  	err = ipw2100_get_ordinal(priv, IPW_ORD_CURRENT_TX_RATE, &val, &len);
->  	if (err) {
->  		IPW_DEBUG_WX("failed querying ordinals.\n");
-> -		return err;
-> +		goto done;
->  	}
->  
->  	switch (val & TX_RATE_MASK) {
+// <smpl>
+@haskernel@
+@@
 
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression n,d;
+@@
+
+(
+- (n + d - 1) / d
++ DIV_ROUND_UP(n,d)
+|
+- (n + (d - 1)) / d
++ DIV_ROUND_UP(n,d)
+)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP((n),d)
++ DIV_ROUND_UP(n,d)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP(n,(d))
++ DIV_ROUND_UP(n,d)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/video/bw-qcam.c       |    4 ++--
+ drivers/media/video/uvc/uvc_video.c |    2 +-
+ drivers/media/video/zoran_device.c  |    4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff -u -p a/drivers/media/video/bw-qcam.c b/drivers/media/video/bw-qcam.c
+--- a/drivers/media/video/bw-qcam.c
++++ b/drivers/media/video/bw-qcam.c
+@@ -495,7 +495,7 @@ static void qc_set(struct qcam_device *q
+ 		val2 = (((q->port_mode & QC_MODE_MASK) = QC_BIDIR) ? 24 : 8) *
+ 		    q->transfer_scale;
+ 	}
+-	val = (val + val2 - 1) / val2;
++	val = DIV_ROUND_UP(val, val2);
+ 	qc_command(q, 0x13);
+ 	qc_command(q, val);
+ 
+@@ -651,7 +651,7 @@ static long qc_capture(struct qcam_devic
+ 	transperline = q->width * q->bpp;
+ 	divisor = (((q->port_mode & QC_MODE_MASK) = QC_BIDIR) ? 24 : 8) *
+ 	    q->transfer_scale;
+-	transperline = (transperline + divisor - 1) / divisor;
++	transperline = DIV_ROUND_UP(transperline, divisor);
+ 
+ 	for (i = 0, yield = yieldlines; i < linestotrans; i++)
+ 	{
+diff -u -p a/drivers/media/video/uvc/uvc_video.c b/drivers/media/video/uvc/uvc_video.c
+--- a/drivers/media/video/uvc/uvc_video.c
++++ b/drivers/media/video/uvc/uvc_video.c
+@@ -644,7 +644,7 @@ static int uvc_init_video_isoc(struct uv
+ 	if (size > UVC_MAX_FRAME_SIZE)
+ 		return -EINVAL;
+ 
+-	npackets = (size + psize - 1) / psize;
++	npackets = DIV_ROUND_UP(size, psize);
+ 	if (npackets > UVC_MAX_ISO_PACKETS)
+ 		npackets = UVC_MAX_ISO_PACKETS;
+ 
+diff -u -p a/drivers/media/video/zoran_device.c b/drivers/media/video/zoran_device.c
+--- a/drivers/media/video/zoran_device.c
++++ b/drivers/media/video/zoran_device.c
+@@ -377,7 +377,7 @@ zr36057_set_vfe (struct zoran           
+ 
+ 	/* horizontal */
+ 	VidWinWid = video_width;
+-	X = (VidWinWid * 64 + tvn->Wa - 1) / tvn->Wa;
++	X = DIV_ROUND_UP(VidWinWid * 64, tvn->Wa);
+ 	We = (VidWinWid * 64) / X;
+ 	HorDcm = 64 - X;
+ 	hcrop1 = 2 * ((tvn->Wa - We) / 4);
+@@ -403,7 +403,7 @@ zr36057_set_vfe (struct zoran           
+ 	/* Vertical */
+ 	DispMode = !(video_height > BUZ_MAX_HEIGHT / 2);
+ 	VidWinHt = DispMode ? video_height : video_height / 2;
+-	Y = (VidWinHt * 64 * 2 + tvn->Ha - 1) / tvn->Ha;
++	Y = DIV_ROUND_UP(VidWinHt * 64 * 2, tvn->Ha);
+ 	He = (VidWinHt * 64) / Y;
+ 	VerDcm = 64 - Y;
+ 	vcrop1 = (tvn->Ha / 2 - He) / 2;
