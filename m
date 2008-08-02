@@ -1,28 +1,137 @@
-From: "=?BIG5?B?pP2rwqfK?=" <fqf9vj0975c@gmail.com>
-Date: Sat, 02 Aug 2008 17:18:55 +0000
-Subject: =?BIG5?B?sXrB2ahTprOkQK3TsU3E3aq6pfi3frr0r7i23KFI?=
-Message-Id: <d58d317b0808021018r79faa81ei1b08d3ccef0370b8@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 Aug 2008 15:12:23 +0000
+Subject: [PATCH 1/10] drivers/atm: Use DIV_ROUND_UP
+Message-Id: <Pine.LNX.4.64.0808021711550.20095@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ibm866"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: chas@cmf.nrl.navy.mil, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-pHPgvqzsp9669K22s12tcAoKp9qtzKq6qXamrqFHq8ik4aq6qEOjuKXzpHCoxrGhoUGzo6xPpHPg
-vqq6pGqoxrGhCgqn2q3MpmKxwKVYpfi3fqfOtki69K+4pV2ndKtlpXi69K22rPykdSur4aV4ut6y
-erV7pqEKCq2trsmtrbZxsU2u17v5IKV1rW4kMjksOTAwCgoopmKwZaO4pn4xMDBNQqSjra2sebZx
-uvSvuKrFtqEpCgqn2q3MsLWquqSjpXWsT7r0r7ihQabTrE+xeqX4t36quqRKpGYKCqO4rdOmbqq6
-pfi3frr0r7i46q7Gp1muyafzt3OqurN0q9esT6vcrautbqq6Cgql+Ld+ou2kxqq6sKqrfr3ouc62
-pKFBpbSzebF6qrq69Lj0qvmtsQoKv+++3KRz4L6mqLROsXqqurnat1EKCqHjoeOh46HjoeOh46Hj
-oeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeMKUFM6IL11pFfByqqruvSvuKfa
-rczB2aVptKOo0ajqpWS+96juoUEKoUChQLtQvXWkV6ZDpkyxYrPmpf6s2bZXsNMrtmynvcO6tk8u
-Li4uLi61par3rHmqQbDIvveo7gqh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh
-46HjoeOh46HjoeOh46HjCgrFd6rvqNO5cayiuN+2wLFNrfuhXVNhbaFeoUcwOTgwMTE5ODEyIC8g
-MDkzODc2NDM5NQoKpFe69LdqtE2heaFApHPgvqzsp96kvaVxuvSvuKFAoXqnWaVpp+So7KfarcwK
-CqHjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeMKpbuk
-vaVxpXSlfrSjqNHD9sHkpnJTRU+xxqfHqkGwyAqrT8PSsU6xeqq6uvSvuKZiWXggLyBHeCAuLi6x
-xqZissSkQK22CqFAoUChQKFAoUChQKFAoUChQKFAoUChQKFAoUChQKFAoUChQCDFd6rvqNO5cbjf
-sN0hISEKoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh
-4wr/9Oi6ey5uxyuJt5+uia2GKyWKy/+x6d22F6WKd/+6ey5uxyuJt6R6ud6X+NqeK2iuz+Ke2F5u
-h3Kh9qZ6yxqB62iZqOit2iaj++B6v+R6ud6X+iuAyit6ZqOit2iaiKd+hq2G22n//++B6v+R6ud6
-X+iuD+ZqOit2iaj+Kd+j+G0K
+From: Julia Lawall <julia@diku.dk>
+
+The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
+(d)) but is perhaps more readable.
+
+In the case of the file drivers/atm/eni.c, I am a little bit suspicious of
+the -1 at the end of the affected expression.  Please check that that is
+what is wanted.
+
+An extract of the semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@haskernel@
+@@
+
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression n,d;
+@@
+
+(
+- (n + d - 1) / d
++ DIV_ROUND_UP(n,d)
+|
+- (n + (d - 1)) / d
++ DIV_ROUND_UP(n,d)
+)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP((n),d)
++ DIV_ROUND_UP(n,d)
+
+@depends on haskernel@
+expression n,d;
+@@
+
+- DIV_ROUND_UP(n,(d))
++ DIV_ROUND_UP(n,d)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/atm/eni.c     |    2 +-
+ drivers/atm/horizon.c |    8 ++++----
+ drivers/atm/zatm.c    |    6 +++---
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff -u -p a/drivers/atm/eni.c b/drivers/atm/eni.c
+--- a/drivers/atm/eni.c
++++ b/drivers/atm/eni.c
+@@ -1270,7 +1270,7 @@ static int comp_tx(struct eni_dev *eni_d
+ 			if (*pre < 3) (*pre)++; /* else fail later */
+ 			div = pre_div[*pre]*-*pcr;
+ 			DPRINTK("max div %d\n",div);
+-			*res = (TS_CLOCK+div-1)/div-1;
++			*res = DIV_ROUND_UP(TS_CLOCK, div)-1;
+ 		}
+ 		if (*res < 0) *res = 0;
+ 		if (*res > MID_SEG_MAX_RATE) *res = MID_SEG_MAX_RATE;
+diff -u -p a/drivers/atm/horizon.c b/drivers/atm/horizon.c
+--- a/drivers/atm/horizon.c
++++ b/drivers/atm/horizon.c
+@@ -635,7 +635,7 @@ static int make_rate (const hrz_dev * de
+ 		// take care of rounding
+ 		switch (r) {
+ 			case round_down:
+-				pre = (br+(c<<div)-1)/(c<<div);
++				pre = DIV_ROUND_UP(br, c<<div);
+ 				// but p must be non-zero
+ 				if (!pre)
+ 					pre = 1;
+@@ -668,7 +668,7 @@ static int make_rate (const hrz_dev * de
+ 			// take care of rounding
+ 			switch (r) {
+ 				case round_down:
+-					pre = (br+(c<<div)-1)/(c<<div);
++					pre = DIV_ROUND_UP(br, c<<div);
+ 					break;
+ 				case round_nearest:
+ 					pre = (br+(c<<div)/2)/(c<<div);
+@@ -698,7 +698,7 @@ got_it:
+ 		if (bits)
+ 			*bits = (div<<CLOCK_SELECT_SHIFT) | (pre-1);
+ 		if (actual) {
+-			*actual = (br + (pre<<div) - 1) / (pre<<div);
++			*actual = DIV_ROUND_UP(br, pre<<div);
+ 			PRINTD (DBG_QOS, "actual rate: %u", *actual);
+ 		}
+ 		return 0;
+@@ -1967,7 +1967,7 @@ static int __devinit hrz_init (hrz_dev *
+   // Set the max AAL5 cell count to be just enough to contain the
+   // largest AAL5 frame that the user wants to receive
+   wr_regw (dev, MAX_AAL5_CELL_COUNT_OFF,
+-	   (max_rx_size + ATM_AAL5_TRAILER + ATM_CELL_PAYLOAD - 1) / ATM_CELL_PAYLOAD);
++	   DIV_ROUND_UP(max_rx_size + ATM_AAL5_TRAILER, ATM_CELL_PAYLOAD));
+   
+   // Enable receive
+   wr_regw (dev, RX_CONFIG_OFF, rd_regw (dev, RX_CONFIG_OFF) | RX_ENABLE);
+diff -u -p a/drivers/atm/zatm.c b/drivers/atm/zatm.c
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -496,8 +496,8 @@ static int open_rx_first(struct atm_vcc 
+ 			vcc->qos.rxtp.max_sdu = 65464;
+ 			/* fix this - we may want to receive 64kB SDUs
+ 			   later */
+-		cells = (vcc->qos.rxtp.max_sdu+ATM_AAL5_TRAILER+
+-		    ATM_CELL_PAYLOAD-1)/ATM_CELL_PAYLOAD;
++		cells = DIV_ROUND_UP(vcc->qos.rxtp.max_sdu + ATM_AAL5_TRAILER,
++				ATM_CELL_PAYLOAD);
+ 		zatm_vcc->pool = pool_index(cells*ATM_CELL_PAYLOAD);
+ 	}
+ 	else {
+@@ -820,7 +820,7 @@ static int alloc_shaper(struct atm_dev *
+ 			}
+ 			else {
+ 				i = 255;
+-				m = (ATM_OC3_PCR*255+max-1)/max;
++				m = DIV_ROUND_UP(ATM_OC3_PCR*255, max);
+ 			}
+ 		}
+ 		if (i > m) {
