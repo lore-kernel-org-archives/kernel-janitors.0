@@ -1,58 +1,44 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 31 Aug 2008 20:35:55 +0000
-Subject: code after return
-Message-Id: <Pine.LNX.4.64.0808312231550.5157@ask.diku.dk>
+From: "Manish Katiyar" <mkatiyar@gmail.com>
+Date: Sun, 03 Aug 2008 07:36:28 +0000
+Subject: [PATCH] Remove warning 'unused variable battery' in drivers/acpi/sbs.c
+Message-Id: <ea11fea30808030024v18912201x46d12fe389e508f8@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, astarikovskiy@suse.de, vladimir.p.lebedev@intel.com, LKML <linux-kernel@vger.kernel.org>, trivial@vger.kernel.org
+Cc: mkatiyar@gmail.com
 
-Below is a list of some places (file and function name) where there is 
-some code after a return or goto.  Most of the time, the return is in a 
-switch case, and the code after the return is a break.  I was wondering 
-whether it would be useful to do something about these?  Or is the thought 
-that it has no impact on the compiled code, so it doesn't matter?  Or is 
-it actually desirable to have a break in every switch case, even if it 
-amounts to dead code?
-
-thanks,
-julia
+Below patch removes the following warning:
+drivers/acpi/sbs.c: In function 'acpi_battery_remove':
+drivers/acpi/sbs.c:819: warning: unused variable 'battery'
 
 
-drivers/infiniband/hw/amso1100/c2_provider.c
-c2_create_op
-break after return
 
-drivers/media/common/tuners/tuner-simple.c
-simple_tuner_attach
-break after return
+Signed-off-by:- "Manish Katiyar" <mkatiyar@gmail.com>
 
-fs/namespace.c
-dup_mnt_ns
-; after return
+---
+ drivers/acpi/sbs.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-net/atm/lec.c
-lec_arp_resolve
-break after return
+diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
+index 10a3651..8493603 100644
+--- a/drivers/acpi/sbs.c
++++ b/drivers/acpi/sbs.c
+@@ -816,7 +816,9 @@ static int acpi_battery_add(struct acpi_sbs *sbs, int id)
 
-drivers/media/common/tuners/tda18271-fe.c
-tda18271_attach
-break after goto
+ static void acpi_battery_remove(struct acpi_sbs *sbs, int id)
+ {
++#ifdef CONFIG_ACPI_SYSFS_POWER || CONFIG_ACPI_PROCFS_POWER
+ 	struct acpi_battery *battery = &sbs->battery[id];
++#endif
+ #ifdef CONFIG_ACPI_SYSFS_POWER
+ 	if (battery->bat.dev) {
+ 		if (battery->have_sysfs_alarm)
+-- 
+1.5.4.3
 
-drivers/media/common/tuners/mxl5007t.c
-mxl5007t_attach
-break after goto
 
-drivers/dma/ioat_dma.c
-ioat_dma_get_next_descriptor
-break after return
 
-drivers/infiniband/hw/nes/nes_verbs.c
-nes_reg_user_mr
-break after return
-
-drivers/media/common/tuners/tda9887.c
-tda9887_attach
-break after return
-----------------------
+Thanks -
+Manish
