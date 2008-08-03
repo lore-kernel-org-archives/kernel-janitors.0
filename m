@@ -1,29 +1,83 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Thu, 07 Aug 2008 13:49:12 +0000
-Subject: Re: [PATCH] drivers/s390: Use an IS_ERR test rather than a NULL
-Message-Id: <1218116952.1033.37.camel@localhost>
+From: "Manish Katiyar" <mkatiyar@gmail.com>
+Date: Sun, 03 Aug 2008 13:24:27 +0000
+Subject: [PATCH] resend: Remove warning 'unused variable battery' in drivers/acpi/sbs.c
+Message-Id: <ea11fea30808030612m7ab72e85xf34e290d674d955d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200808071542.22880.brunel@diku.dk>
-In-Reply-To: <200808071542.22880.brunel@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julien Brunel <brunel@diku.dk>
-Cc: heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: =?ISO-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@helsinki.fi>
+Cc: kernel-janitors@vger.kernel.org, astarikovskiy@suse.de, LKML <linux-kernel@vger.kernel.org>, trivial@kernel.org
 
-On Thu, 2008-08-07 at 15:42 +0200, Julien Brunel wrote:
-> In case of error, functions dasd_kmalloc_request and idal_buffer_alloc
-> return an ERR pointer, but never return the NULL pointer. So after a
-> call to one of these functions, a NULL test should be replaced by an
-> IS_ERR test.
-
-Good findings, many thanks! I'll add it to git390 for the next please
-pull.
-
--- 
-blue skies,
-  Martin.
-
-"Reality continues to ruin my life." - Calvin.
+Resend of the patch to remove the following warning:
+drivers/acpi/sbs.c: In function 'acpi_battery_remove':
+drivers/acpi/sbs.c:819: warning: unused variable 'battery'
 
 
+Signed-off-by:- "Manish Katiyar" <mkatiyar@gmail.com>
+
+---
+ drivers/acpi/sbs.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
+index 10a3651..8493603 100644
+--- a/drivers/acpi/sbs.c
++++ b/drivers/acpi/sbs.c
+@@ -816,7 +816,9 @@ static int acpi_battery_add(struct acpi_sbs *sbs, int i=
+d)
+
+ static void acpi_battery_remove(struct acpi_sbs *sbs, int id)
+ {
++#if defined (CONFIG_ACPI_SYSFS_POWER) || (CONFIG_ACPI_PROCFS_POWER)
+       struct acpi_battery *battery =3D &sbs->battery[id];
++#endif
+ #ifdef CONFIG_ACPI_SYSFS_POWER
+       if (battery->bat.dev) {
+               if (battery->have_sysfs_alarm)
+--
+1.5.4.3
+
+
+Thanks -
+Manish
+
+On Sun, Aug 3, 2008 at 6:00 PM, Ilpo J=E4rvinen <ilpo.jarvinen@helsinki.fi>=
+ wrote:
+> On Sun, 3 Aug 2008, Manish Katiyar wrote:
+>
+>> Below patch removes the following warning:
+>> drivers/acpi/sbs.c: In function 'acpi_battery_remove':
+>> drivers/acpi/sbs.c:819: warning: unused variable 'battery'
+>>
+>>
+>>
+>> Signed-off-by:- "Manish Katiyar" <mkatiyar@gmail.com>
+>>
+>> ---
+>>  drivers/acpi/sbs.c |    2 ++
+>>  1 files changed, 2 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
+>> index 10a3651..8493603 100644
+>> --- a/drivers/acpi/sbs.c
+>> +++ b/drivers/acpi/sbs.c
+>> @@ -816,7 +816,9 @@ static int acpi_battery_add(struct acpi_sbs *sbs, in=
+t id)
+>>
+>>  static void acpi_battery_remove(struct acpi_sbs *sbs, int id)
+>>  {
+>> +#ifdef CONFIG_ACPI_SYSFS_POWER || CONFIG_ACPI_PROCFS_POWER
+>
+> I don't think you can use || operator in ifdef like that... ...Try
+> #if defined(...) || (...) instead.
+>
+>
+> --
+>  i.
+>
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
