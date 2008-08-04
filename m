@@ -1,12 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 02 Aug 2008 15:15:49 +0000
-Subject: [PATCH 9/10] drivers/scsi/megaraid: Use DIV_ROUND_UP
-Message-Id: <Pine.LNX.4.64.0808021715270.20095@ask.diku.dk>
+From: "Yang, Bo" <Bo.Yang@lsi.com>
+Date: Mon, 04 Aug 2008 12:40:27 +0000
+Subject: RE: [PATCH 9/10] drivers/scsi/megaraid: Use DIV_ROUND_UP
+Message-Id: <4B6A08C587958942AA3002690DD4F8C31B0FCFA2@cosmail02.lsi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0808021715270.20095@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0808021715270.20095@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: megaraidlinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, DL-MegaRAID Linux <megaraidlinux@lsi.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.k>
+Cc: "Austria, Winston" <Winston.Austria@lsi.com>, "Yuen, Eric" <Eric.Yuen@lsi.com>
+
+Julia,
+
+Frame_count is the major parameter used by our megaraid sas FW.  It may cause some issues after this change.  Please keep the original implementation.
+
+Thanks.
+
+Bo Yang
+
+-----Original Message-----
+From: Julia Lawall [mailto:julia@diku.dk]
+Sent: Saturday, August 02, 2008 11:16 AM
+To: DL-MegaRAID Linux; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: [PATCH 9/10] drivers/scsi/megaraid: Use DIV_ROUND_UP
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -59,11 +76,11 @@ diff -u -p a/drivers/scsi/megaraid/megaraid_sas.c b/drivers/scsi/megaraid/megara
 --- a/drivers/scsi/megaraid/megaraid_sas.c
 +++ b/drivers/scsi/megaraid/megaraid_sas.c
 @@ -1615,7 +1615,7 @@ static int megasas_create_frame_pool(str
- 	 * Calculated the number of 64byte frames required for SGL
- 	 */
- 	sgl_sz = sge_sz * instance->max_num_sge;
--	frame_count = (sgl_sz + MEGAMFI_FRAME_SIZE - 1) / MEGAMFI_FRAME_SIZE;
-+	frame_count = DIV_ROUND_UP(sgl_sz, MEGAMFI_FRAME_SIZE);
- 
- 	/*
- 	 * We need one extra frame for the MFI command
+         * Calculated the number of 64byte frames required for SGL
+         */
+        sgl_sz = sge_sz * instance->max_num_sge;
+-       frame_count = (sgl_sz + MEGAMFI_FRAME_SIZE - 1) / MEGAMFI_FRAME_SIZE;
++       frame_count = DIV_ROUND_UP(sgl_sz, MEGAMFI_FRAME_SIZE);
+
+        /*
+         * We need one extra frame for the MFI command
