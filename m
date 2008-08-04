@@ -1,113 +1,43 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 02 Aug 2008 15:13:34 +0000
-Subject: [PATCH 4/10] drivers/media/video: Use DIV_ROUND_UP
-Message-Id: <Pine.LNX.4.64.0808021713100.20095@ask.diku.dk>
+From: "Manish Katiyar" <mkatiyar@gmail.com>
+Date: Mon, 04 Aug 2008 18:39:15 +0000
+Subject: [PATCH] Remove redundant condition from map_buffer_to_page
+Message-Id: <ea11fea30808041127u3c35b268l7ad193c415e9af5a@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@infradead.org, v4l-dvb-maintainer@linuxtv.org, video4linux-list@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: mkatiyar@gmail.com
 
-From: Julia Lawall <julia@diku.dk>
+Currently the only caller to this function is do_mpage_readpage()
+which already checks if the buffer is uptodate, so a check inside is
+not required.
 
-The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
-(d)) but is perhaps more readable.
-
-An extract of the semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@haskernel@
-@@
-
-#include <linux/kernel.h>
-
-@depends on haskernel@
-expression n,d;
-@@
-
-(
-- (n + d - 1) / d
-+ DIV_ROUND_UP(n,d)
-|
-- (n + (d - 1)) / d
-+ DIV_ROUND_UP(n,d)
-)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP((n),d)
-+ DIV_ROUND_UP(n,d)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP(n,(d))
-+ DIV_ROUND_UP(n,d)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by:- "Manish Katiyar" <mkatiyar@gmail.com>
 
 ---
- drivers/media/video/bw-qcam.c       |    4 ++--
- drivers/media/video/uvc/uvc_video.c |    2 +-
- drivers/media/video/zoran_device.c  |    4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ fs/mpage.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/media/video/bw-qcam.c b/drivers/media/video/bw-qcam.c
---- a/drivers/media/video/bw-qcam.c
-+++ b/drivers/media/video/bw-qcam.c
-@@ -495,7 +495,7 @@ static void qc_set(struct qcam_device *q
- 		val2 = (((q->port_mode & QC_MODE_MASK) = QC_BIDIR) ? 24 : 8) *
- 		    q->transfer_scale;
- 	}
--	val = (val + val2 - 1) / val2;
-+	val = DIV_ROUND_UP(val, val2);
- 	qc_command(q, 0x13);
- 	qc_command(q, val);
- 
-@@ -651,7 +651,7 @@ static long qc_capture(struct qcam_devic
- 	transperline = q->width * q->bpp;
- 	divisor = (((q->port_mode & QC_MODE_MASK) = QC_BIDIR) ? 24 : 8) *
- 	    q->transfer_scale;
--	transperline = (transperline + divisor - 1) / divisor;
-+	transperline = DIV_ROUND_UP(transperline, divisor);
- 
- 	for (i = 0, yield = yieldlines; i < linestotrans; i++)
- 	{
-diff -u -p a/drivers/media/video/uvc/uvc_video.c b/drivers/media/video/uvc/uvc_video.c
---- a/drivers/media/video/uvc/uvc_video.c
-+++ b/drivers/media/video/uvc/uvc_video.c
-@@ -644,7 +644,7 @@ static int uvc_init_video_isoc(struct uv
- 	if (size > UVC_MAX_FRAME_SIZE)
- 		return -EINVAL;
- 
--	npackets = (size + psize - 1) / psize;
-+	npackets = DIV_ROUND_UP(size, psize);
- 	if (npackets > UVC_MAX_ISO_PACKETS)
- 		npackets = UVC_MAX_ISO_PACKETS;
- 
-diff -u -p a/drivers/media/video/zoran_device.c b/drivers/media/video/zoran_device.c
---- a/drivers/media/video/zoran_device.c
-+++ b/drivers/media/video/zoran_device.c
-@@ -377,7 +377,7 @@ zr36057_set_vfe (struct zoran           
- 
- 	/* horizontal */
- 	VidWinWid = video_width;
--	X = (VidWinWid * 64 + tvn->Wa - 1) / tvn->Wa;
-+	X = DIV_ROUND_UP(VidWinWid * 64, tvn->Wa);
- 	We = (VidWinWid * 64) / X;
- 	HorDcm = 64 - X;
- 	hcrop1 = 2 * ((tvn->Wa - We) / 4);
-@@ -403,7 +403,7 @@ zr36057_set_vfe (struct zoran           
- 	/* Vertical */
- 	DispMode = !(video_height > BUZ_MAX_HEIGHT / 2);
- 	VidWinHt = DispMode ? video_height : video_height / 2;
--	Y = (VidWinHt * 64 * 2 + tvn->Ha - 1) / tvn->Ha;
-+	Y = DIV_ROUND_UP(VidWinHt * 64 * 2, tvn->Ha);
- 	He = (VidWinHt * 64) / Y;
- 	VerDcm = 64 - Y;
- 	vcrop1 = (tvn->Ha / 2 - He) / 2;
+diff --git a/fs/mpage.c b/fs/mpage.c
+index dbcc7af..a797de1 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -135,8 +135,7 @@ map_buffer_to_page(struct page *page, struct
+buffer_head *bh, int page_block)
+ 		 * don't make any buffers if there is only one buffer on
+ 		 * the page and the page just needs to be set up to date
+ 		 */
+-		if (inode->i_blkbits = PAGE_CACHE_SHIFT &&
+-		    buffer_uptodate(bh)) {
++		if (inode->i_blkbits = PAGE_CACHE_SHIFT) {
+ 			SetPageUptodate(page);
+ 			return;
+ 		}
+-- 
+1.5.4.3
+
+
+
+Thanks -
+Manish
