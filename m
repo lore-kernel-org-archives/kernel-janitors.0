@@ -1,71 +1,70 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 23 Aug 2008 16:27:38 +0000
-Subject: [PATCH] net/mac80211/mesh.c: correct the argument to __mesh_table_free
-Message-Id: <Pine.LNX.4.64.0808231826470.3162@ask.diku.dk>
+From: Zhu Yi <yi.zhu@intel.com>
+Date: Mon, 04 Aug 2008 02:41:18 +0000
+Subject: Re: [PATCH 4/7] drivers/net/wireless/ipw2100.c: Release mutex in
+Message-Id: <1217817678.3107.11.camel@debian.sh.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0807210957490.24625@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0807210957490.24625@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com, xemul@openvz.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: jketreno@linux.intel.com, reinette.chatre@intel.com, linux-wireless@vger.kernel.org, ipw2100-devel@lists.sourceforge.net, jgarzik@pobox.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Mon, 2008-07-21 at 09:58 +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The mutex is released on a successful return, so it would seem that it
+> should be released on an error return as well.
 
-In the function mesh_table_grow, it is the new table not the argument table
-that should be freed if the function fails (cf commit
-bd9b448f4c0a514559bdae4ca18ca3e8cd999c6d)
+Acked-by: Zhu Yi <yi.zhu@intel.com>
 
-The semantic match that detects this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Thanks,
+-yi
 
-// <smpl>
-@r exists@
-local idexpression x;
-expression E,f;
-position p1,p2,p3;
-identifier l;
-statement S;
-@@
+> The semantic patch finds this problem is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+> 
+> // <smpl>
+> @@
+> expression l;
+> @@
+> 
+> mutex_lock(l);
+> ... when != mutex_unlock(l)
+>     when any
+>     when strict
+> (
+> if (...) { ... when != mutex_unlock(l)
+> +   mutex_unlock(l);
+>     return ...;
+> }
+> |
+> mutex_unlock(l);
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+> diff -u -p a/drivers/net/wireless/ipw2100.c b/drivers/net/wireless/ipw2100.c
+> --- a/drivers/net/wireless/ipw2100.c
+> +++ b/drivers/net/wireless/ipw2100.c
+> @@ -6442,6 +6442,7 @@ static int ipw2100_resume(struct pci_dev
+>  	if (err) {
+>  		printk(KERN_ERR "%s: pci_enable_device failed on resume\n",
+>  		       dev->name);
+> +		mutex_unlock(&priv->action_mutex);
+>  		return err;
+>  	}
+>  	pci_restore_state(pci_dev);
+> @@ -7146,7 +7147,7 @@ static int ipw2100_wx_get_rate(struct ne
+>  	err = ipw2100_get_ordinal(priv, IPW_ORD_CURRENT_TX_RATE, &val, &len);
+>  	if (err) {
+>  		IPW_DEBUG_WX("failed querying ordinals.\n");
+> -		return err;
+> +		goto done;
+>  	}
+>  
+>  	switch (val & TX_RATE_MASK) {
 
-x = mesh_table_alloc@p1(...)
-...
-if (x = NULL) S
-... when != E = x
-    when != mesh_table_free(x)
-goto@p2 l;
-... when != E = x
-    when != f(...,x,...)
-    when any
-(
-return \(0\|x\);
-|
-return@p3 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-p3 << r.p3;
-@@
-
-print "%s: call on line %s not freed or saved before return on line %s via line %s" % (p1[0].file,p1[0].line,p3[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- net/mac80211/mesh.c           |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/mac80211/mesh.c b/net/mac80211/mesh.c
-index b5933b2..35f2f95 100644
---- a/net/mac80211/mesh.c
-+++ b/net/mac80211/mesh.c
-@@ -383,7 +383,7 @@ errcopy:
- 		hlist_for_each_safe(p, q, &newtbl->hash_buckets[i])
- 			tbl->free_node(p, 0);
- 	}
--	__mesh_table_free(tbl);
-+	__mesh_table_free(newtbl);
- endgrow:
- 	return NULL;
- }
