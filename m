@@ -1,31 +1,101 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Wed, 06 Aug 2008 13:54:04 +0000
-Subject: Re: getting rid of "fs_initcall" from drivers/ code
-Message-Id: <20080806135404.GJ2055@parisc-linux.org>
+From: Julien Brunel <brunel@diku.dk>
+Date: Thu, 07 Aug 2008 13:42:22 +0000
+Subject: [PATCH] drivers/s390: Use an IS_ERR test rather than a NULL test
+Message-Id: <200808071542.22880.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.1.10.0808052206430.20743@localhost.localdomain>
-In-Reply-To: <alpine.LFD.1.10.0808052206430.20743@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 05, 2008 at 10:51:53PM -0400, Robert P. J. Day wrote:
-> ah ... so after being condescending and snotty to me in your previous
-> posting here when i suggested that some cleanup could be done, you've
-> responded to my followup post and admitted that ... some cleanup could
-> be done.
+From: Julien Brunel <brunel@diku.dk>
 
-If you intended to communicate "some cleanup could be done", you failed
-massively.  What I received was "I'm going to tell those idiotic driver
-writers how they should write their code".
+In case of error, functions dasd_kmalloc_request and idal_buffer_alloc
+return an ERR pointer, but never return the NULL pointer. So after a
+call to one of these functions, a NULL test should be replaced by an
+IS_ERR test.
 
-Robert, do you ever intend to move away from these "How things SHOULD be
-done" patches?  Do you ever intend to fix a bug or implement a new
-feature?
+A simplified version of the semantic patch that makes this change is
+as follows: 
+(http://www.emn.fr/x-info/coccinelle/)
 
--- 
-Intel are signing my paycheques ... these opinions are still mine
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+// <smpl>
+@correct_null_test@
+expression x,E;
+statement S1, S2;
+@@
+x = 
+(
+  dasd_kmalloc_request(...)
+|
+  idal_buffer_alloc(...)
+)
+<... when != x = E
+if (
+(
+- x@p2 != NULL
++ ! IS_ERR ( x )
+|
+- x@p2 = NULL
++ IS_ERR( x )
+)
+ )
+S1
+else S2
+...>
+? x = E;
+// </smpl>
+
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
+
+---
+ drivers/s390/block/dasd_eer.c |    3 ++-
+ drivers/s390/char/tape_char.c |    2 +-
+ drivers/s390/char/tape_std.c  |    2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+diff -u -p a/drivers/s390/block/dasd_eer.c b/drivers/s390/block/dasd_eer.c
+--- a/drivers/s390/block/dasd_eer.c
++++ b/drivers/s390/block/dasd_eer.c
+@@ -16,6 +16,7 @@
+ #include <linux/poll.h>
+ #include <linux/mutex.h>
+ #include <linux/smp_lock.h>
++#include <linux/err.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/atomic.h>
+@@ -457,7 +458,7 @@ int dasd_eer_enable(struct dasd_device *
+ 
+ 	cqr = dasd_kmalloc_request("ECKD", 1 /* SNSS */,
+ 				   SNSS_DATA_SIZE, device);
+-	if (!cqr)
++	if (IS_ERR(cqr))
+ 		return -ENOMEM;
+ 
+ 	cqr->startdev = device;
+diff -u -p a/drivers/s390/char/tape_char.c b/drivers/s390/char/tape_char.c
+--- a/drivers/s390/char/tape_char.c
++++ b/drivers/s390/char/tape_char.c
+@@ -109,7 +109,7 @@ tapechar_check_idalbuffer(struct tape_de
+ 
+ 	/* The current idal buffer is not correct. Allocate a new one. */
+ 	new = idal_buffer_alloc(block_size, 0);
+-	if (new = NULL)
++	if (IS_ERR(new))
+ 		return -ENOMEM;
+ 
+ 	if (device->char_data.idal_buf != NULL)
+diff -u -p a/drivers/s390/char/tape_std.c b/drivers/s390/char/tape_std.c
+--- a/drivers/s390/char/tape_std.c
++++ b/drivers/s390/char/tape_std.c
+@@ -248,7 +248,7 @@ tape_std_mtsetblk(struct tape_device *de
+ 
+ 	/* Allocate a new idal buffer. */
+ 	new = idal_buffer_alloc(count, 0);
+-	if (new = NULL)
++	if (IS_ERR(new))
+ 		return -ENOMEM;
+ 	if (device->char_data.idal_buf != NULL)
+ 		idal_buffer_free(device->char_data.idal_buf);
