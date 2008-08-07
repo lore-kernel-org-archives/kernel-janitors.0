@@ -1,55 +1,62 @@
-From: Rene Herman <rene.herman@keyaccess.nl>
-Date: Fri, 08 Aug 2008 15:42:15 +0000
-Subject: Re: [PATCH] sound/pci/cs46xx/cs46xx_lib.c: remove unused variable
-Message-Id: <489C6957.3040803@keyaccess.nl>
+From: Julien Brunel <brunel@diku.dk>
+Date: Thu, 07 Aug 2008 15:15:53 +0000
+Subject: [PATCH] drivers/infiniband/core: Use an IS_ERR test rather than a NULL test
+Message-Id: <200808071715.54004.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1218195562.4609.7.camel@niro-laptop>
-In-Reply-To: <1218195562.4609.7.camel@niro-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Borisov <niro@tut.by>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, abramo@alsa-project.org, kernel-janitors@vger.kernel.org
+To: rolandd@cisco.com, sean.hefty@intel.com, hal.rosenstock@gmail.com, general@lists.openfabrics.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08-08-08 13:39, Michael Borisov wrote:
+From: Julien Brunel <brunel@diku.dk>
 
-> This patch fixes the following compile warning:
-> sound/pci/cs46xx/cs46xx_lib.c: In function 'snd_cs46xx_resume':
-> sound/pci/cs46xx/cs46xx_lib.c:3614: warning: unused variable 'i'
-> 
->  cs46xx_lib.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> Signed-off-by: Michael Borisov <niro@tut.by>
-> ---
-> diff --git a/sound/pci/cs46xx/cs46xx_lib.c
-> b/sound/pci/cs46xx/cs46xx_lib.c
-> index e214e56..07bb7e0 100644
-> --- a/sound/pci/cs46xx/cs46xx_lib.c
-> +++ b/sound/pci/cs46xx/cs46xx_lib.c
-> @@ -3611,7 +3611,7 @@ int snd_cs46xx_resume(struct pci_dev *pci)
->  {
->  	struct snd_card *card = pci_get_drvdata(pci);
->  	struct snd_cs46xx *chip = card->private_data;
-> -	int i, amp_saved;
-> +	int amp_saved;
->  
->  	pci_set_power_state(pci, PCI_D0);
->  	pci_restore_state(pci);
-> @@ -3633,6 +3633,7 @@ int snd_cs46xx_resume(struct pci_dev *pci)
->  #ifdef CONFIG_SND_CS46XX_NEW_DSP
->  	cs46xx_dsp_resume(chip);
->  	/* restore some registers */
-> +	int i;
->  	for (i = 0; i < ARRAY_SIZE(saved_regs); i++)
->  		snd_cs46xx_pokeBA0(chip, saved_regs[i], chip->saved_regs[i]);
->  #else
+In case of error, the function ib_create_send_mad returns an ERR pointer,
+but never returns a NULL pointer. So after a call to this function,
+a NULL test should be replaced by an IS_ERR test.
 
-Mixing code and declarations is C99 and I'm afraid kernel developers 
-haven't gotten around to upgrading themselves for the last 9 years yet 
-so this is unfortunately not accepted style.
+A simplified version of the semantic patch that makes this change is
+as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-I'm afraid you need a { } code block so that the declaration can go at 
-the top of that to stay C89 compatible.
+// <smpl>
+@correct_null_test@
+expression x,E;
+statement S1, S2;
+@@
+x = ib_create_send_mad(...)
+<... when != x = E
+if (
+(
+- x@p2 != NULL
++ ! IS_ERR ( x )
+|
+- x@p2 = NULL
++ IS_ERR( x )
+)
+ )
+S1
+else S2
+...>
+? x = E;
+// </smpl>
 
-Rene.
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
+
+---
+ drivers/infiniband/core/mad_rmpp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/infiniband/core/mad_rmpp.c 
+b/drivers/infiniband/core/mad_rmpp.c
+--- a/drivers/infiniband/core/mad_rmpp.c
++++ b/drivers/infiniband/core/mad_rmpp.c
+@@ -133,7 +133,7 @@ static void ack_recv(struct mad_rmpp_rec
+ 	msg = ib_create_send_mad(&rmpp_recv->agent->agent, recv_wc->wc->src_qp,
+ 				 recv_wc->wc->pkey_index, 1, hdr_len,
+ 				 0, GFP_KERNEL);
+-	if (!msg)
++	if (IS_ERR(msg))
+ 		return;
+ 
+ 	format_ack(msg, (struct ib_rmpp_mad *) recv_wc->recv_buf.mad, rmpp_recv);
