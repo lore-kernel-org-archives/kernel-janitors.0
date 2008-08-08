@@ -1,40 +1,61 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 31 Aug 2008 18:15:38 +0000
-Subject: Re: [PATCH] Fix build warning in kernel/auditsc.c
-Message-Id: <48BADFCA.3090206@bfs.de>
+From: Julien Brunel <brunel@diku.dk>
+Date: Fri, 08 Aug 2008 11:55:21 +0000
+Subject: [PATCH] net/rxrpc: Use an IS_ERR test rather than a NULL test
+Message-Id: <200808081355.21787.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <48b93353.02e2660a.0e28.3e54@mx.google.com>
-In-Reply-To: <48b93353.02e2660a.0e28.3e54@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julien Brunel <brunel@diku.dk>
 
+In case of error, the function rxrpc_get_transport returns an ERR
+pointer, but never returns a NULL pointer. So after a call to this
+function, a NULL test should be replaced by an IS_ERR test.
 
-Hannes Eder schrieb:
-> Fix the following build warning, by eliminating the variable.
-> 
-> kernel/auditsc.c: In function 'audit_match_perm':
-> kernel/auditsc.c:249: warning: ISO C90 forbids mixed declarations and code
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> ---
-> walter harms <wharms@bfs.de> wrote:
->> maybe you can do a s/n/ctx->major/g ?
->> removing the need for the whole variable ?!
-> 
-> Here we go.  Why is this better than splitting the variable declaration and
-> initialization, as in the previous patch?
-> 
+A simplified version of the semantic patch that makes this change is
+as follows: 
+(http://www.emn.fr/x-info/coccinelle/)
 
-Hi hannes,
-removing the variable removes the problem for ever. The Variable itself is used as
-"shortcut" to ctx->major whar is useful in larger codes to get a better overview (sometimes).
-In this case the code is short, so there is no advantage in keeping.
+// <smpl>
+@correct_null_test@
+expression x,E;
+statement S1, S2;
+@@
+x =  rxrpc_get_transport(...)
+<... when != x = E
+if (
+(
+- x@p2 != NULL
++ ! IS_ERR ( x )
+|
+- x@p2 = NULL
++ IS_ERR( x )
+)
+ )
+S1
+else S2
+...>
+? x = E;
+// </smpl>
 
-re,
-  wh
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
 
+---
+ net/rxrpc/ar-accept.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff -u -p a/net/rxrpc/ar-accept.c b/net/rxrpc/ar-accept.c
+--- a/net/rxrpc/ar-accept.c
++++ b/net/rxrpc/ar-accept.c
+@@ -100,7 +100,7 @@ static int rxrpc_accept_incoming_call(st
+ 
+ 	trans = rxrpc_get_transport(local, peer, GFP_NOIO);
+ 	rxrpc_put_peer(peer);
+-	if (!trans) {
++	if (IS_ERR(trans)) {
+ 		_debug("no trans");
+ 		ret = -EBUSY;
+ 		goto error;
