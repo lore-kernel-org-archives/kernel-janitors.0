@@ -1,25 +1,25 @@
-From: Benoit Fouet <benoit.fouet@purplelabs.com>
-Date: Fri, 08 Aug 2008 12:05:53 +0000
+From: Rene Herman <rene.herman@keyaccess.nl>
+Date: Fri, 08 Aug 2008 15:42:15 +0000
 Subject: Re: [PATCH] sound/pci/cs46xx/cs46xx_lib.c: remove unused variable
-Message-Id: <489C36A1.2030801@purplelabs.com>
+Message-Id: <489C6957.3040803@keyaccess.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1218195562.4609.7.camel@niro-laptop>
 In-Reply-To: <1218195562.4609.7.camel@niro-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Michael Borisov <niro@tut.by>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, abramo@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Hi,
+On 08-08-08 13:39, Michael Borisov wrote:
 
-Michael Borisov wrote:
 > This patch fixes the following compile warning:
-> sound/pci/cs46xx/cs46xx_lib.c: In function ‘snd_cs46xx_resume’:
-> sound/pci/cs46xx/cs46xx_lib.c:3614: warning: unused variable ‘i’
->
+> sound/pci/cs46xx/cs46xx_lib.c: In function 'snd_cs46xx_resume':
+> sound/pci/cs46xx/cs46xx_lib.c:3614: warning: unused variable 'i'
+> 
 >  cs46xx_lib.c |    3 ++-
 >  1 file changed, 2 insertions(+), 1 deletion(-)
->
+> 
 > Signed-off-by: Michael Borisov <niro@tut.by>
 > ---
 > diff --git a/sound/pci/cs46xx/cs46xx_lib.c
@@ -41,13 +41,15 @@ Michael Borisov wrote:
 >  	cs46xx_dsp_resume(chip);
 >  	/* restore some registers */
 > +	int i;
->   
+>  	for (i = 0; i < ARRAY_SIZE(saved_regs); i++)
+>  		snd_cs46xx_pokeBA0(chip, saved_regs[i], chip->saved_regs[i]);
+>  #else
 
-why not ifdef'ing the declaration earlier.
-doing it the way you are way, you mix declaration and code.
-(I don't know what the kernel policy is for this matter)
+Mixing code and declarations is C99 and I'm afraid kernel developers 
+haven't gotten around to upgrading themselves for the last 9 years yet 
+so this is unfortunately not accepted style.
 
--- 
-Benoit Fouet
-Purple Labs S.A.
-www.purplelabs.com
+I'm afraid you need a { } code block so that the declaration can go at 
+the top of that to stay C89 compatible.
+
+Rene.
