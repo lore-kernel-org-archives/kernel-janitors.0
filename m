@@ -1,99 +1,43 @@
-From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Mon, 04 Aug 2008 13:23:21 +0000
-Subject: Re: [PATCH] resend: Remove warning 'unused variable battery' in drivers/acpi/sbs.c
-Message-Id: <ea11fea30808040611s61305c74m9a235d1fd15aa199@mail.gmail.com>
+From: Michael Borisov <niro@tut.by>
+Date: Fri, 08 Aug 2008 11:39:22 +0000
+Subject: [PATCH] sound/pci/cs46xx/cs46xx_lib.c: remove unused variable
+Message-Id: <1218195562.4609.7.camel@niro-laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30808030612m7ab72e85xf34e290d674d955d@mail.gmail.com>
-In-Reply-To: <ea11fea30808030612m7ab72e85xf34e290d674d955d@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, abramo@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Sun, Aug 3, 2008 at 9:01 PM, walter harms <wharms@bfs.de> wrote:
->
->
-> Manish Katiyar wrote:
->
->> On Sun, Aug 3, 2008 at 8:42 PM, Ilpo J=E4rvinen <ilpo.jarvinen@helsinki.=
-fi> wrote:
->>> On Sun, 3 Aug 2008, Manish Katiyar wrote:
->>>
->>>>>>  static void acpi_battery_remove(struct acpi_sbs *sbs, int id)
->>>>>>  {
->>>>>> +#if defined (CONFIG_ACPI_SYSFS_POWER) || (CONFIG_ACPI_PROCFS_POWER)
->>>>> Sorry, my bad this time, you actually need to have defined() around b=
-oth
->>>>> of the config symbols though I forgot it in one of them in my example
->>>>> because I was using dots instead of real ones that would have made th=
-at
->>>>> mistake obvious due to capitalization.
->>>> Sorry... I didn't understand :-( ....... I compile tested the patch.
->>> There are plenty of examples available:
->>
->> Ohh Ok.. got it. Here is an updated patch.
->>
->>
->> Signed-off-by:- "Manish Katiyar" <mkatiyar@gmail.com>
->>
->> ---
->>  drivers/acpi/sbs.c |    2 ++
->>  1 files changed, 2 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
->> index 10a3651..8493603 100644
->> --- a/drivers/acpi/sbs.c
->> +++ b/drivers/acpi/sbs.c
->> @@ -816,7 +816,9 @@ static int acpi_battery_add(struct acpi_sbs *sbs, in=
-t id)
->>
->>  static void acpi_battery_remove(struct acpi_sbs *sbs, int id)
->>  {
->> +#if defined(CONFIG_ACPI_SYSFS_POWER) || defined(CONFIG_ACPI_PROCFS_POWE=
-R)
->>         struct acpi_battery *battery =3D &sbs->battery[id];
->> +#endif
->>  #ifdef CONFIG_ACPI_SYSFS_POWER
->>         if (battery->bat.dev) {
->>                 if (battery->have_sysfs_alarm)
->
->
-> i suggest to move the #ifdef CONFIG_ACPI_SYSFS_POWER a few lines up, just=
- to improve
-> readability for me. I did not dive into the code just the patch but i sus=
-pect the whole
-> function depends on CONFIG_ACPI_SYSFS_POWER.
+This patch fixes the following compile warning:
+sound/pci/cs46xx/cs46xx_lib.c: In function ‘snd_cs46xx_resume’:
+sound/pci/cs46xx/cs46xx_lib.c:3614: warning: unused variable ‘i’
 
-Hi Walter,
+ cs46xx_lib.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-From the code it looks like they are separate config options and are
-independant, but I am too novice to say that :-) .
-
-Thanks -
-Manish
+Signed-off-by: Michael Borisov <niro@tut.by>
+---
+diff --git a/sound/pci/cs46xx/cs46xx_lib.c
+b/sound/pci/cs46xx/cs46xx_lib.c
+index e214e56..07bb7e0 100644
+--- a/sound/pci/cs46xx/cs46xx_lib.c
++++ b/sound/pci/cs46xx/cs46xx_lib.c
+@@ -3611,7 +3611,7 @@ int snd_cs46xx_resume(struct pci_dev *pci)
+ {
+ 	struct snd_card *card = pci_get_drvdata(pci);
+ 	struct snd_cs46xx *chip = card->private_data;
+-	int i, amp_saved;
++	int amp_saved;
+ 
+ 	pci_set_power_state(pci, PCI_D0);
+ 	pci_restore_state(pci);
+@@ -3633,6 +3633,7 @@ int snd_cs46xx_resume(struct pci_dev *pci)
+ #ifdef CONFIG_SND_CS46XX_NEW_DSP
+ 	cs46xx_dsp_resume(chip);
+ 	/* restore some registers */
++	int i;
+ 	for (i = 0; i < ARRAY_SIZE(saved_regs); i++)
+ 		snd_cs46xx_pokeBA0(chip, saved_regs[i], chip->saved_regs[i]);
+ #else
 
 
-
->
->  #if defined(CONFIG_ACPI_SYSFS_POWER)
->
->  #if defined(CONFIG_ACPI_PROCFS_POWER)
->          struct acpi_battery *battery =3D &sbs->battery[id];
->  #endif
->
->         if (battery->bat.dev) {
->                 if (battery->have_sysfs_alarm)
->
->
->
-> happy hacking,
->  wh
->
->
->
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
