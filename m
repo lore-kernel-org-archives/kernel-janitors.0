@@ -1,50 +1,46 @@
-From: Julien Brunel <brunel@diku.dk>
-Date: Thu, 28 Aug 2008 13:31:07 +0000
-Subject: [PATCH] drivers/infiniband/core: Use a NULL test rather than an IS_ERR test
-Message-Id: <200808281531.07942.brunel@diku.dk>
+From: Himanshu Chauhan <chauhan.jpr@gmail.com>
+Date: Sun, 10 Aug 2008 12:18:33 +0000
+Subject: memcpy on const pointer, warning in smbfs/cache.c
+Message-Id: <g7mlka$8lc$1@ger.gmane.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: rolandd@cisco.com, sean.hefty@intel.com, hal.rosenstock@gmail.com, general@lists.openfabrics.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-From: Julien Brunel <brunel@diku.dk>
+Dear all,
 
-In case of error, the function ucma_alloc_multicast returns a NULL
-pointer, but never returns an ERR pointer. So after a call to this
-function, an IS_ERR test should be replaced by a NULL test.
+I pulled out latest source from Linus's git tree. During compilation of=20
+smbfs/cache.c in line 148 I got a warning stating
 
-The semantic match that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+  warning: passing argument 1 of =91__constant_memcpy=92 discards qualifier=
+s=20
+from pointer target type
 
-// <smpl>
-@match bad_is_err_test@
-expression x, E;
-@@
+This was in function smb_fill_cache where memcpy is being used as following:
 
-x = ucma_alloc_multicast(...)
-... when != x = E
-IS_ERR(x)
-// </smpl>
+memcpy((char *) newdent->d_name.name, qname->name,
+		       newdent->d_name.len);
 
-Signed-off-by:  Julien Brunel <brunel@diku.dk>
-Signed-off-by:  Julia Lawall <julia@diku.dk>
+d_name is of type struct qstr and in qstr name is defined as const=20
+unsigned char *.
 
----
- drivers/infiniband/core/ucma.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+struct qstr {
+	unsigned int hash;
+	unsigned int len;
+	const unsigned char *name;
+};
 
-diff -u -p a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -904,8 +904,8 @@ static ssize_t ucma_join_multicast(struc
- 
- 	mutex_lock(&file->mut);
- 	mc = ucma_alloc_multicast(ctx);
--	if (IS_ERR(mc)) {
--		ret = PTR_ERR(mc);
-+	if (mc = NULL) {
-+		ret = -ENOMEM;
- 		goto err1;
- 	}
- 
+So this type cast is wrong.
+
+Is it ok to fix this by defineing name as unsigned char * rather than as=20
+const unsigned char *?
+
+Regards
+--Himanshu
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
