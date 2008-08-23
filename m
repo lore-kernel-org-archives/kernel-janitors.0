@@ -1,137 +1,88 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 02 Aug 2008 15:12:23 +0000
-Subject: [PATCH 1/10] drivers/atm: Use DIV_ROUND_UP
-Message-Id: <Pine.LNX.4.64.0808021711550.20095@ask.diku.dk>
+Date: Sat, 23 Aug 2008 16:00:56 +0000
+Subject: [PATCH 2/2] drivers/char/hvc_console.c: adjust call to put_tty_driver
+Message-Id: <Pine.LNX.4.64.0808231800200.3162@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: chas@cmf.nrl.navy.mil, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: paulus@samba.org, benh@kernel.crashing.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
-(d)) but is perhaps more readable.
+The call to put_tty_driver is out of place and is applied to the wrong
+argument.
 
-In the case of the file drivers/atm/eni.c, I am a little bit suspicious of
-the -1 at the end of the affected expression.  Please check that that is
-what is wanted.
+The function enclosing the patched code calls alloc_tty_driver and stores
+the result in drv.  Subsequently, there are two occurrences of error
+handling code, one making a goto to put_tty and one making a goto to
+stop_thread.  At the point of the first one the assignment hvc_driver = drv
+has not yet been executed, and from inspecting the rest of the file it
+seems that hvc_driver would be NULL.  Thus the current call to
+put_tty_driver is useless, and one applied to drv is needed.  The goto
+stop_thread is in the error handling code for a call to
+tty_register_driver, but the error cases in tty_register_driver do not free
+its argument, so it should be done here.  Thus, I have moved the put_tty
+label after the stop_thread label, so that put_tty_driver is called in both
+cases.
 
-An extract of the semantic patch that makes this change is as follows:
+The semantic match that finds this problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@haskernel@
+@r exists@
+local idexpression x;
+expression E,f;
+position p1,p2,p3;
+identifier l;
+statement S;
 @@
 
-#include <linux/kernel.h>
-
-@depends on haskernel@
-expression n,d;
-@@
-
+x = alloc_tty_driver@p1(...)
+...
+if (x = NULL) S
+... when != E = x
+    when != put_tty_driver(x)
+goto@p2 l;
+... when != E = x
+    when != f(...,x,...)
+    when any
 (
-- (n + d - 1) / d
-+ DIV_ROUND_UP(n,d)
+return \(0\|x\);
 |
-- (n + (d - 1)) / d
-+ DIV_ROUND_UP(n,d)
+return@p3 ...;
 )
 
-@depends on haskernel@
-expression n,d;
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+p3 << r.p3;
 @@
 
-- DIV_ROUND_UP((n),d)
-+ DIV_ROUND_UP(n,d)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP(n,(d))
-+ DIV_ROUND_UP(n,d)
+print "%s: call on line %s not freed or saved before return on line %s via line %s" % (p1[0].file,p1[0].line,p3[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/atm/eni.c     |    2 +-
- drivers/atm/horizon.c |    8 ++++----
- drivers/atm/zatm.c    |    6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/char/hvc_console.c    |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/atm/eni.c b/drivers/atm/eni.c
---- a/drivers/atm/eni.c
-+++ b/drivers/atm/eni.c
-@@ -1270,7 +1270,7 @@ static int comp_tx(struct eni_dev *eni_d
- 			if (*pre < 3) (*pre)++; /* else fail later */
- 			div = pre_div[*pre]*-*pcr;
- 			DPRINTK("max div %d\n",div);
--			*res = (TS_CLOCK+div-1)/div-1;
-+			*res = DIV_ROUND_UP(TS_CLOCK, div)-1;
- 		}
- 		if (*res < 0) *res = 0;
- 		if (*res > MID_SEG_MAX_RATE) *res = MID_SEG_MAX_RATE;
-diff -u -p a/drivers/atm/horizon.c b/drivers/atm/horizon.c
---- a/drivers/atm/horizon.c
-+++ b/drivers/atm/horizon.c
-@@ -635,7 +635,7 @@ static int make_rate (const hrz_dev * de
- 		// take care of rounding
- 		switch (r) {
- 			case round_down:
--				pre = (br+(c<<div)-1)/(c<<div);
-+				pre = DIV_ROUND_UP(br, c<<div);
- 				// but p must be non-zero
- 				if (!pre)
- 					pre = 1;
-@@ -668,7 +668,7 @@ static int make_rate (const hrz_dev * de
- 			// take care of rounding
- 			switch (r) {
- 				case round_down:
--					pre = (br+(c<<div)-1)/(c<<div);
-+					pre = DIV_ROUND_UP(br, c<<div);
- 					break;
- 				case round_nearest:
- 					pre = (br+(c<<div)/2)/(c<<div);
-@@ -698,7 +698,7 @@ got_it:
- 		if (bits)
- 			*bits = (div<<CLOCK_SELECT_SHIFT) | (pre-1);
- 		if (actual) {
--			*actual = (br + (pre<<div) - 1) / (pre<<div);
-+			*actual = DIV_ROUND_UP(br, pre<<div);
- 			PRINTD (DBG_QOS, "actual rate: %u", *actual);
- 		}
- 		return 0;
-@@ -1967,7 +1967,7 @@ static int __devinit hrz_init (hrz_dev *
-   // Set the max AAL5 cell count to be just enough to contain the
-   // largest AAL5 frame that the user wants to receive
-   wr_regw (dev, MAX_AAL5_CELL_COUNT_OFF,
--	   (max_rx_size + ATM_AAL5_TRAILER + ATM_CELL_PAYLOAD - 1) / ATM_CELL_PAYLOAD);
-+	   DIV_ROUND_UP(max_rx_size + ATM_AAL5_TRAILER, ATM_CELL_PAYLOAD));
-   
-   // Enable receive
-   wr_regw (dev, RX_CONFIG_OFF, rd_regw (dev, RX_CONFIG_OFF) | RX_ENABLE);
-diff -u -p a/drivers/atm/zatm.c b/drivers/atm/zatm.c
---- a/drivers/atm/zatm.c
-+++ b/drivers/atm/zatm.c
-@@ -496,8 +496,8 @@ static int open_rx_first(struct atm_vcc 
- 			vcc->qos.rxtp.max_sdu = 65464;
- 			/* fix this - we may want to receive 64kB SDUs
- 			   later */
--		cells = (vcc->qos.rxtp.max_sdu+ATM_AAL5_TRAILER+
--		    ATM_CELL_PAYLOAD-1)/ATM_CELL_PAYLOAD;
-+		cells = DIV_ROUND_UP(vcc->qos.rxtp.max_sdu + ATM_AAL5_TRAILER,
-+				ATM_CELL_PAYLOAD);
- 		zatm_vcc->pool = pool_index(cells*ATM_CELL_PAYLOAD);
- 	}
- 	else {
-@@ -820,7 +820,7 @@ static int alloc_shaper(struct atm_dev *
- 			}
- 			else {
- 				i = 255;
--				m = (ATM_OC3_PCR*255+max-1)/max;
-+				m = DIV_ROUND_UP(ATM_OC3_PCR*255, max);
- 			}
- 		}
- 		if (i > m) {
+diff --git a/drivers/char/hvc_console.c b/drivers/char/hvc_console.c
+index fd64137..ec7aded 100644
+--- a/drivers/char/hvc_console.c
++++ b/drivers/char/hvc_console.c
+@@ -819,11 +819,11 @@ static int hvc_init(void)
+ 	hvc_driver = drv;
+ 	return 0;
+ 
+-put_tty:
+-	put_tty_driver(hvc_driver);
+ stop_thread:
+ 	kthread_stop(hvc_task);
+ 	hvc_task = NULL;
++put_tty:
++	put_tty_driver(drv);
+ out:
+ 	return err;
+ }
