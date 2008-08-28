@@ -1,69 +1,50 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 02 Aug 2008 15:15:26 +0000
-Subject: [PATCH 8/10] drivers/scsi: Use DIV_ROUND_UP
-Message-Id: <Pine.LNX.4.64.0808021715060.20095@ask.diku.dk>
+From: Julien Brunel <brunel@diku.dk>
+Date: Thu, 28 Aug 2008 13:31:07 +0000
+Subject: [PATCH] drivers/infiniband/core: Use a NULL test rather than an IS_ERR test
+Message-Id: <200808281531.07942.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: rolandd@cisco.com, sean.hefty@intel.com, hal.rosenstock@gmail.com, general@lists.openfabrics.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: Julien Brunel <brunel@diku.dk>
 
-The kernel.h macro DIV_ROUND_UP performs the computation (((n) + (d) - 1) /
-(d)) but is perhaps more readable.
+In case of error, the function ucma_alloc_multicast returns a NULL
+pointer, but never returns an ERR pointer. So after a call to this
+function, an IS_ERR test should be replaced by a NULL test.
 
-An extract of the semantic patch that makes this change is as follows:
+The semantic match that finds this problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@haskernel@
+@match bad_is_err_test@
+expression x, E;
 @@
 
-#include <linux/kernel.h>
-
-@depends on haskernel@
-expression n,d;
-@@
-
-(
-- (n + d - 1) / d
-+ DIV_ROUND_UP(n,d)
-|
-- (n + (d - 1)) / d
-+ DIV_ROUND_UP(n,d)
-)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP((n),d)
-+ DIV_ROUND_UP(n,d)
-
-@depends on haskernel@
-expression n,d;
-@@
-
-- DIV_ROUND_UP(n,(d))
-+ DIV_ROUND_UP(n,d)
+x = ucma_alloc_multicast(...)
+... when != x = E
+IS_ERR(x)
 // </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/esp_scsi.c              |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/ucma.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -1464,7 +1464,7 @@ static void esp_msgin_sdtr(struct esp *e
+diff -u -p a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -904,8 +904,8 @@ static ssize_t ucma_join_multicast(struc
  
- 		one_clock = esp->ccycle / 1000;
- 		rounded_up = (period << 2);
--		rounded_up = (rounded_up + one_clock - 1) / one_clock;
-+		rounded_up = DIV_ROUND_UP(rounded_up, one_clock);
- 		stp = rounded_up;
- 		if (stp && esp->rev >= FAS236) {
- 			if (stp >= 50)
+ 	mutex_lock(&file->mut);
+ 	mc = ucma_alloc_multicast(ctx);
+-	if (IS_ERR(mc)) {
+-		ret = PTR_ERR(mc);
++	if (mc = NULL) {
++		ret = -ENOMEM;
+ 		goto err1;
+ 	}
+ 
