@@ -1,43 +1,33 @@
-From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Mon, 04 Aug 2008 18:39:15 +0000
-Subject: [PATCH] Remove redundant condition from map_buffer_to_page
-Message-Id: <ea11fea30808041127u3c35b268l7ad193c415e9af5a@mail.gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Fri, 29 Aug 2008 19:01:21 +0000
+Subject: [PATCH] proc: fix sparse warning: make function grab_header static
+Message-Id: <48bad4bb.0aaa660a.7eb7.ffff80b2@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc: mkatiyar@gmail.com
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Currently the only caller to this function is do_mpage_readpage()
-which already checks if the buffer is uptodate, so a check inside is
-not required.
+Fix the following sparse warning in fs/proc/proc_sysctl.c, by making
+the function grab_header static.
 
-Signed-off-by:- "Manish Katiyar" <mkatiyar@gmail.com>
+warning: symbol 'grab_header' was not declared. Should it be static?
 
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- fs/mpage.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ fs/proc/proc_sysctl.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index dbcc7af..a797de1 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -135,8 +135,7 @@ map_buffer_to_page(struct page *page, struct
-buffer_head *bh, int page_block)
- 		 * don't make any buffers if there is only one buffer on
- 		 * the page and the page just needs to be set up to date
- 		 */
--		if (inode->i_blkbits = PAGE_CACHE_SHIFT &&
--		    buffer_uptodate(bh)) {
-+		if (inode->i_blkbits = PAGE_CACHE_SHIFT) {
- 			SetPageUptodate(page);
- 			return;
- 		}
--- 
-1.5.4.3
-
-
-
-Thanks -
-Manish
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index f9a8b89..84f58e8 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -66,7 +66,7 @@ static struct ctl_table *find_in_table(struct ctl_table *p, struct qstr *name)
+ 	return NULL;
+ }
+ 
+-struct ctl_table_header *grab_header(struct inode *inode)
++static struct ctl_table_header *grab_header(struct inode *inode)
+ {
+ 	if (PROC_I(inode)->sysctl)
+ 		return sysctl_head_grab(PROC_I(inode)->sysctl);
