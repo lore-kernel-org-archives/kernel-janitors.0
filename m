@@ -1,22 +1,58 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Mon, 04 Aug 2008 13:09:32 +0000
-Subject: Re: [PATCH 9/10] drivers/scsi/megaraid: Use DIV_ROUND_UP
-Message-Id: <20080804140932.0167ac82@lxorguk.ukuu.org.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 31 Aug 2008 20:35:55 +0000
+Subject: code after return
+Message-Id: <Pine.LNX.4.64.0808312231550.5157@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0808021715270.20095@ask.diku.dk>
-	<4B6A08C587958942AA3002690DD4F8C31B0FCFA2@cosmail02.lsi.com>
-In-Reply-To: <4B6A08C587958942AA3002690DD4F8C31B0FCFA2@cosmail02.lsi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Yang, Bo" <Bo.Yang@lsi.com>
-Cc: Julia Lawall <julia@diku.dk>, DL-MegaRAID Linux <megaraidlinux@lsi.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Austria, Winston" <Winston.Austria@lsi.com>, "Yuen, Eric" <Eric.Yuen@lsi.com>
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 4 Aug 2008 06:40:27 -0600
-"Yang, Bo" <Bo.Yang@lsi.com> wrote:
+Below is a list of some places (file and function name) where there is 
+some code after a return or goto.  Most of the time, the return is in a 
+switch case, and the code after the return is a break.  I was wondering 
+whether it would be useful to do something about these?  Or is the thought 
+that it has no impact on the compiled code, so it doesn't matter?  Or is 
+it actually desirable to have a break in every switch case, even if it 
+amounts to dead code?
 
-> Julia,
-> 
-> Frame_count is the major parameter used by our megaraid sas FW.  It may cause some issues after this change.  Please keep the original implementation.
+thanks,
+julia
 
-The two are identical code - please explain
+
+drivers/infiniband/hw/amso1100/c2_provider.c
+c2_create_op
+break after return
+
+drivers/media/common/tuners/tuner-simple.c
+simple_tuner_attach
+break after return
+
+fs/namespace.c
+dup_mnt_ns
+; after return
+
+net/atm/lec.c
+lec_arp_resolve
+break after return
+
+drivers/media/common/tuners/tda18271-fe.c
+tda18271_attach
+break after goto
+
+drivers/media/common/tuners/mxl5007t.c
+mxl5007t_attach
+break after goto
+
+drivers/dma/ioat_dma.c
+ioat_dma_get_next_descriptor
+break after return
+
+drivers/infiniband/hw/nes/nes_verbs.c
+nes_reg_user_mr
+break after return
+
+drivers/media/common/tuners/tda9887.c
+tda9887_attach
+break after return
+----------------------
