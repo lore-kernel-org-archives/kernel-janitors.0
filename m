@@ -1,45 +1,57 @@
-From: "Sosnowski, Maciej" <maciej.sosnowski@intel.com>
-Date: Fri, 12 Sep 2008 12:13:11 +0000
-Subject: RE: [PATCH 5/5] drivers/dma/ioat_dma.c: Drop code after return
-Message-Id: <7F38996F7185A24AB9071ED4950AD8C101FEE5B9@swsmsx413.ger.corp.intel.com>
+From: Julien Brunel <brunel@diku.dk>
+Date: Mon, 01 Sep 2008 08:51:22 +0000
+Subject: [PATCH] fs/gfs2: Use an IS_ERR test rather than a NULL test
+Message-Id: <200809011051.22862.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0809111434100.9593@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0809111434100.9593@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, vigneshbabu@gmail.com, richard.genoud@gmail.comlinux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: swhiteho@redhat.com, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The break after the return serves no purpose.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> ---
-> 
->  drivers/dma/ioat_dma.c        |    2 --
->  1 files changed, 0 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/ioat_dma.c b/drivers/dma/ioat_dma.c
-> index bc8c6e3..1ef68b3 100644
-> --- a/drivers/dma/ioat_dma.c
-> +++ b/drivers/dma/ioat_dma.c
-> @@ -971,11 +971,9 @@ static struct ioat_desc_sw
->  	*ioat_dma_get_next_descriptor( switch
-(ioat_chan->device->version) {
->  	case IOAT_VER_1_2:
->  		return ioat1_dma_get_next_descriptor(ioat_chan);
-> -		break;
->  	case IOAT_VER_2_0:
->  	case IOAT_VER_3_0:
->  		return ioat2_dma_get_next_descriptor(ioat_chan);
-> -		break;
->  	}
->  	return NULL;
->  }
+From: Julien Brunel <brunel@diku.dk>
 
-You are right. Thanks for pointing this out.
+In case of error, the function gfs2_inode_lookup returns an
+ERR pointer, but never returns a NULL pointer. So a NULL test that
+necessarily comes after an IS_ERR test should be deleted, and a NULL
+test that may come after a call to this function should be
+strengthened by an IS_ERR test.
 
-Acked-by: Maciej Sosnowski <maciej.sosnowski@intel.com>
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@match_bad_null_test@
+expression x, E;
+statement S1,S2;
+@@
+x = gfs2_inode_lookup(...)
+... when != x = E
+* if (x != NULL) 
+S1 else S2
+// </smpl>
+
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
+
+---
+ fs/gfs2/inode.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff -u -p a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -1033,13 +1033,11 @@ struct inode *gfs2_createi(struct gfs2_h
+ 
+ 	if (bh)
+ 		brelse(bh);
+-	if (!inode)
+-		return ERR_PTR(-ENOMEM);
+ 	return inode;
+ 
+ fail_gunlock2:
+ 	gfs2_glock_dq_uninit(ghs + 1);
+-	if (inode)
++	if (inode && !IS_ERR(inode))
+ 		iput(inode);
+ fail_gunlock:
+ 	gfs2_glock_dq(ghs);
