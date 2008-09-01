@@ -1,73 +1,52 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Sep 2008 11:58:26 +0000
-Subject: [PATCH 4/4] net/9p/trans_fd.c: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0809101358070.15308@pc-004.diku.dk>
+From: Julien Brunel <brunel@diku.dk>
+Date: Mon, 01 Sep 2008 08:55:47 +0000
+Subject: [PATCH] fs/reiserfs: Use an IS_ERR test rather than a NULL test
+Message-Id: <200809011055.48175.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net, v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: Julien Brunel <brunel@diku.dk>
 
-Error handling code following a kmalloc should free the allocated data.
+In case of error, the function open_xa_dir returns an ERR pointer,
+but never returns a NULL pointer. So a NULL test that comes after an
+IS_ERR test should be deleted.
 
-The semantic match that finds the problem is as follows:
+The semantic match that finds this problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,l;
-position p1,p2;
-expression *ptr != NULL;
+@match_bad_null_test@
+expression x, E;
+statement S1,S2;
 @@
-
+x = open_xa_dir(...)
+... when != x = E
 (
-if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+*  if (x = NULL && ...) S1 else S2
 |
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
+*  if (x = NULL || ...) S1 else S2
 )
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f = E
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- net/9p/trans_fd.c             |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
 
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index cdf137a..8c92425 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -908,8 +908,10 @@ static struct p9_req *p9_send_request(struct p9_conn *m,
- 	else
- 		n = p9_mux_get_tag(m);
- 
--	if (n < 0)
-+	if (n < 0) {
-+		kfree(req);
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	p9_set_tag(tc, n);
- 
+---
+ fs/reiserfs/xattr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -155,7 +155,7 @@ static struct dentry *get_xa_file_dentry
+ 	xadir = open_xa_dir(inode, flags);
+ 	if (IS_ERR(xadir)) {
+ 		return ERR_CAST(xadir);
+-	} else if (xadir && !xadir->d_inode) {
++	} else if (!xadir->d_inode) {
+ 		dput(xadir);
+ 		return ERR_PTR(-ENODATA);
+ 	}
