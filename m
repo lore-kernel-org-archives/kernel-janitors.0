@@ -1,50 +1,73 @@
-From: Julien Brunel <brunel@diku.dk>
-Date: Mon, 01 Sep 2008 08:57:27 +0000
-Subject: [PATCH] drivers/usb/misc: Use an IS_ERR test rather than a NULL test
-Message-Id: <200809011057.28293.brunel@diku.dk>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Sep 2008 11:57:19 +0000
+Subject: [PATCH 1/4] arch/ia64/sn/pci/tioca_provider.c: introduce missing
+Message-Id: <Pine.LNX.4.64.0809101356590.15308@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julien Brunel <brunel@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-In case of error, the function backlight_device_register returns an
-ERR pointer, but never returns a NULL pointer. So a NULL test that may
-come after a call to this function should be strengthened by an IS_ERR
-test.
+Error handling code following a kmalloc should free the allocated data.
 
-The semantic match that finds this problem is as follows:
+The semantic match that finds the problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@match_bad_null_test@
-expression x, E;
-statement S1,S2;
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,l;
+position p1,p2;
+expression *ptr != NULL;
 @@
-x = backlight_device_register(...)
-... when != x = E
-* if (x != NULL) 
-S1 else S2
+
+(
+if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+|
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+)
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f = E
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
-Signed-off-by:  Julien Brunel <brunel@diku.dk>
-Signed-off-by:  Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/usb/misc/appledisplay.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/ia64/sn/pci/tioca_provider.c   |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-diff -u -p a/drivers/usb/misc/appledisplay.c b/drivers/usb/misc/appledisplay.c
---- a/drivers/usb/misc/appledisplay.c
-+++ b/drivers/usb/misc/appledisplay.c
-@@ -314,7 +314,7 @@ error:
- 					pdata->urbdata, pdata->urb->transfer_dma);
- 			usb_free_urb(pdata->urb);
- 		}
--		if (pdata->bd)
-+		if (pdata->bd && !IS_ERR(pdata->bd))
- 			backlight_device_unregister(pdata->bd);
- 		kfree(pdata->msgdata);
+diff --git a/arch/ia64/sn/pci/tioca_provider.c b/arch/ia64/sn/pci/tioca_provider.c
+index 529462c..7916512 100644
+--- a/arch/ia64/sn/pci/tioca_provider.c
++++ b/arch/ia64/sn/pci/tioca_provider.c
+@@ -420,8 +420,10 @@ tioca_dma_mapped(struct pci_dev *pdev, u64 paddr, size_t req_size)
+ 		entry = find_next_zero_bit(map, mapsize, last_entry);
  	}
+ 
+-	if (entry > mapsize)
++	if (entry > mapsize) {
++		kfree(ca_dmamap);
+ 		goto map_return;
++	}
+ 
+ 	for (i = 0; i < entries; i++)
+ 		set_bit(entry + i, map);
