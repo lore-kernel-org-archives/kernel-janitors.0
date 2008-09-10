@@ -1,39 +1,73 @@
-From: "Richard Genoud" <richard.genoud@gmail.com>
-Date: Thu, 11 Sep 2008 13:46:57 +0000
-Subject: Re: [PATCH 3/5] fs/namespace.c: Drop code after return
-Message-Id: <80b317760809110646m703f126cv9da4bd840a41b2a8@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Sep 2008 11:58:04 +0000
+Subject: [PATCH 3/4] arch/m68k/mm/kmap.c: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0809101357440.15308@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0809111433270.9593@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0809111433270.9593@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, vigneshbabu@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: geert@linux-m68k.org, zippel@linux-m68k.org, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2008/9/11 Julia Lawall <julia@diku.dk>:
-> From: Julia Lawall <julia@diku.dk>
->
-> The extra semicolon serves no purpose.
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-Reviewed-by: Richard Genoud <richard.genoud@gmail.com>
-> ---
->
->  fs/namespace.c                |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 6e283c9..7e6151a 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1993,7 +1993,7 @@ static struct mnt_namespace *dup_mnt_ns(struct mnt_namespace *mnt_ns,
->        if (!new_ns->root) {
->                up_write(&namespace_sem);
->                kfree(new_ns);
-> -               return ERR_PTR(-ENOMEM);;
-> +               return ERR_PTR(-ENOMEM);
->        }
->        spin_lock(&vfsmount_lock);
->        list_add_tail(&new_ns->list, &new_ns->root->mnt_list);
->
+From: Julia Lawall <julia@diku.dk>
+
+Error handling code following a kmalloc should free the allocated data.
+
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+(
+if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+|
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+)
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f = E
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ arch/m68k/mm/kmap.c           |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/arch/m68k/mm/kmap.c b/arch/m68k/mm/kmap.c
+index 46b7d60..df620ac 100644
+--- a/arch/m68k/mm/kmap.c
++++ b/arch/m68k/mm/kmap.c
+@@ -66,8 +66,10 @@ static struct vm_struct *get_io_area(unsigned long size)
+ 	for (p = &iolist; (tmp = *p) ; p = &tmp->next) {
+ 		if (size + addr < (unsigned long)tmp->addr)
+ 			break;
+-		if (addr > KMAP_END-size)
++		if (addr > KMAP_END-size) {
++			kfree(area);
+ 			return NULL;
++		}
+ 		addr = tmp->size + (unsigned long)tmp->addr;
+ 	}
+ 	area->addr = (void *)addr;
