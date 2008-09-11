@@ -1,46 +1,32 @@
-From: Himanshu Chauhan <chauhan.jpr@gmail.com>
-Date: Sun, 10 Aug 2008 12:18:33 +0000
-Subject: memcpy on const pointer, warning in smbfs/cache.c
-Message-Id: <g7mlka$8lc$1@ger.gmane.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 11 Sep 2008 12:34:09 +0000
+Subject: [PATCH 4/5] net/atm/lec.c: Drop code after return
+Message-Id: <Pine.LNX.4.64.0809111433510.9593@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: chas@cmf.nrl.navy.mil, vigneshbabu@gmail.com, richard.genoud@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dear all,
+From: Julia Lawall <julia@diku.dk>
 
-I pulled out latest source from Linus's git tree. During compilation of=20
-smbfs/cache.c in line 148 I got a warning stating
+The break after the return serves no purpose.
 
-  warning: passing argument 1 of =91__constant_memcpy=92 discards qualifier=
-s=20
-from pointer target type
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
 
-This was in function smb_fill_cache where memcpy is being used as following:
+ net/atm/lec.c                 |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-memcpy((char *) newdent->d_name.name, qname->name,
-		       newdent->d_name.len);
-
-d_name is of type struct qstr and in qstr name is defined as const=20
-unsigned char *.
-
-struct qstr {
-	unsigned int hash;
-	unsigned int len;
-	const unsigned char *name;
-};
-
-So this type cast is wrong.
-
-Is it ok to fix this by defineing name as unsigned char * rather than as=20
-const unsigned char *?
-
-Regards
---Himanshu
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index 5799fb5..8f701cd 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -1931,7 +1931,6 @@ static struct atm_vcc *lec_arp_resolve(struct lec_priv *priv,
+ 		switch (priv->lane_version) {
+ 		case 1:
+ 			return priv->mcast_vcc;
+-			break;
+ 		case 2:	/* LANE2 wants arp for multicast addresses */
+ 			if (!compare_ether_addr(mac_to_find, bus_mac))
+ 				return priv->mcast_vcc;
