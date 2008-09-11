@@ -1,38 +1,66 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 03 Sep 2008 00:24:48 +0000
-Subject: Re: [PATCH] net/xfrm: Use an IS_ERR test rather than a NULL test
-Message-Id: <20080902.172448.84151776.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 11 Sep 2008 12:33:26 +0000
+Subject: [PATCH 2/5] drivers/media/common/tuners: Drop code after return or
+Message-Id: <Pine.LNX.4.64.0809111433020.9593@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200809011053.34028.brunel@diku.dk>
-In-Reply-To: <200809011053.34028.brunel@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: brunel@diku.dk
-Cc: kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mchehab@infradead.org, v4l-dvb-maintainer@linuxtv.org, video4linux-list@redhat.com, vigneshbabu@gmail.com, richard.genoud@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julien Brunel <brunel@diku.dk>
-Date: Mon, 1 Sep 2008 10:53:33 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> In case of error, the function xfrm_bundle_create returns an ERR
-> pointer, but never returns a NULL pointer. So a NULL test that comes
-> after an IS_ERR test should be deleted.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @match_bad_null_test@
-> expression x, E;
-> statement S1,S2;
-> @@
-> x =  xfrm_bundle_create(...)
-> ... when != x = E
-> *  if (x != NULL) 
-> S1 else S2
-> // </smpl>
-> 
-> Signed-off-by:  Julien Brunel <brunel@diku.dk>
-> Signed-off-by:  Julia Lawall <julia@diku.dk>
+The break after the return or goto serves no purpose.
 
-Looks good, patch applied, thanks.
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/media/common/tuners/mxl5007t.c     |    1 -
+ drivers/media/common/tuners/tda18271-fe.c  |    1 -
+ drivers/media/common/tuners/tda9887.c      |    1 -
+ drivers/media/common/tuners/tuner-simple.c |    1 -
+ 4 files changed, 4 deletions(-)
+
+diff -u -p a/drivers/media/common/tuners/tuner-simple.c b/drivers/media/common/tuners/tuner-simple.c
+--- a/drivers/media/common/tuners/tuner-simple.c
++++ b/drivers/media/common/tuners/tuner-simple.c
+@@ -1038,7 +1038,6 @@ struct dvb_frontend *simple_tuner_attach
+ 	case 0:
+ 		mutex_unlock(&tuner_simple_list_mutex);
+ 		return NULL;
+-		break;
+ 	case 1:
+ 		fe->tuner_priv = priv;
+ 
+diff -u -p a/drivers/media/common/tuners/tda18271-fe.c b/drivers/media/common/tuners/tda18271-fe.c
+--- a/drivers/media/common/tuners/tda18271-fe.c
++++ b/drivers/media/common/tuners/tda18271-fe.c
+@@ -1155,7 +1155,6 @@ struct dvb_frontend *tda18271_attach(str
+ 	switch (instance) {
+ 	case 0:
+ 		goto fail;
+-		break;
+ 	case 1:
+ 		/* new tuner instance */
+ 		priv->gate = (cfg) ? cfg->gate : TDA18271_GATE_AUTO;
+diff -u -p a/drivers/media/common/tuners/mxl5007t.c b/drivers/media/common/tuners/mxl5007t.c
+--- a/drivers/media/common/tuners/mxl5007t.c
++++ b/drivers/media/common/tuners/mxl5007t.c
+@@ -979,7 +979,6 @@ struct dvb_frontend *mxl5007t_attach(str
+ 	switch (instance) {
+ 	case 0:
+ 		goto fail;
+-		break;
+ 	case 1:
+ 		/* new tuner instance */
+ 		state->config = cfg;
+diff -u -p a/drivers/media/common/tuners/tda9887.c b/drivers/media/common/tuners/tda9887.c
+--- a/drivers/media/common/tuners/tda9887.c
++++ b/drivers/media/common/tuners/tda9887.c
+@@ -686,7 +686,6 @@ struct dvb_frontend *tda9887_attach(stru
+ 	case 0:
+ 		mutex_unlock(&tda9887_list_mutex);
+ 		return NULL;
+-		break;
+ 	case 1:
+ 		fe->analog_demod_priv = priv;
+ 		priv->mode = T_STANDBY;
