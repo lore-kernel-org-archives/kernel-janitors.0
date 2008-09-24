@@ -1,63 +1,60 @@
 From: Julien Brunel <brunel@diku.dk>
-Date: Fri, 26 Sep 2008 13:53:44 +0000
-Subject: [PATCH] drivers/video: Bad error test before a dereference
-Message-Id: <200809261553.45301.brunel@diku.dk>
+Date: Wed, 24 Sep 2008 15:57:19 +0000
+Subject: [PATCH] drivers/usb/host: Use an IS_ERR test rather than a NULL test
+Message-Id: <200809241800.36320.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: nicolas.ferre@atmel.com, adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The error test that follows the call to backlight_device_register
-semms not to concern the right variable.
+In case of error, the function isp1760_register returns an ERR
+pointer, but never returns a NULL pointer. So after a call to this
+function, a NULL test should be replaced by an IS_ERR test. Moreover,
+we have noticed that:
+(1) the result of isp1760_register is assigned through the function
+pci_set_drvdata without an error test,
+(2) if the call to isp1760_register fails, the current function
+(isp1761_pci_probe) returns 0, and if it succeeds, it returns -ENOMEM,
+which seems odd.
 
-A simplified version of the semantic match that finds this problem is
-as follows: 
+Thus, we suggest to move the test before the call to pci_set_drvdata
+to correct (1), and to turn it into a non IS_ERR test to correct (2).
+
+The semantic match that finds this problem is as follows: 
 (http://www.emn.fr/x-info/coccinelle/)
+
 // <smpl>
-@def0@
-expression x;
-position p0;
+@bad_null_test@
+expression x,E;
+statement S1, S2;
 @@
-x@p0 = backlight_device_register(...)
-
-@protected@
-expression def0.x,E;
-position def0.p0;
-position p;
-statement S;
-@@
-x@p0
+x =  isp1760_register(...)
 ... when != x = E
-if (!IS_ERR(x) && ...) {<... x@p ...>} else S
-
-@unprotected@
-expression def0.x;
-identifier fld;
-position def0.p0;
-position p != protected.p;
-@@
-x@p0
-... when != x = E
-* x@p->fld
+* if (x = NULL)
+S1 else S2
 // </smpl>
 
-Signed-off-by: Julien Brunel <brunel@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
 
 ---
- drivers/video/atmel_lcdfb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/isp1760-if.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/video/atmel_lcdfb.c b/drivers/video/atmel_lcdfb.c
---- a/drivers/video/atmel_lcdfb.c
-+++ b/drivers/video/atmel_lcdfb.c
-@@ -132,7 +132,7 @@ static void init_backlight(struct atmel_
- 
- 	bl = backlight_device_register("backlight", &sinfo->pdev->dev,
- 			sinfo, &atmel_lcdc_bl_ops);
--	if (IS_ERR(sinfo->backlight)) {
-+	if (IS_ERR(bl)) {
- 		dev_err(&sinfo->pdev->dev, "error %ld on backlight register\n",
- 				PTR_ERR(bl));
- 		return;
+diff -u -p a/drivers/usb/host/isp1760-if.c b/drivers/usb/host/isp1760-if.c
+--- a/drivers/usb/host/isp1760-if.c
++++ b/drivers/usb/host/isp1760-if.c
+@@ -232,9 +232,10 @@ static int __devinit isp1761_pci_probe(s
+ 	hcd = isp1760_register(pci_mem_phy0, length, dev->irq,
+ 		IRQF_SHARED | IRQF_DISABLED, &dev->dev, dev_name(&dev->dev),
+ 		devflags);
+-	pci_set_drvdata(dev, hcd);
+-	if (!hcd)
++	if (!IS_ERR(hcd)) {
++		pci_set_drvdata(dev, hcd);
+ 		return 0;
++	}
+ clean:
+ 	status = -ENODEV;
+ 	iounmap(iobase);
