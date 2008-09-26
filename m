@@ -1,66 +1,25 @@
-From: Julien Brunel <brunel@diku.dk>
-Date: Fri, 26 Sep 2008 13:27:25 +0000
-Subject: [PATCH] drivers/mtd/ubi: Bad IS_ERR test
-Message-Id: <200809261527.26007.brunel@diku.dk>
+From: Artem Bityutskiy <dedekind@infradead.org>
+Date: Fri, 26 Sep 2008 14:48:48 +0000
+Subject: Re: [PATCH] drivers/mtd/ubi: Bad IS_ERR test
+Message-Id: <1222440528.5012.19.camel@sauron>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200809261527.26007.brunel@diku.dk>
+In-Reply-To: <200809261527.26007.brunel@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: haver@vnet.ibm.com, dedekind@infradead.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julien Brunel <brunel@diku.dk>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, haver@vnet.ibm.com, linux-kernel@vger.kernel.org
 
-In case of error, the function add_volume returns an ERR pointer. The
-result of IS_ERR, which is supposed to be used in a test as it is, is
-here checked to be less than zero, which seems odd. We suggest to
-replace this test by a simple IS_ERR test.
+On Fri, 2008-09-26 at 15:27 +0200, Julien Brunel wrote:
+> In case of error, the function add_volume returns an ERR pointer. The
+> result of IS_ERR, which is supposed to be used in a test as it is, is
+> here checked to be less than zero, which seems odd. We suggest to
+> replace this test by a simple IS_ERR test.
 
-A simplified version of the semantic match that finds this problem is
-as follows: 
-(http://www.emn.fr/x-info/coccinelle/)
+Pushed to ubi-2.6.git, thank you!
 
-// <smpl>
-@def0@
-expression x;
-position p0;
-@@
-x@p0 = add_volume(...)
+-- 
+Best regards,
+Artem Bityutskiy (Битюцкий Артём)
 
-@protected@
-expression def0.x,E;
-position def0.p0;
-position p;
-statement S;
-@@
-x@p0
-... when != x = E
-if (!IS_ERR(x) && ...) {<... x@p ...>} else S
-
-@unprotected@
-expression def0.x,E;
-identifier fld;
-position def0.p0;
-position p != protected.p;
-@@
-x@p0
-... when != x = E
-* x@p->fld
-// </smpl>
-
-Signed-off-by:  Julien Brunel <brunel@diku.dk>
-Signed-off-by:  Julia Lawall <julia@diku.dk>
-
----
- drivers/mtd/ubi/scan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -p -u a/drivers/mtd/ubi/scan.c b/drivers/mtd/ubi/scan.c
---- a/drivers/mtd/ubi/scan.c
-+++ b/drivers/mtd/ubi/scan.c
-@@ -387,7 +387,7 @@ int ubi_scan_add_used(struct ubi_device 
- 		pnum, vol_id, lnum, ec, sqnum, bitflips);
- 
- 	sv = add_volume(si, vol_id, pnum, vid_hdr);
--	if (IS_ERR(sv) < 0)
-+	if (IS_ERR(sv))
- 		return PTR_ERR(sv);
- 
- 	if (si->max_sqnum < sqnum)
