@@ -1,50 +1,64 @@
 From: Julien Brunel <brunel@diku.dk>
-Date: Fri, 12 Sep 2008 14:23:22 +0000
-Subject: [PATCH] fs/9p: Use an IS_ERR test rather than a NULL test
-Message-Id: <200809121623.22644.brunel@diku.dk>
+Date: Fri, 26 Sep 2008 13:51:57 +0000
+Subject: [PATCH] drivers/acpi: dereference without an error test
+Message-Id: <200809261551.58262.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net, v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: rui.zhang@intel.com, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julien Brunel <brunel@diku.dk>
+After a variable is assigned the result of backlight_device_register, an error
+test should be performed before a dereference. 
 
-In case of error, the function p9_client_walk returns an ERR pointer,
-but never returns a NULL pointer. So a NULL test that comes after an
-IS_ERR test should be deleted.
-
-The semantic match that finds this problem is as follows:
+A simplified version of the semantic match that finds this problem is
+as follows: 
 (http://www.emn.fr/x-info/coccinelle/)
-
 // <smpl>
-@match_bad_null_test@
-expression x, E;
-statement S1,S2;
+@def0@
+expression x;
+position p0;
 @@
-x = p9_client_walk(...)
+
+x@p0 = backlight_device_register(...)
+
+@protected@
+expression def0.x,E;
+position def0.p0;
+position p;
+statement S;
+@@
+x@p0
 ... when != x = E
-*  if (x != NULL) 
-S1 else S2
+if (!IS_ERR(x) && ...) {<... x@p ...>} else S
+
+@unprotected@
+expression def0.x,E;
+identifier fld;
+position def0.p0;
+position p != protected.p;
+@@
+x@p0
+... when != x = E
+* x@p->fld
 // </smpl>
 
-Signed-off-by:  Julien Brunel <brunel@diku.dk>
-Signed-off-by:  Julia Lawall <julia@diku.dk>
+Signed-off-by: Julien Brunel <brunel@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- fs/9p/vfs_inode.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/acpi/video.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff -u -p a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -626,8 +626,7 @@ static struct dentry *v9fs_vfs_lookup(st
- 	return NULL;
- 
- error:
--	if (fid)
--		p9_client_clunk(fid);
-+	p9_client_clunk(fid);
- 
- 	return ERR_PTR(result);
- }
+diff -u -p a/drivers/acpi/video.c b/drivers/acpi/video.c
+--- a/drivers/acpi/video.c
++++ b/drivers/acpi/video.c
+@@ -752,6 +752,8 @@ static void acpi_video_device_find_cap(s
+ 		sprintf(name, "acpi_video%d", count++);
+ 		device->backlight = backlight_device_register(name,
+ 			NULL, device, &acpi_backlight_ops);
++		if (IS_ERR(device->backlight))
++			return;
+ 		device->backlight->props.max_brightness = device->brightness->count-3;
+ 		/*
+ 		 * If there exists the _BQC object, the _BQC object will be
