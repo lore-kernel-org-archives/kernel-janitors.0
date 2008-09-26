@@ -1,108 +1,59 @@
-From: "vignesh babu bm" <vigneshbabu@gmail.com>
-Date: Thu, 11 Sep 2008 08:50:08 +0000
-Subject: Re: code after return
-Message-Id: <3d1754a30809110138h47590274g814d9195e3497d72@mail.gmail.com>
+From: Julien Brunel <brunel@diku.dk>
+Date: Fri, 26 Sep 2008 13:23:46 +0000
+Subject: [PATCH] sound/soc/at32: Useless NULL test
+Message-Id: <200809261523.46747.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0808312231550.5157@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0808312231550.5157@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: tiwai@suse.de, liam.girdwood@wolfsonmicro.com, broonie@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Well that is definitely not needed...we should start removing those...
+The test (ssc != NULL) can only be reached if the call to the function
+ssc_request, the result of which ssc is assigned, succeeds. Moreover,
+two statements assign NULL to ssc just before a return, which is useless
+since it is a local variable. So, we suggest to delete the test and
+the two assignments.
 
-On Thu, Sep 11, 2008 at 2:06 PM, Julia Lawall <julia@diku.dk> wrote:
-> For concreteness, here is one example (extra break in the default case):
->
->        switch (init_attr->qp_type) {
->        case IB_QPT_RC:
->                qp = kzalloc(sizeof(*qp), GFP_KERNEL);
->                if (!qp) {
->                        pr_debug("%s: Unable to allocate QP\n", __func__);
->                        return ERR_PTR(-ENOMEM);
->                }
->                spin_lock_init(&qp->lock);
->                if (pd->uobject) {
->                        /* userspace specific */
->                }
->
->                err = c2_alloc_qp(to_c2dev(pd->device),
->                                  to_c2pd(pd), init_attr, qp);
->
->                if (err && pd->uobject) {
->                        /* userspace specific */
->                }
->
->                break;
->        default:
->                pr_debug("%s: Invalid QP type: %d\n", __func__,
->                        init_attr->qp_type);
->                return ERR_PTR(-EINVAL);
->                break;
->        }
->
-> julia
->
->
->
-> On Thu, 11 Sep 2008, vignesh babu bm wrote:
->
->> The given example doesnt really need break statements...
->>
->> On Thu, Sep 11, 2008 at 1:56 PM, Richard Genoud
->> <richard.genoud@gmail.com> wrote:
->> >
->> > 2008/8/31 Julia Lawall <julia@diku.dk>:
->> > > Below is a list of some places (file and function name) where there is
->> > > some code after a return or goto.  Most of the time, the return is in a
->> > > switch case, and the code after the return is a break.  I was wondering
->> > > whether it would be useful to do something about these?  Or is the thought
->> > > that it has no impact on the compiled code, so it doesn't matter?  Or is
->> > > it actually desirable to have a break in every switch case, even if it
->> > > amounts to dead code?
->> > >
->> > > thanks,
->> > > julia
->> >
->> > IHMO, those breaks (and the superfluous semicolon) should be removed.
->> > In the CodingStlye document there's a switch/case example (actually,
->> > it was a placing braces example) like that :
->> >
->> > switch (action) {
->> > case KOBJ_ADD:
->> >        return "add";
->> > case KOBJ_REMOVE:
->> >        return "remove";
->> > case KOBJ_CHANGE:
->> >        return "change";
->> > default:
->> >        return NULL;
->> > }
->> > So, it seems that there's no rule like having a break in every switch case.
->> >
->> > Anyone, another opinion ?
->> >
->> > richard.
->> > --
->> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> > the body of a message to majordomo@vger.kernel.org
->> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->>
->> --
->> ----------------------------------------------
->> "Why is it that every time I'm with you, makes me believe in magic?"
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
+A simplified version of the semantic match that finds this problem is
+as follows: 
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@bad_null_test@
+expression x,E;
+@@
+x = ssc_request(...)
+... when != x = E
+* x != NULL
+// </smpl>
 
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
 
--- 
-----------------------------------------------
-"Why is it that every time I'm with you, makes me believe in magic?"
+---
+ sound/soc/at32/playpaq_wm8510.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff -u -p a/sound/soc/at32/playpaq_wm8510.c b/sound/soc/at32/playpaq_wm8510.c
+--- a/sound/soc/at32/playpaq_wm8510.c
++++ b/sound/soc/at32/playpaq_wm8510.c
+@@ -405,7 +405,6 @@ static int __init playpaq_asoc_init(void
+ 	ssc = ssc_request(0);
+ 	if (IS_ERR(ssc)) {
+ 		ret = PTR_ERR(ssc);
+-		ssc = NULL;
+ 		goto err_ssc;
+ 	}
+ 	ssc_p->ssc = ssc;
+@@ -476,10 +475,7 @@ err_pll0:
+ 		_gclk0 = NULL;
+ 	}
+ err_gclk0:
+-	if (ssc != NULL) {
+-		ssc_free(ssc);
+-		ssc = NULL;
+-	}
++	ssc_free(ssc);
+ err_ssc:
+ 	return ret;
+ }
