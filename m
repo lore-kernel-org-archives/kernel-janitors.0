@@ -1,67 +1,66 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date: Mon, 22 Sep 2008 01:12:28 +0000
-Subject: Re: [PATCH] arch/powerpc/platforms/powermac/pic.c: move of_node_put
-Message-Id: <1222045948.12085.9.camel@pasglop>
+From: Julien Brunel <brunel@diku.dk>
+Date: Fri, 26 Sep 2008 13:27:25 +0000
+Subject: [PATCH] drivers/mtd/ubi: Bad IS_ERR test
+Message-Id: <200809261527.26007.brunel@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0809211301030.7450@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0809211301030.7450@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linuxppc-dev@ozlabs.org, kernel-janitors@vger.kernel.org, paulus@samba.org, linux-kernel@vger.kernel.org
+To: haver@vnet.ibm.com, dedekind@infradead.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2008-09-21 at 13:01 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> It seems better to dereference master before decrementing the reference
-> count rather than afterwards.
-> 
-> The problem was found using the following semantic match:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @r exists@
-> expression n,E;
-> identifier fld;
-> iterator I;
-> statement S;
-> @@
-> 
-> * of_node_put(n)
-> ... when != n = E
->     when != I(n,...) S
-> * n->fld
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+In case of error, the function add_volume returns an ERR pointer. The
+result of IS_ERR, which is supposed to be used in a test as it is, is
+here checked to be less than zero, which seems odd. We suggest to
+replace this test by a simple IS_ERR test.
 
-Ack.
+A simplified version of the semantic match that finds this problem is
+as follows: 
+(http://www.emn.fr/x-info/coccinelle/)
 
-No big deal, tho, those nodes are never going to go away :-)
+// <smpl>
+@def0@
+expression x;
+position p0;
+@@
+x@p0 = add_volume(...)
 
-Cheers,
-Ben.
+@protected@
+expression def0.x,E;
+position def0.p0;
+position p;
+statement S;
+@@
+x@p0
+... when != x = E
+if (!IS_ERR(x) && ...) {<... x@p ...>} else S
 
-> ---
-> 
->  arch/powerpc/platforms/powermac/pic.c          |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powermac/pic.c b/arch/powerpc/platforms/powermac/pic.c
-> index 6d149ae..d17aa2b 100644
-> --- a/arch/powerpc/platforms/powermac/pic.c
-> +++ b/arch/powerpc/platforms/powermac/pic.c
-> @@ -395,10 +395,10 @@ static void __init pmac_pic_probe_oldstyle(void)
->  	if (max_real_irqs > 32)
->  		pmac_irq_hw[i++] = (volatile struct pmac_irq_hw __iomem *)
->  			(addr + 0x10);
-> -	of_node_put(master);
->  
->  	printk(KERN_INFO "irq: Found primary Apple PIC %s for %d irqs\n",
->  	       master->full_name, max_real_irqs);
-> +	of_node_put(master);
->  
->  	/* Map interrupts of cascaded controller */
->  	if (slave && !of_address_to_resource(slave, 0, &r)) {
+@unprotected@
+expression def0.x,E;
+identifier fld;
+position def0.p0;
+position p != protected.p;
+@@
+x@p0
+... when != x = E
+* x@p->fld
+// </smpl>
 
+Signed-off-by:  Julien Brunel <brunel@diku.dk>
+Signed-off-by:  Julia Lawall <julia@diku.dk>
+
+---
+ drivers/mtd/ubi/scan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -p -u a/drivers/mtd/ubi/scan.c b/drivers/mtd/ubi/scan.c
+--- a/drivers/mtd/ubi/scan.c
++++ b/drivers/mtd/ubi/scan.c
+@@ -387,7 +387,7 @@ int ubi_scan_add_used(struct ubi_device 
+ 		pnum, vol_id, lnum, ec, sqnum, bitflips);
+ 
+ 	sv = add_volume(si, vol_id, pnum, vid_hdr);
+-	if (IS_ERR(sv) < 0)
++	if (IS_ERR(sv))
+ 		return PTR_ERR(sv);
+ 
+ 	if (si->max_sqnum < sqnum)
