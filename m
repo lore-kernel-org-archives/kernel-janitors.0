@@ -1,31 +1,49 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Tue, 14 Oct 2008 18:51:44 +0000
-Subject: Re: [PATCH 1/2] drivers/pci/hotplug/cpqphp_ctrl.c: Convert && to ||
-Message-Id: <20081014185143.GH15064@parisc-linux.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 04 Oct 2008 20:05:08 +0000
+Subject: [PATCH 1/2] drivers/i2c/busses/i2c-s3c2410.c: Correct use of.and
+Message-Id: <Pine.LNX.4.64.0810042203520.19286@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0810141759300.20451@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0810141759300.20451@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kristen.c.accardi@intel.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ben-linux@fluff.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 14, 2008 at 05:59:50PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The pattern !E && !E->fld is nonsensical.  The patch below updates this
-> according to the assumption that && should be ||.  But perhaps another
-> solution was intended.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-I think that's the right solution for this case.
+In commit e6bafba5b4765a5a252f1b8d31cbf6d2459da337, a bug was fixed that
+involved converting !x & y to !(x & y).  The code below shows the same
+pattern, and thus should perhaps be fixed in the same way.  In particular,
+the result of !readl(i2c->regs + S3C2410_IICCON) & S3C2410_IICCON_IRQEN is
+always 0.
 
-Reviewed-by: Matthew Wilcox <willy@linux.intel.com>
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
--- 
-Matthew Wilcox				Intel Open Source Technology Centre
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+// <smpl>
+@@ expression E; constant C; @@
+(
+  !E & !C
+|
+- !E & C
++ !(E & C)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/i2c/busses/i2c-s3c2410.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -507,7 +507,7 @@ static int s3c24xx_i2c_doxfer(struct s3c
+ 	unsigned long timeout;
+ 	int ret;
+ 
+-	if (!readl(i2c->regs + S3C2410_IICCON) & S3C2410_IICCON_IRQEN)
++	if (!(readl(i2c->regs + S3C2410_IICCON) & S3C2410_IICCON_IRQEN))
+ 		return -EIO;
+ 
+ 	ret = s3c24xx_i2c_set_master(i2c);
