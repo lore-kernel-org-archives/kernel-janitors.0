@@ -1,22 +1,49 @@
-From: Ian Hilt <Ian.Hilt@gmx.com>
-Date: Sat, 18 Oct 2008 01:13:43 +0000
-Subject: Re: A kernel janitor question
-Message-Id: <alpine.LFD.2.00.0810172110490.23958@sys-0.hiltweb.site>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 04 Oct 2008 20:05:47 +0000
+Subject: [PATCH 2/2] drivers/s390/cio/chsc_sch.c: Correct use of.and &
+Message-Id: <Pine.LNX.4.64.0810042205090.19286@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ee90333f0810141017i5907bc48jfd67cc909e2dbff3@mail.gmail.com>
-In-Reply-To: <ee90333f0810141017i5907bc48jfd67cc909e2dbff3@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 14 Oct 2008, David Li wrote:
-> The requirement that I am not about sure about is if the kernel
-> janitor needs to be able to build, configure and boot up a customized
-> kernel in order to test his patches. It seems to me a must. What's the
-> common practice in this for everyone? Are there any specific
-> requirements on HW? Can any experienced janitors share some thoughts?
+From: Julia Lawall <julia@diku.dk>
 
-Check out "The Linux Kernel in a Nutshell" by Greg Kroah-Hartman.
+In commit e6bafba5b4765a5a252f1b8d31cbf6d2459da337, a bug was fixed that
+involved converting !x & y to !(x & y).  The code below shows the same
+pattern, and thus should perhaps be fixed in the same way.  In particular,
+the result of !scsw_stctl(&request->irb.scsw) & SCSW_STCTL_STATUS_PEND is
+always just !scsw_stctl(&request->irb.scsw).
 
-Here's a link: <http://www.kroah.com/lkn/>
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@ expression E; constant C; @@
+(
+  !E & !C
+|
+- !E & C
++ !(E & C)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/s390/cio/chsc_sch.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/s390/cio/chsc_sch.c b/drivers/s390/cio/chsc_sch.c
+--- a/drivers/s390/cio/chsc_sch.c
++++ b/drivers/s390/cio/chsc_sch.c
+@@ -261,7 +261,7 @@ static int chsc_examine_irb(struct chsc_
+ {
+ 	int backed_up;
+ 
+-	if (!scsw_stctl(&request->irb.scsw) & SCSW_STCTL_STATUS_PEND)
++	if (!(scsw_stctl(&request->irb.scsw) & SCSW_STCTL_STATUS_PEND))
+ 		return -EIO;
+ 	backed_up = scsw_cstat(&request->irb.scsw) & SCHN_STAT_CHAIN_CHECK;
+ 	request->irb.scsw.cmd.cstat &= ~SCHN_STAT_CHAIN_CHECK;
