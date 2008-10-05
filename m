@@ -1,64 +1,29 @@
-From: Julien Brunel <brunel@diku.dk>
-Date: Fri, 26 Sep 2008 13:51:57 +0000
-Subject: [PATCH] drivers/acpi: dereference without an error test
-Message-Id: <200809261551.58262.brunel@diku.dk>
+From: Michal Roszkowski <michal@roszkowski.org>
+Date: Sun, 05 Oct 2008 06:12:25 +0000
+Subject: [patch 001/001] input: fix read past array bounds
+Message-Id: <BB078233-B65F-457C-A999-6C5B0CBF620B@roszkowski.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rui.zhang@intel.com, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-After a variable is assigned the result of backlight_device_register, an error
-test should be performed before a dereference. 
-
-A simplified version of the semantic match that finds this problem is
-as follows: 
-(http://www.emn.fr/x-info/coccinelle/)
-// <smpl>
-@def0@
-expression x;
-position p0;
-@@
-
-x@p0 = backlight_device_register(...)
-
-@protected@
-expression def0.x,E;
-position def0.p0;
-position p;
-statement S;
-@@
-x@p0
-... when != x = E
-if (!IS_ERR(x) && ...) {<... x@p ...>} else S
-
-@unprotected@
-expression def0.x,E;
-identifier fld;
-position def0.p0;
-position p != protected.p;
-@@
-x@p0
-... when != x = E
-* x@p->fld
-// </smpl>
-
-Signed-off-by: Julien Brunel <brunel@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/acpi/video.c |    2 ++
- 1 file changed, 2 insertions(+)
 
-diff -u -p a/drivers/acpi/video.c b/drivers/acpi/video.c
---- a/drivers/acpi/video.c
-+++ b/drivers/acpi/video.c
-@@ -752,6 +752,8 @@ static void acpi_video_device_find_cap(s
- 		sprintf(name, "acpi_video%d", count++);
- 		device->backlight = backlight_device_register(name,
- 			NULL, device, &acpi_backlight_ops);
-+		if (IS_ERR(device->backlight))
-+			return;
- 		device->backlight->props.max_brightness = device->brightness->count-3;
- 		/*
- 		 * If there exists the _BQC object, the _BQC object will be
+Trivial fix for read past end of key_map[] when keycode = NR_KEYS.
+
+--- linux-2.6.26.5/drivers/char/keyboard.c.orig	2008-10-05  
+15:51:09.000000000 +1030
++++ linux-2.6.26.5/drivers/char/keyboard.c	2008-10-05  
+15:52:17.000000000 +1030
+@@ -1247,7 +1247,7 @@ static void kbd_keycode(unsigned int key
+		return;
+	}
+
+-	if (keycode > NR_KEYS)
++	if (keycode >= NR_KEYS)
+		if (keycode >= KEY_BRL_DOT1 && keycode <= KEY_BRL_DOT8)
+			keysym = K(KT_BRL, keycode - KEY_BRL_DOT1 + 1);
+		else
+
