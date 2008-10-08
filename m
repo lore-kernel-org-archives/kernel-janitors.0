@@ -1,54 +1,79 @@
-From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Sun, 19 Oct 2008 12:44:43 +0000
-Subject: Re: [PATCH] mtd: Fix compilation warnings in drivers/mtd/nand/cs553x_nand.c
-Message-Id: <ea11fea30810190532l44289012tbc18cc6ac5c1b92f@mail.gmail.com>
+From: Len Brown <lenb@kernel.org>
+Date: Wed, 08 Oct 2008 20:34:37 +0000
+Subject: Re: [PATCH] drivers/acpi: dereference without an error test
+Message-Id: <alpine.LFD.1.10.0810081634300.3041@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30810141113i81694depeb69c50a373fcf3e@mail.gmail.com>
-In-Reply-To: <ea11fea30810141113i81694depeb69c50a373fcf3e@mail.gmail.com>
+References: <200809261551.58262.brunel@diku.dk>
+In-Reply-To: <200809261551.58262.brunel@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dwmw2@infradead.org, linux-mtd@lists.infradead.org
-Cc: mkatiyar@gmail.com, akpm@linux-foundation.org, kernel-janitors@vger.kernel.org
+To: Julien Brunel <brunel@diku.dk>
+Cc: rui.zhang@intel.com, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 14, 2008 at 11:43 PM, Manish Katiyar <mkatiyar@gmail.com> wrote:
-> Below patch fixes the following compilation warnings.
-> drivers/mtd/nand/cs553x_nand.c:293: warning: unused variable 'mtd_parts'
-> drivers/mtd/nand/cs553x_nand.c:292: warning: unused variable 'mtd_parts_nb'
->
->
-> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
->
+applied.
+
+thanks,
+-len
+
+On Fri, 26 Sep 2008, Julien Brunel wrote:
+
+> After a variable is assigned the result of backlight_device_register, an error
+> test should be performed before a dereference. 
+> 
+> A simplified version of the semantic match that finds this problem is
+> as follows: 
+> (http://www.emn.fr/x-info/coccinelle/)
+> // <smpl>
+> @def0@
+> expression x;
+> position p0;
+> @@
+> 
+> x@p0 = backlight_device_register(...)
+> 
+> @protected@
+> expression def0.x,E;
+> position def0.p0;
+> position p;
+> statement S;
+> @@
+> x@p0
+> ... when != x = E
+> if (!IS_ERR(x) && ...) {<... x@p ...>} else S
+> 
+> @unprotected@
+> expression def0.x,E;
+> identifier fld;
+> position def0.p0;
+> position p != protected.p;
+> @@
+> x@p0
+> ... when != x = E
+> * x@p->fld
+> // </smpl>
+> 
+> Signed-off-by: Julien Brunel <brunel@diku.dk>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
 > ---
->  drivers/mtd/nand/cs553x_nand.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/mtd/nand/cs553x_nand.c b/drivers/mtd/nand/cs553x_nand.c
-> index 3370a80..9f1b451 100644
-> --- a/drivers/mtd/nand/cs553x_nand.c
-> +++ b/drivers/mtd/nand/cs553x_nand.c
-> @@ -289,8 +289,10 @@ static int __init cs553x_init(void)
->        int i;
->        uint64_t val;
->
-> +#ifdef CONFIG_MTD_PARTITIONS
->        int mtd_parts_nb = 0;
->        struct mtd_partition *mtd_parts = NULL;
-> +#endif
->
->        /* If the CPU isn't a Geode GX or LX, abort */
->        if (!is_geode())
+>  drivers/acpi/video.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff -u -p a/drivers/acpi/video.c b/drivers/acpi/video.c
+> --- a/drivers/acpi/video.c
+> +++ b/drivers/acpi/video.c
+> @@ -752,6 +752,8 @@ static void acpi_video_device_find_cap(s
+>  		sprintf(name, "acpi_video%d", count++);
+>  		device->backlight = backlight_device_register(name,
+>  			NULL, device, &acpi_backlight_ops);
+> +		if (IS_ERR(device->backlight))
+> +			return;
+>  		device->backlight->props.max_brightness = device->brightness->count-3;
+>  		/*
+>  		 * If there exists the _BQC object, the _BQC object will be
 > --
-> 1.5.4.3
->
-
-Resending it adding kernel-janitors, since I didn't get any response
-from the linux-mtd list.
-
-Thanks -
-Manish
-
-
-> Thanks -
-> Manish
->
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
