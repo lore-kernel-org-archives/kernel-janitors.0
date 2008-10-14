@@ -1,68 +1,47 @@
-From: Sam Creasey <sammy@sammy.net>
-Date: Tue, 14 Oct 2008 16:40:43 +0000
-Subject: Re: [PATCH 2/2] drivers/scsi/sun3x_esp.c: Convert && to ||
-Message-Id: <20081014164043.GS10918@sammy.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 14 Oct 2008 15:59:50 +0000
+Subject: [PATCH 1/2] drivers/pci/hotplug/cpqphp_ctrl.c: Convert && to ||
+Message-Id: <Pine.LNX.4.64.0810141759300.20451@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0810141759520.20451@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0810141759520.20451@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kristen.c.accardi@intel.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 14, 2008 at 06:00:19PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The pattern !E && !E->fld is nonsensical.  The patch below updates this
-> according to the assumption that && should be ||.  But perhaps another
-> solution was intended.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @disable and_comm@
-> expression E;
-> identifier fld;
-> @@
-> 
-> - !E && !E->fld
-> + !E || !E->fld
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-Acked-By: Sam Creasey <sammy@sammy.net>
+From: Julia Lawall <julia@diku.dk>
 
-I doubt this code would have been likely to execute, but you're
-certainly right.  It's a bug, and this looks like the fix.
+The pattern !E && !E->fld is nonsensical.  The patch below updates this
+according to the assumption that && should be ||.  But perhaps another
+solution was intended.
 
--- Sam
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@disable and_comm@
+expression E;
+identifier fld;
+@@
 
-> 
-> ---
->  drivers/scsi/sun3x_esp.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff -u -p a/drivers/scsi/sun3x_esp.c b/drivers/scsi/sun3x_esp.c
-> --- a/drivers/scsi/sun3x_esp.c
-> +++ b/drivers/scsi/sun3x_esp.c
-> @@ -213,7 +213,7 @@ static int __devinit esp_sun3x_probe(str
->  	esp->ops = &sun3x_esp_ops;
->  
->  	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
-> -	if (!res && !res->start)
-> +	if (!res || !res->start)
->  		goto fail_unlink;
->  
->  	esp->regs = ioremap_nocache(res->start, 0x20);
-> @@ -221,7 +221,7 @@ static int __devinit esp_sun3x_probe(str
->  		goto fail_unmap_regs;
->  
->  	res = platform_get_resource(dev, IORESOURCE_MEM, 1);
-> -	if (!res && !res->start)
-> +	if (!res || !res->start)
->  		goto fail_unmap_regs;
->  
->  	esp->dma_regs = ioremap_nocache(res->start, 0x10);
+- !E && !E->fld
++ !E || !E->fld
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/pci/hotplug/cpqphp_ctrl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/pci/hotplug/cpqphp_ctrl.c b/drivers/pci/hotplug/cpqphp_ctrl.c
+--- a/drivers/pci/hotplug/cpqphp_ctrl.c
++++ b/drivers/pci/hotplug/cpqphp_ctrl.c
+@@ -1139,7 +1139,7 @@ static u8 set_controller_speed(struct co
+ 	for(slot = ctrl->slot; slot; slot = slot->next) {
+ 		if (slot->device = (hp_slot + ctrl->slot_device_offset)) 
+ 			continue;
+-		if (!slot->hotplug_slot && !slot->hotplug_slot->info) 
++		if (!slot->hotplug_slot || !slot->hotplug_slot->info) 
+ 			continue;
+ 		if (slot->hotplug_slot->info->adapter_status = 0) 
+ 			continue;
