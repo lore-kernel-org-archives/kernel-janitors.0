@@ -1,58 +1,166 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Date: Wed, 29 Oct 2008 12:56:00 +0000
-Subject: Re: [PATCH 12/12] x86: Use struct fields instead of bitmasks
-Message-Id: <49085D60.7050807@goop.org>
+From: Dave Airlie <airlied@linux.ie>
+Date: Tue, 21 Oct 2008 03:57:13 +0000
+Subject: Re: [PATCH] via-agp.c fixed compilation error and warnings for
+Message-Id: <alpine.DEB.0.82.0810210453290.26751@skynet.skynet.ie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <> <1224904532-9586-1-git-send-email-ice799@gmail.com> <52f8491fb5d55c0171840b01638ea6db0a98f3be.1224903712.git.ice799@gmail.com> <03269a2e8f455b431612a32e8cce048e98c75b27.1224903712.git.ice799@gmail.com> <4810cc08c12cd78612b53f9b52d7ba93a9b03fd0.1224903712.git.ice799@gmail.com> <a9cabc5cabdb5a10631e2a6dc330c54826f2b210.1224903712.git.ice799@gmail.com> <a4c806abcf7a46c78aaff4e338fdbc1a06a56c88.1224903712.git.ice799@gmail.com> <8834ad1ab5a5ab9b4902ab708160b23f078f3758.1224903712.git.ice799@gmail.com> <4d0ab6d642a4edc3ecc7367df7043ecc8f0a7f98.1224903712.git.ice799@gmail.com> <c53b3a54b3215187055dfe5673e1351d1bd3957a.1224903712.git.ice799@gmail.com> <e1bbf5a92bbf8fcf36dcbb650ee5f22d48d4b0f4.1224903712.git.ice799@gmail.com> <63f6f0d8b3da967e88094b6cd4b23f2ba78abbdc.1224903712.git.ice799@gmail.com> <0df5b7f8e2bee4a3599d6b80ea344b69d4bb4dc6.1224903713.git.ice799@gmail.com> <434766d4b5b6c08a3665c19038daaa3c1fa04cb0.1224903713.git.ice799@gmail.com>
-In-Reply-To: <434766d4b5b6c08a3665c19038daaa3c1fa04cb0.1224903713.git.ice799@gmail.com>
+References: <663ba5090810050509g6ce3c25bh40686506b1d35b8f@mail.gmail.com>
+ <663ba5090810202049i16285109k34fde3ec1c9df319@mail.gmail.com>
+In-Reply-To: <663ba5090810202049i16285109k34fde3ec1c9df319@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Damato <ice799@gmail.com>
-Cc: linux-x86_64@vger.kernel.org, linux-newbie@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: nagaraj s k <nagaraj.sk@gmail.com>
+Cc: trivial@kernel.org, greg@kroah.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, nagaraj.krishnappa@thomsonreuters.com
 
-Joe Damato wrote:
-> Use fields in structs instead of bitmasks for getting/setting descriptor data.
->
-> Signed-off-by: Joe Damato <ice799@gmail.com>
-> ---
->  drivers/lguest/interrupts_and_traps.c |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/lguest/interrupts_and_traps.c b/drivers/lguest/interrupts_and_traps.c
-> index bfb24d9..0d9c065 100644
-> --- a/drivers/lguest/interrupts_and_traps.c
-> +++ b/drivers/lguest/interrupts_and_traps.c
-> @@ -178,7 +178,7 @@ void maybe_do_interrupt(struct lg_cpu *cpu)
->  	 * over them. */
->  	idt = &cpu->arch.idt[FIRST_EXTERNAL_VECTOR+irq];
->  	/* If they don't have a handler (yet?), we just ignore it */
-> -	if (idt_present(idt->a, idt->b)) {
-> +	if (idt->p) {
->   
 
-No, using an idt_present() accessor is better, but just pass it an idt.
 
->  		/* OK, mark it no longer pending and deliver it. */
->  		clear_bit(irq, cpu->irqs_pending);
->  		/* set_guest_interrupt() takes the interrupt descriptor and a
-> @@ -254,7 +254,7 @@ int deliver_trap(struct lg_cpu *cpu, unsigned int num)
->  
->  	/* Early on the Guest hasn't set the IDT entries (or maybe it put a
->  	 * bogus one in): if we fail here, the Guest will be killed. */
-> -	if (!idt_present(cpu->arch.idt[num].a, cpu->arch.idt[num].b))
-> +	if (!cpu->arch.idt[num].p)
->  		return 0;
->  	set_guest_interrupt(cpu, desc_lo(cpu->arch.idt[num]),
->  			    desc_hi(cpu->arch.idt[num]), has_err(num));
-> @@ -461,7 +461,7 @@ void copy_traps(const struct lg_cpu *cpu, gate_desc *idt,
->  		 * If it can't go direct, we still need to copy the priv. level:
->  		 * they might want to give userspace access to a software
->  		 * interrupt. */
-> -		if (idt_type(gidt->a, gidt->b) = 0xF)
-> +		if (gidt->type = 0xF)
->   
+On Tue, 21 Oct 2008, nagaraj s k wrote:
 
-We should have symbolic names for the IDT types.
+> Hi All,
+> 
+> can you please have a look at the patch in the below mail thread, it seems
+> like my mails get lost often here. is there any way i can reach the
+> moderator or any one who can comment on my work( i know there are thousands
+> of patches sent across, i am not the only one).
+> 
 
-    J
+I saw this patch and couldn't see the problem is was solving. If its just 
+a checkpatch.pl run across the file, in parts it makes the file less 
+readable, anything splitting stings to avoid the checkpatch.pl stupid 80 
+chars warnings isn't anything I'm going to worryabout.
+
+The mail says fixing compilation errors, there are no compilation errors, 
+if it fixes checkpatch.pl issues then please say that.
+
+> >          }
+> >      }
+> > -    printk(KERN_ERR PFX "Unknown aperture size from AGP bridge (0x%x)\n",
+> > temp);
+> > +    printk(KERN_ERR PFX "Unknown aperture size from AGP
+> > +        bridge (0x%x)\n", temp);
+
+Uglier code.
+
+> >      return 0;
+> >  }
+> >
+> > @@ -116,7 +117,8 @@ static int via_fetch_size_agp3(void)
+> >      for (i = 0; i < agp_bridge->driver->num_aperture_sizes; i++) {
+> >          if (temp = values[i].size_value) {
+> >              agp_bridge->previous_size > > -                agp_bridge->current_size = (void *) (values + i);
+> > +                agp_bridge->current_size > > +                     (void *) (values + i);
+
+arguably uglier code.
+
+> >              agp_bridge->aperture_size_idx = i;
+> >              return values[i].size;
+> >          }
+> > @@ -142,11 +144,12 @@ static int via_configure_agp3(void)
+> >
+> >      /* 1. Enable GTLB in RX90<7>, all AGP aperture access needs to fetch
+> >       *    translation table first.
+> > -     * 2. Enable AGP aperture in RX91<0>. This bit controls the enabling
+> > of the
+> > -     *    graphics AGP aperture for the AGP3.0 port.
+> > +     * 2. Enable AGP aperture in RX91<0>. This bit controls the
+> > +     * enabling of the graphics AGP aperture for the AGP3.0 port.
+
+this is okay.
+
+> >       */
+> >      pci_read_config_dword(agp_bridge->dev, VIA_AGP3_GARTCTRL, &temp);
+> > -    pci_write_config_dword(agp_bridge->dev, VIA_AGP3_GARTCTRL, temp |
+> > (3<<7));
+> > +    pci_write_config_dword(agp_bridge->dev, VIA_AGP3_GARTCTRL,
+> > +                         temp | (3<<7));
+
+this one is probably okay.
+
+> >      return 0;
+> >  }
+> >
+> > @@ -156,7 +159,8 @@ static void via_cleanup_agp3(void)
+> >      struct aper_size_info_16 *previous_size;
+> >
+> >      previous_size = A_SIZE_16(agp_bridge->previous_size);
+> > -    pci_write_config_byte(agp_bridge->dev, VIA_APSIZE,
+> > previous_size->size_value);
+> > +    pci_write_config_byte(agp_bridge->dev, VIA_APSIZE,
+> > +                previous_size->size_value);
+> >  }
+> >
+> >
+> > @@ -165,7 +169,8 @@ static void via_tlbflush_agp3(struct agp
+> >      u32 temp;
+> >
+> >      pci_read_config_dword(agp_bridge->dev, VIA_AGP3_GARTCTRL, &temp);
+> > -    pci_write_config_dword(agp_bridge->dev, VIA_AGP3_GARTCTRL, temp &
+> > ~(1<<7));
+> > +    pci_write_config_dword(agp_bridge->dev, VIA_AGP3_GARTCTRL,
+> > +                            temp & ~(1<<7));
+> >      pci_write_config_dword(agp_bridge->dev, VIA_AGP3_GARTCTRL, temp);
+> >  }
+> >
+> > @@ -421,13 +426,13 @@ static struct agp_device_ids via_agp_dev
+> >   * VIA's AGP3 chipsets do magick to put the AGP bridge compliant
+> >   * with the same standards version as the graphics card.
+> >   */
+> > -static void check_via_agp3 (struct agp_bridge_data *bridge)
+> > +static void check_via_agp3(struct agp_bridge_data *bridge)
+> >  {
+> >      u8 reg;
+> >
+> >      pci_read_config_byte(bridge->dev, VIA_AGPSEL, &reg);
+> >      /* Check AGP 2.0 compatibility mode. */
+> > -    if ((reg & (1<<1))=0)
+> > +    if ((reg & (1<<1)) = 0)
+> >          bridge->driver = &via_agp3_driver;
+> >  }
+> >
+> > @@ -445,7 +450,8 @@ static int __devinit agp_via_probe(struc
+> >          return -ENODEV;
+> >
+> >      j = ent - agp_via_pci_table;
+> > -    printk (KERN_INFO PFX "Detected VIA %s chipset\n",
+> > devs[j].chipset_name);
+> > +    printk(KERN_INFO PFX "Detected VIA %s chipset\n",
+> > +             devs[j].chipset_name);
+> >
+> >      bridge = agp_alloc_bridge();
+> >      if (!bridge)
+> > @@ -461,7 +467,8 @@ static int __devinit agp_via_probe(struc
+> >      if (pdev->device = PCI_DEVICE_ID_VIA_8367_0) {
+> >          /* Is there a KT400 subsystem ? */
+> >          if (pdev->subsystem_device = PCI_DEVICE_ID_VIA_8377_0) {
+> > -            printk(KERN_INFO PFX "Found KT400 in disguise as a KT266.\n");
+> > +            printk(KERN_INFO PFX "Found KT400 in disguise
+> > +                as a KT266.\n");
+
+uglier.
+
+> >              check_via_agp3(bridge);
+> >          }
+> >      }
+> > @@ -491,8 +498,8 @@ static void __devexit agp_via_remove(str
+> >
+> >  static int agp_via_suspend(struct pci_dev *pdev, pm_message_t state)
+> >  {
+> > -    pci_save_state (pdev);
+> > -    pci_set_power_state (pdev, PCI_D3hot);
+> > +    pci_save_state(pdev);
+> > +    pci_set_power_state(pdev, PCI_D3hot);
+> >
+> >      return 0;
+> >  }
+> > @@ -501,7 +508,7 @@ static int agp_via_resume(struct pci_dev
+> >  {
+> >      struct agp_bridge_data *bridge = pci_get_drvdata(pdev);
+> >
+> > -    pci_set_power_state (pdev, PCI_D0);
+> > +    pci_set_power_state(pdev, PCI_D0);
+> >      pci_restore_state(pdev);
+> >
+> >      if (bridge->driver = &via_agp3_driver)
+> >
+> >
+> 
