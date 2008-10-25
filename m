@@ -1,164 +1,57 @@
-From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Thu, 30 Oct 2008 13:45:55 +0000
-Subject: Re: [PATCH] : Fix compilation warnings in net/netlabel/netlabel_addrlist.c
-Message-Id: <ea11fea30810300633m5a99d4a1k9c0b9a2aa241ecb1@mail.gmail.com>
+From: Joe Damato <ice799@gmail.com>
+Date: Sat, 25 Oct 2008 03:15:29 +0000
+Subject: [PATCH 09/12] x86: Add static initiazlier for descriptors
+Message-Id: <e1bbf5a92bbf8fcf36dcbb650ee5f22d48d4b0f4.1224903712.git.ice799@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30810290106u3f92268q62226da65db6f6a4@mail.gmail.com>
-	 <200810291543.49225.paul.moore@hp.com>
-	 <ea11fea30810291910v1f99b62arcc63285fefe8bf72@mail.gmail.com>
-	 <200810300812.39810.paul.moore@hp.com>
-In-Reply-To: <200810300812.39810.paul.moore@hp.com>
+References: <>
+ <1224904532-9586-1-git-send-email-ice799@gmail.com>
+ <52f8491fb5d55c0171840b01638ea6db0a98f3be.1224903712.git.ice799@gmail.com>
+ <03269a2e8f455b431612a32e8cce048e98c75b27.1224903712.git.ice799@gmail.com>
+ <4810cc08c12cd78612b53f9b52d7ba93a9b03fd0.1224903712.git.ice799@gmail.com>
+ <a9cabc5cabdb5a10631e2a6dc330c54826f2b210.1224903712.git.ice799@gmail.com>
+ <a4c806abcf7a46c78aaff4e338fdbc1a06a56c88.1224903712.git.ice799@gmail.com>
+ <8834ad1ab5a5ab9b4902ab708160b23f078f3758.1224903712.git.ice799@gmail.com>
+ <4d0ab6d642a4edc3ecc7367df7043ecc8f0a7f98.1224903712.git.ice799@gmail.com>
+ <c53b3a54b3215187055dfe5673e1351d1bd3957a.1224903712.git.ice799@gmail.com>
+In-Reply-To: <c53b3a54b3215187055dfe5673e1351d1bd3957a.1224903712.git.ice799@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Moore <paul.moore@hp.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-x86_64@vger.kernel.org, linux-newbie@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Joe Damato <ice799@gmail.com>
 
-On Thu, Oct 30, 2008 at 5:42 PM, Paul Moore <paul.moore@hp.com> wrote:
-> On Wednesday 29 October 2008 10:10:36 pm Manish Katiyar wrote:
->> On Thu, Oct 30, 2008 at 1:13 AM, Paul Moore <paul.moore@hp.com> wrote:
->> > On Wednesday 29 October 2008 2:27:44 pm you wrote:
->> >> Hi Paul,
->> >>
->> >> Does this look better ?? Appreciate your help. Patch compile
->> >> tested.
->> >>
->> >> Enable netlabel auditing functions only when CONFIG_AUDIT is set
->> >>
->> >> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
->> >
->> > Much better, just some style nits noted below that need to be
->> > addressed ...
->>
->> Hi Paul,
->>
->> Updated patch below as per your comments.
->>
->> Enable netlabel auditing functions only when CONFIG_AUDIT is set
->>
->> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
->
-> Thanks for sticking with this, I appreciate it.  There is still one
-> small style nit (see below) but it is really my fault for not being
-> more specific.  Unless you object I'll go ahead and fix it up when I
-> apply the patch.
->
-> I'll send a git pull request out to netdev later today, including your
-> patch, as there are two other labeled networking patches that need to
-> make the next 2.6.28-rcX release.
->
->> ---
->>  net/netlabel/netlabel_addrlist.c |    2 ++
->>  net/netlabel/netlabel_addrlist.h |   22 ++++++++++++++++++++++
->>  2 files changed, 24 insertions(+), 0 deletions(-)
->>
->> diff --git a/net/netlabel/netlabel_addrlist.c
->> b/net/netlabel/netlabel_addrlist.c index b0925a3..3fe73c2 100644
->> --- a/net/netlabel/netlabel_addrlist.c
->> +++ b/net/netlabel/netlabel_addrlist.c
->> @@ -327,6 +327,7 @@ struct netlbl_af6list
->> *netlbl_af6list_remove(const struct in6_addr *addr,
->>   * Write the IPv4 address and address mask, if necessary, to
->> @audit_buf. *
->>   */
->> +#ifdef CONFIG_AUDIT
->>  void netlbl_af4list_audit_addr(struct audit_buffer *audit_buf,
->>                                         int src, const char *dev,
->>                                         __be32 addr, __be32 mask)
->
-> When I said to move the #ifdef below the comment, I meant below
-> the "Audit Helper Functions" comment but before the function's kdoc
-> comment header.
+Add static initializer for LDT/GDT/TSS descriptors.
 
-Hi Paul,
-
-Below is the updated patch.
-
-Enable netlabel auditing functions only when CONFIG_AUDIT is set
-
-Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
+Signed-off-by: Joe Damato <ice799@gmail.com>
 ---
- net/netlabel/netlabel_addrlist.c |    2 ++
- net/netlabel/netlabel_addrlist.h |   22 ++++++++++++++++++++++
- 2 files changed, 24 insertions(+), 0 deletions(-)
+ include/asm-x86/desc_defs.h |   14 ++++++++++++++
+ 1 files changed, 14 insertions(+), 0 deletions(-)
 
-diff --git a/net/netlabel/netlabel_addrlist.c b/net/netlabel/netlabel_addrlist.c
-index b0925a3..249f6b9 100644
---- a/net/netlabel/netlabel_addrlist.c
-+++ b/net/netlabel/netlabel_addrlist.c
-@@ -315,6 +315,7 @@ struct netlbl_af6list *netlbl_af6list_remove(const
-struct in6_addr *addr,
-  * Audit Helper Functions
-  */
-
-+#ifdef CONFIG_AUDIT
- /**
-  * netlbl_af4list_audit_addr - Audit an IPv4 address
-  * @audit_buf: audit buffer
-@@ -386,3 +387,4 @@ void netlbl_af6list_audit_addr(struct audit_buffer
-*audit_buf,
- 	}
- }
- #endif /* IPv6 */
-+#endif /* CONFIG_AUDIT */
-diff --git a/net/netlabel/netlabel_addrlist.h b/net/netlabel/netlabel_addrlist.h
-index 0242bea..3212965 100644
---- a/net/netlabel/netlabel_addrlist.h
-+++ b/net/netlabel/netlabel_addrlist.h
-@@ -120,9 +120,19 @@ struct netlbl_af4list *netlbl_af4list_search(__be32 addr,
- struct netlbl_af4list *netlbl_af4list_search_exact(__be32 addr,
- 						   __be32 mask,
- 						   struct list_head *head);
-+
-+#ifdef CONFIG_AUDIT
- void netlbl_af4list_audit_addr(struct audit_buffer *audit_buf,
- 			       int src, const char *dev,
- 			       __be32 addr, __be32 mask);
-+#else
-+static inline void netlbl_af4list_audit_addr(struct audit_buffer *audit_buf,
-+			       int src, const char *dev,
-+			       __be32 addr, __be32 mask)
-+{
-+	return;
-+}
-+#endif
-
- #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
-
-@@ -179,11 +189,23 @@ struct netlbl_af6list
-*netlbl_af6list_search(const struct in6_addr *addr,
- struct netlbl_af6list *netlbl_af6list_search_exact(const struct in6_addr *addr,
- 						   const struct in6_addr *mask,
- 						   struct list_head *head);
-+
-+#ifdef CONFIG_AUDIT
- void netlbl_af6list_audit_addr(struct audit_buffer *audit_buf,
- 			       int src,
- 			       const char *dev,
- 			       const struct in6_addr *addr,
- 			       const struct in6_addr *mask);
-+#else
-+static inline void netlbl_af6list_audit_addr(struct audit_buffer *audit_buf,
-+			       int src,
-+			       const char *dev,
-+			       const struct in6_addr *addr,
-+			       const struct in6_addr *mask)
-+{
-+	return;
-+}
-+#endif
- #endif /* IPV6 */
-
+diff --git a/include/asm-x86/desc_defs.h b/include/asm-x86/desc_defs.h
+index a1c6516..5119051 100644
+--- a/include/asm-x86/desc_defs.h
++++ b/include/asm-x86/desc_defs.h
+@@ -91,6 +91,20 @@ typedef struct desc_struct tss_desc;
+                 , .dpl = (hi >> 13) & 3 \
+                 , .p   = (hi >> 15) & 1 \
+                 , .base1 = (hi >> 16) & 0xffff }
++#define __DESC_INITIALIZER(lo,hi) \
++                { .limit0 = lo & 0xffff \
++                , .base0  = (lo >> 16) & 0xffff \
++                , .base1  = hi & 0xff \
++                , .type   = (hi >> 8) & 0xf \
++                , .s      = (hi >> 12) & 1 \
++                , .dpl    = (hi >> 13) & 3 \
++                , .p      = (hi >> 15) & 1 \
++                , .limit  = (hi >> 16) & 0xf \
++                , .avl    = (hi >> 20) & 1 \
++                , .l      = (hi >> 21) & 1 \
++                , .d      = (hi >> 22) & 1 \
++                , .g      = (hi >> 23) & 1 \
++                ,.base2   = (hi >> 24) & 0xf }
  #endif
+ 
+ struct desc_ptr {
 -- 
 1.5.4.3
 
-
-Thanks -
-Manish
-
->
-> --
-> paul moore
-> linux @ hp
->
