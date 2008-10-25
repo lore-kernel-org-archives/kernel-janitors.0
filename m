@@ -1,65 +1,44 @@
-From: "Matt Wilbur" <wilburm@gmail.com>
-Date: Sun, 19 Oct 2008 20:29:48 +0000
-Subject: Re: dead website(?) and questions about TODO list
-Message-Id: <f0d69c990810191329r734de5dewefd1ce8a7d9f81d8@mail.gmail.com>
+From: Joe Damato <ice799@gmail.com>
+Date: Sat, 25 Oct 2008 03:15:28 +0000
+Subject: [PATCH 08/12] x86: Use static intializer for IDT entries
+Message-Id: <c53b3a54b3215187055dfe5673e1351d1bd3957a.1224903712.git.ice799@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a91986340810151939j2a9691fnaaed8985117797ff@mail.gmail.com>
-In-Reply-To: <a91986340810151939j2a9691fnaaed8985117797ff@mail.gmail.com>
+References: <>
+ <1224904532-9586-1-git-send-email-ice799@gmail.com>
+ <52f8491fb5d55c0171840b01638ea6db0a98f3be.1224903712.git.ice799@gmail.com>
+ <03269a2e8f455b431612a32e8cce048e98c75b27.1224903712.git.ice799@gmail.com>
+ <4810cc08c12cd78612b53f9b52d7ba93a9b03fd0.1224903712.git.ice799@gmail.com>
+ <a9cabc5cabdb5a10631e2a6dc330c54826f2b210.1224903712.git.ice799@gmail.com>
+ <a4c806abcf7a46c78aaff4e338fdbc1a06a56c88.1224903712.git.ice799@gmail.com>
+ <8834ad1ab5a5ab9b4902ab708160b23f078f3758.1224903712.git.ice799@gmail.com>
+ <4d0ab6d642a4edc3ecc7367df7043ecc8f0a7f98.1224903712.git.ice799@gmail.com>
+In-Reply-To: <4d0ab6d642a4edc3ecc7367df7043ecc8f0a7f98.1224903712.git.ice799@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-x86_64@vger.kernel.org, linux-newbie@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Joe Damato <ice799@gmail.com>
 
-On Sat, Oct 18, 2008 at 10:01 PM, Mark Asselstine <asselsm@gmail.com> wrote:
-> On Sat, Oct 18, 2008 at 9:53 PM, Mike Steiner <mike65536@gmail.com> wrote:
->> On Sat, Oct 18, 2008 at 6:24 PM, Mark Asselstine <asselsm@gmail.com> wrote:
->>> On Sat, Oct 18, 2008 at 5:43 PM, Mike Steiner <mike65536@gmail.com> wrote:
->>>> I haven't heard a peep out of anyone, so I guess I've volunteered
->>>> myself to figure all those things out and clean them up. :-)
->>>>
->>>> I'll assume those web sites are permanently gone, and those 2001 todo
->>>> items are probably done (or irrelevant due to 7 years of changes).
->>>>
->>>> I'll work my way through all those things as I get time, and if I
->>>> screw something up I'm sure somebody will tell me.
->>>>
->>>> If anyone has any suggestions or requests about the wiki organization,
->>>> let me know and I'll try to work those in.
->>>>
->>>
->>> A while back most things were moved to
->>> http://code.google.com/p/kernel-janitors/
->>>
->>> The TODO list can be found at
->>> http://code.google.com/p/kernel-janitors/wiki/TODO
->>>
->>> Mark
->>
->> I haven't seen any links at kernelnewbies to the google site, so I'm
->> not sure how people can find it, since most of the links point to
->> janitor.kernelnewbies.org.
->>
->> And just now I noticed the janitor.kernelnewbies.org site is back up
->> again. This is getting confusing. I assumed that site was dead, so I
->> used the Internet Archive to pull the content to
->> http://kernelnewbies.org/MigratingInProgress and corrected/updated the
->> dead links. So now there's 3 kernel-janitors "sites"! IMHO, I think we
->> should keep the content at kernelnewbies.org since there's a lot of
->> overlap between the subjects, and kernelnewbie's wiki format makes
->> updating pages easy. I'd be happy to finish migrating the content
->> over. I just hate to have people (including me) duplicating effort.
->> What do you think?
->>
->
-> Look through the KJ mailing list archive around May 16-22 of this year
-> as there were discussions about this going on at this time (the thread
-> was titled "[KJ] time for a KJ wiki cleanup"). Personally I have
-> limited time to spend on KJ and other kernel projects so tend to stick
-> to code submissions and review as such I am the last person to give
-> advice on this subject.
+Use static intializer for IDT entries.
 
-The whole status of KJ seems to be up for debate.
+Signed-off-by: Joe Damato <ice799@gmail.com>
+---
+ arch/x86/kernel/traps.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-http://lwn.net/Articles/298854/
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index e062974..b308d71 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -86,7 +86,7 @@ char ignore_fpu_irq;
+  * for this.
+  */
+ gate_desc idt_table[256]
+-	__attribute__((__section__(".data.idt"))) = { { { { 0, 0 } } }, };
++	__attribute__((__section__(".data.idt"))) = { __IDT_INITIALIZER(0, 0) };
+ #endif
+ 
+ static int ignore_nmis;
+-- 
+1.5.4.3
 
-Matt
