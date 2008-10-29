@@ -1,42 +1,27 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Date: Mon, 27 Oct 2008 23:02:25 +0000
-Subject: Re: [PATCH 00/12] x86: Cleanup idt, gdt/ldt/tss structs
-Message-Id: <49064881.9040207@goop.org>
+From: "Manish Katiyar" <mkatiyar@gmail.com>
+Date: Wed, 29 Oct 2008 06:33:20 +0000
+Subject: Confusion about unused variable warnings during kernel build.
+Message-Id: <ea11fea30810282321x4e54617dq5e7d273ac5ff131f@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1224904532-9586-1-git-send-email-ice799@gmail.com> <20081027105559.GA13895@elte.hu> <49062F87.4060307@gmail.com>
-In-Reply-To: <49062F87.4060307@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Damato <ice799@gmail.com>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-x86_64@vger.kernel.org, linux-newbie@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Vegard Nossum <vegard.nossum@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Joe Damato wrote:
->> Small detail, the syntactic form you chose:
->>
->> +       if (!cpu->arch.idt[num].p)
->>
->> is not very readable because it's not obvious at first sight that 
->> ".p" intends to mean "present bit". If then idt[num].present would 
->> have been the better choice - but it's even better to not do 
->> bitfields at all but an idt_present(desc *) helper inline function.
->>
->>   
->
-> OK, I'll try to use more descriptive names. As hpa pointed out in his 
-> email, 'p' is the name of the field in the intel x86 documentation. 
-> That's why I chose that, but I agree it isn't particularly clear.
+Hi,
 
-Using bitfields would be a lot more appealing if the x86 design weren't 
-so batshit insane.  Given that the addresses and limits are split of 
-multiple bitfields, you need to have a set of accessors for those at 
-least.  If you're going to do that, it might be worth having them for 
-all the fields, at least for consistency.  Perhaps this would be too 
-ugly and clumsy, but there isn't much code which really does anything 
-with descriptors in detail.
+Occasionally during kernel builds I get some unused variable warnings.
+But when I go and check the code the variable is getting used.
+Interestingly I have seen this problem only with the file symbols
+exported from fs/locks.c. An example of such errors is
 
-    J
->
-> Thanks again for the feedback,
-> Joe
+fs/lockd/svclock.c:719: warning: unused variable 'file'
+fs/nfsd/nfsxdr.c:154: warning: unused variable 'dentry'
+fs/nfsd/nfs4state.c:1626: warning: unused variable 'flp'
 
+Is there some problem with the way symbols are exported ?? Out of the
+above 3, 2 of them are exported as EXPORT_SYMBOL_GPL and one of them
+as EXPORT_SYMBOL
+
+Thanks -
+Manish
