@@ -1,116 +1,68 @@
 From: "Manish Katiyar" <mkatiyar@gmail.com>
-Date: Wed, 29 Oct 2008 18:39:44 +0000
+Date: Thu, 30 Oct 2008 02:22:36 +0000
 Subject: Re: [PATCH] : Fix compilation warnings in net/netlabel/netlabel_addrlist.c
-Message-Id: <ea11fea30810291127h3d5ade4btcd3b327863e7b210@mail.gmail.com>
+Message-Id: <ea11fea30810291910v1f99b62arcc63285fefe8bf72@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <ea11fea30810290106u3f92268q62226da65db6f6a4@mail.gmail.com>
-	 <200810290949.09108.paul.moore@hp.com>
-	 <ea11fea30810290818p2ae6c11eo5e38baf631867fb1@mail.gmail.com>
 	 <200810291135.25056.paul.moore@hp.com>
-In-Reply-To: <200810291135.25056.paul.moore@hp.com>
+	 <ea11fea30810291127h3d5ade4btcd3b327863e7b210@mail.gmail.com>
+	 <200810291543.49225.paul.moore@hp.com>
+In-Reply-To: <200810291543.49225.paul.moore@hp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Paul Moore <paul.moore@hp.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: mkatiyar@gmail.com
 
-On Wed, Oct 29, 2008 at 9:05 PM, Paul Moore <paul.moore@hp.com> wrote:
-> On Wednesday 29 October 2008 11:18:36 am you wrote:
->> On Wed, Oct 29, 2008 at 7:19 PM, Paul Moore <paul.moore@hp.com> wrote:
->> > On Wednesday 29 October 2008 4:06:09 am Manish Katiyar wrote:
->> >> Below patch fixes the following warning.
->> >> net/netlabel/netlabel_addrlist.c:335: warning: unused variable
->> >> 'dir' net/netlabel/netlabel_addrlist.c:369: warning: unused
->> >> variable 'dir'
->> >>
->> >>
->> >> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
->> >
->> > Hi Manish,
->> >
->> > Good catch, I ran compile tests with different
->> > SECURITY/NETLABEL/IPV6 options enabled/disabled but forgot about
->> > AUDIT.  I appreciate your help finding this and submitting a
->> > possible solution but I think the better approach would be to
->> > conditionally compile out the
->> > netlbl_af{4,6}list_audit_addr() functions similarly to what we do
->> > with several of the NetLabel kernel API functions in
->> > include/net/netlabel.h, see netlbl_enabled() for a simple example.
->>
+On Thu, Oct 30, 2008 at 1:13 AM, Paul Moore <paul.moore@hp.com> wrote:
+> On Wednesday 29 October 2008 2:27:44 pm you wrote:
 >> Hi Paul,
 >>
->> Thanks a lot. I didn't understand your suggestion, but this is also
->> the first time I am looking in net directory :-).
+>> Does this look better ?? Appreciate your help. Patch compile tested.
+>>
+>> Enable netlabel auditing functions only when CONFIG_AUDIT is set
+>>
+>> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
 >
-> There is a first time for everything :)
->
->> Even if you compile
->> netlbl_af{4,6}list_audit_add conditionally based on CONFIG_IPV6 and
->> others, you still need to have CONFIG_AUDIT for audit_log_format().
->> Isn't it ??
->
-> Yes, but the idea is to conditionally compile the
-> netlbl_af{4,6}list_audit_add() functions based on CONFIG_AUDIT.  Below
-> is a simple example using myfunc():
->
-> In the source file you define the function:
->
->  void myfunc(int myarg)
->  {
->        /* bunch of audit stuff */
->  }
->
-> In the header file you have a conditional prototype declaration:
->
->  #ifdef CONFIG_AUDIT
->  void myfunc(int myarg);
->  #else
->  static inline void myfunc(int myarg)
->  {
->        return;
->  }
->  #endif
->
-> This way the code compiles correctly regardless of if CONFIG_AUDIT is
-> defined and has the benefit of not including unnecessary code in the
-> kernel binary.
+> Much better, just some style nits noted below that need to be
+> addressed ...
 
 Hi Paul,
 
-Does this look better ?? Appreciate your help. Patch compile tested.
+Updated patch below as per your comments.
+
 
 Enable netlabel auditing functions only when CONFIG_AUDIT is set
 
 Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
 ---
  net/netlabel/netlabel_addrlist.c |    2 ++
- net/netlabel/netlabel_addrlist.h |   20 ++++++++++++++++++++
- 2 files changed, 22 insertions(+), 0 deletions(-)
+ net/netlabel/netlabel_addrlist.h |   22 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 0 deletions(-)
 
 diff --git a/net/netlabel/netlabel_addrlist.c b/net/netlabel/netlabel_addrlist.c
-index b0925a3..830afef 100644
+index b0925a3..3fe73c2 100644
 --- a/net/netlabel/netlabel_addrlist.c
 +++ b/net/netlabel/netlabel_addrlist.c
-@@ -311,6 +311,7 @@ struct netlbl_af6list *netlbl_af6list_remove(const
+@@ -327,6 +327,7 @@ struct netlbl_af6list *netlbl_af6list_remove(const
 struct in6_addr *addr,
- }
- #endif /* IPv6 */
-
-+#ifdef CONFIG_AUDIT
- /*
-  * Audit Helper Functions
+  * Write the IPv4 address and address mask, if necessary, to @audit_buf.
+  *
   */
++#ifdef CONFIG_AUDIT
+ void netlbl_af4list_audit_addr(struct audit_buffer *audit_buf,
+                                        int src, const char *dev,
+                                        __be32 addr, __be32 mask)
 @@ -386,3 +387,4 @@ void netlbl_af6list_audit_addr(struct audit_buffer
 *audit_buf,
- 	}
+        }
  }
  #endif /* IPv6 */
 +#endif /* CONFIG_AUDIT */
 diff --git a/net/netlabel/netlabel_addrlist.h b/net/netlabel/netlabel_addrlist.h
-index 0242bea..7fa730a 100644
+index 0242bea..3212965 100644
 --- a/net/netlabel/netlabel_addrlist.h
 +++ b/net/netlabel/netlabel_addrlist.h
-@@ -120,9 +120,18 @@ struct netlbl_af4list *netlbl_af4list_search(__be32 addr,
+@@ -120,9 +120,19 @@ struct netlbl_af4list *netlbl_af4list_search(__be32 addr,
  struct netlbl_af4list *netlbl_af4list_search_exact(__be32 addr,
  						   __be32 mask,
  						   struct list_head *head);
@@ -122,14 +74,15 @@ index 0242bea..7fa730a 100644
 +#else
 +static inline void netlbl_af4list_audit_addr(struct audit_buffer *audit_buf,
 +			       int src, const char *dev,
-+			       __be32 addr, __be32 mask) {
++			       __be32 addr, __be32 mask)
++{
 +	return;
 +}
 +#endif
 
  #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
 
-@@ -179,11 +188,22 @@ struct netlbl_af6list
+@@ -179,11 +189,23 @@ struct netlbl_af6list
 *netlbl_af6list_search(const struct in6_addr *addr,
  struct netlbl_af6list *netlbl_af6list_search_exact(const struct in6_addr *addr,
  						   const struct in6_addr *mask,
@@ -146,7 +99,8 @@ index 0242bea..7fa730a 100644
 +			       int src,
 +			       const char *dev,
 +			       const struct in6_addr *addr,
-+			       const struct in6_addr *mask) {
++			       const struct in6_addr *mask)
++{
 +	return;
 +}
 +#endif
@@ -159,20 +113,94 @@ index 0242bea..7fa730a 100644
 Thanks -
 Manish
 
-
 >
->> > If you have the time to revise this patch that would be great, just
->> > CC me on the posting and I'll look it over.
+>> ---
+>>  net/netlabel/netlabel_addrlist.c |    2 ++
+>>  net/netlabel/netlabel_addrlist.h |   20 ++++++++++++++++++++
+>>  2 files changed, 22 insertions(+), 0 deletions(-)
 >>
->> Since this is not my area of expertise, I would rather not like to
->> introduce more bugs in kernel. But yes I can try my best to learn and
->> try to fix it if you are willing to lend a helping hand (which might
->> be iterative and irritating for you due to my stupid questions).
+>> diff --git a/net/netlabel/netlabel_addrlist.c
+>> b/net/netlabel/netlabel_addrlist.c index b0925a3..830afef 100644
+>> --- a/net/netlabel/netlabel_addrlist.c
+>> +++ b/net/netlabel/netlabel_addrlist.c
+>> @@ -311,6 +311,7 @@ struct netlbl_af6list
+>> *netlbl_af6list_remove(const struct in6_addr *addr,
+>>  }
+>>  #endif /* IPv6 */
+>>
+>> +#ifdef CONFIG_AUDIT
+>>  /*
+>>   * Audit Helper Functions
+>>   */
 >
-> I'm more than happy to help but all I ask is that we keep the discussion
-> on the mailing lists so that others could benefit from the discussion.
-> However, if this isn't something you are comfortable with just let me
-> know.
+> Why don't you move the #ifdef down here past the comment.  Not a big
+> deal but you need to respin the patch to fix another problem so why not
+> fix this up too.
+>
+>> @@ -386,3 +387,4 @@ void netlbl_af6list_audit_addr(struct
+>> audit_buffer *audit_buf,
+>>       }
+>>  }
+>>  #endif /* IPv6 */
+>> +#endif /* CONFIG_AUDIT */
+>> diff --git a/net/netlabel/netlabel_addrlist.h
+>> b/net/netlabel/netlabel_addrlist.h index 0242bea..7fa730a 100644
+>> --- a/net/netlabel/netlabel_addrlist.h
+>> +++ b/net/netlabel/netlabel_addrlist.h
+>> @@ -120,9 +120,18 @@ struct netlbl_af4list
+>> *netlbl_af4list_search(__be32 addr, struct netlbl_af4list
+>> *netlbl_af4list_search_exact(__be32 addr, __be32 mask,
+>>                                                  struct list_head *head);
+>> +
+>> +#ifdef CONFIG_AUDIT
+>>  void netlbl_af4list_audit_addr(struct audit_buffer *audit_buf,
+>>                              int src, const char *dev,
+>>                              __be32 addr, __be32 mask);
+>> +#else
+>> +static inline void netlbl_af4list_audit_addr(struct audit_buffer
+>> *audit_buf, +                        int src, const char *dev,
+>> +                            __be32 addr, __be32 mask) {
+>> +     return;
+>> +}
+>> +#endif
+>
+> The curly braces for the function body need to be on a line of their
+> own.  See the two example below:
+>
+>  void bad_style_func(void) {
+>    return;
+>  }
+>
+>  void good_style_func(void)
+>  {
+>    return;
+>  }
+>
+>>  #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>
+>> @@ -179,11 +188,22 @@ struct netlbl_af6list
+>> *netlbl_af6list_search(const struct in6_addr *addr,
+>>  struct netlbl_af6list *netlbl_af6list_search_exact(const struct
+>> in6_addr *addr, const struct in6_addr *mask,
+>>                                                  struct list_head *head);
+>> +
+>> +#ifdef CONFIG_AUDIT
+>>  void netlbl_af6list_audit_addr(struct audit_buffer *audit_buf,
+>>                              int src,
+>>                              const char *dev,
+>>                              const struct in6_addr *addr,
+>>                              const struct in6_addr *mask);
+>> +#else
+>> +static inline void netlbl_af6list_audit_addr(struct audit_buffer
+>> *audit_buf, +                        int src,
+>> +                            const char *dev,
+>> +                            const struct in6_addr *addr,
+>> +                            const struct in6_addr *mask) {
+>> +     return;
+>> +}
+>> +#endif
+>
+> Same curly brace problem.
 >
 > --
 > paul moore
