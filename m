@@ -1,69 +1,76 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 09 Nov 2008 16:56:34 +0000
-Subject: [PATCH 7/8] drivers/staging/wlan-ng/p80211wext.c: use ARRAY_SIZE
-Message-Id: <Pine.LNX.4.64.0811091756140.32509@ask.diku.dk>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Date: Thu, 06 Nov 2008 15:33:36 +0000
+Subject: Re: [PATCH] drivers/video: Bad error test before a dereference
+Message-Id: <49130E50.8090009@atmel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200809261553.45301.brunel@diku.dk>
+In-Reply-To: <200809261553.45301.brunel@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julien Brunel <brunel@diku.dk>, adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Julien Brunel :
+> The error test that follows the call to backlight_device_register
+> semms not to concern the right variable.
+> 
+> A simplified version of the semantic match that finds this problem is
+> as follows: 
+> (http://www.emn.fr/x-info/coccinelle/)
+> // <smpl>
+> @def0@
+> expression x;
+> position p0;
+> @@
+> x@p0 = backlight_device_register(...)
+> 
+> @protected@
+> expression def0.x,E;
+> position def0.p0;
+> position p;
+> statement S;
+> @@
+> x@p0
+> ... when != x = E
+> if (!IS_ERR(x) && ...) {<... x@p ...>} else S
+> 
+> @unprotected@
+> expression def0.x;
+> identifier fld;
+> position def0.p0;
+> position p != protected.p;
+> @@
+> x@p0
+> ... when != x = E
+> * x@p->fld
+> // </smpl>
+> 
+> Signed-off-by: Julien Brunel <brunel@diku.dk>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-ARRAY_SIZE is more concise to use when the size of an array is divided by
-the size of its type or the size of its first element.
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+> 
+> ---
+>  drivers/video/atmel_lcdfb.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff -u -p a/drivers/video/atmel_lcdfb.c b/drivers/video/atmel_lcdfb.c
+> --- a/drivers/video/atmel_lcdfb.c
+> +++ b/drivers/video/atmel_lcdfb.c
+> @@ -132,7 +132,7 @@ static void init_backlight(struct atmel_
+>  
+>  	bl = backlight_device_register("backlight", &sinfo->pdev->dev,
+>  			sinfo, &atmel_lcdc_bl_ops);
+> -	if (IS_ERR(sinfo->backlight)) {
+> +	if (IS_ERR(bl)) {
+>  		dev_err(&sinfo->pdev->dev, "error %ld on backlight register\n",
+>  				PTR_ERR(bl));
+>  		return;
+> 
 
-// <smpl>
-@i@
-@@
+Thanks, regards,
+-- 
+Nicolas Ferre
 
-#include <linux/kernel.h>
-
-@depends on i using "paren.iso"@
-type T;
-T[] E;
-@@
-
-- (sizeof(E)/sizeof(E[...]))
-+ ARRAY_SIZE(E)
-
-@depends on i using "paren.iso"@
-type T;
-T[] E;
-@@
-
-- (sizeof(E)/sizeof(T))
-+ ARRAY_SIZE(E)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/staging/wlan-ng/p80211wext.c           |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/wlan-ng/p80211wext.c b/drivers/staging/wlan-ng/p80211wext.c
-index 906ba43..b8f83eb 100644
---- a/drivers/staging/wlan-ng/p80211wext.c
-+++ b/drivers/staging/wlan-ng/p80211wext.c
-@@ -128,7 +128,7 @@ static const long p80211wext_channel_freq[] = {
- 	2412, 2417, 2422, 2427, 2432, 2437, 2442,
- 	2447, 2452, 2457, 2462, 2467, 2472, 2484
- };
--#define NUM_CHANNELS (sizeof(p80211wext_channel_freq) / sizeof(p80211wext_channel_freq[0]))
-+#define NUM_CHANNELS ARRAY_SIZE(p80211wext_channel_freq)
- 
- /* steal a spare bit to store the shared/opensystems state. should default to open if not set */
- #define HOSTWEP_SHAREDKEY BIT3
-@@ -1852,7 +1852,7 @@ static iw_handler p80211wext_handlers[] =  {
- };
- 
- struct iw_handler_def p80211wext_handler_def = {
--	.num_standard = sizeof(p80211wext_handlers) / sizeof(iw_handler),
-+	.num_standard = ARRAY_SIZE(p80211wext_handlers),
- 	.num_private = 0,
- 	.num_private_args = 0,
-         .standard = p80211wext_handlers,
