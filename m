@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 09 Nov 2008 16:55:49 +0000
-Subject: [PATCH 5/8] drivers/mtd/maps/nettel.c: use ARRAY_SIZE
-Message-Id: <Pine.LNX.4.64.0811091755280.32509@ask.diku.dk>
+Date: Sun, 09 Nov 2008 16:56:57 +0000
+Subject: [PATCH 8/8] net/tipc/bcast.h: use ARRAY_SIZE
+Message-Id: <Pine.LNX.4.64.0811091756350.32509@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dwmw2@infradead.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: per.liden@ericsson.com, jon.maloy@ericsson.com, allan.stephens@windriver.com, tipc-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -27,27 +27,26 @@ type T;
 T[] E;
 @@
 
-- (sizeof(E)/sizeof(E[...]))
+- (sizeof(E)/sizeof(T))
 + ARRAY_SIZE(E)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/mtd/maps/nettel.c     |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ net/tipc/bcast.h              |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/mtd/maps/nettel.c b/drivers/mtd/maps/nettel.c
-index 965e6c6..f38e92c 100644
---- a/drivers/mtd/maps/nettel.c
-+++ b/drivers/mtd/maps/nettel.c
-@@ -362,8 +362,7 @@ static int __init nettel_init(void)
- 
- 	intel_mtd->owner = THIS_MODULE;
- 
--	num_intel_partitions = sizeof(nettel_intel_partitions) /
--		sizeof(nettel_intel_partitions[0]);
-+	num_intel_partitions = ARRAY_SIZE(nettel_intel_partitions);
- 
- 	if (intelboot) {
- 		/*
+diff --git a/net/tipc/bcast.h b/net/tipc/bcast.h
+index 5aa024b..2f2d731 100644
+--- a/net/tipc/bcast.h
++++ b/net/tipc/bcast.h
+@@ -124,7 +124,7 @@ static inline int tipc_nmap_equal(struct tipc_node_map *nm_a, struct tipc_node_m
+ static inline void tipc_nmap_diff(struct tipc_node_map *nm_a, struct tipc_node_map *nm_b,
+ 				  struct tipc_node_map *nm_diff)
+ {
+-	int stop = sizeof(nm_a->map) / sizeof(u32);
++	int stop = ARRAY_SIZE(nm_a->map);
+ 	int w;
+ 	int b;
+ 	u32 map;
