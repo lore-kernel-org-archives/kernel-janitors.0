@@ -1,65 +1,53 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 23 Nov 2008 10:49:36 +0000
-Subject: [PATCH 5/5] mm/page_alloc.c: Eliminate NULL test and memset after
-Message-Id: <Pine.LNX.4.64.0811231148580.28343@ask.diku.dk>
+Date: Sun, 09 Nov 2008 16:55:49 +0000
+Subject: [PATCH 5/8] drivers/mtd/maps/nettel.c: use ARRAY_SIZE
+Message-Id: <Pine.LNX.4.64.0811091755280.32509@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dwmw2@infradead.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
-alloc_bootmem and related functions never return NULL and always return a
-zeroed region of memory.  Thus a NULL test or memset after calls to these
-functions is unnecessary.
+ARRAY_SIZE is more concise to use when the size of an array is divided by
+the size of its type or the size of its first element.
 
-This was fixed using the following semantic patch.
+The semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-expression E;
-statement S;
+@i@
 @@
 
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-(
-- BUG_ON (E = NULL);
-|
-- if (E = NULL) S
-)
+#include <linux/kernel.h>
 
-@@
-expression E,E1;
+@depends on i using "paren.iso"@
+type T;
+T[] E;
 @@
 
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-- memset(E,0,E1);
+- (sizeof(E)/sizeof(E[...]))
++ ARRAY_SIZE(E)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
+ drivers/mtd/maps/nettel.c     |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
- mm/page_alloc.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d8ac014..5040299 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3381,10 +3381,8 @@ static void __init setup_usemap(struct pglist_data *pgdat,
- {
- 	unsigned long usemapsize = usemap_size(zonesize);
- 	zone->pageblock_flags = NULL;
--	if (usemapsize) {
-+	if (usemapsize)
- 		zone->pageblock_flags = alloc_bootmem_node(pgdat, usemapsize);
--		memset(zone->pageblock_flags, 0, usemapsize);
--	}
- }
- #else
- static void inline setup_usemap(struct pglist_data *pgdat,
+diff --git a/drivers/mtd/maps/nettel.c b/drivers/mtd/maps/nettel.c
+index 965e6c6..f38e92c 100644
+--- a/drivers/mtd/maps/nettel.c
++++ b/drivers/mtd/maps/nettel.c
+@@ -362,8 +362,7 @@ static int __init nettel_init(void)
+ 
+ 	intel_mtd->owner = THIS_MODULE;
+ 
+-	num_intel_partitions = sizeof(nettel_intel_partitions) /
+-		sizeof(nettel_intel_partitions[0]);
++	num_intel_partitions = ARRAY_SIZE(nettel_intel_partitions);
+ 
+ 	if (intelboot) {
+ 		/*
