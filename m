@@ -1,61 +1,69 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 23 Nov 2008 10:46:58 +0000
-Subject: [PATCH 2/5] arch/avr32: Eliminate NULL test and memset after
-Message-Id: <Pine.LNX.4.64.0811231146250.28343@ask.diku.dk>
+Date: Sun, 09 Nov 2008 16:56:34 +0000
+Subject: [PATCH 7/8] drivers/staging/wlan-ng/p80211wext.c: use ARRAY_SIZE
+Message-Id: <Pine.LNX.4.64.0811091756140.32509@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hskinnemoen@atmel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
-alloc_bootmem and related functions never return NULL and always return a
-zeroed region of memory.  Thus a NULL test or memset after calls to these
-functions is unnecessary.
+ARRAY_SIZE is more concise to use when the size of an array is divided by
+the size of its type or the size of its first element.
 
-This was fixed using the following semantic patch.
+The semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-expression E;
-statement S;
+@i@
 @@
 
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-(
-- BUG_ON (E = NULL);
-|
-- if (E = NULL) S
-)
+#include <linux/kernel.h>
 
-@@
-expression E,E1;
+@depends on i using "paren.iso"@
+type T;
+T[] E;
 @@
 
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-- memset(E,0,E1);
+- (sizeof(E)/sizeof(E[...]))
++ ARRAY_SIZE(E)
+
+@depends on i using "paren.iso"@
+type T;
+T[] E;
+@@
+
+- (sizeof(E)/sizeof(T))
++ ARRAY_SIZE(E)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
+ drivers/staging/wlan-ng/p80211wext.c           |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
- arch/avr32/mm/init.c                |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/arch/avr32/mm/init.c b/arch/avr32/mm/init.c
-index fa92ff6..e819fa6 100644
---- a/arch/avr32/mm/init.c
-+++ b/arch/avr32/mm/init.c
-@@ -97,7 +97,6 @@ void __init paging_init(void)
+diff --git a/drivers/staging/wlan-ng/p80211wext.c b/drivers/staging/wlan-ng/p80211wext.c
+index 906ba43..b8f83eb 100644
+--- a/drivers/staging/wlan-ng/p80211wext.c
++++ b/drivers/staging/wlan-ng/p80211wext.c
+@@ -128,7 +128,7 @@ static const long p80211wext_channel_freq[] = {
+ 	2412, 2417, 2422, 2427, 2432, 2437, 2442,
+ 	2447, 2452, 2457, 2462, 2467, 2472, 2484
+ };
+-#define NUM_CHANNELS (sizeof(p80211wext_channel_freq) / sizeof(p80211wext_channel_freq[0]))
++#define NUM_CHANNELS ARRAY_SIZE(p80211wext_channel_freq)
  
- 	mem_map = NODE_DATA(0)->node_mem_map;
+ /* steal a spare bit to store the shared/opensystems state. should default to open if not set */
+ #define HOSTWEP_SHAREDKEY BIT3
+@@ -1852,7 +1852,7 @@ static iw_handler p80211wext_handlers[] =  {
+ };
  
--	memset(zero_page, 0, PAGE_SIZE);
- 	empty_zero_page = virt_to_page(zero_page);
- 	flush_dcache_page(empty_zero_page);
- }
+ struct iw_handler_def p80211wext_handler_def = {
+-	.num_standard = sizeof(p80211wext_handlers) / sizeof(iw_handler),
++	.num_standard = ARRAY_SIZE(p80211wext_handlers),
+ 	.num_private = 0,
+ 	.num_private_args = 0,
+         .standard = p80211wext_handlers,
