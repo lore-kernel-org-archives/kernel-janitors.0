@@ -1,48 +1,83 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Fri, 28 Nov 2008 17:19:24 +0000
-Subject: [PATCH] neofb: fix sparse warnings
-Message-Id: <49305146.170e660a.2535.ffffbeb9@mx.google.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Date: Thu, 13 Nov 2008 08:26:46 +0000
+Subject: Re: [Linux-fbdev-devel] [PATCH] drivers/video: Bad error test	before
+Message-Id: <491BE4C6.2040109@atmel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200809261553.45301.brunel@diku.dk> <49130E50.8090009@atmel.com>
+In-Reply-To: <49130E50.8090009@atmel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krzysztof Helt <krzysztof.h1@wp.pl>
-Cc: linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Julien Brunel <brunel@diku.dk>, adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix this sparse warnings:
+Hi Andrew,
 
-  drivers/video/neofb.c:1456:4: warning: returning void-valued expression
-  drivers/video/neofb.c:1464:3: warning: returning void-valued expression
+Nicolas Ferre :
+> Julien Brunel :
+>> The error test that follows the call to backlight_device_register
+>> semms not to concern the right variable.
+>>
+>> A simplified version of the semantic match that finds this problem is
+>> as follows: 
+>> (http://www.emn.fr/x-info/coccinelle/)
+>> // <smpl>
+>> @def0@
+>> expression x;
+>> position p0;
+>> @@
+>> x@p0 = backlight_device_register(...)
+>>
+>> @protected@
+>> expression def0.x,E;
+>> position def0.p0;
+>> position p;
+>> statement S;
+>> @@
+>> x@p0
+>> ... when != x = E
+>> if (!IS_ERR(x) && ...) {<... x@p ...>} else S
+>>
+>> @unprotected@
+>> expression def0.x;
+>> identifier fld;
+>> position def0.p0;
+>> position p != protected.p;
+>> @@
+>> x@p0
+>> ... when != x = E
+>> * x@p->fld
+>> // </smpl>
+>>
+>> Signed-off-by: Julien Brunel <brunel@diku.dk>
+>> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
- drivers/video/neofb.c |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+I do not know if you noticed this little patch but
+I think it will be good if we can queue it for -final.
 
-diff --git a/drivers/video/neofb.c b/drivers/video/neofb.c
-index bfb802d..588527a 100644
---- a/drivers/video/neofb.c
-+++ b/drivers/video/neofb.c
-@@ -1453,7 +1453,8 @@ neo2200_imageblit(struct fb_info *info, const struct fb_image *image)
- 			 * is less than 16 bits wide. This is due to insufficient
- 			 * padding when writing the image. We need to adjust
- 			 * struct fb_pixmap. Not yet done. */
--			return cfb_imageblit(info, image);
-+			cfb_imageblit(info, image);
-+			return;
- 		}
- 		bltCntl_flags = NEO_BC0_SRC_MONO;
- 	} else if (image->depth = info->var.bits_per_pixel) {
-@@ -1461,7 +1462,8 @@ neo2200_imageblit(struct fb_info *info, const struct fb_image *image)
- 	} else {
- 		/* We don't currently support hardware acceleration if image
- 		 * depth is different from display */
--		return cfb_imageblit(info, image);
-+		cfb_imageblit(info, image);
-+		return;
- 	}
- 
- 	switch (info->var.bits_per_pixel) {
+Do you want me to reformulate the submission or the
+original email ok for you ?
+
+>> ---
+>>  drivers/video/atmel_lcdfb.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff -u -p a/drivers/video/atmel_lcdfb.c b/drivers/video/atmel_lcdfb.c
+>> --- a/drivers/video/atmel_lcdfb.c
+>> +++ b/drivers/video/atmel_lcdfb.c
+>> @@ -132,7 +132,7 @@ static void init_backlight(struct atmel_
+>>  
+>>  	bl = backlight_device_register("backlight", &sinfo->pdev->dev,
+>>  			sinfo, &atmel_lcdc_bl_ops);
+>> -	if (IS_ERR(sinfo->backlight)) {
+>> +	if (IS_ERR(bl)) {
+>>  		dev_err(&sinfo->pdev->dev, "error %ld on backlight register\n",
+>>  				PTR_ERR(bl));
+>>  		return;
+
+Thanks, regards,
 -- 
-1.5.6.3
+Nicolas Ferre
 
