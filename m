@@ -1,64 +1,69 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 27 Nov 2008 22:12:55 +0000
-Subject: [PATCH] udf: fix sparse warnings
-Message-Id: <493049b5.170e660a.26c3.ffff8fd8@mx.google.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 14 Nov 2008 18:05:31 +0000
+Subject: [PATCH 1/3] kernel/trace/trace.c: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0811141904580.10023@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Kara <jack@suse.cz>
-Cc: linux-kernel@vger.kernel.org
+To: srostedt@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix this sparse warnings:
+From: Julia Lawall <julia@diku.dk>
 
-  fs/udf/balloc.c:843:3: warning: returning void-valued expression
-  fs/udf/balloc.c:847:3: warning: returning void-valued expression
-  fs/udf/balloc.c:851:3: warning: returning void-valued expression
-  fs/udf/balloc.c:855:3: warning: returning void-valued expression
+Error handling code following a kzalloc should free the allocated data.
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+(
+if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+|
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+)
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f = E
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- fs/udf/balloc.c |   24 ++++++++++++------------
- 1 files changed, 12 insertions(+), 12 deletions(-)
+ kernel/trace/trace.c          |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/fs/udf/balloc.c b/fs/udf/balloc.c
-index c0e87db..7328291 100644
---- a/fs/udf/balloc.c
-+++ b/fs/udf/balloc.c
-@@ -840,21 +840,21 @@ void udf_free_blocks(struct super_block *sb, struct inode *inode,
- 	struct udf_part_map *map = &UDF_SB(sb)->s_partmaps[partition];
- 
- 	if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_BITMAP) {
--		return udf_bitmap_free_blocks(sb, inode,
--					      map->s_uspace.s_bitmap,
--					      bloc, offset, count);
-+		udf_bitmap_free_blocks(sb, inode, map->s_uspace.s_bitmap,
-+				       bloc, offset, count);
-+		return;
- 	} else if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_TABLE) {
--		return udf_table_free_blocks(sb, inode,
--					     map->s_uspace.s_table,
--					     bloc, offset, count);
-+		udf_table_free_blocks(sb, inode, map->s_uspace.s_table,
-+				      bloc, offset, count);
-+		return;
- 	} else if (map->s_partition_flags & UDF_PART_FLAG_FREED_BITMAP) {
--		return udf_bitmap_free_blocks(sb, inode,
--					      map->s_fspace.s_bitmap,
--					      bloc, offset, count);
-+		udf_bitmap_free_blocks(sb, inode, map->s_fspace.s_bitmap,
-+				       bloc, offset, count);
-+		return;
- 	} else if (map->s_partition_flags & UDF_PART_FLAG_FREED_TABLE) {
--		return udf_table_free_blocks(sb, inode,
--					     map->s_fspace.s_table,
--					     bloc, offset, count);
-+		udf_table_free_blocks(sb, inode, map->s_fspace.s_table,
-+				      bloc, offset, count);
-+		return;
- 	} else {
- 		return;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 697eda3..d86e325 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1936,6 +1936,7 @@ __tracing_open(struct inode *inode, struct file *file, int *ret)
+ 			ring_buffer_read_finish(iter->buffer_iter[cpu]);
  	}
--- 
-1.5.6.3
-
+ 	mutex_unlock(&trace_types_lock);
++	kfree(iter);
+ 
+ 	return ERR_PTR(-ENOMEM);
+ }
