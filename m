@@ -1,83 +1,69 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Date: Thu, 13 Nov 2008 08:26:46 +0000
-Subject: Re: [Linux-fbdev-devel] [PATCH] drivers/video: Bad error test	before
-Message-Id: <491BE4C6.2040109@atmel.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 14 Nov 2008 18:06:03 +0000
+Subject: [PATCH 2/3] drivers/video/backlight/da903x.c: introduce missing
+Message-Id: <Pine.LNX.4.64.0811141905330.10023@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200809261553.45301.brunel@diku.dk> <49130E50.8090009@atmel.com>
-In-Reply-To: <49130E50.8090009@atmel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Julien Brunel <brunel@diku.dk>, adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: rpurdie@linux.intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Andrew,
+From: Julia Lawall <julia@diku.dk>
 
-Nicolas Ferre :
-> Julien Brunel :
->> The error test that follows the call to backlight_device_register
->> semms not to concern the right variable.
->>
->> A simplified version of the semantic match that finds this problem is
->> as follows: 
->> (http://www.emn.fr/x-info/coccinelle/)
->> // <smpl>
->> @def0@
->> expression x;
->> position p0;
->> @@
->> x@p0 = backlight_device_register(...)
->>
->> @protected@
->> expression def0.x,E;
->> position def0.p0;
->> position p;
->> statement S;
->> @@
->> x@p0
->> ... when != x = E
->> if (!IS_ERR(x) && ...) {<... x@p ...>} else S
->>
->> @unprotected@
->> expression def0.x;
->> identifier fld;
->> position def0.p0;
->> position p != protected.p;
->> @@
->> x@p0
->> ... when != x = E
->> * x@p->fld
->> // </smpl>
->>
->> Signed-off-by: Julien Brunel <brunel@diku.dk>
->> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Error handling code following a kzalloc should free the allocated data.
 
-I do not know if you noticed this little patch but
-I think it will be good if we can queue it for -final.
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Do you want me to reformulate the submission or the
-original email ok for you ?
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
->> ---
->>  drivers/video/atmel_lcdfb.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff -u -p a/drivers/video/atmel_lcdfb.c b/drivers/video/atmel_lcdfb.c
->> --- a/drivers/video/atmel_lcdfb.c
->> +++ b/drivers/video/atmel_lcdfb.c
->> @@ -132,7 +132,7 @@ static void init_backlight(struct atmel_
->>  
->>  	bl = backlight_device_register("backlight", &sinfo->pdev->dev,
->>  			sinfo, &atmel_lcdc_bl_ops);
->> -	if (IS_ERR(sinfo->backlight)) {
->> +	if (IS_ERR(bl)) {
->>  		dev_err(&sinfo->pdev->dev, "error %ld on backlight register\n",
->>  				PTR_ERR(bl));
->>  		return;
+(
+if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+|
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+)
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f = E
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
 
-Thanks, regards,
--- 
-Nicolas Ferre
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
 
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/video/backlight/da903x.c    |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/video/backlight/da903x.c b/drivers/video/backlight/da903x.c
+index 242c382..75388b9 100644
+--- a/drivers/video/backlight/da903x.c
++++ b/drivers/video/backlight/da903x.c
+@@ -119,6 +119,7 @@ static int da903x_backlight_probe(struct platform_device *pdev)
+ 	default:
+ 		dev_err(&pdev->dev, "invalid backlight device ID(%d)\n",
+ 				pdev->id);
++		kfree(data);
+ 		return -EINVAL;
+ 	}
+ 
