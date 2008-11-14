@@ -1,73 +1,76 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 23 Nov 2008 08:08:28 +0000
-Subject: [PATCH 2/2] drivers/pci/hotplug: Add missing pci_dev_get
-Message-Id: <Pine.LNX.4.64.0811230907370.28343@ask.diku.dk>
+Date: Fri, 14 Nov 2008 18:06:36 +0000
+Subject: [PATCH 3/3] sound/pci/pcxhr/pcxhr.c: introduce missing kfree and
+Message-Id: <Pine.LNX.4.64.0811141906050.10023@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: perex@server.perex.cz, tiwai@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-pci_get_slot does a pci_dev_get, so pci_dev_put needs to be called in an
-error case.
+Error handling code following a kzalloc should free the allocated data.
+The error handling code is adjusted to call pci_disable_device(pci); as
+well, as done later in the function
 
-An alterative would be to move the test_and_set_bit before the call to
-pci_get_slot.
-
-The problem was fixed using the following semantic patch.
+The semantic match that finds the problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-local idexpression *n;
-statement S1,S2;
-expression E,E1;
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,l;
+position p1,p2;
 expression *ptr != NULL;
-type T,T1;
 @@
 
 (
-if (!(n = pci_get_slot(...))) S1
+if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
 |
-n = pci_get_slot(...)
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
 )
-<... when != pci_dev_put(n)
-    when != if (...) { <+... pci_dev_put(n) ...+> }
-    when != true !n  || ...
-    when != n = (T)E
-    when != E = n
-if (!n || ...) S2
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f = E
 ...>
 (
-  return \(0\|<+...n...+>\|ptr\);
+ return \(0\|<+...x...+>\|ptr\);
 |
-+ pci_dev_put(n);
-return ...;
-|
-pci_dev_put(n);
-|
-n = (T1)E1
-|
-E1 = n
+ return@p2 ...;
 )
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
+ sound/pci/pcxhr/pcxhr.c       |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
 
- drivers/pci/hotplug/fakephp.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff -u -p a/drivers/pci/hotplug/fakephp.c b/drivers/pci/hotplug/fakephp.c
---- a/drivers/pci/hotplug/fakephp.c
-+++ b/drivers/pci/hotplug/fakephp.c
-@@ -324,6 +324,7 @@ static int disable_slot(struct hotplug_s
+diff --git a/sound/pci/pcxhr/pcxhr.c b/sound/pci/pcxhr/pcxhr.c
+index 0e06c6c..73de6e9 100644
+--- a/sound/pci/pcxhr/pcxhr.c
++++ b/sound/pci/pcxhr/pcxhr.c
+@@ -1229,8 +1229,11 @@ static int __devinit pcxhr_probe(struct pci_dev *pci, const struct pci_device_id
+ 		return -ENOMEM;
+ 	}
  
- 		if (test_and_set_bit(0, &dslot->removed)) {
- 			dbg("Slot already scheduled for removal\n");
-+			pci_dev_put(dev);
- 			return -ENODEV;
- 		}
- 
+-	if (snd_BUG_ON(pci_id->driver_data >= PCI_ID_LAST))
++	if (snd_BUG_ON(pci_id->driver_data >= PCI_ID_LAST)) {
++		kfree(mgr);
++		pci_disable_device(pci);
+ 		return -ENODEV;
++	}
+ 	card_name = pcxhr_board_params[pci_id->driver_data].board_name;
+ 	mgr->playback_chips = pcxhr_board_params[pci_id->driver_data].playback_chips;
+ 	mgr->capture_chips  = pcxhr_board_params[pci_id->driver_data].capture_chips;
