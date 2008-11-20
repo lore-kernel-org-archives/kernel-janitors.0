@@ -1,60 +1,54 @@
-From: "Milind Arun Choudhary" <milindchoudhary@gmail.com>
-Date: Fri, 14 Nov 2008 07:36:03 +0000
-Subject: Re: http://kernelnewbies.org/KernelJanitors/Todo/ReturnCodes
-Message-Id: <3b44d3fb0811132324g189822c1kecde401e46ae343b@mail.gmail.com>
+From: "Hannes Eder" <hannes@hanneseder.net>
+Date: Thu, 20 Nov 2008 20:25:25 +0000
+Subject: [PATCH] sound/sound_core: Fix sparse warnings: returning void-valued expression and make 'soundcore_
+Message-Id: <154e089b0811201225n78a9f746oc7632e496c445d95@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <491C7726.6060103@rdslink.ro>
-In-Reply-To: <491C7726.6060103@rdslink.ro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Alexandru,
+Fix the following sparse warnings:
 
-Welcome!!
-AFAIK currently no body is working on this task, you are free to try
-your hand at it.
+sound/sound_core.c:460:2: warning: returning void-valued expression
+sound/sound_core.c:477:2: warning: returning void-valued expression
+sound/sound_core.c:510:5: warning: symbol 'soundcore_open' was not
+declared. Should it be static?
 
-Please don't accumulate lots of work and send at once.
-I'd suggest first to find out a couple of occurrences where the return
-code related fixes
-can be applied. fix them compile test and better if you can test thoroughly.
-read the submitting-patches documents and send your first cute lil
-patch to the maintainers
-and lkml.
-this way you will get to know the whole process of submitting patches
-to the linux source tree.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ sound/sound_core.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-best of luck
-Milind
-http://milindchoudhary.googlepages.com/
+diff --git a/sound/sound_core.c b/sound/sound_core.c
+index a75b289..10ba421 100644
+--- a/sound/sound_core.c
++++ b/sound/sound_core.c
+@@ -457,7 +457,7 @@ EXPORT_SYMBOL(unregister_sound_mixer);
 
-On 11/14/08, Alexandru Goia <goia.alex@rdslink.ro> wrote:
-> Greetings,
->
-> I am a first year student at Faculty of Computer Science, University
-> Politehnica
-> in Bucharest, Romania.
->
-> I am willing to take the project located at the URL in Subject. Please
-> tell me
-> who is the responsable with this project and what things I should know
-> before
-> I start the project.
->
-> I will be helped by a teaching assistent from the Faculty.
->
->
-> Thank you,
-> Alexandru Goia.
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+ void unregister_sound_midi(int unit)
+ {
+-	return sound_remove_unit(&chains[2], unit);
++	sound_remove_unit(&chains[2], unit);
+ }
+
+ EXPORT_SYMBOL(unregister_sound_midi);
+@@ -474,7 +474,7 @@ EXPORT_SYMBOL(unregister_sound_midi);
+
+ void unregister_sound_dsp(int unit)
+ {
+-	return sound_remove_unit(&chains[3], unit);
++	sound_remove_unit(&chains[3], unit);
+ }
 
 
--- 
-Milind Arun Choudhary
+@@ -507,7 +507,7 @@ static struct sound_unit *__look_for_unit(int
+chain, int unit)
+ 	return NULL;
+ }
+
+-int soundcore_open(struct inode *inode, struct file *file)
++static int soundcore_open(struct inode *inode, struct file *file)
+ {
+ 	int chain;
+ 	int unit = iminor(inode);
