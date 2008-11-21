@@ -1,53 +1,36 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Wed, 12 Nov 2008 23:17:42 +0000
-Subject: Re: [PATCH 3/8] drivers/media: use ARRAY_SIZE
-Message-Id: <20081112151742.a0da237c.akpm@linux-foundation.org>
+From: "Hannes Eder" <hannes@hanneseder.net>
+Date: Fri, 21 Nov 2008 21:56:17 +0000
+Subject: [PATCH] x86: hypervisor - fix sparse warnings
+Message-Id: <154e089b0811211356y79981d6cke1ea8bf3eddf7e50@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0811091754410.32509@ask.diku.dk>
-	<20081109091427.1d6bdfcd@infradead.org>
-In-Reply-To: <20081109091427.1d6bdfcd@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arjan van de Ven <arjan@infradead.org>
-Cc: video4linux-list@redhat.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, mchehab@infradead.org, julia@diku.dk, v4l-dvb-maintainer@linuxtv.org
+To: Alok N Kataria <akataria@vmware.com>, Dan Hecht <dhecht@vmware.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 9 Nov 2008 09:14:27 -0800
-Arjan van de Ven <arjan@infradead.org> wrote:
+Fix the following sparse warnings:
 
-> On Sun, 9 Nov 2008 17:55:03 +0100 (CET)
-> Julia Lawall <julia@diku.dk> wrote:
-> 
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > ARRAY_SIZE is more concise to use when the size of an array is
-> > divided by the size of its type or the size of its first element.
-> 
-> Hi,
-> looking at your patch, I don't think I agree it's just blindly the
-> right thing to do.
-> 
-> > -	*count = sizeof(RegAddr) / sizeof(u8);
-> > +	*count = ARRAY_SIZE(RegAddr);
+arch/x86/kernel/cpu/hypervisor.c:37:15: warning: symbol
+'get_hypervisor_tsc_freq' was not declared. Should it be static?
+arch/x86/kernel/cpu/hypervisor.c:53:16: warning: symbol
+'init_hypervisor' was not declared. Should it be static?
 
-It looks OK to me?
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ arch/x86/kernel/cpu/hypervisor.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-	u8 RegAddr[] = {
-		11, 12, 13, 22, 32, 43, 44, 53, 56, 59, 73,
-		76, 77, 91, 134, 135, 137, 147,
-		156, 166, 167, 168, 25 };
+diff --git a/arch/x86/kernel/cpu/hypervisor.c b/arch/x86/kernel/cpu/hypervisor.c
+index 35ae2b7..fb5b86a 100644
+--- a/arch/x86/kernel/cpu/hypervisor.c
++++ b/arch/x86/kernel/cpu/hypervisor.c
+@@ -23,6 +23,7 @@
 
-	*count = sizeof(RegAddr) / sizeof(u8);
+ #include <asm/processor.h>
+ #include <asm/vmware.h>
++#include <asm/hypervisor.h>
 
-
-> really. ARRAY_SIZE doesn't appear to be an improvement here..
-
-It's a pretty typical usage of ARRAY_SIZE.  The benefits are, as usual:
-
-- the ARRAY_SIZE construct *tells* the reader what the code is trying
-  to do.  Rather than the reader having to work it out and then say "oh
-  yeah, that's what it's doing".
-
-- a reviewer doesn't have to go back and double-check that correct
-  type was used.
-
+ static inline void __cpuinit
+ detect_hypervisor_vendor(struct cpuinfo_x86 *c)
+-- 
+1.5.6.3
