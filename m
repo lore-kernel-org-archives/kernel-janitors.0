@@ -1,93 +1,32 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 27 Nov 2008 12:19:49 +0000
-Subject: [PATCH] drivers/mtd/nand/pasemi_nand.c: Add missing pci_dev_put
-Message-Id: <Pine.LNX.4.64.0811271319070.15160@pc-004.diku.dk>
+From: "Hannes Eder" <hannes@hanneseder.net>
+Date: Fri, 21 Nov 2008 15:03:24 +0000
+Subject: [PATCH] ALSA: hda - fix sparse warning
+Message-Id: <154e089b0811210703h3b63273et77acddfc0e6612e8@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dwmw2@infradead.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Fix the following sparse warning:
 
-pci_get_device increments a reference count that should be decremented
-using pci_dev_put.  I have thus added an extra label in the error handling
-code to do this.  I don't know, however, whether there should be a
-pci_dev_put before the return 0 as well.
+sound/pci/hda/patch_nvhdmi.c:161:25: warning: symbol
+'snd_hda_preset_nvhdmi' was not declared. Should it be static?
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r exists@
-local idexpression x;
-statement S,S1;
-position p1,p2,p3;
-expression E,E1;
-type T,T1;
-expression *ptr != NULL;
-@@
-
-(
- if ((x@p1 = pci_get_device(...)) = NULL) S
-|
- x@p1 = pci_get_device(...);
-)
- ... when != pci_dev_put(...,(T)x,...)
-     when != if (...) { <+... pci_dev_put(...,(T)x,...) ...+> }
-     when != true x = NULL || ...
-     when != x = E
-     when != E = (T)x
-     when any
-(
- if (x = NULL || ...) S1
-|
- if@p2 (...) {
-  ... when != pci_dev_put(...,(T1)x,...)
-      when != if (...) { <+... pci_dev_put(...,(T1)x,...) ...+> }
-      when != x = E1
-      when != E1 = (T1)x
-(
-  return \(0\|<+...x...+>\|ptr\);
-|
-  return@p3 ...;
-)
-}
-)
-
-@ script:python @
-p1 << r.p1;
-p3 << r.p3;
-@@
-
-print "* file: %s pci_get_device: %s return: %s" % (p1[0].file,p1[0].line,p3[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/mtd/nand/pasemi_nand.c      |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+ sound/pci/hda/patch_nvhdmi.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/mtd/nand/pasemi_nand.c b/drivers/mtd/nand/pasemi_nand.c
-index 75c8990..ceae196 100644
---- a/drivers/mtd/nand/pasemi_nand.c
-+++ b/drivers/mtd/nand/pasemi_nand.c
-@@ -144,7 +144,7 @@ static int __devinit pasemi_nand_probe(struct of_device *ofdev,
- 
- 	if (!request_region(lpcctl, 4, driver_name)) {
- 		err = -EBUSY;
--		goto out_ior;
-+		goto out_pdev;
- 	}
- 
- 	chip->cmd_ctrl = pasemi_hwcontrol;
-@@ -176,6 +176,8 @@ static int __devinit pasemi_nand_probe(struct of_device *ofdev,
- 
-  out_lpc:
- 	release_region(lpcctl, 4);
-+ out_pdev:
-+	pci_dev_put(pdev);
-  out_ior:
- 	iounmap(chip->IO_ADDR_R);
-  out_mtd:
+diff --git a/sound/pci/hda/patch_nvhdmi.c b/sound/pci/hda/patch_nvhdmi.c
+index 2eed2c8..1360d54 100644
+--- a/sound/pci/hda/patch_nvhdmi.c
++++ b/sound/pci/hda/patch_nvhdmi.c
+@@ -28,6 +28,7 @@
+ #include <sound/core.h>
+ #include "hda_codec.h"
+ #include "hda_local.h"
++#include "hda_patch.h"
+
+ struct nvhdmi_spec {
+ 	struct hda_multi_out multiout;
