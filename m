@@ -1,57 +1,65 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 25 Nov 2008 13:14:32 +0000
-Subject: [PATCH 3/5] fs/9p: change simple_strtol to simple_strtoul
-Message-Id: <Pine.LNX.4.64.0811251413050.11897@pc-004.diku.dk>
+Date: Sun, 23 Nov 2008 10:49:36 +0000
+Subject: [PATCH 5/5] mm/page_alloc.c: Eliminate NULL test and memset after
+Message-Id: <Pine.LNX.4.64.0811231148580.28343@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net, v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Since v9ses->uid is unsigned, it would seem better to use simple_strtoul that
-simple_strtol.
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r2@
-long e;
-position p;
+@@
+expression E;
+statement S;
 @@
 
-e = simple_strtol@p(...)
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
 
 @@
-position p != r2.p;
-type T;
-T e;
+expression E,E1;
 @@
 
-e = 
-- simple_strtol@p
-+ simple_strtoul
-  (...)
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
+... when != E
+- memset(E,0,E1);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
 
- fs/9p/v9fs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/page_alloc.c |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-diff -u -p a/fs/9p/v9fs.c b/fs/9p/v9fs.c
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -160,7 +160,7 @@ static int v9fs_parse_options(struct v9f
- 				v9ses->flags |= V9FS_ACCESS_ANY;
- 			else {
- 				v9ses->flags |= V9FS_ACCESS_SINGLE;
--				v9ses->uid = simple_strtol(s, &e, 10);
-+				v9ses->uid = simple_strtoul(s, &e, 10);
- 				if (*e != '\0')
- 					v9ses->uid = ~0;
- 			}
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d8ac014..5040299 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3381,10 +3381,8 @@ static void __init setup_usemap(struct pglist_data *pgdat,
+ {
+ 	unsigned long usemapsize = usemap_size(zonesize);
+ 	zone->pageblock_flags = NULL;
+-	if (usemapsize) {
++	if (usemapsize)
+ 		zone->pageblock_flags = alloc_bootmem_node(pgdat, usemapsize);
+-		memset(zone->pageblock_flags, 0, usemapsize);
+-	}
+ }
+ #else
+ static void inline setup_usemap(struct pglist_data *pgdat,
