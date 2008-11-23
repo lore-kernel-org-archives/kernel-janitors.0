@@ -1,57 +1,61 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 25 Nov 2008 13:15:19 +0000
-Subject: [PATCH 5/5] drivers/usb/gadget: change simple_strtol to simple_strtoul
-Message-Id: <Pine.LNX.4.64.0811251414550.11897@pc-004.diku.dk>
+Date: Sun, 23 Nov 2008 10:46:58 +0000
+Subject: [PATCH 2/5] arch/avr32: Eliminate NULL test and memset after
+Message-Id: <Pine.LNX.4.64.0811231146250.28343@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dbrownell@users.sourceforge.net, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hskinnemoen@atmel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Since num is unsigned, it would seem better to use simple_strtoul that
-simple_strtol.
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r2@
-long e;
-position p;
+@@
+expression E;
+statement S;
 @@
 
-e = simple_strtol@p(...)
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
 
 @@
-position p != r2.p;
-type T;
-T e;
+expression E,E1;
 @@
 
-e = 
-- simple_strtol@p
-+ simple_strtoul
-  (...)
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
+... when != E
+- memset(E,0,E1);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
 
- drivers/usb/gadget/epautoconf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/avr32/mm/init.c                |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff -u -p a/drivers/usb/gadget/epautoconf.c b/drivers/usb/gadget/epautoconf.c
---- a/drivers/usb/gadget/epautoconf.c
-+++ b/drivers/usb/gadget/epautoconf.c
-@@ -161,7 +161,7 @@ ep_matches (
- 	/* report address */
- 	desc->bEndpointAddress &= USB_DIR_IN;
- 	if (isdigit (ep->name [2])) {
--		u8	num = simple_strtol (&ep->name [2], NULL, 10);
-+		u8	num = simple_strtoul (&ep->name [2], NULL, 10);
- 		desc->bEndpointAddress |= num;
- #ifdef	MANY_ENDPOINTS
- 	} else if (desc->bEndpointAddress & USB_DIR_IN) {
+diff --git a/arch/avr32/mm/init.c b/arch/avr32/mm/init.c
+index fa92ff6..e819fa6 100644
+--- a/arch/avr32/mm/init.c
++++ b/arch/avr32/mm/init.c
+@@ -97,7 +97,6 @@ void __init paging_init(void)
+ 
+ 	mem_map = NODE_DATA(0)->node_mem_map;
+ 
+-	memset(zero_page, 0, PAGE_SIZE);
+ 	empty_zero_page = virt_to_page(zero_page);
+ 	flush_dcache_page(empty_zero_page);
+ }
