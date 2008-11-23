@@ -1,69 +1,101 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 14 Nov 2008 18:06:03 +0000
-Subject: [PATCH 2/3] drivers/video/backlight/da903x.c: introduce missing
-Message-Id: <Pine.LNX.4.64.0811141905330.10023@pc-004.diku.dk>
+Date: Sun, 23 Nov 2008 08:07:35 +0000
+Subject: [PATCH 1/2] drivers/char/agp: Add missing pci_dev_get
+Message-Id: <Pine.LNX.4.64.0811230906340.28343@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rpurdie@linux.intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: airlied@linux.ie, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Error handling code following a kzalloc should free the allocated data.
+pci_get_slot does a pci_dev_get, so pci_dev_put needs to be called in an
+error case.
 
-The semantic match that finds the problem is as follows:
+In the first three cases, it might also be possible to move the call to
+pci_get_slot downwards below the error handling code.
+
+The problem was fixed using the following semantic patch.
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,l;
-position p1,p2;
+@@
+local idexpression *n;
+statement S1,S2;
+expression E,E1;
 expression *ptr != NULL;
+type T,T1;
 @@
 
 (
-if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+if (!(n = pci_get_slot(...))) S1
 |
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
+n = pci_get_slot(...)
 )
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f = E
+<... when != pci_dev_put(n)
+    when != if (...) { <+... pci_dev_put(n) ...+> }
+    when != true !n  || ...
+    when != n = (T)E
+    when != E = n
+if (!n || ...) S2
 ...>
 (
- return \(0\|<+...x...+>\|ptr\);
+  return \(0\|<+...n...+>\|ptr\);
 |
- return@p2 ...;
++ pci_dev_put(n);
+return ...;
+|
+pci_dev_put(n);
+|
+n = (T1)E1
+|
+E1 = n
 )
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/video/backlight/da903x.c    |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/video/backlight/da903x.c b/drivers/video/backlight/da903x.c
-index 242c382..75388b9 100644
---- a/drivers/video/backlight/da903x.c
-+++ b/drivers/video/backlight/da903x.c
-@@ -119,6 +119,7 @@ static int da903x_backlight_probe(struct platform_device *pdev)
- 	default:
- 		dev_err(&pdev->dev, "invalid backlight device ID(%d)\n",
- 				pdev->id);
-+		kfree(data);
- 		return -EINVAL;
+ drivers/char/agp/amd64-agp.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff -u -p a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
+--- a/drivers/char/agp/amd64-agp.c
++++ b/drivers/char/agp/amd64-agp.c
+@@ -393,6 +393,7 @@ static int __devinit uli_agp_init(struct
+ 
+ 	if (i = ARRAY_SIZE(uli_sizes)) {
+ 		dev_info(&pdev->dev, "no ULi size found for %d\n", size);
++		pci_dev_put(dev1);
+ 		return -ENODEV;
+ 	}
+ 
+@@ -400,8 +401,10 @@ static int __devinit uli_agp_init(struct
+ 	pci_read_config_dword (k8_northbridges[0], AMD64_GARTAPERTUREBASE, &httfea);
+ 
+ 	/* if x86-64 aperture base is beyond 4G, exit here */
+-	if ((httfea & 0x7fff) >> (32 - 25))
++	if ((httfea & 0x7fff) >> (32 - 25)) {
++		pci_dev_put(dev1);
+ 		return -ENODEV;
++	}
+ 
+ 	httfea = (httfea& 0x7fff) << 25;
+ 
+@@ -451,6 +454,7 @@ static int nforce3_agp_init(struct pci_d
+ 
+ 	if (i = ARRAY_SIZE(nforce3_sizes)) {
+ 		dev_info(&pdev->dev, "no NForce3 size found for %d\n", size);
++		pci_dev_put(dev1);
+ 		return -ENODEV;
+ 	}
+ 
+@@ -465,6 +469,7 @@ static int nforce3_agp_init(struct pci_d
+ 	/* if x86-64 aperture base is beyond 4G, exit here */
+ 	if ( (apbase & 0x7fff) >> (32 - 25) ) {
+ 		dev_info(&pdev->dev, "aperture base > 4G\n");
++		pci_dev_put(dev1);
+ 		return -ENODEV;
  	}
  
