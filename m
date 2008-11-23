@@ -1,63 +1,72 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 09 Nov 2008 16:56:10 +0000
-Subject: [PATCH 6/8] drivers/net/wireless/ath9k/rc.c: use ARRAY_SIZE
-Message-Id: <Pine.LNX.4.64.0811091755500.32509@ask.diku.dk>
+Date: Sun, 23 Nov 2008 10:48:14 +0000
+Subject: [PATCH 3/5] arch/ia64: Eliminate NULL test and memset after
+Message-Id: <Pine.LNX.4.64.0811231147000.28343@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lrodriguez@atheros.com, jmalinen@atheros.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-ARRAY_SIZE is more concise to use when the size of an array is divided by
-the size of its type or the size of its first element.
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
 
-The semantic patch that makes this change is as follows:
+This was fixed using the following semantic patch.
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@i@
+@@
+expression E;
+statement S;
 @@
 
-#include <linux/kernel.h>
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
 
-@depends on i using "paren.iso"@
-type T;
-T[] E;
+@@
+expression E,E1;
 @@
 
-- (sizeof(E)/sizeof(E[...]))
-+ ARRAY_SIZE(E)
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
+... when != E
+- memset(E,0,E1);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
- drivers/net/wireless/ath9k/rc.c     |    6 ++----
- 1 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/ath9k/rc.c b/drivers/net/wireless/ath9k/rc.c
-index cca2fc5..ea37673 100644
---- a/drivers/net/wireless/ath9k/rc.c
-+++ b/drivers/net/wireless/ath9k/rc.c
-@@ -1272,8 +1272,7 @@ static void ath_rc_update_ht(struct ath_softc *sc,
- 				rate_ctrl->state[tx_rate].per = 100;
- 		} else {
- 			/* xretries = 2 */
--			count = sizeof(nretry_to_per_lookup) /
--				sizeof(nretry_to_per_lookup[0]);
-+			count = ARRAY_SIZE(nretry_to_per_lookup);
- 			if (retries >= count)
- 				retries = count - 1;
- 			/* new_PER = 7/8*old_PER + 1/8*(currentPER) */
-@@ -1291,8 +1290,7 @@ static void ath_rc_update_ht(struct ath_softc *sc,
- 	} else {	/* xretries = 0 */
- 		/* Update the PER. */
- 		/* Make sure it doesn't index out of array's bounds. */
--		count = sizeof(nretry_to_per_lookup) /
--			sizeof(nretry_to_per_lookup[0]);
-+		count = ARRAY_SIZE(nretry_to_per_lookup);
- 		if (retries >= count)
- 			retries = count - 1;
- 		if (info_priv->n_bad_frames) {
+ arch/ia64/sn/kernel/setup.c         |    5 +----
+ 1 files changed, 1 insertions(+), 4 deletions(-)
+
+diff --git a/arch/ia64/sn/kernel/setup.c b/arch/ia64/sn/kernel/setup.c
+index bb1d249..b683eb3 100644
+--- a/arch/ia64/sn/kernel/setup.c
++++ b/arch/ia64/sn/kernel/setup.c
+@@ -512,7 +512,6 @@ static void __init sn_init_pdas(char **cmdline_p)
+ 	for_each_online_node(cnode) {
+ 		nodepdaindr[cnode]  		    alloc_bootmem_node(NODE_DATA(cnode), sizeof(nodepda_t));
+-		memset(nodepdaindr[cnode], 0, sizeof(nodepda_t));
+ 		memset(nodepdaindr[cnode]->phys_cpuid, -1,
+ 		    sizeof(nodepdaindr[cnode]->phys_cpuid));
+ 		spin_lock_init(&nodepdaindr[cnode]->ptc_lock);
+@@ -521,11 +520,9 @@ static void __init sn_init_pdas(char **cmdline_p)
+ 	/*
+ 	 * Allocate & initialize nodepda for TIOs.  For now, put them on node 0.
+ 	 */
+-	for (cnode = num_online_nodes(); cnode < num_cnodes; cnode++) {
++	for (cnode = num_online_nodes(); cnode < num_cnodes; cnode++)
+ 		nodepdaindr[cnode]  		    alloc_bootmem_node(NODE_DATA(0), sizeof(nodepda_t));
+-		memset(nodepdaindr[cnode], 0, sizeof(nodepda_t));
+-	}
+ 
+ 	/*
+ 	 * Now copy the array of nodepda pointers to each nodepda.
