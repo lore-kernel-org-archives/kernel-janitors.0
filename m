@@ -1,68 +1,74 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Fri, 28 Nov 2008 16:18:40 +0000
-Subject: [PATCH] viafb: fix sparse warnings
-Message-Id: <493050b9.0aa1660a.74cd.ffffb85a@mx.google.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 23 Nov 2008 10:46:21 +0000
+Subject: [PATCH 1/5] arch/arm: Eliminate NULL test and memset after alloc_bootmem
+Message-Id: <Pine.LNX.4.64.0811231145370.28343@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joseph Chan <JosephChan@via.com.tw>
-Cc: linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: rmk@arm.linux.org.uk, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix this sparse warnings:
+From: Julia Lawall <julia@diku.dk>
 
-  drivers/video/via/viafbdev.c:871:3: warning: returning void-valued expression
-  drivers/video/via/viafbdev.c:938:3: warning: returning void-valued expression
-  drivers/video/via/viafbdev.c:995:3: warning: returning void-valued expression
+As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
+alloc_bootmem and related functions never return NULL and always return a
+zeroed region of memory.  Thus a NULL test or memset after calls to these
+functions is unnecessary.
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E;
+statement S;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
+... when != E
+(
+- BUG_ON (E = NULL);
+|
+- if (E = NULL) S
+)
+
+@@
+expression E,E1;
+@@
+
+E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
+... when != E
+- memset(E,0,E1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/video/via/viafbdev.c |   18 ++++++++++++------
- 1 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/video/via/viafbdev.c b/drivers/video/via/viafbdev.c
-index 73ac754..243fde6 100644
---- a/drivers/video/via/viafbdev.c
-+++ b/drivers/video/via/viafbdev.c
-@@ -867,8 +867,10 @@ static void viafb_fillrect(struct fb_info *info,
- 	u32 col = 0, rop = 0;
- 	int pitch;
- 
--	if (!viafb_accel)
--		return cfb_fillrect(info, rect);
-+	if (!viafb_accel) {
-+		cfb_fillrect(info, rect);
-+		return;
-+	}
- 
- 	if (!rect->width || !rect->height)
- 		return;
-@@ -934,8 +936,10 @@ static void viafb_copyarea(struct fb_info *info,
- 
- 	DEBUG_MSG(KERN_INFO "viafb_copyarea!!\n");
- 
--	if (!viafb_accel)
--		return cfb_copyarea(info, area);
-+	if (!viafb_accel) {
-+		cfb_copyarea(info, area);
-+		return;
-+	}
- 
- 	if (!area->width || !area->height)
- 		return;
-@@ -991,8 +995,10 @@ static void viafb_imageblit(struct fb_info *info,
- 	int i;
- 	int pitch;
- 
--	if (!viafb_accel)
--		return cfb_imageblit(info, image);
-+	if (!viafb_accel) {
-+		cfb_imageblit(info, image);
-+		return;
-+	}
- 
- 	udata = (u32 *) image->data;
- 
--- 
-1.5.6.3
+ arch/arm/mm/mmu.c                   |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index 9a17d51..6eb9f26 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -819,7 +819,6 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
+ 	 * Allocate the vector page early.
+ 	 */
+ 	vectors = alloc_bootmem_low_pages(PAGE_SIZE);
+-	BUG_ON(!vectors);
+ 
+ 	for (addr = VMALLOC_END; addr; addr += PGDIR_SIZE)
+ 		pmd_clear(pmd_off_k(addr));
+@@ -904,10 +903,10 @@ void __init paging_init(struct machine_desc *mdesc)
+ 	top_pmd = pmd_off_k(0xffff0000);
+ 
+ 	/*
+-	 * allocate the zero page.  Note that we count on this going ok.
++	 * allocate the zero page.  Note that this always succeeds and
++	 * returns a zeroed result.
+ 	 */
+ 	zero_page = alloc_bootmem_low_pages(PAGE_SIZE);
+-	memset(zero_page, 0, PAGE_SIZE);
+ 	empty_zero_page = virt_to_page(zero_page);
+ 	flush_dcache_page(empty_zero_page);
+ }
