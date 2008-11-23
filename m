@@ -1,76 +1,73 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Date: Thu, 06 Nov 2008 15:33:36 +0000
-Subject: Re: [PATCH] drivers/video: Bad error test before a dereference
-Message-Id: <49130E50.8090009@atmel.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 23 Nov 2008 08:08:28 +0000
+Subject: [PATCH 2/2] drivers/pci/hotplug: Add missing pci_dev_get
+Message-Id: <Pine.LNX.4.64.0811230907370.28343@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200809261553.45301.brunel@diku.dk>
-In-Reply-To: <200809261553.45301.brunel@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julien Brunel <brunel@diku.dk>, adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julien Brunel :
-> The error test that follows the call to backlight_device_register
-> semms not to concern the right variable.
-> 
-> A simplified version of the semantic match that finds this problem is
-> as follows: 
-> (http://www.emn.fr/x-info/coccinelle/)
-> // <smpl>
-> @def0@
-> expression x;
-> position p0;
-> @@
-> x@p0 = backlight_device_register(...)
-> 
-> @protected@
-> expression def0.x,E;
-> position def0.p0;
-> position p;
-> statement S;
-> @@
-> x@p0
-> ... when != x = E
-> if (!IS_ERR(x) && ...) {<... x@p ...>} else S
-> 
-> @unprotected@
-> expression def0.x;
-> identifier fld;
-> position def0.p0;
-> position p != protected.p;
-> @@
-> x@p0
-> ... when != x = E
-> * x@p->fld
-> // </smpl>
-> 
-> Signed-off-by: Julien Brunel <brunel@diku.dk>
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+pci_get_slot does a pci_dev_get, so pci_dev_put needs to be called in an
+error case.
 
-> 
-> ---
->  drivers/video/atmel_lcdfb.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/drivers/video/atmel_lcdfb.c b/drivers/video/atmel_lcdfb.c
-> --- a/drivers/video/atmel_lcdfb.c
-> +++ b/drivers/video/atmel_lcdfb.c
-> @@ -132,7 +132,7 @@ static void init_backlight(struct atmel_
->  
->  	bl = backlight_device_register("backlight", &sinfo->pdev->dev,
->  			sinfo, &atmel_lcdc_bl_ops);
-> -	if (IS_ERR(sinfo->backlight)) {
-> +	if (IS_ERR(bl)) {
->  		dev_err(&sinfo->pdev->dev, "error %ld on backlight register\n",
->  				PTR_ERR(bl));
->  		return;
-> 
+An alterative would be to move the test_and_set_bit before the call to
+pci_get_slot.
 
-Thanks, regards,
--- 
-Nicolas Ferre
+The problem was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@@
+local idexpression *n;
+statement S1,S2;
+expression E,E1;
+expression *ptr != NULL;
+type T,T1;
+@@
+
+(
+if (!(n = pci_get_slot(...))) S1
+|
+n = pci_get_slot(...)
+)
+<... when != pci_dev_put(n)
+    when != if (...) { <+... pci_dev_put(n) ...+> }
+    when != true !n  || ...
+    when != n = (T)E
+    when != E = n
+if (!n || ...) S2
+...>
+(
+  return \(0\|<+...n...+>\|ptr\);
+|
++ pci_dev_put(n);
+return ...;
+|
+pci_dev_put(n);
+|
+n = (T1)E1
+|
+E1 = n
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+ drivers/pci/hotplug/fakephp.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff -u -p a/drivers/pci/hotplug/fakephp.c b/drivers/pci/hotplug/fakephp.c
+--- a/drivers/pci/hotplug/fakephp.c
++++ b/drivers/pci/hotplug/fakephp.c
+@@ -324,6 +324,7 @@ static int disable_slot(struct hotplug_s
+ 
+ 		if (test_and_set_bit(0, &dslot->removed)) {
+ 			dbg("Slot already scheduled for removal\n");
++			pci_dev_put(dev);
+ 			return -ENODEV;
+ 		}
+ 
