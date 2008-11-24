@@ -1,68 +1,36 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Fri, 28 Nov 2008 17:25:01 +0000
-Subject: [PATCH] i810: fix sparse warnings
-Message-Id: <49305187.02a1660a.3c23.ffffa8ef@mx.google.com>
+From: "Hannes Eder" <hannes@hanneseder.net>
+Date: Mon, 24 Nov 2008 19:31:29 +0000
+Subject: [PATCH] proc: fix sparse warning
+Message-Id: <154e089b0811241131m3a15fb14qaea2d151e14ef4ac@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonino Daplas <adaplas@pol.net>
-Cc: linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix this sparse warnings:
+Impact: fix sparse warning
 
-  drivers/video/i810/i810_accel.c:305:3: warning: returning void-valued expression
-  drivers/video/i810/i810_accel.c:331:3: warning: returning void-valued expression
-  drivers/video/i810/i810_accel.c:370:3: warning: returning void-valued expression
+fs/proc/base.c:312:4: warning: do-while statement is not a compound statement
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/video/i810/i810_accel.c |   18 ++++++++++++------
- 1 files changed, 12 insertions(+), 6 deletions(-)
+ fs/proc/base.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/i810/i810_accel.c b/drivers/video/i810/i810_accel.c
-index 76764ea..f5bedee 100644
---- a/drivers/video/i810/i810_accel.c
-+++ b/drivers/video/i810/i810_accel.c
-@@ -301,8 +301,10 @@ void i810fb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
- 	u32 dx, dy, width, height, dest, rop = 0, color = 0;
- 
- 	if (!info->var.accel_flags || par->dev_flags & LOCKUP ||
--	    par->depth = 4) 
--		return cfb_fillrect(info, rect);
-+	    par->depth = 4) {
-+		cfb_fillrect(info, rect);
-+		return;
-+	}
- 
- 	if (par->depth = 1) 
- 		color = rect->color;
-@@ -327,8 +329,10 @@ void i810fb_copyarea(struct fb_info *info, const struct fb_copyarea *region)
- 	u32 sx, sy, dx, dy, pitch, width, height, src, dest, xdir;
- 
- 	if (!info->var.accel_flags || par->dev_flags & LOCKUP ||
--	    par->depth = 4)
--		return cfb_copyarea(info, region);
-+	    par->depth = 4) {
-+		cfb_copyarea(info, region);
-+		return;
-+	}
- 
- 	dx = region->dx * par->depth;
- 	sx = region->sx * par->depth;
-@@ -366,8 +370,10 @@ void i810fb_imageblit(struct fb_info *info, const struct fb_image *image)
- 	u32 fg = 0, bg = 0, size, dst;
- 	
- 	if (!info->var.accel_flags || par->dev_flags & LOCKUP ||
--	    par->depth = 4 || image->depth != 1) 
--		return cfb_imageblit(info, image);
-+	    par->depth = 4 || image->depth != 1) {
-+		cfb_imageblit(info, image);
-+		return;
-+	}
- 
- 	switch (info->var.bits_per_pixel) {
- 	case 8:
--- 
-1.5.6.3
-
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 94ec750..0801249 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -308,9 +308,9 @@ static int proc_pid_auxv(struct task_struct *task,
+char *buffer)
+ 	struct mm_struct *mm = get_task_mm(task);
+ 	if (mm) {
+ 		unsigned int nwords = 0;
+-		do
++		do {
+ 			nwords += 2;
+-		while (mm->saved_auxv[nwords - 2] != 0); /* AT_NULL */
++		} while (mm->saved_auxv[nwords - 2] != 0); /* AT_NULL */
+ 		res = nwords * sizeof(mm->saved_auxv[0]);
+ 		if (res > PAGE_SIZE)
+ 			res = PAGE_SIZE;
