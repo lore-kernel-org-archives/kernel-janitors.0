@@ -1,66 +1,54 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 15 Nov 2008 18:09:26 +0000
-Subject: Re: [PATCH 3/3, repost] sound/pci/pcxhr/pcxhr.c: introduce missing kfree and pci_disable_device
-Message-Id: <s5hk5b4x3mx.wl%tiwai@suse.de>
+From: "Hannes Eder" <hannes@hanneseder.net>
+Date: Mon, 24 Nov 2008 21:14:43 +0000
+Subject: [PATCH] CRED: fix sparse warnings
+Message-Id: <154e089b0811241314t3291ea30w6268bb5b2b5c7c53@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0811141907200.10023@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0811141907200.10023@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: perex@perex.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Fri, 14 Nov 2008 19:08:18 +0100 (CET),
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Error handling code following a kzalloc should free the allocated data.
-> The error handling code is adjusted to call pci_disable_device(pci); as
-> well, as done later in the function
-> 
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> statement S;
-> expression E;
-> identifier f,l;
-> position p1,p2;
-> expression *ptr != NULL;
-> @@
-> 
-> (
-> if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
-> |
-> x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-> ...
-> if (x = NULL) S
-> )
-> <... when != x
->      when != if (...) { <+...x...+> }
-> x->f = E
-> ...>
-> (
->  return \(0\|<+...x...+>\|ptr\);
-> |
->  return@p2 ...;
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Impact: fix sparse warnings
 
-Applied now.  Thanks.
+Fix the following sparse warnings:
 
+  security/security.c:228:2: warning: returning void-valued expression
+  security/security.c:233:2: warning: returning void-valued expression
+  security/security.c:616:2: warning: returning void-valued expression
 
-Takashi
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ security/security.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/security/security.c b/security/security.c
+index 038ef04..f0d96a6 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -225,12 +225,12 @@ int security_bprm_check(struct linux_binprm *bprm)
+
+ void security_bprm_committing_creds(struct linux_binprm *bprm)
+ {
+-	return security_ops->bprm_committing_creds(bprm);
++	security_ops->bprm_committing_creds(bprm);
+ }
+
+ void security_bprm_committed_creds(struct linux_binprm *bprm)
+ {
+-	return security_ops->bprm_committed_creds(bprm);
++	security_ops->bprm_committed_creds(bprm);
+ }
+
+ int security_bprm_secureexec(struct linux_binprm *bprm)
+@@ -613,7 +613,7 @@ int security_prepare_creds(struct cred *new, const
+struct cred *old, gfp_t gfp)
+
+ void security_commit_creds(struct cred *new, const struct cred *old)
+ {
+-	return security_ops->cred_commit(new, old);
++	security_ops->cred_commit(new, old);
+ }
+
+ int security_kernel_act_as(struct cred *new, u32 secid)
+-- 
+1.5.6.3
