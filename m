@@ -1,140 +1,21 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 25 Nov 2008 13:12:32 +0000
-Subject: [PATCH 1/5] arch/mips/alchemy: change strict_strtol to strict_strtoul
-Message-Id: <Pine.LNX.4.64.0811251412010.11897@pc-004.diku.dk>
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Tue, 25 Nov 2008 16:00:25 +0000
+Subject: Re: [PATCH 1/5] arch/mips/alchemy: change strict_strtol to
+Message-Id: <20081125160025.GA18083@linux-mips.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0811251412010.11897@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0811251412010.11897@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ralf@linux-mips.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Tue, Nov 25, 2008 at 02:12:32PM +0100, Julia Lawall wrote:
 
-Since memsize is unsigned, it would seem better to use strict_strtoul that
-strict_strtol.
+> Since memsize is unsigned, it would seem better to use strict_strtoul that
+> strict_strtol.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+Thanks, applied.
 
-// <smpl>
-@s2@
-long e;
-position p;
-@@
-
-strict_strtol@p(...,&e)
-
-@@
-position p != s2.p;
-type T;
-T e;
-@@
-
-- strict_strtol@p
-+ strict_strtoul
-  (...,&e)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-
- arch/mips/alchemy/db1x00/init.c  |    2 +-
- arch/mips/alchemy/mtx-1/init.c   |    2 +-
- arch/mips/alchemy/pb1000/init.c  |    2 +-
- arch/mips/alchemy/pb1100/init.c  |    2 +-
- arch/mips/alchemy/pb1200/init.c  |    2 +-
- arch/mips/alchemy/pb1500/init.c  |    2 +-
- arch/mips/alchemy/pb1550/init.c  |    2 +-
- arch/mips/alchemy/xxs1500/init.c |    2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
-
-diff -u -p a/arch/mips/alchemy/db1x00/init.c b/arch/mips/alchemy/db1x00/init.c
---- a/arch/mips/alchemy/db1x00/init.c
-+++ b/arch/mips/alchemy/db1x00/init.c
-@@ -57,6 +57,6 @@ void __init prom_init(void)
- 	if (!memsize_str)
- 		memsize = 0x04000000;
- 	else
--		strict_strtol(memsize_str, 0, &memsize);
-+		strict_strtoul(memsize_str, 0, &memsize);
- 	add_memory_region(0, memsize, BOOT_MEM_RAM);
- }
-diff -u -p a/arch/mips/alchemy/mtx-1/init.c b/arch/mips/alchemy/mtx-1/init.c
---- a/arch/mips/alchemy/mtx-1/init.c
-+++ b/arch/mips/alchemy/mtx-1/init.c
-@@ -55,6 +55,6 @@ void __init prom_init(void)
- 	if (!memsize_str)
- 		memsize = 0x04000000;
- 	else
--		strict_strtol(memsize_str, 0, &memsize);
-+		strict_strtoul(memsize_str, 0, &memsize);
- 	add_memory_region(0, memsize, BOOT_MEM_RAM);
- }
-diff -u -p a/arch/mips/alchemy/pb1000/init.c b/arch/mips/alchemy/pb1000/init.c
---- a/arch/mips/alchemy/pb1000/init.c
-+++ b/arch/mips/alchemy/pb1000/init.c
-@@ -52,6 +52,6 @@ void __init prom_init(void)
- 	if (!memsize_str)
- 		memsize = 0x04000000;
- 	else
--		strict_strtol(memsize_str, 0, &memsize);
-+		strict_strtoul(memsize_str, 0, &memsize);
- 	add_memory_region(0, memsize, BOOT_MEM_RAM);
- }
-diff -u -p a/arch/mips/alchemy/pb1100/init.c b/arch/mips/alchemy/pb1100/init.c
---- a/arch/mips/alchemy/pb1100/init.c
-+++ b/arch/mips/alchemy/pb1100/init.c
-@@ -54,7 +54,7 @@ void __init prom_init(void)
- 	if (!memsize_str)
- 		memsize = 0x04000000;
- 	else
--		strict_strtol(memsize_str, 0, &memsize);
-+		strict_strtoul(memsize_str, 0, &memsize);
- 
- 	add_memory_region(0, memsize, BOOT_MEM_RAM);
- }
-diff -u -p a/arch/mips/alchemy/pb1200/init.c b/arch/mips/alchemy/pb1200/init.c
---- a/arch/mips/alchemy/pb1200/init.c
-+++ b/arch/mips/alchemy/pb1200/init.c
-@@ -53,6 +53,6 @@ void __init prom_init(void)
- 	if (!memsize_str)
- 		memsize = 0x08000000;
- 	else
--		strict_strtol(memsize_str, 0, &memsize);
-+		strict_strtoul(memsize_str, 0, &memsize);
- 	add_memory_region(0, memsize, BOOT_MEM_RAM);
- }
-diff -u -p a/arch/mips/alchemy/pb1500/init.c b/arch/mips/alchemy/pb1500/init.c
---- a/arch/mips/alchemy/pb1500/init.c
-+++ b/arch/mips/alchemy/pb1500/init.c
-@@ -53,6 +53,6 @@ void __init prom_init(void)
- 	if (!memsize_str)
- 		memsize = 0x04000000;
- 	else
--		strict_strtol(memsize_str, 0, &memsize);
-+		strict_strtoul(memsize_str, 0, &memsize);
- 	add_memory_region(0, memsize, BOOT_MEM_RAM);
- }
-diff -u -p a/arch/mips/alchemy/pb1550/init.c b/arch/mips/alchemy/pb1550/init.c
---- a/arch/mips/alchemy/pb1550/init.c
-+++ b/arch/mips/alchemy/pb1550/init.c
-@@ -53,6 +53,6 @@ void __init prom_init(void)
- 	if (!memsize_str)
- 		memsize = 0x08000000;
- 	else
--		strict_strtol(memsize_str, 0, &memsize);
-+		strict_strtoul(memsize_str, 0, &memsize);
- 	add_memory_region(0, memsize, BOOT_MEM_RAM);
- }
-diff -u -p a/arch/mips/alchemy/xxs1500/init.c b/arch/mips/alchemy/xxs1500/init.c
---- a/arch/mips/alchemy/xxs1500/init.c
-+++ b/arch/mips/alchemy/xxs1500/init.c
-@@ -53,6 +53,6 @@ void __init prom_init(void)
- 	if (!memsize_str)
- 		memsize = 0x04000000;
- 	else
--		strict_strtol(memsize_str, 0, &memsize);
-+		strict_strtoul(memsize_str, 0, &memsize);
- 	add_memory_region(0, memsize, BOOT_MEM_RAM);
- }
+  Ralf
