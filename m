@@ -1,61 +1,64 @@
-From: David Howells <dhowells@redhat.com>
-Date: Sat, 29 Nov 2008 11:24:30 +0000
-Subject: [PATCH] FRV: Fix mmap2 error handling
-Message-Id: <20081129112430.22841.48427.stgit@warthog.procyon.org.uk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 27 Nov 2008 22:12:55 +0000
+Subject: [PATCH] udf: fix sparse warnings
+Message-Id: <493049b5.170e660a.26c3.ffff8fd8@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081127151238.13728.34704.stgit@warthog.procyon.org.uk>
-In-Reply-To: <20081127151238.13728.34704.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: torvalds@osdl.org, akpm@linux-foundation.org, julia@diku.dk
-Cc: dhowells@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org
 
-Fix the error handling in sys_mmap2().  Currently, if the pgoff check fails,
-fput() might have to be called (which it isn't), so do the pgoff check first,
-before fget() is called.
+Fix this sparse warnings:
 
-Reported-by: Julia Lawall <julia@diku.dk>
-Signed-off-by: David Howells <dhowells@redhat.com>
+  fs/udf/balloc.c:843:3: warning: returning void-valued expression
+  fs/udf/balloc.c:847:3: warning: returning void-valued expression
+  fs/udf/balloc.c:851:3: warning: returning void-valued expression
+  fs/udf/balloc.c:855:3: warning: returning void-valued expression
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
+ fs/udf/balloc.c |   24 ++++++++++++------------
+ 1 files changed, 12 insertions(+), 12 deletions(-)
 
- arch/frv/kernel/sys_frv.c |   17 ++++++++---------
- 1 files changed, 8 insertions(+), 9 deletions(-)
-
-
-diff --git a/arch/frv/kernel/sys_frv.c b/arch/frv/kernel/sys_frv.c
-index 49b2cf2..baadc97 100644
---- a/arch/frv/kernel/sys_frv.c
-+++ b/arch/frv/kernel/sys_frv.c
-@@ -35,22 +35,21 @@ asmlinkage long sys_mmap2(unsigned long addr, unsigned long len,
- 	int error = -EBADF;
- 	struct file * file = NULL;
+diff --git a/fs/udf/balloc.c b/fs/udf/balloc.c
+index c0e87db..7328291 100644
+--- a/fs/udf/balloc.c
++++ b/fs/udf/balloc.c
+@@ -840,21 +840,21 @@ void udf_free_blocks(struct super_block *sb, struct inode *inode,
+ 	struct udf_part_map *map = &UDF_SB(sb)->s_partmaps[partition];
  
--	flags &= ~(MAP_EXECUTABLE | MAP_DENYWRITE);
--	if (!(flags & MAP_ANONYMOUS)) {
--		file = fget(fd);
--		if (!file)
--			goto out;
--	}
--
- 	/* As with sparc32, make sure the shift for mmap2 is constant
- 	   (12), no matter what PAGE_SIZE we have.... */
- 
- 	/* But unlike sparc32, don't just silently break if we're
- 	   trying to map something we can't */
--	if (pgoff & ((1<<(PAGE_SHIFT-12))-1))
-+	if (pgoff & ((1 << (PAGE_SHIFT - 12)) - 1))
- 		return -EINVAL;
-+	pgoff >>= PAGE_SHIFT - 12;
- 
--	pgoff >>= (PAGE_SHIFT - 12);
-+	flags &= ~(MAP_EXECUTABLE | MAP_DENYWRITE);
-+	if (!(flags & MAP_ANONYMOUS)) {
-+		file = fget(fd);
-+		if (!file)
-+			goto out;
-+	}
- 
- 	down_write(&current->mm->mmap_sem);
- 	error = do_mmap_pgoff(file, addr, len, prot, flags, pgoff);
+ 	if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_BITMAP) {
+-		return udf_bitmap_free_blocks(sb, inode,
+-					      map->s_uspace.s_bitmap,
+-					      bloc, offset, count);
++		udf_bitmap_free_blocks(sb, inode, map->s_uspace.s_bitmap,
++				       bloc, offset, count);
++		return;
+ 	} else if (map->s_partition_flags & UDF_PART_FLAG_UNALLOC_TABLE) {
+-		return udf_table_free_blocks(sb, inode,
+-					     map->s_uspace.s_table,
+-					     bloc, offset, count);
++		udf_table_free_blocks(sb, inode, map->s_uspace.s_table,
++				      bloc, offset, count);
++		return;
+ 	} else if (map->s_partition_flags & UDF_PART_FLAG_FREED_BITMAP) {
+-		return udf_bitmap_free_blocks(sb, inode,
+-					      map->s_fspace.s_bitmap,
+-					      bloc, offset, count);
++		udf_bitmap_free_blocks(sb, inode, map->s_fspace.s_bitmap,
++				       bloc, offset, count);
++		return;
+ 	} else if (map->s_partition_flags & UDF_PART_FLAG_FREED_TABLE) {
+-		return udf_table_free_blocks(sb, inode,
+-					     map->s_fspace.s_table,
+-					     bloc, offset, count);
++		udf_table_free_blocks(sb, inode, map->s_fspace.s_table,
++				      bloc, offset, count);
++		return;
+ 	} else {
+ 		return;
+ 	}
+-- 
+1.5.6.3
 
