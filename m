@@ -1,67 +1,84 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 21 Nov 2008 07:43:26 +0000
-Subject: Re: [PATCH] sound/sound_core: Fix sparse warnings: returning void-valued expression and make 'soundc
-Message-Id: <s5hprkpo76p.wl%tiwai@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 27 Nov 2008 13:23:43 +0000
+Subject: [PATCH] sound/pci/mixart/mixart.c: Add missing snd_card_free
+Message-Id: <Pine.LNX.4.64.0811271423040.15160@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <154e089b0811201225n78a9f746oc7632e496c445d95@mail.gmail.com>
-In-Reply-To: <154e089b0811201225n78a9f746oc7632e496c445d95@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: perex@perex.cz, tiwai@suse.de, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 20 Nov 2008 21:25:25 +0100,
-Hannes Eder wrote:
-> 
-> Fix the following sparse warnings:
-> 
-> sound/sound_core.c:460:2: warning: returning void-valued expression
-> sound/sound_core.c:477:2: warning: returning void-valued expression
-> sound/sound_core.c:510:5: warning: symbol 'soundcore_open' was not
-> declared. Should it be static?
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+From: Julia Lawall <julia@diku.dk>
 
-Thanks, applied now.
+The function snd_mixart_create creates a link between mgr and card that
+allows snd_mixart_free to free card as well.  But if snd_mixart_create
+fails, then the link has not been created and card has to be freed explicitly.
 
 
-Takashi
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-> ---
->  sound/sound_core.c |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/sound_core.c b/sound/sound_core.c
-> index a75b289..10ba421 100644
-> --- a/sound/sound_core.c
-> +++ b/sound/sound_core.c
-> @@ -457,7 +457,7 @@ EXPORT_SYMBOL(unregister_sound_mixer);
-> 
->  void unregister_sound_midi(int unit)
->  {
-> -	return sound_remove_unit(&chains[2], unit);
-> +	sound_remove_unit(&chains[2], unit);
->  }
-> 
->  EXPORT_SYMBOL(unregister_sound_midi);
-> @@ -474,7 +474,7 @@ EXPORT_SYMBOL(unregister_sound_midi);
-> 
->  void unregister_sound_dsp(int unit)
->  {
-> -	return sound_remove_unit(&chains[3], unit);
-> +	sound_remove_unit(&chains[3], unit);
->  }
-> 
-> 
-> @@ -507,7 +507,7 @@ static struct sound_unit *__look_for_unit(int
-> chain, int unit)
->  	return NULL;
->  }
-> 
-> -int soundcore_open(struct inode *inode, struct file *file)
-> +static int soundcore_open(struct inode *inode, struct file *file)
->  {
->  	int chain;
->  	int unit = iminor(inode);
-> 
+// <smpl>
+@r exists@
+local idexpression x;
+statement S,S1;
+position p1,p2,p3;
+expression E,E1;
+type T,T1;
+expression *ptr != NULL;
+@@
+
+(
+ if ((x@p1 = snd_card_new(...)) = NULL) S
+|
+ x@p1 = snd_card_new(...);
+)
+ ... when != snd_card_free(...,(T)x,...)
+     when != if (...) { <+... snd_card_free(...,(T)x,...) ...+> }
+     when != true x = NULL || ...
+     when != x = E
+     when != E = (T)x
+     when any
+(
+ if (x = NULL || ...) S1
+|
+ if@p2 (...) {
+  ... when != snd_card_free(...,(T1)x,...)
+      when != if (...) { <+... snd_card_free(...,(T1)x,...) ...+> }
+      when != x = E1
+      when != E1 = (T1)x
+(
+  return \(0\|<+...x...+>\|ptr\);
+|
+  return@p3 ...;
+)
+}
+)
+
+@ script:python @
+p1 << r.p1;
+p3 << r.p3;
+@@
+
+print "* file: %s snd_card_new: %s return: %s" % (p1[0].file,p1[0].line,p3[0].line)
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/pci/mixart/mixart.c           |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/sound/pci/mixart/mixart.c b/sound/pci/mixart/mixart.c
+index ae7601f..1dd90f0 100644
+--- a/sound/pci/mixart/mixart.c
++++ b/sound/pci/mixart/mixart.c
+@@ -1377,6 +1377,7 @@ static int __devinit snd_mixart_probe(struct pci_dev *pci,
+ 		sprintf(card->longname, "%s [PCM #%d]", mgr->longname, i);
+ 
+ 		if ((err = snd_mixart_create(mgr, card, i)) < 0) {
++			snd_card_free(card);
+ 			snd_mixart_free(mgr);
+ 			return err;
+ 		}
