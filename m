@@ -1,54 +1,36 @@
-From: Ingo Molnar <mingo@elte.hu>
-Date: Wed, 26 Nov 2008 03:09:41 +0000
-Subject: Re: [PATCH 2/5] arch/x86/kernel/pci-calgary_64.c: change
-Message-Id: <20081126030938.GD8242@elte.hu>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Fri, 28 Nov 2008 16:01:35 +0000
+Subject: [PATCH] rtc-ds1511: fix sparse warning
+Message-Id: <493049fa.06a1660a.3655.ffffab3c@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0811251412330.11897@pc-004.diku.dk> <20081125144355.GB9912@il.ibm.com>
-In-Reply-To: <20081125144355.GB9912@il.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Muli Ben-Yehuda <muli@il.ibm.com>
-Cc: Julia Lawall <julia@diku.dk>, jdmason@kudzu.us, discuss@x86-64.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>
+Cc: rtc-linux@googlegroups.com
 
+Fix this sparse warning:
 
-* Muli Ben-Yehuda <muli@il.ibm.com> wrote:
+  drivers/rtc/rtc-ds1511.c:634:2: warning: returning void-valued expression
 
-> On Tue, Nov 25, 2008 at 02:13:03PM +0100, Julia Lawall wrote:
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > Since bridge is unsigned, it would seem better to use simple_strtoul that
-> > simple_strtol.
-> > 
-> > A simplified version of the semantic patch that makes this change is as
-> > follows: (http://www.emn.fr/x-info/coccinelle/)
-> > 
-> > // <smpl>
-> > @r2@
-> > long e;
-> > position p;
-> > @@
-> > 
-> > e = simple_strtol@p(...)
-> > 
-> > @@
-> > position p != r2.p;
-> > type T;
-> > T e;
-> > @@
-> > 
-> > e = 
-> > - simple_strtol@p
-> > + simple_strtoul
-> >   (...)
-> > // </smpl>
-> > 
-> > Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> Acked-by: Muli Ben-Yehuda <muli@il.ibm.com>
-> 
-> Ingo, can you please push?
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/rtc/rtc-ds1511.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Sure, applied to tip/x86/urgent, thanks guys!
+diff --git a/drivers/rtc/rtc-ds1511.c b/drivers/rtc/rtc-ds1511.c
+index 25caada..062a1d1 100644
+--- a/drivers/rtc/rtc-ds1511.c
++++ b/drivers/rtc/rtc-ds1511.c
+@@ -631,7 +631,7 @@ ds1511_rtc_init(void)
+  static void __exit
+ ds1511_rtc_exit(void)
+ {
+-	return platform_driver_unregister(&ds1511_rtc_driver);
++	platform_driver_unregister(&ds1511_rtc_driver);
+ }
+ 
+ module_init(ds1511_rtc_init);
+-- 
+1.5.6.3
 
-	Ingo
