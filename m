@@ -1,62 +1,82 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 23 Nov 2008 10:48:56 +0000
-Subject: [PATCH 4/5] arch/powerpc: Eliminate NULL test and memset after
-Message-Id: <Pine.LNX.4.64.0811231148170.28343@ask.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Fri, 28 Nov 2008 17:28:49 +0000
+Subject: [PATCH] intelfb: fix sparse warnings
+Message-Id: <493051d1.0c11660a.4d00.ffffb9b4@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: paulus@samba.org, benh@kernel.crashing.org, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sylvain Meyer <sylvain.meyer@worldonline.fr>
+Cc: linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Fix this sparse warnings:
 
-As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
-alloc_bootmem and related functions never return NULL and always return a
-zeroed region of memory.  Thus a NULL test or memset after calls to these
-functions is unnecessary.
+  drivers/video/intelfb/intelfbdrv.c:1497:3: warning: returning void-valued expression
+  drivers/video/intelfb/intelfbdrv.c:1525:3: warning: returning void-valued expression
+  drivers/video/intelfb/intelfbdrv.c:1544:3: warning: returning void-valued expression
+  drivers/video/intelfb/intelfbdrv.c:1558:3: warning: returning void-valued expression
 
-This was fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-expression E;
-statement S;
-@@
-
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-(
-- BUG_ON (E = NULL);
-|
-- if (E = NULL) S
-)
-
-@@
-expression E,E1;
-@@
-
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-- memset(E,0,E1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
+ drivers/video/intelfb/intelfbdrv.c |   24 ++++++++++++++++--------
+ 1 files changed, 16 insertions(+), 8 deletions(-)
 
- arch/powerpc/kernel/setup_64.c      |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+diff --git a/drivers/video/intelfb/intelfbdrv.c b/drivers/video/intelfb/intelfbdrv.c
+index a09e236..6d8e541 100644
+--- a/drivers/video/intelfb/intelfbdrv.c
++++ b/drivers/video/intelfb/intelfbdrv.c
+@@ -1493,8 +1493,10 @@ static void intelfb_fillrect (struct fb_info *info,
+ 	DBG_MSG("intelfb_fillrect\n");
+ #endif
+ 
+-	if (!ACCEL(dinfo, info) || dinfo->depth = 4)
+-		return cfb_fillrect(info, rect);
++	if (!ACCEL(dinfo, info) || dinfo->depth = 4) {
++		cfb_fillrect(info, rect);
++		return;
++	}
+ 
+ 	if (rect->rop = ROP_COPY)
+ 		rop = PAT_ROP_GXCOPY;
+@@ -1521,8 +1523,10 @@ static void intelfb_copyarea(struct fb_info *info,
+ 	DBG_MSG("intelfb_copyarea\n");
+ #endif
+ 
+-	if (!ACCEL(dinfo, info) || dinfo->depth = 4)
+-		return cfb_copyarea(info, region);
++	if (!ACCEL(dinfo, info) || dinfo->depth = 4) {
++		cfb_copyarea(info, region);
++		return;
++	}
+ 
+ 	intelfbhw_do_bitblt(dinfo, region->sx, region->sy, region->dx,
+ 			    region->dy, region->width, region->height,
+@@ -1540,8 +1544,10 @@ static void intelfb_imageblit(struct fb_info *info,
+ #endif
+ 
+ 	if (!ACCEL(dinfo, info) || dinfo->depth = 4
+-	    || image->depth != 1)
+-		return cfb_imageblit(info, image);
++	    || image->depth != 1) {
++		cfb_imageblit(info, image);
++		return;
++	}
+ 
+ 	if (dinfo->depth != 8) {
+ 		fgcolor = dinfo->pseudo_palette[image->fg_color];
+@@ -1554,8 +1560,10 @@ static void intelfb_imageblit(struct fb_info *info,
+ 	if (!intelfbhw_do_drawglyph(dinfo, fgcolor, bgcolor, image->width,
+ 				    image->height, image->data,
+ 				    image->dx, image->dy,
+-				    dinfo->pitch, info->var.bits_per_pixel))
+-		return cfb_imageblit(info, image);
++				    dinfo->pitch, info->var.bits_per_pixel)) {
++		cfb_imageblit(info, image);
++		return;
++	}
+ }
+ 
+ static int intelfb_cursor(struct fb_info *info, struct fb_cursor *cursor)
+-- 
+1.5.6.3
 
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index 9dca8cf..261c1b0 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -606,8 +606,6 @@ void __init setup_per_cpu_areas(void)
- 
- 	for_each_possible_cpu(i) {
- 		ptr = alloc_bootmem_pages_node(NODE_DATA(cpu_to_node(i)), size);
--		if (!ptr)
--			panic("Cannot allocate cpu data for CPU %d\n", i);
- 
- 		paca[i].data_offset = ptr - __per_cpu_start;
- 		memcpy(ptr, __per_cpu_start, __per_cpu_end - __per_cpu_start);
