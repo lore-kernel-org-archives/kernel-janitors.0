@@ -1,36 +1,36 @@
-From: Len Brown <lenb@kernel.org>
-Date: Sun, 30 Nov 2008 05:11:36 +0000
-Subject: Re: [PATCH] ACPI: EC: fix compilation warning
-Message-Id: <alpine.LFD.2.00.0811300010570.3239@localhost.localdomain>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Fri, 28 Nov 2008 16:11:47 +0000
+Subject: [PATCH] rtc-stk17ta8: fix sparse warning
+Message-Id: <49304ffd.09a1660a.30b3.ffffc7a7@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49318541.0aec660a.0efb.3436@mx.google.com>
- <493199A4.5020203@suse.de>
-In-Reply-To: <493199A4.5020203@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexey Starikovskiy <astarikovskiy@suse.de>
-Cc: Hannes Eder <hannes@hanneseder.net>, Len Brown <len.brown@intel.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alessandro Zummo <a.zummo@towertech.it>
+Cc: rtc-linux@googlegroups.com
 
+Fix this sparse warning:
 
+  drivers/rtc/rtc-stk17ta8.c:403:2: warning: returning void-valued expression
 
-On Sat, 29 Nov 2008, Alexey Starikovskiy wrote:
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/rtc/rtc-stk17ta8.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> Hannes Eder wrote:
-> > Fix the warning introduced in commit
-> > c5279dee26c0e8d7c4200993bfc4b540d2469598,
-> > and give the dummy variable a more verbose name.
-> Thanks!
-> > 
-> >   drivers/acpi/ec.c: In function 'acpi_ec_ecdt_probe':
-> >   drivers/acpi/ec.c:1015: warning: ISO C90 forbids mixed declarations and
-> > code
-> > 
-> > Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> Acked-by: Alexey Starikovskiy <astarikovskiy@suse.de>
-
-applied on top of 11880 fix in acpi-test.
-
-thanks,
--len
+diff --git a/drivers/rtc/rtc-stk17ta8.c b/drivers/rtc/rtc-stk17ta8.c
+index f4cd46e..549990f 100644
+--- a/drivers/rtc/rtc-stk17ta8.c
++++ b/drivers/rtc/rtc-stk17ta8.c
+@@ -400,7 +400,7 @@ static __init int stk17ta8_init(void)
+ 
+ static __exit void stk17ta8_exit(void)
+ {
+-	return platform_driver_unregister(&stk17ta8_rtc_driver);
++	platform_driver_unregister(&stk17ta8_rtc_driver);
+ }
+ 
+ module_init(stk17ta8_init);
+-- 
+1.5.6.3
 
