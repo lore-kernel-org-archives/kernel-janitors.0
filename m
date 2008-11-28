@@ -1,27 +1,40 @@
-From: "=?BIG5?B?vbKlv6z8?=" <q0yl0o1t30q2u@gmail.com>
-Date: Wed, 19 Nov 2008 04:11:46 +0000
-Subject: =?BIG5?B?sXrB2ahTprOkQK3TsU3E3aq6pfi3frr0r7i23KFI?=
-Message-Id: <e5ea08d40811182011k1373b852s894edd4f3baf86ef@mail.gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Fri, 28 Nov 2008 17:16:20 +0000
+Subject: [PATCH] pm3fb: fix sparse warning
+Message-Id: <493050da.02e2660a.5173.ffffbf69@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ibm866"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Antonino Daplas <adaplas@gmail.com>
+Cc: linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-pHPgvqzsp9669K22s12tcAoKoe+n2q3MqrqpdqauoUeryKThqrqoQ6O4pfOkcKjGsaGhQbOjrE+k
-c+C+qrqkaqjGsaEKCqH3p9qtzKZiscClWKX4t36nzrZIuvSvuKVdp3SrZaV4uvSttqz8pHUrq+Gl
-eLresnq1e6ahCgqhra2trsmtrbZxsU2u17v5IKV1rW4kMjksOTAwCgo/KKZisGWjuKZ+MTAwTUKk
-o62trHm2cbr0r7iqxbahKQoKobyn2q3MsLWquqSjpXWsT7r0r7ihQabTrE+xeqX4t36quqRKpGYK
-CqHvo7it06Zuqrql+Ld+uvSvuLjqrsanWa7Jp/O3c6q6s3Sr16xPq9ytq61uqroKCqHvpfi3fqLt
-pMaqurCqq3696LnOtqShQaW0s3mxeqq6uvS49Kr5rbEKCqH1v+++3KRz4L6mqLROsXqqurnat1EK
-CqHjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeMKUFM6
-IL11pFfByqqruvSvuKfarczB2aVptKOo0ajqpWS+96juoUEKoUChQLtQvXWkV6ZDpkyxYrPmpf6s
-2bZXsNMrtmynvcO6tk8uLi4uLi61par3rHmqQbDIvveo7gqh46HjoeOh46HjoeOh46HjoeOh46Hj
-oeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjCgrFd6rvqNO5cayiuN+2wLFNrfuhXVNhbaFe
-oUcwOTgwMTE5ODEyIC8gMDkzODc2NDM5NQoKoeOh46HjoeOh46HjoeOh46HjoeOh46HjoeOh46Hj
-oeOh46HjoeOh46HjoeOh46HjoeOh4wqlu6S9pXGldKV+tKOo0cP2weSmclNFT7HGp8eqQbDICqtP
-w9KxTrF6qrq69K+4pmJZeCAvIEd4IC4uLrHGpmKyxKRArbYKoUChQKFAoUChQKFAoUChQKFAoUCh
-QKFAoUChQKFAoUChQKFAIMV3qu+o07lxuN+w3SEhIQqh46HjoeOh46HjoeOh46HjoeOh46HjoeOh
-46HjoeOh46HjoeOh46HjoeOh46HjoeOh46HjCv/06Lp7Lm7HK4m3n66JrYYrJYrL/7Hp3bYXpYp3
-/7p7Lm7HK4m3pHq53pf42p4raK7P4p7YXm6HcqH2pnrLGoHraJmo6K3aJqP74Hq/5Hq53pf6K4DK
-K3pmo6K3aJqIp36GrYbbaf//74Hq/5Hq53pf6K4P5mo6K3aJqP4p36P4bQo=
+Fix this sparse warning:
+
+  drivers/video/pm3fb.c:543:3: warning: returning void-valued expression
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/video/pm3fb.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/pm3fb.c b/drivers/video/pm3fb.c
+index 68089d1..6666f45 100644
+--- a/drivers/video/pm3fb.c
++++ b/drivers/video/pm3fb.c
+@@ -539,8 +539,10 @@ static void pm3fb_imageblit(struct fb_info *info, const struct fb_image *image)
+ 		bgx = par->palette[image->bg_color];
+ 		break;
+ 	}
+-	if (image->depth != 1)
+-		return cfb_imageblit(info, image);
++	if (image->depth != 1) {
++		cfb_imageblit(info, image);
++		return;
++	}
+ 
+ 	if (info->var.bits_per_pixel = 8) {
+ 		fgx |= fgx << 8;
+-- 
+1.5.6.3
+
