@@ -1,72 +1,68 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 23 Nov 2008 10:48:14 +0000
-Subject: [PATCH 3/5] arch/ia64: Eliminate NULL test and memset after
-Message-Id: <Pine.LNX.4.64.0811231147000.28343@ask.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Fri, 28 Nov 2008 17:25:01 +0000
+Subject: [PATCH] i810: fix sparse warnings
+Message-Id: <49305187.02a1660a.3c23.ffffa8ef@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tony.luck@intel.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antonino Daplas <adaplas@pol.net>
+Cc: linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Fix this sparse warnings:
 
-As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
-alloc_bootmem and related functions never return NULL and always return a
-zeroed region of memory.  Thus a NULL test or memset after calls to these
-functions is unnecessary.
+  drivers/video/i810/i810_accel.c:305:3: warning: returning void-valued expression
+  drivers/video/i810/i810_accel.c:331:3: warning: returning void-valued expression
+  drivers/video/i810/i810_accel.c:370:3: warning: returning void-valued expression
 
-This was fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-expression E;
-statement S;
-@@
-
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-(
-- BUG_ON (E = NULL);
-|
-- if (E = NULL) S
-)
-
-@@
-expression E,E1;
-@@
-
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-- memset(E,0,E1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
+ drivers/video/i810/i810_accel.c |   18 ++++++++++++------
+ 1 files changed, 12 insertions(+), 6 deletions(-)
 
- arch/ia64/sn/kernel/setup.c         |    5 +----
- 1 files changed, 1 insertions(+), 4 deletions(-)
-
-diff --git a/arch/ia64/sn/kernel/setup.c b/arch/ia64/sn/kernel/setup.c
-index bb1d249..b683eb3 100644
---- a/arch/ia64/sn/kernel/setup.c
-+++ b/arch/ia64/sn/kernel/setup.c
-@@ -512,7 +512,6 @@ static void __init sn_init_pdas(char **cmdline_p)
- 	for_each_online_node(cnode) {
- 		nodepdaindr[cnode]  		    alloc_bootmem_node(NODE_DATA(cnode), sizeof(nodepda_t));
--		memset(nodepdaindr[cnode], 0, sizeof(nodepda_t));
- 		memset(nodepdaindr[cnode]->phys_cpuid, -1,
- 		    sizeof(nodepdaindr[cnode]->phys_cpuid));
- 		spin_lock_init(&nodepdaindr[cnode]->ptc_lock);
-@@ -521,11 +520,9 @@ static void __init sn_init_pdas(char **cmdline_p)
- 	/*
- 	 * Allocate & initialize nodepda for TIOs.  For now, put them on node 0.
- 	 */
--	for (cnode = num_online_nodes(); cnode < num_cnodes; cnode++) {
-+	for (cnode = num_online_nodes(); cnode < num_cnodes; cnode++)
- 		nodepdaindr[cnode]  		    alloc_bootmem_node(NODE_DATA(0), sizeof(nodepda_t));
--		memset(nodepdaindr[cnode], 0, sizeof(nodepda_t));
--	}
+diff --git a/drivers/video/i810/i810_accel.c b/drivers/video/i810/i810_accel.c
+index 76764ea..f5bedee 100644
+--- a/drivers/video/i810/i810_accel.c
++++ b/drivers/video/i810/i810_accel.c
+@@ -301,8 +301,10 @@ void i810fb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
+ 	u32 dx, dy, width, height, dest, rop = 0, color = 0;
  
- 	/*
- 	 * Now copy the array of nodepda pointers to each nodepda.
+ 	if (!info->var.accel_flags || par->dev_flags & LOCKUP ||
+-	    par->depth = 4) 
+-		return cfb_fillrect(info, rect);
++	    par->depth = 4) {
++		cfb_fillrect(info, rect);
++		return;
++	}
+ 
+ 	if (par->depth = 1) 
+ 		color = rect->color;
+@@ -327,8 +329,10 @@ void i810fb_copyarea(struct fb_info *info, const struct fb_copyarea *region)
+ 	u32 sx, sy, dx, dy, pitch, width, height, src, dest, xdir;
+ 
+ 	if (!info->var.accel_flags || par->dev_flags & LOCKUP ||
+-	    par->depth = 4)
+-		return cfb_copyarea(info, region);
++	    par->depth = 4) {
++		cfb_copyarea(info, region);
++		return;
++	}
+ 
+ 	dx = region->dx * par->depth;
+ 	sx = region->sx * par->depth;
+@@ -366,8 +370,10 @@ void i810fb_imageblit(struct fb_info *info, const struct fb_image *image)
+ 	u32 fg = 0, bg = 0, size, dst;
+ 	
+ 	if (!info->var.accel_flags || par->dev_flags & LOCKUP ||
+-	    par->depth = 4 || image->depth != 1) 
+-		return cfb_imageblit(info, image);
++	    par->depth = 4 || image->depth != 1) {
++		cfb_imageblit(info, image);
++		return;
++	}
+ 
+ 	switch (info->var.bits_per_pixel) {
+ 	case 8:
+-- 
+1.5.6.3
+
