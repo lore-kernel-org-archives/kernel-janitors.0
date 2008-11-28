@@ -1,74 +1,48 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 23 Nov 2008 10:46:21 +0000
-Subject: [PATCH 1/5] arch/arm: Eliminate NULL test and memset after alloc_bootmem
-Message-Id: <Pine.LNX.4.64.0811231145370.28343@ask.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Fri, 28 Nov 2008 17:19:24 +0000
+Subject: [PATCH] neofb: fix sparse warnings
+Message-Id: <49305146.170e660a.2535.ffffbeb9@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rmk@arm.linux.org.uk, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Krzysztof Helt <krzysztof.h1@wp.pl>
+Cc: linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Fix this sparse warnings:
 
-As noted by Akinobu Mita in patch b1fceac2b9e04d278316b2faddf276015fc06e3b,
-alloc_bootmem and related functions never return NULL and always return a
-zeroed region of memory.  Thus a NULL test or memset after calls to these
-functions is unnecessary.
+  drivers/video/neofb.c:1456:4: warning: returning void-valued expression
+  drivers/video/neofb.c:1464:3: warning: returning void-valued expression
 
-This was fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-expression E;
-statement S;
-@@
-
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-(
-- BUG_ON (E = NULL);
-|
-- if (E = NULL) S
-)
-
-@@
-expression E,E1;
-@@
-
-E = \(alloc_bootmem\|alloc_bootmem_low\|alloc_bootmem_pages\|alloc_bootmem_low_pages\|alloc_bootmem_node\|alloc_bootmem_low_pages_node\|alloc_bootmem_pages_node\)(...)
-... when != E
-- memset(E,0,E1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
+ drivers/video/neofb.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
- arch/arm/mm/mmu.c                   |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
+diff --git a/drivers/video/neofb.c b/drivers/video/neofb.c
+index bfb802d..588527a 100644
+--- a/drivers/video/neofb.c
++++ b/drivers/video/neofb.c
+@@ -1453,7 +1453,8 @@ neo2200_imageblit(struct fb_info *info, const struct fb_image *image)
+ 			 * is less than 16 bits wide. This is due to insufficient
+ 			 * padding when writing the image. We need to adjust
+ 			 * struct fb_pixmap. Not yet done. */
+-			return cfb_imageblit(info, image);
++			cfb_imageblit(info, image);
++			return;
+ 		}
+ 		bltCntl_flags = NEO_BC0_SRC_MONO;
+ 	} else if (image->depth = info->var.bits_per_pixel) {
+@@ -1461,7 +1462,8 @@ neo2200_imageblit(struct fb_info *info, const struct fb_image *image)
+ 	} else {
+ 		/* We don't currently support hardware acceleration if image
+ 		 * depth is different from display */
+-		return cfb_imageblit(info, image);
++		cfb_imageblit(info, image);
++		return;
+ 	}
+ 
+ 	switch (info->var.bits_per_pixel) {
+-- 
+1.5.6.3
 
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index 9a17d51..6eb9f26 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -819,7 +819,6 @@ static void __init devicemaps_init(struct machine_desc *mdesc)
- 	 * Allocate the vector page early.
- 	 */
- 	vectors = alloc_bootmem_low_pages(PAGE_SIZE);
--	BUG_ON(!vectors);
- 
- 	for (addr = VMALLOC_END; addr; addr += PGDIR_SIZE)
- 		pmd_clear(pmd_off_k(addr));
-@@ -904,10 +903,10 @@ void __init paging_init(struct machine_desc *mdesc)
- 	top_pmd = pmd_off_k(0xffff0000);
- 
- 	/*
--	 * allocate the zero page.  Note that we count on this going ok.
-+	 * allocate the zero page.  Note that this always succeeds and
-+	 * returns a zeroed result.
- 	 */
- 	zero_page = alloc_bootmem_low_pages(PAGE_SIZE);
--	memset(zero_page, 0, PAGE_SIZE);
- 	empty_zero_page = virt_to_page(zero_page);
- 	flush_dcache_page(empty_zero_page);
- }
