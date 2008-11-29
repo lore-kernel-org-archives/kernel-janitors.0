@@ -1,30 +1,54 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Thu, 13 Nov 2008 15:45:38 +0000
-Subject: Re: [PATCH] drivers/pcmcia/cistpl.c: introduce missing braces
-Message-Id: <20081113154538.GB7264@comet.dominikbrodowski.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 29 Nov 2008 06:21:29 +0000
+Subject: [PATCH] ACPI: EC: fix compilation warning
+Message-Id: <49318541.0aec660a.0efb.3436@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0811131133010.9563@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0811131133010.9563@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-pcmcia@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexey Starikovskiy <astarikovskiy@suse.de>
+Cc: Len Brown <len.brown@intel.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+Fix the warning introduced in commit c5279dee26c0e8d7c4200993bfc4b540d2469598,
+and give the dummy variable a more verbose name.
 
-On Thu, Nov 13, 2008 at 11:33:54AM +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The indentation and behavior of the code below suggests that braces are
-> intended around the if branch.
+  drivers/acpi/ec.c: In function 'acpi_ec_ecdt_probe':
+  drivers/acpi/ec.c:1015: warning: ISO C90 forbids mixed declarations and code
 
-good catch, but already fixed in pcmcia-git and on its way to Linux (commit
-e689597fe890cf22e23195037aa668c39b25ae4b ) -- many thanks nonetheless!
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/acpi/ec.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-BTW: is this an automatic test script of some sort? if so, it might be
-useful to run this on linux-next kernels, too, so that bugs like this one
-are caught before they hit mainline.
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index c16e09b..60db1b2 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -980,6 +980,7 @@ int __init acpi_ec_ecdt_probe(void)
+ {
+ 	acpi_status status;
+ 	struct acpi_table_ecdt *ecdt_ptr;
++	acpi_handle dummy;
+ 
+ 	boot_ec = make_acpi_ec();
+ 	if (!boot_ec)
+@@ -1012,7 +1013,6 @@ int __init acpi_ec_ecdt_probe(void)
+ 	}
+ 	/* This workaround is needed only on some broken machines,
+ 	 * which require early EC, but fail to provide ECDT */
+-	acpi_handle x;
+ 	printk(KERN_DEBUG PREFIX "Look up EC in DSDT\n");
+ 	status = acpi_get_devices(ec_device_ids[0].id, ec_parse_device,
+ 					boot_ec, NULL);
+@@ -1023,7 +1023,7 @@ int __init acpi_ec_ecdt_probe(void)
+ 	 * which needs it, has fake EC._INI method, so use it as flag.
+ 	 * Keep boot_ec struct as it will be needed soon.
+ 	 */
+-	if (ACPI_FAILURE(acpi_get_handle(boot_ec->handle, "_INI", &x)))
++	if (ACPI_FAILURE(acpi_get_handle(boot_ec->handle, "_INI", &dummy)))
+ 		return -ENODEV;
+ install:
+ 	if (!ec_install_handlers(boot_ec)) {
+-- 
+1.5.6.3
 
-Best,
-	Dominik
