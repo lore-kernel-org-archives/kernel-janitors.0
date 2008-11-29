@@ -1,43 +1,61 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Thu, 27 Nov 2008 16:59:27 +0000
-Subject: Re: [PATCH] FRV: Fix mmap2 error handling
-Message-Id: <20081127165926.GM25548@parisc-linux.org>
+From: David Howells <dhowells@redhat.com>
+Date: Sat, 29 Nov 2008 11:24:30 +0000
+Subject: [PATCH] FRV: Fix mmap2 error handling
+Message-Id: <20081129112430.22841.48427.stgit@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20081127151238.13728.34704.stgit@warthog.procyon.org.uk>
 In-Reply-To: <20081127151238.13728.34704.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: torvalds@osdl.org, akpm@linux-foundation.org, julia@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: torvalds@osdl.org, akpm@linux-foundation.org, julia@diku.dk
+Cc: dhowells@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 27, 2008 at 03:12:38PM +0000, David Howells wrote:
-> Fix the error handling in sys_mmap2().  Currently, if the pgoff check fails,
-> fput() might have to be called (which it isn't), so do the pgoff check first,
-> before fget() is called.
+Fix the error handling in sys_mmap2().  Currently, if the pgoff check fails,
+fput() might have to be called (which it isn't), so do the pgoff check first,
+before fget() is called.
 
-*sigh*.
+Reported-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-My reaction was "Why do we have sys_mmap2 in every architecture?"  So I
-started looking.  Oh dear, oh dear oh dear.
-
-FRV:
-        /* As with sparc32, make sure the shift for mmap2 is constant
-           (12), no matter what PAGE_SIZE we have.... */
-ia64:
-Just uses PAGE_SIZE (currently supported values: 4k, 8k, 16k and 64k).
-
-So what is poor userspace to do?  Check which architecture it's on and
-figure out what PAGE_SIZE to use for mmap2 based on that?
+ arch/frv/kernel/sys_frv.c |   17 ++++++++---------
+ 1 files changed, 8 insertions(+), 9 deletions(-)
 
 
-How about we introduce a sys_mmap6() in common code which takes 'off'
-in multiples of 4k.  Then FRV and other sane architectures can replace
-their sys_mmap2 entries in their syscall tables with sys_mmap6.  ia64 has
-to keep its insane sys_mmap2 entry, but it can add a sys_mmap6 entry too.
+diff --git a/arch/frv/kernel/sys_frv.c b/arch/frv/kernel/sys_frv.c
+index 49b2cf2..baadc97 100644
+--- a/arch/frv/kernel/sys_frv.c
++++ b/arch/frv/kernel/sys_frv.c
+@@ -35,22 +35,21 @@ asmlinkage long sys_mmap2(unsigned long addr, unsigned long len,
+ 	int error = -EBADF;
+ 	struct file * file = NULL;
+ 
+-	flags &= ~(MAP_EXECUTABLE | MAP_DENYWRITE);
+-	if (!(flags & MAP_ANONYMOUS)) {
+-		file = fget(fd);
+-		if (!file)
+-			goto out;
+-	}
+-
+ 	/* As with sparc32, make sure the shift for mmap2 is constant
+ 	   (12), no matter what PAGE_SIZE we have.... */
+ 
+ 	/* But unlike sparc32, don't just silently break if we're
+ 	   trying to map something we can't */
+-	if (pgoff & ((1<<(PAGE_SHIFT-12))-1))
++	if (pgoff & ((1 << (PAGE_SHIFT - 12)) - 1))
+ 		return -EINVAL;
++	pgoff >>= PAGE_SHIFT - 12;
+ 
+-	pgoff >>= (PAGE_SHIFT - 12);
++	flags &= ~(MAP_EXECUTABLE | MAP_DENYWRITE);
++	if (!(flags & MAP_ANONYMOUS)) {
++		file = fget(fd);
++		if (!file)
++			goto out;
++	}
+ 
+ 	down_write(&current->mm->mmap_sem);
+ 	error = do_mmap_pgoff(file, addr, len, prot, flags, pgoff);
 
--- 
-Matthew Wilcox				Intel Open Source Technology Centre
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
