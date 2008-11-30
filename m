@@ -1,36 +1,33 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Fri, 28 Nov 2008 16:11:47 +0000
-Subject: [PATCH] rtc-stk17ta8: fix sparse warning
-Message-Id: <49304ffd.09a1660a.30b3.ffffc7a7@mx.google.com>
+From: Alessandro Zummo <alessandro.zummo@towertech.it>
+Date: Sun, 30 Nov 2008 00:39:31 +0000
+Subject: Re: [PATCH] rtc-stk17ta8: fix sparse warning
+Message-Id: <20081130013931.1b48f892@i1501.lan.towertech.it>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <49304ffd.09a1660a.30b3.ffffc7a7@mx.google.com>
+In-Reply-To: <49304ffd.09a1660a.30b3.ffffc7a7@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>
-Cc: rtc-linux@googlegroups.com
+To: Hannes Eder <hannes@hanneseder.net>
+Cc: rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-Fix this sparse warning:
+On Fri, 28 Nov 2008 17:11:47 +0100
+Hannes Eder <hannes@hanneseder.net> wrote:
 
-  drivers/rtc/rtc-stk17ta8.c:403:2: warning: returning void-valued expression
+> Fix this sparse warning:
+> 
+>   drivers/rtc/rtc-stk17ta8.c:403:2: warning: returning void-valued expression
+> 
+> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
- drivers/rtc/rtc-stk17ta8.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ Acked-by: Alessandro Zummo <a.zummo@towertech.it>
 
-diff --git a/drivers/rtc/rtc-stk17ta8.c b/drivers/rtc/rtc-stk17ta8.c
-index f4cd46e..549990f 100644
---- a/drivers/rtc/rtc-stk17ta8.c
-+++ b/drivers/rtc/rtc-stk17ta8.c
-@@ -400,7 +400,7 @@ static __init int stk17ta8_init(void)
- 
- static __exit void stk17ta8_exit(void)
- {
--	return platform_driver_unregister(&stk17ta8_rtc_driver);
-+	platform_driver_unregister(&stk17ta8_rtc_driver);
- }
- 
- module_init(stk17ta8_init);
 -- 
-1.5.6.3
+
+ Best regards,
+
+ Alessandro Zummo,
+  Tower Technologies - Torino, Italy
+
+  http://www.towertech.it
 
