@@ -1,36 +1,24 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Fri, 28 Nov 2008 16:02:42 +0000
-Subject: [PATCH] KVM: fix sparse warning
-Message-Id: <49304b32.0baa660a.462a.ffffb75d@mx.google.com>
+From: Avi Kivity <avi@redhat.com>
+Date: Sun, 30 Nov 2008 10:17:59 +0000
+Subject: Re: [PATCH] KVM: fix sparse warning
+Message-Id: <49326857.2030501@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <49304b32.0baa660a.462a.ffffb75d@mx.google.com>
+In-Reply-To: <49304b32.0baa660a.462a.ffffb75d@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Avi Kivity <avi@redhat.com>
-Cc: kvm@vger.kernel.org
+To: Hannes Eder <hannes@hanneseder.net>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-Impact: make global function static
+Hannes Eder wrote:
+> Impact: make global function static
+>
+>   virt/kvm/kvm_main.c:85:6: warning: symbol 'kvm_rebooting' was not declared. Should it be static?
+>   
 
-  virt/kvm/kvm_main.c:85:6: warning: symbol 'kvm_rebooting' was not declared. Should it be static?
+Applied, thanks.
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
- virt/kvm/kvm_main.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 54d25e6..8dab7ce 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -82,7 +82,7 @@ struct dentry *kvm_debugfs_dir;
- static long kvm_vcpu_ioctl(struct file *file, unsigned int ioctl,
- 			   unsigned long arg);
- 
--bool kvm_rebooting;
-+static bool kvm_rebooting;
- 
- #ifdef KVM_CAP_DEVICE_ASSIGNMENT
- 
 -- 
-1.5.6.3
+error compiling committee.c: too many arguments to function
 
