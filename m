@@ -1,43 +1,33 @@
-From: "pradeep singh" <pradeep.rautela@gmail.com>
-Date: Wed, 31 Dec 2008 09:48:32 +0000
-Subject: Re: Hi
-Message-Id: <a901b49a0812310136n107320f3m673c33db3f4f2863@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 01 Dec 2008 17:39:01 +0000
+Subject: Re: [PATCH] drivers/mtd/nand/pasemi_nand.c: Add missing pci_dev_put
+Message-Id: <Pine.LNX.4.64.0812011838440.11341@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <13pkae7ts-uvir7e93zqd-048vnsh36cvju@ziplink.net>
-In-Reply-To: <13pkae7ts-uvir7e93zqd-048vnsh36cvju@ziplink.net>
+References: <Pine.LNX.4.64.0811271319070.15160@pc-004.diku.dk>
+	<20081201174327.GA21274@lixom.net>
+In-Reply-To: <20081201174327.GA21274@lixom.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, dwmw2@infradead.org, linux-kernel@vger.kernel.org
 
-Welcome to the family Cristian.
-Good luck.
-    --Pradeep
+On Mon, 1 Dec 2008, Olof Johansson wrote:
 
-On Wed, Dec 31, 2008 at 11:32 AM, Cristian Malinescu
-<cristian.malinescu@gmail.com> wrote:
-> I'm a developer in Canada/Toronto.
-> I'm interested in learning Linux Kernel development and I think
-> joining your project will be a good point to start.
-> I have long experience in programming; between 1992-2000 did
-> exclusively C/C++ development for SCO Unix(client/server applications)
-> and Windows NT/2000(client/server applications and drivers), since
-> 2000 I switched completely to Java/J2EE.
-> Since December 2007 I work for Research In Motion.
->
-> Best regards and I wish to the Tux to have a great party and a
-> successful New Year!
->
-> Cristian Malinescu
-> 1547 Mississauga Valley Blvd #301
-> Mississauga, Ontario, L5A 3X8
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> On Thu, Nov 27, 2008 at 01:19:49PM +0100, Julia Lawall wrote:
+> > From: Julia Lawall <julia@diku.dk>
+> > 
+> > pci_get_device increments a reference count that should be decremented
+> > using pci_dev_put.  I have thus added an extra label in the error handling
+> > code to do this.  I don't know, however, whether there should be a
+> > pci_dev_put before the return 0 as well.
+> > 
+> [...]
+> 
+> > Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> Acked-by: Olof Johansson <olof@lixom.net>
 
+Do you know the answer about the return 0?
 
-
--- 
-Pradeep
+julia
