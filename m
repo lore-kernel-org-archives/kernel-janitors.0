@@ -1,113 +1,81 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:36:30 +0000
-Subject: [PATCH 13/28] drivers/auxdisplay: Drop return value from platform_driver
-Message-Id: <Pine.LNX.4.64.0812101736090.21998@ask.diku.dk>
+Date: Mon, 01 Dec 2008 22:00:55 +0000
+Subject: [PATCH retry] drivers/mtd/nand/pasemi_nand.c: Add missing pci_dev_put
+Message-Id: <Pine.LNX.4.64.0812012259590.1541@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, miguel.ojeda.sandonis@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dwmw2@infradead.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, olof@lixom.net
 
 From: Julia Lawall <julia@diku.dk>
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
+pci_get_device increments a reference count that should be decremented
+using pci_dev_put.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+The semantic patch that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
+@r exists@
+local idexpression x;
+statement S,S1;
+position p1,p2,p3;
+expression E,E1;
+type T,T1;
+expression *ptr != NULL;
 @@
 
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
-@@
-
-- int
-+ void
-       f(...) {
-  <...
 (
--  return \(C\|i\);
-+  return;
+ if ((x@p1 = pci_get_device(...)) = NULL) S
 |
--  return E;
-+  E;
-+  return;
+ x@p1 = pci_get_device(...);
 )
-  ...>
+ ... when != pci_dev_put(...,(T)x,...)
+     when != if (...) { <+... pci_dev_put(...,(T)x,...) ...+> }
+     when != true x = NULL || ...
+     when != x = E
+     when != E = (T)x
+     when any
+(
+ if (x = NULL || ...) S1
+|
+ if@p2 (...) {
+  ... when != pci_dev_put(...,(T1)x,...)
+      when != if (...) { <+... pci_dev_put(...,(T1)x,...) ...+> }
+      when != x = E1
+      when != E1 = (T1)x
+(
+  return \(0\|<+...x...+>\|ptr\);
+|
+  return@p3 ...;
+)
 }
+)
+
+@ script:python @
+p1 << r.p1;
+p3 << r.p3;
+@@
+
+print "* file: %s pci_get_device: %s return: %s" % (p1[0].file,p1[0].line,p3[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/auxdisplay/cfag12864bfb.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/mtd/nand/pasemi_nand.c      |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/auxdisplay/cfag12864bfb.c b/drivers/auxdisplay/cfag12864bfb.c
-index fe3a865..56a3d22 100644
---- a/drivers/auxdisplay/cfag12864bfb.c
-+++ b/drivers/auxdisplay/cfag12864bfb.c
-@@ -115,7 +115,7 @@ none:
- 	return ret;
- }
- 
--static int cfag12864bfb_remove(struct platform_device *device)
-+static void cfag12864bfb_remove(struct platform_device *device)
- {
- 	struct fb_info *info = platform_get_drvdata(device);
- 
-@@ -123,13 +123,11 @@ static int cfag12864bfb_remove(struct platform_device *device)
- 		unregister_framebuffer(info);
- 		framebuffer_release(info);
+diff --git a/drivers/mtd/nand/pasemi_nand.c b/drivers/mtd/nand/pasemi_nand.c
+index 75c8990..9bd6c9a 100644
+--- a/drivers/mtd/nand/pasemi_nand.c
++++ b/drivers/mtd/nand/pasemi_nand.c
+@@ -141,6 +141,7 @@ static int __devinit pasemi_nand_probe(struct of_device *ofdev,
  	}
--
--	return 0;
- }
  
- static struct platform_driver cfag12864bfb_driver = {
- 	.probe	= cfag12864bfb_probe,
--	.remove = cfag12864bfb_remove,
-+	.remove_new = cfag12864bfb_remove,
- 	.driver = {
- 		.name	= CFAG12864BFB_NAME,
- 	},
+ 	lpcctl = pci_resource_start(pdev, 0);
++	pci_dev_put(pdev);
+ 
+ 	if (!request_region(lpcctl, 4, driver_name)) {
+ 		err = -EBUSY;
