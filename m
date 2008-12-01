@@ -1,7 +1,7 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 01 Dec 2008 18:03:28 +0000
+Date: Mon, 01 Dec 2008 20:11:09 +0000
 Subject: Re: [PATCH] drivers/mtd/nand/pasemi_nand.c: Add missing pci_dev_put
-Message-Id: <Pine.LNX.4.64.0812011903120.11341@pc-004.diku.dk>
+Message-Id: <Pine.LNX.4.64.0812012109480.1541@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0811271319070.15160@pc-004.diku.dk>
 	<20081201174327.GA21274@lixom.net>
@@ -40,7 +40,11 @@ On Mon, 1 Dec 2008, Olof Johansson wrote:
 > Either there or in pasemi_nand_remove(), doesn't matter much to me. Doing
 > it before the return 0 is the smaller change.
 
-OK, I will send an adjusted patch shortly.
+Actually, could pci_dev_put(pdev) be placed right after:
 
-Thanks,
+lpcctl = pci_resource_start(pdev, 0);
+
+Then there would only be one, and the rest of the code could go back to 
+its original form.
+
 julia
