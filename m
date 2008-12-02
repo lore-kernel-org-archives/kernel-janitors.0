@@ -1,115 +1,86 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 02 Dec 2008 13:45:18 +0000
-Subject: [PATCH linux-next] powerpc/powermac: Add missing of_node_put
-Message-Id: <200812021445.18670.npalix@diku.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 02 Dec 2008 23:19:01 +0000
+Subject: Re: [PATCH linux-next] powerpc/powermac: Add missing of_node_put
+Message-Id: <20081203101901.4f317425.sfr@canb.auug.org.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Signature=_Wed__3_Dec_2008_10_19_01_+1100_WWFdrGq5wBXyzaor"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: paulus@samba.org, benh@kernel.crashing.org
-Cc: linuxppc-dev@ozlabs.org, Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Palix <npalix@diku.dk>
+References: <200812021445.18670.npalix@diku.dk>
+In-Reply-To: <200812021445.18670.npalix@diku.dk>
+To: Nicolas Palix <npalix@diku.dk>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Julia Lawall <julia@diku.dk>, paulus@samba.org
 
+--Signature=_Wed__3_Dec_2008_10_19_01_+1100_WWFdrGq5wBXyzaor
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-of_node_put is needed before discarding a value received from
-of_find_node_by_name, eg in error handling code or when the device
-node is no longer used.
+Hi Nicolas,
 
-The semantic match that catches the bug is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Thanks for all this work.
 
-// <smpl>
-@r exists@
-local idexpression struct device_node *n;
-position p1, p2;
-struct device_node *n1;
-statement S;
-identifier f;
-expression E;
-expression *ptr != NULL;
-@@
+I think this particular patch is also required against Linus' kernel (not
+just linux-next).
 
-n@p1 = of_find_node_by_name(...)
-...
-if (!n) S
-... when != of_node_put(n)
-    when != n1 = f(n,...)
-    when != E = n
-    when any
-    when strict
-(
-  return \(0\|<+...n...+>\|ptr\);
-|
-return@p2 ...;
-|
-  of_node_put(n);
-|
-  n1 = f(n,...)
-|
-  E = n
-)
+On Tue, 2 Dec 2008 14:45:18 +0100 Nicolas Palix <npalix@diku.dk> wrote:
+>
+> diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platfor=
+ms/powermac/pci.c
+> index bcf50d7..800fcce 100644
+> --- a/arch/powerpc/platforms/powermac/pci.c
+> +++ b/arch/powerpc/platforms/powermac/pci.c
+> @@ -661,6 +661,7 @@ static void __init init_second_ohare(void)
+>  			pci_find_hose_for_OF_device(np);
+>  		if (!hose) {
+>  			printk(KERN_ERR "Can't find PCI hose for OHare2 !\n");
+> +			of_node_put(np);
+>  			return;
+>  		}
+>  		early_read_config_word(hose, bus, devfn, PCI_COMMAND, &cmd);
+> @@ -669,6 +670,7 @@ static void __init init_second_ohare(void)
+>  		early_write_config_word(hose, bus, devfn, PCI_COMMAND, cmd);
+>  	}
+>  	has_second_ohare =3D 1;
+> +	of_node_put(np);
+>  }
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
+This part looks good.
 
-print "* file: %s of_find_node_by_name %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
+> diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platfo=
+rms/powermac/time.c
+> index 59eb840..394593c 100644
+> --- a/arch/powerpc/platforms/powermac/time.c
+> +++ b/arch/powerpc/platforms/powermac/time.c
+> @@ -265,12 +265,14 @@ int __init via_calibrate_decr(void)
+>  	struct resource rsrc;
+> =20
+>  	vias =3D of_find_node_by_name(NULL, "via-cuda");
+>  	if (vias =3D=3D 0)
+>  		vias =3D of_find_node_by_name(NULL, "via-pmu");
+>  	if (vias =3D=3D 0)
+>  		vias =3D of_find_node_by_name(NULL, "via");
+>  	if (vias =3D=3D 0 || of_address_to_resource(vias, 0, &rsrc))
+>  		return 0;
+> +	of_node_put(vias);
+> +
 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- arch/powerpc/platforms/powermac/pci.c     |    2 ++
- arch/powerpc/platforms/powermac/time.c    |    4 +++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+But this needs to also do the of_node_put() if the above "return 0" is
+taken i.e. if of_address_to_resource() fails.
 
-diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
-index bcf50d7..800fcce 100644
---- a/arch/powerpc/platforms/powermac/pci.c
-+++ b/arch/powerpc/platforms/powermac/pci.c
-@@ -661,6 +661,7 @@ static void __init init_second_ohare(void)
- 			pci_find_hose_for_OF_device(np);
- 		if (!hose) {
- 			printk(KERN_ERR "Can't find PCI hose for OHare2 !\n");
-+			of_node_put(np);
- 			return;
- 		}
- 		early_read_config_word(hose, bus, devfn, PCI_COMMAND, &cmd);
-@@ -669,6 +670,7 @@ static void __init init_second_ohare(void)
- 		early_write_config_word(hose, bus, devfn, PCI_COMMAND, cmd);
- 	}
- 	has_second_ohare = 1;
-+	of_node_put(np);
- }
- 
- /*
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index 59eb840..394593c 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -265,12 +265,14 @@ int __init via_calibrate_decr(void)
- 	struct resource rsrc;
- 
- 	vias = of_find_node_by_name(NULL, "via-cuda");
- 	if (vias = 0)
- 		vias = of_find_node_by_name(NULL, "via-pmu");
- 	if (vias = 0)
- 		vias = of_find_node_by_name(NULL, "via");
- 	if (vias = 0 || of_address_to_resource(vias, 0, &rsrc))
- 		return 0;
-+	of_node_put(vias);
-+
- 	via = ioremap(rsrc.start, rsrc.end - rsrc.start + 1);
- 	if (via = NULL) {
- 		printk(KERN_ERR "Failed to map VIA for timer calibration !\n");
-@@ -297,7 +299,7 @@ int __init via_calibrate_decr(void)
- 	ppc_tb_freq = (dstart - dend) * 100 / 6;
- 
- 	iounmap(via);
--	
-+
- 	return 1;
- }
- #endif
--- 
-Nicolas Palix
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__3_Dec_2008_10_19_01_+1100_WWFdrGq5wBXyzaor
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkk1wmUACgkQjjKRsyhoI8zgWgCffoqxkxrFkBlN8yL6i1vzoj4g
+ZsIAn25E5T+i24Wp2RwAzm3PMXPyKQ0Y
+=0dBa
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Dec_2008_10_19_01_+1100_WWFdrGq5wBXyzaor--
