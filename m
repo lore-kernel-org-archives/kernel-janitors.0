@@ -1,43 +1,21 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 25 Dec 2008 14:35:27 +0000
-Subject: [PATCH 7/7] fs/gfs2: Use DEFINE_SPINLOCK
-Message-Id: <Pine.LNX.4.64.0812251535080.22039@ask.diku.dk>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Date: Tue, 02 Dec 2008 19:29:32 +0000
+Subject: Re: [PATCH] alim15x3: fix sparse warning
+Message-Id: <200812022029.35785.bzolnier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <493049e1.0ab6660a.0bc3.ffffaf3b@mx.google.com>
+In-Reply-To: <493049e1.0ab6660a.0bc3.ffffaf3b@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: swhiteho@redhat.com, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Hannes Eder <hannes@hanneseder.net>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Thursday 27 November 2008, Hannes Eder wrote:
+> Fix this sparse warning:
+> 
+>   drivers/ide/alim15x3.c:594:2: warning: returning void-valued expression
+> 
+> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 
-SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
-in Documentation/spinlocks.txt
-
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-declarer name DEFINE_SPINLOCK;
-identifier xxx_lock;
-@@
-
-- spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
-+ DEFINE_SPINLOCK(xxx_lock);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-diff -u -p a/fs/gfs2/glock.c b/fs/gfs2/glock.c
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -65,7 +65,7 @@ static struct dentry *gfs2_root;
- static struct workqueue_struct *glock_workqueue;
- static LIST_HEAD(lru_list);
- static atomic_t lru_count = ATOMIC_INIT(0);
--static spinlock_t lru_lock = SPIN_LOCK_UNLOCKED;
-+static DEFINE_SPINLOCK(lru_lock);
- 
- #define GFS2_GL_HASH_SHIFT      15
- #define GFS2_GL_HASH_SIZE       (1 << GFS2_GL_HASH_SHIFT)
+applied
