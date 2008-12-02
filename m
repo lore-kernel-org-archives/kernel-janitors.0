@@ -1,46 +1,115 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Tue, 30 Dec 2008 12:07:25 +0000
-Subject: Re: Many warnings from our userspace headers
-Message-Id: <20081230120725.GA4622@uranus.ravnborg.org>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 02 Dec 2008 13:45:18 +0000
+Subject: [PATCH linux-next] powerpc/powermac: Add missing of_node_put
+Message-Id: <200812021445.18670.npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081230103348.GA363@uranus.ravnborg.org> <jeiqp2j645.fsf@sykes.suse.de>
-In-Reply-To: <jeiqp2j645.fsf@sykes.suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Schwab <schwab@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-kbuild <linux-kbuild@vger.kernel.org>, janitors <kernel-janitors@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>
+To: paulus@samba.org, benh@kernel.crashing.org
+Cc: linuxppc-dev@ozlabs.org, Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Palix <npalix@diku.dk>
 
-On Tue, Dec 30, 2008 at 11:43:22AM +0100, Andreas Schwab wrote:
-> Sam Ravnborg <sam@ravnborg.org> writes:
-> 
-> > /home/sam/kernel/knext.git/usr/include/linux/acct.h:62: leaks CONFIG_M68K to userspace where it is not valid
-> 
-> IMHO this is a false positive, since it is protected by __KERNEL__ in
-> the same expression.
 
-Correct - but we can rewrite it like this:
+of_node_put is needed before discarding a value received from
+of_find_node_by_name, eg in error handling code or when the device
+node is no longer used.
 
-diff --git a/include/linux/acct.h b/include/linux/acct.h
-index 882dc72..bcc6d2f 100644
---- a/include/linux/acct.h
-+++ b/include/linux/acct.h
-@@ -59,8 +59,12 @@ struct acct
- 	comp_t		ac_majflt;		/* Major Pagefaults */
- 	comp_t		ac_swaps;		/* Number of Swaps */
- /* m68k had no padding here. */
--#if !defined(CONFIG_M68K) || !defined(__KERNEL__)
-+#ifndef __KERNEL__
- 	__u16		ac_ahz;			/* AHZ */
-+#else
-+  #ifndef CONFIG_M68K
-+	__u16		ac_ahz;			/* AHZ */
-+  #endif
+The semantic match that catches the bug is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression struct device_node *n;
+position p1, p2;
+struct device_node *n1;
+statement S;
+identifier f;
+expression E;
+expression *ptr != NULL;
+@@
+
+n@p1 = of_find_node_by_name(...)
+...
+if (!n) S
+... when != of_node_put(n)
+    when != n1 = f(n,...)
+    when != E = n
+    when any
+    when strict
+(
+  return \(0\|<+...n...+>\|ptr\);
+|
+return@p2 ...;
+|
+  of_node_put(n);
+|
+  n1 = f(n,...)
+|
+  E = n
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s of_find_node_by_name %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ arch/powerpc/platforms/powermac/pci.c     |    2 ++
+ arch/powerpc/platforms/powermac/time.c    |    4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
+index bcf50d7..800fcce 100644
+--- a/arch/powerpc/platforms/powermac/pci.c
++++ b/arch/powerpc/platforms/powermac/pci.c
+@@ -661,6 +661,7 @@ static void __init init_second_ohare(void)
+ 			pci_find_hose_for_OF_device(np);
+ 		if (!hose) {
+ 			printk(KERN_ERR "Can't find PCI hose for OHare2 !\n");
++			of_node_put(np);
+ 			return;
+ 		}
+ 		early_read_config_word(hose, bus, devfn, PCI_COMMAND, &cmd);
+@@ -669,6 +670,7 @@ static void __init init_second_ohare(void)
+ 		early_write_config_word(hose, bus, devfn, PCI_COMMAND, cmd);
+ 	}
+ 	has_second_ohare = 1;
++	of_node_put(np);
+ }
+ 
+ /*
+diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
+index 59eb840..394593c 100644
+--- a/arch/powerpc/platforms/powermac/time.c
++++ b/arch/powerpc/platforms/powermac/time.c
+@@ -265,12 +265,14 @@ int __init via_calibrate_decr(void)
+ 	struct resource rsrc;
+ 
+ 	vias = of_find_node_by_name(NULL, "via-cuda");
+ 	if (vias = 0)
+ 		vias = of_find_node_by_name(NULL, "via-pmu");
+ 	if (vias = 0)
+ 		vias = of_find_node_by_name(NULL, "via");
+ 	if (vias = 0 || of_address_to_resource(vias, 0, &rsrc))
+ 		return 0;
++	of_node_put(vias);
++
+ 	via = ioremap(rsrc.start, rsrc.end - rsrc.start + 1);
+ 	if (via = NULL) {
+ 		printk(KERN_ERR "Failed to map VIA for timer calibration !\n");
+@@ -297,7 +299,7 @@ int __init via_calibrate_decr(void)
+ 	ppc_tb_freq = (dstart - dend) * 100 / 6;
+ 
+ 	iounmap(via);
+-	
++
+ 	return 1;
+ }
  #endif
- 	__u32		ac_exitcode;		/* Exitcode */
- 	char		ac_comm[ACCT_COMM + 1];	/* Command Name */
-
-This is at least for me also easier to parse.
-So we remove a (bogus) warning and make the code easier to read.
-
-	Sam
+-- 
+Nicolas Palix
