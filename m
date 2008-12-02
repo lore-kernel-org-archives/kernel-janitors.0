@@ -1,82 +1,82 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Dec 2008 10:19:32 +0000
-Subject: [PATCH 2/13] drivers/input/tablet: use USB API functions rather than
-Message-Id: <Pine.LNX.4.64.0812291119120.9555@pc-004.diku.dk>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 02 Dec 2008 13:50:49 +0000
+Subject: [PATCH linux-next] framebuffer: Add missing of_node_put in drivers/video/valkyriefb.c
+Message-Id: <200812021450.49276.npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitry.torokhov@gmail.com, dtor@mail.ru, linux-input@vger.kernel.org, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>, Nicolas Palix <npalix@diku.dk>
 
-From: Julia Lawall <julia@diku.dk>
 
-This set of patches introduces calls to the following set of functions:
+of_node_put is needed before discarding a value received from
+of_find_node_by_name, eg in error handling code or when the device
+node is no longer used.
 
-usb_endpoint_dir_in(epd)
-usb_endpoint_dir_out(epd)
-usb_endpoint_is_bulk_in(epd)
-usb_endpoint_is_bulk_out(epd)
-usb_endpoint_is_int_in(epd)
-usb_endpoint_is_int_out(epd)
-usb_endpoint_num(epd)
-usb_endpoint_type(epd)
-usb_endpoint_xfer_bulk(epd)
-usb_endpoint_xfer_control(epd)
-usb_endpoint_xfer_int(epd)
-usb_endpoint_xfer_isoc(epd)
-
-In some cases, introducing one of these functions is not possible, and it
-just replaces an explicit integer value by one of the following constants:
-
-USB_ENDPOINT_XFER_BULK
-USB_ENDPOINT_XFER_CONTROL
-USB_ENDPOINT_XFER_INT
-USB_ENDPOINT_XFER_ISOC
-
-An extract of the semantic patch that makes these changes is as follows:
+The semantic match that catches the bug is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r1@ struct usb_endpoint_descriptor *epd; @@
-
-- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
-- \(USB_ENDPOINT_XFER_CONTROL\|0\))
-+ usb_endpoint_xfer_control(epd)
-
-@r5@ struct usb_endpoint_descriptor *epd; @@
-
-- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
--  \(USB_DIR_IN\|0x80\))
-+ usb_endpoint_dir_in(epd)
-
-@inc@
+@r exists@
+local idexpression struct device_node *n;
+position p1, p2;
+statement S1,S2;
+expression E,E1;
+expression *ptr != NULL;
 @@
 
-#include <linux/usb.h>
-
-@depends on !inc && (r1||r5)@
+(
+if (!(n@p1 = of_find_node_by_name(...))) S1
+|
+n@p1 = of_find_node_by_name(...)
+)
+<... when != of_node_put(n)
+    when != if (...) { <+... of_node_put(n) ...+> }
+    when != true !n  || ...
+    when != n = E
+    when != E = n
+if (!n || ...) S2
+...>
+(
+  return \(0\|<+...n...+>\|ptr\);
+|
+return@p2 ...;
+|
+n = E1
+|
+E1 = n
+)
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
 @@
 
-+ #include <linux/usb.h>
-  #include <linux/usb/...>
+print "* file: %s of_find_node_by_name %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
- drivers/input/tablet/gtco.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/valkyriefb.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/input/tablet/gtco.c b/drivers/input/tablet/gtco.c
-index 5524e01..2e18a1c 100644
---- a/drivers/input/tablet/gtco.c
-+++ b/drivers/input/tablet/gtco.c
-@@ -877,7 +877,7 @@ static int gtco_probe(struct usb_interface *usbinterface,
- 	dbg("num endpoints:     %d", usbinterface->cur_altsetting->desc.bNumEndpoints);
- 	dbg("interface class:   %d", usbinterface->cur_altsetting->desc.bInterfaceClass);
- 	dbg("endpoint: attribute:0x%x type:0x%x", endpoint->bmAttributes, endpoint->bDescriptorType);
--	if ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) = USB_ENDPOINT_XFER_INT)
-+	if (usb_endpoint_xfer_int(endpoint))
- 		dbg("endpoint: we have interrupt endpoint\n");
+diff --git a/drivers/video/valkyriefb.c b/drivers/video/valkyriefb.c
+index 7b0cef9..62fba43 100644
+--- a/drivers/video/valkyriefb.c
++++ b/drivers/video/valkyriefb.c
+@@ -346,10 +346,12 @@ int __init valkyriefb_init(void)
+ 			return 0;
  
- 	dbg("endpoint extra len:%d ", usbinterface->altsetting[0].extralen);
+ 		if (of_address_to_resource(dp, 0, &r)) {
++			of_node_put(dp);
+ 			printk(KERN_ERR "can't find address for valkyrie\n");
+ 			return 0;
+ 		}
+ 
++		of_node_put(dp);
+ 		frame_buffer_phys = r.start;
+ 		cmap_regs_phys = r.start + 0x304000;
+ 		flags = _PAGE_WRITETHRU;
+-- 
+Nicolas Palix
