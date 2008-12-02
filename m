@@ -1,77 +1,45 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 02 Dec 2008 13:34:46 +0000
-Subject: [PATCH linux-next] powerpc/chrp: Add missing of_node_put in pci.c
-Message-Id: <200812021434.47010.npalix@diku.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 02 Dec 2008 22:58:05 +0000
+Subject: Re: [PATCH linux-next] powerpc/chrp: Add missing of_node_put in
+Message-Id: <20081203095805.7d868849.sfr@canb.auug.org.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Signature=_Wed__3_Dec_2008_09_58_05_+1100_K4GmTslo0ueuSKAi"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linuxppc-dev@ozlabs.org, Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Palix <npalix@diku.dk>
+References: <200812021434.47010.npalix@diku.dk>
+In-Reply-To: <200812021434.47010.npalix@diku.dk>
+To: Nicolas Palix <npalix@diku.dk>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Julia Lawall <julia@diku.dk>, Paul Mackerras <paulus@samba.org>
 
+--Signature=_Wed__3_Dec_2008_09_58_05_+1100_K4GmTslo0ueuSKAi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-of_node_put is needed before discarding a value received from
-of_find_node_by_name, eg in error handling code or when the device
-node is no longer used.
+On Tue, 2 Dec 2008 14:34:46 +0100 Nicolas Palix <npalix@diku.dk> wrote:
+>
+> of_node_put is needed before discarding a value received from
+> of_find_node_by_name, eg in error handling code or when the device
+> node is no longer used.
+>=20
+> Signed-off-by: Nicolas Palix <npalix@diku.dk>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-The semantic match that catches the bug is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-// <smpl>
-@r exists@
-local idexpression struct device_node *n;
-position p1, p2;
-statement S1,S2;
-expression E,E1;
-expression *ptr != NULL;
-@@
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-(
-if (!(n@p1 = of_find_node_by_name(...))) S1
-|
-n@p1 = of_find_node_by_name(...)
-)
-<... when != of_node_put(n)
-    when != if (...) { <+... of_node_put(n) ...+> }
-    when != true !n  || ...
-    when != n = E
-    when != E = n
-if (!n || ...) S2
-...>
-(
-  return \(0\|<+...n...+>\|ptr\);
-|
-return@p2 ...;
-|
-n = E1
-|
-E1 = n
-)
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
+--Signature=_Wed__3_Dec_2008_09_58_05_+1100_K4GmTslo0ueuSKAi
+Content-Type: application/pgp-signature
 
-print "* file: %s of_find_node_by_name %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- arch/powerpc/platforms/chrp/pci.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+iEYEARECAAYFAkk1vX0ACgkQjjKRsyhoI8yhbwCfYgYc3JfXqy2v7+AwOz5eJ7Ao
+ZucAnR/MiEicPcKWMzgAChoROL9BjRvl
+=6bJ4
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/powerpc/platforms/chrp/pci.c b/arch/powerpc/platforms/chrp/pci.c
-index d3cde6b..5a72ee5 100644
---- a/arch/powerpc/platforms/chrp/pci.c
-+++ b/arch/powerpc/platforms/chrp/pci.c
-@@ -141,6 +141,7 @@ hydra_init(void)
- 		of_node_put(np);
- 		return 0;
- 	}
-+	of_node_put(np);
- 	Hydra = ioremap(r.start, r.end-r.start);
- 	printk("Hydra Mac I/O at %llx\n", (unsigned long long)r.start);
- 	printk("Hydra Feature_Control was %x",
--- 
-Nicolas Palix
+--Signature=_Wed__3_Dec_2008_09_58_05_+1100_K4GmTslo0ueuSKAi--
