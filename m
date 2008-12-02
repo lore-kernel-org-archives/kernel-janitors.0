@@ -1,96 +1,45 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 02 Dec 2008 13:36:44 +0000
-Subject: [PATCH linux-next] drivers/macintosh: Add missing of_node_put in therm_adt746x.c
-Message-Id: <200812021436.44286.npalix@diku.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 02 Dec 2008 23:08:18 +0000
+Subject: Re: [PATCH linux-next] drivers/macintosh: Add missing of_node_put
+Message-Id: <20081203100818.29793232.sfr@canb.auug.org.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Signature=_Wed__3_Dec_2008_10_08_18_+1100_D_By.6Mrt0gQ0Cs5"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Paul Mackerras <paulus@samba.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>, Nicolas Palix <npalix@diku.dk>
+References: <200812021436.44286.npalix@diku.dk>
+In-Reply-To: <200812021436.44286.npalix@diku.dk>
+To: Nicolas Palix <npalix@diku.dk>
+Cc: Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
+--Signature=_Wed__3_Dec_2008_10_08_18_+1100_D_By.6Mrt0gQ0Cs5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-of_node_put is needed before discarding a value received from
-of_find_node_by_name, eg in error handling code or when the device
-node is no longer used.
+On Tue, 2 Dec 2008 14:36:44 +0100 Nicolas Palix <npalix@diku.dk> wrote:
+>
+> of_node_put is needed before discarding a value received from
+> of_find_node_by_name, eg in error handling code or when the device
+> node is no longer used.
+>=20
+> Signed-off-by: Nicolas Palix <npalix@diku.dk>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-The semantic match that catches the bug is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-// <smpl>
-@r exists@
-local idexpression struct device_node *n;
-position p1, p2;
-struct device_node *n1;
-statement S;
-identifier f;
-expression E;
-expression *ptr != NULL;
-@@
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-n@p1 = of_find_node_by_name(...)
-...
-if (!n) S
-... when != of_node_put(n)
-    when != n1 = f(n,...)
-    when != E = n
-    when any
-    when strict
-(
-  return \(0\|<+...n...+>\|ptr\);
-|
-return@p2 ...;
-|
-  of_node_put(n);
-|
-  n1 = f(n,...)
-|
-  E = n
-)
+--Signature=_Wed__3_Dec_2008_10_08_18_+1100_D_By.6Mrt0gQ0Cs5
+Content-Type: application/pgp-signature
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-print "* file: %s of_find_node_by_name %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
+iEYEARECAAYFAkk1v+IACgkQjjKRsyhoI8w+xgCdE6ylniCLtXz/tuGlFnURN4Qg
+BtUAn2geCSpb8NyGBQ6k5uHgzpBlmBLx
+=Sc/m
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- drivers/macintosh/therm_adt746x.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/macintosh/therm_adt746x.c b/drivers/macintosh/therm_adt746x.c
-index 22bf981..82607ad 100644
---- a/drivers/macintosh/therm_adt746x.c
-+++ b/drivers/macintosh/therm_adt746x.c
-@@ -554,7 +554,7 @@ thermostat_init(void)
- 	const u32 *prop;
- 	int i = 0, offset = 0;
- 	int err;
--	
-+
- 	np = of_find_node_by_name(NULL, "fan");
- 	if (!np)
- 		return -ENODEV;
-@@ -613,13 +613,13 @@ thermostat_init(void)
- 	}
- 
- 	of_dev = of_platform_device_create(np, "temperatures", NULL);
--	
-+	of_node_put(np);
-+
- 	if (of_dev = NULL) {
- 		printk(KERN_ERR "Can't register temperatures device !\n");
--		of_node_put(np);
- 		return -ENODEV;
- 	}
--	
-+
- 	err = device_create_file(&of_dev->dev, &dev_attr_sensor1_temperature);
- 	err |= device_create_file(&of_dev->dev, &dev_attr_sensor2_temperature);
- 	err |= device_create_file(&of_dev->dev, &dev_attr_sensor1_limit);
--- 
-Nicolas Palix
+--Signature=_Wed__3_Dec_2008_10_08_18_+1100_D_By.6Mrt0gQ0Cs5--
