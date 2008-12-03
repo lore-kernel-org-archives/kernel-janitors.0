@@ -1,211 +1,91 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:34:42 +0000
-Subject: [PATCH 8/28] drivers/edac: Drop return value from platform_driver
-Message-Id: <Pine.LNX.4.64.0812101734150.21998@ask.diku.dk>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Wed, 03 Dec 2008 10:25:03 +0000
+Subject: Re: [PATCH] powerpc/powermac: Add missing of_node_put
+Message-Id: <200812031125.03478.npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200812021445.18670.npalix@diku.dk>
+	<20081203101901.4f317425.sfr@canb.auug.org.au>
+	<20081203102508.ce955781.sfr@canb.auug.org.au>
+In-Reply-To: <20081203102508.ce955781.sfr@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, dougthompson@xmission.com, bluesmoke-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Julia Lawall <julia@diku.dk>, paulus@samba.org
 
-From: Julia Lawall <julia@diku.dk>
+Hi Stephen,
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
+I fix the patch. I also change the "vias = 0" in "vias = NULL".
+Is "!vias" better ?
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
-@@
-
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
-@@
-
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
-// </smpl>
-
+On Wednesday 03 December 2008 00:25:08 Stephen Rothwell wrote:
+> Hi Nicolas,
+> 
+> On Wed, 3 Dec 2008 10:19:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > I think this particular patch is also required against Linus' kernel (not
+> > just linux-next).
+> 
+> In fact, I think all these patches can apply to Linus' current tree.
+> 
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
- drivers/edac/cell_edac.c    |    5 ++---
- drivers/edac/mv64x60_edac.c |   22 ++++++++--------------
- 2 files changed, 10 insertions(+), 17 deletions(-)
+ arch/powerpc/platforms/powermac/pci.c  |    2 +
+ arch/powerpc/platforms/powermac/time.c |   11 ++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/edac/cell_edac.c b/drivers/edac/cell_edac.c
-index cd2e3b8..68afb41 100644
---- a/drivers/edac/cell_edac.c
-+++ b/drivers/edac/cell_edac.c
-@@ -213,12 +213,11 @@ static int __devinit cell_edac_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int __devexit cell_edac_remove(struct platform_device *pdev)
-+static void __devexit cell_edac_remove(struct platform_device *pdev)
- {
- 	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
- 	if (mci)
- 		edac_mc_free(mci);
--	return 0;
- }
- 
- static struct platform_driver cell_edac_driver = {
-@@ -227,7 +226,7 @@ static struct platform_driver cell_edac_driver = {
- 		.owner	= THIS_MODULE,
- 	},
- 	.probe		= cell_edac_probe,
--	.remove		= cell_edac_remove,
-+	.remove_new	= cell_edac_remove,
- };
- 
- static int __init cell_edac_init(void)
-diff --git a/drivers/edac/mv64x60_edac.c b/drivers/edac/mv64x60_edac.c
-index 083ce8d..1432712 100644
---- a/drivers/edac/mv64x60_edac.c
-+++ b/drivers/edac/mv64x60_edac.c
-@@ -206,7 +206,7 @@ err:
- 	return res;
- }
- 
--static int mv64x60_pci_err_remove(struct platform_device *pdev)
-+static void mv64x60_pci_err_remove(struct platform_device *pdev)
- {
- 	struct edac_pci_ctl_info *pci = platform_get_drvdata(pdev);
- 
-@@ -215,13 +215,11 @@ static int mv64x60_pci_err_remove(struct platform_device *pdev)
- 	edac_pci_del_device(&pdev->dev);
- 
- 	edac_pci_free_ctl_info(pci);
--
--	return 0;
- }
- 
- static struct platform_driver mv64x60_pci_err_driver = {
- 	.probe = mv64x60_pci_err_probe,
--	.remove = __devexit_p(mv64x60_pci_err_remove),
-+	.remove_new = __devexit_p(mv64x60_pci_err_remove),
- 	.driver = {
- 		   .name = "mv64x60_pci_err",
+diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
+index bcf50d7..800fcce 100644
+--- a/arch/powerpc/platforms/powermac/pci.c
++++ b/arch/powerpc/platforms/powermac/pci.c
+@@ -661,6 +661,7 @@ static void __init init_second_ohare(void)
+ 			pci_find_hose_for_OF_device(np);
+ 		if (!hose) {
+ 			printk(KERN_ERR "Can't find PCI hose for OHare2 !\n");
++			of_node_put(np);
+ 			return;
+ 		}
+ 		early_read_config_word(hose, bus, devfn, PCI_COMMAND, &cmd);
+@@ -669,6 +670,7 @@ static void __init init_second_ohare(void)
+ 		early_write_config_word(hose, bus, devfn, PCI_COMMAND, cmd);
  	}
-@@ -375,7 +373,7 @@ err:
- 	return res;
+ 	has_second_ohare = 1;
++	of_node_put(np);
  }
  
--static int mv64x60_sram_err_remove(struct platform_device *pdev)
-+static void mv64x60_sram_err_remove(struct platform_device *pdev)
- {
- 	struct edac_device_ctl_info *edac_dev = platform_get_drvdata(pdev);
+ /*
+diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
+index 59eb840..1810e42 100644
+--- a/arch/powerpc/platforms/powermac/time.c
++++ b/arch/powerpc/platforms/powermac/time.c
+@@ -265,12 +265,15 @@ int __init via_calibrate_decr(void)
+ 	struct resource rsrc;
  
-@@ -383,13 +381,11 @@ static int mv64x60_sram_err_remove(struct platform_device *pdev)
+ 	vias = of_find_node_by_name(NULL, "via-cuda");
+-	if (vias = 0)
++	if (vias = NULL)
+ 		vias = of_find_node_by_name(NULL, "via-pmu");
+-	if (vias = 0)
++	if (vias = NULL)
+ 		vias = of_find_node_by_name(NULL, "via");
+-	if (vias = 0 || of_address_to_resource(vias, 0, &rsrc))
++	if (vias = NULL || of_address_to_resource(vias, 0, &rsrc)) {
++	        of_node_put(vias);
+ 		return 0;
++	}
++	of_node_put(vias);
+ 	via = ioremap(rsrc.start, rsrc.end - rsrc.start + 1);
+ 	if (via = NULL) {
+ 		printk(KERN_ERR "Failed to map VIA for timer calibration !\n");
+@@ -297,7 +300,7 @@ int __init via_calibrate_decr(void)
+ 	ppc_tb_freq = (dstart - dend) * 100 / 6;
  
- 	edac_device_del_device(&pdev->dev);
- 	edac_device_free_ctl_info(edac_dev);
--
--	return 0;
+ 	iounmap(via);
+-	
++
+ 	return 1;
  }
- 
- static struct platform_driver mv64x60_sram_err_driver = {
- 	.probe = mv64x60_sram_err_probe,
--	.remove = mv64x60_sram_err_remove,
-+	.remove_new = mv64x60_sram_err_remove,
- 	.driver = {
- 		   .name = "mv64x60_sram_err",
- 	}
-@@ -570,7 +566,7 @@ err:
- 	return res;
- }
- 
--static int mv64x60_cpu_err_remove(struct platform_device *pdev)
-+static void mv64x60_cpu_err_remove(struct platform_device *pdev)
- {
- 	struct edac_device_ctl_info *edac_dev = platform_get_drvdata(pdev);
- 
-@@ -578,12 +574,11 @@ static int mv64x60_cpu_err_remove(struct platform_device *pdev)
- 
- 	edac_device_del_device(&pdev->dev);
- 	edac_device_free_ctl_info(edac_dev);
--	return 0;
- }
- 
- static struct platform_driver mv64x60_cpu_err_driver = {
- 	.probe = mv64x60_cpu_err_probe,
--	.remove = mv64x60_cpu_err_remove,
-+	.remove_new = mv64x60_cpu_err_remove,
- 	.driver = {
- 		   .name = "mv64x60_cpu_err",
- 	}
-@@ -812,7 +807,7 @@ err:
- 	return res;
- }
- 
--static int mv64x60_mc_err_remove(struct platform_device *pdev)
-+static void mv64x60_mc_err_remove(struct platform_device *pdev)
- {
- 	struct mem_ctl_info *mci = platform_get_drvdata(pdev);
- 
-@@ -820,12 +815,11 @@ static int mv64x60_mc_err_remove(struct platform_device *pdev)
- 
- 	edac_mc_del_mc(&pdev->dev);
- 	edac_mc_free(mci);
--	return 0;
- }
- 
- static struct platform_driver mv64x60_mc_err_driver = {
- 	.probe = mv64x60_mc_err_probe,
--	.remove = mv64x60_mc_err_remove,
-+	.remove_new = mv64x60_mc_err_remove,
- 	.driver = {
- 		   .name = "mv64x60_mc_err",
- 	}
+ #endif
+-- 
+Nicolas Palix
