@@ -1,46 +1,83 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Tue, 09 Dec 2008 20:39:48 +0000
-Subject: [PATCH 5/9] mISDN: fix sparse warnings
-Message-Id: <493feab7.02a1660a.77b3.5168@mx.google.com>
+From: "Vorobiev Dmitri" <dmitri.vorobiev@movial.fi>
+Date: Wed, 03 Dec 2008 19:07:34 +0000
+Subject: Re: [PATCH] SCSI: fix the return type of the remove() method in
+Message-Id: <51634.88.114.226.209.1228331254.squirrel@webmail.movial.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1227140357-29921-1-git-send-email-dmitri.vorobiev@movial.fi>
+    <46353.88.114.226.209.1228321494.squirrel@webmail.movial.fi>
+    <1228324123.5551.25.camel@localhost.localdomain>
+    <ac3eb2510812030952k5b57a9c7qb68e3684de170d75@mail.gmail.com>
+    <1228327306.5551.36.camel@localhost.localdomain>
+    <35647.88.114.226.209.1228329736.squirrel@webmail.movial.fi>
+    <ac3eb2510812031051k9d9312bma119bfae35afc230@mail.gmail.com>
+In-Reply-To: <ac3eb2510812031051k9d9312bma119bfae35afc230@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <kkeil@suse.de>
-Cc: linux-kernel@vger.kernel.org
+To: Kay Sievers <kay.sievers@vrfy.org>
+Cc: Vorobiev Dmitri <dmitri.vorobiev@movial.fi>, James Bottomley <james.bottomley@hansenpartnership.com>, linux-scsi@vger.kernel.org, linux-mips@linux-mips.org, Greg KH <greg@kroah.com>, kernel-janitors@vger.kernel.org
 
-Impact: define variable in the inner most possible scope
+> On Wed, Dec 3, 2008 at 19:42, Vorobiev Dmitri <dmitri.vorobiev@movial.fi>
+> wrote:
+>>> On Wed, 2008-12-03 at 18:52 +0100, Kay Sievers wrote:
+>>>> On Wed, Dec 3, 2008 at 18:08, James Bottomley
+>>>> <James.Bottomley@hansenpartnership.com> wrote:
+>>>> > On Wed, 2008-12-03 at 18:24 +0200, Vorobiev Dmitri wrote:
+>>>> >> > This patch fixes the following compilation warning:
+>>>> >> >
+>>>> >> >   CC [M]  drivers/scsi/sgiwd93.o
+>>>> >> > drivers/scsi/sgiwd93.c:314: warning: initialization from
+>>>> incompatible
+>>>> >> > pointer type
+>>>> >>
+>>>> >> Any news about this one? I think this patch should go via
+>>>> linux-scsi,
+>>>> >> unless you would be insisting on pushing it via linux-mips, in
+>>>> which
+>>>> case
+>>>> >> I'll politely bug Ralf about it. :)
+>>>> >
+>>>> > Looks OK for the local change.
+>>>> >
+>>>> > Globally, having driver->remove and platform_driver->remove return
+>>>> int
+>>>> > instead of void looks wrong.  Particularly when the only use cases
+>>>> are
+>>>> > in drivers/base/ and they all ignore the return code.
+>>>> >
+>>>> > Greg and Kay ... shouldn't we simply redefine the return values for
+>>>> the
+>>>> > remove methods in these structures to return void (and thus match
+>>>> the
+>>>> > use case)?
+>>>>
+>>>> Aren't there many many drivers across the tree, using the "int remove"
+>>>> version?
+>>>
+>>> Yes ... since it's a function prototype.
+>>>
+>>> However, if drivers/base simply discards the return, it's a trap we
+>>> shouldn't be setting.
+>>
+>> Hmmm, it does look like the return value is discarded, please see
+>> drivers/base/dd.c::__device_release_driver() for details.
+>>
+>> Does this not deserve a good cleanup?
+>
+> Sure, it might be. If you want to patch hundreds of files, send
+> patches to maintainers, patch drivers you can not even compile, we
+> could do that.
+>
+> We are already in the middle of a ~400 files "struct device" bus_id
+> conversion, and only very few maintainers respond to these patches. We
+> also never got any reply to the SCSI bus_id patch we sent weeks ago.
+> :)
+>
+> Even when it's "a good cleanup", with maintainers not responding, and
+> supporting it, it's a real pain to change things like this. But, if
+> you want to go ahead and do that, let us know.
 
-Fix this sparse warning:
+Well, I don't really want to look like a coward, but I guess this a good
+project for Kernel Janitors, and I'm Cc:ing their mailing list now.
 
-  drivers/isdn/mISDN/dsp_core.c:746:20: warning: symbol 'nskb' shadows an earlier one
-  drivers/isdn/mISDN/dsp_core.c:634:19: originally declared here
-
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
- drivers/isdn/mISDN/dsp_core.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/isdn/mISDN/dsp_core.c b/drivers/isdn/mISDN/dsp_core.c
-index 41af063..1dc21d8 100644
---- a/drivers/isdn/mISDN/dsp_core.c
-+++ b/drivers/isdn/mISDN/dsp_core.c
-@@ -631,7 +631,6 @@ dsp_function(struct mISDNchannel *ch,  struct sk_buff *skb)
- 	int			ret = 0;
- 	u8			*digits;
- 	int			cont;
--	struct			sk_buff *nskb;
- 	u_long			flags;
- 
- 	hh = mISDN_HEAD_P(skb);
-@@ -690,6 +689,7 @@ dsp_function(struct mISDNchannel *ch,  struct sk_buff *skb)
- 			digits = dsp_dtmf_goertzel_decode(dsp, skb->data,
- 				skb->len, (dsp_options&DSP_OPT_ULAW)?1:0);
- 			while (*digits) {
-+				struct sk_buff *nskb;
- 				if (dsp_debug & DEBUG_DSP_DTMF)
- 					printk(KERN_DEBUG "%s: digit"
- 					    "(%c) to layer %s\n",
--- 
-1.5.6.3
-
+Dmitri
