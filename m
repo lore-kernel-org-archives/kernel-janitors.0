@@ -1,157 +1,73 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:42:16 +0000
-Subject: [PATCH 25/28] drivers/hwmon/smsc47b397: Drop return value from
-Message-Id: <Pine.LNX.4.64.0812101741530.21998@ask.diku.dk>
+Date: Sun, 07 Dec 2008 22:15:33 +0000
+Subject: [PATCH 2/2] drivers/rtc: correct an error test
+Message-Id: <Pine.LNX.4.64.0812072314590.7130@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, mhoffman@lightlink.com, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: vapier.adi@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
+rtc is clearly does not satisfy IS_ERR at the point where it is tested, so
+I have changed the test to consider the just initialized rtc->rtc_dev.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
+@match exists@
+expression x, E;
+identifier fld;
+position p1,p2;
 @@
 
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
-@@
-
-- int
-+ void
-       f(...) {
-  <...
 (
--  return \(C\|i\);
-+  return;
+x = E;
 |
--  return E;
-+  E;
-+  return;
+x = E
+|
+x@p1->fld
+... when != x = E
+IS_ERR(x@p2)
+... when any
 )
-  ...>
-}
+
+@other_match exists@
+expression match.x, E1, E2;
+position match.p1,match.p2;
+@@
+
+x = E1
+... when != x = E2
+    when != x@p1
+x@p2
+
+@ script:python depends on !other_match@
+p1 << match.p1;
+p2 << match.p2;
+@@
+
+print "* file %s dereference %s test %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/hwmon/smsc47b397.c |    6 ++----
- drivers/hwmon/smsc47m1.c   |    8 +++-----
- 2 files changed, 5 insertions(+), 9 deletions(-)
+ drivers/rtc/rtc-bfin.c              |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/hwmon/smsc47b397.c b/drivers/hwmon/smsc47b397.c
-index eb03544..fd4d596 100644
---- a/drivers/hwmon/smsc47b397.c
-+++ b/drivers/hwmon/smsc47b397.c
-@@ -221,7 +221,7 @@ static const struct attribute_group smsc47b397_group = {
- 	.attrs = smsc47b397_attributes,
- };
+diff --git a/drivers/rtc/rtc-bfin.c b/drivers/rtc/rtc-bfin.c
+index 34439ce..aafd3e6 100644
+--- a/drivers/rtc/rtc-bfin.c
++++ b/drivers/rtc/rtc-bfin.c
+@@ -390,7 +390,7 @@ static int __devinit bfin_rtc_probe(struct platform_device *pdev)
  
--static int __devexit smsc47b397_remove(struct platform_device *pdev)
-+static void __devexit smsc47b397_remove(struct platform_device *pdev)
- {
- 	struct smsc47b397_data *data = platform_get_drvdata(pdev);
- 	struct resource *res;
-@@ -231,8 +231,6 @@ static int __devexit smsc47b397_remove(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
- 	release_region(res->start, SMSC_EXTENT);
- 	kfree(data);
--
--	return 0;
- }
- 
- static int smsc47b397_probe(struct platform_device *pdev);
-@@ -243,7 +241,7 @@ static struct platform_driver smsc47b397_driver = {
- 		.name	= DRVNAME,
- 	},
- 	.probe		= smsc47b397_probe,
--	.remove		= __devexit_p(smsc47b397_remove),
-+	.remove_new	= __devexit_p(smsc47b397_remove),
- };
- 
- static int __devinit smsc47b397_probe(struct platform_device *pdev)
-diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
-index d1b4985..fbd9556 100644
---- a/drivers/hwmon/smsc47m1.c
-+++ b/drivers/hwmon/smsc47m1.c
-@@ -138,7 +138,7 @@ struct smsc47m1_sio_data {
- 
- 
- static int smsc47m1_probe(struct platform_device *pdev);
--static int __devexit smsc47m1_remove(struct platform_device *pdev);
-+static void __devexit smsc47m1_remove(struct platform_device *pdev);
- static struct smsc47m1_data *smsc47m1_update_device(struct device *dev,
- 		int init);
- 
-@@ -159,7 +159,7 @@ static struct platform_driver smsc47m1_driver = {
- 		.name	= DRVNAME,
- 	},
- 	.probe		= smsc47m1_probe,
--	.remove		= __devexit_p(smsc47m1_remove),
-+	.remove_new	= __devexit_p(smsc47m1_remove),
- };
- 
- static ssize_t get_fan(struct device *dev, struct device_attribute
-@@ -629,7 +629,7 @@ error_release:
- 	return err;
- }
- 
--static int __devexit smsc47m1_remove(struct platform_device *pdev)
-+static void __devexit smsc47m1_remove(struct platform_device *pdev)
- {
- 	struct smsc47m1_data *data = platform_get_drvdata(pdev);
- 	struct resource *res;
-@@ -641,8 +641,6 @@ static int __devexit smsc47m1_remove(struct platform_device *pdev)
- 	release_region(res->start, SMSC_EXTENT);
- 	platform_set_drvdata(pdev, NULL);
- 	kfree(data);
--
--	return 0;
- }
- 
- static struct smsc47m1_data *smsc47m1_update_device(struct device *dev,
+ 	/* Register our RTC with the RTC framework */
+ 	rtc->rtc_dev = rtc_device_register(pdev->name, dev, &bfin_rtc_ops, THIS_MODULE);
+-	if (unlikely(IS_ERR(rtc))) {
++	if (unlikely(IS_ERR(rtc->rtc_dev))) {
+ 		ret = PTR_ERR(rtc->rtc_dev);
+ 		goto err_irq;
+ 	}
