@@ -1,220 +1,86 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:40:14 +0000
-Subject: [PATCH 20/28] arch/arm: Drop return value from platform_driver remove
-Message-Id: <Pine.LNX.4.64.0812101739410.21998@ask.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Tue, 09 Dec 2008 20:45:43 +0000
+Subject: [PATCH 6/9] mISDN: fix sparse warnings
+Message-Id: <493feaba.06e2660a.55c3.4274@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, rmk@arm.linux.org.uk, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Karsten Keil <kkeil@suse.de>
+Cc: linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Impact: rename function scope variable
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  In arch/arm/common/scoop.c, in the
-original code, there could have been a return of a value other than 0.  The
-original return value is 0 in all other cases.
+Fix this warning:
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+  drivers/isdn/mISDN/l1oip_core.c:472:8: warning: symbol 'id' shadows an earlier one
+  drivers/isdn/mISDN/l1oip_core.c:254:14: originally declared here
 
-// <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
-@@
-
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
-@@
-
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- arch/arm/common/locomo.c     |    6 ++----
- arch/arm/common/sa1111.c     |    6 ++----
- arch/arm/common/scoop.c      |   10 ++++------
- arch/arm/common/sharpsl_pm.c |    6 ++----
- 4 files changed, 10 insertions(+), 18 deletions(-)
+ drivers/isdn/mISDN/l1oip_core.c |   22 +++++++++++-----------
+ 1 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/common/locomo.c b/arch/arm/common/locomo.c
-index 7c6b4b9..ae57b07 100644
---- a/arch/arm/common/locomo.c
-+++ b/arch/arm/common/locomo.c
-@@ -799,7 +799,7 @@ static int locomo_probe(struct platform_device *dev)
- 	return __locomo_probe(&dev->dev, mem, irq);
- }
- 
--static int locomo_remove(struct platform_device *dev)
-+static void locomo_remove(struct platform_device *dev)
+diff --git a/drivers/isdn/mISDN/l1oip_core.c b/drivers/isdn/mISDN/l1oip_core.c
+index e42150a..0884dd6 100644
+--- a/drivers/isdn/mISDN/l1oip_core.c
++++ b/drivers/isdn/mISDN/l1oip_core.c
+@@ -469,7 +469,7 @@ l1oip_socket_recv(struct l1oip *hc, u8 remotecodec, u8 channel, u16 timebase,
+ static void
+ l1oip_socket_parse(struct l1oip *hc, struct sockaddr_in *sin, u8 *buf, int len)
  {
- 	struct locomo *lchip = platform_get_drvdata(dev);
- 
-@@ -807,8 +807,6 @@ static int locomo_remove(struct platform_device *dev)
- 		__locomo_remove(lchip);
- 		platform_set_drvdata(dev, NULL);
+-	u32			id;
++	u32			packet_id;
+ 	u8			channel;
+ 	u8			remotecodec;
+ 	u16			timebase;
+@@ -508,7 +508,7 @@ l1oip_socket_parse(struct l1oip *hc, struct sockaddr_in *sin, u8 *buf, int len)
  	}
--
--	return 0;
- }
  
- /*
-@@ -819,7 +817,7 @@ static int locomo_remove(struct platform_device *dev)
-  */
- static struct platform_driver locomo_device_driver = {
- 	.probe		= locomo_probe,
--	.remove		= locomo_remove,
-+	.remove_new	= locomo_remove,
- #ifdef CONFIG_PM
- 	.suspend	= locomo_suspend,
- 	.resume		= locomo_resume,
-diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
-index 47ccec9..9620972 100644
---- a/arch/arm/common/sa1111.c
-+++ b/arch/arm/common/sa1111.c
-@@ -954,7 +954,7 @@ static int __devinit sa1111_probe(struct platform_device *pdev)
- 	return __sa1111_probe(&pdev->dev, mem, irq);
- }
+ 	/* get id flag */
+-	id = (*buf>>4)&1;
++	packet_id = (*buf>>4)&1;
  
--static int sa1111_remove(struct platform_device *pdev)
-+static void sa1111_remove(struct platform_device *pdev)
- {
- 	struct sa1111 *sachip = platform_get_drvdata(pdev);
+ 	/* check coding */
+ 	remotecodec = (*buf) & 0x0f;
+@@ -520,11 +520,11 @@ l1oip_socket_parse(struct l1oip *hc, struct sockaddr_in *sin, u8 *buf, int len)
+ 	buf++;
+ 	len--;
  
-@@ -967,8 +967,6 @@ static int sa1111_remove(struct platform_device *pdev)
- 		sachip->saved_state = NULL;
- #endif
- 	}
--
--	return 0;
- }
- 
- /*
-@@ -982,7 +980,7 @@ static int sa1111_remove(struct platform_device *pdev)
-  */
- static struct platform_driver sa1111_device_driver = {
- 	.probe		= sa1111_probe,
--	.remove		= sa1111_remove,
-+	.remove_new	= sa1111_remove,
- 	.suspend	= sa1111_suspend,
- 	.resume		= sa1111_resume,
- 	.driver		= {
-diff --git a/arch/arm/common/scoop.c b/arch/arm/common/scoop.c
-index 697c649..d84f0a9 100644
---- a/arch/arm/common/scoop.c
-+++ b/arch/arm/common/scoop.c
-@@ -273,32 +273,30 @@ err_ioremap:
- 	return ret;
- }
- 
--static int __devexit scoop_remove(struct platform_device *pdev)
-+static void __devexit scoop_remove(struct platform_device *pdev)
- {
- 	struct scoop_dev *sdev = platform_get_drvdata(pdev);
- 	int ret;
- 
- 	if (!sdev)
--		return -EINVAL;
-+		return;
- 
- 	if (sdev->gpio.base != -1) {
- 		ret = gpiochip_remove(&sdev->gpio);
- 		if (ret) {
- 			dev_err(&pdev->dev, "Can't remove gpio chip: %d\n", ret);
--			return ret;
-+			return;
+-	/* check id */
+-	if (id) {
++	/* check packet_id */
++	if (packet_id) {
+ 		if (!hc->id) {
+ 			printk(KERN_WARNING "%s: packet error - packet has id "
+-				"0x%x, but we have not\n", __func__, id);
++				"0x%x, but we have not\n", __func__, packet_id);
+ 			return;
  		}
- 	}
+ 		if (len < 4) {
+@@ -532,16 +532,16 @@ l1oip_socket_parse(struct l1oip *hc, struct sockaddr_in *sin, u8 *buf, int len)
+ 				"short for ID value\n", __func__);
+ 			return;
+ 		}
+-		id = (*buf++) << 24;
+-		id += (*buf++) << 16;
+-		id += (*buf++) << 8;
+-		id += (*buf++);
++		packet_id = (*buf++) << 24;
++		packet_id += (*buf++) << 16;
++		packet_id += (*buf++) << 8;
++		packet_id += (*buf++);
+ 		len -= 4;
  
- 	platform_set_drvdata(pdev, NULL);
- 	iounmap(sdev->base);
- 	kfree(sdev);
--
--	return 0;
- }
- 
- static struct platform_driver scoop_driver = {
- 	.probe		= scoop_probe,
--	.remove		= __devexit_p(scoop_remove),
-+	.remove_new	= __devexit_p(scoop_remove),
- 	.suspend	= scoop_suspend,
- 	.resume		= scoop_resume,
- 	.driver		= {
-diff --git a/arch/arm/common/sharpsl_pm.c b/arch/arm/common/sharpsl_pm.c
-index 780bbf7..61393f3 100644
---- a/arch/arm/common/sharpsl_pm.c
-+++ b/arch/arm/common/sharpsl_pm.c
-@@ -818,7 +818,7 @@ static int __init sharpsl_pm_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int sharpsl_pm_remove(struct platform_device *pdev)
-+static void sharpsl_pm_remove(struct platform_device *pdev)
- {
- 	suspend_set_ops(NULL);
- 
-@@ -831,13 +831,11 @@ static int sharpsl_pm_remove(struct platform_device *pdev)
- 
- 	del_timer_sync(&sharpsl_pm.chrg_full_timer);
- 	del_timer_sync(&sharpsl_pm.ac_timer);
--
--	return 0;
- }
- 
- static struct platform_driver sharpsl_pm_driver = {
- 	.probe		= sharpsl_pm_probe,
--	.remove		= sharpsl_pm_remove,
-+	.remove_new	= sharpsl_pm_remove,
- 	.suspend	= sharpsl_pm_suspend,
- 	.resume		= sharpsl_pm_resume,
- 	.driver		= {
+-		if (id != hc->id) {
++		if (packet_id != hc->id) {
+ 			printk(KERN_WARNING "%s: packet error - ID mismatch, "
+ 				"got 0x%x, we 0x%x\n",
+-				__func__, id, hc->id);
++				__func__, packet_id, hc->id);
+ 			return;
+ 		}
+ 	} else {
+-- 
+1.5.6.3
+
