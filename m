@@ -1,246 +1,387 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 18 Dec 2008 20:18:47 +0000
-Subject: [PATCH 2/6] drm/i915: fix sparse warnings: make symbols static
-Message-Id: <494ad5d5.0710660a.4800.ffffc418@mx.google.com>
+Date: Tue, 09 Dec 2008 20:34:25 +0000
+Subject: [PATCH 3/9] mISDN: fix sparse warnings
+Message-Id: <493feab0.09c5660a.39e6.46bb@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.sourceforge.net
+To: Karsten Keil <kkeil@suse.de>
+Cc: linux-kernel@vger.kernel.org
+
+Impact: make global symbols static or include header files for the prototypes
+
+The warnings fixed by including an header file are marked with "*",
+all others have been made static.  This patch fixes all such issues
+in mISDN.
 
 Fix this sparse warnings:
 
-  drivers/gpu/drm/i915/i915_drv.c:38:14: warning: symbol 'i915_modeset' was not declared. Should it be static?
-  drivers/gpu/drm/i915/i915_dma.c:824:5: warning: symbol 'i915_probe_agp' was not declared. Should it be static?
-  drivers/gpu/drm/i915/i915_dma.c:1010:5: warning: symbol 'i915_driver_firstopen' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_display.c:347:1: warning: symbol 'intel_pipe_set_base' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_display.c:1332:6: warning: symbol 'intel_crtc_init' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_display.c:1378:5: warning: symbol 'intel_connector_clones' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_crt.c:240:6: warning: symbol 'intel_crt_enc_destroy' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_sdvo.c:62:6: warning: symbol 'intel_sdvo_write_sdvox' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_sdvo.c:299:5: warning: symbol 'intel_sdvo_get_pixel_multiplier' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_sdvo.c:314:6: warning: symbol 'intel_sdvo_set_control_bus_switch' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_sdvo.c:970:6: warning: symbol 'intel_sdvo_enc_destroy' was not declared. Should it be static
-  drivers/gpu/drm/i915/intel_fb.c:341:5: warning: symbol 'intelfb_blank' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_fb.c:431:5: warning: symbol 'intelfb_create' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_tv.c:1615:6: warning: symbol 'intel_tv_enc_destroy' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_dvo.c:46:25: warning: symbol 'intel_dvo_devices' was not declared. Should it be static?
-  drivers/gpu/drm/i915/intel_dvo.c:338:6: warning: symbol 'intel_dvo_enc_destroy' was not declared. Should it be static?
-  drivers/gpu/drm/i915/i915_opregion.c:260:5: warning: symbol 'intel_opregion_video_event' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:174:5: warning: symbol 'plxsd_master' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:426:1: warning: symbol 'write_fifo_regio' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:447:1: warning: symbol 'write_fifo_pcimem' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:469:1: warning: symbol 'read_fifo_regio' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:491:1: warning: symbol 'read_fifo_pcimem' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:710:1: warning: symbol 'vpm_init' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:793:1: warning: symbol 'vpm_check' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:816:1: warning: symbol 'vpm_echocan_on' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcmulti.c:848:1: warning: symbol 'vpm_echocan_off' was not declared. Should it be static?
+* drivers/isdn/mISDN/l1oip_codec.c:224:1: warning: symbol 'l1oip_law_to_4bit' was not declared. Should it be static?
+* drivers/isdn/mISDN/l1oip_codec.c:261:1: warning: symbol 'l1oip_4bit_to_law' was not declared. Should it be static?
+* drivers/isdn/mISDN/l1oip_codec.c:281:1: warning: symbol 'l1oip_alaw_to_ulaw' was not declared. Should it be static?
+* drivers/isdn/mISDN/l1oip_codec.c:294:1: warning: symbol 'l1oip_ulaw_to_alaw' was not declared. Should it be static?
+* drivers/isdn/mISDN/l1oip_codec.c:311:1: warning: symbol 'l1oip_4bit_free' was not declared. Should it be static?
+* drivers/isdn/mISDN/l1oip_codec.c:322:1: warning: symbol 'l1oip_4bit_alloc' was not declared. Should it be static?
+  drivers/isdn/mISDN/core.c:29:1: warning: symbol 'device_lock' was not declared. Should it be static?
+  drivers/isdn/mISDN/core.c:34:1: warning: symbol 'bp_lock' was not declared. Should it be static?
+  drivers/isdn/mISDN/core.c:196:1: warning: symbol 'mISDNInit' was not declared. Should it be static?
+  drivers/isdn/mISDN/core.c:227:6: warning: symbol 'mISDN_cleanup' was not declared. Should it be static?
+  drivers/isdn/mISDN/stack.c:40:1: warning: symbol 'mISDN_queue_message' was not declared. Should it be static?
+* drivers/isdn/mISDN/layer1.c:388:1: warning: symbol 'l1_init' was not declared. Should it be static?
+* drivers/isdn/mISDN/layer1.c:400:1: warning: symbol 'l1_cleanup' was not declared. Should it be static?
+  drivers/isdn/mISDN/layer2.c:469:1: warning: symbol 'iframe_error' was not declared. Should it be static?
+  drivers/isdn/mISDN/layer2.c:487:1: warning: symbol 'super_error' was not declared. Should it be static?
+  drivers/isdn/mISDN/layer2.c:496:1: warning: symbol 'unnum_error' was not declared. Should it be static?
+  drivers/isdn/mISDN/layer2.c:509:1: warning: symbol 'UI_error' was not declared. Should it be static?
+  drivers/isdn/mISDN/layer2.c:522:1: warning: symbol 'FRMR_error' was not declared. Should it be static?
+  drivers/isdn/mISDN/layer2.c:1069:1: warning: symbol 'enquiry_cr' was not declared. Should it be static?
+* drivers/isdn/mISDN/layer2.c:2196:1: warning: symbol 'Isdnl2_Init' was not declared. Should it be static?
+* drivers/isdn/mISDN/layer2.c:2210:1: warning: symbol 'Isdnl2_cleanup' was not declared. Should it be static?
+  drivers/isdn/mISDN/tei.c:397:1: warning: symbol 'random_ri' was not declared. Should it be static?
+* drivers/isdn/mISDN/timerdev.c:277:1: warning: symbol 'mISDN_inittimer' was not declared. Should it be static?
+* drivers/isdn/mISDN/timerdev.c:288:6: warning: symbol 'mISDN_timer_cleanup' was not declared. Should it be static?
+  drivers/isdn/mISDN/dsp_core.c:164:12: warning: symbol 'mISDN_dsp_revision' was not declared. Should it be static?
+  drivers/isdn/mISDN/dsp_cmx.c:1543:5: warning: symbol 'samplecount' was not declared. Should it be static?
+  drivers/isdn/mISDN/dsp_cmx.c:1546:5: warning: symbol 'dsp_start_jiffies' was not declared. Should it be static?
+  drivers/isdn/mISDN/dsp_cmx.c:1547:16: warning: symbol 'dsp_start_tv' was not declared. Should it be static?
+  drivers/isdn/mISDN/dsp_tones.c:239:3: warning: symbol 'pattern' was not declared. Should it be static?
+  drivers/isdn/mISDN/dsp_audio.c:33:4: warning: symbol 'dsp_audio_ulaw_to_alaw' was not declared. Should it be static?
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/gpu/drm/i915/i915_dma.c      |    6 +++---
- drivers/gpu/drm/i915/i915_drv.c      |    2 +-
- drivers/gpu/drm/i915/i915_opregion.c |    4 ++--
- drivers/gpu/drm/i915/intel_crt.c     |    2 +-
- drivers/gpu/drm/i915/intel_display.c |    6 +++---
- drivers/gpu/drm/i915/intel_dvo.c     |    4 ++--
- drivers/gpu/drm/i915/intel_fb.c      |   10 +++++-----
- drivers/gpu/drm/i915/intel_sdvo.c    |    9 +++++----
- drivers/gpu/drm/i915/intel_tv.c      |    2 +-
- 9 files changed, 23 insertions(+), 22 deletions(-)
+ drivers/isdn/hardware/mISDN/hfcmulti.c |   18 +++++++++---------
+ drivers/isdn/mISDN/core.c              |    8 ++++----
+ drivers/isdn/mISDN/dsp_audio.c         |    2 +-
+ drivers/isdn/mISDN/dsp_cmx.c           |    6 +++---
+ drivers/isdn/mISDN/dsp_core.c          |    2 +-
+ drivers/isdn/mISDN/dsp_tones.c         |    2 +-
+ drivers/isdn/mISDN/l1oip_codec.c       |    1 +
+ drivers/isdn/mISDN/layer1.c            |    1 +
+ drivers/isdn/mISDN/layer2.c            |   14 ++++++++------
+ drivers/isdn/mISDN/stack.c             |    2 +-
+ drivers/isdn/mISDN/tei.c               |    2 +-
+ drivers/isdn/mISDN/timerdev.c          |    1 +
+ 12 files changed, 32 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
-index efcce1a..36a6884 100644
---- a/drivers/gpu/drm/i915/i915_dma.c
-+++ b/drivers/gpu/drm/i915/i915_dma.c
-@@ -821,8 +821,8 @@ static int i915_set_status_page(struct drm_device *dev, void *data,
-  * some RAM for the framebuffer at early boot.  This code figures out
-  * how much was set aside so we can use it for our own purposes.
-  */
--int i915_probe_agp(struct drm_device *dev, unsigned long *aperture_size,
--		   unsigned long *preallocated_size)
-+static int i915_probe_agp(struct drm_device *dev, unsigned long *aperture_size,
-+			  unsigned long *preallocated_size)
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index 46684e1..599d832 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -171,7 +171,7 @@ static int (*unregister_interrupt)(void);
+ static int interrupt_registered;
+ 
+ static struct hfc_multi *syncmaster;
+-int plxsd_master; /* if we have a master card (yet) */
++static int plxsd_master; /* if we have a master card (yet) */
+ static spinlock_t plx_lock; /* may not acquire other lock inside */
+ EXPORT_SYMBOL(plx_lock);
+ 
+@@ -422,7 +422,7 @@ HFC_wait_debug(struct hfc_multi *hc, const char *function, int line)
+ #endif
+ 
+ /* write fifo data (REGIO) */
+-void
++static void
+ write_fifo_regio(struct hfc_multi *hc, u_char *data, int len)
  {
- 	struct pci_dev *bridge_dev;
- 	u16 tmp = 0;
-@@ -1007,7 +1007,7 @@ void i915_master_destroy(struct drm_device *dev, struct drm_master *master)
+ 	outb(A_FIFO_DATA0, (hc->pci_iobase)+4);
+@@ -443,7 +443,7 @@ write_fifo_regio(struct hfc_multi *hc, u_char *data, int len)
+ 	}
+ }
+ /* write fifo data (PCIMEM) */
+-void
++static void
+ write_fifo_pcimem(struct hfc_multi *hc, u_char *data, int len)
+ {
+ 	while (len>>2) {
+@@ -465,7 +465,7 @@ write_fifo_pcimem(struct hfc_multi *hc, u_char *data, int len)
+ 	}
+ }
+ /* read fifo data (REGIO) */
+-void
++static void
+ read_fifo_regio(struct hfc_multi *hc, u_char *data, int len)
+ {
+ 	outb(A_FIFO_DATA0, (hc->pci_iobase)+4);
+@@ -487,7 +487,7 @@ read_fifo_regio(struct hfc_multi *hc, u_char *data, int len)
+ }
+ 
+ /* read fifo data (PCIMEM) */
+-void
++static void
+ read_fifo_pcimem(struct hfc_multi *hc, u_char *data, int len)
+ {
+ 	while (len>>2) {
+@@ -706,7 +706,7 @@ vpm_out(struct hfc_multi *c, int which, unsigned short addr,
  }
  
  
--int i915_driver_firstopen(struct drm_device *dev)
-+static int i915_driver_firstopen(struct drm_device *dev)
+-void
++static void
+ vpm_init(struct hfc_multi *wc)
  {
- 	if (drm_core_check_feature(dev, DRIVER_MODESET))
- 		return 0;
-diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
-index cbee41c..f8b3df0 100644
---- a/drivers/gpu/drm/i915/i915_drv.c
-+++ b/drivers/gpu/drm/i915/i915_drv.c
-@@ -35,7 +35,7 @@
- #include "drm_pciids.h"
- #include <linux/console.h>
- 
--unsigned int i915_modeset = -1;
-+static unsigned int i915_modeset = -1;
- module_param_named(modeset, i915_modeset, int, 0400);
- 
- unsigned int i915_fbpercrtc = 0;
-diff --git a/drivers/gpu/drm/i915/i915_opregion.c b/drivers/gpu/drm/i915/i915_opregion.c
-index 13ae731..ff01283 100644
---- a/drivers/gpu/drm/i915/i915_opregion.c
-+++ b/drivers/gpu/drm/i915/i915_opregion.c
-@@ -257,8 +257,8 @@ void opregion_enable_asle(struct drm_device *dev)
- 
- static struct intel_opregion *system_opregion;
- 
--int intel_opregion_video_event(struct notifier_block *nb, unsigned long val,
--			       void *data)
-+static int intel_opregion_video_event(struct notifier_block *nb,
-+				      unsigned long val, void *data)
- {
- 	/* The only video events relevant to opregion are 0x80. These indicate
- 	   either a docking event, lid switch or display switch request. In
-diff --git a/drivers/gpu/drm/i915/intel_crt.c b/drivers/gpu/drm/i915/intel_crt.c
-index 5d9c94e..dcaed34 100644
---- a/drivers/gpu/drm/i915/intel_crt.c
-+++ b/drivers/gpu/drm/i915/intel_crt.c
-@@ -237,7 +237,7 @@ static const struct drm_connector_helper_funcs intel_crt_connector_helper_funcs
- 	.best_encoder = intel_best_encoder,
- };
- 
--void intel_crt_enc_destroy(struct drm_encoder *encoder)
-+static void intel_crt_enc_destroy(struct drm_encoder *encoder)
- {
- 	drm_encoder_cleanup(encoder);
- }
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 96c2da5..9094119 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -343,7 +343,7 @@ intel_wait_for_vblank(struct drm_device *dev)
- 	udelay(20000);
+ 	unsigned char reg;
+@@ -789,7 +789,7 @@ vpm_init(struct hfc_multi *wc)
+ 	}
  }
  
 -void
 +static void
- intel_pipe_set_base(struct drm_crtc *crtc, int x, int y)
+ vpm_check(struct hfc_multi *hctmp)
  {
- 	struct drm_device *dev = crtc->dev;
-@@ -1329,7 +1329,7 @@ static const struct drm_crtc_funcs intel_crtc_funcs = {
- };
+ 	unsigned char gpi2;
+@@ -812,7 +812,7 @@ vpm_check(struct hfc_multi *hctmp)
+  *
+  */
  
- 
--void intel_crtc_init(struct drm_device *dev, int pipe)
-+static void intel_crtc_init(struct drm_device *dev, int pipe)
+-void
++static void
+ vpm_echocan_on(struct hfc_multi *hc, int ch, int taps)
  {
- 	struct intel_crtc *intel_crtc;
- 	int i;
-@@ -1375,7 +1375,7 @@ struct drm_crtc *intel_get_crtc_from_pipe(struct drm_device *dev, int pipe)
- 	return crtc;
+ 	unsigned int timeslot;
+@@ -844,7 +844,7 @@ vpm_echocan_on(struct hfc_multi *hc, int ch, int taps)
+ 	vpm_out(hc, unit, timeslot, 0x7e);
  }
  
--int intel_connector_clones(struct drm_device *dev, int type_mask)
-+static int intel_connector_clones(struct drm_device *dev, int type_mask)
+-void
++static void
+ vpm_echocan_off(struct hfc_multi *hc, int ch)
  {
- 	int index_mask = 0;
- 	struct drm_connector *connector;
-diff --git a/drivers/gpu/drm/i915/intel_dvo.c b/drivers/gpu/drm/i915/intel_dvo.c
-index 008bfae..cc621c8 100644
---- a/drivers/gpu/drm/i915/intel_dvo.c
-+++ b/drivers/gpu/drm/i915/intel_dvo.c
-@@ -43,7 +43,7 @@ extern struct intel_dvo_dev_ops ivch_ops;
- extern struct intel_dvo_dev_ops tfp410_ops;
- extern struct intel_dvo_dev_ops ch7017_ops;
+ 	unsigned int timeslot;
+diff --git a/drivers/isdn/mISDN/core.c b/drivers/isdn/mISDN/core.c
+index 3306817..751665c 100644
+--- a/drivers/isdn/mISDN/core.c
++++ b/drivers/isdn/mISDN/core.c
+@@ -26,12 +26,12 @@ MODULE_LICENSE("GPL");
+ module_param(debug, uint, S_IRUGO | S_IWUSR);
  
--struct intel_dvo_device intel_dvo_devices[] = {
-+static struct intel_dvo_device intel_dvo_devices[] = {
- 	{
- 		.type = INTEL_DVO_CHIP_TMDS,
- 		.name = "sil164",
-@@ -335,7 +335,7 @@ static const struct drm_connector_helper_funcs intel_dvo_connector_helper_funcs
- 	.best_encoder = intel_best_encoder,
- };
+ static LIST_HEAD(devices);
+-DEFINE_RWLOCK(device_lock);
++static DEFINE_RWLOCK(device_lock);
+ static u64		device_ids;
+ #define MAX_DEVICE_ID	63
  
--void intel_dvo_enc_destroy(struct drm_encoder *encoder)
-+static void intel_dvo_enc_destroy(struct drm_encoder *encoder)
- {
- 	drm_encoder_cleanup(encoder);
+ static LIST_HEAD(Bprotocols);
+-DEFINE_RWLOCK(bp_lock);
++static DEFINE_RWLOCK(bp_lock);
+ 
+ struct mISDNdevice
+ *get_mdevice(u_int id)
+@@ -192,7 +192,7 @@ mISDN_unregister_Bprotocol(struct Bprotocol *bp)
  }
-diff --git a/drivers/gpu/drm/i915/intel_fb.c b/drivers/gpu/drm/i915/intel_fb.c
-index a89ebea..12664c3 100644
---- a/drivers/gpu/drm/i915/intel_fb.c
-+++ b/drivers/gpu/drm/i915/intel_fb.c
-@@ -338,7 +338,7 @@ static void intelfb_off(struct fb_info *info, int dpms_mode)
+ EXPORT_SYMBOL(mISDN_unregister_Bprotocol);
+ 
+-int
++static int
+ mISDNInit(void)
+ {
+ 	int	err;
+@@ -224,7 +224,7 @@ error:
+ 	return err;
+ }
+ 
+-void mISDN_cleanup(void)
++static void mISDN_cleanup(void)
+ {
+ 	misdn_sock_cleanup();
+ 	mISDN_timer_cleanup();
+diff --git a/drivers/isdn/mISDN/dsp_audio.c b/drivers/isdn/mISDN/dsp_audio.c
+index 1c2dd56..de3795e 100644
+--- a/drivers/isdn/mISDN/dsp_audio.c
++++ b/drivers/isdn/mISDN/dsp_audio.c
+@@ -30,7 +30,7 @@ EXPORT_SYMBOL(dsp_audio_s16_to_law);
+ /* alaw -> ulaw */
+ u8 dsp_audio_alaw_to_ulaw[256];
+ /* ulaw -> alaw */
+-u8 dsp_audio_ulaw_to_alaw[256];
++static u8 dsp_audio_ulaw_to_alaw[256];
+ u8 dsp_silence;
+ 
+ 
+diff --git a/drivers/isdn/mISDN/dsp_cmx.c b/drivers/isdn/mISDN/dsp_cmx.c
+index c2f51cc..e868c47 100644
+--- a/drivers/isdn/mISDN/dsp_cmx.c
++++ b/drivers/isdn/mISDN/dsp_cmx.c
+@@ -1540,11 +1540,11 @@ send_packet:
+ 	schedule_work(&dsp->workq);
+ }
+ 
+-u32	samplecount;
++static u32	samplecount;
+ struct timer_list dsp_spl_tl;
+ u32	dsp_spl_jiffies; /* calculate the next time to fire */
+-u32	dsp_start_jiffies; /* jiffies at the time, the calculation begins */
+-struct timeval dsp_start_tv; /* time at start of calculation */
++static u32	dsp_start_jiffies; /* jiffies at the time, the calculation begins */
++static struct timeval dsp_start_tv; /* time at start of calculation */
+ 
+ void
+ dsp_cmx_send(void *arg)
+diff --git a/drivers/isdn/mISDN/dsp_core.c b/drivers/isdn/mISDN/dsp_core.c
+index 2f10ed8..41af063 100644
+--- a/drivers/isdn/mISDN/dsp_core.c
++++ b/drivers/isdn/mISDN/dsp_core.c
+@@ -161,7 +161,7 @@
+ #include "core.h"
+ #include "dsp.h"
+ 
+-const char *mISDN_dsp_revision = "2.0";
++static const char *mISDN_dsp_revision = "2.0";
+ 
+ static int debug;
+ static int options;
+diff --git a/drivers/isdn/mISDN/dsp_tones.c b/drivers/isdn/mISDN/dsp_tones.c
+index de4d0c9..7a9af66 100644
+--- a/drivers/isdn/mISDN/dsp_tones.c
++++ b/drivers/isdn/mISDN/dsp_tones.c
+@@ -231,7 +231,7 @@ dsp_audio_generate_ulaw_samples(void)
+  * tone sequence definition *
+  ****************************/
+ 
+-struct pattern {
++static struct pattern {
+ 	int tone;
+ 	u8 *data[10];
+ 	u32 *siz[10];
+diff --git a/drivers/isdn/mISDN/l1oip_codec.c b/drivers/isdn/mISDN/l1oip_codec.c
+index a2dc457..2ec4b28 100644
+--- a/drivers/isdn/mISDN/l1oip_codec.c
++++ b/drivers/isdn/mISDN/l1oip_codec.c
+@@ -49,6 +49,7 @@ NOTE: The bytes are handled as they are law-encoded.
+ #include <linux/vmalloc.h>
+ #include <linux/mISDNif.h>
+ #include "core.h"
++#include "l1oip.h"
+ 
+ /* definitions of codec. don't use calculations, code may run slower. */
+ 
+diff --git a/drivers/isdn/mISDN/layer1.c b/drivers/isdn/mISDN/layer1.c
+index 4a55d63..b73e952 100644
+--- a/drivers/isdn/mISDN/layer1.c
++++ b/drivers/isdn/mISDN/layer1.c
+@@ -18,6 +18,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/mISDNhw.h>
++#include "core.h"
+ #include "layer1.h"
+ #include "fsm.h"
+ 
+diff --git a/drivers/isdn/mISDN/layer2.c b/drivers/isdn/mISDN/layer2.c
+index 77fca3b..d6e2863 100644
+--- a/drivers/isdn/mISDN/layer2.c
++++ b/drivers/isdn/mISDN/layer2.c
+@@ -15,6 +15,8 @@
+  *
+  */
+ 
++#include <linux/mISDNif.h>
++#include "core.h"
+ #include "fsm.h"
+ #include "layer2.h"
+ 
+@@ -465,7 +467,7 @@ IsRNR(u_char *data, struct layer2 *l2)
+ 	    data[0] = RNR : (data[0] & 0xf) = RNR;
+ }
+ 
+-int
++static int
+ iframe_error(struct layer2 *l2, struct sk_buff *skb)
+ {
+ 	u_int	i;
+@@ -483,7 +485,7 @@ iframe_error(struct layer2 *l2, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
+-int
++static int
+ super_error(struct layer2 *l2, struct sk_buff *skb)
+ {
+ 	if (skb->len != l2addrsize(l2) +
+@@ -492,7 +494,7 @@ super_error(struct layer2 *l2, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
+-int
++static int
+ unnum_error(struct layer2 *l2, struct sk_buff *skb, int wantrsp)
+ {
+ 	int rsp = (*skb->data & 0x2) >> 1;
+@@ -505,7 +507,7 @@ unnum_error(struct layer2 *l2, struct sk_buff *skb, int wantrsp)
+ 	return 0;
+ }
+ 
+-int
++static int
+ UI_error(struct layer2 *l2, struct sk_buff *skb)
+ {
+ 	int rsp = *skb->data & 0x2;
+@@ -518,7 +520,7 @@ UI_error(struct layer2 *l2, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
+-int
++static int
+ FRMR_error(struct layer2 *l2, struct sk_buff *skb)
+ {
+ 	u_int	headers = l2addrsize(l2) + 1;
+@@ -1065,7 +1067,7 @@ l2_st6_dm_release(struct FsmInst *fi, int event, void *arg)
  	}
  }
  
--int intelfb_blank(int blank, struct fb_info *info)
-+static int intelfb_blank(int blank, struct fb_info *info)
+-void
++static void
+ enquiry_cr(struct layer2 *l2, u_char typ, u_char cr, u_char pf)
  {
- 	switch (blank) {
- 	case FB_BLANK_UNBLANK:
-@@ -428,10 +428,10 @@ static struct notifier_block paniced = {
- 	.notifier_call = intelfb_panic,
- };
- 
--int intelfb_create(struct drm_device *dev, uint32_t fb_width,
--		   uint32_t fb_height, uint32_t surface_width,
--		   uint32_t surface_height,
--		   struct intel_framebuffer **intel_fb_p)
-+static int intelfb_create(struct drm_device *dev, uint32_t fb_width,
-+			  uint32_t fb_height, uint32_t surface_width,
-+			  uint32_t surface_height,
-+			  struct intel_framebuffer **intel_fb_p)
- {
- 	struct fb_info *info;
- 	struct intelfb_par *par;
-diff --git a/drivers/gpu/drm/i915/intel_sdvo.c b/drivers/gpu/drm/i915/intel_sdvo.c
-index 626258d..fbbaa4f 100644
---- a/drivers/gpu/drm/i915/intel_sdvo.c
-+++ b/drivers/gpu/drm/i915/intel_sdvo.c
-@@ -59,7 +59,7 @@ struct intel_sdvo_priv {
-  * SDVOB and SDVOC to work around apparent hardware issues (according to
-  * comments in the BIOS).
-  */
--void intel_sdvo_write_sdvox(struct intel_output *intel_output, u32 val)
-+static void intel_sdvo_write_sdvox(struct intel_output *intel_output, u32 val)
- {
- 	struct drm_device *dev = intel_output->base.dev;
- 	struct drm_i915_private *dev_priv = dev->dev_private;
-@@ -296,7 +296,7 @@ static u8 intel_sdvo_read_response(struct intel_output *intel_output,
- 	return status;
+ 	struct sk_buff *skb;
+diff --git a/drivers/isdn/mISDN/stack.c b/drivers/isdn/mISDN/stack.c
+index 54cfddc..d55b14a 100644
+--- a/drivers/isdn/mISDN/stack.c
++++ b/drivers/isdn/mISDN/stack.c
+@@ -36,7 +36,7 @@ _queue_message(struct mISDNstack *st, struct sk_buff *skb)
+ 	}
  }
  
--int intel_sdvo_get_pixel_multiplier(struct drm_display_mode *mode)
-+static int intel_sdvo_get_pixel_multiplier(struct drm_display_mode *mode)
+-int
++static int
+ mISDN_queue_message(struct mISDNchannel *ch, struct sk_buff *skb)
  {
- 	if (mode->clock >= 100000)
- 		return 1;
-@@ -311,7 +311,8 @@ int intel_sdvo_get_pixel_multiplier(struct drm_display_mode *mode)
-  * SDVO chips which defeats the purpose of doing a bus switch in the first
-  * place.
-  */
--void intel_sdvo_set_control_bus_switch(struct intel_output *intel_output, u8 target)
-+static void intel_sdvo_set_control_bus_switch(struct intel_output *intel_output,
-+					      u8 target)
- {
- 	intel_sdvo_write_cmd(intel_output, SDVO_CMD_SET_CONTROL_BUS_SWITCH, &target, 1);
+ 	_queue_message(ch->st, skb);
+diff --git a/drivers/isdn/mISDN/tei.c b/drivers/isdn/mISDN/tei.c
+index 6fbae42..1a824e7 100644
+--- a/drivers/isdn/mISDN/tei.c
++++ b/drivers/isdn/mISDN/tei.c
+@@ -393,7 +393,7 @@ dl_unit_data(struct manager *mgr, struct sk_buff *skb)
+ 	return 0;
  }
-@@ -967,7 +968,7 @@ static const struct drm_connector_helper_funcs intel_sdvo_connector_helper_funcs
- 	.best_encoder = intel_best_encoder,
- };
  
--void intel_sdvo_enc_destroy(struct drm_encoder *encoder)
-+static void intel_sdvo_enc_destroy(struct drm_encoder *encoder)
+-unsigned int
++static unsigned int
+ random_ri(void)
  {
- 	drm_encoder_cleanup(encoder);
- }
-diff --git a/drivers/gpu/drm/i915/intel_tv.c b/drivers/gpu/drm/i915/intel_tv.c
-index d409b86..fbb35dc 100644
---- a/drivers/gpu/drm/i915/intel_tv.c
-+++ b/drivers/gpu/drm/i915/intel_tv.c
-@@ -1612,7 +1612,7 @@ static const struct drm_connector_helper_funcs intel_tv_connector_helper_funcs  	.best_encoder = intel_best_encoder,
- };
+ 	u16 x;
+diff --git a/drivers/isdn/mISDN/timerdev.c b/drivers/isdn/mISDN/timerdev.c
+index a8d1d9f..62b5e49 100644
+--- a/drivers/isdn/mISDN/timerdev.c
++++ b/drivers/isdn/mISDN/timerdev.c
+@@ -23,6 +23,7 @@
+ #include <linux/miscdevice.h>
+ #include <linux/module.h>
+ #include <linux/mISDNif.h>
++#include "core.h"
  
--void intel_tv_enc_destroy(struct drm_encoder *encoder)
-+static void intel_tv_enc_destroy(struct drm_encoder *encoder)
- {
- 	drm_encoder_cleanup(encoder);
- }
+ static u_int	*debug;
+ 
 -- 
 1.5.6.3
 
