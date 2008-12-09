@@ -1,124 +1,46 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:42:58 +0000
-Subject: [PATCH 27/28] drivers/hwmon/vt8231.c: Drop return value from
-Message-Id: <Pine.LNX.4.64.0812101742380.21998@ask.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Tue, 09 Dec 2008 20:39:48 +0000
+Subject: [PATCH 5/9] mISDN: fix sparse warnings
+Message-Id: <493feab7.02a1660a.77b3.5168@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, vt8231@hiddenengine.co.uk, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Karsten Keil <kkeil@suse.de>
+Cc: linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Impact: define variable in the inner most possible scope
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
+Fix this sparse warning:
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+  drivers/isdn/mISDN/dsp_core.c:746:20: warning: symbol 'nskb' shadows an earlier one
+  drivers/isdn/mISDN/dsp_core.c:634:19: originally declared here
 
-// <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
-@@
-
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
-@@
-
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/hwmon/vt8231.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/isdn/mISDN/dsp_core.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/hwmon/vt8231.c b/drivers/hwmon/vt8231.c
-index 5bc5727..39cb37b 100644
---- a/drivers/hwmon/vt8231.c
-+++ b/drivers/hwmon/vt8231.c
-@@ -167,7 +167,7 @@ struct vt8231_data {
+diff --git a/drivers/isdn/mISDN/dsp_core.c b/drivers/isdn/mISDN/dsp_core.c
+index 41af063..1dc21d8 100644
+--- a/drivers/isdn/mISDN/dsp_core.c
++++ b/drivers/isdn/mISDN/dsp_core.c
+@@ -631,7 +631,6 @@ dsp_function(struct mISDNchannel *ch,  struct sk_buff *skb)
+ 	int			ret = 0;
+ 	u8			*digits;
+ 	int			cont;
+-	struct			sk_buff *nskb;
+ 	u_long			flags;
  
- static struct pci_dev *s_bridge;
- static int vt8231_probe(struct platform_device *pdev);
--static int __devexit vt8231_remove(struct platform_device *pdev);
-+static void __devexit vt8231_remove(struct platform_device *pdev);
- static struct vt8231_data *vt8231_update_device(struct device *dev);
- static void vt8231_init_device(struct vt8231_data *data);
- 
-@@ -693,7 +693,7 @@ static struct platform_driver vt8231_driver = {
- 		.name	= "vt8231",
- 	},
- 	.probe	= vt8231_probe,
--	.remove	= __devexit_p(vt8231_remove),
-+	.remove_new = __devexit_p(vt8231_remove),
- };
- 
- static struct pci_device_id vt8231_pci_ids[] = {
-@@ -787,7 +787,7 @@ exit_release:
- 	return err;
- }
- 
--static int __devexit vt8231_remove(struct platform_device *pdev)
-+static void __devexit vt8231_remove(struct platform_device *pdev)
- {
- 	struct vt8231_data *data = platform_get_drvdata(pdev);
- 	int i;
-@@ -805,7 +805,6 @@ static int __devexit vt8231_remove(struct platform_device *pdev)
- 	release_region(data->addr, VT8231_EXTENT);
- 	platform_set_drvdata(pdev, NULL);
- 	kfree(data);
--	return 0;
- }
- 
- static void vt8231_init_device(struct vt8231_data *data)
+ 	hh = mISDN_HEAD_P(skb);
+@@ -690,6 +689,7 @@ dsp_function(struct mISDNchannel *ch,  struct sk_buff *skb)
+ 			digits = dsp_dtmf_goertzel_decode(dsp, skb->data,
+ 				skb->len, (dsp_options&DSP_OPT_ULAW)?1:0);
+ 			while (*digits) {
++				struct sk_buff *nskb;
+ 				if (dsp_debug & DEBUG_DSP_DTMF)
+ 					printk(KERN_DEBUG "%s: digit"
+ 					    "(%c) to layer %s\n",
+-- 
+1.5.6.3
+
