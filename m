@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:35:48 +0000
-Subject: [PATCH 11/28] drivers/cdrom: Drop return value from platform_driver
-Message-Id: <Pine.LNX.4.64.0812101735260.21998@ask.diku.dk>
+Date: Wed, 10 Dec 2008 16:39:16 +0000
+Subject: [PATCH 18/28] arch/arm: Drop return value from platform_driver remove
+Message-Id: <Pine.LNX.4.64.0812101738220.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, axboe@kernel.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, rmk@arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -80,34 +80,107 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/cdrom/gdrom.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/mach-omap1/mailbox.c         |    6 ++----
+ arch/arm/mach-omap2/mailbox.c         |    5 ++---
+ arch/arm/mach-sa1100/jornada720_ssp.c |    5 ++---
+ arch/arm/plat-omap/mcbsp.c            |    6 ++----
+ 4 files changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index 2eecb77..9aaec3c 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -826,7 +826,7 @@ probe_fail_no_mem:
- 	return err;
+diff --git a/arch/arm/plat-omap/mcbsp.c b/arch/arm/plat-omap/mcbsp.c
+index af33fc7..07455c5 100644
+--- a/arch/arm/plat-omap/mcbsp.c
++++ b/arch/arm/plat-omap/mcbsp.c
+@@ -935,7 +935,7 @@ exit:
+ 	return ret;
  }
  
--static int __devexit remove_gdrom(struct platform_device *devptr)
-+static void __devexit remove_gdrom(struct platform_device *devptr)
+-static int __devexit omap_mcbsp_remove(struct platform_device *pdev)
++static void __devexit omap_mcbsp_remove(struct platform_device *pdev)
  {
- 	flush_scheduled_work();
- 	blk_cleanup_queue(gd.gdrom_rq);
-@@ -836,13 +836,11 @@ static int __devexit remove_gdrom(struct platform_device *devptr)
- 	if (gdrom_major)
- 		unregister_blkdev(gdrom_major, GDROM_DEV_NAME);
- 	unregister_cdrom(gd.cd_info);
+ 	struct omap_mcbsp *mcbsp = platform_get_drvdata(pdev);
+ 
+@@ -955,13 +955,11 @@ static int __devexit omap_mcbsp_remove(struct platform_device *pdev)
+ 		mcbsp->free = 0;
+ 		mcbsp->dev = NULL;
+ 	}
 -
 -	return 0;
  }
  
- static struct platform_driver gdrom_driver = {
- 	.probe = probe_gdrom,
--	.remove = __devexit_p(remove_gdrom),
-+	.remove_new = __devexit_p(remove_gdrom),
+ static struct platform_driver omap_mcbsp_driver = {
+ 	.probe		= omap_mcbsp_probe,
+-	.remove		= __devexit_p(omap_mcbsp_remove),
++	.remove_new	= __devexit_p(omap_mcbsp_remove),
+ 	.driver		= {
+ 		.name	= "omap-mcbsp",
+ 	},
+diff --git a/arch/arm/mach-sa1100/jornada720_ssp.c b/arch/arm/mach-sa1100/jornada720_ssp.c
+index 28cf369..8bad8fd 100644
+--- a/arch/arm/mach-sa1100/jornada720_ssp.c
++++ b/arch/arm/mach-sa1100/jornada720_ssp.c
+@@ -178,18 +178,17 @@ static int __init jornada_ssp_probe(struct platform_device *dev)
+ 	return 0;
+ };
+ 
+-static int jornada_ssp_remove(struct platform_device *dev)
++static void jornada_ssp_remove(struct platform_device *dev)
+ {
+ 	/* Note that this doesnt actually remove the driver, since theres nothing to remove
+ 	 * It just makes sure everything is turned off */
+ 	GPSR = GPIO_GPIO25;
+ 	ssp_exit();
+-	return 0;
+ };
+ 
+ struct platform_driver jornadassp_driver = {
+ 	.probe	= jornada_ssp_probe,
+-	.remove	= jornada_ssp_remove,
++	.remove_new = jornada_ssp_remove,
+ 	.driver	= {
+ 		.name	= "jornada_ssp",
+ 	},
+diff --git a/arch/arm/mach-omap1/mailbox.c b/arch/arm/mach-omap1/mailbox.c
+index 59abbf3..cfbf6ba 100644
+--- a/arch/arm/mach-omap1/mailbox.c
++++ b/arch/arm/mach-omap1/mailbox.c
+@@ -175,16 +175,14 @@ static int __init omap1_mbox_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int omap1_mbox_remove(struct platform_device *pdev)
++static void omap1_mbox_remove(struct platform_device *pdev)
+ {
+ 	omap_mbox_unregister(&mbox_dsp_info);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver omap1_mbox_driver = {
+ 	.probe	= omap1_mbox_probe,
+-	.remove	= omap1_mbox_remove,
++	.remove_new = omap1_mbox_remove,
+ 	.driver	= {
+ 		.name	= "mailbox",
+ 	},
+diff --git a/arch/arm/mach-omap2/mailbox.c b/arch/arm/mach-omap2/mailbox.c
+index 32b7af3..4217222 100644
+--- a/arch/arm/mach-omap2/mailbox.c
++++ b/arch/arm/mach-omap2/mailbox.c
+@@ -293,15 +293,14 @@ static int __init omap2_mbox_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int omap2_mbox_remove(struct platform_device *pdev)
++static void omap2_mbox_remove(struct platform_device *pdev)
+ {
+ 	omap_mbox_unregister(&mbox_dsp_info);
+-	return 0;
+ }
+ 
+ static struct platform_driver omap2_mbox_driver = {
+ 	.probe = omap2_mbox_probe,
+-	.remove = omap2_mbox_remove,
++	.remove_new = omap2_mbox_remove,
  	.driver = {
- 			.name = GDROM_DEV_NAME,
+ 		.name = "mailbox",
  	},
