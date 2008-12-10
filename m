@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:41:30 +0000
-Subject: [PATCH 23/28] drivers/hwmon/f71805f.c: Drop return value from
-Message-Id: <Pine.LNX.4.64.0812101741070.21998@ask.diku.dk>
+Date: Wed, 10 Dec 2008 16:38:21 +0000
+Subject: [PATCH 17/28] arch/arm: Drop return value from platform_driver remove
+Message-Id: <Pine.LNX.4.64.0812101738000.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, khali@linux-fr.org, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, ben-linux@fluff.org, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -80,37 +80,64 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/hwmon/f71805f.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/mach-s3c2410/h1940-bluetooth.c |    5 ++---
+ arch/arm/plat-s3c24xx/pwm.c             |    6 ++----
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/hwmon/f71805f.c b/drivers/hwmon/f71805f.c
-index 7a14a2d..76842db 100644
---- a/drivers/hwmon/f71805f.c
-+++ b/drivers/hwmon/f71805f.c
-@@ -1408,7 +1408,7 @@ exit:
- 	return err;
+diff --git a/arch/arm/plat-s3c24xx/pwm.c b/arch/arm/plat-s3c24xx/pwm.c
+index ec56b88..3fcda3f 100644
+--- a/arch/arm/plat-s3c24xx/pwm.c
++++ b/arch/arm/plat-s3c24xx/pwm.c
+@@ -361,15 +361,13 @@ static int s3c_pwm_probe(struct platform_device *pdev)
+ 	return ret;
  }
  
--static int __devexit f71805f_remove(struct platform_device *pdev)
-+static void __devexit f71805f_remove(struct platform_device *pdev)
+-static int s3c_pwm_remove(struct platform_device *pdev)
++static void s3c_pwm_remove(struct platform_device *pdev)
  {
- 	struct f71805f_data *data = platform_get_drvdata(pdev);
- 	struct resource *res;
-@@ -1424,8 +1424,6 @@ static int __devexit f71805f_remove(struct platform_device *pdev)
+ 	struct pwm_device *pwm = platform_get_drvdata(pdev);
  
- 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
- 	release_region(res->start + ADDR_REG_OFFSET, 2);
+ 	clk_put(pwm->clk_div);
+ 	clk_put(pwm->clk);
+ 	kfree(pwm);
 -
 -	return 0;
  }
  
- static struct platform_driver f71805f_driver = {
-@@ -1434,7 +1432,7 @@ static struct platform_driver f71805f_driver = {
- 		.name	= DRVNAME,
+ static struct platform_driver s3c_pwm_driver = {
+@@ -378,7 +376,7 @@ static struct platform_driver s3c_pwm_driver = {
+ 		.owner	= THIS_MODULE,
  	},
- 	.probe		= f71805f_probe,
--	.remove		= __devexit_p(f71805f_remove),
-+	.remove_new	= __devexit_p(f71805f_remove),
+ 	.probe		= s3c_pwm_probe,
+-	.remove		= __devexit_p(s3c_pwm_remove),
++	.remove_new	= __devexit_p(s3c_pwm_remove),
  };
  
- static int __init f71805f_device_add(unsigned short address,
+ static int __init pwm_init(void)
+diff --git a/arch/arm/mach-s3c2410/h1940-bluetooth.c b/arch/arm/mach-s3c2410/h1940-bluetooth.c
+index 5a6bc56..35560ce 100644
+--- a/arch/arm/mach-s3c2410/h1940-bluetooth.c
++++ b/arch/arm/mach-s3c2410/h1940-bluetooth.c
+@@ -106,12 +106,11 @@ static int __init h1940bt_probe(struct platform_device *pdev)
+ 	return device_create_file(&pdev->dev, &dev_attr_enable);
+ }
+ 
+-static int h1940bt_remove(struct platform_device *pdev)
++static void h1940bt_remove(struct platform_device *pdev)
+ {
+ #ifdef CONFIG_LEDS_H1940
+ 	led_trigger_unregister_simple(bt_led_trigger);
+ #endif
+-	return 0;
+ }
+ 
+ 
+@@ -120,7 +119,7 @@ static struct platform_driver h1940bt_driver = {
+ 		.name	= DRV_NAME,
+ 	},
+ 	.probe		= h1940bt_probe,
+-	.remove		= h1940bt_remove,
++	.remove_new	= h1940bt_remove,
+ };
+ 
+ 
