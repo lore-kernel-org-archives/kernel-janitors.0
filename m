@@ -1,116 +1,50 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:41:06 +0000
-Subject: [PATCH 22/28] drivers/hwmon/dme1737.c: Drop return value from
-Message-Id: <Pine.LNX.4.64.0812101740430.21998@ask.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Wed, 10 Dec 2008 19:41:55 +0000
+Subject: Re: [PATCHv2 4/9] mISDN: fix sparse warning
+Message-Id: <49417296.25e2660a.2824.ffffc60b@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <49403C26.5050402@gmail.com>
+In-Reply-To: <49403C26.5050402@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, juergh@gmail.com, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: Karsten Keil <kkeil@suse.de>
 
-From: Julia Lawall <julia@diku.dk>
+Impact: un-export symbol 'plx_lock'
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
+Fix this warning:
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+  drivers/isdn/hardware/mISDN/hfcmulti.c:176:1: warning: symbol 'plx_lock' shadows an earlier one
+  drivers/isdn/hardware/mISDN/hfcmulti.c:175:19: originally declared here
 
-// <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
-@@
-
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
-@@
-
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/hwmon/dme1737.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwmon/dme1737.c b/drivers/hwmon/dme1737.c
-index 27a5d39..3a9b988 100644
---- a/drivers/hwmon/dme1737.c
-+++ b/drivers/hwmon/dme1737.c
-@@ -2465,7 +2465,7 @@ exit:
- 	return err;
- }
+On Wed, Dec 10, 2008 at 11:01 PM, Jiri Slaby <jirislaby@gmail.com> wrote:
+> On 12/10/2008 04:13 PM, Hannes Eder wrote:
+>> Should 'plx_lock' be declared in a header file?  Or is it really
+>> neccessart to export it?
+>
+> As there is no other user, I vote for unexporting it.
+
+In that case patch number 4 looks like this:
+
+ drivers/isdn/hardware/mISDN/hfcmulti.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index 599d832..970201d 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -173,7 +173,6 @@ static int interrupt_registered;
+ static struct hfc_multi *syncmaster;
+ static int plxsd_master; /* if we have a master card (yet) */
+ static spinlock_t plx_lock; /* may not acquire other lock inside */
+-EXPORT_SYMBOL(plx_lock);
  
--static int __devexit dme1737_isa_remove(struct platform_device *pdev)
-+static void __devexit dme1737_isa_remove(struct platform_device *pdev)
- {
- 	struct dme1737_data *data = platform_get_drvdata(pdev);
- 
-@@ -2474,8 +2474,6 @@ static int __devexit dme1737_isa_remove(struct platform_device *pdev)
- 	release_region(data->addr, DME1737_EXTENT);
- 	platform_set_drvdata(pdev, NULL);
- 	kfree(data);
--
--	return 0;
- }
- 
- static struct platform_driver dme1737_isa_driver = {
-@@ -2484,7 +2482,7 @@ static struct platform_driver dme1737_isa_driver = {
- 		.name = "dme1737",
- 	},
- 	.probe = dme1737_isa_probe,
--	.remove = __devexit_p(dme1737_isa_remove),
-+	.remove_new = __devexit_p(dme1737_isa_remove),
- };
- 
- /* ---------------------------------------------------------------------
+ #define	TYP_E1		1
+ #define	TYP_4S		4
+-- 
+1.5.6.3
+
