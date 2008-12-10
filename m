@@ -1,94 +1,174 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Mon, 22 Dec 2008 19:14:49 +0000
-Subject: [PATCH 00/27] drivers/net: fix sparse warnings
-Message-Id: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Dec 2008 16:35:25 +0000
+Subject: [PATCH 10/28] drivers/char: Drop return value from platform_driver
+Message-Id: <Pine.LNX.4.64.0812101735040.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The following series fixes about 100 sparse warnings in drivers/net.
+From: Julia Lawall <julia@diku.dk>
+
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
+
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
+
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
+ drivers/char/sonypi.c     |    6 ++----
+ drivers/char/tb0219.c     |    6 ++----
+ drivers/char/vr41xx_giu.c |    6 ++----
+ 3 files changed, 6 insertions(+), 12 deletions(-)
 
-Hannes Eder (27):
-      drivers/net/wireless/prism54: fix sparse warnings: make symbols static
-      drivers/net/wireless/ipw2x00: fix sparse warnings: make symbols static
-      drivers/net/wireless/b43: fix sparse warnings: make symbols static
-      drivers/net/wireless/ath9k: fix sparse warnings: make symbols static
-      drivers/net/wireless: fix sparse warnings: make symbols static
-      drivers/net/wan/z85230.c: fix sparse warnings: un-EXPORT symbols
-      drivers/net/wan: fix sparse warning: make symbol static
-      drivers/net/wan: fix sparse warnings: make do-while a compound statement
-      drivers/net/usb: fix sparse warnings: make symbols static
-      drivers/net/tulip: fix sparse warnings: make do-while a compound statement
-      drivers/net/tokenring: fix sparse warnings: make symbols static
-      drivers/net/skfp: fix sparse warnings: make symbols static
-      drivers/net/qlge: fix sparse warnings: make symbols static
-      drivers/net/netxen: fix sparse warnings: use NULL pointer instead of plain integer
-      drivers/net/ixgbe: fix sparse warnings: make symbols static
-      drivers/net/irda: fix sparse warnings: make symbols static
-      drivers/net/igb: remove dead code (function 'igb_read_pci_cfg')
-      drivers/net/enic: fix sparse warning: make symbol static
-      drivers/net/e1000e: fix sparse warnings: make symbols static
-      drivers/net/cxgb3: comment out dead code
-      drivers/net/bonding: fix sparse warnings: move decls to header file
-      drivers/net/atlx: fix sparse warnings: make symbols static
-      drivers/net/arcnet: fix sparse warnings: make symbols static
-      drivers/net: fix sparse warnings: make symbols static
-      drivers/net: fix sparse warning: returning void-valued expression
-      drivers/net: fix sparse warnings: make do-while a compound statement
-      drivers/net: fix sparse warning: use ANSI-style function declaration
-
-
- drivers/net/3c523.c                           |    2 -
- drivers/net/arcnet/capmode.c                  |    2 -
- drivers/net/arcnet/com90xx.c                  |    2 -
- drivers/net/atlx/atl1.c                       |    4 +-
- drivers/net/atp.c                             |   19 ++++----
- drivers/net/bonding/bond_main.c               |    1 
- drivers/net/bonding/bond_sysfs.c              |    3 -
- drivers/net/bonding/bonding.h                 |    5 ++
- drivers/net/cs89x0.c                          |    2 -
- drivers/net/cxgb3/vsc8211.c                   |    2 +
- drivers/net/e1000e/es2lan.c                   |    6 ++
- drivers/net/eepro.c                           |    2 -
- drivers/net/enic/vnic_dev.c                   |    2 -
- drivers/net/igb/e1000_mac.c                   |    7 ---
- drivers/net/irda/ma600-sir.c                  |    2 -
- drivers/net/irda/smsc-ircc2.c                 |    6 +-
- drivers/net/irda/w83977af_ir.c                |   14 +++---
- drivers/net/ixgbe/ixgbe_82598.c               |   24 +++++-----
- drivers/net/ixgbe/ixgbe_dcb_82598.c           |    4 +-
- drivers/net/ne.c                              |    2 -
- drivers/net/netxen/netxen_nic_hw.c            |    4 +-
- drivers/net/niu.c                             |    2 -
- drivers/net/plip.c                            |   20 ++++----
- drivers/net/qlge/qlge_ethtool.c               |    2 -
- drivers/net/qlge/qlge_mpi.c                   |    2 -
- drivers/net/s2io.c                            |    2 -
- drivers/net/skfp/skfddi.c                     |    6 +-
- drivers/net/smc9194.c                         |    2 -
- drivers/net/starfire.c                        |    4 +-
- drivers/net/tokenring/ibmtr.c                 |    4 +-
- drivers/net/tokenring/madgemc.c               |    2 -
- drivers/net/tokenring/proteon.c               |    2 -
- drivers/net/tokenring/skisa.c                 |    2 -
- drivers/net/tulip/de2104x.c                   |    4 +-
- drivers/net/tulip/tulip_core.c                |    4 +-
- drivers/net/usb/hso.c                         |   10 ++--
- drivers/net/usb/smsc95xx.c                    |    2 -
- drivers/net/wan/wanxl.c                       |    8 ++-
- drivers/net/wan/x25_asy.c                     |    2 -
- drivers/net/wan/z85230.c                      |   10 +---
- drivers/net/wireless/airo.c                   |    2 -
- drivers/net/wireless/ath9k/eeprom.c           |   62 +++++++++++++------------
- drivers/net/wireless/atmel.c                  |    2 -
- drivers/net/wireless/b43/phy_a.c              |    4 +-
- drivers/net/wireless/b43/phy_g.c              |   20 ++++----
- drivers/net/wireless/ipw2x00/ipw2100.c        |    6 +-
- drivers/net/wireless/prism54/islpci_hotplug.c |    8 ++-
- drivers/net/wireless/ray_cs.c                 |    2 -
- 48 files changed, 153 insertions(+), 158 deletions(-)
+diff --git a/drivers/char/sonypi.c b/drivers/char/sonypi.c
+index f437443..2539332 100644
+--- a/drivers/char/sonypi.c
++++ b/drivers/char/sonypi.c
+@@ -1432,7 +1432,7 @@ static int __devinit sonypi_probe(struct platform_device *dev)
+ 	return error;
+ }
+ 
+-static int __devexit sonypi_remove(struct platform_device *dev)
++static void __devexit sonypi_remove(struct platform_device *dev)
+ {
+ 	sonypi_disable();
+ 
+@@ -1456,8 +1456,6 @@ static int __devexit sonypi_remove(struct platform_device *dev)
+ 	}
+ 
+ 	kfifo_free(sonypi_device.fifo);
+-
+-	return 0;
+ }
+ 
+ #ifdef CONFIG_PM
+@@ -1492,7 +1490,7 @@ static struct platform_driver sonypi_driver = {
+ 		.owner	= THIS_MODULE,
+ 	},
+ 	.probe		= sonypi_probe,
+-	.remove		= __devexit_p(sonypi_remove),
++	.remove_new	= __devexit_p(sonypi_remove),
+ 	.shutdown	= sonypi_shutdown,
+ 	.suspend	= sonypi_suspend,
+ 	.resume		= sonypi_resume,
+diff --git a/drivers/char/tb0219.c b/drivers/char/tb0219.c
+index 6062b62..67e58a4 100644
+--- a/drivers/char/tb0219.c
++++ b/drivers/char/tb0219.c
+@@ -321,7 +321,7 @@ static int __devinit tb0219_probe(struct platform_device *dev)
+ 	return 0;
+ }
+ 
+-static int __devexit tb0219_remove(struct platform_device *dev)
++static void __devexit tb0219_remove(struct platform_device *dev)
+ {
+ 	_machine_restart = old_machine_restart;
+ 
+@@ -329,15 +329,13 @@ static int __devexit tb0219_remove(struct platform_device *dev)
+ 	tb0219_base = NULL;
+ 
+ 	release_mem_region(TB0219_START, TB0219_SIZE);
+-
+-	return 0;
+ }
+ 
+ static struct platform_device *tb0219_platform_device;
+ 
+ static struct platform_driver tb0219_device_driver = {
+ 	.probe		= tb0219_probe,
+-	.remove		= __devexit_p(tb0219_remove),
++	.remove_new	= __devexit_p(tb0219_remove),
+ 	.driver		= {
+ 		.name	= "TB0219",
+ 		.owner	= THIS_MODULE,
+diff --git a/drivers/char/vr41xx_giu.c b/drivers/char/vr41xx_giu.c
+index 54c8372..40cafb5 100644
+--- a/drivers/char/vr41xx_giu.c
++++ b/drivers/char/vr41xx_giu.c
+@@ -647,19 +647,17 @@ static int __devinit giu_probe(struct platform_device *dev)
+ 	return cascade_irq(irq, giu_get_irq);
+ }
+ 
+-static int __devexit giu_remove(struct platform_device *dev)
++static void __devexit giu_remove(struct platform_device *dev)
+ {
+ 	if (giu_base) {
+ 		iounmap(giu_base);
+ 		giu_base = NULL;
+ 	}
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver giu_device_driver = {
+ 	.probe		= giu_probe,
+-	.remove		= __devexit_p(giu_remove),
++	.remove_new	= __devexit_p(giu_remove),
+ 	.driver		= {
+ 		.name	= "GIU",
+ 		.owner	= THIS_MODULE,
