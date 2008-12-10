@@ -1,182 +1,78 @@
-From: "Hannes Eder" <hannes@hanneseder.net>
-Date: Mon, 29 Dec 2008 14:35:31 +0000
-Subject: Re: [PATCH 02/27] drivers/net: fix sparse warnings: make do-while a compound statement
-Message-Id: <154e089b0812290635o5792af25jd26fa184a02dc7af@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Dec 2008 16:26:26 +0000
+Subject: [PATCH 1/28] drivers/base/platform.c: Drop return value from
+Message-Id: <Pine.LNX.4.64.0812101725540.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	 <20081222191507.11807.50794.stgit@vmbox.hanneseder.net>
-	 <m3hc4voo2a.fsf@maximus.localdomain>
-	 <a01a16b50812221544x45c3559ap808ac0095ee8f01@mail.gmail.com>
-	 <m3ocz2ua3w.fsf@maximus.localdomain> <1230053186.1447.9.camel@brick>
-	 <m3k59qssix.fsf@maximus.localdomain>
-	 <alpine.LFD.2.00.0812231008350.3535@localhost.localdomain>
-	 <m3hc4usco9.fsf@maximus.localdomain>
-	 <alpine.LFD.2.00.0812231529030.3535@localhost.localdomain>
-In-Reply-To: <alpine.LFD.2.00.0812231529030.3535@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Krzysztof Halasa <khc@pm.waw.pl>, Harvey Harrison <harvey.harrison@gmail.com>, =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Dec 24, 2008 at 12:38 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
->
-> On Wed, 24 Dec 2008, Krzysztof Halasa wrote:
->>
->> So is a case like
->>       do
->>               x;
->>       while (y);
->> It can't be made more clear with brackets.
->
-> Oh yes it can. People look at that, and it's so uncommon that they
-> literally believe it is a mis-indent.
->
-> [snip]
->
->> kmalloc(sizeof i) just doesn't look good, the operator looks like
->> a variable name.
->
-> And I agree with you. "sizeof i" doesn't look good. It's uncommon, and
-> doesn't match peoples expectations.
->
->> But there is this return statement. Some people tend to write
->> return (x); I simply write return x;
->
-> I do to. And it's the common thing to do, and only totally confused people
-> think that 'return' is a somehow remotely like a "function" of its
-> arguments (the way 'sizeof' is - sizeof _is_ a function of its arguments,
-> albeit a very rare one).
->
->> It's clear, and so is a simple do-while.
->
-> No. "return x;" is clear because it's the common thing, which means that
-> peopel are good at reading it.
+From: Julia Lawall <julia@diku.dk>
 
-I got curious and conducted a little experiment, here is the outcome
-for the linux-2.6 kernel tree:
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  The goal of this patch is to make it possible to convert the
+platform_driver functions stored in the remove field such that they return
+void.  This patch introduces a temporary field remove_new with return type
+void into the platform_driver structure, and updates the only place that
+the remove function is called to call the function in the remove_new field,
+if one is available.  The subsequent patches update some drivers to use the
+remove_new field.
 
-hannes@vmbox:~/linux-2.6$ find . -name "*.[ch]" -print0 | xargs -0 cat
-| ../sparse/cstats -
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-stats for '-':
-  do's:         8092, non compound:              79 (  1.0%)
-  sizeof's:    51216, without parenthesis:     1543 (  3.0%)
-  return's:   286167, with parenthesis:       13552 (  4.7%)
+---
+ drivers/base/platform.c         |   16 ++++++++++++++--
+ include/linux/platform_device.h |    1 +
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-'cstats' is a little program I wrote using the sparse library, see below.
-
-The value for "return's with parenthesis" is a bit of an estimation,
-as 'cstats' operates only at the token level, so
-"return (x) ? y : z;" counts as "return with parenthesis".
-
-some sanity checks, to ensure the magnitudes are right:
-
-hannes@vmbox:~/linux-2.6$ git grep -w do -- *.[ch] | wc -l
-20599
-
-hannes@vmbox:~/linux-2.6$ git grep '\bdo[ \t]*{' -- *.[ch] | wc -l
-7805
-
-I assume 'do' is used frequently in comments:
-
-hannes@vmbox:~/linux-2.6$ git grep '\*.*\bdo\b' -- *.[ch] | wc -l
-11358
-
-hannes@vmbox:~/linux-2.6$ git grep '^[ \t]*do$' -- *.[ch] | wc -l
-34
-
-hannes@vmbox:~/linux-2.6$ git grep -w sizeof -- *.[ch] | wc -l
-49631
-
-constructs like sizeof(array)/sizeof(array[0]) or common:
-
-hannes@vmbox:~/linux-2.6$ git grep  'sizeof.*sizeof' -- *.[ch] | wc -l
-1827
-
-hannes@vmbox:~/linux-2.6$ git grep '\bsizeof [^(]' -- *.[ch] | wc -l
-1534
-
-hannes@vmbox:~/linux-2.6$ git grep -w return -- *.[ch] | wc -l
-295304
-
-hannes@vmbox:~/linux-2.6$ git grep '\breturn (' -- *.[ch] | wc -l
-11067
-
-Best,
-Hannes
-
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-#include "token.h"
-#include "parse.h"
-
-int main(int argc, char **argv)
-{
-        struct string_list *filelist = NULL;
-        char *filename;
-
-        sparse_initialize(argc, argv, &filelist);
-        FOR_EACH_PTR_NOTAG(filelist, filename) {
-                int fd;
-                struct token *token;
-                int do_stats = 0;
-                int do_stats_nc = 0;
-                int sizeof_exprs = 0;
-                int sizeof_exprs_np = 0;
-                int return_stats = 0;
-                int return_stats_wp = 0;
-
-                if (strcmp(filename, "-") = 0) {
-                        fd = 0;
-                } else {
-                        fd = open(filename, O_RDONLY);
-                        if (fd < 0)
-                                die("No such file: %s", filename);
-                }
-
-                // Tokenize the input stream
-                token = tokenize(filename, fd, NULL, includepath);
-                close(fd);
-
-                for ( ; !eof_token(token); token = token->next) {
-                        if (token_type(token) = TOKEN_IDENT) {
-                                if (token->ident = &do_ident) {
-                                        do_stats++;
-                                        if (!match_op(token->next, '{'))
-                                                do_stats_nc++;
-                                }
-                                else if (token->ident = &sizeof_ident) {
-                                        sizeof_exprs++;
-                                        if (!match_op(token->next, '('))
-                                                sizeof_exprs_np++;
-                                }
-                                else if (token->ident = &return_ident) {
-                                        return_stats++;
-                                        if (match_op(token->next, '('))
-                                                return_stats_wp++;
-                                }
-                        }
-                }
-
-                printf("stats for '%s':\n", filename);
-                printf("  do's:     %8d, non compound:        %8d (%5.1f%%)\n",
-                       do_stats, do_stats_nc,
-                       100.0 * do_stats_nc / (do_stats?:1) );
-                printf("  sizeof's: %8d, without parenthesis: %8d (%5.1f%%)\n",
-                       sizeof_exprs, sizeof_exprs_np,
-                       100.0 * sizeof_exprs_np / (sizeof_exprs?:1) );
-                printf("  return's: %8d, with parenthesis:    %8d (%5.1f%%)\n",
-                       return_stats, return_stats_wp,
-                       100.0 * return_stats_wp / (return_stats?:1) );
-
-        } END_FOR_EACH_PTR_NOTAG(filename);
-        return 0;
-}
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index 4b8cc6a..4800110 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -50,6 +50,7 @@ extern void platform_device_put(struct platform_device *pdev);
+ struct platform_driver {
+ 	int (*probe)(struct platform_device *);
+ 	int (*remove)(struct platform_device *);
++	void (*remove_new)(struct platform_device *);
+ 	void (*shutdown)(struct platform_device *);
+ 	int (*suspend)(struct platform_device *, pm_message_t state);
+ 	int (*suspend_late)(struct platform_device *, pm_message_t state);
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index dfcbfe5..2d7b26a 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -459,7 +459,12 @@ static int platform_drv_remove(struct device *_dev)
+ 	struct platform_driver *drv = to_platform_driver(_dev->driver);
+ 	struct platform_device *dev = to_platform_device(_dev);
+ 
+-	return drv->remove(dev);
++	if (drv->remove)
++		drv->remove(dev);
++	else
++		drv->remove_new(dev);
++
++	return 0;
+ }
+ 
+ static void platform_drv_shutdown(struct device *_dev)
+@@ -492,10 +497,17 @@ static int platform_drv_resume(struct device *_dev)
+  */
+ int platform_driver_register(struct platform_driver *drv)
+ {
++	if (drv->remove && drv->remove_new) {
++		printk(KERN_ERR "only one of remove() and "
++				"remove_new() callbacks can be defined, "
++				"aborting...\n");
++		return -EINVAL;
++	}
++
+ 	drv->driver.bus = &platform_bus_type;
+ 	if (drv->probe)
+ 		drv->driver.probe = platform_drv_probe;
+-	if (drv->remove)
++	if (drv->remove || drv->remove_new)
+ 		drv->driver.remove = platform_drv_remove;
+ 	if (drv->shutdown)
+ 		drv->driver.shutdown = platform_drv_shutdown;
