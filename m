@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:43:19 +0000
-Subject: [PATCH 28/28] drivers/char/hw_random/omap-rng.c: Drop return value
-Message-Id: <Pine.LNX.4.64.0812101742590.21998@ask.diku.dk>
+Date: Wed, 10 Dec 2008 16:41:52 +0000
+Subject: [PATCH 24/28] drivers/hwmon/pc87xxx: Drop return value from
+Message-Id: <Pine.LNX.4.64.0812101741310.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, dsaxena@plexity.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, jim.cromie@gmail.com, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -80,37 +80,78 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/char/hw_random/omap-rng.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/hwmon/pc87360.c |    8 +++-----
+ drivers/hwmon/pc87427.c |    6 ++----
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/char/hw_random/omap-rng.c b/drivers/char/hw_random/omap-rng.c
-index d4e7dca..104d005 100644
---- a/drivers/char/hw_random/omap-rng.c
-+++ b/drivers/char/hw_random/omap-rng.c
-@@ -155,7 +155,7 @@ err_region:
- 	return ret;
+diff --git a/drivers/hwmon/pc87360.c b/drivers/hwmon/pc87360.c
+index 5fbfa34..87c4ce3 100644
+--- a/drivers/hwmon/pc87360.c
++++ b/drivers/hwmon/pc87360.c
+@@ -225,7 +225,7 @@ struct pc87360_data {
+  */
+ 
+ static int pc87360_probe(struct platform_device *pdev);
+-static int __devexit pc87360_remove(struct platform_device *pdev);
++static void __devexit pc87360_remove(struct platform_device *pdev);
+ 
+ static int pc87360_read_value(struct pc87360_data *data, u8 ldi, u8 bank,
+ 			      u8 reg);
+@@ -245,7 +245,7 @@ static struct platform_driver pc87360_driver = {
+ 		.name	= "pc87360",
+ 	},
+ 	.probe		= pc87360_probe,
+-	.remove		= __devexit_p(pc87360_remove),
++	.remove_new	= __devexit_p(pc87360_remove),
+ };
+ 
+ /*
+@@ -1266,7 +1266,7 @@ ERROR1:
+ 	return err;
  }
  
--static int __exit omap_rng_remove(struct platform_device *pdev)
-+static void __exit omap_rng_remove(struct platform_device *pdev)
+-static int __devexit pc87360_remove(struct platform_device *pdev)
++static void __devexit pc87360_remove(struct platform_device *pdev)
  {
- 	struct resource *mem = dev_get_drvdata(&pdev->dev);
- 
-@@ -172,8 +172,6 @@ static int __exit omap_rng_remove(struct platform_device *pdev)
- 
- 	release_resource(mem);
- 	rng_base = NULL;
+ 	struct pc87360_data *data = platform_get_drvdata(pdev);
+ 	int i;
+@@ -1285,8 +1285,6 @@ static int __devexit pc87360_remove(struct platform_device *pdev)
+ 		}
+ 	}
+ 	kfree(data);
 -
 -	return 0;
  }
  
- #ifdef CONFIG_PM
-@@ -206,7 +204,7 @@ static struct platform_driver omap_rng_driver = {
- 		.owner		= THIS_MODULE,
+ /* ldi is the logical device index
+diff --git a/drivers/hwmon/pc87427.c b/drivers/hwmon/pc87427.c
+index 7265f22..674176f 100644
+--- a/drivers/hwmon/pc87427.c
++++ b/drivers/hwmon/pc87427.c
+@@ -482,7 +482,7 @@ exit:
+ 	return err;
+ }
+ 
+-static int __devexit pc87427_remove(struct platform_device *pdev)
++static void __devexit pc87427_remove(struct platform_device *pdev)
+ {
+ 	struct pc87427_data *data = platform_get_drvdata(pdev);
+ 	struct resource *res;
+@@ -500,8 +500,6 @@ static int __devexit pc87427_remove(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+ 	release_region(res->start, res->end - res->start + 1);
+-
+-	return 0;
+ }
+ 
+ 
+@@ -511,7 +509,7 @@ static struct platform_driver pc87427_driver = {
+ 		.name	= DRVNAME,
  	},
- 	.probe		= omap_rng_probe,
--	.remove		= __exit_p(omap_rng_remove),
-+	.remove_new	= __exit_p(omap_rng_remove),
- 	.suspend	= omap_rng_suspend,
- 	.resume		= omap_rng_resume
+ 	.probe		= pc87427_probe,
+-	.remove		= __devexit_p(pc87427_remove),
++	.remove_new	= __devexit_p(pc87427_remove),
  };
+ 
+ static int __init pc87427_device_add(unsigned short address)
