@@ -1,81 +1,113 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Dec 2008 15:39:37 +0000
-Subject: [PATCH 8/13] drivers/pci/hotplug: Remove redundant test
-Message-Id: <Pine.LNX.4.64.0812211639170.9555@pc-004.diku.dk>
+Date: Wed, 10 Dec 2008 16:35:48 +0000
+Subject: [PATCH 11/28] drivers/cdrom: Drop return value from platform_driver
+Message-Id: <Pine.LNX.4.64.0812101735260.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, axboe@kernel.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-func is checked not to be NULL a few lines before.
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
 
 A simplified version of the semantic patch that makes this change is as
 follows: (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r exists@
-local idexpression x;
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
+
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
 expression E;
-position p1,p2;
 @@
 
-if (x@p1 = NULL || ...) { ... when forall
-   return ...; }
-... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+- int
++ void
+       f(...) {
+  <...
 (
-x@p2 = NULL
+-  return \(C\|i\);
++  return;
 |
-x@p2 != NULL
+-  return E;
++  E;
++  return;
 )
-
-// another path to the test that is not through p1?
-@s exists@
-local idexpression r.x;
-position r.p1,r.p2;
-@@
-
-... when != x@p1
-(
-x@p2 = NULL
-|
-x@p2 != NULL
-)
-
-@fix depends on !s@
-position r.p1,r.p2;
-expression x,E;
-statement S1,S2;
-@@
-
-(
-- if ((x@p2 != NULL) || ...)
-  S1
-|
-- if ((x@p2 = NULL) && ...) S1
-|
-- BUG_ON(x@p2 = NULL);
-)
+  ...>
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/pci/hotplug/cpqphp_ctrl.c   |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/cdrom/gdrom.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/hotplug/cpqphp_ctrl.c b/drivers/pci/hotplug/cpqphp_ctrl.c
-index d947221..cc227a8 100644
---- a/drivers/pci/hotplug/cpqphp_ctrl.c
-+++ b/drivers/pci/hotplug/cpqphp_ctrl.c
-@@ -1954,7 +1954,7 @@ void cpqhp_pushbutton_thread(unsigned long slot)
- 			return ;
- 		}
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index 2eecb77..9aaec3c 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -826,7 +826,7 @@ probe_fail_no_mem:
+ 	return err;
+ }
  
--		if (func != NULL && ctrl != NULL) {
-+		if (ctrl != NULL) {
- 			if (cpqhp_process_SI(ctrl, func) != 0) {
- 				amber_LED_on(ctrl, hp_slot);
- 				green_LED_off(ctrl, hp_slot);
+-static int __devexit remove_gdrom(struct platform_device *devptr)
++static void __devexit remove_gdrom(struct platform_device *devptr)
+ {
+ 	flush_scheduled_work();
+ 	blk_cleanup_queue(gd.gdrom_rq);
+@@ -836,13 +836,11 @@ static int __devexit remove_gdrom(struct platform_device *devptr)
+ 	if (gdrom_major)
+ 		unregister_blkdev(gdrom_major, GDROM_DEV_NAME);
+ 	unregister_cdrom(gd.cd_info);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver gdrom_driver = {
+ 	.probe = probe_gdrom,
+-	.remove = __devexit_p(remove_gdrom),
++	.remove_new = __devexit_p(remove_gdrom),
+ 	.driver = {
+ 			.name = GDROM_DEV_NAME,
+ 	},
