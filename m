@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:36:08 +0000
-Subject: [PATCH 12/28] drivers/block: Drop return value from platform_driver
-Message-Id: <Pine.LNX.4.64.0812101735490.21998@ask.diku.dk>
+Date: Wed, 10 Dec 2008 16:42:16 +0000
+Subject: [PATCH 25/28] drivers/hwmon/smsc47b397: Drop return value from
+Message-Id: <Pine.LNX.4.64.0812101741530.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, axboe@kernel.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, mhoffman@lightlink.com, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -80,28 +80,78 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/block/xsysace.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/hwmon/smsc47b397.c |    6 ++----
+ drivers/hwmon/smsc47m1.c   |    8 +++-----
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/block/xsysace.c b/drivers/block/xsysace.c
-index 29e1dfa..f28505e 100644
---- a/drivers/block/xsysace.c
-+++ b/drivers/block/xsysace.c
-@@ -1142,15 +1142,14 @@ static int __devinit ace_probe(struct platform_device *dev)
- /*
-  * Platform bus remove() method
-  */
--static int __devexit ace_remove(struct platform_device *dev)
-+static void __devexit ace_remove(struct platform_device *dev)
+diff --git a/drivers/hwmon/smsc47b397.c b/drivers/hwmon/smsc47b397.c
+index eb03544..fd4d596 100644
+--- a/drivers/hwmon/smsc47b397.c
++++ b/drivers/hwmon/smsc47b397.c
+@@ -221,7 +221,7 @@ static const struct attribute_group smsc47b397_group = {
+ 	.attrs = smsc47b397_attributes,
+ };
+ 
+-static int __devexit smsc47b397_remove(struct platform_device *pdev)
++static void __devexit smsc47b397_remove(struct platform_device *pdev)
  {
- 	ace_free(&dev->dev);
+ 	struct smsc47b397_data *data = platform_get_drvdata(pdev);
+ 	struct resource *res;
+@@ -231,8 +231,6 @@ static int __devexit smsc47b397_remove(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+ 	release_region(res->start, SMSC_EXTENT);
+ 	kfree(data);
+-
 -	return 0;
  }
  
- static struct platform_driver ace_platform_driver = {
- 	.probe = ace_probe,
--	.remove = __devexit_p(ace_remove),
-+	.remove_new = __devexit_p(ace_remove),
- 	.driver = {
- 		.owner = THIS_MODULE,
- 		.name = "xsysace",
+ static int smsc47b397_probe(struct platform_device *pdev);
+@@ -243,7 +241,7 @@ static struct platform_driver smsc47b397_driver = {
+ 		.name	= DRVNAME,
+ 	},
+ 	.probe		= smsc47b397_probe,
+-	.remove		= __devexit_p(smsc47b397_remove),
++	.remove_new	= __devexit_p(smsc47b397_remove),
+ };
+ 
+ static int __devinit smsc47b397_probe(struct platform_device *pdev)
+diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
+index d1b4985..fbd9556 100644
+--- a/drivers/hwmon/smsc47m1.c
++++ b/drivers/hwmon/smsc47m1.c
+@@ -138,7 +138,7 @@ struct smsc47m1_sio_data {
+ 
+ 
+ static int smsc47m1_probe(struct platform_device *pdev);
+-static int __devexit smsc47m1_remove(struct platform_device *pdev);
++static void __devexit smsc47m1_remove(struct platform_device *pdev);
+ static struct smsc47m1_data *smsc47m1_update_device(struct device *dev,
+ 		int init);
+ 
+@@ -159,7 +159,7 @@ static struct platform_driver smsc47m1_driver = {
+ 		.name	= DRVNAME,
+ 	},
+ 	.probe		= smsc47m1_probe,
+-	.remove		= __devexit_p(smsc47m1_remove),
++	.remove_new	= __devexit_p(smsc47m1_remove),
+ };
+ 
+ static ssize_t get_fan(struct device *dev, struct device_attribute
+@@ -629,7 +629,7 @@ error_release:
+ 	return err;
+ }
+ 
+-static int __devexit smsc47m1_remove(struct platform_device *pdev)
++static void __devexit smsc47m1_remove(struct platform_device *pdev)
+ {
+ 	struct smsc47m1_data *data = platform_get_drvdata(pdev);
+ 	struct resource *res;
+@@ -641,8 +641,6 @@ static int __devexit smsc47m1_remove(struct platform_device *pdev)
+ 	release_region(res->start, SMSC_EXTENT);
+ 	platform_set_drvdata(pdev, NULL);
+ 	kfree(data);
+-
+-	return 0;
+ }
+ 
+ static struct smsc47m1_data *smsc47m1_update_device(struct device *dev,
