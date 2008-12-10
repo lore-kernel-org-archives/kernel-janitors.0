@@ -1,59 +1,197 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Thu, 18 Dec 2008 23:40:33 +0000
-Subject: Re: [PATCH 1/6] drm/i915: fix sparse warnings: declare one-bit bitfield as unsigned
-Message-Id: <200812181540.34147.jbarnes@virtuousgeek.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Dec 2008 16:35:02 +0000
+Subject: [PATCH 9/28] drivers/dma: Drop return value from platform_driver
+Message-Id: <Pine.LNX.4.64.0812101734430.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <494ad5d2.190c660a.55a0.ffff96ff@mx.google.com>
-In-Reply-To: <494ad5d2.190c660a.55a0.ffff96ff@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.sourceforge.net
-Cc: Hannes Eder <hannes@hanneseder.net>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, maciej.sosnowski@intel.com, dan.j.williams@intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thursday, December 18, 2008 6:09 am Hannes Eder wrote:
-> Fix this sparse warnings:
->
->   drivers/gpu/drm/i915/i915_drv.h:169:22: error: dubious one-bit signed
-> bitfield drivers/gpu/drm/i915/i915_drv.h:169:22: warning: dubious bitfield
-> without explicit `signed' or `unsigned'
-> drivers/gpu/drm/i915/i915_drv.h:170:19: error: dubious one-bit signed
-> bitfield drivers/gpu/drm/i915/i915_drv.h:170:19: warning: dubious bitfield
-> without explicit `signed' or `unsigned'
-> drivers/gpu/drm/i915/i915_drv.h:171:16: error: dubious one-bit signed
-> bitfield drivers/gpu/drm/i915/i915_drv.h:171:16: warning: dubious bitfield
-> without explicit `signed' or `unsigned'
-> drivers/gpu/drm/i915/i915_drv.h:172:23: error: dubious one-bit signed
-> bitfield drivers/gpu/drm/i915/i915_drv.h:172:23: warning: dubious bitfield
-> without explicit `signed' or `unsigned'
->
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> ---
->  drivers/gpu/drm/i915/i915_drv.h |    8 ++++----
->  1 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/i915_drv.h
-> b/drivers/gpu/drm/i915/i915_drv.h index 467572a..a640bcf 100644
-> --- a/drivers/gpu/drm/i915/i915_drv.h
-> +++ b/drivers/gpu/drm/i915/i915_drv.h
-> @@ -166,10 +166,10 @@ typedef struct drm_i915_private {
->  	struct drm_display_mode *vbt_mode; /* if any */
->
->  	/* Feature bits from the VBIOS */
-> -	int int_tv_support:1;
-> -	int lvds_dither:1;
-> -	int lvds_vbt:1;
-> -	int int_crt_support:1;
-> +	unsigned int int_tv_support:1;
-> +	unsigned int lvds_dither:1;
-> +	unsigned int lvds_vbt:1;
-> +	unsigned int int_crt_support:1;
->
->  	struct drm_i915_fence_reg fence_regs[16]; /* assume 965 */
->  	int fence_reg_start; /* 4 if userland hasn't ioctl'd us yet */
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
+
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
+
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/dma/dw_dmac.c  |    6 ++----
+ drivers/dma/iop-adma.c |    6 ++----
+ drivers/dma/mv_xor.c   |   11 ++++-------
+ 3 files changed, 8 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/dma/dw_dmac.c b/drivers/dma/dw_dmac.c
+index 0778d99..7b5521a 100644
+--- a/drivers/dma/dw_dmac.c
++++ b/drivers/dma/dw_dmac.c
+@@ -1036,7 +1036,7 @@ err_kfree:
+ 	return err;
+ }
+ 
+-static int __exit dw_remove(struct platform_device *pdev)
++static void __exit dw_remove(struct platform_device *pdev)
+ {
+ 	struct dw_dma		*dw = platform_get_drvdata(pdev);
+ 	struct dw_dma_chan	*dwc, *_dwc;
+@@ -1064,8 +1064,6 @@ static int __exit dw_remove(struct platform_device *pdev)
+ 	release_mem_region(io->start, DW_REGLEN);
+ 
+ 	kfree(dw);
+-
+-	return 0;
+ }
+ 
+ static void dw_shutdown(struct platform_device *pdev)
+@@ -1096,7 +1094,7 @@ static int dw_resume_early(struct platform_device *pdev)
+ }
+ 
+ static struct platform_driver dw_driver = {
+-	.remove		= __exit_p(dw_remove),
++	.remove_new	= __exit_p(dw_remove),
+ 	.shutdown	= dw_shutdown,
+ 	.suspend_late	= dw_suspend_late,
+ 	.resume_early	= dw_resume_early,
+diff --git a/drivers/dma/iop-adma.c b/drivers/dma/iop-adma.c
+index c7a9306..9b89122 100644
+--- a/drivers/dma/iop-adma.c
++++ b/drivers/dma/iop-adma.c
+@@ -1100,7 +1100,7 @@ out:
+ 	return err;
+ }
+ 
+-static int __devexit iop_adma_remove(struct platform_device *dev)
++static void __devexit iop_adma_remove(struct platform_device *dev)
+ {
+ 	struct iop_adma_device *device = platform_get_drvdata(dev);
+ 	struct dma_chan *chan, *_chan;
+@@ -1132,8 +1132,6 @@ static int __devexit iop_adma_remove(struct platform_device *dev)
+ 		kfree(iop_chan);
+ 	}
+ 	kfree(device);
+-
+-	return 0;
+ }
+ 
+ static int __devinit iop_adma_probe(struct platform_device *pdev)
+@@ -1409,7 +1407,7 @@ MODULE_ALIAS("platform:iop-adma");
+ 
+ static struct platform_driver iop_adma_driver = {
+ 	.probe		= iop_adma_probe,
+-	.remove		= iop_adma_remove,
++	.remove_new	= iop_adma_remove,
+ 	.driver		= {
+ 		.owner	= THIS_MODULE,
+ 		.name	= "iop-adma",
+diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
+index 0328da0..5103dba 100644
+--- a/drivers/dma/mv_xor.c
++++ b/drivers/dma/mv_xor.c
+@@ -1098,7 +1098,7 @@ out:
+ 	return err;
+ }
+ 
+-static int __devexit mv_xor_remove(struct platform_device *dev)
++static void __devexit mv_xor_remove(struct platform_device *dev)
+ {
+ 	struct mv_xor_device *device = platform_get_drvdata(dev);
+ 	struct dma_chan *chan, *_chan;
+@@ -1115,8 +1115,6 @@ static int __devexit mv_xor_remove(struct platform_device *dev)
+ 		mv_chan = to_mv_xor_chan(chan);
+ 		list_del(&chan->device_node);
+ 	}
+-
+-	return 0;
+ }
+ 
+ static int __devinit mv_xor_probe(struct platform_device *pdev)
+@@ -1281,7 +1279,7 @@ mv_xor_conf_mbus_windows(struct mv_xor_shared_private *msp,
+ 
+ static struct platform_driver mv_xor_driver = {
+ 	.probe		= mv_xor_probe,
+-	.remove		= mv_xor_remove,
++	.remove_new	= mv_xor_remove,
+ 	.driver		= {
+ 		.owner	= THIS_MODULE,
+ 		.name	= MV_XOR_NAME,
+@@ -1329,14 +1327,13 @@ static int mv_xor_shared_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int mv_xor_shared_remove(struct platform_device *pdev)
++static void mv_xor_shared_remove(struct platform_device *pdev)
+ {
+-	return 0;
+ }
+ 
+ static struct platform_driver mv_xor_shared_driver = {
+ 	.probe		= mv_xor_shared_probe,
+-	.remove		= mv_xor_shared_remove,
++	.remove_new	= mv_xor_shared_remove,
+ 	.driver		= {
+ 		.owner	= THIS_MODULE,
+ 		.name	= MV_XOR_SHARED_NAME,
