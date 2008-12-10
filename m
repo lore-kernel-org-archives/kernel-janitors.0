@@ -1,44 +1,107 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 23 Dec 2008 07:00:31 +0000
-Subject: Re: container_of
-Message-Id: <Pine.LNX.4.64.0812230759380.32240@ask.diku.dk>
+Date: Wed, 10 Dec 2008 16:36:08 +0000
+Subject: [PATCH 12/28] drivers/block: Drop return value from platform_driver
+Message-Id: <Pine.LNX.4.64.0812101735490.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812191854150.11217@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812191854150.11217@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, axboe@kernel.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 22 Dec 2008, Greg KH wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Tue, Dec 23, 2008 at 07:01:59AM +0100, Julia Lawall wrote:
-> > On Mon, 22 Dec 2008, Greg KH wrote:
-> > 
-> > > On Fri, Dec 19, 2008 at 06:56:46PM +0100, Julia Lawall wrote:
-> > > > Considering code such as the following (drivers/acpi/osl.c):
-> > > > 
-> > > >  	struct acpi_os_dpc *dpc = container_of(work, struct acpi_os_dpc, work);
-> > > > 	if (!dpc) {
-> > > >  		printk(KERN_ERR PREFIX "Invalid (NULL) context\n");
-> > > >  		return;
-> > > >  	}
-> > > > 
-> > > > Is it very likely that container_of can return NULL?  Container_of 
-> > > > computes an offset from a pointer, so I have the impression that if given 
-> > > > a NULL value it would normally return a negative number (or a very large 
-> > > > positive one, depending on how it is interpreted).
-> > > 
-> > > You are correct, that check will never happen, and should be removed.
-> > 
-> > Actually, someone else pointed out that one could call the function with 
-> > &x->fld, and if x is NULL, then container_of(&x->fld,...) would go back 
-> > down to NULL.  I haven't looked at the call sites though to see if that 
-> > can happen.
-> 
-> No, if you were to evaluate x->fld, you would oops :)
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
 
-&x->fld doesn't oops, though.  It just adds the offset of the field fld to 
-x.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
-julia
+// <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
+
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
+
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/block/xsysace.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/block/xsysace.c b/drivers/block/xsysace.c
+index 29e1dfa..f28505e 100644
+--- a/drivers/block/xsysace.c
++++ b/drivers/block/xsysace.c
+@@ -1142,15 +1142,14 @@ static int __devinit ace_probe(struct platform_device *dev)
+ /*
+  * Platform bus remove() method
+  */
+-static int __devexit ace_remove(struct platform_device *dev)
++static void __devexit ace_remove(struct platform_device *dev)
+ {
+ 	ace_free(&dev->dev);
+-	return 0;
+ }
+ 
+ static struct platform_driver ace_platform_driver = {
+ 	.probe = ace_probe,
+-	.remove = __devexit_p(ace_remove),
++	.remove_new = __devexit_p(ace_remove),
+ 	.driver = {
+ 		.owner = THIS_MODULE,
+ 		.name = "xsysace",
