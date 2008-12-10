@@ -1,83 +1,211 @@
-From: "Vorobiev Dmitri" <dmitri.vorobiev@movial.fi>
-Date: Wed, 03 Dec 2008 19:07:34 +0000
-Subject: Re: [PATCH] SCSI: fix the return type of the remove() method in
-Message-Id: <51634.88.114.226.209.1228331254.squirrel@webmail.movial.fi>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Dec 2008 16:34:42 +0000
+Subject: [PATCH 8/28] drivers/edac: Drop return value from platform_driver
+Message-Id: <Pine.LNX.4.64.0812101734150.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1227140357-29921-1-git-send-email-dmitri.vorobiev@movial.fi>
-    <46353.88.114.226.209.1228321494.squirrel@webmail.movial.fi>
-    <1228324123.5551.25.camel@localhost.localdomain>
-    <ac3eb2510812030952k5b57a9c7qb68e3684de170d75@mail.gmail.com>
-    <1228327306.5551.36.camel@localhost.localdomain>
-    <35647.88.114.226.209.1228329736.squirrel@webmail.movial.fi>
-    <ac3eb2510812031051k9d9312bma119bfae35afc230@mail.gmail.com>
-In-Reply-To: <ac3eb2510812031051k9d9312bma119bfae35afc230@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kay Sievers <kay.sievers@vrfy.org>
-Cc: Vorobiev Dmitri <dmitri.vorobiev@movial.fi>, James Bottomley <james.bottomley@hansenpartnership.com>, linux-scsi@vger.kernel.org, linux-mips@linux-mips.org, Greg KH <greg@kroah.com>, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, dougthompson@xmission.com, bluesmoke-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> On Wed, Dec 3, 2008 at 19:42, Vorobiev Dmitri <dmitri.vorobiev@movial.fi>
-> wrote:
->>> On Wed, 2008-12-03 at 18:52 +0100, Kay Sievers wrote:
->>>> On Wed, Dec 3, 2008 at 18:08, James Bottomley
->>>> <James.Bottomley@hansenpartnership.com> wrote:
->>>> > On Wed, 2008-12-03 at 18:24 +0200, Vorobiev Dmitri wrote:
->>>> >> > This patch fixes the following compilation warning:
->>>> >> >
->>>> >> >   CC [M]  drivers/scsi/sgiwd93.o
->>>> >> > drivers/scsi/sgiwd93.c:314: warning: initialization from
->>>> incompatible
->>>> >> > pointer type
->>>> >>
->>>> >> Any news about this one? I think this patch should go via
->>>> linux-scsi,
->>>> >> unless you would be insisting on pushing it via linux-mips, in
->>>> which
->>>> case
->>>> >> I'll politely bug Ralf about it. :)
->>>> >
->>>> > Looks OK for the local change.
->>>> >
->>>> > Globally, having driver->remove and platform_driver->remove return
->>>> int
->>>> > instead of void looks wrong.  Particularly when the only use cases
->>>> are
->>>> > in drivers/base/ and they all ignore the return code.
->>>> >
->>>> > Greg and Kay ... shouldn't we simply redefine the return values for
->>>> the
->>>> > remove methods in these structures to return void (and thus match
->>>> the
->>>> > use case)?
->>>>
->>>> Aren't there many many drivers across the tree, using the "int remove"
->>>> version?
->>>
->>> Yes ... since it's a function prototype.
->>>
->>> However, if drivers/base simply discards the return, it's a trap we
->>> shouldn't be setting.
->>
->> Hmmm, it does look like the return value is discarded, please see
->> drivers/base/dd.c::__device_release_driver() for details.
->>
->> Does this not deserve a good cleanup?
->
-> Sure, it might be. If you want to patch hundreds of files, send
-> patches to maintainers, patch drivers you can not even compile, we
-> could do that.
->
-> We are already in the middle of a ~400 files "struct device" bus_id
-> conversion, and only very few maintainers respond to these patches. We
-> also never got any reply to the SCSI bus_id patch we sent weeks ago.
-> :)
->
-> Even when it's "a good cleanup", with maintainers not responding, and
-> supporting it, it's a real pain to change things like this. But, if
-> you want to go ahead and do that, let us know.
+From: Julia Lawall <julia@diku.dk>
 
-Well, I don't really want to look like a coward, but I guess this a good
-project for Kernel Janitors, and I'm Cc:ing their mailing list now.
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
 
-Dmitri
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
+
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
+
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/edac/cell_edac.c    |    5 ++---
+ drivers/edac/mv64x60_edac.c |   22 ++++++++--------------
+ 2 files changed, 10 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/edac/cell_edac.c b/drivers/edac/cell_edac.c
+index cd2e3b8..68afb41 100644
+--- a/drivers/edac/cell_edac.c
++++ b/drivers/edac/cell_edac.c
+@@ -213,12 +213,11 @@ static int __devinit cell_edac_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int __devexit cell_edac_remove(struct platform_device *pdev)
++static void __devexit cell_edac_remove(struct platform_device *pdev)
+ {
+ 	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
+ 	if (mci)
+ 		edac_mc_free(mci);
+-	return 0;
+ }
+ 
+ static struct platform_driver cell_edac_driver = {
+@@ -227,7 +226,7 @@ static struct platform_driver cell_edac_driver = {
+ 		.owner	= THIS_MODULE,
+ 	},
+ 	.probe		= cell_edac_probe,
+-	.remove		= cell_edac_remove,
++	.remove_new	= cell_edac_remove,
+ };
+ 
+ static int __init cell_edac_init(void)
+diff --git a/drivers/edac/mv64x60_edac.c b/drivers/edac/mv64x60_edac.c
+index 083ce8d..1432712 100644
+--- a/drivers/edac/mv64x60_edac.c
++++ b/drivers/edac/mv64x60_edac.c
+@@ -206,7 +206,7 @@ err:
+ 	return res;
+ }
+ 
+-static int mv64x60_pci_err_remove(struct platform_device *pdev)
++static void mv64x60_pci_err_remove(struct platform_device *pdev)
+ {
+ 	struct edac_pci_ctl_info *pci = platform_get_drvdata(pdev);
+ 
+@@ -215,13 +215,11 @@ static int mv64x60_pci_err_remove(struct platform_device *pdev)
+ 	edac_pci_del_device(&pdev->dev);
+ 
+ 	edac_pci_free_ctl_info(pci);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver mv64x60_pci_err_driver = {
+ 	.probe = mv64x60_pci_err_probe,
+-	.remove = __devexit_p(mv64x60_pci_err_remove),
++	.remove_new = __devexit_p(mv64x60_pci_err_remove),
+ 	.driver = {
+ 		   .name = "mv64x60_pci_err",
+ 	}
+@@ -375,7 +373,7 @@ err:
+ 	return res;
+ }
+ 
+-static int mv64x60_sram_err_remove(struct platform_device *pdev)
++static void mv64x60_sram_err_remove(struct platform_device *pdev)
+ {
+ 	struct edac_device_ctl_info *edac_dev = platform_get_drvdata(pdev);
+ 
+@@ -383,13 +381,11 @@ static int mv64x60_sram_err_remove(struct platform_device *pdev)
+ 
+ 	edac_device_del_device(&pdev->dev);
+ 	edac_device_free_ctl_info(edac_dev);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver mv64x60_sram_err_driver = {
+ 	.probe = mv64x60_sram_err_probe,
+-	.remove = mv64x60_sram_err_remove,
++	.remove_new = mv64x60_sram_err_remove,
+ 	.driver = {
+ 		   .name = "mv64x60_sram_err",
+ 	}
+@@ -570,7 +566,7 @@ err:
+ 	return res;
+ }
+ 
+-static int mv64x60_cpu_err_remove(struct platform_device *pdev)
++static void mv64x60_cpu_err_remove(struct platform_device *pdev)
+ {
+ 	struct edac_device_ctl_info *edac_dev = platform_get_drvdata(pdev);
+ 
+@@ -578,12 +574,11 @@ static int mv64x60_cpu_err_remove(struct platform_device *pdev)
+ 
+ 	edac_device_del_device(&pdev->dev);
+ 	edac_device_free_ctl_info(edac_dev);
+-	return 0;
+ }
+ 
+ static struct platform_driver mv64x60_cpu_err_driver = {
+ 	.probe = mv64x60_cpu_err_probe,
+-	.remove = mv64x60_cpu_err_remove,
++	.remove_new = mv64x60_cpu_err_remove,
+ 	.driver = {
+ 		   .name = "mv64x60_cpu_err",
+ 	}
+@@ -812,7 +807,7 @@ err:
+ 	return res;
+ }
+ 
+-static int mv64x60_mc_err_remove(struct platform_device *pdev)
++static void mv64x60_mc_err_remove(struct platform_device *pdev)
+ {
+ 	struct mem_ctl_info *mci = platform_get_drvdata(pdev);
+ 
+@@ -820,12 +815,11 @@ static int mv64x60_mc_err_remove(struct platform_device *pdev)
+ 
+ 	edac_mc_del_mc(&pdev->dev);
+ 	edac_mc_free(mci);
+-	return 0;
+ }
+ 
+ static struct platform_driver mv64x60_mc_err_driver = {
+ 	.probe = mv64x60_mc_err_probe,
+-	.remove = mv64x60_mc_err_remove,
++	.remove_new = mv64x60_mc_err_remove,
+ 	.driver = {
+ 		   .name = "mv64x60_mc_err",
+ 	}
