@@ -1,59 +1,140 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 16 Dec 2008 15:15:53 +0000
-Subject: [PATCH 11/11] net/bridge/netfilter: Move a dereference below a NULL
-Message-Id: <Pine.LNX.4.64.0812161615320.20444@pc-004.diku.dk>
+Date: Wed, 10 Dec 2008 16:29:14 +0000
+Subject: [PATCH 6/28] drivers/gpio/twl4030-gpio.c: Drop return value from
+Message-Id: <Pine.LNX.4.64.0812101728530.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kaber@trash.net, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, sameo@openedhand.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-In each case, if the NULL test is necessary, then the dereference should be
-moved below the NULL test.
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  The original return value was
+either 0 or -EIO.
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
 @@
-type T;
-expression E;
-identifier i,fld;
-statement S;
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
 @@
 
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
+
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- net/bridge/netfilter/ebtables.c     |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ drivers/gpio/twl4030-gpio.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 0fa208e..1616884 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -86,12 +86,13 @@ static inline int ebt_do_match (struct ebt_entry_match *m,
- static inline int ebt_dev_check(char *entry, const struct net_device *device)
- {
- 	int i = 0;
--	const char *devname = device->name;
-+	const char *devname;
+diff --git a/drivers/gpio/twl4030-gpio.c b/drivers/gpio/twl4030-gpio.c
+index 37d3eec..31d8bb2 100644
+--- a/drivers/gpio/twl4030-gpio.c
++++ b/drivers/gpio/twl4030-gpio.c
+@@ -405,7 +405,7 @@ static int __devinit gpio_twl4030_pulls(u32 ups, u32 downs)
+ 				REG_GPIOPUPDCTR1, 5);
+ }
  
- 	if (*entry = '\0')
- 		return 0;
- 	if (!device)
- 		return 1;
-+	devname = device->name;
- 	/* 1 is the wildcard token */
- 	while (entry[i] != '\0' && entry[i] != 1 && entry[i] = devname[i])
- 		i++;
+-static int gpio_twl4030_remove(struct platform_device *pdev);
++static void gpio_twl4030_remove(struct platform_device *pdev);
+ 
+ static int __devinit gpio_twl4030_probe(struct platform_device *pdev)
+ {
+@@ -468,7 +468,7 @@ no_irqs:
+ 	return ret;
+ }
+ 
+-static int __devexit gpio_twl4030_remove(struct platform_device *pdev)
++static void __devexit gpio_twl4030_remove(struct platform_device *pdev)
+ {
+ 	struct twl4030_gpio_platform_data *pdata = pdev->dev.platform_data;
+ 	int status;
+@@ -478,20 +478,19 @@ static int __devexit gpio_twl4030_remove(struct platform_device *pdev)
+ 				pdata->gpio_base, TWL4030_GPIO_MAX);
+ 		if (status) {
+ 			dev_dbg(&pdev->dev, "teardown --> %d\n", status);
+-			return status;
++			return;
+ 		}
+ 	}
+ 
+ 	status = gpiochip_remove(&twl_gpiochip);
+ 	if (status < 0)
+-		return status;
++		return;
+ 
+ 	if (is_module())
+-		return 0;
++		return;
+ 
+ 	/* REVISIT no support yet for deregistering all the IRQs */
+ 	WARN_ON(1);
+-	return -EIO;
+ }
+ 
+ /* Note:  this hardware lives inside an I2C-based multi-function device. */
+@@ -501,7 +500,7 @@ static struct platform_driver gpio_twl4030_driver = {
+ 	.driver.name	= "twl4030_gpio",
+ 	.driver.owner	= THIS_MODULE,
+ 	.probe		= gpio_twl4030_probe,
+-	.remove		= __devexit_p(gpio_twl4030_remove),
++	.remove_new	= __devexit_p(gpio_twl4030_remove),
+ };
+ 
+ static int __init gpio_twl4030_init(void)
