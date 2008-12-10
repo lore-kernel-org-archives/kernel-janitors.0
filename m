@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:35:25 +0000
-Subject: [PATCH 10/28] drivers/char: Drop return value from platform_driver
-Message-Id: <Pine.LNX.4.64.0812101735040.21998@ask.diku.dk>
+Date: Wed, 10 Dec 2008 16:43:19 +0000
+Subject: [PATCH 28/28] drivers/char/hw_random/omap-rng.c: Drop return value
+Message-Id: <Pine.LNX.4.64.0812101742590.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, dsaxena@plexity.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -80,95 +80,37 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/char/sonypi.c     |    6 ++----
- drivers/char/tb0219.c     |    6 ++----
- drivers/char/vr41xx_giu.c |    6 ++----
- 3 files changed, 6 insertions(+), 12 deletions(-)
+ drivers/char/hw_random/omap-rng.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/char/sonypi.c b/drivers/char/sonypi.c
-index f437443..2539332 100644
---- a/drivers/char/sonypi.c
-+++ b/drivers/char/sonypi.c
-@@ -1432,7 +1432,7 @@ static int __devinit sonypi_probe(struct platform_device *dev)
- 	return error;
+diff --git a/drivers/char/hw_random/omap-rng.c b/drivers/char/hw_random/omap-rng.c
+index d4e7dca..104d005 100644
+--- a/drivers/char/hw_random/omap-rng.c
++++ b/drivers/char/hw_random/omap-rng.c
+@@ -155,7 +155,7 @@ err_region:
+ 	return ret;
  }
  
--static int __devexit sonypi_remove(struct platform_device *dev)
-+static void __devexit sonypi_remove(struct platform_device *dev)
+-static int __exit omap_rng_remove(struct platform_device *pdev)
++static void __exit omap_rng_remove(struct platform_device *pdev)
  {
- 	sonypi_disable();
+ 	struct resource *mem = dev_get_drvdata(&pdev->dev);
  
-@@ -1456,8 +1456,6 @@ static int __devexit sonypi_remove(struct platform_device *dev)
- 	}
+@@ -172,8 +172,6 @@ static int __exit omap_rng_remove(struct platform_device *pdev)
  
- 	kfifo_free(sonypi_device.fifo);
+ 	release_resource(mem);
+ 	rng_base = NULL;
 -
 -	return 0;
  }
  
  #ifdef CONFIG_PM
-@@ -1492,7 +1490,7 @@ static struct platform_driver sonypi_driver = {
- 		.owner	= THIS_MODULE,
+@@ -206,7 +204,7 @@ static struct platform_driver omap_rng_driver = {
+ 		.owner		= THIS_MODULE,
  	},
- 	.probe		= sonypi_probe,
--	.remove		= __devexit_p(sonypi_remove),
-+	.remove_new	= __devexit_p(sonypi_remove),
- 	.shutdown	= sonypi_shutdown,
- 	.suspend	= sonypi_suspend,
- 	.resume		= sonypi_resume,
-diff --git a/drivers/char/tb0219.c b/drivers/char/tb0219.c
-index 6062b62..67e58a4 100644
---- a/drivers/char/tb0219.c
-+++ b/drivers/char/tb0219.c
-@@ -321,7 +321,7 @@ static int __devinit tb0219_probe(struct platform_device *dev)
- 	return 0;
- }
- 
--static int __devexit tb0219_remove(struct platform_device *dev)
-+static void __devexit tb0219_remove(struct platform_device *dev)
- {
- 	_machine_restart = old_machine_restart;
- 
-@@ -329,15 +329,13 @@ static int __devexit tb0219_remove(struct platform_device *dev)
- 	tb0219_base = NULL;
- 
- 	release_mem_region(TB0219_START, TB0219_SIZE);
--
--	return 0;
- }
- 
- static struct platform_device *tb0219_platform_device;
- 
- static struct platform_driver tb0219_device_driver = {
- 	.probe		= tb0219_probe,
--	.remove		= __devexit_p(tb0219_remove),
-+	.remove_new	= __devexit_p(tb0219_remove),
- 	.driver		= {
- 		.name	= "TB0219",
- 		.owner	= THIS_MODULE,
-diff --git a/drivers/char/vr41xx_giu.c b/drivers/char/vr41xx_giu.c
-index 54c8372..40cafb5 100644
---- a/drivers/char/vr41xx_giu.c
-+++ b/drivers/char/vr41xx_giu.c
-@@ -647,19 +647,17 @@ static int __devinit giu_probe(struct platform_device *dev)
- 	return cascade_irq(irq, giu_get_irq);
- }
- 
--static int __devexit giu_remove(struct platform_device *dev)
-+static void __devexit giu_remove(struct platform_device *dev)
- {
- 	if (giu_base) {
- 		iounmap(giu_base);
- 		giu_base = NULL;
- 	}
--
--	return 0;
- }
- 
- static struct platform_driver giu_device_driver = {
- 	.probe		= giu_probe,
--	.remove		= __devexit_p(giu_remove),
-+	.remove_new	= __devexit_p(giu_remove),
- 	.driver		= {
- 		.name	= "GIU",
- 		.owner	= THIS_MODULE,
+ 	.probe		= omap_rng_probe,
+-	.remove		= __exit_p(omap_rng_remove),
++	.remove_new	= __exit_p(omap_rng_remove),
+ 	.suspend	= omap_rng_suspend,
+ 	.resume		= omap_rng_resume
+ };
