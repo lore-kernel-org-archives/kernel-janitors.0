@@ -1,61 +1,107 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Tue, 09 Dec 2008 20:52:14 +0000
-Subject: [PATCH 7/9] mISDN: fix sparse warnings
-Message-Id: <493feabd.0c11660a.1e2c.4f26@mx.google.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Dec 2008 16:40:41 +0000
+Subject: [PATCH 21/28] drivers/char/xilinx_hwicap: Drop return value from
+Message-Id: <Pine.LNX.4.64.0812101740170.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <kkeil@suse.de>
-Cc: linux-kernel@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, grant.likely@secretlab.ca, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Impact: comment out unused symbols
+From: Julia Lawall <julia@diku.dk>
 
-Fix this sparse warnings:
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
 
-  drivers/isdn/hardware/mISDN/hfcmulti.c:794: warning: 'vpm_check' defined but not used
-  drivers/isdn/mISDN/dsp_cmx.c:1546: warning: 'dsp_start_jiffies' defined but not used
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+// <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
+
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
+
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/isdn/hardware/mISDN/hfcmulti.c |    2 ++
- drivers/isdn/mISDN/dsp_cmx.c           |    2 ++
- 2 files changed, 4 insertions(+), 0 deletions(-)
+ drivers/char/xilinx_hwicap/xilinx_hwicap.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
-index b4595f7..2b0e5db 100644
---- a/drivers/isdn/hardware/mISDN/hfcmulti.c
-+++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
-@@ -789,6 +789,7 @@ vpm_init(struct hfc_multi *wc)
- 	}
+diff --git a/drivers/char/xilinx_hwicap/xilinx_hwicap.c b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
+index d161319..007b4df 100644
+--- a/drivers/char/xilinx_hwicap/xilinx_hwicap.c
++++ b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
+@@ -743,14 +743,14 @@ static int __devinit hwicap_drv_probe(struct platform_device *pdev)
+ 			&buffer_icap_config, regs);
  }
  
-+#ifdef UNUSED
- static void
- vpm_check(struct hfc_multi *hctmp)
+-static int __devexit hwicap_drv_remove(struct platform_device *pdev)
++static void __devexit hwicap_drv_remove(struct platform_device *pdev)
  {
-@@ -799,6 +800,7 @@ vpm_check(struct hfc_multi *hctmp)
- 	if ((gpi2 & 0x3) != 0x3)
- 		printk(KERN_DEBUG "Got interrupt 0x%x from VPM!\n", gpi2);
+-	return hwicap_remove(&pdev->dev);
++	hwicap_remove(&pdev->dev);
  }
-+#endif /* UNUSED */
  
- 
- /*
-diff --git a/drivers/isdn/mISDN/dsp_cmx.c b/drivers/isdn/mISDN/dsp_cmx.c
-index e868c47..c884511 100644
---- a/drivers/isdn/mISDN/dsp_cmx.c
-+++ b/drivers/isdn/mISDN/dsp_cmx.c
-@@ -1543,7 +1543,9 @@ send_packet:
- static u32	samplecount;
- struct timer_list dsp_spl_tl;
- u32	dsp_spl_jiffies; /* calculate the next time to fire */
-+#ifdef UNUSED
- static u32	dsp_start_jiffies; /* jiffies at the time, the calculation begins */
-+#endif /* UNUSED */
- static struct timeval dsp_start_tv; /* time at start of calculation */
- 
- void
--- 
-1.5.6.3
-
+ static struct platform_driver hwicap_platform_driver = {
+ 	.probe = hwicap_drv_probe,
+-	.remove = hwicap_drv_remove,
++	.remove_new = hwicap_drv_remove,
+ 	.driver = {
+ 		.owner = THIS_MODULE,
+ 		.name = DRIVER_NAME,
