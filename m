@@ -1,86 +1,113 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Tue, 09 Dec 2008 20:45:43 +0000
-Subject: [PATCH 6/9] mISDN: fix sparse warnings
-Message-Id: <493feaba.06e2660a.55c3.4274@mx.google.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Dec 2008 16:36:30 +0000
+Subject: [PATCH 13/28] drivers/auxdisplay: Drop return value from platform_driver
+Message-Id: <Pine.LNX.4.64.0812101736090.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <kkeil@suse.de>
-Cc: linux-kernel@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, miguel.ojeda.sandonis@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Impact: rename function scope variable
+From: Julia Lawall <julia@diku.dk>
 
-Fix this warning:
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
 
-  drivers/isdn/mISDN/l1oip_core.c:472:8: warning: symbol 'id' shadows an earlier one
-  drivers/isdn/mISDN/l1oip_core.c:254:14: originally declared here
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+// <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
+
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
+
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/isdn/mISDN/l1oip_core.c |   22 +++++++++++-----------
- 1 files changed, 11 insertions(+), 11 deletions(-)
+ drivers/auxdisplay/cfag12864bfb.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/isdn/mISDN/l1oip_core.c b/drivers/isdn/mISDN/l1oip_core.c
-index e42150a..0884dd6 100644
---- a/drivers/isdn/mISDN/l1oip_core.c
-+++ b/drivers/isdn/mISDN/l1oip_core.c
-@@ -469,7 +469,7 @@ l1oip_socket_recv(struct l1oip *hc, u8 remotecodec, u8 channel, u16 timebase,
- static void
- l1oip_socket_parse(struct l1oip *hc, struct sockaddr_in *sin, u8 *buf, int len)
+diff --git a/drivers/auxdisplay/cfag12864bfb.c b/drivers/auxdisplay/cfag12864bfb.c
+index fe3a865..56a3d22 100644
+--- a/drivers/auxdisplay/cfag12864bfb.c
++++ b/drivers/auxdisplay/cfag12864bfb.c
+@@ -115,7 +115,7 @@ none:
+ 	return ret;
+ }
+ 
+-static int cfag12864bfb_remove(struct platform_device *device)
++static void cfag12864bfb_remove(struct platform_device *device)
  {
--	u32			id;
-+	u32			packet_id;
- 	u8			channel;
- 	u8			remotecodec;
- 	u16			timebase;
-@@ -508,7 +508,7 @@ l1oip_socket_parse(struct l1oip *hc, struct sockaddr_in *sin, u8 *buf, int len)
+ 	struct fb_info *info = platform_get_drvdata(device);
+ 
+@@ -123,13 +123,11 @@ static int cfag12864bfb_remove(struct platform_device *device)
+ 		unregister_framebuffer(info);
+ 		framebuffer_release(info);
  	}
+-
+-	return 0;
+ }
  
- 	/* get id flag */
--	id = (*buf>>4)&1;
-+	packet_id = (*buf>>4)&1;
- 
- 	/* check coding */
- 	remotecodec = (*buf) & 0x0f;
-@@ -520,11 +520,11 @@ l1oip_socket_parse(struct l1oip *hc, struct sockaddr_in *sin, u8 *buf, int len)
- 	buf++;
- 	len--;
- 
--	/* check id */
--	if (id) {
-+	/* check packet_id */
-+	if (packet_id) {
- 		if (!hc->id) {
- 			printk(KERN_WARNING "%s: packet error - packet has id "
--				"0x%x, but we have not\n", __func__, id);
-+				"0x%x, but we have not\n", __func__, packet_id);
- 			return;
- 		}
- 		if (len < 4) {
-@@ -532,16 +532,16 @@ l1oip_socket_parse(struct l1oip *hc, struct sockaddr_in *sin, u8 *buf, int len)
- 				"short for ID value\n", __func__);
- 			return;
- 		}
--		id = (*buf++) << 24;
--		id += (*buf++) << 16;
--		id += (*buf++) << 8;
--		id += (*buf++);
-+		packet_id = (*buf++) << 24;
-+		packet_id += (*buf++) << 16;
-+		packet_id += (*buf++) << 8;
-+		packet_id += (*buf++);
- 		len -= 4;
- 
--		if (id != hc->id) {
-+		if (packet_id != hc->id) {
- 			printk(KERN_WARNING "%s: packet error - ID mismatch, "
- 				"got 0x%x, we 0x%x\n",
--				__func__, id, hc->id);
-+				__func__, packet_id, hc->id);
- 			return;
- 		}
- 	} else {
--- 
-1.5.6.3
-
+ static struct platform_driver cfag12864bfb_driver = {
+ 	.probe	= cfag12864bfb_probe,
+-	.remove = cfag12864bfb_remove,
++	.remove_new = cfag12864bfb_remove,
+ 	.driver = {
+ 		.name	= CFAG12864BFB_NAME,
+ 	},
