@@ -1,146 +1,110 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 25 Dec 2008 20:10:30 +0000
-Subject: [PATCH 2/2] drivers/staging/comedi: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0812252109580.31651@ask.diku.dk>
+Date: Wed, 10 Dec 2008 16:37:59 +0000
+Subject: [PATCH 16/28] arch/blackfin: Drop return value from platform_driver
+Message-Id: <Pine.LNX.4.64.0812101737360.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, cooloney@kernel.org, uclinux-dist-devel@blackfin.uclinux.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Error handling code following a kmalloc should free the allocated data.
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the file in this patch, the
+original return value might have been something other than 0.
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r exists@
-local idexpression x;
-statement S;
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
+
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
 expression E;
-identifier f,l;
-position p1,p2;
-expression *ptr != NULL;
 @@
 
+- int
++ void
+       f(...) {
+  <...
 (
-if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+-  return \(C\|i\);
++  return;
 |
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
+-  return E;
++  E;
++  return;
 )
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f = E
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+  ...>
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
----
- drivers/staging/comedi/drivers/usbdux.c     |    6 +++++-
- drivers/staging/comedi/drivers/usbduxfast.c |    6 +++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/staging/comedi/drivers/usbduxfast.c b/drivers/staging/comedi/drivers/usbduxfast.c
---- a/drivers/staging/comedi/drivers/usbduxfast.c
-+++ b/drivers/staging/comedi/drivers/usbduxfast.c
-@@ -1298,7 +1298,7 @@ static int read_firmware(usbduxfastsub_t
+---
+ arch/blackfin/mach-common/dpmc.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/blackfin/mach-common/dpmc.c b/arch/blackfin/mach-common/dpmc.c
+index 02c7efd..72e408d 100644
+--- a/arch/blackfin/mach-common/dpmc.c
++++ b/arch/blackfin/mach-common/dpmc.c
+@@ -99,16 +99,16 @@ static int __devinit bfin_dpmc_probe(struct platform_device *pdev)
+ /**
+  *	bfin_dpmc_remove -
+  */
+-static int __devexit bfin_dpmc_remove(struct platform_device *pdev)
++static void __devexit bfin_dpmc_remove(struct platform_device *pdev)
  {
- 	int i = 0;
- 	unsigned char *fp = (char *)firmwarePtr;
--	unsigned char *firmwareBinary = NULL;
-+	unsigned char *firmwareBinary;
- 	int res = 0;
- 	int maxAddr = 0;
+ 	pdata = NULL;
+-	return cpufreq_unregister_notifier(&vreg_cpufreq_notifier_block,
+-					 CPUFREQ_TRANSITION_NOTIFIER);
++	cpufreq_unregister_notifier(&vreg_cpufreq_notifier_block,
++					CPUFREQ_TRANSITION_NOTIFIER);
+ }
  
-@@ -1322,6 +1322,7 @@ static int read_firmware(usbduxfastsub_t
- 			j++;
- 			if (j >= sizeof(buf)) {
- 				printk("comedi_: usbduxfast: bogus firmware file!\n");
-+				kfree(firmwareBinary);
- 				return -1;
- 			}
- 		}
-@@ -1340,6 +1341,7 @@ static int read_firmware(usbduxfastsub_t
- 
- 		if (buf[0] != ':') {
- 			printk("comedi_: usbduxfast: upload: not an ihex record: %s", buf);
-+			kfree(firmwareBinary);
- 			return -EFAULT;
- 		}
- 
-@@ -1355,6 +1357,7 @@ static int read_firmware(usbduxfastsub_t
- 
- 		if (maxAddr >= FIRMWARE_MAX_LEN) {
- 			printk("comedi_: usbduxfast: firmware upload goes beyond FX2 RAM boundaries.");
-+			kfree(firmwareBinary);
- 			return -EFAULT;
- 		}
- 		//printk("comedi_: usbduxfast: off=%x, len=%x:",off,len);
-@@ -1369,6 +1372,7 @@ static int read_firmware(usbduxfastsub_t
- 
- 		if (type != 0) {
- 			printk("comedi_: usbduxfast: unsupported record type: %u\n", type);
-+			kfree(firmwareBinary);
- 			return -EFAULT;
- 		}
- 
-diff -u -p a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
---- a/drivers/staging/comedi/drivers/usbdux.c
-+++ b/drivers/staging/comedi/drivers/usbdux.c
-@@ -2298,7 +2298,7 @@ static int read_firmware(struct usbduxsu
- 	struct device *dev = &usbduxsub->interface->dev;
- 	int i = 0;
- 	unsigned char *fp = (char *)firmwarePtr;
--	unsigned char *firmwareBinary = NULL;
-+	unsigned char *firmwareBinary;
- 	int res = 0;
- 	int maxAddr = 0;
- 
-@@ -2322,6 +2322,7 @@ static int read_firmware(struct usbduxsu
- 			j++;
- 			if (j >= sizeof(buf)) {
- 				dev_err(dev, "comedi_: bogus firmware file!\n");
-+				kfree(firmwareBinary);
- 				return -1;
- 			}
- 		}
-@@ -2344,6 +2345,7 @@ static int read_firmware(struct usbduxsu
- 		if (buf[0] != ':') {
- 			dev_err(dev, "comedi_: upload: not an ihex record: %s",
- 				buf);
-+			kfree(firmwareBinary);
- 			return -EFAULT;
- 		}
- 
-@@ -2360,6 +2362,7 @@ static int read_firmware(struct usbduxsu
- 		if (maxAddr >= FIRMWARE_MAX_LEN) {
- 			dev_err(dev, "comedi_: firmware upload goes "
- 				"beyond FX2 RAM boundaries.\n");
-+			kfree(firmwareBinary);
- 			return -EFAULT;
- 		}
- 		/* dev_dbg(dev, "comedi_: off=%x, len=%x:\n", off, len); */
-@@ -2375,6 +2378,7 @@ static int read_firmware(struct usbduxsu
- 		if (type != 0) {
- 			dev_err(dev, "comedi_: unsupported record type: %u\n",
- 				type);
-+			kfree(firmwareBinary);
- 			return -EFAULT;
- 		}
- 
+ struct platform_driver bfin_dpmc_device_driver = {
+ 	.probe   = bfin_dpmc_probe,
+-	.remove  = __devexit_p(bfin_dpmc_remove),
++	.remove_new = __devexit_p(bfin_dpmc_remove),
+ 	.driver  = {
+ 		.name = DRIVER_NAME,
+ 	}
