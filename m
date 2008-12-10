@@ -1,86 +1,142 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Sun, 21 Dec 2008 18:16:36 +0000
-Subject: Re: [PATCH 2/13] drivers/gpu/drm/i915: Remove redundant test
-Message-Id: <1229883396.4798.1.camel@gaiman.anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-VdGcmwoWDP5sAH1cnBtS"
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Dec 2008 16:37:35 +0000
+Subject: [PATCH 15/28] arch/sh: Drop return value from platform_driver remove
+Message-Id: <Pine.LNX.4.64.0812101737120.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812211628230.9555@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812211628230.9555@pc-004.diku.dk>
-To: Julia Lawall <julia@diku.dk>
-Cc: airlied@linux.ie, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dmitri.vorobiev@movial.fi, lethal@linux-sh.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
---=-VdGcmwoWDP5sAH1cnBtS
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
 
-On Sun, 2008-12-21 at 16:28 +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
->=20
-> object_list is checked to be not NULL near the beginning of the function =
-and
-> is not updated subsequently.
->=20
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://www.emn.fr/x-info/coccinelle/)
->=20
-> // <smpl>
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
-Committed.  Thanks!
+// <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
+@@
+I.remove = \(f@p\|a(f@p)\);
 
-> ---
->  drivers/gpu/drm/i915/i915_gem.c     |   11 +++++------
->  1 files changed, 5 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_=
-gem.c
-> index fccf199..78319ec 100644
-> --- a/drivers/gpu/drm/i915/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/i915_gem.c
-> @@ -2611,13 +2611,12 @@ i915_gem_execbuffer(struct drm_device *dev, void =
-*data,
->  			  "back to user (%d)\n",
->  			   args->buffer_count, ret);
->  err:
-> -	if (object_list !=3D NULL) {
-> -		for (i =3D 0; i < pinned; i++)
-> -			i915_gem_object_unpin(object_list[i]);
-> +	for (i =3D 0; i < pinned; i++)
-> +		i915_gem_object_unpin(object_list[i]);
-> +
-> +	for (i =3D 0; i < args->buffer_count; i++)
-> +		drm_gem_object_unreference(object_list[i]);
-> =20
-> -		for (i =3D 0; i < args->buffer_count; i++)
-> -			drm_gem_object_unreference(object_list[i]);
-> -	}
->  	mutex_unlock(&dev->struct_mutex);
-> =20
->  pre_mutex_err:
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" i=
-n
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
---=20
-Eric Anholt
-eric@anholt.net                         eric.anholt@intel.com
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
 
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
 
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
 
---=-VdGcmwoWDP5sAH1cnBtS
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
+@@
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
 
-iEYEABECAAYFAklOiAIACgkQHUdvYGzw6vdrqwCghSfgo0EC6SpwgOClXl9APCRy
-SXAAnjPIgiwJpebuFJOFlgyH3SIDrBzD
-=T7IP
------END PGP SIGNATURE-----
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
 
---=-VdGcmwoWDP5sAH1cnBtS--
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/sh/drivers/heartbeat.c   |    6 ++----
+ arch/sh/drivers/push-switch.c |    6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/arch/sh/drivers/heartbeat.c b/arch/sh/drivers/heartbeat.c
+index 938817e..8d8c8a3 100644
+--- a/arch/sh/drivers/heartbeat.c
++++ b/arch/sh/drivers/heartbeat.c
+@@ -116,7 +116,7 @@ static int heartbeat_drv_probe(struct platform_device *pdev)
+ 	return mod_timer(&hd->timer, jiffies + 1);
+ }
+ 
+-static int heartbeat_drv_remove(struct platform_device *pdev)
++static void heartbeat_drv_remove(struct platform_device *pdev)
+ {
+ 	struct heartbeat_data *hd = platform_get_drvdata(pdev);
+ 
+@@ -127,13 +127,11 @@ static int heartbeat_drv_remove(struct platform_device *pdev)
+ 
+ 	if (!pdev->dev.platform_data)
+ 		kfree(hd);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver heartbeat_driver = {
+ 	.probe		= heartbeat_drv_probe,
+-	.remove		= heartbeat_drv_remove,
++	.remove_new	= heartbeat_drv_remove,
+ 	.driver		= {
+ 		.name	= DRV_NAME,
+ 	},
+diff --git a/arch/sh/drivers/push-switch.c b/arch/sh/drivers/push-switch.c
+index 725be6d..747c787 100644
+--- a/arch/sh/drivers/push-switch.c
++++ b/arch/sh/drivers/push-switch.c
+@@ -96,7 +96,7 @@ err:
+ 	return ret;
+ }
+ 
+-static int switch_drv_remove(struct platform_device *pdev)
++static void switch_drv_remove(struct platform_device *pdev)
+ {
+ 	struct push_switch *psw = platform_get_drvdata(pdev);
+ 	struct push_switch_platform_info *psw_info = pdev->dev.platform_data;
+@@ -111,13 +111,11 @@ static int switch_drv_remove(struct platform_device *pdev)
+ 	free_irq(irq, pdev);
+ 
+ 	kfree(psw);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver switch_driver = {
+ 	.probe		= switch_drv_probe,
+-	.remove		= switch_drv_remove,
++	.remove_new	= switch_drv_remove,
+ 	.driver		= {
+ 		.name	= DRV_NAME,
+ 	},
