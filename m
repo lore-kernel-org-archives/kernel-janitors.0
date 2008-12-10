@@ -1,43 +1,116 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 25 Dec 2008 14:33:11 +0000
-Subject: [PATCH 1/7] arch/parisc: Use DEFINE_SPINLOCK
-Message-Id: <Pine.LNX.4.64.0812251532430.22039@ask.diku.dk>
+Date: Wed, 10 Dec 2008 16:41:30 +0000
+Subject: [PATCH 23/28] drivers/hwmon/f71805f.c: Drop return value from
+Message-Id: <Pine.LNX.4.64.0812101741070.21998@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kyle@mcmartin.ca, matthew@wil.cx, grundler@parisc-linux.org, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitri.vorobiev@movial.fi, khali@linux-fr.org, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
-in Documentation/spinlocks.txt
+The return value of the remove function of a driver structure, and thus of
+a platform_driver structure, is ultimately ignored, and is thus
+unnecessary.  This patch removes the return value for the remove function
+stored in a platform_driver structure.  For the files in this patch, the
+return values are always 0.
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
+@r@
+struct platform_driver I;
+identifier a,f;
+position p;
 @@
-declarer name DEFINE_SPINLOCK;
-identifier xxx_lock;
+I.remove = \(f@p\|a(f@p)\);
+
+@void_called@
+identifier r.f;
+position p;
+@@
+f@p(...);
+
+@called@
+identifier r.f;
+position p1 != void_called.p;
+@@
+f@p1(...)
+
+@localfn@
+identifier r.f;
+@@
+static int f(...) { ... }
+
+@depends on !called && localfn@
+struct platform_driver I;
+identifier a,f;
+position r.p;
 @@
 
-- spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
-+ DEFINE_SPINLOCK(xxx_lock);
+I.
+- remove
++ remove_new
+   = \(f@p\|a(f@p)\);
+
+@depends on !called && localfn@
+identifier r.f,i;
+constant C;
+expression E;
+@@
+
+- int
++ void
+       f(...) {
+  <...
+(
+-  return \(C\|i\);
++  return;
+|
+-  return E;
++  E;
++  return;
+)
+  ...>
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-diff -u -p a/arch/parisc/kernel/pdc_cons.c b/arch/parisc/kernel/pdc_cons.c
---- a/arch/parisc/kernel/pdc_cons.c
-+++ b/arch/parisc/kernel/pdc_cons.c
-@@ -52,7 +52,7 @@
- #include <linux/tty.h>
- #include <asm/pdc.h>		/* for iodc_call() proto and friends */
+ drivers/hwmon/f71805f.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/hwmon/f71805f.c b/drivers/hwmon/f71805f.c
+index 7a14a2d..76842db 100644
+--- a/drivers/hwmon/f71805f.c
++++ b/drivers/hwmon/f71805f.c
+@@ -1408,7 +1408,7 @@ exit:
+ 	return err;
+ }
  
--static spinlock_t pdc_console_lock = SPIN_LOCK_UNLOCKED;
-+static DEFINE_SPINLOCK(pdc_console_lock);
- 
- static void pdc_console_write(struct console *co, const char *s, unsigned count)
+-static int __devexit f71805f_remove(struct platform_device *pdev)
++static void __devexit f71805f_remove(struct platform_device *pdev)
  {
+ 	struct f71805f_data *data = platform_get_drvdata(pdev);
+ 	struct resource *res;
+@@ -1424,8 +1424,6 @@ static int __devexit f71805f_remove(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+ 	release_region(res->start + ADDR_REG_OFFSET, 2);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver f71805f_driver = {
+@@ -1434,7 +1432,7 @@ static struct platform_driver f71805f_driver = {
+ 		.name	= DRVNAME,
+ 	},
+ 	.probe		= f71805f_probe,
+-	.remove		= __devexit_p(f71805f_remove),
++	.remove_new	= __devexit_p(f71805f_remove),
+ };
+ 
+ static int __init f71805f_device_add(unsigned short address,
