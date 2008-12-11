@@ -1,29 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 13 Dec 2008 05:20:12 +0000
-Subject: Re: [PATCH 9/9][v2] mISDN: hfcmulti: use __iomem address space
-Message-Id: <20081212.212012.212498095.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 11 Dec 2008 21:36:00 +0000
+Subject: [PATCH 4/9][v2] mISDN: un-export symbol 'plx_lock'
+Message-Id: <49419a2d.06a1660a.5c0a.ffff908c@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49419a44.09c5660a.39e6.65f7@mx.google.com>
-In-Reply-To: <49419a44.09c5660a.39e6.65f7@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kkeil@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Karsten Keil <kkeil@suse.de>
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 11 Dec 2008 22:36:00 +0100
+'plx_lock' is only used within hfcmulti.c.
 
-> Impact: make use of the __iomem address space modifier, and change u_char *,
-> u_short * and u_int * to void *
-> 
-> Fix more than 30 sparse warnings of this or similar type:
-> 
->   drivers/isdn/hardware/mISDN/hfcmulti.c:261:31: warning: incorrect type in argument 2 (different address spaces)
->   drivers/isdn/hardware/mISDN/hfcmulti.c:261:31:    got unsigned char [usertype] *
->   drivers/isdn/hardware/mISDN/hfcmulti.c:261:31:    expected void volatile [noderef] <asn:2>*addr
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> Acked-by: Karsten Keil <kkeil@suse.de>
+Fix this warning:
 
-Applied.
+  drivers/isdn/hardware/mISDN/hfcmulti.c:176:1: warning: symbol 'plx_lock' shadows an earlier one
+  drivers/isdn/hardware/mISDN/hfcmulti.c:175:19: originally declared here
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Acked-by: Karsten Keil <kkeil@suse.de>
+---
+ drivers/isdn/hardware/mISDN/hfcmulti.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index 599d832..970201d 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -173,7 +173,6 @@ static int interrupt_registered;
+ static struct hfc_multi *syncmaster;
+ static int plxsd_master; /* if we have a master card (yet) */
+ static spinlock_t plx_lock; /* may not acquire other lock inside */
+-EXPORT_SYMBOL(plx_lock);
+ 
+ #define	TYP_E1		1
+ #define	TYP_4S		4
+-- 
+1.5.6.3
+
