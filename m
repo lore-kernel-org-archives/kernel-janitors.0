@@ -1,19 +1,48 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Sat, 20 Dec 2008 16:55:55 +0000
-Subject: Re: [PATCH] HID: avoid sparse warning in HID_COMPAT_LOAD_DRIVER
-Message-Id: <494D239B.10800@gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 11 Dec 2008 21:36:00 +0000
+Subject: [PATCH 8/9][v2] mISDN: timerdev: use __user for mISDN_read's buffer argument
+Message-Id: <49419a3f.0710660a.4800.7087@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4947a48f.08b6660a.34ca.ffffa1e8@mx.google.com>  <20081216155822.GD12431@fluff.org.uk>  <alpine.LNX.1.10.0812161659580.21089@jikos.suse.cz>  <20081216194113.GF12431@fluff.org.uk> <154e089b0812161144x3c9579f5g8731b616fde6484c@mail.gmail.com> <494B5BC4.100@gmail.com> <alpine.LNX.1.10.0812191037110.26265@jikos.suse.cz>
-In-Reply-To: <alpine.LNX.1.10.0812191037110.26265@jikos.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Hannes Eder <hannes@hanneseder.net>, Ben Dooks <ben-linux@fluff.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jon Masters <jcm@jonmasters.org>
+To: netdev@vger.kernel.org
+Cc: Karsten Keil <kkeil@suse.de>
 
-Jiri Kosina wrote:
-> BTW while we are at it -- what is the status with module-init-tools? Has 
-> the support been merged already?
+Fix this warning:
 
-As far as I can see, not yet. Jon, what's the status of hid bus support in
-m-i-t, please?
+  drivers/isdn/mISDN/timerdev.c:264:11: warning: incorrect type in initializer (incompatible argument 2 (different address spaces))
+  drivers/isdn/mISDN/timerdev.c:264:11:    expected int ( *read )( ... )
+  drivers/isdn/mISDN/timerdev.c:264:11:    got int ( static [toplevel] *<noident> )( ... )
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Acked-by: Karsten Keil <kkeil@suse.de>
+---
+ drivers/isdn/mISDN/timerdev.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/isdn/mISDN/timerdev.c b/drivers/isdn/mISDN/timerdev.c
+index 62b5e49..f2b3218 100644
+--- a/drivers/isdn/mISDN/timerdev.c
++++ b/drivers/isdn/mISDN/timerdev.c
+@@ -86,7 +86,7 @@ mISDN_close(struct inode *ino, struct file *filep)
+ }
+ 
+ static ssize_t
+-mISDN_read(struct file *filep, char *buf, size_t count, loff_t *off)
++mISDN_read(struct file *filep, char __user *buf, size_t count, loff_t *off)
+ {
+ 	struct mISDNtimerdev	*dev = filep->private_data;
+ 	struct mISDNtimer	*timer;
+@@ -116,7 +116,7 @@ mISDN_read(struct file *filep, char *buf, size_t count, loff_t *off)
+ 		timer = (struct mISDNtimer *)dev->expired.next;
+ 		list_del(&timer->list);
+ 		spin_unlock_irqrestore(&dev->lock, flags);
+-		if (put_user(timer->id, (int *)buf))
++		if (put_user(timer->id, (int __user *)buf))
+ 			ret = -EFAULT;
+ 		else
+ 			ret = sizeof(int);
+-- 
+1.5.6.3
+
