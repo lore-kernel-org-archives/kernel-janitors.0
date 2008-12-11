@@ -1,72 +1,225 @@
-From: James Smart <James.Smart@Emulex.Com>
-Date: Tue, 16 Dec 2008 15:32:24 +0000
-Subject: Re: [PATCH 9/11] drivers/scsi: Move a dereference below a NULL test
-Message-Id: <4947CA08.4000606@emulex.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 11 Dec 2008 21:36:00 +0000
+Subject: [PATCH 1/9][v2] mISDN: use NULL pointer instead of plain integer
+Message-Id: <49419a20.07a0660a.4c25.ffff8ce9@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812161614500.20444@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812161614500.20444@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: netdev@vger.kernel.org
+Cc: Karsten Keil <kkeil@suse.de>
 
-ACK
+Fix more than 100 (all remaining in mISDN) sparse warnings:
 
--- james s
+  drivers/isdn/hardware/mISDN/hfcmulti.c:***:**: warning: Using plain integer as NULL pointer
+  drivers/isdn/mISDN/dsp_tones.c:***:**: warning: Using plain integer as NULL pointer
+  drivers/isdn/mISDN/dsp_pipeline.c:***:**: warning: Using plain integer as NULL pointer
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> In each case, if the NULL test is necessary, then the dereference should be
-> moved below the NULL test.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> type T;
-> expression E;
-> identifier i,fld;
-> statement S;
-> @@
-> 
-> - T i = E->fld;
-> + T i;
->   ... when != E
->       when != i
->   if (E = NULL) S
-> + i = E->fld;
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/scsi/lpfc/lpfc_init.c       |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-> index 909be33..9a01cf0 100644
-> --- a/drivers/scsi/lpfc/lpfc_init.c
-> +++ b/drivers/scsi/lpfc/lpfc_init.c
-> @@ -1736,12 +1736,13 @@ lpfc_block_mgmt_io(struct lpfc_hba * phba)
->  int
->  lpfc_online(struct lpfc_hba *phba)
->  {
-> -       struct lpfc_vport *vport = phba->pport;
-> +       struct lpfc_vport *vport;
->         struct lpfc_vport **vports;
->         int i;
-> 
->         if (!phba)
->                 return 0;
-> +       vport = phba->pport;
-> 
->         if (!(vport->fc_flag & FC_OFFLINE_MODE))
->                 return 0;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Acked-by: Karsten Keil <kkeil@suse.de>
+---
+ drivers/isdn/hardware/mISDN/hfcmulti.c |    2 +-
+ drivers/isdn/mISDN/dsp_pipeline.c      |    2 +-
+ drivers/isdn/mISDN/dsp_tones.c         |   90 ++++++++++++++++----------------
+ 3 files changed, 47 insertions(+), 47 deletions(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index 1eac03f..46684e1 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -887,7 +887,7 @@ vpm_echocan_off(struct hfc_multi *hc, int ch)
+ static inline void
+ hfcmulti_resync(struct hfc_multi *locked, struct hfc_multi *newmaster, int rm)
+ {
+-	struct hfc_multi *hc, *next, *pcmmaster = 0;
++	struct hfc_multi *hc, *next, *pcmmaster = NULL;
+ 	u_int *plx_acc_32, pv;
+ 	u_long flags;
+ 
+diff --git a/drivers/isdn/mISDN/dsp_pipeline.c b/drivers/isdn/mISDN/dsp_pipeline.c
+index fdc800b..83639be 100644
+--- a/drivers/isdn/mISDN/dsp_pipeline.c
++++ b/drivers/isdn/mISDN/dsp_pipeline.c
+@@ -249,7 +249,7 @@ int dsp_pipeline_build(struct dsp_pipeline *pipeline, const char *cfg)
+ 		name = strsep(&tok, "(");
+ 		args = strsep(&tok, ")");
+ 		if (args && !*args)
+-			args = 0;
++			args = NULL;
+ 
+ 		list_for_each_entry_safe(entry, n, &dsp_elements, list)
+ 			if (!strcmp(entry->elem->name, name)) {
+diff --git a/drivers/isdn/mISDN/dsp_tones.c b/drivers/isdn/mISDN/dsp_tones.c
+index 23dd0dd..de4d0c9 100644
+--- a/drivers/isdn/mISDN/dsp_tones.c
++++ b/drivers/isdn/mISDN/dsp_tones.c
+@@ -238,113 +238,113 @@ struct pattern {
+ 	u32 seq[10];
+ } pattern[] = {
+ 	{TONE_GERMAN_DIALTONE,
+-	{DATA_GA, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GA, 0, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GA, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GA, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{1900, 0, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_OLDDIALTONE,
+-	{DATA_GO, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GO, 0, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GO, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GO, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{1998, 0, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_AMERICAN_DIALTONE,
+-	{DATA_DT, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_DT, 0, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_DT, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_DT, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{8000, 0, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_DIALPBX,
+-	{DATA_GA, DATA_S, DATA_GA, DATA_S, DATA_GA, DATA_S, 0, 0, 0, 0},
+-	{SIZE_GA, SIZE_S, SIZE_GA, SIZE_S, SIZE_GA, SIZE_S, 0, 0, 0, 0},
++	{DATA_GA, DATA_S, DATA_GA, DATA_S, DATA_GA, DATA_S, NULL, NULL, NULL, NULL},
++	{SIZE_GA, SIZE_S, SIZE_GA, SIZE_S, SIZE_GA, SIZE_S, NULL, NULL, NULL, NULL},
+ 	{2000, 2000, 2000, 2000, 2000, 12000, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_OLDDIALPBX,
+-	{DATA_GO, DATA_S, DATA_GO, DATA_S, DATA_GO, DATA_S, 0, 0, 0, 0},
+-	{SIZE_GO, SIZE_S, SIZE_GO, SIZE_S, SIZE_GO, SIZE_S, 0, 0, 0, 0},
++	{DATA_GO, DATA_S, DATA_GO, DATA_S, DATA_GO, DATA_S, NULL, NULL, NULL, NULL},
++	{SIZE_GO, SIZE_S, SIZE_GO, SIZE_S, SIZE_GO, SIZE_S, NULL, NULL, NULL, NULL},
+ 	{2000, 2000, 2000, 2000, 2000, 12000, 0, 0, 0, 0} },
+ 
+ 	{TONE_AMERICAN_DIALPBX,
+-	{DATA_DT, DATA_S, DATA_DT, DATA_S, DATA_DT, DATA_S, 0, 0, 0, 0},
+-	{SIZE_DT, SIZE_S, SIZE_DT, SIZE_S, SIZE_DT, SIZE_S, 0, 0, 0, 0},
++	{DATA_DT, DATA_S, DATA_DT, DATA_S, DATA_DT, DATA_S, NULL, NULL, NULL, NULL},
++	{SIZE_DT, SIZE_S, SIZE_DT, SIZE_S, SIZE_DT, SIZE_S, NULL, NULL, NULL, NULL},
+ 	{2000, 2000, 2000, 2000, 2000, 12000, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_RINGING,
+-	{DATA_GA, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GA, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GA, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GA, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{8000, 32000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_OLDRINGING,
+-	{DATA_GO, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GO, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GO, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GO, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{8000, 40000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_AMERICAN_RINGING,
+-	{DATA_RI, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_RI, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_RI, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_RI, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{8000, 32000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_RINGPBX,
+-	{DATA_GA, DATA_S, DATA_GA, DATA_S, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GA, SIZE_S, SIZE_GA, SIZE_S, 0, 0, 0, 0, 0, 0},
++	{DATA_GA, DATA_S, DATA_GA, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GA, SIZE_S, SIZE_GA, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{4000, 4000, 4000, 28000, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_OLDRINGPBX,
+-	{DATA_GO, DATA_S, DATA_GO, DATA_S, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GO, SIZE_S, SIZE_GO, SIZE_S, 0, 0, 0, 0, 0, 0},
++	{DATA_GO, DATA_S, DATA_GO, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GO, SIZE_S, SIZE_GO, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{4000, 4000, 4000, 28000, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_AMERICAN_RINGPBX,
+-	{DATA_RI, DATA_S, DATA_RI, DATA_S, 0, 0, 0, 0, 0, 0},
+-	{SIZE_RI, SIZE_S, SIZE_RI, SIZE_S, 0, 0, 0, 0, 0, 0},
++	{DATA_RI, DATA_S, DATA_RI, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_RI, SIZE_S, SIZE_RI, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{4000, 4000, 4000, 28000, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_BUSY,
+-	{DATA_GA, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GA, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GA, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GA, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{4000, 4000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_OLDBUSY,
+-	{DATA_GO, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GO, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GO, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GO, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{1000, 5000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_AMERICAN_BUSY,
+-	{DATA_BU, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_BU, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_BU, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_BU, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{4000, 4000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_HANGUP,
+-	{DATA_GA, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GA, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GA, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GA, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{4000, 4000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_OLDHANGUP,
+-	{DATA_GO, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GO, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GO, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GO, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{1000, 5000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_AMERICAN_HANGUP,
+-	{DATA_DT, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_DT, 0, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_DT, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_DT, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{8000, 0, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_SPECIAL_INFO,
+-	{DATA_S1, DATA_S2, DATA_S3, DATA_S, 0, 0, 0, 0, 0, 0},
+-	{SIZE_S1, SIZE_S2, SIZE_S3, SIZE_S, 0, 0, 0, 0, 0, 0},
++	{DATA_S1, DATA_S2, DATA_S3, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_S1, SIZE_S2, SIZE_S3, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{2666, 2666, 2666, 8002, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_GASSENBESETZT,
+-	{DATA_GA, DATA_S, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GA, SIZE_S, 0, 0, 0, 0, 0, 0, 0, 0},
++	{DATA_GA, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GA, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{2000, 2000, 0, 0, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{TONE_GERMAN_AUFSCHALTTON,
+-	{DATA_GO, DATA_S, DATA_GO, DATA_S, 0, 0, 0, 0, 0, 0},
+-	{SIZE_GO, SIZE_S, SIZE_GO, SIZE_S, 0, 0, 0, 0, 0, 0},
++	{DATA_GO, DATA_S, DATA_GO, DATA_S, NULL, NULL, NULL, NULL, NULL, NULL},
++	{SIZE_GO, SIZE_S, SIZE_GO, SIZE_S, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{1000, 5000, 1000, 17000, 0, 0, 0, 0, 0, 0} },
+ 
+ 	{0,
+-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
++	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
++	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+ 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0} },
+ };
+ 
+@@ -467,7 +467,7 @@ dsp_tone_timeout(void *arg)
+ 
+ 	/* set next tone */
+ 	if (pat->data[index] = DATA_S)
+-		dsp_tone_hw_message(dsp, 0, 0);
++		dsp_tone_hw_message(dsp, NULL, 0);
+ 	else
+ 		dsp_tone_hw_message(dsp, pat->data[index], *(pat->siz[index]));
+ 	/* set timer */
+-- 
+1.5.6.3
+
