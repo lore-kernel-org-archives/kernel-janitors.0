@@ -1,51 +1,60 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Fri, 19 Dec 2008 22:52:11 +0000
-Subject: Re: [PATCH 0/6] drm/i915: fix sparse warnings
-Message-Id: <1229727131.6544.7.camel@gaiman.anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-Yz4GIFRXm9oif3k2hX26"
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 11 Dec 2008 21:36:00 +0000
+Subject: [PATCH 7/9][v2] mISDN: comment out unused symbols
+Message-Id: <49419a3b.0aec660a.2b49.7900@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <494ad5ce.06e2660a.73b0.ffffd586@mx.google.com>
-In-Reply-To: <494ad5ce.06e2660a.73b0.ffffd586@mx.google.com>
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: Karsten Keil <kkeil@suse.de>
 
+Fix this sparse warnings:
 
---=-Yz4GIFRXm9oif3k2hX26
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+  drivers/isdn/hardware/mISDN/hfcmulti.c:794: warning: 'vpm_check' defined but not used
+  drivers/isdn/mISDN/dsp_cmx.c:1546: warning: 'dsp_start_jiffies' defined but not used
 
-On Thu, 2008-12-18 at 23:27 +0100, Hannes Eder wrote:
-> This series of patches fixes a couple of sparse warnings in drm/i915.
->=20
-> Hannes Eder (6):
->   drm/i915: fix sparse warnings: declare one-bit bitfield as unsigned
->   drm/i915: fix sparse warnings: make symbols static
->   drm/i915: fix sparse warnings: move 'extern' decls to header file
->   drm/i915: fix sparse warnings: returning void-valued expression
->   drm/i915: comment out unused function 'i915_driver_firstopen'
->   drm/i915: add prototype for 'intelfb_panic' to header file
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Acked-by: Karsten Keil <kkeil@suse.de>
+---
+ drivers/isdn/hardware/mISDN/hfcmulti.c |    2 ++
+ drivers/isdn/mISDN/dsp_cmx.c           |    2 ++
+ 2 files changed, 4 insertions(+), 0 deletions(-)
 
-Committed this patch series, except for replacing #5 with just deleting
-the function, and using the updated #6 patch.  Thanks!
-
---=20
-Eric Anholt
-eric@anholt.net                         eric.anholt@intel.com
-
-
-
---=-Yz4GIFRXm9oif3k2hX26
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEABECAAYFAklMJZsACgkQHUdvYGzw6vd+XgCcD2Gpf/NEWNM3KZL7B4ZNwkY2
-pLEAoIBK+5UtVrmgmQ0M9XOxOh2UA6CH
-=MNBF
------END PGP SIGNATURE-----
-
---=-Yz4GIFRXm9oif3k2hX26--
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index 970201d..0668072 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -788,6 +788,7 @@ vpm_init(struct hfc_multi *wc)
+ 	}
+ }
+ 
++#ifdef UNUSED
+ static void
+ vpm_check(struct hfc_multi *hctmp)
+ {
+@@ -798,6 +799,7 @@ vpm_check(struct hfc_multi *hctmp)
+ 	if ((gpi2 & 0x3) != 0x3)
+ 		printk(KERN_DEBUG "Got interrupt 0x%x from VPM!\n", gpi2);
+ }
++#endif /* UNUSED */
+ 
+ 
+ /*
+diff --git a/drivers/isdn/mISDN/dsp_cmx.c b/drivers/isdn/mISDN/dsp_cmx.c
+index e868c47..c884511 100644
+--- a/drivers/isdn/mISDN/dsp_cmx.c
++++ b/drivers/isdn/mISDN/dsp_cmx.c
+@@ -1543,7 +1543,9 @@ send_packet:
+ static u32	samplecount;
+ struct timer_list dsp_spl_tl;
+ u32	dsp_spl_jiffies; /* calculate the next time to fire */
++#ifdef UNUSED
+ static u32	dsp_start_jiffies; /* jiffies at the time, the calculation begins */
++#endif /* UNUSED */
+ static struct timeval dsp_start_tv; /* time at start of calculation */
+ 
+ void
+-- 
+1.5.6.3
 
