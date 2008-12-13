@@ -1,108 +1,49 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Dec 2008 15:40:22 +0000
-Subject: [PATCH 10/13] drivers/scsi: Remove redundant test
-Message-Id: <Pine.LNX.4.64.0812211640020.9555@pc-004.diku.dk>
+Date: Sat, 13 Dec 2008 15:37:59 +0000
+Subject: [PATCH] arch/arm/common/sa1111.c: Correct error handling code
+Message-Id: <Pine.LNX.4.64.0812131637330.20442@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: rmk@arm.linux.org.uk, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-In drivers/scsi/aacraid/commsup.c, dev is checked not to be NULL near the
-beginning of the function, making the test redundant.
+If it is reasonable to apply PTR_ERR to the result of calling clk_get, then
+that result should first be tested with IS_ERR, not with !.
 
-In drivers/scsi/sym53c8xx_2/sym_glue.c, shost is similarly checked not to
-be NULL near the beginning of the function.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r exists@
-local idexpression x;
-expression E;
-position p1,p2;
+@@
+expression E,E1;
 @@
 
-if (x@p1 = NULL || ...) { ... when forall
-   return ...; }
-... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
-(
-x@p2 = NULL
-|
-x@p2 != NULL
-)
-
-// another path to the test that is not through p1?
-@s exists@
-local idexpression r.x;
-position r.p1,r.p2;
-@@
-
-... when != x@p1
-(
-x@p2 = NULL
-|
-x@p2 != NULL
-)
-
-@fix depends on !s@
-position r.p1,r.p2;
-expression x,E;
-statement S1,S2;
-@@
-
-(
-- if ((x@p2 != NULL) || ...)
-  S1
-|
-- if ((x@p2 = NULL) && ...) S1
-|
-- BUG_ON(x@p2 = NULL);
-)
+if (
+-   E = NULL
++   IS_ERR(E)
+   ) { <+... when != E = E1
+        PTR_ERR(E)
+       ...+> }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/aacraid/commsup.c      |    4 ++--
- drivers/scsi/sym53c8xx_2/sym_glue.c |    2 --
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/common/sa1111.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
-index 289304a..2bf0a4f 100644
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -817,7 +817,7 @@ static void aac_handle_aif(struct aac_dev * dev, struct fib * fibptr)
- 			 * see an AifEnConfigChange AIF come through.
- 			 */
+diff -u -p a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+--- a/arch/arm/common/sa1111.c
++++ b/arch/arm/common/sa1111.c
+@@ -630,7 +630,7 @@ __sa1111_probe(struct device *me, struct
+ 		return -ENOMEM;
  
--			if ((dev != NULL) && (dev->scsi_host_ptr != NULL)) {
-+			if (dev->scsi_host_ptr != NULL) {
- 				device = scsi_device_lookup(dev->scsi_host_ptr,
- 					CONTAINER_TO_CHANNEL(container),
- 					CONTAINER_TO_ID(container),
-@@ -1068,7 +1068,7 @@ retry_next:
- 	 * with changes to existing device IDs.
- 	 */
- 
--	if (!dev || !dev->scsi_host_ptr)
-+	if (!dev->scsi_host_ptr)
- 		return;
- 	/*
- 	 * force reload of disk info via aac_probe_container
-diff --git a/drivers/scsi/sym53c8xx_2/sym_glue.c b/drivers/scsi/sym53c8xx_2/sym_glue.c
-index f4e6cde..b8fe82c 100644
---- a/drivers/scsi/sym53c8xx_2/sym_glue.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_glue.c
-@@ -1416,8 +1416,6 @@ static struct Scsi_Host * __devinit sym_attach(struct scsi_host_template *tpnt,
- 		   "TERMINATION, DEVICE POWER etc.!\n", sym_name(np));
- 	spin_unlock_irqrestore(shost->host_lock, flags);
-  attach_failed:
--	if (!shost)
--		return NULL;
- 	printf_info("%s: giving up ...\n", sym_name(np));
- 	if (np)
- 		sym_free_resources(np, pdev);
+ 	sachip->clk = clk_get(me, "SA1111_CLK");
+-	if (!sachip->clk) {
++	if (IS_ERR(sachip->clk)) {
+ 		ret = PTR_ERR(sachip->clk);
+ 		goto err_free;
+ 	}
