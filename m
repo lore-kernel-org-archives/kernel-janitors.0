@@ -1,22 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 08:04:33 +0000
-Subject: Re: [PATCH 14/27] drivers/net/netxen: fix sparse warnings: use
-Message-Id: <20081226.000433.183483351.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Tue, 16 Dec 2008 12:31:31 +0000
+Subject: [PATCH] HID: avoid sparse warning in HID_COMPAT_LOAD_DRIVER
+Message-Id: <4947a48f.08b6660a.34ca.ffffa1e8@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	<20081222191659.11807.9347.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20081222191659.11807.9347.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Mon, 22 Dec 2008 20:16:59 +0100
+Impact: include a prototype for the exported function in the macro
 
-> Fix this sparse warnings:
- ...
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Fix about 20 of this warnings:
 
-Applied.
+  drivers/hid/hid-a4tech.c:162:1: warning: symbol 'hid_compat_a4tech' was not declared. Should it be static?
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ include/linux/hid.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index 215035b..81aa84d 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -793,6 +793,8 @@ dbg_hid(const char *fmt, ...)
+ 
+ #ifdef CONFIG_HID_COMPAT
+ #define HID_COMPAT_LOAD_DRIVER(name)	\
++/* prototype to avoid sparse warning */	\
++extern void hid_compat_##name(void);	\
+ void hid_compat_##name(void) { }	\
+ EXPORT_SYMBOL(hid_compat_##name)
+ #else
+-- 
+1.5.6.3
+
