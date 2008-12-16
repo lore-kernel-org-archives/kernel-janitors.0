@@ -1,22 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 08:05:02 +0000
-Subject: Re: [PATCH 15/27] drivers/net/qlge: fix sparse warnings: make
-Message-Id: <20081226.000502.191315935.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 16 Dec 2008 15:14:28 +0000
+Subject: [PATCH 7/11] drivers/net/wireless/ath9k: Move a dereference below
+Message-Id: <Pine.LNX.4.64.0812161613510.20444@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	<20081222191708.11807.35530.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20081222191708.11807.35530.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lrodriguez@atheros.com, jmalinen@atheros.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Mon, 22 Dec 2008 20:17:09 +0100
+From: Julia Lawall <julia@diku.dk>
 
-> Fix this sparse warnings:
- ...
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+In each case, if the NULL test is necessary, then the dereference should be
+moved below the NULL test.
 
-Applied.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
+@@
+
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wireless/ath9k/hw.c     |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/ath9k/hw.c b/drivers/net/wireless/ath9k/hw.c
+index 98bc25c..7d1dac6 100644
+--- a/drivers/net/wireless/ath9k/hw.c
++++ b/drivers/net/wireless/ath9k/hw.c
+@@ -5581,11 +5581,12 @@ static inline bool ath9k_hw_run_init_cals(struct ath_hal *ah,
+ 	struct ath9k_channel ichan;
+ 	bool isCalDone;
+ 	struct hal_cal_list *currCal = ahp->ah_cal_list_curr;
+-	const struct hal_percal_data *calData = currCal->calData;
++	const struct hal_percal_data *calData;
+ 	int i;
+ 
+ 	if (currCal = NULL)
+ 		return false;
++	calData = currCal->calData;
+ 
+ 	ichan.CalValid = 0;
+ 
