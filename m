@@ -1,41 +1,67 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Date: Tue, 16 Dec 2008 19:41:13 +0000
+From: "Hannes Eder" <hannes@hanneseder.net>
+Date: Tue, 16 Dec 2008 19:44:56 +0000
 Subject: Re: [PATCH] HID: avoid sparse warning in HID_COMPAT_LOAD_DRIVER
-Message-Id: <20081216194113.GF12431@fluff.org.uk>
+Message-Id: <154e089b0812161144x3c9579f5g8731b616fde6484c@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4947a48f.08b6660a.34ca.ffffa1e8@mx.google.com> <20081216155822.GD12431@fluff.org.uk> <alpine.LNX.1.10.0812161659580.21089@jikos.suse.cz>
-In-Reply-To: <alpine.LNX.1.10.0812161659580.21089@jikos.suse.cz>
+References: <4947a48f.08b6660a.34ca.ffffa1e8@mx.google.com>
+	 <20081216155822.GD12431@fluff.org.uk>
+	 <alpine.LNX.1.10.0812161659580.21089@jikos.suse.cz>
+	 <20081216194113.GF12431@fluff.org.uk>
+In-Reply-To: <20081216194113.GF12431@fluff.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Ben Dooks <ben-linux@fluff.org>, Hannes Eder <hannes@hanneseder.net>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Dec 16, 2008 at 05:01:38PM +0100, Jiri Kosina wrote:
+On Tue, Dec 16, 2008 at 5:01 PM, Jiri Kosina <jkosina@suse.cz> wrote:
 > On Tue, 16 Dec 2008, Ben Dooks wrote:
-> 
-> > >  #ifdef CONFIG_HID_COMPAT
-> > >  #define HID_COMPAT_LOAD_DRIVER(name)	\
-> > > +/* prototype to avoid sparse warning */	\
-> > > +extern void hid_compat_##name(void);	\
-> > >  void hid_compat_##name(void) { }	\
-> > surely this could simply be changed to 'static void 
-> > hid_compat_##name(void)' if it is only being defined to be an empty 
-> 
+>
+>> >  #ifdef CONFIG_HID_COMPAT
+>> >  #define HID_COMPAT_LOAD_DRIVER(name)       \
+>> > +/* prototype to avoid sparse warning */    \
+>> > +extern void hid_compat_##name(void);       \
+>> >  void hid_compat_##name(void) { }   \
+>> surely this could simply be changed to 'static void
+>> hid_compat_##name(void)' if it is only being defined to be an empty
+>
 > This will cause gcc emit warnings about unused symbols.
 
-sorry, 'static inline void' then.
- 
-> -- 
-> Jiri Kosina
-> SUSE Labs
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+The real problem is that the symbol (in that case the function) is not
+exported if defined static.
 
--- 
-Ben (ben@fluff.org, http://www.fluff.org/)
+e.g.:
 
-  'a smiley only costs 4 bytes'
+$ cat >foobar.c <<EOF
+> static void foo(void) {}
+> extern void foo(void);
+>
+> void bar(void) {}
+> EOF
+$ gcc -c foobar.c
+$ nm foobar.o
+00000005 T bar
+00000000 t foo
+
+from the nm manpage:
+The  symbol  type. ... If lowercase, the symbol is local; if
+uppercase, the symbol is global (external)
+
+i.e. foo is local
+
+see http://lkml.org/lkml/2008/9/4/495 for what ANSI C Std has to say
+about that and about the proposed change.
+
+But, don't ask my why the void functions with empty function bodies
+are exported.
+
+On Tue, Dec 16, 2008 at 8:41 PM, Ben Dooks <ben-linux@fluff.org> wrote:
+> sorry, 'static inline void' then.
+
+in that case the symbol would not even be local as it is not used with
+the translation unit.
+
+$ nm
+00000005 T bar
+
+-Hannes
