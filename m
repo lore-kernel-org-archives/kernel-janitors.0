@@ -1,51 +1,68 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Sat, 27 Dec 2008 19:20:12 +0000
-Subject: Re: [PATCH 03/27] drivers/net: fix sparse warning: returning void-valued expression
-Message-Id: <20081227192012.GB10592@uranus.ravnborg.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 16 Dec 2008 15:14:49 +0000
+Subject: [PATCH 8/11] drivers/net/wireless/libertas: Move a dereference below
+Message-Id: <Pine.LNX.4.64.0812161614280.20444@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net> <20081222191517.11807.20718.stgit@vmbox.hanneseder.net> <20081225.161740.10052019.davem@davemloft.net> <20081226115921.bb094c58.rdunlap@xenotime.net> <49567dd3.0b38560a.3c6c.0511@mx.google.com>
-In-Reply-To: <49567dd3.0b38560a.3c6c.0511@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dcbw@redhat.com, libertas-dev@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Dec 27, 2008 at 08:11:11PM +0100, Hannes Eder wrote:
-> On 12/26/08, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> > On Thu, 25 Dec 2008 16:17:40 -0800 (PST)
-> >  
-> > David Miller <davem@davemloft.net> wrote:
-> >  
-> >  
-> > > From: Hannes Eder <hannes@hanneseder.net>
-> >  > Date: Mon, 22 Dec 2008 20:15:17 +0100
-> >  >
-> >  > > Fix this sparse warning:
-> >  > >
-> >  > >   drivers/net/niu.c:8850:2: warning: returning void-valued expression
-> >  > >
-> >  > > Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> >  >
-> >  > Can we just fix sparse not to generate this warning?  It's
-> >  > marginal, at best.  C++ even explicitly defines this as valid
-> >  > and last time I brought this up Linus even agreed.
-> >  
-> >  
-> > Ack, I discussed it with him also and he thought that
-> >  they were just fine as they were...
-> >  
-> > 
-> >  > The types match, the function returns void and it is returning a void,
-> >  > what is the problem?
-> 
-> In fact there is no need to _fix_ sparse, as there is a command line option
-> -Wreturn-void / -Wno-return-void, so we could change the Makefile, see diff
-> below.
+From: Julia Lawall <julia@diku.dk>
 
-It is default off but out use of "-Wall" turn it on.
-So your patch is the right approach.
+In each case, if the NULL test is necessary, then the dereference should be
+moved below the NULL test.  I have also taken advantage of the availability
+of the value of priv->dev in the subsequent calls to netif_stop_queue and
+netif_carrier_off.
 
-Can you please re-send it with a proper changelog and signed-off.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-	Sam
+// <smpl>
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
+@@
+
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wireless/libertas/main.c           |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/libertas/main.c b/drivers/net/wireless/libertas/main.c
+index 73dc8c7..91c89da 100644
+--- a/drivers/net/wireless/libertas/main.c
++++ b/drivers/net/wireless/libertas/main.c
+@@ -1311,7 +1311,7 @@ EXPORT_SYMBOL_GPL(lbs_start_card);
+ 
+ void lbs_stop_card(struct lbs_private *priv)
+ {
+-	struct net_device *dev = priv->dev;
++	struct net_device *dev;
+ 	struct cmd_ctrl_node *cmdnode;
+ 	unsigned long flags;
+ 
+@@ -1319,9 +1319,10 @@ void lbs_stop_card(struct lbs_private *priv)
+ 
+ 	if (!priv)
+ 		goto out;
++	dev = priv->dev;
+ 
+-	netif_stop_queue(priv->dev);
+-	netif_carrier_off(priv->dev);
++	netif_stop_queue(dev);
++	netif_carrier_off(dev);
+ 
+ 	lbs_debugfs_remove_one(priv);
+ 	if (priv->mesh_tlv) {
