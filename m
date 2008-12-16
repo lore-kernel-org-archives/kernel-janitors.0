@@ -1,129 +1,59 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 20 Dec 2008 05:59:55 +0000
-Subject: Re: [PATCH 1/3] drivers/gpu/drm: Move a dereference below a NULL
-Message-Id: <Pine.LNX.4.64.0812200659430.23348@ask.diku.dk>
+Date: Tue, 16 Dec 2008 15:15:08 +0000
+Subject: [PATCH 9/11] drivers/scsi: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0812161614500.20444@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812191809490.11217@ask.diku.dk> 
- <21d7e9970812191435g645c03ebqdcd53930d52f4830@mail.gmail.com>
- <1229728328.6544.10.camel@gaiman.anholt.net>
-In-Reply-To: <1229728328.6544.10.camel@gaiman.anholt.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Anholt <eric@anholt.net>
-Cc: Dave Airlie <airlied@gmail.com>, airlied@linux.ie, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-OK
+From: Julia Lawall <julia@diku.dk>
 
-julia
+In each case, if the NULL test is necessary, then the dereference should be
+moved below the NULL test.
 
-On Fri, 19 Dec 2008, Eric Anholt wrote:
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-> On Sat, 2008-12-20 at 08:35 +1000, Dave Airlie wrote:
-> > On Sat, Dec 20, 2008 at 3:10 AM, Julia Lawall <julia@diku.dk> wrote:
-> > > From: Julia Lawall <julia@diku.dk>
-> > >
-> > > If the NULL test is necessary, then the dereference should be moved below
-> > > the NULL test.
-> > >
-> > > The semantic patch that makes this change is as follows:
-> > > (http://www.emn.fr/x-info/coccinelle/).  The result has been modified to
-> > > move the initialization of driver down closer to where it is used.
-> > >
-> > > // <smpl>
-> > > @@
-> > > type T;
-> > > expression E;
-> > > identifier i,fld;
-> > > statement S;
-> > > @@
-> > >
-> > > - T i = E->fld;
-> > > + T i;
-> > >  ... when != E
-> > >      when != i
-> > >  if (E = NULL) S
-> > > + i = E->fld;
-> > > // </smpl>
-> > >
-> > > Signed-off-by: Julia Lawall <julia@diku.dk>
-> > >
-> > > ---
-> > >  drivers/gpu/drm/drm_drv.c |    7 ++++---
-> > >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> > > index 0b9f316..4bdfc98 100644
-> > > --- a/drivers/gpu/drm/drm_drv.c
-> > > +++ b/drivers/gpu/drm/drm_drv.c
-> > > @@ -297,7 +297,7 @@ EXPORT_SYMBOL(drm_init);
-> > >  */
-> > >  static void drm_cleanup(struct drm_device * dev)
-> > >  {
-> > > -       struct drm_driver *driver = dev->driver;
-> > > +       struct drm_driver *driver;
-> > >
-> > >        DRM_DEBUG("\n");
-> > >
-> > > @@ -324,8 +324,9 @@ static void drm_cleanup(struct drm_device * dev)
-> > >                dev->agp = NULL;
-> > >        }
-> > >
-> > > -       if (dev->driver->unload)
-> > > -               dev->driver->unload(dev);
-> > > +       driver = dev->driver;
-> > > +       if (driver->unload)
-> > > +               driver->unload(dev);
-> > 
-> > Huh?
-> > 
-> > The original test is to check it dev->driver->unload exists, not it
-> > dev->driver exists.
-> > 
-> > I think your test  parameters are wrong.
-> 
-> No, it was valid, but I think the better patch is:
-> 
-> From 1e0a24cfe75a328db5a50dbcdaaf0eb461638b6b Mon Sep 17 00:00:00 2001
-> From: Eric Anholt <eric@anholt.net>
-> Date: Fri, 19 Dec 2008 15:07:11 -0800
-> Subject: [PATCH] drm: Avoid use-before-null-test on dev in drm_cleanup().
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> 
-> ---
->  drivers/gpu/drm/drm_drv.c |    4 +---
->  1 files changed, 1 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> index 373e3de..febb517 100644
-> --- a/drivers/gpu/drm/drm_drv.c
-> +++ b/drivers/gpu/drm/drm_drv.c
-> @@ -294,8 +294,6 @@ EXPORT_SYMBOL(drm_init);
->   */
->  static void drm_cleanup(struct drm_device * dev)
->  {
-> -	struct drm_driver *driver = dev->driver;
-> -
->  	DRM_DEBUG("\n");
->  
->  	if (!dev) {
-> @@ -330,7 +328,7 @@ static void drm_cleanup(struct drm_device * dev)
->  	if (drm_core_check_feature(dev, DRIVER_MODESET))
->  		drm_put_minor(&dev->control);
->  
-> -	if (driver->driver_features & DRIVER_GEM)
-> +	if (dev->driver->driver_features & DRIVER_GEM)
->  		drm_gem_destroy(dev);
->  
->  	drm_put_minor(&dev->primary);
-> -- 
-> 1.5.6.5
-> 
-> 
-> -- 
-> Eric Anholt
-> eric@anholt.net                         eric.anholt@intel.com
-> 
-> 
-> 
+// <smpl>
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
+@@
+
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/lpfc/lpfc_init.c       |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 909be33..9a01cf0 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -1736,12 +1736,13 @@ lpfc_block_mgmt_io(struct lpfc_hba * phba)
+ int
+ lpfc_online(struct lpfc_hba *phba)
+ {
+-	struct lpfc_vport *vport = phba->pport;
++	struct lpfc_vport *vport;
+ 	struct lpfc_vport **vports;
+ 	int i;
+ 
+ 	if (!phba)
+ 		return 0;
++	vport = phba->pport;
+ 
+ 	if (!(vport->fc_flag & FC_OFFLINE_MODE))
+ 		return 0;
