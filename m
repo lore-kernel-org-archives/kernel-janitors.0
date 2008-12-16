@@ -1,116 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:29:38 +0000
-Subject: [PATCH 7/28] drivers/firmware/dcdbas.c: Drop return value from
-Message-Id: <Pine.LNX.4.64.0812101729160.21998@ask.diku.dk>
+From: "Adam Spotton" <aspotton@gmail.com>
+Date: Tue, 16 Dec 2008 01:41:55 +0000
+Subject: [PATCH 1/1] net: e100: add KERN_ERR constant to printk function call
+Message-Id: <d2ea0b810812151741l466e1dc1ia1da597913ee0656@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, Douglas_Warzecha@dell.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Add KERN_ERR constant to printk function call.
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
-@@
-
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
-@@
-
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Adam Spotton <aspotton@gmail.com>
 ---
- drivers/firmware/dcdbas.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/dcdbas.c b/drivers/firmware/dcdbas.c
-index 50a071f..097e685 100644
---- a/drivers/firmware/dcdbas.c
-+++ b/drivers/firmware/dcdbas.c
-@@ -567,7 +567,7 @@ static int __devinit dcdbas_probe(struct platform_device *dev)
- 	return 0;
- }
- 
--static int __devexit dcdbas_remove(struct platform_device *dev)
-+static void __devexit dcdbas_remove(struct platform_device *dev)
- {
- 	int i;
- 
-@@ -575,8 +575,6 @@ static int __devexit dcdbas_remove(struct platform_device *dev)
- 	for (i = 0; dcdbas_bin_attrs[i]; i++)
- 		sysfs_remove_bin_file(&dev->dev.kobj, dcdbas_bin_attrs[i]);
- 	sysfs_remove_group(&dev->dev.kobj, &dcdbas_attr_group);
--
--	return 0;
- }
- 
- static struct platform_driver dcdbas_driver = {
-@@ -585,7 +583,7 @@ static struct platform_driver dcdbas_driver = {
- 		.owner	= THIS_MODULE,
- 	},
- 	.probe		= dcdbas_probe,
--	.remove		= __devexit_p(dcdbas_remove),
-+	.remove_new	= __devexit_p(dcdbas_remove),
- };
- 
- /**
+diff --git a/drivers/net/e100.c b/drivers/net/e100.c
+index e8bfcce..26d9c3d 100644
+--- a/drivers/net/e100.c
++++ b/drivers/net/e100.c
+@@ -909,7 +909,7 @@ static u16 mdio_ctrl(struct nic *nic, u32 addr,
+u32 dir, u32 reg, u16 data)
+ 		udelay(20);
+ 	}
+ 	if (unlikely(!i)) {
+-		printk("e100.mdio_ctrl(%s) won't go Ready\n",
++		printk(KERN_ERR "e100.mdio_ctrl(%s) won't go Ready\n",
+ 			nic->netdev->name );
+ 		spin_unlock_irqrestore(&nic->mdio_lock, flags);
+ 		return 0;		/* No way to indicate timeout error */
