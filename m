@@ -1,38 +1,58 @@
 From: Greg KH <gregkh@suse.de>
-Date: Wed, 17 Dec 2008 21:37:45 +0000
+Date: Wed, 17 Dec 2008 21:38:26 +0000
 Subject: Re: [PATCH 1/28] drivers/base/platform.c: Drop return value from
-Message-Id: <20081217213745.GC26923@suse.de>
+Message-Id: <20081217213826.GD26923@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812101725540.21998@ask.diku.dk> <8bd0f97a0812100928l2c75d373n7eba5aa0cc3882fd@mail.gmail.com> <53806.88.114.236.15.1228947522.squirrel@webmail.movial.fi> <8bd0f97a0812101437r4abb9346p8bc8d512ddc02cde@mail.gmail.com> <20081212051759.GA12563@suse.de> <8bd0f97a0812121300p6c509336pde936b7f8c5ca6a@mail.gmail.com>
-In-Reply-To: <8bd0f97a0812121300p6c509336pde936b7f8c5ca6a@mail.gmail.com>
+References: <Pine.LNX.4.64.0812101725540.21998@ask.diku.dk> <8bd0f97a0812100928l2c75d373n7eba5aa0cc3882fd@mail.gmail.com> <53806.88.114.236.15.1228947522.squirrel@webmail.movial.fi> <8bd0f97a0812101437r4abb9346p8bc8d512ddc02cde@mail.gmail.com> <20081212051759.GA12563@suse.de> <49424438.7030205@movial.fi>
+In-Reply-To: <49424438.7030205@movial.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: Vorobiev Dmitri <dmitri.vorobiev@movial.fi>, Julia Lawall <julia@diku.dk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitri Vorobiev <dmitri.vorobiev@movial.fi>
+Cc: Mike Frysinger <vapier.adi@gmail.com>, Julia Lawall <julia@diku.dk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 12, 2008 at 04:00:02PM -0500, Mike Frysinger wrote:
-> On Fri, Dec 12, 2008 at 00:17, Greg KH wrote:
+On Fri, Dec 12, 2008 at 01:00:08PM +0200, Dmitri Vorobiev wrote:
+> Greg KH wrote:
 > > On Wed, Dec 10, 2008 at 05:37:42PM -0500, Mike Frysinger wrote:
 > >> On Wed, Dec 10, 2008 at 17:18, Vorobiev Dmitri wrote:
-> >> >> On Wed, Dec 10, 2008 at 11:26, Julia Lawall wrote:
-> >> >>  you'll get a
-> >> >> warning in C about the assignment, but you wont get a build failure,
-> >> >
-> >> > ...unless you compile with -Werror, which frequently the case.
-> >>
+> >>>> On Wed, Dec 10, 2008 at 11:26, Julia Lawall wrote:
+> >>>>> The return value of the remove function of a driver structure, and thus
+> >>>>> of
+> >>>>> a platform_driver structure, is ultimately ignored, and is thus
+> >>>>> unnecessary.  The goal of this patch is to make it possible to convert
+> >>>>> the
+> >>>>> platform_driver functions stored in the remove field such that they
+> >>>>> return
+> >>>>> void.  This patch introduces a temporary field remove_new with return
+> >>>>> type
+> >>>>> void into the platform_driver structure, and updates the only place that
+> >>>>> the remove function is called to call the function in the remove_new
+> >>>>> field,
+> >>>>> if one is available.  The subsequent patches update some drivers to use
+> >>>>> the
+> >>>>> remove_new field.
+> >>>> why bother with remove -> remove_new convention ?
+> >>> Please see this email for the background:
+> >>>
+> >>> http://lkml.org/lkml/2008/12/10/231
+> >>>
+> >>>>  you'll get a
+> >>>> warning in C about the assignment, but you wont get a build failure,
+> >>> ...unless you compile with -Werror, which frequently the case.
 > >> anyone crazy enough to build with -Werror is crazy enough to send in a fix ;)
-> >
+> > 
 > > Hm, have you noted that some arches have that flag enabled in their
 > > build?
+> > 
+> > And it's not ok to add a couple of hundred build warnings to the system,
+> > sorry.
 > 
-> i dont see anyone building things beyond a select dir or two (none of
-> which contain platform drivers) with -Werror.  where are you seeing
-> this ?
+> Still, what about the whole series? What do you think about int->void
+> migration for the remove() callback?
 
-Sparc builds add this from what I remember, I've broken their build at
-times by adding unnecessary errors and got an inbox full of emails about
-it :)
+In thinking about it some more, I don't really see the point.  We should
+probably just do something about the return value, as that would be
+better, and easier to do.
 
 thanks,
 
