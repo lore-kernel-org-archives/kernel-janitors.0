@@ -1,58 +1,73 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 16 Dec 2008 15:15:31 +0000
-Subject: [PATCH 10/11] drivers/spi: Move a dereference below a NULL test
-Message-Id: <Pine.LNX.4.64.0812161615090.20444@pc-004.diku.dk>
+From: David Brownell <david-b@pacbell.net>
+Date: Wed, 17 Dec 2008 20:22:23 +0000
+Subject: Re: [PATCH 10/11] drivers/spi: Move a dereference below a NULL test
+Message-Id: <200812171222.23785.david-b@pacbell.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0812161615090.20444@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0812161615090.20444-h8frIrHk2441Y/6SN6b7/w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <julia@diku.dk>
+On Tuesday 16 December 2008, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> In each case, if the NULL test is necessary, then the dereference should be
+> moved below the NULL test.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+> 
+> // <smpl>
+> @@
+> type T;
+> expression E;
+> identifier i,fld;
+> statement S;
+> @@
+> 
+> - T i = E->fld;
+> + T i;
+>   ... when != E
+>       when != i
+>   if (E = NULL) S
+> + i = E->fld;
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-In each case, if the NULL test is necessary, then the dereference should be
-moved below the NULL test.
+Acked-by: David Brownell <dbrownell@users.sourceforge.net>
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+... and I'm *still* glad to see tools shaking loose
+goofage like this.  :)
 
-// <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
-@@
 
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
-// </smpl>
+> 
+> ---
+>  drivers/spi/pxa2xx_spi.c            |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/spi/pxa2xx_spi.c b/drivers/spi/pxa2xx_spi.c
+> index cf12f2d..fbad7e4 100644
+> --- a/drivers/spi/pxa2xx_spi.c
+> +++ b/drivers/spi/pxa2xx_spi.c
+> @@ -1561,11 +1561,12 @@ out_error_master_alloc:
+>  static int pxa2xx_spi_remove(struct platform_device *pdev)
+>  {
+>  	struct driver_data *drv_data = platform_get_drvdata(pdev);
+> -	struct ssp_device *ssp = drv_data->ssp;
+> +	struct ssp_device *ssp;
+>  	int status = 0;
+>  
+>  	if (!drv_data)
+>  		return 0;
+> +	ssp = drv_data->ssp;
+>  
+>  	/* Remove the queue */
+>  	status = destroy_queue(drv_data);
+> 
+> 
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
 
----
- drivers/spi/pxa2xx_spi.c            |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/spi/pxa2xx_spi.c b/drivers/spi/pxa2xx_spi.c
-index cf12f2d..fbad7e4 100644
---- a/drivers/spi/pxa2xx_spi.c
-+++ b/drivers/spi/pxa2xx_spi.c
-@@ -1561,11 +1561,12 @@ out_error_master_alloc:
- static int pxa2xx_spi_remove(struct platform_device *pdev)
- {
- 	struct driver_data *drv_data = platform_get_drvdata(pdev);
--	struct ssp_device *ssp = drv_data->ssp;
-+	struct ssp_device *ssp;
- 	int status = 0;
- 
- 	if (!drv_data)
- 		return 0;
-+	ssp = drv_data->ssp;
- 
- 	/* Remove the queue */
- 	status = destroy_queue(drv_data);
