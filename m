@@ -1,27 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 13 Dec 2008 05:15:35 +0000
-Subject: Re: [PATCH 3/9][v2] mISDN: make global symbols static or include
-Message-Id: <20081212.211535.151764794.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 18 Dec 2008 22:27:36 +0000
+Subject: [PATCH 0/6] drm/i915: fix sparse warnings
+Message-Id: <494ad5ce.06e2660a.73b0.ffffd586@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49419a29.05ae660a.58c7.314c@mx.google.com>
-In-Reply-To: <49419a29.05ae660a.58c7.314c@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kkeil@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.sourceforge.net
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 11 Dec 2008 22:36:00 +0100
+This series of patches fixes a couple of sparse warnings in drm/i915.
 
-> The warnings fixed by including an header file for the appropriate
-> prototype are marked with "*", for all others the corresonponding
-> symbol has been made static.  This patch fixes all such issues in
-> mISDN.
-> 
-> Fix this sparse warnings:
- ...
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> Acked-by: Karsten Keil <kkeil@suse.de>
+Hannes Eder (6):
+  drm/i915: fix sparse warnings: declare one-bit bitfield as unsigned
+  drm/i915: fix sparse warnings: make symbols static
+  drm/i915: fix sparse warnings: move 'extern' decls to header file
+  drm/i915: fix sparse warnings: returning void-valued expression
+  drm/i915: comment out unused function 'i915_driver_firstopen'
+  drm/i915: add prototype for 'intelfb_panic' to header file
 
-Applied
+ drivers/gpu/drm/i915/dvo.h           |    6 ++++++
+ drivers/gpu/drm/i915/i915_dma.c      |    8 +++++---
+ drivers/gpu/drm/i915/i915_drv.c      |    2 +-
+ drivers/gpu/drm/i915/i915_drv.h      |    8 ++++----
+ drivers/gpu/drm/i915/i915_opregion.c |    4 ++--
+ drivers/gpu/drm/i915/intel_crt.c     |    2 +-
+ drivers/gpu/drm/i915/intel_display.c |   10 +++++-----
+ drivers/gpu/drm/i915/intel_drv.h     |    2 ++
+ drivers/gpu/drm/i915/intel_dvo.c     |   10 ++--------
+ drivers/gpu/drm/i915/intel_fb.c      |   10 +++++-----
+ drivers/gpu/drm/i915/intel_sdvo.c    |    9 +++++----
+ drivers/gpu/drm/i915/intel_tv.c      |    2 +-
+ 12 files changed, 39 insertions(+), 34 deletions(-)
+
