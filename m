@@ -1,24 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 07:53:03 +0000
-Subject: Re: [PATCH 01/27] drivers/net: fix sparse warning: use ANSI-style
-Message-Id: <20081225.235303.188557355.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 18 Dec 2008 21:32:22 +0000
+Subject: [PATCH 6/6] drm/i915: add prototype for 'intelfb_panic' to header file
+Message-Id: <494ad5e4.0baa660a.04de.7bb4@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	<20081222191458.11807.57800.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20081222191458.11807.57800.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.sourceforge.net
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Mon, 22 Dec 2008 20:14:58 +0100
+Fix this sparse warning:
 
-> Fix this sparse warning:
-> 
->   drivers/net/ne.c:932:24: warning: non-ANSI function declaration of function 'init_module'
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+  drivers/gpu/drm/i915/intel_fb.c:417:5: warning: symbol 'intelfb_panic' was not declared. Should it be static?
 
-Applied.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/gpu/drm/i915/intel_drv.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+index 407edd5..b8ae5ce 100644
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -135,6 +135,8 @@ extern void intel_sdvo_set_hotplug(struct drm_connector *connector, int enable);
+ extern int intelfb_probe(struct drm_device *dev);
+ extern int intelfb_remove(struct drm_device *dev, struct drm_framebuffer *fb);
+ extern int intelfb_resize(struct drm_device *dev, struct drm_crtc *crtc);
++extern int intelfb_panic(struct notifier_block *n, unsigned long ununsed,
++			 void *panic_str);
+ extern void intelfb_restore(void);
+ extern void intel_crtc_fb_gamma_set(struct drm_crtc *crtc, u16 red, u16 green,
+ 				    u16 blue, int regno);
+-- 
+1.5.6.3
+
