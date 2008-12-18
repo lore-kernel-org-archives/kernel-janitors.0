@@ -1,49 +1,42 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Tue, 09 Dec 2008 22:07:02 +0000
-Subject: [PATCH 8/9] mISDN: fix sparse warnings
-Message-Id: <493feac0.09cc660a.02d5.6e27@mx.google.com>
+Date: Thu, 18 Dec 2008 20:25:51 +0000
+Subject: [PATCH 5/6] drm/i915: comment out unused function 'i915_driver_firstopen'
+Message-Id: <494ad5e1.02a1660a.77b3.5036@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <kkeil@suse.de>
-Cc: linux-kernel@vger.kernel.org
-
-Impact: use the address space modifier __user
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.sourceforge.net
 
 Fix this warning:
 
-  drivers/isdn/mISDN/timerdev.c:264:11: warning: incorrect type in initializer (incompatible argument 2 (different address spaces))
-  drivers/isdn/mISDN/timerdev.c:264:11:    expected int ( *read )( ... )
-  drivers/isdn/mISDN/timerdev.c:264:11:    got int ( static [toplevel] *<noident> )( ... )
+  drivers/gpu/drm/i915/i915_dma.c:1011: warning: 'i915_driver_firstopen' defined but not used
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/isdn/mISDN/timerdev.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/i915_dma.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/isdn/mISDN/timerdev.c b/drivers/isdn/mISDN/timerdev.c
-index 62b5e49..f2b3218 100644
---- a/drivers/isdn/mISDN/timerdev.c
-+++ b/drivers/isdn/mISDN/timerdev.c
-@@ -86,7 +86,7 @@ mISDN_close(struct inode *ino, struct file *filep)
+diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
+index 36a6884..10f3fe6 100644
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@ -1007,12 +1007,14 @@ void i915_master_destroy(struct drm_device *dev, struct drm_master *master)
  }
  
- static ssize_t
--mISDN_read(struct file *filep, char *buf, size_t count, loff_t *off)
-+mISDN_read(struct file *filep, char __user *buf, size_t count, loff_t *off)
+ 
++#ifdef UNUSED
+ static int i915_driver_firstopen(struct drm_device *dev)
  {
- 	struct mISDNtimerdev	*dev = filep->private_data;
- 	struct mISDNtimer	*timer;
-@@ -116,7 +116,7 @@ mISDN_read(struct file *filep, char *buf, size_t count, loff_t *off)
- 		timer = (struct mISDNtimer *)dev->expired.next;
- 		list_del(&timer->list);
- 		spin_unlock_irqrestore(&dev->lock, flags);
--		if (put_user(timer->id, (int *)buf))
-+		if (put_user(timer->id, (int __user *)buf))
- 			ret = -EFAULT;
- 		else
- 			ret = sizeof(int);
+ 	if (drm_core_check_feature(dev, DRIVER_MODESET))
+ 		return 0;
+ 	return 0;
+ }
++#endif /* UNUSED */
+ 
+ /**
+  * i915_driver_load - setup chip and create an initial config
 -- 
 1.5.6.3
 
