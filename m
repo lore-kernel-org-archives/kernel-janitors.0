@@ -1,84 +1,64 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Dec 2008 10:21:52 +0000
-Subject: [PATCH 8/13] drivers/staging/rspiusb: use USB API functions rather
-Message-Id: <Pine.LNX.4.64.0812291121350.9555@pc-004.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 18 Dec 2008 20:22:24 +0000
+Subject: [PATCH 3/6] drm/i915: fix sparse warnings: move 'extern' decls to header file
+Message-Id: <494ad5d9.0ab6660a.2341.ffff80b7@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.sourceforge.net
 
-From: Julia Lawall <julia@diku.dk>
+Move 'extern'-decls from "intel_dvo.c" to "dvo.h", as "dvo.h" is
+included by and only by files where the symbols are either defined or
+used.
 
-This set of patches introduces calls to the following set of functions:
+Fix this sparse warnings:
 
-usb_endpoint_dir_in(epd)
-usb_endpoint_dir_out(epd)
-usb_endpoint_is_bulk_in(epd)
-usb_endpoint_is_bulk_out(epd)
-usb_endpoint_is_int_in(epd)
-usb_endpoint_is_int_out(epd)
-usb_endpoint_num(epd)
-usb_endpoint_type(epd)
-usb_endpoint_xfer_bulk(epd)
-usb_endpoint_xfer_control(epd)
-usb_endpoint_xfer_int(epd)
-usb_endpoint_xfer_isoc(epd)
+  drivers/gpu/drm/i915/dvo_ch7xxx.c:358:26: warning: symbol 'ch7xxx_ops' was not declared. Should it be static?
+  drivers/gpu/drm/i915/dvo_ch7017.c:444:26: warning: symbol 'ch7017_ops' was not declared. Should it be static?
+  drivers/gpu/drm/i915/dvo_ivch.c:432:26: warning: symbol 'ivch_ops' was not declared. Should it be static?
+  drivers/gpu/drm/i915/dvo_tfp410.c:325:26: warning: symbol 'tfp410_ops' was not declared. Should it be static?
+  drivers/gpu/drm/i915/dvo_sil164.c:292:26: warning: symbol 'sil164_ops' was not declared. Should it be static?
 
-In some cases, introducing one of these functions is not possible, and it
-just replaces an explicit integer value by one of the following constants:
-
-USB_ENDPOINT_XFER_BULK
-USB_ENDPOINT_XFER_CONTROL
-USB_ENDPOINT_XFER_INT
-USB_ENDPOINT_XFER_ISOC
-
-An extract of the semantic patch that makes these changes is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r1@ struct usb_endpoint_descriptor *epd; @@
-
-- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
-- \(USB_ENDPOINT_XFER_CONTROL\|0\))
-+ usb_endpoint_xfer_control(epd)
-
-@r5@ struct usb_endpoint_descriptor *epd; @@
-
-- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
--  \(USB_DIR_IN\|0x80\))
-+ usb_endpoint_dir_in(epd)
-
-@inc@
-@@
-
-#include <linux/usb.h>
-
-@depends on !inc && (r1||r5)@
-@@
-
-+ #include <linux/usb.h>
-  #include <linux/usb/...>
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/staging/rspiusb/rspiusb.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/dvo.h       |    6 ++++++
+ drivers/gpu/drm/i915/intel_dvo.c |    6 ------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rspiusb/rspiusb.c b/drivers/staging/rspiusb/rspiusb.c
-index ca281d6..ecaffb5 100644
---- a/drivers/staging/rspiusb/rspiusb.c
-+++ b/drivers/staging/rspiusb/rspiusb.c
-@@ -781,9 +781,8 @@ static int piusb_probe(struct usb_interface *interface,
- 			dbg("Endpoint[%d]->MaxPacketSize = %d\n", i,
- 			    endpoint->wMaxPacketSize);
- 		}
--		if ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
--		    USB_ENDPOINT_XFER_BULK) {
--			if (endpoint->bEndpointAddress & USB_DIR_IN)
-+		if (usb_endpoint_xfer_bulk(endpoint)) {
-+			if (usb_endpoint_dir_in(endpoint))
- 				pdx->hEP[i]  				    usb_rcvbulkpipe(pdx->udev,
- 						    endpoint->bEndpointAddress);
+diff --git a/drivers/gpu/drm/i915/dvo.h b/drivers/gpu/drm/i915/dvo.h
+index e80866c..e747ac4 100644
+--- a/drivers/gpu/drm/i915/dvo.h
++++ b/drivers/gpu/drm/i915/dvo.h
+@@ -148,4 +148,10 @@ struct intel_dvo_dev_ops {
+ 	void (*dump_regs)(struct intel_dvo_device *dvo);
+ };
+ 
++extern struct intel_dvo_dev_ops sil164_ops;
++extern struct intel_dvo_dev_ops ch7xxx_ops;
++extern struct intel_dvo_dev_ops ivch_ops;
++extern struct intel_dvo_dev_ops tfp410_ops;
++extern struct intel_dvo_dev_ops ch7017_ops;
++
+ #endif /* _INTEL_DVO_H */
+diff --git a/drivers/gpu/drm/i915/intel_dvo.c b/drivers/gpu/drm/i915/intel_dvo.c
+index cc621c8..8b8d6e6 100644
+--- a/drivers/gpu/drm/i915/intel_dvo.c
++++ b/drivers/gpu/drm/i915/intel_dvo.c
+@@ -37,12 +37,6 @@
+ #define CH7xxx_ADDR	0x76
+ #define TFP410_ADDR	0x38
+ 
+-extern struct intel_dvo_dev_ops sil164_ops;
+-extern struct intel_dvo_dev_ops ch7xxx_ops;
+-extern struct intel_dvo_dev_ops ivch_ops;
+-extern struct intel_dvo_dev_ops tfp410_ops;
+-extern struct intel_dvo_dev_ops ch7017_ops;
+-
+ static struct intel_dvo_device intel_dvo_devices[] = {
+ 	{
+ 		.type = INTEL_DVO_CHIP_TMDS,
+-- 
+1.5.6.3
+
