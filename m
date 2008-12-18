@@ -1,7 +1,7 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 18 Dec 2008 17:11:15 +0000
+Date: Thu, 18 Dec 2008 17:18:36 +0000
 Subject: Re: [PATCH 7/11] drivers/net/wireless/ath9k: Move a dereference
-Message-Id: <Pine.LNX.4.64.0812181807330.23988@ask.diku.dk>
+Message-Id: <Pine.LNX.4.64.0812181818170.23988@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0812161613510.20444@pc-004.diku.dk>
  <20081218155042.GF4121@tuxdriver.com>
@@ -11,6 +11,11 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: "John W. Linville" <linville@tuxdriver.com>
 Cc: lrodriguez@atheros.com, jmalinen@atheros.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+Indeed the code seems to have complete changed.
+
+julia
+
 
 On Thu, 18 Dec 2008, John W. Linville wrote:
 
@@ -65,21 +70,9 @@ On Thu, 18 Dec 2008, John W. Linville wrote:
 > 
 > This patch doesn't seem to apply.  I don't see this code anywhere.
 > Perhaps this is against some older version?
-
-I used the following version of linux-next, which indeed a bit out of 
-date:
-
-commit feaf3848a813a106f163013af6fcf6c4bfec92d9
-Merge: a771132... 0e435ac...
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed Dec 3 16:45:56 2008 -0800
-
-
-But I see the same code in the following version of linux-2.6
-
-commit 1bda71282ded6a2e09a2db7c8884542fb46bfd4f
-Merge: 7a62b17... 25a41b2...
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue Dec 16 09:49:10 2008 -0800
-
-julia
+> 
+> John
+> -- 
+> John W. Linville		Linux should be at the core
+> linville@tuxdriver.com			of your literate lifestyle.
+> 
