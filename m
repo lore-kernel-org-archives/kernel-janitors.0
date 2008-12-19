@@ -1,107 +1,79 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:40:41 +0000
-Subject: [PATCH 21/28] drivers/char/xilinx_hwicap: Drop return value from
-Message-Id: <Pine.LNX.4.64.0812101740170.21998@ask.diku.dk>
+Date: Fri, 19 Dec 2008 17:11:25 +0000
+Subject: [PATCH 3/3] drivers/staging/go7007: Move a dereference below a NULL
+Message-Id: <Pine.LNX.4.64.0812191811020.11217@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, grant.likely@secretlab.ca, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: pete@sensoray.com, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
+In each case, if the NULL test is necessary, then the dereference should be
+moved below the NULL test.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/).  The result has been modified to
+move the initialization of usb down closer to where it is used.
 
 // <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
 @@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
-@@
-
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
+type T;
 expression E;
+identifier i,fld;
+statement S;
 @@
 
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/char/xilinx_hwicap/xilinx_hwicap.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/go7007/s2250-board.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/xilinx_hwicap/xilinx_hwicap.c b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-index d161319..007b4df 100644
---- a/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-+++ b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
-@@ -743,14 +743,14 @@ static int __devinit hwicap_drv_probe(struct platform_device *pdev)
- 			&buffer_icap_config, regs);
- }
- 
--static int __devexit hwicap_drv_remove(struct platform_device *pdev)
-+static void __devexit hwicap_drv_remove(struct platform_device *pdev)
+diff --git a/drivers/staging/go7007/s2250-board.c b/drivers/staging/go7007/s2250-board.c
+index fb6845e..a60e19c 100644
+--- a/drivers/staging/go7007/s2250-board.c
++++ b/drivers/staging/go7007/s2250-board.c
+@@ -149,7 +149,7 @@ static int go7007_usb_vendor_request(struct go7007 *go, u16 request,
+ static int write_reg(struct i2c_client *client, u8 reg, u8 value)
  {
--	return hwicap_remove(&pdev->dev);
-+	hwicap_remove(&pdev->dev);
- }
+ 	struct go7007 *go = i2c_get_adapdata(client->adapter);
+-	struct go7007_usb *usb = go->hpi_context;
++	struct go7007_usb *usb;
+ 	int rc;
+ 	int dev_addr = client->addr;
+ 	u8 *buf;
+@@ -164,6 +164,7 @@ static int write_reg(struct i2c_client *client, u8 reg, u8 value)
+ 	if (buf = NULL)
+ 		return -ENOMEM;
  
- static struct platform_driver hwicap_platform_driver = {
- 	.probe = hwicap_drv_probe,
--	.remove = hwicap_drv_remove,
-+	.remove_new = hwicap_drv_remove,
- 	.driver = {
- 		.owner = THIS_MODULE,
- 		.name = DRIVER_NAME,
++	usb = go->hpi_context;
+ 	if (down_interruptible(&usb->i2c_lock) != 0) {
+ 		printk(KERN_INFO "i2c lock failed\n");
+ 		return -EINTR;
+@@ -181,7 +182,7 @@ static int write_reg(struct i2c_client *client, u8 reg, u8 value)
+ static int write_reg_fp(struct i2c_client *client, u16 addr, u16 val)
+ {
+ 	struct go7007 *go = i2c_get_adapdata(client->adapter);
+-	struct go7007_usb *usb = go->hpi_context;
++	struct go7007_usb *usb;
+ 	u8 *buf;
+ 	struct s2250 *dec = i2c_get_clientdata(client);
+ 
+@@ -200,6 +201,7 @@ static int write_reg_fp(struct i2c_client *client, u16 addr, u16 val)
+ 
+ 	memset(buf, 0xcd, 6);
+ 
++	usb = go->hpi_context;
+ 	if (down_interruptible(&usb->i2c_lock) != 0) {
+ 		printk(KERN_INFO "i2c lock failed\n");
+ 		return -EINTR;
