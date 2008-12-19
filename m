@@ -1,57 +1,66 @@
-From: Olof Johansson <olof@lixom.net>
-Date: Mon, 01 Dec 2008 21:57:31 +0000
-Subject: Re: [PATCH] drivers/mtd/nand/pasemi_nand.c: Add missing pci_dev_put
-Message-Id: <20081201215731.GA23768@lixom.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 19 Dec 2008 17:10:23 +0000
+Subject: [PATCH 1/3] drivers/gpu/drm: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0812191809490.11217@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0811271319070.15160@pc-004.diku.dk>
-	<20081201174327.GA21274@lixom.net>
-	<Pine.LNX.4.64.0812011838440.11341@pc-004.diku.dk>
-	<20081201180812.GA21646@lixom.net>
-	<Pine.LNX.4.64.0812012109480.1541@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812012109480.1541@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, dwmw2@infradead.org, linux-kernel@vger.kernel.org
+To: airlied@linux.ie, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Dec 01, 2008 at 09:11:09PM +0100, Julia Lawall wrote:
-> On Mon, 1 Dec 2008, Olof Johansson wrote:
-> 
-> > On Mon, Dec 01, 2008 at 06:39:01PM +0100, Julia Lawall wrote:
-> > > On Mon, 1 Dec 2008, Olof Johansson wrote:
-> > > 
-> > > > On Thu, Nov 27, 2008 at 01:19:49PM +0100, Julia Lawall wrote:
-> > > > > From: Julia Lawall <julia@diku.dk>
-> > > > > 
-> > > > > pci_get_device increments a reference count that should be decremented
-> > > > > using pci_dev_put.  I have thus added an extra label in the error handling
-> > > > > code to do this.  I don't know, however, whether there should be a
-> > > > > pci_dev_put before the return 0 as well.
-> > > > > 
-> > > > [...]
-> > > > 
-> > > > > Signed-off-by: Julia Lawall <julia@diku.dk>
-> > > > 
-> > > > Acked-by: Olof Johansson <olof@lixom.net>
-> > > 
-> > > Do you know the answer about the return 0?
-> > 
-> > Teaches me to read the patch description twice.
-> > 
-> > Either there or in pasemi_nand_remove(), doesn't matter much to me. Doing
-> > it before the return 0 is the smaller change.
-> 
-> Actually, could pci_dev_put(pdev) be placed right after:
-> 
-> lpcctl = pci_resource_start(pdev, 0);
-> 
-> Then there would only be one, and the rest of the code could go back to 
-> its original form.
+From: Julia Lawall <julia@diku.dk>
 
-Yep, even easier.
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
-Thanks for catching this.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/).  The result has been modified to
+move the initialization of driver down closer to where it is used.
 
+// <smpl>
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
+@@
 
--Olof
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/gpu/drm/drm_drv.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index 0b9f316..4bdfc98 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -297,7 +297,7 @@ EXPORT_SYMBOL(drm_init);
+  */
+ static void drm_cleanup(struct drm_device * dev)
+ {
+-	struct drm_driver *driver = dev->driver;
++	struct drm_driver *driver;
+ 
+ 	DRM_DEBUG("\n");
+ 
+@@ -324,8 +324,9 @@ static void drm_cleanup(struct drm_device * dev)
+ 		dev->agp = NULL;
+ 	}
+ 
+-	if (dev->driver->unload)
+-		dev->driver->unload(dev);
++	driver = dev->driver;
++	if (driver->unload)
++		driver->unload(dev);
+ 
+ 	drm_ht_remove(&dev->map_hash);
+ 	drm_ctxbitmap_cleanup(dev);
