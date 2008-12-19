@@ -1,24 +1,25 @@
-From: Patrick McHardy <kaber@trash.net>
-Date: Fri, 05 Dec 2008 15:22:22 +0000
-Subject: Re: [PATCH] net/netfilter: simplify error handling
-Message-Id: <4939472E.7060804@trash.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 19 Dec 2008 17:56:46 +0000
+Subject: container_of
+Message-Id: <Pine.LNX.4.64.0812191854150.11217@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812051234230.9560@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812051234230.9560@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: davem@davemloft.net, kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> nf_conntrack_alloc cannot return NULL, so there is no need to check for
-> NULL before using the value.  I have also removed the initialization of ct
-> to NULL in nf_conntrack_alloc, since the value is never used, and since
-> perhaps it might lead one to think that return ct at the end might return
-> NULL.
+Considering code such as the following (drivers/acpi/osl.c):
 
-Applied, thanks.
+ 	struct acpi_os_dpc *dpc = container_of(work, struct acpi_os_dpc, work);
+	if (!dpc) {
+ 		printk(KERN_ERR PREFIX "Invalid (NULL) context\n");
+ 		return;
+ 	}
 
+Is it very likely that container_of can return NULL?  Container_of 
+computes an offset from a pointer, so I have the impression that if given 
+a NULL value it would normally return a negative number (or a very large 
+positive one, depending on how it is interpreted).
+
+thanks,
+julia
