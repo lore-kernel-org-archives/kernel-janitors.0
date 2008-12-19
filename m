@@ -1,270 +1,66 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:39:41 +0000
-Subject: [PATCH 19/28] arch/arm/mach-pxa: Drop return value from platform_driver
-Message-Id: <Pine.LNX.4.64.0812101739170.21998@ask.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Fri, 19 Dec 2008 11:34:27 +0000
+Subject: [PATCH v2 6/6] drm/i915: un-EXPORT and make 'intelfb_panic' static
+Message-Id: <494b8afb.0aa5660a.589f.fffffd82@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200812181540.08366.jbarnes@virtuousgeek.org>
+In-Reply-To: <200812181540.08366.jbarnes@virtuousgeek.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, eric.miao@marvell.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: David Airlie <airlied@linux.ie>
 
-From: Julia Lawall <julia@diku.dk>
+Fix this sparse warning:
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
+  drivers/gpu/drm/i915/intel_fb.c:417:5: warning: symbol 'intelfb_panic' was not declared. Should it be static?
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
-@@
-
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
-@@
-
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- arch/arm/mach-pxa/corgi_ssp.c |    5 ++---
- arch/arm/mach-pxa/mioa701.c   |    5 ++---
- arch/arm/mach-pxa/pwm.c       |    9 ++++-----
- arch/arm/mach-pxa/ssp.c       |   11 +++++------
- arch/arm/mach-pxa/tosa-bt.c   |    6 ++----
- 5 files changed, 15 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/corgi_ssp.c b/arch/arm/mach-pxa/corgi_ssp.c
-index 8e2f221..a0e823d 100644
---- a/arch/arm/mach-pxa/corgi_ssp.c
-+++ b/arch/arm/mach-pxa/corgi_ssp.c
-@@ -230,10 +230,9 @@ static int __init corgi_ssp_probe(struct platform_device *dev)
- 	return ret;
- }
+On Fri, Dec 19, 2008 at 12:40 AM, Jesse Barnes <jbarnes@virtuousgeek.org> wrote:
+> On Thursday, December 18, 2008 1:32 pm Hannes Eder wrote:
+>> Fix this sparse warning:
+>>
+>>   drivers/gpu/drm/i915/intel_fb.c:417:5: warning: symbol 'intelfb_panic'
+>> was not declared. Should it be static?
+>
+> Yep, this one should be static instead (I think, just double checking now to
+> make sure it's not used elsewhere, iirc it's not).
+
+Ok, so let's make the function static and there is no need to EXPORT
+it, which wouldn't work for a static function anyway.
+
+When is it safe to un-EXPORT a function?  When it is only referenced
+within the translation unit it is defined in?  But it could be
+referenced from outside the kernel source, or?
+
+
+ drivers/gpu/drm/i915/intel_fb.c |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/intel_fb.c b/drivers/gpu/drm/i915/intel_fb.c
+index 12664c3..bbf6fe0 100644
+--- a/drivers/gpu/drm/i915/intel_fb.c
++++ b/drivers/gpu/drm/i915/intel_fb.c
+@@ -414,15 +414,14 @@ EXPORT_SYMBOL(intelfb_resize);
  
--static int corgi_ssp_remove(struct platform_device *dev)
-+static void corgi_ssp_remove(struct platform_device *dev)
+ static struct drm_mode_set kernelfb_mode;
+ 
+-int intelfb_panic(struct notifier_block *n, unsigned long ununsed,
+-		  void *panic_str)
++static int intelfb_panic(struct notifier_block *n, unsigned long ununsed,
++			 void *panic_str)
  {
- 	ssp_exit(&corgi_ssp_dev);
--	return 0;
- }
+ 	DRM_ERROR("panic occurred, switching back to text console\n");
  
- static int corgi_ssp_suspend(struct platform_device *dev, pm_message_t state)
-@@ -260,7 +259,7 @@ static int corgi_ssp_resume(struct platform_device *dev)
- 
- static struct platform_driver corgissp_driver = {
- 	.probe		= corgi_ssp_probe,
--	.remove		= corgi_ssp_remove,
-+	.remove_new	= corgi_ssp_remove,
- 	.suspend	= corgi_ssp_suspend,
- 	.resume		= corgi_ssp_resume,
- 	.driver		= {
-diff --git a/arch/arm/mach-pxa/mioa701.c b/arch/arm/mach-pxa/mioa701.c
-index 782903f..8f965d0 100644
---- a/arch/arm/mach-pxa/mioa701.c
-+++ b/arch/arm/mach-pxa/mioa701.c
-@@ -775,10 +775,9 @@ static int battery_probe(struct platform_device *pdev)
- 	return rc;
- }
- 
--static int battery_remove(struct platform_device *pdev)
-+static void battery_remove(struct platform_device *pdev)
- {
- 	battery_wm = NULL;
--	return 0;
- }
- 
- static struct platform_driver mioa701_battery_driver = {
-@@ -786,7 +785,7 @@ static struct platform_driver mioa701_battery_driver = {
- 		.name = "wm97xx-battery",
- 	},
- 	.probe = battery_probe,
--	.remove = battery_remove
-+	.remove_new = battery_remove
- };
- 
- static int __init mioa701_battery_init(void)
-diff --git a/arch/arm/mach-pxa/pwm.c b/arch/arm/mach-pxa/pwm.c
-index 74e2ead..43b4be6 100644
---- a/arch/arm/mach-pxa/pwm.c
-+++ b/arch/arm/mach-pxa/pwm.c
-@@ -250,14 +250,14 @@ static int __devinit pxa27x_pwm_probe(struct platform_device *pdev)
+ 	intelfb_restore();
  	return 0;
  }
+-EXPORT_SYMBOL(intelfb_panic);
  
--static int __devexit pwm_remove(struct platform_device *pdev)
-+static void __devexit pwm_remove(struct platform_device *pdev)
- {
- 	struct pwm_device *pwm;
- 	struct resource *r;
- 
- 	pwm = platform_get_drvdata(pdev);
- 	if (pwm = NULL)
--		return -ENODEV;
-+		return;
- 
- 	mutex_lock(&pwm_lock);
- 	list_del(&pwm->node);
-@@ -270,7 +270,6 @@ static int __devexit pwm_remove(struct platform_device *pdev)
- 
- 	clk_put(pwm->clk);
- 	kfree(pwm);
--	return 0;
- }
- 
- static struct platform_driver pxa25x_pwm_driver = {
-@@ -278,7 +277,7 @@ static struct platform_driver pxa25x_pwm_driver = {
- 		.name	= "pxa25x-pwm",
- 	},
- 	.probe		= pxa25x_pwm_probe,
--	.remove		= __devexit_p(pwm_remove),
-+	.remove_new	= __devexit_p(pwm_remove),
- };
- 
- static struct platform_driver pxa27x_pwm_driver = {
-@@ -286,7 +285,7 @@ static struct platform_driver pxa27x_pwm_driver = {
- 		.name	= "pxa27x-pwm",
- 	},
- 	.probe		= pxa27x_pwm_probe,
--	.remove		= __devexit_p(pwm_remove),
-+	.remove_new	= __devexit_p(pwm_remove),
- };
- 
- static int __init pwm_init(void)
-diff --git a/arch/arm/mach-pxa/ssp.c b/arch/arm/mach-pxa/ssp.c
-index 2c31ec7..a1e94f7 100644
---- a/arch/arm/mach-pxa/ssp.c
-+++ b/arch/arm/mach-pxa/ssp.c
-@@ -434,14 +434,14 @@ err_free:
- 	return ret;
- }
- 
--static int __devexit ssp_remove(struct platform_device *pdev)
-+static void __devexit ssp_remove(struct platform_device *pdev)
- {
- 	struct resource *res;
- 	struct ssp_device *ssp;
- 
- 	ssp = platform_get_drvdata(pdev);
- 	if (ssp = NULL)
--		return -ENODEV;
-+		return;
- 
- 	iounmap(ssp->mmio_base);
- 
-@@ -455,7 +455,6 @@ static int __devexit ssp_remove(struct platform_device *pdev)
- 	mutex_unlock(&ssp_lock);
- 
- 	kfree(ssp);
--	return 0;
- }
- 
- static int __devinit pxa25x_ssp_probe(struct platform_device *pdev)
-@@ -478,7 +477,7 @@ static struct platform_driver pxa25x_ssp_driver = {
- 		.name	= "pxa25x-ssp",
- 	},
- 	.probe		= pxa25x_ssp_probe,
--	.remove		= __devexit_p(ssp_remove),
-+	.remove_new	= __devexit_p(ssp_remove),
- };
- 
- static struct platform_driver pxa25x_nssp_driver = {
-@@ -486,7 +485,7 @@ static struct platform_driver pxa25x_nssp_driver = {
- 		.name	= "pxa25x-nssp",
- 	},
- 	.probe		= pxa25x_nssp_probe,
--	.remove		= __devexit_p(ssp_remove),
-+	.remove_new	= __devexit_p(ssp_remove),
- };
- 
- static struct platform_driver pxa27x_ssp_driver = {
-@@ -494,7 +493,7 @@ static struct platform_driver pxa27x_ssp_driver = {
- 		.name	= "pxa27x-ssp",
- 	},
- 	.probe		= pxa27x_ssp_probe,
--	.remove		= __devexit_p(ssp_remove),
-+	.remove_new	= __devexit_p(ssp_remove),
- };
- 
- static int __init pxa_ssp_init(void)
-diff --git a/arch/arm/mach-pxa/tosa-bt.c b/arch/arm/mach-pxa/tosa-bt.c
-index fb0294b..d0039bd 100644
---- a/arch/arm/mach-pxa/tosa-bt.c
-+++ b/arch/arm/mach-pxa/tosa-bt.c
-@@ -106,7 +106,7 @@ err_reset:
- 	return rc;
- }
- 
--static int __devexit tosa_bt_remove(struct platform_device *dev)
-+static void __devexit tosa_bt_remove(struct platform_device *dev)
- {
- 	struct tosa_bt_data *data = dev->dev.platform_data;
- 	struct rfkill *rfk = platform_get_drvdata(dev);
-@@ -121,13 +121,11 @@ static int __devexit tosa_bt_remove(struct platform_device *dev)
- 
- 	gpio_free(data->gpio_pwr);
- 	gpio_free(data->gpio_reset);
--
--	return 0;
- }
- 
- static struct platform_driver tosa_bt_driver = {
- 	.probe = tosa_bt_probe,
--	.remove = __devexit_p(tosa_bt_remove),
-+	.remove_new = __devexit_p(tosa_bt_remove),
- 
- 	.driver = {
- 		.name = "tosa-bt",
+ static struct notifier_block paniced = {
+ 	.notifier_call = intelfb_panic,
+-- 
+1.5.6.3
+
