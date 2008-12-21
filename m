@@ -1,59 +1,83 @@
-From: Greg KH <gregkh@suse.de>
-Date: Wed, 17 Dec 2008 21:38:26 +0000
-Subject: Re: [PATCH 1/28] drivers/base/platform.c: Drop return value from
-Message-Id: <20081217213826.GD26923@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Dec 2008 15:39:15 +0000
+Subject: [PATCH 7/13] drivers/net/wan: Remove redundant test
+Message-Id: <Pine.LNX.4.64.0812211638550.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812101725540.21998@ask.diku.dk> <8bd0f97a0812100928l2c75d373n7eba5aa0cc3882fd@mail.gmail.com> <53806.88.114.236.15.1228947522.squirrel@webmail.movial.fi> <8bd0f97a0812101437r4abb9346p8bc8d512ddc02cde@mail.gmail.com> <20081212051759.GA12563@suse.de> <49424438.7030205@movial.fi>
-In-Reply-To: <49424438.7030205@movial.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitri Vorobiev <dmitri.vorobiev@movial.fi>
-Cc: Mike Frysinger <vapier.adi@gmail.com>, Julia Lawall <julia@diku.dk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: khc@pm.waw.pl, jgarzik@pobox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 12, 2008 at 01:00:08PM +0200, Dmitri Vorobiev wrote:
-> Greg KH wrote:
-> > On Wed, Dec 10, 2008 at 05:37:42PM -0500, Mike Frysinger wrote:
-> >> On Wed, Dec 10, 2008 at 17:18, Vorobiev Dmitri wrote:
-> >>>> On Wed, Dec 10, 2008 at 11:26, Julia Lawall wrote:
-> >>>>> The return value of the remove function of a driver structure, and thus
-> >>>>> of
-> >>>>> a platform_driver structure, is ultimately ignored, and is thus
-> >>>>> unnecessary.  The goal of this patch is to make it possible to convert
-> >>>>> the
-> >>>>> platform_driver functions stored in the remove field such that they
-> >>>>> return
-> >>>>> void.  This patch introduces a temporary field remove_new with return
-> >>>>> type
-> >>>>> void into the platform_driver structure, and updates the only place that
-> >>>>> the remove function is called to call the function in the remove_new
-> >>>>> field,
-> >>>>> if one is available.  The subsequent patches update some drivers to use
-> >>>>> the
-> >>>>> remove_new field.
-> >>>> why bother with remove -> remove_new convention ?
-> >>> Please see this email for the background:
-> >>>
-> >>> http://lkml.org/lkml/2008/12/10/231
-> >>>
-> >>>>  you'll get a
-> >>>> warning in C about the assignment, but you wont get a build failure,
-> >>> ...unless you compile with -Werror, which frequently the case.
-> >> anyone crazy enough to build with -Werror is crazy enough to send in a fix ;)
-> > 
-> > Hm, have you noted that some arches have that flag enabled in their
-> > build?
-> > 
-> > And it's not ok to add a couple of hundred build warnings to the system,
-> > sorry.
-> 
-> Still, what about the whole series? What do you think about int->void
-> migration for the remove() callback?
+From: Julia Lawall <julia@diku.dk>
 
-In thinking about it some more, I don't really see the point.  We should
-probably just do something about the return value, as that would be
-better, and easier to do.
+arg is checked not to be NULL a few lines before.
 
-thanks,
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
-greg k-h
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+position p1,p2;
+@@
+
+if (x@p1 = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+// another path to the test that is not through p1?
+@s exists@
+local idexpression r.x;
+position r.p1,r.p2;
+@@
+
+... when != x@p1
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+@fix depends on !s@
+position r.p1,r.p2;
+expression x,E;
+statement S1,S2;
+@@
+
+(
+- if ((x@p2 != NULL) || ...)
+  S1
+|
+- if ((x@p2 = NULL) && ...) S1
+|
+- BUG_ON(x@p2 = NULL);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wan/pc300_drv.c         |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wan/pc300_drv.c b/drivers/net/wan/pc300_drv.c
+index d67957a..c23fde0 100644
+--- a/drivers/net/wan/pc300_drv.c
++++ b/drivers/net/wan/pc300_drv.c
+@@ -2718,9 +2718,8 @@ static int cpc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 					}
+ 					pc300patrntst.num_errors  						falc_pattern_test_error(card, ch);
+-					if (!arg
+-					    || copy_to_user(arg, &pc300patrntst,
+-							    sizeof (pc300patterntst_t)))
++					if (copy_to_user(arg, &pc300patrntst,
++							 sizeof(pc300patterntst_t)))
+ 							return -EINVAL;
+ 				} else {
+ 					falc_pattern_test(card, ch, pc300patrntst.patrntst_on);
