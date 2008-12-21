@@ -1,92 +1,86 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Dec 2008 15:28:47 +0000
-Subject: [PATCH 2/13] drivers/gpu/drm/i915: Remove redundant test
-Message-Id: <Pine.LNX.4.64.0812211628230.9555@pc-004.diku.dk>
+From: Eric Anholt <eric@anholt.net>
+Date: Sun, 21 Dec 2008 18:16:36 +0000
+Subject: Re: [PATCH 2/13] drivers/gpu/drm/i915: Remove redundant test
+Message-Id: <1229883396.4798.1.camel@gaiman.anholt.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-VdGcmwoWDP5sAH1cnBtS"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Pine.LNX.4.64.0812211628230.9555@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0812211628230.9555@pc-004.diku.dk>
+To: Julia Lawall <julia@diku.dk>
+Cc: airlied@linux.ie, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-object_list is checked to be not NULL near the beginning of the function and
-is not updated subsequently.
+--=-VdGcmwoWDP5sAH1cnBtS
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+On Sun, 2008-12-21 at 16:28 +0100, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+>=20
+> object_list is checked to be not NULL near the beginning of the function =
+and
+> is not updated subsequently.
+>=20
+> A simplified version of the semantic patch that makes this change is as
+> follows: (http://www.emn.fr/x-info/coccinelle/)
+>=20
+> // <smpl>
 
-// <smpl>
-@r exists@
-local idexpression x;
-expression E;
-position p1,p2;
-@@
+Committed.  Thanks!
 
-if (x@p1 = NULL || ...) { ... when forall
-   return ...; }
-... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
-(
-x@p2 = NULL
-|
-x@p2 != NULL
-)
+> ---
+>  drivers/gpu/drm/i915/i915_gem.c     |   11 +++++------
+>  1 files changed, 5 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_=
+gem.c
+> index fccf199..78319ec 100644
+> --- a/drivers/gpu/drm/i915/i915_gem.c
+> +++ b/drivers/gpu/drm/i915/i915_gem.c
+> @@ -2611,13 +2611,12 @@ i915_gem_execbuffer(struct drm_device *dev, void =
+*data,
+>  			  "back to user (%d)\n",
+>  			   args->buffer_count, ret);
+>  err:
+> -	if (object_list !=3D NULL) {
+> -		for (i =3D 0; i < pinned; i++)
+> -			i915_gem_object_unpin(object_list[i]);
+> +	for (i =3D 0; i < pinned; i++)
+> +		i915_gem_object_unpin(object_list[i]);
+> +
+> +	for (i =3D 0; i < args->buffer_count; i++)
+> +		drm_gem_object_unreference(object_list[i]);
+> =20
+> -		for (i =3D 0; i < args->buffer_count; i++)
+> -			drm_gem_object_unreference(object_list[i]);
+> -	}
+>  	mutex_unlock(&dev->struct_mutex);
+> =20
+>  pre_mutex_err:
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" i=
+n
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+--=20
+Eric Anholt
+eric@anholt.net                         eric.anholt@intel.com
 
-// another path to the test that is not through p1?
-@s exists@
-local idexpression r.x;
-position r.p1,r.p2;
-@@
 
-... when != x@p1
-(
-x@p2 = NULL
-|
-x@p2 != NULL
-)
 
-@fix depends on !s@
-position r.p1,r.p2;
-expression x,E;
-statement S1,S2;
-@@
+--=-VdGcmwoWDP5sAH1cnBtS
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
-(
-- if ((x@p2 != NULL) || ...)
-  S1
-|
-- if ((x@p2 = NULL) && ...) S1
-|
-- BUG_ON(x@p2 = NULL);
-)
-// </smpl>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+iEYEABECAAYFAklOiAIACgkQHUdvYGzw6vdrqwCghSfgo0EC6SpwgOClXl9APCRy
+SXAAnjPIgiwJpebuFJOFlgyH3SIDrBzD
+=T7IP
+-----END PGP SIGNATURE-----
 
----
- drivers/gpu/drm/i915/i915_gem.c     |   11 +++++------
- 1 files changed, 5 insertions(+), 6 deletions(-)
+--=-VdGcmwoWDP5sAH1cnBtS--
 
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index fccf199..78319ec 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -2611,13 +2611,12 @@ i915_gem_execbuffer(struct drm_device *dev, void *data,
- 			  "back to user (%d)\n",
- 			   args->buffer_count, ret);
- err:
--	if (object_list != NULL) {
--		for (i = 0; i < pinned; i++)
--			i915_gem_object_unpin(object_list[i]);
-+	for (i = 0; i < pinned; i++)
-+		i915_gem_object_unpin(object_list[i]);
-+
-+	for (i = 0; i < args->buffer_count; i++)
-+		drm_gem_object_unreference(object_list[i]);
- 
--		for (i = 0; i < args->buffer_count; i++)
--			drm_gem_object_unreference(object_list[i]);
--	}
- 	mutex_unlock(&dev->struct_mutex);
- 
- pre_mutex_err:
