@@ -1,42 +1,52 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 18 Dec 2008 20:25:51 +0000
-Subject: [PATCH 5/6] drm/i915: comment out unused function 'i915_driver_firstopen'
-Message-Id: <494ad5e1.02a1660a.77b3.5036@mx.google.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Dec 2008 18:08:09 +0000
+Subject: [PATCH] drivers/mfd: Adjust NULL test
+Message-Id: <Pine.LNX.4.64.0812211907400.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.sourceforge.net
+To: sameo@openedhand.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix this warning:
+From: Julia Lawall <julia@diku.dk>
 
-  drivers/gpu/drm/i915/i915_dma.c:1011: warning: 'i915_driver_firstopen' defined but not used
+Since ei is already known to be non-NULL, I assume that what was intended
+was to test the result of kzalloc.
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E,E1;
+identifier f,fld,fld1;
+statement S1,S2;
+@@
+
+E->fld = f(...);
+... when != E = E1
+    when != E->fld1 = E1
+if (
+-   E
++   E->fld
+           = NULL) S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/gpu/drm/i915/i915_dma.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ drivers/mfd/htc-egpio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
-index 36a6884..10f3fe6 100644
---- a/drivers/gpu/drm/i915/i915_dma.c
-+++ b/drivers/gpu/drm/i915/i915_dma.c
-@@ -1007,12 +1007,14 @@ void i915_master_destroy(struct drm_device *dev, struct drm_master *master)
- }
+diff -u -p a/drivers/mfd/htc-egpio.c b/drivers/mfd/htc-egpio.c
+--- a/drivers/mfd/htc-egpio.c
++++ b/drivers/mfd/htc-egpio.c
+@@ -307,7 +307,7 @@ static int __init egpio_probe(struct pla
  
- 
-+#ifdef UNUSED
- static int i915_driver_firstopen(struct drm_device *dev)
- {
- 	if (drm_core_check_feature(dev, DRIVER_MODESET))
- 		return 0;
- 	return 0;
- }
-+#endif /* UNUSED */
- 
- /**
-  * i915_driver_load - setup chip and create an initial config
--- 
-1.5.6.3
-
+ 	ei->nchips = pdata->num_chips;
+ 	ei->chip = kzalloc(sizeof(struct egpio_chip) * ei->nchips, GFP_KERNEL);
+-	if (!ei) {
++	if (!ei->chip) {
+ 		ret = -ENOMEM;
+ 		goto fail;
+ 	}
