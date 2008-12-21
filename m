@@ -1,73 +1,82 @@
-From: "Prakash, Sathya" <Sathya.Prakash@lsi.com>
-Date: Tue, 30 Dec 2008 04:32:29 +0000
-Subject: RE: [PATCH 3/7] drivers/message/fusion: Move a dereference below a
-Message-Id: <B73941C4DE6A3D4EA1AE128E9565E2442392552FDF@inbmail01.lsi.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Dec 2008 15:37:17 +0000
+Subject: [PATCH 3/13] drivers/infiniband/hw/ehca: Remove redundant test
+Message-Id: <Pine.LNX.4.64.0812211636550.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812260827250.25450@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812260827250.25450@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, "Moore, Eric" <Eric.Moore@lsi.com>, "Support, Software" <support@lsi.com>, DL-MPT Fusion Linux <DL-MPTFusionLinux@lsi.com>, linux-scsi@vger.kernel.org
-
-ACK.
-
------Original Message-----
-From: Julia Lawall [mailto:julia@diku.dk]
-Sent: Friday, December 26, 2008 12:58 PM
-To: Moore, Eric; Support, Software; DL-MPT Fusion Linux; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: [PATCH 3/7] drivers/message/fusion: Move a dereference below a NULL test
+To: rolandd@cisco.com, sean.hefty@intel.com, hal.rosenstock@gmail.com, general@lists.openfabrics.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If the NULL test is necessary, then the dereference should be moved below the NULL test.
+vpage is checked not to be NULL just after it is initialized at the
+beginning of each loop iteration.
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/).
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@disable is_null@
-identifier f;
+@r exists@
+local idexpression x;
 expression E;
-identifier fld;
-statement S;
+position p1,p2;
 @@
 
-+ if (E = NULL) S
-  f(...,E->fld,...);
-- if (E = NULL) S
+if (x@p1 = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
 
-@@
-identifier f;
-expression E;
-identifier fld;
-statement S;
+// another path to the test that is not through p1?
+@s exists@
+local idexpression r.x;
+position r.p1,r.p2;
 @@
 
-+ if (!E) S
-  f(...,E->fld,...);
-- if (!E) S
+... when != x@p1
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+@fix depends on !s@
+position r.p1,r.p2;
+expression x,E;
+statement S1,S2;
+@@
+
+(
+- if ((x@p2 != NULL) || ...)
+  S1
+|
+- if ((x@p2 = NULL) && ...) S1
+|
+- BUG_ON(x@p2 = NULL);
+)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/message/fusion/mptctl.c     |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/ehca/ehca_eq.c           |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c index b89f476..c638171 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -308,10 +308,11 @@ static void mptctl_timeout_expired (MPT_IOCTL *ioctl)  {
-        int rc = 1;
-
--       dctlprintk(ioctl->ioc, printk(MYIOC_s_DEBUG_FMT ": Timeout Expired! Host %d\n",
--                               ioctl->ioc->name, ioctl->ioc->id));
-        if (ioctl = NULL)
-                return;
-+       dctlprintk(ioctl->ioc,
-+                  printk(MYIOC_s_DEBUG_FMT ": Timeout Expired! Host %d\n",
-+                  ioctl->ioc->name, ioctl->ioc->id));
-
-        ioctl->wait_done = 0;
-        if (ioctl->reset & MPTCTL_RESET_OK)
+diff --git a/drivers/infiniband/hw/ehca/ehca_eq.c b/drivers/infiniband/hw/ehca/ehca_eq.c
+index 49660df..523e733 100644
+--- a/drivers/infiniband/hw/ehca/ehca_eq.c
++++ b/drivers/infiniband/hw/ehca/ehca_eq.c
+@@ -113,7 +113,7 @@ int ehca_create_eq(struct ehca_shca *shca,
+ 			if (h_ret != H_SUCCESS || vpage)
+ 				goto create_eq_exit2;
+ 		} else {
+-			if (h_ret != H_PAGE_REGISTERED || !vpage)
++			if (h_ret != H_PAGE_REGISTERED)
+ 				goto create_eq_exit2;
+ 		}
+ 	}
