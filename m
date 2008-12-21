@@ -1,27 +1,92 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 13 Dec 2008 05:17:46 +0000
-Subject: Re: [PATCH 6/9][v2] mISDN: fix sparse warning: symbol 'id' shadows
-Message-Id: <20081212.211746.16355480.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Dec 2008 15:28:47 +0000
+Subject: [PATCH 2/13] drivers/gpu/drm/i915: Remove redundant test
+Message-Id: <Pine.LNX.4.64.0812211628230.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49419a37.0aa5660a.7d74.31a0@mx.google.com>
-In-Reply-To: <49419a37.0aa5660a.7d74.31a0@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kkeil@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: airlied@linux.ie, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 11 Dec 2008 22:36:00 +0100
+From: Julia Lawall <julia@diku.dk>
 
-> Impact: rename function scope variable
-> 
-> Fix this warning:
-> 
->   drivers/isdn/mISDN/l1oip_core.c:472:8: warning: symbol 'id' shadows an earlier one
->   drivers/isdn/mISDN/l1oip_core.c:254:14: originally declared here
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> Acked-by: Karsten Keil <kkeil@suse.de>
+object_list is checked to be not NULL near the beginning of the function and
+is not updated subsequently.
 
-Applied.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+position p1,p2;
+@@
+
+if (x@p1 = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+// another path to the test that is not through p1?
+@s exists@
+local idexpression r.x;
+position r.p1,r.p2;
+@@
+
+... when != x@p1
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+@fix depends on !s@
+position r.p1,r.p2;
+expression x,E;
+statement S1,S2;
+@@
+
+(
+- if ((x@p2 != NULL) || ...)
+  S1
+|
+- if ((x@p2 = NULL) && ...) S1
+|
+- BUG_ON(x@p2 = NULL);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/gpu/drm/i915/i915_gem.c     |   11 +++++------
+ 1 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index fccf199..78319ec 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -2611,13 +2611,12 @@ i915_gem_execbuffer(struct drm_device *dev, void *data,
+ 			  "back to user (%d)\n",
+ 			   args->buffer_count, ret);
+ err:
+-	if (object_list != NULL) {
+-		for (i = 0; i < pinned; i++)
+-			i915_gem_object_unpin(object_list[i]);
++	for (i = 0; i < pinned; i++)
++		i915_gem_object_unpin(object_list[i]);
++
++	for (i = 0; i < args->buffer_count; i++)
++		drm_gem_object_unreference(object_list[i]);
+ 
+-		for (i = 0; i < args->buffer_count; i++)
+-			drm_gem_object_unreference(object_list[i]);
+-	}
+ 	mutex_unlock(&dev->struct_mutex);
+ 
+ pre_mutex_err:
