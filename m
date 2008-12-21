@@ -1,8 +1,10 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:35:02 +0000
+Date: Sun, 21 Dec 2008 15:40:01 +0000
 Subject: [PATCH 9/28] drivers/dma: Drop return value from platform_driver
-Message-Id: <Pine.LNX.4.64.0812101734430.21998@ask.diku.dk>
+Message-Id: <Pine.LNX.4.64.0812211639370.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0812101734430.21998@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0812101734430.21998@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
