@@ -1,11 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Dec 2008 16:38:29 +0000
+Date: Sun, 21 Dec 2008 16:45:44 +0000
 Subject: Re: [PATCH 9/13] fs/xfs: Remove redundant test
-Message-Id: <Pine.LNX.4.64.0812211737180.9555@pc-004.diku.dk>
+Message-Id: <Pine.LNX.4.64.0812211745210.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0812211640360.9555@pc-004.diku.dk>
 	<494E6846.8070800@sandeen.net>
-In-Reply-To: <494E6846.8070800@sandeen.net>
+	<Pine.LNX.4.64.0812211737180.9555@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0812211737180.9555@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -68,13 +69,13 @@ statement S1,S2;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- var/julia/linuxcopy/fs/xfs/xfs_trans_buf.c |    4 ++--
+ fs/xfs/xfs_trans_buf.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/var/linuxes/linux-next/fs/xfs/xfs_trans_buf.c b/var/julia/linuxcopy/fs/xfs/xfs_trans_buf.c
+diff --git a/fs/xfs/xfs_trans_buf.c b/fs/xfs/xfs_trans_buf.c
 index 8ee2f8c..218829e 100644
---- a/var/linuxes/linux-next/fs/xfs/xfs_trans_buf.c
-+++ b/var/julia/linuxcopy/fs/xfs/xfs_trans_buf.c
+--- a/fs/xfs/xfs_trans_buf.c
++++ b/fs/xfs/xfs_trans_buf.c
 @@ -307,7 +307,7 @@ xfs_trans_read_buf(
  			return (flags & XFS_BUF_TRYLOCK) ?
  					EAGAIN : XFS_ERROR(ENOMEM);
