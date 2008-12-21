@@ -1,53 +1,87 @@
-From: Dmitri Vorobiev <dmitri.vorobiev@movial.fi>
-Date: Thu, 18 Dec 2008 14:30:07 +0000
-Subject: Re: [PATCH 4/28] drivers/ide: Drop return value from	platform_driver
-Message-Id: <494A5E6F.70505@movial.fi>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Dec 2008 15:41:57 +0000
+Subject: [PATCH 12/13] fs/cifs: Remove redundant test
+Message-Id: <Pine.LNX.4.64.0812211641370.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812101727230.21998@ask.diku.dk> <20081216195734.GA8032@fluff.org.uk> <4948F56A.7020501@movial.fi> <20081217213226.GA26832@kroah.com>
-In-Reply-To: <20081217213226.GA26832-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: sfrench@samba.org, linux-cifs-client@lists.samba.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Greg KH wrote:
-> On Wed, Dec 17, 2008 at 02:49:46PM +0200, Dmitri Vorobiev wrote:
->> Ben Dooks wrote:
->>> On Wed, Dec 10, 2008 at 05:27:56PM +0100, Julia Lawall wrote:
->>>> From: Julia Lawall <julia@diku.dk>
->>>>
->>>> The return value of the remove function of a driver structure, and thus of
->>>> a platform_driver structure, is ultimately ignored, and is thus
->>>> unnecessary.  This patch removes the return value for the remove function
->>>> stored in a platform_driver structure.
->>>>
->>>> For the files drivers/i2c/busses/i2c-at91.c and
->>>> drivers/i2c/busses/i2c-mv64xxx.c, the original return value was the value
->>>> of a variable storing the result of calling i2c_del_adapter.  I have thus
->>>> also deleted the declaration and initialization of this variable.  For the
->>>> other files, the return values were always 0.
->>>>
->>>> A simplified version of the semantic patch that makes this change is as
->>>> follows: (http://www.emn.fr/x-info/coccinelle/)
->>> I take it remove_new will eventually be renamed to remove once all
->>> the changes have been made?
->>>
->>> Unless there are any objections I'll add this to the merge list for
->>> the next window.
->> Please be careful since the drivers/base/ part has not been applied
->> yet, so I'm Cc:ing Greg now for his opinion.
-> 
-> The more I think about it, the more I think it should not be changed,
-> sorry.  We should leave the return value and do something based on the
-> value of it if we can.
+From: Julia Lawall <julia@diku.dk>
 
-Thanks for the reply, it's justifying the changes in the SGI SCSI controller driver :)
+In fs/cifs/cifssmb.c, pLockData is tested for being NULL at the beginning
+of the function, and not reassigned subsequently.
 
-Dmitri
+In fs/xfs/xfs_trans_buf.c, bp is tested for being NULL just a few lines
+above.
 
-> 
-> thanks,
-> 
-> greg k-h
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+position p1,p2;
+@@
+
+if (x@p1 = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+// another path to the test that is not through p1?
+@s exists@
+local idexpression r.x;
+position r.p1,r.p2;
+@@
+
+... when != x@p1
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+@fix depends on !s@
+position r.p1,r.p2;
+expression x,E;
+statement S1,S2;
+@@
+
+(
+- if ((x@p2 != NULL) || ...)
+  S1
+|
+- if ((x@p2 = NULL) && ...) S1
+|
+- BUG_ON(x@p2 = NULL);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/cifs/cifssmb.c                   |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index 824df14..552642a 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -1871,10 +1871,6 @@ CIFSSMBPosixLock(const int xid, struct cifsTconInfo *tcon,
+ 			rc = -EIO;      /* bad smb */
+ 			goto plk_err_exit;
+ 		}
+-		if (pLockData = NULL) {
+-			rc = -EINVAL;
+-			goto plk_err_exit;
+-		}
+ 		data_offset = le16_to_cpu(pSMBr->t2.DataOffset);
+ 		data_count  = le16_to_cpu(pSMBr->t2.DataCount);
+ 		if (data_count < sizeof(struct cifs_posix_lock)) {
