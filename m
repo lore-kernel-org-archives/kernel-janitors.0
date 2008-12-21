@@ -1,79 +1,28 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 19 Dec 2008 17:11:25 +0000
-Subject: [PATCH 3/3] drivers/staging/go7007: Move a dereference below a NULL
-Message-Id: <Pine.LNX.4.64.0812191811020.11217@ask.diku.dk>
+From: z3gs3v4b63v4x <z3gs3v4b63v4x@gmail.com>
+Date: Sun, 21 Dec 2008 03:16:42 +0000
+Subject: =?BIG5?B?oa0yMDA4LzEyLzIxILF6?= =?BIG5?B?wdmoU6azpECt07FNxN2quqX4t3669K+4ttyhSA==?=
+Message-Id: <9069a9180812201916v33d8d88ag481ff915779ea8be@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: pete@sensoray.com, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+2008-12-21  -  11:16
 
-In each case, if the NULL test is necessary, then the dereference should be
-moved below the NULL test.
+���sm������4������C������0������v������g���]7���p
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/).  The result has been modified to
-move the initialization of usb down closer to where it is used.
+������T������h������a���vS������x���G���������������������C���������������p���������������A���������O���s���������������j������������
 
-// <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
-@@
+������D������x6���b8���������X���������~���������H���������������]���t���e���x���������������������u+���������x���������z���{������
 
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
-// </smpl>
+������p������V������8���q9���M������������ ���u���n$29,900  (���b���e���������~100MB ���������������y���q������������������������)
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+������8������4������P������o������g���uz���OT������j���������A������9���Oh���z0������J���~K������T���Jg���f
 
----
- drivers/staging/go7007/s2250-board.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+������d������C���n6������A������B���~5������Q������P������H������d���YJ������C������L���sj������R���tL������C���OR������9������0���ns������
 
-diff --git a/drivers/staging/go7007/s2250-board.c b/drivers/staging/go7007/s2250-board.c
-index fb6845e..a60e19c 100644
---- a/drivers/staging/go7007/s2250-board.c
-+++ b/drivers/staging/go7007/s2250-board.c
-@@ -149,7 +149,7 @@ static int go7007_usb_vendor_request(struct go7007 *go, u16 request,
- static int write_reg(struct i2c_client *client, u8 reg, u8 value)
- {
- 	struct go7007 *go = i2c_get_adapdata(client->adapter);
--	struct go7007_usb *usb = go->hpi_context;
-+	struct go7007_usb *usb;
- 	int rc;
- 	int dev_addr = client->addr;
- 	u8 *buf;
-@@ -164,6 +164,7 @@ static int write_reg(struct i2c_client *client, u8 reg, u8 value)
- 	if (buf = NULL)
- 		return -ENOMEM;
- 
-+	usb = go->hpi_context;
- 	if (down_interruptible(&usb->i2c_lock) != 0) {
- 		printk(KERN_INFO "i2c lock failed\n");
- 		return -EINTR;
-@@ -181,7 +182,7 @@ static int write_reg(struct i2c_client *client, u8 reg, u8 value)
- static int write_reg_fp(struct i2c_client *client, u16 addr, u16 val)
- {
- 	struct go7007 *go = i2c_get_adapdata(client->adapter);
--	struct go7007_usb *usb = go->hpi_context;
-+	struct go7007_usb *usb;
- 	u8 *buf;
- 	struct s2250 *dec = i2c_get_clientdata(client);
- 
-@@ -200,6 +201,7 @@ static int write_reg_fp(struct i2c_client *client, u16 addr, u16 val)
- 
- 	memset(buf, 0xcd, 6);
- 
-+	usb = go->hpi_context;
- 	if (down_interruptible(&usb->i2c_lock) != 0) {
- 		printk(KERN_INFO "i2c lock failed\n");
- 		return -EINTR;
+������h���~������������e������X���~q������N������y���������A������r���yY���zj������1������d������7������e������
+
+������v������n���ss������m������X���Nr���zq������z������37���Q
+
+Z���w���������������q���������������������M���������G0938-764-395
+4������3���DH������8������2������
+������������{.n���+���������������������+%���������������������������w������{.n���+���������z������������������+h���������������^n���r���������z���������h���������������&���������z������z������������+������+zf���������h���������~������������i���������������������������z_���������j:+v���������)���������m
