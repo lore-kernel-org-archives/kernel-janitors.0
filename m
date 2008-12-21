@@ -1,25 +1,85 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Thu, 18 Dec 2008 23:40:07 +0000
-Subject: Re: [PATCH 6/6] drm/i915: add prototype for 'intelfb_panic' to header file
-Message-Id: <200812181540.08366.jbarnes@virtuousgeek.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Dec 2008 15:40:56 +0000
+Subject: [PATCH 9/13] fs/xfs: Remove redundant test
+Message-Id: <Pine.LNX.4.64.0812211640360.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <494ad5e4.0baa660a.04de.7bb4@mx.google.com>
-In-Reply-To: <494ad5e4.0baa660a.04de.7bb4@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.sourceforge.net
-Cc: Hannes Eder <hannes@hanneseder.net>, David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: xfs-masters@oss.sgi.com, xfs@oss.sgi.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thursday, December 18, 2008 1:32 pm Hannes Eder wrote:
-> Fix this sparse warning:
->
->   drivers/gpu/drm/i915/intel_fb.c:417:5: warning: symbol 'intelfb_panic'
-> was not declared. Should it be static?
+From: Julia Lawall <julia@diku.dk>
 
-Yep, this one should be static instead (I think, just double checking now to 
-make sure it's not used elsewhere, iirc it's not).
+In fs/cifs/cifssmb.c, pLockData is tested for being NULL at the beginning
+of the function, and not reassigned subsequently.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+In fs/xfs/xfs_trans_buf.c, bp is tested for being NULL just a few lines
+above.
 
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+position p1,p2;
+@@
+
+if (x@p1 = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+// another path to the test that is not through p1?
+@s exists@
+local idexpression r.x;
+position r.p1,r.p2;
+@@
+
+... when != x@p1
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+@fix depends on !s@
+position r.p1,r.p2;
+expression x,E;
+statement S1,S2;
+@@
+
+(
+- if ((x@p2 != NULL) || ...)
+  S1
+|
+- if ((x@p2 = NULL) && ...) S1
+|
+- BUG_ON(x@p2 = NULL);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/xfs/xfs_trans_buf.c              |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/xfs/xfs_trans_buf.c b/fs/xfs/xfs_trans_buf.c
+index 8ee2f8c..22afe29 100644
+--- a/fs/xfs/xfs_trans_buf.c
++++ b/fs/xfs/xfs_trans_buf.c
+@@ -307,7 +307,7 @@ xfs_trans_read_buf(
+ 			return (flags & XFS_BUF_TRYLOCK) ?
+ 					EAGAIN : XFS_ERROR(ENOMEM);
+ 
+-		if ((bp != NULL) && (XFS_BUF_GETERROR(bp) != 0)) {
++		if (XFS_BUF_GETERROR(bp) != 0) {
+ 			xfs_ioerror_alert("xfs_trans_read_buf", mp,
+ 					  bp, blkno);
+ 			error = XFS_BUF_GETERROR(bp);
