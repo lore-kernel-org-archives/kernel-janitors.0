@@ -1,26 +1,94 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 08:13:11 +0000
-Subject: Re: [PATCH 23/27] drivers/net/wireless: fix sparse warnings: make
-Message-Id: <20081226.001311.218715858.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Dec 2008 15:28:21 +0000
+Subject: [PATCH 1/13] s390: Remove redundant test
+Message-Id: <Pine.LNX.4.64.0812211628030.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	<20081222191823.11807.62915.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20081222191823.11807.62915.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Mon, 22 Dec 2008 20:18:23 +0100
+From: Julia Lawall <julia@diku.dk>
 
-> Fix this sparse warnings:
-> 
->   drivers/net/wireless/airo.c:3610:6: warning: symbol 'mpi_receive_802_11' was not declared. Should it be static?
->   drivers/net/wireless/atmel.c:3183:6: warning: symbol 'atmel_join_bss' was not declared. Should it be static?
->   drivers/net/wireless/ray_cs.c:831:5: warning: symbol 'ray_dev_init' was not declared. Should it be static?
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+The loop above the modified code only terminates when rc is a valid pointer.
 
-Applied.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+position p1,p2;
+@@
+
+if (x@p1 = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+// another path to the test that is not through p1?
+@s exists@
+local idexpression r.x;
+position r.p1,r.p2;
+@@
+
+... when != x@p1
+(
+x@p2 = NULL
+|
+x@p2 != NULL
+)
+
+@fix depends on !s@
+position r.p1,r.p2;
+expression x,E;
+statement S1,S2;
+@@
+
+(
+- if ((x@p2 != NULL) || ...)
+  S1
+|
+- if ((x@p2 = NULL) && ...) S1
+|
+- BUG_ON(x@p2 = NULL);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/s390/kernel/debug.c          |    2 +-
+ drivers/s390/net/qeth_core_main.c |    1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/s390/kernel/debug.c b/arch/s390/kernel/debug.c
+index 3665b18..e6c141c 100644
+--- a/arch/s390/kernel/debug.c
++++ b/arch/s390/kernel/debug.c
+@@ -391,7 +391,7 @@ debug_info_copy(debug_info_t* in, int mode)
+ 		debug_info_free(rc);
+ 	} while (1);
+ 
+-        if(!rc || (mode = NO_AREAS))
++	if (mode = NO_AREAS)
+                 goto out;
+ 
+         for(i = 0; i < in->nr_areas; i++){
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index bbd6788..e783644 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -2346,7 +2346,6 @@ static int qeth_init_input_buffer(struct qeth_card *card,
+ 	 * the QETH_IN_BUF_REQUEUE_THRESHOLD we should never run  out off
+ 	 * buffers
+ 	 */
+-	BUG_ON(!pool_entry);
+ 
+ 	buf->pool_entry = pool_entry;
+ 	for (i = 0; i < QETH_MAX_BUFFER_ELEMENTS(card); ++i) {
