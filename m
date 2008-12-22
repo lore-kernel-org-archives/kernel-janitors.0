@@ -1,67 +1,50 @@
-From: YanBo <dreamfly281@gmail.com>
-Date: Mon, 22 Dec 2008 02:10:17 +0000
-Subject: Re: [PATCH 2/3] drivers/staging/agnx: Move a dereference below a NULL test
-Message-Id: <1197ff4c0812211810s796a367m7b5dc6b43724c0e0@mail.gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 19:15:36 +0000
+Subject: [PATCH 05/27] drivers/net/arcnet: fix sparse warnings: make symbols
+Message-Id: <20081222191535.11807.72965.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812191810240.11217@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812191810240.11217@ask.diku.dk>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Dec 20, 2008 at 1:11 AM, Julia Lawall <julia@diku.dk> wrote:
-> From: Julia Lawall <julia@diku.dk>
->
-> If the NULL test is necessary, then the dereference should be moved below
-> the NULL test.
->
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
->
-> // <smpl>
-> @@
-> type T;
-> expression E;
-> identifier i,fld;
-> statement S;
-> @@
->
-> - T i = E->fld;
-> + T i;
->  ... when != E
->      when != i
->  if (E = NULL) S
-> + i = E->fld;
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
->
-> ---
->  drivers/staging/agnx/pci.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff -u -p a/drivers/staging/agnx/pci.c b/drivers/staging/agnx/pci.c
-> --- a/drivers/staging/agnx/pci.c
-> +++ b/drivers/staging/agnx/pci.c
-> @@ -440,11 +440,12 @@ static struct ieee80211_ops agnx_ops = {
->  static void __devexit agnx_pci_remove(struct pci_dev *pdev)
->  {
->        struct ieee80211_hw *dev = pci_get_drvdata(pdev);
-> -       struct agnx_priv *priv = dev->priv;
-> +       struct agnx_priv *priv;
->        AGNX_TRACE;
->
->        if (!dev)
->                return;
-> +       priv = dev->priv;
->        ieee80211_unregister_hw(dev);
->        pci_iounmap(pdev, priv->ctl);
->        pci_iounmap(pdev, priv->data);
->
+Fix this sparse warnings:
 
-Thanks! Will pulled to the AGNX git tree.
+  drivers/net/arcnet/capmode.c:64:6: warning: symbol 'arcnet_cap_init' was not declared. Should it be static?
+  drivers/net/arcnet/com90xx.c:586:5: warning: symbol 'com90xx_reset' was not declared. Should it be static?
 
-BR
-Yanbo
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/arcnet/capmode.c |    2 +-
+ drivers/net/arcnet/com90xx.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/arcnet/capmode.c b/drivers/net/arcnet/capmode.c
+index e544953..30580bb 100644
+--- a/drivers/net/arcnet/capmode.c
++++ b/drivers/net/arcnet/capmode.c
+@@ -61,7 +61,7 @@ static struct ArcProto capmode_proto  };
+ 
+ 
+-void arcnet_cap_init(void)
++static void arcnet_cap_init(void)
+ {
+ 	int count;
+ 
+diff --git a/drivers/net/arcnet/com90xx.c b/drivers/net/arcnet/com90xx.c
+index f4113d2..d762fe4 100644
+--- a/drivers/net/arcnet/com90xx.c
++++ b/drivers/net/arcnet/com90xx.c
+@@ -583,7 +583,7 @@ static void com90xx_setmask(struct net_device *dev, int mask)
+  *
+  * However, it does make sure the card is in a defined state.
+  */
+-int com90xx_reset(struct net_device *dev, int really_reset)
++static int com90xx_reset(struct net_device *dev, int really_reset)
+ {
+ 	struct arcnet_local *lp = netdev_priv(dev);
+ 	short ioaddr = dev->base_addr;
+
