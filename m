@@ -1,45 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 02 Dec 2008 22:58:05 +0000
-Subject: Re: [PATCH linux-next] powerpc/chrp: Add missing of_node_put in
-Message-Id: <20081203095805.7d868849.sfr@canb.auug.org.au>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Signature=_Wed__3_Dec_2008_09_58_05_+1100_K4GmTslo0ueuSKAi"
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 19:17:09 +0000
+Subject: [PATCH 15/27] drivers/net/qlge: fix sparse warnings: make symbols
+Message-Id: <20081222191708.11807.35530.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200812021434.47010.npalix@diku.dk>
-In-Reply-To: <200812021434.47010.npalix@diku.dk>
-To: Nicolas Palix <npalix@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Julia Lawall <julia@diku.dk>, Paul Mackerras <paulus@samba.org>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__3_Dec_2008_09_58_05_+1100_K4GmTslo0ueuSKAi
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix this sparse warnings:
 
-On Tue, 2 Dec 2008 14:34:46 +0100 Nicolas Palix <npalix@diku.dk> wrote:
->
-> of_node_put is needed before discarding a value received from
-> of_find_node_by_name, eg in error handling code or when the device
-> node is no longer used.
->=20
-> Signed-off-by: Nicolas Palix <npalix@diku.dk>
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+  drivers/net/qlge/qlge_ethtool.c:100:6: warning: symbol 'ql_update_stats' was not declared. Should it be static?
+  drivers/net/qlge/qlge_mpi.c:22:5: warning: symbol 'ql_get_mb_sts' was not declared. Should it be static?
 
-Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/qlge/qlge_ethtool.c |    2 +-
+ drivers/net/qlge/qlge_mpi.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+diff --git a/drivers/net/qlge/qlge_ethtool.c b/drivers/net/qlge/qlge_ethtool.c
+index b62fbd4..eefb81b 100644
+--- a/drivers/net/qlge/qlge_ethtool.c
++++ b/drivers/net/qlge/qlge_ethtool.c
+@@ -97,7 +97,7 @@ exit:
+ 	return status;
+ }
+ 
+-void ql_update_stats(struct ql_adapter *qdev)
++static void ql_update_stats(struct ql_adapter *qdev)
+ {
+ 	u32 i;
+ 	u64 data;
+diff --git a/drivers/net/qlge/qlge_mpi.c b/drivers/net/qlge/qlge_mpi.c
+index 24fe344..fa31891 100644
+--- a/drivers/net/qlge/qlge_mpi.c
++++ b/drivers/net/qlge/qlge_mpi.c
+@@ -19,7 +19,7 @@ exit:
+ 	return status;
+ }
+ 
+-int ql_get_mb_sts(struct ql_adapter *qdev, struct mbox_params *mbcp)
++static int ql_get_mb_sts(struct ql_adapter *qdev, struct mbox_params *mbcp)
+ {
+ 	int i, status;
+ 
 
---Signature=_Wed__3_Dec_2008_09_58_05_+1100_K4GmTslo0ueuSKAi
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkk1vX0ACgkQjjKRsyhoI8yhbwCfYgYc3JfXqy2v7+AwOz5eJ7Ao
-ZucAnR/MiEicPcKWMzgAChoROL9BjRvl
-=6bJ4
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Dec_2008_09_58_05_+1100_K4GmTslo0ueuSKAi--
