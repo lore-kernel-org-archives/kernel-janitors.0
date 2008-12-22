@@ -1,39 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 13 Dec 2008 01:26:10 +0000
-Subject: Re: [PATCH 0/9] mISDN: fix sparse warnings
-Message-Id: <20081212.172610.193709492.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 19:16:03 +0000
+Subject: [PATCH 08/27] drivers/net/cxgb3: comment out dead code
+Message-Id: <20081222191603.11807.61006.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081210173056.GB15810@pingi.kke.suse.de>
-	<20081211122245.754e7829.akpm@linux-foundation.org>
-	<20081211210537.GA27010@uranus.ravnborg.org>
-In-Reply-To: <20081211210537.GA27010@uranus.ravnborg.org>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sam@ravnborg.org
-Cc: akpm@linux-foundation.org, kkeil@suse.de, hannes@hanneseder.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Thu, 11 Dec 2008 22:05:37 +0100
+The function 'vsc8211_set_speed_duplex' is not used, so comment it
+out.  For 'vsc8211_set_automdi' the function 'vsc8211_set_speed_duplex'
+is the only caller, so comment it out as well.
 
-> Lately Davis Miller has included ISDN stuff in net-next.
-> Try to fix the commented issues, add the acks you got, give patches
-> proper titles and submit to netdev@vger.kernel.org
+Fix this (sparse) warning:
 
-I actually have these in my queue, but I'm up in the
-mountains snowboarding until Sunday so have only been
-handling the most important fixes and easy patches.
+  drivers/net/cxgb3/vsc8211.c:269: warning: 'vsc8211_set_automdi' defined but not used
+  drivers/net/cxgb3/vsc8211.c:295:5: warning: symbol 'vsc8211_set_speed_duplex' was not declared. Should it be static?
 
-Andrew, don't fret, I'll take care of these and they
-won't get lost.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/cxgb3/vsc8211.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-If it's cc:'d to netdev, there is next to zero chance
-of the patch not getting either rejected or applied
-since we track everything in patchwork.
+diff --git a/drivers/net/cxgb3/vsc8211.c b/drivers/net/cxgb3/vsc8211.c
+index 33f956b..d071309 100644
+--- a/drivers/net/cxgb3/vsc8211.c
++++ b/drivers/net/cxgb3/vsc8211.c
+@@ -262,6 +262,7 @@ static int vsc8211_get_link_status_fiber(struct cphy *cphy, int *link_ok,
+ 	return 0;
+ }
+ 
++#ifdef UNUSED
+ /*
+  * Enable/disable auto MDI/MDI-X in forced link speed mode.
+  */
+@@ -301,6 +302,7 @@ int vsc8211_set_speed_duplex(struct cphy *phy, int speed, int duplex)
+ 		err = vsc8211_set_automdi(phy, 1);
+ 	return err;
+ }
++#endif /* UNUSED */
+ 
+ static int vsc8211_power_down(struct cphy *cphy, int enable)
+ {
 
-You know, you too could look there for the state of
-these misdn patches :-)
-
-	http://patchwork.ozlabs.org/project/netdev/list/
-
-Enjoy.
