@@ -1,18 +1,46 @@
-From: Roland Dreier <rdreier@cisco.com>
-Date: Sun, 21 Dec 2008 21:27:57 +0000
-Subject: Re: [PATCH 3/13] drivers/infiniband/hw/ehca: Remove redundant test
-Message-Id: <adaiqpdxlpe.fsf@cisco.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 19:16:59 +0000
+Subject: [PATCH 14/27] drivers/net/netxen: fix sparse warnings: use NULL
+Message-Id: <20081222191659.11807.9347.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812211636550.9555@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812211636550.9555@pc-004.diku.dk> (Julia Lawall's
-	message of "Sun, 21 Dec 2008 16:37:17 +0100 (CET)")
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: rolandd@cisco.com, sean.hefty@intel.com, hal.rosenstock@gmail.com, general@lists.openfabrics.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, hnguyen@de.ibm.com, raisch@de.ibm.com
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks, applied for 2.6.29 (ehca guys added to cc list just to make sure
-this is OK).
+Fix this sparse warnings:
 
- - R.
+  drivers/net/netxen/netxen_nic_hw.c:1462:18: warning: Using plain integer as NULL pointer
+  drivers/net/netxen/netxen_nic_hw.c:1536:18: warning: Using plain integer as NULL pointer
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/netxen/netxen_nic_hw.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/netxen/netxen_nic_hw.c b/drivers/net/netxen/netxen_nic_hw.c
+index 86379fd..aa6e603 100644
+--- a/drivers/net/netxen/netxen_nic_hw.c
++++ b/drivers/net/netxen/netxen_nic_hw.c
+@@ -1459,7 +1459,7 @@ static int netxen_nic_pci_mem_read_direct(struct netxen_adapter *adapter,
+ 			mem_ptr = ioremap(mem_base + mem_page, PAGE_SIZE * 2);
+ 		else
+ 			mem_ptr = ioremap(mem_base + mem_page, PAGE_SIZE);
+-		if (mem_ptr = 0UL) {
++		if (mem_ptr = NULL) {
+ 			*(uint8_t  *)data = 0;
+ 			return -1;
+ 		}
+@@ -1533,7 +1533,7 @@ netxen_nic_pci_mem_write_direct(struct netxen_adapter *adapter, u64 off,
+ 			mem_ptr = ioremap(mem_base + mem_page, PAGE_SIZE*2);
+ 		else
+ 			mem_ptr = ioremap(mem_base + mem_page, PAGE_SIZE);
+-		if (mem_ptr = 0UL)
++		if (mem_ptr = NULL)
+ 			return -1;
+ 		addr = mem_ptr;
+ 		addr += start & (PAGE_SIZE - 1);
+
