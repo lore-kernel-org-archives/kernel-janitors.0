@@ -1,47 +1,53 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Date: Mon, 22 Dec 2008 22:14:05 +0000
+From: "=?UTF-8?Q?H=C3=A5kon_L=C3=B8vdal?=" <hlovdal@gmail.com>
+Date: Mon, 22 Dec 2008 23:44:25 +0000
 Subject: Re: [PATCH 02/27] drivers/net: fix sparse warnings: make do-while a compound statement
-Message-Id: <m3hc4voo2a.fsf@maximus.localdomain>
+Message-Id: <a01a16b50812221544x45c3559ap808ac0095ee8f01@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	<20081222191507.11807.50794.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20081222191507.11807.50794.stgit@vmbox.hanneseder.net> (Hannes Eder's message of "Mon\, 22 Dec 2008 20\:15\:07 +0100")
+	 <20081222191507.11807.50794.stgit@vmbox.hanneseder.net>
+	 <m3hc4voo2a.fsf@maximus.localdomain>
+In-Reply-To: <m3hc4voo2a.fsf@maximus.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Krzysztof Halasa <khc@pm.waw.pl>
+Cc: Hannes Eder <hannes@hanneseder.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hannes Eder <hannes@hanneseder.net> writes:
-
-> Fix this sparse warnings:
-
-Or: break the formating to silence sparse.
-
->   drivers/net/atp.c:811:8: warning: do-while statement is not a compound statement
->   drivers/net/atp.c:813:8: warning: do-while statement is not a compound statement
->   drivers/net/atp.c:815:11: warning: do-while statement is not a compound statement
->   drivers/net/atp.c:817:11: warning: do-while statement is not a compound statement
-
-> --- a/drivers/net/starfire.c
-> +++ b/drivers/net/starfire.c
-> @@ -882,9 +882,9 @@ static int mdio_read(struct net_device *dev, int phy_id, int location)
->  	void __iomem *mdio_addr = np->base + MIICtrl + (phy_id<<7) + (location<<2);
->  	int result, boguscnt00;
->  	/* ??? Should we add a busy-wait here? */
-> -	do
-> +	do {
->  		result = readl(mdio_addr);
-> -	while ((result & 0xC0000000) != 0x80000000 && --boguscnt > 0);
-> +	} while ((result & 0xC0000000) != 0x80000000 && --boguscnt > 0);
->  	if (boguscnt = 0)
->  		return 0;
->  	if ((result & 0xffff) = 0xffff)
-
-
-I don't know how one could think the above is an improvement.
-
-This "do-while statement is not a compound statement" warning is
-pure nonsense.
--- 
-Krzysztof Halasa
+MjAwOC8xMi8yMiBLcnp5c3p0b2YgSGFsYXNhIDxraGNAcG0ud2F3LnBsPjoKPj4gLS0tIGEvZHJp
+dmVycy9uZXQvc3RhcmZpcmUuYwo+PiArKysgYi9kcml2ZXJzL25ldC9zdGFyZmlyZS5jCj4+IEBA
+IC04ODIsOSArODgyLDkgQEAgc3RhdGljIGludCBtZGlvX3JlYWQoc3RydWN0IG5ldF9kZXZpY2Ug
+KmRldiwgaW50IHBoeV9pZCwgaW50IGxvY2F0aW9uKQo+PiAgICAgICB2b2lkIF9faW9tZW0gKm1k
+aW9fYWRkciA9IG5wLT5iYXNlICsgTUlJQ3RybCArIChwaHlfaWQ8PDcpICsgKGxvY2F0aW9uPDwy
+KTsKPj4gICAgICAgaW50IHJlc3VsdCwgYm9ndXNjbnQQMDA7Cj4+ICAgICAgIC8qID8/PyBTaG91
+bGQgd2UgYWRkIGEgYnVzeS13YWl0IGhlcmU/ICovCj4+IC0gICAgIGRvCj4+ICsgICAgIGRvIHsK
+Pj4gICAgICAgICAgICAgICByZXN1bHQgPSByZWFkbChtZGlvX2FkZHIpOwo+PiAtICAgICB3aGls
+ZSAoKHJlc3VsdCAmIDB4QzAwMDAwMDApICE9IDB4ODAwMDAwMDAgJiYgLS1ib2d1c2NudCA+IDAp
+Owo+PiArICAgICB9IHdoaWxlICgocmVzdWx0ICYgMHhDMDAwMDAwMCkgIT0gMHg4MDAwMDAwMCAm
+JiAtLWJvZ3VzY250ID4gMCk7Cj4+ICAgICAgIGlmIChib2d1c2NudCA9IDApCj4+ICAgICAgICAg
+ICAgICAgcmV0dXJuIDA7Cj4+ICAgICAgIGlmICgocmVzdWx0ICYgMHhmZmZmKSA9IDB4ZmZmZikK
+Pgo+Cj4gSSBkb24ndCBrbm93IGhvdyBvbmUgY291bGQgdGhpbmsgdGhlIGFib3ZlIGlzIGFuIGlt
+cHJvdmVtZW50LgoKRm9yIHRoaXMgc3BlY2lmaWMgaXNzdWUgdGhlIGltcG9ydGFudCBhc3BlY3Qg
+aXMgdG8gaW1wcm92ZSByZWFkYWJpbGl0eQooYW5kIG5vdCBqdXN0IGV2ZW50dWFsbHkgc2F0aXNm
+eSBzb21lIHdhcm5pbmcgZnJvbSBhIHRvb2wpLCB3aGljaCBJCmFzc3VtZSB0aGVyZSBpcyBubyBk
+aXNhZ3JlbWVudCBvbi4gTm93IHdoYXQgY29uc3RpdHV0ZXMgaW1wcm92ZWQKcmVhZGJpbGl0eSBv
+biB0aGUgb3RoZXIgaGFuZCBpcyBhbm90aGVyIGlzc3VlLCBhbmQgSSBndWVzcyB0aGVyZSBhcmUK
+bmV4dCB0byBhcyBtYW55IG9wcGluaW9ucyBhcyBkZXZlbG9wZXJzLi4uIDopCkkgd291bGQgbW9z
+dCBjZXJ0YWlubHkgcHJlZmVyIHRvIGhhdmUgY29kZSBsb29rIGNvbnNpc3RlbnRseSBhbmQgYWx3
+YXlzCmhhdmUgYnJhY2tldHMsIGV2ZW4gaW4gdGhlIGNhc2Ugb2YganVzdCBvbmUgYm9keSBsaW5l
+LgoKT2Ygc2Vjb25kYXJ5IGltcG9ydGFuY2UgaXMgdGhlIGJlbmVmaXQgdGhhdCBhbHdheXMgdXNp
+bmcgYnJhY2tldHMKbWFrZXMgdGhlbSBtdWNoIG1vcmUgbWVyZ2UgZnJpZW5kbHkuIENvbnNpZGVy
+IHRoZSBmb2xsb3dpbmcgc2NlbmFyaW86CgpDb21tb24gYmFzZToKICAgICAgICBkbwogICAgICAg
+ICAgICAgICAgcmVzdWx0ID0gcmVhZGwobWRpb19hZGRyKTsKICAgICAgICB3aGlsZSAoKHJlc3Vs
+dCAmIDB4QzAwMDAwMDApICE9IDB4ODAwMDAwMDAgJiYgLS1ib2d1c2NudCA+IDApOwoKQnJhbmNo
+IDEKICAgICAgICBkbyB7CiAgICAgICAgICAgICAgICByZXN1bHQgPSByZWFkbChtZGlvX2FkZHIp
+OwogICAgICAgICAgICAgICAgZG9fc29tZXRoaW5nKCk7CiAgICAgICAgfSB3aGlsZSAoKHJlc3Vs
+dCAmIDB4QzAwMDAwMDApICE9IDB4ODAwMDAwMDAgJiYgLS1ib2d1c2NudCA+IDApOwoKQnJhbmNo
+IDIKICAgICAgICBkbwogICAgICAgICAgICAgICAgcmVzdWx0ID0gcmVhZGwobWRpb19hZGRyKTsK
+ICAgICAgICB3aGlsZSAoTk9UX09LKHJlc3VsdCkgJiYgLS1ib2d1c2NudCA+IDApOwoKSW4gdGhp
+cyBjYXNlIGlmIGJvdGggYnJhbmNoIDEgYW5kIDIgYXJlIG1lcmdlZCwgdGhlcmUgd2lsbCBiZSBh
+IG1lcmdlIGNvbmZsaWN0CnRoYXQgaGFzIHRvIGJlIHJlc29sdmVkIG1hbnVhbGx5LiBJZiB0aGUg
+YnJhY2tldHMgaGFkIGJlZW4gaW4gcGxhY2UgZnJvbSB0aGUKc3RhcnQgdG9vbHMgc2hvdWxkIGJl
+IGFibGUgdG8gcmVzb2x2IHRoaXMgYXV0b21hdGljYWxseS4KCkJSIEjDpWtvbiBMw7h2ZGFsCv/0
+6Lp7Lm7HK4m3n66JrYYrJYrL/7Hp3bYXpYp3/7p7Lm7HK4m3pHq53pf42p4raK7P4p7YXm6HcqH2
+pnrLGoHraJmo6K3aJqP74Hq/5Hq53pf6K4DKK3pmo6K3aJqIp36GrYbbaf//74Hq/5Hq53pf6K4P
+5mo6K3aJqP4p36P4bQo=
