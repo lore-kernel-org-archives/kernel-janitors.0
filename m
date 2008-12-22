@@ -1,28 +1,56 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 02:05:46 +0000
-Subject: Re: [PATCH 13/13] net/appletalk: Remove redundant test
-Message-Id: <20081225.180546.25884866.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 19:17:18 +0000
+Subject: [PATCH 16/27] drivers/net/skfp: fix sparse warnings: make symbols
+Message-Id: <20081222191717.11807.35892.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812211641590.9555@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812211641590.9555@pc-004.diku.dk>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: acme@ghostprotocols.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Dec 2008 16:42:18 +0100 (CET)
+Fix this sparse warnings:
 
-> atif is tested for being NULL twice, with the same effect in each case.  I
-> have kept the second test, as it seems to fit well with the comment above it.
+  drivers/net/skfp/skfddi.c:620:13: warning: symbol 'skfp_interrupt' was not declared. Should it be static?
+  drivers/net/skfp/skfddi.c:687:25: warning: symbol 'skfp_ctl_get_stats' was not declared. Should it be static?
+  drivers/net/skfp/skfddi.c:1232:6: warning: symbol 'CheckSourceAddress' was not declared. Should it be static?
 
-Applied.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/skfp/skfddi.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-But please always CC: netdev on all networking patches, so that your
-patch gets properly tracked at:
+diff --git a/drivers/net/skfp/skfddi.c b/drivers/net/skfp/skfddi.c
+index 7fbd4f8..607efea 100644
+--- a/drivers/net/skfp/skfddi.c
++++ b/drivers/net/skfp/skfddi.c
+@@ -617,7 +617,7 @@ static int skfp_close(struct net_device *dev)
+  *   Interrupts are disabled, then reenabled at the adapter.
+  */
+ 
+-irqreturn_t skfp_interrupt(int irq, void *dev_id)
++static irqreturn_t skfp_interrupt(int irq, void *dev_id)
+ {
+ 	struct net_device *dev = dev_id;
+ 	struct s_smc *smc;	/* private board structure pointer */
+@@ -684,7 +684,7 @@ irqreturn_t skfp_interrupt(int irq, void *dev_id)
+  *   independent.
+  *
+  */
+-struct net_device_stats *skfp_ctl_get_stats(struct net_device *dev)
++static struct net_device_stats *skfp_ctl_get_stats(struct net_device *dev)
+ {
+ 	struct s_smc *bp = netdev_priv(dev);
+ 
+@@ -1229,7 +1229,7 @@ static void send_queued_packets(struct s_smc *smc)
+  * Verify if the source address is set. Insert it if necessary.
+  *
+  ************************/
+-void CheckSourceAddress(unsigned char *frame, unsigned char *hw_addr)
++static void CheckSourceAddress(unsigned char *frame, unsigned char *hw_addr)
+ {
+ 	unsigned char SRBit;
+ 
 
-	http://patchwork.ozlabs.org/project/netdev/list/
-
-I only caught this one by accident while scanning linux-kernel
-postings.  Depending upon that kind of luck is not a good idea :)
