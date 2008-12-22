@@ -1,20 +1,41 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Mon, 22 Dec 2008 16:33:09 +0000
-Subject: Re: [PATCH 1/2] arch/arm/plat-mxc: Add local_irq_restore in error handling code
-Message-Id: <20081222163309.GA16392@n2100.arm.linux.org.uk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 19:16:32 +0000
+Subject: [PATCH 11/27] drivers/net/igb: remove dead code (function
+Message-Id: <20081222191632.11807.3776.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812212153570.3635@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812212153570.3635@ask.diku.dk>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel@pengutronix.de, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Dec 21, 2008 at 09:54:23PM +0100, Julia Lawall wrote:
-> There is a call to local_irq_restore in the normal exit case, so it would
-> seem that there should be one on an error return as well.
+Fix this warning:
 
-Please check what's queued up for the next merge; a similar change is
-already merged as part of a larger patch.  (which is more correct
-since it calls local_irq_restore before the printk.)
+  drivers/net/igb/e1000_mac.c:54: warning: 'igb_read_pci_cfg' defined but not used
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/igb/e1000_mac.c |    7 -------
+ 1 files changed, 0 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/igb/e1000_mac.c b/drivers/net/igb/e1000_mac.c
+index 137269d..97f0049 100644
+--- a/drivers/net/igb/e1000_mac.c
++++ b/drivers/net/igb/e1000_mac.c
+@@ -50,13 +50,6 @@ void igb_remove_device(struct e1000_hw *hw)
+ 	kfree(hw->dev_spec);
+ }
+ 
+-static void igb_read_pci_cfg(struct e1000_hw *hw, u32 reg, u16 *value)
+-{
+-	struct igb_adapter *adapter = hw->back;
+-
+-	pci_read_config_word(adapter->pdev, reg, value);
+-}
+-
+ static s32 igb_read_pcie_cap_reg(struct e1000_hw *hw, u32 reg, u16 *value)
+ {
+ 	struct igb_adapter *adapter = hw->back;
+
