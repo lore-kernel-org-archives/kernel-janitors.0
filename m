@@ -1,7 +1,7 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Sun, 21 Dec 2008 22:27:58 +0000
-Subject: Re: [PATCH 1/2] arch/arm/plat-mxc: Add local_irq_restore in error
-Message-Id: <20081221222758.GB1614@pengutronix.de>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Date: Mon, 22 Dec 2008 16:33:09 +0000
+Subject: Re: [PATCH 1/2] arch/arm/plat-mxc: Add local_irq_restore in error handling code
+Message-Id: <20081222163309.GA16392@n2100.arm.linux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0812212153570.3635@ask.diku.dk>
 In-Reply-To: <Pine.LNX.4.64.0812212153570.3635@ask.diku.dk>
@@ -11,21 +11,10 @@ Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia@diku.dk>
 Cc: kernel@pengutronix.de, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
-
 On Sun, Dec 21, 2008 at 09:54:23PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
 > There is a call to local_irq_restore in the normal exit case, so it would
 > seem that there should be one on an error return as well.
 
-Yes, that's correct. Thanks for the patch. A fix for this is already
-scheduled upstream though.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Please check what's queued up for the next merge; a similar change is
+already merged as part of a larger patch.  (which is more correct
+since it calls local_irq_restore before the printk.)
