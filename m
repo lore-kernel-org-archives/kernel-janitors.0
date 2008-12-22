@@ -1,28 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 04 Dec 2008 05:11:52 +0000
-Subject: Re: [PATCH linux-next] sparc: Add missing of_node_put
-Message-Id: <20081203.211152.263373582.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 19:16:23 +0000
+Subject: [PATCH 10/27] drivers/net/enic: fix sparse warning: make symbol static
+Message-Id: <20081222191622.11807.9132.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200812021130.06197.npalix@diku.dk>
-In-Reply-To: <200812021130.06197.npalix@diku.dk>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: npalix@diku.dk
-Cc: wli@holomorphy.com, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia@diku.dk
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 2 Dec 2008 11:30:06 +0100
+Fix this sparse warning:
 
-> 
-> of_node_put is needed before discarding a value received from
-> of_find_node_by_name, eg in error handling code or when the device
-> node is no longer used.
+  drivers/net/enic/vnic_dev.c:288:5: warning: symbol 'vnic_dev_capable' was not declared. Should it be static?
 
-Applied to sparc-next-2.6, thanks.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/enic/vnic_dev.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-I'm not going to add this to sparc-2.6 or stable, it doesn't
-fix any real bugs on sparc (no hot plugged OF nodes, ever)
-and adding it to sparc-2.6 would potentitally create some
-difficult conflicts in sparc-next-2.6 since we're just finishing
-a full merge of arch/sparc64 into arch/sparc there.
+diff --git a/drivers/net/enic/vnic_dev.c b/drivers/net/enic/vnic_dev.c
+index 08a37b0..1170857 100644
+--- a/drivers/net/enic/vnic_dev.c
++++ b/drivers/net/enic/vnic_dev.c
+@@ -285,7 +285,7 @@ int vnic_dev_cmd(struct vnic_dev *vdev, enum vnic_devcmd_cmd cmd,
+ 	return -ETIMEDOUT;
+ }
+ 
+-int vnic_dev_capable(struct vnic_dev *vdev, enum vnic_devcmd_cmd cmd)
++static int vnic_dev_capable(struct vnic_dev *vdev, enum vnic_devcmd_cmd cmd)
+ {
+ 	u64 a0 = (u32)cmd, a1 = 0;
+ 	int wait = 1000;
+
