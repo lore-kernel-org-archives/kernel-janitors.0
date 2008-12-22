@@ -1,113 +1,138 @@
-From: "Steve French" <smfrench@gmail.com>
-Date: Mon, 22 Dec 2008 21:55:38 +0000
-Subject: Re: [PATCH 12/13] fs/cifs: Remove redundant test
-Message-Id: <524f69650812221355t510f673at37a3e48585c0a5b8@mail.gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 19:16:41 +0000
+Subject: [PATCH 12/27] drivers/net/irda: fix sparse warnings: make symbols
+Message-Id: <20081222191641.11807.72534.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812211641370.9555@pc-004.diku.dk>
-	 <524f69650812221355s2136b391u822d2a08a32c692@mail.gmail.com>
-In-Reply-To: <524f69650812221355s2136b391u822d2a08a32c692@mail.gmail.com>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-cifs-client@lists.samba.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Dec 22, 2008 at 3:55 PM, Steve French <smfrench@gmail.com> wrote:
->
-> Merged into cifs-2.6.git (should make 2.6.29)
->
-> Thx
->
-> On Sun, Dec 21, 2008 at 9:41 AM, Julia Lawall <julia@diku.dk> wrote:
->>
->> From: Julia Lawall <julia@diku.dk>
->>
->> In fs/cifs/cifssmb.c, pLockData is tested for being NULL at the beginning
->> of the function, and not reassigned subsequently.
->>
->> In fs/xfs/xfs_trans_buf.c, bp is tested for being NULL just a few lines
->> above.
->>
->> A simplified version of the semantic patch that makes this change is as
->> follows: (http://www.emn.fr/x-info/coccinelle/)
->>
->> // <smpl>
->> @r exists@
->> local idexpression x;
->> expression E;
->> position p1,p2;
->> @@
->>
->> if (x@p1 = NULL || ...) { ... when forall
->>   return ...; }
->> ... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
->> (
->> x@p2 = NULL
->> |
->> x@p2 != NULL
->> )
->>
->> // another path to the test that is not through p1?
->> @s exists@
->> local idexpression r.x;
->> position r.p1,r.p2;
->> @@
->>
->> ... when != x@p1
->> (
->> x@p2 = NULL
->> |
->> x@p2 != NULL
->> )
->>
->> @fix depends on !s@
->> position r.p1,r.p2;
->> expression x,E;
->> statement S1,S2;
->> @@
->>
->> (
->> - if ((x@p2 != NULL) || ...)
->>  S1
->> |
->> - if ((x@p2 = NULL) && ...) S1
->> |
->> - BUG_ON(x@p2 = NULL);
->> )
->> // </smpl>
->>
->> Signed-off-by: Julia Lawall <julia@diku.dk>
->>
->> ---
->>  fs/cifs/cifssmb.c                   |    4 ----
->>  1 files changed, 0 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
->> index 824df14..552642a 100644
->> --- a/fs/cifs/cifssmb.c
->> +++ b/fs/cifs/cifssmb.c
->> @@ -1871,10 +1871,6 @@ CIFSSMBPosixLock(const int xid, struct cifsTconInfo *tcon,
->>                        rc = -EIO;      /* bad smb */
->>                        goto plk_err_exit;
->>                }
->> -               if (pLockData = NULL) {
->> -                       rc = -EINVAL;
->> -                       goto plk_err_exit;
->> -               }
->>                data_offset = le16_to_cpu(pSMBr->t2.DataOffset);
->>                data_count  = le16_to_cpu(pSMBr->t2.DataCount);
->>                if (data_count < sizeof(struct cifs_posix_lock)) {
->
->
->
-> --
-> Thanks,
->
-> Steve
+Fix this sparse warnings:
 
+  drivers/net/irda/ma600-sir.c:239:5: warning: symbol 'ma600_reset' was not declared. Should it be static?
+  drivers/net/irda/smsc-ircc2.c:875:5: warning: symbol 'smsc_ircc_hard_xmit_sir' was not declared. Should it be static?
+  drivers/net/irda/smsc-ircc2.c:1131:6: warning: symbol 'smsc_ircc_set_sir_speed' was not declared. Should it be static?
+  drivers/net/irda/smsc-ircc2.c:1897:6: warning: symbol 'smsc_ircc_sir_start' was not declared. Should it be static?
+  drivers/net/irda/w83977af_ir.c:150:5: warning: symbol 'w83977af_open' was not declared. Should it be static?
+  drivers/net/irda/w83977af_ir.c:313:5: warning: symbol 'w83977af_probe' was not declared. Should it be static?
+  drivers/net/irda/w83977af_ir.c:412:6: warning: symbol 'w83977af_change_speed' was not declared. Should it be static?
+  drivers/net/irda/w83977af_ir.c:492:5: warning: symbol 'w83977af_hard_xmit' was not declared. Should it be static?
+  drivers/net/irda/w83977af_ir.c:734:5: warning: symbol 'w83977af_dma_receive' was not declared. Should it be static?
+  drivers/net/irda/w83977af_ir.c:806:5: warning: symbol 'w83977af_dma_receive_complete' was not declared. Should it be static?
 
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/irda/ma600-sir.c   |    2 +-
+ drivers/net/irda/smsc-ircc2.c  |    6 +++---
+ drivers/net/irda/w83977af_ir.c |   14 +++++++-------
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
---
-Thanks,
+diff --git a/drivers/net/irda/ma600-sir.c b/drivers/net/irda/ma600-sir.c
+index 1ceed9c..e912164 100644
+--- a/drivers/net/irda/ma600-sir.c
++++ b/drivers/net/irda/ma600-sir.c
+@@ -236,7 +236,7 @@ static int ma600_change_speed(struct sir_dev *dev, unsigned speed)
+  * avoid the state machine complexity before we get things working
+  */
+ 
+-int ma600_reset(struct sir_dev *dev)
++static int ma600_reset(struct sir_dev *dev)
+ {
+ 	IRDA_DEBUG(2, "%s()\n", __func__);
+ 
+diff --git a/drivers/net/irda/smsc-ircc2.c b/drivers/net/irda/smsc-ircc2.c
+index b5360fe..5d09e15 100644
+--- a/drivers/net/irda/smsc-ircc2.c
++++ b/drivers/net/irda/smsc-ircc2.c
+@@ -872,7 +872,7 @@ static void smsc_ircc_timeout(struct net_device *dev)
+  *    waits until the next transmit interrupt, and continues until the
+  *    frame is transmitted.
+  */
+-int smsc_ircc_hard_xmit_sir(struct sk_buff *skb, struct net_device *dev)
++static int smsc_ircc_hard_xmit_sir(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct smsc_ircc_cb *self;
+ 	unsigned long flags;
+@@ -1128,7 +1128,7 @@ static void smsc_ircc_change_speed(struct smsc_ircc_cb *self, u32 speed)
+  *    Set speed of IrDA port to specified baudrate
+  *
+  */
+-void smsc_ircc_set_sir_speed(struct smsc_ircc_cb *self, __u32 speed)
++static void smsc_ircc_set_sir_speed(struct smsc_ircc_cb *self, __u32 speed)
+ {
+ 	int iobase;
+ 	int fcr;    /* FIFO control reg */
+@@ -1894,7 +1894,7 @@ static void __exit smsc_ircc_cleanup(void)
+  * This function *must* be called with spinlock held, because it may
+  * be called from the irq handler (via smsc_ircc_change_speed()). - Jean II
+  */
+-void smsc_ircc_sir_start(struct smsc_ircc_cb *self)
++static void smsc_ircc_sir_start(struct smsc_ircc_cb *self)
+ {
+ 	struct net_device *dev;
+ 	int fir_base, sir_base;
+diff --git a/drivers/net/irda/w83977af_ir.c b/drivers/net/irda/w83977af_ir.c
+index 161d591..30ec913 100644
+--- a/drivers/net/irda/w83977af_ir.c
++++ b/drivers/net/irda/w83977af_ir.c
+@@ -147,8 +147,8 @@ static void __exit w83977af_cleanup(void)
+  *    Open driver instance
+  *
+  */
+-int w83977af_open(int i, unsigned int iobase, unsigned int irq, 
+-		  unsigned int dma)
++static int w83977af_open(int i, unsigned int iobase, unsigned int irq,
++			 unsigned int dma)
+ {
+ 	struct net_device *dev;
+         struct w83977af_ir *self;
+@@ -310,7 +310,7 @@ static int w83977af_close(struct w83977af_ir *self)
+ 	return 0;
+ }
+ 
+-int w83977af_probe( int iobase, int irq, int dma)
++static int w83977af_probe(int iobase, int irq, int dma)
+ {
+   	int version;
+ 	int i;
+@@ -409,7 +409,7 @@ int w83977af_probe( int iobase, int irq, int dma)
+ 	return -1;
+ }
+ 
+-void w83977af_change_speed(struct w83977af_ir *self, __u32 speed)
++static void w83977af_change_speed(struct w83977af_ir *self, __u32 speed)
+ {
+ 	int ir_mode = HCR_SIR;
+ 	int iobase; 
+@@ -489,7 +489,7 @@ void w83977af_change_speed(struct w83977af_ir *self, __u32 speed)
+  *    Sets up a DMA transfer to send the current frame.
+  *
+  */
+-int w83977af_hard_xmit(struct sk_buff *skb, struct net_device *dev)
++static int w83977af_hard_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct w83977af_ir *self;
+ 	__s32 speed;
+@@ -731,7 +731,7 @@ static void w83977af_dma_xmit_complete(struct w83977af_ir *self)
+  *    if it starts to receive a frame.
+  *
+  */
+-int w83977af_dma_receive(struct w83977af_ir *self) 
++static int w83977af_dma_receive(struct w83977af_ir *self)
+ {
+ 	int iobase;
+ 	__u8 set;
+@@ -803,7 +803,7 @@ int w83977af_dma_receive(struct w83977af_ir *self)
+  *    Finished with receiving a frame
+  *
+  */
+-int w83977af_dma_receive_complete(struct w83977af_ir *self)
++static int w83977af_dma_receive_complete(struct w83977af_ir *self)
+ {
+ 	struct sk_buff *skb;
+ 	struct st_fifo *st_fifo;
 
-Steve
