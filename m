@@ -1,40 +1,59 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 18 Dec 2008 20:24:18 +0000
-Subject: [PATCH 4/6] drm/i915: fix sparse warnings: returning void-valued expression
-Message-Id: <494ad5dd.0e0f660a.2937.ffff82d3@mx.google.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 24 Dec 2008 15:24:05 +0000
+Subject: [PATCH 3/3] drivers/staging/rt2860,rt2870: Correct use of.and &
+Message-Id: <Pine.LNX.4.64.0812241623380.5475@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.sourceforge.net
+To: gregkh@suse.de, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix this sparse warnings:
+From: Julia Lawall <julia@diku.dk>
 
-  drivers/gpu/drm/i915/intel_display.c:216:3: warning: returning void-valued expression
-  drivers/gpu/drm/i915/intel_display.c:218:3: warning: returning void-valued expression
+IW_ENCODE_MODE is 0xF000 and thus !erq->flags & IW_ENCODE_MODE is always 0.
+I assume that !(erq->flags & IW_ENCODE_MODE) was intended.
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@ expression E; constant C; @@
+(
+  !E & !C
+|
+- !E & C
++ !(E & C)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/gpu/drm/i915/intel_display.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rt2860/sta_ioctl.c |    2 +-
+ drivers/staging/rt2870/sta_ioctl.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 9094119..035be19 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -213,10 +213,9 @@ static void intel_clock(struct drm_device *dev, int refclk,
- 			intel_clock_t *clock)
- {
- 	if (IS_I9XX(dev))
--		return i9xx_clock (refclk, clock);
-+		i9xx_clock(refclk, clock);
- 	else
--		return i8xx_clock (refclk, clock);
-+		i8xx_clock(refclk, clock);
- }
- 
- /**
--- 
-1.5.6.3
-
+diff -u -p a/drivers/staging/rt2860/sta_ioctl.c b/drivers/staging/rt2860/sta_ioctl.c
+--- a/drivers/staging/rt2860/sta_ioctl.c
++++ b/drivers/staging/rt2860/sta_ioctl.c
+@@ -1756,7 +1756,7 @@ int rt_ioctl_siwencode(struct net_device
+             }
+         else
+ 			/* Don't complain if only change the mode */
+-			if(!erq->flags & IW_ENCODE_MODE) {
++			if (!(erq->flags & IW_ENCODE_MODE)) {
+ 				return -EINVAL;
+ 		}
+ 	}
+diff -u -p a/drivers/staging/rt2870/sta_ioctl.c b/drivers/staging/rt2870/sta_ioctl.c
+--- a/drivers/staging/rt2870/sta_ioctl.c
++++ b/drivers/staging/rt2870/sta_ioctl.c
+@@ -1776,7 +1776,7 @@ int rt_ioctl_siwencode(struct net_device
+             }
+         else
+ 			/* Don't complain if only change the mode */
+-			if(!erq->flags & IW_ENCODE_MODE) {
++			if (!(erq->flags & IW_ENCODE_MODE)) {
+ 				return -EINVAL;
+ 		}
+ 	}
