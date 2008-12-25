@@ -1,105 +1,43 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Dec 2008 10:21:07 +0000
-Subject: [PATCH 6/13] drivers/net/usb: use USB API functions rather than
-Message-Id: <Pine.LNX.4.64.0812291120450.9555@pc-004.diku.dk>
+Date: Thu, 25 Dec 2008 14:33:11 +0000
+Subject: [PATCH 1/7] arch/parisc: Use DEFINE_SPINLOCK
+Message-Id: <Pine.LNX.4.64.0812251532430.22039@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jgarzik@pobox.com, netdev@vger.kernel.org, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kyle@mcmartin.ca, matthew@wil.cx, grundler@parisc-linux.org, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-This set of patches introduces calls to the following set of functions:
+SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
+in Documentation/spinlocks.txt
 
-usb_endpoint_dir_in(epd)
-usb_endpoint_dir_out(epd)
-usb_endpoint_is_bulk_in(epd)
-usb_endpoint_is_bulk_out(epd)
-usb_endpoint_is_int_in(epd)
-usb_endpoint_is_int_out(epd)
-usb_endpoint_num(epd)
-usb_endpoint_type(epd)
-usb_endpoint_xfer_bulk(epd)
-usb_endpoint_xfer_control(epd)
-usb_endpoint_xfer_int(epd)
-usb_endpoint_xfer_isoc(epd)
-
-In some cases, introducing one of these functions is not possible, and it
-just replaces an explicit integer value by one of the following constants:
-
-USB_ENDPOINT_XFER_BULK
-USB_ENDPOINT_XFER_CONTROL
-USB_ENDPOINT_XFER_INT
-USB_ENDPOINT_XFER_ISOC
-
-In drivers/net/wireless/zd1211rw/zd_usb.c the code:
-
-(endpoint->bEndpointAddress & USB_TYPE_MASK) = USB_DIR_OUT
-
-is suspicious.  If it is intended to use USB_ENDPOINT_DIR_MASK rather than
-USB_TYPE_MASK, then the whole conditional test could be converted to a call
-to usb_endpoint_is_bulk_in.
-
-An extract of the semantic patch that makes these changes is as follows:
+The semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r1@ struct usb_endpoint_descriptor *epd; @@
-
-- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
-- \(USB_ENDPOINT_XFER_CONTROL\|0\))
-+ usb_endpoint_xfer_control(epd)
-
-@r5@ struct usb_endpoint_descriptor *epd; @@
-
-- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
--  \(USB_DIR_IN\|0x80\))
-+ usb_endpoint_dir_in(epd)
-
-@inc@
+@@
+declarer name DEFINE_SPINLOCK;
+identifier xxx_lock;
 @@
 
-#include <linux/usb.h>
-
-@depends on !inc && (r1||r5)@
-@@
-
-+ #include <linux/usb.h>
-  #include <linux/usb/...>
+- spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
++ DEFINE_SPINLOCK(xxx_lock);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/net/usb/hso.c                  |    2 +-
- drivers/net/wireless/zd1211rw/zd_usb.c |    3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
-index 2d41a10..6c30c4f 100644
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -3177,7 +3177,7 @@ static struct usb_endpoint_descriptor *hso_get_ep(struct usb_interface *intf,
- 	for (i = 0; i < iface->desc.bNumEndpoints; i++) {
- 		endp = &iface->endpoint[i].desc;
- 		if (((endp->bEndpointAddress & USB_ENDPOINT_DIR_MASK) = dir) &&
--		    ((endp->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) = type))
-+		    (usb_endpoint_type(endp) = type))
- 			return endp;
- 	}
+diff -u -p a/arch/parisc/kernel/pdc_cons.c b/arch/parisc/kernel/pdc_cons.c
+--- a/arch/parisc/kernel/pdc_cons.c
++++ b/arch/parisc/kernel/pdc_cons.c
+@@ -52,7 +52,7 @@
+ #include <linux/tty.h>
+ #include <asm/pdc.h>		/* for iodc_call() proto and friends */
  
-diff --git a/drivers/net/wireless/zd1211rw/zd_usb.c b/drivers/net/wireless/zd1211rw/zd_usb.c
-index 04c1396..b5db57d 100644
---- a/drivers/net/wireless/zd1211rw/zd_usb.c
-+++ b/drivers/net/wireless/zd1211rw/zd_usb.c
-@@ -1065,8 +1065,7 @@ static int eject_installer(struct usb_interface *intf)
- 	/* Find bulk out endpoint */
- 	endpoint = &iface_desc->endpoint[1].desc;
- 	if ((endpoint->bEndpointAddress & USB_TYPE_MASK) = USB_DIR_OUT &&
--	    (endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
--	    USB_ENDPOINT_XFER_BULK) {
-+	    usb_endpoint_xfer_bulk(endpoint)) {
- 		bulk_out_ep = endpoint->bEndpointAddress;
- 	} else {
- 		dev_err(&udev->dev,
+-static spinlock_t pdc_console_lock = SPIN_LOCK_UNLOCKED;
++static DEFINE_SPINLOCK(pdc_console_lock);
+ 
+ static void pdc_console_write(struct console *co, const char *s, unsigned count)
+ {
