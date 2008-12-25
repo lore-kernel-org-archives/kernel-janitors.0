@@ -1,50 +1,43 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 10 Dec 2008 19:41:55 +0000
-Subject: Re: [PATCHv2 4/9] mISDN: fix sparse warning
-Message-Id: <49417296.25e2660a.2824.ffffc60b@mx.google.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 25 Dec 2008 14:34:44 +0000
+Subject: [PATCH 5/7] drivers/staging/comedi: Use DEFINE_SPINLOCK
+Message-Id: <Pine.LNX.4.64.0812251534260.22039@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49403C26.5050402@gmail.com>
-In-Reply-To: <49403C26.5050402@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jirislaby@gmail.com>
-Cc: Karsten Keil <kkeil@suse.de>
+To: ds@schleef.org, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Impact: un-export symbol 'plx_lock'
+From: Julia Lawall <julia@diku.dk>
 
-Fix this warning:
+SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
+in Documentation/spinlocks.txt
 
-  drivers/isdn/hardware/mISDN/hfcmulti.c:176:1: warning: symbol 'plx_lock' shadows an earlier one
-  drivers/isdn/hardware/mISDN/hfcmulti.c:175:19: originally declared here
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+// <smpl>
+@@
+declarer name DEFINE_SPINLOCK;
+identifier xxx_lock;
+@@
+
+- spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
++ DEFINE_SPINLOCK(xxx_lock);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-
-On Wed, Dec 10, 2008 at 11:01 PM, Jiri Slaby <jirislaby@gmail.com> wrote:
-> On 12/10/2008 04:13 PM, Hannes Eder wrote:
->> Should 'plx_lock' be declared in a header file?  Or is it really
->> neccessart to export it?
->
-> As there is no other user, I vote for unexporting it.
-
-In that case patch number 4 looks like this:
-
- drivers/isdn/hardware/mISDN/hfcmulti.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
-index 599d832..970201d 100644
---- a/drivers/isdn/hardware/mISDN/hfcmulti.c
-+++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
-@@ -173,7 +173,6 @@ static int interrupt_registered;
- static struct hfc_multi *syncmaster;
- static int plxsd_master; /* if we have a master card (yet) */
- static spinlock_t plx_lock; /* may not acquire other lock inside */
--EXPORT_SYMBOL(plx_lock);
+diff -u -p a/drivers/staging/comedi/rt_pend_tq.c b/drivers/staging/comedi/rt_pend_tq.c
+--- a/drivers/staging/comedi/rt_pend_tq.c
++++ b/drivers/staging/comedi/rt_pend_tq.c
+@@ -25,7 +25,7 @@ volatile static struct rt_pend_tq rt_pen
+ volatile static struct rt_pend_tq *volatile rt_pend_head = rt_pend_tq,
+ 	*volatile rt_pend_tail = rt_pend_tq;
+ int rt_pend_tq_irq = 0;
+-spinlock_t rt_pend_tq_lock = SPIN_LOCK_UNLOCKED;
++DEFINE_SPINLOCK(rt_pend_tq_lock);
  
- #define	TYP_E1		1
- #define	TYP_4S		4
--- 
-1.5.6.3
-
+ // WARNING: following code not checked against race conditions yet.
+ #define INC_CIRCULAR_PTR(ptr,begin,size) do {if(++(ptr)>=(begin)+(size)) (ptr)=(begin); } while(0)
