@@ -1,70 +1,146 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 26 Dec 2008 07:26:52 +0000
-Subject: [PATCH 1/7] arch/arm/plat-s3c24xx: Move a dereference below a NULL
-Message-Id: <Pine.LNX.4.64.0812260826240.25450@ask.diku.dk>
+Date: Thu, 25 Dec 2008 20:10:30 +0000
+Subject: [PATCH 2/2] drivers/staging/comedi: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0812252109580.31651@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ben-linux@fluff.org, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If the NULL test is necessary, then the dereference should be moved below
-the NULL test.
+Error handling code following a kmalloc should free the allocated data.
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/).
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@disable is_null@
-identifier f;
-expression E;
-identifier fld;
+@r exists@
+local idexpression x;
 statement S;
-@@
-
-+ if (E = NULL) S
-  f(...,E->fld,...);
-- if (E = NULL) S
-
-@@
-identifier f;
 expression E;
-identifier fld;
-statement S;
+identifier f,l;
+position p1,p2;
+expression *ptr != NULL;
 @@
 
-+ if (!E) S
-  f(...,E->fld,...);
-- if (!E) S
+(
+if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+|
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+)
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f = E
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
- arch/arm/plat-s3c24xx/dma.c         |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/comedi/drivers/usbdux.c     |    6 +++++-
+ drivers/staging/comedi/drivers/usbduxfast.c |    6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
-index aee2aeb..f95cb02 100644
---- a/arch/arm/plat-s3c24xx/dma.c
-+++ b/arch/arm/plat-s3c24xx/dma.c
-@@ -227,14 +227,14 @@ s3c2410_dma_loadbuffer(struct s3c2410_dma_chan *chan,
+diff -u -p a/drivers/staging/comedi/drivers/usbduxfast.c b/drivers/staging/comedi/drivers/usbduxfast.c
+--- a/drivers/staging/comedi/drivers/usbduxfast.c
++++ b/drivers/staging/comedi/drivers/usbduxfast.c
+@@ -1298,7 +1298,7 @@ static int read_firmware(usbduxfastsub_t
  {
- 	unsigned long reload;
+ 	int i = 0;
+ 	unsigned char *fp = (char *)firmwarePtr;
+-	unsigned char *firmwareBinary = NULL;
++	unsigned char *firmwareBinary;
+ 	int res = 0;
+ 	int maxAddr = 0;
  
--	pr_debug("s3c2410_chan_loadbuffer: loading buff %p (0x%08lx,0x%06x)\n",
--		 buf, (unsigned long)buf->data, buf->size);
--
- 	if (buf = NULL) {
- 		dmawarn("buffer is NULL\n");
- 		return -EINVAL;
- 	}
+@@ -1322,6 +1322,7 @@ static int read_firmware(usbduxfastsub_t
+ 			j++;
+ 			if (j >= sizeof(buf)) {
+ 				printk("comedi_: usbduxfast: bogus firmware file!\n");
++				kfree(firmwareBinary);
+ 				return -1;
+ 			}
+ 		}
+@@ -1340,6 +1341,7 @@ static int read_firmware(usbduxfastsub_t
  
-+	pr_debug("s3c2410_chan_loadbuffer: loading buff %p (0x%08lx,0x%06x)\n",
-+		 buf, (unsigned long)buf->data, buf->size);
-+
- 	/* check the state of the channel before we do anything */
+ 		if (buf[0] != ':') {
+ 			printk("comedi_: usbduxfast: upload: not an ihex record: %s", buf);
++			kfree(firmwareBinary);
+ 			return -EFAULT;
+ 		}
  
- 	if (chan->load_state = S3C2410_DMALOAD_1LOADED) {
+@@ -1355,6 +1357,7 @@ static int read_firmware(usbduxfastsub_t
+ 
+ 		if (maxAddr >= FIRMWARE_MAX_LEN) {
+ 			printk("comedi_: usbduxfast: firmware upload goes beyond FX2 RAM boundaries.");
++			kfree(firmwareBinary);
+ 			return -EFAULT;
+ 		}
+ 		//printk("comedi_: usbduxfast: off=%x, len=%x:",off,len);
+@@ -1369,6 +1372,7 @@ static int read_firmware(usbduxfastsub_t
+ 
+ 		if (type != 0) {
+ 			printk("comedi_: usbduxfast: unsupported record type: %u\n", type);
++			kfree(firmwareBinary);
+ 			return -EFAULT;
+ 		}
+ 
+diff -u -p a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
+--- a/drivers/staging/comedi/drivers/usbdux.c
++++ b/drivers/staging/comedi/drivers/usbdux.c
+@@ -2298,7 +2298,7 @@ static int read_firmware(struct usbduxsu
+ 	struct device *dev = &usbduxsub->interface->dev;
+ 	int i = 0;
+ 	unsigned char *fp = (char *)firmwarePtr;
+-	unsigned char *firmwareBinary = NULL;
++	unsigned char *firmwareBinary;
+ 	int res = 0;
+ 	int maxAddr = 0;
+ 
+@@ -2322,6 +2322,7 @@ static int read_firmware(struct usbduxsu
+ 			j++;
+ 			if (j >= sizeof(buf)) {
+ 				dev_err(dev, "comedi_: bogus firmware file!\n");
++				kfree(firmwareBinary);
+ 				return -1;
+ 			}
+ 		}
+@@ -2344,6 +2345,7 @@ static int read_firmware(struct usbduxsu
+ 		if (buf[0] != ':') {
+ 			dev_err(dev, "comedi_: upload: not an ihex record: %s",
+ 				buf);
++			kfree(firmwareBinary);
+ 			return -EFAULT;
+ 		}
+ 
+@@ -2360,6 +2362,7 @@ static int read_firmware(struct usbduxsu
+ 		if (maxAddr >= FIRMWARE_MAX_LEN) {
+ 			dev_err(dev, "comedi_: firmware upload goes "
+ 				"beyond FX2 RAM boundaries.\n");
++			kfree(firmwareBinary);
+ 			return -EFAULT;
+ 		}
+ 		/* dev_dbg(dev, "comedi_: off=%x, len=%x:\n", off, len); */
+@@ -2375,6 +2378,7 @@ static int read_firmware(struct usbduxsu
+ 		if (type != 0) {
+ 			dev_err(dev, "comedi_: unsupported record type: %u\n",
+ 				type);
++			kfree(firmwareBinary);
+ 			return -EFAULT;
+ 		}
+ 
