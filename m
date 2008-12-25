@@ -1,21 +1,43 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Date: Tue, 02 Dec 2008 19:29:32 +0000
-Subject: Re: [PATCH] alim15x3: fix sparse warning
-Message-Id: <200812022029.35785.bzolnier@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 25 Dec 2008 14:34:04 +0000
+Subject: [PATCH 3/7] arch/powerpc/platforms/pasemi: Use DEFINE_SPINLOCK
+Message-Id: <Pine.LNX.4.64.0812251533350.22039@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <493049e1.0ab6660a.0bc3.ffffaf3b@mx.google.com>
-In-Reply-To: <493049e1.0ab6660a.0bc3.ffffaf3b@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: olof@lixom.net, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thursday 27 November 2008, Hannes Eder wrote:
-> Fix this sparse warning:
-> 
->   drivers/ide/alim15x3.c:594:2: warning: returning void-valued expression
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+From: Julia Lawall <julia@diku.dk>
 
-applied
+SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
+in Documentation/spinlocks.txt
+
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+declarer name DEFINE_SPINLOCK;
+identifier xxx_lock;
+@@
+
+- spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
++ DEFINE_SPINLOCK(xxx_lock);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+diff -u -p a/arch/powerpc/platforms/pasemi/dma_lib.c b/arch/powerpc/platforms/pasemi/dma_lib.c
+--- a/arch/powerpc/platforms/pasemi/dma_lib.c
++++ b/arch/powerpc/platforms/pasemi/dma_lib.c
+@@ -509,7 +509,7 @@ fallback:
+  */
+ int pasemi_dma_init(void)
+ {
+-	static spinlock_t init_lock = SPIN_LOCK_UNLOCKED;
++	static DEFINE_SPINLOCK(init_lock);
+ 	struct pci_dev *iob_pdev;
+ 	struct pci_dev *pdev;
+ 	struct resource res;
