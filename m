@@ -1,22 +1,43 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Date: Mon, 22 Dec 2008 22:09:05 +0000
-Subject: Re: [PATCH 20/27] drivers/net/wan: fix sparse warnings: make do-while a compound statement
-Message-Id: <m3lju7ooam.fsf@maximus.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 25 Dec 2008 14:34:25 +0000
+Subject: [PATCH 4/7] drivers/media/dvb/firesat: Use DEFINE_SPINLOCK
+Message-Id: <Pine.LNX.4.64.0812251534060.22039@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	<20081222191755.11807.57896.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20081222191755.11807.57896.stgit@vmbox.hanneseder.net> (Hannes Eder's message of "Mon\, 22 Dec 2008 20\:17\:55 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: v4l-dvb-maintainer@linuxtv.org, stefanr@s5r6.in-berlin.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hannes Eder <hannes@hanneseder.net> writes:
+From: Julia Lawall <julia@diku.dk>
 
->   drivers/net/wan/wanxl.c:414:3: warning: do-while statement is not a compound statement
->   drivers/net/wan/wanxl.c:441:3: warning: do-while statement is not a compound statement
+SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
+in Documentation/spinlocks.txt
 
-It's by design.
--- 
-Krzysztof Halasa
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+declarer name DEFINE_SPINLOCK;
+identifier xxx_lock;
+@@
+
+- spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
++ DEFINE_SPINLOCK(xxx_lock);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+diff -u -p a/drivers/media/dvb/firesat/firesat_1394.c b/drivers/media/dvb/firesat/firesat_1394.c
+--- a/drivers/media/dvb/firesat/firesat_1394.c
++++ b/drivers/media/dvb/firesat/firesat_1394.c
+@@ -94,7 +94,7 @@ MODULE_DEVICE_TABLE(ieee1394, firesat_id
+ 
+ /* list of all firesat devices */
+ LIST_HEAD(firesat_list);
+-spinlock_t firesat_list_lock = SPIN_LOCK_UNLOCKED;
++DEFINE_SPINLOCK(firesat_list_lock);
+ 
+ static void fcp_request(struct hpsb_host *host,
+ 			int nodeid,
