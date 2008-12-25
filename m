@@ -1,91 +1,43 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Wed, 03 Dec 2008 10:25:03 +0000
-Subject: Re: [PATCH] powerpc/powermac: Add missing of_node_put
-Message-Id: <200812031125.03478.npalix@diku.dk>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 25 Dec 2008 14:35:05 +0000
+Subject: [PATCH 6/7] drivers/staging/meilhaus: Use DEFINE_SPINLOCK
+Message-Id: <Pine.LNX.4.64.0812251534450.22039@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200812021445.18670.npalix@diku.dk>
-	<20081203101901.4f317425.sfr@canb.auug.org.au>
-	<20081203102508.ce955781.sfr@canb.auug.org.au>
-In-Reply-To: <20081203102508.ce955781.sfr@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Julia Lawall <julia@diku.dk>, paulus@samba.org
+To: mail@davidkiliani.de, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Stephen,
+From: Julia Lawall <julia@diku.dk>
 
-I fix the patch. I also change the "vias = 0" in "vias = NULL".
-Is "!vias" better ?
+SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
+in Documentation/spinlocks.txt
 
-On Wednesday 03 December 2008 00:25:08 Stephen Rothwell wrote:
-> Hi Nicolas,
-> 
-> On Wed, 3 Dec 2008 10:19:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > I think this particular patch is also required against Linus' kernel (not
-> > just linux-next).
-> 
-> In fact, I think all these patches can apply to Linus' current tree.
-> 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+declarer name DEFINE_SPINLOCK;
+identifier xxx_lock;
+@@
+
+- spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
++ DEFINE_SPINLOCK(xxx_lock);
+// </smpl>
+
 Signed-off-by: Julia Lawall <julia@diku.dk>
----
- arch/powerpc/platforms/powermac/pci.c  |    2 +
- arch/powerpc/platforms/powermac/time.c |   11 ++++++----
- 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
-index bcf50d7..800fcce 100644
---- a/arch/powerpc/platforms/powermac/pci.c
-+++ b/arch/powerpc/platforms/powermac/pci.c
-@@ -661,6 +661,7 @@ static void __init init_second_ohare(void)
- 			pci_find_hose_for_OF_device(np);
- 		if (!hose) {
- 			printk(KERN_ERR "Can't find PCI hose for OHare2 !\n");
-+			of_node_put(np);
- 			return;
- 		}
- 		early_read_config_word(hose, bus, devfn, PCI_COMMAND, &cmd);
-@@ -669,6 +670,7 @@ static void __init init_second_ohare(void)
- 		early_write_config_word(hose, bus, devfn, PCI_COMMAND, cmd);
- 	}
- 	has_second_ohare = 1;
-+	of_node_put(np);
- }
+---
+diff -u -p a/drivers/staging/meilhaus/memain.c b/drivers/staging/meilhaus/memain.c
+--- a/drivers/staging/meilhaus/memain.c
++++ b/drivers/staging/meilhaus/memain.c
+@@ -79,7 +79,7 @@ MODULE_PARM(major, "i");
  
- /*
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index 59eb840..1810e42 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -265,12 +265,15 @@ int __init via_calibrate_decr(void)
- 	struct resource rsrc;
+ static struct file *me_filep = NULL;
+ static int me_count = 0;
+-static spinlock_t me_lock = SPIN_LOCK_UNLOCKED;
++static DEFINE_SPINLOCK(me_lock);
+ static DECLARE_RWSEM(me_rwsem);
  
- 	vias = of_find_node_by_name(NULL, "via-cuda");
--	if (vias = 0)
-+	if (vias = NULL)
- 		vias = of_find_node_by_name(NULL, "via-pmu");
--	if (vias = 0)
-+	if (vias = NULL)
- 		vias = of_find_node_by_name(NULL, "via");
--	if (vias = 0 || of_address_to_resource(vias, 0, &rsrc))
-+	if (vias = NULL || of_address_to_resource(vias, 0, &rsrc)) {
-+	        of_node_put(vias);
- 		return 0;
-+	}
-+	of_node_put(vias);
- 	via = ioremap(rsrc.start, rsrc.end - rsrc.start + 1);
- 	if (via = NULL) {
- 		printk(KERN_ERR "Failed to map VIA for timer calibration !\n");
-@@ -297,7 +300,7 @@ int __init via_calibrate_decr(void)
- 	ppc_tb_freq = (dstart - dend) * 100 / 6;
- 
- 	iounmap(via);
--	
-+
- 	return 1;
- }
- #endif
--- 
-Nicolas Palix
+ /* Board instances are kept in a global list */
