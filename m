@@ -1,40 +1,60 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 24 Dec 2008 02:10:27 +0000
-Subject: Re: [PATCH 02/27] drivers/net: fix sparse warnings: make do-while
-Message-Id: <alpine.LFD.2.00.0812231808030.3535@localhost.localdomain>
+From: Junio C Hamano <gitster@pobox.com>
+Date: Thu, 25 Dec 2008 06:17:15 +0000
+Subject: Re: [PATCH 02/27] drivers/net: fix sparse warnings: make do-while a
+Message-Id: <7vd4fgdbis.fsf@gitster.siamese.dyndns.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net> <20081222191507.11807.50794.stgit@vmbox.hanneseder.net> <m3hc4voo2a.fsf@maximus.localdomain> <a01a16b50812221544x45c3559ap808ac0095ee8f01@mail.gmail.com> <m3ocz2ua3w.fsf@maximus.localdomain>
- <1230053186.1447.9.camel@brick> <m3k59qssix.fsf@maximus.localdomain> <alpine.LFD.2.00.0812231008350.3535@localhost.localdomain> <m3hc4usco9.fsf@maximus.localdomain> <alpine.LFD.2.00.0812231529030.3535@localhost.localdomain>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+ <20081222191507.11807.50794.stgit@vmbox.hanneseder.net>
+ <m3hc4voo2a.fsf@maximus.localdomain>
+ <a01a16b50812221544x45c3559ap808ac0095ee8f01@mail.gmail.com>
+ <m3ocz2ua3w.fsf@maximus.localdomain> <1230053186.1447.9.camel@brick>
+ <m3k59qssix.fsf@maximus.localdomain>
+ <alpine.LFD.2.00.0812231008350.3535@localhost.localdomain>
+ <m3hc4usco9.fsf@maximus.localdomain>
+ <alpine.LFD.2.00.0812231529030.3535@localhost.localdomain>
  <m3myemqqgp.fsf@maximus.localdomain>
-In-Reply-To: <m3myemqqgp.fsf@maximus.localdomain>
+In-Reply-To: <m3myemqqgp.fsf@maximus.localdomain> (Krzysztof Halasa's message
+ of "Wed, 24 Dec 2008 03:03:50 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: Harvey Harrison <harvey.harrison@gmail.com>, =?ISO-8859-15?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>, Hannes Eder <hannes@hanneseder.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Harvey Harrison <harvey.harrison@gmail.com>, =?utf-8?B?SMOla29uIEzDuHZkYWw=?= <hlovdal@gmail.com>, Hannes Eder <hannes@hanneseder.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Krzysztof Halasa <khc@pm.waw.pl> writes:
 
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
+> ...
+>> Another example of "common vs non-common" is this:
+>>
+>> 	if (0 <= x)
+>> 		do something..
+>>
+>> is something that crazy people do (sadly, one of the crazy people taught 
+>> the git maintainer C programming, so now even sane people do it). It's 
+>> crazy because it's uncommon, which means that most people have to think 
+>> about it A LOT MORE than about
+>>
+>> 	if (x >= 0)
+>> 		do something..
+>
+> No. It's crazy not because it's uncommon, but because this is how we
+> have been taught in school.
+>
+> I don't know reasons for "0 >= x" but I know one for
+> 	if (0 = x)
+> 		do something..
+>
+> It's because people sometimes write "=" instead of "=" and "0 = x"
+> doesn't make sense to gcc.
 
-On Wed, 24 Dec 2008, Krzysztof Halasa wrote:
-> 
-> People learn, or should, through the life :-)
+It does not have anything to do with the assignment confusion.
 
-Sure. But you should learn about the things that matter - not learn to 
-avoid the stupid pitfalls that come from confusingly doing things so that 
-they visually look similar even when they do different things.
+It is "textual order should reflect actual order" (aka "have number line
+in your head when you write your comparison conditional"):
 
-So don't make people learn by putting traps in their face. That just 
-wastes everybodys time.
+    http://thread.gmane.org/gmane.comp.version-control.git/3903/focusA26
 
-> I'm not sure being common or less common does matter here much.
-> 
-> OTOH I think it's pretty common. Approx as common as while (x) y is,
-> isn't it?
+Even if it may make logical sense, I would not suggest using it when other
+people are not familiar with the convention, though.
 
-I doubt it. It certainly wasn't in the kernel. When we added the sparse 
-warning, I think we got a couple of hits. 
-
-Anyway,  not worth discussing. The fact is, the kernel does not accept do 
-while without braces. I told you why. You can ignore it. I'll ignore you.
-
-		Linus
