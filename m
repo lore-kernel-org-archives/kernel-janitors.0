@@ -1,31 +1,22 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Date: Thu, 25 Dec 2008 17:02:44 +0000
-Subject: Re: [PATCH 02/27] drivers/net: fix sparse warnings: make do-while a compound statement
-Message-Id: <m3iqp89oi3.fsf@maximus.localdomain>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 26 Dec 2008 07:55:46 +0000
+Subject: Re: [PATCH 02/27] drivers/net: fix sparse warnings: make do-while
+Message-Id: <20081225.235546.106485310.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 	<20081222191507.11807.50794.stgit@vmbox.hanneseder.net>
-	<m3hc4voo2a.fsf@maximus.localdomain>
-	<a01a16b50812221544x45c3559ap808ac0095ee8f01@mail.gmail.com>
-	<m3ocz2ua3w.fsf@maximus.localdomain> <1230053186.1447.9.camel@brick>
-	<m3k59qssix.fsf@maximus.localdomain>
-	<alpine.LFD.2.00.0812231008350.3535@localhost.localdomain>
-	<m3hc4usco9.fsf@maximus.localdomain>
-	<alpine.LFD.2.00.0812231529030.3535@localhost.localdomain>
-	<m3myemqqgp.fsf@maximus.localdomain>
-	<alpine.LFD.2.00.0812231808030.3535@localhost.localdomain>
-In-Reply-To: <alpine.LFD.2.00.0812231808030.3535@localhost.localdomain> (Linus Torvalds's message of "Tue\, 23 Dec 2008 18\:10\:27 -0800 \(PST\)")
+In-Reply-To: <20081222191507.11807.50794.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Harvey Harrison <harvey.harrison@gmail.com>, =?utf-8?B?SMOla29uIEzDuHZkYWw=?= <hlovdal@gmail.com>, Hannes Eder <hannes@hanneseder.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: hannes@hanneseder.net
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 22 Dec 2008 20:15:07 +0100
 
-> Anyway,  not worth discussing. The fact is, the kernel does not accept do 
-> while without braces. I told you why. You can ignore it. I'll ignore you.
+> While at it insert some extra curly braces and fix formatting.
+...
+> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 
-Oh, I'm not a martyr.
--- 
-Krzysztof Halasa
+Applied.
