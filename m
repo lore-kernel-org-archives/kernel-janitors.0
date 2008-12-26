@@ -1,59 +1,66 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 24 Dec 2008 15:24:05 +0000
-Subject: [PATCH 3/3] drivers/staging/rt2860,rt2870: Correct use of.and &
-Message-Id: <Pine.LNX.4.64.0812241623380.5475@ask.diku.dk>
+Date: Fri, 26 Dec 2008 07:28:10 +0000
+Subject: [PATCH 4/7] drivers/scsi: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0812260827490.25450@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mike@i-Connect.Net, linux-eata@i-connect.net, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-IW_ENCODE_MODE is 0xF000 and thus !erq->flags & IW_ENCODE_MODE is always 0.
-I assume that !(erq->flags & IW_ENCODE_MODE) was intended.
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
 The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+(http://www.emn.fr/x-info/coccinelle/).
 
 // <smpl>
-@@ expression E; constant C; @@
-(
-  !E & !C
-|
-- !E & C
-+ !(E & C)
-)
+@disable is_null@
+identifier f;
+expression E;
+identifier fld;
+statement S;
+@@
+
++ if (E = NULL) S
+  f(...,E->fld,...);
+- if (E = NULL) S
+
+@@
+identifier f;
+expression E;
+identifier fld;
+statement S;
+@@
+
++ if (!E) S
+  f(...,E->fld,...);
+- if (!E) S
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/staging/rt2860/sta_ioctl.c |    2 +-
- drivers/staging/rt2870/sta_ioctl.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/eata_pio.c             |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/staging/rt2860/sta_ioctl.c b/drivers/staging/rt2860/sta_ioctl.c
---- a/drivers/staging/rt2860/sta_ioctl.c
-+++ b/drivers/staging/rt2860/sta_ioctl.c
-@@ -1756,7 +1756,7 @@ int rt_ioctl_siwencode(struct net_device
-             }
-         else
- 			/* Don't complain if only change the mode */
--			if(!erq->flags & IW_ENCODE_MODE) {
-+			if (!(erq->flags & IW_ENCODE_MODE)) {
- 				return -EINVAL;
- 		}
+diff --git a/drivers/scsi/eata_pio.c b/drivers/scsi/eata_pio.c
+index 952505c..7fec87d 100644
+--- a/drivers/scsi/eata_pio.c
++++ b/drivers/scsi/eata_pio.c
+@@ -500,10 +500,11 @@ static int eata_pio_host_reset(struct scsi_cmnd *cmd)
+ 
+ 		sp = HD(cmd)->ccb[x].cmd;
+ 		HD(cmd)->ccb[x].status = RESET;
+-		printk(KERN_WARNING "eata_pio_reset: slot %d in reset, pid %ld.\n", x, sp->serial_number);
+-
+ 		if (sp = NULL)
+ 			panic("eata_pio_reset: slot %d, sp=NULL.\n", x);
++		printk(KERN_WARNING
++			"eata_pio_reset: slot %d in reset, pid %ld.\n",
++			x, sp->serial_number);
  	}
-diff -u -p a/drivers/staging/rt2870/sta_ioctl.c b/drivers/staging/rt2870/sta_ioctl.c
---- a/drivers/staging/rt2870/sta_ioctl.c
-+++ b/drivers/staging/rt2870/sta_ioctl.c
-@@ -1776,7 +1776,7 @@ int rt_ioctl_siwencode(struct net_device
-             }
-         else
- 			/* Don't complain if only change the mode */
--			if(!erq->flags & IW_ENCODE_MODE) {
-+			if (!(erq->flags & IW_ENCODE_MODE)) {
- 				return -EINVAL;
- 		}
- 	}
+ 
+ 	/* hard reset the HBA  */
