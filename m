@@ -1,98 +1,72 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Dec 2008 10:19:10 +0000
-Subject: [PATCH 1/13] drivers/block: use USB API functions rather than
-Message-Id: <Pine.LNX.4.64.0812291118520.9555@pc-004.diku.dk>
+Date: Fri, 26 Dec 2008 07:28:58 +0000
+Subject: [PATCH 6/7] drivers/staging/comedi: Move a dereference below a NULL
+Message-Id: <Pine.LNX.4.64.0812260828350.25450@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: axboe@kernel.dk, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-This set of patches introduces calls to the following set of functions:
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
-usb_endpoint_dir_in(epd)
-usb_endpoint_dir_out(epd)
-usb_endpoint_is_bulk_in(epd)
-usb_endpoint_is_bulk_out(epd)
-usb_endpoint_is_int_in(epd)
-usb_endpoint_is_int_out(epd)
-usb_endpoint_num(epd)
-usb_endpoint_type(epd)
-usb_endpoint_xfer_bulk(epd)
-usb_endpoint_xfer_control(epd)
-usb_endpoint_xfer_int(epd)
-usb_endpoint_xfer_isoc(epd)
-
-In some cases, introducing one of these functions is not possible, and it
-just replaces an explicit integer value by one of the following constants:
-
-USB_ENDPOINT_XFER_BULK
-USB_ENDPOINT_XFER_CONTROL
-USB_ENDPOINT_XFER_INT
-USB_ENDPOINT_XFER_ISOC
-
-An extract of the semantic patch that makes these changes is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/).
 
 // <smpl>
-@r1@ struct usb_endpoint_descriptor *epd; @@
-
-- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
-- \(USB_ENDPOINT_XFER_CONTROL\|0\))
-+ usb_endpoint_xfer_control(epd)
-
-@r5@ struct usb_endpoint_descriptor *epd; @@
-
-- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
--  \(USB_DIR_IN\|0x80\))
-+ usb_endpoint_dir_in(epd)
-
-@inc@
+@disable is_null@
+identifier f;
+expression E;
+identifier fld;
+statement S;
 @@
 
-#include <linux/usb.h>
++ if (E = NULL) S
+  f(...,E->fld,...);
+- if (E = NULL) S
 
-@depends on !inc && (r1||r5)@
+@@
+identifier f;
+expression E;
+identifier fld;
+statement S;
 @@
 
-+ #include <linux/usb.h>
-  #include <linux/usb/...>
++ if (!E) S
+  f(...,E->fld,...);
+- if (!E) S
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/block/ub.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/staging/comedi/drivers/usbduxfast.c    |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/ub.c b/drivers/block/ub.c
-index 12fb816..b36b84f 100644
---- a/drivers/block/ub.c
-+++ b/drivers/block/ub.c
-@@ -2146,10 +2146,9 @@ static int ub_get_pipes(struct ub_dev *sc, struct usb_device *dev,
- 		ep = &altsetting->endpoint[i].desc;
+diff --git a/drivers/staging/comedi/drivers/usbduxfast.c b/drivers/staging/comedi/drivers/usbduxfast.c
+index 3a00ff0..5c8db77 100644
+--- a/drivers/staging/comedi/drivers/usbduxfast.c
++++ b/drivers/staging/comedi/drivers/usbduxfast.c
+@@ -1671,15 +1671,15 @@ static int usbduxfast_detach(comedi_device * dev)
+ {
+ 	usbduxfastsub_t *usbduxfastsub_tmp;
  
- 		/* Is it a BULK endpoint? */
--		if ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
--				= USB_ENDPOINT_XFER_BULK) {
-+		if (usb_endpoint_xfer_bulk(ep)) {
- 			/* BULK in or out? */
--			if (ep->bEndpointAddress & USB_DIR_IN) {
-+			if (usb_endpoint_dir_in(ep)) {
- 				if (ep_in = NULL)
- 					ep_in = ep;
- 			} else {
-@@ -2168,9 +2167,9 @@ static int ub_get_pipes(struct ub_dev *sc, struct usb_device *dev,
- 	sc->send_ctrl_pipe = usb_sndctrlpipe(dev, 0);
- 	sc->recv_ctrl_pipe = usb_rcvctrlpipe(dev, 0);
- 	sc->send_bulk_pipe = usb_sndbulkpipe(dev,
--		ep_out->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK);
-+		usb_endpoint_num(ep_out));
- 	sc->recv_bulk_pipe = usb_rcvbulkpipe(dev, 
--		ep_in->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK);
-+		usb_endpoint_num(ep_in));
+-#ifdef CONFIG_COMEDI_DEBUG
+-	printk("comedi%d: usbduxfast: detach usb device\n", dev->minor);
+-#endif
+-
+ 	if (!dev) {
+ 		printk("comedi?: usbduxfast: detach without dev variable...\n");
+ 		return -EFAULT;
+ 	}
  
- 	return 0;
- }
++#ifdef CONFIG_COMEDI_DEBUG
++	printk("comedi%d: usbduxfast: detach usb device\n", dev->minor);
++#endif
++
+ 	usbduxfastsub_tmp = dev->private;
+ 	if (!usbduxfastsub_tmp) {
+ 		printk("comedi?: usbduxfast: detach without ptr to usbduxfastsub[]\n");
