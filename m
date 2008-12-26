@@ -1,7 +1,7 @@
 From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 00:17:40 +0000
+Date: Fri, 26 Dec 2008 07:56:25 +0000
 Subject: Re: [PATCH 03/27] drivers/net: fix sparse warning: returning
-Message-Id: <20081225.161740.10052019.davem@davemloft.net>
+Message-Id: <20081225.235625.171202833.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
 	<20081222191517.11807.20718.stgit@vmbox.hanneseder.net>
@@ -21,9 +21,7 @@ Date: Mon, 22 Dec 2008 20:15:17 +0100
 > 
 > Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 
-Can we just fix sparse not to generate this warning?  It's
-marginal, at best.  C++ even explicitly defines this as valid
-and last time I brought this up Linus even agreed.
+Whilst, as stated, I disagree with this warning, I've
+applied your patch.
 
-The types match, the function returns void and it is returning a void,
-what is the problem?
+Thanks.
