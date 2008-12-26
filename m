@@ -1,140 +1,70 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:29:14 +0000
-Subject: [PATCH 6/28] drivers/gpio/twl4030-gpio.c: Drop return value from
-Message-Id: <Pine.LNX.4.64.0812101728530.21998@ask.diku.dk>
+Date: Fri, 26 Dec 2008 07:26:52 +0000
+Subject: [PATCH 1/7] arch/arm/plat-s3c24xx: Move a dereference below a NULL
+Message-Id: <Pine.LNX.4.64.0812260826240.25450@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, sameo@openedhand.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ben-linux@fluff.org, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  The original return value was
-either 0 or -EIO.
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/).
 
 // <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
-
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
-
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
-
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
-
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
-@@
-
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
-
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
+@disable is_null@
+identifier f;
 expression E;
+identifier fld;
+statement S;
 @@
 
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
++ if (E = NULL) S
+  f(...,E->fld,...);
+- if (E = NULL) S
+
+@@
+identifier f;
+expression E;
+identifier fld;
+statement S;
+@@
+
++ if (!E) S
+  f(...,E->fld,...);
+- if (!E) S
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/gpio/twl4030-gpio.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ arch/arm/plat-s3c24xx/dma.c         |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/twl4030-gpio.c b/drivers/gpio/twl4030-gpio.c
-index 37d3eec..31d8bb2 100644
---- a/drivers/gpio/twl4030-gpio.c
-+++ b/drivers/gpio/twl4030-gpio.c
-@@ -405,7 +405,7 @@ static int __devinit gpio_twl4030_pulls(u32 ups, u32 downs)
- 				REG_GPIOPUPDCTR1, 5);
- }
- 
--static int gpio_twl4030_remove(struct platform_device *pdev);
-+static void gpio_twl4030_remove(struct platform_device *pdev);
- 
- static int __devinit gpio_twl4030_probe(struct platform_device *pdev)
+diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+index aee2aeb..f95cb02 100644
+--- a/arch/arm/plat-s3c24xx/dma.c
++++ b/arch/arm/plat-s3c24xx/dma.c
+@@ -227,14 +227,14 @@ s3c2410_dma_loadbuffer(struct s3c2410_dma_chan *chan,
  {
-@@ -468,7 +468,7 @@ no_irqs:
- 	return ret;
- }
+ 	unsigned long reload;
  
--static int __devexit gpio_twl4030_remove(struct platform_device *pdev)
-+static void __devexit gpio_twl4030_remove(struct platform_device *pdev)
- {
- 	struct twl4030_gpio_platform_data *pdata = pdev->dev.platform_data;
- 	int status;
-@@ -478,20 +478,19 @@ static int __devexit gpio_twl4030_remove(struct platform_device *pdev)
- 				pdata->gpio_base, TWL4030_GPIO_MAX);
- 		if (status) {
- 			dev_dbg(&pdev->dev, "teardown --> %d\n", status);
--			return status;
-+			return;
- 		}
+-	pr_debug("s3c2410_chan_loadbuffer: loading buff %p (0x%08lx,0x%06x)\n",
+-		 buf, (unsigned long)buf->data, buf->size);
+-
+ 	if (buf = NULL) {
+ 		dmawarn("buffer is NULL\n");
+ 		return -EINVAL;
  	}
  
- 	status = gpiochip_remove(&twl_gpiochip);
- 	if (status < 0)
--		return status;
-+		return;
++	pr_debug("s3c2410_chan_loadbuffer: loading buff %p (0x%08lx,0x%06x)\n",
++		 buf, (unsigned long)buf->data, buf->size);
++
+ 	/* check the state of the channel before we do anything */
  
- 	if (is_module())
--		return 0;
-+		return;
- 
- 	/* REVISIT no support yet for deregistering all the IRQs */
- 	WARN_ON(1);
--	return -EIO;
- }
- 
- /* Note:  this hardware lives inside an I2C-based multi-function device. */
-@@ -501,7 +500,7 @@ static struct platform_driver gpio_twl4030_driver = {
- 	.driver.name	= "twl4030_gpio",
- 	.driver.owner	= THIS_MODULE,
- 	.probe		= gpio_twl4030_probe,
--	.remove		= __devexit_p(gpio_twl4030_remove),
-+	.remove_new	= __devexit_p(gpio_twl4030_remove),
- };
- 
- static int __init gpio_twl4030_init(void)
+ 	if (chan->load_state = S3C2410_DMALOAD_1LOADED) {
