@@ -1,27 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 07:56:25 +0000
-Subject: Re: [PATCH 03/27] drivers/net: fix sparse warning: returning
-Message-Id: <20081225.235625.171202833.davem@davemloft.net>
+From: "Hannes Eder" <hannes@hanneseder.net>
+Date: Fri, 26 Dec 2008 14:39:59 +0000
+Subject: Re: [PATCH 03/27] drivers/net: fix sparse warning: returning void-valued expression
+Message-Id: <154e089b0812260639t65968a2crbbf6c0a8f8d468cf@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	<20081222191517.11807.20718.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20081222191517.11807.20718.stgit@vmbox.hanneseder.net>
+	 <20081222191517.11807.20718.stgit@vmbox.hanneseder.net>
+	 <20081225.161740.10052019.davem@davemloft.net>
+In-Reply-To: <20081225.161740.10052019.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
+To: David Miller <davem@davemloft.net>
 Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Mon, 22 Dec 2008 20:15:17 +0100
+On Fri, Dec 26, 2008 at 1:17 AM, David Miller <davem@davemloft.net> wrote:
+> From: Hannes Eder <hannes@hanneseder.net>
+> Date: Mon, 22 Dec 2008 20:15:17 +0100
+>
+>> Fix this sparse warning:
+>>
+>>   drivers/net/niu.c:8850:2: warning: returning void-valued expression
+>>
+>> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+>
+> Can we just fix sparse not to generate this warning?  It's
+> marginal, at best.  C++ even explicitly defines this as valid
+> and last time I brought this up Linus even agreed.
+>
+> The types match, the function returns void and it is returning a void,
+> what is the problem?
 
-> Fix this sparse warning:
-> 
->   drivers/net/niu.c:8850:2: warning: returning void-valued expression
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+after reading the following thread I decided to submit such type of patches:
 
-Whilst, as stated, I disagree with this warning, I've
-applied your patch.
+On Thu, 1 May 2008 at 13:53:39 +0100, Al Viro wrote:
+> On Thu, May 01, 2008 at 03:42:14PM +0300, Boaz Harrosh wrote:
+> > > 3.  6.8.6.4(1): A return statement with an expression shall not appear in
+> > > a function whose return type is void.
+> > >
+> >
+> > Please forgive my ignorance, where is this quote from?
+>
+> C99.  I don't have C90 in front of me, so I can't give you exact quote from
+> there, but it's been explicitly banned in C90 as well.
 
-Thanks.
+see http://lkml.org/lkml/2008/5/1/112
