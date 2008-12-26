@@ -1,43 +1,66 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 25 Dec 2008 14:35:05 +0000
-Subject: [PATCH 6/7] drivers/staging/meilhaus: Use DEFINE_SPINLOCK
-Message-Id: <Pine.LNX.4.64.0812251534450.22039@ask.diku.dk>
+Date: Fri, 26 Dec 2008 07:29:19 +0000
+Subject: [PATCH 7/7] drivers/usb/serial: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0812260829000.25450@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mail@davidkiliani.de, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
-in Documentation/spinlocks.txt
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
 The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+(http://www.emn.fr/x-info/coccinelle/).
 
 // <smpl>
-@@
-declarer name DEFINE_SPINLOCK;
-identifier xxx_lock;
+@disable is_null@
+identifier f;
+expression E;
+identifier fld;
+statement S;
 @@
 
-- spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
-+ DEFINE_SPINLOCK(xxx_lock);
++ if (E = NULL) S
+  f(...,E->fld,...);
+- if (E = NULL) S
+
+@@
+identifier f;
+expression E;
+identifier fld;
+statement S;
+@@
+
++ if (!E) S
+  f(...,E->fld,...);
+- if (!E) S
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-diff -u -p a/drivers/staging/meilhaus/memain.c b/drivers/staging/meilhaus/memain.c
---- a/drivers/staging/meilhaus/memain.c
-+++ b/drivers/staging/meilhaus/memain.c
-@@ -79,7 +79,7 @@ MODULE_PARM(major, "i");
+ drivers/usb/serial/usb-serial.c     |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/serial/usb-serial.c b/drivers/usb/serial/usb-serial.c
+index 080ade2..45f8ce8 100644
+--- a/drivers/usb/serial/usb-serial.c
++++ b/drivers/usb/serial/usb-serial.c
+@@ -509,11 +509,11 @@ static void usb_serial_port_work(struct work_struct *work)
+ 		container_of(work, struct usb_serial_port, work);
+ 	struct tty_struct *tty;
  
- static struct file *me_filep = NULL;
- static int me_count = 0;
--static spinlock_t me_lock = SPIN_LOCK_UNLOCKED;
-+static DEFINE_SPINLOCK(me_lock);
- static DECLARE_RWSEM(me_rwsem);
+-	dbg("%s - port %d", __func__, port->number);
+-
+ 	if (!port)
+ 		return;
  
- /* Board instances are kept in a global list */
++	dbg("%s - port %d", __func__, port->number);
++
+ 	tty = tty_port_tty_get(&port->port);
+ 	if (!tty)
+ 		return;
