@@ -1,36 +1,41 @@
-From: "Ray Lee" <ray-lk@madrabbit.org>
-Date: Thu, 11 Dec 2008 00:33:12 +0000
-Subject: Re: linux rebooting w/o crash dump
-Message-Id: <2c0942db0812101633o614390b0ob26e0d83ab78f0cf@mail.gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 27 Dec 2008 21:38:44 +0000
+Subject: [PATCH] Makefile: disable sparse warning "returning void-valued expression"
+Message-Id: <4956a360.0b38560a.3c6c.ffff9113@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ef37ea20812101623g52a36179g7924683d492e7fa7@mail.gmail.com>
-	 <ef37ea20812101625u38af0b42q6a23246bc3eb803@mail.gmail.com>
-In-Reply-To: <ef37ea20812101625u38af0b42q6a23246bc3eb803@mail.gmail.com>
+References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
+	    <20081222191517.11807.20718.stgit@vmbox.hanneseder.net>
+	    <20081225.161740.10052019.davem@davemloft.net>
+	    <20081226115921.bb094c58.rdunlap@xenotime.net>
+	    <49567dd3.0b38560a.3c6c.0511@mx.google.com>
+	    <20081227192012.GB10592@uranus.ravnborg.org>
+In-Reply-To: <20081227192012.GB10592@uranus.ravnborg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Task Struct From Hell <taskstructfromhell@googlemail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Dec 10, 2008 at 4:25 PM, Task Struct From Hell
-<taskstructfromhell@googlemail.com> wrote:
-> Is there any way to debug a kernel that shuts down without leaving any
-> sign of crash, shutdown demand or anything else?
->
-> I am absolutely sure it's not a power issue, as I am running
-> multi-boot and it's never shutting down on my other OSes,
+The sparse warning -Wreturn-void ("returning void-valued expression")
+is off by default, but it is enabled with -Wall, so add
+-Wno-return-void to CHECKFLAGS to disable it.
 
-That means nothing. Linux could be improperly driving the fans or
-processor, and the board may be going into thermal shutdown. It
-wouldn't be a hardware problem, but rather the kernel causing one.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ Makefile |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-> plus, with a
-> newer kernel everything works like a charm - even with the flag
-> 'noreboot'.
-
-Confused. You mean a newer linux kernel doesn't show the problem?
-Please explain?
-
-> I would seriously love to find the root of this problem,
-> but I'm feeling slightly hand-tied on it, been seeking for hints and
-> trying different configurations for about 2 weeks...
+diff --git a/Makefile b/Makefile
+index 64f14aa..a5b5e8d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -321,7 +321,8 @@ KALLSYMS	= scripts/kallsyms
+ PERL		= perl
+ CHECK		= sparse
+ 
+-CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ -Wbitwise $(CF)
++CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
++		  -Wbitwise -Wno-return-void $(CF)
+ MODFLAGS	= -DMODULE
+ CFLAGS_MODULE   = $(MODFLAGS)
+ AFLAGS_MODULE   = $(MODFLAGS)
