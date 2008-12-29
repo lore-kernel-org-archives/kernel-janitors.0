@@ -1,189 +1,84 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 15 Dec 2008 14:23:44 +0000
-Subject: Re: [PATCH 4/5] dccp: Initialisation and type-checking of feature
-Message-Id: <49466870.3010202@bfs.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 29 Dec 2008 10:23:47 +0000
+Subject: [PATCH 13/13] drivers/watchdog: use USB API functions rather than
+Message-Id: <Pine.LNX.4.64.0812291123240.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081208.011917.176472177.davem@davemloft.net> <1229175685-18716-1-git-send-email-gerrit@erg.abdn.ac.uk> <1229175685-18716-2-git-send-email-gerrit@erg.abdn.ac.uk> <1229175685-18716-3-git-send-email-gerrit@erg.abdn.ac.uk> <1229175685-18716-4-git-send-email-gerrit@erg.abdn.ac.uk> <1229175685-18716-5-git-send-email-gerrit@erg.abdn.ac.uk> <20081215141544.GA14518@ghostprotocols.net>
-In-Reply-To: <20081215141544.GA14518@ghostprotocols.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnaldo Carvalho de Melo <acme@redhat.com>, Gerrit Renker <gerrit@erg.abdn.ac.uk>, davem@davemloft.net, dccp@vger.kernel.org, netdev@vger.kernel.org
+To: wim@iguana.be, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
+This set of patches introduces calls to the following set of functions:
 
-Arnaldo Carvalho de Melo schrieb:
-> Em Sat, Dec 13, 2008 at 02:41:24PM +0100, Gerrit Renker escreveu:
->> This patch takes care of initialising and type-checking sysctls related to
->> feature negotiation. Type checking is important since some of the sysctls
->> now directly act on the feature-negotiation process.
->>
->> The sysctls are initialised with the known default values for each feature.
->> For the type-checking the value constraints from RFC 4340 are used:
->>
->>  * Sequence Window uses the specified Wmin2, the maximum is ulong (4 bytes),
->>    tested and confirmed that it works up to 4294967295 - for Gbps speed;
->>  * Ack Ratio is between 0 .. 0xffff (2-byte unsigned integer);
->>  * CCIDs are between 0 .. 255;
->>  * request_retries, retries1, retries2 also between 0..255 for good measure;
->>  * tx_qlen is checked to be non-negative;
->>  * sync_ratelimit remains as before.
->>
->> Further changes:
->> ----------------
->> Performed s@sysctl_dccp_feat@sysctl_dccp@g since the sysctls are now in feat.c.
->>
->> Signed-off-by: Gerrit Renker <gerrit@erg.abdn.ac.uk>
->> Acked-by: Ian McDonald <ian.mcdonald@jandi.co.nz>
->> ---
->>  include/linux/dccp.h |    8 --------
->>  net/dccp/dccp.h      |    3 ---
->>  net/dccp/feat.c      |   11 ++++++++---
->>  net/dccp/feat.h      |    8 ++++++++
->>  net/dccp/options.c   |    4 ----
->>  net/dccp/sysctl.c    |   43 ++++++++++++++++++++++++++++++-------------
->>  6 files changed, 46 insertions(+), 31 deletions(-)
->>
->> --- a/net/dccp/feat.h
->> +++ b/net/dccp/feat.h
->> @@ -100,6 +100,13 @@ struct ccid_dependency {
->>  	u8	val;
->>  };
->>  
->> +/*
->> + * Sysctls to seed defaults for feature negotiation
->> + */
->> +extern unsigned long sysctl_dccp_sequence_window;
->> +extern int	     sysctl_dccp_rx_ccid;
->> +extern int	     sysctl_dccp_tx_ccid;
->> +
->>  #ifdef CONFIG_IP_DCCP_DEBUG
->>  extern const char *dccp_feat_typename(const u8 type);
->>  extern const char *dccp_feat_name(const u8 feat);
->> @@ -114,6 +121,7 @@ static inline void dccp_feat_debug(const u8 type, const u8 feat, const u8 val)
->>  #endif /* CONFIG_IP_DCCP_DEBUG */
->>  
->>  extern int  dccp_feat_init(struct sock *sk);
->> +extern void dccp_feat_initialise_sysctls(void);
->>  extern int  dccp_feat_register_sp(struct sock *sk, u8 feat, u8 is_local,
->>  				  u8 const *list, u8 len);
->>  extern int  dccp_feat_register_nn(struct sock *sk, u8 feat, u64 val);
->> --- a/net/dccp/feat.c
->> +++ b/net/dccp/feat.c
->> @@ -25,6 +25,11 @@
->>  #include "ccid.h"
->>  #include "feat.h"
->>  
->> +/* feature-specific sysctls - initialised to the defaults from RFC 4340, 6.4 */
->> +unsigned long	sysctl_dccp_sequence_window __read_mostly = 100;
->> +int		sysctl_dccp_rx_ccid	    __read_mostly = 2,
->> +		sysctl_dccp_tx_ccid	    __read_mostly = 2;
->> +
->>  /*
->>   * Feature activation handlers.
->>   *
->> @@ -1146,7 +1151,7 @@ int dccp_feat_init(struct sock *sk)
->>  
->>  	/* Non-negotiable (NN) features */
->>  	rc = __feat_register_nn(fn, DCCPF_SEQUENCE_WINDOW, 0,
->> -				    sysctl_dccp_feat_sequence_window);
->> +				    sysctl_dccp_sequence_window);
->>  	if (rc)
->>  		return rc;
->>  
->> @@ -1177,8 +1182,8 @@ int dccp_feat_init(struct sock *sk)
->>  	if (ccid_request_modules(tx.val, tx.len))
->>  		goto free_ccid_lists;
->>  
->> -	if (!dccp_feat_prefer(sysctl_dccp_feat_tx_ccid, tx.val, tx.len) ||
->> -	    !dccp_feat_prefer(sysctl_dccp_feat_rx_ccid, rx.val, rx.len))
->> +	if (!dccp_feat_prefer(sysctl_dccp_tx_ccid, tx.val, tx.len) ||
->> +	    !dccp_feat_prefer(sysctl_dccp_rx_ccid, rx.val, rx.len))
->>  		goto free_ccid_lists;
->>  
->>  	rc = __feat_register_sp(fn, DCCPF_CCID, true, false, tx.val, tx.len);
->> --- a/net/dccp/dccp.h
->> +++ b/net/dccp/dccp.h
->> @@ -95,9 +95,6 @@ extern void dccp_time_wait(struct sock *sk, int state, int timeo);
->>  extern int  sysctl_dccp_request_retries;
->>  extern int  sysctl_dccp_retries1;
->>  extern int  sysctl_dccp_retries2;
->> -extern int  sysctl_dccp_feat_sequence_window;
->> -extern int  sysctl_dccp_feat_rx_ccid;
->> -extern int  sysctl_dccp_feat_tx_ccid;
->>  extern int  sysctl_dccp_tx_qlen;
->>  extern int  sysctl_dccp_sync_ratelimit;
->>  
->> --- a/include/linux/dccp.h
->> +++ b/include/linux/dccp.h
->> @@ -355,14 +355,6 @@ static inline unsigned int dccp_hdr_len(const struct sk_buff *skb)
->>  	return __dccp_hdr_len(dccp_hdr(skb));
->>  }
->>  
->> -
->> -/* initial values for each feature */
->> -#define DCCPF_INITIAL_SEQUENCE_WINDOW		100
->> -#define DCCPF_INITIAL_ACK_RATIO			2
->> -#define DCCPF_INITIAL_CCID			DCCPC_CCID2
->> -/* FIXME: for now we're default to 1 but it should really be 0 */
->> -#define DCCPF_INITIAL_SEND_NDP_COUNT		1
->> -
->>  /**
->>   * struct dccp_request_sock  -  represent DCCP-specific connection request
->>   * @dreq_inet_rsk: structure inherited from
->> --- a/net/dccp/options.c
->> +++ b/net/dccp/options.c
->> @@ -23,10 +23,6 @@
->>  #include "dccp.h"
->>  #include "feat.h"
->>  
->> -int sysctl_dccp_feat_sequence_window = DCCPF_INITIAL_SEQUENCE_WINDOW;
->> -int sysctl_dccp_feat_rx_ccid	      = DCCPF_INITIAL_CCID;
->> -int sysctl_dccp_feat_tx_ccid	      = DCCPF_INITIAL_CCID;
->> -
->>  u64 dccp_decode_value_var(const u8 *bf, const u8 len)
->>  {
->>  	u64 value = 0;
->> --- a/net/dccp/sysctl.c
->> +++ b/net/dccp/sysctl.c
->> @@ -18,55 +18,72 @@
->>  #error This file should not be compiled without CONFIG_SYSCTL defined
->>  #endif
->>  
->> +/* Boundary values */
->> +static int		zero     = 0,
->> +			u8_max   = 0xFF;
-> 
-> I wonder if these aren't available for wider use... some files have it:
-> 
-> ./kernel/sysctl.c
-> ./fs/inotify_user.c
-> ./net/sunrpc/xprtrdma/transport.c
-> ./net/ipv4/ip_fragment.c
-> ./net/ipv4/sysctl_net_ipv4.c
-> ./net/sctp/sysctl.c (well, this one also does the not needed '= 0' :) */
-> 
-> static int zero;
-> 
-> Some others, such as ./net/netrom/sysctl_net_netrom.c, could also use it
-> 
-> And one, etc, and it seems some people are even more crazy about saving
-> some bytes:
-> 
-> /* Constants used for minimum and  maximum */
-> #if defined(CONFIG_HIGHMEM) || defined(CONFIG_DETECT_SOFTLOCKUP)
-> static int one = 1;
-> #endif
-> 
-> Unsure if the cost of exporting this to modules will do us good tho...
-> 
-> Perhaps some janitor may be interested in doing some measurements and
-> looking at u8_max (int_max, etc) too? :-)
-> 
-> Other than that:
-> 
+usb_endpoint_dir_in(epd)
+usb_endpoint_dir_out(epd)
+usb_endpoint_is_bulk_in(epd)
+usb_endpoint_is_bulk_out(epd)
+usb_endpoint_is_int_in(epd)
+usb_endpoint_is_int_out(epd)
+usb_endpoint_num(epd)
+usb_endpoint_type(epd)
+usb_endpoint_xfer_bulk(epd)
+usb_endpoint_xfer_control(epd)
+usb_endpoint_xfer_int(epd)
+usb_endpoint_xfer_isoc(epd)
 
-busybox has replace static int with enum's to save bytes. i guess this is the way to save bytes :)
+In some cases, introducing one of these functions is not possible, and it
+just replaces an explicit integer value by one of the following constants:
 
-re,
- wh
+USB_ENDPOINT_XFER_BULK
+USB_ENDPOINT_XFER_CONTROL
+USB_ENDPOINT_XFER_INT
+USB_ENDPOINT_XFER_ISOC
+
+An extract of the semantic patch that makes these changes is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r1@ struct usb_endpoint_descriptor *epd; @@
+
+- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
+- \(USB_ENDPOINT_XFER_CONTROL\|0\))
++ usb_endpoint_xfer_control(epd)
+
+@r5@ struct usb_endpoint_descriptor *epd; @@
+
+- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
+-  \(USB_DIR_IN\|0x80\))
++ usb_endpoint_dir_in(epd)
+
+@inc@
+@@
+
+#include <linux/usb.h>
+
+@depends on !inc && (r1||r5)@
+@@
+
++ #include <linux/usb.h>
+  #include <linux/usb/...>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/watchdog/pcwd_usb.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/watchdog/pcwd_usb.c b/drivers/watchdog/pcwd_usb.c
+index afb0896..b5320a8 100644
+--- a/drivers/watchdog/pcwd_usb.c
++++ b/drivers/watchdog/pcwd_usb.c
+@@ -609,9 +609,7 @@ static int usb_pcwd_probe(struct usb_interface *interface, const struct usb_devi
+ 	/* check out the endpoint: it has to be Interrupt & IN */
+ 	endpoint = &iface_desc->endpoint[0].desc;
+ 
+-	if (!((endpoint->bEndpointAddress & USB_DIR_IN) &&
+-	     ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
+-				= USB_ENDPOINT_XFER_INT))) {
++	if (!usb_endpoint_is_int_in(endpoint)) {
+ 		/* we didn't find a Interrupt endpoint with direction IN */
+ 		printk(KERN_ERR PFX "Couldn't find an INTR & IN endpoint\n");
+ 		return -ENODEV;
