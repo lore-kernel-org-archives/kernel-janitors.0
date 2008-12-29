@@ -1,28 +1,419 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 08:12:14 +0000
-Subject: Re: [PATCH 22/27] drivers/net/wan/z85230.c: fix sparse warnings:
-Message-Id: <20081226.001214.02292973.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 29 Dec 2008 21:48:19 +0000
+Subject: [PATCH] include/linux: Move definitions from usb.h to usb/ch9.h
+Message-Id: <Pine.LNX.4.64.0812292247300.2265@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20081222191259.11807.53190.stgit@vmbox.hanneseder.net>
-	<20081222191813.11807.144.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20081222191813.11807.144.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@suse.de, dbrownell@users.sourceforge.net, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Mon, 22 Dec 2008 20:18:13 +0100
+From: Julia Lawall <julia@diku.dk>
 
-> The symbols are only references within the translation unit they are
-> defined in, so un-EXPORT them und make them 'static'.
-> 
-> Fix this sparse warnings:
-> 
->   drivers/net/wan/z85230.c:604:25: warning: symbol 'z8530_dma_sync' was not declared. Should it be static?
->   drivers/net/wan/z85230.c:613:25: warning: symbol 'z8530_txdma_sync' was not declared. Should it be static?
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+The functions:
 
-Applied.
+usb_endpoint_dir_in(epd)
+usb_endpoint_dir_out(epd)
+usb_endpoint_is_bulk_in(epd)
+usb_endpoint_is_bulk_out(epd)
+usb_endpoint_is_int_in(epd)
+usb_endpoint_is_int_out(epd)
+usb_endpoint_is_isoc_in(epd)
+usb_endpoint_is_isoc_out(epd)
+usb_endpoint_num(epd)
+usb_endpoint_type(epd)
+usb_endpoint_xfer_bulk(epd)
+usb_endpoint_xfer_control(epd)
+usb_endpoint_xfer_int(epd)
+usb_endpoint_xfer_isoc(epd)
+
+are moved from include/linux/usb.h to include/linux/usb/ch9.h.
+include/linux/usb/ch9.h makes more sense for these functions because they
+only depend on constants that are defined in this file.
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ include/linux/usb.h     |  180 ------------------------------------------------
+ include/linux/usb/ch9.h |  179 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 179 insertions(+), 180 deletions(-)
+
+diff -u -p a/include/linux/usb.h b/include/linux/usb.h
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -641,186 +641,6 @@ static inline int usb_make_path(struct u
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-/**
+- * usb_endpoint_num - get the endpoint's number
+- * @epd: endpoint to be checked
+- *
+- * Returns @epd's number: 0 to 15.
+- */
+-static inline int usb_endpoint_num(const struct usb_endpoint_descriptor *epd)
+-{
+-	return epd->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
+-}
+-
+-/**
+- * usb_endpoint_type - get the endpoint's transfer type
+- * @epd: endpoint to be checked
+- *
+- * Returns one of USB_ENDPOINT_XFER_{CONTROL, ISOC, BULK, INT} according
+- * to @epd's transfer type.
+- */
+-static inline int usb_endpoint_type(const struct usb_endpoint_descriptor *epd)
+-{
+-	return epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK;
+-}
+-
+-/**
+- * usb_endpoint_dir_in - check if the endpoint has IN direction
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint is of type IN, otherwise it returns false.
+- */
+-static inline int usb_endpoint_dir_in(const struct usb_endpoint_descriptor *epd)
+-{
+-	return ((epd->bEndpointAddress & USB_ENDPOINT_DIR_MASK) = USB_DIR_IN);
+-}
+-
+-/**
+- * usb_endpoint_dir_out - check if the endpoint has OUT direction
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint is of type OUT, otherwise it returns false.
+- */
+-static inline int usb_endpoint_dir_out(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return ((epd->bEndpointAddress & USB_ENDPOINT_DIR_MASK) = USB_DIR_OUT);
+-}
+-
+-/**
+- * usb_endpoint_xfer_bulk - check if the endpoint has bulk transfer type
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint is of type bulk, otherwise it returns false.
+- */
+-static inline int usb_endpoint_xfer_bulk(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return ((epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
+-		USB_ENDPOINT_XFER_BULK);
+-}
+-
+-/**
+- * usb_endpoint_xfer_control - check if the endpoint has control transfer type
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint is of type control, otherwise it returns false.
+- */
+-static inline int usb_endpoint_xfer_control(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return ((epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
+-		USB_ENDPOINT_XFER_CONTROL);
+-}
+-
+-/**
+- * usb_endpoint_xfer_int - check if the endpoint has interrupt transfer type
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint is of type interrupt, otherwise it returns
+- * false.
+- */
+-static inline int usb_endpoint_xfer_int(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return ((epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
+-		USB_ENDPOINT_XFER_INT);
+-}
+-
+-/**
+- * usb_endpoint_xfer_isoc - check if the endpoint has isochronous transfer type
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint is of type isochronous, otherwise it returns
+- * false.
+- */
+-static inline int usb_endpoint_xfer_isoc(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return ((epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
+-		USB_ENDPOINT_XFER_ISOC);
+-}
+-
+-/**
+- * usb_endpoint_is_bulk_in - check if the endpoint is bulk IN
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint has bulk transfer type and IN direction,
+- * otherwise it returns false.
+- */
+-static inline int usb_endpoint_is_bulk_in(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return (usb_endpoint_xfer_bulk(epd) && usb_endpoint_dir_in(epd));
+-}
+-
+-/**
+- * usb_endpoint_is_bulk_out - check if the endpoint is bulk OUT
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint has bulk transfer type and OUT direction,
+- * otherwise it returns false.
+- */
+-static inline int usb_endpoint_is_bulk_out(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return (usb_endpoint_xfer_bulk(epd) && usb_endpoint_dir_out(epd));
+-}
+-
+-/**
+- * usb_endpoint_is_int_in - check if the endpoint is interrupt IN
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint has interrupt transfer type and IN direction,
+- * otherwise it returns false.
+- */
+-static inline int usb_endpoint_is_int_in(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return (usb_endpoint_xfer_int(epd) && usb_endpoint_dir_in(epd));
+-}
+-
+-/**
+- * usb_endpoint_is_int_out - check if the endpoint is interrupt OUT
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint has interrupt transfer type and OUT direction,
+- * otherwise it returns false.
+- */
+-static inline int usb_endpoint_is_int_out(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return (usb_endpoint_xfer_int(epd) && usb_endpoint_dir_out(epd));
+-}
+-
+-/**
+- * usb_endpoint_is_isoc_in - check if the endpoint is isochronous IN
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint has isochronous transfer type and IN direction,
+- * otherwise it returns false.
+- */
+-static inline int usb_endpoint_is_isoc_in(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return (usb_endpoint_xfer_isoc(epd) && usb_endpoint_dir_in(epd));
+-}
+-
+-/**
+- * usb_endpoint_is_isoc_out - check if the endpoint is isochronous OUT
+- * @epd: endpoint to be checked
+- *
+- * Returns true if the endpoint has isochronous transfer type and OUT direction,
+- * otherwise it returns false.
+- */
+-static inline int usb_endpoint_is_isoc_out(
+-				const struct usb_endpoint_descriptor *epd)
+-{
+-	return (usb_endpoint_xfer_isoc(epd) && usb_endpoint_dir_out(epd));
+-}
+-
+-/*-------------------------------------------------------------------------*/
+-
+ #define USB_DEVICE_ID_MATCH_DEVICE \
+ 		(USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_PRODUCT)
+ #define USB_DEVICE_ID_MATCH_DEV_RANGE \
+diff -u -p a/include/linux/usb/ch9.h b/include/linux/usb/ch9.h
+--- a/include/linux/usb/ch9.h
++++ b/include/linux/usb/ch9.h
+@@ -353,6 +353,185 @@ struct usb_endpoint_descriptor {
+ #define USB_ENDPOINT_XFER_INT		3
+ #define USB_ENDPOINT_MAX_ADJUSTABLE	0x80
+ 
++/*-------------------------------------------------------------------------*/
++
++/**
++ * usb_endpoint_num - get the endpoint's number
++ * @epd: endpoint to be checked
++ *
++ * Returns @epd's number: 0 to 15.
++ */
++static inline int usb_endpoint_num(const struct usb_endpoint_descriptor *epd)
++{
++	return epd->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
++}
++
++/**
++ * usb_endpoint_type - get the endpoint's transfer type
++ * @epd: endpoint to be checked
++ *
++ * Returns one of USB_ENDPOINT_XFER_{CONTROL, ISOC, BULK, INT} according
++ * to @epd's transfer type.
++ */
++static inline int usb_endpoint_type(const struct usb_endpoint_descriptor *epd)
++{
++	return epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK;
++}
++
++/**
++ * usb_endpoint_dir_in - check if the endpoint has IN direction
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint is of type IN, otherwise it returns false.
++ */
++static inline int usb_endpoint_dir_in(const struct usb_endpoint_descriptor *epd)
++{
++	return ((epd->bEndpointAddress & USB_ENDPOINT_DIR_MASK) = USB_DIR_IN);
++}
++
++/**
++ * usb_endpoint_dir_out - check if the endpoint has OUT direction
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint is of type OUT, otherwise it returns false.
++ */
++static inline int usb_endpoint_dir_out(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return ((epd->bEndpointAddress & USB_ENDPOINT_DIR_MASK) = USB_DIR_OUT);
++}
++
++/**
++ * usb_endpoint_xfer_bulk - check if the endpoint has bulk transfer type
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint is of type bulk, otherwise it returns false.
++ */
++static inline int usb_endpoint_xfer_bulk(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return ((epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
++		USB_ENDPOINT_XFER_BULK);
++}
++
++/**
++ * usb_endpoint_xfer_control - check if the endpoint has control transfer type
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint is of type control, otherwise it returns false.
++ */
++static inline int usb_endpoint_xfer_control(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return ((epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
++		USB_ENDPOINT_XFER_CONTROL);
++}
++
++/**
++ * usb_endpoint_xfer_int - check if the endpoint has interrupt transfer type
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint is of type interrupt, otherwise it returns
++ * false.
++ */
++static inline int usb_endpoint_xfer_int(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return ((epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
++		USB_ENDPOINT_XFER_INT);
++}
++
++/**
++ * usb_endpoint_xfer_isoc - check if the endpoint has isochronous transfer type
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint is of type isochronous, otherwise it returns
++ * false.
++ */
++static inline int usb_endpoint_xfer_isoc(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return ((epd->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
++		USB_ENDPOINT_XFER_ISOC);
++}
++
++/**
++ * usb_endpoint_is_bulk_in - check if the endpoint is bulk IN
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint has bulk transfer type and IN direction,
++ * otherwise it returns false.
++ */
++static inline int usb_endpoint_is_bulk_in(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return (usb_endpoint_xfer_bulk(epd) && usb_endpoint_dir_in(epd));
++}
++
++/**
++ * usb_endpoint_is_bulk_out - check if the endpoint is bulk OUT
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint has bulk transfer type and OUT direction,
++ * otherwise it returns false.
++ */
++static inline int usb_endpoint_is_bulk_out(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return (usb_endpoint_xfer_bulk(epd) && usb_endpoint_dir_out(epd));
++}
++
++/**
++ * usb_endpoint_is_int_in - check if the endpoint is interrupt IN
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint has interrupt transfer type and IN direction,
++ * otherwise it returns false.
++ */
++static inline int usb_endpoint_is_int_in(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return (usb_endpoint_xfer_int(epd) && usb_endpoint_dir_in(epd));
++}
++
++/**
++ * usb_endpoint_is_int_out - check if the endpoint is interrupt OUT
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint has interrupt transfer type and OUT direction,
++ * otherwise it returns false.
++ */
++static inline int usb_endpoint_is_int_out(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return (usb_endpoint_xfer_int(epd) && usb_endpoint_dir_out(epd));
++}
++
++/**
++ * usb_endpoint_is_isoc_in - check if the endpoint is isochronous IN
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint has isochronous transfer type and IN direction,
++ * otherwise it returns false.
++ */
++static inline int usb_endpoint_is_isoc_in(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return (usb_endpoint_xfer_isoc(epd) && usb_endpoint_dir_in(epd));
++}
++
++/**
++ * usb_endpoint_is_isoc_out - check if the endpoint is isochronous OUT
++ * @epd: endpoint to be checked
++ *
++ * Returns true if the endpoint has isochronous transfer type and OUT direction,
++ * otherwise it returns false.
++ */
++static inline int usb_endpoint_is_isoc_out(
++				const struct usb_endpoint_descriptor *epd)
++{
++	return (usb_endpoint_xfer_isoc(epd) && usb_endpoint_dir_out(epd));
++}
+ 
+ /*-------------------------------------------------------------------------*/
+ 
