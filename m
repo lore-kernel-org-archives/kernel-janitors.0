@@ -1,52 +1,84 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Dec 2008 18:08:09 +0000
-Subject: [PATCH] drivers/mfd: Adjust NULL test
-Message-Id: <Pine.LNX.4.64.0812211907400.9555@pc-004.diku.dk>
+Date: Mon, 29 Dec 2008 10:21:52 +0000
+Subject: [PATCH 8/13] drivers/staging/rspiusb: use USB API functions rather
+Message-Id: <Pine.LNX.4.64.0812291121350.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sameo@openedhand.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Since ei is already known to be non-NULL, I assume that what was intended
-was to test the result of kzalloc.
+This set of patches introduces calls to the following set of functions:
 
-The semantic patch that makes this change is as follows:
+usb_endpoint_dir_in(epd)
+usb_endpoint_dir_out(epd)
+usb_endpoint_is_bulk_in(epd)
+usb_endpoint_is_bulk_out(epd)
+usb_endpoint_is_int_in(epd)
+usb_endpoint_is_int_out(epd)
+usb_endpoint_num(epd)
+usb_endpoint_type(epd)
+usb_endpoint_xfer_bulk(epd)
+usb_endpoint_xfer_control(epd)
+usb_endpoint_xfer_int(epd)
+usb_endpoint_xfer_isoc(epd)
+
+In some cases, introducing one of these functions is not possible, and it
+just replaces an explicit integer value by one of the following constants:
+
+USB_ENDPOINT_XFER_BULK
+USB_ENDPOINT_XFER_CONTROL
+USB_ENDPOINT_XFER_INT
+USB_ENDPOINT_XFER_ISOC
+
+An extract of the semantic patch that makes these changes is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-expression E,E1;
-identifier f,fld,fld1;
-statement S1,S2;
+@r1@ struct usb_endpoint_descriptor *epd; @@
+
+- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
+- \(USB_ENDPOINT_XFER_CONTROL\|0\))
++ usb_endpoint_xfer_control(epd)
+
+@r5@ struct usb_endpoint_descriptor *epd; @@
+
+- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
+-  \(USB_DIR_IN\|0x80\))
++ usb_endpoint_dir_in(epd)
+
+@inc@
 @@
 
-E->fld = f(...);
-... when != E = E1
-    when != E->fld1 = E1
-if (
--   E
-+   E->fld
-           = NULL) S1 else S2
+#include <linux/usb.h>
+
+@depends on !inc && (r1||r5)@
+@@
+
++ #include <linux/usb.h>
+  #include <linux/usb/...>
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/mfd/htc-egpio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rspiusb/rspiusb.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff -u -p a/drivers/mfd/htc-egpio.c b/drivers/mfd/htc-egpio.c
---- a/drivers/mfd/htc-egpio.c
-+++ b/drivers/mfd/htc-egpio.c
-@@ -307,7 +307,7 @@ static int __init egpio_probe(struct pla
- 
- 	ei->nchips = pdata->num_chips;
- 	ei->chip = kzalloc(sizeof(struct egpio_chip) * ei->nchips, GFP_KERNEL);
--	if (!ei) {
-+	if (!ei->chip) {
- 		ret = -ENOMEM;
- 		goto fail;
- 	}
+diff --git a/drivers/staging/rspiusb/rspiusb.c b/drivers/staging/rspiusb/rspiusb.c
+index ca281d6..ecaffb5 100644
+--- a/drivers/staging/rspiusb/rspiusb.c
++++ b/drivers/staging/rspiusb/rspiusb.c
+@@ -781,9 +781,8 @@ static int piusb_probe(struct usb_interface *interface,
+ 			dbg("Endpoint[%d]->MaxPacketSize = %d\n", i,
+ 			    endpoint->wMaxPacketSize);
+ 		}
+-		if ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =
+-		    USB_ENDPOINT_XFER_BULK) {
+-			if (endpoint->bEndpointAddress & USB_DIR_IN)
++		if (usb_endpoint_xfer_bulk(endpoint)) {
++			if (usb_endpoint_dir_in(endpoint))
+ 				pdx->hEP[i]  				    usb_rcvbulkpipe(pdx->udev,
+ 						    endpoint->bEndpointAddress);
