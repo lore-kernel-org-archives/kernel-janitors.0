@@ -1,58 +1,108 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 16 Dec 2008 15:13:31 +0000
-Subject: [PATCH 5/11] drivers/net/hamradio/6pack.c: Move a dereference below
-Message-Id: <Pine.LNX.4.64.0812161613100.20444@pc-004.diku.dk>
+Date: Mon, 29 Dec 2008 10:21:29 +0000
+Subject: [PATCH 7/13] drivers/staging/otus: use USB API functions rather than
+Message-Id: <Pine.LNX.4.64.0812291121100.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ajk@iehk.rwth-aachen.de, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lrodriguez@atheros.com, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-In each case, if the NULL test is necessary, then the dereference should be
-moved below the NULL test.
+This set of patches introduces calls to the following set of functions:
 
-The semantic patch that makes this change is as follows:
+usb_endpoint_dir_in(epd)
+usb_endpoint_dir_out(epd)
+usb_endpoint_is_bulk_in(epd)
+usb_endpoint_is_bulk_out(epd)
+usb_endpoint_is_int_in(epd)
+usb_endpoint_is_int_out(epd)
+usb_endpoint_num(epd)
+usb_endpoint_type(epd)
+usb_endpoint_xfer_bulk(epd)
+usb_endpoint_xfer_control(epd)
+usb_endpoint_xfer_int(epd)
+usb_endpoint_xfer_isoc(epd)
+
+In some cases, introducing one of these functions is not possible, and it
+just replaces an explicit integer value by one of the following constants:
+
+USB_ENDPOINT_XFER_BULK
+USB_ENDPOINT_XFER_CONTROL
+USB_ENDPOINT_XFER_INT
+USB_ENDPOINT_XFER_ISOC
+
+An extract of the semantic patch that makes these changes is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
+@r1@ struct usb_endpoint_descriptor *epd; @@
+
+- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
+- \(USB_ENDPOINT_XFER_CONTROL\|0\))
++ usb_endpoint_xfer_control(epd)
+
+@r5@ struct usb_endpoint_descriptor *epd; @@
+
+- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
+-  \(USB_DIR_IN\|0x80\))
++ usb_endpoint_dir_in(epd)
+
+@inc@
 @@
 
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
+#include <linux/usb.h>
+
+@depends on !inc && (r1||r5)@
+@@
+
++ #include <linux/usb.h>
+  #include <linux/usb/...>
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/net/hamradio/6pack.c        |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ drivers/staging/otus/usbdrv.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/hamradio/6pack.c b/drivers/net/hamradio/6pack.c
-index 0f501d2..df7e8de 100644
---- a/drivers/net/hamradio/6pack.c
-+++ b/drivers/net/hamradio/6pack.c
-@@ -718,11 +718,12 @@ static int sixpack_ioctl(struct tty_struct *tty, struct file *file,
- 	unsigned int cmd, unsigned long arg)
- {
- 	struct sixpack *sp = sp_get(tty);
--	struct net_device *dev = sp->dev;
-+	struct net_device *dev;
- 	unsigned int tmp, err;
+diff --git a/drivers/staging/otus/usbdrv.c b/drivers/staging/otus/usbdrv.c
+index 817228d..4443a2c 100644
+--- a/drivers/staging/otus/usbdrv.c
++++ b/drivers/staging/otus/usbdrv.c
+@@ -936,30 +936,26 @@ int zfLnxAllocAllUrbs(struct usbdrv_private *macp)
+     for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i)
+     {
+         endpoint = &iface_desc->endpoint[i].desc;
+-        if ((endpoint->bEndpointAddress & 0x80) &&
+-            ((endpoint->bmAttributes & 3) = 0x02))
++	 if (usb_endpoint_is_bulk_in(endpoint))
+         {
+             /* we found a bulk in endpoint */
+             printk(KERN_ERR "bulk in: wMaxPacketSize = %x\n", le16_to_cpu(endpoint->wMaxPacketSize));
+         }
  
- 	if (!sp)
- 		return -ENXIO;
-+	dev = sp->dev;
+-        if (((endpoint->bEndpointAddress & 0x80) = 0x00) &&
+-            ((endpoint->bmAttributes & 3) = 0x02))
++	 if (usb_endpoint_is_bulk_out(endpoint))
+         {
+             /* we found a bulk out endpoint */
+             printk(KERN_ERR "bulk out: wMaxPacketSize = %x\n", le16_to_cpu(endpoint->wMaxPacketSize));
+         }
  
- 	switch(cmd) {
- 	case SIOCGIFNAME:
+-        if ((endpoint->bEndpointAddress & 0x80) &&
+-            ((endpoint->bmAttributes & 3) = 0x03))
++	 if (usb_endpoint_is_int_in(endpoint))
+         {
+             /* we found a interrupt in endpoint */
+             printk(KERN_ERR "interrupt in: wMaxPacketSize = %x\n", le16_to_cpu(endpoint->wMaxPacketSize));
+             printk(KERN_ERR "interrupt in: int_interval = %d\n", endpoint->bInterval);
+         }
+ 
+-        if (((endpoint->bEndpointAddress & 0x80) = 0x00) &&
+-            ((endpoint->bmAttributes & 3) = 0x03))
++	 if (usb_endpoint_is_int_out(endpoint))
+         {
+             /* we found a interrupt out endpoint */
+             printk(KERN_ERR "interrupt out: wMaxPacketSize = %x\n", le16_to_cpu(endpoint->wMaxPacketSize));
