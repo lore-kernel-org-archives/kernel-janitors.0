@@ -1,19 +1,82 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 26 Dec 2008 02:04:07 +0000
-Subject: Re: [PATCH 6/13] drivers/net: Remove redundant test
-Message-Id: <20081225.180407.94213434.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 29 Dec 2008 10:19:55 +0000
+Subject: [PATCH 3/13] drivers/isdn/gigaset: use USB API functions rather than
+Message-Id: <Pine.LNX.4.64.0812291119340.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812211637560.9555@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812211637560.9555@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: jgarzik@pobox.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hjlipp@web.de, tilman@imap.cc, gigaset307x-common@lists.sourceforge.net, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Dec 2008 16:38:54 +0100 (CET)
 
-> In each case, ap is checked not to be NULL a few lines before.
+This set of patches introduces calls to the following set of functions:
 
-Applied.
+usb_endpoint_dir_in(epd)
+usb_endpoint_dir_out(epd)
+usb_endpoint_is_bulk_in(epd)
+usb_endpoint_is_bulk_out(epd)
+usb_endpoint_is_int_in(epd)
+usb_endpoint_is_int_out(epd)
+usb_endpoint_num(epd)
+usb_endpoint_type(epd)
+usb_endpoint_xfer_bulk(epd)
+usb_endpoint_xfer_control(epd)
+usb_endpoint_xfer_int(epd)
+usb_endpoint_xfer_isoc(epd)
+
+In some cases, introducing one of these functions is not possible, and it
+just replaces an explicit integer value by one of the following constants:
+
+USB_ENDPOINT_XFER_BULK
+USB_ENDPOINT_XFER_CONTROL
+USB_ENDPOINT_XFER_INT
+USB_ENDPOINT_XFER_ISOC
+
+An extract of the semantic patch that makes these changes is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r1@ struct usb_endpoint_descriptor *epd; @@
+
+- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
+- \(USB_ENDPOINT_XFER_CONTROL\|0\))
++ usb_endpoint_xfer_control(epd)
+
+@r5@ struct usb_endpoint_descriptor *epd; @@
+
+- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
+-  \(USB_DIR_IN\|0x80\))
++ usb_endpoint_dir_in(epd)
+
+@inc@
+@@
+
+#include <linux/usb.h>
+
+@depends on !inc && (r1||r5)@
+@@
+
++ #include <linux/usb.h>
+  #include <linux/usb/...>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/isdn/gigaset/usb-gigaset.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/isdn/gigaset/usb-gigaset.c b/drivers/isdn/gigaset/usb-gigaset.c
+index e847c6e..16399fb 100644
+--- a/drivers/isdn/gigaset/usb-gigaset.c
++++ b/drivers/isdn/gigaset/usb-gigaset.c
+@@ -783,7 +783,7 @@ static int gigaset_probe(struct usb_interface *interface,
+ 	/* Fill the interrupt urb and send it to the core */
+ 	usb_fill_int_urb(ucs->read_urb, udev,
+ 			 usb_rcvintpipe(udev,
+-					endpoint->bEndpointAddress & 0x0f),
++					usb_endpoint_num(endpoint)),
+ 			 cs->inbuf[0].rcvbuf, buffer_size,
+ 			 gigaset_read_int_callback,
+ 			 cs->inbuf + 0, endpoint->bInterval);
