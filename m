@@ -1,169 +1,82 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Dec 2008 16:27:20 +0000
-Subject: [PATCH 3/28] drivers/ide: Drop return value from platform_driver
-Message-Id: <Pine.LNX.4.64.0812101727000.21998@ask.diku.dk>
+Date: Mon, 29 Dec 2008 10:19:32 +0000
+Subject: [PATCH 2/13] drivers/input/tablet: use USB API functions rather than
+Message-Id: <Pine.LNX.4.64.0812291119120.9555@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitri.vorobiev@movial.fi, bzolnier@gmail.com, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dmitry.torokhov@gmail.com, dtor@mail.ru, linux-input@vger.kernel.org, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The return value of the remove function of a driver structure, and thus of
-a platform_driver structure, is ultimately ignored, and is thus
-unnecessary.  This patch removes the return value for the remove function
-stored in a platform_driver structure.  For the files in this patch, the
-return values are always 0.
+This set of patches introduces calls to the following set of functions:
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+usb_endpoint_dir_in(epd)
+usb_endpoint_dir_out(epd)
+usb_endpoint_is_bulk_in(epd)
+usb_endpoint_is_bulk_out(epd)
+usb_endpoint_is_int_in(epd)
+usb_endpoint_is_int_out(epd)
+usb_endpoint_num(epd)
+usb_endpoint_type(epd)
+usb_endpoint_xfer_bulk(epd)
+usb_endpoint_xfer_control(epd)
+usb_endpoint_xfer_int(epd)
+usb_endpoint_xfer_isoc(epd)
+
+In some cases, introducing one of these functions is not possible, and it
+just replaces an explicit integer value by one of the following constants:
+
+USB_ENDPOINT_XFER_BULK
+USB_ENDPOINT_XFER_CONTROL
+USB_ENDPOINT_XFER_INT
+USB_ENDPOINT_XFER_ISOC
+
+An extract of the semantic patch that makes these changes is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r@
-struct platform_driver I;
-identifier a,f;
-position p;
-@@
-I.remove = \(f@p\|a(f@p)\);
+@r1@ struct usb_endpoint_descriptor *epd; @@
 
-@void_called@
-identifier r.f;
-position p;
-@@
-f@p(...);
+- ((epd->bmAttributes & \(USB_ENDPOINT_XFERTYPE_MASK\|3\)) =
+- \(USB_ENDPOINT_XFER_CONTROL\|0\))
++ usb_endpoint_xfer_control(epd)
 
-@called@
-identifier r.f;
-position p1 != void_called.p;
-@@
-f@p1(...)
+@r5@ struct usb_endpoint_descriptor *epd; @@
 
-@localfn@
-identifier r.f;
-@@
-static int f(...) { ... }
+- ((epd->bEndpointAddress & \(USB_ENDPOINT_DIR_MASK\|0x80\)) =
+-  \(USB_DIR_IN\|0x80\))
++ usb_endpoint_dir_in(epd)
 
-@depends on !called && localfn@
-struct platform_driver I;
-identifier a,f;
-position r.p;
+@inc@
 @@
 
-I.
-- remove
-+ remove_new
-   = \(f@p\|a(f@p)\);
+#include <linux/usb.h>
 
-@depends on !called && localfn@
-identifier r.f,i;
-constant C;
-expression E;
+@depends on !inc && (r1||r5)@
 @@
 
-- int
-+ void
-       f(...) {
-  <...
-(
--  return \(C\|i\);
-+  return;
-|
--  return E;
-+  E;
-+  return;
-)
-  ...>
-}
++ #include <linux/usb.h>
+  #include <linux/usb/...>
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/ide/ide_platform.c |    6 ++----
- drivers/ide/tx4938ide.c    |    5 ++---
- drivers/ide/tx4939ide.c    |    5 ++---
- 3 files changed, 6 insertions(+), 10 deletions(-)
+ drivers/input/tablet/gtco.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ide/ide_platform.c b/drivers/ide/ide_platform.c
-index 051b4ab..1b75c18 100644
---- a/drivers/ide/ide_platform.c
-+++ b/drivers/ide/ide_platform.c
-@@ -111,13 +111,11 @@ out:
- 	return ret;
- }
+diff --git a/drivers/input/tablet/gtco.c b/drivers/input/tablet/gtco.c
+index 5524e01..2e18a1c 100644
+--- a/drivers/input/tablet/gtco.c
++++ b/drivers/input/tablet/gtco.c
+@@ -877,7 +877,7 @@ static int gtco_probe(struct usb_interface *usbinterface,
+ 	dbg("num endpoints:     %d", usbinterface->cur_altsetting->desc.bNumEndpoints);
+ 	dbg("interface class:   %d", usbinterface->cur_altsetting->desc.bInterfaceClass);
+ 	dbg("endpoint: attribute:0x%x type:0x%x", endpoint->bmAttributes, endpoint->bDescriptorType);
+-	if ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) = USB_ENDPOINT_XFER_INT)
++	if (usb_endpoint_xfer_int(endpoint))
+ 		dbg("endpoint: we have interrupt endpoint\n");
  
--static int __devexit plat_ide_remove(struct platform_device *pdev)
-+static void __devexit plat_ide_remove(struct platform_device *pdev)
- {
- 	struct ide_host *host = pdev->dev.driver_data;
- 
- 	ide_host_remove(host);
--
--	return 0;
- }
- 
- static struct platform_driver platform_ide_driver = {
-@@ -126,7 +124,7 @@ static struct platform_driver platform_ide_driver = {
- 		.owner = THIS_MODULE,
- 	},
- 	.probe = plat_ide_probe,
--	.remove = __devexit_p(plat_ide_remove),
-+	.remove_new = __devexit_p(plat_ide_remove),
- };
- 
- static int __init platform_ide_init(void)
-diff --git a/drivers/ide/tx4938ide.c b/drivers/ide/tx4938ide.c
-index 9120063..523d95e 100644
---- a/drivers/ide/tx4938ide.c
-+++ b/drivers/ide/tx4938ide.c
-@@ -289,12 +289,11 @@ static int __init tx4938ide_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int __exit tx4938ide_remove(struct platform_device *pdev)
-+static void __exit tx4938ide_remove(struct platform_device *pdev)
- {
- 	struct ide_host *host = platform_get_drvdata(pdev);
- 
- 	ide_host_remove(host);
--	return 0;
- }
- 
- static struct platform_driver tx4938ide_driver = {
-@@ -302,7 +301,7 @@ static struct platform_driver tx4938ide_driver = {
- 		.name	= "tx4938ide",
- 		.owner	= THIS_MODULE,
- 	},
--	.remove = __exit_p(tx4938ide_remove),
-+	.remove_new = __exit_p(tx4938ide_remove),
- };
- 
- static int __init tx4938ide_init(void)
-diff --git a/drivers/ide/tx4939ide.c b/drivers/ide/tx4939ide.c
-index bafb7d1..e23d07c 100644
---- a/drivers/ide/tx4939ide.c
-+++ b/drivers/ide/tx4939ide.c
-@@ -706,12 +706,11 @@ static int __init tx4939ide_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int __exit tx4939ide_remove(struct platform_device *pdev)
-+static void __exit tx4939ide_remove(struct platform_device *pdev)
- {
- 	struct ide_host *host = platform_get_drvdata(pdev);
- 
- 	ide_host_remove(host);
--	return 0;
- }
- 
- #ifdef CONFIG_PM
-@@ -732,7 +731,7 @@ static struct platform_driver tx4939ide_driver = {
- 		.name = MODNAME,
- 		.owner = THIS_MODULE,
- 	},
--	.remove = __exit_p(tx4939ide_remove),
-+	.remove_new = __exit_p(tx4939ide_remove),
- 	.resume = tx4939ide_resume,
- };
- 
+ 	dbg("endpoint extra len:%d ", usbinterface->altsetting[0].extralen);
