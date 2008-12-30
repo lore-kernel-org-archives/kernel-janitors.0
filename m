@@ -1,64 +1,63 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Dec 2008 20:54:45 +0000
-Subject: [PATCH 2/2] arch/powerpc/platforms/85xx: Add local_irq_restore in
-Message-Id: <Pine.LNX.4.64.0812212154240.3635@ask.diku.dk>
+From: Kumar Gala <galak@kernel.crashing.org>
+Date: Tue, 30 Dec 2008 18:11:51 +0000
+Subject: Re: [PATCH 2/2] arch/powerpc/platforms/85xx: Add local_irq_restore in error handling code
+Message-Id: <3A41A734-8709-4AC6-ADFD-430D3C1E5DC8@kernel.crashing.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0812212154240.3635@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0812212154240.3635@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: galak@kernel.crashing.org, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linuxppc-dev@ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-There is a call to local_irq_restore in the normal exit case, so it would
-seem that there should be one on an error return as well.
+On Dec 21, 2008, at 2:54 PM, Julia Lawall wrote:
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+> From: Julia Lawall <julia@diku.dk>
+>
+> There is a call to local_irq_restore in the normal exit case, so it  
+> would
+> seem that there should be one on an error return as well.
+>
+> The semantic patch that makes this change is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+>
+> // <smpl>
+> @@
+> expression l;
+> expression E,E1,E2;
+> @@
+>
+> local_irq_save(l);
+> ... when != local_irq_restore(l)
+>    when != spin_unlock_irqrestore(E,l)
+>    when any
+>    when strict
+> (
+> if (...) { ... when != local_irq_restore(l)
+>               when != spin_unlock_irqrestore(E1,l)
+> +   local_irq_restore(l);
+>    return ...;
+> }
+> |
+> if (...)
+> +   {local_irq_restore(l);
+>    return ...;
+> +   }
+> |
+> spin_unlock_irqrestore(E2,l);
+> |
+> local_irq_restore(l);
+> )
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+>
+> ---
+> arch/powerpc/platforms/85xx/smp.c |    1 +
+> 1 file changed, 1 insertion(+)
 
-// <smpl>
-@@
-expression l;
-expression E,E1,E2;
-@@
+applied.
 
-local_irq_save(l);
-... when != local_irq_restore(l)
-    when != spin_unlock_irqrestore(E,l)
-    when any
-    when strict
-(
-if (...) { ... when != local_irq_restore(l)
-               when != spin_unlock_irqrestore(E1,l)
-+   local_irq_restore(l);
-    return ...;
-}
-|
-if (...)
-+   {local_irq_restore(l);
-    return ...;
-+   }
-|
-spin_unlock_irqrestore(E2,l);
-|
-local_irq_restore(l);
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- arch/powerpc/platforms/85xx/smp.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff -u -p a/arch/powerpc/platforms/85xx/smp.c b/arch/powerpc/platforms/85xx/smp.c
---- a/arch/powerpc/platforms/85xx/smp.c
-+++ b/arch/powerpc/platforms/85xx/smp.c
-@@ -58,6 +58,7 @@ smp_85xx_kick_cpu(int nr)
- 
- 	if (cpu_rel_addr = NULL) {
- 		printk(KERN_ERR "No cpu-release-addr for cpu %d\n", nr);
-+		local_irq_restore(flags);
- 		return;
- 	}
- 
+- k
