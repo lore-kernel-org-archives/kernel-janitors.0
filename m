@@ -1,21 +1,27 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Thu, 25 Dec 2008 15:31:37 +0000
-Subject: Re: [PATCH 4/7] drivers/media/dvb/firesat: Use DEFINE_SPINLOCK
-Message-Id: <4953A759.2070609@s5r6.in-berlin.de>
+From: "Cristian Malinescu" <cristian.malinescu@gmail.com>
+Date: Wed, 31 Dec 2008 06:02:13 +0000
+Subject: Hi
+Message-Id: <a1aeb99b0812302202n14343711i60c863e511d02208@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812251534060.22039@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812251534060.22039@ask.diku.dk>
+References: <13pkae7ts-uvir7e93zqd-048vnsh36cvju@ziplink.net>
+In-Reply-To: <13pkae7ts-uvir7e93zqd-048vnsh36cvju@ziplink.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: v4l-dvb-maintainer@linuxtv.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
-> in Documentation/spinlocks.txt
+I'm a developer in Canada/Toronto.
+I'm interested in learning Linux Kernel development and I think
+joining your project will be a good point to start.
+I have long experience in programming; between 1992-2000 did
+exclusively C/C++ development for SCO Unix(client/server applications)
+and Windows NT/2000(client/server applications and drivers), since
+2000 I switched completely to Java/J2EE.
+Since December 2007 I work for Research In Motion.
 
-Committed to linux1394-2.6.git.  Thanks,
--- 
-Stefan Richter
--===-=--- =-- =--http://arcgraph.de/sr/
+Best regards and I wish to the Tux to have a great party and a
+successful New Year!
+
+Cristian Malinescu
+1547 Mississauga Valley Blvd #301
+Mississauga, Ontario, L5A 3X8
