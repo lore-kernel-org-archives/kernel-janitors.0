@@ -1,20 +1,155 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 27 Jan 2009 05:54:33 +0000
-Subject: Re: [PATCH] : Remove unused variable pdev from drivers/net/r6040.c
-Message-Id: <20090126.215433.35004321.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 01 Jan 2009 17:14:35 +0000
+Subject: [PATCH 1/2] sound: Use usb_set/get_intfdata
+Message-Id: <Pine.LNX.4.64.0901011814080.20447@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30901190529k6f12f4c1xed7295ccbf0dcefa@mail.gmail.com>
-	<ea11fea30901262028r3a8f694fgd03b9bf7538719b3@mail.gmail.com>
-In-Reply-To: <ea11fea30901262028r3a8f694fgd03b9bf7538719b3@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mkatiyar@gmail.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, sten.wang@rdc.com.tw, daniel@gimpelevich.san-francisco.ca.us, florian@openwrt.org, stable@vger.kernel.org
+To: perex@perex.cz, tiwai@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Manish Katiyar <mkatiyar@gmail.com>
-Date: Tue, 27 Jan 2009 09:58:11 +0530
+From: Julia Lawall <julia@diku.dk>
 
-> [Adding david miller and stable@kernel.org in cc ]
+Use the USB functions usb_get_intfdata and usb_set_intfdata instead of
+dev_get_drvdata and dev_set_drvdata, respectively.
 
-Applied, thanks Manish.
+The semantic patch that makes this change for the usb_get_intfdata case is
+as follows: (http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@header@
+@@
+
+#include <linux/usb.h>
+
+@same depends on header@
+position p;
+@@
+
+usb_get_intfdata@p(...) { ... }
+
+@depends on header@
+position _p!=same.p;
+identifier _f;
+struct usb_interface*intf;
+@@
+
+_f@_p(...) { <+...
+- dev_get_drvdata(&intf->dev)
++ usb_get_intfdata(intf)
+...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/usb/caiaq/caiaq-device.c |    4 ++--
+ sound/usb/usbaudio.c           |    8 ++++----
+ sound/usb/usx2y/us122l.c       |    4 ++--
+ sound/usb/usx2y/usbusx2y.c     |    4 ++--
+ 4 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/sound/usb/caiaq/caiaq-device.c b/sound/usb/caiaq/caiaq-device.c
+index b143ef7..a62500e 100644
+--- a/sound/usb/caiaq/caiaq-device.c
++++ b/sound/usb/caiaq/caiaq-device.c
+@@ -446,7 +446,7 @@ static int __devinit snd_probe(struct usb_interface *intf,
+ 	if (!card)
+ 		return -ENOMEM;
+ 			
+-	dev_set_drvdata(&intf->dev, card);
++	usb_set_intfdata(intf, card);
+ 	ret = init_card(caiaqdev(card));
+ 	if (ret < 0) {
+ 		log("unable to init card! (ret=%d)\n", ret);
+@@ -460,7 +460,7 @@ static int __devinit snd_probe(struct usb_interface *intf,
+ static void snd_disconnect(struct usb_interface *intf)
+ {
+ 	struct snd_usb_caiaqdev *dev;
+-	struct snd_card *card = dev_get_drvdata(&intf->dev);
++	struct snd_card *card = usb_get_intfdata(intf);
+ 
+ 	debug("%s(%p)\n", __func__, intf);
+ 
+diff --git a/sound/usb/usbaudio.c b/sound/usb/usbaudio.c
+index bbd70d5..c709b95 100644
+--- a/sound/usb/usbaudio.c
++++ b/sound/usb/usbaudio.c
+@@ -3709,7 +3709,7 @@ static int usb_audio_probe(struct usb_interface *intf,
+ 	void *chip;
+ 	chip = snd_usb_audio_probe(interface_to_usbdev(intf), intf, id);
+ 	if (chip) {
+-		dev_set_drvdata(&intf->dev, chip);
++		usb_set_intfdata(intf, chip);
+ 		return 0;
+ 	} else
+ 		return -EIO;
+@@ -3718,13 +3718,13 @@ static int usb_audio_probe(struct usb_interface *intf,
+ static void usb_audio_disconnect(struct usb_interface *intf)
+ {
+ 	snd_usb_audio_disconnect(interface_to_usbdev(intf),
+-				 dev_get_drvdata(&intf->dev));
++				 usb_get_intfdata(intf));
+ }
+ 
+ #ifdef CONFIG_PM
+ static int usb_audio_suspend(struct usb_interface *intf, pm_message_t message)
+ {
+-	struct snd_usb_audio *chip = dev_get_drvdata(&intf->dev);
++	struct snd_usb_audio *chip = usb_get_intfdata(intf);
+ 	struct list_head *p;
+ 	struct snd_usb_stream *as;
+ 
+@@ -3744,7 +3744,7 @@ static int usb_audio_suspend(struct usb_interface *intf, pm_message_t message)
+ 
+ static int usb_audio_resume(struct usb_interface *intf)
+ {
+-	struct snd_usb_audio *chip = dev_get_drvdata(&intf->dev);
++	struct snd_usb_audio *chip = usb_get_intfdata(intf);
+ 
+ 	if (chip = (void *)-1L)
+ 		return 0;
+diff --git a/sound/usb/usx2y/us122l.c b/sound/usb/usx2y/us122l.c
+index c2515b6..73e59f4 100644
+--- a/sound/usb/usx2y/us122l.c
++++ b/sound/usb/usx2y/us122l.c
+@@ -589,7 +589,7 @@ static int snd_us122l_suspend(struct usb_interface *intf, pm_message_t message)
+ 	struct us122l *us122l;
+ 	struct list_head *p;
+ 
+-	card = dev_get_drvdata(&intf->dev);
++	card = usb_get_intfdata(intf);
+ 	if (!card)
+ 		return 0;
+ 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
+@@ -615,7 +615,7 @@ static int snd_us122l_resume(struct usb_interface *intf)
+ 	struct list_head *p;
+ 	int err;
+ 
+-	card = dev_get_drvdata(&intf->dev);
++	card = usb_get_intfdata(intf);
+ 	if (!card)
+ 		return 0;
+ 
+diff --git a/sound/usb/usx2y/usbusx2y.c b/sound/usb/usx2y/usbusx2y.c
+index e5981a6..ca26c53 100644
+--- a/sound/usb/usx2y/usbusx2y.c
++++ b/sound/usb/usx2y/usbusx2y.c
+@@ -392,7 +392,7 @@ static int snd_usX2Y_probe(struct usb_interface *intf, const struct usb_device_i
+ 	void *chip;
+ 	chip = usX2Y_usb_probe(interface_to_usbdev(intf), intf, id);
+ 	if (chip) {
+-		dev_set_drvdata(&intf->dev, chip);
++		usb_set_intfdata(intf, chip);
+ 		return 0;
+ 	} else
+ 		return -EIO;
+@@ -401,7 +401,7 @@ static int snd_usX2Y_probe(struct usb_interface *intf, const struct usb_device_i
+ static void snd_usX2Y_disconnect(struct usb_interface *intf)
+ {
+ 	usX2Y_usb_disconnect(interface_to_usbdev(intf),
+-				 dev_get_drvdata(&intf->dev));
++				 usb_get_intfdata(intf));
+ }
+ 
+ MODULE_DEVICE_TABLE(usb, snd_usX2Y_usb_id_table);
