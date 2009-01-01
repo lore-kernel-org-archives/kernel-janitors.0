@@ -1,26 +1,62 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sun, 18 Jan 2009 15:28:31 +0000
-Subject: [PATCH 0/3] drivers/gpu/drm: fix (sparse) warnings
-Message-Id: <20090118152725.4179.40835.stgit@vmbox.hanneseder.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 01 Jan 2009 17:14:58 +0000
+Subject: [PATCH 2/2] drivers/media/video: Use usb_set_intfdata
+Message-Id: <Pine.LNX.4.64.0901011814360.20447@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mchehab@infradead.org, v4l-dvb-maintainer@linuxtv.org, video4linux-list@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The following series fixes a couple of (sparse) warnings.
+From: Julia Lawall <julia@diku.dk>
+
+This code had calls to both usb_set_intfdata and dev_set_drvdata, doing the
+same thing.
+
+The semantic patch that lead to finding this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@header@
+@@
+
+#include <linux/usb.h>
+
+@same depends on header@
+position p;
+@@
+
+usb_set_intfdata@p(...) { ... }
+
+@depends on header@
+position _p!=same.p;
+identifier _f;
+struct usb_interface *intf;
+expression data;
+@@
+
+_f@_p(...) { <+...
+- dev_set_drvdata(&intf->dev, data);
++ usb_set_intfdata(intf, data);
+...+> }
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
+ drivers/media/video/zr364xx.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-Hannes Eder (3):
-      drivers/gpu/drm: comment out dead code
-      drivers/gpu/drm: fix sparse warnings: unexport symbols
-      drivers/gpu/drm: fix sparse warnings: make symbols static
-
-
- drivers/gpu/drm/drm_crtc.c        |   17 ++++++++++-------
- drivers/gpu/drm/drm_crtc_helper.c |    6 +++---
- drivers/gpu/drm/drm_edid.c        |    4 ++--
- drivers/gpu/drm/drm_modes.c       |   13 +++++++------
- 4 files changed, 22 insertions(+), 18 deletions(-)
+diff --git a/drivers/media/video/zr364xx.c b/drivers/media/video/zr364xx.c
+index a1d81ed..ab7cbbd 100644
+--- a/drivers/media/video/zr364xx.c
++++ b/drivers/media/video/zr364xx.c
+@@ -894,7 +894,6 @@ static void zr364xx_disconnect(struct usb_interface *intf)
+ {
+ 	struct zr364xx_camera *cam = usb_get_intfdata(intf);
+ 	usb_set_intfdata(intf, NULL);
+-	dev_set_drvdata(&intf->dev, NULL);
+ 	dev_info(&intf->dev, DRIVER_DESC " webcam unplugged\n");
+ 	if (cam->vdev)
+ 		video_unregister_device(cam->vdev);
