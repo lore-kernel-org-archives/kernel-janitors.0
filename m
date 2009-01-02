@@ -1,54 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 02 Jan 2009 10:53:52 +0000
-Subject: Re: [PATCH 1/2] sound: Use usb_set/get_intfdata
-Message-Id: <s5hd4f6htbz.wl%tiwai@suse.de>
+From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Date: Fri, 02 Jan 2009 02:01:48 +0000
+Subject: Re: [PATCH] include/linux: Move definitions from usb.h to usb/ch9.h
+Message-Id: <20090102020121.GA9411@gamba.jf.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0901011814080.20447@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0901011814080.20447@pc-004.diku.dk>
+References: <Pine.LNX.4.64.0812292247300.2265@ask.diku.dk> <20081230233727.GA12819@gamba.jf.intel.com> <200812301740.26432.david-b@pacbell.net>
+In-Reply-To: <200812301740.26432.david-b@pacbell.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: perex@perex.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: David Brownell <david-b@pacbell.net>
+Cc: Julia Lawall <julia@diku.dk>, gregkh@suse.de, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 1 Jan 2009 18:14:35 +0100 (CET),
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use the USB functions usb_get_intfdata and usb_set_intfdata instead of
-> dev_get_drvdata and dev_set_drvdata, respectively.
-> 
-> The semantic patch that makes this change for the usb_get_intfdata case is
-> as follows: (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @header@
-> @@
-> 
-> #include <linux/usb.h>
-> 
-> @same depends on header@
-> position p;
-> @@
-> 
-> usb_get_intfdata@p(...) { ... }
-> 
-> @depends on header@
-> position _p!=same.p;
-> identifier _f;
-> struct usb_interface*intf;
-> @@
-> 
-> _f@_p(...) { <+...
-> - dev_get_drvdata(&intf->dev)
-> + usb_get_intfdata(intf)
-> ...+> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+On Tue, Dec 30, 2008 at 05:40:26PM -0800, David Brownell wrote:
+> On Tuesday 30 December 2008, Sarah Sharp wrote:
+> > so why move these functions to=20
+> > include/linux/usb/ch9.h? =A0Was it confusing to find these functions, o=
+r do you
+> > have an overall plan for these changes?
+>=20
+> You missed earlier mail on the topic.  The basic issue is
+> that those symbols can (and should!) be used for peripheral
+> side support as well as host side support ... which means
+> they should never have been put into a host-only header.
 
-Applied now.  Thanks.
+Ah, I see.  Thanks for the explanation. :)
 
-
-Takashi
+Sarah
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
