@@ -1,61 +1,113 @@
-From: Manish Katiyar <mkatiyar@gmail.com>
-Date: Mon, 26 Jan 2009 15:35:38 +0000
-Subject: Re: [PATCH] : Fix compilation warnings when CONFIG_FILE_LOCKING is
-Message-Id: <ea11fea30901260723l546b5d93u6027e111eb565ce@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 03 Jan 2009 16:54:53 +0000
+Subject: [PATCH 2/2] sound/usb: Use negated usb_endpoint_xfer_control, etc
+Message-Id: <Pine.LNX.4.64.0901031753120.9811@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30901160221u2f8dfb08m1e40f44345d1818c@mail.gmail.com>
-In-Reply-To: <ea11fea30901160221u2f8dfb08m1e40f44345d1818c@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: perex@perex.cz, tiwai@suse.de, alsa-devel@alsa-project.org, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 16, 2009 at 3:51 PM, Manish Katiyar <mkatiyar@gmail.com> wrote:
-> Below patch removes the following compilation warnings.
->
-> fs/lockd/svclock.c:719: warning: unused variable 'file'
-> fs/nfsd/nfsxdr.c:154: warning: unused variable 'dentry'
+From: Julia Lawall <julia@diku.dk>
 
-Hi,
+This patch extends 42a6e66f1e40a930d093c33ba0bb9d8d8e4555ed by using
+usb_endpoint_xfer_control, usb_endpoint_xfer_isoc, usb_endpoint_xfer_bulk,
+and usb_endpoint_xfer_int in the negated case as well.
 
-Any feedback on this ?
+This patch also rewrites some calls to usb_endpoint_dir_in as negated calls
+to !usb_endpoint_dir_out, and vice versa, to better correspond to the
+intent of the original code.
 
-Thanks -
-Manish
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
->
->
-> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
-> diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
-> index 6063a8e..c4a08e2 100644
-> --- a/fs/lockd/svclock.c
-> +++ b/fs/lockd/svclock.c
-> @@ -716,7 +716,9 @@ struct lock_manager_operations nlmsvc_lock_operations = {
->  static void
->  nlmsvc_grant_blocked(struct nlm_block *block)
->  {
-> +#ifdef CONFIG_FILE_LOCKING
->        struct nlm_file         *file = block->b_file;
-> +#endif
->        struct nlm_lock         *lock = &block->b_call->a_args.lock;
->        int                     error;
->
-> diff --git a/fs/nfsd/nfsxdr.c b/fs/nfsd/nfsxdr.c
-> index afd08e2..70219c9 100644
-> --- a/fs/nfsd/nfsxdr.c
-> +++ b/fs/nfsd/nfsxdr.c
-> @@ -151,7 +151,9 @@ static __be32 *
->  encode_fattr(struct svc_rqst *rqstp, __be32 *p, struct svc_fh *fhp,
->             struct kstat *stat)
->  {
-> +#ifdef CONFIG_FILE_LOCKING
->        struct dentry   *dentry = fhp->fh_dentry;
-> +#endif
->        int type;
->        struct timespec time;
->        u32 f;
->
->
-> Thanks -
-> Manish
->
+// <smpl>
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_CONTROL\|0\))
++ !usb_endpoint_xfer_control(epd)
+
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_ISOC\|1\))
++ !usb_endpoint_xfer_isoc(epd)
+
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_BULK\|2\))
++ !usb_endpoint_xfer_bulk(epd)
+
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_INT\|3\))
++ !usb_endpoint_xfer_int(epd)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+diff --git a/sound/usb/usbmidi.c b/sound/usb/usbmidi.c
+index 3a9a9fe..320641a 100644
+--- a/sound/usb/usbmidi.c
++++ b/sound/usb/usbmidi.c
+@@ -1392,8 +1392,7 @@ static int snd_usbmidi_get_ms_info(struct snd_usb_midi* umidi,
+ 	for (i = 0; i < intfd->bNumEndpoints; ++i) {
+ 		hostep = &hostif->endpoint[i];
+ 		ep = get_ep_desc(hostep);
+-		if (usb_endpoint_type(ep) != USB_ENDPOINT_XFER_BULK &&
+-		    usb_endpoint_type(ep) != USB_ENDPOINT_XFER_INT)
++		if (!usb_endpoint_xfer_bulk(ep) && !usb_endpoint_xfer_int(ep))
+ 			continue;
+ 		ms_ep = (struct usb_ms_endpoint_descriptor*)hostep->extra;
+ 		if (hostep->extralen < 4 ||
+@@ -1495,8 +1494,8 @@ static int snd_usbmidi_detect_endpoints(struct snd_usb_midi* umidi,
+ 
+ 	for (i = 0; i < intfd->bNumEndpoints; ++i) {
+ 		epd = get_endpoint(hostif, i);
+-		if (usb_endpoint_type(epd) != USB_ENDPOINT_XFER_BULK &&
+-		    usb_endpoint_type(epd) != USB_ENDPOINT_XFER_INT)
++		if (!usb_endpoint_xfer_bulk(epd) &&
++		    !usb_endpoint_xfer_int(epd))
+ 			continue;
+ 		if (out_eps < max_endpoints &&
+ 		    usb_endpoint_dir_out(epd)) {
+@@ -1607,21 +1606,19 @@ static int snd_usbmidi_create_endpoints_midiman(struct snd_usb_midi* umidi,
+ 	}
+ 
+ 	epd = get_endpoint(hostif, 0);
+-	if (usb_endpoint_dir_out(epd) ||
+-	    usb_endpoint_type(epd) != USB_ENDPOINT_XFER_INT) {
++	if (!usb_endpoint_dir_in(epd) || !usb_endpoint_xfer_int(epd)) {
+ 		snd_printdd(KERN_ERR "endpoint[0] isn't interrupt\n");
+ 		return -ENXIO;
+ 	}
+ 	epd = get_endpoint(hostif, 2);
+-	if (usb_endpoint_dir_in(epd) ||
+-	    usb_endpoint_type(epd) != USB_ENDPOINT_XFER_BULK) {
++	if (!usb_endpoint_dir_out(epd) || !usb_endpoint_xfer_bulk(epd)) {
+ 		snd_printdd(KERN_ERR "endpoint[2] isn't bulk output\n");
+ 		return -ENXIO;
+ 	}
+ 	if (endpoint->out_cables > 0x0001) {
+ 		epd = get_endpoint(hostif, 4);
+-		if (usb_endpoint_dir_in(epd) ||
+-		    usb_endpoint_type(epd) != USB_ENDPOINT_XFER_BULK) {
++		if (!usb_endpoint_dir_out(epd) ||
++		    !usb_endpoint_xfer_bulk(epd)) {
+ 			snd_printdd(KERN_ERR "endpoint[4] isn't bulk output\n");
+ 			return -ENXIO;
+ 		}
+diff --git a/sound/usb/usbmixer.c b/sound/usb/usbmixer.c
+index 9ce626f..00397c8 100644
+--- a/sound/usb/usbmixer.c
++++ b/sound/usb/usbmixer.c
+@@ -1755,8 +1755,7 @@ static int snd_usb_mixer_status_create(struct usb_mixer_interface *mixer)
+ 	if (get_iface_desc(hostif)->bNumEndpoints < 1)
+ 		return 0;
+ 	ep = get_endpoint(hostif, 0);
+-	if (usb_endpoint_dir_out(ep) ||
+-	    usb_endpoint_type(ep) != USB_ENDPOINT_XFER_INT)
++	if (!usb_endpoint_dir_in(ep) || !usb_endpoint_xfer_int(ep))
+ 		return 0;
+ 
+ 	epnum = usb_endpoint_num(ep);
