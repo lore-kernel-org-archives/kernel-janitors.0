@@ -1,67 +1,109 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sun, 18 Jan 2009 15:28:56 +0000
-Subject: [PATCH 3/3] drivers/gpu/drm: comment out dead code
-Message-Id: <20090118152856.4179.91855.stgit@vmbox.hanneseder.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 03 Jan 2009 16:53:10 +0000
+Subject: [PATCH 1/2] drivers/media/video: Use negated usb_endpoint_xfer_control,
+Message-Id: <Pine.LNX.4.64.0901031751530.9811@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090118152725.4179.40835.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090118152725.4179.40835.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mchehab@infradead.org, v4l-dvb-maintainer@linuxtv.org, video4linux-list@redhat.com, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The functions:
+From: Julia Lawall <julia@diku.dk>
 
-  drm_crtc_from_fb
-  drm_mode_validate_clocks
+This patch extends 134179823b3ca9c8b98e0631906459dbb022ff9b by using
+usb_endpoint_xfer_control, usb_endpoint_xfer_isoc, usb_endpoint_xfer_bulk,
+and usb_endpoint_xfer_int in the negated case as well.
 
-are not used, so comment them out.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+// <smpl>
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_CONTROL\|0\))
++ !usb_endpoint_xfer_control(epd)
+
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_ISOC\|1\))
++ !usb_endpoint_xfer_isoc(epd)
+
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_BULK\|2\))
++ !usb_endpoint_xfer_bulk(epd)
+
+@@ struct usb_endpoint_descriptor *epd; @@
+
+- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_INT\|3\))
++ !usb_endpoint_xfer_int(epd)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/gpu/drm/drm_crtc.c  |    2 ++
- drivers/gpu/drm/drm_modes.c |    2 ++
- 2 files changed, 4 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index d378306..c44bbde 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -254,6 +254,7 @@ void *drm_mode_object_find(struct drm_device *dev, uint32_t id, uint32_t type)
- }
- EXPORT_SYMBOL(drm_mode_object_find);
+diff --git a/drivers/media/video/em28xx/em28xx-cards.c b/drivers/media/video/em28xx/em28xx-cards.c
+index e776699..1fc4e78 100644
+--- a/drivers/media/video/em28xx/em28xx-cards.c
++++ b/drivers/media/video/em28xx/em28xx-cards.c
+@@ -1990,8 +1990,7 @@ static int em28xx_usb_probe(struct usb_interface *interface,
+ 		int check_interface = 1;
+ 		isoc_pipe = 1;
+ 		endpoint = &interface->cur_altsetting->endpoint[1].desc;
+-		if (usb_endpoint_type(endpoint) !-		    USB_ENDPOINT_XFER_ISOC)
++		if (!usb_endpoint_xfer_isoc(endpoint))
+ 			check_interface = 0;
  
-+#ifdef UNUSED
- /**
-  * drm_crtc_from_fb - find the CRTC structure associated with an fb
-  * @dev: DRM device
-@@ -278,6 +279,7 @@ static struct drm_crtc *drm_crtc_from_fb(struct drm_device *dev,
+ 		if (usb_endpoint_dir_out(endpoint))
+diff --git a/drivers/media/video/usbvideo/ibmcam.c b/drivers/media/video/usbvideo/ibmcam.c
+index f8d85dd..b085496 100644
+--- a/drivers/media/video/usbvideo/ibmcam.c
++++ b/drivers/media/video/usbvideo/ibmcam.c
+@@ -3779,7 +3779,7 @@ static int ibmcam_probe(struct usb_interface *intf, const struct usb_device_id *
+ 			err("Alternate settings have different endpoint addresses!");
+ 			return -ENODEV;
+ 		}
+-		if (usb_endpoint_type(endpoint) != USB_ENDPOINT_XFER_ISOC) {
++		if (!usb_endpoint_xfer_isoc(endpoint)) {
+ 			err("Interface %d. has non-ISO endpoint!", ifnum);
+ 			return -ENODEV;
+ 		}
+diff --git a/drivers/media/video/usbvideo/konicawc.c b/drivers/media/video/usbvideo/konicawc.c
+index 90f0ce6..900ec21 100644
+--- a/drivers/media/video/usbvideo/konicawc.c
++++ b/drivers/media/video/usbvideo/konicawc.c
+@@ -823,7 +823,7 @@ static int konicawc_probe(struct usb_interface *intf, const struct usb_device_id
+ 			err("Alternate settings have different endpoint addresses!");
+ 			return -ENODEV;
+ 		}
+-		if (usb_endpoint_type(endpoint) != USB_ENDPOINT_XFER_ISOC) {
++		if (!usb_endpoint_xfer_isoc(endpoint)) {
+ 			err("Interface %d. has non-ISO endpoint!",
+ 			    interface->desc.bInterfaceNumber);
+ 			return -ENODEV;
+diff --git a/drivers/media/video/usbvideo/ultracam.c b/drivers/media/video/usbvideo/ultracam.c
+index 839a082..fbd1b63 100644
+--- a/drivers/media/video/usbvideo/ultracam.c
++++ b/drivers/media/video/usbvideo/ultracam.c
+@@ -556,7 +556,7 @@ static int ultracam_probe(struct usb_interface *intf, const struct usb_device_id
+ 			err("Alternate settings have different endpoint addresses!");
+ 			return -ENODEV;
+ 		}
+-		if (usb_endpoint_type(endpoint) != USB_ENDPOINT_XFER_ISOC) {
++		if (!usb_endpoint_xfer_isoc(endpoint)) {
+ 			err("Interface %d. has non-ISO endpoint!",
+ 			    interface->desc.bInterfaceNumber);
+ 			return -ENODEV;
+diff --git a/drivers/media/video/usbvision/usbvision-video.c b/drivers/media/video/usbvision/usbvision-video.c
+index 85661b1..70d34b2 100644
+--- a/drivers/media/video/usbvision/usbvision-video.c
++++ b/drivers/media/video/usbvision/usbvision-video.c
+@@ -1679,8 +1679,7 @@ static int __devinit usbvision_probe(struct usb_interface *intf,
+ 		interface = &dev->actconfig->interface[ifnum]->altsetting[0];
  	}
- 	return NULL;
- }
-+#endif /* UNUSED */
- 
- /**
-  * drm_framebuffer_init - initialize a framebuffer
-diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-index c0cfe39..8ebcf51 100644
---- a/drivers/gpu/drm/drm_modes.c
-+++ b/drivers/gpu/drm/drm_modes.c
-@@ -341,6 +341,7 @@ void drm_mode_validate_size(struct drm_device *dev,
- }
- EXPORT_SYMBOL(drm_mode_validate_size);
- 
-+#ifdef UNUSED
- /**
-  * drm_mode_validate_clocks - validate modes against clock limits
-  * @dev: DRM device
-@@ -376,6 +377,7 @@ static void drm_mode_validate_clocks(struct drm_device *dev,
- 			mode->status = MODE_CLOCK_RANGE;
- 	}
- }
-+#endif /* UNUSED */
- 
- /**
-  * drm_mode_prune_invalid - remove invalid modes from mode list
-
+ 	endpoint = &interface->endpoint[1].desc;
+-	if (usb_endpoint_type(endpoint) !-	    USB_ENDPOINT_XFER_ISOC) {
++	if (!usb_endpoint_xfer_isoc(endpoint)) {
+ 		err("%s: interface %d. has non-ISO endpoint!",
+ 		    __func__, ifnum);
+ 		err("%s: Endpoint attributes %d",
