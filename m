@@ -1,109 +1,98 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 03 Jan 2009 16:53:10 +0000
-Subject: [PATCH 1/2] drivers/media/video: Use negated usb_endpoint_xfer_control,
-Message-Id: <Pine.LNX.4.64.0901031751530.9811@pc-004.diku.dk>
+Date: Sun, 04 Jan 2009 10:47:04 +0000
+Subject: [PATCH] usb/core: Use usb_mark_last_busy
+Message-Id: <Pine.LNX.4.64.0901041146290.28116@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@infradead.org, v4l-dvb-maintainer@linuxtv.org, video4linux-list@redhat.com, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-This patch extends 134179823b3ca9c8b98e0631906459dbb022ff9b by using
-usb_endpoint_xfer_control, usb_endpoint_xfer_isoc, usb_endpoint_xfer_bulk,
-and usb_endpoint_xfer_int in the negated case as well.
+This patch introduces uses of the function usb_mark_last_busy, define in
+include/linux/usb.h.  This function only has an effect if CONFIG_USB_SUSPEND
+is set.  This is guaranteed to be the case in the first four modifications
+below, but it might not be the case at the point of the last modification.
+Thus in the last modification, the semantics might be changed.  But the
+affected field last_busy appears only to be read if CONFIG_USB_SUSPEND is
+set.  If this is the case, then not setting it when CONFIG_USB_SUSPEND
+doesn't have any observable effect.
 
 The semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@ struct usb_endpoint_descriptor *epd; @@
+@header@
+@@
+#include <linux/usb.h>
 
-- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_CONTROL\|0\))
-+ !usb_endpoint_xfer_control(epd)
+@same depends on header@
+position p;
+@@
+usb_mark_last_busy@p(...) { ... }
 
-@@ struct usb_endpoint_descriptor *epd; @@
+@depends on header@
+position _p!=same.p;
+identifier _f;
+struct usb_device *udev;
+@@
 
-- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_ISOC\|1\))
-+ !usb_endpoint_xfer_isoc(epd)
-
-@@ struct usb_endpoint_descriptor *epd; @@
-
-- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_BULK\|2\))
-+ !usb_endpoint_xfer_bulk(epd)
-
-@@ struct usb_endpoint_descriptor *epd; @@
-
-- (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_INT\|3\))
-+ !usb_endpoint_xfer_int(epd)
+_f@_p(...) { <+...
+- udev->last_busy = jiffies;
++ usb_mark_last_busy(udev);
+...+> }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-diff --git a/drivers/media/video/em28xx/em28xx-cards.c b/drivers/media/video/em28xx/em28xx-cards.c
-index e776699..1fc4e78 100644
---- a/drivers/media/video/em28xx/em28xx-cards.c
-+++ b/drivers/media/video/em28xx/em28xx-cards.c
-@@ -1990,8 +1990,7 @@ static int em28xx_usb_probe(struct usb_interface *interface,
- 		int check_interface = 1;
- 		isoc_pipe = 1;
- 		endpoint = &interface->cur_altsetting->endpoint[1].desc;
--		if (usb_endpoint_type(endpoint) !-		    USB_ENDPOINT_XFER_ISOC)
-+		if (!usb_endpoint_xfer_isoc(endpoint))
- 			check_interface = 0;
- 
- 		if (usb_endpoint_dir_out(endpoint))
-diff --git a/drivers/media/video/usbvideo/ibmcam.c b/drivers/media/video/usbvideo/ibmcam.c
-index f8d85dd..b085496 100644
---- a/drivers/media/video/usbvideo/ibmcam.c
-+++ b/drivers/media/video/usbvideo/ibmcam.c
-@@ -3779,7 +3779,7 @@ static int ibmcam_probe(struct usb_interface *intf, const struct usb_device_id *
- 			err("Alternate settings have different endpoint addresses!");
- 			return -ENODEV;
- 		}
--		if (usb_endpoint_type(endpoint) != USB_ENDPOINT_XFER_ISOC) {
-+		if (!usb_endpoint_xfer_isoc(endpoint)) {
- 			err("Interface %d. has non-ISO endpoint!", ifnum);
- 			return -ENODEV;
- 		}
-diff --git a/drivers/media/video/usbvideo/konicawc.c b/drivers/media/video/usbvideo/konicawc.c
-index 90f0ce6..900ec21 100644
---- a/drivers/media/video/usbvideo/konicawc.c
-+++ b/drivers/media/video/usbvideo/konicawc.c
-@@ -823,7 +823,7 @@ static int konicawc_probe(struct usb_interface *intf, const struct usb_device_id
- 			err("Alternate settings have different endpoint addresses!");
- 			return -ENODEV;
- 		}
--		if (usb_endpoint_type(endpoint) != USB_ENDPOINT_XFER_ISOC) {
-+		if (!usb_endpoint_xfer_isoc(endpoint)) {
- 			err("Interface %d. has non-ISO endpoint!",
- 			    interface->desc.bInterfaceNumber);
- 			return -ENODEV;
-diff --git a/drivers/media/video/usbvideo/ultracam.c b/drivers/media/video/usbvideo/ultracam.c
-index 839a082..fbd1b63 100644
---- a/drivers/media/video/usbvideo/ultracam.c
-+++ b/drivers/media/video/usbvideo/ultracam.c
-@@ -556,7 +556,7 @@ static int ultracam_probe(struct usb_interface *intf, const struct usb_device_id
- 			err("Alternate settings have different endpoint addresses!");
- 			return -ENODEV;
- 		}
--		if (usb_endpoint_type(endpoint) != USB_ENDPOINT_XFER_ISOC) {
-+		if (!usb_endpoint_xfer_isoc(endpoint)) {
- 			err("Interface %d. has non-ISO endpoint!",
- 			    interface->desc.bInterfaceNumber);
- 			return -ENODEV;
-diff --git a/drivers/media/video/usbvision/usbvision-video.c b/drivers/media/video/usbvision/usbvision-video.c
-index 85661b1..70d34b2 100644
---- a/drivers/media/video/usbvision/usbvision-video.c
-+++ b/drivers/media/video/usbvision/usbvision-video.c
-@@ -1679,8 +1679,7 @@ static int __devinit usbvision_probe(struct usb_interface *intf,
- 		interface = &dev->actconfig->interface[ifnum]->altsetting[0];
+ drivers/usb/core/driver.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff -u -p a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -1317,14 +1317,14 @@ static int usb_autopm_do_device(struct u
+ 	udev->pm_usage_cnt += inc_usage_cnt;
+ 	WARN_ON(udev->pm_usage_cnt < 0);
+ 	if (inc_usage_cnt)
+-		udev->last_busy = jiffies;
++		usb_mark_last_busy(udev);
+ 	if (inc_usage_cnt >= 0 && udev->pm_usage_cnt > 0) {
+ 		if (udev->state = USB_STATE_SUSPENDED)
+ 			status = usb_resume_both(udev);
+ 		if (status != 0)
+ 			udev->pm_usage_cnt -= inc_usage_cnt;
+ 		else if (inc_usage_cnt)
+-			udev->last_busy = jiffies;
++			usb_mark_last_busy(udev);
+ 	} else if (inc_usage_cnt <= 0 && udev->pm_usage_cnt <= 0) {
+ 		status = usb_suspend_both(udev, PMSG_SUSPEND);
  	}
- 	endpoint = &interface->endpoint[1].desc;
--	if (usb_endpoint_type(endpoint) !-	    USB_ENDPOINT_XFER_ISOC) {
-+	if (!usb_endpoint_xfer_isoc(endpoint)) {
- 		err("%s: interface %d. has non-ISO endpoint!",
- 		    __func__, ifnum);
- 		err("%s: Endpoint attributes %d",
+@@ -1434,14 +1434,14 @@ static int usb_autopm_do_interface(struc
+ 	else {
+ 		udev->auto_pm = 1;
+ 		intf->pm_usage_cnt += inc_usage_cnt;
+-		udev->last_busy = jiffies;
++		usb_mark_last_busy(udev);
+ 		if (inc_usage_cnt >= 0 && intf->pm_usage_cnt > 0) {
+ 			if (udev->state = USB_STATE_SUSPENDED)
+ 				status = usb_resume_both(udev);
+ 			if (status != 0)
+ 				intf->pm_usage_cnt -= inc_usage_cnt;
+ 			else
+-				udev->last_busy = jiffies;
++				usb_mark_last_busy(udev);
+ 		} else if (inc_usage_cnt <= 0 && intf->pm_usage_cnt <= 0) {
+ 			status = usb_suspend_both(udev, PMSG_SUSPEND);
+ 		}
+@@ -1610,7 +1610,7 @@ int usb_external_resume_device(struct us
+ 	usb_pm_lock(udev);
+ 	udev->auto_pm = 0;
+ 	status = usb_resume_both(udev);
+-	udev->last_busy = jiffies;
++	usb_mark_last_busy(udev);
+ 	usb_pm_unlock(udev);
+ 	if (status = 0)
+ 		do_unbind_rebind(udev, DO_REBIND);
