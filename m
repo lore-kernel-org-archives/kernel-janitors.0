@@ -1,47 +1,54 @@
-From: Leonardo Potenza <lpotenza@inwind.it>
-Date: Tue, 06 Jan 2009 22:58:29 +0000
-Subject: [PATCH] x86: fix section mismatch warnings in mcheck/mce_amd_64.c
-Message-Id: <200901062358.29954.lpotenza@inwind.it>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Date: Mon, 05 Jan 2009 09:25:10 +0000
+Subject: Re: [PATCH 7/7] fs/gfs2: Use DEFINE_SPINLOCK
+Message-Id: <1231147510.9571.457.camel@quoit>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0812251535080.22039@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0812251535080.22039@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Leonardo Potenza <lpotenza@inwind.it>
+Hi,
 
-The function local_allocate_threshold_blocks() has been marked __cpuinit, in order to remove the following section mismatch messages:
+Now added to the GFS2 -nmw git tree. Thanks,
 
-WARNING: arch/x86/kernel/cpu/mcheck/built-in.o(.text+0x1363): Section mismatch in reference from the function local_allocate_threshold_blocks() to the function .cpuinit.text:allocate_threshold_blocks()
-The function local_allocate_threshold_blocks() references
-the function __cpuinit allocate_threshold_blocks().
-This is often because local_allocate_threshold_blocks lacks a __cpuinit 
-annotation or the annotation of allocate_threshold_blocks is wrong.
+Steve.
 
-WARNING: arch/x86/kernel/cpu/built-in.o(.text+0x1def): Section mismatch in reference from the function local_allocate_threshold_blocks() to the function .cpuinit.text:allocate_threshold_blocks()
-The function local_allocate_threshold_blocks() references
-the function __cpuinit allocate_threshold_blocks().
-This is often because local_allocate_threshold_blocks lacks a __cpuinit 
-annotation or the annotation of allocate_threshold_blocks is wrong.
+On Thu, 2008-12-25 at 15:35 +0100, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> SPIN_LOCK_UNLOCKED is deprecated.  The following makes the change suggested
+> in Documentation/spinlocks.txt
+> 
+> The semantic patch that makes this change is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+> 
+> // <smpl>
+> @@
+> declarer name DEFINE_SPINLOCK;
+> identifier xxx_lock;
+> @@
+> 
+> - spinlock_t xxx_lock = SPIN_LOCK_UNLOCKED;
+> + DEFINE_SPINLOCK(xxx_lock);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+> diff -u -p a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+> --- a/fs/gfs2/glock.c
+> +++ b/fs/gfs2/glock.c
+> @@ -65,7 +65,7 @@ static struct dentry *gfs2_root;
+>  static struct workqueue_struct *glock_workqueue;
+>  static LIST_HEAD(lru_list);
+>  static atomic_t lru_count = ATOMIC_INIT(0);
+> -static spinlock_t lru_lock = SPIN_LOCK_UNLOCKED;
+> +static DEFINE_SPINLOCK(lru_lock);
+>  
+>  #define GFS2_GL_HASH_SHIFT      15
+>  #define GFS2_GL_HASH_SIZE       (1 << GFS2_GL_HASH_SHIFT)
 
-WARNING: arch/x86/kernel/built-in.o(.text+0xef2b): Section mismatch in reference from the function local_allocate_threshold_blocks() to the function .cpuinit.text:allocate_threshold_blocks()
-The function local_allocate_threshold_blocks() references
-the function __cpuinit allocate_threshold_blocks().
-This is often because local_allocate_threshold_blocks lacks a __cpuinit 
-annotation or the annotation of allocate_threshold_blocks is wrong.
-
-Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
----
-Index: linux-2.6/arch/x86/kernel/cpu/mcheck/mce_amd_64.c
-=================================--- linux-2.6.orig/arch/x86/kernel/cpu/mcheck/mce_amd_64.c	2009-01-06 23:03:19.000000000 +0100
-+++ linux-2.6/arch/x86/kernel/cpu/mcheck/mce_amd_64.c	2009-01-06 23:07:00.000000000 +0100
-@@ -462,7 +462,7 @@ out_free:
- 	return err;
- }
- 
--static long local_allocate_threshold_blocks(void *_bank)
-+static __cpuinit long local_allocate_threshold_blocks(void *_bank)
- {
- 	unsigned int *bank = _bank;
- 
