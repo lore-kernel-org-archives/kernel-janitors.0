@@ -1,26 +1,47 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Mon, 05 Jan 2009 19:11:29 +0000
-Subject: Re: [PATCH 8/13] drivers/pci/hotplug: Remove redundant test
-Message-Id: <200901051111.29697.jbarnes@virtuousgeek.org>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Tue, 06 Jan 2009 22:58:29 +0000
+Subject: [PATCH] x86: fix section mismatch warnings in mcheck/mce_amd_64.c
+Message-Id: <200901062358.29954.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0812211639170.9555@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812211639170.9555@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org
 
-On Sunday, December 21, 2008 7:39 am Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
->
-> func is checked not to be NULL a few lines before.
->
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://www.emn.fr/x-info/coccinelle/)
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-Applied, thanks Julia.
+The function local_allocate_threshold_blocks() has been marked __cpuinit, in order to remove the following section mismatch messages:
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+WARNING: arch/x86/kernel/cpu/mcheck/built-in.o(.text+0x1363): Section mismatch in reference from the function local_allocate_threshold_blocks() to the function .cpuinit.text:allocate_threshold_blocks()
+The function local_allocate_threshold_blocks() references
+the function __cpuinit allocate_threshold_blocks().
+This is often because local_allocate_threshold_blocks lacks a __cpuinit 
+annotation or the annotation of allocate_threshold_blocks is wrong.
 
+WARNING: arch/x86/kernel/cpu/built-in.o(.text+0x1def): Section mismatch in reference from the function local_allocate_threshold_blocks() to the function .cpuinit.text:allocate_threshold_blocks()
+The function local_allocate_threshold_blocks() references
+the function __cpuinit allocate_threshold_blocks().
+This is often because local_allocate_threshold_blocks lacks a __cpuinit 
+annotation or the annotation of allocate_threshold_blocks is wrong.
+
+WARNING: arch/x86/kernel/built-in.o(.text+0xef2b): Section mismatch in reference from the function local_allocate_threshold_blocks() to the function .cpuinit.text:allocate_threshold_blocks()
+The function local_allocate_threshold_blocks() references
+the function __cpuinit allocate_threshold_blocks().
+This is often because local_allocate_threshold_blocks lacks a __cpuinit 
+annotation or the annotation of allocate_threshold_blocks is wrong.
+
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+---
+Index: linux-2.6/arch/x86/kernel/cpu/mcheck/mce_amd_64.c
+=================================--- linux-2.6.orig/arch/x86/kernel/cpu/mcheck/mce_amd_64.c	2009-01-06 23:03:19.000000000 +0100
++++ linux-2.6/arch/x86/kernel/cpu/mcheck/mce_amd_64.c	2009-01-06 23:07:00.000000000 +0100
+@@ -462,7 +462,7 @@ out_free:
+ 	return err;
+ }
+ 
+-static long local_allocate_threshold_blocks(void *_bank)
++static __cpuinit long local_allocate_threshold_blocks(void *_bank)
+ {
+ 	unsigned int *bank = _bank;
+ 
