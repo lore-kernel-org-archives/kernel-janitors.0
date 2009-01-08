@@ -1,24 +1,42 @@
-From: Hoang-Nam Nguyen <HNGUYEN@de.ibm.com>
-Date: Tue, 13 Jan 2009 17:24:59 +0000
-Subject: Re: [PATCH 3/13] drivers/infiniband/hw/ehca: Remove redundant test
-Message-Id: <OF143068C7.E221295B-ONC125753D.005F9F0B-C125753D.005FAC45@de.ibm.com>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Thu, 08 Jan 2009 18:57:03 +0000
+Subject: [PATCH] net: fix section mismatch warnings in dccp/ccids/lib/tfrc.c
+Message-Id: <200901081957.03413.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <adaiqpdxlpe.fsf@cisco.com>
-References: <Pine.LNX.4.64.0812211636550.9555@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0812211636550.9555@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <rdreier@cisco.com>
-Cc: Christoph Raisch <raisch@de.ibm.com>, general@lists.openfabrics.org, hal.rosenstock@gmail.com, Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, rolandd@cisco.com, sean.hefty@intel.com
+To: kernel-janitors@vger.kernel.org
+Cc: acme@ghostprotocols.net, linux-kernel@vger.kernel.org
 
-Thanks
-Nam
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-Roland Dreier <rdreier@cisco.com> wrote on 21.12.2008 22:27:57:
+Removed the __exit annotation of tfrc_lib_exit(), in order to suppress the following section mismatch messages:
 
-> Thanks, applied for 2.6.29 (ehca guys added to cc list just to make sure
-> this is OK).
->
->  - R.
+WARNING: net/dccp/dccp.o(.text+0xd9): Section mismatch in reference from the function ccid_cleanup_builtins() to the function .exit.text:tfrc_lib_exit()
+The function ccid_cleanup_builtins() references a function in an exit section.
+Often the function tfrc_lib_exit() has valid usage outside the exit section
+and the fix is to remove the __exit annotation of tfrc_lib_exit.
 
+WARNING: net/dccp/dccp.o(.init.text+0x48): Section mismatch in reference from the function ccid_initialize_builtins() to the function .exit.text:tfrc_lib_exit()
+The function __init ccid_initialize_builtins() references
+a function __exit tfrc_lib_exit().
+This is often seen when error handling in the init function
+uses functionality in the exit path.
+The fix is often to remove the __exit annotation of
+tfrc_lib_exit() so it may be used outside an exit section.
+
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+---
+Index: linux-2.6/net/dccp/ccids/lib/tfrc.c
+=================================--- linux-2.6.orig/net/dccp/ccids/lib/tfrc.c	2009-01-08 19:19:50.000000000 +0100
++++ linux-2.6/net/dccp/ccids/lib/tfrc.c	2009-01-08 19:20:07.000000000 +0100
+@@ -36,7 +36,7 @@ out:
+ 	return rc;
+ }
+ 
+-void __exit tfrc_lib_exit(void)
++void tfrc_lib_exit(void)
+ {
+ 	tfrc_rx_packet_history_exit();
+ 	tfrc_tx_packet_history_exit();
