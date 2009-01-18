@@ -1,49 +1,74 @@
-From: Ingo Molnar <mingo@elte.hu>
-Date: Sun, 18 Jan 2009 22:59:45 +0000
-Subject: Re: [PATCH] x86: fix section mismatch warnings in
-Message-Id: <20090118225945.GA3845@elte.hu>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sun, 18 Jan 2009 15:28:48 +0000
+Subject: [PATCH 2/3] drivers/gpu/drm: fix sparse warnings: unexport symbols
+Message-Id: <20090118152848.4179.85741.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200901182303.56911.lpotenza@inwind.it>
-In-Reply-To: <200901182303.56911.lpotenza@inwind.it>
+References: <20090118152725.4179.40835.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090118152725.4179.40835.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leonardo Potenza <leo.potenza@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>
+To: dri-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Fix this sparse warnings:
 
-* Leonardo Potenza <leo.potenza@gmail.com> wrote:
+  drivers/gpu/drm/drm_crtc_helper.c:137:6: warning: symbol 'drm_helper_probe_connector_modes' was not declared. Should it be static?
+  drivers/gpu/drm/drm_modes.c:360:6: warning: symbol 'drm_mode_validate_clocks' was not declared. Should it be static?
 
-> From: Leonardo Potenza <lpotenza@inwind.it>
-> 
-> The function setup_cpu_local_masks() has been marked __init, in order to remove the following section mismatch messages:
-> 
-> WARNING: vmlinux.o(.text+0x3c2c7): Section mismatch in reference from the function setup_cpu_local_masks() to the function .init.text:alloc_bootmem_cpumask_var()
-> The function setup_cpu_local_masks() references
-> the function __init alloc_bootmem_cpumask_var().
-> This is often because setup_cpu_local_masks lacks a __init 
-> annotation or the annotation of alloc_bootmem_cpumask_var is wrong.
-> 
-> WARNING: vmlinux.o(.text+0x3c2d3): Section mismatch in reference from the function setup_cpu_local_masks() to the function .init.text:alloc_bootmem_cpumask_var()
-> The function setup_cpu_local_masks() references
-> the function __init alloc_bootmem_cpumask_var().
-> This is often because setup_cpu_local_masks lacks a __init 
-> annotation or the annotation of alloc_bootmem_cpumask_var is wrong.
-> 
-> WARNING: vmlinux.o(.text+0x3c2df): Section mismatch in reference from the function setup_cpu_local_masks() to the function .init.text:alloc_bootmem_cpumask_var()
-> The function setup_cpu_local_masks() references
-> the function __init alloc_bootmem_cpumask_var().
-> This is often because setup_cpu_local_masks lacks a __init 
-> annotation or the annotation of alloc_bootmem_cpumask_var is wrong.
-> 
-> WARNING: vmlinux.o(.text+0x3c2eb): Section mismatch in reference from the function setup_cpu_local_masks() to the function .init.text:alloc_bootmem_cpumask_var()
-> The function setup_cpu_local_masks() references
-> the function __init alloc_bootmem_cpumask_var().
-> This is often because setup_cpu_local_masks lacks a __init 
-> annotation or the annotation of alloc_bootmem_cpumask_var is wrong.
-> 
-> Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/gpu/drm/drm_crtc_helper.c |    6 +++---
+ drivers/gpu/drm/drm_modes.c       |    7 +++----
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-applied to tip/x86/urgent, thanks Leonardo!
+diff --git a/drivers/gpu/drm/drm_crtc_helper.c b/drivers/gpu/drm/drm_crtc_helper.c
+index d8a982b..a0b2601 100644
+--- a/drivers/gpu/drm/drm_crtc_helper.c
++++ b/drivers/gpu/drm/drm_crtc_helper.c
+@@ -134,8 +134,9 @@ void drm_helper_probe_single_connector_modes(struct drm_connector *connector,
+ }
+ EXPORT_SYMBOL(drm_helper_probe_single_connector_modes);
+ 
+-void drm_helper_probe_connector_modes(struct drm_device *dev, uint32_t maxX,
+-				      uint32_t maxY)
++static void drm_helper_probe_connector_modes(struct drm_device *dev,
++					     uint32_t maxX,
++					     uint32_t maxY)
+ {
+ 	struct drm_connector *connector;
+ 
+@@ -143,7 +144,6 @@ void drm_helper_probe_connector_modes(struct drm_device *dev, uint32_t maxX,
+ 		drm_helper_probe_single_connector_modes(connector, maxX, maxY);
+ 	}
+ }
+-EXPORT_SYMBOL(drm_helper_probe_connector_modes);
+ 
+ 
+ /**
+diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+index 7c36f16..c0cfe39 100644
+--- a/drivers/gpu/drm/drm_modes.c
++++ b/drivers/gpu/drm/drm_modes.c
+@@ -357,9 +357,9 @@ EXPORT_SYMBOL(drm_mode_validate_size);
+  * sure each mode falls within a given range (defined by @min and @max
+  * arrays) and sets @mode->status as needed.
+  */
+-void drm_mode_validate_clocks(struct drm_device *dev,
+-			      struct list_head *mode_list,
+-			      int *min, int *max, int n_ranges)
++static void drm_mode_validate_clocks(struct drm_device *dev,
++				     struct list_head *mode_list,
++				     int *min, int *max, int n_ranges)
+ {
+ 	struct drm_display_mode *mode;
+ 	int i;
+@@ -376,7 +376,6 @@ void drm_mode_validate_clocks(struct drm_device *dev,
+ 			mode->status = MODE_CLOCK_RANGE;
+ 	}
+ }
+-EXPORT_SYMBOL(drm_mode_validate_clocks);
+ 
+ /**
+  * drm_mode_prune_invalid - remove invalid modes from mode list
 
-	Ingo
