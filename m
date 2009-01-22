@@ -1,57 +1,37 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 04 Jan 2009 11:24:20 +0000
-Subject: Re: [PATCH 2/2] sound/usb: Use negated usb_endpoint_xfer_control, etc
-Message-Id: <s5hhc4f2u1n.wl%tiwai@suse.de>
+From: Daniele Venzano <venza@brownhat.org>
+Date: Thu, 22 Jan 2009 13:04:27 +0000
+Subject: [PATCH] Add missing ifdef in x86 setup.c
+Message-Id: <20090122130427.GA15214@milesteg.arr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0901031753120.9811@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0901031753120.9811@pc-004.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, gregkh@suse.de, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-At Sat, 3 Jan 2009 17:54:53 +0100 (CET),
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> This patch extends 42a6e66f1e40a930d093c33ba0bb9d8d8e4555ed by using
-> usb_endpoint_xfer_control, usb_endpoint_xfer_isoc, usb_endpoint_xfer_bulk,
-> and usb_endpoint_xfer_int in the negated case as well.
-> 
-> This patch also rewrites some calls to usb_endpoint_dir_in as negated calls
-> to !usb_endpoint_dir_out, and vice versa, to better correspond to the
-> intent of the original code.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@ struct usb_endpoint_descriptor *epd; @@
-> 
-> - (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_CONTROL\|0\))
-> + !usb_endpoint_xfer_control(epd)
-> 
-> @@ struct usb_endpoint_descriptor *epd; @@
-> 
-> - (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_ISOC\|1\))
-> + !usb_endpoint_xfer_isoc(epd)
-> 
-> @@ struct usb_endpoint_descriptor *epd; @@
-> 
-> - (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_BULK\|2\))
-> + !usb_endpoint_xfer_bulk(epd)
-> 
-> @@ struct usb_endpoint_descriptor *epd; @@
-> 
-> - (usb_endpoint_type(epd) != \(USB_ENDPOINT_XFER_INT\|3\))
-> + !usb_endpoint_xfer_int(epd)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+The following patch removes a warning generated when the x86
+architecture is compitled without CONFIG_X86_RESERVE_LOW_64K.
+The warning was: ‘dmi_low_memory_corruption’ defined but not used
 
-Applied now.  Thanks.
+Patch is against 2.6.28.1
 
+Signed-off-by: Daniele Venzano <venza@brownhat.org>
 
-Takashi
+--- a/arch/x86/kernel/setup.c	2009-01-22 13:57:16.000000000 +0100
++++ b/arch/x86/kernel/setup.c	2009-01-22 13:57:39.000000000 +0100
+@@ -738,6 +738,7 @@ void start_periodic_check_for_corruption
+ }
+ #endif
+ 
++#ifdef CONFIG_X86_RESERVE_LOW_64K
+ static int __init dmi_low_memory_corruption(const struct dmi_system_id *d)
+ {
+ 	printk(KERN_NOTICE
+@@ -749,6 +750,7 @@ static int __init dmi_low_memory_corrupt
+ 
+ 	return 0;
+ }
++#endif
+ 
+ /* List of systems that have known low memory corruption BIOS problems */
+ static struct dmi_system_id __initdata bad_bios_dmi_table[] = {
+
