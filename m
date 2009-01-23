@@ -1,47 +1,34 @@
-From: Richard Genoud <richard.genoud@gmail.com>
-Date: Fri, 23 Jan 2009 15:56:43 +0000
-Subject: Re: [PATCH] Fix warning in aty128fb
-Message-Id: <80b317760901230756h6c290d48r71e17116beeb9f2b@mail.gmail.com>
+From: Daniele Venzano <venza@brownhat.org>
+Date: Fri, 23 Jan 2009 09:41:49 +0000
+Subject: [PATCH] Fix unused variable warning in rfcomm
+Message-Id: <20090123094149.GA31218@milesteg.arr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090120161859.GA31365@milesteg.arr>
-In-Reply-To: <20090120161859.GA31365@milesteg.arr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: linux-bluetooth@vger.kernel.org, marcel@holtmann.org
 
-2009/1/23 Richard Genoud <richard.genoud@gmail.com>:
-> 2009/1/23 Daniele Venzano <venza@brownhat.org>:
->> I changed the patch to not define backlight only in case the driver is
->> compiled as module. Now it compiles both statically or as module without
->> errors or warnings.
->>
->> Patch is against 2.6.28.1
->>
->> Signed-off-by: Daniele Venzano <venza@brownhat.org>
->>
->> --- linux-2.6.28.1/drivers/video/aty/aty128fb.c.old     2009-01-20 16:08:06.000000000 +0100
->> +++ linux-2.6.28.1/drivers/video/aty/aty128fb.c 2009-01-23 11:34:16.000000000 +0100
->> @@ -360,8 +360,10 @@ static int mtrr = 1;
->>  #ifdef CONFIG_PMAC_BACKLIGHT
->>  static int backlight __devinitdata = 1;
->>  #else
->> +#ifndef MODULE
->>  static int backlight __devinitdata = 0;
->>  #endif
->> +#endif
->>
->>  /* PLL constants */
->>  struct aty128_constants {
->>
->
-> [Added CC:Brad]
->
-> Reviewed-by: Richard Genoud <richard.genoud@gmail.com>
->
+The following patch fixes a warning generated when compiling rfcomm.c
+without CONFIG_BT_RFCOMM_DEBUG.
+The warning was:
+net/bluetooth/rfcomm/sock.c: In function ‘rfcomm_sock_ioctl’:
+net/bluetooth/rfcomm/sock.c:795: warning: unused variable ‘sk’
 
-sorry, there's still an error in the path (I reviewed a little bit to fast...).
-the compilation breaks if "ATI Rage128 display support" is compile as
-a module and "Support for backlight control (FB_ATY128_BACKLIGHT)" is
-set
-(cf line 1997)
+Patch is against 2.6.28.1
+
+Signed-off-by: Daniele Venzano <venza@brownhat.org>
+
+--- a/net/bluetooth/rfcomm/sock.c	2009-01-23 10:30:34.000000000 +0100
++++ b/net/bluetooth/rfcomm/sock.c	2009-01-23 10:31:25.000000000 +0100
+@@ -792,7 +792,9 @@ static int rfcomm_sock_getsockopt(struct
+ 
+ static int rfcomm_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ {
++#ifdef CONFIG_BT_RFCOMM_DEBUG
+ 	struct sock *sk = sock->sk;
++#endif
+ 	int err;
+ 
+ 	BT_DBG("sk %p cmd %x arg %lx", sk, cmd, arg);
+
