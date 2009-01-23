@@ -1,38 +1,29 @@
-From: Daniele Venzano <venza@brownhat.org>
-Date: Fri, 23 Jan 2009 14:09:46 +0000
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Fri, 23 Jan 2009 14:22:09 +0000
 Subject: Re: [PATCH] Fix unused variable warning in rfcomm
-Message-Id: <20090123140946.GA31355@milesteg.arr>
+Message-Id: <BEC94463-F21B-4B9A-BB4F-248ECF9D8329@holtmann.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090123094149.GA31218@milesteg.arr>
-In-Reply-To: <20090123094149.GA31218@milesteg.arr>
+References: <20090123140946.GA31355@milesteg.arr>
+In-Reply-To: <20090123140946.GA31355@milesteg.arr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: richard.genoud@gmail.com, linux-bluetooth@vger.kernel.org, marcel@holtmann.org
+To: Daniele Venzano <venza@brownhat.org>
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, richard.genoud@gmail.com, linux-bluetooth@vger.kernel.org
 
-Sorry, shouldn't have missed that.
+Hi guys,
 
-The following patch fixes a warning generated when compiling rfcomm.c
-without CONFIG_BT_RFCOMM_DEBUG.
-The warning was:
-net/bluetooth/rfcomm/sock.c: In function 'rfcomm_sock_ioctl':
-net/bluetooth/rfcomm/sock.c:795: warning: unused variable 'sk'
+> Sorry, shouldn't have missed that.
+>
+> The following patch fixes a warning generated when compiling rfcomm.c
+> without CONFIG_BT_RFCOMM_DEBUG.
+> The warning was:
+> net/bluetooth/rfcomm/sock.c: In function 'rfcomm_sock_ioctl':
+> net/bluetooth/rfcomm/sock.c:795: warning: unused variable 'sk'
 
-Patch is against 2.6.28.1
+this has been fixed upstream already. So why does this come up again?
 
-Signed-off-by: Daniele Venzano <venza@brownhat.org>
+Regards
 
---- a/net/bluetooth/rfcomm/sock.c	2009-01-23 10:30:34.000000000 +0100
-+++ b/net/bluetooth/rfcomm/sock.c	2009-01-23 15:09:00.000000000 +0100
-@@ -792,7 +792,9 @@ static int rfcomm_sock_getsockopt(struct
- 
- static int rfcomm_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- {
-+#if defined(CONFIG_BT_RFCOMM_DEBUG) || defined(CONFIG_BT_RFCOMM_TTY)
- 	struct sock *sk = sock->sk;
-+#endif
- 	int err;
- 
- 	BT_DBG("sk %p cmd %x arg %lx", sk, cmd, arg);
+Marcel
 
