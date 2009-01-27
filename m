@@ -1,48 +1,48 @@
 From: Manish Katiyar <mkatiyar@gmail.com>
-Date: Mon, 26 Jan 2009 15:32:32 +0000
+Date: Tue, 27 Jan 2009 04:40:11 +0000
 Subject: Re: [PATCH] : Remove unused variable pdev from drivers/net/r6040.c
-Message-Id: <ea11fea30901260720t337d531eh970702ee5e0054df@mail.gmail.com>
+Message-Id: <ea11fea30901262028r3a8f694fgd03b9bf7538719b3@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200901191441.24992.florian@openwrt.org>
-In-Reply-To: <200901191441.24992.florian@openwrt.org>
+References: <ea11fea30901190529k6f12f4c1xed7295ccbf0dcefa@mail.gmail.com>
+In-Reply-To: <ea11fea30901190529k6f12f4c1xed7295ccbf0dcefa@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, sten.wang@rdc.com.tw, daniel@gimpelevich.san-francisco.ca.us, florian@openwrt.org
+Cc: mkatiyar@gmail.com, David Miller <davem@davemloft.net>, stable@vger.kernel.org
 
-On Mon, Jan 19, 2009 at 7:11 PM, Florian Fainelli <florian@openwrt.org> wro=
-te:
-> Le Monday 19 January 2009 14:29:53 Manish Katiyar, vous avez =E9crit :
->> Below patch removes the following compilation warning.
->>
->> drivers/net/r6040.c:441: warning: unused variable 'pdev'
->>
->
-> Good catch, thanks.
-
-Hi Florian,
-
-Will it automatically be picked up or will I have to send it again to Andre=
-w ?
+[Adding david miller and stable@kernel.org in cc ]
 
 Thanks -
 Manish
 
-
-
+On Mon, Jan 19, 2009 at 6:59 PM, Manish Katiyar <mkatiyar@gmail.com> wrote:
+> Below patch removes the following compilation warning.
 >
->>
->> Signed-off-by : Manish Katiyar <mkatiyar@gmail.com>
+> drivers/net/r6040.c:441: warning: unused variable 'pdev'
 >
-> Acked-by: Florian Fainelli <florian@openwrt.org>
+>
+> Signed-off-by : Manish Katiyar <mkatiyar@gmail.com>
+> ---
+>  drivers/net/r6040.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/net/r6040.c b/drivers/net/r6040.c
+> index 72fd9e9..b2dcdb5 100644
+> --- a/drivers/net/r6040.c
+> +++ b/drivers/net/r6040.c
+> @@ -438,7 +438,6 @@ static void r6040_down(struct net_device *dev)
+>  {
+>        struct r6040_private *lp = netdev_priv(dev);
+>        void __iomem *ioaddr = lp->base;
+> -       struct pci_dev *pdev = lp->pdev;
+>        int limit = 2048;
+>        u16 *adrp;
+>        u16 cmd;
 > --
-> Best regards, Florian Fainelli
-> Email : florian@openwrt.org
-> http://openwrt.org
-> -------------------------------
+> 1.5.4.3
 >
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Thanks -
+> Manish
+>
