@@ -1,26 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 01:38:18 +0000
-Subject: Re: [PATCH 20/43] drivers/net/hamradio: fix sparse warning:
-Message-Id: <20090217.173818.220194179.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 04 Feb 2009 21:43:04 +0000
+Subject: [PATCH] arch/powerpc: Eliminate double sizeof
+Message-Id: <Pine.LNX.4.64.0902042236200.3091@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
-	<20090214213329.24377.28382.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214213329.24377.28382.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: galak@kernel.crashing.org, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 14 Feb 2009 22:34:52 +0100
+From: Julia Lawall <julia@diku.dk>
 
-> Impact: Attribute functions with __acquires(...) resp. __releases(...).
-> 
-> Fix this sparse warnings:
->   drivers/net/hamradio/bpqether.c:387:13: warning: context imbalance in 'bpq_seq_start' - wrong count at exit
->   drivers/net/hamradio/bpqether.c:419:13: warning: context imbalance in 'bpq_seq_stop' - unexpected unlock
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Taking sizeof the result of sizeof is quite strange and does not seem to be
+what is wanted here.
 
-Applied.
+This was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression E;
+@@
+
+- sizeof (
+  sizeof (E)
+- )
+
+@@
+type T;
+@@
+
+- sizeof (
+  sizeof (T)
+- )
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ arch/powerpc/platforms/82xx/pq2ads-pci-pic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c b/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
+--- a/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
++++ b/arch/powerpc/platforms/82xx/pq2ads-pci-pic.c
+@@ -186,7 +186,7 @@ out_unmap_regs:
+ 	iounmap(priv->regs);
+ out_free_bootmem:
+ 	free_bootmem((unsigned long)priv,
+-	             sizeof(sizeof(struct pq2ads_pci_pic)));
++	             sizeof(struct pq2ads_pci_pic));
+ 	of_node_put(np);
+ out_unmap_irq:
+ 	irq_dispose_mapping(irq);
