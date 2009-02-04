@@ -1,37 +1,47 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Mon, 09 Feb 2009 22:06:53 +0000
-Subject: [PATCH] orinoco: Storage class should be before const qualifier
-Message-Id: <20090209220653.GA8023@xenon.distanz.ch>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 04 Feb 2009 21:17:29 +0000
+Subject: [PATCH] drivers/scsi: Correct use of.and &
+Message-Id: <Pine.LNX.4.64.0902042215500.3091@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: proski@gnu.org, hermes@gibson.dropbear.id.au, linux-wireless@vger.kernel.org, orinoco-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The C99 specification states in section 6.11.5:
+From: Julia Lawall <julia@diku.dk>
 
-The placement of a storage-class specifier other than at the beginning
-of the declaration specifiers in a declaration is an obsolescent
-feature.
+!ep->esb_stat is either 1 or 0, and the rightmost bit of ESB_ST_COMPLETE is
+always 0, making the result of !ep->esb_stat & ESB_ST_COMPLETE always 0.
+Thus parentheses around the argument to ! seem needed.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@ expression E; constant C; @@
+(
+  !E & !C
+|
+- !E & C
++ !(E & C)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/net/wireless/orinoco/orinoco.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/scsi/libfc/fc_exch.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/orinoco/orinoco.c b/drivers/net/wireless/orinoco/orinoco.c
-index 45a04fa..32482c3 100644
---- a/drivers/net/wireless/orinoco/orinoco.c
-+++ b/drivers/net/wireless/orinoco/orinoco.c
-@@ -431,7 +431,7 @@ struct fw_info {
- 	u16 pda_size;
- };
- 
--const static struct fw_info orinoco_fw[] = {
-+static const struct fw_info orinoco_fw[] = {
- 	{ NULL, "agere_sta_fw.bin", "agere_ap_fw.bin", 0x00390000, 1000 },
- 	{ NULL, "prism_sta_fw.bin", "prism_ap_fw.bin", 0, 1024 },
- 	{ "symbol_sp24t_prim_fw", "symbol_sp24t_sec_fw", NULL, 0x00003100, 512 }
--- 
-1.5.6.5
-
+diff -u -p a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
+--- a/drivers/scsi/libfc/fc_exch.c
++++ b/drivers/scsi/libfc/fc_exch.c
+@@ -283,7 +283,7 @@ static void fc_exch_release(struct fc_ex
+ 			ep->destructor(&ep->seq, ep->arg);
+ 		if (ep->lp->tt.exch_put)
+ 			ep->lp->tt.exch_put(ep->lp, mp, ep->xid);
+-		WARN_ON(!ep->esb_stat & ESB_ST_COMPLETE);
++		WARN_ON(!(ep->esb_stat & ESB_ST_COMPLETE));
+ 		mempool_free(ep, mp->ep_pool);
+ 	}
+ }
