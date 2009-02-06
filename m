@@ -1,31 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 01:21:32 +0000
-Subject: Re: [PATCH 03/43] drivers/net/ni65.c: fix sparse warnings: symbol
-Message-Id: <20090217.172132.01589488.davem@davemloft.net>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Fri, 06 Feb 2009 16:07:19 +0000
+Subject: Re: [PATCH] HID: avoid sparse warning in HID_COMPAT_LOAD_DRIVER
+Message-Id: <alpine.LNX.1.10.0902061706480.11630@jikos.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
-	<20090214211218.23489.71130.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214211218.23489.71130.stgit@vmbox.hanneseder.net>
+References: <4947a48f.08b6660a.34ca.ffffa1e8@mx.google.com>  <20081216155822.GD12431@fluff.org.uk>  <alpine.LNX.1.10.0812161659580.21089@jikos.suse.cz>  <20081216194113.GF12431@fluff.org.uk> <154e089b0812161144x3c9579f5g8731b616fde6484c@mail.gmail.com>
+ <494B5BC4.100@gmail.com> <alpine.LNX.1.10.0812191037110.26265@jikos.suse.cz> <494D239B.10800@gmail.com>
+In-Reply-To: <494D239B.10800@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>, Jon Masters <jcm@jonmasters.org>
+Cc: Hannes Eder <hannes@hanneseder.net>, Ben Dooks <ben-linux@fluff.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 14 Feb 2009 22:12:23 +0100
+On Sat, 20 Dec 2008, Jiri Slaby wrote:
 
-> Impact: Remove redundant variable declaration or move them to a more
-> inner scope.
-> 
-> Fix this sparse warnings:
->   drivers/net/ni65.c:900:37: warning: symbol 'p' shadows an earlier one
->   drivers/net/ni65.c:874:21: originally declared here
->   drivers/net/ni65.c:925:21: warning: symbol 'p' shadows an earlier one
->   drivers/net/ni65.c:874:21: originally declared here
->   drivers/net/ni65.c:945:29: warning: symbol 'k' shadows an earlier one
->   drivers/net/ni65.c:926:15: originally declared here
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+> > BTW while we are at it -- what is the status with module-init-tools? Has 
+> > the support been merged already?
+> As far as I can see, not yet. Jon, what's the status of hid bus support in
+> m-i-t, please?
 
-Applied.
+Any update here please? What is the current status in m-i-t?
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
