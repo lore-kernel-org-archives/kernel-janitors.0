@@ -1,53 +1,69 @@
-From: Steven Rostedt <srostedt@redhat.com>
-Date: Mon, 16 Feb 2009 21:35:37 +0000
-Subject: Re: [PATCH] trace: Storage class should be before const qualifier
-Message-Id: <1234820137.6683.2.camel@localhost.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 08 Feb 2009 21:44:16 +0000
+Subject: [PATCH 2/6] drivers/atm: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0902082243200.25891@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090209220932.GA8220@xenon.distanz.ch>
-In-Reply-To: <20090209220932.GA8220@xenon.distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, netdev@vger.kernel.org, chas@cmf.nrl.navy.mil, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-On Mon, 2009-02-16 at 13:59 +0100, Jiri Kosina wrote:
-> On Mon, 9 Feb 2009, Tobias Klauser wrote:
-> 
-> > The C99 specification states in section 6.11.5:
-> > 
-> > The placement of a storage-class specifier other than at the beginning
-> > of the declaration specifiers in a declaration is an obsolescent
-> > feature.
-> > 
-> > Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-> > ---
-> >  kernel/trace/trace_sysprof.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/kernel/trace/trace_sysprof.c b/kernel/trace/trace_sysprof.c
-> > index eaca5ad..1883221 100644
-> > --- a/kernel/trace/trace_sysprof.c
-> > +++ b/kernel/trace/trace_sysprof.c
-> > @@ -88,7 +88,7 @@ static void backtrace_address(void *data, unsigned long addr, int reliable)
-> >  	}
-> >  }
-> >  
-> > -const static struct stacktrace_ops backtrace_ops = {
-> > +static const struct stacktrace_ops backtrace_ops = {
-> >  	.warning		= backtrace_warning,
-> >  	.warning_symbol		= backtrace_warning_symbol,
-> >  	.stack			= backtrace_stack,
-> 
-> Steven, are you going to take this through wusb tree, or should I take it 
-> through trivial tree together with the rest of these patches? I don't seem 
-> to see this present in current -next.
+Error handling code following a kmalloc should free the allocated data.
 
-Jiri, Ingo has it in his tip tree. I would expect that he'll be pushing
-it out soon.
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Thanks,
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
--- Steve
+(
+if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+|
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+)
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f = E
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
 
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
 
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/atm/solos-pci.c             |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/atm/solos-pci.c b/drivers/atm/solos-pci.c
+index 72fc0f7..89d7a6e 100644
+--- a/drivers/atm/solos-pci.c
++++ b/drivers/atm/solos-pci.c
+@@ -685,6 +685,7 @@ static int fpga_probe(struct pci_dev *dev, const struct pci_device_id *id)
+  out_release_regions:
+ 	pci_release_regions(dev);
+  out:
++	kfree(card);
+ 	return err;
+ }
+ 
