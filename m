@@ -1,46 +1,45 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Fri, 27 Feb 2009 01:12:18 +0000
-Subject: Re: [PATCH 12/16] reiserfs: fix sparse warning: Using plain integer
-Message-Id: <154e089b0902261712q3dad68d7s567d0b6d9c7ee031@mail.gmail.com>
+Date: Sun, 08 Feb 2009 19:24:47 +0000
+Subject: [PATCH] kernel/irq: fix sparse warning: make symbol static
+Message-Id: <20090208192405.8084.89231.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
-	 <20090222000511.17557.96434.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090222000511.17557.96434.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: trivial@kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ingo Molnar <mingo@elte.hu>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[Added To, Cc]
+While being at it make every occurrence of 'do_irq_select_affinity'
+have the same signature in terms of signedness of the first argument.
 
-On Sun, Feb 22, 2009 at 1:05 AM, Hannes Eder <hannes@hanneseder.net> wrote:
-> Fix this sparse warning:
-> =A0fs/reiserfs/inode.c:2555:19: warning: Using plain integer as NULL poin=
-ter
->
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> ---
-> =A0fs/reiserfs/inode.c | =A0 =A02 +-
-> =A01 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-> index 823227a..e69d63a 100644
-> --- a/fs/reiserfs/inode.c
-> +++ b/fs/reiserfs/inode.c
-> @@ -2552,7 +2552,7 @@ static int reiserfs_write_begin(struct file *file,
-> =A0 =A0 =A0 =A0int old_ref =3D 0;
->
-> =A0 =A0 =A0 =A0inode =3D mapping->host;
-> - =A0 =A0 =A0 *fsdata =3D 0;
-> + =A0 =A0 =A0 *fsdata =3D NULL;
-> =A0 =A0 =A0 =A0if (flags & AOP_FLAG_CONT_EXPAND &&
-> =A0 =A0 =A0 =A0 =A0 =A0(pos & (inode->i_sb->s_blocksize - 1)) =3D 0) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pos ++;
->
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Fix this sparse warning:
+  kernel/irq/manage.c:112:5: warning: symbol 'do_irq_select_affinity' was not declared. Should it be static?
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ kernel/irq/manage.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index a3a5dc9..1bdcb59 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -109,7 +109,7 @@ int irq_set_affinity(unsigned int irq, const struct cpumask *cpumask)
+ /*
+  * Generic version of the affinity autoselector.
+  */
+-int do_irq_select_affinity(unsigned int irq, struct irq_desc *desc)
++static int do_irq_select_affinity(unsigned int irq, struct irq_desc *desc)
+ {
+ 	if (!irq_can_set_affinity(irq))
+ 		return 0;
+@@ -156,7 +156,7 @@ int irq_select_affinity_usr(unsigned int irq)
+ }
+ 
+ #else
+-static inline int do_irq_select_affinity(int irq, struct irq_desc *desc)
++static inline int do_irq_select_affinity(unsigned int irq, struct irq_desc *desc)
+ {
+ 	return 0;
+ }
+
