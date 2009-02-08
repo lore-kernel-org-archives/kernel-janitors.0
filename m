@@ -1,45 +1,35 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sun, 08 Feb 2009 19:24:47 +0000
-Subject: [PATCH] kernel/irq: fix sparse warning: make symbol static
-Message-Id: <20090208192405.8084.89231.stgit@vmbox.hanneseder.net>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sun, 08 Feb 2009 23:09:10 +0000
+Subject: Re: [PATCH] kernel/irq: fix sparse warning: make symbol static
+Message-Id: <20090208230910.GH31509@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20090208192405.8084.89231.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090208192405.8084.89231.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@elte.hu>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hannes Eder <hannes@hanneseder.net>
+Cc: Ingo Molnar <mingo@elte.hu>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-While being at it make every occurrence of 'do_irq_select_affinity'
-have the same signature in terms of signedness of the first argument.
+On Sun, Feb 08, 2009 at 08:24:47PM +0100, Hannes Eder wrote:
+> -static inline int do_irq_select_affinity(int irq, struct irq_desc *desc)
+> +static inline int do_irq_select_affinity(unsigned int irq, struct irq_desc *desc)
 
-Fix this sparse warning:
-  kernel/irq/manage.c:112:5: warning: symbol 'do_irq_select_affinity' was not declared. Should it be static?
+Does this not introduce a checkpatch warning about a line being longer
+than 80 columns?  Three acceptable ways to fix this:
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
- kernel/irq/manage.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+static inline
+int do_irq_select_affinity(unsigned int irq, struct irq_desc *desc)
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index a3a5dc9..1bdcb59 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -109,7 +109,7 @@ int irq_set_affinity(unsigned int irq, const struct cpumask *cpumask)
- /*
-  * Generic version of the affinity autoselector.
-  */
--int do_irq_select_affinity(unsigned int irq, struct irq_desc *desc)
-+static int do_irq_select_affinity(unsigned int irq, struct irq_desc *desc)
- {
- 	if (!irq_can_set_affinity(irq))
- 		return 0;
-@@ -156,7 +156,7 @@ int irq_select_affinity_usr(unsigned int irq)
- }
- 
- #else
--static inline int do_irq_select_affinity(int irq, struct irq_desc *desc)
-+static inline int do_irq_select_affinity(unsigned int irq, struct irq_desc *desc)
- {
- 	return 0;
- }
+static inline int do_irq_select_affinity(unsigned int irq,
+							struct irq_desc *desc)
 
+static inline int do_irq_select_affinity(unsigned irq, struct irq_desc *desc)
+
+My favourite is the last one.
+
+-- 
+Matthew Wilcox				Intel Open Source Technology Centre
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
