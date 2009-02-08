@@ -1,31 +1,77 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Feb 2009 07:13:53 +0000
-Subject: Re: [PATCH 0/8] net: fix (sparse) warnings
-Message-Id: <20090226.231353.238232825.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 08 Feb 2009 21:44:47 +0000
+Subject: [PATCH 3/6] drivers/isdn: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0902082244180.25891@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kkeil@suse.de, isdn4linux@listserv.isdn4linux.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 25 Feb 2009 21:31:10 +0100
+From: Julia Lawall <julia@diku.dk>
 
-> The following series fixes some (sparse) warnings in net/.
-> 
-> ---
-> 
-> Hannes Eder (8):
->       wanrouter: fix sparse warnings: context imbalance
->       inet fragments: fix sparse warning: context imbalance
->       decnet: fix sparse warnings: symbol shadows an earlier one
->       decnet: fix sparse warnings: context imbalance
->       [NET] sysctl: fix sparse warning: Should it be static?
->       appletalk: fix warning: format not a string literal and no ...
->       9p: fix sparse warning: cast adds address space
->       net/802: fix sparse warnings: context imbalance
+Error handling code following a kmalloc should free the allocated data.
 
-All applied to net-next-2.6, thanks!
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+(
+if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
+|
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+)
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f = E
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/isdn/hardware/mISDN/hfcmulti.c         |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index 595ba8e..0b28141 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -4599,6 +4599,7 @@ init_e1_port(struct hfc_multi *hc, struct hm_map *m)
+ 			printk(KERN_ERR "%s: no memory for coeffs\n",
+ 			    __func__);
+ 			ret = -ENOMEM;
++			kfree(bch);
+ 			goto free_chan;
+ 		}
+ 		bch->nr = ch;
+@@ -4767,6 +4768,7 @@ init_multi_port(struct hfc_multi *hc, int pt)
+ 			printk(KERN_ERR "%s: no memory for coeffs\n",
+ 			    __func__);
+ 			ret = -ENOMEM;
++			kfree(bch);
+ 			goto free_chan;
+ 		}
+ 		bch->nr = ch + 1;
