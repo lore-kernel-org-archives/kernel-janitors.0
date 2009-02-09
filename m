@@ -1,37 +1,38 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 25 Feb 2009 21:28:45 +0000
-Subject: [PATCH 3/7] sound/pci/hda: fix sparse warning: different signedness
-Message-Id: <20090225212834.9226.76824.stgit@vmbox.hanneseder.net>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Mon, 09 Feb 2009 20:35:39 +0000
+Subject: [PATCH] arm: Storage class should be before const qualifier
+Message-Id: <20090209203539.GA5610@xenon.distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Fix this sparse warning:
-  sound/pci/hda/hda_codec.c:1544:19: warning: incorrect type in assignment (different signedness)
-  sound/pci/hda/hda_codec.c:1544:19:    expected unsigned long *vals
-  sound/pci/hda/hda_codec.c:1544:19:    got long *<noident>
+The C99 specification states in section 6.11.5:
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+The placement of a storage-class specifier other than at the beginning of the
+declaration specifiers in a declaration is an obsolescent feature.
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 ---
- sound/pci/hda/hda_local.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/kernel/machine_kexec.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/hda_local.h b/sound/pci/hda/hda_local.h
-index 4bd82a3..03ee9dd 100644
---- a/sound/pci/hda/hda_local.h
-+++ b/sound/pci/hda/hda_local.h
-@@ -136,7 +136,7 @@ extern struct hda_ctl_ops snd_hda_bind_sw;	/* for bind-switch */
+diff --git a/arch/arm/kernel/machine_kexec.c b/arch/arm/kernel/machine_kexec.c
+index 440dc62..598ca61 100644
+--- a/arch/arm/kernel/machine_kexec.c
++++ b/arch/arm/kernel/machine_kexec.c
+@@ -13,8 +13,8 @@
+ #include <asm/cacheflush.h>
+ #include <asm/mach-types.h>
  
- struct hda_bind_ctls {
- 	struct hda_ctl_ops *ops;
--	long values[];
-+	unsigned long values[];
- };
+-const extern unsigned char relocate_new_kernel[];
+-const extern unsigned int relocate_new_kernel_size;
++extern const unsigned char relocate_new_kernel[];
++extern const unsigned int relocate_new_kernel_size;
  
- int snd_hda_mixer_bind_ctls_info(struct snd_kcontrol *kcontrol,
+ extern void setup_mm_for_reboot(char mode);
+ 
+-- 
+1.5.6.5
 
