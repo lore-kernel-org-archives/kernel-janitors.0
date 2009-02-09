@@ -1,51 +1,41 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 25 Feb 2009 20:32:52 +0000
-Subject: [PATCH 7/8] inet fragments: fix sparse warning: context imbalance
-Message-Id: <20090225203247.6251.30496.stgit@vmbox.hanneseder.net>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Mon, 09 Feb 2009 20:59:40 +0000
+Subject: [PATCH] sh: Storage class should be before const qualifier
+Message-Id: <20090209205940.GA6938@xenon.distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
+References: <20080217143835.GA9231@distanz.ch>
+In-Reply-To: <20080217143835.GA9231@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-sh@vger.kernel.org
 
-Impact: Attribute function with __releases(...)
+The C99 specification states in section 6.11.5:
 
-Fix this sparse warning:
-  net/ipv4/inet_fragment.c:276:35: warning: context imbalance in 'inet_frag_find' - unexpected unlock
+The placement of a storage-class specifier other than at the
+beginning of the declaration specifiers in a declaration is an
+obsolescent feature.
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 ---
- include/net/inet_frag.h  |    3 ++-
- net/ipv4/inet_fragment.c |    1 +
- 2 files changed, 3 insertions(+), 1 deletions(-)
+ arch/sh/kernel/cpu/sh2a/clock-sh7201.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/net/inet_frag.h b/include/net/inet_frag.h
-index e081eef..39f2dc9 100644
---- a/include/net/inet_frag.h
-+++ b/include/net/inet_frag.h
-@@ -61,7 +61,8 @@ void inet_frag_destroy(struct inet_frag_queue *q,
- 				struct inet_frags *f, int *work);
- int inet_frag_evictor(struct netns_frags *nf, struct inet_frags *f);
- struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
--		struct inet_frags *f, void *key, unsigned int hash);
-+		struct inet_frags *f, void *key, unsigned int hash)
-+	__releases(&f->lock);
+diff --git a/arch/sh/kernel/cpu/sh2a/clock-sh7201.c b/arch/sh/kernel/cpu/sh2a/clock-sh7201.c
+index 020a96f..4a5e597 100644
+--- a/arch/sh/kernel/cpu/sh2a/clock-sh7201.c
++++ b/arch/sh/kernel/cpu/sh2a/clock-sh7201.c
+@@ -18,8 +18,8 @@
+ #include <asm/freq.h>
+ #include <asm/io.h>
  
- static inline void inet_frag_put(struct inet_frag_queue *q, struct inet_frags *f)
- {
-diff --git a/net/ipv4/inet_fragment.c b/net/ipv4/inet_fragment.c
-index 6c52e08..eaf3e2c 100644
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -267,6 +267,7 @@ static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
+-const static int pll1rate[]={1,2,3,4,6,8};
+-const static int pfc_divisors[]={1,2,3,4,6,8,12};
++static const int pll1rate[]={1,2,3,4,6,8};
++static const int pfc_divisors[]={1,2,3,4,6,8,12};
+ #define ifc_divisors pfc_divisors
  
- struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
- 		struct inet_frags *f, void *key, unsigned int hash)
-+	__releases(&f->lock)
- {
- 	struct inet_frag_queue *q;
- 	struct hlist_node *n;
+ #if (CONFIG_SH_CLK_MD = 0)
+-- 
+1.5.6.5
 
