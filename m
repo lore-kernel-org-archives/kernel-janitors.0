@@ -1,31 +1,74 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 03:49:51 +0000
-Subject: Re: [PATCH 31/43 v2] drivers/net/tokenring: fix sparse warning:
-Message-Id: <20090217.194951.04719813.davem@davemloft.net>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Mon, 09 Feb 2009 22:04:26 +0000
+Subject: [PATCH] drivers/mfd: Storage class should be before const qualifier
+Message-Id: <20090209220426.GA7902@xenon.distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <154e089b0902150347o4e06683dy1c9c02dc2564ea4f@mail.gmail.com>
-	<20090215121201.26072.42971.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090215121201.26072.42971.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, jjschlst@gmail.com, viro@zeniv.linux.org.uk
+To: kernel-janitors@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sun, 15 Feb 2009 13:13:01 +0100
+The C99 specification states in section 6.11.5:
 
-> Impact: Remove the write-only field 'current_ring_status' completely.
-> 
-> Fix this sparse warnings:
->   drivers/net/tokenring/smctr.c:4410:52: warning: cast truncates bits from constant value (100 becomes 0)
->   drivers/net/tokenring/smctr.c:4415:52: warning: cast truncates bits from constant value (400 becomes 0)
->   drivers/net/tokenring/smctr.c:4420:52: warning: cast truncates bits from constant value (800 becomes 0)
->   drivers/net/tokenring/smctr.c:4425:52: warning: cast truncates bits from constant value (1000 becomes 0)
->   drivers/net/tokenring/smctr.c:4430:52: warning: cast truncates bits from constant value (2000 becomes 0)
->   drivers/net/tokenring/smctr.c:4435:52: warning: cast truncates bits from constant value (4000 becomes 0)
->   drivers/net/tokenring/smctr.c:4440:52: warning: cast truncates bits from constant value (8000 becomes 0)
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+The placement of a storage-class specifier other than at the beginning
+of the declaration specifiers in a declaration is an obsolescent
+feature.
 
-Applied.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/mfd/t7l66xb.c     |    4 ++--
+ drivers/mfd/tc6393xb.c    |    2 +-
+ drivers/mfd/twl4030-irq.c |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mfd/t7l66xb.c b/drivers/mfd/t7l66xb.c
+index 9f7024c..e9f4323 100644
+--- a/drivers/mfd/t7l66xb.c
++++ b/drivers/mfd/t7l66xb.c
+@@ -108,7 +108,7 @@ static int t7l66xb_mmc_disable(struct platform_device *mmc)
+ 
+ /*--------------------------------------------------------------------------*/
+ 
+-const static struct resource t7l66xb_mmc_resources[] = {
++static const struct resource t7l66xb_mmc_resources[] = {
+ 	{
+ 		.start = 0x800,
+ 		.end	= 0x9ff,
+@@ -126,7 +126,7 @@ const static struct resource t7l66xb_mmc_resources[] = {
+ 	},
+ };
+ 
+-const static struct resource t7l66xb_nand_resources[] = {
++static const struct resource t7l66xb_nand_resources[] = {
+ 	{
+ 		.start	= 0xc00,
+ 		.end	= 0xc07,
+diff --git a/drivers/mfd/tc6393xb.c b/drivers/mfd/tc6393xb.c
+index f856e94..77a12fc 100644
+--- a/drivers/mfd/tc6393xb.c
++++ b/drivers/mfd/tc6393xb.c
+@@ -172,7 +172,7 @@ static struct resource __devinitdata tc6393xb_mmc_resources[] = {
+ 	},
+ };
+ 
+-const static struct resource tc6393xb_ohci_resources[] = {
++static const struct resource tc6393xb_ohci_resources[] = {
+ 	{
+ 		.start	= 0x3000,
+ 		.end	= 0x31ff,
+diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
+index b108760..aca2670 100644
+--- a/drivers/mfd/twl4030-irq.c
++++ b/drivers/mfd/twl4030-irq.c
+@@ -182,7 +182,7 @@ static int twl4030_irq_thread(void *data)
+ 	long irq = (long)data;
+ 	struct irq_desc *desc = irq_to_desc(irq);
+ 	static unsigned i2c_errors;
+-	const static unsigned max_i2c_errors = 100;
++	static const unsigned max_i2c_errors = 100;
+ 
+ 	if (!desc) {
+ 		pr_err("twl4030: Invalid IRQ: %ld\n", irq);
+-- 
+1.5.6.5
+
