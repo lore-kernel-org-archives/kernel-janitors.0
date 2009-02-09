@@ -1,77 +1,30 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 08 Feb 2009 21:44:47 +0000
-Subject: [PATCH 3/6] drivers/isdn: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0902082244180.25891@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 09 Feb 2009 01:01:34 +0000
+Subject: Re: [PATCH 3/6] drivers/isdn: introduce missing kfree
+Message-Id: <20090208.170134.255617349.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0902082244180.25891@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0902082244180.25891@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kkeil@suse.de, isdn4linux@listserv.isdn4linux.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: kkeil@suse.de, isdn4linux@listserv.isdn4linux.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Sun, 8 Feb 2009 22:44:47 +0100 (CET)
 
-Error handling code following a kmalloc should free the allocated data.
-
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-(
-if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
-|
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+> Error handling code following a kmalloc should free the allocated data.
 ...
-if (x = NULL) S
-)
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f = E
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
+Also applied.
 
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
+Please CC: ISDN patches to netdev as it is networking, and so
+that the patch gets properly tracked at:
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- drivers/isdn/hardware/mISDN/hfcmulti.c         |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+	http://patchwork.ozlabs.org/project/netdev/list/
 
-diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
-index 595ba8e..0b28141 100644
---- a/drivers/isdn/hardware/mISDN/hfcmulti.c
-+++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
-@@ -4599,6 +4599,7 @@ init_e1_port(struct hfc_multi *hc, struct hm_map *m)
- 			printk(KERN_ERR "%s: no memory for coeffs\n",
- 			    __func__);
- 			ret = -ENOMEM;
-+			kfree(bch);
- 			goto free_chan;
- 		}
- 		bch->nr = ch;
-@@ -4767,6 +4768,7 @@ init_multi_port(struct hfc_multi *hc, int pt)
- 			printk(KERN_ERR "%s: no memory for coeffs\n",
- 			    __func__);
- 			ret = -ENOMEM;
-+			kfree(bch);
- 			goto free_chan;
- 		}
- 		bch->nr = ch + 1;
+and therefore is less likely to be lost.
+
+Thank you.
