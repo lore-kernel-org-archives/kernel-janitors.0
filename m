@@ -1,28 +1,75 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 03:35:13 +0000
-Subject: Re: [PATCH 34/43] drivers/net/usb: fix sparse warnings: Should it
-Message-Id: <20090217.193513.253367372.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Tue, 10 Feb 2009 18:44:12 +0000
+Subject: [PATCH 1/3] trace: fix sparse warnings: make symbols static
+Message-Id: <20090210184357.28131.39458.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
-	<20090214214738.24377.82100.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214214738.24377.82100.stgit@vmbox.hanneseder.net>
+References: <20090210184214.28131.90564.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090210184214.28131.90564.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 14 Feb 2009 22:47:47 +0100
+Impact: make global variables and a global function static
 
-> Impact: Make symbols static.
-> 
-> Fix this sparse warnings:
->   drivers/net/usb/hso.c:1249:6: warning: symbol 'hso_unthrottle_tasklet' was not declared. Should it be static?
->   drivers/net/usb/hso.c:1268:6: warning: symbol 'hso_unthrottle_workfunc' was not declared. Should it be static?
->   drivers/net/usb/hso.c:1466:5: warning: symbol 'tiocmget_submit_urb' was not declared. Should it be static?
->   drivers/net/usb/smsc95xx.c:62:5: warning: symbol 'turbo_mode' was not declared. Should it be static?
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+The function '__trace_userstack' does not seem to have a caller, so it
+is commented out.
 
-Applied.
+Fix this sparse warnings:
+  kernel/trace/trace.c:82:5: warning: symbol 'tracing_disabled' was not declared. Should it be static?
+  kernel/trace/trace.c:600:10: warning: symbol 'trace_record_cmdline_disabled' was not declared. Should it be static?
+  kernel/trace/trace.c:957:6: warning: symbol '__trace_userstack' was not declared. Should it be static?
+  kernel/trace/trace.c:1694:5: warning: symbol 'tracing_release' was not declared. Should it be static?
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ kernel/trace/trace.c |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index ef4dbac..0e7c84f 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -79,7 +79,7 @@ static int dummy_set_flag(u32 old_flags, u32 bit, int set)
+  * of the tracer is successful. But that is the only place that sets
+  * this back to zero.
+  */
+-int tracing_disabled = 1;
++static int tracing_disabled = 1;
+ 
+ static DEFINE_PER_CPU(local_t, ftrace_cpu_disabled);
+ 
+@@ -597,7 +597,7 @@ static int cmdline_idx;
+ static DEFINE_SPINLOCK(trace_cmdline_lock);
+ 
+ /* temporary disable recording */
+-atomic_t trace_record_cmdline_disabled __read_mostly;
++static atomic_t trace_record_cmdline_disabled __read_mostly;
+ 
+ static void trace_init_cmdlines(void)
+ {
+@@ -954,10 +954,12 @@ static void ftrace_trace_userstack(struct trace_array *tr,
+ #endif
+ }
+ 
+-void __trace_userstack(struct trace_array *tr, unsigned long flags)
++#ifdef UNUSED
++static void __trace_userstack(struct trace_array *tr, unsigned long flags)
+ {
+ 	ftrace_trace_userstack(tr, flags, preempt_count());
+ }
++#endif /* UNUSED */
+ 
+ static void
+ ftrace_trace_special(void *__tr,
+@@ -1691,7 +1693,7 @@ int tracing_open_generic(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
+-int tracing_release(struct inode *inode, struct file *file)
++static int tracing_release(struct inode *inode, struct file *file)
+ {
+ 	struct seq_file *m = (struct seq_file *)file->private_data;
+ 	struct trace_iterator *iter = m->private;
+
