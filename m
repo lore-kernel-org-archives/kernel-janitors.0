@@ -1,37 +1,45 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 25 Feb 2009 20:31:59 +0000
-Subject: [PATCH 3/8] appletalk: fix warning: format not a string literal and
-Message-Id: <20090225203145.6251.44085.stgit@vmbox.hanneseder.net>
+Date: Thu, 12 Feb 2009 19:32:41 +0000
+Subject: [PATCH] drivers/isdn/mISDN: fix sparse warnings: make symbols static
+Message-Id: <20090212193234.7485.41475.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Impact: Use 'static const char[]' instead of 'static char[]', and
-since the data is const now it can be placed in __initconst.
-
-Fix this warning:
-  net/appletalk/ddp.c: In function 'atalk_init':
-  net/appletalk/ddp.c:1894: warning: format not a string literal and no format arguments
+Fix this sparse warnings:
+  drivers/isdn/mISDN/clock.c:44:1: warning: symbol 'iclock_lock' was not declared. Should it be static?
+  drivers/isdn/mISDN/clock.c:45:9: warning: symbol 'iclock_count' was not declared. Should it be static?
+  drivers/isdn/mISDN/clock.c:46:17: warning: symbol 'iclock_tv' was not declared. Should it be static?
+  drivers/isdn/mISDN/clock.c:47:9: warning: symbol 'iclock_tv_valid' was not declared. Should it be static?
+  drivers/isdn/mISDN/clock.c:48:20: warning: symbol 'iclock_current' was not declared. Should it be static?
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- net/appletalk/ddp.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/isdn/mISDN/clock.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
-index 510a678..cf05c43 100644
---- a/net/appletalk/ddp.c
-+++ b/net/appletalk/ddp.c
-@@ -1877,7 +1877,7 @@ EXPORT_SYMBOL(aarp_send_ddp);
- EXPORT_SYMBOL(atrtr_get_dev);
- EXPORT_SYMBOL(atalk_find_dev_addr);
+diff --git a/drivers/isdn/mISDN/clock.c b/drivers/isdn/mISDN/clock.c
+index 44d9c3d..f1bbc88 100644
+--- a/drivers/isdn/mISDN/clock.c
++++ b/drivers/isdn/mISDN/clock.c
+@@ -41,11 +41,11 @@
  
--static char atalk_err_snap[] __initdata +static const char atalk_err_snap[] __initconst  	KERN_CRIT "Unable to register DDP with SNAP.\n";
+ static u_int *debug;
+ static LIST_HEAD(iclock_list);
+-DEFINE_RWLOCK(iclock_lock);
+-u16	iclock_count;		/* counter of last clock */
+-struct	timeval iclock_tv;	/* time stamp of last clock */
+-int	iclock_tv_valid;	/* already received one timestamp */
+-struct	mISDNclock *iclock_current;
++static DEFINE_RWLOCK(iclock_lock);
++static u16 iclock_count;		/* counter of last clock */
++static struct timeval iclock_tv;	/* time stamp of last clock */
++static int iclock_tv_valid;		/* already received one timestamp */
++static struct mISDNclock *iclock_current;
  
- /* Called by proto.c on kernel start up */
+ void
+ mISDN_init_clock(u_int *dp)
 
