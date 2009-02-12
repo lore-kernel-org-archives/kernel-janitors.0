@@ -1,24 +1,106 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Mon, 09 Feb 2009 22:09:12 +0000
-Subject: Re: [PATCH] ath5k: Storage class should be before const qualifier
-Message-Id: <4990A988.6020307@gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 12 Feb 2009 19:28:40 +0000
+Subject: [PATCH] drivers/isdn/hardware/mISDN: fix sparse warnings: make
+Message-Id: <20090212192810.7401.70271.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090209220540.GA7962@xenon.distanz.ch>
-In-Reply-To: <20090209220540.GA7962@xenon.distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: ath5k-devel@lists.ath5k.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02/09/2009 11:05 PM, Tobias Klauser wrote:
-> The C99 specification states in section 6.11.5:
-> 
-> The placement of a storage-class specifier other than at the beginning
-> of the declaration specifiers in a declaration is an obsolescent
-> feature.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Fix this sparse warnings:
+  drivers/isdn/hardware/mISDN/hfcpci.c:59:19: warning: symbol 'hfc_tl' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcpci.c:60:9: warning: symbol 'hfc_jiffies' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcsusb.h:201:6: warning: symbol 'conf_str' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcsusb.h:319:12: warning: symbol 'HFC_TE_LAYER1_STATES' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcsusb.h:331:12: warning: symbol 'HFC_NT_LAYER1_STATES' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcsusb.c:38:12: warning: symbol 'hfcsusb_rev' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcsusb.c:978:1: warning: symbol 'fill_isoc_urb' was not declared. Should it be static?
+  drivers/isdn/hardware/mISDN/hfcsusb.c:1724:1: warning: symbol 'setup_hfcsusb' was not declared. Should it be static?
 
-Acked-by: Jiri Slaby <jirislaby@gmail.com>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/isdn/hardware/mISDN/hfcpci.c  |    4 ++--
+ drivers/isdn/hardware/mISDN/hfcsusb.c |    6 +++---
+ drivers/isdn/hardware/mISDN/hfcsusb.h |    6 +++---
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/hfcpci.c b/drivers/isdn/hardware/mISDN/hfcpci.c
+index f0e14df..2bb85c4 100644
+--- a/drivers/isdn/hardware/mISDN/hfcpci.c
++++ b/drivers/isdn/hardware/mISDN/hfcpci.c
+@@ -56,8 +56,8 @@ static const char *hfcpci_revision = "2.0";
+ static int HFC_cnt;
+ static uint debug;
+ static uint poll, tics;
+-struct timer_list hfc_tl;
+-u32	hfc_jiffies;
++static struct timer_list hfc_tl;
++static u32 hfc_jiffies;
+ 
+ MODULE_AUTHOR("Karsten Keil");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+index ba6925f..9c427fb 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.c
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
+@@ -35,7 +35,7 @@
+ #include <linux/mISDNhw.h>
+ #include "hfcsusb.h"
+ 
+-const char *hfcsusb_rev = "Revision: 0.3.3 (socket), 2008-11-05";
++static const char *hfcsusb_rev = "Revision: 0.3.3 (socket), 2008-11-05";
+ 
+ static unsigned int debug;
+ static int poll = DEFAULT_TRANSP_BURST_SZ;
+@@ -974,7 +974,7 @@ hfcsusb_rx_frame(struct usb_fifo *fifo, __u8 *data, unsigned int len,
+ 	spin_unlock(&hw->lock);
+ }
+ 
+-void
++static void
+ fill_isoc_urb(struct urb *urb, struct usb_device *dev, unsigned int pipe,
+ 	      void *buf, int num_packets, int packet_size, int interval,
+ 	      usb_complete_t complete, void *context)
+@@ -1720,7 +1720,7 @@ hfcsusb_stop_endpoint(struct hfcsusb *hw, int channel)
+ 
+ 
+ /* Hardware Initialization */
+-int
++static int
+ setup_hfcsusb(struct hfcsusb *hw)
+ {
+ 	int err;
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.h b/drivers/isdn/hardware/mISDN/hfcsusb.h
+index 098486b..43efe73 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.h
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.h
+@@ -198,7 +198,7 @@ validconf[][19] = {
+ };
+ 
+ /* string description of chosen config */
+-char *conf_str[] = {
++static char *conf_str[] = {
+ 	"4 Interrupt IN + 3 Isochron OUT",
+ 	"3 Interrupt IN + 3 Isochron OUT",
+ 	"4 Isochron IN + 3 Isochron OUT",
+@@ -316,7 +316,7 @@ struct hfcsusb_vdata {
+ #define HFC_MAX_TE_LAYER1_STATE 8
+ #define HFC_MAX_NT_LAYER1_STATE 4
+ 
+-const char *HFC_TE_LAYER1_STATES[HFC_MAX_TE_LAYER1_STATE + 1] = {
++static const char *HFC_TE_LAYER1_STATES[HFC_MAX_TE_LAYER1_STATE + 1] = {
+ 	"TE F0 - Reset",
+ 	"TE F1 - Reset",
+ 	"TE F2 - Sensing",
+@@ -328,7 +328,7 @@ const char *HFC_TE_LAYER1_STATES[HFC_MAX_TE_LAYER1_STATE + 1] = {
+ 	"TE F8 - Lost framing",
+ };
+ 
+-const char *HFC_NT_LAYER1_STATES[HFC_MAX_NT_LAYER1_STATE + 1] = {
++static const char *HFC_NT_LAYER1_STATES[HFC_MAX_NT_LAYER1_STATE + 1] = {
+ 	"NT G0 - Reset",
+ 	"NT G1 - Deactive",
+ 	"NT G2 - Pending activation",
 
