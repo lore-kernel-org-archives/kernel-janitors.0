@@ -1,49 +1,22 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sun, 22 Feb 2009 00:11:42 +0000
-Subject: [PATCH 08/16 v2] [SCSI] FlashPoint: fix sparse warnings: Using plain
-Message-Id: <20090222001036.18094.45698.stgit@vmbox.hanneseder.net>
+From: Paul Mundt <lethal@linux-sh.org>
+Date: Thu, 12 Feb 2009 08:25:28 +0000
+Subject: Re: [PATCH] sh: Storage class should be before const qualifier
+Message-Id: <20090212082528.GB3364@linux-sh.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090222000242.17557.32246.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090222000242.17557.32246.stgit@vmbox.hanneseder.net>
+References: <20080217143835.GA9231@distanz.ch>
+In-Reply-To: <20080217143835.GA9231@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: trivial@kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-sh@vger.kernel.org
 
-Fix this sparse warnings:
-  drivers/scsi/FlashPoint.c:906:9: warning: Using plain integer as NULL pointer
-  drivers/scsi/FlashPoint.c:907:53: warning: Using plain integer as NULL pointer
-  drivers/scsi/FlashPoint.c:922:1: warning: Using plain integer as NULL pointer
+On Mon, Feb 09, 2009 at 09:59:40PM +0100, Tobias Klauser wrote:
+> The C99 specification states in section 6.11.5:
+> 
+> The placement of a storage-class specifier other than at the
+> beginning of the declaration specifiers in a declaration is an
+> obsolescent feature.
+> 
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
-v2: fix checkpatch.pl issue.
-
- drivers/scsi/FlashPoint.c |    7 +++----
- 1 files changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/scsi/FlashPoint.c b/drivers/scsi/FlashPoint.c
-index cb601cf..61e268e 100644
---- a/drivers/scsi/FlashPoint.c
-+++ b/drivers/scsi/FlashPoint.c
-@@ -903,8 +903,8 @@ static void FPT_autoCmdCmplt(unsigned long p_port, unsigned char p_card);
- static void FPT_autoLoadDefaultMap(unsigned long p_port);
- 
- static struct sccb_mgr_tar_info FPT_sccbMgrTbl[MAX_CARDS][MAX_SCSI_TAR] -    { {{0}} };
--static struct sccb_card FPT_BL_Card[MAX_CARDS] = { {0} };
-+    { { {NULL} } };
-+static struct sccb_card FPT_BL_Card[MAX_CARDS] = { {NULL} };
- static SCCBSCAM_INFO FPT_scamInfo[MAX_SCSI_TAR] = { {{0}} };
- static struct nvram_info FPT_nvRamInfo[MAX_MB_CARDS] = { {0} };
- 
-@@ -918,8 +918,7 @@ static unsigned char FPT_scamHAString[]  
- static unsigned short FPT_default_intena = 0;
- 
--static void (*FPT_s_PhaseTbl[8]) (unsigned long, unsigned char) = {
--0};
-+static void (*FPT_s_PhaseTbl[8]) (unsigned long, unsigned char) = {NULL};
- 
- /*---------------------------------------------------------------------
-  *
-
+Applied, thanks.
