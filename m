@@ -1,51 +1,58 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Fri, 27 Feb 2009 01:03:31 +0000
-Subject: Re: [PATCH 07/16] panasonic-laptop: fix sparse warning: Using plain
-Message-Id: <154e089b0902261703r76f23065vaf1e683a4f8f4bb2@mail.gmail.com>
+Date: Sat, 14 Feb 2009 21:13:24 +0000
+Subject: [PATCH 06/43] drivers/net/lance.c: fix sparse warnings: fix signedness
+Message-Id: <20090214211257.23489.76477.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
-	 <20090222000228.17557.1852.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090222000228.17557.1852.stgit@vmbox.hanneseder.net>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: trivial@kernel.org, Len Brown <len.brown@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[Added To]
+Impact: Besides from fixing the signedness issue remove some
+whitespace to obey to the 80 character limit.
 
-On Sun, Feb 22, 2009 at 1:02 AM, Hannes Eder <hannes@hanneseder.net> wrote:
-> Fix this sparse warning:
-> =A0drivers/platform/x86/panasonic-laptop.c:273:70: warning: Using plain i=
-nteger as NULL pointer
->
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> ---
-> =A0drivers/platform/x86/panasonic-laptop.c | =A0 =A02 +-
-> =A01 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/platform/x86/panasonic-laptop.c b/drivers/platform/x=
-86/panasonic-laptop.c
-> index c47a44d..e178cde 100644
-> --- a/drivers/platform/x86/panasonic-laptop.c
-> +++ b/drivers/platform/x86/panasonic-laptop.c
-> @@ -270,7 +270,7 @@ static int acpi_pcc_retrieve_biosdata(struct pcc_acpi=
- *pcc, u32 *sinf)
-> =A0 =A0 =A0 =A0union acpi_object *hkey =3D NULL;
-> =A0 =A0 =A0 =A0int i;
->
-> - =A0 =A0 =A0 status =3D acpi_evaluate_object(pcc->handle, METHOD_HKEY_SI=
-NF, 0,
-> + =A0 =A0 =A0 status =3D acpi_evaluate_object(pcc->handle, METHOD_HKEY_SI=
-NF, NULL,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0&buffer);
-> =A0 =A0 =A0 =A0if (ACPI_FAILURE(status)) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
->
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Fix this sparse warnings:
+  drivers/net/lance.c:399:19: warning: incorrect type in assignment (different signedness)
+  drivers/net/lance.c:654:29: warning: incorrect type in argument 2 (different signedness)
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/lance.c |   11 ++++++-----
+ 1 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/lance.c b/drivers/net/lance.c
+index d7afb93..d83d401 100644
+--- a/drivers/net/lance.c
++++ b/drivers/net/lance.c
+@@ -391,7 +391,8 @@ MODULE_LICENSE("GPL");
+    */
+ static int __init do_lance_probe(struct net_device *dev)
+ {
+-	int *port, result;
++	unsigned int *port;
++	int result;
+ 
+ 	if (high_memory <= phys_to_virt(16*1024*1024))
+ 		lance_need_isa_bounce_buffers = 0;
+@@ -456,13 +457,13 @@ out:
+ static int __init lance_probe1(struct net_device *dev, int ioaddr, int irq, int options)
+ {
+ 	struct lance_private *lp;
+-	long dma_channels;			/* Mark spuriously-busy DMA channels */
++	unsigned long dma_channels;	/* Mark spuriously-busy DMA channels */
+ 	int i, reset_val, lance_version;
+ 	const char *chipname;
+ 	/* Flags for specific chips or boards. */
+-	unsigned char hpJ2405A = 0;		/* HP ISA adaptor */
+-	int hp_builtin = 0;			/* HP on-board ethernet. */
+-	static int did_version;			/* Already printed version info. */
++	unsigned char hpJ2405A = 0;	/* HP ISA adaptor */
++	int hp_builtin = 0;		/* HP on-board ethernet. */
++	static int did_version;		/* Already printed version info. */
+ 	unsigned long flags;
+ 	int err = -ENOMEM;
+ 	void __iomem *bios;
+
