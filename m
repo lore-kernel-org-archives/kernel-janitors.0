@@ -1,39 +1,79 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 17 Feb 2009 11:27:02 +0000
-Subject: Re: [PATCH] drivers/mfd: Storage class should be before const
-Message-Id: <alpine.LNX.1.10.0902171226200.18110@jikos.suse.cz>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 14 Feb 2009 21:47:30 +0000
+Subject: [PATCH 33/43] drivers/net/tulip: fix sparse warning: symbol shadows
+Message-Id: <20090214214707.24377.56661.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090209220426.GA7902@xenon.distanz.ch>
-In-Reply-To: <20090209220426.GA7902@xenon.distanz.ch>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 17 Feb 2009, Samuel Ortiz wrote:
+Impact: Rename a local variable resp. remove a redundant variable and
+while being at it use more unform loop constructs.
 
-> > > --- a/drivers/mfd/twl4030-irq.c
-> > > +++ b/drivers/mfd/twl4030-irq.c
-> > > @@ -182,7 +182,7 @@ static int twl4030_irq_thread(void *data)
-> > >  	long irq = (long)data;
-> > >  	struct irq_desc *desc = irq_to_desc(irq);
-> > >  	static unsigned i2c_errors;
-> > > -	const static unsigned max_i2c_errors = 100;
-> > > +	static const unsigned max_i2c_errors = 100;
-> > >  
-> > >  	if (!desc) {
-> > >  		pr_err("twl4030: Invalid IRQ: %ld\n", irq);
-> > 
-> > This doesn't seem to be picked by anyone for current -next/-mmotm, I have
-> > applied it to trivial tree. Thanks,
-> I'm queueing this one into my mfd for-next branch. I'm ok if you push it
-> upstream before the next merge window though.
+Fix this sparse warning:
+  drivers/net/tulip/de4x5.c:3944:13: warning: symbol 'i' shadows an earlier one
+  drivers/net/tulip/de4x5.c:3938:9: originally declared here
+  drivers/net/tulip/media.c:72:21: warning: symbol 'i' shadows an earlier one
+  drivers/net/tulip/media.c:54:13: originally declared here
+  drivers/net/tulip/media.c:134:21: warning: symbol 'i' shadows an earlier one
+  drivers/net/tulip/media.c:117:13: originally declared here
 
-No problem, I have dropped it from trivial tree, please take it through 
-yours.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/tulip/de4x5.c |    4 ++--
+ drivers/net/tulip/media.c |    8 +++-----
+ 2 files changed, 5 insertions(+), 7 deletions(-)
 
-Thanks,
+diff --git a/drivers/net/tulip/de4x5.c b/drivers/net/tulip/de4x5.c
+index 98e8682..6430a2e 100644
+--- a/drivers/net/tulip/de4x5.c
++++ b/drivers/net/tulip/de4x5.c
+@@ -3942,8 +3942,8 @@ PCI_signature(char *name, struct de4x5_private *lp)
+ 	strcpy(name, "DE434/5");
+ 	return status;
+     } else {                           /* Search for a DEC name in the SROM */
+-	int i = *((char *)&lp->srom + 19) * 3;
+-	strncpy(name, (char *)&lp->srom + 26 + i, 8);
++	int tmp = *((char *)&lp->srom + 19) * 3;
++	strncpy(name, (char *)&lp->srom + 26 + tmp, 8);
+     }
+     name[8] = '\0';
+     for (i=0; i<siglen; i++) {
+diff --git a/drivers/net/tulip/media.c b/drivers/net/tulip/media.c
+index 91cf9c8..daddfa5 100644
+--- a/drivers/net/tulip/media.c
++++ b/drivers/net/tulip/media.c
+@@ -69,11 +69,10 @@ int tulip_mdio_read(struct net_device *dev, int phy_id, int location)
+ 
+ 	spin_lock_irqsave(&tp->mii_lock, flags);
+ 	if (tp->chip_id = LC82C168) {
+-		int i = 1000;
+ 		iowrite32(0x60020000 + (phy_id<<23) + (location<<18), ioaddr + 0xA0);
+ 		ioread32(ioaddr + 0xA0);
+ 		ioread32(ioaddr + 0xA0);
+-		while (--i > 0) {
++		for (i = 1000; i >= 0; --i) {
+ 			barrier();
+ 			if ( ! ((retval = ioread32(ioaddr + 0xA0)) & 0x80000000))
+ 				break;
+@@ -131,13 +130,12 @@ void tulip_mdio_write(struct net_device *dev, int phy_id, int location, int val)
+ 
+ 	spin_lock_irqsave(&tp->mii_lock, flags);
+ 	if (tp->chip_id = LC82C168) {
+-		int i = 1000;
+ 		iowrite32(cmd, ioaddr + 0xA0);
+-		do {
++		for (i = 1000; i >= 0; --i) {
+ 			barrier();
+ 			if ( ! (ioread32(ioaddr + 0xA0) & 0x80000000))
+ 				break;
+-		} while (--i > 0);
++		}
+ 		spin_unlock_irqrestore(&tp->mii_lock, flags);
+ 		return;
+ 	}
 
--- 
-Jiri Kosina
-SUSE Labs
