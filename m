@@ -1,107 +1,36 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Sun, 18 Jan 2009 15:28:40 +0000
-Subject: [PATCH 1/3] drivers/gpu/drm: fix sparse warnings: make symbols static
-Message-Id: <20090118152840.4179.3536.stgit@vmbox.hanneseder.net>
+Date: Sat, 14 Feb 2009 21:16:19 +0000
+Subject: [PATCH 17/43] drivers/net/cxgb3: fix sparse warnings: fix signedness
+Message-Id: <20090214211612.23489.60993.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090118152725.4179.40835.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090118152725.4179.40835.stgit@vmbox.hanneseder.net>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.sourceforge.net
+To: netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix this sparse warnings:
-
-  drivers/gpu/drm/drm_crtc.c:270:17: warning: symbol 'drm_crtc_from_fb' was not declared. Should it be static?
-  drivers/gpu/drm/drm_crtc.c:810:5: warning: symbol 'drm_mode_group_init' was not declared. Should it be static?
-  drivers/gpu/drm/drm_crtc.c:913:6: warning: symbol 'drm_crtc_convert_to_umode' was not declared. Should it be static?
-  drivers/gpu/drm/drm_crtc.c:945:6: warning: symbol 'drm_crtc_convert_umode' was not declared. Should it be static?
-  drivers/gpu/drm/drm_edid.c:252:25: warning: symbol 'drm_mode_std' was not declared. Should it be static?
-  drivers/gpu/drm/drm_modes.c:446:6: warning: symbol 'list_sort' was not declared. Should it be static?
+Fix this sparse warning:
+  drivers/net/cxgb3/ael1002.c:1010:60: warning: incorrect type in argument 4 (different signedness)
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/gpu/drm/drm_crtc.c  |   15 ++++++++-------
- drivers/gpu/drm/drm_edid.c  |    4 ++--
- drivers/gpu/drm/drm_modes.c |    4 ++--
- 3 files changed, 12 insertions(+), 11 deletions(-)
+ drivers/net/cxgb3/ael1002.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index 5b2cbb7..d378306 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -267,8 +267,8 @@ EXPORT_SYMBOL(drm_mode_object_find);
-  * RETURNS:
-  * Pointer to the CRTC or NULL if it wasn't found.
-  */
--struct drm_crtc *drm_crtc_from_fb(struct drm_device *dev,
--				  struct drm_framebuffer *fb)
-+static struct drm_crtc *drm_crtc_from_fb(struct drm_device *dev,
-+					 struct drm_framebuffer *fb)
- {
- 	struct drm_crtc *crtc;
+diff --git a/drivers/net/cxgb3/ael1002.c b/drivers/net/cxgb3/ael1002.c
+index 5c3c05d..e1b2249 100644
+--- a/drivers/net/cxgb3/ael1002.c
++++ b/drivers/net/cxgb3/ael1002.c
+@@ -1005,7 +1005,8 @@ static int ael2005_reset(struct cphy *phy, int wait)
+ 		{ 0, 0, 0, 0 }
+ 	};
  
-@@ -807,7 +807,8 @@ void drm_mode_config_init(struct drm_device *dev)
- }
- EXPORT_SYMBOL(drm_mode_config_init);
+-	int err, lasi_ctrl;
++	int err;
++	unsigned int lasi_ctrl;
  
--int drm_mode_group_init(struct drm_device *dev, struct drm_mode_group *group)
-+static int drm_mode_group_init(struct drm_device *dev,
-+			       struct drm_mode_group *group)
- {
- 	uint32_t total_objects = 0;
- 
-@@ -910,8 +911,8 @@ EXPORT_SYMBOL(drm_mode_config_cleanup);
-  * Convert a drm_display_mode into a drm_mode_modeinfo structure to return to
-  * the user.
-  */
--void drm_crtc_convert_to_umode(struct drm_mode_modeinfo *out,
--			       struct drm_display_mode *in)
-+static void drm_crtc_convert_to_umode(struct drm_mode_modeinfo *out,
-+				      struct drm_display_mode *in)
- {
- 	out->clock = in->clock;
- 	out->hdisplay = in->hdisplay;
-@@ -942,8 +943,8 @@ void drm_crtc_convert_to_umode(struct drm_mode_modeinfo *out,
-  * Convert a drm_mode_modeinfo into a drm_display_mode structure to return to
-  * the caller.
-  */
--void drm_crtc_convert_umode(struct drm_display_mode *out,
--			    struct drm_mode_modeinfo *in)
-+static void drm_crtc_convert_umode(struct drm_display_mode *out,
-+				   struct drm_mode_modeinfo *in)
- {
- 	out->clock = in->clock;
- 	out->hdisplay = in->hdisplay;
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 0fbb0da..47737b2 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -249,8 +249,8 @@ static void edid_fixup_preferred(struct drm_connector *connector,
-  * Punts for now, but should eventually use the FB layer's CVT based mode
-  * generation code.
-  */
--struct drm_display_mode *drm_mode_std(struct drm_device *dev,
--				      struct std_timing *t)
-+static struct drm_display_mode *drm_mode_std(struct drm_device *dev,
-+					     struct std_timing *t)
- {
- 	struct drm_display_mode *mode;
- 	int hsize = t->hsize * 8 + 248, vsize;
-diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-index c9b80fd..7c36f16 100644
---- a/drivers/gpu/drm/drm_modes.c
-+++ b/drivers/gpu/drm/drm_modes.c
-@@ -443,8 +443,8 @@ static int drm_mode_compare(struct list_head *lh_a, struct list_head *lh_b)
- 
- /* FIXME: what we don't have a list sort function? */
- /* list sort from Mark J Roberts (mjr@znex.org) */
--void list_sort(struct list_head *head,
--	       int (*cmp)(struct list_head *a, struct list_head *b))
-+static void list_sort(struct list_head *head,
-+		      int (*cmp)(struct list_head *a, struct list_head *b))
- {
- 	struct list_head *p, *q, *e, *list, *tail, *oldhead;
- 	int insize, nmerges, psize, qsize, i;
+ 	err = mdio_read(phy, MDIO_DEV_PMA_PMD, LASI_CTRL, &lasi_ctrl);
+ 	if (err)
 
