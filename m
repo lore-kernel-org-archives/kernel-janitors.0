@@ -1,43 +1,47 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Sat, 14 Feb 2009 22:48:58 +0000
-Subject: Re: [PATCH] drivers/isdn/hardware/mISDN: change type of hfc_jiffies
-Message-Id: <49974A5A.9030109@gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 14 Feb 2009 21:12:10 +0000
+Subject: [PATCH 02/43] drivers/net/e2100.c: fix sparse warning: symbol shadows
+Message-Id: <20090214211203.23489.80420.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214224049.28194.38982.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214224049.28194.38982.stgit@vmbox.hanneseder.net>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hannes Eder wrote:
-> Patch suggested by Jiri Slaby.
+Impact: Remove redundant inner scope variable and while being at it
+make use of ARRAY_SIZE instead of a hardcoded number.
 
-Well, at least some log needed.
+Fix this sparse warning:
+  drivers/net/e2100.c:219:56: warning: symbol 'i' shadows an earlier one
+  drivers/net/e2100.c:181:13: originally declared here
 
-jiffies are ulong, make sure we fit in jiffies store variable on archs with
-bits per long > 32.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/e2100.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> ---
-> 
-> This patch is based on:
->     drivers/isdn/hardware/mISDN: fix sparse warnings: make symbols static
-> 
->  drivers/isdn/hardware/mISDN/hfcpci.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/isdn/hardware/mISDN/hfcpci.c b/drivers/isdn/hardware/mISDN/hfcpci.c
-> index 2bb85c4..c7a855c 100644
-> --- a/drivers/isdn/hardware/mISDN/hfcpci.c
-> +++ b/drivers/isdn/hardware/mISDN/hfcpci.c
-> @@ -57,7 +57,7 @@ static int HFC_cnt;
->  static uint debug;
->  static uint poll, tics;
->  static struct timer_list hfc_tl;
-> -static u32 hfc_jiffies;
-> +static ulong hfc_jiffies;
+diff --git a/drivers/net/e2100.c b/drivers/net/e2100.c
+index b07ba19..d2f6ee1 100644
+--- a/drivers/net/e2100.c
++++ b/drivers/net/e2100.c
+@@ -216,13 +216,13 @@ static int __init e21_probe1(struct net_device *dev, int ioaddr)
+ 		printk(" %02X", station_addr[i]);
+ 
+ 	if (dev->irq < 2) {
+-		int irqlist[] = {15,11,10,12,5,9,3,4}, i;
+-		for (i = 0; i < 8; i++)
++		int irqlist[] = {15, 11, 10, 12, 5, 9, 3, 4};
++		for (i = 0; i < ARRAY_SIZE(irqlist); i++)
+ 			if (request_irq (irqlist[i], NULL, 0, "bogus", NULL) != -EBUSY) {
+ 				dev->irq = irqlist[i];
+ 				break;
+ 			}
+-		if (i >= 8) {
++		if (i >= ARRAY_SIZE(irqlist)) {
+ 			printk(" unable to get IRQ %d.\n", dev->irq);
+ 			retval = -EAGAIN;
+ 			goto out;
 
-Ok, unsigned long would be nicer. I though it would be implicit when writing
-about ulong, but I see not in this uint-et-al context...
