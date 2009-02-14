@@ -1,28 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Feb 2009 09:01:29 +0000
-Subject: Re: [PATCH 0/5] drivers/isdn: fix sparse warnings
-Message-Id: <20090227.010129.221180189.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 14 Feb 2009 21:14:31 +0000
+Subject: [PATCH 10/43] drivers/net/s2io.c: fix sparse warning: symbol shadows
+Message-Id: <20090214211423.23489.10245.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225230737.5377.31370.stgit@localhost.localdomain>
-In-Reply-To: <20090225230737.5377.31370.stgit@localhost.localdomain>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 26 Feb 2009 00:08:20 +0100
+Impact: Remove redundant inner scope variable.
 
-> The following series fixes some sparse warnings in drivers/isdn.
-> 
-> ---
-> 
-> Hannes Eder (5):
->       drivers/isdn/hardware/eicon: fix sparse warnings: Should it be static?
->       drivers/isdn/hardware/icon: fix sparse warning: cast truncates bits
->       drivers/isdn/hisax: fix sparse warning: Should it be static?
->       drivers/isdn/act2000: fix sparse warning: symbol shadows an earlier one
->       drivers/isdn/capi: fix sparse warning: context imbalance
+Fix this sparse warning:
+  drivers/net/s2io.c:7223:21: warning: symbol 'i' shadows an earlier one
+  drivers/net/s2io.c:7184:13: originally declared here
 
-Applied to net-next-2.6, thanks!
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/s2io.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/s2io.c b/drivers/net/s2io.c
+index 5cd2291..16868b7 100644
+--- a/drivers/net/s2io.c
++++ b/drivers/net/s2io.c
+@@ -7220,7 +7220,6 @@ static int s2io_card_up(struct s2io_nic * sp)
+ 
+ 	/* Initialise napi */
+ 	if (config->napi) {
+-		int i;
+ 		if (config->intr_type =  MSI_X) {
+ 			for (i = 0; i < sp->config.rx_ring_num; i++)
+ 				napi_enable(&sp->mac_control.rings[i].napi);
+
