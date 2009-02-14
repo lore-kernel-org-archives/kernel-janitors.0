@@ -1,65 +1,27 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 14 Feb 2009 21:13:52 +0000
-Subject: [PATCH 08/43] drivers/net/ppp*.c: fix sparse warnings: fix signedness
-Message-Id: <20090214211346.23489.96321.stgit@vmbox.hanneseder.net>
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+Date: Sat, 14 Feb 2009 21:29:48 +0000
+Subject: Re: [PATCH 08/43] drivers/net/ppp*.c: fix sparse warnings: fix
+Message-Id: <20090214212948.GE7648@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net> <20090214211346.23489.96321.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214211346.23489.96321.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hannes Eder <hannes@hanneseder.net>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix this sparse warnings:
-  drivers/net/ppp_generic.c:919:43: warning: incorrect type in argument 1 (different signedness)
-  drivers/net/pppoe.c:1195:43: warning: incorrect type in argument 1 (different signedness)
-  drivers/net/pppol2tp.c:2666:43: warning: incorrect type in argument 1 (different signedness)
+[Hannes Eder - Sat, Feb 14, 2009 at 10:13:52PM +0100]
+| Fix this sparse warnings:
+|   drivers/net/ppp_generic.c:919:43: warning: incorrect type in argument 1 (different signedness)
+|   drivers/net/pppoe.c:1195:43: warning: incorrect type in argument 1 (different signedness)
+|   drivers/net/pppol2tp.c:2666:43: warning: incorrect type in argument 1 (different signedness)
+| 
+| Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+...
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
- drivers/net/ppp_generic.c |    2 +-
- drivers/net/pppoe.c       |    2 +-
- drivers/net/pppol2tp.c    |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Thanks Hannes,
 
-diff --git a/drivers/net/ppp_generic.c b/drivers/net/ppp_generic.c
-index fddc849..81e7fcc 100644
---- a/drivers/net/ppp_generic.c
-+++ b/drivers/net/ppp_generic.c
-@@ -183,7 +183,7 @@ static atomic_t ppp_unit_count = ATOMIC_INIT(0);
- static atomic_t channel_count = ATOMIC_INIT(0);
- 
- /* per-net private data for this module */
--static unsigned int ppp_net_id;
-+static int ppp_net_id;
- struct ppp_net {
- 	/* units to ppp mapping */
- 	struct idr units_idr;
-diff --git a/drivers/net/pppoe.c b/drivers/net/pppoe.c
-index af6321d..e2968f0 100644
---- a/drivers/net/pppoe.c
-+++ b/drivers/net/pppoe.c
-@@ -97,7 +97,7 @@ static const struct proto_ops pppoe_ops;
- static struct ppp_channel_ops pppoe_chan_ops;
- 
- /* per-net private data for this module */
--static unsigned int pppoe_net_id;
-+static int pppoe_net_id;
- struct pppoe_net {
- 	/*
- 	 * we could use _single_ hash table for all
-diff --git a/drivers/net/pppol2tp.c b/drivers/net/pppol2tp.c
-index 1ba0f68..5b07dd8 100644
---- a/drivers/net/pppol2tp.c
-+++ b/drivers/net/pppol2tp.c
-@@ -232,7 +232,7 @@ static struct ppp_channel_ops pppol2tp_chan_ops = { pppol2tp_xmit , NULL };
- static struct proto_ops pppol2tp_ops;
- 
- /* per-net private data for this module */
--static unsigned int pppol2tp_net_id;
-+static int pppol2tp_net_id;
- struct pppol2tp_net {
- 	struct list_head pppol2tp_tunnel_list;
- 	rwlock_t pppol2tp_tunnel_list_lock;
+Acked-by: Cyrill Gorcunov <gorcunov@openvz.org>
 
+	- Cyrill -
