@@ -1,36 +1,42 @@
-From: CityK <cityk@rogers.com>
-Date: Thu, 19 Feb 2009 00:52:43 +0000
-Subject: Re: [PATCH] V4L: Storage class should be before const qualifier
-Message-Id: <499CAD5B.9010106@rogers.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 14 Feb 2009 21:35:35 +0000
+Subject: [PATCH 21/43] drivers/net/hamradio: fix sparse warning: symbol
+Message-Id: <20090214213505.24377.11448.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090209210649.GA7378@xenon.distanz.ch> <alpine.LNX.1.10.0902161353150.18110@jikos.suse.cz> <4999AAB6.4090904@rogers.com> <alpine.LNX.1.10.0902170313310.18110@jikos.suse.cz>
-In-Reply-To: <alpine.LNX.1.10.0902170313310.18110@jikos.suse.cz>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Tobias Klauser <tklauser@distanz.ch>, mchehab@infradead.org, linux-media@vger.kernel.org, video4linux-list@redhat.com, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Jiri Kosina wrote:
-> On Mon, 16 Feb 2009, CityK wrote:
->
->   
->>>> .... [inline patch] ....
->>>>         
->>> This doesn't seem to be picked by anyone for current -next/-mmotm, I have
->>> applied it to trivial tree. Thanks,
->>>       
->> Will this create any complication? As it is indeed queued in our
->> patchwork: http://patchwork.kernel.org/project/linux-media/list/
->>     
->
-> Hmm, patchwork ... did this land in any actual code tree? It has been 
-> submitted by Tobias on 9th Feb and I was not able to find it in any tree 
-> today, so I applied to to trivial tree (to which the patch has been 
-> originally CCed).
->
-> If you guys actually have queued in some tree, please let me know and I 
-> will drop it.
+Impact: Rename inner scrope variable.
 
-I'll defer to Mauro for the absolutes, but it looks like it got applied
-to V4L-DVB mainline Hg yesterday and is in Mauro's Linux-next git.
+Fix this sparse warning:
+  drivers/net/hamradio/yam.c:856:35: warning: symbol 'dev' shadows an earlier one
+
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/hamradio/yam.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
+index a54b865..500a40b 100644
+--- a/drivers/net/hamradio/yam.c
++++ b/drivers/net/hamradio/yam.c
+@@ -854,10 +854,10 @@ static int yam_open(struct net_device *dev)
+ 
+ 	/* Reset overruns for all ports - FPGA programming makes overruns */
+ 	for (i = 0; i < NR_PORTS; i++) {
+-		struct net_device *dev = yam_devs[i];
++		struct net_device *yam_dev = yam_devs[i];
+ 
+-		inb(LSR(dev->base_addr));
+-		dev->stats.rx_fifo_errors = 0;
++		inb(LSR(yam_dev->base_addr));
++		yam_dev->stats.rx_fifo_errors = 0;
+ 	}
+ 
+ 	printk(KERN_INFO "%s at iobase 0x%lx irq %u uart %s\n", dev->name, dev->base_addr, dev->irq,
+
