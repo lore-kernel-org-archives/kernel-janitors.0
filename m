@@ -1,46 +1,37 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 26 Feb 2009 09:01:44 +0000
-Subject: Re: [PATCH 0/7] sound: fix sparse warnings
-Message-Id: <s5h1vtlk1vr.wl%tiwai@suse.de>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 14 Feb 2009 21:38:36 +0000
+Subject: [PATCH 24/43] drivers/net/ixgbe: fix sparse warning: Should it be
+Message-Id: <20090214213822.24377.64757.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
+To: netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-At Wed, 25 Feb 2009 22:26:34 +0100,
-Hannes Eder wrote:
-> 
-> The following series fixes some sparse warnings in sound/.
+Impact: Make symbol static.
 
-Applied all patches now.  Thanks!
+Fix this sparse warning:
+  drivers/net/ixgbe/ixgbe_82598.c:59:5: warning: symbol 'ixgbe_get_pcie_msix_count_82598' was not declared. Should it be static?
 
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/ixgbe/ixgbe_82598.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Takashi
+diff --git a/drivers/net/ixgbe/ixgbe_82598.c b/drivers/net/ixgbe/ixgbe_82598.c
+index 525bd87..51dba1c 100644
+--- a/drivers/net/ixgbe/ixgbe_82598.c
++++ b/drivers/net/ixgbe/ixgbe_82598.c
+@@ -56,7 +56,7 @@ static s32 ixgbe_read_i2c_eeprom_82598(struct ixgbe_hw *hw, u8 byte_offset,
+  *  Read PCIe configuration space, and get the MSI-X vector count from
+  *  the capabilities table.
+  **/
+-u16 ixgbe_get_pcie_msix_count_82598(struct ixgbe_hw *hw)
++static u16 ixgbe_get_pcie_msix_count_82598(struct ixgbe_hw *hw)
+ {
+ 	struct ixgbe_adapter *adapter = hw->back;
+ 	u16 msix_count;
 
-> 
-> ---
-> 
-> Hannes Eder (7):
->       sound/oss: fix sparse warning: symbol shadows an earlier one
->       sound/oss: fix sparse warnings: different signedness
->       sound/drivers/vx: fix sparse warning: different signedness
->       sound/pci/emu10k1: fix sparse warning: different signedness
->       sound/pci/hda: fix sparse warning: different signedness
->       sound/usb/usx2y: fix sparse warning: do-while statement is not a compound ...
->       sound/usb/usx2y: fix sparse warning: Should it be static?
-> 
-> 
->  sound/drivers/vx/vx_uer.c        |    2 +-
->  sound/oss/pss.c                  |   12 ++++++------
->  sound/oss/sequencer.c            |    3 +--
->  sound/pci/emu10k1/emu10k1_main.c |   10 ++++------
->  sound/pci/hda/hda_local.h        |    2 +-
->  sound/usb/usx2y/usX2Yhwdep.c     |    3 ---
->  sound/usb/usx2y/usbusx2y.c       |    4 ++--
->  sound/usb/usx2y/usx2yhwdeppcm.h  |    2 ++
->  8 files changed, 17 insertions(+), 21 deletions(-)
-> 
