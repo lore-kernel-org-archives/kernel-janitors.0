@@ -1,79 +1,45 @@
-From: James Smart <James.Smart@Emulex.Com>
-Date: Mon, 09 Feb 2009 21:39:28 +0000
-Subject: Re: [PATCH 1/6] drivers/scsi: introduce missing kfree
-Message-Id: <4990A290.3030406@emulex.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 14 Feb 2009 21:16:04 +0000
+Subject: [PATCH 16/43] drivers/net/cxgb3: fix sparse warning: symbol shadows
+Message-Id: <20090214211557.23489.75670.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0902082242290.25891@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0902082242290.25891@ask.diku.dk>
+References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Acked-by: James Smart <james.smart@emulex.com>
+Impact: Move variable declaration as close to usage as possible.
 
--- james s
+Fix this sparse warning:
+  drivers/net/cxgb3/cxgb3_main.c:1586:21: warning: symbol 'cap' shadows an earlier one
 
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/cxgb3/cxgb3_main.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Error handling code following a kmalloc should free the allocated data.
-> 
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> statement S;
-> expression E;
-> identifier f,l;
-> position p1,p2;
-> expression *ptr != NULL;
-> @@
-> 
-> (
-> if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
-> |
-> x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-> ...
-> if (x = NULL) S
-> )
-> <... when != x
->      when != if (...) { <+...x...+> }
-> x->f = E
-> ...>
-> (
->  return \(0\|<+...x...+>\|ptr\);
-> |
->  return@p2 ...;
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> ---
->  drivers/scsi/lpfc/lpfc_els.c        |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-> index a8f30bd..a730248 100644
-> --- a/drivers/scsi/lpfc/lpfc_els.c
-> +++ b/drivers/scsi/lpfc/lpfc_els.c
-> @@ -5258,6 +5258,7 @@ lpfc_send_els_event(struct lpfc_vport *vport,
->                         sizeof(struct lpfc_name));
->                 break;
->         default:
-> +               kfree(els_data);
->                 return;
->         }
->         memcpy(els_data->wwpn, &ndlp->nlp_portname, sizeof(struct lpfc_name));
-> 
+diff --git a/drivers/net/cxgb3/cxgb3_main.c b/drivers/net/cxgb3/cxgb3_main.c
+index f2c7cc3..0f6062a 100644
+--- a/drivers/net/cxgb3/cxgb3_main.c
++++ b/drivers/net/cxgb3/cxgb3_main.c
+@@ -1565,7 +1565,6 @@ static int speed_duplex_to_caps(int speed, int duplex)
+ 
+ static int set_settings(struct net_device *dev, struct ethtool_cmd *cmd)
+ {
+-	int cap;
+ 	struct port_info *p = netdev_priv(dev);
+ 	struct link_config *lc = &p->link_config;
+ 
+@@ -1575,7 +1574,7 @@ static int set_settings(struct net_device *dev, struct ethtool_cmd *cmd)
+ 		 * being requested.
+ 		 */
+ 		if (cmd->autoneg = AUTONEG_DISABLE) {
+-			cap = speed_duplex_to_caps(cmd->speed, cmd->duplex);
++			int cap = speed_duplex_to_caps(cmd->speed, cmd->duplex);
+ 			if (lc->supported & cap)
+ 				return 0;
+ 		}
+
