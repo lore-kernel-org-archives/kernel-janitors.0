@@ -1,49 +1,49 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Mon, 16 Feb 2009 16:35:16 +0000
-Subject: Re: [PATCH] Remove errors caught by checkpatch.pl in kernel/kallsyms.c
-Message-Id: <499995C4.3070504@s5r6.in-berlin.de>
+From: Ingo Molnar <mingo@elte.hu>
+Date: Mon, 16 Feb 2009 17:11:15 +0000
+Subject: Re: [PATCH] Remove errors caught by checkpatch.pl in
+Message-Id: <20090216171115.GA25907@elte.hu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30902151034s5444efabw455c1dac1b875086@mail.gmail.com> <20090215184752.GA4970@uranus.ravnborg.org> <4999650C.6030700@s5r6.in-berlin.de> <20090216132822.GC17996@elte.hu> <Pine.LNX.4.64.0902161711580.9565@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0902161711580.9565@pc-004.diku.dk>
+References: <ea11fea30902151034s5444efabw455c1dac1b875086@mail.gmail.com> <20090215184752.GA4970@uranus.ravnborg.org> <4999650C.6030700@s5r6.in-berlin.de> <20090216132822.GC17996@elte.hu> <4999717F.7090205@s5r6.in-berlin.de> <20090216141917.GA8981@elte.hu> <499984C1.6020004@s5r6.in-berlin.de> <20090216155023.GA4422@elte.hu> <20090216161310.GV28946@ZenIV.linux.org.uk>
+In-Reply-To: <20090216161310.GV28946@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Ingo Molnar <mingo@elte.hu>, Sam Ravnborg <sam@ravnborg.org>, Manish Katiyar <mkatiyar@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Stefan Richter <stefanr@s5r6.in-berlin.de>, Sam Ravnborg <sam@ravnborg.org>, Manish Katiyar <mkatiyar@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> Is everything below the --- preserved in what is available via git log?  
 
-No, none of it (if the patch is mechanically applied with e.g. git-am).
+* Al Viro <viro@ZenIV.linux.org.uk> wrote:
 
-Sometimes, useful information does indeed get lost because an author
-didn't consider it "above ---"-worthy.
+> On Mon, Feb 16, 2009 at 04:50:23PM +0100, Ingo Molnar wrote:
+> > 
+> > * Stefan Richter <stefanr@s5r6.in-berlin.de> wrote:
+> > 
+> > > Ingo Molnar wrote:
+> > > > We routinely mention Sparse, lockdep, Coverity, Coccinelle, kmemleak, 
+> > > > ftrace, kmemcheck and other tools as well when it motives to fix a bug 
+> > > > or uncleanliness. [...] It is absolutely fine to
+> > > > mention checkpatch when it catches uncleanliness in code that already 
+> > > > got merged. I dont understand your point.
+> > > 
+> > > I wrote "don't mention checkpatch" but I really meant "think about what
+> > > the effect of the patch is and describe this".
+> > 
+> > Are you arguing that in all those other cases the tools should not be 
+> > mentioned either? I dont think that position is tenable.
+> 
+> Hell, yes.  I'm sick and tired of "$DRIVER: fix sparse warnings 
+> <something far off-screen when looking at it in mutt on xterm>" kind 
+> of subjects, while we are at it.  Mention the tool when that adds 
+> information useful for understanding commit message and patch; 
+> otherwise you are just adding noise.
 
-...
-> I think the how information has some value, 
-> both to make people aware of what tools are useful for what kinds of 
-> tasks, and to help one understand what criteria were used in making the 
-> patch.
+No argument that it's not high value enough information to be in the 
+title itself. That's why i clearly said it in my first mail:
 
-That information is perfect for conservation mailing list archives.
+  "It shouldnt be in the title,"
 
-The source repository metadata (commit logs) have other purposes:  Keep
-book about what happened to the source code and why.
+Stefan Richter's argument was different though, he argued that the 
+information should not be in the changelog at all, in any place. That 
+was and is my point.
 
-> This can sometimes be conveyed more precisely using code than 
-> English text.
-
-If the scope of a change is better captured that way, then OK.
-
-> I agree that the how information is not always relevant for 
-> the person who just wants to scan a changelog to see what is new in the 
-> current Linux release.
-
-The changelog is not only to learn what's new (i.e. a source of release
-notes), it's also to learn what's old. :-)  I go through old changelogs
-all the time because I deal with code with history older than my
-involvement or too old for me to remember the circumstances.
--- 
-Stefan Richter
--===-=--= --=- =----
-http://arcgraph.de/sr/
+	Ingo
