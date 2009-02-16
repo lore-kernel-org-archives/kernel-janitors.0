@@ -1,49 +1,54 @@
 From: Ingo Molnar <mingo@elte.hu>
-Date: Mon, 16 Feb 2009 17:11:15 +0000
+Date: Mon, 16 Feb 2009 17:12:33 +0000
 Subject: Re: [PATCH] Remove errors caught by checkpatch.pl in
-Message-Id: <20090216171115.GA25907@elte.hu>
+Message-Id: <20090216171233.GB25907@elte.hu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30902151034s5444efabw455c1dac1b875086@mail.gmail.com> <20090215184752.GA4970@uranus.ravnborg.org> <4999650C.6030700@s5r6.in-berlin.de> <20090216132822.GC17996@elte.hu> <4999717F.7090205@s5r6.in-berlin.de> <20090216141917.GA8981@elte.hu> <499984C1.6020004@s5r6.in-berlin.de> <20090216155023.GA4422@elte.hu> <20090216161310.GV28946@ZenIV.linux.org.uk>
-In-Reply-To: <20090216161310.GV28946@ZenIV.linux.org.uk>
+References: <ea11fea30902151034s5444efabw455c1dac1b875086@mail.gmail.com> <20090215184752.GA4970@uranus.ravnborg.org> <4999650C.6030700@s5r6.in-berlin.de> <20090216132822.GC17996@elte.hu> <4999717F.7090205@s5r6.in-berlin.de> <20090216141917.GA8981@elte.hu> <499984C1.6020004@s5r6.in-berlin.de> <20090216155023.GA4422@elte.hu> <4999908D.4050403@s5r6.in-berlin.de>
+In-Reply-To: <4999908D.4050403@s5r6.in-berlin.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stefan Richter <stefanr@s5r6.in-berlin.de>, Sam Ravnborg <sam@ravnborg.org>, Manish Katiyar <mkatiyar@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Manish Katiyar <mkatiyar@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 
-* Al Viro <viro@ZenIV.linux.org.uk> wrote:
+* Stefan Richter <stefanr@s5r6.in-berlin.de> wrote:
 
-> On Mon, Feb 16, 2009 at 04:50:23PM +0100, Ingo Molnar wrote:
-> > 
+> Ingo Molnar wrote:
 > > * Stefan Richter <stefanr@s5r6.in-berlin.de> wrote:
-> > 
-> > > Ingo Molnar wrote:
-> > > > We routinely mention Sparse, lockdep, Coverity, Coccinelle, kmemleak, 
-> > > > ftrace, kmemcheck and other tools as well when it motives to fix a bug 
-> > > > or uncleanliness. [...] It is absolutely fine to
-> > > > mention checkpatch when it catches uncleanliness in code that already 
-> > > > got merged. I dont understand your point.
-> > > 
-> > > I wrote "don't mention checkpatch" but I really meant "think about what
-> > > the effect of the patch is and describe this".
-> > 
-> > Are you arguing that in all those other cases the tools should not be 
+> >=20
+> >> Ingo Molnar wrote:
+> >>> We routinely mention Sparse, lockdep, Coverity, Coccinelle, kmemleak,=
+=20
+> >>> ftrace, kmemcheck and other tools as well when it motives to fix a bu=
+g=20
+> >>> or uncleanliness. [...] It is absolutely fine to
+> >>> mention checkpatch when it catches uncleanliness in code that already=
+=20
+> >>> got merged. I dont understand your point.
+> >> I wrote "don't mention checkpatch" but I really meant "think about what
+> >> the effect of the patch is and describe this".
+> >=20
+> > Are you arguing that in all those other cases the tools should not be=20
 > > mentioned either? I dont think that position is tenable.
-> 
-> Hell, yes.  I'm sick and tired of "$DRIVER: fix sparse warnings 
-> <something far off-screen when looking at it in mutt on xterm>" kind 
-> of subjects, while we are at it.  Mention the tool when that adds 
-> information useful for understanding commit message and patch; 
-> otherwise you are just adding noise.
+>=20
+> I'm arguing that in all those other cases the method "think about what=20
+> the effect of the patch is and describe this"=B9 applies just as well,=20
+> and that the mentioning of the tools used does not add value for=20
+> future readers of the changelog. [...]
 
-No argument that it's not high value enough information to be in the 
-title itself. That's why i clearly said it in my first mail:
+That position of not adding tool information to the commit log is not=20
+just not tenable but also incredibly silly.
 
-  "It shouldnt be in the title,"
-
-Stefan Richter's argument was different though, he argued that the 
-information should not be in the changelog at all, in any place. That 
-was and is my point.
+Those tools are useful, they result in fixes, so why should the patch=20
+author pretend and hide the method of finding problems from the Git=20
+history? We often write "found via review" or "found via testing". It's=20
+useful and it gives people an idea of how certain types of fixes were=20
+found.
 
 	Ingo
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
