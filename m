@@ -1,35 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 03:35:35 +0000
-Subject: Re: [PATCH 38/43] drivers/net/wireless: fix sparse warnings:
-Message-Id: <20090217.193535.170390441.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 16 Feb 2009 09:54:38 +0000
+Subject: [PATCH] drivers/net/sfc: fix sparse warnings: Should it be static?
+Message-Id: <20090216095351.391.49056.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
-	<20090214214852.24377.70239.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214214852.24377.70239.stgit@vmbox.hanneseder.net>
+References: <154e089b0902160138n255616a0xb963dfd990d912b@mail.gmail.com>
+In-Reply-To: <154e089b0902160138n255616a0xb963dfd990d912b@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Ben Hutchings <bhutchings@solarflare.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 14 Feb 2009 22:49:09 +0100
+Impact: Include the header file.  If CONFIG_SFC_MTD is not defined
+then the functions 'efx_mtd_remove' and 'efx_mtd_rename' are defined
+'static inline' with an empty function body in the header file, but
+the the whole file mtd.c is not built in this case.
 
-> Impact:
->   Move variable closer to usage resp.
->   remove redundant variables resp.
->   rename function scope variable.
-> 
-> Fix this sparse warnings:
->   drivers/net/wireless/airo.c:3840:29: warning: symbol 'i' shadows an earlier one
->   drivers/net/wireless/airo.c:3751:13: originally declared here
->   drivers/net/wireless/airo.c:3847:29: warning: symbol 'i' shadows an earlier one
->   drivers/net/wireless/airo.c:3751:13: originally declared here
->   drivers/net/wireless/airo.c:3861:21: warning: symbol 'i' shadows an earlier one
->   drivers/net/wireless/airo.c:3751:13: originally declared here
->   drivers/net/wireless/wavelan.c:43:13: warning: symbol 'irq' shadows an earlier one
->   drivers/net/wireless/wavelan.p.h:692:17: originally declared here
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Fix this sparse warnings:
+  drivers/net/sfc/mtd.c:204:6: warning: symbol 'efx_mtd_remove' was not declared. Should it be static?
+  drivers/net/sfc/mtd.c:221:6: warning: symbol 'efx_mtd_rename' was not declared. Should it be static?
+  drivers/net/sfc/mtd.c:230:5: warning: symbol 'efx_mtd_probe' was not declared. Should it be static?
 
-Applied.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/net/sfc/mtd.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/sfc/mtd.c b/drivers/net/sfc/mtd.c
+index 665cafb..820c233 100644
+--- a/drivers/net/sfc/mtd.c
++++ b/drivers/net/sfc/mtd.c
+@@ -15,6 +15,7 @@
+ #define EFX_DRIVER_NAME "sfc_mtd"
+ #include "net_driver.h"
+ #include "spi.h"
++#include "efx.h"
+ 
+ #define EFX_SPI_VERIFY_BUF_LEN 16
+ 
+
