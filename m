@@ -1,39 +1,30 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Mon, 16 Feb 2009 15:34:32 +0000
-Subject: Re: [PATCH] Remove errors caught by checkpatch.pl in 	kernel/utsname_sysctl.c
-Message-Id: <49998788.80606@s5r6.in-berlin.de>
+From: Ingo Molnar <mingo@elte.hu>
+Date: Mon, 16 Feb 2009 15:50:23 +0000
+Subject: Re: [PATCH] Remove errors caught by checkpatch.pl in
+Message-Id: <20090216155023.GA4422@elte.hu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30902151039n447cc111medb9721a95af81a8@mail.gmail.com>	 <49996588.2040501@s5r6.in-berlin.de> <ea11fea30902160659q58578152gea3f4da3821c8e0c@mail.gmail.com>
-In-Reply-To: <ea11fea30902160659q58578152gea3f4da3821c8e0c@mail.gmail.com>
+References: <ea11fea30902151034s5444efabw455c1dac1b875086@mail.gmail.com> <20090215184752.GA4970@uranus.ravnborg.org> <4999650C.6030700@s5r6.in-berlin.de> <20090216132822.GC17996@elte.hu> <4999717F.7090205@s5r6.in-berlin.de> <20090216141917.GA8981@elte.hu> <499984C1.6020004@s5r6.in-berlin.de>
+In-Reply-To: <499984C1.6020004@s5r6.in-berlin.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Manish Katiyar <mkatiyar@gmail.com>
-Cc: mingo@elte.hu, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Manish Katiyar <mkatiyar@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Manish Katiyar wrote:
-> On Mon, Feb 16, 2009 at 6:39 PM, Stefan Richter
-> <stefanr@s5r6.in-berlin.de> wrote:
->> The changelog should note that this is a whitespace fix + initcall
->> annotation change.
 
-Sorry, I didn't get the point of __initcall/device_initcall.  It's not
-an annotation; it defines a call sequence level.
+* Stefan Richter <stefanr@s5r6.in-berlin.de> wrote:
 
-> Replace deprecated __initcall with equivalent device_initcall. Also
-> fix whitespaces.
-...
-> --- a/kernel/utsname_sysctl.c
-> +++ b/kernel/utsname_sysctl.c
-...
-> @@ -142,4 +142,4 @@ static int __init utsname_sysctl_init(void)
->  	return 0;
->  }
+> Ingo Molnar wrote:
+> > We routinely mention Sparse, lockdep, Coverity, Coccinelle, kmemleak, 
+> > ftrace, kmemcheck and other tools as well when it motives to fix a bug 
+> > or uncleanliness. [...] It is absolutely fine to
+> > mention checkpatch when it catches uncleanliness in code that already 
+> > got merged. I dont understand your point.
 > 
-> -__initcall(utsname_sysctl_init);
-> +device_initcall(utsname_sysctl_init);
+> I wrote "don't mention checkpatch" but I really meant "think about what
+> the effect of the patch is and describe this".
 
-It is equivalent, but is it also the most appropriate one?
--- 
-Stefan Richter
--===-=-== -=-= -=-http://arcgraph.de/sr/
+Are you arguing that in all those other cases the tools should not be 
+mentioned either? I dont think that position is tenable.
+
+	Ingo
