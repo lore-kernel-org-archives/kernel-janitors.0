@@ -1,7 +1,7 @@
 From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 01:22:25 +0000
+Date: Wed, 18 Feb 2009 01:26:36 +0000
 Subject: Re: [PATCH 10/43] drivers/net/s2io.c: fix sparse warning: symbol
-Message-Id: <20090217.172225.175747063.davem@davemloft.net>
+Message-Id: <20090217.172636.233855519.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
 	<20090214211423.23489.10245.stgit@vmbox.hanneseder.net>
