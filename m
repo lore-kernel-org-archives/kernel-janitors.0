@@ -1,28 +1,32 @@
-From: Chris Mason <chris.mason@oracle.com>
-Date: Mon, 09 Feb 2009 14:50:26 +0000
-Subject: Re: [PATCH 5/6] fs/btrfs/volumes.c: remove useless kzalloc
-Message-Id: <1234191026.1262.1.camel@think.oraclecorp.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sat, 21 Feb 2009 22:43:11 +0000
+Subject: [PATCH] aty128fb: remove unused variable 'pwr_command'
+Message-Id: <20090221224252.5684.79344.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0902082245250.25891@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0902082245250.25891@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2009-02-08 at 22:45 +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The call to kzalloc is followed by a kmalloc whose result is stored in the
-> same variable.
-> 
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
+Fix this warning:
+  drivers/video/aty/aty128fb.c:2368: warning: unused variable 'pwr_command'
 
-Now that is neat.  Thanks for the patch, I've queued it up here.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/video/aty/aty128fb.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
--chris
-
+diff --git a/drivers/video/aty/aty128fb.c b/drivers/video/aty/aty128fb.c
+index ea5b193..e912258 100644
+--- a/drivers/video/aty/aty128fb.c
++++ b/drivers/video/aty/aty128fb.c
+@@ -2365,7 +2365,6 @@ static void fbcon_aty128_bmove(struct display *p, int sy, int sx, int dy, int dx
+ static void aty128_set_suspend(struct aty128fb_par *par, int suspend)
+ {
+ 	u32	pmgt;
+-	u16	pwr_command;
+ 	struct pci_dev *pdev = par->pdev;
+ 
+ 	if (!par->pm_reg)
 
