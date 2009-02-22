@@ -1,86 +1,48 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 25 Feb 2009 21:28:59 +0000
-Subject: [PATCH 4/7] sound/pci/emu10k1: fix sparse warning: different
-Message-Id: <20090225212853.9226.86574.stgit@vmbox.hanneseder.net>
+From: Manish Katiyar <mkatiyar@gmail.com>
+Date: Sun, 22 Feb 2009 04:54:32 +0000
+Subject: [PATCH] kernel/power/poweroff.c : Fix coding style whitespace fixes
+Message-Id: <ea11fea30902212054vbf5c74ub6545f69a9ad92c3@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Fix this sparse warnings:
-  sound/pci/emu10k1/emu10k1_main.c:723:66: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:724:68: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:748:74: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:751:66: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:759:73: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:760:73: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:837:50: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:845:50: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:881:50: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:889:57: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:890:57: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:895:60: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:897:60: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:899:60: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:910:56: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:914:57: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:918:56: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:922:57: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:924:58: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:936:60: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:1073:60: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:1088:60: warning: incorrect type in argument 3 (different signedness)
-  sound/pci/emu10k1/emu10k1_main.c:1093:58: warning: incorrect type in argument 3 (different signedness)
+Fix coding style whitespace fixes. Patch compile tested
+Before :-
+total: 1 errors, 0 warnings, 46 lines checked
+After
+total: 0 errors, 0 warnings, 46 lines checked
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Before :-
+  text	   data	    bss	    dec	    hex	filename
+    107	     48	      0	    155	     9b	kernel/power/poweroff.o
+After
+   text	   data	    bss	    dec	    hex	filename
+    107	     48	      0	    155	     9b	kernel/power/poweroff.o
+
+
+Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
 ---
- sound/pci/emu10k1/emu10k1_main.c |   10 ++++------
- 1 files changed, 4 insertions(+), 6 deletions(-)
+ kernel/power/poweroff.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/sound/pci/emu10k1/emu10k1_main.c b/sound/pci/emu10k1/emu10k1_main.c
-index f76781f..f18bd62 100644
---- a/sound/pci/emu10k1/emu10k1_main.c
-+++ b/sound/pci/emu10k1/emu10k1_main.c
-@@ -711,8 +711,7 @@ static int snd_emu1010_load_firmware(struct snd_emu10k1 *emu, const char *filena
- static int emu1010_firmware_thread(void *data)
- {
- 	struct snd_emu10k1 *emu = data;
--	int tmp, tmp2;
--	int reg;
-+	u32 tmp, tmp2, reg;
- 	int err;
- 
- 	for (;;) {
-@@ -758,7 +757,7 @@ static int emu1010_firmware_thread(void *data)
- 			snd_printk(KERN_INFO "emu1010: Audio Dock Firmware loaded\n");
- 			snd_emu1010_fpga_read(emu, EMU_DOCK_MAJOR_REV, &tmp);
- 			snd_emu1010_fpga_read(emu, EMU_DOCK_MINOR_REV, &tmp2);
--			snd_printk(KERN_INFO "Audio Dock ver:%d.%d\n",
-+			snd_printk(KERN_INFO "Audio Dock ver: %u.%u\n",
- 				   tmp, tmp2);
- 			/* Sync clocking between 1010 and Dock */
- 			/* Allow DLL to settle */
-@@ -805,8 +804,7 @@ static int emu1010_firmware_thread(void *data)
- static int snd_emu10k1_emu1010_init(struct snd_emu10k1 *emu)
- {
- 	unsigned int i;
--	int tmp, tmp2;
--	int reg;
-+	u32 tmp, tmp2, reg;
- 	int err;
- 	const char *filename = NULL;
- 
-@@ -888,7 +886,7 @@ static int snd_emu10k1_emu1010_init(struct snd_emu10k1 *emu)
- 	snd_printk(KERN_INFO "emu1010: Hana Firmware loaded\n");
- 	snd_emu1010_fpga_read(emu, EMU_HANA_MAJOR_REV, &tmp);
- 	snd_emu1010_fpga_read(emu, EMU_HANA_MINOR_REV, &tmp2);
--	snd_printk(KERN_INFO "emu1010: Hana version: %d.%d\n", tmp, tmp2);
-+	snd_printk(KERN_INFO "emu1010: Hana version: %u.%u\n", tmp, tmp2);
- 	/* Enable 48Volt power to Audio Dock */
- 	snd_emu1010_fpga_write(emu, EMU_HANA_DOCK_PWR, EMU_HANA_DOCK_PWR_ON);
- 
+diff --git a/kernel/power/poweroff.c b/kernel/power/poweroff.c
+index 9789083..e8b3370 100644
+--- a/kernel/power/poweroff.c
++++ b/kernel/power/poweroff.c
+@@ -34,7 +34,7 @@ static struct sysrq_key_op	sysrq_poweroff_op = {
+ 	.handler        = handle_poweroff,
+ 	.help_msg       = "powerOff",
+ 	.action_msg     = "Power Off",
+- 	.enable_mask	= SYSRQ_ENABLE_BOOT,
++	.enable_mask	= SYSRQ_ENABLE_BOOT,
+ };
 
+ static int pm_sysrq_init(void)
+-- 
+1.5.4.3
+
+
+Thanks -
+Manish
