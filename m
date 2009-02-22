@@ -1,39 +1,35 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Date: Fri, 27 Feb 2009 05:07:15 +0000
-Subject: Re: [PATCH 06/16] MTD: tests: fix sparse warnings: Using plain 	integer
-Message-Id: <49A77503.8040900@nokia.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sun, 22 Feb 2009 00:05:13 +0000
+Subject: [PATCH 12/16] reiserfs: fix sparse warning: Using plain integer as
+Message-Id: <20090222000511.17557.96434.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>	 <20090222000216.17557.92413.stgit@vmbox.hanneseder.net> <154e089b0902261702r52432481q6a0561de9576ed71@mail.gmail.com>
-In-Reply-To: <154e089b0902261702r52432481q6a0561de9576ed71@mail.gmail.com>
+References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: "trivial@kernel.org" <trivial@kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hannes Eder wrote:
-> [Added To]
-> 
-> On Sun, Feb 22, 2009 at 1:02 AM, Hannes Eder <hannes@hanneseder.net> wrote:
->> Fix this sparse warnings:
->>  drivers/mtd/tests/mtd_oobtest.c:139:33: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:192:33: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:219:41: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:284:25: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:525:25: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:545:25: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:569:33: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:589:33: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:613:33: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:633:33: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:673:41: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_oobtest.c:701:33: warning: Using plain integer as NULL pointer
->>  drivers/mtd/tests/mtd_readtest.c:74:41: warning: Using plain integer as NULL pointer
->>
->> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Fix this sparse warning:
+  fs/reiserfs/inode.c:2555:19: warning: Using plain integer as NULL pointer
 
-Acked-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ fs/reiserfs/inode.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
--- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 823227a..e69d63a 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2552,7 +2552,7 @@ static int reiserfs_write_begin(struct file *file,
+ 	int old_ref = 0;
+ 
+  	inode = mapping->host;
+-	*fsdata = 0;
++	*fsdata = NULL;
+  	if (flags & AOP_FLAG_CONT_EXPAND &&
+  	    (pos & (inode->i_sb->s_blocksize - 1)) = 0) {
+  		pos ++;
+
