@@ -1,26 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 01:21:21 +0000
-Subject: Re: [PATCH 01/43] drivers/net/at1700.c: fix sparse warning: symbol
-Message-Id: <20090217.172121.199854873.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sun, 22 Feb 2009 00:05:24 +0000
+Subject: [PATCH 13/16] kprobes: fix sparse warnings: Using plain integer as
+Message-Id: <20090222000521.17557.93357.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
-	<20090214211144.23489.88144.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214211144.23489.88144.stgit@vmbox.hanneseder.net>
+References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 14 Feb 2009 22:11:55 +0100
+Fix this sparse warnings:
+  kernel/test_kprobes.c:118:19: warning: Using plain integer as NULL pointer
+  kernel/test_kprobes.c:213:22: warning: Using plain integer as NULL pointer
+  kernel/test_kprobes.c:326:22: warning: Using plain integer as NULL pointer
 
-> Impact: Move variable declaration to a more inner scope.
-> 
-> Fix this sparse warning:
->   drivers/net/at1700.c:846:21: warning: symbol 'i' shadows an earlier one
->   drivers/net/at1700.c:831:13: originally declared here
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ kernel/test_kprobes.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-Applied.
+diff --git a/kernel/test_kprobes.c b/kernel/test_kprobes.c
+index 4f10451..9a43351 100644
+--- a/kernel/test_kprobes.c
++++ b/kernel/test_kprobes.c
+@@ -115,7 +115,7 @@ static int test_kprobes(void)
+ 	int ret;
+ 	struct kprobe *kps[2] = {&kp, &kp2};
+ 
+-	kp.addr = 0; /* addr should be cleard for reusing kprobe. */
++	kp.addr = NULL; /* addr should be cleard for reusing kprobe. */
+ 	ret = register_kprobes(kps, 2);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "Kprobe smoke test failed: "
+@@ -210,7 +210,7 @@ static int test_jprobes(void)
+ 	int ret;
+ 	struct jprobe *jps[2] = {&jp, &jp2};
+ 
+-	jp.kp.addr = 0; /* addr should be cleard for reusing kprobe. */
++	jp.kp.addr = NULL; /* addr should be cleard for reusing kprobe. */
+ 	ret = register_jprobes(jps, 2);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "Kprobe smoke test failed: "
+@@ -323,7 +323,7 @@ static int test_kretprobes(void)
+ 	int ret;
+ 	struct kretprobe *rps[2] = {&rp, &rp2};
+ 
+-	rp.kp.addr = 0; /* addr should be cleard for reusing kprobe. */
++	rp.kp.addr = NULL; /* addr should be cleard for reusing kprobe. */
+ 	ret = register_kretprobes(rps, 2);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "Kprobe smoke test failed: "
+
