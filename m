@@ -1,24 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 03:49:46 +0000
-Subject: Re: [PATCH 43/43] drivers/net/wireless/prism54: fix sparse
-Message-Id: <20090217.194946.175639509.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Sun, 22 Feb 2009 00:05:34 +0000
+Subject: [PATCH 14/16] memcg: fix sparse warning: Using plain integer as NULL
+Message-Id: <20090222000532.17557.52930.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
-	<20090214215034.24377.54126.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214215034.24377.54126.stgit@vmbox.hanneseder.net>
+References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 14 Feb 2009 22:50:45 +0100
+Fix this sparse warning:
+  mm/memcontrol.c:1637:32: warning: Using plain integer as NULL pointer
 
-> Fix sparse warning:
->   drivers/net/wireless/prism54/isl_ioctl.c:2997:32: warning: incorrect type in argument 2 (different signedness)
->   drivers/net/wireless/prism54/oid_mgt.c:712:42: warning: incorrect type in argument 2 (different signedness)
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ mm/memcontrol.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Applied.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 8e4be9c..09d6650 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1634,7 +1634,7 @@ static int mem_cgroup_force_empty_list(struct mem_cgroup *mem,
+ 		pc = list_entry(list->prev, struct page_cgroup, lru);
+ 		if (busy = pc) {
+ 			list_move(&pc->lru, list);
+-			busy = 0;
++			busy = NULL;
+ 			spin_unlock_irqrestore(&zone->lru_lock, flags);
+ 			continue;
+ 		}
+
