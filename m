@@ -1,30 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Feb 2009 01:26:54 +0000
-Subject: Re: [PATCH 13/43] drivers/net/atlx: fix sparse warnings: fix
-Message-Id: <20090217.172654.50571162.davem@davemloft.net>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Wed, 25 Feb 2009 21:26:34 +0000
+Subject: [PATCH 0/7] sound: fix sparse warnings
+Message-Id: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090214210940.23489.95001.stgit@vmbox.hanneseder.net>
-	<20090214211508.23489.57841.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090214211508.23489.57841.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hannes@hanneseder.net
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 14 Feb 2009 22:15:17 +0100
+The following series fixes some sparse warnings in sound/.
 
-> Impact: While being at it: statics do not need to be initialized with 0.
-> 
-> Fix this sparse warnings:
->   drivers/net/atlx/atl1.c:109:1: warning: incorrect type in initializer (different signedness)
->   drivers/net/atlx/atl2.c:2870:1: warning: incorrect type in initializer (different signedness)
->   drivers/net/atlx/atl2.c:2880:1: warning: incorrect type in initializer (different signedness)
->   drivers/net/atlx/atl2.c:2894:1: warning: incorrect type in initializer (different signedness)
->   drivers/net/atlx/atl2.c:2904:1: warning: incorrect type in initializer (different signedness)
->   drivers/net/atlx/atl2.c:2913:1: warning: incorrect type in initializer (different signedness)
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
 
-Applied.
+Hannes Eder (7):
+      sound/oss: fix sparse warning: symbol shadows an earlier one
+      sound/oss: fix sparse warnings: different signedness
+      sound/drivers/vx: fix sparse warning: different signedness
+      sound/pci/emu10k1: fix sparse warning: different signedness
+      sound/pci/hda: fix sparse warning: different signedness
+      sound/usb/usx2y: fix sparse warning: do-while statement is not a compound ...
+      sound/usb/usx2y: fix sparse warning: Should it be static?
+
+
+ sound/drivers/vx/vx_uer.c        |    2 +-
+ sound/oss/pss.c                  |   12 ++++++------
+ sound/oss/sequencer.c            |    3 +--
+ sound/pci/emu10k1/emu10k1_main.c |   10 ++++------
+ sound/pci/hda/hda_local.h        |    2 +-
+ sound/usb/usx2y/usX2Yhwdep.c     |    3 ---
+ sound/usb/usx2y/usbusx2y.c       |    4 ++--
+ sound/usb/usx2y/usx2yhwdeppcm.h  |    2 ++
+ 8 files changed, 17 insertions(+), 21 deletions(-)
