@@ -1,35 +1,37 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Sun, 22 Feb 2009 00:01:13 +0000
-Subject: [PATCH 02/16] x86,
-Message-Id: <20090222000105.17557.49889.stgit@vmbox.hanneseder.net>
+Date: Wed, 25 Feb 2009 20:31:37 +0000
+Subject: [PATCH 2/8] 9p: fix sparse warning: cast adds address space
+Message-Id: <20090225203132.6251.63332.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090221235706.17557.97714.stgit@vmbox.hanneseder.net>
+References: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: trivial@kernel.org
+To: netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Impact: Trust in the comment and add '__force' to the cast.
+
 Fix this sparse warning:
-  arch/x86/mm/numa_32.c:197:24: warning: Using plain integer as NULL pointer
+  net/9p/trans_fd.c:420:34: warning: cast adds address space to expression (<asn:1>)
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- arch/x86/mm/numa_32.c |    2 +-
+ net/9p/trans_fd.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/x86/mm/numa_32.c b/arch/x86/mm/numa_32.c
-index d1f7439..3957cd6 100644
---- a/arch/x86/mm/numa_32.c
-+++ b/arch/x86/mm/numa_32.c
-@@ -194,7 +194,7 @@ void *alloc_remap(int nid, unsigned long size)
- 	size = ALIGN(size, L1_CACHE_BYTES);
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 1df0356..c613ed0 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -417,7 +417,7 @@ static int p9_fd_write(struct p9_client *client, void *v, int len)
+ 	oldfs = get_fs();
+ 	set_fs(get_ds());
+ 	/* The cast to a user pointer is valid due to the set_fs() */
+-	ret = vfs_write(ts->wr, (void __user *)v, len, &ts->wr->f_pos);
++	ret = vfs_write(ts->wr, (__force void __user *)v, len, &ts->wr->f_pos);
+ 	set_fs(oldfs);
  
- 	if (!allocation || (allocation + size) >= node_remap_end_vaddr[nid])
--		return 0;
-+		return NULL;
- 
- 	node_remap_alloc_vaddr[nid] += size;
- 	memset(allocation, 0, size);
+ 	if (ret <= 0 && ret != -ERESTARTSYS && ret != -EAGAIN)
 
