@@ -1,7 +1,7 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 25 Feb 2009 20:33:06 +0000
-Subject: [PATCH 8/8] wanrouter: fix sparse warnings: context imbalance
-Message-Id: <20090225203301.6251.49315.stgit@vmbox.hanneseder.net>
+Date: Wed, 25 Feb 2009 20:32:52 +0000
+Subject: [PATCH 7/8] inet fragments: fix sparse warning: context imbalance
+Message-Id: <20090225203247.6251.30496.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
 In-Reply-To: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
@@ -11,70 +11,41 @@ Content-Transfer-Encoding: 7bit
 To: netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Impact: Attribute functions with __acquires(...) resp. __releases(...).
+Impact: Attribute function with __releases(...)
 
-Fix this sparse warnings:
-  net/wanrouter/wanproc.c:82:13: warning: context imbalance in 'r_start' - wrong count at exit
-  net/wanrouter/wanproc.c:103:13: warning: context imbalance in 'r_stop' - unexpected unlock
-  net/wanrouter/wanmain.c:765:13: warning: context imbalance in 'lock_adapter_irq' - wrong count at exit
-  net/wanrouter/wanmain.c:771:13: warning: context imbalance in 'unlock_adapter_irq' - unexpected unlock
+Fix this sparse warning:
+  net/ipv4/inet_fragment.c:276:35: warning: context imbalance in 'inet_frag_find' - unexpected unlock
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- net/wanrouter/wanmain.c |    8 ++++++--
- net/wanrouter/wanproc.c |    2 ++
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ include/net/inet_frag.h  |    3 ++-
+ net/ipv4/inet_fragment.c |    1 +
+ 2 files changed, 3 insertions(+), 1 deletions(-)
 
-diff --git a/net/wanrouter/wanmain.c b/net/wanrouter/wanmain.c
-index 39701de..466e2d2 100644
---- a/net/wanrouter/wanmain.c
-+++ b/net/wanrouter/wanmain.c
-@@ -86,8 +86,10 @@ static int wanrouter_device_del_if(struct wan_device *wandev,
+diff --git a/include/net/inet_frag.h b/include/net/inet_frag.h
+index e081eef..39f2dc9 100644
+--- a/include/net/inet_frag.h
++++ b/include/net/inet_frag.h
+@@ -61,7 +61,8 @@ void inet_frag_destroy(struct inet_frag_queue *q,
+ 				struct inet_frags *f, int *work);
+ int inet_frag_evictor(struct netns_frags *nf, struct inet_frags *f);
+ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
+-		struct inet_frags *f, void *key, unsigned int hash);
++		struct inet_frags *f, void *key, unsigned int hash)
++	__releases(&f->lock);
  
- static struct wan_device *wanrouter_find_device(char *name);
- static int wanrouter_delete_interface(struct wan_device *wandev, char *name);
--static void lock_adapter_irq(spinlock_t *lock, unsigned long *smp_flags);
--static void unlock_adapter_irq(spinlock_t *lock, unsigned long *smp_flags);
-+static void lock_adapter_irq(spinlock_t *lock, unsigned long *smp_flags)
-+	__acquires(lock);
-+static void unlock_adapter_irq(spinlock_t *lock, unsigned long *smp_flags)
-+	__releases(lock);
- 
- 
- 
-@@ -763,12 +765,14 @@ static int wanrouter_delete_interface(struct wan_device *wandev, char *name)
- }
- 
- static void lock_adapter_irq(spinlock_t *lock, unsigned long *smp_flags)
-+	__acquires(lock)
+ static inline void inet_frag_put(struct inet_frag_queue *q, struct inet_frags *f)
  {
- 	spin_lock_irqsave(lock, *smp_flags);
- }
+diff --git a/net/ipv4/inet_fragment.c b/net/ipv4/inet_fragment.c
+index 6c52e08..eaf3e2c 100644
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -267,6 +267,7 @@ static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
  
- 
- static void unlock_adapter_irq(spinlock_t *lock, unsigned long *smp_flags)
-+	__releases(lock)
+ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf,
+ 		struct inet_frags *f, void *key, unsigned int hash)
++	__releases(&f->lock)
  {
- 	spin_unlock_irqrestore(lock, *smp_flags);
- }
-diff --git a/net/wanrouter/wanproc.c b/net/wanrouter/wanproc.c
-index 267f7ff..c44d96b 100644
---- a/net/wanrouter/wanproc.c
-+++ b/net/wanrouter/wanproc.c
-@@ -80,6 +80,7 @@ static struct proc_dir_entry *proc_router;
-  *	Iterator
-  */
- static void *r_start(struct seq_file *m, loff_t *pos)
-+	__acquires(kernel_lock)
- {
- 	struct wan_device *wandev;
- 	loff_t l = *pos;
-@@ -101,6 +102,7 @@ static void *r_next(struct seq_file *m, void *v, loff_t *pos)
- }
- 
- static void r_stop(struct seq_file *m, void *v)
-+	__releases(kernel_lock)
- {
- 	unlock_kernel();
- }
+ 	struct inet_frag_queue *q;
+ 	struct hlist_node *n;
 
