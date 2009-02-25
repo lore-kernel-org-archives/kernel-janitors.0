@@ -1,90 +1,282 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 08 Feb 2009 21:46:21 +0000
-Subject: [PATCH 6/6] kernel/cred.c: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0902082245540.25891@ask.diku.dk>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Wed, 25 Feb 2009 23:11:37 +0000
+Subject: [PATCH 5/5] drivers/isdn/hardware/eicon: fix sparse warnings: Should
+Message-Id: <20090225231131.5377.81409.stgit@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20090225230737.5377.31370.stgit@localhost.localdomain>
+In-Reply-To: <20090225230737.5377.31370.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jmorris@namei.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Impact: Make symbols static.
 
-Error handling code following a kmalloc should free the allocated data.
-To avoid adding more #ifdefs, the allocation is just moved below the error
-handling code.
+Fix this sparse warnings:
+  drivers/isdn/hardware/eicon/message.c:1197:6: warning: symbol 'connect_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1414:6: warning: symbol 'connect_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1570:6: warning: symbol 'connect_a_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1576:6: warning: symbol 'disconnect_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1631:6: warning: symbol 'disconnect_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1658:6: warning: symbol 'listen_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1707:6: warning: symbol 'info_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1816:6: warning: symbol 'info_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1822:6: warning: symbol 'alert_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:1852:6: warning: symbol 'facility_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:2602:6: warning: symbol 'facility_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:2608:6: warning: symbol 'connect_b3_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:2842:6: warning: symbol 'connect_b3_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:2957:6: warning: symbol 'connect_b3_a_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:2977:6: warning: symbol 'disconnect_b3_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:3033:6: warning: symbol 'disconnect_b3_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:3089:6: warning: symbol 'data_b3_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:3166:6: warning: symbol 'data_b3_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:3199:6: warning: symbol 'reset_b3_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:3240:6: warning: symbol 'reset_b3_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:3264:6: warning: symbol 'connect_b3_t90_a_res' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:3298:6: warning: symbol 'select_b_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:8692:6: warning: symbol 'sig_req' was not declared. Should it be static?
+  drivers/isdn/hardware/eicon/message.c:8792:6: warning: symbol 'send_data' was not declared. Should it be static?
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-(
-if ((x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...)) = NULL) S
-|
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-)
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f = E
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- kernel/cred.c   |   14 ++++++++------
- 1 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/isdn/hardware/eicon/message.c |   70 ++++++++++++++++++++++-----------
+ 1 files changed, 46 insertions(+), 24 deletions(-)
 
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 3a03918..62e909b 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -219,18 +219,20 @@ struct cred *prepare_usermodehelper_creds(void)
- #endif
- 	struct cred *new;
+diff --git a/drivers/isdn/hardware/eicon/message.c b/drivers/isdn/hardware/eicon/message.c
+index 4cc94f2..31f91c1 100644
+--- a/drivers/isdn/hardware/eicon/message.c
++++ b/drivers/isdn/hardware/eicon/message.c
+@@ -1194,7 +1194,8 @@ static char hex_digit_table[0x10]  /* translation function for each message                            */
+ /*------------------------------------------------------------------*/
  
--#ifdef CONFIG_KEYS
--	tgcred = kzalloc(sizeof(*new->tgcred), GFP_ATOMIC);
--	if (!tgcred)
--		return NULL;
--#endif
--
- 	new = kmem_cache_alloc(cred_jar, GFP_ATOMIC);
- 	if (!new)
- 		return NULL;
+-byte connect_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte connect_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word ch;
+   word i;
+@@ -1411,7 +1412,8 @@ byte connect_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
+   return 2;
+ }
  
- 	memcpy(new, &init_cred, sizeof(struct cred));
+-byte connect_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte connect_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word i, Info;
+   word Reject;
+@@ -1567,13 +1569,15 @@ byte connect_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
+   return 1;
+ }
  
-+#ifdef CONFIG_KEYS
-+	tgcred = kzalloc(sizeof(*new->tgcred), GFP_ATOMIC);
-+	if (!tgcred) {
-+		kmem_cache_free(cred_jar, new);
-+		return NULL;
-+	}
-+#endif
-+
- 	atomic_set(&new->usage, 1);
- 	get_group_info(new->group_info);
- 	get_uid(new->user);
+-byte connect_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte connect_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			  PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   dbug(1,dprintf("connect_a_res"));
+   return false;
+ }
+ 
+-byte disconnect_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte disconnect_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			   PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   word Info;
+   word i;
+@@ -1628,7 +1632,8 @@ byte disconnect_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plc
+   return false;
+ }
+ 
+-byte disconnect_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte disconnect_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			   PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   dbug(1,dprintf("disconnect_res"));
+   if(plci)
+@@ -1655,7 +1660,8 @@ byte disconnect_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plc
+   return 0;
+ }
+ 
+-byte listen_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte listen_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++		       PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word Info;
+   byte i;
+@@ -1704,7 +1710,8 @@ byte listen_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, A
+   return false;
+ }
+ 
+-byte info_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte info_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++		     PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   word i;
+   API_PARSE * ai;
+@@ -1813,13 +1820,15 @@ byte info_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APP
+   return false;
+ }
+ 
+-byte info_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte info_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++		     PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   dbug(1,dprintf("info_res"));
+   return false;
+ }
+ 
+-byte alert_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte alert_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++		      PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   word Info;
+   byte ret;
+@@ -1849,7 +1858,8 @@ byte alert_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, AP
+   return ret;
+ }
+ 
+-byte facility_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte facility_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			 PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   word Info = 0;
+   word i    = 0;
+@@ -2599,13 +2609,15 @@ byte facility_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
+   return false;
+ }
+ 
+-byte facility_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte facility_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			 PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   dbug(1,dprintf("facility_res"));
+   return false;
+ }
+ 
+-byte connect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte connect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			   PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word Info = 0;
+   byte req;
+@@ -2839,7 +2851,8 @@ byte connect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plc
+   return false;
+ }
+ 
+-byte connect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte connect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			   PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word ncci;
+   API_PARSE * ncpi;
+@@ -2954,7 +2967,8 @@ byte connect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plc
+   return false;
+ }
+ 
+-byte connect_b3_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte connect_b3_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			     PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word ncci;
+ 
+@@ -2974,7 +2988,8 @@ byte connect_b3_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * p
+   return false;
+ }
+ 
+-byte disconnect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte disconnect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			      PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word Info;
+   word ncci;
+@@ -3030,7 +3045,8 @@ byte disconnect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   *
+   return false;
+ }
+ 
+-byte disconnect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte disconnect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			      PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word ncci;
+   word i;
+@@ -3086,7 +3102,8 @@ byte disconnect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   *
+   return false;
+ }
+ 
+-byte data_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte data_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   NCCI   *ncci_ptr;
+   DATA_B3_DESC   *data;
+@@ -3163,7 +3180,8 @@ byte data_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
+   return false;
+ }
+ 
+-byte data_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte data_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word n;
+   word ncci;
+@@ -3196,7 +3214,8 @@ byte data_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
+   return false;
+ }
+ 
+-byte reset_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte reset_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			 PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word Info;
+   word ncci;
+@@ -3237,7 +3256,8 @@ byte reset_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
+   return false;
+ }
+ 
+-byte reset_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte reset_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			 PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word ncci;
+ 
+@@ -3261,7 +3281,8 @@ byte reset_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
+   return false;
+ }
+ 
+-byte connect_b3_t90_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
++static byte connect_b3_t90_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++				 PLCI *plci, APPL *appl, API_PARSE *parms)
+ {
+   word ncci;
+   API_PARSE * ncpi;
+@@ -3295,7 +3316,8 @@ byte connect_b3_t90_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI
+ }
+ 
+ 
+-byte select_b_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
++static byte select_b_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
++			 PLCI *plci, APPL *appl, API_PARSE *msg)
+ {
+   word Info=0;
+   word i;
+@@ -8689,7 +8711,7 @@ static word add_modem_b23 (PLCI  * plci, API_PARSE* bp_parms)
+ /* send a request for the signaling entity                          */
+ /*------------------------------------------------------------------*/
+ 
+-void sig_req(PLCI   * plci, byte req, byte Id)
++static void sig_req(PLCI *plci, byte req, byte Id)
+ {
+   if(!plci) return;
+   if(plci->adapter->adapter_disabled) return;
+@@ -8789,7 +8811,7 @@ static void send_req(PLCI *plci)
+   dbug(1,dprintf("send_ok"));
+ }
+ 
+-void send_data(PLCI   * plci)
++static void send_data(PLCI *plci)
+ {
+   DIVA_CAPI_ADAPTER   * a;
+   DATA_B3_DESC   * data;
+
