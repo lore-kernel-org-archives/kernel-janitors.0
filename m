@@ -1,43 +1,35 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Sat, 21 Feb 2009 01:18:13 +0000
-Subject: [PATCH 1/2] KVM: fix sparse warnings: context imbalance
-Message-Id: <20090221011806.7022.88651.stgit@vmbox.hanneseder.net>
+Date: Wed, 25 Feb 2009 21:29:15 +0000
+Subject: [PATCH 5/7] sound/drivers/vx: fix sparse warning: different signedness
+Message-Id: <20090225212907.9226.10636.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090221011723.7022.97639.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090221011723.7022.97639.stgit@vmbox.hanneseder.net>
+References: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090225212551.9226.64699.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Avi Kivity <avi@redhat.com>
+To: Takashi Iwai <tiwai@suse.de>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Impact: Attribute function with __acquires(...) resp. __releases(...).
-
-Fix this sparse warnings:
-  arch/x86/kvm/i8259.c:34:13: warning: context imbalance in 'pic_lock' - wrong count at exit
-  arch/x86/kvm/i8259.c:39:13: warning: context imbalance in 'pic_unlock' - unexpected unlock
+Fix this sparse warning:
+  sound/drivers/vx/vx_uer.c:301:42: warning: incorrect type in argument 2 (different signedness)
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- arch/x86/kvm/i8259.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ sound/drivers/vx/vx_uer.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/x86/kvm/i8259.c b/arch/x86/kvm/i8259.c
-index 9316037..a095415 100644
---- a/arch/x86/kvm/i8259.c
-+++ b/arch/x86/kvm/i8259.c
-@@ -32,11 +32,13 @@
- #include <linux/kvm_host.h>
- 
- static void pic_lock(struct kvm_pic *s)
-+	__acquires(&s->lock)
+diff --git a/sound/drivers/vx/vx_uer.c b/sound/drivers/vx/vx_uer.c
+index 0e1ba9b..b0560fe 100644
+--- a/sound/drivers/vx/vx_uer.c
++++ b/sound/drivers/vx/vx_uer.c
+@@ -103,7 +103,7 @@ static void vx_write_one_cbit(struct vx_core *chip, int index, int val)
+  * returns the frequency of UER, or 0 if not sync,
+  * or a negative error code.
+  */
+-static int vx_read_uer_status(struct vx_core *chip, int *mode)
++static int vx_read_uer_status(struct vx_core *chip, unsigned int *mode)
  {
- 	spin_lock(&s->lock);
- }
+ 	int val, freq;
  
- static void pic_unlock(struct kvm_pic *s)
-+	__releases(&s->lock)
- {
- 	struct kvm *kvm = s->kvm;
- 	unsigned acks = s->pending_acks;
 
