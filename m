@@ -1,282 +1,101 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 25 Feb 2009 23:11:37 +0000
-Subject: [PATCH 5/5] drivers/isdn/hardware/eicon: fix sparse warnings: Should
-Message-Id: <20090225231131.5377.81409.stgit@localhost.localdomain>
+Date: Wed, 25 Feb 2009 20:32:39 +0000
+Subject: [PATCH 6/8] decnet: fix sparse warnings: symbol shadows an earlier one
+Message-Id: <20090225203233.6251.92817.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225230737.5377.31370.stgit@localhost.localdomain>
-In-Reply-To: <20090225230737.5377.31370.stgit@localhost.localdomain>
+References: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Impact: Make symbols static.
+Impact: Remove redundant variable declarations, resp. rename
+inner scope variable.
 
 Fix this sparse warnings:
-  drivers/isdn/hardware/eicon/message.c:1197:6: warning: symbol 'connect_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1414:6: warning: symbol 'connect_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1570:6: warning: symbol 'connect_a_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1576:6: warning: symbol 'disconnect_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1631:6: warning: symbol 'disconnect_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1658:6: warning: symbol 'listen_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1707:6: warning: symbol 'info_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1816:6: warning: symbol 'info_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1822:6: warning: symbol 'alert_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:1852:6: warning: symbol 'facility_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:2602:6: warning: symbol 'facility_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:2608:6: warning: symbol 'connect_b3_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:2842:6: warning: symbol 'connect_b3_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:2957:6: warning: symbol 'connect_b3_a_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:2977:6: warning: symbol 'disconnect_b3_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:3033:6: warning: symbol 'disconnect_b3_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:3089:6: warning: symbol 'data_b3_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:3166:6: warning: symbol 'data_b3_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:3199:6: warning: symbol 'reset_b3_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:3240:6: warning: symbol 'reset_b3_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:3264:6: warning: symbol 'connect_b3_t90_a_res' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:3298:6: warning: symbol 'select_b_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:8692:6: warning: symbol 'sig_req' was not declared. Should it be static?
-  drivers/isdn/hardware/eicon/message.c:8792:6: warning: symbol 'send_data' was not declared. Should it be static?
+  net/decnet/af_decnet.c:1252:40: warning: symbol 'skb' shadows an earlier one
+  net/decnet/af_decnet.c:1223:24: originally declared here
+  net/decnet/af_decnet.c:1582:29: warning: symbol 'val' shadows an earlier one
+  net/decnet/af_decnet.c:1527:22: originally declared here
+  net/decnet/dn_dev.c:687:21: warning: symbol 'err' shadows an earlier one
+  net/decnet/dn_dev.c:670:13: originally declared here
+  net/decnet/sysctl_net_decnet.c:182:21: warning: symbol 'len' shadows an earlier one
+  net/decnet/sysctl_net_decnet.c:173:16: originally declared here
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/isdn/hardware/eicon/message.c |   70 ++++++++++++++++++++++-----------
- 1 files changed, 46 insertions(+), 24 deletions(-)
+ net/decnet/af_decnet.c         |   17 +++++++++--------
+ net/decnet/dn_dev.c            |    1 -
+ net/decnet/sysctl_net_decnet.c |    2 +-
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/isdn/hardware/eicon/message.c b/drivers/isdn/hardware/eicon/message.c
-index 4cc94f2..31f91c1 100644
---- a/drivers/isdn/hardware/eicon/message.c
-+++ b/drivers/isdn/hardware/eicon/message.c
-@@ -1194,7 +1194,8 @@ static char hex_digit_table[0x10]  /* translation function for each message                            */
- /*------------------------------------------------------------------*/
+diff --git a/net/decnet/af_decnet.c b/net/decnet/af_decnet.c
+index 12bf7d4..b66fb84 100644
+--- a/net/decnet/af_decnet.c
++++ b/net/decnet/af_decnet.c
+@@ -1246,11 +1246,12 @@ static int dn_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
  
--byte connect_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte connect_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word ch;
-   word i;
-@@ -1411,7 +1412,8 @@ byte connect_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
-   return 2;
- }
+ 	case TIOCINQ:
+ 		lock_sock(sk);
+-		if ((skb = skb_peek(&scp->other_receive_queue)) != NULL) {
++		skb = skb_peek(&scp->other_receive_queue);
++		if (skb) {
+ 			amount = skb->len;
+ 		} else {
+-			struct sk_buff *skb = sk->sk_receive_queue.next;
+-			for(;;) {
++			skb = sk->sk_receive_queue.next;
++			for (;;) {
+ 				if (skb =
+ 				    (struct sk_buff *)&sk->sk_receive_queue)
+ 					break;
+@@ -1579,16 +1580,16 @@ static int __dn_getsockopt(struct socket *sock, int level,int optname, char __us
+ 		default:
+ #ifdef CONFIG_NETFILTER
+ 		{
+-			int val, len;
++			int ret, len;
  
--byte connect_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte connect_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word i, Info;
-   word Reject;
-@@ -1567,13 +1569,15 @@ byte connect_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
-   return 1;
- }
+ 			if(get_user(len, optlen))
+ 				return -EFAULT;
  
--byte connect_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte connect_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			  PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   dbug(1,dprintf("connect_a_res"));
-   return false;
- }
+-			val = nf_getsockopt(sk, PF_DECnet, optname,
++			ret = nf_getsockopt(sk, PF_DECnet, optname,
+ 							optval, &len);
+-			if (val >= 0)
+-				val = put_user(len, optlen);
+-			return val;
++			if (ret >= 0)
++				ret = put_user(len, optlen);
++			return ret;
+ 		}
+ #endif
+ 		case DSO_STREAM:
+diff --git a/net/decnet/dn_dev.c b/net/decnet/dn_dev.c
+index 5e21a2f..31c37ac 100644
+--- a/net/decnet/dn_dev.c
++++ b/net/decnet/dn_dev.c
+@@ -684,7 +684,6 @@ static int dn_nl_newaddr(struct sk_buff *skb, struct nlmsghdr *nlh, void *arg)
+ 		return -ENODEV;
  
--byte disconnect_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte disconnect_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			   PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   word Info;
-   word i;
-@@ -1628,7 +1632,8 @@ byte disconnect_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plc
-   return false;
- }
+ 	if ((dn_db = dev->dn_ptr) = NULL) {
+-		int err;
+ 		dn_db = dn_dev_create(dev, &err);
+ 		if (!dn_db)
+ 			return err;
+diff --git a/net/decnet/sysctl_net_decnet.c b/net/decnet/sysctl_net_decnet.c
+index 965397a..5bcd592 100644
+--- a/net/decnet/sysctl_net_decnet.c
++++ b/net/decnet/sysctl_net_decnet.c
+@@ -179,7 +179,7 @@ static int dn_node_address_handler(ctl_table *table, int write,
+ 	}
  
--byte disconnect_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte disconnect_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			   PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   dbug(1,dprintf("disconnect_res"));
-   if(plci)
-@@ -1655,7 +1660,8 @@ byte disconnect_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plc
-   return 0;
- }
+ 	if (write) {
+-		int len = (*lenp < DN_ASCBUF_LEN) ? *lenp : (DN_ASCBUF_LEN-1);
++		len = (*lenp < DN_ASCBUF_LEN) ? *lenp : (DN_ASCBUF_LEN-1);
  
--byte listen_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte listen_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+		       PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word Info;
-   byte i;
-@@ -1704,7 +1710,8 @@ byte listen_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, A
-   return false;
- }
- 
--byte info_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte info_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+		     PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   word i;
-   API_PARSE * ai;
-@@ -1813,13 +1820,15 @@ byte info_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APP
-   return false;
- }
- 
--byte info_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte info_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+		     PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   dbug(1,dprintf("info_res"));
-   return false;
- }
- 
--byte alert_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte alert_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+		      PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   word Info;
-   byte ret;
-@@ -1849,7 +1858,8 @@ byte alert_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, AP
-   return ret;
- }
- 
--byte facility_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte facility_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			 PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   word Info = 0;
-   word i    = 0;
-@@ -2599,13 +2609,15 @@ byte facility_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
-   return false;
- }
- 
--byte facility_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte facility_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			 PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   dbug(1,dprintf("facility_res"));
-   return false;
- }
- 
--byte connect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte connect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			   PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word Info = 0;
-   byte req;
-@@ -2839,7 +2851,8 @@ byte connect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plc
-   return false;
- }
- 
--byte connect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte connect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			   PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word ncci;
-   API_PARSE * ncpi;
-@@ -2954,7 +2967,8 @@ byte connect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plc
-   return false;
- }
- 
--byte connect_b3_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte connect_b3_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			     PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word ncci;
- 
-@@ -2974,7 +2988,8 @@ byte connect_b3_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * p
-   return false;
- }
- 
--byte disconnect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte disconnect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			      PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word Info;
-   word ncci;
-@@ -3030,7 +3045,8 @@ byte disconnect_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   *
-   return false;
- }
- 
--byte disconnect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte disconnect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			      PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word ncci;
-   word i;
-@@ -3086,7 +3102,8 @@ byte disconnect_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   *
-   return false;
- }
- 
--byte data_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte data_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   NCCI   *ncci_ptr;
-   DATA_B3_DESC   *data;
-@@ -3163,7 +3180,8 @@ byte data_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
-   return false;
- }
- 
--byte data_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte data_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word n;
-   word ncci;
-@@ -3196,7 +3214,8 @@ byte data_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
-   return false;
- }
- 
--byte reset_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte reset_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			 PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word Info;
-   word ncci;
-@@ -3237,7 +3256,8 @@ byte reset_b3_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
-   return false;
- }
- 
--byte reset_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte reset_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			 PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word ncci;
- 
-@@ -3261,7 +3281,8 @@ byte reset_b3_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci,
-   return false;
- }
- 
--byte connect_b3_t90_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * parms)
-+static byte connect_b3_t90_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+				 PLCI *plci, APPL *appl, API_PARSE *parms)
- {
-   word ncci;
-   API_PARSE * ncpi;
-@@ -3295,7 +3316,8 @@ byte connect_b3_t90_a_res(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI
- }
- 
- 
--byte select_b_req(dword Id, word Number, DIVA_CAPI_ADAPTER   * a, PLCI   * plci, APPL   * appl, API_PARSE * msg)
-+static byte select_b_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
-+			 PLCI *plci, APPL *appl, API_PARSE *msg)
- {
-   word Info=0;
-   word i;
-@@ -8689,7 +8711,7 @@ static word add_modem_b23 (PLCI  * plci, API_PARSE* bp_parms)
- /* send a request for the signaling entity                          */
- /*------------------------------------------------------------------*/
- 
--void sig_req(PLCI   * plci, byte req, byte Id)
-+static void sig_req(PLCI *plci, byte req, byte Id)
- {
-   if(!plci) return;
-   if(plci->adapter->adapter_disabled) return;
-@@ -8789,7 +8811,7 @@ static void send_req(PLCI *plci)
-   dbug(1,dprintf("send_ok"));
- }
- 
--void send_data(PLCI   * plci)
-+static void send_data(PLCI *plci)
- {
-   DIVA_CAPI_ADAPTER   * a;
-   DATA_B3_DESC   * data;
+ 		if (copy_from_user(addr, buffer, len))
+ 			return -EFAULT;
 
