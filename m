@@ -1,35 +1,45 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Tue, 10 Feb 2009 18:44:45 +0000
-Subject: [PATCH 3/3] trace: fix sparce warning: attribute function with
-Message-Id: <20090210184443.28131.8584.stgit@vmbox.hanneseder.net>
+Date: Wed, 25 Feb 2009 20:31:24 +0000
+Subject: [PATCH 1/8] net/802: fix sparse warnings: context imbalance
+Message-Id: <20090225203118.6251.34287.stgit@vmbox.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090210184214.28131.90564.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090210184214.28131.90564.stgit@vmbox.hanneseder.net>
+References: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090225203012.6251.32002.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@elte.hu>
+To: netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix this sparse warning:
-  kernel/trace/trace.c:458:9: warning: context imbalance in 'register_tracer' - unexpected unlock
+Impact: Attribute function with __acquires(...) resp. __releases(...).
+
+Fix this sparse warnings:
+  net/802/tr.c:492:21: warning: context imbalance in 'rif_seq_start' - wrong count at exit
+  net/802/tr.c:519:13: warning: context imbalance in 'rif_seq_stop' - unexpected unlock
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- kernel/trace/trace.c |    2 ++
+ net/802/tr.c |    2 ++
  1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 16b8be4..5762fa5 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -439,6 +439,8 @@ update_max_tr_single(struct trace_array *tr, struct task_struct *tsk, int cpu)
-  * Register a new plugin tracer.
-  */
- int register_tracer(struct tracer *type)
-+__releases(kernel_lock)
-+__acquires(kernel_lock)
+diff --git a/net/802/tr.c b/net/802/tr.c
+index 158150f..dab6334 100644
+--- a/net/802/tr.c
++++ b/net/802/tr.c
+@@ -486,6 +486,7 @@ static struct rif_cache *rif_get_idx(loff_t pos)
+ }
+ 
+ static void *rif_seq_start(struct seq_file *seq, loff_t *pos)
++	__acquires(&rif_lock)
  {
- 	struct tracer *t;
- 	int len;
+ 	spin_lock_irq(&rif_lock);
+ 
+@@ -517,6 +518,7 @@ static void *rif_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ }
+ 
+ static void rif_seq_stop(struct seq_file *seq, void *v)
++	__releases(&rif_lock)
+ {
+ 	spin_unlock_irq(&rif_lock);
+ }
 
