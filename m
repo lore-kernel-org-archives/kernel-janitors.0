@@ -1,93 +1,81 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Tue, 10 Feb 2009 18:44:34 +0000
-Subject: [PATCH 2/3] trace: fix sparse warnings: fix (un-)signedness
-Message-Id: <20090210184420.28131.58330.stgit@vmbox.hanneseder.net>
+Date: Fri, 27 Feb 2009 00:55:30 +0000
+Subject: Re: [PATCH 3/3] drivers/gpu/drm: comment out dead code
+Message-Id: <154e089b0902261655j17cf1fc3vaf254d0c2af74616@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090210184214.28131.90564.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090210184214.28131.90564.stgit@vmbox.hanneseder.net>
+References: <20090118152725.4179.40835.stgit@vmbox.hanneseder.net>
+	 <20090118152856.4179.91855.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090118152856.4179.91855.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@elte.hu>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: dri-devel@lists.sourceforge.net, Jesse Barnes <jbarnes@virtuousgeek.org>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix this sparse warnings:
-  kernel/trace/ring_buffer.c:70:37: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/ring_buffer.c:84:39: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/ring_buffer.c:96:43: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/ring_buffer.c:2475:13: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/ring_buffer.c:2475:13: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/ring_buffer.c:2478:42: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/ring_buffer.c:2478:42: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/ring_buffer.c:2500:40: warning: incorrect type in argument 3 (different signedness)
-  kernel/trace/ring_buffer.c:2505:44: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/ring_buffer.c:2507:46: warning: incorrect type in argument 2 (different signedness)
-  kernel/trace/trace.c:2130:40: warning: incorrect type in argument 3 (different signedness)
-  kernel/trace/trace.c:2280:40: warning: incorrect type in argument 3 (different signedness)
+[Added To]
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
- kernel/trace/ring_buffer.c |    8 ++++----
- kernel/trace/trace.c       |    6 +++---
- 2 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index aee76b3..6249e71 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -57,7 +57,7 @@ enum {
- 	RB_BUFFERS_DISABLED	= 1 << RB_BUFFERS_DISABLED_BIT,
- };
- 
--static long ring_buffer_flags __read_mostly = RB_BUFFERS_ON;
-+static unsigned long ring_buffer_flags __read_mostly = RB_BUFFERS_ON;
- 
- /**
-  * tracing_on - enable all tracing buffers
-@@ -2468,7 +2468,7 @@ static ssize_t
- rb_simple_read(struct file *filp, char __user *ubuf,
- 	       size_t cnt, loff_t *ppos)
- {
--	long *p = filp->private_data;
-+	unsigned long *p = filp->private_data;
- 	char buf[64];
- 	int r;
- 
-@@ -2484,9 +2484,9 @@ static ssize_t
- rb_simple_write(struct file *filp, const char __user *ubuf,
- 		size_t cnt, loff_t *ppos)
- {
--	long *p = filp->private_data;
-+	unsigned long *p = filp->private_data;
- 	char buf[64];
--	long val;
-+	unsigned long val;
- 	int ret;
- 
- 	if (cnt >= sizeof(buf))
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 0e7c84f..16b8be4 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2118,7 +2118,7 @@ tracing_ctrl_write(struct file *filp, const char __user *ubuf,
- {
- 	struct trace_array *tr = filp->private_data;
- 	char buf[64];
--	long val;
-+	unsigned long val;
- 	int ret;
- 
- 	if (cnt >= sizeof(buf))
-@@ -2266,9 +2266,9 @@ static ssize_t
- tracing_max_lat_write(struct file *filp, const char __user *ubuf,
- 		      size_t cnt, loff_t *ppos)
- {
--	long *ptr = filp->private_data;
-+	unsigned long *ptr = filp->private_data;
- 	char buf[64];
--	long val;
-+	unsigned long val;
- 	int ret;
- 
- 	if (cnt >= sizeof(buf))
-
+On Sun, Jan 18, 2009 at 4:28 PM, Hannes Eder <hannes@hanneseder.net> wrote:
+> The functions:
+>
+> =A0drm_crtc_from_fb
+> =A0drm_mode_validate_clocks
+>
+> are not used, so comment them out.
+>
+> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+> ---
+> =A0drivers/gpu/drm/drm_crtc.c =A0| =A0 =A02 ++
+> =A0drivers/gpu/drm/drm_modes.c | =A0 =A02 ++
+> =A02 files changed, 4 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+> index d378306..c44bbde 100644
+> --- a/drivers/gpu/drm/drm_crtc.c
+> +++ b/drivers/gpu/drm/drm_crtc.c
+> @@ -254,6 +254,7 @@ void *drm_mode_object_find(struct drm_device *dev, ui=
+nt32_t id, uint32_t type)
+> =A0}
+> =A0EXPORT_SYMBOL(drm_mode_object_find);
+>
+> +#ifdef UNUSED
+> =A0/**
+> =A0* drm_crtc_from_fb - find the CRTC structure associated with an fb
+> =A0* @dev: DRM device
+> @@ -278,6 +279,7 @@ static struct drm_crtc *drm_crtc_from_fb(struct drm_d=
+evice *dev,
+> =A0 =A0 =A0 =A0}
+> =A0 =A0 =A0 =A0return NULL;
+> =A0}
+> +#endif /* UNUSED */
+>
+> =A0/**
+> =A0* drm_framebuffer_init - initialize a framebuffer
+> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+> index c0cfe39..8ebcf51 100644
+> --- a/drivers/gpu/drm/drm_modes.c
+> +++ b/drivers/gpu/drm/drm_modes.c
+> @@ -341,6 +341,7 @@ void drm_mode_validate_size(struct drm_device *dev,
+> =A0}
+> =A0EXPORT_SYMBOL(drm_mode_validate_size);
+>
+> +#ifdef UNUSED
+> =A0/**
+> =A0* drm_mode_validate_clocks - validate modes against clock limits
+> =A0* @dev: DRM device
+> @@ -376,6 +377,7 @@ static void drm_mode_validate_clocks(struct drm_devic=
+e *dev,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mode->status =3D MODE_CLOC=
+K_RANGE;
+> =A0 =A0 =A0 =A0}
+> =A0}
+> +#endif /* UNUSED */
+>
+> =A0/**
+> =A0* drm_mode_prune_invalid - remove invalid modes from mode list
+>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
