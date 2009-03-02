@@ -1,30 +1,33 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 31 Mar 2009 14:22:42 +0000
-Subject: Re: is this list still active?
-Message-Id: <49D22732.5060000@bfs.de>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 02 Mar 2009 00:00:41 +0000
+Subject: [PATCH] IOMMU: use ANSI style function declaration for 'iommu_found'
+Message-Id: <20090302000010.14884.9400.stgit@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.2.00.0903310628510.14399@localhost.localdomain>
-In-Reply-To: <alpine.LFD.2.00.0903310628510.14399@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-yes,
-just yesterday we had a mail
+Fix this sparse warning:
+  drivers/base/iommu.c:34:18: warning: non-ANSI function declaration of function 'iommu_found'
 
-called "Re: [PATCH 1/2] x86: Add getter/setter static inlines for x86 	descriptors"
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ drivers/base/iommu.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-did you see it ?
+diff --git a/drivers/base/iommu.c b/drivers/base/iommu.c
+index 5e039d4..c2d1eed 100644
+--- a/drivers/base/iommu.c
++++ b/drivers/base/iommu.c
+@@ -31,7 +31,7 @@ void register_iommu(struct iommu_ops *ops)
+ 	iommu_ops = ops;
+ }
+ 
+-bool iommu_found()
++bool iommu_found(void)
+ {
+ 	return iommu_ops != NULL;
+ }
 
-re,
- wh
-
-
-Robert P. J. Day schrieb:
->   i haven't seen much activity here lately.  just curious.
-> 
-> rday
-> --
->
-> 
