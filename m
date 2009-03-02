@@ -1,53 +1,77 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 05 Mar 2009 19:53:42 +0000
-Subject: [PATCH v3 02/15] NULL noise: arch/x86/kernel/amd_iommu*.c
-Message-Id: <20090305195228.2407.4911.stgit@f10box.hanneseder.net>
+Date: Mon, 02 Mar 2009 21:34:37 +0000
+Subject: [PATCH 11/16 v2] NULL noise: drivers/ide/ide-*.c
+Message-Id: <20090302213436.27388.13985.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net> <20090305191312.30062.28919.stgit@f10box.hanneseder.net>
-In-Reply-To: <20090305191312.30062.28919.stgit@f10box.hanneseder.net>
+In-Reply-To: <20090227012837.GQ28946@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: trivial@kernel.org
-Cc: Joerg Roedel <joerg.roedel@amd.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix this sparse warning(s):
-  arch/x86/kernel/amd_iommu_init.c:901:37: warning: Using plain integer as NULL pointer
-  arch/x86/kernel/amd_iommu.c:1522:24: warning: Using plain integer as NULL pointer
+Fix this sparse warnings:
+  drivers/ide/ide-disk_proc.c:130:11: warning: Using plain integer as NULL pointer
+  drivers/ide/ide-floppy_proc.c:32:11: warning: Using plain integer as NULL pointer
+  drivers/ide/ide-proc.c:234:11: warning: Using plain integer as NULL pointer
+  drivers/ide/ide-tape.c:2141:11: warning: Using plain integer as NULL pointer
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
 v2: other subject, as suggested by Al Viro
-v3: no need to init the variable (thanks to Joe Perches)
 
- arch/x86/kernel/amd_iommu.c      |    2 +-
- arch/x86/kernel/amd_iommu_init.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/ide/ide-disk_proc.c   |    2 +-
+ drivers/ide/ide-floppy_proc.c |    2 +-
+ drivers/ide/ide-proc.c        |    2 +-
+ drivers/ide/ide-tape.c        |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/amd_iommu.c b/arch/x86/kernel/amd_iommu.c
-index 008e522..3f6e1c8 100644
---- a/arch/x86/kernel/amd_iommu.c
-+++ b/arch/x86/kernel/amd_iommu.c
-@@ -1519,7 +1519,7 @@ static void *alloc_coherent(struct device *dev, size_t size,
- 	flag |= __GFP_ZERO;
- 	virt_addr = (void *)__get_free_pages(flag, get_order(size));
- 	if (!virt_addr)
--		return 0;
-+		return NULL;
+diff --git a/drivers/ide/ide-disk_proc.c b/drivers/ide/ide-disk_proc.c
+index 3f2a078..eaea3be 100644
+--- a/drivers/ide/ide-disk_proc.c
++++ b/drivers/ide/ide-disk_proc.c
+@@ -127,5 +127,5 @@ const struct ide_proc_devset ide_disk_settings[] = {
+ 	IDE_PROC_DEVSET(multcount,	0,    16),
+ 	IDE_PROC_DEVSET(nowerr,		0,     1),
+ 	IDE_PROC_DEVSET(wcache,		0,     1),
+-	{ 0 },
++	{ NULL },
+ };
+diff --git a/drivers/ide/ide-floppy_proc.c b/drivers/ide/ide-floppy_proc.c
+index 3ec762c..fcd4d81 100644
+--- a/drivers/ide/ide-floppy_proc.c
++++ b/drivers/ide/ide-floppy_proc.c
+@@ -29,5 +29,5 @@ const struct ide_proc_devset ide_floppy_settings[] = {
+ 	IDE_PROC_DEVSET(bios_head, 0,  255),
+ 	IDE_PROC_DEVSET(bios_sect, 0,   63),
+ 	IDE_PROC_DEVSET(ticks,	   0,  255),
+-	{ 0 },
++	{ NULL },
+ };
+diff --git a/drivers/ide/ide-proc.c b/drivers/ide/ide-proc.c
+index 0ee8887..10a88bf 100644
+--- a/drivers/ide/ide-proc.c
++++ b/drivers/ide/ide-proc.c
+@@ -231,7 +231,7 @@ static const struct ide_proc_devset ide_generic_settings[] = {
+ 	IDE_PROC_DEVSET(pio_mode, 0, 255),
+ 	IDE_PROC_DEVSET(unmaskirq, 0, 1),
+ 	IDE_PROC_DEVSET(using_dma, 0, 1),
+-	{ 0 },
++	{ NULL },
+ };
  
- 	paddr = virt_to_phys(virt_addr);
+ static void proc_ide_settings_warn(void)
+diff --git a/drivers/ide/ide-tape.c b/drivers/ide/ide-tape.c
+index 733cb51..cafc67d 100644
+--- a/drivers/ide/ide-tape.c
++++ b/drivers/ide/ide-tape.c
+@@ -2142,7 +2142,7 @@ static const struct ide_proc_devset idetape_settings[] = {
+ 	__IDE_PROC_DEVSET(speed,	0, 0xffff, NULL, NULL),
+ 	__IDE_PROC_DEVSET(tdsc,		IDETAPE_DSC_RW_MIN, IDETAPE_DSC_RW_MAX,
+ 					mulf_tdsc, divf_tdsc),
+-	{ 0 },
++	{ NULL },
+ };
+ #endif
  
-diff --git a/arch/x86/kernel/amd_iommu_init.c b/arch/x86/kernel/amd_iommu_init.c
-index 42c33ce..9bccd0f 100644
---- a/arch/x86/kernel/amd_iommu_init.c
-+++ b/arch/x86/kernel/amd_iommu_init.c
-@@ -898,7 +898,7 @@ static int __init init_exclusion_range(struct ivmd_header *m)
- /* called for unity map ACPI definition */
- static int __init init_unity_map_range(struct ivmd_header *m)
- {
--	struct unity_map_entry *e = 0;
-+	struct unity_map_entry *e;
- 
- 	e = kzalloc(sizeof(*e), GFP_KERNEL);
- 	if (e = NULL)
 
