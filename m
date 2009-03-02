@@ -1,36 +1,78 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Date: Tue, 17 Mar 2009 14:27:29 +0000
-Subject: Re: [PATCH v2 06/15] NULL noise: drivers/mtd/tests/mtd_*test.c
-Message-Id: <49BFB351.6020301@nokia.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Mon, 02 Mar 2009 23:53:43 +0000
+Subject: [PATCH 04/16 v3] NULL noise: drivers/ide/ide-*.c
+Message-Id: <20090302235343.28697.19909.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
-	<20090305191457.30062.43881.stgit@f10box.hanneseder.net>
-	<49B0BE07.5080803@nokia.com>
-	<alpine.LNX.2.00.0903171421200.11733@jikos.suse.cz>
-In-Reply-To: <alpine.LNX.2.00.0903171421200.11733@jikos.suse.cz>
+In-Reply-To: <20090302213436.27388.13985.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Hannes Eder <hannes@hanneseder.net>, "trivial@kernel.org" <trivial@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
 
-Jiri Kosina wrote:
->>>   drivers/mtd/tests/mtd_oobtest.c:673:41: warning: Using plain integer as
->>> NULL pointer
->>>   drivers/mtd/tests/mtd_oobtest.c:701:33: warning: Using plain integer as
->>> NULL pointer
->>>   drivers/mtd/tests/mtd_readtest.c:74:41: warning: Using plain integer as
->>> NULL pointer
->>>
->>> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
->>> Acked-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
->> Yes, please, take this patch.
-> 
-> Doesn't seem to be present in current -next/-mmotim, applied to trivial
-> tree.
+Fix this sparse warnings:
+  drivers/ide/ide-disk_proc.c:130:11: warning: Using plain integer as NULL pointer
+  drivers/ide/ide-floppy_proc.c:32:11: warning: Using plain integer as NULL pointer
+  drivers/ide/ide-proc.c:234:11: warning: Using plain integer as NULL pointer
+  drivers/ide/ide-tape.c:2141:11: warning: Using plain integer as NULL pointer
 
-Fine with me. (CCed linux-mtd).
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+v2: other subject, as suggested by Al Viro
+v3: ups. ... send it to the right recipient, fix patch number
+---
+ drivers/ide/ide-disk_proc.c   |    2 +-
+ drivers/ide/ide-floppy_proc.c |    2 +-
+ drivers/ide/ide-proc.c        |    2 +-
+ drivers/ide/ide-tape.c        |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
--- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+diff --git a/drivers/ide/ide-disk_proc.c b/drivers/ide/ide-disk_proc.c
+index 3f2a078..eaea3be 100644
+--- a/drivers/ide/ide-disk_proc.c
++++ b/drivers/ide/ide-disk_proc.c
+@@ -127,5 +127,5 @@ const struct ide_proc_devset ide_disk_settings[] = {
+ 	IDE_PROC_DEVSET(multcount,	0,    16),
+ 	IDE_PROC_DEVSET(nowerr,		0,     1),
+ 	IDE_PROC_DEVSET(wcache,		0,     1),
+-	{ 0 },
++	{ NULL },
+ };
+diff --git a/drivers/ide/ide-floppy_proc.c b/drivers/ide/ide-floppy_proc.c
+index 3ec762c..fcd4d81 100644
+--- a/drivers/ide/ide-floppy_proc.c
++++ b/drivers/ide/ide-floppy_proc.c
+@@ -29,5 +29,5 @@ const struct ide_proc_devset ide_floppy_settings[] = {
+ 	IDE_PROC_DEVSET(bios_head, 0,  255),
+ 	IDE_PROC_DEVSET(bios_sect, 0,   63),
+ 	IDE_PROC_DEVSET(ticks,	   0,  255),
+-	{ 0 },
++	{ NULL },
+ };
+diff --git a/drivers/ide/ide-proc.c b/drivers/ide/ide-proc.c
+index 0ee8887..10a88bf 100644
+--- a/drivers/ide/ide-proc.c
++++ b/drivers/ide/ide-proc.c
+@@ -231,7 +231,7 @@ static const struct ide_proc_devset ide_generic_settings[] = {
+ 	IDE_PROC_DEVSET(pio_mode, 0, 255),
+ 	IDE_PROC_DEVSET(unmaskirq, 0, 1),
+ 	IDE_PROC_DEVSET(using_dma, 0, 1),
+-	{ 0 },
++	{ NULL },
+ };
+ 
+ static void proc_ide_settings_warn(void)
+diff --git a/drivers/ide/ide-tape.c b/drivers/ide/ide-tape.c
+index 733cb51..cafc67d 100644
+--- a/drivers/ide/ide-tape.c
++++ b/drivers/ide/ide-tape.c
+@@ -2142,7 +2142,7 @@ static const struct ide_proc_devset idetape_settings[] = {
+ 	__IDE_PROC_DEVSET(speed,	0, 0xffff, NULL, NULL),
+ 	__IDE_PROC_DEVSET(tdsc,		IDETAPE_DSC_RW_MIN, IDETAPE_DSC_RW_MAX,
+ 					mulf_tdsc, divf_tdsc),
+-	{ 0 },
++	{ NULL },
+ };
+ #endif
+ 
+
