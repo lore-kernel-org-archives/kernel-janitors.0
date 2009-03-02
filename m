@@ -1,65 +1,73 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 05 Mar 2009 21:55:04 +0000
-Subject: [PATCH v3 09/15] NULL noise: drivers/scsi/FlashPoint.c
-Message-Id: <20090305215455.23866.57598.stgit@f10box.hanneseder.net>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Date: Mon, 02 Mar 2009 12:01:22 +0000
+Subject: Re: [PATCH 1/2] GFS2: fix sparse warnings: constant is so big it
+Message-Id: <1235995282.9571.822.camel@quoit>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
-	     <20090305191602.30062.71301.stgit@f10box.hanneseder.net>
-	      <1236283546.5626.45.camel@localhost.localdomain>
-	       <154e089b0903051215q1216aa53icd41556e2af8b234@mail.gmail.com>
-In-Reply-To: <154e089b0903051215q1216aa53icd41556e2af8b234@mail.gmail.com>
+References: <20090221011033.5075.95929.stgit@vmbox.hanneseder.net>
+	 <20090221011125.5075.23703.stgit@vmbox.hanneseder.net>
+In-Reply-To: <20090221011125.5075.23703.stgit@vmbox.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: trivial@kernel.org
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>
+To: Hannes Eder <hannes@hanneseder.net>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix this sparse warnings:
-  drivers/scsi/FlashPoint.c:906:9: warning: Using plain integer as NULL pointer
-  drivers/scsi/FlashPoint.c:907:53: warning: Using plain integer as NULL pointer
-  drivers/scsi/FlashPoint.c:922:1: warning: Using plain integer as NULL pointer
+Hi,
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
----
-v2: fix checkpatch.pl issue.
-v2.1: other subject, as suggested by Al Viro
-v3: no need to explicitly initialize the variables, as they are in the
-    .bss section anyway (pointed out by James Bottomley)
+Sorry for the delay - I'm back from holiday now and I've applied this
+patch to the -nmw git tree. Thanks,
 
- drivers/scsi/FlashPoint.c |   16 +++++++---------
- 1 files changed, 7 insertions(+), 9 deletions(-)
+Steve.
 
-diff --git a/drivers/scsi/FlashPoint.c b/drivers/scsi/FlashPoint.c
-index b898d38..ac67307 100644
---- a/drivers/scsi/FlashPoint.c
-+++ b/drivers/scsi/FlashPoint.c
-@@ -902,13 +902,12 @@ static unsigned char FPT_scmachid(unsigned char p_card,
- static void FPT_autoCmdCmplt(unsigned long p_port, unsigned char p_card);
- static void FPT_autoLoadDefaultMap(unsigned long p_port);
- 
--static struct sccb_mgr_tar_info FPT_sccbMgrTbl[MAX_CARDS][MAX_SCSI_TAR] -    { {{0}} };
--static struct sccb_card FPT_BL_Card[MAX_CARDS] = { {0} };
--static SCCBSCAM_INFO FPT_scamInfo[MAX_SCSI_TAR] = { {{0}} };
--static struct nvram_info FPT_nvRamInfo[MAX_MB_CARDS] = { {0} };
-+static struct sccb_mgr_tar_info FPT_sccbMgrTbl[MAX_CARDS][MAX_SCSI_TAR];
-+static struct sccb_card FPT_BL_Card[MAX_CARDS];
-+static SCCBSCAM_INFO FPT_scamInfo[MAX_SCSI_TAR];
-+static struct nvram_info FPT_nvRamInfo[MAX_MB_CARDS];
- 
--static unsigned char FPT_mbCards = 0;
-+static unsigned char FPT_mbCards;
- static unsigned char FPT_scamHAString[]      { 0x63, 0x07, 'B', 'U', 'S', 'L', 'O', 'G', 'I', 'C',
- 	' ', 'B', 'T', '-', '9', '3', '0',
-@@ -916,10 +915,9 @@ static unsigned char FPT_scamHAString[]  	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
- };
- 
--static unsigned short FPT_default_intena = 0;
-+static unsigned short FPT_default_intena;
- 
--static void (*FPT_s_PhaseTbl[8]) (unsigned long, unsigned char) = {
--0};
-+static void (*FPT_s_PhaseTbl[8]) (unsigned long, unsigned char);
- 
- /*---------------------------------------------------------------------
-  *
+On Sat, 2009-02-21 at 02:11 +0100, Hannes Eder wrote:
+> Fix this sparse warnings:
+>   fs/gfs2/rgrp.c:156:23: warning: constant 0xffffffffffffffff is so big it is unsigned long long
+>   fs/gfs2/rgrp.c:157:23: warning: constant 0xaaaaaaaaaaaaaaaa is so big it is unsigned long long
+>   fs/gfs2/rgrp.c:158:23: warning: constant 0x5555555555555555 is so big it is long long
+>   fs/gfs2/rgrp.c:194:20: warning: constant 0x5555555555555555 is so big it is long long
+>   fs/gfs2/rgrp.c:204:44: warning: constant 0x5555555555555555 is so big it is long long
+> 
+> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+> ---
+>  fs/gfs2/rgrp.c |   12 ++++++------
+>  1 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
+> index c0abe69..34691d7 100644
+> --- a/fs/gfs2/rgrp.c
+> +++ b/fs/gfs2/rgrp.c
+> @@ -153,10 +153,10 @@ static inline u64 gfs2_bit_search(const __le64 *ptr, u64 mask, u8 state)
+>  {
+>  	u64 tmp;
+>  	static const u64 search[] = {
+> -		[0] = 0xffffffffffffffff,
+> -		[1] = 0xaaaaaaaaaaaaaaaa,
+> -		[2] = 0x5555555555555555,
+> -		[3] = 0x0000000000000000,
+> +		[0] = 0xffffffffffffffffULL,
+> +		[1] = 0xaaaaaaaaaaaaaaaaULL,
+> +		[2] = 0x5555555555555555ULL,
+> +		[3] = 0x0000000000000000ULL,
+>  	};
+>  	tmp = le64_to_cpu(*ptr) ^ search[state];
+>  	tmp &= (tmp >> 1);
+> @@ -191,7 +191,7 @@ u32 gfs2_bitfit(const u8 *buf, const unsigned int len, u32 goal, u8 state)
+>  	const __le64 *ptr = ((__le64 *)buf) + (goal >> 5);
+>  	const __le64 *end = (__le64 *)(buf + ALIGN(len, sizeof(u64)));
+>  	u64 tmp;
+> -	u64 mask = 0x5555555555555555;
+> +	u64 mask = 0x5555555555555555ULL;
+>  	u32 bit;
+>  
+>  	BUG_ON(state > 3);
+> @@ -201,7 +201,7 @@ u32 gfs2_bitfit(const u8 *buf, const unsigned int len, u32 goal, u8 state)
+>  	tmp = gfs2_bit_search(ptr, mask, state);
+>  	ptr++;
+>  	while(tmp = 0 && ptr < end) {
+> -		tmp = gfs2_bit_search(ptr, 0x5555555555555555, state);
+> +		tmp = gfs2_bit_search(ptr, 0x5555555555555555ULL, state);
+>  		ptr++;
+>  	}
+>  	/* Mask off any bits which are more than len bytes from the start */
+> 
 
