@@ -1,58 +1,88 @@
-From: Manish Katiyar <mkatiyar@gmail.com>
-Date: Tue, 03 Mar 2009 16:53:47 +0000
-Subject: Re: [PATCH] Replace deprecated __initcall with device_initcall and
-Message-Id: <ea11fea30903030853x12f0863ev1ed6d7b7cf100597@mail.gmail.com>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Wed, 04 Mar 2009 18:34:10 +0000
+Subject: [PATCH 2/3] xfs: make symbols static
+Message-Id: <20090304183356.525.64082.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ea11fea30902160824l22b10dcblc89c718015e156c8@mail.gmail.com>
-In-Reply-To: <ea11fea30902160824l22b10dcblc89c718015e156c8@mail.gmail.com>
+References: <20090304183136.525.13769.stgit@f10box.hanneseder.net>
+In-Reply-To: <20090304183136.525.13769.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Felix Blyakher <felixb@sgi.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-On Tue, Mar 3, 2009 at 9:52 PM, Stefan Richter
-<stefanr@s5r6.in-berlin.de> wrote:
-> Manish Katiyar wrote:
->> On Fri, Feb 20, 2009 at 8:19 PM, Manish Katiyar <mkatiyar@gmail.com> wro=
-te:
->>> Below is the updated patch
->>
->> Hi Stefan,
->>
->> Has this been accepted, or is it still not worth it ?
->
-> Your last posting looked good to me. =A0But I am not the one to take it;
+Instead of the keyword 'static' the macro 'STATIC' is used, so the
+symbols are still global with CONFIG_XFS_DEBUG.
 
-Thanks a lot for your response Stefan.
+Fix this sparse warnings:
+  fs/xfs/linux-2.6/xfs_super.c:638:1: warning: symbol 'xfs_blkdev_get' was not declared. Should it be static?
+  fs/xfs/linux-2.6/xfs_super.c:655:1: warning: symbol 'xfs_blkdev_put' was not declared. Should it be static?
+  fs/xfs/linux-2.6/xfs_super.c:876:1: warning: symbol 'xfsaild' was not declared. Should it be static?
+  fs/xfs/xfs_bmap.c:6208:1: warning: symbol 'xfs_check_block' was not declared. Should it be static?
+  fs/xfs/xfs_dir2_leaf.c:553:1: warning: symbol 'xfs_dir2_leaf_check' was not declared. Should it be static?
 
-I understand that this doesn't lie in purview of Ingo's interest, but
-since one of the kernel maintainers is already in the mail chain, Ingo
-can it be pulled by you, else I will send it to andrew or probably
-trivial@kernel.org.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+ fs/xfs/linux-2.6/xfs_super.c |    6 +++---
+ fs/xfs/xfs_bmap.c            |    2 +-
+ fs/xfs/xfs_dir2_leaf.c       |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-> I
-> just looked at the thread coincidentally.
->
-> One thing that wasn't answered in the discussion is whether
-> device_initcall is not only the equivalent but also the /best/
-> replacement of __initcall, specifically for kallsyms_init. =A0(Maybe it
-> should be something else; then a mechanical replacement by
-> device_initcall would lower awareness of the issue --- if there is an
-> issue. =A0There probably isn't, but I don't know.)
-hmm... I don't know much about this, and googling doesn't give
-anything significant.
+diff --git a/fs/xfs/linux-2.6/xfs_super.c b/fs/xfs/linux-2.6/xfs_super.c
+index bc1e647..9633c3c 100644
+--- a/fs/xfs/linux-2.6/xfs_super.c
++++ b/fs/xfs/linux-2.6/xfs_super.c
+@@ -633,7 +633,7 @@ xfs_max_file_offset(
+ 	return (((__uint64_t)pagefactor) << bitshift) - 1;
+ }
+ 
+-int
++STATIC int
+ xfs_blkdev_get(
+ 	xfs_mount_t		*mp,
+ 	const char		*name,
+@@ -650,7 +650,7 @@ xfs_blkdev_get(
+ 	return -error;
+ }
+ 
+-void
++STATIC void
+ xfs_blkdev_put(
+ 	struct block_device	*bdev)
+ {
+@@ -871,7 +871,7 @@ xfsaild_wakeup(
+ 	wake_up_process(ailp->xa_task);
+ }
+ 
+-int
++STATIC int
+ xfsaild(
+ 	void	*data)
+ {
+diff --git a/fs/xfs/xfs_bmap.c b/fs/xfs/xfs_bmap.c
+index c852cd6..27062d0 100644
+--- a/fs/xfs/xfs_bmap.c
++++ b/fs/xfs/xfs_bmap.c
+@@ -6204,7 +6204,7 @@ xfs_bmap_get_bp(
+ 	return(bp);
+ }
+ 
+-void
++STATIC void
+ xfs_check_block(
+ 	struct xfs_btree_block	*block,
+ 	xfs_mount_t		*mp,
+diff --git a/fs/xfs/xfs_dir2_leaf.c b/fs/xfs/xfs_dir2_leaf.c
+index ef805a3..6427ff1 100644
+--- a/fs/xfs/xfs_dir2_leaf.c
++++ b/fs/xfs/xfs_dir2_leaf.c
+@@ -549,7 +549,7 @@ xfs_dir2_leaf_addname(
+  * Check the internal consistency of a leaf1 block.
+  * Pop an assert if something is wrong.
+  */
+-void
++STATIC void
+ xfs_dir2_leaf_check(
+ 	xfs_inode_t		*dp,		/* incore directory inode */
+ 	xfs_dabuf_t		*bp)		/* leaf's buffer */
 
-Thanks -
-Manish
-
-
-> --
-> Stefan Richter
-> -=3D=3D=3D-=3D--=3D --=3D ---=3D
-> http://arcgraph.de/sr/
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
