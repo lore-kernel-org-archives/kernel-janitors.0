@@ -1,31 +1,31 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Tue, 24 Mar 2009 13:27:23 +0000
-Subject: Re: x86 cpumask.h paravirt.h and sparse
-Message-Id: <154e089b0903240627i5d9e5941r991ac0c0ba9f6a0f@mail.gmail.com>
+Date: Wed, 04 Mar 2009 18:33:23 +0000
+Subject: [PATCH 0/3] xfs: fix sparse warnings
+Message-Id: <20090304183136.525.13769.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <49C8DBBA.90305@fastmail.fm>
-In-Reply-To: <49C8DBBA.90305@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Felix Blyakher <felixb@sgi.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-On Tue, Mar 24, 2009 at 2:10 PM, Jack Stone <jwjstone@fastmail.fm> wrote:
-> Running the following commands generates a lot of sparse warnings:
->
-> make distclean
-> make allyesconfig
-> make C=2
->
-> These warnings are mostly symbol '______f' shadows an earlier one.
->
-> I couldn't find anything mensioned in the archives for either this list
-> or lkml.
->
-> Are these a known problem and is anyone else working on it?
+The following series fixes a fair amount of the remaining sparse
+warnings in fs/xfs with !CONFIG_XFS_DEBUG.
 
-I disabled all the tracing options (in kernel hacking) to avoid all
-this warnings and being able to focus on other stuff.
+With CONFIG_XFS_DEBUG we still got alot of "Should it be static?"
+warnings, but that's a different issue.
 
-hth,
--Hannes
+---
+Hannes Eder (3):
+      xfs: include header files for prototypes
+      xfs: make symbols static
+      xfs: move declaration to header file
+
+ fs/xfs/linux-2.6/xfs_ioctl.c |    1 +
+ fs/xfs/linux-2.6/xfs_super.c |    6 +++---
+ fs/xfs/support/debug.c       |    1 +
+ fs/xfs/xfs_bmap.c            |    2 +-
+ fs/xfs/xfs_da_btree.h        |    1 +
+ fs/xfs/xfs_dir2.c            |    2 --
+ fs/xfs/xfs_dir2_leaf.c       |    2 +-
+ 7 files changed, 8 insertions(+), 7 deletions(-)
