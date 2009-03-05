@@ -1,73 +1,57 @@
-From: Steven Whitehouse <swhiteho@redhat.com>
-Date: Mon, 02 Mar 2009 12:01:22 +0000
-Subject: Re: [PATCH 1/2] GFS2: fix sparse warnings: constant is so big it
-Message-Id: <1235995282.9571.822.camel@quoit>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 05 Mar 2009 19:18:26 +0000
+Subject: [PATCH v2 14/15] NULL noise: kernel/test_kprobes.c
+Message-Id: <20090305191822.30062.10652.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090221011033.5075.95929.stgit@vmbox.hanneseder.net>
-	 <20090221011125.5075.23703.stgit@vmbox.hanneseder.net>
-In-Reply-To: <20090221011125.5075.23703.stgit@vmbox.hanneseder.net>
+References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
+In-Reply-To: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: trivial@kernel.org
+Cc: Ingo Molnar <mingo@elte.hu>
 
-Hi,
+Fix this sparse warnings:
+  kernel/test_kprobes.c:118:19: warning: Using plain integer as NULL pointer
+  kernel/test_kprobes.c:213:22: warning: Using plain integer as NULL pointer
+  kernel/test_kprobes.c:326:22: warning: Using plain integer as NULL pointer
 
-Sorry for the delay - I'm back from holiday now and I've applied this
-patch to the -nmw git tree. Thanks,
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+v2: other subject, as suggested by Al Viro
 
-Steve.
+ kernel/test_kprobes.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-On Sat, 2009-02-21 at 02:11 +0100, Hannes Eder wrote:
-> Fix this sparse warnings:
->   fs/gfs2/rgrp.c:156:23: warning: constant 0xffffffffffffffff is so big it is unsigned long long
->   fs/gfs2/rgrp.c:157:23: warning: constant 0xaaaaaaaaaaaaaaaa is so big it is unsigned long long
->   fs/gfs2/rgrp.c:158:23: warning: constant 0x5555555555555555 is so big it is long long
->   fs/gfs2/rgrp.c:194:20: warning: constant 0x5555555555555555 is so big it is long long
->   fs/gfs2/rgrp.c:204:44: warning: constant 0x5555555555555555 is so big it is long long
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
-> ---
->  fs/gfs2/rgrp.c |   12 ++++++------
->  1 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
-> index c0abe69..34691d7 100644
-> --- a/fs/gfs2/rgrp.c
-> +++ b/fs/gfs2/rgrp.c
-> @@ -153,10 +153,10 @@ static inline u64 gfs2_bit_search(const __le64 *ptr, u64 mask, u8 state)
->  {
->  	u64 tmp;
->  	static const u64 search[] = {
-> -		[0] = 0xffffffffffffffff,
-> -		[1] = 0xaaaaaaaaaaaaaaaa,
-> -		[2] = 0x5555555555555555,
-> -		[3] = 0x0000000000000000,
-> +		[0] = 0xffffffffffffffffULL,
-> +		[1] = 0xaaaaaaaaaaaaaaaaULL,
-> +		[2] = 0x5555555555555555ULL,
-> +		[3] = 0x0000000000000000ULL,
->  	};
->  	tmp = le64_to_cpu(*ptr) ^ search[state];
->  	tmp &= (tmp >> 1);
-> @@ -191,7 +191,7 @@ u32 gfs2_bitfit(const u8 *buf, const unsigned int len, u32 goal, u8 state)
->  	const __le64 *ptr = ((__le64 *)buf) + (goal >> 5);
->  	const __le64 *end = (__le64 *)(buf + ALIGN(len, sizeof(u64)));
->  	u64 tmp;
-> -	u64 mask = 0x5555555555555555;
-> +	u64 mask = 0x5555555555555555ULL;
->  	u32 bit;
->  
->  	BUG_ON(state > 3);
-> @@ -201,7 +201,7 @@ u32 gfs2_bitfit(const u8 *buf, const unsigned int len, u32 goal, u8 state)
->  	tmp = gfs2_bit_search(ptr, mask, state);
->  	ptr++;
->  	while(tmp = 0 && ptr < end) {
-> -		tmp = gfs2_bit_search(ptr, 0x5555555555555555, state);
-> +		tmp = gfs2_bit_search(ptr, 0x5555555555555555ULL, state);
->  		ptr++;
->  	}
->  	/* Mask off any bits which are more than len bytes from the start */
-> 
+diff --git a/kernel/test_kprobes.c b/kernel/test_kprobes.c
+index 4f10451..9a43351 100644
+--- a/kernel/test_kprobes.c
++++ b/kernel/test_kprobes.c
+@@ -115,7 +115,7 @@ static int test_kprobes(void)
+ 	int ret;
+ 	struct kprobe *kps[2] = {&kp, &kp2};
+ 
+-	kp.addr = 0; /* addr should be cleard for reusing kprobe. */
++	kp.addr = NULL; /* addr should be cleard for reusing kprobe. */
+ 	ret = register_kprobes(kps, 2);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "Kprobe smoke test failed: "
+@@ -210,7 +210,7 @@ static int test_jprobes(void)
+ 	int ret;
+ 	struct jprobe *jps[2] = {&jp, &jp2};
+ 
+-	jp.kp.addr = 0; /* addr should be cleard for reusing kprobe. */
++	jp.kp.addr = NULL; /* addr should be cleard for reusing kprobe. */
+ 	ret = register_jprobes(jps, 2);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "Kprobe smoke test failed: "
+@@ -323,7 +323,7 @@ static int test_kretprobes(void)
+ 	int ret;
+ 	struct kretprobe *rps[2] = {&rp, &rp2};
+ 
+-	rp.kp.addr = 0; /* addr should be cleard for reusing kprobe. */
++	rp.kp.addr = NULL; /* addr should be cleard for reusing kprobe. */
+ 	ret = register_kretprobes(rps, 2);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "Kprobe smoke test failed: "
 
