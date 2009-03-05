@@ -1,7 +1,7 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 05 Mar 2009 19:15:44 +0000
-Subject: [PATCH v2 08/15] NULL noise: drivers/platform/x86/panasonic-laptop.c
-Message-Id: <20090305191540.30062.33257.stgit@f10box.hanneseder.net>
+Date: Thu, 05 Mar 2009 19:18:05 +0000
+Subject: [PATCH v2 13/15] NULL noise: fs/reiserfs/inode.c
+Message-Id: <20090305191745.30062.89094.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
 In-Reply-To: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
@@ -9,29 +9,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: trivial@kernel.org
-Cc: Len Brown <len.brown@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 
 Fix this sparse warning:
-  drivers/platform/x86/panasonic-laptop.c:273:70: warning: Using plain integer as NULL pointer
+  fs/reiserfs/inode.c:2555:19: warning: Using plain integer as NULL pointer
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
 v2: other subject, as suggested by Al Viro
 
- drivers/platform/x86/panasonic-laptop.c |    2 +-
+ fs/reiserfs/inode.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/platform/x86/panasonic-laptop.c b/drivers/platform/x86/panasonic-laptop.c
-index c47a44d..e178cde 100644
---- a/drivers/platform/x86/panasonic-laptop.c
-+++ b/drivers/platform/x86/panasonic-laptop.c
-@@ -270,7 +270,7 @@ static int acpi_pcc_retrieve_biosdata(struct pcc_acpi *pcc, u32 *sinf)
- 	union acpi_object *hkey = NULL;
- 	int i;
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index 823227a..e69d63a 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2552,7 +2552,7 @@ static int reiserfs_write_begin(struct file *file,
+ 	int old_ref = 0;
  
--	status = acpi_evaluate_object(pcc->handle, METHOD_HKEY_SINF, 0,
-+	status = acpi_evaluate_object(pcc->handle, METHOD_HKEY_SINF, NULL,
- 				      &buffer);
- 	if (ACPI_FAILURE(status)) {
- 		ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+  	inode = mapping->host;
+-	*fsdata = 0;
++	*fsdata = NULL;
+  	if (flags & AOP_FLAG_CONT_EXPAND &&
+  	    (pos & (inode->i_sb->s_blocksize - 1)) = 0) {
+  		pos ++;
 
