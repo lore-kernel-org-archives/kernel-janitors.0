@@ -1,7 +1,7 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 05 Mar 2009 19:18:05 +0000
-Subject: [PATCH v2 13/15] NULL noise: fs/reiserfs/inode.c
-Message-Id: <20090305191745.30062.89094.stgit@f10box.hanneseder.net>
+Date: Thu, 05 Mar 2009 19:17:29 +0000
+Subject: [PATCH v2 12/15] NULL noise: fs/super.c
+Message-Id: <20090305191722.30062.9528.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
 In-Reply-To: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
@@ -9,29 +9,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: trivial@kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
 
 Fix this sparse warning:
-  fs/reiserfs/inode.c:2555:19: warning: Using plain integer as NULL pointer
+  fs/super.c:849:26: warning: Using plain integer as NULL pointer
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
 v2: other subject, as suggested by Al Viro
 
- fs/reiserfs/inode.c |    2 +-
+ fs/super.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 823227a..e69d63a 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2552,7 +2552,7 @@ static int reiserfs_write_begin(struct file *file,
- 	int old_ref = 0;
+diff --git a/fs/super.c b/fs/super.c
+index c38eef4..c6ad02d 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -846,7 +846,7 @@ void kill_block_super(struct super_block *sb)
+ 	struct block_device *bdev = sb->s_bdev;
+ 	fmode_t mode = sb->s_mode;
  
-  	inode = mapping->host;
--	*fsdata = 0;
-+	*fsdata = NULL;
-  	if (flags & AOP_FLAG_CONT_EXPAND &&
-  	    (pos & (inode->i_sb->s_blocksize - 1)) = 0) {
-  		pos ++;
+-	bdev->bd_super = 0;
++	bdev->bd_super = NULL;
+ 	generic_shutdown_super(sb);
+ 	sync_blockdev(bdev);
+ 	close_bdev_exclusive(bdev, mode);
 
