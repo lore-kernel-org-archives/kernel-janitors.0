@@ -1,35 +1,47 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Wed, 25 Feb 2009 23:11:23 +0000
-Subject: [PATCH 4/5] drivers/isdn/hardware/icon: fix sparse warning: cast
-Message-Id: <20090225231111.5377.77854.stgit@localhost.localdomain>
+Date: Thu, 05 Mar 2009 19:13:57 +0000
+Subject: [PATCH v2 03/15] NULL noise: arch/x86/xen/smp.c
+Message-Id: <20090305191350.30062.68789.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090225230737.5377.31370.stgit@localhost.localdomain>
-In-Reply-To: <20090225230737.5377.31370.stgit@localhost.localdomain>
+References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
+In-Reply-To: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: trivial@kernel.org
+Cc: Jeremy Fitzhardinge <jeremy@xensource.com>
 
-Fix this sparse warning:
-  drivers/isdn/hardware/eicon/debug.c:1201:32: warning: cast truncates bits from constant value (1000 becomes 0)
+Fix this sparse warnings:
+  arch/x86/xen/smp.c:316:52: warning: Using plain integer as NULL pointer
+  arch/x86/xen/smp.c:421:60: warning: Using plain integer as NULL pointer
 
 Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
- drivers/isdn/hardware/eicon/debug.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+v2: other subject, as suggested by Al Viro
 
-diff --git a/drivers/isdn/hardware/eicon/debug.c b/drivers/isdn/hardware/eicon/debug.c
-index 84318ec..33ce89e 100644
---- a/drivers/isdn/hardware/eicon/debug.c
-+++ b/drivers/isdn/hardware/eicon/debug.c
-@@ -1198,7 +1198,7 @@ int SuperTraceASSIGN (void* AdapterHandle, byte* data) {
-         pC->xbuffer[5] = (byte)(rx_dma_magic >>  8);
-         pC->xbuffer[6] = (byte)(rx_dma_magic >> 16);
-         pC->xbuffer[7] = (byte)(rx_dma_magic >> 24);
--        pC->xbuffer[8] = (byte)DIVA_MAX_MANAGEMENT_TRANSFER_SIZE;
-+	pC->xbuffer[8] = (byte)(DIVA_MAX_MANAGEMENT_TRANSFER_SIZE & 0xFF);
-         pC->xbuffer[9] = (byte)(DIVA_MAX_MANAGEMENT_TRANSFER_SIZE >> 8);
-         pC->xbuffer[10] = 0;
+ arch/x86/xen/smp.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/xen/smp.c b/arch/x86/xen/smp.c
+index 035582a..7a1f00f 100644
+--- a/arch/x86/xen/smp.c
++++ b/arch/x86/xen/smp.c
+@@ -313,7 +313,7 @@ static int __cpuinit xen_cpu_up(unsigned int cpu)
+ 	BUG_ON(rc);
  
+ 	while(per_cpu(cpu_state, cpu) != CPU_ONLINE) {
+-		HYPERVISOR_sched_op(SCHEDOP_yield, 0);
++		HYPERVISOR_sched_op(SCHEDOP_yield, NULL);
+ 		barrier();
+ 	}
+ 
+@@ -418,7 +418,7 @@ static void xen_smp_send_call_function_ipi(const struct cpumask *mask)
+ 	/* Make sure other vcpus get a chance to run if they need to. */
+ 	for_each_cpu(cpu, mask) {
+ 		if (xen_vcpu_stolen(cpu)) {
+-			HYPERVISOR_sched_op(SCHEDOP_yield, 0);
++			HYPERVISOR_sched_op(SCHEDOP_yield, NULL);
+ 			break;
+ 		}
+ 	}
 
