@@ -1,24 +1,38 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 05 Mar 2009 13:37:39 +0000
-Subject: Re: [PATCH 1/3] xfs: move declaration to header file
-Message-Id: <20090305133739.GA14854@lst.de>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 05 Mar 2009 19:14:39 +0000
+Subject: [PATCH v2 05/15] NULL noise: drivers/media/dvb/frontends/drx397xD_fw.h
+Message-Id: <20090305191435.30062.72139.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090304183136.525.13769.stgit@f10box.hanneseder.net> <20090304183331.525.4491.stgit@f10box.hanneseder.net>
-In-Reply-To: <20090304183331.525.4491.stgit@f10box.hanneseder.net>
+References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
+In-Reply-To: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: Felix Blyakher <felixb@sgi.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: trivial@kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
 
-On Wed, Mar 04, 2009 at 07:33:48PM +0100, Hannes Eder wrote:
-> Fix this sparse warning:
->   fs/xfs/xfs_da_btree.c:1550:26: warning: symbol 'xfs_default_nameops' was not declared. Should it be static?
-> 
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+Fix this sparse warnings:
+  drivers/media/dvb/frontends/drx397xD_fw.h:21:2: warning: Using plain integer as NULL pointer
+  drivers/media/dvb/frontends/drx397xD_fw.h:22:2: warning: Using plain integer as NULL pointer
 
-Looks good to me.
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+---
+v2: other subject, as suggested by Al Viro
 
-And for future patches please always send them to the mailinglist
-(xfs@oss.sgi.com)
+ drivers/media/dvb/frontends/drx397xD.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/media/dvb/frontends/drx397xD.c b/drivers/media/dvb/frontends/drx397xD.c
+index 1e81e71..172f1f9 100644
+--- a/drivers/media/dvb/frontends/drx397xD.c
++++ b/drivers/media/dvb/frontends/drx397xD.c
+@@ -74,7 +74,7 @@ static struct {
+ } fw[] = {
+ #define _FW_ENTRY(a, b, c)	{					\
+ 			.name	= a,					\
+-			.file	= 0,					\
++			.file	= NULL,					\
+ 			.lock	= __RW_LOCK_UNLOCKED(fw[c].lock),	\
+ 			.refcnt = 0,					\
+ 			.data	= { }		}
 
