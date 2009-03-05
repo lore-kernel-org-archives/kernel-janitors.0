@@ -1,67 +1,55 @@
 From: Hannes Eder <hannes@hanneseder.net>
-Date: Thu, 05 Mar 2009 19:14:18 +0000
-Subject: [PATCH v2 04/15] NULL noise: drivers/gpu/drm/radeon/radeon_*.c
-Message-Id: <20090305191413.30062.67683.stgit@f10box.hanneseder.net>
+Date: Thu, 05 Mar 2009 19:10:55 +0000
+Subject: [PATCH v2 00/15] NULL noise fix: allmodconfig (x86_64), entire tree
+Message-Id: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
-In-Reply-To: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: trivial@kernel.org
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix this sparse warning:
-  drivers/gpu/drm/radeon/r600_cp.c:1811:52: warning: Using plain integer as NULL pointer
-  drivers/gpu/drm/radeon/radeon_cp.c:1363:52: warning: Using plain integer as NULL pointer
-  drivers/gpu/drm/radeon/radeon_state.c:1983:61: warning: Using plain integer as NULL pointer
+The following series does a minor aka. trivial thing, i.e. fixes 'NULL
+noise' for allmodconfig (x86_64) for the entire tree.
 
-Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
-v2: other subject, as suggested by Al Viro
+Hannes Eder (15):
+      NULL noise: mm/memcontrol.c
+      NULL noise: kernel/test_kprobes.c
+      NULL noise: fs/reiserfs/inode.c
+      NULL noise: fs/super.c
+      NULL noise: drivers/video/via/hw.c
+      NULL noise: drivers/usb/host/oxu210hp-hcd.c
+      NULL noise: drivers/scsi/FlashPoint.c
+      NULL noise: drivers/platform/x86/panasonic-laptop.c
+      NULL noise: drivers/pci/dmar.c
+      NULL noise: drivers/mtd/tests/mtd_*test.c
+      NULL noise: drivers/media/dvb/frontends/drx397xD_fw.h
+      NULL noise: drivers/gpu/drm/radeon/radeon_*.c
+      NULL noise: arch/x86/xen/smp.c
+      NULL noise: arch/x86/kernel/amd_iommu*.c
+      NULL noise: arch/x86/kernel
 
- drivers/gpu/drm/radeon/r600_cp.c      |    2 +-
- drivers/gpu/drm/radeon/radeon_cp.c    |    2 +-
- drivers/gpu/drm/radeon/radeon_state.c |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/r600_cp.c b/drivers/gpu/drm/radeon/r600_cp.c
-index 37249b2..2d9147d 100644
---- a/drivers/gpu/drm/radeon/r600_cp.c
-+++ b/drivers/gpu/drm/radeon/r600_cp.c
-@@ -1808,7 +1808,7 @@ int r600_do_cleanup_cp(struct drm_device *dev)
- 
- 		if (dev_priv->gart_info.gart_table_location = DRM_ATI_GART_FB) {
- 			drm_core_ioremapfree(&dev_priv->gart_info.mapping, dev);
--			dev_priv->gart_info.addr = 0;
-+			dev_priv->gart_info.addr = NULL;
- 		}
- 	}
- 	/* only clear to the start of flags */
-diff --git a/drivers/gpu/drm/radeon/radeon_cp.c b/drivers/gpu/drm/radeon/radeon_cp.c
-index 15cfe56..0c49230 100644
---- a/drivers/gpu/drm/radeon/radeon_cp.c
-+++ b/drivers/gpu/drm/radeon/radeon_cp.c
-@@ -1541,7 +1541,7 @@ static int radeon_do_cleanup_cp(struct drm_device * dev)
- 		if (dev_priv->gart_info.gart_table_location = DRM_ATI_GART_FB)
- 		{
- 			drm_core_ioremapfree(&dev_priv->gart_info.mapping, dev);
--			dev_priv->gart_info.addr = 0;
-+			dev_priv->gart_info.addr = NULL;
- 		}
- 	}
- 	/* only clear to the start of flags */
-diff --git a/drivers/gpu/drm/radeon/radeon_state.c b/drivers/gpu/drm/radeon/radeon_state.c
-index ca00cef..fa728ec 100644
---- a/drivers/gpu/drm/radeon/radeon_state.c
-+++ b/drivers/gpu/drm/radeon/radeon_state.c
-@@ -1986,7 +1986,7 @@ static int alloc_surface(drm_radeon_surface_alloc_t *new,
- 
- 	/* find a virtual surface */
- 	for (i = 0; i < 2 * RADEON_MAX_SURFACES; i++)
--		if (dev_priv->virt_surfaces[i].file_priv = 0)
-+		if (dev_priv->virt_surfaces[i].file_priv = NULL)
- 			break;
- 	if (i = 2 * RADEON_MAX_SURFACES) {
- 		return -1;
-
+ arch/x86/kernel/amd_iommu.c             |    2 +-
+ arch/x86/kernel/amd_iommu_init.c        |    2 +-
+ arch/x86/kernel/io_apic.c               |    2 +-
+ arch/x86/kernel/machine_kexec_32.c      |    2 +-
+ arch/x86/kernel/traps.c                 |    2 +-
+ arch/x86/xen/smp.c                      |    4 ++--
+ drivers/gpu/drm/radeon/r600_cp.c        |    2 +-
+ drivers/gpu/drm/radeon/radeon_cp.c      |    2 +-
+ drivers/gpu/drm/radeon/radeon_state.c   |    2 +-
+ drivers/media/dvb/frontends/drx397xD.c  |    2 +-
+ drivers/mtd/tests/mtd_oobtest.c         |   24 ++++++++++++------------
+ drivers/mtd/tests/mtd_readtest.c        |    2 +-
+ drivers/pci/dmar.c                      |    4 ++--
+ drivers/platform/x86/panasonic-laptop.c |    2 +-
+ drivers/scsi/FlashPoint.c               |    7 +++----
+ drivers/usb/host/oxu210hp-hcd.c         |    2 +-
+ drivers/video/via/hw.c                  |    2 +-
+ fs/reiserfs/inode.c                     |    2 +-
+ fs/super.c                              |    2 +-
+ kernel/test_kprobes.c                   |    6 +++---
+ mm/memcontrol.c                         |    2 +-
+ 21 files changed, 38 insertions(+), 39 deletions(-)
