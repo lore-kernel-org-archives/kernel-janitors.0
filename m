@@ -1,62 +1,37 @@
-From: Leonardo Potenza <leo.potenza@gmail.com>
-Date: Sun, 08 Mar 2009 19:17:34 +0000
-Subject: [PATCH] drivers/gpio: fix section mismatch warnings in twl4030-gpio.c
-Message-Id: <200903082017.35072.lpotenza@inwind.it>
+From: Hannes Eder <hannes@hanneseder.net>
+Date: Thu, 05 Mar 2009 19:16:50 +0000
+Subject: [PATCH v2 11/15] NULL noise: drivers/video/via/hw.c
+Message-Id: <20090305191646.30062.6857.stgit@f10box.hanneseder.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
+In-Reply-To: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: hskinnemoen@atmel.com, linux-kernel@vger.kernel.org
+To: trivial@kernel.org
+Cc: Krzysztof Helt <krzysztof.h1@poczta.fm>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev-devel@lists.sourceforge.net
 
-From: Leonardo Potenza <lpotenza@inwind.it>
+Fix this sparse warning:
+  drivers/video/via/hw.c:2020:46: warning: Using plain integer as NULL pointer
 
-Removed the __devexit annotation of gpio_twl4030_remove(), in order to suppress the following section mismatch messages:
-
-WARNING: drivers/gpio/built-in.o(.devinit.text+0xa0b): Section mismatch in reference from the function gpio_twl4030_probe() to the function .devexit.text:gpio_twl4030_remove()
-The function __devinit gpio_twl4030_probe() references
-a function __devexit gpio_twl4030_remove().
-This is often seen when error handling in the init function
-uses functionality in the exit path.
-The fix is often to remove the __devexit annotation of
-gpio_twl4030_remove() so it may be used outside an exit section.
-
-WARNING: drivers/built-in.o(.devinit.text+0xa0b): Section mismatch in reference from the function gpio_twl4030_probe() to the function .devexit.text:gpio_twl4030_remove()
-The function __devinit gpio_twl4030_probe() references
-a function __devexit gpio_twl4030_remove().
-This is often seen when error handling in the init function
-uses functionality in the exit path.
-The fix is often to remove the __devexit annotation of
-gpio_twl4030_remove() so it may be used outside an exit section.
-
-WARNING: vmlinux.o(.devinit.text+0x1702): Section mismatch in reference from the function gpio_twl4030_probe() to the function .devexit.text:gpio_twl4030_remove()
-The function __devinit gpio_twl4030_probe() references
-a function __devexit gpio_twl4030_remove().
-This is often seen when error handling in the init function
-uses functionality in the exit path.
-The fix is often to remove the __devexit annotation of
-gpio_twl4030_remove() so it may be used outside an exit section.
-
-Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+Signed-off-by: Hannes Eder <hannes@hanneseder.net>
 ---
-Index: linux-2.6/drivers/gpio/twl4030-gpio.c
-=================================--- linux-2.6.orig/drivers/gpio/twl4030-gpio.c	2009-03-08 19:23:06.000000000 +0100
-+++ linux-2.6/drivers/gpio/twl4030-gpio.c	2009-03-08 20:07:41.000000000 +0100
-@@ -460,7 +460,7 @@ no_irqs:
- 	return ret;
- }
- 
--static int __devexit gpio_twl4030_remove(struct platform_device *pdev)
-+static int gpio_twl4030_remove(struct platform_device *pdev)
- {
- 	struct twl4030_gpio_platform_data *pdata = pdev->dev.platform_data;
- 	int status;
-@@ -493,7 +493,7 @@ static struct platform_driver gpio_twl40
- 	.driver.name	= "twl4030_gpio",
- 	.driver.owner	= THIS_MODULE,
- 	.probe		= gpio_twl4030_probe,
--	.remove		= __devexit_p(gpio_twl4030_remove),
-+	.remove		= gpio_twl4030_remove,
- };
- 
- static int __init gpio_twl4030_init(void)
+v2: other subject, as suggested by Al Viro
+
+ drivers/video/via/hw.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/video/via/hw.c b/drivers/video/via/hw.c
+index fcd53ce..70d6b6c 100644
+--- a/drivers/video/via/hw.c
++++ b/drivers/video/via/hw.c
+@@ -2017,7 +2017,7 @@ static void init_gfx_chip_info(void)
+ 	/* Indentify GFX Chip Name */
+ 	for (i = 0; pciidlist[i].vendor != 0; i++) {
+ 		pdev = pci_get_device(pciidlist[i].vendor,
+-			pciidlist[i].device, 0);
++			pciidlist[i].device, NULL);
+ 		if (pdev)
+ 			break;
+ 	}
+
