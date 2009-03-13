@@ -1,51 +1,61 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 20 Mar 2009 12:14:29 +0000
-Subject: Re: [PATCH] sound/ali5451: typo: s/resouces/resources/
-Message-Id: <s5htz5o75ne.wl%tiwai@suse.de>
+From: Adam Buchbinder <adam.buchbinder@gmail.com>
+Date: Fri, 13 Mar 2009 15:09:44 +0000
+Subject: [PATCH] Fix misspelling of "Celsius".
+Message-Id: <26b51c320903130809m6ed50538oea0398cdad93dee3@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1237540091-19359-1-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1237540091-19359-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-At Fri, 20 Mar 2009 10:08:11 +0100,
-Wolfram Sang wrote:
-> 
-> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+A few comments say "Celcius"; this fixes them. No code changes.
+---
+ drivers/acpi/thermal.c              |    2 +-
+ drivers/input/touchscreen/ads7846.c |    2 +-
+ drivers/power/bq27x00_battery.c     |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Applied now to sound git tree.
-Thanks.
+diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+index 99e6f1f..0c30ec0 100644
+--- a/drivers/acpi/thermal.c
++++ b/drivers/acpi/thermal.c
+@@ -367,7 +367,7 @@ static int acpi_thermal_trips_update(struct
+acpi_thermal *tz, int flag)
+ 		/*
+ 		 * Treat freezing temperatures as invalid as well; some
+ 		 * BIOSes return really low values and cause reboots at startup.
+-		 * Below zero (Celcius) values clearly aren't right for sure..
++		 * Below zero (Celsius) values clearly aren't right for sure..
+ 		 * ... so lets discard those as invalid.
+ 		 */
+ 		if (ACPI_FAILURE(status) ||
+diff --git a/drivers/input/touchscreen/ads7846.c
+b/drivers/input/touchscreen/ads7846.c
+index 7c27c8b..056ac77 100644
+--- a/drivers/input/touchscreen/ads7846.c
++++ b/drivers/input/touchscreen/ads7846.c
+@@ -295,7 +295,7 @@ name ## _show(struct device *dev, struct
+device_attribute *attr, char *buf) \
+ static DEVICE_ATTR(name, S_IRUGO, name ## _show, NULL);
 
-Takashi
 
-> ---
->  sound/pci/ali5451/ali5451.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/ali5451/ali5451.c b/sound/pci/ali5451/ali5451.c
-> index 1a0fd65..9069c78 100644
-> --- a/sound/pci/ali5451/ali5451.c
-> +++ b/sound/pci/ali5451/ali5451.c
-> @@ -2142,7 +2142,7 @@ static int __devinit snd_ali_resources(struct snd_ali *codec)
->  {
->  	int err;
->  
-> -	snd_ali_printk("resouces allocation ...\n");
-> +	snd_ali_printk("resources allocation ...\n");
->  	err = pci_request_regions(codec->pci, "ALI 5451");
->  	if (err < 0)
->  		return err;
-> @@ -2154,7 +2154,7 @@ static int __devinit snd_ali_resources(struct snd_ali *codec)
->  		return -EBUSY;
->  	}
->  	codec->irq = codec->pci->irq;
-> -	snd_ali_printk("resouces allocated.\n");
-> +	snd_ali_printk("resources allocated.\n");
->  	return 0;
->  }
->  static int snd_ali_dev_free(struct snd_device *device)
-> -- 
-> 1.5.6.5
-> 
+-/* Sysfs conventions report temperatures in millidegrees Celcius.
++/* Sysfs conventions report temperatures in millidegrees Celsius.
+  * ADS7846 could use the low-accuracy two-sample scheme, but can't do the high
+  * accuracy scheme without calibration data.  For now we won't try either;
+  * userspace sees raw sensor values, and must scale/calibrate appropriately.
+diff --git a/drivers/power/bq27x00_battery.c b/drivers/power/bq27x00_battery.c
+index 0c056fc..62bb981 100644
+--- a/drivers/power/bq27x00_battery.c
++++ b/drivers/power/bq27x00_battery.c
+@@ -83,7 +83,7 @@ static int bq27x00_read(u8 reg, int *rt_value, int b_single,
+ }
+
+ /*
+- * Return the battery temperature in Celcius degrees
++ * Return the battery temperature in Celsius degrees
+  * Or < 0 if something fails.
+  */
+ static int bq27x00_battery_temperature(struct bq27x00_device_info *di)
+-- 
+1.5.6.3
