@@ -1,23 +1,29 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Date: Thu, 05 Mar 2009 20:15:29 +0000
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Tue, 17 Mar 2009 13:17:57 +0000
 Subject: Re: [PATCH v2 03/15] NULL noise: arch/x86/xen/smp.c
-Message-Id: <49B032E1.50303@goop.org>
+Message-Id: <alpine.LNX.2.00.0903171417300.11733@jikos.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net> <20090305191350.30062.68789.stgit@f10box.hanneseder.net>
-In-Reply-To: <20090305191350.30062.68789.stgit@f10box.hanneseder.net>
+References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net> <20090305191350.30062.68789.stgit@f10box.hanneseder.net> <49B032E1.50303@goop.org>
+In-Reply-To: <49B032E1.50303@goop.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: trivial@kernel.org, xen-devel@lists.xensource.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wright <chrisw@sous-sol.org>, virtualization@lists.osdl.org
+To: Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: Hannes Eder <hannes@hanneseder.net>, trivial@kernel.org, xen-devel@lists.xensource.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wright <chrisw@sous-sol.org>, virtualization@lists.osdl.org
 
-Hannes Eder wrote:
-> Fix this sparse warnings:
->   arch/x86/xen/smp.c:316:52: warning: Using plain integer as NULL pointer
->   arch/x86/xen/smp.c:421:60: warning: Using plain integer as NULL pointer
->
-> Signed-off-by: Hannes Eder <hannes@hanneseder.net>
->   
-Acked-by: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+On Thu, 5 Mar 2009, Jeremy Fitzhardinge wrote:
 
-    J
+> Hannes Eder wrote:
+> > Fix this sparse warnings:
+> >   arch/x86/xen/smp.c:316:52: warning: Using plain integer as NULL pointer
+> >   arch/x86/xen/smp.c:421:60: warning: Using plain integer as NULL pointer
+> > 
+> > Signed-off-by: Hannes Eder <hannes@hanneseder.net>
+> >   
+> Acked-by: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+
+Noone seems to have picked this so far, so I have applied it to trivial 
+tree. Thanks,
+
+-- 
+Jiri Kosina
