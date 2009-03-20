@@ -1,27 +1,40 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 05 Mar 2009 13:39:17 +0000
-Subject: Re: [PATCH 3/3] xfs: include header files for prototypes
-Message-Id: <20090305133917.GC14854@lst.de>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Fri, 20 Mar 2009 09:08:11 +0000
+Subject: [PATCH] sound/ali5451: typo: s/resouces/resources/
+Message-Id: <1237540091-19359-1-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090304183136.525.13769.stgit@f10box.hanneseder.net> <20090304183418.525.22262.stgit@f10box.hanneseder.net>
-In-Reply-To: <20090304183418.525.22262.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: Felix Blyakher <felixb@sgi.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: kernel-janitors@vger.kernel.org
 
-looks good, except for a tiny nit-pick:
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+---
+ sound/pci/ali5451/ali5451.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-> +++ b/fs/xfs/support/debug.c
-> @@ -19,6 +19,7 @@
->  #include "debug.h"
->  
->  /* xfs_mount.h drags a lot of crap in, sorry.. */
-> +#include "xfs_error.h"
->  #include "xfs_sb.h"
->  #include "xfs_inum.h"
->  #include "xfs_ag.h"
+diff --git a/sound/pci/ali5451/ali5451.c b/sound/pci/ali5451/ali5451.c
+index 1a0fd65..9069c78 100644
+--- a/sound/pci/ali5451/ali5451.c
++++ b/sound/pci/ali5451/ali5451.c
+@@ -2142,7 +2142,7 @@ static int __devinit snd_ali_resources(struct snd_ali *codec)
+ {
+ 	int err;
+ 
+-	snd_ali_printk("resouces allocation ...\n");
++	snd_ali_printk("resources allocation ...\n");
+ 	err = pci_request_regions(codec->pci, "ALI 5451");
+ 	if (err < 0)
+ 		return err;
+@@ -2154,7 +2154,7 @@ static int __devinit snd_ali_resources(struct snd_ali *codec)
+ 		return -EBUSY;
+ 	}
+ 	codec->irq = codec->pci->irq;
+-	snd_ali_printk("resouces allocated.\n");
++	snd_ali_printk("resources allocated.\n");
+ 	return 0;
+ }
+ static int snd_ali_dev_free(struct snd_device *device)
+-- 
+1.5.6.5
 
-as xfs_mount.h doesn't require xfs_error.h it should be included 
-above that comment.
