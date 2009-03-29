@@ -1,54 +1,36 @@
-From: Joe Damato <ice799@gmail.com>
-Date: Sun, 29 Mar 2009 21:21:41 +0000
-Subject: [PATCH 1/2] x86: Add getter/setter static inlines for x86 descriptors
-Message-Id: <76c37743d20e5737eadc747cbdddbc2beb11f074.1238361501.git.ice799@gmail.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Date: Sun, 29 Mar 2009 21:28:00 +0000
+Subject: Re: [PATCH 1/2] x86: Add getter/setter static inlines for x86 descriptors
+Message-Id: <49CFE7E0.80500@zytor.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1238361501.git.ice799@gmail.com>
-In-Reply-To: <cover.1238361501.git.ice799@gmail.com>
+References: <cover.1238361501.git.ice799@gmail.com> <76c37743d20e5737eadc747cbdddbc2beb11f074.1238361501.git.ice799@gmail.com>
+In-Reply-To: <76c37743d20e5737eadc747cbdddbc2beb11f074.1238361501.git.ice799@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-x86_64@vger.kernel.org, w@1wt.eu, mingo@elte.hu, hpa@zytor.com, jeremy@goop.org, linux-newbie@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Joe Damato <ice799@gmail.com>
+To: Joe Damato <ice799@gmail.com>
+Cc: linux-x86_64@vger.kernel.org, w@1wt.eu, mingo@elte.hu, jeremy@goop.org, linux-newbie@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Static inline getters/setters have been provided to encourage consumers not to touch the internals of 32bit x86 descriptors directly.
+Joe Damato wrote:
+> Static inline getters/setters have been provided to encourage consumers not to touch the internals of 32bit x86 descriptors directly.
+> 
+> Signed-off-by: Joe Damato <ice799@gmail.com>
 
-Signed-off-by: Joe Damato <ice799@gmail.com>
----
- arch/x86/include/asm/desc.h |   20 ++++++++++++++++++++
- 1 files changed, 20 insertions(+), 0 deletions(-)
+Okay, what is the motivation for this?
 
-diff --git a/arch/x86/include/asm/desc.h b/arch/x86/include/asm/desc.h
-index dc27705..c62cf93 100644
---- a/arch/x86/include/asm/desc.h
-+++ b/arch/x86/include/asm/desc.h
-@@ -44,6 +44,26 @@ static inline struct desc_struct *get_cpu_gdt_table(unsigned int cpu)
- 	return per_cpu(gdt_page, cpu).gdt;
- }
- 
-+static inline void desc_set_lo(struct desc_struct *d, unsigned int lo)
-+{
-+	d->a = lo;
-+}
-+
-+static inline void desc_set_hi(struct desc_struct *d, unsigned int hi)
-+{
-+	d->b = hi;
-+}
-+
-+static inline unsigned int desc_get_lo(const struct desc_struct *d)
-+{
-+	return d->a;
-+}
-+
-+static inline unsigned int desc_get_hi(const struct desc_struct *d)
-+{
-+	return d->b;
-+}
-+
- #ifdef CONFIG_X86_64
- 
- static inline void pack_gate(gate_desc *gate, unsigned type, unsigned long func,
+This is a serious question.  The x86 descriptors are so complex that
+it's not clear to me that this restriction makes the code any more
+clear.  Especially not with things like:
+
+-		cpu->arch.gdt[i].b |= 0x00000100;
++		desc_set_hi(tmp,  desc_get_hi(tmp) | 0x00000100);
+
+This isn't an improvement.  If you're doing to so something like this,
+you need to actually implement the *intent* here.
+
+	-hpa
+
 -- 
-1.6.2
+H. Peter Anvin, Intel Open Source Technology Center
+I work for Intel.  I don't speak on their behalf.
 
