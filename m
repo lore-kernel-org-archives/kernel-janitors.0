@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sat, 04 Apr 2009 12:08:43 +0000
+From: Martin Olsson <mnemo@minimum.se>
+Date: Sat, 04 Apr 2009 12:21:51 +0000
 Subject: Re: [PATCH 2/2] Fix paramater/parameter typo in dmesg and source
-Message-Id: <alpine.LFD.2.00.0904040806200.26532@localhost.localdomain>
+Message-Id: <49D750DF.5050405@minimum.se>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <49D73B52.5050508@minimum.se>
 In-Reply-To: <49D73B52.5050508@minimum.se>
@@ -10,49 +10,24 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 4 Apr 2009, Martin Olsson wrote:
+Robert P. J. Day wrote:
+> drivers/net/wireless/rndis_wlan.c:	devdbg(dev, "setting rndis config paramater failed, %d.", ret);
+> 
+> might be worth making another pass.  and while you're at it, you might
+> grep for what i've noticed is a *very* common misspelling:
+> "paramter".  i'm betting you'll find at least a few of those.
 
-> From edef040c17106bb02431b9399e9b214da8d7a5fd Mon Sep 17 00:00:00 2001
-> From: Martin Olsson <martin@minimum.se>
-> Date: Sat, 4 Apr 2009 12:29:59 +0200
-> Subject: [PATCH] Correctly spell the word "parameter" in various source
-> comments.
->
-> Signed-off-by: Martin Olsson <martin@minimum.se>
-> ---
->  drivers/atm/lanai.c                    |    2 +-
->  drivers/input/joystick/xpad.c          |    2 +-
->  drivers/net/b44.c                      |    2 +-
->  drivers/net/smc-mca.c                  |    2 +-
->  drivers/net/wireless/orinoco/orinoco.h |    2 +-
->  drivers/net/wireless/p54/p54spi.c      |    2 +-
->  drivers/scsi/qla1280.c                 |    2 +-
->  drivers/scsi/qla4xxx/ql4_mbx.c         |    2 +-
->  drivers/staging/epl/EplInstDef.h       |    2 +-
->  drivers/staging/rt2860/rt28xx.h        |    2 +-
->  drivers/staging/rt2870/rt28xx.h        |    2 +-
->  drivers/usb/core/message.c             |    4 ++--
->  drivers/usb/serial/io_edgeport.c       |    2 +-
->  drivers/usb/serial/ir-usb.c            |    2 +-
->  drivers/video/controlfb.c              |    2 +-
->  fs/debugfs/inode.c                     |    6 +++---
->  16 files changed, 19 insertions(+), 19 deletions(-)
 
-  just FYI, that doesn't appear to be all of them:
+I've covered all instances found by grep already except one but that one
+was inside a changelog and I didn't want to change that retrospectively.
+I split them up into one patch for all source comment changes and another
+patch for the debug print outs to dmesg etc.
 
-drivers/net/wireless/rndis_wlan.c:	devdbg(dev, "setting rndis config paramater failed, %d.", ret);
+The one you mention here is already covered by the debug print patch.
 
-might be worth making another pass.  and while you're at it, you might
-grep for what i've noticed is a *very* common misspelling:
-"paramter".  i'm betting you'll find at least a few of those.
+As you suspected, paramter is even more common in the kernel dev vocabulary :)
+I might do the some more patches later if the first ones are well received / pushed.
 
-rday
---
 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry:
-    Have classroom, will lecture.
 
-http://crashcourse.ca                          Waterloo, Ontario, CANADA
-====================================
+		Martin
