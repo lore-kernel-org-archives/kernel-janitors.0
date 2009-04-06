@@ -1,19 +1,50 @@
-From: Len Brown <lenb@kernel.org>
-Date: Tue, 07 Apr 2009 05:56:23 +0000
-Subject: Re: [PATCH v2 08/15] NULL noise:
-Message-Id: <alpine.LFD.2.00.0904070156150.5698@localhost.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 06 Apr 2009 14:58:06 +0000
+Subject: [PATCH] kernel/hrtimer.c: use function hrtimer_is_queued
+Message-Id: <Pine.LNX.4.64.0904061656500.20450@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090305190954.30062.44759.stgit@f10box.hanneseder.net>
- <20090305191540.30062.33257.stgit@f10box.hanneseder.net>
-In-Reply-To: <20090305191540.30062.33257.stgit@f10box.hanneseder.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Eder <hannes@hanneseder.net>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: tglx@linutronix.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-applied
+From: Julia Lawall <julia@diku.dk>
 
-thanks,
-Len Brown, Intel Open Source Technology Center
+Use the hrtimer_is_queued function rather than an explicit bit-and for
+testing timer->state, as done elsewhere.
 
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@header@
+@@
+
+#include <linux/hrtimer.h>
+
+@depends on header@
+struct hrtimer *timer;
+@@
+
+- (timer->state & HRTIMER_STATE_ENQUEUED)
++ hrtimer_is_queued(timer)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ kernel/hrtimer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/kernel/hrtimer.c b/kernel/hrtimer.c
+--- a/kernel/hrtimer.c
++++ b/kernel/hrtimer.c
+@@ -850,7 +850,7 @@ static void __remove_hrtimer(struct hrti
+ 			     struct hrtimer_clock_base *base,
+ 			     unsigned long newstate, int reprogram)
+ {
+-	if (timer->state & HRTIMER_STATE_ENQUEUED) {
++	if (hrtimer_is_queued(timer)) {
+ 		/*
+ 		 * Remove the timer from the rbtree and replace the
+ 		 * first entry pointer if necessary.
