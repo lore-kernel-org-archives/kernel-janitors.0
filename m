@@ -1,64 +1,30 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 08 Apr 2009 15:06:57 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Wed, 08 Apr 2009 15:10:33 +0000
 Subject: Re: [PATCH 54/56] x86: Remove void casts
-Message-Id: <Pine.LNX.4.64.0904081705390.9554@pc-004.diku.dk>
+Message-Id: <20090408151032.GB20983@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1239189748-11703-54-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-55-git-send-email-jwjstone@fastmail.fm>
- <36ca99e90904080518qf81b483h6ed2bc9752ee0d1e@mail.gmail.com>
- <49DCAE97.8040602@fastmail.fm> <20090408140637.GC12931@elte.hu>
- <49DCB140.7000603@fastmail.fm> <20090408144055.GH12931@elte.hu>
- <49DCB8C5.4090108@fastmail.fm> <20090408144842.GK12931@elte.hu>
- <49DCBA61.8060507@fastmail.fm> <20090408145715.GO12931@elte.hu>
- <49DCBBDF.4040603@fastmail.fm>
-In-Reply-To: <49DCBBDF.4040603@fastmail.fm>
+References: <49DCAE97.8040602@fastmail.fm> <20090408140637.GC12931@elte.hu> <49DCB140.7000603@fastmail.fm> <20090408144055.GH12931@elte.hu> <49DCB8C5.4090108@fastmail.fm> <20090408144842.GK12931@elte.hu> <49DCBA61.8060507@fastmail.fm> <20090408145715.GO12931@elte.hu> <49DCBBDF.4040603@fastmail.fm> <Pine.LNX.4.64.0904081705390.9554@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0904081705390.9554@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jack Stone <jwjstone@fastmail.fm>
-Cc: Ingo Molnar <mingo@elte.hu>, Bert Wesarg <bert.wesarg@googlemail.com>, linux-kernel@vger.kernel.org, jeff@garzik.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Jack Stone <jwjstone@fastmail.fm>, Ingo Molnar <mingo@elte.hu>, Bert Wesarg <bert.wesarg@googlemail.com>, linux-kernel@vger.kernel.org, jeff@garzik.org, kernel-janitors@vger.kernel.org
 
-On Wed, 8 Apr 2009, Jack Stone wrote:
-
-> Ingo Molnar wrote:
-> > * Jack Stone <jwjstone@fastmail.fm> wrote:
-> >
-> >   
-> >> Ingo Molnar wrote:
-> >>     
-> >>> No, i mean, this approach should be changed, and i dont think any 
-> >>> type cast change should go via any trivial tree. It's easy to mess 
-> >>> it up. Please submit them to the maintainer trees
-> >>>       
-> >> Ok. I'll try and find appropriate CCs. I'm going out shortly so it 
-> >> might take me a while.
-> >>     
-> >
-> > Since you do many such patches it might make sense to script up a 
-> > "who maintains what" kind of script - and share that script with 
-> > lkml.
-> >
-> > I have this silly little script:
-> >
-> >   git log $@ | grep Signed-off-by: |
-> >    cut -d: -f2 | cut -d\< -f1 |
-> >     sort | uniq -c | sort -n
-> >
-> > To find out any recent parties that touches a particular file. But 
-> > it would be nice to somehow automate the pickup of mailing-list 
-> > addresses from MAINTAINERS for example. We've literally got hundreds 
-> > of email lists there.
-> >
-> > It is not trivial to do though :-)
-> >   
-> It would be useful. The main problem is working out what files belong to
-> what MAINTAINERS entries.
+On Wed, Apr 08, 2009 at 05:06:57PM +0200, Julia Lawall wrote:
+> This can be helpful: http://lwn.net/Articles/284469/
 > 
-> I'll see what I can cook up.
+> It's a bit out of date, though, because git-blame seems to have 
+> disappeared as a command.
 
-This can be helpful: http://lwn.net/Articles/284469/
+Are you just getting confused by the removal of the 'git-foo' form?
 
-It's a bit out of date, though, because git-blame seems to have 
-disappeared as a command.
+'git blame' works, and I see:
+$ dpkg -S /usr/lib/git-core/git-blame 
+git-core: /usr/lib/git-core/git-blame
 
-julia
+-- 
+Matthew Wilcox				Intel Open Source Technology Centre
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
