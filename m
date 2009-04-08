@@ -1,306 +1,135 @@
-From: Jack Stone <jwjstone@fastmail.fm>
-Date: Wed, 08 Apr 2009 11:22:28 +0000
-Subject: [PATCH 56/56] xfs: Remove void casts
-Message-Id: <1239189748-11703-57-git-send-email-jwjstone@fastmail.fm>
+From: Bert Wesarg <bert.wesarg@googlemail.com>
+Date: Wed, 08 Apr 2009 12:15:17 +0000
+Subject: Re: [PATCH 56/56] xfs: Remove void casts
+Message-Id: <36ca99e90904080515w339dd1d1ge5bfb546cec5e4b8@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <>
- <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-9-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-10-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-11-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-12-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-14-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-15-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-16-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-17-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-18-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-19-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-20-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-21-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-22-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-23-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-24-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-25-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-26-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-27-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-28-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-29-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-30-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-31-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-32-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-33-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-34-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-35-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-36-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-37-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-38-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-39-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-40-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-41-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-42-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-43-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-44-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-45-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-46-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-47-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-48-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-49-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-50-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-51-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-52-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-53-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-54-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-55-git-send-email-jwjstone@fastmail.fm>
- <1239189748-11703-56-git-send-email-jwjstone@fastmail.fm>
-In-Reply-To: <1239189748-11703-56-git-send-email-jwjstone@fastmail.fm>
+References: <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-49-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-50-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-51-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-52-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-53-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-54-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-55-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-56-git-send-email-jwjstone@fastmail.fm>
+	 <1239189748-11703-57-git-send-email-jwjstone@fastmail.fm>
+In-Reply-To: <1239189748-11703-57-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Jack Stone <jwjstone@fastmail.fm>
+Cc: linux-kernel@vger.kernel.org, jeff@garzik.org, kernel-janitors@vger.kernel.org
 
-Remove uneeded void casts
-
-Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
----
- fs/xfs/quota/xfs_dquot_item.c |    2 +-
- fs/xfs/support/ktrace.c       |    6 +++---
- fs/xfs/xfs_attr_leaf.c        |    2 +-
- fs/xfs/xfs_buf_item.c         |    6 +++---
- fs/xfs/xfs_extfree_item.c     |    8 ++++----
- fs/xfs/xfs_inode.c            |    5 ++---
- fs/xfs/xfs_log_recover.c      |    9 ++++-----
- fs/xfs/xfs_trans.c            |    2 +-
- fs/xfs/xfs_trans_inode.c      |    3 +--
- fs/xfs/xfs_trans_item.c       |    6 ++----
- 10 files changed, 22 insertions(+), 27 deletions(-)
-
-diff --git a/fs/xfs/quota/xfs_dquot_item.c b/fs/xfs/quota/xfs_dquot_item.c
-index 1728f6a..a4d970a 100644
---- a/fs/xfs/quota/xfs_dquot_item.c
-+++ b/fs/xfs/quota/xfs_dquot_item.c
-@@ -648,7 +648,7 @@ xfs_qm_qoff_logitem_init(
- {
- 	xfs_qoff_logitem_t	*qf;
- 
--	qf = (xfs_qoff_logitem_t*) kmem_zalloc(sizeof(xfs_qoff_logitem_t), KM_SLEEP);
-+	qf = kmem_zalloc(sizeof(xfs_qoff_logitem_t), KM_SLEEP);
- 
- 	qf->qql_item.li_type = XFS_LI_QUOTAOFF;
- 	if (start)
-diff --git a/fs/xfs/support/ktrace.c b/fs/xfs/support/ktrace.c
-index 2d494c2..3982acf 100644
---- a/fs/xfs/support/ktrace.c
-+++ b/fs/xfs/support/ktrace.c
-@@ -58,7 +58,7 @@ ktrace_alloc(int nentries, unsigned int __nocast sleep)
- 	ktrace_entry_t  *ktep;
- 	int		entries;
- 
--	ktp = (ktrace_t*)kmem_zone_alloc(ktrace_hdr_zone, sleep);
-+	ktp = kmem_zone_alloc(ktrace_hdr_zone, sleep);
- 
- 	if (ktp = (ktrace_t*)NULL) {
- 		/*
-@@ -75,10 +75,10 @@ ktrace_alloc(int nentries, unsigned int __nocast sleep)
- 	 */
- 	entries = roundup_pow_of_two(nentries);
- 	if (entries = ktrace_zentries) {
--		ktep = (ktrace_entry_t*)kmem_zone_zalloc(ktrace_ent_zone,
-+		ktep = kmem_zone_zalloc(ktrace_ent_zone,
- 							    sleep);
- 	} else {
--		ktep = (ktrace_entry_t*)kmem_zalloc((entries * sizeof(*ktep)),
-+		ktep = kmem_zalloc((entries * sizeof(*ktep)),
- 							    sleep | KM_LARGE);
- 	}
- 
-diff --git a/fs/xfs/xfs_attr_leaf.c b/fs/xfs/xfs_attr_leaf.c
-index afdc891..688e894 100644
---- a/fs/xfs/xfs_attr_leaf.c
-+++ b/fs/xfs/xfs_attr_leaf.c
-@@ -2869,7 +2869,7 @@ xfs_attr_leaf_inactive(xfs_trans_t **trans, xfs_inode_t *dp, xfs_dabuf_t *bp)
- 	 * Allocate storage for a list of all the "remote" value extents.
- 	 */
- 	size = count * sizeof(xfs_attr_inactive_list_t);
--	list = (xfs_attr_inactive_list_t *)kmem_alloc(size, KM_SLEEP);
-+	list = kmem_alloc(size, KM_SLEEP);
- 
- 	/*
- 	 * Identify each of the "remote" value extents.
-diff --git a/fs/xfs/xfs_buf_item.c b/fs/xfs/xfs_buf_item.c
-index 92af409..431755a 100644
---- a/fs/xfs/xfs_buf_item.c
-+++ b/fs/xfs/xfs_buf_item.c
-@@ -726,7 +726,7 @@ xfs_buf_item_init(
- 	chunks = (int)((XFS_BUF_COUNT(bp) + (XFS_BLI_CHUNK - 1)) >> XFS_BLI_SHIFT);
- 	map_size = (int)((chunks + NBWORD) >> BIT_TO_WORD_SHIFT);
- 
--	bip = (xfs_buf_log_item_t*)kmem_zone_zalloc(xfs_buf_item_zone,
-+	bip = kmem_zone_zalloc(xfs_buf_item_zone,
- 						    KM_SLEEP);
- 	bip->bli_item.li_type = XFS_LI_BUF;
- 	bip->bli_item.li_ops = &xfs_buf_item_ops;
-@@ -751,9 +751,9 @@ xfs_buf_item_init(
- 	 * the buffer to indicate which bytes the callers have asked
- 	 * to have logged.
- 	 */
--	bip->bli_orig = (char *)kmem_alloc(XFS_BUF_COUNT(bp), KM_SLEEP);
-+	bip->bli_orig = kmem_alloc(XFS_BUF_COUNT(bp), KM_SLEEP);
- 	memcpy(bip->bli_orig, XFS_BUF_PTR(bp), XFS_BUF_COUNT(bp));
--	bip->bli_logged = (char *)kmem_zalloc(XFS_BUF_COUNT(bp) / NBBY, KM_SLEEP);
-+	bip->bli_logged = kmem_zalloc(XFS_BUF_COUNT(bp) / NBBY, KM_SLEEP);
- #endif
- 
- 	/*
-diff --git a/fs/xfs/xfs_extfree_item.c b/fs/xfs/xfs_extfree_item.c
-index 05a4bdd..53ccdc4 100644
---- a/fs/xfs/xfs_extfree_item.c
-+++ b/fs/xfs/xfs_extfree_item.c
-@@ -253,9 +253,9 @@ xfs_efi_init(xfs_mount_t	*mp,
- 	if (nextents > XFS_EFI_MAX_FAST_EXTENTS) {
- 		size = (uint)(sizeof(xfs_efi_log_item_t) +
- 			((nextents - 1) * sizeof(xfs_extent_t)));
--		efip = (xfs_efi_log_item_t*)kmem_zalloc(size, KM_SLEEP);
-+		efip = kmem_zalloc(size, KM_SLEEP);
- 	} else {
--		efip = (xfs_efi_log_item_t*)kmem_zone_zalloc(xfs_efi_zone,
-+		efip = kmem_zone_zalloc(xfs_efi_zone,
- 							     KM_SLEEP);
- 	}
- 
-@@ -548,9 +548,9 @@ xfs_efd_init(xfs_mount_t	*mp,
- 	if (nextents > XFS_EFD_MAX_FAST_EXTENTS) {
- 		size = (uint)(sizeof(xfs_efd_log_item_t) +
- 			((nextents - 1) * sizeof(xfs_extent_t)));
--		efdp = (xfs_efd_log_item_t*)kmem_zalloc(size, KM_SLEEP);
-+		efdp = kmem_zalloc(size, KM_SLEEP);
- 	} else {
--		efdp = (xfs_efd_log_item_t*)kmem_zone_zalloc(xfs_efd_zone,
-+		efdp = kmem_zone_zalloc(xfs_efd_zone,
- 							     KM_SLEEP);
- 	}
- 
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index e7ae08d..5ab6e3d 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -3453,7 +3453,7 @@ xfs_iext_add_indirect_multi(
- 	 * (all extents past */
- 	if (nex2) {
- 		byte_diff = nex2 * sizeof(xfs_bmbt_rec_t);
--		nex2_ep = (xfs_bmbt_rec_t *) kmem_alloc(byte_diff, KM_NOFS);
-+		nex2_ep = kmem_alloc(byte_diff, KM_NOFS);
- 		memmove(nex2_ep, &erp->er_extbuf[idx], byte_diff);
- 		erp->er_extcount -= nex2;
- 		xfs_iext_irec_update_extoffs(ifp, erp_idx + 1, -nex2);
-@@ -3842,8 +3842,7 @@ xfs_iext_realloc_indirect(
- 	if (new_size = 0) {
- 		xfs_iext_destroy(ifp);
- 	} else {
--		ifp->if_u1.if_ext_irec = (xfs_ext_irec_t *)
--			kmem_realloc(ifp->if_u1.if_ext_irec,
-+		ifp->if_u1.if_ext_irec = kmem_realloc(ifp->if_u1.if_ext_irec,
- 				new_size, size, KM_NOFS);
- 	}
- }
-diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
-index 7ba4501..3037920 100644
---- a/fs/xfs/xfs_log_recover.c
-+++ b/fs/xfs/xfs_log_recover.c
-@@ -1670,7 +1670,7 @@ xlog_recover_do_buffer_pass1(
- 	 * the bucket.
- 	 */
- 	if (*bucket = NULL) {
--		bcp = (xfs_buf_cancel_t *)kmem_alloc(sizeof(xfs_buf_cancel_t),
-+		bcp = kmem_alloc(sizeof(xfs_buf_cancel_t),
- 						     KM_SLEEP);
- 		bcp->bc_blkno = blkno;
- 		bcp->bc_len = len;
-@@ -1696,7 +1696,7 @@ xlog_recover_do_buffer_pass1(
- 		nextp = nextp->bc_next;
- 	}
- 	ASSERT(prevp != NULL);
--	bcp = (xfs_buf_cancel_t *)kmem_alloc(sizeof(xfs_buf_cancel_t),
-+	bcp = kmem_alloc(sizeof(xfs_buf_cancel_t),
- 					     KM_SLEEP);
- 	bcp->bc_blkno = blkno;
- 	bcp->bc_len = len;
-@@ -2316,7 +2316,7 @@ xlog_recover_do_inode_trans(
- 	if (item->ri_buf[0].i_len = sizeof(xfs_inode_log_format_t)) {
- 		in_f = (xfs_inode_log_format_t *)item->ri_buf[0].i_addr;
- 	} else {
--		in_f = (xfs_inode_log_format_t *)kmem_alloc(
-+		in_f = kmem_alloc(
- 			sizeof(xfs_inode_log_format_t), KM_SLEEP);
- 		need_free = 1;
- 		error = xfs_inode_item_format_convert(&item->ri_buf[0], in_f);
-@@ -3778,8 +3778,7 @@ xlog_do_log_recovery(
- 	 * First do a pass to find all of the cancelled buf log items.
- 	 * Store them in the buf_cancel_table for use in the second pass.
- 	 */
--	log->l_buf_cancel_table -		(xfs_buf_cancel_t **)kmem_zalloc(XLOG_BC_TABLE_SIZE *
-+	log->l_buf_cancel_table = kmem_zalloc(XLOG_BC_TABLE_SIZE *
- 						 sizeof(xfs_buf_cancel_t*),
- 						 KM_SLEEP);
- 	error = xlog_do_recovery_pass(log, head_blk, tail_blk,
-diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-index 8570b82..44d039d 100644
---- a/fs/xfs/xfs_trans.c
-+++ b/fs/xfs/xfs_trans.c
-@@ -868,7 +868,7 @@ shut_us_down:
- 	} else if (nvec <= XFS_TRANS_LOGVEC_COUNT) {
- 		log_vector = log_vector_fast;
- 	} else {
--		log_vector = (xfs_log_iovec_t *)kmem_alloc(nvec *
-+		log_vector = kmem_alloc(nvec *
- 						   sizeof(xfs_log_iovec_t),
- 						   KM_SLEEP);
- 	}
-diff --git a/fs/xfs/xfs_trans_inode.c b/fs/xfs/xfs_trans_inode.c
-index 23d276a..e1b90f0 100644
---- a/fs/xfs/xfs_trans_inode.c
-+++ b/fs/xfs/xfs_trans_inode.c
-@@ -271,8 +271,7 @@ xfs_trans_inode_broot_debug(
- 		ASSERT((ip->i_df.if_broot != NULL) &&
- 		       (ip->i_df.if_broot_bytes > 0));
- 		iip->ili_root_size = ip->i_df.if_broot_bytes;
--		iip->ili_orig_root -			(char*)kmem_alloc(iip->ili_root_size, KM_SLEEP);
-+		iip->ili_orig_root = kmem_alloc(iip->ili_root_size, KM_SLEEP);
- 		memcpy(iip->ili_orig_root, (char*)(ip->i_df.if_broot),
- 		      iip->ili_root_size);
- 	}
-diff --git a/fs/xfs/xfs_trans_item.c b/fs/xfs/xfs_trans_item.c
-index eb3fc57..49615dd 100644
---- a/fs/xfs/xfs_trans_item.c
-+++ b/fs/xfs/xfs_trans_item.c
-@@ -54,8 +54,7 @@ xfs_trans_add_item(xfs_trans_t *tp, xfs_log_item_t *lip)
- 	 * of them and put it at the front of the chunk list.
- 	 */
- 	if (tp->t_items_free = 0) {
--		licp = (xfs_log_item_chunk_t*)
--		       kmem_alloc(sizeof(xfs_log_item_chunk_t), KM_SLEEP);
-+		licp = kmem_alloc(sizeof(xfs_log_item_chunk_t), KM_SLEEP);
- 		ASSERT(licp != NULL);
- 		/*
- 		 * Initialize the chunk, and then
-@@ -460,8 +459,7 @@ xfs_trans_add_busy(xfs_trans_t *tp, xfs_agnumber_t ag, xfs_extlen_t idx)
- 	 * of them and put it at the front of the chunk list.
- 	 */
- 	if (tp->t_busy_free = 0) {
--		lbcp = (xfs_log_busy_chunk_t*)
--		       kmem_alloc(sizeof(xfs_log_busy_chunk_t), KM_SLEEP);
-+		lbcp = kmem_alloc(sizeof(xfs_log_busy_chunk_t), KM_SLEEP);
- 		ASSERT(lbcp != NULL);
- 		/*
- 		 * Initialize the chunk, and then
--- 
-1.5.4.3
-
+T24gV2VkLCBBcHIgOCwgMjAwOSBhdCAxMzoyMiwgSmFjayBTdG9uZSA8andqc3RvbmVAZmFzdG1h
+aWwuZm0+IHdyb3RlOgo+IFJlbW92ZSB1bmVlZGVkIHZvaWQgY2FzdHMKPgo+IFNpZ25lZC1PZmYt
+Qnk6IEphY2sgU3RvbmUgPGp3anN0b25lQGZhc3RtYWlsLmZtPgo+IC0tLQo+IMKgZnMveGZzL3F1
+b3RhL3hmc19kcXVvdF9pdGVtLmMgfCDCoCDCoDIgKy0KPiDCoGZzL3hmcy9zdXBwb3J0L2t0cmFj
+ZS5jIMKgIMKgIMKgIHwgwqAgwqA2ICsrKy0tLQo+IMKgZnMveGZzL3hmc19hdHRyX2xlYWYuYyDC
+oCDCoCDCoCDCoHwgwqAgwqAyICstCj4gwqBmcy94ZnMveGZzX2J1Zl9pdGVtLmMgwqAgwqAgwqAg
+wqAgfCDCoCDCoDYgKysrLS0tCj4gwqBmcy94ZnMveGZzX2V4dGZyZWVfaXRlbS5jIMKgIMKgIHwg
+wqAgwqA4ICsrKystLS0tCj4gwqBmcy94ZnMveGZzX2lub2RlLmMgwqAgwqAgwqAgwqAgwqAgwqB8
+IMKgIMKgNSArKy0tLQo+IMKgZnMveGZzL3hmc19sb2dfcmVjb3Zlci5jIMKgIMKgIMKgfCDCoCDC
+oDkgKysrKy0tLS0tCj4gwqBmcy94ZnMveGZzX3RyYW5zLmMgwqAgwqAgwqAgwqAgwqAgwqB8IMKg
+IMKgMiArLQo+IMKgZnMveGZzL3hmc190cmFuc19pbm9kZS5jIMKgIMKgIMKgfCDCoCDCoDMgKy0t
+Cj4gwqBmcy94ZnMveGZzX3RyYW5zX2l0ZW0uYyDCoCDCoCDCoCB8IMKgIMKgNiArKy0tLS0KPiDC
+oDEwIGZpbGVzIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDI3IGRlbGV0aW9ucygtKQo+Cj4g
+ZGlmZiAtLWdpdCBhL2ZzL3hmcy9zdXBwb3J0L2t0cmFjZS5jIGIvZnMveGZzL3N1cHBvcnQva3Ry
+YWNlLmMKPiBpbmRleCAyZDQ5NGMyLi4zOTgyYWNmIDEwMDY0NAo+IC0tLSBhL2ZzL3hmcy9zdXBw
+b3J0L2t0cmFjZS5jCj4gKysrIGIvZnMveGZzL3N1cHBvcnQva3RyYWNlLmMKPiBAQCAtNzUsMTAg
+Kzc1LDEwIEBAIGt0cmFjZV9hbGxvYyhpbnQgbmVudHJpZXMsIHVuc2lnbmVkIGludCBfX25vY2Fz
+dCBzbGVlcCkKPiDCoCDCoCDCoCDCoCAqLwo+IMKgIMKgIMKgIMKgZW50cmllcyA9IHJvdW5kdXBf
+cG93X29mX3R3byhuZW50cmllcyk7Cj4gwqAgwqAgwqAgwqBpZiAoZW50cmllcyA9IGt0cmFjZV96
+ZW50cmllcykgewo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAga3RlcCA9IChrdHJhY2VfZW50cnlf
+dCopa21lbV96b25lX3phbGxvYyhrdHJhY2VfZW50X3pvbmUsCj4gKyDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCBrdGVwID0ga21lbV96b25lX3phbGxvYyhrdHJhY2VfZW50X3pvbmUsCj4gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBzbGVlcCk7CkRpdG8uCgo+IMKgIMKgIMKgIMKgfSBlbHNl
+IHsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGt0ZXAgPSAoa3RyYWNlX2VudHJ5X3QqKWttZW1f
+emFsbG9jKChlbnRyaWVzICogc2l6ZW9mKCprdGVwKSksCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCBrdGVwID0ga21lbV96YWxsb2MoKGVudHJpZXMgKiBzaXplb2YoKmt0ZXApKSwKPiDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHNsZWVwIHwgS01fTEFSR0UpOwpQbGVhc2UgY2hlY2su
+Cgo+IMKgIMKgIMKgIMKgfQo+Cj4gZGlmZiAtLWdpdCBhL2ZzL3hmcy94ZnNfYnVmX2l0ZW0uYyBi
+L2ZzL3hmcy94ZnNfYnVmX2l0ZW0uYwo+IGluZGV4IDkyYWY0MDkuLjQzMTc1NWEgMTAwNjQ0Cj4g
+LS0tIGEvZnMveGZzL3hmc19idWZfaXRlbS5jCj4gKysrIGIvZnMveGZzL3hmc19idWZfaXRlbS5j
+Cj4gQEAgLTcyNiw3ICs3MjYsNyBAQCB4ZnNfYnVmX2l0ZW1faW5pdCgKPiDCoCDCoCDCoCDCoGNo
+dW5rcyA9IChpbnQpKChYRlNfQlVGX0NPVU5UKGJwKSArIChYRlNfQkxJX0NIVU5LIC0gMSkpID4+
+IFhGU19CTElfU0hJRlQpOwo+IMKgIMKgIMKgIMKgbWFwX3NpemUgPSAoaW50KSgoY2h1bmtzICsg
+TkJXT1JEKSA+PiBCSVRfVE9fV09SRF9TSElGVCk7Cj4KPiAtIMKgIMKgIMKgIGJpcCA9ICh4ZnNf
+YnVmX2xvZ19pdGVtX3QqKWttZW1fem9uZV96YWxsb2MoeGZzX2J1Zl9pdGVtX3pvbmUsCj4gKyDC
+oCDCoCDCoCBiaXAgPSBrbWVtX3pvbmVfemFsbG9jKHhmc19idWZfaXRlbV96b25lLAo+IMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgS01fU0xFRVApOwpEaXRvLgoKPiDCoCDCoCDCoCDCoGJpcC0+YmxpX2l0
+ZW0ubGlfdHlwZSA9IFhGU19MSV9CVUY7Cj4gwqAgwqAgwqAgwqBiaXAtPmJsaV9pdGVtLmxpX29w
+cyA9ICZ4ZnNfYnVmX2l0ZW1fb3BzOwo+IGRpZmYgLS1naXQgYS9mcy94ZnMveGZzX2V4dGZyZWVf
+aXRlbS5jIGIvZnMveGZzL3hmc19leHRmcmVlX2l0ZW0uYwo+IGluZGV4IDA1YTRiZGQuLjUzY2Nk
+YzQgMTAwNjQ0Cj4gLS0tIGEvZnMveGZzL3hmc19leHRmcmVlX2l0ZW0uYwo+ICsrKyBiL2ZzL3hm
+cy94ZnNfZXh0ZnJlZV9pdGVtLmMKPiBAQCAtMjUzLDkgKzI1Myw5IEBAIHhmc19lZmlfaW5pdCh4
+ZnNfbW91bnRfdCDCoCDCoCptcCwKPiDCoCDCoCDCoCDCoGlmIChuZXh0ZW50cyA+IFhGU19FRklf
+TUFYX0ZBU1RfRVhURU5UUykgewo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgc2l6ZSA9ICh1aW50
+KShzaXplb2YoeGZzX2VmaV9sb2dfaXRlbV90KSArCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAoKG5leHRlbnRzIC0gMSkgKiBzaXplb2YoeGZzX2V4dGVudF90KSkpOwo+IC0g
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgZWZpcCA9ICh4ZnNfZWZpX2xvZ19pdGVtX3QqKWttZW1femFs
+bG9jKHNpemUsIEtNX1NMRUVQKTsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGVmaXAgPSBrbWVt
+X3phbGxvYyhzaXplLCBLTV9TTEVFUCk7Cj4gwqAgwqAgwqAgwqB9IGVsc2Ugewo+IC0gwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgZWZpcCA9ICh4ZnNfZWZpX2xvZ19pdGVtX3QqKWttZW1fem9uZV96YWxs
+b2MoeGZzX2VmaV96b25lLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZWZpcCA9IGttZW1fem9u
+ZV96YWxsb2MoeGZzX2VmaV96b25lLAo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IEtNX1NMRUVQKTsKRGl0by4KCj4gwqAgwqAgwqAgwqB9Cj4KPiBAQCAtNTQ4LDkgKzU0OCw5IEBA
+IHhmc19lZmRfaW5pdCh4ZnNfbW91bnRfdCDCoCDCoCptcCwKPiDCoCDCoCDCoCDCoGlmIChuZXh0
+ZW50cyA+IFhGU19FRkRfTUFYX0ZBU1RfRVhURU5UUykgewo+IMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgc2l6ZSA9ICh1aW50KShzaXplb2YoeGZzX2VmZF9sb2dfaXRlbV90KSArCj4gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAoKG5leHRlbnRzIC0gMSkgKiBzaXplb2YoeGZzX2V4
+dGVudF90KSkpOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgZWZkcCA9ICh4ZnNfZWZkX2xvZ19p
+dGVtX3QqKWttZW1femFsbG9jKHNpemUsIEtNX1NMRUVQKTsKPiArIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIGVmZHAgPSBrbWVtX3phbGxvYyhzaXplLCBLTV9TTEVFUCk7Cj4gwqAgwqAgwqAgwqB9IGVs
+c2Ugewo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgZWZkcCA9ICh4ZnNfZWZkX2xvZ19pdGVtX3Qq
+KWttZW1fem9uZV96YWxsb2MoeGZzX2VmZF96b25lLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+ZWZkcCA9IGttZW1fem9uZV96YWxsb2MoeGZzX2VmZF96b25lLAo+IMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIEtNX1NMRUVQKTsKRGl0by4KCj4gwqAgwqAgwqAgwqB9Cj4KPiBkaWZm
+IC0tZ2l0IGEvZnMveGZzL3hmc19sb2dfcmVjb3Zlci5jIGIvZnMveGZzL3hmc19sb2dfcmVjb3Zl
+ci5jCj4gaW5kZXggN2JhNDUwMS4uMzAzNzkyMCAxMDA2NDQKPiAtLS0gYS9mcy94ZnMveGZzX2xv
+Z19yZWNvdmVyLmMKPiArKysgYi9mcy94ZnMveGZzX2xvZ19yZWNvdmVyLmMKPiBAQCAtMTY3MCw3
+ICsxNjcwLDcgQEAgeGxvZ19yZWNvdmVyX2RvX2J1ZmZlcl9wYXNzMSgKPiDCoCDCoCDCoCDCoCAq
+IHRoZSBidWNrZXQuCj4gwqAgwqAgwqAgwqAgKi8KPiDCoCDCoCDCoCDCoGlmICgqYnVja2V0ID0g
+TlVMTCkgewo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgYmNwID0gKHhmc19idWZfY2FuY2VsX3Qg
+KilrbWVtX2FsbG9jKHNpemVvZih4ZnNfYnVmX2NhbmNlbF90KSwKPiArIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIGJjcCA9IGttZW1fYWxsb2Moc2l6ZW9mKHhmc19idWZfY2FuY2VsX3QpLAo+IMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIEtNX1NMRUVQKTsKRGl0by4KCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqBiY3AtPmJjX2Jsa25vID0gYmxrbm87Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBiY3AtPmJj
+X2xlbiA9IGxlbjsKPiBAQCAtMTY5Niw3ICsxNjk2LDcgQEAgeGxvZ19yZWNvdmVyX2RvX2J1ZmZl
+cl9wYXNzMSgKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoG5leHRwID0gbmV4dHAtPmJjX25leHQ7
+Cj4gwqAgwqAgwqAgwqB9Cj4gwqAgwqAgwqAgwqBBU1NFUlQocHJldnAgIT0gTlVMTCk7Cj4gLSDC
+oCDCoCDCoCBiY3AgPSAoeGZzX2J1Zl9jYW5jZWxfdCAqKWttZW1fYWxsb2Moc2l6ZW9mKHhmc19i
+dWZfY2FuY2VsX3QpLAo+ICsgwqAgwqAgwqAgYmNwID0ga21lbV9hbGxvYyhzaXplb2YoeGZzX2J1
+Zl9jYW5jZWxfdCksCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgS01fU0xFRVApOwpEaXRvLgoKPiDCoCDCoCDCoCDCoGJj
+cC0+YmNfYmxrbm8gPSBibGtubzsKPiDCoCDCoCDCoCDCoGJjcC0+YmNfbGVuID0gbGVuOwo+IEBA
+IC0yMzE2LDcgKzIzMTYsNyBAQCB4bG9nX3JlY292ZXJfZG9faW5vZGVfdHJhbnMoCj4gwqAgwqAg
+wqAgwqBpZiAoaXRlbS0+cmlfYnVmWzBdLmlfbGVuID0gc2l6ZW9mKHhmc19pbm9kZV9sb2dfZm9y
+bWF0X3QpKSB7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpbl9mID0gKHhmc19pbm9kZV9sb2df
+Zm9ybWF0X3QgKilpdGVtLT5yaV9idWZbMF0uaV9hZGRyOwo+IMKgIMKgIMKgIMKgfSBlbHNlIHsK
+PiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGluX2YgPSAoeGZzX2lub2RlX2xvZ19mb3JtYXRfdCAq
+KWttZW1fYWxsb2MoCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpbl9mID0ga21lbV9hbGxvYygK
+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHNpemVvZih4ZnNfaW5vZGVfbG9n
+X2Zvcm1hdF90KSwgS01fU0xFRVApOwpQbGVhc2UgY2hlY2suCgo+IMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgbmVlZF9mcmVlID0gMTsKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGVycm9yID0geGZz
+X2lub2RlX2l0ZW1fZm9ybWF0X2NvbnZlcnQoJml0ZW0tPnJpX2J1ZlswXSwgaW5fZik7Cj4gZGlm
+ZiAtLWdpdCBhL2ZzL3hmcy94ZnNfdHJhbnMuYyBiL2ZzL3hmcy94ZnNfdHJhbnMuYwo+IGluZGV4
+IDg1NzBiODIuLjQ0ZDAzOWQgMTAwNjQ0Cj4gLS0tIGEvZnMveGZzL3hmc190cmFucy5jCj4gKysr
+IGIvZnMveGZzL3hmc190cmFucy5jCj4gQEAgLTg2OCw3ICs4NjgsNyBAQCBzaHV0X3VzX2Rvd246
+Cj4gwqAgwqAgwqAgwqB9IGVsc2UgaWYgKG52ZWMgPD0gWEZTX1RSQU5TX0xPR1ZFQ19DT1VOVCkg
+ewo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgbG9nX3ZlY3RvciA9IGxvZ192ZWN0b3JfZmFzdDsK
+PiDCoCDCoCDCoCDCoH0gZWxzZSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBsb2dfdmVjdG9y
+ID0gKHhmc19sb2dfaW92ZWNfdCAqKWttZW1fYWxsb2MobnZlYyAqCj4gKyDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBsb2dfdmVjdG9yID0ga21lbV9hbGxvYyhudmVjICoKPiDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCBzaXplb2YoeGZzX2xvZ19pb3ZlY190KSwKTW92ZSB1cC4KCj4gwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+S01fU0xFRVApOwpQcm9iYWJseSByZWFsaWduLgoKPiDCoCDCoCDCoCDCoH0KPiAtLQoKQmVydAr/
+9Oi6ey5uxyuJt5+uia2GKyWKy/+x6d22F6WKd/+6ey5uxyuJt6R6ud6X+NqeK2iuz+Ke2F5uh3Kh
+9qZ6yxqB62iZqOit2iaj++B6v+R6ud6X+iuAyit6ZqOit2iaiKd+hq2G22n//++B6v+R6ud6X+iu
+D+ZqOit2iaj+Kd+j+G0K
