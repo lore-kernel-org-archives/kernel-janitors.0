@@ -1,65 +1,100 @@
 From: Jack Stone <jwjstone@fastmail.fm>
-Date: Thu, 09 Apr 2009 09:56:23 +0000
-Subject: Re: [PATCH 14/56] ia64: Remove void casts
-Message-Id: <49DDC647.10702@fastmail.fm>
+Date: Wed, 08 Apr 2009 11:21:49 +0000
+Subject: [PATCH 17/56] infiniband: Remove void casts
+Message-Id: <1239189748-11703-18-git-send-email-jwjstone@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <> <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-9-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-10-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-11-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-12-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-14-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-15-git-send-email-jwjstone@fastmail.fm>
-In-Reply-To: <1239189748-11703-15-git-send-email-jwjstone@fastmail.fm>
+References: <>
+ <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-9-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-10-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-11-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-12-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-14-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-15-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-16-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-17-git-send-email-jwjstone@fastmail.fm>
+In-Reply-To: <1239189748-11703-17-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
-Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, tony.luck@intel.com
+Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
 
-[Added maintainer CC]
-Jack Stone wrote:
-> Remove uneeded void casts
->
-> Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
-> ---
->  arch/ia64/kernel/mca_drv.c |    2 +-
->  arch/ia64/mm/contig.c      |    2 +-
->  arch/ia64/mm/discontig.c   |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/ia64/kernel/mca_drv.c b/arch/ia64/kernel/mca_drv.c
-> index f94aaa8..820f34e 100644
-> --- a/arch/ia64/kernel/mca_drv.c
-> +++ b/arch/ia64/kernel/mca_drv.c
-> @@ -496,7 +496,7 @@ recover_from_read_error(slidx_table_t *slidx,
->  	u64 target_identifier;
->  	pal_min_state_area_t *pmsa;
->  	struct ia64_psr *psr1, *psr2;
-> -	ia64_fptr_t *mca_hdlr_bh = (ia64_fptr_t*)mca_handler_bhhook;
-> +	ia64_fptr_t *mca_hdlr_bh = mca_handler_bhhook;
->  
->  	/* Is target address valid? */
->  	target_identifier = get_target_identifier(peidx);
-> diff --git a/arch/ia64/mm/contig.c b/arch/ia64/mm/contig.c
-> index 0ee085e..e0d27b0 100644
-> --- a/arch/ia64/mm/contig.c
-> +++ b/arch/ia64/mm/contig.c
-> @@ -272,7 +272,7 @@ paging_init (void)
->  		map_size = PAGE_ALIGN(ALIGN(max_low_pfn, MAX_ORDER_NR_PAGES) *
->  			sizeof(struct page));
->  		vmalloc_end -= map_size;
-> -		vmem_map = (struct page *) vmalloc_end;
-> +		vmem_map = vmalloc_end;
->  		efi_memmap_walk(create_mem_map_page_table, NULL);
->  
->  		/*
-> diff --git a/arch/ia64/mm/discontig.c b/arch/ia64/mm/discontig.c
-> index d85ba98..f3a45cd 100644
-> --- a/arch/ia64/mm/discontig.c
-> +++ b/arch/ia64/mm/discontig.c
-> @@ -668,7 +668,7 @@ void __init paging_init(void)
->  #ifdef CONFIG_VIRTUAL_MEM_MAP
->  	vmalloc_end -= PAGE_ALIGN(ALIGN(max_low_pfn, MAX_ORDER_NR_PAGES) *
->  		sizeof(struct page));
-> -	vmem_map = (struct page *) vmalloc_end;
-> +	vmem_map = vmalloc_end;
->  	efi_memmap_walk(create_mem_map_page_table, NULL);
->  	printk("Virtual mem_map starts at 0x%p\n", vmem_map);
->  #endif
->   
+Remove uneeded void casts
+
+Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
+---
+ drivers/infiniband/hw/amso1100/c2_cq.c |    4 ++--
+ drivers/infiniband/hw/ehca/ehca_irq.c  |    9 ++++-----
+ 2 files changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/infiniband/hw/amso1100/c2_cq.c b/drivers/infiniband/hw/amso1100/c2_cq.c
+index bb17cce..f5c45b1 100644
+--- a/drivers/infiniband/hw/amso1100/c2_cq.c
++++ b/drivers/infiniband/hw/amso1100/c2_cq.c
+@@ -133,7 +133,7 @@ static inline int c2_poll_one(struct c2_dev *c2dev,
+ 	struct c2_qp *qp;
+ 	int is_recv = 0;
+ 
+-	ce = (struct c2wr_ce *) c2_mq_consume(&cq->mq);
++	ce = c2_mq_consume(&cq->mq);
+ 	if (!ce) {
+ 		return -EAGAIN;
+ 	}
+@@ -146,7 +146,7 @@ static inline int c2_poll_one(struct c2_dev *c2dev,
+ 	while ((qp  		(struct c2_qp *) (unsigned long) ce->qp_user_context) = NULL) {
+ 		c2_mq_free(&cq->mq);
+-		ce = (struct c2wr_ce *) c2_mq_consume(&cq->mq);
++		ce = c2_mq_consume(&cq->mq);
+ 		if (!ce)
+ 			return -EAGAIN;
+ 	}
+diff --git a/drivers/infiniband/hw/ehca/ehca_irq.c b/drivers/infiniband/hw/ehca/ehca_irq.c
+index 99bcbd7..4b89b79 100644
+--- a/drivers/infiniband/hw/ehca/ehca_irq.c
++++ b/drivers/infiniband/hw/ehca/ehca_irq.c
+@@ -479,13 +479,13 @@ void ehca_tasklet_neq(unsigned long data)
+ 	struct ehca_eqe *eqe;
+ 	u64 ret;
+ 
+-	eqe = (struct ehca_eqe *)ehca_poll_eq(shca, &shca->neq);
++	eqe = ehca_poll_eq(shca, &shca->neq);
+ 
+ 	while (eqe) {
+ 		if (!EHCA_BMASK_GET(NEQE_COMPLETION_EVENT, eqe->entry))
+ 			parse_ec(shca, eqe->entry);
+ 
+-		eqe = (struct ehca_eqe *)ehca_poll_eq(shca, &shca->neq);
++		eqe = ehca_poll_eq(shca, &shca->neq);
+ 	}
+ 
+ 	ret = hipz_h_reset_event(shca->ipz_hca_handle,
+@@ -572,8 +572,7 @@ void ehca_process_eq(struct ehca_shca *shca, int is_irq)
+ 	eqe_cnt = 0;
+ 	do {
+ 		u32 token;
+-		eqe_cache[eqe_cnt].eqe -			(struct ehca_eqe *)ehca_poll_eq(shca, eq);
++		eqe_cache[eqe_cnt].eqe = ehca_poll_eq(shca, eq);
+ 		if (!eqe_cache[eqe_cnt].eqe)
+ 			break;
+ 		eqe_value = eqe_cache[eqe_cnt].eqe->entry;
+@@ -637,7 +636,7 @@ void ehca_process_eq(struct ehca_shca *shca, int is_irq)
+ 		goto unlock_irq_spinlock;
+ 	do {
+ 		struct ehca_eqe *eqe;
+-		eqe = (struct ehca_eqe *)ehca_poll_eq(shca, &shca->eq);
++		eqe = ehca_poll_eq(shca, &shca->eq);
+ 		if (!eqe)
+ 			break;
+ 		process_eqe(shca, eqe);
+-- 
+1.5.4.3
 
