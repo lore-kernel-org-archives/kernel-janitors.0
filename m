@@ -1,37 +1,57 @@
 From: Jack Stone <jwjstone@fastmail.fm>
-Date: Thu, 09 Apr 2009 09:54:34 +0000
-Subject: Re: [PATCH 12/56] hpfs: Remove void casts
-Message-Id: <49DDC5DA.8070408@fastmail.fm>
+Date: Wed, 08 Apr 2009 11:21:39 +0000
+Subject: [PATCH 07/56] coda: Remove void casts
+Message-Id: <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <> <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-9-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-10-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-11-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-12-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm>
-In-Reply-To: <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm>
+References: <>
+ <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm>
+In-Reply-To: <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
-Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, mikulas@artax.karlin.mff.cuni.cz
+Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
 
-[Added maintainer CC]
-Jack Stone wrote:
-> Remove uneeded void casts
->
-> Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
-> ---
->  fs/hpfs/super.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/fs/hpfs/super.c b/fs/hpfs/super.c
-> index fecf402..ab539dc 100644
-> --- a/fs/hpfs/super.c
-> +++ b/fs/hpfs/super.c
-> @@ -164,7 +164,7 @@ static struct kmem_cache * hpfs_inode_cachep;
->  static struct inode *hpfs_alloc_inode(struct super_block *sb)
->  {
->  	struct hpfs_inode_info *ei;
-> -	ei = (struct hpfs_inode_info *)kmem_cache_alloc(hpfs_inode_cachep, GFP_NOFS);
-> +	ei = kmem_cache_alloc(hpfs_inode_cachep, GFP_NOFS);
->  	if (!ei)
->  		return NULL;
->  	ei->vfs_inode.i_version = 1;
->   
+Remove uneeded void casts
+
+Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
+---
+ fs/coda/inode.c  |    2 +-
+ fs/coda/upcall.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/coda/inode.c b/fs/coda/inode.c
+index 830f51a..a0407b3 100644
+--- a/fs/coda/inode.c
++++ b/fs/coda/inode.c
+@@ -43,7 +43,7 @@ static struct kmem_cache * coda_inode_cachep;
+ static struct inode *coda_alloc_inode(struct super_block *sb)
+ {
+ 	struct coda_inode_info *ei;
+-	ei = (struct coda_inode_info *)kmem_cache_alloc(coda_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(coda_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	memset(&ei->c_fid, 0, sizeof(struct CodaFid));
+diff --git a/fs/coda/upcall.c b/fs/coda/upcall.c
+index c274d94..0f2e171 100644
+--- a/fs/coda/upcall.c
++++ b/fs/coda/upcall.c
+@@ -59,7 +59,7 @@ static void *alloc_upcall(int opcode, int size)
+ 
+ #define UPARG(op)\
+ do {\
+-	inp = (union inputArgs *)alloc_upcall(op, insize); \
++	inp = alloc_upcall(op, insize); \
+         if (IS_ERR(inp)) { return PTR_ERR(inp); }\
+         outp = (union outputArgs *)(inp); \
+         outsize = insize; \
+-- 
+1.5.4.3
 
