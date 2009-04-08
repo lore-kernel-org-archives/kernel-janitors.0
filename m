@@ -1,39 +1,100 @@
-From: Diego Liziero <diegoliz@gmail.com>
-Date: Tue, 14 Apr 2009 02:14:10 +0000
-Subject: [PATCH 2/2] drivers/isdn boolean negation and bitwise operation in
-Message-Id: <49E3F172.7090800@gmail.com>
+From: Jack Stone <jwjstone@fastmail.fm>
+Date: Wed, 08 Apr 2009 11:21:55 +0000
+Subject: [PATCH 23/56] minix: Remove void casts
+Message-Id: <1239189748-11703-24-git-send-email-jwjstone@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <>
+ <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-9-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-10-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-11-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-12-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-14-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-15-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-16-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-17-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-18-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-19-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-20-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-21-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-22-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-23-git-send-email-jwjstone@fastmail.fm>
+In-Reply-To: <1239189748-11703-23-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
 
+Remove uneeded void casts
 
-From: Diego Liziero <diegoliz@gmail.com>
-
-(Sorry, I forgot to put [1/2] in the previous mail subject)
-
-The semantic patch that makes this change is:
-(http://www.emn.fr/x-info/coccinelle/)
-
-@@ expression E; constant C; @@
-(
-- !E = C
-+ E != C
-)
-
-Signed-off-by: Diego Liziero <diegoliz@gmail.com>
-
+Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
 ---
-diff = 
---- ./drivers/isdn/hisax/hscx_irq.c	2009-04-13 01:21:26.000000000 +0200
-+++ /tmp/cocci-output-25310-4eeefc-hscx_irq.c	2009-04-13 20:36:49.000000000 +0200
-@@ -32,7 +32,7 @@ waitforXFW(struct IsdnCardState *cs, int
- {
- 	int to = 50;
+ fs/minix/dir.c   |    8 ++++----
+ fs/minix/inode.c |    2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/fs/minix/dir.c b/fs/minix/dir.c
+index d4946c4..e17634c 100644
+--- a/fs/minix/dir.c
++++ b/fs/minix/dir.c
+@@ -114,7 +114,7 @@ static int minix_readdir(struct file * filp, void * dirent, filldir_t filldir)
  
--	while ((!(READHSCX(cs, hscx, HSCX_STAR) & 0x44) = 0x40) && to) {
-+	while (((READHSCX(cs, hscx, HSCX_STAR) & 0x44) != 0x40) && to) {
- 		udelay(1);
- 		to--;
- 	}
+ 		if (IS_ERR(page))
+ 			continue;
+-		kaddr = (char *)page_address(page);
++		kaddr = page_address(page);
+ 		p = kaddr+offset;
+ 		limit = kaddr + minix_last_byte(inode, n) - chunk_size;
+ 		for ( ; p <= limit; p = minix_next_entry(p, sbi)) {
+@@ -189,7 +189,7 @@ minix_dirent *minix_find_entry(struct dentry *dentry, struct page **res_page)
+ 		if (IS_ERR(page))
+ 			continue;
+ 
+-		kaddr = (char*)page_address(page);
++		kaddr = page_address(page);
+ 		limit = kaddr + minix_last_byte(dir, n) - sbi->s_dirsize;
+ 		for (p = kaddr; p <= limit; p = minix_next_entry(p, sbi)) {
+ 			if (sbi->s_version = MINIX_V3) {
+@@ -246,7 +246,7 @@ int minix_add_link(struct dentry *dentry, struct inode *inode)
+ 		if (IS_ERR(page))
+ 			goto out;
+ 		lock_page(page);
+-		kaddr = (char*)page_address(page);
++		kaddr = page_address(page);
+ 		dir_end = kaddr + minix_last_byte(dir, n);
+ 		limit = kaddr + PAGE_CACHE_SIZE - sbi->s_dirsize;
+ 		for (p = kaddr; p <= limit; p = minix_next_entry(p, sbi)) {
+@@ -392,7 +392,7 @@ int minix_empty_dir(struct inode * inode)
+ 		if (IS_ERR(page))
+ 			continue;
+ 
+-		kaddr = (char *)page_address(page);
++		kaddr = page_address(page);
+ 		limit = kaddr + minix_last_byte(inode, i) - sbi->s_dirsize;
+ 		for (p = kaddr; p <= limit; p = minix_next_entry(p, sbi)) {
+ 			if (sbi->s_version = MINIX_V3) {
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index daad3c2..eb74488 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -57,7 +57,7 @@ static struct kmem_cache * minix_inode_cachep;
+ static struct inode *minix_alloc_inode(struct super_block *sb)
+ {
+ 	struct minix_inode_info *ei;
+-	ei = (struct minix_inode_info *)kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(minix_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
+-- 
+1.5.4.3
+
