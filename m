@@ -1,123 +1,40 @@
 From: Jack Stone <jwjstone@fastmail.fm>
-Date: Wed, 08 Apr 2009 13:55:17 +0000
-Subject: Re: [PATCH 22/56] message/fusion: Remove void casts
-Message-Id: <49DCACC5.1090208@fastmail.fm>
+Date: Wed, 08 Apr 2009 11:21:36 +0000
+Subject: [PATCH 04/56] befs: Remove void casts
+Message-Id: <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-15-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-16-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-17-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-18-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-19-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-20-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-21-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-22-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-23-git-send-email-jwjstone@fastmail.fm> <36ca99e90904080443m2c50be7dp588dab68e89dadc7@mail.gmail.com>
-In-Reply-To: <36ca99e90904080443m2c50be7dp588dab68e89dadc7@mail.gmail.com>
+References: <>
+ <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
+In-Reply-To: <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bert Wesarg <bert.wesarg@googlemail.com>
-Cc: linux-kernel@vger.kernel.org, jeff@garzik.org, kernel-janitors@vger.kernel.org
-
-Fixed patch
-
-Thanks,
-
-Jack
-
---
-
-message/fusion: Remove void casts
-
-From: Jack Stone <jwjstone@fastmail.fm>
+To: linux-kernel@vger.kernel.org
+Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
 
 Remove uneeded void casts
 
 Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
 ---
+ fs/befs/linuxvfs.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
- drivers/message/fusion/mptbase.c |    6 +++---
- drivers/message/fusion/mptctl.c  |    6 +++---
- drivers/message/fusion/mptfc.c   |    7 +++----
- 3 files changed, 9 insertions(+), 10 deletions(-)
+diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
+index 76afd0d..cfd9698 100644
+--- a/fs/befs/linuxvfs.c
++++ b/fs/befs/linuxvfs.c
+@@ -277,7 +277,7 @@ static struct inode *
+ befs_alloc_inode(struct super_block *sb)
+ {
+         struct befs_inode_info *bi;
+-        bi = (struct befs_inode_info *)kmem_cache_alloc(befs_inode_cachep,
++        bi = kmem_cache_alloc(befs_inode_cachep,
+ 							GFP_KERNEL);
+         if (!bi)
+                 return NULL;
+-- 
+1.5.4.3
 
-diff --git a/drivers/message/fusion/mptbase.c
-b/drivers/message/fusion/mptbase.c
-index d0d126c..656f15f 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -4666,7 +4666,7 @@ GetLanConfigPages(MPT_ADAPTER *ioc)
- 
-     if (hdr.PageLength > 0) {
-         data_sz = hdr.PageLength * 4;
--        ppage0_alloc = (LANPage0_t *) pci_alloc_consistent(ioc->pcidev,
-data_sz, &page0_dma);
-+        ppage0_alloc = pci_alloc_consistent(ioc->pcidev, data_sz,
-&page0_dma);
-         rc = -ENOMEM;
-         if (ppage0_alloc) {
-             memset((u8 *)ppage0_alloc, 0, data_sz);
-@@ -4712,7 +4712,7 @@ GetLanConfigPages(MPT_ADAPTER *ioc)
- 
-     data_sz = hdr.PageLength * 4;
-     rc = -ENOMEM;
--    ppage1_alloc = (LANPage1_t *) pci_alloc_consistent(ioc->pcidev,
-data_sz, &page1_dma);
-+    ppage1_alloc = pci_alloc_consistent(ioc->pcidev, data_sz, &page1_dma);
-     if (ppage1_alloc) {
-         memset((u8 *)ppage1_alloc, 0, data_sz);
-         cfg.physAddr = page1_dma;
-@@ -4986,7 +4986,7 @@ GetIoUnitPage2(MPT_ADAPTER *ioc)
-     /* Read the config page */
-     data_sz = hdr.PageLength * 4;
-     rc = -ENOMEM;
--    ppage_alloc = (IOUnitPage2_t *) pci_alloc_consistent(ioc->pcidev,
-data_sz, &page_dma);
-+    ppage_alloc = pci_alloc_consistent(ioc->pcidev, data_sz, &page_dma);
-     if (ppage_alloc) {
-         memset((u8 *)ppage_alloc, 0, data_sz);
-         cfg.physAddr = page_dma;
-diff --git a/drivers/message/fusion/mptctl.c
-b/drivers/message/fusion/mptctl.c
-index c638171..7893a2c 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -2603,7 +2603,7 @@ mptctl_hp_targetinfo(unsigned long arg)
-        /* Get the data transfer speeds
-         */
-     data_sz = ioc->spi_data.sdp0length * 4;
--    pg0_alloc = (SCSIDevicePage0_t *) pci_alloc_consistent(ioc->pcidev,
-data_sz, &page_dma);
-+    pg0_alloc = pci_alloc_consistent(ioc->pcidev, data_sz, &page_dma);
-     if (pg0_alloc) {
-         hdr.PageVersion = ioc->spi_data.sdp0version;
-         hdr.PageLength = data_sz;
-@@ -2667,8 +2667,8 @@ mptctl_hp_targetinfo(unsigned long arg)
-         /* Issue the second config page request */
-         cfg.action = MPI_CONFIG_ACTION_PAGE_READ_CURRENT;
-         data_sz = (int) cfg.cfghdr.hdr->PageLength * 4;
--        pg3_alloc = (SCSIDevicePage3_t *) pci_alloc_consistent(
--                            ioc->pcidev, data_sz, &page_dma);
-+        pg3_alloc = pci_alloc_consistent(ioc->pcidev, data_sz,
-+                &page_dma);
-         if (pg3_alloc) {
-             cfg.physAddr = page_dma;
-             cfg.pageAddr = (karg.hdr.channel << 8) | karg.hdr.id;
-diff --git a/drivers/message/fusion/mptfc.c b/drivers/message/fusion/mptfc.c
-index c3c24fd..baee13b 100644
---- a/drivers/message/fusion/mptfc.c
-+++ b/drivers/message/fusion/mptfc.c
-@@ -766,7 +766,7 @@ mptfc_GetFcPortPage0(MPT_ADAPTER *ioc, int portnum)
- 
-     data_sz = hdr.PageLength * 4;
-     rc = -ENOMEM;
--    ppage0_alloc = (FCPortPage0_t *) pci_alloc_consistent(ioc->pcidev,
-data_sz, &page0_dma);
-+    ppage0_alloc = pci_alloc_consistent(ioc->pcidev, data_sz, &page0_dma);
-     if (ppage0_alloc) {
- 
-  try_again:
-@@ -907,9 +907,8 @@ start_over:
-         if (data_sz < sizeof(FCPortPage1_t))
-             data_sz = sizeof(FCPortPage1_t);
- 
--        page1_alloc = (FCPortPage1_t *) pci_alloc_consistent(ioc->pcidev,
--                        data_sz,
--                        &page1_dma);
-+        page1_alloc = pci_alloc_consistent(ioc->pcidev, data_sz,
-+                &page1_dma);
-         if (!page1_alloc)
-             return -ENOMEM;
-     }
