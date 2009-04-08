@@ -1,94 +1,144 @@
-From: Bert Wesarg <bert.wesarg@googlemail.com>
-Date: Wed, 08 Apr 2009 12:22:52 +0000
+From: Jack Stone <jwjstone@fastmail.fm>
+Date: Wed, 08 Apr 2009 14:04:52 +0000
 Subject: Re: [PATCH 35/56] ntfs: Remove void casts
-Message-Id: <36ca99e90904080522o4813667fx535e02179b1f3688@mail.gmail.com>
+Message-Id: <49DCAF04.3090803@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-28-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-29-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-30-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-31-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-32-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-33-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-34-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-35-git-send-email-jwjstone@fastmail.fm>
-	 <1239189748-11703-36-git-send-email-jwjstone@fastmail.fm>
-In-Reply-To: <1239189748-11703-36-git-send-email-jwjstone@fastmail.fm>
+References: <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-28-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-29-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-30-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-31-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-32-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-33-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-34-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-35-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-36-git-send-email-jwjstone@fastmail.fm> <36ca99e90904080522o4813667fx535e02179b1f3688@mail.gmail.com>
+In-Reply-To: <36ca99e90904080522o4813667fx535e02179b1f3688@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Jack Stone <jwjstone@fastmail.fm>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Bert Wesarg <bert.wesarg@googlemail.com>
 Cc: linux-kernel@vger.kernel.org, jeff@garzik.org, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 8, 2009 at 13:22, Jack Stone <jwjstone@fastmail.fm> wrote:
-> Remove uneeded void casts
->
-> Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
-> ---
->  fs/ntfs/compress.c |    2 +-
->  fs/ntfs/dir.c      |    8 ++++----
->  fs/ntfs/index.c    |    2 +-
->  fs/ntfs/logfile.c  |    2 +-
->  fs/ntfs/mft.c      |    4 ++--
->  fs/ntfs/super.c    |    8 ++++----
->  fs/ntfs/usnjrnl.c  |    2 +-
->  7 files changed, 14 insertions(+), 14 deletions(-)
->
-> diff --git a/fs/ntfs/compress.c b/fs/ntfs/compress.c
-> index 9669541..12297ee 100644
-> --- a/fs/ntfs/compress.c
-> +++ b/fs/ntfs/compress.c
-> @@ -280,7 +280,7 @@ return_error:
->        }
->
->        /* We have a valid destination page. Setup the destination pointers. */
-> -       dp_addr = (u8*)page_address(dp) + do_sb_start;
-> +       dp_addr = page_address(dp) + do_sb_start;
-Pointer arithmetic.
+Fixed patch,
 
->
->        /* Now, we are ready to process the current sub-block (sb). */
->        if (!(le16_to_cpup((le16*)cb) & NTFS_SB_IS_COMPRESSED)) {
-> diff --git a/fs/ntfs/logfile.c b/fs/ntfs/logfile.c
-> index d7932e9..b6be7c4 100644
-> --- a/fs/ntfs/logfile.c
-> +++ b/fs/ntfs/logfile.c
-> @@ -549,7 +549,7 @@ bool ntfs_check_logfile(struct inode *log_vi, RESTART_PAGE_HEADER **rp)
->                                goto err_out;
->                        }
->                }
-> -               kaddr = (u8*)page_address(page) + (pos & ~PAGE_CACHE_MASK);
-> +               kaddr = page_address(page) + (pos & ~PAGE_CACHE_MASK);
-Pointer arithmetic.
+Thanks,
 
->                /*
->                 * A non-empty block means the logfile is not empty while an
->                 * empty block after a non-empty block has been encountered
-> diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
-> index 23bf684..552f91b 100644
-> --- a/fs/ntfs/mft.c
-> +++ b/fs/ntfs/mft.c
-> @@ -1196,7 +1196,7 @@ static int ntfs_mft_bitmap_find_and_alloc_free_rec_nolock(ntfs_volume *vol,
->                                                "bitmap, aborting.");
->                                return PTR_ERR(page);
->                        }
-> -                       buf = (u8*)page_address(page) + page_ofs;
-> +                       buf = page_address(page) + page_ofs;
-Pointer arithmetic.
+Jack
 
->                        bit = data_pos & 7;
->                        data_pos &= ~7ull;
->                        ntfs_debug("Before inner for loop: size 0x%x, "
-> @@ -1334,7 +1334,7 @@ static int ntfs_mft_bitmap_extend_allocation_nolock(ntfs_volume *vol)
->                ntfs_error(vol->sb, "Failed to read from lcn bitmap.");
->                return PTR_ERR(page);
->        }
-> -       b = (u8*)page_address(page) + (ll & ~PAGE_CACHE_MASK);
-> +       b = page_address(page) + (ll & ~PAGE_CACHE_MASK);
-Pointer arithmetic.
+--
 
->        tb = 1 << (lcn & 7ull);
->        down_write(&vol->lcnbmp_lock);
->        if (*b != 0xff && !(*b & tb)) {
-> --
-Bert
+ntfs: Remove void casts
+
+From: Jack Stone <jwjstone@fastmail.fm>
+
+Remove uneeded void casts
+
+Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
+---
+
+ fs/ntfs/dir.c     |    8 ++++----
+ fs/ntfs/index.c   |    2 +-
+ fs/ntfs/super.c   |    8 ++++----
+ fs/ntfs/usnjrnl.c |    2 +-
+ 4 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/fs/ntfs/dir.c b/fs/ntfs/dir.c
+index 5a9e344..c373301 100644
+--- a/fs/ntfs/dir.c
++++ b/fs/ntfs/dir.c
+@@ -326,7 +326,7 @@ descend_into_child_node:
+         goto err_out;
+     }
+     lock_page(page);
+-    kaddr = (u8*)page_address(page);
++    kaddr = page_address(page);
+ fast_descend_into_child_node:
+     /* Get to the index allocation block. */
+     ia = (INDEX_ALLOCATION*)(kaddr + ((vcn <<
+@@ -804,7 +804,7 @@ descend_into_child_node:
+         goto err_out;
+     }
+     lock_page(page);
+-    kaddr = (u8*)page_address(page);
++    kaddr = page_address(page);
+ fast_descend_into_child_node:
+     /* Get to the index allocation block. */
+     ia = (INDEX_ALLOCATION*)(kaddr + ((vcn <<
+@@ -1279,7 +1279,7 @@ get_next_bmp_page:
+         bmp_page = NULL;
+         goto iput_err_out;
+     }
+-    bmp = (u8*)page_address(bmp_page);
++    bmp = page_address(bmp_page);
+     /* Find next index block in use. */
+     while (!(bmp[cur_bmp_pos >> 3] & (1 << (cur_bmp_pos & 7)))) {
+ find_next_index_buffer:
+@@ -1322,7 +1322,7 @@ find_next_index_buffer:
+             goto err_out;
+         }
+         lock_page(ia_page);
+-        kaddr = (u8*)page_address(ia_page);
++        kaddr = page_address(ia_page);
+     }
+     /* Get the current index buffer. */
+     ia = (INDEX_ALLOCATION*)(kaddr + (ia_pos & ~PAGE_CACHE_MASK &
+diff --git a/fs/ntfs/index.c b/fs/ntfs/index.c
+index 2194eff..16a8b2e 100644
+--- a/fs/ntfs/index.c
++++ b/fs/ntfs/index.c
+@@ -282,7 +282,7 @@ descend_into_child_node:
+         goto err_out;
+     }
+     lock_page(page);
+-    kaddr = (u8*)page_address(page);
++    kaddr = page_address(page);
+ fast_descend_into_child_node:
+     /* Get to the index allocation block. */
+     ia = (INDEX_ALLOCATION*)(kaddr + ((vcn <<
+diff --git a/fs/ntfs/super.c b/fs/ntfs/super.c
+index f76951d..d05bccf 100644
+--- a/fs/ntfs/super.c
++++ b/fs/ntfs/super.c
+@@ -1295,7 +1295,7 @@ static int
+check_windows_hibernation_status(ntfs_volume *vol)
+         ret = PTR_ERR(page);
+         goto iput_out;
+     }
+-    kaddr = (u32*)page_address(page);
++    kaddr = page_address(page);
+     if (*(le32*)kaddr = cpu_to_le32(0x72626968)/*'hibr'*/) {
+         ntfs_debug("Magic \"hibr\" found in hiberfil.sys.  Windows is "
+                 "hibernated on the volume.  This is the "
+@@ -1515,7 +1515,7 @@ not_enabled:
+                 "attribute.");
+         return false;
+     }
+-    uh = (USN_HEADER*)page_address(page);
++    uh = page_address(page);
+     /* Sanity check the $Max. */
+     if (unlikely(sle64_to_cpu(uh->allocation_delta) >
+             sle64_to_cpu(uh->maximum_size))) {
+@@ -2501,7 +2501,7 @@ static s64 get_nr_free_clusters(ntfs_volume *vol)
+             nr_free -= PAGE_CACHE_SIZE * 8;
+             continue;
+         }
+-        kaddr = (u32*)kmap_atomic(page, KM_USER0);
++        kaddr = kmap_atomic(page, KM_USER0);
+         /*
+          * For each 4 bytes, subtract the number of set bits. If this
+          * is the last page and it is partial we don't really care as
+@@ -2572,7 +2572,7 @@ static unsigned long
+__get_nr_free_mft_records(ntfs_volume *vol,
+             nr_free -= PAGE_CACHE_SIZE * 8;
+             continue;
+         }
+-        kaddr = (u32*)kmap_atomic(page, KM_USER0);
++        kaddr = kmap_atomic(page, KM_USER0);
+         /*
+          * For each 4 bytes, subtract the number of set bits. If this
+          * is the last page and it is partial we don't really care as
+diff --git a/fs/ntfs/usnjrnl.c b/fs/ntfs/usnjrnl.c
+index b2bc0d5..5c8fdd7 100644
+--- a/fs/ntfs/usnjrnl.c
++++ b/fs/ntfs/usnjrnl.c
+@@ -58,7 +58,7 @@ bool ntfs_stamp_usnjrnl(ntfs_volume *vol)
+                     "$UsnJrnl/$DATA/$Max attribute.");
+             return false;
+         }
+-        uh = (USN_HEADER*)page_address(page);
++        uh = page_address(page);
+         stamp = get_current_ntfs_time();
+         ntfs_debug("Stamping transaction log ($UsnJrnl): old "
+                 "journal_id 0x%llx, old lowest_valid_usn "
