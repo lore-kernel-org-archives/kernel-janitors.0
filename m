@@ -1,86 +1,220 @@
 From: Jack Stone <jwjstone@fastmail.fm>
-Date: Thu, 09 Apr 2009 10:16:58 +0000
-Subject: Re: [PATCH 36/56] ocfs2: Remove void casts
-Message-Id: <49DDCB1A.20007@fastmail.fm>
+Date: Wed, 08 Apr 2009 11:22:22 +0000
+Subject: [PATCH 50/56] drivers/staging: Remove void casts
+Message-Id: <1239189748-11703-51-git-send-email-jwjstone@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-29-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-30-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-31-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-32-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-33-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-34-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-35-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-36-git-send-email-jwjstone@fastmail.fm>	 <1239189748-11703-37-git-send-email-jwjstone@fastmail.fm> <36ca99e90904080519s2996a423yfe7eca91a411c8c1@mail.gmail.com> <49DCAED6.1080404@fastmail.fm>
-In-Reply-To: <49DCAED6.1080404@fastmail.fm>
+References: <>
+ <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-9-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-10-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-11-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-12-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-14-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-15-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-16-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-17-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-18-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-19-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-20-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-21-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-22-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-23-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-24-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-25-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-26-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-27-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-28-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-29-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-30-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-31-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-32-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-33-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-34-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-35-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-36-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-37-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-38-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-39-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-40-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-41-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-42-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-43-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-44-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-45-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-46-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-47-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-48-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-49-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-50-git-send-email-jwjstone@fastmail.fm>
+In-Reply-To: <1239189748-11703-50-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Bert Wesarg <bert.wesarg@googlemail.com>
-Cc: linux-kernel@vger.kernel.org, jeff@garzik.org, kernel-janitors@vger.kernel.org, mfasheh@suse.com, joel.becker@oracle.com
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org
+Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
 
-[Added maintainer CCs]
-Jack Stone wrote:
-> Fixed Patch
->
-> Thanks,
->
-> Jack
->
-> --
->
-> ocfs2: Remove void casts
->
-> From: Jack Stone <jwjstone@fastmail.fm>
->
-> Remove uneeded void casts
->
-> Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
-> ---
->
->  fs/ocfs2/dlm/dlmmaster.c |   12 ++++--------
->  1 files changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
-> index f8b653f..52ee37d 100644
-> --- a/fs/ocfs2/dlm/dlmmaster.c
-> +++ b/fs/ocfs2/dlm/dlmmaster.c
-> @@ -758,8 +758,7 @@ lookup:
->          spin_unlock(&dlm->spinlock);
->          mlog(0, "allocating a new resource\n");
->          /* nothing found and we need to allocate one. */
-> -        alloc_mle = (struct dlm_master_list_entry *)
-> -            kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
-> +        alloc_mle = kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
->          if (!alloc_mle)
->              goto leave;
->          res = dlm_new_lockres(dlm, lockid, namelen);
-> @@ -1543,8 +1542,7 @@ way_up_top:
->              spin_unlock(&dlm->master_lock);
->              spin_unlock(&dlm->spinlock);
->  
-> -            mle = (struct dlm_master_list_entry *)
-> -                kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
-> +            mle = kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
->              if (!mle) {
->                  response = DLM_MASTER_RESP_ERROR;
->                  mlog_errno(-ENOMEM);
-> @@ -2455,8 +2453,7 @@ static int dlm_migrate_lockres(struct dlm_ctxt *dlm,
->          goto leave;
->      }
->  
-> -    mle = (struct dlm_master_list_entry *) kmem_cache_alloc(dlm_mle_cache,
-> -                                GFP_NOFS);
-> +    mle = kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
->      if (!mle) {
->          mlog_errno(ret);
->          goto leave;
-> @@ -3036,8 +3033,7 @@ int dlm_migrate_request_handler(struct o2net_msg
-> *msg, u32 len, void *data,
->      hash = dlm_lockid_hash(name, namelen);
->  
->      /* preallocate.. if this fails, abort */
-> -    mle = (struct dlm_master_list_entry *) kmem_cache_alloc(dlm_mle_cache,
-> -                             GFP_NOFS);
-> +    mle = kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
->  
->      if (!mle) {
->          ret = -ENOMEM;
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->   
+Remove uneeded void casts
 
+Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
+---
+ drivers/staging/altpciechdma/altpciechdma.c |    4 ++--
+ drivers/staging/epl/EplApiLinuxKernel.c     |    8 ++------
+ drivers/staging/et131x/et1310_rx.c          |    2 +-
+ drivers/staging/rtl8187se/r8180_core.c      |   10 +++++-----
+ drivers/staging/slicoss/slicoss.c           |    3 +--
+ 5 files changed, 11 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/staging/altpciechdma/altpciechdma.c b/drivers/staging/=
+altpciechdma/altpciechdma.c
+index 5869e14..f613a1d 100644
+--- a/drivers/staging/altpciechdma/altpciechdma.c
++++ b/drivers/staging/altpciechdma/altpciechdma.c
+@@ -535,7 +535,7 @@ static int __devinit dma_test(struct ape_dev *ape, stru=
+ct pci_dev *dev)
+=20
+ 	/* allocate and map coherently-cached memory for a DMA-able buffer */
+ 	/* @see Documentation/PCI/PCI-DMA-mapping.txt, near line 318 */
+-	buffer_virt =3D (u8 *)pci_alloc_consistent(dev, PAGE_SIZE * 4, &buffer_bu=
+s);
++	buffer_virt =3D pci_alloc_consistent(dev, PAGE_SIZE * 4, &buffer_bus);
+ 	if (!buffer_virt) {
+ 		printk(KERN_DEBUG "Could not allocate coherent DMA buffer.\n");
+ 		goto fail;
+@@ -793,7 +793,7 @@ static int __devinit probe(struct pci_dev *dev, const s=
+truct pci_device_id *id)
+=20
+ 	/* allocate and map coherently-cached memory for a descriptor table */
+ 	/* @see LDD3 page 446 */
+-	ape->table_virt =3D (struct ape_chdma_table *)pci_alloc_consistent(dev,
++	ape->table_virt =3D pci_alloc_consistent(dev,
+ 		APE_CHDMA_TABLE_SIZE, &ape->table_bus);
+ 	/* could not allocate table? */
+ 	if (!ape->table_virt) {
+diff --git a/drivers/staging/epl/EplApiLinuxKernel.c b/drivers/staging/epl/=
+EplApiLinuxKernel.c
+index cb3e275..4c5dfcd 100644
+--- a/drivers/staging/epl/EplApiLinuxKernel.c
++++ b/drivers/staging/epl/EplApiLinuxKernel.c
+@@ -655,9 +655,7 @@ static int EplLinIoctl(struct inode *pDeviceFile_p,	// =
+information about the dev
+ 				goto Exit;
+ 			}
+=20
+-			pBufHeader -			    (tEplLinSdoBufHeader *)
+-			    vmalloc(sizeof(tEplLinSdoBufHeader) +
++			pBufHeader =3D vmalloc(sizeof(tEplLinSdoBufHeader) +
+ 				    SdoObject.m_uiSize);
+ 			if (pBufHeader =3D NULL) {	// no memory available
+ 				iRet =3D -ENOMEM;
+@@ -751,9 +749,7 @@ static int EplLinIoctl(struct inode *pDeviceFile_p,	// =
+information about the dev
+ 				goto Exit;
+ 			}
+=20
+-			pBufHeader -			    (tEplLinSdoBufHeader *)
+-			    vmalloc(sizeof(tEplLinSdoBufHeader) +
++			pBufHeader =3D vmalloc(sizeof(tEplLinSdoBufHeader) +
+ 				    SdoObject.m_uiSize);
+ 			if (pBufHeader =3D NULL) {	// no memory available
+ 				iRet =3D -ENOMEM;
+diff --git a/drivers/staging/et131x/et1310_rx.c b/drivers/staging/et131x/et=
+1310_rx.c
+index 8dc559a..4b1ace6 100644
+--- a/drivers/staging/et131x/et1310_rx.c
++++ b/drivers/staging/et131x/et1310_rx.c
+@@ -610,7 +610,7 @@ int et131x_init_recv(struct et131x_adapter *adapter)
+=20
+ 	/* Setup each RFD */
+ 	for (RfdCount =3D 0; RfdCount < rx_ring->NumRfd; RfdCount++) {
+-		pMpRfd =3D (MP_RFD *) kmem_cache_alloc(rx_ring->RecvLookaside,
++		pMpRfd =3D kmem_cache_alloc(rx_ring->RecvLookaside,
+ 						     GFP_ATOMIC | GFP_DMA);
+=20
+ 		if (!pMpRfd) {
+diff --git a/drivers/staging/rtl8187se/r8180_core.c b/drivers/staging/rtl81=
+87se/r8180_core.c
+index 6ecd12d..6223371 100644
+--- a/drivers/staging/rtl8187se/r8180_core.c
++++ b/drivers/staging/rtl8187se/r8180_core.c
+@@ -1691,7 +1691,7 @@ int alloc_tx_beacon_desc_ring(struct net_device *dev,=
+ int count)
+ 	u32 *tmp;
+ 	struct r8180_priv *priv =3D (struct r8180_priv *)ieee80211_priv(dev);
+=20
+-	priv->txbeaconring =3D (u32*)pci_alloc_consistent(priv->pdev,
++	priv->txbeaconring =3D pci_alloc_consistent(priv->pdev,
+ 					  sizeof(u32)*8*count,
+ 					  &priv->txbeaconringdma);
+ 	if (!priv->txbeaconring) return -1;
+@@ -1727,7 +1727,7 @@ short alloc_tx_desc_ring(struct net_device *dev, int =
+bufsize, int count,
+ 		DMESGE ("TX buffer allocation too large");
+ 		return 0;
+ 	}
+-	desc =3D (u32*)pci_alloc_consistent(pdev,
++	desc =3D pci_alloc_consistent(pdev,
+ 					  sizeof(u32)*8*count+256, &dma_desc);
+ 	if(desc=3DNULL) return -1;
+ 	if(dma_desc & 0xff){
+@@ -1751,7 +1751,7 @@ short alloc_tx_desc_ring(struct net_device *dev, int =
+bufsize, int count,
+ 	tmp=DEsc;
+ 	for (i=3D0;i<count;i++)
+ 	{
+-		buf =3D (void*)pci_alloc_consistent(pdev,bufsize,&dma_tmp);
++		buf =3D pci_alloc_consistent(pdev,bufsize,&dma_tmp);
+ 		if (buf =3D NULL) return -ENOMEM;
+=20
+ 		switch(addr) {
+@@ -1975,7 +1975,7 @@ short alloc_rx_desc_ring(struct net_device *dev, u16 =
+bufsize, int count)
+ 		return -1;
+ 	}
+=20
+-	desc =3D (u32*)pci_alloc_consistent(pdev,sizeof(u32)*rx_desc_size*count+2=
+56,
++	desc =3D pci_alloc_consistent(pdev,sizeof(u32)*rx_desc_size*count+256,
+ 					  &dma_desc);
+=20
+ 	if(dma_desc & 0xff){
+@@ -2017,7 +2017,7 @@ short alloc_rx_desc_ring(struct net_device *dev, u16 =
+bufsize, int count)
+ 		for(j=3D0;j<bufsize;j++) ((u8*)buf)[i] =3D 0;
+ #endif
+=20
+-		//buf =3D (void*)pci_alloc_consistent(pdev,bufsize,&dma_tmp);
++		//buf =3D pci_alloc_consistent(pdev,bufsize,&dma_tmp);
+ 		if(-1 =3D buffer_add(&(priv->rxbuffer), buf,dma_tmp,
+ 			   &(priv->rxbufferhead))){
+ 			   DMESGE("Unable to allocate mem RX buf");
+diff --git a/drivers/staging/slicoss/slicoss.c b/drivers/staging/slicoss/sl=
+icoss.c
+index 9481563..746034c 100644
+--- a/drivers/staging/slicoss/slicoss.c
++++ b/drivers/staging/slicoss/slicoss.c
+@@ -333,8 +333,7 @@ static void slic_init_adapter(struct net_device *netdev,
+ 		pslic_handle->next =3D adapter->pfree_slic_handles;
+ 		adapter->pfree_slic_handles =3D pslic_handle;
+ 	}
+-	adapter->pshmem =3D (struct slic_shmem *)
+-					pci_alloc_consistent(adapter->pcidev,
++	adapter->pshmem =3D pci_alloc_consistent(adapter->pcidev,
+ 					sizeof(struct slic_shmem),
+ 					&adapter->
+ 					phys_shmem);
+--=20
+1.5.4.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
