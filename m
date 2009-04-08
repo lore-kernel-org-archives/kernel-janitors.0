@@ -1,47 +1,64 @@
-From: Joe Damato <ice799@gmail.com>
-Date: Thu, 16 Apr 2009 23:56:58 +0000
-Subject: Re: [PATCH 05/56] block: Remove void casts
-Message-Id: <3605561d0904161656r66e6b2a4q32b354ea15ad4742@mail.gmail.com>
+From: Jack Stone <jwjstone@fastmail.fm>
+Date: Wed, 08 Apr 2009 11:21:40 +0000
+Subject: [PATCH 08/56] cris: Remove void casts
+Message-Id: <1239189748-11703-9-git-send-email-jwjstone@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm>
-In-Reply-To: <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm>
+References: <>
+ <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm>
+ <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm>
+In-Reply-To: <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
 
-On Thu, Apr 16, 2009 at 2:16 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Sat, Apr 11, 2009 at 02:55:32PM +0200, walter harms wrote:
->>
->>
->> Al Viro schrieb:
->> > On Wed, Apr 08, 2009 at 01:31:43PM +0200, Bert Wesarg wrote:
->> >> If typeof(c) =3D CommandList_struct*, that you could replace
->> >> sizeof(CommandList_struct) with sizeof(*c) to make the expression
->> >> shorter and fit into one line.
->> >
->> > This is not commonly accepted as a good thing. =A0In particular, I wou=
-ld
->> > seriously ask you to avoid doing anything of that kind around fs/*
->>
->> just for the curious ...
->> What is the dark side of replacing ?
->> foo=3Dmalloc(sizeof(struct fo)) -> foo=3Dmalloc(sizeof( *foo) ))
->
-> The latter is ungreppable.
+Remove uneeded void casts
 
-For the curious, round 2: I was under the impression (perhaps
-incorrectly) that sizeof(*foo) was useful because if the type of foo
-changes (say from struct fo to struct new_fo), you do not need to go
-fishing around the source changing all the "struct fo" to "struct
-new_fo."
+Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
+---
+ arch/cris/arch-v32/drivers/cryptocop.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-This probably doesn't matter though if all the other code is already
-doing sizeof(struct fo), because you'll have to go fishing anyway.
+diff --git a/arch/cris/arch-v32/drivers/cryptocop.c b/arch/cris/arch-v32/drivers/cryptocop.c
+index 67c61ea..5d20327 100644
+--- a/arch/cris/arch-v32/drivers/cryptocop.c
++++ b/arch/cris/arch-v32/drivers/cryptocop.c
+@@ -2455,7 +2455,7 @@ static int map_pages_to_iovec(struct iovec *iov, int iovlen, int *iovix, struct
+ 			DEBUG_API(printk("map_page_to_iovec: *pageix=%d >= nopages=%d\n", *pageix, nopages));
+ 			return 0;
+ 		}
+-		iov[*iovix].iov_base = (unsigned char*)page_address(pages[*pageix]) + *pageoffset;
++		iov[*iovix].iov_base = page_address(pages[*pageix]) + *pageoffset;
+ 		tmplen = PAGE_SIZE - *pageoffset;
+ 		if (tmplen < map_length){
+ 			(*pageoffset) = 0;
+@@ -2780,16 +2780,16 @@ static int cryptocop_ioctl_process(struct inode *inode, struct file *filp, unsig
+ 		size_t tmplen = cop->tfrm_op.inlen;
+ 
+ 		cop->tfrm_op.indata[0].iov_len = PAGE_SIZE - ((unsigned long int)(oper.indata + prev_ix) & ~PAGE_MASK);
+-		cop->tfrm_op.indata[0].iov_base = (unsigned char*)page_address(inpages[0]) + ((unsigned long int)(oper.indata + prev_ix) & ~PAGE_MASK);
++		cop->tfrm_op.indata[0].iov_base = page_address(inpages[0]) + ((unsigned long int)(oper.indata + prev_ix) & ~PAGE_MASK);
+ 		tmplen -= cop->tfrm_op.indata[0].iov_len;
+ 		for (i = 1; i<noinpages; i++){
+ 			cop->tfrm_op.indata[i].iov_len = tmplen < PAGE_SIZE ? tmplen : PAGE_SIZE;
+-			cop->tfrm_op.indata[i].iov_base = (unsigned char*)page_address(inpages[i]);
++			cop->tfrm_op.indata[i].iov_base = page_address(inpages[i]);
+ 			tmplen -= PAGE_SIZE;
+ 		}
+ 	} else {
+ 		cop->tfrm_op.indata[0].iov_len = oper.inlen - prev_ix;
+-		cop->tfrm_op.indata[0].iov_base = (unsigned char*)page_address(inpages[0]) + ((unsigned long int)(oper.indata + prev_ix) & ~PAGE_MASK);
++		cop->tfrm_op.indata[0].iov_base = page_address(inpages[0]) + ((unsigned long int)(oper.indata + prev_ix) & ~PAGE_MASK);
+ 	}
+ 
+ 	iovlen = nooutpages + 6;
+-- 
+1.5.4.3
 
-Joe
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
