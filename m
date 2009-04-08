@@ -1,50 +1,37 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 20 Apr 2009 15:44:12 +0000
-Subject: Re: [PATCH] kernel/power/poweroff.c : Fix coding style whitespace
-Message-Id: <alpine.LNX.2.00.0904201744010.13028@wotan.suse.de>
+From: Jack Stone <jwjstone@fastmail.fm>
+Date: Wed, 08 Apr 2009 11:21:33 +0000
+Subject: [PATCH 01/56] adfs: Remove void casts
+Message-Id: <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <>
+ <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+In-Reply-To: <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
 
-On Sun, 22 Feb 2009, Manish Katiyar wrote:
+Remove uneeded void casts
 
-> Fix coding style whitespace fixes. Patch compile tested
-> Before :-
-> total: 1 errors, 0 warnings, 46 lines checked
-> After
-> total: 0 errors, 0 warnings, 46 lines checked
-> 
-> Before :-
->   text	   data	    bss	    dec	    hex	filename
->     107	     48	      0	    155	     9b	kernel/power/poweroff.o
-> After
->    text	   data	    bss	    dec	    hex	filename
->     107	     48	      0	    155	     9b	kernel/power/poweroff.o
-> 
-> 
-> Signed-off-by: Manish Katiyar <mkatiyar@gmail.com>
-> ---
->  kernel/power/poweroff.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/kernel/power/poweroff.c b/kernel/power/poweroff.c
-> index 9789083..e8b3370 100644
-> --- a/kernel/power/poweroff.c
-> +++ b/kernel/power/poweroff.c
-> @@ -34,7 +34,7 @@ static struct sysrq_key_op	sysrq_poweroff_op = {
->  	.handler        = handle_poweroff,
->  	.help_msg       = "powerOff",
->  	.action_msg     = "Power Off",
-> - 	.enable_mask	= SYSRQ_ENABLE_BOOT,
-> +	.enable_mask	= SYSRQ_ENABLE_BOOT,
->  };
-> 
->  static int pm_sysrq_init(void)
+Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
+---
+ fs/adfs/super.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Applied to trivial tree, thanks.
-
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index dd9becc..9ae1ed1 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -242,7 +242,7 @@ static struct kmem_cache *adfs_inode_cachep;
+ static struct inode *adfs_alloc_inode(struct super_block *sb)
+ {
+ 	struct adfs_inode_info *ei;
+-	ei = (struct adfs_inode_info *)kmem_cache_alloc(adfs_inode_cachep, GFP_KERNEL);
++	ei = kmem_cache_alloc(adfs_inode_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
+ 	return &ei->vfs_inode;
 -- 
-Jiri Kosina
-SUSE Labs
+1.5.4.3
+
