@@ -1,42 +1,52 @@
-From: Ingo Molnar <mingo@elte.hu>
-Date: Wed, 08 Apr 2009 14:57:15 +0000
+From: Jack Stone <jwjstone@fastmail.fm>
+Date: Wed, 08 Apr 2009 14:59:43 +0000
 Subject: Re: [PATCH 54/56] x86: Remove void casts
-Message-Id: <20090408145715.GO12931@elte.hu>
+Message-Id: <49DCBBDF.4040603@fastmail.fm>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1239189748-11703-54-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-55-git-send-email-jwjstone@fastmail.fm> <36ca99e90904080518qf81b483h6ed2bc9752ee0d1e@mail.gmail.com> <49DCAE97.8040602@fastmail.fm> <20090408140637.GC12931@elte.hu> <49DCB140.7000603@fastmail.fm> <20090408144055.GH12931@elte.hu> <49DCB8C5.4090108@fastmail.fm> <20090408144842.GK12931@elte.hu> <49DCBA61.8060507@fastmail.fm>
-In-Reply-To: <49DCBA61.8060507@fastmail.fm>
+References: <1239189748-11703-54-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-55-git-send-email-jwjstone@fastmail.fm> <36ca99e90904080518qf81b483h6ed2bc9752ee0d1e@mail.gmail.com> <49DCAE97.8040602@fastmail.fm> <20090408140637.GC12931@elte.hu> <49DCB140.7000603@fastmail.fm> <20090408144055.GH12931@elte.hu> <49DCB8C5.4090108@fastmail.fm> <20090408144842.GK12931@elte.hu> <49DCBA61.8060507@fastmail.fm> <20090408145715.GO12931@elte.hu>
+In-Reply-To: <20090408145715.GO12931@elte.hu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jack Stone <jwjstone@fastmail.fm>
+To: Ingo Molnar <mingo@elte.hu>
 Cc: Bert Wesarg <bert.wesarg@googlemail.com>, linux-kernel@vger.kernel.org, jeff@garzik.org, kernel-janitors@vger.kernel.org
 
-
-* Jack Stone <jwjstone@fastmail.fm> wrote:
-
-> Ingo Molnar wrote:
-> > No, i mean, this approach should be changed, and i dont think any 
-> > type cast change should go via any trivial tree. It's easy to mess 
-> > it up. Please submit them to the maintainer trees
+Ingo Molnar wrote:
+> * Jack Stone <jwjstone@fastmail.fm> wrote:
 >
-> Ok. I'll try and find appropriate CCs. I'm going out shortly so it 
-> might take me a while.
+>   
+>> Ingo Molnar wrote:
+>>     
+>>> No, i mean, this approach should be changed, and i dont think any 
+>>> type cast change should go via any trivial tree. It's easy to mess 
+>>> it up. Please submit them to the maintainer trees
+>>>       
+>> Ok. I'll try and find appropriate CCs. I'm going out shortly so it 
+>> might take me a while.
+>>     
+>
+> Since you do many such patches it might make sense to script up a 
+> "who maintains what" kind of script - and share that script with 
+> lkml.
+>
+> I have this silly little script:
+>
+>   git log $@ | grep Signed-off-by: |
+>    cut -d: -f2 | cut -d\< -f1 |
+>     sort | uniq -c | sort -n
+>
+> To find out any recent parties that touches a particular file. But 
+> it would be nice to somehow automate the pickup of mailing-list 
+> addresses from MAINTAINERS for example. We've literally got hundreds 
+> of email lists there.
+>
+> It is not trivial to do though :-)
+>   
+It would be useful. The main problem is working out what files belong to
+what MAINTAINERS entries.
 
-Since you do many such patches it might make sense to script up a 
-"who maintains what" kind of script - and share that script with 
-lkml.
+I'll see what I can cook up.
 
-I have this silly little script:
+Thanks,
 
-  git log $@ | grep Signed-off-by: |
-   cut -d: -f2 | cut -d\< -f1 |
-    sort | uniq -c | sort -n
-
-To find out any recent parties that touches a particular file. But 
-it would be nice to somehow automate the pickup of mailing-list 
-addresses from MAINTAINERS for example. We've literally got hundreds 
-of email lists there.
-
-It is not trivial to do though :-)
-
-	Ingo
+Jack
