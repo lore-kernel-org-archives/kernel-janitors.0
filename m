@@ -1,25 +1,33 @@
-From: Jack Stone <jwjstone@fastmail.fm>
-Date: Thu, 09 Apr 2009 09:55:38 +0000
+From: Jean Delvare <khali@linux-fr.org>
+Date: Thu, 09 Apr 2009 12:43:34 +0000
 Subject: Re: [PATCH 13/56] i2c: Remove void casts
-Message-Id: <49DDC61A.8090807@fastmail.fm>
+Message-Id: <20090409144334.4c283ef2@hyperion.delvare>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <> <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-3-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-4-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-5-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-6-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-7-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-8-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-9-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-10-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-11-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-12-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-14-git-send-email-jwjstone@fastmail.fm>
+References: <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
+	<1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
+	<1239189748-11703-3-git-send-email-jwjstone@fastmail.fm>
+	<1239189748-11703-4-git-send-email-jwjstone@fastmail.fm>
+	<1239189748-11703-14-git-send-email-jwjstone@fastmail.fm>
 In-Reply-To: <1239189748-11703-14-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, khali@linux-fr.org, ben-linux@fluff.org
+To: Jack Stone <jwjstone@fastmail.fm>
+Cc: linux-kernel@vger.kernel.org, jeff@garzik.org, kernel-janitors@vger.kernel.org
 
-[Added maintainer CCs]
-Jack Stone wrote:
+Hi Jack,
+
+On Wed,  8 Apr 2009 12:21:45 +0100, Jack Stone wrote:
 > Remove uneeded void casts
->
+> 
 > Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
+
+WARNING: Signed-off-by: is the preferred form
+
 > ---
 >  drivers/i2c/i2c-core.c |    2 +-
 >  1 files changed, 1 insertions(+), 1 deletions(-)
->
+> 
 > diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
 > index b6f3a0d..1578645 100644
 > --- a/drivers/i2c/i2c-core.c
@@ -33,5 +41,8 @@ Jack Stone wrote:
 >  	if (adapter && !try_module_get(adapter->owner))
 >  		adapter = NULL;
 >  
->   
 
+Applied, thanks.
+
+-- 
+Jean Delvare
