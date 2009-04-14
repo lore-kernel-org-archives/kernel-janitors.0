@@ -1,37 +1,39 @@
-From: Jack Stone <jwjstone@fastmail.fm>
-Date: Wed, 08 Apr 2009 11:21:33 +0000
-Subject: [PATCH 01/56] adfs: Remove void casts
-Message-Id: <1239189748-11703-2-git-send-email-jwjstone@fastmail.fm>
+From: Diego Liziero <diegoliz@gmail.com>
+Date: Tue, 14 Apr 2009 01:52:54 +0000
+Subject: [PATCH] drivers/isdn boolean negation and bitwise operation in wrong
+Message-Id: <49E3EC76.70908@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <>
- <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
-In-Reply-To: <1239189748-11703-1-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, Jack Stone <jwjstone@fastmail.fm>
+To: kernel-janitors@vger.kernel.org
 
-Remove uneeded void casts
 
-Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
+
+From: Diego Liziero <diegoliz@gmail.com>
+
+
+The semantic patch that makes this change is:
+(http://www.emn.fr/x-info/coccinelle/)
+
+@@ expression E; constant C; @@
+(
+- !E = C
++ E != C
+)
+
+Signed-off-by: Diego Liziero <diegoliz@gmail.com>
+
 ---
- fs/adfs/super.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-index dd9becc..9ae1ed1 100644
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -242,7 +242,7 @@ static struct kmem_cache *adfs_inode_cachep;
- static struct inode *adfs_alloc_inode(struct super_block *sb)
+diff = 
+--- ./drivers/isdn/hisax/diva.c	2009-04-13 01:21:26.000000000 +0200
++++ /tmp/cocci-output-25237-f6bb7c-diva.c	2009-04-13 20:36:42.000000000 +0200
+@@ -382,7 +382,7 @@ MemwaitforXFW(struct IsdnCardState *cs, 
  {
- 	struct adfs_inode_info *ei;
--	ei = (struct adfs_inode_info *)kmem_cache_alloc(adfs_inode_cachep, GFP_KERNEL);
-+	ei = kmem_cache_alloc(adfs_inode_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
- 	return &ei->vfs_inode;
--- 
-1.5.4.3
-
+ 	int to = 50;
+ 
+-	while ((!(MemReadHSCX(cs, hscx, HSCX_STAR) & 0x44) = 0x40) && to) {
++	while (((MemReadHSCX(cs, hscx, HSCX_STAR) & 0x44) != 0x40) && to) {
+ 		udelay(1);
+ 		to--;
+ 	}
