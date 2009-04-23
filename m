@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 23 Apr 2009 17:24:21 +0000
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 23 Apr 2009 17:26:59 +0000
 Subject: Re: is there a "single_bit_set" macro somewhere?
-Message-Id: <49F0A445.801@xenotime.net>
+Message-Id: <Pine.LNX.4.64.0904231924270.9592@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.LFD.2.00.0904231307160.12567@localhost.localdomain>
 In-Reply-To: <alpine.LFD.2.00.0904231307160.12567@localhost.localdomain>
@@ -10,7 +10,9 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Robert P. J. Day wrote:
+On Thu, 23 Apr 2009, Robert P. J. Day wrote:
+
+> 
 >   once upon a time, the kernel source code was replete with
 > conditional constructs of the form:
 > 
@@ -44,7 +46,21 @@ Robert P. J. Day wrote:
 > 
 >   thoughts?
 
-single_bit_set(n) is equivalent to
-  hamming weight(n) = 1
+I found 8 occurrences with the following Coccinelle semantic match:
 
-lib/hweight.c implements hamming weights for 8/16/32/64-bit args.
+@@ expression n; @@
+
+* (n & (n-1)) = 0
+
+
+The most unpleasant was:
+
+(!(((fp)->ipend & ~0x30) & (((fp)->ipend & ~0x30) - 1)))
+
+in the file arch/blackfin/kernel/traps.c.
+
+At least some of them seemed to have comments nearby that suggested that 
+searching for a single 1-bit was indeed the goal.  I haven't looked at all 
+of them, though.
+
+julia
