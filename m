@@ -1,37 +1,56 @@
-From: Jack Stone <jwjstone@fastmail.fm>
-Date: Thu, 09 Apr 2009 10:06:36 +0000
-Subject: Re: [PATCH 25/56] mm: Remove void casts
-Message-Id: <49DDC8AC.8090300@fastmail.fm>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Thu, 23 Apr 2009 17:14:31 +0000
+Subject: is there a "single_bit_set" macro somewhere?
+Message-Id: <alpine.LFD.2.00.0904231307160.12567@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <> <1239189748-11703-11-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-12-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-13-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-14-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-15-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-16-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-17-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-18-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-19-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-20-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-21-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-22-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-23-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-24-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-25-git-send-email-jwjstone@fastmail.fm> <1239189748-11703-26-git-send-email-jwjstone@fastmail.fm>
-In-Reply-To: <1239189748-11703-26-git-send-email-jwjstone@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: jeff@garzik.org, kernel-janitors@vger.kernel.org, linux-mm@kvack.org
+To: kernel-janitors@vger.kernel.org
 
-[Added maintainer CC]
-Jack Stone wrote:
-> Remove uneeded void casts
->
-> Signed-Off-By: Jack Stone <jwjstone@fastmail.fm>
-> ---
->  mm/shmem.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index d94d2e9..4febea9 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2357,7 +2357,7 @@ static struct kmem_cache *shmem_inode_cachep;
->  static struct inode *shmem_alloc_inode(struct super_block *sb)
->  {
->  	struct shmem_inode_info *p;
-> -	p = (struct shmem_inode_info *)kmem_cache_alloc(shmem_inode_cachep, GFP_KERNEL);
-> +	p = kmem_cache_alloc(shmem_inode_cachep, GFP_KERNEL);
->  	if (!p)
->  		return NULL;
->  	return &p->vfs_inode;
->   
 
+  once upon a time, the kernel source code was replete with
+conditional constructs of the form:
+
+  if ((n & (n-1)) = 0)
+
+as a way of testing whether something was a power of two.  mercifully,
+include/linux/log2.h was created which introduced, among other things:
+
+static inline __attribute__((const))
+bool is_power_of_2(unsigned long n)
+{
+        return (n != 0 && ((n & (n - 1)) = 0));
+}
+
+so we could simply ask whether "is_power_of_2(n)", which is convenient
+when we're testing things like, oh, blocksize.
+
+  similarly, there are bunches of places which need to test whether an
+integer value has only a single set bit (for instance, to make sure
+only one flag bit out of a number of mutually exclusive bits are set).
+
+  mathematically, that would be the same test, of course, but
+semantically, it would be ugly and inappropriate.  is there,
+somewhere, a corresponding macro/function that asks:
+
+  single_bit_set(n)
+
+if not, that would be handy, could be plopped into
+include/linux/bitops.h and could be defined exactly the same way, and
+would allow piles of code to be simplified.
+
+  thoughts?
+
+rday
+--
+
+====================================
+Robert P. J. Day                               Waterloo, Ontario, CANADA
+
+        Linux Consulting, Training and Annoying Kernel Pedantry.
+
+Web page:                                          http://crashcourse.ca
+Linked In:                             http://www.linkedin.com/in/rpjday
+Twitter:                                       http://twitter.com/rpjday
+====================================
