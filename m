@@ -1,7 +1,7 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 23 Apr 2009 17:26:59 +0000
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Thu, 23 Apr 2009 17:34:19 +0000
 Subject: Re: is there a "single_bit_set" macro somewhere?
-Message-Id: <Pine.LNX.4.64.0904231924270.9592@pc-004.diku.dk>
+Message-Id: <alpine.LFD.2.00.0904231331260.12974@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.LFD.2.00.0904231307160.12567@localhost.localdomain>
 In-Reply-To: <alpine.LFD.2.00.0904231307160.12567@localhost.localdomain>
@@ -10,57 +10,94 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 23 Apr 2009, Robert P. J. Day wrote:
+On Thu, 23 Apr 2009, Julia Lawall wrote:
 
-> 
->   once upon a time, the kernel source code was replete with
-> conditional constructs of the form:
-> 
->   if ((n & (n-1)) = 0)
-> 
-> as a way of testing whether something was a power of two.  mercifully,
-> include/linux/log2.h was created which introduced, among other things:
-> 
-> static inline __attribute__((const))
-> bool is_power_of_2(unsigned long n)
-> {
->         return (n != 0 && ((n & (n - 1)) = 0));
-> }
-> 
-> so we could simply ask whether "is_power_of_2(n)", which is convenient
-> when we're testing things like, oh, blocksize.
-> 
->   similarly, there are bunches of places which need to test whether an
-> integer value has only a single set bit (for instance, to make sure
-> only one flag bit out of a number of mutually exclusive bits are set).
-> 
->   mathematically, that would be the same test, of course, but
-> semantically, it would be ugly and inappropriate.  is there,
-> somewhere, a corresponding macro/function that asks:
-> 
->   single_bit_set(n)
-> 
-> if not, that would be handy, could be plopped into
-> include/linux/bitops.h and could be defined exactly the same way, and
-> would allow piles of code to be simplified.
-> 
->   thoughts?
+> I found 8 occurrences with the following Coccinelle semantic match:
+>
+> @@ expression n; @@
+>
+> * (n & (n-1)) = 0
+>
+>
+> The most unpleasant was:
+>
+> (!(((fp)->ipend & ~0x30) & (((fp)->ipend & ~0x30) - 1)))
+>
+> in the file arch/blackfin/kernel/traps.c.
+>
+> At least some of them seemed to have comments nearby that suggested
+> that searching for a single 1-bit was indeed the goal.  I haven't
+> looked at all of them, though.
 
-I found 8 occurrences with the following Coccinelle semantic match:
+  behold, the power of shell and REs, which searches for four
+variations of that test:
 
-@@ expression n; @@
+==
+#!/bin/sh
 
-* (n & (n-1)) = 0
+DIR=${1-*}
 
+echo -e "     x & (x - 1):\n"
+grep -Ern "([^\(\)]+) ?\& ?\(\1 ?- ?1\)" ${DIR}
+echo -e "     x & ((x) - 1):\n"
+grep -Ern "([^\(\)]+) ?\& ?\(\(\1\) ?- ?1\)" ${DIR}
+echo -e "     (x) & (x - 1):\n"
+grep -Ern "\(([^\(\)]+)\) ?\& ?\(\1 ?- ?1\)" ${DIR}
+echo -e "     (x) & ((x) - 1):\n"
+grep -Ern "\(([^\(\)]+)\) ?\& ?\(\(\1\) ?- ?1\)" ${DIR}
 
-The most unpleasant was:
+==
+$ find_pow2_cleanup.sh drivers/staging/comedi
+     x & (x - 1):
 
-(!(((fp)->ipend & ~0x30) & (((fp)->ipend & ~0x30) - 1)))
+drivers/staging/comedi/drivers/amplc_pci224.c:790:	if ((cmd->start_src & (cmd->start_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci224.c:792:	if ((cmd->scan_begin_src & (cmd->scan_begin_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci224.c:794:	if ((cmd->convert_src & (cmd->convert_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci224.c:796:	if ((cmd->scan_end_src & (cmd->scan_end_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci224.c:798:	if ((cmd->stop_src & (cmd->stop_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1274:	if ((cmd->start_src & (cmd->start_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1276:	if ((cmd->scan_begin_src & (cmd->scan_begin_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1278:	if ((cmd->convert_src & (cmd->convert_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1280:	if ((cmd->scan_end_src & (cmd->scan_end_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1282:	if ((cmd->stop_src & (cmd->stop_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1710:	if ((cmd->start_src & (cmd->start_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1712:	if ((cmd->scan_begin_src & (cmd->scan_begin_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1714:	if ((cmd->convert_src & (cmd->convert_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1716:	if ((cmd->scan_end_src & (cmd->scan_end_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_pci230.c:1718:	if ((cmd->stop_src & (cmd->stop_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_dio200.c:843:	if ((cmd->start_src & (cmd->start_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_dio200.c:845:	if ((cmd->scan_begin_src & (cmd->scan_begin_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_dio200.c:847:	if ((cmd->convert_src & (cmd->convert_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_dio200.c:849:	if ((cmd->scan_end_src & (cmd->scan_end_src - 1)) != 0)
+drivers/staging/comedi/drivers/amplc_dio200.c:851:	if ((cmd->stop_src & (cmd->stop_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmmio.c:1123:	if ((cmd->start_src & (cmd->start_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmmio.c:1125:	if ((cmd->scan_begin_src & (cmd->scan_begin_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmmio.c:1127:	if ((cmd->convert_src & (cmd->convert_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmmio.c:1129:	if ((cmd->scan_end_src & (cmd->scan_end_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmmio.c:1131:	if ((cmd->stop_src & (cmd->stop_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmuio.c:1033:	if ((cmd->start_src & (cmd->start_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmuio.c:1035:	if ((cmd->scan_begin_src & (cmd->scan_begin_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmuio.c:1037:	if ((cmd->convert_src & (cmd->convert_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmuio.c:1039:	if ((cmd->scan_end_src & (cmd->scan_end_src - 1)) != 0)
+drivers/staging/comedi/drivers/pcmuio.c:1041:	if ((cmd->stop_src & (cmd->stop_src - 1)) != 0)
+     x & ((x) - 1):
 
-in the file arch/blackfin/kernel/traps.c.
+     (x) & (x - 1):
 
-At least some of them seemed to have comments nearby that suggested that 
-searching for a single 1-bit was indeed the goal.  I haven't looked at all 
-of them, though.
+     (x) & ((x) - 1):
 
-julia
+  and that's out of a single subdirectory of drivers/staging.  there's
+more.  lots more.
+
+rday
+--
+
+====================================
+Robert P. J. Day                               Waterloo, Ontario, CANADA
+
+        Linux Consulting, Training and Annoying Kernel Pedantry.
+
+Web page:                                          http://crashcourse.ca
+Linked In:                             http://www.linkedin.com/in/rpjday
+Twitter:                                       http://twitter.com/rpjday
+====================================
