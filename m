@@ -1,51 +1,68 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 09 May 2009 20:18:01 +0000
-Subject: Re: [PATCH] Remove duplicate slow protocol define in bond_3ad.h
-Message-Id: <20090509.131801.250435722.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 May 2009 13:19:03 +0000
+Subject: tvaudio.c: possible problem with V4L2_TUNER_MODE_MONO
+Message-Id: <Pine.LNX.4.64.0905021518250.9563@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1241888356-7575-1-git-send-email-richard.genoud@gmail.com>
-	<20090509171250.GA3390@psychotron.englab.brq.redhat.com>
-In-Reply-To: <20090509171250.GA3390@psychotron.englab.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jpirko@redhat.com
-Cc: richard.genoud@gmail.com, fubar@us.ibm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Jiri Pirko <jpirko@redhat.com>
-Date: Sat, 9 May 2009 19:12:53 +0200
+The file drivers/media/video/tvaudio.c contains the following code:
 
-> Sat, May 09, 2009 at 06:59:16PM CEST, richard.genoud@gmail.com wrote:
->>ETH_P_SLOW is already defined in include/linux/if_ether.h.
->>There's no need to define BOND_ETH_P_LACPDU in drivers/net/bonding/bond_3ad.h
->>
->>Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
->>---
->> drivers/net/bonding/bond_3ad.h |    4 ++--
->> 1 files changed, 2 insertions(+), 2 deletions(-)
->>
->>diff --git a/drivers/net/bonding/bond_3ad.h b/drivers/net/bonding/bond_3ad.h
->>index a306230..2c46a15 100644
->>--- a/drivers/net/bonding/bond_3ad.h
->>+++ b/drivers/net/bonding/bond_3ad.h
->>@@ -26,10 +26,10 @@
->> #include <asm/byteorder.h>
->> #include <linux/skbuff.h>
->> #include <linux/netdevice.h>
->>+#include <linux/if_ether.h>
->> 
->> // General definitions
->>-#define BOND_ETH_P_LACPDU       0x8809
->>-#define PKT_TYPE_LACPDU         cpu_to_be16(BOND_ETH_P_LACPDU)
->>+#define PKT_TYPE_LACPDU         cpu_to_be16(ETH_P_SLOW)
->> #define AD_TIMER_INTERVAL       100 /*msec*/
->> 
->> #define MULTICAST_LACPDU_ADDR    {0x01, 0x80, 0xC2, 0x00, 0x00, 0x02}
->>-- 
->>1.6.0.4
-> 
-> Looks good.
-> 
-> Signed-off-by: Jiri Pirko <jpirko@redhat.com>
+(starting at line 1257 in a recent linux-next)
 
-Applied to net-next-2.6
+		if (mode & V4L2_TUNER_MODE_MONO)
+			s1 |= TDA8425_S1_STEREO_MONO;
+		if (mode & V4L2_TUNER_MODE_STEREO)
+			s1 |= TDA8425_S1_STEREO_SPATIAL;
+
+(starting at line 1856 in a recent linux-next)
+
+	if (mode & V4L2_TUNER_MODE_MONO)
+		vt->rxsubchans |= V4L2_TUNER_SUB_MONO;
+	if (mode & V4L2_TUNER_MODE_STEREO)
+		vt->rxsubchans |= V4L2_TUNER_SUB_STEREO;
+
+The only possible value of V4L2_TUNER_MODE_MONO, however, seems to be 0, as
+defined in include/linux/videodev2.h, and thus the first test in each case
+is never true.  Is this what is intended, or should the tests be expressed
+in another way?
+
+julia
+
+This problem was found using the following semantic match:
+(http://www.emn.fr/x-info/coccinelle/)
+
+@r expression@
+identifier C;
+expression E;
+position p;
+@@
+
+(
+ E & C@p && ...
+|
+ E & C@p || ...
+)
+
+@s@
+identifier r.C;
+position p1;
+@@
+
+#define C 0
+
+@t@
+identifier r.C;
+expression E != 0;
+@@
+
+#define C E
+
+@script:python depends on s && !t@
+p << r.p;
+C << r.C;
+@@
+
+cocci.print_main("and with 0", p)
