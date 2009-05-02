@@ -1,92 +1,71 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Sat, 02 May 2009 14:17:16 +0000
-Subject: Re: tvaudio.c: possible problem with V4L2_TUNER_MODE_MONO
-Message-Id: <200905021617.16995.hverkuil@xs4all.nl>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 May 2009 13:20:23 +0000
+Subject: amd_iommu_init.c: possible problem with IVHD_FLAG_HT_TUN_EN
+Message-Id: <Pine.LNX.4.64.0905021519390.9563@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0905021518250.9563@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0905021518250.9563@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: joerg.roedel@amd.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Saturday 02 May 2009 15:19:03 Julia Lawall wrote:
-> The file drivers/media/video/tvaudio.c contains the following code:
->
-> (starting at line 1257 in a recent linux-next)
->
-> 		if (mode & V4L2_TUNER_MODE_MONO)
-> 			s1 |= TDA8425_S1_STEREO_MONO;
-> 		if (mode & V4L2_TUNER_MODE_STEREO)
-> 			s1 |= TDA8425_S1_STEREO_SPATIAL;
->
-> (starting at line 1856 in a recent linux-next)
->
-> 	if (mode & V4L2_TUNER_MODE_MONO)
-> 		vt->rxsubchans |= V4L2_TUNER_SUB_MONO;
-> 	if (mode & V4L2_TUNER_MODE_STEREO)
-> 		vt->rxsubchans |= V4L2_TUNER_SUB_STEREO;
->
-> The only possible value of V4L2_TUNER_MODE_MONO, however, seems to be 0,
-> as defined in include/linux/videodev2.h, and thus the first test in each
-> case is never true.  Is this what is intended, or should the tests be
-> expressed in another way?
+The file arch/x86/kernel/amd_iommu_init.c contains the following code:
 
-Hi Julia,
+(starting at line 586 in a recent linux-next)
 
-Nope, this isn't intended. A grep over the v4l sources shows that it is 
-handled incorrectly in several other drivers as well. I'll prepare patches 
-to fix all these drivers.
+	h->flags & IVHD_FLAG_HT_TUN_EN ?
+		iommu_feature_enable(iommu, CONTROL_HT_TUN_EN) :
+		iommu_feature_disable(iommu, CONTROL_HT_TUN_EN);
 
-Thanks,
+	h->flags & IVHD_FLAG_PASSPW_EN ?
+		iommu_feature_enable(iommu, CONTROL_PASSPW_EN) :
+		iommu_feature_disable(iommu, CONTROL_PASSPW_EN);
 
-	Hans
+	h->flags & IVHD_FLAG_RESPASSPW_EN ?
+		iommu_feature_enable(iommu, CONTROL_RESPASSPW_EN) :
+		iommu_feature_disable(iommu, CONTROL_RESPASSPW_EN);
 
->
-> julia
->
-> This problem was found using the following semantic match:
-> (http://www.emn.fr/x-info/coccinelle/)
->
-> @r expression@
-> identifier C;
-> expression E;
-> position p;
-> @@
->
-> (
->  E & C@p && ...
->
->  E & C@p || ...
-> )
->
-> @s@
-> identifier r.C;
-> position p1;
-> @@
->
-> #define C 0
->
-> @t@
-> identifier r.C;
-> expression E != 0;
-> @@
->
-> #define C E
->
-> @script:python depends on s && !t@
-> p << r.p;
-> C << r.C;
-> @@
->
-> cocci.print_main("and with 0", p)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	h->flags & IVHD_FLAG_ISOC_EN ?
+		iommu_feature_enable(iommu, CONTROL_ISOC_EN) :
+		iommu_feature_disable(iommu, CONTROL_ISOC_EN);
 
+The only possible value of IVHD_FLAG_HT_TUN_EN, however, seems to be 0, as
+defined in the same file, and thus the first test is never true.  Is this
+what is intended, or should the test be expressed in another way?
 
+julia
 
--- 
-Hans Verkuil - video4linux developer - sponsored by TANDBERG Telecom
+This problem was found using the following semantic match:
+(http://www.emn.fr/x-info/coccinelle/)
+
+@r expression@
+identifier C;
+expression E;
+position p;
+@@
+
+(
+ E & C@p && ...
+|
+ E & C@p || ...
+)
+
+@s@
+identifier r.C;
+position p1;
+@@
+
+#define C 0
+
+@t@
+identifier r.C;
+expression E != 0;
+@@
+
+#define C E
+
+@script:python depends on s && !t@
+p << r.p;
+C << r.C;
+@@
+
+cocci.print_main("and with 0", p)
