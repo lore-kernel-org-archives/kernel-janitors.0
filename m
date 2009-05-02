@@ -1,39 +1,63 @@
-From: Diego Liziero <diegoliz@gmail.com>
-Date: Tue, 14 Apr 2009 01:52:54 +0000
-Subject: [PATCH] drivers/isdn boolean negation and bitwise operation in wrong
-Message-Id: <49E3EC76.70908@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 May 2009 13:19:38 +0000
+Subject: ivtv-ioctl.c: possible problem with IVTV_F_I_DMA
+Message-Id: <Pine.LNX.4.64.0905021519040.9563@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: hverkuil@xs4all.nl, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The file drivers/media/video/ivtv/ivtv-ioctl.c contains the following code:
 
+(starting at line 183 in a recent linux-next)
 
-From: Diego Liziero <diegoliz@gmail.com>
+		while (itv->i_flags & IVTV_F_I_DMA) {
+			got_sig = signal_pending(current);
+			if (got_sig)
+				break;
+			got_sig = 0;
+			schedule();
+		}
 
+The only possible value of IVTV_F_I_DMA, however, seems to be 0, as defined
+in drivers/media/video/ivtv/ivtv-driver.h, and thus the test is never true.
+Is this what is intended, or should the test be expressed in another way?
 
-The semantic patch that makes this change is:
+julia
+
+This problem was found using the following semantic match:
 (http://www.emn.fr/x-info/coccinelle/)
 
-@@ expression E; constant C; @@
+@r expression@
+identifier C;
+expression E;
+position p;
+@@
+
 (
-- !E = C
-+ E != C
+ E & C@p && ...
+|
+ E & C@p || ...
 )
 
-Signed-off-by: Diego Liziero <diegoliz@gmail.com>
+@s@
+identifier r.C;
+position p1;
+@@
 
----
-diff = 
---- ./drivers/isdn/hisax/diva.c	2009-04-13 01:21:26.000000000 +0200
-+++ /tmp/cocci-output-25237-f6bb7c-diva.c	2009-04-13 20:36:42.000000000 +0200
-@@ -382,7 +382,7 @@ MemwaitforXFW(struct IsdnCardState *cs, 
- {
- 	int to = 50;
- 
--	while ((!(MemReadHSCX(cs, hscx, HSCX_STAR) & 0x44) = 0x40) && to) {
-+	while (((MemReadHSCX(cs, hscx, HSCX_STAR) & 0x44) != 0x40) && to) {
- 		udelay(1);
- 		to--;
- 	}
+#define C 0
+
+@t@
+identifier r.C;
+expression E != 0;
+@@
+
+#define C E
+
+@script:python depends on s && !t@
+p << r.p;
+C << r.C;
+@@
+
+cocci.print_main("and with 0", p)
