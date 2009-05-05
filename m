@@ -1,20 +1,36 @@
-From: Richard Genoud <richard.genoud@gmail.com>
-Date: Tue, 19 May 2009 13:02:26 +0000
-Subject: Re: [PATCH 1/3] clean rspiusb code
-Message-Id: <80b317760905190602n2e4c8f6r73447b0d331d6ce8@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 05 May 2009 11:30:53 +0000
+Subject: p80211wext.c: possible problem with IW_ENCODE_ALG_WEP
+Message-Id: <Pine.LNX.4.64.0905051330150.9552@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <128c57bf092e08fe6372f6e8c3d02fc88b62e094.1242557192.git.richard.genoud@gmail.com>
-In-Reply-To: <128c57bf092e08fe6372f6e8c3d02fc88b62e094.1242557192.git.richard.genoud@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Judd Montgomery <judd@jpilot.org>, Jeff Frontz <jeff.frontz@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Richard Genoud <richard.genoud@gmail.com>
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2009/5/17 Richard Genoud <richard.genoud@gmail.com>:
-> This first patch makes checkpatch happier
->
-I forgot to say that this patch serie applies to Greg KH's staging
-tree (<http://kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/gregkh-05-staging>)
+The file drivers/staging/wlan-ng/p80211wext.c contains the following code:
 
-richard.
+(starting at line 1490 in a recent linux-next)
+
+		if (!(ext->alg & IW_ENCODE_ALG_WEP)) {
+			pr_debug("asked to set a non wep key :(");
+			return -EINVAL;
+		}
+
+The reference to IW_ENCODE_ALG_WEP seems to refer to the following
+definitions in include/linux/wireless.h
+
+/* struct iw_encode_ext ->alg */
+#define IW_ENCODE_ALG_NONE	0
+#define IW_ENCODE_ALG_WEP	1
+#define IW_ENCODE_ALG_TKIP	2
+#define IW_ENCODE_ALG_CCMP	3
+#define IW_ENCODE_ALG_PMK	4
+#define IW_ENCODE_ALG_AES_CMAC	5
+
+But if the alg field returns true for a bit and with IW_ENCODE_ALG_WEP,
+then it would also return true for a bit and with IW_ENCODE_ALG_CCMP and
+IW_ENCODE_ALG_AES_CMAC.  Is this what is intended, or should the test be
+encoded in another way?
+
+julia
