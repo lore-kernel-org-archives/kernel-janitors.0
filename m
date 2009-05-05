@@ -1,49 +1,35 @@
-From: Zhu Yi <yi.zhu@intel.com>
-Date: Mon, 18 May 2009 01:38:16 +0000
-Subject: Re: [PATCH 1/3] drivers/net: use dev_get_drvdata
-Message-Id: <1242610696.24825.462.camel@debian>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 05 May 2009 13:22:43 +0000
+Subject: p80211wext.c: problem with IW_ENCODE_ALG_WEP
+Message-Id: <Pine.LNX.4.64.0905051522010.9552@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0905171128140.20440@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0905171128140.20440@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "Chatre, Reinette" <reinette.chatre@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: richard@rsk.demon.co.uk, gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2009-05-17 at 17:28 +0800, Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Eliminate direct accesses to the driver_data field.
-> cf 82ab13b26f15f49be45f15ccc96bfa0b81dfd015
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> struct device *dev;
-> expression E;
-> type T;
-> @@
-> 
-> - dev->driver_data = (T)E
-> + dev_set_drvdata(dev, E)
-> 
-> @@
-> struct device *dev;
-> type T;
-> @@
-> 
-> - (T)dev->driver_data
-> + dev_get_drvdata(dev)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Zhu Yi <yi.zhu@intel.com>
+The expression !(ext->alg & IW_ENCODE_ALG_WEP) appears to be incorrect,
+because there are several possible values for ext->alg that give 1 when
+bit-anded with IW_ENCODE_ALG_WEP.  Therefore Richard Kennedy suggested to
+rewrite the code with !
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Thanks,
--yi
+---
+ .../drivers/staging/wlan-ng/p80211wext.c           |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
+diff --git a/drivers/staging/wlan-ng/p80211wext.c b/drivers/staging/wlan-ng/p80211wext.c
+index 96078b0..e00e305 100644
+--- a/drivers/staging/wlan-ng/p80211wext.c
++++ b/drivers/staging/wlan-ng/p80211wext.c
+@@ -1487,7 +1487,7 @@ static int p80211wext_set_encodeext(struct net_device *dev,
+ 	}
+ 
+ 	if (ext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY) {
+-		if (!(ext->alg & IW_ENCODE_ALG_WEP)) {
++		if (ext->alg != IW_ENCODE_ALG_WEP) {
+ 			pr_debug("asked to set a non wep key :(");
+ 			return -EINVAL;
+ 		}
