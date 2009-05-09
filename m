@@ -1,45 +1,39 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 20 May 2009 12:18:07 +0000
-Subject: Re: Are the cast necessary in function "kfree"?
-Message-Id: <4A13F4FF.5090501@bfs.de>
+From: Richard Genoud <richard.genoud@gmail.com>
+Date: Sat, 09 May 2009 16:59:16 +0000
+Subject: [PATCH] Remove duplicate slow protocol define in bond_3ad.h
+Message-Id: <1241888356-7575-1-git-send-email-richard.genoud@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5c43c2d40905200330p5b14be2ey567bc493374e09b3@mail.gmail.com>
-In-Reply-To: <5c43c2d40905200330p5b14be2ey567bc493374e09b3@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jay Vosburgh <fubar@us.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Richard Genoud <richard.genoud@gmail.com>
 
+ETH_P_SLOW is already defined in include/linux/if_ether.h.
+There's no need to define BOND_ETH_P_LACPDU in drivers/net/bonding/bond_3ad.h
 
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+---
+ drivers/net/bonding/bond_3ad.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Paul Mundt schrieb:
-> On Wed, May 20, 2009 at 11:30:21AM +0100, Andr? Lopes wrote:
->> Hi. This is my first post :-)
->>
->> I was reading this doc (/linux-2.6/Documentation/scsi/ChangeLog.lpfc),
->> when I found this phrase: "Replace some kfree((void*)ptr) with
->> kfree(ptr)."
->>
-> [snip]
-> 
->> These casts are not necessary...I think so. If it's yes, can we apply
->> patch's to clean-up this?
->>
-> The key thing here is "ptr", as long as these are pointers, then the cast
-> is superfluous. In the case of casting from a non-pointer type, the cast
-> is necessary, particularly if the data type and pointer size vary.
-
-i think the problem is clear,
-
-since he ask for advice..
-IMHO i would start with identifying adding a marker
-like /* cast needed ...*/, perhaps creating a  myfree(propper type).
-
-that would document the use and prevent other people from converting.
-
-just my 2 cents,
-re,
- wh
-
-
+diff --git a/drivers/net/bonding/bond_3ad.h b/drivers/net/bonding/bond_3ad.h
+index a306230..2c46a15 100644
+--- a/drivers/net/bonding/bond_3ad.h
++++ b/drivers/net/bonding/bond_3ad.h
+@@ -26,10 +26,10 @@
+ #include <asm/byteorder.h>
+ #include <linux/skbuff.h>
+ #include <linux/netdevice.h>
++#include <linux/if_ether.h>
+ 
+ // General definitions
+-#define BOND_ETH_P_LACPDU       0x8809
+-#define PKT_TYPE_LACPDU         cpu_to_be16(BOND_ETH_P_LACPDU)
++#define PKT_TYPE_LACPDU         cpu_to_be16(ETH_P_SLOW)
+ #define AD_TIMER_INTERVAL       100 /*msec*/
+ 
+ #define MULTICAST_LACPDU_ADDR    {0x01, 0x80, 0xC2, 0x00, 0x00, 0x02}
+-- 
+1.6.0.4
 
