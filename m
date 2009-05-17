@@ -1,53 +1,109 @@
-From: Richard Kennedy <richard@rsk.demon.co.uk>
-Date: Tue, 05 May 2009 12:48:19 +0000
-Subject: Re: p80211wext.c: possible problem with IW_ENCODE_ALG_WEP
-Message-Id: <4A003593.60001@rsk.demon.co.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 17 May 2009 09:29:00 +0000
+Subject: [PATCH 2/3] drivers/video: use dev_get_drvdata
+Message-Id: <Pine.LNX.4.64.0905171128430.20440@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0905051330150.9552@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0905051330150.9552@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: adaplas@gmail.com, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> The file drivers/staging/wlan-ng/p80211wext.c contains the following code:
-> 
-> (starting at line 1490 in a recent linux-next)
-> 
-> 		if (!(ext->alg & IW_ENCODE_ALG_WEP)) {
-> 			pr_debug("asked to set a non wep key :(");
-> 			return -EINVAL;
-> 		}
-> 
-> The reference to IW_ENCODE_ALG_WEP seems to refer to the following
-> definitions in include/linux/wireless.h
-> 
-> /* struct iw_encode_ext ->alg */
-> #define IW_ENCODE_ALG_NONE	0
-> #define IW_ENCODE_ALG_WEP	1
-> #define IW_ENCODE_ALG_TKIP	2
-> #define IW_ENCODE_ALG_CCMP	3
-> #define IW_ENCODE_ALG_PMK	4
-> #define IW_ENCODE_ALG_AES_CMAC	5
-> 
-> But if the alg field returns true for a bit and with IW_ENCODE_ALG_WEP,
-> then it would also return true for a bit and with IW_ENCODE_ALG_CCMP and
-> IW_ENCODE_ALG_AES_CMAC.  Is this what is intended, or should the test be
-> encoded in another way?
-> 
-> julia
-Hi Julia,
+From: Julia Lawall <julia@diku.dk>
 
-You're quite right, this is not what was intended.
+Eliminate direct accesses to the driver_data field.
+cf 82ab13b26f15f49be45f15ccc96bfa0b81dfd015
 
-The card only handles WEP keys so
-	if (ext->alg != IW_ENCODE_ALG_WEP)  {...}
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-would be better.
+// <smpl>
+@@
+struct device *dev;
+expression E;
+type T;
+@@
 
-Do you want to send a patch to correct this? If not, I can do it.
+- dev->driver_data = (T)E
++ dev_set_drvdata(dev, E)
 
-regards
-Richard
+@@
+struct device *dev;
+type T;
+@@
+
+- (T)dev->driver_data
++ dev_get_drvdata(dev)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/video/omap/omapfb_main.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff -u -p a/drivers/video/omap/omapfb_main.c b/drivers/video/omap/omapfb_main.c
+--- a/drivers/video/omap/omapfb_main.c
++++ b/drivers/video/omap/omapfb_main.c
+@@ -1250,7 +1250,7 @@ static struct fb_ops omapfb_ops = {
+ static ssize_t omapfb_show_caps_num(struct device *dev,
+ 				    struct device_attribute *attr, char *buf)
+ {
+-	struct omapfb_device *fbdev = (struct omapfb_device *)dev->driver_data;
++	struct omapfb_device *fbdev = dev_get_drvdata(dev);
+ 	int plane;
+ 	size_t size;
+ 	struct omapfb_caps caps;
+@@ -1270,7 +1270,7 @@ static ssize_t omapfb_show_caps_num(stru
+ static ssize_t omapfb_show_caps_text(struct device *dev,
+ 				     struct device_attribute *attr, char *buf)
+ {
+-	struct omapfb_device *fbdev = (struct omapfb_device *)dev->driver_data;
++	struct omapfb_device *fbdev = dev_get_drvdata(dev);
+ 	int i;
+ 	struct omapfb_caps caps;
+ 	int plane;
+@@ -1317,7 +1317,7 @@ static DEVICE_ATTR(caps_text, 0444, omap
+ static ssize_t omapfb_show_panel_name(struct device *dev,
+ 				      struct device_attribute *attr, char *buf)
+ {
+-	struct omapfb_device *fbdev = (struct omapfb_device *)dev->driver_data;
++	struct omapfb_device *fbdev = dev_get_drvdata(dev);
+ 
+ 	return snprintf(buf, PAGE_SIZE, "%s\n", fbdev->panel->name);
+ }
+@@ -1326,7 +1326,7 @@ static ssize_t omapfb_show_bklight_level
+ 					 struct device_attribute *attr,
+ 					 char *buf)
+ {
+-	struct omapfb_device *fbdev = (struct omapfb_device *)dev->driver_data;
++	struct omapfb_device *fbdev = dev_get_drvdata(dev);
+ 	int r;
+ 
+ 	if (fbdev->panel->get_bklight_level) {
+@@ -1341,7 +1341,7 @@ static ssize_t omapfb_store_bklight_leve
+ 					  struct device_attribute *attr,
+ 					  const char *buf, size_t size)
+ {
+-	struct omapfb_device *fbdev = (struct omapfb_device *)dev->driver_data;
++	struct omapfb_device *fbdev = dev_get_drvdata(dev);
+ 	int r;
+ 
+ 	if (fbdev->panel->set_bklight_level) {
+@@ -1360,7 +1360,7 @@ static ssize_t omapfb_store_bklight_leve
+ static ssize_t omapfb_show_bklight_max(struct device *dev,
+ 				       struct device_attribute *attr, char *buf)
+ {
+-	struct omapfb_device *fbdev = (struct omapfb_device *)dev->driver_data;
++	struct omapfb_device *fbdev = dev_get_drvdata(dev);
+ 	int r;
+ 
+ 	if (fbdev->panel->get_bklight_level) {
+@@ -1393,7 +1393,7 @@ static struct attribute_group panel_attr
+ static ssize_t omapfb_show_ctrl_name(struct device *dev,
+ 				     struct device_attribute *attr, char *buf)
+ {
+-	struct omapfb_device *fbdev = (struct omapfb_device *)dev->driver_data;
++	struct omapfb_device *fbdev = dev_get_drvdata(dev);
+ 
+ 	return snprintf(buf, PAGE_SIZE, "%s\n", fbdev->ctrl->name);
+ }
