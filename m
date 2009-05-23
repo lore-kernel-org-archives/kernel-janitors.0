@@ -1,37 +1,32 @@
-From: Gerard Lledo <gerard.lledo@gmail.com>
-Date: Wed, 27 May 2009 14:35:18 +0000
-Subject: [PATCH] Staging: comedi: Add missing includes
-Message-Id: <1243434919-10192-2-git-send-email-gerard.lledo@gmail.com>
+From: =?ISO-8859-1?Q?Andr=E9_Lopes?= <andre.neo.net@gmail.com>
+Date: Sat, 23 May 2009 20:45:00 +0000
+Subject: [PATCH] b3dfg: Clean up MODULE_PARM_DESC newline
+Message-Id: <5c43c2d40905231345x4166fd45p807f21783f73c9ce@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1243434919-10192-1-git-send-email-gerard.lledo@gmail.com>
-In-Reply-To: <1243434919-10192-1-git-send-email-gerard.lledo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Gerard Lledo <gerard.lledo@gmail.com>
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, jsbronder@brontes3d.com
 
-Fixes build errors due to missing includes
+This trivial patch just clean up MODULE_PARM_DESC newline from
+drivers/staging/b3dfg/b3dfg.c .
 
-Signed-off-by: Gerard Lledo <gerard.lledo@gmail.com>
 ---
- drivers/staging/comedi/comedidev.h |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+ drivers/staging/b3dfg/b3dfg.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/comedi/comedidev.h b/drivers/staging/comedi/comedidev.h
-index 7a1ccde..1cdf5aa 100644
---- a/drivers/staging/comedi/comedidev.h
-+++ b/drivers/staging/comedi/comedidev.h
-@@ -38,6 +38,9 @@
- #include <linux/dma-mapping.h>
- #include <linux/uaccess.h>
- #include <linux/io.h>
-+#include <linux/delay.h>
-+#include <linux/jiffies.h>
-+#include <linux/timer.h>
- 
- #include "comedi.h"
- 
+diff --git a/drivers/staging/b3dfg/b3dfg.c b/drivers/staging/b3dfg/b3dfg.c
+index 75ebe33..7b18cea 100644
+--- a/drivers/staging/b3dfg/b3dfg.c
++++ b/drivers/staging/b3dfg/b3dfg.c
+@@ -42,7 +42,7 @@ static unsigned int b3dfg_nbuf = 2;
+
+ module_param_named(buffer_count, b3dfg_nbuf, uint, 0444);
+
+-MODULE_PARM_DESC(buffer_count, "Number of buffers (min 2, default 2)\n");
++MODULE_PARM_DESC(buffer_count, "Number of buffers (min 2, default 2)");
+
+ MODULE_AUTHOR("Daniel Drake <ddrake@brontes3d.com>");
+ MODULE_DESCRIPTION("Brontes frame grabber driver");
 -- 
-1.5.6.5
-
+1.6.0.6
