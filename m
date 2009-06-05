@@ -1,50 +1,41 @@
-From: "Mrs Linda Kershaw" <info@w.bank.org>
-Date: Tue, 02 Jun 2009 08:54:21 +0000
-Subject: CHECK OF $800.000.00(APPROVED)
-Message-Id: <20090602085343.M95406@w.bank.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 05 Jun 2009 15:07:38 +0000
+Subject: [PATCH] drivers/staging/rtl8192su: Correct use of.and &
+Message-Id: <Pine.LNX.4.64.0906051706450.3477@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-CONGRATULATION!!!
+From: Julia Lawall <julia@diku.dk>
 
-Congratulations to you as we bring your notice the results of the world
-Bank promo and your email Address was selected through a computer ballot
-system drawn We are happy to inform you that your email won $800.000.00
-United States Dollars. I have been waiting for you since to contact me for
-your Confirmable Bank Draft of $800.000.00 United States Dollars, but I
-did not hear from you since that time. Then I went and deposited the Draft
-with FEDEX EXPRESS DELIVERY,West Africa, I travelled out of the country
-for a 3 Months Course and I will not come back till end of August 2009.
+Correct priority problem in the use of ! and &.
 
-What you have to do now is to contact the FEDEX EXPRESS DELIVERY as soon
-as possible to know when they will deliver your package to you because of
-the expiring date. For your information,I have paid for the delivering
-Charges,Insurance premium and Clearance Certificate Fee of the Cheque
-showing that it is not a Drug Money or meant to sponsor Terrorist attack
-in your Country.Again, I would have paid for the security keeping fee but
-they said no because they don't know when you will contact them and in
-case of demurrage.You have to contact the FEDEX EXPRESS INTERNATIONAL with
-the following informations:
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-First name:
-Last Name:
-Telephone:
-Nationality::
-Age:
-Occupation:
-address:
+// <smpl>
+@@ expression E; constant C; @@
+- !E & C
++ !(E & C)
+// </smpl>
 
-Dispatch Director: Mr. Humphrey Hill
-Email Address: fedexcustomscara@btinternet.com
-Tel: +234-8051471138
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-You are advice  to contact them as soon as you receive this mail to avoid
-any further delay and remember to pay them their Security Keeping fee of
-$250 US Dollars for their immediate action.You should also let me know
-through email as soon as you receive your Draft.
+---
+ drivers/staging/rtl8192su/ieee80211/ieee80211_wx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours Faithfully,
-Mr Linda Kershaw
+diff -u -p a/drivers/staging/rtl8192su/ieee80211/ieee80211_wx.c b/drivers/staging/rtl8192su/ieee80211/ieee80211_wx.c
+--- a/drivers/staging/rtl8192su/ieee80211/ieee80211_wx.c
++++ b/drivers/staging/rtl8192su/ieee80211/ieee80211_wx.c
+@@ -843,7 +843,7 @@ int ieee80211_wx_get_encode_ext(struct i
+ 	} else
+ 		idx = ieee->tx_keyidx;
+ 
+-	if (!ext->ext_flags & IW_ENCODE_EXT_GROUP_KEY &&
++	if (!(ext->ext_flags & IW_ENCODE_EXT_GROUP_KEY) &&
+ 	    ext->alg != IW_ENCODE_ALG_WEP)
+ 		if (idx != 0 || ieee->iw_mode != IW_MODE_INFRA)
+ 			return -EINVAL;
