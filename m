@@ -1,23 +1,35 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 02 Jun 2009 21:43:01 +0000
-Subject: Re: [PATCH] Staging: comedi: Add missing includes
-Message-Id: <20090602214301.GA25921@kroah.com>
+From: Rowland Hook <rjhook70@gmail.com>
+Date: Fri, 05 Jun 2009 20:35:19 +0000
+Subject: From Martins D.Legacy
+Message-Id: <73e2b0650906051335t7f8260bbsc9d15d6df35c9404@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1243434919-10192-1-git-send-email-gerard.lledo@gmail.com> <1243434919-10192-2-git-send-email-gerard.lledo@gmail.com>
-In-Reply-To: <1243434919-10192-2-git-send-email-gerard.lledo@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Gerard Lledo <gerard.lledo@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, May 27, 2009 at 05:35:18PM +0300, Gerard Lledo wrote:
-> Fixes build errors due to missing includes
-> 
-> Signed-off-by: Gerard Lledo <gerard.lledo@gmail.com>
+My name is Martines Legacy
 
-This should now be fixed up already.
+I am an American soldier serving in the military with the army's 3rd
+infantry division.with a need for assistance, I have summed up courage
+to contact you. I found your contact in address on  journal. I got a
+huge fund of Forty Million United States Dollars, (US$40,000,000)
+.This money is among the various currencies which was discovered in
+barrels at a farm-house near one of  Saddam Hussein old palaces in
+Tikrit-Iraq during a rescue operation. I and Sgt James.Howie where the
+first to discover this fund. We concluded and took part of this money
+which is ($40,000.000.00) and shared between us before informing
+anybody about it. This was quite an illegal even last week a roadside
+bomb killed my brother in-law. Find the story on
+web-address below:  http://news.bbc.co.uk/2/hi/middle_east/2988455.stm?
+If  you will do this with good faith and you assure me that my
+percentage will be safe in your care until I complete my service
+here,then I shall agree with You. This is no stolen money, and there
+is no danger involved. We will share upon this ratio: I will take 50%
+and you will take 30%. and 20% shall be given to charity organisation
+which you shall takecare of this offer after a sucessfull transaction,
+We will discuss this in details.
 
-thanks,
-
-greg k-h
+Thanks
+Sgt.Martines Legacy
+Email: proger34@yahoo.com
