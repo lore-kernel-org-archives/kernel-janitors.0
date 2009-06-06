@@ -1,32 +1,39 @@
-From: =?ISO-8859-1?Q?Andr=E9_Lopes?= <andre.neo.net@gmail.com>
-Date: Sat, 23 May 2009 20:45:00 +0000
-Subject: [PATCH] b3dfg: Clean up MODULE_PARM_DESC newline
-Message-Id: <5c43c2d40905231345x4166fd45p807f21783f73c9ce@mail.gmail.com>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Sat, 06 Jun 2009 12:58:56 +0000
+Subject: [PATCH] pci hotplug: adding __init/__exit macros to sgi_hotplug
+Message-Id: <200906061458.56611.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, jsbronder@brontes3d.com
+To: kernel-janitors@vger.kernel.org
 
-This trivial patch just clean up MODULE_PARM_DESC newline from
-drivers/staging/b3dfg/b3dfg.c .
+From: Peter Huewe <peterhuewe@gmx.de>
 
+Trivial patch which adds the __init and __exit macros to the module_init /
+module_exit functions from drivers/pci/hotplug/sgi_hotplug.c
+linux version 2.6.30-rc8
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/staging/b3dfg/b3dfg.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/b3dfg/b3dfg.c b/drivers/staging/b3dfg/b3dfg.c
-index 75ebe33..7b18cea 100644
---- a/drivers/staging/b3dfg/b3dfg.c
-+++ b/drivers/staging/b3dfg/b3dfg.c
-@@ -42,7 +42,7 @@ static unsigned int b3dfg_nbuf = 2;
-
- module_param_named(buffer_count, b3dfg_nbuf, uint, 0444);
-
--MODULE_PARM_DESC(buffer_count, "Number of buffers (min 2, default 2)\n");
-+MODULE_PARM_DESC(buffer_count, "Number of buffers (min 2, default 2)");
-
- MODULE_AUTHOR("Daniel Drake <ddrake@brontes3d.com>");
- MODULE_DESCRIPTION("Brontes frame grabber driver");
--- 
-1.6.0.6
+diff -up linux-2.6.30-rc8/drivers/pci/hotplug/sgi_hotplug.c{.orig,}
+--- linux-2.6.30-rc8/drivers/pci/hotplug/sgi_hotplug.c.orig
++++ linux-2.6.30-rc8/drivers/pci/hotplug/sgi_hotplug.c
+@@ -679,7 +679,7 @@ alloc_err:
+ 	return rc;
+ }
+ 
+-static int sn_pci_hotplug_init(void)
++static int __init sn_pci_hotplug_init(void)
+ {
+ 	struct pci_bus *pci_bus = NULL;
+ 	int rc;
+@@ -716,7 +716,7 @@ static int sn_pci_hotplug_init(void)
+ 	return registered = 1 ? 0 : -ENODEV;
+ }
+ 
+-static void sn_pci_hotplug_exit(void)
++static void __exit sn_pci_hotplug_exit(void)
+ {
+ 	struct hotplug_slot *bss_hotplug_slot;
+ 
