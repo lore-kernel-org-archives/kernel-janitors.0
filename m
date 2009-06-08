@@ -1,39 +1,32 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Sat, 06 Jun 2009 12:58:56 +0000
-Subject: [PATCH] pci hotplug: adding __init/__exit macros to sgi_hotplug
-Message-Id: <200906061458.56611.PeterHuewe@gmx.de>
+From: Jiri Kosina <trivial@kernel.org>
+Date: Mon, 08 Jun 2009 09:57:07 +0000
+Subject: Re: [PATCH] pci hotplug: adding __init/__exit macros to
+Message-Id: <alpine.LNX.2.00.0906081156470.7457@wotan.suse.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="168427776-1423789216-1244455027=:7457"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <200906061458.56611.PeterHuewe@gmx.de>
+In-Reply-To: <200906061458.56611.PeterHuewe@gmx.de>
 To: kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Trivial patch which adds the __init and __exit macros to the module_init /
-module_exit functions from drivers/pci/hotplug/sgi_hotplug.c
-linux version 2.6.30-rc8
+--168427776-1423789216-1244455027=:7457
+Content-Type: TEXT/PLAIN; charset="iso-8859-15"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
-diff -up linux-2.6.30-rc8/drivers/pci/hotplug/sgi_hotplug.c{.orig,}
---- linux-2.6.30-rc8/drivers/pci/hotplug/sgi_hotplug.c.orig
-+++ linux-2.6.30-rc8/drivers/pci/hotplug/sgi_hotplug.c
-@@ -679,7 +679,7 @@ alloc_err:
- 	return rc;
- }
- 
--static int sn_pci_hotplug_init(void)
-+static int __init sn_pci_hotplug_init(void)
- {
- 	struct pci_bus *pci_bus = NULL;
- 	int rc;
-@@ -716,7 +716,7 @@ static int sn_pci_hotplug_init(void)
- 	return registered = 1 ? 0 : -ENODEV;
- }
- 
--static void sn_pci_hotplug_exit(void)
-+static void __exit sn_pci_hotplug_exit(void)
- {
- 	struct hotplug_slot *bss_hotplug_slot;
- 
+On Sat, 6 Jun 2009, Peter H=FCwe wrote:
+
+> Trivial patch which adds the __init and __exit macros to the module_init =
+
+> / module_exit functions from drivers/pci/hotplug/sgi_hotplug.c linux=20
+> version 2.6.30-rc8
+
+Applied, thanks Peter.
+
+--=20
+Jiri Kosina
+SUSE Labs
+
+--168427776-1423789216-1244455027=:7457--
