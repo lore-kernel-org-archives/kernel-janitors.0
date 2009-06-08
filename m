@@ -1,32 +1,23 @@
-From: Jiri Kosina <trivial@kernel.org>
-Date: Mon, 08 Jun 2009 09:57:07 +0000
-Subject: Re: [PATCH] pci hotplug: adding __init/__exit macros to
-Message-Id: <alpine.LNX.2.00.0906081156470.7457@wotan.suse.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="168427776-1423789216-1244455027=:7457"
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Mon, 08 Jun 2009 10:46:10 +0000
+Subject: Re: [PATCH] pci hotplug: adding __init/__exit macros to sgi_hotplug
+Message-Id: <200906081246.10854.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200906061458.56611.PeterHuewe@gmx.de>
 In-Reply-To: <200906061458.56611.PeterHuewe@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Am Montag 08 Juni 2009 11:57:07 schrieb Jiri Kosina:
 
---168427776-1423789216-1244455027=:7457
-Content-Type: TEXT/PLAIN; charset="iso-8859-15"
-Content-Transfer-Encoding: quoted-printable
+> > Trivial patch which adds the __init and __exit macros
+> Applied, thanks Peter.
 
-On Sat, 6 Jun 2009, Peter H=FCwe wrote:
+Thank you too - as it was my first 'official' kernel patch, do you have any 
+remarks? 
+And there are a lot of missing __init / __exit in the kernel - shall I fix 
+them or is isn't worth the effort?
 
-> Trivial patch which adds the __init and __exit macros to the module_init =
-
-> / module_exit functions from drivers/pci/hotplug/sgi_hotplug.c linux=20
-> version 2.6.30-rc8
-
-Applied, thanks Peter.
-
---=20
-Jiri Kosina
-SUSE Labs
-
---168427776-1423789216-1244455027=:7457--
+Peter Huewe
