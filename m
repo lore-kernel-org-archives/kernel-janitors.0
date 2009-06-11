@@ -1,31 +1,62 @@
-From: Hannes Eder <hannes@hanneseder.net>
-Date: Fri, 26 Jun 2009 06:34:22 +0000
-Subject: Re: Newbie: howto get mm tree up to date using quilt
-Message-Id: <154e089b0906252334v59a4630aue14aa4103dd776c@mail.gmail.com>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Thu, 11 Jun 2009 00:00:05 +0000
+Subject: [PATCH] infiniband: adding __init/__exit macros to addr.c and cma.c
+Message-Id: <200906110200.05883.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1faf47660906252159n78d6c3fdpf55a52e691a802bf@mail.gmail.com>
-In-Reply-To: <1faf47660906252159n78d6c3fdpf55a52e691a802bf@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-2009/6/26 Randy Dunlap <rdunlap@xenotime.net>:
-> Charles 'Mack' Rhinelander wrote:
->> I'm running 2.6.28-rc2-mm1, the latest mm tree. I'd like to patch it
->> so it's up to date, and try using the daily snapshots.
->
-> Daily snapshots of what?  mm-tree doesn't have daily snapshots.
-> Andrew Morton hasn't released a -mm patchset lately.  He's been making
-> "mmotm" (mm of the moment) releases/announcements.
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Might help see:
-http://lkml.org/lkml/2008/12/16/327
+Trivial patch which adds the __init and __exit macros to the module_init /
+module_exit functions from drivers/infiniband/core/addr.c and cma.c
+linux version 2.6.30
 
-especially:
-http://git.zen-sources.org/?p=mmotm.git;a=summary
-
-but I don't know if this is still alive.
-
-hth,
--Hannes
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+index ce511d8..5be1bd4 100644
+--- a/drivers/infiniband/core/addr.c
++++ b/drivers/infiniband/core/addr.c
+@@ -514,7 +514,7 @@ static struct notifier_block nb = {
+ 	.notifier_call = netevent_callback
+ };
+ 
+-static int addr_init(void)
++static int __init addr_init(void)
+ {
+ 	addr_wq = create_singlethread_workqueue("ib_addr");
+ 	if (!addr_wq)
+@@ -524,7 +524,7 @@ static int addr_init(void)
+ 	return 0;
+ }
+ 
+-static void addr_cleanup(void)
++static void __exit addr_cleanup(void)
+ {
+ 	unregister_netevent_notifier(&nb);
+ 	destroy_workqueue(addr_wq);
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index 851de83..0753178 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -2960,7 +2960,7 @@ static void cma_remove_one(struct ib_device *device)
+ 	kfree(cma_dev);
+ }
+ 
+-static int cma_init(void)
++static int __init cma_init(void)
+ {
+ 	int ret, low, high, remaining;
+ 
+@@ -2990,7 +2990,7 @@ err:
+ 	return ret;
+ }
+ 
+-static void cma_cleanup(void)
++static void __exit cma_cleanup(void)
+ {
+ 	ib_unregister_client(&cma_client);
+ 	unregister_netdevice_notifier(&cma_nb);
