@@ -1,36 +1,31 @@
-From: Jiri Kosina <trivial@kernel.org>
-Date: Tue, 23 Jun 2009 08:48:28 +0000
-Subject: Re: [PATCH] block: adding __init/__exit macros to DAC960.c
-Message-Id: <alpine.LNX.2.00.0906231048070.7457@wotan.suse.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="168427776-1491735369-1245746908=:7457"
+From: John Daiker <daikerjohn@gmail.com>
+Date: Fri, 12 Jun 2009 22:15:26 +0000
+Subject: Building vmlinux without date/timestamp bits
+Message-Id: <4A32D37E.40507@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200906121307.29865.PeterHuewe@gmx.de> <200906230004.36995.PeterHuewe@gmx.de>
-In-Reply-To: <200906230004.36995.PeterHuewe@gmx.de>
-To: =?ISO-8859-15?Q?Peter_H=FCwe?= <PeterHuewe@gmx.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+I'm working on various trivial patches (mainly whitespace and 
+checkpatch.pl cleanups).
 
---168427776-1491735369-1245746908=:7457
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+I read quite some time ago that it's best to md5sum the vmlinux file 
+before and after these trivial patches are applied (to ensure that no 
+executable code has changed, modules on a binary level are identical, etc).
 
-On Tue, 23 Jun 2009, Peter H=FCwe wrote:
+So far, I have no problems producing identical .o and .ko files with my 
+trivial patches.  My problem lies in the resulting vmlinux and vmlinux.o 
+file, though.
 
-> > Trivial patch which adds the __init and __exit macros to the module_ini=
-t /
-> > module_exit functions from drivers/block/DAC960.c
-> > linux version 2.6.30
-> I was wondering if there is anything wrong with the patch or is it still =
-in=20
-> the review phase ?
+I know the files are different due to date/timestamping the kernel, but 
+I'm not sure where this happens (and how I can prevent it).  Are there 
+pieces of code and/or Makefile that I can comment out so that the 
+resulting vmlinux file isn't timestamped (and thus would be an exactly 
+identical before and after).  I know it can be done... I've done it 
+before (years ago), but seem to have forgotten the trick.
 
-I have applied it to trivial queue, thanks Peter.
+Thanks for the help!
 
---=20
-Jiri Kosina
-SUSE Labs
-
---168427776-1491735369-1245746908=:7457--
+John Daiker
