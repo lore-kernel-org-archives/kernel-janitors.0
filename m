@@ -1,7 +1,7 @@
-From: "Charles 'Mack' Rhinelander" <mrhinelander@gmail.com>
-Date: Wed, 03 Jun 2009 01:03:59 +0000
+From: Kevin DuBois <kdub432@gmail.com>
+Date: Mon, 15 Jun 2009 10:33:20 +0000
 Subject: Re: Getting started
-Message-Id: <1faf47660906021803v4f3127c1u80ea45a17a37c506@mail.gmail.com>
+Message-Id: <4A362370.4000801@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <8ab210c10906021636y655f9d91j1a6d83ebd83ad13b@mail.gmail.com>
 In-Reply-To: <8ab210c10906021636y655f9d91j1a6d83ebd83ad13b@mail.gmail.com>
@@ -10,17 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I'm in a similar situation, I started kernel hacking a couple of weeks
-ago.  I'm not much of a C programmer, and I've found the
-kernelnewbies.org/FAQ section useful, particularly
-kernelnewbies.org/FAQ/WhereDoIBegin That page describes lots of useful
-things you can do just by compiling and running the kernel. I've
-already submitted my first bug, a small thing in a makefile that kept
-the -mm branch from compiling!
-
-Mack Rhinelander
-
-On 6/2/09, hiren panchasara <hiren.panchasara@gmail.com> wrote:
+hiren panchasara wrote:
 > Hi all,
 >
 > I want to start working on kernel development and as per everyone's
@@ -30,11 +20,26 @@ On 6/2/09, hiren panchasara <hiren.panchasara@gmail.com> wrote:
 > It would be great if someone can explain me how to get started and
 > actually work on something.
 >
+>   
+This is just general advice, but like I've found with adopting any new 
+open source project (or any large codebase for that matter) the only 
+_real_ way to make progress is to sit down at your computer with a lot 
+of determination, and "bang your head against the wall" for a little 
+bit. It always helps to have a clearly defined goal, like "make a driver 
+work" or "implement this new algorithm". Every new project I've taken on 
+has been like this, and kernel development is no different. "Just do it" 
+is a lot easier said than done :D
+
+It also helps to have a good grasp of operating systems concepts (about 
+the level an undergrad OS course will give you) before starting. Usually 
+people on the right IRC channels, or on mailing lists are very helpful, 
+especially once they see you put some pseudo-useful code down.
 > thanks,
 > /H
 > --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors"
-> in
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+>   
+Kevin DuBois
+kdub432@gmail.com
