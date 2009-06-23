@@ -1,7 +1,7 @@
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Mon, 22 Jun 2009 21:50:34 +0000
+From: Roland Dreier <rdreier@cisco.com>
+Date: Tue, 23 Jun 2009 00:21:03 +0000
 Subject: Re: [PATCH] infiniband: adding __init/__exit macros to addr.c and cma.c
-Message-Id: <200906222350.34634.PeterHuewe@gmx.de>
+Message-Id: <adamy7zrea8.fsf@cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200906110200.05883.PeterHuewe@gmx.de>
 In-Reply-To: <200906110200.05883.PeterHuewe@gmx.de>
@@ -10,24 +10,6 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Am Dienstag 16 Juni 2009 17:49:38 schrieb Sean Hefty:
-> >> From: Peter Huewe <peterhuewe@gmx.de>
-> >>
-> >> Trivial patch which adds the __init and __exit macros to the module_init
-> >> / module_exit functions from drivers/infiniband/core/addr.c and cma.c
-> >> linux version 2.6.30
-> >>
-> >> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
->
-> Acked-by: Sean Hefty <sean.hefty@intel.com>
->
-> Roland, did you want to pull this through your tree?
->
-
-Hi,
-
-may I ask what is the status of the patch?
-Is it currently in any of your trees?
-
-bye,
-Peter
+I didn't see the original patch go by, but it's fine to go in through
+the trivial tree too.  Otherwise please resend me the original patch and
+I'll queue it up.
