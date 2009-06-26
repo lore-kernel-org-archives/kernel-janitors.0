@@ -1,85 +1,31 @@
-From: Gerard Lledo <gerard.lledo@gmail.com>
-Date: Tue, 02 Jun 2009 11:32:16 +0000
-Subject: Re: [PATCH] [JFFS2] Move jffs2_gcd_mtd threads to the new kthread
-Message-Id: <20090602113216.GA3513@tank>
+From: "Charles 'Mack' Rhinelander" <mrhinelander@gmail.com>
+Date: Fri, 26 Jun 2009 04:59:46 +0000
+Subject: Newbie: howto get mm tree up to date using quilt
+Message-Id: <1faf47660906252159n78d6c3fdpf55a52e691a802bf@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1243585181-2997-1-git-send-email-gerard.lledo@gmail.com>
-	<20090601162010.ed69436f.akpm@linux-foundation.org>
-In-Reply-To: <20090601162010.ed69436f.akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: dwmw2@infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 01, 2009 at 04:20:10PM -0700, Andrew Morton wrote:
-> On Fri, 29 May 2009 11:19:41 +0300
-> Gerard Lledo <gerard.lledo@gmail.com> wrote:
-> 
-> > kernel_thread() is being depracated.  This patch moves the jffs2 garbage
-> > collecting thread to the new kthread API with the minimal impact.
-> > 
-> > Signed-off-by: Gerard Lledo <gerard.lledo@gmail.com>
-> > ---
-> >  fs/jffs2/background.c |   22 ++++++++++++++--------
-> >  1 files changed, 14 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/jffs2/background.c b/fs/jffs2/background.c
-> > index e958010..077fa65 100644
-> > --- a/fs/jffs2/background.c
-> > +++ b/fs/jffs2/background.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/completion.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/freezer.h>
-> > +#include <linux/kthread.h>
-> >  #include "nodelist.h"
-> >  
-> >  
-> > @@ -31,7 +32,7 @@ void jffs2_garbage_collect_trigger(struct jffs2_sb_info *c)
-> >  /* This must only ever be called when no GC thread is currently running */
-> >  int jffs2_start_garbage_collect_thread(struct jffs2_sb_info *c)
-> >  {
-> > -	pid_t pid;
-> > +	struct task_struct *tsk;
-> >  	int ret = 0;
-> >  
-> >  	BUG_ON(c->gc_task);
-> > @@ -39,15 +40,16 @@ int jffs2_start_garbage_collect_thread(struct jffs2_sb_info *c)
-> >  	init_completion(&c->gc_thread_start);
-> >  	init_completion(&c->gc_thread_exit);
-> >  
-> > -	pid = kernel_thread(jffs2_garbage_collect_thread, c, CLONE_FS|CLONE_FILES);
-> > -	if (pid < 0) {
-> > -		printk(KERN_WARNING "fork failed for JFFS2 garbage collect thread: %d\n", -pid);
-> > +	tsk = kthread_create(jffs2_garbage_collect_thread, c, "jffs2_gcd_mtd%d", c->mtd->index);
-> > +	if (IS_ERR(tsk)) {
-> > +		printk(KERN_WARNING "fork failed for JFFS2 garbage collect thread: %ld\n", -PTR_ERR(tsk));
-> >  		complete(&c->gc_thread_exit);
-> > -		ret = pid;
-> > +		ret = PTR_ERR(tsk);
-> >  	} else {
-> > -		/* Wait for it... */
-> > -		D1(printk(KERN_DEBUG "JFFS2: Garbage collect thread is pid %d\n", pid));
-> > +		D1(printk(KERN_DEBUG "JFFS2: Garbage collect thread is pid %d\n", tsk->pid));
-> > +		wake_up_process(tsk);
-> >  		wait_for_completion(&c->gc_thread_start);
-> > +		ret = tsk->pid;
-> >  	}
-> 
-> A simple kthread_run() would be preferable here.  The code presently
-> sort-of open-codes it.
-> 
-> >  	return ret;
-> 
-> Also, manipulating kernel threads via their pids is atypical and
-> inefficient.  In-kernel it is better to refer to threads via their
-> task_struct*.
-> 
-> Fortunately all callers of this function ignore its return value so I
-> expect we can simply change it to be void-returning.  But that's a
-> cleanup which would best be done in a spearate patch.
->
+I'm running 2.6.28-rc2-mm1, the latest mm tree. I'd like to patch it
+so it's up to date, and try using the daily snapshots.
 
-OK, I'll redo the previous patch with kthread_run() instead.  I will also post
-a different patch to cleanup the return value and use void.
+Can somebody please tell me the steps to do this? I've diligently read
+"The Kernel Tester's Guide" and done many google searches, and I've
+got quilt, but I can't tell how these instructions apply to the
+contents of /pub/linux/kernel/people/akpm/patches/2.6/2.6.28-rc2/2.6.28-rc2=
+-mm1
+For example, there's no "series" file, it's called "patch-series"
+
+Am I supposed to change the name? =A0And what all are "broken-out,"
+"hot-fixes," "patch-list....?"
+
+Thanks
+
+Mack Rhinelander
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
