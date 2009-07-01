@@ -1,35 +1,40 @@
-From: Peter =?utf-8?q?H=C3=BCwe?= <PeterHuewe@gmx.de>
-Date: Wed, 01 Jul 2009 08:54:59 +0000
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Wed, 01 Jul 2009 08:58:46 +0000
 Subject: Re: [PATCH] block: adding __init/__exit macros to DAC960.c
-Message-Id: <200907011054.59988.PeterHuewe@gmx.de>
+Message-Id: <alpine.LNX.2.00.0907011057570.4994@wotan.suse.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="168427776-618679282-1246438727=:4994"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200906121307.29865.PeterHuewe@gmx.de> <200906230004.36995.PeterHuewe@gmx.de> <alpine.LNX.2.00.0906231048070.7457@wotan.suse.de>
-In-Reply-To: <alpine.LNX.2.00.0906231048070.7457@wotan.suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Jiri Kosina <trivial@kernel.org>
+References: <200906121307.29865.PeterHuewe@gmx.de> <200906230004.36995.PeterHuewe@gmx.de> <alpine.LNX.2.00.0906231048070.7457@wotan.suse.de> <200907011054.59988.PeterHuewe@gmx.de>
+In-Reply-To: <200907011054.59988.PeterHuewe@gmx.de>
+To: =?ISO-8859-15?Q?Peter_H=FCwe?= <PeterHuewe@gmx.de>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Dienstag 23 Juni 2009 10:48:28 schrieb Jiri Kosina:
-> On Tue, 23 Jun 2009, Peter H=C3=BCwe wrote:
-> > > Trivial patch which adds the __init and __exit macros to the
-> > > module_init / module_exit functions from drivers/block/DAC960.c
-> > > linux version 2.6.30
-> >
-> > I was wondering if there is anything wrong with the patch or is it still
-> > in the review phase ?
->
-> I have applied it to trivial queue, thanks Peter.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hi Jiri,
+--168427776-618679282-1246438727=:4994
+Content-Type: TEXT/PLAIN; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-I just looked in your git tree - it still does not appear there :)
-I'm sorry for bugging you with this trivial patch.
+On Wed, 1 Jul 2009, Peter Hüwe wrote:
 
-Peter
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > > Trivial patch which adds the __init and __exit macros to the 
+> > > > module_init / module_exit functions from drivers/block/DAC960.c 
+> > > > linux version 2.6.30
+> > > I was wondering if there is anything wrong with the patch or is it still
+> > > in the review phase ?
+> > I have applied it to trivial queue, thanks Peter.
+> I just looked in your git tree - it still does not appear there :)
+> I'm sorry for bugging you with this trivial patch.
+
+Hi Peter,
+
+I guess you looked into the wrong branch -- it is in 'for-next' branch, 
+see 
+http://git.kernel.org/?p=linux/kernel/git/jikos/trivial.git;a=commit;h=ef59a28cbb29dd6ec4fcd59eaacb15ea85adbd2e
+
+-- 
+Jiri Kosina
+SUSE Labs
+--168427776-618679282-1246438727=:4994--
