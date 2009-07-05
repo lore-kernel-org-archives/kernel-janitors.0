@@ -1,86 +1,47 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 29 Jul 2009 04:58:00 +0000
-Subject: Re: [PATCH 6/12] drivers/platform/x86: Correct redundant test
-Message-Id: <Pine.LNX.4.64.0907290657380.17320@ask.diku.dk>
+Date: Sun, 05 Jul 2009 07:23:21 +0000
+Subject: [PATCH] drivers/net/cs89x0.c: Avoid using magic number in set_dma_mode
+Message-Id: <Pine.LNX.4.64.0907050922570.27464@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200907290242.n6T2gbP1025488@mercury.physics.adelaide.edu.au>
-In-Reply-To: <200907290242.n6T2gbP1025488@mercury.physics.adelaide.edu.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Woithe <jwoithe@physics.adelaide.edu.au>
-Cc: Paulo Marques <pmarques@grupopie.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 29 Jul 2009, Jonathan Woithe wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Hi Julia
-> 
-> > > > Julia Lawall wrote:
-> > > > > [...]
-> > > > > ---
-> > > > >  drivers/platform/x86/fujitsu-laptop.c          |    3 ---
-> > > > >  1 files changed, 0 insertions(+), 3 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
-> > > > > index 218b9a1..5306901 100644
-> > > > > --- a/drivers/platform/x86/fujitsu-laptop.c
-> > > > > +++ b/drivers/platform/x86/fujitsu-laptop.c
-> > > > > @@ -745,9 +745,6 @@ static int acpi_fujitsu_remove(struct acpi_device *device, int type)
-> > > > >  
-> > > > >  	fujitsu = acpi_driver_data(device);
-> > > > >  
-> > > > > -	if (!device || !acpi_driver_data(device))
-> > > > > -		return -EINVAL;
-> > > > > -
-> > > > 
-> > > > Shouldn't this still do a:
-> > > > 
-> > > >    if (!fujitsu)
-> > > >      return -EINVAL;
-> > > > 
-> > > > to avoid dereferencing a NULL pointer below?
-> > > 
-> > > Hmm, yes it should.  Well spotted.  And I'm not certain how the duplicate
-> > > test on "device" got in there in the first place.  I suspect it came about
-> > > due to some structural changes made a few versions ago and I failed to
-> > > notice that the second check became redundant.
-> > 
-> > If you are going to check fujitsu afterwards, then I think there is no 
-> > need to test the result of acpi_driver_data before.
-> 
-> Yes, of course.  I'll wake up soon, promise!
-> 
-> So we're left with this.
+The constant DMA_RX_MODE is defined to be 0x14 in the local include file
+cs89x0.h.  Since a constant with the same name is used elsewhere with
+set_dma_mode, it seems likely that this constant could be used here.
 
-Looks fine now, thanks.
-julia
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@@ expression E1; identifier I; constant int C; @@
+(
+set_dma_mode(E1,I,...)
+|
+*set_dma_mode(E1,C,...)
+)
+// </smpl>
 
-> Signed-off-by: jwoithe@physics.adelaide.edu.au <Jonathan Woithe>
-> 
-> --- a/drivers/platform/x86/fujitsu-laptop.c	2009-06-12 19:51:45.333234000 +0930
-> +++ b/drivers/platform/x86/fujitsu-laptop.c	2009-07-29 12:10:11.504901871 +0930
-> @@ -740,12 +740,12 @@ static int acpi_fujitsu_remove(struct ac
->  {
->         struct fujitsu_t *fujitsu = NULL;
->  
-> -	if (!device || !acpi_driver_data(device))
-> +	if (!device)
->  		return -EINVAL;
->  
->  	fujitsu = acpi_driver_data(device);
->  
-> -	if (!device || !acpi_driver_data(device))
-> +	if (!fujitsu)
->  		return -EINVAL;
->  
-> 	fujitsu->acpi_handle = NULL;
-> 
-> 
-> Regards
->   jonathan
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/cs89x0.c    |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/cs89x0.c b/drivers/net/cs89x0.c
+index 3eee666..67c9702 100644
+--- a/drivers/net/cs89x0.c
++++ b/drivers/net/cs89x0.c
+@@ -1367,7 +1367,7 @@ net_open(struct net_device *dev)
+ 			spin_lock_irqsave(&lp->lock, flags);
+ 			disable_dma(dev->dma);
+ 			clear_dma_ff(dev->dma);
+-			set_dma_mode(dev->dma, 0x14); /* auto_init as well */
++			set_dma_mode(dev->dma, DMA_RX_MODE); /* auto_init as well */
+ 			set_dma_addr(dev->dma, isa_virt_to_bus(lp->dma_buff));
+ 			set_dma_count(dev->dma, lp->dmasize*1024);
+ 			enable_dma(dev->dma);
