@@ -1,53 +1,57 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 28 Jul 2009 15:53:24 +0000
-Subject: [PATCH 3/9] virt/kvm: correct error-handling code
-Message-Id: <Pine.LNX.4.64.0907281752560.28189@ask.diku.dk>
+Date: Sat, 11 Jul 2009 07:50:49 +0000
+Subject: [PATCH 4/5] drivers/net: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0907110950300.29592@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: avi@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: maxk@qualcomm.com, vtun@office.satix.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-This code is not executed before file has been initialized to the result of
-calling eventfd_fget.  This function returns an ERR_PTR value in an error
-case instead of NULL.  Thus the test that file is not NULL is always true.
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@match exists@
-expression x, E;
-statement S1, S2;
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
 @@
 
-x = eventfd_fget(...)
-... when != x = E
-(
-*  if (x = NULL || ...) S1 else S2
-|
-*  if (x = NULL && ...) S1 else S2
-)
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- virt/kvm/eventfd.c                  |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/net/tun.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
-index 99017e8..bb4ebd8 100644
---- a/virt/kvm/eventfd.c
-+++ b/virt/kvm/eventfd.c
-@@ -230,7 +230,7 @@ fail:
- 	if (eventfd && !IS_ERR(eventfd))
- 		eventfd_ctx_put(eventfd);
+diff -u -p a/drivers/net/tun.c b/drivers/net/tun.c
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -486,11 +486,12 @@ static unsigned int tun_chr_poll(struct 
+ {
+ 	struct tun_file *tfile = file->private_data;
+ 	struct tun_struct *tun = __tun_get(tfile);
+-	struct sock *sk = tun->sk;
++	struct sock *sk;
+ 	unsigned int mask = 0;
  
--	if (file && !IS_ERR(file))
-+	if (!IS_ERR(file))
- 		fput(file);
+ 	if (!tun)
+ 		return POLLERR;
++	sk = tun->sk;
  
- 	kfree(irqfd);
+ 	DBG(KERN_INFO "%s: tun_chr_poll\n", tun->dev->name);
+ 
