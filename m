@@ -1,20 +1,43 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Sat, 11 Jul 2009 11:09:49 +0000
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 11 Jul 2009 11:32:13 +0000
 Subject: Re: [PATCH 5/5] staging/otus: Move a dereference below a NULL test
-Message-Id: <4A5872FD.8040500@gmail.com>
+Message-Id: <Pine.LNX.4.64.0907111331170.31089@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907110950510.29592@ask.diku.dk>	 <4A584A94.5010105@gmail.com>  <1247307444.3032.2.camel@hpdv5.satnam> <1247308323.3032.5.camel@hpdv5.satnam>
-In-Reply-To: <1247308323.3032.5.camel@hpdv5.satnam>
+References: <Pine.LNX.4.64.0907110950510.29592@ask.diku.dk>  <4A584A94.5010105@gmail.com>
+ <1247307444.3032.2.camel@hpdv5.satnam> <4A587245.1080304@gmail.com>
+In-Reply-To: <4A587245.1080304@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaswinder Singh Rajput <jaswinder@kernel.org>
-Cc: "Luis R. Rodriguez" <lrodriguez@atheros.com>, Julia Lawall <julia@diku.dk>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 07/11/2009 12:32 PM, Jaswinder Singh Rajput wrote:
-> And more funny thing is that all functions are global in this file.
+On Sat, 11 Jul 2009, Jiri Slaby wrote:
+
+> On 07/11/2009 12:17 PM, Jaswinder Singh Rajput wrote:
+> > On Sat, 2009-07-11 at 10:17 +0200, Jiri Slaby wrote:
+> >> On 07/11/2009 09:51 AM, Julia Lawall wrote:
+> >>> --- a/drivers/staging/otus/wwrap.c
+> >>> +++ b/drivers/staging/otus/wwrap.c
+> >>> @@ -1016,12 +1016,13 @@ void kevent(struct work_struct *work)
+> >>>  {
+> >>>      struct usbdrv_private *macp > >>>                 container_of(work, struct usbdrv_private, kevent);
+> >>> -    zdev_t *dev = macp->device;
+> >>> +    zdev_t *dev;
+> >>>  
+> >>>      if (macp = NULL)
+> >>>      {
+> >>>          return;
+> >>>      }
+> >>
+> >> The test is rather useless here.
+> >>
+> > 
+> > Why useless, it should be non-null before setting to dev.
 > 
-> Greg, can you please check the scope of these function, why all are
-> global.
+> Even if work was NULL, macp won't be NULL.
 
-Why don't you do that? I think patches are welcome :).
+work could be a small negative number such that calling container_of would 
+return 0.
+
+julia
