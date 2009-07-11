@@ -1,33 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 27 Jul 2009 18:36:21 +0000
-Subject: Re: [PATCH 11/12] net/netlabel: Correct redundant test
-Message-Id: <20090727.113621.207329776.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 11 Jul 2009 07:49:48 +0000
+Subject: [PATCH 1/5] drivers/ata: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0907110949280.29592@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907271815260.2682@ask.diku.dk>
-	<200907271337.30401.paul.moore@hp.com>
-In-Reply-To: <200907271337.30401.paul.moore@hp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: paul.moore@hp.com
-Cc: julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jgarzik@pobox.com, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Paul Moore <paul.moore@hp.com>
-Date: Mon, 27 Jul 2009 13:37:29 -0400
+From: Julia Lawall <julia@diku.dk>
 
-> On Monday 27 July 2009 12:15:43 pm Julia Lawall wrote:
->> From: Julia Lawall <julia@diku.dk>
->>
->> entry was tested for NULL near the beginning of the function, followed by a
->> return, and there is no intervening modification of its value.
->>
->> A simplified version of the semantic match that finds this problem is as
->> follows: (http://www.emn.fr/x-info/coccinelle/)
- ...
->> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> Good catch, thanks.
-> 
-> Acked-by: Paul Moore <paul.moore@hp.com>
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
-Applied to net-next-2.6
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
+@@
+
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/ata/pata_at91.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff -u -p a/drivers/ata/pata_at91.c b/drivers/ata/pata_at91.c
+--- a/drivers/ata/pata_at91.c
++++ b/drivers/ata/pata_at91.c
+@@ -312,11 +312,12 @@ err_ide_ioremap:
+ static int __devexit pata_at91_remove(struct platform_device *pdev)
+ {
+ 	struct ata_host *host = dev_get_drvdata(&pdev->dev);
+-	struct at91_ide_info *info = host->private_data;
++	struct at91_ide_info *info;
+ 	struct device *dev = &pdev->dev;
+ 
+ 	if (!host)
+ 		return 0;
++	info = host->private_data;
+ 
+ 	ata_host_detach(host);
+ 
