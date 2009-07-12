@@ -1,35 +1,126 @@
-From: Rowland Hook <rjhook70@gmail.com>
-Date: Fri, 05 Jun 2009 20:35:19 +0000
-Subject: From Martins D.Legacy
-Message-Id: <73e2b0650906051335t7f8260bbsc9d15d6df35c9404@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 12 Jul 2009 20:05:03 +0000
+Subject: [PATCH 3/5] drivers/isdn: Drop unnecessary NULL test
+Message-Id: <Pine.LNX.4.64.0907122204140.22658@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: isdn@linux-pingi.de, isdn4linux@listserv.isdn4linux.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My name is Martines Legacy
+From: Julia Lawall <julia@diku.dk>
 
-I am an American soldier serving in the military with the army's 3rd
-infantry division.with a need for assistance, I have summed up courage
-to contact you. I found your contact in address on  journal. I got a
-huge fund of Forty Million United States Dollars, (US$40,000,000)
-.This money is among the various currencies which was discovered in
-barrels at a farm-house near one of  Saddam Hussein old palaces in
-Tikrit-Iraq during a rescue operation. I and Sgt James.Howie where the
-first to discover this fund. We concluded and took part of this money
-which is ($40,000.000.00) and shared between us before informing
-anybody about it. This was quite an illegal even last week a roadside
-bomb killed my brother in-law. Find the story on
-web-address below:  http://news.bbc.co.uk/2/hi/middle_east/2988455.stm?
-If  you will do this with good faith and you assure me that my
-percentage will be safe in your care until I complete my service
-here,then I shall agree with You. This is no stolen money, and there
-is no danger involved. We will share upon this ratio: I will take 50%
-and you will take 30%. and 20% shall be given to charity organisation
-which you shall takecare of this offer after a sucessfull transaction,
-We will discuss this in details.
+The result of container_of should not be NULL.  In particular, in this case
+the argument to the enclosing function has passed though INIT_WORK, which
+dereferences it, implying that its container cannot be NULL.
 
-Thanks
-Sgt.Martines Legacy
-Email: proger34@yahoo.com
+A simplified version of the semantic patch that makes this change is as
+follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+identifier fn,work,x,fld;
+type T;
+expression E1,E2;
+statement S;
+@@
+
+static fn(struct work_struct *work) {
+  ... when != work = E1
+  x = container_of(work,T,fld)
+  ... when != x = E2
+- if (x = NULL) S
+  ...
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/isdn/hisax/amd7930_fn.c |    2 --
+ drivers/isdn/hisax/hfc_pci.c    |    2 --
+ drivers/isdn/hisax/hfc_sx.c     |    2 --
+ drivers/isdn/hisax/icc.c        |    2 --
+ drivers/isdn/hisax/isac.c       |    2 --
+ drivers/isdn/hisax/w6692.c      |    2 --
+ 6 files changed, 12 deletions(-)
+
+diff --git a/drivers/isdn/hisax/amd7930_fn.c b/drivers/isdn/hisax/amd7930_fn.c
+index 341faf5..bf526a7 100644
+--- a/drivers/isdn/hisax/amd7930_fn.c
++++ b/drivers/isdn/hisax/amd7930_fn.c
+@@ -238,8 +238,6 @@ Amd7930_bh(struct work_struct *work)
+ 		container_of(work, struct IsdnCardState, tqueue);
+         struct PStack *stptr;
+ 
+-	if (!cs)
+-		return;
+ 	if (test_and_clear_bit(D_CLEARBUSY, &cs->event)) {
+                 if (cs->debug)
+ 			debugl1(cs, "Amd7930: bh, D-Channel Busy cleared");
+diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
+index 3d337d9..d110a77 100644
+--- a/drivers/isdn/hisax/hfc_pci.c
++++ b/drivers/isdn/hisax/hfc_pci.c
+@@ -1506,8 +1506,6 @@ hfcpci_bh(struct work_struct *work)
+ 	u_long	flags;
+ //      struct PStack *stptr;
+ 
+-	if (!cs)
+-		return;
+ 	if (test_and_clear_bit(D_L1STATECHANGE, &cs->event)) {
+ 		if (!cs->hw.hfcpci.nt_mode)
+ 			switch (cs->dc.hfcpci.ph_state) {
+diff --git a/drivers/isdn/hisax/hfc_sx.c b/drivers/isdn/hisax/hfc_sx.c
+index d92e8d6..419f87c 100644
+--- a/drivers/isdn/hisax/hfc_sx.c
++++ b/drivers/isdn/hisax/hfc_sx.c
+@@ -1255,8 +1255,6 @@ hfcsx_bh(struct work_struct *work)
+ 		container_of(work, struct IsdnCardState, tqueue);
+ 	u_long flags;
+ 
+-	if (!cs)
+-		return;
+ 	if (test_and_clear_bit(D_L1STATECHANGE, &cs->event)) {
+ 		if (!cs->hw.hfcsx.nt_mode)
+ 			switch (cs->dc.hfcsx.ph_state) {
+diff --git a/drivers/isdn/hisax/icc.c b/drivers/isdn/hisax/icc.c
+index 682cac3..9aba646 100644
+--- a/drivers/isdn/hisax/icc.c
++++ b/drivers/isdn/hisax/icc.c
+@@ -83,8 +83,6 @@ icc_bh(struct work_struct *work)
+ 		container_of(work, struct IsdnCardState, tqueue);
+ 	struct PStack *stptr;
+ 	
+-	if (!cs)
+-		return;
+ 	if (test_and_clear_bit(D_CLEARBUSY, &cs->event)) {
+ 		if (cs->debug)
+ 			debugl1(cs, "D-Channel Busy cleared");
+diff --git a/drivers/isdn/hisax/isac.c b/drivers/isdn/hisax/isac.c
+index 07b1673..a19354d 100644
+--- a/drivers/isdn/hisax/isac.c
++++ b/drivers/isdn/hisax/isac.c
+@@ -86,8 +86,6 @@ isac_bh(struct work_struct *work)
+ 		container_of(work, struct IsdnCardState, tqueue);
+ 	struct PStack *stptr;
+ 	
+-	if (!cs)
+-		return;
+ 	if (test_and_clear_bit(D_CLEARBUSY, &cs->event)) {
+ 		if (cs->debug)
+ 			debugl1(cs, "D-Channel Busy cleared");
+diff --git a/drivers/isdn/hisax/w6692.c b/drivers/isdn/hisax/w6692.c
+index bb1c8dd..c4d862c 100644
+--- a/drivers/isdn/hisax/w6692.c
++++ b/drivers/isdn/hisax/w6692.c
+@@ -105,8 +105,6 @@ W6692_bh(struct work_struct *work)
+ 		container_of(work, struct IsdnCardState, tqueue);
+ 	struct PStack *stptr;
+ 
+-	if (!cs)
+-		return;
+ 	if (test_and_clear_bit(D_CLEARBUSY, &cs->event)) {
+ 		if (cs->debug)
+ 			debugl1(cs, "D-Channel Busy cleared");
