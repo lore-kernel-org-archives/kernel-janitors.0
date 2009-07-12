@@ -1,54 +1,55 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 13 Jul 2009 20:44:32 +0000
-Subject: [PATCH 3/4] drivers/scsi: adjust NULL test
-Message-Id: <Pine.LNX.4.64.0907132244090.12374@ask.diku.dk>
+Date: Sun, 12 Jul 2009 20:06:00 +0000
+Subject: [PATCH 5/5] net/irda: Drop unnecessary NULL test
+Message-Id: <Pine.LNX.4.64.0907122205340.22658@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: samuel@sortiz.org, irda-users@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Due to the preceding dereference, cmnd cannot be NULL at the point of the
-WARN_ON.  Furthermore, it was earlier tested whether cmnd was NULL and the
-function was exited if that was the case.
+The result of container_of should not be NULL.  In particular, in this case
+the argument to the enclosing function has passed though INIT_WORK, which
+dereferences it, implying that its container cannot be NULL.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+A simplified version of the semantic patch that makes this change is as
+follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r@
-expression x,E,E1;
-identifier f,l;
-position p1,p2;
+@@
+identifier fn,work,x,fld;
+type T;
+expression E1,E2;
+statement S;
 @@
 
-*x@p1->f = E1;
-... when != x = E
-    when != goto l;
-(
-*x@p2 = NULL
-|
-*x@p2 != NULL
-)
+static fn(struct work_struct *work) {
+  ... when != work = E1
+  x = container_of(work,T,fld)
+  ... when != x = E2
+- if (x = NULL) S
+  ...
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/initio.c               |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+ net/irda/irnet/irnet_irda.c         |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
-index 89a5948..359de22 100644
---- a/drivers/scsi/initio.c
-+++ b/drivers/scsi/initio.c
-@@ -2817,7 +2817,6 @@ static void i91uSCBPost(u8 * host_mem, u8 * cblk_mem)
- 	}
+diff --git a/net/irda/irnet/irnet_irda.c b/net/irda/irnet/irnet_irda.c
+index cf9a4b5..49ed80d 100644
+--- a/net/irda/irnet/irnet_irda.c
++++ b/net/irda/irnet/irnet_irda.c
+@@ -21,8 +21,6 @@ static void irnet_ppp_disconnect(struct work_struct *work)
+ 	irnet_socket * self  		container_of(work, irnet_socket, disconnect_work);
  
- 	cmnd->result = cblk->tastat | (cblk->hastat << 16);
--	WARN_ON(cmnd = NULL);
- 	i91u_unmap_scb(host->pci_dev, cmnd);
- 	cmnd->scsi_done(cmnd);	/* Notify system DONE           */
- 	initio_release_scb(host, cblk);	/* Release SCB for current channel */
+-	if (self = NULL)
+-		return;
+ 	/*
+ 	 * If we were connected, cleanup & close the PPP
+ 	 * channel, which will kill pppd (hangup) and the rest.
