@@ -1,50 +1,104 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 21 Jul 2009 16:47:46 +0000
-Subject: [PATCH] drivers/media/dvb: Use dst_type field instead of type_flags
-Message-Id: <Pine.LNX.4.64.0907211847190.26529@ask.diku.dk>
+Date: Sun, 12 Jul 2009 07:43:52 +0000
+Subject: [PATCH 3/3] drivers/usb/gadget: Drop NULL test on list_entry result
+Message-Id: <Pine.LNX.4.64.0907120943230.17416@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dahlmann.thomas@arcor.de, linux-geode@lists.infradead.org, gregkh@suse.de, jirislaby@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-It seems from other code that it is the dst_type field rather than the
-type_flags field that contains values of the form DST_TYPE_IS...
-The type_flags field contains values of the form DST_TYPE_HAS...
+list_entry, which is an alias for container_of, cannot return NULL, as
+there is no way to add a NULL value to a doubly linked list.
 
-The semantic match that finds this problem is as follows:
+A simplified version of the semantic match that findds this problem is as
+follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@ struct dst_state E; @@
+@r@
+expression x,E;
+statement S1,S2;
+position p,p1;
+@@
 
-(
-*E.type_flags = 
-  \( DST_TYPE_IS_SAT\|DST_TYPE_IS_TERR\|DST_TYPE_IS_CABLE\|DST_TYPE_IS_ATSC \)
-|
-*E.type_flags != 
-  \( DST_TYPE_IS_SAT\|DST_TYPE_IS_TERR\|DST_TYPE_IS_CABLE\|DST_TYPE_IS_ATSC \)
-)
+*x = list_entry@p(...)
+... when != x = E
+*if@p1 (x = NULL) S1 else S2
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/media/dvb/bt8xx/dst.c       |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/usb/gadget/amd5536udc.c     |   56 +++++++++-----------
+ 1 files changed, 25 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/media/dvb/bt8xx/dst.c b/drivers/media/dvb/bt8xx/dst.c
-index fec1d77..91353a6 100644
---- a/drivers/media/dvb/bt8xx/dst.c
-+++ b/drivers/media/dvb/bt8xx/dst.c
-@@ -1059,7 +1059,7 @@ static int dst_get_tuner_info(struct dst_state *state)
- 		dprintk(verbose, DST_ERROR, 1, "DST type has TS8");
- 	}
- 	if (state->board_info[0] = 0xbc) {
--		if (state->type_flags != DST_TYPE_IS_ATSC)
-+		if (state->dst_type != DST_TYPE_IS_ATSC)
- 			state->type_flags |= DST_TYPE_HAS_TS188;
- 		else
- 			state->type_flags |= DST_TYPE_HAS_NEWTUNE_2;
+diff --git a/drivers/usb/gadget/amd5536udc.c b/drivers/usb/gadget/amd5536udc.c
+index 826f3ad..85f7aa9 100644
+--- a/drivers/usb/gadget/amd5536udc.c
++++ b/drivers/usb/gadget/amd5536udc.c
+@@ -2379,40 +2379,34 @@ static irqreturn_t udc_data_in_isr(struct udc *dev, int ep_ix)
+ 		if (!ep->cancel_transfer && !list_empty(&ep->queue)) {
+ 			req = list_entry(ep->queue.next,
+ 					struct udc_request, queue);
+-			if (req) {
+-				/*
+-				 * length bytes transfered
+-				 * check dma done of last desc. in PPBDU mode
+-				 */
+-				if (use_dma_ppb_du) {
+-					td = udc_get_last_dma_desc(req);
+-					if (td) {
+-						dma_done -							AMD_GETBITS(td->status,
+-							UDC_DMA_IN_STS_BS);
+-						/* don't care DMA done */
+-						req->req.actual -							req->req.length;
+-					}
+-				} else {
+-					/* assume all bytes transferred */
++			/*
++			 * length bytes transfered
++			 * check dma done of last desc. in PPBDU mode
++			 */
++			if (use_dma_ppb_du) {
++				td = udc_get_last_dma_desc(req);
++				if (td) {
++					dma_done +						AMD_GETBITS(td->status,
++						UDC_DMA_IN_STS_BS);
++					/* don't care DMA done */
+ 					req->req.actual = req->req.length;
+ 				}
++			} else {
++				/* assume all bytes transferred */
++				req->req.actual = req->req.length;
++			}
+ 
+-				if (req->req.actual = req->req.length) {
+-					/* complete req */
+-					complete_req(ep, req, 0);
+-					req->dma_going = 0;
+-					/* further request available ? */
+-					if (list_empty(&ep->queue)) {
+-						/* disable interrupt */
+-						tmp = readl(
+-							&dev->regs->ep_irqmsk);
+-						tmp |= AMD_BIT(ep->num);
+-						writel(tmp,
+-							&dev->regs->ep_irqmsk);
+-					}
+-
++			if (req->req.actual = req->req.length) {
++				/* complete req */
++				complete_req(ep, req, 0);
++				req->dma_going = 0;
++				/* further request available ? */
++				if (list_empty(&ep->queue)) {
++					/* disable interrupt */
++					tmp = readl(&dev->regs->ep_irqmsk);
++					tmp |= AMD_BIT(ep->num);
++					writel(tmp, &dev->regs->ep_irqmsk);
+ 				}
+ 			}
+ 		}
