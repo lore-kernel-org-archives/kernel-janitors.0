@@ -1,42 +1,32 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 11 Jul 2009 18:28:11 +0000
+From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
+Date: Mon, 13 Jul 2009 17:00:38 +0000
 Subject: Re: [PATCH 5/5] staging/otus: Move a dereference below a NULL test
-Message-Id: <Pine.LNX.4.64.0907112027530.1525@ask.diku.dk>
+Message-Id: <20090713170038.GA12919@mosca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907110950510.29592@ask.diku.dk> <4A584A94.5010105@gmail.com>
- <20090711170356.GA5205@suse.de>
-In-Reply-To: <20090711170356.GA5205@suse.de>
+References: <Pine.LNX.4.64.0907110950510.29592@ask.diku.dk>
+ <4A584A94.5010105@gmail.com>
+ <1247307444.3032.2.camel@hpdv5.satnam>
+ <1247308323.3032.5.camel@hpdv5.satnam>
+ <4A5872FD.8040500@gmail.com>
+In-Reply-To: <4A5872FD.8040500@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@suse.de>
-Cc: Jiri Slaby <jirislaby@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, Luis Rodriguez <Luis.Rodriguez@atheros.com>, Julia Lawall <julia@diku.dk>, "gregkh@suse.de" <gregkh@suse.de>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Sat, 11 Jul 2009, Greg KH wrote:
-
-> On Sat, Jul 11, 2009 at 10:17:24AM +0200, Jiri Slaby wrote:
-> > On 07/11/2009 09:51 AM, Julia Lawall wrote:
-> > > diff -u -p a/drivers/staging/otus/wwrap.c b/drivers/staging/otus/wwrap.c
-> > > --- a/drivers/staging/otus/wwrap.c
-> > > +++ b/drivers/staging/otus/wwrap.c
-> > > @@ -1016,12 +1016,13 @@ void kevent(struct work_struct *work)
-> > >  {
-> > >      struct usbdrv_private *macp > > >                 container_of(work, struct usbdrv_private, kevent);
-> > > -    zdev_t *dev = macp->device;
-> > > +    zdev_t *dev;
-> > >  
-> > >      if (macp = NULL)
-> > >      {
-> > >          return;
-> > >      }
-> > 
-> > The test is rather useless here.
+On Sat, Jul 11, 2009 at 04:09:49AM -0700, Jiri Slaby wrote:
+> On 07/11/2009 12:32 PM, Jaswinder Singh Rajput wrote:
+> > And more funny thing is that all functions are global in this file.
+> >
+> > Greg, can you please check the scope of these function, why all are
+> > global.
 > 
-> Yes it is. 
-> 
-> Julia, if you just remove the NULL check, will that keep your scripts
-> happy from noticing such a "problem"?
+> Why don't you do that? I think patches are welcome :).
 
-Yes.  The trigger is the NULL test after the dereference.
+I will note Otus has a replacement ar9170 driver already upstream,
+as soon as it gets aggregation support otus will be dropped. Better
+focus on ar9170 instead if you are looking to spend some cycles on
+driver help.
 
-julia
+  Luis
