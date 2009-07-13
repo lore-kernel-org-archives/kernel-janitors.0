@@ -1,56 +1,81 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 12 Jul 2009 20:03:42 +0000
-Subject: [PATCH 1/5] drivers/char/hvc_console.c: Drop unnecessary NULL test
-Message-Id: <Pine.LNX.4.64.0907122203060.22658@ask.diku.dk>
+Date: Mon, 13 Jul 2009 12:22:30 +0000
+Subject: [PATCH] drivers/media/video: remove null dereference and unnecessary
+Message-Id: <Pine.LNX.4.64.0907131422000.6808@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mmcclell@bigfoot.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The result of container_of should not be NULL.  In particular, in this case
-the argument to the enclosing function has passed though INIT_WORK, which
-dereferences it, implying that its container cannot be NULL.
+In the first part of the patch, if ov is NULL, the previous call to
+mutex_lock would have failed.
 
-A simplified version of the semantic patch that makes this change is as
-follows:
+In the second part of the patch, a non-NULL test is removed, since if the
+value is NULL, the line before would have failed.
+
+Near the end of this function there is an initialization of ov to NULL
+after a kfree, even though no further reference to this variable is
+possible.  Perhaps this is considered good style, and thus I have left it
+as is.
+
+The first problem was detected using the following semantic match
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
 @@
-identifier fn,work,x,fld;
-type T;
-expression E1,E2;
-statement S;
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
 @@
 
-static fn(struct work_struct *work) {
-  ... when != work = E1
-  x = container_of(work,T,fld)
-  ... when != x = E2
-- if (x = NULL) S
-  ...
+* if (E = NULL)
+{
+  ... when != if (E = NULL) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
 }
+else S3
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/char/hvc_console.c          |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+ drivers/media/video/ov511.c         |   10 ++++------
+ 1 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/char/hvc_console.c b/drivers/char/hvc_console.c
-index 94e7e3c..e367630 100644
---- a/drivers/char/hvc_console.c
-+++ b/drivers/char/hvc_console.c
-@@ -516,8 +516,6 @@ static void hvc_set_winsz(struct work_struct *work)
- 	struct winsize ws;
+diff --git a/drivers/media/video/ov511.c b/drivers/media/video/ov511.c
+index 0bc2cf5..7c1f186 100644
+--- a/drivers/media/video/ov511.c
++++ b/drivers/media/video/ov511.c
+@@ -5914,14 +5914,12 @@ ov51x_disconnect(struct usb_interface *intf)
  
- 	hp = container_of(work, struct hvc_struct, tty_resize);
--	if (!hp)
+ 	PDEBUG(3, "");
+ 
++	if (!ov)
++		return;
++
+ 	mutex_lock(&ov->lock);
+ 	usb_set_intfdata (intf, NULL);
+ 
+-	if (!ov) {
+-		mutex_unlock(&ov->lock);
 -		return;
+-	}
+-
+ 	/* Free device number */
+ 	ov511_devused &= ~(1 << ov->nr);
  
- 	spin_lock_irqsave(&hp->lock, hvc_flags);
- 	if (!hp->tty) {
+@@ -5946,7 +5944,7 @@ ov51x_disconnect(struct usb_interface *intf)
+ 	ov->dev = NULL;
+ 
+ 	/* Free the memory */
+-	if (ov && !ov->user) {
++	if (!ov->user) {
+ 		mutex_lock(&ov->cbuf_lock);
+ 		kfree(ov->cbuf);
+ 		ov->cbuf = NULL;
