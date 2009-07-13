@@ -1,405 +1,54 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Wed, 29 Jul 2009 12:10:10 +0000
-Subject: [PATCH 2/4] Staging: hv: Remove typedef NETVSC_PACKET and PNETVSC_PACKET
-Message-Id: <200907291410.10683.npalix@diku.dk>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 13 Jul 2009 20:48:31 +0000
+Subject: [PATCH 4/4] fs/btrfs: adjust NULL test
+Message-Id: <Pine.LNX.4.64.0907132244330.12374@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, hjanssen@microsoft.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: chris.mason@oracle.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-typedef NETVSC_PACKET and PNETVSC_PACKET are removed and their usages
-are replace by the use of struct hv_netvsc_packet and
-struct hv_netvsc_packet * respectively.
+Move the call to BUG_ON to before the dereference of the tested value.
 
-Here is the semantic patch generated to perform this transformation:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
-//<smpl>
-@rm_NETVSC_PACKET@
+// <smpl>
+@r@
+expression x,E,E1;
+identifier f,l;
+position p1,p2;
 @@
--typedef struct _NETVSC_PACKET
-+struct hv_netvsc_packet
-{...}
--NETVSC_PACKET
-;
 
-@rm_PNETVSC_PACKET@
-@@
--typedef struct _NETVSC_PACKET *PNETVSC_PACKET;
-+struct hv_netvsc_packet;
+*x@p1->f = E1;
+... when != x = E
+    when != goto l;
+(
+*x@p2 = NULL
+|
+*x@p2 != NULL
+)
+// </smpl>
 
-@fixtypedef_NETVSC_PACKET@
-typedef NETVSC_PACKET;
-@@
--NETVSC_PACKET
-+struct hv_netvsc_packet
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-@fixstruct__NETVSC_PACKET@
-@@
-struct
--_NETVSC_PACKET
-+hv_netvsc_packet
-
-@fixtypedef_PNETVSC_PACKET@
-typedef PNETVSC_PACKET;
-@@
--PNETVSC_PACKET
-+struct hv_netvsc_packet*
-//</smpl>
-
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
 ---
- drivers/staging/hv/NetVsc.c            |   32 ++++++++++++++++----------------
- drivers/staging/hv/NetVsc.h            |    2 +-
- drivers/staging/hv/RndisFilter.c       |   16 ++++++++--------
- drivers/staging/hv/include/NetVscApi.h |   10 +++++-----
- drivers/staging/hv/netvsc_drv.c        |   16 ++++++++--------
- 5 files changed, 38 insertions(+), 38 deletions(-)
+ fs/btrfs/inode.c                    |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/hv/NetVsc.c b/drivers/staging/hv/NetVsc.c
-index d653f95..b24a870 100644
---- a/drivers/staging/hv/NetVsc.c
-+++ b/drivers/staging/hv/NetVsc.c
-@@ -93,7 +93,7 @@ NetVscOnSendCompletion(
- static int
- NetVscOnSend(
- 	struct hv_device *Device,
--	NETVSC_PACKET	*Packet
-+	struct hv_netvsc_packet	*Packet
- 	);
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 7ffa3d3..8cc6025 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2604,8 +2604,8 @@ noinline int btrfs_truncate_inode_items(struct btrfs_trans_handle *trans,
+ 	if (root->ref_cows)
+ 		btrfs_drop_extent_cache(inode, new_size & (~mask), (u64)-1, 0);
+ 	path = btrfs_alloc_path();
+-	path->reada = -1;
+ 	BUG_ON(!path);
++	path->reada = -1;
  
- static void
-@@ -239,8 +239,8 @@ NetVscInitialize(
- 
- 	DPRINT_ENTER(NETVSC);
- 
--	DPRINT_DBG(NETVSC, "sizeof(NETVSC_PACKET)=%zd, sizeof(NVSP_MESSAGE)=%zd, sizeof(VMTRANSFER_PAGE_PACKET_HEADER)=%zd",
--		sizeof(NETVSC_PACKET), sizeof(NVSP_MESSAGE), sizeof(VMTRANSFER_PAGE_PACKET_HEADER));
-+	DPRINT_DBG(NETVSC, "sizeof(struct hv_netvsc_packet)=%zd, sizeof(NVSP_MESSAGE)=%zd, sizeof(VMTRANSFER_PAGE_PACKET_HEADER)=%zd",
-+		sizeof(struct hv_netvsc_packet), sizeof(NVSP_MESSAGE), sizeof(VMTRANSFER_PAGE_PACKET_HEADER));
- 
- 	/* Make sure we are at least 2 pages since 1 page is used for control */
- 	ASSERT(driver->RingBufferSize >= (PAGE_SIZE << 1));
-@@ -802,7 +802,7 @@ NetVscOnDeviceAdd(
- 	int i;
- 
- 	struct NETVSC_DEVICE *netDevice;
--	NETVSC_PACKET* packet;
-+	struct hv_netvsc_packet *packet;
- 	LIST_ENTRY *entry;
- 
- 	NETVSC_DRIVER_OBJECT *netDriver = (NETVSC_DRIVER_OBJECT*) Device->Driver;;
-@@ -828,7 +828,7 @@ NetVscOnDeviceAdd(
- 
- 	for (i=0; i < NETVSC_RECEIVE_PACKETLIST_COUNT; i++)
- 	{
--		packet = kzalloc(sizeof(NETVSC_PACKET) + (NETVSC_RECEIVE_SG_COUNT* sizeof(PAGE_BUFFER)), GFP_KERNEL);
-+		packet = kzalloc(sizeof(struct hv_netvsc_packet) + (NETVSC_RECEIVE_SG_COUNT* sizeof(PAGE_BUFFER)), GFP_KERNEL);
- 		if (!packet)
- 		{
- 			DPRINT_DBG(NETVSC, "unable to allocate netvsc pkts for receive pool (wanted %d got %d)", NETVSC_RECEIVE_PACKETLIST_COUNT, i);
-@@ -885,7 +885,7 @@ Cleanup:
- 		while (!IsListEmpty(&netDevice->ReceivePacketList))
- 		{
- 			entry = REMOVE_HEAD_LIST(&netDevice->ReceivePacketList);
--			packet = CONTAINING_RECORD(entry, NETVSC_PACKET, ListEntry);
-+			packet = CONTAINING_RECORD(entry, struct hv_netvsc_packet, ListEntry);
- 			kfree(packet);
- 		}
- 
-@@ -915,7 +915,7 @@ NetVscOnDeviceRemove(
- 	)
- {
- 	struct NETVSC_DEVICE *netDevice;
--	NETVSC_PACKET *netvscPacket;
-+	struct hv_netvsc_packet *netvscPacket;
- 	int ret=0;
- 	LIST_ENTRY *entry;
- 
-@@ -958,7 +958,7 @@ NetVscOnDeviceRemove(
- 	while (!IsListEmpty(&netDevice->ReceivePacketList))
- 	{
- 		entry = REMOVE_HEAD_LIST(&netDevice->ReceivePacketList);
--		netvscPacket = CONTAINING_RECORD(entry, NETVSC_PACKET, ListEntry);
-+		netvscPacket = CONTAINING_RECORD(entry, struct hv_netvsc_packet, ListEntry);
- 
- 		kfree(netvscPacket);
- 	}
-@@ -999,7 +999,7 @@ NetVscOnSendCompletion(
- {
- 	struct NETVSC_DEVICE *netDevice;
- 	NVSP_MESSAGE *nvspPacket;
--	NETVSC_PACKET *nvscPacket;
-+	struct hv_netvsc_packet *nvscPacket;
- 
- 	DPRINT_ENTER(NETVSC);
- 
-@@ -1026,7 +1026,7 @@ NetVscOnSendCompletion(
- 	else if (nvspPacket->Header.MessageType = NvspMessage1TypeSendRNDISPacketComplete)
- 	{
- 		/* Get the send context */
--		nvscPacket = (NETVSC_PACKET *)(unsigned long)Packet->TransactionId;
-+		nvscPacket = (struct hv_netvsc_packet *)(unsigned long)Packet->TransactionId;
- 		ASSERT(nvscPacket);
- 
- 		/* Notify the layer above us */
-@@ -1048,7 +1048,7 @@ NetVscOnSendCompletion(
- static int
- NetVscOnSend(
- 	struct hv_device *Device,
--	NETVSC_PACKET *Packet
-+	struct hv_netvsc_packet *Packet
- 	)
- {
- 	struct NETVSC_DEVICE *netDevice;
-@@ -1118,7 +1118,7 @@ NetVscOnReceive(
- 	struct NETVSC_DEVICE *netDevice;
- 	VMTRANSFER_PAGE_PACKET_HEADER *vmxferpagePacket;
- 	NVSP_MESSAGE *nvspPacket;
--	NETVSC_PACKET *netvscPacket=NULL;
-+	struct hv_netvsc_packet *netvscPacket=NULL;
- 	LIST_ENTRY* entry;
- 	unsigned long start;
- 	unsigned long end, endVirtual;
-@@ -1183,7 +1183,7 @@ NetVscOnReceive(
- 	while (!IsListEmpty(&netDevice->ReceivePacketList))
- 	{
- 		entry = REMOVE_HEAD_LIST(&netDevice->ReceivePacketList);
--		netvscPacket = CONTAINING_RECORD(entry, NETVSC_PACKET, ListEntry);
-+		netvscPacket = CONTAINING_RECORD(entry, struct hv_netvsc_packet, ListEntry);
- 
- 		INSERT_TAIL_LIST(&listHead, &netvscPacket->ListEntry);
- 
-@@ -1206,7 +1206,7 @@ NetVscOnReceive(
- 		for (i=count; i != 0; i--)
- 		{
- 			entry = REMOVE_HEAD_LIST(&listHead);
--			netvscPacket = CONTAINING_RECORD(entry, NETVSC_PACKET, ListEntry);
-+			netvscPacket = CONTAINING_RECORD(entry, struct hv_netvsc_packet, ListEntry);
- 
- 			INSERT_TAIL_LIST(&netDevice->ReceivePacketList, &netvscPacket->ListEntry);
- 		}
-@@ -1233,7 +1233,7 @@ NetVscOnReceive(
- 	for (i=0; i < (count - 1); i++)
- 	{
- 		entry = REMOVE_HEAD_LIST(&listHead);
--		netvscPacket = CONTAINING_RECORD(entry, NETVSC_PACKET, ListEntry);
-+		netvscPacket = CONTAINING_RECORD(entry, struct hv_netvsc_packet, ListEntry);
- 
- 		/* Initialize the netvsc packet */
- 		netvscPacket->XferPagePacket = xferpagePacket;
-@@ -1357,7 +1357,7 @@ static void
- NetVscOnReceiveCompletion(
- 	void * Context)
- {
--	NETVSC_PACKET *packet = (NETVSC_PACKET*)Context;
-+	struct hv_netvsc_packet *packet = (struct hv_netvsc_packet*)Context;
- 	struct hv_device *device = (struct hv_device*)packet->Device;
- 	struct NETVSC_DEVICE *netDevice;
- 	u64	transactionId=0;
-diff --git a/drivers/staging/hv/NetVsc.h b/drivers/staging/hv/NetVsc.h
-index 7636654..0389318 100644
---- a/drivers/staging/hv/NetVsc.h
-+++ b/drivers/staging/hv/NetVsc.h
-@@ -60,7 +60,7 @@ struct NETVSC_DEVICE {
- 	int								RefCount;
- 
- 	int								NumOutstandingSends;
--	/* List of free preallocated NETVSC_PACKET to represent receive packet */
-+	/* List of free preallocated hv_netvsc_packet to represent receive packet */
- 	LIST_ENTRY						ReceivePacketList;
- 	spinlock_t receive_packet_list_lock;
- 
-diff --git a/drivers/staging/hv/RndisFilter.c b/drivers/staging/hv/RndisFilter.c
-index 96133a4..a6bbb1c 100644
---- a/drivers/staging/hv/RndisFilter.c
-+++ b/drivers/staging/hv/RndisFilter.c
-@@ -68,7 +68,7 @@ typedef struct _RNDIS_REQUEST {
- 	RNDIS_MESSAGE				ResponseMessage;
- 
- 	/* Simplify allocation by having a netvsc packet inline */
--	NETVSC_PACKET				Packet;
-+	struct hv_netvsc_packet	Packet;
- 	PAGE_BUFFER					Buffer;
- 	/* FIXME: We assumed a fixed size request here. */
- 	RNDIS_MESSAGE				RequestMessage;
-@@ -107,13 +107,13 @@ static void
- RndisFilterReceiveData(
- 	RNDIS_DEVICE	*Device,
- 	RNDIS_MESSAGE	*Message,
--	NETVSC_PACKET	*Packet
-+	struct hv_netvsc_packet	*Packet
- 	);
- 
- static int
- RndisFilterOnReceive(
- 	struct hv_device *Device,
--	NETVSC_PACKET		*Packet
-+	struct hv_netvsc_packet	*Packet
- 	);
- 
- static int
-@@ -184,7 +184,7 @@ RndisFilterOnClose(
- static int
- RndisFilterOnSend(
- 	struct hv_device *Device,
--	NETVSC_PACKET		*Packet
-+	struct hv_netvsc_packet	*Packet
- 	);
- 
- static void
-@@ -345,7 +345,7 @@ RndisFilterSendRequest(
- 	)
- {
- 	int ret=0;
--	NETVSC_PACKET *packet;
-+	struct hv_netvsc_packet *packet;
- 
- 	DPRINT_ENTER(NETVSC);
- 
-@@ -458,7 +458,7 @@ static void
- RndisFilterReceiveData(
- 	RNDIS_DEVICE	*Device,
- 	RNDIS_MESSAGE	*Message,
--	NETVSC_PACKET	*Packet
-+	struct hv_netvsc_packet	*Packet
- 	)
- {
- 	RNDIS_PACKET *rndisPacket;
-@@ -491,7 +491,7 @@ RndisFilterReceiveData(
- static int
- RndisFilterOnReceive(
- 	struct hv_device *Device,
--	NETVSC_PACKET		*Packet
-+	struct hv_netvsc_packet	*Packet
- 	)
- {
- 	struct NETVSC_DEVICE *netDevice = (struct NETVSC_DEVICE*)Device->Extension;
-@@ -1080,7 +1080,7 @@ RndisFilterOnClose(
- static int
- RndisFilterOnSend(
- 	struct hv_device *Device,
--	NETVSC_PACKET		*Packet
-+	struct hv_netvsc_packet	*Packet
- 	)
- {
- 	int ret=0;
-diff --git a/drivers/staging/hv/include/NetVscApi.h b/drivers/staging/hv/include/NetVscApi.h
-index 83e746d..79b9e4b 100644
---- a/drivers/staging/hv/include/NetVscApi.h
-+++ b/drivers/staging/hv/include/NetVscApi.h
-@@ -37,7 +37,7 @@
- 
- /* Fwd declaration */
- 
--typedef struct _NETVSC_PACKET	*PNETVSC_PACKET;
-+struct hv_netvsc_packet;
- 
- 
- 
-@@ -48,10 +48,10 @@ typedef int (*PFN_ON_OPEN)(struct hv_device *Device);
- typedef int (*PFN_ON_CLOSE)(struct hv_device *Device);
- 
- typedef void (*PFN_QUERY_LINKSTATUS)(struct hv_device *Device);
--typedef int (*PFN_ON_SEND)(struct hv_device *dev, PNETVSC_PACKET packet);
-+typedef int (*PFN_ON_SEND)(struct hv_device *dev, struct hv_netvsc_packet *packet);
- typedef void (*PFN_ON_SENDRECVCOMPLETION)(void * Context);
- 
--typedef int (*PFN_ON_RECVCALLBACK)(struct hv_device *dev, PNETVSC_PACKET packet);
-+typedef int (*PFN_ON_RECVCALLBACK)(struct hv_device *dev, struct hv_netvsc_packet *packet);
- typedef void (*PFN_ON_LINKSTATUS_CHANGED)(struct hv_device *dev, u32 Status);
- 
- /* Represent the xfer page packet which contains 1 or more netvsc packet */
-@@ -70,7 +70,7 @@ typedef struct _XFERPAGE_PACKET {
-  * Represent netvsc packet which contains 1 RNDIS and 1 ethernet frame
-  * within the RNDIS
-  */
--typedef struct _NETVSC_PACKET {
-+struct hv_netvsc_packet {
- 	/* Bookkeeping stuff */
- 	DLIST_ENTRY				ListEntry;
- 
-@@ -104,7 +104,7 @@ typedef struct _NETVSC_PACKET {
- 	u32					PageBufferCount;
- 	PAGE_BUFFER				PageBuffers[NETVSC_PACKET_MAXPAGE];
- 
--} NETVSC_PACKET;
-+};
- 
- 
- /* Represents the net vsc driver */
-diff --git a/drivers/staging/hv/netvsc_drv.c b/drivers/staging/hv/netvsc_drv.c
-index 9010f0e..02b200b 100644
---- a/drivers/staging/hv/netvsc_drv.c
-+++ b/drivers/staging/hv/netvsc_drv.c
-@@ -51,7 +51,7 @@ static int netvsc_remove(struct device *device);
- static int netvsc_open(struct net_device *net);
- static void netvsc_xmit_completion(void *context);
- static int netvsc_start_xmit (struct sk_buff *skb, struct net_device *net);
--static int netvsc_recv_callback(struct hv_device *device_obj, NETVSC_PACKET* Packet);
-+static int netvsc_recv_callback(struct hv_device *device_obj, struct hv_netvsc_packet *Packet);
- static int netvsc_close(struct net_device *net);
- static struct net_device_stats *netvsc_get_stats(struct net_device *net);
- static void netvsc_linkstatus_callback(struct hv_device *device_obj, unsigned int status);
-@@ -371,7 +371,7 @@ Desc:	Send completion processing
- --*/
- static void netvsc_xmit_completion(void *context)
- {
--	NETVSC_PACKET *packet = (NETVSC_PACKET *)context;
-+	struct hv_netvsc_packet *packet = (struct hv_netvsc_packet *)context;
- 	struct sk_buff *skb = (struct sk_buff *)(unsigned long)packet->Completion.Send.SendCompletionTid;
- 	struct net_device* net;
- 
-@@ -412,7 +412,7 @@ static int netvsc_start_xmit (struct sk_buff *skb, struct net_device *net)
- 	NETVSC_DRIVER_OBJECT *net_drv_obj = &net_drv_ctx->drv_obj;
- 
- 	int i=0;
--	NETVSC_PACKET* packet;
-+	struct hv_netvsc_packet *packet;
- 	int num_frags;
- 	int retries=0;
- 
-@@ -428,14 +428,14 @@ static int netvsc_start_xmit (struct sk_buff *skb, struct net_device *net)
- 	num_frags = skb_shinfo(skb)->nr_frags + 1 + net_drv_obj->AdditionalRequestPageBufferCount;
- 
- 	/* Allocate a netvsc packet based on # of frags. */
--	packet = kzalloc(sizeof(NETVSC_PACKET) + (num_frags * sizeof(PAGE_BUFFER)) + net_drv_obj->RequestExtSize, GFP_ATOMIC);
-+	packet = kzalloc(sizeof(struct hv_netvsc_packet) + (num_frags * sizeof(PAGE_BUFFER)) + net_drv_obj->RequestExtSize, GFP_ATOMIC);
- 	if (!packet)
- 	{
--		DPRINT_ERR(NETVSC_DRV, "unable to allocate NETVSC_PACKET");
-+		DPRINT_ERR(NETVSC_DRV, "unable to allocate hv_netvsc_packet");
- 		return -1;
- 	}
- 
--	packet->Extension = (void*)(unsigned long)packet + sizeof(NETVSC_PACKET) + (num_frags * sizeof(PAGE_BUFFER)) ;
-+	packet->Extension = (void*)(unsigned long)packet + sizeof(struct hv_netvsc_packet) + (num_frags * sizeof(PAGE_BUFFER)) ;
- 
- 	/* Setup the rndis header */
- 	packet->PageBufferCount = num_frags;
-@@ -549,7 +549,7 @@ Name:	netvsc_recv_callback()
- Desc:	Callback when we receive a packet from the "wire" on the specify device
- 
- --*/
--static int netvsc_recv_callback(struct hv_device *device_obj, NETVSC_PACKET* packet)
-+static int netvsc_recv_callback(struct hv_device *device_obj, struct hv_netvsc_packet *packet)
- {
- 	int ret=0;
- 	struct device_context *device_ctx = to_device_context(device_obj);
-@@ -581,7 +581,7 @@ static int netvsc_recv_callback(struct hv_device *device_obj, NETVSC_PACKET* pac
- 	/* for kmap_atomic */
- 	local_irq_save(flags);
- 
--	/* Copy to skb. This copy is needed here since the memory pointed by NETVSC_PACKET */
-+	/* Copy to skb. This copy is needed here since the memory pointed by hv_netvsc_packet */
- 	/* cannot be deallocated */
- 	for (i=0; i<packet->PageBufferCount; i++)
- 	{
--- 
-1.6.0.4
-
-
--- 
-Nicolas Palix
+ 	/* FIXME, add redo link to tree so we don't leak on crash */
+ 	key.objectid = inode->i_ino;
