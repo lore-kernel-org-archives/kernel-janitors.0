@@ -1,55 +1,73 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 18 Jul 2009 15:25:53 +0000
-Subject: [PATCH 5/6] fs/btrfs: convert nested spin_lock_irqsave to spin_lock
-Message-Id: <Pine.LNX.4.64.0907181725320.26792@ask.diku.dk>
+Date: Mon, 13 Jul 2009 08:54:37 +0000
+Subject: [PATCH] arch/alpha/kernel: Add kmalloc NULL tests
+Message-Id: <Pine.LNX.4.64.0907131054170.6808@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: chris.mason@oracle.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: rth@twiddle.net, ink@jurassic.park.msu.ru, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If spin_lock_irqsave is called twice in a row with the same second
-argument, the interrupt state at the point of the second call overwrites
-the value saved by the first call.  Indeed, the second call does not need
-to save the interrupt state, so it is changed to a simple spin_lock.
+Check that the result of kmalloc is not NULL before passing it to other
+functions.
 
 The semantic match that finds this problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
 @@
-expression lock1,lock2;
-expression flags;
+expression *x;
+identifier f;
+constant char *C;
 @@
 
-*spin_lock_irqsave(lock1,flags)
-... when != flags
-*spin_lock_irqsave(lock2,flags)
+x = \(kmalloc\|kcalloc\|kzalloc\)(...);
+... when != x = NULL
+    when != x != NULL
+    when != (x || ...)
+(
+kfree(x)
+|
+f(...,C,...,x,...)
+|
+*f(...,x,...)
+|
+*x->f
+)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- fs/btrfs/async-thread.c             |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ arch/alpha/kernel/core_marvel.c |    2 ++
+ arch/alpha/kernel/core_titan.c  |    2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
-index 6e4f6c5..019e8af 100644
---- a/fs/btrfs/async-thread.c
-+++ b/fs/btrfs/async-thread.c
-@@ -424,11 +424,11 @@ int btrfs_requeue_work(struct btrfs_work *work)
- 	 * list
+diff --git a/arch/alpha/kernel/core_marvel.c b/arch/alpha/kernel/core_marvel.c
+index e302dae..80953bc 100644
+--- a/arch/alpha/kernel/core_marvel.c
++++ b/arch/alpha/kernel/core_marvel.c
+@@ -1103,6 +1103,8 @@ marvel_agp_info(void)
+ 	 * Allocate the info structure.
  	 */
- 	if (worker->idle) {
--		spin_lock_irqsave(&worker->workers->lock, flags);
-+		spin_lock(&worker->workers->lock);
- 		worker->idle = 0;
- 		list_move_tail(&worker->worker_list,
- 			       &worker->workers->worker_list);
--		spin_unlock_irqrestore(&worker->workers->lock, flags);
-+		spin_unlock(&worker->workers->lock);
- 	}
- 	if (!worker->working) {
- 		wake = 1;
+ 	agp = kmalloc(sizeof(*agp), GFP_KERNEL);
++	if (!agp)
++		return NULL;
+ 
+ 	/*
+ 	 * Fill it in.
+diff --git a/arch/alpha/kernel/core_titan.c b/arch/alpha/kernel/core_titan.c
+index 319fcb7..d6fd453 100644
+--- a/arch/alpha/kernel/core_titan.c
++++ b/arch/alpha/kernel/core_titan.c
+@@ -757,6 +757,8 @@ titan_agp_info(void)
+ 	 * Allocate the info structure.
+ 	 */
+ 	agp = kmalloc(sizeof(*agp), GFP_KERNEL);
++	if (!agp)
++		return NULL;
+ 
+ 	/*
+ 	 * Fill it in.
