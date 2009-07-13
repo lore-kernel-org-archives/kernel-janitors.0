@@ -1,22 +1,33 @@
-From: "MITSUBISHI COMPANY UK" <info@mitsubishi.com>
-Date: Fri, 10 Jul 2009 12:28:19 +0000
-Subject: Your E-mail Attach To category\\"A\\" 870,000GBP&#8207;
-Message-Id: <20090710122033.M14128@mitsubishi.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Mon, 13 Jul 2009 20:56:16 +0000
+Subject: Re: [PATCH] media/omap: adding __init/__exit macros to lcd_drivers
+Message-Id: <200907132256.17036.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200907031439.40456.PeterHuewe@gmx.de>
+In-Reply-To: <200907031439.40456.PeterHuewe@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Jiri Kosina <trivial@kernel.org>
+Cc: imre.deak@nokia.com, linux-omap@vger.kernel.org, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-MITSUBISHI COMPANY UK.
-28 TANFIELD ROAD,LONDON, UK.
+Am Freitag 03 Juli 2009 14:39:40 schrieb Peter H=FCwe:
+> From: Peter Huewe <peterhuewe@gmx.de>
+>
+> Trivial patch which adds the __init and __exit macros to the module_init /
+> module_exit functions to several files in drivers/video/omap/
+>
+> linux version 2.6.31-rc1 - linus git tree
+>
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 
-You have just been awarded,the sum of  &pound;870.000.00 in the  MITSUBISHI COMPANY 
-Award 2009, Anniversary Bonanza. held in July.
+Hi Jini,
+any updates on this patch yet ? :)
 
-Names:............. Address:..............
-Country:................ Age:..........
-Phone Number............ Occupation.......Sex
-
-Regards.Felke Courtney.
-Online Co-ordinator.
+Thanks,
+Peter
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
