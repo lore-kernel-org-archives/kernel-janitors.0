@@ -1,97 +1,111 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 12 Jul 2009 07:43:21 +0000
-Subject: [PATCH 2/3] drivers/staging/b3dfg: Drop NULL test on list_entry
-Message-Id: <Pine.LNX.4.64.0907120942480.17416@ask.diku.dk>
+Date: Sat, 18 Jul 2009 15:25:30 +0000
+Subject: [PATCH 4/6] drivers/staging: convert nested spin_lock_irqsave to
+Message-Id: <Pine.LNX.4.64.0907181724550.26792@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, devel@driverdev.osuosl.org, jirislaby@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-list_entry, which is an alias for container_of, cannot return NULL, as
-there is no way to add a NULL value to a doubly linked list.
+If spin_lock_irqsave is called twice in a row with the same second
+argument, the interrupt state at the point of the second call overwrites
+the value saved by the first call.  Indeed, the second call does not need
+to save the interrupt state, so it is changed to a simple spin_lock.
 
-A simplified version of the semantic match that findds this problem is as
-follows:
+The semantic match that finds this problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r@
-expression x,E;
-statement S1,S2;
-position p,p1;
+@@
+expression lock1,lock2;
+expression flags;
 @@
 
-*x = list_entry@p(...)
-... when != x = E
-*if@p1 (x = NULL) S1 else S2
+*spin_lock_irqsave(lock1,flags)
+... when != flags
+*spin_lock_irqsave(lock2,flags)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/staging/b3dfg/b3dfg.c       |   41 ++++++++-----------
- 1 files changed, 17 insertions(+), 24 deletions(-)
+ drivers/staging/meilhaus/me4600_ai.c           |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/b3dfg/b3dfg.c b/drivers/staging/b3dfg/b3dfg.c
-index eec9c99..94c5d27 100644
---- a/drivers/staging/b3dfg/b3dfg.c
-+++ b/drivers/staging/b3dfg/b3dfg.c
-@@ -632,18 +632,15 @@ static void transfer_complete(struct b3dfg_dev *fgdev)
- 	fgdev->cur_dma_frame_addr = 0;
+diff --git a/drivers/staging/meilhaus/me4600_ai.c b/drivers/staging/meilhaus/me4600_ai.c
+index e496d0c..fd9daa9 100644
+--- a/drivers/staging/meilhaus/me4600_ai.c
++++ b/drivers/staging/meilhaus/me4600_ai.c
+@@ -760,7 +760,7 @@ static int me4600_ai_io_single_read(me_subdevice_t *subdevice,
+ 	// Mark that StreamConfig is removed.
+ 	instance->chan_list_len = 0;
  
- 	buf = list_entry(fgdev->buffer_queue.next, struct b3dfg_buffer, list);
--	if (buf) {
--		dev_dbg(dev, "handle frame completion\n");
--		if (fgdev->cur_dma_frame_idx = B3DFG_FRAMES_PER_BUFFER - 1) {
--
--			/* last frame of that triplet completed */
--			dev_dbg(dev, "triplet completed\n");
--			buf->state = B3DFG_BUFFER_POPULATED;
--			list_del_init(&buf->list);
--			wake_up_interruptible(&fgdev->buffer_waitqueue);
--		}
--	} else {
--		dev_err(dev, "got frame but no buffer!\n");
-+
-+	dev_dbg(dev, "handle frame completion\n");
-+	if (fgdev->cur_dma_frame_idx = B3DFG_FRAMES_PER_BUFFER - 1) {
-+
-+		/* last frame of that triplet completed */
-+		dev_dbg(dev, "triplet completed\n");
-+		buf->state = B3DFG_BUFFER_POPULATED;
-+		list_del_init(&buf->list);
-+		wake_up_interruptible(&fgdev->buffer_waitqueue);
- 	}
- }
+-	spin_lock_irqsave(instance->ctrl_reg_lock, cpu_flags);
++	spin_lock(instance->ctrl_reg_lock);
+ 	/// @note Imprtant: Preserve EXT IRQ settings.
+ 	tmp = inl(instance->ctrl_reg);
+ 	// Clear FIFOs and dissable interrupts
+@@ -824,7 +824,7 @@ static int me4600_ai_io_single_read(me_subdevice_t *subdevice,
+ 		   instance->ctrl_reg - instance->reg_base,
+ 		   instance->single_config[channel].ctrl | tmp);
  
-@@ -663,19 +660,15 @@ static bool setup_next_frame_transfer(struct b3dfg_dev *fgdev, int idx)
- 	dev_dbg(dev, "program DMA transfer for next frame: %d\n", idx);
+-	spin_unlock_irqrestore(instance->ctrl_reg_lock, cpu_flags);
++	spin_unlock(instance->ctrl_reg_lock);
  
- 	buf = list_entry(fgdev->buffer_queue.next, struct b3dfg_buffer, list);
--	if (buf) {
--		if (idx = fgdev->cur_dma_frame_idx + 2) {
--			if (setup_frame_transfer(fgdev, buf, idx - 1))
--				dev_err(dev, "unable to map DMA buffer\n");
--			need_ack = 0;
--		} else {
--			dev_err(dev, "frame mismatch, got %d, expected %d\n",
--				idx, fgdev->cur_dma_frame_idx + 2);
--
--			/* FIXME: handle dropped triplets here */
--		}
-+	if (idx = fgdev->cur_dma_frame_idx + 2) {
-+		if (setup_frame_transfer(fgdev, buf, idx - 1))
-+			dev_err(dev, "unable to map DMA buffer\n");
-+		need_ack = 0;
- 	} else {
--		dev_err(dev, "cannot setup DMA, no buffer\n");
-+		dev_err(dev, "frame mismatch, got %d, expected %d\n",
-+			idx, fgdev->cur_dma_frame_idx + 2);
-+
-+		/* FIXME: handle dropped triplets here */
+ 	if (!(instance->single_config[channel].ctrl & ME4600_AI_CTRL_BIT_EX_TRIG)) {	// Software start
+ 		inl(instance->start_reg);
+@@ -877,7 +877,7 @@ static int me4600_ai_io_single_read(me_subdevice_t *subdevice,
  	}
  
- 	return need_ack;
+ 	// Restore settings.
+-	spin_lock_irqsave(instance->ctrl_reg_lock, cpu_flags);
++	spin_lock(instance->ctrl_reg_lock);
+ 	tmp = inl(instance->ctrl_reg);
+ 	// Clear FIFOs and dissable interrupts.
+ 	tmp &@@ -889,7 +889,7 @@ static int me4600_ai_io_single_read(me_subdevice_t *subdevice,
+ 	outl(tmp, instance->ctrl_reg);
+ 	PDEBUG_REG("ctrl_reg outl(0x%lX+0x%lX)=0x%x\n", instance->reg_base,
+ 		   instance->ctrl_reg - instance->reg_base, tmp);
+-	spin_unlock_irqrestore(instance->ctrl_reg_lock, cpu_flags);
++	spin_unlock(instance->ctrl_reg_lock);
+ 
+ 	spin_unlock_irqrestore(&instance->subdevice_lock, cpu_flags);
+ 
+@@ -1268,7 +1268,7 @@ static int me4600_ai_io_stream_config(me_subdevice_t *subdevice,
+ 	}
+ 
+ 	instance->status = ai_status_none;
+-	spin_lock_irqsave(instance->ctrl_reg_lock, cpu_flags);
++	spin_lock(instance->ctrl_reg_lock);
+ 	// Stop all actions. Block all interrupts. Clear (disable) FIFOs.
+ 	ctrl  	    ME4600_AI_CTRL_BIT_LE_IRQ_RESET | ME4600_AI_CTRL_BIT_HF_IRQ_RESET |
+@@ -1290,7 +1290,7 @@ static int me4600_ai_io_stream_config(me_subdevice_t *subdevice,
+ 	outl(tmp | ctrl, instance->ctrl_reg);
+ 	PDEBUG_REG("ctrl_reg outl(0x%lX+0x%lX)=0x%x\n", instance->reg_base,
+ 		   instance->ctrl_reg - instance->reg_base, tmp | ctrl);
+-	spin_unlock_irqrestore(instance->ctrl_reg_lock, cpu_flags);
++	spin_unlock(instance->ctrl_reg_lock);
+ 
+ 	// Write the channel list
+ 	for (i = 0; i < count; i++) {
+@@ -1529,7 +1529,7 @@ static int me4600_ai_io_stream_config(me_subdevice_t *subdevice,
+ 	ctrl |= (ME4600_AI_CTRL_BIT_HF_IRQ | ME4600_AI_CTRL_BIT_SC_IRQ | ME4600_AI_CTRL_BIT_LE_IRQ);	//The last IRQ source (ME4600_AI_CTRL_BIT_LE_IRQ) is unused!
+ 
+ 	//Everything is good. Finalize
+-	spin_lock_irqsave(instance->ctrl_reg_lock, cpu_flags);
++	spin_lock(instance->ctrl_reg_lock);
+ 	tmp = inl(instance->ctrl_reg);
+ 
+ 	//Preserve EXT IRQ and OFFSET settings. Clean other bits.
+@@ -1541,7 +1541,7 @@ static int me4600_ai_io_stream_config(me_subdevice_t *subdevice,
+ 	outl(ctrl | tmp, instance->ctrl_reg);
+ 	PDEBUG_REG("ctrl_reg outl(0x%lX+0x%lX)=0x%x\n", instance->reg_base,
+ 		   instance->ctrl_reg - instance->reg_base, ctrl | tmp);
+-	spin_unlock_irqrestore(instance->ctrl_reg_lock, cpu_flags);
++	spin_unlock(instance->ctrl_reg_lock);
+ 
+ 	//Set the global parameters end exit.
+ 	instance->chan_list_len = count;
