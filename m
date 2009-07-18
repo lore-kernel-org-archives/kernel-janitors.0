@@ -1,63 +1,57 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Wed, 15 Jul 2009 02:43:58 +0000
-Subject: Re: [PATCH 1/5] drivers/ata: Move a dereference below a NULL test
-Message-Id: <4A5D426E.90308@pobox.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 18 Jul 2009 15:26:14 +0000
+Subject: [PATCH 6/6] sound/isa: convert nested spin_lock_irqsave to spin_lock
+Message-Id: <Pine.LNX.4.64.0907181725540.26792@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907110949280.29592@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907110949280.29592@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: perex@perex.cz, tiwai@suse.de, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> If the NULL test is necessary, then the dereference should be moved below
-> the NULL test.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> type T;
-> expression E;
-> identifier i,fld;
-> statement S;
-> @@
-> 
-> - T i = E->fld;
-> + T i;
->   ... when != E
->       when != i
->   if (E = NULL) S
-> + i = E->fld;
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/ata/pata_at91.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff -u -p a/drivers/ata/pata_at91.c b/drivers/ata/pata_at91.c
-> --- a/drivers/ata/pata_at91.c
-> +++ b/drivers/ata/pata_at91.c
-> @@ -312,11 +312,12 @@ err_ide_ioremap:
->  static int __devexit pata_at91_remove(struct platform_device *pdev)
->  {
->  	struct ata_host *host = dev_get_drvdata(&pdev->dev);
-> -	struct at91_ide_info *info = host->private_data;
-> +	struct at91_ide_info *info;
->  	struct device *dev = &pdev->dev;
->  
->  	if (!host)
->  		return 0;
-> +	info = host->private_data;
->  
+From: Julia Lawall <julia@diku.dk>
 
-applied
+If spin_lock_irqsave is called twice in a row with the same second
+argument, the interrupt state at the point of the second call overwrites
+the value saved by the first call.  Indeed, the second call does not need
+to save the interrupt state, so it is changed to a simple spin_lock.
 
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@@
+expression lock1,lock2;
+expression flags;
+@@
+
+*spin_lock_irqsave(lock1,flags)
+... when != flags
+*spin_lock_irqsave(lock2,flags)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/isa/gus/gus_pcm.c             |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/isa/gus/gus_pcm.c b/sound/isa/gus/gus_pcm.c
+index edb11ee..2dcf45b 100644
+--- a/sound/isa/gus/gus_pcm.c
++++ b/sound/isa/gus/gus_pcm.c
+@@ -795,13 +795,13 @@ static int snd_gf1_pcm_volume_put(struct snd_kcontrol *kcontrol, struct snd_ctl_
+ 		if (!(pcmp->flags & SNDRV_GF1_PCM_PFLG_ACTIVE))
+ 			continue;
+ 		/* load real volume - better precision */
+-		spin_lock_irqsave(&gus->reg_lock, flags);
++		spin_lock(&gus->reg_lock);
+ 		snd_gf1_select_voice(gus, pvoice->number);
+ 		snd_gf1_ctrl_stop(gus, SNDRV_GF1_VB_VOLUME_CONTROL);
+ 		vol = pvoice = pcmp->pvoices[0] ? gus->gf1.pcm_volume_level_left : gus->gf1.pcm_volume_level_right;
+ 		snd_gf1_write16(gus, SNDRV_GF1_VW_VOLUME, vol);
+ 		pcmp->final_volume = 1;
+-		spin_unlock_irqrestore(&gus->reg_lock, flags);
++		spin_unlock(&gus->reg_lock);
+ 	}
+ 	spin_unlock_irqrestore(&gus->voice_alloc, flags);
+ 	return change;
