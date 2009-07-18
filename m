@@ -1,143 +1,55 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 12 Jul 2009 20:47:44 +0000
-Subject: [PATCH] drivers/media/video/gspca: Add kmalloc NULL tests
-Message-Id: <Pine.LNX.4.64.0907122247090.22658@ask.diku.dk>
+Date: Sat, 18 Jul 2009 15:25:53 +0000
+Subject: [PATCH 5/6] fs/btrfs: convert nested spin_lock_irqsave to spin_lock
+Message-Id: <Pine.LNX.4.64.0907181725320.26792@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: moinejf@free.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: chris.mason@oracle.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Check that the result of kmalloc is not NULL before passing it to other
-functions.
+If spin_lock_irqsave is called twice in a row with the same second
+argument, the interrupt state at the point of the second call overwrites
+the value saved by the first call.  Indeed, the second call does not need
+to save the interrupt state, so it is changed to a simple spin_lock.
 
 The semantic match that finds this problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
 @@
-expression *x;
-identifier f;
-constant char *C;
+expression lock1,lock2;
+expression flags;
 @@
 
-x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-... when != x = NULL
-    when != x != NULL
-    when != (x || ...)
-(
-kfree(x)
-|
-f(...,C,...,x,...)
-|
-*f(...,x,...)
-|
-*x->f
-)
+*spin_lock_irqsave(lock1,flags)
+... when != flags
+*spin_lock_irqsave(lock2,flags)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/media/video/gspca/conex.c   |    2 ++
- drivers/media/video/gspca/mars.c    |    2 ++
- drivers/media/video/gspca/sonixj.c  |    2 ++
- drivers/media/video/gspca/spca500.c |    2 ++
- drivers/media/video/gspca/stk014.c  |    2 ++
- drivers/media/video/gspca/sunplus.c |    2 ++
- drivers/media/video/gspca/zc3xx.c   |    2 ++
- 7 files changed, 14 insertions(+)
+ fs/btrfs/async-thread.c             |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/video/gspca/conex.c b/drivers/media/video/gspca/conex.c
-index 219cfa6..8d48ea1 100644
---- a/drivers/media/video/gspca/conex.c
-+++ b/drivers/media/video/gspca/conex.c
-@@ -846,6 +846,8 @@ static int sd_start(struct gspca_dev *gspca_dev)
- 
- 	/* create the JPEG header */
- 	sd->jpeg_hdr = kmalloc(JPEG_HDR_SZ, GFP_KERNEL);
-+	if (!sd->jpeg_hdr)
-+		return -ENOMEM;
- 	jpeg_define(sd->jpeg_hdr, gspca_dev->height, gspca_dev->width,
- 			0x22);		/* JPEG 411 */
- 	jpeg_set_qual(sd->jpeg_hdr, sd->quality);
-diff --git a/drivers/media/video/gspca/mars.c b/drivers/media/video/gspca/mars.c
-index 75e8d14..de769ca 100644
---- a/drivers/media/video/gspca/mars.c
-+++ b/drivers/media/video/gspca/mars.c
-@@ -201,6 +201,8 @@ static int sd_start(struct gspca_dev *gspca_dev)
- 
- 	/* create the JPEG header */
- 	sd->jpeg_hdr = kmalloc(JPEG_HDR_SZ, GFP_KERNEL);
-+	if (!sd->jpeg_hdr)
-+		return -ENOMEM;
- 	jpeg_define(sd->jpeg_hdr, gspca_dev->height, gspca_dev->width,
- 			0x21);		/* JPEG 422 */
- 	jpeg_set_qual(sd->jpeg_hdr, sd->quality);
-diff --git a/drivers/media/video/gspca/sonixj.c b/drivers/media/video/gspca/sonixj.c
-index 0d02f41..db425cc 100644
---- a/drivers/media/video/gspca/sonixj.c
-+++ b/drivers/media/video/gspca/sonixj.c
-@@ -1735,6 +1735,8 @@ static int sd_start(struct gspca_dev *gspca_dev)
- 
- 	/* create the JPEG header */
- 	sd->jpeg_hdr = kmalloc(JPEG_HDR_SZ, GFP_KERNEL);
-+	if (!sd->jpeg_hdr)
-+		return -ENOMEM;
- 	jpeg_define(sd->jpeg_hdr, gspca_dev->height, gspca_dev->width,
- 			0x21);		/* JPEG 422 */
- 	jpeg_set_qual(sd->jpeg_hdr, sd->quality);
-diff --git a/drivers/media/video/gspca/spca500.c b/drivers/media/video/gspca/spca500.c
-index 8806b2f..fab7ef8 100644
---- a/drivers/media/video/gspca/spca500.c
-+++ b/drivers/media/video/gspca/spca500.c
-@@ -670,6 +670,8 @@ static int sd_start(struct gspca_dev *gspca_dev)
- 
- 	/* create the JPEG header */
- 	sd->jpeg_hdr = kmalloc(JPEG_HDR_SZ, GFP_KERNEL);
-+	if (!sd->jpeg_hdr)
-+		return -ENOMEM;
- 	jpeg_define(sd->jpeg_hdr, gspca_dev->height, gspca_dev->width,
- 			0x22);		/* JPEG 411 */
- 	jpeg_set_qual(sd->jpeg_hdr, sd->quality);
-diff --git a/drivers/media/video/gspca/stk014.c b/drivers/media/video/gspca/stk014.c
-index f25be20..4762896 100644
---- a/drivers/media/video/gspca/stk014.c
-+++ b/drivers/media/video/gspca/stk014.c
-@@ -333,6 +333,8 @@ static int sd_start(struct gspca_dev *gspca_dev)
- 
- 	/* create the JPEG header */
- 	sd->jpeg_hdr = kmalloc(JPEG_HDR_SZ, GFP_KERNEL);
-+	if (!sd->jpeg_hdr)
-+		return -ENOMEM;
- 	jpeg_define(sd->jpeg_hdr, gspca_dev->height, gspca_dev->width,
- 			0x22);		/* JPEG 411 */
- 	jpeg_set_qual(sd->jpeg_hdr, sd->quality);
-diff --git a/drivers/media/video/gspca/sunplus.c b/drivers/media/video/gspca/sunplus.c
-index 9623f29..5127bbf 100644
---- a/drivers/media/video/gspca/sunplus.c
-+++ b/drivers/media/video/gspca/sunplus.c
-@@ -973,6 +973,8 @@ static int sd_start(struct gspca_dev *gspca_dev)
- 
- 	/* create the JPEG header */
- 	sd->jpeg_hdr = kmalloc(JPEG_HDR_SZ, GFP_KERNEL);
-+	if (!sd->jpeg_hdr)
-+		return -ENOMEM;
- 	jpeg_define(sd->jpeg_hdr, gspca_dev->height, gspca_dev->width,
- 			0x22);		/* JPEG 411 */
- 	jpeg_set_qual(sd->jpeg_hdr, sd->quality);
-diff --git a/drivers/media/video/gspca/zc3xx.c b/drivers/media/video/gspca/zc3xx.c
-index 08422d3..3d2756f 100644
---- a/drivers/media/video/gspca/zc3xx.c
-+++ b/drivers/media/video/gspca/zc3xx.c
-@@ -7243,6 +7243,8 @@ static int sd_start(struct gspca_dev *gspca_dev)
- 
- 	/* create the JPEG header */
- 	sd->jpeg_hdr = kmalloc(JPEG_HDR_SZ, GFP_KERNEL);
-+	if (!sd->jpeg_hdr)
-+		return -ENOMEM;
- 	jpeg_define(sd->jpeg_hdr, gspca_dev->height, gspca_dev->width,
- 			0x21);		/* JPEG 422 */
- 	jpeg_set_qual(sd->jpeg_hdr, sd->quality);
+diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
+index 6e4f6c5..019e8af 100644
+--- a/fs/btrfs/async-thread.c
++++ b/fs/btrfs/async-thread.c
+@@ -424,11 +424,11 @@ int btrfs_requeue_work(struct btrfs_work *work)
+ 	 * list
+ 	 */
+ 	if (worker->idle) {
+-		spin_lock_irqsave(&worker->workers->lock, flags);
++		spin_lock(&worker->workers->lock);
+ 		worker->idle = 0;
+ 		list_move_tail(&worker->worker_list,
+ 			       &worker->workers->worker_list);
+-		spin_unlock_irqrestore(&worker->workers->lock, flags);
++		spin_unlock(&worker->workers->lock);
+ 	}
+ 	if (!worker->working) {
+ 		wake = 1;
