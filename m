@@ -1,38 +1,44 @@
-From: Ingo Molnar <mingo@elte.hu>
-Date: Sat, 18 Jul 2009 10:16:53 +0000
+From: Jiri Olsa <jolsa@redhat.com>
+Date: Sun, 19 Jul 2009 18:47:19 +0000
 Subject: Re: [PATCH 2/3] tracing: removing struct module* parameter from
-Message-Id: <20090718101653.GC24164@elte.hu>
+Message-Id: <20090719184719.GA3040@jolsa.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1247773468-11594-1-git-send-email-jolsa@redhat.com> <1247773468-11594-3-git-send-email-jolsa@redhat.com>
-In-Reply-To: <1247773468-11594-3-git-send-email-jolsa@redhat.com>
+References: <1247773468-11594-1-git-send-email-jolsa@redhat.com> <1247773468-11594-3-git-send-email-jolsa@redhat.com> <20090718101653.GC24164@elte.hu>
+In-Reply-To: <20090718101653.GC24164@elte.hu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jolsa@redhat.com
+To: Ingo Molnar <mingo@elte.hu>
 Cc: rostedt@goodmis.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-* jolsa@redhat.com <jolsa@redhat.com> wrote:
-
-> The "struct module*" is not being used in the ftrace_init_module 
-> code path, removing it.
->
-> wbr,
-> jirka
+On Sat, Jul 18, 2009 at 12:16:53PM +0200, Ingo Molnar wrote:
 > 
-> Signed-off-by: Jiri Olsa <jolsa@redhat.com>
+> * jolsa@redhat.com <jolsa@redhat.com> wrote:
 > 
-> ---
->  arch/x86/kernel/ftrace.c |    3 +--
->  include/linux/ftrace.h   |    4 +---
->  kernel/trace/ftrace.c    |   25 +++++++++++--------------
->  3 files changed, 13 insertions(+), 19 deletions(-)
+> > The "struct module*" is not being used in the ftrace_init_module 
+> > code path, removing it.
+> >
+> > wbr,
+> > jirka
+> > 
+> > Signed-off-by: Jiri Olsa <jolsa@redhat.com>
+> > 
+> > ---
+> >  arch/x86/kernel/ftrace.c |    3 +--
+> >  include/linux/ftrace.h   |    4 +---
+> >  kernel/trace/ftrace.c    |   25 +++++++++++--------------
+> >  3 files changed, 13 insertions(+), 19 deletions(-)
+> 
+> patch didnt apply cleanly to the latest tracing tree:
+> 
+>   http://people.redhat.com/mingo/tip.git/README
+> 
+> and the other bits had some fuzz as well. Mind merging + resending 
+> this?
+> 
+> 	Ingo
 
-patch didnt apply cleanly to the latest tracing tree:
+sure, np.. I made it against the linus' tree, I'll use the 
+tip tree next time
 
-  http://people.redhat.com/mingo/tip.git/README
-
-and the other bits had some fuzz as well. Mind merging + resending 
-this?
-
-	Ingo
+jira
