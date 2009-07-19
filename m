@@ -1,35 +1,45 @@
-From: Peter =?utf-8?q?H=C3=BCwe?= <PeterHuewe@gmx.de>
-Date: Wed, 01 Jul 2009 09:05:24 +0000
-Subject: Re: [PATCH] block: adding __init/__exit macros to DAC960.c
-Message-Id: <200907011105.24761.PeterHuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 19 Jul 2009 16:09:25 +0000
+Subject: [PATCH] drivers/net/mlx4: Adjust constant
+Message-Id: <Pine.LNX.4.64.0907191809050.16542@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200906121307.29865.PeterHuewe@gmx.de> <200907011054.59988.PeterHuewe@gmx.de> <alpine.LNX.2.00.0907011057570.4994@wotan.suse.de>
-In-Reply-To: <alpine.LNX.2.00.0907011057570.4994@wotan.suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Am Mittwoch 01 Juli 2009 10:58:46 schrieb Jiri Kosina:
-> On Wed, 1 Jul 2009, Peter H=C3=BCwe wrote:
-> Hi Peter,
->
-> I guess you looked into the wrong branch -- it is in 'for-next' branch,
-> see
-> http://git.kernel.org/?p=3Dlinux/kernel/git/jikos/trivial.git;a=3Dcommit;=
-h=EF59
->a28cbb29dd6ec4fcd59eaacb15ea85adbd2e
+From: Julia Lawall <julia@diku.dk>
 
+The values in the advertising field are typically ADVERTISED_xxx, not
+SUPPORTED_xxx.  Both SUPPORTED_10000baseT_Full and
+ADVERTISED_1000baseT_Full have the same value.
 
-Oh - my fault :) Seems I'm still not familiar enough with git :/
-Thank you for the hint and merging my patch.
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Thanks,
-Peter
+// <smpl>
+@@
+struct ethtool_cmd E;
+@@
+*E.advertising = SUPPORTED_10000baseT_Full
+// </smpl>
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/mlx4/en_ethtool.c       |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/mlx4/en_ethtool.c b/drivers/net/mlx4/en_ethtool.c
+index 091f990..86467b4 100644
+--- a/drivers/net/mlx4/en_ethtool.c
++++ b/drivers/net/mlx4/en_ethtool.c
+@@ -220,7 +220,7 @@ static int mlx4_en_get_settings(struct net_device *dev, struct ethtool_cmd *cmd)
+ {
+ 	cmd->autoneg = AUTONEG_DISABLE;
+ 	cmd->supported = SUPPORTED_10000baseT_Full;
+-	cmd->advertising = SUPPORTED_10000baseT_Full;
++	cmd->advertising = ADVERTISED_1000baseT_Full;
+ 	if (netif_carrier_ok(dev)) {
+ 		cmd->speed = SPEED_10000;
+ 		cmd->duplex = DUPLEX_FULL;
