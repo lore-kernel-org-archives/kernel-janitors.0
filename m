@@ -1,62 +1,71 @@
-From: Greg KH <gregkh@suse.de>
-Date: Sat, 11 Jul 2009 17:04:56 +0000
-Subject: Re: [PATCH 5/5, revised] staging/otus: Drop an unnecessary NULL
-Message-Id: <20090711170456.GB5205@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 19 Jul 2009 15:26:13 +0000
+Subject: [PATCH 3/10] drivers/hid: Move dereferences below a NULL test
+Message-Id: <Pine.LNX.4.64.0907191725530.16542@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907111031480.29592@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907111031480.29592@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: jirislaby@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: jkosina@suse.cz, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jul 11, 2009 at 10:32:23AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Apparently, the NULL test is not necessary at this point.
-> 
-> The semantic patch that finds this problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> type T;
-> expression E;
-> identifier i,fld;
-> statement S;
-> @@
-> 
-> - T i = E->fld;
-> + T i;
->   ... when != E
->       when != i
->   if (E = NULL) S
-> + i = E->fld;
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/staging/otus/wwrap.c |    5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/staging/otus/wwrap.c b/drivers/staging/otus/wwrap.c
-> index 4db8f6e..855ff41 100644
-> --- a/drivers/staging/otus/wwrap.c
-> +++ b/drivers/staging/otus/wwrap.c
-> @@ -1018,11 +1018,6 @@ void kevent(struct work_struct *work)
->                 container_of(work, struct usbdrv_private, kevent);
->      zdev_t *dev = macp->device;
->  
-> -    if (macp = NULL)
-> -    {
-> -        return;
-> -    }
-> -
+From: Julia Lawall <julia@diku.dk>
 
-Ok, that will teach me to read all of my mail before responding... :)
+If the NULL test is necessary, then the dereferences should be moved below
+the NULL test.
 
-This looks good, I'll queue it up, thanks.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-greg k-h
+// <smpl>
+@@
+type T;
+expression E,E1;
+identifier i,fld;
+statement S;
+@@
+
+- T i =3D E->fld;
++ T i;
+  ... when !=3D E=E1
+      when !=3D i
+  if (E =3D NULL||...) S
++ i =3D E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/hid/hid-core.c              |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 5ebbb8a..ca69cc3 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -1072,8 +1072,8 @@ EXPORT_SYMBOL_GPL(hid_report_raw_event);
+  */
+ int hid_input_report(struct hid_device *hid, int type, u8 *data, int size,=
+ int interrupt)
+ {
+-	struct hid_report_enum *report_enum =3D hid->report_enum + type;
+-	struct hid_driver *hdrv =3D hid->driver;
++	struct hid_report_enum *report_enum;
++	struct hid_driver *hdrv;
+ 	struct hid_report *report;
+ 	char *buf;
+ 	unsigned int i;
+@@ -1081,6 +1081,8 @@ int hid_input_report(struct hid_device *hid, int type=
+, u8 *data, int size, int i
+=20
+ 	if (!hid || !hid->driver)
+ 		return -ENODEV;
++	report_enum =3D hid->report_enum + type;
++	hdrv =3D hid->driver;
+=20
+ 	if (!size) {
+ 		dbg_hid("empty report\n");
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
