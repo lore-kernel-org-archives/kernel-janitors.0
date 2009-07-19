@@ -1,56 +1,69 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Thu, 30 Jul 2009 20:48:31 +0000
-Subject: Re: [PATCH] Staging: hv: Replace typedef SG_BUFFER_LIST by struct
-Message-Id: <Pine.LNX.4.64.0907302242540.18173@ask.diku.dk>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 19 Jul 2009 15:30:26 +0000
+Subject: [PATCH 9/10] drivers/mmc: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0907191729580.16542@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200907301737.23849.npalix@diku.dk> <20090730155844.GB20557@suse.de>
- <Pine.LNX.4.64.0907302020250.13698@ask.diku.dk> <20090730195229.GB27953@suse.de>
-In-Reply-To: <20090730195229.GB27953@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@suse.de>
-Cc: hjanssen@microsoft.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: jarkko.lavinen@nokia.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 30 Jul 2009, Greg KH wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Thu, Jul 30, 2009 at 08:35:08PM +0200, Nicolas Palix wrote:
->> On Thu, 30 Jul 2009, Greg KH wrote:
->>
->>> On Thu, Jul 30, 2009 at 05:37:23PM +0200, Nicolas Palix wrote:
->>>>
->>>> typedef SG_BUFFER_LIST is removed and its uses are replaced by the use of
->>>> struct scatterlist.
->>>
->>> Sweet!  thanks for doing this, very nice job, I'll go queue it up.
->>
->> I tried to change the RingBuffer too but I did not know
->> which API I should use.
->> The ring buffer in kernel/trace seems fine but it has some
->> dedicated features.
->>
->> Any hint?
->> Of which infrastructure are you thinking in your previous mail?
->
-> I was thinking of include/linux/ring_buffer.h
->
-> Does that not work for you?
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
-It is perfect.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-As its implementation is in kernel/trace and not in lib as scatterlist,
-I just wanted to be sure before spending time on a patch. :)
+// <smpl>
+@@
+type T;
+expression E,E1;
+identifier i,fld;
+statement S;
+@@
 
-thanks.
+- T i =3D E->fld;
++ T i;
+  ... when !=3D E=E1
+      when !=3D i
+  BUG_ON (E =3D NULL||
+-     i
++     E->fld
+       =3D NULL || ...);
++ i =3D E->fld;
+// </smpl>
 
-Nico
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
->
-> thanks,
->
-> greg k-h
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+---
+ drivers/mmc/host/omap.c             |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
+index e7a331d..89281ab 100644
+--- a/drivers/mmc/host/omap.c
++++ b/drivers/mmc/host/omap.c
+@@ -255,11 +255,12 @@ static void mmc_omap_slot_release_work(struct work_st=
+ruct *work)
+=20
+ static void mmc_omap_release_slot(struct mmc_omap_slot *slot, int clk_enab=
+led)
+ {
+-	struct mmc_omap_host *host =3D slot->host;
++	struct mmc_omap_host *host;
+ 	unsigned long flags;
+ 	int i;
+=20
+-	BUG_ON(slot =3D NULL || host->mmc =3D NULL);
++	BUG_ON(slot =3D NULL || slot->host->mmc =3D NULL);
++	host =3D slot->host;
+=20
+ 	if (clk_enabled)
+ 		/* Keeps clock running for at least 8 cycles on valid freq */
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
