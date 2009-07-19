@@ -1,26 +1,67 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Mon, 20 Jul 2009 12:47:36 +0000
-Subject: Re: [PATCH 9/10] drivers/mmc: Move a dereference below a NULL test
-Message-Id: <20090720134736.605f86d1@lxorguk.ukuu.org.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 19 Jul 2009 16:13:04 +0000
+Subject: [PATCH 10/10, corrected diffstat] drivers/net: Move a dereference
+Message-Id: <Pine.LNX.4.64.0907191812010.16542@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907191729580.16542@ask.diku.dk>
-	<4A642458.6080008@nokia.com>
-	<c656a4d20907200533t1cbe1476l62d8a51fdb796c70@mail.gmail.com>
-	<4A64665B.9000504@nokia.com>
-In-Reply-To: <4A64665B.9000504@nokia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Adrian Hunter <adrian.hunter@nokia.com>
-Cc: arun c <arun.edarath@gmail.com>, Julia Lawall <julia@diku.dk>, "Lavinen Jarkko (Nokia-D/Helsinki)" <jarkko.lavinen@nokia.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> It is not a "NULL check" it is an assertion, which can be compiled out.
-> On some platforms BUG is implemented as a null dereference anyway
-> e.g. on ARM  it is *(int *)0 = 0;
+From: Julia Lawall <julia@diku.dk>
 
-It's a bogus check because the 
+If the NULL test is necessary, then the dereferences should be moved below
+the NULL test.
 
-struct mmc_omap_host *host = slot->host;
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-has already been executed before you check for slot = NULL
+// <smpl>
+@@
+type T;
+expression E,E1;
+identifier i,fld;
+statement S;
+@@
 
+- T i =3D E->fld;
++ T i;
+  ... when !=3D E=E1
+      when !=3D i
+  BUG_ON (E =3D NULL||...);
++ i =3D E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/ibm_newemac/rgmii.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ibm_newemac/rgmii.c b/drivers/net/ibm_newemac/rgmi=
+i.c
+index 1d5379d..8d76cb8 100644
+--- a/drivers/net/ibm_newemac/rgmii.c
++++ b/drivers/net/ibm_newemac/rgmii.c
+@@ -188,11 +188,12 @@ void rgmii_put_mdio(struct of_device *ofdev, int inpu=
+t)
+ void rgmii_detach(struct of_device *ofdev, int input)
+ {
+ 	struct rgmii_instance *dev =3D dev_get_drvdata(&ofdev->dev);
+-	struct rgmii_regs __iomem *p =3D dev->base;
+-
+-	mutex_lock(&dev->lock);
++	struct rgmii_regs __iomem *p;
+=20
+ 	BUG_ON(!dev || dev->users =3D 0);
++	p =3D dev->base;
++
++	mutex_lock(&dev->lock);
+=20
+ 	RGMII_DBG(dev, "detach(%d)" NL, input);
+=20
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
