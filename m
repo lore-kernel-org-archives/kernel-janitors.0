@@ -1,45 +1,31 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 19 Jul 2009 16:09:25 +0000
-Subject: [PATCH] drivers/net/mlx4: Adjust constant
-Message-Id: <Pine.LNX.4.64.0907191809050.16542@ask.diku.dk>
+From: Joe Perches <joe@perches.com>
+Date: Sun, 19 Jul 2009 18:24:51 +0000
+Subject: Re: [PATCH] drivers/net/mlx4: Adjust constant
+Message-Id: <1248027891.31365.17.camel@Joe-Laptop.home>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0907191809050.16542@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0907191809050.16542@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sun, 2009-07-19 at 18:09 +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The values in the advertising field are typically ADVERTISED_xxx, not
+> SUPPORTED_xxx.  Both SUPPORTED_10000baseT_Full and
+> ADVERTISED_1000baseT_Full have the same value.
 
-The values in the advertising field are typically ADVERTISED_xxx, not
-SUPPORTED_xxx.  Both SUPPORTED_10000baseT_Full and
-ADVERTISED_1000baseT_Full have the same value.
+other possibles:
 
-The semantic match that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+drivers/net/sungem.c:#define ADVERTISE_MASK	(SUPPORTED_10baseT_Half | SUPPORTED_10baseT_Full | \
+			 SUPPORTED_100baseT_Half | SUPPORTED_100baseT_Full | \
+			 SUPPORTED_1000baseT_Half | SUPPORTED_1000baseT_Full | \
+			 SUPPORTED_Pause | SUPPORTED_Autoneg)
+drivers/net/s2io.c:	info->advertising = (SUPPORTED_10000baseT_Full | SUPPORTED_FIBRE);
+drivers/net/spider_net.c:		advertise |= SUPPORTED_1000baseT_Full;
+drivers/net/spider_net.c:		advertise |= SUPPORTED_1000baseT_Half;
 
-// <smpl>
-@@
-struct ethtool_cmd E;
-@@
-*E.advertising = SUPPORTED_10000baseT_Full
-// </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/mlx4/en_ethtool.c       |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/mlx4/en_ethtool.c b/drivers/net/mlx4/en_ethtool.c
-index 091f990..86467b4 100644
---- a/drivers/net/mlx4/en_ethtool.c
-+++ b/drivers/net/mlx4/en_ethtool.c
-@@ -220,7 +220,7 @@ static int mlx4_en_get_settings(struct net_device *dev, struct ethtool_cmd *cmd)
- {
- 	cmd->autoneg = AUTONEG_DISABLE;
- 	cmd->supported = SUPPORTED_10000baseT_Full;
--	cmd->advertising = SUPPORTED_10000baseT_Full;
-+	cmd->advertising = ADVERTISED_1000baseT_Full;
- 	if (netif_carrier_ok(dev)) {
- 		cmd->speed = SPEED_10000;
- 		cmd->duplex = DUPLEX_FULL;
