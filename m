@@ -1,79 +1,67 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 08 Jul 2009 12:41:38 +0000
-Subject: Re: [PATCH 2/3] drivers/video/imxfb.c: Fix resource size off by 1
-Message-Id: <20090708124138.GR2714@pengutronix.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 19 Jul 2009 15:26:35 +0000
+Subject: [PATCH 4/10] drivers/net: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0907191726140.16542@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907042331490.9841@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907042331490.9841@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel@pengutronix.de, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: eilong@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+From: Julia Lawall <julia@diku.dk>
 
-On Sat, Jul 04, 2009 at 11:32:29PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> In the first case, the change is not semantics-preserving, but
-> resource_size is used at the corresponding call to request_mem_region in
-> the same function.
-> 
-> In the second case, the change is semantics-preserving.
-> 
-> The problem was found using the following semantic patch:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> struct resource *res;
-> @@
-> 
-> - (res->end - res->start) + 1
-> + resource_size(res)
-> 
-> @@
-> struct resource *res;
-> @@
-> 
-> - res->end - res->start
-> + BAD(resource_size(res))
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/video/imxfb.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff -u -p a/drivers/video/imxfb.c b/drivers/video/imxfb.c
-> --- a/drivers/video/imxfb.c 2009-04-13 16:04:25.000000000 +0200
-> +++ b/drivers/video/imxfb.c 2009-07-04 21:37:48.000000000 +0200
-> @@ -754,7 +754,7 @@ failed_map:
->  failed_getclock:
->  	iounmap(fbi->regs);
->  failed_ioremap:
-> -	release_mem_region(res->start, res->end - res->start);
-> +	release_mem_region(res->start, resource_size(res));
->  failed_req:
->  	kfree(info->pseudo_palette);
->  failed_init:
-> @@ -785,7 +785,7 @@ static int __devexit imxfb_remove(struct
->  	framebuffer_release(info);
->  
->  	iounmap(fbi->regs);
-> -	release_mem_region(res->start, res->end - res->start + 1);
-> +	release_mem_region(res->start, resource_size(res));
->  	clk_disable(fbi->clk);
->  	clk_put(fbi->clk);
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
-I already have a patch queued for this issue in imxfb.c
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Sascha
+// <smpl>
+@@
+type T;
+expression E,E1;
+identifier i,fld;
+statement S;
+@@
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+- T i =3D E->fld;
++ T i;
+  ... when !=3D E=E1
+      when !=3D i
+  if (E =3D NULL||...) S
++ i =3D E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/bnx2x_link.c            |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/bnx2x_link.c b/drivers/net/bnx2x_link.c
+index ed648ac..2ee581a 100644
+--- a/drivers/net/bnx2x_link.c
++++ b/drivers/net/bnx2x_link.c
+@@ -4212,13 +4212,14 @@ static void bnx2x_turn_off_sf(struct bnx2x *bp, u8 =
+port)
+ u8 bnx2x_get_ext_phy_fw_version(struct link_params *params, u8 driver_load=
+ed,
+ 			      u8 *version, u16 len)
+ {
+-	struct bnx2x *bp =3D params->bp;
++	struct bnx2x *bp;
+ 	u32 ext_phy_type =3D 0;
+ 	u32 spirom_ver =3D 0;
+ 	u8 status =3D 0 ;
+=20
+ 	if (version =3D NULL || params =3D NULL)
+ 		return -EINVAL;
++	bp =3D params->bp;
+=20
+ 	spirom_ver =3D REG_RD(bp, params->shmem_base +
+ 		   offsetof(struct shmem_region,
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
