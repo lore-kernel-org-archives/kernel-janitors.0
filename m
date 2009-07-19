@@ -1,57 +1,70 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 18 Jul 2009 15:26:14 +0000
-Subject: [PATCH 6/6] sound/isa: convert nested spin_lock_irqsave to spin_lock
-Message-Id: <Pine.LNX.4.64.0907181725540.26792@ask.diku.dk>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Sun, 19 Jul 2009 12:03:26 +0000
+Subject: Re: [PATCH 6/6] sound/isa: convert nested spin_lock_irqsave to spin_lock
+Message-Id: <s5h7hy4op69.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0907181725540.26792@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0907181725540.26792@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: perex@perex.cz, tiwai@suse.de, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+At Sat, 18 Jul 2009 17:26:14 +0200 (CEST),
+Julia Lawall wrote:
+> 
+> From: Julia Lawall <julia@diku.dk>
+> 
+> If spin_lock_irqsave is called twice in a row with the same second
+> argument, the interrupt state at the point of the second call overwrites
+> the value saved by the first call.  Indeed, the second call does not need
+> to save the interrupt state, so it is changed to a simple spin_lock.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+> 
+> // <smpl>
+> @@
+> expression lock1,lock2;
+> expression flags;
+> @@
+> 
+> *spin_lock_irqsave(lock1,flags)
+> ... when != flags
+> *spin_lock_irqsave(lock2,flags)
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-If spin_lock_irqsave is called twice in a row with the same second
-argument, the interrupt state at the point of the second call overwrites
-the value saved by the first call.  Indeed, the second call does not need
-to save the interrupt state, so it is changed to a simple spin_lock.
+Applied now.  Thanks.
 
-The semantic match that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
 
-// <smpl>
-@@
-expression lock1,lock2;
-expression flags;
-@@
+Takashi
 
-*spin_lock_irqsave(lock1,flags)
-... when != flags
-*spin_lock_irqsave(lock2,flags)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- sound/isa/gus/gus_pcm.c             |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/isa/gus/gus_pcm.c b/sound/isa/gus/gus_pcm.c
-index edb11ee..2dcf45b 100644
---- a/sound/isa/gus/gus_pcm.c
-+++ b/sound/isa/gus/gus_pcm.c
-@@ -795,13 +795,13 @@ static int snd_gf1_pcm_volume_put(struct snd_kcontrol *kcontrol, struct snd_ctl_
- 		if (!(pcmp->flags & SNDRV_GF1_PCM_PFLG_ACTIVE))
- 			continue;
- 		/* load real volume - better precision */
--		spin_lock_irqsave(&gus->reg_lock, flags);
-+		spin_lock(&gus->reg_lock);
- 		snd_gf1_select_voice(gus, pvoice->number);
- 		snd_gf1_ctrl_stop(gus, SNDRV_GF1_VB_VOLUME_CONTROL);
- 		vol = pvoice = pcmp->pvoices[0] ? gus->gf1.pcm_volume_level_left : gus->gf1.pcm_volume_level_right;
- 		snd_gf1_write16(gus, SNDRV_GF1_VW_VOLUME, vol);
- 		pcmp->final_volume = 1;
--		spin_unlock_irqrestore(&gus->reg_lock, flags);
-+		spin_unlock(&gus->reg_lock);
- 	}
- 	spin_unlock_irqrestore(&gus->voice_alloc, flags);
- 	return change;
+> 
+> ---
+>  sound/isa/gus/gus_pcm.c             |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/isa/gus/gus_pcm.c b/sound/isa/gus/gus_pcm.c
+> index edb11ee..2dcf45b 100644
+> --- a/sound/isa/gus/gus_pcm.c
+> +++ b/sound/isa/gus/gus_pcm.c
+> @@ -795,13 +795,13 @@ static int snd_gf1_pcm_volume_put(struct snd_kcontrol *kcontrol, struct snd_ctl_
+>  		if (!(pcmp->flags & SNDRV_GF1_PCM_PFLG_ACTIVE))
+>  			continue;
+>  		/* load real volume - better precision */
+> -		spin_lock_irqsave(&gus->reg_lock, flags);
+> +		spin_lock(&gus->reg_lock);
+>  		snd_gf1_select_voice(gus, pvoice->number);
+>  		snd_gf1_ctrl_stop(gus, SNDRV_GF1_VB_VOLUME_CONTROL);
+>  		vol = pvoice = pcmp->pvoices[0] ? gus->gf1.pcm_volume_level_left : gus->gf1.pcm_volume_level_right;
+>  		snd_gf1_write16(gus, SNDRV_GF1_VW_VOLUME, vol);
+>  		pcmp->final_volume = 1;
+> -		spin_unlock_irqrestore(&gus->reg_lock, flags);
+> +		spin_unlock(&gus->reg_lock);
+>  	}
+>  	spin_unlock_irqrestore(&gus->voice_alloc, flags);
+>  	return change;
+> 
