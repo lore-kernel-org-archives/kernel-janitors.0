@@ -1,81 +1,59 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 13 Jul 2009 12:22:30 +0000
-Subject: [PATCH] drivers/media/video: remove null dereference and unnecessary
-Message-Id: <Pine.LNX.4.64.0907131422000.6808@ask.diku.dk>
+Date: Sun, 19 Jul 2009 15:25:28 +0000
+Subject: [PATCH 1/10] arch/arm/plat-omap: Drop unnecessary NULL test
+Message-Id: <Pine.LNX.4.64.0907191725060.16542@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: mmcclell@bigfoot.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: tony@atomide.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-In the first part of the patch, if ov is NULL, the previous call to
-mutex_lock would have failed.
+The function map_iovm_area is static and is only called from one place, at
+which the "new" argument cannot be NULL.
 
-In the second part of the patch, a non-NULL test is removed, since if the
-value is NULL, the line before would have failed.
-
-Near the end of this function there is an initialization of ov to NULL
-after a kfree, even though no further reference to this variable is
-possible.  Perhaps this is considered good style, and thus I have left it
-as is.
-
-The first problem was detected using the following semantic match
+The semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
 @@
-expression E, E1;
-identifier f;
-statement S1,S2,S3;
+type T;
+expression E,E1;
+identifier i,fld;
+statement S;
 @@
 
-* if (E = NULL)
-{
-  ... when != if (E = NULL) S1 else S2
-      when != E = E1
-* E->f
-  ... when any
-  return ...;
-}
-else S3
+- T i =3D E->fld;
++ T i;
+  ... when !=3D E=E1
+      when !=3D i
+  if (E =3D NULL||...) S
++ i =3D E->fld;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/media/video/ov511.c         |   10 ++++------
- 1 files changed, 4 insertions(+), 6 deletions(-)
+ arch/arm/plat-omap/iovmm.c          |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/media/video/ov511.c b/drivers/media/video/ov511.c
-index 0bc2cf5..7c1f186 100644
---- a/drivers/media/video/ov511.c
-+++ b/drivers/media/video/ov511.c
-@@ -5914,14 +5914,12 @@ ov51x_disconnect(struct usb_interface *intf)
- 
- 	PDEBUG(3, "");
- 
-+	if (!ov)
-+		return;
-+
- 	mutex_lock(&ov->lock);
- 	usb_set_intfdata (intf, NULL);
- 
--	if (!ov) {
--		mutex_unlock(&ov->lock);
--		return;
--	}
--
- 	/* Free device number */
- 	ov511_devused &= ~(1 << ov->nr);
- 
-@@ -5946,7 +5944,7 @@ ov51x_disconnect(struct usb_interface *intf)
- 	ov->dev = NULL;
- 
- 	/* Free the memory */
--	if (ov && !ov->user) {
-+	if (!ov->user) {
- 		mutex_lock(&ov->cbuf_lock);
- 		kfree(ov->cbuf);
- 		ov->cbuf = NULL;
+diff --git a/arch/arm/plat-omap/iovmm.c b/arch/arm/plat-omap/iovmm.c
+index 2fce2c1..04e2286 100644
+--- a/arch/arm/plat-omap/iovmm.c
++++ b/arch/arm/plat-omap/iovmm.c
+@@ -447,7 +447,7 @@ static int map_iovm_area(struct iommu *obj, struct iovm=
+_struct *new,
+ 	struct scatterlist *sg;
+ 	u32 da =3D new->da_start;
+=20
+-	if (!obj || !new || !sgt)
++	if (!obj || !sgt)
+ 		return -EINVAL;
+=20
+ 	BUG_ON(!sgtable_ok(sgt));
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
