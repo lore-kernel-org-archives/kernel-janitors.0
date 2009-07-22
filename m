@@ -1,62 +1,46 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Tue, 28 Jul 2009 21:33:11 +0000
-Subject: Re: [PATCH] MAINTAINERS: Add networking wireless drivers section
-Message-Id: <1248816791.13742.4.camel@johannes.local>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Wed, 22 Jul 2009 09:40:08 +0000
+Subject: Re: [PATCH] media/video/cx88: adding __init/__exit macros to cx88
+Message-Id: <alpine.LNX.2.00.0907221138520.11648@wotan.suse.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-36Y6D/GMx/1GBn9tpdRy"
+Content-Type: multipart/mixed; boundary="168427776-1656527655-1248255610=:11648"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907281753540.28189@ask.diku.dk>
-	 <20090728.103044.179053537.davem@davemloft.net>
-	 <1248804397.18284.5.camel@Joe-Laptop.home>
-	 <20090728.113353.08715297.davem@davemloft.net>
-In-Reply-To: <20090728.113353.08715297.davem@davemloft.net>
-To: David Miller <davem@davemloft.net>
-Cc: joe@perches.com, linville@tuxdriver.com, julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
+References: <200907170100.02816.PeterHuewe@gmx.de> <200907221136.30036.PeterHuewe@gmx.de>
+In-Reply-To: <200907221136.30036.PeterHuewe@gmx.de>
+To: =?ISO-8859-15?Q?Peter_H=FCwe?= <PeterHuewe@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@redhat.com>, Frederic CAND <frederic.cand@anevia.com>, Trent Piepho <xyzzy@speakeasy.org>, Darron Broad <darron@kewl.org>, Steven Toth <stoth@linuxtv.org>, "Igor M. Liplianin" <liplianin@me.by>, Oleg Roitburd <oroitburd@gmail.com>, Yang Hongyang <yanghy@cn.fujitsu.com>, Jelle Foks <jelle@foks.us>, linux-media@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
---=-36Y6D/GMx/1GBn9tpdRy
-Content-Type: text/plain
+--168427776-1656527655-1248255610=:11648
+Content-Type: TEXT/PLAIN; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2009-07-28 at 11:33 -0700, David Miller wrote:
-> From: Joe Perches <joe@perches.com>
-> Date: Tue, 28 Jul 2009 11:06:37 -0700
+On Wed, 22 Jul 2009, Peter H=FCwe wrote:
+
+> > Trivial patch which adds the __init and __exit macros to the=20
+> > module_init / module_exit functions to several files in=20
+> > drivers/media/video/cx88/
+> >
+> > linux version 2.6.31-rc3 - linus git tree
+> >
+> > Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+> any updates on this patch?
 >=20
-> > On Tue, 2009-07-28 at 10:30 -0700, David Miller wrote:
-> >> Wireless patches need to be CC:'d to linux-wireless so that
-> >> John Linville can notice and pick them up
-> >=20
-> > Signed-off-by: Joe Perches <joe@perches.com>
->=20
-> Why not just create a plain "WIRELESS" umbrella entry
-> that contains all of drivers/net/wireless, net/mac80211,
-> and net/wireless?
+> If my minor fixes bug you too much please give me a hint how I can improv=
+e my=20
+> patches.
 
-I'll happily maintain net/mac80211 and net/wireless, but won't be
-touching all the old crappy drivers/net/wireless with a long stick.
+Well the minor issue is that when you send trivial patches to=20
+trivial@kernel.org and also to all the involved maintainers, I am waiting=20
+for them to apply them into their trees and only if this doesn't happen=20
+after some time (I check regularly, but not very frequently), I apply to=20
+trivial queue.
 
-johannes
+Thanks,
 
---=-36Y6D/GMx/1GBn9tpdRy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABAgAGBQJKb26UAAoJEODzc/N7+QmaQ1cP/iQntsvWvy5OYfQpKAbiXtRs
-5qEk1Mc7DPM9Mf/oj/WiMMPFLdGvThGyqT95wGmEjioE1BXX58RH2L8x306eqy7K
-th2mRFqjPQldf3dV9W8vQRGQaNzizbRYbKG0VFVyKrpJFXG6PCAckMqVio1oGLO6
-gs1aX7JGaG2RQC0Cqg0sJsKeiM3emsj0/7lf/uzj0gvYy/xEaJECVMMs93OuxLer
-XPOA2vJcD9uT5F31Yr3eJw9h9jQfFJ48dw5L31W3Kz5RtwPw29pNK2gXo8s6MEVw
-Iu9r/DdFFoxZ5QdC43sO2tIRwl3rDQ4NP1X0BFZS45dx+eFqt+BuskfbySB7z28N
-Pc+k382V/7py1kMENVf4utx0JkXKCmzw2rlF6rCHEkSFkXD7RXtqtQ9ZFtg+URJ5
-LIEDhz3UPjRSHCLORYhaeDX1Cr0mIzfUWUI9iFjYGW+bwsO4oES1qhTSs4mGWLbP
-RMoe3hNa4o18VZ4TzImBcygTICPWq2Xav7VvA75kmafrBS4ZqIE/JiroNudYo21n
-v6BhO7Mj57b7Cn2crW0pV8HhTRJMIVt1pRt7xYRrS+nBVG6qZKju4OajVJESVoLZ
-P2zbQwS2JZ9rSbzCTnTG+0ZxHmN8iRec2oEigp1DY5jmGySbyNLrFsOQWrYbnlcs
-N8CNpWxwxJUd9KYupcrI
-=Qo8W
------END PGP SIGNATURE-----
-
---=-36Y6D/GMx/1GBn9tpdRy--
-
+--=20
+Jiri Kosina
+SUSE Labs
+--168427776-1656527655-1248255610=:11648--
