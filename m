@@ -1,34 +1,63 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 30 Jul 2009 17:59:00 +0000
-Subject: Re: [PATCH 4/5] net/netlabel: Add kmalloc NULL tests
-Message-Id: <20090730.105900.232424702.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 27 Jul 2009 16:15:25 +0000
+Subject: [PATCH 10/12] fs/xfs: Correct redundant test
+Message-Id: <Pine.LNX.4.64.0907271815060.2682@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200907301032.20318.paul.moore@hp.com>
-	<Pine.LNX.4.64.0907301637570.8734@ask.diku.dk>
-	<200907301053.37416.paul.moore@hp.com>
-In-Reply-To: <200907301053.37416.paul.moore@hp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: paul.moore@hp.com
-Cc: julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: felixb@sgi.com, xfs-masters@oss.sgi.com, xfs@oss.sgi.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Paul Moore <paul.moore@hp.com>
-Date: Thu, 30 Jul 2009 10:53:37 -0400
+From: Julia Lawall <julia@diku.dk>
 
-> On Thursday 30 July 2009 10:38:19 am Julia Lawall wrote:
->> From: Julia Lawall <julia@diku.dk>
->>
->> The test on map4 should be a test on map6.
->>
->> The semantic match that finds this problem is as follows:
->> (http://www.emn.fr/x-info/coccinelle/)
- ...
->> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> Much better, thank you.
-> 
-> Acked-by: Paul Moore <paul.moore@hp.com>
+bp was tested for NULL a few lines before, followed by a return, and there
+is no intervening modification of its value.
 
-Applied, thanks.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+position p1,p2;
+@@
+
+if (x = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+*x = NULL
+|
+*x != NULL
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/xfs/xfs_trans_buf.c              |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/xfs/xfs_trans_buf.c b/fs/xfs/xfs_trans_buf.c
+index 8ee2f8c..218829e 100644
+--- a/fs/xfs/xfs_trans_buf.c
++++ b/fs/xfs/xfs_trans_buf.c
+@@ -307,7 +307,7 @@ xfs_trans_read_buf(
+ 			return (flags & XFS_BUF_TRYLOCK) ?
+ 					EAGAIN : XFS_ERROR(ENOMEM);
+ 
+-		if ((bp != NULL) && (XFS_BUF_GETERROR(bp) != 0)) {
++		if (XFS_BUF_GETERROR(bp) != 0) {
+ 			xfs_ioerror_alert("xfs_trans_read_buf", mp,
+ 					  bp, blkno);
+ 			error = XFS_BUF_GETERROR(bp);
+@@ -315,7 +315,7 @@ xfs_trans_read_buf(
+ 			return error;
+ 		}
+ #ifdef DEBUG
+-		if (xfs_do_error && (bp != NULL)) {
++		if (xfs_do_error) {
+ 			if (xfs_error_target = target) {
+ 				if (((xfs_req_num++) % xfs_error_mod) = 0) {
+ 					xfs_buf_relse(bp);
