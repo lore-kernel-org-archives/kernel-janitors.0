@@ -1,88 +1,53 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 19 Jul 2009 15:29:37 +0000
-Subject: [PATCH 7/10] drivers/serial: Move a dereference below a NULL test
-Message-Id: <Pine.LNX.4.64.0907191729140.16542@ask.diku.dk>
+Date: Mon, 27 Jul 2009 16:13:11 +0000
+Subject: [PATCH 3/12] drivers/mtd: Correct redundant test
+Message-Id: <Pine.LNX.4.64.0907271812540.2682@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: pfg@sgi.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dwmw2@infradead.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If the NULL test is necessary, then the dereference should be moved below
-the NULL test.
+info has already been tested.  It seems that this test should be on the
+recently returned value mtd_list.
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-type T;
-expression E,E1;
-identifier i,fld;
-statement S;
+@r exists@
+local idexpression x;
+expression E;
 @@
 
-- T i =3D E->fld;
-+ T i;
-  ... when !=3D E=E1
-      when !=3D i
-  BUG_ON (E =3D NULL);
-+ i =3D E->fld;
+if (x = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+*x = NULL
+|
+*x != NULL
+)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/serial/ioc3_serial.c |    3 ++-
- drivers/serial/ioc4_serial.c |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/mtd/maps/physmap_of.c       |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/serial/ioc3_serial.c b/drivers/serial/ioc3_serial.c
-index ae3699d..6d5c91b 100644
---- a/drivers/serial/ioc3_serial.c
-+++ b/drivers/serial/ioc3_serial.c
-@@ -1117,13 +1117,14 @@ static inline int do_read(struct uart_port *the_por=
-t, char *buf, int len)
- 	struct ioc3_port *port =3D get_ioc3_port(the_port);
- 	struct ring *inring;
- 	struct ring_entry *entry;
--	struct port_hooks *hooks =3D port->ip_hooks;
-+	struct port_hooks *hooks;
- 	int byte_num;
- 	char *sc;
- 	int loop_counter;
-=20
- 	BUG_ON(!(len >=3D 0));
- 	BUG_ON(!port);
-+	hooks =3D port->ip_hooks;
-=20
- 	/* There is a nasty timing issue in the IOC3. When the rx_timer
- 	 * expires or the rx_high condition arises, we take an interrupt.
-diff --git a/drivers/serial/ioc4_serial.c b/drivers/serial/ioc4_serial.c
-index 6bab63c..aeca2f8 100644
---- a/drivers/serial/ioc4_serial.c
-+++ b/drivers/serial/ioc4_serial.c
-@@ -2067,13 +2067,14 @@ static inline int do_read(struct uart_port *the_por=
-t, unsigned char *buf,
- 	struct ioc4_port *port =3D get_ioc4_port(the_port, 0);
- 	struct ring *inring;
- 	struct ring_entry *entry;
--	struct hooks *hooks =3D port->ip_hooks;
-+	struct hooks *hooks;
- 	int byte_num;
- 	char *sc;
- 	int loop_counter;
-=20
- 	BUG_ON(!(len >=3D 0));
- 	BUG_ON(!port);
-+	hooks =3D port->ip_hooks;
-=20
- 	/* There is a nasty timing issue in the IOC4. When the rx_timer
- 	 * expires or the rx_high condition arises, we take an interrupt.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/mtd/maps/physmap_of.c b/drivers/mtd/maps/physmap_of.c
+index 39d357b..2cc0b0d 100644
+--- a/drivers/mtd/maps/physmap_of.c
++++ b/drivers/mtd/maps/physmap_of.c
+@@ -215,7 +215,7 @@ static int __devinit of_flash_probe(struct of_device *dev,
+ 		goto err_out;
+ 
+ 	mtd_list = kzalloc(sizeof(struct mtd_info) * count, GFP_KERNEL);
+-	if (!info)
++	if (!mtd_list)
+ 		goto err_out;
+ 
+ 	dev_set_drvdata(&dev->dev, info);
