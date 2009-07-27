@@ -1,57 +1,61 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 11 Jul 2009 07:50:49 +0000
-Subject: [PATCH 4/5] drivers/net: Move a dereference below a NULL test
-Message-Id: <Pine.LNX.4.64.0907110950300.29592@ask.diku.dk>
+Date: Mon, 27 Jul 2009 19:59:48 +0000
+Subject: [PATCH] drivers/staging: Correct use of.and &
+Message-Id: <Pine.LNX.4.64.0907272159040.8135@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: maxk@qualcomm.com, vtun@office.satix.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If the NULL test is necessary, then the dereference should be moved below
-the NULL test.
+Correct priority problem in the use of ! and &.
 
 The semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
-@@
-
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
+@@ expression E; constant C; @@
+- !E & C
++ !(E & C)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/net/tun.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/rt3090/sta_ioctl.c |    6 ++----
+ drivers/staging/vt6656/iwctl.c     |    3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff -u -p a/drivers/net/tun.c b/drivers/net/tun.c
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -486,11 +486,12 @@ static unsigned int tun_chr_poll(struct 
- {
- 	struct tun_file *tfile = file->private_data;
- 	struct tun_struct *tun = __tun_get(tfile);
--	struct sock *sk = tun->sk;
-+	struct sock *sk;
- 	unsigned int mask = 0;
+diff --git a/drivers/staging/rt3090/sta_ioctl.c b/drivers/staging/rt3090/sta_ioctl.c
+index 93efd7f..3ddc0f6 100644
+--- a/drivers/staging/rt3090/sta_ioctl.c
++++ b/drivers/staging/rt3090/sta_ioctl.c
+@@ -1840,10 +1840,8 @@ int rt_ioctl_siwencode(struct net_device *dev,
+             }
+         else
+ 			/* Don't complain if only change the mode */
+-		if(!erq->flags & IW_ENCODE_MODE)
+-		{
+-				return -EINVAL;
+-		}
++		if (!(erq->flags & IW_ENCODE_MODE))
++			return -EINVAL;
+ 	}
  
- 	if (!tun)
- 		return POLLERR;
-+	sk = tun->sk;
- 
- 	DBG(KERN_INFO "%s: tun_chr_poll\n", tun->dev->name);
- 
+ done:
+diff --git a/drivers/staging/vt6656/iwctl.c b/drivers/staging/vt6656/iwctl.c
+index e4fdb6f..96f2a78 100644
+--- a/drivers/staging/vt6656/iwctl.c
++++ b/drivers/staging/vt6656/iwctl.c
+@@ -1409,8 +1409,7 @@ int iwctl_siwencode(struct net_device *dev,
+ 		// Do we want to just set the transmit key index ?
+ 		if ( index < 4 ) {
+ 		    pDevice->byKeyIndex = index;
+-		}
+-		else if(!wrq->flags & IW_ENCODE_MODE) {
++		} else if (!(wrq->flags & IW_ENCODE_MODE)) {
+ 				rc = -EINVAL;
+ 				return rc;
+ 	    }
