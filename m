@@ -1,33 +1,53 @@
-From: Alex Chiang <achiang@hp.com>
-Date: Wed, 29 Jul 2009 00:32:08 +0000
-Subject: Re: [PATCH] Shut off pci_find_device warnings when the deprecated
-Message-Id: <20090729003208.GB3539@ldl.fc.hp.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 27 Jul 2009 16:14:11 +0000
+Subject: [PATCH 6/12] drivers/platform/x86: Correct redundant test
+Message-Id: <Pine.LNX.4.64.0907271813490.2682@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090724094115.GA18450@basil.fritz.box> <20090728095552.72c41525@jbarnes-g45> <20090729001613.GA19369@ldl.fc.hp.com> <20090729002801.GR15310@basil.fritz.box>
-In-Reply-To: <20090729002801.GR15310@basil.fritz.box>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Jesse Barnes <jesse.barnes@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, kernelnewbies@nl.linux.org
+To: jwoithe@physics.adelaide.edu.au, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-* Andi Kleen <andi@firstfloor.org>:
-> > Maybe it's too late now, but I thought those warnings were
-> > supposed to motivate people to convert old, buggy drivers to get
-> > off the deprecated interface.
-> 
-> Yes they are, but this warning instance was not for a old driver,
-> but for the EXPORT_SYMBOL defining the legacy function.
-> 
-> If any driver uses it it'll still warn.
+From: Julia Lawall <julia@diku.dk>
 
-Ok, I've been corrected. :)
+device and acpi_driver_data(device) were tested just a few lines above.
 
-I still think it would be a good learning project for someone to
-audit the tree and see if they can eliminate the usages of
-pci_find_device().
+A simplified version of the semantic match that finds this problem is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
 
-Thanks,
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+@@
 
-/ac
+if (x = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+*x = NULL
+|
+*x != NULL
+)
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/platform/x86/fujitsu-laptop.c          |    3 ---
+ 1 files changed, 0 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+index 218b9a1..5306901 100644
+--- a/drivers/platform/x86/fujitsu-laptop.c
++++ b/drivers/platform/x86/fujitsu-laptop.c
+@@ -745,9 +745,6 @@ static int acpi_fujitsu_remove(struct acpi_device *device, int type)
+ 
+ 	fujitsu = acpi_driver_data(device);
+ 
+-	if (!device || !acpi_driver_data(device))
+-		return -EINVAL;
+-
+ 	fujitsu->acpi_handle = NULL;
+ 
+ 	return 0;
