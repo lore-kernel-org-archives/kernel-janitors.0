@@ -1,7 +1,7 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 27 Jul 2009 16:12:53 +0000
-Subject: [PATCH 2/12] drivers/char: Correct redundant test
-Message-Id: <Pine.LNX.4.64.0907271812340.2682@ask.diku.dk>
+Date: Mon, 27 Jul 2009 16:16:02 +0000
+Subject: [PATCH 12/12] tools: Correct redundant test
+Message-Id: <Pine.LNX.4.64.0907271815440.2682@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,10 +10,8 @@ To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-dc was tested for NULL at the beginning of the function, in which case the
-function returns.  dc does not seem to be updated in the meantime, so the
-second test is unnecessary.  I have assumed that the comment, "notify
-card" goes with the code below it.
+symstrs has already been tested.  It seems that this test should be on the
+recently returned value secstrs.
 
 A simplified version of the semantic match that finds this problem is as
 follows: (http://www.emn.fr/x-info/coccinelle/)
@@ -24,7 +22,7 @@ local idexpression x;
 expression E;
 @@
 
-if (x@ = NULL || ...) { ... when forall
+if (x = NULL || ...) { ... when forall
    return ...; }
 ... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
 (
@@ -37,22 +35,19 @@ if (x@ = NULL || ...) { ... when forall
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/char/nozomi.c               |    7 +------
- 1 files changed, 1 insertions(+), 6 deletions(-)
+ tools/perf/util/symbol.c            |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/char/nozomi.c b/drivers/char/nozomi.c
-index ec58d8c..9322fec 100644
---- a/drivers/char/nozomi.c
-+++ b/drivers/char/nozomi.c
-@@ -1675,11 +1675,6 @@ static int ntty_write(struct tty_struct *tty, const unsigned char *buffer,
- 	rval = __kfifo_put(port->fifo_ul, (unsigned char *)buffer, count);
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 2810605..b4fe057 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -565,7 +565,7 @@ static int dso__load_sym(struct dso *self, int fd, const char *name,
+ 		goto out_elf_end;
  
- 	/* notify card */
--	if (unlikely(dc = NULL)) {
--		DBG1("No device context?");
--		goto exit;
--	}
--
- 	spin_lock_irqsave(&dc->spin_mutex, flags);
- 	/* CTS is only valid on the modem channel */
- 	if (port = &(dc->port[PORT_MDM])) {
+ 	secstrs = elf_getdata(sec_strndx, NULL);
+-	if (symstrs = NULL)
++	if (secstrs = NULL)
+ 		goto out_elf_end;
+ 
+ 	nr_syms = shdr.sh_size / shdr.sh_entsize;
