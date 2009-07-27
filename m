@@ -1,103 +1,53 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Sun, 05 Jul 2009 12:12:00 +0000
-Subject: Re: [lm-sensors] [PATCH 4/5] drivers/hwmon: Use resource_size
-Message-Id: <20090705141200.6b0deb34@hyperion.delvare>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 27 Jul 2009 16:12:34 +0000
+Subject: [PATCH 1/12] drivers/atm: Correct redundant test
+Message-Id: <Pine.LNX.4.64.0907271812130.2682@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907050836530.27464@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907050836530.27464@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: chas@cmf.nrl.navy.mil, linux-atm-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 5 Jul 2009 08:37:14 +0200 (CEST), Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use the function resource_size, which reduces the chance of introducing
-> off-by-one errors in calculating the resource size.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> struct resource *res;
-> @@
-> 
-> - (res->end - res->start) + 1
-> + resource_size(res)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/hwmon/pc87427.c |    6 +++---
->  drivers/hwmon/vt1211.c  |    6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff -u -p a/drivers/hwmon/pc87427.c b/drivers/hwmon/pc87427.c
-> --- a/drivers/hwmon/pc87427.c 2009-01-09 22:41:01.000000000 +0100
-> +++ b/drivers/hwmon/pc87427.c 2009-07-04 21:38:15.000000000 +0200
-> @@ -435,7 +435,7 @@ static int __devinit pc87427_probe(struc
->  	/* This will need to be revisited when we add support for
->  	   temperature and voltage monitoring. */
->  	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> -	if (!request_region(res->start, res->end - res->start + 1, DRVNAME)) {
-> +	if (!request_region(res->start, resource_size(res), DRVNAME)) {
->  		err = -EBUSY;
->  		dev_err(&pdev->dev, "Failed to request region 0x%lx-0x%lx\n",
->  			(unsigned long)res->start, (unsigned long)res->end);
-> @@ -475,7 +475,7 @@ exit_remove_files:
->  		sysfs_remove_group(&pdev->dev.kobj, &pc87427_group_fan[i]);
->  	}
->  exit_release_region:
-> -	release_region(res->start, res->end - res->start + 1);
-> +	release_region(res->start, resource_size(res));
->  exit_kfree:
->  	platform_set_drvdata(pdev, NULL);
->  	kfree(data);
-> @@ -500,7 +500,7 @@ static int __devexit pc87427_remove(stru
->  	kfree(data);
->  
->  	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> -	release_region(res->start, res->end - res->start + 1);
-> +	release_region(res->start, resource_size(res));
->  
->  	return 0;
->  }
-> diff -u -p a/drivers/hwmon/vt1211.c b/drivers/hwmon/vt1211.c
-> --- a/drivers/hwmon/vt1211.c 2009-03-02 11:33:15.000000000 +0100
-> +++ b/drivers/hwmon/vt1211.c 2009-07-04 21:38:17.000000000 +0200
-> @@ -1136,7 +1136,7 @@ static int __devinit vt1211_probe(struct
->  	}
->  
->  	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> -	if (!request_region(res->start, res->end - res->start + 1, DRVNAME)) {
-> +	if (!request_region(res->start, resource_size(res), DRVNAME)) {
->  		err = -EBUSY;
->  		dev_err(dev, "Failed to request region 0x%lx-0x%lx\n",
->  			(unsigned long)res->start, (unsigned long)res->end);
-> @@ -1209,7 +1209,7 @@ EXIT_DEV_REMOVE:
->  	dev_err(dev, "Sysfs interface creation failed (%d)\n", err);
->  EXIT_DEV_REMOVE_SILENT:
->  	vt1211_remove_sysfs(pdev);
-> -	release_region(res->start, res->end - res->start + 1);
-> +	release_region(res->start, resource_size(res));
->  EXIT_KFREE:
->  	platform_set_drvdata(pdev, NULL);
->  	kfree(data);
-> @@ -1228,7 +1228,7 @@ static int __devexit vt1211_remove(struc
->  	kfree(data);
->  
->  	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> -	release_region(res->start, res->end - res->start + 1);
-> +	release_region(res->start, resource_size(res));
->  
->  	return 0;
->  }
+From: Julia Lawall <julia@diku.dk>
 
-Applied, thanks.
+str has already been tested.  It seems that this test should be on the
+recently returned value snr.
 
--- 
-Jean Delvare
+A simplified version of the semantic match that finds this problem is as
+follows: (http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+@@
+
+if (x = NULL || ...) { ... when forall
+   return ...; }
+... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+(
+*x = NULL
+|
+*x != NULL
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/atm/solos-pci.c             |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/atm/solos-pci.c b/drivers/atm/solos-pci.c
+index 9359613..307321b 100644
+--- a/drivers/atm/solos-pci.c
++++ b/drivers/atm/solos-pci.c
+@@ -372,7 +372,7 @@ static int process_status(struct solos_card *card, int port, struct sk_buff *skb
+ 	}
+ 
+ 	snr = next_string(skb);
+-	if (!str)
++	if (!snr)
+ 		return -EIO;
+ 	attn = next_string(skb);
+ 	if (!attn)
