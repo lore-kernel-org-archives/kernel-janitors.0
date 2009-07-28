@@ -1,40 +1,39 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Date: Tue, 14 Jul 2009 22:53:20 +0000
-Subject: Re: [PATCH 5/5] drivers/i2c: Use resource_size
-Message-Id: <20090714225320.GA10277@fluff.org.uk>
+From: Joe Perches <joe@perches.com>
+Date: Tue, 28 Jul 2009 18:06:37 +0000
+Subject: [PATCH] MAINTAINERS: Add networking wireless drivers section
+Message-Id: <1248804397.18284.5.camel@Joe-Laptop.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907050837160.27464@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907050837160.27464-QfmoRoYWmW9knbxzx/v8hQ@public.gmane.org>
+References: <Pine.LNX.4.64.0907281753540.28189@ask.diku.dk>
+	 <20090728.103044.179053537.davem@davemloft.net>
+In-Reply-To: <20090728.103044.179053537.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Miller <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>
+Cc: julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
 
-On Sun, Jul 05, 2009 at 08:37:50AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use the function resource_size, which reduces the chance of introducing
-> off-by-one errors in calculating the resource size.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> struct resource *res;
-> @@
-> 
-> - (res->end - res->start) + 1
-> + resource_size(res)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+On Tue, 2009-07-28 at 10:30 -0700, David Miller wrote:
+> Wireless patches need to be CC:'d to linux-wireless so that
+> John Linville can notice and pick them up
 
-I'll class these as fixes and have applied them to my
-tree for linus.
+Signed-off-by: Joe Perches <joe@perches.com>
 
--- 
-Ben (ben@fluff.org, http://www.fluff.org/)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ebc2691..0574aad 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4186,6 +4186,12 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-2.6.git
+ S:	Odd Fixes
+ F:	drivers/net/
+ 
++NETWORKING WIRELESS DRIVERS
++L:	linux-wireless@vger.kernel.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-2.6.git
++S:	Odd Fixes
++F:	drivers/net/wireless/
++
+ NETXEN (1/10) GbE SUPPORT
+ P:	Dhananjay Phadke
+ M:	dhananjay@netxen.com
 
-  'a smiley only costs 4 bytes'
+
