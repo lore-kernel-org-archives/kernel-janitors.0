@@ -1,53 +1,54 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 27 Jul 2009 16:13:48 +0000
-Subject: [PATCH 5/12] drivers/parisc: Correct redundant test
-Message-Id: <Pine.LNX.4.64.0907271813310.2682@ask.diku.dk>
+Date: Tue, 28 Jul 2009 15:55:33 +0000
+Subject: [PATCH 7/9] drivers/rtc: correct error-handling code
+Message-Id: <Pine.LNX.4.64.0907281755000.28189@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kyle@mcmartin.ca, deller@gmx.de, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: p_gortmaker@yahoo.com, a.zummo@towertech.it, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-pa_pdc_cell has already been tested.  It seems that this test should be on the
-recently returned value io_pdc_cell.
+This code is not executed before ds1307->rtc has been successfully
+initialized to the result of calling rtc_device_register.  Thus the test
+that ds1307->rtc is not NULL is always true.
 
 A simplified version of the semantic match that finds this problem is as
-follows: (http://www.emn.fr/x-info/coccinelle/)
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r exists@
-local idexpression x;
-expression E;
+@match exists@
+expression x, E;
+statement S1, S2;
 @@
 
-if (x = NULL || ...) { ... when forall
-   return ...; }
-... when != \(x=E\|x--\|x++\|--x\|++x\|x-=E\|x+=E\|x|=E\|x&=E\|&x\)
+x = rtc_device_register(...)
+... when != x = E
 (
-*x = NULL
+*  if (x = NULL || ...) S1 else S2
 |
-*x != NULL
+*  if (x = NULL && ...) S1 else S2
 )
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/parisc/lba_pci.c            |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/rtc/rtc-ds1307.c            |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/parisc/lba_pci.c b/drivers/parisc/lba_pci.c
-index ede6146..3aeb327 100644
---- a/drivers/parisc/lba_pci.c
-+++ b/drivers/parisc/lba_pci.c
-@@ -992,7 +992,7 @@ lba_pat_resources(struct parisc_device *pa_dev, struct lba_device *lba_dev)
- 		return;
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index 47a93c0..eb99ee4 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -896,8 +896,7 @@ read_rtc:
+ 	return 0;
  
- 	io_pdc_cell = kzalloc(sizeof(pdc_pat_cell_mod_maddr_block_t), GFP_KERNEL);
--	if (!pa_pdc_cell) {
-+	if (!io_pdc_cell) {
- 		kfree(pa_pdc_cell);
- 		return;
- 	}
+ exit_irq:
+-	if (ds1307->rtc)
+-		rtc_device_unregister(ds1307->rtc);
++	rtc_device_unregister(ds1307->rtc);
+ exit_free:
+ 	kfree(ds1307);
+ 	return err;
