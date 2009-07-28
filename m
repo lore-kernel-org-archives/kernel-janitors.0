@@ -1,30 +1,51 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 03 Jul 2009 09:59:34 +0000
-Subject: Re: [PATCH] hid: adding __init/__exit macros to several hids
-Message-Id: <alpine.LNX.2.00.0907031159210.4994@wotan.suse.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="168427776-624173346-1246615174=:4994"
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 28 Jul 2009 15:56:00 +0000
+Subject: [PATCH 8/9] drivers/mmc: correct error-handling code
+Message-Id: <Pine.LNX.4.64.0907281755340.28189@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200907021908.39275.PeterHuewe@gmx.de>
-In-Reply-To: <200907021908.39275.PeterHuewe@gmx.de>
-To: =?ISO-8859-15?Q?Peter_H=FCwe?= <PeterHuewe@gmx.de>
-Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: avorontsov@ru.mvista.com, linuxppc-dev@ozlabs.org, sdhci-devel@lists.ossman.eu, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Julia Lawall <julia@diku.dk>
 
---168427776-624173346-1246615174=:4994
-Content-Type: TEXT/PLAIN; charset="iso-8859-15"
-Content-Transfer-Encoding: quoted-printable
+sdhci_alloc_host returns an ERR_PTR value in an error case instead of NULL.
 
-On Thu, 2 Jul 2009, Peter H=FCwe wrote:
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> Trivial patch which adds the __init and __exit macros to the module_init /
-> module_exit functions of several hids from drivers/hid/
+// <smpl>
+@match exists@
+expression x, E;
+statement S1, S2;
+@@
 
-Applied, thanks Peter.
+x = sdhci_alloc_host(...)
+... when != x = E
+(
+*  if (x = NULL || ...) S1 else S2
+|
+*  if (x = NULL && ...) S1 else S2
+)
+// </smpl>
 
---=20
-Jiri Kosina
-SUSE Labs
---168427776-624173346-1246615174=:4994--
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/mmc/host/sdhci-of.c         |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-of.c b/drivers/mmc/host/sdhci-of.c
+index d79fa55..fb00bc5 100644
+--- a/drivers/mmc/host/sdhci-of.c
++++ b/drivers/mmc/host/sdhci-of.c
+@@ -226,7 +226,7 @@ static int __devinit sdhci_of_probe(struct of_device *ofdev,
+ 		return -ENODEV;
+ 
+ 	host = sdhci_alloc_host(&ofdev->dev, sizeof(*of_host));
+-	if (!host)
++	if (IS_ERR(host))
+ 		return -ENOMEM;
+ 
+ 	of_host = sdhci_priv(host);
