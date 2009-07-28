@@ -1,65 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 28 Jul 2009 17:30:44 +0000
+From: "John W. Linville" <linville@tuxdriver.com>
+Date: Tue, 28 Jul 2009 17:52:16 +0000
 Subject: Re: [PATCH 5/9] drivers/net/wireless: correct error-handling code
-Message-Id: <20090728.103044.179053537.davem@davemloft.net>
+Message-Id: <20090728175215.GB2687@tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907281753540.28189@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907281753540.28189@ask.diku.dk>
+References: <Pine.LNX.4.64.0907281753540.28189@ask.diku.dk> <20090728.103044.179053537.davem@davemloft.net>
+In-Reply-To: <20090728.103044.179053537.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: David Miller <davem@davemloft.net>
+Cc: julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 28 Jul 2009 17:54:24 +0200 (CEST)
-
-Wireless patches need to be CC:'d to linux-wireless so that
-John Linville can notice and pick them up.  Added...
-
+On Tue, Jul 28, 2009 at 10:30:44AM -0700, David Miller wrote:
 > From: Julia Lawall <julia@diku.dk>
-> 
-> iwm_wdev_alloc returns an ERR_PTR value in an error case instead of NULL.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @match exists@
-> expression x, E;
-> statement S1, S2;
-> @@
-> 
-> x = iwm_wdev_alloc(...)
-> ... when != x = E
-> (
-> *  if (x = NULL || ...) S1 else S2
-> |
-> *  if (x = NULL && ...) S1 else S2
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/net/wireless/iwmc3200wifi/netdev.c     |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/iwmc3200wifi/netdev.c b/drivers/net/wireless/iwmc3200wifi/netdev.c
-> index bb71f8a..e1c6693 100644
-> --- a/drivers/net/wireless/iwmc3200wifi/netdev.c
-> +++ b/drivers/net/wireless/iwmc3200wifi/netdev.c
-> @@ -99,7 +99,7 @@ void *iwm_if_alloc(int sizeof_bus, struct device *dev,
->  	int ret = 0;
->  
->  	wdev = iwm_wdev_alloc(sizeof_bus, dev);
-> -	if (!wdev) {
-> +	if (IS_ERR(wdev)) {
->  		dev_err(dev, "no memory for wireless device instance\n");
->  		return ERR_PTR(-ENOMEM);
->  	}
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> Date: Tue, 28 Jul 2009 17:54:24 +0200 (CEST)
+>=20
+> Wireless patches need to be CC:'d to linux-wireless so that
+> John Linville can notice and pick them up.  Added...
+
+Thanks...FWIW, I've got a nearly identical patch from Dan Carpenter
+queued already.
+
+John
+--=20
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
+			=A1Viva Honduras Libre!
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
