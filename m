@@ -1,33 +1,54 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Date: Tue, 28 Jul 2009 17:52:16 +0000
-Subject: Re: [PATCH 5/9] drivers/net/wireless: correct error-handling code
-Message-Id: <20090728175215.GB2687@tuxdriver.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 28 Jul 2009 15:56:35 +0000
+Subject: [PATCH 9/9] drivers/acpi: correct error-handling code
+Message-Id: <Pine.LNX.4.64.0907281756010.28189@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907281753540.28189@ask.diku.dk> <20090728.103044.179053537.davem@davemloft.net>
-In-Reply-To: <20090728.103044.179053537.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: David Miller <davem@davemloft.net>
-Cc: julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: rui.zhang@intel.com, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jul 28, 2009 at 10:30:44AM -0700, David Miller wrote:
-> From: Julia Lawall <julia@diku.dk>
-> Date: Tue, 28 Jul 2009 17:54:24 +0200 (CEST)
->=20
-> Wireless patches need to be CC:'d to linux-wireless so that
-> John Linville can notice and pick them up.  Added...
+From: Julia Lawall <julia@diku.dk>
 
-Thanks...FWIW, I've got a nearly identical patch from Dan Carpenter
-queued already.
+backlight_device_register may return an ERR_PTR value rather than a valid
+pointer.
 
-John
---=20
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
-			=A1Viva Honduras Libre!
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier fld,fld1;
+expression x,E;
+@@
+
+ x = backlight_device_register(...)
+  ... when != x = E
+      when != &x
+      when != x->fld1
+(
+  ((IS_ERR(x))||...)
+|
+*  x->fld
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/acpi/video.c                |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/acpi/video.c b/drivers/acpi/video.c
+index 8851315..29788db 100644
+--- a/drivers/acpi/video.c
++++ b/drivers/acpi/video.c
+@@ -982,6 +982,8 @@ static void acpi_video_device_find_cap(struct acpi_video_device *device)
+ 		sprintf(name, "acpi_video%d", count++);
+ 		device->backlight = backlight_device_register(name,
+ 			NULL, device, &acpi_backlight_ops);
++		if (IS_ERR(device->backlight))
++			return;
+ 		device->backlight->props.max_brightness = device->brightness->count-3;
+ 		kfree(name);
+ 
