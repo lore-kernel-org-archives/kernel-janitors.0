@@ -1,63 +1,69 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 19 Jul 2009 15:26:58 +0000
-Subject: [PATCH 5/10] drivers/pci: Move a dereference below a NULL test
-Message-Id: <Pine.LNX.4.64.0907191726360.16542@ask.diku.dk>
+Date: Tue, 28 Jul 2009 15:53:53 +0000
+Subject: [PATCH 4/9] fs/btrfs: correct error-handling code
+Message-Id: <Pine.LNX.4.64.0907281753260.28189@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kristen.c.accardi@intel.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: chris.mason@oracle.com, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If the NULL test is necessary, then the dereference should be moved below
-the NULL test.
+find_zlib_workspace returns an ERR_PTR value in an error case instead of NULL.
 
-The semantic patch that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-type T;
-expression E,E1;
-identifier i,fld;
-statement S;
+@match exists@
+expression x, E;
+statement S1, S2;
 @@
 
-- T i =3D E->fld;
-+ T i;
-  ... when !=3D E=E1
-      when !=3D i
-  if (E =3D NULL||...) S
-+ i =3D E->fld;
+x = find_zlib_workspace(...)
+... when != x = E
+(
+*  if (x = NULL || ...) S1 else S2
+|
+*  if (x = NULL && ...) S1 else S2
+)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/pci/pcie/aspm.c             |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+ fs/btrfs/zlib.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 3d27c97..fc8311b 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -668,10 +668,11 @@ out:
- void pcie_aspm_exit_link_state(struct pci_dev *pdev)
- {
- 	struct pci_dev *parent =3D pdev->bus->self;
--	struct pcie_link_state *link_state =3D parent->link_state;
-+	struct pcie_link_state *link_state;
-=20
--	if (aspm_disabled || !pdev->is_pcie || !parent || !link_state)
-+	if (aspm_disabled || !pdev->is_pcie || !parent || !parent->link_state)
- 		return;
-+	link_state =3D parent->link_state;
- 	if (parent->pcie_type !=3D PCI_EXP_TYPE_ROOT_PORT &&
- 		parent->pcie_type !=3D PCI_EXP_TYPE_DOWNSTREAM)
- 		return;
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
+index ecfbce8..3e2b90e 100644
+--- a/fs/btrfs/zlib.c
++++ b/fs/btrfs/zlib.c
+@@ -208,7 +208,7 @@ int btrfs_zlib_compress_pages(struct address_space *mapping,
+ 	*total_in = 0;
+ 
+ 	workspace = find_zlib_workspace();
+-	if (!workspace)
++	if (IS_ERR(workspace))
+ 		return -1;
+ 
+ 	if (Z_OK != zlib_deflateInit(&workspace->def_strm, 3)) {
+@@ -366,7 +366,7 @@ int btrfs_zlib_decompress_biovec(struct page **pages_in,
+ 	char *kaddr;
+ 
+ 	workspace = find_zlib_workspace();
+-	if (!workspace)
++	if (IS_ERR(workspace))
+ 		return -ENOMEM;
+ 
+ 	data_in = kmap(pages_in[page_in_index]);
+@@ -547,9 +547,9 @@ int btrfs_zlib_decompress(unsigned char *data_in,
+ 		return -ENOMEM;
+ 
+ 	workspace = find_zlib_workspace();
+-	if (!workspace)
++	if (IS_ERR(workspace))
+ 		return -ENOMEM;
+ 
+ 	workspace->inf_strm.next_in = data_in;
