@@ -1,27 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 21 Jul 2009 20:01:32 +0000
-Subject: Re: [PATCH 4/10] drivers/net: Move a dereference below a NULL test
-Message-Id: <20090721.130132.152098027.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 28 Jul 2009 15:54:24 +0000
+Subject: [PATCH 5/9] drivers/net/wireless: correct error-handling code
+Message-Id: <Pine.LNX.4.64.0907281753540.28189@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907191726140.16542@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907191726140.16542@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: eilong@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 19 Jul 2009 17:26:35 +0200 (CEST)
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> If the NULL test is necessary, then the dereference should be moved below
-> the NULL test.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+iwm_wdev_alloc returns an ERR_PTR value in an error case instead of NULL.
 
-Applied.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@match exists@
+expression x, E;
+statement S1, S2;
+@@
+
+x = iwm_wdev_alloc(...)
+... when != x = E
+(
+*  if (x = NULL || ...) S1 else S2
+|
+*  if (x = NULL && ...) S1 else S2
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wireless/iwmc3200wifi/netdev.c     |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/iwmc3200wifi/netdev.c b/drivers/net/wireless/iwmc3200wifi/netdev.c
+index bb71f8a..e1c6693 100644
+--- a/drivers/net/wireless/iwmc3200wifi/netdev.c
++++ b/drivers/net/wireless/iwmc3200wifi/netdev.c
+@@ -99,7 +99,7 @@ void *iwm_if_alloc(int sizeof_bus, struct device *dev,
+ 	int ret = 0;
+ 
+ 	wdev = iwm_wdev_alloc(sizeof_bus, dev);
+-	if (!wdev) {
++	if (IS_ERR(wdev)) {
+ 		dev_err(dev, "no memory for wireless device instance\n");
+ 		return ERR_PTR(-ENOMEM);
+ 	}
