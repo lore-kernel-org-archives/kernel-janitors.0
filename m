@@ -1,17 +1,17 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 28 Jul 2009 20:11:14 +0000
+From: Jonathan Woithe <jwoithe@physics.adelaide.edu.au>
+Date: Wed, 29 Jul 2009 01:02:21 +0000
 Subject: Re: [PATCH 6/12] drivers/platform/x86: Correct redundant test
-Message-Id: <Pine.LNX.4.64.0907282207590.2267@ask.diku.dk>
+Message-Id: <200907290050.n6T0oL0o024740@mercury.physics.adelaide.edu.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907271813490.2682@ask.diku.dk> <4A6F3AEA.7090102@grupopie.com>
-In-Reply-To: <4A6F3AEA.7090102@grupopie.com>
+References: <4A6F3AEA.7090102@grupopie.com>
+In-Reply-To: <4A6F3AEA.7090102@grupopie.com> from "Paulo Marques" at Jul 28, 2009 06:52:42 PM
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Paulo Marques <pmarques@grupopie.com>
-Cc: jwoithe@physics.adelaide.edu.au, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Julia Lawall <julia@diku.dk>, jwoithe@physics.adelaide.edu.au, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 28 Jul 2009, Paulo Marques wrote:
+Hi guys
 
 > Julia Lawall wrote:
 > > [...]
@@ -35,12 +35,29 @@ On Tue, 28 Jul 2009, Paulo Marques wrote:
 > 
 >    if (!fujitsu)
 >      return -EINVAL;
+> 
+> to avoid dereferencing a NULL pointer below?
 
-acpi_driver_data just accesses a field of its argument.  Is there a worry 
-that from one call to the next it could have a different value?
+Hmm, yes it should.  Well spotted.  And I'm not certain how the duplicate
+test on "device" got in there in the first place.  I suspect it came about
+due to some structural changes made a few versions ago and I failed to
+notice that the second check became redundant.
 
-Perhaps it would be better to first test !device, then initialize fujitsu, 
-and then test the result of fujitsu?  The acpi_driver_data, which might 
-someday do something more complicated, would only be called once.
+So, combining this with the above patch we should instead do
 
-julia
+Signed-off-by: jwoithe@physics.adelaide.edu.au <Jonathan Woithe>
+
+--- a/drivers/platform/x86/fujitsu-laptop.c	2009-06-12 19:51:45.333234000 +0930
++++ b/drivers/platform/x86/fujitsu-laptop.c	2009-07-29 10:14:30.610249941 +0930
+@@ -745,7 +745,7 @@ static int acpi_fujitsu_remove(struct ac
+ 
+ 	fujitsu = acpi_driver_data(device);
+ 
+-	if (!device || !acpi_driver_data(device))
++	if (!fujitsu)
+ 		return -EINVAL;
+ 
+ 	fujitsu->acpi_handle = NULL;
+
+Regards
+  jonathan
