@@ -1,7 +1,7 @@
-From: Greg KH <gregkh@suse.de>
-Date: Wed, 29 Jul 2009 13:02:33 +0000
+From: Joe Perches <joe@perches.com>
+Date: Wed, 29 Jul 2009 13:03:28 +0000
 Subject: Re: [PATCH 4/4] Staging: hv: Fix warning by casting a (const void
-Message-Id: <20090729130233.GA27054@suse.de>
+Message-Id: <1248872608.3493.26.camel@Joe-Laptop.home>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200907291410.29355.npalix@diku.dk>
 In-Reply-To: <200907291410.29355.npalix@diku.dk>
@@ -9,18 +9,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Nicolas Palix <npalix@diku.dk>
-Cc: hjanssen@microsoft.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: gregkh@suse.de, hjanssen@microsoft.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 29, 2009 at 02:10:28PM +0200, Nicolas Palix wrote:
-> 
+On Wed, 2009-07-29 at 14:10 +0200, Nicolas Palix wrote: 
 > Fix compilation warning by casting the const void *Buffer
 > variable into a void *.
-> 
-> Signed-off-by: Nicolas Palix <npalix@diku.dk>
-> ---
->  drivers/staging/hv/Channel.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
 > diff --git a/drivers/staging/hv/Channel.c b/drivers/staging/hv/Channel.c
 > index 68f3442..854fa30 100644
 > --- a/drivers/staging/hv/Channel.c
@@ -31,17 +24,44 @@ On Wed, Jul 29, 2009 at 02:10:28PM +0200, Nicolas Palix wrote:
 >  
 > -	bufferList[1].Data = Buffer;
 > +	bufferList[1].Data = (void *)Buffer;
+>  	bufferList[1].Length = BufferLen;
 
-Yeah, I thought about doing this as well, but it's wrong.  If this
-buffer really isn't being modified, then the Data pointer needs to be
-const.
+Perhaps this is better?
 
-Or, if the Data pointer really is going to not be const, then the
-function parameters need to be changed, but that means lots of code
-needs to be changed.
+diff --git a/drivers/staging/hv/RingBuffer.c b/drivers/staging/hv/RingBuffer.c
+index 6a9f568..fa40f46 100644
+--- a/drivers/staging/hv/RingBuffer.c
++++ b/drivers/staging/hv/RingBuffer.c
+@@ -228,7 +228,7 @@ static u32
+ CopyToRingBuffer(
+ 	RING_BUFFER_INFO	*RingInfo,
+ 	u32				StartWriteOffset,
+-	void *				Src,
++	const void *			Src,
+ 	u32				SrcLen);
+ 
+ static u32
+@@ -559,7 +559,7 @@ u32
+ CopyToRingBuffer(
+ 	RING_BUFFER_INFO	*RingInfo,
+ 	u32				StartWriteOffset,
+-	void *				Src,
++	const void *			Src,
+ 	u32				SrcLen)
+ {
+ 	void * ringBuffer=GetRingBuffer(RingInfo);
+diff --git a/drivers/staging/hv/RingBuffer.h b/drivers/staging/hv/RingBuffer.h
+index a0b6e0e..4cea2af 100644
+--- a/drivers/staging/hv/RingBuffer.h
++++ b/drivers/staging/hv/RingBuffer.h
+@@ -28,7 +28,7 @@
+ #include "include/osd.h"
+ 
+ typedef struct _SG_BUFFER_LIST {
+-	void *	Data;
++	const void *Data;
+ 	u32	Length;
+ } SG_BUFFER_LIST;
+ 
 
-Hank, what do you think is the correct thing to do here?
 
-thanks,
-
-greg k-h
