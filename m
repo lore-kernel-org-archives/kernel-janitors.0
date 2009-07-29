@@ -1,51 +1,38 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Sun, 19 Jul 2009 22:04:57 +0000
-Subject: Re: [PATCH 3/10] drivers/hid: Move dereferences below a NULL test
-Message-Id: <alpine.LNX.2.00.0907200004310.11648@wotan.suse.de>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Wed, 29 Jul 2009 12:10:28 +0000
+Subject: [PATCH 4/4] Staging: hv: Fix warning by casting a (const void *) to (void *)
+Message-Id: <200907291410.29355.npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907191725530.16542@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907191725530.16542@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: gregkh@suse.de, hjanssen@microsoft.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 19 Jul 2009, Julia Lawall wrote:
 
-> From: Julia Lawall <julia@diku.dk>
->=20
-> If the NULL test is necessary, then the dereferences should be moved below
-> the NULL test.
->=20
-> The semantic patch that makes this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
->=20
-> // <smpl>
-> @@
-> type T;
-> expression E,E1;
-> identifier i,fld;
-> statement S;
-> @@
->=20
-> - T i =3D E->fld;
-> + T i;
->   ... when !=3D E=E1
->       when !=3D i
->   if (E =3D NULL||...) S
-> + i =3D E->fld;
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Fix compilation warning by casting the const void *Buffer
+variable into a void *.
 
-Good catch, applied, thanks Julia.
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+---
+ drivers/staging/hv/Channel.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---=20
-Jiri Kosina
-SUSE Labs
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/hv/Channel.c b/drivers/staging/hv/Channel.c
+index 68f3442..854fa30 100644
+--- a/drivers/staging/hv/Channel.c
++++ b/drivers/staging/hv/Channel.c
+@@ -787,7 +787,7 @@ VmbusChannelSendPacket(
+ 	bufferList[0].Data = &desc;
+ 	bufferList[0].Length = sizeof(VMPACKET_DESCRIPTOR);
+ 
+-	bufferList[1].Data = Buffer;
++	bufferList[1].Data = (void *)Buffer;
+ 	bufferList[1].Length = BufferLen;
+ 
+ 	bufferList[2].Data = &alignedData;
+-- 
+1.6.0.4
+
+
+-- 
+Nicolas Palix
