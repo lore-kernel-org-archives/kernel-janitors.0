@@ -1,48 +1,62 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Fri, 17 Jul 2009 06:31:33 +0000
-Subject: Re: [PATCH 1/4] drivers/block: adjust NULL test
-Message-Id: <4A601AC5.1010308@kernel.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 30 Jul 2009 14:11:24 +0000
+Subject: [PATCH 5/5] sound/aoa: Add kmalloc NULL tests
+Message-Id: <Pine.LNX.4.64.0907301610550.8734@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907132243110.12374@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907132243110.12374@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: johannes@sipsolutions.net, linuxppc-dev@ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> dtp is derefenced on the lines above the test !dtp, and so it cannot be
-> NULL at this point.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @r@
-> expression x,E,E1;
-> identifier f,l;
-> position p1,p2;
-> @@
-> 
-> *x@p1->f = E1;
-> ... when != x = E
->     when != goto l;
-> (
-> *x@p2 = NULL
-> |
-> *x@p2 != NULL
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-Indeed, added to my temp block tree.  Will forward upstream in a few
-days.
+Check that the result of kzalloc is not NULL before a dereference.
 
-Thanks.
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
--- 
-tejun
+// <smpl>
+@@
+expression *x;
+identifier f;
+constant char *C;
+@@
+
+x = \(kmalloc\|kcalloc\|kzalloc\)(...);
+... when != x = NULL
+    when != x != NULL
+    when != (x || ...)
+(
+kfree(x)
+|
+f(...,C,...,x,...)
+|
+*f(...,x,...)
+|
+*x->f
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/aoa/core/gpio-pmf.c           |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/sound/aoa/core/gpio-pmf.c b/sound/aoa/core/gpio-pmf.c
+index 5ca2220..b4439ce 100644
+--- a/sound/aoa/core/gpio-pmf.c
++++ b/sound/aoa/core/gpio-pmf.c
+@@ -182,6 +182,12 @@ static int pmf_set_notify(struct gpio_runtime *rt,
+ 	if (!old && notify) {
+ 		irq_client = kzalloc(sizeof(struct pmf_irq_client),
+ 				     GFP_KERNEL);
++		if (!irq_client) {
++			err = -ENOMEM;
++			printk(KERN_ERR "snd-aoa: gpio layer failed to"
++				" register %s irq (%d)\n", name, err);
++			goto out_unlock;
++		}
+ 		irq_client->data = notif;
+ 		irq_client->handler = pmf_handle_notify_irq;
+ 		irq_client->owner = THIS_MODULE;
