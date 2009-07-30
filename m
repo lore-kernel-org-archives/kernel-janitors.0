@@ -1,32 +1,213 @@
-From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Date: Mon, 13 Jul 2009 17:00:38 +0000
-Subject: Re: [PATCH 5/5] staging/otus: Move a dereference below a NULL test
-Message-Id: <20090713170038.GA12919@mosca>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Thu, 30 Jul 2009 15:37:23 +0000
+Subject: [PATCH] Staging: hv: Replace typedef SG_BUFFER_LIST by struct scatterlist
+Message-Id: <200907301737.23849.npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907110950510.29592@ask.diku.dk>
- <4A584A94.5010105@gmail.com>
- <1247307444.3032.2.camel@hpdv5.satnam>
- <1247308323.3032.5.camel@hpdv5.satnam>
- <4A5872FD.8040500@gmail.com>
-In-Reply-To: <4A5872FD.8040500@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jirislaby@gmail.com>
-Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, Luis Rodriguez <Luis.Rodriguez@atheros.com>, Julia Lawall <julia@diku.dk>, "gregkh@suse.de" <gregkh@suse.de>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: gregkh@suse.de, hjanssen@microsoft.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 11, 2009 at 04:09:49AM -0700, Jiri Slaby wrote:
-> On 07/11/2009 12:32 PM, Jaswinder Singh Rajput wrote:
-> > And more funny thing is that all functions are global in this file.
-> >
-> > Greg, can you please check the scope of these function, why all are
-> > global.
-> 
-> Why don't you do that? I think patches are welcome :).
 
-I will note Otus has a replacement ar9170 driver already upstream,
-as soon as it gets aggregation support otus will be dropped. Better
-focus on ar9170 instead if you are looking to spend some cycles on
-driver help.
+typedef SG_BUFFER_LIST is removed and its uses are replaced by the use of
+struct scatterlist.
 
-  Luis
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+---
+ drivers/staging/hv/Channel.c    |   42 +++++++++++++-------------------------
+ drivers/staging/hv/RingBuffer.c |   27 +++++++++++++------------
+ drivers/staging/hv/RingBuffer.h |   13 ++++-------
+ 3 files changed, 34 insertions(+), 48 deletions(-)
+
+diff --git a/drivers/staging/hv/Channel.c b/drivers/staging/hv/Channel.c
+index be9770e..2938e58 100644
+--- a/drivers/staging/hv/Channel.c
++++ b/drivers/staging/hv/Channel.c
+@@ -773,7 +773,7 @@ VmbusChannelSendPacket(
+ 	VMPACKET_DESCRIPTOR desc;
+ 	u32 packetLen = sizeof(VMPACKET_DESCRIPTOR) + BufferLen;
+ 	u32 packetLenAligned = ALIGN_UP(packetLen, sizeof(u64));
+-	SG_BUFFER_LIST bufferList[3];
++	struct scatterlist bufferList[3];
+ 	u64 alignedData=0;
+ 
+ 	DPRINT_ENTER(VMBUS);
+@@ -790,14 +790,10 @@ VmbusChannelSendPacket(
+ 	desc.Length8 = (u16)(packetLenAligned >> 3);
+ 	desc.TransactionId = RequestId;
+ 
+-	bufferList[0].Data = &desc;
+-	bufferList[0].Length = sizeof(VMPACKET_DESCRIPTOR);
+-
+-	bufferList[1].Data = Buffer;
+-	bufferList[1].Length = BufferLen;
+-
+-	bufferList[2].Data = &alignedData;
+-	bufferList[2].Length = packetLenAligned - packetLen;
++	sg_init_table(bufferList,3);
++	sg_set_buf(&bufferList[0], &desc, sizeof(VMPACKET_DESCRIPTOR));
++	sg_set_buf(&bufferList[1], Buffer, BufferLen);
++	sg_set_buf(&bufferList[2], &alignedData, packetLenAligned - packetLen);
+ 
+ 	ret = RingBufferWrite(
+ 		&Channel->Outbound,
+@@ -841,7 +837,7 @@ VmbusChannelSendPacketPageBuffer(
+ 	u32 descSize;
+ 	u32 packetLen;
+ 	u32 packetLenAligned;
+-	SG_BUFFER_LIST bufferList[3];
++	struct scatterlist bufferList[3];
+ 	u64 alignedData=0;
+ 
+ 	DPRINT_ENTER(VMBUS);
+@@ -872,14 +868,10 @@ VmbusChannelSendPacketPageBuffer(
+ 		desc.Range[i].Pfn	 = PageBuffers[i].Pfn;
+ 	}
+ 
+-	bufferList[0].Data = &desc;
+-	bufferList[0].Length = descSize;
+-
+-	bufferList[1].Data = Buffer;
+-	bufferList[1].Length = BufferLen;
+-
+-	bufferList[2].Data = &alignedData;
+-	bufferList[2].Length = packetLenAligned - packetLen;
++	sg_init_table(bufferList,3);
++	sg_set_buf(&bufferList[0], &desc, descSize);
++	sg_set_buf(&bufferList[1], Buffer, BufferLen);
++	sg_set_buf(&bufferList[2], &alignedData, packetLenAligned - packetLen);
+ 
+ 	ret = RingBufferWrite(
+ 		&Channel->Outbound,
+@@ -922,7 +914,7 @@ VmbusChannelSendPacketMultiPageBuffer(
+ 	u32 descSize;
+ 	u32 packetLen;
+ 	u32 packetLenAligned;
+-	SG_BUFFER_LIST bufferList[3];
++	struct scatterlist bufferList[3];
+ 	u64 alignedData=0;
+ 	u32 PfnCount = NUM_PAGES_SPANNED(MultiPageBuffer->Offset, MultiPageBuffer->Length);
+ 
+@@ -955,14 +947,10 @@ VmbusChannelSendPacketMultiPageBuffer(
+ 
+ 	memcpy(desc.Range.PfnArray, MultiPageBuffer->PfnArray, PfnCount*sizeof(u64));
+ 
+-	bufferList[0].Data = &desc;
+-	bufferList[0].Length = descSize;
+-
+-	bufferList[1].Data = Buffer;
+-	bufferList[1].Length = BufferLen;
+-
+-	bufferList[2].Data = &alignedData;
+-	bufferList[2].Length = packetLenAligned - packetLen;
++	sg_init_table(bufferList,3);
++	sg_set_buf(&bufferList[0], &desc, descSize);
++	sg_set_buf(&bufferList[1], Buffer, BufferLen);
++	sg_set_buf(&bufferList[2], &alignedData, packetLenAligned - packetLen);
+ 
+ 	ret = RingBufferWrite(
+ 		&Channel->Outbound,
+diff --git a/drivers/staging/hv/RingBuffer.c b/drivers/staging/hv/RingBuffer.c
+index d338ce2..571f9db 100644
+--- a/drivers/staging/hv/RingBuffer.c
++++ b/drivers/staging/hv/RingBuffer.c
+@@ -347,9 +347,9 @@ Description:
+ --*/
+ static int
+ RingBufferWrite(
+-	RING_BUFFER_INFO*	OutRingInfo,
+-	SG_BUFFER_LIST		SgBuffers[],
+-	u32				SgBufferCount
++	RING_BUFFER_INFO *OutRingInfo,
++	struct scatterlist *sglist,
++	u32 sgcount
+ 	)
+ {
+ 	int i=0;
+@@ -357,15 +357,16 @@ RingBufferWrite(
+ 	u32 byteAvailToRead;
+ 	u32 totalBytesToWrite=0;
+ 
++	struct scatterlist *sg;
+ 	volatile u32 nextWriteLocation;
+ 	u64 prevIndices=0;
+ 	unsigned long flags;
+ 
+ 	DPRINT_ENTER(VMBUS);
+ 
+-	for (i=0; i < SgBufferCount; i++)
++	for_each_sg(sglist, sg, sgcount, i)
+ 	{
+-		totalBytesToWrite += SgBuffers[i].Length;
++		totalBytesToWrite += sg->length;
+ 	}
+ 
+ 	totalBytesToWrite += sizeof(u64);
+@@ -394,21 +395,21 @@ RingBufferWrite(
+ 	/* Write to the ring buffer */
+ 	nextWriteLocation = GetNextWriteLocation(OutRingInfo);
+ 
+-	for (i=0; i < SgBufferCount; i++)
++	for_each_sg(sglist, sg, sgcount, i)
+ 	{
+-		 nextWriteLocation = CopyToRingBuffer(OutRingInfo,
+-												nextWriteLocation,
+-												SgBuffers[i].Data,
+-												SgBuffers[i].Length);
++		nextWriteLocation = CopyToRingBuffer(OutRingInfo,
++						     nextWriteLocation,
++						     sg_virt(sg),
++						     sg->length);
+ 	}
+ 
+ 	/* Set previous packet start */
+ 	prevIndices = GetRingBufferIndices(OutRingInfo);
+ 
+ 	nextWriteLocation = CopyToRingBuffer(OutRingInfo,
+-												nextWriteLocation,
+-												&prevIndices,
+-												sizeof(u64));
++					     nextWriteLocation,
++					     &prevIndices,
++					     sizeof(u64));
+ 
+ 	/* Make sure we flush all writes before updating the writeIndex */
+ 	mb();
+diff --git a/drivers/staging/hv/RingBuffer.h b/drivers/staging/hv/RingBuffer.h
+index a0b6e0e..1658614 100644
+--- a/drivers/staging/hv/RingBuffer.h
++++ b/drivers/staging/hv/RingBuffer.h
+@@ -25,12 +25,9 @@
+ #ifndef _RING_BUFFER_H_
+ #define _RING_BUFFER_H_
+ 
+-#include "include/osd.h"
++#include <linux/scatterlist.h>
+ 
+-typedef struct _SG_BUFFER_LIST {
+-	void *	Data;
+-	u32	Length;
+-} SG_BUFFER_LIST;
++#include "include/osd.h"
+ 
+ typedef struct _RING_BUFFER {
+     volatile u32	WriteIndex;     /* Offset in bytes from the start of ring data below */
+@@ -83,9 +80,9 @@ RingBufferCleanup(
+ 
+ static int
+ RingBufferWrite(
+-	RING_BUFFER_INFO	*RingInfo,
+-	SG_BUFFER_LIST		SgBuffers[],
+-	u32				SgBufferCount
++	RING_BUFFER_INFO *RingInfo,
++	struct scatterlist *sglist,
++	u32 sgcount
+ 	);
+ 
+ static int
+-- 
+1.6.0.4
+
+
+-- 
+Nicolas Palix
