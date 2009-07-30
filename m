@@ -1,32 +1,58 @@
-From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Date: Thu, 30 Jul 2009 20:19:31 +0000
-Subject: Re: [PATCH 3/5] mm: Add kmalloc NULL tests
-Message-Id: <20090730201931.GA12965@logfs.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 30 Jul 2009 14:10:54 +0000
+Subject: [PATCH 4/5] net/netlabel: Add kmalloc NULL tests
+Message-Id: <Pine.LNX.4.64.0907301610230.8734@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907301608350.8734@ask.diku.dk> <20090730153658.GA22986@cmpxchg.org> <20090730183558.GA11763@logfs.org> <20090730191213.GA9471@cmpxchg.org>
-In-Reply-To: <20090730191213.GA9471@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Julia Lawall <julia@diku.dk>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: paul.moore@hp.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 30 July 2009 21:12:14 +0200, Johannes Weiner wrote:
->=20
-> You will probably have a hard time establishing a userspace mapping
-> before slab is initializied :)
+From: Julia Lawall <julia@diku.dk>
 
-Agreed.
+The test on map4 should be a test on map6.
 
-J=C3=B6rn
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
---=20
-The story so far:
-In the beginning the Universe was created.  This has made a lot
-of people very angry and been widely regarded as a bad move.
--- Douglas Adams
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+// <smpl>
+@@
+expression *x;
+identifier f;
+constant char *C;
+@@
+
+x = \(kmalloc\|kcalloc\|kzalloc\)(...);
+... when != x = NULL
+    when != x != NULL
+    when != (x || ...)
+(
+kfree(x)
+|
+f(...,C,...,x,...)
+|
+*f(...,x,...)
+|
+*x->f
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/netlabel/netlabel_kapi.c        |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index 3ff6f32..6ce0020 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -151,7 +151,7 @@ int netlbl_cfg_unlbl_map_add(const char *domain,
+ 			addr6 = addr;
+ 			mask6 = mask;
+ 			map6 = kzalloc(sizeof(*map6), GFP_ATOMIC);
+-			if (map4 = NULL)
++			if (!map6)
+ 				goto cfg_unlbl_map_add_failure;
+ 			map6->type = NETLBL_NLTYPE_UNLABELED;
+ 			ipv6_addr_copy(&map6->list.addr, addr6);
