@@ -1,62 +1,59 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 30 Jul 2009 14:11:24 +0000
-Subject: [PATCH 5/5] sound/aoa: Add kmalloc NULL tests
-Message-Id: <Pine.LNX.4.64.0907301610550.8734@ask.diku.dk>
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Thu, 30 Jul 2009 14:17:00 +0000
+Subject: Re: [PATCH 5/5] sound/aoa: Add kmalloc NULL tests
+Message-Id: <1248963420.16129.0.camel@johannes.local>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-1aAgYaYXl+i4hAkpYGaf"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: johannes@sipsolutions.net, linuxppc-dev@ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Pine.LNX.4.64.0907301610550.8734@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0907301610550.8734@ask.diku.dk>
+To: Julia Lawall <julia@diku.dk>
+Cc: linuxppc-dev@ozlabs.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-Check that the result of kzalloc is not NULL before a dereference.
+--=-1aAgYaYXl+i4hAkpYGaf
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-The semantic match that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+On Thu, 2009-07-30 at 16:11 +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+>=20
+> Check that the result of kzalloc is not NULL before a dereference.
 
-// <smpl>
-@@
-expression *x;
-identifier f;
-constant char *C;
-@@
+>  		irq_client =3D kzalloc(sizeof(struct pmf_irq_client),
+>  				     GFP_KERNEL);
+> +		if (!irq_client) {
+> +			err =3D -ENOMEM;
+> +			printk(KERN_ERR "snd-aoa: gpio layer failed to"
+> +				" register %s irq (%d)\n", name, err);
+> +			goto out_unlock;
+> +		}
 
-x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-... when != x = NULL
-    when != x != NULL
-    when != (x || ...)
-(
-kfree(x)
-|
-f(...,C,...,x,...)
-|
-*f(...,x,...)
-|
-*x->f
-)
-// </smpl>
+Looks good, thanks, but I'd really drop the printk if only to not have
+the string there, that doesn't really seem interesting.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+johannes
 
----
- sound/aoa/core/gpio-pmf.c           |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+--=-1aAgYaYXl+i4hAkpYGaf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-diff --git a/sound/aoa/core/gpio-pmf.c b/sound/aoa/core/gpio-pmf.c
-index 5ca2220..b4439ce 100644
---- a/sound/aoa/core/gpio-pmf.c
-+++ b/sound/aoa/core/gpio-pmf.c
-@@ -182,6 +182,12 @@ static int pmf_set_notify(struct gpio_runtime *rt,
- 	if (!old && notify) {
- 		irq_client = kzalloc(sizeof(struct pmf_irq_client),
- 				     GFP_KERNEL);
-+		if (!irq_client) {
-+			err = -ENOMEM;
-+			printk(KERN_ERR "snd-aoa: gpio layer failed to"
-+				" register %s irq (%d)\n", name, err);
-+			goto out_unlock;
-+		}
- 		irq_client->data = notif;
- 		irq_client->handler = pmf_handle_notify_irq;
- 		irq_client->owner = THIS_MODULE;
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABAgAGBQJKcatZAAoJEODzc/N7+QmaC/kP/1WQTpl1VPuF4Gxnf9ihDUe0
+U0Oo+Zi0PZy87OMRTXTXEEwhzDEH6lC1wETlI3NIofQ5Md13G9/jJUR9fUMDWi7O
+j7EKy+1iwrNmGeif8Yaicx3ZSUj+/hKDQFc6mg1NyxB3V2Cf1L7PJEE6fqqXLpHA
+tt/irChip+rpWaFBy+r1yD0wUw2rGwB/CVsN9zasH91fbzg6pU6xU3dwQpaUPzt9
+bIxNd7ucne/TtYKRYSpEYSCjy/XfKctgNspyD2O1MmnrotpaW33YcGo5PAZekvJj
+LKoc0ScM7XxrBjT/W6oKmueQzrSu4PFqenKgJlBZI6O1fmPZig2GkFDdcfIW3qXK
+13A9TBAofWd4p4uQRAUVRJ/25RBKLdSZ3J0SlB3Pd7jDB7lcl0dfFI9ofO8OqHCP
+rlklAyAv9GEtns2oqq3IIkgAnz6g5eJgsuaeh+ZNfbvLvmFjGU8D41FMeidW4BNW
+/1iww2ENSafqe8hkR1LYmcP+OOlIqHebKywqp/9Fw3V69fwy0gSYhFsqZDj3MW7o
+q3VksjHoMI333dwg/A/+5kR+xiijFORYNfRJ4esaEpvG7eTVB3CBqbnR7aYn7GYa
+mcZLW5aZ+hG4glkC6ijGwm3gyQwZLkqBFt2ohv4fC0XQvgie2XyiAdn9oEQlBXgB
+hZSmSHQCTc/yGIA7+O5h
+=sGsV
+-----END PGP SIGNATURE-----
+
+--=-1aAgYaYXl+i4hAkpYGaf--
+
