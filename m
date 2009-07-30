@@ -1,21 +1,28 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Thu, 30 Jul 2009 18:35:08 +0000
-Subject: Re: [PATCH] Staging: hv: Replace typedef SG_BUFFER_LIST by struct
-Message-Id: <Pine.LNX.4.64.0907302020250.13698@ask.diku.dk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="-511516320-909263340-1248978908=:13698"
+From: Hank Janssen <hjanssen@microsoft.com>
+Date: Thu, 30 Jul 2009 18:37:16 +0000
+Subject: RE: [PATCH] Staging: hv: Replace typedef SG_BUFFER_LIST by struct
+Message-Id: <8AFC7968D54FB448A30D8F38F259C56209A94E87@TK5EX14MBXC114.redmond.corp.microsoft.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200907301737.23849.npalix@diku.dk> <20090730155844.GB20557@suse.de>
-In-Reply-To: <20090730155844.GB20557@suse.de>
-To: Greg KH <gregkh@suse.de>
-Cc: hjanssen@microsoft.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <200907301737.23849.npalix@diku.dk>
+ <20090730155844.GB20557@suse.de>
+ <Pine.LNX.4.64.0907302020250.13698@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0907302020250.13698@ask.diku.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nicolas Palix <npalix@diku.dk>, Greg KH <gregkh@suse.de>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
----511516320-909263340-1248978908=:13698
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"; format="flowed"
-Content-Transfer-Encoding: quoted-printable
+
+Nicolas,
+
+I was getting into the RingBuffer as well. Do you want to combine efforts?
+
+Thanks,
+
+Hank.
+
 
 On Thu, 30 Jul 2009, Greg KH wrote:
 
@@ -34,22 +41,4 @@ dedicated features.
 Any hint?
 Of which infrastructure are you thinking in your previous mail?
 
->
-> Hank, you are testing the linux-next tree to make sure we haven't broken
-> anything yet, right? :)
->
-> thanks,
->
-> greg k-h
 
-You=B4re welcome.
-
-Nicolas Palix
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
-" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
----511516320-909263340-1248978908=:13698--
