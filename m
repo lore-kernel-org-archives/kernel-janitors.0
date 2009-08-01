@@ -1,23 +1,51 @@
-From: Kyle McMartin <kyle@mcmartin.ca>
-Date: Wed, 05 Aug 2009 14:57:13 +0000
-Subject: Re: [PATCH] arch/parisc: correct use of SHF_ALLOC
-Message-Id: <20090805145713.GP28572@bombadil.infradead.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 01 Aug 2009 19:49:04 +0000
+Subject: [PATCH 2/5] drivers/media/video/uvc: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908012148420.25693@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908042226231.3737@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0908042226231.3737@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Helge Deller <deller@gmx.de>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: laurent.pinchart@skynet.be, linux-media@vger.kernel.org, linux-uvc-devel@lists.berlios.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 04, 2009 at 10:27:07PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> SHF_ALLOC is suitable for testing against the sh_flags field, not the
-> sh_type field.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Thanks Julia, applied.
+The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+but is perhaps more readable.
+
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@haskernel@
+@@
+
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression x,__divisor;
+@@
+
+- (((x) + ((__divisor) / 2)) / (__divisor))
++ DIV_ROUND_CLOSEST(x,__divisor)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/video/uvc/uvc_v4l2.c  |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/media/video/uvc/uvc_v4l2.c b/drivers/media/video/uvc/uvc_v4l2.c
+index 87cb9cc..6edaaf6 100644
+--- a/drivers/media/video/uvc/uvc_v4l2.c
++++ b/drivers/media/video/uvc/uvc_v4l2.c
+@@ -95,7 +95,7 @@ static __u32 uvc_try_frame_interval(struct uvc_frame *frame, __u32 interval)
+ 		const __u32 max = frame->dwFrameInterval[1];
+ 		const __u32 step = frame->dwFrameInterval[2];
+ 
+-		interval = min + (interval - min + step/2) / step * step;
++		interval = min + DIV_ROUND_CLOSEST(interval-min, step) * step;
+ 		if (interval > max)
+ 			interval = max;
+ 	}
