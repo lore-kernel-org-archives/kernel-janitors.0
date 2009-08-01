@@ -1,46 +1,71 @@
-From: Davidlohr Bueso <dave@gnu.org>
-Date: Fri, 14 Aug 2009 21:06:09 +0000
-Subject: [PATCH] hfc_sx: Remove unnecessary cast
-Message-Id: <20090814210609.GA4024@fencepost.gnu.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 01 Aug 2009 08:55:53 +0000
+Subject: [PATCH 10/10] drivers/net/wireless: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0908011055250.23408@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linville@tuxdriver.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Do not need to cast kmalloc, and make the code around it a bit easier to read. Something needed for all the file actually, as the style is not very standard.
+From: Julia Lawall <julia@diku.dk>
 
-Thanks.
+Error handling code following a kzalloc should free the allocated data.
 
-Signed-off-by: Davidlohr Bueso <dave@gnu.org>
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/isdn/hisax/hfc_sx.c |   14 +++++++++-----
- 1 files changed, 9 insertions(+), 5 deletions(-)
+ drivers/net/wireless/iwmc3200wifi/commands.c   |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/isdn/hisax/hfc_sx.c b/drivers/isdn/hisax/hfc_sx.c
-index d92e8d6..172bf19 100644
---- a/drivers/isdn/hisax/hfc_sx.c
-+++ b/drivers/isdn/hisax/hfc_sx.c
-@@ -1480,12 +1480,16 @@ setup_hfcsx(struct IsdnCard *card)
-                  release_region(cs->hw.hfcsx.base, 2);
-                  return(0);
-                }  
--               if (!(cs->hw.hfcsx.extra = (void *)
--                     kmalloc(sizeof(struct hfcsx_extra), GFP_ATOMIC))) {
--                 release_region(cs->hw.hfcsx.base, 2);
--                 printk(KERN_WARNING "HFC-SX: unable to allocate memory\n");
--                 return(0);
-+
-+               cs->hw.hfcsx.extra = kmalloc(sizeof(struct hfcsx_extra),
-+                                       GFP_ATOMIC);
-+
-+               if (!cs->hw.hfcsx.extra) {
-+                       release_region(cs->hw.hfcsx.base, 2);
-+                       printk(KERN_WARNING "HFC-SX: unable to allocate memory\n");
-+                       return 0;
-                }
-+
-                printk(KERN_INFO "HFC-S%c chip detected at base 0x%x IRQ %d HZ %d\n",
-                        tmp[0], (u_int) cs->hw.hfcsx.base, cs->irq, HZ);
-                cs->hw.hfcsx.int_m2 = 0;        /* disable alle interrupts */
+diff --git a/drivers/net/wireless/iwmc3200wifi/commands.c b/drivers/net/wireless/iwmc3200wifi/commands.c
+index 0d66370..2bf9ef9 100644
+--- a/drivers/net/wireless/iwmc3200wifi/commands.c
++++ b/drivers/net/wireless/iwmc3200wifi/commands.c
+@@ -233,6 +233,7 @@ int iwm_store_rxiq_calib_result(struct iwm_priv *iwm)
+ 	eeprom_rxiq = iwm_eeprom_access(iwm, IWM_EEPROM_CALIB_RXIQ);
+ 	if (IS_ERR(eeprom_rxiq)) {
+ 		IWM_ERR(iwm, "Couldn't access EEPROM RX IQ entry\n");
++		kfree(rxiq);
+ 		return PTR_ERR(eeprom_rxiq);
+ 	}
+ 
