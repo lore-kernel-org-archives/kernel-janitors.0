@@ -1,31 +1,71 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 14 Aug 2009 23:38:07 +0000
-Subject: Re: [PATCH] s2io: Remove unnecessary casts
-Message-Id: <20090814.163807.227810344.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 01 Aug 2009 08:54:21 +0000
+Subject: [PATCH 6/10] drivers/net/wireless/iwlwifi: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0908011054010.23408@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090814020328.GA21588@fencepost.gnu.org>
-	<20090813.201452.21119996.davem@davemloft.net>
-	<20090814035733.GA29707@fencepost.gnu.org>
-In-Reply-To: <20090814035733.GA29707@fencepost.gnu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dave@gnu.org
-Cc: ram.vepa@neterion.com, santosh.rastapur@neterion.com, sivakumar.subramani@neterion.com, sreenivasa.honnur@neterion.com, anil.murthy@neterion.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: yi.zhu@intel.com, reinette.chatre@intel.com, linux-wireless@vger.kernel.org, ipw3945-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Davidlohr Bueso <dave@gnu.org>
-Date: Thu, 13 Aug 2009 23:57:33 -0400
+From: Julia Lawall <julia@diku.dk>
 
-> Ok, resubmitting and verified by checkpatch.pl
-> 
-> Thanks.
-> 
-> Signed-off-by: Davidlohr Bueso <dave@gnu.org>
+Error handling code following a kzalloc should free the allocated data.
 
-Your email client has corrupted the patch, turning tab
-characters into spaces and whatnot.
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Please correct this and make a fresh, formal, resubmission
-(fresh subject, commit message, and all).
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
-Thank you.
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/net/wireless/iwlwifi/iwl-debugfs.c     |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/wireless/iwlwifi/iwl-debugfs.c b/drivers/net/wireless/iwlwifi/iwl-debugfs.c
+index 7707a26..c2106d0 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-debugfs.c
++++ b/drivers/net/wireless/iwlwifi/iwl-debugfs.c
+@@ -320,6 +320,7 @@ static ssize_t iwl_dbgfs_nvm_read(struct file *file,
+ 	ptr = priv->eeprom;
+ 	if (!ptr) {
+ 		IWL_ERR(priv, "Invalid EEPROM/OTP memory\n");
++		kfree(buf);
+ 		return -ENOMEM;
+ 	}
+ 	pos += scnprintf(buf + pos, buf_size - pos, "NVM Type: %s\n",
