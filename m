@@ -1,16 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 03 Aug 2009 09:22:09 +0000
-Subject: Re: [PATCH 3/5] drivers/scsi: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908031121360.8435@pc-004.diku.dk>
+Date: Sat, 01 Aug 2009 19:51:06 +0000
+Subject: [PATCH 5/5] drivers/net: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908012150340.25693@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908012149050.25693@ask.diku.dk>
- <Pine.LNX.4.64.0908022235310.12625@axis700.grange>
-In-Reply-To: <Pine.LNX.4.64.0908022235310.12625@axis700.grange>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Kurt Garloff <garloff@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -37,20 +33,20 @@ expression x,__divisor;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/tmscsim.c              |    3 ++-
+ drivers/net/b44.c                   |    3 ++-
  1 files changed, 2 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/scsi/tmscsim.c b/drivers/scsi/tmscsim.c
-index 9a42734..e580db5 100644
---- a/drivers/scsi/tmscsim.c
-+++ b/drivers/scsi/tmscsim.c
-@@ -1125,7 +1125,8 @@ dc390_MsgIn_set_sync (struct dc390_acb* pACB, struct dc390_srb* pSRB)
-     {
-       if (! (bval & FAST_SCSI)) wval1++;
-       printk (KERN_INFO "DC390: Target %i: Sync transfer %i.%1i MHz, Offset %i\n", pDCB->TargetID, 
--	      40/wval1, ((40%wval1)*10+wval1/2)/wval1, pDCB->SyncOffset & 0x0f);
-+	      40/wval1, DIV_ROUND_CLOSEST((40%wval1)*10, wval1),
-+	      pDCB->SyncOffset & 0x0f);
-     }
-   
-   dc390_reprog (pACB, pDCB);
+diff --git a/drivers/net/b44.c b/drivers/net/b44.c
+index 1f7f015..07c92f3 100644
+--- a/drivers/net/b44.c
++++ b/drivers/net/b44.c
+@@ -1297,7 +1297,8 @@ static void b44_chip_reset(struct b44 *bp, int reset_kind)
+ 	switch (sdev->bus->bustype) {
+ 	case SSB_BUSTYPE_SSB:
+ 		bw32(bp, B44_MDIO_CTRL, (MDIO_CTRL_PREAMBLE |
+-		     (((ssb_clockspeed(sdev->bus) + (B44_MDC_RATIO / 2)) / B44_MDC_RATIO)
++		     (DIV_ROUND_CLOSEST(ssb_clockspeed(sdev->bus),
++					B44_MDC_RATIO)
+ 		     & MDIO_CTRL_MAXF_MASK)));
+ 		break;
+ 	case SSB_BUSTYPE_PCI:
