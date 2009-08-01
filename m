@@ -1,91 +1,52 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Aug 2009 06:20:04 +0000
-Subject: Re: [PATCH 2/5] drivers/media/video/uvc: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908020818540.15557@ask.diku.dk>
+Date: Sat, 01 Aug 2009 19:49:55 +0000
+Subject: [PATCH 3/5] drivers/scsi: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908012149050.25693@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908012148420.25693@ask.diku.dk>
- <200908012223.52022.laurent.pinchart@skynet.be>
-In-Reply-To: <200908012223.52022.laurent.pinchart@skynet.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@skynet.be>
-Cc: linux-media@vger.kernel.org, linux-uvc-devel@lists.berlios.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: garloff@suse.de, g.liakhovetski@gmx.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 1 Aug 2009, Laurent Pinchart wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Saturday 01 August 2009 21:49:04 Julia Lawall wrote:
-> > From: Julia Lawall <julia@diku.dk>
-> >
-> > The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
-> > but is perhaps more readable.
-> >
-> > The semantic patch that makes this change is as follows:
-> > (http://www.emn.fr/x-info/coccinelle/)
-> >
-> > // <smpl>
-> > @haskernel@
-> > @@
-> >
-> > #include <linux/kernel.h>
-> >
-> > @depends on haskernel@
-> > expression x,__divisor;
-> > @@
-> >
-> > - (((x) + ((__divisor) / 2)) / (__divisor))
-> > + DIV_ROUND_CLOSEST(x,__divisor)
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <julia@diku.dk>
-> >
-> > ---
-> >  drivers/media/video/uvc/uvc_v4l2.c  |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> >
-> > diff --git a/drivers/media/video/uvc/uvc_v4l2.c
-> > b/drivers/media/video/uvc/uvc_v4l2.c index 87cb9cc..6edaaf6 100644
-> > --- a/drivers/media/video/uvc/uvc_v4l2.c
-> > +++ b/drivers/media/video/uvc/uvc_v4l2.c
-> > @@ -95,7 +95,7 @@ static __u32 uvc_try_frame_interval(struct uvc_frame
-> > *frame, __u32 interval) const __u32 max = frame->dwFrameInterval[1];
-> >  		const __u32 step = frame->dwFrameInterval[2];
-> >
-> > -		interval = min + (interval - min + step/2) / step * step;
-> > +		interval = min + DIV_ROUND_CLOSEST(interval-min, step) * step;
-> >  		if (interval > max)
-> >  			interval = max;
-> >  	}
-> 
-> The purpose of the above code is to clamp the interval value to the [min, max] 
-> range at round it to the closest multiple of step. Other drivers might need 
-> similar code. Do you think it might be useful to introduce a clamp_step macro 
-> for this ?
+The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+but is perhaps more readable.
 
-I tried searching for the following:
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-@@
-expression interval, min, max, step, E;
+// <smpl>
+@haskernel@
 @@
 
-* interval = min + (interval - min + step/2) / step * step;
-  ... when != interval = E
-* if (interval > max)
-  { ...
-     interval = max;
-  ... }
+#include <linux/kernel.h>
 
-@@
-expression interval, min, max, step, E;
+@depends on haskernel@
+expression x,__divisor;
 @@
 
-* interval = min + DIV_ROUND_CLOSEST(interval-min, step) * step;
-  ... when != interval = E
-* if (interval > max) { ...
-     interval = max;
-  ... }
+- (((x) + ((__divisor) / 2)) / (__divisor))
++ DIV_ROUND_CLOSEST(x,__divisor)
+// </smpl>
 
-and the only occurrence I found was the code above.  Perhaps there is some 
-other way in which the pattern would appear?
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-julia
+---
+ drivers/scsi/tmscsim.c              |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+Diff --git a/drivers/scsi/tmscsim.c b/drivers/scsi/tmscsim.c
+index 9a42734..7322f30 100644
+--- a/drivers/scsi/tmscsim.c
++++ b/drivers/scsi/tmscsim.c
+@@ -1125,7 +1125,8 @@ dc390_MsgIn_set_sync (struct dc390_acb* pACB, struct dc390_srb* pSRB)
+     {
+       if (! (bval & FAST_SCSI)) wval1++;
+       printk (KERN_INFO "DC390: Target %i: Sync transfer %i.%1i MHz, Offset %i\n", pDCB->TargetID, 
+-	      40/wval1, ((40%wval1)*10+wval1/2)/wval1, pDCB->SyncOffset & 0x0f);
++		40/wval1, DIV_ROUND_CLOSEST((40 % wval1) * 10, wval1),
++		pDCB->SyncOffset & 0x0f);
+     }
+   
+   dc390_reprog (pACB, pDCB);
