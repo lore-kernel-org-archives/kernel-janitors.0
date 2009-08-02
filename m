@@ -1,71 +1,65 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 07 Aug 2009 04:39:39 +0000
-Subject: Re: [PATCH 3/3] drivers/scsi: Add kmalloc NULL tests
-Message-Id: <Pine.LNX.4.64.0908070639020.1956@ask.diku.dk>
+Date: Sun, 02 Aug 2009 08:45:18 +0000
+Subject: [PATCH 3/15] arch/ia64: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908021044540.15557@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908062205190.19100@ask.diku.dk>
- <1249593604.10463.18.camel@mulgrave.site>
-In-Reply-To: <1249593604.10463.18.camel@mulgrave.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: fenghua.yu@intel.com, tony.luck@intel.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 6 Aug 2009, James Bottomley wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Thu, 2009-08-06 at 22:06 +0200, Julia Lawall wrote:
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > Check that the result of kmalloc is not NULL before passing it to other
-> > functions.
-> > 
-> > The semantic match that finds this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> > 
-> > // <smpl>
-> > @@
-> > expression *x;
-> > identifier f;
-> > constant char *C;
-> > @@
-> > 
-> > x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-> > ... when != x = NULL
-> >     when != x != NULL
-> >     when != (x || ...)
-> > (
-> > kfree(x)
-> > |
-> > f(...,C,...,x,...)
-> > |
-> > *f(...,x,...)
-> > |
-> > *x->f
-> > )
-> > // </smpl>
-> > 
-> > Signed-off-by: Julia Lawall <julia@diku.dk>
-> > 
-> > ---
-> >  drivers/scsi/sr.c                   |    2 ++
-> >  1 files changed, 2 insertions(+), 0 deletions(-)
-> > 
-> > diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-> > index cce0fe4..3fbf42e 100644
-> > --- a/drivers/scsi/sr.c
-> > +++ b/drivers/scsi/sr.c
-> > @@ -211,6 +211,8 @@ static int sr_media_change(struct cdrom_device_info *cdi, int slot)
-> >  	}
-> >  
-> >  	sshdr =  kzalloc(sizeof(*sshdr), GFP_KERNEL);
-> > +	if (!sshdr)
-> > +		return -ENOMEM;
-> 
-> this isn't necessary; sr_test_unit_ready is designed to take a NULL
-> pointer for sshdr ... it's just slightly less useful when this happens,
-> but it still returns some status.
+The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+but is perhaps more readable.
 
-OK, I agree.  Thanks.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-julia
+// <smpl>
+@haskernel@
+@@
+
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression x,__divisor;
+@@
+
+- (((x) + ((__divisor) / 2)) / (__divisor))
++ DIV_ROUND_CLOSEST(x,__divisor)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/ia64/kernel/time.c             |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/arch/ia64/kernel/time.c b/arch/ia64/kernel/time.c
+index 4990495..aaa6651 100644
+--- a/arch/ia64/kernel/time.c
++++ b/arch/ia64/kernel/time.c
+@@ -314,7 +314,7 @@ ia64_init_itm (void)
+ 
+ 	itc_freq = (platform_base_freq*itc_ratio.num)/itc_ratio.den;
+ 
+-	local_cpu_data->itm_delta = (itc_freq + HZ/2) / HZ;
++	local_cpu_data->itm_delta = DIV_ROUND_CLOSEST(itc_freq, HZ);
+ 	printk(KERN_DEBUG "CPU %d: base freq=%lu.%03luMHz, ITC ratio=%u/%u, "
+ 	       "ITC freq=%lu.%03luMHz", smp_processor_id(),
+ 	       platform_base_freq / 1000000, (platform_base_freq / 1000) % 1000,
+@@ -330,9 +330,11 @@ ia64_init_itm (void)
+ 
+ 	local_cpu_data->proc_freq = (platform_base_freq*proc_ratio.num)/proc_ratio.den;
+ 	local_cpu_data->itc_freq = itc_freq;
+-	local_cpu_data->cyc_per_usec = (itc_freq + USEC_PER_SEC/2) / USEC_PER_SEC;
+-	local_cpu_data->nsec_per_cyc = ((NSEC_PER_SEC<<IA64_NSEC_PER_CYC_SHIFT)
+-					+ itc_freq/2)/itc_freq;
++	local_cpu_data->cyc_per_usec +		DIV_ROUND_CLOSEST(itc_freq, USEC_PER_SEC);
++	local_cpu_data->nsec_per_cyc +		DIV_ROUND_CLOSEST(NSEC_PER_SEC << IA64_NSEC_PER_CYC_SHIFT,
++				  itc_freq);
+ 
+ 	if (!(sal_platform_features & IA64_SAL_PLATFORM_FEATURE_ITC_DRIFT)) {
+ #ifdef CONFIG_SMP
+
