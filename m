@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Aug 2009 08:46:45 +0000
-Subject: [PATCH 7/15] arch/arm/plat-iop: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908021046260.15557@ask.diku.dk>
+Date: Sun, 02 Aug 2009 08:46:05 +0000
+Subject: [PATCH 5/15] arch/arm/mach-ixp2000: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908021045400.15557@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel@wantstofly.org, dan.j.williams@intel.com, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel@wantstofly.org, linux-arm-kernel@lists.arm.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -33,19 +33,19 @@ expression x,__divisor;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/arm/plat-iop/time.c            |    2 +-
+ arch/arm/mach-ixp2000/core.c        |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/plat-iop/time.c b/arch/arm/plat-iop/time.c
-index 3695bbe..8da95d5 100644
---- a/arch/arm/plat-iop/time.c
-+++ b/arch/arm/plat-iop/time.c
-@@ -85,7 +85,7 @@ void __init iop_init_time(unsigned long tick_rate)
- {
- 	u32 timer_ctl;
+diff --git a/arch/arm/mach-ixp2000/core.c b/arch/arm/mach-ixp2000/core.c
+index babb225..037342b 100644
+--- a/arch/arm/mach-ixp2000/core.c
++++ b/arch/arm/mach-ixp2000/core.c
+@@ -219,7 +219,7 @@ static struct irqaction ixp2000_timer_irq = {
  
+ void __init ixp2000_init_time(unsigned long tick_rate)
+ {
 -	ticks_per_jiffy = (tick_rate + HZ/2) / HZ;
 +	ticks_per_jiffy = DIV_ROUND_CLOSEST(tick_rate, HZ);
  	ticks_per_usec = tick_rate / 1000000;
- 	next_jiffy_time = 0xffffffff;
- 	iop_tick_rate = tick_rate;
+ 
+ 	/*
