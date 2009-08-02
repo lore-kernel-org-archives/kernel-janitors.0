@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Aug 2009 08:47:27 +0000
-Subject: [PATCH 8/15] arch/m32r: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908021047060.15557@ask.diku.dk>
+Date: Sun, 02 Aug 2009 08:47:47 +0000
+Subject: [PATCH 9/15] arch/m68k: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908021047280.15557@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: takata@linux-m32r.org, linux-m32r@ml.linux-m32r.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: geert@linux-m68k.org, zippel@linux-m68k.org, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -33,37 +33,19 @@ expression x,__divisor;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/m32r/kernel/time.c             |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ arch/m68k/amiga/config.c            |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/m32r/kernel/time.c b/arch/m32r/kernel/time.c
-index cada3ba..49648ba 100644
---- a/arch/m32r/kernel/time.c
-+++ b/arch/m32r/kernel/time.c
-@@ -66,7 +66,7 @@ static unsigned long do_gettimeoffset(void)
- 		count = 0;
+diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
+index 6e56275..002b9b0 100644
+--- a/arch/m68k/amiga/config.c
++++ b/arch/m68k/amiga/config.c
+@@ -480,7 +480,7 @@ static void __init amiga_sched_init(irq_handler_t timer_routine)
+ 	static struct resource sched_res = {
+ 		.name = "timer", .start = 0x00bfd400, .end = 0x00bfd5ff,
+ 	};
+-	jiffy_ticks = (amiga_eclock+HZ/2)/HZ;
++	jiffy_ticks = DIV_ROUND_CLOSEST(amiga_eclock, HZ);
  
- 	count = (latch - count) * TICK_SIZE;
--	elapsed_time = (count + latch / 2) / latch;
-+	elapsed_time = DIV_ROUND_CLOSEST(count, latch);
- 	/* NOTE: LATCH is equal to the "interval" value (= reload count). */
- 
- #else /* CONFIG_SMP */
-@@ -84,7 +84,7 @@ static unsigned long do_gettimeoffset(void)
- 	p_count = count;
- 
- 	count = (latch - count) * TICK_SIZE;
--	elapsed_time = (count + latch / 2) / latch;
-+	elapsed_time = DIV_ROUND_CLOSEST(count, latch);
- 	/* NOTE: LATCH is equal to the "interval" value (= reload count). */
- #endif /* CONFIG_SMP */
- #elif defined(CONFIG_CHIP_M32310)
-@@ -270,7 +270,7 @@ void __init time_init(void)
- 
- 		bus_clock = boot_cpu_data.bus_clock;
- 		divide = boot_cpu_data.timer_divide;
--		latch = (bus_clock/divide + HZ / 2) / HZ;
-+		latch = DIV_ROUND_CLOSEST(bus_clock/divide, HZ);
- 
- 		printk("Timer start : latch = %ld\n", latch);
- 
+ 	if (request_resource(&mb_resources._ciab, &sched_res))
+ 		printk("Cannot allocate ciab.ta{lo,hi}\n");
