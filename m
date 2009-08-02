@@ -1,8 +1,10 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 01 Aug 2009 08:53:14 +0000
+Date: Sun, 02 Aug 2009 08:44:53 +0000
 Subject: [PATCH 2/10] arch/powerpc: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0908011052510.23408@ask.diku.dk>
+Message-Id: <Pine.LNX.4.64.0908021044330.15557@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0908011052510.23408@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0908011052510.23408@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
