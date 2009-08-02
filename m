@@ -1,56 +1,51 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 31 Aug 2009 19:34:25 +0000
-Subject: [PATCH] drivers/staging/rtl8192e: Drop unnecessary NULL test
-Message-Id: <Pine.LNX.4.64.0908312133430.17886@ask.diku.dk>
+Date: Sun, 02 Aug 2009 08:46:25 +0000
+Subject: [PATCH 6/15] arch/arm/mach-shark: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908021046060.15557@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alex@shark-linux.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The result of container_of should not be NULL.  In particular, in this case
-the argument to the enclosing function has passed though INIT_WORK, which
-dereferences it, implying that its container cannot be NULL.
+The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+but is perhaps more readable.
 
-A simplified version of the semantic patch that makes this change is as
-follows:
+The semantic patch that makes this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-identifier fn,work,x,fld;
-type T;
-expression E1,E2;
-statement S;
+@haskernel@
 @@
 
-static fn(struct work_struct *work) {
-  ... when != work = E1
-  x = container_of(work,T,fld)
-  ... when != x = E2
-- if (x = NULL) S
-  ...
-}
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression x,__divisor;
+@@
+
+- (((x) + ((__divisor) / 2)) / (__divisor))
++ DIV_ROUND_CLOSEST(x,__divisor)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/staging/rtl8192e/r8192E_core.c         |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+ arch/arm/mach-shark/core.c          |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/r8192E_core.c b/drivers/staging/rtl8192e/r8192E_core.c
-index 681488b..d4fa654 100644
---- a/drivers/staging/rtl8192e/r8192E_core.c
-+++ b/drivers/staging/rtl8192e/r8192E_core.c
-@@ -1763,8 +1763,6 @@ static void rtl8192_qos_activate(struct work_struct * work)
- 	u8  u1bAIFS;
- 	u32 u4bAcParam;
-         int i;
--        if (priv = NULL)
--                return;
+diff --git a/arch/arm/mach-shark/core.c b/arch/arm/mach-shark/core.c
+index 358d875..a4eae65 100644
+--- a/arch/arm/mach-shark/core.c
++++ b/arch/arm/mach-shark/core.c
+@@ -119,7 +119,7 @@ static void __init shark_map_io(void)
+ }
  
-         mutex_lock(&priv->mutex);
-         if(priv->ieee80211->state != IEEE80211_LINKED)
+ #define IRQ_TIMER 0
+-#define HZ_TIME ((1193180 + HZ/2) / HZ)
++#define HZ_TIME DIV_ROUND_CLOSEST(1193180, HZ)
+ 
+ static irqreturn_t
+ shark_timer_interrupt(int irq, void *dev_id)
