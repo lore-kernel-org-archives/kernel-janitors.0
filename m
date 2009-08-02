@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Aug 2009 08:46:25 +0000
-Subject: [PATCH 6/15] arch/arm/mach-shark: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908021046060.15557@ask.diku.dk>
+Date: Sun, 02 Aug 2009 08:49:13 +0000
+Subject: [PATCH 13/15] drivers/char: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908021048470.15557@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: alex@shark-linux.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -33,19 +33,70 @@ expression x,__divisor;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/arm/mach-shark/core.c          |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/char/mmtimer.c |    5 +++--
+ drivers/char/riscom8.c |   12 ++++++------
+ 2 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-shark/core.c b/arch/arm/mach-shark/core.c
-index 358d875..a4eae65 100644
---- a/arch/arm/mach-shark/core.c
-+++ b/arch/arm/mach-shark/core.c
-@@ -119,7 +119,7 @@ static void __init shark_map_io(void)
- }
+diff --git a/drivers/char/mmtimer.c b/drivers/char/mmtimer.c
+index 918711a..e33acb8 100644
+--- a/drivers/char/mmtimer.c
++++ b/drivers/char/mmtimer.c
+@@ -788,8 +788,9 @@ static int __init mmtimer_init(void)
+ 		goto out1;
+ 	}
  
- #define IRQ_TIMER 0
--#define HZ_TIME ((1193180 + HZ/2) / HZ)
-+#define HZ_TIME DIV_ROUND_CLOSEST(1193180, HZ)
+-	mmtimer_femtoperiod = ((unsigned long)1E15 + sn_rtc_cycles_per_second /
+-			       2) / sn_rtc_cycles_per_second;
++	mmtimer_femtoperiod +		DIV_ROUND_CLOSEST((unsigned long)1E15,
++				  sn_rtc_cycles_per_second);
  
- static irqreturn_t
- shark_timer_interrupt(int irq, void *dev_id)
+ 	if (request_irq(SGI_MMTIMER_VECTOR, mmtimer_interrupt, IRQF_PERCPU, MMTIMER_NAME, NULL)) {
+ 		printk(KERN_WARNING "%s: unable to allocate interrupt.",
+diff --git a/drivers/char/riscom8.c b/drivers/char/riscom8.c
+index 171711a..7f1bb27 100644
+--- a/drivers/char/riscom8.c
++++ b/drivers/char/riscom8.c
+@@ -665,8 +665,8 @@ static void rc_change_speed(struct riscom_board *bp, struct riscom_port *port)
+ 	 */
+ 
+ 	/* Set baud rate for port */
+-	tmp = (((RC_OSCFREQ + baud/2) / baud +
+-		CD180_TPC/2) / CD180_TPC);
++	tmp = DIV_ROUND_CLOSEST(DIV_ROUND_CLOSEST(RC_OSCFREQ, baud),
++				CD180_TPC);
+ 
+ 	rc_out(bp, CD180_RBPRH, (tmp >> 8) & 0xff);
+ 	rc_out(bp, CD180_TBPRH, (tmp >> 8) & 0xff);
+@@ -676,12 +676,12 @@ static void rc_change_speed(struct riscom_board *bp, struct riscom_port *port)
+ 	baud = (baud + 5) / 10;   /* Estimated CPS */
+ 
+ 	/* Two timer ticks seems enough to wakeup something like SLIP driver */
+-	tmp = ((baud + HZ/2) / HZ) * 2 - CD180_NFIFO;
++	tmp = DIV_ROUND_CLOSEST(baud, HZ) * 2 - CD180_NFIFO;
+ 	port->wakeup_chars = (tmp < 0) ? 0 : ((tmp >= SERIAL_XMIT_SIZE) ?
+ 					      SERIAL_XMIT_SIZE - 1 : tmp);
+ 
+ 	/* Receiver timeout will be transmission time for 1.5 chars */
+-	tmp = (RISCOM_TPS + RISCOM_TPS/2 + baud/2) / baud;
++	tmp = DIV_ROUND_CLOSEST(RISCOM_TPS + RISCOM_TPS / 2, baud);
+ 	tmp = (tmp > 0xff) ? 0xff : tmp;
+ 	rc_out(bp, CD180_RTPR, tmp);
+ 
+@@ -1184,7 +1184,7 @@ static int rc_set_serial_info(struct riscom_port *port,
+ 	if ((tmp.irq != bp->irq) ||
+ 	    (tmp.port != bp->base) ||
+ 	    (tmp.type != PORT_CIRRUS) ||
+-	    (tmp.baud_base != (RC_OSCFREQ + CD180_TPC/2) / CD180_TPC) ||
++	    (tmp.baud_base != DIV_ROUND_CLOSEST(RC_OSCFREQ, CD180_TPC)) ||
+ 	    (tmp.custom_divisor != 0) ||
+ 	    (tmp.xmit_fifo_size != CD180_NFIFO) ||
+ 	    (tmp.flags & ~RISCOM_LEGAL_FLAGS))
+@@ -1230,7 +1230,7 @@ static int rc_get_serial_info(struct riscom_port *port,
+ 	tmp.port = bp->base;
+ 	tmp.irq  = bp->irq;
+ 	tmp.flags = port->port.flags;
+-	tmp.baud_base = (RC_OSCFREQ + CD180_TPC/2) / CD180_TPC;
++	tmp.baud_base = DIV_ROUND_CLOSEST(RC_OSCFREQ, CD180_TPC);
+ 	tmp.close_delay = port->port.close_delay * HZ/100;
+ 	tmp.closing_wait = port->port.closing_wait * HZ/100;
+ 	tmp.xmit_fifo_size = CD180_NFIFO;
