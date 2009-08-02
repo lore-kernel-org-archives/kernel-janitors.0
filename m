@@ -1,100 +1,69 @@
-From: =?ISO-8859-1?Q?Erik_Andr=E9n?= <erik.andren@gmail.com>
-Date: Sat, 01 Aug 2009 12:32:29 +0000
-Subject: Re: [PATCH 3/10] drivers/media/video/gspca: introduce missing kfree
-Message-Id: <4A7435DD.8070801@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 02 Aug 2009 08:47:27 +0000
+Subject: [PATCH 8/15] arch/m32r: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908021047060.15557@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908011053140.23408@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0908011053140.23408@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia@diku.dk>
-Cc: frank@zago.net, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: takata@linux-m32r.org, linux-m32r@ml.linux-m32r.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
->=20
-> Error handling code following a kmalloc should free the allocated data.
->=20
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
->=20
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> statement S;
-> expression E;
-> identifier f,f1,l;
-> position p1,p2;
-> expression *ptr !=3D NULL;
-> @@
->=20
-> x@p1 =3D \(kmalloc\|kzalloc\|kcalloc\)(...);
-> ...
-> if (x =3D NULL) S
-> <... when !=3D x
->      when !=3D if (...) { <+...x...+> }
-> (
-> x->f1 =3D E
-> |
->  (x->f1 =3D NULL || ...)
-> |
->  f(...,x->f1,...)
-> )
-> ...>
-> (
->  return \(0\|<+...x...+>\|ptr\);
-> |
->  return@p2 ...;
-> )
->=20
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
->=20
-> print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].li=
-ne)
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Erik Andr=E9n <erik.andren@gmail.com>
-> ---
->  drivers/media/video/gspca/m5602/m5602_s5k83a.c |    4 +++-
->  1 files changed, 3 insertions(+), 1 deletions(-)
->=20
-> diff --git a/drivers/media/video/gspca/m5602/m5602_s5k83a.c b/drivers/med=
-ia/video/gspca/m5602/m5602_s5k83a.c
-> index 7127321..6b89f33 100644
-> --- a/drivers/media/video/gspca/m5602/m5602_s5k83a.c
-> +++ b/drivers/media/video/gspca/m5602/m5602_s5k83a.c
-> @@ -178,8 +178,10 @@ sensor_found:
-> =20
->  	sens_priv->settings >  	kmalloc(sizeof(s32)*ARRAY_SIZE(s5k83a_ctrls), G=
-FP_KERNEL);
-> -	if (!sens_priv->settings)
-> +	if (!sens_priv->settings) {
-> +		kfree(sens_priv);
->  		return -ENOMEM;
-> +	}
-> =20
->  	sd->gspca_dev.cam.cam_mode =3D s5k83a_modes;
->  	sd->gspca_dev.cam.nmodes =3D ARRAY_SIZE(s5k83a_modes);
-> --
+The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+but is perhaps more readable.
 
-Is this patch already merged into a tree that will be merged in the
-upstream one or should the v4l-dvb tree merge it?
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Best regards,
-Erik
+// <smpl>
+@haskernel@
+@@
 
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression x,__divisor;
+@@
+
+- (((x) + ((__divisor) / 2)) / (__divisor))
++ DIV_ROUND_CLOSEST(x,__divisor)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/m32r/kernel/time.c             |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/m32r/kernel/time.c b/arch/m32r/kernel/time.c
+index cada3ba..49648ba 100644
+--- a/arch/m32r/kernel/time.c
++++ b/arch/m32r/kernel/time.c
+@@ -66,7 +66,7 @@ static unsigned long do_gettimeoffset(void)
+ 		count = 0;
+ 
+ 	count = (latch - count) * TICK_SIZE;
+-	elapsed_time = (count + latch / 2) / latch;
++	elapsed_time = DIV_ROUND_CLOSEST(count, latch);
+ 	/* NOTE: LATCH is equal to the "interval" value (= reload count). */
+ 
+ #else /* CONFIG_SMP */
+@@ -84,7 +84,7 @@ static unsigned long do_gettimeoffset(void)
+ 	p_count = count;
+ 
+ 	count = (latch - count) * TICK_SIZE;
+-	elapsed_time = (count + latch / 2) / latch;
++	elapsed_time = DIV_ROUND_CLOSEST(count, latch);
+ 	/* NOTE: LATCH is equal to the "interval" value (= reload count). */
+ #endif /* CONFIG_SMP */
+ #elif defined(CONFIG_CHIP_M32310)
+@@ -270,7 +270,7 @@ void __init time_init(void)
+ 
+ 		bus_clock = boot_cpu_data.bus_clock;
+ 		divide = boot_cpu_data.timer_divide;
+-		latch = (bus_clock/divide + HZ / 2) / HZ;
++		latch = DIV_ROUND_CLOSEST(bus_clock/divide, HZ);
+ 
+ 		printk("Timer start : latch = %ld\n", latch);
+ 
