@@ -1,45 +1,53 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Thu, 20 Aug 2009 21:14:06 +0000
-Subject: [PATCH] char/hvc: adding __init macro to char/hvc_vio.c
-Message-Id: <200908202314.07443.PeterHuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 02 Aug 2009 08:49:54 +0000
+Subject: [PATCH 15/15] drivers/ide/ide-cd.c: Use DIV_ROUND_CLOSEST
+Message-Id: <Pine.LNX.4.64.0908021049350.15557@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Frysinger <vapier@gentoo.org>, Nicolas Palix <npalix@diku.dk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Paul Mackerras <paulus@samba.org>
+To: petkovbb@gmail.com, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
 
-Trivial patch which adds the __init/__exit macros to the module_init/
-module_exit functions of char/hvc_vio.c
+The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+but is perhaps more readable.
 
-Please have a look at the small patch and either pull it through
-your tree, or please ack' it so Jiri can pull it through the trivial tree.
+The semantic patch that makes this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-linux version 2.6.31-rc6 - linus git tree, Do 20. Aug 22:26:06 CEST 2009
+// <smpl>
+@haskernel@
+@@
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+#include <linux/kernel.h>
+
+@depends on haskernel@
+expression x,__divisor;
+@@
+
+- (((x) + ((__divisor) / 2)) / (__divisor))
++ DIV_ROUND_CLOSEST(x,__divisor)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/char/hvc_vio.c b/drivers/char/hvc_vio.c
-index c72b994..10be343 100644
---- a/drivers/char/hvc_vio.c
-+++ b/drivers/char/hvc_vio.c
-@@ -120,7 +120,7 @@ static struct vio_driver hvc_vio_driver = {
- 	}
- };
+ drivers/ide/ide-cd.c                |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/ide/ide-cd.c b/drivers/ide/ide-cd.c
+index 6a9a769..1483a8d 100644
+--- a/drivers/ide/ide-cd.c
++++ b/drivers/ide/ide-cd.c
+@@ -1146,8 +1146,8 @@ void ide_cdrom_update_speed(ide_drive_t *drive, u8 *buf)
+ 	ide_debug_log(IDE_DBG_PROBE, "curspeed: %u, maxspeed: %u",
+ 				     curspeed, maxspeed);
  
--static int hvc_vio_init(void)
-+static int __init hvc_vio_init(void)
- {
- 	int rc;
- 
-@@ -134,7 +134,7 @@ static int hvc_vio_init(void)
+-	cd->current_speed = (curspeed + (176/2)) / 176;
+-	cd->max_speed = (maxspeed + (176/2)) / 176;
++	cd->current_speed = DIV_ROUND_CLOSEST(curspeed, 176);
++	cd->max_speed = DIV_ROUND_CLOSEST(maxspeed, 176);
  }
- module_init(hvc_vio_init); /* after drivers/char/hvc_console.c */
  
--static void hvc_vio_exit(void)
-+static void __exit hvc_vio_exit(void)
- {
- 	vio_unregister_driver(&hvc_vio_driver);
- }
+ #define IDE_CD_CAPABILITIES \
