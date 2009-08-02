@@ -1,52 +1,22 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 01 Aug 2009 19:51:06 +0000
-Subject: [PATCH 5/5] drivers/net: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908012150340.25693@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Sun, 02 Aug 2009 19:55:45 +0000
+Subject: Re: [PATCH 5/5] drivers/net: Use DIV_ROUND_CLOSEST
+Message-Id: <20090802.125545.11631148.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0908012150340.25693@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0908012150340.25693@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Sat, 1 Aug 2009 21:51:06 +0200 (CEST)
 
-The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
-but is perhaps more readable.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+> but is perhaps more readable.
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@haskernel@
-@@
-
-#include <linux/kernel.h>
-
-@depends on haskernel@
-expression x,__divisor;
-@@
-
-- (((x) + ((__divisor) / 2)) / (__divisor))
-+ DIV_ROUND_CLOSEST(x,__divisor)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/b44.c                   |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/b44.c b/drivers/net/b44.c
-index 1f7f015..07c92f3 100644
---- a/drivers/net/b44.c
-+++ b/drivers/net/b44.c
-@@ -1297,7 +1297,8 @@ static void b44_chip_reset(struct b44 *bp, int reset_kind)
- 	switch (sdev->bus->bustype) {
- 	case SSB_BUSTYPE_SSB:
- 		bw32(bp, B44_MDIO_CTRL, (MDIO_CTRL_PREAMBLE |
--		     (((ssb_clockspeed(sdev->bus) + (B44_MDC_RATIO / 2)) / B44_MDC_RATIO)
-+		     (DIV_ROUND_CLOSEST(ssb_clockspeed(sdev->bus),
-+					B44_MDC_RATIO)
- 		     & MDIO_CTRL_MAXF_MASK)));
- 		break;
- 	case SSB_BUSTYPE_PCI:
+Applied.
