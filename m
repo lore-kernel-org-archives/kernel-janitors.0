@@ -1,92 +1,110 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 02 Aug 2009 01:07:16 +0000
-Subject: [PATCH v2 1/2] treewide: Use roundup
-Message-Id: <1249175236.22466.112.camel@Joe-Laptop.home>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 05 Aug 2009 13:24:20 +0000
+Subject: [PATCH 3/4] drivers/serial: Use UPIO_MEM rather than SERIAL_IO_MEM
+Message-Id: <Pine.LNX.4.64.0908051523490.20453@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908012148100.25693@ask.diku.dk>
-	 <1249170191.22466.14.camel@Joe-Laptop.home>
-	 <1249171857.6114.5.camel@desktop>
-In-Reply-To: <1249171857.6114.5.camel@desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Walker <dwalker@fifo99.com>
-Cc: Julia Lawall <julia@diku.dk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2009-08-01 at 17:10 -0700, Daniel Walker wrote:
-> On Sat, 2009-08-01 at 16:43 -0700, Joe Perches wrote:
-> > On Sat, 2009-08-01 at 21:48 +0200, Julia Lawall wrote:
-> > > The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
-> > > but is perhaps more readable.
-> > Similarly, DIV_ROUND_UP does ((n + d - 1) / d)
-> > Signed-off-by: Joe Perches <joe@perches.com>
-> > -	mem_size = ((mem_size + pad - 1) / pad) * pad;
-> > +	mem_size = DIV_ROUND_UP(mem_size, pad) * pad;
-> Doesn't this look more like,
-> #define roundup(x, y) ((((x) + ((y) - 1)) / (y)) * (y))
+From: Julia Lawall <julia@diku.dk>
 
-Yes.  Also, the first patch should not be applied because
-it converts arch/alpha/boot/tools/objstrip.c which does
-not include kernel.h.
+As in the commit 9b4a1617772d6d5ab5eeda0cd95302fae119e359, use UPIO_MEM
+rather than SERIAL_IO_MEM.  Both have the same value.
 
-Here's another pass at it.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Joe Perches <joe@perches.com>
+// <smpl>
+@has_sc@
+@@
+
+#include <linux/serial_core.h>
+
+@depends on has_sc@
+@@
+
+- SERIAL_IO_MEM
++ UPIO_MEM
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/media/video/cx2341x.c      |    4 ++--
- drivers/mtd/tests/mtd_stresstest.c |    2 +-
- sound/pci/hda/hda_intel.c          |    3 +--
- 3 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/serial/mcf.c           |    4 ++--
+ drivers/serial/mpsc.c          |    2 +-
+ drivers/serial/pnx8xxx_uart.c  |    2 +-
+ drivers/serial/sa1100.c        |    2 +-
+ drivers/serial/serial_ks8695.c |    2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/video/cx2341x.c b/drivers/media/video/cx2341x.c
-index 4c8e958..3d40191 100644
---- a/drivers/media/video/cx2341x.c
-+++ b/drivers/media/video/cx2341x.c
-@@ -304,7 +304,7 @@ static int cx2341x_set_ctrl(struct cx2341x_mpeg_params *params, int busy,
- 		int b = ctrl->value + 1;
- 		int gop = params->video_gop_size;
- 		params->video_b_frames = ctrl->value;
--		params->video_gop_size = b * ((gop + b - 1) / b);
-+		params->video_gop_size = roundup(gop, b);
- 		/* Max GOP size = 34 */
- 		while (params->video_gop_size > 34)
- 			params->video_gop_size -= b;
-@@ -313,7 +313,7 @@ static int cx2341x_set_ctrl(struct cx2341x_mpeg_params *params, int busy,
- 	case V4L2_CID_MPEG_VIDEO_GOP_SIZE: {
- 		int b = params->video_b_frames + 1;
- 		int gop = ctrl->value;
--		params->video_gop_size = b * ((gop + b - 1) / b);
-+		params->video_gop_size = roundup(gop, b);
- 		/* Max GOP size = 34 */
- 		while (params->video_gop_size > 34)
- 			params->video_gop_size -= b;
-diff --git a/drivers/mtd/tests/mtd_stresstest.c b/drivers/mtd/tests/mtd_stresstest.c
-index 6392047..f146c81 100644
---- a/drivers/mtd/tests/mtd_stresstest.c
-+++ b/drivers/mtd/tests/mtd_stresstest.c
-@@ -179,7 +179,7 @@ static int do_write(void)
- 		offs = offsets[eb] = 0;
- 	}
- 	len = rand_len(offs);
--	len = ((len + pgsize - 1) / pgsize) * pgsize;
-+	len = roundup(len, pgsize);
- 	if (offs + len > mtd->erasesize) {
- 		if (bbt[eb + 1])
- 			len = mtd->erasesize - offs;
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 77c1b84..1f015b0 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -1128,8 +1128,7 @@ static int azx_setup_periods(struct azx *chip,
- 		if (!pos_adj)
- 			pos_adj = pos_align;
- 		else
--			pos_adj = ((pos_adj + pos_align - 1) / pos_align) *
--				pos_align;
-+			pos_adj = roundup(pos_adj, pos_align);
- 		pos_adj = frames_to_bytes(runtime, pos_adj);
- 		if (pos_adj >= period_bytes) {
- 			snd_printk(KERN_WARNING SFX "Too big adjustment %d\n",
-
-
-
+diff -u -p a/drivers/serial/mcf.c b/drivers/serial/mcf.c
+--- a/drivers/serial/mcf.c
++++ b/drivers/serial/mcf.c
+@@ -464,7 +464,7 @@ int __init early_mcf_setup(struct mcf_pl
+ 		port->mapbase = platp[i].mapbase;
+ 		port->membase = (platp[i].membase) ? platp[i].membase :
+ 			(unsigned char __iomem *) port->mapbase;
+-		port->iotype = SERIAL_IO_MEM;
++		port->iotype = UPIO_MEM;
+ 		port->irq = platp[i].irq;
+ 		port->uartclk = MCF_BUSCLK;
+ 		port->flags = ASYNC_BOOT_AUTOCONF;
+@@ -588,7 +588,7 @@ static int __devinit mcf_probe(struct pl
+ 		port->mapbase = platp[i].mapbase;
+ 		port->membase = (platp[i].membase) ? platp[i].membase :
+ 			(unsigned char __iomem *) platp[i].mapbase;
+-		port->iotype = SERIAL_IO_MEM;
++		port->iotype = UPIO_MEM;
+ 		port->irq = platp[i].irq;
+ 		port->uartclk = MCF_BUSCLK;
+ 		port->ops = &mcf_uart_ops;
+diff -u -p a/drivers/serial/mpsc.c b/drivers/serial/mpsc.c
+--- a/drivers/serial/mpsc.c
++++ b/drivers/serial/mpsc.c
+@@ -1521,7 +1521,7 @@ static int mpsc_verify_port(struct uart_
+ 		rc = -EINVAL;
+ 	else if (pi->port.irq != ser->irq)
+ 		rc = -EINVAL;
+-	else if (ser->io_type != SERIAL_IO_MEM)
++	else if (ser->io_type != UPIO_MEM)
+ 		rc = -EINVAL;
+ 	else if (pi->port.uartclk / 16 != ser->baud_base) /* Not sure */
+ 		rc = -EINVAL;
+diff -u -p a/drivers/serial/pnx8xxx_uart.c b/drivers/serial/pnx8xxx_uart.c
+--- a/drivers/serial/pnx8xxx_uart.c
++++ b/drivers/serial/pnx8xxx_uart.c
+@@ -601,7 +601,7 @@ pnx8xxx_verify_port(struct uart_port *po
+ 		ret = -EINVAL;
+ 	if (sport->port.irq != ser->irq)
+ 		ret = -EINVAL;
+-	if (ser->io_type != SERIAL_IO_MEM)
++	if (ser->io_type != UPIO_MEM)
+ 		ret = -EINVAL;
+ 	if (sport->port.uartclk / 16 != ser->baud_base)
+ 		ret = -EINVAL;
+diff -u -p a/drivers/serial/sa1100.c b/drivers/serial/sa1100.c
+--- a/drivers/serial/sa1100.c
++++ b/drivers/serial/sa1100.c
+@@ -564,7 +564,7 @@ sa1100_verify_port(struct uart_port *por
+ 		ret = -EINVAL;
+ 	if (sport->port.irq != ser->irq)
+ 		ret = -EINVAL;
+-	if (ser->io_type != SERIAL_IO_MEM)
++	if (ser->io_type != UPIO_MEM)
+ 		ret = -EINVAL;
+ 	if (sport->port.uartclk / 16 != ser->baud_base)
+ 		ret = -EINVAL;
+diff -u -p a/drivers/serial/serial_ks8695.c b/drivers/serial/serial_ks8695.c
+--- a/drivers/serial/serial_ks8695.c
++++ b/drivers/serial/serial_ks8695.c
+@@ -547,7 +547,7 @@ static struct uart_port ks8695uart_ports
+ 	{
+ 		.membase	= (void *) KS8695_UART_VA,
+ 		.mapbase	= KS8695_UART_VA,
+-		.iotype		= SERIAL_IO_MEM,
++		.iotype		= UPIO_MEM,
+ 		.irq		= KS8695_IRQ_UART_TX,
+ 		.uartclk	= CLOCK_TICK_RATE * 16,
+ 		.fifosize	= 16,
