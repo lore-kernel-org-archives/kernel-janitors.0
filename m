@@ -1,51 +1,49 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Aug 2009 08:47:47 +0000
-Subject: [PATCH 9/15] arch/m68k: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908021047280.15557@ask.diku.dk>
+Date: Wed, 05 Aug 2009 13:23:48 +0000
+Subject: [PATCH 2/4] drivers/serial/atmel_serial.c: Use UPIO_MEM rather than
+Message-Id: <Pine.LNX.4.64.0908051523080.20453@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: geert@linux-m68k.org, zippel@linux-m68k.org, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Haavard Skinnemoen <hskinnemoen@atmel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
-but is perhaps more readable.
+As in the commit 9b4a1617772d6d5ab5eeda0cd95302fae119e359, use UPIO_MEM
+rather than SERIAL_IO_MEM.  Both have the same value.
 
 The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@haskernel@
+@has_sc@
 @@
 
-#include <linux/kernel.h>
+#include <linux/serial_core.h>
 
-@depends on haskernel@
-expression x,__divisor;
+@depends on has_sc@
 @@
 
-- (((x) + ((__divisor) / 2)) / (__divisor))
-+ DIV_ROUND_CLOSEST(x,__divisor)
+- SERIAL_IO_MEM
++ UPIO_MEM
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/m68k/amiga/config.c            |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/serial/atmel_serial.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
-index 6e56275..002b9b0 100644
---- a/arch/m68k/amiga/config.c
-+++ b/arch/m68k/amiga/config.c
-@@ -480,7 +480,7 @@ static void __init amiga_sched_init(irq_handler_t timer_routine)
- 	static struct resource sched_res = {
- 		.name = "timer", .start = 0x00bfd400, .end = 0x00bfd5ff,
- 	};
--	jiffy_ticks = (amiga_eclock+HZ/2)/HZ;
-+	jiffy_ticks = DIV_ROUND_CLOSEST(amiga_eclock, HZ);
- 
- 	if (request_resource(&mb_resources._ciab, &sched_res))
- 		printk("Cannot allocate ciab.ta{lo,hi}\n");
+diff -u -p a/drivers/serial/atmel_serial.c b/drivers/serial/atmel_serial.c
+--- a/drivers/serial/atmel_serial.c
++++ b/drivers/serial/atmel_serial.c
+@@ -1200,7 +1200,7 @@ static int atmel_verify_port(struct uart
+ 		ret = -EINVAL;
+ 	if (port->irq != ser->irq)
+ 		ret = -EINVAL;
+-	if (ser->io_type != SERIAL_IO_MEM)
++	if (ser->io_type != UPIO_MEM)
+ 		ret = -EINVAL;
+ 	if (port->uartclk / 16 != ser->baud_base)
+ 		ret = -EINVAL;
