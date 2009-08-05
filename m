@@ -1,47 +1,55 @@
-From: Bob Copeland <me@bobcopeland.com>
-Date: Sat, 08 Aug 2009 16:20:01 +0000
-Subject: Re: [PATCH] drivers/net/wireless/ath/ath5k: Change constant name
-Message-Id: <20090808162001.GA18271@hash.localnet>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 05 Aug 2009 12:34:55 +0000
+Subject: [PATCH 2/2] security/smack: Use AF_INET for sin_family field
+Message-Id: <Pine.LNX.4.64.0908051434340.20453@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908081521210.27715@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0908081521210.27715@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "Luis R. Rodriguez" <lrodriguez@atheros.com>, Nick Kossifidis <mickflemm@gmail.com>, Jiri Slaby <jirislaby@gmail.com>, ath5k-devel@lists.ath5k.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linville@tuxdriver.com
+To: James Morris <jmorris@namei.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Aug 08, 2009 at 03:22:26PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Elsewhere, the tqi_type field is compared to constants having a name
-> beginning with AR5K_TX_QUEUE, rather than AR5K_TX_QUEUE_ID.  I have thus
-> converted AR5K_TX_QUEUE_ID_CAB to AR5K_TX_QUEUE_CAB.  This does, however,
-> change the value, so perhaps something else was wanted.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-Nice catch, thanks.  Shouldn't cause any problem with 2.6.31 since we
-don't use the CAB queue yet, but it was definitely wrong.
+Elsewhere the sin_family field holds a value with a name of the form
+AF_..., so it seems reasonable to do so here as well.  Also the values of
+PF_INET and AF_INET are the same.
 
-Acked-by: Bob Copeland <me@bobcopeland.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+struct sockaddr_in sip;
+@@
 
-> diff --git a/drivers/net/wireless/ath/ath5k/qcu.c b/drivers/net/wireless/ath/ath5k/qcu.c
-> index 6d5aaf0..eeebb9a 100644
-> --- a/drivers/net/wireless/ath/ath5k/qcu.c
-> +++ b/drivers/net/wireless/ath/ath5k/qcu.c
-> @@ -362,7 +362,7 @@ int ath5k_hw_reset_tx_queue(struct ath5k_hw *ah, unsigned int queue)
->  		}
->  
->  		if (tq->tqi_ready_time &&
-> -		(tq->tqi_type != AR5K_TX_QUEUE_ID_CAB))
-> +		(tq->tqi_type != AR5K_TX_QUEUE_CAB))
->  			ath5k_hw_reg_write(ah, AR5K_REG_SM(tq->tqi_ready_time,
->  				AR5K_QCU_RDYTIMECFG_INTVAL) |
->  				AR5K_QCU_RDYTIMECFG_ENABLE,
-> 
+(
+sip.sin_family =
+- PF_INET
++ AF_INET
+|
+sip.sin_family !- PF_INET
++ AF_INET
+|
+sip.sin_family - PF_INET
++ AF_INET
+)
+// </smpl>
 
--- 
-Bob Copeland %% www.bobcopeland.com
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ security/smack/smack_lsm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2464,7 +2464,7 @@ static int smack_socket_sendmsg(struct s
+ 	/*
+ 	 * Perfectly reasonable for this to be NULL
+ 	 */
+-	if (sip = NULL || sip->sin_family != PF_INET)
++	if (sip = NULL || sip->sin_family != AF_INET)
+ 		return 0;
+ 
+ 	return smack_netlabel_send(sock->sk, sip);
