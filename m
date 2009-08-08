@@ -1,55 +1,100 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 12 Jul 2009 20:06:00 +0000
-Subject: [PATCH 5/5] net/irda: Drop unnecessary NULL test
-Message-Id: <Pine.LNX.4.64.0907122205340.22658@ask.diku.dk>
+Date: Sat, 08 Aug 2009 06:47:33 +0000
+Subject: [PATCH] drivers/net/tokenring: Use status field rather than state
+Message-Id: <Pine.LNX.4.64.0908080846000.25176@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: samuel@sortiz.org, irda-users@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The result of container_of should not be NULL.  In particular, in this case
-the argument to the enclosing function has passed though INIT_WORK, which
-dereferences it, implying that its container cannot be NULL.
-
-A simplified version of the semantic patch that makes this change is as
-follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-identifier fn,work,x,fld;
-type T;
-expression E1,E2;
-statement S;
-@@
-
-static fn(struct work_struct *work) {
-  ... when != work = E1
-  x = container_of(work,T,fld)
-  ... when != x = E2
-- if (x = NULL) S
-  ...
-}
-// </smpl>
+In general in this file, it is the status field, not the state field, that
+contains values like OPEN and CLOSED.  Indeed, in the first error case, it
+is the field status that is initialized.  I have thus assumed that all of
+the error handling code should be the same, and moved it to the end of the
+function to emphasize its commonality.
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- net/irda/irnet/irnet_irda.c         |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+ drivers/net/tokenring/smctr.c       |   36 +++++--------------
+ 1 files changed, 10 insertions(+), 26 deletions(-)
 
-diff --git a/net/irda/irnet/irnet_irda.c b/net/irda/irnet/irnet_irda.c
-index cf9a4b5..49ed80d 100644
---- a/net/irda/irnet/irnet_irda.c
-+++ b/net/irda/irnet/irnet_irda.c
-@@ -21,8 +21,6 @@ static void irnet_ppp_disconnect(struct work_struct *work)
- 	irnet_socket * self  		container_of(work, irnet_socket, disconnect_work);
+diff --git a/drivers/net/tokenring/smctr.c b/drivers/net/tokenring/smctr.c
+index 6515894..f789f51 100644
+--- a/drivers/net/tokenring/smctr.c
++++ b/drivers/net/tokenring/smctr.c
+@@ -3091,11 +3091,7 @@ static int smctr_lobe_media_test(struct net_device *dev)
+         /* Setup the lobe media test. */
+         smctr_lobe_media_test_cmd(dev);
+         if(smctr_wait_cmd(dev))
+-        {
+-                smctr_reset_adapter(dev);
+-                tp->status = CLOSED;
+-                return (LOBE_MEDIA_TEST_FAILED);
+-        }
++		goto err;
  
--	if (self = NULL)
--		return;
- 	/*
- 	 * If we were connected, cleanup & close the PPP
- 	 * channel, which will kill pppd (hangup) and the rest.
+         /* Tx lobe media test frames. */
+         for(i = 0; i < 1500; ++i)
+@@ -3103,20 +3099,12 @@ static int smctr_lobe_media_test(struct net_device *dev)
+                 if(smctr_send_lobe_media_test(dev))
+                 {
+                         if(perror)
+-                        {
+-                                smctr_reset_adapter(dev);
+-                                tp->state = CLOSED;
+-                                return (LOBE_MEDIA_TEST_FAILED);
+-                        }
++				goto err;
+                         else
+                         {
+                                 perror = 1;
+                                 if(smctr_lobe_media_test_cmd(dev))
+-                                {
+-                                        smctr_reset_adapter(dev);
+-                                        tp->state = CLOSED;
+-                                        return (LOBE_MEDIA_TEST_FAILED);
+-                                }
++					goto err;
+                         }
+                 }
+         }
+@@ -3124,28 +3112,24 @@ static int smctr_lobe_media_test(struct net_device *dev)
+         if(smctr_send_dat(dev))
+         {
+                 if(smctr_send_dat(dev))
+-                {
+-                        smctr_reset_adapter(dev);
+-                        tp->state = CLOSED;
+-                        return (LOBE_MEDIA_TEST_FAILED);
+-                }
++			goto err;
+         }
+ 
+         /* Check if any frames received during test. */
+         if((tp->rx_fcb_curr[MAC_QUEUE]->frame_status)
+                 || (tp->rx_fcb_curr[NON_MAC_QUEUE]->frame_status))
+-        {
+-                smctr_reset_adapter(dev);
+-                tp->state = CLOSED;
+-                return (LOBE_MEDIA_TEST_FAILED);
+-        }
++			goto err;
+ 
+         /* Set receive mask to "Promisc" mode. */
+         tp->receive_mask = saved_rcv_mask;
+ 
+         smctr_chg_rx_mask(dev);
+ 
+-        return (0);
++	 return 0;
++err:
++	smctr_reset_adapter(dev);
++	tp->status = CLOSED;
++	return LOBE_MEDIA_TEST_FAILED;
+ }
+ 
+ static int smctr_lobe_media_test_cmd(struct net_device *dev)
