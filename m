@@ -1,59 +1,76 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 12 Aug 2009 14:51:09 +0000
-Subject: [PATCH] drivers/usb/host: Correct use of.and &
-Message-Id: <Pine.LNX.4.64.0908121650450.8540@pc-004.diku.dk>
+Date: Sun, 09 Aug 2009 07:43:42 +0000
+Subject: [PATCH 2/3] drivers/net: Correct use of request_region/request_mem_region
+Message-Id: <Pine.LNX.4.64.0908090943210.13271@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Correct priority problem in the use of ! and &.
+request_mem_region should be used with release_mem_region, not request_region.
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@ expression E; constant C; @@
-- !E & C
-+ !(E & C)
+@r2@
+expression start;
+@@
+
+request_mem_region(start,...)
+
+@b2@
+expression r2.start;
+@@
+
+request_region(start,...)
+
+@depends on !b2@
+expression r2.start;
+expression E;
+@@
+
+- release_region
++ release_mem_region
+  (start,E)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/usb/host/isp1362-hcd.c      |   12 ++++++++----
- 1 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/jazzsonic.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
-index 16ba1ea..e35d828 100644
---- a/drivers/usb/host/isp1362-hcd.c
-+++ b/drivers/usb/host/isp1362-hcd.c
-@@ -1075,8 +1075,10 @@ static irqreturn_t isp1362_irq(struct usb_hcd *hcd)
- 		isp1362_clr_mask16(isp1362_hcd, HCBUFSTAT, HCBUFSTAT_ISTL0_FULL);
- 		DBG(1, "%s: ISTL0\n", __func__);
- 		WARN_ON((int)!!isp1362_hcd->istl_flip);
--		WARN_ON(isp1362_read_reg16(isp1362_hcd, HCBUFSTAT) & HCBUFSTAT_ISTL0_ACTIVE);
--		WARN_ON(!isp1362_read_reg16(isp1362_hcd, HCBUFSTAT) & HCBUFSTAT_ISTL0_DONE);
-+		WARN_ON(isp1362_read_reg16(isp1362_hcd, HCBUFSTAT) &
-+			HCBUFSTAT_ISTL0_ACTIVE);
-+		WARN_ON(!(isp1362_read_reg16(isp1362_hcd, HCBUFSTAT) &
-+			HCBUFSTAT_ISTL0_DONE));
- 		isp1362_hcd->irqenb &= ~HCuPINT_ISTL0;
- 	}
+diff -u -p a/drivers/net/jazzsonic.c b/drivers/net/jazzsonic.c
+--- a/drivers/net/jazzsonic.c
++++ b/drivers/net/jazzsonic.c
+@@ -203,7 +203,7 @@ static int __devinit sonic_probe1(struct
  
-@@ -1087,8 +1089,10 @@ static irqreturn_t isp1362_irq(struct usb_hcd *hcd)
- 		isp1362_clr_mask16(isp1362_hcd, HCBUFSTAT, HCBUFSTAT_ISTL1_FULL);
- 		DBG(1, "%s: ISTL1\n", __func__);
- 		WARN_ON(!(int)isp1362_hcd->istl_flip);
--		WARN_ON(isp1362_read_reg16(isp1362_hcd, HCBUFSTAT) & HCBUFSTAT_ISTL1_ACTIVE);
--		WARN_ON(!isp1362_read_reg16(isp1362_hcd, HCBUFSTAT) & HCBUFSTAT_ISTL1_DONE);
-+		WARN_ON(isp1362_read_reg16(isp1362_hcd, HCBUFSTAT) &
-+			HCBUFSTAT_ISTL1_ACTIVE);
-+		WARN_ON(!(isp1362_read_reg16(isp1362_hcd, HCBUFSTAT) &
-+			HCBUFSTAT_ISTL1_DONE));
- 		isp1362_hcd->irqenb &= ~HCuPINT_ISTL1;
- 	}
+ 	return 0;
+ out:
+-	release_region(dev->base_addr, SONIC_MEM_SIZE);
++	release_mem_region(dev->base_addr, SONIC_MEM_SIZE);
+ 	return err;
+ }
  
+@@ -247,7 +247,7 @@ static int __devinit jazz_sonic_probe(st
+ 	return 0;
+ 
+ out1:
+-	release_region(dev->base_addr, SONIC_MEM_SIZE);
++	release_mem_region(dev->base_addr, SONIC_MEM_SIZE);
+ out:
+ 	free_netdev(dev);
+ 
+@@ -269,7 +269,7 @@ static int __devexit jazz_sonic_device_r
+ 	unregister_netdev(dev);
+ 	dma_free_coherent(lp->device, SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
+ 	                  lp->descriptors, lp->descriptors_laddr);
+-	release_region (dev->base_addr, SONIC_MEM_SIZE);
++	release_mem_region(dev->base_addr, SONIC_MEM_SIZE);
+ 	free_netdev(dev);
+ 
+ 	return 0;
