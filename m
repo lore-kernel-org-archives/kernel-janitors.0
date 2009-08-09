@@ -1,70 +1,58 @@
-From: Kumar Gala <galak@kernel.crashing.org>
-Date: Fri, 07 Aug 2009 02:26:23 +0000
-Subject: Re: [PATCH 1/10] arch/powerpc/sysdev/qe_lib: introduce missing kfree
-Message-Id: <E4B968CE-5739-455A-9231-8908289B9466@kernel.crashing.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 09 Aug 2009 07:43:20 +0000
+Subject: [PATCH 1/3] drivers/isdn/hisax: Correct use of request_region/request_mem_region
+Message-Id: <Pine.LNX.4.64.0908090942560.13271@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908011052290.23408@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0908011052290.23408@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linuxppc-dev@ozlabs.org, kernel-janitors@vger.kernel.org, timur@freescale.com, linux-kernel@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>, isdn4linux@listserv.isdn4linux.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-On Aug 1, 2009, at 3:52 AM, Julia Lawall wrote:
+request_region should be used with release_region, not request_mem_region.
 
-> From: Julia Lawall <julia@diku.dk>
->
-> Error handling code following a kzalloc should free the allocated  
-> data.
->
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
->
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> statement S;
-> expression E;
-> identifier f,f1,l;
-> position p1,p2;
-> expression *ptr != NULL;
-> @@
->
-> x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-> ...
-> if (x = NULL) S
-> <... when != x
->     when != if (...) { <+...x...+> }
-> (
-> x->f1 = E
-> |
-> (x->f1 = NULL || ...)
-> |
-> f(...,x->f1,...)
-> )
-> ...>
-> (
-> return \(0\|<+...x...+>\|ptr\);
-> |
-> return@p2 ...;
-> )
->
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
->
-> print "* file: %s kmalloc %s return %s" %  
-> (p1[0].file,p1[0].line,p2[0].line)
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> ---
-> arch/powerpc/sysdev/qe_lib/qe_ic.c  |    5 ++++-
-> 1 files changed, 4 insertions(+), 1 deletions(-)
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-applied to next
+// <smpl>
+@r1@
+expression start;
+@@
 
-- k
+request_region(start,...)
+
+@b1@
+expression r1.start;
+@@
+
+request_mem_region(start,...)
+
+@depends on !b1@
+expression r1.start;
+expression E;
+@@
+
+- release_mem_region
++ release_region
+  (start,E)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/isdn/hisax/isurf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/isdn/hisax/isurf.c b/drivers/isdn/hisax/isurf.c
+--- a/drivers/isdn/hisax/isurf.c
++++ b/drivers/isdn/hisax/isurf.c
+@@ -125,7 +125,7 @@ release_io_isurf(struct IsdnCardState *c
+ {
+ 	release_region(cs->hw.isurf.reset, 1);
+ 	iounmap(cs->hw.isurf.isar);
+-	release_mem_region(cs->hw.isurf.phymem, ISURF_IOMEM_SIZE);
++	release_region(cs->hw.isurf.phymem, ISURF_IOMEM_SIZE);
+ }
+ 
+ static void
