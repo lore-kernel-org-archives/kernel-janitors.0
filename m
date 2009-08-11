@@ -1,53 +1,29 @@
-From: "Serge E. Hallyn" <serue@us.ibm.com>
-Date: Tue, 11 Aug 2009 14:36:43 +0000
+From: James Morris <jmorris@namei.org>
+Date: Tue, 11 Aug 2009 15:32:27 +0000
 Subject: Re: [PATCH][RFC] security: constify seq_operations
-Message-Id: <20090811143643.GA15096@us.ibm.com>
+Message-Id: <alpine.LRH.2.00.0908120129290.22015@tundra.namei.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LRH.2.00.0908112337450.21218@tundra.namei.org>
-In-Reply-To: <alpine.LRH.2.00.0908112337450.21218@tundra.namei.org>
+References: <alpine.LRH.2.00.0908112337450.21218@tundra.namei.org> <20090811143643.GA15096@us.ibm.com>
+In-Reply-To: <20090811143643.GA15096@us.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Morris <jmorris@namei.org>
+To: "Serge E. Hallyn" <serue@us.ibm.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Arjan van de Ven <arjan@infradead.org>, kernel-janitors@vger.kernel.org
 
-Quoting James Morris (jmorris@namei.org):
-> I think it'd be a good idea to constify more of the various operations 
-> structs in the kernel -- our coverage of this is spotty.
-> 
-> The patch below should provide coverage for all of the eligible 
-> seq_operations structs in the kernel.  It's derived from the grsecurity 
-> patch (which I was reading and noticed how many of these we're missing).
-> 
-> It's possible something's been missed, or that there are problems in code 
-> which I can't test.  Please review/comment/test.
-> 
-> If it looks ok, I suggest pushing this via -mm.
-> 
-> Note that there are quite a few other similar ops to be constified, such 
-> as file_operations, so if anyone would like to pitch in, please do so.
-> 
-> ---
-> 
-> Subject: [PATCH 1/1] security: constify seq_operations
-> 
-> Make all seq_operations structs const, to help mitigate
-> against revectoring user-triggerable function pointers.
-> 
-> This is derived from the grsecurity patch, although generated
-> from scratch because it's simpler than extracting the changes
-> from there.
-> 
-> Signed-off-by: James Morris <jmorris@namei.org>
+On Tue, 11 Aug 2009, Serge E. Hallyn wrote:
 
-I think it's a good idea.
+> seq_ops structs not constified...  something as simple as
+> find . -type f -print0 | xargs -0 grep 'struct seq_operations' | grep -v const
+> Though what you have here hits all of those and more.
 
-I suppose we could add a script to check for any new
-seq_ops structs not constified...  something as simple as
-find . -type f -print0 | xargs -0 grep 'struct seq_operations' | grep -v const
-Though what you have here hits all of those and more.
+There might be some docs to update to get people to think about it.
 
-Acked-by: Serge Hallyn <serue@us.ibm.com>
+> Acked-by: Serge Hallyn <serue@us.ibm.com>
 
-thanks,
--serge
+Christoph kind of acked it off-list, but wasn't sure about the security: 
+tag.  I suppose it could be seq_file: ?
+
+-- 
+James Morris
+<jmorris@namei.org>
