@@ -1,83 +1,35 @@
 From: Jiri Kosina <jkosina@suse.cz>
-Date: Sat, 08 Aug 2009 00:26:48 +0000
-Subject: Re: [PATCH 7/10] drivers/hid: introduce missing kfree
-Message-Id: <alpine.LNX.2.00.0908080226210.25797@wotan.suse.de>
+Date: Tue, 11 Aug 2009 13:55:46 +0000
+Subject: Re: [PATCH] MAINTAINERS: Add networking wireless drivers section
+Message-Id: <alpine.LRH.2.00.0908111555410.11142@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908011054220.23408@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0908011054220.23408@ask.diku.dk>
+References: <Pine.LNX.4.64.0907281753540.28189@ask.diku.dk>  <20090728.103044.179053537.davem@davemloft.net>  <1248804397.18284.5.camel@Joe-Laptop.home>  <20090728.113353.08715297.davem@davemloft.net> <1248806896.18284.14.camel@Joe-Laptop.home>
+In-Reply-To: <1248806896.18284.14.camel@Joe-Laptop.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: David Miller <davem@davemloft.net>, linville@tuxdriver.com, julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
 
-On Sat, 1 Aug 2009, Julia Lawall wrote:
+On Tue, 28 Jul 2009, Joe Perches wrote:
 
-> From: Julia Lawall <julia@diku.dk>
+> > Why not just create a plain "WIRELESS" umbrella entry that contains 
+> > all of drivers/net/wireless, net/mac80211, and net/wireless?
+> Whatever works for John I suppose. John, do you have a preference?
+> I was trying to avoid the "S: Maintained" label
+> and was copying the form of this section:
 > 
-> Error handling code following a kzalloc should free the allocated data.
-> 
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> statement S;
-> expression E;
-> identifier f,f1,l;
-> position p1,p2;
-> expression *ptr != NULL;
-> @@
-> 
-> x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-> ...
-> if (x = NULL) S
-> <... when != x
->      when != if (...) { <+...x...+> }
-> (
-> x->f1 = E
-> |
->  (x->f1 = NULL || ...)
-> |
->  f(...,x->f1,...)
-> )
-> ...>
-> (
->  return \(0\|<+...x...+>\|ptr\);
-> |
->  return@p2 ...;
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> ---
->  drivers/hid/hid-debug.c             |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-> index 3e425f7..6abd036 100644
-> --- a/drivers/hid/hid-debug.c
-> +++ b/drivers/hid/hid-debug.c
-> @@ -928,6 +928,7 @@ static int hid_debug_events_open(struct inode *inode, struct file *file)
->  
->  	if (!(list->hid_debug_buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
->  		err = -ENOMEM;
-> +		kfree(list);
->  		goto out;
->  	}
->  	list->hdev = (struct hid_device *) inode->i_private;
-> 
+> NETWORKING DRIVERS
+> L:	netdev@vger.kernel.org
+> W:	http://www.linuxfoundation.org/en/Net
+> T:	git git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-2.6.git
+> S:	Odd Fixes
+> F:	drivers/net/
 
-Applied, thanks a lot Julia.
+Just out of curiosity, why is drivers/net marked as "Odd fixes" and not 
+"Maintained"?
 
 -- 
 Jiri Kosina
 SUSE Labs
+
