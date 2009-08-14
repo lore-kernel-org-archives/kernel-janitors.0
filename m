@@ -1,76 +1,114 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 09 Aug 2009 07:43:42 +0000
-Subject: [PATCH 2/3] drivers/net: Correct use of request_region/request_mem_region
-Message-Id: <Pine.LNX.4.64.0908090943210.13271@ask.diku.dk>
+From: Thomas Dahlmann <dahlmann.thomas@arcor.de>
+Date: Fri, 14 Aug 2009 19:32:05 +0000
+Subject: Re: [PATCH 3/3] drivers/usb/gadget: Drop NULL test on list_entry
+Message-Id: <4A870E11.10705@arcor.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0907120943230.17416@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0907120943230.17416@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-geode@lists.infradead.org, gregkh@suse.de, jirislaby@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Thanks!
 
-request_mem_region should be used with release_mem_region, not request_region.
+Applied.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Julia Lawall schrieb:
+> From: Julia Lawall <julia@diku.dk>
+>
+> list_entry, which is an alias for container_of, cannot return NULL, as
+> there is no way to add a NULL value to a doubly linked list.
+>
+> A simplified version of the semantic match that findds this problem is as
+> follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+>
+> // <smpl>
+> @r@
+> expression x,E;
+> statement S1,S2;
+> position p,p1;
+> @@
+>
+> *x = list_entry@p(...)
+> ... when != x = E
+> *if@p1 (x = NULL) S1 else S2
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+>
+> ---
+>  drivers/usb/gadget/amd5536udc.c     |   56 +++++++++-----------
+>  1 files changed, 25 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/usb/gadget/amd5536udc.c b/drivers/usb/gadget/amd5536udc.c
+> index 826f3ad..85f7aa9 100644
+> --- a/drivers/usb/gadget/amd5536udc.c
+> +++ b/drivers/usb/gadget/amd5536udc.c
+> @@ -2379,40 +2379,34 @@ static irqreturn_t udc_data_in_isr(struct udc *dev, int ep_ix)
+>  		if (!ep->cancel_transfer && !list_empty(&ep->queue)) {
+>  			req = list_entry(ep->queue.next,
+>  					struct udc_request, queue);
+> -			if (req) {
+> -				/*
+> -				 * length bytes transfered
+> -				 * check dma done of last desc. in PPBDU mode
+> -				 */
+> -				if (use_dma_ppb_du) {
+> -					td = udc_get_last_dma_desc(req);
+> -					if (td) {
+> -						dma_done > -							AMD_GETBITS(td->status,
+> -							UDC_DMA_IN_STS_BS);
+> -						/* don't care DMA done */
+> -						req->req.actual > -							req->req.length;
+> -					}
+> -				} else {
+> -					/* assume all bytes transferred */
+> +			/*
+> +			 * length bytes transfered
+> +			 * check dma done of last desc. in PPBDU mode
+> +			 */
+> +			if (use_dma_ppb_du) {
+> +				td = udc_get_last_dma_desc(req);
+> +				if (td) {
+> +					dma_done > +						AMD_GETBITS(td->status,
+> +						UDC_DMA_IN_STS_BS);
+> +					/* don't care DMA done */
+>  					req->req.actual = req->req.length;
+>  				}
+> +			} else {
+> +				/* assume all bytes transferred */
+> +				req->req.actual = req->req.length;
+> +			}
+>  
+> -				if (req->req.actual = req->req.length) {
+> -					/* complete req */
+> -					complete_req(ep, req, 0);
+> -					req->dma_going = 0;
+> -					/* further request available ? */
+> -					if (list_empty(&ep->queue)) {
+> -						/* disable interrupt */
+> -						tmp = readl(
+> -							&dev->regs->ep_irqmsk);
+> -						tmp |= AMD_BIT(ep->num);
+> -						writel(tmp,
+> -							&dev->regs->ep_irqmsk);
+> -					}
+> -
+> +			if (req->req.actual = req->req.length) {
+> +				/* complete req */
+> +				complete_req(ep, req, 0);
+> +				req->dma_going = 0;
+> +				/* further request available ? */
+> +				if (list_empty(&ep->queue)) {
+> +					/* disable interrupt */
+> +					tmp = readl(&dev->regs->ep_irqmsk);
+> +					tmp |= AMD_BIT(ep->num);
+> +					writel(tmp, &dev->regs->ep_irqmsk);
+>  				}
+>  			}
+>  		}
+>   
 
-// <smpl>
-@r2@
-expression start;
-@@
-
-request_mem_region(start,...)
-
-@b2@
-expression r2.start;
-@@
-
-request_region(start,...)
-
-@depends on !b2@
-expression r2.start;
-expression E;
-@@
-
-- release_region
-+ release_mem_region
-  (start,E)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/jazzsonic.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff -u -p a/drivers/net/jazzsonic.c b/drivers/net/jazzsonic.c
---- a/drivers/net/jazzsonic.c
-+++ b/drivers/net/jazzsonic.c
-@@ -203,7 +203,7 @@ static int __devinit sonic_probe1(struct
- 
- 	return 0;
- out:
--	release_region(dev->base_addr, SONIC_MEM_SIZE);
-+	release_mem_region(dev->base_addr, SONIC_MEM_SIZE);
- 	return err;
- }
- 
-@@ -247,7 +247,7 @@ static int __devinit jazz_sonic_probe(st
- 	return 0;
- 
- out1:
--	release_region(dev->base_addr, SONIC_MEM_SIZE);
-+	release_mem_region(dev->base_addr, SONIC_MEM_SIZE);
- out:
- 	free_netdev(dev);
- 
-@@ -269,7 +269,7 @@ static int __devexit jazz_sonic_device_r
- 	unregister_netdev(dev);
- 	dma_free_coherent(lp->device, SIZEOF_SONIC_DESC * SONIC_BUS_SCALE(lp->dma_bitmode),
- 	                  lp->descriptors, lp->descriptors_laddr);
--	release_region (dev->base_addr, SONIC_MEM_SIZE);
-+	release_mem_region(dev->base_addr, SONIC_MEM_SIZE);
- 	free_netdev(dev);
- 
- 	return 0;
