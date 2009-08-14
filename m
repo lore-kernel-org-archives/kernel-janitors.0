@@ -1,102 +1,133 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Aug 2009 08:49:13 +0000
-Subject: [PATCH 13/15] drivers/char: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908021048470.15557@ask.diku.dk>
+Date: Fri, 14 Aug 2009 20:10:00 +0000
+Subject: [PATCH] staging: Make some structures static
+Message-Id: <Pine.LNX.4.64.0908142209231.31743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
-but is perhaps more readable.
-
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@haskernel@
-@@
-
-#include <linux/kernel.h>
-
-@depends on haskernel@
-expression x,__divisor;
-@@
-
-- (((x) + ((__divisor) / 2)) / (__divisor))
-+ DIV_ROUND_CLOSEST(x,__divisor)
-// </smpl>
+This was done using a semantic patch (http://coccinelle.lip6.fr/) that
+checks that the declaration is not inside a function definition, that the
+defined variable is not exported using EXPORTED_SYMBOL, etc, and that the
+defined variable does not occur in any other file.  If these conditions
+hold, static is added before the declaration.
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/char/mmtimer.c |    5 +++--
- drivers/char/riscom8.c |   12 ++++++------
- 2 files changed, 9 insertions(+), 8 deletions(-)
+ drivers/staging/android/binder.c             |    4 ++--
+ drivers/staging/dream/qdsp5/audio_aac.c      |    2 +-
+ drivers/staging/dream/qdsp5/audio_in.c       |    2 +-
+ drivers/staging/dream/qdsp5/audio_mp3.c      |    2 +-
+ drivers/staging/dream/qdsp5/audio_out.c      |    2 +-
+ drivers/staging/dream/smd/smd_rpcrouter.c    |    2 +-
+ drivers/staging/otus/80211core/performance.c |    6 +++---
+ drivers/staging/otus/hal/hpmain.c            |    2 +-
+ 8 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/char/mmtimer.c b/drivers/char/mmtimer.c
-index 918711a..e33acb8 100644
---- a/drivers/char/mmtimer.c
-+++ b/drivers/char/mmtimer.c
-@@ -788,8 +788,9 @@ static int __init mmtimer_init(void)
- 		goto out1;
- 	}
+diff -u -p a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -164,8 +164,8 @@ struct binder_transaction_log {
+ 	int full;
+ 	struct binder_transaction_log_entry entry[32];
+ };
+-struct binder_transaction_log binder_transaction_log;
+-struct binder_transaction_log binder_transaction_log_failed;
++static struct binder_transaction_log binder_transaction_log;
++static struct binder_transaction_log binder_transaction_log_failed;
  
--	mmtimer_femtoperiod = ((unsigned long)1E15 + sn_rtc_cycles_per_second /
--			       2) / sn_rtc_cycles_per_second;
-+	mmtimer_femtoperiod +		DIV_ROUND_CLOSEST((unsigned long)1E15,
-+				  sn_rtc_cycles_per_second);
+ static struct binder_transaction_log_entry *binder_transaction_log_add(
+ 	struct binder_transaction_log *log)
+diff -u -p a/drivers/staging/dream/qdsp5/audio_aac.c b/drivers/staging/dream/qdsp5/audio_aac.c
+--- a/drivers/staging/dream/qdsp5/audio_aac.c
++++ b/drivers/staging/dream/qdsp5/audio_aac.c
+@@ -950,7 +950,7 @@ static int audio_release(struct inode *i
+ 	return 0;
+ }
  
- 	if (request_irq(SGI_MMTIMER_VECTOR, mmtimer_interrupt, IRQF_PERCPU, MMTIMER_NAME, NULL)) {
- 		printk(KERN_WARNING "%s: unable to allocate interrupt.",
-diff --git a/drivers/char/riscom8.c b/drivers/char/riscom8.c
-index 171711a..7f1bb27 100644
---- a/drivers/char/riscom8.c
-+++ b/drivers/char/riscom8.c
-@@ -665,8 +665,8 @@ static void rc_change_speed(struct riscom_board *bp, struct riscom_port *port)
- 	 */
+-struct audio the_aac_audio;
++static struct audio the_aac_audio;
  
- 	/* Set baud rate for port */
--	tmp = (((RC_OSCFREQ + baud/2) / baud +
--		CD180_TPC/2) / CD180_TPC);
-+	tmp = DIV_ROUND_CLOSEST(DIV_ROUND_CLOSEST(RC_OSCFREQ, baud),
-+				CD180_TPC);
+ static int audio_open(struct inode *inode, struct file *file)
+ {
+diff -u -p a/drivers/staging/dream/qdsp5/audio_in.c b/drivers/staging/dream/qdsp5/audio_in.c
+--- a/drivers/staging/dream/qdsp5/audio_in.c
++++ b/drivers/staging/dream/qdsp5/audio_in.c
+@@ -785,7 +785,7 @@ static int audio_in_release(struct inode
+ 	return 0;
+ }
  
- 	rc_out(bp, CD180_RBPRH, (tmp >> 8) & 0xff);
- 	rc_out(bp, CD180_TBPRH, (tmp >> 8) & 0xff);
-@@ -676,12 +676,12 @@ static void rc_change_speed(struct riscom_board *bp, struct riscom_port *port)
- 	baud = (baud + 5) / 10;   /* Estimated CPS */
+-struct audio_in the_audio_in;
++static struct audio_in the_audio_in;
  
- 	/* Two timer ticks seems enough to wakeup something like SLIP driver */
--	tmp = ((baud + HZ/2) / HZ) * 2 - CD180_NFIFO;
-+	tmp = DIV_ROUND_CLOSEST(baud, HZ) * 2 - CD180_NFIFO;
- 	port->wakeup_chars = (tmp < 0) ? 0 : ((tmp >= SERIAL_XMIT_SIZE) ?
- 					      SERIAL_XMIT_SIZE - 1 : tmp);
+ static int audio_in_open(struct inode *inode, struct file *file)
+ {
+diff -u -p a/drivers/staging/dream/qdsp5/audio_mp3.c b/drivers/staging/dream/qdsp5/audio_mp3.c
+--- a/drivers/staging/dream/qdsp5/audio_mp3.c
++++ b/drivers/staging/dream/qdsp5/audio_mp3.c
+@@ -864,7 +864,7 @@ static int audio_release(struct inode *i
+ 	return 0;
+ }
  
- 	/* Receiver timeout will be transmission time for 1.5 chars */
--	tmp = (RISCOM_TPS + RISCOM_TPS/2 + baud/2) / baud;
-+	tmp = DIV_ROUND_CLOSEST(RISCOM_TPS + RISCOM_TPS / 2, baud);
- 	tmp = (tmp > 0xff) ? 0xff : tmp;
- 	rc_out(bp, CD180_RTPR, tmp);
+-struct audio the_mp3_audio;
++static struct audio the_mp3_audio;
  
-@@ -1184,7 +1184,7 @@ static int rc_set_serial_info(struct riscom_port *port,
- 	if ((tmp.irq != bp->irq) ||
- 	    (tmp.port != bp->base) ||
- 	    (tmp.type != PORT_CIRRUS) ||
--	    (tmp.baud_base != (RC_OSCFREQ + CD180_TPC/2) / CD180_TPC) ||
-+	    (tmp.baud_base != DIV_ROUND_CLOSEST(RC_OSCFREQ, CD180_TPC)) ||
- 	    (tmp.custom_divisor != 0) ||
- 	    (tmp.xmit_fifo_size != CD180_NFIFO) ||
- 	    (tmp.flags & ~RISCOM_LEGAL_FLAGS))
-@@ -1230,7 +1230,7 @@ static int rc_get_serial_info(struct riscom_port *port,
- 	tmp.port = bp->base;
- 	tmp.irq  = bp->irq;
- 	tmp.flags = port->port.flags;
--	tmp.baud_base = (RC_OSCFREQ + CD180_TPC/2) / CD180_TPC;
-+	tmp.baud_base = DIV_ROUND_CLOSEST(RC_OSCFREQ, CD180_TPC);
- 	tmp.close_delay = port->port.close_delay * HZ/100;
- 	tmp.closing_wait = port->port.closing_wait * HZ/100;
- 	tmp.xmit_fifo_size = CD180_NFIFO;
+ static int audio_open(struct inode *inode, struct file *file)
+ {
+diff -u -p a/drivers/staging/dream/qdsp5/audio_out.c b/drivers/staging/dream/qdsp5/audio_out.c
+--- a/drivers/staging/dream/qdsp5/audio_out.c
++++ b/drivers/staging/dream/qdsp5/audio_out.c
+@@ -699,7 +699,7 @@ static int audio_release(struct inode *i
+ 	return 0;
+ }
+ 
+-struct audio the_audio;
++static struct audio the_audio;
+ 
+ static int audio_open(struct inode *inode, struct file *file)
+ {
+diff -u -p a/drivers/staging/dream/smd/smd_rpcrouter.c b/drivers/staging/dream/smd/smd_rpcrouter.c
+--- a/drivers/staging/dream/smd/smd_rpcrouter.c
++++ b/drivers/staging/dream/smd/smd_rpcrouter.c
+@@ -122,7 +122,7 @@ struct rr_context {
+ 	uint32_t count; /* bytes needed in this state */
+ };
+ 
+-struct rr_context the_rr_context;
++static struct rr_context the_rr_context;
+ 
+ static struct platform_device rpcrouter_pdev = {
+ 	.name		= "oncrpc_router",
+diff -u -p a/drivers/staging/otus/80211core/performance.c b/drivers/staging/otus/80211core/performance.c
+--- a/drivers/staging/otus/80211core/performance.c
++++ b/drivers/staging/otus/80211core/performance.c
+@@ -27,9 +27,9 @@
+ #ifdef ZM_ENABLE_PERFORMANCE_EVALUATION
+ 
+ #define ZM_TP_SIZE 50
+-struct zsSummary zm_summary;
+-struct zsVariation zm_var;
+-struct zsThroughput zm_tp;
++static struct zsSummary zm_summary;
++static struct zsVariation zm_var;
++static struct zsThroughput zm_tp;
+ 
+ void zfiPerformanceInit(zdev_t* dev)
+ {
+diff -u -p a/drivers/staging/otus/hal/hpmain.c b/drivers/staging/otus/hal/hpmain.c
+--- a/drivers/staging/otus/hal/hpmain.c
++++ b/drivers/staging/otus/hal/hpmain.c
+@@ -76,7 +76,7 @@ u32_t zfHpEchoCommand(zdev_t* dev, u32_t
+ 
+ 
+ #define zm_hp_priv(x) (((struct zsHpPriv*)wd->hpPrivate)->x)
+-struct zsHpPriv zgHpPriv;
++static struct zsHpPriv zgHpPriv;
+ 
+ #define ZM_FIRMWARE_WLAN_ADDR           0x200000
+ #define ZM_FIRMWARE_SPI_ADDR      0x114000
