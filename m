@@ -1,69 +1,31 @@
-From: Davidlohr Bueso <dave@gnu.org>
-Date: Fri, 14 Aug 2009 03:57:33 +0000
+From: David Miller <davem@davemloft.net>
+Date: Fri, 14 Aug 2009 23:38:07 +0000
 Subject: Re: [PATCH] s2io: Remove unnecessary casts
-Message-Id: <20090814035733.GA29707@fencepost.gnu.org>
+Message-Id: <20090814.163807.227810344.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090814020328.GA21588@fencepost.gnu.org> <20090813.201452.21119996.davem@davemloft.net>
-In-Reply-To: <20090813.201452.21119996.davem@davemloft.net>
+References: <20090814020328.GA21588@fencepost.gnu.org>
+	<20090813.201452.21119996.davem@davemloft.net>
+	<20090814035733.GA29707@fencepost.gnu.org>
+In-Reply-To: <20090814035733.GA29707@fencepost.gnu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
+To: dave@gnu.org
 Cc: ram.vepa@neterion.com, santosh.rastapur@neterion.com, sivakumar.subramani@neterion.com, sreenivasa.honnur@neterion.com, anil.murthy@neterion.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 13, 2009 at 08:14:52PM -0700, David Miller wrote:
-> From: Davidlohr Bueso <dave@gnu.org>
-> Date: Thu, 13 Aug 2009 22:03:28 -0400
-> 
-> > 
-> > No need to cast kmalloc.
-> > 
-> > Signed-off-by: Davidlohr Bueso <dave@gnu.org>
-> 
-> Yeah but:
-> 
-> >  
-> > -                                       ba->ba_0_org = (void *) kmalloc
-> > -                                           (BUF0_LEN + ALIGN_SIZE, GFP_KERNEL);
-> > +                                       ba->ba_0_org = kmalloc(BUF0_LEN + ALIGN_SIZE, GFP_KERNEL);
-> 
-> Now the code line extends way over 80 columns.
-Ok, resubmitting and verified by checkpatch.pl
+From: Davidlohr Bueso <dave@gnu.org>
+Date: Thu, 13 Aug 2009 23:57:33 -0400
 
-Thanks.
+> Ok, resubmitting and verified by checkpatch.pl
+> 
+> Thanks.
+> 
+> Signed-off-by: Davidlohr Bueso <dave@gnu.org>
 
-Signed-off-by: Davidlohr Bueso <dave@gnu.org>
+Your email client has corrupted the patch, turning tab
+characters into spaces and whatnot.
 
----
- drivers/net/s2io.c |   12 ++++++++----
- 1 files changed, 8 insertions(+), 4 deletions(-)
+Please correct this and make a fresh, formal, resubmission
+(fresh subject, commit message, and all).
 
-diff --git a/drivers/net/s2io.c b/drivers/net/s2io.c
-index 458daa0..2bc62d3 100644
---- a/drivers/net/s2io.c
-+++ b/drivers/net/s2io.c
-@@ -870,8 +870,10 @@ static int init_shared_mem(struct s2io_nic *nic)
-                                while (k != rxd_count[nic->rxd_mode]) {
-                                        ba = &mac_control->rings[i].ba[j][k];
- 
--                                       ba->ba_0_org = (void *) kmalloc
--                                           (BUF0_LEN + ALIGN_SIZE, GFP_KERNEL);
-+                                       ba->ba_0_org = kmalloc
-+                                               (BUF0_LEN + ALIGN_SIZE,
-+                                                GFP_KERNEL);
-+
-                                        if (!ba->ba_0_org)
-                                                return -ENOMEM;
-                                        mem_allocated +@@ -881,8 +883,10 @@ static int init_shared_mem(struct s2io_nic *nic)
-                                        tmp &= ~((unsigned long) ALIGN_SIZE);
-                                        ba->ba_0 = (void *) tmp;
- 
--                                       ba->ba_1_org = (void *) kmalloc
--                                           (BUF1_LEN + ALIGN_SIZE, GFP_KERNEL);
-+                                       ba->ba_1_org = kmalloc
-+                                               (BUF1_LEN + ALIGN_SIZE,
-+                                                GFP_KERNEL);
-+
-                                        if (!ba->ba_1_org)
-                                                return -ENOMEM;
-                                        mem_allocated
+Thank you.
