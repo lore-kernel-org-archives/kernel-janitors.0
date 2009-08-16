@@ -1,51 +1,72 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Aug 2009 08:48:27 +0000
-Subject: [PATCH 11/15] arch/powerpc: Use DIV_ROUND_CLOSEST
-Message-Id: <Pine.LNX.4.64.0908021048090.15557@ask.diku.dk>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Sun, 16 Aug 2009 16:55:48 +0000
+Subject: [PATCH] x86: fix section mismatch warnings in kernel/apic/x2apic_uv_x.c
+Message-Id: <200908161855.48302.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benh@kernel.crashing.org, paulus@samba.org, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
-but is perhaps more readable.
+The function uv_acpi_madt_oem_check() has been marked __init, the struct apic_x2apic_uv_x has been marked __refdata.
+The aim is to remove the following section mismatch messages:
 
-The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+WARNING: arch/x86/kernel/apic/built-in.o(.data+0x1368): Section mismatch in reference from the variable apic_x2apic_uv_x to the function .cpuinit.text:uv_wakeup_secondary()
+The variable apic_x2apic_uv_x references
+the function __cpuinit uv_wakeup_secondary()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console, 
 
-// <smpl>
-@haskernel@
-@@
+WARNING: arch/x86/kernel/built-in.o(.data+0x68e8): Section mismatch in reference from the variable apic_x2apic_uv_x to the function .cpuinit.text:uv_wakeup_secondary()
+The variable apic_x2apic_uv_x references
+the function __cpuinit uv_wakeup_secondary()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console,
 
-#include <linux/kernel.h>
+WARNING: arch/x86/built-in.o(.text+0x7b36f): Section mismatch in reference from the function uv_acpi_madt_oem_check() to the function .init.text:early_ioremap()
+The function uv_acpi_madt_oem_check() references
+the function __init early_ioremap().
+This is often because uv_acpi_madt_oem_check lacks a __init 
+annotation or the annotation of early_ioremap is wrong.
 
-@depends on haskernel@
-expression x,__divisor;
-@@
+WARNING: arch/x86/built-in.o(.text+0x7b38d): Section mismatch in reference from the function uv_acpi_madt_oem_check() to the function .init.text:early_iounmap()
+The function uv_acpi_madt_oem_check() references
+the function __init early_iounmap().
+This is often because uv_acpi_madt_oem_check lacks a __init 
+annotation or the annotation of early_iounmap is wrong.
 
-- (((x) + ((__divisor) / 2)) / (__divisor))
-+ DIV_ROUND_CLOSEST(x,__divisor)
-// </smpl>
+WARNING: arch/x86/built-in.o(.data+0x8668): Section mismatch in reference from the variable apic_x2apic_uv_x to the function .cpuinit.text:uv_wakeup_secondary()
+The variable apic_x2apic_uv_x references
+the function __cpuinit uv_wakeup_secondary()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console,
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
 ---
- arch/powerpc/kernel/time.c          |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index eae4511..edb1edb 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -479,7 +479,8 @@ static int __init iSeries_tb_recal(void)
- 		unsigned long tb_ticks = tb - iSeries_recal_tb;
- 		unsigned long titan_usec = (titan - iSeries_recal_titan) >> 12;
- 		unsigned long new_tb_ticks_per_sec   = (tb_ticks * USEC_PER_SEC)/titan_usec;
--		unsigned long new_tb_ticks_per_jiffy = (new_tb_ticks_per_sec+(HZ/2))/HZ;
-+		unsigned long new_tb_ticks_per_jiffy +			DIV_ROUND_CLOSEST(new_tb_ticks_per_sec, HZ);
- 		long tick_diff = new_tb_ticks_per_jiffy - tb_ticks_per_jiffy;
- 		char sign = '+';		
- 		/* make sure tb_ticks_per_sec and tb_ticks_per_jiffy are consistent */
+Index: linux-2.6/arch/x86/kernel/apic/x2apic_uv_x.c
+=================================--- linux-2.6.orig/arch/x86/kernel/apic/x2apic_uv_x.c	2009-08-16 17:48:15.000000000 +0200
++++ linux-2.6/arch/x86/kernel/apic/x2apic_uv_x.c	2009-08-16 17:52:05.000000000 +0200
+@@ -46,7 +46,7 @@ static int early_get_nodeid(void)
+ 	return node_id.s.node_id;
+ }
+ 
+-static int uv_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
++static int __init uv_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
+ {
+ 	if (!strcmp(oem_id, "SGI")) {
+ 		if (!strcmp(oem_table_id, "UVL"))
+@@ -253,7 +253,7 @@ static void uv_send_IPI_self(int vector)
+ 	apic_write(APIC_SELF_IPI, vector);
+ }
+ 
+-struct apic apic_x2apic_uv_x = {
++struct apic __refdata apic_x2apic_uv_x = {
+ 
+ 	.name				= "UV large system",
+ 	.probe				= NULL,
