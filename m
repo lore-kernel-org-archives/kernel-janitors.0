@@ -1,88 +1,50 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Mon, 03 Aug 2009 20:46:32 +0000
-Subject: Re: [PATCH 1/5] drivers/video: Add kmalloc NULL tests
-Message-Id: <20090803134632.7cff1658.akpm@linux-foundation.org>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Sun, 16 Aug 2009 18:40:08 +0000
+Subject: [PATCH] drivers/pci: fix section mismatch warnings in intel-iommu.c
+Message-Id: <200908162040.08661.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907301559530.8734@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907301559530.8734@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ming Lei <tom.leiming@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: jbarnes@virtuousgeek.org, linux-kernel@vger.kernel.org
 
-On Thu, 30 Jul 2009 16:00:33 +0200 (CEST)
-Julia Lawall <julia@diku.dk> wrote:
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Check that the result of kmalloc is not NULL before passing it to other
-> functions.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @@
-> expression *x;
-> identifier f;
-> constant char *C;
-> @@
-> 
-> x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-> ... when != x = NULL
->     when != x != NULL
->     when != (x || ...)
-> (
-> kfree(x)
-> |
-> f(...,C,...,x,...)
-> |
-> *f(...,x,...)
-> |
-> *x->f
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/video/au1100fb.c            |    4 ++++
->  1 files changed, 4 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/video/au1100fb.c b/drivers/video/au1100fb.c
-> index 378f277..1766846 100644
-> --- a/drivers/video/au1100fb.c
-> +++ b/drivers/video/au1100fb.c
-> @@ -716,6 +716,10 @@ int au1100fb_setup(char *options)
->  			/* Mode option (only option that start with digit) */
->  			else if (isdigit(this_opt[0])) {
->  				mode = kmalloc(strlen(this_opt) + 1, GFP_KERNEL);
-> +				if (!mode) {
-> +					print_err("memory allocation failed");
-> +					return -ENOMEM;
-> +				}
->  				strncpy(mode, this_opt, strlen(this_opt) + 1);
->  			}
->  			/* Unsupported option */
+The functions si_domain_init() and iommu_prepare_static_identity_mapping() have been marked __init, in order to address the following section mismatch messages:
 
-We may as well clean up that open-coded kstrdup() too?
+WARNING: drivers/pci/built-in.o(.text+0x3c4e5): Section mismatch in reference from the function si_domain_init() to the function .init.text:si_domain_work_fn()
+The function si_domain_init() references
+the function __init si_domain_work_fn().
+This is often because si_domain_init lacks a __init 
+annotation or the annotation of si_domain_work_fn is wrong.
 
---- a/drivers/video/au1100fb.c~drivers-video-add-kmalloc-null-tests-fix
-+++ a/drivers/video/au1100fb.c
-@@ -715,12 +715,11 @@ int au1100fb_setup(char *options)
- 			}
- 			/* Mode option (only option that start with digit) */
- 			else if (isdigit(this_opt[0])) {
--				mode = kmalloc(strlen(this_opt) + 1, GFP_KERNEL);
-+				mode = kstrdup(this_opt, GFP_KERNEL);
- 				if (!mode) {
- 					print_err("memory allocation failed");
- 					return -ENOMEM;
- 				}
--				strncpy(mode, this_opt, strlen(this_opt) + 1);
- 			}
- 			/* Unsupported option */
- 			else {
-_
+WARNING: drivers/built-in.o(.text+0x415a5): Section mismatch in reference from the function si_domain_init() to the function .init.text:si_domain_work_fn()
+The function si_domain_init() references
+the function __init si_domain_work_fn().
+This is often because si_domain_init lacks a __init 
+annotation or the annotation of si_domain_work_fn is wrong.
 
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+---
+Index: linux-2.6/drivers/pci/intel-iommu.c
+=================================--- linux-2.6.orig/drivers/pci/intel-iommu.c	2009-08-16 19:29:32.000000000 +0200
++++ linux-2.6/drivers/pci/intel-iommu.c	2009-08-16 19:31:12.000000000 +0200
+@@ -2047,7 +2047,7 @@ static int __init si_domain_work_fn(unsi
+ 
+ }
+ 
+-static int si_domain_init(void)
++static int __init si_domain_init(void)
+ {
+ 	struct dmar_drhd_unit *drhd;
+ 	struct intel_iommu *iommu;
+@@ -2165,7 +2165,7 @@ static int iommu_should_identity_map(str
+ 	return 1;
+ }
+ 
+-static int iommu_prepare_static_identity_mapping(void)
++static int __init iommu_prepare_static_identity_mapping(void)
+ {
+ 	struct pci_dev *pdev = NULL;
+ 	int ret;
