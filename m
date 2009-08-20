@@ -1,44 +1,80 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Sat, 15 Aug 2009 09:15:17 +0000
-Subject: Re: [PATCH][RFC] security: constify seq_operations
-Message-Id: <4A867CA5.1050103@gmail.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 20 Aug 2009 20:42:31 +0000
+Subject: [PATCH] char/vme_scc: adding __init macro to vme_scc.c
+Message-Id: <200908202242.31778.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LRH.2.00.0908112337450.21218@tundra.namei.org> <20090811143643.GA15096@us.ibm.com> <alpine.LRH.2.00.0908120129290.22015@tundra.namei.org> <Pine.LNX.4.64.0908112138290.9996@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0908112138290.9996@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia@diku.dk>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serue@us.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Arjan van de Ven <arjan@infradead.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Kosina <trivial@kernel.org>
+Cc: Alan Cox <alan@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/11/2009 10:47 PM, Julia Lawall wrote:
-> A while ago I made a semantic patch to introduce const on file_operations
-> and and input_device_id types.  I tested it on 142 files in which the
-> change had already been made and got the same result in each case.  I have
-> run it on linux-next and obtained the attached result.  However, I have
-> not checked any of these results, so this is not meant as a submitted
-> patch, but as a starting point for someone who wants to look further into
-> the problem.
->
-> julia
->
+From: Peter Huewe <peterhuewe@gmx.de>
 
-snip
+Trivial patch which adds the __init macro to the module_init 
+function and all of its helper functions of char/vme_scc.c
 
-> diff -u -p a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
-> --- a/fs/ubifs/xattr.c 2009-06-27 09:35:06.000000000 +0200
-> +++ b/fs/ubifs/xattr.c 2009-08-11 22:42:24.000000000 +0200
-> @@ -80,7 +80,7 @@ enum {
->
->   static struct inode_operations none_inode_operations;
->   static struct address_space_operations none_address_operations;
-> -static struct file_operations none_file_operations;
-> +static const struct file_operations none_file_operations;
+Alan or Geert, please have a look at the small patch and either pull it through 
+your tree, or please ack' it so Jiri can pull it through the trivial tree.
 
-Fixed this in UBIFS. Also made the inode operation const. Thanks.
-Pushed to ubifs-2.6.git:
-http://git.infradead.org/ubifs-2.6.git/commit/2d132c333e9f88684801c9b80e6ba086da4f0ea0
+linux version 2.6.31-rc6 - linus git tree, Do 20. Aug 22:26:06 CEST 2009
 
--- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+diff --git a/drivers/char/vme_scc.c b/drivers/char/vme_scc.c
+index 994e1a5..8b24729 100644
+--- a/drivers/char/vme_scc.c
++++ b/drivers/char/vme_scc.c
+@@ -136,7 +136,7 @@ static const struct tty_port_operations scc_port_ops = {
+  * vme_scc_init() and support functions
+  *---------------------------------------------------------------------------*/
+ 
+-static int scc_init_drivers(void)
++static int __init scc_init_drivers(void)
+ {
+ 	int error;
+ 
+@@ -172,7 +172,7 @@ static int scc_init_drivers(void)
+ /* ports[] array is indexed by line no (i.e. [0] for ttyS0, [1] for ttyS1).
+  */
+ 
+-static void scc_init_portstructs(void)
++static void __init scc_init_portstructs(void)
+ {
+ 	struct scc_port *port;
+ 	int i;
+@@ -195,7 +195,7 @@ static void scc_init_portstructs(void)
+ 
+ 
+ #ifdef CONFIG_MVME147_SCC
+-static int mvme147_scc_init(void)
++static int __init mvme147_scc_init(void)
+ {
+ 	struct scc_port *port;
+ 	int error;
+@@ -298,7 +298,7 @@ fail:
+ 
+ 
+ #ifdef CONFIG_MVME162_SCC
+-static int mvme162_scc_init(void)
++static int __init mvme162_scc_init(void)
+ {
+ 	struct scc_port *port;
+ 	int error;
+@@ -404,7 +404,7 @@ fail:
+ 
+ 
+ #ifdef CONFIG_BVME6000_SCC
+-static int bvme6000_scc_init(void)
++static int __init bvme6000_scc_init(void)
+ {
+ 	struct scc_port *port;
+ 	int error;
+@@ -503,7 +503,7 @@ fail_free_b_rx:
+ #endif
+ 
+ 
+-static int vme_scc_init(void)
++static int __init vme_scc_init(void)
+ {
+ 	int res = -ENODEV;
