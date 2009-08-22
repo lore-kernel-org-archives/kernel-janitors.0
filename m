@@ -1,73 +1,49 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 01 Aug 2009 08:55:04 +0000
-Subject: [PATCH 8/10] drivers/md: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0908011054440.23408@ask.diku.dk>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Sat, 22 Aug 2009 23:46:55 +0000
+Subject: [PATCH] char/impi: adding __init macro/ fix of __exit macro location in ipmi_poweroff.c
+Message-Id: <200908230146.56283.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dm-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>
+Cc: Corey Minyard <minyard@acm.org>, openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Error handling code following a kmalloc should free the allocated data.
+Trivial patch which adds the __init to the module_init function of
+drivers/char/ipmi/ipmy_poweroff.c and corrects the location of __exit for the
+cleanup function.
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+According to ldd3, page 31 the __exit token hast to be after the return type.
+Or am I getting something wrong here?
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
+Corey, please have a look at the small patch and either pull it through
+your tree, or please ack' it so Jiri can pull it through the trivial tree.
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
+linux version 2.6.31-rc6 - linus git tree, So 23. Aug 01:38:43 CEST 2009
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/md/dm-exception-store.c     |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/md/dm-exception-store.c b/drivers/md/dm-exception-store.c
-index 3710ff8..ee68d17 100644
---- a/drivers/md/dm-exception-store.c
-+++ b/drivers/md/dm-exception-store.c
-@@ -217,7 +217,8 @@ int dm_exception_store_create(struct dm_target *ti, int argc, char **argv,
- 		type = get_type("N");
- 	else {
- 		ti->error = "Persistent flag is not P or N";
--		return -EINVAL;
-+		r = -EINVAL;
-+		goto bad_type;
- 	}
+diff --git a/drivers/char/ipmi/ipmi_poweroff.c b/drivers/char/ipmi/ipmi_poweroff.c
+index a261bd7..2e66b5f 100644
+--- a/drivers/char/ipmi/ipmi_poweroff.c
++++ b/drivers/char/ipmi/ipmi_poweroff.c
+@@ -691,7 +691,7 @@ static struct ctl_table_header *ipmi_table_header;
+ /*
+  * Startup and shutdown functions.
+  */
+-static int ipmi_poweroff_init(void)
++static int __init ipmi_poweroff_init(void)
+ {
+ 	int rv;
  
- 	if (!type) {
+@@ -725,7 +725,7 @@ static int ipmi_poweroff_init(void)
+ }
+ 
+ #ifdef MODULE
+-static __exit void ipmi_poweroff_cleanup(void)
++static void __exit ipmi_poweroff_cleanup(void)
+ {
+ 	int rv;
+ 
