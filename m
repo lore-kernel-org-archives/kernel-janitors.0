@@ -1,78 +1,44 @@
-From: "Yu, Fenghua" <fenghua.yu@intel.com>
-Date: Wed, 05 Aug 2009 23:22:06 +0000
-Subject: RE: [PATCH 3/15] arch/ia64: Use DIV_ROUND_CLOSEST
-Message-Id: <A6AD88C3F2289247BE726C37303E1EB8B38E494C@orsmsx505.amr.corp.intel.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Sun, 23 Aug 2009 00:01:10 +0000
+Subject: [PATCH] gpio: adding __init/__exit macros in drivers/gpio/bt8xxgpio.c
+Message-Id: <200908230201.10471.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908021044540.15557@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0908021044540.15557@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Julia Lawall' <julia@diku.dk>, "Luck, Tony" <tony.luck@intel.com>, "'linux-ia64@vger.kernel.org'" <linux-ia64@vger.kernel.org>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'kernel-janitors@vger.kernel.org'" <kernel-janitors@vger.kernel.org>
+To: Jiri Kosina <trivial@kernel.org>
+Cc: Michael Buesch <mb@bu3sch.de>, Kay Sievers <kay.sievers@vrfy.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->-----Original Message-----
->From: Julia Lawall [mailto:julia@diku.dk]
->Sent: Sunday, August 02, 2009 1:45 AM
->To: Yu, Fenghua; Luck, Tony; linux-ia64@vger.kernel.org; linux-
->kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
->Subject: [PATCH 3/15] arch/ia64: Use DIV_ROUND_CLOSEST
->
->From: Julia Lawall <julia@diku.dk>
->
->The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
->but is perhaps more readable.
->
->The semantic patch that makes this change is as follows:
->(http://www.emn.fr/x-info/coccinelle/)
->
->// <smpl>
->@haskernel@
->@@
->
->#include <linux/kernel.h>
->
->@depends on haskernel@
->expression x,__divisor;
->@@
->
->- (((x) + ((__divisor) / 2)) / (__divisor))
->+ DIV_ROUND_CLOSEST(x,__divisor)
->// </smpl>
->
->Signed-off-by: Julia Lawall <julia@diku.dk>
->
->---
-> arch/ia64/kernel/time.c             |   10 ++++++----
-> 1 files changed, 6 insertions(+), 4 deletions(-)
->
->diff --git a/arch/ia64/kernel/time.c b/arch/ia64/kernel/time.c
->index 4990495..aaa6651 100644
->--- a/arch/ia64/kernel/time.c
->+++ b/arch/ia64/kernel/time.c
->@@ -314,7 +314,7 @@ ia64_init_itm (void)
->
-> 	itc_freq = (platform_base_freq*itc_ratio.num)/itc_ratio.den;
->
->-	local_cpu_data->itm_delta = (itc_freq + HZ/2) / HZ;
->+	local_cpu_data->itm_delta = DIV_ROUND_CLOSEST(itc_freq, HZ);
-> 	printk(KERN_DEBUG "CPU %d: base freq=%lu.%03luMHz, ITC ratio=%u/%u, "
-> 	       "ITC freq=%lu.%03luMHz", smp_processor_id(),
-> 	       platform_base_freq / 1000000, (platform_base_freq / 1000) %
->1000,
->@@ -330,9 +330,11 @@ ia64_init_itm (void)
->
-> 	local_cpu_data->proc_freq >(platform_base_freq*proc_ratio.num)/proc_ratio.den;
-> 	local_cpu_data->itc_freq = itc_freq;
->-	local_cpu_data->cyc_per_usec = (itc_freq + USEC_PER_SEC/2) /
->USEC_PER_SEC;
->-	local_cpu_data->nsec_per_cyc >((NSEC_PER_SEC<<IA64_NSEC_PER_CYC_SHIFT)
->-					+ itc_freq/2)/itc_freq;
->+	local_cpu_data->cyc_per_usec >+		DIV_ROUND_CLOSEST(itc_freq, USEC_PER_SEC);
->+	local_cpu_data->nsec_per_cyc >+		DIV_ROUND_CLOSEST(NSEC_PER_SEC << IA64_NSEC_PER_CYC_SHIFT,
->+				  itc_freq);
->
-> 	if (!(sal_platform_features & IA64_SAL_PLATFORM_FEATURE_ITC_DRIFT)) {
-> #ifdef CONFIG_SMP
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Acked-by: Fenghua Yu <Fenghua.yu@intel.com>
+Trivial patch which adds the __init/__exit macro to the init/exit functions of
+drivers/gpio/bt8xxgpio.c
 
+Michael, Kay or Greg, please have a look at the small patch and either pull it
+through your tree, or please ack' it so Jiri can pull it through the trivial
+tree.
+
+linux version 2.6.31-rc7 - linus git tree, So 23. Aug 01:38:43 CEST 2009
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+diff --git a/drivers/gpio/bt8xxgpio.c b/drivers/gpio/bt8xxgpio.c
+index 984b587..5590414 100644
+--- a/drivers/gpio/bt8xxgpio.c
++++ b/drivers/gpio/bt8xxgpio.c
+@@ -331,13 +331,13 @@ static struct pci_driver bt8xxgpio_pci_driver = {
+ 	.resume		= bt8xxgpio_resume,
+ };
+ 
+-static int bt8xxgpio_init(void)
++static int __init bt8xxgpio_init(void)
+ {
+ 	return pci_register_driver(&bt8xxgpio_pci_driver);
+ }
+ module_init(bt8xxgpio_init)
+ 
+-static void bt8xxgpio_exit(void)
++static void __exit bt8xxgpio_exit(void)
+ {
+ 	pci_unregister_driver(&bt8xxgpio_pci_driver);
+ }
