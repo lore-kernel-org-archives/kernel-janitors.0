@@ -1,33 +1,59 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 24 Aug 2009 08:18:50 +0000
-Subject: Re: [PATCH] gpio: adding __init/__exit macros in
-Message-Id: <alpine.LNX.2.00.0908241018380.25797@wotan.suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 30 Aug 2009 09:18:13 +0000
+Subject: [PATCH] drivers/input/keyboard: Move a dereference below a NULL test
+Message-Id: <Pine.LNX.4.64.0908301117010.17060@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200908230201.10471.PeterHuewe@gmx.de> <200908230206.57937.mb@bu3sch.de>
-In-Reply-To: <200908230206.57937.mb@bu3sch.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Buesch <mb@bu3sch.de>
-Cc: Peter Huewe <PeterHuewe@gmx.de>, Kay Sievers <kay.sievers@vrfy.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dtor@mail.ru>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 23 Aug 2009, Michael Buesch wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> > Trivial patch which adds the __init/__exit macro to the init/exit functions of
-> > drivers/gpio/bt8xxgpio.c
-> > 
-> > Michael, Kay or Greg, please have a look at the small patch and either pull it
-> > through your tree, or please ack' it so Jiri can pull it through the trivial
-> > tree.
-> > 
-> > linux version 2.6.31-rc7 - linus git tree, So 23. Aug 01:38:43 CEST 2009
-> > 
-> > Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-> 
-> Acked-by: Michael Buesch <mb@bu3sch.de>
+If the NULL test is necessary, then the dereference should be moved below
+the NULL test.
 
-Applied, thanks.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/).
 
--- 
-Jiri Kosina
-SUSE Labs
+// <smpl>
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
+@@
+
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/input/keyboard/w90p910_keypad.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff -u -p a/drivers/input/keyboard/w90p910_keypad.c b/drivers/input/keyboard/w90p910_keypad.c
+--- a/drivers/input/keyboard/w90p910_keypad.c
++++ b/drivers/input/keyboard/w90p910_keypad.c
+@@ -120,7 +120,7 @@ static int __devinit w90p910_keypad_prob
+ {
+ 	const struct w90p910_keypad_platform_data *pdata  						pdev->dev.platform_data;
+-	const struct matrix_keymap_data *keymap_data = pdata->keymap_data;
++	const struct matrix_keymap_data *keymap_data;
+ 	struct w90p910_keypad *keypad;
+ 	struct input_dev *input_dev;
+ 	struct resource *res;
+@@ -132,6 +132,7 @@ static int __devinit w90p910_keypad_prob
+ 		dev_err(&pdev->dev, "no platform data defined\n");
+ 		return -EINVAL;
+ 	}
++	keymap_data = pdata->keymap_data;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
