@@ -1,49 +1,59 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Sat, 22 Aug 2009 23:46:55 +0000
-Subject: [PATCH] char/impi: adding __init macro/ fix of __exit macro location in ipmi_poweroff.c
-Message-Id: <200908230146.56283.PeterHuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 31 Aug 2009 19:12:07 +0000
+Subject: [PATCH] drivers/char/amiserial.c: Add local_irq_restore in error
+Message-Id: <Pine.LNX.4.64.0908312111400.17886@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: Corey Minyard <minyard@acm.org>, openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
 
-Trivial patch which adds the __init to the module_init function of
-drivers/char/ipmi/ipmy_poweroff.c and corrects the location of __exit for the
-cleanup function.
+The gotos to the labels fail_free_irq and fail_unregister only occur
+between local_irq_save and local_irq_restore, so it would seem that this
+code should also call local_irq_restore.
 
-According to ldd3, page 31 the __exit token hast to be after the return type.
-Or am I getting something wrong here?
+The semantic match that detects this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Corey, please have a look at the small patch and either pull it through
-your tree, or please ack' it so Jiri can pull it through the trivial tree.
+// <smpl>
+@rl@
+expression l;
+position p;
+expression E,E1,E2;
+@@
 
-linux version 2.6.31-rc6 - linus git tree, So 23. Aug 01:38:43 CEST 2009
+local_irq_save(l);
+<... when != local_irq_restore(l)
+     when != spin_unlock_irqrestore(E,l)
+if (...) { ... when != local_irq_restore(l)
+               when != spin_unlock_irqrestore(E1,l)
+*    return@p ...;
+}
+...>
+(
+spin_unlock_irqrestore(E2,l);
+|
+local_irq_restore(l);
+)
+</smpl>
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/char/ipmi/ipmi_poweroff.c b/drivers/char/ipmi/ipmi_poweroff.c
-index a261bd7..2e66b5f 100644
---- a/drivers/char/ipmi/ipmi_poweroff.c
-+++ b/drivers/char/ipmi/ipmi_poweroff.c
-@@ -691,7 +691,7 @@ static struct ctl_table_header *ipmi_table_header;
- /*
-  * Startup and shutdown functions.
-  */
--static int ipmi_poweroff_init(void)
-+static int __init ipmi_poweroff_init(void)
- {
- 	int rv;
- 
-@@ -725,7 +725,7 @@ static int ipmi_poweroff_init(void)
- }
- 
- #ifdef MODULE
--static __exit void ipmi_poweroff_cleanup(void)
-+static void __exit ipmi_poweroff_cleanup(void)
- {
- 	int rv;
- 
+ drivers/char/amiserial.c            |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/char/amiserial.c b/drivers/char/amiserial.c
+index 6c32fbf..2131ecb 100644
+--- a/drivers/char/amiserial.c
++++ b/drivers/char/amiserial.c
+@@ -2056,6 +2056,7 @@ fail_free_irq:
+ 	free_irq(IRQ_AMIGA_TBE, state);
+ fail_unregister:
+ 	tty_unregister_driver(serial_driver);
++	local_irq_restore(flags);
+ fail_release_mem_region:
+ 	release_mem_region(CUSTOM_PHYSADDR+0x30, 4);
+ fail_put_tty_driver:
