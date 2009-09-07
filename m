@@ -1,743 +1,667 @@
-From: kevin.granade@gmail.com
-Date: Sat, 05 Sep 2009 06:03:39 +0000
-Subject: [PATCH v2] asus_oled: Cleaned up checkpatch issues.
-Message-Id: <alpine.DEB.2.00.0909050051110.19210@pc9406>
+From: Belisko Marek <marek.belisko@gmail.com>
+Date: Mon, 07 Sep 2009 13:10:03 +0000
+Subject: Re: [PATCH v2] asus_oled: Cleaned up checkpatch issues.
+Message-Id: <e7c6a05e0909070610k440ddbf8t209fee67ba82dbb8@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <alpine.DEB.2.00.0909050051110.19210@pc9406>
+In-Reply-To: <alpine.DEB.2.00.0909050051110.19210@pc9406>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-From: Kevin A. Granade <kevin.granade@gmail.com>
-Date: Sat, 5 Sep 2009 00:44:54 -0500
- Only one functional change, converted SETUP_PACKET HEADER macro to a function.
-
-Changes since last patch:
-   Corrected embarrasing build errors.
-
-Belisko, I started in on this driver just looking for a good project to 
-get my feet wet, if you have any special interest in it I can move on to 
-some other low-hanging fruit, particularly if you have the hardware and/or 
-experience with this sort of thing.
-
-Signed-off-by: Kevin A. Granade <kevin.granade@gmail.com>
----
- drivers/staging/asus_oled/asus_oled.c |  404 ++++++++++++++++++---------------
- 1 files changed, 221 insertions(+), 183 deletions(-)
-
-diff --git a/drivers/staging/asus_oled/asus_oled.c b/drivers/staging/asus_oled/asus_oled.c
-index 9270f5d..f4c2657 100644
---- a/drivers/staging/asus_oled/asus_oled.c
-+++ b/drivers/staging/asus_oled/asus_oled.c
-@@ -63,26 +63,31 @@ static uint start_off;
- 
- module_param(start_off, uint, 0644);
- 
--MODULE_PARM_DESC(start_off, "Set to 1 to switch off OLED display after it is attached");
-+MODULE_PARM_DESC(start_off,
-+		 "Set to 1 to switch off OLED display after it is attached");
- 
--typedef enum {
-+enum oled_pack_mode{
- 	PACK_MODE_G1,
- 	PACK_MODE_G50,
- 	PACK_MODE_LAST
--} oled_pack_mode_t;
-+};
- 
- struct oled_dev_desc_str {
- 	uint16_t		idVendor;
- 	uint16_t		idProduct;
--	uint16_t		devWidth; // width of display
--	oled_pack_mode_t	packMode; // formula to be used while packing the picture
-+	/* width of display */
-+	uint16_t		devWidth;
-+	/* formula to be used while packing the picture */
-+	enum oled_pack_mode	packMode;
- 	const char		*devDesc;
- };
- 
- /* table of devices that work with this driver */
- static struct usb_device_id id_table[] = {
--	{ USB_DEVICE(0x0b05, 0x1726) }, // Asus G1/G2 (and variants)
--	{ USB_DEVICE(0x0b05, 0x175b) }, // Asus G50V (and possibly others - G70? G71?)
-+	/* Asus G1/G2 (and variants)*/
-+	{ USB_DEVICE(0x0b05, 0x1726) },
-+	/* Asus G50V (and possibly others - G70? G71?)*/
-+	{ USB_DEVICE(0x0b05, 0x175b) },
- 	{ },
- };
- 
-@@ -95,20 +100,6 @@ static struct oled_dev_desc_str oled_dev_desc_table[] = {
- 
- MODULE_DEVICE_TABLE(usb, id_table);
- 
--#define SETUP_PACKET_HEADER(packet, val1, val2, val3, val4, val5, val6, val7) \
--	do {					\
--		memset(packet, 0, sizeof(struct asus_oled_header));		\
--		packet->header.magic1 = 0x55;		\
--		packet->header.magic2 = 0xaa;		\
--		packet->header.flags = val1;		\
--		packet->header.value3 = val2;		\
--		packet->header.buffer1 = val3;		\
--		packet->header.buffer2 = val4;		\
--		packet->header.value6 = val5;		\
--		packet->header.value7 = val6;		\
--		packet->header.value8 = val7;		\
--	} while (0);
--
- struct asus_oled_header {
- 	uint8_t		magic1;
- 	uint8_t		magic2;
-@@ -128,10 +119,10 @@ struct asus_oled_packet {
- } __attribute((packed));
- 
- struct asus_oled_dev {
--	struct usb_device *	udev;
-+	struct usb_device       *udev;
- 	uint8_t			pic_mode;
- 	uint16_t		dev_width;
--	oled_pack_mode_t	pack_mode;
-+	enum oled_pack_mode	pack_mode;
- 	size_t			height;
- 	size_t			width;
- 	size_t			x_shift;
-@@ -144,12 +135,28 @@ struct asus_oled_dev {
- 	struct device		*dev;
- };
- 
-+static void setup_packet_header(struct asus_oled_packet *packet, char flags,
-+			 char value3, char buffer1, char buffer2, char value6,
-+			 char value7, char value8)
-+{
-+	memset(packet, 0, sizeof(struct asus_oled_header));
-+	packet->header.magic1 = 0x55;
-+	packet->header.magic2 = 0xaa;
-+	packet->header.flags = flags;
-+	packet->header.value3 = value3;
-+	packet->header.buffer1 = buffer1;
-+	packet->header.buffer2 = buffer2;
-+	packet->header.value6 = value6;
-+	packet->header.value7 = value7;
-+	packet->header.value8 = value8;
-+}
-+
- static void enable_oled(struct asus_oled_dev *odev, uint8_t enabl)
- {
- 	int a;
- 	int retval;
- 	int act_len;
--	struct asus_oled_packet * packet;
-+	struct asus_oled_packet *packet;
- 
- 	packet = kzalloc(sizeof(struct asus_oled_packet), GFP_KERNEL);
- 
-@@ -158,7 +165,7 @@ static void enable_oled(struct asus_oled_dev *odev, uint8_t enabl)
- 		return;
- 	}
- 
--	SETUP_PACKET_HEADER(packet, 0x20, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00);
-+	setup_packet_header(packet, 0x20, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00);
- 
- 	if (enabl)
- 		packet->bitmap[0] = 0xaf;
-@@ -182,29 +189,34 @@ static void enable_oled(struct asus_oled_dev *odev, uint8_t enabl)
- 	kfree(packet);
- }
- 
--static ssize_t set_enabled(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
-+static ssize_t set_enabled(struct device *dev, struct device_attribute *attr,
-+			   const char *buf, size_t count)
- {
- 	struct usb_interface *intf = to_usb_interface(dev);
- 	struct asus_oled_dev *odev = usb_get_intfdata(intf);
--	int temp = simple_strtoul(buf, NULL, 10);
-+	int temp = strict_strtoul(buf, 10, NULL);
- 
- 	enable_oled(odev, temp);
- 
- 	return count;
- }
- 
--static ssize_t class_set_enabled(struct device *device, struct device_attribute *attr, const char *buf, size_t count)
-+static ssize_t class_set_enabled(struct device *device,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t count)
- {
--	struct asus_oled_dev *odev = (struct asus_oled_dev *) dev_get_drvdata(device);
-+	struct asus_oled_dev *odev +		(struct asus_oled_dev *) dev_get_drvdata(device);
- 
--	int temp = simple_strtoul(buf, NULL, 10);
-+	int temp = strict_strtoul(buf, 10, NULL);
- 
- 	enable_oled(odev, temp);
- 
- 	return count;
- }
- 
--static ssize_t get_enabled(struct device *dev, struct device_attribute *attr, char *buf)
-+static ssize_t get_enabled(struct device *dev, struct device_attribute *attr,
-+			   char *buf)
- {
- 	struct usb_interface *intf = to_usb_interface(dev);
- 	struct asus_oled_dev *odev = usb_get_intfdata(intf);
-@@ -212,15 +224,18 @@ static ssize_t get_enabled(struct device *dev, struct device_attribute *attr, ch
- 	return sprintf(buf, "%d\n", odev->enabled);
- }
- 
--static ssize_t class_get_enabled(struct device *device, struct device_attribute *attr, char *buf)
-+static ssize_t class_get_enabled(struct device *device,
-+				 struct device_attribute *attr, char *buf)
- {
--	struct asus_oled_dev *odev = (struct asus_oled_dev *) dev_get_drvdata(device);
-+	struct asus_oled_dev *odev +		(struct asus_oled_dev *) dev_get_drvdata(device);
- 
- 	return sprintf(buf, "%d\n", odev->enabled);
- }
- 
--static void send_packets(struct usb_device *udev, struct asus_oled_packet *packet,
--	char *buf, uint8_t p_type, size_t p_num)
-+static void send_packets(struct usb_device *udev,
-+			 struct asus_oled_packet *packet,
-+			 char *buf, uint8_t p_type, size_t p_num)
- {
- 	size_t i;
- 	int act_len;
-@@ -229,65 +244,76 @@ static void send_packets(struct usb_device *udev, struct asus_oled_packet *packe
- 		int retval;
- 
- 		switch (p_type) {
--			case ASUS_OLED_ROLL:
--				SETUP_PACKET_HEADER(packet, 0x40, 0x80, p_num, i + 1, 0x00, 0x01, 0xff);
-+		case ASUS_OLED_ROLL:
-+			setup_packet_header(packet, 0x40, 0x80, p_num,
-+					    i + 1, 0x00, 0x01, 0xff);
- 			break;
--			case ASUS_OLED_STATIC:
--				SETUP_PACKET_HEADER(packet, 0x10 + i, 0x80, 0x01, 0x01, 0x00, 0x01, 0x00);
-+		case ASUS_OLED_STATIC:
-+			setup_packet_header(packet, 0x10 + i, 0x80, 0x01,
-+					    0x01, 0x00, 0x01, 0x00);
- 			break;
--			case ASUS_OLED_FLASH:
--				SETUP_PACKET_HEADER(packet, 0x10 + i, 0x80, 0x01, 0x01, 0x00, 0x00, 0xff);
-+		case ASUS_OLED_FLASH:
-+			setup_packet_header(packet, 0x10 + i, 0x80, 0x01,
-+					    0x01, 0x00, 0x00, 0xff);
- 			break;
- 		}
- 
--		memcpy(packet->bitmap, buf + (ASUS_OLED_PACKET_BUF_SIZE*i), ASUS_OLED_PACKET_BUF_SIZE);
-+		memcpy(packet->bitmap, buf + (ASUS_OLED_PACKET_BUF_SIZE*i),
-+		       ASUS_OLED_PACKET_BUF_SIZE);
- 
--		retval = usb_bulk_msg(udev,
--			usb_sndctrlpipe(udev, 2),
--			packet,
--			sizeof(struct asus_oled_packet),
--			&act_len,
--			-1);
-+		retval = usb_bulk_msg(udev, usb_sndctrlpipe(udev, 2),
-+				      packet, sizeof(struct asus_oled_packet),
-+				      &act_len, -1);
- 
- 		if (retval)
- 			dev_dbg(&udev->dev, "retval = %d\n", retval);
- 	}
- }
- 
--static void send_packet(struct usb_device *udev, struct asus_oled_packet *packet, size_t offset, size_t len, char *buf, uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4, uint8_t b5, uint8_t b6) {
-+static void send_packet(struct usb_device *udev,
-+			struct asus_oled_packet *packet,
-+			size_t offset, size_t len, char *buf, uint8_t b1,
-+			uint8_t b2, uint8_t b3, uint8_t b4, uint8_t b5,
-+			uint8_t b6) {
- 	int retval;
- 	int act_len;
- 
--	SETUP_PACKET_HEADER(packet, b1, b2, b3, b4, b5, b6, 0x00);
-+	setup_packet_header(packet, b1, b2, b3, b4, b5, b6, 0x00);
- 	memcpy(packet->bitmap, buf + offset, len);
- 
- 	retval = usb_bulk_msg(udev,
--			usb_sndctrlpipe(udev, 2),
--			packet,
--			sizeof(struct asus_oled_packet),
--			&act_len,
--			-1);
-+			      usb_sndctrlpipe(udev, 2),
-+			      packet,
-+			      sizeof(struct asus_oled_packet),
-+			      &act_len,
-+			      -1);
- 
- 	if (retval)
- 		dev_dbg(&udev->dev, "retval = %d\n", retval);
- }
- 
- 
--static void send_packets_g50(struct usb_device *udev, struct asus_oled_packet *packet, char *buf)
-+static void send_packets_g50(struct usb_device *udev,
-+			     struct asus_oled_packet *packet, char *buf)
- {
--	send_packet(udev, packet,     0, 0x100, buf, 0x10, 0x00, 0x02, 0x01, 0x00, 0x01);
--	send_packet(udev, packet, 0x100, 0x080, buf, 0x10, 0x00, 0x02, 0x02, 0x80, 0x00);
--
--	send_packet(udev, packet, 0x180, 0x100, buf, 0x11, 0x00, 0x03, 0x01, 0x00, 0x01);
--	send_packet(udev, packet, 0x280, 0x100, buf, 0x11, 0x00, 0x03, 0x02, 0x00, 0x01);
--	send_packet(udev, packet, 0x380, 0x080, buf, 0x11, 0x00, 0x03, 0x03, 0x80, 0x00);
-+	send_packet(udev, packet,     0, 0x100, buf,
-+		    0x10, 0x00, 0x02, 0x01, 0x00, 0x01);
-+	send_packet(udev, packet, 0x100, 0x080, buf,
-+		    0x10, 0x00, 0x02, 0x02, 0x80, 0x00);
-+
-+	send_packet(udev, packet, 0x180, 0x100, buf,
-+		    0x11, 0x00, 0x03, 0x01, 0x00, 0x01);
-+	send_packet(udev, packet, 0x280, 0x100, buf,
-+		    0x11, 0x00, 0x03, 0x02, 0x00, 0x01);
-+	send_packet(udev, packet, 0x380, 0x080, buf,
-+		    0x11, 0x00, 0x03, 0x03, 0x80, 0x00);
- }
- 
- 
- static void send_data(struct asus_oled_dev *odev)
- {
- 	size_t packet_num = odev->buf_size / ASUS_OLED_PACKET_BUF_SIZE;
--	struct asus_oled_packet * packet;
-+	struct asus_oled_packet *packet;
- 
- 	packet = kzalloc(sizeof(struct asus_oled_packet), GFP_KERNEL);
- 
-@@ -297,20 +323,20 @@ static void send_data(struct asus_oled_dev *odev)
- 	}
- 
- 	if (odev->pack_mode = PACK_MODE_G1) {
--		// When sending roll-mode data the display updated only first packet.
--		// I have no idea why, but when static picture is send just before
--		// rolling picture - everything works fine.
-+		/* When sending roll-mode data the display updated only
-+		   first packet.  I have no idea why, but when static picture
-+		   is sent just before rolling picture everything works fine. */
- 		if (odev->pic_mode = ASUS_OLED_ROLL)
--			send_packets(odev->udev, packet, odev->buf, ASUS_OLED_STATIC, 2);
-+			send_packets(odev->udev, packet, odev->buf,
-+				     ASUS_OLED_STATIC, 2);
- 
--		// Only ROLL mode can use more than 2 packets.
-+		/* Only ROLL mode can use more than 2 packets.*/
- 		if (odev->pic_mode != ASUS_OLED_ROLL && packet_num > 2)
- 			packet_num = 2;
- 
--		send_packets(odev->udev, packet, odev->buf, odev->pic_mode, packet_num);
--	}
--	else
--	if (odev->pack_mode = PACK_MODE_G50) {
-+		send_packets(odev->udev, packet, odev->buf,
-+			     odev->pic_mode, packet_num);
-+	} else if (odev->pack_mode = PACK_MODE_G50) {
- 		send_packets_g50(odev->udev, packet, odev->buf);
- 	}
- 
-@@ -319,53 +345,55 @@ static void send_data(struct asus_oled_dev *odev)
- 
- static int append_values(struct asus_oled_dev *odev, uint8_t val, size_t count)
- {
--	while (count-- > 0) {
--		if (val) {
--			size_t x = odev->buf_offs % odev->width;
--			size_t y = odev->buf_offs / odev->width;
--			size_t i;
--
--			x += odev->x_shift;
--			y += odev->y_shift;
--
--			switch (odev->pack_mode)
--			{
--				case PACK_MODE_G1:
--					// i = (x/128)*640 + 127 - x + (y/8)*128;
--					// This one for 128 is the same, but might be better for different widths?
--					i = (x/odev->dev_width)*640 + odev->dev_width - 1 - x + (y/8)*odev->dev_width;
--				break;
-+	while (count-- > 0 && val) {
-+		size_t x = odev->buf_offs % odev->width;
-+		size_t y = odev->buf_offs / odev->width;
-+		size_t i;
- 
--				case PACK_MODE_G50:
--					i =  (odev->dev_width - 1 - x)/8 + y*odev->dev_width/8;
--				break;
-+		x += odev->x_shift;
-+		y += odev->y_shift;
-+
-+		switch (odev->pack_mode) {
-+		case PACK_MODE_G1:
-+			/* i = (x/128)*640 + 127 - x + (y/8)*128;
-+			   This one for 128 is the same, but might be better
-+			   for different widths? */
-+			i = (x/odev->dev_width)*640 +
-+				odev->dev_width - 1 - x +
-+				(y/8)*odev->dev_width;
-+			break;
- 
--				default:
--					i = 0;
--					printk(ASUS_OLED_ERROR "Unknown OLED Pack Mode: %d!\n", odev->pack_mode);
--				break;
--			}
-+		case PACK_MODE_G50:
-+			i =  (odev->dev_width - 1 - x)/8 + y*odev->dev_width/8;
-+			break;
- 
--			if (i >= odev->buf_size) {
--				printk(ASUS_OLED_ERROR "Buffer overflow! Report a bug in the driver: offs: %d >= %d i: %d (x: %d y: %d)\n",
--					(int) odev->buf_offs, (int) odev->buf_size, (int) i, (int) x, (int) y);
--				return -EIO;
--			}
-+		default:
-+			i = 0;
-+			printk(ASUS_OLED_ERROR "Unknown OLED Pack Mode: %d!\n",
-+			       odev->pack_mode);
-+			break;
-+		}
- 
--			switch (odev->pack_mode)
--			{
--				case PACK_MODE_G1:
--					odev->buf[i] &= ~(1<<(y%8));
--				break;
-+		if (i >= odev->buf_size) {
-+			printk(ASUS_OLED_ERROR "Buffer overflow! Report a bug:"
-+			       "offs: %d >= %d i: %d (x: %d y: %d)\n",
-+			       (int) odev->buf_offs, (int) odev->buf_size,
-+			       (int) i, (int) x, (int) y);
-+			return -EIO;
-+		}
- 
--				case PACK_MODE_G50:
--					odev->buf[i] &= ~(1<<(x%8));
--				break;
-+		switch (odev->pack_mode) {
-+		case PACK_MODE_G1:
-+			odev->buf[i] &= ~(1<<(y%8));
-+			break;
- 
--				default:
--					// cannot get here; stops gcc complaining
--				;
--			}
-+		case PACK_MODE_G50:
-+			odev->buf[i] &= ~(1<<(x%8));
-+			break;
-+
-+		default:
-+			/* cannot get here; stops gcc complaining*/
-+			;
- 		}
- 
- 		odev->last_val = val;
-@@ -375,7 +403,8 @@ static int append_values(struct asus_oled_dev *odev, uint8_t val, size_t count)
- 	return 0;
- }
- 
--static ssize_t odev_set_picture(struct asus_oled_dev *odev, const char *buf, size_t count)
-+static ssize_t odev_set_picture(struct asus_oled_dev *odev,
-+				const char *buf, size_t count)
- {
- 	size_t offs = 0, max_offs;
- 
-@@ -383,32 +412,31 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev, const char *buf, siz
- 		return 0;
- 
- 	if (tolower(buf[0]) = 'b') {
--	    // binary mode, set the entire memory
-+		/* binary mode, set the entire memory*/
- 
--	    size_t i;
-+		size_t i;
- 
--	    odev->buf_size = (odev->dev_width * ASUS_OLED_DISP_HEIGHT) / 8;
-+		odev->buf_size = (odev->dev_width * ASUS_OLED_DISP_HEIGHT) / 8;
- 
--	    if (odev->buf)
--		    kfree(odev->buf);
--	    odev->buf = kmalloc(odev->buf_size, GFP_KERNEL);
-+		kfree(odev->buf);
-+		odev->buf = kmalloc(odev->buf_size, GFP_KERNEL);
- 
--	    memset(odev->buf, 0xff, odev->buf_size);
-+		memset(odev->buf, 0xff, odev->buf_size);
- 
--	    for (i = 1; i < count && i <= 32 * 32; i++) {
--		odev->buf[i-1] = buf[i];
--		odev->buf_offs = i-1;
--	    }
-+		for (i = 1; i < count && i <= 32 * 32; i++) {
-+			odev->buf[i-1] = buf[i];
-+			odev->buf_offs = i-1;
-+		}
- 
--	    odev->width = odev->dev_width / 8;
--	    odev->height = ASUS_OLED_DISP_HEIGHT;
--	    odev->x_shift = 0;
--	    odev->y_shift = 0;
--	    odev->last_val =  0;
-+		odev->width = odev->dev_width / 8;
-+		odev->height = ASUS_OLED_DISP_HEIGHT;
-+		odev->x_shift = 0;
-+		odev->y_shift = 0;
-+		odev->last_val =  0;
- 
--	    send_data(odev);
-+		send_data(odev);
- 
--	    return count;
-+		return count;
- 	}
- 
- 	if (buf[0] = '<') {
-@@ -416,20 +444,21 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev, const char *buf, siz
- 		size_t w = 0, h = 0;
- 		size_t w_mem, h_mem;
- 
--		if (count < 10 || buf[2] != ':') {
-+		if (count < 10 || buf[2] != ':')
- 			goto error_header;
--		}
-+
- 
- 		switch (tolower(buf[1])) {
--			case ASUS_OLED_STATIC:
--			case ASUS_OLED_ROLL:
--			case ASUS_OLED_FLASH:
--				odev->pic_mode = buf[1];
--				break;
--			default:
--				printk(ASUS_OLED_ERROR "Wrong picture mode: '%c'.\n", buf[1]);
--				return -EIO;
--				break;
-+		case ASUS_OLED_STATIC:
-+		case ASUS_OLED_ROLL:
-+		case ASUS_OLED_FLASH:
-+			odev->pic_mode = buf[1];
-+			break;
-+		default:
-+			printk(ASUS_OLED_ERROR "Wrong picture mode: '%c'.\n",
-+			       buf[1]);
-+			return -EIO;
-+			break;
- 		}
- 
- 		for (i = 3; i < count; ++i) {
-@@ -438,11 +467,11 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev, const char *buf, siz
- 
- 				if (w > ASUS_OLED_MAX_WIDTH)
- 					goto error_width;
--			}
--			else if (tolower(buf[i]) = 'x')
-+			} else if (tolower(buf[i]) = 'x') {
- 				break;
--			else
-+			} else {
- 				goto error_width;
-+			}
- 		}
- 
- 		for (++i; i < count; ++i) {
-@@ -451,11 +480,11 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev, const char *buf, siz
- 
- 				if (h > ASUS_OLED_DISP_HEIGHT)
- 					goto error_height;
--			}
--			else if (tolower(buf[i]) = '>')
-+			} else if (tolower(buf[i]) = '>') {
- 				break;
--			else
-+			} else {
- 				goto error_height;
-+			}
- 		}
- 
- 		if (w < 1 || w > ASUS_OLED_MAX_WIDTH)
-@@ -481,8 +510,7 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev, const char *buf, siz
- 
- 		odev->buf_size = w_mem * h_mem / 8;
- 
--		if (odev->buf)
--			kfree(odev->buf);
-+		kfree(odev->buf);
- 		odev->buf = kmalloc(odev->buf_size, GFP_KERNEL);
- 
- 		if (odev->buf = NULL) {
-@@ -503,8 +531,7 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev, const char *buf, siz
- 		if (odev->pic_mode = ASUS_OLED_FLASH) {
- 			if (h < ASUS_OLED_DISP_HEIGHT/2)
- 				odev->y_shift = (ASUS_OLED_DISP_HEIGHT/2 - h)/2;
--		}
--		else {
-+		} else {
- 			if (h < ASUS_OLED_DISP_HEIGHT)
- 				odev->y_shift = (ASUS_OLED_DISP_HEIGHT - h)/2;
- 		}
-@@ -522,20 +549,21 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev, const char *buf, siz
- 			ret = append_values(odev, 1, 1);
- 			if (ret < 0)
- 				return ret;
--		}
--		else if (buf[offs] = '0' || buf[offs] = ' ') {
-+		} else if (buf[offs] = '0' || buf[offs] = ' ') {
- 			ret = append_values(odev, 0, 1);
- 			if (ret < 0)
- 				return ret;
--		}
--		else if (buf[offs] = '\n') {
--			// New line detected. Lets assume, that all characters till the end of the
--			// line were equal to the last character in this line.
-+		} else if (buf[offs] = '\n') {
-+			/* New line detected. Lets assume, that all characters
-+			   till the end of the line were equal to the last
-+			   character in this line.*/
- 			if (odev->buf_offs % odev->width != 0)
- 				ret = append_values(odev, odev->last_val,
--				      odev->width - (odev->buf_offs % odev->width));
--				if (ret < 0)
--					return ret;
-+						    odev->width -
-+						    (odev->buf_offs %
-+						     odev->width));
-+			if (ret < 0)
-+				return ret;
- 		}
- 
- 		offs++;
-@@ -559,47 +587,52 @@ error_header:
- 	return -EIO;
- }
- 
--static ssize_t set_picture(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
-+static ssize_t set_picture(struct device *dev, struct device_attribute *attr,
-+			   const char *buf, size_t count)
- {
- 	struct usb_interface *intf = to_usb_interface(dev);
- 
- 	return odev_set_picture(usb_get_intfdata(intf), buf, count);
- }
- 
--static ssize_t class_set_picture(struct device *device, struct device_attribute *attr, const char *buf, size_t count)
-+static ssize_t class_set_picture(struct device *device,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t count)
- {
--	return odev_set_picture((struct asus_oled_dev *) dev_get_drvdata(device), buf, count);
-+	return odev_set_picture((struct asus_oled_dev *)
-+				dev_get_drvdata(device), buf, count);
- }
- 
- #define ASUS_OLED_DEVICE_ATTR(_file)		dev_attr_asus_oled_##_file
- 
--static DEVICE_ATTR(asus_oled_enabled, S_IWUGO | S_IRUGO, get_enabled, set_enabled);
-+static DEVICE_ATTR(asus_oled_enabled, S_IWUGO | S_IRUGO,
-+		   get_enabled, set_enabled);
- static DEVICE_ATTR(asus_oled_picture, S_IWUGO , NULL, set_picture);
- 
--static DEVICE_ATTR(enabled, S_IWUGO | S_IRUGO, class_get_enabled, class_set_enabled);
-+static DEVICE_ATTR(enabled, S_IWUGO | S_IRUGO,
-+		   class_get_enabled, class_set_enabled);
- static DEVICE_ATTR(picture, S_IWUGO, NULL, class_set_picture);
- 
--static int asus_oled_probe(struct usb_interface *interface, const struct usb_device_id *id)
-+static int asus_oled_probe(struct usb_interface *interface,
-+			   const struct usb_device_id *id)
- {
- 	struct usb_device *udev = interface_to_usbdev(interface);
- 	struct asus_oled_dev *odev = NULL;
- 	int retval = -ENOMEM;
- 	uint16_t dev_width = 0;
--	oled_pack_mode_t pack_mode = PACK_MODE_LAST;
--	const struct oled_dev_desc_str * dev_desc = oled_dev_desc_table;
-+	enum oled_pack_mode pack_mode = PACK_MODE_LAST;
-+	const struct oled_dev_desc_str *dev_desc = oled_dev_desc_table;
- 	const char *desc = NULL;
- 
- 	if (!id) {
--		// Even possible? Just to make sure...
-+		/* Even possible? Just to make sure...*/
- 		dev_err(&interface->dev, "No usb_device_id provided!\n");
- 		return -ENODEV;
- 	}
- 
--	for (; dev_desc->idVendor; dev_desc++)
--	{
-+	for (; dev_desc->idVendor; dev_desc++) {
- 		if (dev_desc->idVendor = id->idVendor
--			&& dev_desc->idProduct = id->idProduct)
--		{
-+		    && dev_desc->idProduct = id->idProduct) {
- 			dev_width = dev_desc->devWidth;
- 			desc = dev_desc->devDesc;
- 			pack_mode = dev_desc->packMode;
-@@ -608,7 +641,8 @@ static int asus_oled_probe(struct usb_interface *interface, const struct usb_dev
- 	}
- 
- 	if (!desc || dev_width < 1 || pack_mode = PACK_MODE_LAST) {
--		dev_err(&interface->dev, "Missing or incomplete device description!\n");
-+		dev_err(&interface->dev,
-+			"Missing or incomplete device description!\n");
- 		return -ENODEV;
- 	}
- 
-@@ -636,16 +670,18 @@ static int asus_oled_probe(struct usb_interface *interface, const struct usb_dev
- 
- 	usb_set_intfdata(interface, odev);
- 
--	retval = device_create_file(&interface->dev, &ASUS_OLED_DEVICE_ATTR(enabled));
-+	retval = device_create_file(&interface->dev,
-+				    &ASUS_OLED_DEVICE_ATTR(enabled));
- 	if (retval)
- 		goto err_files;
- 
--	retval = device_create_file(&interface->dev, &ASUS_OLED_DEVICE_ATTR(picture));
-+	retval = device_create_file(&interface->dev,
-+				    &ASUS_OLED_DEVICE_ATTR(picture));
- 	if (retval)
- 		goto err_files;
- 
- 	odev->dev = device_create(oled_class, &interface->dev, MKDEV(0, 0),
--				NULL, "oled_%d", ++oled_num);
-+				  NULL, "oled_%d", ++oled_num);
- 
- 	if (IS_ERR(odev->dev)) {
- 		retval = PTR_ERR(odev->dev);
-@@ -662,7 +698,9 @@ static int asus_oled_probe(struct usb_interface *interface, const struct usb_dev
- 	if (retval)
- 		goto err_class_picture;
- 
--	dev_info(&interface->dev, "Attached Asus OLED device: %s [width %u, pack_mode %d]\n", desc, odev->dev_width, odev->pack_mode);
-+	dev_info(&interface->dev,
-+		 "Attached Asus OLED device: %s [width %u, pack_mode %d]\n",
-+		 desc, odev->dev_width, odev->pack_mode);
- 
- 	if (start_off)
- 		enable_oled(odev, 0);
-@@ -703,8 +741,7 @@ static void asus_oled_disconnect(struct usb_interface *interface)
- 
- 	usb_put_dev(odev->udev);
- 
--	if (odev->buf)
--		kfree(odev->buf);
-+	kfree(odev->buf);
- 
- 	kfree(odev);
- 
-@@ -720,7 +757,8 @@ static struct usb_driver oled_driver = {
- 
- static ssize_t version_show(struct class *dev, char *buf)
- {
--	return sprintf(buf, ASUS_OLED_UNDERSCORE_NAME " %s\n", ASUS_OLED_VERSION);
-+	return sprintf(buf, ASUS_OLED_UNDERSCORE_NAME " %s\n",
-+		       ASUS_OLED_VERSION);
- }
- 
- static CLASS_ATTR(version, S_IRUGO, version_show, NULL);
--- 
-1.6.3.3
-
+SGkgS2V2aW4sCgpPbiBTYXQsIFNlcCA1LCAyMDA5IGF0IDg6MDMgQU0sIDxrZXZpbi5ncmFuYWRl
+QGdtYWlsLmNvbT4gd3JvdGU6Cj4gRnJvbTogS2V2aW4gQS4gR3JhbmFkZSA8a2V2aW4uZ3JhbmFk
+ZUBnbWFpbC5jb20+Cj4gRGF0ZTogU2F0LCA1IFNlcCAyMDA5IDAwOjQ0OjU0IC0wNTAwCj4gwqBP
+bmx5IG9uZSBmdW5jdGlvbmFsIGNoYW5nZSwgY29udmVydGVkIFNFVFVQX1BBQ0tFVCBIRUFERVIg
+bWFjcm8gdG8gYSBmdW5jdGlvbi4KPgo+IENoYW5nZXMgc2luY2UgbGFzdCBwYXRjaDoKPiDCoCBD
+b3JyZWN0ZWQgZW1iYXJyYXNpbmcgYnVpbGQgZXJyb3JzLgo+Cj4gQmVsaXNrbywgSSBzdGFydGVk
+IGluIG9uIHRoaXMgZHJpdmVyIGp1c3QgbG9va2luZyBmb3IgYSBnb29kIHByb2plY3QgdG8KPiBn
+ZXQgbXkgZmVldCB3ZXQsIGlmIHlvdSBoYXZlIGFueSBzcGVjaWFsIGludGVyZXN0IGluIGl0IEkg
+Y2FuIG1vdmUgb24gdG8KPiBzb21lIG90aGVyIGxvdy1oYW5naW5nIGZydWl0LCBwYXJ0aWN1bGFy
+bHkgaWYgeW91IGhhdmUgdGhlIGhhcmR3YXJlIGFuZC9vcgo+IGV4cGVyaWVuY2Ugd2l0aCB0aGlz
+IHNvcnQgb2YgdGhpbmcuCllvdSBjYW4gY29udGludWUgYXQgeW91ciB3b3JrIGl0J3Mgbm90IG15
+IHByaXZhdGUgdGFzayA6KS4gSSBqdXN0IHdhbnQgdG8gaGVscAp0byBub3QgZHJvcCB0aGlzIGZv
+ciBzdGFnaW5nLgoKPgo+IFNpZ25lZC1vZmYtYnk6IEtldmluIEEuIEdyYW5hZGUgPGtldmluLmdy
+YW5hZGVAZ21haWwuY29tPgo+IC0tLQo+IMKgZHJpdmVycy9zdGFnaW5nL2FzdXNfb2xlZC9hc3Vz
+X29sZWQuYyB8IMKgNDA0ICsrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLQo+IMKgMSBm
+aWxlcyBjaGFuZ2VkLCAyMjEgaW5zZXJ0aW9ucygrKSwgMTgzIGRlbGV0aW9ucygtKQo+Cj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hc3VzX29sZWQvYXN1c19vbGVkLmMgYi9kcml2ZXJz
+L3N0YWdpbmcvYXN1c19vbGVkL2FzdXNfb2xlZC5jCj4gaW5kZXggOTI3MGY1ZC4uZjRjMjY1NyAx
+MDA2NDQKPiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvYXN1c19vbGVkL2FzdXNfb2xlZC5jCj4gKysr
+IGIvZHJpdmVycy9zdGFnaW5nL2FzdXNfb2xlZC9hc3VzX29sZWQuYwo+IEBAIC02MywyNiArNjMs
+MzEgQEAgc3RhdGljIHVpbnQgc3RhcnRfb2ZmOwo+Cj4gwqBtb2R1bGVfcGFyYW0oc3RhcnRfb2Zm
+LCB1aW50LCAwNjQ0KTsKPgo+IC1NT0RVTEVfUEFSTV9ERVNDKHN0YXJ0X29mZiwgIlNldCB0byAx
+IHRvIHN3aXRjaCBvZmYgT0xFRCBkaXNwbGF5IGFmdGVyIGl0IGlzIGF0dGFjaGVkIik7Cj4gK01P
+RFVMRV9QQVJNX0RFU0Moc3RhcnRfb2ZmLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAiU2V0
+IHRvIDEgdG8gc3dpdGNoIG9mZiBPTEVEIGRpc3BsYXkgYWZ0ZXIgaXQgaXMgYXR0YWNoZWQiKTsK
+Pgo+IC10eXBlZGVmIGVudW0gewo+ICtlbnVtIG9sZWRfcGFja19tb2Rlewo+IMKgIMKgIMKgIMKg
+UEFDS19NT0RFX0cxLAo+IMKgIMKgIMKgIMKgUEFDS19NT0RFX0c1MCwKPiDCoCDCoCDCoCDCoFBB
+Q0tfTU9ERV9MQVNUCj4gLX0gb2xlZF9wYWNrX21vZGVfdDsKPiArfTsKPgo+IMKgc3RydWN0IG9s
+ZWRfZGV2X2Rlc2Nfc3RyIHsKPiDCoCDCoCDCoCDCoHVpbnQxNl90IMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgaWRWZW5kb3I7Cj4gwqAgwqAgwqAgwqB1aW50MTZfdCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoGlkUHJvZHVjdDsKPiAtIMKgIMKgIMKgIHVpbnQxNl90IMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgZGV2V2lkdGg7IC8vIHdpZHRoIG9mIGRpc3BsYXkKPiAtIMKgIMKgIMKgIG9sZWRfcGFja19t
+b2RlX3QgwqAgwqAgwqAgwqBwYWNrTW9kZTsgLy8gZm9ybXVsYSB0byBiZSB1c2VkIHdoaWxlIHBh
+Y2tpbmcgdGhlIHBpY3R1cmUKPiArIMKgIMKgIMKgIC8qIHdpZHRoIG9mIGRpc3BsYXkgKi8KPiAr
+IMKgIMKgIMKgIHVpbnQxNl90IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgZGV2V2lkdGg7Cj4gKyDC
+oCDCoCDCoCAvKiBmb3JtdWxhIHRvIGJlIHVzZWQgd2hpbGUgcGFja2luZyB0aGUgcGljdHVyZSAq
+Lwo+ICsgwqAgwqAgwqAgZW51bSBvbGVkX3BhY2tfbW9kZSDCoCDCoCBwYWNrTW9kZTsKPiDCoCDC
+oCDCoCDCoGNvbnN0IGNoYXIgwqAgwqAgwqAgwqAgwqAgwqAgwqAqZGV2RGVzYzsKPiDCoH07Cj4K
+PiDCoC8qIHRhYmxlIG9mIGRldmljZXMgdGhhdCB3b3JrIHdpdGggdGhpcyBkcml2ZXIgKi8KPiDC
+oHN0YXRpYyBzdHJ1Y3QgdXNiX2RldmljZV9pZCBpZF90YWJsZVtdID0gewo+IC0gwqAgwqAgwqAg
+eyBVU0JfREVWSUNFKDB4MGIwNSwgMHgxNzI2KSB9LCAvLyBBc3VzIEcxL0cyIChhbmQgdmFyaWFu
+dHMpCj4gLSDCoCDCoCDCoCB7IFVTQl9ERVZJQ0UoMHgwYjA1LCAweDE3NWIpIH0sIC8vIEFzdXMg
+RzUwViAoYW5kIHBvc3NpYmx5IG90aGVycyAtIEc3MD8gRzcxPykKPiArIMKgIMKgIMKgIC8qIEFz
+dXMgRzEvRzIgKGFuZCB2YXJpYW50cykqLwo+ICsgwqAgwqAgwqAgeyBVU0JfREVWSUNFKDB4MGIw
+NSwgMHgxNzI2KSB9LAo+ICsgwqAgwqAgwqAgLyogQXN1cyBHNTBWIChhbmQgcG9zc2libHkgb3Ro
+ZXJzIC0gRzcwPyBHNzE/KSovCj4gKyDCoCDCoCDCoCB7IFVTQl9ERVZJQ0UoMHgwYjA1LCAweDE3
+NWIpIH0sCj4gwqAgwqAgwqAgwqB7IH0sCj4gwqB9Owo+Cj4gQEAgLTk1LDIwICsxMDAsNiBAQCBz
+dGF0aWMgc3RydWN0IG9sZWRfZGV2X2Rlc2Nfc3RyIG9sZWRfZGV2X2Rlc2NfdGFibGVbXSA9IHsK
+Pgo+IMKgTU9EVUxFX0RFVklDRV9UQUJMRSh1c2IsIGlkX3RhYmxlKTsKPgo+IC0jZGVmaW5lIFNF
+VFVQX1BBQ0tFVF9IRUFERVIocGFja2V0LCB2YWwxLCB2YWwyLCB2YWwzLCB2YWw0LCB2YWw1LCB2
+YWw2LCB2YWw3KSBcCj4gLSDCoCDCoCDCoCBkbyB7IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgXAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgbWVt
+c2V0KHBhY2tldCwgMCwgc2l6ZW9mKHN0cnVjdCBhc3VzX29sZWRfaGVhZGVyKSk7IMKgIMKgIMKg
+IMKgIMKgIMKgIFwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBhY2tldC0+aGVhZGVyLm1hZ2lj
+MSA9IDB4NTU7IMKgIMKgIMKgIMKgIMKgIFwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBhY2tl
+dC0+aGVhZGVyLm1hZ2ljMiA9IDB4YWE7IMKgIMKgIMKgIMKgIMKgIFwKPiAtIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIHBhY2tldC0+aGVhZGVyLmZsYWdzID0gdmFsMTsgwqAgwqAgwqAgwqAgwqAgwqBc
+Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwYWNrZXQtPmhlYWRlci52YWx1ZTMgPSB2YWwyOyDC
+oCDCoCDCoCDCoCDCoCBcCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwYWNrZXQtPmhlYWRlci5i
+dWZmZXIxID0gdmFsMzsgwqAgwqAgwqAgwqAgwqBcCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBw
+YWNrZXQtPmhlYWRlci5idWZmZXIyID0gdmFsNDsgwqAgwqAgwqAgwqAgwqBcCj4gLSDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCBwYWNrZXQtPmhlYWRlci52YWx1ZTYgPSB2YWw1OyDCoCDCoCDCoCDCoCDC
+oCBcCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwYWNrZXQtPmhlYWRlci52YWx1ZTcgPSB2YWw2
+OyDCoCDCoCDCoCDCoCDCoCBcCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwYWNrZXQtPmhlYWRl
+ci52YWx1ZTggPSB2YWw3OyDCoCDCoCDCoCDCoCDCoCBcCj4gLSDCoCDCoCDCoCB9IHdoaWxlICgw
+KTsKPiAtCj4gwqBzdHJ1Y3QgYXN1c19vbGVkX2hlYWRlciB7Cj4gwqAgwqAgwqAgwqB1aW50OF90
+IMKgIMKgIMKgIMKgIG1hZ2ljMTsKPiDCoCDCoCDCoCDCoHVpbnQ4X3QgwqAgwqAgwqAgwqAgbWFn
+aWMyOwo+IEBAIC0xMjgsMTAgKzExOSwxMCBAQCBzdHJ1Y3QgYXN1c19vbGVkX3BhY2tldCB7Cj4g
+wqB9IF9fYXR0cmlidXRlKChwYWNrZWQpKTsKPgo+IMKgc3RydWN0IGFzdXNfb2xlZF9kZXYgewo+
+IC0gwqAgwqAgwqAgc3RydWN0IHVzYl9kZXZpY2UgKiDCoCDCoCB1ZGV2Owo+ICsgwqAgwqAgwqAg
+c3RydWN0IHVzYl9kZXZpY2UgwqAgwqAgwqAgKnVkZXY7Cj4gwqAgwqAgwqAgwqB1aW50OF90IMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBpY19tb2RlOwo+IMKgIMKgIMKgIMKgdWludDE2X3QgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqBkZXZfd2lkdGg7Cj4gLSDCoCDCoCDCoCBvbGVkX3BhY2tfbW9k
+ZV90IMKgIMKgIMKgIMKgcGFja19tb2RlOwo+ICsgwqAgwqAgwqAgZW51bSBvbGVkX3BhY2tfbW9k
+ZSDCoCDCoCBwYWNrX21vZGU7Cj4gwqAgwqAgwqAgwqBzaXplX3QgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqBoZWlnaHQ7Cj4gwqAgwqAgwqAgwqBzaXplX3QgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqB3aWR0aDsKPiDCoCDCoCDCoCDCoHNpemVfdCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oHhfc2hpZnQ7Cj4gQEAgLTE0NCwxMiArMTM1LDI4IEBAIHN0cnVjdCBhc3VzX29sZWRfZGV2IHsK
+PiDCoCDCoCDCoCDCoHN0cnVjdCBkZXZpY2UgwqAgwqAgwqAgwqAgwqAgKmRldjsKPiDCoH07Cj4K
+PiArc3RhdGljIHZvaWQgc2V0dXBfcGFja2V0X2hlYWRlcihzdHJ1Y3QgYXN1c19vbGVkX3BhY2tl
+dCAqcGFja2V0LCBjaGFyIGZsYWdzLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqBjaGFyIHZhbHVlMywgY2hhciBidWZmZXIxLCBjaGFyIGJ1ZmZlcjIsIGNoYXIgdmFsdWU2
+LAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBjaGFyIHZhbHVlNywgY2hh
+ciB2YWx1ZTgpCj4gK3sKPiArIMKgIMKgIMKgIG1lbXNldChwYWNrZXQsIDAsIHNpemVvZihzdHJ1
+Y3QgYXN1c19vbGVkX2hlYWRlcikpOwo+ICsgwqAgwqAgwqAgcGFja2V0LT5oZWFkZXIubWFnaWMx
+ID0gMHg1NTsKPiArIMKgIMKgIMKgIHBhY2tldC0+aGVhZGVyLm1hZ2ljMiA9IDB4YWE7Cj4gKyDC
+oCDCoCDCoCBwYWNrZXQtPmhlYWRlci5mbGFncyA9IGZsYWdzOwo+ICsgwqAgwqAgwqAgcGFja2V0
+LT5oZWFkZXIudmFsdWUzID0gdmFsdWUzOwo+ICsgwqAgwqAgwqAgcGFja2V0LT5oZWFkZXIuYnVm
+ZmVyMSA9IGJ1ZmZlcjE7Cj4gKyDCoCDCoCDCoCBwYWNrZXQtPmhlYWRlci5idWZmZXIyID0gYnVm
+ZmVyMjsKPiArIMKgIMKgIMKgIHBhY2tldC0+aGVhZGVyLnZhbHVlNiA9IHZhbHVlNjsKPiArIMKg
+IMKgIMKgIHBhY2tldC0+aGVhZGVyLnZhbHVlNyA9IHZhbHVlNzsKPiArIMKgIMKgIMKgIHBhY2tl
+dC0+aGVhZGVyLnZhbHVlOCA9IHZhbHVlODsKPiArfQo+ICsKPiDCoHN0YXRpYyB2b2lkIGVuYWJs
+ZV9vbGVkKHN0cnVjdCBhc3VzX29sZWRfZGV2ICpvZGV2LCB1aW50OF90IGVuYWJsKQo+IMKgewo+
+IMKgIMKgIMKgIMKgaW50IGE7Cj4gwqAgwqAgwqAgwqBpbnQgcmV0dmFsOwo+IMKgIMKgIMKgIMKg
+aW50IGFjdF9sZW47Cj4gLSDCoCDCoCDCoCBzdHJ1Y3QgYXN1c19vbGVkX3BhY2tldCAqIHBhY2tl
+dDsKPiArIMKgIMKgIMKgIHN0cnVjdCBhc3VzX29sZWRfcGFja2V0ICpwYWNrZXQ7Cj4KPiDCoCDC
+oCDCoCDCoHBhY2tldCA9IGt6YWxsb2Moc2l6ZW9mKHN0cnVjdCBhc3VzX29sZWRfcGFja2V0KSwg
+R0ZQX0tFUk5FTCk7Cj4KPiBAQCAtMTU4LDcgKzE2NSw3IEBAIHN0YXRpYyB2b2lkIGVuYWJsZV9v
+bGVkKHN0cnVjdCBhc3VzX29sZWRfZGV2ICpvZGV2LCB1aW50OF90IGVuYWJsKQo+IMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgcmV0dXJuOwo+IMKgIMKgIMKgIMKgfQo+Cj4gLSDCoCDCoCDCoCBTRVRV
+UF9QQUNLRVRfSEVBREVSKHBhY2tldCwgMHgyMCwgMHgwMCwgMHgwMCwgMHgwMCwgMHgwMSwgMHgw
+MCwgMHgwMCk7Cj4gKyDCoCDCoCDCoCBzZXR1cF9wYWNrZXRfaGVhZGVyKHBhY2tldCwgMHgyMCwg
+MHgwMCwgMHgwMCwgMHgwMCwgMHgwMSwgMHgwMCwgMHgwMCk7Cj4KPiDCoCDCoCDCoCDCoGlmIChl
+bmFibCkKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHBhY2tldC0+Yml0bWFwWzBdID0gMHhhZjsK
+PiBAQCAtMTgyLDI5ICsxODksMzQgQEAgc3RhdGljIHZvaWQgZW5hYmxlX29sZWQoc3RydWN0IGFz
+dXNfb2xlZF9kZXYgKm9kZXYsIHVpbnQ4X3QgZW5hYmwpCj4gwqAgwqAgwqAgwqBrZnJlZShwYWNr
+ZXQpOwo+IMKgfQo+Cj4gLXN0YXRpYyBzc2l6ZV90IHNldF9lbmFibGVkKHN0cnVjdCBkZXZpY2Ug
+KmRldiwgc3RydWN0IGRldmljZV9hdHRyaWJ1dGUgKmF0dHIsIGNvbnN0IGNoYXIgKmJ1Ziwgc2l6
+ZV90IGNvdW50KQo+ICtzdGF0aWMgc3NpemVfdCBzZXRfZW5hYmxlZChzdHJ1Y3QgZGV2aWNlICpk
+ZXYsIHN0cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqBjb25zdCBjaGFyICpidWYsIHNpemVfdCBjb3VudCkKPiDCoHsK
+PiDCoCDCoCDCoCDCoHN0cnVjdCB1c2JfaW50ZXJmYWNlICppbnRmID0gdG9fdXNiX2ludGVyZmFj
+ZShkZXYpOwo+IMKgIMKgIMKgIMKgc3RydWN0IGFzdXNfb2xlZF9kZXYgKm9kZXYgPSB1c2JfZ2V0
+X2ludGZkYXRhKGludGYpOwo+IC0gwqAgwqAgwqAgaW50IHRlbXAgPSBzaW1wbGVfc3RydG91bChi
+dWYsIE5VTEwsIDEwKTsKPiArIMKgIMKgIMKgIGludCB0ZW1wID0gc3RyaWN0X3N0cnRvdWwoYnVm
+LCAxMCwgTlVMTCk7Cj4KPiDCoCDCoCDCoCDCoGVuYWJsZV9vbGVkKG9kZXYsIHRlbXApOwo+Cj4g
+wqAgwqAgwqAgwqByZXR1cm4gY291bnQ7Cj4gwqB9Cj4KPiAtc3RhdGljIHNzaXplX3QgY2xhc3Nf
+c2V0X2VuYWJsZWQoc3RydWN0IGRldmljZSAqZGV2aWNlLCBzdHJ1Y3QgZGV2aWNlX2F0dHJpYnV0
+ZSAqYXR0ciwgY29uc3QgY2hhciAqYnVmLCBzaXplX3QgY291bnQpCj4gK3N0YXRpYyBzc2l6ZV90
+IGNsYXNzX3NldF9lbmFibGVkKHN0cnVjdCBkZXZpY2UgKmRldmljZSwKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgc3RydWN0IGRldmljZV9hdHRyaWJ1
+dGUgKmF0dHIsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoGNvbnN0IGNoYXIgKmJ1Ziwgc2l6ZV90IGNvdW50KQo+IMKgewo+IC0gwqAgwqAgwqAgc3Ry
+dWN0IGFzdXNfb2xlZF9kZXYgKm9kZXYgPSAoc3RydWN0IGFzdXNfb2xlZF9kZXYgKikgZGV2X2dl
+dF9kcnZkYXRhKGRldmljZSk7Cj4gKyDCoCDCoCDCoCBzdHJ1Y3QgYXN1c19vbGVkX2RldiAqb2Rl
+diA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgKHN0cnVjdCBhc3VzX29sZWRfZGV2ICopIGRldl9n
+ZXRfZHJ2ZGF0YShkZXZpY2UpOwo+Cj4gLSDCoCDCoCDCoCBpbnQgdGVtcCA9IHNpbXBsZV9zdHJ0
+b3VsKGJ1ZiwgTlVMTCwgMTApOwo+ICsgwqAgwqAgwqAgaW50IHRlbXAgPSBzdHJpY3Rfc3RydG91
+bChidWYsIDEwLCBOVUxMKTsKPgo+IMKgIMKgIMKgIMKgZW5hYmxlX29sZWQob2RldiwgdGVtcCk7
+Cj4KPiDCoCDCoCDCoCDCoHJldHVybiBjb3VudDsKPiDCoH0KPgo+IC1zdGF0aWMgc3NpemVfdCBn
+ZXRfZW5hYmxlZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2VfYXR0cmlidXRlICph
+dHRyLCBjaGFyICpidWYpCj4gK3N0YXRpYyBzc2l6ZV90IGdldF9lbmFibGVkKHN0cnVjdCBkZXZp
+Y2UgKmRldiwgc3RydWN0IGRldmljZV9hdHRyaWJ1dGUgKmF0dHIsCj4gKyDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGNoYXIgKmJ1ZikKPiDCoHsKPiDCoCDCoCDCoCDCoHN0
+cnVjdCB1c2JfaW50ZXJmYWNlICppbnRmID0gdG9fdXNiX2ludGVyZmFjZShkZXYpOwo+IMKgIMKg
+IMKgIMKgc3RydWN0IGFzdXNfb2xlZF9kZXYgKm9kZXYgPSB1c2JfZ2V0X2ludGZkYXRhKGludGYp
+Owo+IEBAIC0yMTIsMTUgKzIyNCwxOCBAQCBzdGF0aWMgc3NpemVfdCBnZXRfZW5hYmxlZChzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLCBjaAo+IMKgIMKg
+IMKgIMKgcmV0dXJuIHNwcmludGYoYnVmLCAiJWRcbiIsIG9kZXYtPmVuYWJsZWQpOwo+IMKgfQo+
+Cj4gLXN0YXRpYyBzc2l6ZV90IGNsYXNzX2dldF9lbmFibGVkKHN0cnVjdCBkZXZpY2UgKmRldmlj
+ZSwgc3RydWN0IGRldmljZV9hdHRyaWJ1dGUgKmF0dHIsIGNoYXIgKmJ1ZikKPiArc3RhdGljIHNz
+aXplX3QgY2xhc3NfZ2V0X2VuYWJsZWQoc3RydWN0IGRldmljZSAqZGV2aWNlLAo+ICsgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBzdHJ1Y3QgZGV2aWNlX2F0
+dHJpYnV0ZSAqYXR0ciwgY2hhciAqYnVmKQo+IMKgewo+IC0gwqAgwqAgwqAgc3RydWN0IGFzdXNf
+b2xlZF9kZXYgKm9kZXYgPSAoc3RydWN0IGFzdXNfb2xlZF9kZXYgKikgZGV2X2dldF9kcnZkYXRh
+KGRldmljZSk7Cj4gKyDCoCDCoCDCoCBzdHJ1Y3QgYXN1c19vbGVkX2RldiAqb2RldiA+ICsgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgKHN0cnVjdCBhc3VzX29sZWRfZGV2ICopIGRldl9nZXRfZHJ2ZGF0
+YShkZXZpY2UpOwo+Cj4gwqAgwqAgwqAgwqByZXR1cm4gc3ByaW50ZihidWYsICIlZFxuIiwgb2Rl
+di0+ZW5hYmxlZCk7Cj4gwqB9Cj4KPiAtc3RhdGljIHZvaWQgc2VuZF9wYWNrZXRzKHN0cnVjdCB1
+c2JfZGV2aWNlICp1ZGV2LCBzdHJ1Y3QgYXN1c19vbGVkX3BhY2tldCAqcGFja2V0LAo+IC0gwqAg
+wqAgwqAgY2hhciAqYnVmLCB1aW50OF90IHBfdHlwZSwgc2l6ZV90IHBfbnVtKQo+ICtzdGF0aWMg
+dm9pZCBzZW5kX3BhY2tldHMoc3RydWN0IHVzYl9kZXZpY2UgKnVkZXYsCj4gKyDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHN0cnVjdCBhc3VzX29sZWRfcGFja2V0ICpwYWNrZXQs
+Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGNoYXIgKmJ1ZiwgdWludDhf
+dCBwX3R5cGUsIHNpemVfdCBwX251bSkKPiDCoHsKPiDCoCDCoCDCoCDCoHNpemVfdCBpOwo+IMKg
+IMKgIMKgIMKgaW50IGFjdF9sZW47Cj4gQEAgLTIyOSw2NSArMjQ0LDc2IEBAIHN0YXRpYyB2b2lk
+IHNlbmRfcGFja2V0cyhzdHJ1Y3QgdXNiX2RldmljZSAqdWRldiwgc3RydWN0IGFzdXNfb2xlZF9w
+YWNrZXQgKnBhY2tlCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpbnQgcmV0dmFsOwo+Cj4gwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqBzd2l0Y2ggKHBfdHlwZSkgewo+IC0gwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgY2FzZSBBU1VTX09MRURfUk9MTDoKPiAtIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFNFVFVQX1BBQ0tFVF9IRUFERVIocGFja2V0
+LCAweDQwLCAweDgwLCBwX251bSwgaSArIDEsIDB4MDAsIDB4MDEsIDB4ZmYpOwo+ICsgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgY2FzZSBBU1VTX09MRURfUk9MTDoKPiArIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIHNldHVwX3BhY2tldF9oZWFkZXIocGFja2V0LCAweDQwLCAweDgwLCBw
+X251bSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIGkgKyAxLCAweDAwLCAweDAxLCAweGZmKTsKPiDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoGJyZWFrOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgY2FzZSBBU1VTX09MRURfU1RBVElDOgo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgU0VUVVBfUEFDS0VUX0hFQURFUihwYWNrZXQsIDB4MTAg
+KyBpLCAweDgwLCAweDAxLCAweDAxLCAweDAwLCAweDAxLCAweDAwKTsKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIGNhc2UgQVNVU19PTEVEX1NUQVRJQzoKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIHNldHVwX3BhY2tldF9oZWFkZXIocGFja2V0LCAweDEwICsgaSwgMHg4MCwg
+MHgwMSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIDB4MDEsIDB4MDAsIDB4MDEsIDB4MDApOwo+IMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgYnJlYWs7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBjYXNlIEFTVVNfT0xFRF9GTEFTSDoKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIFNFVFVQX1BBQ0tFVF9IRUFERVIocGFja2V0LCAweDEwICsg
+aSwgMHg4MCwgMHgwMSwgMHgwMSwgMHgwMCwgMHgwMCwgMHhmZik7Cj4gKyDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBjYXNlIEFTVVNfT0xFRF9GTEFTSDoKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIHNldHVwX3BhY2tldF9oZWFkZXIocGFja2V0LCAweDEwICsgaSwgMHg4MCwgMHgw
+MSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIDB4MDEsIDB4MDAsIDB4MDAsIDB4ZmYpOwo+IMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgYnJlYWs7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqB9Cj4KPiAt
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIG1lbWNweShwYWNrZXQtPmJpdG1hcCwgYnVmICsgKEFTVVNf
+T0xFRF9QQUNLRVRfQlVGX1NJWkUqaSksIEFTVVNfT0xFRF9QQUNLRVRfQlVGX1NJWkUpOwo+ICsg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgbWVtY3B5KHBhY2tldC0+Yml0bWFwLCBidWYgKyAoQVNVU19P
+TEVEX1BBQ0tFVF9CVUZfU0laRSppKSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgQVNVU19PTEVEX1BBQ0tFVF9CVUZfU0laRSk7Cj4KPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IHJldHZhbCA9IHVzYl9idWxrX21zZyh1ZGV2LAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgdXNiX3NuZGN0cmxwaXBlKHVkZXYsIDIpLAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgcGFja2V0LAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgc2l6ZW9mKHN0cnVjdCBhc3VzX29sZWRfcGFja2V0KSwKPiAtIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgICZhY3RfbGVuLAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgLTEpOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dmFsID0gdXNiX2J1bGtfbXNn
+KHVkZXYsIHVzYl9zbmRjdHJscGlwZSh1ZGV2LCAyKSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBhY2tldCwgc2l6ZW9mKHN0cnVjdCBh
+c3VzX29sZWRfcGFja2V0KSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgICZhY3RfbGVuLCAtMSk7Cj4KPiDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoGlmIChyZXR2YWwpCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBkZXZf
+ZGJnKCZ1ZGV2LT5kZXYsICJyZXR2YWwgPSAlZFxuIiwgcmV0dmFsKTsKPiDCoCDCoCDCoCDCoH0K
+PiDCoH0KPgo+IC1zdGF0aWMgdm9pZCBzZW5kX3BhY2tldChzdHJ1Y3QgdXNiX2RldmljZSAqdWRl
+diwgc3RydWN0IGFzdXNfb2xlZF9wYWNrZXQgKnBhY2tldCwgc2l6ZV90IG9mZnNldCwgc2l6ZV90
+IGxlbiwgY2hhciAqYnVmLCB1aW50OF90IGIxLCB1aW50OF90IGIyLCB1aW50OF90IGIzLCB1aW50
+OF90IGI0LCB1aW50OF90IGI1LCB1aW50OF90IGI2KSB7Cj4gK3N0YXRpYyB2b2lkIHNlbmRfcGFj
+a2V0KHN0cnVjdCB1c2JfZGV2aWNlICp1ZGV2LAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgc3RydWN0IGFzdXNfb2xlZF9wYWNrZXQgKnBhY2tldCwKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIHNpemVfdCBvZmZzZXQsIHNpemVfdCBsZW4sIGNoYXIgKmJ1
+ZiwgdWludDhfdCBiMSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHVpbnQ4
+X3QgYjIsIHVpbnQ4X3QgYjMsIHVpbnQ4X3QgYjQsIHVpbnQ4X3QgYjUsCj4gKyDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB1aW50OF90IGI2KSB7Cj4gwqAgwqAgwqAgwqBpbnQgcmV0
+dmFsOwo+IMKgIMKgIMKgIMKgaW50IGFjdF9sZW47Cj4KPiAtIMKgIMKgIMKgIFNFVFVQX1BBQ0tF
+VF9IRUFERVIocGFja2V0LCBiMSwgYjIsIGIzLCBiNCwgYjUsIGI2LCAweDAwKTsKPiArIMKgIMKg
+IMKgIHNldHVwX3BhY2tldF9oZWFkZXIocGFja2V0LCBiMSwgYjIsIGIzLCBiNCwgYjUsIGI2LCAw
+eDAwKTsKPiDCoCDCoCDCoCDCoG1lbWNweShwYWNrZXQtPmJpdG1hcCwgYnVmICsgb2Zmc2V0LCBs
+ZW4pOwo+Cj4gwqAgwqAgwqAgwqByZXR2YWwgPSB1c2JfYnVsa19tc2codWRldiwKPiAtIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHVzYl9zbmRjdHJscGlwZSh1ZGV2LCAyKSwKPiAt
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBhY2tldCwKPiAtIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIHNpemVvZihzdHJ1Y3QgYXN1c19vbGVkX3BhY2tldCksCj4g
+LSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAmYWN0X2xlbiwKPiAtIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC0xKTsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIHVzYl9zbmRjdHJscGlwZSh1ZGV2LCAyKSwKPiArIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBhY2tldCwKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHNpemVvZihzdHJ1Y3QgYXN1c19vbGVkX3Bh
+Y2tldCksCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAmYWN0
+X2xlbiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC0xKTsK
+Pgo+IMKgIMKgIMKgIMKgaWYgKHJldHZhbCkKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGRldl9k
+YmcoJnVkZXYtPmRldiwgInJldHZhbCA9ICVkXG4iLCByZXR2YWwpOwo+IMKgfQo+Cj4KPiAtc3Rh
+dGljIHZvaWQgc2VuZF9wYWNrZXRzX2c1MChzdHJ1Y3QgdXNiX2RldmljZSAqdWRldiwgc3RydWN0
+IGFzdXNfb2xlZF9wYWNrZXQgKnBhY2tldCwgY2hhciAqYnVmKQo+ICtzdGF0aWMgdm9pZCBzZW5k
+X3BhY2tldHNfZzUwKHN0cnVjdCB1c2JfZGV2aWNlICp1ZGV2LAo+ICsgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBzdHJ1Y3QgYXN1c19vbGVkX3BhY2tldCAqcGFja2V0
+LCBjaGFyICpidWYpCj4gwqB7Cj4gLSDCoCDCoCDCoCBzZW5kX3BhY2tldCh1ZGV2LCBwYWNrZXQs
+IMKgIMKgIDAsIDB4MTAwLCBidWYsIDB4MTAsIDB4MDAsIDB4MDIsIDB4MDEsIDB4MDAsIDB4MDEp
+Owo+IC0gwqAgwqAgwqAgc2VuZF9wYWNrZXQodWRldiwgcGFja2V0LCAweDEwMCwgMHgwODAsIGJ1
+ZiwgMHgxMCwgMHgwMCwgMHgwMiwgMHgwMiwgMHg4MCwgMHgwMCk7Cj4gLQo+IC0gwqAgwqAgwqAg
+c2VuZF9wYWNrZXQodWRldiwgcGFja2V0LCAweDE4MCwgMHgxMDAsIGJ1ZiwgMHgxMSwgMHgwMCwg
+MHgwMywgMHgwMSwgMHgwMCwgMHgwMSk7Cj4gLSDCoCDCoCDCoCBzZW5kX3BhY2tldCh1ZGV2LCBw
+YWNrZXQsIDB4MjgwLCAweDEwMCwgYnVmLCAweDExLCAweDAwLCAweDAzLCAweDAyLCAweDAwLCAw
+eDAxKTsKPiAtIMKgIMKgIMKgIHNlbmRfcGFja2V0KHVkZXYsIHBhY2tldCwgMHgzODAsIDB4MDgw
+LCBidWYsIDB4MTEsIDB4MDAsIDB4MDMsIDB4MDMsIDB4ODAsIDB4MDApOwo+ICsgwqAgwqAgwqAg
+c2VuZF9wYWNrZXQodWRldiwgcGFja2V0LCDCoCDCoCAwLCAweDEwMCwgYnVmLAo+ICsgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgMHgxMCwgMHgwMCwgMHgwMiwgMHgwMSwgMHgwMCwgMHgwMSk7
+Cj4gKyDCoCDCoCDCoCBzZW5kX3BhY2tldCh1ZGV2LCBwYWNrZXQsIDB4MTAwLCAweDA4MCwgYnVm
+LAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgMHgxMCwgMHgwMCwgMHgwMiwgMHgwMiwg
+MHg4MCwgMHgwMCk7Cj4gKwo+ICsgwqAgwqAgwqAgc2VuZF9wYWNrZXQodWRldiwgcGFja2V0LCAw
+eDE4MCwgMHgxMDAsIGJ1ZiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIDB4MTEsIDB4
+MDAsIDB4MDMsIDB4MDEsIDB4MDAsIDB4MDEpOwo+ICsgwqAgwqAgwqAgc2VuZF9wYWNrZXQodWRl
+diwgcGFja2V0LCAweDI4MCwgMHgxMDAsIGJ1ZiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIDB4MTEsIDB4MDAsIDB4MDMsIDB4MDIsIDB4MDAsIDB4MDEpOwo+ICsgwqAgwqAgwqAgc2Vu
+ZF9wYWNrZXQodWRldiwgcGFja2V0LCAweDM4MCwgMHgwODAsIGJ1ZiwKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIDB4MTEsIDB4MDAsIDB4MDMsIDB4MDMsIDB4ODAsIDB4MDApOwo+IMKg
+fQo+Cj4KPiDCoHN0YXRpYyB2b2lkIHNlbmRfZGF0YShzdHJ1Y3QgYXN1c19vbGVkX2RldiAqb2Rl
+dikKPiDCoHsKPiDCoCDCoCDCoCDCoHNpemVfdCBwYWNrZXRfbnVtID0gb2Rldi0+YnVmX3NpemUg
+LyBBU1VTX09MRURfUEFDS0VUX0JVRl9TSVpFOwo+IC0gwqAgwqAgwqAgc3RydWN0IGFzdXNfb2xl
+ZF9wYWNrZXQgKiBwYWNrZXQ7Cj4gKyDCoCDCoCDCoCBzdHJ1Y3QgYXN1c19vbGVkX3BhY2tldCAq
+cGFja2V0Owo+Cj4gwqAgwqAgwqAgwqBwYWNrZXQgPSBremFsbG9jKHNpemVvZihzdHJ1Y3QgYXN1
+c19vbGVkX3BhY2tldCksIEdGUF9LRVJORUwpOwo+Cj4gQEAgLTI5NywyMCArMzIzLDIwIEBAIHN0
+YXRpYyB2b2lkIHNlbmRfZGF0YShzdHJ1Y3QgYXN1c19vbGVkX2RldiAqb2RldikKPiDCoCDCoCDC
+oCDCoH0KPgo+IMKgIMKgIMKgIMKgaWYgKG9kZXYtPnBhY2tfbW9kZSA9IFBBQ0tfTU9ERV9HMSkg
+ewo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgLy8gV2hlbiBzZW5kaW5nIHJvbGwtbW9kZSBkYXRh
+IHRoZSBkaXNwbGF5IHVwZGF0ZWQgb25seSBmaXJzdCBwYWNrZXQuCj4gLSDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCAvLyBJIGhhdmUgbm8gaWRlYSB3aHksIGJ1dCB3aGVuIHN0YXRpYyBwaWN0dXJlIGlz
+IHNlbmQganVzdCBiZWZvcmUKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC8vIHJvbGxpbmcgcGlj
+dHVyZSAtIGV2ZXJ5dGhpbmcgd29ya3MgZmluZS4KPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC8q
+IFdoZW4gc2VuZGluZyByb2xsLW1vZGUgZGF0YSB0aGUgZGlzcGxheSB1cGRhdGVkIG9ubHkKPiAr
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgZmlyc3QgcGFja2V0LiDCoEkgaGF2ZSBubyBpZGVh
+IHdoeSwgYnV0IHdoZW4gc3RhdGljIHBpY3R1cmUKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgaXMgc2VudCBqdXN0IGJlZm9yZSByb2xsaW5nIHBpY3R1cmUgZXZlcnl0aGluZyB3b3JrcyBm
+aW5lLiAqLwo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgaWYgKG9kZXYtPnBpY19tb2RlID0gQVNV
+U19PTEVEX1JPTEwpCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzZW5kX3Bh
+Y2tldHMob2Rldi0+dWRldiwgcGFja2V0LCBvZGV2LT5idWYsIEFTVVNfT0xFRF9TVEFUSUMsIDIp
+Owo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2VuZF9wYWNrZXRzKG9kZXYt
+PnVkZXYsIHBhY2tldCwgb2Rldi0+YnVmLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBBU1VTX09MRURfU1RBVElDLCAyKTsKPgo+IC0gwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgLy8gT25seSBST0xMIG1vZGUgY2FuIHVzZSBtb3JlIHRoYW4gMiBw
+YWNrZXRzLgo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLyogT25seSBST0xMIG1vZGUgY2FuIHVz
+ZSBtb3JlIHRoYW4gMiBwYWNrZXRzLiovCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAob2Rl
+di0+cGljX21vZGUgIT0gQVNVU19PTEVEX1JPTEwgJiYgcGFja2V0X251bSA+IDIpCj4gwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBwYWNrZXRfbnVtID0gMjsKPgo+IC0gwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgc2VuZF9wYWNrZXRzKG9kZXYtPnVkZXYsIHBhY2tldCwgb2Rldi0+YnVm
+LCBvZGV2LT5waWNfbW9kZSwgcGFja2V0X251bSk7Cj4gLSDCoCDCoCDCoCB9Cj4gLSDCoCDCoCDC
+oCBlbHNlCj4gLSDCoCDCoCDCoCBpZiAob2Rldi0+cGFja19tb2RlID0gUEFDS19NT0RFX0c1MCkg
+ewo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2VuZF9wYWNrZXRzKG9kZXYtPnVkZXYsIHBhY2tl
+dCwgb2Rldi0+YnVmLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqBvZGV2LT5waWNfbW9kZSwgcGFja2V0X251bSk7Cj4gKyDCoCDCoCDCoCB9IGVsc2UgaWYgKG9k
+ZXYtPnBhY2tfbW9kZSA9IFBBQ0tfTU9ERV9HNTApIHsKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oHNlbmRfcGFja2V0c19nNTAob2Rldi0+dWRldiwgcGFja2V0LCBvZGV2LT5idWYpOwo+IMKgIMKg
+IMKgIMKgfQo+Cj4gQEAgLTMxOSw1MyArMzQ1LDU1IEBAIHN0YXRpYyB2b2lkIHNlbmRfZGF0YShz
+dHJ1Y3QgYXN1c19vbGVkX2RldiAqb2RldikKPgo+IMKgc3RhdGljIGludCBhcHBlbmRfdmFsdWVz
+KHN0cnVjdCBhc3VzX29sZWRfZGV2ICpvZGV2LCB1aW50OF90IHZhbCwgc2l6ZV90IGNvdW50KQo+
+IMKgewo+IC0gwqAgwqAgwqAgd2hpbGUgKGNvdW50LS0gPiAwKSB7Cj4gLSDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBpZiAodmFsKSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBz
+aXplX3QgeCA9IG9kZXYtPmJ1Zl9vZmZzICUgb2Rldi0+d2lkdGg7Cj4gLSDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCBzaXplX3QgeSA9IG9kZXYtPmJ1Zl9vZmZzIC8gb2Rldi0+d2lk
+dGg7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzaXplX3QgaTsKPiAtCj4g
+LSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB4ICs9IG9kZXYtPnhfc2hpZnQ7Cj4g
+LSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB5ICs9IG9kZXYtPnlfc2hpZnQ7Cj4g
+LQo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc3dpdGNoIChvZGV2LT5wYWNr
+X21vZGUpCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB7Cj4gLSDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBjYXNlIFBBQ0tfTU9ERV9HMToK
+PiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIC8vIGkgPSAoeC8xMjgpKjY0MCArIDEyNyAtIHggKyAoeS84KSoxMjg7Cj4gLSDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAvLyBUaGlz
+IG9uZSBmb3IgMTI4IGlzIHRoZSBzYW1lLCBidXQgbWlnaHQgYmUgYmV0dGVyIGZvciBkaWZmZXJl
+bnQgd2lkdGhzPwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgaSA9ICh4L29kZXYtPmRldl93aWR0aCkqNjQwICsgb2Rldi0+ZGV2X3dp
+ZHRoIC0gMSAtIHggKyAoeS84KSpvZGV2LT5kZXZfd2lkdGg7Cj4gLSDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBicmVhazsKPiArIMKgIMKgIMKgIHdoaWxlIChj
+b3VudC0tID4gMCAmJiB2YWwpIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHNpemVfdCB4ID0g
+b2Rldi0+YnVmX29mZnMgJSBvZGV2LT53aWR0aDsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHNp
+emVfdCB5ID0gb2Rldi0+YnVmX29mZnMgLyBvZGV2LT53aWR0aDsKPiArIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIHNpemVfdCBpOwo+Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCBjYXNlIFBBQ0tfTU9ERV9HNTA6Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpID0gwqAob2Rldi0+ZGV2X3dpZHRo
+IC0gMSAtIHgpLzggKyB5Km9kZXYtPmRldl93aWR0aC84Owo+IC0gwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCB4ICs9IG9kZXYtPnhfc2hpZnQ7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB5ICs9IG9kZXYt
+Pnlfc2hpZnQ7Cj4gKwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc3dpdGNoIChvZGV2LT5wYWNr
+X21vZGUpIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNhc2UgUEFDS19NT0RFX0cxOgo+ICsg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLyogaSA9ICh4LzEyOCkqNjQwICsgMTI3
+IC0geCArICh5LzgpKjEyODsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgVGhpcyBvbmUgZm9yIDEyOCBpcyB0aGUgc2FtZSwgYnV0IG1pZ2h0IGJlIGJldHRlcgo+ICsg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBmb3IgZGlmZmVyZW50IHdpZHRo
+cz8gKi8KPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGkgPSAoeC9vZGV2LT5k
+ZXZfd2lkdGgpKjY0MCArCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBvZGV2LT5kZXZfd2lkdGggLSAxIC0geCArCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAoeS84KSpvZGV2LT5kZXZfd2lkdGg7Cj4gKyDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBicmVhazsKPgo+IC0gwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZGVmYXVsdDoKPiAtIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGkgPSAwOwo+IC0gwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcHJp
+bnRrKEFTVVNfT0xFRF9FUlJPUiAiVW5rbm93biBPTEVEIFBhY2sgTW9kZTogJWQhXG4iLCBvZGV2
+LT5wYWNrX21vZGUpOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgYnJlYWs7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9Cj4gKyDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCBjYXNlIFBBQ0tfTU9ERV9HNTA6Cj4gKyDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCBpID0gwqAob2Rldi0+ZGV2X3dpZHRoIC0gMSAtIHgpLzggKyB5
+Km9kZXYtPmRldl93aWR0aC84Owo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+YnJlYWs7Cj4KPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGlmIChpID49IG9k
+ZXYtPmJ1Zl9zaXplKSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBwcmludGsoQVNVU19PTEVEX0VSUk9SICJCdWZmZXIgb3ZlcmZsb3chIFJlcG9ydCBh
+IGJ1ZyBpbiB0aGUgZHJpdmVyOiBvZmZzOiAlZCA+PSAlZCBpOiAlZCAoeDogJWQgeTogJWQpXG4i
+LAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgKGludCkgb2Rldi0+YnVmX29mZnMsIChpbnQpIG9kZXYtPmJ1Zl9zaXplLCAoaW50KSBp
+LCAoaW50KSB4LCAoaW50KSB5KTsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIHJldHVybiAtRUlPOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgfQo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZGVmYXVsdDoKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIGkgPSAwOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgcHJpbnRrKEFTVVNfT0xFRF9FUlJPUiAiVW5rbm93biBPTEVEIFBhY2sgTW9kZTog
+JWQhXG4iLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBv
+ZGV2LT5wYWNrX21vZGUpOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJl
+YWs7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9Cj4KPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIHN3aXRjaCAob2Rldi0+cGFja19tb2RlKQo+IC0gwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgewo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgY2FzZSBQQUNLX01PREVfRzE6Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBvZGV2LT5idWZbaV0gJj0gfigxPDwo
+eSU4KSk7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBi
+cmVhazsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGlmIChpID49IG9kZXYtPmJ1Zl9zaXplKSB7
+Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwcmludGsoQVNVU19PTEVEX0VS
+Uk9SICJCdWZmZXIgb3ZlcmZsb3chIFJlcG9ydCBhIGJ1ZzoiCj4gKyDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCJvZmZzOiAlZCA+PSAlZCBpOiAlZCAoeDogJWQg
+eTogJWQpXG4iLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAoaW50KSBvZGV2LT5idWZfb2ZmcywgKGludCkgb2Rldi0+YnVmX3NpemUsCj4gKyDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoChpbnQpIGksIChpbnQpIHgsIChp
+bnQpIHkpOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIC1FSU87
+Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9Cj4KPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNhc2UgUEFDS19NT0RFX0c1MDoKPiAtIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIG9kZXYtPmJ1Zltp
+XSAmPSB+KDE8PCh4JTgpKTsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIGJyZWFrOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc3dpdGNoIChvZGV2LT5w
+YWNrX21vZGUpIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNhc2UgUEFDS19NT0RFX0cxOgo+
+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgb2Rldi0+YnVmW2ldICY9IH4oMTw8
+KHklOCkpOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7Cj4KPiAt
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRlZmF1bHQ6Cj4g
+LSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCAvLyBjYW5ub3QgZ2V0IGhlcmU7IHN0b3BzIGdjYyBjb21wbGFpbmluZwo+IC0gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgOwo+IC0gwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgfQo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgY2FzZSBQQUNLX01P
+REVfRzUwOgo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgb2Rldi0+YnVmW2ld
+ICY9IH4oMTw8KHglOCkpOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJl
+YWs7Cj4gKwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZGVmYXVsdDoKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIC8qIGNhbm5vdCBnZXQgaGVyZTsgc3RvcHMgZ2NjIGNvbXBs
+YWluaW5nKi8KPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIDsKPiDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoH0KPgo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgb2Rldi0+bGFzdF92
+YWwgPSB2YWw7Cj4gQEAgLTM3NSw3ICs0MDMsOCBAQCBzdGF0aWMgaW50IGFwcGVuZF92YWx1ZXMo
+c3RydWN0IGFzdXNfb2xlZF9kZXYgKm9kZXYsIHVpbnQ4X3QgdmFsLCBzaXplX3QgY291bnQpCj4g
+wqAgwqAgwqAgwqByZXR1cm4gMDsKPiDCoH0KPgo+IC1zdGF0aWMgc3NpemVfdCBvZGV2X3NldF9w
+aWN0dXJlKHN0cnVjdCBhc3VzX29sZWRfZGV2ICpvZGV2LCBjb25zdCBjaGFyICpidWYsIHNpemVf
+dCBjb3VudCkKPiArc3RhdGljIHNzaXplX3Qgb2Rldl9zZXRfcGljdHVyZShzdHJ1Y3QgYXN1c19v
+bGVkX2RldiAqb2RldiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIGNvbnN0IGNoYXIgKmJ1Ziwgc2l6ZV90IGNvdW50KQo+IMKgewo+IMKgIMKgIMKgIMKg
+c2l6ZV90IG9mZnMgPSAwLCBtYXhfb2ZmczsKPgo+IEBAIC0zODMsMzIgKzQxMiwzMSBAQCBzdGF0
+aWMgc3NpemVfdCBvZGV2X3NldF9waWN0dXJlKHN0cnVjdCBhc3VzX29sZWRfZGV2ICpvZGV2LCBj
+b25zdCBjaGFyICpidWYsIHNpego+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0dXJuIDA7Cj4K
+PiDCoCDCoCDCoCDCoGlmICh0b2xvd2VyKGJ1ZlswXSkgPSAnYicpIHsKPiAtIMKgIMKgIMKgIMKg
+IMKgIC8vIGJpbmFyeSBtb2RlLCBzZXQgdGhlIGVudGlyZSBtZW1vcnkKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIC8qIGJpbmFyeSBtb2RlLCBzZXQgdGhlIGVudGlyZSBtZW1vcnkqLwo+Cj4gLSDC
+oCDCoCDCoCDCoCDCoCBzaXplX3QgaTsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHNpemVfdCBp
+Owo+Cj4gLSDCoCDCoCDCoCDCoCDCoCBvZGV2LT5idWZfc2l6ZSA9IChvZGV2LT5kZXZfd2lkdGgg
+KiBBU1VTX09MRURfRElTUF9IRUlHSFQpIC8gODsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIG9k
+ZXYtPmJ1Zl9zaXplID0gKG9kZXYtPmRldl93aWR0aCAqIEFTVVNfT0xFRF9ESVNQX0hFSUdIVCkg
+LyA4Owo+Cj4gLSDCoCDCoCDCoCDCoCDCoCBpZiAob2Rldi0+YnVmKQo+IC0gwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAga2ZyZWUob2Rldi0+YnVmKTsKPiAtIMKgIMKgIMKgIMKgIMKgIG9kZXYt
+PmJ1ZiA9IGttYWxsb2Mob2Rldi0+YnVmX3NpemUsIEdGUF9LRVJORUwpOwo+ICsgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAga2ZyZWUob2Rldi0+YnVmKTsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIG9k
+ZXYtPmJ1ZiA9IGttYWxsb2Mob2Rldi0+YnVmX3NpemUsIEdGUF9LRVJORUwpOwo+Cj4gLSDCoCDC
+oCDCoCDCoCDCoCBtZW1zZXQob2Rldi0+YnVmLCAweGZmLCBvZGV2LT5idWZfc2l6ZSk7Cj4gKyDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCBtZW1zZXQob2Rldi0+YnVmLCAweGZmLCBvZGV2LT5idWZfc2l6
+ZSk7Cj4KPiAtIMKgIMKgIMKgIMKgIMKgIGZvciAoaSA9IDE7IGkgPCBjb3VudCAmJiBpIDw9IDMy
+ICogMzI7IGkrKykgewo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgb2Rldi0+YnVmW2ktMV0gPSBi
+dWZbaV07Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBvZGV2LT5idWZfb2ZmcyA9IGktMTsKPiAt
+IMKgIMKgIMKgIMKgIMKgIH0KPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGZvciAoaSA9IDE7IGkg
+PCBjb3VudCAmJiBpIDw9IDMyICogMzI7IGkrKykgewo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgb2Rldi0+YnVmW2ktMV0gPSBidWZbaV07Cj4gKyDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCBvZGV2LT5idWZfb2ZmcyA9IGktMTsKPiArIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIH0KPgo+IC0gwqAgwqAgwqAgwqAgwqAgb2Rldi0+d2lkdGggPSBvZGV2LT5kZXZfd2lk
+dGggLyA4Owo+IC0gwqAgwqAgwqAgwqAgwqAgb2Rldi0+aGVpZ2h0ID0gQVNVU19PTEVEX0RJU1Bf
+SEVJR0hUOwo+IC0gwqAgwqAgwqAgwqAgwqAgb2Rldi0+eF9zaGlmdCA9IDA7Cj4gLSDCoCDCoCDC
+oCDCoCDCoCBvZGV2LT55X3NoaWZ0ID0gMDsKPiAtIMKgIMKgIMKgIMKgIMKgIG9kZXYtPmxhc3Rf
+dmFsID0gwqAwOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgb2Rldi0+d2lkdGggPSBvZGV2LT5k
+ZXZfd2lkdGggLyA4Owo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgb2Rldi0+aGVpZ2h0ID0gQVNV
+U19PTEVEX0RJU1BfSEVJR0hUOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgb2Rldi0+eF9zaGlm
+dCA9IDA7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBvZGV2LT55X3NoaWZ0ID0gMDsKPiArIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIG9kZXYtPmxhc3RfdmFsID0gwqAwOwo+Cj4gLSDCoCDCoCDCoCDC
+oCDCoCBzZW5kX2RhdGEob2Rldik7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzZW5kX2RhdGEo
+b2Rldik7Cj4KPiAtIMKgIMKgIMKgIMKgIMKgIHJldHVybiBjb3VudDsKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIHJldHVybiBjb3VudDsKPiDCoCDCoCDCoCDCoH0KPgo+IMKgIMKgIMKgIMKgaWYg
+KGJ1ZlswXSA9ICc8Jykgewo+IEBAIC00MTYsMjAgKzQ0NCwyMSBAQCBzdGF0aWMgc3NpemVfdCBv
+ZGV2X3NldF9waWN0dXJlKHN0cnVjdCBhc3VzX29sZWRfZGV2ICpvZGV2LCBjb25zdCBjaGFyICpi
+dWYsIHNpego+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgc2l6ZV90IHcgPSAwLCBoID0gMDsKPiDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoHNpemVfdCB3X21lbSwgaF9tZW07Cj4KPiAtIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIGlmIChjb3VudCA8IDEwIHx8IGJ1ZlsyXSAhPSAnOicpIHsKPiArIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIGlmIChjb3VudCA8IDEwIHx8IGJ1ZlsyXSAhPSAnOicpCj4gwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBnb3RvIGVycm9yX2hlYWRlcjsKPiAtIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIH0KPiArCj4KPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHN3aXRjaCAo
+dG9sb3dlcihidWZbMV0pKSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBj
+YXNlIEFTVVNfT0xFRF9TVEFUSUM6Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCBjYXNlIEFTVVNfT0xFRF9ST0xMOgo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgY2FzZSBBU1VTX09MRURfRkxBU0g6Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCBvZGV2LT5waWNfbW9kZSA9IGJ1ZlsxXTsKPiAtIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGJyZWFrOwo+IC0gwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgZGVmYXVsdDoKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIHByaW50ayhBU1VTX09MRURfRVJST1IgIldyb25nIHBpY3R1
+cmUgbW9kZTogJyVjJy5cbiIsIGJ1ZlsxXSk7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCByZXR1cm4gLUVJTzsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGJyZWFrOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+Y2FzZSBBU1VTX09MRURfU1RBVElDOgo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgY2FzZSBBU1VT
+X09MRURfUk9MTDoKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNhc2UgQVNVU19PTEVEX0ZMQVNI
+Ogo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgb2Rldi0+cGljX21vZGUgPSBi
+dWZbMV07Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBicmVhazsKPiArIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIGRlZmF1bHQ6Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBwcmludGsoQVNVU19PTEVEX0VSUk9SICJXcm9uZyBwaWN0dXJlIG1vZGU6ICclYycu
+XG4iLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBidWZb
+MV0pOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIC1FSU87Cj4g
+KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBicmVhazsKPiDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoH0KPgo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgZm9yIChpID0gMzsgaSA8IGNv
+dW50OyArK2kpIHsKPiBAQCAtNDM4LDExICs0NjcsMTEgQEAgc3RhdGljIHNzaXplX3Qgb2Rldl9z
+ZXRfcGljdHVyZShzdHJ1Y3QgYXN1c19vbGVkX2RldiAqb2RldiwgY29uc3QgY2hhciAqYnVmLCBz
+aXoKPgo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgaWYg
+KHcgPiBBU1VTX09MRURfTUFYX1dJRFRIKQo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgZ290byBlcnJvcl93aWR0aDsKPiAtIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIH0KPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIGVsc2UgaWYgKHRvbG93ZXIoYnVmW2ldKSA9ICd4JykKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIH0gZWxzZSBpZiAodG9sb3dlcihidWZbaV0pID0gJ3gnKSB7
+Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBicmVhazsK
+PiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGVsc2UKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIH0gZWxzZSB7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBnb3RvIGVycm9yX3dpZHRoOwo+ICsgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgfQo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgfQo+Cj4gwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqBmb3IgKCsraTsgaSA8IGNvdW50OyArK2kpIHsKPiBAQCAtNDUx
+LDExICs0ODAsMTEgQEAgc3RhdGljIHNzaXplX3Qgb2Rldl9zZXRfcGljdHVyZShzdHJ1Y3QgYXN1
+c19vbGVkX2RldiAqb2RldiwgY29uc3QgY2hhciAqYnVmLCBzaXoKPgo+IMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgaWYgKGggPiBBU1VTX09MRURfRElTUF9I
+RUlHSFQpCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqBnb3RvIGVycm9yX2hlaWdodDsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIH0KPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGVsc2UgaWYg
+KHRvbG93ZXIoYnVmW2ldKSA9ICc+JykKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIH0gZWxzZSBpZiAodG9sb3dlcihidWZbaV0pID0gJz4nKSB7Cj4gwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBicmVhazsKPiAtIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIGVsc2UKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIH0gZWxzZSB7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqBnb3RvIGVycm9yX2hlaWdodDsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIH0KPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoH0KPgo+IMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgaWYgKHcgPCAxIHx8IHcgPiBBU1VTX09MRURfTUFYX1dJRFRIKQo+IEBAIC00ODEsOCArNTEw
+LDcgQEAgc3RhdGljIHNzaXplX3Qgb2Rldl9zZXRfcGljdHVyZShzdHJ1Y3QgYXN1c19vbGVkX2Rl
+diAqb2RldiwgY29uc3QgY2hhciAqYnVmLCBzaXoKPgo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+b2Rldi0+YnVmX3NpemUgPSB3X21lbSAqIGhfbWVtIC8gODsKPgo+IC0gwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgaWYgKG9kZXYtPmJ1ZikKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IGtmcmVlKG9kZXYtPmJ1Zik7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBrZnJlZShvZGV2LT5i
+dWYpOwo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgb2Rldi0+YnVmID0ga21hbGxvYyhvZGV2LT5i
+dWZfc2l6ZSwgR0ZQX0tFUk5FTCk7Cj4KPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGlmIChvZGV2
+LT5idWYgPSBOVUxMKSB7Cj4gQEAgLTUwMyw4ICs1MzEsNyBAQCBzdGF0aWMgc3NpemVfdCBvZGV2
+X3NldF9waWN0dXJlKHN0cnVjdCBhc3VzX29sZWRfZGV2ICpvZGV2LCBjb25zdCBjaGFyICpidWYs
+IHNpego+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgaWYgKG9kZXYtPnBpY19tb2RlID0gQVNVU19P
+TEVEX0ZMQVNIKSB7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAoaCA8
+IEFTVVNfT0xFRF9ESVNQX0hFSUdIVC8yKQo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgb2Rldi0+eV9zaGlmdCA9IChBU1VTX09MRURfRElTUF9IRUlHSFQv
+MiAtIGgpLzI7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9Cj4gLSDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCBlbHNlIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIH0gZWxzZSB7Cj4gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAoaCA8IEFTVVNfT0xFRF9ESVNQX0hFSUdIVCkK
+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoG9kZXYtPnlf
+c2hpZnQgPSAoQVNVU19PTEVEX0RJU1BfSEVJR0hUIC0gaCkvMjsKPiDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoH0KPiBAQCAtNTIyLDIwICs1NDksMjEgQEAgc3RhdGljIHNzaXplX3Qgb2Rldl9zZXRf
+cGljdHVyZShzdHJ1Y3QgYXN1c19vbGVkX2RldiAqb2RldiwgY29uc3QgY2hhciAqYnVmLCBzaXoK
+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJldCA9IGFwcGVuZF92YWx1ZXMo
+b2RldiwgMSwgMSk7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAocmV0
+IDwgMCkKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJl
+dHVybiByZXQ7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9Cj4gLSDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCBlbHNlIGlmIChidWZbb2Zmc10gPSAnMCcgfHwgYnVmW29mZnNdID0gJyAnKSB7Cj4gKyDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCB9IGVsc2UgaWYgKGJ1ZltvZmZzXSA9ICcwJyB8fCBidWZbb2Zm
+c10gPSAnICcpIHsKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJldCA9IGFw
+cGVuZF92YWx1ZXMob2RldiwgMCwgMSk7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqBpZiAocmV0IDwgMCkKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoHJldHVybiByZXQ7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9Cj4gLSDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCBlbHNlIGlmIChidWZbb2Zmc10gPSAnXG4nKSB7Cj4gLSDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAvLyBOZXcgbGluZSBkZXRlY3RlZC4gTGV0cyBhc3N1
+bWUsIHRoYXQgYWxsIGNoYXJhY3RlcnMgdGlsbCB0aGUgZW5kIG9mIHRoZQo+IC0gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLy8gbGluZSB3ZXJlIGVxdWFsIHRvIHRoZSBsYXN0IGNo
+YXJhY3RlciBpbiB0aGlzIGxpbmUuCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9IGVsc2UgaWYg
+KGJ1ZltvZmZzXSA9ICdcbicpIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IC8qIE5ldyBsaW5lIGRldGVjdGVkLiBMZXRzIGFzc3VtZSwgdGhhdCBhbGwgY2hhcmFjdGVycwo+
+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqB0aWxsIHRoZSBlbmQgb2Yg
+dGhlIGxpbmUgd2VyZSBlcXVhbCB0byB0aGUgbGFzdAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqBjaGFyYWN0ZXIgaW4gdGhpcyBsaW5lLiovCj4gwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAob2Rldi0+YnVmX29mZnMgJSBvZGV2LT53aWR0aCAh
+PSAwKQo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0
+ID0gYXBwZW5kX3ZhbHVlcyhvZGV2LCBvZGV2LT5sYXN0X3ZhbCwKPiAtIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIG9kZXYtPndpZHRoIC0gKG9k
+ZXYtPmJ1Zl9vZmZzICUgb2Rldi0+d2lkdGgpKTsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIGlmIChyZXQgPCAwKQo+IC0gwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIHJldDsKPiArIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIG9kZXYtPndpZHRoIC0KPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIChvZGV2
+LT5idWZfb2ZmcyAlCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoG9kZXYtPndpZHRoKSk7Cj4gKyDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAocmV0IDwgMCkKPiArIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHJldHVybiByZXQ7Cj4gwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqB9Cj4KPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoG9mZnMrKzsKPiBA
+QCAtNTU5LDQ3ICs1ODcsNTIgQEAgZXJyb3JfaGVhZGVyOgo+IMKgIMKgIMKgIMKgcmV0dXJuIC1F
+SU87Cj4gwqB9Cj4KPiAtc3RhdGljIHNzaXplX3Qgc2V0X3BpY3R1cmUoc3RydWN0IGRldmljZSAq
+ZGV2LCBzdHJ1Y3QgZGV2aWNlX2F0dHJpYnV0ZSAqYXR0ciwgY29uc3QgY2hhciAqYnVmLCBzaXpl
+X3QgY291bnQpCj4gK3N0YXRpYyBzc2l6ZV90IHNldF9waWN0dXJlKHN0cnVjdCBkZXZpY2UgKmRl
+diwgc3RydWN0IGRldmljZV9hdHRyaWJ1dGUgKmF0dHIsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoGNvbnN0IGNoYXIgKmJ1Ziwgc2l6ZV90IGNvdW50KQo+IMKgewo+
+IMKgIMKgIMKgIMKgc3RydWN0IHVzYl9pbnRlcmZhY2UgKmludGYgPSB0b191c2JfaW50ZXJmYWNl
+KGRldik7Cj4KPiDCoCDCoCDCoCDCoHJldHVybiBvZGV2X3NldF9waWN0dXJlKHVzYl9nZXRfaW50
+ZmRhdGEoaW50ZiksIGJ1ZiwgY291bnQpOwo+IMKgfQo+Cj4gLXN0YXRpYyBzc2l6ZV90IGNsYXNz
+X3NldF9waWN0dXJlKHN0cnVjdCBkZXZpY2UgKmRldmljZSwgc3RydWN0IGRldmljZV9hdHRyaWJ1
+dGUgKmF0dHIsIGNvbnN0IGNoYXIgKmJ1Ziwgc2l6ZV90IGNvdW50KQo+ICtzdGF0aWMgc3NpemVf
+dCBjbGFzc19zZXRfcGljdHVyZShzdHJ1Y3QgZGV2aWNlICpkZXZpY2UsCj4gKyDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHN0cnVjdCBkZXZpY2VfYXR0cmli
+dXRlICphdHRyLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqBjb25zdCBjaGFyICpidWYsIHNpemVfdCBjb3VudCkKPiDCoHsKPiAtIMKgIMKgIMKgIHJl
+dHVybiBvZGV2X3NldF9waWN0dXJlKChzdHJ1Y3QgYXN1c19vbGVkX2RldiAqKSBkZXZfZ2V0X2Ry
+dmRhdGEoZGV2aWNlKSwgYnVmLCBjb3VudCk7Cj4gKyDCoCDCoCDCoCByZXR1cm4gb2Rldl9zZXRf
+cGljdHVyZSgoc3RydWN0IGFzdXNfb2xlZF9kZXYgKikKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRldl9nZXRfZHJ2ZGF0YShkZXZpY2UpLCBidWYsIGNv
+dW50KTsKPiDCoH0KPgo+IMKgI2RlZmluZSBBU1VTX09MRURfREVWSUNFX0FUVFIoX2ZpbGUpIMKg
+IMKgIMKgIMKgIMKgIGRldl9hdHRyX2FzdXNfb2xlZF8jI19maWxlCj4KPiAtc3RhdGljIERFVklD
+RV9BVFRSKGFzdXNfb2xlZF9lbmFibGVkLCBTX0lXVUdPIHwgU19JUlVHTywgZ2V0X2VuYWJsZWQs
+IHNldF9lbmFibGVkKTsKPiArc3RhdGljIERFVklDRV9BVFRSKGFzdXNfb2xlZF9lbmFibGVkLCBT
+X0lXVUdPIHwgU19JUlVHTywKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgZ2V0X2VuYWJs
+ZWQsIHNldF9lbmFibGVkKTsKPiDCoHN0YXRpYyBERVZJQ0VfQVRUUihhc3VzX29sZWRfcGljdHVy
+ZSwgU19JV1VHTyAsIE5VTEwsIHNldF9waWN0dXJlKTsKPgo+IC1zdGF0aWMgREVWSUNFX0FUVFIo
+ZW5hYmxlZCwgU19JV1VHTyB8IFNfSVJVR08sIGNsYXNzX2dldF9lbmFibGVkLCBjbGFzc19zZXRf
+ZW5hYmxlZCk7Cj4gK3N0YXRpYyBERVZJQ0VfQVRUUihlbmFibGVkLCBTX0lXVUdPIHwgU19JUlVH
+TywKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgY2xhc3NfZ2V0X2VuYWJsZWQsIGNsYXNz
+X3NldF9lbmFibGVkKTsKPiDCoHN0YXRpYyBERVZJQ0VfQVRUUihwaWN0dXJlLCBTX0lXVUdPLCBO
+VUxMLCBjbGFzc19zZXRfcGljdHVyZSk7Cj4KPiAtc3RhdGljIGludCBhc3VzX29sZWRfcHJvYmUo
+c3RydWN0IHVzYl9pbnRlcmZhY2UgKmludGVyZmFjZSwgY29uc3Qgc3RydWN0IHVzYl9kZXZpY2Vf
+aWQgKmlkKQo+ICtzdGF0aWMgaW50IGFzdXNfb2xlZF9wcm9iZShzdHJ1Y3QgdXNiX2ludGVyZmFj
+ZSAqaW50ZXJmYWNlLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBj
+b25zdCBzdHJ1Y3QgdXNiX2RldmljZV9pZCAqaWQpCj4gwqB7Cj4gwqAgwqAgwqAgwqBzdHJ1Y3Qg
+dXNiX2RldmljZSAqdWRldiA9IGludGVyZmFjZV90b191c2JkZXYoaW50ZXJmYWNlKTsKPiDCoCDC
+oCDCoCDCoHN0cnVjdCBhc3VzX29sZWRfZGV2ICpvZGV2ID0gTlVMTDsKPiDCoCDCoCDCoCDCoGlu
+dCByZXR2YWwgPSAtRU5PTUVNOwo+IMKgIMKgIMKgIMKgdWludDE2X3QgZGV2X3dpZHRoID0gMDsK
+PiAtIMKgIMKgIMKgIG9sZWRfcGFja19tb2RlX3QgcGFja19tb2RlID0gUEFDS19NT0RFX0xBU1Q7
+Cj4gLSDCoCDCoCDCoCBjb25zdCBzdHJ1Y3Qgb2xlZF9kZXZfZGVzY19zdHIgKiBkZXZfZGVzYyA9
+IG9sZWRfZGV2X2Rlc2NfdGFibGU7Cj4gKyDCoCDCoCDCoCBlbnVtIG9sZWRfcGFja19tb2RlIHBh
+Y2tfbW9kZSA9IFBBQ0tfTU9ERV9MQVNUOwo+ICsgwqAgwqAgwqAgY29uc3Qgc3RydWN0IG9sZWRf
+ZGV2X2Rlc2Nfc3RyICpkZXZfZGVzYyA9IG9sZWRfZGV2X2Rlc2NfdGFibGU7Cj4gwqAgwqAgwqAg
+wqBjb25zdCBjaGFyICpkZXNjID0gTlVMTDsKPgo+IMKgIMKgIMKgIMKgaWYgKCFpZCkgewo+IC0g
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgLy8gRXZlbiBwb3NzaWJsZT8gSnVzdCB0byBtYWtlIHN1cmUu
+Li4KPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC8qIEV2ZW4gcG9zc2libGU/IEp1c3QgdG8gbWFr
+ZSBzdXJlLi4uKi8KPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGRldl9lcnIoJmludGVyZmFjZS0+
+ZGV2LCAiTm8gdXNiX2RldmljZV9pZCBwcm92aWRlZCFcbiIpOwo+IMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgcmV0dXJuIC1FTk9ERVY7Cj4gwqAgwqAgwqAgwqB9Cj4KPiAtIMKgIMKgIMKgIGZvciAo
+OyBkZXZfZGVzYy0+aWRWZW5kb3I7IGRldl9kZXNjKyspCj4gLSDCoCDCoCDCoCB7Cj4gKyDCoCDC
+oCDCoCBmb3IgKDsgZGV2X2Rlc2MtPmlkVmVuZG9yOyBkZXZfZGVzYysrKSB7Cj4gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqBpZiAoZGV2X2Rlc2MtPmlkVmVuZG9yID0gaWQtPmlkVmVuZG9yCj4gLSDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAmJiBkZXZfZGVzYy0+aWRQcm9kdWN0ID0g
+aWQtPmlkUHJvZHVjdCkKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHsKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgICYmIGRldl9kZXNjLT5pZFByb2R1Y3QgPSBpZC0+aWRQcm9kdWN0KSB7
+Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBkZXZfd2lkdGggPSBkZXZfZGVz
+Yy0+ZGV2V2lkdGg7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBkZXNjID0g
+ZGV2X2Rlc2MtPmRldkRlc2M7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBw
+YWNrX21vZGUgPSBkZXZfZGVzYy0+cGFja01vZGU7Cj4gQEAgLTYwOCw3ICs2NDEsOCBAQCBzdGF0
+aWMgaW50IGFzdXNfb2xlZF9wcm9iZShzdHJ1Y3QgdXNiX2ludGVyZmFjZSAqaW50ZXJmYWNlLCBj
+b25zdCBzdHJ1Y3QgdXNiX2Rldgo+IMKgIMKgIMKgIMKgfQo+Cj4gwqAgwqAgwqAgwqBpZiAoIWRl
+c2MgfHwgZGV2X3dpZHRoIDwgMSB8fCBwYWNrX21vZGUgPSBQQUNLX01PREVfTEFTVCkgewo+IC0g
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgZGV2X2VycigmaW50ZXJmYWNlLT5kZXYsICJNaXNzaW5nIG9y
+IGluY29tcGxldGUgZGV2aWNlIGRlc2NyaXB0aW9uIVxuIik7Cj4gKyDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCBkZXZfZXJyKCZpbnRlcmZhY2UtPmRldiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgICJNaXNzaW5nIG9yIGluY29tcGxldGUgZGV2aWNlIGRlc2NyaXB0aW9uIVxuIik7
+Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqByZXR1cm4gLUVOT0RFVjsKPiDCoCDCoCDCoCDCoH0K
+Pgo+IEBAIC02MzYsMTYgKzY3MCwxOCBAQCBzdGF0aWMgaW50IGFzdXNfb2xlZF9wcm9iZShzdHJ1
+Y3QgdXNiX2ludGVyZmFjZSAqaW50ZXJmYWNlLCBjb25zdCBzdHJ1Y3QgdXNiX2Rldgo+Cj4gwqAg
+wqAgwqAgwqB1c2Jfc2V0X2ludGZkYXRhKGludGVyZmFjZSwgb2Rldik7Cj4KPiAtIMKgIMKgIMKg
+IHJldHZhbCA9IGRldmljZV9jcmVhdGVfZmlsZSgmaW50ZXJmYWNlLT5kZXYsICZBU1VTX09MRURf
+REVWSUNFX0FUVFIoZW5hYmxlZCkpOwo+ICsgwqAgwqAgwqAgcmV0dmFsID0gZGV2aWNlX2NyZWF0
+ZV9maWxlKCZpbnRlcmZhY2UtPmRldiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgICZBU1VTX09MRURfREVWSUNFX0FUVFIoZW5hYmxlZCkpOwo+
+IMKgIMKgIMKgIMKgaWYgKHJldHZhbCkKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGdvdG8gZXJy
+X2ZpbGVzOwo+Cj4gLSDCoCDCoCDCoCByZXR2YWwgPSBkZXZpY2VfY3JlYXRlX2ZpbGUoJmludGVy
+ZmFjZS0+ZGV2LCAmQVNVU19PTEVEX0RFVklDRV9BVFRSKHBpY3R1cmUpKTsKPiArIMKgIMKgIMKg
+IHJldHZhbCA9IGRldmljZV9jcmVhdGVfZmlsZSgmaW50ZXJmYWNlLT5kZXYsCj4gKyDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAmQVNVU19PTEVEX0RF
+VklDRV9BVFRSKHBpY3R1cmUpKTsKPiDCoCDCoCDCoCDCoGlmIChyZXR2YWwpCj4gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqBnb3RvIGVycl9maWxlczsKPgo+IMKgIMKgIMKgIMKgb2Rldi0+ZGV2ID0g
+ZGV2aWNlX2NyZWF0ZShvbGVkX2NsYXNzLCAmaW50ZXJmYWNlLT5kZXYsIE1LREVWKDAsIDApLAo+
+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgTlVMTCwgIm9s
+ZWRfJWQiLCArK29sZWRfbnVtKTsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIE5VTEwsICJvbGVkXyVkIiwgKytvbGVkX251bSk7Cj4KPiDCoCDCoCDC
+oCDCoGlmIChJU19FUlIob2Rldi0+ZGV2KSkgewo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0
+dmFsID0gUFRSX0VSUihvZGV2LT5kZXYpOwo+IEBAIC02NjIsNyArNjk4LDkgQEAgc3RhdGljIGlu
+dCBhc3VzX29sZWRfcHJvYmUoc3RydWN0IHVzYl9pbnRlcmZhY2UgKmludGVyZmFjZSwgY29uc3Qg
+c3RydWN0IHVzYl9kZXYKPiDCoCDCoCDCoCDCoGlmIChyZXR2YWwpCj4gwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqBnb3RvIGVycl9jbGFzc19waWN0dXJlOwo+Cj4gLSDCoCDCoCDCoCBkZXZfaW5mbygm
+aW50ZXJmYWNlLT5kZXYsICJBdHRhY2hlZCBBc3VzIE9MRUQgZGV2aWNlOiAlcyBbd2lkdGggJXUs
+IHBhY2tfbW9kZSAlZF1cbiIsIGRlc2MsIG9kZXYtPmRldl93aWR0aCwgb2Rldi0+cGFja19tb2Rl
+KTsKPiArIMKgIMKgIMKgIGRldl9pbmZvKCZpbnRlcmZhY2UtPmRldiwKPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIkF0dGFjaGVkIEFzdXMgT0xFRCBkZXZpY2U6ICVzIFt3aWR0aCAldSwgcGFj
+a19tb2RlICVkXVxuIiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgZGVzYywgb2Rldi0+ZGV2
+X3dpZHRoLCBvZGV2LT5wYWNrX21vZGUpOwo+Cj4gwqAgwqAgwqAgwqBpZiAoc3RhcnRfb2ZmKQo+
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgZW5hYmxlX29sZWQob2RldiwgMCk7Cj4gQEAgLTcwMyw4
+ICs3NDEsNyBAQCBzdGF0aWMgdm9pZCBhc3VzX29sZWRfZGlzY29ubmVjdChzdHJ1Y3QgdXNiX2lu
+dGVyZmFjZSAqaW50ZXJmYWNlKQo+Cj4gwqAgwqAgwqAgwqB1c2JfcHV0X2RldihvZGV2LT51ZGV2
+KTsKPgo+IC0gwqAgwqAgwqAgaWYgKG9kZXYtPmJ1ZikKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IGtmcmVlKG9kZXYtPmJ1Zik7Cj4gKyDCoCDCoCDCoCBrZnJlZShvZGV2LT5idWYpOwo+Cj4gwqAg
+wqAgwqAgwqBrZnJlZShvZGV2KTsKPgo+IEBAIC03MjAsNyArNzU3LDggQEAgc3RhdGljIHN0cnVj
+dCB1c2JfZHJpdmVyIG9sZWRfZHJpdmVyID0gewo+Cj4gwqBzdGF0aWMgc3NpemVfdCB2ZXJzaW9u
+X3Nob3coc3RydWN0IGNsYXNzICpkZXYsIGNoYXIgKmJ1ZikKPiDCoHsKPiAtIMKgIMKgIMKgIHJl
+dHVybiBzcHJpbnRmKGJ1ZiwgQVNVU19PTEVEX1VOREVSU0NPUkVfTkFNRSAiICVzXG4iLCBBU1VT
+X09MRURfVkVSU0lPTik7Cj4gKyDCoCDCoCDCoCByZXR1cm4gc3ByaW50ZihidWYsIEFTVVNfT0xF
+RF9VTkRFUlNDT1JFX05BTUUgIiAlc1xuIiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgQVNVU19PTEVEX1ZFUlNJT04pOwo+IMKgfQo+Cj4gwqBzdGF0aWMgQ0xBU1NfQVRUUih2
+ZXJzaW9uLCBTX0lSVUdPLCB2ZXJzaW9uX3Nob3csIE5VTEwpOwo+IC0tCj4gMS42LjMuMwo+Cj4K
+Cmdvb2QgbHVjaywKCk1hcmVrCgotLSAKYXMgc2ltcGxlIGFzIHByaW1pdGl2ZSBhcyBwb3NzaWJs
+ZQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCk1hcmVr
+IEJlbGlza28gLSBPUEVOLU5BTkRSQQoKUnVza2EgTm92YSBWZXMgMjE5IHwgUHJlc292LCAwODAw
+NSBTbG92YWsgUmVwdWJsaWMKVGVsOiArNDIxIDkxNSAwNTIgMTg0CnNreXBlOiBtYXJla3doaXRl
+CmljcTogMjkwNTUxMDg2CndlYjogaHR0cDovL29wZW4tbmFuZHJhLmNvbQr/9Oi6ey5uxyuJt5+u
+ia2GKyWKy/+x6d22F6WKd/+6ey5uxyuJt6R6ud6X+NqeK2iuz+Ke2F5uh3Kh9qZ6yxqB62iZqOit
+2iaj++B6v+R6ud6X+iuAyit6ZqOit2iaiKd+hq2G22n//++B6v+R6ud6X+iuD+ZqOit2iaj+Kd+j
++G0K
