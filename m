@@ -1,39 +1,89 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 18 Sep 2009 10:25:12 +0000
-Subject: Re: [PATCH] char/hvc: adding __init macro to char/hvc_vio.c
-Message-Id: <alpine.LNX.2.00.0909181224570.17028@wotan.suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 11 Sep 2009 16:21:00 +0000
+Subject: [PATCH 1/8] arch/mips/txx9: introduce missing kfree, iounmap
+Message-Id: <Pine.LNX.4.64.0909111820370.10552@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200908202314.07443.PeterHuewe@gmx.de>
-	<200909170238.40051.PeterHuewe@gmx.de>
-In-Reply-To: <200909170238.40051.PeterHuewe@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Peter Huewe <PeterHuewe@gmx.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Frysinger <vapier@gentoo.org>, Nicolas Palix <npalix@diku.dk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Paul Mackerras <paulus@samba.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 17 Sep 2009, Peter Huewe wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> > Please have a look at the small patch and either pull it through
-> > your tree, or please ack' it so Jiri can pull it through the trivial tr=
-ee.
-> >
-> > linux version 2.6.31-rc6 - linus git tree, Do 20. Aug 22:26:06 CEST 2009
-> >
-> > Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
->=20
-> Hi Jiri,
-> this one got merged by Benjamin, so you can drop it from your queue :)
-> http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux-2.6.git;a=3Dco=
-mmit;h=948c28fe3001f2c9d852dff2a0b2c69fe7cec91b
+Error handling code following a kzalloc should free the allocated data.
+Error handling code following an ioremap should iounmap the allocated data.
 
-Dropped, thanks for letting me know.
+The semantic match that finds the first problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
---=20
-Jiri Kosina
-SUSE Labs, Novell Inc.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ arch/mips/txx9/generic/setup.c      |    9 +++++++--
+ 1 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/arch/mips/txx9/generic/setup.c b/arch/mips/txx9/generic/setup.c
+index a205e2b..5744af2 100644
+--- a/arch/mips/txx9/generic/setup.c
++++ b/arch/mips/txx9/generic/setup.c
+@@ -781,8 +781,10 @@ void __init txx9_iocled_init(unsigned long baseaddr,
+ 	if (!iocled)
+ 		return;
+ 	iocled->mmioaddr = ioremap(baseaddr, 1);
+-	if (!iocled->mmioaddr)
++	if (!iocled->mmioaddr) {
++		kfree(iocled);
+ 		return;
++	}
+ 	iocled->chip.get = txx9_iocled_get;
+ 	iocled->chip.set = txx9_iocled_set;
+ 	iocled->chip.direction_input = txx9_iocled_dir_in;
+@@ -790,8 +792,11 @@ void __init txx9_iocled_init(unsigned long baseaddr,
+ 	iocled->chip.label = "iocled";
+ 	iocled->chip.base = basenum;
+ 	iocled->chip.ngpio = num;
+-	if (gpiochip_add(&iocled->chip))
++	if (gpiochip_add(&iocled->chip)) {
++		iounmap(iocled->mmioaddr);
++		kfree(iocled);
+ 		return;
++	}
+ 	if (basenum < 0)
+ 		basenum = iocled->chip.base;
+ 
