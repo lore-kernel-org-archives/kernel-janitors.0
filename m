@@ -1,30 +1,73 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Date: Wed, 16 Sep 2009 14:46:57 +0000
-Subject: Re: [PATCH] arch/arm: adjust duplicate structure field initialization
-Message-Id: <f17812d70909160746k46b61baay1ace7ef06c1fa6b7@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 11 Sep 2009 16:22:09 +0000
+Subject: [PATCH 5/8] drivers/net/phy: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0909111821520.10552@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0909161105580.8590@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0909161105580.8590@pc-004.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia@diku.dk>
-Cc: Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 16, 2009 at 5:06 PM, Julia Lawall <julia@diku.dk> wrote:
-> From: Julia Lawall <julia@diku.dk>
->
-> Currently the irq_type field of the csb726_lan_config structure is
-> initialized twice. =C2=A0The value in the first case,
-> SMSC911X_IRQ_POLARITY_ACTIVE_LOW, is normally stored in the irq_polarity
-> field, so I have renamed the field in the first initialization to that.
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
->
+From: Julia Lawall <julia@diku.dk>
 
-Applied to 'fix'.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Error handling code following a kzalloc should free the allocated data.
+
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/net/phy/mdio-gpio.c         |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/phy/mdio-gpio.c b/drivers/net/phy/mdio-gpio.c
+index 22cdd45..250e10f 100644
+--- a/drivers/net/phy/mdio-gpio.c
++++ b/drivers/net/phy/mdio-gpio.c
+@@ -211,7 +211,7 @@ static int __devinit mdio_ofgpio_probe(struct of_device *ofdev,
+ 
+ 	new_bus = mdio_gpio_bus_init(&ofdev->dev, pdata, pdata->mdc);
+ 	if (!new_bus)
+-		return -ENODEV;
++		goto out_free;
+ 
+ 	ret = of_mdiobus_register(new_bus, ofdev->node);
+ 	if (ret)
+
