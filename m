@@ -1,44 +1,77 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Tue, 29 Sep 2009 01:24:55 +0000
-Subject: [PATCH] hid: adding __init/__exit macros to twinhan.c
-Message-Id: <200909290324.56042.PeterHuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 11 Sep 2009 16:21:18 +0000
+Subject: [PATCH 2/8] drivers/media/video/uvc: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0909111821010.10552@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200907021908.39275.PeterHuewe@gmx.de>
-In-Reply-To: <200907021908.39275.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Bruno Premont <bonbons@linux-vserver.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, Laurent Pinchart <laurent.pinchart@skynet.be>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
 
-Trivial patch which adds the __init/__exit macros to the module_init/
-module_exit functions of the twinhan driver in hid.
+Error handling code following kmalloc should free the allocated data.
 
-Jiri, I guess this time you can decide wether it's the hid or the trivial 
-tree ;) - thanks jiri for all your patience and work!
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-linux version v2.6.32-rc1 - linus git tree, Di 29. Sep 01:10:18 CEST 2009
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-diff --git a/drivers/hid/hid-twinhan.c b/drivers/hid/hid-twinhan.c
-index b05f602..c40afc5 100644
---- a/drivers/hid/hid-twinhan.c
-+++ b/drivers/hid/hid-twinhan.c
-@@ -132,12 +132,12 @@ static struct hid_driver twinhan_driver = {
- 	.input_mapping = twinhan_input_mapping,
- };
+ drivers/media/video/uvc/uvc_video.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/video/uvc/uvc_video.c b/drivers/media/video/uvc/uvc_video.c
+index 5b757f3..ce2c484 100644
+--- a/drivers/media/video/uvc/uvc_video.c
++++ b/drivers/media/video/uvc/uvc_video.c
+@@ -128,8 +128,11 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+ 	if (data = NULL)
+ 		return -ENOMEM;
  
--static int twinhan_init(void)
-+static int __init twinhan_init(void)
- {
- 	return hid_register_driver(&twinhan_driver);
- }
+-	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) && query = UVC_GET_DEF)
+-		return -EIO;
++	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
++			query = UVC_GET_DEF) {
++		ret = -EIO;
++		goto out;
++	}
  
--static void twinhan_exit(void)
-+static void __exit twinhan_exit(void)
- {
- 	hid_unregister_driver(&twinhan_driver);
- }
+ 	ret = __uvc_query_ctrl(stream->dev, query, 0, stream->intfnum,
+ 		probe ? UVC_VS_PROBE_CONTROL : UVC_VS_COMMIT_CONTROL, data,
