@@ -1,71 +1,24 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 11 Sep 2009 16:21:51 +0000
-Subject: [PATCH 4/8] drivers/net/wan: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0909111821360.10552@pc-004.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 11 Sep 2009 19:13:31 +0000
+Subject: Re: [PATCH 4/8] drivers/net/wan: introduce missing kfree
+Message-Id: <20090911.121331.60080960.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0909111821360.10552@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0909111821360.10552@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krzysztof Halasa <khc@pm.waw.pl>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: khc@pm.waw.pl, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Fri, 11 Sep 2009 18:21:51 +0200 (CEST)
 
-Error handling code following a kmalloc should free the allocated data.
-
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+> Error handling code following a kmalloc should free the allocated data.
+> 
+> The semantic match that finds the problem is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
 ...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- drivers/net/wan/hdlc_ppp.c          |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/wan/hdlc_ppp.c b/drivers/net/wan/hdlc_ppp.c
-index 72a7cda..b9b9d6b 100644
---- a/drivers/net/wan/hdlc_ppp.c
-+++ b/drivers/net/wan/hdlc_ppp.c
-@@ -389,6 +389,7 @@ static void ppp_cp_parse_cr(struct net_device *dev, u16 pid, u8 id,
- 	for (opt = data; len; len -= opt[1], opt += opt[1]) {
- 		if (len < 2 || len < opt[1]) {
- 			dev->stats.rx_errors++;
-+			kfree(out);
- 			return; /* bad packet, drop silently */
- 		}
- 
+Applied.
