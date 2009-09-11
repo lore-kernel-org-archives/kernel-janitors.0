@@ -1,73 +1,24 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 11 Sep 2009 16:22:09 +0000
-Subject: [PATCH 5/8] drivers/net/phy: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0909111821520.10552@pc-004.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 11 Sep 2009 19:13:42 +0000
+Subject: Re: [PATCH 5/8] drivers/net/phy: introduce missing kfree
+Message-Id: <20090911.121342.40455624.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0909111821520.10552@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0909111821520.10552@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Fri, 11 Sep 2009 18:22:09 +0200 (CEST)
 
-Error handling code following a kzalloc should free the allocated data.
+> Error handling code following a kzalloc should free the allocated data.
+> 
+> The semantic match that finds the problem is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+ ...
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- drivers/net/phy/mdio-gpio.c         |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/phy/mdio-gpio.c b/drivers/net/phy/mdio-gpio.c
-index 22cdd45..250e10f 100644
---- a/drivers/net/phy/mdio-gpio.c
-+++ b/drivers/net/phy/mdio-gpio.c
-@@ -211,7 +211,7 @@ static int __devinit mdio_ofgpio_probe(struct of_device *ofdev,
- 
- 	new_bus = mdio_gpio_bus_init(&ofdev->dev, pdata, pdata->mdc);
- 	if (!new_bus)
--		return -ENODEV;
-+		goto out_free;
- 
- 	ret = of_mdiobus_register(new_bus, ofdev->node);
- 	if (ret)
-
+Applied.
