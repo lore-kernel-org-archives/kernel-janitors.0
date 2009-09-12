@@ -1,47 +1,62 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Sep 2009 11:45:16 +0000
-Subject: [PATCH] drivers/net/wireless: Use usb_endpoint_dir_out
-Message-Id: <Pine.LNX.4.64.0909221344370.20456@pc-004.diku.dk>
+From: Jean Delvare <khali@linux-fr.org>
+Date: Sat, 12 Sep 2009 16:04:25 +0000
+Subject: Re: [PATCH] drivers/i2c: Correct use of
+Message-Id: <20090912180425.6dbf339d@hyperion.delvare>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0908091506160.16252@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0908091506160.16252@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>, Ulrich Kunitz <kune@deine-taler.de>, Daniel Drake <dsd@gentoo.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Vitaly Wool <vitalywool@gmail.com>
+Cc: Julia Lawall <julia@diku.dk>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sun, 9 Aug 2009 15:06:43 +0200 (CEST), Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> request_mem_region should be used when ioremap is used subsequently.
+> release_region is then correspondingly replaced by release_mem_region.
+> (...)
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  drivers/i2c/busses/i2c-pnx.c        |    7 ++++---
+>  1 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-pnx.c b/drivers/i2c/busses/i2c-pnx.c
+> index ec15cff..6ff6c20 100644
+> --- a/drivers/i2c/busses/i2c-pnx.c
+> +++ b/drivers/i2c/busses/i2c-pnx.c
+> @@ -586,7 +586,8 @@ static int __devinit i2c_pnx_probe(struct platform_device *pdev)
+>  	alg_data->mif.timer.data = (unsigned long)i2c_pnx->adapter;
+>  
+>  	/* Register I/O resource */
+> -	if (!request_region(alg_data->base, I2C_PNX_REGION_SIZE, pdev->name)) {
+> +	if (!request_mem_region(alg_data->base, I2C_PNX_REGION_SIZE,
+> +				pdev->name)) {
+>  		dev_err(&pdev->dev,
+>  		       "I/O region 0x%08x for I2C already in use.\n",
+>  		       alg_data->base);
+> @@ -650,7 +651,7 @@ out_clock:
+>  out_unmap:
+>  	iounmap((void *)alg_data->ioaddr);
+>  out_release:
+> -	release_region(alg_data->base, I2C_PNX_REGION_SIZE);
+> +	release_mem_region(alg_data->base, I2C_PNX_REGION_SIZE);
+>  out_drvdata:
+>  	platform_set_drvdata(pdev, NULL);
+>  out:
+> @@ -667,7 +668,7 @@ static int __devexit i2c_pnx_remove(struct platform_device *pdev)
+>  	i2c_del_adapter(adap);
+>  	i2c_pnx->set_clock_stop(pdev);
+>  	iounmap((void *)alg_data->ioaddr);
+> -	release_region(alg_data->base, I2C_PNX_REGION_SIZE);
+> +	release_mem_region(alg_data->base, I2C_PNX_REGION_SIZE);
+>  	platform_set_drvdata(pdev, NULL);
+>  
+>  	return 0;
 
-Use the usb_endpoint_dir_out API function.  Note that the use of
-USB_TYPE_MASK in the original code is incorrect; it results in a test that
-is always false.
+Vitaly, can you please ack this change?
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-struct usb_endpoint_descriptor *endpoint;
-expression E;
-@@
-
-- (endpoint->bEndpointAddress & E) = USB_DIR_OUT
-+ usb_endpoint_dir_out(endpoint)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wireless/zd1211rw/zd_usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/net/wireless/zd1211rw/zd_usb.c b/drivers/net/wireless/zd1211rw/zd_usb.c
---- a/drivers/net/wireless/zd1211rw/zd_usb.c
-+++ b/drivers/net/wireless/zd1211rw/zd_usb.c
-@@ -1070,7 +1070,7 @@ static int eject_installer(struct usb_in
- 
- 	/* Find bulk out endpoint */
- 	endpoint = &iface_desc->endpoint[1].desc;
--	if ((endpoint->bEndpointAddress & USB_TYPE_MASK) = USB_DIR_OUT &&
-+	if (usb_endpoint_dir_out(endpoint) &&
- 	    usb_endpoint_xfer_bulk(endpoint)) {
- 		bulk_out_ep = endpoint->bEndpointAddress;
- 	} else {
+-- 
+Jean Delvare
