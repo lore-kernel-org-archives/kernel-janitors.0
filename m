@@ -1,92 +1,30 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Sun, 13 Sep 2009 20:39:21 +0000
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 13 Sep 2009 20:45:51 +0000
 Subject: Re: [PATCH 2/8] drivers/media/video/uvc: introduce missing kfree
-Message-Id: <200909132239.21806.laurent.pinchart@ideasonboard.com>
+Message-Id: <Pine.LNX.4.64.0909132245220.31000@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0909111821010.10552@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0909111821010.10552@pc-004.diku.dk>
+ <200909132239.21806.laurent.pinchart@ideasonboard.com>
+In-Reply-To: <200909132239.21806.laurent.pinchart@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Friday 11 September 2009 18:21:18 Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
+> > -	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) && query = UVC_GET_DEF)
+> > -		return -EIO;
+> > +	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+> > +			query = UVC_GET_DEF) {
+> > +		ret = -EIO;
+> > +		goto out;
+> > +	}
 > 
-> Error handling code following kmalloc should free the allocated data.
+> This check can be moved before kmalloc(), removing the need to free memory in 
+> case of error.
 > 
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> statement S;
-> expression E;
-> identifier f,f1,l;
-> position p1,p2;
-> expression *ptr != NULL;
-> @@
-> 
-> x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-> ...
-> if (x = NULL) S
-> <... when != x
->      when != if (...) { <+...x...+> }
-> (
-> x->f1 = E
-> 
->  (x->f1 = NULL || ...)
-> 
->  f(...,x->f1,...)
-> )
-> ...>
-> (
->  return \(0\|<+...x...+>\|ptr\);
-> 
->  return@p2 ...;
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> print "* file: %s kmalloc %s return %s" %
->  (p1[0].file,p1[0].line,p2[0].line) // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> ---
->  drivers/media/video/uvc/uvc_video.c |    7 +++++--
->  1 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/video/uvc/uvc_video.c
->  b/drivers/media/video/uvc/uvc_video.c index 5b757f3..ce2c484 100644
-> --- a/drivers/media/video/uvc/uvc_video.c
-> +++ b/drivers/media/video/uvc/uvc_video.c
-> @@ -128,8 +128,11 @@ static int uvc_get_video_ctrl(struct uvc_streaming
->  *stream, if (data = NULL)
->  		return -ENOMEM;
-> 
-> -	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) && query = UVC_GET_DEF)
-> -		return -EIO;
-> +	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
-> +			query = UVC_GET_DEF) {
-> +		ret = -EIO;
-> +		goto out;
-> +	}
+> Julia, do you want to submit a modified patch or should I do it myself ?
 
-This check can be moved before kmalloc(), removing the need to free memory in 
-case of error.
+I can do it.  I will send a revised patch shortly.
 
-Julia, do you want to submit a modified patch or should I do it myself ?
- 
->  	ret = __uvc_query_ctrl(stream->dev, query, 0, stream->intfnum,
->  		probe ? UVC_VS_PROBE_CONTROL : UVC_VS_COMMIT_CONTROL, data,
-> 
-
--- 
-Regards,
-
-Laurent Pinchart
+julia
