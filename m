@@ -1,21 +1,36 @@
-From: Kyle McMartin <kyle@mcmartin.ca>
-Date: Mon, 28 Sep 2009 03:29:56 +0000
-Subject: Re: [PATCH] arch/parisc: correct use of SHF_ALLOC
-Message-Id: <20090928032956.GN11961@bombadil.infradead.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 16 Sep 2009 09:06:52 +0000
+Subject: [PATCH] arch/arm: adjust duplicate structure field initialization
+Message-Id: <Pine.LNX.4.64.0909161105580.8590@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908042226231.3737@ask.diku.dk> <20090927182149.GA23464@hiauly1.hia.nrc.ca>
-In-Reply-To: <20090927182149.GA23464@hiauly1.hia.nrc.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: John David Anglin <dave.anglin@nrc-cnrc.gc.ca>
-Cc: Julia Lawall <julia@diku.dk>, Helge Deller <deller@gmx.de>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Eric Miao <eric.y.miao@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Sep 27, 2009 at 02:21:50PM -0400, John David Anglin wrote:
-> Hi Kyle,
-> 
-> I noticed today that this change is not in 2.6.31.1.
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Dunno what happened... I must have updated patchwork and missed it in a
-rebase locally.
+Currently the irq_type field of the csb726_lan_config structure is
+initialized twice.  The value in the first case,
+SMSC911X_IRQ_POLARITY_ACTIVE_LOW, is normally stored in the irq_polarity
+field, so I have renamed the field in the first initialization to that.
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/arm/mach-pxa/csb726.c          |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/csb726.c b/arch/arm/mach-pxa/csb726.c
+index 79141f8..965480e 100644
+--- a/arch/arm/mach-pxa/csb726.c
++++ b/arch/arm/mach-pxa/csb726.c
+@@ -238,7 +238,7 @@ static struct resource csb726_lan_resources[] = {
+ };
+ 
+ struct smsc911x_platform_config csb726_lan_config = {
+-	.irq_type	= SMSC911X_IRQ_POLARITY_ACTIVE_LOW,
++	.irq_polarity	= SMSC911X_IRQ_POLARITY_ACTIVE_LOW,
+ 	.irq_type	= SMSC911X_IRQ_TYPE_PUSH_PULL,
+ 	.flags		= SMSC911X_USE_32BIT,
+ 	.phy_interface	= PHY_INTERFACE_MODE_MII,
