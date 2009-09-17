@@ -1,150 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 11 Sep 2009 16:22:27 +0000
-Subject: [PATCH 6/8] drivers/staging: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0909111822100.10552@pc-004.diku.dk>
+From: Jesse Barnes <jesse.barnes@intel.com>
+Date: Thu, 17 Sep 2009 17:12:19 +0000
+Subject: Re: [PATCH 5/10] drivers/pci: Move a dereference below a NULL test
+Message-Id: <20090917101219.19cb4da1@jbarnes-g45>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0907191726360.16542@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0907191726360.16542@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: kristen.c.accardi@intel.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sun, 19 Jul 2009 17:26:58 +0200 (CEST)
+Julia Lawall <julia@diku.dk> wrote:
 
-Error handling code following a kmalloc or kzalloc should free the
-allocated data.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> If the NULL test is necessary, then the dereference should be moved
+> below the NULL test.
+> 
+> The semantic patch that finds this problem is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Sorry I missed this one.  Looks like it's been fixed another way
+though...
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- drivers/staging/dream/camera/msm_v4l2.c       |    8 ++++++--
- drivers/staging/dream/camera/msm_vfe8x_proc.c |   16 ++++++++++++----
- drivers/staging/iio/accel/lis3l02dq_ring.c    |    1 +
- 3 files changed, 19 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/staging/iio/accel/lis3l02dq_ring.c b/drivers/staging/iio/accel/lis3l02dq_ring.c
-index c21198d..a6b7c72 100644
---- a/drivers/staging/iio/accel/lis3l02dq_ring.c
-+++ b/drivers/staging/iio/accel/lis3l02dq_ring.c
-@@ -286,6 +286,7 @@ static void lis3l02dq_trigger_bh_to_ring(struct work_struct *work_s)
- 	rx_array = kmalloc(4 * (st->indio_dev->scan_count), GFP_KERNEL);
- 	if (rx_array = NULL) {
- 		dev_err(&st->us->dev, "memory alloc failed in ring bh");
-+		kfree(data);
- 		return;
- 	}
- 
-diff --git a/drivers/staging/dream/camera/msm_vfe8x_proc.c b/drivers/staging/dream/camera/msm_vfe8x_proc.c
-index 5436f71..10aef0e 100644
---- a/drivers/staging/dream/camera/msm_vfe8x_proc.c
-+++ b/drivers/staging/dream/camera/msm_vfe8x_proc.c
-@@ -967,8 +967,10 @@ vfe_send_af_stats_msg(uint32_t afBufAddress)
- 	/* fill message with right content. */
- 	/* @todo This is causing issues, need further investigate */
- 	/* spin_lock_irqsave(&ctrl->state_lock, flags); */
--	if (ctrl->vstate != VFE_STATE_ACTIVE)
-+	if (ctrl->vstate != VFE_STATE_ACTIVE) {
-+		kfree(msg);
- 		goto af_stats_done;
-+	}
- 
- 	msg->_d = VFE_MSG_ID_STATS_AUTOFOCUS;
- 	msg->_u.msgStatsAf.afBuffer = afBufAddress;
-@@ -1053,8 +1055,10 @@ static void vfe_send_awb_stats_msg(uint32_t awbBufAddress)
- 	/* fill message with right content. */
- 	/* @todo This is causing issues, need further investigate */
- 	/* spin_lock_irqsave(&ctrl->state_lock, flags); */
--	if (ctrl->vstate != VFE_STATE_ACTIVE)
-+	if (ctrl->vstate != VFE_STATE_ACTIVE) {
-+		kfree(msg);
- 		goto awb_stats_done;
-+	}
- 
- 	msg->_d = VFE_MSG_ID_STATS_WB_EXP;
- 	msg->_u.msgStatsWbExp.awbBuffer = awbBufAddress;
-@@ -1483,8 +1487,10 @@ static void vfe_send_output2_msg(
- 	/* fill message with right content. */
- 	/* @todo This is causing issues, need further investigate */
- 	/* spin_lock_irqsave(&ctrl->state_lock, flags); */
--	if (ctrl->vstate != VFE_STATE_ACTIVE)
-+	if (ctrl->vstate != VFE_STATE_ACTIVE) {
-+		kfree(msg);
- 		goto output2_msg_done;
-+	}
- 
- 	msg->_d = VFE_MSG_ID_OUTPUT2;
- 
-@@ -1518,8 +1524,10 @@ static void vfe_send_output1_msg(
- 
- 	/* @todo This is causing issues, need further investigate */
- 	/* spin_lock_irqsave(&ctrl->state_lock, flags); */
--	if (ctrl->vstate != VFE_STATE_ACTIVE)
-+	if (ctrl->vstate != VFE_STATE_ACTIVE) {
-+		kfree(msg);
- 		goto output1_msg_done;
-+	}
- 
- 	msg->_d = VFE_MSG_ID_OUTPUT1;
- 	memmove(&(msg->_u),
-diff --git a/drivers/staging/dream/camera/msm_v4l2.c b/drivers/staging/dream/camera/msm_v4l2.c
-index 46a6eb1..6a7d46c 100644
---- a/drivers/staging/dream/camera/msm_v4l2.c
-+++ b/drivers/staging/dream/camera/msm_v4l2.c
-@@ -521,13 +521,17 @@ static int msm_v4l2_s_fmt_cap(struct file *f,
-   ctrlcmd->value      = pfmt;
-   ctrlcmd->timeout_ms = 10000;
- 
--	if (pfmt->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-+	if (pfmt->type != V4L2_BUF_TYPE_VIDEO_CAPTURE) {
-+		kfree(ctrlcmd);
- 		return -1;
-+	}
- 
- #if 0
- 	/* FIXEME */
--	if (pfmt->fmt.pix.pixelformat != V4L2_PIX_FMT_YVU420)
-+	if (pfmt->fmt.pix.pixelformat != V4L2_PIX_FMT_YVU420) {
-+		kfree(ctrlcmd);
- 		return -EINVAL;
-+	}
- #endif
- 
- 	/* Ok, but check other params, too. */
+-- 
+Jesse Barnes, Intel Open Source Technology Center
