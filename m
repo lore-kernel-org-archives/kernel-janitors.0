@@ -1,28 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 22 Sep 2009 21:21:15 +0000
-Subject: Re: [PATCH 2/5] drivers/net: remove duplicate structure field
-Message-Id: <20090922.142115.139068968.davem@davemloft.net>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 17 Sep 2009 00:38:39 +0000
+Subject: Re: [PATCH] char/hvc: adding __init macro to char/hvc_vio.c
+Message-Id: <200909170238.40051.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0909192148180.27171@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0909192148180.27171@ask.diku.dk>
+References: <200908202314.07443.PeterHuewe@gmx.de>
+In-Reply-To: <200908202314.07443.PeterHuewe@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Jiri Kosina <trivial@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Frysinger <vapier@gentoo.org>, Nicolas Palix <npalix@diku.dk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Paul Mackerras <paulus@samba.org>
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 19 Sep 2009 21:48:41 +0200 (CEST)
+Am Thursday 20 August 2009 23:14:06 schrieb Peter H=FCwe:
+> From: Peter Huewe <peterhuewe@gmx.de>
+>
+> Trivial patch which adds the __init/__exit macros to the module_init/
+> module_exit functions of char/hvc_vio.c
+>
+> Please have a look at the small patch and either pull it through
+> your tree, or please ack' it so Jiri can pull it through the trivial tree.
+>
+> linux version 2.6.31-rc6 - linus git tree, Do 20. Aug 22:26:06 CEST 2009
+>
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The definitions of vnet_ops and ehea_netdev_ops have initializations of a
-> local function and eth_change_mtu for their respective ndo_change_mtu
-> fields.  This change uses only the local function.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Hi Jiri,
+this one got merged by Benjamin, so you can drop it from your queue :)
+http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux-2.6.git;a=3Dcomm=
+it;h=948c28fe3001f2c9d852dff2a0b2c69fe7cec91b
 
-Applied.
+
+@Benjamin: Thanks for merging.
+
+Regards,
+Peter
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
