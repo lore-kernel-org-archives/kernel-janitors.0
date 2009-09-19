@@ -1,113 +1,65 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 15 Sep 2009 15:56:14 +0000
-Subject: Re: [PATCH 1/8] arch/mips/txx9: introduce missing kfree, iounmap
-Message-Id: <Pine.LNX.4.64.0909151755280.8549@pc-004.diku.dk>
+Date: Sat, 19 Sep 2009 19:49:24 +0000
+Subject: [PATCH 4/5] drivers/infiniband: remove duplicate structure field
+Message-Id: <Pine.LNX.4.64.0909192149040.27171@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090914.003321.160496287.anemo@mba.ocn.ne.jp>
- <Pine.LNX.4.64.0909132113520.31000@ask.diku.dk> <Pine.LNX.4.64.0909150701170.11392@ask.diku.dk>
- <20090916.004525.74746264.anemo@mba.ocn.ne.jp>
-In-Reply-To: <20090916.004525.74746264.anemo@mba.ocn.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
-Cc: ralf@linux-mips.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Chien Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-rd
 
 From: Julia Lawall <julia@diku.dk>
 
-Error handling code following a kzalloc should free the allocated data.
-Error handling code following an ioremap should iounmap the allocated data.
+The definition of nes_netdev_ops has initializations of a local function
+and eth_mac_addr for its ndo_set_mac_address field.  This change uses only
+the local function.
 
-The semantic match that finds the first problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r exists@
-local idexpression x;
-statement S;
+@r@
+identifier I, s, fld;
+position p0,p;
 expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
 @@
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
+struct I s =@p0 { ... .fld@p = E, ...};
+
+@s@
+identifier I, s, r.fld;
+position r.p0,p;
+expression E;
+@@
+
+struct I s =@p0 { ... .fld@p = E, ...};
 
 @script:python@
-p1 << r.p1;
-p2 << r.p2;
+p0 << r.p0;
+fld << r.fld;
+ps << s.p;
+pr << r.p;
 @@
 
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+if int(ps[0].line)!=int(pr[0].line) or int(ps[0].column)!=int(pr[0].column):
+  cocci.print_main(fld,p0)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
----
- arch/mips/txx9/generic/setup.c      |   18 ++++++++++++++----
- 1 files changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/txx9/generic/setup.c b/arch/mips/txx9/generic/setup.c
-index a205e2b..dfe4720 100644
---- a/arch/mips/txx9/generic/setup.c
-+++ b/arch/mips/txx9/generic/setup.c
-@@ -782,7 +782,7 @@ void __init txx9_iocled_init(unsigned long baseaddr,
- 		return;
- 	iocled->mmioaddr = ioremap(baseaddr, 1);
- 	if (!iocled->mmioaddr)
--		return;
-+		goto out_free;
- 	iocled->chip.get = txx9_iocled_get;
- 	iocled->chip.set = txx9_iocled_set;
- 	iocled->chip.direction_input = txx9_iocled_dir_in;
-@@ -791,13 +791,13 @@ void __init txx9_iocled_init(unsigned long baseaddr,
- 	iocled->chip.base = basenum;
- 	iocled->chip.ngpio = num;
- 	if (gpiochip_add(&iocled->chip))
--		return;
-+		goto out_unmap;
- 	if (basenum < 0)
- 		basenum = iocled->chip.base;
- 
- 	pdev = platform_device_alloc("leds-gpio", basenum);
- 	if (!pdev)
--		return;
-+		goto out_gpio;
- 	iocled->pdata.num_leds = num;
- 	iocled->pdata.leds = iocled->leds;
- 	for (i = 0; i < num; i++) {
-@@ -812,7 +812,17 @@ void __init txx9_iocled_init(unsigned long baseaddr,
- 	}
- 	pdev->dev.platform_data = &iocled->pdata;
- 	if (platform_device_add(pdev))
--		platform_device_put(pdev);
-+		goto out_pdev;
-+	return;
-+out_pdev:
-+	platform_device_put(pdev);
-+out_gpio:
-+	if (gpiochip_remove(&iocled->chip))
-+		return;
-+out_unmap:
-+	iounmap(iocled->mmioaddr);
-+out_free:
-+	kfree(iocled);
- }
- #else /* CONFIG_LEDS_GPIO */
- void __init txx9_iocled_init(unsigned long baseaddr,
+---
+ drivers/infiniband/hw/nes/nes_nic.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/infiniband/hw/nes/nes_nic.c b/drivers/infiniband/hw/nes/nes_nic.c
+index 538e409..e593af3 100644
+--- a/drivers/infiniband/hw/nes/nes_nic.c
++++ b/drivers/infiniband/hw/nes/nes_nic.c
+@@ -1566,7 +1566,6 @@ static const struct net_device_ops nes_netdev_ops = {
+ 	.ndo_set_mac_address	= nes_netdev_set_mac_address,
+ 	.ndo_set_multicast_list = nes_netdev_set_multicast_list,
+ 	.ndo_change_mtu		= nes_netdev_change_mtu,
+-	.ndo_set_mac_address 	= eth_mac_addr,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_vlan_rx_register 	= nes_netdev_vlan_rx_register,
+ };
