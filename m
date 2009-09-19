@@ -1,114 +1,78 @@
-From: Thomas Dahlmann <dahlmann.thomas@arcor.de>
-Date: Fri, 14 Aug 2009 19:32:05 +0000
-Subject: Re: [PATCH 3/3] drivers/usb/gadget: Drop NULL test on list_entry
-Message-Id: <4A870E11.10705@arcor.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 19 Sep 2009 19:48:41 +0000
+Subject: [PATCH 2/5] drivers/net: remove duplicate structure field initialization
+Message-Id: <Pine.LNX.4.64.0909192148180.27171@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907120943230.17416@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907120943230.17416@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-geode@lists.infradead.org, gregkh@suse.de, jirislaby@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks!
+From: Julia Lawall <julia@diku.dk>
 
-Applied.
+The definitions of vnet_ops and ehea_netdev_ops have initializations of a
+local function and eth_change_mtu for their respective ndo_change_mtu
+fields.  This change uses only the local function.
 
-Julia Lawall schrieb:
-> From: Julia Lawall <julia@diku.dk>
->
-> list_entry, which is an alias for container_of, cannot return NULL, as
-> there is no way to add a NULL value to a doubly linked list.
->
-> A simplified version of the semantic match that findds this problem is as
-> follows:
-> (http://www.emn.fr/x-info/coccinelle/)
->
-> // <smpl>
-> @r@
-> expression x,E;
-> statement S1,S2;
-> position p,p1;
-> @@
->
-> *x = list_entry@p(...)
-> ... when != x = E
-> *if@p1 (x = NULL) S1 else S2
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
->
-> ---
->  drivers/usb/gadget/amd5536udc.c     |   56 +++++++++-----------
->  1 files changed, 25 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/usb/gadget/amd5536udc.c b/drivers/usb/gadget/amd5536udc.c
-> index 826f3ad..85f7aa9 100644
-> --- a/drivers/usb/gadget/amd5536udc.c
-> +++ b/drivers/usb/gadget/amd5536udc.c
-> @@ -2379,40 +2379,34 @@ static irqreturn_t udc_data_in_isr(struct udc *dev, int ep_ix)
->  		if (!ep->cancel_transfer && !list_empty(&ep->queue)) {
->  			req = list_entry(ep->queue.next,
->  					struct udc_request, queue);
-> -			if (req) {
-> -				/*
-> -				 * length bytes transfered
-> -				 * check dma done of last desc. in PPBDU mode
-> -				 */
-> -				if (use_dma_ppb_du) {
-> -					td = udc_get_last_dma_desc(req);
-> -					if (td) {
-> -						dma_done > -							AMD_GETBITS(td->status,
-> -							UDC_DMA_IN_STS_BS);
-> -						/* don't care DMA done */
-> -						req->req.actual > -							req->req.length;
-> -					}
-> -				} else {
-> -					/* assume all bytes transferred */
-> +			/*
-> +			 * length bytes transfered
-> +			 * check dma done of last desc. in PPBDU mode
-> +			 */
-> +			if (use_dma_ppb_du) {
-> +				td = udc_get_last_dma_desc(req);
-> +				if (td) {
-> +					dma_done > +						AMD_GETBITS(td->status,
-> +						UDC_DMA_IN_STS_BS);
-> +					/* don't care DMA done */
->  					req->req.actual = req->req.length;
->  				}
-> +			} else {
-> +				/* assume all bytes transferred */
-> +				req->req.actual = req->req.length;
-> +			}
->  
-> -				if (req->req.actual = req->req.length) {
-> -					/* complete req */
-> -					complete_req(ep, req, 0);
-> -					req->dma_going = 0;
-> -					/* further request available ? */
-> -					if (list_empty(&ep->queue)) {
-> -						/* disable interrupt */
-> -						tmp = readl(
-> -							&dev->regs->ep_irqmsk);
-> -						tmp |= AMD_BIT(ep->num);
-> -						writel(tmp,
-> -							&dev->regs->ep_irqmsk);
-> -					}
-> -
-> +			if (req->req.actual = req->req.length) {
-> +				/* complete req */
-> +				complete_req(ep, req, 0);
-> +				req->dma_going = 0;
-> +				/* further request available ? */
-> +				if (list_empty(&ep->queue)) {
-> +					/* disable interrupt */
-> +					tmp = readl(&dev->regs->ep_irqmsk);
-> +					tmp |= AMD_BIT(ep->num);
-> +					writel(tmp, &dev->regs->ep_irqmsk);
->  				}
->  			}
->  		}
->   
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r@
+identifier I, s, fld;
+position p0,p;
+expression E;
+@@
+
+struct I s =@p0 { ... .fld@p = E, ...};
+
+@s@
+identifier I, s, r.fld;
+position r.p0,p;
+expression E;
+@@
+
+struct I s =@p0 { ... .fld@p = E, ...};
+
+@script:python@
+p0 << r.p0;
+fld << r.fld;
+ps << s.p;
+pr << r.p;
+@@
+
+if int(ps[0].line)!=int(pr[0].line) or int(ps[0].column)!=int(pr[0].column):
+  cocci.print_main(fld,p0)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/ehea/ehea_main.c |    1 -
+ drivers/net/sunvnet.c        |    1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/drivers/net/sunvnet.c b/drivers/net/sunvnet.c
+index f1e5e45..bc74db0 100644
+--- a/drivers/net/sunvnet.c
++++ b/drivers/net/sunvnet.c
+@@ -1016,7 +1016,6 @@ static const struct net_device_ops vnet_ops = {
+ 	.ndo_open		= vnet_open,
+ 	.ndo_stop		= vnet_close,
+ 	.ndo_set_multicast_list	= vnet_set_rx_mode,
+-	.ndo_change_mtu		= eth_change_mtu,
+ 	.ndo_set_mac_address	= vnet_set_mac_addr,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_tx_timeout		= vnet_tx_timeout,
+diff --git a/drivers/net/ehea/ehea_main.c b/drivers/net/ehea/ehea_main.c
+index 977c3d3..41bd7ae 100644
+--- a/drivers/net/ehea/ehea_main.c
++++ b/drivers/net/ehea/ehea_main.c
+@@ -3083,7 +3083,6 @@ static const struct net_device_ops ehea_netdev_ops = {
+ 	.ndo_poll_controller	= ehea_netpoll,
+ #endif
+ 	.ndo_get_stats		= ehea_get_stats,
+-	.ndo_change_mtu		= eth_change_mtu,
+ 	.ndo_set_mac_address	= ehea_set_mac_addr,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_set_multicast_list	= ehea_set_multicast_list,
