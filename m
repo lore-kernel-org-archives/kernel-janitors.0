@@ -1,65 +1,43 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 19 Sep 2009 19:49:03 +0000
-Subject: [PATCH 3/5] drivers/staging: remove duplicate structure field
-Message-Id: <Pine.LNX.4.64.0909192148420.27171@ask.diku.dk>
+Date: Sun, 20 Sep 2009 09:44:18 +0000
+Subject: [PATCH] drivers/scsi/qla2xxx: harmonize the use of constants
+Message-Id: <Pine.LNX.4.64.0909201143440.14236@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-driver@qlogic.com, Andrew Vasquez <andrew.vasquez@qlogic.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.orgkerne
 
 From: Julia Lawall <julia@diku.dk>
 
-The definition of slic_netdev_ops has initializations of a local function
-and eth_mac_addr for its ndo_set_mac_address field.  This change uses only
-the local function.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-identifier I, s, fld;
-position p0,p;
-expression E;
-@@
-
-struct I s =@p0 { ... .fld@p = E, ...};
-
-@s@
-identifier I, s, r.fld;
-position r.p0,p;
-expression E;
-@@
-
-struct I s =@p0 { ... .fld@p = E, ...};
-
-@script:python@
-p0 << r.p0;
-fld << r.fld;
-ps << s.p;
-pr << r.p;
-@@
-
-if int(ps[0].line)!=int(pr[0].line) or int(ps[0].column)!=int(pr[0].column):
-  cocci.print_main(fld,p0)
-// </smpl>
+The fields out_mb and in_mb are elsewhere combined with the constant MBX_0
+rather than BIT_0.  These have the same value so there is no change in the
+behavior of the code.
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/staging/slicoss/slicoss.c   |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+ drivers/scsi/qla2xxx/qla_mbx.c      |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/slicoss/slicoss.c b/drivers/staging/slicoss/slicoss.c
-index e67a130..5b191af 100644
---- a/drivers/staging/slicoss/slicoss.c
-+++ b/drivers/staging/slicoss/slicoss.c
-@@ -354,7 +354,6 @@ static const struct net_device_ops slic_netdev_ops = {
- 	.ndo_get_stats		= slic_get_stats,
- 	.ndo_set_multicast_list	= slic_mcast_set_list,
- 	.ndo_validate_addr	= eth_validate_addr,
--	.ndo_set_mac_address	= eth_mac_addr,
- 	.ndo_change_mtu		= eth_change_mtu,
- };
+diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
+index b6202fe..6a621e6 100644
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -91,7 +91,7 @@ qla2x00_mailbox_command(scsi_qla_host_t *vha, mbx_cmd_t *mcp)
+ 		if (IS_QLA2200(ha) && cnt = 8)
+ 			optr  			    (uint16_t __iomem *)MAILBOX_REG(ha, &reg->isp, 8);
+-		if (mboxes & BIT_0)
++		if (mboxes & MBX_0)
+ 			WRT_REG_WORD(optr, *iptr);
  
+ 		mboxes >>= 1;
+@@ -179,7 +179,7 @@ qla2x00_mailbox_command(scsi_qla_host_t *vha, mbx_cmd_t *mcp)
+ 		iptr = (uint16_t *)&ha->mailbox_out[0];
+ 		mboxes = mcp->in_mb;
+ 		for (cnt = 0; cnt < ha->mbx_count; cnt++) {
+-			if (mboxes & BIT_0)
++			if (mboxes & MBX_0)
+ 				*iptr2 = *iptr;
+ 
+ 			mboxes >>= 1;
