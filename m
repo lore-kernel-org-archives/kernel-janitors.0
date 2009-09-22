@@ -1,43 +1,47 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 20 Sep 2009 09:44:18 +0000
-Subject: [PATCH] drivers/scsi/qla2xxx: harmonize the use of constants
-Message-Id: <Pine.LNX.4.64.0909201143440.14236@ask.diku.dk>
+Date: Tue, 22 Sep 2009 11:45:16 +0000
+Subject: [PATCH] drivers/net/wireless: Use usb_endpoint_dir_out
+Message-Id: <Pine.LNX.4.64.0909221344370.20456@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-driver@qlogic.com, Andrew Vasquez <andrew.vasquez@qlogic.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.orgkerne
+To: "John W. Linville" <linville@tuxdriver.com>, Ulrich Kunitz <kune@deine-taler.de>, Daniel Drake <dsd@gentoo.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The fields out_mb and in_mb are elsewhere combined with the constant MBX_0
-rather than BIT_0.  These have the same value so there is no change in the
-behavior of the code.
+Use the usb_endpoint_dir_out API function.  Note that the use of
+USB_TYPE_MASK in the original code is incorrect; it results in a test that
+is always false.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+struct usb_endpoint_descriptor *endpoint;
+expression E;
+@@
+
+- (endpoint->bEndpointAddress & E) = USB_DIR_OUT
++ usb_endpoint_dir_out(endpoint)
+// </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/qla2xxx/qla_mbx.c      |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/zd1211rw/zd_usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
-index b6202fe..6a621e6 100644
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -91,7 +91,7 @@ qla2x00_mailbox_command(scsi_qla_host_t *vha, mbx_cmd_t *mcp)
- 		if (IS_QLA2200(ha) && cnt = 8)
- 			optr  			    (uint16_t __iomem *)MAILBOX_REG(ha, &reg->isp, 8);
--		if (mboxes & BIT_0)
-+		if (mboxes & MBX_0)
- 			WRT_REG_WORD(optr, *iptr);
+diff -u -p a/drivers/net/wireless/zd1211rw/zd_usb.c b/drivers/net/wireless/zd1211rw/zd_usb.c
+--- a/drivers/net/wireless/zd1211rw/zd_usb.c
++++ b/drivers/net/wireless/zd1211rw/zd_usb.c
+@@ -1070,7 +1070,7 @@ static int eject_installer(struct usb_in
  
- 		mboxes >>= 1;
-@@ -179,7 +179,7 @@ qla2x00_mailbox_command(scsi_qla_host_t *vha, mbx_cmd_t *mcp)
- 		iptr = (uint16_t *)&ha->mailbox_out[0];
- 		mboxes = mcp->in_mb;
- 		for (cnt = 0; cnt < ha->mbx_count; cnt++) {
--			if (mboxes & BIT_0)
-+			if (mboxes & MBX_0)
- 				*iptr2 = *iptr;
- 
- 			mboxes >>= 1;
+ 	/* Find bulk out endpoint */
+ 	endpoint = &iface_desc->endpoint[1].desc;
+-	if ((endpoint->bEndpointAddress & USB_TYPE_MASK) = USB_DIR_OUT &&
++	if (usb_endpoint_dir_out(endpoint) &&
+ 	    usb_endpoint_xfer_bulk(endpoint)) {
+ 		bulk_out_ep = endpoint->bEndpointAddress;
+ 	} else {
