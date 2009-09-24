@@ -1,65 +1,15 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 19 Sep 2009 19:49:24 +0000
-Subject: [PATCH 4/5] drivers/infiniband: remove duplicate structure field
-Message-Id: <Pine.LNX.4.64.0909192149040.27171@ask.diku.dk>
+From: Roland Dreier <rdreier@cisco.com>
+Date: Thu, 24 Sep 2009 17:59:41 +0000
+Subject: Re: [PATCH 4/5] drivers/infiniband: remove duplicate structure field initialization
+Message-Id: <aday6o41awi.fsf@cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0909192149040.27171@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0909192149040.27171-QfmoRoYWmW9knbxzx/v8hQ@public.gmane.org> (Julia Lawall's
+	message of "Sat, 19 Sep 2009 21:49:24 +0200 (CEST)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Chien Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-rd
+To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
+Cc: hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Chien Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <julia@diku.dk>
-
-The definition of nes_netdev_ops has initializations of a local function
-and eth_mac_addr for its ndo_set_mac_address field.  This change uses only
-the local function.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-identifier I, s, fld;
-position p0,p;
-expression E;
-@@
-
-struct I s =@p0 { ... .fld@p = E, ...};
-
-@s@
-identifier I, s, r.fld;
-position r.p0,p;
-expression E;
-@@
-
-struct I s =@p0 { ... .fld@p = E, ...};
-
-@script:python@
-p0 << r.p0;
-fld << r.fld;
-ps << s.p;
-pr << r.p;
-@@
-
-if int(ps[0].line)!=int(pr[0].line) or int(ps[0].column)!=int(pr[0].column):
-  cocci.print_main(fld,p0)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/infiniband/hw/nes/nes_nic.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/infiniband/hw/nes/nes_nic.c b/drivers/infiniband/hw/nes/nes_nic.c
-index 538e409..e593af3 100644
---- a/drivers/infiniband/hw/nes/nes_nic.c
-+++ b/drivers/infiniband/hw/nes/nes_nic.c
-@@ -1566,7 +1566,6 @@ static const struct net_device_ops nes_netdev_ops = {
- 	.ndo_set_mac_address	= nes_netdev_set_mac_address,
- 	.ndo_set_multicast_list = nes_netdev_set_multicast_list,
- 	.ndo_change_mtu		= nes_netdev_change_mtu,
--	.ndo_set_mac_address 	= eth_mac_addr,
- 	.ndo_validate_addr	= eth_validate_addr,
- 	.ndo_vlan_rx_register 	= nes_netdev_vlan_rx_register,
- };
+thanks, applied
