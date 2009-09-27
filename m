@@ -1,35 +1,53 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 29 Sep 2009 09:17:06 +0000
-Subject: Re: [PATCH] trivial fix of a very frequent spelling mistake
-Message-Id: <alpine.LSU.2.00.0909291115110.9280@wotan.suse.de>
+From: John David Anglin <dave@hiauly1.hia.nrc.ca>
+Date: Sun, 27 Sep 2009 18:21:50 +0000
+Subject: Re: [PATCH] arch/parisc: correct use of SHF_ALLOC
+Message-Id: <20090927182149.GA23464@hiauly1.hia.nrc.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090929014357.GA3597@bombadil.infradead.org>
-In-Reply-To: <20090929014357.GA3597@bombadil.infradead.org>
+References: <Pine.LNX.4.64.0908042226231.3737@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0908042226231.3737@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dirk Hohndel <hohndel@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Helge Deller <deller@gmx.de>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 28 Sep 2009, Dirk Hohndel wrote:
+Hi Kyle,
 
-> something-bility is spelled as something-blity
-> so a grep for 'blit' would find these lines
+I noticed today that this change is not in 2.6.31.1.
+
+Dave
+
+On Tue, 04 Aug 2009, Julia Lawall wrote:
+
+> From: Julia Lawall <julia@diku.dk>
 > 
-> this is so trivial that I didn't split it by subsystem / copy 
-> additional maintainers - all changes are to comments
-> The only purpose is to get fewer false positives when grepping
-> around the kernel sources.
-
-I will split out the drivers/staging part and forward it to Greg (*) and 
-apply the rest to trivial queue.
-
-(*) I try to avoid merging the trivial changes to staging drivers, as 
-these are usually being changed/rewritten quite heavily and we'd get a lot 
-of unnecessary conflicts in -next.
-
-Thanks,
+> SHF_ALLOC is suitable for testing against the sh_flags field, not the
+> sh_type field.
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  arch/parisc/kernel/module.c         |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/parisc/kernel/module.c b/arch/parisc/kernel/module.c
+> index ef5caf2..c904817 100644
+> --- a/arch/parisc/kernel/module.c
+> +++ b/arch/parisc/kernel/module.c
+> @@ -853,7 +853,7 @@ int module_finalize(const Elf_Ehdr *hdr,
+>  	 * ourselves */
+>  	for (i = 1; i < hdr->e_shnum; i++) {
+>  		if(sechdrs[i].sh_type = SHT_SYMTAB
+> -		   && (sechdrs[i].sh_type & SHF_ALLOC)) {
+> +		   && (sechdrs[i].sh_flags & SHF_ALLOC)) {
+>  			int strindex = sechdrs[i].sh_link;
+>  			/* FIXME: AWFUL HACK
+>  			 * The cast is to drop the const from
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-parisc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+J. David Anglin                                  dave.anglin@nrc-cnrc.gc.ca
+National Research Council of Canada              (613) 990-0752 (FAX: 952-6602)
