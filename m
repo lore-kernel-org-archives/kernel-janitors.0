@@ -1,34 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 27 Sep 2009 10:08:32 +0000
-Subject: [PATCH] drivers/char/ipmi: Use KCS_IDLE_STATE
-Message-Id: <Pine.LNX.4.64.0909271208010.7197@ask.diku.dk>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Mon, 28 Sep 2009 23:53:16 +0000
+Subject: [PATCH] staging/phison:  adding __init/__exit macros
+Message-Id: <200909290153.16839.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: minyard@acm.org, openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Jiri Kosina <trivial@kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: Peter Huewe <peterhuewe@gmx.de>
 
-KCS_IDLE and KCS_IDLE state have the same value, but in this function the
-constants ending in _STATE are compared to the state variable.
+Trivial patch which adds the __init/__exit macros to the module_init/
+module_exit functions of drivers/staging/phison/phison.c
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Greg, please have a look at the small patch and either pull it through
+your staging tree, or please ack' it so Jiri can pull it through the trivial tree.
 
+linux version v2.6.32-rc1 - linus git tree, Di 29. Sep 01:10:18 CEST 2009
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/char/ipmi/ipmi_kcs_sm.c     |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/char/ipmi/ipmi_kcs_sm.c b/drivers/char/ipmi/ipmi_kcs_sm.c
-index 8070487..cf82fed 100644
---- a/drivers/char/ipmi/ipmi_kcs_sm.c
-+++ b/drivers/char/ipmi/ipmi_kcs_sm.c
-@@ -370,7 +370,7 @@ static enum si_sm_result kcs_event(struct si_sm_data *kcs, long time)
- 			return SI_SM_IDLE;
+diff --git a/drivers/staging/phison/phison.c b/drivers/staging/phison/phison.c
+index 270ebcb..3817d74 100644
+--- a/drivers/staging/phison/phison.c
++++ b/drivers/staging/phison/phison.c
+@@ -87,12 +87,12 @@ static struct pci_driver phison_pci_driver = {
+ #endif
+ };
  
- 	case KCS_START_OP:
--		if (state != KCS_IDLE) {
-+		if (state != KCS_IDLE_STATE) {
- 			start_error_recovery(kcs,
- 					     "State machine not idle at start");
- 			break;
+-static int phison_ide_init(void)
++static int __init phison_ide_init(void)
+ {
+ 	return pci_register_driver(&phison_pci_driver);
+ }
+ 
+-static void phison_ide_exit(void)
++static void __exit phison_ide_exit(void)
+ {
+ 	pci_unregister_driver(&phison_pci_driver);
+ }
