@@ -1,62 +1,44 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Sat, 12 Sep 2009 16:04:25 +0000
-Subject: Re: [PATCH] drivers/i2c: Correct use of
-Message-Id: <20090912180425.6dbf339d@hyperion.delvare>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Mon, 28 Sep 2009 23:49:00 +0000
+Subject: [PATCH] staging/p9auth:  adding __init/__exit macros
+Message-Id: <200909290149.01257.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908091506160.16252@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0908091506160.16252@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vitaly Wool <vitalywool@gmail.com>
-Cc: Julia Lawall <julia@diku.dk>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: "Serge E. Hallyn" <serue@us.ibm.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Jiri Kosina <trivial@kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, 9 Aug 2009 15:06:43 +0200 (CEST), Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> request_mem_region should be used when ioremap is used subsequently.
-> release_region is then correspondingly replaced by release_mem_region.
-> (...)
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/i2c/busses/i2c-pnx.c        |    7 ++++---
->  1 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-pnx.c b/drivers/i2c/busses/i2c-pnx.c
-> index ec15cff..6ff6c20 100644
-> --- a/drivers/i2c/busses/i2c-pnx.c
-> +++ b/drivers/i2c/busses/i2c-pnx.c
-> @@ -586,7 +586,8 @@ static int __devinit i2c_pnx_probe(struct platform_device *pdev)
->  	alg_data->mif.timer.data = (unsigned long)i2c_pnx->adapter;
->  
->  	/* Register I/O resource */
-> -	if (!request_region(alg_data->base, I2C_PNX_REGION_SIZE, pdev->name)) {
-> +	if (!request_mem_region(alg_data->base, I2C_PNX_REGION_SIZE,
-> +				pdev->name)) {
->  		dev_err(&pdev->dev,
->  		       "I/O region 0x%08x for I2C already in use.\n",
->  		       alg_data->base);
-> @@ -650,7 +651,7 @@ out_clock:
->  out_unmap:
->  	iounmap((void *)alg_data->ioaddr);
->  out_release:
-> -	release_region(alg_data->base, I2C_PNX_REGION_SIZE);
-> +	release_mem_region(alg_data->base, I2C_PNX_REGION_SIZE);
->  out_drvdata:
->  	platform_set_drvdata(pdev, NULL);
->  out:
-> @@ -667,7 +668,7 @@ static int __devexit i2c_pnx_remove(struct platform_device *pdev)
->  	i2c_del_adapter(adap);
->  	i2c_pnx->set_clock_stop(pdev);
->  	iounmap((void *)alg_data->ioaddr);
-> -	release_region(alg_data->base, I2C_PNX_REGION_SIZE);
-> +	release_mem_region(alg_data->base, I2C_PNX_REGION_SIZE);
->  	platform_set_drvdata(pdev, NULL);
->  
->  	return 0;
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Vitaly, can you please ack this change?
+Trivial patch which adds the __init/__exit macros to the module_init/
+module_exit functions of drivers/staging/p9auth/p9auth.c
 
--- 
-Jean Delvare
+Greg, please have a look at the small patch and either pull it through
+your staging tree, or please ack' it so Jiri can pull it through the trivial tree.
+
+linux version v2.6.32-rc1 - linus git tree, Di 29. Sep 01:10:18 CEST 2009
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+diff --git a/drivers/staging/p9auth/p9auth.c b/drivers/staging/p9auth/p9auth.c
+index 9111dcb..c64ace0 100644
+--- a/drivers/staging/p9auth/p9auth.c
++++ b/drivers/staging/p9auth/p9auth.c
+@@ -332,6 +332,7 @@ static const struct file_operations cap_fops = {
+ 	.release = cap_release,
+ };
+ 
++/* no __exit here because it can be called by the init function */
+ static void cap_cleanup_module(void)
+ {
+ 	int i;
+@@ -358,7 +359,7 @@ static void cap_setup_cdev(struct cap_dev *dev, int index)
+ 		printk(KERN_NOTICE "Error %d adding cap%d", err, index);
+ }
+ 
+-static int cap_init_module(void)
++static int __init cap_init_module(void)
+ {
+ 	int result, i;
+ 	dev_t dev = 0;
