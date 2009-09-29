@@ -1,26 +1,34 @@
-From: Steven Toth <stoth@kernellabs.com>
-Date: Wed, 30 Sep 2009 19:30:46 +0000
-Subject: Re: [PATCH] media/video:  adding __init/__exit macros to various
-Message-Id: <4AC3B1E6.5010509@kernellabs.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 29 Sep 2009 06:00:16 +0000
+Subject: [PATCH] drivers/scsi/libsas: Use SAM_GOOD
+Message-Id: <Pine.LNX.4.64.0909290759420.29620@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200909290219.01623.PeterHuewe@gmx.de>
- <200909301002.35202.laurent.pinchart@ideasonboard.com>
- <A69FA2915331DC488A831521EAE36FE4015536F6E8@dlee06.ent.ti.com>
-In-Reply-To: <A69FA2915331DC488A831521EAE36FE4015536F6E8@dlee06.ent.ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Karicheri, Muralidharan" <m-karicheri2@ti.com>
-Cc: Peter Huewe <PeterHuewe@gmx.de>, Jiri Kosina <trivial@kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Andy Walls <awalls@radix.net>, Mauro Carvalho Chehab <mchehab@infradead.org>, Michael Krufky <mkrufky@kernellabs.com>, Martin Dauskardt <martin.dauskardt@gmx.de>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, "ivtv-devel@ivtvdriver.org" <ivtv-devel@ivtvdriver.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: djwong@us.ibm.com, James.Bottomley@suse.de, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 9/30/09 9:26 AM, Karicheri, Muralidharan wrote:
+From: Julia Lawall <julia@diku.dk>
 
-drivers/media/video/saa7164/saa7164-core.c
+The field stat->stat should be compared to SAM_GOOD, not SAM_STAT_GOOD, as
+done elsewhere in the same function.  Both constants have the same value.
 
-drivers/media/video/cx23885/cx23885-core.c
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Acked-By: Steven Toth <stoth@kernellabs.com>
+---
+ drivers/scsi/libsas/sas_ata.c       |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
--- 
-Steven Toth - Kernel Labs
-http://www.kernellabs.com
+diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+index e155011..c77b3f9 100644
+--- a/drivers/scsi/libsas/sas_ata.c
++++ b/drivers/scsi/libsas/sas_ata.c
+@@ -112,7 +112,7 @@ static void sas_ata_task_done(struct sas_task *task)
+ 		dev->sata_dev.sstatus = resp->sstatus;
+ 		dev->sata_dev.serror = resp->serror;
+ 		dev->sata_dev.scontrol = resp->scontrol;
+-	} else if (stat->stat != SAM_STAT_GOOD) {
++	} else if (stat->stat != SAM_GOOD) {
+ 		ac = sas_to_ata_err(stat);
+ 		if (ac) {
+ 			SAS_DPRINTK("%s: SAS error %x\n", __func__,
