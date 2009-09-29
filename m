@@ -1,84 +1,97 @@
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-Date: Wed, 23 Sep 2009 14:46:01 +0000
-Subject: Re: char* -> char[] replacement
-Message-Id: <20090923154555.GA6185@gallifrey>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Tue, 29 Sep 2009 12:26:33 +0000
+Subject: Re: [PATCH] char/vme_scc: adding __init macro to vme_scc.c
+Message-Id: <200909291426.34315.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20090921173400.GA1942@gallifrey>
-In-Reply-To: <20090921173400.GA1942@gallifrey>
+References: <200908202242.31778.PeterHuewe@gmx.de> <200908202301.13974.PeterHuewe@gmx.de>
+In-Reply-To: <200908202301.13974.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Jiri Kosina <trivial@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-OK, I've spotted my mistake - but further digging is keeping me
-confused about what the expected behaviour is, especially with modern gcc's
+Am Thursday 20 August 2009 23:01:13 schrieb Peter Huewe:
+> Am Donnerstag 20 August 2009 22:42:31 schrieb Peter Huewe:
+> > From: Peter Huewe <peterhuewe@gmx.de>
+> >
+> > Trivial patch which adds the __init macro to the module_init
+> > function and all of its helper functions of char/vme_scc.c
+> >
+> > Alan or Geert, please have a look at the small patch and either pull it
+> > through your tree, or please ack' it so Jiri can pull it through the
+> > trivial tree.
+> >
+> > linux version 2.6.31-rc6 - linus git tree, Do 20. Aug 22:26:06 CEST 2009
+> >
+> > Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+> > ---
+> > diff --git a/drivers/char/vme_scc.c b/drivers/char/vme_scc.c
+> > index 994e1a5..8b24729 100644
+> > --- a/drivers/char/vme_scc.c
+> > +++ b/drivers/char/vme_scc.c
+> > @@ -136,7 +136,7 @@ static const struct tty_port_operations scc_port_ops
+> > = { * vme_scc_init() and support functions
+> >
+> > *------------------------------------------------------------------------
+> >-- -*/
+> >
+> > -static int scc_init_drivers(void)
+> > +static int __init scc_init_drivers(void)
+> >  {
+> >  	int error;
+> >
+> > @@ -172,7 +172,7 @@ static int scc_init_drivers(void)
+> >  /* ports[] array is indexed by line no (i.e. [0] for ttyS0, [1] for
+> > ttyS1). */
+> >
+> > -static void scc_init_portstructs(void)
+> > +static void __init scc_init_portstructs(void)
+> >  {
+> >  	struct scc_port *port;
+> >  	int i;
+> > @@ -195,7 +195,7 @@ static void scc_init_portstructs(void)
+> >
+> >
+> >  #ifdef CONFIG_MVME147_SCC
+> > -static int mvme147_scc_init(void)
+> > +static int __init mvme147_scc_init(void)
+> >  {
+> >  	struct scc_port *port;
+> >  	int error;
+> > @@ -298,7 +298,7 @@ fail:
+> >
+> >
+> >  #ifdef CONFIG_MVME162_SCC
+> > -static int mvme162_scc_init(void)
+> > +static int __init mvme162_scc_init(void)
+> >  {
+> >  	struct scc_port *port;
+> >  	int error;
+> > @@ -404,7 +404,7 @@ fail:
+> >
+> >
+> >  #ifdef CONFIG_BVME6000_SCC
+> > -static int bvme6000_scc_init(void)
+> > +static int __init bvme6000_scc_init(void)
+> >  {
+> >  	struct scc_port *port;
+> >  	int error;
+> > @@ -503,7 +503,7 @@ fail_free_b_rx:
+> >  #endif
+> >
+> >
+> > -static int vme_scc_init(void)
+> > +static int __init vme_scc_init(void)
+> >  {
+> >  	int res = -ENODEV;
+>
+> Forwarded message to Alan Cox <alan@lxorguk.ukuu.org.uk>, as
+> alan@redhat.com - as reported by get_maintainer.pl does not work anymore.
 
-* Dr. David Alan Gilbert (linux@treblig.org) wrote:
-> Hi,
->   I noticed the apparently simple entry in the TODO list saying:
-> 
->      From: Jeff Garzik
-> 
->      1) The string form
-> 
->         [const] char *foo = "blah";
->            creates two variables in the final assembly output, a
->            static string, and a char pointer to the static string.
->            The alternate string form
-> 
->         [const] char foo[] = "blah";
->            is better because it declares a single variable.
-> 
->         For variables marked __initdata, the "*foo" form causes only
->         the pointer, not the string itself, to be dropped from the
->         kernel image, which is a bug. Using the "foo[]" form with
->         regular 'ole local variables also makes the assembly shorter.
 
-<snip my original message>
+Hmm any updates on this one?
 
-I've been trying this out on a little standalone hello world.
+Thanks,
+Peter
 
-I'd originally replaced char *foo = "blah" by char foo[] = "blah"
-and been surprised at the extra code generated - but actually thinking
-about it, inside a function this makes sense - every time through the
-compiler has to refresh the array since you might have changed it -
-so I'm not sure that substitution ever makes sense.
-
-Life gets more interesting with const - and I don't understand why.
-On gcc 4.2 if I declare const char foo[] = "blah"  then blah
-ends up in .rodata.str, if you use it multiple times it gets shared.
-However with 4.3.4 or 4.4.1 (all ubuntu packaged versions)
-the const char foo[]="blah" case generates code to write the string
-to the stack on each function call - why??? Is this a compiler bug
-or is there a reason for this change?
-
-Finally,
-  static const char foo[] = "blah";
-
-This ends up putting the constants in a .rodata section rather than
-.rodata.str and doesn't share multiple uses of the same string within
-the same .c file.
-
-These were all done for local variables; with global variables it
-doesn't look much better; const char foo[] does put things in .rodata
-but again none-shared, as does static const char foo[].
-
-All these tests were done on x64.
-
-So, too summarise I'm a bit confused, I think the advise to change
-  char* foo="hello" to char foo[]="hello" appears to be bogus without
-the const.  With the const then I'm not sure the newer compilers are
-behaving as expected.
-
-  Sharing only seems to happen with the char* foo="hello".
-
-Maybe in the case of initdata some of this helps, but I can't see outside
-that - but I can see it causing code duplication or with the newer
-compilers const char foo[] generating more code for no good reason.
-
-Dave
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    | Running GNU/Linux on Alpha,68K| Happy  \ 
-\ gro.gilbert @ treblig.org | MIPS,x86,ARM,SPARC,PPC & HPPA | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
