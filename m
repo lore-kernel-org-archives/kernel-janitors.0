@@ -1,29 +1,35 @@
-From: Jesse Barnes <jesse.barnes@intel.com>
-Date: Thu, 17 Sep 2009 17:12:19 +0000
-Subject: Re: [PATCH 5/10] drivers/pci: Move a dereference below a NULL test
-Message-Id: <20090917101219.19cb4da1@jbarnes-g45>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 30 Sep 2009 14:03:47 +0000
+Subject: [PATCH] drivers/block/DAC960.c: Use DAC960_V2_Controller
+Message-Id: <Pine.LNX.4.64.0909301603230.8553@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0907191726360.16542@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0907191726360.16542@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kristen.c.accardi@intel.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 19 Jul 2009 17:26:58 +0200 (CEST)
-Julia Lawall <julia@diku.dk> wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> If the NULL test is necessary, then the dereference should be moved
-> below the NULL test.
-> 
-> The semantic patch that finds this problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
+DAC960_LP_Controller and DAC960_V2_Controller have the same value, but
+elsewhere it is DAC960_V1_Controller or DAC960_V2_Controller that is used
+in the FirmwareType field.
 
-Sorry I missed this one.  Looks like it's been fixed another way
-though...
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+---
+ drivers/block/DAC960.c              |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
+index eb4fa19..ce1fa92 100644
+--- a/drivers/block/DAC960.c
++++ b/drivers/block/DAC960.c
+@@ -7101,7 +7101,7 @@ static struct DAC960_privdata DAC960_BA_privdata = {
+ 
+ static struct DAC960_privdata DAC960_LP_privdata = {
+ 	.HardwareType =		DAC960_LP_Controller,
+-	.FirmwareType 	=	DAC960_LP_Controller,
++	.FirmwareType 	=	DAC960_V2_Controller,
+ 	.InterruptHandler =	DAC960_LP_InterruptHandler,
+ 	.MemoryWindowSize =	DAC960_LP_RegisterWindowSize,
+ };
