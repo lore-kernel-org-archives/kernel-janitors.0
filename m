@@ -1,39 +1,41 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Wed, 14 Oct 2009 16:10:32 +0000
-Subject: Re: [PATCH] leds-ss4200: Check pci_enable_device return
-Message-Id: <390803460910140910i17a3bd96ufbdf4e3257ba2bf9@mail.gmail.com>
+From: Pete <greg.petr@gmail.com>
+Date: Mon, 05 Oct 2009 18:17:15 +0000
+Subject: [PATCH 1/1, revised] fs: added KERN-DEBUG flag to dprintk macro
+Message-Id: <1254765915.5279.77.camel@linux-k65f.site>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1255493810.28264.6.camel@laptop>
-In-Reply-To: <1255493810.28264.6.camel@laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, trivial@kernel.org
+Cc: Matthew Wilcox <matthew@wil.cx>, Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
 
->
-> Thanks for the patch.  By the way, what tree is this against, or did you
-> just see my patch on a mailing list?
->
+Signed-off-by: Greg Petr <greg.petr@gmail.com>
 
-It is against yesterday linux-next tree.
+Hi, 
 
->
-> Unfortunately, this patch has some issues.  It's a bit nasty to do real
-> work inside of if() conditions, especially when you already have a nice,
-> local variable to store the condition for you.
->
-> Your patch is also buggy because the out: label tries to disable the
-> device and clean up the 'struct device'.  Neither of those things has
-> been done if the pci_enable_device() fails in the first place.  It will
-> probably oops.
->
+The following is a trivial patch which adds KERN_DEBUG flag to the
+dprintk macro. Made this a more generalized version. 
 
-I see.
 
-> I'll cc you on what I think is the correct patch.
->
-> -- Dave
->
->
+--- linux-2.6/fs/aio.c	2009-10-05 14:46:11.000000000 +0530
++++ linux-2.6.test/fs/aio.c	2009-10-05 23:30:26.000000000 +0530
+@@ -37,7 +37,7 @@
+ #include <asm/uaccess.h>
+ 
+ #if DEBUG > 1
+-#define dprintk		printk
++#define dprintk(x...)		printk(KERN_DEBUG x)
+ #else
+ #define dprintk(x...)	do { ; } while (0)
+ #endif
+@@ -530,7 +530,7 @@ static void aio_fput_routine(struct work
+  */
+ static int __aio_put_req(struct kioctx *ctx, struct kiocb *req)
+ {
+-	dprintk(KERN_DEBUG "aio_put(%p): f_count=%ld\n",
++	dprintk("aio_put(%p): f_count=%ld\n",
+ 		req, atomic_long_read(&req->ki_filp->f_count));
+ 
+ 	assert_spin_locked(&ctx->ctx_lock);
 
-Thank you very much and sorry for the noise
+
