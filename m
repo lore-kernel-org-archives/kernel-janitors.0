@@ -1,98 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 30 Oct 2009 11:02:05 +0000
-Subject: Re: [PATCH 2/14] sound: Move dereference after NULL test and drop unnecessary NULL tests
-Message-Id: <s5hiqdxywk2.wl%tiwai@suse.de>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Fri, 09 Oct 2009 15:21:53 +0000
+Subject: Re: [PATCH] media/video:  adding __init/__exit macros to various
+Message-Id: <alpine.LSU.2.00.0910091721260.19284@wotan.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0910170832570.9213@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0910170832570.9213@ask.diku.dk>
+References: <200909290219.01623.PeterHuewe@gmx.de>
+In-Reply-To: <200909290219.01623.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Huewe <PeterHuewe@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Andy Walls <awalls@radix.net>, Mauro Carvalho Chehab <mchehab@infradead.org>, Steven Toth <stoth@kernellabs.com>, Michael Krufky <mkrufky@kernellabs.com>, Laurent Pinchart <laurent.pinchart@skynet.be>, Muralidharan Karicheri <m-karicheri2@ti.com>, Martin Dauskardt <martin.dauskardt@gmx.de>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.orgkernel-janitors@vger.kernel.org
 
-At Sat, 17 Oct 2009 08:33:22 +0200 (CEST),
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> In pcm.c, if the NULL test on pcm is needed, then the dereference should be
-> after the NULL test.
-> 
-> In dummy.c and ali5451.c, the context of the calls to
-> snd_card_dummy_new_mixer and snd_ali_free_voice show that dummy and pvoice,
-> respectively cannot be NULL.
-> 
-> A simplified version of the semantic match that detects this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> // <smpl>
-> @match exists@
-> expression x, E;
-> identifier fld;
-> @@
-> 
-> * x->fld
->   ... when != \(x = E\|&x\)
-> * x = NULL
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+On Tue, 29 Sep 2009, Peter Huewe wrote:
 
-Thanks, applied now.
-
-
-Takashi
-
+> From: Peter Huewe <peterhuewe@gmx.de>
 > 
-> ---
->  sound/core/pcm.c            |    5 +++--
->  sound/drivers/dummy.c       |    2 --
->  sound/pci/ali5451/ali5451.c |    2 +-
-> 
-> diff --git a/sound/core/pcm.c b/sound/core/pcm.c
-> index 0c14401..c69c60b 100644
-> --- a/sound/core/pcm.c
-> +++ b/sound/core/pcm.c
-> @@ -953,11 +953,12 @@ static int snd_pcm_dev_register(struct snd_device *device)
->  	struct snd_pcm_substream *substream;
->  	struct snd_pcm_notify *notify;
->  	char str[16];
-> -	struct snd_pcm *pcm = device->device_data;
-> +	struct snd_pcm *pcm;
->  	struct device *dev;
->  
-> -	if (snd_BUG_ON(!pcm || !device))
-> +	if (snd_BUG_ON(!device || !device->device_data))
->  		return -ENXIO;
-> +	pcm = device->device_data;
->  	mutex_lock(&register_mutex);
->  	err = snd_pcm_add(pcm);
->  	if (err) {
-> diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
-> index 6ba066c..146ef00 100644
-> --- a/sound/drivers/dummy.c
-> +++ b/sound/drivers/dummy.c
-> @@ -808,8 +808,6 @@ static int __devinit snd_card_dummy_new_mixer(struct snd_dummy *dummy)
->  	unsigned int idx;
->  	int err;
->  
-> -	if (snd_BUG_ON(!dummy))
-> -		return -EINVAL;
->  	spin_lock_init(&dummy->mixer_lock);
->  	strcpy(card->mixername, "Dummy Mixer");
->  
-> diff --git a/sound/pci/ali5451/ali5451.c b/sound/pci/ali5451/ali5451.c
-> index b458d20..aaf4da6 100644
-> --- a/sound/pci/ali5451/ali5451.c
-> +++ b/sound/pci/ali5451/ali5451.c
-> @@ -973,7 +973,7 @@ static void snd_ali_free_voice(struct snd_ali * codec,
->  	void *private_data;
->  
->  	snd_ali_printk("free_voice: channel=%d\n",pvoice->number);
-> -	if (pvoice = NULL || !pvoice->use)
-> +	if (!pvoice->use)
->  		return;
->  	snd_ali_clear_voices(codec, pvoice->number, pvoice->number);
->  	spin_lock_irq(&codec->voice_alloc);
-> 
+> Trivial patch which adds the __init/__exit macros to the module_init/
+> module_exit functions of the following drivers in media video:
+>     drivers/media/video/ivtv/ivtv-driver.c
+>     drivers/media/video/cx18/cx18-driver.c
+>     drivers/media/video/davinci/dm355_ccdc.c
+>     drivers/media/video/davinci/dm644x_ccdc.c
+>     drivers/media/video/saa7164/saa7164-core.c
+>     drivers/media/video/saa7134/saa7134-core.c
+>     drivers/media/video/cx23885/cx23885-core.c
+
+This doesn't seem to be present in linux-next as of today. I have queued 
+in in trivial tree.
+
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
