@@ -1,14 +1,16 @@
 From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Mon, 12 Oct 2009 05:45:44 +0000
+Date: Mon, 12 Oct 2009 06:20:18 +0000
 Subject: [PATCH Resend] bt8xxgpio: Check gpiochip_remove() result
-Message-Id: <1255326344.23361.4.camel@laptop>
+Message-Id: <1255328418.29949.3.camel@laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1255326344.23361.4.camel@laptop>
+In-Reply-To: <1255326344.23361.4.camel@laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Resending the patch, forgot about checkpatch.pl
+Forgot about checkpatch.pl, resending the patch. Sorry for the inconvenience.
 
 Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
@@ -54,14 +56,13 @@ index 2559f22..b4aa126 100644
 +		pci_set_drvdata(pdev, NULL);
 +		kfree(bg);
 +	} else
-+		dev_err(&pdev->dev, "Failed to remove the GPIO controller:
++		dev_err(&pdev->dev, "Failed to remove the GPIO controller: \
 +			%d\n", ret);
  }
  
  #ifdef CONFIG_PM
 -- 
 1.6.0.4
-
 
 
 
