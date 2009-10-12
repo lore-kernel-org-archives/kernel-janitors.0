@@ -1,47 +1,54 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 17 Oct 2009 06:42:11 +0000
-Subject: [PATCH 11/14] drivers/scsi: Remove unnecessary NULL test
-Message-Id: <Pine.LNX.4.64.0910170841480.9213@ask.diku.dk>
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Mon, 12 Oct 2009 00:29:07 +0000
+Subject: Re: [Linux-fbdev-devel] [PATCH 3/3] drivers/video: Correct use of
+Message-Id: <20091012002907.GA835@linux-mips.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0908090943560.13271@ask.diku.dk> <10f740e80908090224p13d2119do9e4f4d7730ed001e@mail.gmail.com> <Pine.LNX.4.64.0908091141150.13271@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0908091141150.13271@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sun, Aug 09, 2009 at 11:42:32AM +0200, Julia Lawall wrote:
 
-At the point where cmnd is initialized, it is tested for NULL, so it
-doesn't have to be tested again here.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> request_region should be used with release_region, not request_mem_region.
+> 
+> Geert Uytterhoeven pointed out that in the case of drivers/video/gbefb.c,
+> the problem is actually the other way around; request_mem_region should be
+> used instead of request_region.
+> 
+> The semantic patch that finds/fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r1@
+> expression start;
+> @@
+> 
+> request_region(start,...)
+> 
+> @b1@
+> expression r1.start;
+> @@
+> 
+> request_mem_region(start,...)
+> 
+> @depends on !b1@
+> expression r1.start;
+> expression E;
+> @@
+> 
+> - release_mem_region
+> + release_region
+>   (start,E)
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-A simplified version of the semantic match that detects this problem is as
-follows (http://coccinelle.lip6.fr/):
+Any reason this still hasn't been applied?
 
-// <smpl>
-@match exists@
-expression x, E;
-identifier fld;
-@@
-
-* x->fld
-  ... when != \(x = E\|&x\)
-* x = NULL
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/scsi/initio.c               |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
-index 89a5948..359de22 100644
---- a/drivers/scsi/initio.c
-+++ b/drivers/scsi/initio.c
-@@ -2817,7 +2817,6 @@ static void i91uSCBPost(u8 * host_mem, u8 * cblk_mem)
- 	}
- 
- 	cmnd->result = cblk->tastat | (cblk->hastat << 16);
--	WARN_ON(cmnd = NULL);
- 	i91u_unmap_scb(host->pci_dev, cmnd);
- 	cmnd->scsi_done(cmnd);	/* Notify system DONE           */
- 	initio_release_scb(host, cblk);	/* Release SCB for current channel */
+  Ralf
