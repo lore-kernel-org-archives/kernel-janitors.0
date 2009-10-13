@@ -1,35 +1,17 @@
-From: javier martinez canillas <martinez.javier@gmail.com>
-Date: Sun, 11 Oct 2009 21:38:57 +0000
-Subject: [PATCH 1/1] virtio: adding __devexit to virtballoon_remove
-Message-Id: <1255297137.7037.10.camel@laptop>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Date: Tue, 13 Oct 2009 11:45:58 +0000
+Subject: Re: [PATCH 1/1] virtio: adding __devexit to virtballoon_remove
+Message-Id: <200910132203.59211.rusty@rustcorp.com.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1255297137.7037.10.camel@laptop>
+In-Reply-To: <1255297137.7037.10.camel@laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rusty@rustcorp.com.au, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: javier martinez canillas <martinez.javier@gmail.com>
+Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 
+Thanks, I already have this from Uwe.
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/virtio/virtio_balloon.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index 3978923..9dd5880 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -247,7 +247,7 @@ out:
- 	return err;
- }
- 
--static void virtballoon_remove(struct virtio_device *vdev)
-+static void __devexit virtballoon_remove(struct virtio_device *vdev)
- {
- 	struct virtio_balloon *vb = vdev->priv;
- 
--- 
-1.6.0.4
-
-
-
-
+Cheers,
+Rusty.
