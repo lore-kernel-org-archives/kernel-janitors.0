@@ -1,18 +1,17 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 17 Oct 2009 06:40:34 +0000
-Subject: [PATCH 8/14] drivers/cpuidle: Move dereference after NULL test
-Message-Id: <Pine.LNX.4.64.0910170840030.9213@ask.diku.dk>
+Date: Sat, 17 Oct 2009 06:42:11 +0000
+Subject: [PATCH 11/14] drivers/scsi: Remove unnecessary NULL test
+Message-Id: <Pine.LNX.4.64.0910170841480.9213@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-It does not seem possible that ldev can be NULL, so drop the unnecessary
-test.  If ldev can somehow be NULL, then the initialization of last_idx
-should be moved below the test.
+At the point where cmnd is initialized, it is tested for NULL, so it
+doesn't have to be tested again here.
 
 A simplified version of the semantic match that detects this problem is as
 follows (http://coccinelle.lip6.fr/):
@@ -31,20 +30,18 @@ identifier fld;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/cpuidle/governors/ladder.c  |    3 ---
- 1 files changed, 0 insertions(+), 3 deletions(-)
+ drivers/scsi/initio.c               |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/cpuidle/governors/ladder.c b/drivers/cpuidle/governors/ladder.c
-index a4bec3f..1c1ceb4 100644
---- a/drivers/cpuidle/governors/ladder.c
-+++ b/drivers/cpuidle/governors/ladder.c
-@@ -69,9 +69,6 @@ static int ladder_select_state(struct cpuidle_device *dev)
- 	int last_residency, last_idx = ldev->last_state_idx;
- 	int latency_req = pm_qos_requirement(PM_QOS_CPU_DMA_LATENCY);
+diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
+index 89a5948..359de22 100644
+--- a/drivers/scsi/initio.c
++++ b/drivers/scsi/initio.c
+@@ -2817,7 +2817,6 @@ static void i91uSCBPost(u8 * host_mem, u8 * cblk_mem)
+ 	}
  
--	if (unlikely(!ldev))
--		return 0;
--
- 	/* Special case when user has set very strict latency requirement */
- 	if (unlikely(latency_req = 0)) {
- 		ladder_do_selection(ldev, last_idx, 0);
+ 	cmnd->result = cblk->tastat | (cblk->hastat << 16);
+-	WARN_ON(cmnd = NULL);
+ 	i91u_unmap_scb(host->pci_dev, cmnd);
+ 	cmnd->scsi_done(cmnd);	/* Notify system DONE           */
+ 	initio_release_scb(host, cblk);	/* Release SCB for current channel */
