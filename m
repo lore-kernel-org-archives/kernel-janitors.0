@@ -1,66 +1,58 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Mon, 12 Oct 2009 06:08:09 +0000
-Subject: [PATCH] bt8xxgpio: Check gpiochip_remove() result
-Message-Id: <1255327689.2836.6.camel@laptop>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 17 Oct 2009 06:34:39 +0000
+Subject: [PATCH 5/14] drivers/acpi: Move dereference after NULL test
+Message-Id: <Pine.LNX.4.64.0910170834200.9213@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-After fixing checkpatch.pl warnings, got a compile error. Sorry for the inconvenience.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+If the NULL test on pr is needed, then the dereference should be after the
+NULL test.
+
+A simplified version of the semantic match that detects this problem is as
+follows (http://coccinelle.lip6.fr/):
+
+// <smpl>
+@match exists@
+expression x, E;
+identifier fld;
+@@
+
+* x->fld
+  ... when != \(x = E\|&x\)
+* x = NULL
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/gpio/bt8xxgpio.c |   33 +++++++++++++++++++--------------
- 1 files changed, 19 insertions(+), 14 deletions(-)
+ drivers/acpi/processor_throttling.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/bt8xxgpio.c b/drivers/gpio/bt8xxgpio.c
-index 2559f22..b4aa126 100644
---- a/drivers/gpio/bt8xxgpio.c
-+++ b/drivers/gpio/bt8xxgpio.c
-@@ -242,20 +242,25 @@ err_freebg:
- static void bt8xxgpio_remove(struct pci_dev *pdev)
- {
- 	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
--
--	gpiochip_remove(&bg->gpio);
--
--	bgwrite(0, BT848_INT_MASK);
--	bgwrite(~0x0, BT848_INT_STAT);
--	bgwrite(0x0, BT848_GPIO_OUT_EN);
--
--	iounmap(bg->mmio);
--	release_mem_region(pci_resource_start(pdev, 0),
--			   pci_resource_len(pdev, 0));
--	pci_disable_device(pdev);
--
--	pci_set_drvdata(pdev, NULL);
--	kfree(bg);
-+	int ret;
-+
-+	ret = gpiochip_remove(&bg->gpio);
-+
-+	if (!ret) {
-+		bgwrite(0, BT848_INT_MASK);
-+		bgwrite(~0x0, BT848_INT_STAT);
-+		bgwrite(0x0, BT848_GPIO_OUT_EN);
-+
-+		iounmap(bg->mmio);
-+		release_mem_region(pci_resource_start(pdev, 0),
-+				   pci_resource_len(pdev, 0));
-+		pci_disable_device(pdev);
-+
-+		pci_set_drvdata(pdev, NULL);
-+		kfree(bg);
-+	} else
-+		dev_err(&pdev->dev, "Failed to remove the GPIO controller: \
-+			%d\n", ret);
- }
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index 4c6c14c..1c5d7a8 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -1133,15 +1133,15 @@ int acpi_processor_get_throttling_info(struct acpi_processor *pr)
+ 	int result = 0;
+ 	struct acpi_processor_throttling *pthrottling;
  
- #ifdef CONFIG_PM
--- 
-1.6.0.4
-
-
-
++	if (!pr)
++		return -EINVAL;
++
+ 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+ 			  "pblk_address[0x%08x] duty_offset[%d] duty_width[%d]\n",
+ 			  pr->throttling.address,
+ 			  pr->throttling.duty_offset,
+ 			  pr->throttling.duty_width));
+ 
+-	if (!pr)
+-		return -EINVAL;
+-
+ 	/*
+ 	 * Evaluate _PTC, _TSS and _TPC
+ 	 * They must all be present or none of them can be used.
