@@ -1,20 +1,57 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Wed, 14 Oct 2009 13:40:37 +0000
-Subject: Re: [Linux-fbdev-devel] [PATCH 3/3] drivers/video: Correct use of
-Message-Id: <20091014134037.GA13681@linux-mips.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 17 Oct 2009 06:42:49 +0000
+Subject: [PATCH 13/14] arch/arm/plat-s3c24xx: Move dereference after NULL
+Message-Id: <Pine.LNX.4.64.0910170842310.9213@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0908090943560.13271@ask.diku.dk> <10f740e80908090224p13d2119do9e4f4d7730ed001e@mail.gmail.com> <Pine.LNX.4.64.0908091141150.13271@ask.diku.dk> <20091012002907.GA835@linux-mips.org>
-In-Reply-To: <20091012002907.GA835@linux-mips.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Geert Uytterhoeven <geert.uytterhoeven@gmail.com>, linux-fbdev-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Oct 12, 2009 at 02:29:07AM +0200, Ralf Baechle wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Any reason this still hasn't been applied?
+If the NULL test on buf is needed, then the dereference should be after the
+NULL test.
 
-So applied then.
+A simplified version of the semantic match that detects this problem is as
+follows (http://coccinelle.lip6.fr/):
 
-  Ralf
+// <smpl>
+@match exists@
+expression x, E;
+identifier fld;
+@@
+
+* x->fld
+  ... when != \(x = E\|&x\)
+* x = NULL
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/arm/plat-s3c24xx/dma.c         |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+index 196b191..f046f8c 100644
+--- a/arch/arm/plat-s3c24xx/dma.c
++++ b/arch/arm/plat-s3c24xx/dma.c
+@@ -208,14 +208,14 @@ s3c2410_dma_loadbuffer(struct s3c2410_dma_chan *chan,
+ {
+ 	unsigned long reload;
+ 
+-	pr_debug("s3c2410_chan_loadbuffer: loading buff %p (0x%08lx,0x%06x)\n",
+-		 buf, (unsigned long)buf->data, buf->size);
+-
+ 	if (buf = NULL) {
+ 		dmawarn("buffer is NULL\n");
+ 		return -EINVAL;
+ 	}
+ 
++	pr_debug("s3c2410_chan_loadbuffer: loading buff %p (0x%08lx,0x%06x)\n",
++		 buf, (unsigned long)buf->data, buf->size);
++
+ 	/* check the state of the channel before we do anything */
+ 
+ 	if (chan->load_state = S3C2410_DMALOAD_1LOADED) {
