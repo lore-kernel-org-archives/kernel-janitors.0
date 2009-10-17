@@ -1,41 +1,49 @@
-From: Pete <greg.petr@gmail.com>
-Date: Mon, 05 Oct 2009 18:17:15 +0000
-Subject: [PATCH 1/1, revised] fs: added KERN-DEBUG flag to dprintk macro
-Message-Id: <1254765915.5279.77.camel@linux-k65f.site>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 17 Oct 2009 06:42:30 +0000
+Subject: [PATCH 12/14] arch/arm/plat-omap: Drop an unnecessary NULL test
+Message-Id: <Pine.LNX.4.64.0910170842120.9213@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, trivial@kernel.org
-Cc: Matthew Wilcox <matthew@wil.cx>, Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Signed-off-by: Greg Petr <greg.petr@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-Hi, 
+map_iovm_area is only called from a context where its second argument is
+known not to be NULL, so drop the unnecessary test.  If new could be NULL,
+the initialization of da should be moved below the test.
 
-The following is a trivial patch which adds KERN_DEBUG flag to the
-dprintk macro. Made this a more generalized version. 
+A simplified version of the semantic match that detects this problem is as
+follows (http://coccinelle.lip6.fr/):
 
+// <smpl>
+@match exists@
+expression x, E;
+identifier fld;
+@@
 
---- linux-2.6/fs/aio.c	2009-10-05 14:46:11.000000000 +0530
-+++ linux-2.6.test/fs/aio.c	2009-10-05 23:30:26.000000000 +0530
-@@ -37,7 +37,7 @@
- #include <asm/uaccess.h>
+* x->fld
+  ... when != \(x = E\|&x\)
+* x = NULL
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/arm/plat-omap/iovmm.c          |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/plat-omap/iovmm.c b/arch/arm/plat-omap/iovmm.c
+index dc3fac3..21c73d4 100644
+--- a/arch/arm/plat-omap/iovmm.c
++++ b/arch/arm/plat-omap/iovmm.c
+@@ -449,7 +449,7 @@ static int map_iovm_area(struct iommu *obj, struct iovm_struct *new,
+ 	struct scatterlist *sg;
+ 	u32 da = new->da_start;
  
- #if DEBUG > 1
--#define dprintk		printk
-+#define dprintk(x...)		printk(KERN_DEBUG x)
- #else
- #define dprintk(x...)	do { ; } while (0)
- #endif
-@@ -530,7 +530,7 @@ static void aio_fput_routine(struct work
-  */
- static int __aio_put_req(struct kioctx *ctx, struct kiocb *req)
- {
--	dprintk(KERN_DEBUG "aio_put(%p): f_count=%ld\n",
-+	dprintk("aio_put(%p): f_count=%ld\n",
- 		req, atomic_long_read(&req->ki_filp->f_count));
+-	if (!obj || !new || !sgt)
++	if (!obj || !sgt)
+ 		return -EINVAL;
  
- 	assert_spin_locked(&ctx->ctx_lock);
-
-
+ 	BUG_ON(!sgtable_ok(sgt));
