@@ -1,25 +1,56 @@
-From: Pete <greg.petr@gmail.com>
-Date: Mon, 05 Oct 2009 17:50:49 +0000
-Subject: Re: [PATCH] fs: added KERNEL-DEBUG flag to printk statments
-Message-Id: <1254764952.5279.60.camel@linux-k65f.site>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 17 Oct 2009 06:32:56 +0000
+Subject: [PATCH 1/14] sound/soc: Move dereference after NULL test
+Message-Id: <Pine.LNX.4.64.0910170832300.9213@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1254753799.5279.37.camel@linux-k65f.site>
-	 <1254756285.5279.39.camel@linux-k65f.site>
-	 <20091005170903.GA9791@parisc-linux.org>
-In-Reply-To: <20091005170903.GA9791@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew@wil.cx>, Joe Perches <joe@perches.com>
-Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, lin
 
+From: Julia Lawall <julia@diku.dk>
 
-> Pay special attention to getting DEBUG set in the right place, and
-> _at least_ compile-test your code, with and without DEBUG enabled.
-> You should really run your code (again, with and without DEBUG enabled)
-> and check that it does the right thing.
+If the NULL test on jack is needed, then the derefernce should be after the
+NULL test.
 
-ok - Thanks will redo, test and send a more generalized version of the
-patch which modifies the macro instead.
--Greg
+A simplified version of the semantic match that detects this problem is as
+follows (http://coccinelle.lip6.fr/):
 
+// <smpl>
+@match exists@
+expression x, E;
+identifier fld;
+@@
+
+* x->fld
+  ... when != \(x = E\|&x\)
+* x = NULL
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/soc/soc-jack.c                |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/sound/soc/soc-jack.c b/sound/soc/soc-jack.c
+index 1d455ab..1212414 100644
+--- a/sound/soc/soc-jack.c
++++ b/sound/soc/soc-jack.c
+@@ -58,7 +58,7 @@ EXPORT_SYMBOL_GPL(snd_soc_jack_new);
+  */
+ void snd_soc_jack_report(struct snd_soc_jack *jack, int status, int mask)
+ {
+-	struct snd_soc_codec *codec = jack->card->codec;
++	struct snd_soc_codec *codec;
+ 	struct snd_soc_jack_pin *pin;
+ 	int enable;
+ 	int oldstatus;
+@@ -67,6 +67,7 @@ void snd_soc_jack_report(struct snd_soc_jack *jack, int status, int mask)
+ 		WARN_ON_ONCE(!jack);
+ 		return;
+ 	}
++	codec = jack->card->codec;
+ 
+ 	mutex_lock(&codec->mutex);
+ 
