@@ -1,8 +1,10 @@
 From: =?UTF-8?B?IkwuIEFsYmVydG8gR2ltw6luZXoi?=
-Date: Mon, 19 Oct 2009 21:08:41 +0000
+Date: Mon, 19 Oct 2009 21:35:12 +0000
 Subject: Fix sparse warning
-Message-Id: <4ADCD559.9080807@sysvalve.homelinux.net>
+Message-Id: <4ADCDB90.7030903@sysvalve.homelinux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4ADCD559.9080807@sysvalve.homelinux.net>
+In-Reply-To: <4ADCD559.9080807@sysvalve.homelinux.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
