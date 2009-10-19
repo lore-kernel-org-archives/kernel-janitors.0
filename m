@@ -1,56 +1,48 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 17 Oct 2009 06:40:02 +0000
-Subject: [PATCH 7/14] drivers/mmc: Move dereference after NULL test
-Message-Id: <Pine.LNX.4.64.0910170839430.9213@ask.diku.dk>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+Date: Mon, 19 Oct 2009 07:56:04 +0000
+Subject: Re: [PATCH 7/14] drivers/mmc: Move dereference after NULL test
+Message-Id: <20091019075604.GB11449@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0910170839430.9213@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0910170839430.9213@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sat, Oct 17, 2009 at 08:40:02AM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+>=20
+> If the NULL test on mrq is needed, then the derefernce should be after the
+> NULL test.
+s/derefernce/dereference/
+=20
+> A simplified version of the semantic match that detects this problem is as
+> follows (http://coccinelle.lip6.fr/):
+>=20
+> // <smpl>
+> @match exists@
+> expression x, E;
+> identifier fld;
+> @@
+>=20
+> * x->fld
+>   ... when !=3D \(x =3D E\|&x\)
+> * x =3D NULL
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+Other than that
 
-If the NULL test on mrq is needed, then the derefernce should be after the
-NULL test.
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-A simplified version of the semantic match that detects this problem is as
-follows (http://coccinelle.lip6.fr/):
-
-// <smpl>
-@match exists@
-expression x, E;
-identifier fld;
-@@
-
-* x->fld
-  ... when != \(x = E\|&x\)
-* x = NULL
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/mmc/host/s3cmci.c           |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
-index 99b74a3..5be6962 100644
---- a/drivers/mmc/host/s3cmci.c
-+++ b/drivers/mmc/host/s3cmci.c
-@@ -820,7 +820,7 @@ fail_request:
- static void finalize_request(struct s3cmci_host *host)
- {
- 	struct mmc_request *mrq = host->mrq;
--	struct mmc_command *cmd = host->cmd_is_stop ? mrq->stop : mrq->cmd;
-+	struct mmc_command *cmd;
- 	int debug_as_failure = 0;
- 
- 	if (host->complete_what != COMPLETION_FINALIZE)
-@@ -828,6 +828,7 @@ static void finalize_request(struct s3cmci_host *host)
- 
- 	if (!mrq)
- 		return;
-+	cmd = host->cmd_is_stop ? mrq->stop : mrq->cmd;
- 
- 	if (cmd->data && (cmd->error = 0) &&
- 	    (cmd->data->error = 0)) {
+--=20
+Pengutronix e.K.                              | Uwe Kleine-K=F6nig         =
+   |
+Industrial Linux Solutions                    | http://www.pengutronix.de/ =
+ |
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
