@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 20 Oct 2009 07:24:24 +0000
+From: =?ISO-8859-1?Q?=22L=2E_Alberto_Gim=E9nez=22?=
+Date: Tue, 20 Oct 2009 22:02:17 +0000
 Subject: Re: Fix sparse warning
-Message-Id: <4ADD65A8.4090500@bfs.de>
+Message-Id: <4ADE3369.3010005@sysvalve.homelinux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4ADCD559.9080807@sysvalve.homelinux.net>
 In-Reply-To: <4ADCD559.9080807@sysvalve.homelinux.net>
@@ -10,59 +10,30 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
+Matthew Wilcox wrote:
+> On Mon, Oct 19, 2009 at 11:08:41PM +0200, "L. Alberto Gim??nez" wrote:
+
+> I think in this particular case, there's no reason for 'boot_trace_call'
+> to have file-level scope.  I would move it inside the do_one_initcall()
+> function (and I'd do the same with msgbuf and boot_trace_ret too).
+
+Matthew, Walter, thanks for your reply.
+
+The static (file-scope) variable was introduced by Ingo Molnar in commit
+4a683bf9.
+
+It seems that originally those three static variables were local
+variables, what turned out to cause a stack overflow. So, I think they
+will stay just like they are right now :) (thank god we have git-blame).
+
+Instead, I'll try to work on renaming the "offending" local variables
+and cleaning file by file sparse warnings.
 
 
-L. Alberto Gim=C3=A9nez schrieb:
-> Hi,
->=20
-> I'm starting to do some cleanup for the project, and I'd like to begin
-> fixing sparse errors.
->=20
-> By the way, at first glance, it seems that the warnings that sparse
-> catches may need some depth look (i.e. not a newbiew) not to mess things.
->=20
-> For example, my first compilation sparse checking throws this:
->=20
->=20
-> init/main.c:763:13: warning: symbol 'call' shadows an earlier one
-> init/main.c:710:31: originally declared here
-> init/main.c:793:13: warning: symbol 'call' shadows an earlier one
-> init/main.c:710:31: originally declared here
->=20
-> If you take a look at the code, the global "call" variable is defined as:
->=20
-> static struct boot_trace_call call;
->=20
-> And what makes sparse whine is a local variable definition, totally
-> unrelated (i think):
->=20
-> static void __init do_initcalls(void)
-> {
->     initcall_t *call;
->=20
->     for (call =3D __early_initcall_end; call < __initcall_end; call++)
->         do_one_initcall(*call);
->=20
->     /* Make sure there is no pending stuff from the initcall sequence */
->     flush_scheduled_work();
-> }
->=20
-> So, it seems that I could "fix" this by changing the local variable
-> name. The question is: is this _really_ needed apart from "code
-> hygiene"? Should I "fix" (if you agree to call that "to fix") that issue?
->=20
-> Or would you otherwise recommend me to start with the official janitor
-> TODO list and address more mechanical work at first? Thanks in advance.
->=20
-
-
-Having two variables with the same name is bad practice at least.
-But before renaming "initcall_t *call;" (the easy way) you should check
-if the global "struct boot_trace_call call;" really really is needed (globa=
-l is evil).
-
-re,
- wh
+Best regards,
+--=20
+L. Alberto Gim=E9nez
+GnuPG key ID 0x3BAABDE1
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
