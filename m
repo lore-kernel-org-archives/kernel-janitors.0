@@ -1,7 +1,7 @@
-From: Ingo Molnar <mingo@elte.hu>
-Date: Fri, 23 Oct 2009 11:38:15 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Fri, 23 Oct 2009 11:51:42 +0000
 Subject: Re: Fix sparse warning
-Message-Id: <20091023113815.GF5886@elte.hu>
+Message-Id: <20091023115141.GC19566@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4ADCD559.9080807@sysvalve.homelinux.net>
 In-Reply-To: <4ADCD559.9080807@sysvalve.homelinux.net>
@@ -10,52 +10,35 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-* Matthew Wilcox <matthew@wil.cx> wrote:
-
-> On Fri, Oct 23, 2009 at 09:59:11AM +0200, Ingo Molnar wrote:
-> > Warnings are not something that should be 'fixed' - they are just a sign 
-> > of some sort of trouble:
-> > 
-> >  1- bug/limitation in the tool (Sparse)
-> >  2- uncleanliness in the source code
-> >  3- bug in the source code
-> > 
-> > here it seems to be case #1, as file scope statics are perfectly fine, 
-> > even if used by a single function.
+On Fri, Oct 23, 2009 at 01:38:15PM +0200, Ingo Molnar wrote:
+> * Matthew Wilcox <matthew@wil.cx> wrote:
+> > and you changed it so that the boot_trace_call is now file-scope.  Now 
+> > sparse rightfully warns about the shadow definitions in do_initcalls 
+> > and do_pre_smp_initcalls.
 > 
-> This is case #2.  We used to have:
+> Doh, right you are!
 > 
-> int do_one_initcall(initcall_t fn)
-> {
-> 	struct boot_trace_call call;
-> }
+> Unfortunately the discussion was not Cc:-ed to lkml so i couldnt review 
+> the original patch and i assumed it moved the static back into function 
+> scope.
 > 
-> static void __init do_initcalls(void)
-> {
->         initcall_t *call;
-> }
-> 
-> static void __init do_pre_smp_initcalls(void)
-> {
->         initcall_t *call;
-> }
-> 
-> and you changed it so that the boot_trace_call is now file-scope.  Now 
-> sparse rightfully warns about the shadow definitions in do_initcalls 
-> and do_pre_smp_initcalls.
+> The right fix would be to rename the variables to not be colliding. (if 
+> we used -Wshadow like tools/perf/ does we'd have gotten this warning 
+> from GCC too btw) Does the patch do that? Could we please Cc: patches to 
+> lkml?
 
-Doh, right you are!
+There wasn't a patch ... it was a question about the right way to fix
+something: http://marc.info/?l=kernel-janitors&m5598851800338&w=2
 
-Unfortunately the discussion was not Cc:-ed to lkml so i couldnt review 
-the original patch and i assumed it moved the static back into function 
-scope.
+I agree with you that we should add -Wshadow to the CFLAGS, rather than
+requiring sparse to find these problems.
 
-The right fix would be to rename the variables to not be colliding. (if 
-we used -Wshadow like tools/perf/ does we'd have gotten this warning 
-from GCC too btw) Does the patch do that? Could we please Cc: patches to 
-lkml?
+If you're dead-set on not moving this statis variable back to
+function-scope, then it needs to be renamed; and probably best to rename
+all of 'msgbuf', 'call' and 'ret' to have the same prefix.
 
-Thanks,
-
-	Ingo
+-- 
+Matthew Wilcox				Intel Open Source Technology Centre
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
