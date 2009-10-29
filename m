@@ -1,45 +1,31 @@
-From: Kyle Spaans <kspaans@uwaterloo.ca>
-Date: Thu, 29 Oct 2009 00:09:58 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 29 Oct 2009 08:13:40 +0000
 Subject: Re: Starting in the project
-Message-Id: <20091029000958.GA4670@artificial-flavours.csclub.uwaterloo.ca>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8t9RHnE3ZwKMSgU+"
+Message-Id: <4AE94EB4.90009@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5b097d6e0910281338n2de53f4ie772e531b83f97c9@mail.gmail.com>
 In-Reply-To: <5b097d6e0910281338n2de53f4ie772e531b83f97c9@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Oct 28, 2009 at 04:38:18PM -0400, Eduardo wrote:
+Eduardo schrieb:
+> Hi, I'm trying to enter in kernel janitors project to learn more about
+> kernel and to be a developer.
+> I'm in TODO page, but I don't know where to start. It's being a kind
+> of weird at first glance to me.
 > There is some task easy to do for me to start?
+> 
+> 
 
-It's possible and likely that the Janitors TODO list is out of date.
+read Documentaion/*txt (+ any additional docs you may find)
+try to understand what they want and if it is still valid. Most times
+documentation is not the first priority for programmers but it is a
+nice starting point for beginner and an easy way to get some patches
+into the linux-kernel (by fixed wrong/out-dated docs).
 
-If you want to find something to do, look around in subsystems for their own
-TODO lists, wireless for example:
-    http://linuxwireless.org/en/developers/todo-list
-and you should find ideas that are more specific and up to date.
-
-Aside from that, to get ideas, you can read an operating systems textbook. Find
-an area of the kernel that you think is interesting then start _reading_ code.
-
-gl & hf
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkro3VYACgkQ7ECsBhUMPvCrhACfRzG69LJ/GWmh+pRPIJRBFr1p
-tGkAn2PZcz0UjP5JevonjYnOxKcc2PeS
-=enZd
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
+re,
+ wh
