@@ -1,56 +1,41 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 17 Oct 2009 06:41:26 +0000
-Subject: [PATCH 9/14] drivers/video: Move dereference after NULL test
-Message-Id: <Pine.LNX.4.64.0910170840540.9213@ask.diku.dk>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 31 Oct 2009 05:48:44 +0000
+Subject: [PATCH] bluetooth/btmrl_sdio.c: Fix compile warning
+Message-Id: <1256968124.29147.4.camel@laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Marcel Holtmann <marcel@holtmann.org>, Bing Zhao <bzhao@marvell.com>, Rahul Tank <rahult@marvell.com>, Julia Lawall <julia@diku.dk>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+In linux-next 20091030 I got this compile warning:
 
-If the NULL test on fbi is needed, then the dereference should be after the
-NULL test.
+drivers/bluetooth/btmrvl_sdio.c: In function ‘btmrvl_sdio_verify_fw_download’:
+drivers/bluetooth/btmrvl_sdio.c:79: warning: ‘fws1’ may be used uninitialized in this function
+drivers/bluetooth/btmrvl_sdio.c:79: note: ‘fws1’ was declared here
 
-A simplified version of the semantic match that detects this problem is as
-follows (http://coccinelle.lip6.fr/):
+This patch solves the issue.
 
-// <smpl>
-@match exists@
-expression x, E;
-identifier fld;
-@@
-
-* x->fld
-  ... when != \(x = E\|&x\)
-* x = NULL
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/video/pxafb.c               |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/bluetooth/btmrvl_sdio.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/video/pxafb.c b/drivers/video/pxafb.c
-index 1820c4a..fe3172c 100644
---- a/drivers/video/pxafb.c
-+++ b/drivers/video/pxafb.c
-@@ -1208,13 +1208,14 @@ static void setup_smart_timing(struct pxafb_info *fbi,
- static int pxafb_smart_thread(void *arg)
+diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+index 5b33b85..41d64fd 100644
+--- a/drivers/bluetooth/btmrvl_sdio.c
++++ b/drivers/bluetooth/btmrvl_sdio.c
+@@ -76,7 +76,7 @@ static int btmrvl_sdio_get_rx_unit(struct btmrvl_sdio_card *card)
+ 
+ static int btmrvl_sdio_read_fw_status(struct btmrvl_sdio_card *card, u16 *dat)
  {
- 	struct pxafb_info *fbi = arg;
--	struct pxafb_mach_info *inf = fbi->dev->platform_data;
-+	struct pxafb_mach_info *inf;
+-	u8 fws0, fws1;
++	u8 fws0, fws1 = 0;
+ 	int ret;
  
--	if (!fbi || !inf->smart_update) {
-+	if (!fbi || !fbi->dev->platform_data->smart_update) {
- 		pr_err("%s: not properly initialized, thread terminated\n",
- 				__func__);
- 		return -EINVAL;
- 	}
-+	inf = fbi->dev->platform_data;
- 
- 	pr_debug("%s(): task starting\n", __func__);
- 
+ 	*dat = 0;
+-- 
+1.6.0.4
+
+
+
