@@ -1,41 +1,42 @@
 From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sat, 31 Oct 2009 05:48:44 +0000
-Subject: [PATCH] bluetooth/btmrl_sdio.c: Fix compile warning
-Message-Id: <1256968124.29147.4.camel@laptop>
+Date: Sat, 31 Oct 2009 05:25:15 +0000
+Subject: [PATCH] fs/freevxfs/vxfs_lookup: Fix compile warning
+Message-Id: <1256966715.4278.10.camel@laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Marcel Holtmann <marcel@holtmann.org>, Bing Zhao <bzhao@marvell.com>, Rahul Tank <rahult@marvell.com>, Julia Lawall <julia@diku.dk>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-In linux-next 20091030 I got this compile warning:
+On linux-next 20091030 I got this compile warning:
 
-drivers/bluetooth/btmrvl_sdio.c: In function ‘btmrvl_sdio_verify_fw_download’:
-drivers/bluetooth/btmrvl_sdio.c:79: warning: ‘fws1’ may be used uninitialized in this function
-drivers/bluetooth/btmrvl_sdio.c:79: note: ‘fws1’ was declared here
+fs/freevxfs/vxfs_lookup.c: In function ‘vxfs_lookup’:
+fs/freevxfs/vxfs_lookup.c:177: warning: ‘pp’ may be used uninitialized in this function
+fs/freevxfs/vxfs_lookup.c:177: note: ‘pp’ was declared here
 
 This patch solves the issue.
 
 Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/bluetooth/btmrvl_sdio.c |    2 +-
+ fs/freevxfs/vxfs_lookup.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
-index 5b33b85..41d64fd 100644
---- a/drivers/bluetooth/btmrvl_sdio.c
-+++ b/drivers/bluetooth/btmrvl_sdio.c
-@@ -76,7 +76,7 @@ static int btmrvl_sdio_get_rx_unit(struct btmrvl_sdio_card *card)
- 
- static int btmrvl_sdio_read_fw_status(struct btmrvl_sdio_card *card, u16 *dat)
+diff --git a/fs/freevxfs/vxfs_lookup.c b/fs/freevxfs/vxfs_lookup.c
+index aee049c..151b5e9 100644
+--- a/fs/freevxfs/vxfs_lookup.c
++++ b/fs/freevxfs/vxfs_lookup.c
+@@ -174,7 +174,7 @@ static ino_t
+ vxfs_inode_by_name(struct inode *dip, struct dentry *dp)
  {
--	u8 fws0, fws1;
-+	u8 fws0, fws1 = 0;
- 	int ret;
+ 	struct vxfs_direct		*de;
+-	struct page			*pp;
++	struct page			*pp = NULL;
+ 	ino_t				ino = 0;
  
- 	*dat = 0;
+ 	de = vxfs_find_entry(dip, dp, &pp);
 -- 
 1.6.0.4
 
+	
 
 
