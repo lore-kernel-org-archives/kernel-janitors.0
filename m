@@ -1,122 +1,61 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 17 Oct 2009 06:43:17 +0000
-Subject: [PATCH 14/14] tools/perf: Move dereference after NULL test
-Message-Id: <Pine.LNX.4.64.0910170842500.9213@ask.diku.dk>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 31 Oct 2009 05:06:03 +0000
+Subject: trace/ftrace.c: Fix compile warnings
+Message-Id: <1256965563.4278.7.camel@laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+This patch is against linux-next 20091030. 
 
-In each case, if the NULL test on thread is needed, then the dereference
-should be after the NULL test.
+It solves two compile warning on kernel/trace/ftrace.c.
 
-A simplified version of the semantic match that detects this problem is as
-follows (http://coccinelle.lip6.fr/):
-
-// <smpl>
-@match exists@
-expression x, E;
-identifier fld;
-@@
-
-* x->fld
-  ... when != \(x = E\|&x\)
-* x = NULL
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- tools/perf/builtin-annotate.c |    4 ++--
- tools/perf/builtin-report.c   |    4 ++--
- tools/perf/builtin-sched.c    |    4 ++--
- tools/perf/builtin-trace.c    |    4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ kernel/trace/ftrace.c |    9 ++++++---
+ 1 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 6b00529..6e580ff 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -1581,14 +1581,14 @@ process_sample_event(event_t *event, unsigned long offset, unsigned long head)
- 		(void *)(long)ip,
- 		(long long)period);
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 1ed514f..7f3756d 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -2274,7 +2274,9 @@ void ftrace_set_notrace(unsigned char *buf, int len, int reset)
+ #define FTRACE_FILTER_SIZE		COMMAND_LINE_SIZE
+ static char ftrace_notrace_buf[FTRACE_FILTER_SIZE] __initdata;
+ static char ftrace_filter_buf[FTRACE_FILTER_SIZE] __initdata;
++#ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ static char ftrace_graph_buf[FTRACE_FILTER_SIZE] __initdata;
++#endif
  
--	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
--
- 	if (thread = NULL) {
- 		eprintf("problem processing %d event, skipping it.\n",
- 			event->header.type);
- 		return -1;
- 	}
+ static int __init set_ftrace_notrace(char *str)
+ {
+@@ -2987,6 +2989,7 @@ ftrace_pid_write(struct file *filp, const char __user *ubuf,
+ {
+ 	char buf[64];
+ 	long val;
++	char *bufstr;
+ 	int ret;
  
-+	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
-+
- 	process_raw_event(event, more_data, cpu, timestamp, thread);
+ 	if (cnt >= sizeof(buf))
+@@ -3001,11 +3004,11 @@ ftrace_pid_write(struct file *filp, const char __user *ubuf,
+ 	 * Allow "echo > set_ftrace_pid" or "echo -n '' > set_ftrace_pid"
+ 	 * to clean the filter quietly.
+ 	 */
+-	strstrip(buf);
+-	if (strlen(buf) = 0)
++	bufstr = strstrip(buf);
++	if (strlen(bufstr) = 0)
+ 		return 1;
  
- 	return 0;
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index f57a23b..df265e2 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -634,14 +634,14 @@ process_sample_event(event_t *event, unsigned long offset, unsigned long head)
- 		}
- 	}
+-	ret = strict_strtol(buf, 10, &val);
++	ret = strict_strtol(bufstr, 10, &val);
+ 	if (ret < 0)
+ 		return ret;
  
--	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
--
- 	if (thread = NULL) {
- 		eprintf("problem processing %d event, skipping it.\n",
- 			event->header.type);
- 		return -1;
- 	}
- 
-+	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
-+
- 	if (comm_list && !strlist__has_entry(comm_list, thread->comm))
- 		return 0;
- 
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 8c84320..7c1fa3a 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -110,14 +110,14 @@ process_sample_event(event_t *event, unsigned long offset, unsigned long head)
- 		event->ip.pid,
- 		(void *)(long)ip);
- 
--	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
--
- 	if (thread = NULL) {
- 		fprintf(stderr, "problem processing %d event, skipping it.\n",
- 			event->header.type);
- 		return -1;
- 	}
- 
-+	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
-+
- 	if (event->header.misc & PERF_RECORD_MISC_KERNEL) {
- 		level = 'k';
- 		sym = kernel_maps__find_symbol(ip, &map);
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index fb3f3c2..b9c4371 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -87,14 +87,14 @@ process_sample_event(event_t *event, unsigned long offset, unsigned long head)
- 		(void *)(long)ip,
- 		(long long)period);
- 
--	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
--
- 	if (thread = NULL) {
- 		eprintf("problem processing %d event, skipping it.\n",
- 			event->header.type);
- 		return -1;
- 	}
- 
-+	dump_printf(" ... thread: %s:%d\n", thread->comm, thread->pid);
-+
- 	if (sample_type & PERF_SAMPLE_RAW) {
- 		struct {
- 			u32 size;
+-- 
+1.6.0.4
+
+
+
