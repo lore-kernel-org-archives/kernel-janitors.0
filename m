@@ -1,41 +1,38 @@
-From: askb <askb23@gmail.com>
-Date: Wed, 04 Nov 2009 02:53:42 +0000
-Subject: [PATCH] mm/ksm.c: Fix compile warnings
-Message-Id: <1257302502.14838.19.camel@linux-k65f.site>
+From: Jeff Garzik <jgarzik@pobox.com>
+Date: Tue, 03 Nov 2009 21:17:53 +0000
+Subject: Re: [PATCH 10/14] drivers/ata/libata: Move dereference after NULL
+Message-Id: <4AF09E01.1060205@pobox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0910170841270.9213@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0910170841270.9213@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Found the compiler warning on linux-next:
+On 10/17/2009 02:41 AM, Julia Lawall wrote:
+> From: Julia Lawall<julia@diku.dk>
+>
+> In each case, if the NULL test on qc is needed, then the derefernce
+> should be after the NULL test.
+>
+> A simplified version of the semantic match that detects this problem is as
+> follows (http://coccinelle.lip6.fr/):
+>
+> //<smpl>
+> @match exists@
+> expression x, E;
+> identifier fld;
+> @@
+>
+> * x->fld
+>    ... when != \(x = E\|&x\)
+> * x = NULL
+> //</smpl>
+>
+> Signed-off-by: Julia Lawall<julia@diku.dk>
 
-mm/ksm.c: In function ‘ksm_scan_thread’:
-mm/ksm.c:1083: warning: ‘page2[0u]’ may be used uninitialized in this
-function
-mm/ksm.c:1083: note: ‘page2[0u]’ was declared here
-
-
-fix for the above warning:
-
-Signed-off-by: Anil SB <askb23@gmail.com>
-
-diff --git a/mm/ksm.c b/mm/ksm.c
-index bef1af4..2ea0fd3 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -1080,7 +1080,7 @@ static void stable_tree_append(struct rmap_item
-*rmap_item,
-  */
-static void cmp_and_merge_page(struct page *page, struct rmap_item
-*rmap_item)
-{
-- struct page *page2[1];
-+ struct page *page2[1] = {NULL};
-struct rmap_item *tree_rmap_item;
-unsigned int checksum;
-int err;
-
-Thanks
+applied
 
 
