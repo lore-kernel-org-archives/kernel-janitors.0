@@ -1,39 +1,42 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Tue, 03 Nov 2009 18:52:24 +0000
-Subject: RE: [PATCH] bluetooth/btmrl_sdio.c: Fix compile warning
-Message-Id: <477F20668A386D41ADCC57781B1F704306E01F6E92@SC-VEXCH1.marvell.com>
+From: Pete <greg.petr@gmail.com>
+Date: Tue, 03 Nov 2009 05:36:09 +0000
+Subject: [PATCH] fs/jfs/super.c: Fix compile warning - 'comparison of
+Message-Id: <1257225849.9793.35.camel@linux-k65f.site>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1256968124.29147.4.camel@laptop>
-In-Reply-To: <1256968124.29147.4.camel@laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Javier Martinez Canillas <martinez.javier@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, Rahul Tank <rahult@marvell.com>, Julia Lawall <julia@diku.dk>, "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-SGkgSmF2aWVyLAoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IEphdmllciBN
-YXJ0aW5leiBDYW5pbGxhcyBbbWFpbHRvOm1hcnRpbmV6LmphdmllckBnbWFpbC5jb21dCj4gU2Vu
-dDogRnJpZGF5LCBPY3RvYmVyIDMwLCAyMDA5IDEwOjQ5IFBNCj4gVG86IE1hcmNlbCBIb2x0bWFu
-bjsgQmluZyBaaGFvOyBSYWh1bCBUYW5rOyBKdWxpYSBMYXdhbGw7IGxpbnV4LWJsdWV0b290aEB2
-Z2VyLmtlcm5lbC5vcmc7IGtlcm5lbC0KPiBqYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmcKPiBTdWJq
-ZWN0OiBbUEFUQ0hdIGJsdWV0b290aC9idG1ybF9zZGlvLmM6IEZpeCBjb21waWxlIHdhcm5pbmcK
-PiAKPiBJbiBsaW51eC1uZXh0IDIwMDkxMDMwIEkgZ290IHRoaXMgY29tcGlsZSB3YXJuaW5nOgo+
-IAo+IGRyaXZlcnMvYmx1ZXRvb3RoL2J0bXJ2bF9zZGlvLmM6IEluIGZ1bmN0aW9uIOKAmGJ0bXJ2
-bF9zZGlvX3ZlcmlmeV9md19kb3dubG9hZOKAmToKPiBkcml2ZXJzL2JsdWV0b290aC9idG1ydmxf
-c2Rpby5jOjc5OiB3YXJuaW5nOiDigJhmd3Mx4oCZIG1heSBiZSB1c2VkIHVuaW5pdGlhbGl6ZWQg
-aW4gdGhpcyBmdW5jdGlvbgo+IGRyaXZlcnMvYmx1ZXRvb3RoL2J0bXJ2bF9zZGlvLmM6Nzk6IG5v
-dGU6IOKAmGZ3czHigJkgd2FzIGRlY2xhcmVkIGhlcmUKPiAKPiBUaGlzIHBhdGNoIHNvbHZlcyB0
-aGUgaXNzdWUuCgpZb3VyIHBhdGNoIGlzIHZhbGlkLgoKVGhhbmtzLAoKQmluZwoKPiAKPiBTaWdu
-ZWQtb2ZmLWJ5OiBKYXZpZXIgTWFydGluZXogQ2FuaWxsYXMgPG1hcnRpbmV6LmphdmllckBnbWFp
-bC5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvYmx1ZXRvb3RoL2J0bXJ2bF9zZGlvLmMgfCAgICAyICst
-Cj4gIDEgZmlsZXMgY2hhbmdlZCwgMSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9ucygtKQo+IAo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2JsdWV0b290aC9idG1ydmxfc2Rpby5jIGIvZHJpdmVycy9i
-bHVldG9vdGgvYnRtcnZsX3NkaW8uYwo+IGluZGV4IDViMzNiODUuLjQxZDY0ZmQgMTAwNjQ0Cj4g
-LS0tIGEvZHJpdmVycy9ibHVldG9vdGgvYnRtcnZsX3NkaW8uYwo+ICsrKyBiL2RyaXZlcnMvYmx1
-ZXRvb3RoL2J0bXJ2bF9zZGlvLmMKPiBAQCAtNzYsNyArNzYsNyBAQCBzdGF0aWMgaW50IGJ0bXJ2
-bF9zZGlvX2dldF9yeF91bml0KHN0cnVjdCBidG1ydmxfc2Rpb19jYXJkICpjYXJkKQo+IAo+ICBz
-dGF0aWMgaW50IGJ0bXJ2bF9zZGlvX3JlYWRfZndfc3RhdHVzKHN0cnVjdCBidG1ydmxfc2Rpb19j
-YXJkICpjYXJkLCB1MTYgKmRhdCkKPiAgewo+IC0JdTggZndzMCwgZndzMTsKPiArCXU4IGZ3czAs
-IGZ3czEgPSAwOwo+ICAJaW50IHJldDsKPiAKPiAgCSpkYXQgPSAwOwo+IC0tCj4gMS42LjAuNAo+
-IAo+IAoK//Tounsubscribefromthislisv/sendthelinf/unsubscribekernel/janitors/i
-nthebodyofamessagetomajordomo/vger/kernel/orgMoremajordomoinfoathttp///vger/
-kernel/org/majordomo/info/htCg==
+Hi,
+
+Found a compile warning on linux-next:
+
+fs/jfs/super.c: In function ‘jfs_fill_super’:
+fs/jfs/super.c:527: warning: comparison of distinct pointer types lacks
+a cast
+
+and the corresponding fix::
+
+Signed-off-by: Greg Petr <greg.petr@gmail.com>
+
+diff --git a/fs/jfs/super.c b/fs/jfs/super.c
+index 2234c73..3d8dbab 100644
+--- a/fs/jfs/super.c
++++ b/fs/jfs/super.c
+@@ -524,7 +524,8 @@ static int jfs_fill_super(struct super_block *sb,
+void *data, int silent)
+ 	 * Page cache is indexed by long.
+ 	 * I would use MAX_LFS_FILESIZE, but it's only half as big
+ 	 */
+-	sb->s_maxbytes = min(((u64) PAGE_CACHE_SIZE << 32) - 1,
+sb->s_maxbytes);
++	 sb->s_maxbytes = min(((u64) PAGE_CACHE_SIZE << 32) - 1,
++				(u64)sb->s_maxbytes);
+ #endif
+ 	sb->s_time_gran = 1;
+ 	return 0;
+
+Regards.
+
+
