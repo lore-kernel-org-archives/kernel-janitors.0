@@ -1,39 +1,53 @@
-From: askb <askb23@gmail.com>
-Date: Wed, 04 Nov 2009 06:56:17 +0000
-Subject: [PATCH] fs/ocfs2/stack_user.c - Fixing Compiler warning (PS ignore
-Message-Id: <1257317057.14838.57.camel@linux-k65f.site>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 12 Nov 2009 07:48:37 +0000
+Subject: [PATCH 1/4] drivers/net/enic: decrement sizeof size in strncmp
+Message-Id: <Pine.LNX.4.64.0911120848100.16627@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1257302574.14838.22.camel@linux-k65f.site>
-In-Reply-To: <1257302574.14838.22.camel@linux-k65f.site>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: mfasheh@suse.com, joel.becker@oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Scott Feldman <scofeldm@cisco.com>, Joe Eykholt <jeykholt@cisco.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Found the following compile warning on linux-next:
+From: Julia Lawall <julia@diku.dk>
 
-fs/ocfs2/stack_user.c: In function ‘user_cluster_connect’:
-fs/ocfs2/stack_user.c:817: warning: ‘control’ may be used uninitialized
-in this function
+As observed by Joe Perches, sizeof of a constant string includes the
+trailing 0.  If what is wanted is to check the initial characters of
+another string, this trailing 0 should not be taken into account.  If an
+exact match is wanted, strcmp should be used instead.
 
-fix for the above warning:
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Anil SB <askb23@gmail.com>
+// <smpl>
+@@
+expression foo;
+constant char *abc;
+@@
 
-diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
-index ff4c798..858ef6f 100644
---- a/fs/ocfs2/stack_user.c
-+++ b/fs/ocfs2/stack_user.c
-@@ -814,7 +814,7 @@ static int fs_protocol_compare(struct ocfs2_protocol_version *existing,
- static int user_cluster_connect(struct ocfs2_cluster_connection *conn)
- {
- 	dlm_lockspace_t *fsdlm;
--	struct ocfs2_live_connection *control;
-+	struct ocfs2_live_connection *control = NULL;
- 	int rc = 0;
+strncmp(foo, abc, 
+- sizeof(abc)
++ sizeof(abc)-1
+ )
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/enic/vnic_dev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/net/enic/vnic_dev.c b/drivers/net/enic/vnic_dev.c
+--- a/drivers/net/enic/vnic_dev.c
++++ b/drivers/net/enic/vnic_dev.c
+@@ -358,9 +358,9 @@ int vnic_dev_hw_version(struct vnic_dev 
+ 	if (err)
+ 		return err;
  
- 	BUG_ON(conn = NULL);
-
-
-
-
+-	if (strncmp(fw_info->hw_version, "A1", sizeof("A1")) = 0)
++	if (strncmp(fw_info->hw_version, "A1", sizeof("A1") - 1) = 0)
+ 		*hw_ver = VNIC_DEV_HW_VER_A1;
+-	else if (strncmp(fw_info->hw_version, "A2", sizeof("A2")) = 0)
++	else if (strncmp(fw_info->hw_version, "A2", sizeof("A2") - 1) = 0)
+ 		*hw_ver = VNIC_DEV_HW_VER_A2;
+ 	else
+ 		*hw_ver = VNIC_DEV_HW_VER_UNKNOWN;
