@@ -1,53 +1,52 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 12 Nov 2009 07:48:37 +0000
-Subject: [PATCH 1/4] drivers/net/enic: decrement sizeof size in strncmp
-Message-Id: <Pine.LNX.4.64.0911120848100.16627@ask.diku.dk>
+From: =?ISO-8859-1?Q?J=F6rg-Volker_Peetz?= <jvpeetz@web.de>
+Date: Thu, 12 Nov 2009 10:17:24 +0000
+Subject: Re: [PATCH 1/4] drivers/net/enic: decrement sizeof size in strncmp
+Message-Id: <4AFBE0B4.6070904@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0911120848100.16627@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0911120848100.16627@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Scott Feldman <scofeldm@cisco.com>, Joe Eykholt <jeykholt@cisco.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Julia Lawall wrote:
+> From: Julia Law all <julia@diku.dk>
+>=20
+> As observed by Joe Perches, sizeof of a constant string includes the
+> trailing 0.  If what is wanted is to check the initial characters of
+> another string, this trailing 0 should not be taken into account.  If an
+> exact match is wanted, strcmp should be used instead.
+>=20
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @@
+> expression foo;
+> constant char *abc;
+> @@
+>=20
+> strncmp(foo, abc,=20
+> - sizeof(abc)
+> + sizeof(abc)-1
+>  )
+> // </smpl>
+>=20
+<snip>
+How about this pattern (uses length of first argument):
 
-As observed by Joe Perches, sizeof of a constant string includes the
-trailing 0.  If what is wanted is to check the initial characters of
-another string, this trailing 0 should not be taken into account.  If an
-exact match is wanted, strcmp should be used instead.
+strncmp(foo, abc,
+- sizeof(foo)
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+?
+--=20
+Best regards,
+J=F6rg-Volker.
 
-// <smpl>
-@@
-expression foo;
-constant char *abc;
-@@
-
-strncmp(foo, abc, 
-- sizeof(abc)
-+ sizeof(abc)-1
- )
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/enic/vnic_dev.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff -u -p a/drivers/net/enic/vnic_dev.c b/drivers/net/enic/vnic_dev.c
---- a/drivers/net/enic/vnic_dev.c
-+++ b/drivers/net/enic/vnic_dev.c
-@@ -358,9 +358,9 @@ int vnic_dev_hw_version(struct vnic_dev 
- 	if (err)
- 		return err;
- 
--	if (strncmp(fw_info->hw_version, "A1", sizeof("A1")) = 0)
-+	if (strncmp(fw_info->hw_version, "A1", sizeof("A1") - 1) = 0)
- 		*hw_ver = VNIC_DEV_HW_VER_A1;
--	else if (strncmp(fw_info->hw_version, "A2", sizeof("A2")) = 0)
-+	else if (strncmp(fw_info->hw_version, "A2", sizeof("A2") - 1) = 0)
- 		*hw_ver = VNIC_DEV_HW_VER_A2;
- 	else
- 		*hw_ver = VNIC_DEV_HW_VER_UNKNOWN;
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
