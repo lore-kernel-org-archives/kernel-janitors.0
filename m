@@ -1,7 +1,7 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 12 Nov 2009 10:37:55 +0000
+Date: Thu, 12 Nov 2009 15:33:52 +0000
 Subject: Re: sizeof vs strlen (was Re: [PATCH 4/4] fs/qnx4: decrement sizeof
-Message-Id: <Pine.LNX.4.64.0911121137410.19779@ask.diku.dk>
+Message-Id: <Pine.LNX.4.64.0911121632540.19779@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0911120849260.16627@ask.diku.dk>
  <1258021335.3689.41.camel@tara.firmix.at>
@@ -34,6 +34,7 @@ On Thu, 12 Nov 2009, Bernd Petrovitsch wrote:
 > strings as gcc should be able calculate the length at compile time. And
 > if the string is not constant, sizeof() is probably wrong anyways.
 
-The rule specifies that the string is a constant.
+Does gcc have access to the definition of strlen?  It does not seem to be 
+an inlined function, eg in lib/string.c.
 
 julia
