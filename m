@@ -1,16 +1,15 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 12 Nov 2009 10:14:02 +0000
+From: Anders Larsen <al@alarsen.net>
+Date: Thu, 12 Nov 2009 22:08:36 +0000
 Subject: Re: [PATCH 4/4] fs/qnx4: decrement sizeof size in strncmp
-Message-Id: <Pine.LNX.4.64.0911121113190.19166@ask.diku.dk>
+Message-Id: <20091112220836.GA3893@alarsen.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0911120849260.16627@ask.diku.dk>
- <1258017918l.26867l.0l@i-dmzi_al.realan.de>
-In-Reply-To: <1258017918l.26867l.0l@i-dmzi_al.realan.de>
+In-Reply-To: <Pine.LNX.4.64.0911120849260.16627@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anders Larsen <al@alarsen.net>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, trivial@kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -29,6 +28,7 @@ constant char *abc;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Anders Larsen <al@alarsen.net>
 
 ---
  fs/qnx4/inode.c |    3 ++-
@@ -48,3 +48,5 @@ index 449f5a6..150f4af 100644
  						found = 1;
  						qnx4_sb(sb)->BitMap = kmalloc( sizeof( struct qnx4_inode_entry ), GFP_KERNEL );
  						if (!qnx4_sb(sb)->BitMap) {
+
+
