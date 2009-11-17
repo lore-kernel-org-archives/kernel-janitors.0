@@ -1,21 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Nov 2009 18:49:06 +0000
-Subject: Re: [PATCH 3/16] drivers/net: remove exceptional & on function name
-Message-Id: <20091118.104906.44106380.davem@davemloft.net>
+From: Meenakshi Khorana <khurana.meenakshi@gmail.com>
+Date: Tue, 17 Nov 2009 11:44:20 +0000
+Subject: Patch for fixing compilation warning
+Message-Id: <9e8c6460911170332j1e1704bbtdbd681ab78ffc6ba@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0911181920450.20943@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0911181920450.20943@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: netdev@vger.kernel.org, arnd@arndb.de, joe@perches.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 18 Nov 2009 19:21:04 +0100 (CET)
+I am hereby submitting my first patch for removing the following
+compile time warning
 
-> In this file, function names are otherwise used as pointers without &.
-...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+kernel/marker.c: In function `remove_marker':
+kernel/marker.c:435: warning: `e' might be used uninitialized in this function
 
-Applied.
+Please provide the feedback on same.
+
+Signed-off-by: Meenakshi <khurana.meenakshi@gmail.com>
+
+--- kernel/marker.c.orig        2009-11-17 16:41:29.000000000 +0530
++++ kernel/marker.c     2009-11-17 16:41:41.000000000 +0530
+@@ -432,7 +432,7 @@ static int remove_marker(const char *nam
+ {
+        struct hlist_head *head;
+        struct hlist_node *node;
+-       struct marker_entry *e;
++       struct marker_entry *e = NULL;
+        int found = 0;
+        size_t len = strlen(name) + 1;
+        u32 hash = jhash(name, len-1, 0);
+
+
+Thanks & Regards
