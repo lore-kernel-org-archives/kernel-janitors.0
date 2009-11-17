@@ -1,7 +1,7 @@
-From: Michael Spradling <mike@mspradling.com>
-Date: Tue, 17 Nov 2009 06:04:00 +0000
+From: Michael Spradling <spradlim@msoe.edu>
+Date: Tue, 17 Nov 2009 06:10:08 +0000
 Subject: [PATCH 1/1] Removed Dead Code
-Message-Id: <20091117060400.GA2114@bashful.msoe.edu>
+Message-Id: <20091117061008.GA2473@bashful.msoe.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20091117053847.GA19184@MSServer>
 In-Reply-To: <20091117053847.GA19184@MSServer>
