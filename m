@@ -1,8 +1,10 @@
 From: Michael Spradling <mike@mspradling.com>
-Date: Tue, 17 Nov 2009 05:38:47 +0000
+Date: Tue, 17 Nov 2009 06:04:00 +0000
 Subject: [PATCH 1/1] Removed Dead Code
-Message-Id: <20091117053847.GA19184@MSServer>
+Message-Id: <20091117060400.GA2114@bashful.msoe.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20091117053847.GA19184@MSServer>
+In-Reply-To: <20091117053847.GA19184@MSServer>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -84,5 +86,4 @@ index 0deb0a8..d3059cd 100644
   *	@info : framebuffer structure
 -- 
 1.6.5.2
-
 
