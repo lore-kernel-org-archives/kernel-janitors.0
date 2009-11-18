@@ -1,25 +1,23 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 18 Nov 2009 18:40:15 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 18 Nov 2009 18:47:28 +0000
 Subject: Re: [PATCH 1/16] drivers/net/atl1c: remove exceptional & on
-Message-Id: <1258569615.24178.13.camel@Joe-Laptop.home>
+Message-Id: <20091118.104728.238907669.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0911181920010.20943@ask.diku.dk>
 In-Reply-To: <Pine.LNX.4.64.0911181920010.20943@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, atl1-devel@lists.sourceforge.net, Jie Yang <jie.yang@atheros.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
+To: julia@diku.dk
+Cc: jcliburn@gmail.com, chris.snook@gmail.com, jie.yang@atheros.com, atl1-devel@lists.sourceforge.net, arnd@arndb.de, joe@perches.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2009-11-18 at 19:20 +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 18 Nov 2009 19:20:24 +0100 (CET)
+
+Please don't forget to CC: netdev on networking patches.
+
 > In this file, function names are otherwise used as pointers without &.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
+ ...
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Hi Julia, thanks for doing this.
-
-Can you please post the complete version of the semantic patch?
-
+Applied to net-next-2.6 thanks.
