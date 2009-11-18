@@ -1,54 +1,46 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Tue, 17 Nov 2009 16:14:13 +0000
+From: Tulio Magno Quites Machado Filho <tuliom@quites.com.br>
+Date: Wed, 18 Nov 2009 01:18:15 +0000
 Subject: Re: Patch for fixing compilation warning
-Message-Id: <20091117081413.51902d64.rdunlap@xenotime.net>
+Message-Id: <200911172318.15436.tuliom@quites.com.br>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="nextPart6527303.UoEj4L2ZK3"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <9e8c6460911170332j1e1704bbtdbd681ab78ffc6ba@mail.gmail.com>
 In-Reply-To: <9e8c6460911170332j1e1704bbtdbd681ab78ffc6ba@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 17 Nov 2009 17:02:20 +0530 Meenakshi Khorana wrote:
+--nextPart6527303.UoEj4L2ZK3
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-> I am hereby submitting my first patch for removing the following
-> compile time warning
+On Tuesday 17 November 2009 14:14:13 Randy Dunlap wrote:
+> gmail converted tabs to spaces in the -+ lines above, so the patch
+> would not apply cleanly if this source file were still in use.
+>=20
+> gmail is known for doing this.  Please see
+> Documentation/email-clients.txt in the kernel source tree for help.
 
-What kernel version is this patch for?
-This source file has been removed in recent kernels.
+I also recommend to try 'git format-patch' and 'git send-email'. These tool=
+s=20
+will do everything for you.
 
+More information about submitting patches:
+http://linux.yyz.us/patch-format.html
 
-> kernel/marker.c: In function `remove_marker':
-> kernel/marker.c:435: warning: `e' might be used uninitialized in this function
+=2D-=20
+Tulio Magno
 
-Did you analyze this remove_marker() function to see if the gcc
-warning is correct?  Sometimes this warning is just noise.
+--nextPart6527303.UoEj4L2ZK3
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
 
-> Please provide the feedback on same.
-> 
-> Signed-off-by: Meenakshi <khurana.meenakshi@gmail.com>
-> 
-> --- kernel/marker.c.orig        2009-11-17 16:41:29.000000000 +0530
-> +++ kernel/marker.c     2009-11-17 16:41:41.000000000 +0530
-> @@ -432,7 +432,7 @@ static int remove_marker(const char *nam
->  {
->         struct hlist_head *head;
->         struct hlist_node *node;
-> -       struct marker_entry *e;
-> +       struct marker_entry *e = NULL;
+iEYEABECAAYFAksDS1cACgkQte9yqjutT93K5wCgyEviFNmegy4/tJqQX3QTt39v
+AAMAoImTBOJrw5fm98UxEGARS+AjWir8
+=PxMC
+-----END PGP SIGNATURE-----
 
-gmail converted tabs to spaces in the -+ lines above, so the patch
-would not apply cleanly if this source file were still in use.
-
-gmail is known for doing this.  Please see
-Documentation/email-clients.txt in the kernel source tree for help.
-
->         int found = 0;
->         size_t len = strlen(name) + 1;
->         u32 hash = jhash(name, len-1, 0);
-
-
----
-~Randy
+--nextPart6527303.UoEj4L2ZK3--
