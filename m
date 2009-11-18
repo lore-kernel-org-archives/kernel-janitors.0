@@ -1,24 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 30 Nov 2009 07:42:51 +0000
-Subject: Re: [PATCH] Coding style correction in HDLC/Frame Relay support
-Message-Id: <20091129.234251.48687121.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 18 Nov 2009 18:23:17 +0000
+Subject: [PATCH 8/16] drivers/net/smsc9420.c: remove exceptional & on function
+Message-Id: <Pine.LNX.4.64.0911181923010.20943@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20091126231342.GA25041@vacuum.larces.uece.br>
-In-Reply-To: <20091126231342.GA25041@vacuum.larces.uece.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rudy.matela@gmail.com
-Cc: khc@pm.waw.pl, trivial@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve Glendinning <steve.glendinning@smsc.com>, netdev@vger.kernel.org, arnd@arndb.de, joe@perches.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Rudy Matela <rudy.matela@gmail.com>
-Date: Thu, 26 Nov 2009 20:13:42 -0300
+From: Julia Lawall <julia@diku.dk>
 
-> Coding style corrections on Frame Relay/DLCI support routines.
-> 
-> Added a space separating some if keywords from the following parenthesis to
-> conform to the CodingStyle.
-> 
-> Signed-off-by: Rudy Matela <rudy.matela@gmail.com>
+In this file, function names are otherwise used as pointers without &.
 
-Applied, thanks.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier f;
+@@
+
+f(...) { ... }
+
+@@
+identifier r.f;
+@@
+
+- &f
++ f
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/smsc9420.c              |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/smsc9420.c b/drivers/net/smsc9420.c
+index b4909a2..92e2bbe 100644
+--- a/drivers/net/smsc9420.c
++++ b/drivers/net/smsc9420.c
+@@ -1161,7 +1161,7 @@ static int smsc9420_mii_probe(struct net_device *dev)
+ 		phydev->phy_id);
+ 
+ 	phydev = phy_connect(dev, dev_name(&phydev->dev),
+-		&smsc9420_phy_adjust_link, 0, PHY_INTERFACE_MODE_MII);
++		smsc9420_phy_adjust_link, 0, PHY_INTERFACE_MODE_MII);
+ 
+ 	if (IS_ERR(phydev)) {
+ 		pr_err("%s: Could not attach to PHY\n", dev->name);
