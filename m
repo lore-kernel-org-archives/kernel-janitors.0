@@ -1,7 +1,7 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Wed, 18 Nov 2009 09:05:09 +0000
+From: Bernd Petrovitsch <bernd@firmix.at>
+Date: Wed, 18 Nov 2009 12:01:51 +0000
 Subject: Re: [PATCH 1/1] Removed Dead Code
-Message-Id: <200911181005.10209.npalix@diku.dk>
+Message-Id: <1258545712.16246.53.camel@tara.firmix.at>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20091117053847.GA19184@MSServer>
 In-Reply-To: <20091117053847.GA19184@MSServer>
@@ -10,117 +10,49 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wednesday 18 November 2009 01:12:22 Michael Spradling wrote:
+On Tue, 2009-11-17 at 19:12 -0500, Michael Spradling wrote:
 > Does anyone have any comments, how do I know if this patch is ever taken in...
+Yes (but perhaps not the one you expected;-).
+A review takes usually more than a day (since people tend to have other,
+higher priorities too). And BTW it doesn't speed up if you send the same
+3 times without good reason (and if there is a good reason, there is no
+need to hide it). And the subject as above is *much* better (as it
+describes the intentions of the patch and not your personal ones) than
+the one on the 1st mail.
+
+A good way to speed up the review process is to send the mail also
+directly to the relevant maintainers and interested people (and probably
+the big kernel-mailinglist. No need to subscribe it - it is expected
+that people use Reply-to-all and not delete any Cc:s - unless you really
+know what you do[0]). The simplest way is to use
+scripts/get_maintainer.pl to get a list of probably interested and
+*relevant* (read: subsystem maintainer) people/mailing-lists.
+
+Even if 5 people review and ack-it hereover, it is no help as long as
+the maintainer(s) ignore it (or NACK it for whatever reason).
+
+As for the patch as such: Not that I looked into the framebuffer
+driver(s) or anywhere else, but it's probably good to also mention why
+you believe that that functions are dead code.
+There basically two possibilities: Was in for ages and isn't used any
+longer or is needed for new features. And the subsystem maintainer
+should know (and I don't know - so I can't comment on it) .....
+
 > Is there a server somewhere that shows integration status
+Not until you run one;-)
+You usually should get some feedback who is taking it and - depending on
+subsystem, it's maintainer, the length of the chain towards Linux,
+release dates, etc. - it eventually shows up in mainline and you may get
+some status mails before (e.g. AKPM has scripts which also report
+towards submitters - and reviewers IIRC).
 
-Declare linux-next in your git repository with
-git remote add linux-next <url>
+	Bernd
 
-<url> can be one of the following:
-http://www.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
-Then, retrieve daily release with git remote update.
-You can use GUI, like qgit, or git log, and search for your name.
-
-For info about linux-next, check
-http://linux.f-seidel.de/linux-next/pmwiki/pmwiki.php?n=Linux-next.Linux-next
-
-Alternatively, you can check the gitweb server of linux-next
-http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=summary
-
-> 
-> On Tue, Nov 17, 2009 at 12:38:47AM -0500, Michael Spradling wrote:
-> > Signed-off-by: Michael Spradling <mike@mspradling.com>
-> > 
-> > ---
-> >  drivers/video/s1d13xxxfb.c |   50 --------------------------------------------
-> >  1 files changed, 0 insertions(+), 50 deletions(-)
-> > 
-> > diff --git a/drivers/video/s1d13xxxfb.c b/drivers/video/s1d13xxxfb.c
-> > index 0deb0a8..d3059cd 100644
-> > --- a/drivers/video/s1d13xxxfb.c
-> > +++ b/drivers/video/s1d13xxxfb.c
-> > @@ -409,28 +409,6 @@ s1d13xxxfb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
-> >   ************************************************************/
-> >  
-> >  /**
-> > - *	bltbit_wait_bitset - waits for change in register value
-> > - *	@info : framebuffer structure
-> > - *	@bit  : value expected in register
-> > - *	@timeout : ...
-> > - *
-> > - *	waits until value changes INTO bit
-> > - */
-> > -static u8
-> > -bltbit_wait_bitset(struct fb_info *info, u8 bit, int timeout)
-> > -{
-> > -	while (!(s1d13xxxfb_readreg(info->par, S1DREG_BBLT_CTL0) & bit)) {
-> > -		udelay(10);
-> > -		if (!--timeout) {
-> > -			dbg_blit("wait_bitset timeout\n");
-> > -			break;
-> > -		}
-> > -	}
-> > -
-> > -	return timeout;
-> > -}
-> > -
-> > -/**
-> >   *	bltbit_wait_bitclear - waits for change in register value
-> >   *	@info : frambuffer structure
-> >   *	@bit  : value currently in register
-> > @@ -453,34 +431,6 @@ bltbit_wait_bitclear(struct fb_info *info, u8 bit, int timeout)
-> >  	return timeout;
-> >  }
-> >  
-> > -/**
-> > - *	bltbit_fifo_status - checks the current status of the fifo
-> > - *	@info : framebuffer structure
-> > - *
-> > - *	returns number of free words in buffer
-> > - */
-> > -static u8
-> > -bltbit_fifo_status(struct fb_info *info)
-> > -{
-> > -	u8 status;
-> > -
-> > -	status = s1d13xxxfb_readreg(info->par, S1DREG_BBLT_CTL0);
-> > -
-> > -	/* its empty so room for 16 words */
-> > -	if (status & BBLT_FIFO_EMPTY)
-> > -		return 16;
-> > -
-> > -	/* its full so we dont want to add */
-> > -	if (status & BBLT_FIFO_FULL)
-> > -		return 0;
-> > -
-> > -	/* its atleast half full but we can add one atleast */
-> > -	if (status & BBLT_FIFO_NOT_FULL)
-> > -		return 1;
-> > -
-> > -	return 0;
-> > -}
-> > -
-> >  /*
-> >   *	s1d13xxxfb_bitblt_copyarea - accelerated copyarea function
-> >   *	@info : framebuffer structure
-> > -- 
-> > 1.6.5.2
-> > 
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
-
+[0]: *If* you really know what you do, you will know it on your own.
+     Before, just stick to the rule;-)
 -- 
-Nicolas Palix
+Firmix Software GmbH                   http://www.firmix.at/
+mobil: +43 664 4416156                 fax: +43 1 7890849-55
+          Embedded Linux Development and Services
+
+
