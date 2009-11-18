@@ -1,7 +1,7 @@
-From: Michael Spradling <mike@mspradling.com>
-Date: Wed, 18 Nov 2009 12:13:14 +0000
+From: Bernd Petrovitsch <bernd@firmix.at>
+Date: Wed, 18 Nov 2009 12:37:20 +0000
 Subject: Re: [PATCH 1/1] Removed Dead Code
-Message-Id: <20091118121314.GD22619@MSServer>
+Message-Id: <1258547840.18952.22.camel@tara.firmix.at>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20091117053847.GA19184@MSServer>
 In-Reply-To: <20091117053847.GA19184@MSServer>
@@ -10,126 +10,57 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I did base my patch on the linux-next tree.  I think I will just sit back and
-be patient.  I don't want to spam the list with patches that do fit with the
-communities standards.
+On Wed, 2009-11-18 at 07:11 -0500, Michael Spradling wrote:
+> I know it takes more than a day to take a patch in, however I just wanted to know
+> a little more about the process.  Sorry about the 3 emails.  If you look at the
+E.g. Documentation/SubmittingPatches has more. Perhaps the LKML-FAQ
+(google it, it's easy to find).
 
-Thanks
-Michael
+> headers you will notice they are all from different email accounts.  I had trouble
+I didn't notice (and obviously didn't look good enough).
 
-On Wed, Nov 18, 2009 at 10:05:09AM +0100, Nicolas Palix wrote:
-> On Wednesday 18 November 2009 01:12:22 Michael Spradling wrote:
-> > Does anyone have any comments, how do I know if this patch is ever taken in...
-> > Is there a server somewhere that shows integration status
-> 
-> Declare linux-next in your git repository with
-> git remote add linux-next <url>
-> 
-> <url> can be one of the following:
-> http://www.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> 
-> Then, retrieve daily release with git remote update.
-> You can use GUI, like qgit, or git log, and search for your name.
-> 
-> For info about linux-next, check
-> http://linux.f-seidel.de/linux-next/pmwiki/pmwiki.php?n=Linux-next.Linux-next
-> 
-> Alternatively, you can check the gitweb server of linux-next
-> http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=summary
-> 
-> > 
-> > On Tue, Nov 17, 2009 at 12:38:47AM -0500, Michael Spradling wrote:
-> > > Signed-off-by: Michael Spradling <mike@mspradling.com>
-> > > 
-> > > ---
-> > >  drivers/video/s1d13xxxfb.c |   50 --------------------------------------------
-> > >  1 files changed, 0 insertions(+), 50 deletions(-)
-> > > 
-> > > diff --git a/drivers/video/s1d13xxxfb.c b/drivers/video/s1d13xxxfb.c
-> > > index 0deb0a8..d3059cd 100644
-> > > --- a/drivers/video/s1d13xxxfb.c
-> > > +++ b/drivers/video/s1d13xxxfb.c
-> > > @@ -409,28 +409,6 @@ s1d13xxxfb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
-> > >   ************************************************************/
-> > >  
-> > >  /**
-> > > - *	bltbit_wait_bitset - waits for change in register value
-> > > - *	@info : framebuffer structure
-> > > - *	@bit  : value expected in register
-> > > - *	@timeout : ...
-> > > - *
-> > > - *	waits until value changes INTO bit
-> > > - */
-> > > -static u8
-> > > -bltbit_wait_bitset(struct fb_info *info, u8 bit, int timeout)
-> > > -{
-> > > -	while (!(s1d13xxxfb_readreg(info->par, S1DREG_BBLT_CTL0) & bit)) {
-> > > -		udelay(10);
-> > > -		if (!--timeout) {
-> > > -			dbg_blit("wait_bitset timeout\n");
-> > > -			break;
-> > > -		}
-> > > -	}
-> > > -
-> > > -	return timeout;
-> > > -}
-> > > -
-> > > -/**
-> > >   *	bltbit_wait_bitclear - waits for change in register value
-> > >   *	@info : frambuffer structure
-> > >   *	@bit  : value currently in register
-> > > @@ -453,34 +431,6 @@ bltbit_wait_bitclear(struct fb_info *info, u8 bit, int timeout)
-> > >  	return timeout;
-> > >  }
-> > >  
-> > > -/**
-> > > - *	bltbit_fifo_status - checks the current status of the fifo
-> > > - *	@info : framebuffer structure
-> > > - *
-> > > - *	returns number of free words in buffer
-> > > - */
-> > > -static u8
-> > > -bltbit_fifo_status(struct fb_info *info)
-> > > -{
-> > > -	u8 status;
-> > > -
-> > > -	status = s1d13xxxfb_readreg(info->par, S1DREG_BBLT_CTL0);
-> > > -
-> > > -	/* its empty so room for 16 words */
-> > > -	if (status & BBLT_FIFO_EMPTY)
-> > > -		return 16;
-> > > -
-> > > -	/* its full so we dont want to add */
-> > > -	if (status & BBLT_FIFO_FULL)
-> > > -		return 0;
-> > > -
-> > > -	/* its atleast half full but we can add one atleast */
-> > > -	if (status & BBLT_FIFO_NOT_FULL)
-> > > -		return 1;
-> > > -
-> > > -	return 0;
-> > > -}
-> > > -
-> > >  /*
-> > >   *	s1d13xxxfb_bitblt_copyarea - accelerated copyarea function
-> > >   *	@info : framebuffer structure
-> > > -- 
-> > > 1.6.5.2
-> > > 
-> > > 
-> > > --
-> > > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > > the body of a message to majordomo@vger.kernel.org
-> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> 
-> 
-> -- 
-> Nicolas Palix
+> with my email and I did not see my messages post to the mailing list. Thanks for
+That may also take some time as vger.kernel.org hosts quite a few lists
+with not so few subscribers and it also depends on the receiving side
+(think of e.g. greylisting and/or overloaded spam- and virus-scanners
+because of the next spam flood), it may take some time.
+Email isn't (and never was) a realtime in any way.
+
+> your advice and input....
+And for the future: fullquoting is the most unreadable way to quote
+emails (let alone *comment* on the and *review* the contents)[0]. Google
+the netiquette - as the URL I know by heart is in German - (even it's
+from Usenet/newsgroups) and "learn to quote". SCNR - I always wanted to
+write that once;-)
+
+[ Useless fullquote deleted. People can find it via google after a few
+hours/days(?) or in their inbox anyways. ]
+
+	Bernd
+
+[0]: Think of the possibility that many people - /me included - may
+     plain simply choose to ignore unreadable and/or not (and/or hardly)
+     understandable emails. The language barrier may be a small part of
+     it (and abused as an excuse - no need to excuse, just make it
+     better the next time) but the more important issue is to make
+     reading your emails as easy as possible[1].
+     If the other doesn't have time or motivation to invest 5 minutes in
+     a cleanly formatted mail with simple and easy to read sentences
+     because punctuation and spelling is OK, why should I invest 5
+     minutes to try to decode what that wants to say?
+     And id the sender invests only 30 minutes to really make sure that
+     misinterpretations should not happen because every comment is
+     worded simple, placed at the place where the comment belongs and
+     irrelevant lines are deleted, that is next to no investment even if
+     you save only 2 minutes for each reader (because on the more
+     crowded lists you will have probably have much moire readers than
+     you thought - even if they don't answer. While I'm at it: "Me
+     too!" mails are discouraged too - unless explicitly asked).
+[1]: For the more commercial/business oriented people: Think of each
+     email as another type of business card.
+-- 
+Firmix Software GmbH                   http://www.firmix.at/
+mobil: +43 664 4416156                 fax: +43 1 7890849-55
+          Embedded Linux Development and Services
+
 
