@@ -1,23 +1,150 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Nov 2009 18:47:28 +0000
-Subject: Re: [PATCH 1/16] drivers/net/atl1c: remove exceptional & on
-Message-Id: <20091118.104728.238907669.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 18 Nov 2009 21:07:56 +0000
+Subject: Re: [PATCH 1/16] drivers/net/atl1c: remove exceptional & on function
+Message-Id: <Pine.LNX.4.64.0911182202350.28287@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0911181920010.20943@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0911181920010.20943@ask.diku.dk>
+ <1258569615.24178.13.camel@Joe-Laptop.home>
+In-Reply-To: <1258569615.24178.13.camel@Joe-Laptop.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, jie.yang@atheros.com, atl1-devel@lists.sourceforge.net, arnd@arndb.de, joe@perches.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Jay Cliburn <jcliburn@gmail.com>, Chris Snook <chris.snook@gmail.com>, atl1-devel@lists.sourceforge.net, Jie Yang <jie.yang@atheros.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
 
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 18 Nov 2009 19:20:24 +0100 (CET)
+On Wed, 18 Nov 2009, Joe Perches wrote:
 
-Please don't forget to CC: netdev on networking patches.
+> On Wed, 2009-11-18 at 19:20 +0100, Julia Lawall wrote:
+> > From: Julia Lawall <julia@diku.dk>
+> > 
+> > In this file, function names are otherwise used as pointers without &.
+> > 
+> > A simplified version of the semantic patch that makes this change is as
+> > follows: (http://coccinelle.lip6.fr/)
+> 
+> Hi Julia, thanks for doing this.
+> 
+> Can you please post the complete version of the semantic patch?
 
-> In this file, function names are otherwise used as pointers without &.
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+There are basically three parts to the following semantic patch.  The 
+first part counts the number of references to functions that do and do not 
+have & in front of them.  For simplicity, a function is considered to be 
+something that is explicitly defined in the current file.  It would be 
+possible to also consider functions for which there is only a prototype.
 
-Applied to net-next-2.6 thanks.
+The second part, consisting of the python code in the middle considers the 
+counts and decides which transformation to make, if any.  In the end, to 
+limit the number of files to consider, I just consider files for which 
+there is only one occurrence of one case and more than 9 occurrences of 
+the other.  The two small python rules after that one throw away all of 
+the matches of function names that do not correspond to the case that is 
+desired.
+
+The last few rules do the transformation.  Both transformations are put in 
+one rule, which is safe because all matches for the transformation that is 
+not wanted have been discarded.
+
+julia
+
+@script:python@
+@@
+
+with_and = 0
+without_and = 0
+
+@r@
+identifier f;
+@@
+
+f(...) { ... }
+
+@addr1@
+identifier r.f;
+position pa;
+@@
+
+ &f@pa
+
+@script:python@
+p << addr1.pa;
+@@
+
+with_and = with_and + 1
+
+@r1@
+identifier r.f;
+position p;
+declarer name  EXPORT_SYMBOL;
+@@
+
+(
+EXPORT_SYMBOL(f@p);
+|
+module_init(f@p);
+|
+module_exit(f@p);
+|
+f@p(...)
+)
+
+@noaddr1@
+identifier r.f;
+position pn != r1.p;
+@@
+
+(
+  &f
+|
+ f@pn
+)
+
+@script:python@
+p << noaddr1.pn;
+@@
+
+without_and = without_and + 1
+
+@script:python@
+@@
+
+choose_without_and = False
+#if (with_and * 25 < without_and):
+#  choose_without_and = True
+if (with_and = 1 and without_and > 9):
+  choose_without_and = True
+
+choose_with_and = False
+#if (without_and * 25 < with_and):
+#  choose_with_and = True
+if (without_and = 1 and with_and > 9):
+  choose_with_and = True
+
+@script:python@
+p << addr1.pa;
+f << r.f;
+@@
+
+if (choose_with_and or not choose_without_and):
+  cocci.include_match(False)
+
+@script:python@
+p << noaddr1.pn;
+f << r.f;
+@@
+
+if (choose_without_and or not choose_with_and):
+  cocci.include_match(False)
+
+@@
+identifier f;
+position addr1.pa;
+position noaddr1.pn;
+@@
+
+(
+- &f@pa
++ f
+|
+- f@pn
++ &f
+)
