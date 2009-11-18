@@ -1,36 +1,51 @@
-From: Meenakshi Khorana <khurana.meenakshi@gmail.com>
-Date: Wed, 18 Nov 2009 11:31:34 +0000
-Subject: Re: Patch for fixing compilation warning
-Message-Id: <9e8c6460911180319i6600f8fbp125a011e05b2653c@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 18 Nov 2009 18:23:34 +0000
+Subject: [PATCH 9/16] drivers/net/typhoon.c: remove exceptional & on function
+Message-Id: <Pine.LNX.4.64.0911181923180.20943@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9e8c6460911170332j1e1704bbtdbd681ab78ffc6ba@mail.gmail.com>
-In-Reply-To: <9e8c6460911170332j1e1704bbtdbd681ab78ffc6ba@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Dillow <dave@thedillows.org>, netdev@vger.kernel.org, arnd@arndb.de, joe@perches.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks for the feedback/suggestions. I ll take care of hereby
-mentioned suggestions in future.
+From: Julia Lawall <julia@diku.dk>
 
-I ll modify the patch and re-send the same as per the standard format.
+In this file, function names are otherwise used as pointers without &.
 
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-On Wed, Nov 18, 2009 at 6:48 AM, Tulio Magno Quites Machado Filho
-<tuliom@quites.com.br> wrote:
-> On Tuesday 17 November 2009 14:14:13 Randy Dunlap wrote:
->> gmail converted tabs to spaces in the -+ lines above, so the patch
->> would not apply cleanly if this source file were still in use.
->>
->> gmail is known for doing this.  Please see
->> Documentation/email-clients.txt in the kernel source tree for help.
->
-> I also recommend to try 'git format-patch' and 'git send-email'. These tools
-> will do everything for you.
->
-> More information about submitting patches:
-> http://linux.yyz.us/patch-format.html
->
-> --
-> Tulio Magno
->
+// <smpl>
+@r@
+identifier f;
+@@
+
+f(...) { ... }
+
+@@
+identifier r.f;
+@@
+
+- &f
++ f
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/typhoon.c               |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/typhoon.c b/drivers/net/typhoon.c
+index 5921f5b..079a970 100644
+--- a/drivers/net/typhoon.c
++++ b/drivers/net/typhoon.c
+@@ -2151,7 +2151,7 @@ typhoon_open(struct net_device *dev)
+ 		goto out_sleep;
+ 	}
+ 
+-	err = request_irq(dev->irq, &typhoon_interrupt, IRQF_SHARED,
++	err = request_irq(dev->irq, typhoon_interrupt, IRQF_SHARED,
+ 				dev->name, dev);
+ 	if(err < 0)
+ 		goto out_sleep;
