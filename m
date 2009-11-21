@@ -1,18 +1,19 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 21 Nov 2009 11:51:02 +0000
-Subject: [PATCH 4/8] drivers/edac: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0911211250370.23681@ask.diku.dk>
+Date: Sat, 21 Nov 2009 11:49:41 +0000
+Subject: [PATCH 1/8] drivers/media/video: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0911211249090.23681@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dougthompson@xmission.com, bluesmoke-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
 Error handling code following a kzalloc should free the allocated data.
+Similarly for usb-alloc urb.
 
-The semantic match that finds this problem is as follows:
+The semantic match that finds the first problem is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
@@ -54,22 +55,39 @@ print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/edac/i7core_edac.c          |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+ drivers/media/video/hdpvr/hdpvr-video.c        |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
-index e944b63..4de5a18 100644
---- a/drivers/edac/i7core_edac.c
-+++ b/drivers/edac/i7core_edac.c
-@@ -1215,8 +1215,10 @@ int i7core_get_onedevice(struct pci_dev **prev, int devno,
- 			return -ENOMEM;
- 		i7core_dev->pdev = kzalloc(sizeof(*i7core_dev->pdev) * n_devs,
- 					   GFP_KERNEL);
--		if (!i7core_dev->pdev)
-+		if (!i7core_dev->pdev) {
-+			kfree(i7core_dev);
- 			return -ENOMEM;
-+		}
- 		i7core_dev->socket = socket;
- 		i7core_dev->n_devs = n_devs;
- 		list_add_tail(&i7core_dev->list, &i7core_edac_list);
+diff --git a/drivers/media/video/hdpvr/hdpvr-video.c b/drivers/media/video/hdpvr/hdpvr-video.c
+index 2eb9dc2..b5439ca 100644
+--- a/drivers/media/video/hdpvr/hdpvr-video.c
++++ b/drivers/media/video/hdpvr/hdpvr-video.c
+@@ -139,7 +139,7 @@ int hdpvr_alloc_buffers(struct hdpvr_device *dev, uint count)
+ 		urb = usb_alloc_urb(0, GFP_KERNEL);
+ 		if (!urb) {
+ 			v4l2_err(&dev->v4l2_dev, "cannot allocate urb\n");
+-			goto exit;
++			goto exit_urb;
+ 		}
+ 		buf->urb = urb;
+ 
+@@ -148,7 +148,7 @@ int hdpvr_alloc_buffers(struct hdpvr_device *dev, uint count)
+ 		if (!mem) {
+ 			v4l2_err(&dev->v4l2_dev,
+ 				 "cannot allocate usb transfer buffer\n");
+-			goto exit;
++			goto exit_urb_buffer;
+ 		}
+ 
+ 		usb_fill_bulk_urb(buf->urb, dev->udev,
+@@ -161,6 +161,10 @@ int hdpvr_alloc_buffers(struct hdpvr_device *dev, uint count)
+ 		list_add_tail(&buf->buff_list, &dev->free_buff_list);
+ 	}
+ 	return 0;
++exit_urb_buffer:
++	usb_free_urb(urb);
++exit_urb:
++	kfree(buf);
+ exit:
+ 	hdpvr_free_buffers(dev);
+ 	return retval;
