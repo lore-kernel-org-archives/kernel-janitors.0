@@ -1,80 +1,70 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 21 Nov 2009 11:52:44 +0000
-Subject: [PATCH 7/8] drivers/dma: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0911211252180.23681@ask.diku.dk>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Sat, 21 Nov 2009 21:21:12 +0000
+Subject: Re: [PATCH 7/8] drivers/dma: introduce missing kfree
+Message-Id: <e9c3a7c20911211321x4f87f616ya6bf7561ff5748f@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0911211252180.23681@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0911211252180.23681@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: maciej.sosnowski@intel.com, Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Julia Lawall <julia@diku.dk>
+Cc: maciej.sosnowski@intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
 
-From: Julia Lawall <julia@diku.dk>
+On Sat, Nov 21, 2009 at 4:52 AM, Julia Lawall <julia@diku.dk> wrote:
+> From: Julia Lawall <julia@diku.dk>
+>
+> Error handling code following a kzalloc should free the allocated data.
+>
 
-Error handling code following a kzalloc should free the allocated data.
+Yes, but there is another buglet here:
 
-The semantic match that finds this problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+> =A0 =A0 =A0 =A0/* get platform data */
+> =A0 =A0 =A0 =A0if (!pdev->dev.platform_data)
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto shdev_err;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto platform_err;
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
+"err" is still zero at this point so the probe does not fail.
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- drivers/dma/shdma.c                 |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+How about the following instead?
 
 diff --git a/drivers/dma/shdma.c b/drivers/dma/shdma.c
-index b3b065c..0cd0d58 100644
+index b3b065c..034ecf0 100644
 --- a/drivers/dma/shdma.c
 +++ b/drivers/dma/shdma.c
-@@ -649,7 +649,7 @@ static int __init sh_dmae_probe(struct platform_device *pdev)
- 
- 	/* get platform data */
- 	if (!pdev->dev.platform_data)
--		goto shdev_err;
-+		goto platform_err;
- 
- 	/* platform data */
- 	memcpy(&shdev->pdata, pdev->dev.platform_data,
-@@ -720,6 +720,7 @@ eirq_err:
- 		free_irq(eirq[ecnt], shdev);
- 
+@@ -640,17 +640,16 @@ static int __init sh_dmae_probe(struct
+platform_device *pdev)
+ #endif
+        struct sh_dmae_device *shdev;
+
++       /* get platform data */
++       if (!pdev->dev.platform_data)
++               return -ENODEV;
++
+        shdev =3D kzalloc(sizeof(struct sh_dmae_device), GFP_KERNEL);
+        if (!shdev) {
+                dev_err(&pdev->dev, "No enough memory\n");
+-               err =3D -ENOMEM;
+-               goto shdev_err;
++               return -ENOMEM;
+        }
+
+-       /* get platform data */
+-       if (!pdev->dev.platform_data)
+-               goto shdev_err;
+-
+        /* platform data */
+        memcpy(&shdev->pdata, pdev->dev.platform_data,
+                        sizeof(struct sh_dmae_pdata));
+@@ -722,7 +721,6 @@ eirq_err:
  rst_err:
-+platform_err:
- 	kfree(shdev);
- 
- shdev_err:
+        kfree(shdev);
+
+-shdev_err:
+        return err;
+ }
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
