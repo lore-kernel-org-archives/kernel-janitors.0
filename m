@@ -1,58 +1,74 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 17 Oct 2009 06:34:39 +0000
-Subject: [PATCH 5/14] drivers/acpi: Move dereference after NULL test
-Message-Id: <Pine.LNX.4.64.0910170834200.9213@ask.diku.dk>
+Date: Sat, 21 Nov 2009 11:50:34 +0000
+Subject: [PATCH 3/8] drivers/pcmcia: remove unnecessary kzalloc
+Message-Id: <Pine.LNX.4.64.0911211250090.23681@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If the NULL test on pr is needed, then the dereference should be after the
-NULL test.
+The result of calling kzalloc is never used or freed.
 
-A simplified version of the semantic match that detects this problem is as
-follows (http://coccinelle.lip6.fr/):
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@match exists@
-expression x, E;
-identifier fld;
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
 @@
 
-* x->fld
-  ... when != \(x = E\|&x\)
-* x = NULL
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
- drivers/acpi/processor_throttling.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/pcmcia/sa1111_generic.c     |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 4c6c14c..1c5d7a8 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -1133,15 +1133,15 @@ int acpi_processor_get_throttling_info(struct acpi_processor *pr)
- 	int result = 0;
- 	struct acpi_processor_throttling *pthrottling;
+diff --git a/drivers/pcmcia/sa1111_generic.c b/drivers/pcmcia/sa1111_generic.c
+index deb5036..de6bc33 100644
+--- a/drivers/pcmcia/sa1111_generic.c
++++ b/drivers/pcmcia/sa1111_generic.c
+@@ -127,10 +127,6 @@ int sa1111_pcmcia_add(struct sa1111_dev *dev, struct pcmcia_low_level *ops,
+ 	ops->socket_state = sa1111_pcmcia_socket_state;
+ 	ops->socket_suspend = sa1111_pcmcia_socket_suspend;
  
-+	if (!pr)
-+		return -EINVAL;
-+
- 	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
- 			  "pblk_address[0x%08x] duty_offset[%d] duty_width[%d]\n",
- 			  pr->throttling.address,
- 			  pr->throttling.duty_offset,
- 			  pr->throttling.duty_width));
- 
--	if (!pr)
--		return -EINVAL;
+-	s = kzalloc(sizeof(*s) * ops->nr, GFP_KERNEL);
+-	if (!s)
+-		return -ENODEV;
 -
- 	/*
- 	 * Evaluate _PTC, _TSS and _TPC
- 	 * They must all be present or none of them can be used.
+ 	for (i = 0; i < ops->nr; i++) {
+ 		s = kzalloc(sizeof(*s), GFP_KERNEL);
+ 		if (!s)
