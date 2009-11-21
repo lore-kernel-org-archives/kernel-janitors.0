@@ -1,38 +1,75 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 08 Nov 2009 08:23:07 +0000
-Subject: [PATCH] drivers/net/wireless: correct check on CCS_START_NETWORK
-Message-Id: <Pine.LNX.4.64.0911080922360.2465@ask.diku.dk>
+Date: Sat, 21 Nov 2009 11:51:02 +0000
+Subject: [PATCH 4/8] drivers/edac: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0911211250370.23681@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Corey Thomas <coreythomas@charter.net>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dougthompson@xmission.com, bluesmoke-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-CCS_START_NETWORK is declared in drivers/net/wireless/rayctl.h with the
-comment Values for cmd.  status is previously compared to
-CCS_COMMAND_COMPLETE, which is declared in the same file with the comment
-Values for buffer_status.  Finally, it is possible at this point that cmd
-is CCS_START_NETWORK, because it is compared to that value in an enclosing
-switch that has CCS_START_NETWORK as one of two case labels around this code.
+Error handling code following a kzalloc should free the allocated data.
+
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
- drivers/net/wireless/ray_cs.c       |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/edac/i7core_edac.c          |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
-index 1c88c2e..5ee9d2a 100644
---- a/drivers/net/wireless/ray_cs.c
-+++ b/drivers/net/wireless/ray_cs.c
-@@ -2074,7 +2074,7 @@ static irqreturn_t ray_interrupt(int irq, void *dev_id)
- 				del_timer(&local->timer);
- 				local->timer.expires = jiffies + HZ * 5;
- 				local->timer.data = (long)local;
--				if (status = CCS_START_NETWORK) {
-+				if (cmd = CCS_START_NETWORK) {
- 					DEBUG(0,
- 					      "ray_cs interrupt network \"%s\" start failed\n",
- 					      local->sparm.b4.a_current_ess_id);
+diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
+index e944b63..4de5a18 100644
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -1215,8 +1215,10 @@ int i7core_get_onedevice(struct pci_dev **prev, int devno,
+ 			return -ENOMEM;
+ 		i7core_dev->pdev = kzalloc(sizeof(*i7core_dev->pdev) * n_devs,
+ 					   GFP_KERNEL);
+-		if (!i7core_dev->pdev)
++		if (!i7core_dev->pdev) {
++			kfree(i7core_dev);
+ 			return -ENOMEM;
++		}
+ 		i7core_dev->socket = socket;
+ 		i7core_dev->n_devs = n_devs;
+ 		list_add_tail(&i7core_dev->list, &i7core_edac_list);
