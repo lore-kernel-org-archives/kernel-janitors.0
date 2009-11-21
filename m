@@ -1,28 +1,76 @@
-From: "Banks S Tyree" <card9bronchus@ag-world.com>
-Date: Mon, 09 Nov 2009 06:21:09 +0000
-Subject: Re: doctor data
-Message-Id: <20091109062109.947CB9AEF2A@star-price.fr>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 21 Nov 2009 11:53:08 +0000
+Subject: [PATCH 8/8] fs/ceph: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0911211252440.23681@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: sage@newdream.net, ceph-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
+Error handling code following a kmalloc should free the allocated data.
 
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Recession proof your business with more clients now.
-Use our lists to get a successful campaign going.  
-We have lists of the Medical Community: Doctors, Dentists, Chiropractors, Hospitals etc.. 
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
-Drop me a line here for more info & samples: Aida@expertdatasystems.co.cc
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
 
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
 
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ fs/ceph/xattr.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
-
-
-
-
-send an email to rembox@expertdatasystems.co.cc to be excluded from future mailing.
-
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index 1a48a55..04769a3 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -655,8 +655,10 @@ static int ceph_sync_setxattr(struct dentry *dentry, const char *name,
+ 	/* do request */
+ 	req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_SETXATTR,
+ 				       USE_AUTH_MDS);
+-	if (IS_ERR(req))
+-		return PTR_ERR(req);
++	if (IS_ERR(req)) {
++		err = PTR_ERR(req);
++		goto out;
++	}
+ 	req->r_inode = igrab(inode);
+ 	req->r_inode_drop = CEPH_CAP_XATTR_SHARED;
+ 	req->r_num_caps = 1;
