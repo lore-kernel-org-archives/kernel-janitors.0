@@ -1,64 +1,80 @@
-From: Scott Feldman <scofeldm@cisco.com>
-Date: Mon, 16 Nov 2009 23:46:25 +0000
-Subject: Re: [PATCH 1/4] drivers/net/enic: decrement sizeof size in strncmp
-Message-Id: <C7272451.17157%scofeldm@cisco.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 21 Nov 2009 11:52:44 +0000
+Subject: [PATCH 7/8] drivers/dma: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0911211252180.23681@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.0911120848100.16627@ask.diku.dk>
-References: <Pine.LNX.4.64.0911120848100.16627@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0911120848100.16627@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, Joe Eykholt <jeykholt@cisco.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: maciej.sosnowski@intel.com, Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks Julia/Jorg.  We'll pick up change in next enic patch series.
+From: Julia Lawall <julia@diku.dk>
 
--scott
+Error handling code following a kzalloc should free the allocated data.
 
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-On 11/11/09 11:48 PM, "Julia Lawall" <julia@diku.dk> wrote:
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> As observed by Joe Perches, sizeof of a constant string includes the
-> trailing 0.  If what is wanted is to check the initial characters of
-> another string, this trailing 0 should not be taken into account.  If an
-> exact match is wanted, strcmp should be used instead.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression foo;
-> constant char *abc;
-> @@
-> 
-> strncmp(foo, abc,
-> - sizeof(abc)
-> + sizeof(abc)-1
->  )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/net/enic/vnic_dev.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff -u -p a/drivers/net/enic/vnic_dev.c b/drivers/net/enic/vnic_dev.c
-> --- a/drivers/net/enic/vnic_dev.c
-> +++ b/drivers/net/enic/vnic_dev.c
-> @@ -358,9 +358,9 @@ int vnic_dev_hw_version(struct vnic_dev
-> if (err)
-> return err;
->  
-> - if (strncmp(fw_info->hw_version, "A1", sizeof("A1")) = 0)
-> + if (strncmp(fw_info->hw_version, "A1", sizeof("A1") - 1) = 0)
-> *hw_ver = VNIC_DEV_HW_VER_A1;
-> - else if (strncmp(fw_info->hw_version, "A2", sizeof("A2")) = 0)
-> + else if (strncmp(fw_info->hw_version, "A2", sizeof("A2") - 1) = 0)
-> *hw_ver = VNIC_DEV_HW_VER_A2;
-> else
-> *hw_ver = VNIC_DEV_HW_VER_UNKNOWN;
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
 
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/dma/shdma.c                 |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/dma/shdma.c b/drivers/dma/shdma.c
+index b3b065c..0cd0d58 100644
+--- a/drivers/dma/shdma.c
++++ b/drivers/dma/shdma.c
+@@ -649,7 +649,7 @@ static int __init sh_dmae_probe(struct platform_device *pdev)
+ 
+ 	/* get platform data */
+ 	if (!pdev->dev.platform_data)
+-		goto shdev_err;
++		goto platform_err;
+ 
+ 	/* platform data */
+ 	memcpy(&shdev->pdata, pdev->dev.platform_data,
+@@ -720,6 +720,7 @@ eirq_err:
+ 		free_irq(eirq[ecnt], shdev);
+ 
+ rst_err:
++platform_err:
+ 	kfree(shdev);
+ 
+ shdev_err:
