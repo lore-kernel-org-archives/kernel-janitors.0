@@ -1,52 +1,50 @@
-From: Anders Larsen <al@alarsen.net>
-Date: Thu, 12 Nov 2009 22:08:36 +0000
-Subject: Re: [PATCH 4/4] fs/qnx4: decrement sizeof size in strncmp
-Message-Id: <20091112220836.GA3893@alarsen.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 21 Nov 2009 21:18:44 +0000
+Subject: [PATCH] drivers/regulator: use PTR_ERR to get error code
+Message-Id: <Pine.LNX.4.64.0911212218210.28848@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0911120849260.16627@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0911120849260.16627@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, trivial@kernel.org
+To: Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-As an identical match is wanted in this case, strcmp can be used instead.
+IS_ERR returns only 1 or 0.  The callsite of setup_regulators expects a
+negative integer in an error case.  Thus, PTR_ERR has to be used to extract
+it.
 
-The semantic match that lead to detecting this problem is as follows:
+The semantic match that finds this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression foo;
-constant char *abc;
+expression E,E1;
 @@
 
-*strncmp(foo, abc, sizeof(abc))
+*E = IS_ERR(...)
+ ... when != E = E1
+*return E;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-Signed-off-by: Anders Larsen <al@alarsen.net>
 
 ---
- fs/qnx4/inode.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ drivers/regulator/lp3971.c          |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
-index 449f5a6..150f4af 100644
---- a/fs/qnx4/inode.c
-+++ b/fs/qnx4/inode.c
-@@ -221,7 +221,8 @@ static const char *qnx4_checkroot(struct super_block *sb)
- 				rootdir = (struct qnx4_inode_entry *) (bh->b_data + i * QNX4_DIR_ENTRY_SIZE);
- 				if (rootdir->di_fname != NULL) {
- 					QNX4DEBUG((KERN_INFO "rootdir entry found : [%s]\n", rootdir->di_fname));
--					if (!strncmp(rootdir->di_fname, QNX4_BMNAME, sizeof QNX4_BMNAME)) {
-+					if (!strcmp(rootdir->di_fname,
-+						    QNX4_BMNAME)) {
- 						found = 1;
- 						qnx4_sb(sb)->BitMap = kmalloc( sizeof( struct qnx4_inode_entry ), GFP_KERNEL );
- 						if (!qnx4_sb(sb)->BitMap) {
-
-
+diff --git a/drivers/regulator/lp3971.c b/drivers/regulator/lp3971.c
+index 7803a32..76d08c2 100644
+--- a/drivers/regulator/lp3971.c
++++ b/drivers/regulator/lp3971.c
+@@ -446,8 +446,8 @@ static int setup_regulators(struct lp3971 *lp3971,
+ 		lp3971->rdev[i] = regulator_register(&regulators[id],
+ 			lp3971->dev, pdata->regulators[i].initdata, lp3971);
+ 
+-		err = IS_ERR(lp3971->rdev[i]);
+-		if (err) {
++		if (IS_ERR(lp3971->rdev[i])) {
++			err = PTR_ERR(lp3971->rdev[i]);
+ 			dev_err(lp3971->dev, "regulator init failed: %d\n",
+ 				err);
+ 			goto error;
