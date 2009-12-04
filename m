@@ -1,31 +1,34 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 11 Dec 2009 15:09:19 +0000
-Subject: Re: [PATCH 3/12] crypto: Correct size given to memset
-Message-Id: <20091211150919.GB736@gondor.apana.org.au>
+From: Adam Buchbinder <adam.buchbinder@gmail.com>
+Date: Fri, 04 Dec 2009 20:24:22 +0000
+Subject: [PATCH] Fix misspelling of "journaled".
+Message-Id: <1259958262-24386-1-git-send-email-adam.buchbinder@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912092022500.1870@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912092022500.1870@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Julia Lawall <julia@diku.dk>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-T24gV2VkLCBEZWMgMDksIDIwMDkgYXQgMDg6MjM6MDlQTSArMDEwMCwgSnVsaWEgTGF3YWxsIHdy
-b3RlOgo+IEZyb206IEp1bGlhIExhd2FsbCA8anVsaWFAZGlrdS5kaz4KPiAKPiBNZW1zZXQgc2hv
-dWxkIGJlIGdpdmVuIHRoZSBzaXplIG9mIHRoZSBzdHJ1Y3R1cmUsIG5vdCB0aGUgc2l6ZSBvZiB0
-aGUgcG9pbnRlci4KPiAKPiBUaGUgc2VtYW50aWMgcGF0Y2ggdGhhdCBtYWtlcyB0aGlzIGNoYW5n
-ZSBpcyBhcyBmb2xsb3dzOgo+IChodHRwOi8vY29jY2luZWxsZS5saXA2LmZyLykKPiAKPiAvLyA8
-c21wbD4KPiBAQAo+IHR5cGUgVDsKPiBUICp4Owo+IGV4cHJlc3Npb24gRTsKPiBAQAo+IAo+IG1l
-bXNldCh4LCBFLCBzaXplb2YoCj4gKyAqCj4gIHgpKQo+IC8vIDwvc21wbD4KPiAKPiBTaWduZWQt
-b2ZmLWJ5OiBKdWxpYSBMYXdhbGwgPGp1bGlhQGRpa3UuZGs+CgpMdWNraWx5IHRoZXNlIGZ1bmN0
-aW9ucyBhcmVuJ3QgdXNlZCBieSBhbnl0aGluZy4gIFBlcmhhcHMgd2UKc2hvdWxkIGdldCByaWQg
-b2YgdGhlbSBhbHRvZ2V0aGVyLgoKQW55d2F5LCBJJ3ZlIGFwcGxpZWQgeW91ciBwYXRjaC4gIFRo
-YW5rcyEKLS0gClZpc2l0IE9wZW5zd2FuIGF0IGh0dHA6Ly93d3cub3BlbnN3YW4ub3JnLwpFbWFp
-bDogSGVyYmVydCBYdSB+e1BtVj5ISX59IDxoZXJiZXJ0QGdvbmRvci5hcGFuYS5vcmcuYXU+Ckhv
-bWUgUGFnZTogaHR0cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvClBHUCBLZXk6IGh0
-dHA6Ly9nb25kb3IuYXBhbmEub3JnLmF1L35oZXJiZXJ0L3B1YmtleS50eHQKLS0KVG8gdW5zdWJz
-Y3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1q
-YW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5l
-bC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpv
-cmRvbW8taW5mby5odG1s
+"Journaled" is misspelled "journlaled" in an output string; this patch
+fixed it. No changes in functionality.
+
+Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
+---
+ fs/reiserfs/fix_node.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
+index 5e5a4e6..db3fd7d 100644
+--- a/fs/reiserfs/fix_node.c
++++ b/fs/reiserfs/fix_node.c
+@@ -834,7 +834,7 @@ static int get_empty_nodes(struct tree_balance *tb, int h)
+ 		RFALSE(buffer_dirty(new_bh) ||
+ 		       buffer_journaled(new_bh) ||
+ 		       buffer_journal_dirty(new_bh),
+-		       "PAP-8140: journlaled or dirty buffer %b for the new block",
++		       "PAP-8140: journaled or dirty buffer %b for the new block",
+ 		       new_bh);
+ 
+ 		/* Put empty buffers into the array. */
+-- 
+1.6.3.3
+
