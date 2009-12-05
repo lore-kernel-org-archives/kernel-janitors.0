@@ -1,25 +1,36 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 18 Dec 2009 14:21:04 +0000
-Subject: Re: [PATCH 10/10] Fix misspellings of "separate" in comments.
-Message-Id: <alpine.LNX.2.00.0912181520300.3755@pobox.suse.cz>
+From: Radu Voicilas <radu@picohost.net>
+Date: Sat, 05 Dec 2009 02:19:29 +0000
+Subject: Coding style questions
+Message-Id: <4B19C331.3080805@picohost.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1260567342-8327-11-git-send-email-adam.buchbinder@gmail.com>
-In-Reply-To: <1260567342-8327-11-git-send-email-adam.buchbinder@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 11 Dec 2009, Adam Buchbinder wrote:
+1. When you have a function prototype with a comment following it (which obviously it's a bad thing), like this one
 
-> Some comments misspell "separate"; this fixes them. No code changes.
+u32 eprom_read(struct net_device *dev,u32 addr); //reads a 16 bits word
 
-Patch doesn't apply on 2.6.33-rc1 any more. Could you please remove the 
-staging bits (and send those to Greg), respin against current vanilla, and 
-resend?
+and want to fix it, how would one do it:
+
+/* Read a 16 bits word. */
+u32 eprom_read(struct net_device *dev, u32 addr);
+
+or the comment should go into the implementation file ?
+
+2. What's the kernel code style about header guards ? As far as I've seen, it's usual to do:
+
+#ifndef HEADER_H
+#define HEADER_H
+
+and not:
+
+#infdef _HEADER_H
+#define _HEADER_H
+
+or other variations. Does it even matter?
+
 
 Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+Radu.
