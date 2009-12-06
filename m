@@ -1,56 +1,46 @@
-From: peterhuewe@gmx.de
-Date: Tue, 22 Dec 2009 08:29:24 +0000
-Subject: [PATCH 2/2] ide: add __init/__exit macros to drivers/ide/scc_pata.c
-Message-Id: <1261470564-23754-2-git-send-email-peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 06 Dec 2009 09:16:30 +0000
+Subject: [PATCH 4/5] tools/perf/util: correct size computation
+Message-Id: <Pine.LNX.4.64.0912061016120.20858@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1261470564-23754-1-git-send-email-peterhuewe@gmx.de>
-In-Reply-To: <1261470564-23754-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Sergei Shtylyov <sshtylyov@ru.mvista.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
 
-Trivial patch which adds the __init/__exit macros to the module_init/
-module_exit functions of
+The size argument to zalloc should be the size of desired structure,
+not the pointer to it.
 
-drivers/ide/scc_pata.c
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Please have a look at the small patch and either pull it through
-your tree, or please ack' it so Jiri can pull it through the trivial
-tree.
+// <smpl>
+@expression@
+expression *x;
+@@
 
-Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
-but also present in linus tree.
+x  <+...
+-sizeof(x)
++sizeof(*x)
+...+>// </smpl>
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/ide/scc_pata.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/parse-events.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ide/scc_pata.c b/drivers/ide/scc_pata.c
-index 1104bb3..58c9c91 100644
---- a/drivers/ide/scc_pata.c
-+++ b/drivers/ide/scc_pata.c
-@@ -872,14 +872,14 @@ static struct pci_driver scc_pci_driver = {
- 	.remove = __devexit_p(scc_remove),
- };
- 
--static int scc_ide_init(void)
-+static int __init scc_ide_init(void)
- {
- 	return ide_pci_register_driver(&scc_pci_driver);
- }
- 
- module_init(scc_ide_init);
- /* -- No exit code?
--static void scc_ide_exit(void)
-+static void __exit scc_ide_exit(void)
- {
- 	ide_pci_unregister_driver(&scc_pci_driver);
- }
--- 
-1.6.4.4
-
+diff -u -p a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -197,7 +197,7 @@ struct tracepoint_path *tracepoint_id_to
+ 			if (id = config) {
+ 				closedir(evt_dir);
+ 				closedir(sys_dir);
+-				path = zalloc(sizeof(path));
++				path = zalloc(sizeof(*path));
+ 				path->system = malloc(MAX_EVENT_LENGTH);
+ 				if (!path->system) {
+ 					free(path);
