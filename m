@@ -1,58 +1,48 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Dec 2009 21:00:07 +0000
-Subject: [PATCH] drivers/media/dvb: Move a dereference below a NULL test
-Message-Id: <Pine.LNX.4.64.0912222159480.28669@ask.diku.dk>
+Date: Sun, 06 Dec 2009 09:15:32 +0000
+Subject: [PATCH 1/5] arch/xtensa/platforms/iss: correct size computation
+Message-Id: <Pine.LNX.4.64.0912061015030.20858@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If the NULL test is necessary, then the dereference should be moved below
-the NULL test.
+The size argument to alloc_bootmem should be the size of desired structure,
+not the pointer to it.
 
 The semantic patch that makes this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
+@expression@
+expression *x;
 @@
 
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
-// </smpl>
+x  <+...
+-sizeof(x)
++sizeof(*x)
+...+>// </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/media/dvb/dvb-usb/dw2102.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/xtensa/platforms/iss/network.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-diff -u -p a/drivers/media/dvb/dvb-usb/dw2102.c b/drivers/media/dvb/dvb-usb/dw2102.c
---- a/drivers/media/dvb/dvb-usb/dw2102.c
-+++ b/drivers/media/dvb/dvb-usb/dw2102.c
-@@ -470,12 +470,13 @@ static int s6x0_i2c_transfer(struct i2c_
- 								int num)
- {
- 	struct dvb_usb_device *d = i2c_get_adapdata(adap);
--	struct usb_device *udev = d->udev;
-+	struct usb_device *udev;
- 	int ret = 0;
- 	int len, i, j;
+diff --git a/arch/xtensa/platforms/iss/network.c b/arch/xtensa/platforms/iss/network.c
+index 2f0b86b..54a0868 100644
+--- a/arch/xtensa/platforms/iss/network.c
++++ b/arch/xtensa/platforms/iss/network.c
+@@ -780,7 +780,8 @@ static int iss_net_setup(char *str)
+ 		return 1;
+ 	}
  
- 	if (!d)
- 		return -ENODEV;
-+	udev = d->udev;
- 	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
- 		return -EAGAIN;
- 
+-	if ((new = alloc_bootmem(sizeof new)) = NULL) {
++	new = alloc_bootmem(sizeof(*new));
++	if (new = NULL) {
+ 		printk("Alloc_bootmem failed\n");
+ 		return 1;
+ 	}
