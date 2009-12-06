@@ -1,22 +1,48 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Sat, 19 Dec 2009 21:34:50 +0000
-Subject: Re: [PATCH 1/2] Fix misspelling of "successful" and variants in
-Message-Id: <alpine.LNX.2.00.0912192234390.3755@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 06 Dec 2009 09:16:11 +0000
+Subject: [PATCH 3/5] drivers/infiniband: correct size computation
+Message-Id: <Pine.LNX.4.64.0912061015540.20858@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1261168842-9996-1-git-send-email-adam.buchbinder@gmail.com>
-In-Reply-To: <1261168842-9996-1-git-send-email-adam.buchbinder@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Faisal Latif <faisal.latif@intel.com>, Chien Tung <chien.tin.tung@intel.com>, Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 18 Dec 2009, Adam Buchbinder wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Some comments misspell "successful" or variants of the word; this
-> fixes them. No code changes.
+The size argument to ioremap_nocache should be the size of desired
+information, not the pointer to it.
 
-Applied, thanks Adam.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+// <smpl>
+@expression@
+expression *x;
+@@
+
+x  <+...
+-sizeof(x)
++sizeof(*x)
+...+>// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/infiniband/hw/nes/nes.c     |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/infiniband/hw/nes/nes.c b/drivers/infiniband/hw/nes/nes.c
+index cbde0cf..b8c5372 100644
+--- a/drivers/infiniband/hw/nes/nes.c
++++ b/drivers/infiniband/hw/nes/nes.c
+@@ -521,7 +521,8 @@ static int __devinit nes_probe(struct pci_dev *pcidev, const struct pci_device_i
+ 	spin_lock_init(&nesdev->indexed_regs_lock);
+ 
+ 	/* Remap the PCI registers in adapter BAR0 to kernel VA space */
+-	mmio_regs = ioremap_nocache(pci_resource_start(pcidev, BAR_0), sizeof(mmio_regs));
++	mmio_regs = ioremap_nocache(pci_resource_start(pcidev, BAR_0),
++				    sizeof(*mmio_regs));
+ 	if (mmio_regs = NULL) {
+ 		printk(KERN_ERR PFX "Unable to remap BAR0\n");
+ 		ret = -EIO;
