@@ -1,7 +1,7 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 07 Dec 2009 16:42:07 +0000
+Date: Mon, 07 Dec 2009 19:57:06 +0000
 Subject: RE: [PATCH 3/5] drivers/infiniband: correct size computation
-Message-Id: <Pine.LNX.4.64.0912071741450.15109@ask.diku.dk>
+Message-Id: <Pine.LNX.4.64.0912072056160.1202@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0912061015540.20858@ask.diku.dk>
  <603F8A3875DCE940BA37B49D0A6EA0AE3CE36BF4@azsmsx501.amr.corp.intel.com>
@@ -14,32 +14,40 @@ Content-Transfer-Encoding: 7bit
 To: "Tung, Chien Tin" <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Cc: "Latif, Faisal" <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-On Mon, 7 Dec 2009, Tung, Chien Tin wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> >> > 	/* Remap the PCI registers in adapter BAR0 to kernel VA space */
-> >> >-	mmio_regs = ioremap_nocache(pci_resource_start(pcidev, BAR_0), sizeof(mmio_regs));
-> >> >+	mmio_regs = ioremap_nocache(pci_resource_start(pcidev, BAR_0),
-> >> >+				    sizeof(*mmio_regs));
-> >> > 	if (mmio_regs = NULL) {
-> >> > 		printk(KERN_ERR PFX "Unable to remap BAR0\n");
-> >> > 		ret = -EIO;
-> >>
-> >> mmio_regs is initialized to NULL at the top of the function so
-> >> *mmio_regs wouldn't be a good idea.  Instead of sizeof(*mmio_regs) use
-> >> pci_resource_len(pcidev, BAR_0).  If you can recreate the patch with
-> >> this change I will ack it.
-> >
-> >When you say that it isn't a good idea, do you mean that the result is
-> >wrong, or that it looks odd?  I didn't think sizeof looked at the value,
-> >but only at the type?
-> 
-> 
-> I misspoke on the problem.  Mmio_regs is declared as a void pointer:
-> 
->         void __iomem *mmio_regs = NULL;
-> 
-> Thus pci_resource_len(pcidev, BAR_0) is the correct fix.
+The size argument to ioremap_nocache should be the size of desired
+information, not the pointer to it.
 
-OK, thanks for the clarification.  I will make another patch later today.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-julia
+// <smpl>
+@expression@
+expression *x;
+@@
+
+x  <+...
+*sizeof(x)
+...+>// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/infiniband/hw/nes/nes.c     |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/infiniband/hw/nes/nes.c b/drivers/infiniband/hw/nes/nes.c
+index cbde0cf..95db98f 100644
+--- a/drivers/infiniband/hw/nes/nes.c
++++ b/drivers/infiniband/hw/nes/nes.c
+@@ -521,7 +521,8 @@ static int __devinit nes_probe(struct pci_dev *pcidev, const struct pci_device_i
+ 	spin_lock_init(&nesdev->indexed_regs_lock);
+ 
+ 	/* Remap the PCI registers in adapter BAR0 to kernel VA space */
+-	mmio_regs = ioremap_nocache(pci_resource_start(pcidev, BAR_0), sizeof(mmio_regs));
++	mmio_regs = ioremap_nocache(pci_resource_start(pcidev, BAR_0),
++				    pci_resource_len(pcidev, BAR_0));
+ 	if (mmio_regs = NULL) {
+ 		printk(KERN_ERR PFX "Unable to remap BAR0\n");
+ 		ret = -EIO;
