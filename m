@@ -1,36 +1,68 @@
-From: christian pellegrin <chripell@gmail.com>
-Date: Tue, 29 Dec 2009 09:43:08 +0000
-Subject: Re: [PATCH 4/5] drivers/net/can: Correct NULL test
-Message-Id: <cabda6420912290143pfda331en80f8bd77b7816c1@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 09 Dec 2009 13:23:32 +0000
+Subject: [PATCH] drivers/usb/gadget: Use ERR_PTR/IS_ERR
+Message-Id: <Pine.LNX.4.64.0912091422350.27028@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912272227290.20548@ask.diku.dk>
-	 <4B38B786.9020609@hartkopp.net>
-In-Reply-To: <4B38B786.9020609@hartkopp.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: Julia Lawall <julia@diku.dk>, Urs Thuermann <urs.thuermann@volkswagen.de>, Oliver Hartkopp <oliver.hartkopp@volkswagen.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Dec 28, 2009 at 2:49 PM, Oliver Hartkopp <socketcan@hartkopp.net> wrote:
-> Julia Lawall wrote:
->> From: Julia Lawall <julia@diku.dk>
->
-> Thanks Julia!
->
-> I added Christian Pellegrin who is the author of this driver in CC.
->
-> An obvious copy/paste error :-)
->
+From: Julia Lawall <julia@diku.dk>
 
-yes, exactly that: copy & paste is among the sweetest evils out there.
-I'll try the semantic checker myself next time. Thanks!
+Use ERR_PTR and IS_ERR rather than mixing integers and pointers.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression *E;
+@@
 
--- 
-Christian Pellegrin, see http://www.evolware.org/chri/
-"Real Programmers don't play tennis, or any other sport which requires
-you to change clothes. Mountain climbing is OK, and Real Programmers
-wear their climbing boots to work in case a mountain should suddenly
-spring up in the middle of the computer room."
+* E < 0
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/gadget/f_audio.c        |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/gadget/f_audio.c b/drivers/usb/gadget/f_audio.c
+index c43c89f..0f2eee1 100644
+--- a/drivers/usb/gadget/f_audio.c
++++ b/drivers/usb/gadget/f_audio.c
+@@ -252,12 +252,12 @@ static struct f_audio_buf *f_audio_buffer_alloc(int buf_size)
+ 
+ 	copy_buf = kzalloc(sizeof *copy_buf, GFP_ATOMIC);
+ 	if (!copy_buf)
+-		return (struct f_audio_buf *)-ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	copy_buf->buf = kzalloc(buf_size, GFP_ATOMIC);
+ 	if (!copy_buf->buf) {
+ 		kfree(copy_buf);
+-		return (struct f_audio_buf *)-ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	return copy_buf;
+@@ -332,7 +332,7 @@ static int f_audio_out_ep_complete(struct usb_ep *ep, struct usb_request *req)
+ 		list_add_tail(&copy_buf->list, &audio->play_queue);
+ 		schedule_work(&audio->playback_work);
+ 		copy_buf = f_audio_buffer_alloc(audio_buf_size);
+-		if (copy_buf < 0)
++		if (IS_ERR(copy_buf))
+ 			return -ENOMEM;
+ 	}
+ 
+@@ -576,6 +576,8 @@ static int f_audio_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ 			usb_ep_enable(out_ep, audio->out_desc);
+ 			out_ep->driver_data = audio;
+ 			audio->copy_buf = f_audio_buffer_alloc(audio_buf_size);
++			if (IS_ERR(audio->copy_buf))
++				return -ENOMEM;
+ 
+ 			/*
+ 			 * allocate a bunch of read buffers
