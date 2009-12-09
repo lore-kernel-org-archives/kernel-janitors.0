@@ -1,53 +1,60 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 27 Dec 2009 21:27:11 +0000
-Subject: [PATCH 2/5] drivers/block: Correct NULL test
-Message-Id: <Pine.LNX.4.64.0912272226550.20548@ask.diku.dk>
+Date: Wed, 09 Dec 2009 19:24:48 +0000
+Subject: [PATCH 8/12] drivers/scsi: Correct size given to memset
+Message-Id: <Pine.LNX.4.64.0912092024300.1870@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Test the just-allocated value for NULL rather than some other value.
+Memset should be given the size of the structure, not the size of the pointer.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression x,y;
-statement S;
+type T;
+T *x;
+expression E;
 @@
 
-x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-(
-if ((x) = NULL) S
-|
-if (
--   y
-+   x
-       = NULL)
- S
-)
+memset(x, E, sizeof(
++ *
+ x))
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/block/drbd/drbd_receiver.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/fcoe/libfcoe.c              |    2 +-
+ drivers/scsi/mpt2sas/mpt2sas_transport.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3944,7 +3944,7 @@ static int drbd_do_auth(struct drbd_conf
+diff -u -p a/drivers/scsi/fcoe/libfcoe.c b/drivers/scsi/fcoe/libfcoe.c
+--- a/drivers/scsi/fcoe/libfcoe.c
++++ b/drivers/scsi/fcoe/libfcoe.c
+@@ -444,7 +444,7 @@ static int fcoe_ctlr_encaps(struct fcoe_
+ 	cap->encaps.fd_desc.fip_dlen = dlen / FIP_BPW;
+ 
+ 	mac = (struct fip_mac_desc *)skb_put(skb, sizeof(*mac));
+-	memset(mac, 0, sizeof(mac));
++	memset(mac, 0, sizeof(*mac));
+ 	mac->fd_desc.fip_dtype = FIP_DT_MAC;
+ 	mac->fd_desc.fip_dlen = sizeof(*mac) / FIP_BPW;
+ 	if (dtype != FIP_DT_FLOGI && dtype != FIP_DT_FDISC)
+diff -u -p a/drivers/scsi/mpt2sas/mpt2sas_transport.c b/drivers/scsi/mpt2sas/mpt2sas_transport.c
+--- a/drivers/scsi/mpt2sas/mpt2sas_transport.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_transport.c
+@@ -162,7 +162,7 @@ _transport_set_identify(struct MPT2SAS_A
+ 		return -EIO;
  	}
  
- 	right_response = kmalloc(resp_size, GFP_NOIO);
--	if (response = NULL) {
-+	if (right_response = NULL) {
- 		dev_err(DEV, "kmalloc of right_response failed\n");
- 		rv = 0;
- 		goto fail;
+-	memset(identify, 0, sizeof(identify));
++	memset(identify, 0, sizeof(*identify));
+ 	device_info = le32_to_cpu(sas_device_pg0.DeviceInfo);
+ 
+ 	/* sas_address */
