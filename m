@@ -1,44 +1,47 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 19 Dec 2009 07:17:44 +0000
-Subject: [PATCH 6/7] drivers/usb: Use kzalloc for allocating only one thing
-Message-Id: <Pine.LNX.4.64.0912190817280.30546@ask.diku.dk>
+Date: Wed, 09 Dec 2009 19:22:49 +0000
+Subject: [PATCH 2/12] arch/xtensa: Correct size given to memset
+Message-Id: <Pine.LNX.4.64.0912092022260.1870@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kzalloc rather than kcalloc(1,...)
+Memset should be given the size of the structure, not the size of the pointer.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
+type T;
+T *x;
+expression E;
 @@
 
-- kcalloc(1,
-+ kzalloc(
-          ...)
+memset(x, E, sizeof(
++ *
+ x))
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/usb/host/isp1362-hcd.c |    2 +-
+ arch/xtensa/kernel/process.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
---- a/drivers/usb/host/isp1362-hcd.c 2009-12-17 08:30:14.000000000 +0100
-+++ b/drivers/usb/host/isp1362-hcd.c 2009-12-19 07:52:56.000000000 +0100
-@@ -1257,7 +1257,7 @@ static int isp1362_urb_enqueue(struct us
+diff -u -p a/arch/xtensa/kernel/process.c b/arch/xtensa/kernel/process.c
+--- a/arch/xtensa/kernel/process.c
++++ b/arch/xtensa/kernel/process.c
+@@ -277,7 +277,7 @@ void xtensa_elf_core_copy_regs (xtensa_g
  
- 	/* avoid all allocations within spinlocks: request or endpoint */
- 	if (!hep->hcpriv) {
--		ep = kcalloc(1, sizeof *ep, mem_flags);
-+		ep = kzalloc(sizeof *ep, mem_flags);
- 		if (!ep)
- 			return -ENOMEM;
- 	}
+ 	/* Don't leak any random bits. */
+ 
+-	memset(elfregs, 0, sizeof (elfregs));
++	memset(elfregs, 0, sizeof(*elfregs));
+ 
+ 	/* Note:  PS.EXCM is not set while user task is running; its
+ 	 * being set in regs->ps is for exception handling convenience.
