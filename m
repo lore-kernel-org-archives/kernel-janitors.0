@@ -1,104 +1,60 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 29 Dec 2009 19:16:49 +0000
-Subject: [PATCH 5/5] net/ipv4 : Correct the size argument to kzalloc
-Message-Id: <Pine.LNX.4.64.0912292016230.4001@ask.diku.dk>
+Date: Wed, 09 Dec 2009 19:26:18 +0000
+Subject: [PATCH 12/12] tools/perf: Correct size given to memset
+Message-Id: <Pine.LNX.4.64.0912092026000.1870@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-obj has type struct snmp_object **, not struct snmp_object *.  But indeed
-it is not even clear why kmalloc is needed.  The memory is freed by the end
-of the function, so the local variable of pointer type should be sufficient.
+Memset should be given the size of the structure, not the size of the pointer.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@disable sizeof_type_expr@
+@@
 type T;
-T **x;
+T *x;
+expression E;
 @@
 
-  x   <+...sizeof(
-- T
-+ *x
-  )...+>
+memset(x, E, sizeof(
++ *
+ x))
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- net/ipv4/netfilter/nf_nat_snmp_basic.c         |   31 +++++++-------------
- 1 files changed, 11 insertions(+), 20 deletions(-)
+ tools/perf/util/probe-event.c       |    2 +-
+ tools/perf/util/trace-event-parse.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/ipv4/netfilter/nf_nat_snmp_basic.c b/net/ipv4/netfilter/nf_nat_snmp_basic.c
-index d9521f6..0b9c7ce 100644
---- a/net/ipv4/netfilter/nf_nat_snmp_basic.c
-+++ b/net/ipv4/netfilter/nf_nat_snmp_basic.c
-@@ -1038,7 +1038,7 @@ static int snmp_parse_mangle(unsigned char *msg,
- 	unsigned int cls, con, tag, vers, pdutype;
- 	struct asn1_ctx ctx;
- 	struct asn1_octstr comm;
--	struct snmp_object **obj;
-+	struct snmp_object *obj;
+diff -u -p a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -376,7 +376,7 @@ static void clear_probe_point(struct pro
+ 		free(pp->args);
+ 	for (i = 0; i < pp->found; i++)
+ 		free(pp->probes[i]);
+-	memset(pp, 0, sizeof(pp));
++	memset(pp, 0, sizeof(*pp));
+ }
  
- 	if (debug > 1)
- 		hex_dump(msg, len);
-@@ -1148,43 +1148,34 @@ static int snmp_parse_mangle(unsigned char *msg,
- 	if (cls != ASN1_UNI || con != ASN1_CON || tag != ASN1_SEQ)
- 		return 0;
+ /* List up current perf-probe events */
+diff -u -p a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
+--- a/tools/perf/util/trace-event-parse.c
++++ b/tools/perf/util/trace-event-parse.c
+@@ -1477,7 +1477,7 @@ process_fields(struct event *event, stru
+ 			goto out_free;
  
--	obj = kmalloc(sizeof(struct snmp_object), GFP_ATOMIC);
--	if (obj = NULL) {
--		if (net_ratelimit())
--			printk(KERN_WARNING "OOM in bsalg(%d)\n", __LINE__);
--		return 0;
--	}
--
- 	while (!asn1_eoc_decode(&ctx, eoc)) {
- 		unsigned int i;
+ 		field = malloc_or_die(sizeof(*field));
+-		memset(field, 0, sizeof(field));
++		memset(field, 0, sizeof(*field));
  
--		if (!snmp_object_decode(&ctx, obj)) {
--			if (*obj) {
--				kfree((*obj)->id);
--				kfree(*obj);
-+		if (!snmp_object_decode(&ctx, &obj)) {
-+			if (obj) {
-+				kfree(obj->id);
-+				kfree(obj);
- 			}
--			kfree(obj);
- 			return 0;
- 		}
- 
- 		if (debug > 1) {
- 			printk(KERN_DEBUG "bsalg: object: ");
--			for (i = 0; i < (*obj)->id_len; i++) {
-+			for (i = 0; i < obj->id_len; i++) {
- 				if (i > 0)
- 					printk(".");
--				printk("%lu", (*obj)->id[i]);
-+				printk("%lu", obj->id[i]);
- 			}
--			printk(": type=%u\n", (*obj)->type);
-+			printk(": type=%u\n", obj->type);
- 
- 		}
- 
--		if ((*obj)->type = SNMP_IPADDR)
-+		if (obj->type = SNMP_IPADDR)
- 			mangle_address(ctx.begin, ctx.pointer - 4 , map, check);
- 
--		kfree((*obj)->id);
--		kfree(*obj);
-+		kfree(obj->id);
-+		kfree(obj);
- 	}
--	kfree(obj);
- 
- 	if (!asn1_eoc_decode(&ctx, eoc))
- 		return 0;
+ 		value = arg_eval(arg);
+ 		field->value = strdup(value);
