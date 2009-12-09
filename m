@@ -1,32 +1,47 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 18 Dec 2009 14:19:02 +0000
-Subject: Re: [PATCH 08/10] Fix misspellings of "invocation" in comments.
-Message-Id: <alpine.LNX.2.00.0912181518320.3755@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 09 Dec 2009 19:22:26 +0000
+Subject: [PATCH 1/12] arch/arm: Correct size given to memset
+Message-Id: <Pine.LNX.4.64.0912092022040.1870@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1260567342-8327-9-git-send-email-adam.buchbinder@gmail.com>
-In-Reply-To: <1260567342-8327-9-git-send-email-adam.buchbinder@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 11 Dec 2009, Adam Buchbinder wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Some comments misspell "invocation"; this fixes them. No code
-> changes.
-> 
-> Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
-> ---
->  drivers/staging/wlan-ng/hfa384x_usb.c |    2 +-
->  fs/buffer.c                           |    2 +-
->  fs/mpage.c                            |    2 +-
->  include/linux/mmzone.h                |    2 +-
->  kernel/sched_cpupri.c                 |    2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
+Memset should be given the size of the structure, not the size of the pointer.
 
-I have removed the "staging" bit (see my other mail) and applied the rest. 
-Thanks,
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+// <smpl>
+@@
+type T;
+T *x;
+expression E;
+@@
+
+memset(x, E, sizeof(
++ *
+ x))
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/arm/plat-mxc/dma-mx1-mx2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/arch/arm/plat-mxc/dma-mx1-mx2.c b/arch/arm/plat-mxc/dma-mx1-mx2.c
+--- a/arch/arm/plat-mxc/dma-mx1-mx2.c
++++ b/arch/arm/plat-mxc/dma-mx1-mx2.c
+@@ -694,7 +694,7 @@ int imx_dma_request(int channel, const c
+ 		local_irq_restore(flags);
+ 		return -EBUSY;
+ 	}
+-	memset(imxdma, 0, sizeof(imxdma));
++	memset(imxdma, 0, sizeof(*imxdma));
+ 	imxdma->name = name;
+ 	local_irq_restore(flags); /* request_irq() can block */
+ 
