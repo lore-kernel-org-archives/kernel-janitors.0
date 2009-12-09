@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 09 Dec 2009 19:26:18 +0000
-Subject: [PATCH 12/12] tools/perf: Correct size given to memset
-Message-Id: <Pine.LNX.4.64.0912092026000.1870@ask.diku.dk>
+Date: Wed, 09 Dec 2009 19:25:59 +0000
+Subject: [PATCH 11/12] net/mac80211: Correct size given to memset
+Message-Id: <Pine.LNX.4.64.0912092025240.1870@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -30,31 +30,18 @@ memset(x, E, sizeof(
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- tools/perf/util/probe-event.c       |    2 +-
- tools/perf/util/trace-event-parse.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/mac80211/mesh.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -376,7 +376,7 @@ static void clear_probe_point(struct pro
- 		free(pp->args);
- 	for (i = 0; i < pp->found; i++)
- 		free(pp->probes[i]);
--	memset(pp, 0, sizeof(pp));
-+	memset(pp, 0, sizeof(*pp));
- }
- 
- /* List up current perf-probe events */
-diff -u -p a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -1477,7 +1477,7 @@ process_fields(struct event *event, stru
- 			goto out_free;
- 
- 		field = malloc_or_die(sizeof(*field));
--		memset(field, 0, sizeof(field));
-+		memset(field, 0, sizeof(*field));
- 
- 		value = arg_eval(arg);
- 		field->value = strdup(value);
+diff -u -p a/net/mac80211/mesh.c b/Net/mac80211/mesh.c
+--- a/net/mac80211/mesh.c
++++ b/net/mac80211/mesh.c
+@@ -427,7 +427,7 @@ int ieee80211_new_mesh_header(struct iee
+ 		char *addr5, char *addr6)
+ {
+ 	int aelen = 0;
+-	memset(meshhdr, 0, sizeof(meshhdr));
++	memset(meshhdr, 0, sizeof(*meshhdr));
+ 	meshhdr->ttl = sdata->u.mesh.mshcfg.dot11MeshTTL;
+ 	put_unaligned(cpu_to_le32(sdata->u.mesh.mesh_seqnum), &meshhdr->seqnum);
+ 	sdata->u.mesh.mesh_seqnum++;
