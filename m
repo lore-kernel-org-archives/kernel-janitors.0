@@ -1,47 +1,46 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 09 Dec 2009 19:23:49 +0000
-Subject: [PATCH 5/12] drivers/media/video/uvc: Correct size given to memset
-Message-Id: <Pine.LNX.4.64.0912092023310.1870@ask.diku.dk>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Thu, 10 Dec 2009 02:05:41 +0000
+Subject: Re: [PATCH 5/12] drivers/media/video/uvc: Correct size given to memset
+Message-Id: <200912100305.41707.laurent.pinchart@ideasonboard.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0912092023310.1870@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0912092023310.1870@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@skynet.be>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Hi Julia,
 
-Memset should be given the size of the structure, not the size of the pointer.
+thanks for the patch.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+On Wednesday 09 December 2009 20:23:49 Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Memset should be given the size of the structure, not the size of the
+>  pointer.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> type T;
+> T *x;
+> expression E;
+> @@
+> 
+> memset(x, E, sizeof(
+> + *
+>  x))
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-// <smpl>
-@@
-type T;
-T *x;
-expression E;
-@@
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-memset(x, E, sizeof(
-+ *
- x))
-// </smpl>
+-- 
+Regards,
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/media/video/uvc/uvc_video.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/media/video/uvc/uvc_video.c b/drivers/media/video/uvc/uvc_video.c
---- a/drivers/media/video/uvc/uvc_video.c
-+++ b/drivers/media/video/uvc/uvc_video.c
-@@ -145,7 +145,7 @@ static int uvc_get_video_ctrl(struct uvc
- 		uvc_warn_once(stream->dev, UVC_WARN_MINMAX, "UVC non "
- 			"compliance - GET_MIN/MAX(PROBE) incorrectly "
- 			"supported. Enabling workaround.\n");
--		memset(ctrl, 0, sizeof ctrl);
-+		memset(ctrl, 0, sizeof *ctrl);
- 		ctrl->wCompQuality = le16_to_cpup((__le16 *)data);
- 		ret = 0;
- 		goto out;
+Laurent Pinchart
