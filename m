@@ -1,27 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 14 Dec 2009 03:57:19 +0000
-Subject: Re: [PATCH 2/9] drivers/atm: Correct code taking the size of a
-Message-Id: <20091213.195719.246515608.davem@davemloft.net>
+From: Adam Buchbinder <adam.buchbinder@gmail.com>
+Date: Fri, 11 Dec 2009 21:35:41 +0000
+Subject: [PATCH 09/10] Fix misspellings of "separate" in strings.
+Message-Id: <1260567342-8327-10-git-send-email-adam.buchbinder@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912131240400.24267@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912131240400.24267@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: chas@cmf.nrl.navy.mil, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 13 Dec 2009 12:40:55 +0100 (CET)
+Some string messages misspell "separate"; this fixes them. No change in
+functionality.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> sizeof(TstSchedTbl) is just the size of the pointer.  Change it to the size
-> of the referenced data.
-> 
-> A simplified version of the semantic patch that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
+---
+ drivers/acpi/proc.c             |    2 +-
+ drivers/isdn/mISDN/l1oip_core.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/acpi/proc.c b/drivers/acpi/proc.c
+index d0d25e2..1ac678d 100644
+--- a/drivers/acpi/proc.c
++++ b/drivers/acpi/proc.c
+@@ -435,7 +435,7 @@ acpi_system_write_wakeup_device(struct file *file,
+ 				found_dev->wakeup.gpe_device)) {
+ 				printk(KERN_WARNING
+ 				       "ACPI: '%s' and '%s' have the same GPE, "
+-				       "can't disable/enable one seperately\n",
++				       "can't disable/enable one separately\n",
+ 				       dev->pnp.bus_id, found_dev->pnp.bus_id);
+ 				dev->wakeup.state.enabled  				    found_dev->wakeup.state.enabled;
+diff --git a/drivers/isdn/mISDN/l1oip_core.c b/drivers/isdn/mISDN/l1oip_core.c
+index 7e5f30d..7c63472 100644
+--- a/drivers/isdn/mISDN/l1oip_core.c
++++ b/drivers/isdn/mISDN/l1oip_core.c
+@@ -1509,7 +1509,7 @@ l1oip_init(void)
+ 			printk(KERN_DEBUG "%s: interface %d is %s with %s.\n",
+ 			    __func__, l1oip_cnt, pri ? "PRI" : "BRI",
+ 			    bundle ? "bundled IP packet for all B-channels" :
+-			    "seperate IP packets for every B-channel");
++			    "separate IP packets for every B-channel");
+ 
+ 		hc = kzalloc(sizeof(struct l1oip), GFP_ATOMIC);
+ 		if (!hc) {
+-- 
+1.6.3.3
+
