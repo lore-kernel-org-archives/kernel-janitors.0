@@ -1,34 +1,32 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Dec 2009 18:38:20 +0000
-Subject: Re: [PATCH] char/vme_scc: adding __init macro to vme_scc.c
-Message-Id: <10f740e80912231038r6d58cd34ke01051d82095f12c@mail.gmail.com>
+From: Adam Buchbinder <adam.buchbinder@gmail.com>
+Date: Fri, 11 Dec 2009 21:35:37 +0000
+Subject: [PATCH 05/10] Fix a grammar error (redundant "be").
+Message-Id: <1260567342-8327-6-git-send-email-adam.buchbinder@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200908202242.31778.PeterHuewe@gmx.de>
-In-Reply-To: <200908202242.31778.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Huewe <PeterHuewe@gmx.de>
-Cc: Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 20, 2009 at 21:42, Peter Huewe <PeterHuewe@gmx.de> wrote:
-> From: Peter Huewe <peterhuewe@gmx.de>
->
-> Trivial patch which adds the __init macro to the module_init
-> function and all of its helper functions of char/vme_scc.c
->
-> Alan or Geert, please have a look at the small patch and either pull it through
-> your tree, or please ack' it so Jiri can pull it through the trivial tree.
 
-Thanks, applied.
+Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
+---
+ drivers/net/wireless/zd1211rw/zd_mac.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/net/wireless/zd1211rw/zd_mac.c b/drivers/net/wireless/zd1211rw/zd_mac.c
+index 2b7f965..7aad980 100644
+--- a/drivers/net/wireless/zd1211rw/zd_mac.c
++++ b/drivers/net/wireless/zd1211rw/zd_mac.c
+@@ -312,7 +312,7 @@ static void tx_status(struct ieee80211_hw *hw, struct sk_buff *skb,
+  * zd_mac_tx_failed - callback for failed frames
+  * @dev: the mac80211 wireless device
+  *
+- * This function is called if a frame couldn't be successfully be
++ * This function is called if a frame couldn't be successfully
+  * transferred. The first frame from the tx queue, will be selected and
+  * reported as error to the upper layers.
+  */
+-- 
+1.6.3.3
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
