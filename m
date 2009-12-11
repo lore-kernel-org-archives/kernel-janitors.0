@@ -1,46 +1,33 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 10 Dec 2009 02:05:41 +0000
-Subject: Re: [PATCH 5/12] drivers/media/video/uvc: Correct size given to memset
-Message-Id: <200912100305.41707.laurent.pinchart@ideasonboard.com>
+From: Adam Buchbinder <adam.buchbinder@gmail.com>
+Date: Fri, 11 Dec 2009 21:35:33 +0000
+Subject: [PATCH 01/10] Fix misspelling of "should" in string.
+Message-Id: <1260567342-8327-2-git-send-email-adam.buchbinder@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912092023310.1870@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912092023310.1870@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Julia,
+A string message misspells "should"; this fixes it. No change in functionality.
 
-thanks for the patch.
+Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
+---
+ fs/ext4/move_extent.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-On Wednesday 09 December 2009 20:23:49 Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Memset should be given the size of the structure, not the size of the
->  pointer.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> type T;
-> T *x;
-> expression E;
-> @@
-> 
-> memset(x, E, sizeof(
-> + *
->  x))
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+index 25b6b14..6d26d89 100644
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -1088,7 +1088,7 @@ mext_check_arguments(struct inode *orig_inode,
+ 	}
+ 
+ 	if (!*len) {
+-		ext4_debug("ext4 move extent: len shoudld not be 0 "
++		ext4_debug("ext4 move extent: len should not be 0 "
+ 			"[ino:orig %lu, donor %lu]\n", orig_inode->i_ino,
+ 			donor_inode->i_ino);
+ 		return -EINVAL;
 -- 
-Regards,
+1.6.3.3
 
-Laurent Pinchart
