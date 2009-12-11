@@ -1,47 +1,18 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 13 Dec 2009 11:42:24 +0000
-Subject: [PATCH 6/9] drivers/usb: Correct code taking the size of a pointer
-Message-Id: <Pine.LNX.4.64.0912131242080.24267@ask.diku.dk>
+From: Adam Buchbinder <adam.buchbinder@gmail.com>
+Date: Fri, 11 Dec 2009 21:35:32 +0000
+Subject: [PATCH 00/10] Various spelling and grammar fixes.
+Message-Id: <1260567342-8327-1-git-send-email-adam.buchbinder@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: david.vrabel@csr.com, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+The following patches make no change in functionality; they only fix
+spelling errors (and one grammar error) in the source. Most of the
+errors are in comments, but a few are in message strings. I've
+separated the comment fixes from the string fixes, in case they need
+to be applied separately.
 
-sizeof(chid) is just the size of the pointer.  Change it to the size of the
-referenced structure.
+Adam Buchbinder
 
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression *x;
-expression f;
-type T;
-@@
-
-*f(...,(T)x,...)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/usb/wusbcore/mmc.c          |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/usb/wusbcore/mmc.c b/drivers/usb/wusbcore/mmc.c
-index 3b52161..2d82739 100644
---- a/drivers/usb/wusbcore/mmc.c
-+++ b/drivers/usb/wusbcore/mmc.c
-@@ -263,7 +263,7 @@ int wusbhc_chid_set(struct wusbhc *wusbhc, const struct wusb_ckhdid *chid)
- {
- 	int result = 0;
- 
--	if (memcmp(chid, &wusb_ckhdid_zero, sizeof(chid)) = 0)
-+	if (memcmp(chid, &wusb_ckhdid_zero, sizeof(*chid)) = 0)
- 		chid = NULL;
- 
- 	mutex_lock(&wusbhc->mutex);
