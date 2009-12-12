@@ -1,63 +1,40 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 13 Dec 2009 11:41:12 +0000
-Subject: [PATCH 3/9] drivers/media: Correct code taking the size of a pointer
-Message-Id: <Pine.LNX.4.64.0912131240560.24267@ask.diku.dk>
+From: Radu Voicilas <rvoicilas@gmail.com>
+Date: Sat, 12 Dec 2009 09:06:09 +0000
+Subject: [PATCH 1/4] Spelling fixes.
+Message-Id: <1260608772-9839-2-git-send-email-rvoicilas@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+No change in functionality.
 
-sizeof(print_buf) is just the size of the pointer.  Change it to the size
-used in the allocation of print_buf earlier in the same function.
-
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression *x;
-expression f;
-type T;
-@@
-
-*f(...,(T)x,...)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Radu Voicilas <rvoicilas@gmail.com>
 ---
- drivers/media/video/hdpvr/hdpvr-core.c         |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ samples/kobject/kobject-example.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/video/hdpvr/hdpvr-core.c b/drivers/media/video/hdpvr/hdpvr-core.c
-index e280eb1..51f393d 100644
---- a/drivers/media/video/hdpvr/hdpvr-core.c
-+++ b/drivers/media/video/hdpvr/hdpvr-core.c
-@@ -145,7 +145,7 @@ static int device_authorization(struct hdpvr_device *dev)
- #ifdef HDPVR_DEBUG
- 	else {
- 		hex_dump_to_buffer(dev->usbc_buf, 46, 16, 1, print_buf,
--				   sizeof(print_buf), 0);
-+				   5*buf_size+1, 0);
- 		v4l2_dbg(MSG_INFO, hdpvr_debug, &dev->v4l2_dev,
- 			 "Status request returned, len %d: %s\n",
- 			 ret, print_buf);
-@@ -168,13 +168,13 @@ static int device_authorization(struct hdpvr_device *dev)
+diff --git a/samples/kobject/kobject-example.c b/samples/kobject/kobject-example.c
+index 8d9b55a..86ea0c3 100644
+--- a/samples/kobject/kobject-example.c
++++ b/samples/kobject/kobject-example.c
+@@ -44,7 +44,7 @@ static struct kobj_attribute foo_attribute  	__ATTR(foo, 0666, foo_show, foo_store);
  
- 	response = dev->usbc_buf+38;
- #ifdef HDPVR_DEBUG
--	hex_dump_to_buffer(response, 8, 16, 1, print_buf, sizeof(print_buf), 0);
-+	hex_dump_to_buffer(response, 8, 16, 1, print_buf, 5*buf_size+1, 0);
- 	v4l2_dbg(MSG_INFO, hdpvr_debug, &dev->v4l2_dev, "challenge: %s\n",
- 		 print_buf);
- #endif
- 	challenge(response);
- #ifdef HDPVR_DEBUG
--	hex_dump_to_buffer(response, 8, 16, 1, print_buf, sizeof(print_buf), 0);
-+	hex_dump_to_buffer(response, 8, 16, 1, print_buf, 5*buf_size+1, 0);
- 	v4l2_dbg(MSG_INFO, hdpvr_debug, &dev->v4l2_dev, " response: %s\n",
- 		 print_buf);
- #endif
+ /*
+- * More complex function where we determine which varible is being accessed by
++ * More complex function where we determine which variable is being accessed by
+  * looking at the attribute for the "baz" and "bar" files.
+  */
+ static ssize_t b_show(struct kobject *kobj, struct kobj_attribute *attr,
+@@ -79,7 +79,7 @@ static struct kobj_attribute bar_attribute  
+ 
+ /*
+- * Create a group of attributes so that we can create and destory them all
++ * Create a group of attributes so that we can create and destroy them all
+  * at once.
+  */
+ static struct attribute *attrs[] = {
+-- 
+1.6.3.3
+
