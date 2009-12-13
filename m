@@ -1,52 +1,95 @@
-From: peterhuewe@gmx.de
-Date: Tue, 22 Dec 2009 08:34:49 +0000
-Subject: [PATCH 08/10] video/omap: add __init/__exit macros to drivers/video/omap/lcd_htcherald.c
-Message-Id: <1261470890-24031-1-git-send-email-peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 13 Dec 2009 13:11:09 +0000
+Subject: [PATCH 1/2] drivers/gpu/drm: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0912131410330.24267@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Imre Deak <imre.deak@nokia.com>, Tony Lindgren <tony@atomide.com>, Cory Maccarrone <darkstar6262@gmail.com>, Tomi Valkeinen <tomi.valkeinen@nokia.com>, linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+To: airlied@linux.ie, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
 
-Trivial patch which adds the __init/__exit macros to the module_init/
-module_exit functions of
+Error handling code following a kzalloc should free the allocated data.
+Similarly for usb-alloc urb.
 
-drivers/video/omap/lcd_htcherald.c
+The semantic match that finds the first problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Please have a look at the small patch and either pull it through
-your tree, or please ack' it so Jiri can pull it through the trivial
-tree.
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
-Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
-but also present in linus tree.
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/video/omap/lcd_htcherald.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/intel_overlay.c           |   13 +++++++++----
+ 1 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/video/omap/lcd_htcherald.c b/drivers/video/omap/lcd_htcherald.c
-index a9007c5..4802419 100644
---- a/drivers/video/omap/lcd_htcherald.c
-+++ b/drivers/video/omap/lcd_htcherald.c
-@@ -115,12 +115,12 @@ struct platform_driver htcherald_panel_driver = {
- 	},
- };
+diff --git a/drivers/gpu/drm/i915/intel_overlay.c b/drivers/gpu/drm/i915/intel_overlay.c
+index 49110b3..8ad6851 100644
+--- a/drivers/gpu/drm/i915/intel_overlay.c
++++ b/drivers/gpu/drm/i915/intel_overlay.c
+@@ -1083,14 +1083,18 @@ int intel_overlay_put_image(struct drm_device *dev, void *data,
  
--static int htcherald_panel_drv_init(void)
-+static int __init htcherald_panel_drv_init(void)
- {
- 	return platform_driver_register(&htcherald_panel_driver);
- }
+ 	drmmode_obj = drm_mode_object_find(dev, put_image_rec->crtc_id,
+                         DRM_MODE_OBJECT_CRTC);
+-	if (!drmmode_obj)
+-		return -ENOENT;
++	if (!drmmode_obj) {
++		ret = -ENOENT;
++		goto out_free;
++	}
+ 	crtc = to_intel_crtc(obj_to_crtc(drmmode_obj));
  
--static void htcherald_panel_drv_cleanup(void)
-+static void __exit htcherald_panel_drv_cleanup(void)
- {
- 	platform_driver_unregister(&htcherald_panel_driver);
- }
--- 
-1.6.4.4
-
+ 	new_bo = drm_gem_object_lookup(dev, file_priv,
+ 			put_image_rec->bo_handle);
+-	if (!new_bo)
+-		return -ENOENT;
++	if (!new_bo) {
++		ret = -ENOENT;
++		goto out_free;
++	}
+ 
+ 	mutex_lock(&dev->mode_config.mutex);
+ 	mutex_lock(&dev->struct_mutex);
+@@ -1180,6 +1184,7 @@ out_unlock:
+ 	mutex_unlock(&dev->struct_mutex);
+ 	mutex_unlock(&dev->mode_config.mutex);
+ 	drm_gem_object_unreference(new_bo);
++out_free:
+ 	kfree(params);
+ 
+ 	return ret;
