@@ -1,34 +1,47 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Thu, 24 Dec 2009 13:08:45 +0000
-Subject: drivers/gpu/drm/radeon/radeon_connectors.c: add a NULL test before
-Message-Id: <1261660125.3546.31.camel@ICE-BOX>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 13 Dec 2009 11:42:24 +0000
+Subject: [PATCH 6/9] drivers/usb: Correct code taking the size of a pointer
+Message-Id: <Pine.LNX.4.64.0912131242080.24267@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: david.vrabel@csr.com, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The encoder variable can be NULL in this function so I believe it should
-be checked before dereference.
+From: Julia Lawall <julia@diku.dk>
 
-Coverity CID: 13253
+sizeof(chid) is just the size of the pointer.  Change it to the size of the
+referenced structure.
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c
-b/drivers/gpu/drm/radeon/radeon_connectors.c
-index 5eece18..3ba86fc 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -603,7 +603,7 @@ static enum drm_connector_status
-radeon_vga_detect(struct drm_connector *connect
- 				ret = connector_status_connected;
- 		}
- 	} else {
--		if (radeon_connector->dac_load_detect) {
-+		if (radeon_connector->dac_load_detect && encoder) {
- 			encoder_funcs = encoder->helper_private;
- 			ret = encoder_funcs->detect(encoder, connector);
- 		}
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression *x;
+expression f;
+type T;
+@@
 
+*f(...,(T)x,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/wusbcore/mmc.c          |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/usb/wusbcore/mmc.c b/drivers/usb/wusbcore/mmc.c
+index 3b52161..2d82739 100644
+--- a/drivers/usb/wusbcore/mmc.c
++++ b/drivers/usb/wusbcore/mmc.c
+@@ -263,7 +263,7 @@ int wusbhc_chid_set(struct wusbhc *wusbhc, const struct wusb_ckhdid *chid)
+ {
+ 	int result = 0;
+ 
+-	if (memcmp(chid, &wusb_ckhdid_zero, sizeof(chid)) = 0)
++	if (memcmp(chid, &wusb_ckhdid_zero, sizeof(*chid)) = 0)
+ 		chid = NULL;
+ 
+ 	mutex_lock(&wusbhc->mutex);
