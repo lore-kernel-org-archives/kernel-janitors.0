@@ -1,15 +1,49 @@
-From: Adam Buchbinder <adam.buchbinder@gmail.com>
-Date: Fri, 18 Dec 2009 20:38:20 +0000
-Subject: [PATCH 0/2] Spelling errors (resubmitting).
-Message-Id: <1261168702-9731-1-git-send-email-adam.buchbinder@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 13 Dec 2009 11:42:07 +0000
+Subject: [PATCH 5/9] drivers/net/wireless: Correct code taking the size of
+Message-Id: <Pine.LNX.4.64.0912131241470.24267@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ivo van Doorn <IvDoorn@gmail.com>, Gertjan van Wingerde <gwingerde@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, users@rt2x00.serialmonkey.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The attached patches fix some spelling errors. They're being resubmitted
-against the current kernel head, because the last version was out of date.
-Also, patches against staging are not included; they are being submitted
-to Greg K-H.
+From: Julia Lawall <julia@diku.dk>
 
+sizeof(iv16) and sizeof(iv32) are the sizes of pointers.  Change them to
+the size of the copied data.
+
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression *x;
+expression f;
+type T;
+@@
+
+*f(...,(T)x,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wireless/rt2x00/rt2800lib.c        |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/rt2x00/rt2800lib.c b/drivers/net/wireless/rt2x00/rt2800lib.c
+index eb1e1d0..1e74732 100644
+--- a/drivers/net/wireless/rt2x00/rt2800lib.c
++++ b/drivers/net/wireless/rt2x00/rt2800lib.c
+@@ -2140,8 +2140,8 @@ static void rt2800_get_tkip_seq(struct ieee80211_hw *hw, u8 hw_key_idx,
+ 	rt2800_register_multiread(rt2x00dev, offset,
+ 				      &iveiv_entry, sizeof(iveiv_entry));
+ 
+-	memcpy(&iveiv_entry.iv[0], iv16, sizeof(iv16));
+-	memcpy(&iveiv_entry.iv[4], iv32, sizeof(iv32));
++	memcpy(&iveiv_entry.iv[0], iv16, sizeof(*iv16));
++	memcpy(&iveiv_entry.iv[4], iv32, sizeof(*iv32));
+ }
+ 
+ static int rt2800_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
