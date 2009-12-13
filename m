@@ -1,27 +1,48 @@
-From: Davidlohr Bueso <dave@gnu.org>
-Date: Mon, 14 Dec 2009 19:01:26 +0000
-Subject: Re: Coding style questions
-Message-Id: <20091214190126.GA17084@fencepost.gnu.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 13 Dec 2009 11:41:29 +0000
+Subject: [PATCH 4/9] drivers/net/sfc: Correct code taking the size of a
+Message-Id: <Pine.LNX.4.64.0912131241130.24267@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4B19C331.3080805@picohost.net>
-In-Reply-To: <4B19C331.3080805@picohost.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-net-drivers@solarflare.com, Steve Hodgson <shodgson@solarflare.com>, Ben Hutchings <bhutchings@solarflare.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 04, 2009 at 06:19:29PM -0800, Radu Voicilas wrote:
-> 1. When you have a function prototype with a comment following it (which obviously it's a bad thing), like this one
-> 
-> u32 eprom_read(struct net_device *dev,u32 addr); //reads a 16 bits word
-> 
-> and want to fix it, how would one do it:
-> 
-> /* Read a 16 bits word. */
-> u32 eprom_read(struct net_device *dev, u32 addr);
-> 
-> or the comment should go into the implementation file ?
-It should go in the implementation file, but common sense is always best.
-Be sure to read Documentation/CodingStyle.
+From: Julia Lawall <julia@diku.dk>
 
-   Davidlohr
+The function efx_iterate_state contains the code
+memcpy(&payload->msg, payload_msg, sizeof(payload_msg));
+This is the only use of payload_msg.  The type of payload_msg is
+changed from a pointer to an array, so that the result of sizeof really is
+the length of the string.
+
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression *x;
+expression f;
+type T;
+@@
+
+*f(...,(T)x,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/sfc/selftest.c          |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/sfc/selftest.c b/drivers/net/sfc/selftest.c
+index 14949bb..af39335 100644
+--- a/drivers/net/sfc/selftest.c
++++ b/drivers/net/sfc/selftest.c
+@@ -47,7 +47,7 @@ static const unsigned char payload_source[ETH_ALEN] = {
+ 	0x00, 0x0f, 0x53, 0x1b, 0x1b, 0x1b,
+ };
+ 
+-static const char *payload_msg +static const char payload_msg[]  	"Hello world! This is an Efx loopback test in progress!";
+ 
+ /**
