@@ -1,34 +1,63 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Thu, 24 Dec 2009 13:25:54 +0000
-Subject: drivers/gpu/drm/radeon/radeon_cp.c: fix resource leak on error
-Message-Id: <1261661154.3546.47.camel@ICE-BOX>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 13 Dec 2009 11:41:12 +0000
+Subject: [PATCH 3/9] drivers/media: Correct code taking the size of a pointer
+Message-Id: <Pine.LNX.4.64.0912131240560.24267@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If drm_addmap() fails master_priv is leaked.
+From: Julia Lawall <julia@diku.dk>
 
+sizeof(print_buf) is just the size of the pointer.  Change it to the size
+used in the allocation of print_buf earlier in the same function.
 
-Coverity CID: 13195
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-diff --git a/drivers/gpu/drm/radeon/radeon_cp.c
-b/drivers/gpu/drm/radeon/radeon_cp.c
-index 0b2f9c2..06123ba 100644
---- a/drivers/gpu/drm/radeon/radeon_cp.c
-+++ b/drivers/gpu/drm/radeon/radeon_cp.c
-@@ -2145,6 +2145,7 @@ int radeon_master_create(struct drm_device *dev,
-struct drm_master *master)
- 			 &master_priv->sarea);
- 	if (ret) {
- 		DRM_ERROR("SAREA setup failed\n");
-+		kfree(master_priv);
- 		return ret;
- 	}
- 	master_priv->sarea_priv = master_priv->sarea->handle + sizeof(struct
-drm_sarea);
+// <smpl>
+@@
+expression *x;
+expression f;
+type T;
+@@
 
+*f(...,(T)x,...)
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/video/hdpvr/hdpvr-core.c         |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/video/hdpvr/hdpvr-core.c b/drivers/media/video/hdpvr/hdpvr-core.c
+index e280eb1..51f393d 100644
+--- a/drivers/media/video/hdpvr/hdpvr-core.c
++++ b/drivers/media/video/hdpvr/hdpvr-core.c
+@@ -145,7 +145,7 @@ static int device_authorization(struct hdpvr_device *dev)
+ #ifdef HDPVR_DEBUG
+ 	else {
+ 		hex_dump_to_buffer(dev->usbc_buf, 46, 16, 1, print_buf,
+-				   sizeof(print_buf), 0);
++				   5*buf_size+1, 0);
+ 		v4l2_dbg(MSG_INFO, hdpvr_debug, &dev->v4l2_dev,
+ 			 "Status request returned, len %d: %s\n",
+ 			 ret, print_buf);
+@@ -168,13 +168,13 @@ static int device_authorization(struct hdpvr_device *dev)
+ 
+ 	response = dev->usbc_buf+38;
+ #ifdef HDPVR_DEBUG
+-	hex_dump_to_buffer(response, 8, 16, 1, print_buf, sizeof(print_buf), 0);
++	hex_dump_to_buffer(response, 8, 16, 1, print_buf, 5*buf_size+1, 0);
+ 	v4l2_dbg(MSG_INFO, hdpvr_debug, &dev->v4l2_dev, "challenge: %s\n",
+ 		 print_buf);
+ #endif
+ 	challenge(response);
+ #ifdef HDPVR_DEBUG
+-	hex_dump_to_buffer(response, 8, 16, 1, print_buf, sizeof(print_buf), 0);
++	hex_dump_to_buffer(response, 8, 16, 1, print_buf, 5*buf_size+1, 0);
+ 	v4l2_dbg(MSG_INFO, hdpvr_debug, &dev->v4l2_dev, " response: %s\n",
+ 		 print_buf);
+ #endif
