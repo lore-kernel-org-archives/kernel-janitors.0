@@ -1,37 +1,47 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 30 Dec 2009 11:29:20 +0000
-Subject: Re: [PATCH 3/5] drivers/scsi : Correct the size argument to kmalloc
-Message-Id: <Pine.LNX.4.64.0912301228540.23134@ask.diku.dk>
+Date: Sun, 13 Dec 2009 11:40:55 +0000
+Subject: [PATCH 2/9] drivers/atm: Correct code taking the size of a pointer
+Message-Id: <Pine.LNX.4.64.0912131240400.24267@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912292015420.4001@ask.diku.dk>
- <200912292102.43373.eike-kernel@sf-tec.de>  <Pine.LNX.4.64.0912292103180.4001@ask.diku.dk>
- <1262121796.1888.190.camel@Joe-Laptop.home>
-In-Reply-To: <1262121796.1888.190.camel@Joe-Laptop.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Rolf Eike Beer <eike-kernel@sf-tec.de>, James.Bottomley@suse.de, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: chas@cmf.nrl.navy.mil, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 29 Dec 2009, Joe Perches wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Tue, 2009-12-29 at 21:04 +0100, Julia Lawall wrote:
-> > On Tue, 29 Dec 2009, Rolf Eike Beer wrote:
-> > > Julia Lawall wrote:
-> > > > From: Julia Lawall <julia@diku.dk>
-> > > > In each case, the destination of the allocation has type struct **, so the
-> > > > elements of the array should have pointer type, not structure type.
-> > > Maybe they should even by kcalloc'ed?
-> > I thought about that, but in response to another patch someone seemed to 
-> > think kcalloc was not very useful.  But I can certainly change it in this 
-> > case.
-> 
-> I think kcalloc is useful and should be used when the
-> allocated array of elements needs to be zeroed.
-> 
-> It appears the uses in 1/5 and 3/5 don't need it but
-> maybe patch 2/5 and 4/5 should use kcalloc.
+sizeof(TstSchedTbl) is just the size of the pointer.  Change it to the size
+of the referenced data.
 
-I will look into changing them too.
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-julia
+// <smpl>
+@@
+expression *x;
+expression f;
+type T;
+@@
+
+*f(...,(T)x,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/atm/iphase.c                |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index f734b34..6b73c2b 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -557,7 +557,7 @@ static int ia_cbr_setup (IADEV *dev, struct atm_vcc *vcc) {
+           memcpy((caddr_t)&cbrVC,(caddr_t)TstSchedTbl,sizeof(cbrVC));
+        } /* while */
+        // Move this VCI number into this location of the CBR Sched table.
+-       memcpy((caddr_t)TstSchedTbl, (caddr_t)&vcIndex,sizeof(TstSchedTbl));
++       memcpy((caddr_t)TstSchedTbl, (caddr_t)&vcIndex, sizeof(*TstSchedTbl));
+        dev->CbrRemEntries--;
+        toBeAssigned--;
+    } /* while */ 
