@@ -1,42 +1,76 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Wed, 30 Dec 2009 01:20:05 +0000
-Subject: [PATCH] drm/radeon/radeon_fence.c: move a dereference below the
-Message-Id: <1262136005.8733.26.camel@ICE-BOX>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 13 Dec 2009 13:11:39 +0000
+Subject: [PATCH 2/2] drivers/staging/batman-adv: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.0912131411100.24267@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If a NULL value is possible, the dereference should only occur after the
-NULL test.
+From: Julia Lawall <julia@diku.dk>
 
-Coverity CID: 13334
+Error handling code following a kzalloc should free the allocated data.
+Similarly for usb-alloc urb.
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+The semantic match that finds the first problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-diff --git drivers/gpu/drm/radeon/radeon_fence.c drivers/gpu/drm/radeon/radeon_fence.c
-index 4cdd8b4..f3a8380 100644
---- drivers/gpu/drm/radeon/radeon_fence.c
-+++ drivers/gpu/drm/radeon/radeon_fence.c
-@@ -140,14 +140,14 @@ int radeon_fence_create(struct radeon_device *rdev, struct radeon_fence **fence)
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/staging/batman-adv/send.c   |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/batman-adv/send.c b/drivers/staging/batman-adv/send.c
+index d724798..eb61750 100644
+--- a/drivers/staging/batman-adv/send.c
++++ b/drivers/staging/batman-adv/send.c
+@@ -363,8 +363,10 @@ void add_bcast_packet_to_list(unsigned char *packet_buff, int packet_len)
+ 		return;
  
- bool radeon_fence_signaled(struct radeon_fence *fence)
- {
--	struct radeon_device *rdev = fence->rdev;
- 	unsigned long irq_flags;
- 	bool signaled = false;
+ 	forw_packet->packet_buff = kmalloc(packet_len, GFP_ATOMIC);
+-	if (!forw_packet->packet_buff)
++	if (!forw_packet->packet_buff) {
++		kfree(forw_packet);
+ 		return;
++	}
  
--	if (rdev->gpu_lockup) {
-+	if (fence = NULL) {
- 		return true;
- 	}
--	if (fence = NULL) {
-+
-+	if (fence->rdev->gpu_lockup) {
- 		return true;
- 	}
- 	write_lock_irqsave(&fence->rdev->fence_drv.lock, irq_flags);
-
-
+ 	forw_packet->packet_len = packet_len;
+ 	memcpy(forw_packet->packet_buff, packet_buff, forw_packet->packet_len);
