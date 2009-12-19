@@ -1,61 +1,44 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 28 Dec 2009 14:09:55 +0000
-Subject: [PATCH] drivers/media/video: Correct NULL test
-Message-Id: <Pine.LNX.4.64.0912281509340.6928@ask.diku.dk>
+Date: Sat, 19 Dec 2009 07:17:44 +0000
+Subject: [PATCH 6/7] drivers/usb: Use kzalloc for allocating only one thing
+Message-Id: <Pine.LNX.4.64.0912190817280.30546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Test the just-allocated value for NULL rather than some other value.
+Use kzalloc rather than kcalloc(1,...)
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r@
-identifier f;
+@@
 @@
 
-f(...) { <+... return NULL; ...+> }
-
-@@
-expression *x;
-expression y;
-identifier r.f;
-statement S;
-@@
-
-x = f(...);
-(
-if ((x) = NULL) S
-|
-if (
--   y
-+   x
-       = NULL)
- S
-)
+- kcalloc(1,
++ kzalloc(
+          ...)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/media/video/usbvision/usbvision-video.c |    2 +-
+ drivers/usb/host/isp1362-hcd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/media/video/usbvision/usbvision-video.c b/drivers/media/video/usbvision/usbvision-video.c
---- a/drivers/media/video/usbvision/usbvision-video.c
-+++ b/drivers/media/video/usbvision/usbvision-video.c
-@@ -1487,7 +1487,7 @@ static int __devinit usbvision_register_
- 		usbvision->vbi = usbvision_vdev_init(usbvision,
- 						     &usbvision_vbi_template,
- 						     "USBVision VBI");
--		if (usbvision->vdev = NULL) {
-+		if (usbvision->vbi = NULL) {
- 			goto err_exit;
- 		}
- 		if (video_register_device(usbvision->vbi,
+diff -u -p a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
+--- a/drivers/usb/host/isp1362-hcd.c 2009-12-17 08:30:14.000000000 +0100
++++ b/drivers/usb/host/isp1362-hcd.c 2009-12-19 07:52:56.000000000 +0100
+@@ -1257,7 +1257,7 @@ static int isp1362_urb_enqueue(struct us
+ 
+ 	/* avoid all allocations within spinlocks: request or endpoint */
+ 	if (!hep->hcpriv) {
+-		ep = kcalloc(1, sizeof *ep, mem_flags);
++		ep = kzalloc(sizeof *ep, mem_flags);
+ 		if (!ep)
+ 			return -ENOMEM;
+ 	}
