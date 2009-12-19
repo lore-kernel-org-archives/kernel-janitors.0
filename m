@@ -1,55 +1,43 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Sun, 27 Dec 2009 14:18:31 +0000
-Subject: Re: pointless assignments
-Message-Id: <4B376CB7.2050904@panasas.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 19 Dec 2009 07:17:10 +0000
+Subject: [PATCH 4/7] drivers/scsi/mvsas: Use kzalloc for allocating only one
+Message-Id: <Pine.LNX.4.64.0912190816540.30546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20091227134148.GL6075@bicker>
-In-Reply-To: <20091227134148.GL6075@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, open-osd <osd-dev@open-osd.org>, linux-scsi <linux-scsi@vger.kernel.org>
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 12/27/2009 03:41 PM, Dan Carpenter wrote:
-> drivers/scsi/osd/osd_initiator.c +1435 osd_finalize_request warning: assignment to 'ret' was never used
+From: Julia Lawall <julia@diku.dk>
 
-Thanks, very good catch. Humans 0 Robots 1 ;-)
+Use kzalloc rather than kcalloc(1,...)
 
-I'll queue the below patch for next Kernel. (Such an unused code path no need
-rocking the bote)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Boaz
+// <smpl>
+@@
+@@
+
+- kcalloc(1,
++ kzalloc(
+          ...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Sun, 27 Dec 2009 16:06:47 +0200
-Subject: [PATCH] libosd: Fix unchecked err return found by smatch
+ drivers/scsi/mvsas/mv_init.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Doing CHECK="smatch --two-passes gives:
-drivers/scsi/osd/osd_initiator.c +1435 osd_finalize_request warning: assignment to 'ret' was never used
-
-Which is an unchecked possible allocation failure, Fixed.
-
-Reported-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: Boaz Harrosh <bharrosh@panasas.com>
----
- drivers/scsi/osd/osd_initiator.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
-index 2422347..9334431 100644
---- a/drivers/scsi/osd/osd_initiator.c
-+++ b/drivers/scsi/osd/osd_initiator.c
-@@ -1433,6 +1433,10 @@ int osd_finalize_request(struct osd_request *or,
- 	cdbh->command_specific_options |= or->attributes_mode;
- 	if (or->attributes_mode = OSD_CDB_GET_ATTR_PAGE_SET_ONE) {
- 		ret = _osd_req_finalize_attr_page(or);
-+		if (ret) {
-+			OSD_DEBUG("_osd_req_finalize_set_attr_list failed\n");
-+			return ret;
-+		}
- 	} else {
- 		/* TODO: I think that for the GET_ATTR command these 2 should
- 		 * be reversed to keep them in execution order (for embeded
--- 
-1.6.5.2
-
+diff -u -p a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
+--- a/drivers/scsi/mvsas/mv_init.c 2009-12-12 00:23:19.000000000 +0100
++++ b/drivers/scsi/mvsas/mv_init.c 2009-12-19 07:52:38.000000000 +0100
+@@ -541,7 +541,7 @@ static int __devinit mvs_pci_init(struct
+ 
+ 	chip = &mvs_chips[ent->driver_data];
+ 	SHOST_TO_SAS_HA(shost) -		kcalloc(1, sizeof(struct sas_ha_struct), GFP_KERNEL);
++		kzalloc(sizeof(struct sas_ha_struct), GFP_KERNEL);
+ 	if (!SHOST_TO_SAS_HA(shost)) {
+ 		kfree(shost);
+ 		rc = -ENOMEM;
