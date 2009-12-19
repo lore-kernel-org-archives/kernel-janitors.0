@@ -1,56 +1,45 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 09 Dec 2009 19:23:30 +0000
-Subject: [PATCH 4/12] drivers/media/radio: Correct size given to memset
-Message-Id: <Pine.LNX.4.64.0912092023100.1870@ask.diku.dk>
+Date: Sat, 19 Dec 2009 07:30:10 +0000
+Subject: [PATCH 1/2] drivers/block: drop unnecesary memset
+Message-Id: <Pine.LNX.4.64.0912190829470.30546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mike Miller <mike.miller@hp.com>, iss_storagedev@hp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Memset should be given the size of the structure, not the size of the pointer.
+memset of 0 is not needed after kzalloc
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-type T;
-T *x;
-expression E;
+expression x;
+statement S;
 @@
 
-memset(x, E, sizeof(
-+ *
- x))
-// </smpl>
+x = kzalloc(...);
+if (x = NULL) S
+... when != x
+-memset(x,0,...);// </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/media/radio/radio-tea5764.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/cciss.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff -u -p a/drivers/media/radio/radio-tea5764.c b/drivers/media/radio/radio-tea5764.c
---- a/drivers/media/radio/radio-tea5764.c
-+++ b/drivers/media/radio/radio-tea5764.c
-@@ -314,7 +314,7 @@ static int vidioc_g_tuner(struct file *f
- 	if (v->index > 0)
- 		return -EINVAL;
- 
--	memset(v, 0, sizeof(v));
-+	memset(v, 0, sizeof(*v));
- 	strcpy(v->name, "FM");
- 	v->type = V4L2_TUNER_RADIO;
- 	tea5764_i2c_read(radio);
-@@ -371,7 +371,7 @@ static int vidioc_g_frequency(struct fil
- 	struct tea5764_regs *r = &radio->regs;
- 
- 	tea5764_i2c_read(radio);
--	memset(f, 0, sizeof(f));
-+	memset(f, 0, sizeof(*f));
- 	f->type = V4L2_TUNER_RADIO;
- 	if (r->tnctrl & TEA5764_TNCTRL_PUPD0)
- 		f->frequency = (tea5764_get_freq(radio) * 2) / 125;
+diff -u -p a/drivers/block/cciss.c b/drivers/block/cciss.c
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -4379,7 +4379,6 @@ static void cciss_shutdown(struct pci_de
+ 		return;
+ 	}
+ 	/* write all data in the battery backed cache to disk */
+-	memset(flush_buf, 0, 4);
+ 	return_code = sendcmd_withirq(CCISS_CACHE_FLUSH, h->ctlr, flush_buf,
+ 		4, 0, CTLR_LUNID, TYPE_CMD);
+ 	kfree(flush_buf);
