@@ -1,55 +1,44 @@
-From: peterhuewe@gmx.de
-Date: Tue, 22 Dec 2009 08:38:14 +0000
-Subject: [PATCH 10/10] media/dvb: add __init/__exit macros to drivers/media/dvb/bt8xx/bt878.c
-Message-Id: <1261471095-24272-1-git-send-email-peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 19 Dec 2009 07:16:52 +0000
+Subject: [PATCH 3/7] drivers/net/cxgb3: Use kzalloc for allocating only one
+Message-Id: <Pine.LNX.4.64.0912190816340.30546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jean Delvare <khali@linux-fr.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Divy Le Ray <divy@chelsio.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+From: Julia Lawall <julia@diku.dk>
 
-Trivial patch which adds the __init/__exit macros to the module_init/
-module_exit functions of
+Use kzalloc rather than kcalloc(1,...)
 
-drivers/media/dvb/bt8xx/bt878.c
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Please have a look at the small patch and either pull it through
-your tree, or please ack' it so Jiri can pull it through the trivial
-tree.
+// <smpl>
+@@
+@@
 
-Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
-but also present in linus tree.
+- kcalloc(1,
++ kzalloc(
+          ...)
+// </smpl>
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/media/dvb/bt8xx/bt878.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/cxgb3/cxgb3_offload.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb/bt8xx/bt878.c b/drivers/media/dvb/bt8xx/bt878.c
-index a24c125..2a0886a 100644
---- a/drivers/media/dvb/bt8xx/bt878.c
-+++ b/drivers/media/dvb/bt8xx/bt878.c
-@@ -582,7 +582,7 @@ static int bt878_pci_driver_registered;
- /* Module management functions */
- /*******************************/
+diff -u -p a/drivers/net/cxgb3/cxgb3_offload.c b/drivers/net/cxgb3/cxgb3_offload.c
+--- a/drivers/net/cxgb3/cxgb3_offload.c 2009-09-14 14:55:49.000000000 +0200
++++ b/drivers/net/cxgb3/cxgb3_offload.c 2009-12-19 07:52:52.000000000 +0100
+@@ -1252,7 +1252,7 @@ int cxgb3_offload_activate(struct adapte
+ 	struct mtutab mtutab;
+ 	unsigned int l2t_capacity;
  
--static int bt878_init_module(void)
-+static int __init bt878_init_module(void)
- {
- 	bt878_num = 0;
- 	bt878_pci_driver_registered = 0;
-@@ -600,7 +600,7 @@ static int bt878_init_module(void)
- 	return pci_register_driver(&bt878_pci_driver);
- }
+-	t = kcalloc(1, sizeof(*t), GFP_KERNEL);
++	t = kzalloc(sizeof(*t), GFP_KERNEL);
+ 	if (!t)
+ 		return -ENOMEM;
  
--static void bt878_cleanup_module(void)
-+static void __exit bt878_cleanup_module(void)
- {
- 	if (bt878_pci_driver_registered) {
- 		bt878_pci_driver_registered = 0;
--- 
-1.6.4.4
-
