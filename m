@@ -1,33 +1,57 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 22 Dec 2009 08:43:42 +0000
-Subject: Re: [PATCH 04/10] bluetooth: add __init/__exit macros to
-Message-Id: <1261471422.4041.200.camel@localhost.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 19 Dec 2009 07:16:13 +0000
+Subject: [PATCH 1/7] drivers/block/aoe: Use kzalloc for allocating only one
+Message-Id: <Pine.LNX.4.64.0912190815550.30546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1261470861-23988-1-git-send-email-peterhuewe@gmx.de>
-In-Reply-To: <1261470861-23988-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peterhuewe@gmx.de
-Cc: Jiri Kosina <trivial@kernel.org>, kernel-janitors@vger.kernel.org, Bing Zhao <bzhao@marvell.com>, Ben Hutchings <ben@decadent.org.uk>, =?ISO-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, Julia Lawall <julia@diku.dk>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ecashin@coraid.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Peter,
+From: Julia Lawall <julia@diku.dk>
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> Trivial patch which adds the __init/__exit macros to the module_init/
-> module_exit functions of
-> 
-> drivers/bluetooth/btmrvl_sdio.c
-> 
-> Please have a look at the small patch and either pull it through
-> your tree, or please ack' it so Jiri can pull it through the trivial
-> tree.
+Use kzalloc rather than kcalloc(1,...)
 
-patch has been applied to my tree. Thanks.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Regards
+// <smpl>
+@@
+@@
 
-Marcel
+- kcalloc(1,
++ kzalloc(
+          ...)
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ drivers/block/aoe/aoecmd.c |    2 +-
+ drivers/block/aoe/aoedev.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
+--- a/drivers/block/aoe/aoecmd.c 2009-12-08 20:58:27.000000000 +0100
++++ b/drivers/block/aoe/aoecmd.c 2009-12-19 07:52:28.000000000 +0100
+@@ -954,7 +954,7 @@ addtgt(struct aoedev *d, char *addr, ulo
+ 			"aoe: device addtgt failure; too many targets\n");
+ 		return NULL;
+ 	}
+-	t = kcalloc(1, sizeof *t, GFP_ATOMIC);
++	t = kzalloc(sizeof *t, GFP_ATOMIC);
+ 	f = kcalloc(nframes, sizeof *f, GFP_ATOMIC);
+ 	if (!t || !f) {
+ 		kfree(f);
+diff -u -p a/drivers/block/aoe/aoedev.c b/drivers/block/aoe/aoedev.c
+--- a/drivers/block/aoe/aoedev.c 2009-09-14 14:55:49.000000000 +0200
++++ b/drivers/block/aoe/aoedev.c 2009-12-19 07:52:28.000000000 +0100
+@@ -211,7 +211,7 @@ aoedev_by_sysminor_m(ulong sysminor)
+ 			break;
+ 	if (d)
+ 		goto out;
+-	d = kcalloc(1, sizeof *d, GFP_ATOMIC);
++	d = kzalloc(sizeof *d, GFP_ATOMIC);
+ 	if (!d)
+ 		goto out;
+ 	INIT_WORK(&d->work, aoecmd_sleepwork);
