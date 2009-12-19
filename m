@@ -1,59 +1,57 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 30 Dec 2009 14:34:04 +0000
-Subject: Re: [PATCH 2/5] drivers/net : Correct the size argument to kzalloc
-Message-Id: <Pine.LNX.4.64.0912301533280.23134@ask.diku.dk>
+Date: Sat, 19 Dec 2009 07:18:03 +0000
+Subject: [PATCH 7/7] sound: Use kzalloc for allocating only one thing
+Message-Id: <Pine.LNX.4.64.0912190817460.30546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912292015240.4001@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912292015240.4001@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-To: netdev@vger.kernel.org,linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-Subject: [PATCH 2/5] drivers/net : Correct the size argument to kzalloc
-
-
-----------------------------
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-lp->rx_skb has type struct sk_buff **, not struct sk_buff *, so the
-elements of the array should have pointer type, not structure type.
-
-Convert kzalloc to kcalloc as well.
+Use kzalloc rather than kcalloc(1,...)
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@disable sizeof_type_expr@
-type T;
-T **x;
+@@
 @@
 
-  x   <+...sizeof(
-- T
-+ *x
-  )...+>
+- kcalloc(1,
++ kzalloc(
+          ...)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/net/ll_temac_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/isa/msnd/msnd_midi.c    |    2 +-
+ sound/pci/hda/patch_realtek.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/net/ll_temac_main.c b/drivers/net/ll_temac_main.c
---- a/drivers/net/ll_temac_main.c
-+++ b/drivers/net/ll_temac_main.c
-@@ -134,7 +134,7 @@ static int temac_dma_bd_init(struct net_
- 	struct sk_buff *skb;
- 	int i;
+diff -u -p a/sound/isa/msnd/msnd_midi.c b/sound/isa/msnd/msnd_midi.c
+--- a/sound/isa/msnd/msnd_midi.c 2009-03-28 23:34:55.000000000 +0100
++++ b/sound/isa/msnd/msnd_midi.c 2009-12-19 07:52:27.000000000 +0100
+@@ -162,7 +162,7 @@ int snd_msndmidi_new(struct snd_card *ca
+ 	err = snd_rawmidi_new(card, "MSND-MIDI", device, 1, 1, &rmidi);
+ 	if (err < 0)
+ 		return err;
+-	mpu = kcalloc(1, sizeof(*mpu), GFP_KERNEL);
++	mpu = kzalloc(sizeof(*mpu), GFP_KERNEL);
+ 	if (mpu = NULL) {
+ 		snd_device_free(card, rmidi);
+ 		return -ENOMEM;
+diff -u -p a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+--- a/sound/pci/hda/patch_realtek.c 2009-12-17 08:30:15.000000000 +0100
++++ b/sound/pci/hda/patch_realtek.c 2009-12-19 07:52:50.000000000 +0100
+@@ -12857,7 +12857,7 @@ static int patch_alc268(struct hda_codec
+ 	int board_config;
+ 	int i, has_beep, err;
  
--	lp->rx_skb = kzalloc(sizeof(struct sk_buff)*RX_BD_NUM, GFP_KERNEL);
-+	lp->rx_skb = kcalloc(RX_BD_NUM, sizeof(*lp->rx_skb), GFP_KERNEL);
- 	/* allocate the tx and rx ring buffer descriptors. */
- 	/* returns a virtual addres and a physical address. */
- 	lp->tx_bd_v = dma_alloc_coherent(ndev->dev.parent,
+-	spec = kcalloc(1, sizeof(*spec), GFP_KERNEL);
++	spec = kzalloc(sizeof(*spec), GFP_KERNEL);
+ 	if (spec = NULL)
+ 		return -ENOMEM;
+ 
