@@ -1,47 +1,48 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 09 Dec 2009 19:24:09 +0000
-Subject: [PATCH 6/12] drivers/rtc: Correct size given to memset
-Message-Id: <Pine.LNX.4.64.0912092023500.1870@ask.diku.dk>
+Date: Sun, 20 Dec 2009 19:39:00 +0000
+Subject: [PATCH] kernel/cred.c: Use kmem_cache_free
+Message-Id: <Pine.LNX.4.64.0912202038380.29948@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Zummo <a.zummo@towertech.it>, Paul Gortmaker <p_gortmaker@yahoo.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Memset should be given the size of the structure, not the size of the pointer.
+Free memory allocated using kmem_cache_zalloc using kmem_cache_free rather
+than kfree.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-type T;
-T *x;
-expression E;
+expression x,E,c;
 @@
 
-memset(x, E, sizeof(
-+ *
- x))
+ x = \(kmem_cache_alloc\|kmem_cache_zalloc\|kmem_cache_alloc_node\)(c,...)
+ ... when != x = E
+     when != &x
+?-kfree(x)
++kmem_cache_free(c,x)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/rtc/rtc-at91sam9.c |    2 +-
+ kernel/cred.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/rtc/rtc-at91sam9.c b/drivers/rtc/rtc-at91sam9.c
---- a/drivers/rtc/rtc-at91sam9.c
-+++ b/drivers/rtc/rtc-at91sam9.c
-@@ -161,7 +161,7 @@ static int at91_rtc_readalarm(struct dev
- 	if (offset = 0)
- 		return -EILSEQ;
- 
--	memset(alrm, 0, sizeof(alrm));
-+	memset(alrm, 0, sizeof(*alrm));
- 	if (alarm != ALARM_DISABLED && offset != 0) {
- 		rtc_time_to_tm(offset + alarm, tm);
- 
+diff -u -p a/kernel/cred.c b/kernel/cred.c
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -224,7 +224,7 @@ struct cred *cred_alloc_blank(void)
+ #ifdef CONFIG_KEYS
+ 	new->tgcred = kzalloc(sizeof(*new->tgcred), GFP_KERNEL);
+ 	if (!new->tgcred) {
+-		kfree(new);
++		kmem_cache_free(cred_jar, new);
+ 		return NULL;
+ 	}
+ 	atomic_set(&new->tgcred->usage, 1);
