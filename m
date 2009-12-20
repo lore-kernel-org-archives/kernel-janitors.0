@@ -1,60 +1,62 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Dec 2009 20:31:43 +0000
-Subject: [PATCH 3/6] drivers/mfd: Correct use after free
-Message-Id: <Pine.LNX.4.64.0912222131230.28669@ask.diku.dk>
+Date: Sun, 20 Dec 2009 17:06:52 +0000
+Subject: [PATCH 1/2] drivers/scsi: Eliminate double free
+Message-Id: <Pine.LNX.4.64.0912201806360.26912@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sameo@linux.intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James.Bottomley@suse.de, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The structure t7l66xb should not be freed before the subsequent references
-to its fields in the arguments to clk_put.  Furthermore, this structure is
-allocated near the beginning of the function, and a goto to the label
-err_noirq appears after a successful allocation, so it would seem that the
-kfree should be moved down below this label.
+The few lines below the kfree of hdr_buf may go to the label err_free which
+will also free hdr_buf.  The most straightforward solution seems to be to
+just move the kfree of hdr_buf after these gotos.
 
 A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression x,e;
-identifier f;
+@r@
+identifier E;
+expression E1;
 iterator I;
 statement S;
 @@
 
-*kfree(x);
-... when != &x
-    when != x = e
-    when != I(x,...) S
-*x->f
+*kfree(E);
+... when != E = E1
+    when != I(E,...) S
+    when != &E
+*kfree(E);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/mfd/t7l66xb.c               |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/scsi/ses.c                  |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/t7l66xb.c b/drivers/mfd/t7l66xb.c
-index 2fa0703..dad3768 100644
---- a/drivers/mfd/t7l66xb.c
-+++ b/drivers/mfd/t7l66xb.c
-@@ -405,12 +405,12 @@ static int t7l66xb_probe(struct platform_device *dev)
- err_ioremap:
- 	release_resource(&t7l66xb->rscr);
- err_request_scr:
--	kfree(t7l66xb);
- 	clk_put(t7l66xb->clk48m);
- err_clk48m_get:
- 	clk_put(t7l66xb->clk32k);
- err_clk32k_get:
- err_noirq:
-+	kfree(t7l66xb);
- 	return ret;
- }
+diff --git a/drivers/scsi/ses.c b/drivers/scsi/ses.c
+index 55b034b..3c8a024 100644
+--- a/drivers/scsi/ses.c
++++ b/drivers/scsi/ses.c
+@@ -591,8 +591,6 @@ static int ses_intf_add(struct device *cdev,
+ 		ses_dev->page10_len = len;
+ 		buf = NULL;
+ 	}
+-	kfree(hdr_buf);
+-
+ 	scomp = kzalloc(sizeof(struct ses_component) * components, GFP_KERNEL);
+ 	if (!scomp)
+ 		goto err_free;
+@@ -604,6 +602,8 @@ static int ses_intf_add(struct device *cdev,
+ 		goto err_free;
+ 	}
  
++	kfree(hdr_buf);
++
+ 	edev->scratch = ses_dev;
+ 	for (i = 0; i < components; i++)
+ 		edev->component[i].scratch = scomp + i;
