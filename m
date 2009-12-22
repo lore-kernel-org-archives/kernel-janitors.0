@@ -1,40 +1,64 @@
-From: Radu Voicilas <rvoicilas@gmail.com>
-Date: Sat, 12 Dec 2009 09:06:09 +0000
-Subject: [PATCH 1/4] Spelling fixes.
-Message-Id: <1260608772-9839-2-git-send-email-rvoicilas@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 22 Dec 2009 20:31:23 +0000
+Subject: [PATCH 2/6] drivers/media/radio: Correct use after free
+Message-Id: <Pine.LNX.4.64.0912222131000.28669@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-No change in functionality.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Radu Voicilas <rvoicilas@gmail.com>
+It is not clear how to share the unlock in the case where the structure
+containing the lock has to be freed.  So the unlock is now duplicated, with
+one copy moved before the free.  The unlock label furthermore is no longer
+useful and is thus deleted.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,e;
+identifier f;
+iterator I;
+statement S;
+@@
+
+*kfree(x);
+... when != &x
+    when != x = e
+    when != I(x,...) S
+*x->f
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- samples/kobject/kobject-example.c |    4 ++--
+ drivers/media/radio/si470x/radio-si470x-usb.c  |    4 ++--
  1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/samples/kobject/kobject-example.c b/samples/kobject/kobject-example.c
-index 8d9b55a..86ea0c3 100644
---- a/samples/kobject/kobject-example.c
-+++ b/samples/kobject/kobject-example.c
-@@ -44,7 +44,7 @@ static struct kobj_attribute foo_attribute  	__ATTR(foo, 0666, foo_show, foo_store);
+diff --git a/drivers/media/radio/si470x/radio-si470x-usb.c b/drivers/media/radio/si470x/radio-si470x-usb.c
+index a96e1b9..a0a79c7 100644
+--- a/drivers/media/radio/si470x/radio-si470x-usb.c
++++ b/drivers/media/radio/si470x/radio-si470x-usb.c
+@@ -590,8 +590,9 @@ int si470x_fops_release(struct file *file)
+ 			video_unregister_device(radio->videodev);
+ 			kfree(radio->int_in_buffer);
+ 			kfree(radio->buffer);
++			mutex_unlock(&radio->disconnect_lock);
+ 			kfree(radio);
+-			goto unlock;
++			goto done;
+ 		}
  
- /*
-- * More complex function where we determine which varible is being accessed by
-+ * More complex function where we determine which variable is being accessed by
-  * looking at the attribute for the "baz" and "bar" files.
-  */
- static ssize_t b_show(struct kobject *kobj, struct kobj_attribute *attr,
-@@ -79,7 +79,7 @@ static struct kobj_attribute bar_attribute  
- 
- /*
-- * Create a group of attributes so that we can create and destory them all
-+ * Create a group of attributes so that we can create and destroy them all
-  * at once.
-  */
- static struct attribute *attrs[] = {
--- 
-1.6.3.3
-
+ 		/* cancel read processes */
+@@ -601,7 +602,6 @@ int si470x_fops_release(struct file *file)
+ 		retval = si470x_stop(radio);
+ 		usb_autopm_put_interface(radio->intf);
+ 	}
+-unlock:
+ 	mutex_unlock(&radio->disconnect_lock);
+ done:
+ 	return retval;
