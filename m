@@ -1,75 +1,55 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 09 Dec 2009 15:07:50 +0000
-Subject: Re: [PATCH] NTFS: Change string pointers to string constants.
-Message-Id: <4B1FBD46.1050204@bfs.de>
+From: peterhuewe@gmx.de
+Date: Tue, 22 Dec 2009 08:38:14 +0000
+Subject: [PATCH 10/10] media/dvb: add __init/__exit macros to drivers/media/dvb/bt8xx/bt878.c
+Message-Id: <1261471095-24272-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1259808806-27279-1-git-send-email-daikerjohn@gmail.com> <C1806924-DE57-4FBA-A67C-85C618FE6639@cam.ac.uk> <1260236833.3215.237.camel@Joe-Laptop.home> <20091209145846.GA3562@joi.lan>
-In-Reply-To: <20091209145846.GA3562@joi.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcin Slusarz <marcin.slusarz@gmail.com>
-Cc: Joe Perches <joe@perches.com>, Anton Altaparmakov <aia21@cam.ac.uk>, John Daiker <daikerjohn@gmail.com>, kernel-janitors@vger.kernel.org, aia21@cantab.net, linux-ntfs-dev@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Mauro Carvalho Chehab <mchehab@infradead.org>, Jean Delvare <khali@linux-fr.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Peter Huewe <peterhuewe@gmx.de>
 
+Trivial patch which adds the __init/__exit macros to the module_init/
+module_exit functions of
 
-Marcin Slusarz schrieb:
-> On Mon, Dec 07, 2009 at 05:47:13PM -0800, Joe Perches wrote:
->> On Tue, 2009-12-08 at 00:57 +0000, Anton Altaparmakov wrote:
->>> Can you please explain the rational for making this change?
->> Perhaps it's not worth much, but it saves a pointer reference.
->>
->> $ cat pointer.c
->> #include <string.h>
->> #include <stdio.h>
->>
->> int main (int argc, char** argv)
->> {
->> 	static const char *foo = "abcdefg";
->> 	printf("%s\n", foo);
->> 	return 0;
->> }
->>
->> $ gcc -c pointer.c
->> $ size pointer.o
->>    text	   data	    bss	    dec	    hex	filename
->>      37	      4	      0	     41	     29	pointer.o
->>
->> $ cat reference.c
->> #include <string.h>
->> #include <stdio.h>
->>
->> int main (int argc, char** argv)
->> {
->> static const char foo[] = "abcdefg";
->> printf("%s\n", foo);
->> return 0;
->> }
->>
->> $ gcc -c reference.c
->> $ size reference.o
->>    text    data     bss     dec     hex filename
->>      36       0       0      36      24 reference.o
-> 
-> Yeah, for static variables it's better. But for automatic variables
-> it's worse, because it now has to do a copy at runtime.
-> And the patch changes both types.
-> 
-> $ size pointer.o reference.o
->    text    data     bss     dec     hex filename
->     101       8       0     109      6d pointer.o
->      96       0       0      96      60 reference.o
-> 
-> $ size pointer-nonstatic.o reference-nonstatic.o
->    text    data     bss     dec     hex filename
->     106       0       0     106      6a pointer-nonstatic.o
->     109       0       0     109      6d reference-nonstatic.o
-> --
+drivers/media/dvb/bt8xx/bt878.c
 
+Please have a look at the small patch and either pull it through
+your tree, or please ack' it so Jiri can pull it through the trivial
+tree.
 
-nobody should spend to much time on this. gcc <what ever next version>
-will have different results. It is better to spend time improving
-the compiler and make it generate shorter/faster code.
+Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
+but also present in linus tree.
 
-just my 2 cents,
- wh
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/media/dvb/bt8xx/bt878.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb/bt8xx/bt878.c b/drivers/media/dvb/bt8xx/bt878.c
+index a24c125..2a0886a 100644
+--- a/drivers/media/dvb/bt8xx/bt878.c
++++ b/drivers/media/dvb/bt8xx/bt878.c
+@@ -582,7 +582,7 @@ static int bt878_pci_driver_registered;
+ /* Module management functions */
+ /*******************************/
+ 
+-static int bt878_init_module(void)
++static int __init bt878_init_module(void)
+ {
+ 	bt878_num = 0;
+ 	bt878_pci_driver_registered = 0;
+@@ -600,7 +600,7 @@ static int bt878_init_module(void)
+ 	return pci_register_driver(&bt878_pci_driver);
+ }
+ 
+-static void bt878_cleanup_module(void)
++static void __exit bt878_cleanup_module(void)
+ {
+ 	if (bt878_pci_driver_registered) {
+ 		bt878_pci_driver_registered = 0;
+-- 
+1.6.4.4
+
