@@ -1,47 +1,52 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Wed, 30 Dec 2009 01:16:35 +0000
-Subject: [PATCH] gpu/drm/radeon/radeon_irq.c: move a dereference below a
-Message-Id: <1262135795.8733.21.camel@ICE-BOX>
+From: peterhuewe@gmx.de
+Date: Tue, 22 Dec 2009 08:34:49 +0000
+Subject: [PATCH 08/10] video/omap: add __init/__exit macros to drivers/video/omap/lcd_htcherald.c
+Message-Id: <1261470890-24031-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Imre Deak <imre.deak@nokia.com>, Tony Lindgren <tony@atomide.com>, Cory Maccarrone <darkstar6262@gmail.com>, Tomi Valkeinen <tomi.valkeinen@nokia.com>, linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If a NULL value is possible, the dereference should only occur after the
-NULL test. 
+From: Peter Huewe <peterhuewe@gmx.de>
 
+Trivial patch which adds the __init/__exit macros to the module_init/
+module_exit functions of
 
-Coverity CID: 13338
+drivers/video/omap/lcd_htcherald.c
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com> 
+Please have a look at the small patch and either pull it through
+your tree, or please ack' it so Jiri can pull it through the trivial
+tree.
 
-diff --git drivers/gpu/drm/radeon/radeon_irq.c drivers/gpu/drm/radeon/radeon_irq.c
-index b79ecc4..2f349a3 100644
---- drivers/gpu/drm/radeon/radeon_irq.c
-+++ drivers/gpu/drm/radeon/radeon_irq.c
-@@ -289,16 +289,16 @@ int radeon_irq_emit(struct drm_device *dev, void *data, struct drm_file *file_pr
- 	drm_radeon_irq_emit_t *emit = data;
- 	int result;
+Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
+but also present in linus tree.
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/video/omap/lcd_htcherald.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/omap/lcd_htcherald.c b/drivers/video/omap/lcd_htcherald.c
+index a9007c5..4802419 100644
+--- a/drivers/video/omap/lcd_htcherald.c
++++ b/drivers/video/omap/lcd_htcherald.c
+@@ -115,12 +115,12 @@ struct platform_driver htcherald_panel_driver = {
+ 	},
+ };
  
--	if ((dev_priv->flags & RADEON_FAMILY_MASK) >= CHIP_R600)
--		return -EINVAL;
--
--	LOCK_TEST_WITH_RETURN(dev, file_priv);
--
- 	if (!dev_priv) {
- 		DRM_ERROR("called with no initialization\n");
- 		return -EINVAL;
- 	}
+-static int htcherald_panel_drv_init(void)
++static int __init htcherald_panel_drv_init(void)
+ {
+ 	return platform_driver_register(&htcherald_panel_driver);
+ }
  
-+	if ((dev_priv->flags & RADEON_FAMILY_MASK) >= CHIP_R600)
-+		return -EINVAL;
-+
-+	LOCK_TEST_WITH_RETURN(dev, file_priv);
-+
- 	result = radeon_emit_irq(dev);
- 
- 	if (DRM_COPY_TO_USER(emit->irq_seq, &result, sizeof(int))) {
-
+-static void htcherald_panel_drv_cleanup(void)
++static void __exit htcherald_panel_drv_cleanup(void)
+ {
+ 	platform_driver_unregister(&htcherald_panel_driver);
+ }
+-- 
+1.6.4.4
 
