@@ -1,57 +1,55 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Dec 2009 20:32:28 +0000
-Subject: [PATCH 5/6] drivers/scsi: Correct use after free
-Message-Id: <Pine.LNX.4.64.0912222132080.28669@ask.diku.dk>
+From: peterhuewe@gmx.de
+Date: Tue, 22 Dec 2009 08:38:02 +0000
+Subject: [PATCH 09/10] w1: add __init/__exit macros to drivers/w1/w1.c
+Message-Id: <1261471082-24233-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: aacraid@adaptec.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Evgeniy Polyakov <johnpol@2ka.mipt.ru>, Kay Sievers <kay.sievers@vrfy.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Move the kfree after a reference to the freed structure.
+Trivial patch which adds the __init/__exit macros to the module_init/
+module_exit functions of
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+drivers/w1/w1.c
 
-// <smpl>
-@@
-expression x,e;
-identifier f;
-iterator I;
-statement S;
-@@
+Please have a look at the small patch and either pull it through
+your tree, or please ack' it so Jiri can pull it through the trivial
+tree.
 
-*kfree(x);
-... when != &x
-    when != x = e
-    when != I(x,...) S
-*x->f
-// </smpl>
+Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
+but also present in linus tree.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/scsi/dpt_i2o.c              |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ drivers/w1/w1.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index 4967643..18c625c 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -1229,12 +1229,13 @@ static void adpt_i2o_delete_hba(adpt_hba* pHba)
- 		}
- 	}
- 	pci_dev_put(pHba->pDev);
--	kfree(pHba);
+diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+index acc7e3b..ad5897d 100644
+--- a/drivers/w1/w1.c
++++ b/drivers/w1/w1.c
+@@ -986,7 +986,7 @@ int w1_process(void *data)
+ 	return 0;
+ }
  
- 	if (adpt_sysfs_class)
- 		device_destroy(adpt_sysfs_class,
- 				MKDEV(DPTI_I2O_MAJOR, pHba->unit));
+-static int w1_init(void)
++static int __init w1_init(void)
+ {
+ 	int retval;
  
-+	kfree(pHba);
-+
- 	if(hba_count <= 0){
- 		unregister_chrdev(DPTI_I2O_MAJOR, DPT_DRIVER);   
- 		if (adpt_sysfs_class) {
+@@ -1034,7 +1034,7 @@ err_out_exit_init:
+ 	return retval;
+ }
+ 
+-static void w1_fini(void)
++static void __exit w1_fini(void)
+ {
+ 	struct w1_master *dev;
+ 
+-- 
+1.6.4.4
+
