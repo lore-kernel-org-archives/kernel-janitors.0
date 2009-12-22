@@ -1,30 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 14 Dec 2009 03:57:29 +0000
-Subject: Re: [PATCH 4/9] drivers/net/sfc: Correct code taking the size of a
-Message-Id: <20091213.195729.28793749.davem@davemloft.net>
+From: Peter Huewe <peterhuewe@gmx.de>
+Date: Tue, 22 Dec 2009 09:05:58 +0000
+Subject: [PATCH] MAINTAINERS: Fix entry for uwb to include subdirectories
+Message-Id: <1261472760-24854-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912131241130.24267@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912131241130.24267@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: linux-net-drivers@solarflare.com, shodgson@solarflare.com, bhutchings@solarflare.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Andrew Morton <akpm@linux-foundation.org>, Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 13 Dec 2009 12:41:29 +0100 (CET)
+This little patch removes the asterisk wildcard, in order to get the uwb
+maintainer when using get_maintainer.pl on anyfiles in the
+subdirectories of uwb.
+Otherwise it get_maintainer.pl does not come up with a result
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The function efx_iterate_state contains the code
-> memcpy(&payload->msg, payload_msg, sizeof(payload_msg));
-> This is the only use of payload_msg.  The type of payload_msg is
-> changed from a pointer to an array, so that the result of sizeof really is
-> the length of the string.
-> 
-> A simplified version of the semantic patch that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ MAINTAINERS |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Applied.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e770069..fbcc8f9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5467,7 +5467,7 @@ ULTRA-WIDEBAND (UWB) SUBSYSTEM:
+ M:	David Vrabel <david.vrabel@csr.com>
+ L:	linux-usb@vger.kernel.org
+ S:	Supported
+-F:	drivers/uwb/*
++F:	drivers/uwb/
+ F:	include/linux/uwb.h
+ F:	include/linux/uwb/
+ 
+-- 
+1.6.4.4
+
