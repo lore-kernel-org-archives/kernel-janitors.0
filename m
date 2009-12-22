@@ -1,53 +1,56 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 18 Dec 2009 14:19:40 +0000
-Subject: Re: [PATCH 09/10] Fix misspellings of "separate" in strings.
-Message-Id: <alpine.LNX.2.00.0912181519310.3755@pobox.suse.cz>
+From: peterhuewe@gmx.de
+Date: Tue, 22 Dec 2009 08:29:24 +0000
+Subject: [PATCH 2/2] ide: add __init/__exit macros to drivers/ide/scc_pata.c
+Message-Id: <1261470564-23754-2-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1260567342-8327-10-git-send-email-adam.buchbinder@gmail.com>
-In-Reply-To: <1260567342-8327-10-git-send-email-adam.buchbinder@gmail.com>
+References: <1261470564-23754-1-git-send-email-peterhuewe@gmx.de>
+In-Reply-To: <1261470564-23754-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, "David S. Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Sergei Shtylyov <sshtylyov@ru.mvista.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 11 Dec 2009, Adam Buchbinder wrote:
+From: Peter Huewe <peterhuewe@gmx.de>
 
-> Some string messages misspell "separate"; this fixes them. No change in
-> functionality.
-> 
-> Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
-> ---
->  drivers/acpi/proc.c             |    2 +-
->  drivers/isdn/mISDN/l1oip_core.c |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/proc.c b/drivers/acpi/proc.c
-> index d0d25e2..1ac678d 100644
-> --- a/drivers/acpi/proc.c
-> +++ b/drivers/acpi/proc.c
-> @@ -435,7 +435,7 @@ acpi_system_write_wakeup_device(struct file *file,
->  				found_dev->wakeup.gpe_device)) {
->  				printk(KERN_WARNING
->  				       "ACPI: '%s' and '%s' have the same GPE, "
-> -				       "can't disable/enable one seperately\n",
-> +				       "can't disable/enable one separately\n",
->  				       dev->pnp.bus_id, found_dev->pnp.bus_id);
->  				dev->wakeup.state.enabled >  				    found_dev->wakeup.state.enabled;
-> diff --git a/drivers/isdn/mISDN/l1oip_core.c b/drivers/isdn/mISDN/l1oip_core.c
-> index 7e5f30d..7c63472 100644
-> --- a/drivers/isdn/mISDN/l1oip_core.c
-> +++ b/drivers/isdn/mISDN/l1oip_core.c
-> @@ -1509,7 +1509,7 @@ l1oip_init(void)
->  			printk(KERN_DEBUG "%s: interface %d is %s with %s.\n",
->  			    __func__, l1oip_cnt, pri ? "PRI" : "BRI",
->  			    bundle ? "bundled IP packet for all B-channels" :
-> -			    "seperate IP packets for every B-channel");
-> +			    "separate IP packets for every B-channel");
->  
->  		hc = kzalloc(sizeof(struct l1oip), GFP_ATOMIC);
+Trivial patch which adds the __init/__exit macros to the module_init/
+module_exit functions of
 
-Applied, thanks.
+drivers/ide/scc_pata.c
 
+Please have a look at the small patch and either pull it through
+your tree, or please ack' it so Jiri can pull it through the trivial
+tree.
+
+Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
+but also present in linus tree.
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/ide/scc_pata.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ide/scc_pata.c b/drivers/ide/scc_pata.c
+index 1104bb3..58c9c91 100644
+--- a/drivers/ide/scc_pata.c
++++ b/drivers/ide/scc_pata.c
+@@ -872,14 +872,14 @@ static struct pci_driver scc_pci_driver = {
+ 	.remove = __devexit_p(scc_remove),
+ };
+ 
+-static int scc_ide_init(void)
++static int __init scc_ide_init(void)
+ {
+ 	return ide_pci_register_driver(&scc_pci_driver);
+ }
+ 
+ module_init(scc_ide_init);
+ /* -- No exit code?
+-static void scc_ide_exit(void)
++static void __exit scc_ide_exit(void)
+ {
+ 	ide_pci_unregister_driver(&scc_pci_driver);
+ }
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+1.6.4.4
+
