@@ -1,53 +1,55 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 27 Dec 2009 21:28:00 +0000
-Subject: [PATCH 5/5] drivers/staging/tm6000: Correct NULL test
-Message-Id: <Pine.LNX.4.64.0912272227450.20548@ask.diku.dk>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Tue, 22 Dec 2009 08:41:42 +0000
+Subject: [PATCH 03/10] isdn/mISDN: add __init/__exit macros to drivers/isdn/mISDN/dsp_core.c
+Message-Id: <200912220941.42370.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Karsten Keil <isdn@linux-pingi.de>, Andreas Eversberg <andreas@eversberg.eu>, "David S. Miller" <davem@davemloft.net>
 
-From: Julia Lawall <julia@diku.dk>
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Test the just-allocated value for NULL rather than some other value.
+Trivial patch which adds the __init/__exit macros to the module_init/
+module_exit functions of
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+drivers/isdn/mISDN/dsp_core.c
 
-// <smpl>
-@@
-expression x,y;
-statement S;
-@@
+Please have a look at the small patch and either pull it through
+your tree, or please ack' it so Jiri can pull it through the trivial
+tree.
 
-x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-(
-if ((x) = NULL) S
-|
-if (
--   y
-+   x
-       = NULL)
- S
-)
-// </smpl>
+Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
+but also present in linus tree.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/staging/tm6000/tm6000-video.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/isdn/mISDN/dsp_core.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/staging/tm6000/tm6000-video.c b/drivers/staging/tm6000/tm6000-video.c
---- a/drivers/staging/tm6000/tm6000-video.c
-+++ b/drivers/staging/tm6000/tm6000-video.c
-@@ -642,7 +642,7 @@ static int tm6000_prepare_isoc(struct tm
+diff --git a/drivers/isdn/mISDN/dsp_core.c b/drivers/isdn/mISDN/dsp_core.c
+index 43ff4d3..6eac588 100644
+--- a/drivers/isdn/mISDN/dsp_core.c
++++ b/drivers/isdn/mISDN/dsp_core.c
+@@ -1114,7 +1114,7 @@ static struct Bprotocol DSP = {
+ 	.create = dspcreate
+ };
  
- 	dev->isoc_ctl.transfer_buffer = kmalloc(sizeof(void *)*num_bufs,
- 				   GFP_KERNEL);
--	if (!dev->isoc_ctl.urb) {
-+	if (!dev->isoc_ctl.transfer_buffer) {
- 		tm6000_err("cannot allocate memory for usbtransfer\n");
- 		kfree(dev->isoc_ctl.urb);
- 		return -ENOMEM;
+-static int dsp_init(void)
++static int __init dsp_init(void)
+ {
+ 	int err;
+ 	int tics;
+@@ -1212,7 +1212,7 @@ static int dsp_init(void)
+ }
+ 
+ 
+-static void dsp_cleanup(void)
++static void __exit dsp_cleanup(void)
+ {
+ 	mISDN_unregister_Bprotocol(&DSP);
+ 
+-- 
+1.6.4.4
+
