@@ -1,50 +1,72 @@
-From: Adam Buchbinder <adam.buchbinder@gmail.com>
-Date: Fri, 11 Dec 2009 21:35:38 +0000
-Subject: [PATCH 06/10] Fix misspelling of "truly" in a label.
-Message-Id: <1260567342-8327-7-git-send-email-adam.buchbinder@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Dec 2009 19:20:37 +0000
+Subject: Re: [PATCH 9/15] arch/m68k: Use DIV_ROUND_CLOSEST
+Message-Id: <10f740e80912231120r363c4e0cg9b10053788fc16d9@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0908021047280.15557@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0908021047280.15557@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia@diku.dk>
+Cc: zippel@linux-m68k.org, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-A label reads 'truely_dead' rather than 'truly_dead'; this fixes it.
-No change in functionality.
+On Sun, Aug 2, 2009 at 09:47, Julia Lawall <julia@diku.dk> wrote:
+> From: Julia Lawall <julia@diku.dk>
+>
+> The kernel.h macro DIV_ROUND_CLOSEST performs the computation (x + d/2)/d
+> but is perhaps more readable.
 
-Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
----
- drivers/net/typhoon.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+Thanks, applied.
 
-diff --git a/drivers/net/typhoon.c b/drivers/net/typhoon.c
-index 5921f5b..13cc3b8 100644
---- a/drivers/net/typhoon.c
-+++ b/drivers/net/typhoon.c
-@@ -2113,7 +2113,7 @@ typhoon_tx_timeout(struct net_device *dev)
- 	if(typhoon_reset(tp->ioaddr, WaitNoSleep) < 0) {
- 		printk(KERN_WARNING "%s: could not reset in tx timeout\n",
- 					dev->name);
--		goto truely_dead;
-+		goto truly_dead;
- 	}
- 
- 	/* If we ever start using the Hi ring, it will need cleaning too */
-@@ -2123,13 +2123,13 @@ typhoon_tx_timeout(struct net_device *dev)
- 	if(typhoon_start_runtime(tp) < 0) {
- 		printk(KERN_ERR "%s: could not start runtime in tx timeout\n",
- 					dev->name);
--		goto truely_dead;
-+		goto truly_dead;
-         }
- 
- 	netif_wake_queue(dev);
- 	return;
- 
--truely_dead:
-+truly_dead:
- 	/* Reset the hardware, and turn off carrier to avoid more timeouts */
- 	typhoon_reset(tp->ioaddr, NoWait);
- 	netif_carrier_off(dev);
+> The semantic patch that makes this change is as follows:
+> (http://www.emn.fr/x-info/coccinelle/)
+>
+> // <smpl>
+> @haskernel@
+> @@
+>
+> #include <linux/kernel.h>
+>
+> @depends on haskernel@
+> expression x,__divisor;
+> @@
+>
+> - (((x) + ((__divisor) / 2)) / (__divisor))
+> + DIV_ROUND_CLOSEST(x,__divisor)
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+>
+> ---
+>  arch/m68k/amiga/config.c            |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
+> index 6e56275..002b9b0 100644
+> --- a/arch/m68k/amiga/config.c
+> +++ b/arch/m68k/amiga/config.c
+> @@ -480,7 +480,7 @@ static void __init amiga_sched_init(irq_handler_t timer_routine)
+>        static struct resource sched_res = {
+>                .name = "timer", .start = 0x00bfd400, .end = 0x00bfd5ff,
+>        };
+> -       jiffy_ticks = (amiga_eclock+HZ/2)/HZ;
+> +       jiffy_ticks = DIV_ROUND_CLOSEST(amiga_eclock, HZ);
+>
+>        if (request_resource(&mb_resources._ciab, &sched_res))
+>                printk("Cannot allocate ciab.ta{lo,hi}\n");
+>
+
+
+
 -- 
-1.6.3.3
+Gr{oetje,eeting}s,
 
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
