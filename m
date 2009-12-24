@@ -1,47 +1,34 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 09 Dec 2009 19:25:23 +0000
-Subject: [PATCH 10/12] drivers/usb: Correct size given to memset
-Message-Id: <Pine.LNX.4.64.0912092025050.1870@ask.diku.dk>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Thu, 24 Dec 2009 13:25:54 +0000
+Subject: drivers/gpu/drm/radeon/radeon_cp.c: fix resource leak on error
+Message-Id: <1261661154.3546.47.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+If drm_addmap() fails master_priv is leaked.
 
-Memset should be given the size of the structure, not the size of the pointer.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Coverity CID: 13195
 
-// <smpl>
-@@
-type T;
-T *x;
-expression E;
-@@
-
-memset(x, E, sizeof(
-+ *
- x))
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/usb/gadget/f_mass_storage.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/usb/gadget/f_mass_storage.c b/drivers/usb/gadget/f_mass_storage.c
---- a/drivers/usb/gadget/f_mass_storage.c
-+++ b/drivers/usb/gadget/f_mass_storage.c
-@@ -2675,7 +2675,7 @@ static struct fsg_common *fsg_common_ini
- 			return ERR_PTR(-ENOMEM);
- 		common->free_storage_on_release = 1;
- 	} else {
--		memset(common, 0, sizeof common);
-+		memset(common, 0, sizeof *common);
- 		common->free_storage_on_release = 0;
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+diff --git a/drivers/gpu/drm/radeon/radeon_cp.c
+b/drivers/gpu/drm/radeon/radeon_cp.c
+index 0b2f9c2..06123ba 100644
+--- a/drivers/gpu/drm/radeon/radeon_cp.c
++++ b/drivers/gpu/drm/radeon/radeon_cp.c
+@@ -2145,6 +2145,7 @@ int radeon_master_create(struct drm_device *dev,
+struct drm_master *master)
+ 			 &master_priv->sarea);
+ 	if (ret) {
+ 		DRM_ERROR("SAREA setup failed\n");
++		kfree(master_priv);
+ 		return ret;
  	}
- 
+ 	master_priv->sarea_priv = master_priv->sarea->handle + sizeof(struct
+drm_sarea);
+
+
