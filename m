@@ -1,28 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 14 Dec 2009 03:58:06 +0000
-Subject: Re: [PATCH] drivers/net/usb: Correct code taking the size of a
-Message-Id: <20091213.195806.179955530.davem@davemloft.net>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Thu, 24 Dec 2009 12:44:30 +0000
+Subject: drivers/gpu/drm/radeon: move a dereference below a NULL test
+Message-Id: <1261658670.3546.7.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912131646400.27767@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912131646400.27767@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: petkan@users.sourceforge.net, gregkh@suse.de, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 13 Dec 2009 16:47:04 +0100 (CET)
+If a NULL value is possible, the dereference should only occur after the
+NULL test.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> sizeof(dev->dev_addr) is the size of a pointer.  A few lines above, the
-> size of this field is obtained using netdev->addr_len for a call to memcpy,
-> so do the same here.
-> 
-> A simplified version of the semantic patch that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+diff --git a/drivers/gpu/drm/radeon/radeon_irq.c
+b/drivers/gpu/drm/radeon/radeon_irq.c
+index b79ecc4..2f349a3 100644
+--- a/drivers/gpu/drm/radeon/radeon_irq.c
++++ b/drivers/gpu/drm/radeon/radeon_irq.c
+@@ -289,16 +289,16 @@ int radeon_irq_emit(struct drm_device *dev, void
+*data, struct drm_file *file_pr
+ 	drm_radeon_irq_emit_t *emit = data;
+ 	int result;
+ 
+-	if ((dev_priv->flags & RADEON_FAMILY_MASK) >= CHIP_R600)
+-		return -EINVAL;
+-
+-	LOCK_TEST_WITH_RETURN(dev, file_priv);
+-
+ 	if (!dev_priv) {
+ 		DRM_ERROR("called with no initialization\n");
+ 		return -EINVAL;
+ 	}
+ 
++	if ((dev_priv->flags & RADEON_FAMILY_MASK) >= CHIP_R600)
++		return -EINVAL;
++
++	LOCK_TEST_WITH_RETURN(dev, file_priv);
++
+ 	result = radeon_emit_irq(dev);
+ 
+ 	if (DRM_COPY_TO_USER(emit->irq_seq, &result, sizeof(int))) {
 
-Applied.
+
