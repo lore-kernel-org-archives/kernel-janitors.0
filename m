@@ -1,60 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 09 Dec 2009 19:24:48 +0000
-Subject: [PATCH 8/12] drivers/scsi: Correct size given to memset
-Message-Id: <Pine.LNX.4.64.0912092024300.1870@ask.diku.dk>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Thu, 24 Dec 2009 13:18:16 +0000
+Subject: drivers/gpu/drm/radeon/radeon_cp.c: check for invalid radeon family
+Message-Id: <1261660696.3546.40.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+If there is an invalid radeon family the fw_name is NULL and causes an
+NULL pointer dereference.
+This just adds a check for something unexpected.
 
-Memset should be given the size of the structure, not the size of the pointer.
+Coverity CID: 13252
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-type T;
-T *x;
-expression E;
-@@
-
-memset(x, E, sizeof(
-+ *
- x))
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/scsi/fcoe/libfcoe.c              |    2 +-
- drivers/scsi/mpt2sas/mpt2sas_transport.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff -u -p a/drivers/scsi/fcoe/libfcoe.c b/drivers/scsi/fcoe/libfcoe.c
---- a/drivers/scsi/fcoe/libfcoe.c
-+++ b/drivers/scsi/fcoe/libfcoe.c
-@@ -444,7 +444,7 @@ static int fcoe_ctlr_encaps(struct fcoe_
- 	cap->encaps.fd_desc.fip_dlen = dlen / FIP_BPW;
- 
- 	mac = (struct fip_mac_desc *)skb_put(skb, sizeof(*mac));
--	memset(mac, 0, sizeof(mac));
-+	memset(mac, 0, sizeof(*mac));
- 	mac->fd_desc.fip_dtype = FIP_DT_MAC;
- 	mac->fd_desc.fip_dlen = sizeof(*mac) / FIP_BPW;
- 	if (dtype != FIP_DT_FLOGI && dtype != FIP_DT_FDISC)
-diff -u -p a/drivers/scsi/mpt2sas/mpt2sas_transport.c b/drivers/scsi/mpt2sas/mpt2sas_transport.c
---- a/drivers/scsi/mpt2sas/mpt2sas_transport.c
-+++ b/drivers/scsi/mpt2sas/mpt2sas_transport.c
-@@ -162,7 +162,7 @@ _transport_set_identify(struct MPT2SAS_A
- 		return -EIO;
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+diff --git a/drivers/gpu/drm/radeon/radeon_cp.c
+b/drivers/gpu/drm/radeon/radeon_cp.c
+index 0b2f9c2..1e66337 100644
+--- a/drivers/gpu/drm/radeon/radeon_cp.c
++++ b/drivers/gpu/drm/radeon/radeon_cp.c
+@@ -531,6 +531,8 @@ static int
+radeon_cp_init_microcode(drm_radeon_private_t *dev_priv)
+ 		   ((dev_priv->flags & RADEON_FAMILY_MASK) = CHIP_RV570)) {
+ 		DRM_INFO("Loading R500 Microcode\n");
+ 		fw_name = FIRMWARE_R520;
++	} else {
++		return -EINVAL;
  	}
  
--	memset(identify, 0, sizeof(identify));
-+	memset(identify, 0, sizeof(*identify));
- 	device_info = le32_to_cpu(sas_device_pg0.DeviceInfo);
- 
- 	/* sas_address */
+ 	err = request_firmware(&dev_priv->me_fw, fw_name, &pdev->dev);
+
+
