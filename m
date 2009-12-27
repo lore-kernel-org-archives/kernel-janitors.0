@@ -1,33 +1,53 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Wed, 30 Dec 2009 01:22:55 +0000
-Subject: [PATCH] drm/radeon/radeon_connectors.c: add a NULL test before
-Message-Id: <1262136175.8733.31.camel@ICE-BOX>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 27 Dec 2009 21:27:11 +0000
+Subject: [PATCH 2/5] drivers/block: Correct NULL test
+Message-Id: <Pine.LNX.4.64.0912272226550.20548@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: drbd-dev@lists.linbit.com, drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The encoder variable can be NULL in this function so I believe it should
-be checked before dereference.
+From: Julia Lawall <julia@diku.dk>
 
-Coverity CID: 13253
+Test the just-allocated value for NULL rather than some other value.
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git drivers/gpu/drm/radeon/radeon_connectors.c drivers/gpu/drm/radeon/radeon_connectors.c
-index 2016156..b82ae61 100644
---- drivers/gpu/drm/radeon/radeon_connectors.c
-+++ drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -615,7 +615,7 @@ static enum drm_connector_status radeon_vga_detect(struct drm_connector *connect
- 				ret = connector_status_connected;
- 		}
- 	} else {
--		if (radeon_connector->dac_load_detect) {
-+		if (radeon_connector->dac_load_detect && encoder) {
- 			encoder_funcs = encoder->helper_private;
- 			ret = encoder_funcs->detect(encoder, connector);
- 		}
+// <smpl>
+@@
+expression x,y;
+statement S;
+@@
 
+x = \(kmalloc\|kcalloc\|kzalloc\)(...);
+(
+if ((x) = NULL) S
+|
+if (
+-   y
++   x
+       = NULL)
+ S
+)
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/block/drbd/drbd_receiver.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -3944,7 +3944,7 @@ static int drbd_do_auth(struct drbd_conf
+ 	}
+ 
+ 	right_response = kmalloc(resp_size, GFP_NOIO);
+-	if (response = NULL) {
++	if (right_response = NULL) {
+ 		dev_err(DEV, "kmalloc of right_response failed\n");
+ 		rv = 0;
+ 		goto fail;
