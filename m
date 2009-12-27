@@ -1,56 +1,53 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 07 Dec 2009 10:08:15 +0000
-Subject: Re: [PATCH 4/5] tools/perf/util: correct size computation
-Message-Id: <4B1CD40F.4010407@bfs.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 27 Dec 2009 21:27:44 +0000
+Subject: [PATCH 4/5] drivers/net/can: Correct NULL test
+Message-Id: <Pine.LNX.4.64.0912272227290.20548@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912061016120.20858@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912061016120.20858@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Urs Thuermann <urs.thuermann@volkswagen.de>, Oliver Hartkopp <oliver.hartkopp@volkswagen.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
+Test the just-allocated value for NULL rather than some other value.
 
-Julia Lawall schrieb:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The size argument to zalloc should be the size of desired structure,
-> not the pointer to it.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @expression@
-> expression *x;
-> @@
-> 
-> x >  <+...
-> -sizeof(x)
-> +sizeof(*x)
-> ...+>// </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  tools/perf/util/parse-events.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -197,7 +197,7 @@ struct tracepoint_path *tracepoint_id_to
->  			if (id = config) {
->  				closedir(evt_dir);
->  				closedir(sys_dir);
-> -				path = zalloc(sizeof(path));
-> +				path = zalloc(sizeof(*path));
->  				path->system = malloc(MAX_EVENT_LENGTH);
->  				if (!path->system) {
->  					free(path);
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-and zalloc() can not fail ?
-re,
- wh
+// <smpl>
+@@
+expression x,y;
+statement S;
+@@
+
+x = \(kmalloc\|kcalloc\|kzalloc\)(...);
+(
+if ((x) = NULL) S
+|
+if (
+-   y
++   x
+       = NULL)
+ S
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/can/mcp251x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/net/can/mcp251x.c b/drivers/net/can/mcp251x.c
+--- a/drivers/net/can/mcp251x.c
++++ b/drivers/net/can/mcp251x.c
+@@ -990,7 +990,7 @@ static int __devinit mcp251x_can_probe(s
+ 			goto error_tx_buf;
+ 		}
+ 		priv->spi_rx_buf = kmalloc(SPI_TRANSFER_BUF_LEN, GFP_KERNEL);
+-		if (!priv->spi_tx_buf) {
++		if (!priv->spi_rx_buf) {
+ 			ret = -ENOMEM;
+ 			goto error_rx_buf;
+ 		}
