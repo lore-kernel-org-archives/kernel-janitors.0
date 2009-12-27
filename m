@@ -1,19 +1,53 @@
-From: Roland Dreier <rdreier@cisco.com>
-Date: Wed, 09 Dec 2009 22:32:51 +0000
-Subject: Re: [PATCH 3/5] drivers/infiniband: correct size computation
-Message-Id: <ada3a3jrd64.fsf@roland-alpha.cisco.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 27 Dec 2009 21:28:00 +0000
+Subject: [PATCH 5/5] drivers/staging/tm6000: Correct NULL test
+Message-Id: <Pine.LNX.4.64.0912272227450.20548@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912061015540.20858@ask.diku.dk>
-	<603F8A3875DCE940BA37B49D0A6EA0AE3CE36BF4@azsmsx501.amr.corp.intel.com>
-	<Pine.LNX.4.64.0912071720520.15109@ask.diku.dk>
-	<603F8A3875DCE940BA37B49D0A6EA0AE3CE36C9F@azsmsx501.amr.corp.intel.com>
-	<Pine.LNX.4.64.0912072056160.1202@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912072056160.1202-QfmoRoYWmW9knbxzx/v8hQ@public.gmane.org> (Julia Lawall's
-	message of "Mon, 7 Dec 2009 20:57:06 +0100 (CET)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: "Tung, Chien Tin" <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Latif, Faisal" <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma@vger.kernel.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-applied, thanks everyone.
+From: Julia Lawall <julia@diku.dk>
+
+Test the just-allocated value for NULL rather than some other value.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,y;
+statement S;
+@@
+
+x = \(kmalloc\|kcalloc\|kzalloc\)(...);
+(
+if ((x) = NULL) S
+|
+if (
+-   y
++   x
+       = NULL)
+ S
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/staging/tm6000/tm6000-video.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/staging/tm6000/tm6000-video.c b/drivers/staging/tm6000/tm6000-video.c
+--- a/drivers/staging/tm6000/tm6000-video.c
++++ b/drivers/staging/tm6000/tm6000-video.c
+@@ -642,7 +642,7 @@ static int tm6000_prepare_isoc(struct tm
+ 
+ 	dev->isoc_ctl.transfer_buffer = kmalloc(sizeof(void *)*num_bufs,
+ 				   GFP_KERNEL);
+-	if (!dev->isoc_ctl.urb) {
++	if (!dev->isoc_ctl.transfer_buffer) {
+ 		tm6000_err("cannot allocate memory for usbtransfer\n");
+ 		kfree(dev->isoc_ctl.urb);
+ 		return -ENOMEM;
