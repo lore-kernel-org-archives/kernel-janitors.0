@@ -1,32 +1,56 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Wed, 30 Dec 2009 01:25:45 +0000
-Subject: [PATCH] drm/radeon/radeon_cp.c: fix resource leak on error
-Message-Id: <1262136345.8733.36.camel@ICE-BOX>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 27 Dec 2009 21:27:28 +0000
+Subject: [PATCH 3/5] drivers/gpu: Correct NULL test
+Message-Id: <Pine.LNX.4.64.0912272227130.20548@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: airlied@linux.ie, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If drm_addmap() fails master_priv is leaked.
+From: Julia Lawall <julia@diku.dk>
 
+Test the just-allocated value for NULL rather than some other value.
 
-Coverity CID: 13195
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+// <smpl>
+@@
+expression x,y;
+statement S;
+@@
 
-diff --git drivers/gpu/drm/radeon/radeon_cp.c drivers/gpu/drm/radeon/radeon_cp.c
-index 0b2f9c2..06123ba 100644
---- drivers/gpu/drm/radeon/radeon_cp.c
-+++ drivers/gpu/drm/radeon/radeon_cp.c
-@@ -2145,6 +2145,7 @@ int radeon_master_create(struct drm_device *dev, struct drm_master *master)
- 			 &master_priv->sarea);
- 	if (ret) {
- 		DRM_ERROR("SAREA setup failed\n");
-+		kfree(master_priv);
- 		return ret;
- 	}
- 	master_priv->sarea_priv = master_priv->sarea->handle + sizeof(struct drm_sarea);
+x = \(kmalloc\|kcalloc\|kzalloc\)(...);
+(
+if ((x) = NULL) S
+|
+if (
+-   y
++   x
+       = NULL)
+ S
+)
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ drivers/gpu/drm/nouveau/nouveau_grctx.c        |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_grctx.c b/drivers/gpu/drm/nouveau/nouveau_grctx.c
+index 419f4c2..c7ebec6 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_grctx.c
++++ b/drivers/gpu/drm/nouveau/nouveau_grctx.c
+@@ -97,8 +97,8 @@ nouveau_grctx_prog_load(struct drm_device *dev)
+ 		}
+ 
+ 		pgraph->ctxvals = kmalloc(fw->size, GFP_KERNEL);
+-		if (!pgraph->ctxprog) {
+-			NV_ERROR(dev, "OOM copying ctxprog\n");
++		if (!pgraph->ctxvals) {
++			NV_ERROR(dev, "OOM copying ctxvals\n");
+ 			release_firmware(fw);
+ 			nouveau_grctx_fini(dev);
+ 			return -ENOMEM;
