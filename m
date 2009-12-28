@@ -1,62 +1,34 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 27 Dec 2009 22:25:52 +0000
-Subject: Re: [PATCH 1/5] arch/arm: Correct NULL test
-Message-Id: <Pine.LNX.4.64.0912272325130.22240@ask.diku.dk>
+From: "H Hartley Sweeten" <hartleys@visionengravers.com>
+Date: Mon, 28 Dec 2009 16:24:19 +0000
+Subject: RE: [PATCH 1/5] arch/arm: Correct NULL test
+Message-Id: <BD79186B4FD85F4B8E60E381CAEE19090200F461@mi8nycmail19.Mi8.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912272226360.20548@ask.diku.dk>
-	<20091227215106.GA18317@pengutronix.de>
-In-Reply-To: <20091227215106.GA18317@pengutronix.de>
+References: <Pine.LNX.4.64.0912272226360.20548@ask.diku.dk><20091227215106.GA18317@pengutronix.de>
+	<Pine.LNX.4.64.0912272307310.20548@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0912272307310.20548@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sunday, December 27, 2009 3:08 PM, Julia Lawall wrote:
+>>>  	dbgfs_chan = kmalloc(sizeof(*dbgfs_state) * num_dma_channels,
+>>>  			     GFP_KERNEL);
+>>> -	if (!dbgfs_state)
+>>> +	if (!dbgfs_chan)
+>>>  		goto err_alloc;
+>> Shouldn't the malloc line read:
+>> 
+>> 	... = kmalloc(sizeof(*dbgfs_chan) * ...)
+>> 	                      ^^^^^^^^^^
+>> 
+>> ?
+>
+> Good point, thanks.  I will send a revised patch.
 
-Test the just-allocated value for NULL rather than some other value.
-Adjust the size of the allocated array as well, according to the location
-storing the result.
+Wouldn't this be clearer?
 
-The semantic patch that makes the first change is as follows:
-(http://coccinelle.lip6.fr/)
+	... = kmalloc(sizeof(struct dentry) * ...)
 
-// <smpl>
-@@
-expression x,y;
-statement S;
-@@
-
-x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-(
-if ((x) = NULL) S
-|
-if (
--   y
-+   x
-       = NULL)
- S
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- arch/arm/plat-pxa/dma.c             |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/plat-pxa/dma.c b/arch/arm/plat-pxa/dma.c
-index 2975798..fb28dc9 100644
---- a/arch/arm/plat-pxa/dma.c
-+++ b/arch/arm/plat-pxa/dma.c
-@@ -242,9 +242,9 @@ static void pxa_dma_init_debugfs(void)
- 	if (!dbgfs_state)
- 		goto err_state;
- 
--	dbgfs_chan = kmalloc(sizeof(*dbgfs_state) * num_dma_channels,
-+	dbgfs_chan = kmalloc(sizeof(*dbgfs_chan) * num_dma_channels,
- 			     GFP_KERNEL);
--	if (!dbgfs_state)
-+	if (!dbgfs_chan)
- 		goto err_alloc;
- 
- 	chandir = debugfs_create_dir("channels", dbgfs_root);
+Regards,
+Hartley
