@@ -1,14 +1,48 @@
-From: "Helga M." <boyanivolgin66367@gmail.com>
-Date: Mon, 28 Dec 2009 22:36:15 +0000
-Subject: Short joke for You
-Message-Id: <085f47b1-55d3-4b9c-bec3-71cdd6110aa0@u7g2000yqm.googlegroups.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 29 Dec 2009 19:15:42 +0000
+Subject: [PATCH 2/5] drivers/net : Correct the size argument to kzalloc
+Message-Id: <Pine.LNX.4.64.0912292015240.4001@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <dfe9d62d-d4a8-4cfe-b181-adcf5afd505c@u7g2000yqm.googlegroups.com>
-In-Reply-To: <dfe9d62d-d4a8-4cfe-b181-adcf5afd505c@u7g2000yqm.googlegroups.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-One short joke clip to cheer Your up!
-http://www.tcp3.com/helga-4315
+From: Julia Lawall <julia@diku.dk>
+
+lp->rx_skb has type struct sk_buff **, not struct sk_buff *, so the
+elements of the array should have pointer type, not structure type.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@disable sizeof_type_expr@
+type T;
+T **x;
+@@
+
+  x   <+...sizeof(
+- T
++ *x
+  )...+>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/ll_temac_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/net/ll_temac_main.c b/drivers/net/ll_temac_main.c
+--- a/drivers/net/ll_temac_main.c
++++ b/drivers/net/ll_temac_main.c
+@@ -134,7 +134,7 @@ static int temac_dma_bd_init(struct net_
+ 	struct sk_buff *skb;
+ 	int i;
+ 
+-	lp->rx_skb = kzalloc(sizeof(struct sk_buff)*RX_BD_NUM, GFP_KERNEL);
++	lp->rx_skb = kzalloc(sizeof(*lp->rx_skb) * RX_BD_NUM, GFP_KERNEL);
+ 	/* allocate the tx and rx ring buffer descriptors. */
+ 	/* returns a virtual addres and a physical address. */
+ 	lp->tx_bd_v = dma_alloc_coherent(ndev->dev.parent,
