@@ -1,40 +1,48 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 18 Dec 2009 14:03:41 +0000
-Subject: Re: [PATCH 01/10] Fix misspelling of "should" in string.
-Message-Id: <alpine.LNX.2.00.0912181503280.3755@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 29 Dec 2009 19:16:22 +0000
+Subject: [PATCH 4/5] drivers/usb : Correct the size argument to kzalloc
+Message-Id: <Pine.LNX.4.64.0912292016040.4001@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1260567342-8327-2-git-send-email-adam.buchbinder@gmail.com>
-In-Reply-To: <1260567342-8327-2-git-send-email-adam.buchbinder@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 11 Dec 2009, Adam Buchbinder wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> A string message misspells "should"; this fixes it. No change in functionality.
-> 
-> Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
-> ---
->  fs/ext4/move_extent.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-> index 25b6b14..6d26d89 100644
-> --- a/fs/ext4/move_extent.c
-> +++ b/fs/ext4/move_extent.c
-> @@ -1088,7 +1088,7 @@ mext_check_arguments(struct inode *orig_inode,
->  	}
->  
->  	if (!*len) {
-> -		ext4_debug("ext4 move extent: len shoudld not be 0 "
-> +		ext4_debug("ext4 move extent: len should not be 0 "
->  			"[ino:orig %lu, donor %lu]\n", orig_inode->i_ino,
->  			donor_inode->i_ino);
->  		return -EINVAL;
+urb_priv->tds has type struct td **, not struct td *, so the
+elements of the array should have pointer type, not structure type.
 
-This has been already fixed for 2.6.33-rc1.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+// <smpl>
+@disable sizeof_type_expr@
+type T;
+T **x;
+@@
+
+  x   <+...sizeof(
+- T
++ *x
+  )...+>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/host/fhci-hcd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/usb/host/fhci-hcd.c b/drivers/usb/host/fhci-hcd.c
+--- a/drivers/usb/host/fhci-hcd.c
++++ b/drivers/usb/host/fhci-hcd.c
+@@ -432,7 +432,7 @@ static int fhci_urb_enqueue(struct usb_h
+ 		return -ENOMEM;
+ 
+ 	/* allocate the private part of the URB */
+-	urb_priv->tds = kzalloc(size * sizeof(struct td), mem_flags);
++	urb_priv->tds = kzalloc(size * sizeof(*urb_priv->tds), mem_flags);
+ 	if (!urb_priv->tds) {
+ 		kfree(urb_priv);
+ 		return -ENOMEM;
