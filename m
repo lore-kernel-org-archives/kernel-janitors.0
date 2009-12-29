@@ -1,35 +1,48 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Wed, 30 Dec 2009 01:23:55 +0000
-Subject: [PATCH] drm/radeon/radeon_cp.c: check for invalid radeon family
-Message-Id: <1262136235.8733.33.camel@ICE-BOX>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 29 Dec 2009 19:15:23 +0000
+Subject: [PATCH 1/5] drivers/mtd : Correct the size argument to kzalloc
+Message-Id: <Pine.LNX.4.64.0912292015001.4001@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: dwmw2@infradead.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If there is an invalid radeon family the fw_name is NULL and causes an
-NULL pointer dereference.
-This just adds a check for something unexpected.
+From: Julia Lawall <julia@diku.dk>
 
-Coverity CID: 13252
+mtd_list has type struct mtd_info **, not struct mtd_info *, so the
+elements of the array should have pointer type, not structure type.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+// <smpl>
+@disable sizeof_type_expr@
+type T;
+T **x;
+@@
 
-diff --git drivers/gpu/drm/radeon/radeon_cp.c drivers/gpu/drm/radeon/radeon_cp.c
-index 0b2f9c2..1e66337 100644
---- drivers/gpu/drm/radeon/radeon_cp.c
-+++ drivers/gpu/drm/radeon/radeon_cp.c
-@@ -531,6 +531,8 @@ static int radeon_cp_init_microcode(drm_radeon_private_t *dev_priv)
- 		   ((dev_priv->flags & RADEON_FAMILY_MASK) = CHIP_RV570)) {
- 		DRM_INFO("Loading R500 Microcode\n");
- 		fw_name = FIRMWARE_R520;
-+	} else {
-+		return -EINVAL;
- 	}
+  x   <+...sizeof(
+- T
++ *x
+  )...+>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/mtd/maps/physmap_of.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/mtd/maps/physmap_of.c b/drivers/mtd/maps/physmap_of.c
+--- a/drivers/mtd/maps/physmap_of.c
++++ b/drivers/mtd/maps/physmap_of.c
+@@ -217,7 +217,7 @@ static int __devinit of_flash_probe(stru
  
- 	err = request_firmware(&dev_priv->me_fw, fw_name, &pdev->dev);
-
-
+ 	dev_set_drvdata(&dev->dev, info);
+ 
+-	mtd_list = kzalloc(sizeof(struct mtd_info) * count, GFP_KERNEL);
++	mtd_list = kzalloc(sizeof(*mtd_list) * count, GFP_KERNEL);
+ 	if (!mtd_list)
+ 		goto err_flash_remove;
+ 
