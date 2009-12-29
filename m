@@ -1,62 +1,40 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 29 Dec 2009 19:16:03 +0000
-Subject: [PATCH 3/5] drivers/scsi : Correct the size argument to kmalloc
-Message-Id: <Pine.LNX.4.64.0912292015420.4001@ask.diku.dk>
+From: Rolf Eike Beer <eike-kernel@sf-tec.de>
+Date: Tue, 29 Dec 2009 20:02:42 +0000
+Subject: Re: [PATCH 3/5] drivers/scsi : Correct the size argument to kmalloc
+Message-Id: <200912292102.43373.eike-kernel@sf-tec.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="nextPart1699455.DbQ32g4QYV"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: James.Bottomley@suse.de, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Pine.LNX.4.64.0912292015420.4001@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0912292015420.4001@ask.diku.dk>
+To: Julia Lawall <julia@diku.dk>
+Cc: James.Bottomley@suse.de, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+--nextPart1699455.DbQ32g4QYV
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-In each case, the destination of the allocation has type struct **, so the
-elements of the array should have pointer type, not structure type.
+Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+>=20
+> In each case, the destination of the allocation has type struct **, so the
+> elements of the array should have pointer type, not structure type.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Maybe they should even by kcalloc'ed?
 
-// <smpl>
-@disable sizeof_type_expr@
-type T;
-T **x;
-@@
+Eike
 
-  x   <+...sizeof(
-- T
-+ *x
-  )...+>
-// </smpl>
+--nextPart1699455.DbQ32g4QYV
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.12 (GNU/Linux)
 
----
- drivers/scsi/aic94xx/aic94xx_init.c |    4 ++--
- drivers/scsi/ch.c                   |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+iEYEABECAAYFAks6YGMACgkQXKSJPmm5/E6KCQCgnrkOEo9hY7DsSefSyUa1QSdj
+2isAn2F4oFROAFlqgHz5UWGrRjyh+yGp
+=scYj
+-----END PGP SIGNATURE-----
 
-diff -u -p a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
---- a/drivers/scsi/aic94xx/aic94xx_init.c
-+++ b/drivers/scsi/aic94xx/aic94xx_init.c
-@@ -687,9 +687,9 @@ static int asd_register_sas_ha(struct as
- {
- 	int i;
- 	struct asd_sas_phy   **sas_phys -		kmalloc(ASD_MAX_PHYS * sizeof(struct asd_sas_phy), GFP_KERNEL);
-+		kmalloc(ASD_MAX_PHYS * sizeof(*sas_phys), GFP_KERNEL);
- 	struct asd_sas_port  **sas_ports -		kmalloc(ASD_MAX_PHYS * sizeof(struct asd_sas_port), GFP_KERNEL);
-+		kmalloc(ASD_MAX_PHYS * sizeof(*sas_ports), GFP_KERNEL);
- 
- 	if (!sas_phys || !sas_ports) {
- 		kfree(sas_phys);
-diff -u -p a/drivers/scsi/ch.c b/drivers/scsi/ch.c
---- a/drivers/scsi/ch.c
-+++ b/drivers/scsi/ch.c
-@@ -351,7 +351,7 @@ ch_readconfig(scsi_changer *ch)
- 	}
- 
- 	/* look up the devices of the data transfer elements */
--	ch->dt = kmalloc(ch->counts[CHET_DT]*sizeof(struct scsi_device),
-+	ch->dt = kmalloc(ch->counts[CHET_DT]*sizeof(*ch->dt),
- 			 GFP_KERNEL);
- 
- 	if (!ch->dt) {
+--nextPart1699455.DbQ32g4QYV--
