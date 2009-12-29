@@ -1,74 +1,36 @@
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Date: Mon, 28 Dec 2009 13:49:58 +0000
+From: christian pellegrin <chripell@gmail.com>
+Date: Tue, 29 Dec 2009 09:43:08 +0000
 Subject: Re: [PATCH 4/5] drivers/net/can: Correct NULL test
-Message-Id: <4B38B786.9020609@hartkopp.net>
+Message-Id: <cabda6420912290143pfda331en80f8bd77b7816c1@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0912272227290.20548@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912272227290.20548@ask.diku.dk>
+	 <4B38B786.9020609@hartkopp.net>
+In-Reply-To: <4B38B786.9020609@hartkopp.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Urs Thuermann <urs.thuermann@volkswagen.de>, Oliver Hartkopp <oliver.hartkopp@volkswagen.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, chri <chripell@gmail.com>, chripell@evolware.org
+To: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Julia Lawall <julia@diku.dk>, Urs Thuermann <urs.thuermann@volkswagen.de>, Oliver Hartkopp <oliver.hartkopp@volkswagen.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
+On Mon, Dec 28, 2009 at 2:49 PM, Oliver Hartkopp <socketcan@hartkopp.net> wrote:
+> Julia Lawall wrote:
+>> From: Julia Lawall <julia@diku.dk>
+>
+> Thanks Julia!
+>
+> I added Christian Pellegrin who is the author of this driver in CC.
+>
+> An obvious copy/paste error :-)
+>
 
-Thanks Julia!
+yes, exactly that: copy & paste is among the sweetest evils out there.
+I'll try the semantic checker myself next time. Thanks!
 
-I added Christian Pellegrin who is the author of this driver in CC.
 
-An obvious copy/paste error :-)
 
-Regards,
-Oliver
-
-Acked-by: Oliver Hartkopp <oliver@hartkopp.net>
-
-> 
-> Test the just-allocated value for NULL rather than some other value.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,y;
-> statement S;
-> @@
-> 
-> x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-> (
-> if ((x) = NULL) S
-> |
-> if (
-> -   y
-> +   x
->        = NULL)
->  S
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/net/can/mcp251x.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/drivers/net/can/mcp251x.c b/drivers/net/can/mcp251x.c
-> --- a/drivers/net/can/mcp251x.c
-> +++ b/drivers/net/can/mcp251x.c
-> @@ -990,7 +990,7 @@ static int __devinit mcp251x_can_probe(s
->  			goto error_tx_buf;
->  		}
->  		priv->spi_rx_buf = kmalloc(SPI_TRANSFER_BUF_LEN, GFP_KERNEL);
-> -		if (!priv->spi_tx_buf) {
-> +		if (!priv->spi_rx_buf) {
->  			ret = -ENOMEM;
->  			goto error_rx_buf;
->  		}
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+-- 
+Christian Pellegrin, see http://www.evolware.org/chri/
+"Real Programmers don't play tennis, or any other sport which requires
+you to change clothes. Mountain climbing is OK, and Real Programmers
+wear their climbing boots to work in case a mountain should suddenly
+spring up in the middle of the computer room."
