@@ -1,53 +1,47 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Dec 2009 20:32:07 +0000
-Subject: [PATCH 4/6] drivers/scsi/aacraid: Correct use after free
-Message-Id: <Pine.LNX.4.64.0912222131430.28669@ask.diku.dk>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Wed, 30 Dec 2009 01:16:35 +0000
+Subject: [PATCH] gpu/drm/radeon/radeon_irq.c: move a dereference below a
+Message-Id: <1262135795.8733.21.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: aacraid@adaptec.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+If a NULL value is possible, the dereference should only occur after the
+NULL test. 
 
-Move the kfree after the print statement that uses the freed structure.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Coverity CID: 13338
 
-// <smpl>
-@@
-expression x,e;
-identifier f;
-iterator I;
-statement S;
-@@
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com> 
 
-*kfree(x);
-... when != &x
-    when != x = e
-    when != I(x,...) S
-*x->f
-// </smpl>
+diff --git drivers/gpu/drm/radeon/radeon_irq.c drivers/gpu/drm/radeon/radeon_irq.c
+index b79ecc4..2f349a3 100644
+--- drivers/gpu/drm/radeon/radeon_irq.c
++++ drivers/gpu/drm/radeon/radeon_irq.c
+@@ -289,16 +289,16 @@ int radeon_irq_emit(struct drm_device *dev, void *data, struct drm_file *file_pr
+ 	drm_radeon_irq_emit_t *emit = data;
+ 	int result;
+ 
+-	if ((dev_priv->flags & RADEON_FAMILY_MASK) >= CHIP_R600)
+-		return -EINVAL;
+-
+-	LOCK_TEST_WITH_RETURN(dev, file_priv);
+-
+ 	if (!dev_priv) {
+ 		DRM_ERROR("called with no initialization\n");
+ 		return -EINVAL;
+ 	}
+ 
++	if ((dev_priv->flags & RADEON_FAMILY_MASK) >= CHIP_R600)
++		return -EINVAL;
++
++	LOCK_TEST_WITH_RETURN(dev, file_priv);
++
+ 	result = radeon_emit_irq(dev);
+ 
+ 	if (DRM_COPY_TO_USER(emit->irq_seq, &result, sizeof(int))) {
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
 
----
- drivers/scsi/aacraid/commctrl.c     |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index 0391d75..2870c16 100644
---- a/drivers/scsi/aacraid/commctrl.c
-+++ b/drivers/scsi/aacraid/commctrl.c
-@@ -655,9 +655,9 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 				/* Does this really need to be GFP_DMA? */
- 				p = kmalloc(usg->sg[i].count,GFP_KERNEL|__GFP_DMA);
- 				if(!p) {
--					kfree (usg);
- 					dprintk((KERN_DEBUG"aacraid: Could not allocate SG buffer - size = %d buffer number %d of %d\n",
- 					  usg->sg[i].count,i,usg->count));
-+					kfree(usg);
- 					rcode = -ENOMEM;
- 					goto cleanup;
- 				}
