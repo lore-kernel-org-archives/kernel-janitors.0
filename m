@@ -1,48 +1,45 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 06 Dec 2009 09:15:32 +0000
-Subject: [PATCH 1/5] arch/xtensa/platforms/iss: correct size computation
-Message-Id: <Pine.LNX.4.64.0912061015030.20858@ask.diku.dk>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Wed, 30 Dec 2009 01:18:30 +0000
+Subject: [PATCH] drm/radeon/radeon_device.c: move a dereference below a
+Message-Id: <1262135910.8733.23.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Zankel <chris@zankel.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+If a NULL value is possible, the dereference should only occur after the
+NULL test.
 
-The size argument to alloc_bootmem should be the size of desired structure,
-not the pointer to it.
+Coverity CID: 13335
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
-// <smpl>
-@expression@
-expression *x;
-@@
-
-x  <+...
--sizeof(x)
-+sizeof(*x)
-...+>// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- arch/xtensa/platforms/iss/network.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/arch/xtensa/platforms/iss/network.c b/arch/xtensa/platforms/iss/network.c
-index 2f0b86b..54a0868 100644
---- a/arch/xtensa/platforms/iss/network.c
-+++ b/arch/xtensa/platforms/iss/network.c
-@@ -780,7 +780,8 @@ static int iss_net_setup(char *str)
- 		return 1;
- 	}
+diff --git drivers/gpu/drm/radeon/radeon_device.c drivers/gpu/drm/radeon/radeon_device.c
+index 7c68480..0c51f8e 100644
+--- drivers/gpu/drm/radeon/radeon_device.c
++++ drivers/gpu/drm/radeon/radeon_device.c
+@@ -733,16 +733,18 @@ void radeon_device_fini(struct radeon_device *rdev)
+  */
+ int radeon_suspend_kms(struct drm_device *dev, pm_message_t state)
+ {
+-	struct radeon_device *rdev = dev->dev_private;
++	struct radeon_device *rdev;
+ 	struct drm_crtc *crtc;
+ 	int r;
  
--	if ((new = alloc_bootmem(sizeof new)) = NULL) {
-+	new = alloc_bootmem(sizeof(*new));
-+	if (new = NULL) {
- 		printk("Alloc_bootmem failed\n");
- 		return 1;
+-	if (dev = NULL || rdev = NULL) {
++	if (dev = NULL || dev->dev_private = NULL) {
+ 		return -ENODEV;
  	}
+ 	if (state.event = PM_EVENT_PRETHAW) {
+ 		return 0;
+ 	}
++	rdev = dev->dev_private;
++
+ 	/* unpin the front buffers */
+ 	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
+ 		struct radeon_framebuffer *rfb = to_radeon_framebuffer(crtc->fb);
+
+
