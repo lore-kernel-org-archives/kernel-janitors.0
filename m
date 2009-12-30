@@ -1,8 +1,10 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 29 Dec 2009 19:16:22 +0000
-Subject: [PATCH 4/5] drivers/usb : Correct the size argument to kzalloc
-Message-Id: <Pine.LNX.4.64.0912292016040.4001@ask.diku.dk>
+Date: Wed, 30 Dec 2009 14:34:37 +0000
+Subject: Re: [PATCH 4/5] drivers/usb : Correct the size argument to kzalloc
+Message-Id: <Pine.LNX.4.64.0912301534070.23134@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0912292016040.4001@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0912292016040.4001@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,6 +14,8 @@ From: Julia Lawall <julia@diku.dk>
 
 urb_priv->tds has type struct td **, not struct td *, so the
 elements of the array should have pointer type, not structure type.
+
+Convert kzalloc to kcalloc as well.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
@@ -42,7 +46,7 @@ diff -u -p a/drivers/usb/host/fhci-hcd.c b/drivers/usb/host/fhci-hcd.c
  
  	/* allocate the private part of the URB */
 -	urb_priv->tds = kzalloc(size * sizeof(struct td), mem_flags);
-+	urb_priv->tds = kzalloc(size * sizeof(*urb_priv->tds), mem_flags);
++	urb_priv->tds = kcalloc(size, sizeof(*urb_priv->tds), mem_flags);
  	if (!urb_priv->tds) {
  		kfree(urb_priv);
  		return -ENOMEM;
