@@ -1,76 +1,63 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 13 Dec 2009 13:11:39 +0000
-Subject: [PATCH 2/2] drivers/staging/batman-adv: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.0912131411100.24267@ask.diku.dk>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Wed, 30 Dec 2009 01:21:52 +0000
+Subject: [PATCH] drm/radeon: fix a couple of array index errors
+Message-Id: <1262136112.8733.29.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+There are a couple of array overruns, and some associated confusion in
+the code. 
+This is just a wild guess at what the code should actually look like.
 
-Error handling code following a kzalloc should free the allocated data.
-Similarly for usb-alloc urb.
+Coverity CID: 13305 13306
 
-The semantic match that finds the first problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- drivers/staging/batman-adv/send.c   |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/batman-adv/send.c b/drivers/staging/batman-adv/send.c
-index d724798..eb61750 100644
---- a/drivers/staging/batman-adv/send.c
-+++ b/drivers/staging/batman-adv/send.c
-@@ -363,8 +363,10 @@ void add_bcast_packet_to_list(unsigned char *packet_buff, int packet_len)
- 		return;
+diff --git drivers/gpu/drm/radeon/radeon_legacy_tv.c drivers/gpu/drm/radeon/radeon_legacy_tv.c
+index 3a12bb0..c37535a 100644
+--- drivers/gpu/drm/radeon/radeon_legacy_tv.c
++++ drivers/gpu/drm/radeon/radeon_legacy_tv.c
+@@ -112,6 +112,8 @@ static const uint16_t vert_timing_NTSC[] = {
+ 	0x1817,
+ 	0x21d4,
+ 	0x0002,
++	0x0000,
++	0x0000,
+ 	0
+ };
  
- 	forw_packet->packet_buff = kmalloc(packet_len, GFP_ATOMIC);
--	if (!forw_packet->packet_buff)
-+	if (!forw_packet->packet_buff) {
-+		kfree(forw_packet);
- 		return;
-+	}
+@@ -623,9 +625,9 @@ void radeon_legacy_tv_mode_set(struct drm_encoder *encoder,
+ 	}
+ 	flicker_removal = (tmp + 500) / 1000;
  
- 	forw_packet->packet_len = packet_len;
- 	memcpy(forw_packet->packet_buff, packet_buff, forw_packet->packet_len);
+-	if (flicker_removal < 3)
+-		flicker_removal = 3;
+-	for (i = 0; i < 6; ++i) {
++	if (flicker_removal < 2)
++		flicker_removal = 2;
++	for (i = 0; i < ARRAY_SIZE(SLOPE_limit); ++i) {
+ 		if (flicker_removal = SLOPE_limit[i])
+ 			break;
+ 	}
+diff --git drivers/gpu/drm/radeon/radeon_mode.h drivers/gpu/drm/radeon/radeon_mode.h
+index 402369d..abee9a9 100644
+--- drivers/gpu/drm/radeon/radeon_mode.h
++++ drivers/gpu/drm/radeon/radeon_mode.h
+@@ -218,8 +218,8 @@ struct radeon_mode_info {
+ 
+ };
+ 
+-#define MAX_H_CODE_TIMING_LEN 32
+-#define MAX_V_CODE_TIMING_LEN 32
++#define MAX_H_CODE_TIMING_LEN 16
++#define MAX_V_CODE_TIMING_LEN 16
+ 
+ /* need to store these as reading
+    back code tables is excessive */
+
+
