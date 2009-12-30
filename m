@@ -1,17 +1,28 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 29 Dec 2009 19:15:42 +0000
-Subject: [PATCH 2/5] drivers/net : Correct the size argument to kzalloc
-Message-Id: <Pine.LNX.4.64.0912292015240.4001@ask.diku.dk>
+Date: Wed, 30 Dec 2009 14:34:04 +0000
+Subject: Re: [PATCH 2/5] drivers/net : Correct the size argument to kzalloc
+Message-Id: <Pine.LNX.4.64.0912301533280.23134@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0912292015240.4001@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0912292015240.4001@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+To: netdev@vger.kernel.org,linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+Subject: [PATCH 2/5] drivers/net : Correct the size argument to kzalloc
+
+
+----------------------------
+
 From: Julia Lawall <julia@diku.dk>
 
 lp->rx_skb has type struct sk_buff **, not struct sk_buff *, so the
 elements of the array should have pointer type, not structure type.
+
+Convert kzalloc to kcalloc as well.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
@@ -42,7 +53,7 @@ diff -u -p a/drivers/net/ll_temac_main.c b/drivers/net/ll_temac_main.c
  	int i;
  
 -	lp->rx_skb = kzalloc(sizeof(struct sk_buff)*RX_BD_NUM, GFP_KERNEL);
-+	lp->rx_skb = kzalloc(sizeof(*lp->rx_skb) * RX_BD_NUM, GFP_KERNEL);
++	lp->rx_skb = kcalloc(RX_BD_NUM, sizeof(*lp->rx_skb), GFP_KERNEL);
  	/* allocate the tx and rx ring buffer descriptors. */
  	/* returns a virtual addres and a physical address. */
  	lp->tx_bd_v = dma_alloc_coherent(ndev->dev.parent,
