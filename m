@@ -1,33 +1,95 @@
-From: Radu Voicilas <rvoicilas@gmail.com>
-Date: Sat, 12 Dec 2009 09:06:12 +0000
-Subject: [PATCH 4/4] Spelling fixes.
-Message-Id: <1260608772-9839-5-git-send-email-rvoicilas@gmail.com>
+From: Len Brown <lenb@kernel.org>
+Date: Wed, 30 Dec 2009 06:51:18 +0000
+Subject: Re: [PATCH 9/9] drivers/acpi: correct error-handling code
+Message-Id: <alpine.LFD.2.00.0912300151120.15839@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323328-1632894692-1262155886=:15839"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+References: <Pine.LNX.4.64.0907281756010.28189@ask.diku.dk>
+ <1248828809.2670.144.camel@rzhang-dt>
+In-Reply-To: <1248828809.2670.144.camel@rzhang-dt>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Julia Lawall <julia@diku.dk>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-No change in functionality.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Radu Voicilas <rvoicilas@gmail.com>
----
- samples/kprobes/kretprobe_example.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+--8323328-1632894692-1262155886=:15839
+Content-Type: TEXT/PLAIN; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-diff --git a/samples/kprobes/kretprobe_example.c b/samples/kprobes/kretprobe_example.c
-index 1041b67..7aca41a 100644
---- a/samples/kprobes/kretprobe_example.c
-+++ b/samples/kprobes/kretprobe_example.c
-@@ -35,7 +35,7 @@ struct my_data {
- 	ktime_t entry_stamp;
- };
- 
--/* Here we use the entry_hanlder to timestamp function entry */
-+/* Here we use the entry_handler to timestamp function entry */
- static int entry_handler(struct kretprobe_instance *ri, struct pt_regs *regs)
- {
- 	struct my_data *data;
--- 
-1.6.3.3
+applied
 
+thanks,
+Len Brown, Intel Open Source Technology Center
+
+On Wed, 29 Jul 2009, Zhang Rui wrote:
+
+> On Tue, 2009-07-28 at 23:56 +0800, Julia Lawall wrote:
+> > From: Julia Lawall <julia@diku.dk>
+> > 
+> > backlight_device_register may return an ERR_PTR value rather than a valid
+> > pointer.
+> > 
+> > A simplified version of the semantic match that finds this problem is as
+> > follows: (http://coccinelle.lip6.fr/)
+> 
+> > Signed-off-by: Julia Lawall <julia@diku.dk>
+> > 
+> > ---
+> >  drivers/acpi/video.c                |    2 ++
+> >  1 files changed, 2 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/video.c b/drivers/acpi/video.c
+> > index 8851315..29788db 100644
+> > --- a/drivers/acpi/video.c
+> > +++ b/drivers/acpi/video.c
+> > @@ -982,6 +982,8 @@ static void acpi_video_device_find_cap(struct acpi_video_device *device)
+> >  		sprintf(name, "acpi_video%d", count++);
+> >  		device->backlight = backlight_device_register(name,
+> >  			NULL, device, &acpi_backlight_ops);
+> > +		if (IS_ERR(device->backlight))
+> > +			return;
+> 
+> we should kfree(name) here.
+> 
+> >  		device->backlight->props.max_brightness = device->brightness->count-3;
+> >  		kfree(name);
+> 
+> how about this one?
+> 
+> ﻿backlight_device_register may return an ERR_PTR value rather than a valid
+> pointer.
+> 
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> ---
+>  drivers/acpi/video.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> Index: linux-2.6/drivers/acpi/video.c
+> ===================================================================
+> --- linux-2.6.orig/drivers/acpi/video.c
+> +++ linux-2.6/drivers/acpi/video.c
+> @@ -982,8 +982,10 @@ static void acpi_video_device_find_cap(s
+>  		sprintf(name, "acpi_video%d", count++);
+>  		device->backlight = backlight_device_register(name,
+>  			NULL, device, &acpi_backlight_ops);
+> -		device->backlight->props.max_brightness = device->brightness->count-3;
+>  		kfree(name);
+> +		if (IS_ERR(device->backlight))
+> +			return;
+> +		device->backlight->props.max_brightness = device->brightness->count-3;
+>  
+>  		result = sysfs_create_link(&device->backlight->dev.kobj,
+>  					   &device->dev->dev.kobj, "device");
+> 
+> 
+> 
+>  
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+--8323328-1632894692-1262155886=:15839--
