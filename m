@@ -1,49 +1,34 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 13 Dec 2009 11:42:07 +0000
-Subject: [PATCH 5/9] drivers/net/wireless: Correct code taking the size of
-Message-Id: <Pine.LNX.4.64.0912131241470.24267@ask.diku.dk>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Wed, 30 Dec 2009 01:24:51 +0000
+Subject: [PATCH] drm/radeon/r100.c: check for invalid family
+Message-Id: <1262136291.8733.35.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ivo van Doorn <IvDoorn@gmail.com>, Gertjan van Wingerde <gwingerde@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, users@rt2x00.serialmonkey.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+If there is an invalid family the fw_name is NULL and causes an
+NULL pointer dereference.
+This just adds a check for something unexpected.
 
-sizeof(iv16) and sizeof(iv32) are the sizes of pointers.  Change them to
-the size of the copied data.
+Coverity CID: 13251
 
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
-// <smpl>
-@@
-expression *x;
-expression f;
-type T;
-@@
-
-*f(...,(T)x,...)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wireless/rt2x00/rt2800lib.c        |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/rt2x00/rt2800lib.c b/drivers/net/wireless/rt2x00/rt2800lib.c
-index eb1e1d0..1e74732 100644
---- a/drivers/net/wireless/rt2x00/rt2800lib.c
-+++ b/drivers/net/wireless/rt2x00/rt2800lib.c
-@@ -2140,8 +2140,8 @@ static void rt2800_get_tkip_seq(struct ieee80211_hw *hw, u8 hw_key_idx,
- 	rt2800_register_multiread(rt2x00dev, offset,
- 				      &iveiv_entry, sizeof(iveiv_entry));
+diff --git drivers/gpu/drm/radeon/r100.c drivers/gpu/drm/radeon/r100.c
+index 7172746..e4b9770 100644
+--- drivers/gpu/drm/radeon/r100.c
++++ drivers/gpu/drm/radeon/r100.c
+@@ -584,6 +584,8 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
+ 		   (rdev->family = CHIP_RV570)) {
+ 		DRM_INFO("Loading R500 Microcode\n");
+ 		fw_name = FIRMWARE_R520;
++	} else {
++		return -EINVAL;
+ 	}
  
--	memcpy(&iveiv_entry.iv[0], iv16, sizeof(iv16));
--	memcpy(&iveiv_entry.iv[4], iv32, sizeof(iv32));
-+	memcpy(&iveiv_entry.iv[0], iv16, sizeof(*iv16));
-+	memcpy(&iveiv_entry.iv[4], iv32, sizeof(*iv32));
- }
- 
- static int rt2800_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
+ 	err = request_firmware(&rdev->me_fw, fw_name, &pdev->dev);
+
+
