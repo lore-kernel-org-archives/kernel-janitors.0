@@ -1,29 +1,23 @@
 From: David Miller <davem@davemloft.net>
-Date: Mon, 18 Jan 2010 08:29:31 +0000
-Subject: Re: [PATCH 3/9] drivers/net: Eliminate useless code
-Message-Id: <20100118.002931.55279267.davem@davemloft.net>
+Date: Mon, 04 Jan 2010 05:44:12 +0000
+Subject: Re: [PATCH 4/5] drivers/net/can: Correct NULL test
+Message-Id: <20100103.214412.50599561.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1001161657400.28745@ask.diku.dk>
-	<20100117.193140.153138395.davem@davemloft.net>
-	<Pine.LNX.4.64.1001180911080.12648@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1001180911080.12648@ask.diku.dk>
+References: <Pine.LNX.4.64.0912272227290.20548@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0912272227290.20548@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: julia@diku.dk
-Cc: ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: urs.thuermann@volkswagen.de, oliver.hartkopp@volkswagen.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 18 Jan 2010 09:12:21 +0100 (CET)
+Date: Sun, 27 Dec 2009 22:27:44 +0100 (CET)
 
 > From: Julia Lawall <julia@diku.dk>
 > 
-> The variable qdev is initialized twice to the same (side effect-free)
-> expression.  Drop one initialization.
-> 
-> A simplified version of the semantic match that finds this problem is:
-> (http://coccinelle.lip6.fr/)
+> Test the just-allocated value for NULL rather than some other value.
  ...
 > Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Applied, thanks.
+Applied.
