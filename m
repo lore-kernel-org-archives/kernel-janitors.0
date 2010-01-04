@@ -1,28 +1,61 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 23 Jan 2010 12:45:22 +0000
-Subject: [patch] drbd: null dereference bug
-Message-Id: <20100123124522.GA3061@bicker>
+From: "Miller, Mike (OS Dev)" <Mike.Miller@hp.com>
+Date: Mon, 04 Jan 2010 16:14:53 +0000
+Subject: RE: [PATCH 1/2] drivers/block: drop unnecesary memset
+Message-Id: <0F5B06BAB751E047AB5C87D1F77A77886995B7E02A@GVW0547EXC.americas.hpqcorp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0912190829470.30546@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0912190829470.30546@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars Ellenberg <drbd-dev@lists.linbit.com>
-Cc: drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, ISS StorageDev <iss_storagedev@hp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-epoch is always NULL here.
+ 
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-This patch has only been compile tested.  Sorry.  :/
+> -----Original Message-----
+> From: Julia Lawall [mailto:julia@diku.dk] 
+> Sent: Saturday, December 19, 2009 1:30 AM
+> To: Miller, Mike (OS Dev); ISS StorageDev; 
+> linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Subject: [PATCH 1/2] drivers/block: drop unnecesary memset
+> 
+> From: Julia Lawall <julia@diku.dk>
+> 
+> memset of 0 is not needed after kzalloc
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression x;
+> statement S;
+> @@
+> 
+> x = kzalloc(...);
+> if (x = NULL) S
+> ... when != x
+> -memset(x,0,...);// </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
---- orig/drivers/block/drbd/drbd_receiver.c	2010-01-23 10:53:13.000000000 +0300
-+++ devel/drivers/block/drbd/drbd_receiver.c	2010-01-23 10:54:19.000000000 +0300
-@@ -1224,7 +1224,7 @@ static int receive_Barrier(struct drbd_c
- 	epoch = kmalloc(sizeof(struct drbd_epoch), GFP_NOIO);
- 	if (!epoch) {
- 		dev_warn(DEV, "Allocation of an epoch failed, slowing down\n");
--		issue_flush = !test_and_set_bit(DE_BARRIER_IN_NEXT_EPOCH_ISSUED, &epoch->flags);
-+		issue_flush = !test_and_set_bit(DE_BARRIER_IN_NEXT_EPOCH_ISSUED, &mdev->current_epoch->flags);
- 		drbd_wait_ee_list_empty(mdev, &mdev->active_ee);
- 		if (issue_flush) {
- 			rv = drbd_flush_after_epoch(mdev, mdev->current_epoch);
+Acked-by: Mike Miller <mike.miller@hp.com>
+
+> 
+> ---
+>  drivers/block/cciss.c |    1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff -u -p a/drivers/block/cciss.c b/drivers/block/cciss.c
+> --- a/drivers/block/cciss.c
+> +++ b/drivers/block/cciss.c
+> @@ -4379,7 +4379,6 @@ static void cciss_shutdown(struct pci_de
+>  		return;
+>  	}
+>  	/* write all data in the battery backed cache to disk */
+> -	memset(flush_buf, 0, 4);
+>  	return_code = sendcmd_withirq(CCISS_CACHE_FLUSH, 
+> h->ctlr, flush_buf,
+>  		4, 0, CTLR_LUNID, TYPE_CMD);
+>  	kfree(flush_buf);
+> 
