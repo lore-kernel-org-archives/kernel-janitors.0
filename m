@@ -1,61 +1,24 @@
-From: "Miller, Mike (OS Dev)" <Mike.Miller@hp.com>
-Date: Mon, 04 Jan 2010 16:14:53 +0000
-Subject: RE: [PATCH 1/2] drivers/block: drop unnecesary memset
-Message-Id: <0F5B06BAB751E047AB5C87D1F77A77886995B7E02A@GVW0547EXC.americas.hpqcorp.net>
+From: Patrick McHardy <kaber@trash.net>
+Date: Mon, 04 Jan 2010 14:23:23 +0000
+Subject: Re: [PATCH 5/5] net/ipv4 : Correct the size argument to kzalloc
+Message-Id: <4B41F9DB.1010908@trash.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912190829470.30546@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912190829470.30546@ask.diku.dk>
+References: <Pine.LNX.4.64.0912292016230.4001@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0912292016230.4001@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, ISS StorageDev <iss_storagedev@hp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Julia Lawall <julia@diku.dk>
+Cc: "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
- 
-
-> -----Original Message-----
-> From: Julia Lawall [mailto:julia@diku.dk] 
-> Sent: Saturday, December 19, 2009 1:30 AM
-> To: Miller, Mike (OS Dev); ISS StorageDev; 
-> linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH 1/2] drivers/block: drop unnecesary memset
-> 
+Julia Lawall wrote:
 > From: Julia Lawall <julia@diku.dk>
 > 
-> memset of 0 is not needed after kzalloc
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x;
-> statement S;
-> @@
-> 
-> x = kzalloc(...);
-> if (x = NULL) S
-> ... when != x
-> -memset(x,0,...);// </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+> obj has type struct snmp_object **, not struct snmp_object *.  But indeed
+> it is not even clear why kmalloc is needed.  The memory is freed by the end
+> of the function, so the local variable of pointer type should be sufficient.
 
-Acked-by: Mike Miller <mike.miller@hp.com>
+Thanks. As this is basically just an unneeded and oversized allocation
+without any bad consequences, I've applied it to nf-next-2.6.git.
 
-> 
-> ---
->  drivers/block/cciss.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff -u -p a/drivers/block/cciss.c b/drivers/block/cciss.c
-> --- a/drivers/block/cciss.c
-> +++ b/drivers/block/cciss.c
-> @@ -4379,7 +4379,6 @@ static void cciss_shutdown(struct pci_de
->  		return;
->  	}
->  	/* write all data in the battery backed cache to disk */
-> -	memset(flush_buf, 0, 4);
->  	return_code = sendcmd_withirq(CCISS_CACHE_FLUSH, 
-> h->ctlr, flush_buf,
->  		4, 0, CTLR_LUNID, TYPE_CMD);
->  	kfree(flush_buf);
-> 
+
