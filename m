@@ -1,52 +1,47 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 16 Jan 2010 15:59:22 +0000
-Subject: [PATCH 6/9] drivers/staging/go7007: Eliminate useless code
-Message-Id: <Pine.LNX.4.64.1001161659000.28745@ask.diku.dk>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Tue, 05 Jan 2010 10:32:20 +0000
+Subject: Re: [PATCH 03/10] isdn/mISDN: add __init/__exit macros to
+Message-Id: <alpine.LNX.2.00.1001051132070.2277@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200912220941.42370.PeterHuewe@gmx.de>
+In-Reply-To: <200912220941.42370.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Huewe <PeterHuewe@gmx.de>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>, Andreas Eversberg <andreas@eversberg.eu>, "David S. Miller" <davem@davemloft.net>
 
-From: Julia Lawall <julia@diku.dk>
+On Tue, 22 Dec 2009, Peter Huewe wrote:
 
-The variable s is initialized twice to the same (side effect-free)
-expression.  Drop one initialization.
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+> ---
+>  drivers/isdn/mISDN/dsp_core.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/isdn/mISDN/dsp_core.c b/drivers/isdn/mISDN/dsp_core.c
+> index 43ff4d3..6eac588 100644
+> --- a/drivers/isdn/mISDN/dsp_core.c
+> +++ b/drivers/isdn/mISDN/dsp_core.c
+> @@ -1114,7 +1114,7 @@ static struct Bprotocol DSP = {
+>  	.create = dspcreate
+>  };
+>  
+> -static int dsp_init(void)
+> +static int __init dsp_init(void)
+>  {
+>  	int err;
+>  	int tics;
+> @@ -1212,7 +1212,7 @@ static int dsp_init(void)
+>  }
+>  
+>  
+> -static void dsp_cleanup(void)
+> +static void __exit dsp_cleanup(void)
+>  {
+>  	mISDN_unregister_Bprotocol(&DSP);
 
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
+Applied, thanks Peter.
 
-// <smpl>
-@forall@
-idexpression *x;
-identifier f!=ERR_PTR;
-@@
-
-x = f(...)
-... when != x
-(
-x = f(...,<+...x...+>,...)
-|
-* x = f(...)
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/staging/go7007/s2250-loader.c          |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/go7007/s2250-loader.c b/drivers/staging/go7007/s2250-loader.c
-index c152ab9..d9a3278 100644
---- a/drivers/staging/go7007/s2250-loader.c
-+++ b/drivers/staging/go7007/s2250-loader.c
-@@ -139,9 +139,9 @@ failed2:
- 
- static void s2250loader_disconnect(struct usb_interface *interface)
- {
--	pdevice_extension_t s = usb_get_intfdata(interface);
-+	pdevice_extension_t s;
- 	printk(KERN_INFO "s2250: disconnect\n");
- 	lock_kernel();
- 	s = usb_get_intfdata(interface);
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
