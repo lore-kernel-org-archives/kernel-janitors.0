@@ -1,24 +1,55 @@
-From: Patrick McHardy <kaber@trash.net>
-Date: Mon, 04 Jan 2010 14:23:23 +0000
-Subject: Re: [PATCH 5/5] net/ipv4 : Correct the size argument to kzalloc
-Message-Id: <4B41F9DB.1010908@trash.net>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Tue, 05 Jan 2010 10:28:57 +0000
+Subject: Re: [PATCH 09/10] w1: add __init/__exit macros to drivers/w1/w1.c
+Message-Id: <alpine.LNX.2.00.1001051128080.2277@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912292016230.4001@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912292016230.4001@ask.diku.dk>
+References: <1261471082-24233-1-git-send-email-peterhuewe@gmx.de>
+In-Reply-To: <1261471082-24233-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Huewe <peterhuewe@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, Evgeniy Polyakov <johnpol@2ka.mipt.ru>, Kay Sievers <kay.sievers@vrfy.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
+On Tue, 22 Dec 2009, peterhuewe@gmx.de wrote:
+
+> From: Peter Huewe <peterhuewe@gmx.de>
 > 
-> obj has type struct snmp_object **, not struct snmp_object *.  But indeed
-> it is not even clear why kmalloc is needed.  The memory is freed by the end
-> of the function, so the local variable of pointer type should be sufficient.
+> Trivial patch which adds the __init/__exit macros to the module_init/
+> module_exit functions of
+> 
+> drivers/w1/w1.c
+> 
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+> ---
+>  drivers/w1/w1.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+> index acc7e3b..ad5897d 100644
+> --- a/drivers/w1/w1.c
+> +++ b/drivers/w1/w1.c
+> @@ -986,7 +986,7 @@ int w1_process(void *data)
+>  	return 0;
+>  }
+>  
+> -static int w1_init(void)
+> +static int __init w1_init(void)
+>  {
+>  	int retval;
+>  
+> @@ -1034,7 +1034,7 @@ err_out_exit_init:
+>  	return retval;
+>  }
+>  
+> -static void w1_fini(void)
+> +static void __exit w1_fini(void)
+>  {
+>  	struct w1_master *dev;
+>  
 
-Thanks. As this is basically just an unneeded and oversized allocation
-without any bad consequences, I've applied it to nf-next-2.6.git.
+Applied, thanks.
 
-
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
