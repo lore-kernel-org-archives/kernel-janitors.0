@@ -1,22 +1,62 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 21 Jan 2010 13:08:21 +0000
-Subject: Re: [PATCH 4/9] net/sctp: Eliminate useless code
-Message-Id: <20100121.050821.80020283.davem@davemloft.net>
+From: Jean Delvare <khali@linux-fr.org>
+Date: Tue, 05 Jan 2010 10:13:48 +0000
+Subject: Re: [PATCH 10/10] media/dvb: add __init/__exit macros to
+Message-Id: <20100105111348.4a2091bd@hyperion.delvare>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1001211121500.13529@ask.diku.dk>
-	<20100121.024337.57448535.davem@davemloft.net>
-	<Pine.LNX.4.64.1001211148310.13529@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1001211148310.13529@ask.diku.dk>
+References: <1261471095-24272-1-git-send-email-peterhuewe@gmx.de>
+In-Reply-To: <1261471095-24272-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: vladislav.yasevich@hp.com, sri@us.ibm.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Huewe <peterhuewe@gmx.de>
+Cc: Jiri Kosina <trivial@kernel.org>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 21 Jan 2010 11:49:10 +0100 (CET)
+On Tue, 22 Dec 2009 09:38:14 +0100, peterhuewe@gmx.de wrote:
+> From: Peter Huewe <peterhuewe@gmx.de>
+> 
+> Trivial patch which adds the __init/__exit macros to the module_init/
+> module_exit functions of
+> 
+> drivers/media/dvb/bt8xx/bt878.c
+> 
+> Please have a look at the small patch and either pull it through
+> your tree, or please ack' it so Jiri can pull it through the trivial
+> tree.
+> 
+> Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
+> but also present in linus tree.
+> 
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 
-> Is the new one better than the old one?  Because in my local copies, they 
-> are the same...
+Acked-by: Jean Delvare <khali@linux-fr.org>
 
-The new one worked and I applied it.
+> ---
+>  drivers/media/dvb/bt8xx/bt878.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/dvb/bt8xx/bt878.c b/drivers/media/dvb/bt8xx/bt878.c
+> index a24c125..2a0886a 100644
+> --- a/drivers/media/dvb/bt8xx/bt878.c
+> +++ b/drivers/media/dvb/bt8xx/bt878.c
+> @@ -582,7 +582,7 @@ static int bt878_pci_driver_registered;
+>  /* Module management functions */
+>  /*******************************/
+>  
+> -static int bt878_init_module(void)
+> +static int __init bt878_init_module(void)
+>  {
+>  	bt878_num = 0;
+>  	bt878_pci_driver_registered = 0;
+> @@ -600,7 +600,7 @@ static int bt878_init_module(void)
+>  	return pci_register_driver(&bt878_pci_driver);
+>  }
+>  
+> -static void bt878_cleanup_module(void)
+> +static void __exit bt878_cleanup_module(void)
+>  {
+>  	if (bt878_pci_driver_registered) {
+>  		bt878_pci_driver_registered = 0;
+
+
+-- 
+Jean Delvare
