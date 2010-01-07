@@ -1,66 +1,25 @@
-From: Philipp Reisner <philipp.reisner@linbit.com>
-Date: Mon, 04 Jan 2010 11:09:35 +0000
-Subject: Re: [Drbd-dev] [PATCH 2/5] drivers/block: Correct NULL test
-Message-Id: <201001041209.35550.philipp.reisner@linbit.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Thu, 07 Jan 2010 03:48:49 +0000
+Subject: Re: [PATCH] drm/radeon/radeon_cp.c: check for invalid radeon family
+Message-Id: <21d7e9971001061948m466e0abdwb03ceef2cb947687@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912272226550.20548@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0912272226550.20548@ask.diku.dk>
+References: <1262136235.8733.33.camel@ICE-BOX>
+In-Reply-To: <1262136235.8733.33.camel@ICE-BOX>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org
-Cc: Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org
+To: Darren Jenkins <darrenrjenkins@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi,
+On Wed, Dec 30, 2009 at 11:23 AM, Darren Jenkins
+<darrenrjenkins@gmail.com> wrote:
+> If there is an invalid radeon family the fw_name is NULL and causes an
+> NULL pointer dereference.
+> This just adds a check for something unexpected.
+>
 
-The patch titeled "drivers/block: Correct NULL test" is in the
-git://git.drbd.org/linux-2.6-drbd.git for-jens tree and will
-flow upstream from there.
+Same as for last one, unless a developer explicity writes code wrong,
+this cannot
+happen, and I'd prefer a developer would see an oops.
 
--Phil
-
-Full quote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Test the just-allocated value for NULL rather than some other value.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,y;
-> statement S;
-> @@
-> 
-> x = \(kmalloc\|kcalloc\|kzalloc\)(...);
-> (
-> if ((x) = NULL) S
-> 
-> if (
-> -   y
-> +   x
->        = NULL)
->  S
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/block/drbd/drbd_receiver.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/drivers/block/drbd/drbd_receiver.c
->  b/drivers/block/drbd/drbd_receiver.c ---
->  a/drivers/block/drbd/drbd_receiver.c
-> +++ b/drivers/block/drbd/drbd_receiver.c
-> @@ -3944,7 +3944,7 @@ static int drbd_do_auth(struct drbd_conf
->  	}
-> 
->  	right_response = kmalloc(resp_size, GFP_NOIO);
-> -	if (response = NULL) {
-> +	if (right_response = NULL) {
->  		dev_err(DEV, "kmalloc of right_response failed\n");
->  		rv = 0;
->  		goto fail;
+Dave.
