@@ -1,41 +1,37 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Mon, 18 Jan 2010 21:11:46 +0000
-Subject: Re: [PATCH] video/matrox: Checkpatch cleanups for matroxfb_crtc2.c
-Message-Id: <20100118221146.5d81fc0e@hyperion.delvare>
+From: =?ISO-8859-1?Q?Andr=E9_Silva?= <andre.beat@gmail.com>
+Date: Thu, 07 Jan 2010 22:41:40 +0000
+Subject: Is this project still alive?
+Message-Id: <a7e3224b1001071441h49a797ffv18ebe964c5f20b81@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201001181934.49519.PeterHuewe@gmx.de>
-	<1263842269.26846.122.camel@Joe-Laptop.home>
-	<201001182027.29805.PeterHuewe@gmx.de>
-	<1263844770.26846.134.camel@Joe-Laptop.home>
-In-Reply-To: <1263844770.26846.134.camel@Joe-Laptop.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: Joe Perches <joe@perches.com>
-Cc: Peter =?UTF-8?B?SMO8d2U=?= <PeterHuewe@gmx.de>, Petr Vandrovec <vandrove@vc.cvut.cz>, Andrew Morton <akpm@linux-foundation.org>, Krzysztof Helt <krzysztof.h1@wp.pl>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 18 Jan 2010 11:59:30 -0800, Joe Perches wrote:
-> On Mon, 2010-01-18 at 20:27 +0100, Peter H=C3=BCwe wrote:
-> > the reason behind this change was that spaces and tabs were mixed for=20
-> > indention.=20
->=20
-> Checkpatch isn't gospel and isn't always right.
->=20
-> There should be room for taste preference here
-> and I think whatever Petr V's is should prevail.
->=20
-> > How about this indention? Would this be better?
->=20
-> Well, I don't think so, but others will have different opinions.
+Hi,
 
-I don't see it as an improvement either. Was checkpatch.pl really
-complaining about the alignment? Tabs followed by less than 8 spaces is
-acceptable and fairly common AFAICT, I can't remember the script
-yelling at me when I do it.
+I'm taking a masters degree in computer engineering and I'm really
+interested in OSs, so the idea of hacking the linux kernel really got to my
+curiosity. While I was looking for the best way to start I found this
+project which seemed a really good way for me to get into the kernel. The
+thing is the idea I got from the project's website and irc channel is that
+project is kind of dead. I want to know if that is the case or if there is
+anyone out there willing to help me out.
+I have a fair knowledge of C programming and UNIX programming, my knowledge
+of assembly and cpu architectures is a bit poor though.
 
+Also, if anyone could recommend the "best" way to get my feet wet (books to
+read, documentation to read, tasks to start hacking), any help would be
+appreciated.
 
---=20
-Jean Delvare
+Since the kernel is such a big monster I might add that one of my main
+interest areas is scheduling.
+
+I'm sorry if my English isn't perfect but as it is not my main language
+there might be some screw ups.
+
+Regards,
+Andr=E9 Silva
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
