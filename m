@@ -1,27 +1,25 @@
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Wed, 06 Jan 2010 20:58:01 +0000
-Subject: Re: [PATCH 2/2] ide: add __init/__exit macros to drivers/ide/scc_pata.c
-Message-Id: <201001062158.01870.PeterHuewe@gmx.de>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 08 Jan 2010 08:13:02 +0000
+Subject: Re: [PATCH 2/2] ide: add __init/__exit macros to
+Message-Id: <20100108.001302.146106973.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1261470564-23754-2-git-send-email-peterhuewe@gmx.de> <201001051939.07756.bzolnier@gmail.com> <20100106.122826.233087809.davem@davemloft.net>
-In-Reply-To: <20100106.122826.233087809.davem@davemloft.net>
+References: <1261470564-23754-2-git-send-email-peterhuewe@gmx.de>
+	<alpine.LNX.2.00.1001051124150.2277@pobox.suse.cz>
+	<201001051939.07756.bzolnier@gmail.com>
+In-Reply-To: <201001051939.07756.bzolnier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: bzolnier@gmail.com, jkosina@suse.cz, kernel-janitors@vger.kernel.org, sshtylyov@ru.mvista.com, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bzolnier@gmail.com
+Cc: jkosina@suse.cz, peterhuewe@gmx.de, kernel-janitors@vger.kernel.org, sshtylyov@ru.mvista.com, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Mittwoch 06 Januar 2010 21:28:26 schrieb David Miller:
-> From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-> Date: Tue, 5 Jan 2010 19:39:07 +0100
-> 
-> 
-> Not being able to unload a module is a bug isn't it?  Bug fixes
-> are always fine :-)
-> 
-> I'll take a closer look at this then apply it, thanks Bart!
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Date: Tue, 5 Jan 2010 19:39:07 +0100
 
-Funny what such trivial patch can reveal :)
+> -	ide_pci_unregister_driver(&scc_pci_driver);
+> +	pci_unregister_driver(&scc_pci_driver);
 
-Regards,
-Peter
+As a side note I can't figure out how this driver can currently even
+build without errors before this patch.
+
+ide_pci_unregister_driver() isn't even defined anywhere these days.
