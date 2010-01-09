@@ -1,49 +1,49 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 08 Dec 2009 18:51:34 +0000
-Subject: [PATCH] drivers/isdn: eliminate duplicated test
-Message-Id: <Pine.LNX.4.64.0912081951140.28834@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 09 Jan 2010 08:53:25 +0000
+Subject: [announce] smatch 1.54
+Message-Id: <20100109085325.GE7840@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: isdn@linux-pingi.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Smatch is a static checker for C.  Download it here:  
+http://repo.or.cz/w/smatch.git
 
-The code checked slot_rx twice.  Check slot_tx by analogy with the bank
-case.
+These days there are at least seven static checkers people are using 
+to check the kernel source.  I can't swear that it's better than all
+the others...  Smatch is open source.  It's written in C.  It's based
+on sparse.  It's not horribly slow.  It has a git repo that gets updated
+every few days.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Really what I would like is for smatch to become a smarter version
+of checkpatch.pl.  I'd like it to be something simple, that catches many 
+types of common bugs.  Something that people run before submitting code.
+It's still probably a year away from being good enough for that.
 
-// <smpl>
-@@
-expression E;
-@@
+Since the last release:
+	* You need to pass "-p=kernel" to check the kernel source.
+	make CHECK="/path/to/smatch -p=kernel" C=1 bzImage
 
-(
-*E && E
-|
-*E || E
-)
-// </smpl>
+	* The output has been cleaned up.  You can still pass --spammy
+	and --info if you want the old output.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+	* The array overflow check has improved and finds around 30
+	bugs in the 2.6.33-rc2 kernel.
 
----
- drivers/isdn/hardware/mISDN/hfcmulti.c         |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+	* There is a new "dma on the stack" check that finds 382
+	bugs.  The ones from drivers/usb/serial/ have fixes already.
+	This could maybe be rewritten as a Coccinelle script.  The
+	fixes are pretty mechanical.
 
-diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
-index a6624ad..1a1420d 100644
---- a/drivers/isdn/hardware/mISDN/hfcmulti.c
-+++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
-@@ -3152,7 +3152,7 @@ static void
- hfcmulti_pcm(struct hfc_multi *hc, int ch, int slot_tx, int bank_tx,
-     int slot_rx, int bank_rx)
- {
--	if (slot_rx < 0 || slot_rx < 0 || bank_tx < 0 || bank_rx < 0) {
-+	if (slot_tx < 0 || slot_rx < 0 || bank_tx < 0 || bank_rx < 0) {
- 		/* disable PCM */
- 		mode_hfcmulti(hc, ch, hc->chan[ch].protocol, -1, 0, -1, 0);
- 		return;
+That's the main stuff.
+
+From what I can tell about the open source checkers is that only the
+authors use them.  Smatch has two users besides me (they do userspace 
+stuff so they're not on this list), so it's one of the most popular.
+
+Anyway, feedback is always good.  :)
+
+regards,
+dan carpenter
