@@ -1,29 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 04 Jan 2010 05:22:49 +0000
-Subject: Re: [PATCH 3/7] drivers/net/cxgb3: Use kzalloc for allocating only
-Message-Id: <20100103.212249.91319016.davem@davemloft.net>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Tue, 12 Jan 2010 12:37:07 +0000
+Subject: [PATCH] drivers/acpi/power_meter.c : remove double kfree()
+Message-Id: <1263299827.4571.11.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0912190816340.30546@ask.diku.dk>
-	<4B3005D5.9070608@chelsio.com>
-In-Reply-To: <4B3005D5.9070608@chelsio.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: divy@chelsio.com
-Cc: julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: djwong@us.ibm.com, lenb@kernel.org, linux-acpi@vger.kernel.org, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Divy Le Ray <divy@chelsio.com>
-Date: Mon, 21 Dec 2009 15:33:41 -0800
+resource->domain_devices can be double kfree()'d in a couple of places.
+Fix this by setting num_domain_devices = 0 after the kfree().
 
-> Julia Lawall wrote:
->>
->> From: Julia Lawall <julia@diku.dk>
->>
->> Use kzalloc rather than kcalloc(1,...)
- ...
->> Signed-off-by: Julia Lawall <julia@diku.dk>
->>
-> 
-> Acked-by: Divy Le Ray <divy@chelsio.com>
+Coverity CID: 13356, 13355, 13354
 
-Applied to net-next-2.6, thanks.
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com> 
+
+diff --git drivers/acpi/power_meter.c drivers/acpi/power_meter.c
+index 2ef7030..18ce00a 100644
+--- drivers/acpi/power_meter.c
++++ drivers/acpi/power_meter.c
+@@ -534,6 +534,7 @@ static void remove_domain_devices(struct acpi_power_meter_resource *resource)
+ 
+ 	kfree(resource->domain_devices);
+ 	kobject_put(resource->holders_dir);
++	resource->num_domain_devices = 0;
+ }
+ 
+ static int read_domain_devices(struct acpi_power_meter_resource *resource)
+@@ -740,7 +741,6 @@ skip_unsafe_cap:
+ 
+ 	return res;
+ error:
+-	remove_domain_devices(resource);
+ 	remove_attrs(resource);
+ 	return res;
+ }
+
+
