@@ -1,33 +1,45 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Fri, 08 Jan 2010 14:40:34 +0000
-Subject: [PATCH] : hardware/mISDN/mISDNinfineon.c: Bail out of loop on error
-Message-Id: <1262961634.32453.12.camel@ICE-BOX>
+From: walter harms <wharms@bfs.de>
+Date: Wed, 13 Jan 2010 08:40:03 +0000
+Subject: Re: drivers/gpu/drm/radeon/radeon_cp.c: check for invalid radeon
+Message-Id: <4B4D86E3.9090207@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1261660696.3546.40.camel@ICE-BOX>
+In-Reply-To: <1261660696.3546.40.camel@ICE-BOX>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>, keil@isdn4linux.de
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Darren Jenkins <darrenrjenkins@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel mailing list <dri-devel@lists.sourceforge.net>, Kernel Janitors <kernel-janitors@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
-If setup_instance() fails we kfree() the card, and then use it in the next loop iteration.
-So lets bail out of the loop instead.
 
-Coverity CID: 13357
+Darren Jenkins schrieb:
+> If there is an invalid radeon family the fw_name is NULL and causes an
+> NULL pointer dereference.
+> This just adds a check for something unexpected.
+> 
+> Coverity CID: 13252
+> 
+> Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+> diff --git a/drivers/gpu/drm/radeon/radeon_cp.c
+> b/drivers/gpu/drm/radeon/radeon_cp.c
+> index 0b2f9c2..1e66337 100644
+> --- a/drivers/gpu/drm/radeon/radeon_cp.c
+> +++ b/drivers/gpu/drm/radeon/radeon_cp.c
+> @@ -531,6 +531,8 @@ static int
+> radeon_cp_init_microcode(drm_radeon_private_t *dev_priv)
+>  		   ((dev_priv->flags & RADEON_FAMILY_MASK) = CHIP_RV570)) {
+>  		DRM_INFO("Loading R500 Microcode\n");
+>  		fw_name = FIRMWARE_R520;
+> +	} else {
+> +		return -EINVAL;
+>  	}
+>  
+>  	err = request_firmware(&dev_priv->me_fw, fw_name, &pdev->dev);
+> 
+> 
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com> 
+Someone should take the job to clear the if forrest and replace it with switch()/case.
 
-diff --git drivers/isdn/hardware/mISDN/mISDNinfineon.c drivers/isdn/hardware/mISDN/mISDNinfineon.c
-index 62441ba..36c6c61 100644
---- drivers/isdn/hardware/mISDN/mISDNinfineon.c
-+++ drivers/isdn/hardware/mISDN/mISDNinfineon.c
-@@ -1133,6 +1133,7 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 			if (err) {
- 				kfree(sc);
- 				release_card(card);
-+				break;
- 			} else
- 				card->sc[i - 1] = sc;
- 		}
-
-
+just my 2 cents,
+ wh
