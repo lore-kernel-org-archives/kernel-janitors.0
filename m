@@ -1,16 +1,52 @@
-From: "Contreras interception" <lesiopnmster34@gmail.com>
-Date: Thu, 21 Jan 2010 22:39:57 +0000
-Subject: Reach 788k doctors - we have the list and others too
-Message-Id: <20100121223958.37051C8078E@server50.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 16 Jan 2010 16:00:26 +0000
+Subject: [PATCH 9/9] fs/ecryptfs: Eliminate useless code
+Message-Id: <Pine.LNX.4.64.1001161700100.28745@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Tyler Hicks <tyhicks@linux.vnet.ibm.com>, Dustin Kirkland <kirkland@canonical.com>, ecryptfs-devel@lists.launchpad.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I have many good quality lists at decent prices. Drop me a line here:  Mariana.Harding@highpowerlists.net
-I'll get you all the details and samples. 
-  
+From: Julia Lawall <julia@diku.dk>
 
+The variable lower_dentry is initialized twice to the same (side effect-free)
+expression.  Drop one initialization.
 
-to adjust your subscription status email to disappear@highpowerlists.net
+A simplified version of the semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@forall@
+idexpression *x;
+identifier f!=ERR_PTR;
+@@
+
+x = f(...)
+... when != x
+(
+x = f(...,<+...x...+>,...)
+|
+* x = f(...)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/ecryptfs/file.c                  |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/ecryptfs/file.c b/fs/ecryptfs/file.c
+index 1744f17..7bf1031 100644
+--- a/fs/ecryptfs/file.c
++++ b/fs/ecryptfs/file.c
+@@ -158,9 +158,9 @@ static int ecryptfs_open(struct inode *inode, struct file *file)
+ 	struct dentry *ecryptfs_dentry = file->f_path.dentry;
+ 	/* Private value of ecryptfs_dentry allocated in
+ 	 * ecryptfs_lookup() */
+-	struct dentry *lower_dentry = ecryptfs_dentry_to_lower(ecryptfs_dentry);
++	struct dentry *lower_dentry;
+ 	struct ecryptfs_file_info *file_info;
+ 
+ 	mount_crypt_stat = &ecryptfs_superblock_to_private(
