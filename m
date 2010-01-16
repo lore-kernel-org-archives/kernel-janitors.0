@@ -1,37 +1,51 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Sun, 17 Jan 2010 11:40:36 +0000
-Subject: Re: [PATCH 1/9] drivers/char: Eliminate useless code
-Message-Id: <4B52F734.6000408@s5r6.in-berlin.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 16 Jan 2010 15:57:56 +0000
+Subject: [PATCH 3/9] drivers/net: Eliminate useless code
+Message-Id: <Pine.LNX.4.64.1001161657400.28745@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1001161656560.28745@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1001161656560.28745@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dimitri Sivanich <sivanich@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Ron Mercer <ron.mercer@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> The variable x is initialized twice to the same (side effect-free)
-> expression.  Drop one initialization.
-[...]
-> --- a/drivers/char/mmtimer.c
-> +++ b/drivers/char/mmtimer.c
-> @@ -546,9 +546,9 @@ static void mmtimer_tasklet(unsigned long data)
->  {
->  	int nodeid = data;
->  	struct mmtimer_node *mn = &timers[nodeid];
-> -	struct mmtimer *x = rb_entry(mn->next, struct mmtimer, list);
-> +	struct mmtimer *x;
->  	struct k_itimer *t;
->  	unsigned long flags;
+From: Julia Lawall <julia@diku.dk>
 
-The next x = rb_entry(mn->next, struct mmtimer, list); is preceded by a
-test whether mn->next is NULL.
+The variable qdev is initialized twice to the same (side effect-free)
+expression.  Drop one initialization.
 
-Unless that test is redundant too, your patch fixes a potential NULL
-pointer dereference, introduced by commit cbacdd95 "SGI Altix mmtimer:
-allow larger number of timers per node" in 2.6.26.
--- 
-Stefan Richter
--===-=-=- ---= =---http://arcgraph.de/sr/
+A simplified version of the semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@forall@
+idexpression *x;
+identifier f!=ERR_PTR;
+@@
+
+x = f(...)
+... when != x
+(
+x = f(...,<+...x...+>,...)
+|
+* x = f(...)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/qla3xxx.c               |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/qla3xxx.c b/drivers/net/qla3xxx.c
+index f922294..4ef0afb 100644
+--- a/drivers/net/qla3xxx.c
++++ b/drivers/net/qla3xxx.c
+@@ -4087,9 +4087,8 @@ static void __devexit ql3xxx_remove(struct pci_dev *pdev)
+ 	struct ql3_adapter *qdev = netdev_priv(ndev);
+ 
+ 	unregister_netdev(ndev);
+-	qdev = netdev_priv(ndev);
+ 
+ 	ql_disable_interrupts(qdev);
+ 
