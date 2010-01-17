@@ -1,52 +1,37 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 16 Jan 2010 15:57:16 +0000
-Subject: [PATCH 1/9] drivers/char: Eliminate useless code
-Message-Id: <Pine.LNX.4.64.1001161656560.28745@ask.diku.dk>
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Date: Sun, 17 Jan 2010 11:40:36 +0000
+Subject: Re: [PATCH 1/9] drivers/char: Eliminate useless code
+Message-Id: <4B52F734.6000408@s5r6.in-berlin.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1001161656560.28745@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1001161656560.28745@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dimitri Sivanich <sivanich@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
 
-From: Julia Lawall <julia@diku.dk>
+Julia Lawall wrote:
+> The variable x is initialized twice to the same (side effect-free)
+> expression.  Drop one initialization.
+[...]
+> --- a/drivers/char/mmtimer.c
+> +++ b/drivers/char/mmtimer.c
+> @@ -546,9 +546,9 @@ static void mmtimer_tasklet(unsigned long data)
+>  {
+>  	int nodeid = data;
+>  	struct mmtimer_node *mn = &timers[nodeid];
+> -	struct mmtimer *x = rb_entry(mn->next, struct mmtimer, list);
+> +	struct mmtimer *x;
+>  	struct k_itimer *t;
+>  	unsigned long flags;
 
-The variable x is initialized twice to the same (side effect-free)
-expression.  Drop one initialization.
+The next x = rb_entry(mn->next, struct mmtimer, list); is preceded by a
+test whether mn->next is NULL.
 
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@forall@
-idexpression *x;
-identifier f!=ERR_PTR;
-@@
-
-x = f(...)
-... when != x
-(
-x = f(...,<+...x...+>,...)
-|
-* x = f(...)
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/char/mmtimer.c              |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/char/mmtimer.c b/drivers/char/mmtimer.c
-index 918711a..04fd0d8 100644
---- a/drivers/char/mmtimer.c
-+++ b/drivers/char/mmtimer.c
-@@ -546,9 +546,9 @@ static void mmtimer_tasklet(unsigned long data)
- {
- 	int nodeid = data;
- 	struct mmtimer_node *mn = &timers[nodeid];
--	struct mmtimer *x = rb_entry(mn->next, struct mmtimer, list);
-+	struct mmtimer *x;
- 	struct k_itimer *t;
- 	unsigned long flags;
- 
+Unless that test is redundant too, your patch fixes a potential NULL
+pointer dereference, introduced by commit cbacdd95 "SGI Altix mmtimer:
+allow larger number of timers per node" in 2.6.26.
+-- 
+Stefan Richter
+-===-=-=- ---= =---http://arcgraph.de/sr/
