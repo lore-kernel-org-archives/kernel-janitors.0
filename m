@@ -1,55 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 18 Jan 2010 08:12:21 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 18 Jan 2010 08:29:31 +0000
 Subject: Re: [PATCH 3/9] drivers/net: Eliminate useless code
-Message-Id: <Pine.LNX.4.64.1001180911080.12648@ask.diku.dk>
+Message-Id: <20100118.002931.55279267.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.1001161657400.28745@ask.diku.dk>
- <20100117.193140.153138395.davem@davemloft.net>
-In-Reply-To: <20100117.193140.153138395.davem@davemloft.net>
+	<20100117.193140.153138395.davem@davemloft.net>
+	<Pine.LNX.4.64.1001180911080.12648@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1001180911080.12648@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
+To: julia@diku.dk
 Cc: ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Mon, 18 Jan 2010 09:12:21 +0100 (CET)
 
-The variable qdev is initialized twice to the same (side effect-free)
-expression.  Drop one initialization.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The variable qdev is initialized twice to the same (side effect-free)
+> expression.  Drop one initialization.
+> 
+> A simplified version of the semantic match that finds this problem is:
+> (http://coccinelle.lip6.fr/)
+ ...
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@forall@
-idexpression *x;
-identifier f!=ERR_PTR;
-@@
-
-x = f(...)
-... when != x
-(
-x = f(...,<+...x...+>,...)
-|
-* x = f(...)
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/qla3xxx.c               |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/qla3xxx.c b/drivers/net/qla3xxx.c
-index f922294..4ef0afb 100644
---- a/drivers/net/qla3xxx.c
-+++ b/drivers/net/qla3xxx.c
-@@ -4087,7 +4087,6 @@ static void __devexit ql3xxx_remove(struct pci_dev *pdev)
- 	struct ql3_adapter *qdev = netdev_priv(ndev);
- 
- 	unregister_netdev(ndev);
--	qdev = netdev_priv(ndev);
- 
- 	ql_disable_interrupts(qdev);
- 
+Applied, thanks.
