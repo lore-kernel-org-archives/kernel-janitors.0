@@ -1,51 +1,61 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 16 Jan 2010 15:57:56 +0000
-Subject: [PATCH 3/9] drivers/net: Eliminate useless code
-Message-Id: <Pine.LNX.4.64.1001161657400.28745@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 18 Jan 2010 03:31:40 +0000
+Subject: Re: [PATCH 3/9] drivers/net: Eliminate useless code
+Message-Id: <20100117.193140.153138395.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1001161657400.28745@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1001161657400.28745@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ron Mercer <ron.mercer@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Sat, 16 Jan 2010 16:57:56 +0100 (CET)
 
-The variable qdev is initialized twice to the same (side effect-free)
-expression.  Drop one initialization.
+> The variable qdev is initialized twice to the same (side effect-free)
+> expression.  Drop one initialization.
+> 
+> A simplified version of the semantic match that finds this problem is:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @forall@
+> idexpression *x;
+> identifier f!=ERR_PTR;
+> @@
+> 
+> x = f(...)
+> ... when != x
+> (
+> x = f(...,<+...x...+>,...)
+> |
+> * x = f(...)
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
+Something in your patch creation process is corrupting these
+patches.
 
-// <smpl>
-@forall@
-idexpression *x;
-identifier f!=ERR_PTR;
-@@
+> diff --git a/drivers/net/qla3xxx.c b/drivers/net/qla3xxx.c
+> index f922294..4ef0afb 100644
+> --- a/drivers/net/qla3xxx.c
+> +++ b/drivers/net/qla3xxx.c
+> @@ -4087,9 +4087,8 @@ static void __devexit ql3xxx_remove(struct pci_dev *pdev)
+>  	struct ql3_adapter *qdev = netdev_priv(ndev);
+>  
+>  	unregister_netdev(ndev);
+> -	qdev = netdev_priv(ndev);
+>  
+>  	ql_disable_interrupts(qdev);
+>  
+> --
 
-x = f(...)
-... when != x
-(
-x = f(...,<+...x...+>,...)
-|
-* x = f(...)
-)
-// </smpl>
+That hunk header states that after the line is removed there should
+be 8 lines present in the hunk, but the patch only shows 7 such
+lines.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/qla3xxx.c               |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/qla3xxx.c b/drivers/net/qla3xxx.c
-index f922294..4ef0afb 100644
---- a/drivers/net/qla3xxx.c
-+++ b/drivers/net/qla3xxx.c
-@@ -4087,9 +4087,8 @@ static void __devexit ql3xxx_remove(struct pci_dev *pdev)
- 	struct ql3_adapter *qdev = netdev_priv(ndev);
- 
- 	unregister_netdev(ndev);
--	qdev = netdev_priv(ndev);
- 
- 	ql_disable_interrupts(qdev);
- 
+I suspect something is eating the final line of your patches.
