@@ -1,35 +1,49 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Tue, 19 Jan 2010 21:08:53 +0000
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 21 Jan 2010 10:47:41 +0000
 Subject: Re: Lots of bugs with current->state = TASK_*INTERRUPTIBLE
-Message-Id: <1263935333.4561.26.camel@frodo>
+Message-Id: <Pine.LNX.4.64.1001211145480.13529@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1263932978.31321.53.camel@gandalf.stny.rr.com>
-	 <Pine.LNX.4.64.1001192155490.28583@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1001192155490.28583@ask.diku.dk>
+ <Pine.LNX.4.64.1001192155490.28583@ask.diku.dk> <1263935333.4561.26.camel@frodo>
+In-Reply-To: <1263935333.4561.26.camel@frodo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
+To: Steven Rostedt <rostedt@goodmis.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, linux-arch@vger.kernel.org, Greg KH <greg@kroah.com>, Andy Whitcroft <apw@canonical.com>
 
-On Tue, 2010-01-19 at 21:58 +0100, Julia Lawall wrote:
-> > Anyway, this looks like a good janitorial work. Anything that assigns
-> > state outside the rq locks to something other than TASK_RUNNING and that
-> > is not before a schedule() (perhaps even those) should be converted to:
-> > 
-> > 	set_current_task(<state>).
-> 
-> Does "not before a schedule" mean not before a schedule_timeout as well?
+What about something like the following (drivers/macintosh/adb.c):
 
-Yep.
+        add_wait_queue(&state->wait_queue, &wait);
+        current->state = TASK_INTERRUPTIBLE;
 
-> 
-> Also, I assume you mean set_current_state?
+	for (;;) {
+	        req = state->completed;
+                if (req != NULL)
+                        state->completed = req->next;
+                else if (atomic_read(&state->n_pending) = 0)
+                        ret = -EIO;
+		if (req != NULL || ret != 0)
+			break;
 
-Yep!
+                if (file->f_flags & O_NONBLOCK) {
+                        ret = -EAGAIN;
+                        break;
+		}
+                if (signal_pending(current)) {
+                        ret = -ERESTARTSYS;
+                        break;
+                }
+                spin_unlock_irqrestore(&state->lock, flags);
+                schedule();
+        	spin_lock_irqsave(&state->lock, flags);
+        }
 
-Thanks!
+        current->state = TASK_RUNNING;
+        remove_wait_queue(&state->wait_queue, &wait);
 
--- Steve
+There is a call to schedule eventually after the first current->state 
+assignment, but it is not right after.
 
-
+thanks,
+julia
