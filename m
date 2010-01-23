@@ -1,59 +1,28 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 05 Jan 2010 10:27:07 +0000
-Subject: Re: [PATCH 08/10] video/omap: add __init/__exit macros to
-Message-Id: <alpine.LNX.2.00.1001051126360.2277@pobox.suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 23 Jan 2010 12:45:22 +0000
+Subject: [patch] drbd: null dereference bug
+Message-Id: <20100123124522.GA3061@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1261470890-24031-1-git-send-email-peterhuewe@gmx.de>
-In-Reply-To: <1261470890-24031-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Huewe <peterhuewe@gmx.de>
-Cc: kernel-janitors@vger.kernel.org, Imre Deak <imre.deak@nokia.com>, Tony Lindgren <tony@atomide.com>, Cory Maccarrone <darkstar6262@gmail.com>, Tomi Valkeinen <tomi.valkeinen@nokia.com>, linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lars Ellenberg <drbd-dev@lists.linbit.com>
+Cc: drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 22 Dec 2009, peterhuewe@gmx.de wrote:
+epoch is always NULL here.
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> Trivial patch which adds the __init/__exit macros to the module_init/
-> module_exit functions of
-> 
-> drivers/video/omap/lcd_htcherald.c
-> 
-> Please have a look at the small patch and either pull it through
-> your tree, or please ack' it so Jiri can pull it through the trivial
-> tree.
-> 
-> Patch against linux-next-tree, 22. Dez 08:38:18 CET 2009
-> but also present in linus tree.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-> ---
->  drivers/video/omap/lcd_htcherald.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/omap/lcd_htcherald.c b/drivers/video/omap/lcd_htcherald.c
-> index a9007c5..4802419 100644
-> --- a/drivers/video/omap/lcd_htcherald.c
-> +++ b/drivers/video/omap/lcd_htcherald.c
-> @@ -115,12 +115,12 @@ struct platform_driver htcherald_panel_driver = {
->  	},
->  };
->  
-> -static int htcherald_panel_drv_init(void)
-> +static int __init htcherald_panel_drv_init(void)
->  {
->  	return platform_driver_register(&htcherald_panel_driver);
->  }
->  
-> -static void htcherald_panel_drv_cleanup(void)
-> +static void __exit htcherald_panel_drv_cleanup(void)
->  {
->  	platform_driver_unregister(&htcherald_panel_driver);
->  }
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This patch has only been compile tested.  Sorry.  :/
 
-Doesn't seem to be in linux-next as of today. Applied myself, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+--- orig/drivers/block/drbd/drbd_receiver.c	2010-01-23 10:53:13.000000000 +0300
++++ devel/drivers/block/drbd/drbd_receiver.c	2010-01-23 10:54:19.000000000 +0300
+@@ -1224,7 +1224,7 @@ static int receive_Barrier(struct drbd_c
+ 	epoch = kmalloc(sizeof(struct drbd_epoch), GFP_NOIO);
+ 	if (!epoch) {
+ 		dev_warn(DEV, "Allocation of an epoch failed, slowing down\n");
+-		issue_flush = !test_and_set_bit(DE_BARRIER_IN_NEXT_EPOCH_ISSUED, &epoch->flags);
++		issue_flush = !test_and_set_bit(DE_BARRIER_IN_NEXT_EPOCH_ISSUED, &mdev->current_epoch->flags);
+ 		drbd_wait_ee_list_empty(mdev, &mdev->active_ee);
+ 		if (issue_flush) {
+ 			rv = drbd_flush_after_epoch(mdev, mdev->current_epoch);
