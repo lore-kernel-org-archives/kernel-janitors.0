@@ -1,7 +1,7 @@
-From: Johan Hovold <jhovold@gmail.com>
-Date: Mon, 25 Jan 2010 16:57:13 +0000
+From: Greg KH <greg@kroah.com>
+Date: Mon, 25 Jan 2010 20:40:55 +0000
 Subject: Re: [patch] usb: io_edgeport: eliminate get_string()
-Message-Id: <20100125165713.GB2680@localhost>
+Message-Id: <20100125204055.GA22221@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100125115333.GD3061@bicker>
 In-Reply-To: <20100125115333.GD3061@bicker>
@@ -17,21 +17,12 @@ On Mon, Jan 25, 2010 at 02:53:33PM +0300, Dan Carpenter wrote:
 > a rubbish function and moving to usb_string() avoids using it.
 > 
 > Let's eliminate get_string() entirely.
-> 
-> Reported-by: Johan Hovold <jhovold@gmail.com>
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> Cc: stable@kernel.org
 
-Acked.
+Hm, for some reason I couldn't use usb_string() when I originally wrote
+this code (way back in 1999).  I can't recall what it is, but have you
+tested this with an edgeport device to verify that it doesn't break
+anything?
 
-How do we generally deal with patches with multiple authors? This patch
-is a logical and obvious extension of the patch I submitted yesterday,
-which in turn was a fix (implemented from scratch) for two bugs pointed
-out by Dan.
+thanks,
 
-This particular change is trivial of course, but are there any general
-guidelines for such cases?
-
-Thanks,
-Johan
-
+greg k-h
