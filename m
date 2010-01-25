@@ -1,52 +1,54 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 16 Jan 2010 16:00:26 +0000
-Subject: [PATCH 9/9] fs/ecryptfs: Eliminate useless code
-Message-Id: <Pine.LNX.4.64.1001161700100.28745@ask.diku.dk>
+From: Philipp Reisner <philipp.reisner@linbit.com>
+Date: Mon, 25 Jan 2010 17:14:36 +0000
+Subject: Re: [Drbd-dev] [patch] drbd: null dereference bug
+Message-Id: <201001251814.37009.philipp.reisner@linbit.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100123124522.GA3061@bicker>
+In-Reply-To: <20100123124522.GA3061@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tyler Hicks <tyhicks@linux.vnet.ibm.com>, Dustin Kirkland <kirkland@canonical.com>, ecryptfs-devel@lists.launchpad.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: drbd-dev@lists.linbit.com
+Cc: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>
 
-From: Julia Lawall <julia@diku.dk>
+Am Samstag, 23. Januar 2010 13:45:22 schrieb Dan Carpenter:
+> epoch is always NULL here.
+>=20
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> This patch has only been compile tested.  Sorry.  :/
+>=20
+> --- orig/drivers/block/drbd/drbd_receiver.c	2010-01-23 10:53:13.000000000
+>  +0300 +++ devel/drivers/block/drbd/drbd_receiver.c	2010-01-23
+>  10:54:19.000000000 +0300 @@ -1224,7 +1224,7 @@ static int
+>  receive_Barrier(struct drbd_c
+>  	epoch =3D kmalloc(sizeof(struct drbd_epoch), GFP_NOIO);
+>  	if (!epoch) {
+>  		dev_warn(DEV, "Allocation of an epoch failed, slowing down\n");
+> -		issue_flush =3D !test_and_set_bit(DE_BARRIER_IN_NEXT_EPOCH_ISSUED, &ep=
+och->flags);
+> +		issue_flush =3D !test_and_set_bit(DE_BARRIER_IN_NEXT_EPOCH_ISSUED, &md=
+ev->current_epoch->flags);
+>  		drbd_wait_ee_list_empty(mdev, &mdev->active_ee);
+>  		if (issue_flush) {
+>  			rv =3D drbd_flush_after_epoch(mdev, mdev->current_epoch);
+>
 
-The variable lower_dentry is initialized twice to the same (side effect-free)
-expression.  Drop one initialization.
+The patch is correct. It is going upstream though the DRBD tree.
+See:
+http://git.drbd.org/?p=3Dlinux-2.6-drbd.git;a=3Dcommit;h=D3db7b485ad7c467a6=
+1279d6a8ef51a3c83352df
 
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
+-Phil
+--=20
+: Dipl-Ing Philipp Reisner
+: LINBIT | Your Way to High Availability
+: Tel: +43-1-8178292-50, Fax: +43-1-8178292-82
+: http://www.linbit.com
 
-// <smpl>
-@forall@
-idexpression *x;
-identifier f!=ERR_PTR;
-@@
-
-x = f(...)
-... when != x
-(
-x = f(...,<+...x...+>,...)
-|
-* x = f(...)
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- fs/ecryptfs/file.c                  |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/fs/ecryptfs/file.c b/fs/ecryptfs/file.c
-index 1744f17..7bf1031 100644
---- a/fs/ecryptfs/file.c
-+++ b/fs/ecryptfs/file.c
-@@ -158,9 +158,9 @@ static int ecryptfs_open(struct inode *inode, struct file *file)
- 	struct dentry *ecryptfs_dentry = file->f_path.dentry;
- 	/* Private value of ecryptfs_dentry allocated in
- 	 * ecryptfs_lookup() */
--	struct dentry *lower_dentry = ecryptfs_dentry_to_lower(ecryptfs_dentry);
-+	struct dentry *lower_dentry;
- 	struct ecryptfs_file_info *file_info;
- 
- 	mount_crypt_stat = &ecryptfs_superblock_to_private(
+DRBD(R) and LINBIT(R) are registered trademarks of LINBIT, Austria.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
