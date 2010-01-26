@@ -1,7 +1,7 @@
-From: Oliver Neukum <oliver@neukum.org>
-Date: Tue, 26 Jan 2010 06:50:22 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 26 Jan 2010 09:15:16 +0000
 Subject: Re: [patch] usb: io_edgeport: eliminate get_string()
-Message-Id: <201001260750.22160.oliver@neukum.org>
+Message-Id: <20100126091516.GE3061@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100125115333.GD3061@bicker>
 In-Reply-To: <20100125115333.GD3061@bicker>
@@ -10,18 +10,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Am Dienstag, 26. Januar 2010 05:27:31 schrieb Greg KH:
-> > Good point. But if that is considered critical enough then Dan's
-> > original patch should go to stable instead of this one. And so should
-> > the other 10+ DMA-to-stack patches in Greg's tree?
+On Mon, Jan 25, 2010 at 12:41:54PM -0800, Greg KH wrote:
+> On Mon, Jan 25, 2010 at 02:53:33PM +0300, Dan Carpenter wrote:
+> > Johan Hovold points out that get_string() is basically just a re-implimentation
+> > of usb_string().  It is also buggy.  It does DMA on the stack and it doesn't
+> > handle negative returns from usb_get_descriptor().  Plus unicode_to_ascii() is 
+> > a rubbish function and moving to usb_string() avoids using it.
+> > 
+> > Let's eliminate get_string() entirely.
+> > 
+> > Reported-by: Johan Hovold <jhovold@gmail.com>
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > Cc: stable@kernel.org
 > 
-> Given the age of this bug (1999) and the fact that the devices are no
-> longer made, I don't think this is -stable worthy.
+> Why stable?  Does this fix an existing bug somewhere?
+> 
 
-That's an odd form of reasoning. As the patch touches just this driver
-it makes no difference if you don't have the hardware. If you have
-the hardware on an architecture where it matters, this is no longer
-true.
+No sorry.  My script added that automatically and I meant forgot to 
+remove it.  This should go through -next I think.
 
-	Regards
-		Oliver
+I will be more careful in the future.
+
+regards,
+dan carpenter
+
+> thanks,
+> 
+> greg k-h
