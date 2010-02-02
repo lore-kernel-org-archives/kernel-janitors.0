@@ -1,70 +1,56 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 13 Feb 2010 08:00:11 +0000
-Subject: Re: [patch] staging: vt6655: add missing curly braces
-Message-Id: <20100213080010.GI14210@bicker>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Date: Tue, 02 Feb 2010 15:19:15 +0000
+Subject: Re: [PATCH 3/8] drivers/media/video/hdpvr: introduce missing kfree
+Message-Id: <4B684273.6040500@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100212114801.GA5975@bicker>
-In-Reply-To: <20100212114801.GA5975@bicker>
+References: <Pine.LNX.4.64.0909111821180.10552@pc-004.diku.dk> <20090916111325.GA14900@aniel.lan>
+In-Reply-To: <20090916111325.GA14900@aniel.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Janne Grunau <j@jannau.net>
+Cc: Julia Lawall <julia@diku.dk>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Feb 12, 2010 at 02:28:16PM +0100, walter harms wrote:
+Hi Janne,
+
+Janne Grunau wrote:
+> On Fri, Sep 11, 2009 at 06:21:35PM +0200, Julia Lawall wrote:
+>> Error handling code following a kzalloc should free the allocated data.
 > 
+> Thanks for the report. I'll commit a different patch which adds the buffer
+> to the buffer list as soon it is allocated. The hdpvr_free_buffers() in the
+> error handling code will clean it up then. See below:
+
+Any news about this subject? The current upstream code still misses the change bellow
+
 > 
-> Dan Carpenter schrieb:
-> > It's clear from the indent levels and the context that there are supposed to
-> > be curly braces here.
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > 
-> > diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
-> > index db78614..bf4fd49 100644
-> > --- a/drivers/staging/vt6655/card.c
-> > +++ b/drivers/staging/vt6655/card.c
-> > @@ -2788,16 +2788,18 @@ void CARDvUpdateBasicTopRate (PVOID pDeviceHandler)
-> >  
-> >       //Determines the highest basic rate.
-> >       for (ii = RATE_54M; ii >= RATE_6M; ii --) {
-> > -         if ( (pDevice->wBasicRate) & ((WORD)(1<<ii)) )
-> > +         if ( (pDevice->wBasicRate) & ((WORD)(1<<ii)) ) {
-> >               byTopOFDM = ii;
-> >               break;
-> > +         }
-> >       }
-> >       pDevice->byTopOFDMBasicRate = byTopOFDM;
-> >  
-> >       for (ii = RATE_11M;; ii --) {
-> > -         if ( (pDevice->wBasicRate) & ((WORD)(1<<ii)) )
-> > +         if ( (pDevice->wBasicRate) & ((WORD)(1<<ii)) ) {
-> >               byTopCCK = ii;
-> >               break;
-> > +         }
-> >           if (ii = RATE_1M)
-> >              break;
-> >       }
+> diff --git a/linux/drivers/media/video/hdpvr/hdpvr-video.c b/linux/drivers/media/video/hdpvr/hdpvr-video.c
+> --- a/linux/drivers/media/video/hdpvr/hdpvr-video.c
+> +++ b/linux/drivers/media/video/hdpvr/hdpvr-video.c
+> @@ -134,6 +134,8 @@
+>                         v4l2_err(&dev->v4l2_dev, "cannot allocate buffer\n");
+>                         goto exit;
+>                 }
+> +               list_add_tail(&buf->buff_list, &dev->free_buff_list);
+> +
+>                 buf->dev = dev;
 > 
+>                 urb = usb_alloc_urb(0, GFP_KERNEL);
+> @@ -158,7 +160,6 @@
+>                                   hdpvr_read_bulk_callback, buf);
 > 
-> this is a realy nice catch :)
+>                 buf->status = BUFSTAT_AVAILABLE;
+> -               list_add_tail(&buf->buff_list, &dev->free_buff_list);
+>         }
+>         return 0;
+>  exit:
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-It was just a smatch thing.
 
-> NTL i guess the code is looking for the highest bit that could be replace
-> with kernel code. (ffs() ?)
-> 
+-- 
 
-Well, it's not exactly ffs() because ffs(1) would return 1 but the in
-this code when pDevice->wBasicRate is 1 byTopCCK would be 0.
-
-if ( (pDevice->wBasicRate) & ((WORD)(1 << ii)) ) {
-if (         1             &        (1 << 1)) { is false.
-if (         1             &        (1 << 0)) { is true.
-
-But sure, I can send a patch in the next email.
-
-regards,
-dan carpenter
-
-> just my 2 cents,
->  wh
+Cheers,
+Mauro
