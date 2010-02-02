@@ -1,29 +1,35 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Mon, 08 Feb 2010 08:00:52 +0000
-Subject: Re: [patch] bluetooth: ath3k: add kfree() on error path
-Message-Id: <1265616052.31341.256.camel@localhost.localdomain>
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Tue, 02 Feb 2010 12:12:10 +0000
+Subject: [PATCH] drivers/acpi/ec.c fix a small memory leak
+Message-Id: <1265112730.4804.8.camel@ICE-BOX>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100208054317.GA10576@bicker>
-In-Reply-To: <20100208054317.GA10576@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Alicke Xu <sxu@atheros.com>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, Vikram Kandukuri <vikram.kandukuri@atheros.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>, Len Brown <lenb@kernel.org>, linux ACPI <linux-acpi@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, astarikovskiy@suse.de
 
-Hi Dan,
+Plug a very small leak in acpi_ec_ecdt_probe()
 
-> Add a couple kfree() calls on an error path.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> ---
-> I only compile tested this one and it's obvoiusly low priority.  Could it go into linux-next?
+Coverity CID: 13319
 
-patch has been applied. Thanks.
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com> 
 
-Regards
-
-Marcel
+diff --git drivers/acpi/ec.c drivers/acpi/ec.c
+index d6471bb..13061dc 100644
+--- drivers/acpi/ec.c
++++ drivers/acpi/ec.c
+@@ -1009,8 +1009,10 @@ int __init acpi_ec_ecdt_probe(void)
+ 	/* fall through */
+ 	}
+ 
+-	if (EC_FLAGS_SKIP_DSDT_SCAN)
++	if (EC_FLAGS_SKIP_DSDT_SCAN) {
++		kfree(saved_ec);
+ 		return -ENODEV;
++	}
+ 
+ 	/* This workaround is needed only on some broken machines,
+ 	 * which require early EC, but fail to provide ECDT */
 
 
