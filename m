@@ -1,35 +1,52 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 13 Feb 2010 10:06:16 +0000
-Subject: Re: [patch] staging: vt6655: rewrite CARDvUpdateBasicTopRate()
-Message-Id: <20100213100616.GK14210@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 06 Feb 2010 08:42:39 +0000
+Subject: [PATCH 3/11] arch/x86/kernel: Correct NULL test
+Message-Id: <Pine.LNX.4.64.1002060942170.8092@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100213080317.GJ14210@bicker>
-In-Reply-To: <20100213080317.GJ14210@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joerg.roedel@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Feb 13, 2010 at 10:44:53AM +0100, Jiri Slaby wrote:
-> On 02/13/2010 10:36 AM, Jiri Slaby wrote:
-> > You cannot use ffs and fls here.
-> 
-> Actually you can (fls), if you add proper masks there like
-> fls(pDevice->wBasicRate & ((1 << RATE_24M) - 1) & ~((1 << RATE_6M) -
-> 1)), but with some macro-ification inside. Dunno if it gets better though.
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Ok.  I didn't understand how ffs() and fls() worked before.  Sorry about that.
+dev was tested just above, so drop the second test.
 
-Let's just apply my original patch because that is an obvious one.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-If I could test my changes, I would feel more comfortable rewriting stuff
-but I don't have the hardware.
+// <smpl>
+@r@
+expression *x;
+expression e;
+identifier l;
+@@
 
-regards,
-dan carpenter
+if (x = NULL || ...) {
+    ... when forall
+    return ...; }
+... when != goto l;
+    when != x = e
+    when != &x
+*x = NULL
+// </smpl>
 
-> -- 
-> js
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ arch/x86/kernel/amd_iommu.c         |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
+diff --git a/arch/x86/kernel/amd_iommu.c b/arch/x86/kernel/amd_iommu.c
+index adb0ba0..2c4a501 100644
+--- a/arch/x86/kernel/amd_iommu.c
++++ b/arch/x86/kernel/amd_iommu.c
+@@ -118,7 +118,7 @@ static bool check_device(struct device *dev)
+ 		return false;
+ 
+ 	/* No device or no PCI device */
+-	if (!dev || dev->bus != &pci_bus_type)
++	if (dev->bus != &pci_bus_type)
+ 		return false;
+ 
+ 	devid = get_device_id(dev);
