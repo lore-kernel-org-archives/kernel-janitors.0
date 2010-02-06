@@ -1,29 +1,52 @@
-From: "Linus Walleij" <linus.walleij@stericsson.com>
-Date: Tue, 09 Feb 2010 21:54:36 +0000
-Subject: RE: [PATCH 6/11] drivers/dma: Correct NULL test
-Message-Id: <A6D19A13FE030A409EC4362C172E091F0E79D583@eseldmw101.eemea.ericsson.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 06 Feb 2010 08:43:03 +0000
+Subject: [PATCH 4/11] arch/x86/kvm: Correct NULL test
+Message-Id: <Pine.LNX.4.64.1002060942390.8092@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1002060943220.8092@ask.diku.dk> <e9c3a7c21002081307j567413adg6ed8aa04bf153e41@mail.gmail.com>
-In-Reply-To: <e9c3a7c21002081307j567413adg6ed8aa04bf153e41@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>, Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[Dan/Julia]
+From: Julia Lawall <julia@diku.dk>
 
-> On Sat, Feb 6, 2010 at 1:43 AM, Julia Lawall <julia@diku.dk> wrote:
-> > From: Julia Lawall <julia@diku.dk>
-> >
-> > cohd_fin has already been verified not to be NULL, so the 
-> argument to
-> > BUG_ON cannot be true.
+msr was tested above, so the second test is not needed.
 
-Acked-by: Linus Walleij <linus.walleij@stericsson.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-BTW I've got some more DMA patches for COH 901 318 and even
-a client using it cooking, if you apply this I'll happily
-rebase as soon as I can see it in -next.
+// <smpl>
+@r@
+expression *x;
+expression e;
+identifier l;
+@@
 
-Linus Walleij
+if (x = NULL || ...) {
+    ... when forall
+    return ...; }
+... when != goto l;
+    when != x = e
+    when != &x
+*x = NULL
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/x86/kvm/vmx.c                  |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 7375ae1..422bfc8 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1609,8 +1609,6 @@ static void vmx_set_efer(struct kvm_vcpu *vcpu, u64 efer)
+ 	 */
+ 	vmx_load_host_state(to_vmx(vcpu));
+ 	vcpu->arch.shadow_efer = efer;
+-	if (!msr)
+-		return;
+ 	if (efer & EFER_LMA) {
+ 		vmcs_write32(VM_ENTRY_CONTROLS,
+ 			     vmcs_read32(VM_ENTRY_CONTROLS) |
