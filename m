@@ -1,30 +1,52 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 22 Feb 2010 04:54:45 +0000
-Subject: [patch] mca: remove some dead code
-Message-Id: <20100222045445.GA4853@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 06 Feb 2010 08:42:00 +0000
+Subject: [PATCH 1/11] arch/arm/plat-pxa: Correct NULL test
+Message-Id: <Pine.LNX.4.64.1002060941410.8092@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-There are two return statements in a row.  The first return statement is
-the correct one.  For the unused return statement, it is the 
-mca_device_read_stored_pos() which returns mca_dev->pos[reg];
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Test the value that was just allocated rather than the previously tested one.
 
-diff --git a/drivers/mca/mca-device.c b/drivers/mca/mca-device.c
-index e7adf89..ff078f4 100644
---- a/drivers/mca/mca-device.c
-+++ b/drivers/mca/mca-device.c
-@@ -65,8 +65,6 @@ unsigned char mca_device_read_pos(struct mca_device *mca_dev, int reg)
- 	struct mca_bus *mca_bus = to_mca_bus(mca_dev->dev.parent);
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+expression *x;
+expression e;
+identifier l;
+@@
+
+if (x = NULL || ...) {
+    ... when forall
+    return ...; }
+... when != goto l;
+    when != x = e
+    when != &x
+*x = NULL
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/arm/plat-pxa/dma.c             |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/plat-pxa/dma.c b/arch/arm/plat-pxa/dma.c
+index 2975798..bcfda50 100644
+--- a/arch/arm/plat-pxa/dma.c
++++ b/arch/arm/plat-pxa/dma.c
+@@ -244,7 +244,7 @@ static void pxa_dma_init_debugfs(void)
  
- 	return mca_bus->f.mca_read_pos(mca_dev, reg);
--
--	return 	mca_dev->pos[reg];
- }
- EXPORT_SYMBOL(mca_device_read_pos);
+ 	dbgfs_chan = kmalloc(sizeof(*dbgfs_state) * num_dma_channels,
+ 			     GFP_KERNEL);
+-	if (!dbgfs_state)
++	if (!dbgfs_chan)
+ 		goto err_alloc;
  
+ 	chandir = debugfs_create_dir("channels", dbgfs_root);
