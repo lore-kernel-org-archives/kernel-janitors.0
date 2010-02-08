@@ -1,22 +1,31 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Date: Mon, 08 Feb 2010 14:18:22 +0000
-Subject: Re: [PATCH 3/11] arch/x86/kernel: Correct NULL test
-Message-Id: <20100208141821.GD16236@amd.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 08 Feb 2010 05:43:17 +0000
+Subject: [patch] bluetooth: ath3k: add kfree() on error path
+Message-Id: <20100208054317.GA10576@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1002060942170.8092@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1002060942170.8092@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Alicke Xu <sxu@atheros.com>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, Vikram Kandukuri <vikram.kandukuri@atheros.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Feb 06, 2010 at 09:42:39AM +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> dev was tested just above, so drop the second test.
+Add a couple kfree() calls on an error path.
 
-Applied to amd-iommu/fixes. Thanks Julia.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-	Joerg
+---
+I only compile tested this one and it's obvoiusly low priority.  Could it go into linux-next?
 
+diff --git a/drivers/bluetooth/ath3k.c b/drivers/bluetooth/ath3k.c
+index add9485..128cae4 100644
+--- a/drivers/bluetooth/ath3k.c
++++ b/drivers/bluetooth/ath3k.c
+@@ -143,6 +143,8 @@ static int ath3k_probe(struct usb_interface *intf,
+ 	usb_set_intfdata(intf, data);
+ 	if (ath3k_load_firmware(data, data->fw_data, data->fw_size)) {
+ 		usb_set_intfdata(intf, NULL);
++		kfree(data->fw_data);
++		kfree(data);
+ 		return -EIO;
+ 	}
+ 
