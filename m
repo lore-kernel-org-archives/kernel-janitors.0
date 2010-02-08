@@ -1,31 +1,29 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 08 Feb 2010 05:43:17 +0000
-Subject: [patch] bluetooth: ath3k: add kfree() on error path
-Message-Id: <20100208054317.GA10576@bicker>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Mon, 08 Feb 2010 08:00:52 +0000
+Subject: Re: [patch] bluetooth: ath3k: add kfree() on error path
+Message-Id: <1265616052.31341.256.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100208054317.GA10576@bicker>
+In-Reply-To: <20100208054317.GA10576@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
+To: Dan Carpenter <error27@gmail.com>
 Cc: Alicke Xu <sxu@atheros.com>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, Vikram Kandukuri <vikram.kandukuri@atheros.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Add a couple kfree() calls on an error path.
+Hi Dan,
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+> Add a couple kfree() calls on an error path.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> ---
+> I only compile tested this one and it's obvoiusly low priority.  Could it go into linux-next?
 
----
-I only compile tested this one and it's obvoiusly low priority.  Could it go into linux-next?
+patch has been applied. Thanks.
 
-diff --git a/drivers/bluetooth/ath3k.c b/drivers/bluetooth/ath3k.c
-index add9485..128cae4 100644
---- a/drivers/bluetooth/ath3k.c
-+++ b/drivers/bluetooth/ath3k.c
-@@ -143,6 +143,8 @@ static int ath3k_probe(struct usb_interface *intf,
- 	usb_set_intfdata(intf, data);
- 	if (ath3k_load_firmware(data, data->fw_data, data->fw_size)) {
- 		usb_set_intfdata(intf, NULL);
-+		kfree(data->fw_data);
-+		kfree(data);
- 		return -EIO;
- 	}
- 
+Regards
+
+Marcel
+
+
