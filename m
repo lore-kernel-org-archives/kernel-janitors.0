@@ -1,46 +1,79 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Date: Mon, 22 Feb 2010 17:57:08 +0000
-Subject: Re: [patch] rcutorture: mod_timer() takes an absolute time
-Message-Id: <20100222175708.GI6748@linux.vnet.ibm.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 13 Feb 2010 08:03:17 +0000
+Subject: [patch] staging: vt6655: rewrite CARDvUpdateBasicTopRate()
+Message-Id: <20100213080317.GJ14210@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100222125304.GA5416@bicker>
-In-Reply-To: <20100222125304.GA5416@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 22, 2010 at 04:10:00PM +0300, Dan Carpenter wrote:
-> Hi Paul,
->=20
-> I was inspired to write a smatch check based on:
-> http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux-2.6.git;a=3Dco=
-mmitdiff;h=B857df1acc634b18db1db2a40864af985100266e
->=20
-> I compiled it and modprobed the resulting module...  Is this correct,
-> or did you intend for the timer to trigger right away?
+Originally, I wrote a patch to add some missing curly braces, but Walter
+Harms suggested that I should just rewrite the whole function to use the
+kernel version of ffs().
 
-Excellent catch, Dan!  Applied.
+It is odd to subtract one from the result of ffs() but that was present
+in the original code as well (once you add the missing curly braces).
 
-							Thanx, Paul
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This patch replaces my previous patch.  I don't have the hardware to 
+actually test this change.  :/
 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->=20
-> diff --git a/kernel/rcutorture.c b/kernel/rcutorture.c
-> index 9bb5217..1970f61 100644
-> --- a/kernel/rcutorture.c
-> +++ b/kernel/rcutorture.c
-> @@ -798,7 +798,7 @@ rcu_torture_reader(void *arg)
->  	do {
->  		if (irqreader && cur_ops->irq_capable) {
->  			if (!timer_pending(&t))
-> -				mod_timer(&t, 1);
-> +				mod_timer(&t, jiffies + 1);
->  		}
->  		idx =3D cur_ops->readlock();
->  		completed =3D cur_ops->completed();
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
+index db78614..3a1f2be 100644
+--- a/drivers/staging/vt6655/card.c
++++ b/drivers/staging/vt6655/card.c
+@@ -2780,28 +2780,32 @@ void vUpdateIFS (PVOID pDeviceHandler)
+     VNSvOutPortB(pDevice->PortOffset + MAC_REG_CWMAXMIN0, (BYTE)byMaxMin);
+ }
+ 
++static int top_OFDM_basic_rate(u16 basic_rate)
++{
++	int rate;
++
++	rate = ffs(basic_rate) - 1;
++	if (rate > RATE_54M || rate < RATE_6M)
++		return RATE_24M;
++	return rate;
++}
++
++static int top_CCK(u16 basic_rate)
++{
++	int rate;
++
++	rate = ffs(basic_rate) - 1;
++	if (rate > RATE_11M || rate < 0)
++		return RATE_1M;
++	return rate;
++}
++
+ void CARDvUpdateBasicTopRate (PVOID pDeviceHandler)
+ {
+-    PSDevice pDevice = (PSDevice) pDeviceHandler;
+-    BYTE byTopOFDM = RATE_24M, byTopCCK = RATE_1M;
+-    BYTE ii;
+-
+-     //Determines the highest basic rate.
+-     for (ii = RATE_54M; ii >= RATE_6M; ii --) {
+-         if ( (pDevice->wBasicRate) & ((WORD)(1<<ii)) )
+-             byTopOFDM = ii;
+-             break;
+-     }
+-     pDevice->byTopOFDMBasicRate = byTopOFDM;
+-
+-     for (ii = RATE_11M;; ii --) {
+-         if ( (pDevice->wBasicRate) & ((WORD)(1<<ii)) )
+-             byTopCCK = ii;
+-             break;
+-         if (ii = RATE_1M)
+-            break;
+-     }
+-     pDevice->byTopCCKBasicRate = byTopCCK;
++	PSDevice pDevice = (PSDevice) pDeviceHandler;
++
++	pDevice->byTopOFDMBasicRate = top_OFDM_basic_rate(pDevice->wBasicRate);
++	pDevice->byTopCCKBasicRate = top_CCK(pDevice->wBasicRate);
+ }
+ 
+ 
