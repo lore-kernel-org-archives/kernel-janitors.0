@@ -1,108 +1,55 @@
-From: Dave Chinner <david@fromorbit.com>
-Date: Mon, 15 Feb 2010 22:08:15 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 16 Feb 2010 05:42:00 +0000
 Subject: Re: bug list: range checking issues
-Message-Id: <20100215220815.GF28392@discord.disaster>
+Message-Id: <20100216054200.GM14210@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100215124046.GB18821@bicker>
 In-Reply-To: <20100215124046.GB18821@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 15, 2010 at 03:40:56PM +0300, Dan Carpenter wrote:
-> This is the results from:
->     make C=1 CHECK="/path/to/smatch -p=kernel" bzImage modules | tee warns.txt
->     grep -w overflow warns.txt | uniq -f 3 | tee err-list
-> 
-> I hacked on the buffer overflow check last weekend and these are the 
-> results.  It has way more false positives than the other bug lists 
-> I've posted, but it's still kinda neat.
+Here are a couple more things.
 
-I'll come back to this.
+The strcpy is not ideal.  It looks at the size of the string buffers instead
+of looking at where the first NULL is.  But probably quite a few of them are
+bugs, or could be improved by using strncpy and explicitly setting a NULL 
+pointer.
 
-> It works like this:
-> 
-> lib/zlib_inflate/inftrees.c
->    112      for (min = 1; min <= MAXBITS; min++)
->    113          if (count[min] != 0) break;
->    114      if (root < min) root = min;
-> smatch thinks "min" can be MAXBITS here.
-> 
-> One bad thing is that if you have code like:
->         if (foo = 42)
-> 		frob();
-> Smatch thinks that "foo" can be 43 after the if statement.
+regards,
+dan carpenter
 
-I think you understate the number of problems this matching rule
-has.
-
-.....
-> fs/xfs/xfs_attr_leaf.c +1097 xfs_attr_leaf_add_work(33) warn: buffer overflow 'hdr->freemap' 3 <= 3
-
-	ASSERT((mapindex >= 0) && (mapindex < XFS_ATTR_LEAF_MAPSIZE));
-	.....
-	map = &hdr->freemap[mapindex];
-
-=> False positive.
-
-> fs/xfs/xfs_da_btree.c +159 xfs_da_split(15) error: buffer overflow 'state->path.blk' 5 <= 5
-> fs/xfs/xfs_da_btree.c +162 xfs_da_split(18) warn: buffer overflow 'state->path.blk' 5 <= 5
-
-	ASSERT((max >= 0) && (max < XFS_DA_NODE_MAXDEPTH));
-	.....
-	addblk = &state->path.blk[max];
-
-=> False positives.
-
-> fs/xfs/xfs_dir2_block.c +1152 xfs_dir2_sf_to_block(128) error: buffer overflow 'dep->name' 1 <= 1
-
-	dep->name is a variable length array, size determined by
-	dep->namelen.
-
-=> False positives.
-
-> fs/xfs/xfs_dir2_leaf.c +504 xfs_dir2_leaf_addname(343) warn: buffer overflow 'leaf->ents' 1 <= 1
-> fs/xfs/xfs_dir2_leaf.c +585 xfs_dir2_leaf_check(30) error: buffer overflow 'leaf->ents' 1 <= 1
-> fs/xfs/xfs_dir2_node.c +253 xfs_dir2_leafn_add(69) warn: buffer overflow 'leaf->ents' 1 <= 1
-> fs/xfs/xfs_dir2_node.c +286 xfs_dir2_leafn_add(102) error: buffer overflow 'leaf->ents' 1 <= 1
-> fs/xfs/xfs_dir2_node.c +305 xfs_dir2_leafn_add(121) warn: buffer overflow 'leaf->ents' 1 <= 1
-> fs/xfs/xfs_dir2_node.c +316 xfs_dir2_leafn_add(132) error: buffer overflow 'leaf->ents' 1 <= 1
-> fs/xfs/xfs_dir2_node.c +320 xfs_dir2_leafn_add(136) warn: buffer overflow 'leaf->ents' 1 <= 2
-> fs/xfs/xfs_dir2_node.c +321 xfs_dir2_leafn_add(137) warn: buffer overflow 'leaf->ents' 1 <= 1
-> fs/xfs/xfs_dir2_node.c +361 xfs_dir2_leafn_check(15) error: buffer overflow 'leaf->ents' 1 <= 1
-
-	leaf->ents is a varaible length array, size determined by
-	the directory block header.
-
-=> False positives.
-
-> fs/xfs/xfs_dir2_sf.c +115 xfs_dir2_block_sfsize(44) error: buffer overflow 'dep->name' 1 <= 1
-
-	as per above
-
-=> False positive.
-
-> fs/xfs/xfs_inode.c +3562 xfs_iext_remove_inline(14) warn: buffer overflow 'ifp->if_u2.if_inline_ext' 2 <= 2
-
-	ASSERT(idx < XFS_INLINE_EXTS);
-	....
-	ASSERT(((nextents - ext_diff) > 0) &&
-		(nextents - ext_diff) < XFS_INLINE_EXTS);
-
-=> False positive
-
-So for XFS your tool has produced 100% false positives. I think you
-really need to spend more time reducing the incidence of false
-positives before reporting lists of potential buffer overflows to
-lkml. There may be some real ones in this list, but reporting tens
-of false positives with no real substance just wastes everyone's
-time. Static code checking only has value if there is a
-high signal to noise ratio....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+drivers/acpi/acpi_pad.c +456 acpi_pad_add(5) error: strcpy() "processor_aggregator" too large for ((device)->pnp.device_class) (21 vs 20)
+drivers/acpi/power_meter.c +902 acpi_power_meter_add(17) error: strcpy() "power_meter_resource" too large for ((device)->pnp.device_class) (21 vs 20)
+drivers/acpi/sbshc.c +275 acpi_smbus_hc_add(16) error: strcpy() "smbus_host_controller" too large for ((device)->pnp.device_class) (22 vs 20)
+drivers/isdn/divert/isdn_divert.c +482 isdn_divert_icall(95) error: strcpy() dv->rule.to_nr too large for ic->parm.setup.phone (35 vs 32)
+drivers/isdn/divert/isdn_divert.c +79 deflect_timer_expire(22) error: strcpy() cs->deflect_dest too large for cs->ics.parm.setup.phone (35 vs 32)
+drivers/isdn/hardware/eicon/debug.c +927 diva_mnt_add_xdi_adapter(66) error: strcpy() tmp too large for clients[id]->drvName (256 vs 128)
+drivers/isdn/hardware/eicon/debug.c +928 diva_mnt_add_xdi_adapter(67) error: strcpy() tmp too large for clients[id]->Dbg.drvName (256 vs 16)
+drivers/isdn/hisax/config.c +1231 HiSax_inithardware(21) error: strcpy() id too large for ids (64 vs 20)
+drivers/isdn/hisax/config.c +1236 HiSax_inithardware(26) error: strcpy() id too large for ids (64 vs 20)
+drivers/isdn/i4l/isdn_net.c +2929 isdn_net_getcfg(42) error: strcpy() lp->slave->name too large for cfg->slave (16 vs 10)
+drivers/isdn/i4l/isdn_net.c +2935 isdn_net_getcfg(48) error: strcpy() lp->master->name too large for cfg->master (16 vs 10)
+drivers/isdn/sc/interrupt.c +118 interrupt_handler(91) error: strcpy() (sc_adapter[card]->channel+(rcvmsg.phy_link_no-1))->dn too large for setup.eazmsn (50 vs 32)
+drivers/media/video/cx231xx/cx231xx-audio.c +498 cx231xx_audio_init(37) error: strcpy() "Conexant cx231xx Audio" too large for card->driver (23 vs 16)
+drivers/media/video/cx23885/cx23885-417.c +1358 vidioc_querycap(7) error: strcpy() dev->name too large for cap->driver (32 vs 16)
+drivers/media/video/em28xx/em28xx-audio.c +494 em28xx_audio_init(38) error: strcpy() "Empia Em28xx Audio" too large for card->driver (19 vs 16)
+drivers/net/ewrk3.c +1785 ewrk3_ioctl(111) error: copy_from_user() tmp->addr too small (3072 vs 6144)
+drivers/net/wireless/airo.c +2226 airo_start_xmit11(35) error: buffer overflow 'fids' 6 <= 6
+drivers/scsi/qla2xxx/qla_gs.c +1322 qla2x00_fdmi_rhba(74) error: strcpy() ha->model_number too large for eiter->a.model (17 vs 16)
+drivers/scsi/qla2xxx/qla_gs.c +1347 qla2x00_fdmi_rhba(99) error: strcpy() ha->adapter_id too large for eiter->a.hw_version (17 vs 16)
+drivers/staging/otus/ioctl.c +509 usbdrvwext_giwname(6) error: strcpy() "IEEE 802.11-MIMO" too large for wrq->name (17 vs 16)
+drivers/staging/wlan-ng/prism2fw.c +588 mkpdrlist(9) error: buffer overflow 'pda16' 512 <= 512
+drivers/staging/wlan-ng/prism2fw.c +628 mkpdrlist(49) error: buffer overflow 'pda16' 512 <= 512
+drivers/video/sis/sis_main.c +1848 sisfb_get_fix(6) error: strcpy() ivideo->myid too large for fix->id (40 vs 16)
+net/decnet/dn_dev.c +430 dn_dev_ioctl(10) error: copy_from_user() ifr too small (40 vs 42)
+net/tipc/bearer.c +274 bearer_name_validate(37) error: strcpy() media_name too large for name_parts->media_name (32 vs 16)
+sound/isa/ad1848/ad1848.c +115 snd_ad1848_probe(28) error: strcpy() pcm->name too large for card->shortname (80 vs 32)
+sound/isa/cs423x/cs4231.c +114 snd_cs4231_probe(23) error: strcpy() pcm->name too large for card->shortname (80 vs 32)
+sound/isa/cs423x/cs4236.c +423 snd_cs423x_probe(41) error: strcpy() pcm->name too large for card->driver (80 vs 16)
+sound/isa/cs423x/cs4236.c +424 snd_cs423x_probe(42) error: strcpy() pcm->name too large for card->shortname (80 vs 32)
+sound/isa/es1688/es1688.c +145 snd_es1688_probe(25) error: strcpy() pcm->name too large for card->shortname (80 vs 32)
+sound/isa/gus/gus_main.c +400 snd_gus_check_version(42) error: strcpy() card->longname too large for card->shortname (80 vs 32)
+sound/usb/caiaq/audio.c +642 snd_usb_caiaq_audio_init(30) error: strcpy() dev->product_name too large for dev->pcm->name (255 vs 80)
+sound/usb/caiaq/midi.c +138 snd_usb_caiaq_midi_init(13) error: strcpy() device->product_name too large for rmidi->name (255 vs 80)
