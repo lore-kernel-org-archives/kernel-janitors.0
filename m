@@ -1,46 +1,38 @@
-From: Clemens Ladisch <clemens@ladisch.de>
-Date: Tue, 16 Feb 2010 10:00:57 +0000
+From: Jaroslav Kysela <perex@perex.cz>
+Date: Tue, 16 Feb 2010 11:02:56 +0000
 Subject: Re: bug list: range checking issues
-Message-Id: <4B7A6CD9.10903@ladisch.de>
+Message-Id: <alpine.LNX.2.00.1002161201140.28127@eeebox2.perex-int.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100215124046.GB18821@bicker>
-In-Reply-To: <20100215124046.GB18821@bicker>
+References: <20100215124046.GB18821@bicker> <4B7A6CD9.10903@ladisch.de>
+In-Reply-To: <4B7A6CD9.10903@ladisch.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
 
-Dan Carpenter wrote:
-> sound/core/seq/oss/seq_oss_init.c +276 snd_seq_oss_open(102) error: buffer overflow 'client_table' 16 <= 16
+On Tue, 16 Feb 2010, Clemens Ladisch wrote:
 
-False positive, probably because the source of the assignment is checked
-for overflow:
+> This looks correct; the channels parameter is an interval, not a mask.
+>
+> 	if (!params->fifo_size) {
+> 		if (snd_mask_min(&params->masks[SNDRV_PCM_HW_PARAM_FORMAT]) =
+> 		    snd_mask_max(&params->masks[SNDRV_PCM_HW_PARAM_FORMAT]) &&
+> 		    snd_mask_min(&params->masks[SNDRV_PCM_HW_PARAM_CHANNELS]) =
+> 		    snd_mask_max(&params->masks[SNDRV_PCM_HW_PARAM_CHANNELS])) {
+>
+> Jaroslav, I guess this should have been snd_interval_min/max?
+> And shouldn't the parameters be accessed with hw_param_mask/interval?
 
-195:	dp->index = i;
-	if (i >= SNDRV_SEQ_OSS_MAX_CLIENTS) {
-		...
-		goto _error;
-	...
-276:	client_table[dp->index] = dp;
+Yes, the checks are not valid. Thanks for this notice. I fixed this issue 
+in this commit:
 
-> sound/oss/sequencer.c +1638 compute_finetune(45) error: buffer overflow 'semitone_tuning' 24 <= 99
+http://git.alsa-project.org/?p=alsa-kernel.git;a=commitdiff;h;e522a9514f58e0596db34898a514df206cadc5
 
-False positive; bend is at most 2399, so semitones is at most 23.
-The "if (semitones > 99) semitones = 99;" check is completely bogus.
+ 					Jaroslav
 
-> sound/core/pcm_native.c +320 snd_pcm_hw_refine(159) warn: buffer overflow 'params->masks' 3 <= 10
+-----
+Jaroslav Kysela <perex@perex.cz>
+Linux Kernel Sound Maintainer
+ALSA Project, Red Hat, Inc.
 
-This looks correct; the channels parameter is an interval, not a mask.
-
-	if (!params->fifo_size) {
-		if (snd_mask_min(&params->masks[SNDRV_PCM_HW_PARAM_FORMAT]) =
-		    snd_mask_max(&params->masks[SNDRV_PCM_HW_PARAM_FORMAT]) &&
-		    snd_mask_min(&params->masks[SNDRV_PCM_HW_PARAM_CHANNELS]) =
-		    snd_mask_max(&params->masks[SNDRV_PCM_HW_PARAM_CHANNELS])) {
-
-Jaroslav, I guess this should have been snd_interval_min/max?
-And shouldn't the parameters be accessed with hw_param_mask/interval?
-
-
-Regards,
-Clemens
