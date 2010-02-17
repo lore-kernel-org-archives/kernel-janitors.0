@@ -1,52 +1,115 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 06 Feb 2010 08:43:21 +0000
-Subject: [PATCH 5/11] drivers/block/drbd: Correct NULL test
-Message-Id: <Pine.LNX.4.64.1002060943040.8092@ask.diku.dk>
+From: Francisco Jerez <currojerez@riseup.net>
+Date: Wed, 17 Feb 2010 18:36:06 +0000
+Subject: Re: [Nouveau] [PATCH] drm/nouveau: fix pramdac_table range checking
+Message-Id: <87vddvyajt.fsf@riseup.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="==-=-="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lars Ellenberg <drbd-dev@lists.linbit.com>, drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20100215124046.GB18821@bicker> <20100215222041.GA2823@joi.lan>
+In-Reply-To: <20100215222041.GA2823@joi.lan> (Marcin Slusarz's message of
+	"Mon, 15 Feb 2010 23:20:41 +0100")
+To: Marcin Slusarz <marcin.slusarz@gmail.com>
+Cc: nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+--==-=-=
+Content-Type: multipart/mixed; boundary="=-=-="
 
-Test the value that was just allocated rather than the previously tested one.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Marcin Slusarz <marcin.slusarz@gmail.com> writes:
 
-// <smpl>
-@r@
-expression *x;
-expression e;
-identifier l;
-@@
+> On Mon, Feb 15, 2010 at 03:40:56PM +0300, Dan Carpenter wrote:
+>> This is the results from:
+>>     make C=3D1 CHECK=3D"/path/to/smatch -p=3Dkernel" bzImage modules | t=
+ee warns.txt
+>>     grep -w overflow warns.txt | uniq -f 3 | tee err-list
+>>=20
+>> I hacked on the buffer overflow check last weekend and these are the=20
+>> results.  It has way more false positives than the other bug lists=20
+>> I've posted, but it's still kinda neat.
+>>=20
+>> It works like this:
+>>=20
+>> lib/zlib_inflate/inftrees.c
+>>    112      for (min =3D 1; min <=3D MAXBITS; min++)
+>>    113          if (count[min] !=3D 0) break;
+>>    114      if (root < min) root =3D min;
+>> smatch thinks "min" can be MAXBITS here.
+>>=20
+>> One bad thing is that if you have code like:
+>>         if (foo =3D=3D 42)
+>> 		frob();
+>> Smatch thinks that "foo" can be 43 after the if statement.
+>>=20
+>> The format is:
+>> file.c +<line> function(<lines into function>) warning 'array_name' <arr=
+ay size> <=3D <offset>
+>>=20
+>> regards,
+>> dan carpenter
+>>=20
+>> Previous bug lists:
+>> * Putting too much data on the stack
+>>   http://lkml.indiana.edu/hypermail/linux/kernel/1002.1/01252.html
+>>=20
+>> * Assigning negative values to unsigned variables
+>>   http://lkml.indiana.edu/hypermail/linux/kernel/1001.3/01222.html
+>>=20
+>> * Doing dma on the stack
+>>   http://lkml.indiana.edu/hypermail/linux/kernel/1001.3/01231.html
+>>=20
+>> * Dereferencing variables before verifying they are not null
+>>   http://lkml.indiana.edu/hypermail/linux/kernel/1001.3/01980.html
+>>=20
+>> (...)
+>> drivers/gpu/drm/nouveau/nouveau_bios.c +770 get_tmds_index_reg(36) error=
+: buffer overflow 'pramdac_table' 4 <=3D 4
+>> (...)
+>
+> ---
+> From: Marcin Slusarz <marcin.slusarz@gmail.com>
+> Subject: [PATCH] drm/nouveau: fix pramdac_table range checking
+>
+> get_tmds_index_reg reads some value from stack when mlv happens
+> to be equal to size of pramdac_table array. Fix it.
+>
+> Reported-by: Dan Carpenter <error27@gmail.com>
+> Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_bios.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c b/drivers/gpu/drm/nou=
+veau/nouveau_bios.c
+> index 2cd0fad..e7be506 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_bios.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
+> @@ -762,7 +762,7 @@ static uint32_t get_tmds_index_reg(struct drm_device =
+*dev, uint8_t mlv)
+>  			dacoffset ^=3D 8;
+>  		return 0x6808b0 + dacoffset;
+>  	} else {
+> -		if (mlv > ARRAY_SIZE(pramdac_table)) {
+> +		if (mlv >=3D ARRAY_SIZE(pramdac_table)) {
+>  			NV_ERROR(dev, "Magic Lookup Value too big (%02X)\n",
+>  									mlv);
+>  			return 0;
 
-if (x = NULL || ...) {
-    ... when forall
-    return ...; }
-... when != goto l;
-    when != x = e
-    when != &x
-*x = NULL
-// </smpl>
+Thanks. I've pushed all the three patches.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+--=-=-=--
 
----
- drivers/block/drbd/drbd_main.c      |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+--==-=-=
+Content-Type: application/pgp-signature
 
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index ab871e0..d0c38a6 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -2770,7 +2770,7 @@ static int drbd_create_mempools(void)
- 
- 	drbd_ee_mempool = mempool_create(number,
- 		mempool_alloc_slab, mempool_free_slab, drbd_ee_cache);
--	if (drbd_request_mempool = NULL)
-+	if (drbd_ee_mempool = NULL)
- 		goto Enomem;
- 
- 	/* drbd's page pool */
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkt8NxcACgkQ196Zy2qEI5duawCfT6eVIiqH2BcJqELkpPO732mc
+J9MAn3ZlSTF1MLoeDjxLee21WFmokZbN
+=RGjB
+-----END PGP SIGNATURE-----
+--==-=-=--
