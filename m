@@ -1,41 +1,47 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Wed, 03 Feb 2010 11:33:06 +0000
-Subject: Re: [PATCH] drivers/acpi/ec.c fix a small memory leak
-Message-Id: <82faac5b1002030333w6eea479sb9148a329c0eb441@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 18 Feb 2010 09:45:29 +0000
+Subject: [patch] iwlwifi: testing the wrong variable
+Message-Id: <20100218094529.GA1298@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1265112730.4804.8.camel@ICE-BOX> <4B684650.9070807@suse.de>
-In-Reply-To: <4B684650.9070807@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexey Starikovskiy <astarikovskiy@suse.de>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Len Brown <lenb@kernel.org>, linux ACPI <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Zhu Yi <yi.zhu@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Abhijeet Kolekar <abhijeet.kolekar@intel.com>, Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Alexey,
+The first one fixes a smatch false positive and the second one fixes
+a potential bug.
 
-On Wed, Feb 3, 2010 at 2:35 AM, Alexey Starikovskiy
-<astarikovskiy@suse.de> wrote:
-> NAK
->
-> saved_ec is allocated if flag EC_FLAGS_VALIDATE_ECDT is true.
-> EC_FLAGS_SKIP_DSDT_SCAN have no sense in such case, thus this new code path
-> is never executed.
+drivers/net/wireless/iwlwifi/iwl-5000.c +786 iwl5000_txq_update_byte_cnt_tbl(37) error: buffer overflow 
+'(scd_bc_tbl+txq_id)->tfd_offset' 320 <= 512
+drivers/net/wireless/iwlwifi/iwl-5000.c +808 iwl5000_txq_inval_byte_cnt_tbl(19) error: buffer overflow 
+'(scd_bc_tbl+txq_id)->tfd_offset' 320 <= 512
 
-From what I can tell this is not guaranteed by the code, it is relying
-on DMI data not matching two of the stings at once.
-However I don't know anything about DMI, so if you say this makes no
-sense and will never happen I am happy.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+Cc: stable@kernel.org
+---
+I don't have the hardware to test this change.
 
-I will mark this as ignore in the Coverity databse.
+diff --git a/drivers/net/wireless/iwlwifi/iwl-5000.c b/drivers/net/wireless/iwlwifi/iwl-5000.c
+index de45f30..b45150d 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-5000.c
++++ b/drivers/net/wireless/iwlwifi/iwl-5000.c
+@@ -781,7 +781,7 @@ void iwl5000_txq_update_byte_cnt_tbl(struct iwl_priv *priv,
+ 
+ 	scd_bc_tbl[txq_id].tfd_offset[write_ptr] = bc_ent;
+ 
+-	if (txq->q.write_ptr < TFD_QUEUE_SIZE_BC_DUP)
++	if (write_ptr < TFD_QUEUE_SIZE_BC_DUP)
+ 		scd_bc_tbl[txq_id].
+ 			tfd_offset[TFD_QUEUE_SIZE_MAX + write_ptr] = bc_ent;
+ }
+@@ -803,7 +803,7 @@ void iwl5000_txq_inval_byte_cnt_tbl(struct iwl_priv *priv,
+ 	bc_ent =  cpu_to_le16(1 | (sta_id << 12));
+ 	scd_bc_tbl[txq_id].tfd_offset[read_ptr] = bc_ent;
+ 
+-	if (txq->q.write_ptr < TFD_QUEUE_SIZE_BC_DUP)
++	if (read_ptr < TFD_QUEUE_SIZE_BC_DUP)
+ 		scd_bc_tbl[txq_id].
+ 			tfd_offset[TFD_QUEUE_SIZE_MAX + read_ptr] =  bc_ent;
+ }
 
-> On the other hand, unconditionally freeing pointer, which is might be NULL, is not
-> right either.
-
-Nowadays this is the preferred method actually.
-
-> Regards,
-> Alex.
-
-Thanks for the feedback.
-
-Darren J
