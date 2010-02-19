@@ -1,52 +1,32 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 06 Feb 2010 08:42:00 +0000
-Subject: [PATCH 1/11] arch/arm/plat-pxa: Correct NULL test
-Message-Id: <Pine.LNX.4.64.1002060941410.8092@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 19 Feb 2010 06:58:56 +0000
+Subject: [patch] oxygen: clean up.  make precedence explicit
+Message-Id: <20100219065856.GA17130@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: alsa-devel@alsa-project.org
+Cc: Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>
 
-From: Julia Lawall <julia@diku.dk>
+This doesn't change anything, but I think it makes the code clearer.  
+It silences a smatch warning:
+sound/pci/oxygen/oxygen_mixer.c +91 dac_mute_put(7) warn: add some parenthesis here?
 
-Test the value that was just allocated rather than the previously tested one.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-expression *x;
-expression e;
-identifier l;
-@@
-
-if (x = NULL || ...) {
-    ... when forall
-    return ...; }
-... when != goto l;
-    when != x = e
-    when != &x
-*x = NULL
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- arch/arm/plat-pxa/dma.c             |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Compile tested.
 
-diff --git a/arch/arm/plat-pxa/dma.c b/arch/arm/plat-pxa/dma.c
-index 2975798..bcfda50 100644
---- a/arch/arm/plat-pxa/dma.c
-+++ b/arch/arm/plat-pxa/dma.c
-@@ -244,7 +244,7 @@ static void pxa_dma_init_debugfs(void)
+diff --git a/sound/pci/oxygen/oxygen_mixer.c b/sound/pci/oxygen/oxygen_mixer.c
+index f375b8a..28590b9 100644
+--- a/sound/pci/oxygen/oxygen_mixer.c
++++ b/sound/pci/oxygen/oxygen_mixer.c
+@@ -88,7 +88,7 @@ static int dac_mute_put(struct snd_kcontrol *ctl,
+ 	int changed;
  
- 	dbgfs_chan = kmalloc(sizeof(*dbgfs_state) * num_dma_channels,
- 			     GFP_KERNEL);
--	if (!dbgfs_state)
-+	if (!dbgfs_chan)
- 		goto err_alloc;
- 
- 	chandir = debugfs_create_dir("channels", dbgfs_root);
+ 	mutex_lock(&chip->mutex);
+-	changed = !value->value.integer.value[0] != chip->dac_mute;
++	changed = (!value->value.integer.value[0]) != chip->dac_mute;
+ 	if (changed) {
+ 		chip->dac_mute = !value->value.integer.value[0];
+ 		chip->model.update_dac_mute(chip);
