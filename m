@@ -1,38 +1,39 @@
-From: Jaroslav Kysela <perex@perex.cz>
-Date: Tue, 16 Feb 2010 11:02:56 +0000
-Subject: Re: bug list: range checking issues
-Message-Id: <alpine.LNX.2.00.1002161201140.28127@eeebox2.perex-int.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 22 Feb 2010 13:10:00 +0000
+Subject: [patch] rcutorture: mod_timer() takes an absolute time
+Message-Id: <20100222125304.GA5416@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100215124046.GB18821@bicker> <4B7A6CD9.10903@ladisch.de>
-In-Reply-To: <4B7A6CD9.10903@ladisch.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Clemens Ladisch <clemens@ladisch.de>
-Cc: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 16 Feb 2010, Clemens Ladisch wrote:
+Hi Paul,
 
-> This looks correct; the channels parameter is an interval, not a mask.
->
-> 	if (!params->fifo_size) {
-> 		if (snd_mask_min(&params->masks[SNDRV_PCM_HW_PARAM_FORMAT]) =
-> 		    snd_mask_max(&params->masks[SNDRV_PCM_HW_PARAM_FORMAT]) &&
-> 		    snd_mask_min(&params->masks[SNDRV_PCM_HW_PARAM_CHANNELS]) =
-> 		    snd_mask_max(&params->masks[SNDRV_PCM_HW_PARAM_CHANNELS])) {
->
-> Jaroslav, I guess this should have been snd_interval_min/max?
-> And shouldn't the parameters be accessed with hw_param_mask/interval?
+I was inspired to write a smatch check based on:
+http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux-2.6.git;a=3Dcomm=
+itdiff;h=B857df1acc634b18db1db2a40864af985100266e
 
-Yes, the checks are not valid. Thanks for this notice. I fixed this issue 
-in this commit:
+I compiled it and modprobed the resulting module...  Is this correct,
+or did you intend for the timer to trigger right away?
 
-http://git.alsa-project.org/?p=alsa-kernel.git;a=commitdiff;h;e522a9514f58e0596db34898a514df206cadc5
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
- 					Jaroslav
-
------
-Jaroslav Kysela <perex@perex.cz>
-Linux Kernel Sound Maintainer
-ALSA Project, Red Hat, Inc.
-
+diff --git a/kernel/rcutorture.c b/kernel/rcutorture.c
+index 9bb5217..1970f61 100644
+--- a/kernel/rcutorture.c
++++ b/kernel/rcutorture.c
+@@ -798,7 +798,7 @@ rcu_torture_reader(void *arg)
+ 	do {
+ 		if (irqreader && cur_ops->irq_capable) {
+ 			if (!timer_pending(&t))
+-				mod_timer(&t, 1);
++				mod_timer(&t, jiffies + 1);
+ 		}
+ 		idx =3D cur_ops->readlock();
+ 		completed =3D cur_ops->completed();
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
