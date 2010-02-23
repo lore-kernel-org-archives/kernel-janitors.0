@@ -1,52 +1,48 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 06 Feb 2010 08:44:39 +0000
-Subject: [PATCH 9/11] drivers/scsi: Correct NULL test
-Message-Id: <Pine.LNX.4.64.1002060944160.8092@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 23 Feb 2010 12:04:23 +0000
+Subject: [patch] uwb: remove duplicate cpu_to_le16()
+Message-Id: <20100223120423.GC5378@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Vrabel <david.vrabel@csr.com>
+Cc: =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+These parameters should be passed as cpu endian because we change it to
+little endian inside usb_control_msg().  On x86 cpu_to_le16() doesn't
+do anything so either way works but I think the original code would break 
+on big endian systems.
 
-fcf is tested in the line just below, so the first test is not needed.
+I removed the masks as well because that usb_control_msg() parameters 
+are __u16 so we already only use the lower bits.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-expression *x;
-expression e;
-identifier l;
-@@
-
-if (x = NULL || ...) {
-    ... when forall
-    return ...; }
-... when != goto l;
-    when != x = e
-    when != &x
-*x = NULL
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/scsi/fcoe/libfcoe.c         |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+I found this through static checking and I can't test it.  Please
+review carefully.
 
-diff --git a/drivers/scsi/fcoe/libfcoe.c b/drivers/scsi/fcoe/libfcoe.c
-index 9823291..9b634bd 100644
---- a/drivers/scsi/fcoe/libfcoe.c
-+++ b/drivers/scsi/fcoe/libfcoe.c
-@@ -941,8 +941,6 @@ static void fcoe_ctlr_recv_clr_vlink(struct fcoe_ctlr *fip,
- 	u32	desc_mask;
- 
- 	LIBFCOE_FIP_DBG(fip, "Clear Virtual Link received\n");
--	if (!fcf)
--		return;
- 	if (!fcf || !fc_host_port_id(lport->host))
- 		return;
- 
+diff --git a/drivers/uwb/i1480/dfu/usb.c b/drivers/uwb/i1480/dfu/usb.c
+index 0bb665a..a7d4023 100644
+--- a/drivers/uwb/i1480/dfu/usb.c
++++ b/drivers/uwb/i1480/dfu/usb.c
+@@ -120,8 +120,7 @@ int i1480_usb_write(struct i1480 *i1480, u32 memory_address,
+ 		result = usb_control_msg(
+ 			i1480_usb->usb_dev, usb_sndctrlpipe(i1480_usb->usb_dev, 0),
+ 			0xf0, USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+-			cpu_to_le16(memory_address & 0xffff),
+-			cpu_to_le16((memory_address >> 16) & 0xffff),
++			memory_address,	(memory_address >> 16),
+ 			i1480->cmd_buf, buffer_size, 100 /* FIXME: arbitrary */);
+ 		if (result < 0)
+ 			break;
+@@ -166,8 +165,7 @@ int i1480_usb_read(struct i1480 *i1480, u32 addr, size_t size)
+ 		result = usb_control_msg(
+ 			i1480_usb->usb_dev, usb_rcvctrlpipe(i1480_usb->usb_dev, 0),
+ 			0xf0, USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+-			cpu_to_le16(itr_addr & 0xffff),
+-			cpu_to_le16((itr_addr >> 16) & 0xffff),
++			itr_addr, (itr_addr >> 16),
+ 			i1480->cmd_buf + itr, itr_size,
+ 			100 /* FIXME: arbitrary */);
+ 		if (result < 0) {
