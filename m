@@ -1,26 +1,43 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 02 Mar 2010 08:21:35 +0000
-Subject: bug report: sd:  off by one in sd_read_block_limits()
-Message-Id: <20100302082135.GA6218@bicker>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Tue, 02 Mar 2010 13:12:54 +0000
+Subject: Re: bug report: sd:  off by one in sd_read_block_limits()
+Message-Id: <yq1tysy27ft.fsf@sermon.lab.mkp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100302082135.GA6218@bicker>
+In-Reply-To: <20100302082135.GA6218@bicker> (Dan Carpenter's message of "Tue,
+	2 Mar 2010 11:21:35 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-drivers/scsi/sd.c +1986 sd_read_block_limits(39) warn: buffer overflow 'buffer' 32 <= 32
-  1951          const int vpd_len = 32;
-  1952          unsigned char *buffer = kmalloc(vpd_len, GFP_KERNEL);
+>>>>> "Dan" = Dan Carpenter <error27@gmail.com> writes:
 
-	[snip]
+Dan> drivers/scsi/sd.c +1986 sd_read_block_limits(39) warn: buffer
+Dan> overflow 'buffer' 32 <= 32
+Dan>   1951 const int vpd_len = 32;
 
-  1984                  if (buffer[32] & 0x80)
+sd: Fix block limits VPD page length
 
-	This is past the end of the array.
+Commit e3deec09 incorrectly assumed that the page length was limited to
+32 bytes.  The B0 VPD page length is defined to be 60 bytes when the
+device supports thin provisioning.
 
-  1985                          q->limits.discard_alignment   1986                                  get_unaligned_be32(&buffer[32]) & ~(1 << 31);
-  1987          }
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-regards,
-dan carpenter
+---
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 1dd4d84..3ed2644 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1948,7 +1948,7 @@ static void sd_read_block_limits(struct scsi_disk *sdkp)
+ {
+ 	struct request_queue *q = sdkp->disk->queue;
+ 	unsigned int sector_sz = sdkp->device->sector_size;
+-	const int vpd_len = 32;
++	const int vpd_len = 60;
+ 	unsigned char *buffer = kmalloc(vpd_len, GFP_KERNEL);
+ 
+ 	if (!buffer ||
