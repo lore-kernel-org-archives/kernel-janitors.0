@@ -1,7 +1,7 @@
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Tue, 02 Mar 2010 13:36:35 +0000
+Date: Tue, 02 Mar 2010 13:44:34 +0000
 Subject: Re: bug report: sd:  off by one in sd_read_block_limits()
-Message-Id: <yq1fx4i26cc.fsf@sermon.lab.mkp.net>
+Message-Id: <yq1bpf625z1.fsf@sermon.lab.mkp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100302082135.GA6218@bicker>
 	<yq1tysy27ft.fsf@sermon.lab.mkp.net>
@@ -11,26 +11,42 @@ In-Reply-To: <yq1k4tu2716.fsf@sermon.lab.mkp.net> (Martin K. Petersen's
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <James.Bottomley@suse.de>
-Cc: Matthew Wilcox <matthew@wil.cx>, Dan Carpenter <error27@gmail.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Dan Carpenter <error27@gmail.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+>>>>> "Martin" = Martin K Petersen <martin.petersen@oracle.com> writes:
+
+Page B1 is also defined to be 64 bytes long...
 
 
-James,
+sd: Fix VPD buffer allocations
 
-While I agree the original VPD code's double kmalloc() was a bit of a
-wart at least it did the right thing because it allocated a suitably
-sized buffer for page 0.
+Commit e3deec09 incorrectly assumed that the B0 and B1 page lengths were
+limited to 32 bytes.  The B0 VPD page length is defined to be 64 bytes
+when the device supports thin provisioning.  B1 is always defined to be
+64 bytes.
 
-My concern with the interface you introduced in e3deec09 is that for
-devices that support a large number of VPD pages we won't be able to fit
-the page list in the allocated buffer.  And callers are likely to pick a
-buffer size that makes sense for the VPD page they are interested in.
-It's not a big deal in the block limits/block device characteristics
-case because they are big enough.
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-But at the very minimum that interface should come with a big fat
-warning in the comment section that describes that the page list must
-also be able to fit.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 1dd4d84..f999538 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1948,7 +1948,7 @@ static void sd_read_block_limits(struct scsi_disk *sdkp)
+ {
+ 	struct request_queue *q = sdkp->disk->queue;
+ 	unsigned int sector_sz = sdkp->device->sector_size;
+-	const int vpd_len = 32;
++	const int vpd_len = 64;
+ 	unsigned char *buffer = kmalloc(vpd_len, GFP_KERNEL);
+ 
+ 	if (!buffer ||
+@@ -1998,7 +1998,7 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
+ {
+ 	unsigned char *buffer;
+ 	u16 rot;
+-	const int vpd_len = 32;
++	const int vpd_len = 64;
+ 
+ 	buffer = kmalloc(vpd_len, GFP_KERNEL);
+ 
