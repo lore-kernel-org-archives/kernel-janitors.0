@@ -1,24 +1,26 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 24 Mar 2010 20:28:42 +0000
-Subject: Re: [patch] af_key: return error if pfkey_xfrm_policy2msg_prep()
-Message-Id: <20100324.132842.237368279.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 02 Mar 2010 08:21:35 +0000
+Subject: bug report: sd:  off by one in sd_read_block_limits()
+Message-Id: <20100302082135.GA6218@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269438383.4089.15.camel@bigi>
-	<20100324161921.GA5069@bicker>
-	<1269448790.4089.34.camel@bigi>
-In-Reply-To: <1269448790.4089.34.camel@bigi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hadi@cyberus.ca
-Cc: error27@gmail.com, netdev@vger.kernel.org, eric.dumazet@gmail.com, shemminger@vyatta.com, adobriyan@gmail.com, kernel-janitors@vger.kernel.org
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: jamal <hadi@cyberus.ca>
-Date: Wed, 24 Mar 2010 12:39:50 -0400
+drivers/scsi/sd.c +1986 sd_read_block_limits(39) warn: buffer overflow 'buffer' 32 <= 32
+  1951          const int vpd_len = 32;
+  1952          unsigned char *buffer = kmalloc(vpd_len, GFP_KERNEL);
 
-> I am really sorry - your patch is pfkey path and the example i gave you
-> is xfrm based;-< I worry too much, so never mind - the change seems
-> harmless enough:
-> Acked-by: Jamal Hadi Salim <hadi@mojatatu.com>
+	[snip]
 
-Applied, thanks everyone.
+  1984                  if (buffer[32] & 0x80)
+
+	This is past the end of the array.
+
+  1985                          q->limits.discard_alignment   1986                                  get_unaligned_be32(&buffer[32]) & ~(1 << 31);
+  1987          }
+
+regards,
+dan carpenter
