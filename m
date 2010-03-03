@@ -1,28 +1,21 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 03 Mar 2010 08:22:41 +0000
-Subject: [patch] cassini: fix off by one
-Message-Id: <20100303082241.GA32640@bicker>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 03 Mar 2010 09:07:46 +0000
+Subject: Re: [patch] cassini: fix off by one
+Message-Id: <20100303.010746.134683403.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100303082241.GA32640@bicker>
+In-Reply-To: <20100303082241.GA32640@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Yang Hongyang <yanghy@cn.fujitsu.com>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: error27@gmail.com
+Cc: netdev@vger.kernel.org, adobriyan@gmail.com, akpm@linux-foundation.org, yanghy@cn.fujitsu.com, kaber@trash.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There are only 6 link_modes.
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 3 Mar 2010 11:22:41 +0300
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+> There are only 6 link_modes.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/net/cassini.c b/drivers/net/cassini.c
-index 7cbcfb0..9bd155e 100644
---- a/drivers/net/cassini.c
-+++ b/drivers/net/cassini.c
-@@ -5072,7 +5072,7 @@ static int __devinit cas_init_one(struct pci_dev *pdev,
- 	INIT_WORK(&cp->reset_task, cas_reset_task);
- 
- 	/* Default link parameters */
--	if (link_mode >= 0 && link_mode <= 6)
-+	if (link_mode >= 0 && link_mode < 6)
- 		cp->link_cntl = link_modes[link_mode];
- 	else
- 		cp->link_cntl = BMCR_ANENABLE;
+Applied.
