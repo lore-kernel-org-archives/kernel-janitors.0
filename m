@@ -1,32 +1,28 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 28 Mar 2010 15:38:10 +0000
-Subject: Re: [patch] video/sn9c102: improve error handling
-Message-Id: <20100328153810.GA5069@bicker>
+Date: Wed, 03 Mar 2010 08:22:41 +0000
+Subject: [patch] cassini: fix off by one
+Message-Id: <20100303082241.GA32640@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100328115005.GW5069@bicker> <honrg5$7uk$1@dough.gmane.org>
-In-Reply-To: <honrg5$7uk$1@dough.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Yang Hongyang <yanghy@cn.fujitsu.com>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Mar 28, 2010 at 05:09:48PM +0200, Christophe JAILLET wrote:
-> Hi,
-> 
-> this patch seems incomplete.
-> 
-> You had an opening { wityhout the corresponding }.
+There are only 6 link_modes.
 
-It must be an issue with the mail server on your end. :/ 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Here is a url you can download it from.
-http://lkml.org/lkml/2010/3/28/43
-
-Unfortunately, lkml.org puts some white space on the end of diffs.
-Patch complains but it still applies them fine.
-
-regards,
-dan carpenter
-
-
+diff --git a/drivers/net/cassini.c b/drivers/net/cassini.c
+index 7cbcfb0..9bd155e 100644
+--- a/drivers/net/cassini.c
++++ b/drivers/net/cassini.c
+@@ -5072,7 +5072,7 @@ static int __devinit cas_init_one(struct pci_dev *pdev,
+ 	INIT_WORK(&cp->reset_task, cas_reset_task);
+ 
+ 	/* Default link parameters */
+-	if (link_mode >= 0 && link_mode <= 6)
++	if (link_mode >= 0 && link_mode < 6)
+ 		cp->link_cntl = link_modes[link_mode];
+ 	else
+ 		cp->link_cntl = BMCR_ANENABLE;
