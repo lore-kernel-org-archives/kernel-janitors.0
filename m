@@ -1,55 +1,33 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 11 Mar 2010 08:13:02 +0000
-Subject: Re: discussion [patch] /lib/kobject.c
-Message-Id: <4B98A60E.8050705@bfs.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 03 Mar 2010 07:07:24 +0000
+Subject: [patch] davinci_emac: off by one
+Message-Id: <20100303070724.GC5086@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4B975F28.4050903@bfs.de>
-In-Reply-To: <4B975F28.4050903@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Chaithrika U S <chaithrika@ti.com>, Sriramakrishnan <srk@ti.com>, "David S. Miller" <davem@davemloft.net>, Kevin Hilman <khilman@deeprootsystems.com>, Anant Gole <anantgole@ti.com>, kernel-janitors@vger.kernel.org
 
+This off by one error was found by smatch.
 
+drivers/net/davinci_emac.c +2390 emac_dev_open(13) error: buffer overflow 'priv->mac_addr' 6 <= 6
 
-Julia Lawall schrieb:
-> I guess something similar could be done with snprintf?
-> 
-> The following code comes from /var/linuxes/linux-next/arch/ia64/pci/pci.c
-> 
-> 	len = strlen(info->name) + 32;
->         name = kzalloc(len, GFP_KERNEL);
-> 	if (!name) {
->                 printk(KERN_ERR "PCI: No memory for %s I/O port space name\n",
-> 			info->name);
->                 goto free_resource;
->         }
-> 
->         min = addr->minimum;
->         max = min + addr->address_length - 1;
->         if (addr->info.io.translation_type = ACPI_SPARSE_TRANSLATION)
->                 sparse = 1;
-> 
-> 	space_nr = new_space(addr->translation_offset, sparse);
->         if (space_nr = ~0)
-> 	        goto free_name;
-> 
-> 	base = __pa(io_space[space_nr].mmio_base);
-> 	base_port = IO_SPACE_BASE(space_nr);
->         snprintf(name, len, "%s I/O Ports %08lx-%08lx", info->name,
->                 base_port + min, base_port + max);
-> 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+I don't have the hardware to test this.  If would be cool if someone
+would verify that the hardware still works after the patch is applied.
 
-yes, i would replace that with:
-
-	 name = kasprintf(GFP_KERNEL,"%s I/O Ports %08lx-%08lx", info->name,
-                base_port + min, base_port + max);
-
-          if (!name) {
-                printk(KERN_ERR "PCI: No memory for %s I/O port space name\n",
-			info->name);
-                goto free_resource;
-           }
-
-re,
- wh
+diff --git a/drivers/net/davinci_emac.c b/drivers/net/davinci_emac.c
+index 1605bc2..eab07cd 100644
+--- a/drivers/net/davinci_emac.c
++++ b/drivers/net/davinci_emac.c
+@@ -2386,7 +2386,7 @@ static int emac_dev_open(struct net_device *ndev)
+ 	struct emac_priv *priv = netdev_priv(ndev);
+ 
+ 	netif_carrier_off(ndev);
+-	for (cnt = 0; cnt <= ETH_ALEN; cnt++)
++	for (cnt = 0; cnt < ETH_ALEN; cnt++)
+ 		ndev->dev_addr[cnt] = priv->mac_addr[cnt];
+ 
+ 	/* Configuration items */
