@@ -1,33 +1,29 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 03 Mar 2010 07:07:24 +0000
-Subject: [patch] davinci_emac: off by one
-Message-Id: <20100303070724.GC5086@bicker>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 03 Mar 2010 09:08:14 +0000
+Subject: Re: [patch] davinci_emac: off by one
+Message-Id: <20100303.010814.246406195.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100303070724.GC5086@bicker>
+In-Reply-To: <20100303070724.GC5086@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: Chaithrika U S <chaithrika@ti.com>, Sriramakrishnan <srk@ti.com>, "David S. Miller" <davem@davemloft.net>, Kevin Hilman <khilman@deeprootsystems.com>, Anant Gole <anantgole@ti.com>, kernel-janitors@vger.kernel.org
+To: error27@gmail.com
+Cc: netdev@vger.kernel.org, chaithrika@ti.com, srk@ti.com, khilman@deeprootsystems.com, anantgole@ti.com, kernel-janitors@vger.kernel.org
 
-This off by one error was found by smatch.
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 3 Mar 2010 10:07:24 +0300
 
-drivers/net/davinci_emac.c +2390 emac_dev_open(13) error: buffer overflow 'priv->mac_addr' 6 <= 6
+> This off by one error was found by smatch.
+> 
+> drivers/net/davinci_emac.c +2390 emac_dev_open(13) error: buffer overflow 'priv->mac_addr' 6 <= 6
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> I don't have the hardware to test this.  If would be cool if someone
+> would verify that the hardware still works after the patch is applied.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-I don't have the hardware to test this.  If would be cool if someone
-would verify that the hardware still works after the patch is applied.
+It looks obvious enough for me, taking in more than 6 address
+bytes make no sense in an ethernet driver, so I'll apply this.
 
-diff --git a/drivers/net/davinci_emac.c b/drivers/net/davinci_emac.c
-index 1605bc2..eab07cd 100644
---- a/drivers/net/davinci_emac.c
-+++ b/drivers/net/davinci_emac.c
-@@ -2386,7 +2386,7 @@ static int emac_dev_open(struct net_device *ndev)
- 	struct emac_priv *priv = netdev_priv(ndev);
- 
- 	netif_carrier_off(ndev);
--	for (cnt = 0; cnt <= ETH_ALEN; cnt++)
-+	for (cnt = 0; cnt < ETH_ALEN; cnt++)
- 		ndev->dev_addr[cnt] = priv->mac_addr[cnt];
- 
- 	/* Configuration items */
+Thanks.
