@@ -1,38 +1,29 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 11 Mar 2010 09:59:40 +0000
-Subject: Re: smatch_scripts/whitespace_only.sh
-Message-Id: <20100311095940.GK6321@bicker>
+Date: Wed, 03 Mar 2010 07:08:18 +0000
+Subject: [patch] oxygen: change || to &&
+Message-Id: <20100303070818.GD5086@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100310101224.GC6321@bicker> <Pine.LNX.4.64.1003101113330.24684@ask.diku.dk> <20100310142759.GG6321@bicker> <Pine.LNX.4.64.1003101537040.27249@ask.diku.dk> <1268244709.1545.392.camel@Joe-Laptop.home>
-In-Reply-To: <1268244709.1545.392.camel@Joe-Laptop.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Julia Lawall <julia@diku.dk>, linux-kernel@vger.kernel.org, gregkh@suse.de, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Clemens Ladisch <clemens@ladisch.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Mar 10, 2010 at 10:11:49AM -0800, Joe Perches wrote:
-> On Wed, 2010-03-10 at 15:38 +0100, Julia Lawall wrote:
-> > > > On Wed, 10 Mar 2010, Dan Carpenter wrote:
-> > > > > I wrote a script to check that a patch only changes white space.
-> 
-> Perhaps you could use #define __LINE__ 0 to avoid
-> any vertical line position comparison checks?
-> 
+In the original code the condition was always true (hopefully) because
+WM8776_HPLVOL is zero.
 
-I tried something similar to that at first but I found that line 
-numbers were used in other ways.  In the end, I added a -no-lineno to
-sparse so it thinks everything is on line 123456.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-It might be better to just right a perl script that strips out all the
-whitespace and compares the result blobs before and after the patch.  
-That would handle the #if 0 code as well.
-
-regards,
-dan carpenter
-
-> > Maybe checkpatch could be changed to not complain about > 80 characters 
-> > when the line contains a string?
-> 
-> That's been at least partially done in commit
-> 691e669ba8c64d31ac08d87b1751e6acfa3ff65e
+diff --git a/sound/pci/oxygen/xonar_wm87x6.c b/sound/pci/oxygen/xonar_wm87x6.c
+index 7754db1..dbc4b89 100644
+--- a/sound/pci/oxygen/xonar_wm87x6.c
++++ b/sound/pci/oxygen/xonar_wm87x6.c
+@@ -68,7 +68,7 @@ static void wm8776_write(struct oxygen *chip,
+ 			 OXYGEN_SPI_CEN_LATCH_CLOCK_LO,
+ 			 (reg << 9) | value);
+ 	if (reg < ARRAY_SIZE(data->wm8776_regs)) {
+-		if (reg >= WM8776_HPLVOL || reg <= WM8776_DACMASTER)
++		if (reg >= WM8776_HPLVOL && reg <= WM8776_DACMASTER)
+ 			value &= ~WM8776_UPDATE;
+ 		data->wm8776_regs[reg] = value;
+ 	}
