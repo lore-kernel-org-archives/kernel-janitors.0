@@ -1,34 +1,28 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 15 Mar 2010 18:47:53 +0000
-Subject: Re: [PATCH] init dynamic bin_attribute structures
-Message-Id: <alpine.LFD.2.00.1003151144550.18017@i5.linux-foundation.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 03 Mar 2010 07:05:44 +0000
+Subject: [patch] gamecon: fix off by one range check
+Message-Id: <20100303070544.GB5086@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.2.00.1003141054050.3719@i5.linux-foundation.org> <1268612981-9009-1-git-send-email-w.sang@pengutronix.de> <alpine.LRH.2.00.1003151055060.26353@twin.jikos.cz>
-In-Reply-To: <alpine.LRH.2.00.1003151055060.26353@twin.jikos.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Wolfram Sang <w.sang@pengutronix.de>, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, kernel-janitors@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Gortmaker <p_gortmaker@yahoo.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-mips@linux-mips.org, rtc-linux@googlegroups.com
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Scott Moreau <oreaus@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+It should be >= GC_MAX not > GC_MAX.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-On Mon, 15 Mar 2010, Jiri Kosina wrote:
-> 
-> I don't understand how cocinelle works, but the resulting patch seems to 
-> be incomplete.
-> 
-> The fix is needed at least in firmware loader (for which Greg has already 
-> queued patch), in ACPI thermal driver [1], etc).
-
-The firmware loader should be done differently:
-
-	http://patchwork.kernel.org/patch/84814/
-
-and I suspect that Wolfram may have skipped the thermal one as having been 
-done by another patch (that I didn't merge, due to having questions about 
-the whole issue, but that I don't have any objections to)
-
-But maybe there is also some limitation to the coccinelle rule too.
-
-		Linus
+diff --git a/drivers/input/joystick/gamecon.c b/drivers/input/joystick/gamecon.c
+index ae998d9..7a55714 100644
+--- a/drivers/input/joystick/gamecon.c
++++ b/drivers/input/joystick/gamecon.c
+@@ -819,7 +819,7 @@ static int __init gc_setup_pad(struct gc *gc, int idx, int pad_type)
+ 	int i;
+ 	int err;
+ 
+-	if (pad_type < 1 || pad_type > GC_MAX) {
++	if (pad_type < 1 || pad_type >= GC_MAX) {
+ 		pr_err("Pad type %d unknown\n", pad_type);
+ 		return -EINVAL;
+ 	}
