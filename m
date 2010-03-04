@@ -1,44 +1,41 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Thu, 25 Mar 2010 11:24:38 +0000
-Subject: Re: [patch] mfd: off by one calculating size
-Message-Id: <20100325112437.GB3720@sortiz.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 04 Mar 2010 19:14:03 +0000
+Subject: mysterious -1 offset in staging rt2860 driver
+Message-Id: <20100304191403.GA24075@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100322121242.GL21571@bicker>
-In-Reply-To: <20100322121242.GL21571@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Richard =?iso-8859-1?Q?R=F6jfors?= <richard.rojfors@pelagicore.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+So here is a mystery for people who enjoy such mysterious things.
 
-On Mon, Mar 22, 2010 at 03:12:42PM +0300, Dan Carpenter wrote:
-> I'm pretty sure that it should be + 1 here.  It's an off by one, because
-> we start counting at zero.
-Thanks Dan, patch applied to my for-next branch.
+drivers/staging/rt2860/sta_ioctl.c +1020 rt_ioctl_giwscan(219)
+  1011                  if (CAP_IS_PRIVACY_ON
+  1012                      (pAdapter->ScanTab.BssEntry[i].CapabilityInfo))
+  1013                          iwe.u.data.flags = IW_ENCODE_ENABLED | IW_ENCODE_NOKEY;
+  1014                  else
+  1015                          iwe.u.data.flags = IW_ENCODE_DISABLED;
+  1016
+  1017                  __smatch_value("iwe.u.data.flags");
+  1018                  previous_ev = current_ev;
+  1019                  current_ev   1020                      iwe_stream_add_point(info, current_ev, end_buf, &iwe,
+  1021                                           (char *)pAdapter->
+  1022                                           SharedKey[BSS0][(iwe.u.data.
+  1023                                                            flags &
+  1024                                                            IW_ENCODE_INDEX) -
+  1025                                                           1].Key);
 
-Cheers,
-Samuel.
 
+That last bit is easier to read if it's on one line.
 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Found by a static checker and untested.  Please review carefully.
-> 
-> diff --git a/drivers/mfd/timberdale.h b/drivers/mfd/timberdale.h
-> index 8d27ffa..902c451 100644
-> --- a/drivers/mfd/timberdale.h
-> +++ b/drivers/mfd/timberdale.h
-> @@ -66,7 +66,7 @@
->  
->  #define CHIPCTLOFFSET	0x800
->  #define CHIPCTLEND	0x8ff
-> -#define CHIPCTLSIZE	(CHIPCTLEND - CHIPCTLOFFSET)
-> +#define CHIPCTLSIZE	(CHIPCTLEND - CHIPCTLOFFSET + 1)
->  
->  #define INTCOFFSET	0xc00
->  #define INTCEND		0xfff
+SharedKey[BSS0][(iwe.u.data.flags & IW_ENCODE_INDEX) - 1].Key);
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+iwe.u.data.flags is either 0x0400 or 0x8000.  IW_ENCODE_INDEX is 0xff, so
+after we mask off the lower bits we get 0x00 and then we subtract 1 we get
+an array offset of -1.
+
+I doubt that's what we want, but what _do_ we want here?
+
+regards,
+dan carpenter
