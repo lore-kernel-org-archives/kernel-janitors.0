@@ -1,75 +1,50 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:35:18 +0000
-Subject: Re: [PATCH 06/24] input/keyboard: fix dangling pointers
-Message-Id: <20100330123518.GG29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Cgrdyab2wu3Akvjd"
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 06 Mar 2010 11:05:39 +0000
+Subject: [patch] i915: fix small leak on error path
+Message-Id: <20100306110539.GD4958@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-7-git-send-email-w.sang@pengutronix.de> <20100320192007.GA28402@core.coreip.homeip.net>
-In-Reply-To: <20100320192007.GA28402-WlK9ik9hQGAhIp7JRqBPierSzoNAToWh@public.gmane.org>
-To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: Luca Barbieri <luca@luca-barbieri.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.sourceforge.net
 
+We should free "params" before returning.
 
---Cgrdyab2wu3Akvjd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Hi Dmitry,
-
-> On Sat, Mar 20, 2010 at 03:12:47PM +0100, Wolfram Sang wrote:
-> > Fix I2C-drivers which missed setting clientdata to NULL before freeing =
-the
-> > structure it points to. Also fix drivers which do this _after_ the stru=
-cture
-> > was freed already.
-> >=20
->=20
-> I am not sure if setting clientdata to NULL before freeing the data is
-> that important; we really want to be sure that we don't leave clientdata
-> dangling when we finish unbinding the driver. If there are another
-> thread the change will not really help the problem of accessing
-> non-existing client data.
->=20
-> I will apply lm8323 portion of the patch but leave qt2160 as is.
-
-We reached an agreement that a) setting the clientdata-pointer to NULL shou=
-ld
-be done in the i2c-core [1] and b) how to do it. Based on that, I will do t=
-he
-modification of the i2c-core for 2.6.34 (as it fixes the dangling pointers)=
- and
-then create one single patch removing the then superflous calls to
-i2c_set_clientdata for 2.6.35 (as it is a cleanup). As you already applied =
-the
-above patch to your branch: you don't have to revert, we will fix it for yo=
-u in
-the next round.
-
-Sorry for the detour!
-
-Kind regards,
-
-   Wolfram
-
-[1] http://thread.gmane.org/gmane.linux.drivers.i2c/5674/focus=3D5729
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---Cgrdyab2wu3Akvjd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux8AYACgkQD27XaX1/VRs9oQCdEDKK0ngsZhgFzOhzRWf3QtE2
-NlQAn24Dj6voGeer6H30RiDpUyNBAWbU
-=oY6l
------END PGP SIGNATURE-----
-
---Cgrdyab2wu3Akvjd--
+diff --git a/drivers/gpu/drm/i915/intel_overlay.c b/drivers/gpu/drm/i915/intel_overlay.c
+index d355d1d..60595fc 100644
+--- a/drivers/gpu/drm/i915/intel_overlay.c
++++ b/drivers/gpu/drm/i915/intel_overlay.c
+@@ -1068,14 +1068,18 @@ int intel_overlay_put_image(struct drm_device *dev, void *data,
+ 
+ 	drmmode_obj = drm_mode_object_find(dev, put_image_rec->crtc_id,
+                         DRM_MODE_OBJECT_CRTC);
+-	if (!drmmode_obj)
+-		return -ENOENT;
++	if (!drmmode_obj) {
++		ret = -ENOENT;
++		goto out_free;
++	}
+ 	crtc = to_intel_crtc(obj_to_crtc(drmmode_obj));
+ 
+ 	new_bo = drm_gem_object_lookup(dev, file_priv,
+ 			put_image_rec->bo_handle);
+-	if (!new_bo)
+-		return -ENOENT;
++	if (!new_bo) {
++		ret = -ENOENT;
++		goto out_free;
++	}
+ 
+ 	mutex_lock(&dev->mode_config.mutex);
+ 	mutex_lock(&dev->struct_mutex);
+@@ -1165,6 +1169,7 @@ out_unlock:
+ 	mutex_unlock(&dev->struct_mutex);
+ 	mutex_unlock(&dev->mode_config.mutex);
+ 	drm_gem_object_unreference_unlocked(new_bo);
++out_free:
+ 	kfree(params);
+ 
+ 	return ret;
