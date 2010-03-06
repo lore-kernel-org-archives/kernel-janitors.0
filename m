@@ -1,74 +1,48 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:30:30 +0000
-Subject: Re: [PATCH 03/24] usb/otg/isp1301_omap: Fix dangling pointer
-Message-Id: <20100330123030.GE29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="//IivP0gvsAy3Can"
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 06 Mar 2010 11:21:25 +0000
+Subject: [patch] security: ima_file_mmap() don't just return zero
+Message-Id: <20100306112125.GN4958@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-4-git-send-email-w.sang@pengutronix.de> <20100320200907.GA3861@gandalf>
-In-Reply-To: <20100320200907.GA3861@gandalf>
-To: Felipe Balbi <me-uiRdBs8odbtmTBlB0Cgj/Q@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mimi Zohar <zohar@us.ibm.com>
+Cc: James Morris <jmorris@namei.org>, Eric Paris <eparis@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, "J.R. Okajima" <hooanon05@yahoo.co.jp>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+It seems like we should return an error here.  That's what the comment
+says we should do.
 
---//IivP0gvsAy3Can
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I also removed an out of date comment.  It wasn't needed and seemed likely
+to get out of date again.
 
-On Sat, Mar 20, 2010 at 10:09:07PM +0200, Felipe Balbi wrote:
-> On Sat, Mar 20, 2010 at 03:12:44PM +0100, Wolfram Sang wrote:
-> > Fix this i2c-driver which missed setting clientdata to NULL before free=
-ing the
-> > structure it points to. Found by a semantic patch, but fixed by hand.
-> >=20
-> > Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-> > Cc: David Brownell <dbrownell@users.sourceforge.net>
-> > Cc: Greg Kroah-Hartman <gregkh@suse.de>
->=20
-> Acked-by: Felipe Balbi <felipe.balbi@nokia.com>
->=20
-> Greg,
->=20
-> if you wish, you can take queue it already unless Dave has any comments.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This was found with a static checker and I have only compile tested it.
+The callers all seem to use the return code, but please review carefully.
+The code has been like this since the module was merged.
 
-Thanks but:
-
-please drop this this patch. We reached an agreement that a) setting the
-clientdata-pointer to NULL should be done in the i2c-core [1] and b) how to=
- do
-it. Based on that, I will do the modification of the i2c-core for 2.6.34 (a=
-s it
-fixes the dangling pointers) and then create one single patch removing the =
-then
-superflous calls to i2c_set_clientdata for 2.6.35 (as it is a cleanup). If =
-you
-already applied the above patch to your branch, you don't have to revert; we
-will fix it for you in the next round.
-
-Sorry for the detour!
-
-Kind regards,
-
-   Wolfram
-
-[1] http://thread.gmane.org/gmane.linux.drivers.i2c/5674/focus=3D5729
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---//IivP0gvsAy3Can
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux7uYACgkQD27XaX1/VRs8lgCfdSWmMqeV5ofY0y5my3O2weiK
-XNUAnjk+HWCG3Djbomb6ueKiMunzc7RX
-=885N
------END PGP SIGNATURE-----
-
---//IivP0gvsAy3Can--
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 294b005..90d5314 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -260,18 +260,17 @@ out:
+  * policy decision.
+  *
+  * Return 0 on success, an error code on failure.
+- * (Based on the results of appraise_measurement().)
+  */
+ int ima_file_mmap(struct file *file, unsigned long prot)
+ {
+-	int rc;
++	int rc = 0;
+ 
+ 	if (!file)
+ 		return 0;
+ 	if (prot & PROT_EXEC)
+ 		rc = process_measurement(file, file->f_dentry->d_name.name,
+ 					 MAY_EXEC, FILE_MMAP);
+-	return 0;
++	return rc;
+ }
+ 
+ /**
