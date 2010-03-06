@@ -1,36 +1,31 @@
-From: reinette chatre <reinette.chatre@intel.com>
-Date: Mon, 29 Mar 2010 16:13:51 +0000
-Subject: Re: [patch] iwlwifi: range checking issue
-Message-Id: <1269879231.2446.3410.camel@rchatre-DESK>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 06 Mar 2010 11:14:09 +0000
+Subject: [patch] bridge: cleanup: remove unneed check
+Message-Id: <20100306111408.GJ4958@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100328115500.GX5069@bicker>
-	 <1269828072.4043.247.camel@debian>
-In-Reply-To: <1269828072.4043.247.camel@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Zhu, Yi" <yi.zhu@intel.com>
-Cc: Dan Carpenter <error27@gmail.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, "Kolekar, Abhijeet" <abhijeet.kolekar@intel.com>, "Berg, Johannes" <johannes.berg@intel.com>, "Guy, Wey-Yi W" <wey-yi.w.guy@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, bridge@lists.linux-foundation.org, "David S. Miller" <davem@davemloft.net>
 
-On Sun, 2010-03-28 at 19:01 -0700, Zhu, Yi wrote:
-> On Sun, 2010-03-28 at 19:55 +0800, Dan Carpenter wrote:
-> > IWL_RATE_COUNT is 13 and IWL_RATE_COUNT_LEGACY is 12.
-> > 
-> > IWL_RATE_COUNT_LEGACY is the right one here because iwl3945_rates
-> > doesn't support 60M and also that's how "rates" is defined in
-> > iwlcore_init_geos() from drivers/net/wireless/iwlwifi/iwl-core.c.
-> > 
-> >         rates = kzalloc((sizeof(struct ieee80211_rate) * IWL_RATE_COUNT_LEGACY),
-> >                         GFP_KERNEL);
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> Acked-by: Zhu Yi <yi.zhu@intel.com>
+We dereference "port" on the lines immediately before and immediately 
+after the test so port should hopefully never be null here.
 
-Great catch. Since this is a fix for a buffer overflow ... could you
-please pass it on to stable also?
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thank you
-
-Reinette
-
+diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
+index 2559fb5..8b25887 100644
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -627,8 +627,8 @@ static void br_multicast_port_query_expired(unsigned long data)
+ 	struct net_bridge *br = port->br;
+ 
+ 	spin_lock(&br->multicast_lock);
+-	if (port && (port->state = BR_STATE_DISABLED ||
+-		     port->state = BR_STATE_BLOCKING))
++	if (port->state = BR_STATE_DISABLED ||
++	    port->state = BR_STATE_BLOCKING)
+ 		goto out;
+ 
+ 	if (port->multicast_startup_queries_sent <
