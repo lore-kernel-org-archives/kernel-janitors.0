@@ -1,39 +1,28 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 06 Mar 2010 11:38:26 +0000
-Subject: Re: [patch] joystick: off by one error
-Message-Id: <20100306113826.GO4958@bicker>
+Date: Sat, 06 Mar 2010 12:02:22 +0000
+Subject: [patch] nfs: fix unlikely memory leak
+Message-Id: <20100306120221.GA10702@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100306110944.GG4958@bicker>
-In-Reply-To: <20100306110944.GG4958@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Scott Moreau <oreaus@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, Mar 06, 2010 at 02:09:44PM +0300, Dan Carpenter wrote:
-> This fixes a smatch warning:
-> drivers/input/joystick/gamecon.c +838 gc_setup_pad(23) error: buffer overflow 'gc_names' 10 <= 10
-> 
+I'll admit that it's unlikely for the first allocation to fail and 
+the second one to succeed.  I won't be offended if you ignore this
+patch.
 
-Crap.  I already sent this patch.  I'm really sorry about that.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-I will fix my QC process to not do this again.
-
-regards,
-dan carpenter
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/input/joystick/gamecon.c b/drivers/input/joystick/gamecon.c
-> index ae998d9..7a55714 100644
-> --- a/drivers/input/joystick/gamecon.c
-> +++ b/drivers/input/joystick/gamecon.c
-> @@ -819,7 +819,7 @@ static int __init gc_setup_pad(struct gc *gc, int idx, int pad_type)
->  	int i;
->  	int err;
->  
-> -	if (pad_type < 1 || pad_type > GC_MAX) {
-> +	if (pad_type < 1 || pad_type >= GC_MAX) {
->  		pr_err("Pad type %d unknown\n", pad_type);
->  		return -EINVAL;
->  	}
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index eda74c4..f9254fb 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -5107,6 +5107,7 @@ static int nfs41_proc_async_sequence(struct nfs_client *clp,
+ 	res = kzalloc(sizeof(*res), GFP_KERNEL);
+ 	if (!args || !res) {
+ 		kfree(args);
++		kfree(res);
+ 		nfs_put_client(clp);
+ 		return -ENOMEM;
+ 	}
