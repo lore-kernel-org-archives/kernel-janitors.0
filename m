@@ -1,40 +1,30 @@
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 22 Mar 2010 13:07:14 +0000
-Subject: [PATCH] AFS: Potential null dereference
-Message-Id: <20100322130713.12914.76901.stgit@warthog.procyon.org.uk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 06 Mar 2010 11:08:56 +0000
+Subject: [patch] goku_udc: potential null dereference
+Message-Id: <20100306110856.GF4958@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: torvalds@osdl.org, akpm@linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>, David Howells <dhowells@redhat.com>
+To: David Brownell <dbrownell@users.sourceforge.net>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Matthias Kaehlcke <matthias@kaehlcke.net>, Harvey Harrison <harvey.harrison@gmail.com>, =?iso-8859-1?Q?N=E9meth_M=E1rton?= <nm127@freemail.hu>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-
-It seems clear from the surrounding code that xpermits is allowed to be NULL
-here.
+"dev" is always null here.  In the end it's only used to get the 
+pci_name() of "pdev" which is redundant information and so I
+removed it.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
 
- fs/afs/security.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/afs/security.c b/fs/afs/security.c
-index 3ef5043..bb4ed14 100644
---- a/fs/afs/security.c
-+++ b/fs/afs/security.c
-@@ -189,8 +189,9 @@ void afs_cache_permit(struct afs_vnode *vnode, struct key *key, long acl_order)
- 	if (!permits)
- 		goto out_unlock;
- 
--	memcpy(permits->permits, xpermits->permits,
--	       count * sizeof(struct afs_permit));
-+	if (xpermits)
-+		memcpy(permits->permits, xpermits->permits,
-+			count * sizeof(struct afs_permit));
- 
- 	_debug("key %x access %x",
- 	       key_serial(key), vnode->status.caller_access);
-
+diff --git a/drivers/usb/gadget/goku_udc.c b/drivers/usb/gadget/goku_udc.c
+index e8edc64..1088d08 100644
+--- a/drivers/usb/gadget/goku_udc.c
++++ b/drivers/usb/gadget/goku_udc.c
+@@ -1768,7 +1768,7 @@ static int goku_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	 * usb_gadget_driver_{register,unregister}() must change.
+ 	 */
+ 	if (the_controller) {
+-		WARNING(dev, "ignoring %s\n", pci_name(pdev));
++		pr_warning("ignoring %s\n", pci_name(pdev));
+ 		return -EBUSY;
+ 	}
+ 	if (!pdev->irq) {
