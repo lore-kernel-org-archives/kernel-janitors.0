@@ -1,26 +1,28 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sat, 06 Mar 2010 12:20:32 +0000
+From: David Miller <davem@davemloft.net>
+Date: Sun, 07 Mar 2010 23:27:57 +0000
 Subject: Re: [patch] bridge: cleanup: remove unneed check
-Message-Id: <20100306122031.GA15864@gondor.apana.org.au>
+Message-Id: <20100307.152757.142897943.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100306111408.GJ4958@bicker>
-In-Reply-To: <20100306111408.GJ4958@bicker>
+	<20100306122031.GA15864@gondor.apana.org.au>
+In-Reply-To: <20100306122031.GA15864@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: herbert@gondor.apana.org.au
+Cc: error27@gmail.com, shemminger@linux-foundation.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gU2F0LCBNYXIgMDYsIDIwMTAgYXQgMDI6MTQ6MDlQTSArMDMwMCwgRGFuIENhcnBlbnRlciB3
-cm90ZToKPiBXZSBkZXJlZmVyZW5jZSAicG9ydCIgb24gdGhlIGxpbmVzIGltbWVkaWF0ZWx5IGJl
-Zm9yZSBhbmQgaW1tZWRpYXRlbHkgCj4gYWZ0ZXIgdGhlIHRlc3Qgc28gcG9ydCBzaG91bGQgaG9w
-ZWZ1bGx5IG5ldmVyIGJlIG51bGwgaGVyZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVu
-dGVyIDxlcnJvcjI3QGdtYWlsLmNvbT4KClNpZ25lZC1vZmYtYnk6IEhlcmJlcnQgWHUgPGhlcmJl
-cnRAZ29uZG9yLmFwYW5hLm9yZy5hdT4KClllcyB0aGlzIGxvb2tzIGNvcnJlY3QgdG8gbWUuCgpU
-aGFua3MsCi0tIApWaXNpdCBPcGVuc3dhbiBhdCBodHRwOi8vd3d3Lm9wZW5zd2FuLm9yZy8KRW1h
-aWw6IEhlcmJlcnQgWHUgfntQbVY+SEl+fSA8aGVyYmVydEBnb25kb3IuYXBhbmEub3JnLmF1PgpI
-b21lIFBhZ2U6IGh0dHA6Ly9nb25kb3IuYXBhbmEub3JnLmF1L35oZXJiZXJ0LwpQR1AgS2V5OiBo
-dHRwOi8vZ29uZG9yLmFwYW5hLm9yZy5hdS9+aGVyYmVydC9wdWJrZXkudHh0Ci0tClRvIHVuc3Vi
-c2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwt
-amFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
-ZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFq
-b3Jkb21vLWluZm8uaHRtbA==
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Sat, 6 Mar 2010 20:20:32 +0800
+
+> On Sat, Mar 06, 2010 at 02:14:09PM +0300, Dan Carpenter wrote:
+>> We dereference "port" on the lines immediately before and immediately 
+>> after the test so port should hopefully never be null here.
+>> 
+>> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> 
+> Yes this looks correct to me.
+
+Applied.
