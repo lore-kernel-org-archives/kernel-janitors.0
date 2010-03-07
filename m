@@ -1,48 +1,38 @@
-From: Vikram Dhillon <dhillonv10@gmail.com>
-Date: Sun, 07 Mar 2010 03:29:54 +0000
-Subject: Re: [patch] security: ima_file_mmap() don't just return zero
-Message-Id: <ea6602021003061929y6324e019n3b7e941804638342@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 07 Mar 2010 12:36:45 +0000
+Subject: [patch] regulator: handle kcalloc() failure
+Message-Id: <20100307123645.GB6469@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100306112125.GN4958@bicker>
-	 <ea6602021003061330j56132f8er73e27f017e6b9d09@mail.gmail.com>
-	 <OFC651A6C0.BD37C0C8-ON852576DF.0004365B-852576DF.00045289@us.ibm.com>
-In-Reply-To: <OFC651A6C0.BD37C0C8-ON852576DF.0004365B-852576DF.00045289@us.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Mimi Zohar <zohar@us.ibm.com>
-Cc: Eric Paris <eparis@redhat.com>, Dan Carpenter <error27@gmail.com>, "J.R. Okajima" <hooanon05@yahoo.co.jp>, James Morris <jmorris@namei.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Julia Lawall <julia@diku.dk>, Dmitry Torokhov <dtor@mail.ru>, Wolfram Sang <w.sang@pengutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Mar 6, 2010 at 7:47 PM, Mimi Zohar <zohar@us.ibm.com> wrote:
-> Vikram Dhillon <dhillonv10@gmail.com> wrote on 03/06/2010 04:30:33 PM:
->
->> On Sat, Mar 6, 2010 at 6:21 AM, Dan Carpenter <error27@gmail.com> wrote:
->> > It seems like we should return an error here.  That's what the comment
->> > says we should do.
->> >
->> > I also removed an out of date comment.  It wasn't needed and seemed
->> > likely
->> > to get out of date again.
->> >
->> > Signed-off-by: Dan Carpenter <error27@gmail.com>
->> > ---
->
-> The current code and comment are correct, as the return code will reflect
-> the file's integrity appraisal, which hasn't yet been implemented.
->
-> Mimi
+Return -ENOMEM if kcalloc() fails
 
-Oh right :) I guess we aren't at a point yet to enforce integrity, so
-what should the return code return? Based on the comment the code
-seemed okay but I think we may have to base it on measurement
-appraisal in LIM (then again, not too sure if this is the right
-approach).
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-Regards,
-Vikram Dhillon
-
-~~~
-There are lots of Linux users who don't care how the kernel works, but
-only want to use it. That is a tribute to how good Linux is.
--- Linus Torvalds
+diff --git a/drivers/regulator/lp3971.c b/drivers/regulator/lp3971.c
+index f5532ed..55fab4a 100644
+--- a/drivers/regulator/lp3971.c
++++ b/drivers/regulator/lp3971.c
+@@ -439,6 +439,10 @@ static int __devinit setup_regulators(struct lp3971 *lp3971,
+ 	lp3971->num_regulators = pdata->num_regulators;
+ 	lp3971->rdev = kcalloc(pdata->num_regulators,
+ 				sizeof(struct regulator_dev *), GFP_KERNEL);
++	if (!lp3971->rdev) {
++		err = -ENOMEM;
++		goto err_nomem;
++	}
+ 
+ 	/* Instantiate the regulators */
+ 	for (i = 0; i < pdata->num_regulators; i++) {
+@@ -461,6 +465,7 @@ error:
+ 		regulator_unregister(lp3971->rdev[i]);
+ 	kfree(lp3971->rdev);
+ 	lp3971->rdev = NULL;
++err_nomem:
+ 	return err;
+ }
+ 
