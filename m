@@ -1,52 +1,30 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 09 Mar 2010 21:13:49 +0000
-Subject: [PATCH 1/5] drivers/media: drop redundant memset
-Message-Id: <Pine.LNX.4.64.1003092213280.4974@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 08 Mar 2010 13:07:01 +0000
+Subject: batman: potential null dereference
+Message-Id: <20100308130700.GJ6469@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+drivers/staging/batman-adv/routing.c
+    88          } else if ((orig_node->router = NULL) && (neigh_node != NULL)) {
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+    89  
+    90                  bat_dbg(DBG_ROUTES,
+    91                          "Adding route towards: %pM (via %pM)\n",
+    92                          orig_node->orig, neigh_node->addr);
+    93                  hna_global_add_orig(orig_node, hna_buff, hna_buff_len);
+    94  
+    95                  /* route changed */
+    96          } else {
+    97                  bat_dbg(DBG_ROUTES, "Changing route towards: %pM (now via %pM - was via %pM)\n", 
+orig_node->orig, neigh_node->addr, orig_node->router->addr);
+                                   ^^^^^^^^^^^^^^^^^^^^^^^									
+    98          }
 
-The region set by the call to memset is immediately overwritten by the
-subsequent call to memcpy.
+This could fail if debugging is enabled and neigh_node is null.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e1,e2,e3,e4;
-@@
-
-- memset(e1,e2,e3);
-  memcpy(e1,e4,e3);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/media/dvb/bt8xx/dst.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff -u -p a/drivers/media/dvb/bt8xx/dst.c b/drivers/media/dvb/bt8xx/dst.c
---- a/drivers/media/dvb/bt8xx/dst.c
-+++ b/drivers/media/dvb/bt8xx/dst.c
-@@ -930,7 +930,6 @@ static int dst_fw_ver(struct dst_state *
- 		dprintk(verbose, DST_INFO, 1, "Unsupported Command");
- 		return -1;
- 	}
--	memset(&state->fw_version, '\0', 8);
- 	memcpy(&state->fw_version, &state->rxbuffer, 8);
- 	dprintk(verbose, DST_ERROR, 1, "Firmware Ver = %x.%x Build = %02x, on %x:%x, %x-%x-20%02x",
- 		state->fw_version[0] >> 4, state->fw_version[0] & 0x0f,
-@@ -1053,7 +1052,6 @@ static int dst_get_tuner_info(struct dst
- 			goto force;
- 		}
- 	}
--	memset(&state->board_info, '\0', 8);
- 	memcpy(&state->board_info, &state->rxbuffer, 8);
- 	if (state->type_flags & DST_TYPE_HAS_MULTI_FE) {
- 		dprintk(verbose, DST_ERROR, 1, "DST type has TS8");
+regards,
+dan carpenter
