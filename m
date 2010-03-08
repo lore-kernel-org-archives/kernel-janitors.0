@@ -1,24 +1,22 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 28 Mar 2010 04:12:13 +0000
-Subject: Re: [PATCH 7/7] arch/sparc/kernel: Use set_cpus_allowed_ptr
-Message-Id: <20100327.211213.13750482.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 08 Mar 2010 12:55:22 +0000
+Subject: mfd: dereferencing first then checking
+Message-Id: <20100308125522.GA11530@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1003262303500.6480@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1003262303500.6480@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: peterz@infradead.org, mingo@elte.hu, tglx@linutronix.de, oleg@redhat.com, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 26 Mar 2010 23:04:09 +0100 (CET)
+drivers/mfd/t7l66xb.c +371 t7l66xb_probe(58) warn: variable dereferenced before check 'pdata'
+   338          t7l66xb->irq_base = pdata->irq_base;
 
-> Use set_cpus_allowed_ptr rather than set_cpus_allowed.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+   [snip]
 
-Applied, thanks Julia.
+   371          if (pdata && pdata->enable)
+   372                  pdata->enable(dev);
+
+Can pdata be null here?  We dereferenced on line 338 without checking.
+
+regards,
+dan carpenter
