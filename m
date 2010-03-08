@@ -1,54 +1,40 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:47:54 +0000
-Subject: Re: [PATCH 17/24] regulator: fix dangling pointers
-Message-Id: <20100330124754.GL29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="FnOKg9Ah4tDwTfQS"
+From: "Christophe Jaillet" <christophe.jaillet@wanadoo.fr>
+Date: Mon, 08 Mar 2010 21:21:20 +0000
+Subject: [patch] /lib/kobject.c
+Message-Id: <hn3pog$8co$1@dough.gmane.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-18-git-send-email-w.sang@pengutronix.de> <1269287350.3754.22.camel@odin>
-In-Reply-To: <1269287350.3754.22.camel@odin>
-To: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+
+Hi, here is a patch against /lib/kobject.c.
+
+No need to allocate more memory than usefull.
+Here, we only need 12 (strlen("DEVPATH_OLD=")) + 1 (\0) extra bytes. This
+saves 2 bytes !!! and improve readability IMO.
 
 
---FnOKg9Ah4tDwTfQS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
-On Mon, Mar 22, 2010 at 07:49:10PM +0000, Liam Girdwood wrote:
-> On Sat, 2010-03-20 at 15:12 +0100, Wolfram Sang wrote:
-> > Fix I2C-drivers which missed setting clientdata to NULL before freeing =
-the
-> > structure it points to. Also fix drivers which do this _after_ the stru=
-cture
-> > was freed already.
-> >=20
-> > Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-> > Cc: Liam Girdwood <lrg@slimlogic.co.uk>
-> > Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > ---
-> >=20
->=20
-> Applied.
+---
 
-Thanks. An update will be needed though. But we will take care of it!
+diff --git a/lib/kobject.c b/lib/kobject.c
+index 0487d1f..958cc76 100644
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -412,7 +412,7 @@ int kobject_rename(struct kobject *kobj, const char
+*new_name)
+   error = -ENOMEM;
+   goto out;
+  }
+- devpath_string = kmalloc(strlen(devpath) + 15, GFP_KERNEL);
++ devpath_string = kmalloc(12 + strlen(devpath) + 1, GFP_KERNEL);
+  if (!devpath_string) {
+   error = -ENOMEM;
+   goto out;
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
---FnOKg9Ah4tDwTfQS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux8voACgkQD27XaX1/VRvqzQCgoo9UfUUrP+Y5X9g0wL4yyTj7
-5K8AnAn1KMgqMK1J+UnjLi2fj9X4siZB
-=qMhL
------END PGP SIGNATURE-----
-
---FnOKg9Ah4tDwTfQS--
