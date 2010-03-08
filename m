@@ -1,21 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 24 Mar 2010 20:37:04 +0000
-Subject: Re: [patch] rds: cleanup: remove unneeded variable
-Message-Id: <20100324.133704.247147708.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 08 Mar 2010 12:15:59 +0000
+Subject: [patch] bluetooth: storing negative values as unsigned char
+Message-Id: <20100308121559.GG6469@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100324115730.GF21571@bicker>
-In-Reply-To: <20100324115730.GF21571@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: andy.grover@oracle.com, shemminger@vyatta.com, adobriyan@gmail.com, eparis@redhat.com, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Bing Zhao <bzhao@marvell.com>, Rahul Tank <rahult@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 24 Mar 2010 14:57:30 +0300
+This is mostly cleanup.  There is only one caller and it just checks for 
+non-zero return values.  Still "ret" should be int because we want to return 
+-EINVAL on errors.
 
-> We never use "sk" so this patch removes it.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/bluetooth/btmrvl_main.c b/drivers/bluetooth/btmrvl_main.c
+index 53a43ad..49ec89c 100644
+--- a/drivers/bluetooth/btmrvl_main.c
++++ b/drivers/bluetooth/btmrvl_main.c
+@@ -66,7 +66,7 @@ int btmrvl_process_event(struct btmrvl_private *priv, struct sk_buff *skb)
+ {
+ 	struct btmrvl_adapter *adapter = priv->adapter;
+ 	struct btmrvl_event *event;
+-	u8 ret = 0;
++	int ret = 0;
+ 
+ 	event = (struct btmrvl_event *) skb->data;
+ 	if (event->ec != 0xff) {
