@@ -1,36 +1,61 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 24 Mar 2010 11:56:41 +0000
-Subject: [patch] mac80211: remove unneed variable from
-Message-Id: <20100324115641.GE21571@bicker>
+Date: Mon, 08 Mar 2010 13:39:24 +0000
+Subject: [patch] rt2860: off by one errors
+Message-Id: <20100308133923.GA18477@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, Kalle Valo <kalle.valo@iki.fi>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We don't need "sdata" any more after:
-	d84f323477260e773d5317ad7cbe50f76115cb47
-	mac80211: remove dev_hold/put calls
+The code is trying to say that if the offset is higher than the max it 
+should be set to the max, but there is an off by one bug and it sets it 
+one passed the end of the array.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index cbe53ed..08e1f17 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -2010,14 +2010,12 @@ void ieee80211_tx_pending(unsigned long data)
- 		while (!skb_queue_empty(&local->pending[i])) {
- 			struct sk_buff *skb = __skb_dequeue(&local->pending[i]);
- 			struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
--			struct ieee80211_sub_if_data *sdata;
- 
- 			if (WARN_ON(!info->control.vif)) {
- 				kfree_skb(skb);
- 				continue;
+diff --git a/drivers/staging/rt2860/sta_ioctl.c b/drivers/staging/rt2860/sta_ioctl.c
+index de4b627..33a6939 100644
+--- a/drivers/staging/rt2860/sta_ioctl.c
++++ b/drivers/staging/rt2860/sta_ioctl.c
+@@ -1047,8 +1047,7 @@ int rt_ioctl_giwscan(struct net_device *dev,
+ 			if (tmpRate = 0x6c
+ 			    && pAdapter->ScanTab.BssEntry[i].HtCapabilityLen >
+ 			    0) {
+-				int rate_count -				    sizeof(ralinkrate) / sizeof(__s32);
++				int rate_count = ARRAY_SIZE(ralinkrate);
+ 				struct rt_ht_cap_info capInfo  				    pAdapter->ScanTab.BssEntry[i].HtCapability.
+ 				    HtCapInfo;
+@@ -1061,10 +1060,11 @@ int rt_ioctl_giwscan(struct net_device *dev,
+ 				int rate_index  				    12 + ((u8)capInfo.ChannelWidth * 24) +
+ 				    ((u8)shortGI * 48) + ((u8)maxMCS);
++
+ 				if (rate_index < 0)
+ 					rate_index = 0;
+-				if (rate_index > rate_count)
+-					rate_index = rate_count;
++				if (rate_index >= rate_count)
++					rate_index = rate_count - 1;
+ 				iwe.u.bitrate.value  				    ralinkrate[rate_index] * 500000;
  			}
+@@ -2338,7 +2338,7 @@ int rt_ioctl_giwrate(struct net_device *dev,
+ */
+ 	GET_PAD_FROM_NET_DEV(pAd, dev);
  
--			sdata = vif_to_sdata(info->control.vif);
- 			spin_unlock_irqrestore(&local->queue_stop_reason_lock,
- 						flags);
+-	rate_count = sizeof(ralinkrate) / sizeof(__s32);
++	rate_count = ARRAY_SIZE(ralinkrate);
+ 	/*check if the interface is down */
+ 	if (!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_IN_USE)) {
+ 		DBGPRINT(RT_DEBUG_TRACE, ("INFO::Network is down!\n"));
+@@ -2369,8 +2369,8 @@ int rt_ioctl_giwrate(struct net_device *dev,
+ 	if (rate_index < 0)
+ 		rate_index = 0;
  
+-	if (rate_index > rate_count)
+-		rate_index = rate_count;
++	if (rate_index >= rate_count)
++		rate_index = rate_count - 1;
+ 
+ 	wrqu->bitrate.value = ralinkrate[rate_index] * 500000;
+ 	wrqu->bitrate.disabled = 0;
