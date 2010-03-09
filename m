@@ -1,7 +1,7 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 09 Mar 2010 18:12:26 +0000
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 09 Mar 2010 18:49:08 +0000
 Subject: Re: [patch] /lib/kobject.c
-Message-Id: <20100309181226.GA31027@kroah.com>
+Message-Id: <Pine.LNX.4.64.1003091947450.27434@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <hn3pog$8co$1@dough.gmane.org>
 In-Reply-To: <hn3pog$8co$1@dough.gmane.org>
@@ -10,7 +10,8 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 09, 2010 at 06:35:27PM +0100, walter harms wrote:
+On Tue, 9 Mar 2010, walter harms wrote:
+
 > 
 > 
 > Greg KH schrieb:
@@ -60,13 +61,33 @@ On Tue, Mar 09, 2010 at 06:35:27PM +0100, walter harms wrote:
 > just put it in place of the kmalloc
 > The interessting question is:
 > can devpath be manipulated to be VERY large at some point ?
+> 
+> @julia:
+> i did not check but i can imagine that the pattern
+> A=kmalloc() ... sprintf(a," ",b);
+> 
+> come up at some points inside the kernel since a lot of programmers
+> do not know about asprint().
 
-Possibly, yes.  But on systems where is is very large, you usually have
-very large mounts of memory :)
+Indeed, I find around 40 occurrences, such as:
 
-Either way, you can't manipulate it except if you are root, so all is
-fine.
+diff -u -p /var/linuxes/linux-next/arch/ia64/pci/pci.c /tmp/nothing
+--- /var/linuxes/linux-next/arch/ia64/pci/pci.c	2010-03-01 07:52:48.000000000 +0
+100
++++ /tmp/nothing
+@@ -366,11 +366,9 @@ pci_acpi_scan_root(struct acpi_device *d
+ 		if (!controller->window)
+ 			goto out2;
+ 
+-		name = kmalloc(16, GFP_KERNEL);
+ 		if (!name)
+ 			goto out3;
+ 
+-		sprintf(name, "PCI Bus %04x:%02x", domain, bus);
+ 		info.bridge = device;
+ 		info.controller = controller;
+ 		info.name = name;
 
-thanks,
+(- means "item of interest", not necessarily something to remove)
 
-greg k-h
+julia
