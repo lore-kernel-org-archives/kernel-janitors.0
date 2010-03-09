@@ -1,38 +1,49 @@
-From: James Bottomley <James.Bottomley@suse.de>
-Date: Mon, 15 Mar 2010 22:48:11 +0000
-Subject: Re: [patch] dpt_i20: several use after free issues
-Message-Id: <1268693291.2853.60.camel@mulgrave.site>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 09 Mar 2010 21:14:11 +0000
+Subject: [PATCH 2/5] drivers/net: drop redundant memset
+Message-Id: <Pine.LNX.4.64.1003092213500.4974@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100315082656.GJ18181@bicker>
-	 <20100315134526.0b2e3637.akpm@linux-foundation.org>
-In-Reply-To: <20100315134526.0b2e3637.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Carpenter <error27@gmail.com>, Adaptec OEM Raid Solutions <aacraid@adaptec.com>, Yang Hongyang <yanghy@cn.fujitsu.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Alan Cox <alan@linux.intel.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ramkrishna Vepa <ram.vepa@neterion.com>, Rastapur Santosh <santosh.rastapur@neterion.com>, Sivakumar Subramani <sivakumar.subramani@neterion.com>, Sreenivasa Honnur <sreenivasa.honnur@neterion.com>, Anil Murthy <anil.murthy@neterion.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2010-03-15 at 13:45 -0700, Andrew Morton wrote:
-> On Mon, 15 Mar 2010 11:26:56 +0300
-> Dan Carpenter <error27@gmail.com> wrote:
-> 
-> > adpt_i2o_delete_hba() calls kfree() so we have to save "pHba->next"
-> > before calling it.  Also inside adpt_i2o_delete_hba() itself, there
-> > was another use after free bug which I fixed by moving the kfree() 
-> > down a line.
-> 
-> erk.  This code should be crashing most gruesomely.  I wonder why it
-> doesn't.
+From: Julia Lawall <julia@diku.dk>
 
-I'm tempted to say because we have no users, but actually, for this
-driver, I know we do.  So I think it works because most people don't
-have poisoning turned on in a running system and there's no sleep
-between the free and the use, so no opportunity to reuse the area on the
-percpu hot list even in an smp system.
+The region set by the call to memset is immediately overwritten by the
+subsequent call to memcpy.
 
-I'll add it to -rc fixes ... when I get the current misc tree broken
-apart.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-James
+// <smpl>
+@@
+expression e1,e2,e3,e4;
+@@
 
+- memset(e1,e2,e3);
+  memcpy(e1,e4,e3);
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/s2io.c                  |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/s2io.c b/drivers/net/s2io.c
+index df70657..2eb7f8a 100644
+--- a/drivers/net/s2io.c
++++ b/drivers/net/s2io.c
+@@ -5819,10 +5819,8 @@ static void s2io_vpd_read(struct s2io_nic *nic)
+ 		}
+ 	}
+ 
+-	if ((!fail) && (vpd_data[1] < VPD_STRING_LEN)) {
+-		memset(nic->product_name, 0, vpd_data[1]);
++	if ((!fail) && (vpd_data[1] < VPD_STRING_LEN))
+ 		memcpy(nic->product_name, &vpd_data[3], vpd_data[1]);
+-	}
+ 	kfree(vpd_data);
+ 	swstats->mem_freed += 256;
+ }
