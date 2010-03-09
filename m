@@ -1,27 +1,52 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 28 Mar 2010 11:25:22 +0000
-Subject: [patch] drm: fix check for end of loop
-Message-Id: <20100328112522.GL5069@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 09 Mar 2010 21:13:49 +0000
+Subject: [PATCH 1/5] drivers/media: drop redundant memset
+Message-Id: <Pine.LNX.4.64.1003092213280.4974@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Eric Anholt <eric@anholt.net>, Dave Airlie <airlied@redhat.com>, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"agpmem" is never NULL here.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+The region set by the call to memset is immediately overwritten by the
+subsequent call to memcpy.
 
-diff --git a/drivers/gpu/drm/drm_memory.c b/drivers/gpu/drm/drm_memory.c
-index e4865f9..7732268 100644
---- a/drivers/gpu/drm/drm_memory.c
-+++ b/drivers/gpu/drm/drm_memory.c
-@@ -77,7 +77,7 @@ static void *agp_remap(unsigned long offset, unsigned long size,
- 		    && (agpmem->bound + (agpmem->pages << PAGE_SHIFT)) > 		    (offset + size))
- 			break;
--	if (!agpmem)
-+	if (&agpmem->head = &dev->agp->memory)
- 		return NULL;
- 
- 	/*
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2,e3,e4;
+@@
+
+- memset(e1,e2,e3);
+  memcpy(e1,e4,e3);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/dvb/bt8xx/dst.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff -u -p a/drivers/media/dvb/bt8xx/dst.c b/drivers/media/dvb/bt8xx/dst.c
+--- a/drivers/media/dvb/bt8xx/dst.c
++++ b/drivers/media/dvb/bt8xx/dst.c
+@@ -930,7 +930,6 @@ static int dst_fw_ver(struct dst_state *
+ 		dprintk(verbose, DST_INFO, 1, "Unsupported Command");
+ 		return -1;
+ 	}
+-	memset(&state->fw_version, '\0', 8);
+ 	memcpy(&state->fw_version, &state->rxbuffer, 8);
+ 	dprintk(verbose, DST_ERROR, 1, "Firmware Ver = %x.%x Build = %02x, on %x:%x, %x-%x-20%02x",
+ 		state->fw_version[0] >> 4, state->fw_version[0] & 0x0f,
+@@ -1053,7 +1052,6 @@ static int dst_get_tuner_info(struct dst
+ 			goto force;
+ 		}
+ 	}
+-	memset(&state->board_info, '\0', 8);
+ 	memcpy(&state->board_info, &state->rxbuffer, 8);
+ 	if (state->type_flags & DST_TYPE_HAS_MULTI_FE) {
+ 		dprintk(verbose, DST_ERROR, 1, "DST type has TS8");
