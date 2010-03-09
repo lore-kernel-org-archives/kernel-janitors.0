@@ -1,37 +1,44 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Fri, 19 Mar 2010 11:48:36 +0000
-Subject: Re: mfd: dereferencing first then checking
-Message-Id: <20100319114834.GB3156@sortiz.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 09 Mar 2010 21:14:34 +0000
+Subject: [PATCH 3/5] drivers/scsi: drop redundant memset
+Message-Id: <Pine.LNX.4.64.1003092214110.4974@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100308125522.GA11530@bicker>
-In-Reply-To: <20100308125522.GA11530@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jack_wang@usish.com, lindar_liu@usish.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From: Julia Lawall <julia@diku.dk>
 
-On Mon, Mar 08, 2010 at 03:55:22PM +0300, Dan Carpenter wrote:
-> drivers/mfd/t7l66xb.c +371 t7l66xb_probe(58) warn: variable dereferenced before check 'pdata'
->    338          t7l66xb->irq_base = pdata->irq_base;
-> 
->    [snip]
-> 
->    371          if (pdata && pdata->enable)
->    372                  pdata->enable(dev);
-> 
-> Can pdata be null here?  We dereferenced on line 338 without checking.
-We should definitely check for pdata being not NULL here.
-I fixed that, thanks for spotting it.
+The region set by the call to memset is immediately overwritten by the
+subsequent call to memcpy.
 
-Cheers,
-Samuel.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression e1,e2,e3,e4;
+@@
 
-> regards,
-> dan carpenter
+- memset(e1,e2,e3);
+  memcpy(e1,e4,e3);
+// </smpl>
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/pm8001/pm8001_hwi.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff -u -p a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -4389,7 +4389,6 @@ pm8001_chip_fw_flash_update_req(struct p
+ 				return -ENOMEM;
+ 		}
+ 	}
+-	memset(buffer, 0, fw_control->len);
+ 	memcpy(buffer, fw_control->buffer, fw_control->len);
+ 	flash_update_info.sgl.addr = cpu_to_le64(phys_addr);
+ 	flash_update_info.sgl.im_len.len = cpu_to_le32(fw_control->len);
