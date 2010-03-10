@@ -1,52 +1,56 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Mar 2010 15:35:05 +0000
-Subject: [PATCH 6/12] drivers/net: Add missing unlock
-Message-Id: <Pine.LNX.4.64.1003291734460.21896@ask.diku.dk>
+Date: Wed, 10 Mar 2010 21:18:13 +0000
+Subject: [PATCH 5/6] drivers/base/module.c: Use kasprintf
+Message-Id: <Pine.LNX.4.64.1003102217500.1672@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Unlock the lock before leaving the function.
+kasprintf combines kmalloc and sprintf, and takes care of the size
+calculation itself.
 
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r exists@
-expression E1;
-identifier f;
+@@
+expression a,flag;
+expression list args;
+statement S;
 @@
 
-f (...) { <+...
-* spin_lock_irqsave (E1,...);
-... when != E1
-* return ...;
-...+> }
+  a -  \(kmalloc\|kzalloc\)(...,flag)
++  kasprintf(flag,args)
+  <... when != a
+  if (a = NULL || ...) S
+  ...>
+- sprintf(a,args);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/net/sgiseeq.c               |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+ drivers/base/module.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/sgiseeq.c b/drivers/net/sgiseeq.c
-index ed999d3..37f6a00 100644
---- a/drivers/net/sgiseeq.c
-+++ b/drivers/net/sgiseeq.c
-@@ -592,8 +592,10 @@ static int sgiseeq_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	/* Setup... */
- 	len = skb->len;
- 	if (len < ETH_ZLEN) {
--		if (skb_padto(skb, ETH_ZLEN))
-+		if (skb_padto(skb, ETH_ZLEN)) {
-+			spin_unlock_irqrestore(&sp->tx_lock, flags);
- 			return NETDEV_TX_OK;
-+		}
- 		len = ETH_ZLEN;
- 	}
+diff -u -p a/drivers/base/module.c b/drivers/base/module.c
+--- a/drivers/base/module.c
++++ b/drivers/base/module.c
+@@ -14,12 +14,10 @@ static char *make_driver_name(struct dev
+ {
+ 	char *driver_name;
+ 
+-	driver_name = kmalloc(strlen(drv->name) + strlen(drv->bus->name) + 2,
+-			      GFP_KERNEL);
++	driver_name = kasprintf(GFP_KERNEL, "%s:%s", drv->bus->name, drv->name);
+ 	if (!driver_name)
+ 		return NULL;
+ 
+-	sprintf(driver_name, "%s:%s", drv->bus->name, drv->name);
+ 	return driver_name;
+ }
  
