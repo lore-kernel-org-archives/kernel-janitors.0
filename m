@@ -1,55 +1,67 @@
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Date: Tue, 23 Mar 2010 16:43:23 +0000
-Subject: Re: [patch v2] cx231xx: card->driver "Conexant cx231xx Audio" too
-Message-Id: <20100323164323.GA2841@joi.lan>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Mar 2010 21:16:51 +0000
+Subject: [PATCH 4/6] drivers/acpi: Use kasprintf
+Message-Id: <Pine.LNX.4.64.1003102216290.1672@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100319114957.GQ5331@bicker>
- <s5hr5ncxvm9.wl%tiwai@suse.de>
- <20100322153909.GC23411@bicker>
- <1269272627.22616.35.camel@Joe-Laptop.home>
- <s5h39zsxryw.wl%tiwai@suse.de>
-In-Reply-To: <s5h39zsxryw.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Joe Perches <joe@perches.com>, Dan Carpenter <error27@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Srinivasa Deevi <srinivasa.deevi@conexant.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 22, 2010 at 05:04:55PM +0100, Takashi Iwai wrote:
-> At Mon, 22 Mar 2010 08:43:47 -0700,
-> Joe Perches wrote:
-> > 
-> > On Mon, 2010-03-22 at 18:39 +0300, Dan Carpenter wrote:
-> > > card->driver is 15 characters and a NULL, the original code could 
-> > > cause a buffer overflow.
-> > 
-> > > In version 2, I used a better name that Takashi Iwai suggested.
-> > 
-> > Perhaps it's better to use strncpy as well.
-> 
-> strlcpy() would be safer :)
-> 
-> But, in such a case, we want rather that the error is notified at
-> build time.
-> 
-> Maybe a macro like below would be helpful to catch such bugs?
-> 
-> #define COPY_STRING(buf, src)						\
-> 	do {								\
-> 		if (__builtin_constant_p(src))				\
-> 			BUILD_BUG_ON(strlen(src) >= sizeof(buf));	\
-> 		strcpy(buf, src);					\
-> 	} while (0)
-> 
-> and used like:
-> 
-> struct foo {
-> 	char foo[5];
-> } x;
-> 
-> COPY_STRING(x.foo, "OK"); // OK
-> COPY_STRING(x.foo, "1234567890"); // NG
+From: Julia Lawall <julia@diku.dk>
 
-why not define strcpy this way?
+kasprintf combines kmalloc and sprintf, and takes care of the size
+calculation itself.
 
-Marcin
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression a,flag;
+expression list args;
+statement S;
+@@
+
+  a -  \(kmalloc\|kzalloc\)(...,flag)
++  kasprintf(flag,args)
+  <... when != a
+  if (a = NULL || ...) S
+  ...>
+- sprintf(a,args);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/acpi/video.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff -u -p a/drivers/acpi/video.c b/drivers/acpi/video.c
+--- a/drivers/acpi/video.c
++++ b/drivers/acpi/video.c
+@@ -1005,11 +1005,10 @@ static void acpi_video_device_find_cap(s
+ 		result = acpi_video_init_brightness(device);
+ 		if (result)
+ 			return;
+-		name = kzalloc(MAX_NAME_LEN, GFP_KERNEL);
++		name = kasprintf(GFP_KERNEL, "acpi_video%d", count++);
+ 		if (!name)
+ 			return;
+ 
+-		sprintf(name, "acpi_video%d", count++);
+ 		device->backlight = backlight_device_register(name,
+ 			NULL, device, &acpi_backlight_ops);
+ 		kfree(name);
+@@ -1056,10 +1055,9 @@ static void acpi_video_device_find_cap(s
+ 		if (device->cap._DCS && device->cap._DSS) {
+ 			static int count;
+ 			char *name;
+-			name = kzalloc(MAX_NAME_LEN, GFP_KERNEL);
++			name = kasprintf(GFP_KERNEL, "acpi_video%d", count++);
+ 			if (!name)
+ 				return;
+-			sprintf(name, "acpi_video%d", count++);
+ 			device->output_dev = video_output_register(name,
+ 					NULL, device, &acpi_output_properties);
+ 			kfree(name);
