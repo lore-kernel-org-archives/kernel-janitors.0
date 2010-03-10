@@ -1,30 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 24 Mar 2010 20:34:33 +0000
-Subject: Re: [patch] llc: cleanup: remove dead code from llc_init()
-Message-Id: <20100324.133433.20926021.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 10 Mar 2010 10:57:03 +0000
+Subject: [patch] omap24xxcam: potential buffer overflow
+Message-Id: <20100310105703.GD6321@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100324115510.GC21571@bicker>
-	<20100324135418.GD23594@ghostprotocols.net>
-In-Reply-To: <20100324135418.GD23594@ghostprotocols.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: acme@ghostprotocols.net
-Cc: error27@gmail.com, opurdila@ixiacom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman <gregkh@suse.de>, Trent Piepho <xyzzy@speakeasy.org>, Hans Verkuil <hverkuil@xs4all.nl>, kernel-janitors@vger.kernel.org, sakari.ailus@nokia.com
 
-From: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
-Date: Wed, 24 Mar 2010 10:54:18 -0300
+The previous loop goes until last = VIDEO_MAX_FRAME, so this could 
+potentially go one past the end of the loop.
 
-> Em Wed, Mar 24, 2010 at 02:55:10PM +0300, Dan Carpenter escreveu:
->> We don't need "dev" any more after:
->> 	a5a04819c5740cb1aa217af2cc8f5ef26f33d744
->> 	[LLC]: station source mac address
->> 
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> Old leftovers, well spotted, Dave, please apply.
-> 
-> 
-> Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks.
+diff --git a/drivers/media/video/omap24xxcam.c b/drivers/media/video/omap24xxcam.c
+index 142c327..bedbee9 100644
+--- a/drivers/media/video/omap24xxcam.c
++++ b/drivers/media/video/omap24xxcam.c
+@@ -1404,7 +1404,7 @@ static int omap24xxcam_mmap_buffers(struct file *file,
+ 	}
+ 
+ 	size = 0;
+-	for (i = first; i <= last; i++) {
++	for (i = first; i <= last && i < VIDEO_MAX_FRAME; i++) {
+ 		struct videobuf_dmabuf *dma = videobuf_to_dma(vbq->bufs[i]);
+ 
+ 		for (j = 0; j < dma->sglen; j++) {
