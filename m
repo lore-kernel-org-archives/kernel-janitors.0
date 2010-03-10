@@ -1,42 +1,30 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Mon, 08 Mar 2010 04:02:13 +0000
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Date: Wed, 10 Mar 2010 08:04:25 +0000
 Subject: Re: [patch] regulator: handle kcalloc() failure
-Message-Id: <20100308040213.GI8548@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cVp8NMj01v+Em8Se"
+Message-Id: <1268208265.3760.0.camel@odin>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100307123645.GB6469@bicker>
 In-Reply-To: <20100307123645.GB6469@bicker>
-To: Dan Carpenter <error27@gmail.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Julia Lawall <julia@diku.dk>, Dmitry Torokhov <dtor@mail.ru>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <error27@gmail.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Julia Lawall <julia@diku.dk>, Dmitry Torokhov <dtor@mail.ru>, Wolfram Sang <w.sang@pengutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
---cVp8NMj01v+Em8Se
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Mar 07, 2010 at 03:36:45PM +0300, Dan Carpenter wrote:
+On Sun, 2010-03-07 at 15:36 +0300, Dan Carpenter wrote:
 > Return -ENOMEM if kcalloc() fails
->=20
+> 
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
 
-Acked-by: Wolfram Sang <w.sang@pengutronix.de>
+Applied.
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Thanks
 
---cVp8NMj01v+Em8Se
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+Liam
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+-- 
+Freelance Developer, SlimLogic Ltd
+ASoC and Voltage Regulator Maintainer.
+http://www.slimlogic.co.uk
 
-iEYEARECAAYFAkuUdsUACgkQD27XaX1/VRtE4gCguQme9vkTrK7Ww6xVRphvsqkZ
-qBkAmgM2i1HCenHtTlQ2P+y/iTluAxbk
-=UZGt
------END PGP SIGNATURE-----
-
---cVp8NMj01v+Em8Se--
