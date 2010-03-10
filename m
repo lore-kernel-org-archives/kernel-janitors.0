@@ -1,29 +1,56 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 28 Mar 2010 11:19:47 +0000
-Subject: [patch] via: off by one issue
-Message-Id: <20100328111947.GH5069@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Mar 2010 21:17:28 +0000
+Subject: [PATCH 6/6] drivers/char/ppdev.c: Use kasprintf
+Message-Id: <Pine.LNX.4.64.1003102216510.1672@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"fx->lock" is used as the index in "dev_priv->decoder_queue[fx->lock]"
-which is an array of "VIA_NR_XVMC_LOCKS" elements.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+kasprintf combines kmalloc and sprintf, and takes care of the size
+calculation itself.
 
-diff --git a/drivers/gpu/drm/via/via_video.c b/drivers/gpu/drm/via/via_video.c
-index 6ec04ac..6efac81 100644
---- a/drivers/gpu/drm/via/via_video.c
-+++ b/drivers/gpu/drm/via/via_video.c
-@@ -75,7 +75,7 @@ int via_decoder_futex(struct drm_device *dev, void *data, struct drm_file *file_
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression a,flag;
+expression list args;
+statement S;
+@@
+
+  a -  \(kmalloc\|kzalloc\)(...,flag)
++  kasprintf(flag,args)
+  <... when != a
+  if (a = NULL || ...) S
+  ...>
+- sprintf(a,args);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/char/ppdev.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff -u -p a/drivers/char/ppdev.c b/drivers/char/ppdev.c
+--- a/drivers/char/ppdev.c
++++ b/drivers/char/ppdev.c
+@@ -286,12 +286,10 @@ static int register_device (int minor, s
+ 	char *name;
+ 	int fl;
  
- 	DRM_DEBUG("\n");
+-	name = kmalloc (strlen (CHRDEV) + 3, GFP_KERNEL);
++	name = kasprintf(GFP_KERNEL, CHRDEV "%x", minor);
+ 	if (name = NULL)
+ 		return -ENOMEM;
  
--	if (fx->lock > VIA_NR_XVMC_LOCKS)
-+	if (fx->lock >= VIA_NR_XVMC_LOCKS)
- 		return -EFAULT;
- 
- 	lock = (volatile int *)XVMCLOCKPTR(sAPriv, fx->lock);
+-	sprintf (name, CHRDEV "%x", minor);
+-
+ 	port = parport_find_number (minor);
+ 	if (!port) {
+ 		printk (KERN_WARNING "%s: no associated port!\n", name);
