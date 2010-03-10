@@ -1,29 +1,56 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 30 Mar 2010 09:41:25 +0000
-Subject: [patch] 9p: return on mutex_lock_interruptible()
-Message-Id: <20100330094125.GH5069@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Mar 2010 21:15:19 +0000
+Subject: [PATCH 2/6] drivers/mtd: Use kasprintf
+Message-Id: <Pine.LNX.4.64.1003102215020.1672@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>, Sripathi Kodi <sripathik@in.ibm.com>, Jim Garlick <garlick@llnl.gov>, Martin Stava <martin.stava@gmail.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joern Engel <joern@lazybastard.org>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If "err" is -EINTR here the original code calls mutex_unlock() and then
-returns, but it should just return directly.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+kasprintf combines kmalloc and sprintf, and takes care of the size
+calculation itself.
 
-diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
-index d8a3afe..bbe00cf 100644
---- a/fs/9p/vfs_dir.c
-+++ b/fs/9p/vfs_dir.c
-@@ -130,6 +130,8 @@ static int v9fs_dir_readdir(struct file *filp, void *dirent, filldir_t filldir)
- 	rdir = (struct p9_rdir *) fid->rdir;
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression a,flag;
+expression list args;
+statement S;
+@@
+
+  a -  \(kmalloc\|kzalloc\)(...,flag)
++  kasprintf(flag,args)
+  <... when != a
+  if (a = NULL || ...) S
+  ...>
+- sprintf(a,args);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/mtd/devices/block2mtd.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff -u -p a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
+--- a/drivers/mtd/devices/block2mtd.c
++++ b/drivers/mtd/devices/block2mtd.c
+@@ -275,12 +275,10 @@ static struct block2mtd_dev *add_device(
  
- 	err = mutex_lock_interruptible(&rdir->mutex);
-+	if (err)
-+		return err;
- 	while (err = 0) {
- 		if (rdir->tail = rdir->head) {
- 			err = v9fs_file_readn(filp, rdir->buf, NULL,
+ 	/* Setup the MTD structure */
+ 	/* make the name contain the block device in */
+-	name = kmalloc(sizeof("block2mtd: ") + strlen(devname) + 1,
+-			GFP_KERNEL);
++	name = kasprintf(GFP_KERNEL, "block2mtd: %s", devname);
+ 	if (!name)
+ 		goto devinit_err;
+ 
+-	sprintf(name, "block2mtd: %s", devname);
+ 	dev->mtd.name = name;
+ 
+ 	dev->mtd.size = dev->blkdev->bd_inode->i_size & PAGE_MASK;
