@@ -1,12 +1,15 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 09 Mar 2010 21:14:34 +0000
-Subject: [PATCH 3/5] drivers/scsi: drop redundant memset
-Message-Id: <Pine.LNX.4.64.1003092214110.4974@ask.diku.dk>
+From: "jack wang" <jack_wang@usish.com>
+Date: Wed, 10 Mar 2010 01:05:07 +0000
+Subject: RE: [PATCH 3/5] drivers/scsi: drop redundant memset
+Message-Id: <B8AD7A70524143C289C05DFE9857EC84@usish.com.cn>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1003092214110.4974@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1003092214110.4974@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jack_wang@usish.com, lindar_liu@usish.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: 'Julia Lawall' <julia@diku.dk>, lindar_liu@usish.com, "'James E.J. Bottomley'" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-jan
+
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -31,7 +34,8 @@ Signed-off-by: Julia Lawall <julia@diku.dk>
  drivers/scsi/pm8001/pm8001_hwi.c |    1 -
  1 file changed, 1 deletion(-)
 
-diff -u -p a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+diff -u -p a/drivers/scsi/pm8001/pm8001_hwi.c
+b/drivers/scsi/pm8001/pm8001_hwi.c
 --- a/drivers/scsi/pm8001/pm8001_hwi.c
 +++ b/drivers/scsi/pm8001/pm8001_hwi.c
 @@ -4389,7 +4389,6 @@ pm8001_chip_fw_flash_update_req(struct p
@@ -42,3 +46,9 @@ diff -u -p a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
  	memcpy(buffer, fw_control->buffer, fw_control->len);
  	flash_update_info.sgl.addr = cpu_to_le64(phys_addr);
  	flash_update_info.sgl.im_len.len = cpu_to_le32(fw_control->len);
+
+
+
+[Jack] Thanks Julia.
+Acked-by: Jack Wang <jack_wang@usish.com>
+
