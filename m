@@ -1,70 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Mar 2010 15:36:44 +0000
-Subject: [PATCH 11/12] drivers/usb/gadget: Add missing unlock
-Message-Id: <Pine.LNX.4.64.1003291736250.21896@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 10 Mar 2010 09:54:30 +0000
+Subject: [patch] rt2860: clean up & => &&
+Message-Id: <20100310095430.GB6321@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+a4_exists is an integer used as a boolean type so the original code 
+works.  But all the other conditions use && and this makes it 
+consistent.
 
-In an error handling case the lock is not unlocked.  The return is
-converted to a goto, to share the unlock at the end of the function.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-expression E1;
-identifier f;
-@@
-
-f (...) { <+...
-* spin_lock_irqsave (E1,...);
-... when != E1
-* return ...;
-...+> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/usb/gadget/s3c-hsotg.c      |    7 +++++--
- 1 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index f742c8e..85dedf0 100644
---- a/drivers/usb/gadget/s3c-hsotg.c
-+++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -2144,6 +2144,7 @@ static int s3c_hsotg_ep_enable(struct usb_ep *ep,
- 	u32 epctrl;
- 	u32 mps;
- 	int dir_in;
-+	int ret = 0;
+diff --git a/drivers/staging/rt2860/common/cmm_aes.c b/drivers/staging/rt2860/common/cmm_aes.c
+index 250357c..1d159ff 100644
+--- a/drivers/staging/rt2860/common/cmm_aes.c
++++ b/drivers/staging/rt2860/common/cmm_aes.c
+@@ -281,7 +281,7 @@ void construct_mic_header2(unsigned char *mic_header2,
+ 	mic_header2[6] = mpdu[22] & 0x0f;	/* SC */
+ 	mic_header2[7] = 0x00;	/* mpdu[23]; */
  
- 	dev_dbg(hsotg->dev,
- 		"%s: ep %s: a 0x%02x, attr 0x%02x, mps 0x%04x, intr %d\n",
-@@ -2195,7 +2196,8 @@ static int s3c_hsotg_ep_enable(struct usb_ep *ep,
- 	switch (desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) {
- 	case USB_ENDPOINT_XFER_ISOC:
- 		dev_err(hsotg->dev, "no current ISOC support\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out;
+-	if ((!qc_exists) & a4_exists) {
++	if ((!qc_exists) && a4_exists) {
+ 		for (i = 0; i < 6; i++)
+ 			mic_header2[8 + i] = mpdu[24 + i];	/* A4 */
  
- 	case USB_ENDPOINT_XFER_BULK:
- 		epctrl |= S3C_DxEPCTL_EPType_Bulk;
-@@ -2234,8 +2236,9 @@ static int s3c_hsotg_ep_enable(struct usb_ep *ep,
- 	/* enable the endpoint interrupt */
- 	s3c_hsotg_ctrl_epint(hsotg, index, dir_in, 1);
- 
-+out:
- 	spin_unlock_irqrestore(&hs_ep->lock, flags);
--	return 0;
-+	return ret;
- }
- 
- static int s3c_hsotg_ep_disable(struct usb_ep *ep)
