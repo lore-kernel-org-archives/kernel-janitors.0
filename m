@@ -1,7 +1,7 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Mar 2010 20:27:11 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 11 Mar 2010 08:13:02 +0000
 Subject: Re: discussion [patch] /lib/kobject.c
-Message-Id: <Pine.LNX.4.64.1003102125510.1672@ask.diku.dk>
+Message-Id: <4B98A60E.8050705@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4B975F28.4050903@bfs.de>
 In-Reply-To: <4B975F28.4050903@bfs.de>
@@ -10,30 +10,46 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I guess something similar could be done with snprintf?
 
-The following code comes from /var/linuxes/linux-next/arch/ia64/pci/pci.c
 
-	len = strlen(info->name) + 32;
-        name = kzalloc(len, GFP_KERNEL);
-	if (!name) {
+Julia Lawall schrieb:
+> I guess something similar could be done with snprintf?
+> 
+> The following code comes from /var/linuxes/linux-next/arch/ia64/pci/pci.c
+> 
+> 	len = strlen(info->name) + 32;
+>         name = kzalloc(len, GFP_KERNEL);
+> 	if (!name) {
+>                 printk(KERN_ERR "PCI: No memory for %s I/O port space name\n",
+> 			info->name);
+>                 goto free_resource;
+>         }
+> 
+>         min = addr->minimum;
+>         max = min + addr->address_length - 1;
+>         if (addr->info.io.translation_type = ACPI_SPARSE_TRANSLATION)
+>                 sparse = 1;
+> 
+> 	space_nr = new_space(addr->translation_offset, sparse);
+>         if (space_nr = ~0)
+> 	        goto free_name;
+> 
+> 	base = __pa(io_space[space_nr].mmio_base);
+> 	base_port = IO_SPACE_BASE(space_nr);
+>         snprintf(name, len, "%s I/O Ports %08lx-%08lx", info->name,
+>                 base_port + min, base_port + max);
+> 
+
+yes, i would replace that with:
+
+	 name = kasprintf(GFP_KERNEL,"%s I/O Ports %08lx-%08lx", info->name,
+                base_port + min, base_port + max);
+
+          if (!name) {
                 printk(KERN_ERR "PCI: No memory for %s I/O port space name\n",
 			info->name);
                 goto free_resource;
-        }
+           }
 
-        min = addr->minimum;
-        max = min + addr->address_length - 1;
-        if (addr->info.io.translation_type = ACPI_SPARSE_TRANSLATION)
-                sparse = 1;
-
-	space_nr = new_space(addr->translation_offset, sparse);
-        if (space_nr = ~0)
-	        goto free_name;
-
-	base = __pa(io_space[space_nr].mmio_base);
-	base_port = IO_SPACE_BASE(space_nr);
-        snprintf(name, len, "%s I/O Ports %08lx-%08lx", info->name,
-                base_port + min, base_port + max);
-
-julia
+re,
+ wh
