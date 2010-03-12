@@ -1,43 +1,39 @@
-From: Dhaval Giani <dhaval.giani@gmail.com>
-Date: Mon, 15 Mar 2010 12:54:15 +0000
-Subject: Re: [patch] sched: remove some dead code
-Message-Id: <8aa016e11003150554h549a5853o7b21773915ac2451@mail.gmail.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Fri, 12 Mar 2010 07:03:50 +0000
+Subject: [PATCH 2/3] drivers/base: init dynamic bin_attribute structures
+Message-Id: <1268377431-11671-3-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100315082148.GD18181@bicker>
-In-Reply-To: <20100315082148.GD18181@bicker>
+References: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>, Dhaval Giani <dhaval.giani@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Kay Sievers <kay.sievers@vrfy.org>, Ingo Molnar <mingo@elte.hu>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: Wolfram Sang <w.sang@pengutronix.de>, Greg Kroah-Hartman <gregkh@suse.de>, "Eric W. Biederman" <ebiederm@xmission.com>, linux-kernel@vger.kernel.org
 
-On Mon, Mar 15, 2010 at 9:21 AM, Dan Carpenter <error27@gmail.com> wrote:
-> This was left over from "7c9414385e sched: Remove USER_SCHED"
->
+Commit 6992f5334995af474c2b58d010d08bc597f0f2fe introduced this requirement.
+Found with coccinelle, but fixed manually. Compile tested on X86 where
+possible.
 
-Quite surprising I missed that. Thanks for catching it.
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+---
+ drivers/base/firmware_class.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index d0dc26a..443231f 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -391,6 +391,7 @@ static int fw_register_device(struct device **dev_p, const char *fw_name,
+ 
+ 	init_completion(&fw_priv->completion);
+ 	fw_priv->attr_data = firmware_attr_data_tmpl;
++	sysfs_bin_attr_init(&fw_priv->attr_data);
+ 	fw_priv->fw_id = kstrdup(fw_name, GFP_KERNEL);
+ 	if (!fw_priv->fw_id) {
+ 		dev_err(device, "%s: Firmware name allocation failed\n",
+-- 
+1.7.0
 
-Acked-by: Dhaval Giani <dhaval.giani@gmail.com>
-
-> diff --git a/kernel/user.c b/kernel/user.c
-> index 766467b..ec3b222 100644
-> --- a/kernel/user.c
-> +++ b/kernel/user.c
-> @@ -178,8 +178,6 @@ struct user_struct *alloc_uid(struct user_namespace *=
-ns, uid_t uid)
->
-> =A0 =A0 =A0 =A0return up;
->
-> - =A0 =A0 =A0 put_user_ns(new->user_ns);
-> - =A0 =A0 =A0 kmem_cache_free(uid_cachep, new);
-> =A0out_unlock:
-> =A0 =A0 =A0 =A0return NULL;
-> =A0}
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
