@@ -1,45 +1,39 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Mon, 22 Mar 2010 14:53:57 +0000
-Subject: Re: [patch v2] pcrypt: handle crypto_get_attr_type() errors
-Message-Id: <20100322145357.GK20508@secunet.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Fri, 12 Mar 2010 07:03:49 +0000
+Subject: [PATCH 1/3] arch/mips/txx9/generic: init dynamic bin_attribute structures
+Message-Id: <1268377431-11671-2-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100321092847.GJ5331@bicker>
- <20100322132342.GJ20508@secunet.com>
- <20100322135319.GQ21571@bicker>
-In-Reply-To: <20100322135319.GQ21571@bicker>
+References: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.orgkern
+To: kernel-janitors@vger.kernel.org
+Cc: Wolfram Sang <w.sang@pengutronix.de>, Ralf Baechle <ralf@linux-mips.org>, "Eric W. Biederman" <ebiederm@xmission.com>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 22, 2010 at 04:53:19PM +0300, Dan Carpenter wrote:
->  
-> -static struct crypto_instance *pcrypt_alloc_aead(struct rtattr **tb)
-> +static struct crypto_instance *pcrypt_alloc_aead(struct rtattr **tb,
-> +						 struct crypto_attr_type *algt)
->  {
->  	struct crypto_instance *inst;
->  	struct crypto_alg *alg;
-> -	struct crypto_attr_type *algt;
-> -
-> -	algt = crypto_get_attr_type(tb);
->  
->  	alg = crypto_get_attr_alg(tb, algt->type,
->  				  (algt->mask & CRYPTO_ALG_TYPE_MASK));
-> @@ -365,7 +363,7 @@ static struct crypto_instance *pcrypt_alloc(struct rtattr **tb)
->  
->  	switch (algt->type & algt->mask & CRYPTO_ALG_TYPE_MASK) {
->  	case CRYPTO_ALG_TYPE_AEAD:
-> -		return pcrypt_alloc_aead(tb);
-> +		return pcrypt_alloc_aead(tb, algt);
->  	}
->  
+Commit 6992f5334995af474c2b58d010d08bc597f0f2fe introduced this requirement.
+Found with coccinelle, but fixed manually. Compile tested on X86 where
+possible.
 
-I thought about passing the type and mask values separately to
-pcrypt_alloc_aead, like type and mask values are passed to
-crypto_get_attr_alg. This is the usual way to do this in the
-crypto layer.
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+---
+ arch/mips/txx9/generic/setup.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Thanks,
+diff --git a/arch/mips/txx9/generic/setup.c b/arch/mips/txx9/generic/setup.c
+index 7174d83..95184a0 100644
+--- a/arch/mips/txx9/generic/setup.c
++++ b/arch/mips/txx9/generic/setup.c
+@@ -956,6 +956,7 @@ void __init txx9_sramc_init(struct resource *r)
+ 	if (!dev->base)
+ 		goto exit;
+ 	dev->dev.cls = &txx9_sramc_sysdev_class;
++	sysfs_bin_attr_init(&dev->bindata_attr);
+ 	dev->bindata_attr.attr.name = "bindata";
+ 	dev->bindata_attr.attr.mode = S_IRUSR | S_IWUSR;
+ 	dev->bindata_attr.read = txx9_sram_read;
+-- 
+1.7.0
 
-Steffen
