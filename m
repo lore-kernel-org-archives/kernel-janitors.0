@@ -1,52 +1,40 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 28 Mar 2010 16:00:25 +0000
-Subject: [PATCH] fs/btrfs: Correct use after free
-Message-Id: <Pine.LNX.4.64.1003281800020.29824@ask.diku.dk>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Fri, 12 Mar 2010 07:03:51 +0000
+Subject: [PATCH 3/3] drivers/rtc: init dynamic bin_attribute structures
+Message-Id: <1268377431-11671-4-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Wolfram Sang <w.sang@pengutronix.de>, Paul Gortmaker <p_gortmaker@yahoo.com>, Alessandro Zummo <a.zummo@towertech.it>, "Eric W. Biederman" <ebiederm@xmission.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Commit 6992f5334995af474c2b58d010d08bc597f0f2fe introduced this requirement.
+Found with coccinelle, but fixed manually. Compile tested on X86 where
+possible.
 
-If the kfree is executed, the dereference of range afterwards will
-represent a use after free.  Added goto out, as done in the other nearby
-error handling code.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x,e;
-identifier f;
-iterator I;
-statement S;
-@@
-
-*kfree(x);
-... when != &x
-    when != x = e
-    when != I(x,...) S
-*x->f
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Paul Gortmaker <p_gortmaker@yahoo.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
 ---
- fs/btrfs/ioctl.c                    |    1 +
+ drivers/rtc/rtc-ds1742.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 2845c6c..dacbb52 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1375,6 +1375,7 @@ static int btrfs_ioctl_defrag(struct file *file, void __user *argp)
- 					   sizeof(*range))) {
- 				ret = -EFAULT;
- 				kfree(range);
-+				goto out;
- 			}
- 			/* compression requires us to start the IO */
- 			if ((range->flags & BTRFS_DEFRAG_RANGE_COMPRESS)) {
+diff --git a/drivers/rtc/rtc-ds1742.c b/drivers/rtc/rtc-ds1742.c
+index a127336..cad9ceb 100644
+--- a/drivers/rtc/rtc-ds1742.c
++++ b/drivers/rtc/rtc-ds1742.c
+@@ -184,6 +184,7 @@ static int __devinit ds1742_rtc_probe(struct platform_device *pdev)
+ 	pdata->size_nvram = pdata->size - RTC_SIZE;
+ 	pdata->ioaddr_rtc = ioaddr + pdata->size_nvram;
+ 
++	sysfs_bin_attr_init(&pdata->nvram_attr);
+ 	pdata->nvram_attr.attr.name = "nvram";
+ 	pdata->nvram_attr.attr.mode = S_IRUGO | S_IWUSR;
+ 	pdata->nvram_attr.read = ds1742_nvram_read;
+-- 
+1.7.0
+
