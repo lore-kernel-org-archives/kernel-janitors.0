@@ -1,48 +1,34 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 22 Mar 2010 14:46:06 +0000
-Subject: Re: [patch] cx231xx: card->driver "Conexant cx231xx Audio" too long
-Message-Id: <s5hr5ncxvm9.wl%tiwai@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 13 Mar 2010 09:01:09 +0000
+Subject: [PATCH] drivers/net/tg3.c: change the field used with the
+Message-Id: <Pine.LNX.4.64.1003131000420.30245@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100319114957.GQ5331@bicker>
-In-Reply-To: <20100319114957.GQ5331@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Srinivasa Deevi <srinivasa.deevi@conexant.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matt Carlson <mcarlson@broadcom.com>, Michael Chan <mchan@broadcom.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Fri, 19 Mar 2010 14:49:57 +0300,
-Dan Carpenter wrote:
-> 
-> card->driver is 15 characters and a NULL, the original code could 
-> cause a buffer overflow.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-This should rather a string without spaces because this string is used
-as an identifier in alsa-lib.
-Better to use "Cx231xx" or "Cx231xx-Audio".
+The constant TG3_FLAG_10_100_ONLY should be used with the tg3_flags field,
+not the tg3_flags2 field, as done elsewhere in the same file.
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Takashi
+---
+ drivers/net/tg3.c                   |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> 
-> diff --git a/drivers/media/video/cx231xx/cx231xx-audio.c b/drivers/media/video/cx231xx/cx231xx-audio.c
-> index 7793d60..b3282ae 100644
-> --- a/drivers/media/video/cx231xx/cx231xx-audio.c
-> +++ b/drivers/media/video/cx231xx/cx231xx-audio.c
-> @@ -495,7 +495,7 @@ static int cx231xx_audio_init(struct cx231xx *dev)
->  	pcm->info_flags = 0;
->  	pcm->private_data = dev;
->  	strcpy(pcm->name, "Conexant cx231xx Capture");
-> -	strcpy(card->driver, "Conexant cx231xx Audio");
-> +	strcpy(card->driver, "Cx231xx Audio");
->  	strcpy(card->shortname, "Cx231xx Audio");
->  	strcpy(card->longname, "Conexant cx231xx Audio");
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
+index 0fa7688..fa8fb1a 100644
+--- a/drivers/net/tg3.c
++++ b/drivers/net/tg3.c
+@@ -9776,7 +9776,7 @@ static int tg3_set_settings(struct net_device *dev, struct ethtool_cmd *cmd)
+ 			   ADVERTISED_Pause |
+ 			   ADVERTISED_Asym_Pause;
+ 
+-		if (!(tp->tg3_flags2 & TG3_FLAG_10_100_ONLY))
++		if (!(tp->tg3_flags & TG3_FLAG_10_100_ONLY))
+ 			mask |= ADVERTISED_1000baseT_Half |
+ 				ADVERTISED_1000baseT_Full;
+ 
