@@ -1,34 +1,24 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 13 Mar 2010 09:01:09 +0000
-Subject: [PATCH] drivers/net/tg3.c: change the field used with the
-Message-Id: <Pine.LNX.4.64.1003131000420.30245@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 13 Mar 2010 20:22:26 +0000
+Subject: Re: [PATCH] drivers/net/tg3.c: change the field used with the
+Message-Id: <20100313.122226.91435148.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1003131000420.30245@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1003131000420.30245@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Carlson <mcarlson@broadcom.com>, Michael Chan <mchan@broadcom.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: mcarlson@broadcom.com, mchan@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Sat, 13 Mar 2010 10:01:09 +0100 (CET)
 
-The constant TG3_FLAG_10_100_ONLY should be used with the tg3_flags field,
-not the tg3_flags2 field, as done elsewhere in the same file.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The constant TG3_FLAG_10_100_ONLY should be used with the tg3_flags field,
+> not the tg3_flags2 field, as done elsewhere in the same file.
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/tg3.c                   |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
-index 0fa7688..fa8fb1a 100644
---- a/drivers/net/tg3.c
-+++ b/drivers/net/tg3.c
-@@ -9776,7 +9776,7 @@ static int tg3_set_settings(struct net_device *dev, struct ethtool_cmd *cmd)
- 			   ADVERTISED_Pause |
- 			   ADVERTISED_Asym_Pause;
- 
--		if (!(tp->tg3_flags2 & TG3_FLAG_10_100_ONLY))
-+		if (!(tp->tg3_flags & TG3_FLAG_10_100_ONLY))
- 			mask |= ADVERTISED_1000baseT_Half |
- 				ADVERTISED_1000baseT_Full;
- 
+Applied, thanks a lot Julia.
