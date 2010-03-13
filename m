@@ -1,46 +1,33 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:44:37 +0000
-Subject: Re: [PATCH 14/24] misc: fix dangling pointers
-Message-Id: <20100330124437.GK29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="5mZBmBd1ZkdwT1ny"
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 13 Mar 2010 14:56:21 +0000
+Subject: [patch] memcontrol: fix potential null deref
+Message-Id: <20100313145621.GA3569@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-15-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1269094385-16114-15-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kamezawa.hiroyu@jp.fujitsu.com
+Cc: Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>, Andrew Morton <akpm@linux-foundation.org>, "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>
 
+There was a potential null deref introduced in:
+c62b1a3b31b5 memcg: use generic percpu instead of private implementation
 
---5mZBmBd1ZkdwT1ny
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-On Sat, Mar 20, 2010 at 03:12:55PM +0100, Wolfram Sang wrote:
-> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-> structure it points to. Also fix drivers which do this _after_ the struct=
-ure
-> was freed already.
->=20
-> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-
-Uhm, Greg should know by now to drop these patches? ;)
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---5mZBmBd1ZkdwT1ny
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux8jUACgkQD27XaX1/VRvw3ACeJdUw4g3j9ryrCfKfhasJts46
-vCkAn2uE6RskzqmIesUePl8HeOwGwQVs
-=bD9C
------END PGP SIGNATURE-----
-
---5mZBmBd1ZkdwT1ny--
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 7973b52..e1e0996 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3691,8 +3691,10 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ 	else
+ 		mem = vmalloc(size);
+ 
+-	if (mem)
+-		memset(mem, 0, size);
++	if (!mem)
++		return NULL;
++
++	memset(mem, 0, size);
+ 	mem->stat = alloc_percpu(struct mem_cgroup_stat_cpu);
+ 	if (!mem->stat) {
+ 		if (size < PAGE_SIZE)
