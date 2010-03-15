@@ -1,46 +1,75 @@
-From: Andy Walls <awalls@radix.net>
-Date: Thu, 18 Mar 2010 11:37:22 +0000
-Subject: Re: [patch] ivtv: sizeof() => ARRAY_SIZE()
-Message-Id: <1268912242.3084.7.camel@palomino.walls.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 15 Mar 2010 08:26:56 +0000
+Subject: [patch] dpt_i20: several use after free issues
+Message-Id: <20100315082656.GJ18181@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100317151156.GG5331@bicker>
-In-Reply-To: <20100317151156.GG5331@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Yang Hongyang <yanghy@cn.fujitsu.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, Alan Cox <alan@linux.intel.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2010-03-17 at 18:11 +0300, Dan Carpenter wrote:
-> This fixes a smatch warning:
-> drivers/media/video/ivtv/ivtv-vbi.c +138 ivtv_write_vbi(43) 
-> 	error: buffer overflow 'vi->cc_payload' 256 <= 1023
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+adpt_i2o_delete_hba() calls kfree() so we have to save "pHba->next"
+before calling it.  Also inside adpt_i2o_delete_hba() itself, there
+was another use after free bug which I fixed by moving the kfree() 
+down a line.
 
-Looks good.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Reviewed-by: Andy Walls <awalls@radix.net>
-
-And, if needed
-
-Signed-off-by: Andy Walls <awalls@radix.net>
-
-Regards,
-Andy
-
-> diff --git a/drivers/media/video/ivtv/ivtv-vbi.c b/drivers/media/video/ivtv/ivtv-vbi.c
-> index f420d31..d73af45 100644
-> --- a/drivers/media/video/ivtv/ivtv-vbi.c
-> +++ b/drivers/media/video/ivtv/ivtv-vbi.c
-> @@ -134,7 +134,7 @@ void ivtv_write_vbi(struct ivtv *itv, const struct v4l2_sliced_vbi_data *sliced,
->  			}
->  		}
->  	}
-> -	if (found_cc && vi->cc_payload_idx < sizeof(vi->cc_payload)) {
-> +	if (found_cc && vi->cc_payload_idx < ARRAY_SIZE(vi->cc_payload)) {
->  		vi->cc_payload[vi->cc_payload_idx++] = cc;
->  		set_bit(IVTV_F_I_UPDATE_CC, &itv->i_flags);
->  	}
-> 
-
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index 4967643..0435d04 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -188,7 +188,8 @@ MODULE_DEVICE_TABLE(pci,dptids);
+ static int adpt_detect(struct scsi_host_template* sht)
+ {
+ 	struct pci_dev *pDev = NULL;
+-	adpt_hba* pHba;
++	adpt_hba *pHba;
++	adpt_hba *next;
+ 
+ 	PINFO("Detecting Adaptec I2O RAID controllers...\n");
+ 
+@@ -206,7 +207,8 @@ static int adpt_detect(struct scsi_host_template* sht)
+ 	}
+ 
+ 	/* In INIT state, Activate IOPs */
+-	for (pHba = hba_chain; pHba; pHba = pHba->next) {
++	for (pHba = hba_chain; pHba; pHba = next) {
++		next = pHba->next;
+ 		// Activate does get status , init outbound, and get hrt
+ 		if (adpt_i2o_activate_hba(pHba) < 0) {
+ 			adpt_i2o_delete_hba(pHba);
+@@ -243,7 +245,8 @@ rebuild_sys_tab:
+ 	PDEBUG("HBA's in OPERATIONAL state\n");
+ 
+ 	printk("dpti: If you have a lot of devices this could take a few minutes.\n");
+-	for (pHba = hba_chain; pHba; pHba = pHba->next) {
++	for (pHba = hba_chain; pHba; pHba = next) {
++		next = pHba->next;
+ 		printk(KERN_INFO"%s: Reading the hardware resource table.\n", pHba->name);
+ 		if (adpt_i2o_lct_get(pHba) < 0){
+ 			adpt_i2o_delete_hba(pHba);
+@@ -263,7 +266,8 @@ rebuild_sys_tab:
+ 		adpt_sysfs_class = NULL;
+ 	}
+ 
+-	for (pHba = hba_chain; pHba; pHba = pHba->next) {
++	for (pHba = hba_chain; pHba; pHba = next) {
++		next = pHba->next;
+ 		if (adpt_scsi_host_alloc(pHba, sht) < 0){
+ 			adpt_i2o_delete_hba(pHba);
+ 			continue;
+@@ -1229,11 +1233,10 @@ static void adpt_i2o_delete_hba(adpt_hba* pHba)
+ 		}
+ 	}
+ 	pci_dev_put(pHba->pDev);
+-	kfree(pHba);
+-
+ 	if (adpt_sysfs_class)
+ 		device_destroy(adpt_sysfs_class,
+ 				MKDEV(DPTI_I2O_MAJOR, pHba->unit));
++	kfree(pHba);
+ 
+ 	if(hba_count <= 0){
+ 		unregister_chrdev(DPTI_I2O_MAJOR, DPT_DRIVER);   
