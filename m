@@ -1,75 +1,57 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 15 Mar 2010 10:00:11 +0000
-Subject: Re: [PATCH] init dynamic bin_attribute structures
-Message-Id: <alpine.LRH.2.00.1003151055060.26353@twin.jikos.cz>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Mon, 15 Mar 2010 10:12:32 +0000
+Subject: Re: [rtc-linux] Re: [PATCH] init dynamic bin_attribute structures
+Message-Id: <20100315101232.GB20604@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="neYutvxvOLaeuPCA"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.2.00.1003141054050.3719@i5.linux-foundation.org> <1268612981-9009-1-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1268612981-9009-1-git-send-email-w.sang@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <w.sang@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, kernel-janitors@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, Ralf Baechle <ralf@linux-mips.org>, Paul Gortmaker <p_gortmaker@yahoo.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-mips@linux-mips.org, rtc-linux@googlegroups.com
+References: <alpine.LFD.2.00.1003141054050.3719@i5.linux-foundation.org> <1268612981-9009-1-git-send-email-w.sang@pengutronix.de> <alpine.LRH.2.00.1003151055060.26353@twin.jikos.cz>
+In-Reply-To: <alpine.LRH.2.00.1003151055060.26353@twin.jikos.cz>
+To: rtc-linux@googlegroups.com
+Cc: linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, kernel-janitors@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, Ralf Baechle <ralf@linux-mips.org>, Paul Gortmaker <p_gortmaker@yahoo.com>, Alessandro Zummo <a.zummo@towertech.it>, linux-mips@linux-mips.org, Jiri Kosina <jkosina@suse.cz>
 
-On Mon, 15 Mar 2010, Wolfram Sang wrote:
 
-> Commit 6992f5334995af474c2b58d010d08bc597f0f2fe introduced this requirement.
-> First, at25 was fixed manually. Then, other occurences were found with
-> coccinelle and the following semantic patch. Results were reviewed and fixed
-> up:
-> 
-> @ init @
-> identifier struct_name, bin;
-> @@
-> 
-> 	struct struct_name {
-> 		...
-> 		struct bin_attribute bin;
-> 		...
-> 	};
-> 
-> @ main extends init @
-> expression E;
-> statement S;
-> identifier name, err;
-> @@
-> 
-> (
-> 	struct struct_name *name;
-> |
-> -	struct struct_name *name = NULL;
-> +	struct struct_name *name;
-> )
-> 	...
-> (
-> 	sysfs_bin_attr_init(&name->bin);
-> |
-> +	sysfs_bin_attr_init(&name->bin);
-> 	if (sysfs_create_bin_file(E, &name->bin))
-> 		S
-> |
-> +	sysfs_bin_attr_init(&name->bin);
-> 	err = sysfs_create_bin_file(E, &name->bin);
-> )
-> 
-> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> ---
->  arch/mips/txx9/generic/setup.c |    1 +
->  drivers/misc/eeprom/at25.c     |    1 +
->  drivers/rtc/rtc-ds1742.c       |    1 +
->  3 files changed, 3 insertions(+), 0 deletions(-)
+--neYutvxvOLaeuPCA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I don't understand how cocinelle works, but the resulting patch seems to 
-be incomplete.
 
-The fix is needed at least in firmware loader (for which Greg has already 
-queued patch), in ACPI thermal driver [1], etc).
+> I don't understand how cocinelle works, but the resulting patch seems to=
+=20
+> be incomplete.
 
-[1] http://lkml.indiana.edu/hypermail/linux/kernel/1003.1/02680.html
+Okay, will investigate, thanks for the pointer.
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+> The fix is needed at least in firmware loader (for which Greg has already=
+=20
+> queued patch), in ACPI thermal driver [1], etc).
 
+Firmware loader should be handled differently, see other mails in the
+originating thread, so I skipped it intentionally. at24 also needed a fix, =
+but
+that one was just applied via the i2c-tree, so I skipped it, too. Will check
+the ACPI-case!
+
+Regards,
+
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--neYutvxvOLaeuPCA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkueCBAACgkQD27XaX1/VRswuQCdFiF8i3Vjj2s0QPm1v4UCjE2R
+pJYAoI5n8xxHNNFVFuS3KCJDpN1uBst/
+=9hnN
+-----END PGP SIGNATURE-----
+
+--neYutvxvOLaeuPCA--
