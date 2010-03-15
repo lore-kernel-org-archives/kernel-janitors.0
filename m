@@ -1,48 +1,28 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 03 Mar 2010 21:51:22 +0000
-Subject: Re: [patch] riptide: clean up while loop
-Message-Id: <s5hsk8hm5ut.wl%tiwai@suse.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 15 Mar 2010 08:21:48 +0000
+Subject: [patch] sched: remove some dead code
+Message-Id: <20100315082148.GD18181@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100303071349.GG5086@bicker>
-In-Reply-To: <20100303071349.GG5086@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dhaval Giani <dhaval.giani@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Kay Sievers <kay.sievers@vrfy.org>, Ingo Molnar <mingo@elte.hu>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Wed, 3 Mar 2010 10:13:49 +0300,
-Dan Carpenter wrote:
-> 
-> If getpaths() returned an odd number this would be a buffer under-run and an 
-> endless loop.  It turns out that getpaths() can only return even numbers, but 
-> let's make it easy for people auditing code.  With the new code you don't 
-> need to look at getpaths().
-> 
-> This silences a smatch warning.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+This was left over from "7c9414385e sched: Remove USER_SCHED"
 
-Applied now.  Thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
-Takashi
-
-> diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
-> index e66ef2b..a5924af 100644
-> --- a/sound/pci/riptide/riptide.c
-> +++ b/sound/pci/riptide/riptide.c
-> @@ -1974,9 +1974,9 @@ snd_riptide_proc_read(struct snd_info_entry *entry,
->  	}
->  	snd_iprintf(buffer, "Paths:\n");
->  	i = getpaths(cif, p);
-> -	while (i--) {
-> -		snd_iprintf(buffer, "%x->%x ", p[i - 1], p[i]);
-> -		i--;
-> +	while (i >= 2) {
-> +		i -= 2;
-> +		snd_iprintf(buffer, "%x->%x ", p[i], p[i + 1]);
->  	}
->  	snd_iprintf(buffer, "\n");
->  }
-> 
+diff --git a/kernel/user.c b/kernel/user.c
+index 766467b..ec3b222 100644
+--- a/kernel/user.c
++++ b/kernel/user.c
+@@ -178,8 +178,6 @@ struct user_struct *alloc_uid(struct user_namespace *ns, uid_t uid)
+ 
+ 	return up;
+ 
+-	put_user_ns(new->user_ns);
+-	kmem_cache_free(uid_cachep, new);
+ out_unlock:
+ 	return NULL;
+ }
