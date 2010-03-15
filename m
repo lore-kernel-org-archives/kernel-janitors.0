@@ -1,22 +1,28 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 23 Mar 2010 06:24:03 +0000
-Subject: Re: [PATCH] drivers/media/video: avoid NULL dereference
-Message-Id: <Pine.LNX.4.64.1003230723150.8768@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 15 Mar 2010 08:25:10 +0000
+Subject: [patch] pcmcia: add important if statement
+Message-Id: <20100315082510.GH18181@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1003212230380.12371@ask.diku.dk>
- <20100322231441.b7e33bf9.akpm@linux-foundation.org>
-In-Reply-To: <20100322231441.b7e33bf9.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark McClelland <mmcclell@bigfoot.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Karsten Keil <keil@b1-systems.de>, Magnus Damm <damm@opensource.se>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>
 
-> I think we can pretty safely assume that we never get here with ov=NULL.
-> 
-> Oh well, I'll leave the test there for others to ponder.
+There was a problem introduced in Jul 2008 by:
+0e6f9d270840 pcmcia: use pcmcia_loop_config in scsi pcmcia drivers
 
-OK.  I didn't read far enough in this email and sent another patch, in 
-case it's useful.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-julia
+diff --git a/drivers/scsi/pcmcia/nsp_cs.c b/drivers/scsi/pcmcia/nsp_cs.c
+index c2341af..0212464 100644
+--- a/drivers/scsi/pcmcia/nsp_cs.c
++++ b/drivers/scsi/pcmcia/nsp_cs.c
+@@ -1717,6 +1717,7 @@ static int nsp_cs_config(struct pcmcia_device *link)
+ 	cfg_mem->data = data;
+ 
+ 	ret = pcmcia_loop_config(link, nsp_cs_config_check, cfg_mem);
++	if (ret)
+ 		goto cs_failed;
+ 
+ 	if (link->conf.Attributes & CONF_ENABLE_IRQ) {
