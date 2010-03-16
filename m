@@ -1,36 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 15 Mar 2010 22:47:14 +0000
-Subject: Re: [PATCH 2/5] drivers/net: drop redundant memset
-Message-Id: <20100315.154714.23695928.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 16 Mar 2010 10:03:49 +0000
+Subject: [patch] iio: test for failed allocation
+Message-Id: <20100316100349.GA4219@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1003092213500.4974@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1003092213500.4974@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: ram.vepa@neterion.com, santosh.rastapur@neterion.com, sivakumar.subramani@neterion.com, sreenivasa.honnur@neterion.com, anil.murthy@neterion.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Jonathan Cameron <jic23@cam.ac.uk>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 9 Mar 2010 22:14:11 +0100 (CET)
+We should return test to see if iio_allocate_trigger() fails and return -ENOMEM.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The region set by the call to memset is immediately overwritten by the
-> subsequent call to memcpy.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e1,e2,e3,e4;
-> @@
-> 
-> - memset(e1,e2,e3);
->   memcpy(e1,e4,e3);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks!
+diff --git a/drivers/staging/iio/accel/lis3l02dq_ring.c b/drivers/staging/iio/accel/lis3l02dq_ring.c
+index a6b7c72..db3270f 100644
+--- a/drivers/staging/iio/accel/lis3l02dq_ring.c
++++ b/drivers/staging/iio/accel/lis3l02dq_ring.c
+@@ -492,6 +492,9 @@ int lis3l02dq_probe_trigger(struct iio_dev *indio_dev)
+ 	struct lis3l02dq_state *state = indio_dev->dev_data;
+ 
+ 	state->trig = iio_allocate_trigger();
++	if (!state->trig)
++		return -ENOMEM;
++
+ 	state->trig->name = kmalloc(IIO_TRIGGER_NAME_LENGTH, GFP_KERNEL);
+ 	if (!state->trig->name) {
+ 		ret = -ENOMEM;
