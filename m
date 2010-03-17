@@ -1,22 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 23 Mar 2010 01:33:39 +0000
-Subject: Re: [patch] korina: use resource_size()
-Message-Id: <20100322.183339.228963639.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 17 Mar 2010 15:11:56 +0000
+Subject: [patch] ivtv: sizeof() => ARRAY_SIZE()
+Message-Id: <20100317151156.GG5331@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100322121145.GK21571@bicker>
-In-Reply-To: <20100322121145.GK21571@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, n0-1@freewrt.org, jpirko@redhat.com, shemminger@vyatta.com, joe@perches.com
+To: Andy Walls <awalls@radix.net>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 22 Mar 2010 15:11:45 +0300
+This fixes a smatch warning:
+drivers/media/video/ivtv/ivtv-vbi.c +138 ivtv_write_vbi(43) 
+	error: buffer overflow 'vi->cc_payload' 256 <= 1023
 
-> This size calculation is wrong.  It should be end - start + 1.
-> Use resource_size() to calculate it correctly.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/drivers/media/video/ivtv/ivtv-vbi.c b/drivers/media/video/ivtv/ivtv-vbi.c
+index f420d31..d73af45 100644
+--- a/drivers/media/video/ivtv/ivtv-vbi.c
++++ b/drivers/media/video/ivtv/ivtv-vbi.c
+@@ -134,7 +134,7 @@ void ivtv_write_vbi(struct ivtv *itv, const struct v4l2_sliced_vbi_data *sliced,
+ 			}
+ 		}
+ 	}
+-	if (found_cc && vi->cc_payload_idx < sizeof(vi->cc_payload)) {
++	if (found_cc && vi->cc_payload_idx < ARRAY_SIZE(vi->cc_payload)) {
+ 		vi->cc_payload[vi->cc_payload_idx++] = cc;
+ 		set_bit(IVTV_F_I_UPDATE_CC, &itv->i_flags);
+ 	}
