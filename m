@@ -1,26 +1,34 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 09 Mar 2010 00:54:50 +0000
-Subject: Re: [patch] bluetooth: storing negative values as unsigned char
-Message-Id: <1268096091.3712.30.camel@localhost.localdomain>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 19 Mar 2010 11:48:06 +0000
+Subject: [patch] acpi_pad: "processor_aggregator" name too long
+Message-Id: <20100319114806.GN5331@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100308121559.GG6469@bicker>
-In-Reply-To: <20100308121559.GG6469@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Bing Zhao <bzhao@marvell.com>, Rahul Tank <rahult@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Shaohua Li <shaohua.li@intel.com>
+Cc: Len Brown <lenb@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Chen Gong <gong.chen@linux.intel.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+cpi_device_class can only be 19 characters and a NULL terminator.
 
-> This is mostly cleanup.  There is only one caller and it just checks for 
-> non-zero return values.  Still "ret" should be int because we want to return 
-> -EINVAL on errors.
+With the current name we get a buffer overflow in acpi_pad_add()
+        strcpy(acpi_device_class(device), ACPI_PROCESSOR_AGGREGATOR_CLASS);
 
-patch has been applied. Thanks.
-
-Regards
-
-Marcel
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Feel free to pick your own name if you don't like mine.  :)
 
 
+diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
+index 7e52295..2db89d9 100644
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -30,7 +30,7 @@
+ #include <acpi/acpi_bus.h>
+ #include <acpi/acpi_drivers.h>
+ 
+-#define ACPI_PROCESSOR_AGGREGATOR_CLASS	"processor_aggregator"
++#define ACPI_PROCESSOR_AGGREGATOR_CLASS	"proc_aggregator"
+ #define ACPI_PROCESSOR_AGGREGATOR_DEVICE_NAME "Processor Aggregator"
+ #define ACPI_PROCESSOR_AGGREGATOR_NOTIFY 0x80
+ static DEFINE_MUTEX(isolated_cpus_lock);
