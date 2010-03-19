@@ -1,24 +1,33 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Date: Mon, 22 Mar 2010 12:30:22 +0000
-Subject: Re: [patch] pxa168fb: use resource_size()
-Message-Id: <f17812d71003220530p7c45fbd4r6938433d379bc67@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 19 Mar 2010 11:49:20 +0000
+Subject: [patch] power_meter: acpi_device_class "power_meter_resource" too
+Message-Id: <20100319114920.GP5331@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100322121034.GI21571@bicker>
-In-Reply-To: <20100322121034.GI21571@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>, Jun Nie <njun@marvell.com>, Eric Miao <eric.y.miao@gmail.com>, Lennert Buytenhek <buytenh@marvell.com>, Krzysztof Helt <krzysztof.h1@wp.pl>, Kevin Liu <kliu5@marvell.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Len Brown <lenb@kernel.org>
+Cc: "Darrick J. Wong" <djwong@us.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, =?iso-8859-1?Q?M=E1rton_N=E9meth?= <nm127@freemail.hu>, Lin Ming <ming.m.lin@intel.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 22, 2010 at 8:10 PM, Dan Carpenter <error27@gmail.com> wrote:
-> The size calculation is not correct. =C2=A0It should be end - start + 1.
-> Use resource_size() to caculate it.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+acpi_device_class can only be 19 characters and a NULL terminator.
 
-Applied to 'fix'.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The current code has a buffer overflow in acpi_power_meter_add():
+       strcpy(acpi_device_class(device), ACPI_POWER_METER_CLASS);
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Feel free to change the name to anything you like.
+
+diff --git a/drivers/acpi/power_meter.c b/drivers/acpi/power_meter.c
+index 834c5af..31baa1e 100644
+--- a/drivers/acpi/power_meter.c
++++ b/drivers/acpi/power_meter.c
+@@ -34,7 +34,7 @@
+ #define ACPI_POWER_METER_NAME		"power_meter"
+ ACPI_MODULE_NAME(ACPI_POWER_METER_NAME);
+ #define ACPI_POWER_METER_DEVICE_NAME	"Power Meter"
+-#define ACPI_POWER_METER_CLASS		"power_meter_resource"
++#define ACPI_POWER_METER_CLASS		"pwr_meter_resource"
+ 
+ #define NUM_SENSORS			17
+ 
