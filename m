@@ -1,22 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 07 Mar 2010 23:28:10 +0000
-Subject: Re: [patch] sock.c: potential null dereference
-Message-Id: <20100307.152810.247228037.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 19 Mar 2010 11:49:57 +0000
+Subject: [patch] cx231xx: card->driver "Conexant cx231xx Audio" too long
+Message-Id: <20100319114957.GQ5331@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100306110445.GC4958@bicker>
-In-Reply-To: <20100306110445.GC4958@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, eric.dumazet@gmail.com, jengelh@medozas.de, mingo@elte.hu, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Srinivasa Deevi <srinivasa.deevi@conexant.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 6 Mar 2010 14:04:45 +0300
+card->driver is 15 characters and a NULL, the original code could 
+cause a buffer overflow.
 
-> We test that "prot->rsk_prot" is non-null right before we dereference it
-> on this line.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/drivers/media/video/cx231xx/cx231xx-audio.c b/drivers/media/video/cx231xx/cx231xx-audio.c
+index 7793d60..b3282ae 100644
+--- a/drivers/media/video/cx231xx/cx231xx-audio.c
++++ b/drivers/media/video/cx231xx/cx231xx-audio.c
+@@ -495,7 +495,7 @@ static int cx231xx_audio_init(struct cx231xx *dev)
+ 	pcm->info_flags = 0;
+ 	pcm->private_data = dev;
+ 	strcpy(pcm->name, "Conexant cx231xx Capture");
+-	strcpy(card->driver, "Conexant cx231xx Audio");
++	strcpy(card->driver, "Cx231xx Audio");
+ 	strcpy(card->shortname, "Cx231xx Audio");
+ 	strcpy(card->longname, "Conexant cx231xx Audio");
+ 
