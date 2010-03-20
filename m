@@ -1,56 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Mar 2010 21:15:19 +0000
-Subject: [PATCH 2/6] drivers/mtd: Use kasprintf
-Message-Id: <Pine.LNX.4.64.1003102215020.1672@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 20 Mar 2010 11:37:31 +0000
+Subject: [patch 2/3] btrfs cleanup: remove more dead code
+Message-Id: <20100320113730.GZ5331@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joern Engel <joern@lazybastard.org>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@oracle.com>
+Cc: Dan Carpenter <error27@gmail.com>, Christoph Hellwig <hch@lst.de>, Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+rb_node cannot be an ERR_PTR() here so I removed the misleading check.
+Also I removed some more dead code at the bottom.
 
-kasprintf combines kmalloc and sprintf, and takes care of the size
-calculation itself.
+It looks like the code from lookup_extent_mapping() may have been 
+copy and pasted into search_extent_mapping()?
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression a,flag;
-expression list args;
-statement S;
-@@
-
-  a -  \(kmalloc\|kzalloc\)(...,flag)
-+  kasprintf(flag,args)
-  <... when != a
-  if (a = NULL || ...) S
-  ...>
-- sprintf(a,args);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/mtd/devices/block2mtd.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This doesn't change anything.  Could you put it into linux-next?
 
-diff -u -p a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
---- a/drivers/mtd/devices/block2mtd.c
-+++ b/drivers/mtd/devices/block2mtd.c
-@@ -275,12 +275,10 @@ static struct block2mtd_dev *add_device(
- 
- 	/* Setup the MTD structure */
- 	/* make the name contain the block device in */
--	name = kmalloc(sizeof("block2mtd: ") + strlen(devname) + 1,
--			GFP_KERNEL);
-+	name = kasprintf(GFP_KERNEL, "block2mtd: %s", devname);
- 	if (!name)
- 		goto devinit_err;
- 
--	sprintf(name, "block2mtd: %s", devname);
- 	dev->mtd.name = name;
- 
- 	dev->mtd.size = dev->blkdev->bd_inode->i_size & PAGE_MASK;
+diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+index 94668b1..010f299 100644
+--- a/fs/btrfs/extent_map.c
++++ b/fs/btrfs/extent_map.c
+@@ -380,16 +380,7 @@ struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
+ 		em = NULL;
+ 		goto out;
+ 	}
+-	if (IS_ERR(rb_node)) {
+-		em = ERR_PTR(PTR_ERR(rb_node));
+-		goto out;
+-	}
+ 	em = rb_entry(rb_node, struct extent_map, rb_node);
+-	goto found;
+-
+-	em = NULL;
+-	goto out;
+-
+ found:
+ 	atomic_inc(&em->refs);
+ out:
