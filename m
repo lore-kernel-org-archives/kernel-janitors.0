@@ -1,56 +1,181 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 25 Mar 2010 10:58:22 +0000
-Subject: Re: [rfc patch] wm8994: range checking issue
-Message-Id: <20100325105822.GE5069@bicker>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sat, 20 Mar 2010 14:12:59 +0000
+Subject: [PATCH 18/24] rtc: fix dangling pointers
+Message-Id: <1269094385-16114-19-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100324120107.GH21571@bicker> <20100324125946.GA26453@rakim.wolfsonmicro.main> <20100324140621.GI21571@bicker> <20100324143139.GE26453@rakim.wolfsonmicro.main>
-In-Reply-To: <20100324143139.GE26453@rakim.wolfsonmicro.main>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Joonyoung Shim <jy0922.shim@samsung.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Paul Gortmaker <p_gortmaker@yahoo.com>, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com
 
-On Wed, Mar 24, 2010 at 02:31:39PM +0000, Mark Brown wrote:
-> On Wed, Mar 24, 2010 at 05:06:21PM +0300, Dan Carpenter wrote:
-> > On Wed, Mar 24, 2010 at 12:59:46PM +0000, Mark Brown wrote:
-> 
-> > > This is caused by confusion with the MAX_CACHED_REGISTER definition in
-> > > the header.  Best to use that one consistently, I guess - I've got a
-> > > sneaking suspicion something has gone AWOL in the driver publication
-> > > process.
-> 
-> > Hm...  That sounds more involved than I anticipated.  I don't have the
-> > hardware and don't feel comfortable making complicated changes if I
-> > can't test them.
-> 
-> Not really, it's just a case of picking the value to standardise on for
-> the size of the array instead of the one you picked.  However, now I
-> look at it again REG_CACHE_SIZE is the one we want and _MAX_CACHED_REGISTER 
-> is bitrot which should be removed.
-> 
-> I didn't look as closely as I might due to the extraneous changes for
-> BUG_ON() I mentioned which meant the patch wouldn't be applied anyway.
-> Those shouldn't be changed because there's no way anything in the kernel
-> should be generating a reference to a register which doesn't physically
-> exist (which is what they check for).
-> 
-> > Can someone else take care of this.
-> 
-> Actually, now I look even more closely there's further issues with the
-> patch - you're missing the fact that the register cache is only used for
-> non-volatile registers but all registers beyond the end of the register
-> cache are treated as volatile.  This means that I'm not convinced there
-> are any actual problems here, I'm not sure what analysis smatch is doing
-> but it looks to have generated false positives here.
-> 
+Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+structure it points to. Also fix drivers which do this _after_ the structure
+was freed already.
 
-Yup.  You are right, this is a false positive.  I'm very sorry about that, 
-I misread the code as well.
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Paul Gortmaker <p_gortmaker@yahoo.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+---
 
-The problem is that Smatch doesn't do cross function analysis yet.  :/
+Found using coccinelle, then reviewed. Full patchset is available via
+kernel-janitors, linux-i2c, and LKML.
+---
+ drivers/rtc/rtc-ds1307.c  |    2 ++
+ drivers/rtc/rtc-fm3130.c  |    2 ++
+ drivers/rtc/rtc-m41t80.c  |    2 ++
+ drivers/rtc/rtc-pcf8563.c |    2 ++
+ drivers/rtc/rtc-pcf8583.c |    2 ++
+ drivers/rtc/rtc-rs5c372.c |    2 ++
+ drivers/rtc/rtc-s35390a.c |    4 ++--
+ 7 files changed, 14 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index c4ec5c1..eee887c 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -900,6 +900,7 @@ read_rtc:
+ exit_irq:
+ 	rtc_device_unregister(ds1307->rtc);
+ exit_free:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(ds1307);
+ 	return err;
+ }
+@@ -917,6 +918,7 @@ static int __devexit ds1307_remove(struct i2c_client *client)
+ 		sysfs_remove_bin_file(&client->dev.kobj, &nvram);
+ 
+ 	rtc_device_unregister(ds1307->rtc);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(ds1307);
+ 	return 0;
+ }
+diff --git a/drivers/rtc/rtc-fm3130.c b/drivers/rtc/rtc-fm3130.c
+index 812c667..6c4e90f 100644
+--- a/drivers/rtc/rtc-fm3130.c
++++ b/drivers/rtc/rtc-fm3130.c
+@@ -462,6 +462,7 @@ exit_bad:
+ 	}
+ 	return 0;
+ exit_free:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(fm3130);
+ 	return err;
+ }
+@@ -471,6 +472,7 @@ static int __devexit fm3130_remove(struct i2c_client *client)
+ 	struct fm3130 *fm3130 = i2c_get_clientdata(client);
+ 
+ 	rtc_device_unregister(fm3130->rtc);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(fm3130);
+ 	return 0;
+ }
+diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
+index 60fe266..2fd8d7c 100644
+--- a/drivers/rtc/rtc-m41t80.c
++++ b/drivers/rtc/rtc-m41t80.c
+@@ -863,6 +863,7 @@ ht_err:
+ exit:
+ 	if (rtc)
+ 		rtc_device_unregister(rtc);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(clientdata);
+ 	return rc;
+ }
+@@ -880,6 +881,7 @@ static int m41t80_remove(struct i2c_client *client)
+ #endif
+ 	if (rtc)
+ 		rtc_device_unregister(rtc);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(clientdata);
+ 
+ 	return 0;
+diff --git a/drivers/rtc/rtc-pcf8563.c b/drivers/rtc/rtc-pcf8563.c
+index 65f346b..4be76a4 100644
+--- a/drivers/rtc/rtc-pcf8563.c
++++ b/drivers/rtc/rtc-pcf8563.c
+@@ -225,6 +225,7 @@ static int pcf8563_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ exit_kfree:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(pcf8563);
+ 
+ 	return err;
+@@ -237,6 +238,7 @@ static int pcf8563_remove(struct i2c_client *client)
+ 	if (pcf8563->rtc)
+ 		rtc_device_unregister(pcf8563->rtc);
+ 
++	i2c_set_clientdata(client, NULL);
+ 	kfree(pcf8563);
+ 
+ 	return 0;
+diff --git a/drivers/rtc/rtc-pcf8583.c b/drivers/rtc/rtc-pcf8583.c
+index 2d201af..e122d9f 100644
+--- a/drivers/rtc/rtc-pcf8583.c
++++ b/drivers/rtc/rtc-pcf8583.c
+@@ -290,6 +290,7 @@ static int pcf8583_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ exit_kfree:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(pcf8583);
+ 	return err;
+ }
+@@ -300,6 +301,7 @@ static int __devexit pcf8583_remove(struct i2c_client *client)
+ 
+ 	if (pcf8583->rtc)
+ 		rtc_device_unregister(pcf8583->rtc);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(pcf8583);
+ 	return 0;
+ }
+diff --git a/drivers/rtc/rtc-rs5c372.c b/drivers/rtc/rtc-rs5c372.c
+index 2f2c68d..75e0423 100644
+--- a/drivers/rtc/rtc-rs5c372.c
++++ b/drivers/rtc/rtc-rs5c372.c
+@@ -694,6 +694,7 @@ exit_devreg:
+ 	rtc_device_unregister(rs5c372->rtc);
+ 
+ exit_kfree:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(rs5c372);
+ 
+ exit:
+@@ -706,6 +707,7 @@ static int rs5c372_remove(struct i2c_client *client)
+ 
+ 	rtc_device_unregister(rs5c372->rtc);
+ 	rs5c_sysfs_unregister(&client->dev);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(rs5c372);
+ 	return 0;
+ }
+diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
+index def4d39..da39041 100644
+--- a/drivers/rtc/rtc-s35390a.c
++++ b/drivers/rtc/rtc-s35390a.c
+@@ -274,8 +274,8 @@ exit_dummy:
+ 	for (i = 1; i < 8; ++i)
+ 		if (s35390a->client[i])
+ 			i2c_unregister_device(s35390a->client[i]);
+-	kfree(s35390a);
+ 	i2c_set_clientdata(client, NULL);
++	kfree(s35390a);
+ 
+ exit:
+ 	return err;
+@@ -291,8 +291,8 @@ static int s35390a_remove(struct i2c_client *client)
+ 			i2c_unregister_device(s35390a->client[i]);
+ 
+ 	rtc_device_unregister(s35390a->rtc);
+-	kfree(s35390a);
+ 	i2c_set_clientdata(client, NULL);
++	kfree(s35390a);
+ 
+ 	return 0;
+ }
+-- 
+1.7.0
 
-> I'll send a patch for _MAX_CACHED_REGISTER later today.
