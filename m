@@ -1,40 +1,27 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Fri, 12 Mar 2010 07:03:51 +0000
-Subject: [PATCH 3/3] drivers/rtc: init dynamic bin_attribute structures
-Message-Id: <1268377431-11671-4-git-send-email-w.sang@pengutronix.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 20 Mar 2010 11:24:48 +0000
+Subject: [patch 3/3] btrfs: dereferencing freed memory
+Message-Id: <20100320112448.GX5331@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Wolfram Sang <w.sang@pengutronix.de>, Paul Gortmaker <p_gortmaker@yahoo.com>, Alessandro Zummo <a.zummo@towertech.it>, "Eric W. Biederman" <ebiederm@xmission.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+To: Chris Mason <chris.mason@oracle.com>
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Sage Weil <sage@newdream.net>, Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Commit 6992f5334995af474c2b58d010d08bc597f0f2fe introduced this requirement.
-Found with coccinelle, but fixed manually. Compile tested on X86 where
-possible.
+The original code dereferenced range on the next line.
 
-Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-Cc: Paul Gortmaker <p_gortmaker@yahoo.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
----
- drivers/rtc/rtc-ds1742.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/rtc/rtc-ds1742.c b/drivers/rtc/rtc-ds1742.c
-index a127336..cad9ceb 100644
---- a/drivers/rtc/rtc-ds1742.c
-+++ b/drivers/rtc/rtc-ds1742.c
-@@ -184,6 +184,7 @@ static int __devinit ds1742_rtc_probe(struct platform_device *pdev)
- 	pdata->size_nvram = pdata->size - RTC_SIZE;
- 	pdata->ioaddr_rtc = ioaddr + pdata->size_nvram;
- 
-+	sysfs_bin_attr_init(&pdata->nvram_attr);
- 	pdata->nvram_attr.attr.name = "nvram";
- 	pdata->nvram_attr.attr.mode = S_IRUGO | S_IWUSR;
- 	pdata->nvram_attr.read = ds1742_nvram_read;
--- 
-1.7.0
-
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index be9b5df..d7ab56c 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -1378,6 +1378,7 @@ static int btrfs_ioctl_defrag(struct file *file, void __user *argp)
+ 					   sizeof(*range))) {
+ 				ret = -EFAULT;
+ 				kfree(range);
++				goto out;
+ 			}
+ 			/* compression requires us to start the IO */
+ 			if ((range->flags & BTRFS_DEFRAG_RANGE_COMPRESS)) {
