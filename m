@@ -1,15 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 30 Mar 2010 05:33:50 +0000
-Subject: Re: [PATCH] drivers/serial/sunsu.c: Correct use after free
-Message-Id: <20100329.223350.155118810.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 20 Mar 2010 11:19:38 +0000
+Subject: [patch] afs: potential null dereference
+Message-Id: <20100320111938.GT5331@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1003291139250.21896@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1003291139250.21896@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+It seems clear from the surrounding code that xpermits is allowed to be 
+NULL here.
 
-Applied, thanks a lot for fixing this.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/fs/afs/security.c b/fs/afs/security.c
+index 3ef5043..bb4ed14 100644
+--- a/fs/afs/security.c
++++ b/fs/afs/security.c
+@@ -189,8 +189,9 @@ void afs_cache_permit(struct afs_vnode *vnode, struct key *key, long acl_order)
+ 	if (!permits)
+ 		goto out_unlock;
+ 
+-	memcpy(permits->permits, xpermits->permits,
+-	       count * sizeof(struct afs_permit));
++	if (xpermits)
++		memcpy(permits->permits, xpermits->permits,
++			count * sizeof(struct afs_permit));
+ 
+ 	_debug("key %x access %x",
+ 	       key_serial(key), vnode->status.caller_access);
