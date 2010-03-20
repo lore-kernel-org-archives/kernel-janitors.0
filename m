@@ -1,30 +1,66 @@
-From: David Howells <dhowells@redhat.com>
-Date: Sat, 27 Mar 2010 13:28:37 +0000
-Subject: Re: [PATCH 5/7] arch/powerpc/kernel: Use set_cpus_allowed_ptr
-Message-Id: <18215.1269696517@redhat.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sat, 20 Mar 2010 14:12:47 +0000
+Subject: [PATCH 06/24] input/keyboard: fix dangling pointers
+Message-Id: <1269094385-16114-7-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <18162.1269696414@redhat.com>
-	<Pine.LNX.4.64.1003262303080.6480@ask.diku.dk>
-In-Reply-To: <18162.1269696414@redhat.com>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: peterz@infradead.org, kernel-janitors@vger.kernel.org, oleg@redhat.com, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Paul Mackerras <paulus@samba.org>, mingo@elte.hu, tglx@linutronix.de
+To: kernel-janitors@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+structure it points to. Also fix drivers which do this _after_ the structure
+was freed already.
 
-> > The semantic patch that makes this change is as follows:
-> > (http://coccinelle.lip6.fr/)
-> 
-> That URL doesn't appear to work:
-> 
-> Not Found
-> The requested URL /) was not found on this server.
-> Additionally, a 404 Not Found error was encountered while trying to use an ErrorDocument to handle the request.
-> Apache/2.2.8 (Mandriva Linux/PREFORK-6mdv2008.1) Server at coccinelle.lip6.fr Port 80
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-Actually, it does.  It's just that my email client thought that the closing
-bracket after it was part of the URL:-/
+Found using coccinelle, then reviewed. Full patchset is available via
+kernel-janitors, linux-i2c, and LKML.
+---
+ drivers/input/keyboard/lm8323.c |    2 ++
+ drivers/input/keyboard/qt2160.c |    2 +-
+ 2 files changed, 3 insertions(+), 1 deletions(-)
 
-David
+diff --git a/drivers/input/keyboard/lm8323.c b/drivers/input/keyboard/lm8323.c
+index 574eda2..2b8bf05 100644
+--- a/drivers/input/keyboard/lm8323.c
++++ b/drivers/input/keyboard/lm8323.c
+@@ -768,6 +768,7 @@ fail2:
+ 			led_classdev_unregister(&lm->pwm[i].cdev);
+ fail1:
+ 	input_free_device(idev);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(lm);
+ 	return err;
+ }
+@@ -789,6 +790,7 @@ static int __devexit lm8323_remove(struct i2c_client *client)
+ 		if (lm->pwm[i].enabled)
+ 			led_classdev_unregister(&lm->pwm[i].cdev);
+ 
++	i2c_set_clientdata(client, NULL);
+ 	kfree(lm);
+ 
+ 	return 0;
+diff --git a/drivers/input/keyboard/qt2160.c b/drivers/input/keyboard/qt2160.c
+index 31f3008..43db5e9 100644
+--- a/drivers/input/keyboard/qt2160.c
++++ b/drivers/input/keyboard/qt2160.c
+@@ -356,9 +356,9 @@ static int __devexit qt2160_remove(struct i2c_client *client)
+ 	cancel_delayed_work_sync(&qt2160->dwork);
+ 
+ 	input_unregister_device(qt2160->input);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(qt2160);
+ 
+-	i2c_set_clientdata(client, NULL);
+ 	return 0;
+ }
+ 
+-- 
+1.7.0
+
