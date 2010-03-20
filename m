@@ -1,35 +1,33 @@
-From: David Howells <dhowells@redhat.com>
-Date: Tue, 23 Mar 2010 14:48:37 +0000
-Subject: [PATCH] fscache: add missing unlock
-Message-Id: <20100323144837.24147.90288.stgit@warthog.procyon.org.uk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 20 Mar 2010 11:26:05 +0000
+Subject: [patch 1/3] btrfs cleanup: remove dead code
+Message-Id: <20100320112605.GY5331@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: torvalds@osdl.org, akpm@linux-foundation.org
-Cc: viro@zeniv.linux.org.uk, Trond.Myklebust@netapp.com, linux-cachefs@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>, David Howells <dhowells@redhat.com>
+To: Chris Mason <chris.mason@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, Dan Carpenter <error27@gmail.com>, Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-
-Sparse complained about this missing spin_unlock()
+rb_node is never an ERR_PTR() here.  This code confuses smatch.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
 ---
+This doesn't change anything.  It's just a cleanup.  Could you load
+it up for linux-next?
 
- fs/fscache/page.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/fs/fscache/page.c b/fs/fscache/page.c
-index c598ea4..6980902 100644
---- a/fs/fscache/page.c
-+++ b/fs/fscache/page.c
-@@ -881,6 +881,7 @@ submit_failed:
- 	goto nobufs;
- 
- nobufs_unlock_obj:
-+	spin_unlock(&cookie->stores_lock);
- 	spin_unlock(&object->lock);
- nobufs:
- 	spin_unlock(&cookie->lock);
-
+diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+index 28d87ba..94668b1 100644
+--- a/fs/btrfs/extent_map.c
++++ b/fs/btrfs/extent_map.c
+@@ -335,10 +335,6 @@ struct extent_map *lookup_extent_mapping(struct extent_map_tree *tree,
+ 		em = NULL;
+ 		goto out;
+ 	}
+-	if (IS_ERR(rb_node)) {
+-		em = ERR_PTR(PTR_ERR(rb_node));
+-		goto out;
+-	}
+ 	em = rb_entry(rb_node, struct extent_map, rb_node);
+ 	if (end > em->start && start < extent_map_end(em))
+ 		goto found;
