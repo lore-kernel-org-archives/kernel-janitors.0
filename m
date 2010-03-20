@@ -1,66 +1,34 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Sat, 20 Mar 2010 14:12:47 +0000
-Subject: [PATCH 06/24] input/keyboard: fix dangling pointers
-Message-Id: <1269094385-16114-7-git-send-email-w.sang@pengutronix.de>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Sat, 20 Mar 2010 19:20:07 +0000
+Subject: Re: [PATCH 06/24] input/keyboard: fix dangling pointers
+Message-Id: <20100320192007.GA28402@core.coreip.homeip.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+ <1269094385-16114-7-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-7-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+To: Wolfram Sang <w.sang@pengutronix.de>
+Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 
-Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-structure it points to. Also fix drivers which do this _after_ the structure
-was freed already.
+Hi Wolfram,
 
-Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+On Sat, Mar 20, 2010 at 03:12:47PM +0100, Wolfram Sang wrote:
+> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+> structure it points to. Also fix drivers which do this _after_ the structure
+> was freed already.
+> 
 
-Found using coccinelle, then reviewed. Full patchset is available via
-kernel-janitors, linux-i2c, and LKML.
----
- drivers/input/keyboard/lm8323.c |    2 ++
- drivers/input/keyboard/qt2160.c |    2 +-
- 2 files changed, 3 insertions(+), 1 deletions(-)
+I am not sure if setting clientdata to NULL before freeing the data is
+that important; we really want to be sure that we don't leave clientdata
+dangling when we finish unbinding the driver. If there are another
+thread the change will not really help the problem of accessing
+non-existing client data.
 
-diff --git a/drivers/input/keyboard/lm8323.c b/drivers/input/keyboard/lm8323.c
-index 574eda2..2b8bf05 100644
---- a/drivers/input/keyboard/lm8323.c
-+++ b/drivers/input/keyboard/lm8323.c
-@@ -768,6 +768,7 @@ fail2:
- 			led_classdev_unregister(&lm->pwm[i].cdev);
- fail1:
- 	input_free_device(idev);
-+	i2c_set_clientdata(client, NULL);
- 	kfree(lm);
- 	return err;
- }
-@@ -789,6 +790,7 @@ static int __devexit lm8323_remove(struct i2c_client *client)
- 		if (lm->pwm[i].enabled)
- 			led_classdev_unregister(&lm->pwm[i].cdev);
- 
-+	i2c_set_clientdata(client, NULL);
- 	kfree(lm);
- 
- 	return 0;
-diff --git a/drivers/input/keyboard/qt2160.c b/drivers/input/keyboard/qt2160.c
-index 31f3008..43db5e9 100644
---- a/drivers/input/keyboard/qt2160.c
-+++ b/drivers/input/keyboard/qt2160.c
-@@ -356,9 +356,9 @@ static int __devexit qt2160_remove(struct i2c_client *client)
- 	cancel_delayed_work_sync(&qt2160->dwork);
- 
- 	input_unregister_device(qt2160->input);
-+	i2c_set_clientdata(client, NULL);
- 	kfree(qt2160);
- 
--	i2c_set_clientdata(client, NULL);
- 	return 0;
- }
- 
+I will apply lm8323 portion of the patch but leave qt2160 as is.
+
+Thanks.
+
 -- 
-1.7.0
-
+Dmitry
