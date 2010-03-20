@@ -1,21 +1,95 @@
-From: David Teigland <teigland@redhat.com>
-Date: Mon, 22 Mar 2010 13:50:11 +0000
-Subject: Re: [patch] dlm: cleanup remove unused code
-Message-Id: <20100322135011.GA29680@redhat.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sat, 20 Mar 2010 14:12:49 +0000
+Subject: [PATCH 08/24] leds: fix dangling pointers
+Message-Id: <1269094385-16114-9-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100322120354.GB21571@bicker>
-In-Reply-To: <20100322120354.GB21571@bicker>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Christine Caulfield <ccaulfie@redhat.com>, Steven Whitehouse <swhiteho@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Richard Purdie <rpurdie@rpsys.net>, Riku Voipio <riku.voipio@iki.fi>
 
-On Mon, Mar 22, 2010 at 03:03:54PM +0300, Dan Carpenter wrote:
-> Smatch complains because "lkb" is never NULL.  Looking at it, the original
-> code actually adds the new element to the end of the list fine, so we can
-> just get rid of the if condition.  This code is four years old and no one
-> has complained so it must work.
+Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+structure it points to. Also fix drivers which do this _after_ the structure
+was freed already.
 
-Thanks, queued for the next pull.
-Dave
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Riku Voipio <riku.voipio@iki.fi>
+---
+
+Found using coccinelle, then reviewed. Full patchset is available via
+kernel-janitors, linux-i2c, and LKML.
+---
+ drivers/leds/leds-lp3944.c  |    2 +-
+ drivers/leds/leds-pca9532.c |    4 ++--
+ drivers/leds/leds-pca955x.c |    4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
+index 5946208..7dca8f2 100644
+--- a/drivers/leds/leds-lp3944.c
++++ b/drivers/leds/leds-lp3944.c
+@@ -425,8 +425,8 @@ static int __devexit lp3944_remove(struct i2c_client *client)
+ 			break;
+ 		}
+ 
+-	kfree(data);
+ 	i2c_set_clientdata(client, NULL);
++	kfree(data);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+index adc561e..0f1f8f9 100644
+--- a/drivers/leds/leds-pca9532.c
++++ b/drivers/leds/leds-pca9532.c
+@@ -320,8 +320,8 @@ static int pca9532_probe(struct i2c_client *client,
+ 
+ 	err = pca9532_configure(client, data, pca9532_pdata);
+ 	if (err) {
+-		kfree(data);
+ 		i2c_set_clientdata(client, NULL);
++		kfree(data);
+ 	}
+ 
+ 	return err;
+@@ -349,8 +349,8 @@ static int pca9532_remove(struct i2c_client *client)
+ 			break;
+ 		}
+ 
+-	kfree(data);
+ 	i2c_set_clientdata(client, NULL);
++	kfree(data);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index 4e2d1a4..279fc31 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -340,8 +340,8 @@ exit:
+ 		cancel_work_sync(&pca955x[i].work);
+ 	}
+ 
+-	kfree(pca955x);
+ 	i2c_set_clientdata(client, NULL);
++	kfree(pca955x);
+ 
+ 	return err;
+ }
+@@ -356,8 +356,8 @@ static int __devexit pca955x_remove(struct i2c_client *client)
+ 		cancel_work_sync(&pca955x[i].work);
+ 	}
+ 
+-	kfree(pca955x);
+ 	i2c_set_clientdata(client, NULL);
++	kfree(pca955x);
+ 
+ 	return 0;
+ }
+-- 
+1.7.0
 
