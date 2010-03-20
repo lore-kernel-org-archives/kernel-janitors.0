@@ -1,43 +1,102 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Date: Tue, 23 Mar 2010 07:00:58 +0000
-Subject: Re: [patch] kcore: fix test for end of list
-Message-Id: <2375c9f91003230000m171f35c0t66fc3a5094b0d881@mail.gmail.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sat, 20 Mar 2010 14:12:45 +0000
+Subject: [PATCH 04/24] gpio: fix dangling pointers
+Message-Id: <1269094385-16114-5-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100322120509.GC21571@bicker>
-	 <20100322233113.f17d0e0c.akpm@linux-foundation.org>
-In-Reply-To: <20100322233113.f17d0e0c.akpm@linux-foundation.org>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Carpenter <error27@gmail.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Jiri Slaby <jirislaby@gmail.com>, Jaswinder Singh Rajput <jaswinderrajput@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
 
-On Tue, Mar 23, 2010 at 11:31 AM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Mon, 22 Mar 2010 15:05:09 +0300 Dan Carpenter <error27@gmail.com> wrote:
->
->> "m" is never NULL here.  We need a different test for the end of list
->> condition.
->>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->> ---
->> Found with a static checker and compile tested only.  Please review
->> carefully.
->>
->> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
->> index a44a789..b442dac 100644
->> --- a/fs/proc/kcore.c
->> +++ b/fs/proc/kcore.c
->> @@ -490,7 +490,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
->>               }
->>               read_unlock(&kclist_lock);
->>
->> -             if (m = NULL) {
->> +             if (&m->list = &kclist_head) {
->>                       if (clear_user(buffer, tsz))
->>                               return -EFAULT;
->>               } else if (is_vmalloc_or_module_addr((void *)start)) {
->
-> hm, that code's been there for five years.  I wonder if it's actually necessary.
+Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+structure it points to. Also fix drivers which do this _after_ the structure
+was freed already.
 
-Nope, not that long, please see commit 2ef43ec7. :)
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+---
+
+Found using coccinelle, then reviewed. Full patchset is available via
+kernel-janitors, linux-i2c, and LKML.
+---
+ drivers/gpio/adp5588-gpio.c |    1 +
+ drivers/gpio/max732x.c      |    1 +
+ drivers/gpio/pca953x.c      |    1 +
+ drivers/gpio/pcf857x.c      |    7 ++++---
+ 4 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/adp5588-gpio.c b/drivers/gpio/adp5588-gpio.c
+index afc097a..c0cb5c1 100644
+--- a/drivers/gpio/adp5588-gpio.c
++++ b/drivers/gpio/adp5588-gpio.c
+@@ -227,6 +227,7 @@ static int __devexit adp5588_gpio_remove(struct i2c_client *client)
+ 		return ret;
+ 	}
+ 
++	i2c_set_clientdata(client, NULL);
+ 	kfree(dev);
+ 	return 0;
+ }
+diff --git a/drivers/gpio/max732x.c b/drivers/gpio/max732x.c
+index f786824..85fe675 100644
+--- a/drivers/gpio/max732x.c
++++ b/drivers/gpio/max732x.c
+@@ -356,6 +356,7 @@ static int __devexit max732x_remove(struct i2c_client *client)
+ 	if (chip->client_dummy)
+ 		i2c_unregister_device(chip->client_dummy);
+ 
++	i2c_set_clientdata(client, NULL);
+ 	kfree(chip);
+ 	return 0;
+ }
+diff --git a/drivers/gpio/pca953x.c b/drivers/gpio/pca953x.c
+index ab5daab..05242dc 100644
+--- a/drivers/gpio/pca953x.c
++++ b/drivers/gpio/pca953x.c
+@@ -571,6 +571,7 @@ static int pca953x_remove(struct i2c_client *client)
+ 
+ 	pca953x_irq_teardown(chip);
+ 	kfree(chip->dyn_pdata);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(chip);
+ 	return 0;
+ }
+diff --git a/drivers/gpio/pcf857x.c b/drivers/gpio/pcf857x.c
+index 29f19ce..c2aed8a 100644
+--- a/drivers/gpio/pcf857x.c
++++ b/drivers/gpio/pcf857x.c
+@@ -259,9 +259,7 @@ static int pcf857x_probe(struct i2c_client *client,
+ 		goto fail;
+ 
+ 	gpio->chip.label = client->name;
+-
+ 	gpio->client = client;
+-	i2c_set_clientdata(client, gpio);
+ 
+ 	/* NOTE:  these chips have strange "quasi-bidirectional" I/O pins.
+ 	 * We can't actually know whether a pin is configured (a) as output
+@@ -307,6 +305,7 @@ static int pcf857x_probe(struct i2c_client *client,
+ 			dev_warn(&client->dev, "setup --> %d\n", status);
+ 	}
+ 
++	i2c_set_clientdata(client, gpio);
+ 	return 0;
+ 
+ fail:
+@@ -334,8 +333,10 @@ static int pcf857x_remove(struct i2c_client *client)
+ 	}
+ 
+ 	status = gpiochip_remove(&gpio->chip);
+-	if (status = 0)
++	if (status = 0) {
++		i2c_set_clientdata(client, NULL);
+ 		kfree(gpio);
++	}
+ 	else
+ 		dev_err(&client->dev, "%s --> %d\n", "remove", status);
+ 	return status;
+-- 
+1.7.0
+
