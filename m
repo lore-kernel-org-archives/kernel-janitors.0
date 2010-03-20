@@ -1,80 +1,50 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Sat, 06 Mar 2010 00:21:30 +0000
-Subject: Re: mysterious -1 offset in staging rt2860 driver
-Message-Id: <82faac5b1003051621q59520668o2c9d7575cff54176@mail.gmail.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sat, 20 Mar 2010 14:13:02 +0000
+Subject: [PATCH 21/24] staging/iio/adc: fix dangling pointers
+Message-Id: <1269094385-16114-22-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100304191403.GA24075@bicker>
-In-Reply-To: <20100304191403.GA24075@bicker>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org
 
-On Fri, Mar 5, 2010 at 6:14 AM, Dan Carpenter <error27@gmail.com> wrote:
-> So here is a mystery for people who enjoy such mysterious things.
->
-> drivers/staging/rt2860/sta_ioctl.c +1020 rt_ioctl_giwscan(219)
-> =A01011 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (CAP_IS_PRIVACY_ON
-> =A01012 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(pAdapter->ScanTab.Bss=
-Entry[i].CapabilityInfo))
-> =A01013 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0iwe.u.data.fla=
-gs =3D IW_ENCODE_ENABLED | IW_ENCODE_NOKEY;
-> =A01014 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0else
-> =A01015 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0iwe.u.data.fla=
-gs =3D IW_ENCODE_DISABLED;
-> =A01016
-> =A01017 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0__smatch_value("iwe.u.data.fla=
-gs");
-> =A01018 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0previous_ev =3D current_ev;
-> =A01019 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0current_ev > =A01020 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0iwe_stream_add_point(info, current_ev, e=
-nd_buf, &iwe,
-> =A01021 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 (char *)pAdapter->
-> =A01022 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 SharedKey[BSS0][(iwe.u.data.
-> =A01023 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0flags &
-> =A01024 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0IW_ENCODE_INDEX) -
-> =A01025 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 1].Key);
->
->
-> That last bit is easier to read if it's on one line.
->
-> SharedKey[BSS0][(iwe.u.data.flags & IW_ENCODE_INDEX) - 1].Key);
->
-> iwe.u.data.flags is either 0x0400 or 0x8000. =A0IW_ENCODE_INDEX is 0xff, =
-so
-> after we mask off the lower bits we get 0x00 and then we subtract 1 we get
-> an array offset of -1.
->
-> I doubt that's what we want, but what _do_ we want here?
->
+Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+structure it points to. Also fix drivers which do this _after_ the structure
+was freed already.
 
-Looking at the use of IW_ENCODE_INDEX elsewhere it seems to be a mask
-for a key value that can be 0..4 where 0 means some default value and
-1 - 4 means use value-- ie 0 - 3.
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
+---
 
-iwe.u.data.flags is assigned to 1 earlier so I would assume the code should=
- be
+Found using coccinelle, then reviewed. Full patchset is available via
+kernel-janitors, linux-i2c, and LKML.
+---
+ drivers/staging/iio/adc/max1363_core.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-                                iwe.u.data.flags  &=3D ~ IW_ENCODE_FLAGS
->>   1011                  if (CAP_IS_PRIVACY_ON
->>   1012                      (pAdapter->ScanTab.BssEntry[i].CapabilityInf=
-o))
->>   1013                          iwe.u.data.flags |=3D IW_ENCODE_ENABLED =
-| IW_ENCODE_NOKEY;
->>   1014                  else
->>   1015                          iwe.u.data.flags |=3D IW_ENCODE_DISABLED;
+diff --git a/drivers/staging/iio/adc/max1363_core.c b/drivers/staging/iio/adc/max1363_core.c
+index 9703881..1682fd0 100644
+--- a/drivers/staging/iio/adc/max1363_core.c
++++ b/drivers/staging/iio/adc/max1363_core.c
+@@ -556,6 +556,7 @@ error_put_reg:
+ 	if (!IS_ERR(st->reg))
+ 		regulator_put(st->reg);
+ error_free_st:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(st);
+ 
+ error_ret:
+@@ -573,6 +574,7 @@ static int max1363_remove(struct i2c_client *client)
+ 		regulator_disable(st->reg);
+ 		regulator_put(st->reg);
+ 	}
++	i2c_set_clientdata(client, NULL);
+ 	kfree(st);
+ 
+ 	return 0;
+-- 
+1.7.0
 
-Which I think would both make sense and give an array index of 0.
-
-
-Darren J.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
