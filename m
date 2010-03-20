@@ -1,48 +1,120 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 23 Feb 2010 12:04:23 +0000
-Subject: [patch] uwb: remove duplicate cpu_to_le16()
-Message-Id: <20100223120423.GC5378@bicker>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sat, 20 Mar 2010 14:12:55 +0000
+Subject: [PATCH 14/24] misc: fix dangling pointers
+Message-Id: <1269094385-16114-15-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Vrabel <david.vrabel@csr.com>
-Cc: =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, Jiri Kosina <jkosina@suse.cz>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
 
-These parameters should be passed as cpu endian because we change it to
-little endian inside usb_control_msg().  On x86 cpu_to_le16() doesn't
-do anything so either way works but I think the original code would break 
-on big endian systems.
+Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+structure it points to. Also fix drivers which do this _after_ the structure
+was freed already.
 
-I removed the masks as well because that usb_control_msg() parameters 
-are __u16 so we already only use the lower bits.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
 ---
-I found this through static checking and I can't test it.  Please
-review carefully.
 
-diff --git a/drivers/uwb/i1480/dfu/usb.c b/drivers/uwb/i1480/dfu/usb.c
-index 0bb665a..a7d4023 100644
---- a/drivers/uwb/i1480/dfu/usb.c
-+++ b/drivers/uwb/i1480/dfu/usb.c
-@@ -120,8 +120,7 @@ int i1480_usb_write(struct i1480 *i1480, u32 memory_address,
- 		result = usb_control_msg(
- 			i1480_usb->usb_dev, usb_sndctrlpipe(i1480_usb->usb_dev, 0),
- 			0xf0, USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
--			cpu_to_le16(memory_address & 0xffff),
--			cpu_to_le16((memory_address >> 16) & 0xffff),
-+			memory_address,	(memory_address >> 16),
- 			i1480->cmd_buf, buffer_size, 100 /* FIXME: arbitrary */);
- 		if (result < 0)
- 			break;
-@@ -166,8 +165,7 @@ int i1480_usb_read(struct i1480 *i1480, u32 addr, size_t size)
- 		result = usb_control_msg(
- 			i1480_usb->usb_dev, usb_rcvctrlpipe(i1480_usb->usb_dev, 0),
- 			0xf0, USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
--			cpu_to_le16(itr_addr & 0xffff),
--			cpu_to_le16((itr_addr >> 16) & 0xffff),
-+			itr_addr, (itr_addr >> 16),
- 			i1480->cmd_buf + itr, itr_size,
- 			100 /* FIXME: arbitrary */);
- 		if (result < 0) {
+Found using coccinelle, then reviewed. Full patchset is available via
+kernel-janitors, linux-i2c, and LKML.
+---
+ drivers/misc/ad525x_dpot.c |    2 +-
+ drivers/misc/ics932s401.c  |    2 ++
+ drivers/misc/isl29003.c    |    6 +++++-
+ drivers/misc/tsl2550.c     |    6 +++++-
+ 4 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/misc/ad525x_dpot.c b/drivers/misc/ad525x_dpot.c
+index 30a59f2..3b6f437 100644
+--- a/drivers/misc/ad525x_dpot.c
++++ b/drivers/misc/ad525x_dpot.c
+@@ -567,8 +567,8 @@ static int ad525x_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ exit_free:
+-	kfree(data);
+ 	i2c_set_clientdata(client, NULL);
++	kfree(data);
+ exit:
+ 	dev_err(dev, "failed to create client\n");
+ 	return err;
+diff --git a/drivers/misc/ics932s401.c b/drivers/misc/ics932s401.c
+index 395a4ea..f60b7e7 100644
+--- a/drivers/misc/ics932s401.c
++++ b/drivers/misc/ics932s401.c
+@@ -465,6 +465,7 @@ static int ics932s401_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ exit_free:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(data);
+ exit:
+ 	return err;
+@@ -475,6 +476,7 @@ static int ics932s401_remove(struct i2c_client *client)
+ 	struct ics932s401_data *data = i2c_get_clientdata(client);
+ 
+ 	sysfs_remove_group(&client->dev.kobj, &data->attrs);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(data);
+ 	return 0;
+ }
+diff --git a/drivers/misc/isl29003.c b/drivers/misc/isl29003.c
+index a71e245..5bd4d8b 100644
+--- a/drivers/misc/isl29003.c
++++ b/drivers/misc/isl29003.c
+@@ -397,15 +397,19 @@ static int __devinit isl29003_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ exit_kfree:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(data);
+ 	return err;
+ }
+ 
+ static int __devexit isl29003_remove(struct i2c_client *client)
+ {
++	struct isl29003_data *data = i2c_get_clientdata(client);
++
+ 	sysfs_remove_group(&client->dev.kobj, &isl29003_attr_group);
+ 	isl29003_set_power_state(client, 0);
+-	kfree(i2c_get_clientdata(client));
++	i2c_set_clientdata(client, NULL);
++	kfree(data);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/misc/tsl2550.c b/drivers/misc/tsl2550.c
+index 483ae5f..230c326 100644
+--- a/drivers/misc/tsl2550.c
++++ b/drivers/misc/tsl2550.c
+@@ -400,6 +400,7 @@ static int __devinit tsl2550_probe(struct i2c_client *client,
+ 	return 0;
+ 
+ exit_kfree:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(data);
+ exit:
+ 	return err;
+@@ -407,12 +408,15 @@ exit:
+ 
+ static int __devexit tsl2550_remove(struct i2c_client *client)
+ {
++	struct tsl2550_data *data = i2c_get_clientdata(client);
++
+ 	sysfs_remove_group(&client->dev.kobj, &tsl2550_attr_group);
+ 
+ 	/* Power down the device */
+ 	tsl2550_set_power_state(client, 0);
+ 
+-	kfree(i2c_get_clientdata(client));
++	i2c_set_clientdata(client, NULL);
++	kfree(data);
+ 
+ 	return 0;
+ }
+-- 
+1.7.0
+
