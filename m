@@ -1,30 +1,50 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 24 Mar 2010 13:35:50 +0000
-Subject: Re: [patch v3] pcrypt: handle crypto_get_attr_type() errors
-Message-Id: <20100324133550.GA9640@gondor.apana.org.au>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sat, 20 Mar 2010 14:13:03 +0000
+Subject: [PATCH 22/24] staging/iio/light: fix dangling pointers
+Message-Id: <1269094385-16114-23-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100321092847.GJ5331@bicker> <20100322132342.GJ20508@secunet.com> <20100322135319.GQ21571@bicker> <20100322145357.GK20508@secunet.com> <20100322152845.GT21571@bicker> <20100323103431.GA27822@secunet.com>
-In-Reply-To: <20100323103431.GA27822@secunet.com>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-1-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Dan Carpenter <error27@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
 
-T24gVHVlLCBNYXIgMjMsIDIwMTAgYXQgMTE6MzQ6MzFBTSArMDEwMCwgU3RlZmZlbiBLbGFzc2Vy
-dCB3cm90ZToKPiBPbiBNb24sIE1hciAyMiwgMjAxMCBhdCAwNjoyODo0NVBNICswMzAwLCBEYW4g
-Q2FycGVudGVyIHdyb3RlOgo+ID4gSSB3YXMgY29uY2VybmVkIGFib3V0IHRoZSBlcnJvciBoYW5k
-bGluZyBmb3IgY3J5cHRvX2dldF9hdHRyX3R5cGUoKSBpbgo+ID4gcGNyeXB0X2FsbG9jX2FlYWQo
-KS4gIFN0ZWZmZW4gS2xhc3NlcnQgcG9pbnRlZCBvdXQgdGhhdCB3ZSBjb3VsZCBzaW1wbHkKPiA+
-IGF2b2lkIGNhbGxpbmcgY3J5cHRvX2dldF9hdHRyX3R5cGUoKSBpZiB3ZSBwYXNzZWQgdGhlIHR5
-cGUgYW5kIG1hc2sgYXMgYQo+ID4gcGFyYW1ldGVycy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTog
-RGFuIENhcnBlbnRlciA8ZXJyb3IyN0BnbWFpbC5jb20+Cj4gCj4gQWNrZWQtYnk6IFN0ZWZmZW4g
-S2xhc3NlcnQgPHN0ZWZmZW4ua2xhc3NlcnRAc2VjdW5ldC5jb20+CgpQYXRjaCBhcHBsaWVkLiAg
-VGhhbmtzIGV2ZXJ5b25lIQotLSAKVmlzaXQgT3BlbnN3YW4gYXQgaHR0cDovL3d3dy5vcGVuc3dh
-bi5vcmcvCkVtYWlsOiBIZXJiZXJ0IFh1IH57UG1WPkhJfn0gPGhlcmJlcnRAZ29uZG9yLmFwYW5h
-Lm9yZy5hdT4KSG9tZSBQYWdlOiBodHRwOi8vZ29uZG9yLmFwYW5hLm9yZy5hdS9+aGVyYmVydC8K
-UEdQIEtleTogaHR0cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvcHVia2V5LnR4dAot
-LQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3Jp
-YmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
-QHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJu
-ZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
+Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+structure it points to. Also fix drivers which do this _after_ the structure
+was freed already.
+
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
+---
+
+Found using coccinelle, then reviewed. Full patchset is available via
+kernel-janitors, linux-i2c, and LKML.
+---
+ drivers/staging/iio/light/tsl2563.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/staging/iio/light/tsl2563.c b/drivers/staging/iio/light/tsl2563.c
+index 78b9432..286559d 100644
+--- a/drivers/staging/iio/light/tsl2563.c
++++ b/drivers/staging/iio/light/tsl2563.c
+@@ -681,6 +681,7 @@ static int __devinit tsl2563_probe(struct i2c_client *client,
+ fail2:
+ 	iio_device_unregister(chip->indio_dev);
+ fail1:
++	i2c_set_clientdata(client, NULL);
+ 	kfree(chip);
+ 	return err;
+ }
+@@ -691,6 +692,7 @@ static int tsl2563_remove(struct i2c_client *client)
+ 
+ 	iio_device_unregister(chip->indio_dev);
+ 
++	i2c_set_clientdata(client, NULL);
+ 	kfree(chip);
+ 	return 0;
+ }
+-- 
+1.7.0
+
