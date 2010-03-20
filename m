@@ -1,33 +1,48 @@
-From: Clemens Ladisch <clemens@ladisch.de>
-Date: Wed, 03 Mar 2010 08:58:06 +0000
-Subject: Re: [alsa-devel] [patch] oxygen: change || to &&
-Message-Id: <4B8E249E.2090806@ladisch.de>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sat, 20 Mar 2010 14:12:43 +0000
+Subject: [PATCH 02/24] power/ds2782: really clear i2c_clientdata on exit
+Message-Id: <1269094385-16114-3-git-send-email-w.sang@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100303070818.GD5086@bicker>
-In-Reply-To: <20100303070818.GD5086@bicker>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-1-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Ryan Mallon <ryan-7Wk5F4Od5/oYd5yxfr4S2w@public.gmane.org>, Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Dan Carpenter wrote:
-> In the original code the condition was always true (hopefully) because
-> WM8776_HPLVOL is zero.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Probably due to a copy & paste bug, clientdata was set again to the data
+structure (which is freed immediately afterwards) when it should be NULLed.
 
-Thanks; applied.
+Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Ryan Mallon <ryan@bluewatersys.com>
+Cc: Anton Vorontsov <cbouatmailru@gmail.com>
+---
+ drivers/power/ds2782_battery.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-> diff --git a/sound/pci/oxygen/xonar_wm87x6.c b/sound/pci/oxygen/xonar_wm87x6.c
-> index 7754db1..dbc4b89 100644
-> --- a/sound/pci/oxygen/xonar_wm87x6.c
-> +++ b/sound/pci/oxygen/xonar_wm87x6.c
-> @@ -68,7 +68,7 @@ static void wm8776_write(struct oxygen *chip,
->  			 OXYGEN_SPI_CEN_LATCH_CLOCK_LO,
->  			 (reg << 9) | value);
->  	if (reg < ARRAY_SIZE(data->wm8776_regs)) {
-> -		if (reg >= WM8776_HPLVOL || reg <= WM8776_DACMASTER)
-> +		if (reg >= WM8776_HPLVOL && reg <= WM8776_DACMASTER)
->  			value &= ~WM8776_UPDATE;
->  		data->wm8776_regs[reg] = value;
->  	}
+diff --git a/drivers/power/ds2782_battery.c b/drivers/power/ds2782_battery.c
+index da14f37..6971b85 100644
+--- a/drivers/power/ds2782_battery.c
++++ b/drivers/power/ds2782_battery.c
+@@ -236,7 +236,7 @@ static int ds2782_battery_remove(struct i2c_client *client)
+ 	idr_remove(&battery_id, info->id);
+ 	mutex_unlock(&battery_lock);
+ 
+-	i2c_set_clientdata(client, info);
++	i2c_set_clientdata(client, NULL);
+ 
+ 	kfree(info);
+ 	return 0;
+@@ -289,7 +289,7 @@ static int ds2782_battery_probe(struct i2c_client *client,
+ fail_register:
+ 	kfree(info->battery.name);
+ fail_name:
+-	i2c_set_clientdata(client, info);
++	i2c_set_clientdata(client, NULL);
+ 	kfree(info);
+ fail_info:
+ 	mutex_lock(&battery_lock);
+-- 
+1.7.0
+
