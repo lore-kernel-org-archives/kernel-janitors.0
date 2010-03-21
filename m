@@ -1,34 +1,66 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sat, 20 Mar 2010 19:20:07 +0000
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sun, 21 Mar 2010 01:59:26 +0000
 Subject: Re: [PATCH 06/24] input/keyboard: fix dangling pointers
-Message-Id: <20100320192007.GA28402@core.coreip.homeip.net>
+Message-Id: <20100321015925.GA26625@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="EVF5PPMfhYS0aIcm"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
- <1269094385-16114-7-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1269094385-16114-7-git-send-email-w.sang@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <w.sang@pengutronix.de>
-Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-7-git-send-email-w.sang@pengutronix.de> <20100320192007.GA28402@core.coreip.homeip.net>
+In-Reply-To: <20100320192007.GA28402-WlK9ik9hQGAhIp7JRqBPierSzoNAToWh@public.gmane.org>
+To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Hi Wolfram,
 
-On Sat, Mar 20, 2010 at 03:12:47PM +0100, Wolfram Sang wrote:
-> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-> structure it points to. Also fix drivers which do this _after_ the structure
-> was freed already.
-> 
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am not sure if setting clientdata to NULL before freeing the data is
-that important; we really want to be sure that we don't leave clientdata
-dangling when we finish unbinding the driver. If there are another
-thread the change will not really help the problem of accessing
-non-existing client data.
+Hello Dmitry,
 
-I will apply lm8323 portion of the patch but leave qt2160 as is.
+On Sat, Mar 20, 2010 at 12:20:07PM -0700, Dmitry Torokhov wrote:
+> Hi Wolfram,
+>=20
+> On Sat, Mar 20, 2010 at 03:12:47PM +0100, Wolfram Sang wrote:
+> > Fix I2C-drivers which missed setting clientdata to NULL before freeing =
+the
+> > structure it points to. Also fix drivers which do this _after_ the stru=
+cture
+> > was freed already.
+> >=20
+>=20
+> I am not sure if setting clientdata to NULL before freeing the data is
+> that important; we really want to be sure that we don't leave clientdata
+> dangling when we finish unbinding the driver. If there are another
+> thread the change will not really help the problem of accessing
+> non-existing client data.
 
-Thanks.
+I agree it won't matter in practice. Jean and I concluded it is better
+style, though (http://comments.gmane.org/gmane.linux.drivers.i2c/5392).
+Still, I will not insist and leave it up the subsystem maintainers, of
+course. I also won't check for that case again in the future.
 
--- 
-Dmitry
+> I will apply lm8323 portion of the patch but leave qt2160 as is.
+
+Thanks!
+
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkulfX0ACgkQD27XaX1/VRtgIwCeP3ARt+wII1Xeva9Lnytebcsr
+IQcAnApsmX1e9BfUoF/0kyJ4U7XWnSgu
+=lIAk
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
