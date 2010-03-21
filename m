@@ -1,38 +1,58 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Sat, 20 Mar 2010 20:25:01 +0000
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Sun, 21 Mar 2010 02:09:33 +0000
 Subject: Re: [PATCH 13/24] mfd: fix dangling pointers
-Message-Id: <20100320212501.138b1644@hyperion.delvare>
+Message-Id: <20100321020933.GB26625@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="61jdw2sOBCFtR2d/"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
-	<1269094385-16114-14-git-send-email-w.sang@pengutronix.de>
-	<20100320172241.GD1549@opensource.wolfsonmicro.com>
-In-Reply-To: <20100320172241.GD1549-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-14-git-send-email-w.sang@pengutronix.de> <20100320172241.GD1549@opensource.wolfsonmicro.com>
+In-Reply-To: <20100320172241.GD1549@opensource.wolfsonmicro.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>
 
-On Sat, 20 Mar 2010 17:22:41 +0000, Mark Brown wrote:
-> On Sat, Mar 20, 2010 at 03:12:54PM +0100, Wolfram Sang wrote:
-> > Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-> > structure it points to. Also fix drivers which do this _after_ the structure
-> > was freed already.
-> 
-> Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> 
+
+--61jdw2sOBCFtR2d/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello Mark,
+
 > but it really does seem like this is something that the I2C core ought
 > to handle - the assignment to null is boiler plate code that's getting
 > added to the overwhelming majority of I2C devices in their teardown
 > path, it'd seem a lot more sensible for the core to just trash driver
 > data after the driver is unbound if it's important that this happens.
 
-This is an interesting point. Do you know of any other subsystem doing
-this? The core touching private data seems wrong to me, but I have to
-agree that it would avoid a lot of duplication across drivers.
+While working on this, I got the same impression that it should be handled =
+at
+core-level. I wondered if functions ala i2c_alloc_clientdata() and
+i2c_free_clientdata() could help. But seeing the myriad ways of setting up
+private data in those drivers, I thought this to be the next step after
+cleaning up the status quo, because it surely needs discussion. I wanted to
+write about all this in the introductory message but sadly forgot. Thanks f=
+or
+starting the discussion, very welcome.
 
-Can someone find a reasonable use case for client data surviving the
-driver's .remove() call?
+Regards,
 
--- 
-Jean Delvare
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--61jdw2sOBCFtR2d/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkulf90ACgkQD27XaX1/VRt09gCgjSrBPxPmyQsA+FPnAYKGUqVW
+MjgAn3DFPETnj7nqH76Qp2QjJxdK4koV
+=9unb
+-----END PGP SIGNATURE-----
+
+--61jdw2sOBCFtR2d/--
