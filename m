@@ -1,33 +1,71 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 30 Mar 2010 09:40:16 +0000
-Subject: Re: [patch v2] batman: cleanup: change test for end of array
-Message-Id: <20100330094016.GG5069@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Mar 2010 21:31:06 +0000
+Subject: [PATCH] drivers/media/video: avoid NULL dereference
+Message-Id: <Pine.LNX.4.64.1003212230380.12371@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100328131335.GY5069@bicker>
-In-Reply-To: <20100328131335.GY5069@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mark McClelland <mmcclell@bigfoot.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Mar 30, 2010 at 10:08:15AM +0800, Marek Lindner wrote:
-> On Monday 29 March 2010 16:11:34 Dan Carpenter wrote:
-> > > I might be mistaken but it looks like the "&" is wrong here. Shouldn't it
-> > > be: memset(device_client_hash, 0, sizeof(device_client_hash));
-> > 
-> > Either way works.
-> 
-> Ok, I committed it without the "&" - makes me sleep better.  ;-)
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Cool.
+If ov is NULL, it will not be possible to take the lock in the first place,
+so move the test up earlier.
 
-regars,
-dan carpenter
+The semantic match that finds the problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> Thanks for the patch,
-> Marek
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+// <smpl>
+@r exists@
+expression E, E1;
+identifier f;
+statement S1,S3;
+iterator iter;
+@@
+
+if ((E = NULL && ...) || ...)
+{
+  ... when != false ((E = NULL && ...) || ...)
+      when != true  ((E != NULL && ...) || ...)
+      when != iter(E,...) S1
+      when != E = E1
+(
+  sizeof(E->f)
+|
+* E->f
+)
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/video/ov511.c         |    8 +++-----
+ 1 files changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/video/ov511.c b/drivers/media/video/ov511.c
+index e0bce8d..2357218 100644
+--- a/drivers/media/video/ov511.c
++++ b/drivers/media/video/ov511.c
+@@ -5913,14 +5913,12 @@ ov51x_disconnect(struct usb_interface *intf)
+ 
+ 	PDEBUG(3, "");
+ 
++	if (!ov)
++		return;
++
+ 	mutex_lock(&ov->lock);
+ 	usb_set_intfdata (intf, NULL);
+ 
+-	if (!ov) {
+-		mutex_unlock(&ov->lock);
+-		return;
+-	}
+-
+ 	/* Free device number */
+ 	ov511_devused &= ~(1 << ov->nr);
+ 
