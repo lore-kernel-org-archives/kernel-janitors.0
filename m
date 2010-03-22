@@ -1,58 +1,40 @@
-From: Sven Eckelmann <sven.eckelmann@gmx.de>
-Date: Mon, 08 Mar 2010 16:23:06 +0000
-Subject: Re: [B.A.T.M.A.N.] FWD: batman: potential null dereference
-Message-Id: <201003081723.06876.sven.eckelmann@gmx.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nextPart1302465.Y0fTrzrNYY"
+From: David Howells <dhowells@redhat.com>
+Date: Mon, 22 Mar 2010 13:07:14 +0000
+Subject: [PATCH] AFS: Potential null dereference
+Message-Id: <20100322130713.12914.76901.stgit@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: torvalds@osdl.org, akpm@linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>, David Howells <dhowells@redhat.com>
 
---nextPart1302465.Y0fTrzrNYY
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: Dan Carpenter <error27@gmail.com>
 
-Dan Carpenter wrote:
-[...]
-> > It looks a little bit like checked with clang's static analyzer. This
-> > analyzer has problems to track constraints at all. This means that it
-> > doesn't catch the update_routes constraint "orig_node->router !=3D
-> > neigh_node".
-> >
-> > But I am also not good at tracking that kind of constraints and reported
-> > this or a similar "bug" in batmand a while ago.
-> >
-> > So it is not a real bug, but maybe not easy to read.
->=20
-> Yeah.  I see what you mean...
+It seems clear from the surrounding code that xpermits is allowed to be NULL
+here.
 
-Good. And thanks for the bug report. It is always good that someone looks o=
-ver=20
-the code :)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-Best regards,
-	Sven
+ fs/afs/security.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
---nextPart1302465.Y0fTrzrNYY
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+diff --git a/fs/afs/security.c b/fs/afs/security.c
+index 3ef5043..bb4ed14 100644
+--- a/fs/afs/security.c
++++ b/fs/afs/security.c
+@@ -189,8 +189,9 @@ void afs_cache_permit(struct afs_vnode *vnode, struct key *key, long acl_order)
+ 	if (!permits)
+ 		goto out_unlock;
+ 
+-	memcpy(permits->permits, xpermits->permits,
+-	       count * sizeof(struct afs_permit));
++	if (xpermits)
++		memcpy(permits->permits, xpermits->permits,
++			count * sizeof(struct afs_permit));
+ 
+ 	_debug("key %x access %x",
+ 	       key_serial(key), vnode->status.caller_access);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQIcBAABCgAGBQJLlSRqAAoJEF2HCgfBJntGpX8P/iFcEdKtce6pG0Qed5CZZW41
-3OLi7GihzgOzRpUtcxBkLi4WAo+rU95kQfkct31dhLNv3T/HDf8TecRjv9+g12qI
-ZwG0y77rqGR/X+6l/5+vklVz30ucfiVkIy4pkQPqZ30OnJe29LAfFjo9mBwxH5rL
-OmJpTdPPwaXnyj1k1jCr7zQi9RojTptGAXnaBSSQUAO3LE/6E3rrp5BV2MLORTmn
-bKDE6SzcWnvE4DQVz2ThmcWDodWNo66ULxYVXFsaRRXSrJtvfrenaao/HrM8DpPf
-0izE4ddgQhxDwB4k16bwMmOfVHfgJi/geCsQStNqBre72ghW+Qn8KUIhJui17f7i
-5VHzVXTfL0VfMrIwhp+bre1yn9Ll+vetQFIVc/g9CoxoO/R6P10TLr7gD14hYvFP
-xccOFVAO2Hn2QDOqcwnyAt8RHfgkQPBIentbgQDcJUpM5T7RxJOAEDUQMRpYwRPG
-SFPevjAOxumEgeY6edmPW73Oan82dF4oV2LPaNdGww/PuSRGXGGuGCdC0xk232Fb
-02SJTwmnKMEAoLSY5p93Ly1hSnPRXAPY1ns1W8xnZZ7zUOJwf/Tozr1xt56ps+Ir
-4LAdwZwRNX7L+CD17lFRl+K5NTrKUFUjJsC7C2ijxPnRoFx3QiCf3+ZEz4hXJ3uz
-tiVkQcIbb3XX0BOoYe9r
-=FI4E
------END PGP SIGNATURE-----
-
---nextPart1302465.Y0fTrzrNYY--
