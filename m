@@ -1,41 +1,47 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Mon, 29 Mar 2010 10:07:19 +0000
-Subject: Re: [PATCH 1/7] arch/arm: Use set_cpus_allowed_ptr
-Message-Id: <1269857239.12097.250.camel@laptop>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 22 Mar 2010 12:07:54 +0000
+Subject: fscache: bug report: dereferencing before checking
+Message-Id: <20100322120753.GE21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1003262301300.6480@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1003262301300.6480@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2010-03-26 at 23:01 +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use set_cpus_allowed_ptr rather than set_cpus_allowed.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression E1,E2;
-> @@
-> 
-> - set_cpus_allowed(E1, cpumask_of_cpu(E2))
-> + set_cpus_allowed_ptr(E1, cpumask_of(E2))
-> 
-> @@
-> expression E;
-> identifier I;
-> @@
-> 
-> - set_cpus_allowed(E, I)
-> + set_cpus_allowed_ptr(E, &I)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Can "page" be NULL here?
 
-Thanks for doing this Julia!
+fs/fscache/page.c +712
+   705          page = results[0];
+   706          _debug("gang %d [%lx]", n, page->index);
+                                           ^^^^^^^^^^^
+	dereference
 
+   707          if (page->index > op->store_limit) {
+                    ^^^^^^^^^^^
+	dereference
+
+   708                  fscache_stat(&fscache_n_store_pages_over_limit);
+   709                  goto superseded;
+   710          }
+   711
+   712          if (page) {
+
+	check
+
+   713                  radix_tree_tag_set(&cookie->stores, page->index,
+   714                                     FSCACHE_COOKIE_STORING_TAG);
+   715                  radix_tree_tag_clear(&cookie->stores, page->index,
+   716                                       FSCACHE_COOKIE_PENDING_TAG);
+   717          }
+   718
+   719          spin_unlock(&cookie->stores_lock);
+   720          spin_unlock(&object->lock);
+   721
+   722          if (page) {
+
+	check
+
+   723                  fscache_set_op_state(&op->op, "Store");
+
+regards,
+dan carpenter
