@@ -1,54 +1,32 @@
-From: Henrik Kretzschmar <henne@nachtwindheim.de>
-Date: Fri, 26 Mar 2010 11:17:20 +0000
-Subject: Re: [PATCH] mkpiggy.c fixes compiler warning
-Message-Id: <4BAC97C0.9050604@nachtwindheim.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 22 Mar 2010 12:10:35 +0000
+Subject: [patch] pxa168fb: use resource_size()
+Message-Id: <20100322121034.GI21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1268591308.6104.6.camel@lovely>
-In-Reply-To: <1268591308.6104.6.camel@lovely>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jun Nie <njun@marvell.com>
+Cc: Eric Miao <eric.y.miao@gmail.com>, Lennert Buytenhek <buytenh@marvell.com>, Krzysztof Helt <krzysztof.h1@wp.pl>, Kevin Liu <kliu5@marvell.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Christoph Fritz schrieb:
-> fixes compiler warning (ignoring return value of 'fread', declared with
-> attribute warn_unused_result) and fseek error returns now
->
->
-> Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
-> ---
->  arch/x86/boot/compressed/mkpiggy.c |    6 +++++-
->  1 files changed, 5 insertions(+), 1 deletions(-)
->
-> diff --git a/arch/x86/boot/compressed/mkpiggy.c b/arch/x86/boot/compressed/mkpiggy.c
-> index bcbd36c..78d14d2 100644
-> --- a/arch/x86/boot/compressed/mkpiggy.c
-> +++ b/arch/x86/boot/compressed/mkpiggy.c
-> @@ -61,8 +61,12 @@ int main(int argc, char *argv[])
->  
->  	if (fseek(f, -4L, SEEK_END)) {
->  		perror(argv[1]);
-> +		return 1;
-> +	}
-> +	if (fread(&olen, sizeof olen, 1, f) != 1) {
-> +		perror(argv[1]);
-> +		return 1;
->  	}
-> -	fread(&olen, sizeof olen, 1, f);
->  	ilen = ftell(f);
->  	olen = getle32(&olen);
->  	fclose(f);
->   
-Hi Christoph,
+The size calculation is not correct.  It should be end - start + 1.
+Use resource_size() to caculate it.
 
-this looks good to me, so you can add a:
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This was found by a static checker and I don't have the hardware to
+test it.  Please review carefully.
 
-Acked-by: Henrik Kretzschmar <henne@nachtwindheim.de>
-
-
-Now you have to send it to the responsible maintainer(s).
-Take a look at MAINTAINERS or better use ./scripts/get_maintainer.pl --roles -f <your patchfile> .
-
-Greets,
-Henrik
-
+diff --git a/drivers/video/pxa168fb.c b/drivers/video/pxa168fb.c
+index 75285d3..c91a7f7 100644
+--- a/drivers/video/pxa168fb.c
++++ b/drivers/video/pxa168fb.c
+@@ -668,7 +668,7 @@ static int __init pxa168fb_probe(struct platform_device *pdev)
+ 	/*
+ 	 * Map LCD controller registers.
+ 	 */
+-	fbi->reg_base = ioremap_nocache(res->start, res->end - res->start);
++	fbi->reg_base = ioremap_nocache(res->start, resource_size(res));
+ 	if (fbi->reg_base = NULL) {
+ 		ret = -ENOMEM;
+ 		goto failed;
