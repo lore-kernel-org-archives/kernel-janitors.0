@@ -1,166 +1,34 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Sat, 20 Mar 2010 14:12:41 +0000
-Subject: i2c-drivers: Remove dangling pointers
-Message-Id: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 22 Mar 2010 12:03:54 +0000
+Subject: [patch] dlm: cleanup remove unused code
+Message-Id: <20100322120354.GB21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christine Caulfield <ccaulfie@redhat.com>
+Cc: David Teigland <teigland@redhat.com>, Steven Whitehouse <swhiteho@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+Smatch complains because "lkb" is never NULL.  Looking at it, the original
+code actually adds the new element to the end of the list fine, so we can
+just get rid of the if condition.  This code is four years old and no one
+has complained so it must work.
 
-here is a patch series fixing I2C drivers which free their private data
-structure and leave the clientdata pointer dangling or do the cleanup in the
-wrong order. All occurences were found using coccinelle [1] and the semantic
-patch below. The matches have been reviewed, and sometimes adapted.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The complete series goes to linux-i2c and kernel-janitors. The rest of the CCs
-is handled per patch using get_maintainers.pl (which always adds LKML, so you
-have the complete series there, too).
-
-Please review, comment, apply!
-
-Kind regards,
-
-   Wolfram
-
-[1] http://coccinelle.lip6.fr/
-
-=
-@@
-type T;
-identifier client, data;
-@@
-
-// Check if function uses clientdata
-(
-	i2c_set_clientdata(client, data);
-|
-	data = i2c_get_clientdata(client);
-|
-	T data = i2c_get_clientdata(client);
-)
-// Anything inbetween
-	...
-// Check if clientdata gets NULLed before data is freed
-(
-	i2c_set_clientdata(client, NULL);
-	...
- 	kfree(data);
-|
-+	i2c_set_clientdata(client, NULL);
- 	kfree(data);
-	...
--	i2c_set_clientdata(client, NULL);
-|
-+	i2c_set_clientdata(client, NULL);
-? 	kfree(data);
-)
-
-=
- drivers/gpio/adp5588-gpio.c                   |    1 +
- drivers/gpio/max732x.c                        |    1 +
- drivers/gpio/pca953x.c                        |    1 +
- drivers/gpio/pcf857x.c                        |    7 ++++---
- drivers/hwmon/ad7414.c                        |    2 ++
- drivers/hwmon/ad7418.c                        |    2 ++
- drivers/hwmon/adm1021.c                       |    2 ++
- drivers/hwmon/adm1025.c                       |    2 ++
- drivers/hwmon/adm1026.c                       |    2 ++
- drivers/hwmon/adm1029.c                       |    2 ++
- drivers/hwmon/adm1031.c                       |    2 ++
- drivers/hwmon/adm9240.c                       |    2 ++
- drivers/hwmon/ads7828.c                       |    5 ++++-
- drivers/hwmon/adt7462.c                       |    2 ++
- drivers/hwmon/adt7470.c                       |    2 ++
- drivers/hwmon/adt7475.c                       |    2 ++
- drivers/hwmon/amc6821.c                       |    2 ++
- drivers/hwmon/asb100.c                        |    2 ++
- drivers/hwmon/atxp1.c                         |    2 ++
- drivers/hwmon/dme1737.c                       |    2 ++
- drivers/hwmon/ds1621.c                        |    2 ++
- drivers/hwmon/f75375s.c                       |    4 ++--
- drivers/hwmon/g760a.c                         |    4 ++--
- drivers/hwmon/gl518sm.c                       |    2 ++
- drivers/hwmon/gl520sm.c                       |    2 ++
- drivers/hwmon/lm63.c                          |    2 ++
- drivers/hwmon/lm77.c                          |    2 ++
- drivers/hwmon/lm78.c                          |    2 ++
- drivers/hwmon/lm80.c                          |    2 ++
- drivers/hwmon/lm83.c                          |    2 ++
- drivers/hwmon/lm85.c                          |    2 ++
- drivers/hwmon/lm87.c                          |    2 ++
- drivers/hwmon/lm90.c                          |    2 ++
- drivers/hwmon/lm92.c                          |    2 ++
- drivers/hwmon/lm93.c                          |    2 ++
- drivers/hwmon/lm95241.c                       |    1 +
- drivers/hwmon/ltc4215.c                       |    2 ++
- drivers/hwmon/ltc4245.c                       |    2 ++
- drivers/hwmon/max1619.c                       |    2 ++
- drivers/hwmon/max6650.c                       |    2 ++
- drivers/hwmon/pcf8591.c                       |    6 +++++-
- drivers/hwmon/smsc47m192.c                    |    2 ++
- drivers/hwmon/thmc50.c                        |    2 ++
- drivers/hwmon/tmp401.c                        |    1 +
- drivers/hwmon/w83791d.c                       |    2 ++
- drivers/hwmon/w83792d.c                       |    2 ++
- drivers/hwmon/w83793.c                        |    1 +
- drivers/hwmon/w83l785ts.c                     |    2 ++
- drivers/hwmon/w83l786ng.c                     |    2 ++
- drivers/input/keyboard/lm8323.c               |    2 ++
- drivers/input/keyboard/qt2160.c               |    2 +-
- drivers/input/touchscreen/mcs5000_ts.c        |    2 +-
- drivers/input/touchscreen/tsc2007.c           |    1 +
- drivers/leds/leds-lp3944.c                    |    2 +-
- drivers/leds/leds-pca9532.c                   |    4 ++--
- drivers/leds/leds-pca955x.c                   |    4 ++--
- drivers/macintosh/therm_adt746x.c             |    2 ++
- drivers/media/radio/radio-tea5764.c           |    2 ++
- drivers/media/radio/si470x/radio-si470x-i2c.c |    2 +-
- drivers/media/video/cs5345.c                  |    1 +
- drivers/media/video/cs53l32a.c                |    1 +
- drivers/media/video/ir-kbd-i2c.c              |    2 ++
- drivers/media/video/tda9840.c                 |    1 +
- drivers/media/video/tea6415c.c                |    1 +
- drivers/media/video/tea6420.c                 |    1 +
- drivers/media/video/ths7303.c                 |    1 +
- drivers/mfd/88pm860x-i2c.c                    |    1 +
- drivers/mfd/ab3100-core.c                     |    2 ++
- drivers/mfd/da903x.c                          |    1 +
- drivers/mfd/menelaus.c                        |    3 ++-
- drivers/mfd/pcf50633-core.c                   |    1 +
- drivers/mfd/tps65010.c                        |    2 +-
- drivers/mfd/wm8350-i2c.c                      |    2 ++
- drivers/misc/ad525x_dpot.c                    |    2 +-
- drivers/misc/eeprom/at24.c                    |    2 +-
- drivers/misc/eeprom/eeprom.c                  |    6 +++++-
- drivers/misc/eeprom/max6875.c                 |    2 ++
- drivers/misc/ics932s401.c                     |    2 ++
- drivers/misc/isl29003.c                       |    6 +++++-
- drivers/misc/tsl2550.c                        |    6 +++++-
- drivers/mtd/maps/pismo.c                      |    8 +++++++-
- drivers/power/bq27x00_battery.c               |    2 ++
- drivers/power/ds2782_battery.c                |    4 ++--
- drivers/regulator/max1586.c                   |    2 +-
- drivers/regulator/max8649.c                   |    3 ++-
- drivers/regulator/max8660.c                   |    2 +-
- drivers/rtc/rtc-ds1307.c                      |    2 ++
- drivers/rtc/rtc-fm3130.c                      |    2 ++
- drivers/rtc/rtc-m41t80.c                      |    2 ++
- drivers/rtc/rtc-pcf8563.c                     |    2 ++
- drivers/rtc/rtc-pcf8583.c                     |    2 ++
- drivers/rtc/rtc-rs5c372.c                     |    2 ++
- drivers/rtc/rtc-s35390a.c                     |    4 ++--
- drivers/staging/dream/synaptics_i2c_rmi.c     |    2 ++
- drivers/staging/go7007/wis-saa7113.c          |    1 +
- drivers/staging/go7007/wis-saa7115.c          |    1 +
- drivers/staging/go7007/wis-tw9903.c           |    1 +
- drivers/staging/iio/adc/max1363_core.c        |    2 ++
- drivers/staging/iio/light/tsl2563.c           |    2 ++
- drivers/usb/otg/isp1301_omap.c                |    5 ++++-
- drivers/video/matrox/matroxfb_maven.c         |    1 +
- drivers/w1/masters/ds2482.c                   |    2 ++
- 102 files changed, 198 insertions(+), 33 deletions(-)
-
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index 46ffd3e..f162de5 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -732,10 +732,7 @@ static void lkb_add_ordered(struct list_head *new, struct list_head *head,
+ 		if (lkb->lkb_rqmode < mode)
+ 			break;
+ 
+-	if (!lkb)
+-		list_add_tail(new, head);
+-	else
+-		__list_add(new, lkb->lkb_statequeue.prev, &lkb->lkb_statequeue);
++	__list_add(new, lkb->lkb_statequeue.prev, &lkb->lkb_statequeue);
+ }
+ 
+ /* add/remove lkb to rsb's grant/convert/wait queue */
