@@ -1,32 +1,33 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Mon, 22 Mar 2010 20:36:45 +0000
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Mon, 22 Mar 2010 21:51:18 +0000
 Subject: Re: [PATCH 12/24] media/video: fix dangling pointers
-Message-Id: <20100322213645.34257722@hyperion.delvare>
+Message-Id: <20100322215118.GC17533@sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
-	<1269094385-16114-13-git-send-email-w.sang@pengutronix.de>
-	<201003202302.49526.hverkuil@xs4all.nl>
-	<20100321144655.4747fd2a@hyperion.delvare>
-In-Reply-To: <20100321144655.4747fd2a-ig7AzVSIIG7kN2dkZ6Wm7A@public.gmane.org>
+ <20100321144655.4747fd2a@hyperion.delvare>
+ <20100321141417.GA19626@opensource.wolfsonmicro.com>
+ <201003211709.56319.hverkuil@xs4all.nl>
+ <20100322213358.31e50b3c@hyperion.delvare>
+In-Reply-To: <20100322213358.31e50b3c@hyperion.delvare>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mauro Carvalho Chehab <mchehab-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Wolfram Sang <w.sang@pengutronix.de>, kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
 
-Replying to myself...
+On Mon, Mar 22, 2010 at 09:33:58PM +0100, Jean Delvare wrote:
+> On Sun, 21 Mar 2010 17:09:56 +0100, Hans Verkuil wrote:
+> > On Sunday 21 March 2010 15:14:17 Mark Brown wrote:
 
-On Sun, 21 Mar 2010 14:46:55 +0100, Jean Delvare wrote:
-> I get the feeling that this would be a job for managed resources as
-> some drivers already do for I/O ports and IRQs. Managed resources don't
-> care about symmetry of allocation and freeing, by design (so it can
-> violate point 1 above.) Aha! Isn't it exactly what devm_kzalloc() is
-> all about?
+> > > I agree with this.  There are also some use cases where the device data
+> > > is actually static (eg, a generic description of the device or a
+> > > reference to some other shared resource rather than per device allocated
+> > > data).
 
-Thinking about it again, this really only addresses the calls to
-kfree(), not the calls to i2c_set_clientdata(), so apparently I'm quite
-off-topic for this discussion. I still think that moving drivers to
-managed resources is the way to go, but that's a different issue.
+> From a technical perspective, there is little rationale to have the
+> client data pointed to static data. If you could reach it from probe(),
+> it has to be a global, and if it is a global, you can reach it again
+> directly from the rest of your code.
 
--- 
-Jean Delvare
+The use case I can think of there is bus type specific stuff for devices
+that support multiple buses.
