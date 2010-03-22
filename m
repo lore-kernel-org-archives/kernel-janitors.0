@@ -1,64 +1,60 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:31:58 +0000
-Subject: Re: [PATCH 04/24] gpio: fix dangling pointers
-Message-Id: <20100330123158.GF29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="CXFpZVxO6m2Ol4tQ"
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 22 Mar 2010 12:11:11 +0000
+Subject: [patch] stmmac: use resource_size()
+Message-Id: <20100322121111.GJ21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-5-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1269094385-16114-5-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>, Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
+The size calculation is not correct.  It should be end - start + 1.
+Use resource_size() to calculate it instead.
 
---CXFpZVxO6m2Ol4tQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-On Sat, Mar 20, 2010 at 03:12:45PM +0100, Wolfram Sang wrote:
-> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-> structure it points to. Also fix drivers which do this _after_ the struct=
-ure
-> was freed already.
->=20
-> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-
-please drop this this patch. We reached an agreement that a) setting the
-clientdata-pointer to NULL should be done in the i2c-core [1] and b) how to=
- do
-it. Based on that, I will do the modification of the i2c-core for 2.6.34 (a=
-s it
-fixes the dangling pointers) and then create one single patch removing the =
-then
-superflous calls to i2c_set_clientdata for 2.6.35 (as it is a cleanup). If =
-you
-already applied the above patch to your branch, you don't have to revert; we
-will fix it for you in the next round.
-
-Sorry for the detour!
-
-Kind regards,
-
-   Wolfram
-
-[1] http://thread.gmane.org/gmane.linux.drivers.i2c/5674/focus=3D5729
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---CXFpZVxO6m2Ol4tQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux7z4ACgkQD27XaX1/VRvomQCffC4CBDyVrKL9CzOZsVEAOlsg
-JUMAoJ4Aj9xD7rkoZhAD8w9FPndiHdet
-=nX0i
------END PGP SIGNATURE-----
-
---CXFpZVxO6m2Ol4tQ--
+diff --git a/drivers/net/stmmac/stmmac_main.c b/drivers/net/stmmac/stmmac_main.c
+index a673361..92bef30 100644
+--- a/drivers/net/stmmac/stmmac_main.c
++++ b/drivers/net/stmmac/stmmac_main.c
+@@ -1685,8 +1685,7 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
+ 	}
+ 	pr_info("done!\n");
+ 
+-	if (!request_mem_region(res->start, (res->end - res->start),
+-				pdev->name)) {
++	if (!request_mem_region(res->start, resource_size(res),	pdev->name)) {
+ 		pr_err("%s: ERROR: memory allocation failed"
+ 		       "cannot get the I/O addr 0x%x\n",
+ 		       __func__, (unsigned int)res->start);
+@@ -1694,9 +1693,9 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
+ 		goto out;
+ 	}
+ 
+-	addr = ioremap(res->start, (res->end - res->start));
++	addr = ioremap(res->start, resource_size(res));
+ 	if (!addr) {
+-		pr_err("%s: ERROR: memory mapping failed \n", __func__);
++		pr_err("%s: ERROR: memory mapping failed\n", __func__);
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+@@ -1774,7 +1773,7 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
+ out:
+ 	if (ret < 0) {
+ 		platform_set_drvdata(pdev, NULL);
+-		release_mem_region(res->start, (res->end - res->start));
++		release_mem_region(res->start, resource_size(res));
+ 		if (addr != NULL)
+ 			iounmap(addr);
+ 	}
+@@ -1812,7 +1811,7 @@ static int stmmac_dvr_remove(struct platform_device *pdev)
+ 
+ 	iounmap((void *)ndev->base_addr);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(res->start, (res->end - res->start));
++	release_mem_region(res->start, resource_size(res));
+ 
+ 	free_netdev(ndev);
+ 
