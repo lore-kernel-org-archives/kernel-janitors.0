@@ -1,25 +1,49 @@
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 22 Mar 2010 13:05:24 +0000
-Subject: Re: [patch] afs: potential null dereference
-Message-Id: <12814.1269263124@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 22 Mar 2010 13:53:19 +0000
+Subject: [patch v2] pcrypt: handle crypto_get_attr_type() errors
+Message-Id: <20100322135319.GQ21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100322125626.GM21571@bicker> <20100320111938.GT5331@bicker> <28809.1269259520@redhat.com>
-In-Reply-To: <20100322125626.GM21571@bicker>
+References: <20100321092847.GJ5331@bicker> <20100322132342.GJ20508@secunet.com>
+In-Reply-To: <20100322132342.GJ20508@secunet.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: dhowells@redhat.com, kernel-janitors@vger.kernel.org, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <error27@gmail.com> wrote:
+I was concerned about the error handling for crypto_get_attr_type() in
+pcrypt_alloc_aead().  Steffen Klassert pointed out that we could simply 
+avoid calling crypto_get_attr_type() if we passed the type and mask as a 
+parameter.
 
-> I was concerned about the dereference here:
-> 
-> +       if (xpermits)
-> +               memcpy(permits->permits, xpermits->permits,
->                                          ^^^^^^^^^^^^^^^^^
-> +                       count * sizeof(struct afs_permit));
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-That's a good point - in which case your patch should definitely go in.
-
-David
+diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
+index 8020124..e049388 100644
+--- a/crypto/pcrypt.c
++++ b/crypto/pcrypt.c
+@@ -315,13 +315,11 @@ out_free_inst:
+ 	goto out;
+ }
+ 
+-static struct crypto_instance *pcrypt_alloc_aead(struct rtattr **tb)
++static struct crypto_instance *pcrypt_alloc_aead(struct rtattr **tb,
++						 struct crypto_attr_type *algt)
+ {
+ 	struct crypto_instance *inst;
+ 	struct crypto_alg *alg;
+-	struct crypto_attr_type *algt;
+-
+-	algt = crypto_get_attr_type(tb);
+ 
+ 	alg = crypto_get_attr_alg(tb, algt->type,
+ 				  (algt->mask & CRYPTO_ALG_TYPE_MASK));
+@@ -365,7 +363,7 @@ static struct crypto_instance *pcrypt_alloc(struct rtattr **tb)
+ 
+ 	switch (algt->type & algt->mask & CRYPTO_ALG_TYPE_MASK) {
+ 	case CRYPTO_ALG_TYPE_AEAD:
+-		return pcrypt_alloc_aead(tb);
++		return pcrypt_alloc_aead(tb, algt);
+ 	}
+ 
+ 	return ERR_PTR(-EINVAL);
