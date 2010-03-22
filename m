@@ -1,70 +1,30 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:41:58 +0000
-Subject: Re: [PATCH 13/24] mfd: fix dangling pointers
-Message-Id: <20100330124158.GJ29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="JsihDCElWRmQcbOr"
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 22 Mar 2010 12:07:28 +0000
+Subject: [patch] ewrk3: range checking problem
+Message-Id: <20100322120728.GD21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-14-git-send-email-w.sang@pengutronix.de> <20100325104137.GA3720@sortiz.org>
-In-Reply-To: <20100325104137.GA3720-jcdQHdrhKHMdnm+yROfE0A@public.gmane.org>
-To: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: Stephen Hemminger <shemminger@vyatta.com>, Patrick McHardy <kaber@trash.net>, Jiri Pirko <jpirko@redhat.com>, Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
+The range checking here is wrong.  It should be HASH_TABLE_LEN which 
+is 512.
 
---JsihDCElWRmQcbOr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-On Thu, Mar 25, 2010 at 11:41:38AM +0100, Samuel Ortiz wrote:
-> Hi Wolfram,
->=20
-> On Sat, Mar 20, 2010 at 03:12:54PM +0100, Wolfram Sang wrote:
-> > Fix I2C-drivers which missed setting clientdata to NULL before freeing =
-the
-> > structure it points to. Also fix drivers which do this _after_ the stru=
-cture
-> > was freed already.
-> Patch applied, many thanks.
-
-Thanks. Sadly some fixup will be needed:
-
-We reached an agreement that a) setting the clientdata-pointer to NULL shou=
-ld
-be done in the i2c-core [1] and b) how to do it. Based on that, I will do t=
-he
-modification of the i2c-core for 2.6.34 (as it fixes the dangling pointers)=
- and
-then create one single patch removing the then superflous calls to
-i2c_set_clientdata for 2.6.35 (as it is a cleanup). As you already applied =
-the
-above patch to your branch: you don't have to revert, we will fix it for yo=
-u in
-the next round.
-
-Sorry for the detour!
-
-Kind regards,
-
-   Wolfram
-
-[1] http://thread.gmane.org/gmane.linux.drivers.i2c/5674/focus=3D5729
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---JsihDCElWRmQcbOr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux8ZYACgkQD27XaX1/VRsWPQCeKipiGJ4vmu3Xb0myM+cG3Rx4
-OYYAoL9SIRKKxnPXLO+9qOgDgedTzq54
-=mQLF
------END PGP SIGNATURE-----
-
---JsihDCElWRmQcbOr--
+diff --git a/drivers/net/ewrk3.c b/drivers/net/ewrk3.c
+index 91e59f3..ae02de1 100644
+--- a/drivers/net/ewrk3.c
++++ b/drivers/net/ewrk3.c
+@@ -1776,8 +1776,7 @@ static int ewrk3_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+ 		break;
+ 	case EWRK3_SET_MCA:	/* Set a multicast address */
+ 		if (capable(CAP_NET_ADMIN)) {
+-			if (ioc->len > 1024)
+-			{
++			if (ioc->len > HASH_TABLE_LEN) {
+ 				status = -EINVAL;
+ 				break;
+ 			}
