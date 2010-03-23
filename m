@@ -1,36 +1,38 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Date: Tue, 23 Mar 2010 02:47:33 +0000
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Tue, 23 Mar 2010 03:31:13 +0000
 Subject: Re: [patch] kcore: fix test for end of list
-Message-Id: <2375c9f91003221947n4d4f417w3a5ea32565e9c582@mail.gmail.com>
+Message-Id: <20100322233113.f17d0e0c.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100322120509.GC21571@bicker>
-	 <20100323091841.dd500a38.kamezawa.hiroyu@jp.fujitsu.com>
-In-Reply-To: <20100323091841.dd500a38.kamezawa.hiroyu@jp.fujitsu.com>
+In-Reply-To: <20100322120509.GC21571@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-Cc: Dan Carpenter <error27@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Jiri Slaby <jirislaby@gmail.com>, Jaswinder Singh Rajput <jaswinderrajput@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <error27@gmail.com>
+Cc: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, WANG Cong <xiyou.wangcong@gmail.com>, Jiri Slaby <jirislaby@gmail.com>, Jaswinder Singh Rajput <jaswinderrajput@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Mar 23, 2010 at 8:18 AM, KAMEZAWA Hiroyuki
-<kamezawa.hiroyu@jp.fujitsu.com> wrote:
-> On Mon, 22 Mar 2010 15:05:09 +0300
-> Dan Carpenter <error27@gmail.com> wrote:
->
->> "m" is never NULL here. =C2=A0We need a different test for the end of li=
-st
->> condition.
->>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> yes, thank you.
-> Acked-by: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+On Mon, 22 Mar 2010 15:05:09 +0300 Dan Carpenter <error27@gmail.com> wrote:
 
-Yeah, this is a good catch for me too!
+> "m" is never NULL here.  We need a different test for the end of list
+> condition.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> Found with a static checker and compile tested only.  Please review
+> carefully.
+> 
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index a44a789..b442dac 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -490,7 +490,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+>  		}
+>  		read_unlock(&kclist_lock);
+>  
+> -		if (m = NULL) {
+> +		if (&m->list = &kclist_head) {
+>  			if (clear_user(buffer, tsz))
+>  				return -EFAULT;
+>  		} else if (is_vmalloc_or_module_addr((void *)start)) {
 
-Acked-by: WANG Cong <xiyou.wangcong@gmail.com>
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+hm, that code's been there for five years.  I wonder if it's actually necessary.
