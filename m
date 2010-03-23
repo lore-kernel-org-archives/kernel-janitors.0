@@ -1,76 +1,53 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 22 Mar 2010 17:50:11 +0000
-Subject: Re: [patch v2] cx231xx: card->driver "Conexant cx231xx Audio" too
-Message-Id: <4BA7ADD3.8000105@bfs.de>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 23 Mar 2010 06:59:42 +0000
+Subject: Re: [patch v2] cx231xx: card->driver "Conexant cx231xx Audio" too long
+Message-Id: <s5hwrx3a5gh.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100322153909.GC23411@bicker>
+References: <20100319114957.GQ5331@bicker>
+	<s5hr5ncxvm9.wl%tiwai@suse.de>
+	<20100322153909.GC23411@bicker>
 In-Reply-To: <20100322153909.GC23411@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Srinivasa Deevi <srinivasa.deevi@conexant.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-Takashi Iwai schrieb:
-> At Mon, 22 Mar 2010 18:18:04 +0100,
-> walter harms wrote:
->>
->>
->> Takashi Iwai schrieb:
->>> At Mon, 22 Mar 2010 08:43:47 -0700,
->>> Joe Perches wrote:
->>>> On Mon, 2010-03-22 at 18:39 +0300, Dan Carpenter wrote:
->>>>> card->driver is 15 characters and a NULL, the original code could 
->>>>> cause a buffer overflow.
->>>>> In version 2, I used a better name that Takashi Iwai suggested.
->>>> Perhaps it's better to use strncpy as well.
->>> strlcpy() would be safer :)
->>>
->>> But, in such a case, we want rather that the error is notified at
->>> build time.
->>>
->>> Maybe a macro like below would be helpful to catch such bugs?
->>>
->>> #define COPY_STRING(buf, src)						\
->>> 	do {								\
->>> 		if (__builtin_constant_p(src))				\
->>> 			BUILD_BUG_ON(strlen(src) >= sizeof(buf));	\
->>> 		strcpy(buf, src);					\
->>> 	} while (0)
->>>
->>> and used like:
->>>
->>> struct foo {
->>> 	char foo[5];
->>> } x;
->>>
->>> COPY_STRING(x.foo, "OK"); // OK
->>> COPY_STRING(x.foo, "1234567890"); // NG
->>>
->>>
->>> Takashi
->>> --
->>
->> did i miss something ?
+At Mon, 22 Mar 2010 18:39:09 +0300,
+Dan Carpenter wrote:
 > 
-> Yes :)
-> 
->> why not change  card->driver int char * ? a simple card->driver="name"
->> would solve the problem.
-> 
-> The length is fixed because it's used for ioctl.
-> 
-> 
+> card->driver is 15 characters and a NULL, the original code could 
+> cause a buffer overflow.
+>  
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> In version 2, I used a better name that Takashi Iwai suggested.
 
-I am not sure that i understand that, users can change the name ?
-ok who do you prevent an overflow there ? (I could not find the code)
-Perhaps you will simply cut the user string ? if you do that you can
-simply use strncpy here.
+Acked-by: Takashi Iwai <tiwai@suse.de>
 
-thx for fast answer,
-ntl i will go offline for the next weeks
+Could you fix em28xx in the same way, too?
 
-re,
- wh
 
+thanks,
+
+Takashi
+
+> diff --git a/drivers/media/video/cx231xx/cx231xx-audio.c b/drivers/media/video/cx231xx/cx231xx-audio.c
+> index 7793d60..7cae95a 100644
+> --- a/drivers/media/video/cx231xx/cx231xx-audio.c
+> +++ b/drivers/media/video/cx231xx/cx231xx-audio.c
+> @@ -495,7 +495,7 @@ static int cx231xx_audio_init(struct cx231xx *dev)
+>  	pcm->info_flags = 0;
+>  	pcm->private_data = dev;
+>  	strcpy(pcm->name, "Conexant cx231xx Capture");
+> -	strcpy(card->driver, "Conexant cx231xx Audio");
+> +	strcpy(card->driver, "Cx231xx-Audio");
+>  	strcpy(card->shortname, "Cx231xx Audio");
+>  	strcpy(card->longname, "Conexant cx231xx Audio");
+>  
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
