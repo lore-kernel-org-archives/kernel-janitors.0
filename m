@@ -1,91 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 26 Mar 2010 22:03:07 +0000
-Subject: [PATCH 4/7] arch/mips/kernel: Use set_cpus_allowed_ptr
-Message-Id: <Pine.LNX.4.64.1003262302480.6480@ask.diku.dk>
+From: David Howells <dhowells@redhat.com>
+Date: Tue, 23 Mar 2010 14:48:37 +0000
+Subject: [PATCH] fscache: add missing unlock
+Message-Id: <20100323144837.24147.90288.stgit@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peterz@infradead.org, mingo@elte.hu, tglx@linutronix.de, oleg@redhat.com, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: torvalds@osdl.org, akpm@linux-foundation.org
+Cc: viro@zeniv.linux.org.uk, Trond.Myklebust@netapp.com, linux-cachefs@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>, David Howells <dhowells@redhat.com>
 
-From: Julia Lawall <julia@diku.dk>
+From: Dan Carpenter <error27@gmail.com>
 
-Use set_cpus_allowed_ptr rather than set_cpus_allowed.
+Sparse complained about this missing spin_unlock()
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression E1,E2;
-@@
-
-- set_cpus_allowed(E1, cpumask_of_cpu(E2))
-+ set_cpus_allowed_ptr(E1, cpumask_of(E2))
-
-@@
-expression E;
-identifier I;
-@@
-
-- set_cpus_allowed(E, I)
-+ set_cpus_allowed_ptr(E, &I)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- arch/mips/kernel/cpufreq/loongson2_cpufreq.c |    4 ++--
- arch/mips/kernel/mips-mt-fpaff.c             |    4 ++--
- arch/mips/kernel/traps.c                     |    2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff -u -p a/arch/mips/kernel/cpufreq/loongson2_cpufreq.c b/arch/mips/kernel/cpufreq/loongson2_cpufreq.c
---- a/arch/mips/kernel/cpufreq/loongson2_cpufreq.c
-+++ b/arch/mips/kernel/cpufreq/loongson2_cpufreq.c
-@@ -65,7 +65,7 @@ static int loongson2_cpufreq_target(stru
- 		return -ENODEV;
+ fs/fscache/page.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/fs/fscache/page.c b/fs/fscache/page.c
+index c598ea4..6980902 100644
+--- a/fs/fscache/page.c
++++ b/fs/fscache/page.c
+@@ -881,6 +881,7 @@ submit_failed:
+ 	goto nobufs;
  
- 	cpus_allowed = current->cpus_allowed;
--	set_cpus_allowed(current, cpumask_of_cpu(cpu));
-+	set_cpus_allowed_ptr(current, cpumask_of(cpu));
- 
- 	if (cpufreq_frequency_table_target
- 	    (policy, &loongson2_clockmod_table[0], target_freq, relation,
-@@ -91,7 +91,7 @@ static int loongson2_cpufreq_target(stru
- 	/* notifiers */
- 	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
- 
--	set_cpus_allowed(current, cpus_allowed);
-+	set_cpus_allowed_ptr(current, &cpus_allowed);
- 
- 	/* setting the cpu frequency */
- 	clk_set_rate(cpuclk, freq);
-diff -u -p a/arch/mips/kernel/mips-mt-fpaff.c b/arch/mips/kernel/mips-mt-fpaff.c
---- a/arch/mips/kernel/mips-mt-fpaff.c
-+++ b/arch/mips/kernel/mips-mt-fpaff.c
-@@ -100,10 +100,10 @@ asmlinkage long mipsmt_sys_sched_setaffi
- 	if (test_ti_thread_flag(ti, TIF_FPUBOUND) &&
- 	    cpus_intersects(new_mask, mt_fpu_cpumask)) {
- 		cpus_and(effective_mask, new_mask, mt_fpu_cpumask);
--		retval = set_cpus_allowed(p, effective_mask);
-+		retval = set_cpus_allowed_ptr(p, &effective_mask);
- 	} else {
- 		clear_ti_thread_flag(ti, TIF_FPUBOUND);
--		retval = set_cpus_allowed(p, new_mask);
-+		retval = set_cpus_allowed_ptr(p, &new_mask);
- 	}
- 
- out_unlock:
-diff -u -p a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
---- a/arch/mips/kernel/traps.c
-+++ b/arch/mips/kernel/traps.c
-@@ -862,7 +862,7 @@ static void mt_ase_fp_affinity(void)
- 				= current->cpus_allowed;
- 			cpus_and(tmask, current->cpus_allowed,
- 				mt_fpu_cpumask);
--			set_cpus_allowed(current, tmask);
-+			set_cpus_allowed_ptr(current, &tmask);
- 			set_thread_flag(TIF_FPUBOUND);
- 		}
- 	}
+ nobufs_unlock_obj:
++	spin_unlock(&cookie->stores_lock);
+ 	spin_unlock(&object->lock);
+ nobufs:
+ 	spin_unlock(&cookie->lock);
+
