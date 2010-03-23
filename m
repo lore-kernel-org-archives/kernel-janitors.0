@@ -1,71 +1,45 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 21 Mar 2010 21:31:06 +0000
-Subject: [PATCH] drivers/media/video: avoid NULL dereference
-Message-Id: <Pine.LNX.4.64.1003212230380.12371@ask.diku.dk>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Tue, 23 Mar 2010 03:14:41 +0000
+Subject: Re: [PATCH] drivers/media/video: avoid NULL dereference
+Message-Id: <20100322231441.b7e33bf9.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1003212230380.12371@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1003212230380.12371@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark McClelland <mmcclell@bigfoot.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Mark McClelland <mmcclell@bigfoot.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sun, 21 Mar 2010 22:31:06 +0100 (CET) Julia Lawall <julia@diku.dk> wrote:
 
-If ov is NULL, it will not be possible to take the lock in the first place,
-so move the test up earlier.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> If ov is NULL, it will not be possible to take the lock in the first place,
+> so move the test up earlier.
+> 
+> ...
+>
+> --- a/drivers/media/video/ov511.c
+> +++ b/drivers/media/video/ov511.c
+> @@ -5913,14 +5913,12 @@ ov51x_disconnect(struct usb_interface *intf)
+>  
+>  	PDEBUG(3, "");
+>  
+> +	if (!ov)
+> +		return;
+> +
+>  	mutex_lock(&ov->lock);
+>  	usb_set_intfdata (intf, NULL);
+>  
+> -	if (!ov) {
+> -		mutex_unlock(&ov->lock);
+> -		return;
+> -	}
+> -
+>  	/* Free device number */
+>  	ov511_devused &= ~(1 << ov->nr);
 
-The semantic match that finds the problem is as follows:
-(http://coccinelle.lip6.fr/)
+I think we can pretty safely assume that we never get here with ov=NULL.
 
-// <smpl>
-@r exists@
-expression E, E1;
-identifier f;
-statement S1,S3;
-iterator iter;
-@@
-
-if ((E = NULL && ...) || ...)
-{
-  ... when != false ((E = NULL && ...) || ...)
-      when != true  ((E != NULL && ...) || ...)
-      when != iter(E,...) S1
-      when != E = E1
-(
-  sizeof(E->f)
-|
-* E->f
-)
-  ... when any
-  return ...;
-}
-else S3
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/media/video/ov511.c         |    8 +++-----
- 1 files changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/video/ov511.c b/drivers/media/video/ov511.c
-index e0bce8d..2357218 100644
---- a/drivers/media/video/ov511.c
-+++ b/drivers/media/video/ov511.c
-@@ -5913,14 +5913,12 @@ ov51x_disconnect(struct usb_interface *intf)
- 
- 	PDEBUG(3, "");
- 
-+	if (!ov)
-+		return;
-+
- 	mutex_lock(&ov->lock);
- 	usb_set_intfdata (intf, NULL);
- 
--	if (!ov) {
--		mutex_unlock(&ov->lock);
--		return;
--	}
--
- 	/* Free device number */
- 	ov511_devused &= ~(1 << ov->nr);
- 
+Oh well, I'll leave the test there for others to ponder.
