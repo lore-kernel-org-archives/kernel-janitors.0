@@ -1,61 +1,33 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 08 Mar 2010 13:39:24 +0000
-Subject: [patch] rt2860: off by one errors
-Message-Id: <20100308133923.GA18477@bicker>
+Date: Tue, 23 Mar 2010 11:40:43 +0000
+Subject: [patch v2] em28xx: "Empia Em28xx Audio" too long
+Message-Id: <20100323114043.GY21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100319114825.GO5331@bicker>
+In-Reply-To: <20100319114825.GO5331@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, Douglas Schilling Landgraf <dougsland@redhat.com>, Robert Krakora <rob.krakora@messagenetsystems.com>, Nicola Soranzo <nsoranzo@tiscali.it>, Devin Heitmueller <dheitmueller@kernellabs.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Andrew Morton <akpm@linux-foundation.org>
 
-The code is trying to say that if the offset is higher than the max it 
-should be set to the max, but there is an off by one bug and it sets it 
-one passed the end of the array.
+card->driver is 15 characters and a NULL.  The original code
+goes past the end of the array.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+V2:  Takashi Iwai asked me to change the space to a hyphen since this is 
+used as an identifier in alsa-lib.
 
-diff --git a/drivers/staging/rt2860/sta_ioctl.c b/drivers/staging/rt2860/sta_ioctl.c
-index de4b627..33a6939 100644
---- a/drivers/staging/rt2860/sta_ioctl.c
-+++ b/drivers/staging/rt2860/sta_ioctl.c
-@@ -1047,8 +1047,7 @@ int rt_ioctl_giwscan(struct net_device *dev,
- 			if (tmpRate = 0x6c
- 			    && pAdapter->ScanTab.BssEntry[i].HtCapabilityLen >
- 			    0) {
--				int rate_count -				    sizeof(ralinkrate) / sizeof(__s32);
-+				int rate_count = ARRAY_SIZE(ralinkrate);
- 				struct rt_ht_cap_info capInfo  				    pAdapter->ScanTab.BssEntry[i].HtCapability.
- 				    HtCapInfo;
-@@ -1061,10 +1060,11 @@ int rt_ioctl_giwscan(struct net_device *dev,
- 				int rate_index  				    12 + ((u8)capInfo.ChannelWidth * 24) +
- 				    ((u8)shortGI * 48) + ((u8)maxMCS);
-+
- 				if (rate_index < 0)
- 					rate_index = 0;
--				if (rate_index > rate_count)
--					rate_index = rate_count;
-+				if (rate_index >= rate_count)
-+					rate_index = rate_count - 1;
- 				iwe.u.bitrate.value  				    ralinkrate[rate_index] * 500000;
- 			}
-@@ -2338,7 +2338,7 @@ int rt_ioctl_giwrate(struct net_device *dev,
- */
- 	GET_PAD_FROM_NET_DEV(pAd, dev);
+diff --git a/drivers/media/video/em28xx/em28xx-audio.c b/drivers/media/video/em28xx/em28xx-audio.c
+index bd78338..e182abf 100644
+--- a/drivers/media/video/em28xx/em28xx-audio.c
++++ b/drivers/media/video/em28xx/em28xx-audio.c
+@@ -491,7 +491,7 @@ static int em28xx_audio_init(struct em28xx *dev)
+ 	strcpy(pcm->name, "Empia 28xx Capture");
  
--	rate_count = sizeof(ralinkrate) / sizeof(__s32);
-+	rate_count = ARRAY_SIZE(ralinkrate);
- 	/*check if the interface is down */
- 	if (!RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_IN_USE)) {
- 		DBGPRINT(RT_DEBUG_TRACE, ("INFO::Network is down!\n"));
-@@ -2369,8 +2369,8 @@ int rt_ioctl_giwrate(struct net_device *dev,
- 	if (rate_index < 0)
- 		rate_index = 0;
+ 	snd_card_set_dev(card, &dev->udev->dev);
+-	strcpy(card->driver, "Empia Em28xx Audio");
++	strcpy(card->driver, "Em28xx-Audio");
+ 	strcpy(card->shortname, "Em28xx Audio");
+ 	strcpy(card->longname, "Empia Em28xx Audio");
  
--	if (rate_index > rate_count)
--		rate_index = rate_count;
-+	if (rate_index >= rate_count)
-+		rate_index = rate_count - 1;
- 
- 	wrqu->bitrate.value = ralinkrate[rate_index] * 500000;
- 	wrqu->bitrate.disabled = 0;
