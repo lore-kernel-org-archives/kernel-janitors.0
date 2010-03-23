@@ -1,34 +1,27 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 30 Mar 2010 09:42:09 +0000
-Subject: [patch] 9p: saving negative to unsigned char
-Message-Id: <20100330094209.GI5069@bicker>
+Date: Tue, 23 Mar 2010 11:26:29 +0000
+Subject: [patch] fscache: add missing unlock
+Message-Id: <20100323112629.GX21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Abhishek Kulkarni <adkulkar@umail.iu.edu>, Sripathi Kodi <sripathik@in.ibm.com>, Latchesar Ionkov <lucho@ionkov.net>, Venkateswararao Jujjuri <jvrao@us.ibm.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: Steve Dickson <steved@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, Trond Myklebust <Trond.Myklebust@netapp.com>, Daire Byrne <Daire.Byrne@framestore.com>, linux-cachefs@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Saving -EINVAL as unsigned char truncates the high bits and changes it 
-into 234 instead of -22.  This breaks the test for "if (ret = -EINVAL)"
-in parse_opts().
+Sparse complained about this missing spin_unlock()
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/net/9p/client.c b/net/9p/client.c
-index e3e5bf4..edf31aa 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -71,9 +71,10 @@ inline int p9_is_proto_dotu(struct p9_client *clnt)
- EXPORT_SYMBOL(p9_is_proto_dotu);
+diff --git a/fs/fscache/page.c b/fs/fscache/page.c
+index c598ea4..6980902 100644
+--- a/fs/fscache/page.c
++++ b/fs/fscache/page.c
+@@ -881,6 +881,7 @@ submit_failed:
+ 	goto nobufs;
  
- /* Interpret mount option for protocol version */
--static unsigned char get_protocol_version(const substring_t *name)
-+static int get_protocol_version(const substring_t *name)
- {
--	unsigned char version = -EINVAL;
-+	int version = -EINVAL;
-+
- 	if (!strncmp("9p2000", name->from, name->to-name->from)) {
- 		version = p9_proto_legacy;
- 		P9_DPRINTK(P9_DEBUG_9P, "Protocol version: Legacy\n");
+ nobufs_unlock_obj:
++	spin_unlock(&cookie->stores_lock);
+ 	spin_unlock(&object->lock);
+ nobufs:
+ 	spin_unlock(&cookie->lock);
