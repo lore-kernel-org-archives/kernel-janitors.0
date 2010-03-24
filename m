@@ -1,40 +1,30 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Tue, 23 Mar 2010 10:34:31 +0000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 24 Mar 2010 13:35:50 +0000
 Subject: Re: [patch v3] pcrypt: handle crypto_get_attr_type() errors
-Message-Id: <20100323103431.GA27822@secunet.com>
+Message-Id: <20100324133550.GA9640@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100321092847.GJ5331@bicker>
- <20100322132342.GJ20508@secunet.com>
- <20100322135319.GQ21571@bicker>
- <20100322145357.GK20508@secunet.com>
- <20100322152845.GT21571@bicker>
-In-Reply-To: <20100322152845.GT21571@bicker>
+References: <20100321092847.GJ5331@bicker> <20100322132342.GJ20508@secunet.com> <20100322135319.GQ21571@bicker> <20100322145357.GK20508@secunet.com> <20100322152845.GT21571@bicker> <20100323103431.GA27822@secunet.com>
+In-Reply-To: <20100323103431.GA27822@secunet.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.orgkern
+Content-Type: text/plain; charset="hz-gb-2312"
+Content-Transfer-Encoding: base64
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Dan Carpenter <error27@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 22, 2010 at 06:28:45PM +0300, Dan Carpenter wrote:
-> I was concerned about the error handling for crypto_get_attr_type() in
-> pcrypt_alloc_aead().  Steffen Klassert pointed out that we could simply
-> avoid calling crypto_get_attr_type() if we passed the type and mask as a
-> parameters.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
-
-Thanks a lot!
-
-> ---
-> All three versions have basically been the same except for style issues.
-> I will confess that this (hopefully final :P) version looks much nicer 
-> than the earlier ones.
-> 
-
-It's not only style issues. We also got some additional benefit from
-this version. We got rid of a superfluous call to crypto_get_attr_type
-and we are able to change type and mask before we pass it to
-pcrypt_alloc_aead if this becomes necessary.
-
-Steffen
+T24gVHVlLCBNYXIgMjMsIDIwMTAgYXQgMTE6MzQ6MzFBTSArMDEwMCwgU3RlZmZlbiBLbGFzc2Vy
+dCB3cm90ZToKPiBPbiBNb24sIE1hciAyMiwgMjAxMCBhdCAwNjoyODo0NVBNICswMzAwLCBEYW4g
+Q2FycGVudGVyIHdyb3RlOgo+ID4gSSB3YXMgY29uY2VybmVkIGFib3V0IHRoZSBlcnJvciBoYW5k
+bGluZyBmb3IgY3J5cHRvX2dldF9hdHRyX3R5cGUoKSBpbgo+ID4gcGNyeXB0X2FsbG9jX2FlYWQo
+KS4gIFN0ZWZmZW4gS2xhc3NlcnQgcG9pbnRlZCBvdXQgdGhhdCB3ZSBjb3VsZCBzaW1wbHkKPiA+
+IGF2b2lkIGNhbGxpbmcgY3J5cHRvX2dldF9hdHRyX3R5cGUoKSBpZiB3ZSBwYXNzZWQgdGhlIHR5
+cGUgYW5kIG1hc2sgYXMgYQo+ID4gcGFyYW1ldGVycy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTog
+RGFuIENhcnBlbnRlciA8ZXJyb3IyN0BnbWFpbC5jb20+Cj4gCj4gQWNrZWQtYnk6IFN0ZWZmZW4g
+S2xhc3NlcnQgPHN0ZWZmZW4ua2xhc3NlcnRAc2VjdW5ldC5jb20+CgpQYXRjaCBhcHBsaWVkLiAg
+VGhhbmtzIGV2ZXJ5b25lIQotLSAKVmlzaXQgT3BlbnN3YW4gYXQgaHR0cDovL3d3dy5vcGVuc3dh
+bi5vcmcvCkVtYWlsOiBIZXJiZXJ0IFh1IH57UG1WPkhJfn0gPGhlcmJlcnRAZ29uZG9yLmFwYW5h
+Lm9yZy5hdT4KSG9tZSBQYWdlOiBodHRwOi8vZ29uZG9yLmFwYW5hLm9yZy5hdS9+aGVyYmVydC8K
+UEdQIEtleTogaHR0cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvcHVia2V5LnR4dAot
+LQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3Jp
+YmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
+QHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJu
+ZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
