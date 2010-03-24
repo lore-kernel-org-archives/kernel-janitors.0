@@ -1,50 +1,55 @@
-From: Christian Casteyde <casteyde.christian@free.fr>
-Date: Wed, 31 Mar 2010 20:17:32 +0000
-Subject: Re: [patch] thermal: make lockdep happy
-Message-Id: <201003312217.33392.casteyde.christian@free.fr>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 24 Mar 2010 11:56:03 +0000
+Subject: [patch] wimax: remove unneeded variable
+Message-Id: <20100324115603.GD21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100331170916.GA13784@bicker>
-In-Reply-To: <20100331170916.GA13784@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Andrew Morton <akpm@linux-foundation.org>, Len Brown <len.brown@intel.com>, Matthew Garrett <mjg@redhat.com>, Frans Pop <elendil@planet.nl>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, "David S. Miller" <davem@davemloft.net>, Alexey Dobriyan <adobriyan@gmail.com>, Jiri Kosina <jkosina@suse.cz>, kernel-janitors@vger.kernel.org
 
-Seems to fix it, at least when applied on -rc3.
-I'm updating the bugzilla entry.
+We never actually use "dev" so I removed it.
 
-Thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Le mercredi 31 mars 2010, Dan Carpenter a =E9crit=A0:
-> Hi Christian,
->
-> Can you test this patch?
->
-> I wrote this to address bugzilla bug:
-> 	https://bugzilla.kernel.org/show_bug.cgi?id=15504
-> 	BUG: key ffff88004c3811e0 not in .data! occured in lockdep.c
->
-> We now have to call sysfs_attr_init() for dynamically allocated sysfs
-> attributes or lockdep complains.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/drivers/thermal/thermal_sys.c b/drivers/thermal/thermal_sys.c
-> index 5066de5..d4fec47 100644
-> --- a/drivers/thermal/thermal_sys.c
-> +++ b/drivers/thermal/thermal_sys.c
-> @@ -725,6 +725,7 @@ int thermal_zone_bind_cooling_device(struct
-> thermal_zone_device *tz, goto release_idr;
->
->  	sprintf(dev->attr_name, "cdev%d_trip_point", dev->id);
-> +	sysfs_attr_init(&dev->attr.attr);
->  	dev->attr.attr.name =3D dev->attr_name;
->  	dev->attr.attr.mode =3D 0444;
->  	dev->attr.show =3D thermal_cooling_device_trip_point_show;
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/wimax/op-reset.c b/net/wimax/op-reset.c
+index 4dc82a5..68bedf3 100644
+--- a/net/wimax/op-reset.c
++++ b/net/wimax/op-reset.c
+@@ -110,7 +110,6 @@ int wimax_gnl_doit_reset(struct sk_buff *skb, struct genl_info *info)
+ {
+ 	int result, ifindex;
+ 	struct wimax_dev *wimax_dev;
+-	struct device *dev;
+ 
+ 	d_fnstart(3, NULL, "(skb %p info %p)\n", skb, info);
+ 	result = -ENODEV;
+@@ -123,7 +122,6 @@ int wimax_gnl_doit_reset(struct sk_buff *skb, struct genl_info *info)
+ 	wimax_dev = wimax_dev_get_by_genl_info(info, ifindex);
+ 	if (wimax_dev = NULL)
+ 		goto error_no_wimax_dev;
+-	dev = wimax_dev_to_dev(wimax_dev);
+ 	/* Execute the operation and send the result back to user space */
+ 	result = wimax_reset(wimax_dev);
+ 	dev_put(wimax_dev->net_dev);
+diff --git a/net/wimax/op-state-get.c b/net/wimax/op-state-get.c
+index 11ad335..aff8776 100644
+--- a/net/wimax/op-state-get.c
++++ b/net/wimax/op-state-get.c
+@@ -53,7 +53,6 @@ int wimax_gnl_doit_state_get(struct sk_buff *skb, struct genl_info *info)
+ {
+ 	int result, ifindex;
+ 	struct wimax_dev *wimax_dev;
+-	struct device *dev;
+ 
+ 	d_fnstart(3, NULL, "(skb %p info %p)\n", skb, info);
+ 	result = -ENODEV;
+@@ -66,7 +65,6 @@ int wimax_gnl_doit_state_get(struct sk_buff *skb, struct genl_info *info)
+ 	wimax_dev = wimax_dev_get_by_genl_info(info, ifindex);
+ 	if (wimax_dev = NULL)
+ 		goto error_no_wimax_dev;
+-	dev = wimax_dev_to_dev(wimax_dev);
+ 	/* Execute the operation and send the result back to user space */
+ 	result = wimax_state_get(wimax_dev);
+ 	dev_put(wimax_dev->net_dev);
