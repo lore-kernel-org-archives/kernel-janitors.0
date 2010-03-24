@@ -1,24 +1,34 @@
-From: Jason Baron <jbaron@redhat.com>
-Date: Mon, 08 Mar 2010 15:51:33 +0000
-Subject: Re: [patch] dynamic_debug: small clean up in ddebug_proc_write()
-Message-Id: <20100308155132.GA2734@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 24 Mar 2010 11:55:10 +0000
+Subject: [patch] llc: cleanup: remove dead code from llc_init()
+Message-Id: <20100324115510.GC21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100306105934.GA4958@bicker>
-In-Reply-To: <20100306105934.GA4958@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Greg Banks <gnb@melbourne.sgi.com>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
+Cc: "David S. Miller" <davem@davemloft.net>, Octavian Purdila <opurdila@ixiacom.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Mar 06, 2010 at 01:59:34PM +0300, Dan Carpenter wrote:
-> This the doesn't change behavior at all.  In the original code, if nwords
-> was zero then ddebug_parse_query() would return -EINVAL, now we just do 
-> it earlier.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
+We don't need "dev" any more after:
+	a5a04819c5740cb1aa217af2cc8f5ef26f33d744
+	[LLC]: station source mac address
 
-I guess it makes the code a little more readable.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Acked-by: Jason Baron <jbaron@redhat.com>
+diff --git a/net/llc/llc_core.c b/net/llc/llc_core.c
+index 78167e8..2bb0ddf 100644
+--- a/net/llc/llc_core.c
++++ b/net/llc/llc_core.c
+@@ -144,12 +144,6 @@ static struct packet_type llc_tr_packet_type __read_mostly = {
+ 
+ static int __init llc_init(void)
+ {
+-	struct net_device *dev;
+-
+-	dev = first_net_device(&init_net);
+-	if (dev != NULL)
+-		dev = next_net_device(dev);
+-
+ 	dev_add_pack(&llc_packet_type);
+ 	dev_add_pack(&llc_tr_packet_type);
+ 	return 0;
