@@ -1,29 +1,27 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 24 Mar 2010 11:58:34 +0000
-Subject: [patch] wm8994: playback => capture
-Message-Id: <20100324115834.GG21571@bicker>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Date: Wed, 24 Mar 2010 13:51:46 +0000
+Subject: Re: [patch] wm8994: playback => capture
+Message-Id: <1269438706.3798.53.camel@odin>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100324115834.GG21571@bicker>
+In-Reply-To: <20100324115834.GG21571@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Joonyoung Shim <jy0922.shim@samsung.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: alsa-devel@alsa-project.org, Joonyoung Shim <jy0922.shim@samsung.com>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Sparse caught that initialize "playback" two times instead of
-initializing "capture".
+On Wed, 2010-03-24 at 14:58 +0300, Dan Carpenter wrote:
+> Sparse caught that initialize "playback" two times instead of
+> initializing "capture".
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Acked-by: Liam Girdwood <lrg@slimlogic.co.uk>
 
-diff --git a/sound/soc/codecs/wm8994.c b/sound/soc/codecs/wm8994.c
-index 29f3771..d10d651 100644
---- a/sound/soc/codecs/wm8994.c
-+++ b/sound/soc/codecs/wm8994.c
-@@ -3401,7 +3401,7 @@ struct snd_soc_dai wm8994_dai[] = {
- 			.rates = WM8994_RATES,
- 			.formats = WM8994_FORMATS,
- 		},
--		.playback = {
-+		.capture = {
- 			.stream_name = "AIF3 Capture",
- 			.channels_min = 2,
- 			.channels_max = 2,
+-- 
+Freelance Developer, SlimLogic Ltd
+ASoC and Voltage Regulator Maintainer.
+http://www.slimlogic.co.uk
+
