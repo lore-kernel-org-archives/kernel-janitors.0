@@ -1,66 +1,35 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:49:32 +0000
-Subject: Re: [PATCH 18/24] rtc: fix dangling pointers
-Message-Id: <20100330124932.GM29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="UUMz/kfoogzZ9WLZ"
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 24 Mar 2010 11:57:30 +0000
+Subject: [patch] rds: cleanup: remove unneeded variable
+Message-Id: <20100324115730.GF21571@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-19-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1269094385-16114-19-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Gortmaker <p_gortmaker-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andy Grover <andy.grover@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Stephen Hemminger <shemminger@vyatta.com>, Alexey Dobriyan <adobriyan@gmail.com>, Eric Paris <eparis@redhat.com>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We never use "sk" so this patch removes it.
 
---UUMz/kfoogzZ9WLZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-On Sat, Mar 20, 2010 at 03:12:59PM +0100, Wolfram Sang wrote:
-> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-> structure it points to. Also fix drivers which do this _after_ the struct=
-ure
-> was freed already.
->=20
-> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-> Cc: Paul Gortmaker <p_gortmaker@yahoo.com>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-
-please drop this this patch. We reached an agreement that a) setting the
-clientdata-pointer to NULL should be done in the i2c-core [1] and b) how to=
- do
-it. Based on that, I will do the modification of the i2c-core for 2.6.34 (a=
-s it
-fixes the dangling pointers) and then create one single patch removing the =
-then
-superflous calls to i2c_set_clientdata for 2.6.35 (as it is a cleanup). If =
-you
-already applied the above patch to your branch, you don't have to revert; we
-will fix it for you in the next round.
-
-Sorry for the detour!
-
-Kind regards,
-
-   Wolfram
-
-[1] http://thread.gmane.org/gmane.linux.drivers.i2c/5674/focus=3D5729
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---UUMz/kfoogzZ9WLZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux81wACgkQD27XaX1/VRtx5wCfZgJACPD30QCZN1KMxLrVxLM/
-cA8AoK1bGXV51a1vgcx8HLAsA59LAEEc
-=c4Fm
------END PGP SIGNATURE-----
-
---UUMz/kfoogzZ9WLZ--
+diff --git a/net/rds/af_rds.c b/net/rds/af_rds.c
+index 853c52b..9abc825 100644
+--- a/net/rds/af_rds.c
++++ b/net/rds/af_rds.c
+@@ -446,7 +446,6 @@ static void rds_sock_inc_info(struct socket *sock, unsigned int len,
+ 			      struct rds_info_lengths *lens)
+ {
+ 	struct rds_sock *rs;
+-	struct sock *sk;
+ 	struct rds_incoming *inc;
+ 	unsigned long flags;
+ 	unsigned int total = 0;
+@@ -456,7 +455,6 @@ static void rds_sock_inc_info(struct socket *sock, unsigned int len,
+ 	spin_lock_irqsave(&rds_sock_lock, flags);
+ 
+ 	list_for_each_entry(rs, &rds_sock_list, rs_item) {
+-		sk = rds_rs_to_sk(rs);
+ 		read_lock(&rs->rs_recv_lock);
+ 
+ 		/* XXX too lazy to maintain counts.. */
