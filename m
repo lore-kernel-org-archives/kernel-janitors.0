@@ -1,34 +1,35 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Mon, 15 Mar 2010 17:49:05 +0000
-Subject: Re: [PATCH 1/3] arch/mips/txx9/generic: init dynamic bin_attribute
-Message-Id: <20100315174905.GC20055@linux-mips.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 25 Mar 2010 14:41:22 +0000
+Subject: [patch v2] acpi_pad: "processor_aggregator" name too long
+Message-Id: <20100325144122.GF5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
- <1268377431-11671-2-git-send-email-w.sang@pengutronix.de>
- <20100312183450.GC8736@core.coreip.homeip.net>
- <20100313022855.GD4034@pengutronix.de>
-In-Reply-To: <20100313022855.GD4034@pengutronix.de>
+References: <20100319114806.GN5331@bicker> <20100325142738.GD1602@ucw.cz>
+In-Reply-To: <20100325142738.GD1602@ucw.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <w.sang@pengutronix.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, kernel-janitors@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Shaohua Li <shaohua.li@intel.com>, Len Brown <lenb@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Chen Gong <gong.chen@linux.intel.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Mar 13, 2010 at 03:28:55AM +0100, Wolfram Sang wrote:
+cpi_device_class can only be 19 characters and a NULL terminator.
 
-> > Regarding all 3 - it looks like these dynamically alocated attributes
-> > could be converted to statically allocated ones. I'd recommend doing
-> > that instead (in fact, I posted patch for the firmware_class couple days
-> > ago).
-> 
-> I agree for the firmware-patch. Regarding the MIPS one, 'size' might differ and
-> 'private' will differ per instance. Regarding the RTC driver, 'size' might also
-> differ. I don't know if somebody really wants two RTCs or the SRAM for MIPS can
-> be instantiated more than once. Unless somebody with actual hardware jumps in,
-> I'd say better safe than sorry.
+With the current name we get a buffer overflow in acpi_pad_add()
+	strcpy(acpi_device_class(device), ACPI_PROCESSOR_AGGREGATOR_CLASS);
 
-On the txx9 platform you've posted the patch for additional RTCs or SRAMs
-would not normally be expected.  On other platforms such as IP27 there
-would be one per node that is potencially very many.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+V2: Thanks to Pavel Machek for coming up with the right name for this.
 
-  Ralf
+diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
+index 7e52295..790aaa1 100644
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -30,7 +30,7 @@
+ #include <acpi/acpi_bus.h>
+ #include <acpi/acpi_drivers.h>
+ 
+-#define ACPI_PROCESSOR_AGGREGATOR_CLASS	"processor_aggregator"
++#define ACPI_PROCESSOR_AGGREGATOR_CLASS	"cpu_aggregator"
+ #define ACPI_PROCESSOR_AGGREGATOR_DEVICE_NAME "Processor Aggregator"
+ #define ACPI_PROCESSOR_AGGREGATOR_NOTIFY 0x80
+ static DEFINE_MUTEX(isolated_cpus_lock);
