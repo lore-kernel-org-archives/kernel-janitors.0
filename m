@@ -1,41 +1,59 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 16 Mar 2010 06:53:36 +0000
-Subject: Re: [patch] sequencer: clean up remove bogus check
-Message-Id: <s5haau8iwpb.wl%tiwai@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 26 Mar 2010 22:03:29 +0000
+Subject: [PATCH 5/7] arch/powerpc/kernel: Use set_cpus_allowed_ptr
+Message-Id: <Pine.LNX.4.64.1003262303080.6480@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100316064623.GA5331@bicker>
-In-Reply-To: <20100316064623.GA5331@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: peterz@infradead.org, mingo@elte.hu, tglx@linutronix.de, oleg@redhat.com, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Tue, 16 Mar 2010 09:46:23 +0300,
-Dan Carpenter wrote:
-> 
-> A few lines earlier bend is limited to 2399.  So semitones is always
-> less than 24 here.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-Applied now.  Thanks.
-(That range check is even wrong since the array size is 24...)
+Use set_cpus_allowed_ptr rather than set_cpus_allowed.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Takashi
+// <smpl>
+@@
+expression E1,E2;
+@@
 
-> diff --git a/sound/oss/sequencer.c b/sound/oss/sequencer.c
-> index c798746..e85789e 100644
-> --- a/sound/oss/sequencer.c
-> +++ b/sound/oss/sequencer.c
-> @@ -1631,8 +1631,6 @@ unsigned long compute_finetune(unsigned long base_freq, int bend, int range,
->  	}
->  
->  	semitones = bend / 100;
-> -	if (semitones > 99)
-> -		semitones = 99;
->  	cents = bend % 100;
->  
->  	amount = (int) (semitone_tuning[semitones] * multiplier * cent_tuning[cents]) / 10000;
-> 
+- set_cpus_allowed(E1, cpumask_of_cpu(E2))
++ set_cpus_allowed_ptr(E1, cpumask_of(E2))
+
+@@
+expression E;
+identifier I;
+@@
+
+- set_cpus_allowed(E, I)
++ set_cpus_allowed_ptr(E, &I)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/powerpc/kernel/smp.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -561,12 +561,12 @@ void __init smp_cpus_done(unsigned int m
+ 	 * se we pin us down to CPU 0 for a short while
+ 	 */
+ 	old_mask = current->cpus_allowed;
+-	set_cpus_allowed(current, cpumask_of_cpu(boot_cpuid));
++	set_cpus_allowed_ptr(current, cpumask_of(boot_cpuid));
+ 	
+ 	if (smp_ops && smp_ops->setup_cpu)
+ 		smp_ops->setup_cpu(boot_cpuid);
+ 
+-	set_cpus_allowed(current, old_mask);
++	set_cpus_allowed_ptr(current, &old_mask);
+ 
+ 	snapshot_timebases();
+ 
+
