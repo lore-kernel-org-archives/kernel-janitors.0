@@ -1,80 +1,132 @@
-From: Giridhar Malavali <giridhar.malavali@qlogic.com>
-Date: Tue, 30 Mar 2010 01:23:41 +0000
-Subject: Re: [PATCH 9/12] drivers/scsi/qla2xxx: Add missing unlock
-Message-Id: <alpine.LRH.2.00.1003291819330.28339@mvluser00.mv.qlogic.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 26 Mar 2010 22:04:09 +0000
+Subject: [PATCH 7/7] arch/sparc/kernel: Use set_cpus_allowed_ptr
+Message-Id: <Pine.LNX.4.64.1003262303500.6480@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1003291735420.21896@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1003291735420.21896@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@suse.de
-Cc: andrew.vasquez@qlogic.com, julia@diku.dk, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: peterz@infradead.org, mingo@elte.hu, tglx@linutronix.de, oleg@redhat.com, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 29 Mar 2010, Julia Lawall wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> From: Julia Lawall <julia@diku.dk>
->
-> This code represents error handling code.  Add an unlock as done in the
-> normal exit path from the function.
->
-> A simplified version of the semantic patch that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @r exists@
-> expression E1;
-> identifier f;
-> @@
->
-> f (...) { <+...
-> * spin_lock_irqsave (E1,...);
-> ... when != E1
-> * return ...;
-> ...+> }
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
->
-> ---
-> drivers/scsi/qla2xxx/qla_attr.c     |    1 +
-> 1 files changed, 1 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
-> index 90d1e06..e8ace7a 100644
-> --- a/drivers/scsi/qla2xxx/qla_attr.c
-> +++ b/drivers/scsi/qla2xxx/qla_attr.c
-> @@ -2392,6 +2392,7 @@ done:
-> 		kfree(sp->fcport);
-> 	kfree(sp->ctx);
-> 	mempool_free(sp, ha->srb_mempool);
-> +	spin_unlock_irqrestore(&ha->hardware_lock, flags);
-> 	return 0;
-> }
->
->
-James,
+Use set_cpus_allowed_ptr rather than set_cpus_allowed.
 
-Can u please include this patch.
-Here is the pointer for the similar patch submitted previously which I acked.
-http://marc.info/?l=linux-scsi&m6877099912968&w=2
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-With the new BSG patches submitted to scsi-misc at
-http://marc.info/?l=linux-scsi&m6904344832176&w=2, the BSG related code
-is moved to new files bsg.[ch]. The patch below will fix the lock imbalance issue
-with latest patches submitted to scsi-misc.
+// <smpl>
+@@
+expression E1,E2;
+@@
 
-Giri
+- set_cpus_allowed(E1, cpumask_of_cpu(E2))
++ set_cpus_allowed_ptr(E1, cpumask_of(E2))
+
+@@
+expression E;
+identifier I;
+@@
+
+- set_cpus_allowed(E, I)
++ set_cpus_allowed_ptr(E, &I)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
-index 387d694..21e5bcd 100644
---- a/drivers/scsi/qla2xxx/qla_bsg.c
-+++ b/drivers/scsi/qla2xxx/qla_bsg.c
-@@ -1199,6 +1199,7 @@ qla24xx_bsg_timeout(struct fc_bsg_job *bsg_job)
-   	return 0;
+ arch/sparc/kernel/sysfs.c        |    4 ++--
+ arch/sparc/kernel/us2e_cpufreq.c |    8 ++++----
+ arch/sparc/kernel/us3_cpufreq.c  |    8 ++++----
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-   done:
-+	spin_unlock_irqrestore(&ha->hardware_lock, flags);
-   	if (bsg_job->request->msgcode = FC_BSG_HST_CT)
-   		kfree(sp->fcport);
-   	kfree(sp->ctx);
+diff -u -p a/arch/sparc/kernel/sysfs.c b/arch/sparc/kernel/sysfs.c
+--- a/arch/sparc/kernel/sysfs.c
++++ b/arch/sparc/kernel/sysfs.c
+@@ -107,12 +107,12 @@ static unsigned long run_on_cpu(unsigned
+ 	unsigned long ret;
+ 
+ 	/* should return -EINVAL to userspace */
+-	if (set_cpus_allowed(current, cpumask_of_cpu(cpu)))
++	if (set_cpus_allowed_ptr(current, cpumask_of(cpu)))
+ 		return 0;
+ 
+ 	ret = func(arg);
+ 
+-	set_cpus_allowed(current, old_affinity);
++	set_cpus_allowed_ptr(current, &old_affinity);
+ 
+ 	return ret;
+ }
+diff -u -p a/arch/sparc/kernel/us2e_cpufreq.c b/arch/sparc/kernel/us2e_cpufreq.c
+--- a/arch/sparc/kernel/us2e_cpufreq.c
++++ b/arch/sparc/kernel/us2e_cpufreq.c
+@@ -238,12 +238,12 @@ static unsigned int us2e_freq_get(unsign
+ 		return 0;
+ 
+ 	cpus_allowed = current->cpus_allowed;
+-	set_cpus_allowed(current, cpumask_of_cpu(cpu));
++	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+ 
+ 	clock_tick = sparc64_get_clock_tick(cpu) / 1000;
+ 	estar = read_hbreg(HBIRD_ESTAR_MODE_ADDR);
+ 
+-	set_cpus_allowed(current, cpus_allowed);
++	set_cpus_allowed_ptr(current, &cpus_allowed);
+ 
+ 	return clock_tick / estar_to_divisor(estar);
+ }
+@@ -259,7 +259,7 @@ static void us2e_set_cpu_divider_index(u
+ 		return;
+ 
+ 	cpus_allowed = current->cpus_allowed;
+-	set_cpus_allowed(current, cpumask_of_cpu(cpu));
++	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+ 
+ 	new_freq = clock_tick = sparc64_get_clock_tick(cpu) / 1000;
+ 	new_bits = index_to_estar_mode(index);
+@@ -281,7 +281,7 @@ static void us2e_set_cpu_divider_index(u
+ 
+ 	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+ 
+-	set_cpus_allowed(current, cpus_allowed);
++	set_cpus_allowed_ptr(current, &cpus_allowed);
+ }
+ 
+ static int us2e_freq_target(struct cpufreq_policy *policy,
+diff -u -p a/arch/sparc/kernel/us3_cpufreq.c b/arch/sparc/kernel/us3_cpufreq.c
+--- a/arch/sparc/kernel/us3_cpufreq.c
++++ b/arch/sparc/kernel/us3_cpufreq.c
+@@ -86,12 +86,12 @@ static unsigned int us3_freq_get(unsigne
+ 		return 0;
+ 
+ 	cpus_allowed = current->cpus_allowed;
+-	set_cpus_allowed(current, cpumask_of_cpu(cpu));
++	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+ 
+ 	reg = read_safari_cfg();
+ 	ret = get_current_freq(cpu, reg);
+ 
+-	set_cpus_allowed(current, cpus_allowed);
++	set_cpus_allowed_ptr(current, &cpus_allowed);
+ 
+ 	return ret;
+ }
+@@ -106,7 +106,7 @@ static void us3_set_cpu_divider_index(un
+ 		return;
+ 
+ 	cpus_allowed = current->cpus_allowed;
+-	set_cpus_allowed(current, cpumask_of_cpu(cpu));
++	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+ 
+ 	new_freq = sparc64_get_clock_tick(cpu) / 1000;
+ 	switch (index) {
+@@ -140,7 +140,7 @@ static void us3_set_cpu_divider_index(un
+ 
+ 	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+ 
+-	set_cpus_allowed(current, cpus_allowed);
++	set_cpus_allowed_ptr(current, &cpus_allowed);
+ }
+ 
+ static int us3_freq_target(struct cpufreq_policy *policy,
