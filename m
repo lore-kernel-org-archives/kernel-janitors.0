@@ -1,66 +1,88 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:36:12 +0000
-Subject: Re: [PATCH 08/24] leds: fix dangling pointers
-Message-Id: <20100330123612.GH29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="EemXnrF2ob+xzFeB"
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 26 Mar 2010 22:01:51 +0000
+Subject: [PATCH 1/7] arch/arm: Use set_cpus_allowed_ptr
+Message-Id: <Pine.LNX.4.64.1003262301300.6480@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-9-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1269094385-16114-9-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Riku Voipio <riku.voipio-X3B1VOXEql0@public.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+From: Julia Lawall <julia@diku.dk>
 
---EemXnrF2ob+xzFeB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use set_cpus_allowed_ptr rather than set_cpus_allowed.
 
-On Sat, Mar 20, 2010 at 03:12:49PM +0100, Wolfram Sang wrote:
-> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-> structure it points to. Also fix drivers which do this _after_ the struct=
-ure
-> was freed already.
->=20
-> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-> Cc: Richard Purdie <rpurdie@rpsys.net>
-> Cc: Riku Voipio <riku.voipio@iki.fi>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-please drop this this patch. We reached an agreement that a) setting the
-clientdata-pointer to NULL should be done in the i2c-core [1] and b) how to=
- do
-it. Based on that, I will do the modification of the i2c-core for 2.6.34 (a=
-s it
-fixes the dangling pointers) and then create one single patch removing the =
-then
-superflous calls to i2c_set_clientdata for 2.6.35 (as it is a cleanup). If =
-you
-already applied the above patch to your branch, you don't have to revert; we
-will fix it for you in the next round.
+// <smpl>
+@@
+expression E1,E2;
+@@
 
-Sorry for the detour!
+- set_cpus_allowed(E1, cpumask_of_cpu(E2))
++ set_cpus_allowed_ptr(E1, cpumask_of(E2))
 
-Kind regards,
+@@
+expression E;
+identifier I;
+@@
 
-   Wolfram
+- set_cpus_allowed(E, I)
++ set_cpus_allowed_ptr(E, &I)
+// </smpl>
 
-[1] http://thread.gmane.org/gmane.linux.drivers.i2c/5674/focus=3D5729
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+---
+ arch/arm/mach-integrator/cpu.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---EemXnrF2ob+xzFeB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux8DwACgkQD27XaX1/VRtGVwCfZkkftdDEO97j7QecceDftlaL
-4h4AnjBYnZQvW4F5FQnXcPDNQGmN5A8+
-=AvUU
------END PGP SIGNATURE-----
-
---EemXnrF2ob+xzFeB--
+diff -u -p a/arch/arm/mach-integrator/cpu.c b/arch/arm/mach-integrator/cpu.c
+--- a/arch/arm/mach-integrator/cpu.c
++++ b/arch/arm/mach-integrator/cpu.c
+@@ -99,7 +99,7 @@ static int integrator_set_target(struct 
+ 	 * Bind to the specified CPU.  When this call returns,
+ 	 * we should be running on the right CPU.
+ 	 */
+-	set_cpus_allowed(current, cpumask_of_cpu(cpu));
++	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+ 	BUG_ON(cpu != smp_processor_id());
+ 
+ 	/* get current setting */
+@@ -127,7 +127,7 @@ static int integrator_set_target(struct 
+ 	freqs.cpu = policy->cpu;
+ 
+ 	if (freqs.old = freqs.new) {
+-		set_cpus_allowed(current, cpus_allowed);
++		set_cpus_allowed_ptr(current, &cpus_allowed);
+ 		return 0;
+ 	}
+ 
+@@ -150,7 +150,7 @@ static int integrator_set_target(struct 
+ 	/*
+ 	 * Restore the CPUs allowed mask.
+ 	 */
+-	set_cpus_allowed(current, cpus_allowed);
++	set_cpus_allowed_ptr(current, &cpus_allowed);
+ 
+ 	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+ 
+@@ -166,7 +166,7 @@ static unsigned int integrator_get(unsig
+ 
+ 	cpus_allowed = current->cpus_allowed;
+ 
+-	set_cpus_allowed(current, cpumask_of_cpu(cpu));
++	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+ 	BUG_ON(cpu != smp_processor_id());
+ 
+ 	/* detect memory etc. */
+@@ -182,7 +182,7 @@ static unsigned int integrator_get(unsig
+ 
+ 	current_freq = icst_hz(&cclk_params, vco) / 1000; /* current freq */
+ 
+-	set_cpus_allowed(current, cpus_allowed);
++	set_cpus_allowed_ptr(current, &cpus_allowed);
+ 
+ 	return current_freq;
+ }
