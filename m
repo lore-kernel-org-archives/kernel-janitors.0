@@ -1,59 +1,26 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 26 Mar 2010 22:03:29 +0000
-Subject: [PATCH 5/7] arch/powerpc/kernel: Use set_cpus_allowed_ptr
-Message-Id: <Pine.LNX.4.64.1003262303080.6480@ask.diku.dk>
+From: David Howells <dhowells@redhat.com>
+Date: Sat, 27 Mar 2010 13:26:54 +0000
+Subject: Re: [PATCH 5/7] arch/powerpc/kernel: Use set_cpus_allowed_ptr
+Message-Id: <18162.1269696414@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1003262303080.6480@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1003262303080.6480@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peterz@infradead.org, mingo@elte.hu, tglx@linutronix.de, oleg@redhat.com, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: peterz@infradead.org, kernel-janitors@vger.kernel.org, oleg@redhat.com, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, Paul Mackerras <paulus@samba.org>, mingo@elte.hu, tglx@linutronix.de
 
-From: Julia Lawall <julia@diku.dk>
+Julia Lawall <julia@diku.dk> wrote:
 
-Use set_cpus_allowed_ptr rather than set_cpus_allowed.
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+That URL doesn't appear to work:
 
-// <smpl>
-@@
-expression E1,E2;
-@@
+Not Found
+The requested URL /) was not found on this server.
+Additionally, a 404 Not Found error was encountered while trying to use an ErrorDocument to handle the request.
+Apache/2.2.8 (Mandriva Linux/PREFORK-6mdv2008.1) Server at coccinelle.lip6.fr Port 80
 
-- set_cpus_allowed(E1, cpumask_of_cpu(E2))
-+ set_cpus_allowed_ptr(E1, cpumask_of(E2))
-
-@@
-expression E;
-identifier I;
-@@
-
-- set_cpus_allowed(E, I)
-+ set_cpus_allowed_ptr(E, &I)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- arch/powerpc/kernel/smp.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff -u -p a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -561,12 +561,12 @@ void __init smp_cpus_done(unsigned int m
- 	 * se we pin us down to CPU 0 for a short while
- 	 */
- 	old_mask = current->cpus_allowed;
--	set_cpus_allowed(current, cpumask_of_cpu(boot_cpuid));
-+	set_cpus_allowed_ptr(current, cpumask_of(boot_cpuid));
- 	
- 	if (smp_ops && smp_ops->setup_cpu)
- 		smp_ops->setup_cpu(boot_cpuid);
- 
--	set_cpus_allowed(current, old_mask);
-+	set_cpus_allowed_ptr(current, &old_mask);
- 
- 	snapshot_timebases();
- 
-
+David
