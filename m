@@ -1,70 +1,35 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date: Mon, 29 Mar 2010 10:57:15 +0000
-Subject: Re: [PATCH] drivers/macintosh: Correct potential double free
-Message-Id: <1269860235.7101.13.camel@pasglop>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 28 Mar 2010 11:55:00 +0000
+Subject: [patch] iwlwifi: range checking issue
+Message-Id: <20100328115500.GX5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1003291138520.21896@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1003291138520.21896@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linuxppc-dev@ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Zhu Yi <yi.zhu@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Abhijeet Kolekar <abhijeet.kolekar@intel.com>, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2010-03-29 at 11:39 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The conditionals were testing different values, but then all freeing the
-> same one, which could result in a double free.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
+IWL_RATE_COUNT is 13 and IWL_RATE_COUNT_LEGACY is 12.
 
-Thanks. I'll stick that in my -next branch as soon as I open it :-)
+IWL_RATE_COUNT_LEGACY is the right one here because iwl3945_rates
+doesn't support 60M and also that's how "rates" is defined in
+iwlcore_init_geos() from drivers/net/wireless/iwlwifi/iwl-core.c.
 
-Cheers,
-Ben.
+        rates = kzalloc((sizeof(struct ieee80211_rate) * IWL_RATE_COUNT_LEGACY),
+                        GFP_KERNEL);
 
-> // <smpl>
-> @@
-> expression x,e;
-> identifier f;
-> iterator I;
-> statement S;
-> @@
-> 
-> *kfree(x);
-> ... when != &x
->     when != x = e
->     when != I(x,...) S
-> *x
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/macintosh/windfarm_pm91.c   |    9 +++------
->  1 files changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/macintosh/windfarm_pm91.c b/drivers/macintosh/windfarm_pm91.c
-> index bea9916..3442732 100644
-> --- a/drivers/macintosh/windfarm_pm91.c
-> +++ b/drivers/macintosh/windfarm_pm91.c
-> @@ -687,12 +687,9 @@ static int __devexit wf_smu_remove(struct platform_device *ddev)
->  		wf_put_control(cpufreq_clamp);
->  
->  	/* Destroy control loops state structures */
-> -	if (wf_smu_slots_fans)
-> -		kfree(wf_smu_cpu_fans);
-> -	if (wf_smu_drive_fans)
-> -		kfree(wf_smu_cpu_fans);
-> -	if (wf_smu_cpu_fans)
-> -		kfree(wf_smu_cpu_fans);
-> +	kfree(wf_smu_slots_fans);
-> +	kfree(wf_smu_drive_fans);
-> +	kfree(wf_smu_cpu_fans);
->  
->  	return 0;
->  }
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
+diff --git a/drivers/net/wireless/iwlwifi/iwl3945-base.c b/drivers/net/wireless/iwlwifi/iwl3945-base.c
+index 54daa38..7d3806a 100644
+--- a/drivers/net/wireless/iwlwifi/iwl3945-base.c
++++ b/drivers/net/wireless/iwlwifi/iwl3945-base.c
+@@ -1955,7 +1955,7 @@ static void iwl3945_init_hw_rates(struct iwl_priv *priv,
+ {
+ 	int i;
+ 
+-	for (i = 0; i < IWL_RATE_COUNT; i++) {
++	for (i = 0; i < IWL_RATE_COUNT_LEGACY; i++) {
+ 		rates[i].bitrate = iwl3945_rates[i].ieee * 5;
+ 		rates[i].hw_value = i; /* Rate scaling will work on indexes */
+ 		rates[i].hw_value_short = i;
