@@ -1,30 +1,28 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 08 Mar 2010 13:07:01 +0000
-Subject: batman: potential null dereference
-Message-Id: <20100308130700.GJ6469@bicker>
+Date: Sun, 28 Mar 2010 11:48:34 +0000
+Subject: [patch] comedi: off by one issue
+Message-Id: <20100328114834.GT5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Bill Pemberton <wfp5p@virginia.edu>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-drivers/staging/batman-adv/routing.c
-    88          } else if ((orig_node->router = NULL) && (neigh_node != NULL)) {
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^
-    89  
-    90                  bat_dbg(DBG_ROUTES,
-    91                          "Adding route towards: %pM (via %pM)\n",
-    92                          orig_node->orig, neigh_node->addr);
-    93                  hna_global_add_orig(orig_node, hna_buff, hna_buff_len);
-    94  
-    95                  /* route changed */
-    96          } else {
-    97                  bat_dbg(DBG_ROUTES, "Changing route towards: %pM (now via %pM - was via %pM)\n", 
-orig_node->orig, neigh_node->addr, orig_node->router->addr);
-                                   ^^^^^^^^^^^^^^^^^^^^^^^									
-    98          }
+"dac_range_table" has 5 elements.
 
-This could fail if debugging is enabled and neigh_node is null.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-regards,
-dan carpenter
+diff --git a/drivers/staging/comedi/drivers/dt2801.c b/drivers/staging/comedi/drivers/dt2801.c
+index 3f365ae..83fb6e5 100644
+--- a/drivers/staging/comedi/drivers/dt2801.c
++++ b/drivers/staging/comedi/drivers/dt2801.c
+@@ -472,7 +472,7 @@ static const struct comedi_lrange *dac_range_table[] = {
+ 
+ static const struct comedi_lrange *dac_range_lkup(int opt)
+ {
+-	if (opt < 0 || opt > 5)
++	if (opt < 0 || opt >= 5)
+ 		return &range_unknown;
+ 	return dac_range_table[opt];
+ }
