@@ -1,36 +1,39 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 30 Mar 2010 16:45:42 +0000
-Subject: [patch v2] s390: potential buffer overflow
-Message-Id: <20100330164542.GN5069@bicker>
+Date: Sun, 28 Mar 2010 11:49:20 +0000
+Subject: [patch] video/zc0301: improve error handling
+Message-Id: <20100328114920.GU5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100330094342.GJ5069@bicker> <m1k4strd42.fsf@fess.ebiederm.org>
-In-Reply-To: <m1k4strd42.fsf@fess.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, Hans-Joachim Picht <hans@linux.vnet.ibm.com>, Sebastian Ott <sebott@linux.vnet.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Luca Risolia <luca.risolia@studio.unibo.it>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Alexey Dobriyan <adobriyan@gmail.com>, Andreas Mohr <andi@lisas.de>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"len" hasn't been properly range checked so we shouldn't use it as an
-array offset.  This can only be written to by root but it would still be
-annoying to accidentally write more than 3 characters and corrupt your
-memory.
+Return an error if the controller is not found.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-v2.  Removed a superfluous chunk from my first patch.  I didn't
-understand how ->maxlen worked.
 
-diff --git a/drivers/s390/char/sclp_async.c b/drivers/s390/char/sclp_async.c
-index f449c69..38a9f55 100644
---- a/drivers/s390/char/sclp_async.c
-+++ b/drivers/s390/char/sclp_async.c
-@@ -84,7 +84,7 @@ static int proc_handler_callhome(struct ctl_table *ctl, int write,
- 		rc = copy_from_user(buf, buffer, sizeof(buf));
- 		if (rc != 0)
- 			return -EFAULT;
--		buf[len - 1] = '\0';
-+		buf[sizeof(buf) - 1] = '\0';
- 		if (strict_strtoul(buf, 0, &val) != 0)
- 			return -EINVAL;
- 		if (val != 0 && val != 1)
+diff --git a/drivers/media/video/zc0301/zc0301_core.c b/drivers/media/video/zc0301/zc0301_core.c
+index e44e4b5..bb51cfb 100644
+--- a/drivers/media/video/zc0301/zc0301_core.c
++++ b/drivers/media/video/zc0301/zc0301_core.c
+@@ -1153,7 +1153,7 @@ zc0301_vidioc_s_ctrl(struct zc0301_device* cam, void __user * arg)
+ 	if (copy_from_user(&ctrl, arg, sizeof(ctrl)))
+ 		return -EFAULT;
+ 
+-	for (i = 0; i < ARRAY_SIZE(s->qctrl); i++)
++	for (i = 0; i < ARRAY_SIZE(s->qctrl); i++) {
+ 		if (ctrl.id = s->qctrl[i].id) {
+ 			if (s->qctrl[i].flags & V4L2_CTRL_FLAG_DISABLED)
+ 				return -EINVAL;
+@@ -1163,7 +1163,9 @@ zc0301_vidioc_s_ctrl(struct zc0301_device* cam, void __user * arg)
+ 			ctrl.value -= ctrl.value % s->qctrl[i].step;
+ 			break;
+ 		}
+-
++	}
++	if (i = ARRAY_SIZE(s->qctrl))
++		return -EINVAL;
+ 	if ((err = s->set_ctrl(cam, &ctrl)))
+ 		return err;
+ 
