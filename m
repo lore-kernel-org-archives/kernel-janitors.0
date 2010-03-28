@@ -1,29 +1,52 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 16 Mar 2010 10:19:51 +0000
-Subject: bug report: frontier: use after free
-Message-Id: <20100316101951.GD5331@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 28 Mar 2010 16:00:25 +0000
+Subject: [PATCH] fs/btrfs: Correct use after free
+Message-Id: <Pine.LNX.4.64.1003281800020.29824@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@oracle.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-drivers/staging/frontier/alphatrack.c +854 usb_alphatrack_disconnect()
-   845          /* if the device is not opened, then we clean up right now */
-   846          if (!dev->open_count) {
-   847                  up(&dev->sem);
-   848                  usb_alphatrack_delete(dev);
+From: Julia Lawall <julia@diku.dk>
 
-	We free "dev" here.
+If the kfree is executed, the dereference of range afterwards will
+represent a use after free.  Added goto out, as done in the other nearby
+error handling code.
 
-   849          } else {
-   850                  dev->intf = NULL;
-   851                  up(&dev->sem);
-   852          }
-   853  
-   854          atomic_set(&dev->writes_pending, 0);
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-	We use it here.
+// <smpl>
+@@
+expression x,e;
+identifier f;
+iterator I;
+statement S;
+@@
 
-regards,
-dan carpenter
+*kfree(x);
+... when != &x
+    when != x = e
+    when != I(x,...) S
+*x->f
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/btrfs/ioctl.c                    |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 2845c6c..dacbb52 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -1375,6 +1375,7 @@ static int btrfs_ioctl_defrag(struct file *file, void __user *argp)
+ 					   sizeof(*range))) {
+ 				ret = -EFAULT;
+ 				kfree(range);
++				goto out;
+ 			}
+ 			/* compression requires us to start the IO */
+ 			if ((range->flags & BTRFS_DEFRAG_RANGE_COMPRESS)) {
