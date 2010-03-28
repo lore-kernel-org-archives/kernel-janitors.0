@@ -1,77 +1,37 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Fri, 12 Mar 2010 07:03:48 +0000
-Subject: init dynamic bin_attribute structures
-Message-Id: <1268377431-11671-1-git-send-email-w.sang@pengutronix.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 28 Mar 2010 11:28:08 +0000
+Subject: [patch] mfd: off by one issue
+Message-Id: <20100328112808.GO5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Paul Fertser <fercerpav@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Arnaud Patard <arnaud.patard@rtp-net.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello,
+"pcf->irq_handler" has PCF50633_NUM_IRQ elements.
 
-I was pointed to the fact that commit 6992f5334995af474c2b58d010d08bc597f0f=
-2fe
-requires adjustments to dynamically created sysfs-attributes when Albrecht =
-Dre=C3=9F
-tried to compile the eeprom-driver at24 with lockdep enabled. After fixing =
-this
-for at24 and at25, I came up with this coccinelle-script to find further
-candidates:
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-@ init @
-identifier struct_name, bin;
-@@
-
-	struct struct_name {
-		...
-		struct bin_attribute bin;
-		...
-	};
-
-@ main extends init @
-expression E;
-statement S;
-identifier name, err;
-@@
-
-(
-	struct struct_name *name;
-|
--	struct struct_name *name =3D NULL;
-+	struct struct_name *name;
-)
-	...
-(
-	sysfs_bin_attr_init(&name->bin);
-|
-+	sysfs_bin_attr_init(&name->bin);
-	if (sysfs_create_bin_file(E, &name->bin))
-		S
-|
-+	sysfs_bin_attr_init(&name->bin);
-	err =3D sysfs_create_bin_file(E, &name->bin);
-)
-
-(Note: I did a similar script for non-binary attributes, too. That one didn=
-'t
-find a match)
-
-The resulting series is the edited outcome of that. "Edited" because the
-patches were manually reviewed afterwards to find the best place to add the
-fix. The patches are not more than compile-tested on x86 where possible due=
- to
-no hardware. Please also note that my semantic patch is probably not perfect
-and may have missed code still needing the fix.
-
-Comments welcome, of course.
-
-Regards,
-
-   Wolfram Sang
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/mfd/pcf50633-core.c b/drivers/mfd/pcf50633-core.c
+index 03dcc92..4f13608 100644
+--- a/drivers/mfd/pcf50633-core.c
++++ b/drivers/mfd/pcf50633-core.c
+@@ -217,7 +217,7 @@ static struct attribute_group pcf_attr_group = {
+ int pcf50633_register_irq(struct pcf50633 *pcf, int irq,
+ 			void (*handler) (int, void *), void *data)
+ {
+-	if (irq < 0 || irq > PCF50633_NUM_IRQ || !handler)
++	if (irq < 0 || irq >= PCF50633_NUM_IRQ || !handler)
+ 		return -EINVAL;
+ 
+ 	if (WARN_ON(pcf->irq_handler[irq].handler))
+@@ -234,7 +234,7 @@ EXPORT_SYMBOL_GPL(pcf50633_register_irq);
+ 
+ int pcf50633_free_irq(struct pcf50633 *pcf, int irq)
+ {
+-	if (irq < 0 || irq > PCF50633_NUM_IRQ)
++	if (irq < 0 || irq >= PCF50633_NUM_IRQ)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&pcf->lock);
