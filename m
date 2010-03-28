@@ -1,29 +1,29 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 28 Mar 2010 11:21:18 +0000
-Subject: [patch] video/au0828: off by one bug
-Message-Id: <20100328112118.GI5069@bicker>
+Date: Sun, 28 Mar 2010 11:19:47 +0000
+Subject: [patch] via: off by one issue
+Message-Id: <20100328111947.GH5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Devin Heitmueller <dheitmueller@kernellabs.com>, Michael Krufky <mkrufky@linuxtv.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "AUVI_INPUT(tmp)" macro uses "tmp" as an index of an array with
-AU0828_MAX_INPUT elements.
+"fx->lock" is used as the index in "dev_priv->decoder_queue[fx->lock]"
+which is an array of "VIA_NR_XVMC_LOCKS" elements.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/media/video/au0828/au0828-video.c b/drivers/media/video/au0828/au0828-video.c
-index dc67bc4..19a5773 100644
---- a/drivers/media/video/au0828/au0828-video.c
-+++ b/drivers/media/video/au0828/au0828-video.c
-@@ -1104,7 +1104,7 @@ static int vidioc_enum_input(struct file *file, void *priv,
+diff --git a/drivers/gpu/drm/via/via_video.c b/drivers/gpu/drm/via/via_video.c
+index 6ec04ac..6efac81 100644
+--- a/drivers/gpu/drm/via/via_video.c
++++ b/drivers/gpu/drm/via/via_video.c
+@@ -75,7 +75,7 @@ int via_decoder_futex(struct drm_device *dev, void *data, struct drm_file *file_
  
- 	tmp = input->index;
+ 	DRM_DEBUG("\n");
  
--	if (tmp > AU0828_MAX_INPUT)
-+	if (tmp >= AU0828_MAX_INPUT)
- 		return -EINVAL;
- 	if (AUVI_INPUT(tmp).type = 0)
- 		return -EINVAL;
+-	if (fx->lock > VIA_NR_XVMC_LOCKS)
++	if (fx->lock >= VIA_NR_XVMC_LOCKS)
+ 		return -EFAULT;
+ 
+ 	lock = (volatile int *)XVMCLOCKPTR(sAPriv, fx->lock);
