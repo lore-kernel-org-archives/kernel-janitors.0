@@ -1,42 +1,49 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 30 Mar 2010 12:28:34 +0000
-Subject: Re: [PATCH 02/24] power/ds2782: really clear i2c_clientdata on exit
-Message-Id: <20100330122834.GD29472@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Q0rSlbzrZN6k9QnT"
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 28 Mar 2010 11:29:09 +0000
+Subject: [patch] video/s255drv: cleanup. remove uneeded NULL check
+Message-Id: <20100328112909.GP5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-3-git-send-email-w.sang@pengutronix.de> <20100322170810.GA30325@oksana.dev.rtsoft.ru>
-In-Reply-To: <20100322170810.GA30325-wnGakbxT3iijyJ0x5qLZdcN33GVbZNy3@public.gmane.org>
-To: Anton Vorontsov <avorontsov-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ryan Mallon <ryan-7Wk5F4Od5/oYd5yxfr4S2w@public.gmane.org>, Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Dean Anderson <dean@sensoray.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mike Isely <isely@pobox.com>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+"dev" can never be NULL there so there is no need to check it.
+Also I made a couple of white space changes to the declaration of "dev".
 
---Q0rSlbzrZN6k9QnT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This eliminates a smatch warning about checking for NULL after a
+dereference.
 
-> Why is this needed? I'd vote for just removing set_clientdata in
-> fail/remove paths.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Yes, it will be done this way. I will prepare the necessary cleanups for
-2.6.35. Please drop this patch.
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---Q0rSlbzrZN6k9QnT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkux7nIACgkQD27XaX1/VRtwVgCgktG65wiSfWynE/Ysg29wExEe
-ZZMAnj2B3w9xn+Cg5pSet6T/UIEYRWr9
-=t4mc
------END PGP SIGNATURE-----
-
---Q0rSlbzrZN6k9QnT--
+diff --git a/drivers/media/video/s2255drv.c b/drivers/media/video/s2255drv.c
+index fb742f1..e70af5d 100644
+--- a/drivers/media/video/s2255drv.c
++++ b/drivers/media/video/s2255drv.c
+@@ -2582,8 +2582,9 @@ error:
+ /* disconnect routine. when board is removed physically or with rmmod */
+ static void s2255_disconnect(struct usb_interface *interface)
+ {
+-	struct s2255_dev *dev = NULL;
++	struct s2255_dev *dev;
+ 	int i;
++
+ 	dprintk(1, "s2255: disconnect interface %p\n", interface);
+ 	dev = usb_get_intfdata(interface);
+ 
+@@ -2602,11 +2603,9 @@ static void s2255_disconnect(struct usb_interface *interface)
+ 	usb_set_intfdata(interface, NULL);
+ 	mutex_unlock(&dev->open_lock);
+ 
+-	if (dev) {
+-		kref_put(&dev->kref, s2255_destroy);
+-		dprintk(1, "s2255drv: disconnect\n");
+-		dev_info(&interface->dev, "s2255usb now disconnected\n");
+-	}
++	kref_put(&dev->kref, s2255_destroy);
++	dprintk(1, "s2255drv: disconnect\n");
++	dev_info(&interface->dev, "s2255usb now disconnected\n");
+ }
+ 
+ static struct usb_driver s2255_driver = {
