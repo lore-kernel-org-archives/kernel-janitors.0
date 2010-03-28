@@ -1,42 +1,83 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Thu, 11 Mar 2010 15:28:01 +0000
-Subject: Re: [patch] hwmon: saving negative errors in unsigned
-Message-Id: <20100311162801.482d96d6@hyperion.delvare>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 28 Mar 2010 11:24:38 +0000
+Subject: [patch] drm: sysfs files error handling
+Message-Id: <20100328112438.GK5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100311103151.GN6321@bicker>
-In-Reply-To: <20100311103151.GN6321@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-
-On Thu, 11 Mar 2010 12:08:32 +0100, Hans de Goede wrote:
-> Ack.
-> 
-> Acked-by: Hans de Goede <hdegoede@redhat.com>
-
-Applied, thanks.
-
-> On 03/11/2010 11:31 AM, Dan Carpenter wrote:
-> > "ret" is used to store the return value for watchdog_trigger() and it
-> > should be signed for the error handling to work.
-> >
-> > Signed-off-by: Dan Carpenter<error27@gmail.com>
-> >
-> > diff --git a/drivers/hwmon/w83793.c b/drivers/hwmon/w83793.c
-> > index 9de81a4..612807d 100644
-> > --- a/drivers/hwmon/w83793.c
-> > +++ b/drivers/hwmon/w83793.c
-> > @@ -1294,7 +1294,7 @@ static int watchdog_close(struct inode *inode, struct file *filp)
-> >   static ssize_t watchdog_write(struct file *filp, const char __user *buf,
-> >   	size_t count, loff_t *offset)
-> >   {
-> > -	size_t ret;
-> > +	ssize_t ret;
-> >   	struct w83793_data *data = filp->private_data;
-> >
-> >   	if (count) {
+To: David Airlie <airlied@linux.ie>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andi Kleen <ak@linux.intel.com>, Thomas Hellstrom <thellstrom@vmware.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
--- 
-Jean Delvare
+In the original code we used "j" as an iterator but we used "i" as an
+index.
+
+-               for (j = 0; j < i; j++)
+-                       device_remove_file(&connector->kdev,
+-                                          &connector_attrs[i]);
+
+Smatch complained about that because "i" was potentially passed the end
+of the array.  Which makes sense if we should be using "j" there.
+
+I also thought that we should remove the files for &connector_attrs_opt1
+but to do that I had to add separate iterators for &connector_attrs and
+&connector_attrs_opt1.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Found by static analysis and compile tested only.
+
+diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
+index 014ce24..f144487 100644
+--- a/drivers/gpu/drm/drm_sysfs.c
++++ b/drivers/gpu/drm/drm_sysfs.c
+@@ -353,7 +353,10 @@ static struct bin_attribute edid_attr = {
+ int drm_sysfs_connector_add(struct drm_connector *connector)
+ {
+ 	struct drm_device *dev = connector->dev;
+-	int ret = 0, i, j;
++	int attr_cnt = 0;
++	int opt_cnt = 0;
++	int i;
++	int ret = 0;
+ 
+ 	/* We shouldn't get called more than once for the same connector */
+ 	BUG_ON(device_is_registered(&connector->kdev));
+@@ -376,8 +379,8 @@ int drm_sysfs_connector_add(struct drm_connector *connector)
+ 
+ 	/* Standard attributes */
+ 
+-	for (i = 0; i < ARRAY_SIZE(connector_attrs); i++) {
+-		ret = device_create_file(&connector->kdev, &connector_attrs[i]);
++	for (attr_cnt = 0; attr_cnt < ARRAY_SIZE(connector_attrs); attr_cnt++) {
++		ret = device_create_file(&connector->kdev, &connector_attrs[attr_cnt]);
+ 		if (ret)
+ 			goto err_out_files;
+ 	}
+@@ -393,8 +396,8 @@ int drm_sysfs_connector_add(struct drm_connector *connector)
+ 		case DRM_MODE_CONNECTOR_SVIDEO:
+ 		case DRM_MODE_CONNECTOR_Component:
+ 		case DRM_MODE_CONNECTOR_TV:
+-			for (i = 0; i < ARRAY_SIZE(connector_attrs_opt1); i++) {
+-				ret = device_create_file(&connector->kdev, &connector_attrs_opt1[i]);
++			for (opt_cnt = 0; opt_cnt < ARRAY_SIZE(connector_attrs_opt1); opt_cnt++) {
++				ret = device_create_file(&connector->kdev, &connector_attrs_opt1[opt_cnt]);
+ 				if (ret)
+ 					goto err_out_files;
+ 			}
+@@ -413,10 +416,10 @@ int drm_sysfs_connector_add(struct drm_connector *connector)
+ 	return 0;
+ 
+ err_out_files:
+-	if (i > 0)
+-		for (j = 0; j < i; j++)
+-			device_remove_file(&connector->kdev,
+-					   &connector_attrs[i]);
++	for (i = 0; i < opt_cnt; i++)
++		device_remove_file(&connector->kdev, &connector_attrs_opt1[i]);
++	for (i = 0; i < attr_cnt; i++)
++		device_remove_file(&connector->kdev, &connector_attrs[i]);
+ 	device_unregister(&connector->kdev);
+ 
+ out:
