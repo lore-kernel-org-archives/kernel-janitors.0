@@ -1,67 +1,58 @@
-From: Alexander Kurz <akurz@blala.de>
-Date: Wed, 31 Mar 2010 16:21:29 +0000
-Subject: [PATCH] drivers/net/pcmcia/3c574_cs: fixing stats.tx_bytes counter
-Message-Id: <alpine.DEB.1.10.1003312014120.9974@blala.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 29 Mar 2010 15:35:42 +0000
+Subject: [PATCH 8/12] drivers/scsi/lpfc: Unlock the lock that was locked
+Message-Id: <Pine.LNX.4.64.1003291735250.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@emulex.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello folks,
-while playing with an old "Megahertz 574B" card I noticed, that the 
-netstat TX bytes where badly wrong. So I looked at 
-drivers/net/pcmcia/3c574_cs and the method to update stats.tx_bytes.
-Since the 3c589_cs code is quite similar I checked if the method
-to update the counter from there (in dev->hard_start_xmit)
-produces correct results, and it did.   
-Unfortunately the differences between 3c589_cs and 3c574_cs
-concerning stats.tx_bytes are older than v2.6.11 and thus  
-out of my git-focus. I would like to check this, but I don't
-know how, thanks,
+From: Julia Lawall <julia@diku.dk>
 
-Alexander Kurz
+The lock taken was in the ct_ev_lock field, not the hbalock field.
 
-So, here is my patch:
-From bbe9796e5f8835db3a3b0e80d4daadbb85b00802 Mon Sep 17 00:00:00 2001
-From: Alexander Kurz <linux@kbdbabel.org>
-Date: Wed, 31 Mar 2010 17:33:25 +0200
-Subject: [PATCH] drivers/net/pcmcia/3c574_cs: fixing stats.tx_bytes counter
- like done in 3c589_cs. The counter had incorrect contents
- on tests using a "Megahertz 574B" card.
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Alexander Kurz <linux@kbdbabel.org>
+// <smpl>
+@r exists@
+expression E1;
+identifier f;
+@@
+
+f (...) { <+...
+* spin_lock_irqsave (E1,...);
+... when != E1
+* return ...;
+...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/net/pcmcia/3c574_cs.c |    7 +++++--
- 1 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_bsg.c        |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/pcmcia/3c574_cs.c b/drivers/net/pcmcia/3c574_cs.c
-index 3d1d3a7..757f87b 100644
---- a/drivers/net/pcmcia/3c574_cs.c
-+++ b/drivers/net/pcmcia/3c574_cs.c
-@@ -781,8 +781,13 @@ static netdev_tx_t el3_start_xmit(struct sk_buff *skb,
- 		  inw(ioaddr + EL3_STATUS));
+diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
+index 692c29f..992efb1 100644
+--- a/drivers/scsi/lpfc/lpfc_bsg.c
++++ b/drivers/scsi/lpfc/lpfc_bsg.c
+@@ -432,7 +432,7 @@ lpfc_bsg_rport_els_cmp(struct lpfc_hba *phba,
+ 	dd_data = cmdiocbq->context1;
+ 	/* normal completion and timeout crossed paths, already done */
+ 	if (!dd_data) {
+-		spin_unlock_irqrestore(&phba->hbalock, flags);
++		spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
+ 		return;
+ 	}
  
- 	spin_lock_irqsave(&lp->window_lock, flags);
-+
-+	dev->stats.tx_bytes += skb->len;
-+
-+	/* Put out the doubleword header... */
- 	outw(skb->len, ioaddr + TX_FIFO);
- 	outw(0, ioaddr + TX_FIFO);
-+	/* ... and the packet rounded to a doubleword. */
- 	outsl(ioaddr + TX_FIFO, skb->data, (skb->len+3)>>2);
+@@ -1195,7 +1195,7 @@ lpfc_issue_ct_rsp_cmp(struct lpfc_hba *phba,
+ 	dd_data = cmdiocbq->context1;
+ 	/* normal completion and timeout crossed paths, already done */
+ 	if (!dd_data) {
+-		spin_unlock_irqrestore(&phba->hbalock, flags);
++		spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
+ 		return;
+ 	}
  
- 	dev->trans_start = jiffies;
-@@ -1021,8 +1026,6 @@ static void update_stats(struct net_device *dev)
- 	/* BadSSD */				   inb(ioaddr + 12);
- 	up					 = inb(ioaddr + 13);
- 
--	dev->stats.tx_bytes 			+= tx + ((up & 0xf0) << 12);
--
- 	EL3WINDOW(1);
- }
- 
--- 
-1.7.0
-
