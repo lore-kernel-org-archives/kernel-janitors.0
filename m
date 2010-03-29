@@ -1,55 +1,52 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 26 Mar 2010 22:02:47 +0000
-Subject: [PATCH 3/7] arch/ia64/sn/kernel: Use set_cpus_allowed_ptr
-Message-Id: <Pine.LNX.4.64.1003262302250.6480@ask.diku.dk>
+Date: Mon, 29 Mar 2010 15:35:05 +0000
+Subject: [PATCH 6/12] drivers/net: Add missing unlock
+Message-Id: <Pine.LNX.4.64.1003291734460.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peterz@infradead.org, mingo@elte.hu, tglx@linutronix.de, oleg@redhat.com, Jes Sorensen <jes@sgi.com>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, linux-altix@sgi.com, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use set_cpus_allowed_ptr rather than set_cpus_allowed.
+Unlock the lock before leaving the function.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression E1,E2;
-@@
-
-- set_cpus_allowed(E1, cpumask_of_cpu(E2))
-+ set_cpus_allowed_ptr(E1, cpumask_of(E2))
-
-@@
-expression E;
-identifier I;
+@r exists@
+expression E1;
+identifier f;
 @@
 
-- set_cpus_allowed(E, I)
-+ set_cpus_allowed_ptr(E, &I)
+f (...) { <+...
+* spin_lock_irqsave (E1,...);
+... when != E1
+* return ...;
+...+> }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/ia64/sn/kernel/sn2/sn_hwperf.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/sgiseeq.c               |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-diff -u -p a/arch/ia64/sn/kernel/sn2/sn_hwperf.c b/arch/ia64/sn/kernel/sn2/sn_hwperf.c
---- a/arch/ia64/sn/kernel/sn2/sn_hwperf.c
-+++ b/arch/ia64/sn/kernel/sn2/sn_hwperf.c
-@@ -629,9 +629,9 @@ static int sn_hwperf_op_cpu(struct sn_hw
- 		else {
- 			/* migrate the task before calling SAL */ 
- 			save_allowed = current->cpus_allowed;
--			set_cpus_allowed(current, cpumask_of_cpu(cpu));
-+			set_cpus_allowed_ptr(current, cpumask_of(cpu));
- 			sn_hwperf_call_sal(op_info);
--			set_cpus_allowed(current, save_allowed);
-+			set_cpus_allowed_ptr(current, &save_allowed);
- 		}
+diff --git a/drivers/net/sgiseeq.c b/drivers/net/sgiseeq.c
+index ed999d3..37f6a00 100644
+--- a/drivers/net/sgiseeq.c
++++ b/drivers/net/sgiseeq.c
+@@ -592,8 +592,10 @@ static int sgiseeq_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	/* Setup... */
+ 	len = skb->len;
+ 	if (len < ETH_ZLEN) {
+-		if (skb_padto(skb, ETH_ZLEN))
++		if (skb_padto(skb, ETH_ZLEN)) {
++			spin_unlock_irqrestore(&sp->tx_lock, flags);
+ 			return NETDEV_TX_OK;
++		}
+ 		len = ETH_ZLEN;
  	}
- 	r = op_info->ret;
+ 
