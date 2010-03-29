@@ -1,28 +1,36 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 20 Mar 2010 11:22:10 +0000
-Subject: [patch 1/3] btrfs: checking for NULL instead of IS_ERR()
-Message-Id: <20100320112210.GV5331@bicker>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Mon, 29 Mar 2010 13:20:42 +0000
+Subject: [PATCH] pwc Kconfig dependency fix
+Message-Id: <1269868842.8583.9.camel@lovely>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Sage Weil <sage@newdream.net>, Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-btrfs_get_extent() never returns NULL, only a valid pointer or ERR_PTR()
+makes USB_PWC_INPUT_EVDEV to depend also on USB_PWC
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+---
+ drivers/media/video/pwc/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 2845c6c..15f661d 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -511,7 +511,7 @@ static int should_defrag_range(struct inode *inode, u64 start, u64 len,
- 		em = btrfs_get_extent(inode, NULL, 0, start, len, 0);
- 		unlock_extent(io_tree, start, start + len - 1, GFP_NOFS);
- 
--		if (!em)
-+		if (IS_ERR(em))
- 			return 0;
- 	}
- 
+diff --git a/drivers/media/video/pwc/Kconfig b/drivers/media/video/pwc/Kconfig
+index 340f954..11980db 100644
+--- a/drivers/media/video/pwc/Kconfig
++++ b/drivers/media/video/pwc/Kconfig
+@@ -39,7 +39,7 @@ config USB_PWC_DEBUG
+ config USB_PWC_INPUT_EVDEV
+ 	bool "USB Philips Cameras input events device support"
+ 	default y
+-	depends on USB_PWC=INPUT || INPUT=y
++	depends on USB_PWC && (USB_PWC=INPUT || INPUT=y)
+ 	---help---
+ 	  This option makes USB Philips cameras register the snapshot button as
+ 	  an input device to report button events.
+-- 
+1.5.6.5
+
+
+
+
