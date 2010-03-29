@@ -1,45 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 03 Mar 2010 09:07:33 +0000
-Subject: Re: [patch] cpmac: use after free
-Message-Id: <20100303.010733.98407421.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 29 Mar 2010 15:36:02 +0000
+Subject: [PATCH 9/12] drivers/scsi/qla2xxx: Add missing unlock
+Message-Id: <Pine.LNX.4.64.1003291735420.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100303084610.GH5086@bicker>
-	<20100303085957.GA2961@psychotron.lab.eng.brq.redhat.com>
-In-Reply-To: <20100303085957.GA2961@psychotron.lab.eng.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jpirko@redhat.com
-Cc: error27@gmail.com, netdev@vger.kernel.org, florian@openwrt.org, ralf@linux-mips.org, weil@mail.berlios.de, kernel-janitors@vger.kernel.org
+To: Andrew Vasquez <andrew.vasquez@qlogic.com>, linux-driver@qlogic.com, "J, ames E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.orgker
 
-From: Jiri Pirko <jpirko@redhat.com>
-Date: Wed, 3 Mar 2010 09:59:58 +0100
+From: Julia Lawall <julia@diku.dk>
 
-> Wed, Mar 03, 2010 at 09:46:10AM CET, error27@gmail.com wrote:
->>The original code dereferenced "cpmac_mii" after calling 
->>"mdiobus_free(cpmac_mii);"
->>
->>Signed-off-by: Dan Carpenter <error27@gmail.com>
->>---
->>Found by a static checker and not tested.  Sorry.  :/
->>
->>diff --git a/drivers/net/cpmac.c b/drivers/net/cpmac.c
->>index b85c81f..9d48942 100644
->>--- a/drivers/net/cpmac.c
->>+++ b/drivers/net/cpmac.c
->>@@ -1290,8 +1290,8 @@ void __devexit cpmac_exit(void)
->> {
->> 	platform_driver_unregister(&cpmac_driver);
->> 	mdiobus_unregister(cpmac_mii);
->>-	mdiobus_free(cpmac_mii);
->> 	iounmap(cpmac_mii->priv);
->>+	mdiobus_free(cpmac_mii);
->> }
->> 
->> module_init(cpmac_init);
-> 
-> Looks good. Thanks.
-> 
-> Reviewed-by: Jiri Pirko <jpirko@redhat.com>
+This code represents error handling code.  Add an unlock as done in the
+normal exit path from the function.
 
-Applied.
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression E1;
+identifier f;
+@@
+
+f (...) { <+...
+* spin_lock_irqsave (E1,...);
+... when != E1
+* return ...;
+...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/qla2xxx/qla_attr.c     |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
+index 90d1e06..e8ace7a 100644
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -2392,6 +2392,7 @@ done:
+ 		kfree(sp->fcport);
+ 	kfree(sp->ctx);
+ 	mempool_free(sp, ha->srb_mempool);
++	spin_unlock_irqrestore(&ha->hardware_lock, flags);
+ 	return 0;
+ }
+ 
