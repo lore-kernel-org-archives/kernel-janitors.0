@@ -1,38 +1,80 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Date: Tue, 16 Mar 2010 10:58:32 +0000
-Subject: Re: [patch] iio: test for failed allocation
-Message-Id: <4B9F64DC.3080602@cam.ac.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 29 Mar 2010 15:37:02 +0000
+Subject: [PATCH 12/12] kernel/trace: Add missing unlock
+Message-Id: <Pine.LNX.4.64.1003291736440.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100316100349.GA4219@bicker>
-In-Reply-To: <20100316100349.GA4219@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>, Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 03/16/10 10:03, Dan Carpenter wrote:
-> We should return test to see if iio_allocate_trigger() fails and return -ENOMEM.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-Indeed.  Another one for the stupid errors pile!
+From: Julia Lawall <julia@diku.dk>
 
-Thanks.
+In some error handling cases the lock is not unlocked.  The return is
+converted to a goto, to share the unlock at the end of the function.
 
-Acked-by: Jonathan Cameron <jic23@cam.ac.uk>
-> 
-> diff --git a/drivers/staging/iio/accel/lis3l02dq_ring.c b/drivers/staging/iio/accel/lis3l02dq_ring.c
-> index a6b7c72..db3270f 100644
-> --- a/drivers/staging/iio/accel/lis3l02dq_ring.c
-> +++ b/drivers/staging/iio/accel/lis3l02dq_ring.c
-> @@ -492,6 +492,9 @@ int lis3l02dq_probe_trigger(struct iio_dev *indio_dev)
->  	struct lis3l02dq_state *state = indio_dev->dev_data;
->  
->  	state->trig = iio_allocate_trigger();
-> +	if (!state->trig)
-> +		return -ENOMEM;
-> +
->  	state->trig->name = kmalloc(IIO_TRIGGER_NAME_LENGTH, GFP_KERNEL);
->  	if (!state->trig->name) {
->  		ret = -ENOMEM;
-> 
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r exists@
+expression E1;
+identifier f;
+@@
+
+f (...) { <+...
+* spin_lock_irq (E1,...);
+... when != E1
+* return ...;
+...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ kernel/trace/ring_buffer.c          |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 05a9f83..cd2e1d8 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1201,18 +1201,19 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned nr_pages)
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		if (RB_WARN_ON(cpu_buffer, list_empty(cpu_buffer->pages)))
+-			return;
++			goto out;
+ 		p = cpu_buffer->pages->next;
+ 		bpage = list_entry(p, struct buffer_page, list);
+ 		list_del_init(&bpage->list);
+ 		free_buffer_page(bpage);
+ 	}
+ 	if (RB_WARN_ON(cpu_buffer, list_empty(cpu_buffer->pages)))
+-		return;
++		goto out;
+ 
+ 	rb_reset_cpu(cpu_buffer);
+ 	rb_check_pages(cpu_buffer);
+ 
++out:
+ 	spin_unlock_irq(&cpu_buffer->reader_lock);
+ }
+ 
+@@ -1229,7 +1230,7 @@ rb_insert_pages(struct ring_buffer_per_cpu *cpu_buffer,
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		if (RB_WARN_ON(cpu_buffer, list_empty(pages)))
+-			return;
++			goto out;
+ 		p = pages->next;
+ 		bpage = list_entry(p, struct buffer_page, list);
+ 		list_del_init(&bpage->list);
+@@ -1238,6 +1239,7 @@ rb_insert_pages(struct ring_buffer_per_cpu *cpu_buffer,
+ 	rb_reset_cpu(cpu_buffer);
+ 	rb_check_pages(cpu_buffer);
+ 
++out:
+ 	spin_unlock_irq(&cpu_buffer->reader_lock);
+ }
+ 
