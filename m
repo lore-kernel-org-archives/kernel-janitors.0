@@ -1,125 +1,70 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 26 Mar 2010 22:02:23 +0000
-Subject: [PATCH 2/7] arch/ia64/kernel: Use set_cpus_allowed_ptr
-Message-Id: <Pine.LNX.4.64.1003262301510.6480@ask.diku.dk>
+Date: Mon, 29 Mar 2010 15:36:44 +0000
+Subject: [PATCH 11/12] drivers/usb/gadget: Add missing unlock
+Message-Id: <Pine.LNX.4.64.1003291736250.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peterz@infradead.org, mingo@elte.hu, tglx@linutronix.de, oleg@redhat.com, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use set_cpus_allowed_ptr rather than set_cpus_allowed.
+In an error handling case the lock is not unlocked.  The return is
+converted to a goto, to share the unlock at the end of the function.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression E1,E2;
-@@
-
-- set_cpus_allowed(E1, cpumask_of_cpu(E2))
-+ set_cpus_allowed_ptr(E1, cpumask_of(E2))
-
-@@
-expression E;
-identifier I;
+@r exists@
+expression E1;
+identifier f;
 @@
 
-- set_cpus_allowed(E, I)
-+ set_cpus_allowed_ptr(E, &I)
+f (...) { <+...
+* spin_lock_irqsave (E1,...);
+... when != E1
+* return ...;
+...+> }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/ia64/kernel/cpufreq/acpi-cpufreq.c |   10 +++++-----
- arch/ia64/kernel/salinfo.c              |    5 ++---
- arch/ia64/kernel/topology.c             |    4 ++--
- 3 files changed, 9 insertions(+), 10 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c      |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-diff -u -p a/arch/ia64/kernel/cpufreq/acpi-cpufreq.c b/arch/ia64/kernel/cpufreq/acpi-cpufreq.c
---- a/arch/ia64/kernel/cpufreq/acpi-cpufreq.c
-+++ b/arch/ia64/kernel/cpufreq/acpi-cpufreq.c
-@@ -112,7 +112,7 @@ processor_get_freq (
- 	dprintk("processor_get_freq\n");
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index f742c8e..85dedf0 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -2144,6 +2144,7 @@ static int s3c_hsotg_ep_enable(struct usb_ep *ep,
+ 	u32 epctrl;
+ 	u32 mps;
+ 	int dir_in;
++	int ret = 0;
  
- 	saved_mask = current->cpus_allowed;
--	set_cpus_allowed(current, cpumask_of_cpu(cpu));
-+	set_cpus_allowed_ptr(current, cpumask_of(cpu));
- 	if (smp_processor_id() != cpu)
- 		goto migrate_end;
+ 	dev_dbg(hsotg->dev,
+ 		"%s: ep %s: a 0x%02x, attr 0x%02x, mps 0x%04x, intr %d\n",
+@@ -2195,7 +2196,8 @@ static int s3c_hsotg_ep_enable(struct usb_ep *ep,
+ 	switch (desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) {
+ 	case USB_ENDPOINT_XFER_ISOC:
+ 		dev_err(hsotg->dev, "no current ISOC support\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out;
  
-@@ -120,7 +120,7 @@ processor_get_freq (
- 	ret = processor_get_pstate(&value);
+ 	case USB_ENDPOINT_XFER_BULK:
+ 		epctrl |= S3C_DxEPCTL_EPType_Bulk;
+@@ -2234,8 +2236,9 @@ static int s3c_hsotg_ep_enable(struct usb_ep *ep,
+ 	/* enable the endpoint interrupt */
+ 	s3c_hsotg_ctrl_epint(hsotg, index, dir_in, 1);
  
- 	if (ret) {
--		set_cpus_allowed(current, saved_mask);
-+		set_cpus_allowed_ptr(current, &saved_mask);
- 		printk(KERN_WARNING "get performance failed with error %d\n",
- 		       ret);
- 		ret = 0;
-@@ -130,7 +130,7 @@ processor_get_freq (
- 	ret = (clock_freq*1000);
- 
- migrate_end:
--	set_cpus_allowed(current, saved_mask);
-+	set_cpus_allowed_ptr(current, &saved_mask);
- 	return ret;
++out:
+ 	spin_unlock_irqrestore(&hs_ep->lock, flags);
+-	return 0;
++	return ret;
  }
  
-@@ -150,7 +150,7 @@ processor_set_freq (
- 	dprintk("processor_set_freq\n");
- 
- 	saved_mask = current->cpus_allowed;
--	set_cpus_allowed(current, cpumask_of_cpu(cpu));
-+	set_cpus_allowed_ptr(current, cpumask_of(cpu));
- 	if (smp_processor_id() != cpu) {
- 		retval = -EAGAIN;
- 		goto migrate_end;
-@@ -207,7 +207,7 @@ processor_set_freq (
- 	retval = 0;
- 
- migrate_end:
--	set_cpus_allowed(current, saved_mask);
-+	set_cpus_allowed_ptr(current, &saved_mask);
- 	return (retval);
- }
- 
-diff -u -p a/arch/ia64/kernel/topology.c b/arch/ia64/kernel/topology.c
---- a/arch/ia64/kernel/topology.c
-+++ b/arch/ia64/kernel/topology.c
-@@ -360,12 +360,12 @@ static int __cpuinit cache_add_dev(struc
- 		return 0;
- 
- 	oldmask = current->cpus_allowed;
--	retval = set_cpus_allowed(current, cpumask_of_cpu(cpu));
-+	retval = set_cpus_allowed_ptr(current, cpumask_of(cpu));
- 	if (unlikely(retval))
- 		return retval;
- 
- 	retval = cpu_cache_sysfs_init(cpu);
--	set_cpus_allowed(current, oldmask);
-+	set_cpus_allowed_ptr(current, &oldmask);
- 	if (unlikely(retval < 0))
- 		return retval;
- 
-diff --git a/arch/ia64/kernel/salinfo.c b/arch/ia64/kernel/salinfo.c
-index e6676fc..aa8b5fa 100644
---- a/arch/ia64/kernel/salinfo.c
-+++ b/arch/ia64/kernel/salinfo.c
-@@ -404,10 +404,9 @@ static void
- call_on_cpu(int cpu, void (*fn)(void *), void *arg)
- {
- 	cpumask_t save_cpus_allowed = current->cpus_allowed;
--	cpumask_t new_cpus_allowed = cpumask_of_cpu(cpu);
--	set_cpus_allowed(current, new_cpus_allowed);
-+	set_cpus_allowed_ptr(current, cpumask_of(cpu));
- 	(*fn)(arg);
--	set_cpus_allowed(current, save_cpus_allowed);
-+	set_cpus_allowed_ptr(current, &save_cpus_allowed);
- }
- 
- static void
+ static int s3c_hsotg_ep_disable(struct usb_ep *ep)
