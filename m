@@ -1,42 +1,38 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 20 Mar 2010 11:37:31 +0000
-Subject: [patch 2/3] btrfs cleanup: remove more dead code
-Message-Id: <20100320113730.GZ5331@bicker>
+Date: Mon, 29 Mar 2010 09:01:27 +0000
+Subject: [patch] usb/oxu210hp: release spinlock on error path
+Message-Id: <20100329090127.GE5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>
-Cc: Dan Carpenter <error27@gmail.com>, Christoph Hellwig <hch@lst.de>, Venkatesh Pallipadi <venkatesh.pallipadi@intel.com>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Anand Gadiyar <gadiyar@ti.com>, David Brownell <dbrownell@users.sourceforge.net>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-rb_node cannot be an ERR_PTR() here so I removed the misleading check.
-Also I removed some more dead code at the bottom.
-
-It looks like the code from lookup_extent_mapping() may have been 
-copy and pasted into search_extent_mapping()?
+Smatch complained about this missing spinlock.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
-This doesn't change anything.  Could you put it into linux-next?
+Compile tested only.  :/
 
-diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
-index 94668b1..010f299 100644
---- a/fs/btrfs/extent_map.c
-+++ b/fs/btrfs/extent_map.c
-@@ -380,16 +380,7 @@ struct extent_map *search_extent_mapping(struct extent_map_tree *tree,
- 		em = NULL;
- 		goto out;
+diff --git a/drivers/usb/host/oxu210hp-hcd.c b/drivers/usb/host/oxu210hp-hcd.c
+index 50f57f4..e62b30b 100644
+--- a/drivers/usb/host/oxu210hp-hcd.c
++++ b/drivers/usb/host/oxu210hp-hcd.c
+@@ -660,13 +660,13 @@ static struct ehci_qh *oxu_qh_alloc(struct oxu_hcd *oxu)
+ 		if (qh->dummy = NULL) {
+ 			oxu_dbg(oxu, "no dummy td\n");
+ 			oxu->qh_used[i] = 0;
+-
+-			return NULL;
++			qh = NULL;
++			goto unlock;
+ 		}
+ 
+ 		oxu->qh_used[i] = 1;
  	}
--	if (IS_ERR(rb_node)) {
--		em = ERR_PTR(PTR_ERR(rb_node));
--		goto out;
--	}
- 	em = rb_entry(rb_node, struct extent_map, rb_node);
--	goto found;
 -
--	em = NULL;
--	goto out;
--
- found:
- 	atomic_inc(&em->refs);
- out:
++unlock:
+ 	spin_unlock(&oxu->mem_lock);
+ 
+ 	return qh;
