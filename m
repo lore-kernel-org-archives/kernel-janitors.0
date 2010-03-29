@@ -1,29 +1,53 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 19 Mar 2010 11:48:25 +0000
-Subject: [patch] em28xx: "Empia Em28xx Audio" too long
-Message-Id: <20100319114825.GO5331@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 29 Mar 2010 15:35:24 +0000
+Subject: [PATCH 7/12] drivers/pcmcia: Add missing local_irq_restore
+Message-Id: <Pine.LNX.4.64.1003291735050.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Douglas Schilling Landgraf <dougsland@redhat.com>, Robert Krakora <rob.krakora@messagenetsystems.com>, Nicola Soranzo <nsoranzo@tiscali.it>, Devin Heitmueller <dheitmueller@kernellabs.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-card->driver is 15 characters and a NULL.  The original code
-goes past the end of the array.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use local_irq_restore in this error-handling case just like in the one just
+below.
 
-diff --git a/drivers/media/video/em28xx/em28xx-audio.c b/drivers/media/video/em28xx/em28xx-audio.c
-index bd78338..530df0a 100644
---- a/drivers/media/video/em28xx/em28xx-audio.c
-+++ b/drivers/media/video/em28xx/em28xx-audio.c
-@@ -491,7 +491,7 @@ static int em28xx_audio_init(struct em28xx *dev)
- 	strcpy(pcm->name, "Empia 28xx Capture");
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression E1;
+identifier f;
+@@
+
+f (...) { <+...
+* local_irq_save (E1,...);
+... when != E1
+* return ...;
+...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/pcmcia/db1xxx_ss.c          |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/pcmcia/db1xxx_ss.c b/drivers/pcmcia/db1xxx_ss.c
+index a520193..a3fec01 100644
+--- a/drivers/pcmcia/db1xxx_ss.c
++++ b/drivers/pcmcia/db1xxx_ss.c
+@@ -165,8 +165,10 @@ static int db1x_pcmcia_setup_irqs(struct db1x_pcmcia_sock *sock)
  
- 	snd_card_set_dev(card, &dev->udev->dev);
--	strcpy(card->driver, "Empia Em28xx Audio");
-+	strcpy(card->driver, "Em28xx Audio");
- 	strcpy(card->shortname, "Em28xx Audio");
- 	strcpy(card->longname, "Empia Em28xx Audio");
+ 		ret = request_irq(sock->insert_irq, db1200_pcmcia_cdirq,
+ 				  IRQF_DISABLED, "pcmcia_insert", sock);
+-		if (ret)
++		if (ret) {
++			local_irq_restore(flags);
+ 			goto out1;
++		}
  
+ 		ret = request_irq(sock->eject_irq, db1200_pcmcia_cdirq,
+ 				  IRQF_DISABLED, "pcmcia_eject", sock);
