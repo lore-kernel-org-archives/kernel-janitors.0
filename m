@@ -1,8 +1,10 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Mar 2010 15:34:28 +0000
-Subject: [PATCH 4/12] drivers/gpio: Add missing unlock
-Message-Id: <Pine.LNX.4.64.1003291734110.21896@ask.diku.dk>
+Date: Mon, 29 Mar 2010 16:23:30 +0000
+Subject: Re: [PATCH 4/12] drivers/gpio: Add missing unlock
+Message-Id: <Pine.LNX.4.64.1003291822470.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1003291734110.21896@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1003291734110.21896@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -32,11 +34,13 @@ f (...) { <+...
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/gpio/timbgpio.c             |   10 +++++++---
- 1 files changed, 7 insertions(+), 3 deletions(-)
+Corrected patch.  Adjusted the return value.
+
+ drivers/gpio/timbgpio.c             |   12 ++++++++----
+ 1 files changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/timbgpio.c b/drivers/gpio/timbgpio.c
-index d4295fa..ae143dd 100644
+index d4295fa..871608b 100644
 --- a/drivers/gpio/timbgpio.c
 +++ b/drivers/gpio/timbgpio.c
 @@ -130,6 +130,7 @@ static int timbgpio_irq_type(unsigned irq, unsigned trigger)
@@ -60,14 +64,16 @@ index d4295fa..ae143dd 100644
  		else {
  			flr |= 1 << offset;
  			bflr |= 1 << offset;
-@@ -174,8 +177,9 @@ static int timbgpio_irq_type(unsigned irq, unsigned trigger)
+@@ -174,9 +177,10 @@ static int timbgpio_irq_type(unsigned irq, unsigned trigger)
  		iowrite32(bflr, tgpio->membase + TGPIO_BFLR);
  
  	iowrite32(1 << offset, tgpio->membase + TGPIO_ICR);
 -	spin_unlock_irqrestore(&tgpio->lock, flags);
  
+-	return 0;
 +out:
 +	spin_unlock_irqrestore(&tgpio->lock, flags);
- 	return 0;
++	return ret;
  }
  
+ static void timbgpio_irq(unsigned int irq, struct irq_desc *desc)
