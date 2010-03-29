@@ -1,56 +1,49 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Mar 2010 21:17:28 +0000
-Subject: [PATCH 6/6] drivers/char/ppdev.c: Use kasprintf
-Message-Id: <Pine.LNX.4.64.1003102216510.1672@ask.diku.dk>
+Date: Mon, 29 Mar 2010 15:34:11 +0000
+Subject: [PATCH 3/12] drivers/char/amiserial.c: Add missing local_irq_restore
+Message-Id: <Pine.LNX.4.64.1003291733530.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-kasprintf combines kmalloc and sprintf, and takes care of the size
-calculation itself.
+Add local_irq_restore after the labels that can be reached after a
+local_irq_save.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression a,flag;
-expression list args;
-statement S;
+@r exists@
+expression E1;
+identifier f;
 @@
 
-  a -  \(kmalloc\|kzalloc\)(...,flag)
-+  kasprintf(flag,args)
-  <... when != a
-  if (a = NULL || ...) S
-  ...>
-- sprintf(a,args);
+f (...) { <+...
+* local_irq_save (E1,...);
+... when != E1
+* return ...;
+...+> }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/char/ppdev.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/char/amiserial.c            |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff -u -p a/drivers/char/ppdev.c b/drivers/char/ppdev.c
---- a/drivers/char/ppdev.c
-+++ b/drivers/char/ppdev.c
-@@ -286,12 +286,10 @@ static int register_device (int minor, s
- 	char *name;
- 	int fl;
- 
--	name = kmalloc (strlen (CHRDEV) + 3, GFP_KERNEL);
-+	name = kasprintf(GFP_KERNEL, CHRDEV "%x", minor);
- 	if (name = NULL)
- 		return -ENOMEM;
- 
--	sprintf (name, CHRDEV "%x", minor);
--
- 	port = parport_find_number (minor);
- 	if (!port) {
- 		printk (KERN_WARNING "%s: no associated port!\n", name);
+diff --git a/drivers/char/amiserial.c b/drivers/char/amiserial.c
+index 6c32fbf..2131ecb 100644
+--- a/drivers/char/amiserial.c
++++ b/drivers/char/amiserial.c
+@@ -2056,6 +2056,7 @@ fail_free_irq:
+ 	free_irq(IRQ_AMIGA_TBE, state);
+ fail_unregister:
+ 	tty_unregister_driver(serial_driver);
++	local_irq_restore(flags);
+ fail_release_mem_region:
+ 	release_mem_region(CUSTOM_PHYSADDR+0x30, 4);
+ fail_put_tty_driver:
