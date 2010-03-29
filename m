@@ -1,35 +1,30 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 28 Mar 2010 11:55:00 +0000
-Subject: [patch] iwlwifi: range checking issue
-Message-Id: <20100328115500.GX5069@bicker>
+From: Zhu Yi <yi.zhu@intel.com>
+Date: Mon, 29 Mar 2010 02:01:12 +0000
+Subject: Re: [patch] iwlwifi: range checking issue
+Message-Id: <1269828072.4043.247.camel@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100328115500.GX5069@bicker>
+In-Reply-To: <20100328115500.GX5069@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhu Yi <yi.zhu@intel.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Abhijeet Kolekar <abhijeet.kolekar@intel.com>, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: "Chatre, Reinette" <reinette.chatre@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, "Kolekar, Abhijeet" <abhijeet.kolekar@intel.com>, "Berg, Johannes" <johannes.berg@intel.com>, "Guy, Wey-Yi W" <wey-yi.w.guy@intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-IWL_RATE_COUNT is 13 and IWL_RATE_COUNT_LEGACY is 12.
+On Sun, 2010-03-28 at 19:55 +0800, Dan Carpenter wrote:
+> IWL_RATE_COUNT is 13 and IWL_RATE_COUNT_LEGACY is 12.
+> 
+> IWL_RATE_COUNT_LEGACY is the right one here because iwl3945_rates
+> doesn't support 60M and also that's how "rates" is defined in
+> iwlcore_init_geos() from drivers/net/wireless/iwlwifi/iwl-core.c.
+> 
+>         rates = kzalloc((sizeof(struct ieee80211_rate) * IWL_RATE_COUNT_LEGACY),
+>                         GFP_KERNEL);
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-IWL_RATE_COUNT_LEGACY is the right one here because iwl3945_rates
-doesn't support 60M and also that's how "rates" is defined in
-iwlcore_init_geos() from drivers/net/wireless/iwlwifi/iwl-core.c.
+Acked-by: Zhu Yi <yi.zhu@intel.com>
 
-        rates = kzalloc((sizeof(struct ieee80211_rate) * IWL_RATE_COUNT_LEGACY),
-                        GFP_KERNEL);
+Thanks,
+-yi
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/net/wireless/iwlwifi/iwl3945-base.c b/drivers/net/wireless/iwlwifi/iwl3945-base.c
-index 54daa38..7d3806a 100644
---- a/drivers/net/wireless/iwlwifi/iwl3945-base.c
-+++ b/drivers/net/wireless/iwlwifi/iwl3945-base.c
-@@ -1955,7 +1955,7 @@ static void iwl3945_init_hw_rates(struct iwl_priv *priv,
- {
- 	int i;
- 
--	for (i = 0; i < IWL_RATE_COUNT; i++) {
-+	for (i = 0; i < IWL_RATE_COUNT_LEGACY; i++) {
- 		rates[i].bitrate = iwl3945_rates[i].ieee * 5;
- 		rates[i].hw_value = i; /* Rate scaling will work on indexes */
- 		rates[i].hw_value_short = i;
