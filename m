@@ -1,37 +1,54 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 30 Mar 2010 14:44:33 +0000
-Subject: Re: [patch] drm: sysfs files error handling
-Message-Id: <20100330144433.GM5069@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 29 Mar 2010 15:33:52 +0000
+Subject: [PATCH 2/12] arch/s390/kernel: Add missing unlock
+Message-Id: <Pine.LNX.4.64.1003291733350.21896@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100328112438.GK5069@bicker> <4BAFC232.8010404@linux.intel.com>
-In-Reply-To: <4BAFC232.8010404@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andi Kleen <ak@linux.intel.com>
-Cc: David Airlie <airlied@linux.ie>, Greg Kroah-Hartman <gregkh@suse.de>, Thomas Hellstrom <thellstrom@vmware.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, dri-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Mar 28, 2010 at 10:55:14PM +0200, Andi Kleen wrote:
-> , Dan Carpenter wrote:
->>
->> In the original code we used "j" as an iterator but we used "i" as an
->> index.
->>
->> -               for (j = 0; j<  i; j++)
->> -                       device_remove_file(&connector->kdev,
->> -&connector_attrs[i]);
->
-> I guess this really should be a attribute group anyways?
->
-> Typically when there's such a open coded loop it means the wrong
-> interfaces are being used.
+From: Julia Lawall <julia@diku.dk>
 
-My graphics card is crap and doesn't use this code at all.  I'd feel 
-uncomfortable those changes without being able to test it.
+In the default case the lock is not unlocked.  The return is
+converted to a goto, to share the unlock at the end of the function.
 
-So while, you are probably right, someone else should probably do that.
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@r exists@
+expression E1;
+identifier f;
+@@
 
-> -Andi
+f (...) { <+...
+* spin_lock_irq (E1,...);
+... when != E1
+* return ...;
+...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/s390/kernel/topology.c         |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+index 14ef6f0..247b4c2 100644
+--- a/arch/s390/kernel/topology.c
++++ b/arch/s390/kernel/topology.c
+@@ -165,10 +165,11 @@ static void tl_to_cores(struct tl_info *info)
+ 		default:
+ 			clear_cores();
+ 			machine_has_topology = 0;
+-			return;
++			goto out;
+ 		}
+ 		tle = next_tle(tle);
+ 	}
++out:
+ 	spin_unlock_irq(&topology_lock);
+ }
+ 
