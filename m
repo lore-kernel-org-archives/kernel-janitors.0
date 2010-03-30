@@ -1,33 +1,49 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Date: Sun, 21 Mar 2010 08:30:41 +0000
+From: Wolfram Sang <w.sang@pengutronix.de>
+Date: Tue, 30 Mar 2010 12:26:44 +0000
 Subject: Re: [PATCH 01/24] mtd/maps/pismo: remove dangling pointer and a
-Message-Id: <1269160241.4028.9777.camel@macbook.infradead.org>
+Message-Id: <20100330122644.GC29472@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="wxDdMuZNg1r63Hyj"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
-	 <1269094385-16114-2-git-send-email-w.sang@pengutronix.de>
-	 <20100320145729.GA5399@flint.arm.linux.org.uk>
-	 <20100320153146.GB5515@pengutronix.de>
-	 <20100320154113.GB14470@flint.arm.linux.org.uk>
-In-Reply-To: <20100320154113.GB14470-f404yB8NqCZvn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Russell King <rmk+lkml-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-2-git-send-email-w.sang@pengutronix.de> <20100320145729.GA5399@flint.arm.linux.org.uk> <20100320153146.GB5515@pengutronix.de> <20100320154113.GB14470@flint.arm.linux.org.uk> <1269160241.4028.9777.camel@macbook.infradead.org>
+In-Reply-To: <1269160241.4028.9777.camel@macbook.infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Russell King <rmk+lkml@arm.linux.org.uk>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
 
-On Sat, 2010-03-20 at 15:41 +0000, Russell King wrote:
-> 
-> Thanks.
-> 
-> Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> 
-> David, are you going to pick this up? 
 
-http://git.infradead.org/mtd-2.6.git/commitdiff/395b2288
+--wxDdMuZNg1r63Hyj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+On Sun, Mar 21, 2010 at 08:30:41AM +0000, David Woodhouse wrote:
 
--- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse@intel.com                              Intel Corporation
+> > Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> >=20
+> > David, are you going to pick this up?=20
+>=20
+> http://git.infradead.org/mtd-2.6.git/commitdiff/395b2288
 
+Thanks. The handling of the dangling pointer will be handled differently fr=
+om
+2.6.35 on, but I will prepare the necessary fixup then. The fixed leak was
+good to have, I think.
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--wxDdMuZNg1r63Hyj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkux7gQACgkQD27XaX1/VRtZqgCgw6MZ9rJru+nE6a2mkxJ98Cco
+khMAoJrN2JlWKWJeHTzq/t9FwLMVUq7t
+=S2Us
+-----END PGP SIGNATURE-----
+
+--wxDdMuZNg1r63Hyj--
