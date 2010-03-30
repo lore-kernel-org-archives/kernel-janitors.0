@@ -1,49 +1,80 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Mar 2010 15:36:02 +0000
-Subject: [PATCH 9/12] drivers/scsi/qla2xxx: Add missing unlock
-Message-Id: <Pine.LNX.4.64.1003291735420.21896@ask.diku.dk>
+From: Giridhar Malavali <giridhar.malavali@qlogic.com>
+Date: Tue, 30 Mar 2010 01:23:41 +0000
+Subject: Re: [PATCH 9/12] drivers/scsi/qla2xxx: Add missing unlock
+Message-Id: <alpine.LRH.2.00.1003291819330.28339@mvluser00.mv.qlogic.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1003291735420.21896@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1003291735420.21896@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Vasquez <andrew.vasquez@qlogic.com>, linux-driver@qlogic.com, "J, ames E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.orgker
+To: James.Bottomley@suse.de
+Cc: andrew.vasquez@qlogic.com, julia@diku.dk, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Mon, 29 Mar 2010, Julia Lawall wrote:
 
-This code represents error handling code.  Add an unlock as done in the
-normal exit path from the function.
+> From: Julia Lawall <julia@diku.dk>
+>
+> This code represents error handling code.  Add an unlock as done in the
+> normal exit path from the function.
+>
+> A simplified version of the semantic patch that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @r exists@
+> expression E1;
+> identifier f;
+> @@
+>
+> f (...) { <+...
+> * spin_lock_irqsave (E1,...);
+> ... when != E1
+> * return ...;
+> ...+> }
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+>
+> ---
+> drivers/scsi/qla2xxx/qla_attr.c     |    1 +
+> 1 files changed, 1 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
+> index 90d1e06..e8ace7a 100644
+> --- a/drivers/scsi/qla2xxx/qla_attr.c
+> +++ b/drivers/scsi/qla2xxx/qla_attr.c
+> @@ -2392,6 +2392,7 @@ done:
+> 		kfree(sp->fcport);
+> 	kfree(sp->ctx);
+> 	mempool_free(sp, ha->srb_mempool);
+> +	spin_unlock_irqrestore(&ha->hardware_lock, flags);
+> 	return 0;
+> }
+>
+>
+James,
 
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Can u please include this patch.
+Here is the pointer for the similar patch submitted previously which I acked.
+http://marc.info/?l=linux-scsi&m6877099912968&w=2
 
-// <smpl>
-@r exists@
-expression E1;
-identifier f;
-@@
+With the new BSG patches submitted to scsi-misc at
+http://marc.info/?l=linux-scsi&m6904344832176&w=2, the BSG related code
+is moved to new files bsg.[ch]. The patch below will fix the lock imbalance issue
+with latest patches submitted to scsi-misc.
 
-f (...) { <+...
-* spin_lock_irqsave (E1,...);
-... when != E1
-* return ...;
-...+> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Giri
 ---
- drivers/scsi/qla2xxx/qla_attr.c     |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
+index 387d694..21e5bcd 100644
+--- a/drivers/scsi/qla2xxx/qla_bsg.c
++++ b/drivers/scsi/qla2xxx/qla_bsg.c
+@@ -1199,6 +1199,7 @@ qla24xx_bsg_timeout(struct fc_bsg_job *bsg_job)
+   	return 0;
 
-diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
-index 90d1e06..e8ace7a 100644
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -2392,6 +2392,7 @@ done:
- 		kfree(sp->fcport);
- 	kfree(sp->ctx);
- 	mempool_free(sp, ha->srb_mempool);
+   done:
 +	spin_unlock_irqrestore(&ha->hardware_lock, flags);
- 	return 0;
- }
- 
+   	if (bsg_job->request->msgcode = FC_BSG_HST_CT)
+   		kfree(sp->fcport);
+   	kfree(sp->ctx);
