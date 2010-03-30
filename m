@@ -1,27 +1,34 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 20 Mar 2010 11:24:48 +0000
-Subject: [patch 3/3] btrfs: dereferencing freed memory
-Message-Id: <20100320112448.GX5331@bicker>
+Date: Tue, 30 Mar 2010 09:42:09 +0000
+Subject: [patch] 9p: saving negative to unsigned char
+Message-Id: <20100330094209.GI5069@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Sage Weil <sage@newdream.net>, Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Abhishek Kulkarni <adkulkar@umail.iu.edu>, Sripathi Kodi <sripathik@in.ibm.com>, Latchesar Ionkov <lucho@ionkov.net>, Venkateswararao Jujjuri <jvrao@us.ibm.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The original code dereferenced range on the next line.
+Saving -EINVAL as unsigned char truncates the high bits and changes it 
+into 234 instead of -22.  This breaks the test for "if (ret = -EINVAL)"
+in parse_opts().
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index be9b5df..d7ab56c 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1378,6 +1378,7 @@ static int btrfs_ioctl_defrag(struct file *file, void __user *argp)
- 					   sizeof(*range))) {
- 				ret = -EFAULT;
- 				kfree(range);
-+				goto out;
- 			}
- 			/* compression requires us to start the IO */
- 			if ((range->flags & BTRFS_DEFRAG_RANGE_COMPRESS)) {
+diff --git a/net/9p/client.c b/net/9p/client.c
+index e3e5bf4..edf31aa 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -71,9 +71,10 @@ inline int p9_is_proto_dotu(struct p9_client *clnt)
+ EXPORT_SYMBOL(p9_is_proto_dotu);
+ 
+ /* Interpret mount option for protocol version */
+-static unsigned char get_protocol_version(const substring_t *name)
++static int get_protocol_version(const substring_t *name)
+ {
+-	unsigned char version = -EINVAL;
++	int version = -EINVAL;
++
+ 	if (!strncmp("9p2000", name->from, name->to-name->from)) {
+ 		version = p9_proto_legacy;
+ 		P9_DPRINTK(P9_DEBUG_9P, "Protocol version: Legacy\n");
