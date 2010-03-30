@@ -1,102 +1,64 @@
 From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Sat, 20 Mar 2010 14:12:45 +0000
-Subject: [PATCH 04/24] gpio: fix dangling pointers
-Message-Id: <1269094385-16114-5-git-send-email-w.sang@pengutronix.de>
+Date: Tue, 30 Mar 2010 12:31:58 +0000
+Subject: Re: [PATCH 04/24] gpio: fix dangling pointers
+Message-Id: <20100330123158.GF29472@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="CXFpZVxO6m2Ol4tQ"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-5-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-5-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-structure it points to. Also fix drivers which do this _after_ the structure
-was freed already.
 
-Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
----
+--CXFpZVxO6m2Ol4tQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Found using coccinelle, then reviewed. Full patchset is available via
-kernel-janitors, linux-i2c, and LKML.
----
- drivers/gpio/adp5588-gpio.c |    1 +
- drivers/gpio/max732x.c      |    1 +
- drivers/gpio/pca953x.c      |    1 +
- drivers/gpio/pcf857x.c      |    7 ++++---
- 4 files changed, 7 insertions(+), 3 deletions(-)
+On Sat, Mar 20, 2010 at 03:12:45PM +0100, Wolfram Sang wrote:
+> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+> structure it points to. Also fix drivers which do this _after_ the struct=
+ure
+> was freed already.
+>=20
+> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
 
-diff --git a/drivers/gpio/adp5588-gpio.c b/drivers/gpio/adp5588-gpio.c
-index afc097a..c0cb5c1 100644
---- a/drivers/gpio/adp5588-gpio.c
-+++ b/drivers/gpio/adp5588-gpio.c
-@@ -227,6 +227,7 @@ static int __devexit adp5588_gpio_remove(struct i2c_client *client)
- 		return ret;
- 	}
- 
-+	i2c_set_clientdata(client, NULL);
- 	kfree(dev);
- 	return 0;
- }
-diff --git a/drivers/gpio/max732x.c b/drivers/gpio/max732x.c
-index f786824..85fe675 100644
---- a/drivers/gpio/max732x.c
-+++ b/drivers/gpio/max732x.c
-@@ -356,6 +356,7 @@ static int __devexit max732x_remove(struct i2c_client *client)
- 	if (chip->client_dummy)
- 		i2c_unregister_device(chip->client_dummy);
- 
-+	i2c_set_clientdata(client, NULL);
- 	kfree(chip);
- 	return 0;
- }
-diff --git a/drivers/gpio/pca953x.c b/drivers/gpio/pca953x.c
-index ab5daab..05242dc 100644
---- a/drivers/gpio/pca953x.c
-+++ b/drivers/gpio/pca953x.c
-@@ -571,6 +571,7 @@ static int pca953x_remove(struct i2c_client *client)
- 
- 	pca953x_irq_teardown(chip);
- 	kfree(chip->dyn_pdata);
-+	i2c_set_clientdata(client, NULL);
- 	kfree(chip);
- 	return 0;
- }
-diff --git a/drivers/gpio/pcf857x.c b/drivers/gpio/pcf857x.c
-index 29f19ce..c2aed8a 100644
---- a/drivers/gpio/pcf857x.c
-+++ b/drivers/gpio/pcf857x.c
-@@ -259,9 +259,7 @@ static int pcf857x_probe(struct i2c_client *client,
- 		goto fail;
- 
- 	gpio->chip.label = client->name;
--
- 	gpio->client = client;
--	i2c_set_clientdata(client, gpio);
- 
- 	/* NOTE:  these chips have strange "quasi-bidirectional" I/O pins.
- 	 * We can't actually know whether a pin is configured (a) as output
-@@ -307,6 +305,7 @@ static int pcf857x_probe(struct i2c_client *client,
- 			dev_warn(&client->dev, "setup --> %d\n", status);
- 	}
- 
-+	i2c_set_clientdata(client, gpio);
- 	return 0;
- 
- fail:
-@@ -334,8 +333,10 @@ static int pcf857x_remove(struct i2c_client *client)
- 	}
- 
- 	status = gpiochip_remove(&gpio->chip);
--	if (status = 0)
-+	if (status = 0) {
-+		i2c_set_clientdata(client, NULL);
- 		kfree(gpio);
-+	}
- 	else
- 		dev_err(&client->dev, "%s --> %d\n", "remove", status);
- 	return status;
--- 
-1.7.0
+please drop this this patch. We reached an agreement that a) setting the
+clientdata-pointer to NULL should be done in the i2c-core [1] and b) how to=
+ do
+it. Based on that, I will do the modification of the i2c-core for 2.6.34 (a=
+s it
+fixes the dangling pointers) and then create one single patch removing the =
+then
+superflous calls to i2c_set_clientdata for 2.6.35 (as it is a cleanup). If =
+you
+already applied the above patch to your branch, you don't have to revert; we
+will fix it for you in the next round.
 
+Sorry for the detour!
+
+Kind regards,
+
+   Wolfram
+
+[1] http://thread.gmane.org/gmane.linux.drivers.i2c/5674/focus=3D5729
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--CXFpZVxO6m2Ol4tQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkux7z4ACgkQD27XaX1/VRvomQCffC4CBDyVrKL9CzOZsVEAOlsg
+JUMAoJ4Aj9xD7rkoZhAD8w9FPndiHdet
+=nX0i
+-----END PGP SIGNATURE-----
+
+--CXFpZVxO6m2Ol4tQ--
