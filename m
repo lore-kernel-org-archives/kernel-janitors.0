@@ -1,95 +1,66 @@
 From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Sat, 20 Mar 2010 14:12:49 +0000
-Subject: [PATCH 08/24] leds: fix dangling pointers
-Message-Id: <1269094385-16114-9-git-send-email-w.sang@pengutronix.de>
+Date: Tue, 30 Mar 2010 12:36:12 +0000
+Subject: Re: [PATCH 08/24] leds: fix dangling pointers
+Message-Id: <20100330123612.GH29472@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="EemXnrF2ob+xzFeB"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
-In-Reply-To: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Richard Purdie <rpurdie@rpsys.net>, Riku Voipio <riku.voipio@iki.fi>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-9-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-9-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Riku Voipio <riku.voipio-X3B1VOXEql0@public.gmane.org>
 
-Fix I2C-drivers which missed setting clientdata to NULL before freeing the
-structure it points to. Also fix drivers which do this _after_ the structure
-was freed already.
 
-Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
-Cc: Richard Purdie <rpurdie@rpsys.net>
-Cc: Riku Voipio <riku.voipio@iki.fi>
----
+--EemXnrF2ob+xzFeB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Found using coccinelle, then reviewed. Full patchset is available via
-kernel-janitors, linux-i2c, and LKML.
----
- drivers/leds/leds-lp3944.c  |    2 +-
- drivers/leds/leds-pca9532.c |    4 ++--
- drivers/leds/leds-pca955x.c |    4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+On Sat, Mar 20, 2010 at 03:12:49PM +0100, Wolfram Sang wrote:
+> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+> structure it points to. Also fix drivers which do this _after_ the struct=
+ure
+> was freed already.
+>=20
+> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Riku Voipio <riku.voipio@iki.fi>
 
-diff --git a/drivers/leds/leds-lp3944.c b/drivers/leds/leds-lp3944.c
-index 5946208..7dca8f2 100644
---- a/drivers/leds/leds-lp3944.c
-+++ b/drivers/leds/leds-lp3944.c
-@@ -425,8 +425,8 @@ static int __devexit lp3944_remove(struct i2c_client *client)
- 			break;
- 		}
- 
--	kfree(data);
- 	i2c_set_clientdata(client, NULL);
-+	kfree(data);
- 
- 	return 0;
- }
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index adc561e..0f1f8f9 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -320,8 +320,8 @@ static int pca9532_probe(struct i2c_client *client,
- 
- 	err = pca9532_configure(client, data, pca9532_pdata);
- 	if (err) {
--		kfree(data);
- 		i2c_set_clientdata(client, NULL);
-+		kfree(data);
- 	}
- 
- 	return err;
-@@ -349,8 +349,8 @@ static int pca9532_remove(struct i2c_client *client)
- 			break;
- 		}
- 
--	kfree(data);
- 	i2c_set_clientdata(client, NULL);
-+	kfree(data);
- 	return 0;
- }
- 
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index 4e2d1a4..279fc31 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -340,8 +340,8 @@ exit:
- 		cancel_work_sync(&pca955x[i].work);
- 	}
- 
--	kfree(pca955x);
- 	i2c_set_clientdata(client, NULL);
-+	kfree(pca955x);
- 
- 	return err;
- }
-@@ -356,8 +356,8 @@ static int __devexit pca955x_remove(struct i2c_client *client)
- 		cancel_work_sync(&pca955x[i].work);
- 	}
- 
--	kfree(pca955x);
- 	i2c_set_clientdata(client, NULL);
-+	kfree(pca955x);
- 
- 	return 0;
- }
--- 
-1.7.0
+please drop this this patch. We reached an agreement that a) setting the
+clientdata-pointer to NULL should be done in the i2c-core [1] and b) how to=
+ do
+it. Based on that, I will do the modification of the i2c-core for 2.6.34 (a=
+s it
+fixes the dangling pointers) and then create one single patch removing the =
+then
+superflous calls to i2c_set_clientdata for 2.6.35 (as it is a cleanup). If =
+you
+already applied the above patch to your branch, you don't have to revert; we
+will fix it for you in the next round.
 
+Sorry for the detour!
+
+Kind regards,
+
+   Wolfram
+
+[1] http://thread.gmane.org/gmane.linux.drivers.i2c/5674/focus=3D5729
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--EemXnrF2ob+xzFeB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkux8DwACgkQD27XaX1/VRtGVwCfZkkftdDEO97j7QecceDftlaL
+4h4AnjBYnZQvW4F5FQnXcPDNQGmN5A8+
+=AvUU
+-----END PGP SIGNATURE-----
+
+--EemXnrF2ob+xzFeB--
