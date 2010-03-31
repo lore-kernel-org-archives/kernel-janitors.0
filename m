@@ -1,52 +1,49 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 29 Mar 2010 15:33:34 +0000
-Subject: [PATCH 1/12] arch/powerpc/kernel: Add missing unlock
-Message-Id: <Pine.LNX.4.64.1003291733150.21896@ask.diku.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 31 Mar 2010 01:52:25 +0000
+Subject: Re: [PATCH 1/12] arch/powerpc/kernel: Add missing unlock
+Message-Id: <20100331125225.3714c9f6.sfr@canb.auug.org.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Signature=_Wed__31_Mar_2010_12_52_25_+1100_6WvQH3F2B.u.+QJk"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <Pine.LNX.4.64.1003291733150.21896@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1003291733150.21896@ask.diku.dk>
+To: Julia Lawall <julia@diku.dk>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
 
-From: Julia Lawall <julia@diku.dk>
+--Signature=_Wed__31_Mar_2010_12_52_25_+1100_6WvQH3F2B.u.+QJk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add an unlock before exiting the function.
+Hi Julia,
 
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+On Mon, 29 Mar 2010 17:33:34 +0200 (CEST) Julia Lawall <julia@diku.dk> wrot=
+e:
+>
+> From: Julia Lawall <julia@diku.dk>
+>=20
+> Add an unlock before exiting the function.
 
-// <smpl>
-@r exists@
-expression E1;
-identifier f;
-@@
+Thanks for this.
 
-f (...) { <+...
-* spin_lock_irq (E1,...);
-... when != E1
-* return ...;
-...+> }
-// </smpl>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
----
- arch/powerpc/kernel/vio.c           |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/arch/powerpc/kernel/vio.c b/arch/powerpc/kernel/vio.c
-index 77f6421..2ca69fa 100644
---- a/arch/powerpc/kernel/vio.c
-+++ b/arch/powerpc/kernel/vio.c
-@@ -644,8 +644,10 @@ void vio_cmo_set_dev_desired(struct vio_dev *viodev, size_t desired)
- 			found = 1;
- 			break;
- 		}
--	if (!found)
-+	if (!found) {
-+		spin_unlock_irqrestore(&vio_cmo.lock, flags);
- 		return;
-+	}
- 
- 	/* Increase/decrease in desired device entitlement */
- 	if (desired >= viodev->cmo.desired) {
+--Signature=_Wed__31_Mar_2010_12_52_25_+1100_6WvQH3F2B.u.+QJk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuyqtkACgkQjjKRsyhoI8wchQCeO0mO1cTe2HbjLlJ0XKe7lA7z
+Uc4AmgM1Ki+gVC52iFCoEMNOVkFAUsGO
+=hDu/
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__31_Mar_2010_12_52_25_+1100_6WvQH3F2B.u.+QJk--
