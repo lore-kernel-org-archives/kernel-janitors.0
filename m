@@ -1,73 +1,124 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Fri, 30 Apr 2010 20:30:23 +0000
-Subject: [PATCH 2/7] drivers/staging/comedi: dev_node removal (das08_cs)
-Message-Id: <1272659423.14356.33.camel@lenovo>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Thu, 01 Apr 2010 19:51:31 +0000
+Subject: Re: [PATCH 3/12] drivers/char/amiserial.c: Add missing
+Message-Id: <20100401125131.8c9539e2.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1003291733530.21896@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1003291733530.21896@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+On Mon, 29 Mar 2010 17:34:11 +0200 (CEST)
+Julia Lawall <julia@diku.dk> wrote:
+
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Add local_irq_restore after the labels that can be reached after a
+> local_irq_save.
+> 
+> A simplified version of the semantic patch that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r exists@
+> expression E1;
+> identifier f;
+> @@
+> 
+> f (...) { <+...
+> * local_irq_save (E1,...);
+> ... when != E1
+> * return ...;
+> ...+> }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  drivers/char/amiserial.c            |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/char/amiserial.c b/drivers/char/amiserial.c
+> index 6c32fbf..2131ecb 100644
+> --- a/drivers/char/amiserial.c
+> +++ b/drivers/char/amiserial.c
+> @@ -2056,6 +2056,7 @@ fail_free_irq:
+>  	free_irq(IRQ_AMIGA_TBE, state);
+>  fail_unregister:
+>  	tty_unregister_driver(serial_driver);
+> +	local_irq_restore(flags);
+>  fail_release_mem_region:
+>  	release_mem_region(CUSTOM_PHYSADDR+0x30, 4);
+>  fail_put_tty_driver:
+
+We shouldn't be calling tty_unregister_driver() with local interrupts
+disabled - it does mutex_lock() (at least), which will emit a
+might_sleep() warning (at least).
+
+I don't expect there was any need to disable irq's across the
+request_irq() calls (?), hence:
+
+
+
+From: Julia Lawall <julia@diku.dk>
+
+rs_init() is failing to restore interrupts on two error paths, and is
+incorrectly calling tty_unregister_driver() with local interrupts
+disabled.
+
+Fix these things by disabling interrupts later, after the reauest_irq()
+calls.
+
+
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression E1;
+identifier f;
+@@
+
+f (...) { <+...
+* local_irq_save (E1,...);
+... when != E1
+* return ...;
+...+> }
+// </smpl>
+
+[akpm@linux-foundation.org: reimplement the fix]
+Signed-off-by: Julia Lawall <julia@diku.dk>
+Cc: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+Cc: Greg KH <greg@kroah.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- drivers/staging/comedi/drivers/das08_cs.c |   19 +++----------------
- 1 files changed, 3 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/das08_cs.c b/drivers/staging/comedi/drivers/das08_cs.c
-index bd69c4f..896d25b 100644
---- a/drivers/staging/comedi/drivers/das08_cs.c
-+++ b/drivers/staging/comedi/drivers/das08_cs.c
-@@ -142,7 +142,6 @@ static const dev_info_t dev_info = "pcm-das08";
+ drivers/char/amiserial.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -puN drivers/char/amiserial.c~drivers-char-amiserialc-add-missing-local_irq_restore drivers/char/amiserial.c
+--- a/drivers/char/amiserial.c~drivers-char-amiserialc-add-missing-local_irq_restore
++++ a/drivers/char/amiserial.c
+@@ -2021,8 +2021,6 @@ static int __init rs_init(void)
+ 	state->baud_base = amiga_colorclock;
+ 	state->xmit_fifo_size = 1;
  
- struct local_info_t {
- 	struct pcmcia_device *link;
--	dev_node_t node;
- 	int stop;
- 	struct bus_operations *bus;
- };
-@@ -203,10 +202,8 @@ static void das08_pcmcia_detach(struct pcmcia_device *link)
- 
- 	dev_dbg(&link->dev, "das08_pcmcia_detach\n");
- 
--	if (link->dev_node) {
--		((struct local_info_t *)link->priv)->stop = 1;
--		das08_pcmcia_release(link);
--	}
-+	((struct local_info_t *)link->priv)->stop = 1;
-+	das08_pcmcia_release(link);
- 
- 	/* This points to the parent struct local_info_t struct */
- 	if (link->priv)
-@@ -261,7 +258,6 @@ static int das08_pcmcia_config_loop(struct pcmcia_device *p_dev,
- 
- static void das08_pcmcia_config(struct pcmcia_device *link)
- {
--	struct local_info_t *dev = link->priv;
- 	int ret;
- 
- 	dev_dbg(&link->dev, "das08_pcmcia_config\n");
-@@ -284,17 +280,8 @@ static void das08_pcmcia_config(struct pcmcia_device *link)
- 	if (ret)
- 		goto failed;
- 
--	/*
--	   At this point, the dev_node_t structure(s) need to be
--	   initialized and arranged in a linked list at link->dev.
--	 */
--	sprintf(dev->node.dev_name, "pcm-das08");
--	dev->node.major = dev->node.minor = 0;
--	link->dev_node = &dev->node;
+-	local_irq_save(flags);
 -
- 	/* Finally, report what we've done */
--	printk(KERN_INFO "%s: index 0x%02x",
--	       dev->node.dev_name, link->conf.ConfigIndex);
-+	dev_info(&link->dev, "index 0x%02x", link->conf.ConfigIndex);
- 	if (link->conf.Attributes & CONF_ENABLE_IRQ)
- 		printk(", irq %u", link->irq);
- 	if (link->io.NumPorts1)
--- 
-1.6.0.4
-
-
-
+ 	/* set ISRs, and then disable the rx interrupts */
+ 	error = request_irq(IRQ_AMIGA_TBE, ser_tx_int, 0, "serial TX", state);
+ 	if (error)
+@@ -2033,6 +2031,8 @@ static int __init rs_init(void)
+ 	if (error)
+ 		goto fail_free_irq;
+ 
++	local_irq_save(flags);
++
+ 	/* turn off Rx and Tx interrupts */
+ 	custom.intena = IF_RBF | IF_TBE;
+ 	mb();
+_
 
