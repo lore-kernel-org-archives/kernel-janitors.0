@@ -1,23 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 Apr 2010 22:57:54 +0000
-Subject: Re: [patch] rdma: potential ERR_PTR dereference
-Message-Id: <20100422.155754.233400086.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 01 Apr 2010 15:55:16 +0000
+Subject: [patch] wd7000: typo spin_unlock_irq() => spin_lock_irq()
+Message-Id: <20100401155516.GF5265@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100422095527.GQ29647@bicker>
-In-Reply-To: <20100422095527.GQ29647@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: andy.grover@oracle.com, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Miroslav Zagorac <zaga@fly.cc.fer.hr>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Adam Buchbinder <adam.buchbinder@gmail.com>, Jiri Kosina <jkosina@suse.cz>, jgarzik@pobox.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 22 Apr 2010 11:55:27 +0200
+This was introduced back in 2005 at the very start of the git era by:
+	df0ae2497ddefd72a87f3a3b34ff32455d7d4ae0
+	[SCSI] allow sleeping in ->eh_host_reset_handler()
 
-> In the original code, the "goto out" calls "rdma_destroy_id(cm_id);"
-> That isn't needed here and would cause problems because "cm_id" is an 
-> ERR_PTR.  The new code just returns directly.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Also this driver was written before some of our youngest kernel hackers
+were born.  Neat.  :)
 
-Applied.
+diff --git a/drivers/scsi/wd7000.c b/drivers/scsi/wd7000.c
+index 2f6e9d8..bdfe59d 100644
+--- a/drivers/scsi/wd7000.c
++++ b/drivers/scsi/wd7000.c
+@@ -1588,7 +1588,7 @@ static int wd7000_host_reset(struct scsi_cmnd *SCpnt)
+ {
+ 	Adapter *host = (Adapter *) SCpnt->device->host->hostdata;
+ 
+-	spin_unlock_irq(SCpnt->device->host->host_lock);
++	spin_lock_irq(SCpnt->device->host->host_lock);
+ 
+ 	if (wd7000_adapter_reset(host) < 0) {
+ 		spin_unlock_irq(SCpnt->device->host->host_lock);
