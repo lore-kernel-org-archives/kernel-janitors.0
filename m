@@ -1,30 +1,30 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 27 Mar 2010 14:59:50 +0000
-Subject: [patch] drbd: potential null dereference
-Message-Id: <20100327145950.GG5069@bicker>
+Date: Thu, 01 Apr 2010 15:51:43 +0000
+Subject: [patch] mxser: spin_lock() => spin_lock_irq()
+Message-Id: <20100401155143.GC5265@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars Ellenberg <drbd-dev@lists.linbit.com>
-Cc: Jens Axboe <jens.axboe@oracle.com>, Philipp Reisner <philipp.reisner@linbit.com>, drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If "e" is NULL then "bm_ext" would be NULL too.
+This should be spin_lock_irq() to match the spin_unlock_irq().
+Originally it was a lock_kernel() but we switched everything to
+spin_lock_irq() last November.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-Found by static analysis and compile tested only.  Sorry.  :/
 
-diff --git a/drivers/block/drbd/drbd_actlog.c b/drivers/block/drbd/drbd_actlog.c
-index 17956ff..b68b778 100644
---- a/drivers/block/drbd/drbd_actlog.c
-+++ b/drivers/block/drbd/drbd_actlog.c
-@@ -1328,7 +1328,7 @@ int drbd_rs_del_all(struct drbd_conf *mdev)
- 		for (i = 0; i < mdev->resync->nr_elements; i++) {
- 			e = lc_element_by_index(mdev->resync, i);
- 			bm_ext = e ? lc_entry(e, struct bm_extent, lce) : NULL;
--			if (bm_ext->lce.lc_number = LC_FREE)
-+			if (!bm_ext || bm_ext->lce.lc_number = LC_FREE)
- 				continue;
- 			if (bm_ext->lce.lc_number = mdev->resync_wenr) {
- 				dev_info(DEV, "dropping %u in drbd_rs_del_all, apparently"
+diff --git a/drivers/char/mxser.c b/drivers/char/mxser.c
+index e0c5d2a..ecb2d8b 100644
+--- a/drivers/char/mxser.c
++++ b/drivers/char/mxser.c
+@@ -1768,7 +1768,7 @@ static int mxser_ioctl(struct tty_struct *tty, struct file *file,
+ 		int len, lsr;
+ 
+ 		len = mxser_chars_in_buffer(tty);
+-		spin_lock(&info->slock);
++		spin_lock_irq(&info->slock);
+ 		lsr = inb(info->ioaddr + UART_LSR) & UART_LSR_THRE;
+ 		spin_unlock_irq(&info->slock);
+ 		len += (lsr ? 0 : 1);
