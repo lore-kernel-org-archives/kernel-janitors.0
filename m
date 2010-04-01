@@ -1,25 +1,31 @@
-From: Roland Dreier <rdreier@cisco.com>
-Date: Thu, 08 Apr 2010 16:00:36 +0000
-Subject: Re: [patch] infiniband: checking the wrong variable
-Message-Id: <ada39z6x7bv.fsf@roland-alpha.cisco.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 01 Apr 2010 15:54:04 +0000
+Subject: [patch] cciss: unlock on error path
+Message-Id: <20100401155404.GD5265@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100407093901.GG5157@bicker>
-	<g2ge2e108261004080313t32c2e1besd8a95e2f9bf418f9@mail.gmail.com>
-	<ada7hoixaqw.fsf@roland-alpha.cisco.com>
-	<r2le2e108261004080807i36ad0755gad9843224b0c42fc@mail.gmail.com>
-In-Reply-To: <r2le2e108261004080807i36ad0755gad9843224b0c42fc-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-	(Bart Van Assche's message of "Thu, 8 Apr 2010 17:07:02 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bart Van Assche <bvanassche-HInyCGIudOg@public.gmane.org>
-Cc: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Lameter <cl-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Jack Morgenstein <jackm-LDSdmyG8hGV8YrgS2mwiifqBs+8SCbDb@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Miller <mike.miller@hp.com>
+Cc: Jens Axboe <jens.axboe@oracle.com>, "Stephen M. Cameron" <scameron@beardog.cce.hp.com>, Andrew Morton <akpm@linux-foundation.org>, iss_storagedev@hp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
- > It would be great if someone could explain the impact of this issue --
- > the impact is not yet clear to me.
+We take the spin_lock again in fail_all_cmds() so we need to unlock
+here.
 
-Um, it's a one-line patch -- pretty clear if the allocation fails then
-we check the wrong value and probably crash.
--- 
-Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
-http://www.cisco.com/web/about/doing_business/legal/cri/index.html
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This was found by a static checker and I don't have the hardware myself.
+Please review carefully.
+
+diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
+index 9e3af30..eb5ff05 100644
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -3341,6 +3341,7 @@ static irqreturn_t do_cciss_intr(int irq, void *dev_id)
+ 					printk(KERN_WARNING
+ 					       "cciss: controller cciss%d failed, stopping.\n",
+ 					       h->ctlr);
++					spin_unlock_irqrestore(CCISS_LOCK(h->ctlr), flags);
+ 					fail_all_cmds(h->ctlr);
+ 					return IRQ_HANDLED;
+ 				}
