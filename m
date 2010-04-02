@@ -1,51 +1,28 @@
-From: "Gustavo F. Padovan" <gustavo@padovan.org>
-Date: Thu, 22 Apr 2010 12:33:47 +0000
-Subject: Re: [patch] bluetooth: handle l2cap_create_connless_pdu() errors
-Message-Id: <20100422123347.GA5265@vigoh>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 02 Apr 2010 11:28:43 +0000
+Subject: [patch] dma-debug: off by one issue
+Message-Id: <20100402112843.GI5265@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100422095201.GO29647@bicker>
-In-Reply-To: <20100422095201.GO29647@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, "David S. Miller" <davem@davemloft.net>, Andrei Emeltchenko <andrei.emeltchenko@nokia.com>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: Ingo Molnar <mingo@elte.hu>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Shaun Ruffell <sruffell@digium.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+We need to reserve the last character for the NULL terminator.
 
-* Dan Carpenter <error27@gmail.com> [2010-04-22 11:52:01 +0200]:
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> l2cap_create_connless_pdu() can sometimes return ERR_PTR(-ENOMEM) or
-> ERR_PTR(-EFAULT).
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/net/bluetooth/l2cap.c b/net/bluetooth/l2cap.c
-> index 99d68c3..9753b69 100644
-> --- a/net/bluetooth/l2cap.c
-> +++ b/net/bluetooth/l2cap.c
-> @@ -1626,7 +1626,10 @@ static int l2cap_sock_sendmsg(struct kiocb *iocb, struct socket *sock, struct ms
->  	/* Connectionless channel */
->  	if (sk->sk_type = SOCK_DGRAM) {
->  		skb = l2cap_create_connless_pdu(sk, msg, len);
-> -		err = l2cap_do_send(sk, skb);
-> +		if (IS_ERR(skb))
-> +			err = PTR_ERR(skb);
-> +		else
-> +			err = l2cap_do_send(sk, skb);
->  		goto done;
->  	}
-
-Your fix looks ok, but we have changed l2cap_do_send() to void, so you
-have to modify your patch.
-
-That change is not in the bluetooth-testingtree yet, so remote add my git
-tree and use the branch ertm.
-
-git://git.profusion.mobi/users/padovan/bluetooth-testing.git
-
-Regards,
-
--- 
-Gustavo F. Padovan
-http://padovan.org
+diff --git a/lib/dma-debug.c b/lib/dma-debug.c
+index ba8b670..01e6427 100644
+--- a/lib/dma-debug.c
++++ b/lib/dma-debug.c
+@@ -570,7 +570,7 @@ static ssize_t filter_write(struct file *file, const char __user *userbuf,
+ 	 * Now parse out the first token and use it as the name for the
+ 	 * driver to filter for.
+ 	 */
+-	for (i = 0; i < NAME_MAX_LEN; ++i) {
++	for (i = 0; i < NAME_MAX_LEN - 1; ++i) {
+ 		current_driver_name[i] = buf[i];
+ 		if (isspace(buf[i]) || buf[i] = ' ' || buf[i] = 0)
+ 			break;
