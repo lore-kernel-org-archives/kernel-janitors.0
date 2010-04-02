@@ -1,40 +1,55 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 29 Apr 2010 09:29:57 +0000
-Subject: Re: [patch] iwl: cleanup: remove unneeded error handling
-Message-Id: <20100429092956.GH29093@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 02 Apr 2010 12:47:59 +0000
+Subject: [PATCH 3/3] sound/pci: Eliminate use after free
+Message-Id: <Pine.LNX.4.64.1004021447390.17695@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100428090115.GF29093@bicker> <1272507134.14773.4339.camel@debian>
-In-Reply-To: <1272507134.14773.4339.camel@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhu Yi <yi.zhu@intel.com>
-Cc: "Ortiz, Samuel" <samuel.ortiz@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Andrew Morton <akpm@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Apr 29, 2010 at 10:12:14AM +0800, Zhu Yi wrote:
-> 
-> Thanks. But looks like you missed the one in if_sdio_debugfs_init().
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Yup.
+Use the call to snd_card_free in the error handling code at the end of the
+function, as in the other error cases.
 
-> I don't think we even need to check -ENODEV ourselves because if
-> DEBUG_FS is not compiled in, all the debugfs utility functions will
-> become no-op.
-> 
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Good point.
+// <smpl>
+@@
+expression E,E2;
+@@
 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+snd_card_free(E)
+...
+(
+  E = E2
+|
+* E
+)
+// </smpl>
 
-Probably this could get changed to just "Reported-by" but I'm happy to
-take credit for other peoples work.  :)
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-> Signed-off-by: Zhu Yi <yi.zhu@intel.com>
-> 
+---
+ sound/pci/echoaudio/echoaudio.c     |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
-Acked-by: Dan Carpenter <error27@gmail.com>
-
-regards,
-dan carpenter
-
+diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
+index 8dab82d..668a5ec 100644
+--- a/sound/pci/echoaudio/echoaudio.c
++++ b/sound/pci/echoaudio/echoaudio.c
+@@ -2184,10 +2184,9 @@ static int __devinit snd_echo_probe(struct pci_dev *pci,
+ 			goto ctl_error;
+ #endif
+ 
+-	if ((err = snd_card_register(card)) < 0) {
+-		snd_card_free(card);
++	err = snd_card_register(card);
++	if (err < 0)
+ 		goto ctl_error;
+-	}
+ 	snd_printk(KERN_INFO "Card registered: %s\n", card->longname);
+ 
+ 	pci_set_drvdata(pci, chip);
