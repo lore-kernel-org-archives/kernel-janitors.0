@@ -1,29 +1,38 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 22 Apr 2010 09:40:53 +0000
-Subject: [patch] nouveau: off by one in nv50_gpio_location()
-Message-Id: <20100422094053.GL29647@bicker>
+From: =?UTF-8?B?Iua9mOWNq+W5syhQZXRlciBQYW4pIg==?=
+Date: Sun, 04 Apr 2010 09:21:41 +0000
+Subject: [patch] vfs: indent cleanup for fs/open.c
+Message-Id: <4BB85A25.8020305@redflag-linux.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-If "gpio->line" is 32 then "nv50_gpio_reg[gpio->line >> 3]" reads past the
-end of the array.
+indent cleanup for fs/open.c
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Peter Pan <wppan@redflag-linux.com>
+---
+  fs/open.c |    3 +--
+  1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nv50_gpio.c b/drivers/gpu/drm/nouveau/nv50_gpio.c
-index c61782b..bb47ad7 100644
---- a/drivers/gpu/drm/nouveau/nv50_gpio.c
-+++ b/drivers/gpu/drm/nouveau/nv50_gpio.c
-@@ -31,7 +31,7 @@ nv50_gpio_location(struct dcb_gpio_entry *gpio, uint32_t *reg, uint32_t *shift)
- {
- 	const uint32_t nv50_gpio_reg[4] = { 0xe104, 0xe108, 0xe280, 0xe284 };
- 
--	if (gpio->line > 32)
-+	if (gpio->line >= 32)
- 		return -EINVAL;
- 
- 	*reg = nv50_gpio_reg[gpio->line >> 3];
+diff --git a/fs/open.c b/fs/open.c
+index e17f544..fa27166 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -472,8 +472,7 @@ SYSCALL_DEFINE3(faccessat, int, dfd, const char 
+__user *, filename, int, mode)
+  		if (override_cred->uid)
+  			cap_clear(override_cred->cap_effective);
+  		else
+-			override_cred->cap_effective -				override_cred->cap_permitted;
++			override_cred->cap_effective = override_cred->cap_permitted;
+  	}
+
+  	old_cred = override_creds(override_cred);
+-- 
+1.6.2.2
+
+Regards
+-- 
+潘卫平(Peter Pan)
+Red Flag Software Co.,Ltd.
