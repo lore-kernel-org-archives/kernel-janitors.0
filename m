@@ -1,21 +1,37 @@
-From: Linus WALLEIJ <linus.walleij@stericsson.com>
-Date: Wed, 07 Apr 2010 12:53:14 +0000
-Subject: RE: [patch] i2c: off by one issue
-Message-Id: <CEE6BB42CAD6E947908279175AF8470A03A50DA2@EXDCVYMBSTM006.EQ1STM.local>
+From: =?UTF-8?B?Iua9mOWNq+W5syhQZXRlciBQYW4pIg==?=
+Date: Sun, 04 Apr 2010 07:49:27 +0000
+Subject: [patch] vfs: indent cleanup for fs/namei.c
+Message-Id: <4BB84487.5030303@redflag-linux.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100407092258.GD5157@bicker>
-In-Reply-To: <20100407092258.GD5157@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Jean Delvare (PC drivers, core)" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "Ben Dooks (embedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Jean Delvare <khali-ReZ1+7V3V0tg9hUCZPvPmw@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Lameter <cl-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-> If we don't find the correct rate, we want to end the loop with "i"
-> pointing to the last element in the array.
+indent cleanup for fs/namei.c
 
-Good catch!
-Acked-by: Linus Walleij <linus.walleij@stericsson.com>
+Signed-off-by: Peter Pan <wppan@redflag-linux.com>
+---
+  fs/namei.c |    2 +-
+  1 files changed, 1 insertions(+), 1 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/fs/namei.c b/fs/namei.c
+index a7dce91..905fb84 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -172,7 +172,7 @@ EXPORT_SYMBOL(putname);
+  static int acl_permission_check(struct inode *inode, int mask,
+  		int (*check_acl)(struct inode *inode, int mask))
+  {
+-	umode_t			mode = inode->i_mode;
++	umode_t mode = inode->i_mode;
+
+  	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
+
+-- 
+1.6.2.2
+
+Regards
+-- 
+潘卫平(Peter Pan)
+Red Flag Software Co.,Ltd.
