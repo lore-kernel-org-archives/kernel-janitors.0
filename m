@@ -1,73 +1,52 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Fri, 30 Apr 2010 20:31:23 +0000
-Subject: [PATCH 5/7] drivers/staging/comedi: dev_node removal (ni_labpc_cs)
-Message-Id: <1272659483.14356.36.camel@lenovo>
+From: James Simmons <jsimmons@infradead.org>
+Date: Mon, 05 Apr 2010 14:04:43 +0000
+Subject: Re: [PATCH 23/24] video/matrox: fix dangling pointers
+Message-Id: <alpine.LFD.2.00.1004051504200.16108@casper.infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <1269094385-16114-24-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269094385-16114-24-git-send-email-w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Petr Vandrovec <vandrove-hnqZr3NxcozrBKCeMvbIDA@public.gmane.org>, Linux Fbdev development list <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-3NddpPZAyC0@public.gmane.org>
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/comedi/drivers/ni_labpc_cs.c |   19 +++----------------
- 1 files changed, 3 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/ni_labpc_cs.c b/drivers/staging/comedi/drivers/ni_labpc_cs.c
-index 907b2ae..fd8d3e9 100644
---- a/drivers/staging/comedi/drivers/ni_labpc_cs.c
-+++ b/drivers/staging/comedi/drivers/ni_labpc_cs.c
-@@ -199,7 +199,6 @@ static const dev_info_t dev_info = "daqcard-1200";
+On Sat, 20 Mar 2010, Wolfram Sang wrote:
+
+> Fix I2C-drivers which missed setting clientdata to NULL before freeing the
+> structure it points to. Also fix drivers which do this _after_ the structure
+> was freed already.
+> 
+> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+> Cc: Petr Vandrovec <vandrove@vc.cvut.cz>
+> ---
+
+Acked-by: James Simmons <jsimmons@infradead.org>
  
- struct local_info_t {
- 	struct pcmcia_device *link;
--	dev_node_t node;
- 	int stop;
- 	struct bus_operations *bus;
- };
-@@ -265,10 +264,8 @@ static void labpc_cs_detach(struct pcmcia_device *link)
- 	   the release() function is called, that will trigger a proper
- 	   detach().
- 	 */
--	if (link->dev_node) {
--		((struct local_info_t *)link->priv)->stop = 1;
--		labpc_release(link);
--	}
-+	((struct local_info_t *)link->priv)->stop = 1;
-+	labpc_release(link);
- 
- 	/* This points to the parent local_info_t struct (may be null) */
- 	kfree(link->priv);
-@@ -350,7 +347,6 @@ static int labpc_pcmcia_config_loop(struct pcmcia_device *p_dev,
- 
- static void labpc_config(struct pcmcia_device *link)
- {
--	struct local_info_t *dev = link->priv;
- 	int ret;
- 	win_req_t req;
- 
-@@ -374,17 +370,8 @@ static void labpc_config(struct pcmcia_device *link)
- 	if (ret)
- 		goto failed;
- 
--	/*
--	   At this point, the dev_node_t structure(s) need to be
--	   initialized and arranged in a linked list at link->dev.
--	 */
--	sprintf(dev->node.dev_name, "daqcard-1200");
--	dev->node.major = dev->node.minor = 0;
--	link->dev_node = &dev->node;
--
- 	/* Finally, report what we've done */
--	printk(KERN_INFO "%s: index 0x%02x",
--	       dev->node.dev_name, link->conf.ConfigIndex);
-+	dev_info(&link->dev, "index 0x%02x", link->conf.ConfigIndex);
- 	if (link->conf.Attributes & CONF_ENABLE_IRQ)
- 		printk(", irq %d", link->irq);
- 	if (link->io.NumPorts1)
--- 
-1.6.0.4
-
-
-
-
+> Found using coccinelle, then reviewed. Full patchset is available via
+> kernel-janitors, linux-i2c, and LKML.
+> ---
+>  drivers/video/matrox/matroxfb_maven.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/video/matrox/matroxfb_maven.c b/drivers/video/matrox/matroxfb_maven.c
+> index 91af915..e7b0ec3 100644
+> --- a/drivers/video/matrox/matroxfb_maven.c
+> +++ b/drivers/video/matrox/matroxfb_maven.c
+> @@ -1254,6 +1254,7 @@ static int maven_probe(struct i2c_client *client,
+>  		goto ERROR4;
+>  	return 0;
+>  ERROR4:;
+> +	i2c_set_clientdata(client, NULL);
+>  	kfree(data);
+>  ERROR0:;
+>  	return err;
+> -- 
+> 1.7.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
