@@ -1,60 +1,34 @@
-From: "Hiremath, Vaibhav" <hvaibhav@ti.com>
-Date: Wed, 07 Apr 2010 09:37:34 +0000
-Subject: RE: [patch] davinci: don't return under lock on error path
-Message-Id: <19F8576C6E063C45BE387C64729E7394044DF7F9AA@dbde02.ent.ti.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 06 Apr 2010 16:45:12 +0000
+Subject: [patch v2] dma-debug: cleanup for loop
+Message-Id: <20100406164512.GF21229@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100407092105.GC5157@bicker>
-In-Reply-To: <20100407092105.GC5157@bicker>
+References: <20100402112843.GI5265@bicker> <20100403204717.GS24846@8bytes.org> <20100405125329.GA16197@bicker> <20100405140215.GA29758@8bytes.org> <20100405140909.GB29758@8bytes.org>
+In-Reply-To: <20100405140909.GB29758@8bytes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "Karicheri, Muralidharan" <m-karicheri2@ti.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Joerg Roedel <joerg.roedel@amd.com>, Ingo Molnar <mingo@elte.hu>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Shaun Ruffell <sruffell@digium.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Earlier in this function we set the last byte of "buf" to NULL so we 
+always hit the break statement and "i" is never equal to NAME_MAX_LEN.  
+This patch doesn't change how the driver works but it silences a Smatch 
+warning and it makes it clearer that we don't write past the end of the 
+array.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:error27@gmail.com]
-> Sent: Wednesday, April 07, 2010 2:51 PM
-> To: Mauro Carvalho Chehab
-> Cc: Hans Verkuil; Hiremath, Vaibhav; Laurent Pinchart; Karicheri,
-> Muralidharan; linux-media@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch] davinci: don't return under lock on error path
-> 
-> If the kmalloc() failed for "ccdc_cfg = kmalloc(...);" then we would exit
-> with the lock held.  I moved the mutex_lock() below the allocation
-> because it isn't protecting anything in that block and allocations are
-> allocations are sometimes slow.
-[Hiremath, Vaibhav] Good catch and thanks for the patch.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
-Acked-by: Vaibhav Hiremath <hvaibhav@ti.com>
-
-Thanks,
-Vaibhav
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/media/video/davinci/vpfe_capture.c
-> b/drivers/media/video/davinci/vpfe_capture.c
-> index 7cf042f..5c83f90 100644
-> --- a/drivers/media/video/davinci/vpfe_capture.c
-> +++ b/drivers/media/video/davinci/vpfe_capture.c
-> @@ -1824,7 +1824,6 @@ static __init int vpfe_probe(struct platform_device
-> *pdev)
->  		goto probe_free_dev_mem;
->  	}
-> 
-> -	mutex_lock(&ccdc_lock);
->  	/* Allocate memory for ccdc configuration */
->  	ccdc_cfg = kmalloc(sizeof(struct ccdc_config), GFP_KERNEL);
->  	if (NULL = ccdc_cfg) {
-> @@ -1833,6 +1832,8 @@ static __init int vpfe_probe(struct platform_device
-> *pdev)
->  		goto probe_free_dev_mem;
->  	}
-> 
-> +	mutex_lock(&ccdc_lock);
-> +
->  	strncpy(ccdc_cfg->name, vpfe_cfg->ccdc, 32);
->  	/* Get VINT0 irq resource */
->  	res1 = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+diff --git a/lib/dma-debug.c b/lib/dma-debug.c
+index ba8b670..01e6427 100644
+--- a/lib/dma-debug.c
++++ b/lib/dma-debug.c
+@@ -570,7 +570,7 @@ static ssize_t filter_write(struct file *file, const char __user *userbuf,
+ 	 * Now parse out the first token and use it as the name for the
+ 	 * driver to filter for.
+ 	 */
+-	for (i = 0; i < NAME_MAX_LEN; ++i) {
++	for (i = 0; i < NAME_MAX_LEN - 1; ++i) {
+ 		current_driver_name[i] = buf[i];
+ 		if (isspace(buf[i]) || buf[i] = ' ' || buf[i] = 0)
+ 			break;
