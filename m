@@ -1,43 +1,40 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Date: Wed, 07 Apr 2010 10:05:12 +0000
-Subject: Re: [patch v2] dma-debug: cleanup for loop
-Message-Id: <20100407100512.GJ28166@amd.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 06 Apr 2010 10:44:29 +0000
+Subject: [patch] asus: don't modify bluetooth/wlan on boot
+Message-Id: <20100406104429.GB21229@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100402112843.GI5265@bicker>
- <20100403204717.GS24846@8bytes.org>
- <20100405125329.GA16197@bicker>
- <20100405140215.GA29758@8bytes.org>
- <20100405140909.GB29758@8bytes.org>
- <20100406164512.GF21229@bicker>
-In-Reply-To: <20100406164512.GF21229@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Joerg Roedel <joro@8bytes.org>, Ingo Molnar <mingo@elte.hu>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Shaun Ruffell <sruffell@digium.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Corentin Chary <corentincj@iksaif.net>
+Cc: Matthew Garrett <mjg@redhat.com>, Len Brown <len.brown@intel.com>, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 06, 2010 at 07:45:12PM +0300, Dan Carpenter wrote:
-> Earlier in this function we set the last byte of "buf" to NULL so we 
-> always hit the break statement and "i" is never equal to NAME_MAX_LEN.  
-> This patch doesn't change how the driver works but it silences a Smatch 
-> warning and it makes it clearer that we don't write past the end of the 
-> array.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-> index ba8b670..01e6427 100644
-> --- a/lib/dma-debug.c
-> +++ b/lib/dma-debug.c
-> @@ -570,7 +570,7 @@ static ssize_t filter_write(struct file *file, const char __user *userbuf,
->  	 * Now parse out the first token and use it as the name for the
->  	 * driver to filter for.
->  	 */
-> -	for (i = 0; i < NAME_MAX_LEN; ++i) {
-> +	for (i = 0; i < NAME_MAX_LEN - 1; ++i) {
->  		current_driver_name[i] = buf[i];
->  		if (isspace(buf[i]) || buf[i] = ' ' || buf[i] = 0)
->  			break;
+We were storing -1 as an unsigned int and as a result the effect of 
+passing -1 was the same as using 1.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
+diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
+index 475ab50..f532336 100644
+--- a/drivers/platform/x86/asus-laptop.c
++++ b/drivers/platform/x86/asus-laptop.c
+@@ -78,15 +78,15 @@ static uint wapf = 1;
+ module_param(wapf, uint, 0644);
+ MODULE_PARM_DESC(wapf, "WAPF value");
+ 
+-static uint wlan_status = 1;
+-static uint bluetooth_status = 1;
++static int wlan_status = 1;
++static int bluetooth_status = 1;
+ 
+-module_param(wlan_status, uint, 0644);
++module_param(wlan_status, int, 0644);
+ MODULE_PARM_DESC(wlan_status, "Set the wireless status on boot "
+ 		 "(0 = disabled, 1 = enabled, -1 = don't do anything). "
+ 		 "default is 1");
+ 
+-module_param(bluetooth_status, uint, 0644);
++module_param(bluetooth_status, int, 0644);
+ MODULE_PARM_DESC(bluetooth_status, "Set the wireless status on boot "
+ 		 "(0 = disabled, 1 = enabled, -1 = don't do anything). "
+ 		 "default is 1");
