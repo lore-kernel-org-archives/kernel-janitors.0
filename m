@@ -1,16 +1,17 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Date: Tue, 06 Apr 2010 11:32:32 +0000
+From: Matt Mackall <mpm@selenic.com>
+Date: Tue, 06 Apr 2010 15:17:56 +0000
 Subject: Re: [patch] proc: copy_to_user() returns unsigned
-Message-Id: <20100406202339.7E6F.A69D9226@jp.fujitsu.com>
+Message-Id: <1270567076.3552.2016.camel@calx>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100406104539.GC21229@bicker>
 In-Reply-To: <20100406104539.GC21229@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Minchan Kim <minchan.kim@gmail.com>, Matt Mackall <mpm@selenic.com>, David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: kosaki.motohiro@jp.fujitsu.com
+To: Dan Carpenter <error27@gmail.com>, Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Minchan Kim <minchan.kim@gmail.com>, David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+On Tue, 2010-04-06 at 13:45 +0300, Dan Carpenter wrote:
 > copy_to_user() returns the number of bytes left to be copied.
 > 
 > This was a typo from: d82ef020cf31504c816803b1def94eb5ff173363
@@ -32,11 +33,11 @@ Cc: kosaki.motohiro@jp.fujitsu.com
 >  			goto out_free;
 >  		}
 
-  Reviewed-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Acked-by: Matt Mackall <mpm@selenic.com>
 
+Linus, please take this one too.
 
-However I don't think this patch is kernel-janitors material. it should
-be just merged mainline soon.
-
+-- 
+http://selenic.com : development and support for Mercurial and Linux
 
 
