@@ -1,47 +1,31 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 14 Apr 2010 16:24:36 +0000
-Subject: Re: [PATCH] usb/serial/generic: Fix compile error
-Message-Id: <20100414162435.GD2450@core.coreip.homeip.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 06 Apr 2010 10:45:39 +0000
+Subject: [patch] proc: copy_to_user() returns unsigned
+Message-Id: <20100406104539.GC21229@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1270999742.11481.44.camel@lenovo>
-In-Reply-To: <1270999742.11481.44.camel@lenovo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Minchan Kim <minchan.kim@gmail.com>, Matt Mackall <mpm@selenic.com>, David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 14, 2010 at 09:07:40AM -0700, Randy Dunlap wrote:
-> On Wed, 14 Apr 2010 08:59:53 -0700 Dmitry Torokhov wrote:
-> 
-> > On Wed, Apr 14, 2010 at 08:45:19AM -0700, Randy Dunlap wrote:
-> > > On Sun, 11 Apr 2010 20:04:46 -0700 Dmitry Torokhov wrote:
-> > > 
-> > > > Hi Javier,
-> > > > 
-> > > > On Sun, Apr 11, 2010 at 11:29:02AM -0400, Javier Martinez Canillas wrote:
-> > > > > usb/serial/generic.c gives me a compile error when CONFIG_MAGIC_SYSRQ is
-> > > > > not defined.
-> > > > > 
-> > > > > The problem is that usb_serial_handle_sysrq_char() calls handle_sysrq()
-> > > > > that only is defined if CONFIG_MAGIC_SYSRQ is defined.
-> > > > > 
-> > > > > This patch add an empty handle_sysrq inline function if
-> > > > > CONFIG_MAGIC_SYSRQ is not defined and generic.c compiles cleanly.
-> > > > > 
-> > > > 
-> > > > Thanks for the patch. I will fold it into the one where I managed to
-> > > > loose the static inline if you do not mind.
-> > > 
-> > > can we get this patch into linux-next also, please?
-> > > It still fails in 2 places when MAGIC_SYSRQ is disabled.
-> > > 
-> > 
-> > Should be there...
-> 
-> It's not in linux-next-20100414.
-> 
+copy_to_user() returns the number of bytes left to be copied.
 
-I see it in by 'next' branch, let's see if it shows up in the next next.
+This was a typo from: d82ef020cf31504c816803b1def94eb5ff173363
+"proc: pagemap: Hold mmap_sem during page walk".
 
--- 
-Dmitry
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 0962739..bfb2773 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -799,7 +799,7 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
+ 		start_vaddr = end;
+ 
+ 		len = min(count, PM_ENTRY_BYTES * pm.pos);
+-		if (copy_to_user(buf, pm.buffer, len) < 0) {
++		if (copy_to_user(buf, pm.buffer, len)) {
+ 			ret = -EFAULT;
+ 			goto out_free;
+ 		}
