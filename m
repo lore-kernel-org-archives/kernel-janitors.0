@@ -1,31 +1,21 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 07 Apr 2010 09:22:58 +0000
-Subject: [patch] i2c: off by one issue
-Message-Id: <20100407092258.GD5157@bicker>
+From: Linus WALLEIJ <linus.walleij@stericsson.com>
+Date: Wed, 07 Apr 2010 12:53:14 +0000
+Subject: RE: [patch] i2c: off by one issue
+Message-Id: <CEE6BB42CAD6E947908279175AF8470A03A50DA2@EXDCVYMBSTM006.EQ1STM.local>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100407092258.GD5157@bicker>
+In-Reply-To: <20100407092258.GD5157@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Jean Delvare (PC drivers, core)" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "Ben Dooks (embedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Jean Delvare <khali-ReZ1+7V3V0tg9hUCZPvPmw@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Lameter <cl-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Jean Delvare (PC drivers, core)" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: "Ben Dooks (embedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Jean Delvare <khali-ReZ1+7V3V0tg9hUCZPvPmw@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Lameter <cl-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-If we don't find the correct rate, we want to end the loop with "i"
-pointing to the last element in the array.
+> If we don't find the correct rate, we want to end the loop with "i"
+> pointing to the last element in the array.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-I will be offline for a while, sorry if I delay replying.
+Good catch!
+Acked-by: Linus Walleij <linus.walleij@stericsson.com>
 
-diff --git a/drivers/i2c/busses/i2c-stu300.c b/drivers/i2c/busses/i2c-stu300.c
-index 1f5b38b..495be45 100644
---- a/drivers/i2c/busses/i2c-stu300.c
-+++ b/drivers/i2c/busses/i2c-stu300.c
-@@ -498,7 +498,7 @@ static int stu300_set_clk(struct stu300_dev *dev, unsigned long clkrate)
- 	int i = 0;
- 
- 	/* Locate the apropriate clock setting */
--	while (i < ARRAY_SIZE(stu300_clktable) &&
-+	while (i < ARRAY_SIZE(stu300_clktable) - 1 &&
- 	       stu300_clktable[i].rate < clkrate)
- 		i++;
- 
+Yours,
+Linus Walleij
