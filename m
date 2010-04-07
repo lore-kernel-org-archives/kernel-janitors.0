@@ -1,22 +1,31 @@
-From: "Mrs.Susan William" <Mrs.Susan@ufba.br>
-Date: Tue, 06 Apr 2010 23:40:12 +0000
-Subject: You Won =?iso-8859-1?b?KKM1MDAsMDAwLjAw?= GBP Pounds)
-Message-Id: <20100406204012.4t4edobsh5ukgkgk@webmail.ufba.br>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 07 Apr 2010 09:41:14 +0000
+Subject: [patch] video: comparing unsigned with negative 0
+Message-Id: <20100407094114.GH5157@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Kuninori Morimoto <morimoto.kuninori@renesas.com>, Magnus Damm <damm@opensource.se>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+soc_mbus_bytes_per_line() returns -EINVAL on error but we store it in an
+unsigned int so the test for less than zero doesn't work.  I think it
+always returns "small" positive values so we can just cast it to int
+here.
 
-Your Winning details:(CGPN):7-22-71-00-66-12,Ticket no:00869575733664,Serial
-no:/BTD/8070447706/06,Luckyno:12-12-23-35-40-41(12).Contact Mr.Graham
-Benfield.Email:g.benfield147@googlemail.com
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
-
-
-
-----------------------------------------------------------------
-Universidade Federal da Bahia - http://www.portal.ufba.br
-
+diff --git a/drivers/media/video/sh_mobile_ceu_camera.c b/drivers/media/video/sh_mobile_ceu_camera.c
+index 6e16b39..1ad980f 100644
+--- a/drivers/media/video/sh_mobile_ceu_camera.c
++++ b/drivers/media/video/sh_mobile_ceu_camera.c
+@@ -1633,7 +1633,7 @@ static int sh_mobile_ceu_try_fmt(struct soc_camera_device *icd,
+ 	height = pix->height;
+ 
+ 	pix->bytesperline = soc_mbus_bytes_per_line(width, xlate->host_fmt);
+-	if (pix->bytesperline < 0)
++	if ((int)pix->bytesperline < 0)
+ 		return pix->bytesperline;
+ 	pix->sizeimage = height * pix->bytesperline;
+ 
