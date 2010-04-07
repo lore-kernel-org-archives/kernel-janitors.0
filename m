@@ -1,44 +1,29 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 04 Apr 2010 10:20:01 +0000
-Subject: Re: [patch] i2c: cleanup: change parameter to pointer
-Message-Id: <s5hpr2fh63y.wl%tiwai@suse.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 07 Apr 2010 09:39:01 +0000
+Subject: [patch] infiniband: checking the wrong variable
+Message-Id: <20100407093901.GG5157@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100402112923.GJ5265@bicker>
-In-Reply-To: <20100402112923.GJ5265@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Pavel Hofman <pavel.hofman@ivitera.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Christoph Lameter <cl-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Jack Morgenstein <jackm-LDSdmyG8hGV8YrgS2mwiifqBs+8SCbDb@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-At Fri, 2 Apr 2010 14:29:23 +0300,
-Dan Carpenter wrote:
-> 
-> We actually pass an array of 7 chars not 5.
-> This silences a smatch warning.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+The intent here was to check the "mfrpl->mapped_page_list" allocation.
+We checked "mfrpl->ibfrpl.page_list" earlier.
 
-Thanks.  I applied together with the fx in the declaration part in
-include/sound/ak4113.h.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
-Takashi
-
-> ---
-> Compile tested only.  :/
-> 
-> diff --git a/sound/i2c/other/ak4113.c b/sound/i2c/other/ak4113.c
-> index fff62cc..971a84a 100644
-> --- a/sound/i2c/other/ak4113.c
-> +++ b/sound/i2c/other/ak4113.c
-> @@ -70,7 +70,7 @@ static int snd_ak4113_dev_free(struct snd_device *device)
->  }
->  
->  int snd_ak4113_create(struct snd_card *card, ak4113_read_t *read,
-> -		ak4113_write_t *write, const unsigned char pgm[5],
-> +		ak4113_write_t *write, const unsigned char *pgm,
->  		void *private_data, struct ak4113 **r_ak4113)
->  {
->  	struct ak4113 *chip;
-> 
+diff --git a/drivers/infiniband/hw/mlx4/mr.c b/drivers/infiniband/hw/mlx4/mr.c
+index 56147b2..1d27b9a 100644
+--- a/drivers/infiniband/hw/mlx4/mr.c
++++ b/drivers/infiniband/hw/mlx4/mr.c
+@@ -240,7 +240,7 @@ struct ib_fast_reg_page_list *mlx4_ib_alloc_fast_reg_page_list(struct ib_device
+ 	mfrpl->mapped_page_list = dma_alloc_coherent(&dev->dev->pdev->dev,
+ 						     size, &mfrpl->map,
+ 						     GFP_KERNEL);
+-	if (!mfrpl->ibfrpl.page_list)
++	if (!mfrpl->mapped_page_list)
+ 		goto err_free;
+ 
+ 	WARN_ON(mfrpl->map & 0x3f);
