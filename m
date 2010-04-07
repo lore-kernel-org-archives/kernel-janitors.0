@@ -1,25 +1,41 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Mon, 19 Apr 2010 14:11:28 +0000
-Subject: Re: [PATCH] Fix inappropriate substraction on
-Message-Id: <1271686289.19685.31805.camel@gandalf.stny.rr.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 07 Apr 2010 09:18:50 +0000
+Subject: smatch: leds: potential null deref
+Message-Id: <20100407091850.GB5157@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <m2i5a774f4c1004102223zbfc0ce63u4e8682b69e7d8088@mail.gmail.com>
-In-Reply-To: <m2i5a774f4c1004102223zbfc0ce63u4e8682b69e7d8088@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: shenghui <crosslonelyover@gmail.com>
-Cc: fweisbec@gmail.com, mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, 2010-04-11 at 13:23 +0800, shenghui wrote:
-> I noticed inappropriate substraction on variable
-> tracing_pages_allocated in trace_free_page()in 2.6.27.y series (from
-> 2.6.27 to 2.6.27.46) kernel.
-> 
+Hello,
 
-I'm not maintaining a 2.6.27 kernel, but if someone else is, then feel
-free to include this.
+Smatch complains about a potential null dereference but I don't know how
+to fix it.  Could you take a look?
 
--- Steve
+drivers/leds/leds-88pm860x.c +269 pm860x_led_probe(28)
+	error: potential null derefence 'pdata'.
+   256          if (pdev->dev.parent->platform_data) {
+   257                  pm860x_pdata = pdev->dev.parent->platform_data;
+   258                  pdata = pm860x_pdata->led;
+   259          } else
+   260                  pdata = NULL;
+                        ^^^^^^^^^^^^^
 
+	We set pdata to NULL here.
 
+   261  
+   262          data = kzalloc(sizeof(struct pm860x_led), GFP_KERNEL);
+   263          if (data = NULL)
+   264                  return -ENOMEM;
+   265          strncpy(data->name, res->name, MFD_NAME_SIZE);
+   266          dev_set_drvdata(&pdev->dev, data);
+   267          data->chip = chip;
+   268          data->i2c = (chip->id = CHIP_PM8606) ? chip->client : chip->companion;
+   269          data->iset = pdata->iset;
+                             ^^^^^^^^^^^^
+
+	We dereference it here.
+
+regards,
+dan carpenter
