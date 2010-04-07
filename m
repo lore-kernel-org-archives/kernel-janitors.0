@@ -1,34 +1,62 @@
-From: Joel Becker <Joel.Becker@oracle.com>
-Date: Fri, 23 Apr 2010 21:45:05 +0000
-Subject: Re: [patch] ocfs2: potential ERR_PTR dereference on error paths
-Message-Id: <20100423214505.GB8330@mail.oracle.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 07 Apr 2010 09:35:46 +0000
+Subject: [patch] stmmac: use resource_size()
+Message-Id: <20100407093546.GF5157@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100422093929.GK29647@bicker>
-In-Reply-To: <20100422093929.GK29647@bicker>
+References: <20100322121111.GJ21571@bicker>
+In-Reply-To: <20100322121111.GJ21571@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Joe Perches <joe@perches.com>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Thu, Apr 22, 2010 at 11:39:29AM +0200, Dan Carpenter wrote:
-> If "handle" is non null at the end of the function then we assume it's a
-> valid pointer and pass it to ocfs2_commit_trans();
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Resource size should be calculated as end - start + 1 because we start
+counting at zero.  I changed the code to resource_size() to do the 
+calculation.
 
-	This patch is now in the 'fixes' branch of ocfs2.git.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Joel
-
--- 
-
-"And yet I fight,
- And yet I fight this battle all alone.
- No one to cry to;
- No place to call home."
-
-Joel Becker
-Principal Software Developer
-Oracle
-E-mail: joel.becker@oracle.com
-Phone: (650) 506-8127
+diff --git a/drivers/net/stmmac/stmmac_main.c b/drivers/net/stmmac/stmmac_main.c
+index a214a16..4111a85 100644
+--- a/drivers/net/stmmac/stmmac_main.c
++++ b/drivers/net/stmmac/stmmac_main.c
+@@ -1686,7 +1686,7 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
+ 	}
+ 	pr_info("done!\n");
+ 
+-	if (!request_mem_region(res->start, (res->end - res->start),
++	if (!request_mem_region(res->start, resource_size(res),
+ 				pdev->name)) {
+ 		pr_err("%s: ERROR: memory allocation failed"
+ 		       "cannot get the I/O addr 0x%x\n",
+@@ -1695,9 +1695,9 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
+ 		goto out;
+ 	}
+ 
+-	addr = ioremap(res->start, (res->end - res->start));
++	addr = ioremap(res->start, resource_size(res));
+ 	if (!addr) {
+-		pr_err("%s: ERROR: memory mapping failed \n", __func__);
++		pr_err("%s: ERROR: memory mapping failed\n", __func__);
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+@@ -1775,7 +1775,7 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
+ out:
+ 	if (ret < 0) {
+ 		platform_set_drvdata(pdev, NULL);
+-		release_mem_region(res->start, (res->end - res->start));
++		release_mem_region(res->start, resource_size(res));
+ 		if (addr != NULL)
+ 			iounmap(addr);
+ 	}
+@@ -1813,7 +1813,7 @@ static int stmmac_dvr_remove(struct platform_device *pdev)
+ 
+ 	iounmap((void *)ndev->base_addr);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(res->start, (res->end - res->start));
++	release_mem_region(res->start, resource_size(res));
+ 
+ 	free_netdev(ndev);
+ 
