@@ -1,51 +1,39 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 05 Apr 2010 12:33:35 +0000
-Subject: Re: [patch] vfs: indent cleanup for fs/namei.c
-Message-Id: <20100405123335.GB16099@bicker>
+Date: Wed, 07 Apr 2010 09:21:05 +0000
+Subject: [patch] davinci: don't return under lock on error path
+Message-Id: <20100407092105.GC5157@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4BB84487.5030303@redflag-linux.com>
-In-Reply-To: <4BB84487.5030303@redflag-linux.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Vaibhav Hiremath <hvaibhav@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Muralidharan Karicheri <m-karicheri2@ti.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Apr 04, 2010 at 03:49:27PM +0800, "潘卫平(Peter Pan)" wrote:
-> indent cleanup for fs/namei.c
->
+If the kmalloc() failed for "ccdc_cfg = kmalloc(...);" then we would exit
+with the lock held.  I moved the mutex_lock() below the allocation
+because it isn't protecting anything in that block and allocations are 
+allocations are sometimes slow.
 
-I would restrict whitespace cleanups to staging...  Al Viro is just
-going to get annoyed with these patches.  Why deal with that?
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-regards,
-dan carpenter
-
-> Signed-off-by: Peter Pan <wppan@redflag-linux.com>
-> ---
->  fs/namei.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index a7dce91..905fb84 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -172,7 +172,7 @@ EXPORT_SYMBOL(putname);
->  static int acl_permission_check(struct inode *inode, int mask,
->  		int (*check_acl)(struct inode *inode, int mask))
->  {
-> -	umode_t			mode = inode->i_mode;
-> +	umode_t mode = inode->i_mode;
->
->  	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
->
-> -- 
-> 1.6.2.2
->
-> Regards
-> -- 
-> 潘卫平(Peter Pan)
-> Red Flag Software Co.,Ltd.
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/media/video/davinci/vpfe_capture.c b/drivers/media/video/davinci/vpfe_capture.c
+index 7cf042f..5c83f90 100644
+--- a/drivers/media/video/davinci/vpfe_capture.c
++++ b/drivers/media/video/davinci/vpfe_capture.c
+@@ -1824,7 +1824,6 @@ static __init int vpfe_probe(struct platform_device *pdev)
+ 		goto probe_free_dev_mem;
+ 	}
+ 
+-	mutex_lock(&ccdc_lock);
+ 	/* Allocate memory for ccdc configuration */
+ 	ccdc_cfg = kmalloc(sizeof(struct ccdc_config), GFP_KERNEL);
+ 	if (NULL = ccdc_cfg) {
+@@ -1833,6 +1832,8 @@ static __init int vpfe_probe(struct platform_device *pdev)
+ 		goto probe_free_dev_mem;
+ 	}
+ 
++	mutex_lock(&ccdc_lock);
++
+ 	strncpy(ccdc_cfg->name, vpfe_cfg->ccdc, 32);
+ 	/* Get VINT0 irq resource */
+ 	res1 = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
