@@ -1,75 +1,41 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Fri, 30 Apr 2010 20:31:10 +0000
-Subject: [PATCH 4/7] drivers/staging/comedi: dev_node removal (ni_daq_dio24)
-Message-Id: <1272659470.14356.35.camel@lenovo>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Thu, 08 Apr 2010 08:14:51 +0000
+Subject: Re: [patch] mtd: silence compile warning
+Message-Id: <1270714491.6754.99.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100322115819.GA21571@bicker>
+In-Reply-To: <20100322115819.GA21571@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <error27@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/comedi/drivers/ni_daq_dio24.c |   21 ++++-----------------
- 1 files changed, 4 insertions(+), 17 deletions(-)
+On Mon, 2010-03-22 at 15:02 +0300, Dan Carpenter wrote:
+> This gets rid of a compile warning:
+> drivers/mtd/maps/dmv182.c:120: warning: format ‘%d’ expects type 
+> 	‘int’, but argument 2 has type ‘uint64_t’
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> diff --git a/drivers/mtd/maps/dmv182.c b/drivers/mtd/maps/dmv182.c
+> index d171674..680ba2d 100644
+> --- a/drivers/mtd/maps/dmv182.c
+> +++ b/drivers/mtd/maps/dmv182.c
+> @@ -116,7 +116,7 @@ static int __init init_svme182(void)
+>  		return -ENXIO;
+>  	}
+>  
+> -	printk(KERN_NOTICE "SVME182 flash device: %dMiB at 0x%08x\n",
+> +	printk(KERN_NOTICE "SVME182 flash device: %lldMiB at 0x%08x\n",
+>  		   this_mtd->size >> 20, FLASH_BASE_ADDR);
 
-diff --git a/drivers/staging/comedi/drivers/ni_daq_dio24.c b/drivers/staging/comedi/drivers/ni_daq_dio24.c
-index 2259fb4..0f9f22d 100644
---- a/drivers/staging/comedi/drivers/ni_daq_dio24.c
-+++ b/drivers/staging/comedi/drivers/ni_daq_dio24.c
-@@ -221,7 +221,6 @@ static const dev_info_t dev_info = "ni_daq_dio24";
- 
- struct local_info_t {
- 	struct pcmcia_device *link;
--	dev_node_t node;
- 	int stop;
- 	struct bus_operations *bus;
- };
-@@ -286,11 +285,9 @@ static void dio24_cs_detach(struct pcmcia_device *link)
- 
- 	dev_dbg(&link->dev, "dio24_cs_detach\n");
- 
--	if (link->dev_node) {
--		((struct local_info_t *)link->priv)->stop = 1;
--		dio24_release(link);
--	}
--
-+	((struct local_info_t *)link->priv)->stop = 1;
-+	dio24_release(link);
-+
- 	/* This points to the parent local_info_t struct */
- 	if (link->priv)
- 		kfree(link->priv);
-@@ -371,7 +368,6 @@ static int dio24_pcmcia_config_loop(struct pcmcia_device *p_dev,
- 
- static void dio24_config(struct pcmcia_device *link)
- {
--	struct local_info_t *dev = link->priv;
- 	int ret;
- 	win_req_t req;
- 
-@@ -397,17 +393,8 @@ static void dio24_config(struct pcmcia_device *link)
- 	if (ret)
- 		goto failed;
- 
--	/*
--	   At this point, the dev_node_t structure(s) need to be
--	   initialized and arranged in a linked list at link->dev.
--	 */
--	sprintf(dev->node.dev_name, "ni_daq_dio24");
--	dev->node.major = dev->node.minor = 0;
--	link->dev_node = &dev->node;
--
- 	/* Finally, report what we've done */
--	printk(KERN_INFO "%s: index 0x%02x",
--	       dev->node.dev_name, link->conf.ConfigIndex);
-+	dev_info(&link->dev, "index 0x%02x", link->conf.ConfigIndex);
- 	if (link->conf.Attributes & CONF_ENABLE_IRQ)
- 		printk(", irq %d", link->irq);
- 	if (link->io.NumPorts1)
+%lld is also wrong for uint64_t, I think on PPC it'll result in a
+warning. Instead, I'd use %llu and then a cast:
+
+(unsigned long long)(this_mtd->size >> 20)
+
 -- 
-1.6.0.4
-
-
-
+Best Regards,
+Artem Bityutskiy (Артём Битюцкий)
 
