@@ -1,12 +1,15 @@
 From: Mark Asselstine <asselsm@gmail.com>
-Date: Thu, 08 Apr 2010 00:40:56 +0000
+Date: Fri, 09 Apr 2010 03:15:15 +0000
 Subject: [PATCH] mmc: sd: Cleanup redundant memset
-Message-Id: <1270687256-17061-1-git-send-email-asselsm@gmail.com>
+Message-Id: <1270782915-25089-1-git-send-email-asselsm@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1270687256-17061-1-git-send-email-asselsm@gmail.com>
+In-Reply-To: <1270687256-17061-1-git-send-email-asselsm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-mmc@vger.kernel.org
+Cc: asselsm@gmail.com
 
 The clearing of mrq via a memset at the top of the for loop in
 mmc_wait_for_app_cmd() is not required as mrq is not used and
@@ -16,6 +19,10 @@ is not required.
 
 Signed-off-by: Mark Asselstine <asselsm@gmail.com>
 ---
+Resending to linux-mmc@vger.kernel.org and akpm@linux-foundation.org
+since MMC/SD is an orphan so hopefully including these folks will allow
+someone to pick this patch up.
+
  drivers/mmc/core/sd_ops.c |    2 --
  1 files changed, 0 insertions(+), 2 deletions(-)
 
