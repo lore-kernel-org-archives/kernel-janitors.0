@@ -1,40 +1,55 @@
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 26 Apr 2010 19:08:48 +0000
-Subject: Re: [patch] cifs: change && to ||
-Message-Id: <w2h524f69651004261208yc7df0e47hc2cae203e537d579@mail.gmail.com>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Sat, 10 Apr 2010 12:40:37 +0000
+Subject: [PATCH] fix checking in probe function
+Message-Id: <1270903237.3689.2.camel@lovely>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100426101006.GQ29093@bicker>
-In-Reply-To: <20100426101006.GQ29093@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 26, 2010 at 5:46 AM, Dan Carpenter <error27@gmail.com> wrote:
-> On Mon, Apr 26, 2010 at 06:44:01AM -0400, Jeff Layton wrote:
->> On Mon, 26 Apr 2010 12:10:06 +0200
->> Dan Carpenter <error27@gmail.com> wrote:
->>
->> > This is a typo, if pvolume_info were NULL it would oops.
->> >
->> Good catch. I wonder though whether we can just eliminate that check
->> altogether? In any case, this is clearly correct in the short term.
->
-> Nah, we can't. =A0If the kmalloc() that allocates *pvolume_info fails it
-> would lead to an OOPs.
->
-> regards,
-> dan carpenter
-
-Merged.
 
 
---=20
-Thanks,
+Improve device and platform data checks in probe function.
 
-Steve
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Signed-off-by: Haojian Zhuang <haojian.zhuang@marvell.com>
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+---
+ drivers/leds/leds-88pm860x.c |   11 ++++++++---
+ 1 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
+index 16a60c0..b767710 100644
+--- a/drivers/leds/leds-88pm860x.c
++++ b/drivers/leds/leds-88pm860x.c
+@@ -256,8 +256,10 @@ static int pm860x_led_probe(struct platform_device *pdev)
+ 	if (pdev->dev.parent->platform_data) {
+ 		pm860x_pdata = pdev->dev.parent->platform_data;
+ 		pdata = pm860x_pdata->led;
+-	} else
+-		pdata = NULL;
++	} else {
++		dev_err(&pdev->dev, "missing platform data\n");
++		return -EINVAL;
++	}
+ 
+ 	data = kzalloc(sizeof(struct pm860x_led), GFP_KERNEL);
+ 	if (data = NULL)
+@@ -268,8 +270,11 @@ static int pm860x_led_probe(struct platform_device *pdev)
+ 	data->i2c = (chip->id = CHIP_PM8606) ? chip->client : chip->companion;
+ 	data->iset = pdata->iset;
+ 	data->port = __check_device(pdata, data->name);
+-	if (data->port < 0)
++	if (data->port < 0) {
++		dev_err(&pdev->dev, "check device failed\n");
++		kfree(data);
+ 		return -EINVAL;
++	}
+ 
+ 	data->current_brightness = 0;
+ 	data->cdev.name = data->name;
+-- 
+1.5.6.5
+
+
