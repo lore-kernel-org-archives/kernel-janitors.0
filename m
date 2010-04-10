@@ -1,33 +1,195 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Mon, 05 Apr 2010 14:09:09 +0000
-Subject: Re: [patch] dma-debug: off by one issue
-Message-Id: <20100405140909.GB29758@8bytes.org>
+From: Mike Isely <isely@isely.net>
+Date: Sat, 10 Apr 2010 16:55:35 +0000
+Subject: Re: [PATCH] device_attributes: add sysfs_attr_init() for dynamic
+Message-Id: <alpine.DEB.1.10.1004101154480.5518@ivanova.isely.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100402112843.GI5265@bicker> <20100403204717.GS24846@8bytes.org> <20100405125329.GA16197@bicker> <20100405140215.GA29758@8bytes.org>
-In-Reply-To: <20100405140215.GA29758@8bytes.org>
+References: <1269238878-991-1-git-send-email-w.sang@pengutronix.de>
+In-Reply-To: <1269238878-991-1-git-send-email-w.sang@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Joerg Roedel <joerg.roedel@amd.com>, Ingo Molnar <mingo@elte.hu>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Shaun Ruffell <sruffell@digium.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wolfram Sang <w.sang@pengutronix.de>
+Cc: kernel-janitors@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Greg KH <gregkh@suse.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Sujith Thomas <sujith.thomas@intel.com>, Matthew Garrett <mjg@redhat.com>, linuxppc-dev@ozlabs.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, platform-driver-x86@vger.kernel.org, Mike Isely <isely@isely.net>
 
-On Mon, Apr 05, 2010 at 04:02:15PM +0200, Joerg Roedel wrote:
-> On Mon, Apr 05, 2010 at 03:53:30PM +0300, Dan Carpenter wrote:
-> > On Sat, Apr 03, 2010 at 10:47:17PM +0200, Joerg Roedel wrote:
-> 
-> > > The character is already reserved by the user-to-kernel copy earlier in
-> > > the function.
-> > 
-> > Yes, but the original code requires more code reading to audit. Let's 
-> > change the commit message to say that it's a clean up patch.
-> 
-> In this case its better to remove the
-> 
-> 	current_driver_name[i] = 0;
-> 
-> line just after the loop.
 
-Ah no, thats nonsense. Mind to resend the patch with a new
-commit-message? I'll queue it then tomorrow.
+Acked-By: Mike Isely <isely@pobox.com>
 
-	Joerg
+(in the context of the pvrusb2 driver related changes)
 
+  -Mike
+
+On Mon, 22 Mar 2010, Wolfram Sang wrote:
+
+> Made necessary by 6992f5334995af474c2b58d010d08bc597f0f2fe.
+> 
+> Found by this semantic patch:
+> 
+> @ init @
+> type T;
+> identifier A;
+> @@
+> 
+>         T {
+>                 ...
+>                 struct device_attribute A;
+>                 ...
+>         };
+> 
+> @ main extends init @
+> expression E;
+> statement S;
+> identifier err;
+> T *name;
+> @@
+> 
+>         ... when != sysfs_attr_init(&name->A.attr);
+> (
+> +       sysfs_attr_init(&name->A.attr);
+>         if (device_create_file(E, &name->A))
+>                 S
+> |
+> +       sysfs_attr_init(&name->A.attr);
+>         err = device_create_file(E, &name->A);
+> )
+> 
+> While reviewing, I put the initialization to apropriate places.
+> 
+> Signed-off-by: Wolfram Sang <w.sang@pengutronix.de>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Greg KH <gregkh@suse.de>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Mike Isely <isely@pobox.com>
+> Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
+> Cc: Sujith Thomas <sujith.thomas@intel.com>
+> Cc: Matthew Garrett <mjg@redhat.com>
+> ---
+> 
+> The thermal-sys.c-part should fix bugs #15548 and #15584.
+> 
+>  drivers/macintosh/windfarm_core.c           |    1 +
+>  drivers/media/video/pvrusb2/pvrusb2-sysfs.c |    8 ++++++++
+>  drivers/platform/x86/intel_menlow.c         |    1 +
+>  drivers/thermal/thermal_sys.c               |    1 +
+>  drivers/video/fsl-diu-fb.c                  |    1 +
+>  5 files changed, 12 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/macintosh/windfarm_core.c b/drivers/macintosh/windfarm_core.c
+> index 419795f..f447642 100644
+> --- a/drivers/macintosh/windfarm_core.c
+> +++ b/drivers/macintosh/windfarm_core.c
+> @@ -209,6 +209,7 @@ int wf_register_control(struct wf_control *new_ct)
+>  	kref_init(&new_ct->ref);
+>  	list_add(&new_ct->link, &wf_controls);
+>  
+> +	sysfs_attr_init(&new_ct->attr.attr);
+>  	new_ct->attr.attr.name = new_ct->name;
+>  	new_ct->attr.attr.mode = 0644;
+>  	new_ct->attr.show = wf_show_control;
+> diff --git a/drivers/media/video/pvrusb2/pvrusb2-sysfs.c b/drivers/media/video/pvrusb2/pvrusb2-sysfs.c
+> index 6c23456..71f5056 100644
+> --- a/drivers/media/video/pvrusb2/pvrusb2-sysfs.c
+> +++ b/drivers/media/video/pvrusb2/pvrusb2-sysfs.c
+> @@ -423,10 +423,12 @@ static void pvr2_sysfs_add_debugifc(struct pvr2_sysfs *sfp)
+>  
+>  	dip = kzalloc(sizeof(*dip),GFP_KERNEL);
+>  	if (!dip) return;
+> +	sysfs_attr_init(&dip->attr_debugcmd.attr);
+>  	dip->attr_debugcmd.attr.name = "debugcmd";
+>  	dip->attr_debugcmd.attr.mode = S_IRUGO|S_IWUSR|S_IWGRP;
+>  	dip->attr_debugcmd.show = debugcmd_show;
+>  	dip->attr_debugcmd.store = debugcmd_store;
+> +	sysfs_attr_init(&dip->attr_debuginfo.attr);
+>  	dip->attr_debuginfo.attr.name = "debuginfo";
+>  	dip->attr_debuginfo.attr.mode = S_IRUGO;
+>  	dip->attr_debuginfo.show = debuginfo_show;
+> @@ -644,6 +646,7 @@ static void class_dev_create(struct pvr2_sysfs *sfp,
+>  		return;
+>  	}
+>  
+> +	sysfs_attr_init(&sfp->attr_v4l_minor_number.attr);
+>  	sfp->attr_v4l_minor_number.attr.name = "v4l_minor_number";
+>  	sfp->attr_v4l_minor_number.attr.mode = S_IRUGO;
+>  	sfp->attr_v4l_minor_number.show = v4l_minor_number_show;
+> @@ -658,6 +661,7 @@ static void class_dev_create(struct pvr2_sysfs *sfp,
+>  		sfp->v4l_minor_number_created_ok = !0;
+>  	}
+>  
+> +	sysfs_attr_init(&sfp->attr_v4l_radio_minor_number.attr);
+>  	sfp->attr_v4l_radio_minor_number.attr.name = "v4l_radio_minor_number";
+>  	sfp->attr_v4l_radio_minor_number.attr.mode = S_IRUGO;
+>  	sfp->attr_v4l_radio_minor_number.show = v4l_radio_minor_number_show;
+> @@ -672,6 +676,7 @@ static void class_dev_create(struct pvr2_sysfs *sfp,
+>  		sfp->v4l_radio_minor_number_created_ok = !0;
+>  	}
+>  
+> +	sysfs_attr_init(&sfp->attr_unit_number.attr);
+>  	sfp->attr_unit_number.attr.name = "unit_number";
+>  	sfp->attr_unit_number.attr.mode = S_IRUGO;
+>  	sfp->attr_unit_number.show = unit_number_show;
+> @@ -685,6 +690,7 @@ static void class_dev_create(struct pvr2_sysfs *sfp,
+>  		sfp->unit_number_created_ok = !0;
+>  	}
+>  
+> +	sysfs_attr_init(&sfp->attr_bus_info.attr);
+>  	sfp->attr_bus_info.attr.name = "bus_info_str";
+>  	sfp->attr_bus_info.attr.mode = S_IRUGO;
+>  	sfp->attr_bus_info.show = bus_info_show;
+> @@ -699,6 +705,7 @@ static void class_dev_create(struct pvr2_sysfs *sfp,
+>  		sfp->bus_info_created_ok = !0;
+>  	}
+>  
+> +	sysfs_attr_init(&sfp->attr_hdw_name.attr);
+>  	sfp->attr_hdw_name.attr.name = "device_hardware_type";
+>  	sfp->attr_hdw_name.attr.mode = S_IRUGO;
+>  	sfp->attr_hdw_name.show = hdw_name_show;
+> @@ -713,6 +720,7 @@ static void class_dev_create(struct pvr2_sysfs *sfp,
+>  		sfp->hdw_name_created_ok = !0;
+>  	}
+>  
+> +	sysfs_attr_init(&sfp->attr_hdw_desc.attr);
+>  	sfp->attr_hdw_desc.attr.name = "device_hardware_description";
+>  	sfp->attr_hdw_desc.attr.mode = S_IRUGO;
+>  	sfp->attr_hdw_desc.show = hdw_desc_show;
+> diff --git a/drivers/platform/x86/intel_menlow.c b/drivers/platform/x86/intel_menlow.c
+> index f0a90a6..90ba5d7 100644
+> --- a/drivers/platform/x86/intel_menlow.c
+> +++ b/drivers/platform/x86/intel_menlow.c
+> @@ -396,6 +396,7 @@ static int intel_menlow_add_one_attribute(char *name, int mode, void *show,
+>  	if (!attr)
+>  		return -ENOMEM;
+>  
+> +	sysfs_attr_init(&attr->attr.attr); /* That's consistent naming :D */
+>  	attr->attr.attr.name = name;
+>  	attr->attr.attr.mode = mode;
+>  	attr->attr.show = show;
+> diff --git a/drivers/thermal/thermal_sys.c b/drivers/thermal/thermal_sys.c
+> index 5066de5..d4fec47 100644
+> --- a/drivers/thermal/thermal_sys.c
+> +++ b/drivers/thermal/thermal_sys.c
+> @@ -725,6 +725,7 @@ int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
+>  		goto release_idr;
+>  
+>  	sprintf(dev->attr_name, "cdev%d_trip_point", dev->id);
+> +	sysfs_attr_init(&dev->attr.attr);
+>  	dev->attr.attr.name = dev->attr_name;
+>  	dev->attr.attr.mode = 0444;
+>  	dev->attr.show = thermal_cooling_device_trip_point_show;
+> diff --git a/drivers/video/fsl-diu-fb.c b/drivers/video/fsl-diu-fb.c
+> index 4637bcb..994358a 100644
+> --- a/drivers/video/fsl-diu-fb.c
+> +++ b/drivers/video/fsl-diu-fb.c
+> @@ -1536,6 +1536,7 @@ static int __devinit fsl_diu_probe(struct of_device *ofdev,
+>  		goto error;
+>  	}
+>  
+> +	sysfs_attr_init(&machine_data->dev_attr.attr);
+>  	machine_data->dev_attr.attr.name = "monitor";
+>  	machine_data->dev_attr.attr.mode = S_IRUGO|S_IWUSR;
+>  	machine_data->dev_attr.show = show_monitor;
+> 
+
+-- 
+
+Mike Isely
+isely @ isely (dot) net
+PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
