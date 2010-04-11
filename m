@@ -1,36 +1,41 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 27 Apr 2010 10:30:51 +0000
-Subject: Re: [patch] gpio: potential null dereference
-Message-Id: <20100427103051.GB29093@bicker>
+From: shenghui <crosslonelyover@gmail.com>
+Date: Sun, 11 Apr 2010 05:23:12 +0000
+Subject: [PATCH] Fix inappropriate substraction on tracing_pages_allocated in
+Message-Id: <m2i5a774f4c1004102223zbfc0ce63u4e8682b69e7d8088@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100426192520.GU29093@bicker> <20100426230515.GA1388@emlix.com> <20100427090533.GZ29093@bicker> <4BD6B13C.6020406@emlix.com>
-In-Reply-To: <4BD6B13C.6020406@emlix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Daniel =?iso-8859-1?Q?Gl=F6ckner?= <dg@emlix.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jani Nikula <ext-jani.1.nikula@nokia.com>, David Brownell <dbrownell@users.sourceforge.net>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: rostedt@goodmis.org, fweisbec@gmail.com, mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 27, 2010 at 11:41:16AM +0200, Daniel Gl=F6ckner wrote:
-> It returns a valid pointer iff (desc->flags & GPIO_TRIGGER_MASK).
->=20
-> When !(desc->flags & GPIO_TRIGGER_MASK) it returns NULL and everything
-> gets allocated (unless !gpio_flags as well). What you wanted to remove
-> is the allocation code, not error handling code.=20
+I noticed inappropriate substraction on variable
+tracing_pages_allocated in trace_free_page()in 2.6.27.y series (from
+2.6.27 to 2.6.27.46) kernel.
 
-No no.  I don't want to remove anything.  I'm happy with the code as is
-now that you've explained it to me.  :)
 
-regards,
-dan carpenter
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
 
-> It is always run when
-> the trigger is set from "none" to something else.
->=20
->   Daniel
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+ kernel/trace/trace.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 8f3fb3d..dfe3995 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3018,7 +3018,6 @@ static int trace_free_page(void)
+ 		ClearPageLRU(page);
+ 		list_del(&page->lru);
+ 		tracing_pages_allocated--;
+-		tracing_pages_allocated--;
+ 		__free_page(page);
+
+ 		tracing_reset(data);
+@@ -3036,6 +3035,7 @@ static int trace_free_page(void)
+ 		page = list_entry(p, struct page, lru);
+ 		ClearPageLRU(page);
+ 		list_del(&page->lru);
++		tracing_pages_allocated--;
+ 		__free_page(page);
+
+ 		tracing_reset(data);
