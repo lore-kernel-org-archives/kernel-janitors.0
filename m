@@ -1,55 +1,43 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Sat, 10 Apr 2010 12:40:37 +0000
-Subject: [PATCH] fix checking in probe function
-Message-Id: <1270903237.3689.2.camel@lovely>
+From: Haojian Zhuang <hzhuang1@marvell.com>
+Date: Tue, 13 Apr 2010 00:50:15 +0000
+Subject: RE: [PATCH] fix checking in probe function
+Message-Id: <25B60CDC2F704E4E9D88FFD52780CB4C04D46080FE@SC-VEXCH1.marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1270903237.3689.2.camel@lovely>
+In-Reply-To: <1270903237.3689.2.camel@lovely>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-
-
-Improve device and platform data checks in probe function.
-
-
-Signed-off-by: Haojian Zhuang <haojian.zhuang@marvell.com>
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
----
- drivers/leds/leds-88pm860x.c |   11 ++++++++---
- 1 files changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
-index 16a60c0..b767710 100644
---- a/drivers/leds/leds-88pm860x.c
-+++ b/drivers/leds/leds-88pm860x.c
-@@ -256,8 +256,10 @@ static int pm860x_led_probe(struct platform_device *pdev)
- 	if (pdev->dev.parent->platform_data) {
- 		pm860x_pdata = pdev->dev.parent->platform_data;
- 		pdata = pm860x_pdata->led;
--	} else
--		pdata = NULL;
-+	} else {
-+		dev_err(&pdev->dev, "missing platform data\n");
-+		return -EINVAL;
-+	}
- 
- 	data = kzalloc(sizeof(struct pm860x_led), GFP_KERNEL);
- 	if (data = NULL)
-@@ -268,8 +270,11 @@ static int pm860x_led_probe(struct platform_device *pdev)
- 	data->i2c = (chip->id = CHIP_PM8606) ? chip->client : chip->companion;
- 	data->iset = pdata->iset;
- 	data->port = __check_device(pdata, data->name);
--	if (data->port < 0)
-+	if (data->port < 0) {
-+		dev_err(&pdev->dev, "check device failed\n");
-+		kfree(data);
- 		return -EINVAL;
-+	}
- 
- 	data->current_brightness = 0;
- 	data->cdev.name = data->name;
--- 
-1.5.6.5
-
-
+WWVzLCBrZnJlZSgpIHNob3VsZCBiZSB1c2VkIGFzIHlvdSBtZW50aW9uZWQuCgpJJ20gT0sgb24g
+eW91ciBwYXRjaC4KClRoYW5rcwpIYW9qaWFuCgotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQpG
+cm9tOiBDaHJpc3RvcGggRnJpdHogW21haWx0bzpjaGYuZnJpdHpAZ29vZ2xlbWFpbC5jb21dIApT
+ZW50OiAyMDEwxOo01MIxMMjVIDg6NDEgUE0KVG86IEhhb2ppYW4gWmh1YW5nCkNjOiBEYW4gQ2Fy
+cGVudGVyOyBSaWNoYXJkIFB1cmRpZTsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZwpT
+dWJqZWN0OiBbUEFUQ0hdIGZpeCBjaGVja2luZyBpbiBwcm9iZSBmdW5jdGlvbgoKCgpJbXByb3Zl
+IGRldmljZSBhbmQgcGxhdGZvcm0gZGF0YSBjaGVja3MgaW4gcHJvYmUgZnVuY3Rpb24uCgoKU2ln
+bmVkLW9mZi1ieTogSGFvamlhbiBaaHVhbmcgPGhhb2ppYW4uemh1YW5nQG1hcnZlbGwuY29tPgpT
+aWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGggRnJpdHogPGNoZi5mcml0ekBnb29nbGVtYWlsLmNvbT4K
+LS0tCiBkcml2ZXJzL2xlZHMvbGVkcy04OHBtODYweC5jIHwgICAxMSArKysrKysrKy0tLQogMSBm
+aWxlcyBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9sZWRzL2xlZHMtODhwbTg2MHguYyBiL2RyaXZlcnMvbGVkcy9sZWRzLTg4cG04
+NjB4LmMKaW5kZXggMTZhNjBjMC4uYjc2NzcxMCAxMDA2NDQKLS0tIGEvZHJpdmVycy9sZWRzL2xl
+ZHMtODhwbTg2MHguYworKysgYi9kcml2ZXJzL2xlZHMvbGVkcy04OHBtODYweC5jCkBAIC0yNTYs
+OCArMjU2LDEwIEBAIHN0YXRpYyBpbnQgcG04NjB4X2xlZF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
+ZGV2aWNlICpwZGV2KQogCWlmIChwZGV2LT5kZXYucGFyZW50LT5wbGF0Zm9ybV9kYXRhKSB7CiAJ
+CXBtODYweF9wZGF0YSA9IHBkZXYtPmRldi5wYXJlbnQtPnBsYXRmb3JtX2RhdGE7CiAJCXBkYXRh
+ID0gcG04NjB4X3BkYXRhLT5sZWQ7Ci0JfSBlbHNlCi0JCXBkYXRhID0gTlVMTDsKKwl9IGVsc2Ug
+eworCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJtaXNzaW5nIHBsYXRmb3JtIGRhdGFcbiIpOworCQly
+ZXR1cm4gLUVJTlZBTDsKKwl9CiAKIAlkYXRhID0ga3phbGxvYyhzaXplb2Yoc3RydWN0IHBtODYw
+eF9sZWQpLCBHRlBfS0VSTkVMKTsKIAlpZiAoZGF0YSA9IE5VTEwpCkBAIC0yNjgsOCArMjcwLDEx
+IEBAIHN0YXRpYyBpbnQgcG04NjB4X2xlZF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
+ZGV2KQogCWRhdGEtPmkyYyA9IChjaGlwLT5pZCA9IENISVBfUE04NjA2KSA/IGNoaXAtPmNsaWVu
+dCA6IGNoaXAtPmNvbXBhbmlvbjsKIAlkYXRhLT5pc2V0ID0gcGRhdGEtPmlzZXQ7CiAJZGF0YS0+
+cG9ydCA9IF9fY2hlY2tfZGV2aWNlKHBkYXRhLCBkYXRhLT5uYW1lKTsKLQlpZiAoZGF0YS0+cG9y
+dCA8IDApCisJaWYgKGRhdGEtPnBvcnQgPCAwKSB7CisJCWRldl9lcnIoJnBkZXYtPmRldiwgImNo
+ZWNrIGRldmljZSBmYWlsZWRcbiIpOworCQlrZnJlZShkYXRhKTsKIAkJcmV0dXJuIC1FSU5WQUw7
+CisJfQogCiAJZGF0YS0+Y3VycmVudF9icmlnaHRuZXNzID0gMDsKIAlkYXRhLT5jZGV2Lm5hbWUg
+PSBkYXRhLT5uYW1lOwotLSAKMS41LjYuNQoKCv/06Lp7Lm7HK4m3n66JrYYrJYrL/7Hp3bYXpYp3
+/7p7Lm7HK4m3pHq53pf42p4raK7P4p7YXm6HcqH2pnrLGoHraJmo6K3aJqP74Hq/5Hq53pf6K4DK
+K3pmo6K3aJqIp36GrYbbaf//74Hq/5Hq53pf6K4P5mo6K3aJqP4p36P4bQo=
