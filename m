@@ -1,45 +1,19 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Thu, 01 Apr 2010 08:32:50 +0000
-Subject: Re: [PATCH 12/24] media/video: fix dangling pointers
-Message-Id: <201004011032.50117.hverkuil@xs4all.nl>
+From: Sameer Rahmani <lxsameer@gmail.com>
+Date: Wed, 14 Apr 2010 16:18:46 +0000
+Subject: linux0.01 build failed
+Message-Id: <v2w731a53501004140906z6b0d7a5bo31e14358c563a94d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1269094385-16114-1-git-send-email-w.sang@pengutronix.de> <201003211709.56319.hverkuil@xs4all.nl> <20100330123912.GI29472@pengutronix.de>
-In-Reply-To: <20100330123912.GI29472@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <w.sang@pengutronix.de>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Jean Delvare <khali@linux-fr.org>, kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tuesday 30 March 2010 14:39:12 Wolfram Sang wrote:
-> Hans,
-> 
-> > But this just feels like an i2c core thing to me. After remove() is called
-> > the core should just set the client data to NULL. If there are drivers that
-> > rely on the current behavior, then those drivers should be reviewed first as
-> > to the reason why they need it.
-> 
-> It will be done this way now. As you have taken part in the discussion, I guess
-> the media-subsystem never really considered picking those patches up ;)
+hi i'm try to build linux0.01 but i get this error :
 
-I remember that there was one patch in your patch series where the client data
-was set after it was freed.
+error :
+http://dpaste.com/183807/
 
-That should still be fixed (by just removing the i2c_set_clientdata).
+makefile:
+http://dpaste.com/183801/
 
-Can you post that one again?
-
-Regards,
-
-	Hans
-
-
-> 
-> Regards,
-> 
->    Wolfram
-> 
-> 
-
--- 
-Hans Verkuil - video4linux developer - sponsored by TANDBERG
+gcc: 4.x amd64
