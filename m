@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 15 Apr 2010 15:12:13 +0000
+From: anubhav rakshit <anubhavrocks@gmail.com>
+Date: Fri, 16 Apr 2010 03:36:42 +0000
 Subject: Re: linux0.01 build failed
-Message-Id: <20100415081213.d32bb7b1.rdunlap@xenotime.net>
+Message-Id: <m2z623132dc1004152024k730ffb5eoc75e336e3ecbb60d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <v2w731a53501004140906z6b0d7a5bo31e14358c563a94d@mail.gmail.com>
 In-Reply-To: <v2w731a53501004140906z6b0d7a5bo31e14358c563a94d@mail.gmail.com>
@@ -10,27 +10,30 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 15 Apr 2010 12:39:03 +0200 H=E5kon L=F8vdal wrote:
+On Wed, Apr 14, 2010 at 9:36 PM, Sameer Rahmani <lxsameer@gmail.com> wrote:
+> hi i'm try to build linux0.01 but i get this error :
+>
+> error :
+> http://dpaste.com/183807/
+>
+> makefile:
+> http://dpaste.com/183801/
+>
+> gcc: 4.x amd64
 
-> On 14 April 2010 18:06, Sameer Rahmani <lxsameer@gmail.com> wrote:
-> > error :
-> > http://dpaste.com/183807/
-> >
-> > makefile:
-> > http://dpaste.com/183801/
+I do not think 64 bit would ever work with that kernel.
 
-I'm pretty sure that you need the tools (gcc, as or whatever assembler
-was used back then).  Are you using them?
-
-
-> Please do not use such temporarely storage services for posts
-> to public mailing lists. In the future when someone wants to
-> research and investigate what the kernel janitors were doing
-> in 2010, that content will almost certainly be gone.
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
+" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
 
 
----
-~Randy
+
+--=20
+Anubhav Rakshit
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
