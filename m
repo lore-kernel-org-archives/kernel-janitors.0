@@ -1,34 +1,63 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Fri, 30 Apr 2010 05:11:02 +0000
-Subject: Re: [PATCH] drivers/staging/comedi: dev_node removal
-Message-Id: <t2w390803461004292211w207da067ob81522720005fecb@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 18 Apr 2010 19:32:52 +0000
+Subject: [patch] i2o: cleanup exit paths
+Message-Id: <20100418193252.GE7920@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1272258528.29373.7.camel@lenovo>
-In-Reply-To: <1272258528.29373.7.camel@lenovo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
->
-> Yes, I've picked up the checkpatch changes in my staging-next tree, but
-> I think you have to put the dev node stuff through the pcmcia tree as it
-> will not build without it, right?
->
+This is just a cleanup and doesn't change how the code works.
 
-Yes. the driver doesn't build on both trees due the changes in struct
-pcmcia_device. I'm going to regenerate the patch against pcmcia tree
-and send it to Dominik Brodowski.
+The original code had a mix of returns and gotos so I changed everything
+to just return directly.
 
-Thanks a lot
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Best regards
-
------------------------------------------
-Javier Mart=C3=ADnez Canillas
-+595 981 88 66 58
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
+index 11073fa..d33693c 100644
+--- a/drivers/message/i2o/i2o_config.c
++++ b/drivers/message/i2o/i2o_config.c
+@@ -314,22 +314,22 @@ static int i2o_cfg_swul(unsigned long arg)
+ 	int ret = 0;
+ 
+ 	if (copy_from_user(&kxfer, pxfer, sizeof(struct i2o_sw_xfer)))
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	if (get_user(swlen, kxfer.swlen) < 0)
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	if (get_user(maxfrag, kxfer.maxfrag) < 0)
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	if (get_user(curfrag, kxfer.curfrag) < 0)
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	if (curfrag = maxfrag)
+ 		fragsize = swlen - (maxfrag - 1) * 8192;
+ 
+ 	if (!kxfer.buf)
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	c = i2o_find_iop(kxfer.iop);
+ 	if (!c)
+@@ -373,12 +373,8 @@ static int i2o_cfg_swul(unsigned long arg)
+ 
+ 	i2o_dma_free(&c->pdev->dev, &buffer);
+ 
+-      return_ret:
+ 	return ret;
+-      return_fault:
+-	ret = -EFAULT;
+-	goto return_ret;
+-};
++}
+ 
+ static int i2o_cfg_swdel(unsigned long arg)
+ {
