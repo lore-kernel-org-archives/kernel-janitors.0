@@ -1,77 +1,84 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Fri, 30 Apr 2010 20:31:48 +0000
-Subject: [PATCH 7/7] drivers/staging/comedi: dev_node removal
-Message-Id: <1272659508.14356.38.camel@lenovo>
+From: David Howells <dhowells@redhat.com>
+Date: Wed, 21 Apr 2010 11:01:23 +0000
+Subject: [PATCH] AFS: Don't pass error value to page_cache_release() in error
+Message-Id: <20100421110123.25523.71216.stgit@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/comedi/drivers/quatech_daqp_cs.c |   23 ++-------------------
- 1 files changed, 3 insertions(+), 20 deletions(-)
+In the error handling in afs_mntpt_do_automount(), we pass an error pointer to
+page_cache_release() if read_mapping_page() failed.  Instead, we should extend
+the gotos around the error handling we don't need.
 
-diff --git a/drivers/staging/comedi/drivers/quatech_daqp_cs.c b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-index 7aa17f9..1786db2 100644
---- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-+++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-@@ -60,7 +60,6 @@ Devices: [Quatech] DAQP-208 (daqp), DAQP-308
- 
- struct local_info_t {
- 	struct pcmcia_device *link;
--	dev_node_t node;
- 	int stop;
- 	int table_index;
- 	char board_name[32];
-@@ -1070,10 +1069,8 @@ static void daqp_cs_detach(struct pcmcia_device *link)
- 
- 	dev_dbg(&link->dev, "daqp_cs_detach\n");
- 
--	if (link->dev_node) {
--		dev->stop = 1;
--		daqp_cs_release(link);
--	}
-+	dev->stop = 1;
-+	daqp_cs_release(link);
- 
- 	/* Unlink device structure, and free it */
- 	dev_table[dev->table_index] = NULL;
-@@ -1128,7 +1125,6 @@ static int daqp_pcmcia_config_loop(struct pcmcia_device *p_dev,
- 
- static void daqp_cs_config(struct pcmcia_device *link)
+Reported-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/afs/mntpt.c |   24 ++++++++++++------------
+ 1 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
+index b0e030d..1820d58 100644
+--- a/fs/afs/mntpt.c
++++ b/fs/afs/mntpt.c
+@@ -145,9 +145,9 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
  {
--	struct local_info_t *dev = link->priv;
+ 	struct afs_super_info *super;
+ 	struct vfsmount *mnt;
+-	struct page *page = NULL;
++	struct page *page;
+ 	size_t size;
+-	char *buf, *devname = NULL, *options = NULL;
++	char *buf, *devname, *options;
  	int ret;
  
- 	dev_dbg(&link->dev, "daqp_cs_config\n");
-@@ -1152,21 +1148,8 @@ static void daqp_cs_config(struct pcmcia_device *link)
- 	if (ret)
- 		goto failed;
+ 	_enter("{%s}", mntpt->d_name.name);
+@@ -157,22 +157,22 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
+ 	ret = -EINVAL;
+ 	size = mntpt->d_inode->i_size;
+ 	if (size > PAGE_SIZE - 1)
+-		goto error;
++		goto error_no_devname;
  
--	/*
--	   At this point, the dev_node_t structure(s) need to be
--	   initialized and arranged in a linked list at link->dev.
--	 */
--	/* Comedi's PCMCIA script uses this device name (extracted
--	 * from /var/lib/pcmcia/stab) to pass to comedi_config
--	 */
--	/* sprintf(dev->node.dev_name, "daqp%d", dev->table_index); */
--	sprintf(dev->node.dev_name, "quatech_daqp_cs");
--	dev->node.major = dev->node.minor = 0;
--	link->dev_node = &dev->node;
--
- 	/* Finally, report what we've done */
--	printk(KERN_INFO "%s: index 0x%02x",
--	       dev->node.dev_name, link->conf.ConfigIndex);
-+	dev_info(&link->dev, "index 0x%02x", link->conf.ConfigIndex);
- 	if (link->conf.Attributes & CONF_ENABLE_IRQ)
- 		printk(", irq %u", link->irq);
- 	if (link->io.NumPorts1)
--- 
-1.6.0.4
-
-
-
+ 	ret = -ENOMEM;
+ 	devname = (char *) get_zeroed_page(GFP_KERNEL);
+ 	if (!devname)
+-		goto error;
++		goto error_no_devname;
+ 
+ 	options = (char *) get_zeroed_page(GFP_KERNEL);
+ 	if (!options)
+-		goto error;
++		goto error_no_options;
+ 
+ 	/* read the contents of the AFS special symlink */
+ 	page = read_mapping_page(mntpt->d_inode->i_mapping, 0, NULL);
+ 	if (IS_ERR(page)) {
+ 		ret = PTR_ERR(page);
+-		goto error;
++		goto error_no_page;
+ 	}
+ 
+ 	ret = -EIO;
+@@ -203,12 +203,12 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
+ 	return mnt;
+ 
+ error:
+-	if (page)
+-		page_cache_release(page);
+-	if (devname)
+-		free_page((unsigned long) devname);
+-	if (options)
+-		free_page((unsigned long) options);
++	page_cache_release(page);
++error_no_page:
++	free_page((unsigned long) options);
++error_no_options:
++	free_page((unsigned long) devname);
++error_no_devname:
+ 	_leave(" = %d", ret);
+ 	return ERR_PTR(ret);
+ }
 
