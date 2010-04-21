@@ -1,26 +1,42 @@
-From: Philipp Reisner <philipp.reisner@linbit.com>
-Date: Thu, 01 Apr 2010 08:56:39 +0000
-Subject: Re: [patch] drbd: potential null dereference
-Message-Id: <9736574BB1380E.7050404@linbit.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Wed, 21 Apr 2010 21:19:38 +0000
+Subject: Subject: [PATCH 2/2] arch/avr32: fix build failure caused by wrong prototype
+Message-Id: <201004212319.39033.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100327145950.GG5069@bicker>
-In-Reply-To: <20100327145950.GG5069@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Lars Ellenberg <lars.ellenberg@linbit.com>, Jens Axboe <jens.axboe@oracle.com>, Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Haavard Skinnemoen <hskinnemoen@atmel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan, 
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Thanks for the work with the static analyzer, but the patch is
-bogus. The lc_element_by_index() function causes a BUG_ON before
-returning a NULL. The next mail contains a patch that removes
-the unnecessary conditional expression operator.
+This patch fixes a build failure[1] introduced by 1d8393171
+which had the static keyword as a leftover.
 
-Philipp Reisner (1):
-  drbd: lc_element_by_index() never returns NULL
+Kernelversion: linux-next-20100421
 
- drivers/block/drbd/drbd_actlog.c |    2 +-
+References:
+[1]http://kisskb.ellerman.id.au/kisskb/buildresult/2448162/
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ arch/avr32/kernel/ptrace.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/avr32/kernel/ptrace.c b/arch/avr32/kernel/ptrace.c
+index dd5b882..5e73c25 100644
+--- a/arch/avr32/kernel/ptrace.c
++++ b/arch/avr32/kernel/ptrace.c
+@@ -28,7 +28,7 @@ static struct pt_regs *get_user_regs(struct task_struct *tsk)
+ 				  THREAD_SIZE - sizeof(struct pt_regs));
+ }
+ 
+-static void user_enable_single_step(struct task_struct *tsk)
++void user_enable_single_step(struct task_struct *tsk)
+ {
+ 	pr_debug("user_enable_single_step: pid=%u, PC=0x%08lx, SR=0x%08lx\n",
+ 		 tsk->pid, task_pt_regs(tsk)->pc, task_pt_regs(tsk)->sr);
+-- 
+1.6.4.4
 
