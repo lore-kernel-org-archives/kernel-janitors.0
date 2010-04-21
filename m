@@ -1,27 +1,32 @@
-From: Johannes Weiner <hannes@cmpxchg.org>
-Date: Wed, 21 Apr 2010 21:10:52 +0000
+From: Izik Eidus <ieidus@redhat.com>
+Date: Wed, 21 Apr 2010 23:51:18 +0000
 Subject: Re: [patch] ksm: check for ERR_PTR from follow_page()
-Message-Id: <20100421211052.GE5336@cmpxchg.org>
+Message-Id: <20100422025118.360ea4bc@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100421102759.GA29647@bicker> <4BCF18A8.8080809@redhat.com> <20100421174615.GO32034@random.random> <20100421205305.GO20640@cmpxchg.org> <20100421205807.GV32034@random.random>
-In-Reply-To: <20100421205807.GV32034@random.random>
+References: <20100421102759.GA29647@bicker>
+In-Reply-To: <20100421102759.GA29647@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Rik van Riel <riel@redhat.com>, Dan Carpenter <error27@gmail.com>, Izik Eidus <ieidus@redhat.com>, Hugh Dickins <hugh.dickins@tiscali.co.uk>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Hugh Dickins <hugh.dickins@tiscali.co.uk>, Andrea Arcangeli <aarcange@redhat.com>, Rik van Riel <riel@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, Apr 21, 2010 at 10:58:07PM +0200, Andrea Arcangeli wrote:
-> On Wed, Apr 21, 2010 at 10:53:05PM +0200, Johannes Weiner wrote:
-> > + * Returns the mapped (struct page *), %NULL if no mapping exists, or
-> > + * an error pointer if there is a mapping to something not represented
-> > + * by a page descriptor (see also vm_normal_page()).
+On Wed, 21 Apr 2010 12:27:59 +0200
+Dan Carpenter <error27@gmail.com> wrote:
+
+Hello
+
+> The follow_page() function can potentially return -EFAULT so I added 
+> checks for this.
 > 
-> where exactly in vm_normal_page? Note I already checked vm_normal_page
-> before sending the prev email and I didn't immediately see.  I search
-> return and they all return NULL except the return pfn_to_page(pfn), so
-> is pfn_to_page that returns -EFAULT (the implementations I checked
-> don't but there are plenty that I didn't check...).
+> Also I silenced an uninitialized variable warning on my version of gcc 
+> (version 4.3.2).
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> ---
+> I'm not very familiar with this code, so handle with care.
 
-It's not vm_normal_page() that returns -EFAULT.  It is follow_page()
-that translates NULL from vm_normal_page() into -EFAULT.
+
+Acked-by: Izik Eidus <ieidus@redhat.com>
+
+Thanks.
