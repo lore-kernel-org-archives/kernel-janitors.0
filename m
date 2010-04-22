@@ -1,73 +1,36 @@
-From: Haojian Zhuang <hzhuang1@marvell.com>
-Date: Fri, 09 Apr 2010 10:14:17 +0000
-Subject: RE: smatch: leds: potential null deref
-Message-Id: <25B60CDC2F704E4E9D88FFD52780CB4C04D4607C21@SC-VEXCH1.marvell.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="_002_25B60CDC2F704E4E9D88FFD52780CB4C04D4607C21SCVEXCH1marve_"
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Apr 2010 09:53:27 +0000
+Subject: [patch] rtnetlink: potential ERR_PTR dereference
+Message-Id: <20100422095327.GP29647@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100407091850.GB5157@bicker>
-In-Reply-To: <20100407091850.GB5157@bicker>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: Eric Dumazet <eric.dumazet@gmail.com>, Patrick McHardy <kaber@trash.net>, "Eric W. Biederman" <ebiederm@aristanetworks.com>, Mitch Williams <mitch.a.williams@intel.com>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
 
---_002_25B60CDC2F704E4E9D88FFD52780CB4C04D4607C21SCVEXCH1marve_
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+In the original code, if rtnl_create_link() returned an ERR_PTR then that
+would get passed to rtnl_configure_link() which dereferences it.
 
-SGksDQoNCkV4Y3VzZSBtZSBvbiBsYXRlIHJlc3BvbnNlLiBOb3cgSSBmaXggaXQuDQoNClJpY2hh
-cmQsDQpDb3VsZCB5b3UgaGVscCB0byByZXZpZXcgJiBtZXJnZSB0aGlzIHBhdGNoPw0KDQpUaGFu
-a3MNCkhhb2ppYW4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IERhbiBDYXJw
-ZW50ZXIgW21haWx0bzplcnJvcjI3QGdtYWlsLmNvbV0gDQpTZW50OiAyMDEwxOo01MI3yNUgNTox
-OSBQTQ0KVG86IEhhb2ppYW4gWmh1YW5nDQpDYzogUmljaGFyZCBQdXJkaWU7IGtlcm5lbC1qYW5p
-dG9yc0B2Z2VyLmtlcm5lbC5vcmcNClN1YmplY3Q6IHNtYXRjaDogbGVkczogcG90ZW50aWFsIG51
-bGwgZGVyZWYNCg0KSGVsbG8sDQoNClNtYXRjaCBjb21wbGFpbnMgYWJvdXQgYSBwb3RlbnRpYWwg
-bnVsbCBkZXJlZmVyZW5jZSBidXQgSSBkb24ndCBrbm93IGhvdw0KdG8gZml4IGl0LiAgQ291bGQg
-eW91IHRha2UgYSBsb29rPw0KDQpkcml2ZXJzL2xlZHMvbGVkcy04OHBtODYweC5jICsyNjkgcG04
-NjB4X2xlZF9wcm9iZSgyOCkNCgllcnJvcjogcG90ZW50aWFsIG51bGwgZGVyZWZlbmNlICdwZGF0
-YScuDQogICAyNTYgICAgICAgICAgaWYgKHBkZXYtPmRldi5wYXJlbnQtPnBsYXRmb3JtX2RhdGEp
-IHsNCiAgIDI1NyAgICAgICAgICAgICAgICAgIHBtODYweF9wZGF0YSA9IHBkZXYtPmRldi5wYXJl
-bnQtPnBsYXRmb3JtX2RhdGE7DQogICAyNTggICAgICAgICAgICAgICAgICBwZGF0YSA9IHBtODYw
-eF9wZGF0YS0+bGVkOw0KICAgMjU5ICAgICAgICAgIH0gZWxzZQ0KICAgMjYwICAgICAgICAgICAg
-ICAgICAgcGRhdGEgPSBOVUxMOw0KICAgICAgICAgICAgICAgICAgICAgICAgXl5eXl5eXl5eXl5e
-Xg0KDQoJV2Ugc2V0IHBkYXRhIHRvIE5VTEwgaGVyZS4NCg0KICAgMjYxICANCiAgIDI2MiAgICAg
-ICAgICBkYXRhID0ga3phbGxvYyhzaXplb2Yoc3RydWN0IHBtODYweF9sZWQpLCBHRlBfS0VSTkVM
-KTsNCiAgIDI2MyAgICAgICAgICBpZiAoZGF0YSA9PSBOVUxMKQ0KICAgMjY0ICAgICAgICAgICAg
-ICAgICAgcmV0dXJuIC1FTk9NRU07DQogICAyNjUgICAgICAgICAgc3RybmNweShkYXRhLT5uYW1l
-LCByZXMtPm5hbWUsIE1GRF9OQU1FX1NJWkUpOw0KICAgMjY2ICAgICAgICAgIGRldl9zZXRfZHJ2
-ZGF0YSgmcGRldi0+ZGV2LCBkYXRhKTsNCiAgIDI2NyAgICAgICAgICBkYXRhLT5jaGlwID0gY2hp
-cDsNCiAgIDI2OCAgICAgICAgICBkYXRhLT5pMmMgPSAoY2hpcC0+aWQgPT0gQ0hJUF9QTTg2MDYp
-ID8gY2hpcC0+Y2xpZW50IDogY2hpcC0+Y29tcGFuaW9uOw0KICAgMjY5ICAgICAgICAgIGRhdGEt
-PmlzZXQgPSBwZGF0YS0+aXNldDsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXl5eXl5e
-Xl5eXl5eDQoNCglXZSBkZXJlZmVyZW5jZSBpdCBoZXJlLg0KDQpyZWdhcmRzLA0KZGFuIGNhcnBl
-bnRlcg0K
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Found by a static checker, and compile tested only.  :/
 
---_002_25B60CDC2F704E4E9D88FFD52780CB4C04D4607C21SCVEXCH1marve_
-Content-Type: application/octet-stream;
-	name="0001-led-fix-parameter-checking.patch"
-Content-Description: 0001-led-fix-parameter-checking.patch
-Content-Disposition: attachment;
-	filename="0001-led-fix-parameter-checking.patch"; size=1045;
-	creation-date="Fri, 09 Apr 2010 03:13:33 GMT";
-	modification-date="Fri, 09 Apr 2010 03:04:23 GMT"
-Content-Transfer-Encoding: base64
-
-RnJvbSA3YjExNWU2NmEwZWUyMmJkYjUwMTI1YmI4MzQ3NTdlNWViMjljZGE3IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBIYW9qaWFuIFpodWFuZyA8aGFvamlhbi56aHVhbmdAbWFydmVs
-bC5jb20+CkRhdGU6IEZyaSwgOSBBcHIgMjAxMCAxMjo1NzoyNyAtMDQwMApTdWJqZWN0OiBbUEFU
-Q0hdIGxlZDogZml4IHBhcmFtZXRlciBjaGVja2luZwoKSWYgcGxhdGZvcm0gZGF0YSBpc24ndCBh
-c3NpZ25lZCwgbm8gZXJyb3IgZGV0ZWN0aW9uIG9uIHRoaXMuIE5vdyBjaGVjayBpdCBhbmQKZXhp
-dCBpZiBpdCdzIG5vdCBhc3NpZ25lZC4KClNpZ25lZC1vZmYtYnk6IEhhb2ppYW4gWmh1YW5nIDxo
-YW9qaWFuLnpodWFuZ0BtYXJ2ZWxsLmNvbT4KLS0tCiBkcml2ZXJzL2xlZHMvbGVkcy04OHBtODYw
-eC5jIHwgICAgNiArKysrLS0KIDEgZmlsZXMgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAyIGRl
-bGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvbGVkcy9sZWRzLTg4cG04NjB4LmMgYi9k
-cml2ZXJzL2xlZHMvbGVkcy04OHBtODYweC5jCmluZGV4IDE2YTYwYzAuLjQ2ZWZjM2EgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvbGVkcy9sZWRzLTg4cG04NjB4LmMKKysrIGIvZHJpdmVycy9sZWRzL2xl
-ZHMtODhwbTg2MHguYwpAQCAtMjU2LDggKzI1NiwxMCBAQCBzdGF0aWMgaW50IHBtODYweF9sZWRf
-cHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlpZiAocGRldi0+ZGV2LnBhcmVu
-dC0+cGxhdGZvcm1fZGF0YSkgewogCQlwbTg2MHhfcGRhdGEgPSBwZGV2LT5kZXYucGFyZW50LT5w
-bGF0Zm9ybV9kYXRhOwogCQlwZGF0YSA9IHBtODYweF9wZGF0YS0+bGVkOwotCX0gZWxzZQotCQlw
-ZGF0YSA9IE5VTEw7CisJfSBlbHNlIHsKKwkJZGV2X2VycigmcGRldi0+ZGV2LCAibWlzc2luZyBw
-bGF0Zm9ybSBkYXRhXG4iKTsKKwkJcmV0dXJuIC1FSU5WQUw7CisJfQogCiAJZGF0YSA9IGt6YWxs
-b2Moc2l6ZW9mKHN0cnVjdCBwbTg2MHhfbGVkKSwgR0ZQX0tFUk5FTCk7CiAJaWYgKGRhdGEgPT0g
-TlVMTCkKLS0gCjEuNS42LjUKCg==
-
---_002_25B60CDC2F704E4E9D88FFD52780CB4C04D4607C21SCVEXCH1marve_--
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 4568120..fe776c9 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -1270,10 +1270,11 @@ replay:
+ 			err = ops->newlink(net, dev, tb, data);
+ 		else
+ 			err = register_netdevice(dev);
+-		if (err < 0 && !IS_ERR(dev)) {
++
++		if (err < 0 && !IS_ERR(dev))
+ 			free_netdev(dev);
++		if (err < 0)
+ 			goto out;
+-		}
+ 
+ 		err = rtnl_configure_link(dev, ifm);
+ 		if (err < 0)
