@@ -1,7 +1,7 @@
-From: Philipp Reisner <philipp.reisner@linbit.com>
-Date: Thu, 22 Apr 2010 12:47:40 +0000
+From: Jens Axboe <jens.axboe@oracle.com>
+Date: Thu, 22 Apr 2010 12:50:45 +0000
 Subject: Re: [patch] drbd: fix memory leak
-Message-Id: <1271940461-15012-1-git-send-email-philipp.reisner@linbit.com>
+Message-Id: <20100422125044.GI27497@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100422095641.GR29647@bicker>
 In-Reply-To: <20100422095641.GR29647@bicker>
@@ -10,11 +10,16 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Jens,
+On Thu, Apr 22 2010, Philipp Reisner wrote:
+> Hi Jens,
+> 
+> Please apply the following patch as well.
+> 
+> PS: I have put both at git://git.drbd.org/linux-2.6-drbd.git for-jens
 
-Please apply the following patch as well.
+Thanks, I just hand applied the 2nd one since the first one was already
+there.
 
-PS: I have put both at git://git.drbd.org/linux-2.6-drbd.git for-jens
+-- 
+Jens Axboe
 
-Best,
- Phil
