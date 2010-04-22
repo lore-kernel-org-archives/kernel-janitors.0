@@ -1,22 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 Apr 2010 22:57:49 +0000
-Subject: Re: [patch] rtnetlink: potential ERR_PTR dereference
-Message-Id: <20100422.155749.136502434.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Apr 2010 09:39:29 +0000
+Subject: [patch] ocfs2: potential ERR_PTR dereference on error paths
+Message-Id: <20100422093929.GK29647@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100422095327.GP29647@bicker>
-In-Reply-To: <20100422095327.GP29647@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, eric.dumazet@gmail.com, kaber@trash.net, ebiederm@aristanetworks.com, mitch.a.williams@intel.com, kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 22 Apr 2010 11:53:27 +0200
+If "handle" is non null at the end of the function then we assume it's a
+valid pointer and pass it to ocfs2_commit_trans();
 
-> In the original code, if rtnl_create_link() returned an ERR_PTR then that
-> would get passed to rtnl_configure_link() which dereferences it.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 07cc8bb..ae8e161 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -558,6 +558,7 @@ static int ocfs2_truncate_for_delete(struct ocfs2_super *osb,
+ 		handle = ocfs2_start_trans(osb, OCFS2_INODE_UPDATE_CREDITS);
+ 		if (IS_ERR(handle)) {
+ 			status = PTR_ERR(handle);
++			handle = NULL;
+ 			mlog_errno(status);
+ 			goto out;
+ 		}
