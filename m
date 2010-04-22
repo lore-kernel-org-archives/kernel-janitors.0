@@ -1,55 +1,36 @@
-From: Simon Horman <horms@verge.net.au>
-Date: Tue, 27 Apr 2010 08:16:19 +0000
-Subject: Re: [PATCH] staging/otus: Add null check and fix coding style issue
-Message-Id: <20100427081619.GJ3247@verge.net.au>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Apr 2010 09:28:39 +0000
+Subject: [patch] nfs: fix some issues in nfs41_proc_reclaim_complete()
+Message-Id: <20100422092839.GI29647@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201004270034.49340.PeterHuewe@gmx.de>
-In-Reply-To: <201004270034.49340.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Huewe <PeterHuewe@gmx.de>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, David Binderman <dcb314@hotmail.com>, D Pranith Kumar <bobby.prani@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: Benny Halevy <bhalevy@panasas.com>, Andy Adamson <andros@netapp.com>, Alexandros Batsakis <batsakis@netapp.com>, Ricardo Labiaga <Ricardo.Labiaga@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 27, 2010 at 12:34:49AM +0200, Peter Huewe wrote:
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch removes mixing of declarations and code and adds a null-test
-> after a kmalloc.
-> 
-> Patch against linux-next as of 20100427
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-Acked-by: Simon Horman <horms@verge.net.au>
+The original code passed an ERR_PTR() to rpc_put_task() and instead of
+returning zero on success it returned -ENOMEM.
 
-> ---
->  drivers/staging/otus/ioctl.c |    7 +++++--
->  1 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/otus/ioctl.c b/drivers/staging/otus/ioctl.c
-> index 84be4b2..cface46 100644
-> --- a/drivers/staging/otus/ioctl.c
-> +++ b/drivers/staging/otus/ioctl.c
-> @@ -867,6 +867,7 @@ int usbdrvwext_giwscan(struct net_device *dev,
->  	char *current_ev = extra;
->  	char *end_buf;
->  	int i;
-> +	struct zsBssListV1 *pBssList;
->  	/* BssList = wd->sta.pBssList; */
->  	/* zmw_get_wlan_dev(dev); */
->  
-> @@ -874,8 +875,10 @@ int usbdrvwext_giwscan(struct net_device *dev,
->  		return 0;
->  
->  	/* struct zsBssList BssList; */
-> -	struct zsBssListV1 *pBssList = kmalloc(sizeof(struct zsBssListV1),
-> -								GFP_KERNEL);
-> +	pBssList = kmalloc(sizeof(struct zsBssListV1), GFP_KERNEL);
-> +	if (pBssList = NULL)
-> +		return -ENOMEM;
-> +
->  	if (data->length = 0)
->  		end_buf = extra + IW_SCAN_MAX_DATA;
->  	else
-> -- 
-> 1.6.4.4
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This was found by smatch and I've only compile tested it.  Sorry.  :/
+
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 6380670..071fced 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -5218,9 +5218,12 @@ static int nfs41_proc_reclaim_complete(struct nfs_client *clp)
+ 	msg.rpc_resp = &calldata->res;
+ 	task_setup_data.callback_data = calldata;
+ 	task = rpc_run_task(&task_setup_data);
+-	if (IS_ERR(task))
++	if (IS_ERR(task)) {
+ 		status = PTR_ERR(task);
++		goto out;
++	}
+ 	rpc_put_task(task);
++	return 0;
+ out:
+ 	dprintk("<-- %s status=%d\n", __func__, status);
+ 	return status;
