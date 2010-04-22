@@ -1,20 +1,32 @@
-From: David Howells <dhowells@redhat.com>
-Date: Wed, 21 Apr 2010 10:54:13 +0000
-Subject: Re: [patch] afs: passing an ERR_PTR() to page_cache_release()
-Message-Id: <23222.1271847253@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Apr 2010 09:52:01 +0000
+Subject: [patch] bluetooth: handle l2cap_create_connless_pdu() errors
+Message-Id: <20100422095201.GO29647@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100421103250.GE29647@bicker>
-In-Reply-To: <20100421103250.GE29647@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: "David S. Miller" <davem@davemloft.net>, "Gustavo F. Padovan" <gustavo@padovan.org>, Andrei Emeltchenko <andrei.emeltchenko@nokia.com>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <error27@gmail.com> wrote:
+l2cap_create_connless_pdu() can sometimes return ERR_PTR(-ENOMEM) or
+ERR_PTR(-EFAULT).
 
-> In the error handling we try to release "page" if it's not NULL.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-A better way to do this is to add another goto label and skip that bit of the
-error handling.
-
-David
+diff --git a/net/bluetooth/l2cap.c b/net/bluetooth/l2cap.c
+index 99d68c3..9753b69 100644
+--- a/net/bluetooth/l2cap.c
++++ b/net/bluetooth/l2cap.c
+@@ -1626,7 +1626,10 @@ static int l2cap_sock_sendmsg(struct kiocb *iocb, struct socket *sock, struct ms
+ 	/* Connectionless channel */
+ 	if (sk->sk_type = SOCK_DGRAM) {
+ 		skb = l2cap_create_connless_pdu(sk, msg, len);
+-		err = l2cap_do_send(sk, skb);
++		if (IS_ERR(skb))
++			err = PTR_ERR(skb);
++		else
++			err = l2cap_do_send(sk, skb);
+ 		goto done;
+ 	}
+ 
