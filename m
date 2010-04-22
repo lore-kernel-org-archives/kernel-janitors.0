@@ -1,49 +1,29 @@
-From: "jack wang" <jack_wang@usish.com>
-Date: Fri, 23 Apr 2010 12:16:25 +0000
-Subject: RE: [patch] pm8001: potential null dereference inpm8001_dev_gone_notify()
-Message-Id: <23094BDAA2D949B792874EAB2C42FB3D@usish.com.cn>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Apr 2010 09:40:53 +0000
+Subject: [patch] nouveau: off by one in nv50_gpio_location()
+Message-Id: <20100422094053.GL29647@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100423120104.GG29093@bicker>
-In-Reply-To: <20100423120104.GG29093@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <error27@gmail.com>
-Cc: lindar_liu@usish.com, "'James E.J. Bottomley'" <James.Bottomley@suse.de>, 'Tom Peng' <tom_peng@usish.com>, 'Jiri Kosina' <jkosina@suse.cz>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
 
-
-In the original code we dereferenced "pm8001_dev" before checking if it 
-was null.  This patch moves the dereference inside the condition.
-
-This was found by a static checker (smatch).  I looked, but I couldn't 
-tell if "pm8001_dev" dev was ever actually null.  The approach in this 
-patch seemed like the safest response.
+If "gpio->line" is 32 then "nv50_gpio_reg[gpio->line >> 3]" reads past the
+end of the array.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/scsi/pm8001/pm8001_sas.c
-b/drivers/scsi/pm8001/pm8001_sas.c
-index bff4f51..cd02cea 100644
---- a/drivers/scsi/pm8001/pm8001_sas.c
-+++ b/drivers/scsi/pm8001/pm8001_sas.c
-@@ -885,11 +885,13 @@ static void pm8001_dev_gone_notify(struct
-domain_device *dev)
- 	u32 tag;
- 	struct pm8001_hba_info *pm8001_ha;
- 	struct pm8001_device *pm8001_dev = dev->lldd_dev;
--	u32 device_id = pm8001_dev->device_id;
-+
- 	pm8001_ha = pm8001_find_ha_by_dev(dev);
- 	spin_lock_irqsave(&pm8001_ha->lock, flags);
- 	pm8001_tag_alloc(pm8001_ha, &tag);
- 	if (pm8001_dev) {
-+		u32 device_id = pm8001_dev->device_id;
-+
- 		PM8001_DISC_DBG(pm8001_ha,
- 			pm8001_printk("found dev[%d:%x] is gone.\n",
- 			pm8001_dev->device_id, pm8001_dev->dev_type));
-
-
-[Jack] Acked-by: Jack Wang <jack_wang@usish.com>
-Thanks!
-
+diff --git a/drivers/gpu/drm/nouveau/nv50_gpio.c b/drivers/gpu/drm/nouveau/nv50_gpio.c
+index c61782b..bb47ad7 100644
+--- a/drivers/gpu/drm/nouveau/nv50_gpio.c
++++ b/drivers/gpu/drm/nouveau/nv50_gpio.c
+@@ -31,7 +31,7 @@ nv50_gpio_location(struct dcb_gpio_entry *gpio, uint32_t *reg, uint32_t *shift)
+ {
+ 	const uint32_t nv50_gpio_reg[4] = { 0xe104, 0xe108, 0xe280, 0xe284 };
+ 
+-	if (gpio->line > 32)
++	if (gpio->line >= 32)
+ 		return -EINVAL;
+ 
+ 	*reg = nv50_gpio_reg[gpio->line >> 3];
