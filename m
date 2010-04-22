@@ -1,84 +1,37 @@
-From: David Howells <dhowells@redhat.com>
-Date: Wed, 21 Apr 2010 11:01:23 +0000
-Subject: [PATCH] AFS: Don't pass error value to page_cache_release() in error
-Message-Id: <20100421110123.25523.71216.stgit@warthog.procyon.org.uk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Apr 2010 10:05:35 +0000
+Subject: [patch] security: testing the wrong variable in create_by_name()
+Message-Id: <20100422100506.GU29647@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-security-module@vger.kernel.org
 
-In the error handling in afs_mntpt_do_automount(), we pass an error pointer to
-page_cache_release() if read_mapping_page() failed.  Instead, we should extend
-the gotos around the error handling we don't need.
+There is a typo here.  We should be testing "*dentry" instead of
+"dentry".  If "*dentry" is an ERR_PTR, it gets dereferenced in either
+mkdir() or create() which would cause an OOPs.
 
-Reported-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
- fs/afs/mntpt.c |   24 ++++++++++++------------
- 1 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
-index b0e030d..1820d58 100644
---- a/fs/afs/mntpt.c
-+++ b/fs/afs/mntpt.c
-@@ -145,9 +145,9 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
- {
- 	struct afs_super_info *super;
- 	struct vfsmount *mnt;
--	struct page *page = NULL;
-+	struct page *page;
- 	size_t size;
--	char *buf, *devname = NULL, *options = NULL;
-+	char *buf, *devname, *options;
- 	int ret;
+diff --git a/security/inode.c b/security/inode.c
+index c3a7938..1c812e8 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -161,13 +161,13 @@ static int create_by_name(const char *name, mode_t mode,
  
- 	_enter("{%s}", mntpt->d_name.name);
-@@ -157,22 +157,22 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
- 	ret = -EINVAL;
- 	size = mntpt->d_inode->i_size;
- 	if (size > PAGE_SIZE - 1)
--		goto error;
-+		goto error_no_devname;
+ 	mutex_lock(&parent->d_inode->i_mutex);
+ 	*dentry = lookup_one_len(name, parent, strlen(name));
+-	if (!IS_ERR(dentry)) {
++	if (!IS_ERR(*dentry)) {
+ 		if ((mode & S_IFMT) = S_IFDIR)
+ 			error = mkdir(parent->d_inode, *dentry, mode);
+ 		else
+ 			error = create(parent->d_inode, *dentry, mode);
+ 	} else
+-		error = PTR_ERR(dentry);
++		error = PTR_ERR(*dentry);
+ 	mutex_unlock(&parent->d_inode->i_mutex);
  
- 	ret = -ENOMEM;
- 	devname = (char *) get_zeroed_page(GFP_KERNEL);
- 	if (!devname)
--		goto error;
-+		goto error_no_devname;
- 
- 	options = (char *) get_zeroed_page(GFP_KERNEL);
- 	if (!options)
--		goto error;
-+		goto error_no_options;
- 
- 	/* read the contents of the AFS special symlink */
- 	page = read_mapping_page(mntpt->d_inode->i_mapping, 0, NULL);
- 	if (IS_ERR(page)) {
- 		ret = PTR_ERR(page);
--		goto error;
-+		goto error_no_page;
- 	}
- 
- 	ret = -EIO;
-@@ -203,12 +203,12 @@ static struct vfsmount *afs_mntpt_do_automount(struct dentry *mntpt)
- 	return mnt;
- 
- error:
--	if (page)
--		page_cache_release(page);
--	if (devname)
--		free_page((unsigned long) devname);
--	if (options)
--		free_page((unsigned long) options);
-+	page_cache_release(page);
-+error_no_page:
-+	free_page((unsigned long) options);
-+error_no_options:
-+	free_page((unsigned long) devname);
-+error_no_devname:
- 	_leave(" = %d", ret);
- 	return ERR_PTR(ret);
- }
-
+ 	return error;
