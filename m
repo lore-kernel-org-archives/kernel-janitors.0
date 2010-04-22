@@ -1,16 +1,29 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Date: Mon, 12 Apr 2010 17:12:44 +0000
-Subject: Re: [patch] asus: don't modify bluetooth/wlan on boot
-Message-Id: <20100412171244.GB657@srcf.ucam.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Apr 2010 09:50:10 +0000
+Subject: [patch] wimax: checking ERR_PTR vs null
+Message-Id: <20100422095010.GN29647@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100406104429.GB21229@bicker>
-In-Reply-To: <20100406104429.GB21229@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Corentin Chary <corentincj@iksaif.net>, Len Brown <len.brown@intel.com>, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Inaky Perez-Gonzalez <inaky@linux.intel.com>, Alexey Dobriyan <adobriyan@gmail.com>, Paulius Zaleckas <paulius.zaleckas@teltonika.lt>, "David S. Miller" <davem@davemloft.net>, wimax@linuxwimax.org, kernel-janitors@vger.kernel.org
 
-Thanks, applied.
+stch_skb is allocated with wimax_gnl_re_state_change_alloc().  That
+function returns ERR_PTRs on failure and doesn't return NULL.
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/net/wimax/stack.c b/net/wimax/stack.c
+index 1ed65db..62b1a66 100644
+--- a/net/wimax/stack.c
++++ b/net/wimax/stack.c
+@@ -315,7 +315,7 @@ void __wimax_state_change(struct wimax_dev *wimax_dev, enum wimax_st new_state)
+ 		BUG();
+ 	}
+ 	__wimax_state_set(wimax_dev, new_state);
+-	if (stch_skb)
++	if (!IS_ERR(stch_skb))
+ 		wimax_gnl_re_state_change_send(wimax_dev, stch_skb, header);
+ out:
+ 	d_fnend(3, dev, "(wimax_dev %p new_state %u [old %u]) = void\n",
