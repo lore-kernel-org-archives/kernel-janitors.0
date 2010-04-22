@@ -1,7 +1,7 @@
-From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Date: Wed, 21 Apr 2010 13:15:22 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Apr 2010 09:22:42 +0000
 Subject: Re: [patch] logfs: testing the wrong variable
-Message-Id: <20100421131517.GB18441@logfs.org>
+Message-Id: <20100422092242.GH29647@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100421103354.GF29647@bicker>
 In-Reply-To: <20100421103354.GF29647@bicker>
@@ -10,39 +10,26 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 21 April 2010 12:33:54 +0200, Dan Carpenter wrote:
+On Wed, Apr 21, 2010 at 03:15:22PM +0200, J=F6rn Engel wrote:
+
+> Did you use a tool to find this?  And if yes, where would I find it? ;)
 >=20
-> There is a typo here.  We should test "last" instead of "first".
->=20
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->=20
-> diff --git a/fs/logfs/super.c b/fs/logfs/super.c
-> index b60bfac..1e0449e 100644
-> --- a/fs/logfs/super.c
-> +++ b/fs/logfs/super.c
-> @@ -377,7 +377,7 @@ static struct page *find_super_block(struct super_blo=
-ck *sb)
->  	if (!first || IS_ERR(first))
->  		return NULL;
->  	last =3D super->s_devops->find_last_sb(sb, &super->s_sb_ofs[1]);
-> -	if (!last || IS_ERR(first)) {
-> +	if (!last || IS_ERR(last)) {
->  		page_cache_release(first);
->  		return NULL;
->  	}
 
-Applied, thanks!
+This is smatch stuff (http://smatch.sf.net).
 
-Did you use a tool to find this?  And if yes, where would I find it? ;)
+The problem is that it's a private modification where I made it print=20
+errors if we pass an ERR_PTR to a function.  After I send out 10 patches=20
+today that modification will only print false positives... Normally the=20
+false positives are cases where the function accepts ERR_PTRs as a=20
+paramater.  I need to kill most of the false positives before I can push=20
+the change.
 
-J=C3=B6rn
+The good thing about Smatch is that it's easy to compile, but the bad
+thing is that it's false positive heavy.
 
---=20
-In America you can have either a flimsy box banged together out of two
-by fours and drywall, or a McMansion -- a flimsy box banged together
-out of two by fours and drywall, but larger, more dramatic-looking,
-and full of expensive fittings.
--- Paul Graham
+regards,
+dan carpenter
+
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
