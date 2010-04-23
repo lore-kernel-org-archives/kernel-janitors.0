@@ -1,41 +1,67 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Thu, 22 Apr 2010 15:59:48 +0000
-Subject: Re: [patch] nfsd: potential ERR_PTR dereference on exp_export()
-Message-Id: <20100422155948.GE5926@fieldses.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 23 Apr 2010 20:19:13 +0000
+Subject: [patch] i2o: trivial: cleanup some exit paths
+Message-Id: <20100423201717.GK29093@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100422093059.GJ29647@bicker>
-In-Reply-To: <20100422093059.GJ29647@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Neil Brown <neilb@suse.de>, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 22, 2010 at 11:30:59AM +0200, Dan Carpenter wrote:
-> We "goto finish" from several places where "exp" is an ERR_PTR.  Also I 
-> changed the check for "fsid_key" so that it was consistent with the check
-> I added.
+This is just a cleanup and doesn't change how the code works.
 
-OK, thanks; applied.
+The original code had a mix of returns and gotos so I changed everything
+to just return directly.
 
---b.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+Reviewed-by: Christoph Lameter <cl@linux-foundation.org>
+---
+There isn't really a maintainer for this code and Alan Cox suggested
+that I just send it through the trivial tree.
 
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-> index 872a5ef..bfe6f3f 100644
-> --- a/fs/nfsd/export.c
-> +++ b/fs/nfsd/export.c
-> @@ -1071,9 +1071,9 @@ exp_export(struct nfsctl_export *nxp)
->  		err = 0;
->  finish:
->  	kfree(new.ex_pathname);
-> -	if (exp)
-> +	if (!IS_ERR_OR_NULL(exp))
->  		exp_put(exp);
-> -	if (fsid_key && !IS_ERR(fsid_key))
-> +	if (!IS_ERR_OR_NULL(fsid_key))
->  		cache_put(&fsid_key->h, &svc_expkey_cache);
->  	path_put(&path);
->  out_put_clp:
+diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
+index 11073fa..d33693c 100644
+--- a/drivers/message/i2o/i2o_config.c
++++ b/drivers/message/i2o/i2o_config.c
+@@ -314,22 +314,22 @@ static int i2o_cfg_swul(unsigned long arg)
+ 	int ret = 0;
+ 
+ 	if (copy_from_user(&kxfer, pxfer, sizeof(struct i2o_sw_xfer)))
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	if (get_user(swlen, kxfer.swlen) < 0)
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	if (get_user(maxfrag, kxfer.maxfrag) < 0)
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	if (get_user(curfrag, kxfer.curfrag) < 0)
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	if (curfrag = maxfrag)
+ 		fragsize = swlen - (maxfrag - 1) * 8192;
+ 
+ 	if (!kxfer.buf)
+-		goto return_fault;
++		return -EFAULT;
+ 
+ 	c = i2o_find_iop(kxfer.iop);
+ 	if (!c)
+@@ -373,12 +373,8 @@ static int i2o_cfg_swul(unsigned long arg)
+ 
+ 	i2o_dma_free(&c->pdev->dev, &buffer);
+ 
+-      return_ret:
+ 	return ret;
+-      return_fault:
+-	ret = -EFAULT;
+-	goto return_ret;
+-};
++}
+ 
+ static int i2o_cfg_swdel(unsigned long arg)
+ {
