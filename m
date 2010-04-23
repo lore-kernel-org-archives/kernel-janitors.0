@@ -1,31 +1,49 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 07 Apr 2010 09:41:14 +0000
-Subject: [patch] video: comparing unsigned with negative 0
-Message-Id: <20100407094114.GH5157@bicker>
+From: "jack wang" <jack_wang@usish.com>
+Date: Fri, 23 Apr 2010 12:16:25 +0000
+Subject: RE: [patch] pm8001: potential null dereference inpm8001_dev_gone_notify()
+Message-Id: <23094BDAA2D949B792874EAB2C42FB3D@usish.com.cn>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100423120104.GG29093@bicker>
+In-Reply-To: <20100423120104.GG29093@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Kuninori Morimoto <morimoto.kuninori@renesas.com>, Magnus Damm <damm@opensource.se>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: 'Dan Carpenter' <error27@gmail.com>
+Cc: lindar_liu@usish.com, "'James E.J. Bottomley'" <James.Bottomley@suse.de>, 'Tom Peng' <tom_peng@usish.com>, 'Jiri Kosina' <jkosina@suse.cz>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-soc_mbus_bytes_per_line() returns -EINVAL on error but we store it in an
-unsigned int so the test for less than zero doesn't work.  I think it
-always returns "small" positive values so we can just cast it to int
-here.
+
+In the original code we dereferenced "pm8001_dev" before checking if it 
+was null.  This patch moves the dereference inside the condition.
+
+This was found by a static checker (smatch).  I looked, but I couldn't 
+tell if "pm8001_dev" dev was ever actually null.  The approach in this 
+patch seemed like the safest response.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/media/video/sh_mobile_ceu_camera.c b/drivers/media/video/sh_mobile_ceu_camera.c
-index 6e16b39..1ad980f 100644
---- a/drivers/media/video/sh_mobile_ceu_camera.c
-+++ b/drivers/media/video/sh_mobile_ceu_camera.c
-@@ -1633,7 +1633,7 @@ static int sh_mobile_ceu_try_fmt(struct soc_camera_device *icd,
- 	height = pix->height;
- 
- 	pix->bytesperline = soc_mbus_bytes_per_line(width, xlate->host_fmt);
--	if (pix->bytesperline < 0)
-+	if ((int)pix->bytesperline < 0)
- 		return pix->bytesperline;
- 	pix->sizeimage = height * pix->bytesperline;
- 
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c
+b/drivers/scsi/pm8001/pm8001_sas.c
+index bff4f51..cd02cea 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -885,11 +885,13 @@ static void pm8001_dev_gone_notify(struct
+domain_device *dev)
+ 	u32 tag;
+ 	struct pm8001_hba_info *pm8001_ha;
+ 	struct pm8001_device *pm8001_dev = dev->lldd_dev;
+-	u32 device_id = pm8001_dev->device_id;
++
+ 	pm8001_ha = pm8001_find_ha_by_dev(dev);
+ 	spin_lock_irqsave(&pm8001_ha->lock, flags);
+ 	pm8001_tag_alloc(pm8001_ha, &tag);
+ 	if (pm8001_dev) {
++		u32 device_id = pm8001_dev->device_id;
++
+ 		PM8001_DISC_DBG(pm8001_ha,
+ 			pm8001_printk("found dev[%d:%x] is gone.\n",
+ 			pm8001_dev->device_id, pm8001_dev->dev_type));
+
+
+[Jack] Acked-by: Jack Wang <jack_wang@usish.com>
+Thanks!
+
