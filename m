@@ -1,15 +1,19 @@
 From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Mon, 26 Apr 2010 05:08:48 +0000
+Date: Mon, 26 Apr 2010 05:33:57 +0000
 Subject: [PATCH] drivers/staging/comedi: dev_node removal
-Message-Id: <1272258528.29373.7.camel@lenovo>
+Message-Id: <1272260037.29373.15.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1272258528.29373.7.camel@lenovo>
+In-Reply-To: <1272258528.29373.7.camel@lenovo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-With today linux-next, I got a compilation error with
-drivers/stagint/comedi.
+This is the correct patch, I didn't notice that mi email client was wrapping the lines...sorry for the noise.
+
+With today linux-next, I got a compilation error in
+drivers/staging/comedi.
 
 drivers/staging/comedi/drivers/cb_das16_cs.c:719: error: ‘struct
 pcmcia_device’ has no member named ‘dev_node’
@@ -24,23 +28,16 @@ Subject: [PATCH] drivers/staging/comedi: dev_node removal
 
 Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/staging/comedi/drivers/cb_das16_cs.c     |   21
-+++----------------
- drivers/staging/comedi/drivers/das08_cs.c        |   19
-++---------------
- drivers/staging/comedi/drivers/ni_daq_700.c      |   19
-++---------------
- drivers/staging/comedi/drivers/ni_daq_dio24.c    |   19
-++---------------
- drivers/staging/comedi/drivers/ni_labpc_cs.c     |   19
-++---------------
+ drivers/staging/comedi/drivers/cb_das16_cs.c     |   21 +++----------------
+ drivers/staging/comedi/drivers/das08_cs.c        |   19 ++---------------
+ drivers/staging/comedi/drivers/ni_daq_700.c      |   19 ++---------------
+ drivers/staging/comedi/drivers/ni_daq_dio24.c    |   19 ++---------------
+ drivers/staging/comedi/drivers/ni_labpc_cs.c     |   19 ++---------------
  drivers/staging/comedi/drivers/ni_mio_cs.c       |   10 +--------
- drivers/staging/comedi/drivers/quatech_daqp_cs.c |   23
-++-------------------
+ drivers/staging/comedi/drivers/quatech_daqp_cs.c |   23 ++-------------------
  7 files changed, 20 insertions(+), 110 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/cb_das16_cs.c
-b/drivers/staging/comedi/drivers/cb_das16_cs.c
+diff --git a/drivers/staging/comedi/drivers/cb_das16_cs.c b/drivers/staging/comedi/drivers/cb_das16_cs.c
 index e0352c6..6fa47dd 100644
 --- a/drivers/staging/comedi/drivers/cb_das16_cs.c
 +++ b/drivers/staging/comedi/drivers/cb_das16_cs.c
@@ -52,8 +49,7 @@ index e0352c6..6fa47dd 100644
  	int stop;
  	struct bus_operations *bus;
  };
-@@ -716,10 +715,8 @@ static void das16cs_pcmcia_detach(struct
-pcmcia_device *link)
+@@ -716,10 +715,8 @@ static void das16cs_pcmcia_detach(struct pcmcia_device *link)
  {
  	dev_dbg(&link->dev, "das16cs_pcmcia_detach\n");
  
@@ -66,8 +62,7 @@ pcmcia_device *link)
  	/* This points to the parent struct local_info_t struct */
  	if (link->priv)
  		kfree(link->priv);
-@@ -764,7 +761,6 @@ static int das16cs_pcmcia_config_loop(struct
-pcmcia_device *p_dev,
+@@ -764,7 +761,6 @@ static int das16cs_pcmcia_config_loop(struct pcmcia_device *p_dev,
  
  static void das16cs_pcmcia_config(struct pcmcia_device *link)
  {
@@ -75,8 +70,7 @@ pcmcia_device *p_dev,
  	int ret;
  
  	dev_dbg(&link->dev, "das16cs_pcmcia_config\n");
-@@ -787,17 +783,8 @@ static void das16cs_pcmcia_config(struct
-pcmcia_device *link)
+@@ -787,17 +783,8 @@ static void das16cs_pcmcia_config(struct pcmcia_device *link)
  	if (ret)
  		goto failed;
  
@@ -96,8 +90,7 @@ pcmcia_device *link)
  	if (link->conf.Attributes & CONF_ENABLE_IRQ)
  		printk(", irq %u", link->irq);
  	if (link->io.NumPorts1)
-diff --git a/drivers/staging/comedi/drivers/das08_cs.c
-b/drivers/staging/comedi/drivers/das08_cs.c
+diff --git a/drivers/staging/comedi/drivers/das08_cs.c b/drivers/staging/comedi/drivers/das08_cs.c
 index bd69c4f..a03ee79 100644
 --- a/drivers/staging/comedi/drivers/das08_cs.c
 +++ b/drivers/staging/comedi/drivers/das08_cs.c
@@ -109,8 +102,7 @@ index bd69c4f..a03ee79 100644
  	int stop;
  	struct bus_operations *bus;
  };
-@@ -203,10 +202,8 @@ static void das08_pcmcia_detach(struct
-pcmcia_device *link)
+@@ -203,10 +202,8 @@ static void das08_pcmcia_detach(struct pcmcia_device *link)
  
  	dev_dbg(&link->dev, "das08_pcmcia_detach\n");
  
@@ -123,8 +115,7 @@ pcmcia_device *link)
  
  	/* This points to the parent struct local_info_t struct */
  	if (link->priv)
-@@ -261,7 +258,6 @@ static int das08_pcmcia_config_loop(struct
-pcmcia_device *p_dev,
+@@ -261,7 +258,6 @@ static int das08_pcmcia_config_loop(struct pcmcia_device *p_dev,
  
  static void das08_pcmcia_config(struct pcmcia_device *link)
  {
@@ -132,8 +123,7 @@ pcmcia_device *p_dev,
  	int ret;
  
  	dev_dbg(&link->dev, "das08_pcmcia_config\n");
-@@ -284,17 +280,8 @@ static void das08_pcmcia_config(struct
-pcmcia_device *link)
+@@ -284,17 +280,8 @@ static void das08_pcmcia_config(struct pcmcia_device *link)
  	if (ret)
  		goto failed;
  
@@ -152,8 +142,7 @@ pcmcia_device *link)
  	if (link->conf.Attributes & CONF_ENABLE_IRQ)
  		printk(", irq %u", link->irq);
  	if (link->io.NumPorts1)
-diff --git a/drivers/staging/comedi/drivers/ni_daq_700.c
-b/drivers/staging/comedi/drivers/ni_daq_700.c
+diff --git a/drivers/staging/comedi/drivers/ni_daq_700.c b/drivers/staging/comedi/drivers/ni_daq_700.c
 index 072bc4b..e7c6e52 100644
 --- a/drivers/staging/comedi/drivers/ni_daq_700.c
 +++ b/drivers/staging/comedi/drivers/ni_daq_700.c
@@ -165,8 +154,7 @@ index 072bc4b..e7c6e52 100644
  	int stop;
  	struct bus_operations *bus;
  };
-@@ -535,10 +534,8 @@ static void dio700_cs_detach(struct pcmcia_device
-*link)
+@@ -535,10 +534,8 @@ static void dio700_cs_detach(struct pcmcia_device *link)
  
  	dev_dbg(&link->dev, "dio700_cs_detach\n");
  
@@ -179,8 +167,7 @@ index 072bc4b..e7c6e52 100644
  
  	/* This points to the parent struct local_info_t struct */
  	if (link->priv)
-@@ -620,7 +617,6 @@ static int dio700_pcmcia_config_loop(struct
-pcmcia_device *p_dev,
+@@ -620,7 +617,6 @@ static int dio700_pcmcia_config_loop(struct pcmcia_device *p_dev,
  
  static void dio700_config(struct pcmcia_device *link)
  {
@@ -188,8 +175,7 @@ pcmcia_device *p_dev,
  	win_req_t req;
  	int ret;
  
-@@ -646,17 +642,8 @@ static void dio700_config(struct pcmcia_device
-*link)
+@@ -646,17 +642,8 @@ static void dio700_config(struct pcmcia_device *link)
  	if (ret != 0)
  		goto failed;
  
@@ -208,8 +194,7 @@ pcmcia_device *p_dev,
  	if (link->conf.Attributes & CONF_ENABLE_IRQ)
  		printk(", irq %d", link->irq);
  	if (link->io.NumPorts1)
-diff --git a/drivers/staging/comedi/drivers/ni_daq_dio24.c
-b/drivers/staging/comedi/drivers/ni_daq_dio24.c
+diff --git a/drivers/staging/comedi/drivers/ni_daq_dio24.c b/drivers/staging/comedi/drivers/ni_daq_dio24.c
 index 2259fb4..d0b2c1e 100644
 --- a/drivers/staging/comedi/drivers/ni_daq_dio24.c
 +++ b/drivers/staging/comedi/drivers/ni_daq_dio24.c
@@ -221,8 +206,7 @@ index 2259fb4..d0b2c1e 100644
  	int stop;
  	struct bus_operations *bus;
  };
-@@ -286,10 +285,8 @@ static void dio24_cs_detach(struct pcmcia_device
-*link)
+@@ -286,10 +285,8 @@ static void dio24_cs_detach(struct pcmcia_device *link)
  
  	dev_dbg(&link->dev, "dio24_cs_detach\n");
  
@@ -235,8 +219,7 @@ index 2259fb4..d0b2c1e 100644
  
  	/* This points to the parent local_info_t struct */
  	if (link->priv)
-@@ -371,7 +368,6 @@ static int dio24_pcmcia_config_loop(struct
-pcmcia_device *p_dev,
+@@ -371,7 +368,6 @@ static int dio24_pcmcia_config_loop(struct pcmcia_device *p_dev,
  
  static void dio24_config(struct pcmcia_device *link)
  {
@@ -244,8 +227,7 @@ pcmcia_device *p_dev,
  	int ret;
  	win_req_t req;
  
-@@ -397,17 +393,8 @@ static void dio24_config(struct pcmcia_device
-*link)
+@@ -397,17 +393,8 @@ static void dio24_config(struct pcmcia_device *link)
  	if (ret)
  		goto failed;
  
@@ -264,8 +246,7 @@ pcmcia_device *p_dev,
  	if (link->conf.Attributes & CONF_ENABLE_IRQ)
  		printk(", irq %d", link->irq);
  	if (link->io.NumPorts1)
-diff --git a/drivers/staging/comedi/drivers/ni_labpc_cs.c
-b/drivers/staging/comedi/drivers/ni_labpc_cs.c
+diff --git a/drivers/staging/comedi/drivers/ni_labpc_cs.c b/drivers/staging/comedi/drivers/ni_labpc_cs.c
 index 907b2ae..f77efae 100644
 --- a/drivers/staging/comedi/drivers/ni_labpc_cs.c
 +++ b/drivers/staging/comedi/drivers/ni_labpc_cs.c
@@ -277,8 +258,7 @@ index 907b2ae..f77efae 100644
  	int stop;
  	struct bus_operations *bus;
  };
-@@ -265,10 +264,8 @@ static void labpc_cs_detach(struct pcmcia_device
-*link)
+@@ -265,10 +264,8 @@ static void labpc_cs_detach(struct pcmcia_device *link)
  	   the release() function is called, that will trigger a proper
  	   detach().
  	 */
@@ -291,8 +271,7 @@ index 907b2ae..f77efae 100644
  
  	/* This points to the parent local_info_t struct (may be null) */
  	kfree(link->priv);
-@@ -350,7 +347,6 @@ static int labpc_pcmcia_config_loop(struct
-pcmcia_device *p_dev,
+@@ -350,7 +347,6 @@ static int labpc_pcmcia_config_loop(struct pcmcia_device *p_dev,
  
  static void labpc_config(struct pcmcia_device *link)
  {
@@ -300,8 +279,7 @@ pcmcia_device *p_dev,
  	int ret;
  	win_req_t req;
  
-@@ -374,17 +370,8 @@ static void labpc_config(struct pcmcia_device
-*link)
+@@ -374,17 +370,8 @@ static void labpc_config(struct pcmcia_device *link)
  	if (ret)
  		goto failed;
  
@@ -320,8 +298,7 @@ pcmcia_device *p_dev,
  	if (link->conf.Attributes & CONF_ENABLE_IRQ)
  		printk(", irq %d", link->irq);
  	if (link->io.NumPorts1)
-diff --git a/drivers/staging/comedi/drivers/ni_mio_cs.c
-b/drivers/staging/comedi/drivers/ni_mio_cs.c
+diff --git a/drivers/staging/comedi/drivers/ni_mio_cs.c b/drivers/staging/comedi/drivers/ni_mio_cs.c
 index a6007ab..1e8aeba 100644
 --- a/drivers/staging/comedi/drivers/ni_mio_cs.c
 +++ b/drivers/staging/comedi/drivers/ni_mio_cs.c
@@ -347,8 +324,7 @@ index a6007ab..1e8aeba 100644
  }
  
  static int mio_cs_suspend(struct pcmcia_device *link)
-@@ -347,8 +341,6 @@ static void mio_cs_config(struct pcmcia_device
-*link)
+@@ -347,8 +341,6 @@ static void mio_cs_config(struct pcmcia_device *link)
  		dev_info(&link->dev, "no IRQ available\n");
  
  	ret = pcmcia_request_configuration(link, &link->conf);
@@ -356,10 +332,8 @@ index a6007ab..1e8aeba 100644
 -	link->dev_node = &dev_node;
  }
  
- static int mio_cs_attach(struct comedi_device *dev, struct
-comedi_devconfig *it)
-diff --git a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
+ static int mio_cs_attach(struct comedi_device *dev, struct comedi_devconfig *it)
+diff --git a/drivers/staging/comedi/drivers/quatech_daqp_cs.c b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
 index ab00846..a2d7489 100644
 --- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
 +++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
@@ -371,8 +345,7 @@ index ab00846..a2d7489 100644
  	int stop;
  	int table_index;
  	char board_name[32];
-@@ -1072,10 +1071,8 @@ static void daqp_cs_detach(struct pcmcia_device
-*link)
+@@ -1072,10 +1071,8 @@ static void daqp_cs_detach(struct pcmcia_device *link)
  
  	dev_dbg(&link->dev, "daqp_cs_detach\n");
  
@@ -385,8 +358,7 @@ index ab00846..a2d7489 100644
  
  	/* Unlink device structure, and free it */
  	dev_table[dev->table_index] = NULL;
-@@ -1130,7 +1127,6 @@ static int daqp_pcmcia_config_loop(struct
-pcmcia_device *p_dev,
+@@ -1130,7 +1127,6 @@ static int daqp_pcmcia_config_loop(struct pcmcia_device *p_dev,
  
  static void daqp_cs_config(struct pcmcia_device *link)
  {
@@ -394,8 +366,7 @@ pcmcia_device *p_dev,
  	int ret;
  
  	dev_dbg(&link->dev, "daqp_cs_config\n");
-@@ -1154,21 +1150,8 @@ static void daqp_cs_config(struct pcmcia_device
-*link)
+@@ -1154,21 +1150,8 @@ static void daqp_cs_config(struct pcmcia_device *link)
  	if (ret)
  		goto failed;
  
@@ -420,8 +391,6 @@ pcmcia_device *p_dev,
  	if (link->io.NumPorts1)
 -- 
 1.6.0.4
-
-
 
 
 
