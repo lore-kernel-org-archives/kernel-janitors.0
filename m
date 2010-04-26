@@ -1,43 +1,32 @@
-From: Rudy Matela <rudy.matela@gmail.com>
-Date: Tue, 13 Apr 2010 23:55:04 +0000
-Subject: Re: is this list active ?
-Message-Id: <p2n235c15c11004131655z80a03b3as3247246f3e7a156b@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 26 Apr 2010 19:25:20 +0000
+Subject: [patch] gpio: potential null dereference
+Message-Id: <20100426192520.GU29093@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <r2r731a53501004131248ja3ff8381t2616c4b46240b37f@mail.gmail.com>
-In-Reply-To: <r2r731a53501004131248ja3ff8381t2616c4b46240b37f@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jani Nikula <ext-jani.1.nikula@nokia.com>, David Brownell <dbrownell@users.sourceforge.net>, Daniel =?iso-8859-1?Q?Gl=F6ckner?= <dg@emlix.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In fact, this list has been quite active during the last few weeks!
+Smatch found a potential null dereference in gpio_setup_irq().  The 
+"pdesc" variable is allocated with idr_find() that can return NULL.  If
+gpio_setup_irq() is called with 0 as gpio_flags and "pdesc" is null, it
+would OOPs here.
 
-On Tue, Apr 13, 2010 at 20:50, shenghui <crosslonelyover@gmail.com> wrote:
-> 2010/4/14 Sameer Rahmani <lxsameer@gmail.com>:
->> is it ?
->> --
->> To unsubscribe from this list: send the line "unsubscribe kernel-janitor=
-s" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->>
->
-> Sure. :-)
->
->
-> --
->
->
-> Thanks and Best Regards,
-> shenghui
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
-" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 76be229..eb0c3fe 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -416,7 +416,8 @@ static int gpio_setup_irq(struct gpio_desc *desc, struct device *dev,
+ 	return 0;
+ 
+ free_sd:
+-	sysfs_put(pdesc->value_sd);
++	if (pdesc)
++		sysfs_put(pdesc->value_sd);
+ free_id:
+ 	idr_remove(&pdesc_idr, id);
+ 	desc->flags &= GPIO_FLAGS_MASK;
