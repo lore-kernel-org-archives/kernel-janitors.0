@@ -1,26 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 28 Apr 2010 00:03:56 +0000
-Subject: Re: [patch v2] bluetooth: handle l2cap_create_connless_pdu() errors
-Message-Id: <20100427.170356.219742971.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 26 Apr 2010 10:10:06 +0000
+Subject: [patch] cifs: change && to ||
+Message-Id: <20100426101006.GQ29093@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100426150919.GA12813@vigoh>
-	<20100426.111259.112594696.davem@davemloft.net>
-	<1272333926.22838.116.camel@localhost.localdomain>
-In-Reply-To: <1272333926.22838.116.camel@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: marcel@holtmann.org
-Cc: gustavo@padovan.org, error27@gmail.com, andrei.emeltchenko@nokia.com, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 27 Apr 2010 04:05:26 +0200
+This is a typo, if pvolume_info were NULL it would oops.
 
-> my bad here. I looked at the patch and thought it was only an issue
-> inside the development tree. So was letting Gustavo sort this out. You
-> are 100% right, this needs to be fixed right away. If you wanna take
-> this directly, then
-> 
-> Acked-by: Marcel Holtmann <marcel@holtmann.org>
+This function is used in clean up and error handling.  The current code
+never passes a NULL pvolume_info, but it could pass a NULL *pvolume_info
+if the kmalloc() failed.
 
-I applied the original patch with your ACK, thanks Marcel.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index d9566bf..85a35a4 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -2262,7 +2262,7 @@ cleanup_volume_info(struct smb_vol **pvolume_info)
+ {
+ 	struct smb_vol *volume_info;
+ 
+-	if (!pvolume_info && !*pvolume_info)
++	if (!pvolume_info || !*pvolume_info)
+ 		return;
+ 
+ 	volume_info = *pvolume_info;
