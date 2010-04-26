@@ -1,43 +1,51 @@
-From: Haojian Zhuang <hzhuang1@marvell.com>
-Date: Tue, 13 Apr 2010 00:50:15 +0000
-Subject: RE: [PATCH] fix checking in probe function
-Message-Id: <25B60CDC2F704E4E9D88FFD52780CB4C04D46080FE@SC-VEXCH1.marvell.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Mon, 26 Apr 2010 22:34:49 +0000
+Subject: [PATCH] staging/otus: Add null check and fix coding style issue
+Message-Id: <201004270034.49340.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1270903237.3689.2.camel@lovely>
-In-Reply-To: <1270903237.3689.2.camel@lovely>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: David Binderman <dcb314@hotmail.com>, D Pranith Kumar <bobby.prani@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, Simon Horman <horms@verge.net.au>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-WWVzLCBrZnJlZSgpIHNob3VsZCBiZSB1c2VkIGFzIHlvdSBtZW50aW9uZWQuCgpJJ20gT0sgb24g
-eW91ciBwYXRjaC4KClRoYW5rcwpIYW9qaWFuCgotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQpG
-cm9tOiBDaHJpc3RvcGggRnJpdHogW21haWx0bzpjaGYuZnJpdHpAZ29vZ2xlbWFpbC5jb21dIApT
-ZW50OiAyMDEwxOo01MIxMMjVIDg6NDEgUE0KVG86IEhhb2ppYW4gWmh1YW5nCkNjOiBEYW4gQ2Fy
-cGVudGVyOyBSaWNoYXJkIFB1cmRpZTsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZwpT
-dWJqZWN0OiBbUEFUQ0hdIGZpeCBjaGVja2luZyBpbiBwcm9iZSBmdW5jdGlvbgoKCgpJbXByb3Zl
-IGRldmljZSBhbmQgcGxhdGZvcm0gZGF0YSBjaGVja3MgaW4gcHJvYmUgZnVuY3Rpb24uCgoKU2ln
-bmVkLW9mZi1ieTogSGFvamlhbiBaaHVhbmcgPGhhb2ppYW4uemh1YW5nQG1hcnZlbGwuY29tPgpT
-aWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGggRnJpdHogPGNoZi5mcml0ekBnb29nbGVtYWlsLmNvbT4K
-LS0tCiBkcml2ZXJzL2xlZHMvbGVkcy04OHBtODYweC5jIHwgICAxMSArKysrKysrKy0tLQogMSBm
-aWxlcyBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9sZWRzL2xlZHMtODhwbTg2MHguYyBiL2RyaXZlcnMvbGVkcy9sZWRzLTg4cG04
-NjB4LmMKaW5kZXggMTZhNjBjMC4uYjc2NzcxMCAxMDA2NDQKLS0tIGEvZHJpdmVycy9sZWRzL2xl
-ZHMtODhwbTg2MHguYworKysgYi9kcml2ZXJzL2xlZHMvbGVkcy04OHBtODYweC5jCkBAIC0yNTYs
-OCArMjU2LDEwIEBAIHN0YXRpYyBpbnQgcG04NjB4X2xlZF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
-ZGV2aWNlICpwZGV2KQogCWlmIChwZGV2LT5kZXYucGFyZW50LT5wbGF0Zm9ybV9kYXRhKSB7CiAJ
-CXBtODYweF9wZGF0YSA9IHBkZXYtPmRldi5wYXJlbnQtPnBsYXRmb3JtX2RhdGE7CiAJCXBkYXRh
-ID0gcG04NjB4X3BkYXRhLT5sZWQ7Ci0JfSBlbHNlCi0JCXBkYXRhID0gTlVMTDsKKwl9IGVsc2Ug
-eworCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJtaXNzaW5nIHBsYXRmb3JtIGRhdGFcbiIpOworCQly
-ZXR1cm4gLUVJTlZBTDsKKwl9CiAKIAlkYXRhID0ga3phbGxvYyhzaXplb2Yoc3RydWN0IHBtODYw
-eF9sZWQpLCBHRlBfS0VSTkVMKTsKIAlpZiAoZGF0YSA9IE5VTEwpCkBAIC0yNjgsOCArMjcwLDEx
-IEBAIHN0YXRpYyBpbnQgcG04NjB4X2xlZF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
-ZGV2KQogCWRhdGEtPmkyYyA9IChjaGlwLT5pZCA9IENISVBfUE04NjA2KSA/IGNoaXAtPmNsaWVu
-dCA6IGNoaXAtPmNvbXBhbmlvbjsKIAlkYXRhLT5pc2V0ID0gcGRhdGEtPmlzZXQ7CiAJZGF0YS0+
-cG9ydCA9IF9fY2hlY2tfZGV2aWNlKHBkYXRhLCBkYXRhLT5uYW1lKTsKLQlpZiAoZGF0YS0+cG9y
-dCA8IDApCisJaWYgKGRhdGEtPnBvcnQgPCAwKSB7CisJCWRldl9lcnIoJnBkZXYtPmRldiwgImNo
-ZWNrIGRldmljZSBmYWlsZWRcbiIpOworCQlrZnJlZShkYXRhKTsKIAkJcmV0dXJuIC1FSU5WQUw7
-CisJfQogCiAJZGF0YS0+Y3VycmVudF9icmlnaHRuZXNzID0gMDsKIAlkYXRhLT5jZGV2Lm5hbWUg
-PSBkYXRhLT5uYW1lOwotLSAKMS41LjYuNQoKCv/06Lp7Lm7HK4m3n66JrYYrJYrL/7Hp3bYXpYp3
-/7p7Lm7HK4m3pHq53pf42p4raK7P4p7YXm6HcqH2pnrLGoHraJmo6K3aJqP74Hq/5Hq53pf6K4DK
-K3pmo6K3aJqIp36GrYbbaf//74Hq/5Hq53pf6K4P5mo6K3aJqP4p36P4bQo=
+From: Peter Huewe <peterhuewe@gmx.de>
+
+This patch removes mixing of declarations and code and adds a null-test
+after a kmalloc.
+
+Patch against linux-next as of 20100427
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/staging/otus/ioctl.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/otus/ioctl.c b/drivers/staging/otus/ioctl.c
+index 84be4b2..cface46 100644
+--- a/drivers/staging/otus/ioctl.c
++++ b/drivers/staging/otus/ioctl.c
+@@ -867,6 +867,7 @@ int usbdrvwext_giwscan(struct net_device *dev,
+ 	char *current_ev = extra;
+ 	char *end_buf;
+ 	int i;
++	struct zsBssListV1 *pBssList;
+ 	/* BssList = wd->sta.pBssList; */
+ 	/* zmw_get_wlan_dev(dev); */
+ 
+@@ -874,8 +875,10 @@ int usbdrvwext_giwscan(struct net_device *dev,
+ 		return 0;
+ 
+ 	/* struct zsBssList BssList; */
+-	struct zsBssListV1 *pBssList = kmalloc(sizeof(struct zsBssListV1),
+-								GFP_KERNEL);
++	pBssList = kmalloc(sizeof(struct zsBssListV1), GFP_KERNEL);
++	if (pBssList = NULL)
++		return -ENOMEM;
++
+ 	if (data->length = 0)
+ 		end_buf = extra + IW_SCAN_MAX_DATA;
+ 	else
+-- 
+1.6.4.4
+
