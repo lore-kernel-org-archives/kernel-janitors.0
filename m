@@ -1,55 +1,41 @@
-From: "Gustavo F. Padovan" <gustavo@padovan.org>
-Date: Mon, 26 Apr 2010 15:09:19 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 26 Apr 2010 18:12:59 +0000
 Subject: Re: [patch v2] bluetooth: handle l2cap_create_connless_pdu() errors
-Message-Id: <20100426150919.GA12813@vigoh>
+Message-Id: <20100426.111259.112594696.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100422095201.GO29647@bicker>
- <20100422123347.GA5265@vigoh>
- <20100426113627.GS29093@bicker>
-In-Reply-To: <20100426113627.GS29093@bicker>
+References: <20100422123347.GA5265@vigoh>
+	<20100426113627.GS29093@bicker>
+	<20100426150919.GA12813@vigoh>
+In-Reply-To: <20100426150919.GA12813@vigoh>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, "David S. Miller" <davem@davemloft.net>, Andrei Emeltchenko <andrei.emeltchenko@nokia.com>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gustavo@padovan.org
+Cc: error27@gmail.com, marcel@holtmann.org, andrei.emeltchenko@nokia.com, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From: "Gustavo F. Padovan" <gustavo@padovan.org>
+Date: Mon, 26 Apr 2010 12:09:19 -0300
 
-* Dan Carpenter <error27@gmail.com> [2010-04-26 13:36:27 +0200]:
-
-> l2cap_create_connless_pdu() can sometimes return ERR_PTR(-ENOMEM) or
-> ERR_PTR(-EFAULT).
+> Hi Dan,
 > 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> In v2 I wrote the patch on top of Gustavo Padovon's devel tree
+> * Dan Carpenter <error27@gmail.com> [2010-04-26 13:36:27 +0200]:
 > 
-> diff --git a/net/bluetooth/l2cap.c b/net/bluetooth/l2cap.c
-> index a668ef4..b32682c 100644
-> --- a/net/bluetooth/l2cap.c
-> +++ b/net/bluetooth/l2cap.c
-> @@ -1712,8 +1712,12 @@ static int l2cap_sock_sendmsg(struct kiocb *iocb, struct socket *sock, struct ms
->  	/* Connectionless channel */
->  	if (sk->sk_type = SOCK_DGRAM) {
->  		skb = l2cap_create_connless_pdu(sk, msg, len);
-> -		l2cap_do_send(sk, skb);
-> -		err = len;
-> +		if (IS_ERR(skb)) {
-> +			err = PTR_ERR(skb);
+>> l2cap_create_connless_pdu() can sometimes return ERR_PTR(-ENOMEM) or
+>> ERR_PTR(-EFAULT).
+>> 
+>> Signed-off-by: Dan Carpenter <error27@gmail.com>
+>> ---
+>> In v2 I wrote the patch on top of Gustavo Padovon's devel tree
 
-Remove the braces on the 'if', then we are fine to pick your patch ;)
+This is the kind of bug that could cause a crash if the path actually
+executes.
 
-> +		} else {
-> +			l2cap_do_send(sk, skb);
-> +			err = len;
-> +		}
->  		goto done;
->  	}
->  
+Therefore it tires me that that submitter was told to regenerate this
+patch against some devel tree that is -next bound, when in fact this
+is the kind of fix that warrants inclusion right now into net-2.6
 
+Marcel, please do whatever magic you need to so I can get this into
+Linus's tree as I did the rest of the ERR_PTR() fixes from Dan already.
+No reason to treat Bluetooth special and defer these fixes to -next.
 
-Regards,
-
--- 
-Gustavo F. Padovan
-http://padovan.org
+Thanks.
