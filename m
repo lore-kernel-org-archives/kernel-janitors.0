@@ -1,28 +1,29 @@
-From: =?iso-8859-1?Q?L=2E_Alberto_Gim=E9nez?= <agimenez@sysvalve.es>
-Date: Tue, 27 Apr 2010 21:00:03 +0000
+From: David Miller <davem@davemloft.net>
+Date: Tue, 27 Apr 2010 21:33:13 +0000
 Subject: Re: [patch] ipheth: potential null dereferences on error path
-Message-Id: <20100427210003.GA13873@bart.evergreen.loc>
+Message-Id: <20100427.143313.135530432.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100427092012.GA29093@bicker>
-In-Reply-To: <20100427092012.GA29093@bicker>
+	<20100427210003.GA13873@bart.evergreen.loc>
+In-Reply-To: <20100427210003.GA13873@bart.evergreen.loc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
-Cc: Diego Giagio <diego@giagio.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: agimenez@sysvalve.es
+Cc: error27@gmail.com, diego@giagio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 27, 2010 at 11:20:12AM +0200, Dan Carpenter wrote:
-> The calls to usb_free_buffer() dereference rx_urb and tx_urb in the
-> parameter list but those could be NULL.
+From: L. Alberto Gim=E9nez <agimenez@sysvalve.es>
+Date: Tue, 27 Apr 2010 23:00:03 +0200
+
+> On Tue, Apr 27, 2010 at 11:20:12AM +0200, Dan Carpenter wrote:
+>> The calls to usb_free_buffer() dereference rx_urb and tx_urb in the
+>> parameter list but those could be NULL.
+>>=20
+>> Signed-off-by: Dan Carpenter <error27@gmail.com>
 >=20
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> Seems good to me (should I ack it or any other kind of singoff?).
 
-Seems good to me (should I ack it or any other kind of singoff?).
-
---=20
-L. Alberto Gim=E9nez
-JabberID agimenez@jabber.sysvalve.es
-GnuPG key ID 0x3BAABDE1
+If you give it an "Acked-by: ..." that would be nice.
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
