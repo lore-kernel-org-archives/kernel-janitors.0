@@ -1,45 +1,68 @@
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 29 Apr 2010 00:41:22 +0000
-Subject: [PATCH] arm/mach-msm: Add CONFIG conditional for board-trout
-Message-Id: <201004290241.23068.PeterHuewe@gmx.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 27 Apr 2010 09:20:12 +0000
+Subject: [patch] ipheth: potential null dereferences on error path
+Message-Id: <20100427092012.GA29093@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100428060825.GE3721@ucw.cz>
-In-Reply-To: <20100428060825.GE3721@ucw.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Diego Giagio <diego@giagio.com>
+Cc: "David S. Miller" <davem@davemloft.net>, =?iso-8859-1?Q?L=2E_Alberto_Gim=E9nez?= <agimenez@sysvalve.es>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+The calls to usb_free_buffer() dereference rx_urb and tx_urb in the
+parameter list but those could be NULL.
 
-This patch adds a conditional for CONFIG_MSM_DEBUG_UART to prevent a
-build failure[1], this is done the same way as for every board in mach-msm.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-References:
-[1] http://kisskb.ellerman.id.au/kisskb/buildresult/2448102/
-
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
-KernelVersion: linux-next-20100429
-
- arch/arm/mach-msm/board-trout.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-msm/board-trout.c b/arch/arm/mach-msm/board-trout.c
-index 9793ff4..b88aec2 100644
---- a/arch/arm/mach-msm/board-trout.c
-+++ b/arch/arm/mach-msm/board-trout.c
-@@ -82,8 +82,10 @@ static void __init trout_map_io(void)
+diff --git a/drivers/net/usb/ipheth.c b/drivers/net/usb/ipheth.c
+index fd10331..418825d 100644
+--- a/drivers/net/usb/ipheth.c
++++ b/drivers/net/usb/ipheth.c
+@@ -122,25 +122,25 @@ static int ipheth_alloc_urbs(struct ipheth_device *iphone)
+ 
+ 	tx_urb = usb_alloc_urb(0, GFP_KERNEL);
+ 	if (tx_urb = NULL)
+-		goto error;
++		goto error_nomem;
+ 
+ 	rx_urb = usb_alloc_urb(0, GFP_KERNEL);
+ 	if (rx_urb = NULL)
+-		goto error;
++		goto free_tx_urb;
+ 
+ 	tx_buf = usb_buffer_alloc(iphone->udev,
+ 				  IPHETH_BUF_SIZE,
+ 				  GFP_KERNEL,
+ 				  &tx_urb->transfer_dma);
+ 	if (tx_buf = NULL)
+-		goto error;
++		goto free_rx_urb;
+ 
+ 	rx_buf = usb_buffer_alloc(iphone->udev,
+ 				  IPHETH_BUF_SIZE,
+ 				  GFP_KERNEL,
+ 				  &rx_urb->transfer_dma);
+ 	if (rx_buf = NULL)
+-		goto error;
++		goto free_tx_buf;
+ 
+ 
+ 	iphone->tx_urb = tx_urb;
+@@ -149,13 +149,14 @@ static int ipheth_alloc_urbs(struct ipheth_device *iphone)
+ 	iphone->rx_buf = rx_buf;
+ 	return 0;
+ 
+-error:
+-	usb_buffer_free(iphone->udev, IPHETH_BUF_SIZE, rx_buf,
+-			rx_urb->transfer_dma);
++free_tx_buf:
+ 	usb_buffer_free(iphone->udev, IPHETH_BUF_SIZE, tx_buf,
+ 			tx_urb->transfer_dma);
++free_rx_urb:
+ 	usb_free_urb(rx_urb);
++free_tx_urb:
+ 	usb_free_urb(tx_urb);
++error_nomem:
+ 	return -ENOMEM;
  }
  
- MACHINE_START(TROUT, "HTC Dream")
-+#ifdef CONFIG_MSM_DEBUG_UART
- 	.phys_io	= MSM_DEBUG_UART_PHYS,
- 	.io_pg_offst	= ((MSM_DEBUG_UART_BASE) >> 18) & 0xfffc,
-+#endif
- 	.boot_params	= 0x10000100,
- 	.fixup		= trout_fixup,
- 	.map_io		= trout_map_io,
--- 
-1.6.4.4
-
