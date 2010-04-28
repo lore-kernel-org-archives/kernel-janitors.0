@@ -1,43 +1,33 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 07 Apr 2010 09:33:36 +0000
-Subject: [patch] nouveau: fix memory leak
-Message-Id: <20100407093336.GE5157@bicker>
+Date: Wed, 28 Apr 2010 08:55:15 +0000
+Subject: [patch] crypto: cleanup: remove unneeded null check
+Message-Id: <20100428085515.GE29093@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Christoph Lameter <cl@linux-foundation.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>, Ben Skeggs <bskeggs@redhat.com>, Tejun Heo <tj@kernel.org>, dri-devel@lists.sourceforge.net
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, Brad Bosch <bradbosch@comcast.net>, Richard Hartmann <richih.mailinglist@gmail.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In the original code there was a typo and we called kfree(pgraph->ctxprog)
-two times instead of kfree(pgraph->ctxvals);
+We don't check "frontend" consistently in crypto_init_spawn2().  We
+check it at the start of the function but then we dereference it 
+unconditionally in the parameter list when we call crypto_init_spawn().
 
-Also it's OK to pass NULL variables to kfree().  checkpatch.pl complains 
-about this so I removed the checks.
+I looked at the places that call crypto_init_spawn2() and "frontend" is
+always a valid pointer so I removed the check for null.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_grctx.c b/drivers/gpu/drm/nouveau/nouveau_grctx.c
-index 32f0e49..06642a5 100644
---- a/drivers/gpu/drm/nouveau/nouveau_grctx.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_grctx.c
-@@ -134,15 +134,11 @@ nouveau_grctx_fini(struct drm_device *dev)
- 	struct drm_nouveau_private *dev_priv = dev->dev_private;
- 	struct nouveau_pgraph_engine *pgraph = &dev_priv->engine.graph;
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index 76fae27..c3cf1a6 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -544,7 +544,7 @@ int crypto_init_spawn2(struct crypto_spawn *spawn, struct crypto_alg *alg,
+ {
+ 	int err = -EINVAL;
  
--	if (pgraph->ctxprog) {
--		kfree(pgraph->ctxprog);
--		pgraph->ctxprog = NULL;
--	}
-+	kfree(pgraph->ctxprog);
-+	pgraph->ctxprog = NULL;
+-	if (frontend && (alg->cra_flags ^ frontend->type) & frontend->maskset)
++	if ((alg->cra_flags ^ frontend->type) & frontend->maskset)
+ 		goto out;
  
--	if (pgraph->ctxvals) {
--		kfree(pgraph->ctxprog);
--		pgraph->ctxvals = NULL;
--	}
-+	kfree(pgraph->ctxvals);
-+	pgraph->ctxvals = NULL;
- }
- 
- void
+ 	spawn->frontend = frontend;
