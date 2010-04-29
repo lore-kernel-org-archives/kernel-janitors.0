@@ -1,34 +1,42 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Thu, 01 Apr 2010 16:52:37 +0000
-Subject: Re: [patch] mxser: spin_lock() => spin_lock_irq()
-Message-Id: <4BB4CF55.8000400@gmail.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 29 Apr 2010 00:56:10 +0000
+Subject: [PATCH] arch/sh: Fix wrong function prototype for native_cpu_disable
+Message-Id: <201004290256.10506.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100401155143.GC5265@bicker>
-In-Reply-To: <20100401155143.GC5265@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Matt Fleming <matt@console-pimps.org>, Mike Travis <travis@sgi.com>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 04/01/2010 05:51 PM, Dan Carpenter wrote:
-> This should be spin_lock_irq() to match the spin_unlock_irq().
-> Originally it was a lock_kernel() but we switched everything to
-> spin_lock_irq() last November.
->
-> Signed-off-by: Dan Carpenter<error27@gmail.com>
->
-> diff --git a/drivers/char/mxser.c b/drivers/char/mxser.c
-> index e0c5d2a..ecb2d8b 100644
-> --- a/drivers/char/mxser.c
-> +++ b/drivers/char/mxser.c
-> @@ -1768,7 +1768,7 @@ static int mxser_ioctl(struct tty_struct *tty, struct file *file,
->   		int len, lsr;
->
->   		len = mxser_chars_in_buffer(tty);
-> -		spin_lock(&info->slock);
-> +		spin_lock_irq(&info->slock);
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Hmm, and there is one more error in the MOXA_ASPP_MON case. Interrupts 
-are not disabled at all there. Could you fix that too?
+This patch fixes the prototype of native_cpu_disable if
+CONFIG_HOTPLUG_CPU is not set, and thus fixes a build failure[1]
 
-Thanks.
+References:
+[1] http://kisskb.ellerman.id.au/kisskb/buildresult/2536296/
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+KernelVersion: linux-next-20100429
+
+ arch/sh/kernel/smp.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/sh/kernel/smp.c b/arch/sh/kernel/smp.c
+index 86cd6f9..509b36b 100644
+--- a/arch/sh/kernel/smp.c
++++ b/arch/sh/kernel/smp.c
+@@ -161,7 +161,7 @@ int __cpu_disable(void)
+ 	return 0;
+ }
+ #else /* ... !CONFIG_HOTPLUG_CPU */
+-int native_cpu_disable(void)
++int native_cpu_disable(unsigned int cpu)
+ {
+ 	return -ENOSYS;
+ }
+-- 
+1.6.4.4
+
