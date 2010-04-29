@@ -1,26 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 30 Apr 2010 23:42:52 +0000
-Subject: Re: [patch] ipv6: cleanup: remove unneeded null check
-Message-Id: <20100430.164252.170100570.davem@davemloft.net>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Thu, 29 Apr 2010 00:29:52 +0000
+Subject: [PATCH] arm/mach-msm: Fix wrong include path.
+Message-Id: <201004290229.53378.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100429143034.GI29093@bicker>
-In-Reply-To: <20100429143034.GI29093@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, eric.dumazet@gmail.com, sri@us.ibm.com, herbert@gondor.apana.org.au, emils.tantilov@gmail.com, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 29 Apr 2010 16:30:35 +0200
+From: Peter Huewe <peterhuewe@gmx.de>
 
-> We dereference "sk" unconditionally elsewhere in the function.  
-> 
-> This was left over from:  b30bd282 "ip6_xmit: remove unnecessary NULL
-> ptr check".  According to that commit message, "the sk argument to 
-> ip6_xmit is never NULL nowadays since the skb->priority assigment 
-> expects a valid socket."
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+This patch fixes a build failure[1] caused by a wrong include path.
 
-Applied, thanks Dan.
+References:
+[1] http://kisskb.ellerman.id.au/kisskb/buildresult/2535826/
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+KernelVersion: linux-next-20100429
+
+ arch/arm/mach-msm/devices.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-msm/devices.c b/arch/arm/mach-msm/devices.c
+index 29b1cd6..982f1da 100644
+--- a/arch/arm/mach-msm/devices.c
++++ b/arch/arm/mach-msm/devices.c
+@@ -24,7 +24,7 @@
+ #include <linux/mtd/nand.h>
+ #include <linux/mtd/partitions.h>
+ 
+-#include <asm/mach/mmc.h>
++#include <mach/mmc.h>
+ 
+ static struct resource resources_uart1[] = {
+ 	{
+-- 
+1.6.4.4
+
