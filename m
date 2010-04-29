@@ -1,40 +1,31 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Thu, 29 Apr 2010 00:29:52 +0000
-Subject: [PATCH] arm/mach-msm: Fix wrong include path.
-Message-Id: <201004290229.53378.PeterHuewe@gmx.de>
+From: Daniel Walker <dwalker@codeaurora.org>
+Date: Thu, 29 Apr 2010 01:48:04 +0000
+Subject: Re: [PATCH] arm/mach-msm: Fix wrong include path.
+Message-Id: <1272505684.2007.128.camel@m0nster>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201004290229.53378.PeterHuewe@gmx.de>
+In-Reply-To: <201004290229.53378.PeterHuewe@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+On Thu, 2010-04-29 at 02:29 +0200, Peter H=C3=BCwe wrote:
+> From: Peter Huewe <peterhuewe@gmx.de>
+>=20
+> This patch fixes a build failure[1] caused by a wrong include path.
+>=20
+> References:
+> [1] http://kisskb.ellerman.id.au/kisskb/buildresult/2535826/
+>=20
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 
-This patch fixes a build failure[1] caused by a wrong include path.
+Oddly, I just fixed this like 4 hours ago ..
 
-References:
-[1] http://kisskb.ellerman.id.au/kisskb/buildresult/2535826/
+Daniel
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
-KernelVersion: linux-next-20100429
-
- arch/arm/mach-msm/devices.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-msm/devices.c b/arch/arm/mach-msm/devices.c
-index 29b1cd6..982f1da 100644
---- a/arch/arm/mach-msm/devices.c
-+++ b/arch/arm/mach-msm/devices.c
-@@ -24,7 +24,7 @@
- #include <linux/mtd/nand.h>
- #include <linux/mtd/partitions.h>
- 
--#include <asm/mach/mmc.h>
-+#include <mach/mmc.h>
- 
- static struct resource resources_uart1[] = {
- 	{
--- 
-1.6.4.4
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
