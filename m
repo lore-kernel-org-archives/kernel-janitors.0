@@ -1,49 +1,56 @@
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 29 Apr 2010 00:31:03 +0000
-Subject: [PATCH] arch/arm: Fix missing define for ARM_PMU_DEVICE_CPU
-Message-Id: <201004290231.03440.PeterHuewe@gmx.de>
+From: Will Deacon <will.deacon@arm.com>
+Date: Thu, 29 Apr 2010 08:26:20 +0000
+Subject: Re: [PATCH] arch/arm: Fix missing define for ARM_PMU_DEVICE_CPU
+Message-Id: <1272529580.24662.10.camel@e102144-lin.cambridge.arm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201004290231.03440.PeterHuewe@gmx.de>
+	<20100429081218.GA14783@wear.picochip.com>
+In-Reply-To: <20100429081218.GA14783@wear.picochip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+Hi Jamie,
 
-This patch adds a define for ARM_PMU_DEVICE_CPU which seemed to be
-missing/undefined and caused some build failures [1-4].
+Thanks for CC'ing me on this.
 
-I defined ARM_PMU_DEVICE_CPU = -1 as stated in
-Documentation/driver_model/platform.txt to indicate there is only one.
-I'm _not_ sure if this is correct, but due to the static nature of the
-define I assume it is.
+On Thu, 2010-04-29 at 09:12 +0100, Jamie Iles wrote:
+> On Thu, Apr 29, 2010 at 02:31:03AM +0200, Peter Huewe wrote:
+> > From: Peter Huewe <peterhuewe@gmx.de>
+> >
+> > This patch adds a define for ARM_PMU_DEVICE_CPU which seemed to be
+> > missing/undefined and caused some build failures [1-4].
+> >
+> > I defined ARM_PMU_DEVICE_CPU = -1 as stated in
+> > Documentation/driver_model/platform.txt to indicate there is only
+> one.
+> > I'm _not_ sure if this is correct, but due to the static nature of
+> the
+> > define I assume it is.
+> Hi Peter,
+> 
+> This build error is due to the core patch of Will's "ARM: pmu: provide
+> a
+> registration mechanism for IRQs" patch series not being merged yet.
+> I'm not
+> sure what the status of that patch is at the moment though.
+
+I submitted the series to Russell's patch system on 9 April.
+However, as you know, he's currently without an internet connection and
+the patch system has gone offline. He applied some of the series before
+he lost connectivity, so I expect he'll look at the others when he's
+back [although I imagine there are lots of other patches in the same
+situation].
+
+Peter: if you're interested, the patch series I sent to the ARM
+Linux list is archived here:
+
+http://lists.infradead.org/pipermail/linux-arm-kernel/2010-March/012113.html
+
+Cheers,
+
+Will
 
 
-References:
-[1] http://kisskb.ellerman.id.au/kisskb/buildresult/2535843/
-[2] http://kisskb.ellerman.id.au/kisskb/buildresult/2535842/
-[3] http://kisskb.ellerman.id.au/kisskb/buildresult/2535820/
-[4] http://kisskb.ellerman.id.au/kisskb/buildresult/2535819/
-
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
-KernelVersion: linux-next-20100429
-
- arch/arm/include/asm/pmu.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/include/asm/pmu.h b/arch/arm/include/asm/pmu.h
-index 2829b9f..9b186e2 100644
---- a/arch/arm/include/asm/pmu.h
-+++ b/arch/arm/include/asm/pmu.h
-@@ -13,6 +13,7 @@
- #define __ARM_PMU_H__
- 
- #ifdef CONFIG_CPU_HAS_PMU
-+#define ARM_PMU_DEVICE_CPU -1
- 
- struct pmu_irqs {
- 	const int   *irqs;
--- 
-1.6.4.4
 
