@@ -1,27 +1,49 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 26 Apr 2010 09:52:34 +0000
-Subject: Re: [patch] i2o: trivial: cleanup some exit paths
-Message-Id: <alpine.LNX.2.00.1004261152200.7579@pobox.suse.cz>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 29 Apr 2010 00:31:03 +0000
+Subject: [PATCH] arch/arm: Fix missing define for ARM_PMU_DEVICE_CPU
+Message-Id: <201004290231.03440.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100423201717.GK29093@bicker>
-In-Reply-To: <20100423201717.GK29093@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 23 Apr 2010, Dan Carpenter wrote:
+From: Peter Huewe <peterhuewe@gmx.de>
 
-> This is just a cleanup and doesn't change how the code works.
-> 
-> The original code had a mix of returns and gotos so I changed everything
-> to just return directly.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> Reviewed-by: Christoph Lameter <cl@linux-foundation.org>
+This patch adds a define for ARM_PMU_DEVICE_CPU which seemed to be
+missing/undefined and caused some build failures [1-4].
 
-Applied, thank you.
+I defined ARM_PMU_DEVICE_CPU = -1 as stated in
+Documentation/driver_model/platform.txt to indicate there is only one.
+I'm _not_ sure if this is correct, but due to the static nature of the
+define I assume it is.
 
+
+References:
+[1] http://kisskb.ellerman.id.au/kisskb/buildresult/2535843/
+[2] http://kisskb.ellerman.id.au/kisskb/buildresult/2535842/
+[3] http://kisskb.ellerman.id.au/kisskb/buildresult/2535820/
+[4] http://kisskb.ellerman.id.au/kisskb/buildresult/2535819/
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+KernelVersion: linux-next-20100429
+
+ arch/arm/include/asm/pmu.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/include/asm/pmu.h b/arch/arm/include/asm/pmu.h
+index 2829b9f..9b186e2 100644
+--- a/arch/arm/include/asm/pmu.h
++++ b/arch/arm/include/asm/pmu.h
+@@ -13,6 +13,7 @@
+ #define __ARM_PMU_H__
+ 
+ #ifdef CONFIG_CPU_HAS_PMU
++#define ARM_PMU_DEVICE_CPU -1
+ 
+ struct pmu_irqs {
+ 	const int   *irqs;
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+1.6.4.4
+
