@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Fri, 30 Apr 2010 20:31:37 +0000
-Subject: [PATCH 6/7] drivers/staging/comedi: dev_node removal (ni_mio_cs)
-Message-Id: <1272659497.14356.37.camel@lenovo>
+Date: Fri, 30 Apr 2010 20:31:10 +0000
+Subject: [PATCH 4/7] drivers/staging/comedi: dev_node removal (ni_daq_dio24)
+Message-Id: <1272659470.14356.35.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,44 +10,63 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/staging/comedi/drivers/ni_mio_cs.c |   10 +---------
- 1 files changed, 1 insertions(+), 9 deletions(-)
+ drivers/staging/comedi/drivers/ni_daq_dio24.c |   21 ++++-----------------
+ 1 files changed, 4 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/ni_mio_cs.c b/drivers/staging/comedi/drivers/ni_mio_cs.c
-index a6007ab..1e8aeba 100644
---- a/drivers/staging/comedi/drivers/ni_mio_cs.c
-+++ b/drivers/staging/comedi/drivers/ni_mio_cs.c
-@@ -262,11 +262,6 @@ static void cs_detach(struct pcmcia_device *);
+diff --git a/drivers/staging/comedi/drivers/ni_daq_dio24.c b/drivers/staging/comedi/drivers/ni_daq_dio24.c
+index 2259fb4..0f9f22d 100644
+--- a/drivers/staging/comedi/drivers/ni_daq_dio24.c
++++ b/drivers/staging/comedi/drivers/ni_daq_dio24.c
+@@ -221,7 +221,6 @@ static const dev_info_t dev_info = "ni_daq_dio24";
  
- static struct pcmcia_device *cur_dev = NULL;
- static const dev_info_t dev_info = "ni_mio_cs";
--static dev_node_t dev_node = {
--	"ni_mio_cs",
--	COMEDI_MAJOR, 0,
--	NULL
--};
+ struct local_info_t {
+ 	struct pcmcia_device *link;
+-	dev_node_t node;
+ 	int stop;
+ 	struct bus_operations *bus;
+ };
+@@ -286,11 +285,9 @@ static void dio24_cs_detach(struct pcmcia_device *link)
  
- static int cs_attach(struct pcmcia_device *link)
- {
-@@ -291,8 +286,7 @@ static void cs_detach(struct pcmcia_device *link)
- {
- 	DPRINTK("cs_detach(link=%p)\n", link);
+ 	dev_dbg(&link->dev, "dio24_cs_detach\n");
  
--	if (link->dev_node)
--		cs_release(link);
-+	cs_release(link);
- }
- 
- static int mio_cs_suspend(struct pcmcia_device *link)
-@@ -347,8 +341,6 @@ static void mio_cs_config(struct pcmcia_device *link)
- 		dev_info(&link->dev, "no IRQ available\n");
- 
- 	ret = pcmcia_request_configuration(link, &link->conf);
+-	if (link->dev_node) {
+-		((struct local_info_t *)link->priv)->stop = 1;
+-		dio24_release(link);
+-	}
 -
--	link->dev_node = &dev_node;
- }
++	((struct local_info_t *)link->priv)->stop = 1;
++	dio24_release(link);
++
+ 	/* This points to the parent local_info_t struct */
+ 	if (link->priv)
+ 		kfree(link->priv);
+@@ -371,7 +368,6 @@ static int dio24_pcmcia_config_loop(struct pcmcia_device *p_dev,
  
- static int mio_cs_attach(struct comedi_device *dev, struct comedi_devconfig *it)
+ static void dio24_config(struct pcmcia_device *link)
+ {
+-	struct local_info_t *dev = link->priv;
+ 	int ret;
+ 	win_req_t req;
+ 
+@@ -397,17 +393,8 @@ static void dio24_config(struct pcmcia_device *link)
+ 	if (ret)
+ 		goto failed;
+ 
+-	/*
+-	   At this point, the dev_node_t structure(s) need to be
+-	   initialized and arranged in a linked list at link->dev.
+-	 */
+-	sprintf(dev->node.dev_name, "ni_daq_dio24");
+-	dev->node.major = dev->node.minor = 0;
+-	link->dev_node = &dev->node;
+-
+ 	/* Finally, report what we've done */
+-	printk(KERN_INFO "%s: index 0x%02x",
+-	       dev->node.dev_name, link->conf.ConfigIndex);
++	dev_info(&link->dev, "index 0x%02x", link->conf.ConfigIndex);
+ 	if (link->conf.Attributes & CONF_ENABLE_IRQ)
+ 		printk(", irq %d", link->irq);
+ 	if (link->io.NumPorts1)
 -- 
 1.6.0.4
 
