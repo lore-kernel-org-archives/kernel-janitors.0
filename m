@@ -1,35 +1,74 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 01 Apr 2010 15:54:38 +0000
-Subject: [patch] ir-keytable: avoid double lock
-Message-Id: <20100401155438.GE5265@bicker>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Fri, 30 Apr 2010 20:30:40 +0000
+Subject: [PATCH 3/7] drivers/staging/comedi: dev_node removal (ni_daq_700)
+Message-Id: <1272659440.14356.34.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Dmitry Torokhov <dtor@mail.ru>, =?iso-8859-1?Q?M=E1rton_N=E9meth?= <nm127@freemail.hu>, Alexander Beregalov <a.beregalov@gmail.com>, Matthew Garrett <mjg@redhat.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-It's possible that we wanted to resize to a smaller size but we didn't
-have enough memory to create the new table.  We need to test for that
-here so we don't try to lock twice and dead lock.  Also we free the
-"oldkeymap" on that path and that would be bad.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
-I don't know this code very well.  Maybe we should  just take the lock
-earlier in the function for the resize case and the non resize case.
-Can we add new keys while the resize is taking place?
+ drivers/staging/comedi/drivers/ni_daq_700.c |   19 +++----------------
+ 1 files changed, 3 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/media/IR/ir-keytable.c b/drivers/media/IR/ir-keytable.c
-index 0a3b4ed..51cd0f3 100644
---- a/drivers/media/IR/ir-keytable.c
-+++ b/drivers/media/IR/ir-keytable.c
-@@ -216,7 +216,7 @@ static void ir_delete_key(struct ir_scancode_table *rc_tab, int elem)
- 		memcpy(&newkeymap[elem], &oldkeymap[elem + 1],
- 		       (newsize - elem) * sizeof(*newkeymap));
+diff --git a/drivers/staging/comedi/drivers/ni_daq_700.c b/drivers/staging/comedi/drivers/ni_daq_700.c
+index 072bc4b..06dd44f 100644
+--- a/drivers/staging/comedi/drivers/ni_daq_700.c
++++ b/drivers/staging/comedi/drivers/ni_daq_700.c
+@@ -470,7 +470,6 @@ static const dev_info_t dev_info = "ni_daq_700";
  
--	if (resize) {
-+	if (resize && newkeymap != oldkeymap) {
- 		/*
- 		 * As the copy happened to a temporary table, only here
- 		 * it needs to lock while replacing the table pointers
+ struct local_info_t {
+ 	struct pcmcia_device *link;
+-	dev_node_t node;
+ 	int stop;
+ 	struct bus_operations *bus;
+ };
+@@ -535,10 +534,8 @@ static void dio700_cs_detach(struct pcmcia_device *link)
+ 
+ 	dev_dbg(&link->dev, "dio700_cs_detach\n");
+ 
+-	if (link->dev_node) {
+-		((struct local_info_t *)link->priv)->stop = 1;
+-		dio700_release(link);
+-	}
++	((struct local_info_t *)link->priv)->stop = 1;
++	dio700_release(link);
+ 
+ 	/* This points to the parent struct local_info_t struct */
+ 	if (link->priv)
+@@ -620,7 +617,6 @@ static int dio700_pcmcia_config_loop(struct pcmcia_device *p_dev,
+ 
+ static void dio700_config(struct pcmcia_device *link)
+ {
+-	struct local_info_t *dev = link->priv;
+ 	win_req_t req;
+ 	int ret;
+ 
+@@ -646,17 +642,8 @@ static void dio700_config(struct pcmcia_device *link)
+ 	if (ret != 0)
+ 		goto failed;
+ 
+-	/*
+-	   At this point, the dev_node_t structure(s) need to be
+-	   initialized and arranged in a linked list at link->dev.
+-	 */
+-	sprintf(dev->node.dev_name, "ni_daq_700");
+-	dev->node.major = dev->node.minor = 0;
+-	link->dev_node = &dev->node;
+-
+ 	/* Finally, report what we've done */
+-	printk(KERN_INFO "%s: index 0x%02x",
+-	       dev->node.dev_name, link->conf.ConfigIndex);
++	dev_info(&link->dev, "index 0x%02x", link->conf.ConfigIndex);
+ 	if (link->conf.Attributes & CONF_ENABLE_IRQ)
+ 		printk(", irq %d", link->irq);
+ 	if (link->io.NumPorts1)
+-- 
+1.6.0.4
+
+
+
+
+
