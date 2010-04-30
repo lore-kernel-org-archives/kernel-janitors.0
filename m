@@ -1,28 +1,38 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 29 Apr 2010 23:33:07 +0000
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Fri, 30 Apr 2010 04:59:44 +0000
 Subject: Re: [PATCH] drivers/staging/comedi: dev_node removal
-Message-Id: <20100429233307.GB6272@kroah.com>
+Message-Id: <h2v390803461004292159zf89f4f37k41ea71644ac39445@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1272258528.29373.7.camel@lenovo>
 In-Reply-To: <1272258528.29373.7.camel@lenovo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 26, 2010 at 01:33:57AM -0400, Javier Martinez Canillas wrote:
-> This is the correct patch, I didn't notice that mi email client was wrapping the lines...sorry for the noise.
-> 
-> With today linux-next, I got a compilation error in
-> drivers/staging/comedi.
-> 
-> drivers/staging/comedi/drivers/cb_das16_cs.c:719: error: ‘struct
-> pcmcia_device’ has no member named ‘dev_node’
-> 
-> I think this patch solves the issue removing dev_node.
+>
+> This should go through the pcmcia tree, please do it that way.
+>
 
-This should go through the pcmcia tree, please do it that way.
+Sure, do you want me to generate the patch against
+git://git.kernel.org/pub/scm/linux/kernel/git/brodo/pcmcia-2.6.git?
 
-thanks,
+I was looking and that tree doesn't seem to have a newer version of
+the comedi driver. As a matter of fact it looks that a few style
+issues have been resolved in the linux-next tree and are not in the
+pcmcia tree.
 
-greg k-h
+For example:
+
+./scripts/checkpatch.pl -f
+pcmcia-2.6/drivers/staging/comedi/drivers/cb_das16_cs.c
+total: 1 errors, 12 warnings, 894 lines checked
+
+./scripts/checkpatch.pl -f
+linux-next/drivers/staging/comedi/drivers/cb_das16_cs.c
+total: 1 errors, 9 warnings, 894 lines checked
+
+Thanks a lot
+
+-----------------------------------
+Javier Martinez Canillas
