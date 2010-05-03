@@ -1,24 +1,29 @@
-From: "Ming Yang" <mingyang43@hotmail.com>
-Date: Thu, 20 May 2010 18:18:57 +0000
-Subject: HIGHLY CONFIDENTIAL
-Message-Id: <24667ac2ab6a7959ae4f5ea5f8cf8945.squirrel@woolnet.net>
+From: Herbert Xu <herbert@gondor.hengli.com.au>
+Date: Mon, 03 May 2010 03:08:44 +0000
+Subject: Re: [patch] crypto: cleanup: remove unneeded null check
+Message-Id: <20100503030844.GA31335@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100428085515.GE29093@bicker>
+In-Reply-To: <20100428085515.GE29093@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="hz-gb-2312"
+Content-Transfer-Encoding: base64
+To: Dan Carpenter <error27@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Brad Bosch <bradbosch@comcast.net>, Richard Hartmann <richih.mailinglist@gmail.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-Greeting from Hong Kong
-
-An arab made a fixed deposit of $24,500.000.00 in my bank branch where am
-a director and he died with his entire family in the war leaving behind no
-next of kin,if you choose to stand as my deceased client's next of kin. if
-interested mail me at the address below:
-yangming64@yahoo.com.hk
-
-Yours Truly,
-Ming Yang
-
-
+T24gV2VkLCBBcHIgMjgsIDIwMTAgYXQgMTA6NTU6MTVBTSArMDIwMCwgRGFuIENhcnBlbnRlciB3
+cm90ZToKPiBXZSBkb24ndCBjaGVjayAiZnJvbnRlbmQiIGNvbnNpc3RlbnRseSBpbiBjcnlwdG9f
+aW5pdF9zcGF3bjIoKS4gIFdlCj4gY2hlY2sgaXQgYXQgdGhlIHN0YXJ0IG9mIHRoZSBmdW5jdGlv
+biBidXQgdGhlbiB3ZSBkZXJlZmVyZW5jZSBpdCAKPiB1bmNvbmRpdGlvbmFsbHkgaW4gdGhlIHBh
+cmFtZXRlciBsaXN0IHdoZW4gd2UgY2FsbCBjcnlwdG9faW5pdF9zcGF3bigpLgo+IAo+IEkgbG9v
+a2VkIGF0IHRoZSBwbGFjZXMgdGhhdCBjYWxsIGNyeXB0b19pbml0X3NwYXduMigpIGFuZCAiZnJv
+bnRlbmQiIGlzCj4gYWx3YXlzIGEgdmFsaWQgcG9pbnRlciBzbyBJIHJlbW92ZWQgdGhlIGNoZWNr
+IGZvciBudWxsLgo+IAo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGVycm9yMjdAZ21h
+aWwuY29tPgoKUGF0Y2ggYXBwbGllZC4gIFRoYW5rcyEKLS0gClZpc2l0IE9wZW5zd2FuIGF0IGh0
+dHA6Ly93d3cub3BlbnN3YW4ub3JnLwpFbWFpbDogSGVyYmVydCBYdSB+e1BtVj5ISX59IDxoZXJi
+ZXJ0QGdvbmRvci5hcGFuYS5vcmcuYXU+CkhvbWUgUGFnZTogaHR0cDovL2dvbmRvci5hcGFuYS5v
+cmcuYXUvfmhlcmJlcnQvClBHUCBLZXk6IGh0dHA6Ly9nb25kb3IuYXBhbmEub3JnLmF1L35oZXJi
+ZXJ0L3B1YmtleS50eHQKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhl
+IGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNz
+YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAg
+aHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
