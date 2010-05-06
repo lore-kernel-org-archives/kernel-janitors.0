@@ -1,48 +1,60 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 31 May 2010 19:27:39 +0000
-Subject: [patch] V4L/DVB: remove unneeded null check in anysee_probe()
-Message-Id: <20100531192632.GZ5483@bicker>
+From: Jiri Olsa <jolsa@redhat.com>
+Date: Thu, 06 May 2010 17:36:15 +0000
+Subject: [PATCH 11/13] drivers/video: removing redundant ifdefs
+Message-Id: <1273167377-14270-12-git-send-email-jolsa@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
+In-Reply-To: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Antti Palosaari <crope@iki.fi>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, Jiri Kosina <jkosina@suse.cz>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, jgarzik@pobox.com, hare@suse.de, felipe.balbi@nokia.com, Jiri Olsa <jolsa@redhat.com>
 
-Smatch complained because "d" is dereferenced first and then checked for
-null later .  The only code path where "d" could be a invalid pointer is
-if this is a cold device in dvb_usb_device_init().  I consulted Antti 
-Palosaari and he explained that anysee is always a warm device.
+wbr,
+jirka
 
-I have added a comment and removed the unneeded null check.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Jiri Olsa <jolsa@redhat.com>
+---
+ drivers/video/atafb.c                   |    2 --
+ drivers/video/matrox/matroxfb_DAC1064.c |    5 +----
+ 2 files changed, 1 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/dvb/dvb-usb/anysee.c b/drivers/media/dvb/dvb-usb/anysee.c
-index faca1ad..aa5c7d5 100644
---- a/drivers/media/dvb/dvb-usb/anysee.c
-+++ b/drivers/media/dvb/dvb-usb/anysee.c
-@@ -463,6 +463,11 @@ static int anysee_probe(struct usb_interface *intf,
- 	if (intf->num_altsetting < 1)
- 		return -ENODEV;
- 
-+	/*
-+	 * Anysee is always warm (its USB-bridge, Cypress FX2, uploads
-+	 * firmware from eeprom).  If dvb_usb_device_init() succeeds that
-+	 * means d is a valid pointer.
-+	 */
- 	ret = dvb_usb_device_init(intf, &anysee_properties, THIS_MODULE, &d,
- 		adapter_nr);
- 	if (ret)
-@@ -479,10 +484,7 @@ static int anysee_probe(struct usb_interface *intf,
- 	if (ret)
- 		return ret;
- 
--	if (d)
--		ret = anysee_init(d);
--
--	return ret;
-+	return anysee_init(d);
+diff --git a/drivers/video/atafb.c b/drivers/video/atafb.c
+index f3aada2..5b2b5ef 100644
+--- a/drivers/video/atafb.c
++++ b/drivers/video/atafb.c
+@@ -1718,11 +1718,9 @@ static int falcon_setcolreg(unsigned int regno, unsigned int red,
+ 			(((red & 0xe000) >> 13) | ((red & 0x1000) >> 12) << 8) |
+ 			(((green & 0xe000) >> 13) | ((green & 0x1000) >> 12) << 4) |
+ 			((blue & 0xe000) >> 13) | ((blue & 0x1000) >> 12);
+-#ifdef ATAFB_FALCON
+ 		((u32 *)info->pseudo_palette)[regno] = ((red & 0xf800) |
+ 						       ((green & 0xfc00) >> 5) |
+ 						       ((blue & 0xf800) >> 11));
+-#endif
+ 	}
+ 	return 0;
  }
+diff --git a/drivers/video/matrox/matroxfb_DAC1064.c b/drivers/video/matrox/matroxfb_DAC1064.c
+index f9fa0fd..1717623 100644
+--- a/drivers/video/matrox/matroxfb_DAC1064.c
++++ b/drivers/video/matrox/matroxfb_DAC1064.c
+@@ -869,12 +869,9 @@ static int MGAG100_preinit(struct matrox_fb_info *minfo)
+ 	minfo->capable.plnwt = minfo->devflags.accelerator = FB_ACCEL_MATROX_MGAG100
+ 			? minfo->devflags.sgram : 1;
  
- static struct usb_device_id anysee_table[] = {
+-#ifdef CONFIG_FB_MATROX_G
+ 	if (minfo->devflags.g450dac) {
+ 		minfo->outputs[0].output = &g450out;
+-	} else
+-#endif
+-	{
++	} else {
+ 		minfo->outputs[0].output = &m1064;
+ 	}
+ 	minfo->outputs[0].src = minfo->outputs[0].default_src;
+-- 
+1.6.6.1
+
