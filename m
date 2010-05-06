@@ -1,55 +1,23 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 13 May 2010 20:00:40 +0000
-Subject: [PATCH 7/20] drivers/usb/serial: Use kzalloc
-Message-Id: <Pine.LNX.4.64.1005132200240.6282@ask.diku.dk>
+From: Mark Fasheh <mfasheh@suse.com>
+Date: Thu, 06 May 2010 15:24:02 +0000
+Subject: Re: [Ocfs2-devel] [patch] ocfs2: potential ERR_PTR dereference on error paths
+Message-Id: <20100506152402.GH24797@wotan.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100422093929.GK29647@bicker>
+In-Reply-To: <20100422093929.GK29647@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-From: Julia Lawall <julia@diku.dk>
+On Thu, Apr 22, 2010 at 11:39:29AM +0200, Dan Carpenter wrote:
+> If "handle" is non null at the end of the function then we assume it's a
+> valid pointer and pass it to ocfs2_commit_trans();
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Use kzalloc rather than the combination of kmalloc and memset.
+Acked-by: Mark Fasheh <mfasheh@suse.com>
+	--Mark
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x,size,flags;
-statement S;
-@@
-
--x = kmalloc(size,flags);
-+x = kzalloc(size,flags);
- if (x = NULL) S
--memset(x, 0, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/usb/serial/io_edgeport.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff -u -p a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -3020,7 +3020,7 @@ static int edge_startup(struct usb_seria
- 
- 	/* set up our port private structures */
- 	for (i = 0; i < serial->num_ports; ++i) {
--		edge_port = kmalloc(sizeof(struct edgeport_port), GFP_KERNEL);
-+		edge_port = kzalloc(sizeof(struct edgeport_port), GFP_KERNEL);
- 		if (edge_port = NULL) {
- 			dev_err(&serial->dev->dev, "%s - Out of memory\n",
- 								   __func__);
-@@ -3033,7 +3033,6 @@ static int edge_startup(struct usb_seria
- 			kfree(edge_serial);
- 			return -ENOMEM;
- 		}
--		memset(edge_port, 0, sizeof(struct edgeport_port));
- 		spin_lock_init(&edge_port->ep_lock);
- 		edge_port->port = serial->port[i];
- 		usb_set_serial_port_data(serial->port[i], edge_port);
+--
+Mark Fasheh
