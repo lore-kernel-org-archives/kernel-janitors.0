@@ -1,72 +1,36 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:24:47 +0000
-Subject: [PATCH 20/27] drivers/s390/net: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221024220.13021@ask.diku.dk>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 06 May 2010 09:58:55 +0000
+Subject: [PATCH] dmaengine: mpc512x: Use resource_size
+Message-Id: <1273139935-26789-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ursula Braun <ursula.braun@de.ibm.com>, Frank Blaschka <blaschka@linux.vnet.ibm.com>, linux390@de.ibm.com, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.j.williams@intel.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>
 
-From: Julia Lawall <julia@diku.dk>
+Use the resource_size function instead of manually calculating the
+resource size.  This reduces the chance of introducing off-by-one
+errors.
 
-Use memdup_user when user data is immediately copied into the
-allocated region.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression from,to,size,flag;
-position p;
-identifier l1,l2;
-@@
-
--  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-+  to = memdup_user(from,size);
-   if (
--      to=NULL
-+      IS_ERR(to)
-                 || ...) {
-   <+... when != goto l1;
--  -ENOMEM
-+  PTR_ERR(to)
-   ...+>
-   }
--  if (copy_from_user(to, from, size) != 0) {
--    <+... when != goto l2;
--    -EFAULT
--    ...+>
--  }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 ---
- drivers/s390/net/qeth_core_main.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/dma/mpc512x_dma.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index 13ef46b..8b48fbd 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -3764,15 +3764,10 @@ int qeth_snmp_command(struct qeth_card *card, char __user *udata)
- 	/* skip 4 bytes (data_len struct member) to get req_len */
- 	if (copy_from_user(&req_len, udata + sizeof(int), sizeof(int)))
- 		return -EFAULT;
--	ureq = kmalloc(req_len+sizeof(struct qeth_snmp_ureq_hdr), GFP_KERNEL);
--	if (!ureq) {
-+	ureq = memdup_user(udata, req_len + sizeof(struct qeth_snmp_ureq_hdr));
-+	if (IS_ERR(ureq)) {
- 		QETH_DBF_TEXT(TRACE, 2, "snmpnome");
--		return -ENOMEM;
--	}
--	if (copy_from_user(ureq, udata,
--			req_len + sizeof(struct qeth_snmp_ureq_hdr))) {
--		kfree(ureq);
--		return -EFAULT;
-+		return PTR_ERR(ureq);
+diff --git a/drivers/dma/mpc512x_dma.c b/drivers/dma/mpc512x_dma.c
+index 84326c9..201e6e1 100644
+--- a/drivers/dma/mpc512x_dma.c
++++ b/drivers/dma/mpc512x_dma.c
+@@ -658,7 +658,7 @@ static int __devinit mpc_dma_probe(struct of_device *op,
  	}
- 	qinfo.udata_len = ureq->hdr.data_len;
- 	qinfo.udata = kzalloc(qinfo.udata_len, GFP_KERNEL);
+ 
+ 	regs_start = res.start;
+-	regs_size = res.end - res.start + 1;
++	regs_size = resource_size(&res);
+ 
+ 	if (!devm_request_mem_region(dev, regs_start, regs_size, DRV_NAME)) {
+ 		dev_err(dev, "Error requesting memory region!\n");
+-- 
+1.6.3.3
+
