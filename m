@@ -1,53 +1,45 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 26 May 2010 15:58:28 +0000
-Subject: [PATCH 14/17] drivers/char/n_gsm.c: Add missing spin_unlock_irqrestore
-Message-Id: <Pine.LNX.4.64.1005261758070.23743@ask.diku.dk>
+From: Jiri Olsa <jolsa@redhat.com>
+Date: Thu, 06 May 2010 17:36:08 +0000
+Subject: [PATCH 04/13] x86: removing redundant ifdef
+Message-Id: <1273167377-14270-5-git-send-email-jolsa@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
+In-Reply-To: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, jgarzik@pobox.com, hare@suse.de, felipe.balbi@nokia.com, Jiri Olsa <jolsa@redhat.com>
 
-From: Julia Lawall <julia@diku.dk>
+wbr,
+jirka
 
-Add a spin_unlock_irqrestore missing on the error path.  Converting the
-return to break leads to the spin_unlock_irqrestore at the end of the
-function.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression E1;
-@@
-
-* spin_lock_irqsave(E1,...);
-  <+... when != E1
-  if (...) {
-    ... when != E1
-*   return ...;
-  }
-  ...+>
-* spin_unlock_irqrestore(E1,...);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Jiri Olsa <jolsa@redhat.com>
 ---
- drivers/char/n_gsm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/early-quirks.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/n_gsm.c b/drivers/char/n_gsm.c
-index c4161d5..ab89cef 100644
---- a/drivers/char/n_gsm.c
-+++ b/drivers/char/n_gsm.c
-@@ -922,7 +922,7 @@ static void gsm_dlci_data_sweep(struct gsm_mux *gsm)
- 		else
- 			len = gsm_dlci_data_output_framed(gsm, dlci);
- 		if (len < 0)
--			return;
-+			break;
- 		/* DLCI empty - try the next */
- 		if (len = 0)
- 			i++;
+diff --git a/arch/x86/kernel/early-quirks.c b/arch/x86/kernel/early-quirks.c
+index ebdb85c..76b8cd9 100644
+--- a/arch/x86/kernel/early-quirks.c
++++ b/arch/x86/kernel/early-quirks.c
+@@ -97,7 +97,6 @@ static void __init nvidia_bugs(int num, int slot, int func)
+ }
+ 
+ #if defined(CONFIG_ACPI) && defined(CONFIG_X86_IO_APIC)
+-#if defined(CONFIG_ACPI) && defined(CONFIG_X86_IO_APIC)
+ static u32 __init ati_ixp4x0_rev(int num, int slot, int func)
+ {
+ 	u32 d;
+@@ -115,7 +114,6 @@ static u32 __init ati_ixp4x0_rev(int num, int slot, int func)
+ 	d &= 0xff;
+ 	return d;
+ }
+-#endif
+ 
+ static void __init ati_bugs(int num, int slot, int func)
+ {
+-- 
+1.6.6.1
+
