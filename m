@@ -1,53 +1,47 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:14:53 +0000
-Subject: [PATCH 6/37] drivers/media/video/gspca: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152314370.21345@ask.diku.dk>
+From: Jiri Olsa <jolsa@redhat.com>
+Date: Thu, 06 May 2010 17:36:11 +0000
+Subject: [PATCH 07/13] h8300: removing redundant ifdef
+Message-Id: <1273167377-14270-8-git-send-email-jolsa@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
+In-Reply-To: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Leandro Costantino <lcostantino@gmail.com>, Jean-Francois Moine <moinejf@free.fr>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, jgarzik@pobox.com, hare@suse.de, felipe.balbi@nokia.com, Jiri Olsa <jolsa@redhat.com>
 
-From: Julia Lawall <julia@diku.dk>
+wbr,
+jirka
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression from,to,size,flag;
-statement S;
-@@
-
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Jiri Olsa <jolsa@redhat.com>
 ---
- drivers/media/video/gspca/t613.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/h8300/include/asm/tlb.h |   13 -------------
+ 1 files changed, 0 insertions(+), 13 deletions(-)
 
-diff -u -p a/drivers/media/video/gspca/t613.c b/drivers/media/video/gspca/t613.c
---- a/drivers/media/video/gspca/t613.c
-+++ b/drivers/media/video/gspca/t613.c
-@@ -577,12 +577,11 @@ static void reg_w_buf(struct gspca_dev *
- 	} else {
- 		u8 *tmpbuf;
+diff --git a/arch/h8300/include/asm/tlb.h b/arch/h8300/include/asm/tlb.h
+index 3dea80a..6339a02 100644
+--- a/arch/h8300/include/asm/tlb.h
++++ b/arch/h8300/include/asm/tlb.h
+@@ -7,17 +7,4 @@
  
--		tmpbuf = kmalloc(len, GFP_KERNEL);
-+		tmpbuf = kmemdup(buffer, len, GFP_KERNEL);
- 		if (!tmpbuf) {
- 			err("Out of memory");
- 			return;
- 		}
--		memcpy(tmpbuf, buffer, len);
- 		usb_control_msg(gspca_dev->dev,
- 				usb_sndctrlpipe(gspca_dev->dev, 0),
- 				0,
+ #define tlb_flush(tlb)	do { } while(0)
+ 
+-/* 
+-  include/asm-h8300/tlb.h 
+-*/
+-
+-#ifndef __H8300_TLB_H__
+-#define __H8300_TLB_H__
+-
+-#define tlb_flush(tlb)	do { } while(0)
+-
+-#include <asm-generic/tlb.h>
+-
+-#endif
+-
+ #endif
+-- 
+1.6.6.1
+
