@@ -1,73 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 13 May 2010 19:59:15 +0000
-Subject: [PATCH 3/20] drivers/media: Use kzalloc
-Message-Id: <Pine.LNX.4.64.1005132158570.6282@ask.diku.dk>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 06 May 2010 08:06:30 +0000
+Subject: [PATCH] uwb: Use resource_size
+Message-Id: <1273133190-6479-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Use the resource_size function instead of manually calculating the
+resource size.  This reduces the chance of introducing off-by-one
+errors.
 
-Use kzalloc rather than the combination of kmalloc and memset.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x,size,flags;
-statement S;
-@@
-
--x = kmalloc(size,flags);
-+x = kzalloc(size,flags);
- if (x = NULL) S
--memset(x, 0, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 ---
- drivers/media/dvb/frontends/ds3000.c |    5 +----
- drivers/media/video/omap/omap_vout.c |    3 +--
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/uwb/whc-rc.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff -u -p a/drivers/media/dvb/frontends/ds3000.c b/drivers/media/dvb/frontends/ds3000.c
---- a/drivers/media/dvb/frontends/ds3000.c
-+++ b/drivers/media/dvb/frontends/ds3000.c
-@@ -969,15 +969,12 @@ struct dvb_frontend *ds3000_attach(const
- 	dprintk("%s\n", __func__);
+diff --git a/drivers/uwb/whc-rc.c b/drivers/uwb/whc-rc.c
+index 7349558..4074a23 100644
+--- a/drivers/uwb/whc-rc.c
++++ b/drivers/uwb/whc-rc.c
+@@ -222,7 +222,7 @@ int whcrc_setup_rc_umc(struct whcrc *whcrc)
+ 	struct umc_dev *umc_dev = whcrc->umc_dev;
  
- 	/* allocate memory for the internal state */
--	state = kmalloc(sizeof(struct ds3000_state), GFP_KERNEL);
-+	state = kzalloc(sizeof(struct ds3000_state), GFP_KERNEL);
- 	if (state = NULL) {
- 		printk(KERN_ERR "Unable to kmalloc\n");
- 		goto error2;
- 	}
- 
--	/* setup the state */
--	memset(state, 0, sizeof(struct ds3000_state));
--
- 	state->config = config;
- 	state->i2c = i2c;
- 	state->prevUCBS2 = 0;
-diff -u -p a/drivers/media/video/omap/omap_vout.c b/drivers/media/video/omap/omap_vout.c
---- a/drivers/media/video/omap/omap_vout.c
-+++ b/drivers/media/video/omap/omap_vout.c
-@@ -2371,12 +2371,11 @@ static int __init omap_vout_create_video
- 
- 	for (k = 0; k < pdev->num_resources; k++) {
- 
--		vout = kmalloc(sizeof(struct omap_vout_device), GFP_KERNEL);
-+		vout = kzalloc(sizeof(struct omap_vout_device), GFP_KERNEL);
- 		if (!vout) {
- 			dev_err(&pdev->dev, ": could not allocate memory\n");
- 			return -ENOMEM;
- 		}
--		memset(vout, 0, sizeof(struct omap_vout_device));
- 
- 		vout->vid = k;
- 		vid_dev->vouts[k] = vout;
+ 	whcrc->area = umc_dev->resource.start;
+-	whcrc->rc_len = umc_dev->resource.end - umc_dev->resource.start + 1;
++	whcrc->rc_len = resource_size(&umc_dev->resource);
+ 	result = -EBUSY;
+ 	if (request_mem_region(whcrc->area, whcrc->rc_len, KBUILD_MODNAME) = NULL) {
+ 		dev_err(dev, "can't request URC region (%zu bytes @ 0x%lx): %d\n",
+-- 
+1.6.3.3
+
