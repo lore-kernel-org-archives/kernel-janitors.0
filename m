@@ -1,51 +1,56 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 20 May 2010 09:11:26 +0000
-Subject: Re: [lm-sensors] [PATCH 04/11] hwmon: Storage class should be
-Message-Id: <20100520091126.GX9489@distanz.ch>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Mon, 10 May 2010 16:19:07 +0000
+Subject: [PATCH 0/4] Add a Coccinelle front-end script
+Message-Id: <1273508351-4998-1-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1274344488-8918-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1274344488-8918-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Jean,
+New targets are added (coccicheck-<mode>) to call the 'coccinelle.sh' front-end
+in the 'scripts' directory with the <mode> argument.
 
-On 2010-05-20 at 11:06:48 +0200, Jean Delvare <khali@linux-fr.org> wrote:
-> On Thu, 20 May 2010 10:34:48 +0200, Tobias Klauser wrote:
-> > The C99 specification states in section 6.11.5:
-> > 
-> > The placement of a storage-class specifier other than at the beginning
-> > of the declaration specifiers in a declaration is an obsolescent
-> > feature.
-> > 
-> > Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-> > ---
-> >  drivers/hwmon/emc1403.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/drivers/hwmon/emc1403.c b/drivers/hwmon/emc1403.c
-> > index 28cca34..0e4b564 100644
-> > --- a/drivers/hwmon/emc1403.c
-> > +++ b/drivers/hwmon/emc1403.c
-> > @@ -308,7 +308,7 @@ static const unsigned short emc1403_address_list[] = {
-> >  	0x18, 0x2a, 0x4c, 0x4d, I2C_CLIENT_END
-> >  };
-> >  
-> > -const static struct i2c_device_id emc1403_idtable[] = {
-> > +static const struct i2c_device_id emc1403_idtable[] = {
-> >  	{ "emc1403", 0 },
-> >  	{ }
-> >  };
-> 
-> Good catch. I've folded your fix into the original patch, as it isn't
-> upstream yet.
-> 
-> Could this error be caught by checkpatch.pl in the future? It seems
-> easy enough to identify, and would save you the manual work.
+Four modes are defined: report, patch, context, and org.
 
-I'll do that and submit a patch. Thanks for the suggestion.
+'report' mode generates a list in the following format:
+  file:line:column-column: message
 
-Cheers Tobias
+'patch' mode proposes a generic fix, when possible.
+
+'context' mode highlights lines of interest and their context
+in a diff-like style.
+
+'org' mode generates a report in the Org mode format of Emacs.
+
+Three semantic patches, with a low rate of false positives, are also
+included.  Other semantic patches will be provided later. Note that a
+semantic patch does not need to define all four modes. As many semantic
+patches may be proposed later, they are organized under sub-directories
+of 'scripts/coccinelle/'.
+
+We add a reference to the tool in the proposed changelog because it will
+make the changelog easier to understand for someone who is not aware of
+the tool.
+
+To apply a single semantic patch, the user can define the COCCI environment
+variable which gives the path to the semantic patch.
+
+Nicolas Palix (4):
+  Add targets to use the Coccinelle checker
+  Add scripts/coccinelle/drop_kmalloc_cast.cocci
+  Add scripts/coccinelle/kzalloc-simple.cocci
+  Add scripts/coccinelle/resource_size.cocci
+
+ MAINTAINERS                                |   10 +++
+ Makefile                                   |   20 +++++-
+ scripts/coccinelle.sh                      |   28 ++++++++
+ scripts/coccinelle/drop_kmalloc_cast.cocci |   68 ++++++++++++++++++++
+ scripts/coccinelle/kzalloc-simple.cocci    |   83 ++++++++++++++++++++++++
+ scripts/coccinelle/resource_size.cocci     |   94 ++++++++++++++++++++++++++++
+ 6 files changed, 301 insertions(+), 2 deletions(-)
+ create mode 100755 scripts/coccinelle.sh
+ create mode 100644 scripts/coccinelle/drop_kmalloc_cast.cocci
+ create mode 100644 scripts/coccinelle/kzalloc-simple.cocci
+ create mode 100644 scripts/coccinelle/resource_size.cocci
 
