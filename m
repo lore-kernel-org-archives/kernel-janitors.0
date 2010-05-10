@@ -1,42 +1,114 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Date: Fri, 28 May 2010 16:45:16 +0000
-Subject: Re: [PATCH 6/17] arch/x86/kernel: Add missing spin_unlock
-Message-Id: <4BFFF31C.9090904@zytor.com>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Mon, 10 May 2010 16:19:10 +0000
+Subject: [PATCH 3/4] Add scripts/coccinelle/kzalloc-simple.cocci
+Message-Id: <1273508351-4998-4-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261755260.23743@ask.diku.dk> <20100527111136.GV3266@amd.com> <Pine.LNX.4.64.1005271317180.5422@ask.diku.dk> <201005271342.25619.npalix@diku.dk> <20100528071114.GA3266@amd.com>
-In-Reply-To: <20100528071114.GA3266@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Roedel, Joerg" <Joerg.Roedel@amd.com>
-Cc: Nicolas Palix <npalix@diku.dk>, Julia Lawall <julia@diku.dk>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On 05/28/2010 12:11 AM, Roedel, Joerg wrote:
-> On Thu, May 27, 2010 at 07:42:25AM -0400, Nicolas Palix wrote:
->>> We have submitted and received some feedback on an initial version of 
->>> this, but I'm not completely sure of the current status.
->>
->> You can see the latest feedback we get at
->> http://lkml.org/lkml/2010/5/10/257
->>
->> The initial submission and its comments are at
->> http://lkml.org/lkml/2010/4/26/269
-> 
-> I've also sent some feedback. Would be cool if you could work the
-> feedback in and do a repost asking Andrew to take it. Would be cool to
-> have this merged with 2.6.36.
-> 
+This semantic patch replaces a pair of calls to kmalloc and memset
+by a single call to kzalloc.
 
-I don't see why scripts that don't *in themselves* change the output
-binaries need to wait for .36.  Instead, it would be better to get them
-in sooner to make them available to developers in advance of the .36 cycle.
+It only looks for simple cases to avoid false positives.
 
-Of course, I'm not Linus, and I don't see him Cc:'d on this, but that
-would be the normal rules.
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ scripts/coccinelle/kzalloc-simple.cocci |   83 +++++++++++++++++++++++++++++++
+ 1 files changed, 83 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/kzalloc-simple.cocci
 
-	-hpa
-
+diff --git a/scripts/coccinelle/kzalloc-simple.cocci b/scripts/coccinelle/kzalloc-simple.cocci
+new file mode 100644
+index 0000000..b099fea
+--- /dev/null
++++ b/scripts/coccinelle/kzalloc-simple.cocci
+@@ -0,0 +1,83 @@
++///
++/// kzalloc should be used rather than kmalloc followed by memset 0
++///
++// Confidence: High
++// Copyright: (C) 2009-2010 Julia Lawall, Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2009-2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/rules/kzalloc.html
++// Options: -no_includes -include_headers
++//
++// Keywords: kmalloc, kzalloc
++// Version min: < 12 kmalloc
++// Version min:   14 kzalloc
++// Version max: *
++//
++
++virtual context
++virtual patch
++virtual org
++virtual report
++
++//----------------------------------------------------------
++//  For context mode
++//----------------------------------------------------------
++
++@depends on context@
++type T, T2;
++expression x;
++expression E1,E2;
++statement S;
++@@
++
++* x = (T)kmalloc(E1,E2);
++  if ((x=NULL) || ...) S
++* memset((T2)x,0,E1);
++
++//----------------------------------------------------------
++//  For patch mode
++//----------------------------------------------------------
++
++@depends on patch@
++type T, T2;
++expression x;
++expression E1,E2;
++statement S;
++@@
++
++- x = (T)kmalloc(E1,E2);
+++ x = kzalloc(E1,E2);
++  if ((x=NULL) || ...) S
++- memset((T2)x,0,E1);
++
++//----------------------------------------------------------
++//  For org mode
++//----------------------------------------------------------
++
++@r depends on org || report@
++type T, T2;
++expression x;
++expression E1,E2;
++statement S;
++position p;
++@@
++
++ x = (T)kmalloc@p(E1,E2);
++ if ((x=NULL) || ...) S
++ memset((T2)x,0,E1);
++
++@script:python depends on org@
++p << r.p;
++x << r.x;
++@@
++
++msg="%s" % (x)
++msg_safe=msg.replace("[","@(").replace("]",")")
++coccilib.org.print_todo(p[0], msg_safe)
++
++@script:python depends on report@
++p << r.p;
++x << r.x;
++@@
++
++msg="WARNING: kzalloc should be used for %s, instead of kmalloc/memset" % (x)
++coccilib.report.print_report(p[0], msg_safe)
 -- 
-H. Peter Anvin, Intel Open Source Technology Center
-I work for Intel.  I don't speak on their behalf.
+1.7.0.4
 
