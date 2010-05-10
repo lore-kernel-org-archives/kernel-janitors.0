@@ -1,16 +1,98 @@
-From: Sage Weil <sage@newdream.net>
-Date: Thu, 13 May 2010 20:37:37 +0000
-Subject: Re: [PATCH 19/20] fs/ceph: Use kzalloc
-Message-Id: <Pine.LNX.4.64.1005131336560.13692@cobra.newdream.net>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Mon, 10 May 2010 16:19:09 +0000
+Subject: [PATCH 2/4] Add scripts/coccinelle/drop_kmalloc_cast.cocci
+Message-Id: <1273508351-4998-3-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005132207120.6282@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005132207120.6282@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Queued for 2.6.35, thanks!
+The purpose of this semantic patch is to remove
+useless casts, as mentioned in the Linux documentation.
+See Chapter 14 in Documentation/CodingStyle for more information.
 
-sage
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ scripts/coccinelle/drop_kmalloc_cast.cocci |   68 ++++++++++++++++++++++++++++
+ 1 files changed, 68 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/drop_kmalloc_cast.cocci
+
+diff --git a/scripts/coccinelle/drop_kmalloc_cast.cocci b/scripts/coccinelle/drop_kmalloc_cast.cocci
+new file mode 100644
+index 0000000..cb54a4b
+--- /dev/null
++++ b/scripts/coccinelle/drop_kmalloc_cast.cocci
+@@ -0,0 +1,68 @@
++///
++/// Casting (void *) value returned by kmalloc is useless
++/// as mentioned in Documentation/CodingStyle, Chap 14.
++///
++// Confidence: High
++// Copyright: 2009,2010 Nicolas Palix, DIKU.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: -no_includes -include_headers
++//
++// Keywords: kmalloc, kzalloc, kcalloc
++// Version min: < 2.6.12 kmalloc
++// Version min: < 2.6.12 kcalloc
++// Version min:   2.6.14 kzalloc
++// Version max: *
++//
++
++virtual context
++virtual patch
++virtual org
++virtual report
++
++//----------------------------------------------------------
++//  For context mode
++//----------------------------------------------------------
++
++@depends on context@
++type T;
++@@
++
++* (T *)
++  \(kmalloc\|kzalloc\|kcalloc\)(...)
++
++//----------------------------------------------------------
++//  For patch mode
++//----------------------------------------------------------
++
++@depends on patch@
++type T;
++@@
++
++- (T *)
++  \(kmalloc\|kzalloc\|kcalloc\)(...)
++
++//----------------------------------------------------------
++//  For org and report mode
++//----------------------------------------------------------
++
++@r depends on org || report@
++type T;
++position p;
++@@
++
++ (T@p *)\(kmalloc\|kzalloc\|kcalloc\)(...)
++
++@script:python depends on org@
++p << r.p;
++t << r.T;
++@@
++
++coccilib.org.print_safe_todo(p[0], t)
++
++@script:python depends on report@
++p << r.p;
++t << r.T;
++@@
++
++msg="WARNING: casting value returned by k[cmz]alloc to (%s *) is useless." % (t)
++coccilib.report.print_report(p[0], msg)
+-- 
+1.7.0.4
+
