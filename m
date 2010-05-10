@@ -1,36 +1,135 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 31 May 2010 07:32:00 +0000
-Subject: Re: [patch] caif: remove unneeded null check in caif_connect()
-Message-Id: <20100531.003200.102574775.davem@davemloft.net>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Mon, 10 May 2010 16:19:08 +0000
+Subject: [PATCH 1/4] Add targets to use the Coccinelle checker
+Message-Id: <1273508351-4998-2-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100522204342.GV22515@bicker>
-	<AANLkTikM6_-YgLcBtcxN_TA1ISHkRk6fCEJVOS7pRZel@mail.gmail.com>
-In-Reply-To: <AANLkTikM6_-YgLcBtcxN_TA1ISHkRk6fCEJVOS7pRZel@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: sjurbren@gmail.com
-Cc: error27@gmail.com, sjur.brandeland@stericsson.com, eric.dumazet@gmail.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-From: Sjur Br=E6ndeland <sjurbren@gmail.com>
-Date: Mon, 24 May 2010 21:56:01 +0200
+Four targets are added. Each one generates a different
+output kind: context, patch, org, report.
+Every SmPL file in 'scripts/coccinelle' is given to the spatch frontend
+(located in the 'scripts' directory), and applied to the entire
+source tree.
 
-> Dan Carpenter <error27@gmail.com> wrote:
->> We already dereferenced uaddr towards the start of the function when we
->> checked that "uaddr->sa_family !=3D AF_CAIF". =A0Both the check here and=
- the
->> earlier check were added in bece7b2398d0: "caif: Rewritten socket
->> implementation". =A0Before that patch, we assumed that we recieved a val=
-id
->> pointer for uaddr, and based on that, I have removed this check.
->>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> Thanks Looks good,
-> Acked-by: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ MAINTAINERS           |   10 ++++++++++
+ Makefile              |   20 ++++++++++++++++++--
+ scripts/coccinelle.sh |   28 ++++++++++++++++++++++++++++
+ 3 files changed, 56 insertions(+), 2 deletions(-)
+ create mode 100755 scripts/coccinelle.sh
 
-Applied.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d5b0b1b..84f527a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1543,6 +1543,16 @@ L:	platform-driver-x86@vger.kernel.org
+ S:	Supported
+ F:	drivers/platform/x86/classmate-laptop.c
+ 
++COCCINELLE/Semantic Patches (SmPL)
++M:	Julia Lawall <julia@diku.dk>
++M:	Gilles Muller <Gilles.Muller@lip6.fr>
++M:	Nicolas Palix <npalix@diku.dk>
++L:	cocci@diku.dk (moderated for non-subscribers)
++W:	http://coccinelle.lip6.fr/
++S:	Supported
++F:	scripts/coccinelle/
++F:	scripts/coccinelle.sh
++
+ CODA FILE SYSTEM
+ M:	Jan Harkes <jaharkes@cs.cmu.edu>
+ M:	coda@cs.cmu.edu
+diff --git a/Makefile b/Makefile
+index 701bc65..7bf168f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -325,6 +325,7 @@ INSTALLKERNEL  := installkernel
+ DEPMOD		= /sbin/depmod
+ KALLSYMS	= scripts/kallsyms
+ PERL		= perl
++COCCINELLE      = spatch
+ CHECK		= sparse
+ 
+ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
+@@ -411,7 +412,8 @@ endif
+ no-dot-config-targets := clean mrproper distclean \
+ 			 cscope TAGS tags help %docs check% \
+ 			 include/linux/version.h headers_% \
+-			 kernelrelease kernelversion
++			 kernelrelease kernelversion        \
++			 coccicheck-%
+ 
+ config-targets := 0
+ mixed-targets  := 0
+@@ -1264,7 +1266,8 @@ help:
+ 	@echo  '  includecheck    - Check for duplicate included header files'
+ 	@echo  '  export_report   - List the usages of all exported symbols'
+ 	@echo  '  headers_check   - Sanity check on exported headers'
+-	@echo  '  headerdep       - Detect inclusion cycles in headers'; \
++	@echo  '  headerdep       - Detect inclusion cycles in headers'
++	@echo  '  coccicheck-<m>  - Check with Coccinelle in <m> mode (report, context, patch, org)'; \
+ 	 echo  ''
+ 	@echo  'Kernel packaging:'
+ 	@$(MAKE) $(build)=$(package-dir) help
+@@ -1424,6 +1427,19 @@ versioncheck:
+ 		-name '*.[hcS]' -type f -print | sort \
+ 		| xargs $(PERL) -w $(srctree)/scripts/checkversion.pl
+ 
++coccicheck-context coccicheck-patch coccicheck-org coccicheck-report:
++	@echo ''
++	@echo 'Please check for false positives in the output before submitting a patch.'
++	@echo 'When using "patch" mode, carefully review the patch before submitting it.'
++	@echo ''
++	@if [ "$(COCCI)" = "" ] ; then                         \
++	find $(srctree)/scripts/coccinelle/                    \
++		-name '*.cocci' -type f                        \
++		-exec $(srctree)/scripts/coccinelle.sh $(COCCINELLE) $(@:coccicheck-%=%) \{} $(srctree) \; ; \
++	else                                                                                                 \
++		$(srctree)/scripts/coccinelle.sh $(COCCINELLE) $(@:coccicheck-%=%) $(COCCI) $(srctree)     ; \
++	fi
++
+ namespacecheck:
+ 	$(PERL) $(srctree)/scripts/namespace.pl
+ 
+diff --git a/scripts/coccinelle.sh b/scripts/coccinelle.sh
+new file mode 100755
+index 0000000..0d29e93
+--- /dev/null
++++ b/scripts/coccinelle.sh
+@@ -0,0 +1,28 @@
++#!/bin/sh
++
++SPATCH="`which $1`"
++MODE="$2"
++COCCI="$3"
++DIR="$4"
++
++OPT=`grep "Option" $COCCI | cut -d':' -f2`
++FILE=`echo $COCCI | sed "s|$DIR/||"`
++
++if [ -x "$SPATCH" ]; then
++
++    echo "Processing `basename $COCCI` with option(s) \"$(OPT)\""
++    echo 'Message example to submit a patch:'
++    sed -e '/\/\/\//!d' -e 's|^///||' $COCCI
++
++    echo ' The semantic patch that makes this change is available'
++    echo " in $FILE."
++    echo ''
++    echo ' More information about semantic patching is available at'
++    echo ' http://coccinelle.lip6.fr/'
++    echo ''
++
++    $SPATCH -D $MODE -very_quiet -sp_file $COCCI $OPT -dir $DIR
++
++else
++    echo 'spatch is part of the Coccinelle project and is available at http://coccinelle.lip6.fr/'
++fi
+-- 
+1.7.0.4
+
