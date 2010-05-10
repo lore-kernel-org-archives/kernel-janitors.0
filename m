@@ -1,12 +1,15 @@
 From: Nicolas Palix <npalix@diku.dk>
-Date: Mon, 10 May 2010 16:19:09 +0000
+Date: Mon, 10 May 2010 16:24:25 +0000
 Subject: [PATCH 2/4] Add scripts/coccinelle/drop_kmalloc_cast.cocci
-Message-Id: <1273508351-4998-3-git-send-email-npalix@diku.dk>
+Message-Id: <1273508667-5152-3-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1273508667-5152-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1273508667-5152-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Nicolas Palix <npalix@diku.dk>
 
 The purpose of this semantic patch is to remove
 useless casts, as mentioned in the Linux documentation.
