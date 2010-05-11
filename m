@@ -1,80 +1,116 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:22:17 +0000
-Subject: [PATCH 13/27] fs/autofs4: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221022010.13021@ask.diku.dk>
+From: matt mooney <mfm@muteddisk.com>
+Date: Tue, 11 May 2010 09:52:00 +0000
+Subject: [PATCH 2/2] kbuild/makefiles.txt: Fix examples
+Message-Id: <20100511095200.GB16871@haskell.muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ian Kent <raven@themaw.net>, autofs@linux.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: matt mooney <mfm@muteddisk.com>
 
-Use memdup_user when user data is immediately copied into the allocated
-region.  Elimination of the variable ads, which is no longer useful.
+Update examples to reflect the current state of the Makefiles used.
+Fix spelling and grammar errors along with flow of text.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression from,to,size,flag;
-position p;
-identifier l1,l2;
-@@
-
--  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-+  to = memdup_user(from,size);
-   if (
--      to=NULL
-+      IS_ERR(to)
-                 || ...) {
-   <+... when != goto l1;
--  -ENOMEM
-+  PTR_ERR(to)
-   ...+>
-   }
--  if (copy_from_user(to, from, size) != 0) {
--    <+... when != goto l2;
--    -EFAULT
--    ...+>
--  }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- fs/autofs4/dev-ioctl.c |   13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ Documentation/kbuild/makefiles.txt |   53 +++++++++++++++++-------------------
+ 1 files changed, 25 insertions(+), 28 deletions(-)
 
-diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
-index d29b7f6..33d8fc6 100644
---- a/fs/autofs4/dev-ioctl.c
-+++ b/fs/autofs4/dev-ioctl.c
-@@ -95,7 +95,7 @@ static int check_dev_ioctl_version(int cmd, struct autofs_dev_ioctl *param)
-  */
- static struct autofs_dev_ioctl *copy_dev_ioctl(struct autofs_dev_ioctl __user *in)
- {
--	struct autofs_dev_ioctl tmp, *ads;
-+	struct autofs_dev_ioctl tmp;
- 
- 	if (copy_from_user(&tmp, in, sizeof(tmp)))
- 		return ERR_PTR(-EFAULT);
-@@ -103,16 +103,7 @@ static struct autofs_dev_ioctl *copy_dev_ioctl(struct autofs_dev_ioctl __user *i
- 	if (tmp.size < sizeof(tmp))
- 		return ERR_PTR(-EINVAL);
- 
--	ads = kmalloc(tmp.size, GFP_KERNEL);
--	if (!ads)
--		return ERR_PTR(-ENOMEM);
+diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
+index 6004671..acf9716 100644
+--- a/Documentation/kbuild/makefiles.txt
++++ b/Documentation/kbuild/makefiles.txt
+@@ -285,45 +285,42 @@ more details, with real examples.
+ --- 3.7 Compilation flags
+
+     ccflags-y, asflags-y and ldflags-y
+-	The three flags listed above applies only to the kbuild makefile
+-	where they are assigned. They are used for all the normal
+-	cc, as and ld invocation happenign during a recursive build.
++	The three flags listed above apply only to the kbuild makefile where
++	they are assigned (i.e., per-directory). They are used for all the
++	normal cc, as and ld invocation happening during a recursive build.
+ 	Note: Flags with the same behaviour were previously named:
+-	EXTRA_CFLAGS, EXTRA_AFLAGS and EXTRA_LDFLAGS.
+-	They are yet supported but their use are deprecated.
++	EXTRA_CFLAGS, EXTRA_AFLAGS and EXTRA_LDFLAGS. They are still
++	supported but their use is deprecated.
+
+-	ccflags-y specifies options for compiling C files with $(CC).
++	ccflags-y specifies options for compiling with $(CC).
+
+ 	Example:
+-		# drivers/sound/emu10k1/Makefile
+-		ccflags-y += -I$(obj)
+-		ccflags-$(DEBUG) += -DEMU10K1_DEBUG
 -
--	if (copy_from_user(ads, in, tmp.size)) {
--		kfree(ads);
--		return ERR_PTR(-EFAULT);
--	}
++		# drivers/acpi/Makefile
++		ccflags-y := -Os
++		ccflags-$(CONFIG_ACPI_DEBUG) += -DACPI_DEBUG_OUTPUT
+
+ 	This variable is necessary because the top Makefile owns the
+ 	variable $(KBUILD_CFLAGS) and uses it for compilation flags for the
+ 	entire tree.
+
+-	asflags-y is a similar string for per-directory options
+-	when compiling assembly language source.
++	asflags-y specifies options for assembling with $(AS).
+
+ 	Example:
+-		#arch/x86_64/kernel/Makefile
+-		asflags-y := -traditional
 -
--	return ads;
-+	return memdup_user(in, tmp.size);
- }
- 
- static inline void free_dev_ioctl(struct autofs_dev_ioctl *param)
++		#arch/sparc/kernel/Makefile
++		asflags-y := -ansi
+
+-	ldflags-y is a string for per-directory options to $(LD).
++	ldflags-y specifies options for linking with $(LD).
+
+ 	Example:
+-		#arch/m68k/fpsp040/Makefile
+-		ldflags-y := -x
++		#arch/cris/boot/compressed/Makefile
++		ldflags-y += -T $(srctree)/$(src)/decompress_$(arch-y).lds
+
+     subdir-ccflags-y, subdir-asflags-y
+-	The two flags listed above are similar to ccflags-y and as-falgs-y.
+-	The difference is that the subdir- variants has effect for the kbuild
+-	file where tey are present and all subdirectories.
+-	Options specified using subdir-* are added to the commandline before
+-	the options specified using the non-subdir variants.
++	The two flags listed above are similar to ccflags-y and asflags-y.
++	The difference is that the subdir- variants affect the kbuild
++	file where they are present and all subdirectories. Options specified
++	using subdir-* are added to the commandline before the options
++	specified using the non-subdir variants.
+
+ 	Example:
+ 		subdir-ccflags-y := -Werror
+@@ -341,18 +338,18 @@ more details, with real examples.
+ 		CFLAGS_aha152x.o =   -DAHA152X_STAT -DAUTOCONF
+ 		CFLAGS_gdth.o    = # -DDEBUG_GDTH=2 -D__SERIAL__ -D__COM2__ \
+ 				     -DGDTH_STATISTICS
+-		CFLAGS_seagate.o =   -DARBITRATE -DPARITY -DSEAGATE_USE_ASM
+
+-	These three lines specify compilation flags for aha152x.o,
+-	gdth.o, and seagate.o
++	These two lines specify compilation flags for aha152x.o and gdth.o.
+
+ 	$(AFLAGS_$@) is a similar feature for source files in assembly
+ 	languages.
+
+ 	Example:
+ 		# arch/arm/kernel/Makefile
+-		AFLAGS_head-armv.o := -DTEXTADDR=$(TEXTADDR) -traditional
+-		AFLAGS_head-armo.o := -DTEXTADDR=$(TEXTADDR) -traditional
++		AFLAGS_head.o        := -DTEXT_OFFSET=$(TEXT_OFFSET)
++		AFLAGS_crunch-bits.o := -Wa,-mcpu=ep9312
++		AFLAGS_iwmmxt.o      := -Wa,-mcpu=iwmmxt
++
+
+ --- 3.9 Dependency tracking
+
+--
+1.6.6.1
