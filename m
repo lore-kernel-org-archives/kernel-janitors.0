@@ -1,48 +1,65 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 31 May 2010 21:07:48 +0000
-Subject: Re: [patch 2/2] input/tps6507x-ts: zero vs NULL
-Message-Id: <20100531210748.GB5483@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 11 May 2010 18:28:34 +0000
+Subject: [PATCH 5/5] arch/x86/kernel: Drop memory allocation cast
+Message-Id: <Pine.LNX.4.64.1005112028160.4330@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100531120215.GS5483@bicker> <20100531191029.GD30712@core.coreip.homeip.net>
-In-Reply-To: <20100531191029.GD30712@core.coreip.homeip.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Todd Fischer <todd.fischer@ridgerun.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, ", H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, May 31, 2010 at 12:10:29PM -0700, Dmitry Torokhov wrote:
-> On Mon, May 31, 2010 at 02:02:15PM +0200, Dan Carpenter wrote:
-> > --- a/drivers/input/touchscreen/tps6507x-ts.c
-> > +++ b/drivers/input/touchscreen/tps6507x-ts.c
-> > @@ -342,7 +342,7 @@ err2:
-> >  	cancel_delayed_work(&tsc->work);
-> >  	flush_workqueue(tsc->wq);
-> >  	destroy_workqueue(tsc->wq);
-> > -	tsc->wq = 0;
-> > +	tsc->wq = NULL;
-> >  	input_free_device(input_dev);
-> >  err1:
-> >  	kfree(tsc);
-> > @@ -364,7 +364,7 @@ static int __devexit tps6507x_ts_remove(struct platform_device *pdev)
-> >  	cancel_delayed_work(&tsc->work);
-> >  	flush_workqueue(tsc->wq);
-> 
-> Why isn't it cancel_delayed_work_sync()?
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Good point.
+Drop cast on the result of kmalloc and similar functions.
 
-> >  	destroy_workqueue(tsc->wq);
-> > -	tsc->wq = 0;
-> > +	tsc->wq = NULL;
-> >  
-> 
-> Setting tsc to 0/NULL does not make much sense as it is being freed a
-> couple of lines below.
-> 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-That's true.  I'll send an updated patch tomorrow.
+// <smpl>
+@@
+type T;
+@@
 
-regards,
-dan carpenter
+- (T *)
+  (\(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
+   kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\)(...))
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/x86/kernel/tlb_uv.c            |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/tlb_uv.c b/arch/x86/kernel/tlb_uv.c
+index 7fea555..9064179 100644
+--- a/arch/x86/kernel/tlb_uv.c
++++ b/arch/x86/kernel/tlb_uv.c
+@@ -1141,7 +1141,7 @@ uv_activation_descriptor_init(int node, int pnode)
+ 	 * each bau_desc is 64 bytes; there are 8 (UV_ITEMS_PER_DESCRIPTOR)
+ 	 * per cpu; and up to 32 (UV_ADP_SIZE) cpu's per uvhub
+ 	 */
+-	bau_desc = (struct bau_desc *)kmalloc_node(sizeof(struct bau_desc)*
++	bau_desc = kmalloc_node(sizeof(struct bau_desc) *
+ 		UV_ADP_SIZE*UV_ITEMS_PER_DESCRIPTOR, GFP_KERNEL, node);
+ 	BUG_ON(!bau_desc);
+ 
+@@ -1200,7 +1200,7 @@ uv_payload_queue_init(int node, int pnode)
+ 	struct bau_payload_queue_entry *pqp_malloc;
+ 	struct bau_control *bcp;
+ 
+-	pqp = (struct bau_payload_queue_entry *) kmalloc_node(
++	pqp = kmalloc_node(
+ 		(DEST_Q_SIZE + 1) * sizeof(struct bau_payload_queue_entry),
+ 		GFP_KERNEL, node);
+ 	BUG_ON(!pqp);
+@@ -1286,8 +1286,7 @@ static void uv_init_per_cpu(int nuvhubs)
+ 	};
+ 	struct uvhub_desc *uvhub_descs;
+ 
+-	uvhub_descs = (struct uvhub_desc *)
+-		kmalloc(nuvhubs * sizeof(struct uvhub_desc), GFP_KERNEL);
++	uvhub_descs = kmalloc(nuvhubs * sizeof(struct uvhub_desc), GFP_KERNEL);
+ 	memset(uvhub_descs, 0, nuvhubs * sizeof(struct uvhub_desc));
+ 	for_each_present_cpu(cpu) {
+ 		bcp = &per_cpu(bau_control, cpu);
