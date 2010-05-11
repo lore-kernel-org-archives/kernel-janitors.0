@@ -1,36 +1,36 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Date: Wed, 26 May 2010 19:13:37 +0000
-Subject: Re: [PATCH 7/17] arch/arm/common: Add missing spin_unlock_irqrestore
-Message-Id: <201005262113.38450.marek.vasut@gmail.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Tue, 11 May 2010 07:10:23 +0000
+Subject: [PATCH] serial: bfin_sport_uart: Use resource size to fix off-by-one error
+Message-Id: <1273561823-4495-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261756000.23743@ask.diku.dk>
-	<201005261907.06198.marek.vasut@gmail.com>
-	<20100526184358.GC6232@n2100.arm.linux.org.uk>
-In-Reply-To: <20100526184358.GC6232@n2100.arm.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: vapier@gentoo.org, gregkh@suse.de, linux-serial@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>
 
-Dne St 26. kv=C4=9Btna 2010 20:43:58 Russell King - ARM Linux napsal(a):
-> On Wed, May 26, 2010 at 07:07:06PM +0200, Marek Vasut wrote:
-> > Why are "readl"s protected by spinlock anyway ? Can't we just move the
-> > locking past the code above ?
->=20
-> Good question - and there seems to be a deadlock waiting to happen -
-> sa1111_wake() re-takes the same lock.
->=20
-> I think we should kill all the spinlock in sa1111_resume().
+Use the resource_size function instead of manually calculating the
+resource size. This actually fixes an off-by-one error.
 
-Russell, Julia, check the patch I posted. Comments are welcome.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/serial/bfin_sport_uart.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-btw. Russell, killing the spinlock in resume might be overkill. If there wa=
-s any=20
-reason for that being there, it was for the write ops so I'd rather keep th=
-ose=20
-locked. Anyone with actual hardware available should look into that though.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/serial/bfin_sport_uart.c b/drivers/serial/bfin_sport_uart.c
+index 66cda22..e57fb3d 100644
+--- a/drivers/serial/bfin_sport_uart.c
++++ b/drivers/serial/bfin_sport_uart.c
+@@ -774,8 +774,7 @@ static int __devinit sport_uart_probe(struct platform_device *pdev)
+ 			goto out_error_free_peripherals;
+ 		}
+ 
+-		sport->port.membase = ioremap(res->start,
+-			res->end - res->start);
++		sport->port.membase = ioremap(res->start, resource_size(res));
+ 		if (!sport->port.membase) {
+ 			dev_err(&pdev->dev, "Cannot map sport IO\n");
+ 			ret = -ENXIO;
+-- 
+1.6.3.3
+
