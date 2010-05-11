@@ -1,33 +1,33 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 29 May 2010 09:43:07 +0000
-Subject: [patch 3/11] btrfs: handle kzalloc() failure in open_ctree()
-Message-Id: <20100529094307.GD5483@bicker>
+From: Zachary Richey <zr.public@gmail.com>
+Date: Tue, 11 May 2010 18:13:48 +0000
+Subject: [PATCH 1/2] Staging: wlan-ng: fix coding style issues in p80211_conv.c
+Message-Id: <6d7f8e8ef8e4df0727d235d7e4650fb3ea9db5e0.1273600945.git.zr.public@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Jens Axboe <jens.axboe@oracle.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Unwind and return -ENOMEM if the allocation fails here.
+This patch fixes a simple coding style issue reported by checkpatch.pl in p80211_conv.c
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Zachary Richey <zr.public@gmail.com>
+---
+ drivers/staging/wlan-ng/p80211conv.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index f3b287c..73895ba 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1941,8 +1941,11 @@ struct btrfs_root *open_ctree(struct super_block *sb,
- 		     btrfs_level_size(tree_root,
- 				      btrfs_super_log_root_level(disk_super));
- 
--		log_tree_root = kzalloc(sizeof(struct btrfs_root),
--						      GFP_NOFS);
-+		log_tree_root = kzalloc(sizeof(struct btrfs_root), GFP_NOFS);
-+		if (!log_tree_root) {
-+			err = -ENOMEM;
-+			goto fail_trans_kthread;
-+		}
- 
- 		__setup_root(nodesize, leafsize, sectorsize, stripesize,
- 			     log_tree_root, fs_info, BTRFS_TREE_LOG_OBJECTID);
+diff --git a/drivers/staging/wlan-ng/p80211conv.c b/drivers/staging/wlan-ng/p80211conv.c
+index a1605fb..71c3595 100644
+--- a/drivers/staging/wlan-ng/p80211conv.c
++++ b/drivers/staging/wlan-ng/p80211conv.c
+@@ -208,7 +208,7 @@ int skb_ether_to_p80211(wlandevice_t *wlandev, u32 ethconv,
+ 		p80211_wep->data = kmalloc(skb->len, GFP_ATOMIC);
+ 		foo = wep_encrypt(wlandev, skb->data, p80211_wep->data,
+ 				  skb->len,
+-				  (wlandev->hostwep &HOSTWEP_DEFAULTKEY_MASK),
++				  (wlandev->hostwep & HOSTWEP_DEFAULTKEY_MASK),
+ 				  p80211_wep->iv, p80211_wep->icv);
+ 		if (foo) {
+ 			printk(KERN_WARNING
+-- 
+1.6.3.3
+
