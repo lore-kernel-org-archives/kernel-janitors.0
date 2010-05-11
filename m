@@ -1,36 +1,21 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Tue, 11 May 2010 07:10:23 +0000
-Subject: [PATCH] serial: bfin_sport_uart: Use resource size to fix off-by-one error
-Message-Id: <1273561823-4495-1-git-send-email-tklauser@distanz.ch>
+From: Mike Frysinger <vapier.adi@gmail.com>
+Date: Tue, 11 May 2010 18:08:54 +0000
+Subject: Re: [PATCH] serial: bfin_sport_uart: Use resource size to fix
+Message-Id: <AANLkTilzQO2a6OZFctMwEXiywCIlrfRfWyC4MyDQ4JJE@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1273561823-4495-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1273561823-4495-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vapier@gentoo.org, gregkh@suse.de, linux-serial@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>
+To: Tobias Klauser <tklauser@distanz.ch>
+Cc: gregkh@suse.de, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use the resource_size function instead of manually calculating the
-resource size. This actually fixes an off-by-one error.
+On Tue, May 11, 2010 at 03:10, Tobias Klauser wrote:
+> Use the resource_size function instead of manually calculating the
+> resource size. This actually fixes an off-by-one error.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- drivers/serial/bfin_sport_uart.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+thanks !
 
-diff --git a/drivers/serial/bfin_sport_uart.c b/drivers/serial/bfin_sport_uart.c
-index 66cda22..e57fb3d 100644
---- a/drivers/serial/bfin_sport_uart.c
-+++ b/drivers/serial/bfin_sport_uart.c
-@@ -774,8 +774,7 @@ static int __devinit sport_uart_probe(struct platform_device *pdev)
- 			goto out_error_free_peripherals;
- 		}
- 
--		sport->port.membase = ioremap(res->start,
--			res->end - res->start);
-+		sport->port.membase = ioremap(res->start, resource_size(res));
- 		if (!sport->port.membase) {
- 			dev_err(&pdev->dev, "Cannot map sport IO\n");
- 			ret = -ENXIO;
--- 
-1.6.3.3
-
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+-mike
