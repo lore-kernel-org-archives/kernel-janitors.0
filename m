@@ -1,68 +1,107 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Thu, 06 May 2010 19:36:13 +0000
-Subject: Re: [PATCH 03/13] arm: removing redundant ifdefs
-Message-Id: <20100506193613.GA26818@n2100.arm.linux.org.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 11 May 2010 18:28:14 +0000
+Subject: [PATCH 4/5] fs/ocfs2/dlm: Drop memory allocation cast
+Message-Id: <Pine.LNX.4.64.1005112027000.4330@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273167377-14270-1-git-send-email-jolsa@redhat.com> <1273167377-14270-4-git-send-email-jolsa@redhat.com>
-In-Reply-To: <1273167377-14270-4-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, jgarzik@pobox.com, hare@suse.de, felipe.balbi@nokia.com
+To: Mark Fasheh <mfasheh@suse.com>, Joel Becker <joel.becker@oracle.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Ah, it's finally come through.
+From: Julia Lawall <julia@diku.dk>
 
-On Thu, May 06, 2010 at 07:36:07PM +0200, Jiri Olsa wrote:
-> --- a/arch/arm/include/asm/processor.h
-> +++ b/arch/arm/include/asm/processor.h
-> @@ -22,11 +22,9 @@
->  #include <asm/ptrace.h>
->  #include <asm/types.h>
->  
-> -#ifdef __KERNEL__
->  #define STACK_TOP	((current->personality & ADDR_LIMIT_32BIT) ? \
->  			 TASK_SIZE : TASK_SIZE_26)
->  #define STACK_TOP_MAX	TASK_SIZE
-> -#endif
+Drop cast on the result of kmalloc and similar functions.
 
-This one is correct.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-> --- a/arch/arm/mach-ixp23xx/include/mach/platform.h
-> +++ b/arch/arm/mach-ixp23xx/include/mach/platform.h
-> @@ -43,7 +43,6 @@ extern struct sys_timer ixp23xx_timer;
->  
->  #define IXP23XX_UART_XTAL		14745600
->  
-> -#ifndef __ASSEMBLY__
->  /*
->   * Is system memory on the XSI or CPP bus?
->   */
-> @@ -51,7 +50,5 @@ static inline unsigned ixp23xx_cpp_boot(void)
->  {
->  	return (*IXP23XX_EXP_CFG0 & IXP23XX_EXP_CFG0_XSI_NOT_PRES);
->  }
-> -#endif
+// <smpl>
+@@
+type T;
+@@
 
-Ok too.
+- (T *)
+  (\(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
+   kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\)(...))
+// </smpl>
 
-> --- a/arch/arm/plat-omap/include/plat/clock.h
-> +++ b/arch/arm/plat-omap/include/plat/clock.h
-> @@ -133,17 +133,12 @@ struct clk {
->  	__s8			usecount;
->  	u8			fixed_div;
->  	u8			flags;
-> -#ifdef CONFIG_ARCH_OMAP2PLUS
->  	void __iomem		*clksel_reg;
->  	u32			clksel_mask;
->  	const struct clksel	*clksel;
->  	struct dpll_data	*dpll_data;
->  	const char		*clkdm_name;
->  	struct clockdomain	*clkdm;
-> -#else
-> -	__u8			rate_offset;
-> -	__u8			src_offset;
-> -#endif
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-This is wrong.  There is a preceding #ifdef CONFIG_ARCH_OMAP2PLUS, but
-there's also a preceding #endif terminating that conditional section.
+---
+ fs/ocfs2/dlm/dlmlock.c   |    2 +-
+ fs/ocfs2/dlm/dlmmaster.c |   18 ++++++------------
+ 2 files changed, 7 insertions(+), 13 deletions(-)
+
+diff --git a/fs/ocfs2/dlm/dlmlock.c b/fs/ocfs2/dlm/dlmlock.c
+index f1fba2a..69cf369 100644
+--- a/fs/ocfs2/dlm/dlmlock.c
++++ b/fs/ocfs2/dlm/dlmlock.c
+@@ -431,7 +431,7 @@ struct dlm_lock * dlm_new_lock(int type, u8 node, u64 cookie,
+ 	struct dlm_lock *lock;
+ 	int kernel_allocated = 0;
+ 
+-	lock = (struct dlm_lock *) kmem_cache_zalloc(dlm_lock_cache, GFP_NOFS);
++	lock = kmem_cache_zalloc(dlm_lock_cache, GFP_NOFS);
+ 	if (!lock)
+ 		return NULL;
+ 
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 4fc6fd2..4a7506a 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -617,13 +617,11 @@ struct dlm_lock_resource *dlm_new_lockres(struct dlm_ctxt *dlm,
+ {
+ 	struct dlm_lock_resource *res = NULL;
+ 
+-	res = (struct dlm_lock_resource *)
+-				kmem_cache_zalloc(dlm_lockres_cache, GFP_NOFS);
++	res = kmem_cache_zalloc(dlm_lockres_cache, GFP_NOFS);
+ 	if (!res)
+ 		goto error;
+ 
+-	res->lockname.name = (char *)
+-				kmem_cache_zalloc(dlm_lockname_cache, GFP_NOFS);
++	res->lockname.name = kmem_cache_zalloc(dlm_lockname_cache, GFP_NOFS);
+ 	if (!res->lockname.name)
+ 		goto error;
+ 
+@@ -757,8 +755,7 @@ lookup:
+ 		spin_unlock(&dlm->spinlock);
+ 		mlog(0, "allocating a new resource\n");
+ 		/* nothing found and we need to allocate one. */
+-		alloc_mle = (struct dlm_master_list_entry *)
+-			kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
++		alloc_mle = kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
+ 		if (!alloc_mle)
+ 			goto leave;
+ 		res = dlm_new_lockres(dlm, lockid, namelen);
+@@ -1542,8 +1539,7 @@ way_up_top:
+ 			spin_unlock(&dlm->master_lock);
+ 			spin_unlock(&dlm->spinlock);
+ 
+-			mle = (struct dlm_master_list_entry *)
+-				kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
++			mle = kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
+ 			if (!mle) {
+ 				response = DLM_MASTER_RESP_ERROR;
+ 				mlog_errno(-ENOMEM);
+@@ -2456,8 +2452,7 @@ static int dlm_migrate_lockres(struct dlm_ctxt *dlm,
+ 		goto leave;
+ 	}
+ 
+-	mle = (struct dlm_master_list_entry *) kmem_cache_alloc(dlm_mle_cache,
+-								GFP_NOFS);
++	mle = kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
+ 	if (!mle) {
+ 		mlog_errno(ret);
+ 		goto leave;
+@@ -3039,8 +3034,7 @@ int dlm_migrate_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 	hash = dlm_lockid_hash(name, namelen);
+ 
+ 	/* preallocate.. if this fails, abort */
+-	mle = (struct dlm_master_list_entry *) kmem_cache_alloc(dlm_mle_cache,
+-							 GFP_NOFS);
++	mle = kmem_cache_alloc(dlm_mle_cache, GFP_NOFS);
+ 
+ 	if (!mle) {
+ 		ret = -ENOMEM;
