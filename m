@@ -1,26 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 18 May 2010 05:55:55 +0000
-Subject: Re: [PATCH 15/20] drivers/net: Use kcalloc or kzalloc
-Message-Id: <20100517.225555.267953461.davem@davemloft.net>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Tue, 11 May 2010 06:57:44 +0000
+Subject: [PATCH] crypto: mv_cesa - Use resource_size
+Message-Id: <1273561064-3530-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005132205420.6282@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005132205420.6282@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org
+Cc: davem@davemloft.net, kernel-janitors@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>
 
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 13 May 2010 22:06:01 +0200 (CEST)
+Use the resource_size function instead of manually calculating the
+resource size. This reduces the chance of introducing off-by-one errors.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kcalloc or kzalloc rather than the combination of kmalloc and memset.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/crypto/mv_cesa.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/crypto/mv_cesa.c b/drivers/crypto/mv_cesa.c
+index 18a436c..e095422 100644
+--- a/drivers/crypto/mv_cesa.c
++++ b/drivers/crypto/mv_cesa.c
+@@ -1023,7 +1023,7 @@ static int mv_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&cp->lock);
+ 	crypto_init_queue(&cp->queue, 50);
+-	cp->reg = ioremap(res->start, res->end - res->start + 1);
++	cp->reg = ioremap(res->start, resource_size(res));
+ 	if (!cp->reg) {
+ 		ret = -ENOMEM;
+ 		goto err;
+@@ -1034,7 +1034,7 @@ static int mv_probe(struct platform_device *pdev)
+ 		ret = -ENXIO;
+ 		goto err_unmap_reg;
+ 	}
+-	cp->sram_size = res->end - res->start + 1;
++	cp->sram_size = resource_size(res);
+ 	cp->max_req_size = cp->sram_size - SRAM_CFG_SPACE;
+ 	cp->sram = ioremap(res->start, cp->sram_size);
+ 	if (!cp->sram) {
+-- 
+1.6.3.3
+
