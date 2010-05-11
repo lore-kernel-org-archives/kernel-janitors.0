@@ -1,40 +1,110 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Wed, 26 May 2010 12:43:43 +0000
-Subject: Re: [patch v3 2/2] video/saa7134: remove duplicate break
-Message-Id: <20100526144343.0c2369da@hyperion.delvare>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 11 May 2010 18:26:28 +0000
+Subject: [PATCH 2/5] drivers/s390/net: Drop memory allocation cast
+Message-Id: <Pine.LNX.4.64.1005112025580.4330@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100525092149.GA13089@bicker>
-In-Reply-To: <20100525092149.GA13089@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, hermann pitton <hermann-pitton@arcor.de>, Douglas Schilling Landgraf <dougsland@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ursula Braun <ursula.braun@de.ibm.com>, Frank Blaschka <blaschka@linux.vnet.ibm.com>, linux390@de.ibm.com, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 25 May 2010 11:21:50 +0200, Dan Carpenter wrote:
-> The original code had two break statements in a row.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Jean Delvare <khali@linux-fr.org>
+Drop cast on the result of kmalloc and similar functions.
 
-> ---
-> v3: Put this in a seperate patch.
-> 
-> diff --git a/drivers/media/video/saa7134/saa7134-input.c b/drivers/media/video/saa7134/saa7134-input.c
-> index e5565e2..7691bf2 100644
-> --- a/drivers/media/video/saa7134/saa7134-input.c
-> +++ b/drivers/media/video/saa7134/saa7134-input.c
-> @@ -815,7 +815,6 @@ int saa7134_input_init1(struct saa7134_dev *dev)
->  		mask_keyup   = 0x020000;
->  		polling      = 50; /* ms */
->  		break;
-> -	break;
->  	}
->  	if (NULL = ir_codes) {
->  		printk("%s: Oops: IR config error [card=%d]\n",
-> 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+type T;
+@@
 
--- 
-Jean Delvare
+- (T *)
+  (\(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
+   kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\)(...))
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/s390/net/ctcm_main.c      |    6 ++----
+ drivers/s390/net/ctcm_mpc.c       |    6 ++----
+ drivers/s390/net/lcs.c            |    3 +--
+ drivers/s390/net/qeth_core_main.c |    2 +-
+ 4 files changed, 6 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
+index e35713d..4ecafbf 100644
+--- a/drivers/s390/net/ctcm_main.c
++++ b/drivers/s390/net/ctcm_main.c
+@@ -1364,8 +1364,7 @@ static int add_channel(struct ccw_device *cdev, enum ctcm_channel_types type,
+ 
+ 	ch->protocol = priv->protocol;
+ 	if (IS_MPC(priv)) {
+-		ch->discontact_th = (struct th_header *)
+-				kzalloc(TH_HEADER_LENGTH, gfp_type());
++		ch->discontact_th = kzalloc(TH_HEADER_LENGTH, gfp_type());
+ 		if (ch->discontact_th = NULL)
+ 					goto nomem_return;
+ 
+@@ -1379,8 +1378,7 @@ static int add_channel(struct ccw_device *cdev, enum ctcm_channel_types type,
+ 	} else
+ 		ccw_num = 8;
+ 
+-	ch->ccw = (struct ccw1 *)
+-		kzalloc(ccw_num * sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
++	ch->ccw = kzalloc(ccw_num * sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
+ 	if (ch->ccw = NULL)
+ 					goto nomem_return;
+ 
+diff --git a/drivers/s390/net/ctcm_mpc.c b/drivers/s390/net/ctcm_mpc.c
+index 5978b39..87c24d2 100644
+--- a/drivers/s390/net/ctcm_mpc.c
++++ b/drivers/s390/net/ctcm_mpc.c
+@@ -669,8 +669,7 @@ static void ctcmpc_send_sweep_resp(struct channel *rch)
+ 				goto done;
+ 	}
+ 
+-	header = (struct th_sweep *)
+-			kmalloc(sizeof(struct th_sweep), gfp_type());
++	header = kmalloc(sizeof(struct th_sweep), gfp_type());
+ 
+ 	if (!header) {
+ 		dev_kfree_skb_any(sweep_skb);
+@@ -1191,8 +1190,7 @@ static void ctcmpc_unpack_skb(struct channel *ch, struct sk_buff *pskb)
+ 			skb_pull(pskb, new_len); /* point to next PDU */
+ 		}
+ 	} else {
+-		mpcginfo = (struct mpcg_info *)
+-				kmalloc(sizeof(struct mpcg_info), gfp_type());
++		mpcginfo = kmalloc(sizeof(struct mpcg_info), gfp_type());
+ 		if (mpcginfo = NULL)
+ 					goto done;
+ 
+diff --git a/drivers/s390/net/lcs.c b/drivers/s390/net/lcs.c
+index 9b19ea1..0f19d54 100644
+--- a/drivers/s390/net/lcs.c
++++ b/drivers/s390/net/lcs.c
+@@ -1238,8 +1238,7 @@ lcs_set_mc_addresses(struct lcs_card *card, struct in_device *in4_dev)
+ 		ipm = lcs_check_addr_entry(card, im4, buf);
+ 		if (ipm != NULL)
+ 			continue;	/* Address already in list. */
+-		ipm = (struct lcs_ipm_list *)
+-			kzalloc(sizeof(struct lcs_ipm_list), GFP_ATOMIC);
++		ipm = kzalloc(sizeof(struct lcs_ipm_list), GFP_ATOMIC);
+ 		if (ipm = NULL) {
+ 			pr_info("Not enough memory to add"
+ 				" new multicast entry!\n");
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index 3ba738b..065a3fa 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -606,7 +606,7 @@ static int qeth_setup_channel(struct qeth_channel *channel)
+ 
+ 	QETH_DBF_TEXT(SETUP, 2, "setupch");
+ 	for (cnt = 0; cnt < QETH_CMD_BUFFER_NO; cnt++) {
+-		channel->iob[cnt].data = (char *)
++		channel->iob[cnt].data  			kmalloc(QETH_BUFSIZE, GFP_DMA|GFP_KERNEL);
+ 		if (channel->iob[cnt].data = NULL)
+ 			break;
