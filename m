@@ -1,10 +1,11 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 12 May 2010 08:21:36 +0000
+Date: Wed, 12 May 2010 08:56:38 +0000
 Subject: Re: [PATCH 5/5] arch/x86/kernel: Drop memory allocation cast
-Message-Id: <Pine.LNX.4.64.1005121021110.31474@ask.diku.dk>
+Message-Id: <Pine.LNX.4.64.1005121056240.31474@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.1005112028160.4330@ask.diku.dk> <4BEA58C6.7030103@bfs.de>
-In-Reply-To: <4BEA58C6.7030103@bfs.de>
+ <Pine.LNX.4.64.1005121021110.31474@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005121021110.31474@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -14,8 +15,10 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, ", H. 
 From: Julia Lawall <julia@diku.dk>
 
 Drop cast on the result of kmalloc and similar functions.
+The third occurrence is additionally modified by hand to use kcalloc and to
+check that the result of the allocation is not NULL.
 
-The semantic patch that makes this change is as follows:
+The semantic patch that makes the drop cast change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
@@ -35,7 +38,7 @@ Signed-off-by: Julia Lawall <julia@diku.dk>
  1 files changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/kernel/tlb_uv.c b/arch/x86/kernel/tlb_uv.c
-index 7fea555..217c361 100644
+index 7fea555..97e790c 100644
 --- a/arch/x86/kernel/tlb_uv.c
 +++ b/arch/x86/kernel/tlb_uv.c
 @@ -1141,7 +1141,7 @@ uv_activation_descriptor_init(int node, int pnode)
@@ -63,7 +66,7 @@ index 7fea555..217c361 100644
 -	uvhub_descs = (struct uvhub_desc *)
 -		kmalloc(nuvhubs * sizeof(struct uvhub_desc), GFP_KERNEL);
 -	memset(uvhub_descs, 0, nuvhubs * sizeof(struct uvhub_desc));
-+	uvhub_descs = kzalloc(nuvhubs * sizeof(struct uvhub_desc), GFP_KERNEL);
++	uvhub_descs = kcalloc(nuvhubs, sizeof(struct uvhub_desc), GFP_KERNEL);
 +	BUG_ON(!uvhub_descs);
  	for_each_present_cpu(cpu) {
  		bcp = &per_cpu(bau_control, cpu);
