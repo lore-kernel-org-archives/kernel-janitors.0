@@ -1,62 +1,36 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 11 May 2010 18:25:56 +0000
-Subject: [PATCH 1/5] drivers/net/wireless/hostap: Drop memory allocation cast
-Message-Id: <Pine.LNX.4.64.1005112025280.4330@ask.diku.dk>
+From: =?UTF-8?B?Iua9mOWNq+W5syhQZXRlciBQYW4pIg==?=
+Date: Wed, 12 May 2010 03:07:38 +0000
+Subject: [PATCH] ext2:delete two redundant assignments
+Message-Id: <4BEA1B7A.7020109@redflag-linux.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jouni Malinen <j@w1.fi>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+es->s_free_blocks_count and es->s_free_inodes_count are assigned in
+ext2_sync_super().
 
-Drop cast on the result of kmalloc and similar functions.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-type T;
-@@
-
-- (T *)
-  (\(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
-   kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\)(...))
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Peter Pan <wppan@redflag-linux.com>
 ---
- drivers/net/wireless/hostap/hostap_80211_rx.c |    3 +--
- drivers/net/wireless/hostap/hostap_ioctl.c    |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+  fs/ext2/super.c |    4 ----
+  1 files changed, 0 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/hostap/hostap_80211_rx.c b/drivers/net/wireless/hostap/hostap_80211_rx.c
-index f4c5612..e0b3e8d 100644
---- a/drivers/net/wireless/hostap/hostap_80211_rx.c
-+++ b/drivers/net/wireless/hostap/hostap_80211_rx.c
-@@ -355,8 +355,7 @@ static struct hostap_bss_info *__hostap_add_bss(local_info_t *local, u8 *bssid,
- 		list_del(&bss->list);
- 		local->num_bss_info--;
- 	} else {
--		bss = (struct hostap_bss_info *)
--			kmalloc(sizeof(*bss), GFP_ATOMIC);
-+		bss = kmalloc(sizeof(*bss), GFP_ATOMIC);
- 		if (bss = NULL)
- 			return NULL;
- 	}
-diff --git a/drivers/net/wireless/hostap/hostap_ioctl.c b/drivers/net/wireless/hostap/hostap_ioctl.c
-index 9a08230..a85e43a 100644
---- a/drivers/net/wireless/hostap/hostap_ioctl.c
-+++ b/drivers/net/wireless/hostap/hostap_ioctl.c
-@@ -3039,8 +3039,7 @@ static int prism2_ioctl_priv_download(local_info_t *local, struct iw_point *p)
- 	    p->length > 1024 || !p->pointer)
- 		return -EINVAL;
- 
--	param = (struct prism2_download_param *)
--		kmalloc(p->length, GFP_KERNEL);
-+	param = kmalloc(p->length, GFP_KERNEL);
- 	if (param = NULL)
- 		return -ENOMEM;
- 
+diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+index 42e4a30..1cf58aa 100644
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -1182,10 +1182,6 @@ static int ext2_sync_fs(struct super_block *sb, 
+int wait)
+  	if (es->s_state & cpu_to_le16(EXT2_VALID_FS)) {
+  		ext2_debug("setting valid to 0\n");
+  		es->s_state &= cpu_to_le16(~EXT2_VALID_FS);
+-		es->s_free_blocks_count -			cpu_to_le32(ext2_count_free_blocks(sb));
+-		es->s_free_inodes_count -			cpu_to_le32(ext2_count_free_inodes(sb));
+  		es->s_mtime = cpu_to_le32(get_seconds());
+  		ext2_sync_super(sb, es);
+  	} else {
+-- 
+1.6.6
+
+
