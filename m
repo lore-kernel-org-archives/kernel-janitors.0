@@ -1,18 +1,53 @@
-From: Roland Dreier <rdreier@cisco.com>
-Date: Wed, 26 May 2010 04:11:04 +0000
-Subject: Re: [PATCH 10/27] drivers/infiniband/core: Use memdup_user
-Message-Id: <adahblvxpyf.fsf@roland-alpha.cisco.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 20:05:40 +0000
+Subject: [PATCH 14/20] drivers/net/vmxnet3: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132204040.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005221021030.13021@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005221021030.13021@ask.diku.dk> (Julia Lawall's
-	message of "Sat, 22 May 2010 10:21:27 +0200 (CEST)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Shreyas Bhatewara <sbhatewara@vmware.com>, "VMware, Inc." <pv-drivers@vmware.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-thanks, applied.
--- 
-Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
-http://www.cisco.com/web/about/doing_business/legal/cri/index.html
+From: Julia Lawall <julia@diku.dk>
+
+Use kzalloc rather than the combination of kmalloc and memset.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,size,flags;
+statement S;
+@@
+
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/vmxnet3/vmxnet3_drv.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -1369,13 +1369,12 @@ vmxnet3_rq_create(struct vmxnet3_rx_queu
+ 
+ 	sz = sizeof(struct vmxnet3_rx_buf_info) * (rq->rx_ring[0].size +
+ 						   rq->rx_ring[1].size);
+-	bi = kmalloc(sz, GFP_KERNEL);
++	bi = kzalloc(sz, GFP_KERNEL);
+ 	if (!bi) {
+ 		printk(KERN_ERR "%s: failed to allocate rx bufinfo\n",
+ 		       adapter->netdev->name);
+ 		goto err;
+ 	}
+-	memset(bi, 0, sz);
+ 	rq->buf_info[0] = bi;
+ 	rq->buf_info[1] = bi + rq->rx_ring[0].size;
+ 
