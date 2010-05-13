@@ -1,36 +1,50 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 06 May 2010 09:51:37 +0000
-Subject: [PATCH] powerpc/BSR: Use resource_size
-Message-Id: <1273139497-25961-1-git-send-email-tklauser@distanz.ch>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 20:07:11 +0000
+Subject: [PATCH 18/20] drivers/video/matrox: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132206530.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benh@kernel.crashing.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>
+To: Petr Vandrovec <vandrove@vc.cvut.cz>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use the resource_size function instead of manually calculating the
-resource size.  This reduces the chance of introducing off-by-one
-errors.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Use kzalloc rather than the combination of kmalloc and memset.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,size,flags;
+statement S;
+@@
+
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/char/bsr.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/video/matrox/matroxfb_base.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/char/bsr.c b/drivers/char/bsr.c
-index 89d871e..aadc78b 100644
---- a/drivers/char/bsr.c
-+++ b/drivers/char/bsr.c
-@@ -210,7 +210,7 @@ static int bsr_add_node(struct device_node *bn)
+diff -u -p a/drivers/video/matrox/matroxfb_base.c b/drivers/video/matrox/matroxfb_base.c
+--- a/drivers/video/matrox/matroxfb_base.c
++++ b/drivers/video/matrox/matroxfb_base.c
+@@ -2040,10 +2040,9 @@ static int matroxfb_probe(struct pci_dev
+ 		return -1;
+ 	}
  
- 		cur->bsr_minor  = i + total_bsr_devs;
- 		cur->bsr_addr   = res.start;
--		cur->bsr_len    = res.end - res.start + 1;
-+		cur->bsr_len    = resource_size(&res);
- 		cur->bsr_bytes  = bsr_bytes[i];
- 		cur->bsr_stride = bsr_stride[i];
- 		cur->bsr_dev    = MKDEV(bsr_major, i + total_bsr_devs);
--- 
-1.6.3.3
-
+-	minfo = kmalloc(sizeof(*minfo), GFP_KERNEL);
++	minfo = kzalloc(sizeof(*minfo), GFP_KERNEL);
+ 	if (!minfo)
+ 		return -1;
+-	memset(minfo, 0, sizeof(*minfo));
+ 
+ 	minfo->pcidev = pdev;
+ 	minfo->dead = 0;
