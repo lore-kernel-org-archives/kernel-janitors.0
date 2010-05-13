@@ -1,60 +1,74 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 21 May 2010 19:56:04 +0000
-Subject: Re: [patch] nuc900fb: release correct mem region
-Message-Id: <20100521125604.3065ca0e.akpm@linux-foundation.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 20:02:03 +0000
+Subject: [PATCH 9/20] drivers/bluetooth: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132201470.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100325105408.GD5069@bicker> <20100519194854.GB22515@bicker>
-	<AANLkTimDYkjTEVMFl8Vrbwblg46-ErGEaUV3M9-DWbCu@mail.gmail.com>
-In-Reply-To: <AANLkTimDYkjTEVMFl8Vrbwblg46-ErGEaUV3M9-DWbCu@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 20 May 2010 10:36:59 +0800
-Wan ZongShun <mcuos.com@gmail.com> wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Hi Dan,
-> 
-> Qiang brother have a busy doing business, so I can maintain the
-> nuc900fb driver instead.
+Use kzalloc rather than the combination of kmalloc and memset.
 
-Feel free to send an update to the MAINTAINERS file.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-> It looks good to me.
-> 
-> Andrew , Could you help merge this patch? thanks a lot!
-> 
-> Acked-by: Wan ZongShun<mcuos.com@gmail.com>
-> 
-> 
-> 2010/5/20 Dan Carpenter <error27@gmail.com>:
-> > Ping. __Any feedback on this patch?
-> >
-> > regards,
-> > dan carpenter
-> >
-> > On Thu, Mar 25, 2010 at 01:54:08PM +0300, Dan Carpenter wrote:
-> >> We should be releasing "res->start" here.
-> >>
-> >> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> >> ---
-> >> BTW. __Congratulations on being an official driver maintainer now. __:) __Can
-> >> you add yourself to the MAINTAINERS file?
-> >>
-> >> diff --git a/drivers/video/nuc900fb.c b/drivers/video/nuc900fb.c
-> >> index 6bf0d46..d4cde79 100644
-> >> --- a/drivers/video/nuc900fb.c
-> >> +++ b/drivers/video/nuc900fb.c
-> >> @@ -667,7 +667,7 @@ release_irq:
-> >> __release_regs:
-> >> __ __ __ iounmap(fbi->io);
-> >> __release_mem_region:
-> >> - __ __ release_mem_region((unsigned long)fbi->mem, size);
-> >> + __ __ release_mem_region(res->start, size);
-> >> __free_fb:
-> >> __ __ __ framebuffer_release(fbinfo);
-> >> __ __ __ return ret;
-> >
+// <smpl>
+@@
+expression x,size,flags;
+statement S;
+@@
 
-I don't think I ever received a copy of this patch.  I reconstructed it.
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/bluetooth/btmrvl_sdio.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff -u -p a/drivers/bluetooth/btmrvl_sdio.c b/drivers/bluetooth/btmrvl_sdio.c
+--- a/drivers/bluetooth/btmrvl_sdio.c
++++ b/drivers/bluetooth/btmrvl_sdio.c
+@@ -216,7 +216,7 @@ static int btmrvl_sdio_download_helper(s
+ 
+ 	tmphlprbufsz = ALIGN_SZ(BTM_UPLD_SIZE, BTSDIO_DMA_ALIGN);
+ 
+-	tmphlprbuf = kmalloc(tmphlprbufsz, GFP_KERNEL);
++	tmphlprbuf = kzalloc(tmphlprbufsz, GFP_KERNEL);
+ 	if (!tmphlprbuf) {
+ 		BT_ERR("Unable to allocate buffer for helper."
+ 			" Terminating download");
+@@ -224,8 +224,6 @@ static int btmrvl_sdio_download_helper(s
+ 		goto done;
+ 	}
+ 
+-	memset(tmphlprbuf, 0, tmphlprbufsz);
+-
+ 	helperbuf = (u8 *) ALIGN_ADDR(tmphlprbuf, BTSDIO_DMA_ALIGN);
+ 
+ 	/* Perform helper data transfer */
+@@ -318,7 +316,7 @@ static int btmrvl_sdio_download_fw_w_hel
+ 	BT_DBG("Downloading FW image (%d bytes)", firmwarelen);
+ 
+ 	tmpfwbufsz = ALIGN_SZ(BTM_UPLD_SIZE, BTSDIO_DMA_ALIGN);
+-	tmpfwbuf = kmalloc(tmpfwbufsz, GFP_KERNEL);
++	tmpfwbuf = kzalloc(tmpfwbufsz, GFP_KERNEL);
+ 	if (!tmpfwbuf) {
+ 		BT_ERR("Unable to allocate buffer for firmware."
+ 		       " Terminating download");
+@@ -326,8 +324,6 @@ static int btmrvl_sdio_download_fw_w_hel
+ 		goto done;
+ 	}
+ 
+-	memset(tmpfwbuf, 0, tmpfwbufsz);
+-
+ 	/* Ensure aligned firmware buffer */
+ 	fwbuf = (u8 *) ALIGN_ADDR(tmpfwbuf, BTSDIO_DMA_ALIGN);
+ 
