@@ -1,74 +1,102 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Wed, 19 May 2010 22:09:18 +0000
-Subject: Re: [PATCH 16/37] drivers/media/video/uvc: Use kmemdup
-Message-Id: <201005200009.19916.laurent.pinchart@ideasonboard.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 19:58:56 +0000
+Subject: [PATCH 2/20] drivers/gpu/drm: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132158390.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005152317410.21345@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005152317410.21345@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Laurent Pinchart <laurent.pinchart@skynet.be>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+From: Julia Lawall <julia@diku.dk>
 
-Thanks for the patch.
+Use kzalloc rather than the combination of kmalloc and memset.
 
-On Saturday 15 May 2010 23:17:59 Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kmemdup when some other buffer is immediately copied into the
-> allocated region.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression from,to,size,flag;
-> statement S;
-> @@
-> 
-> -  to = \(kmalloc\|kzalloc\)(size,flag);
-> +  to = kmemdup(from,size,flag);
->    if (to=NULL || ...) S
-> -  memcpy(to, from, size);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/media/video/uvc/uvc_driver.c |    5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff -u -p a/drivers/media/video/uvc/uvc_driver.c
-> b/drivers/media/video/uvc/uvc_driver.c ---
-> a/drivers/media/video/uvc/uvc_driver.c
-> +++ b/drivers/media/video/uvc/uvc_driver.c
-> @@ -637,14 +637,13 @@ static int uvc_parse_streaming(struct uv
->  	}
->  	streaming->header.bControlSize = n;
-> 
-> -	streaming->header.bmaControls = kmalloc(p*n, GFP_KERNEL);
-> +	streaming->header.bmaControls = kmemdup(&buffer[size], p * n,
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-I'm puzzled, how did the above semantic patch transform 'p*n' into 'p * n' ? 
-As a side note, keeping 'p*n' would have allowed the statement to fit in one 
-line :-)
+// <smpl>
+@@
+expression x,size,flags;
+statement S;
+@@
 
-> +						GFP_KERNEL);
->  	if (streaming->header.bmaControls = NULL) {
->  		ret = -ENOMEM;
->  		goto error;
->  	}
-> 
-> -	memcpy(streaming->header.bmaControls, &buffer[size], p*n);
-> -
->  	buflen -= buffer[0];
->  	buffer += buffer[0];
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
+// </smpl>
 
--- 
-Regards,
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Laurent Pinchart
+---
+ drivers/gpu/drm/drm_auth.c          |    3 +--
+ drivers/gpu/drm/drm_dma.c           |    4 +---
+ drivers/gpu/drm/drm_fops.c          |    3 +--
+ drivers/gpu/drm/savage/savage_bci.c |    3 +--
+ 4 files changed, 4 insertions(+), 9 deletions(-)
+
+diff -u -p a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
+--- a/drivers/gpu/drm/drm_auth.c
++++ b/drivers/gpu/drm/drm_auth.c
+@@ -79,10 +79,9 @@ static int drm_add_magic(struct drm_mast
+ 	struct drm_device *dev = master->minor->dev;
+ 	DRM_DEBUG("%d\n", magic);
+ 
+-	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
+ 	if (!entry)
+ 		return -ENOMEM;
+-	memset(entry, 0, sizeof(*entry));
+ 	entry->priv = priv;
+ 	entry->hash_item.key = (unsigned long)magic;
+ 	mutex_lock(&dev->struct_mutex);
+diff -u -p a/drivers/gpu/drm/drm_dma.c b/drivers/gpu/drm/drm_dma.c
+--- a/drivers/gpu/drm/drm_dma.c
++++ b/drivers/gpu/drm/drm_dma.c
+@@ -47,12 +47,10 @@ int drm_dma_setup(struct drm_device *dev
+ {
+ 	int i;
+ 
+-	dev->dma = kmalloc(sizeof(*dev->dma), GFP_KERNEL);
++	dev->dma = kzalloc(sizeof(*dev->dma), GFP_KERNEL);
+ 	if (!dev->dma)
+ 		return -ENOMEM;
+ 
+-	memset(dev->dma, 0, sizeof(*dev->dma));
+-
+ 	for (i = 0; i <= DRM_MAX_ORDER; i++)
+ 		memset(&dev->dma->bufs[i], 0, sizeof(dev->dma->bufs[0]));
+ 
+diff -u -p a/drivers/gpu/drm/drm_fops.c b/drivers/gpu/drm/drm_fops.c
+--- a/drivers/gpu/drm/drm_fops.c
++++ b/drivers/gpu/drm/drm_fops.c
+@@ -243,11 +243,10 @@ static int drm_open_helper(struct inode 
+ 
+ 	DRM_DEBUG("pid = %d, minor = %d\n", task_pid_nr(current), minor_id);
+ 
+-	priv = kmalloc(sizeof(*priv), GFP_KERNEL);
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	memset(priv, 0, sizeof(*priv));
+ 	filp->private_data = priv;
+ 	priv->filp = filp;
+ 	priv->uid = current_euid();
+diff -u -p a/drivers/gpu/drm/savage/savage_bci.c b/drivers/gpu/drm/savage/savage_bci.c
+--- a/drivers/gpu/drm/savage/savage_bci.c
++++ b/drivers/gpu/drm/savage/savage_bci.c
+@@ -539,11 +539,10 @@ int savage_driver_load(struct drm_device
+ {
+ 	drm_savage_private_t *dev_priv;
+ 
+-	dev_priv = kmalloc(sizeof(drm_savage_private_t), GFP_KERNEL);
++	dev_priv = kzalloc(sizeof(drm_savage_private_t), GFP_KERNEL);
+ 	if (dev_priv = NULL)
+ 		return -ENOMEM;
+ 
+-	memset(dev_priv, 0, sizeof(drm_savage_private_t));
+ 	dev->dev_private = (void *)dev_priv;
+ 
+ 	dev_priv->chipset = (enum savage_family)chipset;
