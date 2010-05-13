@@ -1,69 +1,73 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:20:45 +0000
-Subject: [PATCH 25/37] drivers/net/usb: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152320270.21345@ask.diku.dk>
+Date: Thu, 13 May 2010 19:59:15 +0000
+Subject: [PATCH 3/20] drivers/media: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132158570.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
+Use kzalloc rather than the combination of kmalloc and memset.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression from,to,size,flag;
+expression x,size,flags;
 statement S;
 @@
 
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/net/usb/asix.c    |    3 +--
- drivers/net/usb/mcs7830.c |    4 +---
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ drivers/media/dvb/frontends/ds3000.c |    5 +----
+ drivers/media/video/omap/omap_vout.c |    3 +--
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff -u -p a/drivers/net/usb/asix.c b/drivers/net/usb/asix.c
---- a/drivers/net/usb/asix.c
-+++ b/drivers/net/usb/asix.c
-@@ -224,10 +224,9 @@ static int asix_write_cmd(struct usbnet 
- 		   cmd, value, index, size);
+diff -u -p a/drivers/media/dvb/frontends/ds3000.c b/drivers/media/dvb/frontends/ds3000.c
+--- a/drivers/media/dvb/frontends/ds3000.c
++++ b/drivers/media/dvb/frontends/ds3000.c
+@@ -969,15 +969,12 @@ struct dvb_frontend *ds3000_attach(const
+ 	dprintk("%s\n", __func__);
  
- 	if (data) {
--		buf = kmalloc(size, GFP_KERNEL);
-+		buf = kmemdup(data, size, GFP_KERNEL);
- 		if (!buf)
- 			goto out;
--		memcpy(buf, data, size);
+ 	/* allocate memory for the internal state */
+-	state = kmalloc(sizeof(struct ds3000_state), GFP_KERNEL);
++	state = kzalloc(sizeof(struct ds3000_state), GFP_KERNEL);
+ 	if (state = NULL) {
+ 		printk(KERN_ERR "Unable to kmalloc\n");
+ 		goto error2;
  	}
  
- 	err = usb_control_msg(
-diff -u -p a/drivers/net/usb/mcs7830.c b/drivers/net/usb/mcs7830.c
---- a/drivers/net/usb/mcs7830.c
-+++ b/drivers/net/usb/mcs7830.c
-@@ -142,12 +142,10 @@ static int mcs7830_set_reg(struct usbnet
- 	int ret;
- 	void *buffer;
- 
--	buffer = kmalloc(size, GFP_NOIO);
-+	buffer = kmemdup(data, size, GFP_NOIO);
- 	if (buffer = NULL)
- 		return -ENOMEM;
- 
--	memcpy(buffer, data, size);
+-	/* setup the state */
+-	memset(state, 0, sizeof(struct ds3000_state));
 -
- 	ret = usb_control_msg(xdev, usb_sndctrlpipe(xdev, 0), MCS7830_WR_BREQ,
- 			      MCS7830_WR_BMREQ, 0x0000, index, buffer,
- 			      size, MCS7830_CTRL_TIMEOUT);
+ 	state->config = config;
+ 	state->i2c = i2c;
+ 	state->prevUCBS2 = 0;
+diff -u -p a/drivers/media/video/omap/omap_vout.c b/drivers/media/video/omap/omap_vout.c
+--- a/drivers/media/video/omap/omap_vout.c
++++ b/drivers/media/video/omap/omap_vout.c
+@@ -2371,12 +2371,11 @@ static int __init omap_vout_create_video
+ 
+ 	for (k = 0; k < pdev->num_resources; k++) {
+ 
+-		vout = kmalloc(sizeof(struct omap_vout_device), GFP_KERNEL);
++		vout = kzalloc(sizeof(struct omap_vout_device), GFP_KERNEL);
+ 		if (!vout) {
+ 			dev_err(&pdev->dev, ": could not allocate memory\n");
+ 			return -ENOMEM;
+ 		}
+-		memset(vout, 0, sizeof(struct omap_vout_device));
+ 
+ 		vout->vid = k;
+ 		vid_dev->vouts[k] = vout;
