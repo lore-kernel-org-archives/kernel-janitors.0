@@ -1,49 +1,73 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Date: Thu, 20 May 2010 15:05:06 +0000
-Subject: Re: [PATCH 01/11] [ARM] pxa: Storage class should be before const
-Message-Id: <AANLkTinQaa2HYk1TF5P_P3yMmBpMgxS5WzOgqGvojINx@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 19:58:37 +0000
+Subject: [PATCH 1/20] sound/pci/asihpi: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132157400.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1274344306-8735-1-git-send-email-tklauser@distanz.ch>
-	<201005201226.13337.marek.vasut@gmail.com>
-In-Reply-To: <201005201226.13337.marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, May 20, 2010 at 6:26 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> Dne Čt 20. května 2010 10:31:46 Tobias Klauser napsal(a):
->> The C99 specification states in section 6.11.5:
->>
->> The placement of a storage-class specifier other than at the beginning
->> of the declaration specifiers in a declaration is an obsolescent
->> feature.
->>
->> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
->> ---
->>  arch/arm/mach-pxa/palmtc.c |    4 ++--
->>  1 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/mach-pxa/palmtc.c b/arch/arm/mach-pxa/palmtc.c
->> index 033b567..ce1104d 100644
->> --- a/arch/arm/mach-pxa/palmtc.c
->> +++ b/arch/arm/mach-pxa/palmtc.c
->> @@ -263,11 +263,11 @@ const struct matrix_keymap_data palmtc_keymap_data >> { .keymap_size                = ARRAY_SIZE(palmtc_matrix_keys),
->>  };
->>
->> -const static unsigned int palmtc_keypad_row_gpios[] = {
->> +static const unsigned int palmtc_keypad_row_gpios[] = {
->>       0, 9, 10, 11
->>  };
->>
->> -const static unsigned int palmtc_keypad_col_gpios[] = {
->> +static const unsigned int palmtc_keypad_col_gpios[] = {
->>       18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 79, 80
->>  };
->
-> Ok, if that's the case, you have my ack:
->
-> Acked-by: Marek Vasut <marek.vasut@gmail.com>
->
+From: Julia Lawall <julia@diku.dk>
 
-Applied.
+Use kzalloc rather than the combination of kmalloc and memset.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,size,flags;
+statement S;
+@@
+
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/pci/asihpi/hpi6000.c |    3 +--
+ sound/pci/asihpi/hpi6205.c |    3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff -u -p a/sound/pci/asihpi/hpi6000.c b/sound/pci/asihpi/hpi6000.c
+--- a/sound/pci/asihpi/hpi6000.c
++++ b/sound/pci/asihpi/hpi6000.c
+@@ -448,14 +448,13 @@ static void subsys_create_adapter(struct
+ 	if (phm->u.s.resource.r.pci->device_id != HPI_PCI_DEV_ID_PCI2040)
+ 		return;
+ 
+-	ao.priv = kmalloc(sizeof(struct hpi_hw_obj), GFP_KERNEL);
++	ao.priv = kzalloc(sizeof(struct hpi_hw_obj), GFP_KERNEL);
+ 	if (!ao.priv) {
+ 		HPI_DEBUG_LOG(ERROR, "cant get mem for adapter object\n");
+ 		phr->error = HPI_ERROR_MEMORY_ALLOC;
+ 		return;
+ 	}
+ 
+-	memset(ao.priv, 0, sizeof(struct hpi_hw_obj));
+ 	/* create the adapter object based on the resource information */
+ 	/*? memcpy(&ao.Pci,&phm->u.s.Resource.r.Pci,sizeof(ao.Pci)); */
+ 	ao.pci = *phm->u.s.resource.r.pci;
+diff -u -p a/sound/pci/asihpi/hpi6205.c b/sound/pci/asihpi/hpi6205.c
+--- a/sound/pci/asihpi/hpi6205.c
++++ b/sound/pci/asihpi/hpi6205.c
+@@ -482,13 +482,12 @@ static void subsys_create_adapter(struct
+ 	if (phm->u.s.resource.r.pci->device_id != HPI_PCI_DEV_ID_DSP6205)
+ 		return;
+ 
+-	ao.priv = kmalloc(sizeof(struct hpi_hw_obj), GFP_KERNEL);
++	ao.priv = kzalloc(sizeof(struct hpi_hw_obj), GFP_KERNEL);
+ 	if (!ao.priv) {
+ 		HPI_DEBUG_LOG(ERROR, "cant get mem for adapter object\n");
+ 		phr->error = HPI_ERROR_MEMORY_ALLOC;
+ 		return;
+ 	}
+-	memset(ao.priv, 0, sizeof(struct hpi_hw_obj));
+ 
+ 	ao.pci = *phm->u.s.resource.r.pci;
+ 	err = create_adapter_obj(&ao, &os_error_code);
