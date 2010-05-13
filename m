@@ -1,57 +1,55 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 10:01:30 +0000
-Subject: [PATCH 8/8] fs/affs: Use ERR_CAST
-Message-Id: <Pine.LNX.4.64.1005221201150.13021@ask.diku.dk>
+Date: Thu, 13 May 2010 20:00:40 +0000
+Subject: [PATCH 7/20] drivers/usb/serial: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132200240.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roman Zippel <zippel@linux-m68k.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use ERR_CAST(x) rather than ERR_PTR(PTR_ERR(x)).  The former makes more
-clear what is the purpose of the operation, which otherwise looks like a
-no-op.
+Use kzalloc rather than the combination of kmalloc and memset.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-type T;
-T x;
-identifier f;
+expression x,size,flags;
+statement S;
 @@
 
-T f (...) { <+...
-- ERR_PTR(PTR_ERR(x))
-+ x
- ...+> }
-
-@@
-expression x;
-@@
-
-- ERR_PTR(PTR_ERR(x))
-+ ERR_CAST(x)
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- fs/affs/namei.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/serial/io_edgeport.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff -u -p a/fs/affs/namei.c b/fs/affs/namei.c
---- a/fs/affs/namei.c
-+++ b/fs/affs/namei.c
-@@ -224,7 +224,7 @@ affs_lookup(struct inode *dir, struct de
- 		affs_brelse(bh);
- 		inode = affs_iget(sb, ino);
- 		if (IS_ERR(inode))
--			return ERR_PTR(PTR_ERR(inode));
-+			return ERR_CAST(inode);
- 	}
- 	dentry->d_op = AFFS_SB(sb)->s_flags & SF_INTL ? &affs_intl_dentry_operations : &affs_dentry_operations;
- 	d_add(dentry, inode);
+diff -u -p a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -3020,7 +3020,7 @@ static int edge_startup(struct usb_seria
+ 
+ 	/* set up our port private structures */
+ 	for (i = 0; i < serial->num_ports; ++i) {
+-		edge_port = kmalloc(sizeof(struct edgeport_port), GFP_KERNEL);
++		edge_port = kzalloc(sizeof(struct edgeport_port), GFP_KERNEL);
+ 		if (edge_port = NULL) {
+ 			dev_err(&serial->dev->dev, "%s - Out of memory\n",
+ 								   __func__);
+@@ -3033,7 +3033,6 @@ static int edge_startup(struct usb_seria
+ 			kfree(edge_serial);
+ 			return -ENOMEM;
+ 		}
+-		memset(edge_port, 0, sizeof(struct edgeport_port));
+ 		spin_lock_init(&edge_port->ep_lock);
+ 		edge_port->port = serial->port[i];
+ 		usb_set_serial_port_data(serial->port[i], edge_port);
