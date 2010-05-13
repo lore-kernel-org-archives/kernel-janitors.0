@@ -1,89 +1,71 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:19:17 +0000
-Subject: [PATCH 3/27] fs/btrfs: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221018590.13021@ask.diku.dk>
+Date: Thu, 13 May 2010 20:07:46 +0000
+Subject: [PATCH 20/20] drivers/mtd/nand: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132207300.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Vincent Sanders <support@simtec.co.uk>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use memdup_user when user data is immediately copied into the
-allocated region.
+Use kzalloc rather than the combination of kmalloc and memset.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression from,to,size,flag;
-position p;
-identifier l1,l2;
+expression x,size,flags;
+statement S;
 @@
 
--  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-+  to = memdup_user(from,size);
-   if (
--      to=NULL
-+      IS_ERR(to)
-                 || ...) {
-   <+... when != goto l1;
--  -ENOMEM
-+  PTR_ERR(to)
-   ...+>
-   }
--  if (copy_from_user(to, from, size) != 0) {
--    <+... when != goto l2;
--    -EFAULT
--    ...+>
--  }
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- fs/btrfs/ioctl.c |   20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ drivers/mtd/nand/s3c2410.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 97a9783..5301d78 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1096,14 +1096,10 @@ static noinline int btrfs_ioctl_tree_search(struct file *file,
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
+diff -u -p a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -929,14 +929,13 @@ static int s3c24xx_nand_probe(struct pla
  
--	args = kmalloc(sizeof(*args), GFP_KERNEL);
--	if (!args)
--		return -ENOMEM;
-+	args = memdup_user(argp, sizeof(*args));
-+	if (IS_ERR(args))
-+		return PTR_ERR(args);
+ 	pr_debug("s3c2410_nand_probe(%p)\n", pdev);
  
--	if (copy_from_user(args, argp, sizeof(*args))) {
--		kfree(args);
--		return -EFAULT;
--	}
- 	inode = fdentry(file)->d_inode;
- 	ret = search_ioctl(inode, args);
- 	if (ret = 0 && copy_to_user(argp, args, sizeof(*args)))
-@@ -1211,14 +1207,10 @@ static noinline int btrfs_ioctl_ino_lookup(struct file *file,
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
+-	info = kmalloc(sizeof(*info), GFP_KERNEL);
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 	if (info = NULL) {
+ 		dev_err(&pdev->dev, "no memory for flash info\n");
+ 		err = -ENOMEM;
+ 		goto exit_error;
+ 	}
  
--	args = kmalloc(sizeof(*args), GFP_KERNEL);
--	if (!args)
--		return -ENOMEM;
-+	args = memdup_user(argp, sizeof(*args));
-+	if (IS_ERR(args))
-+		return PTR_ERR(args);
+-	memset(info, 0, sizeof(*info));
+ 	platform_set_drvdata(pdev, info);
  
--	if (copy_from_user(args, argp, sizeof(*args))) {
--		kfree(args);
--		return -EFAULT;
--	}
- 	inode = fdentry(file)->d_inode;
+ 	spin_lock_init(&info->controller.lock);
+@@ -994,15 +993,13 @@ static int s3c24xx_nand_probe(struct pla
+ 	/* allocate our information */
  
- 	if (args->treeid = 0)
+ 	size = nr_sets * sizeof(*info->mtds);
+-	info->mtds = kmalloc(size, GFP_KERNEL);
++	info->mtds = kzalloc(size, GFP_KERNEL);
+ 	if (info->mtds = NULL) {
+ 		dev_err(&pdev->dev, "failed to allocate mtd storage\n");
+ 		err = -ENOMEM;
+ 		goto exit_error;
+ 	}
+ 
+-	memset(info->mtds, 0, size);
+-
+ 	/* initialise all possible chips */
+ 
+ 	nmtd = info->mtds;
