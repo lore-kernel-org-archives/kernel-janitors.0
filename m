@@ -1,52 +1,56 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 13 May 2010 20:02:56 +0000
-Subject: [PATCH 11/20] drivers/net/wireless/orinoco: Use kzalloc
-Message-Id: <Pine.LNX.4.64.1005132202310.6282@ask.diku.dk>
+Date: Thu, 13 May 2010 20:06:40 +0000
+Subject: [PATCH 17/20] arch/x86/kernel: Use kcalloc
+Message-Id: <Pine.LNX.4.64.1005132206210.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Roskin <proski@gnu.org>, David Gibson <hermes@gibson.dropbear.id.au>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, orinoco-users@lists.sourceforge.net, orinoco-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kzalloc rather than the combination of kmalloc and memset.
+Use kcalloc rather than the combination of kmalloc and memset.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression x,size,flags;
+expression x,y,flags;
 statement S;
+type T;
 @@
 
--x = kmalloc(size,flags);
-+x = kzalloc(size,flags);
+x = 
+-   kmalloc
++   kcalloc
+           (
+-           y * sizeof(T),
++           y, sizeof(T),
+                flags);
  if (x = NULL) S
--memset(x, 0, size);
+-memset(x, 0, y * sizeof(T));
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/net/wireless/orinoco/orinoco_usb.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/x86/kernel/uv_time.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff -u -p a/drivers/net/wireless/orinoco/orinoco_usb.c b/drivers/net/wireless/orinoco/orinoco_usb.c
---- a/drivers/net/wireless/orinoco/orinoco_usb.c
-+++ b/drivers/net/wireless/orinoco/orinoco_usb.c
-@@ -356,12 +356,10 @@ static struct request_context *ezusb_all
+diff -u -p a/arch/x86/kernel/uv_time.c b/arch/x86/kernel/uv_time.c
+--- a/arch/x86/kernel/uv_time.c
++++ b/arch/x86/kernel/uv_time.c
+@@ -149,10 +149,9 @@ static __init int uv_rtc_allocate_timers
  {
- 	struct request_context *ctx;
+ 	int cpu;
  
--	ctx = kmalloc(sizeof(*ctx), GFP_ATOMIC);
-+	ctx = kzalloc(sizeof(*ctx), GFP_ATOMIC);
- 	if (!ctx)
- 		return NULL;
+-	blade_info = kmalloc(uv_possible_blades * sizeof(void *), GFP_KERNEL);
++	blade_info = kcalloc(uv_possible_blades, sizeof(void *), GFP_KERNEL);
+ 	if (!blade_info)
+ 		return -ENOMEM;
+-	memset(blade_info, 0, uv_possible_blades * sizeof(void *));
  
--	memset(ctx, 0, sizeof(*ctx));
--
- 	ctx->buf = kmalloc(BULK_BUF_SIZE, GFP_ATOMIC);
- 	if (!ctx->buf) {
- 		kfree(ctx);
+ 	for_each_present_cpu(cpu) {
+ 		int nid = cpu_to_node(cpu);
