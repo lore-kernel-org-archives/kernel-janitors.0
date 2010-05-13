@@ -1,60 +1,54 @@
-From: Jiri Olsa <jolsa@redhat.com>
-Date: Thu, 06 May 2010 17:36:15 +0000
-Subject: [PATCH 11/13] drivers/video: removing redundant ifdefs
-Message-Id: <1273167377-14270-12-git-send-email-jolsa@redhat.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 20:01:46 +0000
+Subject: [PATCH 8/20] drivers/parport: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132200410.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
-In-Reply-To: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, jgarzik@pobox.com, hare@suse.de, felipe.balbi@nokia.com, Jiri Olsa <jolsa@redhat.com>
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-wbr,
-jirka
+From: Julia Lawall <julia@diku.dk>
 
+Use kzalloc rather than the combination of kmalloc and memset.
 
-Signed-off-by: Jiri Olsa <jolsa@redhat.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,size,flags;
+statement S;
+@@
+
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/video/atafb.c                   |    2 --
- drivers/video/matrox/matroxfb_DAC1064.c |    5 +----
- 2 files changed, 1 insertions(+), 6 deletions(-)
+ drivers/parport/share.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/video/atafb.c b/drivers/video/atafb.c
-index f3aada2..5b2b5ef 100644
---- a/drivers/video/atafb.c
-+++ b/drivers/video/atafb.c
-@@ -1718,11 +1718,9 @@ static int falcon_setcolreg(unsigned int regno, unsigned int red,
- 			(((red & 0xe000) >> 13) | ((red & 0x1000) >> 12) << 8) |
- 			(((green & 0xe000) >> 13) | ((green & 0x1000) >> 12) << 4) |
- 			((blue & 0xe000) >> 13) | ((blue & 0x1000) >> 12);
--#ifdef ATAFB_FALCON
- 		((u32 *)info->pseudo_palette)[regno] = ((red & 0xf800) |
- 						       ((green & 0xfc00) >> 5) |
- 						       ((blue & 0xf800) >> 11));
--#endif
- 	}
- 	return 0;
- }
-diff --git a/drivers/video/matrox/matroxfb_DAC1064.c b/drivers/video/matrox/matroxfb_DAC1064.c
-index f9fa0fd..1717623 100644
---- a/drivers/video/matrox/matroxfb_DAC1064.c
-+++ b/drivers/video/matrox/matroxfb_DAC1064.c
-@@ -869,12 +869,9 @@ static int MGAG100_preinit(struct matrox_fb_info *minfo)
- 	minfo->capable.plnwt = minfo->devflags.accelerator = FB_ACCEL_MATROX_MGAG100
- 			? minfo->devflags.sgram : 1;
+diff -u -p a/drivers/parport/share.c b/drivers/parport/share.c
+--- a/drivers/parport/share.c
++++ b/drivers/parport/share.c
+@@ -282,14 +282,13 @@ struct parport *parport_register_port(un
+ 	int device;
+ 	char *name;
  
--#ifdef CONFIG_FB_MATROX_G
- 	if (minfo->devflags.g450dac) {
- 		minfo->outputs[0].output = &g450out;
--	} else
--#endif
--	{
-+	} else {
- 		minfo->outputs[0].output = &m1064;
+-	tmp = kmalloc(sizeof(struct parport), GFP_KERNEL);
++	tmp = kzalloc(sizeof(struct parport), GFP_KERNEL);
+ 	if (!tmp) {
+ 		printk(KERN_WARNING "parport: memory squeeze\n");
+ 		return NULL;
  	}
- 	minfo->outputs[0].src = minfo->outputs[0].default_src;
--- 
-1.6.6.1
-
+ 
+ 	/* Init our structure */
+- 	memset(tmp, 0, sizeof(struct parport));
+ 	tmp->base = base;
+ 	tmp->irq = irq;
+ 	tmp->dma = dma;
