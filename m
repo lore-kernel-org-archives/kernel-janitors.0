@@ -1,56 +1,52 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:20:26 +0000
-Subject: [PATCH 24/37] drivers/net/wireless/b43: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152320070.21345@ask.diku.dk>
+Date: Thu, 13 May 2010 20:02:56 +0000
+Subject: [PATCH 11/20] drivers/net/wireless/orinoco: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132202310.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefano Brivio <stefano.brivio@polimi.it>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Pavel Roskin <proski@gnu.org>, David Gibson <hermes@gibson.dropbear.id.au>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, orinoco-users@lists.sourceforge.net, orinoco-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
+Use kzalloc rather than the combination of kmalloc and memset.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression from,to,size,flag;
+expression x,size,flags;
 statement S;
 @@
 
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/net/wireless/b43/dma.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/orinoco/orinoco_usb.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff -u -p a/drivers/net/wireless/b43/dma.c b/drivers/net/wireless/b43/dma.c
---- a/drivers/net/wireless/b43/dma.c
-+++ b/drivers/net/wireless/b43/dma.c
-@@ -1221,14 +1221,14 @@ static int dma_tx_fragment(struct b43_dm
- 	meta->dmaaddr = map_descbuffer(ring, skb->data, skb->len, 1);
- 	/* create a bounce buffer in zone_dma on mapping failure. */
- 	if (b43_dma_mapping_error(ring, meta->dmaaddr, skb->len, 1)) {
--		priv_info->bouncebuffer = kmalloc(skb->len, GFP_ATOMIC | GFP_DMA);
-+		priv_info->bouncebuffer = kmemdup(skb->data, skb->len,
-+						  GFP_ATOMIC | GFP_DMA);
- 		if (!priv_info->bouncebuffer) {
- 			ring->current_slot = old_top_slot;
- 			ring->used_slots = old_used_slots;
- 			err = -ENOMEM;
- 			goto out_unmap_hdr;
- 		}
--		memcpy(priv_info->bouncebuffer, skb->data, skb->len);
+diff -u -p a/drivers/net/wireless/orinoco/orinoco_usb.c b/drivers/net/wireless/orinoco/orinoco_usb.c
+--- a/drivers/net/wireless/orinoco/orinoco_usb.c
++++ b/drivers/net/wireless/orinoco/orinoco_usb.c
+@@ -356,12 +356,10 @@ static struct request_context *ezusb_all
+ {
+ 	struct request_context *ctx;
  
- 		meta->dmaaddr = map_descbuffer(ring, priv_info->bouncebuffer, skb->len, 1);
- 		if (b43_dma_mapping_error(ring, meta->dmaaddr, skb->len, 1)) {
+-	ctx = kmalloc(sizeof(*ctx), GFP_ATOMIC);
++	ctx = kzalloc(sizeof(*ctx), GFP_ATOMIC);
+ 	if (!ctx)
+ 		return NULL;
+ 
+-	memset(ctx, 0, sizeof(*ctx));
+-
+ 	ctx->buf = kmalloc(BULK_BUF_SIZE, GFP_ATOMIC);
+ 	if (!ctx->buf) {
+ 		kfree(ctx);
