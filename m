@@ -1,34 +1,64 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Sat, 29 May 2010 07:06:52 +0000
-Subject: Re: [patch] video/saa7134: potential null dereferences in debug
-Message-Id: <20100529090652.2e8f5e43@hyperion.delvare>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 20:06:20 +0000
+Subject: [PATCH 16/20] drivers/platform/x86: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132206020.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100522201535.GI22515@bicker>
-	<20100522225921.585b2d72@hyperion.delvare>
-	<20100529012954.25490c3a@pedra>
-In-Reply-To: <20100529012954.25490c3a@pedra>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Dan Carpenter <error27@gmail.com>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, hermann pitton <hermann-pitton@arcor.de>, Douglas Schilling Landgraf <dougsland@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Woithe <jwoithe@physics.adelaide.edu.au>, Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 29 May 2010 01:29:54 -0300, Mauro Carvalho Chehab wrote:
-> Em Sat, 22 May 2010 22:59:21 +0200
-> Jean Delvare <khali@linux-fr.org> escreveu:
-> > I would have used "(null)" instead of "<null>" for consistency with
-> > lib/vsprintf.c:string().
-> > 
-> > But more importantly, I suspect that a better fix would be to not call
-> > these macros when dev or ir, respectively, is NULL. The faulty dprintk
-> > calls in get_key_msi_tvanywhere_plus() and get_key_flydvb_trio() could
-> > be replaced with i2cdprintk (which is misnamed IMHO, BTW.)
-> 
-> Agreed.
-> 
-> Dan, could you please rework your patch according with Jean's feedback?
+From: Julia Lawall <julia@diku.dk>
 
-He did already.
+Use kzalloc rather than the combination of kmalloc and memset.
 
--- 
-Jean Delvare
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,size,flags;
+statement S;
+@@
+
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/platform/x86/fujitsu-laptop.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff -u -p a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+--- a/drivers/platform/x86/fujitsu-laptop.c
++++ b/drivers/platform/x86/fujitsu-laptop.c
+@@ -1090,10 +1090,9 @@ static int __init fujitsu_init(void)
+ 	if (acpi_disabled)
+ 		return -ENODEV;
+ 
+-	fujitsu = kmalloc(sizeof(struct fujitsu_t), GFP_KERNEL);
++	fujitsu = kzalloc(sizeof(struct fujitsu_t), GFP_KERNEL);
+ 	if (!fujitsu)
+ 		return -ENOMEM;
+-	memset(fujitsu, 0, sizeof(struct fujitsu_t));
+ 	fujitsu->keycode1 = KEY_PROG1;
+ 	fujitsu->keycode2 = KEY_PROG2;
+ 	fujitsu->keycode3 = KEY_PROG3;
+@@ -1150,12 +1149,11 @@ static int __init fujitsu_init(void)
+ 
+ 	/* Register hotkey driver */
+ 
+-	fujitsu_hotkey = kmalloc(sizeof(struct fujitsu_hotkey_t), GFP_KERNEL);
++	fujitsu_hotkey = kzalloc(sizeof(struct fujitsu_hotkey_t), GFP_KERNEL);
+ 	if (!fujitsu_hotkey) {
+ 		ret = -ENOMEM;
+ 		goto fail_hotkey;
+ 	}
+-	memset(fujitsu_hotkey, 0, sizeof(struct fujitsu_hotkey_t));
+ 
+ 	result = acpi_bus_register_driver(&acpi_fujitsu_hotkey_driver);
+ 	if (result < 0) {
