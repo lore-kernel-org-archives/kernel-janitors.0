@@ -1,43 +1,50 @@
-From: Avi Kivity <avi@redhat.com>
-Date: Thu, 27 May 2010 13:20:25 +0000
-Subject: Re: [PATCH 10/17] arch/ia64/kvm: Add missing spin_unlock
-Message-Id: <4BFE7199.7060609@redhat.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 20:00:22 +0000
+Subject: [PATCH 6/20] drivers/net: Use kzalloc
+Message-Id: <Pine.LNX.4.64.1005132200050.6282@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261756490.23743@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005261756490.23743@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, Xiantao Zhang <xiantao.zhang@intel.com>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, kvm@vger.kernel.org, kvm-ia64@vger.kernel.org, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Lennert Buytenhek <buytenh@wantstofly.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/26/2010 06:57 PM, Julia Lawall wrote:
-> From: Julia Lawall<julia@diku.dk>
->
-> Add a spin_unlock missing on the error path.
->
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> //<smpl>
-> @@
-> expression E1;
-> @@
->
-> * spin_lock(E1,...);
->    <+... when != E1
->    if (...) {
->      ... when != E1
-> *   return ...;
->    }
->    ...+>
-> * spin_unlock(E1,...);
-> //</smpl>
->
->    
+From: Julia Lawall <julia@diku.dk>
 
-Applied, thanks.
+Use kzalloc rather than the combination of kmalloc and memset.
 
--- 
-error compiling committee.c: too many arguments to function
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression x,size,flags;
+statement S;
+@@
+
+-x = kmalloc(size,flags);
++x = kzalloc(size,flags);
+ if (x = NULL) S
+-memset(x, 0, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/mv643xx_eth.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/net/mv643xx_eth.c b/drivers/net/mv643xx_eth.c
+--- a/drivers/net/mv643xx_eth.c
++++ b/drivers/net/mv643xx_eth.c
+@@ -2608,10 +2608,9 @@ static int mv643xx_eth_shared_probe(stru
+ 		goto out;
+ 
+ 	ret = -ENOMEM;
+-	msp = kmalloc(sizeof(*msp), GFP_KERNEL);
++	msp = kzalloc(sizeof(*msp), GFP_KERNEL);
+ 	if (msp = NULL)
+ 		goto out;
+-	memset(msp, 0, sizeof(*msp));
+ 
+ 	msp->base = ioremap(res->start, res->end - res->start + 1);
+ 	if (msp->base = NULL)
