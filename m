@@ -1,93 +1,28 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 27 May 2010 08:09:24 +0000
-Subject: Re: [PATCH 17/17] sound: Add missing spin_unlock
-Message-Id: <s5hiq694vgr.wl%tiwai@suse.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 14 May 2010 14:49:20 +0000
+Subject: [patch -next] asihpi: testing the wrong variable
+Message-Id: <20100514144920.GC17487@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261759110.23743@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005261759110.23743@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Eliot Blennerhassett <eblennerhassett@audioscience.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-At Wed, 26 May 2010 17:59:27 +0200 (CEST),
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Add a spin_unlock missing on the error path.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression E1;
-> @@
-> 
-> * spin_lock(E1,...);
->   <+... when != E1
->   if (...) {
->     ... when != E1
-> *   return ...;
->   }
->   ...+>
-> * spin_unlock(E1,...);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+There is a typo here.  We want to test "*dst" not "dst".
 
-Thanks, applied now.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
-Takashi
-
-> ---
->  sound/mips/au1x00.c                 |    1 +
->  sound/oss/dmasound/dmasound_atari.c |    5 +++--
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/mips/au1x00.c b/sound/mips/au1x00.c
-> index 3e763d6..446cf97 100644
-> --- a/sound/mips/au1x00.c
-> +++ b/sound/mips/au1x00.c
-> @@ -516,6 +516,7 @@ get the interrupt driven case to work efficiently */
->  			break;
->  	if (i = 0x5000) {
->  		printk(KERN_ERR "au1000 AC97: AC97 command read timeout\n");
-> +		spin_unlock(&au1000->ac97_lock);
->  		return 0;
->  	}
->  
-> diff --git a/sound/oss/dmasound/dmasound_atari.c b/sound/oss/dmasound/dmasound_atari.c
-> index 1f47741..13c2144 100644
-> --- a/sound/oss/dmasound/dmasound_atari.c
-> +++ b/sound/oss/dmasound/dmasound_atari.c
-> @@ -1277,7 +1277,7 @@ static irqreturn_t AtaInterrupt(int irq, void *dummy)
->  		 * (almost) like on the TT.
->  		 */
->  		write_sq_ignore_int = 0;
-> -		return IRQ_HANDLED;
-> +		goto out;
->  	}
->  
->  	if (!write_sq.active) {
-> @@ -1285,7 +1285,7 @@ static irqreturn_t AtaInterrupt(int irq, void *dummy)
->  		 * the sq variables, so better don't do anything here.
->  		 */
->  		WAKE_UP(write_sq.sync_queue);
-> -		return IRQ_HANDLED;
-> +		goto out;
->  	}
->  
->  	/* Probably ;) one frame is finished. Well, in fact it may be that a
-> @@ -1322,6 +1322,7 @@ static irqreturn_t AtaInterrupt(int irq, void *dummy)
->  	/* We are not playing after AtaPlay(), so there
->  	   is nothing to play any more. Wake up a process
->  	   waiting for audio output to drain. */
-> +out:
->  	spin_unlock(&dmasound.lock);
->  	return IRQ_HANDLED;
->  }
-> 
+diff --git a/sound/pci/asihpi/hpifunc.c b/sound/pci/asihpi/hpifunc.c
+index 254c580..15f0c7e 100644
+--- a/sound/pci/asihpi/hpifunc.c
++++ b/sound/pci/asihpi/hpifunc.c
+@@ -3279,7 +3279,7 @@ static u16 hpi_entity_alloc_and_copy(struct hpi_entity *src,
+ 
+ 	buf_size = hpi_entity_size(src);
+ 	*dst = kmalloc(buf_size, GFP_KERNEL);
+-	if (dst = NULL)
++	if (*dst = NULL)
+ 		return HPI_ERROR_MEMORY_ALLOC;
+ 	memcpy(*dst, src, buf_size);
+ 	return 0;
