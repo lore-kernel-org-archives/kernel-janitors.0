@@ -1,46 +1,29 @@
-From: Jiri Olsa <jolsa@redhat.com>
-Date: Thu, 06 May 2010 17:36:06 +0000
-Subject: [PATCH 02/13] ia64: removing redundant ifdef
-Message-Id: <1273167377-14270-3-git-send-email-jolsa@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 14 May 2010 14:50:05 +0000
+Subject: [patch -next] sound/asihpi: incorrect range check
+Message-Id: <20100514145005.GD17487@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
-In-Reply-To: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, jgarzik@pobox.com, hare@suse.de, felipe.balbi@nokia.com, Jiri Olsa <jolsa@redhat.com>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Eliot Blennerhassett <eblennerhassett@audioscience.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-wbr,
-jirka
+The entity_type_to_size[] array has LAST_ENTITY_TYPE (11) number of elements,
+not LAST_ENTITY_ROLE (17).  This only affects the debug output.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Jiri Olsa <jolsa@redhat.com>
----
- arch/ia64/include/asm/mmzone.h |    4 ----
- 1 files changed, 0 insertions(+), 4 deletions(-)
-
-diff --git a/arch/ia64/include/asm/mmzone.h b/arch/ia64/include/asm/mmzone.h
-index f2ca320..e0de617 100644
---- a/arch/ia64/include/asm/mmzone.h
-+++ b/arch/ia64/include/asm/mmzone.h
-@@ -19,16 +19,12 @@
+diff --git a/sound/pci/asihpi/hpifunc.c b/sound/pci/asihpi/hpifunc.c
+index 254c580..eda26b3 100644
+--- a/sound/pci/asihpi/hpifunc.c
++++ b/sound/pci/asihpi/hpifunc.c
+@@ -3407,7 +3407,7 @@ u16 hpi_entity_alloc_and_pack(const enum e_entity_type type,
+ 	if (hE)
+ 		return hE;
  
- static inline int pfn_to_nid(unsigned long pfn)
- {
--#ifdef CONFIG_NUMA
- 	extern int paddr_to_nid(unsigned long);
- 	int nid = paddr_to_nid(pfn << PAGE_SHIFT);
- 	if (nid < 0)
- 		return 0;
- 	else
- 		return nid;
--#else
--	return 0;
--#endif
- }
+-	HPI_DEBUG_ASSERT(role > entity_role_null && type < LAST_ENTITY_ROLE);
++	HPI_DEBUG_ASSERT(role > entity_role_null && type < LAST_ENTITY_TYPE);
  
- #ifdef CONFIG_IA64_DIG /* DIG systems are small */
--- 
-1.6.6.1
-
+ 	bytes_to_copy = entity_type_to_size[type] * item_count;
+ 	total_size = hpi_entity_header_size(*entity) + bytes_to_copy;
