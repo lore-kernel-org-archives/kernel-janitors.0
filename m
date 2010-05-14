@@ -1,44 +1,56 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Tue, 25 May 2010 15:33:16 +0000
-Subject: Re: [PATCH 1/3 v2] kbuild/makefiles.txt: Fix examples and content
-Message-Id: <20100525083316.dba6892a.rdunlap@xenotime.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 14 May 2010 19:30:30 +0000
+Subject: [PATCH 7/10] security/selinux/ss: Use kstrdup
+Message-Id: <Pine.LNX.4.64.1005142130140.28935@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273603385-20587-1-git-send-email-mfm@muteddisk.com>
-	<20100512043038.GB5358@cr0.nay.redhat.com>
-In-Reply-To: <20100512043038.GB5358@cr0.nay.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: =?ISO-8859-1?Q?Am=E9rico?= Wang <xiyou.wangcong@gmail.com>
-Cc: matt mooney <mfm@muteddisk.com>, Randy Dunlap <rdunlap@xenotime.net>, linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, mec@shout.net, kai@tp1.ruhr-uni-bochum.de, sam@ravnborg.org, jengelh@gmx.de
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Stephen Smalley <sds@tycho.nsa.gov>, James Morris <jmorris@namei.org>, Eric Paris <eparis@parisplace.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 12 May 2010 12:30:38 +0800 Am=E9rico Wang wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Tue, May 11, 2010 at 11:43:05AM -0700, matt mooney wrote:
-> >
-> >Update section 3.3 Loadable module goals - obj-m, from $(<module_name>-o=
-bjs) to $(<module_name>-y) for easier addition of conditional objects to th=
-e module. The examples are also updated to reflect the current state of eac=
-h Makefile used.
-> >
-> >Signed-off-by: matt mooney <mfm@muteddisk.com>
->=20
->=20
-> The whole patchset looks good to me, so,
->=20
-> Reviewed-by: WANG Cong <xiyou.wangcong@gmail.com>
->=20
-> But note that I am not a native English-speaker, let's
-> see what Randy will say.
+Use kstrdup when the goal of an allocation is copy a string into the
+allocated region.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Added all 3 patches to my patch queue.  Thanks, Matt.
+// <smpl>
+@@
+expression from,to;
+expression flag,E1,E2;
+statement S;
+@@
+
+-  to = kmalloc(strlen(from) + 1,flag);
++  to = kstrdup(from, flag);
+   ... when != \(from = E1 \| to = E1 \)
+   if (to=NULL || ...) S
+   ... when != \(from = E2 \| to = E2 \)
+-  strcpy(to, from);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ security/selinux/ss/policydb.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -156,12 +156,11 @@ static int roles_init(struct policydb *p
+ 		rc = -EINVAL;
+ 		goto out_free_role;
+ 	}
+-	key = kmalloc(strlen(OBJECT_R) + 1, GFP_KERNEL);
++	key = kstrdup(OBJECT_R, GFP_KERNEL);
+ 	if (!key) {
+ 		rc = -ENOMEM;
+ 		goto out_free_role;
+ 	}
+-	strcpy(key, OBJECT_R);
+ 	rc = hashtab_insert(p->p_roles.table, key, role);
+ 	if (rc)
+ 		goto out_free_key;
