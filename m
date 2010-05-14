@@ -1,7 +1,7 @@
-From: Corbin Simpson <mostawesomedude@gmail.com>
-Date: Thu, 13 May 2010 22:40:51 +0000
+From: Matt Turner <mattst88@gmail.com>
+Date: Fri, 14 May 2010 00:25:49 +0000
 Subject: Re: [PATCH 2/20] drivers/gpu/drm: Use kzalloc
-Message-Id: <AANLkTinQJDjv0oXXPqlRITLvcp5OaDmnzX0E-1vU942X@mail.gmail.com>
+Message-Id: <AANLkTilFWD5tykIabA9gM5bKASkPo7I1FNWDZfItY5el@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.1005132158390.6282@ask.diku.dk>
 In-Reply-To: <Pine.LNX.4.64.1005132158390.6282@ask.diku.dk>
@@ -9,9 +9,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: Julia Lawall <julia@diku.dk>
-Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Thu, May 13, 2010 at 12:58 PM, Julia Lawall <julia@diku.dk> wrote:
+On Thu, May 13, 2010 at 3:58 PM, Julia Lawall <julia@diku.dk> wrote:
 > From: Julia Lawall <julia@diku.dk>
 >
 > Use kzalloc rather than the combination of kmalloc and memset.
@@ -109,19 +109,13 @@ EL);
 > =A0 =A0 =A0 =A0dev->dev_private =3D (void *)dev_priv;
 >
 > =A0 =A0 =A0 =A0dev_priv->chipset =3D (enum savage_family)chipset;
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
 
-Zero idea if anybody cares about savage DRM, but this looks like a
-completely reasonable patch.
-
-Reviewed-by: Corbin Simpson <MostAwesomeDude@gmail.com>
-
-~ C.
-
---=20
-When the facts change, I change my mind. What do you do, sir? ~ Keynes
-
-Corbin Simpson
-<MostAwesomeDude@gmail.com>
+Reviewed-by: Matt Turner <mattst88@gmail.com>
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
