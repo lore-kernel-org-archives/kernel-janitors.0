@@ -1,59 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 14 May 2010 19:30:48 +0000
-Subject: [PATCH 8/10] fs/ocfs2/dlm: Use kstrdup
-Message-Id: <Pine.LNX.4.64.1005142130310.28935@ask.diku.dk>
+From: Joel Becker <Joel.Becker@oracle.com>
+Date: Fri, 14 May 2010 20:06:33 +0000
+Subject: Re: [PATCH 8/10] fs/ocfs2/dlm: Use kstrdup
+Message-Id: <20100514200632.GD29764@mail.oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1005142130310.28935@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005142130310.28935@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Fasheh <mfasheh@suse.com>, Joel Becker <joel.becker@oracle.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Fri, May 14, 2010 at 09:30:48PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Use kstrdup when the goal of an allocation is copy a string into the
+> allocated region.
 
-Use kstrdup when the goal of an allocation is copy a string into the
-allocated region.
+	Seems fine.  I'll send it along.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Joel
 
-// <smpl>
-@@
-expression from,to;
-expression flag,E1,E2;
-statement S;
-@@
+-- 
 
--  to = kmalloc(strlen(from) + 1,flag);
-+  to = kstrdup(from, flag);
-   ... when != \(from = E1 \| to = E1 \)
-   if (to=NULL || ...) S
-   ... when != \(from = E2 \| to = E2 \)
--  strcpy(to, from);
-// </smpl>
+"In the arms of the angel, fly away from here,
+ From this dark, cold hotel room and the endlessness that you fear.
+ You are pulled from the wreckage of your silent reverie.
+ In the arms of the angel, may you find some comfort here."
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- fs/ocfs2/dlm/dlmdomain.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff -u -p a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
---- a/fs/ocfs2/dlm/dlmdomain.c
-+++ b/fs/ocfs2/dlm/dlmdomain.c
-@@ -1523,7 +1523,7 @@ static struct dlm_ctxt *dlm_alloc_ctxt(c
- 		goto leave;
- 	}
- 
--	dlm->name = kmalloc(strlen(domain) + 1, GFP_KERNEL);
-+	dlm->name = kstrdup(domain, GFP_KERNEL);
- 	if (dlm->name = NULL) {
- 		mlog_errno(-ENOMEM);
- 		kfree(dlm);
-@@ -1557,7 +1557,6 @@ static struct dlm_ctxt *dlm_alloc_ctxt(c
- 	for (i = 0; i < DLM_HASH_BUCKETS; i++)
- 		INIT_HLIST_HEAD(dlm_master_hash(dlm, i));
- 
--	strcpy(dlm->name, domain);
- 	dlm->key = key;
- 	dlm->node_num = o2nm_this_node();
- 
+Joel Becker
+Principal Software Developer
+Oracle
+E-mail: joel.becker@oracle.com
+Phone: (650) 506-8127
