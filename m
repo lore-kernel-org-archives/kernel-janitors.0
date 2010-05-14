@@ -1,44 +1,26 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Tue, 11 May 2010 06:57:44 +0000
-Subject: [PATCH] crypto: mv_cesa - Use resource_size
-Message-Id: <1273561064-3530-1-git-send-email-tklauser@distanz.ch>
+From: Herbert Xu <herbert@gondor.hengli.com.au>
+Date: Fri, 14 May 2010 04:58:17 +0000
+Subject: Re: [PATCH] crypto: mv_cesa - Use resource_size
+Message-Id: <20100514045817.GB26117@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1273561064-3530-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1273561064-3530-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org
-Cc: davem@davemloft.net, kernel-janitors@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>
+Content-Type: text/plain; charset="hz-gb-2312"
+Content-Transfer-Encoding: base64
+To: Tobias Klauser <tklauser@distanz.ch>
+Cc: linux-crypto@vger.kernel.org, davem@davemloft.net, kernel-janitors@vger.kernel.org
 
-Use the resource_size function instead of manually calculating the
-resource size. This reduces the chance of introducing off-by-one errors.
-
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- drivers/crypto/mv_cesa.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/crypto/mv_cesa.c b/drivers/crypto/mv_cesa.c
-index 18a436c..e095422 100644
---- a/drivers/crypto/mv_cesa.c
-+++ b/drivers/crypto/mv_cesa.c
-@@ -1023,7 +1023,7 @@ static int mv_probe(struct platform_device *pdev)
- 
- 	spin_lock_init(&cp->lock);
- 	crypto_init_queue(&cp->queue, 50);
--	cp->reg = ioremap(res->start, res->end - res->start + 1);
-+	cp->reg = ioremap(res->start, resource_size(res));
- 	if (!cp->reg) {
- 		ret = -ENOMEM;
- 		goto err;
-@@ -1034,7 +1034,7 @@ static int mv_probe(struct platform_device *pdev)
- 		ret = -ENXIO;
- 		goto err_unmap_reg;
- 	}
--	cp->sram_size = res->end - res->start + 1;
-+	cp->sram_size = resource_size(res);
- 	cp->max_req_size = cp->sram_size - SRAM_CFG_SPACE;
- 	cp->sram = ioremap(res->start, cp->sram_size);
- 	if (!cp->sram) {
--- 
-1.6.3.3
-
+T24gVHVlLCBNYXkgMTEsIDIwMTAgYXQgMDg6NTc6NDRBTSArMDIwMCwgVG9iaWFzIEtsYXVzZXIg
+d3JvdGU6Cj4gVXNlIHRoZSByZXNvdXJjZV9zaXplIGZ1bmN0aW9uIGluc3RlYWQgb2YgbWFudWFs
+bHkgY2FsY3VsYXRpbmcgdGhlCj4gcmVzb3VyY2Ugc2l6ZS4gVGhpcyByZWR1Y2VzIHRoZSBjaGFu
+Y2Ugb2YgaW50cm9kdWNpbmcgb2ZmLWJ5LW9uZSBlcnJvcnMuCj4gCj4gU2lnbmVkLW9mZi1ieTog
+VG9iaWFzIEtsYXVzZXIgPHRrbGF1c2VyQGRpc3RhbnouY2g+CgpQYXRjaCBhcHBsaWVkLiAgVGhh
+bmtzIQotLSAKVmlzaXQgT3BlbnN3YW4gYXQgaHR0cDovL3d3dy5vcGVuc3dhbi5vcmcvCkVtYWls
+OiBIZXJiZXJ0IFh1IH57UG1WPkhJfn0gPGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9yZy5hdT4KSG9t
+ZSBQYWdlOiBodHRwOi8vZ29uZG9yLmFwYW5hLm9yZy5hdS9+aGVyYmVydC8KUEdQIEtleTogaHR0
+cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvcHVia2V5LnR4dAotLQpUbyB1bnN1YnNj
+cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWph
+bml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
+Lm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
+ZG9tby1pbmZvLmh0bWw=
