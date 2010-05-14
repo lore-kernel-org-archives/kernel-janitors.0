@@ -1,37 +1,56 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 20 May 2010 08:32:54 +0000
-Subject: [PATCH 02/11] xtensa: Storage class should be before const qualifier
-Message-Id: <1274344374-8804-1-git-send-email-tklauser@distanz.ch>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 14 May 2010 19:28:37 +0000
+Subject: [PATCH 2/10] drivers/char/ipmi: Use kstrdup
+Message-Id: <Pine.LNX.4.64.1005142128140.28935@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Corey Minyard <minyard@acm.org>, openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The C99 specification states in section 6.11.5:
+From: Julia Lawall <julia@diku.dk>
 
-The placement of a storage-class specifier other than at the beginning
-of the declaration specifiers in a declaration is an obsolescent
-feature.
+Use kstrdup when the goal of an allocation is copy a string into the
+allocated region.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to;
+expression flag,E1,E2;
+statement S;
+@@
+
+-  to = kmalloc(strlen(from) + 1,flag);
++  to = kstrdup(from, flag);
+   ... when != \(from = E1 \| to = E1 \)
+   if (to=NULL || ...) S
+   ... when != \(from = E2 \| to = E2 \)
+-  strcpy(to, from);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- arch/xtensa/variants/s6000/include/variant/dmac.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/char/ipmi/ipmi_msghandler.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/xtensa/variants/s6000/include/variant/dmac.h b/arch/xtensa/variants/s6000/include/variant/dmac.h
-index 89ab948..e81735b 100644
---- a/arch/xtensa/variants/s6000/include/variant/dmac.h
-+++ b/arch/xtensa/variants/s6000/include/variant/dmac.h
-@@ -357,7 +357,7 @@ static inline u32 s6dmac_channel_enabled(u32 dmac, int chan)
- static inline void s6dmac_dp_setup_group(u32 dmac, int port,
- 			int nrch, int frrep)
- {
--	const static u8 mask[4] = {0, 3, 1, 2};
-+	static const u8 mask[4] = {0, 3, 1, 2};
- 	BUG_ON(dmac != S6_REG_DPDMA);
- 	if ((port < 0) || (port > 3) || (nrch < 1) || (nrch > 4))
- 		return;
--- 
-1.6.3.3
-
+diff -u -p a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -1976,12 +1976,11 @@ int ipmi_smi_add_proc_entry(ipmi_smi_t s
+ 	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
+ 	if (!entry)
+ 		return -ENOMEM;
+-	entry->name = kmalloc(strlen(name)+1, GFP_KERNEL);
++	entry->name = kstrdup(name, GFP_KERNEL);
+ 	if (!entry->name) {
+ 		kfree(entry);
+ 		return -ENOMEM;
+ 	}
+-	strcpy(entry->name, name);
+ 
+ 	file = create_proc_entry(name, 0, smi->proc_dir);
+ 	if (!file) {
