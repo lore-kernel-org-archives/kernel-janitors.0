@@ -1,67 +1,59 @@
-From: "Gustavo F. Padovan" <gustavo@padovan.org>
-Date: Sun, 16 May 2010 04:53:31 +0000
-Subject: Re: [PATCH 20/37] drivers/bluetooth: Use kmemdup
-Message-Id: <20100516045331.GA25105@vigoh>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 14 May 2010 19:30:48 +0000
+Subject: [PATCH 8/10] fs/ocfs2/dlm: Use kstrdup
+Message-Id: <Pine.LNX.4.64.1005142130310.28935@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005152318590.21345@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005152318590.21345@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Fasheh <mfasheh@suse.com>, Joel Becker <joel.becker@oracle.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-* Julia Lawall <julia@diku.dk> [2010-05-15 23:19:15 +0200]:
+From: Julia Lawall <julia@diku.dk>
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kmemdup when some other buffer is immediately copied into the
-> allocated region.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression from,to,size,flag;
-> statement S;
-> @@
-> 
-> -  to = \(kmalloc\|kzalloc\)(size,flag);
-> +  to = kmemdup(from,size,flag);
->    if (to=NULL || ...) S
-> -  memcpy(to, from, size);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/bluetooth/bcm203x.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff -u -p a/drivers/bluetooth/bcm203x.c b/drivers/bluetooth/bcm203x.c
-> --- a/drivers/bluetooth/bcm203x.c
-> +++ b/drivers/bluetooth/bcm203x.c
-> @@ -224,7 +224,7 @@ static int bcm203x_probe(struct usb_inte
->  
->  	BT_DBG("firmware data %p size %zu", firmware->data, firmware->size);
->  
-> -	data->fw_data = kmalloc(firmware->size, GFP_KERNEL);
-> +	data->fw_data = kmemdup(firmware->data, firmware->size, GFP_KERNEL);
->  	if (!data->fw_data) {
->  		BT_ERR("Can't allocate memory for firmware image");
->  		release_firmware(firmware);
-> @@ -234,7 +234,6 @@ static int bcm203x_probe(struct usb_inte
->  		return -ENOMEM;
->  	}
->  
-> -	memcpy(data->fw_data, firmware->data, firmware->size);
->  	data->fw_size = firmware->size;
->  	data->fw_sent = 0;
+Use kstrdup when the goal of an allocation is copy a string into the
+allocated region.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Acked-by: Gustavo F. Padovan <padovan@profusion.mobi>
+// <smpl>
+@@
+expression from,to;
+expression flag,E1,E2;
+statement S;
+@@
 
--- 
-Gustavo F. Padovan
-http://padovan.org
+-  to = kmalloc(strlen(from) + 1,flag);
++  to = kstrdup(from, flag);
+   ... when != \(from = E1 \| to = E1 \)
+   if (to=NULL || ...) S
+   ... when != \(from = E2 \| to = E2 \)
+-  strcpy(to, from);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/ocfs2/dlm/dlmdomain.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -1523,7 +1523,7 @@ static struct dlm_ctxt *dlm_alloc_ctxt(c
+ 		goto leave;
+ 	}
+ 
+-	dlm->name = kmalloc(strlen(domain) + 1, GFP_KERNEL);
++	dlm->name = kstrdup(domain, GFP_KERNEL);
+ 	if (dlm->name = NULL) {
+ 		mlog_errno(-ENOMEM);
+ 		kfree(dlm);
+@@ -1557,7 +1557,6 @@ static struct dlm_ctxt *dlm_alloc_ctxt(c
+ 	for (i = 0; i < DLM_HASH_BUCKETS; i++)
+ 		INIT_HLIST_HEAD(dlm_master_hash(dlm, i));
+ 
+-	strcpy(dlm->name, domain);
+ 	dlm->key = key;
+ 	dlm->node_num = o2nm_this_node();
+ 
