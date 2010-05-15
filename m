@@ -1,42 +1,68 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 22 May 2010 19:53:27 +0000
-Subject: [patch] em28xx: remove unneeded null checks
-Message-Id: <20100522194854.GH22515@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 09:46:54 +0000
+Subject: [PATCH 4/4] drivers/media/video: Eliminate use after free
+Message-Id: <Pine.LNX.4.64.1005151146370.15566@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Devin Heitmueller <dheitmueller@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "dev" variable is used as a list cursor in a list_for_each_entry()
-loop and can never be null here so I removed the check.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+The error value is saved in a new local variable err before freeing the
+containing structure.
 
-diff --git a/drivers/media/video/em28xx/em28xx-core.c b/drivers/media/video/em28xx/em28xx-core.c
-index 331e1ca..44c63cb 100644
---- a/drivers/media/video/em28xx/em28xx-core.c
-+++ b/drivers/media/video/em28xx/em28xx-core.c
-@@ -1186,8 +1186,7 @@ int em28xx_register_extension(struct em28xx_ops *ops)
- 	mutex_lock(&em28xx_devlist_mutex);
- 	list_add_tail(&ops->next, &em28xx_extension_devlist);
- 	list_for_each_entry(dev, &em28xx_devlist, devlist) {
--		if (dev)
--			ops->init(dev);
-+		ops->init(dev);
- 	}
- 	printk(KERN_INFO "Em28xx: Initialized (%s) extension\n", ops->name);
- 	mutex_unlock(&em28xx_devlist_mutex);
-@@ -1201,10 +1200,8 @@ void em28xx_unregister_extension(struct em28xx_ops *ops)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@free@
+expression E;
+position p;
+@@
+kfree@p(E)
+
+@@
+expression free.E, subE<=free.E, E1;
+position free.p;
+@@
+
+  kfree@p(E)
+  ...
+(
+  subE = E1
+|
+* E
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/video/mem2mem_testdev.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/video/mem2mem_testdev.c b/drivers/media/video/mem2mem_testdev.c
+index baf211b..fb73f34 100644
+--- a/drivers/media/video/mem2mem_testdev.c
++++ b/drivers/media/video/mem2mem_testdev.c
+@@ -858,6 +858,7 @@ static int m2mtest_open(struct file *file)
+ {
+ 	struct m2mtest_dev *dev = video_drvdata(file);
+ 	struct m2mtest_ctx *ctx = NULL;
++	int err;
  
- 	mutex_lock(&em28xx_devlist_mutex);
- 	list_for_each_entry(dev, &em28xx_devlist, devlist) {
--		if (dev)
--			ops->fini(dev);
-+		ops->fini(dev);
+ 	ctx = kzalloc(sizeof *ctx, GFP_KERNEL);
+ 	if (!ctx)
+@@ -871,8 +872,9 @@ static int m2mtest_open(struct file *file)
+ 
+ 	ctx->m2m_ctx = v4l2_m2m_ctx_init(ctx, dev->m2m_dev, queue_init);
+ 	if (IS_ERR(ctx->m2m_ctx)) {
++		err = PTR_ERR(ctx->m2m_ctx);
+ 		kfree(ctx);
+-		return PTR_ERR(ctx->m2m_ctx);
++		return err;
  	}
--
- 	printk(KERN_INFO "Em28xx: Removed (%s) extension\n", ops->name);
- 	list_del(&ops->next);
- 	mutex_unlock(&em28xx_devlist_mutex);
+ 
+ 	atomic_inc(&dev->num_inst);
