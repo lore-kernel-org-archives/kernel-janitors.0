@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:13:16 +0000
-Subject: [PATCH 2/37] drivers/memstick/core/mspro_block.c: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152312290.21345@ask.diku.dk>
+Date: Sat, 15 May 2010 21:19:48 +0000
+Subject: [PATCH 22/37] drivers/scsi/mpt2sas: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152319310.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -31,23 +31,27 @@ statement S;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/memstick/core/mspro_block.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/mpt2sas/mpt2sas_scsih.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff -u -p a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
---- a/drivers/memstick/core/mspro_block.c
-+++ b/drivers/memstick/core/mspro_block.c
-@@ -1012,12 +1012,11 @@ static int mspro_block_read_attributes(s
+diff -u -p a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+--- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+@@ -6056,7 +6056,7 @@ mpt2sas_scsih_event_callback(struct MPT2
+ 		return 1;
  	}
- 	msb->attr_group.name = "media_attributes";
- 
--	buffer = kmalloc(msb->page_size, GFP_KERNEL);
-+	buffer = kmemdup((char *)attr, msb->page_size, GFP_KERNEL);
- 	if (!buffer) {
- 		rc = -ENOMEM;
- 		goto out_free_attr;
+ 	sz = le16_to_cpu(mpi_reply->EventDataLength) * 4;
+-	fw_event->event_data = kzalloc(sz, GFP_ATOMIC);
++	fw_event->event_data = kmemdup(mpi_reply->EventData, sz, GFP_ATOMIC);
+ 	if (!fw_event->event_data) {
+ 		printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
+ 		    ioc->name, __FILE__, __LINE__, __func__);
+@@ -6064,8 +6064,6 @@ mpt2sas_scsih_event_callback(struct MPT2
+ 		return 1;
  	}
--	memcpy(buffer, (char *)attr, msb->page_size);
- 	page_count = 1;
  
- 	for (cnt = 0; cnt < attr_count; ++cnt) {
+-	memcpy(fw_event->event_data, mpi_reply->EventData,
+-	    sz);
+ 	fw_event->ioc = ioc;
+ 	fw_event->VF_ID = mpi_reply->VF_ID;
+ 	fw_event->VP_ID = mpi_reply->VP_ID;
