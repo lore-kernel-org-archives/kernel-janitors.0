@@ -1,28 +1,58 @@
-From: Herbert Xu <herbert@gondor.hengli.com.au>
-Date: Wed, 26 May 2010 00:45:35 +0000
-Subject: Re: [patch] mv_cesa: fixup error handling in mv_probe()
-Message-Id: <20100526004535.GF20073@gondor.apana.org.au>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:12:28 +0000
+Subject: [PATCH 1/37] drivers/net/wireless/libertas: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152312060.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100525094947.GF22515@bicker>
-In-Reply-To: <20100525094947.GF22515@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Dan Carpenter <error27@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Uri Simchoni <uri@jdland.co.il>, Nicolas Pitre <nico@marvell.com>, Tejun Heo <tj@kernel.org>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Williams <dcbw@redhat.com>, "John W. Linville" <linville@tuxdriver.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gVHVlLCBNYXkgMjUsIDIwMTAgYXQgMTE6NDk6NDdBTSArMDIwMCwgRGFuIENhcnBlbnRlciB3
-cm90ZToKPiBUaGUgZXJyb3IgaGFuZGxpbmcgaW4gbXZfcHJvYmUoKSB3YXMgYSBiaXQgbWVzc2Vk
-IHVwLiAgVGhlcmUgd2VyZSBzb21lIAo+IGdvdG9zIHRvIHRoZSB3cm9uZyBsYWJlbHMgc28gaXQg
-ZW5kZWQgdXAgcmVsZWFzaW5nIHN0dWZmIHRoYXQgdGhhdCBoYWRuJ3QKPiBiZWVuIGFxdWlyZWQg
-YW5kIG5vdCByZWxlYXNpbmcgc3R1ZmYgdGhhdCB3YXMgbWVhbnQgdG8gYmUgcmVsZWFzZWQuICBJ
-Cj4gc2h1ZmZsZWQgaXQgYXJvdW5kIGEgYml0IHRvIGZpeCBpdCBhbmQgbWFrZSBpdCBjbGVhcmVy
-Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGVycm9yMjdAZ21haWwuY29tPgoK
-UGF0Y2ggYXBwbGllZC4gIFRoYW5rIHlvdS4KLS0gClZpc2l0IE9wZW5zd2FuIGF0IGh0dHA6Ly93
-d3cub3BlbnN3YW4ub3JnLwpFbWFpbDogSGVyYmVydCBYdSB+e1BtVj5ISX59IDxoZXJiZXJ0QGdv
-bmRvci5hcGFuYS5vcmcuYXU+CkhvbWUgUGFnZTogaHR0cDovL2dvbmRvci5hcGFuYS5vcmcuYXUv
-fmhlcmJlcnQvClBHUCBLZXk6IGh0dHA6Ly9nb25kb3IuYXBhbmEub3JnLmF1L35oZXJiZXJ0L3B1
-YmtleS50eHQKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
-InVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
-IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDov
-L3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+From: Julia Lawall <julia@diku.dk>
+
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wireless/libertas/if_usb.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff -u -p a/drivers/net/wireless/libertas/if_usb.c b/drivers/net/wireless/libertas/if_usb.c
+--- a/drivers/net/wireless/libertas/if_usb.c
++++ b/drivers/net/wireless/libertas/if_usb.c
+@@ -618,16 +618,14 @@ static void if_usb_receive_fwload(struct
+ 		return;
+ 	}
+ 
+-	syncfwheader = kmalloc(sizeof(struct fwsyncheader), GFP_ATOMIC);
++	syncfwheader = kmemdup(skb->data + IPFIELD_ALIGN_OFFSET,
++			       sizeof(struct fwsyncheader), GFP_ATOMIC);
+ 	if (!syncfwheader) {
+ 		lbs_deb_usbd(&cardp->udev->dev, "Failure to allocate syncfwheader\n");
+ 		kfree_skb(skb);
+ 		return;
+ 	}
+ 
+-	memcpy(syncfwheader, skb->data + IPFIELD_ALIGN_OFFSET,
+-	       sizeof(struct fwsyncheader));
+-
+ 	if (!syncfwheader->cmd) {
+ 		lbs_deb_usb2(&cardp->udev->dev, "FW received Blk with correct CRC\n");
+ 		lbs_deb_usb2(&cardp->udev->dev, "FW received Blk seqnum = %d\n",
