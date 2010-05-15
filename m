@@ -1,70 +1,56 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:25:03 +0000
-Subject: [PATCH 21/27] drivers/ide: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221024470.13021@ask.diku.dk>
+Date: Sat, 15 May 2010 21:15:27 +0000
+Subject: [PATCH 8/37] drivers/media/video/zoran: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152315100.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use memdup_user when user data is immediately copied into the
+Use kmemdup when some other buffer is immediately copied into the
 allocated region.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
 expression from,to,size,flag;
-position p;
-identifier l1,l2;
+statement S;
 @@
 
--  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-+  to = memdup_user(from,size);
-   if (
--      to=NULL
-+      IS_ERR(to)
-                 || ...) {
-   <+... when != goto l1;
--  -ENOMEM
-+  PTR_ERR(to)
-   ...+>
-   }
--  if (copy_from_user(to, from, size) != 0) {
--    <+... when != goto l2;
--    -EFAULT
--    ...+>
--  }
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/ide/ide-taskfile.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/media/video/zoran/videocodec.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ide/ide-taskfile.c b/drivers/ide/ide-taskfile.c
-index 67fb735..34b9872 100644
---- a/drivers/ide/ide-taskfile.c
-+++ b/drivers/ide/ide-taskfile.c
-@@ -480,13 +480,9 @@ int ide_taskfile_ioctl(ide_drive_t *drive, unsigned long arg)
- 	u16 nsect		= 0;
- 	char __user *buf = (char __user *)arg;
+diff -u -p a/drivers/media/video/zoran/videocodec.c b/drivers/media/video/zoran/videocodec.c
+--- a/drivers/media/video/zoran/videocodec.c
++++ b/drivers/media/video/zoran/videocodec.c
+@@ -107,15 +107,14 @@ videocodec_attach (struct videocodec_mas
+ 			if (!try_module_get(h->codec->owner))
+ 				return NULL;
  
--	req_task = kzalloc(tasksize, GFP_KERNEL);
--	if (req_task = NULL)
--		return -ENOMEM;
--	if (copy_from_user(req_task, buf, tasksize)) {
--		kfree(req_task);
--		return -EFAULT;
--	}
-+	req_task = memdup_user(buf, tasksize);
-+	if (IS_ERR(req_task))
-+		return PTR_ERR(req_task);
+-			codec -			    kmalloc(sizeof(struct videocodec), GFP_KERNEL);
++			codec = kmemdup(h->codec, sizeof(struct videocodec),
++					GFP_KERNEL);
+ 			if (!codec) {
+ 				dprintk(1,
+ 					KERN_ERR
+ 					"videocodec_attach: no mem\n");
+ 				goto out_module_put;
+ 			}
+-			memcpy(codec, h->codec, sizeof(struct videocodec));
  
- 	taskout = req_task->out_size;
- 	taskin  = req_task->in_size;
+ 			snprintf(codec->name, sizeof(codec->name),
+ 				 "%s[%d]", codec->name, h->attached);
