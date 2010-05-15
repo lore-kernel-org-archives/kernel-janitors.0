@@ -1,22 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 29 May 2010 07:20:10 +0000
-Subject: Re: [patch 1/2] be2net: add unlock on error path
-Message-Id: <20100529.002010.123974681.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:23:48 +0000
+Subject: [PATCH 35/37] drivers/block/aoe: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152323310.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100526144634.GL22515@bicker>
-In-Reply-To: <20100526144634.GL22515@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: sathyap@serverengines.com, subbus@serverengines.com, sarveshwarb@serverengines.com, ajitk@serverengines.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Ed L. Cashin" <ecashin@coraid.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 26 May 2010 16:46:35 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> The unlock accidentally got removed from the error path in dd131e76e5:
-> "be2net: Bug fix to avoid disabling bottom half during firmware upgrade."
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-Applied.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/block/aoe/aoechr.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/block/aoe/aoechr.c b/drivers/block/aoe/aoechr.c
+--- a/drivers/block/aoe/aoechr.c
++++ b/drivers/block/aoe/aoechr.c
+@@ -132,13 +132,12 @@ bail:		spin_unlock_irqrestore(&emsgs_loc
+ 		return;
+ 	}
+ 
+-	mp = kmalloc(n, GFP_ATOMIC);
++	mp = kmemdup(msg, n, GFP_ATOMIC);
+ 	if (mp = NULL) {
+ 		printk(KERN_ERR "aoe: allocation failure, len=%ld\n", n);
+ 		goto bail;
+ 	}
+ 
+-	memcpy(mp, msg, n);
+ 	em->msg = mp;
+ 	em->flags |= EMFL_VALID;
+ 	em->len = n;
