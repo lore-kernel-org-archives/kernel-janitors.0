@@ -1,51 +1,56 @@
-From: Andrew Grover <andy.grover@gmail.com>
-Date: Fri, 28 May 2010 07:38:05 +0000
-Subject: Re: [patch 3/3] rds/iw_rdma: remove unneeded kfree()
-Message-Id: <AANLkTilQJJ2k27gwF8VcrUTR3L9JU-7D_hCphEZp4CSy@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:17:59 +0000
+Subject: [PATCH 16/37] drivers/media/video/uvc: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152317410.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100527091128.GT22515@bicker>
-In-Reply-To: <20100527091128.GT22515@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
-Cc: Andy Grover <andy.grover@oracle.com>, "David S. Miller" <davem@davemloft.net>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Laurent Pinchart <laurent.pinchart@skynet.be>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks Dan, nice catches.
+From: Julia Lawall <julia@diku.dk>
 
-For all three:
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-Acked-by: Andy Grover <andy.grover@oracle.com>
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
--- Andy
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
 
-On Thu, May 27, 2010 at 2:11 AM, Dan Carpenter <error27@gmail.com> wrote:
-> The "dma_pages" variable is always NULL at this point so the kfree()
-> isn't needed.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/net/rds/iw_rdma.c b/net/rds/iw_rdma.c
-> index 48d5073..742ab6a 100644
-> --- a/net/rds/iw_rdma.c
-> +++ b/net/rds/iw_rdma.c
-> @@ -334,7 +334,6 @@ static u64 *rds_iw_map_scatterlist(struct rds_iw_devi=
-ce *rds_iwdev,
-> =A0out_unmap:
-> =A0 =A0 =A0 =A0ib_dma_unmap_sg(rds_iwdev->dev, sg->list, sg->len, DMA_BID=
-IRECTIONAL);
-> =A0 =A0 =A0 =A0sg->dma_len =3D 0;
-> - =A0 =A0 =A0 kfree(dma_pages);
-> =A0 =A0 =A0 =A0return ERR_PTR(ret);
-> =A0}
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/video/uvc/uvc_driver.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff -u -p a/drivers/media/video/uvc/uvc_driver.c b/drivers/media/video/uvc/uvc_driver.c
+--- a/drivers/media/video/uvc/uvc_driver.c
++++ b/drivers/media/video/uvc/uvc_driver.c
+@@ -637,14 +637,13 @@ static int uvc_parse_streaming(struct uv
+ 	}
+ 	streaming->header.bControlSize = n;
+ 
+-	streaming->header.bmaControls = kmalloc(p*n, GFP_KERNEL);
++	streaming->header.bmaControls = kmemdup(&buffer[size], p * n,
++						GFP_KERNEL);
+ 	if (streaming->header.bmaControls = NULL) {
+ 		ret = -ENOMEM;
+ 		goto error;
+ 	}
+ 
+-	memcpy(streaming->header.bmaControls, &buffer[size], p*n);
+-
+ 	buflen -= buffer[0];
+ 	buffer += buffer[0];
+ 
