@@ -1,56 +1,103 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 14 May 2010 19:31:07 +0000
-Subject: [PATCH 9/10] drivers/md: Use kstrdup
-Message-Id: <Pine.LNX.4.64.1005142130490.28935@ask.diku.dk>
+Date: Sat, 15 May 2010 21:25:31 +0000
+Subject: [PATCH 37/37] drivers/parport: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152324080.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Neil Brown <neilb@suse.de>, dm-devel@redhat.com, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kstrdup when the goal of an allocation is copy a string into the
+Use kmemdup when some other buffer is immediately copied into the
 allocated region.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression from,to;
-expression flag,E1,E2;
+expression from,to,size,flag;
 statement S;
 @@
 
--  to = kmalloc(strlen(from) + 1,flag);
-+  to = kstrdup(from, flag);
-   ... when != \(from = E1 \| to = E1 \)
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
    if (to=NULL || ...) S
-   ... when != \(from = E2 \| to = E2 \)
--  strcpy(to, from);
+-  memcpy(to, from, size);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/md/dm-crypt.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/parport/parport_gsc.c    |    4 ++--
+ drivers/parport/parport_sunbpp.c |    5 ++---
+ drivers/parport/procfs.c         |    6 ++----
+ 3 files changed, 6 insertions(+), 9 deletions(-)
 
-diff -u -p a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -1168,12 +1168,11 @@ static int crypt_ctr(struct dm_target *t
- 	if (ivmode && cc->iv_gen_ops) {
- 		if (ivopts)
- 			*(ivopts - 1) = ':';
--		cc->iv_mode = kmalloc(strlen(ivmode) + 1, GFP_KERNEL);
-+		cc->iv_mode = kstrdup(ivmode, GFP_KERNEL);
- 		if (!cc->iv_mode) {
- 			ti->error = "Error kmallocing iv_mode string";
- 			goto bad_ivmode_string;
- 		}
--		strcpy(cc->iv_mode, ivmode);
- 	} else
- 		cc->iv_mode = NULL;
+diff -u -p a/drivers/parport/parport_gsc.c b/drivers/parport/parport_gsc.c
+--- a/drivers/parport/parport_gsc.c
++++ b/drivers/parport/parport_gsc.c
+@@ -247,14 +247,14 @@ struct parport *__devinit parport_gsc_pr
+ 		printk (KERN_DEBUG "parport (0x%lx): no memory!\n", base);
+ 		return NULL;
+ 	}
+-	ops = kmalloc (sizeof (struct parport_operations), GFP_KERNEL);
++	ops = kmemdup(&parport_gsc_ops, sizeof(struct parport_operations),
++		      GFP_KERNEL);
+ 	if (!ops) {
+ 		printk (KERN_DEBUG "parport (0x%lx): no memory for ops!\n",
+ 			base);
+ 		kfree (priv);
+ 		return NULL;
+ 	}
+-	memcpy (ops, &parport_gsc_ops, sizeof (struct parport_operations));
+ 	priv->ctr = 0xc;
+ 	priv->ctr_writable = 0xff;
+ 	priv->dma_buf = 0;
+diff -u -p a/drivers/parport/parport_sunbpp.c b/drivers/parport/parport_sunbpp.c
+--- a/drivers/parport/parport_sunbpp.c
++++ b/drivers/parport/parport_sunbpp.c
+@@ -305,12 +305,11 @@ static int __devinit bpp_probe(struct of
+ 	size = resource_size(&op->resource[0]);
+ 	dma = PARPORT_DMA_NONE;
  
+-	ops = kmalloc(sizeof(struct parport_operations), GFP_KERNEL);
++	ops = kmemdup(&parport_sunbpp_ops, sizeof(struct parport_operations),
++		      GFP_KERNEL);
+         if (!ops)
+ 		goto out_unmap;
+ 
+-        memcpy (ops, &parport_sunbpp_ops, sizeof(struct parport_operations));
+-
+ 	dprintk(("register_port\n"));
+ 	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops)))
+ 		goto out_free_ops;
+diff -u -p a/drivers/parport/procfs.c b/drivers/parport/procfs.c
+--- a/drivers/parport/procfs.c
++++ b/drivers/parport/procfs.c
+@@ -476,10 +476,9 @@ int parport_proc_register(struct parport
+ 	struct parport_sysctl_table *t;
+ 	int i;
+ 
+-	t = kmalloc(sizeof(*t), GFP_KERNEL);
++	t = kmemdup(&parport_sysctl_template, sizeof(*t), GFP_KERNEL);
+ 	if (t = NULL)
+ 		return -ENOMEM;
+-	memcpy(t, &parport_sysctl_template, sizeof(*t));
+ 
+ 	t->device_dir[0].extra1 = port;
+ 
+@@ -523,10 +522,9 @@ int parport_device_proc_register(struct 
+ 	struct parport_device_sysctl_table *t;
+ 	struct parport * port = device->port;
+ 	
+-	t = kmalloc(sizeof(*t), GFP_KERNEL);
++	t = kmemdup(&parport_device_sysctl_template, sizeof(*t), GFP_KERNEL);
+ 	if (t = NULL)
+ 		return -ENOMEM;
+-	memcpy(t, &parport_device_sysctl_template, sizeof(*t));
+ 
+ 	t->dev_dir[0].child = t->parport_dir;
+ 	t->parport_dir[0].child = t->port_dir;
