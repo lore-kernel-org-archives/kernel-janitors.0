@@ -1,70 +1,69 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 17 May 2010 08:43:33 +0000
-Subject: Re: [PATCH 3/4] drivers/hid: Eliminate use after free
-Message-Id: <alpine.LNX.2.00.1005171042430.28092@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:20:07 +0000
+Subject: [PATCH 23/37] drivers/s390/char: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152319490.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005151146120.15566@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005151146120.15566@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 15 May 2010, Julia Lawall wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The skip label frees resp, which has not been allocated at the point of
-> this goto and then does a break, based on the fact that err is non-zero.
-> This is replaced by a break directly.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @free@
-> expression E;
-> position p;
-> @@
-> kfree@p(E)
-> 
-> @@
-> expression free.E, subE<=free.E, E1;
-> position free.p;
-> @@
-> 
->   kfree@p(E)
->   ...
-> (
->   subE = E1
-> |
-> * E
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/hid/hid-picolcd.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-picolcd.c b/drivers/hid/hid-picolcd.c
-> index 95253b3..7aabf65 100644
-> --- a/drivers/hid/hid-picolcd.c
-> +++ b/drivers/hid/hid-picolcd.c
-> @@ -1616,7 +1616,7 @@ static ssize_t _picolcd_flash_write(struct picolcd_data *data, int report_id,
->  		raw_data[len_off] = s > 32 ? 32 : s;
->  		if (copy_from_user(raw_data+len_off+1, u, raw_data[len_off])) {
->  			err = -EFAULT;
-> -			goto skip;
-> +			break;
->  		}
->  		resp = picolcd_send_and_wait(data->hdev, report_id, raw_data,
->  				len_off+1+raw_data[len_off]);
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-Good catch, applied. Thanks,
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/s390/char/keyboard.c |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff -u -p a/drivers/s390/char/keyboard.c b/drivers/s390/char/keyboard.c
+--- a/drivers/s390/char/keyboard.c
++++ b/drivers/s390/char/keyboard.c
+@@ -59,12 +59,11 @@ kbd_alloc(void) {
+ 		goto out_kbd;
+ 	for (i = 0; i < ARRAY_SIZE(key_maps); i++) {
+ 		if (key_maps[i]) {
+-			kbd->key_maps[i] -				kmalloc(sizeof(u_short)*NR_KEYS, GFP_KERNEL);
++			kbd->key_maps[i] = kmemdup(key_maps[i],
++						   sizeof(u_short) * NR_KEYS,
++						   GFP_KERNEL);
+ 			if (!kbd->key_maps[i])
+ 				goto out_maps;
+-			memcpy(kbd->key_maps[i], key_maps[i],
+-			       sizeof(u_short)*NR_KEYS);
+ 		}
+ 	}
+ 	kbd->func_table = kzalloc(sizeof(func_table), GFP_KERNEL);
+@@ -83,12 +82,11 @@ kbd_alloc(void) {
+ 		kzalloc(sizeof(fn_handler_fn *) * NR_FN_HANDLER, GFP_KERNEL);
+ 	if (!kbd->fn_handler)
+ 		goto out_func;
+-	kbd->accent_table -		kmalloc(sizeof(struct kbdiacruc)*MAX_DIACR, GFP_KERNEL);
++	kbd->accent_table = kmemdup(accent_table,
++				    sizeof(struct kbdiacruc) * MAX_DIACR,
++				    GFP_KERNEL);
+ 	if (!kbd->accent_table)
+ 		goto out_fn_handler;
+-	memcpy(kbd->accent_table, accent_table,
+-	       sizeof(struct kbdiacruc)*MAX_DIACR);
+ 	kbd->accent_table_size = accent_table_size;
+ 	return kbd;
+ 
