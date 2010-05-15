@@ -1,23 +1,53 @@
-From: Mark Fasheh <mfasheh@suse.com>
-Date: Thu, 06 May 2010 15:24:02 +0000
-Subject: Re: [Ocfs2-devel] [patch] ocfs2: potential ERR_PTR dereference on error paths
-Message-Id: <20100506152402.GH24797@wotan.suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:14:53 +0000
+Subject: [PATCH 6/37] drivers/media/video/gspca: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152314370.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100422093929.GK29647@bicker>
-In-Reply-To: <20100422093929.GK29647@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Leandro Costantino <lcostantino@gmail.com>, Jean-Francois Moine <moinejf@free.fr>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Apr 22, 2010 at 11:39:29AM +0200, Dan Carpenter wrote:
-> If "handle" is non null at the end of the function then we assume it's a
-> valid pointer and pass it to ocfs2_commit_trans();
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Mark Fasheh <mfasheh@suse.com>
-	--Mark
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
---
-Mark Fasheh
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/video/gspca/t613.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/media/video/gspca/t613.c b/drivers/media/video/gspca/t613.c
+--- a/drivers/media/video/gspca/t613.c
++++ b/drivers/media/video/gspca/t613.c
+@@ -577,12 +577,11 @@ static void reg_w_buf(struct gspca_dev *
+ 	} else {
+ 		u8 *tmpbuf;
+ 
+-		tmpbuf = kmalloc(len, GFP_KERNEL);
++		tmpbuf = kmemdup(buffer, len, GFP_KERNEL);
+ 		if (!tmpbuf) {
+ 			err("Out of memory");
+ 			return;
+ 		}
+-		memcpy(tmpbuf, buffer, len);
+ 		usb_control_msg(gspca_dev->dev,
+ 				usb_sndctrlpipe(gspca_dev->dev, 0),
+ 				0,
