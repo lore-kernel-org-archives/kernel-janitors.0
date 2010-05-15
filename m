@@ -1,33 +1,74 @@
-From: Philipp Reisner <philipp.reisner@linbit.com>
-Date: Thu, 22 Apr 2010 12:47:41 +0000
-Subject: [PATCH 1/1] drbd: Terminate a connection early if sending the protocol fails
-Message-Id: <1271940461-15012-2-git-send-email-philipp.reisner@linbit.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:16:39 +0000
+Subject: [PATCH 12/37] drivers/net/wireless/wl12xx: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152316220.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Luciano Coelho <luciano.coelho@nokia.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+From: Julia Lawall <julia@diku.dk>
+
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/block/drbd/drbd_receiver.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ drivers/net/wireless/wl12xx/wl1271_main.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index ed9f1de..3f096e7 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -899,7 +899,8 @@ retry:
+diff -u -p a/drivers/net/wireless/wl12xx/wl1271_main.c b/drivers/net/wireless/wl12xx/wl1271_main.c
+--- a/drivers/net/wireless/wl12xx/wl1271_main.c
++++ b/drivers/net/wireless/wl12xx/wl1271_main.c
+@@ -573,7 +573,7 @@ static int wl1271_fetch_nvs(struct wl127
+ 		goto out;
+ 	}
  
- 	drbd_thread_start(&mdev->asender);
+-	wl->nvs = kmalloc(sizeof(struct wl1271_nvs_file), GFP_KERNEL);
++	wl->nvs = kmemdup(fw->data, sizeof(struct wl1271_nvs_file), GFP_KERNEL);
  
--	drbd_send_protocol(mdev);
-+	if (!drbd_send_protocol(mdev))
-+		return -1;
- 	drbd_send_sync_param(mdev, &mdev->sync_conf);
- 	drbd_send_sizes(mdev, 0);
- 	drbd_send_uuids(mdev);
--- 
-1.6.3.3
-
+ 	if (!wl->nvs) {
+ 		wl1271_error("could not allocate memory for the nvs file");
+@@ -581,8 +581,6 @@ static int wl1271_fetch_nvs(struct wl127
+ 		goto out;
+ 	}
+ 
+-	memcpy(wl->nvs, fw->data, sizeof(struct wl1271_nvs_file));
+-
+ out:
+ 	release_firmware(fw);
+ 
+@@ -2350,15 +2348,13 @@ struct ieee80211_hw *wl1271_alloc_hw(voi
+ 		goto err_hw_alloc;
+ 	}
+ 
+-	plat_dev = kmalloc(sizeof(wl1271_device), GFP_KERNEL);
++	plat_dev = kmemdup(&wl1271_device, sizeof(wl1271_device), GFP_KERNEL);
+ 	if (!plat_dev) {
+ 		wl1271_error("could not allocate platform_device");
+ 		ret = -ENOMEM;
+ 		goto err_plat_alloc;
+ 	}
+ 
+-	memcpy(plat_dev, &wl1271_device, sizeof(wl1271_device));
+-
+ 	wl = hw->priv;
+ 	memset(wl, 0, sizeof(*wl));
+ 
