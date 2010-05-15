@@ -1,26 +1,74 @@
-From: Herbert Xu <herbert@gondor.hengli.com.au>
-Date: Wed, 26 May 2010 00:37:02 +0000
-Subject: Re: [PATCH 2/8] crypto: Use ERR_CAST
-Message-Id: <20100526003701.GA20073@gondor.apana.org.au>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:22:38 +0000
+Subject: [PATCH 31/37] drivers/infiniband/core: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152322190.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005221159290.13021@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005221159290.13021@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Julia Lawall <julia@diku.dk>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-jani
 
-T24gU2F0LCBNYXkgMjIsIDIwMTAgYXQgMTE6NTk6NDhBTSArMDIwMCwgSnVsaWEgTGF3YWxsIHdy
-b3RlOgo+IEZyb206IEp1bGlhIExhd2FsbCA8anVsaWFAZGlrdS5kaz4KPiAKPiBVc2UgRVJSX0NB
-U1QoeCkgcmF0aGVyIHRoYW4gRVJSX1BUUihQVFJfRVJSKHgpKS4gIFRoZSBmb3JtZXIgbWFrZXMg
-bW9yZQo+IGNsZWFyIHdoYXQgaXMgdGhlIHB1cnBvc2Ugb2YgdGhlIG9wZXJhdGlvbiwgd2hpY2gg
-b3RoZXJ3aXNlIGxvb2tzIGxpa2UgYQo+IG5vLW9wLgoKUGF0Y2ggYXBwbGllZC4gIFRoYW5rcyBK
-dWxpYS4KLS0gClZpc2l0IE9wZW5zd2FuIGF0IGh0dHA6Ly93d3cub3BlbnN3YW4ub3JnLwpFbWFp
-bDogSGVyYmVydCBYdSB+e1BtVj5ISX59IDxoZXJiZXJ0QGdvbmRvci5hcGFuYS5vcmcuYXU+Ckhv
-bWUgUGFnZTogaHR0cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvClBHUCBLZXk6IGh0
-dHA6Ly9nb25kb3IuYXBhbmEub3JnLmF1L35oZXJiZXJ0L3B1YmtleS50eHQKLS0KVG8gdW5zdWJz
-Y3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1q
-YW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5l
-bC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpv
-cmRvbW8taW5mby5odG1s
+From: Julia Lawall <julia@diku.dk>
+
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/infiniband/core/cma.c |    4 ++--
+ drivers/infiniband/core/mad.c |    4 +---
+ 2 files changed, 3 insertions(+), 5 deletions(-)
+
+diff -u -p a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -1676,13 +1676,13 @@ int rdma_set_ib_paths(struct rdma_cm_id 
+ 	if (!cma_comp_exch(id_priv, CMA_ADDR_RESOLVED, CMA_ROUTE_RESOLVED))
+ 		return -EINVAL;
+ 
+-	id->route.path_rec = kmalloc(sizeof *path_rec * num_paths, GFP_KERNEL);
++	id->route.path_rec = kmemdup(path_rec, sizeof *path_rec * num_paths,
++				     GFP_KERNEL);
+ 	if (!id->route.path_rec) {
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+ 
+-	memcpy(id->route.path_rec, path_rec, sizeof *path_rec * num_paths);
+ 	id->route.num_paths = num_paths;
+ 	return 0;
+ err:
+diff -u -p a/drivers/infiniband/core/mad.c b/drivers/infiniband/core/mad.c
+--- a/drivers/infiniband/core/mad.c
++++ b/drivers/infiniband/core/mad.c
+@@ -291,13 +291,11 @@ struct ib_mad_agent *ib_register_mad_age
+ 	}
+ 
+ 	if (mad_reg_req) {
+-		reg_req = kmalloc(sizeof *reg_req, GFP_KERNEL);
++		reg_req = kmemdup(mad_reg_req, sizeof *reg_req, GFP_KERNEL);
+ 		if (!reg_req) {
+ 			ret = ERR_PTR(-ENOMEM);
+ 			goto error3;
+ 		}
+-		/* Make a copy of the MAD registration request */
+-		memcpy(reg_req, mad_reg_req, sizeof *reg_req);
+ 	}
+ 
+ 	/* Now, fill in the various structures */
