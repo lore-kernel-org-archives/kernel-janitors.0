@@ -1,71 +1,52 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 13 May 2010 20:07:46 +0000
-Subject: [PATCH 20/20] drivers/mtd/nand: Use kzalloc
-Message-Id: <Pine.LNX.4.64.1005132207300.6282@ask.diku.dk>
+Date: Sat, 15 May 2010 21:14:36 +0000
+Subject: [PATCH 5/37] drivers/message/fusion: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152314130.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vincent Sanders <support@simtec.co.uk>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Eric Moore <Eric.Moore@lsi.com>, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kzalloc rather than the combination of kmalloc and memset.
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression x,size,flags;
+expression from,to,size,flag;
 statement S;
 @@
 
--x = kmalloc(size,flags);
-+x = kzalloc(size,flags);
- if (x = NULL) S
--memset(x, 0, size);
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/mtd/nand/s3c2410.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/message/fusion/mptbase.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff -u -p a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
---- a/drivers/mtd/nand/s3c2410.c
-+++ b/drivers/mtd/nand/s3c2410.c
-@@ -929,14 +929,13 @@ static int s3c24xx_nand_probe(struct pla
+diff -u -p a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+--- a/drivers/message/fusion/mptbase.c
++++ b/drivers/message/fusion/mptbase.c
+@@ -5945,11 +5945,10 @@ mpt_findImVolumes(MPT_ADAPTER *ioc)
+ 	if (mpt_config(ioc, &cfg) != 0)
+ 		goto out;
  
- 	pr_debug("s3c2410_nand_probe(%p)\n", pdev);
+-	mem = kmalloc(iocpage2sz, GFP_KERNEL);
++	mem = kmemdup((u8 *)pIoc2, iocpage2sz, GFP_KERNEL);
+ 	if (!mem)
+ 		goto out;
  
--	info = kmalloc(sizeof(*info), GFP_KERNEL);
-+	info = kzalloc(sizeof(*info), GFP_KERNEL);
- 	if (info = NULL) {
- 		dev_err(&pdev->dev, "no memory for flash info\n");
- 		err = -ENOMEM;
- 		goto exit_error;
- 	}
+-	memcpy(mem, (u8 *)pIoc2, iocpage2sz);
+ 	ioc->raid_data.pIocPg2 = (IOCPage2_t *) mem;
  
--	memset(info, 0, sizeof(*info));
- 	platform_set_drvdata(pdev, info);
- 
- 	spin_lock_init(&info->controller.lock);
-@@ -994,15 +993,13 @@ static int s3c24xx_nand_probe(struct pla
- 	/* allocate our information */
- 
- 	size = nr_sets * sizeof(*info->mtds);
--	info->mtds = kmalloc(size, GFP_KERNEL);
-+	info->mtds = kzalloc(size, GFP_KERNEL);
- 	if (info->mtds = NULL) {
- 		dev_err(&pdev->dev, "failed to allocate mtd storage\n");
- 		err = -ENOMEM;
- 		goto exit_error;
- 	}
- 
--	memset(info->mtds, 0, size);
--
- 	/* initialise all possible chips */
- 
- 	nmtd = info->mtds;
+ 	mpt_read_ioc_pg_3(ioc);
