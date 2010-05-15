@@ -1,61 +1,69 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 26 May 2010 15:58:07 +0000
-Subject: [PATCH 13/17] drivers/message/i2o/exec-osm.c: Add missing mutex_unlock
-Message-Id: <Pine.LNX.4.64.1005261757420.23743@ask.diku.dk>
+Date: Sat, 15 May 2010 21:20:45 +0000
+Subject: [PATCH 25/37] drivers/net/usb: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152320270.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Add a mutex_unlock missing on the error path.
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression E1;
+expression from,to,size,flag;
+statement S;
 @@
 
-* mutex_lock(E1,...);
-  <+... when != E1
-  if (...) {
-    ... when != E1
-*   return ...;
-  }
-  ...+>
-* mutex_unlock(E1,...);
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/message/i2o/exec-osm.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/usb/asix.c    |    3 +--
+ drivers/net/usb/mcs7830.c |    4 +---
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/message/i2o/exec-osm.c b/drivers/message/i2o/exec-osm.c
-index 06c655c..a3970e5 100644
---- a/drivers/message/i2o/exec-osm.c
-+++ b/drivers/message/i2o/exec-osm.c
-@@ -389,12 +389,16 @@ static int i2o_exec_lct_notify(struct i2o_controller *c, u32 change_ind)
- 	dev = &c->pdev->dev;
+diff -u -p a/drivers/net/usb/asix.c b/drivers/net/usb/asix.c
+--- a/drivers/net/usb/asix.c
++++ b/drivers/net/usb/asix.c
+@@ -224,10 +224,9 @@ static int asix_write_cmd(struct usbnet 
+ 		   cmd, value, index, size);
  
- 	if (i2o_dma_realloc(dev, &c->dlct,
--					le32_to_cpu(sb->expected_lct_size)))
-+					le32_to_cpu(sb->expected_lct_size))) {
-+		mutex_unlock(&c->lct_lock);
+ 	if (data) {
+-		buf = kmalloc(size, GFP_KERNEL);
++		buf = kmemdup(data, size, GFP_KERNEL);
+ 		if (!buf)
+ 			goto out;
+-		memcpy(buf, data, size);
+ 	}
+ 
+ 	err = usb_control_msg(
+diff -u -p a/drivers/net/usb/mcs7830.c b/drivers/net/usb/mcs7830.c
+--- a/drivers/net/usb/mcs7830.c
++++ b/drivers/net/usb/mcs7830.c
+@@ -142,12 +142,10 @@ static int mcs7830_set_reg(struct usbnet
+ 	int ret;
+ 	void *buffer;
+ 
+-	buffer = kmalloc(size, GFP_NOIO);
++	buffer = kmemdup(data, size, GFP_NOIO);
+ 	if (buffer = NULL)
  		return -ENOMEM;
-+	}
  
- 	msg = i2o_msg_get_wait(c, I2O_TIMEOUT_MESSAGE_GET);
--	if (IS_ERR(msg))
-+	if (IS_ERR(msg)) {
-+		mutex_unlock(&c->lct_lock);
- 		return PTR_ERR(msg);
-+	}
- 
- 	msg->u.head[0] = cpu_to_le32(EIGHT_WORD_MSG_SIZE | SGL_OFFSET_6);
- 	msg->u.head[1] = cpu_to_le32(I2O_CMD_LCT_NOTIFY << 24 | HOST_TID << 12 |
+-	memcpy(buffer, data, size);
+-
+ 	ret = usb_control_msg(xdev, usb_sndctrlpipe(xdev, 0), MCS7830_WR_BREQ,
+ 			      MCS7830_WR_BMREQ, 0x0000, index, buffer,
+ 			      size, MCS7830_CTRL_TIMEOUT);
