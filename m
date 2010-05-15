@@ -1,28 +1,75 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 29 May 2010 09:47:24 +0000
-Subject: [patch 8/11] btrfs: btrfs_lookup_dir_item() can return ERR_PTR
-Message-Id: <20100529094724.GI5483@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:13:53 +0000
+Subject: [PATCH 3/37] drivers/misc/iwmc3200top/log.c: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152313170.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Sage Weil <sage@newdream.net>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-btrfs_lookup_dir_item() can return either ERR_PTRs or null.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 9f9a1d9..4dbaf89 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1845,7 +1845,7 @@ static long btrfs_ioctl_default_subvol(struct file *file, void __user *argp)
- 	dir_id = btrfs_super_root_dir(&root->fs_info->super_copy);
- 	di = btrfs_lookup_dir_item(trans, root->fs_info->tree_root, path,
- 				   dir_id, "default", 7, 1);
--	if (!di) {
-+	if (IS_ERR_OR_NULL(di)) {
- 		btrfs_free_path(path);
- 		btrfs_end_transaction(trans, root);
- 		printk(KERN_ERR "Umm, you don't have the default dir item, "
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/misc/iwmc3200top/log.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff -u -p a/drivers/misc/iwmc3200top/log.c b/drivers/misc/iwmc3200top/log.c
+--- a/drivers/misc/iwmc3200top/log.c
++++ b/drivers/misc/iwmc3200top/log.c
+@@ -214,7 +214,7 @@ ssize_t store_iwmct_log_level(struct dev
+ 	if (!count)
+ 		goto exit;
+ 
+-	str_buf = kzalloc(count, GFP_KERNEL);
++	str_buf = kmemdup(buf, count, GFP_KERNEL);
+ 	if (!str_buf) {
+ 		LOG_ERROR(priv, DEBUGFS,
+ 			"failed to allocate %zd bytes\n", count);
+@@ -222,8 +222,6 @@ ssize_t store_iwmct_log_level(struct dev
+ 		goto exit;
+ 	}
+ 
+-	memcpy(str_buf, buf, count);
+-
+ 	while ((token = strsep(&str_buf, ",")) != NULL) {
+ 		while (isspace(*token))
+ 			++token;
+@@ -291,7 +289,7 @@ ssize_t store_iwmct_log_level_fw(struct 
+ 	if (!count)
+ 		goto exit;
+ 
+-	str_buf = kzalloc(count, GFP_KERNEL);
++	str_buf = kmemdup(buf, count, GFP_KERNEL);
+ 	if (!str_buf) {
+ 		LOG_ERROR(priv, DEBUGFS,
+ 			"failed to allocate %zd bytes\n", count);
+@@ -299,8 +297,6 @@ ssize_t store_iwmct_log_level_fw(struct 
+ 		goto exit;
+ 	}
+ 
+-	memcpy(str_buf, buf, count);
+-
+ 	cmd.hdr.type = COMM_TYPE_H2D;
+ 	cmd.hdr.category = COMM_CATEGORY_DEBUG;
+ 	cmd.hdr.opcode = CMD_DBG_LOG_LEVEL;
