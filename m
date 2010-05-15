@@ -1,27 +1,87 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Wed, 26 May 2010 06:32:27 +0000
-Subject: Re: [patch] padata: add parenthesis in MAX_SEQ_NR macro
-Message-Id: <20100526063227.GP2184@secunet.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 09:45:53 +0000
+Subject: [PATCH 1/4] drivers/char: Eliminate use after free
+Message-Id: <Pine.LNX.4.64.1005151145340.15566@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100525212913.GK22515@bicker>
-In-Reply-To: <20100525212913.GK22515@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Herbert Xu <herbert@gondor.hengli.com.au>, Henrik Kretzschmar <henne@nachtwindheim.de>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Amit Shah <amit.shah@redhat.com>, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 25, 2010 at 11:29:13PM +0200, Dan Carpenter wrote:
-> MAX_SEQ_NR is used in padata_alloc_pd() like this:
-> 
->         pd->max_seq_nr = (MAX_SEQ_NR / num_cpus) * num_cpus - 1;
-> 
-> It needs parenthesis or the divide by num_cpus takes precedence over the
-> subtraction.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
+In each case, the first argument to send_control_msg or __send_control_msg,
+respectively, has either not been successfully allocated or has been freed
+at the point of the call.  In the first case, the first argument, port, is
+only used to access the portdev and id fields, in order to call
+__send_control_msg.  Thus it seems possible instead to call
+__send_control_msg directly.  In the second case, the call to
+__send_control_msg is moved up to a place where it seems like the first
+argument, portdev, has been initialized sufficiently to make the call to
+__send_control_msg meaningful.
 
-Thanks,
+This has only been compile tested.
 
-Steffen
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@free@
+expression E;
+position p;
+@@
+kfree@p(E)
+
+@@
+expression free.E, subE<=free.E, E1;
+position free.p;
+@@
+
+  kfree@p(E)
+  ...
+(
+  subE = E1
+|
+* E
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/char/virtio_console.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 458d907..8c99bf1 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1090,7 +1090,7 @@ free_port:
+ 	kfree(port);
+ fail:
+ 	/* The host might want to notify management sw about port add failure */
+-	send_control_msg(port, VIRTIO_CONSOLE_PORT_READY, 0);
++	__send_control_msg(portdev, id, VIRTIO_CONSOLE_PORT_READY, 0);
+ 	return err;
+ }
+ 
+@@ -1559,6 +1559,9 @@ static int __devinit virtcons_probe(struct virtio_device *vdev)
+ 	return 0;
+ 
+ free_vqs:
++	/* The host might want to notify mgmt sw about device add failure */
++	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
++			   VIRTIO_CONSOLE_DEVICE_READY, 0);
+ 	vdev->config->del_vqs(vdev);
+ 	kfree(portdev->in_vqs);
+ 	kfree(portdev->out_vqs);
+@@ -1567,9 +1570,6 @@ free_chrdev:
+ free:
+ 	kfree(portdev);
+ fail:
+-	/* The host might want to notify mgmt sw about device add failure */
+-	__send_control_msg(portdev, VIRTIO_CONSOLE_BAD_ID,
+-			   VIRTIO_CONSOLE_DEVICE_READY, 0);
+ 	return err;
+ }
+ 
