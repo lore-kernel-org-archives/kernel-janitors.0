@@ -1,47 +1,53 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 20 May 2010 08:35:28 +0000
-Subject: [PATCH 05/11] omap: i2c: Storage class should be before const qualifier
-Message-Id: <1274344528-8975-1-git-send-email-tklauser@distanz.ch>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:22:00 +0000
+Subject: [PATCH 29/37] drivers/input/misc: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152321430.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tobias Klauser <tklauser-93Khv+1bN0NyDzI6CaY1VQ@public.gmane.org>
+To: Miloslav Trmac <mitr@volny.cz>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The C99 specification states in section 6.11.5:
+From: Julia Lawall <julia@diku.dk>
 
-The placement of a storage-class specifier other than at the beginning
-of the declaration specifiers in a declaration is an obsolescent
-feature.
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/i2c/busses/i2c-omap.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/misc/wistron_btns.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
-index 7674efb..de79286 100644
---- a/drivers/i2c/busses/i2c-omap.c
-+++ b/drivers/i2c/busses/i2c-omap.c
-@@ -205,7 +205,7 @@ struct omap_i2c_dev {
- 	u16			errata;
- };
+diff -u -p a/drivers/input/misc/wistron_btns.c b/drivers/input/misc/wistron_btns.c
+--- a/drivers/input/misc/wistron_btns.c
++++ b/drivers/input/misc/wistron_btns.c
+@@ -983,11 +983,11 @@ static int __init copy_keymap(void)
+ 	for (key = keymap; key->type != KE_END; key++)
+ 		length++;
  
--const static u8 reg_map[] = {
-+static const u8 reg_map[] = {
- 	[OMAP_I2C_REV_REG] = 0x00,
- 	[OMAP_I2C_IE_REG] = 0x01,
- 	[OMAP_I2C_STAT_REG] = 0x02,
-@@ -226,7 +226,7 @@ const static u8 reg_map[] = {
- 	[OMAP_I2C_BUFSTAT_REG] = 0x10,
- };
+-	new_keymap = kmalloc(length * sizeof(struct key_entry), GFP_KERNEL);
++	new_keymap = kmemdup(keymap, length * sizeof(struct key_entry),
++			     GFP_KERNEL);
+ 	if (!new_keymap)
+ 		return -ENOMEM;
  
--const static u8 omap4_reg_map[] = {
-+static const u8 omap4_reg_map[] = {
- 	[OMAP_I2C_REV_REG] = 0x04,
- 	[OMAP_I2C_IE_REG] = 0x2c,
- 	[OMAP_I2C_STAT_REG] = 0x28,
--- 
-1.6.3.3
-
+-	memcpy(new_keymap, keymap, length * sizeof(struct key_entry));
+ 	keymap = new_keymap;
+ 
+ 	return 0;
