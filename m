@@ -1,28 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 29 May 2010 07:19:50 +0000
-Subject: Re: [PATCH 4/17] drivers/isdn/hardware/mISDN: Add missing
-Message-Id: <20100529.001950.71558279.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:21:01 +0000
+Subject: [PATCH 26/37] drivers/net/wireless/ipw2x00: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152320450.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261754560.23743@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005261754560.23743@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhu Yi <yi.zhu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 26 May 2010 17:55:10 +0200 (CEST)
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Add a spin_unlock missing on the error path.  The return value of write_reg
-> seems to be completely ignored, so it seems that the lock should be
-> released in every case.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-Applied, thanks.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wireless/ipw2x00/ipw2200.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/net/wireless/ipw2x00/ipw2200.c b/drivers/net/wireless/ipw2x00/ipw2200.c
+--- a/drivers/net/wireless/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/ipw2x00/ipw2200.c
+@@ -6626,13 +6626,12 @@ static int ipw_wx_set_genie(struct net_d
+ 		return -EINVAL;
+ 
+ 	if (wrqu->data.length) {
+-		buf = kmalloc(wrqu->data.length, GFP_KERNEL);
++		buf = kmemdup(extra, wrqu->data.length, GFP_KERNEL);
+ 		if (buf = NULL) {
+ 			err = -ENOMEM;
+ 			goto out;
+ 		}
+ 
+-		memcpy(buf, extra, wrqu->data.length);
+ 		kfree(ieee->wpa_ie);
+ 		ieee->wpa_ie = buf;
+ 		ieee->wpa_ie_len = wrqu->data.length;
