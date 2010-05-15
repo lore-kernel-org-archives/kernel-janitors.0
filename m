@@ -1,60 +1,51 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 27 May 2010 09:08:33 +0000
-Subject: [patch 1/3] rds/iw_rdma: using too much stack space
-Message-Id: <20100527090833.GR22515@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:15:44 +0000
+Subject: [PATCH 9/37] drivers/usb/gadget: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152315280.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Grover <andy.grover@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Haavard Skinnemoen <hskinnemoen@atmel.com>, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, kernel@avr32linux.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-struct rds_sock is pretty big, it uses 944 bytes.  The inclusion of 
-struct sock is what does it, struct sock uses 700 bytes.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-diff --git a/net/rds/iw_rdma.c b/net/rds/iw_rdma.c
-index 13dc186..742ab6a 100644
---- a/net/rds/iw_rdma.c
-+++ b/net/rds/iw_rdma.c
-@@ -178,23 +178,29 @@ int rds_iw_update_cm_id(struct rds_iw_device *rds_iwdev, struct rdma_cm_id *cm_i
- {
- 	struct sockaddr_in *src_addr, *dst_addr;
- 	struct rds_iw_device *rds_iwdev_old;
--	struct rds_sock rs;
-+	struct rds_sock *rs;
- 	struct rdma_cm_id *pcm_id;
--	int rc;
-+	int ret;
-+
-+	rs = kmalloc(sizeof(*rs), GFP_KERNEL);
-+	if (!rs)
-+		return -ENOMEM;
- 
- 	src_addr = (struct sockaddr_in *)&cm_id->route.addr.src_addr;
- 	dst_addr = (struct sockaddr_in *)&cm_id->route.addr.dst_addr;
- 
--	rs.rs_bound_addr = src_addr->sin_addr.s_addr;
--	rs.rs_bound_port = src_addr->sin_port;
--	rs.rs_conn_addr = dst_addr->sin_addr.s_addr;
--	rs.rs_conn_port = dst_addr->sin_port;
-+	rs->rs_bound_addr = src_addr->sin_addr.s_addr;
-+	rs->rs_bound_port = src_addr->sin_port;
-+	rs->rs_conn_addr = dst_addr->sin_addr.s_addr;
-+	rs->rs_conn_port = dst_addr->sin_port;
- 
--	rc = rds_iw_get_device(&rs, &rds_iwdev_old, &pcm_id);
--	if (rc)
-+	ret = rds_iw_get_device(rs, &rds_iwdev_old, &pcm_id);
-+	if (ret)
- 		rds_iw_remove_cm_id(rds_iwdev, cm_id);
- 
--	return rds_iw_add_cm_id(rds_iwdev, cm_id);
-+	ret = rds_iw_add_cm_id(rds_iwdev, cm_id);
-+	kfree(rs);
-+	return ret;
- }
- 
- void rds_iw_add_conn(struct rds_iw_device *rds_iwdev, struct rds_connection *conn)
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
+
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/gadget/atmel_usba_udc.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/usb/gadget/atmel_usba_udc.c b/drivers/usb/gadget/atmel_usba_udc.c
+--- a/drivers/usb/gadget/atmel_usba_udc.c
++++ b/drivers/usb/gadget/atmel_usba_udc.c
+@@ -48,10 +48,9 @@ static int queue_dbg_open(struct inode *
+ 
+ 	spin_lock_irq(&ep->udc->lock);
+ 	list_for_each_entry(req, &ep->queue, queue) {
+-		req_copy = kmalloc(sizeof(*req_copy), GFP_ATOMIC);
++		req_copy = kmemdup(req, sizeof(*req_copy), GFP_ATOMIC);
+ 		if (!req_copy)
+ 			goto fail;
+-		memcpy(req_copy, req, sizeof(*req_copy));
+ 		list_add_tail(&req_copy->queue, queue_data);
+ 	}
+ 	spin_unlock_irq(&ep->udc->lock);
