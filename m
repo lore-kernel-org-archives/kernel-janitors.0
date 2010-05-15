@@ -1,36 +1,51 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 26 May 2010 20:28:43 +0000
-Subject: Re: [PATCH] Staging: rtl8192su: ieee80211: fix brace coding style
-Message-Id: <20100526202842.GO22515@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 15 May 2010 21:19:30 +0000
+Subject: [PATCH 21/37] drivers/hid: Use kmemdup
+Message-Id: <Pine.LNX.4.64.1005152319150.21345@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1274891337-7783-1-git-send-email-madness@xakep.ru> <20100526184808.GA6031@coldcone>
-In-Reply-To: <20100526184808.GA6031@coldcone>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Denis Kirjanov <kirjanov@gmail.com>
-Cc: Bashlykov Arthur <madness@xakep.ru>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 26, 2010 at 10:48:08PM +0400, Denis Kirjanov wrote:
-> On Wed, May 26, 2010 at 20:28 +0400, Bashlykov Arthur wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> > -	if (!ieee->proto_started){
-> > +	if (!ieee->proto_started) {
-> >  		ieee->iw_mode = wrqu->mode;
-> 
-> I guess we can drop braces with single else statement
+Use kmemdup when some other buffer is immediately copied into the
+allocated region.
 
-How Bashlykov has this is proper kernel style because the else statement
-has more than one line.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-> > -	}else{
-> > +	} else {
-> >  		ieee80211_stop_protocol(ieee);
-> >  		ieee->iw_mode = wrqu->mode;
-> >  		ieee80211_start_protocol(ieee);
+// <smpl>
+@@
+expression from,to,size,flag;
+statement S;
+@@
 
-The rest of your comments were correct of course.  Thanks for reviewing
-this patch.
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to=NULL || ...) S
+-  memcpy(to, from, size);
+// </smpl>
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/hid/hid-core.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -653,10 +653,9 @@ int hid_parse_report(struct hid_device *
+ 	if (device->driver->report_fixup)
+ 		device->driver->report_fixup(device, start, size);
+ 
+-	device->rdesc = kmalloc(size, GFP_KERNEL);
++	device->rdesc = kmemdup(start, size, GFP_KERNEL);
+ 	if (device->rdesc = NULL)
+ 		return -ENOMEM;
+-	memcpy(device->rdesc, start, size);
+ 	device->rsize = size;
+ 
+ 	parser = vmalloc(sizeof(struct hid_parser));
