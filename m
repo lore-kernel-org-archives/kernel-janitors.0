@@ -1,59 +1,70 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 09:46:36 +0000
-Subject: [PATCH 3/4] drivers/hid: Eliminate use after free
-Message-Id: <Pine.LNX.4.64.1005151146120.15566@ask.diku.dk>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Mon, 17 May 2010 08:43:33 +0000
+Subject: Re: [PATCH 3/4] drivers/hid: Eliminate use after free
+Message-Id: <alpine.LNX.2.00.1005171042430.28092@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1005151146120.15566@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005151146120.15566@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sat, 15 May 2010, Julia Lawall wrote:
 
-The skip label frees resp, which has not been allocated at the point of
-this goto and then does a break, based on the fact that err is non-zero.
-This is replaced by a break directly.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The skip label frees resp, which has not been allocated at the point of
+> this goto and then does a break, based on the fact that err is non-zero.
+> This is replaced by a break directly.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @free@
+> expression E;
+> position p;
+> @@
+> kfree@p(E)
+> 
+> @@
+> expression free.E, subE<=free.E, E1;
+> position free.p;
+> @@
+> 
+>   kfree@p(E)
+>   ...
+> (
+>   subE = E1
+> |
+> * E
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  drivers/hid/hid-picolcd.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-picolcd.c b/drivers/hid/hid-picolcd.c
+> index 95253b3..7aabf65 100644
+> --- a/drivers/hid/hid-picolcd.c
+> +++ b/drivers/hid/hid-picolcd.c
+> @@ -1616,7 +1616,7 @@ static ssize_t _picolcd_flash_write(struct picolcd_data *data, int report_id,
+>  		raw_data[len_off] = s > 32 ? 32 : s;
+>  		if (copy_from_user(raw_data+len_off+1, u, raw_data[len_off])) {
+>  			err = -EFAULT;
+> -			goto skip;
+> +			break;
+>  		}
+>  		resp = picolcd_send_and_wait(data->hdev, report_id, raw_data,
+>  				len_off+1+raw_data[len_off]);
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Good catch, applied. Thanks,
 
-// <smpl>
-@free@
-expression E;
-position p;
-@@
-kfree@p(E)
-
-@@
-expression free.E, subE<=free.E, E1;
-position free.p;
-@@
-
-  kfree@p(E)
-  ...
-(
-  subE = E1
-|
-* E
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/hid/hid-picolcd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-picolcd.c b/drivers/hid/hid-picolcd.c
-index 95253b3..7aabf65 100644
---- a/drivers/hid/hid-picolcd.c
-+++ b/drivers/hid/hid-picolcd.c
-@@ -1616,7 +1616,7 @@ static ssize_t _picolcd_flash_write(struct picolcd_data *data, int report_id,
- 		raw_data[len_off] = s > 32 ? 32 : s;
- 		if (copy_from_user(raw_data+len_off+1, u, raw_data[len_off])) {
- 			err = -EFAULT;
--			goto skip;
-+			break;
- 		}
- 		resp = picolcd_send_and_wait(data->hdev, report_id, raw_data,
- 				len_off+1+raw_data[len_off]);
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
