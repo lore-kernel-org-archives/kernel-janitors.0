@@ -1,54 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:21:01 +0000
-Subject: [PATCH 26/37] drivers/net/wireless/ipw2x00: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152320450.21345@ask.diku.dk>
+From: Zhu Yi <yi.zhu@intel.com>
+Date: Tue, 18 May 2010 01:26:52 +0000
+Subject: Re: [PATCH 26/37] drivers/net/wireless/ipw2x00: Use kmemdup
+Message-Id: <1274146012.27831.2484.camel@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1005152320450.21345@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005152320450.21345@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhu Yi <yi.zhu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: "Chatre, Reinette" <reinette.chatre@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+On Sun, 2010-05-16 at 05:21 +0800, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Use kmemdup when some other buffer is immediately copied into the
+> allocated region.
+> 
+> A simplified version of the semantic patch that makes this change is
+> as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression from,to,size,flag;
+> statement S;
+> @@
+> 
+> -  to = \(kmalloc\|kzalloc\)(size,flag);
+> +  to = kmemdup(from,size,flag);
+>    if (to=NULL || ...) S
+> -  memcpy(to, from, size);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk> 
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
+Acked-by: Zhu Yi <yi.zhu@intel.com>
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+Thanks,
+-yi
 
-// <smpl>
-@@
-expression from,to,size,flag;
-statement S;
-@@
-
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wireless/ipw2x00/ipw2200.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff -u -p a/drivers/net/wireless/ipw2x00/ipw2200.c b/drivers/net/wireless/ipw2x00/ipw2200.c
---- a/drivers/net/wireless/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/ipw2x00/ipw2200.c
-@@ -6626,13 +6626,12 @@ static int ipw_wx_set_genie(struct net_d
- 		return -EINVAL;
- 
- 	if (wrqu->data.length) {
--		buf = kmalloc(wrqu->data.length, GFP_KERNEL);
-+		buf = kmemdup(extra, wrqu->data.length, GFP_KERNEL);
- 		if (buf = NULL) {
- 			err = -ENOMEM;
- 			goto out;
- 		}
- 
--		memcpy(buf, extra, wrqu->data.length);
- 		kfree(ieee->wpa_ie);
- 		ieee->wpa_ie = buf;
- 		ieee->wpa_ie_len = wrqu->data.length;
