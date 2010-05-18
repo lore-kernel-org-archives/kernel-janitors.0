@@ -1,53 +1,38 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 13 May 2010 20:05:40 +0000
-Subject: [PATCH 14/20] drivers/net/vmxnet3: Use kzalloc
-Message-Id: <Pine.LNX.4.64.1005132204040.6282@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 18 May 2010 05:55:44 +0000
+Subject: Re: [PATCH 14/20] drivers/net/vmxnet3: Use kzalloc
+Message-Id: <20100517.225544.85428189.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1005132204040.6282@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005132204040.6282@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shreyas Bhatewara <sbhatewara@vmware.com>, "VMware, Inc." <pv-drivers@vmware.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: sbhatewara@vmware.com, pv-drivers@vmware.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Thu, 13 May 2010 22:05:40 +0200 (CEST)
 
-Use kzalloc rather than the combination of kmalloc and memset.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Use kzalloc rather than the combination of kmalloc and memset.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression x,size,flags;
+> statement S;
+> @@
+> 
+> -x = kmalloc(size,flags);
+> +x = kzalloc(size,flags);
+>  if (x = NULL) S
+> -memset(x, 0, size);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x,size,flags;
-statement S;
-@@
-
--x = kmalloc(size,flags);
-+x = kzalloc(size,flags);
- if (x = NULL) S
--memset(x, 0, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/vmxnet3/vmxnet3_drv.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff -u -p a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -1369,13 +1369,12 @@ vmxnet3_rq_create(struct vmxnet3_rx_queu
- 
- 	sz = sizeof(struct vmxnet3_rx_buf_info) * (rq->rx_ring[0].size +
- 						   rq->rx_ring[1].size);
--	bi = kmalloc(sz, GFP_KERNEL);
-+	bi = kzalloc(sz, GFP_KERNEL);
- 	if (!bi) {
- 		printk(KERN_ERR "%s: failed to allocate rx bufinfo\n",
- 		       adapter->netdev->name);
- 		goto err;
- 	}
--	memset(bi, 0, sz);
- 	rq->buf_info[0] = bi;
- 	rq->buf_info[1] = bi + rq->rx_ring[0].size;
- 
+Applied.
