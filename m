@@ -1,7 +1,7 @@
 From: Joel Becker <Joel.Becker@oracle.com>
-Date: Fri, 14 May 2010 20:06:33 +0000
+Date: Tue, 18 May 2010 19:32:41 +0000
 Subject: Re: [PATCH 8/10] fs/ocfs2/dlm: Use kstrdup
-Message-Id: <20100514200632.GD29764@mail.oracle.com>
+Message-Id: <20100518193241.GE3239@mail.oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.1005142130310.28935@ask.diku.dk>
 In-Reply-To: <Pine.LNX.4.64.1005142130310.28935@ask.diku.dk>
@@ -16,17 +16,36 @@ On Fri, May 14, 2010 at 09:30:48PM +0200, Julia Lawall wrote:
 > 
 > Use kstrdup when the goal of an allocation is copy a string into the
 > allocated region.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression from,to;
+> expression flag,E1,E2;
+> statement S;
+> @@
+> 
+> -  to = kmalloc(strlen(from) + 1,flag);
+> +  to = kstrdup(from, flag);
+>    ... when != \(from = E1 \| to = E1 \)
+>    if (to=NULL || ...) S
+>    ... when != \(from = E2 \| to = E2 \)
+> -  strcpy(to, from);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-	Seems fine.  I'll send it along.
+This patch is now in the merge-window branch of ocfs2.git.
 
 Joel
 
 -- 
 
-"In the arms of the angel, fly away from here,
- From this dark, cold hotel room and the endlessness that you fear.
- You are pulled from the wreckage of your silent reverie.
- In the arms of the angel, may you find some comfort here."
+"If you are ever in doubt as to whether or not to kiss a pretty girl, 
+ give her the benefit of the doubt"
+                                        -Thomas Carlyle
 
 Joel Becker
 Principal Software Developer
