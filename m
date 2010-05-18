@@ -1,7 +1,7 @@
 From: Joel Becker <Joel.Becker@oracle.com>
-Date: Tue, 11 May 2010 18:53:30 +0000
+Date: Tue, 18 May 2010 19:32:05 +0000
 Subject: Re: [PATCH 4/5] fs/ocfs2/dlm: Drop memory allocation cast
-Message-Id: <20100511185329.GA10423@mail.oracle.com>
+Message-Id: <20100518193205.GD3239@mail.oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.1005112027000.4330@ask.diku.dk>
 In-Reply-To: <Pine.LNX.4.64.1005112027000.4330@ask.diku.dk>
@@ -31,18 +31,15 @@ On Tue, May 11, 2010 at 08:28:14PM +0200, Julia Lawall wrote:
 > 
 > Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Acked-by: Joel Becker <joel.becker@oracle.com>
-
-	You're welcome to push this.  Let me know if you want me to send
-it via ocfs2.git.
+This patch is now in the merge-window branch of ocfs2.git.
 
 Joel
 
 -- 
 
-Life's Little Instruction Book #451
-
-	"Don't be afraid to say, 'I'm sorry.'"
+Viro's Razor:
+	Any race condition, no matter how unlikely, will occur just
+	often enough to bite you.
 
 Joel Becker
 Principal Software Developer
