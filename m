@@ -1,44 +1,38 @@
-From: Johan Hovold <jhovold@gmail.com>
-Date: Thu, 27 May 2010 13:15:39 +0000
-Subject: Re: [PATCH 11/11] drivers/usb/serial: Eliminate a NULL pointer
-Message-Id: <20100527131539.GA26198@localhost>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 19 May 2010 19:48:54 +0000
+Subject: Re: [patch] nuc900fb: release correct mem region
+Message-Id: <20100519194854.GB22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005271437200.5422@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005271437200.5422@ask.diku.dk>
+References: <20100325105408.GD5069@bicker>
+In-Reply-To: <20100325105408.GD5069@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Julia, 
+Ping.  Any feedback on this patch?
 
-On Thu, May 27, 2010 at 02:37:39PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
+regards,
+dan carpenter
+
+On Thu, Mar 25, 2010 at 01:54:08PM +0300, Dan Carpenter wrote:
+> We should be releasing "res->start" here.
 > 
-> The assignment seems completely unnecessary if mos7840_port is NULL.
-> 
-[...]
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 > ---
->  drivers/usb/serial/mos7840.c |    1 -
->  1 file changed, 1 deletion(-)
+> BTW.  Congratulations on being an official driver maintainer now.  :)  Can
+> you add yourself to the MAINTAINERS file?
 > 
-> diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
-> index f8424d1..585b7e6 100644
-> --- a/drivers/usb/serial/mos7840.c
-> +++ b/drivers/usb/serial/mos7840.c
-> @@ -730,7 +730,6 @@ static void mos7840_bulk_in_callback(struct urb *urb)
->  	mos7840_port = urb->context;
->  	if (!mos7840_port) {
->  		dbg("%s", "NULL mos7840_port pointer");
-> -		mos7840_port->read_urb_busy = false;
->  		return;
->  	}
-
-I stumbled over this one a couple of weeks ago. There a patch sitting in
-Greg's queue already:
-
-	http://thread.gmane.org/gmane.linux.usb.general/31668
-
-Thanks,
-Johan
+> diff --git a/drivers/video/nuc900fb.c b/drivers/video/nuc900fb.c
+> index 6bf0d46..d4cde79 100644
+> --- a/drivers/video/nuc900fb.c
+> +++ b/drivers/video/nuc900fb.c
+> @@ -667,7 +667,7 @@ release_irq:
+>  release_regs:
+>  	iounmap(fbi->io);
+>  release_mem_region:
+> -	release_mem_region((unsigned long)fbi->mem, size);
+> +	release_mem_region(res->start, size);
+>  free_fb:
+>  	framebuffer_release(fbinfo);
+>  	return ret;
