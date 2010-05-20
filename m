@@ -1,23 +1,79 @@
-From: Kyle McMartin <kyle@mcmartin.ca>
-Date: Thu, 06 May 2010 17:40:17 +0000
-Subject: Re: [PATCH 09/13] parisc: removing redundant ifdef
-Message-Id: <20100506174017.GF4902@bombadil.infradead.org>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 20 May 2010 08:38:11 +0000
+Subject: [PATCH 07/11] drivers/net/wireless: Storage class should be before const qualifier
+Message-Id: <1274344691-9095-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273167377-14270-1-git-send-email-jolsa@redhat.com> <1273167377-14270-10-git-send-email-jolsa@redhat.com>
-In-Reply-To: <1273167377-14270-10-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, jgarzik@pobox.com, hare@suse.de, felipe.balbi@nokia.com
+To: linville@tuxdriver.com, ilw@linux.intel.com, reinette.chatre@intel.com, yi.zhu@intel.com, luciano.coelho@nokia.com
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>
 
-On Thu, May 06, 2010 at 07:36:13PM +0200, Jiri Olsa wrote:
-> wbr,
-> jirka
-> 
-> 
-> Signed-off-by: Jiri Olsa <jolsa@redhat.com>
+The C99 specification states in section 6.11.5:
 
-Thanks, looks good. Applied.
+The placement of a storage-class specifier other than at the beginning
+of the declaration specifiers in a declaration is an obsolescent
+feature.
 
---Kyle
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/net/wireless/iwlwifi/iwl-core.c   |    4 ++--
+ drivers/net/wireless/wl12xx/wl1271_main.c |    6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/iwlwifi/iwl-core.c b/drivers/net/wireless/iwlwifi/iwl-core.c
+index 5a7eca8..5df3f88 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-core.c
++++ b/drivers/net/wireless/iwlwifi/iwl-core.c
+@@ -2544,7 +2544,7 @@ void iwl_update_stats(struct iwl_priv *priv, bool is_tx, __le16 fc, u16 len)
+ EXPORT_SYMBOL(iwl_update_stats);
+ #endif
+ 
+-const static char *get_csr_string(int cmd)
++static const char *get_csr_string(int cmd)
+ {
+ 	switch (cmd) {
+ 		IWL_CMD(CSR_HW_IF_CONFIG_REG);
+@@ -2615,7 +2615,7 @@ void iwl_dump_csr(struct iwl_priv *priv)
+ }
+ EXPORT_SYMBOL(iwl_dump_csr);
+ 
+-const static char *get_fh_string(int cmd)
++static const char *get_fh_string(int cmd)
+ {
+ 	switch (cmd) {
+ 		IWL_CMD(FH_RSCSR_CHNL0_STTS_WPTR_REG);
+diff --git a/drivers/net/wireless/wl12xx/wl1271_main.c b/drivers/net/wireless/wl12xx/wl1271_main.c
+index b7d9137..b7a78e2 100644
+--- a/drivers/net/wireless/wl12xx/wl1271_main.c
++++ b/drivers/net/wireless/wl12xx/wl1271_main.c
+@@ -1991,7 +1991,7 @@ static struct ieee80211_channel wl1271_channels[] = {
+ };
+ 
+ /* mapping to indexes for wl1271_rates */
+-const static u8 wl1271_rate_to_idx_2ghz[] = {
++static const u8 wl1271_rate_to_idx_2ghz[] = {
+ 	/* MCS rates are used only with 11n */
+ 	CONF_HW_RXTX_RATE_UNSUPPORTED, /* CONF_HW_RXTX_RATE_MCS7 */
+ 	CONF_HW_RXTX_RATE_UNSUPPORTED, /* CONF_HW_RXTX_RATE_MCS6 */
+@@ -2103,7 +2103,7 @@ static struct ieee80211_channel wl1271_channels_5ghz[] = {
+ };
+ 
+ /* mapping to indexes for wl1271_rates_5ghz */
+-const static u8 wl1271_rate_to_idx_5ghz[] = {
++static const u8 wl1271_rate_to_idx_5ghz[] = {
+ 	/* MCS rates are used only with 11n */
+ 	CONF_HW_RXTX_RATE_UNSUPPORTED, /* CONF_HW_RXTX_RATE_MCS7 */
+ 	CONF_HW_RXTX_RATE_UNSUPPORTED, /* CONF_HW_RXTX_RATE_MCS6 */
+@@ -2139,7 +2139,7 @@ static struct ieee80211_supported_band wl1271_band_5ghz = {
+ 	.n_bitrates = ARRAY_SIZE(wl1271_rates_5ghz),
+ };
+ 
+-const static u8 *wl1271_band_rate_to_idx[] = {
++static const u8 *wl1271_band_rate_to_idx[] = {
+ 	[IEEE80211_BAND_2GHZ] = wl1271_rate_to_idx_2ghz,
+ 	[IEEE80211_BAND_5GHZ] = wl1271_rate_to_idx_5ghz
+ };
+-- 
+1.6.3.3
+
