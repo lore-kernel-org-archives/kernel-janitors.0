@@ -1,53 +1,47 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 13 May 2010 20:02:21 +0000
-Subject: [PATCH 10/20] drivers/block/drbd: Use kzalloc
-Message-Id: <Pine.LNX.4.64.1005132202040.6282@ask.diku.dk>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 20 May 2010 08:35:28 +0000
+Subject: [PATCH 05/11] omap: i2c: Storage class should be before const qualifier
+Message-Id: <1274344528-8975-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars Ellenberg <drbd-dev@lists.linbit.com>, drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tobias Klauser <tklauser-93Khv+1bN0NyDzI6CaY1VQ@public.gmane.org>
 
-From: Julia Lawall <julia@diku.dk>
+The C99 specification states in section 6.11.5:
 
-Use kzalloc rather than the combination of kmalloc and memset.
+The placement of a storage-class specifier other than at the beginning
+of the declaration specifiers in a declaration is an obsolescent
+feature.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x,size,flags;
-statement S;
-@@
-
--x = kmalloc(size,flags);
-+x = kzalloc(size,flags);
- if (x = NULL) S
--memset(x, 0, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 ---
- drivers/block/drbd/drbd_nl.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-omap.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff -u -p a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -1199,13 +1199,12 @@ static int drbd_nl_net_conf(struct drbd_
- 	}
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index 7674efb..de79286 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -205,7 +205,7 @@ struct omap_i2c_dev {
+ 	u16			errata;
+ };
  
- 	/* allocation not in the IO path, cqueue thread context */
--	new_conf = kmalloc(sizeof(struct net_conf), GFP_KERNEL);
-+	new_conf = kzalloc(sizeof(struct net_conf), GFP_KERNEL);
- 	if (!new_conf) {
- 		retcode = ERR_NOMEM;
- 		goto fail;
- 	}
+-const static u8 reg_map[] = {
++static const u8 reg_map[] = {
+ 	[OMAP_I2C_REV_REG] = 0x00,
+ 	[OMAP_I2C_IE_REG] = 0x01,
+ 	[OMAP_I2C_STAT_REG] = 0x02,
+@@ -226,7 +226,7 @@ const static u8 reg_map[] = {
+ 	[OMAP_I2C_BUFSTAT_REG] = 0x10,
+ };
  
--	memset(new_conf, 0, sizeof(struct net_conf));
- 	new_conf->timeout	   = DRBD_TIMEOUT_DEF;
- 	new_conf->try_connect_int  = DRBD_CONNECT_INT_DEF;
- 	new_conf->ping_int	   = DRBD_PING_INT_DEF;
+-const static u8 omap4_reg_map[] = {
++static const u8 omap4_reg_map[] = {
+ 	[OMAP_I2C_REV_REG] = 0x04,
+ 	[OMAP_I2C_IE_REG] = 0x2c,
+ 	[OMAP_I2C_STAT_REG] = 0x28,
+-- 
+1.6.3.3
+
