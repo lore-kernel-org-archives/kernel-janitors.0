@@ -1,66 +1,39 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Wed, 26 May 2010 12:43:13 +0000
-Subject: Re: [patch v3 1/2] video/saa7134: change dprintk() to i2cdprintk()
-Message-Id: <20100526144313.1d15222f@hyperion.delvare>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 20 May 2010 15:12:52 +0000
+Subject: [PATCH] OMAP: DSS2: storage class should be before const qualifier
+Message-Id: <1274368372-4043-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100525091816.GA13034@bicker>
-In-Reply-To: <20100525091816.GA13034@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, hermann pitton <hermann-pitton@arcor.de>, Douglas Schilling Landgraf <dougsland@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Dan,
+The C99 specification states in section 6.11.5:
 
-On Tue, 25 May 2010 11:19:53 +0200, Dan Carpenter wrote:
-> The problem is that dprintk() dereferences "dev" which is null here.
-> The i2cdprintk() uses "ir" so that's OK.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> v2: Jean Delvare suggested that I use i2cdprintk() instead of modifying
-> dprintk().
-> v3: V2 had a bonus cleanup that I removed from v3
-> 
-> diff --git a/drivers/media/video/saa7134/saa7134-input.c b/drivers/media/video/saa7134/saa7134-input.c
-> index e5565e2..7691bf2 100644
-> --- a/drivers/media/video/saa7134/saa7134-input.c
-> +++ b/drivers/media/video/saa7134/saa7134-input.c
-> @@ -141,8 +141,8 @@ static int get_key_flydvb_trio(struct IR_i2c *ir, u32 *ir_key, u32 *ir_raw)
->  	struct saa7134_dev *dev = ir->c->adapter->algo_data;
->  
->  	if (dev = NULL) {
-> -		dprintk("get_key_flydvb_trio: "
-> -			 "gir->c->adapter->algo_data is NULL!\n");
-> +		i2cdprintk("get_key_flydvb_trio: "
-> +			   "gir->c->adapter->algo_data is NULL!\n");
+The placement of a storage-class specifier other than at the beginning
+of the declaration specifiers in a declaration is an obsolescent
+feature.
 
-Sorry for noticing only now, but "gir->" in the comment is odd. As seen
-in the code above, it's actually "ir->". Maybe you want to fix this, as
-you are already touching that line anyway.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ arch/arm/plat-omap/include/plat/display.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-
-Other than this, this patch is:
-
-Acked-by: Jean Delvare <khali@linux-fr.org>
-
->  		return -EIO;
->  	}
->  
-> @@ -195,8 +195,8 @@ static int get_key_msi_tvanywhere_plus(struct IR_i2c *ir, u32 *ir_key,
->  	/* <dev> is needed to access GPIO. Used by the saa_readl macro. */
->  	struct saa7134_dev *dev = ir->c->adapter->algo_data;
->  	if (dev = NULL) {
-> -		dprintk("get_key_msi_tvanywhere_plus: "
-> -			"gir->c->adapter->algo_data is NULL!\n");
-> +		i2cdprintk("get_key_msi_tvanywhere_plus: "
-> +			   "gir->c->adapter->algo_data is NULL!\n");
->  		return -EIO;
->  	}
->  
-> 
-
-
+diff --git a/arch/arm/plat-omap/include/plat/display.h b/arch/arm/plat-omap/include/plat/display.h
+index 1c529ce..fbbb966 100644
+--- a/arch/arm/plat-omap/include/plat/display.h
++++ b/arch/arm/plat-omap/include/plat/display.h
+@@ -277,8 +277,8 @@ struct omap_video_timings {
+  * identify the mode, and does not actually use the configs
+  * itself. However, the configs should be something that
+  * a normal monitor can also show */
+-const extern struct omap_video_timings omap_dss_pal_timings;
+-const extern struct omap_video_timings omap_dss_ntsc_timings;
++extern const struct omap_video_timings omap_dss_pal_timings;
++extern const struct omap_video_timings omap_dss_ntsc_timings;
+ #endif
+ 
+ struct omap_overlay_info {
 -- 
-Jean Delvare
+1.6.3.3
+
