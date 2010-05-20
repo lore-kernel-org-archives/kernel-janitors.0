@@ -1,19 +1,37 @@
-From: Len Brown <lenb@kernel.org>
-Date: Thu, 20 May 2010 05:03:03 +0000
-Subject: Re: [PATCH 11/37] drivers/acpi: Use kmemdup
-Message-Id: <alpine.LFD.2.00.1005200103000.2921@localhost.localdomain>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 20 May 2010 08:34:48 +0000
+Subject: [PATCH 04/11] hwmon: Storage class should be before const qualifier
+Message-Id: <1274344488-8918-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005152316030.21345@ask.diku.dk>
- <4BEF1328.8040306@suse.de>
-In-Reply-To: <4BEF1328.8040306@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexey Starikovskiy <astarikovskiy@suse.de>
-Cc: Julia Lawall <julia@diku.dk>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-applied
+The C99 specification states in section 6.11.5:
 
-thanks,
-Len Brown, Intel Open Source Technology Center
+The placement of a storage-class specifier other than at the beginning
+of the declaration specifiers in a declaration is an obsolescent
+feature.
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/hwmon/emc1403.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/hwmon/emc1403.c b/drivers/hwmon/emc1403.c
+index 28cca34..0e4b564 100644
+--- a/drivers/hwmon/emc1403.c
++++ b/drivers/hwmon/emc1403.c
+@@ -308,7 +308,7 @@ static const unsigned short emc1403_address_list[] = {
+ 	0x18, 0x2a, 0x4c, 0x4d, I2C_CLIENT_END
+ };
+ 
+-const static struct i2c_device_id emc1403_idtable[] = {
++static const struct i2c_device_id emc1403_idtable[] = {
+ 	{ "emc1403", 0 },
+ 	{ }
+ };
+-- 
+1.6.3.3
 
