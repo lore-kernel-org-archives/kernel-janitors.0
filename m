@@ -1,30 +1,38 @@
-From: Alan Cox <alan@linux.intel.com>
-Date: Tue, 25 May 2010 12:42:58 +0000
-Subject: Re: [patch] TTY/n_gsm: potential double lock
-Message-Id: <20100525134258.568a600f@linux.intel.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 20 May 2010 08:40:55 +0000
+Subject: [PATCH 11/11] ALSA: hda: Storage class should be before const qualifier
+Message-Id: <1274344855-9336-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100525093717.GC22515@bicker>
-In-Reply-To: <20100525093717.GC22515@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: perex@perex.cz, tiwai@suse.de, alsa-devel@alsa-project.org
+Cc: Tobias Klauser <tklauser@distanz.ch>, kernel-janitors@vger.kernel.org
 
-On Tue, 25 May 2010 11:37:17 +0200
-Dan Carpenter <error27@gmail.com> wrote:
+The C99 specification states in section 6.11.5:
 
-> In gsm_dlci_data_kick() we call gsm_dlci_data_sweep() with the
-> "gsm->tx_lock" held so we can't lock it again inside
-> gsm_dlci_data_sweep().  I removed that lock from and added one to 
-> gsmld_write_wakeup() instead.  The sweep function is only called from
-> those two places.
+The placement of a storage-class specifier other than at the beginning
+of the declaration specifiers in a declaration is an obsolescent
+feature.
 
-Well spotted - I'm surprised that escaped as I've been using the code a
-fair bit in that exact form. Not immediately obvious that the case
-should be that hard to trigger.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ sound/pci/hda/patch_realtek.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Alan Cox <alan@linux.intel.com>
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 80a183f..53538b0 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -14207,7 +14207,7 @@ enum {
+ 	ALC269_FIXUP_SONY_VAIO,
+ };
+ 
+-const static struct hda_verb alc269_sony_vaio_fixup_verbs[] = {
++static const struct hda_verb alc269_sony_vaio_fixup_verbs[] = {
+ 	{0x19, AC_VERB_SET_PIN_WIDGET_CONTROL, PIN_VREFGRD},
+ 	{}
+ };
+-- 
+1.6.3.3
 
