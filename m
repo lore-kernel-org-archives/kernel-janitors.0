@@ -1,66 +1,60 @@
-From: Wan ZongShun <mcuos.com@gmail.com>
-Date: Thu, 20 May 2010 02:36:59 +0000
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Fri, 21 May 2010 19:56:04 +0000
 Subject: Re: [patch] nuc900fb: release correct mem region
-Message-Id: <AANLkTimDYkjTEVMFl8Vrbwblg46-ErGEaUV3M9-DWbCu@mail.gmail.com>
+Message-Id: <20100521125604.3065ca0e.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100325105408.GD5069@bicker>
-	<20100519194854.GB22515@bicker>
-In-Reply-To: <20100519194854.GB22515@bicker>
+References: <20100325105408.GD5069@bicker> <20100519194854.GB22515@bicker>
+	<AANLkTimDYkjTEVMFl8Vrbwblg46-ErGEaUV3M9-DWbCu@mail.gmail.com>
+In-Reply-To: <AANLkTimDYkjTEVMFl8Vrbwblg46-ErGEaUV3M9-DWbCu@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Hi Dan,
+On Thu, 20 May 2010 10:36:59 +0800
+Wan ZongShun <mcuos.com@gmail.com> wrote:
 
-Qiang brother have a busy doing business, so I can maintain the
-nuc900fb driver instead.
-It looks good to me.
+> Hi Dan,
+> 
+> Qiang brother have a busy doing business, so I can maintain the
+> nuc900fb driver instead.
 
-Andrew , Could you help merge this patch? thanks a lot!
+Feel free to send an update to the MAINTAINERS file.
 
-Acked-by: Wan ZongShun<mcuos.com@gmail.com>
+> It looks good to me.
+> 
+> Andrew , Could you help merge this patch? thanks a lot!
+> 
+> Acked-by: Wan ZongShun<mcuos.com@gmail.com>
+> 
+> 
+> 2010/5/20 Dan Carpenter <error27@gmail.com>:
+> > Ping. __Any feedback on this patch?
+> >
+> > regards,
+> > dan carpenter
+> >
+> > On Thu, Mar 25, 2010 at 01:54:08PM +0300, Dan Carpenter wrote:
+> >> We should be releasing "res->start" here.
+> >>
+> >> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> >> ---
+> >> BTW. __Congratulations on being an official driver maintainer now. __:) __Can
+> >> you add yourself to the MAINTAINERS file?
+> >>
+> >> diff --git a/drivers/video/nuc900fb.c b/drivers/video/nuc900fb.c
+> >> index 6bf0d46..d4cde79 100644
+> >> --- a/drivers/video/nuc900fb.c
+> >> +++ b/drivers/video/nuc900fb.c
+> >> @@ -667,7 +667,7 @@ release_irq:
+> >> __release_regs:
+> >> __ __ __ iounmap(fbi->io);
+> >> __release_mem_region:
+> >> - __ __ release_mem_region((unsigned long)fbi->mem, size);
+> >> + __ __ release_mem_region(res->start, size);
+> >> __free_fb:
+> >> __ __ __ framebuffer_release(fbinfo);
+> >> __ __ __ return ret;
+> >
 
-
-2010/5/20 Dan Carpenter <error27@gmail.com>:
-> Ping.  Any feedback on this patch?
->
-> regards,
-> dan carpenter
->
-> On Thu, Mar 25, 2010 at 01:54:08PM +0300, Dan Carpenter wrote:
->> We should be releasing "res->start" here.
->>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->> ---
->> BTW.  Congratulations on being an official driver maintainer now.  :)  Can
->> you add yourself to the MAINTAINERS file?
->>
->> diff --git a/drivers/video/nuc900fb.c b/drivers/video/nuc900fb.c
->> index 6bf0d46..d4cde79 100644
->> --- a/drivers/video/nuc900fb.c
->> +++ b/drivers/video/nuc900fb.c
->> @@ -667,7 +667,7 @@ release_irq:
->>  release_regs:
->>       iounmap(fbi->io);
->>  release_mem_region:
->> -     release_mem_region((unsigned long)fbi->mem, size);
->> +     release_mem_region(res->start, size);
->>  free_fb:
->>       framebuffer_release(fbinfo);
->>       return ret;
->
-
-
-
--- 
-*linux-arm-kernel mailing list
-mail addr:linux-arm-kernel@lists.infradead.org
-you can subscribe by:
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-* linux-arm-NUC900 mailing list
-mail addr:NUC900@googlegroups.com
-main web: https://groups.google.com/group/NUC900
-you can subscribe it by sending me mail:
-mcuos.com@gmail.com
+I don't think I ever received a copy of this patch.  I reconstructed it.
