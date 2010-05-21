@@ -1,39 +1,28 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 20 May 2010 15:12:52 +0000
-Subject: [PATCH] OMAP: DSS2: storage class should be before const qualifier
-Message-Id: <1274368372-4043-1-git-send-email-tklauser@distanz.ch>
+From: Tomi Valkeinen <tomi.valkeinen@nokia.com>
+Date: Fri, 21 May 2010 08:37:32 +0000
+Subject: Re: [PATCH] OMAP: DSS2: storage class should be before const
+Message-Id: <1274431052.4246.88.camel@tubuntu.research.nokia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1274368372-4043-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1274368372-4043-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-The C99 specification states in section 6.11.5:
+Hi,
 
-The placement of a storage-class specifier other than at the beginning
-of the declaration specifiers in a declaration is an obsolescent
-feature.
+On Thu, 2010-05-20 at 17:12 +0200, ext Tobias Klauser wrote:
+> The C99 specification states in section 6.11.5:
+> 
+> The placement of a storage-class specifier other than at the beginning
+> of the declaration specifiers in a declaration is an obsolescent
+> feature.
+> 
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- arch/arm/plat-omap/include/plat/display.h |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Thanks! Applied to omap-dss tree.
 
-diff --git a/arch/arm/plat-omap/include/plat/display.h b/arch/arm/plat-omap/include/plat/display.h
-index 1c529ce..fbbb966 100644
---- a/arch/arm/plat-omap/include/plat/display.h
-+++ b/arch/arm/plat-omap/include/plat/display.h
-@@ -277,8 +277,8 @@ struct omap_video_timings {
-  * identify the mode, and does not actually use the configs
-  * itself. However, the configs should be something that
-  * a normal monitor can also show */
--const extern struct omap_video_timings omap_dss_pal_timings;
--const extern struct omap_video_timings omap_dss_ntsc_timings;
-+extern const struct omap_video_timings omap_dss_pal_timings;
-+extern const struct omap_video_timings omap_dss_ntsc_timings;
- #endif
- 
- struct omap_overlay_info {
--- 
-1.6.3.3
+ Tomi
+
 
