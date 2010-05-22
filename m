@@ -1,47 +1,79 @@
-From: Jiri Olsa <jolsa@redhat.com>
-Date: Thu, 06 May 2010 17:36:11 +0000
-Subject: [PATCH 07/13] h8300: removing redundant ifdef
-Message-Id: <1273167377-14270-8-git-send-email-jolsa@redhat.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 10:00:38 +0000
+Subject: [PATCH 5/8] fs/btrfs: Use ERR_CAST
+Message-Id: <Pine.LNX.4.64.1005221200210.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
-In-Reply-To: <1273167377-14270-1-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, jgarzik@pobox.com, hare@suse.de, felipe.balbi@nokia.com, Jiri Olsa <jolsa@redhat.com>
+To: Chris Mason <chris.mason@oracle.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-wbr,
-jirka
+From: Julia Lawall <julia@diku.dk>
 
+Use ERR_CAST(x) rather than ERR_PTR(PTR_ERR(x)).  The former makes more
+clear what is the purpose of the operation, which otherwise looks like a
+no-op.
 
-Signed-off-by: Jiri Olsa <jolsa@redhat.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+type T;
+T x;
+identifier f;
+@@
+
+T f (...) { <+...
+- ERR_PTR(PTR_ERR(x))
++ x
+ ...+> }
+
+@@
+expression x;
+@@
+
+- ERR_PTR(PTR_ERR(x))
++ ERR_CAST(x)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- arch/h8300/include/asm/tlb.h |   13 -------------
- 1 files changed, 0 insertions(+), 13 deletions(-)
+ fs/btrfs/extent_map.c |    4 ++--
+ fs/btrfs/super.c      |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/h8300/include/asm/tlb.h b/arch/h8300/include/asm/tlb.h
-index 3dea80a..6339a02 100644
---- a/arch/h8300/include/asm/tlb.h
-+++ b/arch/h8300/include/asm/tlb.h
-@@ -7,17 +7,4 @@
+diff -u -p a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+--- a/fs/btrfs/extent_map.c
++++ b/fs/btrfs/extent_map.c
+@@ -335,7 +335,7 @@ struct extent_map *lookup_extent_mapping
+ 		goto out;
+ 	}
+ 	if (IS_ERR(rb_node)) {
+-		em = ERR_PTR(PTR_ERR(rb_node));
++		em = ERR_CAST(rb_node);
+ 		goto out;
+ 	}
+ 	em = rb_entry(rb_node, struct extent_map, rb_node);
+@@ -384,7 +384,7 @@ struct extent_map *search_extent_mapping
+ 		goto out;
+ 	}
+ 	if (IS_ERR(rb_node)) {
+-		em = ERR_PTR(PTR_ERR(rb_node));
++		em = ERR_CAST(rb_node);
+ 		goto out;
+ 	}
+ 	em = rb_entry(rb_node, struct extent_map, rb_node);
+diff -u -p a/fs/btrfs/super.c b/fs/btrfs/super.c
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -378,7 +378,7 @@ static struct dentry *get_default_root(s
+ find_root:
+ 	new_root = btrfs_read_fs_root_no_name(root->fs_info, &location);
+ 	if (IS_ERR(new_root))
+-		return ERR_PTR(PTR_ERR(new_root));
++		return ERR_CAST(new_root);
  
- #define tlb_flush(tlb)	do { } while(0)
- 
--/* 
--  include/asm-h8300/tlb.h 
--*/
--
--#ifndef __H8300_TLB_H__
--#define __H8300_TLB_H__
--
--#define tlb_flush(tlb)	do { } while(0)
--
--#include <asm-generic/tlb.h>
--
--#endif
--
- #endif
--- 
-1.6.6.1
-
+ 	if (btrfs_root_refs(&new_root->root_item) = 0)
+ 		return ERR_PTR(-ENOENT);
