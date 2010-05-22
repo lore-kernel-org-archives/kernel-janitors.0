@@ -1,36 +1,57 @@
-From: =?UTF-8?B?Iua9mOWNq+W5syhQZXRlciBQYW4pIg==?=
-Date: Wed, 12 May 2010 03:07:38 +0000
-Subject: [PATCH] ext2:delete two redundant assignments
-Message-Id: <4BEA1B7A.7020109@redflag-linux.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 10:01:30 +0000
+Subject: [PATCH 8/8] fs/affs: Use ERR_CAST
+Message-Id: <Pine.LNX.4.64.1005221201150.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Roman Zippel <zippel@linux-m68k.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-es->s_free_blocks_count and es->s_free_inodes_count are assigned in
-ext2_sync_super().
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Peter Pan <wppan@redflag-linux.com>
+Use ERR_CAST(x) rather than ERR_PTR(PTR_ERR(x)).  The former makes more
+clear what is the purpose of the operation, which otherwise looks like a
+no-op.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+type T;
+T x;
+identifier f;
+@@
+
+T f (...) { <+...
+- ERR_PTR(PTR_ERR(x))
++ x
+ ...+> }
+
+@@
+expression x;
+@@
+
+- ERR_PTR(PTR_ERR(x))
++ ERR_CAST(x)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-  fs/ext2/super.c |    4 ----
-  1 files changed, 0 insertions(+), 4 deletions(-)
+ fs/affs/namei.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 42e4a30..1cf58aa 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -1182,10 +1182,6 @@ static int ext2_sync_fs(struct super_block *sb, 
-int wait)
-  	if (es->s_state & cpu_to_le16(EXT2_VALID_FS)) {
-  		ext2_debug("setting valid to 0\n");
-  		es->s_state &= cpu_to_le16(~EXT2_VALID_FS);
--		es->s_free_blocks_count -			cpu_to_le32(ext2_count_free_blocks(sb));
--		es->s_free_inodes_count -			cpu_to_le32(ext2_count_free_inodes(sb));
-  		es->s_mtime = cpu_to_le32(get_seconds());
-  		ext2_sync_super(sb, es);
-  	} else {
--- 
-1.6.6
-
-
+diff -u -p a/fs/affs/namei.c b/fs/affs/namei.c
+--- a/fs/affs/namei.c
++++ b/fs/affs/namei.c
+@@ -224,7 +224,7 @@ affs_lookup(struct inode *dir, struct de
+ 		affs_brelse(bh);
+ 		inode = affs_iget(sb, ino);
+ 		if (IS_ERR(inode))
+-			return ERR_PTR(PTR_ERR(inode));
++			return ERR_CAST(inode);
+ 	}
+ 	dentry->d_op = AFFS_SB(sb)->s_flags & SF_INTL ? &affs_intl_dentry_operations : &affs_dentry_operations;
+ 	d_add(dentry, inode);
