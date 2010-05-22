@@ -1,61 +1,96 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Wed, 05 May 2010 09:18:41 +0000
-Subject: [PATCH] USB: isp1760: Use resource_size
-Message-Id: <1273051121-12861-1-git-send-email-tklauser@distanz.ch>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:21:02 +0000
+Subject: [PATCH 9/27] drivers/media: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221020440.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use the resource_size function instead of manually calculating the
-resource size.  This reduces the chance of introducing off-by-one
-errors.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Use memdup_user when user data is immediately copied into the
+allocated region.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
+
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/usb/host/isp1760-if.c |   11 +++++------
- 1 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/media/dvb/dvb-core/dvb_demux.c |   10 +++-------
+ drivers/media/video/dabusb.c           |   13 ++++---------
+ 2 files changed, 7 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/usb/host/isp1760-if.c b/drivers/usb/host/isp1760-if.c
-index 42a0946..8f0259e 100644
---- a/drivers/usb/host/isp1760-if.c
-+++ b/drivers/usb/host/isp1760-if.c
-@@ -36,7 +36,7 @@ static int of_isp1760_probe(struct of_device *dev,
- 	struct resource memory;
- 	struct of_irq oirq;
- 	int virq;
--	u64 res_len;
-+	resource_size_t res_len;
- 	int ret;
- 	const unsigned int *prop;
- 	unsigned int devflags = 0;
-@@ -45,13 +45,12 @@ static int of_isp1760_probe(struct of_device *dev,
- 	if (ret)
- 		return -ENXIO;
+diff --git a/drivers/media/dvb/dvb-core/dvb_demux.c b/drivers/media/dvb/dvb-core/dvb_demux.c
+index 977ddba..4a88a3e 100644
+--- a/drivers/media/dvb/dvb-core/dvb_demux.c
++++ b/drivers/media/dvb/dvb-core/dvb_demux.c
+@@ -1130,13 +1130,9 @@ static int dvbdmx_write(struct dmx_demux *demux, const char __user *buf, size_t
+ 	if ((!demux->frontend) || (demux->frontend->source != DMX_MEMORY_FE))
+ 		return -EINVAL;
  
--	res = request_mem_region(memory.start, memory.end - memory.start + 1,
--			dev_name(&dev->dev));
-+	res_len = resource_size(&memory);
-+
-+	res = request_mem_region(memory.start, res_len, dev_name(&dev->dev));
- 	if (!res)
- 		return -EBUSY;
+-	p = kmalloc(count, GFP_USER);
+-	if (!p)
+-		return -ENOMEM;
+-	if (copy_from_user(p, buf, count)) {
+-		kfree(p);
+-		return -EFAULT;
+-	}
++	p = memdup_user(buf, count);
++	if (IS_ERR(p))
++		return PTR_ERR(p);
+ 	if (mutex_lock_interruptible(&dvbdemux->mutex)) {
+ 		kfree(p);
+ 		return -ERESTARTSYS;
+diff --git a/drivers/media/video/dabusb.c b/drivers/media/video/dabusb.c
+index 0f50508..5b176bd 100644
+--- a/drivers/media/video/dabusb.c
++++ b/drivers/media/video/dabusb.c
+@@ -706,16 +706,11 @@ static long dabusb_ioctl (struct file *file, unsigned int cmd, unsigned long arg
+ 	switch (cmd) {
  
--	res_len = memory.end - memory.start + 1;
+ 	case IOCTL_DAB_BULK:
+-		pbulk = kmalloc(sizeof (bulk_transfer_t), GFP_KERNEL);
++		pbulk = memdup_user((void __user *)arg,
++				    sizeof(bulk_transfer_t));
+ 
+-		if (!pbulk) {
+-			ret = -ENOMEM;
+-			break;
+-		}
 -
- 	if (of_irq_map_one(dp, 0, &oirq)) {
- 		ret = -ENODEV;
- 		goto release_reg;
-@@ -92,7 +91,7 @@ static int of_isp1760_probe(struct of_device *dev,
- 	return ret;
+-		if (copy_from_user (pbulk, (void __user *) arg, sizeof (bulk_transfer_t))) {
+-			ret = -EFAULT;
+-			kfree (pbulk);
++		if (IS_ERR(pbulk)) {
++			ret = PTR_ERR(pbulk);
+ 			break;
+ 		}
  
- release_reg:
--	release_mem_region(memory.start, memory.end - memory.start + 1);
-+	release_mem_region(memory.start, res_len);
- 	return ret;
- }
- 
--- 
-1.6.3.3
-
