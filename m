@@ -1,52 +1,71 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:14:12 +0000
-Subject: [PATCH 4/37] drivers/block: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152313540.21345@ask.diku.dk>
+Date: Sat, 22 May 2010 08:18:34 +0000
+Subject: [PATCH 1/27] net/can: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221018130.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeremy Fitzhardinge <jeremy@xensource.com>, Chris Wright <chrisw@sous-sol.org>, virtualization@lists.osdl.org, xen-devel@lists.xensource.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Oliver Hartkopp <socketcan@hartkopp.net>, Urs Thuermann <urs.thuermann@volkswagen.de>, "David S. Miller" <davem@davemloft.net>, socketcan-core@lists.berlios.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kmemdup when some other buffer is immediately copied into the
+Use memdup_user when user data is immediately copied into the
 allocated region.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
 expression from,to,size,flag;
-statement S;
+position p;
+identifier l1,l2;
 @@
 
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/block/xen-blkfront.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/can/raw.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff -u -p a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -775,11 +775,10 @@ static int blkif_recover(struct blkfront
- 	int j;
+diff --git a/net/can/raw.c b/net/can/raw.c
+index da99cf1..ccfe633 100644
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -436,14 +436,9 @@ static int raw_setsockopt(struct socket *sock, int level, int optname,
  
- 	/* Stage 1: Make a safe copy of the shadow state. */
--	copy = kmalloc(sizeof(info->shadow),
-+	copy = kmemdup(info->shadow, sizeof(info->shadow),
- 		       GFP_NOIO | __GFP_REPEAT | __GFP_HIGH);
- 	if (!copy)
- 		return -ENOMEM;
--	memcpy(copy, info->shadow, sizeof(info->shadow));
- 
- 	/* Stage 2: Set up free list. */
- 	memset(&info->shadow, 0, sizeof(info->shadow));
+ 		if (count > 1) {
+ 			/* filter does not fit into dfilter => alloc space */
+-			filter = kmalloc(optlen, GFP_KERNEL);
+-			if (!filter)
+-				return -ENOMEM;
+-
+-			if (copy_from_user(filter, optval, optlen)) {
+-				kfree(filter);
+-				return -EFAULT;
+-			}
++			filter = memdup_user(optval, optlen);
++			if (IS_ERR(filter))
++				return PTR_ERR(filter);
+ 		} else if (count = 1) {
+ 			if (copy_from_user(&sfilter, optval, sizeof(sfilter)))
+ 				return -EFAULT;
