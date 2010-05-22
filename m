@@ -1,32 +1,71 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 29 May 2010 09:44:10 +0000
-Subject: [patch 4/11] btrfs: btrfs_read_fs_root_no_name() returns ERR_PTRs
-Message-Id: <20100529094410.GE5483@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:19:36 +0000
+Subject: [PATCH 4/27] drivers/video/via: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221019180.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Jens Axboe <jens.axboe@oracle.com>, Christoph Hellwig <hch@lst.de>, kernel-janitors@vger.kernel.org, Chris Mason <chris.mason@oracle.com>
+To: Joseph Chan <JosephChan@via.com.tw>, Scott Fang <ScottFang@viatech.com.cn>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-btrfs_read_fs_root_no_name() returns ERR_PTRs on error so I added a
-check for that.  It's not clear to me if it can also return NULL
-pointers or not so I left the original NULL pointer check as is.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 73895ba..34f7c37 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1985,6 +1985,10 @@ struct btrfs_root *open_ctree(struct super_block *sb,
- 	fs_info->fs_root = btrfs_read_fs_root_no_name(fs_info, &location);
- 	if (!fs_info->fs_root)
- 		goto fail_trans_kthread;
-+	if (IS_ERR(fs_info->fs_root)) {
-+		err = PTR_ERR(fs_info->fs_root);
-+		goto fail_trans_kthread;
-+	}
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
+
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/video/via/viafbdev.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/video/via/viafbdev.c b/drivers/video/via/viafbdev.c
+index 2bc40e6..1082541 100644
+--- a/drivers/video/via/viafbdev.c
++++ b/drivers/video/via/viafbdev.c
+@@ -578,14 +578,9 @@ static int viafb_ioctl(struct fb_info *info, u_int cmd, u_long arg)
+ 		break;
  
- 	if (!(sb->s_flags & MS_RDONLY)) {
- 		down_read(&fs_info->cleanup_work_sem);
+ 	case VIAFB_SET_GAMMA_LUT:
+-		viafb_gamma_table = kmalloc(256 * sizeof(u32), GFP_KERNEL);
+-		if (!viafb_gamma_table)
+-			return -ENOMEM;
+-		if (copy_from_user(viafb_gamma_table, argp,
+-				256 * sizeof(u32))) {
+-			kfree(viafb_gamma_table);
+-			return -EFAULT;
+-		}
++		viafb_gamma_table = memdup_user(argp, 256 * sizeof(u32));
++		if (IS_ERR(viafb_gamma_table))
++			return PTR_ERR(viafb_gamma_table);
+ 		viafb_set_gamma_table(viafb_bpp, viafb_gamma_table);
+ 		kfree(viafb_gamma_table);
+ 		break;
