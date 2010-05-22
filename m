@@ -1,91 +1,78 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 22 May 2010 20:42:38 +0000
-Subject: [patch] comedi: cleanup: remove unneeded null checks
-Message-Id: <20100522203958.GU22515@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:24:21 +0000
+Subject: [PATCH 19/27] drivers/telephony/ixj.c: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221023490.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These checks are obviously pointless because kfree() can handle null
-dereferences.
+From: Julia Lawall <julia@diku.dk>
 
-But really the main problem is that if the pointers were null that would
-cause problems on the ealier lines.  The dereferences would cause an oops
-and the _release() functions use ->priv to determine which IRQ to free.  
-I looked into it and quite a few of the detach functions assume 
-link->priv is non-null.  It seems like we can remove these checks.
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/staging/comedi/drivers/cb_das16_cs.c b/drivers/staging/comedi/drivers/cb_das16_cs.c
-index 30b522c..16f9c0a 100644
---- a/drivers/staging/comedi/drivers/cb_das16_cs.c
-+++ b/drivers/staging/comedi/drivers/cb_das16_cs.c
-@@ -718,8 +718,7 @@ static void das16cs_pcmcia_detach(struct pcmcia_device *link)
- 	((struct local_info_t *)link->priv)->stop = 1;
- 	das16cs_pcmcia_release(link);
- 	/* This points to the parent struct local_info_t struct */
--	if (link->priv)
--		kfree(link->priv);
-+	kfree(link->priv);
- }				/* das16cs_pcmcia_detach */
- 
- 
-diff --git a/drivers/staging/comedi/drivers/das08_cs.c b/drivers/staging/comedi/drivers/das08_cs.c
-index 896d25b..eb3aa59 100644
---- a/drivers/staging/comedi/drivers/das08_cs.c
-+++ b/drivers/staging/comedi/drivers/das08_cs.c
-@@ -206,8 +206,7 @@ static void das08_pcmcia_detach(struct pcmcia_device *link)
- 	das08_pcmcia_release(link);
- 
- 	/* This points to the parent struct local_info_t struct */
--	if (link->priv)
--		kfree(link->priv);
-+	kfree(link->priv);
- 
- }				/* das08_pcmcia_detach */
- 
-diff --git a/drivers/staging/comedi/drivers/ni_daq_700.c b/drivers/staging/comedi/drivers/ni_daq_700.c
-index 06dd44f..e217b54 100644
---- a/drivers/staging/comedi/drivers/ni_daq_700.c
-+++ b/drivers/staging/comedi/drivers/ni_daq_700.c
-@@ -538,8 +538,7 @@ static void dio700_cs_detach(struct pcmcia_device *link)
- 	dio700_release(link);
- 
- 	/* This points to the parent struct local_info_t struct */
--	if (link->priv)
--		kfree(link->priv);
-+	kfree(link->priv);
- 
- }				/* dio700_cs_detach */
- 
-diff --git a/drivers/staging/comedi/drivers/ni_daq_dio24.c b/drivers/staging/comedi/drivers/ni_daq_dio24.c
-index 7bfe08b..6d6073f 100644
---- a/drivers/staging/comedi/drivers/ni_daq_dio24.c
-+++ b/drivers/staging/comedi/drivers/ni_daq_dio24.c
-@@ -289,8 +289,7 @@ static void dio24_cs_detach(struct pcmcia_device *link)
- 	dio24_release(link);
- 
- 	/* This points to the parent local_info_t struct */
--	if (link->priv)
--		kfree(link->priv);
-+	kfree(link->priv);
- 
- }				/* dio24_cs_detach */
- 
-diff --git a/drivers/staging/comedi/drivers/quatech_daqp_cs.c b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-index 1786db2..71dbe69 100644
---- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-+++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-@@ -1074,8 +1074,7 @@ static void daqp_cs_detach(struct pcmcia_device *link)
- 
- 	/* Unlink device structure, and free it */
- 	dev_table[dev->table_index] = NULL;
--	if (dev)
--		kfree(dev);
-+	kfree(dev);
- 
- }				/* daqp_cs_detach */
- 
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
+
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/telephony/ixj.c |   15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/telephony/ixj.c b/drivers/telephony/ixj.c
+index e89304c..b53deee 100644
+--- a/drivers/telephony/ixj.c
++++ b/drivers/telephony/ixj.c
+@@ -5879,20 +5879,13 @@ out:
+ static int ixj_build_filter_cadence(IXJ *j, IXJ_FILTER_CADENCE __user * cp)
+ {
+ 	IXJ_FILTER_CADENCE *lcp;
+-	lcp = kmalloc(sizeof(IXJ_FILTER_CADENCE), GFP_KERNEL);
+-	if (lcp = NULL) {
++	lcp = memdup_user(cp, sizeof(IXJ_FILTER_CADENCE));
++	if (IS_ERR(lcp)) {
+ 		if(ixjdebug & 0x0001) {
+-			printk(KERN_INFO "Could not allocate memory for cadence\n");
++			printk(KERN_INFO "Could not allocate memory for cadence or could not copy cadence to kernel\n");
+ 		}
+-		return -ENOMEM;
++		return PTR_ERR(lcp);
+         }
+-	if (copy_from_user(lcp, cp, sizeof(IXJ_FILTER_CADENCE))) {
+-		if(ixjdebug & 0x0001) {
+-			printk(KERN_INFO "Could not copy cadence to kernel\n");
+-		}
+-		kfree(lcp);
+-		return -EFAULT;
+-	}
+ 	if (lcp->filter > 5) {
+ 		if(ixjdebug & 0x0001) {
+ 			printk(KERN_INFO "Cadence out of range\n");
