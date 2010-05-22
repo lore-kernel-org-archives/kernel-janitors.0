@@ -1,26 +1,83 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Date: Mon, 31 May 2010 11:39:15 +0000
-Subject: Re: [PATCH 2/11] drivers/watchdog: Eliminate a NULL pointer
-Message-Id: <20100531113915.GS3972@infomag.iguana.be>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 09:59:48 +0000
+Subject: [PATCH 2/8] crypto: Use ERR_CAST
+Message-Id: <Pine.LNX.4.64.1005221159290.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005271432100.5422@ask.diku.dk> <20100531112330.GI3489@rakim.wolfsonmicro.main>
-In-Reply-To: <20100531112330.GI3489@rakim.wolfsonmicro.main>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi All,
+From: Julia Lawall <julia@diku.dk>
 
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > At the point of the call to dev_err, wm8350 is NULL.
-> 
-> Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Use ERR_CAST(x) rather than ERR_PTR(PTR_ERR(x)).  The former makes more
+clear what is the purpose of the operation, which otherwise looks like a
+no-op.
 
-Will add this one in linux-2.6-watchdog-next for testing and sent it to Linus after a couple of days.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Kind regards,
-Wim.
+// <smpl>
+@@
+type T;
+T x;
+identifier f;
+@@
 
+T f (...) { <+...
+- ERR_PTR(PTR_ERR(x))
++ x
+ ...+> }
+
+@@
+expression x;
+@@
+
+- ERR_PTR(PTR_ERR(x))
++ ERR_CAST(x)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ crypto/authenc.c |    2 +-
+ crypto/ctr.c     |    2 +-
+ crypto/xts.c     |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff -u -p a/crypto/authenc.c b/crypto/authenc.c
+--- a/crypto/authenc.c
++++ b/crypto/authenc.c
+@@ -612,7 +612,7 @@ static struct crypto_instance *crypto_au
+ 	auth = ahash_attr_alg(tb[1], CRYPTO_ALG_TYPE_HASH,
+ 			       CRYPTO_ALG_TYPE_AHASH_MASK);
+ 	if (IS_ERR(auth))
+-		return ERR_PTR(PTR_ERR(auth));
++		return ERR_CAST(auth);
+ 
+ 	auth_base = &auth->base;
+ 
+diff -u -p a/crypto/ctr.c b/crypto/ctr.c
+--- a/crypto/ctr.c
++++ b/crypto/ctr.c
+@@ -185,7 +185,7 @@ static struct crypto_instance *crypto_ct
+ 	alg = crypto_attr_alg(tb[1], CRYPTO_ALG_TYPE_CIPHER,
+ 				  CRYPTO_ALG_TYPE_MASK);
+ 	if (IS_ERR(alg))
+-		return ERR_PTR(PTR_ERR(alg));
++		return ERR_CAST(alg);
+ 
+ 	/* Block size must be >= 4 bytes. */
+ 	err = -EINVAL;
+diff -u -p a/crypto/xts.c b/crypto/xts.c
+--- a/crypto/xts.c
++++ b/crypto/xts.c
+@@ -224,7 +224,7 @@ static struct crypto_instance *alloc(str
+ 	alg = crypto_get_attr_alg(tb, CRYPTO_ALG_TYPE_CIPHER,
+ 				  CRYPTO_ALG_TYPE_MASK);
+ 	if (IS_ERR(alg))
+-		return ERR_PTR(PTR_ERR(alg));
++		return ERR_CAST(alg);
+ 
+ 	inst = crypto_alloc_instance("xts", alg);
+ 	if (IS_ERR(inst))
