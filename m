@@ -1,47 +1,37 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 31 May 2010 20:40:38 +0000
-Subject: Re: [patch 1/2] input/tps6507x-ts: dereferencing before checking
-Message-Id: <20100531204038.GA5483@bicker>
+Date: Sat, 22 May 2010 20:45:19 +0000
+Subject: [patch] caif: cleanup: remove duplicate checks
+Message-Id: <20100522204519.GW22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100531120122.GR5483@bicker> <20100531191723.GE30712@core.coreip.homeip.net>
-In-Reply-To: <20100531191723.GE30712@core.coreip.homeip.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Todd Fischer <todd.fischer@ridgerun.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Sjur Braendeland <sjur.brandeland@stericsson.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Mon, May 31, 2010 at 12:17:23PM -0700, Dmitry Torokhov wrote:
-> > --- a/drivers/input/touchscreen/tps6507x-ts.c
-> > +++ b/drivers/input/touchscreen/tps6507x-ts.c
-> > @@ -355,10 +355,11 @@ static int __devexit tps6507x_ts_remove(struct platform_device *pdev)
-> >  {
-> >  	struct tps6507x_dev *tps6507x_dev = platform_get_drvdata(pdev);
-> >  	struct tps6507x_ts *tsc = tps6507x_dev->ts;
-> > -	struct input_dev *input_dev = tsc->input_dev;
-> > +	struct input_dev *input_dev;
-> >  
-> >  	if (!tsc)
-> >  		return 0;
-> > +	input_dev = tsc->input_dev;
-> >  
-> 
-> Why would tsc ever be NULL?
-> 
-> Also I really do not like that pdev's driver data that is supposed to be
-> driver-private data is being used by the parent. Parent should be using
-> it's own drvdata and leave child's data alone. We should probably do in
-> platform code what I2C is about to do and clear drvdata on unbind
-> automatically to prevent this kind of misuse.
-> 
+These checks merely duplicate the things we've asserted already.  In the
+case of the checks for null we've already dereferenced those variables
+as well.
 
-Uh...  Sorry I was just messing with my static checker and didn't look
-into it deeply enough.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-All your points are valid ones of course.  This is fairly new driver so
-we might be able to ask the maintainer.  :)  Todd, do you want to help
-us out?
-
-regards,
-dan carpenter
-
+diff --git a/net/caif/cfcnfg.c b/net/caif/cfcnfg.c
+index df43f26..cc2f072 100644
+--- a/net/caif/cfcnfg.c
++++ b/net/caif/cfcnfg.c
+@@ -313,14 +313,10 @@ cfcnfg_linkup_rsp(struct cflayer *layer, u8 channel_id, enum cfctrl_srv serv,
+ 	caif_assert(phyinfo->phy_layer != NULL);
+ 	caif_assert(phyinfo->phy_layer->id = phyid);
+ 
+-	if (phyinfo != NULL &&
+-	    phyinfo->phy_ref_count++ = 0 &&
+-	    phyinfo->phy_layer != NULL &&
++	if (phyinfo->phy_ref_count++ = 0 &&
+ 	    phyinfo->phy_layer->modemcmd != NULL) {
+-		caif_assert(phyinfo->phy_layer->id = phyid);
+ 		phyinfo->phy_layer->modemcmd(phyinfo->phy_layer,
+ 					     _CAIF_MODEMCMD_PHYIF_USEFULL);
+-
+ 	}
+ 	adapt_layer->id = channel_id;
+ 
