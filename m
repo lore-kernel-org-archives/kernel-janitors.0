@@ -1,30 +1,71 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 29 May 2010 09:46:47 +0000
-Subject: [patch 7/11] btrfs: unwind after btrfs_start_transaction() errors
-Message-Id: <20100529094647.GH5483@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:22:49 +0000
+Subject: [PATCH 15/27] drivers/mtd: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221022350.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Sage Weil <sage@newdream.net>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This was added by a22285a6a3: "Btrfs: Integrate metadata reservation
-with start_transaction".  If we goto out here then we skip all the
-unwinding and there are locks still held etc.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 4cdb98c..9f9a1d9 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1280,7 +1280,7 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
- 	trans = btrfs_start_transaction(root, 0);
- 	if (IS_ERR(trans)) {
- 		err = PTR_ERR(trans);
--		goto out;
-+		goto out_up_write;
- 	}
- 	trans->block_rsv = &root->fs_info->global_block_rsv;
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
+
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/mtd/mtdchar.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+index 000d65e..91c8013 100644
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -404,14 +404,9 @@ static int mtd_do_writeoob(struct file *file, struct mtd_info *mtd,
+ 	if (ops.ooboffs && ops.ooblen > (mtd->oobsize - ops.ooboffs))
+ 		return -EINVAL;
  
+-	ops.oobbuf = kmalloc(length, GFP_KERNEL);
+-	if (!ops.oobbuf)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(ops.oobbuf, ptr, length)) {
+-		kfree(ops.oobbuf);
+-		return -EFAULT;
+-	}
++	ops.oobbuf = memdup_user(ptr, length);
++	if (IS_ERR(ops.oobbuf))
++		return PTR_ERR(ops.oobbuf);
+ 
+ 	start &= ~((uint64_t)mtd->oobsize - 1);
+ 	ret = mtd->write_oob(mtd, start, &ops);
