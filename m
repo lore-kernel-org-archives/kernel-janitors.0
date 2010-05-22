@@ -1,27 +1,40 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Mon, 03 May 2010 13:15:06 +0000
-Subject: Re: [PATCH 1/7] drivers/staging/comedi: dev_node removal
-Message-Id: <20100503131506.GB10064@comet.dominikbrodowski.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 22 May 2010 20:31:40 +0000
+Subject: [patch] V4L/DVB: uninitialized variable in
+Message-Id: <20100522203140.GQ22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hey,
+The patch ffb4877ba0: "V4L/DVB: v4l2-common: simplify prio utility
+functions" accidentally removed the "dev = fh->dev;" assignment.
+Even before that change, we still could have passed a bogus "dev" pointer
+to cx25821_set_freq() if "fh" was null.
 
-On Fri, Apr 30, 2010 at 04:30:07PM -0400, Javier Martinez Canillas wrote:
-> This is the first patch of a patch series that removes dev_node in comedi drivers.
-> 
-> I got a build error trying to compile comedi drivers due dev_node removal in struct pcmcia_device.
-> 
-> I first generated a patch against linux-next tree to solve the issue. But then was told that this change has to go through pcmcia tree.
-> 
-> So I generate the patches against pcmcia-2.6 git tree and also split the patch in seven small patches so it would be easier to review.
-> 
-> Thanks a lot.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied all seven patches. Thanks a lot!
-
-Best,
-	Dominik
+diff --git a/drivers/staging/cx25821/cx25821-video.c b/drivers/staging/cx25821/cx25821-video.c
+index 791212c..56a7521 100644
+--- a/drivers/staging/cx25821/cx25821-video.c
++++ b/drivers/staging/cx25821/cx25821-video.c
+@@ -966,11 +966,13 @@ int cx25821_vidioc_s_frequency(struct file *file, void *priv, struct v4l2_freque
+ 	struct cx25821_dev *dev;
+ 	int err;
+ 
+-	if (fh) {
+-		err = v4l2_prio_check(&dev->prio, fh->prio);
+-		if (0 != err)
+-			return err;
+-	}
++	if (!fh)
++		return -ENODEV;
++
++	dev = fh->dev;
++	err = v4l2_prio_check(&dev->prio, fh->prio);
++	if (0 != err)
++		return err;
+ 
+ 	return cx25821_set_freq(dev, f);
+ }
