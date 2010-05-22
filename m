@@ -1,37 +1,40 @@
-From: Kevin Hilman <khilman@deeprootsystems.com>
-Date: Fri, 14 May 2010 15:16:04 +0000
-Subject: Re: [PATCH 4/20] arch/arm/mach-davinci: Use kzalloc
-Message-Id: <87d3wyqzt7.fsf@deeprootsystems.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 22 May 2010 20:20:24 +0000
+Subject: [patch] sctp: dubious bitfields in sctp_transport
+Message-Id: <20100522202024.GL22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005132159170.6282@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005132159170.6282@ask.diku.dk> (Julia Lawall's
-	message of "Thu\, 13 May 2010 21\:59\:32 +0200 \(CEST\)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Vlad Yasevich <vladislav.yasevich@hp.com>
+Cc: Sridhar Samudrala <sri@us.ibm.com>, "David S. Miller" <davem@davemloft.net>, Wei Yongjun <yjwei@cn.fujitsu.com>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall <julia@diku.dk> writes:
+Sparse complains because these one-bit bitfields are signed.
+  include/net/sctp/structs.h:879:24: error: dubious one-bit signed bitfield
+  include/net/sctp/structs.h:889:31: error: dubious one-bit signed bitfield
+  include/net/sctp/structs.h:895:26: error: dubious one-bit signed bitfield
+  include/net/sctp/structs.h:898:31: error: dubious one-bit signed bitfield
+  include/net/sctp/structs.h:901:27: error: dubious one-bit signed bitfield
 
-> From: Julia Lawall <julia@diku.dk>
->
-> Use kzalloc rather than the combination of kmalloc and memset.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression x,size,flags;
-> statement S;
-> @@
->
-> -x = kmalloc(size,flags);
-> +x = kzalloc(size,flags);
->  if (x = NULL) S
-> -memset(x, 0, size);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+It doesn't cause a problem in the current code, but it would be better
+to clean it up.  This was introduced by c0058a35aacc7: "sctp: Save some
+room in the sctp_transport by using bitfields".
 
-Acked-by: Kevin Hilman <khilman@deeprootsystems.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+It looks like this header is exported to user space.  I don't know if
+that makes a difference.
+
+diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
+index 6173c61..4b86011 100644
+--- a/include/net/sctp/structs.h
++++ b/include/net/sctp/structs.h
+@@ -876,7 +876,7 @@ struct sctp_transport {
+ 
+ 	/* Reference counting. */
+ 	atomic_t refcnt;
+-	int	 dead:1,
++	__u32	 dead:1,
+ 		/* RTO-Pending : A flag used to track if one of the DATA
+ 		 *		chunks sent to this address is currently being
+ 		 *		used to compute a RTT. If this flag is 0,
