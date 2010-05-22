@@ -1,18 +1,17 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:21:45 +0000
-Subject: [PATCH 11/27] drivers/i2c: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221021270.13021@ask.diku.dk>
+Date: Sat, 22 May 2010 08:25:44 +0000
+Subject: [PATCH 23/27] drivers/net/wireless/prism54: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221025200.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>, "Ben Dooks (em, bedded platforms)" <ben-linux@fluff.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janit
+To: "Luis R. Rodriguez" <mcgrof@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use memdup_user when user data is immediately copied into the allocated
-region.  Note that in the second case, the ++i is no longer necessary, as
-the last value is already freed if needed by the call to memdup_user.
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
@@ -45,46 +44,28 @@ identifier l1,l2;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/i2c/i2c-dev.c |   22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+ drivers/net/wireless/prism54/isl_ioctl.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index e0694e4..03e9ef8 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -167,13 +167,9 @@ static ssize_t i2cdev_write(struct file *file, const char __user *buf,
- 	if (count > 8192)
- 		count = 8192;
+diff --git a/drivers/net/wireless/prism54/isl_ioctl.c b/drivers/net/wireless/prism54/isl_ioctl.c
+index 8d1190c..2a62c60 100644
+--- a/drivers/net/wireless/prism54/isl_ioctl.c
++++ b/drivers/net/wireless/prism54/isl_ioctl.c
+@@ -2751,14 +2751,9 @@ prism54_hostapd(struct net_device *ndev, struct iw_point *p)
+            p->length > PRISM2_HOSTAPD_MAX_BUF_SIZE || !p->pointer)
+                return -EINVAL;
  
--	tmp = kmalloc(count, GFP_KERNEL);
--	if (tmp = NULL)
--		return -ENOMEM;
--	if (copy_from_user(tmp, buf, count)) {
--		kfree(tmp);
--		return -EFAULT;
--	}
-+	tmp = memdup_user(buf, count);
-+	if (IS_ERR(tmp))
-+		return PTR_ERR(tmp);
+-       param = kmalloc(p->length, GFP_KERNEL);
+-       if (param = NULL)
+-               return -ENOMEM;
+-
+-       if (copy_from_user(param, p->pointer, p->length)) {
+-               kfree(param);
+-               return -EFAULT;
+-       }
++	param = memdup_user(p->pointer, p->length);
++	if (IS_ERR(param))
++		return PTR_ERR(param);
  
- 	pr_debug("i2c-dev: i2c-%d writing %zu bytes.\n",
- 		iminor(file->f_path.dentry->d_inode), count);
-@@ -247,15 +243,9 @@ static noinline int i2cdev_ioctl_rdrw(struct i2c_client *client,
- 			break;
- 		}
- 		data_ptrs[i] = (u8 __user *)rdwr_pa[i].buf;
--		rdwr_pa[i].buf = kmalloc(rdwr_pa[i].len, GFP_KERNEL);
--		if (rdwr_pa[i].buf = NULL) {
--			res = -ENOMEM;
--			break;
--		}
--		if (copy_from_user(rdwr_pa[i].buf, data_ptrs[i],
--				   rdwr_pa[i].len)) {
--				++i; /* Needs to be kfreed too */
--				res = -EFAULT;
-+		rdwr_pa[i].buf = memdup_user(data_ptrs[i], rdwr_pa[i].len);
-+		if (IS_ERR(rdwr_pa[i].buf)) {
-+			res = PTR_ERR(rdwr_pa[i].buf);
- 			break;
- 		}
- 	}
+        switch (param->cmd) {
+        case PRISM2_SET_ENCRYPTION:
