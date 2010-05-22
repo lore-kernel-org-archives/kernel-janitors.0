@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:24:21 +0000
-Subject: [PATCH 19/27] drivers/telephony/ixj.c: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221023490.13021@ask.diku.dk>
+Date: Sat, 22 May 2010 08:24:47 +0000
+Subject: [PATCH 20/27] drivers/s390/net: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221024220.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ursula Braun <ursula.braun@de.ibm.com>, Frank Blaschka <blaschka@linux.vnet.ibm.com>, linux390@de.ibm.com, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -44,35 +44,29 @@ identifier l1,l2;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/telephony/ixj.c |   15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/s390/net/qeth_core_main.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/telephony/ixj.c b/drivers/telephony/ixj.c
-index e89304c..b53deee 100644
---- a/drivers/telephony/ixj.c
-+++ b/drivers/telephony/ixj.c
-@@ -5879,20 +5879,13 @@ out:
- static int ixj_build_filter_cadence(IXJ *j, IXJ_FILTER_CADENCE __user * cp)
- {
- 	IXJ_FILTER_CADENCE *lcp;
--	lcp = kmalloc(sizeof(IXJ_FILTER_CADENCE), GFP_KERNEL);
--	if (lcp = NULL) {
-+	lcp = memdup_user(cp, sizeof(IXJ_FILTER_CADENCE));
-+	if (IS_ERR(lcp)) {
- 		if(ixjdebug & 0x0001) {
--			printk(KERN_INFO "Could not allocate memory for cadence\n");
-+			printk(KERN_INFO "Could not allocate memory for cadence or could not copy cadence to kernel\n");
- 		}
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index 13ef46b..8b48fbd 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -3764,15 +3764,10 @@ int qeth_snmp_command(struct qeth_card *card, char __user *udata)
+ 	/* skip 4 bytes (data_len struct member) to get req_len */
+ 	if (copy_from_user(&req_len, udata + sizeof(int), sizeof(int)))
+ 		return -EFAULT;
+-	ureq = kmalloc(req_len+sizeof(struct qeth_snmp_ureq_hdr), GFP_KERNEL);
+-	if (!ureq) {
++	ureq = memdup_user(udata, req_len + sizeof(struct qeth_snmp_ureq_hdr));
++	if (IS_ERR(ureq)) {
+ 		QETH_DBF_TEXT(TRACE, 2, "snmpnome");
 -		return -ENOMEM;
-+		return PTR_ERR(lcp);
-         }
--	if (copy_from_user(lcp, cp, sizeof(IXJ_FILTER_CADENCE))) {
--		if(ixjdebug & 0x0001) {
--			printk(KERN_INFO "Could not copy cadence to kernel\n");
--		}
--		kfree(lcp);
--		return -EFAULT;
 -	}
- 	if (lcp->filter > 5) {
- 		if(ixjdebug & 0x0001) {
- 			printk(KERN_INFO "Cadence out of range\n");
+-	if (copy_from_user(ureq, udata,
+-			req_len + sizeof(struct qeth_snmp_ureq_hdr))) {
+-		kfree(ureq);
+-		return -EFAULT;
++		return PTR_ERR(ureq);
+ 	}
+ 	qinfo.udata_len = ureq->hdr.data_len;
+ 	qinfo.udata = kzalloc(qinfo.udata_len, GFP_KERNEL);
