@@ -1,107 +1,71 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 30 May 2010 13:49:22 +0000
-Subject: [PATCH 1/2] drivers/scsi: Use GFP_ATOMIC when a lock is held
-Message-Id: <Pine.LNX.4.64.1005301549030.15938@ask.diku.dk>
+Date: Sat, 22 May 2010 08:23:08 +0000
+Subject: [PATCH 16/27] drivers/char/applicom.c: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221022500.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The function adpt_i2o_post_wait is called from several places, in some of
-which, such as adpt_abort, a lock may be held.
-
-The functions adpt_i2o_reparse_lct and adpt_i2o_lct_get are called from
-several places, including adpt_rescan where a lock may be held.
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@gfp exists@
-identifier fn;
+@@
+expression from,to,size,flag;
 position p;
+identifier l1,l2;
 @@
 
-fn(...) {
- ... when != spin_unlock_irqrestore
-     when any
- GFP_KERNEL@p
- ... when any
-}
-
-@locked@
-identifier gfp.fn;
-@@
-
-spin_lock_irqsave(...)
-...  when != spin_unlock_irqrestore
-fn(...)
-
-@depends on locked@
-position gfp.p;
-@@
-
-- GFP_KERNEL@p
-+ GFP_ATOMIC
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/dpt_i2o.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/char/applicom.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index b0c576f..4df589a 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -1290,7 +1290,7 @@ static int adpt_i2o_post_wait(adpt_hba* pHba, u32* msg, int len, int timeout)
- 	ulong flags = 0;
- 	struct adpt_i2o_post_wait_data *p1, *p2;
- 	struct adpt_i2o_post_wait_data *wait_data -		kmalloc(sizeof(struct adpt_i2o_post_wait_data),GFP_KERNEL);
-+		kmalloc(sizeof(struct adpt_i2o_post_wait_data), GFP_ATOMIC);
- 	DECLARE_WAITQUEUE(wait, current);
+diff --git a/drivers/char/applicom.c b/drivers/char/applicom.c
+index 63313a3..f4ae0e0 100644
+--- a/drivers/char/applicom.c
++++ b/drivers/char/applicom.c
+@@ -703,14 +703,9 @@ static long ac_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	/* In general, the device is only openable by root anyway, so we're not
+ 	   particularly concerned that bogus ioctls can flood the console. */
  
- 	if (!wait_data)
-@@ -2651,7 +2651,8 @@ static s32 adpt_i2o_reparse_lct(adpt_hba* pHba)
- 				pDev = pDev->next_lun;
- 			}
- 			if(!pDev ) { // Something new add it
--				d = kmalloc(sizeof(struct i2o_device), GFP_KERNEL);
-+				d = kmalloc(sizeof(struct i2o_device),
-+					    GFP_ATOMIC);
- 				if(d=NULL)
- 				{
- 					printk(KERN_CRIT "Out of memory for I2O device data.\n");
-@@ -2673,7 +2674,9 @@ static s32 adpt_i2o_reparse_lct(adpt_hba* pHba)
- 				}
- 				pDev = pHba->channel[bus_no].device[scsi_id];	
- 				if( pDev = NULL){
--					pDev =  kzalloc(sizeof(struct adpt_device),GFP_KERNEL);
-+					pDev +					  kzalloc(sizeof(struct adpt_device),
-+						  GFP_ATOMIC);
- 					if(pDev = NULL) {
- 						return -ENOMEM;
- 					}
-@@ -2682,7 +2685,9 @@ static s32 adpt_i2o_reparse_lct(adpt_hba* pHba)
- 					while (pDev->next_lun) {
- 						pDev = pDev->next_lun;
- 					}
--					pDev = pDev->next_lun = kzalloc(sizeof(struct adpt_device),GFP_KERNEL);
-+					pDev = pDev->next_lun +					  kzalloc(sizeof(struct adpt_device),
-+						  GFP_ATOMIC);
- 					if(pDev = NULL) {
- 						return -ENOMEM;
- 					}
-@@ -3127,7 +3132,7 @@ static int adpt_i2o_lct_get(adpt_hba* pHba)
- 		if (pHba->lct = NULL) {
- 			pHba->lct = dma_alloc_coherent(&pHba->pDev->dev,
- 					pHba->lct_size, &pHba->lct_pa,
--					GFP_KERNEL);
-+					GFP_ATOMIC);
- 			if(pHba->lct = NULL) {
- 				printk(KERN_CRIT "%s: Lct Get failed. Out of memory.\n",
- 					pHba->name);
+-	adgl = kmalloc(sizeof(struct st_ram_io), GFP_KERNEL);
+-	if (!adgl)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(adgl, argp, sizeof(struct st_ram_io))) {
+-		kfree(adgl);
+-		return -EFAULT;
+-	}
++	adgl = memdup_user(argp, sizeof(struct st_ram_io));
++	if (IS_ERR(adgl))
++		return PTR_ERR(adgl);
+ 
+ 	lock_kernel();	
+ 	IndexCard = adgl->num_card-1;
