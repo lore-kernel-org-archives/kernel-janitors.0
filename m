@@ -1,75 +1,70 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 26 May 2010 15:54:39 +0000
-Subject: [PATCH 2/17] fs: Add missing mutex_unlock
-Message-Id: <Pine.LNX.4.64.1005261754220.23743@ask.diku.dk>
+Date: Sat, 22 May 2010 08:25:03 +0000
+Subject: [PATCH 21/27] drivers/ide: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221024470.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Add a mutex_unlock missing on the error path.  At other exists from the
-function that return an error flag, the mutex is unlocked, so do the same
-here.
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
-The semantic match that finds this problem is as follows:
+The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression E1;
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
 @@
 
-* mutex_lock(E1,...);
-  <+... when != E1
-  if (...) {
-    ... when != E1
-*   return ...;
-  }
-  ...+>
-* mutex_unlock(E1,...);
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- fs/pipe.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/ide/ide-taskfile.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index d79872e..60da077 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -1169,14 +1169,18 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
+diff --git a/drivers/ide/ide-taskfile.c b/drivers/ide/ide-taskfile.c
+index 67fb735..34b9872 100644
+--- a/drivers/ide/ide-taskfile.c
++++ b/drivers/ide/ide-taskfile.c
+@@ -480,13 +480,9 @@ int ide_taskfile_ioctl(ide_drive_t *drive, unsigned long arg)
+ 	u16 nsect		= 0;
+ 	char __user *buf = (char __user *)arg;
  
- 	switch (cmd) {
- 	case F_SETPIPE_SZ:
--		if (!capable(CAP_SYS_ADMIN) && arg > pipe_max_pages)
--			return -EINVAL;
-+		if (!capable(CAP_SYS_ADMIN) && arg > pipe_max_pages) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 		/*
- 		 * The pipe needs to be at least 2 pages large to
- 		 * guarantee POSIX behaviour.
- 		 */
--		if (arg < 2)
--			return -EINVAL;
-+		if (arg < 2) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 		ret = pipe_set_size(pipe, arg);
- 		break;
- 	case F_GETPIPE_SZ:
-@@ -1187,6 +1191,7 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
- 		break;
- 	}
+-	req_task = kzalloc(tasksize, GFP_KERNEL);
+-	if (req_task = NULL)
+-		return -ENOMEM;
+-	if (copy_from_user(req_task, buf, tasksize)) {
+-		kfree(req_task);
+-		return -EFAULT;
+-	}
++	req_task = memdup_user(buf, tasksize);
++	if (IS_ERR(req_task))
++		return PTR_ERR(req_task);
  
-+out:
- 	mutex_unlock(&pipe->inode->i_mutex);
- 	return ret;
- }
+ 	taskout = req_task->out_size;
+ 	taskin  = req_task->in_size;
