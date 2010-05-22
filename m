@@ -1,27 +1,125 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 28 May 2010 13:55:34 +0000
-Subject: Re: question about leds-88pm860x.c
-Message-Id: <20100528135533.GZ22515@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 10:01:14 +0000
+Subject: [PATCH 7/8] fs/ceph: Use ERR_CAST
+Message-Id: <Pine.LNX.4.64.1005221200560.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100528123122.GY22515@bicker>
-In-Reply-To: <20100528123122.GY22515@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 28, 2010 at 06:42:33AM -0700, Haojian Zhuang wrote:
-> Thanks for your good catch. We needn't this checking at here. Now I format this patch.
-> 
-> Best Regards
-> Haojian
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Sorry, I only noticed this after I had already sent the email but
-__check_device() in drivers/video/backlight/88pm860x_bl.c has the same
-thing.
+Use ERR_CAST(x) rather than ERR_PTR(PTR_ERR(x)).  The former makes more
+clear what is the purpose of the operation, which otherwise looks like a
+no-op.
 
-regards,
-dan carpenter
+In the case of fs/ceph/inode.c, ERR_CAST is not needed, because the type of
+the returned value is the same as the type of the enclosing function.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+type T;
+T x;
+identifier f;
+@@
+
+T f (...) { <+...
+- ERR_PTR(PTR_ERR(x))
++ x
+ ...+> }
+
+@@
+expression x;
+@@
+
+- ERR_PTR(PTR_ERR(x))
++ ERR_CAST(x)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/ceph/dir.c    |    2 +-
+ fs/ceph/export.c |    2 +-
+ fs/ceph/file.c   |    2 +-
+ fs/ceph/inode.c  |    2 +-
+ fs/ceph/osdmap.c |    2 +-
+ fs/ceph/super.c  |    2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff -u -p a/fs/ceph/dir.c b/fs/ceph/dir.c
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -587,7 +587,7 @@ static struct dentry *ceph_lookup(struct
+ 		CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_LOOKUP;
+ 	req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+ 	if (IS_ERR(req))
+-		return ERR_PTR(PTR_ERR(req));
++		return ERR_CAST(req);
+ 	req->r_dentry = dget(dentry);
+ 	req->r_num_caps = 2;
+ 	/* we only need inode linkage */
+diff -u -p a/fs/ceph/export.c b/fs/ceph/export.c
+--- a/fs/ceph/export.c
++++ b/fs/ceph/export.c
+@@ -133,7 +133,7 @@ static struct dentry *__cfh_to_dentry(st
+ 		req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPHASH,
+ 					       USE_ANY_MDS);
+ 		if (IS_ERR(req))
+-			return ERR_PTR(PTR_ERR(req));
++			return ERR_CAST(req);
+ 
+ 		req->r_ino1 = vino;
+ 		req->r_ino2.ino = cfh->parent_ino;
+diff -u -p a/fs/ceph/file.c b/fs/ceph/file.c
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -230,7 +230,7 @@ struct dentry *ceph_lookup_open(struct i
+ 	/* do the open */
+ 	req = prepare_open_request(dir->i_sb, flags, mode);
+ 	if (IS_ERR(req))
+-		return ERR_PTR(PTR_ERR(req));
++		return ERR_CAST(req);
+ 	req->r_dentry = dget(dentry);
+ 	req->r_num_caps = 2;
+ 	if (flags & O_CREAT) {
+diff -u -p a/fs/ceph/inode.c b/fs/ceph/inode.c
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -69,7 +69,7 @@ struct inode *ceph_get_snapdir(struct in
+ 
+ 	BUG_ON(!S_ISDIR(parent->i_mode));
+ 	if (IS_ERR(inode))
+-		return ERR_PTR(PTR_ERR(inode));
++		return inode;
+ 	inode->i_mode = parent->i_mode;
+ 	inode->i_uid = parent->i_uid;
+ 	inode->i_gid = parent->i_gid;
+diff -u -p a/fs/ceph/osdmap.c b/fs/ceph/osdmap.c
+--- a/fs/ceph/osdmap.c
++++ b/fs/ceph/osdmap.c
+@@ -706,7 +706,7 @@ struct ceph_osdmap *osdmap_apply_increme
+ 		     len, *p, end);
+ 		newcrush = crush_decode(*p, min(*p+len, end));
+ 		if (IS_ERR(newcrush))
+-			return ERR_PTR(PTR_ERR(newcrush));
++			return ERR_CAST(newcrush);
+ 	}
+ 
+ 	/* new flags? */
+diff -u -p a/fs/ceph/super.c b/fs/ceph/super.c
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -738,7 +738,7 @@ static struct dentry *open_root_dentry(s
+ 	dout("open_root_inode opening '%s'\n", path);
+ 	req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, USE_ANY_MDS);
+ 	if (IS_ERR(req))
+-		return ERR_PTR(PTR_ERR(req));
++		return ERR_CAST(req);
+ 	req->r_path1 = kstrdup(path, GFP_NOFS);
+ 	req->r_ino1.ino = CEPH_INO_ROOT;
+ 	req->r_ino1.snap = CEPH_NOSNAP;
