@@ -1,44 +1,29 @@
-From: Luciano Coelho <luciano.coelho@nokia.com>
-Date: Mon, 17 May 2010 07:59:37 +0000
-Subject: Re: [PATCH 12/37] drivers/net/wireless/wl12xx: Use kmemdup
-Message-Id: <1274083177.17643.8.camel@chilepepper>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 22 May 2010 20:18:01 +0000
+Subject: [patch] scsi/qla2xxx: check for null consistently
+Message-Id: <20100522201801.GK22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005152316220.21345@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005152316220.21345@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ext Julia Lawall <julia@diku.dk>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Andrew Vasquez <andrew.vasquez@qlogic.com>
+Cc: linux-driver@qlogic.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, Giridhar Malavali <giridhar.malavali@qlogic.com>, Anirban Chakraborty <anirban.chakraborty@qlogic.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2010-05-15 at 23:16 +0200, ext Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kmemdup when some other buffer is immediately copied into the
-> allocated region.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression from,to,size,flag;
-> statement S;
-> @@
-> 
-> -  to = \(kmalloc\|kzalloc\)(size,flag);
-> +  to = kmemdup(from,size,flag);
->    if (to=NULL || ...) S
-> -  memcpy(to, from, size);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+We assume that "ha->cs84xx" can be null on the previous line, so we
+should check it here as well.
 
-Thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Acked-by: Luciano Coelho <luciano.coelho@nokia.com>
-
--- 
-Cheers,
-Luca.
-
+diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
+index 3b70860..ad22baa 100644
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -1211,7 +1211,7 @@ qla24xx_84xx_fw_version_show(struct device *dev,
+ 	if (ha->cs84xx && ha->cs84xx->op_fw_version = 0)
+ 		rval = qla84xx_verify_chip(vha, status);
+ 
+-	if ((rval = QLA_SUCCESS) && (status[0] = 0))
++	if (ha->cs84xx && rval = QLA_SUCCESS && status[0] = 0)
+ 		return snprintf(buf, PAGE_SIZE, "%u\n",
+ 			(uint32_t)ha->cs84xx->op_fw_version);
+ 
