@@ -1,33 +1,70 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 04 May 2010 12:31:13 +0000
-Subject: [patch -next 1/2] media/az6027: handle -EIO failure
-Message-Id: <20100504123113.GY29093@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:26:22 +0000
+Subject: [PATCH 25/27] drivers/usb/gadget: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221026050.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If the az6027_usb_in_op() returns a negative errno ret is -EIO and in
-that case the value of b[0] may be undefined.  The original code
-assigned 0 to ret, but since it's already 0 now we can skip that.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
-diff --git a/drivers/media/dvb/dvb-usb/az6027.c b/drivers/media/dvb/dvb-usb/az6027.c
-index baaa301..6681ac1 100644
---- a/drivers/media/dvb/dvb-usb/az6027.c
-+++ b/drivers/media/dvb/dvb-usb/az6027.c
-@@ -701,10 +701,7 @@ static int az6027_ci_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int o
- 	} else
- 		ret = 0;
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
+
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/gadget/inode.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/usb/gadget/inode.c b/drivers/usb/gadget/inode.c
+index de8a838..63fc171 100644
+--- a/drivers/usb/gadget/inode.c
++++ b/drivers/usb/gadget/inode.c
+@@ -1867,13 +1867,9 @@ dev_config (struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
+ 	buf += 4;
+ 	length -= 4;
  
--	if (b[0] = 0) {
--		ret = 0;
--
--	} else if (b[0] = 1) {
-+	if (!ret && b[0] = 1) {
- 		ret = DVB_CA_EN50221_POLL_CAM_PRESENT |
- 		      DVB_CA_EN50221_POLL_CAM_READY;
- 	}
+-	kbuf = kmalloc (length, GFP_KERNEL);
+-	if (!kbuf)
+-		return -ENOMEM;
+-	if (copy_from_user (kbuf, buf, length)) {
+-		kfree (kbuf);
+-		return -EFAULT;
+-	}
++	kbuf = memdup_user(buf, length);
++	if (IS_ERR(kbuf))
++		return PTR_ERR(kbuf);
+ 
+ 	spin_lock_irq (&dev->lock);
+ 	value = -EINVAL;
