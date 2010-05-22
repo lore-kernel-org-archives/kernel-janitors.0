@@ -1,42 +1,74 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Date: Mon, 17 May 2010 19:06:00 +0000
-Subject: Re: [patch v2] bio-integrity: use hardware sectors instead of block layer sectors
-Message-Id: <yq1ljbi8i1z.fsf@sermon.lab.mkp.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:26:04 +0000
+Subject: [PATCH 24/27] drivers/net/wan: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221025450.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100507082928.GT27064@bicker> <20100507095414.GH27064@bicker>
-In-Reply-To: <20100507095414.GH27064@bicker> (Dan Carpenter's message of "Fri,
-	7 May 2010 11:54:14 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <jens.axboe@oracle.com>, Chuck Ebbert <cebbert@redhat.com>, linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org
+To: Kevin Curtis <kevin.curtis@farsite.co.uk>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->>>>> "Dan" = Dan Carpenter <error27@gmail.com> writes:
+From: Julia Lawall <julia@diku.dk>
 
-Dan,
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
-This one bitrotted in my mailbox for a while because it conflicted with
-something else I was working on and then it slipped through the cracks.
-Sorry about that.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
 
-Dan> The difference between "sectors" and "nr_sectors" is that "sectors"
-Dan> is in terms of 512 byte sectors and "nr_sectors" is in terms of
-Dan> hardware sectors.  They are only different for 4k sector devices.
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
 
-Dan> Also I changed the name because as Jamie Lokier points out, "that
-Dan> code is so asking for the variable to be called 'hw_sectors'."
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-The change is obviously functionally correct.  But I object to the
-notion of hw_sectors.  The 1:1 mapping of DIF tuples and logical blocks
-is even going away in SBC3.  So let's not perpetuate that.
+---
+ drivers/net/wan/farsync.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-I have a patch in my queue that gets rid of all the hw_sector references
-in the integrity code.  I'll make sure to include your fix.
-
-So thanks for spotting this.  I obviously haven't tested PI drives with
-a 4KB logical block size in combination with device mapper...
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/net/wan/farsync.c b/drivers/net/wan/farsync.c
+index e087b9a..43b7727 100644
+--- a/drivers/net/wan/farsync.c
++++ b/drivers/net/wan/farsync.c
+@@ -2038,16 +2038,10 @@ fst_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 
+ 		/* Now copy the data to the card. */
+ 
+-		buf = kmalloc(wrthdr.size, GFP_KERNEL);
+-		if (!buf)
+-			return -ENOMEM;
+-
+-		if (copy_from_user(buf,
+-				   ifr->ifr_data + sizeof (struct fstioc_write),
+-				   wrthdr.size)) {
+-			kfree(buf);
+-			return -EFAULT;
+-		}
++		buf = memdup_user(ifr->ifr_data + sizeof(struct fstioc_write),
++				  wrthdr.size);
++		if (IS_ERR(buf))
++			return PTR_ERR(buf);
+ 
+ 		memcpy_toio(card->mem + wrthdr.offset, buf, wrthdr.size);
+ 		kfree(buf);
