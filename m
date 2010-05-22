@@ -1,83 +1,71 @@
-From: Martyn Welch <martyn.welch@ge.com>
-Date: Thu, 27 May 2010 07:54:49 +0000
-Subject: Re: [PATCH 16/17] drivers/staging/vme/bridges: Add missing unlocks
-Message-Id: <4BFE2549.4000403@ge.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:25:19 +0000
+Subject: [PATCH 22/27] net/dccp: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221025040.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261758540.23743@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005261758540.23743@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>, "David S. Miller" <davem@davemloft.net>, dccp@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
->
-> Add a spin_unlock and mutex_unlock missing on the error path.
->
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression E1;
-> @@
->
-> * spin_lock(E1,...);
->   <+... when != E1
->   if (...) {
->     ... when != E1
-> *   return ...;
->   }
->   ...+>
-> * spin_unlock(E1,...);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
->   
+From: Julia Lawall <julia@diku.dk>
 
-Good catch.
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
-Signed-off-by: Martyn Welch <martyn.welch@ge.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
 
-> ---
->  drivers/staging/vme/bridges/vme_ca91cx42.c |    8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/staging/vme/bridges/vme_ca91cx42.c b/drivers/staging/vme/bridges/vme_ca91cx42.c
-> index 0c82eb4..f38f7b7 100644
-> --- a/drivers/staging/vme/bridges/vme_ca91cx42.c
-> +++ b/drivers/staging/vme/bridges/vme_ca91cx42.c
-> @@ -900,7 +900,8 @@ unsigned int ca91cx42_master_rmw(struct vme_master_resource *image,
->  	/* Address must be 4-byte aligned */
->  	if (pci_addr & 0x3) {
->  		dev_err(dev, "RMW Address not 4-byte aligned\n");
-> -		return -EINVAL;
-> +		result = -EINVAL;
-> +		goto out;
->  	}
->  
->  	/* Ensure RMW Disabled whilst configuring */
-> @@ -921,6 +922,7 @@ unsigned int ca91cx42_master_rmw(struct vme_master_resource *image,
->  	/* Disable RMW */
->  	iowrite32(0, bridge->base + SCYC_CTL);
->  
-> +out:
->  	spin_unlock(&(image->lock));
->  
->  	mutex_unlock(&(bridge->vme_rmw));
-> _______________________________________________
-> devel mailing list
-> devel@linuxdriverproject.org
-> http://driverdev.linuxdriverproject.org/mailman/listinfo/devel
->   
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
--- 
-Martyn Welch (Principal Software Engineer)   |   Registered in England and
-GE Intelligent Platforms                     |   Wales (3828642) at 100
-T +44(0)127322748                            |   Barbirolli Square, Manchester,
-E martyn.welch@ge.com                        |   M2 3AB  VAT:GB 927559189
+---
+ net/dccp/proto.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
+diff --git a/net/dccp/proto.c b/net/dccp/proto.c
+index b03ecf6..f79bcef 100644
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -473,14 +473,9 @@ static int dccp_setsockopt_ccid(struct sock *sk, int type,
+ 	if (optlen < 1 || optlen > DCCP_FEAT_MAX_SP_VALS)
+ 		return -EINVAL;
+ 
+-	val = kmalloc(optlen, GFP_KERNEL);
+-	if (val = NULL)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(val, optval, optlen)) {
+-		kfree(val);
+-		return -EFAULT;
+-	}
++	val = memdup_user(optval, optlen);
++	if (IS_ERR(val))
++		return PTR_ERR(val);
+ 
+ 	lock_sock(sk);
+ 	if (type = DCCP_SOCKOPT_TX_CCID || type = DCCP_SOCKOPT_CCID)
