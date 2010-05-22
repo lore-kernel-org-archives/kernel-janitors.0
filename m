@@ -1,103 +1,100 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:25:31 +0000
-Subject: [PATCH 37/37] drivers/parport: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152324080.21345@ask.diku.dk>
+Date: Sat, 22 May 2010 08:20:44 +0000
+Subject: [PATCH 8/27] drivers/block: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221020260.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chirag Kantharia <chirag.kantharia@hp.com>, iss_storagedev@hp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
+Use memdup_user when user data is immediately copied into the
+allocated region.  Some checkpatch cleanups in nearby code.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
 expression from,to,size,flag;
-statement S;
+position p;
+identifier l1,l2;
 @@
 
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/parport/parport_gsc.c    |    4 ++--
- drivers/parport/parport_sunbpp.c |    5 ++---
- drivers/parport/procfs.c         |    6 ++----
- 3 files changed, 6 insertions(+), 9 deletions(-)
+ drivers/block/cpqarray.c |   32 ++++++++++----------------------
+ 1 file changed, 10 insertions(+), 22 deletions(-)
 
-diff -u -p a/drivers/parport/parport_gsc.c b/drivers/parport/parport_gsc.c
---- a/drivers/parport/parport_gsc.c
-+++ b/drivers/parport/parport_gsc.c
-@@ -247,14 +247,14 @@ struct parport *__devinit parport_gsc_pr
- 		printk (KERN_DEBUG "parport (0x%lx): no memory!\n", base);
- 		return NULL;
- 	}
--	ops = kmalloc (sizeof (struct parport_operations), GFP_KERNEL);
-+	ops = kmemdup(&parport_gsc_ops, sizeof(struct parport_operations),
-+		      GFP_KERNEL);
- 	if (!ops) {
- 		printk (KERN_DEBUG "parport (0x%lx): no memory for ops!\n",
- 			base);
- 		kfree (priv);
- 		return NULL;
- 	}
--	memcpy (ops, &parport_gsc_ops, sizeof (struct parport_operations));
- 	priv->ctr = 0xc;
- 	priv->ctr_writable = 0xff;
- 	priv->dma_buf = 0;
-diff -u -p a/drivers/parport/parport_sunbpp.c b/drivers/parport/parport_sunbpp.c
---- a/drivers/parport/parport_sunbpp.c
-+++ b/drivers/parport/parport_sunbpp.c
-@@ -305,12 +305,11 @@ static int __devinit bpp_probe(struct of
- 	size = resource_size(&op->resource[0]);
- 	dma = PARPORT_DMA_NONE;
- 
--	ops = kmalloc(sizeof(struct parport_operations), GFP_KERNEL);
-+	ops = kmemdup(&parport_sunbpp_ops, sizeof(struct parport_operations),
-+		      GFP_KERNEL);
-         if (!ops)
- 		goto out_unmap;
- 
--        memcpy (ops, &parport_sunbpp_ops, sizeof(struct parport_operations));
--
- 	dprintk(("register_port\n"));
- 	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops)))
- 		goto out_free_ops;
-diff -u -p a/drivers/parport/procfs.c b/drivers/parport/procfs.c
---- a/drivers/parport/procfs.c
-+++ b/drivers/parport/procfs.c
-@@ -476,10 +476,9 @@ int parport_proc_register(struct parport
- 	struct parport_sysctl_table *t;
- 	int i;
- 
--	t = kmalloc(sizeof(*t), GFP_KERNEL);
-+	t = kmemdup(&parport_sysctl_template, sizeof(*t), GFP_KERNEL);
- 	if (t = NULL)
- 		return -ENOMEM;
--	memcpy(t, &parport_sysctl_template, sizeof(*t));
- 
- 	t->device_dir[0].extra1 = port;
- 
-@@ -523,10 +522,9 @@ int parport_device_proc_register(struct 
- 	struct parport_device_sysctl_table *t;
- 	struct parport * port = device->port;
- 	
--	t = kmalloc(sizeof(*t), GFP_KERNEL);
-+	t = kmemdup(&parport_device_sysctl_template, sizeof(*t), GFP_KERNEL);
- 	if (t = NULL)
- 		return -ENOMEM;
--	memcpy(t, &parport_device_sysctl_template, sizeof(*t));
- 
- 	t->dev_dir[0].child = t->parport_dir;
- 	t->parport_dir[0].child = t->port_dir;
+diff --git a/drivers/block/cpqarray.c b/drivers/block/cpqarray.c
+index 91d1163..7e40462 100644
+--- a/drivers/block/cpqarray.c
++++ b/drivers/block/cpqarray.c
+@@ -1225,17 +1225,11 @@ static int ida_ctlr_ioctl(ctlr_info_t *h, int dsk, ida_ioctl_t *io)
+ 	/* Pre submit processing */
+ 	switch(io->cmd) {
+ 	case PASSTHRU_A:
+-		p = kmalloc(io->sg[0].size, GFP_KERNEL);
+-		if (!p) 
+-		{ 
+-			error = -ENOMEM; 
+-			cmd_free(h, c, 0); 
+-			return(error);
+-		}
+-		if (copy_from_user(p, io->sg[0].addr, io->sg[0].size)) {
+-			kfree(p);
+-			cmd_free(h, c, 0); 
+-			return -EFAULT;
++		p = memdup_user(io->sg[0].addr, io->sg[0].size);
++		if (IS_ERR(p)) {
++			error = PTR_ERR(p);
++			cmd_free(h, c, 0);
++			return error;
+ 		}
+ 		c->req.hdr.blk = pci_map_single(h->pci_dev, &(io->c), 
+ 				sizeof(ida_ioctl_t), 
+@@ -1266,18 +1260,12 @@ static int ida_ctlr_ioctl(ctlr_info_t *h, int dsk, ida_ioctl_t *io)
+ 	case DIAG_PASS_THRU:
+ 	case COLLECT_BUFFER:
+ 	case WRITE_FLASH_ROM:
+-		p = kmalloc(io->sg[0].size, GFP_KERNEL);
+-		if (!p) 
+- 		{ 
+-                        error = -ENOMEM; 
+-                        cmd_free(h, c, 0);
+-                        return(error);
++		p = memdup_user(io->sg[0].addr, io->sg[0].size);
++		if (IS_ERR(p)) {
++			error = PTR_ERR(p);
++			cmd_free(h, c, 0);
++			return error;
+                 }
+-		if (copy_from_user(p, io->sg[0].addr, io->sg[0].size)) {
+-			kfree(p);
+-                        cmd_free(h, c, 0);
+-			return -EFAULT;
+-		}
+ 		c->req.sg[0].size = io->sg[0].size;
+ 		c->req.sg[0].addr = pci_map_single(h->pci_dev, p, 
+ 			c->req.sg[0].size, PCI_DMA_BIDIRECTIONAL); 
