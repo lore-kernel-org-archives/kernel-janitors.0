@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:18:34 +0000
-Subject: [PATCH 1/27] net/can: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221018130.13021@ask.diku.dk>
+Date: Sat, 22 May 2010 08:23:26 +0000
+Subject: [PATCH 17/27] drivers/char/vt.c: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221023090.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oliver Hartkopp <socketcan@hartkopp.net>, Urs Thuermann <urs.thuermann@volkswagen.de>, "David S. Miller" <davem@davemloft.net>, socketcan-core@lists.berlios.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -44,28 +44,27 @@ identifier l1,l2;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- net/can/raw.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/char/vt.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/net/can/raw.c b/net/can/raw.c
-index da99cf1..ccfe633 100644
---- a/net/can/raw.c
-+++ b/net/can/raw.c
-@@ -436,14 +436,9 @@ static int raw_setsockopt(struct socket *sock, int level, int optname,
- 
- 		if (count > 1) {
- 			/* filter does not fit into dfilter => alloc space */
--			filter = kmalloc(optlen, GFP_KERNEL);
--			if (!filter)
--				return -ENOMEM;
--
--			if (copy_from_user(filter, optval, optlen)) {
--				kfree(filter);
--				return -EFAULT;
--			}
-+			filter = memdup_user(optval, optlen);
-+			if (IS_ERR(filter))
-+				return PTR_ERR(filter);
- 		} else if (count = 1) {
- 			if (copy_from_user(&sfilter, optval, sizeof(sfilter)))
- 				return -EFAULT;
+diff --git a/drivers/char/vt.c b/drivers/char/vt.c
+index bd1d116..7cdb6ee 100644
+--- a/drivers/char/vt.c
++++ b/drivers/char/vt.c
+@@ -3967,13 +3967,9 @@ static int con_font_set(struct vc_data *vc, struct console_font_op *op)
+ 	font.charcount = op->charcount;
+ 	font.height = op->height;
+ 	font.width = op->width;
+-	font.data = kmalloc(size, GFP_KERNEL);
+-	if (!font.data)
+-		return -ENOMEM;
+-	if (copy_from_user(font.data, op->data, size)) {
+-		kfree(font.data);
+-		return -EFAULT;
+-	}
++	font.data = memdup_user(op->data, size);
++	if (IS_ERR(font.data))
++		return PTR_ERR(font.data);
+ 	acquire_console_sem();
+ 	if (vc->vc_sw->con_font_set)
+ 		rc = vc->vc_sw->con_font_set(vc, &font, op->flags);
