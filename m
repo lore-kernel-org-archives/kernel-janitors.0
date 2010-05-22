@@ -1,57 +1,57 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:19:48 +0000
-Subject: [PATCH 22/37] drivers/scsi/mpt2sas: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152319310.21345@ask.diku.dk>
+Date: Sat, 22 May 2010 09:59:29 +0000
+Subject: [PATCH 1/8] ipc/sem.c: Use ERR_CAST
+Message-Id: <Pine.LNX.4.64.1005221159101.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
+Use ERR_CAST(x) rather than ERR_PTR(PTR_ERR(x)).  The former makes more
+clear what is the purpose of the operation, which otherwise looks like a
+no-op.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression from,to,size,flag;
-statement S;
+type T;
+T x;
+identifier f;
 @@
 
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
+T f (...) { <+...
+- ERR_PTR(PTR_ERR(x))
++ x
+ ...+> }
+
+@@
+expression x;
+@@
+
+- ERR_PTR(PTR_ERR(x))
++ ERR_CAST(x)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/mpt2sas/mpt2sas_scsih.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ ipc/sem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff -u -p a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
---- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-+++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-@@ -6056,7 +6056,7 @@ mpt2sas_scsih_event_callback(struct MPT2
- 		return 1;
- 	}
- 	sz = le16_to_cpu(mpi_reply->EventDataLength) * 4;
--	fw_event->event_data = kzalloc(sz, GFP_ATOMIC);
-+	fw_event->event_data = kmemdup(mpi_reply->EventData, sz, GFP_ATOMIC);
- 	if (!fw_event->event_data) {
- 		printk(MPT2SAS_ERR_FMT "failure at %s:%d/%s()!\n",
- 		    ioc->name, __FILE__, __LINE__, __func__);
-@@ -6064,8 +6064,6 @@ mpt2sas_scsih_event_callback(struct MPT2
- 		return 1;
- 	}
+diff -u -p a/ipc/sem.c b/ipc/sem.c
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -1069,7 +1069,7 @@ static struct sem_undo *find_alloc_undo(
+ 	/* step 1: figure out the size of the semaphore array */
+ 	sma = sem_lock_check(ns, semid);
+ 	if (IS_ERR(sma))
+-		return ERR_PTR(PTR_ERR(sma));
++		return ERR_CAST(sma);
  
--	memcpy(fw_event->event_data, mpi_reply->EventData,
--	    sz);
- 	fw_event->ioc = ioc;
- 	fw_event->VF_ID = mpi_reply->VF_ID;
- 	fw_event->VP_ID = mpi_reply->VP_ID;
+ 	nsems = sma->sem_nsems;
+ 	sem_getref_and_unlock(sma);
