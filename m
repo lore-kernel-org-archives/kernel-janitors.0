@@ -1,32 +1,80 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 25 May 2010 09:55:06 +0000
-Subject: [patch 2/2] dma/timb_dma: compile warning on 32 bit
-Message-Id: <20100525095506.GJ22515@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:22:17 +0000
+Subject: [PATCH 13/27] fs/autofs4: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221022010.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Walleij <linus.walleij@stericsson.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Richard =?iso-8859-1?Q?R=F6jfors?= <richard.rojfors@pelagicore.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ian Kent <raven@themaw.net>, autofs@linux.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This silences a compile warning on 32 bit systems:
-drivers/dma/timb_dma.c:203: warning: cast to pointer from integer of different size
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use memdup_user when user data is immediately copied into the allocated
+region.  Elimination of the variable ads, which is no longer useful.
 
-diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
-index 0172fa3..debc2b7 100644
---- a/drivers/dma/timb_dma.c
-+++ b/drivers/dma/timb_dma.c
-@@ -200,8 +200,8 @@ static int td_fill_desc(struct timb_dma_chan *td_chan, u8 *dma_desc,
- 		return -EINVAL;
- 	}
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
+
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/autofs4/dev-ioctl.c |   13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
+index d29b7f6..33d8fc6 100644
+--- a/fs/autofs4/dev-ioctl.c
++++ b/fs/autofs4/dev-ioctl.c
+@@ -95,7 +95,7 @@ static int check_dev_ioctl_version(int cmd, struct autofs_dev_ioctl *param)
+  */
+ static struct autofs_dev_ioctl *copy_dev_ioctl(struct autofs_dev_ioctl __user *in)
+ {
+-	struct autofs_dev_ioctl tmp, *ads;
++	struct autofs_dev_ioctl tmp;
  
--	dev_dbg(chan2dev(&td_chan->chan), "desc: %p, addr: %p\n",
--		dma_desc, (void *)sg_dma_address(sg));
-+	dev_dbg(chan2dev(&td_chan->chan), "desc: %p, addr: 0x%llx\n",
-+		dma_desc, (unsigned long long)sg_dma_address(sg));
+ 	if (copy_from_user(&tmp, in, sizeof(tmp)))
+ 		return ERR_PTR(-EFAULT);
+@@ -103,16 +103,7 @@ static struct autofs_dev_ioctl *copy_dev_ioctl(struct autofs_dev_ioctl __user *i
+ 	if (tmp.size < sizeof(tmp))
+ 		return ERR_PTR(-EINVAL);
  
- 	dma_desc[7] = (sg_dma_address(sg) >> 24) & 0xff;
- 	dma_desc[6] = (sg_dma_address(sg) >> 16) & 0xff;
-
+-	ads = kmalloc(tmp.size, GFP_KERNEL);
+-	if (!ads)
+-		return ERR_PTR(-ENOMEM);
+-
+-	if (copy_from_user(ads, in, tmp.size)) {
+-		kfree(ads);
+-		return ERR_PTR(-EFAULT);
+-	}
+-
+-	return ads;
++	return memdup_user(in, tmp.size);
+ }
+ 
+ static inline void free_dev_ioctl(struct autofs_dev_ioctl *param)
