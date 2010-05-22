@@ -1,54 +1,71 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 31 May 2010 07:25:18 +0000
-Subject: Re: [patch 5/11] btrfs: remove unneeded null check in
-Message-Id: <20100531072518.GO5483@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:21:27 +0000
+Subject: [PATCH 10/27] drivers/infiniband/core: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221021030.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100529094508.GF5483@bicker> <AANLkTikLkpTgkOGi8M8VL_rZRLyzbJKoKW9RiNMJenMi@mail.gmail.com>
-In-Reply-To: <AANLkTikLkpTgkOGi8M8VL_rZRLyzbJKoKW9RiNMJenMi@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Mike Fedyk <mfedyk@mikefedyk.com>
-Cc: linux-btrfs@vger.kernel.org, Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-jani
 
-On Sat, May 29, 2010 at 11:01:56AM -0700, Mike Fedyk wrote:
-> On Sat, May 29, 2010 at 2:45 AM, Dan Carpenter <error27@gmail.com> wrote:
-> > "old_inode" cannot be null here, because we dereference it
-> > unconditionally throughout the function.
-> >
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> >
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index fa6ccc1..0bc29be 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -6487,10 +6487,8 @@ static int btrfs_rename(struct inode *old_dir, s=
-truct dentry *old_dentry,
-> > =A0 =A0 =A0 =A0 * make sure the inode gets flushed if it is replacing
-> > =A0 =A0 =A0 =A0 * something.
-> > =A0 =A0 =A0 =A0 */
-> > - =A0 =A0 =A0 if (new_inode && new_inode->i_size &&
-> > - =A0 =A0 =A0 =A0 =A0 old_inode && S_ISREG(old_inode->i_mode)) {
-> > + =A0 =A0 =A0 if (new_inode && new_inode->i_size && S_ISREG(old_inode->=
-i_mode))
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0btrfs_add_ordered_operation(trans, root,=
- old_inode);
-> > - =A0 =A0 =A0 }
->=20
-> I think code like this is here because there are still a lot of
-> features that are being added to btrfs and it's easier to have the
-> additional checks than continually adding and removing them as the
-> code changes.
+From: Julia Lawall <julia@diku.dk>
 
-Right right.  I understand about extra checks and api changes.  But in
-this case that doesn't aply.  There is no way this particular check helps
-now or in the future, and it just wastes time when someone is auditing
-for inconsistent null checking.
+Use memdup_user when user data is immediately copied into the
+allocated region.
 
-regards,
-dan carpenter
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
+
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/infiniband/core/ucm.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/infiniband/core/ucm.c b/drivers/infiniband/core/ucm.c
+index 4647484..08f948d 100644
+--- a/drivers/infiniband/core/ucm.c
++++ b/drivers/infiniband/core/ucm.c
+@@ -706,14 +706,9 @@ static int ib_ucm_alloc_data(const void **dest, u64 src, u32 len)
+ 	if (!len)
+ 		return 0;
+ 
+-	data = kmalloc(len, GFP_KERNEL);
+-	if (!data)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(data, (void __user *)(unsigned long)src, len)) {
+-		kfree(data);
+-		return -EFAULT;
+-	}
++	data = memdup_user((void __user *)(unsigned long)src, len);
++	if (IS_ERR(data))
++		return PTR_ERR(data);
+ 
+ 	*dest = data;
+ 	return 0;
