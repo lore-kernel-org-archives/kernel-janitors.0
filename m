@@ -1,26 +1,29 @@
-From: Herbert Xu <herbert@gondor.hengli.com.au>
-Date: Fri, 14 May 2010 04:58:17 +0000
-Subject: Re: [PATCH] crypto: mv_cesa - Use resource_size
-Message-Id: <20100514045817.GB26117@gondor.apana.org.au>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 22 May 2010 19:45:50 +0000
+Subject: [patch] e1000e: change logical negate to bitwise
+Message-Id: <20100522194550.GG22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273561064-3530-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1273561064-3530-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: linux-crypto@vger.kernel.org, davem@davemloft.net, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, PJ Waskiewicz <peter.p.waskiewicz.jr@intel.com>, John Ronciak <john.ronciak@intel.com>, "David S. Miller" <davem@davemloft.net>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gVHVlLCBNYXkgMTEsIDIwMTAgYXQgMDg6NTc6NDRBTSArMDIwMCwgVG9iaWFzIEtsYXVzZXIg
-d3JvdGU6Cj4gVXNlIHRoZSByZXNvdXJjZV9zaXplIGZ1bmN0aW9uIGluc3RlYWQgb2YgbWFudWFs
-bHkgY2FsY3VsYXRpbmcgdGhlCj4gcmVzb3VyY2Ugc2l6ZS4gVGhpcyByZWR1Y2VzIHRoZSBjaGFu
-Y2Ugb2YgaW50cm9kdWNpbmcgb2ZmLWJ5LW9uZSBlcnJvcnMuCj4gCj4gU2lnbmVkLW9mZi1ieTog
-VG9iaWFzIEtsYXVzZXIgPHRrbGF1c2VyQGRpc3RhbnouY2g+CgpQYXRjaCBhcHBsaWVkLiAgVGhh
-bmtzIQotLSAKVmlzaXQgT3BlbnN3YW4gYXQgaHR0cDovL3d3dy5vcGVuc3dhbi5vcmcvCkVtYWls
-OiBIZXJiZXJ0IFh1IH57UG1WPkhJfn0gPGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9yZy5hdT4KSG9t
-ZSBQYWdlOiBodHRwOi8vZ29uZG9yLmFwYW5hLm9yZy5hdS9+aGVyYmVydC8KUEdQIEtleTogaHR0
-cDovL2dvbmRvci5hcGFuYS5vcmcuYXUvfmhlcmJlcnQvcHVia2V5LnR4dAotLQpUbyB1bnN1YnNj
-cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWph
-bml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
-Lm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
-ZG9tby1pbmZvLmh0bWw=
+The bitwise negate is intended here.  With the logical negate the 
+condition is always false.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/net/e1000e/netdev.c b/drivers/net/e1000e/netdev.c
+index 24507f3..57a7e41 100644
+--- a/drivers/net/e1000e/netdev.c
++++ b/drivers/net/e1000e/netdev.c
+@@ -2554,7 +2554,7 @@ static void e1000_init_manageability_pt(struct e1000_adapter *adapter)
+ 			mdef = er32(MDEF(i));
+ 
+ 			/* Ignore filters with anything other than IPMI ports */
+-			if (mdef & !(E1000_MDEF_PORT_623 | E1000_MDEF_PORT_664))
++			if (mdef & ~(E1000_MDEF_PORT_623 | E1000_MDEF_PORT_664))
+ 				continue;
+ 
+ 			/* Enable this decision filter in MANC2H */
