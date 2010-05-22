@@ -1,29 +1,90 @@
-From: Herbert Xu <herbert@gondor.hengli.com.au>
-Date: Mon, 03 May 2010 03:08:44 +0000
-Subject: Re: [patch] crypto: cleanup: remove unneeded null check
-Message-Id: <20100503030844.GA31335@gondor.apana.org.au>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 22 May 2010 08:21:45 +0000
+Subject: [PATCH 11/27] drivers/i2c: Use memdup_user
+Message-Id: <Pine.LNX.4.64.1005221021270.13021@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100428085515.GE29093@bicker>
-In-Reply-To: <20100428085515.GE29093@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Dan Carpenter <error27@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Brad Bosch <bradbosch@comcast.net>, Richard Hartmann <richih.mailinglist@gmail.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>, "Ben Dooks (em, bedded platforms)" <ben-linux@fluff.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janit
 
-T24gV2VkLCBBcHIgMjgsIDIwMTAgYXQgMTA6NTU6MTVBTSArMDIwMCwgRGFuIENhcnBlbnRlciB3
-cm90ZToKPiBXZSBkb24ndCBjaGVjayAiZnJvbnRlbmQiIGNvbnNpc3RlbnRseSBpbiBjcnlwdG9f
-aW5pdF9zcGF3bjIoKS4gIFdlCj4gY2hlY2sgaXQgYXQgdGhlIHN0YXJ0IG9mIHRoZSBmdW5jdGlv
-biBidXQgdGhlbiB3ZSBkZXJlZmVyZW5jZSBpdCAKPiB1bmNvbmRpdGlvbmFsbHkgaW4gdGhlIHBh
-cmFtZXRlciBsaXN0IHdoZW4gd2UgY2FsbCBjcnlwdG9faW5pdF9zcGF3bigpLgo+IAo+IEkgbG9v
-a2VkIGF0IHRoZSBwbGFjZXMgdGhhdCBjYWxsIGNyeXB0b19pbml0X3NwYXduMigpIGFuZCAiZnJv
-bnRlbmQiIGlzCj4gYWx3YXlzIGEgdmFsaWQgcG9pbnRlciBzbyBJIHJlbW92ZWQgdGhlIGNoZWNr
-IGZvciBudWxsLgo+IAo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGVycm9yMjdAZ21h
-aWwuY29tPgoKUGF0Y2ggYXBwbGllZC4gIFRoYW5rcyEKLS0gClZpc2l0IE9wZW5zd2FuIGF0IGh0
-dHA6Ly93d3cub3BlbnN3YW4ub3JnLwpFbWFpbDogSGVyYmVydCBYdSB+e1BtVj5ISX59IDxoZXJi
-ZXJ0QGdvbmRvci5hcGFuYS5vcmcuYXU+CkhvbWUgUGFnZTogaHR0cDovL2dvbmRvci5hcGFuYS5v
-cmcuYXUvfmhlcmJlcnQvClBHUCBLZXk6IGh0dHA6Ly9nb25kb3IuYXBhbmEub3JnLmF1L35oZXJi
-ZXJ0L3B1YmtleS50eHQKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhl
-IGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNz
-YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAg
-aHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+From: Julia Lawall <julia@diku.dk>
+
+Use memdup_user when user data is immediately copied into the allocated
+region.  Note that in the second case, the ++i is no longer necessary, as
+the last value is already freed if needed by the call to memdup_user.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression from,to,size,flag;
+position p;
+identifier l1,l2;
+@@
+
+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
++  to = memdup_user(from,size);
+   if (
+-      to=NULL
++      IS_ERR(to)
+                 || ...) {
+   <+... when != goto l1;
+-  -ENOMEM
++  PTR_ERR(to)
+   ...+>
+   }
+-  if (copy_from_user(to, from, size) != 0) {
+-    <+... when != goto l2;
+-    -EFAULT
+-    ...+>
+-  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/i2c/i2c-dev.c |   22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index e0694e4..03e9ef8 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -167,13 +167,9 @@ static ssize_t i2cdev_write(struct file *file, const char __user *buf,
+ 	if (count > 8192)
+ 		count = 8192;
+ 
+-	tmp = kmalloc(count, GFP_KERNEL);
+-	if (tmp = NULL)
+-		return -ENOMEM;
+-	if (copy_from_user(tmp, buf, count)) {
+-		kfree(tmp);
+-		return -EFAULT;
+-	}
++	tmp = memdup_user(buf, count);
++	if (IS_ERR(tmp))
++		return PTR_ERR(tmp);
+ 
+ 	pr_debug("i2c-dev: i2c-%d writing %zu bytes.\n",
+ 		iminor(file->f_path.dentry->d_inode), count);
+@@ -247,15 +243,9 @@ static noinline int i2cdev_ioctl_rdrw(struct i2c_client *client,
+ 			break;
+ 		}
+ 		data_ptrs[i] = (u8 __user *)rdwr_pa[i].buf;
+-		rdwr_pa[i].buf = kmalloc(rdwr_pa[i].len, GFP_KERNEL);
+-		if (rdwr_pa[i].buf = NULL) {
+-			res = -ENOMEM;
+-			break;
+-		}
+-		if (copy_from_user(rdwr_pa[i].buf, data_ptrs[i],
+-				   rdwr_pa[i].len)) {
+-				++i; /* Needs to be kfreed too */
+-				res = -EFAULT;
++		rdwr_pa[i].buf = memdup_user(data_ptrs[i], rdwr_pa[i].len);
++		if (IS_ERR(rdwr_pa[i].buf)) {
++			res = PTR_ERR(rdwr_pa[i].buf);
+ 			break;
+ 		}
+ 	}
