@@ -1,27 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 31 May 2010 07:31:30 +0000
-Subject: Re: [PATCH 26/27] drivers/isdn: Use memdup_user
-Message-Id: <20100531.003130.28788082.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 24 May 2010 15:59:36 +0000
+Subject: [patch v2] video/saa7134: change dprintk() to i2cdprintk()
+Message-Id: <20100524155936.GZ22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005221026230.13021@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005221026230.13021@ask.diku.dk>
+References: <20100522201535.GI22515@bicker> <20100522225921.585b2d72@hyperion.delvare>
+In-Reply-To: <20100522225921.585b2d72@hyperion.delvare>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, hermann pitton <hermann-pitton@arcor.de>, Douglas Schilling Landgraf <dougsland@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 10:26:42 +0200 (CEST)
+The problem is that dprintk() dereferences "dev" which is null here.
+The i2cdprintk() uses "ir" so that's OK.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use memdup_user when user data is immediately copied into the
-> allocated region.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Also removed a duplicated break statement.
 
-Applied.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+v2: Jean Delvare suggested that I use i2cdprintk() instead of modifying
+dprintk().
+
+diff --git a/drivers/media/video/saa7134/saa7134-input.c b/drivers/media/video/saa7134/saa7134-input.c
+index e5565e2..7691bf2 100644
+--- a/drivers/media/video/saa7134/saa7134-input.c
++++ b/drivers/media/video/saa7134/saa7134-input.c
+@@ -141,8 +141,8 @@ static int get_key_flydvb_trio(struct IR_i2c *ir, u32 *ir_key, u32 *ir_raw)
+ 	struct saa7134_dev *dev = ir->c->adapter->algo_data;
+ 
+ 	if (dev = NULL) {
+-		dprintk("get_key_flydvb_trio: "
+-			 "gir->c->adapter->algo_data is NULL!\n");
++		i2cdprintk("get_key_flydvb_trio: "
++			   "gir->c->adapter->algo_data is NULL!\n");
+ 		return -EIO;
+ 	}
+ 
+@@ -195,8 +195,8 @@ static int get_key_msi_tvanywhere_plus(struct IR_i2c *ir, u32 *ir_key,
+ 	/* <dev> is needed to access GPIO. Used by the saa_readl macro. */
+ 	struct saa7134_dev *dev = ir->c->adapter->algo_data;
+ 	if (dev = NULL) {
+-		dprintk("get_key_msi_tvanywhere_plus: "
+-			"gir->c->adapter->algo_data is NULL!\n");
++		i2cdprintk("get_key_msi_tvanywhere_plus: "
++			   "gir->c->adapter->algo_data is NULL!\n");
+ 		return -EIO;
+ 	}
+ 
+@@ -815,7 +815,6 @@ int saa7134_input_init1(struct saa7134_dev *dev)
+ 		mask_keyup   = 0x020000;
+ 		polling      = 50; /* ms */
+ 		break;
+-	break;
+ 	}
+ 	if (NULL = ir_codes) {
+ 		printk("%s: Oops: IR config error [card=%d]\n",
