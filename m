@@ -1,38 +1,55 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Wed, 26 May 2010 21:00:19 +0000
-Subject: Re: [PATCH 03/11] drm/i915: Storage class should be before const qualifier
-Message-Id: <8739xe1iqk.fsf@pollan.anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 24 May 2010 16:29:34 +0000
+Subject: [patch v2] caif: cleanup: remove duplicate checks
+Message-Id: <20100524162815.GA22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1274344426-8860-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1274344426-8860-1-git-send-email-tklauser@distanz.ch>
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: Tobias Klauser <tklauser@distanz.ch>, kernel-janitors@vger.kernel.org
+References: <20100522204519.GW22515@bicker> <4BF8E6FE.9000303@bfs.de>
+In-Reply-To: <4BF8E6FE.9000303@bfs.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: walter harms <wharms@bfs.de>
+Cc: netdev@vger.kernel.org, Sjur Braendeland <sjur.brandeland@stericsson.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---=-=-=
-Content-Transfer-Encoding: quoted-printable
+"phyinfo" can never be null here because we assigned it an address, so I
+removed both the assert and the second check inside the if statement.  I
+removed the "phyinfo->phy_layer != NULL" check as well because that was
+asserted earlier.
 
-On Thu, 20 May 2010 10:33:46 +0200, Tobias Klauser <tklauser@distanz.ch> wr=
-ote:
-> The C99 specification states in section 6.11.5:
->=20
-> The placement of a storage-class specifier other than at the beginning
-> of the declaration specifiers in a declaration is an obsolescent
-> feature.
->=20
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Walter Harms suggested I move the "phyinfo->phy_ref_count++;" outside
+the if condition for readability, so I have done that.
 
-Applied.  Thanks!
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+The original code increments phyinfo->phy_ref_count++ even if
+phyinfo->phy_layer->modemcmd is NULL.  I kept it the same in my code,
+but maybe I should change that?
 
---=-=-=
-Content-Type: application/pgp-signature
+v2: Removed an assert.  Moved the increment outside the if condition.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkv9i+MACgkQHUdvYGzw6veniwCfScYksfb1gNrs2JeS9GvrkLNt
-2mAAn1Z+FBS9nYdVcXEuBtw4A9gENIyN
-=x18q
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/net/caif/cfcnfg.c b/net/caif/cfcnfg.c
+index df43f26..7c81974 100644
+--- a/net/caif/cfcnfg.c
++++ b/net/caif/cfcnfg.c
+@@ -308,19 +308,15 @@ cfcnfg_linkup_rsp(struct cflayer *layer, u8 channel_id, enum cfctrl_srv serv,
+ 	caif_assert(cnfg != NULL);
+ 	caif_assert(phyid != 0);
+ 	phyinfo = &cnfg->phy_layers[phyid];
+-	caif_assert(phyinfo != NULL);
+ 	caif_assert(phyinfo->id = phyid);
+ 	caif_assert(phyinfo->phy_layer != NULL);
+ 	caif_assert(phyinfo->phy_layer->id = phyid);
+ 
+-	if (phyinfo != NULL &&
+-	    phyinfo->phy_ref_count++ = 0 &&
+-	    phyinfo->phy_layer != NULL &&
++	phyinfo->phy_ref_count++;
++	if (phyinfo->phy_ref_count = 1 &&
+ 	    phyinfo->phy_layer->modemcmd != NULL) {
+-		caif_assert(phyinfo->phy_layer->id = phyid);
+ 		phyinfo->phy_layer->modemcmd(phyinfo->phy_layer,
+ 					     _CAIF_MODEMCMD_PHYIF_USEFULL);
+-
+ 	}
+ 	adapt_layer->id = channel_id;
+ 
