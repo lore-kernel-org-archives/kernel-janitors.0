@@ -1,53 +1,49 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:17:19 +0000
-Subject: [PATCH 14/37] drivers/net/wireless/ath/ath9k: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152316580.21345@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 25 May 2010 09:53:48 +0000
+Subject: [patch 1/2] dma/timb_dma: fixup error handling in
+Message-Id: <20100525095348.GI22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <lrodriguez@atheros.com>, Jouni Malinen <jmalinen@atheros.com>, Sujith Manoharan <Sujith.Manoharan@atheros.com>, Vasanthakumar Thiagarajan <vasanth@atheros.com>, Senthil Balasubramanian <senthilkumar@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Linus Walleij <linus.walleij@stericsson.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Richard =?iso-8859-1?Q?R=F6jfors?= <richard.rojfors@pelagicore.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+The original code tried to kfree(td_desc->desc_list) when td_desc was
+NULL so I re-arranged it.
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression from,to,size,flag;
-statement S;
-@@
-
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wireless/ath/ath9k/hif_usb.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff -u -p a/drivers/net/wireless/ath/ath9k/hif_usb.c b/drivers/net/wireless/ath/ath9k/hif_usb.c
---- a/drivers/net/wireless/ath/ath9k/hif_usb.c
-+++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
-@@ -901,12 +901,10 @@ static void ath9k_hif_usb_reboot(struct 
- 	void *buf;
- 	int ret;
+diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
+index 0172fa3..3e101a0 100644
+--- a/drivers/dma/timb_dma.c
++++ b/drivers/dma/timb_dma.c
+@@ -390,7 +390,7 @@ static struct timb_dma_desc *td_alloc_init_desc(struct timb_dma_chan *td_chan)
+ 	td_desc->desc_list = kzalloc(td_desc->desc_list_len, GFP_KERNEL);
+ 	if (!td_desc->desc_list) {
+ 		dev_err(chan2dev(chan), "Failed to alloc descriptor\n");
+-		goto err;
++		goto err_desc;
+ 	}
  
--	buf = kmalloc(4, GFP_KERNEL);
-+	buf = kmemdup(&reboot_cmd, 4, GFP_KERNEL);
- 	if (!buf)
- 		return;
+ 	dma_async_tx_descriptor_init(&td_desc->txd, chan);
+@@ -403,14 +403,16 @@ static struct timb_dma_desc *td_alloc_init_desc(struct timb_dma_chan *td_chan)
+ 	err = dma_mapping_error(chan2dmadev(chan), td_desc->txd.phys);
+ 	if (err) {
+ 		dev_err(chan2dev(chan), "DMA mapping error: %d\n", err);
+-		goto err;
++		goto err_list;
+ 	}
  
--	memcpy(buf, &reboot_cmd, 4);
+ 	return td_desc;
+-err:
++
++err_list:
+ 	kfree(td_desc->desc_list);
++err_desc:
+ 	kfree(td_desc);
 -
- 	ret = usb_bulk_msg(udev, usb_sndbulkpipe(udev, USB_REG_OUT_PIPE),
- 			   buf, 4, NULL, HZ);
- 	if (ret)
++err:
+ 	return NULL;
+ 
+ }
