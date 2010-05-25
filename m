@@ -1,29 +1,28 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 29 May 2010 09:40:57 +0000
-Subject: [patch 1/11] btrfs: handle error returns from
-Message-Id: <20100529094056.GB5483@bicker>
+Date: Tue, 25 May 2010 09:52:27 +0000
+Subject: [patch] drm/nouveau: off by one in init_i2c_device_find()
+Message-Id: <20100525095227.GH22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
 
-If btrfs_lookup_dir_item() fails, we should can just let the mount fail
-with an error.
+dcb->i2c[] has DCB_MAX_NUM_I2C_ENTRIES entries.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index d34b2df..28b53f1 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -360,6 +360,8 @@ static struct dentry *get_default_root(struct super_block *sb,
- 	 */
- 	dir_id = btrfs_super_root_dir(&root->fs_info->super_copy);
- 	di = btrfs_lookup_dir_item(NULL, root, path, dir_id, "default", 7, 0);
-+	if (IS_ERR(di))
-+		return ERR_CAST(di);
- 	if (!di) {
- 		/*
- 		 * Ok the default dir item isn't there.  This is weird since
+diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c b/drivers/gpu/drm/nouveau/nouveau_bios.c
+index e7e69cc..bf92a1e 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_bios.c
++++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
+@@ -814,7 +814,7 @@ init_i2c_device_find(struct drm_device *dev, int i2c_index)
+ 	if (i2c_index = 0x81)
+ 		i2c_index = (dcb->i2c_default_indices & 0xf0) >> 4;
+ 
+-	if (i2c_index > DCB_MAX_NUM_I2C_ENTRIES) {
++	if (i2c_index >= DCB_MAX_NUM_I2C_ENTRIES) {
+ 		NV_ERROR(dev, "invalid i2c_index 0x%x\n", i2c_index);
+ 		return NULL;
+ 	}
