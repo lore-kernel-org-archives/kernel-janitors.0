@@ -1,32 +1,28 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 29 May 2010 09:49:07 +0000
-Subject: [patch 11/11] btrfs: The file argument for fsync() is never null
-Message-Id: <20100529094907.GL5483@bicker>
+Date: Tue, 25 May 2010 09:51:10 +0000
+Subject: [patch] kobject: free memory if netlink_kernel_create() fails
+Message-Id: <20100525095110.GG22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "file" argument for fsync is never null so we can remove this check.
-
-What drew my attention here is that 7ea8085910e: "drop unused dentry 
-argument to ->fsync" introduced an unconditional dereference at the
-start of the function and that generated a smatch warning.
+There is a kfree(ue_sk) missing on the error path if 
+netlink_kernel_create() fails.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 787b50a..e252d23 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1140,7 +1140,7 @@ int btrfs_sync_file(struct file *file, int datasync)
- 	/*
- 	 * ok we haven't committed the transaction yet, lets do a commit
- 	 */
--	if (file && file->private_data)
-+	if (file->private_data)
- 		btrfs_ioctl_trans_end(file);
- 
- 	trans = btrfs_start_transaction(root, 0);
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 59c1551..08e15f7 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -378,6 +378,7 @@ static int uevent_net_init(struct net *net)
+ 	if (!ue_sk->sk) {
+ 		printk(KERN_ERR
+ 		       "kobject_uevent: unable to create netlink socket!\n");
++		kfree(ue_sk);
+ 		return -ENODEV;
+ 	}
+ 	mutex_lock(&uevent_sock_mutex);
