@@ -1,54 +1,59 @@
-From: Joel Becker <Joel.Becker@oracle.com>
-Date: Tue, 18 May 2010 19:32:41 +0000
-Subject: Re: [PATCH 8/10] fs/ocfs2/dlm: Use kstrdup
-Message-Id: <20100518193241.GE3239@mail.oracle.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 25 May 2010 09:37:17 +0000
+Subject: [patch] TTY/n_gsm: potential double lock
+Message-Id: <20100525093717.GC22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005142130310.28935@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005142130310.28935@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 14, 2010 at 09:30:48PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kstrdup when the goal of an allocation is copy a string into the
-> allocated region.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression from,to;
-> expression flag,E1,E2;
-> statement S;
-> @@
-> 
-> -  to = kmalloc(strlen(from) + 1,flag);
-> +  to = kstrdup(from, flag);
->    ... when != \(from = E1 \| to = E1 \)
->    if (to=NULL || ...) S
->    ... when != \(from = E2 \| to = E2 \)
-> -  strcpy(to, from);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+In gsm_dlci_data_kick() we call gsm_dlci_data_sweep() with the
+"gsm->tx_lock" held so we can't lock it again inside
+gsm_dlci_data_sweep().  I removed that lock from and added one to 
+gsmld_write_wakeup() instead.  The sweep function is only called from
+those two places.
 
-This patch is now in the merge-window branch of ocfs2.git.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Joel
-
--- 
-
-"If you are ever in doubt as to whether or not to kiss a pretty girl, 
- give her the benefit of the doubt"
-                                        -Thomas Carlyle
-
-Joel Becker
-Principal Software Developer
-Oracle
-E-mail: joel.becker@oracle.com
-Phone: (650) 506-8127
+diff --git a/drivers/char/n_gsm.c b/drivers/char/n_gsm.c
+index c4161d5..e4089c4 100644
+--- a/drivers/char/n_gsm.c
++++ b/drivers/char/n_gsm.c
+@@ -904,9 +904,7 @@ static void gsm_dlci_data_sweep(struct gsm_mux *gsm)
+ 	int len;
+ 	/* Priority ordering: We should do priority with RR of the groups */
+ 	int i = 1;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&gsm->tx_lock, flags);
+ 	while (i < NUM_DLCI) {
+ 		struct gsm_dlci *dlci;
+ 
+@@ -927,7 +925,6 @@ static void gsm_dlci_data_sweep(struct gsm_mux *gsm)
+ 		if (len = 0)
+ 			i++;
+ 	}
+-	spin_unlock_irqrestore(&gsm->tx_lock, flags);
+ }
+ 
+ /**
+@@ -2230,12 +2227,16 @@ static int gsmld_open(struct tty_struct *tty)
+ static void gsmld_write_wakeup(struct tty_struct *tty)
+ {
+ 	struct gsm_mux *gsm = tty->disc_data;
++	unsigned long flags;
+ 
+ 	/* Queue poll */
+ 	clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags);
+ 	gsm_data_kick(gsm);
+-	if (gsm->tx_bytes < TX_THRESH_LO)
++	if (gsm->tx_bytes < TX_THRESH_LO) {
++		spin_lock_irqsave(&gsm->tx_lock, flags);
+ 		gsm_dlci_data_sweep(gsm);
++		spin_unlock_irqrestore(&gsm->tx_lock, flags);
++	}
+ }
+ 
+ /**
