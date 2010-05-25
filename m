@@ -1,17 +1,28 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Date: Fri, 28 May 2010 17:25:00 +0000
-Subject: Re: [PATCH 9/11] drivers/platform/x86: Eliminate a NULL pointer
-Message-Id: <20100528172500.GE30936@srcf.ucam.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 25 May 2010 09:40:17 +0000
+Subject: [patch] md/raid10: check for ERR_PTR returns from setup_conf()
+Message-Id: <20100525094017.GD22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005271436460.5422@ask.diku.dk> <201005270921.43049.dmitry.torokhov@gmail.com> <Pine.LNX.4.64.1005271831520.5422@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005271831520.5422@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mattia Dongili <malattia@linux.it>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Neil Brown <neilb@suse.de>
+Cc: Andre Noll <maan@systemlinux.org>, Robert Becker <Rob.Becker@riverbed.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <jens.axboe@oracle.com>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Applied this version, thanks.
+setup_conf() can return error values so I added a check for that here.
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 0372499..8bd7da2 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -2454,6 +2454,8 @@ static void *raid10_takeover_raid0(mddev_t *mddev)
+ 	mddev->recovery_cp = MaxSector;
+ 
+ 	conf = setup_conf(mddev);
++	if (IS_ERR(conf))
++		return conf;
+ 	conf->scale_disks = 2;
+ 	return conf;
+ }
