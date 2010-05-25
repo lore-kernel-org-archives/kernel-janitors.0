@@ -1,20 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 27 May 2010 04:10:08 +0000
-Subject: Re: [PATCH 9/17] net/iucv: Add missing spin_unlock
-Message-Id: <20100526.211008.116373263.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 25 May 2010 09:19:53 +0000
+Subject: [patch v3 1/2] video/saa7134: change dprintk() to i2cdprintk()
+Message-Id: <20100525091816.GA13034@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261756330.23743@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005261756330.23743@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: ursula.braun@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, hermann pitton <hermann-pitton@arcor.de>, Douglas Schilling Landgraf <dougsland@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 26 May 2010 17:56:48 +0200 (CEST)
+The problem is that dprintk() dereferences "dev" which is null here.
+The i2cdprintk() uses "ir" so that's OK.
 
-> Add a spin_unlock missing on the error path.  There seems like no reason
-> why the lock should continue to be held if the kzalloc fail.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+v2: Jean Delvare suggested that I use i2cdprintk() instead of modifying
+dprintk().
+v3: V2 had a bonus cleanup that I removed from v3
 
-Applied, thanks.
+diff --git a/drivers/media/video/saa7134/saa7134-input.c b/drivers/media/video/saa7134/saa7134-input.c
+index e5565e2..7691bf2 100644
+--- a/drivers/media/video/saa7134/saa7134-input.c
++++ b/drivers/media/video/saa7134/saa7134-input.c
+@@ -141,8 +141,8 @@ static int get_key_flydvb_trio(struct IR_i2c *ir, u32 *ir_key, u32 *ir_raw)
+ 	struct saa7134_dev *dev = ir->c->adapter->algo_data;
+ 
+ 	if (dev = NULL) {
+-		dprintk("get_key_flydvb_trio: "
+-			 "gir->c->adapter->algo_data is NULL!\n");
++		i2cdprintk("get_key_flydvb_trio: "
++			   "gir->c->adapter->algo_data is NULL!\n");
+ 		return -EIO;
+ 	}
+ 
+@@ -195,8 +195,8 @@ static int get_key_msi_tvanywhere_plus(struct IR_i2c *ir, u32 *ir_key,
+ 	/* <dev> is needed to access GPIO. Used by the saa_readl macro. */
+ 	struct saa7134_dev *dev = ir->c->adapter->algo_data;
+ 	if (dev = NULL) {
+-		dprintk("get_key_msi_tvanywhere_plus: "
+-			"gir->c->adapter->algo_data is NULL!\n");
++		i2cdprintk("get_key_msi_tvanywhere_plus: "
++			   "gir->c->adapter->algo_data is NULL!\n");
+ 		return -EIO;
+ 	}
+ 
+
