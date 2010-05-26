@@ -1,27 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 31 May 2010 07:30:48 +0000
-Subject: Re: [PATCH 6/27] drivers/net/cxgb3: Use memdup_user
-Message-Id: <20100531.003048.115910311.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 26 May 2010 15:16:48 +0000
+Subject: [patch] caif: unlock on error path in cfserl_receive()
+Message-Id: <20100526151648.GA15439@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005221019530.13021@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005221019530.13021@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: divy@chelsio.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 10:20:10 +0200 (CEST)
+There was an spin_unlock missing on the error path.  The spin_lock was
+tucked in with the declarations so it was hard to spot.  I added a new
+line.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use memdup_user when user data is immediately copied into the
-> allocated region.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/net/caif/cfserl.c b/net/caif/cfserl.c
+index cb4325a..965c5ba 100644
+--- a/net/caif/cfserl.c
++++ b/net/caif/cfserl.c
+@@ -59,16 +59,18 @@ static int cfserl_receive(struct cflayer *l, struct cfpkt *newpkt)
+ 	u8 stx = CFSERL_STX;
+ 	int ret;
+ 	u16 expectlen = 0;
++
+ 	caif_assert(newpkt != NULL);
+ 	spin_lock(&layr->sync);
+ 
+ 	if (layr->incomplete_frm != NULL) {
+-
+ 		layr->incomplete_frm  		    cfpkt_append(layr->incomplete_frm, newpkt, expectlen);
+ 		pkt = layr->incomplete_frm;
+-		if (pkt = NULL)
++		if (pkt = NULL) {
++			spin_unlock(&layr->sync);
+ 			return -ENOMEM;
++		}
+ 	} else {
+ 		pkt = newpkt;
+ 	}
