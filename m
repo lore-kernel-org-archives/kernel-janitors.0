@@ -1,38 +1,64 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 31 May 2010 07:32:05 +0000
-Subject: Re: [patch v2] caif: cleanup: remove duplicate checks
-Message-Id: <20100531.003205.179958733.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 15:54:21 +0000
+Subject: [PATCH 1/17] net/rds: Add missing mutex_unlock
+Message-Id: <Pine.LNX.4.64.1005261754030.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4BF8E6FE.9000303@bfs.de>
-	<20100524162815.GA22515@bicker>
-	<AANLkTilHv7m-oJSlXHJRLT9BLKscGLSFnGVCOB9U0kic@mail.gmail.com>
-In-Reply-To: <AANLkTilHv7m-oJSlXHJRLT9BLKscGLSFnGVCOB9U0kic@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: sjurbren@gmail.com
-Cc: error27@gmail.com, wharms@bfs.de, netdev@vger.kernel.org, sjur.brandeland@stericsson.com, sfr@canb.auug.org.au, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andy Grover <andy.grover@oracle.com>, "David S. Miller" <davem@davemloft.net>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Sjur Br=E6ndeland <sjurbren@gmail.com>
-Date: Mon, 24 May 2010 22:47:41 +0200
+From: Julia Lawall <julia@diku.dk>
 
->  Dan Carpenter <error27@gmail.com> wrote:
->> "phyinfo" can never be null here because we assigned it an address, so I
->> removed both the assert and the second check inside the if statement. =
-=A0I
->> removed the "phyinfo->phy_layer !=3D NULL" check as well because that was
->> asserted earlier.
->>
->> Walter Harms suggested I move the "phyinfo->phy_ref_count++;" outside
->> the if condition for readability, so I have done that.
->>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> Acked-by: Sjur Braendeland <sjur.brandeland@stericsson.com>
-> Thanks, this looks good.
+Add a mutex_unlock missing on the error path.  In each case, whenever the
+label out is reached from elsewhere in the function, mutex is not locked.
 
-Applied.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression E1;
+@@
+
+* mutex_lock(E1);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* mutex_unlock(E1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/rds/ib_cm.c |    1 +
+ net/rds/iw_cm.c |    1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
+index 10ed0d5..f688327 100644
+--- a/net/rds/ib_cm.c
++++ b/net/rds/ib_cm.c
+@@ -475,6 +475,7 @@ int rds_ib_cm_handle_connect(struct rdma_cm_id *cm_id,
+ 	err = rds_ib_setup_qp(conn);
+ 	if (err) {
+ 		rds_ib_conn_error(conn, "rds_ib_setup_qp failed (%d)\n", err);
++		mutex_unlock(&conn->c_cm_lock);
+ 		goto out;
+ 	}
+ 
+diff --git a/net/rds/iw_cm.c b/net/rds/iw_cm.c
+index a9d951b..b5dd6ac 100644
+--- a/net/rds/iw_cm.c
++++ b/net/rds/iw_cm.c
+@@ -452,6 +452,7 @@ int rds_iw_cm_handle_connect(struct rdma_cm_id *cm_id,
+ 	err = rds_iw_setup_qp(conn);
+ 	if (err) {
+ 		rds_iw_conn_error(conn, "rds_iw_setup_qp failed (%d)\n", err);
++		mutex_unlock(&conn->c_cm_lock);
+ 		goto out;
+ 	}
+ 
