@@ -1,41 +1,61 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 22 May 2010 20:30:36 +0000
-Subject: [patch] scsi/qla2xxx: checking for null cleanups
-Message-Id: <20100522203036.GP22515@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 15:57:41 +0000
+Subject: [PATCH 12/17] drivers/video/omap2/displays: Add missing mutex_unlock
+Message-Id: <Pine.LNX.4.64.1005261757240.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Vasquez <andrew.vasquez@qlogic.com>
-Cc: linux-driver@qlogic.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, Giridhar Malavali <giridhar.malavali@qlogic.com>, Anirban Chakraborty <anirban.chakraborty@qlogic.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@nokia.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These are two cleanups to make the static checkers happy.  The "vha" is 
-used as the list cursor and can never be null so I removed the check.  I 
-also modified qla2x00_request_firmware() to avoid a theoretical null
-dereference.  This is unlikely to happen I think, but it makes auditing
-easier.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Add a mutex_unlock missing on the error paths.  The use of the mutex is
+balanced elsewhere in the file.
 
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index be1a8fc..d306853 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -2354,7 +2354,7 @@ qla2x00_remove_one(struct pci_dev *pdev)
- 	ha = base_vha->hw;
- 
- 	list_for_each_entry_safe(vha, temp, &ha->vp_list, list) {
--		if (vha && vha->fc_vport)
-+		if (vha->fc_vport)
- 			fc_vport_terminate(vha->fc_vport);
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression E1;
+@@
+
+* mutex_lock(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* mutex_unlock(E1,...);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/video/omap2/displays/panel-acx565akm.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/omap2/displays/panel-acx565akm.c b/drivers/video/omap2/displays/panel-acx565akm.c
+index 1f8eb70..07fbb8a 100644
+--- a/drivers/video/omap2/displays/panel-acx565akm.c
++++ b/drivers/video/omap2/displays/panel-acx565akm.c
+@@ -592,7 +592,7 @@ static int acx_panel_power_on(struct omap_dss_device *dssdev)
+ 	r = omapdss_sdi_display_enable(dssdev);
+ 	if (r) {
+ 		pr_err("%s sdi enable failed\n", __func__);
+-		return r;
++		goto fail_unlock;
  	}
  
-@@ -3689,6 +3689,8 @@ qla2x00_request_firmware(scsi_qla_host_t *vha)
- 		blob = &qla_fw_blobs[FW_ISP81XX];
- 	} else if (IS_QLA82XX(ha)) {
- 		blob = &qla_fw_blobs[FW_ISP82XX];
-+	} else {
-+		return NULL;
- 	}
+ 	/*FIXME tweak me */
+@@ -633,6 +633,8 @@ static int acx_panel_power_on(struct omap_dss_device *dssdev)
+ 	return acx565akm_bl_update_status(md->bl_dev);
+ fail:
+ 	omapdss_sdi_display_disable(dssdev);
++fail_unlock:
++	mutex_unlock(&md->mutex);
+ 	return r;
+ }
  
- 	mutex_lock(&qla_fw_lock);
