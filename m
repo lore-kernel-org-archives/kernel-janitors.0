@@ -1,55 +1,52 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Date: Mon, 24 May 2010 01:04:10 +0000
-Subject: Re: [PATCH 5/27] mm: Use memdup_user
-Message-Id: <20100524095902.1E92.A69D9226@jp.fujitsu.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 15:56:48 +0000
+Subject: [PATCH 9/17] net/iucv: Add missing spin_unlock
+Message-Id: <Pine.LNX.4.64.1005261756330.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005221019370.13021@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005221019370.13021@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kosaki.motohiro@jp.fujitsu.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ursula Braun <ursula.braun@de.ibm.com>, linux390@de.ibm.com, "David S. , Miller" <davem@davemloft.net>, linux-s390@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  mm/util.c |   11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/mm/util.c b/mm/util.c
-> index f5712e8..4735ea4 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -225,15 +225,10 @@ char *strndup_user(const char __user *s, long n)
->  	if (length > n)
->  		return ERR_PTR(-EINVAL);
->  
-> -	p = kmalloc(length, GFP_KERNEL);
-> +	p = memdup_user(s, length);
+From: Julia Lawall <julia@diku.dk>
 
-memdup? Why can't we use strnlen_user() and legitimate length copy?
+Add a spin_unlock missing on the error path.  There seems like no reason
+why the lock should continue to be held if the kzalloc fail.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
->  
-> -	if (!p)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	if (copy_from_user(p, s, length)) {
-> -		kfree(p);
-> -		return ERR_PTR(-EFAULT);
-> -	}
-> +	if (IS_ERR(p))
-> +		return p;
->  
->  	p[length - 1] = '\0';
->  
-> 
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo@kvack.org.  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+// <smpl>
+@@
+expression E1;
+@@
 
+* spin_lock(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* spin_unlock(E1,...);
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ net/iucv/af_iucv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+index c8b4599..9637e45 100644
+--- a/net/iucv/af_iucv.c
++++ b/net/iucv/af_iucv.c
+@@ -1619,7 +1619,7 @@ static void iucv_callback_rx(struct iucv_path *path, struct iucv_message *msg)
+ save_message:
+ 	save_msg = kzalloc(sizeof(struct sock_msg_q), GFP_ATOMIC | GFP_DMA);
+ 	if (!save_msg)
+-		return;
++		goto out_unlock;
+ 	save_msg->path = path;
+ 	save_msg->msg = *msg;
+ 
