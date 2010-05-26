@@ -1,60 +1,61 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 09:46:12 +0000
-Subject: [PATCH 2/4] drivers/scsi/aacraid: Eliminate use after free
-Message-Id: <Pine.LNX.4.64.1005151145540.15566@ask.diku.dk>
+Date: Wed, 26 May 2010 15:58:07 +0000
+Subject: [PATCH 13/17] drivers/message/i2o/exec-osm.c: Add missing mutex_unlock
+Message-Id: <Pine.LNX.4.64.1005261757420.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The debugging code using the freed structure is moved before the kfree.
+Add a mutex_unlock missing on the error path.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@free@
-expression E;
-position p;
 @@
-kfree@p(E)
-
-@@
-expression free.E, subE<=free.E, E1;
-position free.p;
+expression E1;
 @@
 
-  kfree@p(E)
-  ...
-(
-  subE = E1
-|
-* E
-)
+* mutex_lock(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* mutex_unlock(E1,...);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/aacraid/commctrl.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/message/i2o/exec-osm.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
-index 9c0c911..1b761d5 100644
---- a/drivers/scsi/aacraid/commctrl.c
-+++ b/drivers/scsi/aacraid/commctrl.c
-@@ -655,9 +655,9 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
- 				/* Does this really need to be GFP_DMA? */
- 				p = kmalloc(usg->sg[i].count,GFP_KERNEL|__GFP_DMA);
- 				if(!p) {
--					kfree (usg);
--					dprintk((KERN_DEBUG"aacraid: Could not allocate SG buffer - size = %d buffer number %d of %d\n",
-+					dprintk((KERN_DEBUG "aacraid: Could not allocate SG buffer - size = %d buffer number %d of %d\n",
- 					  usg->sg[i].count,i,usg->count));
-+					kfree(usg);
- 					rcode = -ENOMEM;
- 					goto cleanup;
- 				}
+diff --git a/drivers/message/i2o/exec-osm.c b/drivers/message/i2o/exec-osm.c
+index 06c655c..a3970e5 100644
+--- a/drivers/message/i2o/exec-osm.c
++++ b/drivers/message/i2o/exec-osm.c
+@@ -389,12 +389,16 @@ static int i2o_exec_lct_notify(struct i2o_controller *c, u32 change_ind)
+ 	dev = &c->pdev->dev;
+ 
+ 	if (i2o_dma_realloc(dev, &c->dlct,
+-					le32_to_cpu(sb->expected_lct_size)))
++					le32_to_cpu(sb->expected_lct_size))) {
++		mutex_unlock(&c->lct_lock);
+ 		return -ENOMEM;
++	}
+ 
+ 	msg = i2o_msg_get_wait(c, I2O_TIMEOUT_MESSAGE_GET);
+-	if (IS_ERR(msg))
++	if (IS_ERR(msg)) {
++		mutex_unlock(&c->lct_lock);
+ 		return PTR_ERR(msg);
++	}
+ 
+ 	msg->u.head[0] = cpu_to_le32(EIGHT_WORD_MSG_SIZE | SGL_OFFSET_6);
+ 	msg->u.head[1] = cpu_to_le32(I2O_CMD_LCT_NOTIFY << 24 | HOST_TID << 12 |
