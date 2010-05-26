@@ -1,56 +1,55 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 27 May 2010 12:32:09 +0000
-Subject: [PATCH 1/11] drivers/usb/serial: Eliminate a NULL pointer dereference
-Message-Id: <Pine.LNX.4.64.1005271431530.5422@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 26 May 2010 14:58:10 +0000
+Subject: [patch v4 1/2] video/saa7134: change dprintk() to i2cdprintk()
+Message-Id: <20100526145810.GN22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100525091816.GA13034@bicker> <20100526144313.1d15222f@hyperion.delvare>
+In-Reply-To: <20100526144313.1d15222f@hyperion.delvare>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Berger <pberger@brimson.com>, Al Borchers <alborchers@steinerpoint.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, hermann pitton <hermann-pitton@arcor.de>, Douglas Schilling Landgraf <dougsland@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+The problem is that dprintk() dereferences "dev" which is null here.
+The i2cdprintk() uses "ir" so that's OK.
 
-If port is NULL, then the call to dev_err will dereference a value that is
-a small offset from NULL.
+Also Jean Delvare pointed out a typo in the comment so we may as well
+fix that.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-expression E,E1;
-identifier f;
-statement S1,S2,S3;
-@@
-
-if ((E = NULL && ...) || ...)
-{
-  ... when != if (...) S1 else S2
-      when != E = E1
-* E->f
-  ... when any
-  return ...;
-}
-else S3
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+Acked-by: Jean Delvare <khali@linux-fr.org>
 ---
- drivers/usb/serial/digi_acceleport.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+v2: Jean Delvare suggested that I use i2cdprintk() instead of modifying
+dprintk().
+v3: V2 had a bonus cleanup that I removed from v3
+v4: Fixed typo in the comment.
 
-diff --git a/drivers/usb/serial/digi_acceleport.c b/drivers/usb/serial/digi_acceleport.c
-index 3edda3e..fd35f73 100644
---- a/drivers/usb/serial/digi_acceleport.c
-+++ b/drivers/usb/serial/digi_acceleport.c
-@@ -1239,8 +1239,7 @@ static void digi_write_bulk_callback(struct urb *urb)
+diff --git a/drivers/media/video/saa7134/saa7134-input.c b/drivers/media/video/saa7134/saa7134-input.c
+index e5565e2..7691bf2 100644
+--- a/drivers/media/video/saa7134/saa7134-input.c
++++ b/drivers/media/video/saa7134/saa7134-input.c
+@@ -141,8 +141,8 @@ static int get_key_flydvb_trio(struct IR_i2c *ir, u32 *ir_key, u32 *ir_raw)
+ 	struct saa7134_dev *dev = ir->c->adapter->algo_data;
  
- 	/* port and serial sanity check */
- 	if (port = NULL || (priv = usb_get_serial_port_data(port)) = NULL) {
--		dev_err(&port->dev,
--			"%s: port or port->private is NULL, status=%d\n",
-+		pr_err("%s: port or port->private is NULL, status=%d\n",
- 			__func__, status);
- 		return;
+ 	if (dev = NULL) {
+-		dprintk("get_key_flydvb_trio: "
+-			 "gir->c->adapter->algo_data is NULL!\n");
++		i2cdprintk("get_key_flydvb_trio: "
++			   "ir->c->adapter->algo_data is NULL!\n");
+ 		return -EIO;
  	}
+ 
+@@ -195,8 +195,8 @@ static int get_key_msi_tvanywhere_plus(struct IR_i2c *ir, u32 *ir_key,
+ 	/* <dev> is needed to access GPIO. Used by the saa_readl macro. */
+ 	struct saa7134_dev *dev = ir->c->adapter->algo_data;
+ 	if (dev = NULL) {
+-		dprintk("get_key_msi_tvanywhere_plus: "
+-			"gir->c->adapter->algo_data is NULL!\n");
++		i2cdprintk("get_key_msi_tvanywhere_plus: "
++			   "ir->c->adapter->algo_data is NULL!\n");
+ 		return -EIO;
+ 	}
+ 
+
+
