@@ -1,62 +1,53 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 29 May 2010 09:46:06 +0000
-Subject: [patch 6/11] btrfs: cleanup btrfs_dec_test_ordered_pending()
-Message-Id: <20100529094606.GG5483@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 15:58:28 +0000
+Subject: [PATCH 14/17] drivers/char/n_gsm.c: Add missing spin_unlock_irqrestore
+Message-Id: <Pine.LNX.4.64.1005261758070.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-btrfs@vger.kernel.org
-Cc: Josef Bacik <josef@redhat.com>, Yan Zheng <zheng.yan@oracle.com>, Jens Axboe <jens.axboe@oracle.com>, Tejun Heo <tj@kernel.org>, kernel-janitors@vger.kernel.org, Chris Mason <chris.mason@oracle.com>
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"ret" was used in a confusing way because instead of returning "ret" we
-returned the opposite of ret.  I refactored it.  Also if ret is non-zero
-in the new code then entry is clearly non-null so I removed that check.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Add a spin_unlock_irqrestore missing on the error path.  Converting the
+return to break leads to the spin_unlock_irqrestore at the end of the
+function.
 
-diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
-index e56c72b..0a37019 100644
---- a/fs/btrfs/ordered-data.c
-+++ b/fs/btrfs/ordered-data.c
-@@ -270,13 +270,13 @@ int btrfs_dec_test_ordered_pending(struct inode *inode,
- 	spin_lock(&tree->lock);
- 	node = tree_search(tree, file_offset);
- 	if (!node) {
--		ret = 1;
-+		ret = 0;
- 		goto out;
- 	}
- 
- 	entry = rb_entry(node, struct btrfs_ordered_extent, rb_node);
- 	if (!offset_in_entry(entry, file_offset)) {
--		ret = 1;
-+		ret = 0;
- 		goto out;
- 	}
- 
-@@ -286,17 +286,19 @@ int btrfs_dec_test_ordered_pending(struct inode *inode,
- 		       (unsigned long long)io_size);
- 	}
- 	entry->bytes_left -= io_size;
--	if (entry->bytes_left = 0)
-+	if (entry->bytes_left = 0) {
- 		ret = test_and_set_bit(BTRFS_ORDERED_IO_DONE, &entry->flags);
--	else
--		ret = 1;
-+		ret = !ret;
-+	} else {
-+		ret = 0;
-+	}
- out:
--	if (!ret && cached && entry) {
-+	if (ret && cached) {
- 		*cached = entry;
- 		atomic_inc(&entry->refs);
- 	}
- 	spin_unlock(&tree->lock);
--	return ret = 0;
-+	return ret;
- }
- 
- /*
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression E1;
+@@
+
+* spin_lock_irqsave(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* spin_unlock_irqrestore(E1,...);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/char/n_gsm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/n_gsm.c b/drivers/char/n_gsm.c
+index c4161d5..ab89cef 100644
+--- a/drivers/char/n_gsm.c
++++ b/drivers/char/n_gsm.c
+@@ -922,7 +922,7 @@ static void gsm_dlci_data_sweep(struct gsm_mux *gsm)
+ 		else
+ 			len = gsm_dlci_data_output_framed(gsm, dlci);
+ 		if (len < 0)
+-			return;
++			break;
+ 		/* DLCI empty - try the next */
+ 		if (len = 0)
+ 			i++;
