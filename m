@@ -1,41 +1,81 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Mon, 31 May 2010 16:58:18 +0000
-Subject: Re: [PATCH 12/27] drivers/ieee1394: Use memdup_user
-Message-Id: <4C03EAAA.6050603@s5r6.in-berlin.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 15:59:27 +0000
+Subject: [PATCH 17/17] sound: Add missing spin_unlock
+Message-Id: <Pine.LNX.4.64.1005261759110.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005221021460.13021@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005221021460.13021@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall wrote on 2010-05-22:
-...
-> --- a/drivers/ieee1394/video1394.c
-> +++ b/drivers/ieee1394/video1394.c
-> @@ -1045,14 +1045,9 @@ static long video1394_ioctl(struct file *file,
->  			if (get_user(qv, &p->packet_sizes))
->  				return -EFAULT;
->  
-> -			psizes = kmalloc(buf_size, GFP_KERNEL);
-> -			if (!psizes)
-> -				return -ENOMEM;
-> -
-> -			if (copy_from_user(psizes, qv, buf_size)) {
-> -				kfree(psizes);
-> -				return -EFAULT;
-> -			}
-> +			psizes = memdup_user(qv, buf_size);
-> +			if (IS_ERR(psizes))
-> +				return PTR_ERR(psizes);
->  		}
->  
->  		spin_lock_irqsave(&d->lock,flags);
+From: Julia Lawall <julia@diku.dk>
 
-Committed to linux1394-2.6.git now, thanks.  (Because akpm said that it
-is worth it regardless of video1394 being at its end of life.)
--- 
-Stefan Richter
--===-=-=- -=-= ==http://arcgraph.de/sr/
+Add a spin_unlock missing on the error path.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression E1;
+@@
+
+* spin_lock(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* spin_unlock(E1,...);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/mips/au1x00.c                 |    1 +
+ sound/oss/dmasound/dmasound_atari.c |    5 +++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sound/mips/au1x00.c b/sound/mips/au1x00.c
+index 3e763d6..446cf97 100644
+--- a/sound/mips/au1x00.c
++++ b/sound/mips/au1x00.c
+@@ -516,6 +516,7 @@ get the interrupt driven case to work efficiently */
+ 			break;
+ 	if (i = 0x5000) {
+ 		printk(KERN_ERR "au1000 AC97: AC97 command read timeout\n");
++		spin_unlock(&au1000->ac97_lock);
+ 		return 0;
+ 	}
+ 
+diff --git a/sound/oss/dmasound/dmasound_atari.c b/sound/oss/dmasound/dmasound_atari.c
+index 1f47741..13c2144 100644
+--- a/sound/oss/dmasound/dmasound_atari.c
++++ b/sound/oss/dmasound/dmasound_atari.c
+@@ -1277,7 +1277,7 @@ static irqreturn_t AtaInterrupt(int irq, void *dummy)
+ 		 * (almost) like on the TT.
+ 		 */
+ 		write_sq_ignore_int = 0;
+-		return IRQ_HANDLED;
++		goto out;
+ 	}
+ 
+ 	if (!write_sq.active) {
+@@ -1285,7 +1285,7 @@ static irqreturn_t AtaInterrupt(int irq, void *dummy)
+ 		 * the sq variables, so better don't do anything here.
+ 		 */
+ 		WAKE_UP(write_sq.sync_queue);
+-		return IRQ_HANDLED;
++		goto out;
+ 	}
+ 
+ 	/* Probably ;) one frame is finished. Well, in fact it may be that a
+@@ -1322,6 +1322,7 @@ static irqreturn_t AtaInterrupt(int irq, void *dummy)
+ 	/* We are not playing after AtaPlay(), so there
+ 	   is nothing to play any more. Wake up a process
+ 	   waiting for audio output to drain. */
++out:
+ 	spin_unlock(&dmasound.lock);
+ 	return IRQ_HANDLED;
+ }
