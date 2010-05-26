@@ -1,33 +1,75 @@
-From: Zachary Richey <zr.public@gmail.com>
-Date: Tue, 11 May 2010 18:13:48 +0000
-Subject: [PATCH 1/2] Staging: wlan-ng: fix coding style issues in p80211_conv.c
-Message-Id: <6d7f8e8ef8e4df0727d235d7e4650fb3ea9db5e0.1273600945.git.zr.public@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 15:54:39 +0000
+Subject: [PATCH 2/17] fs: Add missing mutex_unlock
+Message-Id: <Pine.LNX.4.64.1005261754220.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch fixes a simple coding style issue reported by checkpatch.pl in p80211_conv.c
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Zachary Richey <zr.public@gmail.com>
+Add a mutex_unlock missing on the error path.  At other exists from the
+function that return an error flag, the mutex is unlocked, so do the same
+here.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression E1;
+@@
+
+* mutex_lock(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* mutex_unlock(E1,...);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/wlan-ng/p80211conv.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ fs/pipe.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/wlan-ng/p80211conv.c b/drivers/staging/wlan-ng/p80211conv.c
-index a1605fb..71c3595 100644
---- a/drivers/staging/wlan-ng/p80211conv.c
-+++ b/drivers/staging/wlan-ng/p80211conv.c
-@@ -208,7 +208,7 @@ int skb_ether_to_p80211(wlandevice_t *wlandev, u32 ethconv,
- 		p80211_wep->data = kmalloc(skb->len, GFP_ATOMIC);
- 		foo = wep_encrypt(wlandev, skb->data, p80211_wep->data,
- 				  skb->len,
--				  (wlandev->hostwep &HOSTWEP_DEFAULTKEY_MASK),
-+				  (wlandev->hostwep & HOSTWEP_DEFAULTKEY_MASK),
- 				  p80211_wep->iv, p80211_wep->icv);
- 		if (foo) {
- 			printk(KERN_WARNING
--- 
-1.6.3.3
-
+diff --git a/fs/pipe.c b/fs/pipe.c
+index d79872e..60da077 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -1169,14 +1169,18 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ 	switch (cmd) {
+ 	case F_SETPIPE_SZ:
+-		if (!capable(CAP_SYS_ADMIN) && arg > pipe_max_pages)
+-			return -EINVAL;
++		if (!capable(CAP_SYS_ADMIN) && arg > pipe_max_pages) {
++			ret = -EINVAL;
++			goto out;
++		}
+ 		/*
+ 		 * The pipe needs to be at least 2 pages large to
+ 		 * guarantee POSIX behaviour.
+ 		 */
+-		if (arg < 2)
+-			return -EINVAL;
++		if (arg < 2) {
++			ret = -EINVAL;
++			goto out;
++		}
+ 		ret = pipe_set_size(pipe, arg);
+ 		break;
+ 	case F_GETPIPE_SZ:
+@@ -1187,6 +1191,7 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		break;
+ 	}
+ 
++out:
+ 	mutex_unlock(&pipe->inode->i_mutex);
+ 	return ret;
+ }
