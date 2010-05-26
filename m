@@ -1,51 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 27 May 2010 16:10:08 +0000
-Subject: [PATCH] drivers/usb/host: Eliminate NULL dereference
-Message-Id: <Pine.LNX.4.64.1005271809090.5422@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 26 May 2010 22:34:17 +0000
+Subject: smatch 1.55 released
+Message-Id: <20100526223417.GP22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Vrabel <david.vrabel@csr.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Smatch is a static checker for C.  The core parts basically do flow
+analysis and then there are project specific checks as well.  The
+website is:  http://smatch.sf.net
 
-The test above allows std to be NULL, so check that std is not NULL before
-doing the dereference.
+To use it do:
+	git clone git://repo.or.cz/smatch.git
+	cd smatch ; make ; cd /usr/src/kernel
+	make CHECK="~/path/to/smatch/smatch -p=kernel" C=1 \
+                   bzImage modules | tee warns.txt
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Things that have changed since 1.54:
+* The array overflow check is now useful.
+* There is a new check for precedence bugs caused by macro expansion.
+* The checks for null pointer dereferences were rewritten and now have
+    fewer false positives.
+* Some kernel specific tests were added for kunmap(),
+    release_resource(), resource_size(), and mod_timer().
 
-// <smpl>
-@r exists@
-expression E,E1;
-identifier f;
-statement S1,S2,S3;
-@@
+Major Bugs:
+* Smatch doesn't handle loops correctly.
+* It doesn't do cross function analysis.
+* It doesn't understand code like this:
+	foo->bar = NULL;
+	foo = not_null();
+	foo->bar->baz;  // <- Smatch complains about a null dereference.
+* Too many false positives generally.
 
-if ((E = NULL && ...) || ...)
-{
-  ... when != if (...) S1 else S2
-      when != E = E1
-* E->f
-  ... when any
-}
-else S3
-// </smpl>
+Anyway, please test it out.  :)
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-diff --git a/drivers/usb/host/whci/qset.c b/drivers/usb/host/whci/qset.c
-index ab5a14f..dc0ab83 100644
---- a/drivers/usb/host/whci/qset.c
-+++ b/drivers/usb/host/whci/qset.c
-@@ -475,7 +475,7 @@ static int qset_add_urb_sg(struct whc *whc, struct whc_qset *qset, struct urb *u
- 			    || (prev_end & (WHCI_PAGE_SIZE-1))
- 			    || (dma_addr & (WHCI_PAGE_SIZE-1))
- 			    || std->len + WHCI_PAGE_SIZE > QTD_MAX_XFER_SIZE) {
--				if (std->len % qset->max_packet != 0)
-+				if (std && std->len % qset->max_packet != 0)
- 					return -EINVAL;
- 				std = qset_new_std(whc, qset, urb, mem_flags);
- 				if (std = NULL) {
+regards,
+dan carpenter
