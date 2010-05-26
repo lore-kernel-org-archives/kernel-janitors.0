@@ -1,33 +1,54 @@
-From: Daniel Walker <dwalker@codeaurora.org>
-Date: Sun, 02 May 2010 14:56:10 +0000
-Subject: Re: [PATCH] arm/mach-msm: Add CONFIG conditional for board-trout
-Message-Id: <1272812170.23015.1.camel@desktop>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 15:56:14 +0000
+Subject: [PATCH 7/17] arch/arm/common: Add missing spin_unlock_irqrestore
+Message-Id: <Pine.LNX.4.64.1005261756000.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201004290241.23068.PeterHuewe@gmx.de>
-	<20100501101442.GH12172@n2100.arm.linux.org.uk>
-In-Reply-To: <20100501101442.GH12172@n2100.arm.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Sat, 2010-05-01 at 11:14 +0100, Russell King - ARM Linux wrote:
-> On Thu, Apr 29, 2010 at 02:41:22AM +0200, Peter Huewe wrote:
-> > From: Peter Huewe <peterhuewe@gmx.de>
-> > 
-> > This patch adds a conditional for CONFIG_MSM_DEBUG_UART to prevent a
-> > build failure[1], this is done the same way as for every board in mach-msm.
-> > 
-> > References:
-> > [1] http://kisskb.ellerman.id.au/kisskb/buildresult/2448102/
-> > 
-> > Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-> 
-> Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> 
-> Who's going to deal with getting this patch upstream?
+From: Julia Lawall <julia@diku.dk>
 
-I am .. I have a similar patch in my next tree already.
+Add a spin_unlock_irqrestore missing on the error path.  Although the lock
+is destroyed with the rest of the sachip structure in the function
+__sa1111_remove, it still seems useful to restore the interrupt state.
 
-Daniel
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression E1;
+@@
+
+* spin_lock_irqsave(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* spin_unlock_irqrestore(E1,...);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+Perhaps the unlock is now too early?
+
+ arch/arm/common/sa1111.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+index a52a27c..59e38ff 100644
+--- a/arch/arm/common/sa1111.c
++++ b/arch/arm/common/sa1111.c
+@@ -959,6 +959,7 @@ static int sa1111_resume(struct platform_device *dev)
+ 	 */
+ 	id = sa1111_readl(sachip->base + SA1111_SKID);
+ 	if ((id & SKID_ID_MASK) != SKID_SA1111_ID) {
++		spin_unlock_irqrestore(&sachip->lock, flags);
+ 		__sa1111_remove(sachip);
+ 		platform_set_drvdata(dev, NULL);
+ 		kfree(save);
