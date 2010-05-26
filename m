@@ -1,68 +1,51 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 09:46:54 +0000
-Subject: [PATCH 4/4] drivers/media/video: Eliminate use after free
-Message-Id: <Pine.LNX.4.64.1005151146370.15566@ask.diku.dk>
+Date: Wed, 26 May 2010 15:58:53 +0000
+Subject: [PATCH 15/17] fs/ocfs2/dlm: Add missing spin_unlock
+Message-Id: <Pine.LNX.4.64.1005261758290.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Fasheh <mfasheh@suse.com>, Joel Becker <joel.becker@oracle.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The error value is saved in a new local variable err before freeing the
-containing structure.
+Add a spin_unlock missing on the error path.  Unlock as in the other code
+that leads to the leave label.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@free@
-expression E;
-position p;
 @@
-kfree@p(E)
-
-@@
-expression free.E, subE<=free.E, E1;
-position free.p;
+expression E1;
 @@
 
-  kfree@p(E)
-  ...
-(
-  subE = E1
-|
-* E
-)
+* spin_lock(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* spin_unlock(E1,...);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/media/video/mem2mem_testdev.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/ocfs2/dlm/dlmdomain.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/video/mem2mem_testdev.c b/drivers/media/video/mem2mem_testdev.c
-index baf211b..fb73f34 100644
---- a/drivers/media/video/mem2mem_testdev.c
-+++ b/drivers/media/video/mem2mem_testdev.c
-@@ -858,6 +858,7 @@ static int m2mtest_open(struct file *file)
- {
- 	struct m2mtest_dev *dev = video_drvdata(file);
- 	struct m2mtest_ctx *ctx = NULL;
-+	int err;
+diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+index 6b5a492..2ccad86 100644
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -1709,6 +1709,7 @@ retry:
+ 		}
  
- 	ctx = kzalloc(sizeof *ctx, GFP_KERNEL);
- 	if (!ctx)
-@@ -871,8 +872,9 @@ static int m2mtest_open(struct file *file)
- 
- 	ctx->m2m_ctx = v4l2_m2m_ctx_init(ctx, dev->m2m_dev, queue_init);
- 	if (IS_ERR(ctx->m2m_ctx)) {
-+		err = PTR_ERR(ctx->m2m_ctx);
- 		kfree(ctx);
--		return PTR_ERR(ctx->m2m_ctx);
-+		return err;
- 	}
- 
- 	atomic_inc(&dev->num_inst);
+ 		if (dlm_protocol_compare(&dlm->fs_locking_proto, fs_proto)) {
++			spin_unlock(&dlm_domain_lock);
+ 			mlog(ML_ERROR,
+ 			     "Requested locking protocol version is not "
+ 			     "compatible with already registered domain "
