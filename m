@@ -1,66 +1,56 @@
-From: Andre Noll <maan@systemlinux.org>
-Date: Tue, 25 May 2010 14:56:13 +0000
-Subject: Re: [patch] md/raid10: check for ERR_PTR returns from setup_conf()
-Message-Id: <20100525145613.GD1211@skl-net.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="KdquIMZPjGJQvRdI"
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 15:55:25 +0000
+Subject: [PATCH 5/17] drivers/media/video/pvrusb2: Add missing mutex_unlock
+Message-Id: <Pine.LNX.4.64.1005261755110.23743@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100525094017.GD22515@bicker>
-In-Reply-To: <20100525094017.GD22515@bicker>
-To: Dan Carpenter <error27@gmail.com>
-Cc: Neil Brown <neilb@suse.de>, Robert Becker <Rob.Becker@riverbed.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <jens.axboe@oracle.com>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mike Isely <isely@pobox.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
---KdquIMZPjGJQvRdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add a mutex_unlock missing on the error path.  In the other functions in
+the same file the locks and unlocks of this mutex appear to be balanced,
+so it would seem that the same should hold in this case.
 
-On 11:40, Dan Carpenter wrote:
-> setup_conf() can return error values so I added a check for that here.
->=20
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->=20
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index 0372499..8bd7da2 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -2454,6 +2454,8 @@ static void *raid10_takeover_raid0(mddev_t *mddev)
->  	mddev->recovery_cp =3D MaxSector;
-> =20
->  	conf =3D setup_conf(mddev);
-> +	if (IS_ERR(conf))
-> +		return conf;
->  	conf->scale_disks =3D 2;
->  	return conf;
->  }
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Looks good. Feel free to add my Acked-By.
+// <smpl>
+@@
+expression E1;
+@@
 
-BTW: setup_conf() could use some cleanup: The "couldn't allocate
-memory" error message at the bottom is misleading, and the function
-returns ERR_PTR(-ENOMEM) also if md_register_thread() fails.
+* mutex_lock(E1,...);
+  <+... when != E1
+  if (...) {
+    ... when != E1
+*   return ...;
+  }
+  ...+>
+* mutex_unlock(E1,...);
+// </smpl>
 
-Here's a question for Neil: raid10_takeover_raid0() sets
-mddev->new_layout, but setup_conf() uses the old values of the
-raid0. How is this supposed to work?
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Thanks
-Andre
---=20
-The only person who always got his work done by Friday was Robinson Crusoe
+---
+ drivers/media/video/pvrusb2/pvrusb2-ioread.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---KdquIMZPjGJQvRdI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQFL++UNWto1QDEAkw8RArWLAJ0UzsayPZJS/D3WBP2UQdtFRdqu8wCgp8+J
-mbgWr/oXr+TiLuSThMTDQnU=
-=JMOm
------END PGP SIGNATURE-----
-
---KdquIMZPjGJQvRdI--
+diff --git a/drivers/media/video/pvrusb2/pvrusb2-ioread.c b/drivers/media/video/pvrusb2/pvrusb2-ioread.c
+index b482478..bba6115 100644
+--- a/drivers/media/video/pvrusb2/pvrusb2-ioread.c
++++ b/drivers/media/video/pvrusb2/pvrusb2-ioread.c
+@@ -223,7 +223,10 @@ int pvr2_ioread_setup(struct pvr2_ioread *cp,struct pvr2_stream *sp)
+ 				   " pvr2_ioread_setup (setup) id=%p",cp);
+ 			pvr2_stream_kill(sp);
+ 			ret = pvr2_stream_set_buffer_count(sp,BUFFER_COUNT);
+-			if (ret < 0) return ret;
++			if (ret < 0) {
++				mutex_unlock(&cp->mutex);
++				return ret;
++			}
+ 			for (idx = 0; idx < BUFFER_COUNT; idx++) {
+ 				bp = pvr2_stream_get_buffer(sp,idx);
+ 				pvr2_buffer_set_buffer(bp,
