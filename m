@@ -1,40 +1,53 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Thu, 27 May 2010 11:48:30 +0000
-Subject: Re: [PATCH 4/4] Add scripts/coccinelle/resource_size.cocci
-Message-Id: <201005271348.31452.npalix@diku.dk>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 27 May 2010 12:37:39 +0000
+Subject: [PATCH 11/11] drivers/usb/serial: Eliminate a NULL pointer dereference
+Message-Id: <Pine.LNX.4.64.1005271437200.5422@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273508667-5152-1-git-send-email-npalix@diku.dk> <1273508667-5152-5-git-send-email-npalix@diku.dk> <o2y84144f021005100952z1a7e991dt21341fb8f7c76af@mail.gmail.com>
-In-Reply-To: <o2y84144f021005100952z1a7e991dt21341fb8f7c76af@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Monday 10 May 2010 18:52:10 Pekka Enberg wrote:
-> On Mon, May 10, 2010 at 7:24 PM, Nicolas Palix <npalix@diku.dk> wrote:
-> > @@ -0,0 +1,94 @@
-> > +///
-> > +/// Use resource_size function on resource object
-> > +/// instead of explicit computation.
-> > +///
-> > +//  Confidence: High
-> > +//  Copyright: (C) 2009, 2010 Nicolas Palix, DIKU.  GPLv2.
-> > +//  Copyright: (C) 2009, 2010 Julia Lawall, DIKU.  GPLv2.
-> > +//  Copyright: (C) 2009, 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
-> > +//  URL: http://coccinelle.lip6.fr/
-> > +//  Options:
-> > +//
-> > +//  Keywords: resource_size
-> > +//  Version min: 2.6.27 resource_size
-> 
-> I guess we don't need this versioning in mainline?
-> 
+From: Julia Lawall <julia@diku.dk>
 
-It's indeed not essential for the mainline. It's however
-helpful to document the internal APIs and will help people
-who want to (back)port this patch series on other branches,
-potentially branches forked before 2.6.27 for instance.
+The assignment seems completely unnecessary if mos7840_port is NULL.
 
--- 
-Nicolas Palix
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression E,E1;
+identifier f;
+statement S1,S2,S3;
+@@
+
+if ((E = NULL && ...) || ...)
+{
+  ... when != if (...) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/serial/mos7840.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+index f8424d1..585b7e6 100644
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -730,7 +730,6 @@ static void mos7840_bulk_in_callback(struct urb *urb)
+ 	mos7840_port = urb->context;
+ 	if (!mos7840_port) {
+ 		dbg("%s", "NULL mos7840_port pointer");
+-		mos7840_port->read_urb_busy = false;
+ 		return;
+ 	}
+ 
