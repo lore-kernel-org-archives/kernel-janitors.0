@@ -1,42 +1,57 @@
-From: Giridhar Malavali <giridhar.malavali@qlogic.com>
-Date: Tue, 25 May 2010 18:48:27 +0000
-Subject: Re: [patch] scsi/qla2xxx: check for null consistently
-Message-Id: <C821698B.7573%giridhar.malavali@qlogic.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 27 May 2010 12:33:47 +0000
+Subject: [PATCH 7/11] drivers/scsi: Eliminate a NULL pointer dereference
+Message-Id: <Pine.LNX.4.64.1005271433330.5422@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100522201801.GK22515@bicker>
-In-Reply-To: <20100522201801.GK22515@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Andrew Vasquez <andrew.vasquez@qlogic.com>
-Cc: Linux Driver <Linux-Driver@qlogic.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Anirban Chakraborty <anirban.chakraborty@qlogic.com>, LinuxSCSI <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: HighPoint Linux Team <linux@highpoint-tech.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
+The end of the function is reachable both when host is and is not NULL.
 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-On 5/22/10 1:18 PM, "Dan Carpenter" <error27@gmail.com> wrote:
+// <smpl>
+@r exists@
+expression E,E1;
+identifier f;
+statement S1,S2,S3;
+@@
 
-> We assume that "ha->cs84xx" can be null on the previous line, so we
-> should check it here as well.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
-> index 3b70860..ad22baa 100644
-> --- a/drivers/scsi/qla2xxx/qla_attr.c
-> +++ b/drivers/scsi/qla2xxx/qla_attr.c
-> @@ -1211,7 +1211,7 @@ qla24xx_84xx_fw_version_show(struct device *dev,
->         if (ha->cs84xx && ha->cs84xx->op_fw_version = 0)
->                 rval = qla84xx_verify_chip(vha, status);
-> 
-> -       if ((rval = QLA_SUCCESS) && (status[0] = 0))
-> +       if (ha->cs84xx && rval = QLA_SUCCESS && status[0] = 0)
->                 return snprintf(buf, PAGE_SIZE, "%u\n",
->                         (uint32_t)ha->cs84xx->op_fw_version);
-> 
+if ((E = NULL && ...) || ...)
+{
+  ... when != if (...) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
 
-The checking for ha->cs84xx is redundant here since earlier check make sure
-that this code does not execute for non ISP 84xx ISPs. I will cleanup and
-resubmit the changes.
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+If it is a problem to use 0 when host is NULL, then the code could be fixed
+in another way.
 
+ drivers/scsi/hptiop.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/hptiop.c b/drivers/scsi/hptiop.c
+index 645f7cd..0729f15 100644
+--- a/drivers/scsi/hptiop.c
++++ b/drivers/scsi/hptiop.c
+@@ -1157,7 +1157,7 @@ free_pci_regions:
+ disable_pci_device:
+ 	pci_disable_device(pcidev);
+ 
+-	dprintk("scsi%d: hptiop_probe fail\n", host->host_no);
++	dprintk("scsi%d: hptiop_probe fail\n", host ? host->host_no : 0);
+ 	return -ENODEV;
+ }
+ 
