@@ -1,52 +1,20 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 26 May 2010 15:56:48 +0000
-Subject: [PATCH 9/17] net/iucv: Add missing spin_unlock
-Message-Id: <Pine.LNX.4.64.1005261756330.23743@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 27 May 2010 04:10:08 +0000
+Subject: Re: [PATCH 9/17] net/iucv: Add missing spin_unlock
+Message-Id: <20100526.211008.116373263.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1005261756330.23743@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005261756330.23743@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ursula Braun <ursula.braun@de.ibm.com>, linux390@de.ibm.com, "David S. , Miller" <davem@davemloft.net>, linux-s390@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: ursula.braun@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 May 2010 17:56:48 +0200 (CEST)
 
-Add a spin_unlock missing on the error path.  There seems like no reason
-why the lock should continue to be held if the kzalloc fail.
+> Add a spin_unlock missing on the error path.  There seems like no reason
+> why the lock should continue to be held if the kzalloc fail.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression E1;
-@@
-
-* spin_lock(E1,...);
-  <+... when != E1
-  if (...) {
-    ... when != E1
-*   return ...;
-  }
-  ...+>
-* spin_unlock(E1,...);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- net/iucv/af_iucv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index c8b4599..9637e45 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -1619,7 +1619,7 @@ static void iucv_callback_rx(struct iucv_path *path, struct iucv_message *msg)
- save_message:
- 	save_msg = kzalloc(sizeof(struct sock_msg_q), GFP_ATOMIC | GFP_DMA);
- 	if (!save_msg)
--		return;
-+		goto out_unlock;
- 	save_msg->path = path;
- 	save_msg->msg = *msg;
- 
+Applied, thanks.
