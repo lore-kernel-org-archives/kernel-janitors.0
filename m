@@ -1,36 +1,54 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 25 May 2010 21:54:01 +0000
-Subject: [patch] mempolicy: ERR_PTR dereference in mpol_shared_policy_init()
-Message-Id: <20100525215401.GA2506@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 27 May 2010 12:32:45 +0000
+Subject: [PATCH 3/11] arch/sparc/kernel: Eliminate what looks like a NULL
+Message-Id: <Pine.LNX.4.64.1005271432250.5422@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lee Schermerhorn <lee.schermerhorn@hp.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Christoph Lameter <cl@linux-foundation.org>, David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Grant Likely <grant.likely@secretlab.ca>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.orgkern
 
-The original code called mpol_put(new) while "new" was an ERR_PTR.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+At the point of the test, action cannot be NULL, as it has been dereferenced
+in the code just above.
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 7575101..5d6fb33 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2098,7 +2098,7 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
- 		/* contextualize the tmpfs mount point mempolicy */
- 		new = mpol_new(mpol->mode, mpol->flags, &mpol->w.user_nodemask);
- 		if (IS_ERR(new))
--			goto put_free; /* no valid nodemask intersection */
-+			goto free_scratch; /* no valid nodemask intersection */
- 
- 		task_lock(current);
- 		ret = mpol_set_nodemask(new, &mpol->w.user_nodemask, scratch);
-@@ -2114,6 +2114,7 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
- 
- put_free:
- 		mpol_put(new);			/* drop initial ref */
-+free_scratch:
- 		NODEMASK_SCRATCH_FREE(scratch);
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression E,E1;
+identifier f;
+statement S1,S2,S3;
+@@
+
+if ((E = NULL && ...) || ...)
+{
+  ... when != if (...) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/sparc/kernel/sun4d_irq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sparc/kernel/sun4d_irq.c b/arch/sparc/kernel/sun4d_irq.c
+index ab036a7..e11b461 100644
+--- a/arch/sparc/kernel/sun4d_irq.c
++++ b/arch/sparc/kernel/sun4d_irq.c
+@@ -183,7 +183,7 @@ void sun4d_free_irq(unsigned int irq, void *dev_id)
+ 		goto out_unlock;
  	}
- }
+ 	
+-	if (action && tmp)
++	if (tmp)
+ 		tmp->next = action->next;
+ 	else
+ 		*actionp = action->next;
