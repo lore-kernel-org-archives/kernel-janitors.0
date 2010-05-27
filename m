@@ -1,73 +1,28 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 12 May 2010 08:56:38 +0000
-Subject: Re: [PATCH 5/5] arch/x86/kernel: Drop memory allocation cast
-Message-Id: <Pine.LNX.4.64.1005121056240.31474@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 27 May 2010 09:11:28 +0000
+Subject: [patch 3/3] rds/iw_rdma: remove unneeded kfree()
+Message-Id: <20100527091128.GT22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005112028160.4330@ask.diku.dk> <4BEA58C6.7030103@bfs.de>
- <Pine.LNX.4.64.1005121021110.31474@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005121021110.31474@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, ", H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andy Grover <andy.grover@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+The "dma_pages" variable is always NULL at this point so the kfree()
+isn't needed.
 
-Drop cast on the result of kmalloc and similar functions.
-The third occurrence is additionally modified by hand to use kcalloc and to
-check that the result of the allocation is not NULL.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The semantic patch that makes the drop cast change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-type T;
-@@
-
-- (T *)
-  (\(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
-   kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\)(...))
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- arch/x86/kernel/tlb_uv.c            |    9 ++++-----
- 1 files changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/tlb_uv.c b/arch/x86/kernel/tlb_uv.c
-index 7fea555..97e790c 100644
---- a/arch/x86/kernel/tlb_uv.c
-+++ b/arch/x86/kernel/tlb_uv.c
-@@ -1141,7 +1141,7 @@ uv_activation_descriptor_init(int node, int pnode)
- 	 * each bau_desc is 64 bytes; there are 8 (UV_ITEMS_PER_DESCRIPTOR)
- 	 * per cpu; and up to 32 (UV_ADP_SIZE) cpu's per uvhub
- 	 */
--	bau_desc = (struct bau_desc *)kmalloc_node(sizeof(struct bau_desc)*
-+	bau_desc = kmalloc_node(sizeof(struct bau_desc) *
- 		UV_ADP_SIZE*UV_ITEMS_PER_DESCRIPTOR, GFP_KERNEL, node);
- 	BUG_ON(!bau_desc);
+diff --git a/net/rds/iw_rdma.c b/net/rds/iw_rdma.c
+index 48d5073..742ab6a 100644
+--- a/net/rds/iw_rdma.c
++++ b/net/rds/iw_rdma.c
+@@ -334,7 +334,6 @@ static u64 *rds_iw_map_scatterlist(struct rds_iw_device *rds_iwdev,
+ out_unmap:
+ 	ib_dma_unmap_sg(rds_iwdev->dev, sg->list, sg->len, DMA_BIDIRECTIONAL);
+ 	sg->dma_len = 0;
+-	kfree(dma_pages);
+ 	return ERR_PTR(ret);
+ }
  
-@@ -1200,7 +1200,7 @@ uv_payload_queue_init(int node, int pnode)
- 	struct bau_payload_queue_entry *pqp_malloc;
- 	struct bau_control *bcp;
- 
--	pqp = (struct bau_payload_queue_entry *) kmalloc_node(
-+	pqp = kmalloc_node(
- 		(DEST_Q_SIZE + 1) * sizeof(struct bau_payload_queue_entry),
- 		GFP_KERNEL, node);
- 	BUG_ON(!pqp);
-@@ -1286,9 +1286,8 @@ static void uv_init_per_cpu(int nuvhubs)
- 	};
- 	struct uvhub_desc *uvhub_descs;
- 
--	uvhub_descs = (struct uvhub_desc *)
--		kmalloc(nuvhubs * sizeof(struct uvhub_desc), GFP_KERNEL);
--	memset(uvhub_descs, 0, nuvhubs * sizeof(struct uvhub_desc));
-+	uvhub_descs = kcalloc(nuvhubs, sizeof(struct uvhub_desc), GFP_KERNEL);
-+	BUG_ON(!uvhub_descs);
- 	for_each_present_cpu(cpu) {
- 		bcp = &per_cpu(bau_control, cpu);
- 		memset(bcp, 0, sizeof(struct bau_control));
