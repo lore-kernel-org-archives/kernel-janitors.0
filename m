@@ -1,52 +1,56 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:14:36 +0000
-Subject: [PATCH 5/37] drivers/message/fusion: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152314130.21345@ask.diku.dk>
+Date: Thu, 27 May 2010 12:32:09 +0000
+Subject: [PATCH 1/11] drivers/usb/serial: Eliminate a NULL pointer dereference
+Message-Id: <Pine.LNX.4.64.1005271431530.5422@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Moore <Eric.Moore@lsi.com>, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Berger <pberger@brimson.com>, Al Borchers <alborchers@steinerpoint.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
+If port is NULL, then the call to dev_err will dereference a value that is
+a small offset from NULL.
 
-A simplified version of the semantic patch that makes this change is as
+A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression from,to,size,flag;
-statement S;
+@r exists@
+expression E,E1;
+identifier f;
+statement S1,S2,S3;
 @@
 
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
+if ((E = NULL && ...) || ...)
+{
+  ... when != if (...) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/message/fusion/mptbase.c |    3 +--
+ drivers/usb/serial/digi_acceleport.c |    3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff -u -p a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -5945,11 +5945,10 @@ mpt_findImVolumes(MPT_ADAPTER *ioc)
- 	if (mpt_config(ioc, &cfg) != 0)
- 		goto out;
+diff --git a/drivers/usb/serial/digi_acceleport.c b/drivers/usb/serial/digi_acceleport.c
+index 3edda3e..fd35f73 100644
+--- a/drivers/usb/serial/digi_acceleport.c
++++ b/drivers/usb/serial/digi_acceleport.c
+@@ -1239,8 +1239,7 @@ static void digi_write_bulk_callback(struct urb *urb)
  
--	mem = kmalloc(iocpage2sz, GFP_KERNEL);
-+	mem = kmemdup((u8 *)pIoc2, iocpage2sz, GFP_KERNEL);
- 	if (!mem)
- 		goto out;
- 
--	memcpy(mem, (u8 *)pIoc2, iocpage2sz);
- 	ioc->raid_data.pIocPg2 = (IOCPage2_t *) mem;
- 
- 	mpt_read_ioc_pg_3(ioc);
+ 	/* port and serial sanity check */
+ 	if (port = NULL || (priv = usb_get_serial_port_data(port)) = NULL) {
+-		dev_err(&port->dev,
+-			"%s: port or port->private is NULL, status=%d\n",
++		pr_err("%s: port or port->private is NULL, status=%d\n",
+ 			__func__, status);
+ 		return;
+ 	}
