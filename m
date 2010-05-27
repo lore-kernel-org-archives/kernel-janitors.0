@@ -1,30 +1,55 @@
-From: =?UTF-8?Q?Sjur_Br=C3=A6ndeland?= <sjurbren@gmail.com>
-Date: Wed, 26 May 2010 18:13:32 +0000
-Subject: Re: [PATCH 8/17] net/caif: Add missing spin_unlock
-Message-Id: <AANLkTilnCabvmeF11Rx7XlEHxwqrnBk2JLznOBLrCHuC@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 27 May 2010 12:33:00 +0000
+Subject: [PATCH 4/11] drivers/net/hamradio: Eliminate a NULL pointer dereference
+Message-Id: <Pine.LNX.4.64.1005271432450.5422@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261756150.23743@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005261756150.23743@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia@diku.dk>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jean-Paul Roubelat <jpr@f6fbb.org>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall <julia@diku.dk> wrote:
-> From: Julia Lawall <julia@diku.dk>
->
-> Add a spin_unlock missing on the error path. =C2=A0The spin lock is used =
-in a
-> balanced way elsewhere in the file.
+From: Julia Lawall <julia@diku.dk>
 
-This bug is already fixed an part of net-2.6 in
-"[PATCH net-2.6 5/6] caif: Bugfix - missing spin_unlock".
+At the point of the print, dev is NULL.
 
-Regards
-Sjur
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression E,E1;
+identifier f;
+statement S1,S2,S3;
+@@
+
+if ((E = NULL && ...) || ...)
+{
+  ... when != if (...) S1 else S2
+      when != E = E1
+* E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/hamradio/yam.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
+index 694132e..4e7d1d0 100644
+--- a/drivers/net/hamradio/yam.c
++++ b/drivers/net/hamradio/yam.c
+@@ -1151,8 +1151,7 @@ static int __init yam_init_driver(void)
+ 		dev = alloc_netdev(sizeof(struct yam_port), name,
+ 				   yam_setup);
+ 		if (!dev) {
+-			printk(KERN_ERR "yam: cannot allocate net device %s\n",
+-			       dev->name);
++			pr_err("yam: cannot allocate net device\n");
+ 			err = -ENOMEM;
+ 			goto error;
+ 		}
