@@ -1,24 +1,38 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 27 May 2010 16:53:02 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 27 May 2010 17:08:16 +0000
 Subject: Re: [PATCH 7/11] drivers/scsi: Eliminate a NULL pointer dereference
-Message-Id: <20100527165301.GU22515@bicker>
+Message-Id: <4BFEA700.20603@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005271433330.5422@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005271433330.5422@ask.diku.dk>
+References: <Pine.LNX.4.64.1005271433330.5422@ask.diku.dk> <20100527165301.GU22515@bicker>
+In-Reply-To: <20100527165301.GU22515@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: HighPoint Linux Team <linux@highpoint-tech.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>, Julia Lawall <julia@diku.dk>, HighPoint Linux Team <linux@highpoint-tech.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.ker
 
-On Thu, May 27, 2010 at 02:33:47PM +0200, Julia Lawall wrote:
-> If it is a problem to use 0 when host is NULL, then the code could be fixed
-> in another way.
+
+
+Dan Carpenter schrieb:
+> On Thu, May 27, 2010 at 02:33:47PM +0200, Julia Lawall wrote:
+>> If it is a problem to use 0 when host is NULL, then the code could be fixed
+>> in another way.
+>>
+> 
+> Yeah.  It seems like it would be better to give a clearly bogus number.
+> I would have said -1 but "scsi-1" looks normal so maybe something like 
+> 9999999?
 > 
 
-Yeah.  It seems like it would be better to give a clearly bogus number.
-I would have said -1 but "scsi-1" looks normal so maybe something like 
-9999999?
+lets spend some bytes:
 
-regards,
-dan carpenter
+	
+	if (host)
+		dprintk("scsi%d: hptiop_probe failed\n",host->host_no);
+	else
+		dprintk("scsi: no host, hptiop_probe failed\n");
+
+
+
+re,
+ wh
+
