@@ -1,42 +1,71 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 28 May 2010 11:46:08 +0000
-Subject: question about
-Message-Id: <20100528114608.GX22515@bicker>
+From: Haojian Zhuang <hzhuang1@marvell.com>
+Date: Fri, 28 May 2010 13:42:33 +0000
+Subject: RE: question about
+Message-Id: <25B60CDC2F704E4E9D88FFD52780CB4C04D6304AAA@SC-VEXCH1.marvell.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="_002_25B60CDC2F704E4E9D88FFD52780CB4C04D6304AAASCVEXCH1marve_"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20100528114608.GX22515@bicker>
+In-Reply-To: <20100528114608.GX22515@bicker>
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04D6304AAASCVEXCH1marve_
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 
-I was going through some Smatch stuff and it complains about something
-in drivers/leds/leds-88pm860x.c  Could you take a look at it?  I'm not
-sure what was intended there.
+VGhhbmtzIGZvciB5b3VyIGdvb2QgY2F0Y2guIFdlIG5lZWRuJ3QgdGhpcyBjaGVja2luZyBhdCBo
+ZXJlLiBOb3cgSSBmb3JtYXQgdGhpcyBwYXRjaC4NCg0KQmVzdCBSZWdhcmRzDQpIYW9qaWFuDQoN
+Ci0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBEYW4gQ2FycGVudGVyIFttYWlsdG86
+ZXJyb3IyN0BnbWFpbC5jb21dIA0KU2VudDogMjAxMMTqNdTCMjjI1SA3OjQ2IFBNDQpUbzogSGFv
+amlhbiBaaHVhbmcNCkNjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnDQpTdWJqZWN0
+OiBxdWVzdGlvbiBhYm91dA0KDQpIaSwNCg0KSSB3YXMgZ29pbmcgdGhyb3VnaCBzb21lIFNtYXRj
+aCBzdHVmZiBhbmQgaXQgY29tcGxhaW5zIGFib3V0IHNvbWV0aGluZw0KaW4gZHJpdmVycy9sZWRz
+L2xlZHMtODhwbTg2MHguYyAgQ291bGQgeW91IHRha2UgYSBsb29rIGF0IGl0PyAgSSdtIG5vdA0K
+c3VyZSB3aGF0IHdhcyBpbnRlbmRlZCB0aGVyZS4NCg0KZHJpdmVycy9sZWRzL2xlZHMtODhwbTg2
+MHguYyArMjI4IF9fY2hlY2tfZGV2aWNlKDYpIHdhcm46IHVuc2lnbmVkICdwLT5mbGFncycgaXMg
+bmV2ZXIgbGVzcyB0aGFuIHplcm8uDQogICAyMjIgIHN0YXRpYyBpbnQgX19jaGVja19kZXZpY2Uo
+c3RydWN0IHBtODYweF9sZWRfcGRhdGEgKnBkYXRhLCBjaGFyICpuYW1lKQ0KICAgMjIzICB7DQog
+ICAyMjQgICAgICAgICAgc3RydWN0IHBtODYweF9sZWRfcGRhdGEgKnAgPSBwZGF0YTsNCiAgIDIy
+NSAgICAgICAgICBpbnQgcmV0ID0gLUVJTlZBTDsNCiAgIDIyNg0KICAgMjI3ICAgICAgICAgIHdo
+aWxlIChwICYmIHAtPmlkKSB7DQogICAyMjggICAgICAgICAgICAgICAgICBpZiAoKHAtPmlkICE9
+IFBNODYwNl9JRF9MRUQpIHx8IChwLT5mbGFncyA8IDApKQ0KICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXl5eXl5eXl5eXl5eDQoNCglwLT5m
+bGFncyBpcyBhbiB1bnNpZ25lZCBpbnQgc28gdGhpcyBjb25kaXRpb24gaXMgbmV2ZXIgdHJ1ZS4N
+Cg0KICAgMjI5ICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsNCiAgIDIzMA0KICAgMjMx
+ICAgICAgICAgICAgICAgICAgaWYgKCFzdHJuY21wKG5hbWUsIHBtODYweF9sZWRfbmFtZVtwLT5m
+bGFnc10sDQogICAyMzIgICAgICAgICAgICAgICAgICAgICAgICAgIE1GRF9OQU1FX1NJWkUpKSB7
+DQogICAyMzMgICAgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IChpbnQpcC0+ZmxhZ3M7DQog
+ICAyMzQgICAgICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOw0KICAgMjM1ICAgICAgICAgICAg
+ICAgICAgfQ0KICAgMjM2ICAgICAgICAgICAgICAgICAgcCsrOw0KICAgMjM3ICAgICAgICAgIH0N
+CiAgIDIzOCAgICAgICAgICByZXR1cm4gcmV0Ow0KICAgMjM5ICB9DQoNCnJlZ2FyZHMsDQpkYW4g
+Y2FycGVudGVyDQo=
 
-drivers/leds/leds-88pm860x.c +228 __check_device(6) warn: unsigned 'p->flags' is never less than zero.
-   222  static int __check_device(struct pm860x_led_pdata *pdata, char *name)
-   223  {
-   224          struct pm860x_led_pdata *p = pdata;
-   225          int ret = -EINVAL;
-   226
-   227          while (p && p->id) {
-   228                  if ((p->id != PM8606_ID_LED) || (p->flags < 0))
-                                                         ^^^^^^^^^^^^
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04D6304AAASCVEXCH1marve_
+Content-Type: application/octet-stream;
+	name="0001-leds-remove-redundant-checking.patch"
+Content-Description: 0001-leds-remove-redundant-checking.patch
+Content-Disposition: attachment;
+	filename="0001-leds-remove-redundant-checking.patch"; size=922;
+	creation-date="Fri, 28 May 2010 06:40:50 GMT";
+	modification-date="Fri, 28 May 2010 06:38:52 GMT"
+Content-Transfer-Encoding: base64
 
-	p->flags is an unsigned int so this condition is never true.
+RnJvbSA1OWIyYTEzOTFkNTMxYmYwNjE0M2FkNWZjN2I4NjQ5MGZlYWQ1MDY1IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBIYW9qaWFuIFpodWFuZyA8aGFvamlhbi56aHVhbmdAbWFydmVs
+bC5jb20+CkRhdGU6IEZyaSwgMjggTWF5IDIwMTAgMjE6MzY6NDcgKzA4MDAKU3ViamVjdDogW1BB
+VENIXSBsZWRzOiByZW1vdmUgcmVkdW5kYW50IGNoZWNraW5nCgpmbGFncyB2YXJpYWJsZSBpcyBk
+ZWNsYXJlZCBhcyB1bnNpZ25lZC4gU28gd2UgbmVlZG4ndCB0byBjaGVjayB3aGV0aGVyIGl0J3MK
+bmVnYXRpdmUgdmFsdWUuCgpTaWduZWQtb2ZmLWJ5OiBIYW9qaWFuIFpodWFuZyA8aGFvamlhbi56
+aHVhbmdAbWFydmVsbC5jb20+Ci0tLQogZHJpdmVycy9sZWRzL2xlZHMtODhwbTg2MHguYyB8ICAg
+IDIgKy0KIDEgZmlsZXMgY2hhbmdlZCwgMSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9ucygtKQoK
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbGVkcy9sZWRzLTg4cG04NjB4LmMgYi9kcml2ZXJzL2xlZHMv
+bGVkcy04OHBtODYweC5jCmluZGV4IGRhMTQ2ZGEuLjVkZWNjMWMgMTAwNjQ0Ci0tLSBhL2RyaXZl
+cnMvbGVkcy9sZWRzLTg4cG04NjB4LmMKKysrIGIvZHJpdmVycy9sZWRzL2xlZHMtODhwbTg2MHgu
+YwpAQCAtMTYwLDcgKzE2MCw3IEBAIHN0YXRpYyBpbnQgX19jaGVja19kZXZpY2Uoc3RydWN0IHBt
+ODYweF9sZWRfcGRhdGEgKnBkYXRhLCBjaGFyICpuYW1lKQogCWludCByZXQgPSAtRUlOVkFMOwog
+CiAJd2hpbGUgKHAgJiYgcC0+aWQpIHsKLQkJaWYgKChwLT5pZCAhPSBQTTg2MDZfSURfTEVEKSB8
+fCAocC0+ZmxhZ3MgPCAwKSkKKwkJaWYgKHAtPmlkICE9IFBNODYwNl9JRF9MRUQpCiAJCQlicmVh
+azsKIAogCQlpZiAoIXN0cm5jbXAobmFtZSwgcG04NjB4X2xlZF9uYW1lW3AtPmZsYWdzXSwKLS0g
+CjEuNS42LjUKCg==
 
-   229                          break;
-   230
-   231                  if (!strncmp(name, pm860x_led_name[p->flags],
-   232                          MFD_NAME_SIZE)) {
-   233                          ret = (int)p->flags;
-   234                          break;
-   235                  }
-   236                  p++;
-   237          }
-   238          return ret;
-   239  }
-
-regards,
-dan carpenter
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04D6304AAASCVEXCH1marve_--
