@@ -1,116 +1,31 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:27:02 +0000
-Subject: [PATCH 27/27] drivers/staging/dream/camera: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221026430.13021@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 28 May 2010 10:33:15 +0000
+Subject: [patch] sfi: returning freed pointer
+Message-Id: <20100528103315.GV22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+We never actually use the return value of sfi_sysfs_install_table() but
+it still seems wrong to return a freed pointer.
 
-Use memdup_user when user data is immediately copied into the
-allocated region.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression from,to,size,flag;
-position p;
-identifier l1,l2;
-@@
-
--  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-+  to = memdup_user(from,size);
-   if (
--      to=NULL
-+      IS_ERR(to)
-                 || ...) {
-   <+... when != goto l1;
--  -ENOMEM
-+  PTR_ERR(to)
-   ...+>
-   }
--  if (copy_from_user(to, from, size) != 0) {
--    <+... when != goto l2;
--    -EFAULT
--    ...+>
--  }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/staging/dream/camera/msm_vfe8x.c |   45 ++++++++-----------------------
- 1 file changed, 12 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/staging/dream/camera/msm_vfe8x.c b/drivers/staging/dream/camera/msm_vfe8x.c
-index e61fdba..d87d56f 100644
---- a/drivers/staging/dream/camera/msm_vfe8x.c
-+++ b/drivers/staging/dream/camera/msm_vfe8x.c
-@@ -644,17 +644,10 @@ static int vfe_config(struct msm_vfe_cfg_cmd *cmd, void *data)
- 		if (!axid)
- 			return -EFAULT;
+diff --git a/drivers/sfi/sfi_core.c b/drivers/sfi/sfi_core.c
+index 0051959..ceba593 100644
+--- a/drivers/sfi/sfi_core.c
++++ b/drivers/sfi/sfi_core.c
+@@ -441,8 +441,10 @@ struct sfi_table_attr __init *sfi_sysfs_install_table(u64 pa)
  
--		axio -			kmalloc(sizeof(struct vfe_cmd_axi_output_config),
--				GFP_ATOMIC);
--		if (!axio)
--			return -ENOMEM;
--
--		if (copy_from_user(axio, (void __user *)(vfecmd.value),
--			sizeof(struct vfe_cmd_axi_output_config))) {
--			kfree(axio);
--			return -EFAULT;
--		}
-+		axio = memdup_user((void __user *)(vfecmd.value),
-+				   sizeof(struct vfe_cmd_axi_output_config));
-+		if (IS_ERR(axio))
-+			return PTR_ERR(axio);
+ 	ret = sysfs_create_bin_file(tables_kobj,
+ 				  &tbl_attr->attr);
+-	if (ret)
++	if (ret) {
+ 		kfree(tbl_attr);
++		tbl_attr = NULL;
++	}
  
- 		vfe_config_axi(OUTPUT_1, axid, axio);
- 		vfe_axi_output_config(axio);
-@@ -669,17 +662,10 @@ static int vfe_config(struct msm_vfe_cfg_cmd *cmd, void *data)
- 		if (!axid)
- 			return -EFAULT;
- 
--		axio -			kmalloc(sizeof(struct vfe_cmd_axi_output_config),
--				GFP_ATOMIC);
--		if (!axio)
--			return -ENOMEM;
--
--		if (copy_from_user(axio, (void __user *)(vfecmd.value),
--				sizeof(struct vfe_cmd_axi_output_config))) {
--			kfree(axio);
--			return -EFAULT;
--		}
-+		axio = memdup_user((void __user *)(vfecmd.value),
-+				   sizeof(struct vfe_cmd_axi_output_config));
-+		if (IS_ERR(axio))
-+			return PTR_ERR(axio);
- 
- 		vfe_config_axi(OUTPUT_2, axid, axio);
- 
-@@ -694,17 +680,10 @@ static int vfe_config(struct msm_vfe_cfg_cmd *cmd, void *data)
- 		if (!axid)
- 			return -EFAULT;
- 
--		axio -			kmalloc(sizeof(struct vfe_cmd_axi_output_config),
--				GFP_ATOMIC);
--		if (!axio)
--			return -ENOMEM;
--
--		if (copy_from_user(axio, (void __user *)(vfecmd.value),
--			sizeof(struct vfe_cmd_axi_output_config))) {
--			kfree(axio);
--			return -EFAULT;
--		}
-+		axio = memdup_user((void __user *)(vfecmd.value),
-+				   sizeof(struct vfe_cmd_axi_output_config));
-+		if (IS_ERR(axio))
-+			return PTR_ERR(axio);
- 
- 		vfe_config_axi(OUTPUT_1_AND_2,
- 			axid, axio);
+ 	sfi_unmap_table(th);
+ 	return tbl_attr;
