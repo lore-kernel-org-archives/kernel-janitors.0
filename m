@@ -1,51 +1,42 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Mon, 17 May 2010 10:23:14 +0000
-Subject: Re: [PATCH 1/10] drivers/s390/char: Use kstrdup
-Message-Id: <20100517122314.0c639383@mschwide.boeblingen.de.ibm.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 28 May 2010 11:46:08 +0000
+Subject: question about
+Message-Id: <20100528114608.GX22515@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005142127100.28935@ask.diku.dk>
-	<Pine.LNX.4.64.1005142210320.28935@ask.diku.dk>
-	<Pine.LNX.4.64.1005142303180.28935@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005142303180.28935@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 14 May 2010 23:03:51 +0200 (CEST)
-Julia Lawall <julia@diku.dk> wrote:
+Hi,
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kstrdup when the goal of an allocation is copy a string into the
-> allocated region.  Additionally drop the now unused variable len.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression from,to;
-> expression flag,E1,E2;
-> statement S;
-> @@
-> 
-> -  to = kmalloc(strlen(from) + 1,flag);
-> +  to = kstrdup(from, flag);
->    ... when != \(from = E1 \| to = E1 \)
->    if (to=NULL || ...) S
->    ... when != \(from = E2 \| to = E2 \)
-> -  strcpy(to, from);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+I was going through some Smatch stuff and it complains about something
+in drivers/leds/leds-88pm860x.c  Could you take a look at it?  I'm not
+sure what was intended there.
 
-Added to git390, thanks Julia.
+drivers/leds/leds-88pm860x.c +228 __check_device(6) warn: unsigned 'p->flags' is never less than zero.
+   222  static int __check_device(struct pm860x_led_pdata *pdata, char *name)
+   223  {
+   224          struct pm860x_led_pdata *p = pdata;
+   225          int ret = -EINVAL;
+   226
+   227          while (p && p->id) {
+   228                  if ((p->id != PM8606_ID_LED) || (p->flags < 0))
+                                                         ^^^^^^^^^^^^
 
--- 
-blue skies,
-   Martin.
+	p->flags is an unsigned int so this condition is never true.
 
-"Reality continues to ruin my life." - Calvin.
+   229                          break;
+   230
+   231                  if (!strncmp(name, pm860x_led_name[p->flags],
+   232                          MFD_NAME_SIZE)) {
+   233                          ret = (int)p->flags;
+   234                          break;
+   235                  }
+   236                  p++;
+   237          }
+   238          return ret;
+   239  }
 
+regards,
+dan carpenter
