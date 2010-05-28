@@ -1,58 +1,32 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Mon, 17 May 2010 09:31:23 +0000
+From: Joerg Roedel <joro@8bytes.org>
+Date: Fri, 28 May 2010 07:09:21 +0000
 Subject: Re: [PATCH 0/4] Add a Coccinelle front-end script
-Message-Id: <20100517093123.GE22781@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="M/SuVGWktc5uNpra"
+Message-Id: <20100528070921.GK1237@8bytes.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273508667-5152-1-git-send-email-npalix@diku.dk> <20100511021416.GA7125@hexapodia.org>
-In-Reply-To: <20100511021416.GA7125@hexapodia.org>
-To: Andy Isaacson <adi@hexapodia.org>
-Cc: Nicolas Palix <npalix@diku.dk>, Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Kernel Janitors <kernel-janitors@vger.kernel.org>
+References: <1273508667-5152-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1273508667-5152-1-git-send-email-npalix@diku.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nicolas Palix <npalix@diku.dk>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>
 
+On Mon, May 10, 2010 at 06:24:23PM +0200, Nicolas Palix wrote:
+> Three semantic patches, with a low rate of false positives, are also
+> included.
 
---M/SuVGWktc5uNpra
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is there a way to annotate false positives so that they do not produce
+warnings over and over?
 
-On Mon, May 10, 2010 at 07:14:16PM -0700, Andy Isaacson wrote:
-> On Mon, May 10, 2010 at 06:24:23PM +0200, Nicolas Palix wrote:
-> > New targets are added (coccicheck-<mode>) to call the 'coccinelle.sh'
-> > front-end in the 'scripts' directory with the <mode> argument.
-> >=20
-> > Four modes are defined: report, patch, context, and org.
->=20
-> Please check-in this write-up somewhere (Documentation/README.coccinelle
-> perhaps?)
+> Other semantic patches will be provided later. Note that a semantic
+> patch does not need to define all four modes. As many semantic patches
+> may be proposed later, they are organized under sub-directories of
+> 'scripts/coccinelle/'.
 
-I still haven't made my mind regarding these four modes; but if they are us=
-ed,
-they should be documented. ACK.
+Don't know how complex the coccinelle software itself is, but I think it
+would make sense to ship it with the kernel-sources too. That together
+with a README and everything is perfect :-)
+Thanks for the great work, this should definitly be upstream.
 
-> Also I'd like to see a short example of how to use the framework.  I've
-> read Val's spatch article (http://lwn.net/Articles/315686/) and it's
-> still a bit of a black art to me.
+	Joerg
 
-Something like this? :)
-
-https://lwn.net/Articles/380835/
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---M/SuVGWktc5uNpra
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkvxDOsACgkQD27XaX1/VRt83QCfbWZzqpu2iFUbvrst8ye9gpgD
-nVQAnRFqz0OzSgnWPZ3vzoLYKL49bzGJ
-=PDPy
------END PGP SIGNATURE-----
-
---M/SuVGWktc5uNpra--
