@@ -1,71 +1,28 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:23:49 +0000
-Subject: [PATCH 18/27] drivers/message/i2o/i2o_config.c: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221023270.13021@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 29 May 2010 09:47:24 +0000
+Subject: [patch 8/11] btrfs: btrfs_lookup_dir_item() can return ERR_PTR
+Message-Id: <20100529094724.GI5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-btrfs@vger.kernel.org
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Sage Weil <sage@newdream.net>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+btrfs_lookup_dir_item() can return either ERR_PTRs or null.
 
-Use memdup_user when user data is immediately copied into the
-allocated region.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression from,to,size,flag;
-position p;
-identifier l1,l2;
-@@
-
--  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-+  to = memdup_user(from,size);
-   if (
--      to=NULL
-+      IS_ERR(to)
-                 || ...) {
-   <+... when != goto l1;
--  -ENOMEM
-+  PTR_ERR(to)
-   ...+>
-   }
--  if (copy_from_user(to, from, size) != 0) {
--    <+... when != goto l2;
--    -EFAULT
--    ...+>
--  }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/message/i2o/i2o_config.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
-index d33693c..c4b117f 100644
---- a/drivers/message/i2o/i2o_config.c
-+++ b/drivers/message/i2o/i2o_config.c
-@@ -186,14 +186,9 @@ static int i2o_cfg_parms(unsigned long arg, unsigned int type)
- 	if (!dev)
- 		return -ENXIO;
- 
--	ops = kmalloc(kcmd.oplen, GFP_KERNEL);
--	if (!ops)
--		return -ENOMEM;
--
--	if (copy_from_user(ops, kcmd.opbuf, kcmd.oplen)) {
--		kfree(ops);
--		return -EFAULT;
--	}
-+	ops = memdup_user(kcmd.opbuf, kcmd.oplen);
-+	if (IS_ERR(ops))
-+		return PTR_ERR(ops);
- 
- 	/*
- 	 * It's possible to have a _very_ large table
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 9f9a1d9..4dbaf89 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -1845,7 +1845,7 @@ static long btrfs_ioctl_default_subvol(struct file *file, void __user *argp)
+ 	dir_id = btrfs_super_root_dir(&root->fs_info->super_copy);
+ 	di = btrfs_lookup_dir_item(trans, root->fs_info->tree_root, path,
+ 				   dir_id, "default", 7, 1);
+-	if (!di) {
++	if (IS_ERR_OR_NULL(di)) {
+ 		btrfs_free_path(path);
+ 		btrfs_end_transaction(trans, root);
+ 		printk(KERN_ERR "Umm, you don't have the default dir item, "
