@@ -1,30 +1,30 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 22 May 2010 20:16:26 +0000
-Subject: [patch] mtd/sst25l: check for null consistently
-Message-Id: <20100522201626.GJ22515@bicker>
+Date: Sat, 29 May 2010 09:42:19 +0000
+Subject: [patch 2/11] btrfs: btrfs_iget() returns ERR_PTR
+Message-Id: <20100529094219.GC5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, kernel-janitors@vger.kernel.org, H Hartley Sweeten <hsweeten@visionengravers.com>, Andre Renaud <andre@bluewatersys.com>, linux-mtd@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>
+To: linux-btrfs@vger.kernel.org
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
 
-The rest of the function assumes that "data" can be null.  I don't know
-the code well enough to say whether it can actually be null, but there 
-is no harm in checking here.
+btrfs_iget() returns an ERR_PTR() on failure and not null.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/mtd/devices/sst25l.c b/drivers/mtd/devices/sst25l.c
-index ab5d8cd..684247a 100644
---- a/drivers/mtd/devices/sst25l.c
-+++ b/drivers/mtd/devices/sst25l.c
-@@ -454,7 +454,7 @@ static int __init sst25l_probe(struct spi_device *spi)
- 						  parts, nr_parts);
- 		}
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 28b53f1..f2393b3 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -392,8 +392,8 @@ setup_root:
+ 	location.offset = 0;
  
--	} else if (data->nr_parts) {
-+	} else if (data && data->nr_parts) {
- 		dev_warn(&spi->dev, "ignoring %d default partitions on %s\n",
- 			 data->nr_parts, data->name);
- 	}
+ 	inode = btrfs_iget(sb, &location, new_root, &new);
+-	if (!inode)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(inode))
++		return ERR_CAST(inode);
+ 
+ 	/*
+ 	 * If we're just mounting the root most subvol put the inode and return
