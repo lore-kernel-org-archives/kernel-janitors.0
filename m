@@ -1,42 +1,63 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 26 May 2010 22:34:17 +0000
-Subject: smatch 1.55 released
-Message-Id: <20100526223417.GP22515@bicker>
+Date: Sat, 29 May 2010 09:48:01 +0000
+Subject: [patch 9/11] btrfs: silence sparse warnings in ioctl.c
+Message-Id: <20100529094801.GJ5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: linux-btrfs@vger.kernel.org
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Sage Weil <sage@newdream.net>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
 
-Smatch is a static checker for C.  The core parts basically do flow
-analysis and then there are project specific checks as well.  The
-website is:  http://smatch.sf.net
+I fixed the following sparse warnings:
 
-To use it do:
-	git clone git://repo.or.cz/smatch.git
-	cd smatch ; make ; cd /usr/src/kernel
-	make CHECK="~/path/to/smatch/smatch -p=kernel" C=1 \
-                   bzImage modules | tee warns.txt
+fs/btrfs/ioctl.c:1936:22: warning: cast removes address space of expression
+fs/btrfs/ioctl.c:1939:26: warning: incorrect type in argument 1 (different address spaces)
+fs/btrfs/ioctl.c:1939:26:    expected void [noderef] <asn:1>*to
+fs/btrfs/ioctl.c:1939:26:    got struct btrfs_ioctl_space_info *[assigned] user_dest
+fs/btrfs/ioctl.c:1872:6: warning: symbol 'btrfs_ioctl_space_info' was not declared. Should it be static?
 
-Things that have changed since 1.54:
-* The array overflow check is now useful.
-* There is a new check for precedence bugs caused by macro expansion.
-* The checks for null pointer dereferences were rewritten and now have
-    fewer false positives.
-* Some kernel specific tests were added for kunmap(),
-    release_resource(), resource_size(), and mod_timer().
+Also I noticed that a related cast of "arg" could be removed so I did
+that.
 
-Major Bugs:
-* Smatch doesn't handle loops correctly.
-* It doesn't do cross function analysis.
-* It doesn't understand code like this:
-	foo->bar = NULL;
-	foo = not_null();
-	foo->bar->baz;  // <- Smatch complains about a null dereference.
-* Too many false positives generally.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Anyway, please test it out.  :)
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 4dbaf89..a945a66 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -1869,21 +1869,19 @@ static long btrfs_ioctl_default_subvol(struct file *file, void __user *argp)
+ 	return 0;
+ }
+ 
+-long btrfs_ioctl_space_info(struct btrfs_root *root, void __user *arg)
++static long btrfs_ioctl_space_info(struct btrfs_root *root, void __user *arg)
+ {
+ 	struct btrfs_ioctl_space_args space_args;
+ 	struct btrfs_ioctl_space_info space;
+ 	struct btrfs_ioctl_space_info *dest;
+ 	struct btrfs_ioctl_space_info *dest_orig;
+-	struct btrfs_ioctl_space_info *user_dest;
++	struct btrfs_ioctl_space_info __user *user_dest;
+ 	struct btrfs_space_info *info;
+ 	int alloc_size;
+ 	int ret = 0;
+ 	int slot_count = 0;
+ 
+-	if (copy_from_user(&space_args,
+-			   (struct btrfs_ioctl_space_args __user *)arg,
+-			   sizeof(space_args)))
++	if (copy_from_user(&space_args, arg, sizeof(space_args)))
+ 		return -EFAULT;
+ 
+ 	/* first we count slots */
+@@ -1933,7 +1931,7 @@ long btrfs_ioctl_space_info(struct btrfs_root *root, void __user *arg)
+ 	}
+ 	rcu_read_unlock();
+ 
+-	user_dest = (struct btrfs_ioctl_space_info *)
++	user_dest = (struct btrfs_ioctl_space_info __user *)
+ 		(arg + sizeof(struct btrfs_ioctl_space_args));
+ 
+ 	if (copy_to_user(user_dest, dest_orig, alloc_size))
 
-regards,
-dan carpenter
