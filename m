@@ -1,63 +1,33 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 27 May 2010 12:33:17 +0000
-Subject: [PATCH 5/11] drivers/dma: Eliminate a NULL pointer dereference
-Message-Id: <Pine.LNX.4.64.1005271433000.5422@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 29 May 2010 09:43:07 +0000
+Subject: [patch 3/11] btrfs: handle kzalloc() failure in open_ctree()
+Message-Id: <20100529094307.GD5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-btrfs@vger.kernel.org
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Jens Axboe <jens.axboe@oracle.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Unwind and return -ENOMEM if the allocation fails here.
 
-If td_desc is NULL, just skip both kfrees.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-expression E,E1;
-identifier f;
-statement S1,S2,S3;
-@@
-
-if ((E = NULL && ...) || ...)
-{
-  ... when != if (...) S1 else S2
-      when != E = E1
-* E->f
-  ... when any
-  return ...;
-}
-else S3
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/dma/timb_dma.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/timb_dma.c b/drivers/dma/timb_dma.c
-index 0172fa3..c4eb96a 100644
---- a/drivers/dma/timb_dma.c
-+++ b/drivers/dma/timb_dma.c
-@@ -382,7 +382,7 @@ static struct timb_dma_desc *td_alloc_init_desc(struct timb_dma_chan *td_chan)
- 	td_desc = kzalloc(sizeof(struct timb_dma_desc), GFP_KERNEL);
- 	if (!td_desc) {
- 		dev_err(chan2dev(chan), "Failed to alloc descriptor\n");
--		goto err;
-+		goto out;
- 	}
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index f3b287c..73895ba 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1941,8 +1941,11 @@ struct btrfs_root *open_ctree(struct super_block *sb,
+ 		     btrfs_level_size(tree_root,
+ 				      btrfs_super_log_root_level(disk_super));
  
- 	td_desc->desc_list_len = td_chan->desc_elems * TIMB_DMA_DESC_SIZE;
-@@ -410,7 +410,7 @@ static struct timb_dma_desc *td_alloc_init_desc(struct timb_dma_chan *td_chan)
- err:
- 	kfree(td_desc->desc_list);
- 	kfree(td_desc);
--
-+out:
- 	return NULL;
+-		log_tree_root = kzalloc(sizeof(struct btrfs_root),
+-						      GFP_NOFS);
++		log_tree_root = kzalloc(sizeof(struct btrfs_root), GFP_NOFS);
++		if (!log_tree_root) {
++			err = -ENOMEM;
++			goto fail_trans_kthread;
++		}
  
- }
+ 		__setup_root(nodesize, leafsize, sectorsize, stripesize,
+ 			     log_tree_root, fs_info, BTRFS_TREE_LOG_OBJECTID);
