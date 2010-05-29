@@ -1,51 +1,30 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 15 May 2010 21:23:15 +0000
-Subject: [PATCH 33/37] drivers/net/usb: Use kmemdup
-Message-Id: <Pine.LNX.4.64.1005152322560.21345@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 29 May 2010 09:46:47 +0000
+Subject: [patch 7/11] btrfs: unwind after btrfs_start_transaction() errors
+Message-Id: <20100529094647.GH5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Korsgaard <jacmet@sunsite.dk>, Greg Kroah-Hartman <gregkh@suse.de>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-btrfs@vger.kernel.org
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Sage Weil <sage@newdream.net>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+This was added by a22285a6a3: "Btrfs: Integrate metadata reservation
+with start_transaction".  If we goto out here then we skip all the
+unwinding and there are locks still held etc.
 
-Use kmemdup when some other buffer is immediately copied into the
-allocated region.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression from,to,size,flag;
-statement S;
-@@
-
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to=NULL || ...) S
--  memcpy(to, from, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/usb/dm9601.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff -u -p a/drivers/net/usb/dm9601.c b/drivers/net/usb/dm9601.c
---- a/drivers/net/usb/dm9601.c
-+++ b/drivers/net/usb/dm9601.c
-@@ -93,10 +93,9 @@ static int dm_write(struct usbnet *dev, 
- 	netdev_dbg(dev->net, "dm_write() reg=0x%02x, length=%d\n", reg, length);
- 
- 	if (data) {
--		buf = kmalloc(length, GFP_KERNEL);
-+		buf = kmemdup(data, length, GFP_KERNEL);
- 		if (!buf)
- 			goto out;
--		memcpy(buf, data, length);
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 4cdb98c..9f9a1d9 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -1280,7 +1280,7 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
+ 	trans = btrfs_start_transaction(root, 0);
+ 	if (IS_ERR(trans)) {
+ 		err = PTR_ERR(trans);
+-		goto out;
++		goto out_up_write;
  	}
+ 	trans->block_rsv = &root->fs_info->global_block_rsv;
  
- 	err = usb_control_msg(dev->udev,
