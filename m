@@ -1,48 +1,32 @@
-From: Joel Becker <Joel.Becker@oracle.com>
-Date: Tue, 18 May 2010 19:32:05 +0000
-Subject: Re: [PATCH 4/5] fs/ocfs2/dlm: Drop memory allocation cast
-Message-Id: <20100518193205.GD3239@mail.oracle.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 29 May 2010 09:49:07 +0000
+Subject: [patch 11/11] btrfs: The file argument for fsync() is never null
+Message-Id: <20100529094907.GL5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005112027000.4330@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005112027000.4330@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-btrfs@vger.kernel.org
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
 
-On Tue, May 11, 2010 at 08:28:14PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Drop cast on the result of kmalloc and similar functions.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> type T;
-> @@
-> 
-> - (T *)
->   (\(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|
->    kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\)(...))
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+The "file" argument for fsync is never null so we can remove this check.
 
-This patch is now in the merge-window branch of ocfs2.git.
+What drew my attention here is that 7ea8085910e: "drop unused dentry 
+argument to ->fsync" introduced an unconditional dereference at the
+start of the function and that generated a smatch warning.
 
-Joel
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-
-Viro's Razor:
-	Any race condition, no matter how unlikely, will occur just
-	often enough to bite you.
-
-Joel Becker
-Principal Software Developer
-Oracle
-E-mail: joel.becker@oracle.com
-Phone: (650) 506-8127
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 787b50a..e252d23 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1140,7 +1140,7 @@ int btrfs_sync_file(struct file *file, int datasync)
+ 	/*
+ 	 * ok we haven't committed the transaction yet, lets do a commit
+ 	 */
+-	if (file && file->private_data)
++	if (file->private_data)
+ 		btrfs_ioctl_trans_end(file);
+ 
+ 	trans = btrfs_start_transaction(root, 0);
