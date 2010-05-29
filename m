@@ -1,29 +1,32 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 14 May 2010 14:50:05 +0000
-Subject: [patch -next] sound/asihpi: incorrect range check
-Message-Id: <20100514145005.GD17487@bicker>
+Date: Sat, 29 May 2010 09:44:10 +0000
+Subject: [patch 4/11] btrfs: btrfs_read_fs_root_no_name() returns ERR_PTRs
+Message-Id: <20100529094410.GE5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, Eliot Blennerhassett <eblennerhassett@audioscience.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: linux-btrfs@vger.kernel.org
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Jens Axboe <jens.axboe@oracle.com>, Christoph Hellwig <hch@lst.de>, kernel-janitors@vger.kernel.org, Chris Mason <chris.mason@oracle.com>
 
-The entity_type_to_size[] array has LAST_ENTITY_TYPE (11) number of elements,
-not LAST_ENTITY_ROLE (17).  This only affects the debug output.
+btrfs_read_fs_root_no_name() returns ERR_PTRs on error so I added a
+check for that.  It's not clear to me if it can also return NULL
+pointers or not so I left the original NULL pointer check as is.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/sound/pci/asihpi/hpifunc.c b/sound/pci/asihpi/hpifunc.c
-index 254c580..eda26b3 100644
---- a/sound/pci/asihpi/hpifunc.c
-+++ b/sound/pci/asihpi/hpifunc.c
-@@ -3407,7 +3407,7 @@ u16 hpi_entity_alloc_and_pack(const enum e_entity_type type,
- 	if (hE)
- 		return hE;
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 73895ba..34f7c37 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1985,6 +1985,10 @@ struct btrfs_root *open_ctree(struct super_block *sb,
+ 	fs_info->fs_root = btrfs_read_fs_root_no_name(fs_info, &location);
+ 	if (!fs_info->fs_root)
+ 		goto fail_trans_kthread;
++	if (IS_ERR(fs_info->fs_root)) {
++		err = PTR_ERR(fs_info->fs_root);
++		goto fail_trans_kthread;
++	}
  
--	HPI_DEBUG_ASSERT(role > entity_role_null && type < LAST_ENTITY_ROLE);
-+	HPI_DEBUG_ASSERT(role > entity_role_null && type < LAST_ENTITY_TYPE);
- 
- 	bytes_to_copy = entity_type_to_size[type] * item_count;
- 	total_size = hpi_entity_header_size(*entity) + bytes_to_copy;
+ 	if (!(sb->s_flags & MS_RDONLY)) {
+ 		down_read(&fs_info->cleanup_work_sem);
