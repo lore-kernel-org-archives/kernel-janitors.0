@@ -1,49 +1,70 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Fri, 28 May 2010 07:04:01 +0000
-Subject: Re: [PATCH 1/4] Add targets to use the Coccinelle checker
-Message-Id: <20100528070401.GJ1237@8bytes.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 30 May 2010 13:49:40 +0000
+Subject: [PATCH 2/2] drivers/isdn/hardware/mISDN: Use GFP_ATOMIC when a lock
+Message-Id: <Pine.LNX.4.64.1005301549230.15938@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273508667-5152-1-git-send-email-npalix@diku.dk> <1273508667-5152-2-git-send-email-npalix@diku.dk> <20100512064230.GC5718@cr0.nay.redhat.com>
-In-Reply-To: <20100512064230.GC5718@cr0.nay.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: =?iso-8859-1?Q?Am=E9rico?= Wang <xiyou.wangcong@gmail.com>
-Cc: Nicolas Palix <npalix@diku.dk>, Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 12, 2010 at 02:42:30PM +0800, Am=E9rico Wang wrote:
-> On Mon, May 10, 2010 at 06:24:24PM +0200, Nicolas Palix wrote:
-> >Four targets are added. Each one generates a different
-> >output kind: context, patch, org, report.
-> >Every SmPL file in 'scripts/coccinelle' is given to the spatch frontend
-> >(located in the 'scripts' directory), and applied to the entire
-> >source tree.
-> >
-> >Signed-off-by: Nicolas Palix <npalix@diku.dk>
-> >Signed-off-by: Julia Lawall <julia@diku.dk>
->=20
-> This is great!
+From: Julia Lawall <julia@diku.dk>
 
-Totally agreed.
+The function inittiger is only called from nj_init_card, where a lock is held.
 
-> I would like to see coccinelle to be integrated with kbuild, but the
-> name 'coccicheck' is really confusing, how about 'sema_check'? Which
-> means 'semantic check'.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-I think its okay to keep coccicheck because its the name of the tool
-called. We do the same with 'make cscope'.
-But since I am a bit lazy I would prefer a shorter name, probably just
-'make cocci'?
+// <smpl>
+@gfp exists@
+identifier fn;
+position p;
+@@
 
-> Or we can use something like for sparse, i.e. 'make C=3D1' etc..
+fn(...) {
+ ... when != spin_unlock_irqrestore
+     when any
+ GFP_KERNEL@p
+ ... when any
+}
 
-Yes, this would also make sense. As a developer I could add this and
-only the code I changed is checked.
+@locked@
+identifier gfp.fn;
+@@
 
-	Joerg
+spin_lock_irqsave(...)
+...  when != spin_unlock_irqrestore
+fn(...)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+@depends on locked@
+position gfp.p;
+@@
+
+- GFP_KERNEL@p
++ GFP_ATOMIC
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/isdn/hardware/mISDN/netjet.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/isdn/hardware/mISDN/netjet.c b/drivers/isdn/hardware/mISDN/netjet.c
+--- a/drivers/isdn/hardware/mISDN/netjet.c
++++ b/drivers/isdn/hardware/mISDN/netjet.c
+@@ -320,12 +320,12 @@ inittiger(struct tiger_hw *card)
+ 		return -ENOMEM;
+ 	}
+ 	for (i = 0; i < 2; i++) {
+-		card->bc[i].hsbuf = kmalloc(NJ_DMA_TXSIZE, GFP_KERNEL);
++		card->bc[i].hsbuf = kmalloc(NJ_DMA_TXSIZE, GFP_ATOMIC);
+ 		if (!card->bc[i].hsbuf) {
+ 			pr_info("%s: no B%d send buffer\n", card->name, i + 1);
+ 			return -ENOMEM;
+ 		}
+-		card->bc[i].hrbuf = kmalloc(NJ_DMA_RXSIZE, GFP_KERNEL);
++		card->bc[i].hrbuf = kmalloc(NJ_DMA_RXSIZE, GFP_ATOMIC);
+ 		if (!card->bc[i].hrbuf) {
+ 			pr_info("%s: no B%d recv buffer\n", card->name, i + 1);
+ 			return -ENOMEM;
