@@ -1,54 +1,91 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 27 May 2010 12:32:45 +0000
-Subject: [PATCH 3/11] arch/sparc/kernel: Eliminate what looks like a NULL
-Message-Id: <Pine.LNX.4.64.1005271432250.5422@ask.diku.dk>
+Date: Sun, 30 May 2010 20:27:46 +0000
+Subject: [PATCH 2/3] drivers/staging: Use GFP_ATOMIC when a lock is held
+Message-Id: <Pine.LNX.4.64.1005302227290.19253@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Grant Likely <grant.likely@secretlab.ca>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.orgkern
+To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-At the point of the test, action cannot be NULL, as it has been dereferenced
-in the code just above.
+In each case, the containing function is only called from one place, where
+a spin lock is held.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r exists@
-expression E,E1;
-identifier f;
-statement S1,S2,S3;
+@gfp exists@
+identifier fn;
+position p;
 @@
 
-if ((E = NULL && ...) || ...)
-{
-  ... when != if (...) S1 else S2
-      when != E = E1
-* E->f
-  ... when any
+fn(...) {
+... when != spin_unlock
+    when any
+  GFP_KERNEL@p
+ ... when any
 }
-else S3
+
+@locked@
+identifier gfp.fn;
+@@
+
+spin_lock(...)
+... when != spin_unlock
+fn(...)
+
+@depends on locked@
+position gfp.p;
+@@
+
+- GFP_KERNEL@p
++ GFP_ATOMIC
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/sparc/kernel/sun4d_irq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/iio/ring_sw.c              |    2 +-
+ drivers/staging/vme/bridges/vme_ca91cx42.c |    2 +-
+ drivers/staging/vme/bridges/vme_tsi148.c   |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/sparc/kernel/sun4d_irq.c b/arch/sparc/kernel/sun4d_irq.c
-index ab036a7..e11b461 100644
---- a/arch/sparc/kernel/sun4d_irq.c
-+++ b/arch/sparc/kernel/sun4d_irq.c
-@@ -183,7 +183,7 @@ void sun4d_free_irq(unsigned int irq, void *dev_id)
- 		goto out_unlock;
+diff -u -p a/drivers/staging/iio/ring_sw.c b/drivers/staging/iio/ring_sw.c
+--- a/drivers/staging/iio/ring_sw.c
++++ b/drivers/staging/iio/ring_sw.c
+@@ -20,7 +20,7 @@ static inline int __iio_allocate_sw_ring
+ 	if ((length = 0) || (bytes_per_datum = 0))
+ 		return -EINVAL;
+ 	__iio_update_ring_buffer(&ring->buf, bytes_per_datum, length);
+-	ring->data = kmalloc(length*ring->buf.bpd, GFP_KERNEL);
++	ring->data = kmalloc(length*ring->buf.bpd, GFP_ATOMIC);
+ 	ring->read_p = NULL;
+ 	ring->write_p = NULL;
+ 	ring->last_written_p = NULL;
+diff -u -p a/drivers/staging/vme/bridges/vme_ca91cx42.c b/drivers/staging/vme/bridges/vme_ca91cx42.c
+--- a/drivers/staging/vme/bridges/vme_ca91cx42.c
++++ b/drivers/staging/vme/bridges/vme_ca91cx42.c
+@@ -523,7 +523,7 @@ static int ca91cx42_alloc_resource(struc
  	}
- 	
--	if (action && tmp)
-+	if (tmp)
- 		tmp->next = action->next;
- 	else
- 		*actionp = action->next;
+ 
+ 	if (image->bus_resource.name = NULL) {
+-		image->bus_resource.name = kmalloc(VMENAMSIZ+3, GFP_KERNEL);
++		image->bus_resource.name = kmalloc(VMENAMSIZ+3, GFP_ATOMIC);
+ 		if (image->bus_resource.name = NULL) {
+ 			dev_err(ca91cx42_bridge->parent, "Unable to allocate "
+ 				"memory for resource name\n");
+diff -u -p a/drivers/staging/vme/bridges/vme_tsi148.c b/drivers/staging/vme/bridges/vme_tsi148.c
+--- a/drivers/staging/vme/bridges/vme_tsi148.c
++++ b/drivers/staging/vme/bridges/vme_tsi148.c
+@@ -828,7 +828,7 @@ static int tsi148_alloc_resource(struct 
+ 		return 0;
+ 
+ 	if (image->bus_resource.name = NULL) {
+-		image->bus_resource.name = kmalloc(VMENAMSIZ+3, GFP_KERNEL);
++		image->bus_resource.name = kmalloc(VMENAMSIZ+3, GFP_ATOMIC);
+ 		if (image->bus_resource.name = NULL) {
+ 			dev_err(tsi148_bridge->parent, "Unable to allocate "
+ 				"memory for resource name\n");
