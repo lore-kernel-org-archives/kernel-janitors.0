@@ -1,66 +1,45 @@
-From: Dan Williams <dcbw@redhat.com>
-Date: Mon, 17 May 2010 16:35:17 +0000
-Subject: Re: [PATCH 1/37] drivers/net/wireless/libertas: Use kmemdup
-Message-Id: <1274114117.2382.0.camel@localhost.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 30 May 2010 19:48:03 +0000
+Subject: Subject: [PATCH] net/ipv6: Use GFP_ATOMIC when a lock is held
+Message-Id: <Pine.LNX.4.64.1005302147310.19253@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005152312060.21345@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005152312060.21345@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "John W. Linville" <linville@tuxdriver.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2010-05-15 at 23:12 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kmemdup when some other buffer is immediately copied into the
-> allocated region.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression from,to,size,flag;
-> statement S;
-> @@
-> 
-> -  to = \(kmalloc\|kzalloc\)(size,flag);
-> +  to = kmemdup(from,size,flag);
->    if (to=NULL || ...) S
-> -  memcpy(to, from, size);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Dan Williams <dcbw@redhat.com>
+A spin lock is taken near the beginning of the enclosing function.
 
-> ---
->  drivers/net/wireless/libertas/if_usb.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff -u -p a/drivers/net/wireless/libertas/if_usb.c b/drivers/net/wireless/libertas/if_usb.c
-> --- a/drivers/net/wireless/libertas/if_usb.c
-> +++ b/drivers/net/wireless/libertas/if_usb.c
-> @@ -618,16 +618,14 @@ static void if_usb_receive_fwload(struct
->  		return;
->  	}
->  
-> -	syncfwheader = kmalloc(sizeof(struct fwsyncheader), GFP_ATOMIC);
-> +	syncfwheader = kmemdup(skb->data + IPFIELD_ALIGN_OFFSET,
-> +			       sizeof(struct fwsyncheader), GFP_ATOMIC);
->  	if (!syncfwheader) {
->  		lbs_deb_usbd(&cardp->udev->dev, "Failure to allocate syncfwheader\n");
->  		kfree_skb(skb);
->  		return;
->  	}
->  
-> -	memcpy(syncfwheader, skb->data + IPFIELD_ALIGN_OFFSET,
-> -	       sizeof(struct fwsyncheader));
-> -
->  	if (!syncfwheader->cmd) {
->  		lbs_deb_usb2(&cardp->udev->dev, "FW received Blk with correct CRC\n");
->  		lbs_deb_usb2(&cardp->udev->dev, "FW received Blk seqnum = %d\n",
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+@@
 
+spin_lock(...)
+... when != spin_unlock(...)
+-GFP_KERNEL
++GFP_ATOMIC
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/ipv6/sit.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/net/ipv6/sit.c b/net/ipv6/sit.c
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -358,7 +358,7 @@ ipip6_tunnel_add_prl(struct ip_tunnel *t
+ 		goto out;
+ 	}
+ 
+-	p = kzalloc(sizeof(struct ip_tunnel_prl_entry), GFP_KERNEL);
++	p = kzalloc(sizeof(struct ip_tunnel_prl_entry), GFP_ATOMIC);
+ 	if (!p) {
+ 		err = -ENOBUFS;
+ 		goto out;
