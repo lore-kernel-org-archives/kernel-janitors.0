@@ -1,46 +1,42 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Fri, 14 May 2010 21:32:05 +0000
-Subject: Re: [PATCH 13/13] drivers/ata: removing redundant ifdef
-Message-Id: <4BEDC155.8040204@pobox.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 31 May 2010 12:02:15 +0000
+Subject: [patch 2/2] input/tps6507x-ts: zero vs NULL
+Message-Id: <20100531120215.GS5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273167377-14270-1-git-send-email-jolsa@redhat.com> <1273167377-14270-14-git-send-email-jolsa@redhat.com>
-In-Reply-To: <1273167377-14270-14-git-send-email-jolsa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ysato@users.sourceforge.jp, tony.luck@intel.com, dhowells@redhat.com, kyle@mcmartin.ca, benh@kernel.crashing.org, schwidefsky@de.ibm.com, hare@suse.de, felipe.balbi@nokia.com
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Todd Fischer <todd.fischer@ridgerun.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/06/2010 01:36 PM, Jiri Olsa wrote:
-> wbr,
-> jirka
->
->
-> Signed-off-by: Jiri Olsa<jolsa@redhat.com>
-> ---
->   drivers/ata/ahci.c |    2 --
->   1 files changed, 0 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-> index 8b502f4..5326af2 100644
-> --- a/drivers/ata/ahci.c
-> +++ b/drivers/ata/ahci.c
-> @@ -3179,7 +3179,6 @@ static bool ahci_broken_online(struct pci_dev *pdev)
->   #ifdef CONFIG_ATA_ACPI
->   static void ahci_gtf_filter_workaround(struct ata_host *host)
->   {
-> -#ifdef CONFIG_ATA_ACPI
->   	static const struct dmi_system_id sysids[] = {
->   		/*
->   		 * Aspire 3810T issues a bunch of SATA enable commands
-> @@ -3220,7 +3219,6 @@ static void ahci_gtf_filter_workaround(struct ata_host *host)
->   			ata_for_each_dev(dev, link, ALL)
->   				dev->gtf_filter |= filter;
->   	}
-> -#endif
->   }
+This patch silences a sparse warning:
 
-I don't see this in the linux-next version of ahci.c, so I'm dropping 
-this patch.
+drivers/input/touchscreen/tps6507x-ts.c:345:19:
+	warning: Using plain integer as NULL pointer
+drivers/input/touchscreen/tps6507x-ts.c:367:19:
+	warning: Using plain integer as NULL pointer
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/drivers/input/touchscreen/tps6507x-ts.c b/drivers/input/touchscreen/tps6507x-ts.c
+index b99db09..1e57e4e 100644
+--- a/drivers/input/touchscreen/tps6507x-ts.c
++++ b/drivers/input/touchscreen/tps6507x-ts.c
+@@ -342,7 +342,7 @@ err2:
+ 	cancel_delayed_work(&tsc->work);
+ 	flush_workqueue(tsc->wq);
+ 	destroy_workqueue(tsc->wq);
+-	tsc->wq = 0;
++	tsc->wq = NULL;
+ 	input_free_device(input_dev);
+ err1:
+ 	kfree(tsc);
+@@ -364,7 +364,7 @@ static int __devexit tps6507x_ts_remove(struct platform_device *pdev)
+ 	cancel_delayed_work(&tsc->work);
+ 	flush_workqueue(tsc->wq);
+ 	destroy_workqueue(tsc->wq);
+-	tsc->wq = 0;
++	tsc->wq = NULL;
+ 
+ 	input_free_device(input_dev);
+ 
