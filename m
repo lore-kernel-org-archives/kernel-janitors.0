@@ -1,50 +1,35 @@
-From: Spyros Papageorgiou <spyros.papageorgiou@gmail.com>
-Date: Mon, 31 May 2010 15:04:13 +0000
-Subject: [PATCH] Drivers: Stagins: memrar: cleanup
-Message-Id: <4C03CFED.2030101@gmail.com>
+From: Jiri Slaby <jirislaby@gmail.com>
+Date: Mon, 31 May 2010 17:37:14 +0000
+Subject: Re: [PATCH] Drivers: Stagins: memrar: cleanup
+Message-Id: <4C03F3CA.6070809@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4C03CFED.2030101@gmail.com>
+In-Reply-To: <4C03CFED.2030101@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de
-Cc: ossama.othman@intel.com, devel@driverdev.osuosl.org, Kernel development list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Spyros Papageorgiou <spyros.papageorgiou@gmail.com>
+Cc: gregkh@suse.de, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, ossama.othman@intel.com, Kernel development list <linux-kernel@vger.kernel.org>
 
-From:Spyros Papageorgiou <spyros.papageorgiou@gmai.com>
+On 05/31/2010 05:04 PM, Spyros Papageorgiou wrote:
+> From:Spyros Papageorgiou <spyros.papageorgiou@gmai.com>
+> 
+> Removed an unneeded struct specifier in function call.
+> 
+> Signed-off-by: Spyros Papageorgiou <spyros.papageorgiou@gmai.com>
+> ---
+>  drivers/staging/memrar/memrar_allocator.c |    6 +++---
+>  1 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/memrar/memrar_allocator.c b/drivers/staging/memrar/memrar_allocator.c
+> index a4f8c58..db37c6a 100644
+> --- a/drivers/staging/memrar/memrar_allocator.c
+> +++ b/drivers/staging/memrar/memrar_allocator.c
+> @@ -276,7 +276,7 @@ long memrar_allocator_free(struct memrar_allocator *allocator,
+>  
+>  		struct memrar_address_range * const chunk >  			&list_entry(pos,
+> -				    struct memrar_address_ranges,
+> +				    memrar_address_ranges,
+>  				    list)->range;
 
-Removed an unneeded struct specifier in function call.
-
-Signed-off-by: Spyros Papageorgiou <spyros.papageorgiou@gmai.com>
----
- drivers/staging/memrar/memrar_allocator.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/memrar/memrar_allocator.c b/drivers/staging/memrar/memrar_allocator.c
-index a4f8c58..db37c6a 100644
---- a/drivers/staging/memrar/memrar_allocator.c
-+++ b/drivers/staging/memrar/memrar_allocator.c
-@@ -276,7 +276,7 @@ long memrar_allocator_free(struct memrar_allocator *allocator,
- 
- 		struct memrar_address_range * const chunk  			&list_entry(pos,
--				    struct memrar_address_ranges,
-+				    memrar_address_ranges,
- 				    list)->range;
- 
- 		/* Extend size of existing free adjacent chunk. */
-@@ -300,7 +300,7 @@ long memrar_allocator_free(struct memrar_allocator *allocator,
- 
- 			struct memrar_address_ranges const * const next  				list_entry(pos->next,
--					   struct memrar_address_ranges,
-+					   memrar_address_ranges,
- 					   list);
- 
- 			chunk->end = handle->end;
-@@ -352,7 +352,7 @@ long memrar_allocator_free(struct memrar_allocator *allocator,
- 
- 			struct memrar_address_ranges const * const prev  				list_entry(pos->prev,
--					   struct memrar_address_ranges,
-+					   memrar_address_ranges,
- 					   list);
- 
- 			chunk->begin = handle->begin;
--- 
-1.7.0.4
+It is not a function call, it's a macro. Did you try to compile this?
