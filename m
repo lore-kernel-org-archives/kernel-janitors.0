@@ -1,51 +1,28 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Wed, 26 May 2010 16:32:27 +0000
-Subject: Re: [PATCH 3/17] arch/mips/kernel: Add missing read_unlock
-Message-Id: <20100526163227.GA17043@linux-mips.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 31 May 2010 14:00:53 +0000
+Subject: [patch 1/2] infiniband/cxgb4: remove unneeded assignment
+Message-Id: <20100531140053.GT5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261754390.23743@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005261754390.23743@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, "Kevin D. Kissell" <kevink@paralogos.com>
-Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, May 26, 2010 at 05:54:55PM +0200, Julia Lawall wrote:
+We don't need to assign rpl here, we do that later on.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Add a read_unlock missing on the error path.  Other ways of reaching
-> out_unlock have tasklist_lock unlocked.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression E1;
-> @@
-> 
-> * read_lock(E1,...);
->   <+... when != E1
->   if (...) {
->     ... when != E1
-> *   return ...;
->   }
->   ...+>
-> * read_unlock(E1,...);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
-> I wasn't able to find what security_task_setscheduler actually does.  
-> If it releases tasklist_lock in an error case, then ignire this patch.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Your patch appears correct - and mipsmt_sys_sched_setaffinity() even
-more broken than you thought.  It duplicates some code from kernel/sched.c
-and has gotten out of sync.
-
-Fixing that up.
-
-   Ralf
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index 30ce0a8..60b5beb 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -2242,7 +2242,7 @@ static void process_work(struct work_struct *work)
+ {
+ 	struct sk_buff *skb = NULL;
+ 	struct c4iw_dev *dev;
+-	struct cpl_act_establish *rpl = cplhdr(skb);
++	struct cpl_act_establish *rpl;
+ 	unsigned int opcode;
+ 	int ret;
+ 
