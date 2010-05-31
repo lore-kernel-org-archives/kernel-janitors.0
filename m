@@ -1,39 +1,50 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Date: Sun, 23 May 2010 01:01:27 +0000
-Subject: Re: [patch] e1000e: change logical negate to bitwise
-Message-Id: <AANLkTil3USy0GrLLgShygH8PpOZPmVHwH5oSvNarAOhk@mail.gmail.com>
+From: Spyros Papageorgiou <spyros.papageorgiou@gmail.com>
+Date: Mon, 31 May 2010 15:04:13 +0000
+Subject: [PATCH] Drivers: Stagins: memrar: cleanup
+Message-Id: <4C03CFED.2030101@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100522194550.GG22515@bicker>
-In-Reply-To: <20100522194550.GG22515@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, PJ Waskiewicz <peter.p.waskiewicz.jr@intel.com>, John Ronciak <john.ronciak@intel.com>, "David S. Miller" <davem@davemloft.net>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: gregkh@suse.de
+Cc: ossama.othman@intel.com, devel@driverdev.osuosl.org, Kernel development list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, May 22, 2010 at 12:45, Dan Carpenter <error27@gmail.com> wrote:
-> The bitwise negate is intended here.  With the logical negate the
-> condition is always false.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/drivers/net/e1000e/netdev.c b/drivers/net/e1000e/netdev.c
-> index 24507f3..57a7e41 100644
-> --- a/drivers/net/e1000e/netdev.c
-> +++ b/drivers/net/e1000e/netdev.c
-> @@ -2554,7 +2554,7 @@ static void e1000_init_manageability_pt(struct e1000_adapter *adapter)
->                        mdef = er32(MDEF(i));
->
->                        /* Ignore filters with anything other than IPMI ports */
-> -                       if (mdef & !(E1000_MDEF_PORT_623 | E1000_MDEF_PORT_664))
-> +                       if (mdef & ~(E1000_MDEF_PORT_623 | E1000_MDEF_PORT_664))
->                                continue;
->
->                        /* Enable this decision filter in MANC2H */
-> --
+From:Spyros Papageorgiou <spyros.papageorgiou@gmai.com>
 
-Thanks Dan, I have added the patch to my queue.
+Removed an unneeded struct specifier in function call.
 
+Signed-off-by: Spyros Papageorgiou <spyros.papageorgiou@gmai.com>
+---
+ drivers/staging/memrar/memrar_allocator.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/memrar/memrar_allocator.c b/drivers/staging/memrar/memrar_allocator.c
+index a4f8c58..db37c6a 100644
+--- a/drivers/staging/memrar/memrar_allocator.c
++++ b/drivers/staging/memrar/memrar_allocator.c
+@@ -276,7 +276,7 @@ long memrar_allocator_free(struct memrar_allocator *allocator,
+ 
+ 		struct memrar_address_range * const chunk  			&list_entry(pos,
+-				    struct memrar_address_ranges,
++				    memrar_address_ranges,
+ 				    list)->range;
+ 
+ 		/* Extend size of existing free adjacent chunk. */
+@@ -300,7 +300,7 @@ long memrar_allocator_free(struct memrar_allocator *allocator,
+ 
+ 			struct memrar_address_ranges const * const next  				list_entry(pos->next,
+-					   struct memrar_address_ranges,
++					   memrar_address_ranges,
+ 					   list);
+ 
+ 			chunk->end = handle->end;
+@@ -352,7 +352,7 @@ long memrar_allocator_free(struct memrar_allocator *allocator,
+ 
+ 			struct memrar_address_ranges const * const prev  				list_entry(pos->prev,
+-					   struct memrar_address_ranges,
++					   memrar_address_ranges,
+ 					   list);
+ 
+ 			chunk->begin = handle->begin;
 -- 
-Cheers,
-Jeff
+1.7.0.4
