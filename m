@@ -1,211 +1,48 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 13 May 2010 20:03:15 +0000
-Subject: [PATCH 12/20] drivers/mtd: Use kzalloc
-Message-Id: <Pine.LNX.4.64.1005132202570.6282@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 31 May 2010 19:27:39 +0000
+Subject: [patch] V4L/DVB: remove unneeded null check in anysee_probe()
+Message-Id: <20100531192632.GZ5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Antti Palosaari <crope@iki.fi>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, Jiri Kosina <jkosina@suse.cz>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Smatch complained because "d" is dereferenced first and then checked for
+null later .  The only code path where "d" could be a invalid pointer is
+if this is a cold device in dvb_usb_device_init().  I consulted Antti 
+Palosaari and he explained that anysee is always a warm device.
 
-Use kzalloc rather than the combination of kmalloc and memset.
+I have added a comment and removed the unneeded null check.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-// <smpl>
-@@
-expression x,size,flags;
-statement S;
-@@
-
--x = kmalloc(size,flags);
-+x = kzalloc(size,flags);
- if (x = NULL) S
--memset(x, 0, size);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/mtd/lpddr/qinfo_probe.c     |    7 ++-----
- drivers/mtd/maps/ixp2000.c          |    3 +--
- drivers/mtd/maps/ixp4xx.c           |    3 +--
- drivers/mtd/maps/pxa2xx-flash.c     |    3 +--
- drivers/mtd/tests/mtd_pagetest.c    |    3 +--
- drivers/mtd/tests/mtd_readtest.c    |    3 +--
- drivers/mtd/tests/mtd_speedtest.c   |    3 +--
- drivers/mtd/tests/mtd_stresstest.c  |    3 +--
- drivers/mtd/tests/mtd_subpagetest.c |    3 +--
- 9 files changed, 10 insertions(+), 21 deletions(-)
-
-diff -u -p a/drivers/mtd/lpddr/qinfo_probe.c b/drivers/mtd/lpddr/qinfo_probe.c
---- a/drivers/mtd/lpddr/qinfo_probe.c
-+++ b/drivers/mtd/lpddr/qinfo_probe.c
-@@ -134,13 +134,12 @@ out:
- static int lpddr_chip_setup(struct map_info *map, struct lpddr_private *lpddr)
- {
- 
--	lpddr->qinfo = kmalloc(sizeof(struct qinfo_chip), GFP_KERNEL);
-+	lpddr->qinfo = kzalloc(sizeof(struct qinfo_chip), GFP_KERNEL);
- 	if (!lpddr->qinfo) {
- 		printk(KERN_WARNING "%s: no memory for LPDDR qinfo structure\n",
- 				map->name);
- 		return 0;
- 	}
--	memset(lpddr->qinfo, 0, sizeof(struct qinfo_chip));
- 
- 	/* Get the ManuID */
- 	lpddr->ManufactId = CMDVAL(map_read(map, map->pfow_base + PFOW_MANUFACTURER_ID));
-@@ -185,13 +184,11 @@ static struct lpddr_private *lpddr_probe
- 	lpddr.numchips = 1;
- 
- 	numvirtchips = lpddr.numchips * lpddr.qinfo->HWPartsNum;
--	retlpddr = kmalloc(sizeof(struct lpddr_private) +
-+	retlpddr = kzalloc(sizeof(struct lpddr_private) +
- 			numvirtchips * sizeof(struct flchip), GFP_KERNEL);
- 	if (!retlpddr)
- 		return NULL;
- 
--	memset(retlpddr, 0, sizeof(struct lpddr_private) +
--				numvirtchips * sizeof(struct flchip));
- 	memcpy(retlpddr, &lpddr, sizeof(struct lpddr_private));
- 
- 	retlpddr->numchips = numvirtchips;
-diff -u -p a/drivers/mtd/maps/ixp2000.c b/drivers/mtd/maps/ixp2000.c
---- a/drivers/mtd/maps/ixp2000.c
-+++ b/drivers/mtd/maps/ixp2000.c
-@@ -165,12 +165,11 @@ static int ixp2000_flash_probe(struct pl
- 		return -EIO;
- 	}
- 
--	info = kmalloc(sizeof(struct ixp2000_flash_info), GFP_KERNEL);
-+	info = kzalloc(sizeof(struct ixp2000_flash_info), GFP_KERNEL);
- 	if(!info) {
- 		err = -ENOMEM;
- 		goto Error;
- 	}
--	memset(info, 0, sizeof(struct ixp2000_flash_info));
- 
- 	platform_set_drvdata(dev, info);
- 
-diff -u -p a/drivers/mtd/maps/ixp4xx.c b/drivers/mtd/maps/ixp4xx.c
---- a/drivers/mtd/maps/ixp4xx.c
-+++ b/drivers/mtd/maps/ixp4xx.c
-@@ -196,12 +196,11 @@ static int ixp4xx_flash_probe(struct pla
- 			return err;
- 	}
- 
--	info = kmalloc(sizeof(struct ixp4xx_flash_info), GFP_KERNEL);
-+	info = kzalloc(sizeof(struct ixp4xx_flash_info), GFP_KERNEL);
- 	if(!info) {
- 		err = -ENOMEM;
- 		goto Error;
- 	}
--	memset(info, 0, sizeof(struct ixp4xx_flash_info));
- 
- 	platform_set_drvdata(dev, info);
- 
-diff -u -p a/drivers/mtd/maps/pxa2xx-flash.c b/drivers/mtd/maps/pxa2xx-flash.c
---- a/drivers/mtd/maps/pxa2xx-flash.c
-+++ b/drivers/mtd/maps/pxa2xx-flash.c
-@@ -63,11 +63,10 @@ static int __init pxa2xx_flash_probe(str
- 	if (!res)
+diff --git a/drivers/media/dvb/dvb-usb/anysee.c b/drivers/media/dvb/dvb-usb/anysee.c
+index faca1ad..aa5c7d5 100644
+--- a/drivers/media/dvb/dvb-usb/anysee.c
++++ b/drivers/media/dvb/dvb-usb/anysee.c
+@@ -463,6 +463,11 @@ static int anysee_probe(struct usb_interface *intf,
+ 	if (intf->num_altsetting < 1)
  		return -ENODEV;
  
--	info = kmalloc(sizeof(struct pxa2xx_flash_info), GFP_KERNEL);
-+	info = kzalloc(sizeof(struct pxa2xx_flash_info), GFP_KERNEL);
- 	if (!info)
- 		return -ENOMEM;
++	/*
++	 * Anysee is always warm (its USB-bridge, Cypress FX2, uploads
++	 * firmware from eeprom).  If dvb_usb_device_init() succeeds that
++	 * means d is a valid pointer.
++	 */
+ 	ret = dvb_usb_device_init(intf, &anysee_properties, THIS_MODULE, &d,
+ 		adapter_nr);
+ 	if (ret)
+@@ -479,10 +484,7 @@ static int anysee_probe(struct usb_interface *intf,
+ 	if (ret)
+ 		return ret;
  
--	memset(info, 0, sizeof(struct pxa2xx_flash_info));
- 	info->map.name = (char *) flash->name;
- 	info->map.bankwidth = flash->width;
- 	info->map.phys = res->start;
-diff -u -p a/drivers/mtd/tests/mtd_pagetest.c b/drivers/mtd/tests/mtd_pagetest.c
---- a/drivers/mtd/tests/mtd_pagetest.c
-+++ b/drivers/mtd/tests/mtd_pagetest.c
-@@ -480,12 +480,11 @@ static int scan_for_bad_eraseblocks(void
- {
- 	int i, bad = 0;
+-	if (d)
+-		ret = anysee_init(d);
+-
+-	return ret;
++	return anysee_init(d);
+ }
  
--	bbt = kmalloc(ebcnt, GFP_KERNEL);
-+	bbt = kzalloc(ebcnt, GFP_KERNEL);
- 	if (!bbt) {
- 		printk(PRINT_PREF "error: cannot allocate memory\n");
- 		return -ENOMEM;
- 	}
--	memset(bbt, 0 , ebcnt);
- 
- 	printk(PRINT_PREF "scanning for bad eraseblocks\n");
- 	for (i = 0; i < ebcnt; ++i) {
-diff -u -p a/drivers/mtd/tests/mtd_readtest.c b/drivers/mtd/tests/mtd_readtest.c
---- a/drivers/mtd/tests/mtd_readtest.c
-+++ b/drivers/mtd/tests/mtd_readtest.c
-@@ -141,12 +141,11 @@ static int scan_for_bad_eraseblocks(void
- {
- 	int i, bad = 0;
- 
--	bbt = kmalloc(ebcnt, GFP_KERNEL);
-+	bbt = kzalloc(ebcnt, GFP_KERNEL);
- 	if (!bbt) {
- 		printk(PRINT_PREF "error: cannot allocate memory\n");
- 		return -ENOMEM;
- 	}
--	memset(bbt, 0 , ebcnt);
- 
- 	/* NOR flash does not implement block_isbad */
- 	if (mtd->block_isbad = NULL)
-diff -u -p a/drivers/mtd/tests/mtd_speedtest.c b/drivers/mtd/tests/mtd_speedtest.c
---- a/drivers/mtd/tests/mtd_speedtest.c
-+++ b/drivers/mtd/tests/mtd_speedtest.c
-@@ -295,12 +295,11 @@ static int scan_for_bad_eraseblocks(void
- {
- 	int i, bad = 0;
- 
--	bbt = kmalloc(ebcnt, GFP_KERNEL);
-+	bbt = kzalloc(ebcnt, GFP_KERNEL);
- 	if (!bbt) {
- 		printk(PRINT_PREF "error: cannot allocate memory\n");
- 		return -ENOMEM;
- 	}
--	memset(bbt, 0 , ebcnt);
- 
- 	/* NOR flash does not implement block_isbad */
- 	if (mtd->block_isbad = NULL)
-diff -u -p a/drivers/mtd/tests/mtd_stresstest.c b/drivers/mtd/tests/mtd_stresstest.c
---- a/drivers/mtd/tests/mtd_stresstest.c
-+++ b/drivers/mtd/tests/mtd_stresstest.c
-@@ -221,12 +221,11 @@ static int scan_for_bad_eraseblocks(void
- {
- 	int i, bad = 0;
- 
--	bbt = kmalloc(ebcnt, GFP_KERNEL);
-+	bbt = kzalloc(ebcnt, GFP_KERNEL);
- 	if (!bbt) {
- 		printk(PRINT_PREF "error: cannot allocate memory\n");
- 		return -ENOMEM;
- 	}
--	memset(bbt, 0 , ebcnt);
- 
- 	/* NOR flash does not implement block_isbad */
- 	if (mtd->block_isbad = NULL)
-diff -u -p a/drivers/mtd/tests/mtd_subpagetest.c b/drivers/mtd/tests/mtd_subpagetest.c
---- a/drivers/mtd/tests/mtd_subpagetest.c
-+++ b/drivers/mtd/tests/mtd_subpagetest.c
-@@ -354,12 +354,11 @@ static int scan_for_bad_eraseblocks(void
- {
- 	int i, bad = 0;
- 
--	bbt = kmalloc(ebcnt, GFP_KERNEL);
-+	bbt = kzalloc(ebcnt, GFP_KERNEL);
- 	if (!bbt) {
- 		printk(PRINT_PREF "error: cannot allocate memory\n");
- 		return -ENOMEM;
- 	}
--	memset(bbt, 0 , ebcnt);
- 
- 	printk(PRINT_PREF "scanning for bad eraseblocks\n");
- 	for (i = 0; i < ebcnt; ++i) {
+ static struct usb_device_id anysee_table[] = {
