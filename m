@@ -1,34 +1,30 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:15:20 +0000
-Subject: [PATCH 07/25] r852: remove casts from void*
-Message-Id: <1277806521-30942-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 01 Jun 2010 07:15:50 +0000
+Subject: [patch] autofs4: remove unneeded null check in try_to_fill_dentry()
+Message-Id: <20100601071550.GI5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, Tejun Heo <tj@kernel.org>, David Woodhouse <dwmw2@infradead.org>
+To: kernel-janitors@vger.kernel.org
 
-Remove unnesessary casts from void*.
+After 97e7449a7ad: "autofs4: fix indirect mount pending expire race" we
+know longer assumed that "ino" can be null.  The other null checks got
+removed but this was one as missed.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/mtd/nand/r852.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/mtd/nand/r852.c b/drivers/mtd/nand/r852.c
-index c0a9835..43f0366 100644
---- a/drivers/mtd/nand/r852.c
-+++ b/drivers/mtd/nand/r852.c
-@@ -380,7 +380,7 @@ void r852_cmdctl(struct mtd_info *mtd, int dat, unsigned int ctrl)
-  */
- int r852_wait(struct mtd_info *mtd, struct nand_chip *chip)
- {
--	struct r852_device *dev = (struct r852_device *)chip->priv;
-+	struct r852_device *dev = chip->priv;
+diff --git a/fs/autofs4/root.c b/fs/autofs4/root.c
+index db4117e..5c0b93f 100644
+--- a/fs/autofs4/root.c
++++ b/fs/autofs4/root.c
+@@ -198,8 +198,7 @@ static int try_to_fill_dentry(struct dentry *dentry, int flags)
+ 	}
  
- 	unsigned long timeout;
- 	int status;
--- 
-1.7.0.4
-
+ 	/* Initialize expiry counter after successful mount */
+-	if (ino)
+-		ino->last_used = jiffies;
++	ino->last_used = jiffies;
+ 
+ 	spin_lock(&sbi->fs_lock);
+ 	ino->flags &= ~AUTOFS_INF_PENDING;
