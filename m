@@ -1,327 +1,101 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Sun, 06 Jun 2010 15:15:07 +0000
-Subject: [PATCH 7/7] Add scripts/coccinelle/deref_null.cocci
-Message-Id: <1275837307-4283-8-git-send-email-npalix@diku.dk>
+From: Jean Delvare <khali@linux-fr.org>
+Date: Tue, 01 Jun 2010 11:14:35 +0000
+Subject: Re: [PATCH 11/27] drivers/i2c: Use memdup_user
+Message-Id: <20100601131435.5904351c@hyperion.delvare>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1275837307-4283-1-git-send-email-npalix@diku.dk>
-In-Reply-To: <1275837307-4283-1-git-send-email-npalix@diku.dk>
+References: <Pine.LNX.4.64.1005221021270.13021@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005221021270.13021-QfmoRoYWmW9knbxzx/v8hQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, =?UTF-8?q?Am=C3=A9rico=20Wang?= <xiyou.wangcong@gmail.com>, Andy Isaacson <adi@hexapodia.org>, Linus Torvalds <torvalds@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>, walter harms <wharms@bfs.de>, Joerg Roedel <joro@8bytes.org>, Jan Engelhardt <jengelh@medozas.de>
-Cc: Nicolas Palix <npalix@diku.dk>
+To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Add a Coccinelle file to identify the dereferences of NULL variables
+Hi Julia,
 
-This semantic patch identifies when a variable is known to be NULL
-after a test, but it is still dereferenced later.
+On Sat, 22 May 2010 10:21:45 +0200 (CEST), Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Use memdup_user when user data is immediately copied into the allocated
+> region.  Note that in the second case, the ++i is no longer necessary, as
+> the last value is already freed if needed by the call to memdup_user.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression from,to,size,flag;
+> position p;
+> identifier l1,l2;
+> @@
+> 
+> -  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
+> +  to = memdup_user(from,size);
+>    if (
+> -      to=NULL
+> +      IS_ERR(to)
+>                  || ...) {
+>    <+... when != goto l1;
+> -  -ENOMEM
+> +  PTR_ERR(to)
+>    ...+>
+>    }
+> -  if (copy_from_user(to, from, size) != 0) {
+> -    <+... when != goto l2;
+> -    -EFAULT
+> -    ...+>
+> -  }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  drivers/i2c/i2c-dev.c |   22 ++++++----------------
+>  1 file changed, 6 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+> index e0694e4..03e9ef8 100644
+> --- a/drivers/i2c/i2c-dev.c
+> +++ b/drivers/i2c/i2c-dev.c
+> @@ -167,13 +167,9 @@ static ssize_t i2cdev_write(struct file *file, const char __user *buf,
+>  	if (count > 8192)
+>  		count = 8192;
+>  
+> -	tmp = kmalloc(count, GFP_KERNEL);
+> -	if (tmp = NULL)
+> -		return -ENOMEM;
+> -	if (copy_from_user(tmp, buf, count)) {
+> -		kfree(tmp);
+> -		return -EFAULT;
+> -	}
+> +	tmp = memdup_user(buf, count);
+> +	if (IS_ERR(tmp))
+> +		return PTR_ERR(tmp);
+>  
+>  	pr_debug("i2c-dev: i2c-%d writing %zu bytes.\n",
+>  		iminor(file->f_path.dentry->d_inode), count);
+> @@ -247,15 +243,9 @@ static noinline int i2cdev_ioctl_rdrw(struct i2c_client *client,
+>  			break;
+>  		}
+>  		data_ptrs[i] = (u8 __user *)rdwr_pa[i].buf;
+> -		rdwr_pa[i].buf = kmalloc(rdwr_pa[i].len, GFP_KERNEL);
+> -		if (rdwr_pa[i].buf = NULL) {
+> -			res = -ENOMEM;
+> -			break;
+> -		}
+> -		if (copy_from_user(rdwr_pa[i].buf, data_ptrs[i],
+> -				   rdwr_pa[i].len)) {
+> -				++i; /* Needs to be kfreed too */
+> -				res = -EFAULT;
+> +		rdwr_pa[i].buf = memdup_user(data_ptrs[i], rdwr_pa[i].len);
+> +		if (IS_ERR(rdwr_pa[i].buf)) {
+> +			res = PTR_ERR(rdwr_pa[i].buf);
+>  			break;
+>  		}
+>  	}
 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
- scripts/coccinelle/deref_null.cocci |  293 +++++++++++++++++++++++++++++++++++
- 1 files changed, 293 insertions(+), 0 deletions(-)
- create mode 100644 scripts/coccinelle/deref_null.cocci
+Applied, thanks.
 
-diff --git a/scripts/coccinelle/deref_null.cocci b/scripts/coccinelle/deref_null.cocci
-new file mode 100644
-index 0000000..9969d76
---- /dev/null
-+++ b/scripts/coccinelle/deref_null.cocci
-@@ -0,0 +1,293 @@
-+///
-+/// A variable is dereference under a NULL test.
-+/// Even though it is know to be NULL.
-+///
-+// Confidence: Moderate
-+// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
-+// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
-+// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Comments: -I ... -all_includes can give more complete results
-+// Options:
-+
-+virtual context
-+virtual patch
-+virtual org
-+virtual report
-+
-+@initialize:python depends on !context && patch && !org && !report@
-+
-+import sys
-+print >> sys.stderr, "This semantic patch does not support the 'patch' mode."
-+
-+@depends on patch@
-+@@
-+
-+this_rule_should_never_matches();
-+
-+@ifm depends on !patch@
-+expression *E;
-+statement S1,S2;
-+position p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...) S1 else S2
-+
-+// The following two rules are separate, because both can match a single
-+// expression in different ways
-+@pr1 depends on !patch expression@
-+expression *ifm.E;
-+identifier f;
-+position p1;
-+@@
-+
-+ (E != NULL && ...) ? <+...E->f@p1...+> : ...
-+
-+@pr2 depends on !patch expression@
-+expression *ifm.E;
-+identifier f;
-+position p2;
-+@@
-+
-+(
-+  (E != NULL) && ... && <+...E->f@p2...+>
-+|
-+  (E = NULL) || ... || <+...E->f@p2...+>
-+|
-+ sizeof(<+...E->f@p2...+>)
-+)
-+
-+// For org and report modes
-+
-+@r depends on !context && !patch && (org || report) exists@
-+expression subE <= ifm.E;
-+expression *ifm.E;
-+expression E1,E2;
-+identifier f;
-+statement S1,S2,S3,S4;
-+iterator iter;
-+position p!={pr1.p1,pr2.p2};
-+position ifm.p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...)
-+{
-+  ... when != if (...) S1 else S2
-+(
-+ iter(subE,...) S4 // no use
-+|
-+ list_remove_head(E2,subE,...)
-+|
-+ subE = E1
-+|
-+ for(subE = E1;...;...) S4
-+|
-+ subE++
-+|
-+ ++subE
-+|
-+ --subE
-+|
-+ subE--
-+|
-+ &subE
-+|
-+ E->f@p // bad use
-+)
-+  ... when any
-+  return ...;
-+}
-+else S3
-+
-+@script:python depends on !context && !patch && !org && report@
-+p << r.p;
-+p1 << ifm.p1;
-+x << ifm.E;
-+@@
-+
-+msg="ERROR: %s is NULL but dereferenced." % (x)
-+coccilib.report.print_report(p[0], msg)
-+cocci.include_match(False)
-+
-+@script:python depends on !context && !patch && org && !report@
-+p << r.p;
-+p1 << ifm.p1;
-+x << ifm.E;
-+@@
-+
-+msg="ERROR: %s is NULL but dereferenced." % (x)
-+msg_safe=msg.replace("[","@(").replace("]",")")
-+cocci.print_main(msg_safe,p)
-+cocci.include_match(False)
-+
-+@s depends on !context && !patch && (org || report) exists@
-+expression subE <= ifm.E;
-+expression *ifm.E;
-+expression E1,E2;
-+identifier f;
-+statement S1,S2,S3,S4;
-+iterator iter;
-+position p!={pr1.p1,pr2.p2};
-+position ifm.p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...)
-+{
-+  ... when != if (...) S1 else S2
-+(
-+ iter(subE,...) S4 // no use
-+|
-+ list_remove_head(E2,subE,...)
-+|
-+ subE = E1
-+|
-+ for(subE = E1;...;...) S4
-+|
-+ subE++
-+|
-+ ++subE
-+|
-+ --subE
-+|
-+ subE--
-+|
-+ &subE
-+|
-+ E->f@p // bad use
-+)
-+  ... when any
-+}
-+else S3
-+
-+@script:python depends on !context && !patch && !org && report@
-+p << s.p;
-+p1 << ifm.p1;
-+x << ifm.E;
-+@@
-+
-+msg="ERROR: %s is NULL but dereferenced." % (x)
-+coccilib.report.print_report(p[0], msg)
-+
-+@script:python depends on !context && !patch && org && !report@
-+p << s.p;
-+p1 << ifm.p1;
-+x << ifm.E;
-+@@
-+
-+msg="ERROR: %s is NULL but dereferenced." % (x)
-+msg_safe=msg.replace("[","@(").replace("]",")")
-+cocci.print_main(msg_safe,p)
-+
-+// For context mode
-+
-+@depends on context && !patch && !org && !report exists@
-+expression subE <= ifm.E;
-+expression *ifm.E;
-+expression E1,E2;
-+identifier f;
-+statement S1,S2,S3,S4;
-+iterator iter;
-+position p!={pr1.p1,pr2.p2};
-+position ifm.p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...)
-+{
-+  ... when != if (...) S1 else S2
-+(
-+ iter(subE,...) S4 // no use
-+|
-+ list_remove_head(E2,subE,...)
-+|
-+ subE = E1
-+|
-+ for(subE = E1;...;...) S4
-+|
-+ subE++
-+|
-+ ++subE
-+|
-+ --subE
-+|
-+ subE--
-+|
-+ &subE
-+|
-+* E->f@p // bad use
-+)
-+  ... when any
-+  return ...;
-+}
-+else S3
-+
-+// The following three rules are duplicates of ifm, pr1 and pr2 respectively.
-+// It is need because the previous rule as already made a "change".
-+
-+@ifm1 depends on !patch@
-+expression *E;
-+statement S1,S2;
-+position p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...) S1 else S2
-+
-+@pr11 depends on !patch expression@
-+expression *ifm1.E;
-+identifier f;
-+position p1;
-+@@
-+
-+ (E != NULL && ...) ? <+...E->f@p1...+> : ...
-+
-+@pr12 depends on !patch expression@
-+expression *ifm1.E;
-+identifier f;
-+position p2;
-+@@
-+
-+(
-+  (E != NULL) && ... && <+...E->f@p2...+>
-+|
-+  (E = NULL) || ... || <+...E->f@p2...+>
-+|
-+ sizeof(<+...E->f@p2...+>)
-+)
-+
-+@depends on context && !patch && !org && !report exists@
-+expression subE <= ifm1.E;
-+expression *ifm1.E;
-+expression E1,E2;
-+identifier f;
-+statement S1,S2,S3,S4;
-+iterator iter;
-+position p!={pr11.p1,pr12.p2};
-+position ifm1.p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...)
-+{
-+  ... when != if (...) S1 else S2
-+(
-+ iter(subE,...) S4 // no use
-+|
-+ list_remove_head(E2,subE,...)
-+|
-+ subE = E1
-+|
-+ for(subE = E1;...;...) S4
-+|
-+ subE++
-+|
-+ ++subE
-+|
-+ --subE
-+|
-+ subE--
-+|
-+ &subE
-+|
-+* E->f@p // bad use
-+)
-+  ... when any
-+}
-+else S3
 -- 
-1.7.0.4
-
+Jean Delvare
