@@ -1,128 +1,92 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Fri, 18 Jun 2010 18:24:32 +0000
-Subject: Re: [patch] mfd/88pm860x: fix uninitialized variable and clean up
-Message-Id: <20100618182432.GE3582@sortiz.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 01 Jun 2010 07:09:33 +0000
+Subject: [patch 2/2] caif: add newlines after declarations in caif_serial.c
+Message-Id: <20100601070933.GE5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100526225409.GQ22515@bicker>
-In-Reply-To: <20100526225409.GQ22515@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-Hi Dan,
+I added newlines after the declarations in caif_serial.c.  This is
+normal kernel style, although I can't see anywhere it's documented.
 
-On Thu, May 27, 2010 at 12:54:09AM +0200, Dan Carpenter wrote:
-> The original code had a compile warning:
-> drivers/mfd/88pm860x-core.c:431: warning: ‘ret’ may be used
-> 	uninitialized in this function
-> It seems like the warning is valid if either pdata or pdata->touch is
-> NULL.
-> 
-> This patch checks pdata and pdata->touch at the beginning of the 
-> function.  That means everything can be pulled in one indent level.
-> Now all the statements fit within the 80 character limit.
-> 
-> Also at that point the "use_gpadc" variable isn't needed and removing
-> it simplifies the logic.
-Thanks, patch applied to my for-next branch.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Cheers,
-Samuel.
-
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
-> index 405d2d5..f9ada69 100644
-> --- a/drivers/mfd/88pm860x-core.c
-> +++ b/drivers/mfd/88pm860x-core.c
-> @@ -428,52 +428,44 @@ static int __devinit device_gpadc_init(struct pm860x_chip *chip,
->  {
->  	struct i2c_client *i2c = (chip->id = CHIP_PM8607) ? chip->client \
->  				: chip->companion;
-> -	int use_gpadc = 0, data, ret;
-> +	int data;
-> +	int ret;
->  
->  	/* initialize GPADC without activating it */
->  
-> -	if (pdata && pdata->touch) {
-> -		/* set GPADC MISC1 register */
-> -		data = 0;
-> -		data |= (pdata->touch->gpadc_prebias << 1)
-> -			& PM8607_GPADC_PREBIAS_MASK;
-> -		data |= (pdata->touch->slot_cycle << 3)
-> -			& PM8607_GPADC_SLOT_CYCLE_MASK;
-> -		data |= (pdata->touch->off_scale << 5)
-> -			& PM8607_GPADC_OFF_SCALE_MASK;
-> -		data |= (pdata->touch->sw_cal << 7)
-> -			& PM8607_GPADC_SW_CAL_MASK;
-> -		if (data) {
-> -			ret = pm860x_reg_write(i2c, PM8607_GPADC_MISC1, data);
-> -			if (ret < 0)
-> -				goto out;
-> -		}
-> -		/* set tsi prebias time */
-> -		if (pdata->touch->tsi_prebias) {
-> -			data = pdata->touch->tsi_prebias;
-> -			ret = pm860x_reg_write(i2c, PM8607_TSI_PREBIAS, data);
-> -			if (ret < 0)
-> -				goto out;
-> -		}
-> -		/* set prebias & prechg time of pen detect */
-> -		data = 0;
-> -		data |= pdata->touch->pen_prebias & PM8607_PD_PREBIAS_MASK;
-> -		data |= (pdata->touch->pen_prechg << 5)
-> -			& PM8607_PD_PRECHG_MASK;
-> -		if (data) {
-> -			ret = pm860x_reg_write(i2c, PM8607_PD_PREBIAS, data);
-> -			if (ret < 0)
-> -				goto out;
-> -		}
-> +	if (!pdata || !pdata->touch)
-> +		return -EINVAL;
->  
-> -		use_gpadc = 1;
-> +	/* set GPADC MISC1 register */
-> +	data = 0;
-> +	data |= (pdata->touch->gpadc_prebias << 1) & PM8607_GPADC_PREBIAS_MASK;
-> +	data |= (pdata->touch->slot_cycle << 3) & PM8607_GPADC_SLOT_CYCLE_MASK;
-> +	data |= (pdata->touch->off_scale << 5) & PM8607_GPADC_OFF_SCALE_MASK;
-> +	data |= (pdata->touch->sw_cal << 7) & PM8607_GPADC_SW_CAL_MASK;
-> +	if (data) {
-> +		ret = pm860x_reg_write(i2c, PM8607_GPADC_MISC1, data);
-> +		if (ret < 0)
-> +			goto out;
->  	}
-> -
-> -	/* turn on GPADC */
-> -	if (use_gpadc) {
-> -		ret = pm860x_set_bits(i2c, PM8607_GPADC_MISC1,
-> -				      PM8607_GPADC_EN, PM8607_GPADC_EN);
-> +	/* set tsi prebias time */
-> +	if (pdata->touch->tsi_prebias) {
-> +		data = pdata->touch->tsi_prebias;
-> +		ret = pm860x_reg_write(i2c, PM8607_TSI_PREBIAS, data);
-> +		if (ret < 0)
-> +			goto out;
->  	}
-> +	/* set prebias & prechg time of pen detect */
-> +	data = 0;
-> +	data |= pdata->touch->pen_prebias & PM8607_PD_PREBIAS_MASK;
-> +	data |= (pdata->touch->pen_prechg << 5) & PM8607_PD_PRECHG_MASK;
-> +	if (data) {
-> +		ret = pm860x_reg_write(i2c, PM8607_PD_PREBIAS, data);
-> +		if (ret < 0)
-> +			goto out;
-> +	}
-> +
-> +	ret = pm860x_set_bits(i2c, PM8607_GPADC_MISC1,
-> +			      PM8607_GPADC_EN, PM8607_GPADC_EN);
->  out:
->  	return ret;
->  }
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+diff --git a/drivers/net/caif/caif_serial.c b/drivers/net/caif/caif_serial.c
+index f30a6a0..3e706f0 100644
+--- a/drivers/net/caif/caif_serial.c
++++ b/drivers/net/caif/caif_serial.c
+@@ -174,6 +174,7 @@ static void ldisc_receive(struct tty_struct *tty, const u8 *data,
+ 	struct ser_device *ser;
+ 	int ret;
+ 	u8 *p;
++
+ 	ser = tty->disc_data;
+ 
+ 	/*
+@@ -221,6 +222,7 @@ static int handle_tx(struct ser_device *ser)
+ 	struct tty_struct *tty;
+ 	struct sk_buff *skb;
+ 	int tty_wr, len, room;
++
+ 	tty = ser->tty;
+ 	ser->tx_started = true;
+ 
+@@ -281,6 +283,7 @@ error:
+ static int caif_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct ser_device *ser;
++
+ 	BUG_ON(dev = NULL);
+ 	ser = netdev_priv(dev);
+ 
+@@ -299,6 +302,7 @@ static int caif_xmit(struct sk_buff *skb, struct net_device *dev)
+ static void ldisc_tx_wakeup(struct tty_struct *tty)
+ {
+ 	struct ser_device *ser;
++
+ 	ser = tty->disc_data;
+ 	BUG_ON(ser = NULL);
+ 	BUG_ON(ser->tty != tty);
+@@ -348,6 +352,7 @@ static void ldisc_close(struct tty_struct *tty)
+ 	struct ser_device *ser = tty->disc_data;
+ 	/* Remove may be called inside or outside of rtnl_lock */
+ 	int islocked = rtnl_is_locked();
++
+ 	if (!islocked)
+ 		rtnl_lock();
+ 	/* device is freed automagically by net-sysfs */
+@@ -374,6 +379,7 @@ static struct tty_ldisc_ops caif_ldisc = {
+ static int register_ldisc(void)
+ {
+ 	int result;
++
+ 	result = tty_register_ldisc(N_CAIF, &caif_ldisc);
+ 	if (result < 0) {
+ 		pr_err("cannot register CAIF ldisc=%d err=%d\n", N_CAIF,
+@@ -391,6 +397,7 @@ static const struct net_device_ops netdev_ops = {
+ static void caifdev_setup(struct net_device *dev)
+ {
+ 	struct ser_device *serdev = netdev_priv(dev);
++
+ 	dev->features = 0;
+ 	dev->netdev_ops = &netdev_ops;
+ 	dev->type = ARPHRD_CAIF;
+@@ -423,6 +430,7 @@ static int caif_net_close(struct net_device *dev)
+ static int __init caif_ser_init(void)
+ {
+ 	int ret;
++
+ 	ret = register_ldisc();
+ 	debugfsdir = debugfs_create_dir("caif_serial", NULL);
+ 	return ret;
+@@ -433,6 +441,7 @@ static void __exit caif_ser_exit(void)
+ 	struct ser_device *ser = NULL;
+ 	struct list_head *node;
+ 	struct list_head *_tmp;
++
+ 	list_for_each_safe(node, _tmp, &ser_list) {
+ 		ser = list_entry(node, struct ser_device, node);
+ 		dev_close(ser->dev);
