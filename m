@@ -1,34 +1,77 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:15:36 +0000
-Subject: [PATCH 11/25] pcm3724: remove casts from void*
-Message-Id: <1277806537-31078-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 01 Jun 2010 14:34:56 +0000
+Subject: [PATCH 3/4] drivers/scsi/arcmsr: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.1006011634390.12546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Benjamin Adolphi <b.adolphi@gmail.com>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove unnesessary casts from void*.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Error handling code following a kmalloc should free the allocated data.
+
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/staging/comedi/drivers/pcm3724.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/scsi/arcmsr/arcmsr_hba.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/comedi/drivers/pcm3724.c b/drivers/staging/comedi/drivers/pcm3724.c
-index ed61030..0e91d95 100644
---- a/drivers/staging/comedi/drivers/pcm3724.c
-+++ b/drivers/staging/comedi/drivers/pcm3724.c
-@@ -184,7 +184,7 @@ static void enable_chan(struct comedi_device *dev, struct comedi_subdevice *s,
- 	struct priv_pcm3724 *priv;
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index ffa5479..a94fb9d 100644
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -1526,6 +1526,7 @@ static int arcmsr_iop_message_xfer(struct AdapterControlBlock *acb,
+ 		if (!acb->fw_state) {
+ 			pcmdmessagefld->cmdmessage.ReturnCode  			ARCMSR_MESSAGE_RETURNCODE_BUS_HANG_ON;
++			kfree(ver_addr);
+ 			goto message_out;
+ 		}
  
- 	gatecfg = 0;
--	priv = (struct priv_pcm3724 *)(dev->private);
-+	priv = dev->private;
+@@ -1578,6 +1579,7 @@ static int arcmsr_iop_message_xfer(struct AdapterControlBlock *acb,
+ 		if (!acb->fw_state) {
+ 			pcmdmessagefld->cmdmessage.ReturnCode  			ARCMSR_MESSAGE_RETURNCODE_BUS_HANG_ON;
++			kfree(ver_addr);
+ 			goto message_out;
+ 		}
  
- 	mask = 1 << CR_CHAN(chanspec);
- 	if (s = dev->subdevices)	/*  subdev 0 */
--- 
-1.7.0.4
-
