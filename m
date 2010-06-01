@@ -1,187 +1,89 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 04 Jun 2010 10:38:40 +0000
-Subject: [patch] Staging: sep: return -EFAULT on copy_to_user errors
-Message-Id: <20100604103840.GD5483@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 01 Jun 2010 14:34:20 +0000
+Subject: [PATCH 1/4] drivers/mtd/maps: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.1006011625510.12546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Alan Cox <alan@linux.intel.com>, Ben Hutchings <ben@decadent.org.uk>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@secretlab.ca>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.orgker
 
-copy_to_user() returns the number of bytes remaining but we want to
-return a negative error code here.  These functions are used in the
-ioctl handler and the error code gets returned to userspace.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Error handling code following a kmalloc should free the allocated data.
 
-diff --git a/drivers/staging/sep/sep_driver.c b/drivers/staging/sep/sep_driver.c
-index 0332c37..ecbde34 100644
---- a/drivers/staging/sep/sep_driver.c
-+++ b/drivers/staging/sep/sep_driver.c
-@@ -594,8 +594,10 @@ static int sep_allocate_data_pool_memory_handler(struct sep_device *sep,
- 	dbg("SEP Driver:--------> sep_allocate_data_pool_memory_handler start\n");
- 
- 	error = copy_from_user(&command_args, (void *) arg, sizeof(struct sep_driver_alloc_t));
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function;
-+	}
- 
- 	/* allocate memory */
- 	if ((sep->data_pool_bytes_allocated + command_args.num_bytes) > SEP_DRIVER_DATA_POOL_SHARED_AREA_SIZE_IN_BYTES) {
-@@ -609,8 +611,10 @@ static int sep_allocate_data_pool_memory_handler(struct sep_device *sep,
- 
- 	/* write the memory back to the user space */
- 	error = copy_to_user((void *) arg, (void *) &command_args, sizeof(struct sep_driver_alloc_t));
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function;
-+	}
- 
- 	/* set the allocation */
- 	sep->data_pool_bytes_allocated += command_args.num_bytes;
-@@ -661,6 +665,8 @@ static int sep_write_into_data_pool_handler(struct sep_device *sep, unsigned lon
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/mtd/maps/physmap_of.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mtd/maps/physmap_of.c b/drivers/mtd/maps/physmap_of.c
+index ba124ba..6ac5f9f 100644
+--- a/drivers/mtd/maps/physmap_of.c
++++ b/drivers/mtd/maps/physmap_of.c
+@@ -353,7 +353,7 @@ static int __devinit of_flash_probe(struct of_device *dev,
+ 				   &info->parts, 0);
+ 	if (err < 0) {
+ 		of_free_probes(part_probe_types);
+-		return err;
++		goto err_out;
  	}
- 	/* copy the application data */
- 	error = copy_from_user(virt_address, (void *) app_in_address, num_bytes);
-+	if (error)
-+		error = -EFAULT;
- end_function:
- 	dbg("SEP Driver:<-------- sep_write_into_data_pool_handler end\n");
- 	return error;
-@@ -711,6 +717,8 @@ static int sep_read_from_data_pool_handler(struct sep_device *sep, unsigned long
+ 	of_free_probes(part_probe_types);
  
- 	/* copy the application data */
- 	error = copy_to_user((void *) app_out_address, virt_address, num_bytes);
-+	if (error)
-+		error = -EFAULT;
- end_function:
- 	dbg("SEP Driver:<-------- sep_read_from_data_pool_handler end\n");
- 	return error;
-@@ -1448,8 +1456,10 @@ static int sep_create_sync_dma_tables_handler(struct sep_device *sep,
- 	dbg("SEP Driver:--------> sep_create_sync_dma_tables_handler start\n");
+@@ -361,14 +361,14 @@ static int __devinit of_flash_probe(struct of_device *dev,
+ 	if (err = 0) {
+ 		err = of_mtd_parse_partitions(&dev->dev, dp, &info->parts);
+ 		if (err < 0)
+-			return err;
++			goto err_out;
+ 	}
+ #endif
  
- 	error = copy_from_user(&command_args, (void *) arg, sizeof(struct sep_driver_build_sync_table_t));
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function;
-+	}
+ 	if (err = 0) {
+ 		err = parse_obsolete_partitions(dev, info, dp);
+ 		if (err < 0)
+-			return err;
++			goto err_out;
+ 	}
  
- 	edbg("app_in_address is %08lx\n", command_args.app_in_address);
- 	edbg("app_out_address is %08lx\n", command_args.app_out_address);
-@@ -1799,8 +1809,10 @@ static int sep_create_flow_dma_tables_handler(struct sep_device *sep,
- 		goto end_function;
- 
- 	error = copy_from_user(&command_args, (void *) arg, sizeof(struct sep_driver_build_flow_table_t));
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function;
-+	}
- 
- 	/* create flow tables */
- 	error = sep_prepare_flow_dma_tables(sep, command_args.num_virtual_buffers, command_args.virt_buff_data_addr, flow_context_ptr, &first_table_data, &last_table_data, command_args.isKernelVirtualAddress);
-@@ -1819,8 +1831,10 @@ static int sep_create_flow_dma_tables_handler(struct sep_device *sep,
- 
- 	/* send the parameters to user application */
- 	error = copy_to_user((void *) arg, &command_args, sizeof(struct sep_driver_build_flow_table_t));
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function_with_error;
-+	}
- 
- 	/* all the flow created  - update the flow entry with temp id */
- 	flow_context_ptr->flow_id = SEP_TEMP_FLOW_ID;
-@@ -1861,8 +1875,10 @@ static int sep_add_flow_tables_handler(struct sep_device *sep, unsigned long arg
- 
- 	/* get input parameters */
- 	error = copy_from_user(&command_args, (void *) arg, sizeof(struct sep_driver_add_flow_table_t));
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function;
-+	}
- 
- 	/* find the flow structure for the flow id */
- 	flow_context_ptr = sep_find_flow_context(sep, command_args.flow_id);
-@@ -1933,6 +1949,8 @@ static int sep_add_flow_tables_handler(struct sep_device *sep, unsigned long arg
- 
- 	/* send the parameters to user application */
- 	error = copy_to_user((void *) arg, &command_args, sizeof(struct sep_driver_add_flow_table_t));
-+	if (error)
-+		error = -EFAULT;
- end_function_with_error:
- 	/* free the allocated tables */
- 	sep_deallocated_flow_tables(&first_table_data);
-@@ -1953,8 +1971,10 @@ static int sep_add_flow_tables_message_handler(struct sep_device *sep, unsigned
- 	dbg("SEP Driver:--------> sep_add_flow_tables_message_handler start\n");
- 
- 	error = copy_from_user(&command_args, (void *) arg, sizeof(struct sep_driver_add_message_t));
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function;
-+	}
- 
- 	/* check input */
- 	if (command_args.message_size_in_bytes > SEP_MAX_ADD_MESSAGE_LENGTH_IN_BYTES) {
-@@ -1970,6 +1990,8 @@ static int sep_add_flow_tables_message_handler(struct sep_device *sep, unsigned
- 	/* copy the message into context */
- 	flow_context_ptr->message_size_in_bytes = command_args.message_size_in_bytes;
- 	error = copy_from_user(flow_context_ptr->message, (void *) command_args.message_address, command_args.message_size_in_bytes);
-+	if (error)
-+		error = -EFAULT;
- end_function:
- 	dbg("SEP Driver:<-------- sep_add_flow_tables_message_handler end\n");
- 	return error;
-@@ -1994,6 +2016,8 @@ static int sep_get_static_pool_addr_handler(struct sep_device *sep, unsigned lon
- 
- 	/* send the parameters to user application */
- 	error = copy_to_user((void *) arg, &command_args, sizeof(struct sep_driver_static_pool_addr_t));
-+	if (error)
-+		error = -EFAULT;
- 	dbg("SEP Driver:<-------- sep_get_static_pool_addr_handler end\n");
- 	return error;
- }
-@@ -2010,8 +2034,10 @@ static int sep_get_physical_mapped_offset_handler(struct sep_device *sep, unsign
- 	dbg("SEP Driver:--------> sep_get_physical_mapped_offset_handler start\n");
- 
- 	error = copy_from_user(&command_args, (void *) arg, sizeof(struct sep_driver_get_mapped_offset_t));
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function;
-+	}
- 
- 	if (command_args.physical_address < sep->shared_bus) {
- 		error = -EINVAL;
-@@ -2025,6 +2051,8 @@ static int sep_get_physical_mapped_offset_handler(struct sep_device *sep, unsign
- 
- 	/* send the parameters to user application */
- 	error = copy_to_user((void *) arg, &command_args, sizeof(struct sep_driver_get_mapped_offset_t));
-+	if (error)
-+		error = -EFAULT;
- end_function:
- 	dbg("SEP Driver:<-------- sep_get_physical_mapped_offset_handler end\n");
- 	return error;
-@@ -2070,11 +2098,11 @@ static int sep_init_handler(struct sep_device *sep, unsigned long arg)
- 	error = 0;
- 
- 	error = copy_from_user(&command_args, (void *) arg, sizeof(struct sep_driver_init_t));
--
--	dbg("SEP Driver:--------> sep_init_handler - finished copy_from_user \n");
--
--	if (error)
-+	if (error) {
-+		error = -EFAULT;
- 		goto end_function;
-+	}
-+	dbg("SEP Driver:--------> sep_init_handler - finished copy_from_user\n");
- 
- 	/* PATCH - configure the DMA to single -burst instead of multi-burst */
- 	/*sep_configure_dma_burst(); */
+ 	if (err > 0)
