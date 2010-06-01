@@ -1,25 +1,33 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Sat, 12 Jun 2010 14:32:09 +0000
-Subject: Re: [PATCH] MTD: remove redundant dependency checks in Kconfig
-Message-Id: <1276353129.19028.124.camel@localhost>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 01 Jun 2010 08:23:11 +0000
+Subject: [patch] btrfs: uninitialized data is check_path_shared()
+Message-Id: <20100601082311.GM5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100608134822.GA18437@caffeine.csclub.uwaterloo.ca>
-In-Reply-To: <20100608134822.GA18437@caffeine.csclub.uwaterloo.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Kyle Spaans <kspaans@uwaterloo.ca>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <chris.mason@oracle.com>
+Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2010-06-08 at 09:48 -0400, Kyle Spaans wrote:
-> Look for dependency checks for "FOO" when inside of an "if FOO" block and remove them.
-> 
-> Signed-off-by: Kyle Spaans <kspaans@uwaterloo.ca>
-> Reviewed-by: Robert P. J. Day <rpjday@crashcourse.ca>
+refs can be used with uninitialized data if btrfs_lookup_extent_info()
+fails on the first pass through the loop.  In the original code if that
+happens then check_path_shared() probably returns 1, but with this patch
+it will continue through the loop.
 
-Pushed to l2-mtd-2.6.git / master, thanks!
+I'm not super familiar with this code so please look it over carefully.
 
--- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index fa6ccc1..9640dae 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2673,7 +2673,7 @@ static int check_path_shared(struct btrfs_root *root,
+ 	struct extent_buffer *eb;
+ 	int level;
+ 	int ret;
+-	u64 refs;
++	u64 refs = 0;
+ 
+ 	for (level = 0; level < BTRFS_MAX_LEVEL; level++) {
+ 		if (!path->nodes[level])
