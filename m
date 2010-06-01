@@ -1,65 +1,234 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 03 Jun 2010 10:07:46 +0000
-Subject: [patch] x86: xsave: cleanup return codes in check_for_xstate()
-Message-Id: <20100603100746.GU5483@bicker>
+Date: Tue, 01 Jun 2010 08:15:19 +0000
+Subject: [patch] V4L/DVB: white space changes in dvb-usb-init.c
+Message-Id: <20100601081519.GK5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>, Avi Kivity <avi@redhat.com>, Hongjiu Lu <hjl.tools@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The places which call check_for_xstate() only care about zero or
-non-zero so this patch doesn't change how the code runs, but it's a 
-cleanup.  The main reason for this patch is that I'm looking for places
-which don't return -EFAULT for copy_from_user() failures.
+I started fixing one or two lines, but after a while I got into a groove
+and started changing everything.  I left the lines longer than 80
+characters because that seemed to be the style in this file.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/arch/x86/kernel/xsave.c b/arch/x86/kernel/xsave.c
-index 37e68fc..9801498 100644
---- a/arch/x86/kernel/xsave.c
-+++ b/arch/x86/kernel/xsave.c
-@@ -36,15 +36,14 @@ int check_for_xstate(struct i387_fxsave_struct __user *buf,
+diff --git a/drivers/media/dvb/dvb-usb/dvb-usb-init.c b/drivers/media/dvb/dvb-usb/dvb-usb-init.c
+index 5d91f70..2e3ea0f 100644
+--- a/drivers/media/dvb/dvb-usb/dvb-usb-init.c
++++ b/drivers/media/dvb/dvb-usb/dvb-usb-init.c
+@@ -15,7 +15,7 @@
  
- 	err = __copy_from_user(fx_sw_user, &buf->sw_reserved[0],
- 			       sizeof(struct _fpx_sw_bytes));
--
- 	if (err)
--		return err;
-+		return -EFAULT;
+ /* debug */
+ int dvb_usb_debug;
+-module_param_named(debug,dvb_usb_debug, int, 0644);
++module_param_named(debug, dvb_usb_debug, int, 0644);
+ MODULE_PARM_DESC(debug, "set debugging level (1=info,xfer=2,pll=4,ts=8,err,rc2,fwd,mem8,uxfer%6  (or-able))." DVB_USB_DEBUG_STATUS);
  
- 	/*
- 	 * First Magic check failed.
+ int dvb_usb_disable_rc_polling;
+@@ -29,7 +29,7 @@ MODULE_PARM_DESC(force_pid_filter_usage, "force all dvb-usb-devices to use a PID
+ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
+ {
+ 	struct dvb_usb_adapter *adap;
+-	int ret,n;
++	int ret, n;
+ 
+ 	for (n = 0; n < d->props.num_adapters; n++) {
+ 		adap = &d->adapter[n];
+@@ -38,7 +38,7 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
+ 
+ 		memcpy(&adap->props, &d->props.adapter[n], sizeof(struct dvb_usb_adapter_properties));
+ 
+-/* speed - when running at FULL speed we need a HW PID filter */
++		/* speed - when running at FULL speed we need a HW PID filter */
+ 		if (d->udev->speed = USB_SPEED_FULL && !(adap->props.caps & DVB_USB_ADAP_HAS_PID_FILTER)) {
+ 			err("This USB2.0 device cannot be run on a USB1.1 port. (it lacks a hardware PID filter)");
+ 			return -ENODEV;
+@@ -46,7 +46,7 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
+ 
+ 		if ((d->udev->speed = USB_SPEED_FULL && adap->props.caps & DVB_USB_ADAP_HAS_PID_FILTER) ||
+ 			(adap->props.caps & DVB_USB_ADAP_NEED_PID_FILTERING)) {
+-			info("will use the device's hardware PID filter (table count: %d).",adap->props.pid_filter_count);
++			info("will use the device's hardware PID filter (table count: %d).", adap->props.pid_filter_count);
+ 			adap->pid_filtering  = 1;
+ 			adap->max_feed_count = adap->props.pid_filter_count;
+ 		} else {
+@@ -64,9 +64,9 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
+ 		}
+ 
+ 		if (adap->props.size_of_priv > 0) {
+-			adap->priv = kzalloc(adap->props.size_of_priv,GFP_KERNEL);
++			adap->priv = kzalloc(adap->props.size_of_priv, GFP_KERNEL);
+ 			if (adap->priv = NULL) {
+-				err("no memory for priv for adapter %d.",n);
++				err("no memory for priv for adapter %d.", n);
+ 				return -ENOMEM;
+ 			}
+ 		}
+@@ -86,8 +86,8 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
+ 	 * sometimes a timeout occures, this helps
  	 */
- 	if (fx_sw_user->magic1 != FP_XSTATE_MAGIC1)
--		return -1;
-+		return -EINVAL;
- 
- 	/*
- 	 * Check for error scenarios.
-@@ -52,19 +51,21 @@ int check_for_xstate(struct i387_fxsave_struct __user *buf,
- 	if (fx_sw_user->xstate_size < min_xstate_size ||
- 	    fx_sw_user->xstate_size > xstate_size ||
- 	    fx_sw_user->xstate_size > fx_sw_user->extended_size)
--		return -1;
-+		return -EINVAL;
- 
- 	err = __get_user(magic2, (__u32 *) (((void *)fpstate) +
- 					    fx_sw_user->extended_size -
- 					    FP_XSTATE_MAGIC2_SIZE));
-+	if (err)
-+		return err;
- 	/*
- 	 * Check for the presence of second magic word at the end of memory
- 	 * layout. This detects the case where the user just copied the legacy
- 	 * fpstate layout with out copying the extended state information
- 	 * in the memory layout.
- 	 */
--	if (err || magic2 != FP_XSTATE_MAGIC2)
--		return -1;
-+	if (magic2 != FP_XSTATE_MAGIC2)
-+		return -EFAULT;
+ 	if (d->props.generic_bulk_ctrl_endpoint != 0) {
+-		usb_clear_halt(d->udev,usb_sndbulkpipe(d->udev,d->props.generic_bulk_ctrl_endpoint));
+-		usb_clear_halt(d->udev,usb_rcvbulkpipe(d->udev,d->props.generic_bulk_ctrl_endpoint));
++		usb_clear_halt(d->udev, usb_sndbulkpipe(d->udev, d->props.generic_bulk_ctrl_endpoint));
++		usb_clear_halt(d->udev, usb_rcvbulkpipe(d->udev, d->props.generic_bulk_ctrl_endpoint));
+ 	}
  
  	return 0;
+@@ -96,6 +96,7 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
+ static int dvb_usb_adapter_exit(struct dvb_usb_device *d)
+ {
+ 	int n;
++
+ 	for (n = 0; n < d->num_adapters_initialized; n++) {
+ 		dvb_usb_adapter_frontend_exit(&d->adapter[n]);
+ 		dvb_usb_adapter_dvb_exit(&d->adapter[n]);
+@@ -111,11 +112,11 @@ static int dvb_usb_adapter_exit(struct dvb_usb_device *d)
+ /* general initialization functions */
+ static int dvb_usb_exit(struct dvb_usb_device *d)
+ {
+-	deb_info("state before exiting everything: %x\n",d->state);
++	deb_info("state before exiting everything: %x\n", d->state);
+ 	dvb_usb_remote_exit(d);
+ 	dvb_usb_adapter_exit(d);
+ 	dvb_usb_i2c_exit(d);
+-	deb_info("state should be zero now: %x\n",d->state);
++	deb_info("state should be zero now: %x\n", d->state);
+ 	d->state = DVB_USB_STATE_INIT;
+ 	kfree(d->priv);
+ 	kfree(d);
+@@ -132,14 +133,14 @@ static int dvb_usb_init(struct dvb_usb_device *d, short *adapter_nums)
+ 	d->state = DVB_USB_STATE_INIT;
+ 
+ 	if (d->props.size_of_priv > 0) {
+-		d->priv = kzalloc(d->props.size_of_priv,GFP_KERNEL);
++		d->priv = kzalloc(d->props.size_of_priv, GFP_KERNEL);
+ 		if (d->priv = NULL) {
+ 			err("no memory for priv in 'struct dvb_usb_device'");
+ 			return -ENOMEM;
+ 		}
+ 	}
+ 
+-/* check the capabilities and set appropriate variables */
++	/* check the capabilities and set appropriate variables */
+ 	dvb_usb_device_power_ctrl(d, 1);
+ 
+ 	if ((ret = dvb_usb_i2c_init(d)) ||
+@@ -157,16 +158,17 @@ static int dvb_usb_init(struct dvb_usb_device *d, short *adapter_nums)
  }
+ 
+ /* determine the name and the state of the just found USB device */
+-static struct dvb_usb_device_description * dvb_usb_find_device(struct usb_device *udev,struct dvb_usb_device_properties *props, int *cold)
++static struct dvb_usb_device_description *dvb_usb_find_device(struct usb_device *udev, struct dvb_usb_device_properties *props, int *cold)
+ {
+-	int i,j;
++	int i, j;
+ 	struct dvb_usb_device_description *desc = NULL;
++
+ 	*cold = -1;
+ 
+ 	for (i = 0; i < props->num_device_descs; i++) {
+ 
+ 		for (j = 0; j < DVB_USB_ID_MAX_NUM && props->devices[i].cold_ids[j] != NULL; j++) {
+-			deb_info("check for cold %x %x\n",props->devices[i].cold_ids[j]->idVendor, props->devices[i].cold_ids[j]->idProduct);
++			deb_info("check for cold %x %x\n", props->devices[i].cold_ids[j]->idVendor, props->devices[i].cold_ids[j]->idProduct);
+ 			if (props->devices[i].cold_ids[j]->idVendor  = le16_to_cpu(udev->descriptor.idVendor) &&
+ 				props->devices[i].cold_ids[j]->idProduct = le16_to_cpu(udev->descriptor.idProduct)) {
+ 				*cold = 1;
+@@ -179,7 +181,7 @@ static struct dvb_usb_device_description * dvb_usb_find_device(struct usb_device
+ 			break;
+ 
+ 		for (j = 0; j < DVB_USB_ID_MAX_NUM && props->devices[i].warm_ids[j] != NULL; j++) {
+-			deb_info("check for warm %x %x\n",props->devices[i].warm_ids[j]->idVendor, props->devices[i].warm_ids[j]->idProduct);
++			deb_info("check for warm %x %x\n", props->devices[i].warm_ids[j]->idVendor, props->devices[i].warm_ids[j]->idProduct);
+ 			if (props->devices[i].warm_ids[j]->idVendor = le16_to_cpu(udev->descriptor.idVendor) &&
+ 				props->devices[i].warm_ids[j]->idProduct = le16_to_cpu(udev->descriptor.idProduct)) {
+ 				*cold = 0;
+@@ -190,7 +192,7 @@ static struct dvb_usb_device_description * dvb_usb_find_device(struct usb_device
+ 	}
+ 
+ 	if (desc != NULL && props->identify_state != NULL)
+-		props->identify_state(udev,props,&desc,cold);
++		props->identify_state(udev, props, &desc, cold);
+ 
+ 	return desc;
+ }
+@@ -202,7 +204,7 @@ int dvb_usb_device_power_ctrl(struct dvb_usb_device *d, int onoff)
+ 	else
+ 		d->powered--;
+ 
+-	if (d->powered = 0 || (onoff && d->powered = 1)) { // when switching from 1 to 0 or from 0 to 1
++	if (d->powered = 0 || (onoff && d->powered = 1)) { /* when switching from 1 to 0 or from 0 to 1 */
+ 		deb_info("power control: %d\n", onoff);
+ 		if (d->props.power_ctrl)
+ 			return d->props.power_ctrl(d, onoff);
+@@ -222,32 +224,32 @@ int dvb_usb_device_init(struct usb_interface *intf,
+ 	struct dvb_usb_device *d = NULL;
+ 	struct dvb_usb_device_description *desc = NULL;
+ 
+-	int ret = -ENOMEM,cold=0;
++	int ret = -ENOMEM, cold = 0;
+ 
+ 	if (du != NULL)
+ 		*du = NULL;
+ 
+-	if ((desc = dvb_usb_find_device(udev,props,&cold)) = NULL) {
++	if ((desc = dvb_usb_find_device(udev, props, &cold)) = NULL) {
+ 		deb_err("something went very wrong, device was not found in current device list - let's see what comes next.\n");
+ 		return -ENODEV;
+ 	}
+ 
+ 	if (cold) {
+-		info("found a '%s' in cold state, will try to load a firmware",desc->name);
+-		ret = dvb_usb_download_firmware(udev,props);
++		info("found a '%s' in cold state, will try to load a firmware", desc->name);
++		ret = dvb_usb_download_firmware(udev, props);
+ 		if (!props->no_reconnect || ret != 0)
+ 			return ret;
+ 	}
+ 
+-	info("found a '%s' in warm state.",desc->name);
+-		d = kzalloc(sizeof(struct dvb_usb_device),GFP_KERNEL);
++	info("found a '%s' in warm state.", desc->name);
++	d = kzalloc(sizeof(struct dvb_usb_device), GFP_KERNEL);
+ 	if (d = NULL) {
+ 		err("no memory for 'struct dvb_usb_device'");
+ 		return -ENOMEM;
+ 	}
+ 
+ 	d->udev = udev;
+-	memcpy(&d->props,props,sizeof(struct dvb_usb_device_properties));
++	memcpy(&d->props, props, sizeof(struct dvb_usb_device_properties));
+ 	d->desc = desc;
+ 	d->owner = owner;
+ 
+@@ -259,9 +261,9 @@ int dvb_usb_device_init(struct usb_interface *intf,
+ 	ret = dvb_usb_init(d, adapter_nums);
+ 
+ 	if (ret = 0)
+-		info("%s successfully initialized and connected.",desc->name);
++		info("%s successfully initialized and connected.", desc->name);
+ 	else
+-		info("%s error while loading driver (%d)",desc->name,ret);
++		info("%s error while loading driver (%d)", desc->name, ret);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(dvb_usb_device_init);
+@@ -271,12 +273,12 @@ void dvb_usb_device_exit(struct usb_interface *intf)
+ 	struct dvb_usb_device *d = usb_get_intfdata(intf);
+ 	const char *name = "generic DVB-USB module";
+ 
+-	usb_set_intfdata(intf,NULL);
++	usb_set_intfdata(intf, NULL);
+ 	if (d != NULL && d->desc != NULL) {
+ 		name = d->desc->name;
+ 		dvb_usb_exit(d);
+ 	}
+-	info("%s successfully deinitialized and disconnected.",name);
++	info("%s successfully deinitialized and disconnected.", name);
+ 
+ }
+ EXPORT_SYMBOL(dvb_usb_device_exit);
