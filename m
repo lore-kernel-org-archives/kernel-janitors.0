@@ -1,34 +1,33 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:16:08 +0000
-Subject: [PATCH 19/25] rt_linux: remove casts from void*
-Message-Id: <1277806569-31350-1-git-send-email-segooon@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 01 Jun 2010 07:27:21 +0000
+Subject: Re: [PATCH] ipv6: get rid of ipip6_prl_lock
+Message-Id: <20100601.002721.184817854.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1275252912.2472.23.camel@edumazet-laptop>
+	<Pine.LNX.4.64.1005302303180.19253@ask.diku.dk>
+	<1275282295.2472.34.camel@edumazet-laptop>
+In-Reply-To: <1275282295.2472.34.camel@edumazet-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, =?UTF-8?q?Sebastian=20Dalfu=C3=9F?= <sd@sedf.de>, Jeff Mahoney <jeffm@suse.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: eric.dumazet@gmail.com
+Cc: julia@diku.dk, kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove unnesessary casts from void*.
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Mon, 31 May 2010 07:04:55 +0200
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/rt2860/rt_linux.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> [PATCH] ipv6: get rid of ipip6_prl_lock
+> 
+> As noticed by Julia Lawall, ipip6_tunnel_add_prl() incorrectly calls 
+> kzallloc(..., GFP_KERNEL) while a spinlock is held. She provided
+> a patch to use GFP_ATOMIC instead.
+> 
+> One possibility would be to convert this spinlock to a mutex, or
+> preallocate the thing before taking the lock.
+> 
+> After RCU conversion, it appears we dont need this lock, since 
+> caller already holds RTNL
+> 
+> Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
 
-diff --git a/drivers/staging/rt2860/rt_linux.c b/drivers/staging/rt2860/rt_linux.c
-index 0029b2d..6536965 100644
---- a/drivers/staging/rt2860/rt_linux.c
-+++ b/drivers/staging/rt2860/rt_linux.c
-@@ -1015,7 +1015,7 @@ int RtmpOSTaskKill(struct rt_rtmp_os_task *pTask)
- 	struct rt_rtmp_adapter *pAd;
- 	int ret = NDIS_STATUS_FAILURE;
- 
--	pAd = (struct rt_rtmp_adapter *)pTask->priv;
-+	pAd = pTask->priv;
- 
- #ifdef KTHREAD_SUPPORT
- 	if (pTask->kthread_task) {
--- 
-1.7.0.4
-
+Applied, thanks everyone.
