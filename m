@@ -1,45 +1,87 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Fri, 04 Jun 2010 10:38:20 +0000
-Subject: Re: [PATCH 1/4] Add targets to use the Coccinelle checker
-Message-Id: <20100604103820.GA10104@merkur.ravnborg.org>
+From: Karsten Keil <isdn@linux-pingi.de>
+Date: Tue, 01 Jun 2010 08:05:35 +0000
+Subject: Re: [PATCH 2/2] drivers/isdn/hardware/mISDN: Use GFP_ATOMIC when a
+Message-Id: <20100601080535.GA19288@gw.linux-pingi.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1273508667-5152-1-git-send-email-npalix@diku.dk> <1273508667-5152-2-git-send-email-npalix@diku.dk> <20100603102315.GA8002@merkur.ravnborg.org> <201006041156.20714.npalix@diku.dk>
-In-Reply-To: <201006041156.20714.npalix@diku.dk>
+References: <Pine.LNX.4.64.1005301549230.15938@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005301549230.15938@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Palix <npalix@diku.dk>
-Cc: Michal Marek <mmarek@suse.cz>, Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>
+To: Julia Lawall <julia@diku.dk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> > 
-> > A nice simplification of the top-level Mkefile.
-> > and an opportunity to document some of the
-> > magic shell commands used by the various tools.
-...
+Hello Julia,
+
+thanks for that report, the issue is valid, but I think the fix in that case
+should be to move the allocation to an other place, to avoid wasting of
+GFP_ATOMIC allocation. I will come up with an other fix.
+
+Karsten
+
+
+On Sun, May 30, 2010 at 03:49:40PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
 > 
-> I am not sure to understand your suggestion.
+> The function inittiger is only called from nj_init_card, where a lock is held.
 > 
-> Should I make this change and integrate it into my patch series
-> or it is something to do later ?
-
-If we agree on this as the base infrastructure I would
-like you to introduce it as part of adding Coccinelle support.
-
-That should not touch the existing targets - but only
-add Coccinelle support. But in a way so we have the
-infrastructure in place so we can later move the other targets later.
-
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
 > 
-> In doing so, I will have to select the 'mode' in a different way.
-> I was thinking of renaming my targets in one of the following forms
-> or using an environment variable:
+> // <smpl>
+> @gfp exists@
+> identifier fn;
+> position p;
+> @@
 > 
-> make cocci-report-check
-> make report-coccicheck
-> make coccicheck MODE=report
-
-I like the latter.
-If you do "make coccicheck" then you can show a list of
-possible mode's. And if MODE is set you use this mode.
-
-	Sam
+> fn(...) {
+>  ... when != spin_unlock_irqrestore
+>      when any
+>  GFP_KERNEL@p
+>  ... when any
+> }
+> 
+> @locked@
+> identifier gfp.fn;
+> @@
+> 
+> spin_lock_irqsave(...)
+> ...  when != spin_unlock_irqrestore
+> fn(...)
+> 
+> @depends on locked@
+> position gfp.p;
+> @@
+> 
+> - GFP_KERNEL@p
+> + GFP_ATOMIC
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  drivers/isdn/hardware/mISDN/netjet.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff -u -p a/drivers/isdn/hardware/mISDN/netjet.c b/drivers/isdn/hardware/mISDN/netjet.c
+> --- a/drivers/isdn/hardware/mISDN/netjet.c
+> +++ b/drivers/isdn/hardware/mISDN/netjet.c
+> @@ -320,12 +320,12 @@ inittiger(struct tiger_hw *card)
+>  		return -ENOMEM;
+>  	}
+>  	for (i = 0; i < 2; i++) {
+> -		card->bc[i].hsbuf = kmalloc(NJ_DMA_TXSIZE, GFP_KERNEL);
+> +		card->bc[i].hsbuf = kmalloc(NJ_DMA_TXSIZE, GFP_ATOMIC);
+>  		if (!card->bc[i].hsbuf) {
+>  			pr_info("%s: no B%d send buffer\n", card->name, i + 1);
+>  			return -ENOMEM;
+>  		}
+> -		card->bc[i].hrbuf = kmalloc(NJ_DMA_RXSIZE, GFP_KERNEL);
+> +		card->bc[i].hrbuf = kmalloc(NJ_DMA_RXSIZE, GFP_ATOMIC);
+>  		if (!card->bc[i].hrbuf) {
+>  			pr_info("%s: no B%d recv buffer\n", card->name, i + 1);
+>  			return -ENOMEM;
+> --
+> To unsubscribe from this list: send the line "unsubscribe netdev" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
