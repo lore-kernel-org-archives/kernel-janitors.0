@@ -1,73 +1,72 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 20 Jun 2010 13:40:20 +0000
-Subject: [PATCH 2/3] drivers/gpu/drm/i915: remove duplicate structure field
-Message-Id: <Pine.LNX.4.64.1006201540030.6207@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 01 Jun 2010 07:12:53 +0000
+Subject: [patch] fscache: remove unneeded null checks
+Message-Id: <20100601071253.GG5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Mon, Mar 22, 2010 at 12:47:17PM +0000, David Howells wrote:
+> radix_tree_gang_lookup_tag() finds pages in the tree that have a
+> particular tag set, and returns the number of pages it has selected.
+> If that number is != 1, then I don't proceed with accessing the array.
+>
+> So I think the tests of page later are unnecessary.
 
-In each case, is_mobile is defined twice to 1.  Drop one initialization.
+Yep.  I think so too.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-// <smpl>
-@r@
-identifier I, s, fld;
-position p0,p;
-expression E;
-@@
-
-struct I s =@p0 { ... .fld@p = E, ...};
-
-@s@
-identifier I, s, r.fld;
-position r.p0,p;
-expression E;
-@@
-
-struct I s =@p0 { ... .fld@p = E, ...};
-
-@script:python@
-p0 << r.p0;
-fld << r.fld;
-ps << s.p;
-pr << r.p;
-@@
-
-if int(ps[0].line)<int(pr[0].line) or int(ps[0].column)<int(pr[0].column):
-  cocci.print_main(fld,p0)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/gpu/drm/i915/i915_drv.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
-index 423dc90..39b8981 100644
---- a/drivers/gpu/drm/i915/i915_drv.c
-+++ b/drivers/gpu/drm/i915/i915_drv.c
-@@ -97,7 +97,7 @@ static const struct intel_device_info intel_i965g_info = {
- };
+diff --git a/fs/fscache/page.c b/fs/fscache/page.c
+index 47aefd3..723b889 100644
+--- a/fs/fscache/page.c
++++ b/fs/fscache/page.c
+@@ -710,30 +710,26 @@ static void fscache_write_op(struct fscache_operation *_op)
+ 		goto superseded;
+ 	}
  
- static const struct intel_device_info intel_i965gm_info = {
--	.is_i965g = 1, .is_mobile = 1, .is_i965gm = 1, .is_i9xx = 1,
-+	.is_i965g = 1, .is_i965gm = 1, .is_i9xx = 1,
- 	.is_mobile = 1, .has_fbc = 1, .has_rc6 = 1,
- 	.has_hotplug = 1,
- };
-@@ -114,7 +114,7 @@ static const struct intel_device_info intel_g45_info = {
- };
+-	if (page) {
+-		radix_tree_tag_set(&cookie->stores, page->index,
+-				   FSCACHE_COOKIE_STORING_TAG);
+-		radix_tree_tag_clear(&cookie->stores, page->index,
+-				     FSCACHE_COOKIE_PENDING_TAG);
+-	}
++	radix_tree_tag_set(&cookie->stores, page->index,
++			   FSCACHE_COOKIE_STORING_TAG);
++	radix_tree_tag_clear(&cookie->stores, page->index,
++			     FSCACHE_COOKIE_PENDING_TAG);
  
- static const struct intel_device_info intel_gm45_info = {
--	.is_i965g = 1, .is_mobile = 1, .is_g4x = 1, .is_i9xx = 1,
-+	.is_i965g = 1, .is_g4x = 1, .is_i9xx = 1,
- 	.is_mobile = 1, .need_gfx_hws = 1, .has_fbc = 1, .has_rc6 = 1,
- 	.has_pipe_cxsr = 1,
- 	.has_hotplug = 1,
+ 	spin_unlock(&cookie->stores_lock);
+ 	spin_unlock(&object->lock);
+ 
+-	if (page) {
+-		fscache_set_op_state(&op->op, "Store");
+-		fscache_stat(&fscache_n_store_pages);
+-		fscache_stat(&fscache_n_cop_write_page);
+-		ret = object->cache->ops->write_page(op, page);
+-		fscache_stat_d(&fscache_n_cop_write_page);
+-		fscache_set_op_state(&op->op, "EndWrite");
+-		fscache_end_page_write(object, page);
+-		if (ret < 0) {
+-			fscache_set_op_state(&op->op, "Abort");
+-			fscache_abort_object(object);
+-		} else {
+-			fscache_enqueue_operation(&op->op);
+-		}
++	fscache_set_op_state(&op->op, "Store");
++	fscache_stat(&fscache_n_store_pages);
++	fscache_stat(&fscache_n_cop_write_page);
++	ret = object->cache->ops->write_page(op, page);
++	fscache_stat_d(&fscache_n_cop_write_page);
++	fscache_set_op_state(&op->op, "EndWrite");
++	fscache_end_page_write(object, page);
++	if (ret < 0) {
++		fscache_set_op_state(&op->op, "Abort");
++		fscache_abort_object(object);
++	} else {
++		fscache_enqueue_operation(&op->op);
+ 	}
+ 
+ 	_leave("");
