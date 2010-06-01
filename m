@@ -1,43 +1,100 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 04 Jun 2010 17:14:37 +0000
-Subject: Re: [patch] V4L/DVB: dvb_ca_en50221: return -EFAULT on	copy_to_user
-Message-Id: <4C09347D.9000007@bfs.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 01 Jun 2010 14:35:15 +0000
+Subject: [PATCH 4/4] drivers/hid: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.1006011634560.12546@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100604103629.GC5483@bicker>
-In-Reply-To: <20100604103629.GC5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
+Error handling code following a kmalloc should free the allocated data.
 
-Dan Carpenter schrieb:
-> On Fri, Jun 04, 2010 at 02:26:05PM +0200, walter harms wrote:
->> Doint to many things at once is bad. IMHO it is more readable to do so:
->>
->> +status = copy_to_user(buf, hdr, 2);
->> +if ( status  != 0) {
->>
->> Maybe the maintainer has different ideas but especialy lines like will gain.
->>
->> -if ((status = copy_from_user(fragbuf + 2, buf + fragpos, fraglen)) != 0)
->> +status = copy_from_user(fragbuf + 2, buf + fragpos, fraglen):
->> +if ( status  != 0) {
->>
->> just my 2 cents,
-> 
-> You're right of course as always and checkpatch warns about these as
-> well.
-> 
-> I figured if it was in the original code, it was probably OK to leave it.
-> But I now recognize this as pure laziness on my part and I appologize.  
-> Twenty lashes for me and all that.  Fixed patch coming up.  ;)
-> 
-> regards,
-> dan carpenter
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-I hope my guidance will ease your way to enlightenment.   ;)
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
-re,
- wh
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ drivers/hid/hid-roccat.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/hid/hid-roccat.c b/drivers/hid/hid-roccat.c
+index e05d48e..f6e80c7 100644
+--- a/drivers/hid/hid-roccat.c
++++ b/drivers/hid/hid-roccat.c
+@@ -168,7 +168,7 @@ static int roccat_open(struct inode *inode, struct file *file)
+ 		printk(KERN_EMERG "roccat device with minor %d doesn't exist\n",
+ 				minor);
+ 		error = -ENODEV;
+-		goto exit_unlock;
++		goto exit_err;
+ 	}
+ 
+ 	if (!device->open++) {
+@@ -178,7 +178,7 @@ static int roccat_open(struct inode *inode, struct file *file)
+ 					PM_HINT_FULLON);
+ 			if (error < 0) {
+ 				--device->open;
+-				goto exit_unlock;
++				goto exit_err;
+ 			}
+ 		}
+ 		error = device->hid->ll_driver->open(device->hid);
+@@ -187,7 +187,7 @@ static int roccat_open(struct inode *inode, struct file *file)
+ 				device->hid->ll_driver->power(device->hid,
+ 						PM_HINT_NORMAL);
+ 			--device->open;
+-			goto exit_unlock;
++			goto exit_err;
+ 		}
+ 	}
+ 
+@@ -202,6 +202,9 @@ exit_unlock:
+ 	mutex_unlock(&device->readers_lock);
+ 	mutex_unlock(&devices_lock);
+ 	return error;
++exit_err:
++	kfree(reader);
++	goto exit_unlock;
+ }
+ 
+ static int roccat_release(struct inode *inode, struct file *file)
