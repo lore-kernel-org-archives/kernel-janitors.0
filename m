@@ -1,44 +1,122 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Tue, 01 Jun 2010 09:58:01 +0000
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Tue, 01 Jun 2010 21:15:29 +0000
 Subject: Re: [PATCH 6/17] arch/x86/kernel: Add missing spin_unlock
-Message-Id: <20100601095801.GB964@8bytes.org>
+Message-Id: <20100601141529.0c99f22c.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261755260.23743@ask.diku.dk> <20100527111136.GV3266@amd.com> <Pine.LNX.4.64.1005271317180.5422@ask.diku.dk> <201005271342.25619.npalix@diku.dk> <20100528071114.GA3266@amd.com> <4BFFF31C.9090904@zytor.com>
-In-Reply-To: <4BFFF31C.9090904@zytor.com>
+References: <Pine.LNX.4.64.1005261755260.23743@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005261755260.23743@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Roedel, Joerg" <Joerg.Roedel@amd.com>, Nicolas Palix <npalix@diku.dk>, "x86@kernel.org" <x86@kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Ingo Molnar <mingo@redhat.com>, Julia Lawall <julia@diku.dk>, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Julia Lawall <julia@diku.dk>
+Cc: Joerg Roedel <joerg.roedel@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 28, 2010 at 09:45:16AM -0700, H. Peter Anvin wrote:
-> On 05/28/2010 12:11 AM, Roedel, Joerg wrote:
-> > On Thu, May 27, 2010 at 07:42:25AM -0400, Nicolas Palix wrote:
-> >>> We have submitted and received some feedback on an initial version of 
-> >>> this, but I'm not completely sure of the current status.
-> >>
-> >> You can see the latest feedback we get at
-> >> http://lkml.org/lkml/2010/5/10/257
-> >>
-> >> The initial submission and its comments are at
-> >> http://lkml.org/lkml/2010/4/26/269
-> > 
-> > I've also sent some feedback. Would be cool if you could work the
-> > feedback in and do a repost asking Andrew to take it. Would be cool to
-> > have this merged with 2.6.36.
-> > 
+On Wed, 26 May 2010 17:55:59 +0200 (CEST)
+Julia Lawall <julia@diku.dk> wrote:
+
+> From: Julia Lawall <julia@diku.dk>
 > 
-> I don't see why scripts that don't *in themselves* change the output
-> binaries need to wait for .36.  Instead, it would be better to get them
-> in sooner to make them available to developers in advance of the .36 cycle.
+> Add a spin_unlock missing on the error path.  The locks and unlocks are
+> balanced in other functions, so it seems that the same should be the case
+> here.
 > 
-> Of course, I'm not Linus, and I don't see him Cc:'d on this, but that
-> would be the normal rules.
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression E1;
+> @@
+> 
+> * spin_lock(E1,...);
+>   <+... when != E1
+>   if (...) {
+>     ... when != E1
+> *   return ...;
+>   }
+>   ...+>
+> * spin_unlock(E1,...);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  arch/x86/kernel/amd_iommu.c |    8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/amd_iommu.c b/arch/x86/kernel/amd_iommu.c
+> index fa5a147..b98e1cd 100644
+> --- a/arch/x86/kernel/amd_iommu.c
+> +++ b/arch/x86/kernel/amd_iommu.c
+> @@ -1499,12 +1499,16 @@ static int __attach_device(struct device *dev,
+>  
+>  	/* Some sanity checks */
+>  	if (alias_data->domain != NULL &&
+> -	    alias_data->domain != domain)
+> +	    alias_data->domain != domain) {
+> +		spin_unlock(&domain->lock);
+>  		return -EBUSY;
+> +	}
+>  
+>  	if (dev_data->domain != NULL &&
+> -	    dev_data->domain != domain)
+> +	    dev_data->domain != domain) {
+> +		spin_unlock(&domain->lock);
+>  		return -EBUSY;
+> +	}
+>  
+>  	/* Do real assignment */
+>  	if (dev_data->alias != dev) {
 
-Yeah, merging it now would be even better. Since these scripts don't
-change the kernel itself there is little risk to break anything. So how
-about working in the feedback and sending an updated version to Linus
-soon?
+The reason why these bugs occur is that we sprinkle multiple `return'
+statements inside the middle of non-trivial functions.  People miss
+some or fail to modify some when later changing locking rules and we
+gain bugs (or, similarly, resource leaks).
 
-	Joerg
+So I'd suggest that when fixing such bugs, we also fix their cause.
+
+ie:
+
+--- a/arch/x86/kernel/amd_iommu.c~arch-x86-kernel-add-missing-spin_unlock
++++ a/arch/x86/kernel/amd_iommu.c
+@@ -1487,6 +1487,7 @@ static int __attach_device(struct device
+ 			   struct protection_domain *domain)
+ {
+ 	struct iommu_dev_data *dev_data, *alias_data;
++	int ret;
+ 
+ 	dev_data   = get_dev_data(dev);
+ 	alias_data = get_dev_data(dev_data->alias);
+@@ -1497,14 +1498,17 @@ static int __attach_device(struct device
+ 	/* lock domain */
+ 	spin_lock(&domain->lock);
+ 
++	ret = -EBUSY;
+ 	/* Some sanity checks */
+ 	if (alias_data->domain != NULL &&
+ 	    alias_data->domain != domain)
+-		return -EBUSY;
++		goto out;
+ 
+ 	if (dev_data->domain != NULL &&
+ 	    dev_data->domain != domain)
+-		return -EBUSY;
++		goto out;
++
++	ret = 0;
+ 
+ 	/* Do real assignment */
+ 	if (dev_data->alias != dev) {
+@@ -1522,8 +1526,8 @@ static int __attach_device(struct device
+ 
+ 	/* ready */
+ 	spin_unlock(&domain->lock);
+-
+-	return 0;
++out:
++	return ret;
+ }
+ 
+ /*
+_
 
