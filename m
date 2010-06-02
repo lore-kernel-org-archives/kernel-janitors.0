@@ -1,58 +1,97 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 04 Jun 2010 10:24:13 +0000
-Subject: [patch] drm/vmwgfx: return -EFAULT for copy_to_user errors
-Message-Id: <20100604102413.GA5483@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 02 Jun 2010 13:12:44 +0000
+Subject: [PATCH] staging: xgifb: Fix compiler warnings about unused
+Message-Id: <1275484364.16039.10.camel@shinshilla>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-copy_to/from_user() returns the number of bytes remaining to be copied
-but we want to return a negative error code here.  This gets returned to
-userspace.
+Fix compiler warnings about unused variables and functions on
+CONFIG_FB_XGI=m.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-index f8fbbc6..8612378 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-@@ -597,8 +597,10 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
- 
- 	ret = copy_from_user(srf->sizes, user_sizes,
- 			     srf->num_sizes * sizeof(*srf->sizes));
--	if (unlikely(ret != 0))
-+	if (unlikely(ret != 0)) {
-+		ret = -EFAULT;
- 		goto out_err1;
-+	}
- 
- 	if (srf->scanout &&
- 	    srf->num_sizes = 1 &&
-@@ -697,9 +699,11 @@ int vmw_surface_reference_ioctl(struct drm_device *dev, void *data,
- 	if (user_sizes)
- 		ret = copy_to_user(user_sizes, srf->sizes,
- 				   srf->num_sizes * sizeof(*srf->sizes));
--	if (unlikely(ret != 0))
-+	if (unlikely(ret != 0)) {
- 		DRM_ERROR("copy_to_user failed %p %u\n",
- 			  user_sizes, srf->num_sizes);
-+		ret = -EFAULT;
-+	}
- out_bad_resource:
- out_no_reference:
- 	ttm_base_object_unref(&base);
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-index dbd36b8..ba15038 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-@@ -644,6 +644,7 @@ int vmw_execbuf_ioctl(struct drm_device *dev, void *data,
- 	ret = copy_from_user(cmd, user_cmd, arg->command_size);
- 
- 	if (unlikely(ret != 0)) {
-+		ret = -EFAULT;
- 		DRM_ERROR("Failed copying commands.\n");
- 		goto out_commit;
- 	}
+diff --git a/drivers/staging/xgifb/XGI_main.h
+b/drivers/staging/xgifb/XGI_main.h
+index 4f4171e..dd6d6bd 100644
+--- a/drivers/staging/xgifb/XGI_main.h
++++ b/drivers/staging/xgifb/XGI_main.h
+@@ -388,7 +388,6 @@ static int currcon = 0;
+static int XGIfb_registered;
+static int XGIfb_tvmode = 0;
+static int XGIfb_mem = 0;
+-static int XGIfb_pdc = 0;
+static int enable_dstn = 0;
+static int XGIfb_ypan = -1;
+
+diff --git a/drivers/staging/xgifb/XGI_main_26.c
+b/drivers/staging/xgifb/XGI_main_26.c
+index 867012b..4e3af91 100644
+--- a/drivers/staging/xgifb/XGI_main_26.c
++++ b/drivers/staging/xgifb/XGI_main_26.c
+@@ -855,6 +855,7 @@ static int XGIfb_validate_mode(int myindex)
+
+}
+
++#ifndef MODULE
+static void XGIfb_search_crt2type(const char *name)
+{
+int i = 0;
+@@ -873,7 +874,9 @@ static void XGIfb_search_crt2type(const char *name)
+if(XGIfb_crt2type < 0)
+printk(KERN_INFO "XGIfb: Invalid CRT2 type: %s\n", name);
+}
++#endif
+
++#ifndef MODULE
+static void XGIfb_search_queuemode(const char *name)
+{
+int i = 0;
+@@ -891,6 +894,7 @@ static void XGIfb_search_queuemode(const char *name)
+if (XGIfb_queuemode < 0)
+printk(KERN_INFO "XGIfb: Invalid queuemode type: %s\n", name);
+}
++#endif
+
+static u8 XGIfb_search_refresh_rate(unsigned int rate)
+{
+@@ -938,6 +942,7 @@ static u8 XGIfb_search_refresh_rate(unsigned int
+rate)
+}
+}
+
++#ifndef MODULE
+static void XGIfb_search_tvstd(const char *name)
+{
+int i = 0;
+@@ -953,6 +958,7 @@ static void XGIfb_search_tvstd(const char *name)
+i++;
+}
+}
++#endif
+
+static BOOLEAN XGIfb_bridgeisslave(void)
+{
+@@ -2824,6 +2830,7 @@ static void XGIfb_post_setmode(void)
+XGIINITSTATIC int __init XGIfb_setup(char *options)
+{
+char *this_opt;
++ int XGIfb_pdc;
+
+
+
+@@ -3585,7 +3592,6 @@ module_init(xgifb_init);
+static char         *mode = NULL;
+static int          vesa = 0;
+static unsigned int rate = 0;
+-static unsigned int crt1off = 1;
+static unsigned int mem = 0;
+static char         *forcecrt2type = NULL;
+static int          forcecrt1 = -1;
+-- 
+1.7.0.4
+
+
+
