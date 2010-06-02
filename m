@@ -1,37 +1,23 @@
-From: Mike Christie <michaelc@cs.wisc.edu>
-Date: Thu, 10 Jun 2010 20:43:17 +0000
-Subject: Re: [patch 2/2] be2iscsi: null dereference on error path
-Message-Id: <4C114E65.90305@cs.wisc.edu>
+From: Roland Dreier <rdreier@cisco.com>
+Date: Wed, 02 Jun 2010 21:58:35 +0000
+Subject: Re: [patch 2/2] infiniband/cxgb4: add null check
+Message-Id: <adaeigpqepg.fsf@roland-alpha.cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100610075305.GJ5483@bicker>
-In-Reply-To: <20100610075305.GJ5483@bicker>
+References: <20100531140152.GU5483@bicker>
+In-Reply-To: <20100531140152.GU5483@bicker> (Dan Carpenter's message of "Mon,
+	31 May 2010 16:01:52 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Jayamohan Kallickal <jayamohank@serverengines.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 06/10/2010 02:53 AM, Dan Carpenter wrote:
-> "phba" is always null here so we can't dereference it.
->
-> Signed-off-by: Dan Carpenter<error27@gmail.com>
->
-> diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-> index 779e1d1..efadde9 100644
-> --- a/drivers/scsi/be2iscsi/be_main.c
-> +++ b/drivers/scsi/be2iscsi/be_main.c
-> @@ -3774,8 +3774,8 @@ static int __devinit beiscsi_dev_probe(struct pci_dev *pcidev,
->
->   	ret = beiscsi_enable_pci(pcidev);
->   	if (ret<  0) {
-> -		shost_printk(KERN_ERR, phba->shost, "beiscsi_dev_probe-"
-> -			     "Failed to enable pci device \n");
-> +		dev_err(&pcidev->dev, "beiscsi_dev_probe-"
-> +			" Failed to enable pci device\n");
->   		return ret;
->   	}
->
+ >  	if (status < 0) {
+ > -		ep->com.cm_id->rem_ref(ep->com.cm_id);
+ > +		if (ep->com.cm_id)
+ > +			ep->com.cm_id->rem_ref(ep->com.cm_id);
 
-Looks good. Thanks.
-
-Reviewed-by: Mike Christie <michaelc@cs.wisc.edu>
+Steve, does this make sense?
+-- 
+Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
+http://www.cisco.com/web/about/doing_business/legal/cri/index.html
