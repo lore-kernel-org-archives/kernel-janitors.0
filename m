@@ -1,89 +1,215 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 01 Jun 2010 14:34:20 +0000
-Subject: [PATCH 1/4] drivers/mtd/maps: introduce missing kfree
-Message-Id: <Pine.LNX.4.64.1006011625510.12546@ask.diku.dk>
+From: Borislav Petkov <bp@amd64.org>
+Date: Wed, 02 Jun 2010 16:18:40 +0000
+Subject: [PATCH -v2] x86, cacheinfo: Carve out L3 cache slot accessors
+Message-Id: <20100602161840.GI18327@aftab>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100601071126.GF5483@bicker>
+ <20100601082305.GA10650@aftab>
+In-Reply-To: <20100601082305.GA10650@aftab>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@secretlab.ca>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.orgker
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dan Carpenter <error27@gmail.com>, "x86@kernel.org" <x86@kernel.org>, Dave Jones <davej@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+This is in preparation for disabling L3 cache indices after having
+received correctable ECCs in the L3 cache. Now we allow for initial
+setting of a disabled index slot (write once) and deny writing new
+indices to it after it has been disabled. Also, we deny using both slots
+to disable one and the same index.
 
-Error handling code following a kmalloc should free the allocated data.
+Userspace can restore the previously disabled indices by rewriting those
+sysfs entries when booting.
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Cleanup and reorganize code while at it.
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Borislav Petkov <borislav.petkov@amd.com>
 ---
- drivers/mtd/maps/physmap_of.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/maps/physmap_of.c b/drivers/mtd/maps/physmap_of.c
-index ba124ba..6ac5f9f 100644
---- a/drivers/mtd/maps/physmap_of.c
-+++ b/drivers/mtd/maps/physmap_of.c
-@@ -353,7 +353,7 @@ static int __devinit of_flash_probe(struct of_device *dev,
- 				   &info->parts, 0);
- 	if (err < 0) {
- 		of_free_probes(part_probe_types);
--		return err;
-+		goto err_out;
- 	}
- 	of_free_probes(part_probe_types);
+Please ignore the previous one which had a wrong check in
+amd_set_l3_disable_slot().
+
+Thanks.
+
+ arch/x86/kernel/cpu/intel_cacheinfo.c |  108 +++++++++++++++++++++++++--------
+ 1 files changed, 82 insertions(+), 26 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
+index 33eae20..898c2f4 100644
+--- a/arch/x86/kernel/cpu/intel_cacheinfo.c
++++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
+@@ -347,8 +347,8 @@ static struct amd_l3_cache * __cpuinit amd_init_l3_cache(int node)
+ 	return l3;
+ }
  
-@@ -361,14 +361,14 @@ static int __devinit of_flash_probe(struct of_device *dev,
- 	if (err = 0) {
- 		err = of_mtd_parse_partitions(&dev->dev, dp, &info->parts);
- 		if (err < 0)
--			return err;
-+			goto err_out;
- 	}
- #endif
+-static void __cpuinit
+-amd_check_l3_disable(int index, struct _cpuid4_info_regs *this_leaf)
++static void __cpuinit amd_check_l3_disable(struct _cpuid4_info_regs *this_leaf,
++					   int index)
+ {
+ 	int node;
  
- 	if (err = 0) {
- 		err = parse_obsolete_partitions(dev, info, dp);
- 		if (err < 0)
--			return err;
-+			goto err_out;
- 	}
+@@ -396,20 +396,39 @@ amd_check_l3_disable(int index, struct _cpuid4_info_regs *this_leaf)
+ 	this_leaf->l3 = l3_caches[node];
+ }
  
- 	if (err > 0)
++/*
++ * check whether a slot used for disabling an L3 index is occupied.
++ * @l3: L3 cache descriptor
++ * @slot: slot number (0..1)
++ *
++ * @returns: the disabled index if used or negative value if slot free.
++ */
++int amd_get_l3_disable_slot(struct amd_l3_cache *l3, unsigned slot)
++{
++	unsigned int reg = 0;
++
++	pci_read_config_dword(l3->dev, 0x1BC + slot * 4, &reg);
++
++	/* check whether this slot is activated already */
++	if (reg & (3UL << 30))
++		return reg & 0xfff;
++
++	return -1;
++}
++
+ static ssize_t show_cache_disable(struct _cpuid4_info *this_leaf, char *buf,
+ 				  unsigned int slot)
+ {
+-	struct pci_dev *dev = this_leaf->l3->dev;
+-	unsigned int reg = 0;
++	int index;
+ 
+ 	if (!this_leaf->l3 || !this_leaf->l3->can_disable)
+ 		return -EINVAL;
+ 
+-	if (!dev)
+-		return -EINVAL;
++	index = amd_get_l3_disable_slot(this_leaf->l3, slot);
++	if (index >= 0)
++		return sprintf(buf, "%d\n", index);
+ 
+-	pci_read_config_dword(dev, 0x1BC + slot * 4, &reg);
+-	return sprintf(buf, "0x%08x\n", reg);
++	return sprintf(buf, "FREE\n");
+ }
+ 
+ #define SHOW_CACHE_DISABLE(slot)					\
+@@ -451,37 +470,74 @@ static void amd_l3_disable_index(struct amd_l3_cache *l3, int cpu,
+ 	}
+ }
+ 
+-
+-static ssize_t store_cache_disable(struct _cpuid4_info *this_leaf,
+-				   const char *buf, size_t count,
+-				   unsigned int slot)
++/*
++ * disable a L3 cache index by using a disable-slot
++ *
++ * @l3:    L3 cache descriptor
++ * @cpu:   A CPU on the node containing the L3 cache
++ * @slot:  slot number (0..1)
++ * @index: index to disable
++ *
++ * @return: 0 on success, error status on failure
++ */
++int amd_set_l3_disable_slot(struct amd_l3_cache *l3, int cpu, unsigned slot,
++			    unsigned long index)
+ {
+-	struct pci_dev *dev = this_leaf->l3->dev;
+-	int cpu = cpumask_first(to_cpumask(this_leaf->shared_cpu_map));
+-	unsigned long val = 0;
++	int ret = 0;
+ 
+ #define SUBCACHE_MASK	(3UL << 20)
+ #define SUBCACHE_INDEX	0xfff
+ 
+-	if (!this_leaf->l3 || !this_leaf->l3->can_disable)
++	/*
++	 * check whether this slot is already used or
++	 * the index is already disabled
++	 */
++	ret = amd_get_l3_disable_slot(l3, slot);
++	if (ret >= 0)
+ 		return -EINVAL;
+ 
++	/*
++	 * check whether the other slot has disabled the
++	 * same index already
++	 */
++	if (index = amd_get_l3_disable_slot(l3, !slot))
++		return -EINVAL;
++
++	/* do not allow writes outside of allowed bits */
++	if ((index & ~(SUBCACHE_MASK | SUBCACHE_INDEX)) ||
++	    ((index & SUBCACHE_INDEX) > l3->indices))
++		return -EINVAL;
++
++	amd_l3_disable_index(l3, cpu, slot, index);
++
++	return 0;
++}
++
++static ssize_t store_cache_disable(struct _cpuid4_info *this_leaf,
++				  const char *buf, size_t count,
++				  unsigned int slot)
++{
++	unsigned long val = 0;
++	int cpu, err = 0;
++
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	if (!dev)
++	if (!this_leaf->l3 || !this_leaf->l3->can_disable)
+ 		return -EINVAL;
+ 
+-	if (strict_strtoul(buf, 10, &val) < 0)
+-		return -EINVAL;
++	cpu = cpumask_first(to_cpumask(this_leaf->shared_cpu_map));
+ 
+-	/* do not allow writes outside of allowed bits */
+-	if ((val & ~(SUBCACHE_MASK | SUBCACHE_INDEX)) ||
+-	    ((val & SUBCACHE_INDEX) > this_leaf->l3->indices))
++	if (strict_strtoul(buf, 10, &val) < 0)
+ 		return -EINVAL;
+ 
+-	amd_l3_disable_index(this_leaf->l3, cpu, slot, val);
+-
++	err = amd_set_l3_disable_slot(this_leaf->l3, cpu, slot, val);
++	if (err) {
++		if (err = -EEXIST)
++			printk(KERN_WARNING "L3 disable slot %d in use!\n",
++					    slot);
++		return err;
++	}
+ 	return count;
+ }
+ 
+@@ -502,7 +558,7 @@ static struct _cache_attr cache_disable_1 = __ATTR(cache_disable_1, 0644,
+ 
+ #else	/* CONFIG_CPU_SUP_AMD */
+ static void __cpuinit
+-amd_check_l3_disable(int index, struct _cpuid4_info_regs *this_leaf)
++amd_check_l3_disable(struct _cpuid4_info_regs *this_leaf, int index)
+ {
+ };
+ #endif /* CONFIG_CPU_SUP_AMD */
+@@ -518,7 +574,7 @@ __cpuinit cpuid4_cache_lookup_regs(int index,
+ 
+ 	if (boot_cpu_data.x86_vendor = X86_VENDOR_AMD) {
+ 		amd_cpuid4(index, &eax, &ebx, &ecx);
+-		amd_check_l3_disable(index, this_leaf);
++		amd_check_l3_disable(this_leaf, index);
+ 	} else {
+ 		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
+ 	}
+-- 
+1.6.4.4
+
+-- 
+Regards/Gruss,
+Boris.
+
+Operating Systems Research Center
+Advanced Micro Devices, Inc.
