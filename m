@@ -1,71 +1,37 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 22 May 2010 08:25:44 +0000
-Subject: [PATCH 23/27] drivers/net/wireless/prism54: Use memdup_user
-Message-Id: <Pine.LNX.4.64.1005221025200.13021@ask.diku.dk>
+From: Roland Dreier <rdreier@cisco.com>
+Date: Wed, 02 Jun 2010 19:20:46 +0000
+Subject: Re: [announce] smatch 1.54
+Message-Id: <adahblls0kx.fsf@roland-alpha.cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100109085325.GE7840@bicker>
+In-Reply-To: <20100109085325.GE7840@bicker> (Dan Carpenter's message of "Sat,
+	9 Jan 2010 11:53:25 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Hi Dan,
 
-Use memdup_user when user data is immediately copied into the
-allocated region.
+I'm trying out smatch on some kernel code now.  Neat stuff, but I'm
+seeing some puzzling false positives relating to signedness.  Basically,
+if I have code like:
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+	__be16 foo;
+	__u16 bar;
 
-// <smpl>
-@@
-expression from,to,size,flag;
-position p;
-identifier l1,l2;
-@@
+	foo = cpu_to_be16(128);
+	bar = cpu_to_be16(128);
 
--  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-+  to = memdup_user(from,size);
-   if (
--      to=NULL
-+      IS_ERR(to)
-                 || ...) {
-   <+... when != goto l1;
--  -ENOMEM
-+  PTR_ERR(to)
-   ...+>
-   }
--  if (copy_from_user(to, from, size) != 0) {
--    <+... when != goto l2;
--    -EFAULT
--    ...+>
--  }
-// </smpl>
+then the first line warns about 32768 not fitting into foo, but while
+the second line doesn't warn, even though __be16 is just a __bitwise__
+__u16.  I don't understand the sparse / smatch internals so I'm not sure
+why applying __bitwise__ apparently kills the unsigned modifier.  Maybe
+it's an easy fix for you?  Otherwise I'll poke at it a little later.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wireless/prism54/isl_ioctl.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/prism54/isl_ioctl.c b/drivers/net/wireless/prism54/isl_ioctl.c
-index 8d1190c..2a62c60 100644
---- a/drivers/net/wireless/prism54/isl_ioctl.c
-+++ b/drivers/net/wireless/prism54/isl_ioctl.c
-@@ -2751,14 +2751,9 @@ prism54_hostapd(struct net_device *ndev, struct iw_point *p)
-            p->length > PRISM2_HOSTAPD_MAX_BUF_SIZE || !p->pointer)
-                return -EINVAL;
- 
--       param = kmalloc(p->length, GFP_KERNEL);
--       if (param = NULL)
--               return -ENOMEM;
--
--       if (copy_from_user(param, p->pointer, p->length)) {
--               kfree(param);
--               return -EFAULT;
--       }
-+	param = memdup_user(p->pointer, p->length);
-+	if (IS_ERR(param))
-+		return PTR_ERR(param);
- 
-        switch (param->cmd) {
-        case PRISM2_SET_ENCRYPTION:
+Thanks,
+  Roland
+-- 
+Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
+http://www.cisco.com/web/about/doing_business/legal/cri/index.html
