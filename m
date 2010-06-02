@@ -1,33 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 01 Jun 2010 07:27:21 +0000
-Subject: Re: [PATCH] ipv6: get rid of ipip6_prl_lock
-Message-Id: <20100601.002721.184817854.davem@davemloft.net>
+From: James Morris <jmorris@namei.org>
+Date: Wed, 02 Jun 2010 01:56:36 +0000
+Subject: Re: [patch] smack: opt_dentry is never null in in
+Message-Id: <alpine.LRH.2.00.1006021156230.12305@tundra.namei.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1275252912.2472.23.camel@edumazet-laptop>
-	<Pine.LNX.4.64.1005302303180.19253@ask.diku.dk>
-	<1275282295.2472.34.camel@edumazet-laptop>
-In-Reply-To: <1275282295.2472.34.camel@edumazet-laptop>
+References: <20100601071404.GH5483@bicker>
+In-Reply-To: <20100601071404.GH5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: eric.dumazet@gmail.com
-Cc: julia@diku.dk, kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, "David P. Quigley" <dpquigl@tycho.nsa.gov>, David Howells <dhowells@redhat.com>, Serge Hallyn <serue@us.ibm.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Mon, 31 May 2010 07:04:55 +0200
+On Tue, 1 Jun 2010, Dan Carpenter wrote:
 
-> [PATCH] ipv6: get rid of ipip6_prl_lock
+> This patch removes some unneeded code for if opt_dentry is null because
+> that can never happen.
 > 
-> As noticed by Julia Lawall, ipip6_tunnel_add_prl() incorrectly calls 
-> kzallloc(..., GFP_KERNEL) while a spinlock is held. She provided
-> a patch to use GFP_ATOMIC instead.
+> The function dereferences "opt_dentry" earlier when it checks 
+> "if (opt_dentry->d_parent = opt_dentry) {".  That code was added in
+> 2008.
 > 
-> One possibility would be to convert this spinlock to a mutex, or
-> preallocate the thing before taking the lock.
+> This function called from security_d_instantiate().  I checked all the 
+> places which call security_d_instantiate() and dentry is always non-null.
+> I also checked the selinux version of this hook and there is a comment
+> which says that dentry should be non-null if called from 
+> d_instantiate().
 > 
-> After RCU conversion, it appears we dont need this lock, since 
-> caller already holds RTNL
-> 
-> Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks everyone.
+
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
+
+-- 
+James Morris
+<jmorris@namei.org>
