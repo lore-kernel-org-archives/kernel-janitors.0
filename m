@@ -1,139 +1,209 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Wed, 30 Jun 2010 21:50:32 +0000
-Subject: [PATCH] Add support for the C variable in the coccicheck script
-Message-Id: <1277934632-6802-1-git-send-email-npalix@diku.dk>
+From: Borislav Petkov <bp@amd64.org>
+Date: Wed, 02 Jun 2010 16:09:29 +0000
+Subject: [PATCH] x86, cacheinfo: Carve out L3 cache slot accessors
+Message-Id: <20100602160929.GH18327@aftab>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100601071126.GF5483@bicker>
+ <20100601082305.GA10650@aftab>
+In-Reply-To: <20100601082305.GA10650@aftab>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, =?UTF-8?q?Am=C3=A9rico=20Wang?= <xiyou.wangcong@gmail.com>, Andy Isaacson <adi@hexapodia.org>, Linus Torvalds <torvalds@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>, walter harms <wharms@bfs.de>, Joerg Roedel <joro@8bytes.org>, Jan Engelhardt <jengelh@medozas.de>
-Cc: Nicolas Palix <npalix@diku.dk>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, Dan Carpenter <error27@gmail.com>, Dave Jones <davej@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-This patch makes it possible to use the Coccinelle checker with the C
-variable of the build system. To check only newly edited code, the
-following command may be used:
+This is in preparation for disabling L3 cache indices after having
+received correctable ECCs in the L3 cache. Now we allow for initial
+setting of a disabled index slot (write once) and deny writing new
+indices to it after it has been disabled. Also, we deny using both slots
+to disable one and the same index.
 
-'make C={1,2} CHECK="scripts/coccicheck"'
+Userspace can restore the previously disabled indices by rewriting those
+sysfs entries when booting.
 
-This runs every semantic patch in scripts/coccinelle by default. The
-COCCI variable may additionally be used to only apply a single
-semantic patch.
+Cleanup and reorganize code while at it.
 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Borislav Petkov <borislav.petkov@amd.com>
 ---
- scripts/coccicheck |   76 +++++++++++++++++++++++++++++++++++-----------------
- 1 files changed, 51 insertions(+), 25 deletions(-)
+ arch/x86/kernel/cpu/intel_cacheinfo.c |  108 +++++++++++++++++++++++++--------
+ 1 files changed, 82 insertions(+), 26 deletions(-)
 
-diff --git a/scripts/coccicheck b/scripts/coccicheck
-index 037424b..b8bcf1f 100755
---- a/scripts/coccicheck
-+++ b/scripts/coccicheck
-@@ -2,53 +2,79 @@
- 
- SPATCH="`which ${SPATCH:=spatch}`"
- 
-+if [ "$C" = "1" -o "$C" = "2" ]; then
-+    ONLINE=1
-+
-+# This requires Coccinelle >= 0.2.3
-+#    FLAGS="-ignore_unknown_options -very_quiet"
-+#    OPTIONS=$*
-+
-+# Workaround for Coccinelle < 0.2.3
-+    FLAGS="-I $srctree/include -very_quiet"
-+    shift $(( $# - 1 ))
-+    OPTIONS=$1
-+else
-+    ONLINE=0
-+    FLAGS="-very_quiet"
-+fi
-+
- if [ ! -x "$SPATCH" ]; then
-     echo 'spatch is part of the Coccinelle project and is available at http://coccinelle.lip6.fr/'
-     exit 1
- fi
- 
- if [ "$MODE" = "" ] ; then
--    echo 'You have not explicitly specify the mode to use. Fallback to "report".'
--    echo 'You can specify the mode with "make coccicheck MODE=<mode>"'
--    echo 'Available modes are: report, patch, context, org'
-+    if [ "$ONLINE" = "0" ] ; then
-+	echo 'You have not explicitly specify the mode to use. Fallback to "report".'
-+	echo 'You can specify the mode with "make coccicheck MODE=<mode>"'
-+	echo 'Available modes are: report, patch, context, org'
-+    fi
-     MODE="report"
- fi
- 
--echo ''
--echo 'Please check for false positives in the output before submitting a patch.'
--echo 'When using "patch" mode, carefully review the patch before submitting it.'
--echo ''
-+if [ "$ONLINE" = "0" ] ; then
-+    echo ''
-+    echo 'Please check for false positives in the output before submitting a patch.'
-+    echo 'When using "patch" mode, carefully review the patch before submitting it.'
-+    echo ''
-+fi
- 
--function coccinelle {
-+coccinelle () {
-     COCCI="$1"
--    DIR="$2"
- 
-     OPT=`grep "Option" $COCCI | cut -d':' -f2`
--    FILE=`echo $COCCI | sed "s|$DIR/||"`
- 
--    echo "Processing `basename $COCCI` with option(s) \"$OPT\""
--    echo 'Message example to submit a patch:'
-+#   The option '-parse_cocci' can be used to syntaxically check the SmPL files.
-+#
-+#    $SPATCH -D $MODE $FLAGS -parse_cocci $COCCI $OPT > /dev/null
- 
--    sed -e '/\/\/\//!d' -e 's|^///||' $COCCI
-+    if [ "$ONLINE" = "0" ] ; then
- 
--    echo ' The semantic patch that makes this change is available'
--    echo " in $FILE."
--    echo ''
--    echo ' More information about semantic patching is available at'
--    echo ' http://coccinelle.lip6.fr/'
--    echo ''
-+	FILE=`echo $COCCI | sed "s|$srctree/||"`
- 
--#   The option '-parse_cocci' can be used to syntaxically check the SmPL files.
--#
--#    $SPATCH -D $MODE -very_quiet -parse_cocci $COCCI $OPT > /dev/null
-+	echo "Processing `basename $COCCI` with option(s) \"$OPT\""
-+	echo 'Message example to submit a patch:'
-+
-+	sed -e '/\/\/\//!d' -e 's|^///||' $COCCI
-+
-+	echo ' The semantic patch that makes this change is available'
-+	echo " in $FILE."
-+	echo ''
-+	echo ' More information about semantic patching is available at'
-+	echo ' http://coccinelle.lip6.fr/'
-+	echo ''
-+
-+	$SPATCH -D $MODE $FLAGS -sp_file $COCCI $OPT -dir $srctree || exit 1
-+    else
-+	$SPATCH -D $MODE $FLAGS -sp_file $COCCI $OPT $OPTIONS || exit 1
-+    fi
- 
--    $SPATCH -D $MODE -very_quiet -sp_file $COCCI $OPT -dir $DIR
+diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
+index 33eae20..d6587ee 100644
+--- a/arch/x86/kernel/cpu/intel_cacheinfo.c
++++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
+@@ -347,8 +347,8 @@ static struct amd_l3_cache * __cpuinit amd_init_l3_cache(int node)
+ 	return l3;
  }
  
- if [ "$COCCI" = "" ] ; then
-     for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
--	coccinelle $f $srctree;
-+	coccinelle $f
-     done
- else
--    coccinelle $COCCI $srctree
-+    coccinelle $COCCI
- fi
+-static void __cpuinit
+-amd_check_l3_disable(int index, struct _cpuid4_info_regs *this_leaf)
++static void __cpuinit amd_check_l3_disable(struct _cpuid4_info_regs *this_leaf,
++					   int index)
+ {
+ 	int node;
+ 
+@@ -396,20 +396,39 @@ amd_check_l3_disable(int index, struct _cpuid4_info_regs *this_leaf)
+ 	this_leaf->l3 = l3_caches[node];
+ }
+ 
++/*
++ * check whether a slot used for disabling an L3 index is occupied.
++ * @l3: L3 cache descriptor
++ * @slot: slot number (0..1)
++ *
++ * @returns: the disabled index if used or negative value if slot free.
++ */
++int amd_get_l3_disable_slot(struct amd_l3_cache *l3, unsigned slot)
++{
++	unsigned int reg = 0;
++
++	pci_read_config_dword(l3->dev, 0x1BC + slot * 4, &reg);
++
++	/* check whether this slot is activated already */
++	if (reg & (3UL << 30))
++		return reg & 0xfff;
++
++	return -1;
++}
++
+ static ssize_t show_cache_disable(struct _cpuid4_info *this_leaf, char *buf,
+ 				  unsigned int slot)
+ {
+-	struct pci_dev *dev = this_leaf->l3->dev;
+-	unsigned int reg = 0;
++	int index;
+ 
+ 	if (!this_leaf->l3 || !this_leaf->l3->can_disable)
+ 		return -EINVAL;
+ 
+-	if (!dev)
+-		return -EINVAL;
++	index = amd_get_l3_disable_slot(this_leaf->l3, slot);
++	if (index >= 0)
++		return sprintf(buf, "%d\n", index);
+ 
+-	pci_read_config_dword(dev, 0x1BC + slot * 4, &reg);
+-	return sprintf(buf, "0x%08x\n", reg);
++	return sprintf(buf, "FREE\n");
+ }
+ 
+ #define SHOW_CACHE_DISABLE(slot)					\
+@@ -451,37 +470,74 @@ static void amd_l3_disable_index(struct amd_l3_cache *l3, int cpu,
+ 	}
+ }
+ 
+-
+-static ssize_t store_cache_disable(struct _cpuid4_info *this_leaf,
+-				   const char *buf, size_t count,
+-				   unsigned int slot)
++/*
++ * disable a L3 cache index by using a disable-slot
++ *
++ * @l3:    L3 cache descriptor
++ * @cpu:   A CPU on the node containing the L3 cache
++ * @slot:  slot number (0..1)
++ * @index: index to disable
++ *
++ * @return: 0 on success, error status on failure
++ */
++int amd_set_l3_disable_slot(struct amd_l3_cache *l3, int cpu, unsigned slot,
++			    unsigned long index)
+ {
+-	struct pci_dev *dev = this_leaf->l3->dev;
+-	int cpu = cpumask_first(to_cpumask(this_leaf->shared_cpu_map));
+-	unsigned long val = 0;
++	int ret = 0;
+ 
+ #define SUBCACHE_MASK	(3UL << 20)
+ #define SUBCACHE_INDEX	0xfff
+ 
+-	if (!this_leaf->l3 || !this_leaf->l3->can_disable)
++	/*
++	 * check whether this slot is already used or
++	 * the index is already disabled
++	 */
++	ret = amd_get_l3_disable_slot(l3, slot);
++	if (ret > 0)
+ 		return -EINVAL;
+ 
++	/*
++	 * check whether the other slot has disabled the
++	 * same index already
++	 */
++	if (index = amd_get_l3_disable_slot(l3, !slot))
++		return -EINVAL;
++
++	/* do not allow writes outside of allowed bits */
++	if ((index & ~(SUBCACHE_MASK | SUBCACHE_INDEX)) ||
++	    ((index & SUBCACHE_INDEX) > l3->indices))
++		return -EINVAL;
++
++	amd_l3_disable_index(l3, cpu, slot, index);
++
++	return 0;
++}
++
++static ssize_t store_cache_disable(struct _cpuid4_info *this_leaf,
++				  const char *buf, size_t count,
++				  unsigned int slot)
++{
++	unsigned long val = 0;
++	int cpu, err = 0;
++
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	if (!dev)
++	if (!this_leaf->l3 || !this_leaf->l3->can_disable)
+ 		return -EINVAL;
+ 
+-	if (strict_strtoul(buf, 10, &val) < 0)
+-		return -EINVAL;
++	cpu = cpumask_first(to_cpumask(this_leaf->shared_cpu_map));
+ 
+-	/* do not allow writes outside of allowed bits */
+-	if ((val & ~(SUBCACHE_MASK | SUBCACHE_INDEX)) ||
+-	    ((val & SUBCACHE_INDEX) > this_leaf->l3->indices))
++	if (strict_strtoul(buf, 10, &val) < 0)
+ 		return -EINVAL;
+ 
+-	amd_l3_disable_index(this_leaf->l3, cpu, slot, val);
+-
++	err = amd_set_l3_disable_slot(this_leaf->l3, cpu, slot, val);
++	if (err) {
++		if (err = -EEXIST)
++			printk(KERN_WARNING "L3 disable slot %d in use!\n",
++					    slot);
++		return err;
++	}
+ 	return count;
+ }
+ 
+@@ -502,7 +558,7 @@ static struct _cache_attr cache_disable_1 = __ATTR(cache_disable_1, 0644,
+ 
+ #else	/* CONFIG_CPU_SUP_AMD */
+ static void __cpuinit
+-amd_check_l3_disable(int index, struct _cpuid4_info_regs *this_leaf)
++amd_check_l3_disable(struct _cpuid4_info_regs *this_leaf, int index)
+ {
+ };
+ #endif /* CONFIG_CPU_SUP_AMD */
+@@ -518,7 +574,7 @@ __cpuinit cpuid4_cache_lookup_regs(int index,
+ 
+ 	if (boot_cpu_data.x86_vendor = X86_VENDOR_AMD) {
+ 		amd_cpuid4(index, &eax, &ebx, &ecx);
+-		amd_check_l3_disable(index, this_leaf);
++		amd_check_l3_disable(this_leaf, index);
+ 	} else {
+ 		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
+ 	}
 -- 
-1.7.0.4
+1.6.4.4
 
+-- 
+Regards/Gruss,
+Boris.
+
+Operating Systems Research Center
+Advanced Micro Devices, Inc.
