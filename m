@@ -1,15 +1,16 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Tue, 01 Jun 2010 21:47:57 +0000
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 02 Jun 2010 05:29:04 +0000
 Subject: Re: [PATCH 6/17] arch/x86/kernel: Add missing spin_unlock
-Message-Id: <alpine.LFD.2.00.1006012346040.2933@localhost.localdomain>
+Message-Id: <Pine.LNX.4.64.1006020727380.18272@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005261755260.23743@ask.diku.dk> <20100601141529.0c99f22c.akpm@linux-foundation.org>
+References: <Pine.LNX.4.64.1005261755260.23743@ask.diku.dk>
+ <20100601141529.0c99f22c.akpm@linux-foundation.org>
 In-Reply-To: <20100601141529.0c99f22c.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Julia Lawall <julia@diku.dk>, Joerg Roedel <joerg.roedel@amd.com>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Joerg Roedel <joerg.roedel@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 On Tue, 1 Jun 2010, Andrew Morton wrote:
 
@@ -116,12 +117,11 @@ On Tue, 1 Jun 2010, Andrew Morton wrote:
 > -
 > -	return 0;
 > +out:
-
-Moving the label _before_ spin_unlock() might fix it really. :)
-
 > +	return ret;
 >  }
 
-Thanks,
+I don't have the impression that this actually fixes the problem, only the 
+code structure.  Out should be above the spin_lock, and there should just 
+be one return, of ret.  I will send another patch shortly.
 
-	tglx
+julia
