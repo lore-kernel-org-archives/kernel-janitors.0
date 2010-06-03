@@ -1,43 +1,49 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 08 Jun 2010 20:35:21 +0000
-Subject: Re: [patch 4/7] selinux: fix error codes in cond_read_node()
-Message-Id: <20100608203521.GC5483@bicker>
+From: Greg KH <greg@kroah.com>
+Date: Thu, 03 Jun 2010 17:45:58 +0000
+Subject: Re: [PATCH 11/11] drivers/usb/serial: Eliminate a NULL pointer
+Message-Id: <20100603174558.GA3834@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100607210703.GT5483@bicker>
-In-Reply-To: <20100607210703.GT5483@bicker>
+References: <Pine.LNX.4.64.1005271437200.5422@ask.diku.dk>
+ <20100527131539.GA26198@localhost>
+In-Reply-To: <20100527131539.GA26198@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Johan Hovold <jhovold@gmail.com>
+Cc: Julia Lawall <julia@diku.dk>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 08, 2010 at 04:19:18PM -0400, Eric Paris wrote:
-> > + =A0 =A0 =A0 rc =3D cond_read_av_list(p, fp, &node->false_list, node->=
-true_list);
-> > + =A0 =A0 =A0 if (rc < 0)
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto err;
->=20
-> I know that lots of the next_entry() calls use if (rc < 0) [unrelated
-> note I think those need to be fixed too] but most of the code uses if
-> (rc) and I strongly prefer if (rc) as it's cleaner and faster from a
-> micro architecture point of view.  Would you mind re-spinning this
-> one?
->=20
-> -Eric
+On Thu, May 27, 2010 at 03:15:39PM +0200, Johan Hovold wrote:
+> Hi Julia, 
+> 
+> On Thu, May 27, 2010 at 02:37:39PM +0200, Julia Lawall wrote:
+> > From: Julia Lawall <julia@diku.dk>
+> > 
+> > The assignment seems completely unnecessary if mos7840_port is NULL.
+> > 
+> [...]
+> > ---
+> >  drivers/usb/serial/mos7840.c |    1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+> > index f8424d1..585b7e6 100644
+> > --- a/drivers/usb/serial/mos7840.c
+> > +++ b/drivers/usb/serial/mos7840.c
+> > @@ -730,7 +730,6 @@ static void mos7840_bulk_in_callback(struct urb *urb)
+> >  	mos7840_port = urb->context;
+> >  	if (!mos7840_port) {
+> >  		dbg("%s", "NULL mos7840_port pointer");
+> > -		mos7840_port->read_urb_busy = false;
+> >  		return;
+> >  	}
+> 
+> I stumbled over this one a couple of weeks ago. There a patch sitting in
+> Greg's queue already:
+> 
+> 	http://thread.gmane.org/gmane.linux.usb.general/31668
 
-The thing I like about if (rc < 0) is that it's makes it explicit that
-we expect negative error values.  My gut says this will make it easier
-for static checkers to track what the value of "rc" is.
+Which is now in my tree.
 
-But I don't have strong feelings about this.
+thanks,
 
-I'll resend the whole set tomorrow or the next day with all the changes
-you suggested.
-
-regards,
-dan carpenter
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+greg k-h
