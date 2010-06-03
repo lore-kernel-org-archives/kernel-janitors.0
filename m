@@ -1,49 +1,38 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 03 Jun 2010 17:45:58 +0000
-Subject: Re: [PATCH 11/11] drivers/usb/serial: Eliminate a NULL pointer
-Message-Id: <20100603174558.GA3834@kroah.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 03 Jun 2010 10:05:35 +0000
+Subject: [patch] tehuti: return -EFAULT on copy_to_user errors
+Message-Id: <20100603100535.GT5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005271437200.5422@ask.diku.dk>
- <20100527131539.GA26198@localhost>
-In-Reply-To: <20100527131539.GA26198@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johan Hovold <jhovold@gmail.com>
-Cc: Julia Lawall <julia@diku.dk>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexander Indenbaum <baum@tehutinetworks.net>
+Cc: Andy Gospodarek <andy@greyhouse.net>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Stephen Hemminger <shemminger@vyatta.com>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, May 27, 2010 at 03:15:39PM +0200, Johan Hovold wrote:
-> Hi Julia, 
-> 
-> On Thu, May 27, 2010 at 02:37:39PM +0200, Julia Lawall wrote:
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > The assignment seems completely unnecessary if mos7840_port is NULL.
-> > 
-> [...]
-> > ---
-> >  drivers/usb/serial/mos7840.c |    1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
-> > index f8424d1..585b7e6 100644
-> > --- a/drivers/usb/serial/mos7840.c
-> > +++ b/drivers/usb/serial/mos7840.c
-> > @@ -730,7 +730,6 @@ static void mos7840_bulk_in_callback(struct urb *urb)
-> >  	mos7840_port = urb->context;
-> >  	if (!mos7840_port) {
-> >  		dbg("%s", "NULL mos7840_port pointer");
-> > -		mos7840_port->read_urb_busy = false;
-> >  		return;
-> >  	}
-> 
-> I stumbled over this one a couple of weeks ago. There a patch sitting in
-> Greg's queue already:
-> 
-> 	http://thread.gmane.org/gmane.linux.usb.general/31668
+copy_to_user() returns the number of bytes remaining but we want to
+return a negative error code here.
 
-Which is now in my tree.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-thanks,
-
-greg k-h
+diff --git a/drivers/net/tehuti.c b/drivers/net/tehuti.c
+index 20ab161..737df60 100644
+--- a/drivers/net/tehuti.c
++++ b/drivers/net/tehuti.c
+@@ -646,7 +646,7 @@ static int bdx_ioctl_priv(struct net_device *ndev, struct ifreq *ifr, int cmd)
+ 		error = copy_from_user(data, ifr->ifr_data, sizeof(data));
+ 		if (error) {
+ 			pr_err("cant copy from user\n");
+-			RET(error);
++			RET(-EFAULT);
+ 		}
+ 		DBG("%d 0x%x 0x%x\n", data[0], data[1], data[2]);
+ 	}
+@@ -665,7 +665,7 @@ static int bdx_ioctl_priv(struct net_device *ndev, struct ifreq *ifr, int cmd)
+ 		    data[2]);
+ 		error = copy_to_user(ifr->ifr_data, data, sizeof(data));
+ 		if (error)
+-			RET(error);
++			RET(-EFAULT);
+ 		break;
+ 
+ 	case BDX_OP_WRITE:
