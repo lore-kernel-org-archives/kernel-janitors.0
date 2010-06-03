@@ -1,106 +1,65 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:15:32 +0000
-Subject: [PATCH 10/25] sg: remove casts from void*
-Message-Id: <1277806533-31044-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 03 Jun 2010 10:07:46 +0000
+Subject: [patch] x86: xsave: cleanup return codes in check_for_xstate()
+Message-Id: <20100603100746.GU5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Doug Gilbert <dgilbert@interlog.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Jens Axboe <jens.axboe@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Alexey Dobriyan <adobriyan@gmail.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>, Avi Kivity <avi@redhat.com>, Hongjiu Lu <hjl.tools@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove unnesessary casts from void*.
+The places which call check_for_xstate() only care about zero or
+non-zero so this patch doesn't change how the code runs, but it's a 
+cleanup.  The main reason for this patch is that I'm looking for places
+which don't return -EFAULT for copy_from_user() failures.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/scsi/sg.c |   18 +++++++++---------
- 1 files changed, 9 insertions(+), 9 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index ef752b2..5fd2964 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -210,7 +210,7 @@ static void sg_put_dev(Sg_device *sdp);
+diff --git a/arch/x86/kernel/xsave.c b/arch/x86/kernel/xsave.c
+index 37e68fc..9801498 100644
+--- a/arch/x86/kernel/xsave.c
++++ b/arch/x86/kernel/xsave.c
+@@ -36,15 +36,14 @@ int check_for_xstate(struct i387_fxsave_struct __user *buf,
  
- static int sg_allow_access(struct file *filp, unsigned char *cmd)
- {
--	struct sg_fd *sfp = (struct sg_fd *)filp->private_data;
-+	struct sg_fd *sfp = filp->private_data;
+ 	err = __copy_from_user(fx_sw_user, &buf->sw_reserved[0],
+ 			       sizeof(struct _fpx_sw_bytes));
+-
+ 	if (err)
+-		return err;
++		return -EFAULT;
  
- 	if (sfp->parentdp->device->type = TYPE_SCANNER)
- 		return 0;
-@@ -318,7 +318,7 @@ sg_release(struct inode *inode, struct file *filp)
- 	Sg_device *sdp;
- 	Sg_fd *sfp;
+ 	/*
+ 	 * First Magic check failed.
+ 	 */
+ 	if (fx_sw_user->magic1 != FP_XSTATE_MAGIC1)
+-		return -1;
++		return -EINVAL;
  
--	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
-+	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
- 	SCSI_LOG_TIMEOUT(3, printk("sg_release: %s\n", sdp->disk->disk_name));
+ 	/*
+ 	 * Check for error scenarios.
+@@ -52,19 +51,21 @@ int check_for_xstate(struct i387_fxsave_struct __user *buf,
+ 	if (fx_sw_user->xstate_size < min_xstate_size ||
+ 	    fx_sw_user->xstate_size > xstate_size ||
+ 	    fx_sw_user->xstate_size > fx_sw_user->extended_size)
+-		return -1;
++		return -EINVAL;
  
-@@ -342,7 +342,7 @@ sg_read(struct file *filp, char __user *buf, size_t count, loff_t * ppos)
- 	struct sg_header *old_hdr = NULL;
- 	int retval = 0;
+ 	err = __get_user(magic2, (__u32 *) (((void *)fpstate) +
+ 					    fx_sw_user->extended_size -
+ 					    FP_XSTATE_MAGIC2_SIZE));
++	if (err)
++		return err;
+ 	/*
+ 	 * Check for the presence of second magic word at the end of memory
+ 	 * layout. This detects the case where the user just copied the legacy
+ 	 * fpstate layout with out copying the extended state information
+ 	 * in the memory layout.
+ 	 */
+-	if (err || magic2 != FP_XSTATE_MAGIC2)
+-		return -1;
++	if (magic2 != FP_XSTATE_MAGIC2)
++		return -EFAULT;
  
--	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
-+	if ((!(sfp =  filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
- 	SCSI_LOG_TIMEOUT(3, printk("sg_read: %s, count=%d\n",
- 				   sdp->disk->disk_name, (int) count));
-@@ -533,7 +533,7 @@ sg_write(struct file *filp, const char __user *buf, size_t count, loff_t * ppos)
- 	sg_io_hdr_t *hp;
- 	unsigned char cmnd[MAX_COMMAND_SIZE];
- 
--	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
-+	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
- 	SCSI_LOG_TIMEOUT(3, printk("sg_write: %s, count=%d\n",
- 				   sdp->disk->disk_name, (int) count));
-@@ -768,7 +768,7 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
- 	Sg_request *srp;
- 	unsigned long iflags;
- 
--	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
-+	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
- 
- 	SCSI_LOG_TIMEOUT(3, printk("sg_ioctl: %s, cmd=0x%x\n",
-@@ -1096,7 +1096,7 @@ static long sg_compat_ioctl(struct file *filp, unsigned int cmd_in, unsigned lon
- 	Sg_fd *sfp;
- 	struct scsi_device *sdev;
- 
--	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
-+	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
- 
- 	sdev = sdp->device;
-@@ -1122,7 +1122,7 @@ sg_poll(struct file *filp, poll_table * wait)
- 	int count = 0;
- 	unsigned long iflags;
- 
--	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp))
-+	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp))
- 	    || sfp->closed)
- 		return POLLERR;
- 	poll_wait(filp, &sfp->read_wait, wait);
-@@ -1153,7 +1153,7 @@ sg_fasync(int fd, struct file *filp, int mode)
- 	Sg_device *sdp;
- 	Sg_fd *sfp;
- 
--	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
-+	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
- 	SCSI_LOG_TIMEOUT(3, printk("sg_fasync: %s, mode=%d\n",
- 				   sdp->disk->disk_name, mode));
-@@ -1208,7 +1208,7 @@ sg_mmap(struct file *filp, struct vm_area_struct *vma)
- 	Sg_scatter_hold *rsv_schp;
- 	int k, length;
- 
--	if ((!filp) || (!vma) || (!(sfp = (Sg_fd *) filp->private_data)))
-+	if ((!filp) || (!vma) || (!(sfp = filp->private_data)))
- 		return -ENXIO;
- 	req_sz = vma->vm_end - vma->vm_start;
- 	SCSI_LOG_TIMEOUT(3, printk("sg_mmap starting, vm_start=%p, len=%d\n",
--- 
-1.7.0.4
-
+ 	return 0;
+ }
