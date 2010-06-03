@@ -1,84 +1,46 @@
-From: shenghui <crosslonelyover@gmail.com>
-Date: Tue, 08 Jun 2010 11:15:34 +0000
-Subject: Re: [PATCH] Documentation/filesystems/xip.txt: clarify the statement:
-Message-Id: <AANLkTikNN8A0X2z8TL0MPHqjXrS-4uqrkVcoV_dqxeiv@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 03 Jun 2010 09:56:13 +0000
+Subject: [patch] isdn/kcapi: return -EFAULT on copy_from_user errors
+Message-Id: <20100603095613.GP5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTik9UM9ta3r7ZNt8Z-CNS6Vz-aIWb_qewgECFfoe@mail.gmail.com>
-	<20100608092458.GA5483@bicker>
-In-Reply-To: <20100608092458.GA5483@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, cotte@de.ibm.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Jan Kiszka <jan.kiszka@web.de>, Tilman Schmidt <tilman@imap.cc>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2010/6/8 Dan Carpenter <error27@gmail.com>:
-> On Tue, Jun 08, 2010 at 04:37:04PM +0800, shenghui wrote:
->> diff --git a/Documentation/filesystems/xip.txt
->> b/Documentation/filesystems/xip.txt
->> index 0466ee5..bef4120 100644
->> --- a/Documentation/filesystems/xip.txt
->> +++ b/Documentation/filesystems/xip.txt
->> @@ -35,8 +35,7 @@ is performed. A struct block_device reference is
->> used to address the device,
->
-> I don't know about xip, but the patch is malformed.  It's line wrapped
-> here.
->
->>  and a sector_t argument is used to identify the individual block. As an
->>  alternative, memory technology devices can be used for this.
->>
->> -The block device operation is optional, these block devices support it as of
->> -today:
->> +The block device operation is mandatory for execute-in-place, these
->> block devices support it as of today:
->
-> And here.
->
->>  - dcssblk: s390 dcss block device driver
->>
->
-> There is documentation in Documentation/email-clients.txt.  Send a patch
-> to yourself, then save it as a raw document.
->
-> cd path/to/linux
-> cat raw-email | patch -p1
->
-> If it applies correctly resend your patch to the list.
->
-> regards,
-> dan carpenter
->
->
->
+copy_from_user() returns the number of bytes remaining but we should
+return -EFAULT here.  The error code gets returned to the user.  Both 
+old_capi_manufacturer() and capi20_manufacturer() had other places
+that already returned -EFAULT so this won't break anything.
 
-Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
----
- Documentation/filesystems/xip.txt |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/Documentation/filesystems/xip.txt
-b/Documentation/filesystems/xip.txt
-index 0466ee5..caaa8b4 100644
---- a/Documentation/filesystems/xip.txt
-+++ b/Documentation/filesystems/xip.txt
-@@ -35,8 +35,8 @@ is performed. A struct block_device reference is
-used to address the device,
- and a sector_t argument is used to identify the individual block. As an
- alternative, memory technology devices can be used for this.
-
--The block device operation is optional, these block devices support it as of
--today:
-+The block device operation is mandatory for execute-in-place, these block
-+devices support it as of today:
- - dcssblk: s390 dcss block device driver
-
- An address space operation named get_xip_mem is used to retrieve references
--- 
-1.7.0.1
-
-
--- 
-
-
-Thanks and Best Regards,
-shenghui
+diff --git a/drivers/isdn/capi/kcapi.c b/drivers/isdn/capi/kcapi.c
+index bde3c88..b054494 100644
+--- a/drivers/isdn/capi/kcapi.c
++++ b/drivers/isdn/capi/kcapi.c
+@@ -1020,12 +1020,12 @@ static int old_capi_manufacturer(unsigned int cmd, void __user *data)
+ 		if (cmd = AVMB1_ADDCARD) {
+ 		   if ((retval = copy_from_user(&cdef, data,
+ 					    sizeof(avmb1_carddef))))
+-			   return retval;
++			   return -EFAULT;
+ 		   cdef.cardtype = AVM_CARDTYPE_B1;
+ 		} else {
+ 		   if ((retval = copy_from_user(&cdef, data,
+ 					    sizeof(avmb1_extcarddef))))
+-			   return retval;
++			   return -EFAULT;
+ 		}
+ 		cparams.port = cdef.port;
+ 		cparams.irq = cdef.irq;
+@@ -1218,7 +1218,7 @@ int capi20_manufacturer(unsigned int cmd, void __user *data)
+ 		kcapi_carddef cdef;
+ 
+ 		if ((retval = copy_from_user(&cdef, data, sizeof(cdef))))
+-			return retval;
++			return -EFAULT;
+ 
+ 		cparams.port = cdef.port;
+ 		cparams.irq = cdef.irq;
