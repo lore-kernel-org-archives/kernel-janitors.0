@@ -1,34 +1,58 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:16:33 +0000
-Subject: [PATCH 25/25] wl_profile: remove casts from void*
-Message-Id: <1277806594-31554-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 04 Jun 2010 10:24:13 +0000
+Subject: [patch] drm/vmwgfx: return -EFAULT for copy_to_user errors
+Message-Id: <20100604102413.GA5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, "Prashant P. Shah" <pshah.mumbai@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Henk de Groot <pe1dnn@amsat.org>, Andy Shevchenko <ext-andriy.shevchenko@nokia.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Remove unnesessary casts from void*.
+copy_to/from_user() returns the number of bytes remaining to be copied
+but we want to return a negative error code here.  This gets returned to
+userspace.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/wlags49_h2/wl_profile.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/wlags49_h2/wl_profile.c b/drivers/staging/wlags49_h2/wl_profile.c
-index 292d579..7a1337d 100644
---- a/drivers/staging/wlags49_h2/wl_profile.c
-+++ b/drivers/staging/wlags49_h2/wl_profile.c
-@@ -169,7 +169,7 @@ void parse_config(struct net_device *dev)
- 	DBG_ENTER(DbgInfo);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
+index f8fbbc6..8612378 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
+@@ -597,8 +597,10 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
  
- 	/* Get the wavelan specific info for this device */
--	wvlan_config = (struct wl_private *)dev->priv;
-+	wvlan_config = dev->priv;
- 	if (wvlan_config = NULL) {
- 		DBG_ERROR(DbgInfo, "Wavelan specific info struct not present?\n");
- 		return;
--- 
-1.7.0.4
-
+ 	ret = copy_from_user(srf->sizes, user_sizes,
+ 			     srf->num_sizes * sizeof(*srf->sizes));
+-	if (unlikely(ret != 0))
++	if (unlikely(ret != 0)) {
++		ret = -EFAULT;
+ 		goto out_err1;
++	}
+ 
+ 	if (srf->scanout &&
+ 	    srf->num_sizes = 1 &&
+@@ -697,9 +699,11 @@ int vmw_surface_reference_ioctl(struct drm_device *dev, void *data,
+ 	if (user_sizes)
+ 		ret = copy_to_user(user_sizes, srf->sizes,
+ 				   srf->num_sizes * sizeof(*srf->sizes));
+-	if (unlikely(ret != 0))
++	if (unlikely(ret != 0)) {
+ 		DRM_ERROR("copy_to_user failed %p %u\n",
+ 			  user_sizes, srf->num_sizes);
++		ret = -EFAULT;
++	}
+ out_bad_resource:
+ out_no_reference:
+ 	ttm_base_object_unref(&base);
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index dbd36b8..ba15038 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -644,6 +644,7 @@ int vmw_execbuf_ioctl(struct drm_device *dev, void *data,
+ 	ret = copy_from_user(cmd, user_cmd, arg->command_size);
+ 
+ 	if (unlikely(ret != 0)) {
++		ret = -EFAULT;
+ 		DRM_ERROR("Failed copying commands.\n");
+ 		goto out_commit;
+ 	}
