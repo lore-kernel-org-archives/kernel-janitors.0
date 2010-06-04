@@ -1,52 +1,33 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:16:29 +0000
-Subject: [PATCH 24/25] wl_pci: remove casts from void*
-Message-Id: <1277806590-31520-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 04 Jun 2010 10:23:21 +0000
+Subject: [patch] drm/drm_crtc: return -EFAULT on copy_to_user errors
+Message-Id: <20100604102321.GZ5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Henk de Groot <pe1dnn@amsat.org>, Huang Weiyi <weiyi.huang@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Remove unnesessary casts from void*.
+copy_from_user() returns the number of bytes left to be copied but we
+want to return a negative error code here.  This is in the ioctl handler
+so the error code get returned to userspace.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/wlags49_h2/wl_pci.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/wlags49_h2/wl_pci.c b/drivers/staging/wlags49_h2/wl_pci.c
-index 6751b4b..af4f4f8 100644
---- a/drivers/staging/wlags49_h2/wl_pci.c
-+++ b/drivers/staging/wlags49_h2/wl_pci.c
-@@ -465,7 +465,7 @@ void __devexit wl_pci_remove(struct pci_dev *pdev)
-     free_irq( dev->irq, dev );
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index 994d23b..57cea01 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -1840,8 +1840,10 @@ int drm_mode_dirtyfb_ioctl(struct drm_device *dev,
  
- #ifdef ENABLE_DMA
--    wl_pci_dma_free( pdev, (struct wl_private *)dev->priv );
-+    wl_pci_dma_free( pdev, dev->priv );
- #endif
- 
-     wl_device_dealloc( dev );
-@@ -534,7 +534,7 @@ int wl_pci_setup( struct pci_dev *pdev )
- 
- #ifdef ENABLE_DMA
-     /* Allocate DMA Descriptors */
--    if( wl_pci_dma_alloc( pdev, (struct wl_private *)dev->priv ) < 0 ) {
-+    if( wl_pci_dma_alloc( pdev, dev->priv ) < 0 ) {
-         DBG_ERROR( DbgInfo, "Could not allocate DMA descriptor memory!!!\n" );
-         DBG_LEAVE( DbgInfo );
-         return -ENOMEM;
-@@ -570,7 +570,7 @@ int wl_pci_setup( struct pci_dev *pdev )
+ 		ret = copy_from_user(clips, clips_ptr,
+ 				     num_clips * sizeof(*clips));
+-		if (ret)
++		if (ret) {
++			ret = -EFAULT;
+ 			goto out_err2;
++		}
  	}
  
-     /* Make sure interrupts are enabled properly for CardBus */
--    lp = (struct wl_private *)dev->priv;
-+    lp = dev->priv;
- 
-     if( lp->hcfCtx.IFB_BusType = CFG_NIC_BUS_TYPE_CARDBUS ||
- 	    lp->hcfCtx.IFB_BusType = CFG_NIC_BUS_TYPE_PCI 		) {
--- 
-1.7.0.4
-
+ 	if (fb->funcs->dirty) {
