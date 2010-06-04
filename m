@@ -1,27 +1,31 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 21 Jun 2010 06:46:35 +0000
-Subject: [patch] pci: off by one in dmar_get_fault_reason()
-Message-Id: <20100621064635.GB5940@bicker>
+Date: Fri, 04 Jun 2010 10:20:46 +0000
+Subject: [patch] vt_ioctl: return -EFAULT on copy_from_user errors
+Message-Id: <20100604102046.GY5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Alan Cox <alan@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This should be '<' here instead of '<=' so we don't go past the end of
-the array.
+copy_from_user() returns the number of bytes remaining but we want to
+return a negative error code here.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/pci/dmar.c b/drivers/pci/dmar.c
-index 0a19708..3043636 100644
---- a/drivers/pci/dmar.c
-+++ b/drivers/pci/dmar.c
-@@ -1208,7 +1208,7 @@ static const char *intr_remap_fault_reasons[]  
- const char *dmar_get_fault_reason(u8 fault_reason, int *fault_type)
- {
--	if (fault_reason >= 0x20 && (fault_reason <= 0x20 +
-+	if (fault_reason >= 0x20 && (fault_reason < 0x20 +
- 				     ARRAY_SIZE(intr_remap_fault_reasons))) {
- 		*fault_type = INTR_REMAP;
- 		return intr_remap_fault_reasons[fault_reason - 0x20];
+diff --git a/drivers/char/vt_ioctl.c b/drivers/char/vt_ioctl.c
+index 6aa1028..cb19dbc 100644
+--- a/drivers/char/vt_ioctl.c
++++ b/drivers/char/vt_ioctl.c
+@@ -1303,7 +1303,9 @@ int vt_ioctl(struct tty_struct *tty, struct file * file,
+ 		if (!perm)
+ 			goto eperm;
+ 		ret = copy_from_user(&ui, up, sizeof(struct unimapinit));
+-		if (!ret)
++		if (ret)
++			ret = -EFAULT;
++		else
+ 			con_clear_unimap(vc, &ui);
+ 		break;
+ 	      }
