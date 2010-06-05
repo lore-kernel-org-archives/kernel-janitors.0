@@ -1,29 +1,38 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 05 Jun 2010 21:19:43 +0000
-Subject: Re: [PATCH] APIC: Remove unused variable
-Message-Id: <20100605211943.GN5483@bicker>
+From: Richard Weinberger <richard@nod.at>
+Date: Sat, 05 Jun 2010 21:28:36 +0000
+Subject: [PATCH] APIC: Remove unused variable
+Message-Id: <1275773316-21626-1-git-send-email-richard@nod.at>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1275771369-15113-1-git-send-email-richard@nod.at>
-In-Reply-To: <1275771369-15113-1-git-send-email-richard@nod.at>
+References: <20100605211943.GN5483@bicker>
+In-Reply-To: <20100605211943.GN5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Weinberger <richard@nod.at>
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, rakib.mullick@gmail.com, ebiederm@xmission.com, gorcunov@openvz.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: tglx@linutronix.de
+Cc: mingo@redhat.com, hpa@zytor.com, x86@kernel.org, rakib.mullick@gmail.com, ebiederm@xmission.com, gorcunov@openvz.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Richard Weinberger <richard@nod.at>
 
-On Sat, Jun 05, 2010 at 10:56:09PM +0200, Richard Weinberger wrote:
-> base is never used in this file.
-> 
+base is never used in this file.
+---
+ arch/x86/kernel/apic/es7000_32.c |    6 ------
+ 1 files changed, 0 insertions(+), 6 deletions(-)
 
-This is left over from commit 7b20bd5fb9 "x86, irq: Kill 
-io_apic_renumber_irq" where we removed the es7000_rename_gsi() function.
-Could you remove the comment that went with it as well?
-
-/* 
- * GSI override for ES7000 platforms.
- */
-
-regards,
-dan carpenter
-
+diff --git a/arch/x86/kernel/apic/es7000_32.c b/arch/x86/kernel/apic/es7000_32.c
+index 425e53a..770262b 100644
+--- a/arch/x86/kernel/apic/es7000_32.c
++++ b/arch/x86/kernel/apic/es7000_32.c
+@@ -125,12 +125,6 @@ static unsigned long			host_addr;
+ 
+ int					es7000_plat;
+ 
+-/*
+- * GSI override for ES7000 platforms.
+- */
+-
+-static unsigned int			base;
+-
+ static int __cpuinit wakeup_secondary_cpu_via_mip(int cpu, unsigned long eip)
+ {
+ 	unsigned long vect = 0, psaival = 0;
+-- 
+1.6.6.1
 
