@@ -1,34 +1,32 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 06 Jun 2010 03:10:57 +0000
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 06 Jun 2010 16:40:40 +0000
 Subject: Re: [PATCH] drivers/staging/pohmelfs: fix compile warning
-Message-Id: <1275793857.11597.105.camel@Joe-Laptop.home>
+Message-Id: <AANLkTikYhy8NSs9uPBf9QFebeCrCPvuOlaf85fb2Dl1T@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1275788460.10961.18.camel@lenovo>
 In-Reply-To: <1275788460.10961.18.camel@lenovo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 2010-06-05 at 21:41 -0400, Javier Martinez Canillas wrote:
-> A really trivial patch to solve a warning when compiling staging/pohmelfs
+>
+> No warning with gcc 4.4.3.
+> What gcc version are you using?
 
-> diff --git a/drivers/staging/pohmelfs/inode.c b/drivers/staging/pohmelfs/inode.c
-> index 643b413..20b0c68 100644
-> --- a/drivers/staging/pohmelfs/inode.c
-> +++ b/drivers/staging/pohmelfs/inode.c
-> @@ -1266,7 +1266,7 @@ static void pohmelfs_put_super(struct super_block *sb)
->  {
->  	struct pohmelfs_sb *psb = POHMELFS_SB(sb);
->  	struct pohmelfs_inode *pi;
-> -	unsigned int count;
-> +	unsigned int count = 0;
->  	unsigned int in_drop_list = 0;
->  	struct inode *inode, *tmp;
->  
+gcc (Ubuntu 4.4.3-4ubuntu5) 4.4.3
 
-No warning with gcc 4.4.3.
-What gcc version are you using?
-Perhaps you should upgrade.
+> Perhaps you should upgrade.
+>
 
+Strange, I have a warning with last linux-next:
 
+drivers/staging/pohmelfs/inode.c: In function ‘pohmelfs_put_super’:
+drivers/staging/pohmelfs/inode.c:1269: warning: ‘count’ may be used
+uninitialized in this function
+
+Best regards,
+
+-----------------------------------------
+Javier Martínez Canillas
++595 981 88 66 58
