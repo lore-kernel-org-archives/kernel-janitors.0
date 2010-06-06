@@ -1,32 +1,35 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Date: Tue, 01 Jun 2010 08:23:05 +0000
-Subject: Re: [patch] x86, cacheinfo: dereferences before check
-Message-Id: <20100601082305.GA10650@aftab>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 06 Jun 2010 01:41:00 +0000
+Subject: [PATCH] drivers/staging/pohmelfs: fix compile warning
+Message-Id: <1275788460.10961.18.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100601071126.GF5483@bicker>
-In-Reply-To: <20100601071126.GF5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Dave Jones <davej@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, Jun 01, 2010 at 03:11:27AM -0400
+A really trivial patch to solve a warning when compiling staging/pohmelfs
 
-> This moves a couple dereferences after the checks in
-> show_cache_disable() and store_cache_disable().  These were introduced
-> fairly recently in 9350f982e4: "x86, cacheinfo: Reorganize AMD L3 cache
-> structure"
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/pohmelfs/inode.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Yes, this is correct, thanks. However I have a couple of patches which
-rewrite and cleanup this section even more and was waiting for the merge
-window to close before sending out. Stay tuned...
-
+diff --git a/drivers/staging/pohmelfs/inode.c b/drivers/staging/pohmelfs/inode.c
+index 643b413..20b0c68 100644
+--- a/drivers/staging/pohmelfs/inode.c
++++ b/drivers/staging/pohmelfs/inode.c
+@@ -1266,7 +1266,7 @@ static void pohmelfs_put_super(struct super_block *sb)
+ {
+ 	struct pohmelfs_sb *psb = POHMELFS_SB(sb);
+ 	struct pohmelfs_inode *pi;
+-	unsigned int count;
++	unsigned int count = 0;
+ 	unsigned int in_drop_list = 0;
+ 	struct inode *inode, *tmp;
+ 
 -- 
-Regards/Gruss,
-Boris.
+1.7.0.4
 
-Operating Systems Research Center
-Advanced Micro Devices, Inc.
+
 
