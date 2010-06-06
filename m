@@ -1,7 +1,7 @@
 From: Nicolas Palix <npalix@diku.dk>
-Date: Sun, 06 Jun 2010 15:15:02 +0000
-Subject: [PATCH 2/7] Add Documentation/coccinelle.txt
-Message-Id: <1275837307-4283-3-git-send-email-npalix@diku.dk>
+Date: Sun, 06 Jun 2010 15:15:07 +0000
+Subject: [PATCH 7/7] Add scripts/coccinelle/deref_null.cocci
+Message-Id: <1275837307-4283-8-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1275837307-4283-1-git-send-email-npalix@diku.dk>
 In-Reply-To: <1275837307-4283-1-git-send-email-npalix@diku.dk>
@@ -11,283 +11,317 @@ Content-Transfer-Encoding: 7bit
 To: Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, =?UTF-8?q?Am=C3=A9rico=20Wang?= <xiyou.wangcong@gmail.com>, Andy Isaacson <adi@hexapodia.org>, Linus Torvalds <torvalds@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>, walter harms <wharms@bfs.de>, Joerg Roedel <joro@8bytes.org>, Jan Engelhardt <jengelh@medozas.de>
 Cc: Nicolas Palix <npalix@diku.dk>
 
-The purpose of this file is to document how to use Coccinelle and its
-spatch tool to check the Linux kernel.
+Add a Coccinelle file to identify the dereferences of NULL variables
 
-It gives information on where and how to retrieve Coccinelle, and how
-to use it with the Coccinelle scripts integrated in the Linux kernel.
+This semantic patch identifies when a variable is known to be NULL
+after a test, but it is still dereferenced later.
 
 Signed-off-by: Nicolas Palix <npalix@diku.dk>
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- Documentation/coccinelle.txt |  258 ++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 258 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/coccinelle.txt
+ scripts/coccinelle/deref_null.cocci |  293 +++++++++++++++++++++++++++++++++++
+ 1 files changed, 293 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/deref_null.cocci
 
-diff --git a/Documentation/coccinelle.txt b/Documentation/coccinelle.txt
+diff --git a/scripts/coccinelle/deref_null.cocci b/scripts/coccinelle/deref_null.cocci
 new file mode 100644
-index 0000000..ba3315d
+index 0000000..9969d76
 --- /dev/null
-+++ b/Documentation/coccinelle.txt
-@@ -0,0 +1,258 @@
-+Copyright 2010 Nicolas Palix <npalix@diku.dk>
-+Copyright 2010 Julia Lawall <julia@diku.dk>
-+Copyright 2010 Gilles Muller <Gilles.Muller@lip6.fr>
++++ b/scripts/coccinelle/deref_null.cocci
+@@ -0,0 +1,293 @@
++///
++/// A variable is dereference under a NULL test.
++/// Even though it is know to be NULL.
++///
++// Confidence: Moderate
++// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
++// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments: -I ... -all_includes can give more complete results
++// Options:
 +
++virtual context
++virtual patch
++virtual org
++virtual report
 +
-+ Getting Coccinelle
-+~~~~~~~~~~~~~~~~~~~~
++@initialize:python depends on !context && patch && !org && !report@
 +
-+The semantic patches included in the kernel use the 'virtual rule'
-+feature which was introduced in Coccinelle version 0.1.11.
++import sys
++print >> sys.stderr, "This semantic patch does not support the 'patch' mode."
 +
-+Coccinelle (>=0.2.0) is available through the package manager
-+of many distributions, e.g. :
-+
-+ - Debian (>=squeeze)
-+ - Fedora (>)
-+ - Ubuntu (>.04 Karmic Koala)
-+ - OpenSUSE
-+ - Arch Linux
-+ - NetBSD
-+ - FreeBSD
-+
-+
-+You can get the latest version released from the Coccinelle homepage at
-+http://coccinelle.lip6.fr/
-+
-+Once you have it, run the following command:
-+
-+     	./configure
-+        make
-+
-+as a regular user, and install it with
-+
-+        sudo make install
-+
-+
-+ Using Coccinelle on the Linux kernel
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+A Coccinelle-specific target is defined in the top level
-+Makefile. This target is named 'coccicheck' and calls the 'coccicheck'
-+front-end in the 'scripts' directory.
-+
-+Four modes are defined: report, patch, context, and org. The mode to
-+use is specified by setting the MODE variable with 'MODE=<mode>'.
-+
-+'report' generates a list in the following format:
-+  file:line:column-column: message
-+
-+'patch' proposes a fix, when possible.
-+
-+'context' highlights lines of interest and their context in a
-+diff-like style.Lines of interest are indicated with '-'.
-+
-+'org' generates a report in the Org mode format of Emacs.
-+
-+Note that not all semantic patches implement all modes.
-+
-+To make a report for every semantic patch, run the following command:
-+
-+	make coccicheck MODE=report
-+
-+NB: The 'report' mode is the default one.
-+
-+To produce patches, run:
-+
-+	make coccicheck MODE=patch
-+
-+
-+The coccicheck target applies every semantic patch available in the
-+subdirectories of 'scripts/coccinelle' to the entire Linux kernel.
-+
-+For each semantic patch, a changelog message is proposed.  It gives a
-+description of the problem being checked by the semantic patch, and
-+includes a reference to Coccinelle.
-+
-+As any static code analyzer, Coccinelle produces false
-+positives. Thus, reports must be carefully checked, and patches
-+reviewed.
-+
-+
-+ Using Coccinelle with a single semantic patch
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The optional make variable COCCI can be used to check a single
-+semantic patch. In that case, the variable must be initialized with
-+the name of the semantic patch to apply.
-+
-+For instance:
-+
-+	make coccicheck COCCI=<my_SP.cocci> MODE=patch
-+or
-+	make coccicheck COCCI=<my_SP.cocci> MODE=report
-+
-+
-+ Proposing new semantic patches
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+New semantic patches can be proposed and submitted by kernel
-+developers. For sake of clarity, they should be organized in the
-+subdirectories of 'scripts/coccinelle/'.
-+
-+
-+ Detailed description of the 'report' mode
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+'report' generates a list in the following format:
-+  file:line:column-column: message
-+
-+Example:
-+
-+Running
-+
-+	make coccicheck MODE=report COCCI=scripts/coccinelle/err_cast.cocci
-+
-+will execute the following part of the SmPL script.
-+
-+<smpl>
-+@r depends on !context && !patch && (org || report)@
-+expression x;
-+position p;
++@depends on patch@
 +@@
 +
-+ ERR_PTR@p(PTR_ERR(x))
++this_rule_should_never_matches();
 +
-+@script:python depends on report@
++@ifm depends on !patch@
++expression *E;
++statement S1,S2;
++position p1;
++@@
++
++if@p1 ((E = NULL && ...) || ...) S1 else S2
++
++// The following two rules are separate, because both can match a single
++// expression in different ways
++@pr1 depends on !patch expression@
++expression *ifm.E;
++identifier f;
++position p1;
++@@
++
++ (E != NULL && ...) ? <+...E->f@p1...+> : ...
++
++@pr2 depends on !patch expression@
++expression *ifm.E;
++identifier f;
++position p2;
++@@
++
++(
++  (E != NULL) && ... && <+...E->f@p2...+>
++|
++  (E = NULL) || ... || <+...E->f@p2...+>
++|
++ sizeof(<+...E->f@p2...+>)
++)
++
++// For org and report modes
++
++@r depends on !context && !patch && (org || report) exists@
++expression subE <= ifm.E;
++expression *ifm.E;
++expression E1,E2;
++identifier f;
++statement S1,S2,S3,S4;
++iterator iter;
++position p!={pr1.p1,pr2.p2};
++position ifm.p1;
++@@
++
++if@p1 ((E = NULL && ...) || ...)
++{
++  ... when != if (...) S1 else S2
++(
++ iter(subE,...) S4 // no use
++|
++ list_remove_head(E2,subE,...)
++|
++ subE = E1
++|
++ for(subE = E1;...;...) S4
++|
++ subE++
++|
++ ++subE
++|
++ --subE
++|
++ subE--
++|
++ &subE
++|
++ E->f@p // bad use
++)
++  ... when any
++  return ...;
++}
++else S3
++
++@script:python depends on !context && !patch && !org && report@
 +p << r.p;
-+x << r.x;
++p1 << ifm.p1;
++x << ifm.E;
 +@@
 +
-+msg="ERR_CAST can be used with %s" % (x)
++msg="ERROR: %s is NULL but dereferenced." % (x)
 +coccilib.report.print_report(p[0], msg)
-+</smpl>
++cocci.include_match(False)
 +
-+This SmPL excerpt generates entries on the standard output, as
-+illustrated below:
-+
-+/home/user/linux/crypto/ctr.c:188:9-16: ERR_CAST can be used with alg
-+/home/user/linux/crypto/authenc.c:619:9-16: ERR_CAST can be used with auth
-+/home/user/linux/crypto/xts.c:227:9-16: ERR_CAST can be used with alg
-+
-+
-+ Detailed description of the 'patch' mode
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+When the 'patch' mode is available, it proposes a fix for each problem
-+identified.
-+
-+Example:
-+
-+Running
-+	make coccicheck MODE=patch COCCI=scripts/coccinelle/err_cast.cocci
-+
-+will execute the following part of the SmPL script.
-+
-+<smpl>
-+@ depends on !context && patch && !org && !report @
-+expression x;
-+@@
-+
-+- ERR_PTR(PTR_ERR(x))
-++ ERR_CAST(x)
-+</smpl>
-+
-+This SmPL excerpt generates patch hunks on the standard output, as
-+illustrated below:
-+
-+diff -u -p a/crypto/ctr.c b/crypto/ctr.c
-+--- a/crypto/ctr.c 2010-05-26 10:49:38.000000000 +0200
-++++ b/crypto/ctr.c 2010-06-03 23:44:49.000000000 +0200
-+@@ -185,7 +185,7 @@ static struct crypto_instance *crypto_ct
-+ 	alg = crypto_attr_alg(tb[1], CRYPTO_ALG_TYPE_CIPHER,
-+ 				  CRYPTO_ALG_TYPE_MASK);
-+ 	if (IS_ERR(alg))
-+-		return ERR_PTR(PTR_ERR(alg));
-++		return ERR_CAST(alg);
-+ 
-+ 	/* Block size must be >= 4 bytes. */
-+ 	err = -EINVAL;
-+
-+ Detailed description of the 'context' mode
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+'context' highlights lines of interest and their context
-+in a diff-like style.
-+
-+NOTE: The diff-like output generated is NOT an applicable patch. The
-+      intent of the 'context' mode is to highlight the important lines
-+      (annotated with minus, '-') and gives some surrounding context
-+      lines around. This output can be used with the diff mode of
-+      Emacs to review the code.
-+
-+Example:
-+
-+Running
-+	make coccicheck MODE=context COCCI=scripts/coccinelle/err_cast.cocci
-+
-+will execute the following part of the SmPL script.
-+
-+<smpl>
-+@ depends on context && !patch && !org && !report@
-+expression x;
-+@@
-+
-+* ERR_PTR(PTR_ERR(x))
-+</smpl>
-+
-+This SmPL excerpt generates diff hunks on the standard output, as
-+illustrated below:
-+
-+diff -u -p /home/user/linux/crypto/ctr.c /tmp/nothing
-+--- /home/user/linux/crypto/ctr.c	2010-05-26 10:49:38.000000000 +0200
-++++ /tmp/nothing
-+@@ -185,7 +185,6 @@ static struct crypto_instance *crypto_ct
-+ 	alg = crypto_attr_alg(tb[1], CRYPTO_ALG_TYPE_CIPHER,
-+ 				  CRYPTO_ALG_TYPE_MASK);
-+ 	if (IS_ERR(alg))
-+-		return ERR_PTR(PTR_ERR(alg));
-+ 
-+ 	/* Block size must be >= 4 bytes. */
-+ 	err = -EINVAL;
-+
-+ Detailed description of the 'org' mode
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+'org' generates a report in the Org mode format of Emacs.
-+
-+Example:
-+
-+Running
-+	make coccicheck MODE=org COCCI=scripts/coccinelle/err_cast.cocci
-+
-+will execute the following part of the SmPL script.
-+
-+<smpl>
-+@r depends on !context && !patch && (org || report)@
-+expression x;
-+position p;
-+@@
-+
-+ ERR_PTR@p(PTR_ERR(x))
-+
-+@script:python depends on org@
++@script:python depends on !context && !patch && org && !report@
 +p << r.p;
-+x << r.x;
++p1 << ifm.p1;
++x << ifm.E;
 +@@
 +
-+msg="ERR_CAST can be used with %s" % (x)
++msg="ERROR: %s is NULL but dereferenced." % (x)
 +msg_safe=msg.replace("[","@(").replace("]",")")
-+coccilib.org.print_todo(p[0], msg_safe)
-+</smpl>
++cocci.print_main(msg_safe,p)
++cocci.include_match(False)
 +
-+This SmPL excerpt generates Org entries on the standard output, as
-+illustrated below:
++@s depends on !context && !patch && (org || report) exists@
++expression subE <= ifm.E;
++expression *ifm.E;
++expression E1,E2;
++identifier f;
++statement S1,S2,S3,S4;
++iterator iter;
++position p!={pr1.p1,pr2.p2};
++position ifm.p1;
++@@
 +
-+* TODO [[view:/home/user/linux/crypto/ctr.c::face=ovl-face1::linb8::colb=9::cole][ERR_CAST can be used with alg]]
-+* TODO [[view:/home/user/linux/crypto/authenc.c::face=ovl-face1::linba9::colb=9::cole][ERR_CAST can be used with auth]]
-+* TODO [[view:/home/user/linux/crypto/xts.c::face=ovl-face1::linb"7::colb=9::cole][ERR_CAST can be used with alg]]
++if@p1 ((E = NULL && ...) || ...)
++{
++  ... when != if (...) S1 else S2
++(
++ iter(subE,...) S4 // no use
++|
++ list_remove_head(E2,subE,...)
++|
++ subE = E1
++|
++ for(subE = E1;...;...) S4
++|
++ subE++
++|
++ ++subE
++|
++ --subE
++|
++ subE--
++|
++ &subE
++|
++ E->f@p // bad use
++)
++  ... when any
++}
++else S3
++
++@script:python depends on !context && !patch && !org && report@
++p << s.p;
++p1 << ifm.p1;
++x << ifm.E;
++@@
++
++msg="ERROR: %s is NULL but dereferenced." % (x)
++coccilib.report.print_report(p[0], msg)
++
++@script:python depends on !context && !patch && org && !report@
++p << s.p;
++p1 << ifm.p1;
++x << ifm.E;
++@@
++
++msg="ERROR: %s is NULL but dereferenced." % (x)
++msg_safe=msg.replace("[","@(").replace("]",")")
++cocci.print_main(msg_safe,p)
++
++// For context mode
++
++@depends on context && !patch && !org && !report exists@
++expression subE <= ifm.E;
++expression *ifm.E;
++expression E1,E2;
++identifier f;
++statement S1,S2,S3,S4;
++iterator iter;
++position p!={pr1.p1,pr2.p2};
++position ifm.p1;
++@@
++
++if@p1 ((E = NULL && ...) || ...)
++{
++  ... when != if (...) S1 else S2
++(
++ iter(subE,...) S4 // no use
++|
++ list_remove_head(E2,subE,...)
++|
++ subE = E1
++|
++ for(subE = E1;...;...) S4
++|
++ subE++
++|
++ ++subE
++|
++ --subE
++|
++ subE--
++|
++ &subE
++|
++* E->f@p // bad use
++)
++  ... when any
++  return ...;
++}
++else S3
++
++// The following three rules are duplicates of ifm, pr1 and pr2 respectively.
++// It is need because the previous rule as already made a "change".
++
++@ifm1 depends on !patch@
++expression *E;
++statement S1,S2;
++position p1;
++@@
++
++if@p1 ((E = NULL && ...) || ...) S1 else S2
++
++@pr11 depends on !patch expression@
++expression *ifm1.E;
++identifier f;
++position p1;
++@@
++
++ (E != NULL && ...) ? <+...E->f@p1...+> : ...
++
++@pr12 depends on !patch expression@
++expression *ifm1.E;
++identifier f;
++position p2;
++@@
++
++(
++  (E != NULL) && ... && <+...E->f@p2...+>
++|
++  (E = NULL) || ... || <+...E->f@p2...+>
++|
++ sizeof(<+...E->f@p2...+>)
++)
++
++@depends on context && !patch && !org && !report exists@
++expression subE <= ifm1.E;
++expression *ifm1.E;
++expression E1,E2;
++identifier f;
++statement S1,S2,S3,S4;
++iterator iter;
++position p!={pr11.p1,pr12.p2};
++position ifm1.p1;
++@@
++
++if@p1 ((E = NULL && ...) || ...)
++{
++  ... when != if (...) S1 else S2
++(
++ iter(subE,...) S4 // no use
++|
++ list_remove_head(E2,subE,...)
++|
++ subE = E1
++|
++ for(subE = E1;...;...) S4
++|
++ subE++
++|
++ ++subE
++|
++ --subE
++|
++ subE--
++|
++ &subE
++|
++* E->f@p // bad use
++)
++  ... when any
++}
++else S3
 -- 
 1.7.0.4
 
