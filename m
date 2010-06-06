@@ -1,55 +1,116 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 30 Jun 2010 22:57:54 +0000
-Subject: Re: [PATCH] ext2:delete misused ext2_free_blocks
-Message-Id: <20100630225754.GT19184@bicker>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Sun, 06 Jun 2010 15:15:04 +0000
+Subject: [PATCH 4/7] Add scripts/coccinelle/alloc/kzalloc-simple.cocci
+Message-Id: <1275837307-4283-5-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277893287-25916-1-git-send-email-wppan@redflag-linux.com>
-In-Reply-To: <1277893287-25916-1-git-send-email-wppan@redflag-linux.com>
+References: <1275837307-4283-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1275837307-4283-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Pan <wppan@redflag-linux.com>
-Cc: jack@suse.cz, hch@lst.de, viro@zeniv.linux.org.uk, npiggin@suse.de, jblunck@suse.de, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, =?UTF-8?q?Am=C3=A9rico=20Wang?= <xiyou.wangcong@gmail.com>, Andy Isaacson <adi@hexapodia.org>, Linus Torvalds <torvalds@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>, walter harms <wharms@bfs.de>, Joerg Roedel <joro@8bytes.org>, Jan Engelhardt <jengelh@medozas.de>
+Cc: Nicolas Palix <npalix@diku.dk>
 
-On Wed, Jun 30, 2010 at 06:21:27PM +0800, Peter Pan wrote:
-> if ext2_new_blocks returns error, no blocks need to be freed.
-> 
+This semantic patch replaces a pair of calls to kmalloc and memset
+by a single call to kzalloc.
 
-Hi Peter,
+It only looks for simple cases to avoid false positives.
 
-Your patch isn't right.  The original code is OK as is.
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ scripts/coccinelle/alloc/kzalloc-simple.cocci |   82 +++++++++++++++++++++++++
+ 1 files changed, 82 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/alloc/kzalloc-simple.cocci
 
-Are you seeing a kernel panic?  Perhaps we can help you fix it.
+diff --git a/scripts/coccinelle/alloc/kzalloc-simple.cocci b/scripts/coccinelle/alloc/kzalloc-simple.cocci
+new file mode 100644
+index 0000000..2eae828
+--- /dev/null
++++ b/scripts/coccinelle/alloc/kzalloc-simple.cocci
+@@ -0,0 +1,82 @@
++///
++/// kzalloc should be used rather than kmalloc followed by memset 0
++///
++// Confidence: High
++// Copyright: (C) 2009-2010 Julia Lawall, Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2009-2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/rules/kzalloc.html
++// Options: -no_includes -include_headers
++//
++// Keywords: kmalloc, kzalloc
++// Version min: < 2.6.12 kmalloc
++// Version min:   2.6.14 kzalloc
++//
++
++virtual context
++virtual patch
++virtual org
++virtual report
++
++//----------------------------------------------------------
++//  For context mode
++//----------------------------------------------------------
++
++@depends on context@
++type T, T2;
++expression x;
++expression E1,E2;
++statement S;
++@@
++
++* x = (T)kmalloc(E1,E2);
++  if ((x=NULL) || ...) S
++* memset((T2)x,0,E1);
++
++//----------------------------------------------------------
++//  For patch mode
++//----------------------------------------------------------
++
++@depends on patch@
++type T, T2;
++expression x;
++expression E1,E2;
++statement S;
++@@
++
++- x = (T)kmalloc(E1,E2);
+++ x = kzalloc(E1,E2);
++  if ((x=NULL) || ...) S
++- memset((T2)x,0,E1);
++
++//----------------------------------------------------------
++//  For org mode
++//----------------------------------------------------------
++
++@r depends on org || report@
++type T, T2;
++expression x;
++expression E1,E2;
++statement S;
++position p;
++@@
++
++ x = (T)kmalloc@p(E1,E2);
++ if ((x=NULL) || ...) S
++ memset((T2)x,0,E1);
++
++@script:python depends on org@
++p << r.p;
++x << r.x;
++@@
++
++msg="%s" % (x)
++msg_safe=msg.replace("[","@(").replace("]",")")
++coccilib.org.print_todo(p[0], msg_safe)
++
++@script:python depends on report@
++p << r.p;
++x << r.x;
++@@
++
++msg="WARNING: kzalloc should be used for %s, instead of kmalloc/memset" % (x)
++coccilib.report.print_report(p[0], msg)
+-- 
+1.7.0.4
 
-regards,
-dan carpenter
-
-> Signed-off-by: Peter Pan <wppan@redflag-linux.com>
-> ---
->  fs/ext2/inode.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-> index 3675088..f858847 100644
-> --- a/fs/ext2/inode.c
-> +++ b/fs/ext2/inode.c
-> @@ -385,6 +385,8 @@ static int ext2_alloc_blocks(struct inode *inode,
->  	ext2_fsblk_t current_block = 0;
->  	int ret = 0;
->  
-> +	*err = -ENOSPC;
-> +
->  	/*
->  	 * Here we try to allocate the requested multiple blocks at once,
->  	 * on a best-effort basis.
-> @@ -421,8 +423,6 @@ static int ext2_alloc_blocks(struct inode *inode,
->  	*err = 0;
->  	return ret;
->  failed_out:
-> -	for (i = 0; i <index; i++)
-> -		ext2_free_blocks(inode, new_blocks[i], 1);
->  	return ret;
->  }
->  
-> -- 
-> 1.6.6
