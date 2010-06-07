@@ -1,31 +1,77 @@
-From: James Morris <jmorris@namei.org>
-Date: Sun, 06 Jun 2010 23:23:19 +0000
-Subject: Re: [patch] KEYS: Propagate error code instead of returning
-Message-Id: <alpine.LRH.2.00.1006070923020.22265@tundra.namei.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 07 Jun 2010 21:07:03 +0000
+Subject: [patch 4/7] selinux: fix error codes in cond_read_node()
+Message-Id: <20100607210703.GT5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100603190911.GX5483@bicker>
-In-Reply-To: <20100603190911.GX5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 3 Jun 2010, Dan Carpenter wrote:
+Originally cond_read_node() returned -1 (-EPERM) on errors which was
+incorrect.  Now it either propagates the error codes from lower level
+functions next_entry() or cond_read_av_list() or it returns -ENOMEM or
+-EINVAL.
 
-> This is from a Smatch check I'm writing.
-> 
-> strncpy_from_user() returns -EFAULT on error so the first change just
-> silences a warning but doesn't change how the code works.
-> 
-> The other change is a bug fix because install_thread_keyring_to_cred()
-> can return a variety of errors such as -EINVAL, -EEXIST, -ENOMEM or 
-> -EKEYREVOKED.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+next_entry() returns -EINVAL.
+cond_read_av_list() returns -EINVAL or -ENOMEM.
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-James Morris
-<jmorris@namei.org>
+diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+index 4c39f19..f0de637 100644
+--- a/security/selinux/ss/conditional.c
++++ b/security/selinux/ss/conditional.c
+@@ -392,14 +392,14 @@ static int cond_read_node(struct policydb *p, struct cond_node *node, void *fp)
+ 
+ 	rc = next_entry(buf, fp, sizeof(u32));
+ 	if (rc < 0)
+-		return -1;
++		return rc;
+ 
+ 	node->cur_state = le32_to_cpu(buf[0]);
+ 
+ 	len = 0;
+ 	rc = next_entry(buf, fp, sizeof(u32));
+ 	if (rc < 0)
+-		return -1;
++		return rc;
+ 
+ 	/* expr */
+ 	len = le32_to_cpu(buf[0]);
+@@ -409,6 +409,7 @@ static int cond_read_node(struct policydb *p, struct cond_node *node, void *fp)
+ 		if (rc < 0)
+ 			goto err;
+ 
++		rc = -ENOMEM;
+ 		expr = kzalloc(sizeof(struct cond_expr), GFP_KERNEL);
+ 		if (!expr)
+ 			goto err;
+@@ -417,6 +418,7 @@ static int cond_read_node(struct policydb *p, struct cond_node *node, void *fp)
+ 		expr->bool = le32_to_cpu(buf[1]);
+ 
+ 		if (!expr_isvalid(p, expr)) {
++			rc = -EINVAL;
+ 			kfree(expr);
+ 			goto err;
+ 		}
+@@ -428,14 +430,16 @@ static int cond_read_node(struct policydb *p, struct cond_node *node, void *fp)
+ 		last = expr;
+ 	}
+ 
+-	if (cond_read_av_list(p, fp, &node->true_list, NULL) != 0)
++	rc = cond_read_av_list(p, fp, &node->true_list, NULL);
++	if (rc < 0)
+ 		goto err;
+-	if (cond_read_av_list(p, fp, &node->false_list, node->true_list) != 0)
++	rc = cond_read_av_list(p, fp, &node->false_list, node->true_list);
++	if (rc < 0)
+ 		goto err;
+ 	return 0;
+ err:
+ 	cond_node_destroy(node);
+-	return -1;
++	return rc;
+ }
+ 
+ int cond_read_list(struct policydb *p, void *fp)
