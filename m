@@ -1,111 +1,70 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Wed, 02 Jun 2010 09:08:56 +0000
-Subject: Re: [PATCH 4/4] drivers/hid: introduce missing kfree
-Message-Id: <alpine.LNX.2.00.1006021108460.12271@pobox.suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 07 Jun 2010 21:05:54 +0000
+Subject: [patch 3/7] selinux: fix error codes in cond_read_av_list()
+Message-Id: <20100607210554.GS5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1006011634560.12546@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1006011634560.12546@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 1 Jun 2010, Julia Lawall wrote:
+After this patch cond_read_av_list() no longer returns -1 for any
+errors.  It just propagates error code back from lower levels.  Those can
+either be -EINVAL or -ENOMEM.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Error handling code following a kmalloc should free the allocated data.
-> 
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> statement S;
-> expression E;
-> identifier f,f1,l;
-> position p1,p2;
-> expression *ptr != NULL;
-> @@
-> 
-> x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-> ...
-> if (x = NULL) S
-> <... when != x
->      when != if (...) { <+...x...+> }
-> (
-> x->f1 = E
-> |
->  (x->f1 = NULL || ...)
-> |
->  f(...,x->f1,...)
-> )
-> ...>
-> (
->  return \(0\|<+...x...+>\|ptr\);
-> |
->  return@p2 ...;
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> ---
->  drivers/hid/hid-roccat.c |    9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-roccat.c b/drivers/hid/hid-roccat.c
-> index e05d48e..f6e80c7 100644
-> --- a/drivers/hid/hid-roccat.c
-> +++ b/drivers/hid/hid-roccat.c
-> @@ -168,7 +168,7 @@ static int roccat_open(struct inode *inode, struct file *file)
->  		printk(KERN_EMERG "roccat device with minor %d doesn't exist\n",
->  				minor);
->  		error = -ENODEV;
-> -		goto exit_unlock;
-> +		goto exit_err;
->  	}
->  
->  	if (!device->open++) {
-> @@ -178,7 +178,7 @@ static int roccat_open(struct inode *inode, struct file *file)
->  					PM_HINT_FULLON);
->  			if (error < 0) {
->  				--device->open;
-> -				goto exit_unlock;
-> +				goto exit_err;
->  			}
->  		}
->  		error = device->hid->ll_driver->open(device->hid);
-> @@ -187,7 +187,7 @@ static int roccat_open(struct inode *inode, struct file *file)
->  				device->hid->ll_driver->power(device->hid,
->  						PM_HINT_NORMAL);
->  			--device->open;
-> -			goto exit_unlock;
-> +			goto exit_err;
->  		}
->  	}
->  
-> @@ -202,6 +202,9 @@ exit_unlock:
->  	mutex_unlock(&device->readers_lock);
->  	mutex_unlock(&devices_lock);
->  	return error;
-> +exit_err:
-> +	kfree(reader);
-> +	goto exit_unlock;
->  }
->  
->  static int roccat_release(struct inode *inode, struct file *file)
+I also modified cond_insertf() since cond_read_av_list() passes that as a 
+function pointer to avtab_read_item().  It isn't used anywhere else.
 
-Applied, thank you Julia.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+index acaa6cd..4c39f19 100644
+--- a/security/selinux/ss/conditional.c
++++ b/security/selinux/ss/conditional.c
+@@ -263,7 +263,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+ 	struct cond_av_list *other = data->other, *list, *cur;
+ 	struct avtab_node *node_ptr;
+ 	u8 found;
+-
++	int ret = -EINVAL;
+ 
+ 	/*
+ 	 * For type rules we have to make certain there aren't any
+@@ -317,8 +317,10 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+ 	}
+ 
+ 	list = kzalloc(sizeof(struct cond_av_list), GFP_KERNEL);
+-	if (!list)
++	if (!list) {
++		ret = -ENOMEM;
+ 		goto err;
++	}
+ 
+ 	list->node = node_ptr;
+ 	if (!data->head)
+@@ -331,7 +333,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+ err:
+ 	cond_av_list_destroy(data->head);
+ 	data->head = NULL;
+-	return -1;
++	return ret;
+ }
+ 
+ static int cond_read_av_list(struct policydb *p, void *fp, struct cond_av_list **ret_list, struct cond_av_list *other)
+@@ -346,7 +348,7 @@ static int cond_read_av_list(struct policydb *p, void *fp, struct cond_av_list *
+ 	len = 0;
+ 	rc = next_entry(buf, fp, sizeof(u32));
+ 	if (rc < 0)
+-		return -1;
++		return rc;
+ 
+ 	len = le32_to_cpu(buf[0]);
+ 	if (len = 0)
+@@ -361,7 +363,6 @@ static int cond_read_av_list(struct policydb *p, void *fp, struct cond_av_list *
+ 				     &data);
+ 		if (rc)
+ 			return rc;
+-
+ 	}
+ 
+ 	*ret_list = data.head;
