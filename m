@@ -1,35 +1,63 @@
-From: Mike Christie <michaelc@cs.wisc.edu>
-Date: Thu, 10 Jun 2010 20:44:05 +0000
-Subject: Re: [patch 1/2] be2iscsi: memory leak on error path
-Message-Id: <4C114E95.7080401@cs.wisc.edu>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 07 Jun 2010 21:10:13 +0000
+Subject: [patch 6/7] selinux: fix error codes in cond_read_bool()
+Message-Id: <20100607211013.GV5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100610075221.GI5483@bicker>
-In-Reply-To: <20100610075221.GI5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Jayamohan Kallickal <jayamohank@serverengines.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 06/10/2010 02:52 AM, Dan Carpenter wrote:
-> I added a kfree(pwrb_arr) in front of the return.
->
-> Signed-off-by: Dan Carpenter<error27@gmail.com>
->
-> diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-> index dd5b105..779e1d1 100644
-> --- a/drivers/scsi/be2iscsi/be_main.c
-> +++ b/drivers/scsi/be2iscsi/be_main.c
-> @@ -2750,6 +2750,7 @@ beiscsi_create_wrb_rings(struct beiscsi_hba *phba,
->   		if (status != 0) {
->   			shost_printk(KERN_ERR, phba->shost,
->   				     "wrbq create failed.");
-> +			kfree(pwrb_arr);
->   			return status;
->   		}
->   		phwi_ctrlr->wrb_context[i * 2].cid = phwi_context->be_wrbq[i].
+The original code always returned -1 (-EPERM) on error.  The new code
+returns either -ENOMEM, or -EINVAL or it propagates the error codes from
+lower level functions next_entry() or hashtab_insert().
 
+next_entry() returns -EINVAL.
+hashtab_insert() returns -EINVAL, -EEXIST, or -ENOMEM.
 
-Looks good. Thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Reviewed-by: Mike Christie <michaelc@cs.wisc.edu>
+diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+index 7447be0..dc5db55 100644
+--- a/security/selinux/ss/conditional.c
++++ b/security/selinux/ss/conditional.c
+@@ -223,7 +223,7 @@ int cond_read_bool(struct policydb *p, struct hashtab *h, void *fp)
+ 
+ 	booldatum = kzalloc(sizeof(struct cond_bool_datum), GFP_KERNEL);
+ 	if (!booldatum)
+-		return -1;
++		return -ENOMEM;
+ 
+ 	rc = next_entry(buf, fp, sizeof buf);
+ 	if (rc < 0)
+@@ -232,11 +232,13 @@ int cond_read_bool(struct policydb *p, struct hashtab *h, void *fp)
+ 	booldatum->value = le32_to_cpu(buf[0]);
+ 	booldatum->state = le32_to_cpu(buf[1]);
+ 
++	rc = -EINVAL;
+ 	if (!bool_isvalid(booldatum))
+ 		goto err;
+ 
+ 	len = le32_to_cpu(buf[2]);
+ 
++	rc = -ENOMEM;
+ 	key = kmalloc(len + 1, GFP_KERNEL);
+ 	if (!key)
+ 		goto err;
+@@ -244,13 +246,14 @@ int cond_read_bool(struct policydb *p, struct hashtab *h, void *fp)
+ 	if (rc < 0)
+ 		goto err;
+ 	key[len] = '\0';
+-	if (hashtab_insert(h, key, booldatum))
++	rc = hashtab_insert(h, key, booldatum);
++	if (rc < 0)
+ 		goto err;
+ 
+ 	return 0;
+ err:
+ 	cond_destroy_bool(key, booldatum, NULL);
+-	return -1;
++	return rc;
+ }
+ 
+ struct cond_insertf_data {
