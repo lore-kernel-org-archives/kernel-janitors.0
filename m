@@ -1,57 +1,69 @@
-From: Eric Paris <eparis@parisplace.org>
-Date: Tue, 08 Jun 2010 20:20:31 +0000
-Subject: Re: [patch 5/7] selinux: fix error codes in cond_policydb_init()
-Message-Id: <AANLkTikdWwqR-Q4EjO-kziUr1W1OoKGxzmCyiAaEFJaI@mail.gmail.com>
+From: shenghui <crosslonelyover@gmail.com>
+Date: Tue, 08 Jun 2010 08:37:04 +0000
+Subject: [PATCH] Documentation/filesystems/xip.txt: clarify the statement: The
+Message-Id: <AANLkTik9UM9ta3r7ZNt8Z-CNS6Vz-aIWb_qewgECFfoe@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100607210816.GU5483@bicker>
-In-Reply-To: <20100607210816.GU5483@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org
 
-On Mon, Jun 7, 2010 at 5:08 PM, Dan Carpenter <error27@gmail.com> wrote:
-> It's better to propagate the error code from avtab_init() instead of
-> returning -1 (-EPERM). =A0It turns out that avtab_init() never fails so
-> this patch doesn't change how the code runs but it's still a clean up.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/cond=
-itional.c
-> index f0de637..7447be0 100644
-> --- a/security/selinux/ss/conditional.c
-> +++ b/security/selinux/ss/conditional.c
-> @@ -117,10 +117,14 @@ int evaluate_cond_node(struct policydb *p, struct c=
-ond_node *node)
->
-> =A0int cond_policydb_init(struct policydb *p)
-> =A0{
-> + =A0 =A0 =A0 int ret;
+Hi all,
 
-I know, I'm being pedantic, but int rc, not int ret;  All of the rest
-of the code uses rc.
+      The origin text in xip.txt said:
+" The block device operation is optional, these block devices support it as of
+  today:
+  - dcssblk: s390 dcss block device driver
+"
 
-> +
-> =A0 =A0 =A0 =A0p->bool_val_to_struct =3D NULL;
-> =A0 =A0 =A0 =A0p->cond_list =3D NULL;
-> - =A0 =A0 =A0 if (avtab_init(&p->te_cond_avtab))
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> +
-> + =A0 =A0 =A0 ret =3D avtab_init(&p->te_cond_avtab);
-> + =A0 =A0 =A0 if (ret < 0)
+      While in fs/ext2/xip.c, we can get the following code:
+  65void ext2_xip_verify_sb(struct super_block *sb)
+  66{
+  67        struct ext2_sb_info *sbi = EXT2_SB(sb);
+  68
+  69        if ((sbi->s_mount_opt & EXT2_MOUNT_XIP) &&
+  70            !sb->s_bdev->bd_disk->fops->direct_access) {
+  71                sbi->s_mount_opt &= (~EXT2_MOUNT_XIP);
+  72                ext2_msg(sb, KERN_WARNING,
+  73                             "warning: ignoring xip option - "
+  74                             "not supported by bdev");
+  75        }
+  76}
 
-if (rc)   not if (rc < 0)
+        While the statement in the origin text may be against other
+block devices, I get confused at first, so I modify the statement
+to make it more clear.
 
 
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return ret;
->
-> =A0 =A0 =A0 =A0return 0;
-> =A0}
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
 
--Eric
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+ Documentation/filesystems/xip.txt |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/filesystems/xip.txt
+b/Documentation/filesystems/xip.txt
+index 0466ee5..bef4120 100644
+--- a/Documentation/filesystems/xip.txt
++++ b/Documentation/filesystems/xip.txt
+@@ -35,8 +35,7 @@ is performed. A struct block_device reference is
+used to address the device,
+ and a sector_t argument is used to identify the individual block. As an
+ alternative, memory technology devices can be used for this.
+
+-The block device operation is optional, these block devices support it as of
+-today:
++The block device operation is mandatory for execute-in-place, these
+block devices support it as of today:
+ - dcssblk: s390 dcss block device driver
+
+ An address space operation named get_xip_mem is used to retrieve references
+-- 
+1.7.0.1
+
+
+-- 
+
+
+Thanks and Best Regards,
+shenghui
