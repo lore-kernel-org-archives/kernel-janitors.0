@@ -1,24 +1,36 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 29 Jun 2010 07:07:01 +0000
-Subject: Re: [patch] input: error handling bug in lm8323_probe()
-Message-Id: <20100629070701.GB19712@core.coreip.homeip.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 09 Jun 2010 12:01:54 +0000
+Subject: [patch] sata_sil24: memset() overflow
+Message-Id: <20100609120153.GF5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100610075431.GK5483@bicker>
-In-Reply-To: <20100610075431.GK5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Wolfram Sang <w.sang@pengutronix.de>, Richard Purdie <rpurdie@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: Tejun Heo <tj@kernel.org>, Robert Hancock <hancockrwd@gmail.com>, Vivek Mahajan <vivek.mahajan@freescale.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 10, 2010 at 09:54:31AM +0200, Dan Carpenter wrote:
-> We reuse the "i" variable later on so if we goto fail3 or fail4 then "i"
-> will be set to the wrong thing and cause a crash.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
+cb->atapi.cdb is an array of 16 u8 elements.  The call too memset() 
+would set the first part of the sge array to zero as well.  It's not
+a packed struct. 
 
-Applied to next, thanks Dan.
+This one has been around for five years.  I found it with Smatch.  I
+think the reason no one has seen it before is because we normally call
+sil24_fill_sg() and that overwrites sge with proper information?
 
--- 
-Dmitry
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+I don't have this hardware myself so I can't test it.  Sorry. :(
+
+diff --git a/drivers/ata/sata_sil24.c b/drivers/ata/sata_sil24.c
+index e925051..9e459eb 100644
+--- a/drivers/ata/sata_sil24.c
++++ b/drivers/ata/sata_sil24.c
+@@ -865,7 +865,7 @@ static void sil24_qc_prep(struct ata_queued_cmd *qc)
+ 	} else {
+ 		prb = &cb->atapi.prb;
+ 		sge = cb->atapi.sge;
+-		memset(cb->atapi.cdb, 0, 32);
++		memset(cb->atapi.cdb, 0, sizeof(cb->atapi.cdb));
+ 		memcpy(cb->atapi.cdb, qc->cdb, qc->dev->cdb_len);
+ 
+ 		if (ata_is_data(qc->tf.protocol)) {
