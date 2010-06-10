@@ -1,54 +1,27 @@
-From: shenghui <crosslonelyover@gmail.com>
-Date: Tue, 29 Jun 2010 06:34:48 +0000
-Subject: Re: [PATCH] avoid return NULL on root rb_node in rb_next/rb_prev in
-Message-Id: <AANLkTin8xnr1Vp1lXiOpWcMLHSlbwpPiRrkzZVMChOus@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 10 Jun 2010 07:52:21 +0000
+Subject: [patch 1/2] be2iscsi: memory leak on error path
+Message-Id: <20100610075221.GI5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTilJDrpoFGyTSrKg3Hg59u9TvBLbxk4HAVKBvjxQ@mail.gmail.com>
-	<1277733320.3561.50.camel@laptop>
-	<AANLkTinuas0MPFvZk9nOd91PuHXtaluHkkcWjGKYPZOl@mail.gmail.com>
-In-Reply-To: <AANLkTinuas0MPFvZk9nOd91PuHXtaluHkkcWjGKYPZOl@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, linux-mm@kvack.org, mingo@elte.hu
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jayamohan Kallickal <jayamohank@serverengines.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Mike Christie <michaelc@cs.wisc.edu>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2010/6/29 shenghui <crosslonelyover@gmail.com>:
-> 2010/6/28 Peter Zijlstra <peterz@infradead.org>:
->> So if ->rb_leftmost is NULL, then the if (!left) check in
->> __pick_next_entity() would return null.
->>
->> As to the NULL deref in in pick_next_task_fair()->set_next_entity() that
->> should never happen because pick_next_task_fair() will bail
->> on !->nr_running.
->>
->> Furthermore, you've failed to mention what kernel version you're looking
->> at.
->>
->
-> The kernel version is 2.6.35-rc3, and 2.6.34 has the same code.
->
-> For nr->running, if current is the only process in the run queue, then
-> nr->running would not be zero.
-> 1784        if (!cfs_rq->nr_running)
-> 1785                return NULL;
-> pick_next_task_fair() could pass above check and run to following:
-> 1787        do {
-> 1788                se = pick_next_entity(cfs_rq);
-> 1789                set_next_entity(cfs_rq, se);
-> 1790                cfs_rq = group_cfs_rq(se);
-> 1791        } while (cfs_rq);
->
-> Then pick_next_entity will get NULL for current is the root rb_node.
-> Then set_next_entity would fail on NULL deference.
->
+I added a kfree(pwrb_arr) in front of the return.
 
-Sorry, I misunderstood the code. I'll put forward one new patch to
-avoid the NULL condition
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
--- 
-
-
-Thanks and Best Regards,
-shenghui
+diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
+index dd5b105..779e1d1 100644
+--- a/drivers/scsi/be2iscsi/be_main.c
++++ b/drivers/scsi/be2iscsi/be_main.c
+@@ -2750,6 +2750,7 @@ beiscsi_create_wrb_rings(struct beiscsi_hba *phba,
+ 		if (status != 0) {
+ 			shost_printk(KERN_ERR, phba->shost,
+ 				     "wrbq create failed.");
++			kfree(pwrb_arr);
+ 			return status;
+ 		}
+ 		phwi_ctrlr->wrb_context[i * 2].cid = phwi_context->be_wrbq[i].
