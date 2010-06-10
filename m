@@ -1,23 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 01 Jun 2010 08:28:24 +0000
-Subject: Re: [PATCH 2/2] drivers/isdn/hardware/mISDN: Use GFP_ATOMIC when a
-Message-Id: <20100601.012824.186321680.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 10 Jun 2010 07:53:05 +0000
+Subject: [patch 2/2] be2iscsi: null dereference on error path
+Message-Id: <20100610075305.GJ5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005301549230.15938@ask.diku.dk>
-	<20100601080535.GA19288@gw.linux-pingi.de>
-In-Reply-To: <20100601080535.GA19288@gw.linux-pingi.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: isdn@linux-pingi.de
-Cc: julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jayamohan Kallickal <jayamohank@serverengines.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Mike Christie <michaelc@cs.wisc.edu>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Karsten Keil <isdn@linux-pingi.de>
-Date: Tue, 1 Jun 2010 10:05:35 +0200
+"phba" is always null here so we can't dereference it.
 
-> thanks for that report, the issue is valid, but I think the fix in that case
-> should be to move the allocation to an other place, to avoid wasting of
-> GFP_ATOMIC allocation. I will come up with an other fix.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-You'll have to write your patch relative to Julia'a s ince it's already
-in my net-2.6 tree, since it's a bug fix.
+diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
+index 779e1d1..efadde9 100644
+--- a/drivers/scsi/be2iscsi/be_main.c
++++ b/drivers/scsi/be2iscsi/be_main.c
+@@ -3774,8 +3774,8 @@ static int __devinit beiscsi_dev_probe(struct pci_dev *pcidev,
+ 
+ 	ret = beiscsi_enable_pci(pcidev);
+ 	if (ret < 0) {
+-		shost_printk(KERN_ERR, phba->shost, "beiscsi_dev_probe-"
+-			     "Failed to enable pci device \n");
++		dev_err(&pcidev->dev, "beiscsi_dev_probe-"
++			" Failed to enable pci device\n");
+ 		return ret;
+ 	}
+ 
