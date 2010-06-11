@@ -1,48 +1,35 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 11 Jun 2010 06:41:42 +0000
-Subject: Re: [PATCH] staging/wlags49_hs: Fix build error when CONFIG_SYSFS
-Message-Id: <1276238502.1556.512.camel@Joe-Laptop.home>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Fri, 11 Jun 2010 12:46:01 +0000
+Subject: Re: [PATCH] staging/wlags49_hs: Fix build error when CONFIG_SYSFS is
+Message-Id: <AANLkTikH_CAVo7sblakUfhI-ysIXk2z1KZz0YkjCDL3m@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1276238148.22216.30.camel@lenovo>
-In-Reply-To: <1276238148.22216.30.camel@lenovo>
+References: <1276238148.22216.30.camel@lenovo> <1276238502.1556.512.camel@Joe-Laptop.home>
+In-Reply-To: <1276238502.1556.512.camel@Joe-Laptop.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Javier Martinez Canillas <martinez.javier@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Joe Perches <joe@perches.com>
 Cc: Greg Kroah-Hartman <gregkh@suse.de>, Henk de Groot <pe1dnn@amsat.org>, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On Fri, 2010-06-11 at 02:35 -0400, Javier Martinez Canillas wrote:
-> With current linux-next I got a build error with wlags49_h2 driver when CONFIG_SYSFS is not set.
-> diff --git a/drivers/staging/wlags49_h2/wl_sysfs.h b/drivers/staging/wlags49_h2/wl_sysfs.h
-> index 6d96d03..7d5895d 100644
-> --- a/drivers/staging/wlags49_h2/wl_sysfs.h
-> +++ b/drivers/staging/wlags49_h2/wl_sysfs.h
-> @@ -2,6 +2,6 @@
->  extern void register_wlags_sysfs(struct net_device *);
->  extern void unregister_wlags_sysfs(struct net_device *);
->  #else
-> -static void register_wlags_sysfs(struct net_device *) { return; };
-> -static void unregister_wlags_sysfs(struct net_device *) { return; };
-> +#define register_wlags_sysfs(net_device) { }
-> +#define unregister_wlags_sysfs(net_device) { }
->  #endif
+>>  extern void register_wlags_sysfs(struct net_device *);
+>>  extern void unregister_wlags_sysfs(struct net_device *);
+>>  #else
+>> -static void register_wlags_sysfs(struct net_device *) { return; };
+>> -static void unregister_wlags_sysfs(struct net_device *) { return; };
+>> +#define register_wlags_sysfs(net_device) { }
+>> +#define unregister_wlags_sysfs(net_device) { }
+>>  #endif
+>
+> Yes, that works, but a better fix would be to remove the
+> semicolons after the function close braces.
+> ---
 
-Yes, that works, but a better fix would be to remove the
-semicolons after the function close braces.
----
-diff --git a/drivers/staging/wlags49_h2/wl_sysfs.h
-b/drivers/staging/wlags49_h2/wl_sysfs.h
-index 6d96d03..7d5895d 100644
---- a/drivers/staging/wlags49_h2/wl_sysfs.h
-+++ b/drivers/staging/wlags49_h2/wl_sysfs.h
-@@ -2,6 +2,6 @@
- extern void register_wlags_sysfs(struct net_device *);
- extern void unregister_wlags_sysfs(struct net_device *);
- #else
--static void register_wlags_sysfs(struct net_device *) { return; };
--static void unregister_wlags_sysfs(struct net_device *) { return; };
-+static void register_wlags_sysfs(struct net_device *) { return; }
-+static void unregister_wlags_sysfs(struct net_device *) { return; }
- #endif
+Why would it be better? With a macro you avoid the overhead of a
+function call that does nothing.
+I personally think a macro fit better in this case.
 
+Best regards,
 
+-----------------------------------------
+Javier Martínez Canillas
++595 981 88 66 58
