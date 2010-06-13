@@ -1,169 +1,25 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:15:56 +0000
-Subject: [PATCH 16/25] pmem: remove casts from void*
-Message-Id: <1277806557-31248-1-git-send-email-segooon@gmail.com>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Date: Sun, 13 Jun 2010 09:08:04 +0000
+Subject: Re: [patch] mtd: return success on blktrans_ioctl()
+Message-Id: <1276420084.19028.182.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100531140337.GV5483@bicker>
+In-Reply-To: <20100531140337.GV5483@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Pavel Machek <pavel@ucw.cz>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, Jochen Maes <jochen.maes@sejo.be>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <error27@gmail.com>
+Cc: Maxim Levitsky <maximlevitsky@gmail.com>, kernel-janitors@vger.kernel.org, H Hartley Sweeten <hsweeten@visionengravers.com>, linux-mtd@lists.infradead.org, Ben Hutchings <bhutchings@solarflare.com>, David Woodhouse <dwmw2@infradead.org>
 
-Remove unnesessary casts from void*.
+On Mon, 2010-05-31 at 16:03 +0200, Dan Carpenter wrote:
+> There was a break missing so we returned -ENOTTY on success instead of
+> zero.  This was introduced by 048d8719956: "mtd: blktrans: Hotplug fixes"
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/dream/pmem.c |   32 ++++++++++++++++----------------
- 1 files changed, 16 insertions(+), 16 deletions(-)
+Pushed to l2-mtd-2.6.git, thanks.
 
-diff --git a/drivers/staging/dream/pmem.c b/drivers/staging/dream/pmem.c
-index 6387365..2e80f62 100644
---- a/drivers/staging/dream/pmem.c
-+++ b/drivers/staging/dream/pmem.c
-@@ -209,7 +209,7 @@ static int has_allocation(struct file *file)
- 
- 	if (unlikely(!file->private_data))
- 		return 0;
--	data = (struct pmem_data *)file->private_data;
-+	data = file->private_data;
- 	if (unlikely(data->index < 0))
- 		return 0;
- 	return 1;
-@@ -223,7 +223,7 @@ static int is_master_owner(struct file *file)
- 
- 	if (!is_pmem_file(file) || !has_allocation(file))
- 		return 0;
--	data = (struct pmem_data *)file->private_data;
-+	data = file->private_data;
- 	if (PMEM_FLAGS_MASTERMAP & data->flags)
- 		return 1;
- 	master_file = fget_light(data->master_fd, &put_needed);
-@@ -268,7 +268,7 @@ static void pmem_revoke(struct file *file, struct pmem_data *data);
- 
- static int pmem_release(struct inode *inode, struct file *file)
- {
--	struct pmem_data *data = (struct pmem_data *)file->private_data;
-+	struct pmem_data *data = file->private_data;
- 	struct pmem_region_node *region_node;
- 	struct list_head *elt, *elt2;
- 	int id = get_id(file), ret = 0;
-@@ -591,7 +591,7 @@ static int pmem_mmap(struct file *file, struct vm_area_struct *vma)
- 		return -EINVAL;
- 	}
- 
--	data = (struct pmem_data *)file->private_data;
-+	data = file->private_data;
- 	down_write(&data->sem);
- 	/* check this file isn't already mmaped, for submaps check this file
- 	 * has never been mmaped */
-@@ -690,7 +690,7 @@ int get_pmem_user_addr(struct file *file, unsigned long *start,
- #endif
- 		return -1;
- 	}
--	data = (struct pmem_data *)file->private_data;
-+	data = file->private_data;
- 	down_read(&data->sem);
- 	if (data->vma) {
- 		*start = data->vma->vm_start;
-@@ -712,7 +712,7 @@ int get_pmem_addr(struct file *file, unsigned long *start,
- 	if (!is_pmem_file(file) || !has_allocation(file))
- 		return -1;
- 
--	data = (struct pmem_data *)file->private_data;
-+	data = file->private_data;
- 	if (data->index = -1) {
- #if PMEM_DEBUG
- 		printk(KERN_INFO "pmem: requested pmem data from file with no "
-@@ -766,7 +766,7 @@ void put_pmem_file(struct file *file)
- 	if (!is_pmem_file(file))
- 		return;
- 	id = get_id(file);
--	data = (struct pmem_data *)file->private_data;
-+	data = file->private_data;
- #if PMEM_DEBUG
- 	down_write(&data->sem);
- 	if (data->ref = 0) {
-@@ -793,7 +793,7 @@ void flush_pmem_file(struct file *file, unsigned long offset, unsigned long len)
- 		return;
- 
- 	id = get_id(file);
--	data = (struct pmem_data *)file->private_data;
-+	data = file->private_data;
- 	if (!pmem[id].cached)
- 		return;
- 
-@@ -822,7 +822,7 @@ end:
- 
- static int pmem_connect(unsigned long connect, struct file *file)
- {
--	struct pmem_data *data = (struct pmem_data *)file->private_data;
-+	struct pmem_data *data = file->private_data;
- 	struct pmem_data *src_data;
- 	struct file *src_file;
- 	int ret = 0, put_needed;
-@@ -842,7 +842,7 @@ static int pmem_connect(unsigned long connect, struct file *file)
- 		ret = -EINVAL;
- 		goto err_bad_file;
- 	}
--	src_data = (struct pmem_data *)src_file->private_data;
-+	src_data = src_file->private_data;
- 
- 	if (has_allocation(file) && (data->index != src_data->index)) {
- 		printk(KERN_INFO "pmem: file is already mapped but doesn't "
-@@ -929,7 +929,7 @@ int pmem_remap(struct pmem_region *region, struct file *file,
- 	struct mm_struct *mm = NULL;
- 	struct list_head *elt, *elt2;
- 	int id = get_id(file);
--	struct pmem_data *data = (struct pmem_data *)file->private_data;
-+	struct pmem_data *data = file->private_data;
- 
- 	/* pmem region must be aligned on a page boundry */
- 	if (unlikely(!PMEM_IS_PAGE_ALIGNED(region->offset) ||
-@@ -1053,7 +1053,7 @@ static void pmem_revoke(struct file *file, struct pmem_data *data)
- 
- static void pmem_get_size(struct pmem_region *region, struct file *file)
- {
--	struct pmem_data *data = (struct pmem_data *)file->private_data;
-+	struct pmem_data *data = file->private_data;
- 	int id = get_id(file);
- 
- 	if (!has_allocation(file)) {
-@@ -1082,7 +1082,7 @@ static long pmem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 				region.offset = 0;
- 				region.len = 0;
- 			} else {
--				data = (struct pmem_data *)file->private_data;
-+				data = file->private_data;
- 				region.offset = pmem_start_addr(id, data);
- 				region.len = pmem_len(id, data);
- 			}
-@@ -1099,7 +1099,7 @@ static long pmem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 			if (copy_from_user(&region, (void __user *)arg,
- 						sizeof(struct pmem_region)))
- 				return -EFAULT;
--			data = (struct pmem_data *)file->private_data;
-+			data = file->private_data;
- 			return pmem_remap(&region, file, PMEM_MAP);
- 		}
- 		break;
-@@ -1109,7 +1109,7 @@ static long pmem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 			if (copy_from_user(&region, (void __user *)arg,
- 						sizeof(struct pmem_region)))
- 				return -EFAULT;
--			data = (struct pmem_data *)file->private_data;
-+			data = file->private_data;
- 			return pmem_remap(&region, file, PMEM_UNMAP);
- 			break;
- 		}
-@@ -1139,7 +1139,7 @@ static long pmem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		{
- 			if (has_allocation(file))
- 				return -EINVAL;
--			data = (struct pmem_data *)file->private_data;
-+			data = file->private_data;
- 			data->index = pmem_allocate(id, arg);
- 			break;
- 		}
 -- 
-1.7.0.4
+Best Regards,
+Artem Bityutskiy (Артём Битюцкий)
 
