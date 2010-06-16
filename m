@@ -1,97 +1,59 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, 02 Jun 2010 13:12:44 +0000
-Subject: [PATCH] staging: xgifb: Fix compiler warnings about unused
-Message-Id: <1275484364.16039.10.camel@shinshilla>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Wed, 16 Jun 2010 15:56:23 +0000
+Subject: Re: [patch] V4L/DVB: remove unneeded null check in anysee_probe()
+Message-Id: <alpine.LNX.2.00.1006161755560.12271@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100531192632.GZ5483@bicker>
+In-Reply-To: <20100531192632.GZ5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Antti Palosaari <crope@iki.fi>, =?ISO-8859-15?Q?Andr=E9_Goddard_Rosa?= <andre.goddard@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix compiler warnings about unused variables and functions on
-CONFIG_FB_XGI=m.
+On Mon, 31 May 2010, Dan Carpenter wrote:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+> Smatch complained because "d" is dereferenced first and then checked for
+> null later .  The only code path where "d" could be a invalid pointer is
+> if this is a cold device in dvb_usb_device_init().  I consulted Antti 
+> Palosaari and he explained that anysee is always a warm device.
+> 
+> I have added a comment and removed the unneeded null check.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> diff --git a/drivers/media/dvb/dvb-usb/anysee.c b/drivers/media/dvb/dvb-usb/anysee.c
+> index faca1ad..aa5c7d5 100644
+> --- a/drivers/media/dvb/dvb-usb/anysee.c
+> +++ b/drivers/media/dvb/dvb-usb/anysee.c
+> @@ -463,6 +463,11 @@ static int anysee_probe(struct usb_interface *intf,
+>  	if (intf->num_altsetting < 1)
+>  		return -ENODEV;
+>  
+> +	/*
+> +	 * Anysee is always warm (its USB-bridge, Cypress FX2, uploads
+> +	 * firmware from eeprom).  If dvb_usb_device_init() succeeds that
+> +	 * means d is a valid pointer.
+> +	 */
+>  	ret = dvb_usb_device_init(intf, &anysee_properties, THIS_MODULE, &d,
+>  		adapter_nr);
+>  	if (ret)
+> @@ -479,10 +484,7 @@ static int anysee_probe(struct usb_interface *intf,
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (d)
+> -		ret = anysee_init(d);
+> -
+> -	return ret;
+> +	return anysee_init(d);
 
-diff --git a/drivers/staging/xgifb/XGI_main.h
-b/drivers/staging/xgifb/XGI_main.h
-index 4f4171e..dd6d6bd 100644
---- a/drivers/staging/xgifb/XGI_main.h
-+++ b/drivers/staging/xgifb/XGI_main.h
-@@ -388,7 +388,6 @@ static int currcon = 0;
-static int XGIfb_registered;
-static int XGIfb_tvmode = 0;
-static int XGIfb_mem = 0;
--static int XGIfb_pdc = 0;
-static int enable_dstn = 0;
-static int XGIfb_ypan = -1;
+Doesn't seem to be present in linux-next as of today. Mauro, will you 
+take it?
+Or I can take it if you ack it.
 
-diff --git a/drivers/staging/xgifb/XGI_main_26.c
-b/drivers/staging/xgifb/XGI_main_26.c
-index 867012b..4e3af91 100644
---- a/drivers/staging/xgifb/XGI_main_26.c
-+++ b/drivers/staging/xgifb/XGI_main_26.c
-@@ -855,6 +855,7 @@ static int XGIfb_validate_mode(int myindex)
+Thanks,
 
-}
-
-+#ifndef MODULE
-static void XGIfb_search_crt2type(const char *name)
-{
-int i = 0;
-@@ -873,7 +874,9 @@ static void XGIfb_search_crt2type(const char *name)
-if(XGIfb_crt2type < 0)
-printk(KERN_INFO "XGIfb: Invalid CRT2 type: %s\n", name);
-}
-+#endif
-
-+#ifndef MODULE
-static void XGIfb_search_queuemode(const char *name)
-{
-int i = 0;
-@@ -891,6 +894,7 @@ static void XGIfb_search_queuemode(const char *name)
-if (XGIfb_queuemode < 0)
-printk(KERN_INFO "XGIfb: Invalid queuemode type: %s\n", name);
-}
-+#endif
-
-static u8 XGIfb_search_refresh_rate(unsigned int rate)
-{
-@@ -938,6 +942,7 @@ static u8 XGIfb_search_refresh_rate(unsigned int
-rate)
-}
-}
-
-+#ifndef MODULE
-static void XGIfb_search_tvstd(const char *name)
-{
-int i = 0;
-@@ -953,6 +958,7 @@ static void XGIfb_search_tvstd(const char *name)
-i++;
-}
-}
-+#endif
-
-static BOOLEAN XGIfb_bridgeisslave(void)
-{
-@@ -2824,6 +2830,7 @@ static void XGIfb_post_setmode(void)
-XGIINITSTATIC int __init XGIfb_setup(char *options)
-{
-char *this_opt;
-+ int XGIfb_pdc;
-
-
-
-@@ -3585,7 +3592,6 @@ module_init(xgifb_init);
-static char         *mode = NULL;
-static int          vesa = 0;
-static unsigned int rate = 0;
--static unsigned int crt1off = 1;
-static unsigned int mem = 0;
-static char         *forcecrt2type = NULL;
-static int          forcecrt1 = -1;
 -- 
-1.7.0.4
-
-
-
+Jiri Kosina
+SUSE Labs, Novell Inc.
