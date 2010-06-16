@@ -1,35 +1,35 @@
-From: shenghui <crosslonelyover@gmail.com>
-Date: Tue, 29 Jun 2010 12:44:37 +0000
-Subject: Re: [PATCH] avoid race condition in pick_next_task_fair in
-Message-Id: <AANLkTil26yR6bdPoaH84rOoJfmg8cyS0ScvVeBydZQ25@mail.gmail.com>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Wed, 16 Jun 2010 14:54:52 +0000
+Subject: [PATCH] drm/i915: fix warn, struct may be used uninitialized
+Message-Id: <20100616145452.GA30948@lovely.krouter>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTin49UHeVhfS-iFwWvPIg29HPhXaP3DorBAa-a0I@mail.gmail.com>
-	<1277808215.1868.5.camel@laptop>
-	<AANLkTik4PXpgkc_ob-INohfmlTwe3wqDmif_ohXBxHHX@mail.gmail.com>
-	<1277811316.1868.40.camel@laptop>
-In-Reply-To: <1277811316.1868.40.camel@laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, Greg KH <greg@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-2010/6/29 Peter Zijlstra <peterz@infradead.org>:
-> Pretty much everywhere, if you look at sched.c the only sched_class
-> method not called with rq->lock held is ::task_fork().
->
-> The interesting bits are that schedule()->pre_schedule()/idle_balance()
-> can drop rq->lock as well as ->select_task_rq().
->
->
->
->
+In function ‘i915_setup_compression’:
+warning: ‘compressed_llb’ may be used uninitialized in this function
 
-Thanks for your instructions!
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+---
+ drivers/gpu/drm/i915/i915_dma.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-
+diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
+index 59a2bf8..772a72a 100644
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@ -1229,7 +1229,8 @@ static void i915_warn_stolen(struct drm_device *dev)
+ static void i915_setup_compression(struct drm_device *dev, int size)
+ {
+ 	struct drm_i915_private *dev_priv = dev->dev_private;
+-	struct drm_mm_node *compressed_fb, *compressed_llb;
++	struct drm_mm_node *compressed_fb;
++	struct drm_mm_node *compressed_llb;
+ 	unsigned long cfb_base;
+ 	unsigned long ll_base = 0;
+ 
 -- 
+1.7.1
 
-
-Thanks and Best Regards,
-shenghui
