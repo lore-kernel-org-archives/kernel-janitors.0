@@ -1,47 +1,54 @@
-From: Evgeniy Polyakov <zbr@ioremap.net>
-Date: Tue, 08 Jun 2010 12:40:31 +0000
-Subject: Re: [PATCH] drivers/staging/pohmelfs: fix compile warning
-Message-Id: <20100608124031.GA31804@ioremap.net>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Thu, 17 Jun 2010 05:17:44 +0000
+Subject: [PATCH] staging/wlags49_h2: Fix build error when CONFIG_SYSFS is
+Message-Id: <1276751864.14632.6.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1275788460.10961.18.camel@lenovo>
-In-Reply-To: <1275788460.10961.18.camel@lenovo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Javier.
+Hello,
 
-Patch looks good, thank you.
+Didn't get any feedback so resending the patch.
 
-On Sat, Jun 05, 2010 at 09:41:00PM -0400, Javier Martinez Canillas (martinez.javier@gmail.com) wrote:
-> A really trivial patch to solve a warning when compiling staging/pohmelfs
-> 
-> Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+I got a wlags49_h2 driver build error in linux-next when CONFIG_SYSFS is not set.
 
-Greg, please apply.
+CC [M]  drivers/staging/wlags49_h2/wl_cs.o
+In file included from drivers/staging/wlags49_h2/wl_cs.c:104:
+drivers/staging/wlags49_h2/wl_sysfs.h: In function ‘register_wlags_sysfs’:
+drivers/staging/wlags49_h2/wl_sysfs.h:5: error: parameter name omitted
+drivers/staging/wlags49_h2/wl_sysfs.h: In function ‘unregister_wlags_sysfs’:
+drivers/staging/wlags49_h2/wl_sysfs.h:6: error: parameter name omitted
+make[1]: *** [drivers/staging/wlags49_h2/wl_cs.o] Error 1
+make: *** [_module_drivers/staging/wlags49_h2] Error 2
 
-> ---
->  drivers/staging/pohmelfs/inode.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/staging/pohmelfs/inode.c b/drivers/staging/pohmelfs/inode.c
-> index 643b413..20b0c68 100644
-> --- a/drivers/staging/pohmelfs/inode.c
-> +++ b/drivers/staging/pohmelfs/inode.c
-> @@ -1266,7 +1266,7 @@ static void pohmelfs_put_super(struct super_block *sb)
->  {
->  	struct pohmelfs_sb *psb = POHMELFS_SB(sb);
->  	struct pohmelfs_inode *pi;
-> -	unsigned int count;
-> +	unsigned int count = 0;
->  	unsigned int in_drop_list = 0;
->  	struct inode *inode, *tmp;
->  
-> -- 
-> 1.7.0.4
-> 
-> 
+This is due a wrong function definition (it does not include parameters names). 
 
--- 
-	Evgeniy Polyakov
+Current patch solves the issue.
+
+Thanks a lot
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/wlags49_h2/wl_sysfs.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/wlags49_h2/wl_sysfs.h
+b/drivers/staging/wlags49_h2/wl_sysfs.h
+index 6d96d03..fa658c3 100644
+--- a/drivers/staging/wlags49_h2/wl_sysfs.h
++++ b/drivers/staging/wlags49_h2/wl_sysfs.h
+@@ -2,6 +2,6 @@
+ extern void register_wlags_sysfs(struct net_device *);
+ extern void unregister_wlags_sysfs(struct net_device *);
+ #else
+-static void register_wlags_sysfs(struct net_device *) { return; };
+-static void unregister_wlags_sysfs(struct net_device *) { return; };
++static inline void register_wlags_sysfs(struct net_device *net) { }
++static inline void unregister_wlags_sysfs(struct net_device *net) { }
+ #endif
+--
+1.7.0.4
+
+
