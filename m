@@ -1,43 +1,45 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:15:52 +0000
-Subject: [PATCH 15/25] linux: remove casts from void*
-Message-Id: <1277806553-31214-1-git-send-email-segooon@gmail.com>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Thu, 17 Jun 2010 13:28:25 +0000
+Subject: [PATCH] x86: fix section mismatch in pcibios_scan_specific_bus
+Message-Id: <1276781305.2999.1.camel@lovely.krouter>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bob Beers <bob.beers@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Remove unnesessary casts from void*.
+Fix following section mismatch in legacy function
+pcibios_scan_specific_bus:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+arch/x86/pci/built-in.o(.text+0x1637): Section mismatch in
+reference from the function pcibios_scan_specific_bus() to
+the function .devinit.text:pci_scan_bus_on_node()
+
+The function pcibios_scan_specific_bus() references the
+function __devinit pci_scan_bus_on_node().
+
+This is often because pcibios_scan_specific_bus lacks a
+__devinit annotation or the annotation of
+pci_scan_bus_on_nodeis wrong.
+
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
 ---
- drivers/staging/cxt1e1/linux.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/pci/legacy.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/cxt1e1/linux.c b/drivers/staging/cxt1e1/linux.c
-index 134e756..baa4b54 100644
---- a/drivers/staging/cxt1e1/linux.c
-+++ b/drivers/staging/cxt1e1/linux.c
-@@ -461,7 +461,7 @@ chan_get_stats (struct net_device * ndev)
-     {
-         struct c4_priv *priv;
+diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
+index 8d460ea..c89266b 100644
+--- a/arch/x86/pci/legacy.c
++++ b/arch/x86/pci/legacy.c
+@@ -36,7 +36,7 @@ int __init pci_legacy_init(void)
+ 	return 0;
+ }
  
--        priv = (struct c4_priv *) dev_to_hdlc (ndev)->priv;
-+        priv = dev_to_hdlc (ndev)->priv;
-         channum = priv->channum;
-     }
- #endif
-@@ -886,7 +886,7 @@ do_deluser (struct net_device * ndev, int lockit)
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
-         priv = DEV_TO_PRIV (ndev);
- #else
--        priv = (struct c4_priv *) dev_to_hdlc (ndev)->priv;
-+        priv = dev_to_hdlc (ndev)->priv;
- #endif
-         ci = priv->ci;
-         channum = priv->channum;
+-void pcibios_scan_specific_bus(int busn)
++void __devinit pcibios_scan_specific_bus(int busn)
+ {
+ 	int devfn;
+ 	long node;
 -- 
-1.7.0.4
+1.7.1
 
