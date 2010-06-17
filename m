@@ -1,35 +1,42 @@
-From: Ben Skeggs <bskeggs@redhat.com>
-Date: Thu, 03 Jun 2010 01:22:57 +0000
-Subject: Re: [patch] drm/nouveau: off by one in init_i2c_device_find()
-Message-Id: <1275528177.9064.0.camel@nisroch>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 17 Jun 2010 12:08:47 +0000
+Subject: [patch] Staging: wlan-ng: silence a sparse warning
+Message-Id: <20100617120847.GJ5483@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100525095227.GH22515@bicker>
-In-Reply-To: <20100525095227.GH22515@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 2010-05-25 at 11:52 +0200, Dan Carpenter wrote:
-> dcb->i2c[] has DCB_MAX_NUM_I2C_ENTRIES entries.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-Thanks, picked this up in the nouveau tree.
+This doesn't change the behavior.  It just silences a sparse warning.
 
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c b/drivers/gpu/drm/nouveau/nouveau_bios.c
-> index e7e69cc..bf92a1e 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bios.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
-> @@ -814,7 +814,7 @@ init_i2c_device_find(struct drm_device *dev, int i2c_index)
->  	if (i2c_index = 0x81)
->  		i2c_index = (dcb->i2c_default_indices & 0xf0) >> 4;
->  
-> -	if (i2c_index > DCB_MAX_NUM_I2C_ENTRIES) {
-> +	if (i2c_index >= DCB_MAX_NUM_I2C_ENTRIES) {
->  		NV_ERROR(dev, "invalid i2c_index 0x%x\n", i2c_index);
->  		return NULL;
->  	}
+drivers/staging/wlan-ng/hfa384x_usb.c:2810:62: warning: dubious: !x | !y
 
+The point of the bitwise OR is so that a logical OR could short circuit
+the second call to test_and_set_bit().
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/staging/wlan-ng/hfa384x_usb.c b/drivers/staging/wlan-ng/hfa384x_usb.c
+index a41db5d..563017a 100644
+--- a/drivers/staging/wlan-ng/hfa384x_usb.c
++++ b/drivers/staging/wlan-ng/hfa384x_usb.c
+@@ -2805,11 +2805,13 @@ void hfa384x_tx_timeout(wlandevice_t *wlandev)
+ 
+ 	spin_lock_irqsave(&hw->ctlxq.lock, flags);
+ 
+-	if (!hw->wlandev->hwremoved &&
+-	    /* Note the bitwise OR, not the logical OR. */
+-	    (!test_and_set_bit(WORK_TX_HALT, &hw->usb_flags) |
+-	     !test_and_set_bit(WORK_RX_HALT, &hw->usb_flags))) {
+-		schedule_work(&hw->usb_work);
++	if (!hw->wlandev->hwremoved) {
++		int sched;
++
++		sched = !test_and_set_bit(WORK_TX_HALT, &hw->usb_flags);
++		sched |= !test_and_set_bit(WORK_RX_HALT, &hw->usb_flags);
++		if (sched)
++			schedule_work(&hw->usb_work);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&hw->ctlxq.lock, flags);
