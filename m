@@ -1,197 +1,128 @@
-From: Eric Paris <eparis@parisplace.org>
-Date: Tue, 08 Jun 2010 20:00:26 +0000
-Subject: Re: [patch 1/7] selinux: cleanup return codes in avtab_read_item()
-Message-Id: <AANLkTimZ48MAeEGoCwu3cWFTBofb-OUw6tBKQ7wSsJ4X@mail.gmail.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Fri, 18 Jun 2010 18:24:32 +0000
+Subject: Re: [patch] mfd/88pm860x: fix uninitialized variable and clean up
+Message-Id: <20100618182432.GE3582@sortiz.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100607210217.GQ5483@bicker>
-In-Reply-To: <20100607210217.GQ5483@bicker>
+References: <20100526225409.GQ22515@bicker>
+In-Reply-To: <20100526225409.GQ22515@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <error27@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jun 7, 2010 at 5:02 PM, Dan Carpenter <error27@gmail.com> wrote:
-> The avtab_read_item() function tends to return -1 as a default error
-> code which is wrong (-1 means -EPERM). =A0I modified it to return
-> appropriate error codes which is -EINVAL or the error code from
-> next_entry() or insertf().
->
-> next_entry() returns -EINVAL.
-> insertf() is a function pointer to either avtab_insert() or
-> cond_insertf().
-> avtab_insert() returns -EINVAL, -ENOMEM, and -EEXIST.
-> cond_insertf() currently returns -1, but I will fix it in a later patch.
->
-> There is code in avtab_read() which translates the -1 returns from
-> avtab_read_item() to -EINVAL. The translation is no longer needed, so I
-> removed it.
->
+Hi Dan,
+
+On Thu, May 27, 2010 at 12:54:09AM +0200, Dan Carpenter wrote:
+> The original code had a compile warning:
+> drivers/mfd/88pm860x-core.c:431: warning: ‘ret’ may be used
+> 	uninitialized in this function
+> It seems like the warning is valid if either pdata or pdata->touch is
+> NULL.
+> 
+> This patch checks pdata and pdata->touch at the beginning of the 
+> function.  That means everything can be pulled in one indent level.
+> Now all the statements fit within the 80 character limit.
+> 
+> Also at that point the "use_gpadc" variable isn't needed and removing
+> it simplifies the logic.
+Thanks, patch applied to my for-next branch.
+
+Cheers,
+Samuel.
+
+
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-I did these same patches a month ago and they were pretty much
-completely ignored.  Glad to see someone else is trying again.
-
-Acked-by: Eric Paris <eparis@redhat.com>
-
-> diff --git a/security/selinux/ss/avtab.c b/security/selinux/ss/avtab.c
-> index 1215b8e..fe62d82 100644
-> --- a/security/selinux/ss/avtab.c
-> +++ b/security/selinux/ss/avtab.c
-> @@ -344,18 +344,18 @@ int avtab_read_item(struct avtab *a, void *fp, stru=
-ct policydb *pol,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0rc =3D next_entry(buf32, fp, sizeof(u32));
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (rc < 0) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: truncated entry\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return rc;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0items2 =3D le32_to_cpu(buf32[0]);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (items2 > ARRAY_SIZE(buf32)) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: entry overflow\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0rc =3D next_entry(buf32, fp, sizeof(u32)*i=
-tems2);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (rc < 0) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: truncated entry\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return rc;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0items =3D 0;
->
-> @@ -363,19 +363,19 @@ int avtab_read_item(struct avtab *a, void *fp, stru=
-ct policydb *pol,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0key.source_type =3D (u16)val;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (key.source_type !=3D val) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: truncated source type\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0val =3D le32_to_cpu(buf32[items++]);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0key.target_type =3D (u16)val;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (key.target_type !=3D val) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: truncated target type\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0val =3D le32_to_cpu(buf32[items++]);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0key.target_class =3D (u16)val;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (key.target_class !=3D val) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: truncated target class\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0val =3D le32_to_cpu(buf32[items++]);
-> @@ -383,12 +383,12 @@ int avtab_read_item(struct avtab *a, void *fp, stru=
-ct policydb *pol,
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (!(val & (AVTAB_AV | AVTAB_TYPE))) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: null entry\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if ((val & AVTAB_AV) &&
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(val & AVTAB_TYPE)) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: entry has both access vectors and types\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0for (i =3D 0; i < ARRAY_SIZE(spec_order); =
-i++) {
-> @@ -403,7 +403,7 @@ int avtab_read_item(struct avtab *a, void *fp, struct=
- policydb *pol,
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (items !=3D items2) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =
-avtab: entry only had %d items, expected %d\n", items2, items);
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return 0;
-> =A0 =A0 =A0 =A0}
-> @@ -411,7 +411,7 @@ int avtab_read_item(struct avtab *a, void *fp, struct=
- policydb *pol,
-> =A0 =A0 =A0 =A0rc =3D next_entry(buf16, fp, sizeof(u16)*4);
-> =A0 =A0 =A0 =A0if (rc < 0) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: avtab: truncated=
- entry\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return rc;
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0items =3D 0;
-> @@ -424,7 +424,7 @@ int avtab_read_item(struct avtab *a, void *fp, struct=
- policydb *pol,
-> =A0 =A0 =A0 =A0 =A0 =A0!policydb_type_isvalid(pol, key.target_type) ||
-> =A0 =A0 =A0 =A0 =A0 =A0!policydb_class_isvalid(pol, key.target_class)) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: avtab: invalid t=
-ype or class\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0set =3D 0;
-> @@ -434,19 +434,19 @@ int avtab_read_item(struct avtab *a, void *fp, stru=
-ct policydb *pol,
-> =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0if (!set || set > 1) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: =A0avtab: =A0mor=
-e than one specifier\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0rc =3D next_entry(buf32, fp, sizeof(u32));
-> =A0 =A0 =A0 =A0if (rc < 0) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: avtab: truncated=
- entry\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return rc;
-> =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0datum.data =3D le32_to_cpu(*buf32);
-> =A0 =A0 =A0 =A0if ((key.specified & AVTAB_TYPE) &&
-> =A0 =A0 =A0 =A0 =A0 =A0!policydb_type_isvalid(pol, datum.data)) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "SELinux: avtab: invalid t=
-ype\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -1;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0return insertf(a, &key, &datum, p);
-> =A0}
-> @@ -487,8 +487,7 @@ int avtab_read(struct avtab *a, void *fp, struct poli=
-cydb *pol)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KER=
-N_ERR "SELinux: avtab: out of memory\n");
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0else if (rc =3D -EEXIST)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KER=
-N_ERR "SELinux: avtab: duplicate entry\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 rc =3D -EIN=
-VAL;
+> 
+> diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
+> index 405d2d5..f9ada69 100644
+> --- a/drivers/mfd/88pm860x-core.c
+> +++ b/drivers/mfd/88pm860x-core.c
+> @@ -428,52 +428,44 @@ static int __devinit device_gpadc_init(struct pm860x_chip *chip,
+>  {
+>  	struct i2c_client *i2c = (chip->id = CHIP_PM8607) ? chip->client \
+>  				: chip->companion;
+> -	int use_gpadc = 0, data, ret;
+> +	int data;
+> +	int ret;
+>  
+>  	/* initialize GPADC without activating it */
+>  
+> -	if (pdata && pdata->touch) {
+> -		/* set GPADC MISC1 register */
+> -		data = 0;
+> -		data |= (pdata->touch->gpadc_prebias << 1)
+> -			& PM8607_GPADC_PREBIAS_MASK;
+> -		data |= (pdata->touch->slot_cycle << 3)
+> -			& PM8607_GPADC_SLOT_CYCLE_MASK;
+> -		data |= (pdata->touch->off_scale << 5)
+> -			& PM8607_GPADC_OFF_SCALE_MASK;
+> -		data |= (pdata->touch->sw_cal << 7)
+> -			& PM8607_GPADC_SW_CAL_MASK;
+> -		if (data) {
+> -			ret = pm860x_reg_write(i2c, PM8607_GPADC_MISC1, data);
+> -			if (ret < 0)
+> -				goto out;
+> -		}
+> -		/* set tsi prebias time */
+> -		if (pdata->touch->tsi_prebias) {
+> -			data = pdata->touch->tsi_prebias;
+> -			ret = pm860x_reg_write(i2c, PM8607_TSI_PREBIAS, data);
+> -			if (ret < 0)
+> -				goto out;
+> -		}
+> -		/* set prebias & prechg time of pen detect */
+> -		data = 0;
+> -		data |= pdata->touch->pen_prebias & PM8607_PD_PREBIAS_MASK;
+> -		data |= (pdata->touch->pen_prechg << 5)
+> -			& PM8607_PD_PRECHG_MASK;
+> -		if (data) {
+> -			ret = pm860x_reg_write(i2c, PM8607_PD_PREBIAS, data);
+> -			if (ret < 0)
+> -				goto out;
+> -		}
+> +	if (!pdata || !pdata->touch)
+> +		return -EINVAL;
+>  
+> -		use_gpadc = 1;
+> +	/* set GPADC MISC1 register */
+> +	data = 0;
+> +	data |= (pdata->touch->gpadc_prebias << 1) & PM8607_GPADC_PREBIAS_MASK;
+> +	data |= (pdata->touch->slot_cycle << 3) & PM8607_GPADC_SLOT_CYCLE_MASK;
+> +	data |= (pdata->touch->off_scale << 5) & PM8607_GPADC_OFF_SCALE_MASK;
+> +	data |= (pdata->touch->sw_cal << 7) & PM8607_GPADC_SW_CAL_MASK;
+> +	if (data) {
+> +		ret = pm860x_reg_write(i2c, PM8607_GPADC_MISC1, data);
+> +		if (ret < 0)
+> +			goto out;
+>  	}
+> -
+> -	/* turn on GPADC */
+> -	if (use_gpadc) {
+> -		ret = pm860x_set_bits(i2c, PM8607_GPADC_MISC1,
+> -				      PM8607_GPADC_EN, PM8607_GPADC_EN);
+> +	/* set tsi prebias time */
+> +	if (pdata->touch->tsi_prebias) {
+> +		data = pdata->touch->tsi_prebias;
+> +		ret = pm860x_reg_write(i2c, PM8607_TSI_PREBIAS, data);
+> +		if (ret < 0)
+> +			goto out;
+>  	}
+> +	/* set prebias & prechg time of pen detect */
+> +	data = 0;
+> +	data |= pdata->touch->pen_prebias & PM8607_PD_PREBIAS_MASK;
+> +	data |= (pdata->touch->pen_prechg << 5) & PM8607_PD_PRECHG_MASK;
+> +	if (data) {
+> +		ret = pm860x_reg_write(i2c, PM8607_PD_PREBIAS, data);
+> +		if (ret < 0)
+> +			goto out;
+> +	}
 > +
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto bad;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0}
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-=
-module" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +	ret = pm860x_set_bits(i2c, PM8607_GPADC_MISC1,
+> +			      PM8607_GPADC_EN, PM8607_GPADC_EN);
+>  out:
+>  	return ret;
+>  }
+
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
