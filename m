@@ -1,53 +1,61 @@
-From: Simon Horman <horms@verge.net.au>
-Date: Wed, 30 Jun 2010 00:02:50 +0000
-Subject: Re: [PATCH 20/25] usb_main_dev: remove casts from void*
-Message-Id: <20100630000250.GC2138@verge.net.au>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 20 Jun 2010 11:24:54 +0000
+Subject: [PATCH 2/2] arch/sh/mm: Eliminate a double lock
+Message-Id: <Pine.LNX.4.64.1006201324360.4366@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277806573-31384-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277806573-31384-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Nobhiro KUSUNO <n-kusuno@fc4.so-net.ne.jp>, Sebastian =?utf-8?Q?Dalfu=C3=9F?= <sd@sedf.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Paul Mundt <lethal@linux-sh.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 29, 2010 at 02:16:12PM +0400, Kulikov Vasiliy wrote:
-> Remove unnesessary casts from void*.
+From: Julia Lawall <julia@diku.dk>
 
-No objections here.
+The function begins and ends with a read_lock.  The latter is changed to a
+read_unlock.
 
-FWIW, Reviewed-by: Simon Horman <horms@verge.net.au>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/staging/rt2860/usb_main_dev.c |    8 ++++----
->  1 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/rt2860/usb_main_dev.c b/drivers/staging/rt2860/usb_main_dev.c
-> index b740662..40eab25 100644
-> --- a/drivers/staging/rt2860/usb_main_dev.c
-> +++ b/drivers/staging/rt2860/usb_main_dev.c
-> @@ -421,8 +421,8 @@ int MlmeThread(IN void *Context)
->  	int status;
->  	status = 0;
->  
-> -	pTask = (struct rt_rtmp_os_task *)Context;
-> -	pAd = (struct rt_rtmp_adapter *)pTask->priv;
-> +	pTask = Context;
-> +	pAd = pTask->priv;
->  
->  	RtmpOSTaskCustomize(pTask);
->  
-> @@ -490,8 +490,8 @@ int RTUSBCmdThread(IN void *Context)
->  	int status;
->  	status = 0;
->  
-> -	pTask = (struct rt_rtmp_os_task *)Context;
-> -	pAd = (struct rt_rtmp_adapter *)pTask->priv;
-> +	pTask = Context;
-> +	pAd = pTask->priv;
->  
->  	RtmpOSTaskCustomize(pTask);
->  
-> -- 
-> 1.7.0.4
+// <smpl>
+@locked@
+expression E1;
+position p;
+@@
+
+read_lock(E1@p,...);
+
+@r exists@
+expression x <= locked.E1;
+expression locked.E1;
+expression E2;
+identifier lock;
+position locked.p,p1,p2;
+@@
+
+*lock@p1 (E1@p,...);
+... when != E1
+    when != \(x = E2\|&x\)
+*lock@p2 (E1,...);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+Not tested
+
+ arch/sh/mm/pmb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sh/mm/pmb.c b/arch/sh/mm/pmb.c
+index 18623ba..6379091 100644
+--- a/arch/sh/mm/pmb.c
++++ b/arch/sh/mm/pmb.c
+@@ -770,7 +770,7 @@ static void __init pmb_resize(void)
+ 		spin_unlock_irqrestore(&pmbe->lock, flags);
+ 	}
+ 
+-	read_lock(&pmb_rwlock);
++	read_unlock(&pmb_rwlock);
+ }
+ #endif
+ 
