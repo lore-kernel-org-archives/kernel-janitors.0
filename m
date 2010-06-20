@@ -1,70 +1,73 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:16:20 +0000
-Subject: [PATCH 22/25] vme_tsi148: remove casts from void*
-Message-Id: <1277806581-31452-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 20 Jun 2010 13:40:20 +0000
+Subject: [PATCH 2/3] drivers/gpu/drm/i915: remove duplicate structure field
+Message-Id: <Pine.LNX.4.64.1006201540030.6207@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Martyn Welch <martyn.welch@ge.com>, Julia Lawall <julia@diku.dk>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove unnesessary casts from void*.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+In each case, is_mobile is defined twice to 1.  Drop one initialization.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier I, s, fld;
+position p0,p;
+expression E;
+@@
+
+struct I s =@p0 { ... .fld@p = E, ...};
+
+@s@
+identifier I, s, r.fld;
+position r.p0,p;
+expression E;
+@@
+
+struct I s =@p0 { ... .fld@p = E, ...};
+
+@script:python@
+p0 << r.p0;
+fld << r.fld;
+ps << s.p;
+pr << r.p;
+@@
+
+if int(ps[0].line)<int(pr[0].line) or int(ps[0].column)<int(pr[0].column):
+  cocci.print_main(fld,p0)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/vme/bridges/vme_tsi148.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/i915/i915_drv.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/vme/bridges/vme_tsi148.c b/drivers/staging/vme/bridges/vme_tsi148.c
-index abe88a3..4685a31 100644
---- a/drivers/staging/vme/bridges/vme_tsi148.c
-+++ b/drivers/staging/vme/bridges/vme_tsi148.c
-@@ -1649,7 +1649,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
- 	/* Fill out source part */
- 	switch (src->type) {
- 	case VME_DMA_PATTERN:
--		pattern_attr = (struct vme_dma_pattern *)src->private;
-+		pattern_attr = src->private;
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 423dc90..39b8981 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -97,7 +97,7 @@ static const struct intel_device_info intel_i965g_info = {
+ };
  
- 		entry->descriptor.dsal = pattern_attr->pattern;
- 		entry->descriptor.dsat = TSI148_LCSR_DSAT_TYP_PAT;
-@@ -1663,7 +1663,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+ static const struct intel_device_info intel_i965gm_info = {
+-	.is_i965g = 1, .is_mobile = 1, .is_i965gm = 1, .is_i9xx = 1,
++	.is_i965g = 1, .is_i965gm = 1, .is_i9xx = 1,
+ 	.is_mobile = 1, .has_fbc = 1, .has_rc6 = 1,
+ 	.has_hotplug = 1,
+ };
+@@ -114,7 +114,7 @@ static const struct intel_device_info intel_g45_info = {
+ };
  
- 		break;
- 	case VME_DMA_PCI:
--		pci_attr = (struct vme_dma_pci *)src->private;
-+		pci_attr = src->private;
- 
- 		reg_split((unsigned long long)pci_attr->address, &address_high,
- 			&address_low);
-@@ -1672,7 +1672,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
- 		entry->descriptor.dsat = TSI148_LCSR_DSAT_TYP_PCI;
- 		break;
- 	case VME_DMA_VME:
--		vme_attr = (struct vme_dma_vme *)src->private;
-+		vme_attr = src->private;
- 
- 		reg_split((unsigned long long)vme_attr->address, &address_high,
- 			&address_low);
-@@ -1701,7 +1701,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
- 	/* Fill out destination part */
- 	switch (dest->type) {
- 	case VME_DMA_PCI:
--		pci_attr = (struct vme_dma_pci *)dest->private;
-+		pci_attr = dest->private;
- 
- 		reg_split((unsigned long long)pci_attr->address, &address_high,
- 			&address_low);
-@@ -1710,7 +1710,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
- 		entry->descriptor.ddat = TSI148_LCSR_DDAT_TYP_PCI;
- 		break;
- 	case VME_DMA_VME:
--		vme_attr = (struct vme_dma_vme *)dest->private;
-+		vme_attr = dest->private;
- 
- 		reg_split((unsigned long long)vme_attr->address, &address_high,
- 			&address_low);
--- 
-1.7.0.4
-
+ static const struct intel_device_info intel_gm45_info = {
+-	.is_i965g = 1, .is_mobile = 1, .is_g4x = 1, .is_i9xx = 1,
++	.is_i965g = 1, .is_g4x = 1, .is_i9xx = 1,
+ 	.is_mobile = 1, .need_gfx_hws = 1, .has_fbc = 1, .has_rc6 = 1,
+ 	.has_pipe_cxsr = 1,
+ 	.has_hotplug = 1,
