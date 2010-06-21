@@ -1,33 +1,29 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 04 Jun 2010 10:23:21 +0000
-Subject: [patch] drm/drm_crtc: return -EFAULT on copy_to_user errors
-Message-Id: <20100604102321.GZ5483@bicker>
+Date: Mon, 21 Jun 2010 06:45:08 +0000
+Subject: [patch] scsi/bfa: off by one in bfa_ioc_mbox_isr()
+Message-Id: <20100621064507.GA5940@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Jing Huang <huangj@brocade.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Krishna Gudipati <kgudipat@brocade.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-copy_from_user() returns the number of bytes left to be copied but we
-want to return a negative error code here.  This is in the ioctl handler
-so the error code get returned to userspace.
+This should be ">=" here instead of ">" so that we don't read past the
+end of the array.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index 994d23b..57cea01 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -1840,8 +1840,10 @@ int drm_mode_dirtyfb_ioctl(struct drm_device *dev,
- 
- 		ret = copy_from_user(clips, clips_ptr,
- 				     num_clips * sizeof(*clips));
--		if (ret)
-+		if (ret) {
-+			ret = -EFAULT;
- 			goto out_err2;
-+		}
+diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
+index e038bc9..0ba624d 100644
+--- a/drivers/scsi/bfa/bfa_ioc.c
++++ b/drivers/scsi/bfa/bfa_ioc.c
+@@ -1595,7 +1595,7 @@ bfa_ioc_mbox_isr(struct bfa_ioc_s *ioc)
+ 		return;
  	}
  
- 	if (fb->funcs->dirty) {
+-	if ((mc > BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
++	if ((mc >= BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
+ 		return;
+ 
+ 	mod->mbhdlr[mc].cbfn(mod->mbhdlr[mc].cbarg, &m);
