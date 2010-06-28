@@ -1,29 +1,62 @@
-From: Herbert Xu <herbert@gondor.hengli.com.au>
-Date: Thu, 03 Jun 2010 10:19:37 +0000
-Subject: Re: [patch] padata: add parenthesis in MAX_SEQ_NR macro
-Message-Id: <20100603101937.GA31063@gondor.apana.org.au>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Mon, 28 Jun 2010 00:16:37 +0000
+Subject: [PATCH] staging/wlan-ng: reflects NL80211 API change
+Message-Id: <1277684197.9983.7.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100525212913.GK22515@bicker> <20100526063227.GP2184@secunet.com>
-In-Reply-To: <20100526063227.GP2184@secunet.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="hz-gb-2312"
-Content-Transfer-Encoding: base64
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Dan Carpenter <error27@gmail.com>, Henrik Kretzschmar <henne@nachtwindheim.de>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-T24gV2VkLCBNYXkgMjYsIDIwMTAgYXQgMDg6MzI6MjdBTSArMDIwMCwgU3RlZmZlbiBLbGFzc2Vy
-dCB3cm90ZToKPiBPbiBUdWUsIE1heSAyNSwgMjAxMCBhdCAxMToyOToxM1BNICswMjAwLCBEYW4g
-Q2FycGVudGVyIHdyb3RlOgo+ID4gTUFYX1NFUV9OUiBpcyB1c2VkIGluIHBhZGF0YV9hbGxvY19w
-ZCgpIGxpa2UgdGhpczoKPiA+IAo+ID4gICAgICAgICBwZC0+bWF4X3NlcV9uciA9IChNQVhfU0VR
-X05SIC8gbnVtX2NwdXMpICogbnVtX2NwdXMgLSAxOwo+ID4gCj4gPiBJdCBuZWVkcyBwYXJlbnRo
-ZXNpcyBvciB0aGUgZGl2aWRlIGJ5IG51bV9jcHVzIHRha2VzIHByZWNlZGVuY2Ugb3ZlciB0aGUK
-PiA+IHN1YnRyYWN0aW9uLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVyIDxl
-cnJvcjI3QGdtYWlsLmNvbT4KPiAKPiBBY2tlZC1ieTogU3RlZmZlbiBLbGFzc2VydCA8c3RlZmZl
-bi5rbGFzc2VydEBzZWN1bmV0LmNvbT4KCkFwcGxpZWQuICBUaGFua3MhCi0tIApWaXNpdCBPcGVu
-c3dhbiBhdCBodHRwOi8vd3d3Lm9wZW5zd2FuLm9yZy8KRW1haWw6IEhlcmJlcnQgWHUgfntQbVY+
-SEl+fSA8aGVyYmVydEBnb25kb3IuYXBhbmEub3JnLmF1PgpIb21lIFBhZ2U6IGh0dHA6Ly9nb25k
-b3IuYXBhbmEub3JnLmF1L35oZXJiZXJ0LwpQR1AgS2V5OiBodHRwOi8vZ29uZG9yLmFwYW5hLm9y
-Zy5hdS9+aGVyYmVydC9wdWJrZXkudHh0Ci0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
-OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5
-IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21v
-IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+In today linux-next I got a compile error in wlan-ng:
+
+CC [M]  drivers/staging/wlan-ng/p80211netdev.o
+In file included from drivers/staging/wlan-ng/p80211netdev.c:91:
+drivers/staging/wlan-ng/cfg80211.c:602: warning: ‘enum tx_power_setting’ declared inside parameter list
+drivers/staging/wlan-ng/cfg80211.c:602: warning: its scope is only this definition or declaration, which is probably not what you want
+drivers/staging/wlan-ng/cfg80211.c:602: error: parameter 2 (‘type’) has incomplete type
+drivers/staging/wlan-ng/cfg80211.c: In function ‘prism2_set_tx_power’:
+drivers/staging/wlan-ng/cfg80211.c:609: error: ‘TX_POWER_AUTOMATIC’ undeclared (first use in this function)
+drivers/staging/wlan-ng/cfg80211.c:609: error: (Each undeclared identifier is reported only once
+drivers/staging/wlan-ng/cfg80211.c:609: error: for each function it appears in.)
+make[1]: *** [drivers/staging/wlan-ng/p80211netdev.o] Error 1
+make: *** [_module_drivers/staging/wlan-ng] Error 2
+
+The problem is that the 802.11 netlink interface changed and the driver was not updated
+
+Current patch solves the issue
+
+Best regards,
+
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/wlan-ng/cfg80211.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
+index b0792f7..9803b28 100644
+--- a/drivers/staging/wlan-ng/cfg80211.c
++++ b/drivers/staging/wlan-ng/cfg80211.c
+@@ -599,14 +599,14 @@ int prism2_leave_ibss(struct wiphy *wiphy, struct net_device *dev) {
+ 
+ 
+ int prism2_set_tx_power(struct wiphy *wiphy,
+-			enum tx_power_setting type, int dbm) {
++			enum nl80211_tx_power_setting type, int dbm) {
+ 	struct prism2_wiphy_private *priv = wiphy_priv(wiphy);
+ 	wlandevice_t *wlandev = priv->wlandev;
+ 	u32 data;
+ 	int result;
+ 	int err = 0;
+ 
+-	if (type = TX_POWER_AUTOMATIC)
++	if (type = NL80211_TX_POWER_AUTOMATIC)
+ 		data = 30;
+ 	else
+ 		data = dbm;
+-- 
+1.7.0.4
+
+
+
