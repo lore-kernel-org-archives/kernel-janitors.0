@@ -1,30 +1,33 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 29 Jun 2010 19:01:32 +0000
-Subject: Re: [PATCH 01/25] r852: remove casts from void*
-Message-Id: <20100629190132.GP19184@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 28 Jun 2010 11:54:48 +0000
+Subject: [PATCH 02/16] trivial: use ARRAY_SIZE
+Message-Id: <1277726089-24467-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277806498-30738-1-git-send-email-segooon@gmail.com> <20100629123850.GO19184@bicker> <20100629152823.GA4268@shinshilla>
-In-Reply-To: <20100629152823.GA4268@shinshilla>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: trivial@kernel.org
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Stephen Hemminger <shemminger@vyatta.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Paul Fulghum <paulkf@microgate.com>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org
 
-On Tue, Jun 29, 2010 at 07:28:26PM +0400, Kulikov Vasiliy wrote:
-> > 1) The subjects are not helpful.  This one should say something about
-> > "mtd" but it doesn't.
-> ok
-> 
-> > 2) These haven't been run through checkpatch.pl.
-> Sorry for dummy question, but shouldn't code style be consistent?
-> Somebody who will see old code and patched code will see one line with
-> wrong-style code then one line with ok then one with wrong etc.
-> Imho it's better to fix style in one big patch.
+Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
 
-No.  If there's only one good line in a whole file, that's at least
-better than nothing.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/char/synclink_gt.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/char/synclink_gt.c b/drivers/char/synclink_gt.c
+index 4561ce2..334cf5c 100644
+--- a/drivers/char/synclink_gt.c
++++ b/drivers/char/synclink_gt.c
+@@ -4845,7 +4845,7 @@ static int register_test(struct slgt_info *info)
+ {
+ 	static unsigned short patterns[]  		{0x0000, 0xffff, 0xaaaa, 0x5555, 0x6969, 0x9696};
+-	static unsigned int count = sizeof(patterns)/sizeof(patterns[0]);
++	static unsigned int count = ARRAY_SIZE(patterns);
+ 	unsigned int i;
+ 	int rc = 0;
+ 
+-- 
+1.7.0.4
 
