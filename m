@@ -1,76 +1,49 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Mon, 28 Jun 2010 13:55:20 +0000
-Subject: Re: [PATCH] avoid return NULL on root rb_node in rb_next/rb_prev
-Message-Id: <1277733320.3561.50.camel@laptop>
+From: shenghui <crosslonelyover@gmail.com>
+Date: Mon, 28 Jun 2010 23:48:12 +0000
+Subject: Re: [PATCH] avoid return NULL on root rb_node in rb_next/rb_prev in
+Message-Id: <AANLkTinuas0MPFvZk9nOd91PuHXtaluHkkcWjGKYPZOl@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTilJDrpoFGyTSrKg3Hg59u9TvBLbxk4HAVKBvjxQ@mail.gmail.com>
-In-Reply-To: <AANLkTilJDrpoFGyTSrKg3Hg59u9TvBLbxk4HAVKBvjxQ@mail.gmail.com>
+	<1277733320.3561.50.camel@laptop>
+In-Reply-To: <1277733320.3561.50.camel@laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: shenghui <crosslonelyover@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, linux-mm@kvack.org, mingo@elte.hu
 
-On Mon, 2010-06-28 at 21:17 +0800, shenghui wrote:
-> Hi,
-> 
->        I'm reading cfs code, and get the following potential bug.
-> 
-> In kernel/sched_fair.c, we can get the following call thread:
-> 
-> 1778static struct task_struct *pick_next_task_fair(struct rq *rq)
-> 1779{
-> ...
-> 1787        do {
-> 1788                se = pick_next_entity(cfs_rq);
-> 1789                set_next_entity(cfs_rq, se);
-> 1790                cfs_rq = group_cfs_rq(se);
-> 1791        } while (cfs_rq);
-> ...
-> 1797}
-> 
->  925static struct sched_entity *pick_next_entity(struct cfs_rq *cfs_rq)
->  926{
->  927        struct sched_entity *se = __pick_next_entity(cfs_rq);
-> ...
->  941        return se;
->  942}
-> 
->  377static struct sched_entity *__pick_next_entity(struct cfs_rq *cfs_rq)
->  378{
->  379        struct rb_node *left = cfs_rq->rb_leftmost;
->  380
->  381        if (!left)
->  382                return NULL;
->  ...
->  385}
-> 
-> To manipulate cfs_rq->rb_leftmost, __dequeue_entity does the following:
-> 
->  365static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
->  366{
->  367        if (cfs_rq->rb_leftmost = &se->run_node) {
->  368                struct rb_node *next_node;
->  369
->  370                next_node = rb_next(&se->run_node);
->  371                cfs_rq->rb_leftmost = next_node;
->  372        }
->  373
->  374        rb_erase(&se->run_node, &cfs_rq->tasks_timeline);
->  375}
-> 
-> Here, if se->run_node is the root rb_node, next_node will be set NULL
-> by rb_next.
-> Then __pick_next_entity may get NULL on some call, and set_next_entity
-> may deference
-> NULL value.
+2010/6/28 Peter Zijlstra <peterz@infradead.org>:
+> So if ->rb_leftmost is NULL, then the if (!left) check in
+> __pick_next_entity() would return null.
+>
+> As to the NULL deref in in pick_next_task_fair()->set_next_entity() that
+> should never happen because pick_next_task_fair() will bail
+> on !->nr_running.
+>
+> Furthermore, you've failed to mention what kernel version you're looking
+> at.
+>
 
-So if ->rb_leftmost is NULL, then the if (!left) check in
-__pick_next_entity() would return null.
+The kernel version is 2.6.35-rc3, and 2.6.34 has the same code.
 
-As to the NULL deref in in pick_next_task_fair()->set_next_entity() that
-should never happen because pick_next_task_fair() will bail
-on !->nr_running.
+For nr->running, if current is the only process in the run queue, then
+nr->running would not be zero.
+1784        if (!cfs_rq->nr_running)
+1785                return NULL;
+pick_next_task_fair() could pass above check and run to following:
+1787        do {
+1788                se = pick_next_entity(cfs_rq);
+1789                set_next_entity(cfs_rq, se);
+1790                cfs_rq = group_cfs_rq(se);
+1791        } while (cfs_rq);
 
-Furthermore, you've failed to mention what kernel version you're looking
-at.
+Then pick_next_entity will get NULL for current is the root rb_node.
+Then set_next_entity would fail on NULL deference.
+
+
+
+-- 
+
+
+Thanks and Best Regards,
+shenghui
