@@ -1,59 +1,106 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Wed, 16 Jun 2010 15:56:23 +0000
-Subject: Re: [patch] V4L/DVB: remove unneeded null check in anysee_probe()
-Message-Id: <alpine.LNX.2.00.1006161755560.12271@pobox.suse.cz>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:32 +0000
+Subject: [PATCH 10/25] sg: remove casts from void*
+Message-Id: <1277806533-31044-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100531192632.GZ5483@bicker>
-In-Reply-To: <20100531192632.GZ5483@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Antti Palosaari <crope@iki.fi>, =?ISO-8859-15?Q?Andr=E9_Goddard_Rosa?= <andre.goddard@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Doug Gilbert <dgilbert@interlog.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Jens Axboe <jens.axboe@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Alexey Dobriyan <adobriyan@gmail.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 31 May 2010, Dan Carpenter wrote:
+Remove unnesessary casts from void*.
 
-> Smatch complained because "d" is dereferenced first and then checked for
-> null later .  The only code path where "d" could be a invalid pointer is
-> if this is a cold device in dvb_usb_device_init().  I consulted Antti 
-> Palosaari and he explained that anysee is always a warm device.
-> 
-> I have added a comment and removed the unneeded null check.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/media/dvb/dvb-usb/anysee.c b/drivers/media/dvb/dvb-usb/anysee.c
-> index faca1ad..aa5c7d5 100644
-> --- a/drivers/media/dvb/dvb-usb/anysee.c
-> +++ b/drivers/media/dvb/dvb-usb/anysee.c
-> @@ -463,6 +463,11 @@ static int anysee_probe(struct usb_interface *intf,
->  	if (intf->num_altsetting < 1)
->  		return -ENODEV;
->  
-> +	/*
-> +	 * Anysee is always warm (its USB-bridge, Cypress FX2, uploads
-> +	 * firmware from eeprom).  If dvb_usb_device_init() succeeds that
-> +	 * means d is a valid pointer.
-> +	 */
->  	ret = dvb_usb_device_init(intf, &anysee_properties, THIS_MODULE, &d,
->  		adapter_nr);
->  	if (ret)
-> @@ -479,10 +484,7 @@ static int anysee_probe(struct usb_interface *intf,
->  	if (ret)
->  		return ret;
->  
-> -	if (d)
-> -		ret = anysee_init(d);
-> -
-> -	return ret;
-> +	return anysee_init(d);
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/scsi/sg.c |   18 +++++++++---------
+ 1 files changed, 9 insertions(+), 9 deletions(-)
 
-Doesn't seem to be present in linux-next as of today. Mauro, will you 
-take it?
-Or I can take it if you ack it.
-
-Thanks,
-
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index ef752b2..5fd2964 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -210,7 +210,7 @@ static void sg_put_dev(Sg_device *sdp);
+ 
+ static int sg_allow_access(struct file *filp, unsigned char *cmd)
+ {
+-	struct sg_fd *sfp = (struct sg_fd *)filp->private_data;
++	struct sg_fd *sfp = filp->private_data;
+ 
+ 	if (sfp->parentdp->device->type = TYPE_SCANNER)
+ 		return 0;
+@@ -318,7 +318,7 @@ sg_release(struct inode *inode, struct file *filp)
+ 	Sg_device *sdp;
+ 	Sg_fd *sfp;
+ 
+-	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
++	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+ 	SCSI_LOG_TIMEOUT(3, printk("sg_release: %s\n", sdp->disk->disk_name));
+ 
+@@ -342,7 +342,7 @@ sg_read(struct file *filp, char __user *buf, size_t count, loff_t * ppos)
+ 	struct sg_header *old_hdr = NULL;
+ 	int retval = 0;
+ 
+-	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
++	if ((!(sfp =  filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+ 	SCSI_LOG_TIMEOUT(3, printk("sg_read: %s, count=%d\n",
+ 				   sdp->disk->disk_name, (int) count));
+@@ -533,7 +533,7 @@ sg_write(struct file *filp, const char __user *buf, size_t count, loff_t * ppos)
+ 	sg_io_hdr_t *hp;
+ 	unsigned char cmnd[MAX_COMMAND_SIZE];
+ 
+-	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
++	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+ 	SCSI_LOG_TIMEOUT(3, printk("sg_write: %s, count=%d\n",
+ 				   sdp->disk->disk_name, (int) count));
+@@ -768,7 +768,7 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
+ 	Sg_request *srp;
+ 	unsigned long iflags;
+ 
+-	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
++	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+ 
+ 	SCSI_LOG_TIMEOUT(3, printk("sg_ioctl: %s, cmd=0x%x\n",
+@@ -1096,7 +1096,7 @@ static long sg_compat_ioctl(struct file *filp, unsigned int cmd_in, unsigned lon
+ 	Sg_fd *sfp;
+ 	struct scsi_device *sdev;
+ 
+-	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
++	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+ 
+ 	sdev = sdp->device;
+@@ -1122,7 +1122,7 @@ sg_poll(struct file *filp, poll_table * wait)
+ 	int count = 0;
+ 	unsigned long iflags;
+ 
+-	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp))
++	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp))
+ 	    || sfp->closed)
+ 		return POLLERR;
+ 	poll_wait(filp, &sfp->read_wait, wait);
+@@ -1153,7 +1153,7 @@ sg_fasync(int fd, struct file *filp, int mode)
+ 	Sg_device *sdp;
+ 	Sg_fd *sfp;
+ 
+-	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
++	if ((!(sfp = filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+ 	SCSI_LOG_TIMEOUT(3, printk("sg_fasync: %s, mode=%d\n",
+ 				   sdp->disk->disk_name, mode));
+@@ -1208,7 +1208,7 @@ sg_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	Sg_scatter_hold *rsv_schp;
+ 	int k, length;
+ 
+-	if ((!filp) || (!vma) || (!(sfp = (Sg_fd *) filp->private_data)))
++	if ((!filp) || (!vma) || (!(sfp = filp->private_data)))
+ 		return -ENXIO;
+ 	req_sz = vma->vm_end - vma->vm_start;
+ 	SCSI_LOG_TIMEOUT(3, printk("sg_mmap starting, vm_start=%p, len=%d\n",
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+1.7.0.4
+
