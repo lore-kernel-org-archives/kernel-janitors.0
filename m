@@ -1,37 +1,34 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 01 Jun 2010 08:17:27 +0000
-Subject: [patch] V4L/DVB: cpia_usb: remove unneeded variable
-Message-Id: <20100601081727.GL5483@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:28 +0000
+Subject: [PATCH 09/25] pci-sysfs: remove casts from void*
+Message-Id: <1277806529-31010-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Greg Kroah-Hartman <gregkh@suse.de>, Chris Wright <chrisw@sous-sol.org>, "Michael S. Tsirkin" <mst@redhat.com>, Michal Schmidt <mschmidt@redhat.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is just a cleanup patch.  We never use the "udev" variable so I
-have removed it.
+Remove unnesessary casts from void*.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/pci/pci-sysfs.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/media/video/cpia_usb.c b/drivers/media/video/cpia_usb.c
-index ef1f893..58d193f 100644
---- a/drivers/media/video/cpia_usb.c
-+++ b/drivers/media/video/cpia_usb.c
-@@ -584,7 +584,6 @@ static void cpia_disconnect(struct usb_interface *intf)
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index afd2fbf..7f8bc8c 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -734,7 +734,7 @@ pci_mmap_resource(struct kobject *kobj, struct bin_attribute *attr,
  {
- 	struct cam_data *cam = usb_get_intfdata(intf);
- 	struct usb_cpia *ucpia;
--	struct usb_device *udev;
- 
- 	usb_set_intfdata(intf, NULL);
- 	if (!cam)
-@@ -606,8 +605,6 @@ static void cpia_disconnect(struct usb_interface *intf)
- 	if (waitqueue_active(&ucpia->wq_stream))
- 		wake_up_interruptible(&ucpia->wq_stream);
- 
--	udev = interface_to_usbdev(intf);
--
- 	ucpia->curbuff = ucpia->workbuff = NULL;
- 
- 	vfree(ucpia->buffers[2]);
+ 	struct pci_dev *pdev = to_pci_dev(container_of(kobj,
+ 						       struct device, kobj));
+-	struct resource *res = (struct resource *)attr->private;
++	struct resource *res = attr->private;
+ 	enum pci_mmap_state mmap_type;
+ 	resource_size_t start, end;
+ 	int i;
+-- 
+1.7.0.4
+
