@@ -1,34 +1,34 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:16:00 +0000
-Subject: [PATCH 17/25] wrap_sec: remove casts from void*
-Message-Id: <1277806561-31282-1-git-send-email-segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:36 +0000
+Subject: [PATCH 11/25] pcm3724: remove casts from void*
+Message-Id: <1277806537-31078-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alexander Beregalov <a.beregalov@gmail.com>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Benjamin Adolphi <b.adolphi@gmail.com>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
 Remove unnesessary casts from void*.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/staging/otus/wrap_sec.c |    2 +-
+ drivers/staging/comedi/drivers/pcm3724.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/otus/wrap_sec.c b/drivers/staging/otus/wrap_sec.c
-index 0b238e9..1fba7a9 100644
---- a/drivers/staging/otus/wrap_sec.c
-+++ b/drivers/staging/otus/wrap_sec.c
-@@ -36,7 +36,7 @@ extern int zfLnxCencSendMsg(struct sock *netlink_sk, u_int8_t *msg, int len);
- u16_t zfLnxCencAsocNotify(zdev_t *dev, u16_t *macAddr, u8_t *body,
- 				u16_t bodySize, u16_t port)
- {
--	struct usbdrv_private *macp = (struct usbdrv_private *)dev->priv;
-+	struct usbdrv_private *macp = dev->priv;
- 	struct zydas_cenc_sta_info cenc_info;
- 	/* struct sock *netlink_sk;	*/
- 	u8_t ie_len;
+diff --git a/drivers/staging/comedi/drivers/pcm3724.c b/drivers/staging/comedi/drivers/pcm3724.c
+index ed61030..0e91d95 100644
+--- a/drivers/staging/comedi/drivers/pcm3724.c
++++ b/drivers/staging/comedi/drivers/pcm3724.c
+@@ -184,7 +184,7 @@ static void enable_chan(struct comedi_device *dev, struct comedi_subdevice *s,
+ 	struct priv_pcm3724 *priv;
+ 
+ 	gatecfg = 0;
+-	priv = (struct priv_pcm3724 *)(dev->private);
++	priv = dev->private;
+ 
+ 	mask = 1 << CR_CHAN(chanspec);
+ 	if (s = dev->subdevices)	/*  subdev 0 */
 -- 
 1.7.0.4
 
