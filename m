@@ -1,41 +1,34 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Wed, 16 Jun 2010 14:37:34 +0000
-Subject: [PATCH] mac80211: fix warn, enum may be used uninitialized
-Message-Id: <1276699054.30673.0.camel@lovely>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:24 +0000
+Subject: [PATCH 08/25] sm_common: remove casts from void*
+Message-Id: <1277806525-30976-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes@sipsolutions.net>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Kalle Valo <kalle.valo@nokia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-kernel@vger.kernel.org
 
-regression introduced by b8d92c9c141ee3dc9b3537b1f0ffb4a54ea8d9b2
+Remove unnesessary casts from void*.
 
-In function ‘ieee80211_work_rx_queued_mgmt’:
-warning: ‘rma’ may be used uninitialized in this function
-
-this re-adds default value WORK_ACT_NONE back to rma
-
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- net/mac80211/work.c |    2 +-
+ drivers/mtd/nand/sm_common.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/net/mac80211/work.c b/net/mac80211/work.c
-index be3d4a6..b025dc7 100644
---- a/net/mac80211/work.c
-+++ b/net/mac80211/work.c
-@@ -715,7 +715,7 @@ static void ieee80211_work_rx_queued_mgmt(struct ieee80211_local *local,
- 	struct ieee80211_rx_status *rx_status;
- 	struct ieee80211_mgmt *mgmt;
- 	struct ieee80211_work *wk;
--	enum work_action rma;
-+	enum work_action rma = WORK_ACT_NONE;
- 	u16 fc;
+diff --git a/drivers/mtd/nand/sm_common.c b/drivers/mtd/nand/sm_common.c
+index ac80fb3..4a8f367 100644
+--- a/drivers/mtd/nand/sm_common.c
++++ b/drivers/mtd/nand/sm_common.c
+@@ -109,7 +109,7 @@ static struct nand_flash_dev nand_xd_flash_ids[] = {
  
- 	rx_status = (struct ieee80211_rx_status *) skb->cb;
+ int sm_register_device(struct mtd_info *mtd, int smartmedia)
+ {
+-	struct nand_chip *chip = (struct nand_chip *)mtd->priv;
++	struct nand_chip *chip = mtd->priv;
+ 	int ret;
+ 
+ 	chip->options |= NAND_SKIP_BBTSCAN;
 -- 
-1.7.1
-
-
+1.7.0.4
 
