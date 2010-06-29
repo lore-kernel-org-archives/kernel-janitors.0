@@ -1,45 +1,34 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 05 Jun 2010 13:16:37 +0000
-Subject: bug report: xgifb: buffer overflow issues
-Message-Id: <20100605131637.GL5483@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:47 +0000
+Subject: [PATCH 14/25] cx25821-alsa: remove casts from void*
+Message-Id: <1277806548-31180-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, Olimpiu Pascariu <olimpiu.pascariu@gmail.com>, Tejun Heo <tj@kernel.org>, Palash Bandyopadhyay <palash.bandyopadhyay@conexant.com>, sai gopal <tsg321@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Hi Arnaud,
+Remove unnesessary casts from void*.
 
-Smatch reported a couple of array overflows in the new xgifb driver
-which was added to staging.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/cx25821/cx25821-alsa.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-drivers/staging/xgifb/XGI_main_26.c +3080 xgifb_probe(125)
-	error: strcpy() "0.84" too large for XGIhw_ext.szVBIOSVer (5 vs 4)
-  3076            XGIhw_ext.pjCustomizedROMImage = NULL;
-  3077            XGIhw_ext.bSkipDramSizing = 0;
-  3078            XGIhw_ext.pQueryVGAConfigSpace = &XGIfb_query_VGA_config_space;
-  3079  //      XGIhw_ext.pQueryNorthBridgeSpace = &XGIfb_query_north_bridge_space;
-  3080            strcpy(XGIhw_ext.szVBIOSVer, "0.84");
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-XGIhw_ext.szVBIOSVer is an array of 4 characters but "0.84" is 5
-characters long counting the NULL terminator.
-
-vers/staging/xgifb/XGI_main_26.c +1733 XGIfb_get_fix(6)
-	error: strcpy() myid too large for fix->id (20 vs 16)
-  1730          DEBUGPRN("inside get_fix");
-  1731          memset(fix, 0, sizeof(struct fb_fix_screeninfo));
-  1732  
-  1733          strcpy(fix->id, myid);
-                ^^^^^^^^^^^^^^^^^^^^^
-
-myid is 20 characters long and fix->id is 16 characters long.  I suggest
-maybe change the myid to 16 characters and also use:
+diff --git a/drivers/staging/cx25821/cx25821-alsa.c b/drivers/staging/cx25821/cx25821-alsa.c
+index 1798975..ce2c6f1 100644
+--- a/drivers/staging/cx25821/cx25821-alsa.c
++++ b/drivers/staging/cx25821/cx25821-alsa.c
+@@ -699,7 +699,7 @@ static int cx25821_audio_initdev(struct cx25821_dev *dev)
  
-	strlcpy(fix->id, myid, sizeof(fix->id));
+ 	/* Card "creation" */
+ 	card->private_free = snd_cx25821_dev_free;
+-	chip = (struct cx25821_audio_dev *) card->private_data;
++	chip = card->private_data;
+ 	spin_lock_init(&chip->reg_lock);
+ 
+ 	chip->dev = dev;
+-- 
+1.7.0.4
 
-I would have sent a patch to do this, but I don't think myid is actually
-initialized anywhere.  What should the myid string to say?
-
-regards,
-dan carpenter
