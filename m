@@ -1,72 +1,81 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 01 Jun 2010 07:12:53 +0000
-Subject: [patch] fscache: remove unneeded null checks
-Message-Id: <20100601071253.GG5483@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:17 +0000
+Subject: [PATCH 06/25] nandsim: remove casts from void*
+Message-Id: <1277806517-30908-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, linux-mtd@lists.infradead.org, Ben Hutchings <bhutchings@solarflare.com>, David Woodhouse <dwmw2@infradead.org>, Andrey Yurovsky <yurovsky@gmail.com>
 
-On Mon, Mar 22, 2010 at 12:47:17PM +0000, David Howells wrote:
-> radix_tree_gang_lookup_tag() finds pages in the tree that have a
-> particular tag set, and returns the number of pages it has selected.
-> If that number is != 1, then I don't proceed with accessing the array.
->
-> So I think the tests of page later are unnecessary.
+Remove unnesessary casts from void*.
 
-Yep.  I think so too.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/mtd/nand/nandsim.c |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+diff --git a/drivers/mtd/nand/nandsim.c b/drivers/mtd/nand/nandsim.c
+index 261337e..c25648b 100644
+--- a/drivers/mtd/nand/nandsim.c
++++ b/drivers/mtd/nand/nandsim.c
+@@ -553,8 +553,8 @@ static uint64_t divide(uint64_t n, uint32_t d)
+  */
+ static int init_nandsim(struct mtd_info *mtd)
+ {
+-	struct nand_chip *chip = (struct nand_chip *)mtd->priv;
+-	struct nandsim   *ns   = (struct nandsim *)(chip->priv);
++	struct nand_chip *chip = mtd->priv;
++	struct nandsim   *ns   = chip->priv;
+ 	int i, ret = 0;
+ 	uint64_t remains;
+ 	uint64_t next_offset;
+@@ -1877,7 +1877,7 @@ static void switch_state(struct nandsim *ns)
+ 
+ static u_char ns_nand_read_byte(struct mtd_info *mtd)
+ {
+-        struct nandsim *ns = (struct nandsim *)((struct nand_chip *)mtd->priv)->priv;
++	struct nandsim *ns = ((struct nand_chip *)mtd->priv)->priv;
+ 	u_char outb = 0x00;
+ 
+ 	/* Sanity and correctness checks */
+@@ -1950,7 +1950,7 @@ static u_char ns_nand_read_byte(struct mtd_info *mtd)
+ 
+ static void ns_nand_write_byte(struct mtd_info *mtd, u_char byte)
+ {
+-        struct nandsim *ns = (struct nandsim *)((struct nand_chip *)mtd->priv)->priv;
++	struct nandsim *ns = ((struct nand_chip *)mtd->priv)->priv;
+ 
+ 	/* Sanity and correctness checks */
+ 	if (!ns->lines.ce) {
+@@ -2132,7 +2132,7 @@ static uint16_t ns_nand_read_word(struct mtd_info *mtd)
+ 
+ static void ns_nand_write_buf(struct mtd_info *mtd, const u_char *buf, int len)
+ {
+-        struct nandsim *ns = (struct nandsim *)((struct nand_chip *)mtd->priv)->priv;
++	struct nandsim *ns = ((struct nand_chip *)mtd->priv)->priv;
+ 
+ 	/* Check that chip is expecting data input */
+ 	if (!(ns->state & STATE_DATAIN_MASK)) {
+@@ -2159,7 +2159,7 @@ static void ns_nand_write_buf(struct mtd_info *mtd, const u_char *buf, int len)
+ 
+ static void ns_nand_read_buf(struct mtd_info *mtd, u_char *buf, int len)
+ {
+-        struct nandsim *ns = (struct nandsim *)((struct nand_chip *)mtd->priv)->priv;
++	struct nandsim *ns = ((struct nand_chip *)mtd->priv)->priv;
+ 
+ 	/* Sanity and correctness checks */
+ 	if (!ns->lines.ce) {
+@@ -2352,7 +2352,7 @@ module_init(ns_init_module);
+  */
+ static void __exit ns_cleanup_module(void)
+ {
+-	struct nandsim *ns = (struct nandsim *)(((struct nand_chip *)nsmtd->priv)->priv);
++	struct nandsim *ns = ((struct nand_chip *)nsmtd->priv)->priv;
+ 	int i;
+ 
+ 	free_nandsim(ns);    /* Free nandsim private resources */
+-- 
+1.7.0.4
 
-diff --git a/fs/fscache/page.c b/fs/fscache/page.c
-index 47aefd3..723b889 100644
---- a/fs/fscache/page.c
-+++ b/fs/fscache/page.c
-@@ -710,30 +710,26 @@ static void fscache_write_op(struct fscache_operation *_op)
- 		goto superseded;
- 	}
- 
--	if (page) {
--		radix_tree_tag_set(&cookie->stores, page->index,
--				   FSCACHE_COOKIE_STORING_TAG);
--		radix_tree_tag_clear(&cookie->stores, page->index,
--				     FSCACHE_COOKIE_PENDING_TAG);
--	}
-+	radix_tree_tag_set(&cookie->stores, page->index,
-+			   FSCACHE_COOKIE_STORING_TAG);
-+	radix_tree_tag_clear(&cookie->stores, page->index,
-+			     FSCACHE_COOKIE_PENDING_TAG);
- 
- 	spin_unlock(&cookie->stores_lock);
- 	spin_unlock(&object->lock);
- 
--	if (page) {
--		fscache_set_op_state(&op->op, "Store");
--		fscache_stat(&fscache_n_store_pages);
--		fscache_stat(&fscache_n_cop_write_page);
--		ret = object->cache->ops->write_page(op, page);
--		fscache_stat_d(&fscache_n_cop_write_page);
--		fscache_set_op_state(&op->op, "EndWrite");
--		fscache_end_page_write(object, page);
--		if (ret < 0) {
--			fscache_set_op_state(&op->op, "Abort");
--			fscache_abort_object(object);
--		} else {
--			fscache_enqueue_operation(&op->op);
--		}
-+	fscache_set_op_state(&op->op, "Store");
-+	fscache_stat(&fscache_n_store_pages);
-+	fscache_stat(&fscache_n_cop_write_page);
-+	ret = object->cache->ops->write_page(op, page);
-+	fscache_stat_d(&fscache_n_cop_write_page);
-+	fscache_set_op_state(&op->op, "EndWrite");
-+	fscache_end_page_write(object, page);
-+	if (ret < 0) {
-+		fscache_set_op_state(&op->op, "Abort");
-+		fscache_abort_object(object);
-+	} else {
-+		fscache_enqueue_operation(&op->op);
- 	}
- 
- 	_leave("");
