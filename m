@@ -1,29 +1,34 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 21 Jun 2010 06:45:08 +0000
-Subject: [patch] scsi/bfa: off by one in bfa_ioc_mbox_isr()
-Message-Id: <20100621064507.GA5940@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:20 +0000
+Subject: [PATCH 07/25] r852: remove casts from void*
+Message-Id: <1277806521-30942-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jing Huang <huangj@brocade.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Krishna Gudipati <kgudipat@brocade.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, Tejun Heo <tj@kernel.org>, David Woodhouse <dwmw2@infradead.org>
 
-This should be ">=" here instead of ">" so that we don't read past the
-end of the array.
+Remove unnesessary casts from void*.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/mtd/nand/r852.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
-index e038bc9..0ba624d 100644
---- a/drivers/scsi/bfa/bfa_ioc.c
-+++ b/drivers/scsi/bfa/bfa_ioc.c
-@@ -1595,7 +1595,7 @@ bfa_ioc_mbox_isr(struct bfa_ioc_s *ioc)
- 		return;
- 	}
+diff --git a/drivers/mtd/nand/r852.c b/drivers/mtd/nand/r852.c
+index c0a9835..43f0366 100644
+--- a/drivers/mtd/nand/r852.c
++++ b/drivers/mtd/nand/r852.c
+@@ -380,7 +380,7 @@ void r852_cmdctl(struct mtd_info *mtd, int dat, unsigned int ctrl)
+  */
+ int r852_wait(struct mtd_info *mtd, struct nand_chip *chip)
+ {
+-	struct r852_device *dev = (struct r852_device *)chip->priv;
++	struct r852_device *dev = chip->priv;
  
--	if ((mc > BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
-+	if ((mc >= BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
- 		return;
- 
- 	mod->mbhdlr[mc].cbfn(mod->mbhdlr[mc].cbarg, &m);
+ 	unsigned long timeout;
+ 	int status;
+-- 
+1.7.0.4
+
