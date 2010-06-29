@@ -1,33 +1,36 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 01 Jun 2010 08:23:11 +0000
-Subject: [patch] btrfs: uninitialized data is check_path_shared()
-Message-Id: <20100601082311.GM5483@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:16:25 +0000
+Subject: [PATCH 23/25] wl_netdev: remove casts from void*
+Message-Id: <1277806586-31486-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>
-Cc: Yan Zheng <zheng.yan@oracle.com>, Josef Bacik <josef@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Henk de Groot <pe1dnn@amsat.org>, Andrew Morton <akpm@linux-foundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-refs can be used with uninitialized data if btrfs_lookup_extent_info()
-fails on the first pass through the loop.  In the original code if that
-happens then check_path_shared() probably returns 1, but with this patch
-it will continue through the loop.
+Remove unnesessary casts from void*.
 
-I'm not super familiar with this code so please look it over carefully.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/wlags49_h2/wl_netdev.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index fa6ccc1..9640dae 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -2673,7 +2673,7 @@ static int check_path_shared(struct btrfs_root *root,
- 	struct extent_buffer *eb;
- 	int level;
- 	int ret;
--	u64 refs;
-+	u64 refs = 0;
+diff --git a/drivers/staging/wlags49_h2/wl_netdev.c b/drivers/staging/wlags49_h2/wl_netdev.c
+index 1aa61db..e2a7ad0 100644
+--- a/drivers/staging/wlags49_h2/wl_netdev.c
++++ b/drivers/staging/wlags49_h2/wl_netdev.c
+@@ -1905,8 +1905,8 @@ int wl_rx_dma( struct net_device *dev )
+     DBG_FUNC("wl_rx")
+     DBG_PARAM(DbgInfo, "dev", "%s (0x%p)", dev->name, dev);
  
- 	for (level = 0; level < BTRFS_MAX_LEVEL; level++) {
- 		if (!path->nodes[level])
+-    if((( lp = (struct wl_private *)dev->priv ) != NULL ) &&
+-          !( lp->flags & WVLAN2_UIL_BUSY )) {
++    if((( lp = dev->priv ) != NULL ) &&
++	!( lp->flags & WVLAN2_UIL_BUSY )) {
+ 
+ #ifdef USE_RTS
+         if( lp->useRTS = 1 ) {
+-- 
+1.7.0.4
+
