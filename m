@@ -1,26 +1,79 @@
-From: =?UTF-8?B?Iua9mOWNq+W5syhQZXRlciBQYW4pIg==?=
-Date: Tue, 29 Jun 2010 03:20:55 +0000
-Subject: question about ext2_find_shared
-Message-Id: <4C296697.1010000@redflag-linux.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:13 +0000
+Subject: [PATCH 05/25] mtd_dataflash: remove casts from void*
+Message-Id: <1277806514-30874-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, linux-kernel@vger.kernel.org, H Hartley Sweeten <hsweeten@visionengravers.com>, linux-mtd@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>, "Robert P. J. Day" <rpjday@crashcourse.ca>, David Woodhouse <dwmw2@infradead.org>
 
-Hi, all
+Remove unnesessary casts from void*.
 
-the function ext2_find_shared is located fs/ext2/inode.c 935
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/mtd/devices/mtd_dataflash.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
 
-I see ext2_find_shared is related with truncation, but i don't know
-what's the use of it.
-
-And i am also confused with the implementation of ext2_find_shared.
-
-It would be greatly appreciated if somebody can show me what's the use
-of ext2_find_shared and how it works.
-
-Regards
+diff --git a/drivers/mtd/devices/mtd_dataflash.c b/drivers/mtd/devices/mtd_dataflash.c
+index 1981740..c5015cc 100644
+--- a/drivers/mtd/devices/mtd_dataflash.c
++++ b/drivers/mtd/devices/mtd_dataflash.c
+@@ -141,7 +141,7 @@ static int dataflash_waitready(struct spi_device *spi)
+  */
+ static int dataflash_erase(struct mtd_info *mtd, struct erase_info *instr)
+ {
+-	struct dataflash	*priv = (struct dataflash *)mtd->priv;
++	struct dataflash	*priv = mtd->priv;
+ 	struct spi_device	*spi = priv->spi;
+ 	struct spi_transfer	x = { .tx_dma = 0, };
+ 	struct spi_message	msg;
+@@ -231,7 +231,7 @@ static int dataflash_erase(struct mtd_info *mtd, struct erase_info *instr)
+ static int dataflash_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 			       size_t *retlen, u_char *buf)
+ {
+-	struct dataflash	*priv = (struct dataflash *)mtd->priv;
++	struct dataflash	*priv = mtd->priv;
+ 	struct spi_transfer	x[2] = { { .tx_dma = 0, }, };
+ 	struct spi_message	msg;
+ 	unsigned int		addr;
+@@ -304,7 +304,7 @@ static int dataflash_read(struct mtd_info *mtd, loff_t from, size_t len,
+ static int dataflash_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 				size_t * retlen, const u_char * buf)
+ {
+-	struct dataflash	*priv = (struct dataflash *)mtd->priv;
++	struct dataflash	*priv = mtd->priv;
+ 	struct spi_device	*spi = priv->spi;
+ 	struct spi_transfer	x[2] = { { .tx_dma = 0, }, };
+ 	struct spi_message	msg;
+@@ -515,7 +515,7 @@ static ssize_t otp_read(struct spi_device *spi, unsigned base,
+ static int dataflash_read_fact_otp(struct mtd_info *mtd,
+ 		loff_t from, size_t len, size_t *retlen, u_char *buf)
+ {
+-	struct dataflash	*priv = (struct dataflash *)mtd->priv;
++	struct dataflash	*priv = mtd->priv;
+ 	int			status;
+ 
+ 	/* 64 bytes, from 0..63 ... start at 64 on-chip */
+@@ -532,7 +532,7 @@ static int dataflash_read_fact_otp(struct mtd_info *mtd,
+ static int dataflash_read_user_otp(struct mtd_info *mtd,
+ 		loff_t from, size_t len, size_t *retlen, u_char *buf)
+ {
+-	struct dataflash	*priv = (struct dataflash *)mtd->priv;
++	struct dataflash	*priv = mtd->priv;
+ 	int			status;
+ 
+ 	/* 64 bytes, from 0..63 ... start at 0 on-chip */
+@@ -553,7 +553,7 @@ static int dataflash_write_user_otp(struct mtd_info *mtd,
+ 	const size_t		l = 4 + 64;
+ 	uint8_t			*scratch;
+ 	struct spi_transfer	t;
+-	struct dataflash	*priv = (struct dataflash *)mtd->priv;
++	struct dataflash	*priv = mtd->priv;
+ 	int			status;
+ 
+ 	if (len > 64)
 -- 
-Peter Pan
-Red Flag Software Co.,Ltd
+1.7.0.4
+
