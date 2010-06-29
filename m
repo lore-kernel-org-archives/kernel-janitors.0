@@ -1,34 +1,26 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:15:24 +0000
-Subject: [PATCH 08/25] sm_common: remove casts from void*
-Message-Id: <1277806525-30976-1-git-send-email-segooon@gmail.com>
+From: =?UTF-8?B?Iua9mOWNq+W5syhQZXRlciBQYW4pIg==?=
+Date: Tue, 29 Jun 2010 03:20:55 +0000
+Subject: question about ext2_find_shared
+Message-Id: <4C296697.1010000@redflag-linux.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-kernel@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove unnesessary casts from void*.
+Hi, all
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/mtd/nand/sm_common.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+the function ext2_find_shared is located fs/ext2/inode.c 935
 
-diff --git a/drivers/mtd/nand/sm_common.c b/drivers/mtd/nand/sm_common.c
-index ac80fb3..4a8f367 100644
---- a/drivers/mtd/nand/sm_common.c
-+++ b/drivers/mtd/nand/sm_common.c
-@@ -109,7 +109,7 @@ static struct nand_flash_dev nand_xd_flash_ids[] = {
- 
- int sm_register_device(struct mtd_info *mtd, int smartmedia)
- {
--	struct nand_chip *chip = (struct nand_chip *)mtd->priv;
-+	struct nand_chip *chip = mtd->priv;
- 	int ret;
- 
- 	chip->options |= NAND_SKIP_BBTSCAN;
+I see ext2_find_shared is related with truncation, but i don't know
+what's the use of it.
+
+And i am also confused with the implementation of ext2_find_shared.
+
+It would be greatly appreciated if somebody can show me what's the use
+of ext2_find_shared and how it works.
+
+Regards
 -- 
-1.7.0.4
-
+Peter Pan
+Red Flag Software Co.,Ltd
