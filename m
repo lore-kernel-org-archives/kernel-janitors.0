@@ -1,26 +1,34 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Sat, 12 Jun 2010 11:53:28 +0000
-Subject: Re: [PATCH 4/8] fs/ubifs: Use ERR_CAST
-Message-Id: <1276343608.19028.118.camel@localhost>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:16:33 +0000
+Subject: [PATCH 25/25] wl_profile: remove casts from void*
+Message-Id: <1277806594-31554-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005221200050.13021@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005221200050.13021@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@nokia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, "Prashant P. Shah" <pshah.mumbai@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Henk de Groot <pe1dnn@amsat.org>, Andy Shevchenko <ext-andriy.shevchenko@nokia.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sat, 2010-05-22 at 12:00 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use ERR_CAST(x) rather than ERR_PTR(PTR_ERR(x)).  The former makes more
-> clear what is the purpose of the operation, which otherwise looks like a
-> no-op.
+Remove unnesessary casts from void*.
 
-Pushed to the ubifs-2.6.git tree, thank you!
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/wlags49_h2/wl_profile.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
+diff --git a/drivers/staging/wlags49_h2/wl_profile.c b/drivers/staging/wlags49_h2/wl_profile.c
+index 292d579..7a1337d 100644
+--- a/drivers/staging/wlags49_h2/wl_profile.c
++++ b/drivers/staging/wlags49_h2/wl_profile.c
+@@ -169,7 +169,7 @@ void parse_config(struct net_device *dev)
+ 	DBG_ENTER(DbgInfo);
+ 
+ 	/* Get the wavelan specific info for this device */
+-	wvlan_config = (struct wl_private *)dev->priv;
++	wvlan_config = dev->priv;
+ 	if (wvlan_config = NULL) {
+ 		DBG_ERROR(DbgInfo, "Wavelan specific info struct not present?\n");
+ 		return;
 -- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+1.7.0.4
 
