@@ -1,45 +1,43 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Thu, 17 Jun 2010 13:28:25 +0000
-Subject: [PATCH] x86: fix section mismatch in pcibios_scan_specific_bus
-Message-Id: <1276781305.2999.1.camel@lovely.krouter>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:43 +0000
+Subject: [PATCH 13/25] crystalhd_lnx: remove casts from void*
+Message-Id: <1277806544-31146-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Jarod Wilson <jarod@redhat.com>, Manu Abraham <abraham.manu@gmail.com>, Scott Davilla <davilla@4pi.com>, Ameya Palande <2ameya@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Fix following section mismatch in legacy function
-pcibios_scan_specific_bus:
+Remove unnesessary casts from void*.
 
-arch/x86/pci/built-in.o(.text+0x1637): Section mismatch in
-reference from the function pcibios_scan_specific_bus() to
-the function .devinit.text:pci_scan_bus_on_node()
-
-The function pcibios_scan_specific_bus() references the
-function __devinit pci_scan_bus_on_node().
-
-This is often because pcibios_scan_specific_bus lacks a
-__devinit annotation or the annotation of
-pci_scan_bus_on_nodeis wrong.
-
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- arch/x86/pci/legacy.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/staging/crystalhd/crystalhd_lnx.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
-index 8d460ea..c89266b 100644
---- a/arch/x86/pci/legacy.c
-+++ b/arch/x86/pci/legacy.c
-@@ -36,7 +36,7 @@ int __init pci_legacy_init(void)
- 	return 0;
- }
+diff --git a/drivers/staging/crystalhd/crystalhd_lnx.c b/drivers/staging/crystalhd/crystalhd_lnx.c
+index a4ec891..ce67392 100644
+--- a/drivers/staging/crystalhd/crystalhd_lnx.c
++++ b/drivers/staging/crystalhd/crystalhd_lnx.c
+@@ -273,7 +273,7 @@ static long chd_dec_ioctl(struct file *fd, unsigned int cmd, unsigned long ua)
+ 		return -EINVAL;
+ 	}
  
--void pcibios_scan_specific_bus(int busn)
-+void __devinit pcibios_scan_specific_bus(int busn)
- {
- 	int devfn;
- 	long node;
+-	uc = (struct crystalhd_user *)fd->private_data;
++	uc = fd->private_data;
+ 	if (!uc) {
+ 		BCMLOG_ERR("Failed to get uc\n");
+ 		return -ENODATA;
+@@ -334,7 +334,7 @@ static int chd_dec_close(struct inode *in, struct file *fd)
+ 		return -EINVAL;
+ 	}
+ 
+-	uc = (struct crystalhd_user *)fd->private_data;
++	uc = fd->private_data;
+ 	if (!uc) {
+ 		BCMLOG_ERR("Failed to get uc\n");
+ 		return -ENODATA;
 -- 
-1.7.1
+1.7.0.4
 
