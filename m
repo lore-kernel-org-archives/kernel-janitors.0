@@ -1,33 +1,70 @@
-From: Richard Weinberger <richard@nod.at>
-Date: Sat, 05 Jun 2010 20:58:10 +0000
-Subject: [PATCH] char: Remove unused variable
-Message-Id: <1275771490-15190-1-git-send-email-richard@nod.at>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:16:20 +0000
+Subject: [PATCH 22/25] vme_tsi148: remove casts from void*
+Message-Id: <1277806581-31452-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de
-Cc: jirislaby@gmail.com, alan@linux.intel.com, akpm@linux-foundation.org, joe@perches.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Richard Weinberger <richard@nod.at>
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Martyn Welch <martyn.welch@ge.com>, Julia Lawall <julia@diku.dk>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-card is never used within isicom_open().
+Remove unnesessary casts from void*.
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/char/isicom.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+ drivers/staging/vme/bridges/vme_tsi148.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/char/isicom.c b/drivers/char/isicom.c
-index 98310e1..50e4265 100644
---- a/drivers/char/isicom.c
-+++ b/drivers/char/isicom.c
-@@ -872,7 +872,6 @@ static struct tty_port *isicom_find_port(struct tty_struct *tty)
- static int isicom_open(struct tty_struct *tty, struct file *filp)
- {
- 	struct isi_port *port;
--	struct isi_board *card;
- 	struct tty_port *tport;
+diff --git a/drivers/staging/vme/bridges/vme_tsi148.c b/drivers/staging/vme/bridges/vme_tsi148.c
+index abe88a3..4685a31 100644
+--- a/drivers/staging/vme/bridges/vme_tsi148.c
++++ b/drivers/staging/vme/bridges/vme_tsi148.c
+@@ -1649,7 +1649,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+ 	/* Fill out source part */
+ 	switch (src->type) {
+ 	case VME_DMA_PATTERN:
+-		pattern_attr = (struct vme_dma_pattern *)src->private;
++		pattern_attr = src->private;
  
- 	tport = isicom_find_port(tty);
+ 		entry->descriptor.dsal = pattern_attr->pattern;
+ 		entry->descriptor.dsat = TSI148_LCSR_DSAT_TYP_PAT;
+@@ -1663,7 +1663,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+ 
+ 		break;
+ 	case VME_DMA_PCI:
+-		pci_attr = (struct vme_dma_pci *)src->private;
++		pci_attr = src->private;
+ 
+ 		reg_split((unsigned long long)pci_attr->address, &address_high,
+ 			&address_low);
+@@ -1672,7 +1672,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+ 		entry->descriptor.dsat = TSI148_LCSR_DSAT_TYP_PCI;
+ 		break;
+ 	case VME_DMA_VME:
+-		vme_attr = (struct vme_dma_vme *)src->private;
++		vme_attr = src->private;
+ 
+ 		reg_split((unsigned long long)vme_attr->address, &address_high,
+ 			&address_low);
+@@ -1701,7 +1701,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+ 	/* Fill out destination part */
+ 	switch (dest->type) {
+ 	case VME_DMA_PCI:
+-		pci_attr = (struct vme_dma_pci *)dest->private;
++		pci_attr = dest->private;
+ 
+ 		reg_split((unsigned long long)pci_attr->address, &address_high,
+ 			&address_low);
+@@ -1710,7 +1710,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+ 		entry->descriptor.ddat = TSI148_LCSR_DDAT_TYP_PCI;
+ 		break;
+ 	case VME_DMA_VME:
+-		vme_attr = (struct vme_dma_vme *)dest->private;
++		vme_attr = dest->private;
+ 
+ 		reg_split((unsigned long long)vme_attr->address, &address_high,
+ 			&address_low);
 -- 
-1.6.6.1
+1.7.0.4
 
