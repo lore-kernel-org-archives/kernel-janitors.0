@@ -1,88 +1,34 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 29 Jun 2010 10:15:39 +0000
-Subject: [PATCH 12/25] quatech_daqp_cs: remove casts from void*
-Message-Id: <1277806541-31112-1-git-send-email-segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:16:00 +0000
+Subject: [PATCH 17/25] wrap_sec: remove casts from void*
+Message-Id: <1277806561-31282-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Dominik Brodowski <linux@dominikbrodowski.net>, Alexander Kurz <linux@kbdbabel.org>, Jiri Kosina <jkosina@suse.cz>, Javier Martinez Canillas <martinez.javier@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alexander Beregalov <a.beregalov@gmail.com>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
 Remove unnesessary casts from void*.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/staging/comedi/drivers/quatech_daqp_cs.c |   14 +++++++-------
- 1 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/otus/wrap_sec.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/quatech_daqp_cs.c b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-index a91db6c..b38b107 100644
---- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-+++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-@@ -221,7 +221,7 @@ static void hex_dump(char *str, void *ptr, int len)
- 
- static int daqp_ai_cancel(struct comedi_device *dev, struct comedi_subdevice *s)
+diff --git a/drivers/staging/otus/wrap_sec.c b/drivers/staging/otus/wrap_sec.c
+index 0b238e9..1fba7a9 100644
+--- a/drivers/staging/otus/wrap_sec.c
++++ b/drivers/staging/otus/wrap_sec.c
+@@ -36,7 +36,7 @@ extern int zfLnxCencSendMsg(struct sock *netlink_sk, u_int8_t *msg, int len);
+ u16_t zfLnxCencAsocNotify(zdev_t *dev, u16_t *macAddr, u8_t *body,
+ 				u16_t bodySize, u16_t port)
  {
--	struct local_info_t *local = (struct local_info_t *)s->private;
-+	struct local_info_t *local = s->private;
- 
- 	if (local->stop) {
- 		return -EIO;
-@@ -279,7 +279,7 @@ static enum irqreturn daqp_interrupt(int irq, void *dev_id)
- 		return IRQ_NONE;
- 	}
- 
--	if ((struct local_info_t *)s->private != local) {
-+	if (s->private != local) {
- 		printk(KERN_WARNING
- 		       "daqp_interrupt(): invalid comedi_subdevice.\n");
- 		return IRQ_NONE;
-@@ -350,7 +350,7 @@ static int daqp_ai_insn_read(struct comedi_device *dev,
- 			     struct comedi_subdevice *s,
- 			     struct comedi_insn *insn, unsigned int *data)
- {
--	struct local_info_t *local = (struct local_info_t *)s->private;
-+	struct local_info_t *local = s->private;
- 	int i;
- 	int v;
- 	int counter = 10000;
-@@ -579,7 +579,7 @@ static int daqp_ai_cmdtest(struct comedi_device *dev,
- 
- static int daqp_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
- {
--	struct local_info_t *local = (struct local_info_t *)s->private;
-+	struct local_info_t *local = s->private;
- 	struct comedi_cmd *cmd = &s->async->cmd;
- 	int counter;
- 	int scanlist_start_on_every_entry;
-@@ -781,7 +781,7 @@ static int daqp_ao_insn_write(struct comedi_device *dev,
- 			      struct comedi_subdevice *s,
- 			      struct comedi_insn *insn, unsigned int *data)
- {
--	struct local_info_t *local = (struct local_info_t *)s->private;
-+	struct local_info_t *local = s->private;
- 	int d;
- 	unsigned int chan;
- 
-@@ -809,7 +809,7 @@ static int daqp_di_insn_read(struct comedi_device *dev,
- 			     struct comedi_subdevice *s,
- 			     struct comedi_insn *insn, unsigned int *data)
- {
--	struct local_info_t *local = (struct local_info_t *)s->private;
-+	struct local_info_t *local = s->private;
- 
- 	if (local->stop) {
- 		return -EIO;
-@@ -826,7 +826,7 @@ static int daqp_do_insn_write(struct comedi_device *dev,
- 			      struct comedi_subdevice *s,
- 			      struct comedi_insn *insn, unsigned int *data)
- {
--	struct local_info_t *local = (struct local_info_t *)s->private;
-+	struct local_info_t *local = s->private;
- 
- 	if (local->stop) {
- 		return -EIO;
+-	struct usbdrv_private *macp = (struct usbdrv_private *)dev->priv;
++	struct usbdrv_private *macp = dev->priv;
+ 	struct zydas_cenc_sta_info cenc_info;
+ 	/* struct sock *netlink_sk;	*/
+ 	u8_t ie_len;
 -- 
 1.7.0.4
 
