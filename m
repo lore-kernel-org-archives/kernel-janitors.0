@@ -1,20 +1,36 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Date: Mon, 21 Jun 2010 03:58:10 +0000
-Subject: Re: [PATCH 2/2] arch/sh/mm: Eliminate a double lock
-Message-Id: <20100621035809.GB29997@linux-sh.org>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:14:57 +0000
+Subject: [PATCH 01/25] r852: remove casts from void*
+Message-Id: <1277806498-30738-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1006201324360.4366@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1006201324360.4366@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, Tejun Heo <tj@kernel.org>, David Woodhouse <dwmw2@infradead.org>
 
-On Sun, Jun 20, 2010 at 01:24:54PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The function begins and ends with a read_lock.  The latter is changed to a
-> read_unlock.
-> 
-Indeed, good catch. Applied, thanks.
+Remove unnesessary casts from void*.
+
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/mtd/nand/r852.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/nand/r852.c b/drivers/mtd/nand/r852.c
+index 78a4232..c0a9835 100644
+--- a/drivers/mtd/nand/r852.c
++++ b/drivers/mtd/nand/r852.c
+@@ -64,8 +64,8 @@ static inline void r852_write_reg_dword(struct r852_device *dev,
+ /* returns pointer to our private structure */
+ static inline struct r852_device *r852_get_dev(struct mtd_info *mtd)
+ {
+-	struct nand_chip *chip = (struct nand_chip *)mtd->priv;
+-	return (struct r852_device *)chip->priv;
++	struct nand_chip *chip = mtd->priv;
++	return chip->priv;
+ }
+ 
+ 
+-- 
+1.7.0.4
+
