@@ -1,65 +1,34 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Thu, 17 Jun 2010 13:27:29 +0000
-Subject: Re: [PATCH] drm/i915: fix warn, struct may be used uninitialized
-Message-Id: <1276781249.2999.0.camel@lovely.krouter>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 29 Jun 2010 10:15:01 +0000
+Subject: [PATCH 02/25] n2-drv: remove casts from void*
+Message-Id: <1277806502-30772-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100616145452.GA30948@lovely.krouter>
-In-Reply-To: <20100616145452.GA30948@lovely.krouter>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.hengli.com.au>, Grant Likely <grant.likely@secretlab.ca>, Sean MacLennan <smaclennan@pikatech.com>, Jiri Kosina <jkosina@suse.cz>, Daniel Mack <daniel@caiaq.de>, linux-kernel@vger.kernel.org
 
-I meant to send the following patch.
+Remove unnesessary casts from void*.
 
-Thanks for pointing out,
-  chf
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
-In function ‘i915_setup_compression’:
-warning: ‘compressed_llb’ may be used uninitialized in this function
+ drivers/char/hw_random/n2-drv.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-this modifies the topology of the function a bit
-
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
----
- drivers/gpu/drm/i915/i915_dma.c |   15 ++++++---------
- 1 files changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
-index 59a2bf8..17b5dc8 100644
---- a/drivers/gpu/drm/i915/i915_dma.c
-+++ b/drivers/gpu/drm/i915/i915_dma.c
-@@ -1274,21 +1274,18 @@ static void i915_setup_compression(struct drm_device *dev, int size)
- 			drm_mm_put_block(compressed_fb);
- 			drm_mm_put_block(compressed_llb);
- 		}
--	}
--
--	dev_priv->cfb_size = size;
+diff --git a/drivers/char/hw_random/n2-drv.c b/drivers/char/hw_random/n2-drv.c
+index 0f9cbf1..101d5f2 100644
+--- a/drivers/char/hw_random/n2-drv.c
++++ b/drivers/char/hw_random/n2-drv.c
+@@ -387,7 +387,7 @@ static int n2rng_init_control(struct n2rng *np)
  
--	intel_disable_fbc(dev);
--	dev_priv->compressed_fb = compressed_fb;
--
--	if (IS_GM45(dev)) {
--		I915_WRITE(DPFC_CB_BASE, compressed_fb->start);
--	} else {
- 		I915_WRITE(FBC_CFB_BASE, cfb_base);
- 		I915_WRITE(FBC_LL_BASE, ll_base);
- 		dev_priv->compressed_llb = compressed_llb;
-+	} else {
-+		I915_WRITE(DPFC_CB_BASE, compressed_fb->start);
- 	}
+ static int n2rng_data_read(struct hwrng *rng, u32 *data)
+ {
+-	struct n2rng *np = (struct n2rng *) rng->priv;
++	struct n2rng *np = rng->priv;
+ 	unsigned long ra = __pa(&np->test_data);
+ 	int len;
  
-+	dev_priv->cfb_size = size;
-+	intel_disable_fbc(dev);
-+	dev_priv->compressed_fb = compressed_fb;
-+
- 	DRM_DEBUG("FBC base 0x%08lx, ll base 0x%08lx, size %dM\n", cfb_base,
- 		  ll_base, size >> 20);
- }
 -- 
-1.7.1
-
-
+1.7.0.4
 
