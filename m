@@ -1,52 +1,139 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 04 Jun 2010 15:39:03 +0000
-Subject: [patch v2] V4L/DVB: dvb_ca_en50221: return -EFAULT on copy_to_user
-Message-Id: <20100604153903.GH5483@bicker>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Wed, 30 Jun 2010 21:50:32 +0000
+Subject: [PATCH] Add support for the C variable in the coccicheck script
+Message-Id: <1277934632-6802-1-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100604103629.GC5483@bicker> <4C08F0DD.50702@bfs.de>
-In-Reply-To: <4C08F0DD.50702@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Frederic Weisbecker <fweisbec@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Michal Marek <mmarek@suse.cz>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, =?UTF-8?q?Am=C3=A9rico=20Wang?= <xiyou.wangcong@gmail.com>, Andy Isaacson <adi@hexapodia.org>, Linus Torvalds <torvalds@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>, walter harms <wharms@bfs.de>, Joerg Roedel <joro@8bytes.org>, Jan Engelhardt <jengelh@medozas.de>
+Cc: Nicolas Palix <npalix@diku.dk>
 
-copy_to_user() returns the number of bytes remaining to be copied which
-isn't the right thing to return here.  The comments say that these 
-functions in dvb_ca_en50221.c should return the number of bytes copied or
-an error return.  I've changed it to return -EFAULT.
+This patch makes it possible to use the Coccinelle checker with the C
+variable of the build system. To check only newly edited code, the
+following command may be used:
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+'make C={1,2} CHECK="scripts/coccicheck"'
+
+This runs every semantic patch in scripts/coccinelle by default. The
+COCCI variable may additionally be used to only apply a single
+semantic patch.
+
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-V2: Some style fixes suggested by Walter Harms.
+ scripts/coccicheck |   76 +++++++++++++++++++++++++++++++++++-----------------
+ 1 files changed, 51 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/media/dvb/dvb-core/dvb_ca_en50221.c b/drivers/media/dvb/dvb-core/dvb_ca_en50221.c
-index ef259a0..cb97e6b 100644
---- a/drivers/media/dvb/dvb-core/dvb_ca_en50221.c
-+++ b/drivers/media/dvb/dvb-core/dvb_ca_en50221.c
-@@ -1318,8 +1318,11 @@ static ssize_t dvb_ca_en50221_io_write(struct file *file,
+diff --git a/scripts/coccicheck b/scripts/coccicheck
+index 037424b..b8bcf1f 100755
+--- a/scripts/coccicheck
++++ b/scripts/coccicheck
+@@ -2,53 +2,79 @@
  
- 		fragbuf[0] = connection_id;
- 		fragbuf[1] = ((fragpos + fraglen) < count) ? 0x80 : 0x00;
--		if ((status = copy_from_user(fragbuf + 2, buf + fragpos, fraglen)) != 0)
-+		status = copy_from_user(fragbuf + 2, buf + fragpos, fraglen);
-+		if (status) {
-+			status = -EFAULT;
- 			goto exit;
-+		}
+ SPATCH="`which ${SPATCH:=spatch}`"
  
- 		timeout = jiffies + HZ / 2;
- 		written = 0;
-@@ -1494,8 +1497,11 @@ static ssize_t dvb_ca_en50221_io_read(struct file *file, char __user * buf,
++if [ "$C" = "1" -o "$C" = "2" ]; then
++    ONLINE=1
++
++# This requires Coccinelle >= 0.2.3
++#    FLAGS="-ignore_unknown_options -very_quiet"
++#    OPTIONS=$*
++
++# Workaround for Coccinelle < 0.2.3
++    FLAGS="-I $srctree/include -very_quiet"
++    shift $(( $# - 1 ))
++    OPTIONS=$1
++else
++    ONLINE=0
++    FLAGS="-very_quiet"
++fi
++
+ if [ ! -x "$SPATCH" ]; then
+     echo 'spatch is part of the Coccinelle project and is available at http://coccinelle.lip6.fr/'
+     exit 1
+ fi
  
- 	hdr[0] = slot;
- 	hdr[1] = connection_id;
--	if ((status = copy_to_user(buf, hdr, 2)) != 0)
-+	status = copy_to_user(buf, hdr, 2);
-+	if (status) {
-+		status = -EFAULT;
- 		goto exit;
-+	}
- 	status = pktlen;
+ if [ "$MODE" = "" ] ; then
+-    echo 'You have not explicitly specify the mode to use. Fallback to "report".'
+-    echo 'You can specify the mode with "make coccicheck MODE=<mode>"'
+-    echo 'Available modes are: report, patch, context, org'
++    if [ "$ONLINE" = "0" ] ; then
++	echo 'You have not explicitly specify the mode to use. Fallback to "report".'
++	echo 'You can specify the mode with "make coccicheck MODE=<mode>"'
++	echo 'Available modes are: report, patch, context, org'
++    fi
+     MODE="report"
+ fi
  
- exit:
+-echo ''
+-echo 'Please check for false positives in the output before submitting a patch.'
+-echo 'When using "patch" mode, carefully review the patch before submitting it.'
+-echo ''
++if [ "$ONLINE" = "0" ] ; then
++    echo ''
++    echo 'Please check for false positives in the output before submitting a patch.'
++    echo 'When using "patch" mode, carefully review the patch before submitting it.'
++    echo ''
++fi
+ 
+-function coccinelle {
++coccinelle () {
+     COCCI="$1"
+-    DIR="$2"
+ 
+     OPT=`grep "Option" $COCCI | cut -d':' -f2`
+-    FILE=`echo $COCCI | sed "s|$DIR/||"`
+ 
+-    echo "Processing `basename $COCCI` with option(s) \"$OPT\""
+-    echo 'Message example to submit a patch:'
++#   The option '-parse_cocci' can be used to syntaxically check the SmPL files.
++#
++#    $SPATCH -D $MODE $FLAGS -parse_cocci $COCCI $OPT > /dev/null
+ 
+-    sed -e '/\/\/\//!d' -e 's|^///||' $COCCI
++    if [ "$ONLINE" = "0" ] ; then
+ 
+-    echo ' The semantic patch that makes this change is available'
+-    echo " in $FILE."
+-    echo ''
+-    echo ' More information about semantic patching is available at'
+-    echo ' http://coccinelle.lip6.fr/'
+-    echo ''
++	FILE=`echo $COCCI | sed "s|$srctree/||"`
+ 
+-#   The option '-parse_cocci' can be used to syntaxically check the SmPL files.
+-#
+-#    $SPATCH -D $MODE -very_quiet -parse_cocci $COCCI $OPT > /dev/null
++	echo "Processing `basename $COCCI` with option(s) \"$OPT\""
++	echo 'Message example to submit a patch:'
++
++	sed -e '/\/\/\//!d' -e 's|^///||' $COCCI
++
++	echo ' The semantic patch that makes this change is available'
++	echo " in $FILE."
++	echo ''
++	echo ' More information about semantic patching is available at'
++	echo ' http://coccinelle.lip6.fr/'
++	echo ''
++
++	$SPATCH -D $MODE $FLAGS -sp_file $COCCI $OPT -dir $srctree || exit 1
++    else
++	$SPATCH -D $MODE $FLAGS -sp_file $COCCI $OPT $OPTIONS || exit 1
++    fi
+ 
+-    $SPATCH -D $MODE -very_quiet -sp_file $COCCI $OPT -dir $DIR
+ }
+ 
+ if [ "$COCCI" = "" ] ; then
+     for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
+-	coccinelle $f $srctree;
++	coccinelle $f
+     done
+ else
+-    coccinelle $COCCI $srctree
++    coccinelle $COCCI
+ fi
+-- 
+1.7.0.4
+
