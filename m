@@ -1,46 +1,43 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 15 Jul 2010 08:23:10 +0000
-Subject: [patch] orinoco_usb: potential null dereference
-Message-Id: <20100715082309.GE5164@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 01 Jul 2010 11:23:12 +0000
+Subject: [PATCH 16/16] drivers/usb/host: use ARRAY_SIZE
+Message-Id: <1277983394-30198-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Roskin <proski@gnu.org>
-Cc: David Gibson <hermes@gibson.dropbear.id.au>, "John W. Linville" <linville@tuxdriver.com>, David Kilroy <kilroyd@googlemail.com>, linux-wireless@vger.kernel.org, orinoco-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Sarah Sharp <sarah.a.sharp@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, John Youn <John.Youn@synopsys.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Smatch complains that "upriv->read_urb" gets dereferenced before
-checking for NULL.  It turns out that it's possible for
-"upriv->read_urb" to be NULL so I added checks around the dereferences.
+Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
 
-Also I remove an "if (upriv->bap_buf != NULL)" check because
-"kfree(NULL) is OK.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/usb/host/xhci-mem.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/net/wireless/orinoco/orinoco_usb.c b/drivers/net/wireless/orinoco/orinoco_usb.c
-index 78f089b..11d5ec2 100644
---- a/drivers/net/wireless/orinoco/orinoco_usb.c
-+++ b/drivers/net/wireless/orinoco/orinoco_usb.c
-@@ -1504,16 +1504,16 @@ static inline void ezusb_delete(struct ezusb_priv *upriv)
- 	    ezusb_ctx_complete(list_entry(item,
- 					  struct request_context, list));
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index fd9e03a..1fcef80 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -1566,7 +1566,7 @@ static int xhci_check_trb_in_td_math(struct xhci_hcd *xhci, gfp_t mem_flags)
+ 	unsigned int num_tests;
+ 	int i, ret;
  
--	if (upriv->read_urb->status = -EINPROGRESS)
-+	if (upriv->read_urb && upriv->read_urb->status = -EINPROGRESS)
- 		printk(KERN_ERR PFX "Some URB in progress\n");
+-	num_tests = sizeof(simple_test_vector) / sizeof(simple_test_vector[0]);
++	num_tests = ARRAY_SIZE(simple_test_vector);
+ 	for (i = 0; i < num_tests; i++) {
+ 		ret = xhci_test_trb_in_td(xhci,
+ 				xhci->event_ring->first_seg,
+@@ -1579,7 +1579,7 @@ static int xhci_check_trb_in_td_math(struct xhci_hcd *xhci, gfp_t mem_flags)
+ 			return ret;
+ 	}
  
- 	mutex_unlock(&upriv->mtx);
- 
--	kfree(upriv->read_urb->transfer_buffer);
--	if (upriv->bap_buf != NULL)
--		kfree(upriv->bap_buf);
--	if (upriv->read_urb != NULL)
-+	if (upriv->read_urb) {
-+		kfree(upriv->read_urb->transfer_buffer);
- 		usb_free_urb(upriv->read_urb);
-+	}
-+	kfree(upriv->bap_buf);
- 	if (upriv->dev) {
- 		struct orinoco_private *priv = ndev_priv(upriv->dev);
- 		orinoco_if_del(priv);
+-	num_tests = sizeof(complex_test_vector) / sizeof(complex_test_vector[0]);
++	num_tests = ARRAY_SIZE(complex_test_vector);
+ 	for (i = 0; i < num_tests; i++) {
+ 		ret = xhci_test_trb_in_td(xhci,
+ 				complex_test_vector[i].input_seg,
+-- 
+1.7.0.4
+
