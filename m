@@ -1,50 +1,52 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 10 Jul 2010 11:00:35 +0000
-Subject: [PATCH 1/3] jazzsonic: free irq if sonic_open() fails
-Message-Id: <1278759635-7654-1-git-send-email-segooon@gmail.com>
+Date: Thu, 01 Jul 2010 13:17:03 +0000
+Subject: [PATCH 24/25] staging/wlags49_h2: remove casts from void*
+Message-Id: <1277990225-22889-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Julia Lawall <julia@diku.dk>, Finn Thain <fthain@telegraphics.com.au>, netdev@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Henk de Groot <pe1dnn@amsat.org>, Huang Weiyi <weiyi.huang@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-jazzsonic_open() doesn't check sonic_open() return code. If it is error
-we must free requested IRQ.
+Remove unnesessary casts from void*.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/net/jazzsonic.c |   17 +++++++++++++----
- 1 files changed, 13 insertions(+), 4 deletions(-)
+ drivers/staging/wlags49_h2/wl_pci.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/jazzsonic.c b/drivers/net/jazzsonic.c
-index 3e6aaf9..949c1f9 100644
---- a/drivers/net/jazzsonic.c
-+++ b/drivers/net/jazzsonic.c
-@@ -82,11 +82,20 @@ static unsigned short known_revisions[]  
- static int jazzsonic_open(struct net_device* dev)
- {
--	if (request_irq(dev->irq, sonic_interrupt, IRQF_DISABLED, "sonic", dev)) {
--		printk(KERN_ERR "%s: unable to get IRQ %d.\n", dev->name, dev->irq);
--		return -EAGAIN;
-+	int retval;
-+
-+	retval = request_irq(dev->irq, sonic_interrupt, IRQF_DISABLED,
-+				"sonic", dev);
-+	if (retval) {
-+		printk(KERN_ERR "%s: unable to get IRQ %d.\n",
-+				dev->name, dev->irq);
-+		return retval;
- 	}
--	return sonic_open(dev);
-+
-+	retval = sonic_open(dev);
-+	if (retval)
-+		free_irq(dev->irq, dev);
-+	return retval;
- }
+diff --git a/drivers/staging/wlags49_h2/wl_pci.c b/drivers/staging/wlags49_h2/wl_pci.c
+index 6751b4b..b736ae8 100644
+--- a/drivers/staging/wlags49_h2/wl_pci.c
++++ b/drivers/staging/wlags49_h2/wl_pci.c
+@@ -465,7 +465,7 @@ void __devexit wl_pci_remove(struct pci_dev *pdev)
+     free_irq( dev->irq, dev );
  
- static int jazzsonic_close(struct net_device* dev)
+ #ifdef ENABLE_DMA
+-    wl_pci_dma_free( pdev, (struct wl_private *)dev->priv );
++    wl_pci_dma_free(pdev, dev->priv);
+ #endif
+ 
+     wl_device_dealloc( dev );
+@@ -534,7 +534,7 @@ int wl_pci_setup( struct pci_dev *pdev )
+ 
+ #ifdef ENABLE_DMA
+     /* Allocate DMA Descriptors */
+-    if( wl_pci_dma_alloc( pdev, (struct wl_private *)dev->priv ) < 0 ) {
++    if (wl_pci_dma_alloc(pdev, dev->priv) < 0) {
+         DBG_ERROR( DbgInfo, "Could not allocate DMA descriptor memory!!!\n" );
+         DBG_LEAVE( DbgInfo );
+         return -ENOMEM;
+@@ -570,7 +570,7 @@ int wl_pci_setup( struct pci_dev *pdev )
+ 	}
+ 
+     /* Make sure interrupts are enabled properly for CardBus */
+-    lp = (struct wl_private *)dev->priv;
++    lp = dev->priv;
+ 
+     if( lp->hcfCtx.IFB_BusType = CFG_NIC_BUS_TYPE_CARDBUS ||
+ 	    lp->hcfCtx.IFB_BusType = CFG_NIC_BUS_TYPE_PCI 		) {
 -- 
 1.7.0.4
 
