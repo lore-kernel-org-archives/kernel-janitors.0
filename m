@@ -1,81 +1,119 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 19 Jul 2010 17:01:33 +0000
-Subject: Re: [patch] drm: radeon: fix sign bug
-Message-Id: <AANLkTinms2qBWTaNSEN-mYIQb0S9CwsqmM6EyJC53q4Q@mail.gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 01 Jul 2010 11:22:55 +0000
+Subject: [PATCH 10/16] staging/otus: use ARRAY_SIZE
+Message-Id: <1277983377-29390-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100717102802.GF17585@bicker>
-In-Reply-To: <20100717102802.GF17585@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
-Cc: Dave Airlie <airlied@redhat.com>, Jerome Glisse <jglisse@redhat.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Simon Horman <horms@verge.net.au>, Julia Lawall <julia@diku.dk>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 17, 2010 at 6:28 AM, Dan Carpenter <error27@gmail.com> wrote:
-> The "error" variable is unsigned so it's never less than zero. =A0I
-> changed it to check if (freq < current_freq) directly.
->
-> "best_error" is also unsigned so "best_error - 100" could be a large
-> number instead of a negative. =A0Since "error" is unsigned it is never
-> less than a negative and so the cases where "best_error" is less than or
-> equal to 100 are false.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
+Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
 
-This looks good Dan.  Dave, please apply,
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/otus/hal/hpmain.c |   42 ++++++++----------------------------
+ 1 files changed, 10 insertions(+), 32 deletions(-)
 
-Reviewed-by: Alex Deucher <alexdeucher@gmail.com>
+diff --git a/drivers/staging/otus/hal/hpmain.c b/drivers/staging/otus/hal/hpmain.c
+index 5f412e0..cc543fd 100644
+--- a/drivers/staging/otus/hal/hpmain.c
++++ b/drivers/staging/otus/hal/hpmain.c
+@@ -430,7 +430,7 @@ void zfInitPhy(zdev_t* dev,  u32_t frequency, u8_t bw40)
+      * Register setting by mode
+      */
+ 
+-    entries = sizeof(ar5416Modes) / sizeof(*ar5416Modes);
++    entries = ARRAY_SIZE(ar5416Modes);
+     zm_msg1_scan(ZM_LV_2, "Modes register setting entries=", entries);
+     for (i=0; i<entries; i++)
+     {
+@@ -496,7 +496,7 @@ void zfInitPhy(zdev_t* dev,  u32_t frequency, u8_t bw40)
+     /*
+      * Common Register setting
+      */
+-    entries = sizeof(ar5416Common) / sizeof(*ar5416Common);
++    entries = ARRAY_SIZE(ar5416Common);
+     for (i=0; i<entries; i++)
+     {
+         reg_write(ar5416Common[i][0], ar5416Common[i][1]);
+@@ -506,7 +506,7 @@ void zfInitPhy(zdev_t* dev,  u32_t frequency, u8_t bw40)
+     /*
+      * RF Gain setting by freqIndex
+      */
+-    entries = sizeof(ar5416BB_RfGain) / sizeof(*ar5416BB_RfGain);
++    entries = ARRAY_SIZE(ar5416BB_RfGain);
+     for (i=0; i<entries; i++)
+     {
+         reg_write(ar5416BB_RfGain[i][0], ar5416BB_RfGain[i][freqIndex]);
+@@ -963,7 +963,6 @@ u32_t reverse_bits(u32_t chan_sel)
+ /* Bank 0 1 2 3 5 6 7 */
+ void zfSetRfRegs(zdev_t* dev, u32_t frequency)
+ {
+-    u16_t entries;
+     u16_t freqIndex = 0;
+     u16_t i;
+ 
+@@ -984,51 +983,30 @@ void zfSetRfRegs(zdev_t* dev, u32_t frequency)
+     }
+ 
+ #if 1
+-    entries = sizeof(otusBank) / sizeof(*otusBank);
+-    for (i=0; i<entries; i++)
+-    {
++    for (i = 0; i < ARRAY_SIZE(otusBank); i++)
+         reg_write(otusBank[i][0], otusBank[i][freqIndex]);
+-    }
+ #else
+     /* Bank0 */
+-    entries = sizeof(ar5416Bank0) / sizeof(*ar5416Bank0);
+-    for (i=0; i<entries; i++)
+-    {
++    for (i = 0; i < ARRAY_SIZE(ar5416Bank0); i++)
+         reg_write(ar5416Bank0[i][0], ar5416Bank0[i][1]);
+-    }
+     /* Bank1 */
+-    entries = sizeof(ar5416Bank1) / sizeof(*ar5416Bank1);
+-    for (i=0; i<entries; i++)
+-    {
++    for (i = 0; i < ARRAY_SIZE(ar5416Bank1); i++)
+         reg_write(ar5416Bank1[i][0], ar5416Bank1[i][1]);
+-    }
+     /* Bank2 */
+-    entries = sizeof(ar5416Bank2) / sizeof(*ar5416Bank2);
+-    for (i=0; i<entries; i++)
+-    {
++    for (i = 0; i < ARRAY_SIZE(ar5416Bank2); i++)
+         reg_write(ar5416Bank2[i][0], ar5416Bank2[i][1]);
+-    }
+     /* Bank3 */
+-    entries = sizeof(ar5416Bank3) / sizeof(*ar5416Bank3);
+-    for (i=0; i<entries; i++)
+-    {
++    for (i = 0; i < ARRAY_SIZE(ar5416Bank3); i++)
+         reg_write(ar5416Bank3[i][0], ar5416Bank3[i][freqIndex]);
+-    }
+     /* Bank5 */
+     reg_write (0x98b0,  0x00000013);
+     reg_write (0x98e4,  0x00000002);
+     /* Bank6 */
+-    entries = sizeof(ar5416Bank6) / sizeof(*ar5416Bank6);
+-    for (i=0; i<entries; i++)
+-    {
++    for (i = 0; i < ARRAY_SIZE(ar5416Bank6); i++)
+         reg_write(ar5416Bank6[i][0], ar5416Bank6[i][freqIndex]);
+-    }
+     /* Bank7 */
+-    entries = sizeof(ar5416Bank7) / sizeof(*ar5416Bank7);
+-    for (i=0; i<entries; i++)
+-    {
++    for (i = 0; i < ARRAY_SIZE(ar5416Bank7); i++)
+         reg_write(ar5416Bank7[i][0], ar5416Bank7[i][1]);
+-    }
+ #endif
+ 
+     zfFlushDelayWrite(dev);
+-- 
+1.7.0.4
 
-> diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/ra=
-deon/radeon_display.c
-> index 8154cdf..a68728d 100644
-> --- a/drivers/gpu/drm/radeon/radeon_display.c
-> +++ b/drivers/gpu/drm/radeon/radeon_display.c
-> @@ -558,15 +558,17 @@ static void radeon_compute_pll_legacy(struct radeon=
-_pll *pll,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0current_freq =3D radeon_div(tmp, ref_div * post_div);
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0if (pll->flags & RADEON_PLL_PREFER_CLOSEST_LOWER) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 error =3D freq - current_freq;
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 error =3D error < 0 ? 0xffffffff : error;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 if (freq < current_freq)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 error =3D 0xffffffff;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 else
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 error =3D freq - current_freq;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0} else
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0error =3D abs(current_freq - freq);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0vco_diff =3D abs(vco - best_vco);
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0if ((best_vco =3D 0 && error < best_error) ||
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0(best_vco !=3D 0 &&
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0(error < best_error - 100 ||
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0((best_error > 100 && error < best_error - 100) ||
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0(abs(error - best_error) < 100 && vco_diff < best_vco_di=
-ff)))) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0best_post_div =3D post_div;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0best_ref_div =3D ref_div;
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
