@@ -1,49 +1,43 @@
-From: Wang Sheng-Hui <crosslonelyover@gmail.com>
-Date: Fri, 16 Jul 2010 15:09:11 +0000
-Subject: [PATCH] clear code: add macro wrapper for header mbcache.h
-Message-Id: <4C407617.6080002@gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 01 Jul 2010 13:16:49 +0000
+Subject: [PATCH 15/25] staging/cxt1e1: remove casts from void*
+Message-Id: <1277990210-22191-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bob Beers <bob.beers@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Hi,
+Remove unnesessary casts from void*.
 
-In header file include/linux/mbcache.h, no macro wrapper defined.
-I think it's better to add ifndef/define macro to wrap it.
-Following patch is against 2.6.35-rc5. Please check it.
-
-
-Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- include/linux/mbcache.h |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
+ drivers/staging/cxt1e1/linux.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/mbcache.h b/include/linux/mbcache.h
-index a09b84e..3a6a802 100644
---- a/include/linux/mbcache.h
-+++ b/include/linux/mbcache.h
-@@ -3,6 +3,8 @@
-
-   (C) 2001 by Andreas Gruenbacher, <a.gruenbacher@computer.org>
- */
-+#ifndef __LINUX_MBCACHE_H
-+#define __LINUX_MBCACHE_H
-
- /* Hardwire the number of additional indexes */
- #define MB_CACHE_INDEXES_COUNT 1
-@@ -50,3 +52,5 @@ struct mb_cache_entry *mb_cache_entry_find_next(struct
-mb_cache_entry *, int,
- 						struct block_device *,
- 						unsigned int);
+diff --git a/drivers/staging/cxt1e1/linux.c b/drivers/staging/cxt1e1/linux.c
+index 134e756..0cd93a1 100644
+--- a/drivers/staging/cxt1e1/linux.c
++++ b/drivers/staging/cxt1e1/linux.c
+@@ -461,7 +461,7 @@ chan_get_stats (struct net_device * ndev)
+     {
+         struct c4_priv *priv;
+ 
+-        priv = (struct c4_priv *) dev_to_hdlc (ndev)->priv;
++	priv = dev_to_hdlc(ndev)->priv;
+         channum = priv->channum;
+     }
  #endif
-+
-+#endif /* __LINUX_MBCACHE_H */
+@@ -886,7 +886,7 @@ do_deluser (struct net_device * ndev, int lockit)
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+         priv = DEV_TO_PRIV (ndev);
+ #else
+-        priv = (struct c4_priv *) dev_to_hdlc (ndev)->priv;
++	priv = dev_to_hdlc(ndev)->priv;
+ #endif
+         ci = priv->ci;
+         channum = priv->channum;
 -- 
-1.7.1.1
+1.7.0.4
 
-
--- 
-Thanks and Regards,
-shenghui
