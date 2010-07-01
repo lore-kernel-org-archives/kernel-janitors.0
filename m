@@ -1,41 +1,111 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Fri, 02 Jul 2010 21:30:39 +0000
-Subject: Re: [PATCH 09/25] pci-sysfs: remove casts from void*
-Message-Id: <20100702143039.7bdac116@virtuousgeek.org>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 01 Jul 2010 11:22:51 +0000
+Subject: [PATCH 09/16] staging/otus: use ARRAY_SIZE
+Message-Id: <1277983372-29356-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277806529-31010-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277806529-31010-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, Chris Wright <chrisw@sous-sol.org>, "Michael S. Tsirkin" <mst@redhat.com>, Michal Schmidt <mschmidt@redhat.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Dan Carpenter <error27@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Tue, 29 Jun 2010 14:15:28 +0400
-Kulikov Vasiliy <segooon@gmail.com> wrote:
+Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
 
-> Remove unnesessary casts from void*.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/pci/pci-sysfs.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index afd2fbf..7f8bc8c 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -734,7 +734,7 @@ pci_mmap_resource(struct kobject *kobj, struct bin_attribute *attr,
->  {
->  	struct pci_dev *pdev = to_pci_dev(container_of(kobj,
->  						       struct device, kobj));
-> -	struct resource *res = (struct resource *)attr->private;
-> +	struct resource *res = attr->private;
->  	enum pci_mmap_state mmap_type;
->  	resource_size_t start, end;
->  	int i;
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/otus/hal/hpani.c |   37 ++++++++++++++++---------------------
+ 1 files changed, 16 insertions(+), 21 deletions(-)
 
-Applied to my linux-next branch, thanks.
-
+diff --git a/drivers/staging/otus/hal/hpani.c b/drivers/staging/otus/hal/hpani.c
+index f53e483..6940ddc 100644
+--- a/drivers/staging/otus/hal/hpani.c
++++ b/drivers/staging/otus/hal/hpani.c
+@@ -72,7 +72,6 @@ s32_t BEACON_RSSI(zdev_t *dev)
+ 
+ void zfHpAniAttach(zdev_t *dev)
+ {
+-#define N(a)     (sizeof(a) / sizeof(a[0]))
+     u32_t i;
+     struct zsHpPriv *HpPriv;
+ 
+@@ -125,7 +124,6 @@ void zfHpAniAttach(zdev_t *dev)
+     HpPriv->stats.ast_nodestats.ns_avgbrssi = ZM_RSSI_DUMMY_MARKER;
+     HpPriv->stats.ast_nodestats.ns_avgrssi = ZM_RSSI_DUMMY_MARKER;
+     HpPriv->stats.ast_nodestats.ns_avgtxrssi = ZM_RSSI_DUMMY_MARKER;
+-#undef N
+ }
+ 
+ /*
+@@ -133,7 +131,6 @@ void zfHpAniAttach(zdev_t *dev)
+  */
+ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
+ {
+-#define N(a) (sizeof(a)/sizeof(a[0]))
+     typedef s32_t TABLE[];
+     struct zsHpPriv *HpPriv;
+     struct zsAniState *aniState;
+@@ -148,11 +145,12 @@ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
+     {
+         u32_t level = param;
+ 
+-        if (level >= N(HpPriv->totalSizeDesired)) {
+-          zm_debug_msg1("level out of range, desired level : ", level);
+-          zm_debug_msg1("max level : ", N(HpPriv->totalSizeDesired));
+-          return FALSE;
+-        }
++	if (level >= ARRAY_SIZE(HpPriv->totalSizeDesired)) {
++		zm_debug_msg1("level out of range, desired level : ", level);
++		zm_debug_msg1("max level : ",
++			ARRAY_SIZE(HpPriv->totalSizeDesired));
++		return FALSE;
++	}
+ 
+         zfDelayWriteInternalReg(dev, AR_PHY_DESIRED_SZ,
+                 (HpPriv->regPHYDesiredSZ & ~AR_PHY_DESIRED_SZ_TOT_DES)
+@@ -260,12 +258,11 @@ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
+         const TABLE firstep = { 0, 4, 8 };
+         u32_t level = param;
+ 
+-        if (level >= N(firstep))
+-        {
+-            zm_debug_msg1("level out of range, desired level : ", level);
+-            zm_debug_msg1("max level : ", N(firstep));
+-            return FALSE;
+-        }
++	if (level >= ARRAY_SIZE(firstep)) {
++		zm_debug_msg1("level out of range, desired level : ", level);
++		zm_debug_msg1("max level : ", ARRAY_SIZE(firstep));
++		return FALSE;
++	}
+         zfDelayWriteInternalReg(dev, AR_PHY_FIND_SIG,
+                 (HpPriv->regPHYFindSig & ~AR_PHY_FIND_SIG_FIRSTEP)
+                 | ((firstep[level] << AR_PHY_FIND_SIG_FIRSTEP_S)
+@@ -283,12 +280,11 @@ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
+         const TABLE cycpwrThr1 = { 2, 4, 6, 8, 10, 12, 14, 16 };
+         u32_t level = param;
+ 
+-        if (level >= N(cycpwrThr1))
+-        {
+-            zm_debug_msg1("level out of range, desired level : ", level);
+-            zm_debug_msg1("max level : ", N(cycpwrThr1));
+-            return FALSE;
+-        }
++	if (level >= ARRAY_SIZE(cycpwrThr1)) {
++		zm_debug_msg1("level out of range, desired level : ", level);
++		zm_debug_msg1("max level : ", ARRAY_SIZE(cycpwrThr1));
++		return FALSE;
++	}
+         zfDelayWriteInternalReg(dev, AR_PHY_TIMING5,
+                 (HpPriv->regPHYTiming5 & ~AR_PHY_TIMING5_CYCPWR_THR1)
+                 | ((cycpwrThr1[level] << AR_PHY_TIMING5_CYCPWR_THR1_S)
+@@ -335,7 +331,6 @@ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
+         return FALSE;
+     }
+     return TRUE;
+-#undef  N
+ }
+ 
+ void zfHpAniRestart(zdev_t* dev)
 -- 
-Jesse Barnes, Intel Open Source Technology Center
+1.7.0.4
+
