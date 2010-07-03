@@ -1,129 +1,37 @@
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Date: Fri, 30 Jul 2010 20:20:00 +0000
-Subject: Re: [patch v2] nouveau: unwind on load errors
-Message-Id: <20100730202000.GA4194@joi.lan>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:04:47 +0000
+Subject: [PATCH 19/19] drivers/usb/core: use for_each_pci_dev()
+Message-Id: <1278173088-12051-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100729180231.GV26313@bicker> <20100729193948.GA4821@joi.lan>
-	<20100730150432.GC26313@bicker>
-In-Reply-To: <20100730150432.GC26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: nouveau@lists.freedesktop.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Grant Likely <grant.likely@secretlab.ca>, Ben Skeggs <bskeggs@redhat.com>, Dave Airlie <airlied@redhat.com>
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alan Stern <stern@rowland.harvard.edu>, Andrew Morton <akpm@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 30, 2010 at 05:04:32PM +0200, Dan Carpenter wrote:
-> nuveau_load() just returned directly if there was an error instead of                                                       
-  ^^^^^^ typo
+Use for_each_pci_dev() to simplify the code.
 
-> releasing resources.                                                                                                         
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> V2: updated to the nouveau git tree.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/usb/core/hcd-pci.c |    5 +----
+ 1 files changed, 1 insertions(+), 4 deletions(-)
 
-Thanks.
-Reviewed-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
+index 7e2d527..c1f0bba 100644
+--- a/drivers/usb/core/hcd-pci.c
++++ b/drivers/usb/core/hcd-pci.c
+@@ -66,10 +66,7 @@ static void companion_common(struct pci_dev *pdev, struct usb_hcd *hcd,
+ 	 * vice versa.
+ 	 */
+ 	companion = NULL;
+-	for (;;) {
+-		companion = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, companion);
+-		if (!companion)
+-			break;
++	for_each_pci_dev(companion) {
+ 		if (companion->bus != pdev->bus ||
+ 				PCI_SLOT(companion->devfn) != slot)
+ 			continue;
+-- 
+1.7.0.4
 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_state.c b/drivers/gpu/drm/nouveau/nouveau_state.c
-> index ee3729e..cf16bfb 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_state.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_state.c
-> @@ -739,8 +739,10 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
->  	int ret;
->  
->  	dev_priv = kzalloc(sizeof(*dev_priv), GFP_KERNEL);
-> -	if (!dev_priv)
-> -		return -ENOMEM;
-> +	if (!dev_priv) {
-> +		ret = -ENOMEM;
-> +		goto err_out;
-> +	}
->  	dev->dev_private = dev_priv;
->  	dev_priv->dev = dev;
->  
-> @@ -750,8 +752,10 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
->  		 dev->pci_vendor, dev->pci_device, dev->pdev->class);
->  
->  	dev_priv->wq = create_workqueue("nouveau");
-> -	if (!dev_priv->wq)
-> -		return -EINVAL;
-> +	if (!dev_priv->wq) {
-> +		ret = -EINVAL;
-> +		goto err_priv;
-> +	}
->  
->  	/* resource 0 is mmio regs */
->  	/* resource 1 is linear FB */
-> @@ -764,7 +768,8 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
->  	if (!dev_priv->mmio) {
->  		NV_ERROR(dev, "Unable to initialize the mmio mapping. "
->  			 "Please report your setup to " DRIVER_EMAIL "\n");
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto err_wq;
->  	}
->  	NV_DEBUG(dev, "regs mapped ok at 0x%llx\n",
->  					(unsigned long long)mmio_start_offs);
-> @@ -812,7 +817,8 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
->  		break;
->  	default:
->  		NV_INFO(dev, "Unsupported chipset 0x%08x\n", reg0);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto err_mmio;
->  	}
->  
->  	NV_INFO(dev, "Detected an NV%2x generation card (0x%08x)\n",
-> @@ -820,7 +826,7 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
->  
->  	ret = nouveau_remove_conflicting_drivers(dev);
->  	if (ret)
-> -		return ret;
-> +		goto err_mmio;
->  
->  	/* Map PRAMIN BAR, or on older cards, the aperture withing BAR0 */
->  	if (dev_priv->card_type >= NV_40) {
-> @@ -834,7 +840,8 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
->  				dev_priv->ramin_size);
->  		if (!dev_priv->ramin) {
->  			NV_ERROR(dev, "Failed to PRAMIN BAR");
-> -			return -ENOMEM;
-> +			ret = -ENOMEM;
-> +			goto err_mmio;
->  		}
->  	} else {
->  		dev_priv->ramin_size = 1 * 1024 * 1024;
-> @@ -842,7 +849,8 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
->  					  dev_priv->ramin_size);
->  		if (!dev_priv->ramin) {
->  			NV_ERROR(dev, "Failed to map BAR0 PRAMIN.\n");
-> -			return -ENOMEM;
-> +			ret = -ENOMEM;
-> +			goto err_mmio;
->  		}
->  	}
->  
-> @@ -857,9 +865,21 @@ int nouveau_load(struct drm_device *dev, unsigned long flags)
->  	/* For kernel modesetting, init card now and bring up fbcon */
->  	ret = nouveau_card_init(dev);
->  	if (ret)
-> -		return ret;
-> +		goto err_ramin;
->  
->  	return 0;
-> +
-> +err_ramin:
-> +	iounmap(dev_priv->ramin);
-> +err_mmio:
-> +	iounmap(dev_priv->mmio);
-> +err_wq:
-> +	destroy_workqueue(dev_priv->wq);
-> +err_priv:
-> +	kfree(dev_priv);
-> +	dev->dev_private = NULL;
-> +err_out:
-> +	return ret;
->  }
->  
->  void nouveau_lastclose(struct drm_device *dev)
