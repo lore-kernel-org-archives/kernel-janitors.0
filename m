@@ -1,24 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 Jul 2010 21:13:24 +0000
-Subject: Re: [patch -next] stmmac: handle allocation errors in setup
-Message-Id: <20100722.141324.76106225.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:04:39 +0000
+Subject: [PATCH 17/19] drivers/pci: use for_each_pci_dev()
+Message-Id: <1278173080-11983-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100722111648.GD17585@bicker>
-In-Reply-To: <20100722111648.GD17585@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: peppe.cavallaro@st.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 22 Jul 2010 13:16:48 +0200
+Use for_each_pci_dev() to simplify the code.
 
-> If the allocations fail in either dwmac1000_setup() or dwmac100_setup()
-> then return NULL.  These are called from stmmac_mac_device_setup().  The 
-> check for NULL returns in stmmac_mac_device_setup() needed to be moved 
-> forward a couple lines.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/pci/setup-irq.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/drivers/pci/setup-irq.c b/drivers/pci/setup-irq.c
+index aa795fd..eec9738 100644
+--- a/drivers/pci/setup-irq.c
++++ b/drivers/pci/setup-irq.c
+@@ -59,7 +59,6 @@ pci_fixup_irqs(u8 (*swizzle)(struct pci_dev *, u8 *),
+ 	       int (*map_irq)(struct pci_dev *, u8, u8))
+ {
+ 	struct pci_dev *dev = NULL;
+-	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev)
+ 		pdev_fixup_irq(dev, swizzle, map_irq);
+-	}
+ }
+-- 
+1.7.0.4
+
