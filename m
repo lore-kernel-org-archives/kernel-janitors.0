@@ -1,86 +1,34 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 09 Jul 2010 17:55:13 +0000
-Subject: [PATCH v3] ll_temac: fix DMA and memory leaks
-Message-Id: <1278698113-5713-1-git-send-email-segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:03:43 +0000
+Subject: [PATCH 03/19] arch/mn10300/unit-asb2305: use for_each_pci_dev()
+Message-Id: <1278173024-11507-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Denis Kirjanov <dkirjanov@kernel.org>, "David S. Miller" <davem@davemloft.net>, John Linn <john.linn@xilinx.com>, Grant Likely <grant.likely@secretlab.ca>, Jiri Pirko <jpirko@redhat.com>, netdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Koichi Yasutake <yasutake.koichi@jp.panasonic.com>, Tejun Heo <tj@kernel.org>, linux-am33-list@redhat.com, linux-kernel@vger.kernel.org
 
-temac_dma_bd_init() doesn't free DMA and memory on error. Also
-temac_stop() must free them.
+Use for_each_pci_dev() to simplify the code.
 
-Signed-off-by: Denis Kirjanov <dkirjanov@kernel.org>
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/net/ll_temac_main.c |   38 ++++++++++++++++++++++++++++++++++++++
- 1 files changed, 38 insertions(+), 0 deletions(-)
+ arch/mn10300/unit-asb2305/pci-irq.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/net/ll_temac_main.c b/drivers/net/ll_temac_main.c
-index 5bca20b..9090e79 100644
---- a/drivers/net/ll_temac_main.c
-+++ b/drivers/net/ll_temac_main.c
-@@ -193,6 +193,41 @@ static int temac_dcr_setup(struct temac_local *lp, struct of_device *op,
- #endif
+diff --git a/arch/mn10300/unit-asb2305/pci-irq.c b/arch/mn10300/unit-asb2305/pci-irq.c
+index 91212ea..77439da 100644
+--- a/arch/mn10300/unit-asb2305/pci-irq.c
++++ b/arch/mn10300/unit-asb2305/pci-irq.c
+@@ -29,7 +29,7 @@ void __init pcibios_fixup_irqs(void)
+ 	struct pci_dev *dev = NULL;
+ 	u8 line, pin;
  
- /**
-+ *  * temac_dma_bd_release - Release buffer descriptor rings
-+ */
-+static void temac_dma_bd_release(struct net_device *ndev)
-+{
-+	struct temac_local *lp = netdev_priv(ndev);
-+	int i;
-+
-+	if (lp->rx_skb) {
-+		for (i = 0; i < RX_BD_NUM; i++) {
-+			if (!lp->rx_skb[i])
-+				break;
-+			dma_unmap_single(ndev->dev.parent, lp->rx_bd_v[i].phys,
-+				    XTE_MAX_JUMBO_FRAME_SIZE, DMA_FROM_DEVICE);
-+			dev_kfree_skb(lp->rx_skb[i]);
-+		}
-+		kfree(lp->rx_skb);
-+		lp->rx_skb = NULL;
-+	}
-+
-+	if (lp->rx_bd_v) {
-+		dma_free_coherent(ndev->dev.parent,
-+				sizeof(*lp->rx_bd_v) * RX_BD_NUM,
-+				lp->rx_bd_v, lp->rx_bd_p);
-+		lp->rx_bd_v = NULL;
-+	}
-+
-+	if (lp->tx_bd_v) {
-+		dma_free_coherent(ndev->dev.parent,
-+				sizeof(*lp->tx_bd_v) * TX_BD_NUM,
-+				lp->tx_bd_v, lp->tx_bd_p);
-+		lp->tx_bd_v = NULL;
-+	}
-+}
-+
-+/**
-  * temac_dma_bd_init - Setup buffer descriptor rings
-  */
- static int temac_dma_bd_init(struct net_device *ndev)
-@@ -275,6 +310,7 @@ static int temac_dma_bd_init(struct net_device *ndev)
- 	return 0;
- 
- out:
-+	temac_dma_bd_release(ndev);
- 	return -ENOMEM;
- }
- 
-@@ -858,6 +894,8 @@ static int temac_stop(struct net_device *ndev)
- 		phy_disconnect(lp->phy_dev);
- 	lp->phy_dev = NULL;
- 
-+	temac_dma_bd_release(ndev);
-+
- 	return 0;
- }
- 
+-	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &pin);
+ 		if (pin) {
+ 			dev->irq = XIRQ1;
 -- 
 1.7.0.4
 
