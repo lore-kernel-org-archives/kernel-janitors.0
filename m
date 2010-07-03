@@ -1,25 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 02:06:32 +0000
-Subject: Re: [PATCH 08/25] atm: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100715.190632.59688957.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:04:15 +0000
+Subject: [PATCH 11/19] drivers/net/irda: use for_each_pci_dev()
+Message-Id: <1278173056-11779-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152045.33543.PeterHuewe@gmx.de>
-In-Reply-To: <201007152045.33543.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: PeterHuewe@gmx.de
-Cc: kernel-janitors@vger.kernel.org, chas@cmf.nrl.navy.mil, hsweeten@visionengravers.com, tj@kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Samuel Ortiz <samuel@sortiz.org>, "David S. Miller" <davem@davemloft.net>, Stephen Hemminger <shemminger@vyatta.com>, Jiri Kosina <jkosina@suse.cz>, Joe Perches <joe@perches.com>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 20:45:32 +0200
+Use for_each_pci_dev() to simplify the code.
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/irda/smsc-ircc2.c |    5 +----
+ 1 files changed, 1 insertions(+), 4 deletions(-)
 
-Applied.
+diff --git a/drivers/net/irda/smsc-ircc2.c b/drivers/net/irda/smsc-ircc2.c
+index d67e484..850ca1c 100644
+--- a/drivers/net/irda/smsc-ircc2.c
++++ b/drivers/net/irda/smsc-ircc2.c
+@@ -2848,9 +2848,7 @@ static int __init smsc_ircc_preconfigure_subsystems(unsigned short ircc_cfg,
+ 	unsigned short ss_device = 0x0000;
+ 	int ret = 0;
+ 
+-	dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev);
+-
+-	while (dev != NULL) {
++	for_each_pci_dev(dev) {
+ 		struct smsc_ircc_subsystem_configuration *conf;
+ 
+ 		/*
+@@ -2899,7 +2897,6 @@ static int __init smsc_ircc_preconfigure_subsystems(unsigned short ircc_cfg,
+ 					ret = -ENODEV;
+ 			}
+ 		}
+-		dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev);
+ 	}
+ 
+ 	return ret;
+-- 
+1.7.0.4
+
