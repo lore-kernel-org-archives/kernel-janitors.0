@@ -1,27 +1,35 @@
-From: Herbert Xu <herbert@gondor.hengli.com.au>
-Date: Mon, 19 Jul 2010 06:05:59 +0000
-Subject: Re: [PATCH 16/25] crypto: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100719060559.GA19793@gondor.apana.org.au>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:03:51 +0000
+Subject: [PATCH 05/19] arch/x86/kernel: use for_each_pci_dev()
+Message-Id: <1278173032-11575-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152100.42276.PeterHuewe@gmx.de>
-In-Reply-To: <201007152100.42276.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Huewe <PeterHuewe@gmx.de>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Roel Kluin <roel.kluin@gmail.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Chihau Chau <chihau@gmail.com>, linux-geode@lists.infradead.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Joerg Roedel <joerg.roedel@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 15, 2010 at 09:00:41PM +0200, Peter Huewe wrote:
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Use for_each_pci_dev() to simplify the code.
 
-Patch applied.  Thanks.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ arch/x86/kernel/amd_iommu.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/amd_iommu.c b/arch/x86/kernel/amd_iommu.c
+index 0d20286..29dd3b9 100644
+--- a/arch/x86/kernel/amd_iommu.c
++++ b/arch/x86/kernel/amd_iommu.c
+@@ -2609,8 +2609,7 @@ int __init amd_iommu_init_passthrough(void)
+ 
+ 	pt_domain->mode |= PAGE_MODE_NONE;
+ 
+-	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
+-
++	for_each_pci_dev(dev) {
+ 		if (!check_device(&dev->dev))
+ 			continue;
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.7.0.4
+
