@@ -1,70 +1,52 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 30 Jul 2010 15:16:58 +0000
-Subject: [PATCH 1/2] drivers/serial/icom.c: Eliminate use after free
-Message-Id: <Pine.LNX.4.64.1007301716250.17618@ask.diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:04:03 +0000
+Subject: [PATCH 08/19] arch/x86/pci: use for_each_pci_dev()
+Message-Id: <1278173044-11677-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Seth Heasley <seth.heasley@intel.com>, Jacob Pan <jacob.jun.pan@intel.com>, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Use for_each_pci_dev() to simplify the code.
 
-Release_firmware has two definitions, one of which does nothing
-(include/linux/firmware.h) and one of which always frees its argument
-(drivers/base/firmware_class.c).  If the latter can be used, the access to
-the size field inthe argument of writeb represents a use after free.  The
-patch thus saves the size value before calling release_firmware and then
-uses it afterwards.
-
-A simplified version of the semantic patch that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression E,E2;
-@@
-
-release_firmware(E)
-...
-(
-  E = E2
-|
-* E
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
-Another possibility would be to put the call to remove_firmware later.  One
-could also wonder whether the first argument to writeb could be calculated
-using DIV_ROUND_UP, even though the semantics is not exactly the same.
+ arch/x86/pci/irq.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
- drivers/serial/icom.c               |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
+index 9810a0f..f547ee0 100644
+--- a/arch/x86/pci/irq.c
++++ b/arch/x86/pci/irq.c
+@@ -989,7 +989,7 @@ static int pcibios_lookup_irq(struct pci_dev *dev, int assign)
+ 	dev_info(&dev->dev, "%s PCI INT %c -> IRQ %d\n", msg, 'A' + pin - 1, irq);
+ 
+ 	/* Update IRQ for all devices with the same pirq value */
+-	while ((dev2 = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev2)) != NULL) {
++	for_each_pci_dev(dev2) {
+ 		pci_read_config_byte(dev2, PCI_INTERRUPT_PIN, &pin);
+ 		if (!pin)
+ 			continue;
+@@ -1028,7 +1028,7 @@ void __init pcibios_fixup_irqs(void)
+ 	u8 pin;
+ 
+ 	DBG(KERN_DEBUG "PCI: IRQ fixup\n");
+-	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		/*
+ 		 * If the BIOS has set an out of range IRQ number, just
+ 		 * ignore it.  Also keep track of which IRQ's are
+@@ -1052,7 +1052,7 @@ void __init pcibios_fixup_irqs(void)
+ 		return;
+ 
+ 	dev = NULL;
+-	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &pin);
+ 		if (!pin)
+ 			continue;
+-- 
+1.7.0.4
 
-diff --git a/drivers/serial/icom.c b/drivers/serial/icom.c
-index 53a4682..f82e95a 100644
---- a/drivers/serial/icom.c
-+++ b/drivers/serial/icom.c
-@@ -360,6 +360,7 @@ static void load_code(struct icom_port *icom_port)
- 	unsigned char *new_page = NULL;
- 	unsigned char cable_id = NO_CABLE;
- 	struct pci_dev *dev = icom_port->adapter->pci_dev;
-+	size_t size;
- 
- 	/* Clear out any pending interrupts */
- 	writew(0x3FFF, icom_port->int_reg);
-@@ -454,9 +455,10 @@ static void load_code(struct icom_port *icom_port)
- 	for (index = 0; index < fw->size; index++)
- 		new_page[index] = fw->data[index];
- 
-+	size = fw->size;
- 	release_firmware(fw);
- 
--	writeb((char) ((fw->size + 16)/16), &icom_port->dram->mac_length);
-+	writeb((char) ((size + 16)/16), &icom_port->dram->mac_length);
- 	writel(temp_pci, &icom_port->dram->mac_load_addr);
- 
- 	/*Setting the syncReg to 0x80 causes adapter to start downloading
