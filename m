@@ -1,44 +1,40 @@
-From: Miao Xie <miaox@cn.fujitsu.com>
-Date: Tue, 27 Jul 2010 03:41:20 +0000
-Subject: Re: [PATCH] btrfs: set task state with schedule_timeout_uninterruptible()
-Message-Id: <4C4E5560.9060905@cn.fujitsu.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:03:59 +0000
+Subject: [PATCH 07/19] arch/x86/kernel: use for_each_pci_dev()
+Message-Id: <1278173040-11643-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280132864-8266-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280132864-8266-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Chris Mason <chris.mason@oracle.com>, Tejun Heo <tj@kernel.org>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Borislav Petkov <borislav.petkov@amd.com>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
 
-On Mon, 26 Jul 2010 12:27:43 +0400, Kulikov Vasiliy wrote:
-> worker_loop() uses schedule_timeout() without setting state to
-> STATE_(UN)INTERRUPTIBLE. As it is called in cycle without checking of
-> pending signals, use schedule_timeout_uninterruptible().
-> 
-> Signed-off-by: Kulikov Vasiliy<segooon@gmail.com>
-> ---
->   fs/btrfs/async-thread.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
-> index 7ec1409..54eb070 100644
-> --- a/fs/btrfs/async-thread.c
-> +++ b/fs/btrfs/async-thread.c
-> @@ -362,7 +362,7 @@ again:
->   				 * worker->working is still 1, so nobody
->   				 * is going to try and wake us up
->   				 */
-> -				schedule_timeout(1);
-> +				schedule_timeout_uninterruptible(1);
+Use for_each_pci_dev() to simplify the code.
 
-I found there is the same problem in the other place of the btrfs,
-could you fix them?
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ arch/x86/kernel/k8.c |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
 
-Thanks!
-Miao
-
->   				smp_mb();
->   				if (!list_empty(&worker->pending) ||
->   				    !list_empty(&worker->prio_pending))
+diff --git a/arch/x86/kernel/k8.c b/arch/x86/kernel/k8.c
+index 0f7bc20..0ea4b35 100644
+--- a/arch/x86/kernel/k8.c
++++ b/arch/x86/kernel/k8.c
+@@ -27,11 +27,10 @@ EXPORT_SYMBOL(k8_northbridges);
+ 
+ static struct pci_dev *next_k8_northbridge(struct pci_dev *dev)
+ {
+-	do {
+-		dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev);
+-		if (!dev)
++	for_each_pci_dev(dev) {
++		if (pci_match_id(&k8_nb_ids[0], dev))
+ 			break;
+-	} while (!pci_match_id(&k8_nb_ids[0], dev));
++	}
+ 	return dev;
+ }
+ 
+-- 
+1.7.0.4
 
