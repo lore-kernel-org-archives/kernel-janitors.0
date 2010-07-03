@@ -1,116 +1,34 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Tue, 27 Jul 2010 22:26:37 +0000
-Subject: Re: [PATCH] staging: xgifb: Fix compiler warnings about unused
-Message-Id: <20100727152637.91f12357.randy.dunlap@oracle.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:04:35 +0000
+Subject: [PATCH 16/19] drivers/pci: use for_each_pci_dev()
+Message-Id: <1278173076-11949-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>, Huang Ying <ying.huang@intel.com>, Stefan Assmann <sassmann@redhat.com>, Andrew Patterson <andrew.patterson@hp.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 02 Jun 2010 17:12:44 +0400 Kulikov Vasiliy wrote:
+Use for_each_pci_dev() to simplify the code.
 
-> Fix compiler warnings about unused variables and functions on
-> CONFIG_FB_XGI=m.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-
-Hi,
-
-(if this patch is still wanted:)
-
-This patch does not apply cleanly because it has been mangled/munged (destroyed,
-mucked up, whatever).  Please fix your mail client and resend it, and when you
-resend it, please use this info along with the CC: to the driver author:
-
-STAGING SUBSYSTEM
-M:	Greg Kroah-Hartman <gregkh@suse.de>
-L:	devel@driverdev.osuosl.org
-
-
-Thanks.
-
-
-> diff --git a/drivers/staging/xgifb/XGI_main.h
-> b/drivers/staging/xgifb/XGI_main.h
-> index 4f4171e..dd6d6bd 100644
-> --- a/drivers/staging/xgifb/XGI_main.h
-> +++ b/drivers/staging/xgifb/XGI_main.h
-> @@ -388,7 +388,6 @@ static int currcon = 0;
-> static int XGIfb_registered;
-> static int XGIfb_tvmode = 0;
-> static int XGIfb_mem = 0;
-> -static int XGIfb_pdc = 0;
-> static int enable_dstn = 0;
-> static int XGIfb_ypan = -1;
-> 
-> diff --git a/drivers/staging/xgifb/XGI_main_26.c
-> b/drivers/staging/xgifb/XGI_main_26.c
-> index 867012b..4e3af91 100644
-> --- a/drivers/staging/xgifb/XGI_main_26.c
-> +++ b/drivers/staging/xgifb/XGI_main_26.c
-> @@ -855,6 +855,7 @@ static int XGIfb_validate_mode(int myindex)
-> 
-> }
-> 
-> +#ifndef MODULE
-> static void XGIfb_search_crt2type(const char *name)
-> {
-> int i = 0;
-> @@ -873,7 +874,9 @@ static void XGIfb_search_crt2type(const char *name)
-> if(XGIfb_crt2type < 0)
-> printk(KERN_INFO "XGIfb: Invalid CRT2 type: %s\n", name);
-> }
-> +#endif
-> 
-> +#ifndef MODULE
-> static void XGIfb_search_queuemode(const char *name)
-> {
-> int i = 0;
-> @@ -891,6 +894,7 @@ static void XGIfb_search_queuemode(const char *name)
-> if (XGIfb_queuemode < 0)
-> printk(KERN_INFO "XGIfb: Invalid queuemode type: %s\n", name);
-> }
-> +#endif
-> 
-> static u8 XGIfb_search_refresh_rate(unsigned int rate)
-> {
-> @@ -938,6 +942,7 @@ static u8 XGIfb_search_refresh_rate(unsigned int
-> rate)
-> }
-> }
-> 
-> +#ifndef MODULE
-> static void XGIfb_search_tvstd(const char *name)
-> {
-> int i = 0;
-> @@ -953,6 +958,7 @@ static void XGIfb_search_tvstd(const char *name)
-> i++;
-> }
-> }
-> +#endif
-> 
-> static BOOLEAN XGIfb_bridgeisslave(void)
-> {
-> @@ -2824,6 +2830,7 @@ static void XGIfb_post_setmode(void)
-> XGIINITSTATIC int __init XGIfb_setup(char *options)
-> {
-> char *this_opt;
-> + int XGIfb_pdc;
-> 
-> 
-> 
-> @@ -3585,7 +3592,6 @@ module_init(xgifb_init);
-> static char         *mode = NULL;
-> static int          vesa = 0;
-> static unsigned int rate = 0;
-> -static unsigned int crt1off = 1;
-> static unsigned int mem = 0;
-> static char         *forcecrt2type = NULL;
-> static int          forcecrt1 = -1;
-> -- 
-
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/pci/search.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/pci/search.c b/drivers/pci/search.c
+index 20d03f7..9d75dc8 100644
+--- a/drivers/pci/search.c
++++ b/drivers/pci/search.c
+@@ -169,7 +169,7 @@ struct pci_dev *pci_get_domain_bus_and_slot(int domain, unsigned int bus,
+ {
+ 	struct pci_dev *dev = NULL;
+ 
+-	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		if (pci_domain_nr(dev->bus) = domain &&
+ 		    (dev->bus->number = bus && dev->devfn = devfn))
+ 			return dev;
+-- 
+1.7.0.4
+
