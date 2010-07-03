@@ -1,34 +1,34 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 31 Jul 2010 17:40:07 +0000
-Subject: [PATCH 7/7] usb: adutux: fix misuse of return value of copy_to_user()
-Message-Id: <1280598008-8605-1-git-send-email-segooon@gmail.com>
+Date: Sat, 03 Jul 2010 16:03:55 +0000
+Subject: [PATCH 06/19] arch/x86/kernel/cpu/cpufreq: use for_each_pci_dev()
+Message-Id: <1278173036-11609-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Oliver Neukum <oliver@neukum.org>, Mauro Carvalho Chehab <mchehab@redhat.com>, Joe Perches <joe@perches.com>, =?UTF-8?q?N=C3=A9meth=20M=C3=A1rton?= <nm127@freemail.hu>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Dave Jones <davej@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Tejun Heo <tj@kernel.org>, cpufreq@vger.kernel.org, linux-kernel@vger.kernel.org
 
-copy_to_user() returns number of not copied bytes, not error code.
+Use for_each_pci_dev() to simplify the code.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/usb/misc/adutux.c |    2 +-
+ arch/x86/kernel/cpu/cpufreq/gx-suspmod.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/usb/misc/adutux.c b/drivers/usb/misc/adutux.c
-index d240de0..801324a 100644
---- a/drivers/usb/misc/adutux.c
-+++ b/drivers/usb/misc/adutux.c
-@@ -439,7 +439,7 @@ static ssize_t adu_read(struct file *file, __user char *buffer, size_t count,
- 			/* drain secondary buffer */
- 			int amount = bytes_to_read < data_in_secondary ? bytes_to_read : data_in_secondary;
- 			i = copy_to_user(buffer, dev->read_buffer_secondary+dev->secondary_head, amount);
--			if (i < 0) {
-+			if (i) {
- 				retval = -EFAULT;
- 				goto exit;
- 			}
+diff --git a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
+index 16e3483..8c3325f 100644
+--- a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
++++ b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
+@@ -199,7 +199,7 @@ static __init struct pci_dev *gx_detect_chipset(void)
+ 	}
+ 
+ 	/* detect which companion chip is used */
+-	while ((gx_pci = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, gx_pci)) != NULL) {
++	for_each_pci_dev(gx_pci) {
+ 		if ((pci_match_id(gx_chipset_tbl, gx_pci)) != NULL)
+ 			return gx_pci;
+ 	}
 -- 
 1.7.0.4
 
