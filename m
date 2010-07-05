@@ -1,65 +1,167 @@
-From: =?utf-8?Q?Am=C3=A9rico?= Wang <xiyou.wangcong@gmail.com>
-Date: Thu, 29 Jul 2010 07:58:15 +0000
-Subject: Re: [patch] kexec: return -EFAULT on copy_to_user() failures
-Message-Id: <20100729075815.GA5555@cr0.nay.redhat.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 05 Jul 2010 12:13:20 +0000
+Subject: [PATCH] epic100: Use the instance of net_device_stats from net_device.
+Message-Id: <1278332002-15860-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100729073609.GR26313@bicker>
-In-Reply-To: <20100729073609.GR26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, "Eric W. Biederman" <ebiederm@xmission.com>, Simon Kagstrom <simon.kagstrom@netinsight.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, Jiri Pirko <jpirko@redhat.com>, Stephen Hemminger <shemminger@vyatta.com>, Alexey Dobriyan <adobriyan@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 29, 2010 at 09:36:10AM +0200, Dan Carpenter wrote:
->copy_to/from_user() returns the number of bytes remaining to be copied.
->It never returns a negative value.  The correct return code is -EFAULT
->and not -EIO.
->
->All the callers check for non-zero returns so that's Ok, but the return
->code is passed to the user so we should fix this.
->
->Signed-off-by: Dan Carpenter <error27@gmail.com>
+Since net_device has an instance of net_device_stats,
+we can remove the instance of this from the adapter structure.
 
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/epic100.c |   47 ++++++++++++++++++++++-------------------------
+ 1 files changed, 22 insertions(+), 25 deletions(-)
 
-Acked-by: WANG Cong <xiyou.wangcong@gmail.com>
+diff --git a/drivers/net/epic100.c b/drivers/net/epic100.c
+index 4c27465..57c8ac0 100644
+--- a/drivers/net/epic100.c
++++ b/drivers/net/epic100.c
+@@ -278,7 +278,6 @@ struct epic_private {
+ 	struct pci_dev *pci_dev;			/* PCI bus location. */
+ 	int chip_id, chip_flags;
+ 
+-	struct net_device_stats stats;
+ 	struct timer_list timer;			/* Media selection timer. */
+ 	int tx_threshold;
+ 	unsigned char mc_filter[8];
+@@ -770,7 +769,6 @@ static int epic_open(struct net_device *dev)
+ static void epic_pause(struct net_device *dev)
+ {
+ 	long ioaddr = dev->base_addr;
+-	struct epic_private *ep = netdev_priv(dev);
+ 
+ 	netif_stop_queue (dev);
+ 
+@@ -781,9 +779,9 @@ static void epic_pause(struct net_device *dev)
+ 
+ 	/* Update the error counts. */
+ 	if (inw(ioaddr + COMMAND) != 0xffff) {
+-		ep->stats.rx_missed_errors += inb(ioaddr + MPCNT);
+-		ep->stats.rx_frame_errors += inb(ioaddr + ALICNT);
+-		ep->stats.rx_crc_errors += inb(ioaddr + CRCCNT);
++		dev->stats.rx_missed_errors += inb(ioaddr + MPCNT);
++		dev->stats.rx_frame_errors += inb(ioaddr + ALICNT);
++		dev->stats.rx_crc_errors += inb(ioaddr + CRCCNT);
+ 	}
+ 
+ 	/* Remove the packets on the Rx queue. */
+@@ -900,7 +898,7 @@ static void epic_tx_timeout(struct net_device *dev)
+ 		}
+ 	}
+ 	if (inw(ioaddr + TxSTAT) & 0x10) {		/* Tx FIFO underflow. */
+-		ep->stats.tx_fifo_errors++;
++		dev->stats.tx_fifo_errors++;
+ 		outl(RestartTx, ioaddr + COMMAND);
+ 	} else {
+ 		epic_restart(dev);
+@@ -908,7 +906,7 @@ static void epic_tx_timeout(struct net_device *dev)
+ 	}
+ 
+ 	dev->trans_start = jiffies; /* prevent tx timeout */
+-	ep->stats.tx_errors++;
++	dev->stats.tx_errors++;
+ 	if (!ep->tx_full)
+ 		netif_wake_queue(dev);
+ }
+@@ -1016,7 +1014,7 @@ static netdev_tx_t epic_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ static void epic_tx_error(struct net_device *dev, struct epic_private *ep,
+ 			  int status)
+ {
+-	struct net_device_stats *stats = &ep->stats;
++	struct net_device_stats *stats = &dev->stats;
+ 
+ #ifndef final_version
+ 	/* There was an major error, log it. */
+@@ -1053,9 +1051,9 @@ static void epic_tx(struct net_device *dev, struct epic_private *ep)
+ 			break;	/* It still hasn't been Txed */
+ 
+ 		if (likely(txstatus & 0x0001)) {
+-			ep->stats.collisions += (txstatus >> 8) & 15;
+-			ep->stats.tx_packets++;
+-			ep->stats.tx_bytes += ep->tx_skbuff[entry]->len;
++			dev->stats.collisions += (txstatus >> 8) & 15;
++			dev->stats.tx_packets++;
++			dev->stats.tx_bytes += ep->tx_skbuff[entry]->len;
+ 		} else
+ 			epic_tx_error(dev, ep, txstatus);
+ 
+@@ -1125,12 +1123,12 @@ static irqreturn_t epic_interrupt(int irq, void *dev_instance)
+ 			goto out;
+ 
+ 		/* Always update the error counts to avoid overhead later. */
+-		ep->stats.rx_missed_errors += inb(ioaddr + MPCNT);
+-		ep->stats.rx_frame_errors += inb(ioaddr + ALICNT);
+-		ep->stats.rx_crc_errors += inb(ioaddr + CRCCNT);
++		dev->stats.rx_missed_errors += inb(ioaddr + MPCNT);
++		dev->stats.rx_frame_errors += inb(ioaddr + ALICNT);
++		dev->stats.rx_crc_errors += inb(ioaddr + CRCCNT);
+ 
+ 		if (status & TxUnderrun) { /* Tx FIFO underflow. */
+-			ep->stats.tx_fifo_errors++;
++			dev->stats.tx_fifo_errors++;
+ 			outl(ep->tx_threshold += 128, ioaddr + TxThresh);
+ 			/* Restart the transmit process. */
+ 			outl(RestartTx, ioaddr + COMMAND);
+@@ -1183,10 +1181,10 @@ static int epic_rx(struct net_device *dev, int budget)
+ 			if (status & 0x2000) {
+ 				printk(KERN_WARNING "%s: Oversized Ethernet frame spanned "
+ 					   "multiple buffers, status %4.4x!\n", dev->name, status);
+-				ep->stats.rx_length_errors++;
++				dev->stats.rx_length_errors++;
+ 			} else if (status & 0x0006)
+ 				/* Rx Frame errors are counted in hardware. */
+-				ep->stats.rx_errors++;
++				dev->stats.rx_errors++;
+ 		} else {
+ 			/* Malloc up new buffer, compatible with net-2e. */
+ 			/* Omit the four octet CRC from the length. */
+@@ -1223,8 +1221,8 @@ static int epic_rx(struct net_device *dev, int budget)
+ 			}
+ 			skb->protocol = eth_type_trans(skb, dev);
+ 			netif_receive_skb(skb);
+-			ep->stats.rx_packets++;
+-			ep->stats.rx_bytes += pkt_len;
++			dev->stats.rx_packets++;
++			dev->stats.rx_bytes += pkt_len;
+ 		}
+ 		work_done++;
+ 		entry = (++ep->cur_rx) % RX_RING_SIZE;
+@@ -1259,7 +1257,7 @@ static void epic_rx_err(struct net_device *dev, struct epic_private *ep)
+ 	if (status = EpicRemoved)
+ 		return;
+ 	if (status & RxOverflow) 	/* Missed a Rx frame. */
+-		ep->stats.rx_errors++;
++		dev->stats.rx_errors++;
+ 	if (status & (RxOverflow | RxFull))
+ 		outw(RxQueued, ioaddr + COMMAND);
+ }
+@@ -1357,17 +1355,16 @@ static int epic_close(struct net_device *dev)
+ 
+ static struct net_device_stats *epic_get_stats(struct net_device *dev)
+ {
+-	struct epic_private *ep = netdev_priv(dev);
+ 	long ioaddr = dev->base_addr;
+ 
+ 	if (netif_running(dev)) {
+ 		/* Update the error counts. */
+-		ep->stats.rx_missed_errors += inb(ioaddr + MPCNT);
+-		ep->stats.rx_frame_errors += inb(ioaddr + ALICNT);
+-		ep->stats.rx_crc_errors += inb(ioaddr + CRCCNT);
++		dev->stats.rx_missed_errors += inb(ioaddr + MPCNT);
++		dev->stats.rx_frame_errors += inb(ioaddr + ALICNT);
++		dev->stats.rx_crc_errors += inb(ioaddr + CRCCNT);
+ 	}
+ 
+-	return &ep->stats;
++	return &dev->stats;
+ }
+ 
+ /* Set or clear the multicast filter for this adaptor.
+-- 
+1.7.0.4
 
->
->diff --git a/kernel/kexec.c b/kernel/kexec.c
->index 474a847..ab2258b 100644
->--- a/kernel/kexec.c
->+++ b/kernel/kexec.c
->@@ -151,8 +151,10 @@ static int do_kimage_alloc(struct kimage **rimage, unsigned long entry,
-> 	image->nr_segments = nr_segments;
-> 	segment_bytes = nr_segments * sizeof(*segments);
-> 	result = copy_from_user(image->segment, segments, segment_bytes);
->-	if (result)
->+	if (result) {
->+		result = -EFAULT;
-> 		goto out;
->+	}
-> 
-> 	/*
-> 	 * Verify we have good destination addresses.  The caller is
->@@ -827,7 +829,7 @@ static int kimage_load_normal_segment(struct kimage *image,
-> 		result = copy_from_user(ptr, buf, uchunk);
-> 		kunmap(page);
-> 		if (result) {
->-			result = (result < 0) ? result : -EIO;
->+			result = -EFAULT;
-> 			goto out;
-> 		}
-> 		ubytes -= uchunk;
->@@ -882,7 +884,7 @@ static int kimage_load_crash_segment(struct kimage *image,
-> 		kexec_flush_icache_page(page);
-> 		kunmap(page);
-> 		if (result) {
->-			result = (result < 0) ? result : -EIO;
->+			result = -EFAULT;
-> 			goto out;
-> 		}
-> 		ubytes -= uchunk;
->--
->To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
->Please read the FAQ at  http://www.tux.org/lkml/
