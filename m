@@ -1,40 +1,56 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, 14 Jul 2010 18:03:25 +0000
-Subject: [PATCH 06/11] tulip: formatting of pointers in printk()
-Message-Id: <1279130606-10927-1-git-send-email-segooon@gmail.com>
+From: Martyn Welch <martyn.welch@ge.com>
+Date: Mon, 05 Jul 2010 10:38:24 +0000
+Subject: Re: [PATCH 21/25] vme_ca91cx42: remove casts from void*
+Message-Id: <4C31B620.4060301@ge.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1277806577-31418-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1277806577-31418-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Grant Grundler <grundler@parisc-linux.org>, Kyle McMartin <kyle@mcmartin.ca>, "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, Jiri Pirko <jpirko@redhat.com>, Stephen Hemminger <shemminger@vyatta.com>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@suse.de>, Julia Lawall <julia@diku.dk>, linux-kernel@vger.kernel.org
 
-Use %p instead of %08x in printk().
+Kulikov Vasiliy wrote:
+> Remove unnesessary casts from void*.
+>
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+>   
+Seems ok, cheers,
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/net/tulip/winbond-840.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Martyn Welch <martyn.welch@ge.com>
 
-diff --git a/drivers/net/tulip/winbond-840.c b/drivers/net/tulip/winbond-840.c
-index 608b279..66d41cf 100644
---- a/drivers/net/tulip/winbond-840.c
-+++ b/drivers/net/tulip/winbond-840.c
-@@ -1514,12 +1514,12 @@ static int netdev_close(struct net_device *dev)
- 	if (debug > 2) {
- 		int i;
- 
--		printk(KERN_DEBUG"  Tx ring at %08x:\n", (int)np->tx_ring);
-+		printk(KERN_DEBUG"  Tx ring at %p:\n", np->tx_ring);
- 		for (i = 0; i < TX_RING_SIZE; i++)
- 			printk(KERN_DEBUG " #%d desc. %04x %04x %08x\n",
- 			       i, np->tx_ring[i].length,
- 			       np->tx_ring[i].status, np->tx_ring[i].buffer1);
--		printk(KERN_DEBUG "  Rx ring %08x:\n", (int)np->rx_ring);
-+		printk(KERN_DEBUG "  Rx ring %p:\n", np->rx_ring);
- 		for (i = 0; i < RX_RING_SIZE; i++) {
- 			printk(KERN_DEBUG " #%d desc. %04x %04x %08x\n",
- 			       i, np->rx_ring[i].length,
+
+> ---
+>  drivers/staging/vme/bridges/vme_ca91cx42.c |    8 ++++----
+>  1 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/staging/vme/bridges/vme_ca91cx42.c b/drivers/staging/vme/bridges/vme_ca91cx42.c
+> index 0c82eb4..ce05ffa 100644
+> --- a/drivers/staging/vme/bridges/vme_ca91cx42.c
+> +++ b/drivers/staging/vme/bridges/vme_ca91cx42.c
+> @@ -961,11 +961,11 @@ int ca91cx42_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+>  
+>  	if (dest->type = VME_DMA_VME) {
+>  		entry->descriptor.dctl |= CA91CX42_DCTL_L2V;
+> -		vme_attr = (struct vme_dma_vme *)dest->private;
+> -		pci_attr = (struct vme_dma_pci *)src->private;
+> +		vme_attr = dest->private;
+> +		pci_attr = src->private;
+>  	} else {
+> -		vme_attr = (struct vme_dma_vme *)src->private;
+> -		pci_attr = (struct vme_dma_pci *)dest->private;
+> +		vme_attr = src->private;
+> +		pci_attr = dest->private;
+>  	}
+>  
+>  	/* Check we can do fullfill required attributes */
+>   
+
+
 -- 
-1.7.0.4
+Martyn Welch (Principal Software Engineer)   |   Registered in England and
+GE Intelligent Platforms                     |   Wales (3828642) at 100
+T +44(0)127322748                            |   Barbirolli Square, Manchester,
+E martyn.welch@ge.com                        |   M2 3AB  VAT:GB 927559189
 
