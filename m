@@ -1,29 +1,86 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 10 Jul 2010 14:30:04 +0000
-Subject: [patch] vmwgfx: return -EFAULT if copy_to_user fails
-Message-Id: <20100710143003.GZ19184@bicker>
+From: Martyn Welch <martyn.welch@ge.com>
+Date: Mon, 05 Jul 2010 10:38:47 +0000
+Subject: Re: [PATCH 22/25] vme_tsi148: remove casts from void*
+Message-Id: <4C31B637.6070604@ge.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1277806581-31452-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1277806581-31452-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Dave Airlie <airlied@redhat.com>, kernel-janitors@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>, dri-devel@lists.freedesktop.org
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, Julia Lawall <julia@diku.dk>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-copy_to_user() returns the number of bytes remaining to be copied, but
-we want to return a negative error code.  This gets copied to user
-space.
+Kulikov Vasiliy wrote:
+> Remove unnesessary casts from void*.
+>
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+>   
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Seems ok, cheers,
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-index f1d6261..437ac78 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-@@ -972,6 +972,7 @@ int vmw_kms_update_layout_ioctl(struct drm_device *dev, void *data,
- 	ret = copy_from_user(rects, user_rects, rects_size);
- 	if (unlikely(ret != 0)) {
- 		DRM_ERROR("Failed to get rects.\n");
-+		ret = -EFAULT;
- 		goto out_free;
- 	}
- 
+Signed-off-by: Martyn Welch <martyn.welch@ge.com>
+
+
+> ---
+>  drivers/staging/vme/bridges/vme_tsi148.c |   10 +++++-----
+>  1 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/staging/vme/bridges/vme_tsi148.c b/drivers/staging/vme/bridges/vme_tsi148.c
+> index abe88a3..4685a31 100644
+> --- a/drivers/staging/vme/bridges/vme_tsi148.c
+> +++ b/drivers/staging/vme/bridges/vme_tsi148.c
+> @@ -1649,7 +1649,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+>  	/* Fill out source part */
+>  	switch (src->type) {
+>  	case VME_DMA_PATTERN:
+> -		pattern_attr = (struct vme_dma_pattern *)src->private;
+> +		pattern_attr = src->private;
+>  
+>  		entry->descriptor.dsal = pattern_attr->pattern;
+>  		entry->descriptor.dsat = TSI148_LCSR_DSAT_TYP_PAT;
+> @@ -1663,7 +1663,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+>  
+>  		break;
+>  	case VME_DMA_PCI:
+> -		pci_attr = (struct vme_dma_pci *)src->private;
+> +		pci_attr = src->private;
+>  
+>  		reg_split((unsigned long long)pci_attr->address, &address_high,
+>  			&address_low);
+> @@ -1672,7 +1672,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+>  		entry->descriptor.dsat = TSI148_LCSR_DSAT_TYP_PCI;
+>  		break;
+>  	case VME_DMA_VME:
+> -		vme_attr = (struct vme_dma_vme *)src->private;
+> +		vme_attr = src->private;
+>  
+>  		reg_split((unsigned long long)vme_attr->address, &address_high,
+>  			&address_low);
+> @@ -1701,7 +1701,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+>  	/* Fill out destination part */
+>  	switch (dest->type) {
+>  	case VME_DMA_PCI:
+> -		pci_attr = (struct vme_dma_pci *)dest->private;
+> +		pci_attr = dest->private;
+>  
+>  		reg_split((unsigned long long)pci_attr->address, &address_high,
+>  			&address_low);
+> @@ -1710,7 +1710,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
+>  		entry->descriptor.ddat = TSI148_LCSR_DDAT_TYP_PCI;
+>  		break;
+>  	case VME_DMA_VME:
+> -		vme_attr = (struct vme_dma_vme *)dest->private;
+> +		vme_attr = dest->private;
+>  
+>  		reg_split((unsigned long long)vme_attr->address, &address_high,
+>  			&address_low);
+>   
+
+
+-- 
+Martyn Welch (Principal Software Engineer)   |   Registered in England and
+GE Intelligent Platforms                     |   Wales (3828642) at 100
+T +44(0)127322748                            |   Barbirolli Square, Manchester,
+E martyn.welch@ge.com                        |   M2 3AB  VAT:GB 927559189
+
