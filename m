@@ -1,38 +1,183 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 15 Jul 2010 00:56:45 +0000
-Subject: Re: [patch] net/sched: potential data corruption
-Message-Id: <20100714.175645.189713068.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 05 Jul 2010 12:13:31 +0000
+Subject: [PATCH] ethoc: Use the instance of net_device_stats from net_device.
+Message-Id: <1278332012-16456-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100713132152.GL5658@bicker>
-	<1279036694.16376.0.camel@bigi>
-In-Reply-To: <1279036694.16376.0.camel@bigi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hadi@cyberus.ca
-Cc: error27@gmail.com, shemminger@vyatta.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, matthew@wil.cx
+To: kernel-janitors@vger.kernel.org
 
-From: jamal <hadi@cyberus.ca>
-Date: Tue, 13 Jul 2010 11:58:14 -0400
+Since net_device has an instance of net_device_stats,
+we can remove the instance of this from the adapter structure.
 
-> On Tue, 2010-07-13 at 15:21 +0200, Dan Carpenter wrote:
->> The reset_policy() does:
->>         memset(d->tcfd_defdata, 0, SIMP_MAX_DATA);
->>         strlcpy(d->tcfd_defdata, defdata, SIMP_MAX_DATA);
->> 
->> In the original code, the size of d->tcfd_defdata wasn't fixed and if
->> strlen(defdata) was less than 31, reset_policy() would cause memory
->> corruption.
->> 
->> Please Note:  The original alloc_defdata() assumes defdata is 32
->> characters and a NUL terminator while reset_policy() assumes defdata is
->> 31 characters and a NUL.  This patch updates alloc_defdata() to match
->> reset_policy() (ie a shorter string).  I'm not very familiar with this
->> code so please review carefully.
->> 
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> 
-> Acked-by: Jamal Hadi Salim <hadi@cyberus.ca>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/ethoc.c |   47 ++++++++++++++++++++++-------------------------
+ 1 files changed, 22 insertions(+), 25 deletions(-)
 
-Applied, thanks.
+diff --git a/drivers/net/ethoc.c b/drivers/net/ethoc.c
+index 37ce8ac..db519a8 100644
+--- a/drivers/net/ethoc.c
++++ b/drivers/net/ethoc.c
+@@ -183,7 +183,6 @@ MODULE_PARM_DESC(buffer_size, "DMA buffer allocation size");
+  * @vma:        pointer to array of virtual memory addresses for buffers
+  * @netdev:	pointer to network device structure
+  * @napi:	NAPI structure
+- * @stats:	network device statistics
+  * @msg_enable:	device state flags
+  * @rx_lock:	receive lock
+  * @lock:	device lock
+@@ -208,7 +207,6 @@ struct ethoc {
+ 
+ 	struct net_device *netdev;
+ 	struct napi_struct napi;
+-	struct net_device_stats stats;
+ 	u32 msg_enable;
+ 
+ 	spinlock_t rx_lock;
+@@ -367,39 +365,39 @@ static unsigned int ethoc_update_rx_stats(struct ethoc *dev,
+ 
+ 	if (bd->stat & RX_BD_TL) {
+ 		dev_err(&netdev->dev, "RX: frame too long\n");
+-		dev->stats.rx_length_errors++;
++		netdev->stats.rx_length_errors++;
+ 		ret++;
+ 	}
+ 
+ 	if (bd->stat & RX_BD_SF) {
+ 		dev_err(&netdev->dev, "RX: frame too short\n");
+-		dev->stats.rx_length_errors++;
++		netdev->stats.rx_length_errors++;
+ 		ret++;
+ 	}
+ 
+ 	if (bd->stat & RX_BD_DN) {
+ 		dev_err(&netdev->dev, "RX: dribble nibble\n");
+-		dev->stats.rx_frame_errors++;
++		netdev->stats.rx_frame_errors++;
+ 	}
+ 
+ 	if (bd->stat & RX_BD_CRC) {
+ 		dev_err(&netdev->dev, "RX: wrong CRC\n");
+-		dev->stats.rx_crc_errors++;
++		netdev->stats.rx_crc_errors++;
+ 		ret++;
+ 	}
+ 
+ 	if (bd->stat & RX_BD_OR) {
+ 		dev_err(&netdev->dev, "RX: overrun\n");
+-		dev->stats.rx_over_errors++;
++		netdev->stats.rx_over_errors++;
+ 		ret++;
+ 	}
+ 
+ 	if (bd->stat & RX_BD_MISS)
+-		dev->stats.rx_missed_errors++;
++		netdev->stats.rx_missed_errors++;
+ 
+ 	if (bd->stat & RX_BD_LC) {
+ 		dev_err(&netdev->dev, "RX: late collision\n");
+-		dev->stats.collisions++;
++		netdev->stats.collisions++;
+ 		ret++;
+ 	}
+ 
+@@ -431,15 +429,15 @@ static int ethoc_rx(struct net_device *dev, int limit)
+ 				void *src = priv->vma[entry];
+ 				memcpy_fromio(skb_put(skb, size), src, size);
+ 				skb->protocol = eth_type_trans(skb, dev);
+-				priv->stats.rx_packets++;
+-				priv->stats.rx_bytes += size;
++				dev->stats.rx_packets++;
++				dev->stats.rx_bytes += size;
+ 				netif_receive_skb(skb);
+ 			} else {
+ 				if (net_ratelimit())
+ 					dev_warn(&dev->dev, "low on memory - "
+ 							"packet dropped\n");
+ 
+-				priv->stats.rx_dropped++;
++				dev->stats.rx_dropped++;
+ 				break;
+ 			}
+ 		}
+@@ -460,30 +458,30 @@ static int ethoc_update_tx_stats(struct ethoc *dev, struct ethoc_bd *bd)
+ 
+ 	if (bd->stat & TX_BD_LC) {
+ 		dev_err(&netdev->dev, "TX: late collision\n");
+-		dev->stats.tx_window_errors++;
++		netdev->stats.tx_window_errors++;
+ 	}
+ 
+ 	if (bd->stat & TX_BD_RL) {
+ 		dev_err(&netdev->dev, "TX: retransmit limit\n");
+-		dev->stats.tx_aborted_errors++;
++		netdev->stats.tx_aborted_errors++;
+ 	}
+ 
+ 	if (bd->stat & TX_BD_UR) {
+ 		dev_err(&netdev->dev, "TX: underrun\n");
+-		dev->stats.tx_fifo_errors++;
++		netdev->stats.tx_fifo_errors++;
+ 	}
+ 
+ 	if (bd->stat & TX_BD_CS) {
+ 		dev_err(&netdev->dev, "TX: carrier sense lost\n");
+-		dev->stats.tx_carrier_errors++;
++		netdev->stats.tx_carrier_errors++;
+ 	}
+ 
+ 	if (bd->stat & TX_BD_STATS)
+-		dev->stats.tx_errors++;
++		netdev->stats.tx_errors++;
+ 
+-	dev->stats.collisions += (bd->stat >> 4) & 0xf;
+-	dev->stats.tx_bytes += bd->stat >> 16;
+-	dev->stats.tx_packets++;
++	netdev->stats.collisions += (bd->stat >> 4) & 0xf;
++	netdev->stats.tx_bytes += bd->stat >> 16;
++	netdev->stats.tx_packets++;
+ 	return 0;
+ }
+ 
+@@ -514,7 +512,7 @@ static void ethoc_tx(struct net_device *dev)
+ 
+ static irqreturn_t ethoc_interrupt(int irq, void *dev_id)
+ {
+-	struct net_device *dev = (struct net_device *)dev_id;
++	struct net_device *dev = dev_id;
+ 	struct ethoc *priv = netdev_priv(dev);
+ 	u32 pending;
+ 
+@@ -529,7 +527,7 @@ static irqreturn_t ethoc_interrupt(int irq, void *dev_id)
+ 
+ 	if (pending & INT_MASK_BUSY) {
+ 		dev_err(&dev->dev, "packet dropped\n");
+-		priv->stats.rx_dropped++;
++		dev->stats.rx_dropped++;
+ 	}
+ 
+ 	if (pending & INT_MASK_RX) {
+@@ -810,8 +808,7 @@ static void ethoc_tx_timeout(struct net_device *dev)
+ 
+ static struct net_device_stats *ethoc_stats(struct net_device *dev)
+ {
+-	struct ethoc *priv = netdev_priv(dev);
+-	return &priv->stats;
++	return &dev->stats;
+ }
+ 
+ static netdev_tx_t ethoc_start_xmit(struct sk_buff *skb, struct net_device *dev)
+@@ -822,7 +819,7 @@ static netdev_tx_t ethoc_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	void *dest;
+ 
+ 	if (unlikely(skb->len > ETHOC_BUFSIZ)) {
+-		priv->stats.tx_errors++;
++		dev->stats.tx_errors++;
+ 		goto out;
+ 	}
+ 
+-- 
+1.7.0.4
+
