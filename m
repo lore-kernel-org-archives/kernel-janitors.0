@@ -1,44 +1,127 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 12 Jul 2010 16:40:43 +0000
-Subject: Re: [PATCH] remove unnecesary while loop in ext2_xattr_get
-Message-Id: <20100712164018.GC5658@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 05 Jul 2010 12:13:10 +0000
+Subject: [PATCH] sun3_82586: Use the instance of net_device_stats from net_device.
+Message-Id: <1278331992-15792-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007122309063128435@gmail.com>
-In-Reply-To: <201007122309063128435@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: crosslonelyover <crosslonelyover@gmail.com>
-Cc: linux-ext4 <linux-ext4@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Eric Dumazet <eric.dumazet@gmail.com>, Patrick McHardy <kaber@trash.net>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 12, 2010 at 11:09:09PM +0800, crosslonelyover wrote:
-> Hi,
->      In ext2_xattr_get, we'll check the xattr entry one 
-> by one in the following loop:
->          entry = FIRST_ENTRY(bh);
->          while (!IS_LAST_ENTRY(entry)) {
->                  struct ext2_xattr_entry *next >                          EXT2_XATTR_NEXT(entry);
->                  if ((char *)next >= end)
->                          goto bad_block;
->                  if (name_index = entry->e_name_index &&
->                      name_len = entry->e_name_len &&
->                      memcmp(name, entry->e_name, name_len) = 0)
->                          goto found;
->                  entry = next;
->          }
-> We can only execute the code immediately following 
-> the loop when !IS_LAST_ENTRY(entry) is true. So the
-> followed while loop seems unnecessary. I think we can
-> remove it.
->       Following is my patch. It's against 2.6.35-rc4.
-> Please check it.
-> 
+Since net_device has an instance of net_device_stats,
+we can remove the instance of this from the adapter structure.
 
-Yes.  This is dead code.  This stuff is from the days before git
-so we'll never know who to blame for it.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/sun3_82586.c |   35 +++++++++++++++++------------------
+ 1 files changed, 17 insertions(+), 18 deletions(-)
 
-Reviewed-by: Dan Carpenter <error27@gmail.com>
-
-regards,
-dan carpenter
+diff --git a/drivers/net/sun3_82586.c b/drivers/net/sun3_82586.c
+index 1513123..b6ae53b 100644
+--- a/drivers/net/sun3_82586.c
++++ b/drivers/net/sun3_82586.c
+@@ -142,7 +142,6 @@ static void    sun3_82586_rnr_int(struct net_device *dev);
+ 
+ struct priv
+ {
+-	struct net_device_stats stats;
+ 	unsigned long base;
+ 	char *memtop;
+ 	long int lock;
+@@ -788,10 +787,10 @@ static void sun3_82586_rcv_int(struct net_device *dev)
+ 						skb_copy_to_linear_data(skb,(char *) p->base+swab32((unsigned long) rbd->buffer),totlen);
+ 						skb->protocol=eth_type_trans(skb,dev);
+ 						netif_rx(skb);
+-						p->stats.rx_packets++;
++						dev->stats.rx_packets++;
+ 					}
+ 					else
+-						p->stats.rx_dropped++;
++						dev->stats.rx_dropped++;
+ 				}
+ 				else
+ 				{
+@@ -812,13 +811,13 @@ static void sun3_82586_rcv_int(struct net_device *dev)
+ 					totlen += rstat & RBD_MASK;
+ 					rbd->status = 0;
+ 					printk("%s: received oversized frame! length: %d\n",dev->name,totlen);
+-					p->stats.rx_dropped++;
++					dev->stats.rx_dropped++;
+ 			 }
+ 		}
+ 		else /* frame !(ok), only with 'save-bad-frames' */
+ 		{
+ 			printk("%s: oops! rfd-error-status: %04x\n",dev->name,status);
+-			p->stats.rx_errors++;
++			dev->stats.rx_errors++;
+ 		}
+ 		p->rfd_top->stat_high = 0;
+ 		p->rfd_top->last = RFD_SUSP; /* maybe exchange by RFD_LAST */
+@@ -885,7 +884,7 @@ static void sun3_82586_rnr_int(struct net_device *dev)
+ {
+ 	struct priv *p = netdev_priv(dev);
+ 
+-	p->stats.rx_errors++;
++	dev->stats.rx_errors++;
+ 
+ 	WAIT_4_SCB_CMD();		/* wait for the last cmd, WAIT_4_FULLSTAT?? */
+ 	p->scb->cmd_ruc = RUC_ABORT; /* usually the RU is in the 'no resource'-state .. abort it now. */
+@@ -918,29 +917,29 @@ static void sun3_82586_xmt_int(struct net_device *dev)
+ 
+ 	if(status & STAT_OK)
+ 	{
+-		p->stats.tx_packets++;
+-		p->stats.collisions += (status & TCMD_MAXCOLLMASK);
++		dev->stats.tx_packets++;
++		dev->stats.collisions += (status & TCMD_MAXCOLLMASK);
+ 	}
+ 	else
+ 	{
+-		p->stats.tx_errors++;
++		dev->stats.tx_errors++;
+ 		if(status & TCMD_LATECOLL) {
+ 			printk("%s: late collision detected.\n",dev->name);
+-			p->stats.collisions++;
++			dev->stats.collisions++;
+ 		}
+ 		else if(status & TCMD_NOCARRIER) {
+-			p->stats.tx_carrier_errors++;
++			dev->stats.tx_carrier_errors++;
+ 			printk("%s: no carrier detected.\n",dev->name);
+ 		}
+ 		else if(status & TCMD_LOSTCTS)
+ 			printk("%s: loss of CTS detected.\n",dev->name);
+ 		else if(status & TCMD_UNDERRUN) {
+-			p->stats.tx_fifo_errors++;
++			dev->stats.tx_fifo_errors++;
+ 			printk("%s: DMA underrun detected.\n",dev->name);
+ 		}
+ 		else if(status & TCMD_MAXCOLL) {
+ 			printk("%s: Max. collisions exceeded.\n",dev->name);
+-			p->stats.collisions += 16;
++			dev->stats.collisions += 16;
+ 		}
+ 	}
+ 
+@@ -1129,12 +1128,12 @@ static struct net_device_stats *sun3_82586_get_stats(struct net_device *dev)
+ 	ovrn = swab16(p->scb->ovrn_errs);
+ 	p->scb->ovrn_errs = 0;
+ 
+-	p->stats.rx_crc_errors += crc;
+-	p->stats.rx_fifo_errors += ovrn;
+-	p->stats.rx_frame_errors += aln;
+-	p->stats.rx_dropped += rsc;
++	dev->stats.rx_crc_errors += crc;
++	dev->stats.rx_fifo_errors += ovrn;
++	dev->stats.rx_frame_errors += aln;
++	dev->stats.rx_dropped += rsc;
+ 
+-	return &p->stats;
++	return &dev->stats;
+ }
+ 
+ /********************************************************
+-- 
+1.7.0.4
 
