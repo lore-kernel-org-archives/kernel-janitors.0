@@ -1,40 +1,127 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 23 Jul 2010 12:00:23 +0000
-Subject: Re: [patch -next] V4L: ivtv: remove unneeded NULL checks
-Message-Id: <20100723120023.GI26313@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 05 Jul 2010 12:14:23 +0000
+Subject: [PATCH] ni52: Use the instance of net_device_stats from net_device.
+Message-Id: <1278332065-17831-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100723101232.GE26313@bicker> <1279885607.2013.8.camel@morgan.silverblock.net>
-In-Reply-To: <1279885607.2013.8.camel@morgan.silverblock.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Walls <awalls@md.metrocast.net>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Ian Armstrong <ian@iarmst.demon.co.uk>, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, Jiri Pirko <jpirko@redhat.com>, Stephen Hemminger <shemminger@vyatta.com>, Jiri Kosina <jkosina@suse.cz>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 23, 2010 at 07:46:47AM -0400, Andy Walls wrote:
-> On Fri, 2010-07-23 at 12:12 +0200, Dan Carpenter wrote:
-> > In ivtvfb_callback_cleanup() we dereference "itv" before checking that
-> > it's NULL.  "itv" is assigned with container_of() which basically never
-> > returns a NULL pointer so the check is pointless.  I removed it, along
-> > with a similar check in ivtvfb_callback_init().
-> > 
-> > I considered adding a check for v4l2_dev, but I looked at the code and I
-> > don't think that can be NULL either.
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> Hi Dan,
-> 
-> Thanks, but Jiri Slaby already caught this one:
-> 
-> https://patchwork.kernel.org/patch/112725/
-> 
-> I'm going to let Mauro pick up Jiri's patch out of patchwork.
-> 
+Since net_device has an instance of net_device_stats,
+we can remove the instance of this from the adapter structure.
 
-Wow.  It's remarkable how similar they are even down to the change log.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/ni52.c |   37 ++++++++++++++++++-------------------
+ 1 files changed, 18 insertions(+), 19 deletions(-)
 
-regards,
-dan carpenter
-
+diff --git a/drivers/net/ni52.c b/drivers/net/ni52.c
+index 9bddb5f..33618ed 100644
+--- a/drivers/net/ni52.c
++++ b/drivers/net/ni52.c
+@@ -185,7 +185,6 @@ static void    ni52_xmt_int(struct net_device *dev);
+ static void    ni52_rnr_int(struct net_device *dev);
+ 
+ struct priv {
+-	struct net_device_stats stats;
+ 	char __iomem *base;
+ 	char __iomem *mapped;
+ 	char __iomem *memtop;
+@@ -972,10 +971,10 @@ static void ni52_rcv_int(struct net_device *dev)
+ 					memcpy_fromio(skb->data, p->base + readl(&rbd->buffer), totlen);
+ 					skb->protocol = eth_type_trans(skb, dev);
+ 					netif_rx(skb);
+-					p->stats.rx_packets++;
+-					p->stats.rx_bytes += totlen;
++					dev->stats.rx_packets++;
++					dev->stats.rx_bytes += totlen;
+ 				} else
+-					p->stats.rx_dropped++;
++					dev->stats.rx_dropped++;
+ 			} else {
+ 				int rstat;
+ 				 /* free all RBD's until RBD_LAST is set */
+@@ -993,12 +992,12 @@ static void ni52_rcv_int(struct net_device *dev)
+ 				writew(0, &rbd->status);
+ 				printk(KERN_ERR "%s: received oversized frame! length: %d\n",
+ 					dev->name, totlen);
+-				p->stats.rx_dropped++;
++				dev->stats.rx_dropped++;
+ 			 }
+ 		} else {/* frame !(ok), only with 'save-bad-frames' */
+ 			printk(KERN_ERR "%s: oops! rfd-error-status: %04x\n",
+ 				dev->name, status);
+-			p->stats.rx_errors++;
++			dev->stats.rx_errors++;
+ 		}
+ 		writeb(0, &p->rfd_top->stat_high);
+ 		writeb(RFD_SUSP, &p->rfd_top->last); /* maybe exchange by RFD_LAST */
+@@ -1043,7 +1042,7 @@ static void ni52_rnr_int(struct net_device *dev)
+ {
+ 	struct priv *p = netdev_priv(dev);
+ 
+-	p->stats.rx_errors++;
++	dev->stats.rx_errors++;
+ 
+ 	wait_for_scb_cmd(dev);		/* wait for the last cmd, WAIT_4_FULLSTAT?? */
+ 	writeb(RUC_ABORT, &p->scb->cmd_ruc); /* usually the RU is in the 'no resource'-state .. abort it now. */
+@@ -1076,29 +1075,29 @@ static void ni52_xmt_int(struct net_device *dev)
+ 		printk(KERN_ERR "%s: strange .. xmit-int without a 'COMPLETE'\n", dev->name);
+ 
+ 	if (status & STAT_OK) {
+-		p->stats.tx_packets++;
+-		p->stats.collisions += (status & TCMD_MAXCOLLMASK);
++		dev->stats.tx_packets++;
++		dev->stats.collisions += (status & TCMD_MAXCOLLMASK);
+ 	} else {
+-		p->stats.tx_errors++;
++		dev->stats.tx_errors++;
+ 		if (status & TCMD_LATECOLL) {
+ 			printk(KERN_ERR "%s: late collision detected.\n",
+ 				dev->name);
+-			p->stats.collisions++;
++			dev->stats.collisions++;
+ 		} else if (status & TCMD_NOCARRIER) {
+-			p->stats.tx_carrier_errors++;
++			dev->stats.tx_carrier_errors++;
+ 			printk(KERN_ERR "%s: no carrier detected.\n",
+ 				dev->name);
+ 		} else if (status & TCMD_LOSTCTS)
+ 			printk(KERN_ERR "%s: loss of CTS detected.\n",
+ 				dev->name);
+ 		else if (status & TCMD_UNDERRUN) {
+-			p->stats.tx_fifo_errors++;
++			dev->stats.tx_fifo_errors++;
+ 			printk(KERN_ERR "%s: DMA underrun detected.\n",
+ 				dev->name);
+ 		} else if (status & TCMD_MAXCOLL) {
+ 			printk(KERN_ERR "%s: Max. collisions exceeded.\n",
+ 				dev->name);
+-			p->stats.collisions += 16;
++			dev->stats.collisions += 16;
+ 		}
+ 	}
+ #if (NUM_XMIT_BUFFS > 1)
+@@ -1286,12 +1285,12 @@ static struct net_device_stats *ni52_get_stats(struct net_device *dev)
+ 	ovrn = readw(&p->scb->ovrn_errs);
+ 	writew(0, &p->scb->ovrn_errs);
+ 
+-	p->stats.rx_crc_errors += crc;
+-	p->stats.rx_fifo_errors += ovrn;
+-	p->stats.rx_frame_errors += aln;
+-	p->stats.rx_dropped += rsc;
++	dev->stats.rx_crc_errors += crc;
++	dev->stats.rx_fifo_errors += ovrn;
++	dev->stats.rx_frame_errors += aln;
++	dev->stats.rx_dropped += rsc;
+ 
+-	return &p->stats;
++	return &dev->stats;
+ }
+ 
+ /********************************************************
+-- 
+1.7.0.4
 
