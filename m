@@ -1,24 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 11 Jul 2010 02:42:23 +0000
-Subject: Re: [PATCH 1/2] 82596: do not panic on out of memory
-Message-Id: <20100710.194223.15248752.davem@davemloft.net>
-List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278678323-6848-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278678323-6848-1-git-send-email-segooon@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, jpirko@redhat.com, shemminger@vyatta.com, eric.dumazet@gmail.com, andre.goddard@gmail.com, netdev@vger.kernel.org
-
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri,  9 Jul 2010 16:25:22 +0400
+Date: Mon, 05 Jul 2010 08:00:54 +0000
+Subject: [PATCH] kernel/watchdog: Initialize 'result'
+Message-Id: <1278316854-28442-1-git-send-email-segooon@gmail.com>
+List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, Don Zickus <dzickus@redhat.com>, Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org
 
-> If dev_alloc_skb() failed then free already allocated skbs.
-> remove_rx_bufs() can be called multiple times, so set rbd->skb to NULL
-> to avoid double free. remove_rx_bufs() was moved upwards to be seen by
-> init_rx_bufs().
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Variable on the stack is not initialized to zero, do it explicitly.
 
-Applied to net-next-2.6
+This patch silences a compiler warning:
+kernel/watchdog.c:463: warning: ‘result’ may be used uninitialized in this function
+
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ kernel/watchdog.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 91b0b26..613bc1f 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -460,7 +460,7 @@ static void watchdog_disable(int cpu)
+ static void watchdog_enable_all_cpus(void)
+ {
+ 	int cpu;
+-	int result;
++	int result = 0;
+ 
+ 	for_each_online_cpu(cpu)
+ 		result += watchdog_enable(cpu);
+-- 
+1.7.0.4
+
