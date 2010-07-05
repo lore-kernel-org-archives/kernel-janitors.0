@@ -1,25 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 02:07:11 +0000
-Subject: Re: [PATCH 21/25] isdn/hardware/eicon: Convert pci_table entries
-Message-Id: <20100715.190711.28819238.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 05 Jul 2010 15:07:15 +0000
+Subject: [PATCH] drivers/net: correct valid flag
+Message-Id: <Pine.LNX.4.64.1007051706530.15185@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152104.45958.PeterHuewe@gmx.de>
-In-Reply-To: <201007152104.45958.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: PeterHuewe@gmx.de
-Cc: kernel-janitors@vger.kernel.org, mac@melware.de, isdn@linux-pingi.de, arnd@arndb.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 21:04:45 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Elsewhere in the "optimized" functions, the "2" constants are used.
+NV_TX_VALID and NV_TX2_VALID have the same value.
 
-Applied.
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+diff --git a/drivers/net/forcedeth.c b/drivers/net/forcedeth.c
+index 268ea4d..870c18b 100644
+--- a/drivers/net/forcedeth.c
++++ b/drivers/net/forcedeth.c
+@@ -2468,7 +2468,8 @@ static int nv_tx_done_optimized(struct net_device *dev, int limit)
+ 	struct ring_desc_ex* orig_get_tx = np->get_tx.ex;
+ 
+ 	while ((np->get_tx.ex != np->put_tx.ex) &&
+-	       !((flags = le32_to_cpu(np->get_tx.ex->flaglen)) & NV_TX_VALID) &&
++	       !((flags = le32_to_cpu(np->get_tx.ex->flaglen)) & NV_TX2_VALID)
++	       &&
+ 	       (tx_work < limit)) {
+ 
+ 		dprintk(KERN_DEBUG "%s: nv_tx_done_optimized: flags 0x%x.\n",
