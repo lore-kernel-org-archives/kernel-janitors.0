@@ -1,57 +1,21 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 03 Jul 2010 15:20:42 +0000
-Subject: [PATCH] net/ne: fix memory leak in ne_drv_probe()
-Message-Id: <1278170444-8170-1-git-send-email-segooon@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 06 Jul 2010 03:08:16 +0000
+Subject: Re: [PATCH] net/ne: fix memory leak in ne_drv_probe()
+Message-Id: <20100705.200816.57450933.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1278170444-8170-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1278170444-8170-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: segooon@gmail.com
+Cc: kernel-janitors@vger.kernel.org, joe@perches.com, anemo@mba.ocn.ne.jp, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-net_device allocated with alloc_eip_netdev() must be freed.
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat,  3 Jul 2010 19:20:42 +0400
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/net/ne.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+> net_device allocated with alloc_eip_netdev() must be freed.
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-diff --git a/drivers/net/ne.c b/drivers/net/ne.c
-index b8e2923..1063093 100644
---- a/drivers/net/ne.c
-+++ b/drivers/net/ne.c
-@@ -796,28 +796,30 @@ static int __init ne_drv_probe(struct platform_device *pdev)
- 	dev = alloc_eip_netdev();
- 	if (!dev)
- 		return -ENOMEM;
- 
- 	/* ne.c doesn't populate resources in platform_device, but
- 	 * rbtx4927_ne_init and rbtx4938_ne_init do register devices
- 	 * with resources.
- 	 */
- 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
- 	if (res) {
- 		dev->base_addr = res->start;
- 		dev->irq = platform_get_irq(pdev, 0);
- 	} else {
--		if (this_dev < 0 || this_dev >= MAX_NE_CARDS)
-+		if (this_dev < 0 || this_dev >= MAX_NE_CARDS) {
-+			free_netdev(dev);
- 			return -EINVAL;
-+		}
- 		dev->base_addr = io[this_dev];
- 		dev->irq = irq[this_dev];
- 		dev->mem_end = bad[this_dev];
- 	}
- 	err = do_ne_probe(dev);
- 	if (err) {
- 		free_netdev(dev);
- 		return err;
- 	}
- 	platform_set_drvdata(pdev, dev);
- 
- 	/* Update with any values found by probing, don't update if
- 	 * resources were specified.
--- 
-1.7.0.4
-
+Applied, thanks.
