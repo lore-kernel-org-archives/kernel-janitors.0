@@ -1,22 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 03:28:23 +0000
-Subject: Re: [PATCH 3/8] drivers: irda: fix sign bug
-Message-Id: <20100715.202823.200354925.davem@davemloft.net>
-List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279219494-12408-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1279219494-12408-1-git-send-email-segooon@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, samuel@sortiz.org, kuninori.morimoto.gx@renesas.com, netdev@vger.kernel.org
-
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 15 Jul 2010 22:44:54 +0400
+Date: Tue, 06 Jul 2010 15:28:07 +0000
+Subject: [PATCH] enclosure: fix lost return
+Message-Id: <1278430088-9761-1-git-send-email-segooon@gmail.com>
+List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: James Bottomley <James.Bottomley@suse.de>, Tejun Heo <tj@kernel.org>, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org
 
-> platform_get_irq_byname() can return negative results, it is not seen to
-> unsigned irq. Make it signed.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Useless statement must be return with argument.
 
-Applied.
+This patch silences a compiler warning:
+drivers/misc/enclosure.c: In function ‘enclosure_component_register’:
+drivers/misc/enclosure.c:289: warning: ignoring return value of ‘ERR_PTR’, declared with attribute warn_unused_result
+
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/misc/enclosure.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/misc/enclosure.c b/drivers/misc/enclosure.c
+index 48c84a5..9ae7bef 100644
+--- a/drivers/misc/enclosure.c
++++ b/drivers/misc/enclosure.c
+@@ -286,7 +286,7 @@ enclosure_component_register(struct enclosure_device *edev,
+ 
+ 	err = device_register(cdev);
+ 	if (err)
+-		ERR_PTR(err);
++		return ERR_PTR(err);
+ 
+ 	return ecomp;
+ }
+-- 
+1.7.0.4
+
