@@ -1,25 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 02:06:10 +0000
-Subject: Re: [PATCH 05/25] atm: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100715.190610.112584064.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 08 Jul 2010 12:09:54 +0000
+Subject: [PATCH 1/4] ax88796: free irq on error
+Message-Id: <1278590996-3122-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152041.08976.PeterHuewe@gmx.de>
-In-Reply-To: <201007152041.08976.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: PeterHuewe@gmx.de
-Cc: kernel-janitors@vger.kernel.org, chas@cmf.nrl.navy.mil, eric.dumazet@gmail.com, tj@kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Paul Gortmaker <p_gortmaker@yahoo.com>, "David S. Miller" <davem@davemloft.net>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, Joe Perches <joe@perches.com>, netdev@vger.kernel.org
 
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 20:41:08 +0200
+If ax_ei_open() failed we must free previously requested irq.
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/ax88796.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-Applied.
+diff --git a/drivers/net/ax88796.c b/drivers/net/ax88796.c
+index 55c9958..20e946b 100644
+--- a/drivers/net/ax88796.c
++++ b/drivers/net/ax88796.c
+@@ -481,8 +481,10 @@ static int ax_open(struct net_device *dev)
+ 		return ret;
+ 
+ 	ret = ax_ei_open(dev);
+-	if (ret)
++	if (ret) {
++		free_irq(dev->irq, dev);
+ 		return ret;
++	}
+ 
+ 	/* turn the phy on (if turned off) */
+ 
+-- 
+1.7.0.4
+
