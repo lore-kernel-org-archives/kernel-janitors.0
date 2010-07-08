@@ -1,34 +1,27 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 16 Jul 2010 16:13:02 +0000
-Subject: [PATCH 03/15] arch/tile: check kmalloc() result
-Message-Id: <1279296783-24863-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 08 Jul 2010 12:49:38 +0000
+Subject: [patch] ceph: add kfree() to error path
+Message-Id: <20100708124938.GJ19184@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Chris Metcalf <cmetcalf@tilera.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+To: Sage Weil <sage@newdream.net>
+Cc: Noah Watkins <noah@noahdesu.com>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If kmalloc() fails exit with -ENOMEM.
+We leak a "pi" on this error path.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- arch/tile/kernel/hardwall.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/arch/tile/kernel/hardwall.c b/arch/tile/kernel/hardwall.c
-index 7bf0627..584b965 100644
---- a/arch/tile/kernel/hardwall.c
-+++ b/arch/tile/kernel/hardwall.c
-@@ -364,6 +364,8 @@ static struct hardwall_info *hardwall_create(
- 	/* Allocate a new rectangle optimistically. */
- 	rect = kmalloc(sizeof(struct hardwall_info),
- 			GFP_KERNEL | __GFP_ZERO);
-+	if (rect = NULL)
-+		return ERR_PTR(-ENOMEM);
- 	INIT_LIST_HEAD(&rect->task_head);
- 
- 	/* Compute the rectangle size and validate that it's plausible. */
--- 
-1.7.0.4
-
+diff --git a/fs/ceph/osdmap.c b/fs/ceph/osdmap.c
+index 50ce64e..277f8b3 100644
+--- a/fs/ceph/osdmap.c
++++ b/fs/ceph/osdmap.c
+@@ -568,6 +568,7 @@ struct ceph_osdmap *osdmap_decode(void **p, void *end)
+ 		if (ev > CEPH_PG_POOL_VERSION) {
+ 			pr_warning("got unknown v %d > %d of ceph_pg_pool\n",
+ 				   ev, CEPH_PG_POOL_VERSION);
++			kfree(pi);
+ 			goto bad;
+ 		}
+ 		__decode_pool(p, pi);
