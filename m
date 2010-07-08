@@ -1,26 +1,94 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Wed, 21 Jul 2010 23:22:46 +0000
-Subject: Re: [PATCH 0/2] mbcache fixes
-Message-Id: <20100721232245.GB903@ZenIV.linux.org.uk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 08 Jul 2010 12:10:10 +0000
+Subject: [PATCH 3/4] ll_temac: free everything on error path
+Message-Id: <1278591012-3213-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4C46D1C5.90200@gmail.com>
- <4C46FD67.8070808@redhat.com>
- <20100721202637.4CC213C539AA@imap.suse.de>
-In-Reply-To: <20100721202637.4CC213C539AA@imap.suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Gruenbacher <agruen@suse.de>
-Cc: Eric Sandeen <sandeen@redhat.com>, hch@infradead.org, linux-ext4 <linux-ext4@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors <kernel-janitors@vger.kernel.org>, Wang Sheng-Hui <crosslonelyover@gmail.com>
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, John Linn <john.linn@xilinx.com>, Grant Likely <grant.likely@secretlab.ca>, Jiri Pirko <jpirko@redhat.com>, Brian Hill <brian.hill@xilinx.com>, netdev@vger.kernel.org
 
-On Wed, Jul 21, 2010 at 07:57:20PM +0200, Andreas Gruenbacher wrote:
-> Al,
-> 
-> here is an mbcache cleanup and then a fixed version of Shenghui's minor
-> shrinker function fix.  The patches have survived functional testing
-> here.
-> 
-> This seems slightly too much for kernel-janitors, so could you please
-> take the patches?
+temac_dma_bd_init() must free all allocated resources: memory, dma, skbs.
 
-Done.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/ll_temac_main.c |   30 +++++++++++++++++++++++++-----
+ 1 files changed, 25 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ll_temac_main.c b/drivers/net/ll_temac_main.c
+index a2da3d7..38d658a 100644
+--- a/drivers/net/ll_temac_main.c
++++ b/drivers/net/ll_temac_main.c
+@@ -200,6 +200,7 @@ static int temac_dma_bd_init(struct net_device *ndev)
+ 	struct temac_local *lp = netdev_priv(ndev);
+ 	struct sk_buff *skb;
+ 	int i;
++	int tx_bd_v_size, rx_bd_v_size;
+ 
+ 	lp->rx_skb = kzalloc(sizeof(*lp->rx_skb) * RX_BD_NUM, GFP_KERNEL);
+ 	if (!lp->rx_skb) {
+@@ -209,21 +210,23 @@ static int temac_dma_bd_init(struct net_device *ndev)
+ 	}
+ 	/* allocate the tx and rx ring buffer descriptors. */
+ 	/* returns a virtual addres and a physical address. */
++	tx_bd_v_size = sizeof(*lp->tx_bd_v) * TX_BD_NUM;
+ 	lp->tx_bd_v = dma_alloc_coherent(ndev->dev.parent,
+-					 sizeof(*lp->tx_bd_v) * TX_BD_NUM,
++					tx_bd_v_size,
+ 					 &lp->tx_bd_p, GFP_KERNEL);
+ 	if (!lp->tx_bd_v) {
+ 		dev_err(&ndev->dev,
+ 				"unable to allocate DMA TX buffer descriptors");
+-		goto out;
++		goto err_rx_skb;
+ 	}
++	rx_bd_v_size = sizeof(*lp->rx_bd_v) * RX_BD_NUM;
+ 	lp->rx_bd_v = dma_alloc_coherent(ndev->dev.parent,
+-					 sizeof(*lp->rx_bd_v) * RX_BD_NUM,
++					 rx_bd_v_size,
+ 					 &lp->rx_bd_p, GFP_KERNEL);
+ 	if (!lp->rx_bd_v) {
+ 		dev_err(&ndev->dev,
+ 				"unable to allocate DMA RX buffer descriptors");
+-		goto out;
++		goto err_tx_bd;
+ 	}
+ 
+ 	memset(lp->tx_bd_v, 0, sizeof(*lp->tx_bd_v) * TX_BD_NUM);
+@@ -242,7 +245,7 @@ static int temac_dma_bd_init(struct net_device *ndev)
+ 
+ 		if (skb = 0) {
+ 			dev_err(&ndev->dev, "alloc_skb error %d\n", i);
+-			goto out;
++			goto err_dma_single;
+ 		}
+ 		lp->rx_skb[i] = skb;
+ 		/* returns physical address of skb->data */
+@@ -274,6 +277,23 @@ static int temac_dma_bd_init(struct net_device *ndev)
+ 
+ 	return 0;
+ 
++err_dma_single:
++	for (i = 0; i < RX_BD_NUM; i++) {
++		if (lp->rx_skb[i] = NULL)
++			break;
++
++		kfree_skb(lp->rx_skb[i]);
++		dma_unmap_single(ndev->dev.parent, lp->rx_bd_v[i].phys,
++				XTE_MAX_JUMBO_FRAME_SIZE, DMA_FROM_DEVICE);
++	}
++
++	dma_free_coherent(ndev->dev.parent, rx_bd_v_size,
++				lp->rx_bd_v, lp->rx_bd_p);
++err_tx_bd:
++	dma_free_coherent(ndev->dev.parent, tx_bd_v_size,
++				lp->tx_bd_v, lp->tx_bd_p);
++err_rx_skb:
++	kfree(lp->rx_skb);
+ out:
+ 	return -ENOMEM;
+ }
+-- 
+1.7.0.4
+
