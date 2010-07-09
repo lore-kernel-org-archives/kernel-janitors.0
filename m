@@ -1,22 +1,81 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 28 Jul 2010 18:01:38 +0000
-Subject: Re: [PATCH 01/10] arm: leds: check return value of request_region()
-Message-Id: <20100728180138.GO26313@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 09 Jul 2010 12:25:40 +0000
+Subject: [PATCH 2/2] 82596: free resources on error
+Message-Id: <1278678340-6889-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280335127-23145-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280335127-23145-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Stephen Hemminger <shemminger@vyatta.com>, Eric Dumazet <eric.dumazet@gmail.com>, =?UTF-8?q?Andr=C3=A9=20Goddard=20Rosa?= <andre.goddard@gmail.com>, netdev@vger.kernel.org
 
-On Wed, Jul 28, 2010 at 08:38:47PM +0400, Kulikov Vasiliy wrote:
-> request_region() may fail, if so return -ENOMEM.
+IRQ 56 was not freed anywhere (neither in i596_open() on error nor in
+i596_close()), rx_bufs were not freed if init_i596_mem() fails,
+netif_stop_queue() was not called.
 
-I think -EBUSY is more normal, although some people return -ENODEV or
--EIO.  But I would think -EBUSY is the right one.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/82596.c |   30 ++++++++++++++++++++++--------
+ 1 files changed, 22 insertions(+), 8 deletions(-)
 
-regards,
-dan carpenter
-
+diff --git a/drivers/net/82596.c b/drivers/net/82596.c
+index 73073d0..89e43d7 100644
+--- a/drivers/net/82596.c
++++ b/drivers/net/82596.c
+@@ -1015,24 +1015,35 @@ static int i596_open(struct net_device *dev)
+ 	}
+ #ifdef ENABLE_MVME16x_NET
+ 	if (MACH_IS_MVME16x) {
+-		if (request_irq(0x56, i596_error, 0, "i82596_error", dev))
+-			return -EAGAIN;
++		if (request_irq(0x56, i596_error, 0, "i82596_error", dev)) {
++			res = -EAGAIN;
++			goto err_irq_dev;
++		}
+ 	}
+ #endif
+ 	res = init_rx_bufs(dev);
+-	if (res) {
+-		free_irq(dev->irq, dev);
+-		return res;
+-	}
++	if (res)
++		goto err_irq_56;
+ 
+ 	netif_start_queue(dev);
+ 
+-	/* Initialize the 82596 memory */
+ 	if (init_i596_mem(dev)) {
+ 		res = -EAGAIN;
+-		free_irq(dev->irq, dev);
++		goto err_queue;
+ 	}
+ 
++	return 0;
++
++err_queue:
++	netif_stop_queue(dev);
++	remove_rx_bufs(dev);
++err_irq_56:
++#ifdef ENABLE_MVME16x_NET
++	free_irq(0x56, dev);
++#endif
++err_irq_dev:
++	free_irq(dev->irq, dev);
++
+ 	return res;
+ }
+ 
+@@ -1498,6 +1509,9 @@ static int i596_close(struct net_device *dev)
+ 	}
+ #endif
+ 
++#ifdef ENABLE_MVME16x_NET
++	free_irq(0x56, dev);
++#endif
+ 	free_irq(dev->irq, dev);
+ 	remove_rx_bufs(dev);
+ 
+-- 
+1.7.0.4
 
