@@ -1,51 +1,99 @@
-From: "Gustavo F. Padovan" <gustavo@padovan.org>
-Date: Sat, 17 Jul 2010 17:51:40 +0000
-Subject: Re: [patch] l2cap: fix signedness bugs
-Message-Id: <20100717175139.GF16892@vigoh>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 09 Jul 2010 12:25:22 +0000
+Subject: [PATCH 1/2] 82596: do not panic on out of memory
+Message-Id: <1278678323-6848-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100717170548.GH17585@bicker>
-In-Reply-To: <20100717170548.GH17585@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, "David S. Miller" <davem@davemloft.net>, "Gustavo F. Padovan" <padovan@profusion.mobi>, =?iso-8859-1?Q?Jo=E3o?= Paulo Rechi Vita <jprvita@profusion.mobi>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Stephen Hemminger <shemminger@vyatta.com>, Eric Dumazet <eric.dumazet@gmail.com>, =?UTF-8?q?Andr=C3=A9=20Goddard=20Rosa?= <andre.goddard@gmail.com>, netdev@vger.kernel.org
 
-Hi Dan,
+If dev_alloc_skb() failed then free already allocated skbs.
+remove_rx_bufs() can be called multiple times, so set rbd->skb to NULL
+to avoid double free. remove_rx_bufs() was moved upwards to be seen by
+init_rx_bufs().
 
-* Dan Carpenter <error27@gmail.com> [2010-07-17 19:05:48 +0200]:
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/82596.c |   42 ++++++++++++++++++++++++++----------------
+ 1 files changed, 26 insertions(+), 16 deletions(-)
 
-> These variables are only used for math.  They should be from -63 to +63.
-> In the original code instead of being negative they would be largish
-> positive numbers.  I changed them to ints.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/net/bluetooth/l2cap.c b/net/bluetooth/l2cap.c
-> index 1b682a5..4a13499 100644
-> --- a/net/bluetooth/l2cap.c
-> +++ b/net/bluetooth/l2cap.c
-> @@ -3795,7 +3795,7 @@ static inline int l2cap_data_channel_iframe(struct sock *sk, u16 rx_control, str
->  	u8 tx_seq = __get_txseq(rx_control);
->  	u8 req_seq = __get_reqseq(rx_control);
->  	u8 sar = rx_control >> L2CAP_CTRL_SAR_SHIFT;
-> -	u8 tx_seq_offset, expected_tx_seq_offset;
-> +	int tx_seq_offset, expected_tx_seq_offset;
->  	int num_to_ack = (pi->tx_win/6) + 1;
->  	int err = 0;
->  
-> @@ -4080,7 +4080,7 @@ static inline int l2cap_data_channel(struct l2cap_conn *conn, u16 cid, struct sk
->  	struct sock *sk;
->  	struct l2cap_pinfo *pi;
->  	u16 control, len;
-> -	u8 tx_seq, req_seq, next_tx_seq_offset, req_seq_offset;
-> +	int tx_seq, req_seq, next_tx_seq_offset, req_seq_offset;
->  
->  	sk = l2cap_get_chan_by_scid(&conn->chan_list, cid);
->  	if (!sk) {
-
-I fixed this already. Thanks.
-
+diff --git a/drivers/net/82596.c b/drivers/net/82596.c
+index dd8dc15..73073d0 100644
+--- a/drivers/net/82596.c
++++ b/drivers/net/82596.c
+@@ -525,7 +525,21 @@ static irqreturn_t i596_error(int irq, void *dev_id)
+ }
+ #endif
+ 
+-static inline void init_rx_bufs(struct net_device *dev)
++static inline void remove_rx_bufs(struct net_device *dev)
++{
++	struct i596_private *lp = dev->ml_priv;
++	struct i596_rbd *rbd;
++	int i;
++
++	for (i = 0, rbd = lp->rbds; i < rx_ring_size; i++, rbd++) {
++		if (rbd->skb = NULL)
++			break;
++		dev_kfree_skb(rbd->skb);
++		rbd->skb = NULL;
++	}
++}
++
++static inline int init_rx_bufs(struct net_device *dev)
+ {
+ 	struct i596_private *lp = dev->ml_priv;
+ 	int i;
+@@ -537,8 +551,11 @@ static inline void init_rx_bufs(struct net_device *dev)
+ 	for (i = 0, rbd = lp->rbds; i < rx_ring_size; i++, rbd++) {
+ 		struct sk_buff *skb = dev_alloc_skb(PKT_BUF_SZ);
+ 
+-		if (skb = NULL)
+-			panic("82596: alloc_skb() failed");
++		if (skb = NULL) {
++			remove_rx_bufs(dev);
++			return -ENOMEM;
++		}
++
+ 		skb->dev = dev;
+ 		rbd->v_next = rbd+1;
+ 		rbd->b_next = WSWAPrbd(virt_to_bus(rbd+1));
+@@ -574,19 +591,8 @@ static inline void init_rx_bufs(struct net_device *dev)
+ 	rfd->v_next = lp->rfds;
+ 	rfd->b_next = WSWAPrfd(virt_to_bus(lp->rfds));
+ 	rfd->cmd = CMD_EOL|CMD_FLEX;
+-}
+-
+-static inline void remove_rx_bufs(struct net_device *dev)
+-{
+-	struct i596_private *lp = dev->ml_priv;
+-	struct i596_rbd *rbd;
+-	int i;
+ 
+-	for (i = 0, rbd = lp->rbds; i < rx_ring_size; i++, rbd++) {
+-		if (rbd->skb = NULL)
+-			break;
+-		dev_kfree_skb(rbd->skb);
+-	}
++	return 0;
+ }
+ 
+ 
+@@ -1013,7 +1019,11 @@ static int i596_open(struct net_device *dev)
+ 			return -EAGAIN;
+ 	}
+ #endif
+-	init_rx_bufs(dev);
++	res = init_rx_bufs(dev);
++	if (res) {
++		free_irq(dev->irq, dev);
++		return res;
++	}
+ 
+ 	netif_start_queue(dev);
+ 
 -- 
-Gustavo F. Padovan
-http://padovan.org
+1.7.0.4
+
