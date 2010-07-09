@@ -1,47 +1,86 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 31 Jul 2010 17:39:03 +0000
-Subject: [PATCH 4/7] usb: lh7a40x_udc: check return value of create_proc_read_entry()
-Message-Id: <1280597943-8485-1-git-send-email-segooon@gmail.com>
+Date: Fri, 09 Jul 2010 17:55:13 +0000
+Subject: [PATCH v3] ll_temac: fix DMA and memory leaks
+Message-Id: <1278698113-5713-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
+Cc: Denis Kirjanov <dkirjanov@kernel.org>, "David S. Miller" <davem@davemloft.net>, John Linn <john.linn@xilinx.com>, Grant Likely <grant.likely@secretlab.ca>, Jiri Pirko <jpirko@redhat.com>, netdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-create_proc_read_entry() may fail, if so return -ENOMEM.
+temac_dma_bd_init() doesn't free DMA and memory on error. Also
+temac_stop() must free them.
 
+Signed-off-by: Denis Kirjanov <dkirjanov@kernel.org>
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/usb/gadget/lh7a40x_udc.c |    9 +++++++--
- 1 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/ll_temac_main.c |   38 ++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 38 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/usb/gadget/lh7a40x_udc.c b/drivers/usb/gadget/lh7a40x_udc.c
-index fded3fc..b04a62f 100644
---- a/drivers/usb/gadget/lh7a40x_udc.c
-+++ b/drivers/usb/gadget/lh7a40x_udc.c
-@@ -244,7 +244,7 @@ udc_proc_read(char *page, char **start, off_t off, int count,
+diff --git a/drivers/net/ll_temac_main.c b/drivers/net/ll_temac_main.c
+index 5bca20b..9090e79 100644
+--- a/drivers/net/ll_temac_main.c
++++ b/drivers/net/ll_temac_main.c
+@@ -193,6 +193,41 @@ static int temac_dcr_setup(struct temac_local *lp, struct of_device *op,
+ #endif
  
- #else	/* !CONFIG_USB_GADGET_DEBUG_FILES */
- 
--#define create_proc_files() do {} while (0)
-+#define create_proc_files() ({ (void *)1; })
- #define remove_proc_files() do {} while (0)
- 
- #endif	/* CONFIG_USB_GADGET_DEBUG_FILES */
-@@ -2092,7 +2092,12 @@ static int lh7a40x_udc_probe(struct platform_device *pdev)
- 		return -EBUSY;
- 	}
- 
--	create_proc_files();
-+	if (create_proc_files() = NULL) {
-+		DEBUG(KERN_ERR "%s: can't get irq %i, err %d\n", driver_name,
-+		      IRQ_USBINTR, retval);
-+		free_irq(IRQ_USBINTR, dev);
-+		return -ENOMEM;
+ /**
++ *  * temac_dma_bd_release - Release buffer descriptor rings
++ */
++static void temac_dma_bd_release(struct net_device *ndev)
++{
++	struct temac_local *lp = netdev_priv(ndev);
++	int i;
++
++	if (lp->rx_skb) {
++		for (i = 0; i < RX_BD_NUM; i++) {
++			if (!lp->rx_skb[i])
++				break;
++			dma_unmap_single(ndev->dev.parent, lp->rx_bd_v[i].phys,
++				    XTE_MAX_JUMBO_FRAME_SIZE, DMA_FROM_DEVICE);
++			dev_kfree_skb(lp->rx_skb[i]);
++		}
++		kfree(lp->rx_skb);
++		lp->rx_skb = NULL;
 +	}
++
++	if (lp->rx_bd_v) {
++		dma_free_coherent(ndev->dev.parent,
++				sizeof(*lp->rx_bd_v) * RX_BD_NUM,
++				lp->rx_bd_v, lp->rx_bd_p);
++		lp->rx_bd_v = NULL;
++	}
++
++	if (lp->tx_bd_v) {
++		dma_free_coherent(ndev->dev.parent,
++				sizeof(*lp->tx_bd_v) * TX_BD_NUM,
++				lp->tx_bd_v, lp->tx_bd_p);
++		lp->tx_bd_v = NULL;
++	}
++}
++
++/**
+  * temac_dma_bd_init - Setup buffer descriptor rings
+  */
+ static int temac_dma_bd_init(struct net_device *ndev)
+@@ -275,6 +310,7 @@ static int temac_dma_bd_init(struct net_device *ndev)
+ 	return 0;
  
- 	return retval;
+ out:
++	temac_dma_bd_release(ndev);
+ 	return -ENOMEM;
  }
+ 
+@@ -858,6 +894,8 @@ static int temac_stop(struct net_device *ndev)
+ 		phy_disconnect(lp->phy_dev);
+ 	lp->phy_dev = NULL;
+ 
++	temac_dma_bd_release(ndev);
++
+ 	return 0;
+ }
+ 
 -- 
 1.7.0.4
 
