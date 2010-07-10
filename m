@@ -1,39 +1,42 @@
-From: Trond Myklebust <Trond.Myklebust@netapp.com>
-Date: Fri, 30 Jul 2010 17:48:04 +0000
-Subject: Re: [PATCH 9/9] sunrpc: auth_gss: misused copy_to_user() return
-Message-Id: <1280512084.12852.9.camel@heimdal.trondhjem.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 10 Jul 2010 09:29:20 +0000
+Subject: [patch] kgdb: strlen() doesn't count the terminator
+Message-Id: <20100710092920.GT19184@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280488234-21223-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280488234-21223-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "J. Bruce Fields" <bfields@fieldses.org>, Neil Brown <neilb@suse.de>, "David S. Miller" <davem@davemloft.net>, Jeff Layton <jlayton@redhat.com>, Steve Dickson <steved@redhat.com>, Suresh Jayaraman <sjayaraman@suse.de>, Kevin Coffman <kwc@citi.umich.edu>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2010-07-30 at 15:10 +0400, Kulikov Vasiliy wrote:
-> copy_to_user() returns nonzero value on error, this value may be any
-> value between 0 and requested count, not only requested count.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  net/sunrpc/auth_gss/auth_gss.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
-> index 8da2a0e..232d7dc 100644
-> --- a/net/sunrpc/auth_gss/auth_gss.c
-> +++ b/net/sunrpc/auth_gss/auth_gss.c
-> @@ -610,7 +610,7 @@ gss_pipe_upcall(struct file *filp, struct rpc_pipe_msg *msg,
->  	unsigned long left;
->  
->  	left = copy_to_user(dst, data, mlen);
-> -	if (left = mlen) {
-> +	if (left)
->  		msg->errno = -EFAULT;
->  		return -EFAULT;
->  	}
+This is an off by one because strlen() doesn't count the null
+terminator.  We strcpy() these strings into an array of size
+MAX_CONFIG_LEN.
 
-Ditto unnecessary...
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Trond
+diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
+index 7245023..799ea0a 100644
+--- a/drivers/misc/kgdbts.c
++++ b/drivers/misc/kgdbts.c
+@@ -988,7 +988,7 @@ static void kgdbts_run_tests(void)
+ 
+ static int kgdbts_option_setup(char *opt)
+ {
+-	if (strlen(opt) > MAX_CONFIG_LEN) {
++	if (strlen(opt) >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdbts: config string too long\n");
+ 		return -ENOSPC;
+ 	}
+diff --git a/drivers/serial/kgdboc.c b/drivers/serial/kgdboc.c
+index a9a94ae..ba7b7c6 100644
+--- a/drivers/serial/kgdboc.c
++++ b/drivers/serial/kgdboc.c
+@@ -70,7 +70,7 @@ static void kgdboc_unregister_kbd(void)
+ 
+ static int kgdboc_option_setup(char *opt)
+ {
+-	if (strlen(opt) > MAX_CONFIG_LEN) {
++	if (strlen(opt) >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdboc: config string too long\n");
+ 		return -ENOSPC;
+ 	}
