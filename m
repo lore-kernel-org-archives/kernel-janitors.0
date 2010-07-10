@@ -1,24 +1,33 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Mon, 26 Jul 2010 14:04:17 +0000
-Subject: Re: [PATCH 03/11] arch/mips/kernel/smtc.c: formatting of pointers in
-Message-Id: <20100726140417.GA12084@linux-mips.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 10 Jul 2010 09:51:54 +0000
+Subject: [patch] 9p: strlen() doesn't count the terminator
+Message-Id: <20100710095154.GU19184@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279130502-10777-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1279130502-10777-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Chris Dearman <chris@mips.com>, "Robert P. J. Day" <rpjday@crashcourse.ca>, Rusty Russell <rusty@rustcorp.com.au>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Abhishek Kulkarni <adkulkar@umail.iu.edu>, Venkateswararao Jujjuri <jvrao@us.ibm.com>, linux-kernel@vger.kernel.org, Tilman Sauerbeck <tilman@code-monkey.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 14, 2010 at 10:01:42PM +0400, Kulikov Vasiliy wrote:
+This is an off by one bug because strlen() doesn't count the NULL
+terminator.  We strcpy() addr into a fixed length array of size
+UNIX_PATH_MAX later on.
 
-> Use %p instead of %08x in printk().
+The addr variable is the name of the device being mounted.
 
-Queued for 2.6.36, thanks!
+CC: stable@kernel.org
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Yes, %p is prefered here.  But your log message doesn't mention that your
-patch also does a functional change, it drops the 0x prefix of the printed
-value ...
-
-  Ralf
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 98ce9bc..c85109d 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -948,7 +948,7 @@ p9_fd_create_unix(struct p9_client *client, const char *addr, char *args)
+ 
+ 	csocket = NULL;
+ 
+-	if (strlen(addr) > UNIX_PATH_MAX) {
++	if (strlen(addr) >= UNIX_PATH_MAX) {
+ 		P9_EPRINTK(KERN_ERR, "p9_trans_unix: address too long: %s\n",
+ 			addr);
+ 		return -ENAMETOOLONG;
