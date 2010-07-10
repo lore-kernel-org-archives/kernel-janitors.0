@@ -1,50 +1,53 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 19 Jul 2010 16:00:12 +0000
-Subject: Re: [PATCH 11/15] pci: echoaudio: check kmalloc() result
-Message-Id: <s5haapnfomr.wl%tiwai@suse.de>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 10 Jul 2010 03:25:12 +0000
+Subject: [PATCH 1/3] fix staging/spectra: removes q->prepare_flush_fn
+Message-Id: <1278732312.1725.17.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279296943-25187-1-git-send-email-segooon@gmail.com>
-	<20100716211650.4abb6387@Jay>
-In-Reply-To: <20100716211650.4abb6387@Jay>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Giuliano Pochini <pochini@shiny.it>
-Cc: alsa-devel@alsa-project.org, Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: kernel-janitors@vger.kernel.org
 
-At Fri, 16 Jul 2010 21:16:50 +0200,
-Giuliano Pochini wrote:
-> 
-> On Fri, 16 Jul 2010 20:15:43 +0400
-> Kulikov Vasiliy <segooon@gmail.com> wrote:
-> 
-> > If kmalloc() fails exit with -ENOMEM.
-> > 
-> > Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> > ---
-> >  sound/pci/echoaudio/echoaudio.c |    2 ++
-> >  1 files changed, 2 insertions(+), 0 deletions(-)
-> > 
-> > diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
-> > index 668a5ec..20763dd 100644
-> > --- a/sound/pci/echoaudio/echoaudio.c
-> > +++ b/sound/pci/echoaudio/echoaudio.c
-> > @@ -2250,6 +2250,8 @@ static int snd_echo_resume(struct pci_dev *pci)
-> >  	DE_INIT(("resume start\n"));
-> >  	pci_restore_state(pci);
-> >  	commpage_bak = kmalloc(sizeof(struct echoaudio), GFP_KERNEL);
-> > +	if (commpage_bak = NULL)
-> > +		return -ENOMEM;
-> >  	commpage = chip->comm_page;
-> >  	memcpy(commpage_bak, commpage, sizeof(struct comm_page));
-> >  
-> 
-> Yes, of course. Thank you.
-> 
-> 
-> Ack-by: Giuliano Pochini <pochini@shiny.it>
+This patch is the first one of a patchset that allows 
+stagin/spectra driver to compile in linux-next. 
 
-Applied now.  Thanks.
+blk_queue_ordered doesn't receive a prepare flush function anymore
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/spectra/ffsport.c |   10 +---------
+ 1 files changed, 1 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/spectra/ffsport.c b/drivers/staging/spectra/ffsport.c
+index d0c5c97..eca6536 100644
+--- a/drivers/staging/spectra/ffsport.c
++++ b/drivers/staging/spectra/ffsport.c
+@@ -272,13 +272,6 @@ static int get_res_blk_num_os(void)
+ 	return res_blks;
+ }
+ 
+-static void SBD_prepare_flush(struct request_queue *q, struct request *rq)
+-{
+-	rq->cmd_type = REQ_TYPE_LINUX_BLOCK;
+-	/* rq->timeout = 5 * HZ; */
+-	rq->cmd[0] = REQ_LB_OP_FLUSH;
+-}
+-
+ /* Transfer a full request. */
+ static int do_transfer(struct spectra_nand_dev *tr, struct request *req)
+ {
+@@ -650,8 +643,7 @@ static int SBD_setup_device(struct spectra_nand_dev *dev, int which)
+ 	/* Here we force report 512 byte hardware sector size to Kernel */
+ 	blk_queue_logical_block_size(dev->queue, 512);
+ 
+-	blk_queue_ordered(dev->queue, QUEUE_ORDERED_DRAIN_FLUSH,
+-					SBD_prepare_flush);
++	blk_queue_ordered(dev->queue, QUEUE_ORDERED_DRAIN_FLUSH);
+ 
+ 	dev->thread = kthread_run(spectra_trans_thread, dev, "nand_thd");
+ 	if (IS_ERR(dev->thread)) {
+-- 
+1.7.0.4
 
 
-Takashi
+
