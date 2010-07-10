@@ -1,20 +1,38 @@
-From: Roland Dreier <rdreier@cisco.com>
-Date: Wed, 21 Jul 2010 17:57:40 +0000
-Subject: Re: [patch v2] infiniband: cxgb3: clean up signed check
-Message-Id: <adawrsoogyz.fsf@roland-alpha.cisco.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 10 Jul 2010 10:54:29 +0000
+Subject: [patch] cgroups: save space for the terminator
+Message-Id: <20100710105429.GW19184@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100717102900.GG17585@bicker>
-	<4C446509.3010400@opengridcomputing.com>
-	<20100719203014.GN17585@bicker>
-In-Reply-To: <20100719203014.GN17585@bicker> (Dan Carpenter's message of "Mon,
-	19 Jul 2010 22:30:14 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Steve Wise <swise-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>, Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Frank Zago <fzago-klaOcWyJdxkshyMvu7JE4pqQE7yCjDx5@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Menage <menage@google.com>
+Cc: Li Zefan <lizf@cn.fujitsu.com>, Andrew Morton <akpm@linux-foundation.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Ben Blum <bblum@andrew.cmu.edu>, containers@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-thanks, applied
--- 
-Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
-http://www.cisco.com/web/about/doing_business/legal/cri/index.html
+The original code didn't leave enough space for a NULL terminator.
+These strings are copied with strcpy() into fixed length buffers in
+cgroup_root_from_opts().
+ 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/kernel/cgroup.c b/kernel/cgroup.c
+index 3ac6f5b..a942820 100644
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@ -1102,7 +1102,7 @@ static int parse_cgroupfs_options(char *data, struct cgroup_sb_opts *opts)
+ 			if (opts->release_agent)
+ 				return -EINVAL;
+ 			opts->release_agent -				kstrndup(token + 14, PATH_MAX, GFP_KERNEL);
++				kstrndup(token + 14, PATH_MAX - 1, GFP_KERNEL);
+ 			if (!opts->release_agent)
+ 				return -ENOMEM;
+ 		} else if (!strncmp(token, "name=", 5)) {
+@@ -1123,7 +1123,7 @@ static int parse_cgroupfs_options(char *data, struct cgroup_sb_opts *opts)
+ 			if (opts->name)
+ 				return -EINVAL;
+ 			opts->name = kstrndup(name,
+-					      MAX_CGROUP_ROOT_NAMELEN,
++					      MAX_CGROUP_ROOT_NAMELEN - 1,
+ 					      GFP_KERNEL);
+ 			if (!opts->name)
+ 				return -ENOMEM;
