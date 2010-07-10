@@ -1,40 +1,50 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 20 Jul 2010 15:14:52 +0000
-Subject: Re: [PATCH 05/16] trivial: use ARRAY_SIZE
-Message-Id: <alpine.LNX.2.00.1007201714380.4741@pobox.suse.cz>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 10 Jul 2010 11:00:35 +0000
+Subject: [PATCH 1/3] jazzsonic: free irq if sonic_open() fails
+Message-Id: <1278759635-7654-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277726101-24567-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277726101-24567-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>, Zhenyu Wang <zhenyuw@linux.intel.com>, Zhao Yakui <yakui.zhao@intel.com>, Ma Ling <ling.ma@intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Julia Lawall <julia@diku.dk>, Finn Thain <fthain@telegraphics.com.au>, netdev@vger.kernel.org
 
-On Mon, 28 Jun 2010, Kulikov Vasiliy wrote:
+jazzsonic_open() doesn't check sonic_open() return code. If it is error
+we must free requested IRQ.
 
-> Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/gpu/drm/i915/intel_tv.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_tv.c b/drivers/gpu/drm/i915/intel_tv.c
-> index 6d553c2..d2d4e40 100644
-> --- a/drivers/gpu/drm/i915/intel_tv.c
-> +++ b/drivers/gpu/drm/i915/intel_tv.c
-> @@ -1424,7 +1424,7 @@ intel_tv_get_modes(struct drm_connector *connector)
->  	int j, count = 0;
->  	u64 tmp;
->  
-> -	for (j = 0; j < sizeof(input_res_table) / sizeof(input_res_table[0]);
-> +	for (j = 0; j < ARRAY_SIZE(input_res_table);
->  	     j++) {
->  		struct input_res *input = &input_res_table[j];
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/jazzsonic.c |   17 +++++++++++++----
+ 1 files changed, 13 insertions(+), 4 deletions(-)
 
-Folded into the sdvo change you did and applied.
-
+diff --git a/drivers/net/jazzsonic.c b/drivers/net/jazzsonic.c
+index 3e6aaf9..949c1f9 100644
+--- a/drivers/net/jazzsonic.c
++++ b/drivers/net/jazzsonic.c
+@@ -82,11 +82,20 @@ static unsigned short known_revisions[]  
+ static int jazzsonic_open(struct net_device* dev)
+ {
+-	if (request_irq(dev->irq, sonic_interrupt, IRQF_DISABLED, "sonic", dev)) {
+-		printk(KERN_ERR "%s: unable to get IRQ %d.\n", dev->name, dev->irq);
+-		return -EAGAIN;
++	int retval;
++
++	retval = request_irq(dev->irq, sonic_interrupt, IRQF_DISABLED,
++				"sonic", dev);
++	if (retval) {
++		printk(KERN_ERR "%s: unable to get IRQ %d.\n",
++				dev->name, dev->irq);
++		return retval;
+ 	}
+-	return sonic_open(dev);
++
++	retval = sonic_open(dev);
++	if (retval)
++		free_irq(dev->irq, dev);
++	return retval;
+ }
+ 
+ static int jazzsonic_close(struct net_device* dev)
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+1.7.0.4
+
