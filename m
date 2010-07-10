@@ -1,74 +1,62 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 17 Jul 2010 15:19:07 +0000
-Subject: [PATCH 1/5] arm: mach-davinci: check irq2ctlr() result
-Message-Id: <1279379947-15152-1-git-send-email-segooon@gmail.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 10 Jul 2010 03:56:52 +0000
+Subject: [PATCH 3/3] fix staging/spectra: don't use locked_ioctl
+Message-Id: <1278734212.1725.48.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-If irq2ctlr() fails return IRQ_NONE.
-Also as it can fail make 'ctlr' signed.
+Since BKL was removed from block ioctl handling code, locked_ioctl doesn't 
+exist anymore. 
 
+Using ioctl instead and doing the locking manually.
 
-The semantic patch that finds this problem (many false-positive results):
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@ r1 @
-identifier f;
-@@
-int f(...) { ... }
-
-@@
-identifier r1.f;
-type T;
-unsigned T x;
-@@
-
-*x = f(...)
- ...
-*x > 0
-
-
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- arch/arm/mach-davinci/dma.c |    8 ++++++--
- 1 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/staging/spectra/ffsport.c |   15 ++++++++++++++-
+ 1 files changed, 14 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/dma.c b/arch/arm/mach-davinci/dma.c
-index d33827a..d1127e1 100644
---- a/arch/arm/mach-davinci/dma.c
-+++ b/arch/arm/mach-davinci/dma.c
-@@ -344,10 +344,12 @@ static int irq2ctlr(int irq)
- static irqreturn_t dma_irq_handler(int irq, void *data)
- {
- 	int i;
--	unsigned ctlr;
-+	int ctlr;
- 	unsigned int cnt = 0;
+diff --git a/drivers/staging/spectra/ffsport.c b/drivers/staging/spectra/ffsport.c
+index 00a0ac0..6f73091 100644
+--- a/drivers/staging/spectra/ffsport.c
++++ b/drivers/staging/spectra/ffsport.c
+@@ -27,6 +27,7 @@
+ #include <linux/kthread.h>
+ #include <linux/log2.h>
+ #include <linux/init.h>
++#include <linux/smp_lock.h>
  
- 	ctlr = irq2ctlr(irq);
-+	if (ctlr < 0)
-+		return IRQ_NONE;
+ /**** Helper functions used for Div, Remainder operation on u64 ****/
  
- 	dev_dbg(data, "dma_irq_handler\n");
+@@ -589,11 +590,23 @@ int GLOB_SBD_ioctl(struct block_device *bdev, fmode_t mode,
+ 	return -ENOTTY;
+ }
  
-@@ -398,10 +400,12 @@ static irqreturn_t dma_irq_handler(int irq, void *data)
- static irqreturn_t dma_ccerr_handler(int irq, void *data)
- {
- 	int i;
--	unsigned ctlr;
-+	int ctlr;
- 	unsigned int cnt = 0;
- 
- 	ctlr = irq2ctlr(irq);
-+	if (ctlr < 0)
-+		return IRQ_NONE;
- 
- 	dev_dbg(data, "dma_ccerr_handler\n");
++int GLOB_SBD_unlocked_ioctl(struct block_device *bdev, fmode_t mode,
++		unsigned int cmd, unsigned long arg)
++{
++	int ret;
++
++	lock_kernel();
++	ret = GLOB_SBD_ioctl(bdev, mode, cmd, arg);
++	unlock_kernel();
++	
++	return ret;
++}
++
+ static struct block_device_operations GLOB_SBD_ops = {
+ 	.owner = THIS_MODULE,
+ 	.open = GLOB_SBD_open,
+ 	.release = GLOB_SBD_release,
+-	.locked_ioctl = GLOB_SBD_ioctl,
++	.ioctl = GLOB_SBD_unlocked_ioctl,
+ 	.getgeo = GLOB_SBD_getgeo,
+ };
  
 -- 
 1.7.0.4
+
+
 
