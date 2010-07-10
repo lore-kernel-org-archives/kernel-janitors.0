@@ -1,29 +1,81 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 23 Jul 2010 20:06:04 +0000
-Subject: Re: [PATCH] net: s2io: fix buffer overflow
-Message-Id: <20100723.130604.15256955.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 10 Jul 2010 11:39:06 +0000
+Subject: [PATCH 2/3 v2] macsonic: free irqs if sonic_open() fails
+Message-Id: <20100710113906.GB6967@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279902976-27146-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1279902976-27146-1-git-send-email-segooon@gmail.com>
+References: <1278759661-7731-1-git-send-email-segooon@gmail.com>
+ <20100710112229.GX19184@bicker>
+ <20100710113057.GA6967@albatros>
+In-Reply-To: <20100710113057.GA6967@albatros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, ramkrishna.vepa@exar.com, sivakumar.subramani@exar.com, sreenivasa.honnur@exar.com, jon.mason@exar.com, joe@perches.com, jpirko@redhat.com, netdev@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Finn Thain <fthain@telegraphics.com.au>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Tejun Heo <tj@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 23 Jul 2010 20:36:15 +0400
+macsonic_open() doesn't check sonic_open() return code. If it is error
+we must free requested IRQs.
 
-> vpd_data[] is allocated as kmalloc(256, GFP_KERNEL), so if cnt = 255
-> then (cnt + 3) overflows 256. memset() is executed without checking.
-> vpd_data[cnt+2] must be less than 256-cnt-2 as the latter is number of
-> vpd_data[] elements to copy.
-> 
-> Do not fill with zero the beginning of nic->serial_num as it will
-> be filled with vpd_data[].
-> 
-> String in product_name[] should be terminated by '\0'.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ drivers/net/macsonic.c |   37 ++++++++++++++++++++++++++++---------
+ 1 files changed, 28 insertions(+), 9 deletions(-)
 
-Applied.
+diff --git a/drivers/net/macsonic.c b/drivers/net/macsonic.c
+index adb54fe..c93679e 100644
+--- a/drivers/net/macsonic.c
++++ b/drivers/net/macsonic.c
+@@ -140,21 +140,40 @@ static irqreturn_t macsonic_interrupt(int irq, void *dev_id)
+ 
+ static int macsonic_open(struct net_device* dev)
+ {
+-	if (request_irq(dev->irq, sonic_interrupt, IRQ_FLG_FAST, "sonic", dev)) {
+-		printk(KERN_ERR "%s: unable to get IRQ %d.\n", dev->name, dev->irq);
+-		return -EAGAIN;
++	int retval;
++
++	retval = request_irq(dev->irq, sonic_interrupt, IRQ_FLG_FAST,
++				"sonic", dev);
++	if (retval) {
++		printk(KERN_ERR "%s: unable to get IRQ %d.\n",
++				dev->name, dev->irq);
++		goto err;
+ 	}
+ 	/* Under the A/UX interrupt scheme, the onboard SONIC interrupt comes
+ 	 * in at priority level 3. However, we sometimes get the level 2 inter-
+ 	 * rupt as well, which must prevent re-entrance of the sonic handler.
+ 	 */
+-	if (dev->irq = IRQ_AUTO_3)
+-		if (request_irq(IRQ_NUBUS_9, macsonic_interrupt, IRQ_FLG_FAST, "sonic", dev)) {
+-			printk(KERN_ERR "%s: unable to get IRQ %d.\n", dev->name, IRQ_NUBUS_9);
+-			free_irq(dev->irq, dev);
+-			return -EAGAIN;
++	if (dev->irq = IRQ_AUTO_3) {
++		retval = request_irq(IRQ_NUBUS_9, macsonic_interrupt,
++					IRQ_FLG_FAST, "sonic", dev);
++		if (retval) {
++			printk(KERN_ERR "%s: unable to get IRQ %d.\n",
++					dev->name, IRQ_NUBUS_9);
++			goto err_irq;
+ 		}
+-	return sonic_open(dev);
++	}
++	retval = sonic_open(dev);
++	if (retval)
++		goto err_irq_nubus;
++	return 0;
++
++err_irq_nubus:
++	if (dev->irq = IRQ_AUTO_3)
++		free_irq(IRQ_NUBUS_9, dev);
++err_irq:
++	free_irq(dev->irq, dev);
++err:
++	return retval;
+ }
+ 
+ static int macsonic_close(struct net_device* dev)
+-- 
+1.7.0.4
+
