@@ -1,31 +1,29 @@
-From: Daniel Walker <dwalker@codeaurora.org>
-Date: Wed, 14 Jul 2010 22:29:37 +0000
-Subject: Re: [PATCH 10/11] staging: msm: formatting of pointers in printk()
-Message-Id: <1279146577.22623.7.camel@c-dwalke-linux.qualcomm.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 10 Jul 2010 08:53:38 +0000
+Subject: [patch] prism54: call BUG_ON() earlier
+Message-Id: <20100710085338.GQ19184@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279130759-17608-1-git-send-email-segooon@gmail.com>
-	 <201007141528.43290.davidb@codeaurora.org>
-In-Reply-To: <201007141528.43290.davidb@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Brown <davidb@codeaurora.org>
-Cc: Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Stepan Moskovchenko <stepanm@codeaurora.org>, Abhijeet Dharmapurikar <adharmap@codeaurora.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, Jiri Kosina <jkosina@suse.cz>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2010-07-14 at 15:28 -0700, David Brown wrote:
-> On Wednesday 14 July 2010 11:05:58 Kulikov Vasiliy wrote:
-> 
-> > Use %p instead of %08x in printk().
-> > 
-> > Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> 
-> Acked-by: David Brown <davidb@codeaurora.org>
+This test is off by one because strlen() doesn't include the NULL
+terminator.
 
-yeah, it looks fine to me too.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Daniel
-
--- 
-Sent by an consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
-
+diff --git a/drivers/net/wireless/prism54/isl_ioctl.c b/drivers/net/wireless/prism54/isl_ioctl.c
+index 8d1190c..1051268 100644
+--- a/drivers/net/wireless/prism54/isl_ioctl.c
++++ b/drivers/net/wireless/prism54/isl_ioctl.c
+@@ -2067,7 +2067,7 @@ send_simple_event(islpci_private *priv, const char *str)
+ 	memptr = kmalloc(IW_CUSTOM_MAX, GFP_KERNEL);
+ 	if (!memptr)
+ 		return;
+-	BUG_ON(n > IW_CUSTOM_MAX);
++	BUG_ON(n >= IW_CUSTOM_MAX);
+ 	wrqu.data.pointer = memptr;
+ 	wrqu.data.length = n;
+ 	strcpy(memptr, str);
