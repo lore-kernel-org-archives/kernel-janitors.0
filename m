@@ -1,45 +1,37 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 30 Jul 2010 11:09:02 +0000
-Subject: [PATCH 6/9] staging: rtl8192su: check whether requests succeeded
-Message-Id: <1280488143-20899-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 10 Jul 2010 22:10:42 +0000
+Subject: [patch] hostap: fixup strlen() math
+Message-Id: <20100710221042.GA14911@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Jouni Malinen <j@w1.fi>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Martin Decky <martin@decky.cz>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-rtl8192_usb_probe() does not check alloc_ieee80211() and
-register_netdev() return values for errors.
+In hostap_add_interface() we do:
+	sprintf(dev->name, "%s%s", prefix, name);
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/rtl8192su/r8192U_core.c |    5 ++++-
- 1 files changed, 4 insertions(+), 1 deletions(-)
+dev->name has IFNAMSIZ (16) characters.
+prefix is local->dev->name.
+name is "wds%d"
 
-diff --git a/drivers/staging/rtl8192su/r8192U_core.c b/drivers/staging/rtl8192su/r8192U_core.c
-index b69e198..8acfaaf 100644
---- a/drivers/staging/rtl8192su/r8192U_core.c
-+++ b/drivers/staging/rtl8192su/r8192U_core.c
-@@ -7385,6 +7385,8 @@ static int __devinit rtl8192_usb_probe(struct usb_interface *intf,
-         RT_TRACE(COMP_INIT, "Oops: i'm coming\n");
- 
- 	dev = alloc_ieee80211(sizeof(struct r8192_priv));
-+	if (dev = NULL)
-+		return -ENOMEM;
- 
- 	usb_set_intfdata(intf, dev);
- 	SET_NETDEV_DEV(dev, &intf->dev);
-@@ -7422,7 +7424,8 @@ static int __devinit rtl8192_usb_probe(struct usb_interface *intf,
- 	netif_carrier_off(dev);
- 	netif_stop_queue(dev);
- 
--	register_netdev(dev);
-+	if (register_netdev(dev))
-+		goto fail;
- 	RT_TRACE(COMP_INIT, "dev name====> %s\n",dev->name);
- 	rtl8192_proc_init_one(dev);
- 
--- 
-1.7.0.4
+strlen() returns the number of characters in the string not counting the
+NULL so if we have a string with 11 characters we get "12345678901wds%d"
+which is 16 characters and a NULL so we're past the end of the array.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/net/wireless/hostap/hostap_main.c b/drivers/net/wireless/hostap/hostap_main.c
+index eb57d1e..f1bc258 100644
+--- a/drivers/net/wireless/hostap/hostap_main.c
++++ b/drivers/net/wireless/hostap/hostap_main.c
+@@ -186,7 +186,7 @@ int prism2_wds_add(local_info_t *local, u8 *remote_addr,
+ 		return -ENOBUFS;
+ 
+ 	/* verify that there is room for wds# postfix in the interface name */
+-	if (strlen(local->dev->name) > IFNAMSIZ - 5) {
++	if (strlen(local->dev->name) >= IFNAMSIZ - 5) {
+ 		printk(KERN_DEBUG "'%s' too long base device name\n",
+ 		       local->dev->name);
+ 		return -EINVAL;
