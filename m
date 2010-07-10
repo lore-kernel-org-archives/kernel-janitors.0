@@ -1,24 +1,73 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Mon, 05 Jul 2010 12:55:44 +0000
-Subject: Re: [PATCH] ioc3-eth: Use the instance of net_device_stats from
-Message-Id: <20100705125544.GA28849@linux-mips.org>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 10 Jul 2010 04:07:35 +0000
+Subject: [PATCH 3/3] Correct: fix staging/spectra: don't use locked_ioctl
+Message-Id: <1278734855.1725.52.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278332034-17122-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278332034-17122-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Eric Dumazet <eric.dumazet@gmail.com>, Patrick McHardy <kaber@trash.net>, Alexey Dobriyan <adobriyan@gmail.com>, linux-mips@linux-mips.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 05, 2010 at 04:13:51PM +0400, Kulikov Vasiliy wrote:
+Last patch has a style problem. Sending the correct one. Sorry for the noise
 
-> Since net_device has an instance of net_device_stats,
-> we can remove the instance of this from the adapter structure.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Since BKL was removed from block ioctl handling code, locked_ioctl doesn't 
+exist anymore. 
 
-NACK, your patch doesn't compile.  I'll post a fixed patch in a separate
-mail.
+Using ioctl instead and doing the locking manually.
 
-  Ralf
+From b2bfc3da2c83066ad773df81787fc9416f5382c2 Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 10 Jul 2010 00:00:16 -0400
+Subject: [PATCH 3/3] fix staging/spectra: don't use locked_ioctl
+
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/spectra/ffsport.c |   15 ++++++++++++++-
+ 1 files changed, 14 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/spectra/ffsport.c b/drivers/staging/spectra/ffsport.c
+index 00a0ac0..7b34635 100644
+--- a/drivers/staging/spectra/ffsport.c
++++ b/drivers/staging/spectra/ffsport.c
+@@ -27,6 +27,7 @@
+ #include <linux/kthread.h>
+ #include <linux/log2.h>
+ #include <linux/init.h>
++#include <linux/smp_lock.h>
+ 
+ /**** Helper functions used for Div, Remainder operation on u64 ****/
+ 
+@@ -589,11 +590,23 @@ int GLOB_SBD_ioctl(struct block_device *bdev, fmode_t mode,
+ 	return -ENOTTY;
+ }
+ 
++int GLOB_SBD_unlocked_ioctl(struct block_device *bdev, fmode_t mode,
++		unsigned int cmd, unsigned long arg)
++{
++	int ret;
++
++	lock_kernel();
++	ret = GLOB_SBD_ioctl(bdev, mode, cmd, arg);
++	unlock_kernel();
++
++	return ret;
++}
++
+ static struct block_device_operations GLOB_SBD_ops = {
+ 	.owner = THIS_MODULE,
+ 	.open = GLOB_SBD_open,
+ 	.release = GLOB_SBD_release,
+-	.locked_ioctl = GLOB_SBD_ioctl,
++	.ioctl = GLOB_SBD_unlocked_ioctl,
+ 	.getgeo = GLOB_SBD_getgeo,
+ };
+ 
+-- 
+1.7.0.4
+
+
+
+
+
+
