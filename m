@@ -1,22 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 06 Jul 2010 02:06:49 +0000
-Subject: Re: [PATCH] ethoc: Use the instance of net_device_stats from
-Message-Id: <20100705.190649.232765900.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 10 Jul 2010 14:33:36 +0000
+Subject: [patch] ocfs2: tighten up strlen() checking
+Message-Id: <20100710143336.GB19184@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278332012-16456-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278332012-16456-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, thomas@wytron.com.tw, jonas@southpole.se, eric.dumazet@gmail.com, julia@diku.dk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon,  5 Jul 2010 16:13:31 +0400
+This function is only called from one place and it's like this:
+	dlm_register_domain(conn->cc_name, dlm_key, &fs_version);
 
-> Since net_device has an instance of net_device_stats,
-> we can remove the instance of this from the adapter structure.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+The "conn->cc_name" is 64 characters long.  If strlen(conn->cc_name)
+were equal to O2NM_MAX_NAME_LEN (64) that would be a bug because
+strlen() doesn't count the NULL character.
 
-Applied.
+In fact, if you look how O2NM_MAX_NAME_LEN is used, it mostly describes
+64 character buffers.  The only exception is nd_name from struct
+o2nm_node.
+
+Anyway I looked into it and in this case the domain string comes from
+osb->uuid_str in ocfs2_setup_osb_uuid().  That's 32 characters and NULL
+which easily fits into O2NM_MAX_NAME_LEN.  This patch doesn't change how
+the code works, but I think it makes the code a little cleaner.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Or we could get rid of check entirely.
+
+diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+index 6b5a492..084b051 100644
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -1671,7 +1671,7 @@ struct dlm_ctxt * dlm_register_domain(const char *domain,
+ 	struct dlm_ctxt *dlm = NULL;
+ 	struct dlm_ctxt *new_ctxt = NULL;
+ 
+-	if (strlen(domain) > O2NM_MAX_NAME_LEN) {
++	if (strlen(domain) >= O2NM_MAX_NAME_LEN) {
+ 		ret = -ENAMETOOLONG;
+ 		mlog(ML_ERROR, "domain name length too long\n");
+ 		goto leave;
