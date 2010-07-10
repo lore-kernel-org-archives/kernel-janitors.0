@@ -1,25 +1,31 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 20 Jul 2010 15:02:23 +0000
-Subject: RE: [PATCH 01/16] trivial: use ARRAY_SIZE
-Message-Id: <alpine.LNX.2.00.1007201702020.4741@pobox.suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 10 Jul 2010 10:06:44 +0000
+Subject: [patch] trace: strlen() return doesn't account for the NULL
+Message-Id: <20100710100644.GV19184@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277726085-24434-1-git-send-email-segooon@gmail.com> <0F5B06BAB751E047AB5C87D1F77A77887D03473B46@GVW0547EXC.americas.hpqcorp.net>
-In-Reply-To: <0F5B06BAB751E047AB5C87D1F77A77887D03473B46@GVW0547EXC.americas.hpqcorp.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Miller, Mike (OS Dev)" <Mike.Miller@hp.com>
-Cc: Kulikov Vasiliy <segooon@gmail.com>, Kernel Janitors <kernel-janitors@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, "Stephen M. Cameron" <scameron@beardog.cce.hp.com>, Andrew Morton <akpm@linux-foundation.org>, "Patterson, Andrew D (LeftHand Networks)" <andrew.patterson@hp.com>, ISS StorageDev <iss_storagedev@hp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, Li Zefan <lizf@cn.fujitsu.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 28 Jun 2010, Miller, Mike (OS Dev) wrote:
+We need to add one to the strlen() return because of the NULL
+character.  The type->name here generally comes from the kernel and I
+don't think any of them come close to being MAX_TRACER_SIZE (100)
+characters long so this is basically a cleanup.
 
-> > Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
-> > 
-> > Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> Acked-by: Mike Miller <mike.miller@hp.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Not present in linux-next as of today. Applied, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 086d363..5f13c35 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -729,7 +729,7 @@ __acquires(kernel_lock)
+ 		return -1;
+ 	}
+ 
+-	if (strlen(type->name) > MAX_TRACER_SIZE) {
++	if (strlen(type->name) >= MAX_TRACER_SIZE) {
+ 		pr_info("Tracer has a name longer than %d\n", MAX_TRACER_SIZE);
+ 		return -1;
+ 	}
