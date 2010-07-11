@@ -1,25 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 02:06:53 +0000
-Subject: Re: [PATCH 19/25] isdn/hardware/mISDN: Convert pci_table entries
-Message-Id: <20100715.190653.260081840.davem@davemloft.net>
+From: "crosslonelyover" <crosslonelyover@gmail.com>
+Date: Sun, 11 Jul 2010 02:16:04 +0000
+Subject: [PATCH & RESEND] avoid NULL deference in ext2_xattr_get
+Message-Id: <201007111016021569718@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152102.38008.PeterHuewe@gmx.de>
-In-Reply-To: <201007152102.38008.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: PeterHuewe@gmx.de
-Cc: kernel-janitors@vger.kernel.org, isdn@linux-pingi.de, u.kleine-koenig@pengutronix.de, tj@kernel.org, jkosina@suse.cz, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors <kernel-janitors@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>linux-kernel <linux-kernel@vger.kernel>
 
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 21:02:36 +0200
+Hi Dan Carpenter,
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+     Thanks for your instructions. I regenerated the patch.
+Please check it.
 
-Applied.
+From 3149865e0d118b939c27659a4e4c884eaa6b3a4c Mon Sep 17 00:00:00 2001
+From: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Date: Sat, 10 Jul 2010 22:07:37 -0400
+Subject: [PATCH] avoid NULL deference in ext2_xattr_get
+
+
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
+---
+ fs/ext2/xattr.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+index 7c39157..81ec1c6 100644
+--- a/fs/ext2/xattr.c
++++ b/fs/ext2/xattr.c
+@@ -156,11 +156,12 @@ ext2_xattr_get(struct inode *inode, int name_index, const char *name,
+ 	char *end;
+ 	int error;
+ 
++	if (name = NULL)
++		return -EINVAL;
++
+ 	ea_idebug(inode, "name=%d.%s, buffer=%p, buffer_size=%ld",
+ 		  name_index, name, buffer, (long)buffer_size);
+ 
+-	if (name = NULL)
+-		return -EINVAL;
+ 	down_read(&EXT2_I(inode)->xattr_sem);
+ 	error = -ENODATA;
+ 	if (!EXT2_I(inode)->i_file_acl)
+-- 
+1.7.1.1
+
+
