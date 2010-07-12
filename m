@@ -1,23 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 27 Jul 2010 04:05:22 +0000
-Subject: Re: [PATCH] usbnet: use jiffies in schedule_timeout(), not msecs
-Message-Id: <20100726.210522.191412048.davem@davemloft.net>
+From: "crosslonelyover" <crosslonelyover@gmail.com>
+Date: Mon, 12 Jul 2010 15:09:09 +0000
+Subject: [PATCH] remove unnecesary while loop in ext2_xattr_get
+Message-Id: <201007122309063128435@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280132742-8126-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280132742-8126-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, dbrownell@users.sourceforge.net, gregkh@suse.de, ben@decadent.org.uk, joe@perches.com, shemminger@vyatta.com, jussi.kivilinna@mbnet.fi, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-ext4 <linux-ext4@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon, 26 Jul 2010 12:25:42 +0400
+Hi,
+     In ext2_xattr_get, we'll check the xattr entry one 
+by one in the following loop:
+         entry = FIRST_ENTRY(bh);
+         while (!IS_LAST_ENTRY(entry)) {
+                 struct ext2_xattr_entry *next                          EXT2_XATTR_NEXT(entry);
+                 if ((char *)next >= end)
+                         goto bad_block;
+                 if (name_index = entry->e_name_index &&
+                     name_len = entry->e_name_len &&
+                     memcmp(name, entry->e_name, name_len) = 0)
+                         goto found;
+                 entry = next;
+         }
+We can only execute the code immediately following 
+the loop when !IS_LAST_ENTRY(entry) is true. So the
+followed while loop seems unnecessary. I think we can
+remove it.
+      Following is my patch. It's against 2.6.35-rc4.
+Please check it.
 
-> usbnet_terminate_urbs() uses schedule_timeout() with argument 3 msecs.
-> schedule_timeout() uses jiffies as argument, so convert msecs to jiffies
-> with msecs_to_jiffies().
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-Applied, thanks.
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
+---
+ fs/ext2/xattr.c |    9 +--------
+ 1 files changed, 1 insertions(+), 8 deletions(-)
+
+diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+index 0b94d61..a6bccdb 100644
+--- a/fs/ext2/xattr.c
++++ b/fs/ext2/xattr.c
+@@ -201,14 +201,7 @@ bad_block:	ext2_error(inode->i_sb, "ext2_xattr_get",
+ 			goto found;
+ 		entry = next;
+ 	}
+-	/* Check the remaining name entries */
+-	while (!IS_LAST_ENTRY(entry)) {
+-		struct ext2_xattr_entry *next -			EXT2_XATTR_NEXT(entry);
+-		if ((char *)next >= end)
+-			goto bad_block;
+-		entry = next;
+-	}
++
+ 	if (ext2_xattr_cache_insert(bh))
+ 		ea_idebug(inode, "cache insert failed");
+ 	error = -ENODATA;
+-- 
+1.7.1.1
+
+
