@@ -1,44 +1,71 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 03:28:38 +0000
-Subject: Re: [PATCH 5/8] drivers: ixgbevf: fix unsigned underflow
-Message-Id: <20100715.202838.258102741.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 12 Jul 2010 14:52:33 +0000
+Subject: [PATCH v2] depca: fix leaks in depca_module_init()
+Message-Id: <20100712145233.GA30504@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279219557-12525-1-git-send-email-segooon@gmail.com>
-	<43F901BD926A4E43B106BF17856F0755EA96143E@orsmsx508.amr.corp.intel.com>
-In-Reply-To: <43F901BD926A4E43B106BF17856F0755EA96143E@orsmsx508.amr.corp.intel.com>
+References: <1278678986-7725-1-git-send-email-segooon@gmail.com>
+ <20100711.181300.58435799.davem@davemloft.net>
+In-Reply-To: <20100711.181300.58435799.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregory.v.rose@intel.com
-Cc: segooon@gmail.com, kernel-janitors@vger.kernel.org, jeffrey.t.kirsher@intel.com, eric.dumazet@gmail.com, joe@perches.com, netdev@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, jpirko@redhat.com, joe@perches.com, shemminger@vyatta.com, eric.dumazet@gmail.com, netdev@vger.kernel.org
 
-From: "Rose, Gregory V" <gregory.v.rose@intel.com>
-Date: Thu, 15 Jul 2010 11:52:54 -0700
+Since some of xxx_register_driver() can return error we must unregister
+already registered drivers.
 
->>-----Original Message-----
->>From: Kulikov Vasiliy [mailto:segooon@gmail.com]
->>Sent: Thursday, July 15, 2010 11:46 AM
->>To: kernel-janitors@vger.kernel.org
->>Cc: David S. Miller; Kirsher, Jeffrey T; Rose, Gregory V; Eric Dumazet;
->>Joe Perches; netdev@vger.kernel.org
->>Subject: [PATCH 5/8] drivers: ixgbevf: fix unsigned underflow
->>
->>'count' is unsigned. It is initialized to zero, then it can be increased
->>multiple times, and finally it is used in such a way:
->>
->>   >>>> count--;
->>   |
->>   |    /* clear timestamp and dma mappings for remaining portion of
->>packet */
->>   |    while (count >= 0) {
->>   |            count--;
->>   |            ...
->>   ^
->>If count is zero here (so, it was never increased), we would have a very
->>long loop :)
->>
->>Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-...
-> Acked By: Greg Rose <gregory.v.rose@intel.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/depca.c |   29 +++++++++++++++++++++++------
+ 1 files changed, 23 insertions(+), 6 deletions(-)
 
-Applied.
+diff --git a/drivers/net/depca.c b/drivers/net/depca.c
+index bf66e9b..44c0694 100644
+--- a/drivers/net/depca.c
++++ b/drivers/net/depca.c
+@@ -2061,18 +2061,35 @@ static int depca_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+ 
+ static int __init depca_module_init (void)
+ {
+-        int err = 0;
++	int err = 0;
+ 
+ #ifdef CONFIG_MCA
+-        err = mca_register_driver (&depca_mca_driver);
++	err = mca_register_driver(&depca_mca_driver);
++	if (err)
++		goto err;
+ #endif
+ #ifdef CONFIG_EISA
+-        err |= eisa_driver_register (&depca_eisa_driver);
++	err = eisa_driver_register(&depca_eisa_driver);
++	if (err)
++		goto err_mca;
+ #endif
+-	err |= platform_driver_register (&depca_isa_driver);
+-	depca_platform_probe ();
++	err = platform_driver_register(&depca_isa_driver);
++	if (err)
++		goto err_eisa;
+ 
+-        return err;
++	depca_platform_probe();
++	return 0;
++
++err_eisa:
++#ifdef CONFIG_EISA
++	eisa_driver_unregister(&depca_eisa_driver);
++err_mca:
++#endif
++#ifdef CONFIG_MCA
++	mca_unregister_driver(&depca_mca_driver);
++err:
++#endif
++	return err;
+ }
+ 
+ static void __exit depca_module_exit (void)
+-- 
+1.7.0.4
+
