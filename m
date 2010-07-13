@@ -1,23 +1,39 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Mon, 12 Jul 2010 14:57:07 +0000
-Subject: Re: [PATCH] staging: mrst-touchscreen: fix leaks
-Message-Id: <20100712160532.0147d9fe@lxorguk.ukuu.org.uk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 13 Jul 2010 19:49:23 +0000
+Subject: [PATCH v2] eth16i: fix memory leak
+Message-Id: <1279050563-15759-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278946084-30228-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278946084-30228-1-git-send-email-segooon@gmail.com>
+References: <20100713114347.GK5658@bicker>
+In-Reply-To: <20100713114347.GK5658@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Dan Carpenter <error27@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Mika Kuoppala <miku@iki.fi>, "David S. Miller" <davem@davemloft.net>, Stephen Hemminger <shemminger@vyatta.com>, Eric Dumazet <eric.dumazet@gmail.com>, Tejun Heo <tj@kernel.org>, Jiri Pirko <jpirko@redhat.com>, netdev@vger.kernel.org
 
-On Mon, 12 Jul 2010 18:48:04 +0400
-Kulikov Vasiliy <segooon@gmail.com> wrote:
+Free allocated netdev if no probe is expected.
 
-> mrstouch_probe() must unregister input device, free requested IRQ and
-> input device in error path.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/eth16i.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-It does indeed need to do some of this but your patch is versus an older
-version of the driver and Dmitry already fixed this - plus a chunk of the
-stuff vanished in turning it to a threaded IRQ
+diff --git a/drivers/net/eth16i.c b/drivers/net/eth16i.c
+index 874973f..10e39f2 100644
+--- a/drivers/net/eth16i.c
++++ b/drivers/net/eth16i.c
+@@ -1442,8 +1442,10 @@ int __init init_module(void)
+ 		dev->if_port = eth16i_parse_mediatype(mediatype[this_dev]);
+ 
+ 		if(io[this_dev] = 0) {
+-			if(this_dev != 0) /* Only autoprobe 1st one */
++			if (this_dev != 0) { /* Only autoprobe 1st one */
++				free_netdev(dev);
+ 				break;
++			}
+ 
+ 			printk(KERN_NOTICE "eth16i.c: Presently autoprobing (not recommended) for a single card.\n");
+ 		}
+-- 
+1.7.0.4
 
