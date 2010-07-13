@@ -1,34 +1,40 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 03 Jul 2010 16:04:11 +0000
-Subject: [PATCH 10/19] drivers/ide: use for_each_pci_dev()
-Message-Id: <1278173052-11745-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 13 Jul 2010 11:34:59 +0000
+Subject: [patch] nfs: include space for the NULL in root path
+Message-Id: <20100713113459.GI5658@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use for_each_pci_dev() to simplify the code.
+In root_nfs_name() it does the following:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/ide/ide-scan-pci.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+        if (strlen(buf) + strlen(cp) > NFS_MAXPATHLEN) {
+                printk(KERN_ERR "Root-NFS: Pathname for remote directory too long.\n");
+                return -1;
+        }
+        sprintf(nfs_export_path, buf, cp);
 
-diff --git a/drivers/ide/ide-scan-pci.c b/drivers/ide/ide-scan-pci.c
-index 0e79eff..c3da53e 100644
---- a/drivers/ide/ide-scan-pci.c
-+++ b/drivers/ide/ide-scan-pci.c
-@@ -88,7 +88,7 @@ static int __init ide_scan_pcibus(void)
- 	struct list_head *l, *n;
+In the original code if (strlen(buf) + strlen(cp) = NFS_MAXPATHLEN)
+then the sprintf() would lead to an overflow.  Generally the rest of the
+code assumes that the path can have NFS_MAXPATHLEN (1024) characters and
+a NULL terminator so the fix is to add space to the nfs_export_path[]
+buffer.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/fs/nfs/nfsroot.c b/fs/nfs/nfsroot.c
+index 6bd19d8..5c4f7cf 100644
+--- a/fs/nfs/nfsroot.c
++++ b/fs/nfs/nfsroot.c
+@@ -105,7 +105,7 @@ static char nfs_root_name[256] __initdata = "";
+ static __be32 servaddr __initdata = 0;
  
- 	pre_init = 0;
--	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)))
-+	for_each_pci_dev(dev)
- 		ide_scan_pcidev(dev);
+ /* Name of directory to mount */
+-static char nfs_export_path[NFS_MAXPATHLEN] __initdata = { 0, };
++static char nfs_export_path[NFS_MAXPATHLEN + 1] __initdata = { 0, };
  
- 	/*
--- 
-1.7.0.4
-
+ /* NFS-related data */
+ static struct nfs_mount_data nfs_data __initdata = { 0, };/* NFS mount info */
