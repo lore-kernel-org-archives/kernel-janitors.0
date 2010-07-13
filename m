@@ -1,25 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 02:07:16 +0000
-Subject: Re: [PATCH 22/25] mISDN: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100715.190716.102544882.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 13 Jul 2010 11:23:12 +0000
+Subject: [PATCH] wd: fix memory leak
+Message-Id: <1279020192-9484-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152105.39404.PeterHuewe@gmx.de>
-In-Reply-To: <201007152105.39404.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: PeterHuewe@gmx.de
-Cc: kernel-janitors@vger.kernel.org, isdn@linux-pingi.de, akpm@linux-foundation.org, jkosina@suse.cz, roel.kluin@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, netdev@vger.kernel.org
 
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 21:05:38 +0200
+Unmap mapped IO in wd_probe1() if register_netdev() failed.
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/wd.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-Applied.
+diff --git a/drivers/net/wd.c b/drivers/net/wd.c
+index 746a5ee..eb72c67 100644
+--- a/drivers/net/wd.c
++++ b/drivers/net/wd.c
+@@ -358,8 +358,10 @@ static int __init wd_probe1(struct net_device *dev, int ioaddr)
+ #endif
+ 
+ 	err = register_netdev(dev);
+-	if (err)
++	if (err) {
+ 		free_irq(dev->irq, dev);
++		iounmap(ei_status.mem);
++	}
+ 	return err;
+ }
+ 
+-- 
+1.7.0.4
+
