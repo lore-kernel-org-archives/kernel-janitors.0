@@ -1,42 +1,45 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 20 Jul 2010 15:04:28 +0000
-Subject: Re: [PATCH 02/16] trivial: use ARRAY_SIZE
-Message-Id: <alpine.LNX.2.00.1007201704120.4741@pobox.suse.cz>
+From: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Date: Tue, 13 Jul 2010 14:55:21 +0000
+Subject: [PATCH] ext2: return -ENODATA for NULL i_file_acl in ext2_xattr_list
+Message-Id: <4C3C7E59.8040905@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277726089-24467-1-git-send-email-segooon@gmail.com> <4C2A36C6.3020101@microgate.com>
-In-Reply-To: <4C2A36C6.3020101@microgate.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Fulghum <paulkf@microgate.com>
-Cc: Kulikov Vasiliy <segooon@gmail.com>, Kernel Janitors <kernel-janitors@vger.kernel.org>, Stephen Hemminger <shemminger@vyatta.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org
+To: kernel-janitors <kernel-janitors@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Tue, 29 Jun 2010, Paul Fulghum wrote:
+ Hi,
 
-> > Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
-> > 
-> > Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> > ---
-> >  drivers/char/synclink_gt.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/drivers/char/synclink_gt.c b/drivers/char/synclink_gt.c
-> > index 4561ce2..334cf5c 100644
-> > --- a/drivers/char/synclink_gt.c
-> > +++ b/drivers/char/synclink_gt.c
-> > @@ -4845,7 +4845,7 @@ static int register_test(struct slgt_info *info)
-> >  {
-> >  	static unsigned short patterns[] > >  		{0x0000, 0xffff, 0xaaaa, 0x5555, 0x6969, 0x9696};
-> > -	static unsigned int count = sizeof(patterns)/sizeof(patterns[0]);
-> > +	static unsigned int count = ARRAY_SIZE(patterns);
-> >  	unsigned int i;
-> >  	int rc = 0;
-> >  
-> 
-> Acked-by: Paul Fulghum <paulkf@microgate.com>
+In ext2_xattr_list, if (!EXT2_I(inode)->i_file_acl)
+is true, we should return -ENODATA instead of 0.
+Following patch is against 2.6.35-rc5. Please check
+it.
 
-The patch is not in linux-next as of today. Applied, thanks guys.
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
+---
+fs/ext2/xattr.c | 2 +-
+1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+index 7c39157..5ecbbd8 100644
+--- a/fs/ext2/xattr.c
++++ b/fs/ext2/xattr.c
+@@ -263,7 +263,7 @@ ext2_xattr_list(struct dentry *dentry, char *buffer,
+size_t buffer_size)
+buffer, (long)buffer_size);
+
+down_read(&EXT2_I(inode)->xattr_sem);
+- error = 0;
++ error = -ENODATA;
+if (!EXT2_I(inode)->i_file_acl)
+goto cleanup;
+ea_idebug(inode, "reading block %d", EXT2_I(inode)->i_file_acl);
+-- 
+1.7.1.1
+
+
 
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+Thanks and Regards,
+shenghui
+
