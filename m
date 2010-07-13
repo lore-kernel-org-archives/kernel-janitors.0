@@ -1,38 +1,51 @@
-From: Jeff Garzik <jeff@garzik.org>
-Date: Fri, 16 Jul 2010 00:51:19 +0000
-Subject: Re: [PATCH 11/25] block: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <4C3FAD07.6040104@garzik.org>
+From: =?ISO-8859-1?Q?=22Tegawend=E9_F=2E_Bissyand=E9=22?=
+Date: Tue, 13 Jul 2010 10:50:40 +0000
+Subject: Empty critical section issue in Bluetooth Linux driver code
+Message-Id: <4C3C4500.3090302@labri.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152051.18189.PeterHuewe@gmx.de> <20100715185904.GA4023@x200>
-In-Reply-To: <20100715185904.GA4023@x200>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Peter Huewe <PeterHuewe@gmx.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, =?ISO-8859-1?Q?M=E1rton_N=E9meth?= <nm127@freemail.hu>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On 07/15/2010 03:03 PM, Alexey Dobriyan wrote:
-> On Thu, Jul 15, 2010 at 08:51:17PM +0200, Peter Huewe wrote:
->> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
->> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
->> PCI_VDEVICE macro, and thus improves readability.
->
-> Well, it doesn't improve readability, and ## usage prevents grepping and
-> long term plan to switch to numbers instead of PCI_VENDOR_ID_*,
-> but whatever.
->
->> -	{ PCI_VENDOR_ID_PROMISE, 0x8000, PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
->> -	{ PCI_VENDOR_ID_PROMISE, 0x8002, PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
->> +	{ PCI_VDEVICE(PROMISE, 0x8000), },
->> +	{ PCI_VDEVICE(PROMISE, 0x8002), },
+Hi,
 
-Switching to use hex numbers for _device ids_ is encouraged, because 
-history has proven its pointless to create named constants for 
-single-use ids.  However, using named constants for PCI vendor ids makes 
-a lot of sense.
+I have been using Coccinelle to validate some trivial rules of kernel
+API use by device drivers.
+I came accross the definition of an empty critical section in the
+'bfusb_close' function in file drivers/bluetooth/bfusb.c
 
-	Jeff
+static int bfusb_close(struct hci_dev *hdev)
+{
+     ...
+     write_lock_irqsave(&data->lock, flags);
+     write_unlock_irqrestore(&data->lock, flags);
+
+     bfusb_unlink_urbs(data);
+     bfusb_flush(hdev);
+
+     return 0;
+}
+This excerpt is from Linux 2.6.34, but the same code has been prevailing
+long before (I've seen it in 2.6.5)
+So I was wondering if there is some code that is supposed to go between
+write_lock_irqsave and write_unlock_irqsave,
+or if the two statements should simply removed?
+I also supposed that this was just meant to allow to wait for a release of =
+the lock by another thread.
+In this case, wouldn't spin_lock or mutex_lock be more appropriate as write=
+_lock can be confusing even though
+I suppose it has the same effect?? but I am not sure.
+
+best regards,
+
+--=20
+Tegawend=E9 F. Bissyand=E9
+PhD student at LaBRI - France
 
 
-
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
