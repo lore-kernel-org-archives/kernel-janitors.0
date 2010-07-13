@@ -1,21 +1,24 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 12 Jul 2010 17:48:02 +0000
-Subject: Re: [patch] prism54: call BUG_ON() earlier
-Message-Id: <20100712174802.GE5658@bicker>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Tue, 13 Jul 2010 09:57:56 +0000
+Subject: Re: [PATCH 01/25] r852: remove casts from void*
+Message-Id: <1279015076.31639.20.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100710085338.GQ19184@bicker> <AANLkTikJ9Ae2HRIwdcc8oVgAc2zoVHUL7ZY9k2QO2QpS@mail.gmail.com> <20100712173714.GD5658@bicker>
-In-Reply-To: <20100712173714.GD5658@bicker>
+References: <1277806498-30738-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1277806498-30738-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, =?iso-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, Jiri Kosina <jkosina@suse.cz>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Maxim Levitsky <maximlevitsky@gmail.com>, Kernel Janitors <kernel-janitors@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, Tejun Heo <tj@kernel.org>, David Woodhouse <dwmw2@infradead.org>
 
-Of course the main reasons is that it silences a static checkers
-warning.  :P
+On Tue, 2010-06-29 at 14:14 +0400, Kulikov Vasiliy wrote:
+> Remove unnesessary casts from void*.
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-drivers/net/wireless/prism54/isl_ioctl.c +2073 send_simple_event(12)
-	error: strcpy() 'str' too large for 'memptr' (257 vs 256)
+Pushed whole series to l2-mtd-2.6.git / master.
 
-regards,
-dan carpenter
+-- 
+Best Regards,
+Artem Bityutskiy (Артём Битюцкий)
+
