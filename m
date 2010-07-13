@@ -1,45 +1,33 @@
-From: Wang Sheng-Hui <crosslonelyover@gmail.com>
-Date: Tue, 13 Jul 2010 15:03:31 +0000
-Subject: [PATCH]trivial: clear the comment on parameters for ext2_xattr_set
-Message-Id: <4C3C8043.3030700@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 13 Jul 2010 19:24:26 +0000
+Subject: Re: [PATCH]trivial: clear the comment on parameters for
+Message-Id: <20100713192426.GQ5658@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4C3C8043.3030700@gmail.com>
+In-Reply-To: <4C3C8043.3030700@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors <kernel-janitors@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Cc: kernel-janitors <kernel-janitors@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
- Hi,
+On Tue, Jul 13, 2010 at 11:03:31PM +0800, Wang Sheng-Hui wrote:
+> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+> index 5ecbbd8..f56b599 100644
+> --- a/fs/ext2/xattr.c
+> +++ b/fs/ext2/xattr.c
+> @@ -355,7 +355,7 @@ static void ext2_xattr_update_super_block(struct
+> super_block *sb)
+> /*
+> * ext2_xattr_set()
+> *
+> - * Create, replace or remove an extended attribute for this inode. Buffer
+> + * Create, replace or remove an extended attribute for this inode. Value
+> * is NULL to remove an existing extended attribute, and non-NULL to
 
-The comment for ext2_xattr_get is confusing for it has
-no parameter named "buffer". I checked the code and think the
-description is suitable for the parameter "value".
-Following patch is against 2.6.35-rc5. Please check it.
+It is talking about the "value" parameter, but your email client mangled
+this patch so it doesn't apply.
 
-
-Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
----
-fs/ext2/xattr.c | 2 +-
-1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
-index 5ecbbd8..f56b599 100644
---- a/fs/ext2/xattr.c
-+++ b/fs/ext2/xattr.c
-@@ -355,7 +355,7 @@ static void ext2_xattr_update_super_block(struct
-super_block *sb)
-/*
-* ext2_xattr_set()
-*
-- * Create, replace or remove an extended attribute for this inode. Buffer
-+ * Create, replace or remove an extended attribute for this inode. Value
-* is NULL to remove an existing extended attribute, and non-NULL to
-* either replace an existing extended attribute, or create a new extended
-* attribute. The flags XATTR_REPLACE and XATTR_CREATE
--- 
-1.7.1.1
-
-
--- 
-Thanks and Regards,
-shenghui
+regards,
+dan carpenter
 
