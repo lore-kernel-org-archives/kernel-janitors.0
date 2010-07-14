@@ -1,31 +1,38 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Fri, 16 Jul 2010 23:54:52 +0000
-Subject: Re: [PATCH 12/25] char: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
-Message-Id: <201007170154.52461.PeterHuewe@gmx.de>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 14 Jul 2010 18:02:47 +0000
+Subject: [PATCH 05/11] tulip: formatting of pointers in printk()
+Message-Id: <1279130568-10857-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152052.38060.PeterHuewe@gmx.de> <201007152307.35062.PeterHuewe@gmx.de> <20100716042845.GA28607@suse.de>
-In-Reply-To: <20100716042845.GA28607@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@suse.de>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, "Digi International, Inc" <Eng.Linux@digi.com>, Alexey Dobriyan <adobriyan@gmail.com>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Grant Grundler <grundler@parisc-linux.org>, Kyle McMartin <kyle@mcmartin.ca>, "David S. Miller" <davem@davemloft.net>, Joe Perches <joe@perches.com>, Jiri Pirko <jpirko@redhat.com>, Ben Hutchings <ben@decadent.org.uk>, Grant Likely <grant.likely@secretlab.ca>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-Am Freitag 16 Juli 2010 06:28:45 schrieb Greg KH:
-> > Maybe there should be a version of PCI_DEVICE that addresses this issue?
-> > But I have to admit, something like:
-> > { PCI_DEVICE_DD(PCI_VENDOR_ID_DIGI, PCI_DEVICE_XR), brd_xrj },
-> > doesn't look that much better.
-> 
-> You can do:
-> 	{ PCI_DEVICE_TABLE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_XR), brd_xrj },
-> just fine today, so do that if you want to.
+Use %p instead of %08x in printk().
 
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/tulip/tulip_core.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Hi Greg,
+diff --git a/drivers/net/tulip/tulip_core.c b/drivers/net/tulip/tulip_core.c
+index 03e96b9..14e5312 100644
+--- a/drivers/net/tulip/tulip_core.c
++++ b/drivers/net/tulip/tulip_core.c
+@@ -596,10 +596,10 @@ static void tulip_tx_timeout(struct net_device *dev)
+ 					pr_cont(" %02x", buf[j]);
+ 			pr_cont(" j=%d\n", j);
+ 		}
+-		printk(KERN_DEBUG "  Rx ring %08x: ", (int)tp->rx_ring);
++		printk(KERN_DEBUG "  Rx ring %p: ", tp->rx_ring);
+ 		for (i = 0; i < RX_RING_SIZE; i++)
+ 			pr_cont(" %08x", (unsigned int)tp->rx_ring[i].status);
+-		printk(KERN_DEBUG "  Tx ring %08x: ", (int)tp->tx_ring);
++		printk(KERN_DEBUG "  Tx ring %p: ", tp->tx_ring);
+ 		for (i = 0; i < TX_RING_SIZE; i++)
+ 			pr_cont(" %08x", (unsigned int)tp->tx_ring[i].status);
+ 		pr_cont("\n");
+-- 
+1.7.0.4
 
-unfortunately I can't find the definition of this macro - can you perhaps 
-pinpoint me to it? And maybe an example in the kernel?
-
-Thanks,
-Peter
