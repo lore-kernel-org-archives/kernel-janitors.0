@@ -1,23 +1,18 @@
-From: shenghui <crosslonelyover@gmail.com>
-Date: Thu, 22 Jul 2010 01:06:35 +0000
-Subject: Re: [PATCH] fix return value for mb_cache_shrink_fn when nr_to_scan >
-Message-Id: <AANLkTimDCOHLSvfgXganFgHEpn6MCzOMidF2ByVgu2y_@mail.gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 14 Jul 2010 10:01:36 +0000
+Subject: TODO list
+Message-Id: <20100714100136.GA3583@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4C4796CE.6080306@gmail.com>
-In-Reply-To: <4C4796CE.6080306@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Sandeen <sandeen@redhat.com>, agruen@suse.de, hch@infradead.org, linux-ext4 <linux-ext4@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@k
+To: kernel-janitors@vger.kernel.org
 
-Sorry to trouble you all & Thanks for your instructions!
-I noticed that Andreas Gruenbacher has submitted patches
-on mbcache.
-Please ignore mine.
+Hi,
 
+it seems that TODO list at http://kernelnewbies.org/KernelJanitors/Todo
+is rather obsoleted, e.g. some tasks are already done. Is there any
+renewed list?
 
--- 
-
-
-Thanks and Best Regards,
-shenghui
+Or I should mail to this mailing list with request to update concrete
+task with proof that this task is done/etc.?
