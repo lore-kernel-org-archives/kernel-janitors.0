@@ -1,48 +1,47 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 29 Jul 2010 12:02:13 +0000
-Subject: Re: [PATCH 06/10 v2] ALSA: msnd: check request_region() return value
-Message-Id: <s5hocdqsdh6.wl%tiwai@suse.de>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 14 Jul 2010 18:05:58 +0000
+Subject: [PATCH 10/11] staging: msm: formatting of pointers in printk()
+Message-Id: <1279130759-17608-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280400325-9405-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280400325-9405-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Daniel Walker <dwalker@codeaurora.org>, Stepan Moskovchenko <stepanm@codeaurora.org>, Abhijeet Dharmapurikar <adharmap@codeaurora.org>, David Brown <davidb@codeaurora.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-At Thu, 29 Jul 2010 14:45:24 +0400,
-Kulikov Vasiliy wrote:
-> 
-> request_region() may fail, if so return -EBUSY.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Use %p instead of %08x in printk().
 
-Thanks, applied both patches now.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/msm/mdp4_overlay.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/staging/msm/mdp4_overlay.c b/drivers/staging/msm/mdp4_overlay.c
+index 304bb82..de284c2 100644
+--- a/drivers/staging/msm/mdp4_overlay.c
++++ b/drivers/staging/msm/mdp4_overlay.c
+@@ -874,8 +874,8 @@ struct mdp4_overlay_pipe *mdp4_overlay_pipe_alloc(void)
+ 		if (pipe->pipe_ndx = 0) {
+ 			pipe->pipe_ndx = i + 1;	/* start from 1 */
+ 			init_completion(&pipe->comp);
+-	printk(KERN_INFO "mdp4_overlay_pipe_alloc: pipe=%x ndx=%d\n",
+-					(int)pipe, pipe->pipe_ndx);
++	printk(KERN_INFO "mdp4_overlay_pipe_alloc: pipe=%p ndx=%d\n",
++					pipe, pipe->pipe_ndx);
+ 			return pipe;
+ 		}
+ 		pipe++;
+@@ -887,8 +887,8 @@ struct mdp4_overlay_pipe *mdp4_overlay_pipe_alloc(void)
+ 
+ void mdp4_overlay_pipe_free(struct mdp4_overlay_pipe *pipe)
+ {
+-	printk(KERN_INFO "mdp4_overlay_pipe_free: pipe=%x ndx=%d\n",
+-					(int)pipe, pipe->pipe_ndx);
++	printk(KERN_INFO "mdp4_overlay_pipe_free: pipe=%p ndx=%d\n",
++					pipe, pipe->pipe_ndx);
+ 	memset(pipe, 0, sizeof(*pipe));
+ }
+ 
+-- 
+1.7.0.4
 
-Takashi
-
-> ---
->  sound/isa/msnd/msnd_pinnacle.c |    5 ++++-
->  1 files changed, 4 insertions(+), 1 deletions(-)
-> 
-> diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.c
-> index 60b6abd..ed42f8e 100644
-> --- a/sound/isa/msnd/msnd_pinnacle.c
-> +++ b/sound/isa/msnd/msnd_pinnacle.c
-> @@ -549,7 +549,10 @@ static int __devinit snd_msnd_attach(struct snd_card *card)
->  		printk(KERN_ERR LOGNAME ": Couldn't grab IRQ %d\n", chip->irq);
->  		return err;
->  	}
-> -	request_region(chip->io, DSP_NUMIO, card->shortname);
-> +	if (request_region(chip->io, DSP_NUMIO, card->shortname) = NULL) {
-> +		free_irq(chip->irq, chip);
-> +		return -EBUSY;
-> +	}
->  
->  	if (!request_mem_region(chip->base, BUFFSIZE, card->shortname)) {
->  		printk(KERN_ERR LOGNAME
-> -- 
-> 1.7.0.4
-> 
