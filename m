@@ -1,58 +1,46 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 19 Jul 2010 16:00:29 +0000
-Subject: Re: [PATCH 12/15] pci: riptide: check kzalloc() result
-Message-Id: <s5h8w57foma.wl%tiwai@suse.de>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 13:50:41 +0000
+Subject: Convert pci_table entries with PCI_ANY_ID to PCI_DEVICE ?
+Message-Id: <201007151550.42146.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279296959-25227-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1279296959-25227-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Alexey Dobriyan <adobriyan@gmail.com>, Dan Carpenter <error27@gmail.com>, Andy Shevchenko <ext-andriy.shevchenko@nokia.com>, Roel Kluin <roel.kluin@gmail.com>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+To: kernel-janitors@vger.kernel.org
 
-At Fri, 16 Jul 2010 20:15:59 +0400,
-Kulikov Vasiliy wrote:
-> 
-> If kzalloc() fails exit with -ENOMEM.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Hi,
 
-Thanks, applied now.
+I was wondering what you think about changing pci_table entries with 
+subvendor=PCI_ANY_ID and subdevice=PCI_ANY_ID to use the PCI_DEVICE MACRO?
+
+Here's a sample patch:
+
+---
+diff --git a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c 
+b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
+index 16e3483..b0126eb 100644
+--- a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
++++ b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
+@@ -169,12 +169,9 @@ static int gx_freq_mult[16] = {
+  *     Low Level chipset interface                             *
+  ****************************************************************/
+ static struct pci_device_id gx_chipset_tbl[] __initdata = {
+-       { PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY,
+-               PCI_ANY_ID, PCI_ANY_ID },
+-       { PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520,
+-               PCI_ANY_ID, PCI_ANY_ID },
+-       { PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510,
+-               PCI_ANY_ID, PCI_ANY_ID },
++       { PCI_DEVICE(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY) },
++       { PCI_DEVICE(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520) },
++       { PCI_DEVICE(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510) },
+        { 0, },
+ };
+---
+Do you think it's worth the effort (e.g. in terms of readability) to convert 
+the entries?
 
 
-Takashi
+Thanks,
+Peter
 
-> ---
->  sound/pci/riptide/riptide.c |    6 ++++++
->  1 files changed, 6 insertions(+), 0 deletions(-)
-> 
-> diff --git a/sound/pci/riptide/riptide.c b/sound/pci/riptide/riptide.c
-> index 59d7996..f64fb7d 100644
-> --- a/sound/pci/riptide/riptide.c
-> +++ b/sound/pci/riptide/riptide.c
-> @@ -1615,7 +1615,10 @@ static int snd_riptide_playback_open(struct snd_pcm_substream *substream)
->  
->  	chip->playback_substream[sub_num] = substream;
->  	runtime->hw = snd_riptide_playback;
-> +
->  	data = kzalloc(sizeof(struct pcmhw), GFP_KERNEL);
-> +	if (data = NULL)
-> +		return -ENOMEM;
->  	data->paths = lbus_play_paths[sub_num];
->  	data->id = play_ids[sub_num];
->  	data->source = play_sources[sub_num];
-> @@ -1635,7 +1638,10 @@ static int snd_riptide_capture_open(struct snd_pcm_substream *substream)
->  
->  	chip->capture_substream = substream;
->  	runtime->hw = snd_riptide_capture;
-> +
->  	data = kzalloc(sizeof(struct pcmhw), GFP_KERNEL);
-> +	if (data = NULL)
-> +		return -ENOMEM;
->  	data->paths = lbus_rec_path;
->  	data->id = PADC;
->  	data->source = ACLNK2PADC;
-> -- 
-> 1.7.0.4
-> 
