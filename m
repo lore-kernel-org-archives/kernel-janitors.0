@@ -1,36 +1,39 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 13 Jul 2010 11:23:33 +0000
-Subject: [PATCH] wireless: airo: delete netdev from list after it is freed
-Message-Id: <1279020214-9525-1-git-send-email-segooon@gmail.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:39:43 +0000
+Subject: [PATCH 04/25] ata: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152039.44324.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, Matthieu CASTET <castet.matthieu@free.fr>, Stanislaw Gruszka <sgruszka@redhat.com>, Roel Kluin <roel.kluin@gmail.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Jeff Garzik <jgarzik@pobox.com>, Tejun Heo <tj@kernel.org>, Sergei Shtylyov <sshtylyov@ru.mvista.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We must call del_airo_dev() before free_netdev() since we call
-add_airo_dev() exactly after alloc_netdev().
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/net/wireless/airo.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/ata/pata_scc.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
-index 6b605df..cce2f8f 100644
---- a/drivers/net/wireless/airo.c
-+++ b/drivers/net/wireless/airo.c
-@@ -2931,8 +2931,8 @@ err_out_res:
- 	        release_region( dev->base_addr, 64 );
- err_out_nets:
- 	airo_networks_free(ai);
--	del_airo_dev(ai);
- err_out_free:
-+	del_airo_dev(ai);
- 	free_netdev(dev);
- 	return NULL;
- }
+diff --git a/drivers/ata/pata_scc.c b/drivers/ata/pata_scc.c
+index d9db3f8..fe36966 100644
+--- a/drivers/ata/pata_scc.c
++++ b/drivers/ata/pata_scc.c
+@@ -168,8 +168,7 @@ static const unsigned long JCACTSELtbl[2][7] = {
+ };
+ 
+ static const struct pci_device_id scc_pci_tbl[] = {
+-	{PCI_VENDOR_ID_TOSHIBA_2, PCI_DEVICE_ID_TOSHIBA_SCC_ATA,
+-	 PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
++	{ PCI_VDEVICE(TOSHIBA_2, PCI_DEVICE_ID_TOSHIBA_SCC_ATA), 0},
+ 	{ }	/* terminate list */
+ };
+ 
 -- 
-1.7.0.4
+1.7.1
 
