@@ -1,46 +1,40 @@
-From: Joel Becker <Joel.Becker@oracle.com>
-Date: Mon, 12 Jul 2010 18:33:53 +0000
-Subject: Re: [patch] ocfs2: tighten up strlen() checking
-Message-Id: <20100712183353.GF12179@mail.oracle.com>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 19:01:21 +0000
+Subject: [PATCH 17/25] infiniband/hw/nes: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152101.21810.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100710143336.GB19184@bicker>
-In-Reply-To: <20100710143336.GB19184@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Faisal Latif <faisal.latif@intel.com>, Chien Tung <chien.tin.tung@intel.com>, Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 10, 2010 at 04:33:36PM +0200, Dan Carpenter wrote:
-> This function is only called from one place and it's like this:
-> 	dlm_register_domain(conn->cc_name, dlm_key, &fs_version);
-> 
-> The "conn->cc_name" is 64 characters long.  If strlen(conn->cc_name)
-> were equal to O2NM_MAX_NAME_LEN (64) that would be a bug because
-> strlen() doesn't count the NULL character.
-> 
-> In fact, if you look how O2NM_MAX_NAME_LEN is used, it mostly describes
-> 64 character buffers.  The only exception is nd_name from struct
-> o2nm_node.
-> 
-> Anyway I looked into it and in this case the domain string comes from
-> osb->uuid_str in ocfs2_setup_osb_uuid().  That's 32 characters and NULL
-> which easily fits into O2NM_MAX_NAME_LEN.  This patch doesn't change how
-> the code works, but I think it makes the code a little cleaner.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Peter Huewe <peterhuewe@gmx.de>
 
-	This patch is now in the fixes branch of ocfs2.git.
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
 
-Joel
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/infiniband/hw/nes/nes.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/infiniband/hw/nes/nes.c b/drivers/infiniband/hw/nes/nes.c
+index de7b9d7..1f26927 100644
+--- a/drivers/infiniband/hw/nes/nes.c
++++ b/drivers/infiniband/hw/nes/nes.c
+@@ -110,8 +110,8 @@ static unsigned int sysfs_nonidx_addr;
+ static unsigned int sysfs_idx_addr;
+ 
+ static struct pci_device_id nes_pci_table[] = {
+-	{PCI_VENDOR_ID_NETEFFECT, PCI_DEVICE_ID_NETEFFECT_NE020, PCI_ANY_ID, PCI_ANY_ID},
+-	{PCI_VENDOR_ID_NETEFFECT, PCI_DEVICE_ID_NETEFFECT_NE020_KR, PCI_ANY_ID, PCI_ANY_ID},
++	{PCI_VDEVICE(NETEFFECT, PCI_DEVICE_ID_NETEFFECT_NE020), },
++	{PCI_VDEVICE(NETEFFECT, PCI_DEVICE_ID_NETEFFECT_NE020_KR), },
+ 	{0}
+ };
+ 
 -- 
+1.7.1
 
-Viro's Razor:
-	Any race condition, no matter how unlikely, will occur just
-	often enough to bite you.
-
-Joel Becker
-Consulting Software Developer
-Oracle
-E-mail: joel.becker@oracle.com
-Phone: (650) 506-8127
