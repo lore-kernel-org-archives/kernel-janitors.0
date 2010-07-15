@@ -1,34 +1,45 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 03 Jul 2010 16:04:35 +0000
-Subject: [PATCH 16/19] drivers/pci: use for_each_pci_dev()
-Message-Id: <1278173076-11949-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 15 Jul 2010 08:20:19 +0000
+Subject: [patch] dpt_i2o: move range check forward
+Message-Id: <20100715082019.GD5164@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>, Huang Ying <ying.huang@intel.com>, Stefan Assmann <sassmann@redhat.com>, Andrew Patterson <andrew.patterson@hp.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Frederic Weisbecker <fweisbec@gmail.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, John Kacur <jkacur@redhat.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use for_each_pci_dev() to simplify the code.
+The check to test that "bus_no" was valid came after we had already used
+it as an array offset.  This patch moves it forward.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/pci/search.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-index 20d03f7..9d75dc8 100644
---- a/drivers/pci/search.c
-+++ b/drivers/pci/search.c
-@@ -169,7 +169,7 @@ struct pci_dev *pci_get_domain_bus_and_slot(int domain, unsigned int bus,
- {
- 	struct pci_dev *dev = NULL;
- 
--	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		if (pci_domain_nr(dev->bus) = domain &&
- 		    (dev->bus->number = bus && dev->devfn = devfn))
- 			return dev;
--- 
-1.7.0.4
-
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index b0c576f..2a46f25 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -2640,6 +2640,13 @@ static s32 adpt_i2o_reparse_lct(adpt_hba* pHba)
+ 				continue;
+ 			}
+ 			bus_no = buf[0]>>16;
++			if (bus_no >= MAX_CHANNEL) {	/* Something wrong skip it */
++				printk(KERN_WARNING
++					"%s: Channel number %d out of range\n",
++					pHba->name, bus_no);
++				continue;
++			}
++
+ 			scsi_id = buf[1];
+ 			scsi_lun = (buf[2]>>8 )&0xff;
+ 			pDev = pHba->channel[bus_no].device[scsi_id];
+@@ -2667,10 +2674,6 @@ static s32 adpt_i2o_reparse_lct(adpt_hba* pHba)
+ 				adpt_i2o_report_hba_unit(pHba, d);
+ 				adpt_i2o_install_device(pHba, d);
+ 	
+-				if(bus_no >= MAX_CHANNEL) {	// Something wrong skip it
+-					printk(KERN_WARNING"%s: Channel number %d out of range \n", pHba->name, bus_no);
+-					continue;
+-				}
+ 				pDev = pHba->channel[bus_no].device[scsi_id];	
+ 				if( pDev = NULL){
+ 					pDev =  kzalloc(sizeof(struct adpt_device),GFP_KERNEL);
