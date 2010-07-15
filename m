@@ -1,25 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 02:06:27 +0000
-Subject: Re: [PATCH 07/25] atm: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100715.190627.39190842.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 15 Jul 2010 07:57:36 +0000
+Subject: [patch] crypto/ablkcipher: missing return statement
+Message-Id: <20100715075736.GC5164@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152044.12653.PeterHuewe@gmx.de>
-In-Reply-To: <201007152044.12653.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: PeterHuewe@gmx.de
-Cc: kernel-janitors@vger.kernel.org, chas@cmf.nrl.navy.mil, roel.kluin@gmail.com, eric.dumazet@gmail.com, tj@kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, Richard Hartmann <richih.mailinglist@gmail.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 20:44:11 +0200
+The intent was to return here.  In the original an allocation failure
+would lead to a NULL dereference.
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/crypto/ablkcipher.c b/crypto/ablkcipher.c
+index 98a6610..a854df2 100644
+--- a/crypto/ablkcipher.c
++++ b/crypto/ablkcipher.c
+@@ -165,7 +165,7 @@ static inline int ablkcipher_next_slow(struct ablkcipher_request *req,
+ 
+ 	p = kmalloc(n, GFP_ATOMIC);
+ 	if (!p)
+-		ablkcipher_walk_done(req, walk, -ENOMEM);
++		return ablkcipher_walk_done(req, walk, -ENOMEM);
+ 
+ 	base = p + 1;
+ 
