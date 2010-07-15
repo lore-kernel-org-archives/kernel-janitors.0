@@ -1,31 +1,38 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Thu, 08 Jul 2010 21:02:39 +0000
-Subject: Re: [PATCH] bluetooth: btmrvl_sdio: silence warning
-Message-Id: <1278622959.10421.68.camel@localhost.localdomain>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:45:32 +0000
+Subject: [PATCH 08/25] atm: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152045.33543.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278316883-29784-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278316883-29784-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Bing Zhao <bzhao@marvell.com>, Ben Hutchings <ben@decadent.org.uk>, =?ISO-8859-1?Q?Andr=E9?= Goddard Rosa <andre.goddard@gmail.com>, Julia Lawall <julia@diku.dk>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Chas Williams <chas@cmf.nrl.navy.mil>, "David S. Miller" <davem@davemloft.net>, H Hartley Sweeten <hsweeten@visionengravers.com>, Tejun Heo <tj@kernel.org>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kulikov,
+From: Peter Huewe <peterhuewe@gmx.de>
 
-> Clone checking of ret to simplify the code.
-> 
-> This patch silences a compiler warning:
-> drivers/bluetooth/btmrvl_sdio.c: In function ‘btmrvl_sdio_verify_fw_download’:
-> drivers/bluetooth/btmrvl_sdio.c:80: warning: ‘fws1’ may be used uninitialized in this function
-> drivers/bluetooth/btmrvl_sdio.c:80: note: ‘fws1’ was declared here
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
 
-patch has been applied to bluetooth-next-2.6 tree. Thanks.
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/atm/idt77252.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-Regards
-
-Marcel
-
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index 558ad18..1679cbf 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -3779,8 +3779,7 @@ err_out_disable_pdev:
+ 
+ static struct pci_device_id idt77252_pci_tbl[]  {
+-	{ PCI_VENDOR_ID_IDT, PCI_DEVICE_ID_IDT_IDT77252,
+-	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0 },
++	{ PCI_VDEVICE(IDT, PCI_DEVICE_ID_IDT_IDT77252), 0 },
+ 	{ 0, }
+ };
+ 
+-- 
+1.7.1
 
