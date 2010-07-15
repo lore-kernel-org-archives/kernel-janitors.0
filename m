@@ -1,51 +1,38 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 22 Jul 2010 08:50:28 +0000
-Subject: [patch -next] ath9k: snprintf() returns largish values
-Message-Id: <20100722085027.GU17585@bicker>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:59:36 +0000
+Subject: [PATCH 15/25] char: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152059.36733.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Cc: Jouni Malinen <jmalinen@atheros.com>, Sujith Manoharan <Sujith.Manoharan@atheros.com>, Vasanthakumar Thiagarajan <vasanth@atheros.com>, Senthil Balasubramanian <senthilkumar@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, Vivek Natarajan <vnatarajan@atheros.com>, Felix Fietkau <nbd@openwrt.org>, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Stephen Hemminger <shemminger@vyatta.com>, "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 
-The snprintf() function returns the number of characters that would have
-been written (not counting the NUL character on the end).  It could
-potentially be larger than the size of the buffer.
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
 
-diff --git a/drivers/net/wireless/ath/ath9k/htc_drv_main.c b/drivers/net/wireless/ath/ath9k/htc_drv_main.c
-index 3243877..cf9bcc6 100644
---- a/drivers/net/wireless/ath/ath9k/htc_drv_main.c
-+++ b/drivers/net/wireless/ath/ath9k/htc_drv_main.c
-@@ -524,6 +524,9 @@ static ssize_t read_file_tgt_stats(struct file *file, char __user *user_buf,
- 	len += snprintf(buf + len, sizeof(buf) - len,
- 			"%19s : %10u\n", "TX Rate", priv->debug.txrate);
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/char/synclinkmp.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/char/synclinkmp.c b/drivers/char/synclinkmp.c
+index e56caf7..9f9cd8f 100644
+--- a/drivers/char/synclinkmp.c
++++ b/drivers/char/synclinkmp.c
+@@ -482,7 +482,7 @@ static int synclinkmp_init_one(struct pci_dev *dev,const struct pci_device_id *e
+ static void synclinkmp_remove_one(struct pci_dev *dev);
  
-+	if (len > sizeof(buf))
-+		len = sizeof(buf);
-+
- 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
- }
- 
-@@ -569,6 +572,9 @@ static ssize_t read_file_xmit(struct file *file, char __user *user_buf,
- 			"%20s : %10u\n", "VO queued",
- 			priv->debug.tx_stats.queue_stats[WME_AC_VO]);
- 
-+	if (len > sizeof(buf))
-+		len = sizeof(buf);
-+
- 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
- }
- 
-@@ -595,6 +601,9 @@ static ssize_t read_file_recv(struct file *file, char __user *user_buf,
- 			"%20s : %10u\n", "SKBs Dropped",
- 			priv->debug.rx_stats.skb_dropped);
- 
-+	if (len > sizeof(buf))
-+		len = sizeof(buf);
-+
- 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
- }
- 
+ static struct pci_device_id synclinkmp_pci_tbl[] = {
+-	{ PCI_VENDOR_ID_MICROGATE, PCI_DEVICE_ID_MICROGATE_SCA, PCI_ANY_ID, PCI_ANY_ID, },
++	{ PCI_VDEVICE(MICROGATE, PCI_DEVICE_ID_MICROGATE_SCA), },
+ 	{ 0, }, /* terminate list */
+ };
+ MODULE_DEVICE_TABLE(pci, synclinkmp_pci_tbl);
+-- 
+1.7.1
+
