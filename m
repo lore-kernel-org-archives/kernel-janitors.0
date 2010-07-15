@@ -1,45 +1,36 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 15 Jul 2010 08:20:19 +0000
-Subject: [patch] dpt_i2o: move range check forward
-Message-Id: <20100715082019.GD5164@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 15 Jul 2010 06:42:27 +0000
+Subject: [PATCH 1/2] i2o: fix overflow of copy_to_user()
+Message-Id: <1279176147-5521-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Frederic Weisbecker <fweisbec@gmail.com>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, John Kacur <jkacur@redhat.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, Dan Carpenter <error27@gmail.com>, linux-kernel@vger.kernel.org
 
-The check to test that "bus_no" was valid came after we had already used
-it as an array offset.  This patch moves it forward.
+If (len > reslen) we must not call copy_to_user() since kernel buffer is
+smaller than we want to copy. Similar code in this file is correct, so
+this bug was a typo.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/message/i2o/i2o_config.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index b0c576f..2a46f25 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -2640,6 +2640,13 @@ static s32 adpt_i2o_reparse_lct(adpt_hba* pHba)
- 				continue;
- 			}
- 			bus_no = buf[0]>>16;
-+			if (bus_no >= MAX_CHANNEL) {	/* Something wrong skip it */
-+				printk(KERN_WARNING
-+					"%s: Channel number %d out of range\n",
-+					pHba->name, bus_no);
-+				continue;
-+			}
-+
- 			scsi_id = buf[1];
- 			scsi_lun = (buf[2]>>8 )&0xff;
- 			pDev = pHba->channel[bus_no].device[scsi_id];
-@@ -2667,10 +2674,6 @@ static s32 adpt_i2o_reparse_lct(adpt_hba* pHba)
- 				adpt_i2o_report_hba_unit(pHba, d);
- 				adpt_i2o_install_device(pHba, d);
- 	
--				if(bus_no >= MAX_CHANNEL) {	// Something wrong skip it
--					printk(KERN_WARNING"%s: Channel number %d out of range \n", pHba->name, bus_no);
--					continue;
--				}
- 				pDev = pHba->channel[bus_no].device[scsi_id];	
- 				if( pDev = NULL){
- 					pDev =  kzalloc(sizeof(struct adpt_device),GFP_KERNEL);
+diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
+index c4b117f..4dd39a0 100644
+--- a/drivers/message/i2o/i2o_config.c
++++ b/drivers/message/i2o/i2o_config.c
+@@ -115,7 +115,7 @@ static int i2o_cfg_gethrt(unsigned long arg)
+ 	put_user(len, kcmd.reslen);
+ 	if (len > reslen)
+ 		ret = -ENOBUFS;
+-	if (copy_to_user(kcmd.resbuf, (void *)hrt, len))
++	else if (copy_to_user(kcmd.resbuf, (void *)hrt, len))
+ 		ret = -EFAULT;
+ 
+ 	return ret;
+-- 
+1.7.0.4
+
