@@ -1,23 +1,40 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 22 Jul 2010 18:51:27 +0000
-Subject: Re: [PATCH 09/11] staging: comedi: formatting of pointers in
-Message-Id: <1279824687.1909.55.camel@Joe-Laptop.home>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:51:17 +0000
+Subject: [PATCH 11/25] block: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152051.18189.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279176172-5609-1-git-send-email-segooon@gmail.com>
-	 <4C3EAEC5.8080908@gmail.com>  <20100722184557.GC32116@kroah.com>
-In-Reply-To: <20100722184557.GC32116@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <greg@kroah.com>
-Cc: Jiri Slaby <jirislaby@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, Javier Martinez Canillas <martinez.javier@gmail.com>, Jiri Kosina <jkosina@suse.cz>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>, Alexander Kurz <linux@kbdbabel.org>
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Jens Axboe <jens.axboe@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,  =?iso-8859-1?q?M=E1rton?= =?iso-8859-1?q?_N=E9meth?= <nm127@freemail.hu>, "Martin K. Petersen" <martin.petersen@oracle.com>, Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org
 
-On Thu, 2010-07-22 at 11:45 -0700, Greg KH wrote:
-> On Thu, Jul 15, 2010 at 08:46:29AM +0200, Jiri Slaby wrote:
-> > On 07/15/2010 08:42 AM, Kulikov Vasiliy wrote:
-> > The name and parameters suggest to remove the function completely. (And
-> > use print_hex_dump_bytes instead.)
-> I agree, Kulikov, can you make that chagne instead?
+From: Peter Huewe <peterhuewe@gmx.de>
 
-The function isn't used at all and should simply be removed.
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/block/sx8.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/sx8.c b/drivers/block/sx8.c
+index b70f0fc..15745e4 100644
+--- a/drivers/block/sx8.c
++++ b/drivers/block/sx8.c
+@@ -410,8 +410,8 @@ static void carm_remove_one (struct pci_dev *pdev);
+ static int carm_bdev_getgeo(struct block_device *bdev, struct hd_geometry *geo);
+ 
+ static const struct pci_device_id carm_pci_tbl[] = {
+-	{ PCI_VENDOR_ID_PROMISE, 0x8000, PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
+-	{ PCI_VENDOR_ID_PROMISE, 0x8002, PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
++	{ PCI_VDEVICE(PROMISE, 0x8000), },
++	{ PCI_VDEVICE(PROMISE, 0x8002), },
+ 	{ }	/* terminate list */
+ };
+ MODULE_DEVICE_TABLE(pci, carm_pci_tbl);
+-- 
+1.7.1
 
