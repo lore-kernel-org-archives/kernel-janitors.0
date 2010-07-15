@@ -1,61 +1,42 @@
-From: "Miller, Mike (OS Dev)" <Mike.Miller@hp.com>
-Date: Thu, 29 Jul 2010 20:16:53 +0000
-Subject: RE: [PATCH] cpqarray: check put_user() result
-Message-Id: <0F5B06BAB751E047AB5C87D1F77A77887D05640118@GVW0547EXC.americas.hpqcorp.net>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:49:32 +0000
+Subject: [PATCH 10/25] atm: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152049.33395.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280418885-5630-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280418885-5630-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: Chirag Kantharia <chirag.kantharia@hp.com>, Jens Axboe <jaxboe@fusionio.com>, Andrew Morton <akpm@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>, ISS StorageDev <iss_storagedev@hp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Chas Williams <chas@cmf.nrl.navy.mil>, "David S. Miller" <davem@davemloft.net>, Tejun Heo <tj@kernel.org>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Peter Huewe <peterhuewe@gmx.de>
+
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/atm/zatm.c |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/atm/zatm.c b/drivers/atm/zatm.c
+index 702acce..4e885d2 100644
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -1637,10 +1637,8 @@ out_free:
+ MODULE_LICENSE("GPL");
  
+ static struct pci_device_id zatm_pci_tbl[] __devinitdata = {
+-	{ PCI_VENDOR_ID_ZEITNET, PCI_DEVICE_ID_ZEITNET_1221,
+-		PCI_ANY_ID, PCI_ANY_ID, 0, 0, ZATM_COPPER },
+-	{ PCI_VENDOR_ID_ZEITNET, PCI_DEVICE_ID_ZEITNET_1225,
+-		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0 },
++	{ PCI_VDEVICE(ZEITNET, PCI_DEVICE_ID_ZEITNET_1221), ZATM_COPPER },
++	{ PCI_VDEVICE(ZEITNET, PCI_DEVICE_ID_ZEITNET_1225), 0 },
+ 	{ 0, }
+ };
+ MODULE_DEVICE_TABLE(pci, zatm_pci_tbl);
+-- 
+1.7.1
 
-> -----Original Message-----
-> From: Kulikov Vasiliy [mailto:segooon@gmail.com] 
-> Sent: Thursday, July 29, 2010 10:55 AM
-> To: kernel-janitors@vger.kernel.org
-> Cc: Chirag Kantharia; Jens Axboe; Andrew Morton; Alexey 
-> Dobriyan; Christoph Hellwig; Arnd Bergmann; ISS StorageDev; 
-> linux-kernel@vger.kernel.org
-> Subject: [PATCH] cpqarray: check put_user() result
-> 
-> put_user() may fail, if so return -EFAULT.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/block/cpqarray.c |    6 ++++--
->  1 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/cpqarray.c 
-> b/drivers/block/cpqarray.c index 9473215..d53b029 100644
-> --- a/drivers/block/cpqarray.c
-> +++ b/drivers/block/cpqarray.c
-> @@ -1179,7 +1179,8 @@ out_passthru:
->  		return error;
->  	case IDAGETCTLRSIG:
->  		if (!arg) return -EINVAL;
-> -		put_user(host->ctlr_sig, (int __user *)arg);
-> +		if (put_user(host->ctlr_sig, (int __user *)arg))
-> +			return -EFAULT;
->  		return 0;
->  	case IDAREVALIDATEVOLS:
->  		if (MINOR(bdev->bd_dev) != 0)
-> @@ -1187,7 +1188,8 @@ out_passthru:
->  		return revalidate_allvol(host);
->  	case IDADRIVERVERSION:
->  		if (!arg) return -EINVAL;
-> -		put_user(DRIVER_VERSION, (unsigned long __user *)arg);
-> +		if (put_user(DRIVER_VERSION, (unsigned long 
-> __user *)arg))
-> +			return -EFAULT;
->  		return 0;
->  	case IDAGETPCIINFO:
->  	{
-> --
-> 1.7.0.4
-> 
-> 
-Acked-by: Mike Miller <mike.miller@hp.com>
