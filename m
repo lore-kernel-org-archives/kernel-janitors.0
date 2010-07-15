@@ -1,49 +1,39 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Tue, 27 Jul 2010 22:24:39 +0000
-Subject: Re: [PATCH] dvb: siano: free spinlock before schedule()
-Message-Id: <4C4F5CA7.1030706@gmail.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:48:26 +0000
+Subject: [PATCH 09/25] atm: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152048.27535.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280256161-7971-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280256161-7971-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Douglas Schilling Landgraf <dougsland@redhat.com>, Jiri Kosina <jkosina@suse.cz>, Roel Kluin <roel.kluin@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Zidlicky <rz@linux-m68k.org>
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Chas Williams <chas@cmf.nrl.navy.mil>, "David S. Miller" <davem@davemloft.net>, H Hartley Sweeten <hsweeten@visionengravers.com>, Tejun Heo <tj@kernel.org>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/27/2010 08:42 PM, Kulikov Vasiliy wrote:
-> Calling schedule() holding spinlock with disables irqs is improper. As
-> spinlock protects list coredev->buffers, it can be unlocked untill wakeup.
-> This bug was introduced in a9349315f65cd6a16e8fab1f6cf0fd40f379c4db.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/media/dvb/siano/smscoreapi.c |    6 ++++--
->  1 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/dvb/siano/smscoreapi.c b/drivers/media/dvb/siano/smscoreapi.c
-> index 7f2c94a..d93468c 100644
-> --- a/drivers/media/dvb/siano/smscoreapi.c
-> +++ b/drivers/media/dvb/siano/smscoreapi.c
-> @@ -1113,9 +1113,11 @@ struct smscore_buffer_t *smscore_getbuffer(struct smscore_device_t *coredev)
->  	 */
->  
->  	prepare_to_wait(&coredev->buffer_mng_waitq, &wait, TASK_INTERRUPTIBLE);
-> -
-> -	if (list_empty(&coredev->buffers))
-> +	if (list_empty(&coredev->buffers)) {
-> +		spin_unlock_irqrestore(&coredev->bufferslock, flags);
->  		schedule();
-> +		spin_lock_irqsave(&coredev->bufferslock, flags);
-> +	}
->  
->  	finish_wait(&coredev->buffer_mng_waitq, &wait);
+From: Peter Huewe <peterhuewe@gmx.de>
 
-There is a better fix (which fixes the potential NULL dereference):
-http://lkml.org/lkml/2010/6/7/175
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
 
-Richard, could you address the comments there and resend?
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/atm/nicstar.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-regards,
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index cff337e..729a149 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -264,8 +264,7 @@ static void __devexit nicstar_remove_one(struct pci_dev *pcidev)
+ }
+ 
+ static struct pci_device_id nicstar_pci_tbl[] __devinitdata = {
+-	{PCI_VENDOR_ID_IDT, PCI_DEVICE_ID_IDT_IDT77201,
+-	 PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
++	{ PCI_VDEVICE(IDT, PCI_DEVICE_ID_IDT_IDT77201), 0 },
+ 	{0,}			/* terminate list */
+ };
+ 
 -- 
-js
+1.7.1
+
