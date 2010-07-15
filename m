@@ -1,35 +1,63 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 17 Jul 2010 10:26:08 +0000
-Subject: [patch] auditsc: audit_log_single_execve_arg() returns signed
-Message-Id: <20100717102608.GE17585@bicker>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 19:09:24 +0000
+Subject: [PATCH 25/25] message/fusion: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152109.25219.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Eric Moore <Eric.Moore@lsi.com>, support@lsi.com, James Bottomley <James.Bottomley@suse.de>, Kashyap Desai <kashyap.desai@lsi.com>, Tejun Heo <tj@kernel.org>, Michael Reed <mdr@sgi.com>, "Desai, Kashyap" <Kashyap.Desai@lsi.com>, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"len" needs to be signed because audit_log_single_execve_arg() returns
--1 and we want to check for that:
+From: Peter Huewe <peterhuewe@gmx.de>
 
-                len = audit_log_single_execve_arg(context, ab, i,
-                                                  &len_sent, p, buf);
-                if (len <= 0)
-                        break;
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/message/fusion/mptfc.c |   27 +++++++++------------------
+ 1 files changed, 9 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 3828ad5..2c060c3 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1158,7 +1158,8 @@ static void audit_log_execve_info(struct audit_context *context,
- 				  struct audit_aux_data_execve *axi)
- {
- 	int i;
--	size_t len, len_sent = 0;
-+	ssize_t len;
-+	size_t len_sent = 0;
- 	const char __user *p;
- 	char *buf;
+diff --git a/drivers/message/fusion/mptfc.c b/drivers/message/fusion/mptfc.c
+index b5f03ad..19dad15 100644
+--- a/drivers/message/fusion/mptfc.c
++++ b/drivers/message/fusion/mptfc.c
+@@ -139,24 +139,15 @@ static struct scsi_host_template mptfc_driver_template = {
+  */
  
+ static struct pci_device_id mptfc_pci_table[] = {
+-	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC909,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC919,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC929,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC919X,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC929X,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC939X,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC949X,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC949E,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_BROCADE, MPI_MANUFACTPAGE_DEVICEID_FC949E,
+-		PCI_ANY_ID, PCI_ANY_ID },
++	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC909), },
++	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC919), },
++	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC929), },
++	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC919X), },
++	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC929X), },
++	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC939X), },
++	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC949X), },
++	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC949E), },
++	{ PCI_VDEVICE(BROCADE, MPI_MANUFACTPAGE_DEVICEID_FC949E), },
+ 	{0}	/* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(pci, mptfc_pci_table);
+-- 
+1.7.1
+
