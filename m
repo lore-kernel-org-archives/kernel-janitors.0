@@ -1,42 +1,35 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Sun, 04 Jul 2010 13:18:34 +0000
-Subject: Re: [PATCH 19/19] drivers/usb/core: use for_each_pci_dev()
-Message-Id: <Pine.LNX.4.44L0.1007040918000.16841-100000@netrider.rowland.org>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 15 Jul 2010 18:44:54 +0000
+Subject: [PATCH 3/8] drivers: irda: fix sign bug
+Message-Id: <1279219494-12408-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1278173088-12051-1-git-send-email-segooon@gmail.com>
-References: <1278173088-12051-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278173088-12051-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Samuel Ortiz <samuel@sortiz.org>, "David S. Miller" <davem@davemloft.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, netdev@vger.kernel.org
 
-On Sat, 3 Jul 2010, Kulikov Vasiliy wrote:
+platform_get_irq_byname() can return negative results, it is not seen to
+unsigned irq. Make it signed.
 
-> Use for_each_pci_dev() to simplify the code.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/usb/core/hcd-pci.c |    5 +----
->  1 files changed, 1 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
-> index 7e2d527..c1f0bba 100644
-> --- a/drivers/usb/core/hcd-pci.c
-> +++ b/drivers/usb/core/hcd-pci.c
-> @@ -66,10 +66,7 @@ static void companion_common(struct pci_dev *pdev, struct usb_hcd *hcd,
->  	 * vice versa.
->  	 */
->  	companion = NULL;
-> -	for (;;) {
-> -		companion = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, companion);
-> -		if (!companion)
-> -			break;
-> +	for_each_pci_dev(companion) {
->  		if (companion->bus != pdev->bus ||
->  				PCI_SLOT(companion->devfn) != slot)
->  			continue;
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/irda/sh_irda.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+diff --git a/drivers/net/irda/sh_irda.c b/drivers/net/irda/sh_irda.c
+index 9a828b0..edd5666 100644
+--- a/drivers/net/irda/sh_irda.c
++++ b/drivers/net/irda/sh_irda.c
+@@ -749,7 +749,7 @@ static int __devinit sh_irda_probe(struct platform_device *pdev)
+ 	struct sh_irda_self *self;
+ 	struct resource *res;
+ 	char clk_name[8];
+-	unsigned int irq;
++	int irq;
+ 	int err = -ENOMEM;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-- 
+1.7.0.4
 
