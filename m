@@ -1,79 +1,42 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 31 Jul 2010 08:39:51 +0000
-Subject: Re: [PATCH 5/9] staging: panel: check put_user() return value
-Message-Id: <4C53E157.8080102@bfs.de>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:38:20 +0000
+Subject: [PATCH 03/25] atm: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152038.21535.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280488123-20859-1-git-send-email-segooon@gmail.com> <20100730211544.GH19782@1wt.eu>
-In-Reply-To: <20100730211544.GH19782@1wt.eu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Willy Tarreau <w@1wt.eu>
-Cc: Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Peter Huewe <peterhuewe@gmx.de>, Andy Shevchenko <andy.shevchenko@gmail.com>, Julia Lawall <julia@diku.dk>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Chas Williams <chas@cmf.nrl.navy.mil>, "David S. Miller" <davem@davemloft.net>, Ben Hutchings <ben@decadent.org.uk>, Tejun Heo <tj@kernel.org>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Peter Huewe <peterhuewe@gmx.de>
 
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
 
-Willy Tarreau schrieb:
-> On Fri, Jul 30, 2010 at 03:08:42PM +0400, Kulikov Vasiliy wrote:
->> diff --git a/drivers/staging/panel/panel.c b/drivers/staging/panel/panel.c
->> index f58da32..57f4946 100644
->> --- a/drivers/staging/panel/panel.c
->> +++ b/drivers/staging/panel/panel.c
->> @@ -1589,25 +1589,30 @@ void lcd_init(void)
->>  static ssize_t keypad_read(struct file *file,
->>  			   char *buf, size_t count, loff_t *ppos)
->>  {
->> -
->> +	int buflen = keypad_buflen;
->>  	unsigned i = *ppos;
->>  	char *tmp = buf;
->> +	int start = keypad_start;
->>  
->> -	if (keypad_buflen = 0) {
->> +	if (buflen = 0) {
->>  		if (file->f_flags & O_NONBLOCK)
->>  			return -EAGAIN;
->>  
->>  		interruptible_sleep_on(&keypad_read_wait);
->>  		if (signal_pending(current))
->>  			return -EINTR;
->> +		buflen = keypad_buflen;
->>  	}
-> 
-> Not sure what the intent was here, I think you're re-adjusting
-> the buffer's length in case something else was read. But then
-> I don't understand why buflen it not simply assigned after the
-> if() block.
-> 
-> The rest below looks fine otherwise.
-> 
->>  
->> -	for (; count-- > 0 && (keypad_buflen > 0);
->> -	     ++i, ++tmp, --keypad_buflen) {
->> -		put_user(keypad_buffer[keypad_start], tmp);
->> -		keypad_start = (keypad_start + 1) % KEYPAD_BUFFER;
->> +	for (; count-- > 0 && (buflen > 0);
->> +	     ++i, ++tmp, --buflen) {
->> +		if (put_user(keypad_buffer[start], tmp))
->> +			return -EFAULT;
->> +		start = (start + 1) % KEYPAD_BUFFER;
->>  	}
->>  	*ppos = i;
->> +	keypad_buflen = buflen;
->> +	keypad_start = start;
->>  
->>  	return tmp - buf;
->>  }
-> 
-> 
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/atm/ambassador.c |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
 
-IMHO opinion the for() construct breaks the rule of "no surprise please".
-perhaps a while() would improve readability.
-
-just my two cents,
-re,
- wh
-
-
-
+diff --git a/drivers/atm/ambassador.c b/drivers/atm/ambassador.c
+index 9d18644..a33896a 100644
+--- a/drivers/atm/ambassador.c
++++ b/drivers/atm/ambassador.c
+@@ -2371,10 +2371,8 @@ MODULE_PARM_DESC(pci_lat, "PCI latency in bus cycles");
+ /********** module entry **********/
+ 
+ static struct pci_device_id amb_pci_tbl[] = {
+-	{ PCI_VENDOR_ID_MADGE, PCI_DEVICE_ID_MADGE_AMBASSADOR, PCI_ANY_ID, PCI_ANY_ID,
+-	  0, 0, 0 },
+-	{ PCI_VENDOR_ID_MADGE, PCI_DEVICE_ID_MADGE_AMBASSADOR_BAD, PCI_ANY_ID, PCI_ANY_ID,
+-	  0, 0, 0 },
++	{ PCI_VDEVICE(MADGE, PCI_DEVICE_ID_MADGE_AMBASSADOR), 0 },
++	{ PCI_VDEVICE(MADGE, PCI_DEVICE_ID_MADGE_AMBASSADOR_BAD), 0 },
+ 	{ 0, }
+ };
+ 
+-- 
+1.7.1
 
