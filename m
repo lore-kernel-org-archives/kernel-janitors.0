@@ -1,51 +1,45 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 20 Jul 2010 15:08:47 +0000
-Subject: Re: [PATCH 04/16] trivial: use ARRAY_SIZE
-Message-Id: <alpine.LNX.2.00.1007201708300.4741@pobox.suse.cz>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:36:41 +0000
+Subject: [PATCH 02/25] cpufreq: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152036.41768.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277726097-24534-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277726097-24534-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>, Zhao Yakui <yakui.zhao@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, Ma Ling <ling.ma@intel.com>, Ian Romanick <ian.d.romanick@intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Dave Jones <davej@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Tejun Heo <tj@kernel.org>, cpufreq@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 28 Jun 2010, Kulikov Vasiliy wrote:
+From: Peter Huewe <peterhuewe@gmx.de>
 
-> Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/gpu/drm/i915/intel_sdvo.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_sdvo.c b/drivers/gpu/drm/i915/intel_sdvo.c
-> index 76993ac..03c231b 100644
-> --- a/drivers/gpu/drm/i915/intel_sdvo.c
-> +++ b/drivers/gpu/drm/i915/intel_sdvo.c
-> @@ -392,13 +392,13 @@ static void intel_sdvo_debug_write(struct intel_encoder *intel_encoder, u8 cmd,
->  		DRM_LOG_KMS("%02X ", ((u8 *)args)[i]);
->  	for (; i < 8; i++)
->  		DRM_LOG_KMS("   ");
-> -	for (i = 0; i < sizeof(sdvo_cmd_names) / sizeof(sdvo_cmd_names[0]); i++) {
-> +	for (i = 0; i < ARRAY_SIZE(sdvo_cmd_names); i++) {
->  		if (cmd = sdvo_cmd_names[i].cmd) {
->  			DRM_LOG_KMS("(%s)", sdvo_cmd_names[i].name);
->  			break;
->  		}
->  	}
-> -	if (i = sizeof(sdvo_cmd_names)/ sizeof(sdvo_cmd_names[0]))
-> +	if (i = ARRAY_SIZE(sdvo_cmd_names))
->  		DRM_LOG_KMS("(%02X)", cmd);
->  	DRM_LOG_KMS("\n");
->  }
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
 
-Applied to trivial queue, as linux-next as of today doesn't carry this 
-patch.
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ arch/x86/kernel/cpu/cpufreq/gx-suspmod.c |    9 +++------
+ 1 files changed, 3 insertions(+), 6 deletions(-)
 
-Thanks,
-
+diff --git a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
+index 16e3483..a7867ee 100644
+--- a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
++++ b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
+@@ -169,12 +169,9 @@ static int gx_freq_mult[16] = {
+  *	Low Level chipset interface				*
+  ****************************************************************/
+ static struct pci_device_id gx_chipset_tbl[] __initdata = {
+-	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520,
+-		PCI_ANY_ID, PCI_ANY_ID },
+-	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510,
+-		PCI_ANY_ID, PCI_ANY_ID },
++	{ PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY), },
++	{ PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5520), },
++	{ PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5510), },
+ 	{ 0, },
+ };
+ 
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+1.7.1
+
