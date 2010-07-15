@@ -1,22 +1,38 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Fri, 30 Jul 2010 12:44:37 +0000
-Subject: Re: [PATCH 1/9] staging: dt3155: check put_user() return value
-Message-Id: <4C52C935.5020900@gmail.com>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 19:00:41 +0000
+Subject: [PATCH 16/25] crypto: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152100.42276.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280488030-20697-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280488030-20697-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Roel Kluin <roel.kluin@gmail.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Chihau Chau <chihau@gmail.com>, linux-geode@lists.infradead.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/30/2010 01:07 PM, Kulikov Vasiliy wrote:
-> put_user() may fail, if so return -EFAULT.
-> Also compare count with copied data size, not size of struct with these
-> fields.
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Please do whitespace cleanup separately. We cannot review this.
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
 
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/crypto/geode-aes.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/crypto/geode-aes.c b/drivers/crypto/geode-aes.c
+index 09389dd..219d09c 100644
+--- a/drivers/crypto/geode-aes.c
++++ b/drivers/crypto/geode-aes.c
+@@ -573,7 +573,7 @@ geode_aes_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ }
+ 
+ static struct pci_device_id geode_aes_tbl[] = {
+-	{ PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_LX_AES, PCI_ANY_ID, PCI_ANY_ID} ,
++	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_LX_AES), } ,
+ 	{ 0, }
+ };
+ 
 -- 
-js
+1.7.1
+
