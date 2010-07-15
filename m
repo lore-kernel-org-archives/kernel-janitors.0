@@ -1,24 +1,23 @@
 From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 13:50:41 +0000
-Subject: Convert pci_table entries with PCI_ANY_ID to PCI_DEVICE ?
-Message-Id: <201007151550.42146.PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 13:57:37 +0000
+Subject: Re: Convert pci_table entries with PCI_ANY_ID to PCI_DEVICE ?
+Message-Id: <201007151557.37555.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201007151550.42146.PeterHuewe@gmx.de>
+In-Reply-To: <201007151550.42146.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+Or even better convert them using PCI_VDEVICE,
 
-I was wondering what you think about changing pci_table entries with 
-subvendor=PCI_ANY_ID and subdevice=PCI_ANY_ID to use the PCI_DEVICE MACRO?
-
-Here's a sample patch:
+Here's the same sample patch with PCI_VDEVICE:
 
 ---
 diff --git a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c 
 b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
-index 16e3483..b0126eb 100644
+index 16e3483..581b29c 100644
 --- a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
 +++ b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
 @@ -169,12 +169,9 @@ static int gx_freq_mult[16] = {
@@ -31,16 +30,12 @@ index 16e3483..b0126eb 100644
 -               PCI_ANY_ID, PCI_ANY_ID },
 -       { PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510,
 -               PCI_ANY_ID, PCI_ANY_ID },
-+       { PCI_DEVICE(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY) },
-+       { PCI_DEVICE(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520) },
-+       { PCI_DEVICE(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510) },
++       { PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY) },
++       { PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5520) },
++       { PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5510) },
         { 0, },
  };
 ---
-Do you think it's worth the effort (e.g. in terms of readability) to convert 
-the entries?
 
-
-Thanks,
-Peter
+What do you think?
 
