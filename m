@@ -1,30 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 02:07:04 +0000
-Subject: Re: [PATCH 20/25] mISDN: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100715.190704.246538713.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 15 Jul 2010 18:45:57 +0000
+Subject: [PATCH 5/8] drivers: ixgbevf: fix unsigned underflow
+Message-Id: <1279219557-12525-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152104.08458.PeterHuewe@gmx.de>
-In-Reply-To: <201007152104.08458.PeterHuewe@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: PeterHuewe@gmx.de
-Cc: kernel-janitors@vger.kernel.org, isdn@linux-pingi.de, akpm@linux-foundation.org, u.kleine-koenig@pengutronix.de, tj@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Eric Dumazet <eric.dumazet@gmail.com>, Joe Perches <joe@perches.com>, netdev@vger.kernel.org
 
-From: Peter H=FCwe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 21:04:07 +0200
+'count' is unsigned. It is initialized to zero, then it can be increased
+multiple times, and finally it is used in such a way:
 
-> From: Peter Huewe <peterhuewe@gmx.de>
->=20
-> This patch converts pci_table entries, where .subvendor=3DPCI_ANY_ID and
-> .subdevice=3DPCI_ANY_ID, .class=3D0 and .class_mask=3D0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
->=20
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+   >>>> count--;
+   |
+   |    /* clear timestamp and dma mappings for remaining portion of packet */
+   |    while (count >= 0) {
+   |            count--;
+   |            ...
+   ^
+If count is zero here (so, it was never increased), we would have a very
+long loop :)
 
-Applied.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/ixgbevf/ixgbevf_main.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/ixgbevf/ixgbevf_main.c b/drivers/net/ixgbevf/ixgbevf_main.c
+index 73f1e75..af49135 100644
+--- a/drivers/net/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ixgbevf/ixgbevf_main.c
+@@ -2935,7 +2935,8 @@ static int ixgbevf_tx_map(struct ixgbevf_adapter *adapter,
+ 	struct ixgbevf_tx_buffer *tx_buffer_info;
+ 	unsigned int len;
+ 	unsigned int total = skb->len;
+-	unsigned int offset = 0, size, count = 0;
++	unsigned int offset = 0, size;
++	int count = 0;
+ 	unsigned int nr_frags = skb_shinfo(skb)->nr_frags;
+ 	unsigned int f;
+ 	int i;
+-- 
+1.7.0.4
+
