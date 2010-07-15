@@ -1,89 +1,39 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 10 Jul 2010 07:30:07 +0000
-Subject: [PATCH 3/4 v3] ll_temac: fix DMA and memory leaks
-Message-Id: <20100710073006.GA4339@albatros>
+From: Peter Huewe <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 18:58:09 +0000
+Subject: [PATCH 13/25] char: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007152058.10297.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278591012-3213-1-git-send-email-segooon@gmail.com>
- <AANLkTilm1b61ikLi28We3aLrF3Ld4c05oFZlh3K1pORe@mail.gmail.com>
-In-Reply-To: <AANLkTilm1b61ikLi28We3aLrF3Ld4c05oFZlh3K1pORe@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dkirjanov@kernel.org
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, John Linn <john.linn@xilinx.com>, Grant Likely <grant.likely@secretlab.ca>, Jiri Pirko <jpirko@redhat.com>, Brian Hill <brian.hill@xilinx.com>, netdev@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, Stephen Hemminger <shemminger@vyatta.com>, Jiri Slaby <jslaby@suse.cz>, "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 
-temac_dma_bd_init() doesn't free DMA and memory on error. Also
-temac_stop() must free them.
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Signed-off-by: Denis Kirjanov <dkirjanov@kernel.org>
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+PCI_VDEVICE macro, and thus improves readability.
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/net/ll_temac_main.c |   38 ++++++++++++++++++++++++++++++++++++++
- 1 files changed, 38 insertions(+), 0 deletions(-)
+ drivers/char/synclink.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ll_temac_main.c b/drivers/net/ll_temac_main.c
-index 5bca20b..9090e79 100644
---- a/drivers/net/ll_temac_main.c
-+++ b/drivers/net/ll_temac_main.c
-@@ -193,6 +193,41 @@ static int temac_dcr_setup(struct temac_local *lp, struct of_device *op,
- #endif
+diff --git a/drivers/char/synclink.c b/drivers/char/synclink.c
+index a2a5800..a5941a4 100644
+--- a/drivers/char/synclink.c
++++ b/drivers/char/synclink.c
+@@ -889,8 +889,8 @@ static int synclink_init_one (struct pci_dev *dev,
+ static void synclink_remove_one (struct pci_dev *dev);
  
- /**
-+ *  * temac_dma_bd_release - Release buffer descriptor rings
-+ */
-+static void temac_dma_bd_release(struct net_device *ndev)
-+{
-+	struct temac_local *lp = netdev_priv(ndev);
-+	int i;
-+
-+	if (lp->rx_skb) {
-+		for (i = 0; i < RX_BD_NUM; i++) {
-+			if (!lp->rx_skb[i])
-+				break;
-+			dma_unmap_single(ndev->dev.parent, lp->rx_bd_v[i].phys,
-+				    XTE_MAX_JUMBO_FRAME_SIZE, DMA_FROM_DEVICE);
-+			dev_kfree_skb(lp->rx_skb[i]);
-+		}
-+		kfree(lp->rx_skb);
-+		lp->rx_skb = NULL;
-+	}
-+
-+	if (lp->rx_bd_v) {
-+		dma_free_coherent(ndev->dev.parent,
-+				sizeof(*lp->rx_bd_v) * RX_BD_NUM,
-+				lp->rx_bd_v, lp->rx_bd_p);
-+		lp->rx_bd_v = NULL;
-+	}
-+
-+	if (lp->tx_bd_v) {
-+		dma_free_coherent(ndev->dev.parent,
-+				sizeof(*lp->tx_bd_v) * TX_BD_NUM,
-+				lp->tx_bd_v, lp->tx_bd_p);
-+		lp->tx_bd_v = NULL;
-+	}
-+}
-+
-+/**
-  * temac_dma_bd_init - Setup buffer descriptor rings
-  */
- static int temac_dma_bd_init(struct net_device *ndev)
-@@ -275,6 +310,7 @@ static int temac_dma_bd_init(struct net_device *ndev)
- 	return 0;
- 
- out:
-+	temac_dma_bd_release(ndev);
- 	return -ENOMEM;
- }
- 
-@@ -858,6 +894,8 @@ static int temac_stop(struct net_device *ndev)
- 		phy_disconnect(lp->phy_dev);
- 	lp->phy_dev = NULL;
- 
-+	temac_dma_bd_release(ndev);
-+
- 	return 0;
- }
- 
+ static struct pci_device_id synclink_pci_tbl[] = {
+-	{ PCI_VENDOR_ID_MICROGATE, PCI_DEVICE_ID_MICROGATE_USC, PCI_ANY_ID, PCI_ANY_ID, },
+-	{ PCI_VENDOR_ID_MICROGATE, 0x0210, PCI_ANY_ID, PCI_ANY_ID, },
++	{ PCI_VDEVICE(MICROGATE, PCI_DEVICE_ID_MICROGATE_USC), },
++	{ PCI_VDEVICE(MICROGATE, 0x0210), },
+ 	{ 0, }, /* terminate list */
+ };
+ MODULE_DEVICE_TABLE(pci, synclink_pci_tbl);
 -- 
-1.7.0.4
+1.7.1
 
