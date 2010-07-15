@@ -1,74 +1,61 @@
-From: Andy Walls <awalls@md.metrocast.net>
-Date: Thu, 15 Jul 2010 21:43:20 +0000
-Subject: Re: [PATCH 24/25] video/ivtv: Convert pci_table entries to
-Message-Id: <1279230200.7920.23.camel@morgan.silverblock.net>
+From: Peter =?utf-8?q?H=C3=BCwe?= <PeterHuewe@gmx.de>
+Date: Thu, 15 Jul 2010 22:00:51 +0000
+Subject: Re: [PATCH 24/25] video/ivtv: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007160000.52153.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152108.27175.PeterHuewe@gmx.de>
-In-Reply-To: <201007152108.27175.PeterHuewe@gmx.de>
+References: <201007152108.27175.PeterHuewe@gmx.de> <1279230200.7920.23.camel@morgan.silverblock.net>
+In-Reply-To: <1279230200.7920.23.camel@morgan.silverblock.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Huewe <PeterHuewe@gmx.de>
+To: Andy Walls <awalls@md.metrocast.net>
 Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Ian Armstrong <ian@iarmst.demon.co.uk>, Douglas Schilling Landgraf <dougsland@redhat.com>, Steven Toth <stoth@kernellabs.com>, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2010-07-15 at 21:08 +0200, Peter Huewe wrote:
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
+Am Donnerstag 15 Juli 2010 23:43:20 schrieb Andy Walls:
+> > ... use the PCI_VDEVICE macro, and thus improves readability.
+> I have to disagree.  The patch may improve typesetting, but it degrades
+> clarity and maintainability from my perspective.
+> ...
+> So I'm going to NAK this for ivtv, unless someone can help me understand
+> any big picture benefit that I may not see from my possibly myopic
+> perspective.
 
-Hi Peter,
+Hi Andy,
 
-I have to disagree.  The patch may improve typesetting, but it degrades
-clarity and maintainability from my perspective.
+absolutely no problem ;) - I thing that is one of the great things about open 
+source that people can have different opinions and discuss them.
 
-a. PCI_ANY_ID indicates to the reader a wildcard match is being
-performed.  The PCI_VDEVICE() macro hides that to some degree.
+Patches are proposals only, and if I spark a discussion which brings the 
+development process further or from which I can learn something, I'm a lucky 
+guy ;)
 
-b. PCI_VENDOR_ID_ICOMP clearly indicates that ICOMP is a vendor.
-"ICOMP" alone does not hint to the reader that is stands for a company
-(the now defunct "Internext Compression, Inc.").
+> PCI_ANY_ID indicates to the reader a wildcard match is being
+> performed. 
+Yeah, but I get absolutely no information out of the 0, 0, parameters either - 
+unless I look up the function - but then I could also look up the Macro.
+
+> BTW, I have not seen a similar patch come in my mailbox for
+> cx18-driver.c.  Why propose the change for ivtv and not cx18?
+
+That might be the case since I picked out several different locations using 
+cscope (by gut instinct) - so the patchset is not comprehensive. 
+There are still a lot of places that are not converted, I just picked some at 
+random and stopped at 25 patches.
+The reason behind this was that I almost expected some kind of controversy and 
+discussion about the changes - and since I'm getting some NACKs I guess this 
+was a smart move - imagine I had converted the whole kernel source just to get 
+a simple NACK ;)
+
+Thanks,
+Peter
 
 
-IMO, macros, for things other than named constants, should only be used
-for constructs that the C language does not express clearly or compactly
-in the context.  This structure initialization being done in file scope,
-where white space and line feeds are cheap, will only be obfuscated by
-macros, not clarified.
-
-So I'm going to NAK this for ivtv, unless someone can help me understand
-any big picture benefit that I may not see from my possibly myopic
-perspective.
 
 
-BTW, I have not seen a similar patch come in my mailbox for
-cx18-driver.c.  Why propose the change for ivtv and not cx18?
 
-Regards,
-Andy
 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-> ---
->  drivers/media/video/ivtv/ivtv-driver.c |    6 ++----
->  1 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/video/ivtv/ivtv-driver.c b/drivers/media/video/ivtv/ivtv-driver.c
-> index 90daa6e..8e73ab9 100644
-> --- a/drivers/media/video/ivtv/ivtv-driver.c
-> +++ b/drivers/media/video/ivtv/ivtv-driver.c
-> @@ -69,10 +69,8 @@ int ivtv_first_minor;
->  
->  /* add your revision and whatnot here */
->  static struct pci_device_id ivtv_pci_tbl[] __devinitdata = {
-> -	{PCI_VENDOR_ID_ICOMP, PCI_DEVICE_ID_IVTV15,
-> -	 PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-> -	{PCI_VENDOR_ID_ICOMP, PCI_DEVICE_ID_IVTV16,
-> -	 PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-> +	{PCI_VDEVICE(ICOMP, PCI_DEVICE_ID_IVTV15), 0},
-> +	{PCI_VDEVICE(ICOMP, PCI_DEVICE_ID_IVTV16), 0},
->  	{0,}
->  };
->  
+
+
+
 
 
