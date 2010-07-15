@@ -1,48 +1,64 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 16 Jul 2010 16:16:54 +0000
-Subject: [PATCH 15/15] sound/soc: imx: check kzalloc() result and fix memory leak
-Message-Id: <1279297014-25347-1-git-send-email-segooon@gmail.com>
+Date: Thu, 15 Jul 2010 06:42:39 +0000
+Subject: [PATCH 2/2] i2o: check return code from put_user()
+Message-Id: <1279176159-5565-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sascha Hauer <s.hauer@pengutronix.de>, Javier Martin <javier.martin@vista-silicon.com>, Tejun Heo <tj@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, Dan Carpenter <error27@gmail.com>, linux-kernel@vger.kernel.org
 
-If kzalloc() fails we must exit with -ENOMEM. Also we must free
-allocated runtime->private_data on error as it would be lost on next
-call to snd_imx_open().
+Check return value of put_user() and return -EFAULT if it failed.
+Original comment "We did a get user...so assuming mem is ok...is this
+bad?" is incorrect because memory can be read only.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- sound/soc/imx/imx-pcm-fiq.c |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
+ drivers/message/i2o/i2o_config.c |   16 +++++++++-------
+ 1 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/imx/imx-pcm-fiq.c b/sound/soc/imx/imx-pcm-fiq.c
-index 6b518e0..b2bf272 100644
---- a/sound/soc/imx/imx-pcm-fiq.c
-+++ b/sound/soc/imx/imx-pcm-fiq.c
-@@ -192,6 +192,8 @@ static int snd_imx_open(struct snd_pcm_substream *substream)
- 	int ret;
+diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
+index 4dd39a0..068ba07 100644
+--- a/drivers/message/i2o/i2o_config.c
++++ b/drivers/message/i2o/i2o_config.c
+@@ -111,9 +111,9 @@ static int i2o_cfg_gethrt(unsigned long arg)
  
- 	iprtd = kzalloc(sizeof(*iprtd), GFP_KERNEL);
-+	if (iprtd = NULL)
-+		return -ENOMEM;
- 	runtime->private_data = iprtd;
+ 	len = 8 + ((hrt->entry_len * hrt->num_entries) << 2);
  
- 	iprtd->substream = substream;
-@@ -202,8 +204,10 @@ static int snd_imx_open(struct snd_pcm_substream *substream)
+-	/* We did a get user...so assuming mem is ok...is this bad? */
+-	put_user(len, kcmd.reslen);
+-	if (len > reslen)
++	if (put_user(len, kcmd.reslen))
++		ret = -EFAULT;
++	else if (len > reslen)
+ 		ret = -ENOBUFS;
+ 	else if (copy_to_user(kcmd.resbuf, (void *)hrt, len))
+ 		ret = -EFAULT;
+@@ -147,8 +147,9 @@ static int i2o_cfg_getlct(unsigned long arg)
+ 	lct = (i2o_lct *) c->lct;
  
- 	ret = snd_pcm_hw_constraint_integer(substream->runtime,
- 			SNDRV_PCM_HW_PARAM_PERIODS);
--	if (ret < 0)
-+	if (ret < 0) {
-+		kfree(iprtd);
- 		return ret;
-+	}
+ 	len = (unsigned int)lct->table_size << 2;
+-	put_user(len, kcmd.reslen);
+-	if (len > reslen)
++	if (put_user(len, kcmd.reslen))
++		ret = -EFAULT;
++	else if (len > reslen)
+ 		ret = -ENOBUFS;
+ 	else if (copy_to_user(kcmd.resbuf, lct, len))
+ 		ret = -EFAULT;
+@@ -208,8 +209,9 @@ static int i2o_cfg_parms(unsigned long arg, unsigned int type)
+ 		return -EAGAIN;
+ 	}
  
- 	snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
- 	return 0;
+-	put_user(len, kcmd.reslen);
+-	if (len > reslen)
++	if (put_user(len, kcmd.reslen))
++		ret = -EFAULT;
++	else if (len > reslen)
+ 		ret = -ENOBUFS;
+ 	else if (copy_to_user(kcmd.resbuf, res, len))
+ 		ret = -EFAULT;
 -- 
 1.7.0.4
 
