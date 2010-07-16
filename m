@@ -1,39 +1,45 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 23 Jul 2010 11:47:06 +0000
-Subject: [patch] message/i2o: add sanity check
-Message-Id: <20100723114706.GH26313@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 16 Jul 2010 16:16:34 +0000
+Subject: [PATCH 14/15] sound/soc: imx: check kzalloc() result and fix memory leak
+Message-Id: <1279296995-25307-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, Markus.Lidel@shadowconnect.com
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sascha Hauer <s.hauer@pengutronix.de>, Javier Martin <javier.martin@vista-silicon.com>, Tejun Heo <tj@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-We use "reply_size" to determine the size of the "reply" buffer.  These
-days the "reply" buffer is just some context information, an error code,
-and a bunch of zeroes.  We stopped using it for useful information four
-years ago in dcceafe25a5f47 "[PATCH] I2O: Bugfixes"
+If kzalloc() fails we must exit with -ENOMEM. Also we must free
+allocated runtime->private_data on error as it would be lost on next
+call to snd_imx_open().
 
-This patch ensures that "reply" is large enough to hold the context
-information.   In the current code if "reply_size" is zero that would
-cause memory corruption when we save the error code:
-	reply[4] = ((u32) rcode) << 24;
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ sound/soc/imx/imx-pcm-dma-mx2.c |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
-index c4b117f..8b1d55e 100644
---- a/drivers/message/i2o/i2o_config.c
-+++ b/drivers/message/i2o/i2o_config.c
-@@ -817,6 +817,11 @@ static int i2o_cfg_passthru(unsigned long arg)
- 	reply_size >>= 16;
- 	reply_size <<= 2;
+diff --git a/sound/soc/imx/imx-pcm-dma-mx2.c b/sound/soc/imx/imx-pcm-dma-mx2.c
+index 05f19c9..0a595da 100644
+--- a/sound/soc/imx/imx-pcm-dma-mx2.c
++++ b/sound/soc/imx/imx-pcm-dma-mx2.c
+@@ -292,12 +292,16 @@ static int snd_imx_open(struct snd_pcm_substream *substream)
+ 	int ret;
  
-+	if (reply_size < 5 * sizeof(u32)) {
-+		rcode = -EINVAL;
-+		goto out;
+ 	iprtd = kzalloc(sizeof(*iprtd), GFP_KERNEL);
++	if (iprtd = NULL)
++		return -ENOMEM;
+ 	runtime->private_data = iprtd;
+ 
+ 	ret = snd_pcm_hw_constraint_integer(substream->runtime,
+ 			SNDRV_PCM_HW_PARAM_PERIODS);
+-	if (ret < 0)
++	if (ret < 0) {
++		kfree(iprtd);
+ 		return ret;
 +	}
-+
- 	reply = kzalloc(reply_size, GFP_KERNEL);
- 	if (!reply) {
- 		printk(KERN_WARNING "%s: Could not allocate reply buffer\n",
+ 
+ 	snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
+ 	return 0;
+-- 
+1.7.0.4
+
