@@ -1,23 +1,34 @@
-From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Date: Mon, 12 Jul 2010 14:51:49 +0000
-Subject: Re: [PATCH] adm8211: fix memory leak
-Message-Id: <20100712145149.GA2273@tux>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 16 Jul 2010 16:15:43 +0000
+Subject: [PATCH 11/15] pci: echoaudio: check kmalloc() result
+Message-Id: <1279296943-25187-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278764938-9417-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278764938-9417-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Michael Wu <flamingice@sourmilk.net>, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, Kalle Valo <kalle.valo@iki.fi>, Luis Rodriguez <Luis.Rodriguez@Atheros.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Giuliano Pochini <pochini@shiny.it>, Julia Lawall <julia@diku.dk>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
 
-On Sat, Jul 10, 2010 at 05:28:57AM -0700, Kulikov Vasiliy wrote:
-> We must free priv->eeprom allocated in adm8211_read_eeprom().
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+If kmalloc() fails exit with -ENOMEM.
 
-Acked-by: Luis R. Rodriguez <lrodriguez@atheros.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ sound/pci/echoaudio/echoaudio.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-Good catch.
+diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
+index 668a5ec..20763dd 100644
+--- a/sound/pci/echoaudio/echoaudio.c
++++ b/sound/pci/echoaudio/echoaudio.c
+@@ -2250,6 +2250,8 @@ static int snd_echo_resume(struct pci_dev *pci)
+ 	DE_INIT(("resume start\n"));
+ 	pci_restore_state(pci);
+ 	commpage_bak = kmalloc(sizeof(struct echoaudio), GFP_KERNEL);
++	if (commpage_bak = NULL)
++		return -ENOMEM;
+ 	commpage = chip->comm_page;
+ 	memcpy(commpage_bak, commpage, sizeof(struct comm_page));
+ 
+-- 
+1.7.0.4
 
-  Luis
