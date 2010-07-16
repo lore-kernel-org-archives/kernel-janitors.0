@@ -1,40 +1,36 @@
-From: Dan Williams <dcbw@redhat.com>
-Date: Thu, 22 Jul 2010 20:23:43 +0000
-Subject: Re: [patch -next] libertas: precedence bug
-Message-Id: <1279837494.4829.18.camel@dcbw.foobar.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 16 Jul 2010 16:12:46 +0000
+Subject: [PATCH 02/15] arm/mach-u300: check kmalloc result
+Message-Id: <1279296767-24823-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100722122102.GH17585@bicker>
-In-Reply-To: <20100722122102.GH17585@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Holger Schurig <holgerschurig@gmail.com>, "David S. Miller" <davem@davemloft.net>, Amitkumar Karwar <akarwar@marvell.com>, Stephen Hemminger <shemminger@vyatta.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, 2010-07-22 at 14:21 +0200, Dan Carpenter wrote:
-> Negate has precedence over comparison so the original test was always
-> false.  (Neither 0 nor 1 are equal to NL80211_IFTYPE_MONITOR).
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+If kmalloc() fails free already allocated memory and exit with -ENOMEM.
 
-Acked-by: Dan Williams <dcbw@redhat.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ arch/arm/mach-u300/dummyspichip.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-> diff --git a/drivers/net/wireless/libertas/tx.c b/drivers/net/wireless/libertas/tx.c
-> index 411a3bb..8000ca6 100644
-> --- a/drivers/net/wireless/libertas/tx.c
-> +++ b/drivers/net/wireless/libertas/tx.c
-> @@ -180,7 +180,7 @@ void lbs_send_tx_feedback(struct lbs_private *priv, u32 try_count)
->  {
->  	struct tx_radiotap_hdr *radiotap_hdr;
->  
-> -	if (!priv->wdev->iftype = NL80211_IFTYPE_MONITOR ||
-> +	if (priv->wdev->iftype != NL80211_IFTYPE_MONITOR ||
->  	    priv->currenttxskb = NULL)
->  		return;
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+diff --git a/arch/arm/mach-u300/dummyspichip.c b/arch/arm/mach-u300/dummyspichip.c
+index 5f55012..452218a 100644
+--- a/arch/arm/mach-u300/dummyspichip.c
++++ b/arch/arm/mach-u300/dummyspichip.c
+@@ -64,6 +64,11 @@ static ssize_t dummy_looptest(struct device *dev,
+ 		goto out;
+ 	}
+ 	bigrxbuf_virtual = kmalloc(DMA_TEST_SIZE, GFP_KERNEL);
++	if (bigrxbuf_virtual = NULL) {
++		kfree(bigtxbuf_virtual);
++		status = -ENOMEM;
++		goto out;
++	}
+ 
+ 	/* Fill TXBUF with some happy pattern */
+ 	memset(bigtxbuf_virtual, 0xAA, DMA_TEST_SIZE);
+-- 
+1.7.0.4
 
