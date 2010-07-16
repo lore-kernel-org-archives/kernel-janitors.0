@@ -1,47 +1,41 @@
 From: Greg KH <gregkh@suse.de>
-Date: Fri, 16 Jul 2010 04:28:45 +0000
+Date: Fri, 16 Jul 2010 04:29:43 +0000
 Subject: Re: [PATCH 12/25] char: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100716042845.GA28607@suse.de>
+Message-Id: <20100716042943.GB28607@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152052.38060.PeterHuewe@gmx.de> <20100715204540.GB24463@suse.de> <201007152307.35062.PeterHuewe@gmx.de>
-In-Reply-To: <201007152307.35062.PeterHuewe@gmx.de>
+References: <201007152052.38060.PeterHuewe@gmx.de> <20100715204540.GB24463@suse.de> <1279227615.5816.96.camel@Joe-Laptop.home>
+In-Reply-To: <1279227615.5816.96.camel@Joe-Laptop.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter H?we <PeterHuewe@gmx.de>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, "Digi International, Inc" <Eng.Linux@digi.com>, Alexey Dobriyan <adobriyan@gmail.com>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Peter Huewe <PeterHuewe@gmx.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, "Digi International, Inc" <Eng.Linux@digi.com>, Alexey Dobriyan <adobriyan@gmail.com>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, linux-kernel@vger.kernel.org
 
-On Thu, Jul 15, 2010 at 11:07:34PM +0200, Peter H?we wrote:
-> Am Donnerstag 15 Juli 2010 22:45:40 schrieb Greg KH:
-> > The main reason I hate this macro, is that it now makes it almost
-> > impossible to grep for any users of the PCI_VENDOR_DIGI pci vendor id.
+On Thu, Jul 15, 2010 at 02:00:15PM -0700, Joe Perches wrote:
+> On Thu, 2010-07-15 at 13:45 -0700, Greg KH wrote:
 > > I much prefer the PCI_DEVICE() macro instead, and as such, I'm not
 > > willing to take any of these patches, sorry.
 > 
-> No problem ;)
-> Patches are just proposals - nothing else.
+> grepping for pci device ids using constants and
+> expecting the result to be comprehensive isn't
+> sensible.
+
+But it's a nice goal :)
+
+> $ grep -rwP --include=*.[ch] -w PCI_VDEVICE drivers/char | wc -l
+> 32
+
+drivers/char is not exactly a large collection of PCI drivers, only some
+old serial port ones.
+
+> The current drivers/ use of PCI_VDEVICE to PCI_DEVICE is ~50/50
 > 
-> The only  question that remains is, do you see any point in converting the 
-> patches to use PCI_DEVICE?
-> Since you have to address/set the .driver_data explicitly I guess there's no 
-> point in doing it.
-> 
-> It's
-> { PCI_VENDOR_DIGI, PCI_DEVICE_XRJ, PCI_ANY_ID, PCI_ANY_ID, 0, 0, brd_xrj },
-> vs.
->  { PCI_DEVICE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_XR), .driver_data=brd_xrj },
-> and I guess it isn't really an improvement.
+> $ grep --include=*.[ch] -rwP PCI_DEVICE drivers | wc -l
+> 866
+> $ grep --include=*.[ch] -rwP PCI_VDEVICE drivers | wc -l
+> 768
 
-It's a bit nicer, yes.  But only do it if you want to.
-
-> Maybe there should be a version of PCI_DEVICE that addresses this issue? 
-> But I have to admit, something like:
-> { PCI_DEVICE_DD(PCI_VENDOR_ID_DIGI, PCI_DEVICE_XR), brd_xrj }, 
-> doesn't look that much better.
-
-You can do:
-	{ PCI_DEVICE_TABLE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_XR), brd_xrj },
-just fine today, so do that if you want to.
+Hey, anything to increase that ratio is good :)
 
 thanks,
 
