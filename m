@@ -1,103 +1,48 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Wed, 28 Jul 2010 17:04:28 +0000
-Subject: coccinelle script for correct handling of return values of
-Message-Id: <20100728170428.GA23707@albatros>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 16 Jul 2010 16:14:49 +0000
+Subject: [PATCH 08/15] staging: tm6000: fix null dereference and memory leak
+Message-Id: <1279296889-25063-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, Stefan Ringel <stefan.ringel@arcor.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Hi folks,
+Do not dereference ir_input_dev if it is NULL.
 
-I'm currently working on this task:
-http://kernelnewbies.org/KernelJanitors/Todo/ReturnCodes
+Also free ir_input_dev->input_dev on error path.
 
-I think this task can be partly done with coccinelle. The most often cases of
-invalid handling is no handling :)
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/tm6000/tm6000-input.c |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
 
-I am not guru of coccinelle, but I think it is very useful here. So,
-I've written basic script of finding common errors, but it is not ideal.
-Some trivial "metamorphisms" can be added, like this:
+diff --git a/drivers/staging/tm6000/tm6000-input.c b/drivers/staging/tm6000/tm6000-input.c
+index 32f7a0a..5edf728 100644
+--- a/drivers/staging/tm6000/tm6000-input.c
++++ b/drivers/staging/tm6000/tm6000-input.c
+@@ -247,8 +247,10 @@ int tm6000_ir_init(struct tm6000_core *dev)
+ 
+ 	ir = kzalloc(sizeof(*ir), GFP_KERNEL);
+ 	ir_input_dev = kzalloc(sizeof(*ir_input_dev), GFP_KERNEL);
++	if (!ir || !ir_input_dev)
++		goto err_out_free;
+ 	ir_input_dev->input_dev = input_allocate_device();
+-	if (!ir || !ir_input_dev || !ir_input_dev->input_dev)
++	if (!ir_input_dev->input_dev)
+ 		goto err_out_free;
+ 
+ 	/* record handles to ourself */
+@@ -330,6 +332,8 @@ int tm6000_ir_init(struct tm6000_core *dev)
+ err_out_stop:
+ 	dev->ir = NULL;
+ err_out_free:
++	if (ir_input_dev)
++		input_free_device(ir_input_dev->input_dev);
+ 	kfree(ir_input_dev);
+ 	kfree(ir);
+ 	return err;
+-- 
+1.7.0.4
 
-if (!x) ...
-
-is equivalent in our case to
-
-if (unlikely(!x)) ...
-
-likely(), unlikely(), WARN(), some_driver_defined_assert(), etc.
-
-Currently script finds ~400 patterns in linux-next, some of them are
-false positive. Even if there were no false positives it is a rather
-long process :)
-
-
-So, I'm calling for help in raking this mess and improving the script.
-
-
-// These are checks for allocation function, only comparation with 0 is ok
-@@
-identifier x;
-identifier f ~= "request_region$\|kmalloc$\|vmalloc$\|pci_map_.*$\|get_free_pages$\|get_free_page$\|ioremap$\|create_proc_.*$";
-statement S1, S2;
-@@
-
-\(
-*x = f(...);
- ...
-     when != if (x) S1 else S2
-     when != if (x = 0) S1 else S2
-     when != if (x = NULL) S1 else S2
-     when != if (x != 0) S1 else S2
-     when != if (x != NULL) S1 else S2
-     when != if (!x) S1 else S2
-     when != return x;
-\|
-*f(...);
-\)
-
-// These are checks for functions that return 0 on success and smth <0 on error
-// Result can be checked as (ret = 0), (ret < 0) and as (ret >= 0)
-@@
-identifier x;
-identifier f ~= "request_irq$\|register_netdev$\|misc_register$\|scsi_register$\|put_user$\|get_user$\|kernel_thread$";
-statement S1, S2;
-@@
-
-\(
-*x = f(...);
- ...
-     when != if (x < 0) S1 else S2
-     when != if (x >= 0) S1 else S2
-     when != if (x != 0) S1 else S2
-     when != if (!x) S1 else S2
-     when != if (x = 0) S1 else S2
-     when != return x;
-\|
-*f(...);
-\)
-
-// These are function returning 0 on success and positive (!!!) result on error
-// Result can be checked as (ret = 0), (ret > 0)
-//
-@@
-identifier x;
-identifier f ~= "copy_to_user$\|copy_from_user$";
-statement S1, S2;
-@@
-
-\(
-*x = f(...);
- ...
-     when != if (x) S1 else S2
-     when != if (!x) S1 else S2
-     when != if (x > 0) S1 else S2
-     when != return x;
-\|
-*f(...);
-\)
-
-
-Thanks,
-Vasiliy.
