@@ -1,59 +1,37 @@
-From: Borislav Petkov <bp@amd64.org>
-Date: Sun, 04 Jul 2010 07:51:10 +0000
-Subject: Re: [PATCH 07/19] arch/x86/kernel: use for_each_pci_dev()
-Message-Id: <20100704075110.GA5356@aftab>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 16 Jul 2010 16:15:25 +0000
+Subject: [PATCH 10/15] fs: cifs: check kmalloc() result
+Message-Id: <1279296925-25147-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278173040-11643-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278173040-11643-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, Tejun Heo <tj@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Dave Kleikamp <shaggy-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, Jul 03, 2010 at 12:03:59PM -0400
+If kmalloc() fails exit with -ENOMEM.
 
-> Use for_each_pci_dev() to simplify the code.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ fs/cifs/readdir.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-Acked-by: Borislav Petkov <borislav.petkov@amd.com>
-
-> ---
->  arch/x86/kernel/k8.c |    7 +++----
->  1 files changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/k8.c b/arch/x86/kernel/k8.c
-> index 0f7bc20..0ea4b35 100644
-> --- a/arch/x86/kernel/k8.c
-> +++ b/arch/x86/kernel/k8.c
-> @@ -27,11 +27,10 @@ EXPORT_SYMBOL(k8_northbridges);
->  
->  static struct pci_dev *next_k8_northbridge(struct pci_dev *dev)
->  {
-> -	do {
-> -		dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev);
-> -		if (!dev)
-> +	for_each_pci_dev(dev) {
-> +		if (pci_match_id(&k8_nb_ids[0], dev))
->  			break;
-> -	} while (!pci_match_id(&k8_nb_ids[0], dev));
-> +	}
->  	return dev;
->  }
->  
-> -- 
-> 1.7.0.4
-> 
-> 
-
+diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
+index daf1753..d5e591f 100644
+--- a/fs/cifs/readdir.c
++++ b/fs/cifs/readdir.c
+@@ -847,6 +847,11 @@ int cifs_readdir(struct file *file, void *direntry, filldir_t filldir)
+ 		end_of_smb = cifsFile->srch_inf.ntwrk_buf_start + max_len;
+ 
+ 		tmp_buf = kmalloc(UNICODE_NAME_MAX, GFP_KERNEL);
++		if (tmp_buf = NULL) {
++			rc = -ENOMEM;
++			break;
++		}
++
+ 		for (i = 0; (i < num_to_fill) && (rc = 0); i++) {
+ 			if (current_entry = NULL) {
+ 				/* evaluate whether this case is an error */
 -- 
-Regards/Gruss,
-Boris.
+1.7.0.4
 
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Gemeinde Aschheim, Landkreis Muenchen
-Registergericht Muenchen, HRB Nr. 43632
