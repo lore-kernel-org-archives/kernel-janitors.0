@@ -1,37 +1,48 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon, 12 Jul 2010 14:48:24 +0000
-Subject: [PATCH] Staging: panel: fix memory leak
-Message-Id: <1278946104-30300-1-git-send-email-segooon@gmail.com>
+Date: Fri, 16 Jul 2010 16:16:54 +0000
+Subject: [PATCH 15/15] sound/soc: imx: check kzalloc() result and fix memory leak
+Message-Id: <1279297014-25347-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Willy Tarreau <w@1wt.eu>, Peter Huewe <peterhuewe@gmx.de>, Julia Lawall <julia@diku.dk>, Sudhakar Rajashekhara <sudhakar.raj@ti.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sascha Hauer <s.hauer@pengutronix.de>, Javier Martin <javier.martin@vista-silicon.com>, Tejun Heo <tj@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-panel_bind_key() must free allocated memory.
+If kzalloc() fails we must exit with -ENOMEM. Also we must free
+allocated runtime->private_data on error as it would be lost on next
+call to snd_imx_open().
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/staging/panel/panel.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+ sound/soc/imx/imx-pcm-fiq.c |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/panel/panel.c b/drivers/staging/panel/panel.c
-index 3154ffe..0fa910d 100644
---- a/drivers/staging/panel/panel.c
-+++ b/drivers/staging/panel/panel.c
-@@ -1999,8 +1999,10 @@ static struct logical_input *panel_bind_key(char *name, char *press,
- 		return NULL;
- 	}
- 	if (!input_name2mask(name, &key->mask, &key->value, &scan_mask_i,
--			     &scan_mask_o))
-+			     &scan_mask_o)) {
-+		kfree(key);
- 		return NULL;
+diff --git a/sound/soc/imx/imx-pcm-fiq.c b/sound/soc/imx/imx-pcm-fiq.c
+index 6b518e0..b2bf272 100644
+--- a/sound/soc/imx/imx-pcm-fiq.c
++++ b/sound/soc/imx/imx-pcm-fiq.c
+@@ -192,6 +192,8 @@ static int snd_imx_open(struct snd_pcm_substream *substream)
+ 	int ret;
+ 
+ 	iprtd = kzalloc(sizeof(*iprtd), GFP_KERNEL);
++	if (iprtd = NULL)
++		return -ENOMEM;
+ 	runtime->private_data = iprtd;
+ 
+ 	iprtd->substream = substream;
+@@ -202,8 +204,10 @@ static int snd_imx_open(struct snd_pcm_substream *substream)
+ 
+ 	ret = snd_pcm_hw_constraint_integer(substream->runtime,
+ 			SNDRV_PCM_HW_PARAM_PERIODS);
+-	if (ret < 0)
++	if (ret < 0) {
++		kfree(iprtd);
+ 		return ret;
 +	}
  
- 	key->type = INPUT_TYPE_KBD;
- 	key->state = INPUT_ST_LOW;
+ 	snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
+ 	return 0;
 -- 
 1.7.0.4
 
