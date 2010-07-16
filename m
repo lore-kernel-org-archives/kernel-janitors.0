@@ -1,43 +1,25 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 01 Jul 2010 11:23:12 +0000
-Subject: [PATCH 16/16] drivers/usb/host: use ARRAY_SIZE
-Message-Id: <1277983394-30198-1-git-send-email-segooon@gmail.com>
+Date: Fri, 16 Jul 2010 09:47:10 +0000
+Subject: process_reloc_for_got: no ENOMEM check
+Message-Id: <20100716094710.GA24173@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Sarah Sharp <sarah.a.sharp@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, John Youn <John.Youn@synopsys.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>
 
-Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
+Hi,
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/usb/host/xhci-mem.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+I've found in ./arch/alpha/kernel/module.c in process_reloc_for_got()
+such code:
+                     
+  g = kmalloc (sizeof (*g), GFP_KERNEL);
+  g->next = chains[r_sym].next;
+  g->r_addend = r_addend;
+  g->got_offset = *poffset;
 
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index fd9e03a..1fcef80 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1566,7 +1566,7 @@ static int xhci_check_trb_in_td_math(struct xhci_hcd *xhci, gfp_t mem_flags)
- 	unsigned int num_tests;
- 	int i, ret;
- 
--	num_tests = sizeof(simple_test_vector) / sizeof(simple_test_vector[0]);
-+	num_tests = ARRAY_SIZE(simple_test_vector);
- 	for (i = 0; i < num_tests; i++) {
- 		ret = xhci_test_trb_in_td(xhci,
- 				xhci->event_ring->first_seg,
-@@ -1579,7 +1579,7 @@ static int xhci_check_trb_in_td_math(struct xhci_hcd *xhci, gfp_t mem_flags)
- 			return ret;
- 	}
- 
--	num_tests = sizeof(complex_test_vector) / sizeof(complex_test_vector[0]);
-+	num_tests = ARRAY_SIZE(complex_test_vector);
- 	for (i = 0; i < num_tests; i++) {
- 		ret = xhci_test_trb_in_td(xhci,
- 				complex_test_vector[i].input_seg,
--- 
-1.7.0.4
+Here we use 'g' without checking it for zero. I don't know what this
+function does so I cannot write a patch myself.
 
+Thanks.
