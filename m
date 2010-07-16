@@ -1,46 +1,31 @@
-From: Greg KH <gregkh@suse.de>
-Date: Fri, 16 Jul 2010 05:47:38 +0000
-Subject: Re: [PATCH 12/25] char: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100716054738.GA30421@suse.de>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Fri, 16 Jul 2010 23:54:52 +0000
+Subject: Re: [PATCH 12/25] char: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
+Message-Id: <201007170154.52461.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152052.38060.PeterHuewe@gmx.de> <20100715204540.GB24463@suse.de> <1279227615.5816.96.camel@Joe-Laptop.home> <20100716042943.GB28607@suse.de> <1279255463.4526.19.camel@Joe-Laptop.home> <20100716052924.GA29966@suse.de> <1279258640.4526.23.camel@Joe-Laptop.home>
-In-Reply-To: <1279258640.4526.23.camel@Joe-Laptop.home>
+References: <201007152052.38060.PeterHuewe@gmx.de> <201007152307.35062.PeterHuewe@gmx.de> <20100716042845.GA28607@suse.de>
+In-Reply-To: <20100716042845.GA28607@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Peter Huewe <PeterHuewe@gmx.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, "Digi International, Inc" <Eng.Linux@digi.com>, Alexey Dobriyan <adobriyan@gmail.com>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, linux-kernel@vger.kernel.org
+To: Greg KH <gregkh@suse.de>
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, "Digi International, Inc" <Eng.Linux@digi.com>, Alexey Dobriyan <adobriyan@gmail.com>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
 
-On Thu, Jul 15, 2010 at 10:37:20PM -0700, Joe Perches wrote:
-> On Thu, 2010-07-15 at 22:29 -0700, Greg KH wrote:
-> > On Thu, Jul 15, 2010 at 09:44:23PM -0700, Joe Perches wrote:
-> > > On Thu, 2010-07-15 at 21:29 -0700, Greg KH wrote:
-> > > > On Thu, Jul 15, 2010 at 02:00:15PM -0700, Joe Perches wrote:
-> > > > > On Thu, 2010-07-15 at 13:45 -0700, Greg KH wrote:
-> > > > > > I much prefer the PCI_DEVICE() macro instead, and as such, I'm not
-> > > > > > willing to take any of these patches, sorry.
-> > > > > grepping for pci device ids using constants and
-> > > > > expecting the result to be comprehensive isn't
-> > > > > sensible.
-> > > > But it's a nice goal :)
-> > > I think your goal is not a good one.
-> > > 
-> > > For instance:
-> > > 
-> > > $ grep -rP --include=*.[ch] "\bPCI_VDEVICE\s*\(\s*INTEL" drivers | wc -l
-> > > 201
-> > > $ grep -rP --include=*.[ch] "\bPCI_DEVICE\s*\(PCI_VENDOR_ID_INTEL" drivers | wc -l
-> > > 45
-> > > $ grep -rP --include=*.[ch] "\bPCI_DEVICE\s*\(\s*0x8086" drivers | wc -l
-> > > 38
-> > > I'd much rather do a search for "PCI_VDEVICE.*INTEL"
-> > I'd much rather use 'cscope' or 'ctags' than trying to remember regular
-> > expressions like the above.
+Am Freitag 16 Juli 2010 06:28:45 schrieb Greg KH:
+> > Maybe there should be a version of PCI_DEVICE that addresses this issue?
+> > But I have to admit, something like:
+> > { PCI_DEVICE_DD(PCI_VENDOR_ID_DIGI, PCI_DEVICE_XR), brd_xrj },
+> > doesn't look that much better.
 > 
-> Then it appears your original argument doesn't have much merit.
+> You can do:
+> 	{ PCI_DEVICE_TABLE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_XR), brd_xrj },
+> just fine today, so do that if you want to.
 
-I'd rather people not use PCI_VDEVICE() as then you can't easily scan
-for the PCI_VENDOR_ID_FOO value usage with a tool like cscope, so I
-think my original point stands.
 
-nevermind.
+Hi Greg,
+
+unfortunately I can't find the definition of this macro - can you perhaps 
+pinpoint me to it? And maybe an example in the kernel?
+
+Thanks,
+Peter
