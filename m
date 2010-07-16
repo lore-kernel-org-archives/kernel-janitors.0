@@ -1,36 +1,49 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 15 Jul 2010 06:42:27 +0000
-Subject: [PATCH 1/2] i2o: fix overflow of copy_to_user()
-Message-Id: <1279176147-5521-1-git-send-email-segooon@gmail.com>
+From: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Date: Fri, 16 Jul 2010 15:09:11 +0000
+Subject: [PATCH] clear code: add macro wrapper for header mbcache.h
+Message-Id: <4C407617.6080002@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, Dan Carpenter <error27@gmail.com>, linux-kernel@vger.kernel.org
+To: linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
 
-If (len > reslen) we must not call copy_to_user() since kernel buffer is
-smaller than we want to copy. Similar code in this file is correct, so
-this bug was a typo.
+Hi,
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+In header file include/linux/mbcache.h, no macro wrapper defined.
+I think it's better to add ifndef/define macro to wrap it.
+Following patch is against 2.6.35-rc5. Please check it.
+
+
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
 ---
- drivers/message/i2o/i2o_config.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ include/linux/mbcache.h |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
-index c4b117f..4dd39a0 100644
---- a/drivers/message/i2o/i2o_config.c
-+++ b/drivers/message/i2o/i2o_config.c
-@@ -115,7 +115,7 @@ static int i2o_cfg_gethrt(unsigned long arg)
- 	put_user(len, kcmd.reslen);
- 	if (len > reslen)
- 		ret = -ENOBUFS;
--	if (copy_to_user(kcmd.resbuf, (void *)hrt, len))
-+	else if (copy_to_user(kcmd.resbuf, (void *)hrt, len))
- 		ret = -EFAULT;
- 
- 	return ret;
+diff --git a/include/linux/mbcache.h b/include/linux/mbcache.h
+index a09b84e..3a6a802 100644
+--- a/include/linux/mbcache.h
++++ b/include/linux/mbcache.h
+@@ -3,6 +3,8 @@
+
+   (C) 2001 by Andreas Gruenbacher, <a.gruenbacher@computer.org>
+ */
++#ifndef __LINUX_MBCACHE_H
++#define __LINUX_MBCACHE_H
+
+ /* Hardwire the number of additional indexes */
+ #define MB_CACHE_INDEXES_COUNT 1
+@@ -50,3 +52,5 @@ struct mb_cache_entry *mb_cache_entry_find_next(struct
+mb_cache_entry *, int,
+ 						struct block_device *,
+ 						unsigned int);
+ #endif
++
++#endif /* __LINUX_MBCACHE_H */
 -- 
-1.7.0.4
+1.7.1.1
 
+
+-- 
+Thanks and Regards,
+shenghui
