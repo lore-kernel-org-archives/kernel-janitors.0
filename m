@@ -1,35 +1,22 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 15 Jul 2010 18:44:54 +0000
-Subject: [PATCH 3/8] drivers: irda: fix sign bug
-Message-Id: <1279219494-12408-1-git-send-email-segooon@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 16 Jul 2010 03:28:23 +0000
+Subject: Re: [PATCH 3/8] drivers: irda: fix sign bug
+Message-Id: <20100715.202823.200354925.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1279219494-12408-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1279219494-12408-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Samuel Ortiz <samuel@sortiz.org>, "David S. Miller" <davem@davemloft.net>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, netdev@vger.kernel.org
+To: segooon@gmail.com
+Cc: kernel-janitors@vger.kernel.org, samuel@sortiz.org, kuninori.morimoto.gx@renesas.com, netdev@vger.kernel.org
 
-platform_get_irq_byname() can return negative results, it is not seen to
-unsigned irq. Make it signed.
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 15 Jul 2010 22:44:54 +0400
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/net/irda/sh_irda.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> platform_get_irq_byname() can return negative results, it is not seen to
+> unsigned irq. Make it signed.
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-diff --git a/drivers/net/irda/sh_irda.c b/drivers/net/irda/sh_irda.c
-index 9a828b0..edd5666 100644
---- a/drivers/net/irda/sh_irda.c
-+++ b/drivers/net/irda/sh_irda.c
-@@ -749,7 +749,7 @@ static int __devinit sh_irda_probe(struct platform_device *pdev)
- 	struct sh_irda_self *self;
- 	struct resource *res;
- 	char clk_name[8];
--	unsigned int irq;
-+	int irq;
- 	int err = -ENOMEM;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--- 
-1.7.0.4
-
+Applied.
