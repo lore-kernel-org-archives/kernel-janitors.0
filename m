@@ -1,37 +1,32 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 31 Jul 2010 16:33:59 +0000
-Subject: [PATCH] net: wl12xx: do not use kfree'd memory
-Message-Id: <1280594039-3246-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 17 Jul 2010 18:27:46 +0000
+Subject: [patch] scsi_transport_fc: remove unneeded check
+Message-Id: <20100717181808.GJ17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Luciano Coelho <luciano.coelho@nokia.com>, "John W. Linville" <linville@tuxdriver.com>, Juuso Oikarinen <juuso.oikarinen@nokia.com>, Teemu Paasikivi <ext-teemu.3.paasikivi@nokia.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>
+Cc: James Smart <james.smart@emulex.com>, Christof Schmitt <christof.schmitt@de.ibm.com>, Hannes Reinecke <hare@suse.de>, Mike Christie <michaelc@cs.wisc.edu>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-wl1271_dump() uses cmd after kfree(cmd). Move kfree() just after
-wl1271_dump().
+"val" can never be less than zero here.  It's unsigned and
+simple_strtoul() always returns positive values.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/net/wireless/wl12xx/wl1271_spi.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+I also cleaned up the check.  "*cp != '\0'" is more explicit than "*cp"
+and I removed some parenthesis that weren't needed.
 
-diff --git a/drivers/net/wireless/wl12xx/wl1271_spi.c b/drivers/net/wireless/wl12xx/wl1271_spi.c
-index 96d25fb..4cb99c5 100644
---- a/drivers/net/wireless/wl12xx/wl1271_spi.c
-+++ b/drivers/net/wireless/wl12xx/wl1271_spi.c
-@@ -160,9 +160,8 @@ static void wl1271_spi_init(struct wl1271 *wl)
- 	spi_message_add_tail(&t, &m);
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/scsi/scsi_transport_fc.c b/drivers/scsi/scsi_transport_fc.c
+index 0681378..b108a9b 100644
+--- a/drivers/scsi/scsi_transport_fc.c
++++ b/drivers/scsi/scsi_transport_fc.c
+@@ -844,7 +844,7 @@ store_fc_rport_dev_loss_tmo(struct device *dev, struct device_attribute *attr,
+ 	    (rport->port_state = FC_PORTSTATE_NOTPRESENT))
+ 		return -EBUSY;
+ 	val = simple_strtoul(buf, &cp, 0);
+-	if ((*cp && (*cp != '\n')) || (val < 0))
++	if (*cp != '\0' && *cp != '\n')
+ 		return -EINVAL;
  
- 	spi_sync(wl_to_spi(wl), &m);
--	kfree(cmd);
--
- 	wl1271_dump(DEBUG_SPI, "spi init -> ", cmd, WSPI_INIT_CMD_LEN);
-+	kfree(cmd);
- }
- 
- #define WL1271_BUSY_WORD_TIMEOUT 1000
--- 
-1.7.0.4
-
+ 	/*
