@@ -1,52 +1,74 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 01 Jul 2010 13:17:03 +0000
-Subject: [PATCH 24/25] staging/wlags49_h2: remove casts from void*
-Message-Id: <1277990225-22889-1-git-send-email-segooon@gmail.com>
+Date: Sat, 17 Jul 2010 15:19:07 +0000
+Subject: [PATCH 1/5] arm: mach-davinci: check irq2ctlr() result
+Message-Id: <1279379947-15152-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Henk de Groot <pe1dnn@amsat.org>, Huang Weiyi <weiyi.huang@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Remove unnesessary casts from void*.
+If irq2ctlr() fails return IRQ_NONE.
+Also as it can fail make 'ctlr' signed.
+
+
+The semantic patch that finds this problem (many false-positive results):
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@ r1 @
+identifier f;
+@@
+int f(...) { ... }
+
+@@
+identifier r1.f;
+type T;
+unsigned T x;
+@@
+
+*x = f(...)
+ ...
+*x > 0
+
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/staging/wlags49_h2/wl_pci.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/mach-davinci/dma.c |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/wlags49_h2/wl_pci.c b/drivers/staging/wlags49_h2/wl_pci.c
-index 6751b4b..b736ae8 100644
---- a/drivers/staging/wlags49_h2/wl_pci.c
-+++ b/drivers/staging/wlags49_h2/wl_pci.c
-@@ -465,7 +465,7 @@ void __devexit wl_pci_remove(struct pci_dev *pdev)
-     free_irq( dev->irq, dev );
+diff --git a/arch/arm/mach-davinci/dma.c b/arch/arm/mach-davinci/dma.c
+index d33827a..d1127e1 100644
+--- a/arch/arm/mach-davinci/dma.c
++++ b/arch/arm/mach-davinci/dma.c
+@@ -344,10 +344,12 @@ static int irq2ctlr(int irq)
+ static irqreturn_t dma_irq_handler(int irq, void *data)
+ {
+ 	int i;
+-	unsigned ctlr;
++	int ctlr;
+ 	unsigned int cnt = 0;
  
- #ifdef ENABLE_DMA
--    wl_pci_dma_free( pdev, (struct wl_private *)dev->priv );
-+    wl_pci_dma_free(pdev, dev->priv);
- #endif
+ 	ctlr = irq2ctlr(irq);
++	if (ctlr < 0)
++		return IRQ_NONE;
  
-     wl_device_dealloc( dev );
-@@ -534,7 +534,7 @@ int wl_pci_setup( struct pci_dev *pdev )
+ 	dev_dbg(data, "dma_irq_handler\n");
  
- #ifdef ENABLE_DMA
-     /* Allocate DMA Descriptors */
--    if( wl_pci_dma_alloc( pdev, (struct wl_private *)dev->priv ) < 0 ) {
-+    if (wl_pci_dma_alloc(pdev, dev->priv) < 0) {
-         DBG_ERROR( DbgInfo, "Could not allocate DMA descriptor memory!!!\n" );
-         DBG_LEAVE( DbgInfo );
-         return -ENOMEM;
-@@ -570,7 +570,7 @@ int wl_pci_setup( struct pci_dev *pdev )
- 	}
+@@ -398,10 +400,12 @@ static irqreturn_t dma_irq_handler(int irq, void *data)
+ static irqreturn_t dma_ccerr_handler(int irq, void *data)
+ {
+ 	int i;
+-	unsigned ctlr;
++	int ctlr;
+ 	unsigned int cnt = 0;
  
-     /* Make sure interrupts are enabled properly for CardBus */
--    lp = (struct wl_private *)dev->priv;
-+    lp = dev->priv;
+ 	ctlr = irq2ctlr(irq);
++	if (ctlr < 0)
++		return IRQ_NONE;
  
-     if( lp->hcfCtx.IFB_BusType = CFG_NIC_BUS_TYPE_CARDBUS ||
- 	    lp->hcfCtx.IFB_BusType = CFG_NIC_BUS_TYPE_PCI 		) {
+ 	dev_dbg(data, "dma_ccerr_handler\n");
+ 
 -- 
 1.7.0.4
 
