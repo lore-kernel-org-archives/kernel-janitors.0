@@ -1,36 +1,29 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 16 Jul 2010 16:12:46 +0000
-Subject: [PATCH 02/15] arm/mach-u300: check kmalloc result
-Message-Id: <1279296767-24823-1-git-send-email-segooon@gmail.com>
+From: Linus Walleij <linus.ml.walleij@gmail.com>
+Date: Sat, 17 Jul 2010 10:00:38 +0000
+Subject: Re: [PATCH 02/15] arm/mach-u300: check kmalloc result
+Message-Id: <AANLkTinb-TcOBX69tjR1Z3OdYmNvDwHMl_-C-39eWyCu@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1279296767-24823-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1279296767-24823-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-If kmalloc() fails free already allocated memory and exit with -ENOMEM.
+2010/7/16 Kulikov Vasiliy <segooon@gmail.com>:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- arch/arm/mach-u300/dummyspichip.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+> =A0arch/arm/mach-u300/dummyspichip.c | =A0 =A05 +++++
+> =A01 files changed, 5 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-u300/dummyspichip.c b/arch/arm/mach-u300/dummyspichip.c
-index 5f55012..452218a 100644
---- a/arch/arm/mach-u300/dummyspichip.c
-+++ b/arch/arm/mach-u300/dummyspichip.c
-@@ -64,6 +64,11 @@ static ssize_t dummy_looptest(struct device *dev,
- 		goto out;
- 	}
- 	bigrxbuf_virtual = kmalloc(DMA_TEST_SIZE, GFP_KERNEL);
-+	if (bigrxbuf_virtual = NULL) {
-+		kfree(bigtxbuf_virtual);
-+		status = -ENOMEM;
-+		goto out;
-+	}
- 
- 	/* Fill TXBUF with some happy pattern */
- 	memset(bigtxbuf_virtual, 0xAA, DMA_TEST_SIZE);
--- 
-1.7.0.4
+NACK I have recently submitted two patches to move this test chip to
+drivers/spi, please base your fixes work on top of those patches
+instead, and make sure to mail them to Grant Likely and the
+spi-devel-general list.
 
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
