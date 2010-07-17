@@ -1,64 +1,60 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 15 Jul 2010 06:42:39 +0000
-Subject: [PATCH 2/2] i2o: check return code from put_user()
-Message-Id: <1279176159-5565-1-git-send-email-segooon@gmail.com>
+Date: Sat, 17 Jul 2010 15:19:33 +0000
+Subject: [PATCH 2/5] arm: mach-pnx4008: fix sign bug
+Message-Id: <1279379974-15192-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, Dan Carpenter <error27@gmail.com>, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Check return value of put_user() and return -EFAULT if it failed.
-Original comment "We did a get user...so assuming mem is ok...is this
-bad?" is incorrect because memory can be read only.
+'ret' is unsigned, so this code is wrong:
+
+    ret = gpio_read_bit(...);
+    ...
+    if (ret > 0)
+
+If gpio_read_bit() returns -EFAULT then (ret > 0) would be true.
+Make 'ret' signed.
+
+
+The semantic patch that finds this problem (many false-positive results):
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@ r1 @
+identifier f;
+@@
+int f(...) { ... }
+
+@@
+identifier r1.f;
+type T;
+unsigned T x;
+@@
+
+*x = f(...)
+ ...
+*x > 0
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/message/i2o/i2o_config.c |   16 +++++++++-------
- 1 files changed, 9 insertions(+), 7 deletions(-)
+ arch/arm/mach-pnx4008/gpio.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
-index 4dd39a0..068ba07 100644
---- a/drivers/message/i2o/i2o_config.c
-+++ b/drivers/message/i2o/i2o_config.c
-@@ -111,9 +111,9 @@ static int i2o_cfg_gethrt(unsigned long arg)
+diff --git a/arch/arm/mach-pnx4008/gpio.c b/arch/arm/mach-pnx4008/gpio.c
+index f219914..4a0c0eb 100644
+--- a/arch/arm/mach-pnx4008/gpio.c
++++ b/arch/arm/mach-pnx4008/gpio.c
+@@ -199,7 +199,7 @@ EXPORT_SYMBOL(pnx4008_gpio_unregister_pin);
  
- 	len = 8 + ((hrt->entry_len * hrt->num_entries) << 2);
- 
--	/* We did a get user...so assuming mem is ok...is this bad? */
--	put_user(len, kcmd.reslen);
--	if (len > reslen)
-+	if (put_user(len, kcmd.reslen))
-+		ret = -EFAULT;
-+	else if (len > reslen)
- 		ret = -ENOBUFS;
- 	else if (copy_to_user(kcmd.resbuf, (void *)hrt, len))
- 		ret = -EFAULT;
-@@ -147,8 +147,9 @@ static int i2o_cfg_getlct(unsigned long arg)
- 	lct = (i2o_lct *) c->lct;
- 
- 	len = (unsigned int)lct->table_size << 2;
--	put_user(len, kcmd.reslen);
--	if (len > reslen)
-+	if (put_user(len, kcmd.reslen))
-+		ret = -EFAULT;
-+	else if (len > reslen)
- 		ret = -ENOBUFS;
- 	else if (copy_to_user(kcmd.resbuf, lct, len))
- 		ret = -EFAULT;
-@@ -208,8 +209,9 @@ static int i2o_cfg_parms(unsigned long arg, unsigned int type)
- 		return -EAGAIN;
- 	}
- 
--	put_user(len, kcmd.reslen);
--	if (len > reslen)
-+	if (put_user(len, kcmd.reslen))
-+		ret = -EFAULT;
-+	else if (len > reslen)
- 		ret = -ENOBUFS;
- 	else if (copy_to_user(kcmd.resbuf, res, len))
- 		ret = -EFAULT;
+ unsigned long pnx4008_gpio_read_pin(unsigned short pin)
+ {
+-	unsigned long ret = -EFAULT;
++	int ret = -EFAULT;
+ 	int gpio = GPIO_BIT_MASK(pin);
+ 	gpio_lock();
+ 	if (GPIO_ISOUT(pin)) {
 -- 
 1.7.0.4
 
