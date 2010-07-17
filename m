@@ -1,58 +1,46 @@
-From: Steve Wise <swise@opengridcomputing.com>
-Date: Mon, 19 Jul 2010 14:45:29 +0000
-Subject: Re: [patch] infiniband: cxgb3: fix signed bug
-Message-Id: <4C446509.3010400@opengridcomputing.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 17 Jul 2010 10:28:02 +0000
+Subject: [patch] drm: radeon: fix sign bug
+Message-Id: <20100717102802.GF17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100717102900.GG17585@bicker>
-In-Reply-To: <20100717102900.GG17585@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Frank Zago <fzago-klaOcWyJdxkshyMvu7JE4pqQE7yCjDx5@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Airlie <airlied@linux.ie>
+Cc: Dave Airlie <airlied@redhat.com>, Jerome Glisse <jglisse@redhat.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Dan Carpenter wrote:
-> "num_wrs" should be signed so that the "if (num_wrs <= 0)" checks work.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/drivers/infiniband/hw/cxgb3/iwch_qp.c b/drivers/infiniband/hw/cxgb3/iwch_qp.c
-> index ae47bfd..e90fb2d 100644
-> --- a/drivers/infiniband/hw/cxgb3/iwch_qp.c
-> +++ b/drivers/infiniband/hw/cxgb3/iwch_qp.c
-> @@ -357,7 +357,7 @@ int iwch_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
->  	struct iwch_qp *qhp;
->  	u32 idx;
->  	union t3_wr *wqe;
-> -	u32 num_wrs;
-> +	int num_wrs;
->  	unsigned long flag;
->  	struct t3_swsq *sqp;
->  	int wr_cnt = 1;
-> @@ -535,7 +535,7 @@ int iwch_bind_mw(struct ib_qp *qp,
->  	union t3_wr *wqe;
->  	u32 pbl_addr;
->  	u8 page_size;
-> -	u32 num_wrs;
-> +	int num_wrs;
->  	unsigned long flag;
->  	struct ib_sge sgl;
->  	int err=0;
-> @@ -554,7 +554,7 @@ int iwch_bind_mw(struct ib_qp *qp,
->  	}
->  	num_wrs = Q_FREECNT(qhp->wq.sq_rptr, qhp->wq.sq_wptr,
->  			    qhp->wq.sq_size_log2);
-> -	if ((num_wrs) <= 0) {
-> +	if (num_wrs <= 0) {
->  		spin_unlock_irqrestore(&qhp->lock, flag);
->  		return -ENOMEM;
->  	}
->   
+The "error" variable is unsigned so it's never less than zero.  I
+changed it to check if (freq < current_freq) directly.
 
+"best_error" is also unsigned so "best_error - 100" could be a large
+number instead of a negative.  Since "error" is unsigned it is never
+less than a negative and so the cases where "best_error" is less than or
+equal to 100 are false.
 
-The macro Q_FREECNT() must never return <0 or things are badly broken, 
-so this patch should really leave num_wrs as unsigned and just check for 
-num_wrs = 0.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Steve.
-
+diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
+index 8154cdf..a68728d 100644
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -558,15 +558,17 @@ static void radeon_compute_pll_legacy(struct radeon_pll *pll,
+ 					current_freq = radeon_div(tmp, ref_div * post_div);
+ 
+ 					if (pll->flags & RADEON_PLL_PREFER_CLOSEST_LOWER) {
+-						error = freq - current_freq;
+-						error = error < 0 ? 0xffffffff : error;
++						if (freq < current_freq)
++							error = 0xffffffff;
++						else
++							error = freq - current_freq;
+ 					} else
+ 						error = abs(current_freq - freq);
+ 					vco_diff = abs(vco - best_vco);
+ 
+ 					if ((best_vco = 0 && error < best_error) ||
+ 					    (best_vco != 0 &&
+-					     (error < best_error - 100 ||
++					     ((best_error > 100 && error < best_error - 100) ||
+ 					      (abs(error - best_error) < 100 && vco_diff < best_vco_diff)))) {
+ 						best_post_div = post_div;
+ 						best_ref_div = ref_div;
