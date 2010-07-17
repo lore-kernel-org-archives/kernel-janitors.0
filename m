@@ -1,25 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 16 Jul 2010 02:06:44 +0000
-Subject: Re: [PATCH 10/25] atm: Convert pci_table entries to PCI_VDEVICE
-Message-Id: <20100715.190644.48498742.davem@davemloft.net>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 17 Jul 2010 20:39:54 +0000
+Subject: [PATCH 1/4] staging/spectra: remove duplicate GLOB_VERSION
+Message-Id: <1279399194.14049.18.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152049.33395.PeterHuewe@gmx.de>
-In-Reply-To: <201007152049.33395.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: PeterHuewe@gmx.de
-Cc: kernel-janitors@vger.kernel.org, chas@cmf.nrl.navy.mil, tj@kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 20:49:32 +0200
+This is the first patch of a patchset that removes all compilations warnings in staging/spectra.
 
-> From: Peter Huewe <peterhuewe@gmx.de>
-> 
-> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-> PCI_VDEVICE macro, and thus improves readability.
-> 
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+These patches are a delta from a previous patchset and it assumes that these three patches all already applied:
 
-Applied.
+[PATCH 1/3] fix staging/spectra: removes q->prepare_flush_fn
+[PATCH 2/3] fix staging/spectra: use new REQ_FLUSH flag
+[PATCH 3/3] fix staging/spectra: don't use locked_ioctl
+
+Thanks a lot
+
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/spectra/ffsport.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/spectra/ffsport.c b/drivers/staging/spectra/ffsport.c
+index 7b34635..44a7fbe 100644
+--- a/drivers/staging/spectra/ffsport.c
++++ b/drivers/staging/spectra/ffsport.c
+@@ -114,7 +114,6 @@ u64 GLOB_u64_Remainder(u64 addr, u32 divisor_type)
+ 
+ #define GLOB_SBD_NAME          "nd"
+ #define GLOB_SBD_IRQ_NUM       (29)
+-#define GLOB_VERSION		"driver version 20091110"
+ 
+ #define GLOB_SBD_IOCTL_GC                        (0x7701)
+ #define GLOB_SBD_IOCTL_WL                        (0x7702)
+-- 
+1.7.0.4
+
+
+
+
