@@ -1,38 +1,34 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon, 05 Jul 2010 08:01:09 +0000
-Subject: [PATCH] cifs: silence compiler warning
-Message-Id: <1278316870-29112-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 17 Jul 2010 10:24:32 +0000
+Subject: [patch] scsi/initio: add GFP_KERNEL flag
+Message-Id: <20100717102432.GD17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Kernel Janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Suresh Jayaraman <sjayaraman-l3A5Bk7waGM@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>
+Cc: Jiri Kosina <jkosina@suse.cz>, Daniel Mack <daniel@caiaq.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If buf is NULL then ppdata is unitialized after exit from validate_ntransact().
-In this case we do not use ppdata, but compiler warns us. Make it happy.
+Calling scb = kzalloc(i, GFP_DMA) is not the right idea.  If this is
+what we really wanted it would be better to specify it explicitly as 
+kzalloc(i, GFP_NOWAIT | GFP_DMA).  But in this case it's OK to wait so
+I changed it to use GFP_KERNEL.  Also I added a __GFP_NOWARN, since we
+expect the allocation to fail occasionaly (and we just try allocate a 
+smaller amount on the next time through the loop).
 
-This patch silences a compiler warning:
-fs/cifs/cifssmb.c: In function ‘CIFSSMBGetCIFSACL’:
-fs/cifs/cifssmb.c:3082: warning: ‘pdata’ may be used uninitialized in this function
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- fs/cifs/cifssmb.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-index c65c341..22805e2 100644
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -2506,6 +2506,7 @@ validate_ntransact(char *buf, char **ppparm, char **ppdata,
+diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
+index a771416..a4baa44 100644
+--- a/drivers/scsi/initio.c
++++ b/drivers/scsi/initio.c
+@@ -2885,7 +2885,8 @@ static int initio_probe_one(struct pci_dev *pdev,
  
- 	*pdatalen = 0;
- 	*pparmlen = 0;
-+	*ppdata = 0;
+ 	for (; num_scb >= MAX_TARGETS + 3; num_scb--) {
+ 		i = num_scb * sizeof(struct scsi_ctrl_blk);
+-		if ((scb = kzalloc(i, GFP_DMA)) != NULL)
++		scb = kzalloc(i, GFP_KERNEL | GFP_DMA | __GFP_NOWARN);
++		if (scb)
+ 			break;
+ 	}
  
- 	if (buf = NULL)
- 		return -EINVAL;
--- 
-1.7.0.4
-
