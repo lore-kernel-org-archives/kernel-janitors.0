@@ -1,36 +1,35 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, 28 Jul 2010 16:39:26 +0000
-Subject: [PATCH 03/10] sh: dma: check return value of create_proc_read_entry()
-Message-Id: <1280335166-23225-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 17 Jul 2010 10:26:08 +0000
+Subject: [patch] auditsc: audit_log_single_execve_arg() returns signed
+Message-Id: <20100717102608.GE17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Paul Mundt <lethal@linux-sh.org>, Tejun Heo <tj@kernel.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-create_proc_read_entry() may fail, if so return -ENOMEM.
+"len" needs to be signed because audit_log_single_execve_arg() returns
+-1 and we want to check for that:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- arch/sh/drivers/dma/dma-api.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+                len = audit_log_single_execve_arg(context, ab, i,
+                                                  &len_sent, p, buf);
+                if (len <= 0)
+                        break;
 
-diff --git a/arch/sh/drivers/dma/dma-api.c b/arch/sh/drivers/dma/dma-api.c
-index 4a27722..f46848f 100644
---- a/arch/sh/drivers/dma/dma-api.c
-+++ b/arch/sh/drivers/dma/dma-api.c
-@@ -412,8 +412,8 @@ EXPORT_SYMBOL(unregister_dmac);
- static int __init dma_api_init(void)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 3828ad5..2c060c3 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -1158,7 +1158,8 @@ static void audit_log_execve_info(struct audit_context *context,
+ 				  struct audit_aux_data_execve *axi)
  {
- 	printk(KERN_NOTICE "DMA: Registering DMA API.\n");
--	create_proc_read_entry("dma", 0, 0, dma_read_proc, 0);
--	return 0;
-+	return create_proc_read_entry("dma", 0, 0, dma_read_proc, 0)
-+		    ? 0 : -ENOMEM;
- }
- subsys_initcall(dma_api_init);
+ 	int i;
+-	size_t len, len_sent = 0;
++	ssize_t len;
++	size_t len_sent = 0;
+ 	const char __user *p;
+ 	char *buf;
  
--- 
-1.7.0.4
-
