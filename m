@@ -1,36 +1,63 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, 21 Jul 2010 19:07:25 +0000
-Subject: [PATCH 2/2] edac: i5400: carefull error handling
-Message-Id: <1279739245-8243-1-git-send-email-segooon@gmail.com>
+Date: Sat, 17 Jul 2010 15:19:48 +0000
+Subject: [PATCH 3/5] dma: dmatest: fix potential sign bug
+Message-Id: <1279379988-15232-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Jeff Roberson <jroberson@jroberson.net>, Doug Thompson <dougthompson@xmission.com>, Joe Perches <joe@perches.com>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Dan Williams <dan.j.williams@intel.com>, Andrew Morton <akpm@linux-foundation.org>, Maciej Sosnowski <maciej.sosnowski@intel.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Anatolij Gustschin <agust@denx.de>, linux-kernel@vger.kernel.org
 
--EIO is not the only error code that pci_enable_device() may return,
-also the set of errors can be enhanced in future. We should compare
-return code with zero, not with concrete error value.
+'cnt' is unsigned, so this code may become wrong in future as
+dmatest_add_threads() can return error code:
+
+	cnt = dmatest_add_threads(dtc, DMA_MEMCPY);
+	thread_count += cnt > 0 ? cnt : 0;
+		        ^^^^^^^
+
+Now it can return only -EINVAL if and only if second argument of
+dmatest_add_threads() is not one of DMA_MEMCPY, DMA_XOR, DMA_PQ.
+So, now it is not wrong but may become wrong in future.
+
+
+The semantic patch that finds this problem (many false-positive results):
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@ r1 @
+identifier f;
+@@
+int f(...) { ... }
+
+@@
+identifier r1.f;
+type T;
+unsigned T x;
+@@
+
+*x = f(...)
+ ...
+*x > 0
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/edac/i5400_edac.c |    2 +-
+ drivers/dma/dmatest.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/edac/i5400_edac.c b/drivers/edac/i5400_edac.c
-index 010c1d6..38a9be9 100644
---- a/drivers/edac/i5400_edac.c
-+++ b/drivers/edac/i5400_edac.c
-@@ -1348,7 +1348,7 @@ static int __devinit i5400_init_one(struct pci_dev *pdev,
+diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+index 68d58c4..5589358 100644
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -540,7 +540,7 @@ static int dmatest_add_channel(struct dma_chan *chan)
+ 	struct dmatest_chan	*dtc;
+ 	struct dma_device	*dma_dev = chan->device;
+ 	unsigned int		thread_count = 0;
+-	unsigned int		cnt;
++	int cnt;
  
- 	/* wake up device */
- 	rc = pci_enable_device(pdev);
--	if (rc = -EIO)
-+	if (rc)
- 		return rc;
- 
- 	/* now probe and enable the device */
+ 	dtc = kmalloc(sizeof(struct dmatest_chan), GFP_KERNEL);
+ 	if (!dtc) {
 -- 
 1.7.0.4
 
