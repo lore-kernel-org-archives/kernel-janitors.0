@@ -1,45 +1,27 @@
-From: Liam Girdwood <lrg@slimlogic.co.uk>
-Date: Sat, 17 Jul 2010 17:45:33 +0000
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Sat, 17 Jul 2010 18:47:05 +0000
 Subject: Re: [PATCH 13/15] sound/soc: davinci: check kzalloc() result (typo)
-Message-Id: <1279388733.3070.5.camel@odin>
+Message-Id: <20100717184705.GA27456@rakim.wolfsonmicro.main>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1279296977-25267-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1279296977-25267-1-git-send-email-segooon@gmail.com>
+	<1279388733.3070.5.camel@odin>
+In-Reply-To: <1279388733.3070.5.camel@odin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Peter Ujfalusi <peter.ujfalusi@nokia.com>, linux-kernel@vger.kernel.org, Miguel Aguilar <miguel.aguilar@ridgerun.com>
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Miguel Aguilar <miguel.aguilar@ridgerun.com>
 
-On Fri, 2010-07-16 at 20:16 +0400, Kulikov Vasiliy wrote:
-> The code checks 'davinci_vc' after kzalloc() and do not checks
-> 'davinci_vcif_dev' that kzalloc() result is assigned to. It seems that
-> it is a typo (autocompletion?).
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  sound/soc/davinci/davinci-vcif.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/sound/soc/davinci/davinci-vcif.c b/sound/soc/davinci/davinci-vcif.c
-> index 9aa980d..4867853 100644
-> --- a/sound/soc/davinci/davinci-vcif.c
-> +++ b/sound/soc/davinci/davinci-vcif.c
-> @@ -203,7 +203,7 @@ static int davinci_vcif_probe(struct platform_device *pdev)
->  	int ret;
->  
->  	davinci_vcif_dev = kzalloc(sizeof(struct davinci_vcif_dev), GFP_KERNEL);
-> -	if (!davinci_vc) {
-> +	if (!davinci_vcif_dev) {
->  		dev_dbg(&pdev->dev,
->  			"could not allocate memory for private data\n");
->  		return -ENOMEM;
+On Sat, Jul 17, 2010 at 06:45:33PM +0100, Liam Girdwood wrote:
+> On Fri, 2010-07-16 at 20:16 +0400, Kulikov Vasiliy wrote:
+> > The code checks 'davinci_vc' after kzalloc() and do not checks
+> > 'davinci_vcif_dev' that kzalloc() result is assigned to. It seems that
+> > it is a typo (autocompletion?).
 
-13,14 & 15
+> > Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-Acked-by: Liam Girdwood <lrg@slimlogic.co.uk>
--- 
-Freelance Developer, SlimLogic Ltd
-ASoC and Voltage Regulator Maintainer.
-http://www.slimlogic.co.uk
+> Acked-by: Liam Girdwood <lrg@slimlogic.co.uk>
 
+Applied, thanks.  Kulikov could you please check the subject lines
+you're using for your patches - try to be consistent with the rest of
+the patches for the same code area.
