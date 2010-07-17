@@ -1,23 +1,60 @@
-From: Herbert Xu <herbert@gondor.hengli.com.au>
-Date: Mon, 05 Jul 2010 13:25:27 +0000
-Subject: Re: [PATCH 02/25] n2-drv: remove casts from void*
-Message-Id: <20100705132527.GA6974@gondor.apana.org.au>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 17 Jul 2010 15:21:00 +0000
+Subject: [PATCH 5/5] net: dccp: fix sign bug
+Message-Id: <1279380060-15394-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277806502-30772-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277806502-30772-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Matt Mackall <mpm@selenic.com>, Grant Likely <grant.likely@secretlab.ca>, Sean MacLennan <smaclennan@pikatech.com>, Jiri Kosina <jkosina@suse.cz>, Daniel Mack <daniel@caiaq.de>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>, "David S. Miller" <davem@davemloft.net>, Gerrit Renker <gerrit@erg.abdn.ac.uk>, dccp@vger.kernel.org, netdev@vger.kernel.org
 
-On Tue, Jun 29, 2010 at 02:15:01PM +0400, Kulikov Vasiliy wrote:
-> Remove unnesessary casts from void*.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+'gap' is unsigned, so this code is wrong:
 
-Patch applied.  Thank you.
+    gap = -new_head;
+    ...
+    if (gap > 0) { ... }
+
+Make 'gap' signed.
+
+
+The semantic patch that finds this problem (many false-positive results):
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@ r1 @
+identifier f;
+@@
+int f(...) { ... }
+
+@@
+identifier r1.f;
+type T;
+unsigned T x;
+@@
+
+*x = f(...)
+ ...
+*x > 0
+
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ net/dccp/ackvec.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/net/dccp/ackvec.c b/net/dccp/ackvec.c
+index 2abddee..92a6fcb 100644
+--- a/net/dccp/ackvec.c
++++ b/net/dccp/ackvec.c
+@@ -201,7 +201,7 @@ static inline int dccp_ackvec_set_buf_head_state(struct dccp_ackvec *av,
+ 						 const unsigned int packets,
+ 						 const unsigned char state)
+ {
+-	unsigned int gap;
++	long gap;
+ 	long new_head;
+ 
+ 	if (av->av_vec_len + packets > DCCP_MAX_ACKVEC_LEN)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.7.0.4
+
