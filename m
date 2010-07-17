@@ -1,22 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 06 Jul 2010 02:06:35 +0000
-Subject: Re: [PATCH] epic100: Use the instance of net_device_stats from
-Message-Id: <20100705.190635.245412428.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 17 Jul 2010 17:05:48 +0000
+Subject: [patch] l2cap: fix signedness bugs
+Message-Id: <20100717170548.GH17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278332002-15860-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278332002-15860-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, joe@perches.com, jpirko@redhat.com, shemminger@vyatta.com, adobriyan@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: "David S. Miller" <davem@davemloft.net>, "Gustavo F. Padovan" <padovan@profusion.mobi>, =?iso-8859-1?Q?Jo=E3o?= Paulo Rechi Vita <jprvita@profusion.mobi>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon,  5 Jul 2010 16:13:20 +0400
+These variables are only used for math.  They should be from -63 to +63.
+In the original code instead of being negative they would be largish
+positive numbers.  I changed them to ints.
 
-> Since net_device has an instance of net_device_stats,
-> we can remove the instance of this from the adapter structure.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/net/bluetooth/l2cap.c b/net/bluetooth/l2cap.c
+index 1b682a5..4a13499 100644
+--- a/net/bluetooth/l2cap.c
++++ b/net/bluetooth/l2cap.c
+@@ -3795,7 +3795,7 @@ static inline int l2cap_data_channel_iframe(struct sock *sk, u16 rx_control, str
+ 	u8 tx_seq = __get_txseq(rx_control);
+ 	u8 req_seq = __get_reqseq(rx_control);
+ 	u8 sar = rx_control >> L2CAP_CTRL_SAR_SHIFT;
+-	u8 tx_seq_offset, expected_tx_seq_offset;
++	int tx_seq_offset, expected_tx_seq_offset;
+ 	int num_to_ack = (pi->tx_win/6) + 1;
+ 	int err = 0;
+ 
+@@ -4080,7 +4080,7 @@ static inline int l2cap_data_channel(struct l2cap_conn *conn, u16 cid, struct sk
+ 	struct sock *sk;
+ 	struct l2cap_pinfo *pi;
+ 	u16 control, len;
+-	u8 tx_seq, req_seq, next_tx_seq_offset, req_seq_offset;
++	int tx_seq, req_seq, next_tx_seq_offset, req_seq_offset;
+ 
+ 	sk = l2cap_get_chan_by_scid(&conn->chan_list, cid);
+ 	if (!sk) {
