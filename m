@@ -1,41 +1,58 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Date: Fri, 30 Jul 2010 15:19:30 +0000
-Subject: Re: [PATCH 2/9] staging: octeon: check request_irq() return value
-Message-Id: <4C52ED82.6040703@caviumnetworks.com>
+From: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Date: Sun, 18 Jul 2010 13:57:18 +0000
+Subject: [PATCH 2/2] turn BUG_ON for out of bound in mb_cache_entry_find_first/mb_cache_entry_find_next
+Message-Id: <4C43083E.6020201@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280488062-20737-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280488062-20737-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Ralf Baechle <ralf@linux-mips.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-mm@kvack.org, linux-ext4 <linux-ext4@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On 07/30/2010 04:07 AM, Kulikov Vasiliy wrote:
-> request_irq() may fail, if so propagate error code.
->
-> Signed-off-by: Kulikov Vasiliy<segooon@gmail.com>
-
-You can add:
-
-Acked-by: David Daney <ddaney@caviumnetworks.com>
+In mb_cache_entry_find_first/mb_cache_entry_find_next, macro
+mb_assert is used to do assertion on index, but it just prints
+KERN_ERR info if defined.
+Currently, only ext2/ext3/ext4 use the function with index set 0.
+But for potential usage by other subsystems, I think we shoud report BUG
+if we got some index out of bound here.
 
 
-> ---
->   drivers/staging/octeon/ethernet-spi.c |    2 ++
->   1 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/staging/octeon/ethernet-spi.c b/drivers/staging/octeon/ethernet-spi.c
-> index b58b897..9708254 100644
-> --- a/drivers/staging/octeon/ethernet-spi.c
-> +++ b/drivers/staging/octeon/ethernet-spi.c
-> @@ -294,6 +294,8 @@ int cvm_oct_spi_init(struct net_device *dev)
->   	if (number_spi_ports = 0) {
->   		r = request_irq(OCTEON_IRQ_RML, cvm_oct_spi_rml_interrupt,
->   				IRQF_SHARED, "SPI",&number_spi_ports);
-> +		if (r)
-> +			return r;
->   	}
->   	number_spi_ports++;
->
+Following patch is against 2.6.35-rc3, and should be
+applied after the first patch.Please check it.
 
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
+---
+ fs/mbcache.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/mbcache.c b/fs/mbcache.c
+index 5697d9e..ed25979 100644
+--- a/fs/mbcache.c
++++ b/fs/mbcache.c
+@@ -614,7 +614,7 @@ mb_cache_entry_find_first(struct mb_cache *cache,
+int index,
+ 	struct list_head *l;
+ 	struct mb_cache_entry *ce;
+
+-	mb_assert(index < mb_cache_indexes(cache));
++	BUG_ON((index < 0) || (index >= mb_cache_indexes(cache)));
+ 	spin_lock(&mb_cache_spinlock);
+ 	l = cache->c_indexes_hash[index][bucket].next;
+ 	ce = __mb_cache_entry_find(l, &cache->c_indexes_hash[index][bucket],
+@@ -652,7 +652,7 @@ mb_cache_entry_find_next(struct mb_cache_entry
+*prev, int index,
+ 	struct list_head *l;
+ 	struct mb_cache_entry *ce;
+
+-	mb_assert(index < mb_cache_indexes(cache));
++	BUG_ON((index < 0) || (index >= mb_cache_indexes(cache)));
+ 	spin_lock(&mb_cache_spinlock);
+ 	l = prev->e_indexes[index].o_list.next;
+ 	ce = __mb_cache_entry_find(l, &cache->c_indexes_hash[index][bucket],
+-- 
+1.7.1.1
+
+
+
+-- 
+Thanks and Regards,
+shenghui
