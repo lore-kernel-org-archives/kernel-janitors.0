@@ -1,29 +1,55 @@
-From: Linus Walleij <linus.ml.walleij@gmail.com>
-Date: Sat, 17 Jul 2010 10:00:38 +0000
-Subject: Re: [PATCH 02/15] arm/mach-u300: check kmalloc result
-Message-Id: <AANLkTinb-TcOBX69tjR1Z3OdYmNvDwHMl_-C-39eWyCu@mail.gmail.com>
+From: Roland Dreier <rdreier@cisco.com>
+Date: Mon, 19 Jul 2010 20:15:24 +0000
+Subject: Re: [patch 2/2] infiniband/cxgb4: add null check
+Message-Id: <adalj97qlcz.fsf@roland-alpha.cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279296767-24823-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1279296767-24823-1-git-send-email-segooon@gmail.com>
+References: <20100531140152.GU5483@bicker>
+In-Reply-To: <20100531140152.GU5483@bicker> (Dan Carpenter's message of "Mon,
+	31 May 2010 16:01:52 +0200")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-2010/7/16 Kulikov Vasiliy <segooon@gmail.com>:
+Since we agreed the NULL check probably wasn't needed, I added this:
 
-> =A0arch/arm/mach-u300/dummyspichip.c | =A0 =A05 +++++
-> =A01 files changed, 5 insertions(+), 0 deletions(-)
+[PATCH] RDMA/cxgb4: Remove unneeded NULL check
 
-NACK I have recently submitted two patches to move this test chip to
-drivers/spi, please base your fixes work on top of those patches
-instead, and make sure to mail them to Grant Likely and the
-spi-devel-general list.
+The rest of the code seems to assume that ep->com.cm_id can't be NULL,
+so remove an unneeded test.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reported-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Roland Dreier <rolandd@cisco.com>
+---
+ drivers/infiniband/hw/cxgb4/cm.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index b5e676c..4185c3b 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -780,11 +780,11 @@ static void connect_reply_upcall(struct c4iw_ep *ep, int status)
+ 		event.private_data_len = ep->plen;
+ 		event.private_data = ep->mpa_pkt + sizeof(struct mpa_message);
+ 	}
+-	if (ep->com.cm_id) {
+-		PDBG("%s ep %p tid %u status %d\n", __func__, ep,
+-		     ep->hwtid, status);
+-		ep->com.cm_id->event_handler(ep->com.cm_id, &event);
+-	}
++
++	PDBG("%s ep %p tid %u status %d\n", __func__, ep,
++	     ep->hwtid, status);
++	ep->com.cm_id->event_handler(ep->com.cm_id, &event);
++
+ 	if (status < 0) {
+ 		ep->com.cm_id->rem_ref(ep->com.cm_id);
+ 		ep->com.cm_id = NULL;
+-- 
+1.7.1.1
+
+
+-- 
+Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
+http://www.cisco.com/web/about/doing_business/legal/cri/index.html
