@@ -1,38 +1,27 @@
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 19:00:41 +0000
-Subject: [PATCH 16/25] crypto: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
-Message-Id: <201007152100.42276.PeterHuewe@gmx.de>
+From: Herbert Xu <herbert@gondor.hengli.com.au>
+Date: Mon, 19 Jul 2010 06:05:59 +0000
+Subject: Re: [PATCH 16/25] crypto: Convert pci_table entries to PCI_VDEVICE
+Message-Id: <20100719060559.GA19793@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201007152100.42276.PeterHuewe@gmx.de>
+In-Reply-To: <201007152100.42276.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Roel Kluin <roel.kluin@gmail.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Chihau Chau <chihau@gmail.com>, linux-geode@lists.infradead.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Huewe <PeterHuewe@gmx.de>
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Roel Kluin <roel.kluin@gmail.com>, Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, Chihau Chau <chihau@gmail.com>, linux-geode@lists.infradead.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+On Thu, Jul 15, 2010 at 09:00:41PM +0200, Peter Huewe wrote:
+> From: Peter Huewe <peterhuewe@gmx.de>
+> 
+> This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
+> .subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
+> PCI_VDEVICE macro, and thus improves readability.
+> 
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 
-This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-PCI_VDEVICE macro, and thus improves readability.
-
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
- drivers/crypto/geode-aes.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/crypto/geode-aes.c b/drivers/crypto/geode-aes.c
-index 09389dd..219d09c 100644
---- a/drivers/crypto/geode-aes.c
-+++ b/drivers/crypto/geode-aes.c
-@@ -573,7 +573,7 @@ geode_aes_probe(struct pci_dev *dev, const struct pci_device_id *id)
- }
- 
- static struct pci_device_id geode_aes_tbl[] = {
--	{ PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_LX_AES, PCI_ANY_ID, PCI_ANY_ID} ,
-+	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_LX_AES), } ,
- 	{ 0, }
- };
- 
+Patch applied.  Thanks.
 -- 
-1.7.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
