@@ -1,34 +1,67 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, 14 Jul 2010 18:02:21 +0000
-Subject: [PATCH 04/11] xtavnet/setup.c: formatting of pointers in printk()
-Message-Id: <1279130541-10817-1-git-send-email-segooon@gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Tue, 20 Jul 2010 15:13:21 +0000
+Subject: Re: [PATCH 07/16] trivial: use ARRAY_SIZE
+Message-Id: <alpine.LNX.2.00.1007201713040.4741@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1277726109-24633-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1277726109-24633-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Chris Zankel <chris@zankel.net>, Pete Delaney <piet@tensilica.com>, Dan Nicolaescu <dann@xtensa-linux.org>, Marc Gauthier <marc@tensilica.com>, linux-kernel@vger.kernel.org
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Jing Huang <huangj@brocade.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Krishna Gudipati <kgudipat@brocade.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use %p instead of %08x in printk().
+On Mon, 28 Jun 2010, Kulikov Vasiliy wrote:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- arch/xtensa/platforms/xtavnet/setup.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+> ---
+>  drivers/scsi/bfa/bfa_fcs.c |   10 ++++------
+>  1 files changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/scsi/bfa/bfa_fcs.c b/drivers/scsi/bfa/bfa_fcs.c
+> index 3516172..153cb2a 100644
+> --- a/drivers/scsi/bfa/bfa_fcs.c
+> +++ b/drivers/scsi/bfa/bfa_fcs.c
+> @@ -86,7 +86,7 @@ bfa_fcs_attach(struct bfa_fcs_s *fcs, struct bfa_s *bfa, struct bfad_s *bfad,
+>  	bfa_attach_fcs(bfa);
+>  	fcbuild_init();
+>  
+> -	for (i = 0; i < sizeof(fcs_modules) / sizeof(fcs_modules[0]); i++) {
+> +	for (i = 0; i < ARRAY_SIZE(fcs_modules); i++) {
+>  		mod = &fcs_modules[i];
+>  		if (mod->attach)
+>  			mod->attach(fcs);
+> @@ -102,7 +102,7 @@ bfa_fcs_init(struct bfa_fcs_s *fcs)
+>  	int             i;
+>  	struct bfa_fcs_mod_s  *mod;
+>  
+> -	for (i = 0; i < sizeof(fcs_modules) / sizeof(fcs_modules[0]); i++) {
+> +	for (i = 0; i < ARRAY_SIZE(fcs_modules); i++) {
+>  		mod = &fcs_modules[i];
+>  		if (mod->modinit)
+>  			mod->modinit(fcs);
+> @@ -163,13 +163,11 @@ void
+>  bfa_fcs_exit(struct bfa_fcs_s *fcs)
+>  {
+>  	struct bfa_fcs_mod_s  *mod;
+> -	int             nmods, i;
+> +	int i;
+>  
+>  	bfa_wc_init(&fcs->wc, bfa_fcs_exit_comp, fcs);
+>  
+> -	nmods = sizeof(fcs_modules) / sizeof(fcs_modules[0]);
+> -
+> -	for (i = 0; i < nmods; i++) {
+> +	for (i = 0; i < ARRAY_SIZE(fcs_modules); i++) {
+>  
+>  		mod = &fcs_modules[i];
+>  		if (mod->modexit) {
 
-diff --git a/arch/xtensa/platforms/xtavnet/setup.c b/arch/xtensa/platforms/xtavnet/setup.c
-index 256fcb2..1597dbf 100644
---- a/arch/xtensa/platforms/xtavnet/setup.c
-+++ b/arch/xtensa/platforms/xtavnet/setup.c
-@@ -213,7 +213,7 @@ void platform_init(bp_tag_t *bootparams)
- {
- 	printk("\n");
- 	if( bootparams )
--		printk("XTAVnet: platform_init(bootparams:0x%x)\n", (unsigned)bootparams);
-+		printk("XTAVnet: platform_init(bootparams:%p)\n", bootparams);
- }
- 
- static int xtavnet_init(void)
+I have folded this patch into the other bfa change you made, and applied. 
+Thanks,
+
 -- 
-1.7.0.4
-
+Jiri Kosina
+SUSE Labs, Novell Inc.
