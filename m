@@ -1,86 +1,20 @@
-From: Martyn Welch <martyn.welch@ge.com>
-Date: Mon, 05 Jul 2010 10:38:47 +0000
-Subject: Re: [PATCH 22/25] vme_tsi148: remove casts from void*
-Message-Id: <4C31B637.6070604@ge.com>
+From: "Sonia Porter" <sporter@jusd.k12.ca.us>
+Date: Tue, 20 Jul 2010 01:26:37 +0000
+Subject: Dear Webmail User
+Message-Id: <8A78544F83994B468EAC5A3D242C1E34C79054@exchsrv02.jusd.dom>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277806581-31452-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277806581-31452-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, Julia Lawall <julia@diku.dk>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: info@upgrade.com
 
-Kulikov Vasiliy wrote:
-> Remove unnesessary casts from void*.
->
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
->   
+This message was sent automatically by a program on Web mail which periodically checks the size of in boxes, where new messages are received.The program is run weekly to ensure no one's in box grows too large. If your in box becomes too large,you will be unable to receive new email. Just before this message was sent,you had 18 Mega bytes (MB) or more of messages stored in your in box on your Web mail. To help's re-set your SPACE on our database prior to maintain your IN BOX.
+ 
+YOU MUST COPY AND PAST THE BELOW LINK TO INCREASE YOUR INBOX QUOTA AND UPGRADE YOUR WEBMAIL ACCOUNT
 
-Seems ok, cheers,
-
-Signed-off-by: Martyn Welch <martyn.welch@ge.com>
-
-
-> ---
->  drivers/staging/vme/bridges/vme_tsi148.c |   10 +++++-----
->  1 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/staging/vme/bridges/vme_tsi148.c b/drivers/staging/vme/bridges/vme_tsi148.c
-> index abe88a3..4685a31 100644
-> --- a/drivers/staging/vme/bridges/vme_tsi148.c
-> +++ b/drivers/staging/vme/bridges/vme_tsi148.c
-> @@ -1649,7 +1649,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
->  	/* Fill out source part */
->  	switch (src->type) {
->  	case VME_DMA_PATTERN:
-> -		pattern_attr = (struct vme_dma_pattern *)src->private;
-> +		pattern_attr = src->private;
->  
->  		entry->descriptor.dsal = pattern_attr->pattern;
->  		entry->descriptor.dsat = TSI148_LCSR_DSAT_TYP_PAT;
-> @@ -1663,7 +1663,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
->  
->  		break;
->  	case VME_DMA_PCI:
-> -		pci_attr = (struct vme_dma_pci *)src->private;
-> +		pci_attr = src->private;
->  
->  		reg_split((unsigned long long)pci_attr->address, &address_high,
->  			&address_low);
-> @@ -1672,7 +1672,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
->  		entry->descriptor.dsat = TSI148_LCSR_DSAT_TYP_PCI;
->  		break;
->  	case VME_DMA_VME:
-> -		vme_attr = (struct vme_dma_vme *)src->private;
-> +		vme_attr = src->private;
->  
->  		reg_split((unsigned long long)vme_attr->address, &address_high,
->  			&address_low);
-> @@ -1701,7 +1701,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
->  	/* Fill out destination part */
->  	switch (dest->type) {
->  	case VME_DMA_PCI:
-> -		pci_attr = (struct vme_dma_pci *)dest->private;
-> +		pci_attr = dest->private;
->  
->  		reg_split((unsigned long long)pci_attr->address, &address_high,
->  			&address_low);
-> @@ -1710,7 +1710,7 @@ int tsi148_dma_list_add(struct vme_dma_list *list, struct vme_dma_attr *src,
->  		entry->descriptor.ddat = TSI148_LCSR_DDAT_TYP_PCI;
->  		break;
->  	case VME_DMA_VME:
-> -		vme_attr = (struct vme_dma_vme *)dest->private;
-> +		vme_attr = dest->private;
->  
->  		reg_split((unsigned long long)vme_attr->address, &address_high,
->  			&address_low);
->   
-
-
--- 
-Martyn Welch (Principal Software Engineer)   |   Registered in England and
-GE Intelligent Platforms                     |   Wales (3828642) at 100
-T +44(0)127322748                            |   Barbirolli Square, Manchester,
-E martyn.welch@ge.com                        |   M2 3AB  VAT:GB 927559189
-
+http://www.eformit.com/eform.aspx?webmasterupgradesystem 
+ 
+ You will continue to receive this warning message periodically if your inbox size continues to be between 18 and 20 MB. If your in box size grows to 20MB,then a program on the Web mail will move your oldest email to a folder in your home directory to ensure that you will continue to be able to receive incoming email. You will be notified by email that this has taken place. If your in box grows to 25 MB, you will be unable to receive new email as it will be returned to the sender.After you read a message,it is best to REPLY and SAVE a copy.
+ 
+Thanks.
+Web mail Help Desk
