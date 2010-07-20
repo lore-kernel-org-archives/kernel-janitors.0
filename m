@@ -1,37 +1,63 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 03 Jul 2010 16:04:28 +0000
-Subject: [PATCH 14/19] drivers/pci: use for_each_pci_dev()
-Message-Id: <1278173068-11881-1-git-send-email-segooon@gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Tue, 20 Jul 2010 15:06:19 +0000
+Subject: Re: [PATCH 03/16] trivial: use ARRAY_SIZE
+Message-Id: <alpine.LNX.2.00.1007201706060.4741@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1277726093-24500-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1277726093-24500-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Tejun Heo <tj@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, David Airlie <airlied@linux.ie>, Dave Airlie <airlied@redhat.com>, Adam Jackson <ajax@redhat.com>, Zhao Yakui <yakui.zhao@intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Use for_each_pci_dev() to simplify the code.
+On Mon, 28 Jun 2010, Kulikov Vasiliy wrote:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/pci/proc.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+> Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_edid.c |    7 ++-----
+>  1 files changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+> index c198186..da06476 100644
+> --- a/drivers/gpu/drm/drm_edid.c
+> +++ b/drivers/gpu/drm/drm_edid.c
+> @@ -929,13 +929,11 @@ drm_mode_do_interlace_quirk(struct drm_display_mode *mode,
+>  		{ 1440,  576 },
+>  		{ 2880,  576 },
+>  	};
+> -	static const int n_sizes > -		sizeof(cea_interlaced)/sizeof(cea_interlaced[0]);
+>  
+>  	if (!(pt->misc & DRM_EDID_PT_INTERLACED))
+>  		return;
+>  
+> -	for (i = 0; i < n_sizes; i++) {
+> +	for (i = 0; i < ARRAY_SIZE(cea_interlaced); i++) {
+>  		if ((mode->hdisplay = cea_interlaced[i].w) &&
+>  		    (mode->vdisplay = cea_interlaced[i].h / 2)) {
+>  			mode->vdisplay *= 2;
+> @@ -1375,7 +1373,6 @@ static const struct {
+>  	{ 1920, 1440, 60, 0 },
+>  	{ 1920, 1440, 75, 0 },
+>  };
+> -static const int num_est3_modes = sizeof(est3_modes) / sizeof(est3_modes[0]);
+>  
+>  static int
+>  drm_est3_modes(struct drm_connector *connector, struct detailed_timing *timing)
+> @@ -1387,7 +1384,7 @@ drm_est3_modes(struct drm_connector *connector, struct detailed_timing *timing)
+>  	for (i = 0; i < 6; i++) {
+>  		for (j = 7; j > 0; j--) {
+>  			m = (i * 8) + (7 - j);
+> -			if (m >= num_est3_modes)
+> +			if (m >= ARRAY_SIZE(est3_modes))
+>  				break;
+>  			if (est[i] & (1 << j)) {
+>  				mode = drm_mode_find_dmt(connector->dev,
 
-diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-index 449e890..2fd73fb 100644
---- a/drivers/pci/proc.c
-+++ b/drivers/pci/proc.c
-@@ -485,9 +485,9 @@ static int __init pci_proc_init(void)
- 	proc_create("devices", 0, proc_bus_pci_dir,
- 		    &proc_bus_pci_dev_operations);
- 	proc_initialized = 1;
--	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev)
- 		pci_proc_attach_device(dev);
--	}
-+
- 	return 0;
- }
- 
+Not found in linux-next as of today. Applied, thanks.
+
 -- 
-1.7.0.4
-
+Jiri Kosina
+SUSE Labs, Novell Inc.
