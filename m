@@ -1,36 +1,51 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 03 Jul 2010 16:04:07 +0000
-Subject: [PATCH 09/19] drivers/edac: use for_each_pci_dev()
-Message-Id: <1278173048-11711-1-git-send-email-segooon@gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Tue, 20 Jul 2010 15:15:56 +0000
+Subject: Re: [PATCH 08/16] trivial: use ARRAY_SIZE
+Message-Id: <alpine.LNX.2.00.1007201715330.4741@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1277726113-24666-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1277726113-24666-1-git-send-email-segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Doug Thompson <dougthompson@xmission.com>, Stephen Hemminger <shemminger@vyatta.com>, Jens Axboe <jens.axboe@oracle.com>, David Teigland <teigland@redhat.com>, Pekka Enberg <penberg@cs.helsinki.fi>, "Hans J. Koch" <hjk@linutronix.de>, bluesmoke-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Kulikov Vasiliy <segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kernel Janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "James E.J. Bottomley" <James.Bottomley-l3A5Bk7waGM@public.gmane.org>, devel-s9riP+hp16TNLxjTenLetw@public.gmane.org
 
-Use for_each_pci_dev() to simplify the code.
+On Mon, 28 Jun 2010, Kulikov Vasiliy wrote:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/edac/edac_pci_sysfs.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+> Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+> ---
+>  drivers/scsi/libfc/fc_exch.c |    4 +---
+>  1 files changed, 1 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
+> index 104e0fb..ca52bfa 100644
+> --- a/drivers/scsi/libfc/fc_exch.c
+> +++ b/drivers/scsi/libfc/fc_exch.c
+> @@ -219,8 +219,6 @@ static void fc_exch_els_rrq(struct fc_seq *, struct fc_frame *);
+>   */
+>  static char *fc_exch_rctl_names[] = FC_RCTL_NAMES_INIT;
+>  
+> -#define FC_TABLE_SIZE(x)   (sizeof(x) / sizeof(x[0]))
+> -
+>  /**
+>   * fc_exch_name_lookup() - Lookup name by opcode
+>   * @op:	       Opcode to be looked up
+> @@ -249,7 +247,7 @@ static inline const char *fc_exch_name_lookup(unsigned int op, char **table,
+>  static const char *fc_exch_rctl_name(unsigned int op)
+>  {
+>  	return fc_exch_name_lookup(op, fc_exch_rctl_names,
+> -				   FC_TABLE_SIZE(fc_exch_rctl_names));
+> +				   ARRAY_SIZE(fc_exch_rctl_names));
+>  }
 
-diff --git a/drivers/edac/edac_pci_sysfs.c b/drivers/edac/edac_pci_sysfs.c
-index c39697d..dd28a82 100644
---- a/drivers/edac/edac_pci_sysfs.c
-+++ b/drivers/edac/edac_pci_sysfs.c
-@@ -653,9 +653,8 @@ static inline void edac_pci_dev_parity_iterator(pci_parity_check_fn_t fn)
- 	 * and while we are looking at it have its reference count
- 	 * bumped until we are done with it
- 	 */
--	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev)
- 		fn(dev);
--	}
- }
- 
- /*
+Applied. Please use better Subject: lines next time though. Having the 
+whole series have the same Subject: line doesn't really help.
+
+Thanks,
+
 -- 
-1.7.0.4
-
+Jiri Kosina
+SUSE Labs, Novell Inc.
