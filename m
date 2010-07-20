@@ -1,37 +1,25 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 15 Jul 2010 18:43:15 +0000
-Subject: [PATCH 1/8] arm/mach-tegra: fix unsigned calcs
-Message-Id: <1279219395-12088-1-git-send-email-segooon@gmail.com>
+From: Colin Cross <ccross@android.com>
+Date: Tue, 20 Jul 2010 07:14:08 +0000
+Subject: Re: [PATCH 1/8] arm/mach-tegra: fix unsigned calcs
+Message-Id: <AANLkTinFKH4Ed3UW3kMKdT5RJwmmE5n5k7nO01mB9xpO@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1279219395-12088-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1279219395-12088-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-divider_u71 is unsigned, so this check is buggy:
-if (divider_u71 - 2 > 255 || divider_u71 - 2 < 0)
+On Thu, Jul 15, 2010 at 11:43 AM, Kulikov Vasiliy <segooon@gmail.com> wrote:
+> divider_u71 is unsigned, so this check is buggy:
+> if (divider_u71 - 2 > 255 || divider_u71 - 2 < 0)
+>
+> If divider_u71 is 0 or 1 both checks are lying.
+> So, it does not produce a buggy answer, but it is confusing.
 
-If divider_u71 is 0 or 1 both checks are lying.
-So, it does not produce a buggy answer, but it is confusing.
+Hi Kulikov,
+Thanks for the patch.  This problem has been fixed in another patch in
+the linux-tegra tree, I'll post it for review and update the
+linux-next tree soon.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- arch/arm/mach-tegra/tegra2_clocks.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/tegra2_clocks.c b/arch/arm/mach-tegra/tegra2_clocks.c
-index 4261632..64df5b4 100644
---- a/arch/arm/mach-tegra/tegra2_clocks.c
-+++ b/arch/arm/mach-tegra/tegra2_clocks.c
-@@ -149,7 +149,7 @@ static int clk_div71_get_divider(struct clk *c, unsigned long rate)
- 
- 	divider_u71 = DIV_ROUND_UP(c->rate * 2, rate);
- 
--	if (divider_u71 - 2 > 255 || divider_u71 - 2 < 0)
-+	if (divider_u71 > 2 + 255 || divider_u71 < 2)
- 		return -EINVAL;
- 
- 	return divider_u71 - 2;
--- 
-1.7.0.4
-
+Colin Cross
