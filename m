@@ -1,25 +1,40 @@
-From: Colin Cross <ccross@android.com>
-Date: Tue, 20 Jul 2010 07:14:08 +0000
+From: Mike Rapoport <mike@compulab.co.il>
+Date: Tue, 20 Jul 2010 07:53:56 +0000
 Subject: Re: [PATCH 1/8] arm/mach-tegra: fix unsigned calcs
-Message-Id: <AANLkTinFKH4Ed3UW3kMKdT5RJwmmE5n5k7nO01mB9xpO@mail.gmail.com>
+Message-Id: <4C455614.1000801@compulab.co.il>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1279219395-12088-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1279219395-12088-1-git-send-email-segooon@gmail.com>
+	<AANLkTinFKH4Ed3UW3kMKdT5RJwmmE5n5k7nO01mB9xpO@mail.gmail.com>
+In-Reply-To: <AANLkTinFKH4Ed3UW3kMKdT5RJwmmE5n5k7nO01mB9xpO@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Jul 15, 2010 at 11:43 AM, Kulikov Vasiliy <segooon@gmail.com> wrote:
-> divider_u71 is unsigned, so this check is buggy:
-> if (divider_u71 - 2 > 255 || divider_u71 - 2 < 0)
->
-> If divider_u71 is 0 or 1 both checks are lying.
-> So, it does not produce a buggy answer, but it is confusing.
+Colin Cross wrote:
+> On Thu, Jul 15, 2010 at 11:43 AM, Kulikov Vasiliy <segooon@gmail.com> wrote:
+>> divider_u71 is unsigned, so this check is buggy:
+>> if (divider_u71 - 2 > 255 || divider_u71 - 2 < 0)
+>>
+>> If divider_u71 is 0 or 1 both checks are lying.
+>> So, it does not produce a buggy answer, but it is confusing.
+> 
+> Hi Kulikov,
 
-Hi Kulikov,
-Thanks for the patch.  This problem has been fixed in another patch in
-the linux-tegra tree, I'll post it for review and update the
-linux-next tree soon.
+The first name is Vasiliy :)
 
-Colin Cross
+> Thanks for the patch.  This problem has been fixed in another patch in
+> the linux-tegra tree, I'll post it for review and update the
+> linux-next tree soon.
+> 
+> Colin Cross
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+-- 
+Sincerely yours,
+Mike.
