@@ -1,45 +1,58 @@
-From: shenghui <crosslonelyover@gmail.com>
-Date: Tue, 20 Jul 2010 01:04:46 +0000
-Subject: Re: [PATCH] fix return value for mb_cache_shrink_fn when nr_to_scan >
-Message-Id: <AANLkTimBCrq8cPJrTSKiG_wbd1ppu0twTAMXeezJEZs3@mail.gmail.com>
+From: Eric Sandeen <sandeen@redhat.com>
+Date: Tue, 20 Jul 2010 15:13:56 +0000
+Subject: Re: [PATCH] fix return value for mb_cache_shrink_fn when nr_to_scan
+Message-Id: <4C45BD34.8030905@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4C425273.5000702@gmail.com>
-	<20100718060106.GA579@infradead.org>
-	<4C42A10B.2080904@gmail.com>
-	<201007192039.06670.agruen@suse.de>
-	<AANLkTimh4UjM3LWPjBjMA5UGecQYyPSxIvJBInijAP-j@mail.gmail.com>
-In-Reply-To: <AANLkTimh4UjM3LWPjBjMA5UGecQYyPSxIvJBInijAP-j@mail.gmail.com>
+References: <4C425273.5000702@gmail.com> <20100718060106.GA579@infradead.org> <4C42A10B.2080904@gmail.com> <201007192039.06670.agruen@suse.de>
+In-Reply-To: <201007192039.06670.agruen@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Andreas Gruenbacher <agruen@suse.de>
-Cc: Christoph Hellwig <hch@infradead.org>, Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-mm@kvack.org, linux-ext4 <linux-ext4@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+Cc: Wang Sheng-Hui <crosslonelyover@gmail.com>, Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-mm@kvack.org, linux-ext4 <linux-ext4@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-2010/7/20 shenghui <crosslonelyover@gmail.com>:
-> 2010/7/20 Andreas Gruenbacher <agruen@suse.de>:
->
-> Sorry, I haven't found any special attention on
-> sysctl_vfs_cache_pressure = 0 case or scale
-> nr_to_scan in fs/dcache.c
->
->  900static int shrink_dcache_memory(int nr, gfp_t gfp_mask)
->  901{
->  902        if (nr) {
->  903                if (!(gfp_mask & __GFP_FS))
->  904                        return -1;
->  905                prune_dcache(nr);
->  906        }
->  907        return (dentry_stat.nr_unused / 100) * sysctl_vfs_cache_pressure;
->  908}
->
+Andreas Gruenbacher wrote:
+> On Sunday 18 July 2010 08:36:59 Wang Sheng-Hui wrote:
+>> I regenerated the patch. Please check it.
+> 
+> The logic for calculating how many objects to free is still wrong: 
+> mb_cache_shrink_fn returns the number of entries scaled by 
+> sysctl_vfs_cache_pressure / 100.  It should also scale nr_to_scan by the 
+> inverse of that.  The sysctl_vfs_cache_pressure = 0 case (never scale) may 
+> require special attention.
 
-And for sysctl_vfs_cache_pressure = 0 case, it's
-enough to return 0 to indicate no cache entries left.
+I don't think that's right:
+
+vfs_cache_pressure
+------------------
+
+Controls the tendency of the kernel to reclaim the memory which is used for
+caching of directory and inode objects.
+
+At the default value of vfs_cache_pressure0 the kernel will attempt to
+reclaim dentries and inodes at a "fair" rate with respect to pagecache and
+swapcache reclaim.  Decreasing vfs_cache_pressure causes the kernel to prefer
+to retain dentry and inode caches. When vfs_cache_pressure=0, the kernel will
+never reclaim dentries and inodes due to memory pressure and this can easily
+lead to out-of-memory conditions. Increasing vfs_cache_pressure beyond 100
+causes the kernel to prefer to reclaim dentries and inodes.
+
+
+0 means "never reclaim," it doesn't mean "never scale."
+
+As for nr_to_scan, after the first call, the shrinker has a scaled
+version of the total count, so the requested nr_to_scan on the
+next call is already scaled based on that.
+
+I think the logic in the mbcache shrinker is fine.
+
+-Eric
+
+> See dcache_shrinker() in fs/dcache.c.
 
 
 
--- 
+> 
+> Thanks,
+> Andreas
 
-
-Thanks and Best Regards,
-shenghui
