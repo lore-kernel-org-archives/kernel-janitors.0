@@ -1,7 +1,7 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 13 Jul 2010 14:56:08 +0000
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 21 Jul 2010 17:44:57 +0000
 Subject: Re: [PATCH] check name_len before down_read xattr_sem and sb_read
-Message-Id: <20100713145608.GM5658@bicker>
+Message-Id: <20100721174457.GE1215@atrey.karlin.mff.cuni.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <201007122229025316610@gmail.com>
 In-Reply-To: <201007122229025316610@gmail.com>
@@ -11,7 +11,6 @@ Content-Transfer-Encoding: 7bit
 To: crosslonelyover <crosslonelyover@gmail.com>
 Cc: linux-ext4 <linux-ext4@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On Mon, Jul 12, 2010 at 10:29:09PM +0800, crosslonelyover wrote:
 > Hi,
 >        I walked through ext2_xattr_get, and felt that we can
 > do some optimization on it. For name_len check, it's done
@@ -39,12 +38,28 @@ On Mon, Jul 12, 2010 at 10:29:09PM +0800, crosslonelyover wrote:
 > ---
 >  fs/ext2/xattr.c |   12 +++++++-----
 >  1 files changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+> index 7c39157..0b94d61 100644
+> --- a/fs/ext2/xattr.c
+> +++ b/fs/ext2/xattr.c
+> @@ -161,6 +161,13 @@ ext2_xattr_get(struct inode *inode, int name_index, const char *name,
+>  
+>  	if (name = NULL)
+>  		return -EINVAL;
+> +
+> +	/* find named attribute */
+> +	name_len = strlen(name);
+> +	error = -ERANGE;
+> +	if (name_len > 255)
+> +		goto cleanup;
+  But you cannot go to cleanup here because you don't hold xattr_sem...
 
-For what it's worth, this change looks OK to me.
-
-Reviewed-by: Dan Carpenter <error27@gmail.com>
-
-regards,
-dan carpenter
-
-
+									Honza
+> +
+>  	down_read(&EXT2_I(inode)->xattr_sem);
+>  	error = -ENODATA;
+>  	if (!EXT2_I(inode)->i_file_acl)
+-- 
+Jan Kara <jack@suse.cz>
+SuSE CR Labs
