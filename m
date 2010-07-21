@@ -1,26 +1,78 @@
-From: Andreas Gruenbacher <agruen@suse.de>
-Date: Tue, 20 Jul 2010 16:34:46 +0000
-Subject: Re: [PATCH] fix return value for mb_cache_shrink_fn when nr_to_scan > 0
-Message-Id: <201007201834.46593.agruen@suse.de>
+From: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Date: Wed, 21 Jul 2010 10:53:57 +0000
+Subject: [PATCH] fix return value for mb_cache_shrink_fn when nr_to_scan >
+Message-Id: <4C46D1C5.90200@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4C425273.5000702@gmail.com> <201007192039.06670.agruen@suse.de> <4C45BD34.8030905@redhat.com>
-In-Reply-To: <4C45BD34.8030905@redhat.com>
+References: <4C425273.5000702@gmail.com>
+In-Reply-To: <4C425273.5000702@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Sandeen <sandeen@redhat.com>, Wang Sheng-Hui <crosslonelyover@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-mm@kvack.org, linux-ext4 <linux-ext4@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: sandeen@redhat.com, agruen@suse.de, hch@infradead.org, linux-ext4 <linux-ext4@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.orgkerne
 
-On Tuesday 20 July 2010 17:13:56 Eric Sandeen wrote:
-> I think the logic in the mbcache shrinker is fine.
+Sorry. regerated the patch, please check it.
+I wrapped most code in single pair of spinlock ops for 2 reasons:
+1) get spinlock 2 times seems time consuming
+2) use single pair of spinlock ops can keep "count"
+   consistent for the shrink operation. 2 pairs may
+   get some new ces created by other processes. 
 
-Indeed yes, I got confused, sorry.
 
-On Sunday 18 July 2010 08:36:59 Wang Sheng-Hui wrote:
-> I regenerated the patch. Please check it.
 
-Sheng-Hui, the mb_cache_lru_list list is now accessed without holding 
-mb_cache_spinlock.
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
+---
+ fs/mbcache.c |   24 ++++++++++++------------
+ 1 files changed, 12 insertions(+), 12 deletions(-)
 
-Thanks,
-Andreas
+diff --git a/fs/mbcache.c b/fs/mbcache.c
+index ec88ff3..ee57aa3 100644
+--- a/fs/mbcache.c
++++ b/fs/mbcache.c
+@@ -201,21 +201,15 @@ mb_cache_shrink_fn(int nr_to_scan, gfp_t gfp_mask)
+ {
+ 	LIST_HEAD(free_list);
+ 	struct list_head *l, *ltmp;
++	struct mb_cache *cache;
+ 	int count = 0;
+ 
+-	spin_lock(&mb_cache_spinlock);
+-	list_for_each(l, &mb_cache_list) {
+-		struct mb_cache *cache -			list_entry(l, struct mb_cache, c_cache_list);
+-		mb_debug("cache %s (%d)", cache->c_name,
+-			  atomic_read(&cache->c_entry_count));
+-		count += atomic_read(&cache->c_entry_count);
+-	}
+ 	mb_debug("trying to free %d entries", nr_to_scan);
+-	if (nr_to_scan = 0) {
+-		spin_unlock(&mb_cache_spinlock);
++
++	spin_lock(&mb_cache_spinlock);
++	if (nr_to_scan = 0)
+ 		goto out;
+-	}
++
+ 	while (nr_to_scan-- && !list_empty(&mb_cache_lru_list)) {
+ 		struct mb_cache_entry *ce  			list_entry(mb_cache_lru_list.next,
+@@ -223,12 +217,18 @@ mb_cache_shrink_fn(int nr_to_scan, gfp_t gfp_mask)
+ 		list_move_tail(&ce->e_lru_list, &free_list);
+ 		__mb_cache_entry_unhash(ce);
+ 	}
+-	spin_unlock(&mb_cache_spinlock);
+ 	list_for_each_safe(l, ltmp, &free_list) {
+ 		__mb_cache_entry_forget(list_entry(l, struct mb_cache_entry,
+ 						   e_lru_list), gfp_mask);
+ 	}
+ out:
++	list_for_each_entry(cache, &mb_cache_list, c_cache_list) {
++		mb_debug("cache %s (%d)", cache->c_name,
++			  atomic_read(&cache->c_entry_count));
++		count += atomic_read(&cache->c_entry_count);
++	}
++	spin_unlock(&mb_cache_spinlock);
++
+ 	return (count / 100) * sysctl_vfs_cache_pressure;
+ }
+ 
+-- 
+1.6.3.3
+
