@@ -1,54 +1,28 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 20 Jul 2010 15:33:01 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 21 Jul 2010 21:04:04 +0000
 Subject: Re: [PATCH 11/19] drivers/net/irda: use for_each_pci_dev()
-Message-Id: <alpine.LNX.2.00.1007201732370.4741@pobox.suse.cz>
+Message-Id: <20100721.140404.168047053.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1278173056-11779-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278173056-11779-1-git-send-email-segooon@gmail.com>
+	<alpine.LNX.2.00.1007201732370.4741@pobox.suse.cz>
+In-Reply-To: <alpine.LNX.2.00.1007201732370.4741@pobox.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Samuel Ortiz <samuel@sortiz.org>, "David S. Miller" <davem@davemloft.net>, Stephen Hemminger <shemminger@vyatta.com>, Joe Perches <joe@perches.com>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jkosina@suse.cz
+Cc: segooon@gmail.com, kernel-janitors@vger.kernel.org, samuel@sortiz.org, shemminger@vyatta.com, joe@perches.com, eric.dumazet@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 3 Jul 2010, Kulikov Vasiliy wrote:
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Tue, 20 Jul 2010 17:33:01 +0200 (CEST)
 
-> Use for_each_pci_dev() to simplify the code.
+> On Sat, 3 Jul 2010, Kulikov Vasiliy wrote:
 > 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/net/irda/smsc-ircc2.c |    5 +----
->  1 files changed, 1 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/irda/smsc-ircc2.c b/drivers/net/irda/smsc-ircc2.c
-> index d67e484..850ca1c 100644
-> --- a/drivers/net/irda/smsc-ircc2.c
-> +++ b/drivers/net/irda/smsc-ircc2.c
-> @@ -2848,9 +2848,7 @@ static int __init smsc_ircc_preconfigure_subsystems(unsigned short ircc_cfg,
->  	unsigned short ss_device = 0x0000;
->  	int ret = 0;
->  
-> -	dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev);
-> -
-> -	while (dev != NULL) {
-> +	for_each_pci_dev(dev) {
->  		struct smsc_ircc_subsystem_configuration *conf;
->  
->  		/*
-> @@ -2899,7 +2897,6 @@ static int __init smsc_ircc_preconfigure_subsystems(unsigned short ircc_cfg,
->  					ret = -ENODEV;
->  			}
->  		}
-> -		dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev);
->  	}
->  
->  	return ret;
+>> Use for_each_pci_dev() to simplify the code.
+>> 
+>> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+>> ---
+...
+> Doesn't seem to hit linux-next as of today. Dave, are you going to merge 
+> it?
 
-Doesn't seem to hit linux-next as of today. Dave, are you going to merge 
-it?
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+I'll apply this now, thanks.
