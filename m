@@ -1,49 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 12 Jul 2010 01:13:00 +0000
-Subject: Re: [PATCH] depca: fix leaks
-Message-Id: <20100711.181300.58435799.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 21 Jul 2010 12:00:36 +0000
+Subject: [PATCH] 3c59x: handle pci_iomap() errors
+Message-Id: <1279713638-31567-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278678986-7725-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278678986-7725-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, jpirko@redhat.com, joe@perches.com, shemminger@vyatta.com, eric.dumazet@gmail.com, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Steffen Klassert <klassert@mathematik.tu-chemnitz.de>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, Ben Hutchings <ben@decadent.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Joe Perches <joe@perches.com>, netdev@vger.kernel.org
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri,  9 Jul 2010 16:36:25 +0400
+pci_iomap() can fail, handle this case and return -ENOMEM from probe
+function.
 
-> Since some of xxx_register_driver() can return error we must continue
-> with already registered drivers. If any of xxx_register_driver()
-> succeeded or depca_platform_probe() found any device then
-> depca_module_init() returns ok. In depca_module_exit() we must
-> unregister only registered drivers.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/3c59x.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-Driver registry should succeed except in cases that would indicate a
-serious driver bug, such as trying to register the same driver twice.
+diff --git a/drivers/net/3c59x.c b/drivers/net/3c59x.c
+index 069a03f..9b137e1 100644
+--- a/drivers/net/3c59x.c
++++ b/drivers/net/3c59x.c
+@@ -1020,6 +1020,11 @@ static int __devinit vortex_init_one(struct pci_dev *pdev,
+ 	ioaddr = pci_iomap(pdev, pci_bar, 0);
+ 	if (!ioaddr) /* If mapping fails, fall-back to BAR 0... */
+ 		ioaddr = pci_iomap(pdev, 0, 0);
++	if (!ioaddr) {
++		pci_disable_device(pdev);
++		rc = -ENOMEM;
++		goto out;
++	}
+ 
+ 	rc = vortex_probe1(&pdev->dev, ioaddr, pdev->irq,
+ 			   ent->driver_data, unit);
+-- 
+1.7.0.4
 
-Therefore if any registry fails, we should fail the entire probe.
-
-This is the scheme used in just about any driver I've had any
-involvement in, see for example drivers/net/niu.c:
-
---------------------
-#ifdef CONFIG_SPARC64
-	err = of_register_driver(&niu_of_driver, &of_bus_type);
-#endif
-
-	if (!err) {
-		err = pci_register_driver(&niu_pci_driver);
-#ifdef CONFIG_SPARC64
-		if (err)
-			of_unregister_driver(&niu_of_driver);
-#endif
-	}
-
-	return err;
---------------------
-
-Please do something similar here in depca, thanks.
