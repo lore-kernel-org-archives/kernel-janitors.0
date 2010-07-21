@@ -1,62 +1,39 @@
-From: Devin Heitmueller <dheitmueller@kernellabs.com>
-Date: Fri, 23 Jul 2010 13:12:37 +0000
-Subject: Re: [patch -next] V4L: au0828: move dereference below sanity checks
-Message-Id: <AANLkTi=4-973-tomyGeF1X6EXGzhcgWXeNZ6mZ=awMF+@mail.gmail.com>
+From: Andreas Gruenbacher <agruen@suse.de>
+Date: Wed, 21 Jul 2010 17:57:20 +0000
+Subject: [PATCH 0/2] mbcache fixes
+Message-Id: <20100721202637.4CC213C539AA@imap.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100723100920.GC26313@bicker>
-In-Reply-To: <20100723100920.GC26313@bicker>
+References: <4C46D1C5.90200@gmail.com> <4C46FD67.8070808@redhat.com>
+In-Reply-To: <4C46FD67.8070808@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman <gregkh@suse.de>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Eric Sandeen <sandeen@redhat.com>, hch@infradead.org, linux-ext4 <linux-ext4@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors <kernel-janitors@vger.kernel.org>, Wang Sheng-Hui <crosslonelyover@gmail.com>
 
-On Fri, Jul 23, 2010 at 6:09 AM, Dan Carpenter <error27@gmail.com> wrote:
-> This function has sanity checks to make sure that "dev" is non-null. =A0I
-> moved the dereference down below the checks. =A0In the current code "dev"
-> is never actually null.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/drivers/media/video/au0828/au0828-video.c b/drivers/media/vi=
-deo/au0828/au0828-video.c
-> index d97e0a2..7989a7b 100644
-> --- a/drivers/media/video/au0828/au0828-video.c
-> +++ b/drivers/media/video/au0828/au0828-video.c
-> @@ -441,7 +441,7 @@ static void au0828_copy_vbi(struct au0828_dev *dev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0unsigned char =
-*outp, unsigned long len)
-> =A0{
-> =A0 =A0 =A0 =A0unsigned char *startwrite, *startread;
-> - =A0 =A0 =A0 int bytesperline =3D dev->vbi_width;
-> + =A0 =A0 =A0 int bytesperline;
-> =A0 =A0 =A0 =A0int i, j =3D 0;
->
-> =A0 =A0 =A0 =A0if (dev =3D NULL) {
-> @@ -464,6 +464,8 @@ static void au0828_copy_vbi(struct au0828_dev *dev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return;
-> =A0 =A0 =A0 =A0}
->
-> + =A0 =A0 =A0 bytesperline =3D dev->vbi_width;
-> +
-> =A0 =A0 =A0 =A0if (dma_q->pos + len > buf->vb.size)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0len =3D buf->vb.size - dma_q->pos;
->
->
+Al,
 
-In reality the check for "dev" can be removed since it will *never*
-happen (I added it during some debugging, as can be seen by the rest
-of the NULL checks).
+here is an mbcache cleanup and then a fixed version of Shenghui's minor
+shrinker function fix.  The patches have survived functional testing
+here.
 
-Either way though, this patch is fine.
+This seems slightly too much for kernel-janitors, so could you please
+take the patches?
 
-Acked-by: Devin Heitmueller <dheitmueller@kernellabs.com>
+Thanks,
+Andreas
 
---=20
-Devin J. Heitmueller - Kernel Labs
-http://www.kernellabs.com
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Andreas Gruenbacher (2):
+  mbcache: Remove unused features
+  mbcache: fix shrinker function return value
+
+ fs/ext2/xattr.c         |   12 ++--
+ fs/ext3/xattr.c         |   12 ++--
+ fs/ext4/xattr.c         |   12 ++--
+ fs/mbcache.c            |  168 ++++++++++++++---------------------------------
+ include/linux/mbcache.h |   20 ++----
+ 5 files changed, 70 insertions(+), 154 deletions(-)
+
+-- 
+1.7.2.rc3.57.g77b5b
+
