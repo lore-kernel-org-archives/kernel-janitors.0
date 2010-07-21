@@ -1,36 +1,36 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 29 Jul 2010 15:56:25 +0000
-Subject: [PATCH] scsi: mac_scsi: check scsi_register() result
-Message-Id: <1280418986-6024-1-git-send-email-segooon@gmail.com>
+Date: Wed, 21 Jul 2010 19:07:25 +0000
+Subject: [PATCH 2/2] edac: i5400: carefull error handling
+Message-Id: <1279739245-8243-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Jeff Roberson <jroberson@jroberson.net>, Doug Thompson <dougthompson@xmission.com>, Joe Perches <joe@perches.com>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
 
-scsi_register() may fail, if so return from detect() with negative
-result.
+-EIO is not the only error code that pci_enable_device() may return,
+also the set of errors can be enhanced in future. We should compare
+return code with zero, not with concrete error value.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/scsi/mac_scsi.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+ drivers/edac/i5400_edac.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/scsi/mac_scsi.c b/drivers/scsi/mac_scsi.c
-index bf2a1c5..3ab601f 100644
---- a/drivers/scsi/mac_scsi.c
-+++ b/drivers/scsi/mac_scsi.c
-@@ -268,6 +268,9 @@ int macscsi_detect(struct scsi_host_template * tpnt)
-     /* Once we support multiple 5380s (e.g. DuoDock) we'll do
-        something different here */
-     instance = scsi_register (tpnt, sizeof(struct NCR5380_hostdata));
-+    if (instance = NULL)
-+	return 0;
-+
- #if NDEBUG
-     default_instance = instance;
- #endif
+diff --git a/drivers/edac/i5400_edac.c b/drivers/edac/i5400_edac.c
+index 010c1d6..38a9be9 100644
+--- a/drivers/edac/i5400_edac.c
++++ b/drivers/edac/i5400_edac.c
+@@ -1348,7 +1348,7 @@ static int __devinit i5400_init_one(struct pci_dev *pdev,
+ 
+ 	/* wake up device */
+ 	rc = pci_enable_device(pdev);
+-	if (rc = -EIO)
++	if (rc)
+ 		return rc;
+ 
+ 	/* now probe and enable the device */
 -- 
 1.7.0.4
 
