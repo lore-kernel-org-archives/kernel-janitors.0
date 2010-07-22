@@ -1,52 +1,46 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 03 Jul 2010 16:04:03 +0000
-Subject: [PATCH 08/19] arch/x86/pci: use for_each_pci_dev()
-Message-Id: <1278173044-11677-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Jul 2010 11:26:50 +0000
+Subject: [patch -next] wireless: remove unneeded variable from
+Message-Id: <20100722112650.GE17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Seth Heasley <seth.heasley@intel.com>, Jacob Pan <jacob.jun.pan@intel.com>, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, "Luis R. Rodriguez" <mcgrof@gmail.com>, Benoit PAPILLAULT <benoit.papillault@free.fr>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use for_each_pci_dev() to simplify the code.
+The "rd" variable isn't needed any more since 4f366c5dabcb 
+"wireless: only use alpha2 regulatory information from country IE"
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- arch/x86/pci/irq.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
-index 9810a0f..f547ee0 100644
---- a/arch/x86/pci/irq.c
-+++ b/arch/x86/pci/irq.c
-@@ -989,7 +989,7 @@ static int pcibios_lookup_irq(struct pci_dev *dev, int assign)
- 	dev_info(&dev->dev, "%s PCI INT %c -> IRQ %d\n", msg, 'A' + pin - 1, irq);
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 48baf28..ec4e76f 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -1492,7 +1492,6 @@ void regulatory_hint_11d(struct wiphy *wiphy,
+ 			 u8 *country_ie,
+ 			 u8 country_ie_len)
+ {
+-	struct ieee80211_regdomain *rd = NULL;
+ 	char alpha2[2];
+ 	enum environment_cap env = ENVIRON_ANY;
+ 	struct regulatory_request *request;
+@@ -1529,7 +1528,7 @@ void regulatory_hint_11d(struct wiphy *wiphy,
  
- 	/* Update IRQ for all devices with the same pirq value */
--	while ((dev2 = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev2)) != NULL) {
-+	for_each_pci_dev(dev2) {
- 		pci_read_config_byte(dev2, PCI_INTERRUPT_PIN, &pin);
- 		if (!pin)
- 			continue;
-@@ -1028,7 +1028,7 @@ void __init pcibios_fixup_irqs(void)
- 	u8 pin;
+ 	request = kzalloc(sizeof(struct regulatory_request), GFP_KERNEL);
+ 	if (!request)
+-		goto free_rd_out;
++		goto out;
  
- 	DBG(KERN_DEBUG "PCI: IRQ fixup\n");
--	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		/*
- 		 * If the BIOS has set an out of range IRQ number, just
- 		 * ignore it.  Also keep track of which IRQ's are
-@@ -1052,7 +1052,7 @@ void __init pcibios_fixup_irqs(void)
- 		return;
+ 	request->wiphy_idx = get_wiphy_idx(wiphy);
+ 	request->alpha2[0] = alpha2[0];
+@@ -1543,8 +1542,6 @@ void regulatory_hint_11d(struct wiphy *wiphy,
  
- 	dev = NULL;
--	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &pin);
- 		if (!pin)
- 			continue;
--- 
-1.7.0.4
-
+ 	return;
+ 
+-free_rd_out:
+-	kfree(rd);
+ out:
+ 	mutex_unlock(&reg_mutex);
+ }
