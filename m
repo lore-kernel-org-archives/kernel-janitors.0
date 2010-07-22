@@ -1,41 +1,29 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 27 Jul 2010 22:28:58 +0000
-Subject: Re: [patch -next] bluetooth/hci_ath: kfree() => kfree_skb()
-Message-Id: <1280269738.2621.94.camel@localhost.localdomain>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Jul 2010 11:14:19 +0000
+Subject: [patch net-next] mac80211: freeing the wrong variable
+Message-Id: <20100722111419.GC17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100723101104.GD26313@bicker>  <20100723181053.GN2620@vigoh>
-In-Reply-To: <20100723181053.GN2620@vigoh>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Gustavo F. Padovan" <gustavo@padovan.org>
-Cc: Dan Carpenter <error27@gmail.com>, Suraj Sumangala <suraj@atheros.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Felix Fietkau <nbd@openwrt.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>, Ming Lei <tom.leiming@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+The intent was to free "msp->ratelist" here.  "msp->sample_table" is
+always NULL at this point.
 
-> > sk_buffs have to be freed with kfree_skb() instead of kfree().
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > 
-> > diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
-> > index 5ab258b..74a8f61 100755
-> > --- a/drivers/bluetooth/hci_ath.c
-> > +++ b/drivers/bluetooth/hci_ath.c
-> > @@ -163,7 +163,7 @@ static int ath_enqueue(struct hci_uart *hu, struct sk_buff *skb)
-> >  	struct ath_struct *ath = hu->priv;
-> >  
-> >  	if (bt_cb(skb)->pkt_type = HCI_SCODATA_PKT) {
-> > -		kfree(skb);
-> > +		kfree_skb(skb);
-> >  		return 0;
-> >  	}
-> 
-> Acked-by: Gustavo F. Padovan <padovan@profusion.mobi>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-patch has been applied. Thanks.
-
-Regards
-
-Marcel
-
-
+diff --git a/net/mac80211/rc80211_minstrel_ht.c b/net/mac80211/rc80211_minstrel_ht.c
+index b5ace24..0ec0584 100644
+--- a/net/mac80211/rc80211_minstrel_ht.c
++++ b/net/mac80211/rc80211_minstrel_ht.c
+@@ -748,7 +748,7 @@ minstrel_ht_alloc_sta(void *priv, struct ieee80211_sta *sta, gfp_t gfp)
+ 	return msp;
+ 
+ error1:
+-	kfree(msp->sample_table);
++	kfree(msp->ratelist);
+ error:
+ 	kfree(msp);
+ 	return NULL;
