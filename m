@@ -1,51 +1,29 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 10 Jul 2010 11:30:57 +0000
-Subject: Re: [PATCH 2/3] macsonic: free irq if sonic_open() fails
-Message-Id: <20100710113057.GA6967@albatros>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Jul 2010 12:21:02 +0000
+Subject: [patch -next] libertas: precedence bug
+Message-Id: <20100722122102.GH17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278759661-7731-1-git-send-email-segooon@gmail.com>
- <20100710112229.GX19184@bicker>
-In-Reply-To: <20100710112229.GX19184@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Finn Thain <fthain@telegraphics.com.au>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Tejun Heo <tj@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org
+To: Dan Williams <dcbw@redhat.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Holger Schurig <holgerschurig@gmail.com>, "David S. Miller" <davem@davemloft.net>, Amitkumar Karwar <akarwar@marvell.com>, Stephen Hemminger <shemminger@vyatta.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jul 10, 2010 at 13:22 +0200, Dan Carpenter wrote:
-> On Sat, Jul 10, 2010 at 03:01:00PM +0400, Kulikov Vasiliy wrote:
-> 
-> > +	if (dev->irq = IRQ_AUTO_3) {
-> > +		retval = request_irq(IRQ_NUBUS_9, macsonic_interrupt,
-> > +					IRQ_FLG_FAST, "sonic", dev);
-> > +		if (retval) {
-> > +			printk(KERN_ERR "%s: unable to get IRQ %d.\n",
-> > +					dev->name, IRQ_NUBUS_9);
-> > +			goto err_irq;
-> >  		}
-> > -	return sonic_open(dev);
-> > +	}
-> > +	retval = sonic_open(dev);
-> > +	if (retval)
-> > +		goto err_irq_nubus;
-> > +	return 0;
-> > +
-> > +err_irq_nubus:
-> 
-> This should be:
-> 
-> +	if (dev->irq = IRQ_AUTO_3)
-> +		free_irq(IRQ_NUBUS_9, dev);
+Negate has precedence over comparison so the original test was always
+false.  (Neither 0 nor 1 are equal to NL80211_IFTYPE_MONITOR).
 
-Of course, thank you.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> 
-> > +err_irq:
-> > +	free_irq(dev->irq, dev);
-> > +err:
-> > +	return retval;
-> >  }
-> 
-> regards,
-> dan carpenter
-> 
+diff --git a/drivers/net/wireless/libertas/tx.c b/drivers/net/wireless/libertas/tx.c
+index 411a3bb..8000ca6 100644
+--- a/drivers/net/wireless/libertas/tx.c
++++ b/drivers/net/wireless/libertas/tx.c
+@@ -180,7 +180,7 @@ void lbs_send_tx_feedback(struct lbs_private *priv, u32 try_count)
+ {
+ 	struct tx_radiotap_hdr *radiotap_hdr;
+ 
+-	if (!priv->wdev->iftype = NL80211_IFTYPE_MONITOR ||
++	if (priv->wdev->iftype != NL80211_IFTYPE_MONITOR ||
+ 	    priv->currenttxskb = NULL)
+ 		return;
+ 
