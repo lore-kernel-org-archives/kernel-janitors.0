@@ -1,35 +1,67 @@
-From: Eric Anholt <eric@anholt.net>
-Date: Thu, 01 Jul 2010 22:59:43 +0000
-Subject: Re: [PATCH] drm/i915: fix warn, struct may be used uninitialized
-Message-Id: <87wrtezu3k.fsf@pollan.anholt.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Jul 2010 11:16:48 +0000
+Subject: [patch -next] stmmac: handle allocation errors in setup functions
+Message-Id: <20100722111648.GD17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100616145452.GA30948@lovely.krouter>
-In-Reply-To: <20100616145452.GA30948@lovely.krouter>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---=-=-=
-Content-Transfer-Encoding: quoted-printable
+If the allocations fail in either dwmac1000_setup() or dwmac100_setup()
+then return NULL.  These are called from stmmac_mac_device_setup().  The 
+check for NULL returns in stmmac_mac_device_setup() needed to be moved 
+forward a couple lines.
 
-On Thu, 17 Jun 2010 15:27:29 +0200, Christoph Fritz <chf.fritz@googlemail.c=
-om> wrote:
-> I meant to send the following patch.
->=20
-> Thanks for pointing out,
->   chf
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-I went with a simpler one from another submitter that didn't change the
-structure of the function.
-
---=-=-=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEUEARECAAYFAkwtHd8ACgkQHUdvYGzw6vf0tQCYxzDUuBKmzFE0a/Uozpdj0QW8
-YQCdH2B4W3AjLMI0prVwBtYj3V//Hlk=
-=u1Dm
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/net/stmmac/dwmac1000_core.c b/drivers/net/stmmac/dwmac1000_core.c
+index 917b4e1..2b2f5c8 100644
+--- a/drivers/net/stmmac/dwmac1000_core.c
++++ b/drivers/net/stmmac/dwmac1000_core.c
+@@ -220,6 +220,8 @@ struct mac_device_info *dwmac1000_setup(unsigned long ioaddr)
+ 		((uid & 0x0000ff00) >> 8), (uid & 0x000000ff));
+ 
+ 	mac = kzalloc(sizeof(const struct mac_device_info), GFP_KERNEL);
++	if (!mac)
++		return NULL;
+ 
+ 	mac->mac = &dwmac1000_ops;
+ 	mac->dma = &dwmac1000_dma_ops;
+diff --git a/drivers/net/stmmac/dwmac100_core.c b/drivers/net/stmmac/dwmac100_core.c
+index 6f270a0..2fb165f 100644
+--- a/drivers/net/stmmac/dwmac100_core.c
++++ b/drivers/net/stmmac/dwmac100_core.c
+@@ -179,6 +179,8 @@ struct mac_device_info *dwmac100_setup(unsigned long ioaddr)
+ 	struct mac_device_info *mac;
+ 
+ 	mac = kzalloc(sizeof(const struct mac_device_info), GFP_KERNEL);
++	if (!mac)
++		return NULL;
+ 
+ 	pr_info("\tDWMAC100\n");
+ 
+diff --git a/drivers/net/stmmac/stmmac_main.c b/drivers/net/stmmac/stmmac_main.c
+index acf0616..0bdd332 100644
+--- a/drivers/net/stmmac/stmmac_main.c
++++ b/drivers/net/stmmac/stmmac_main.c
+@@ -1558,15 +1558,15 @@ static int stmmac_mac_device_setup(struct net_device *dev)
+ 	else
+ 		device = dwmac100_setup(ioaddr);
+ 
++	if (!device)
++		return -ENOMEM;
++
+ 	if (priv->enh_desc) {
+ 		device->desc = &enh_desc_ops;
+ 		pr_info("\tEnhanced descriptor structure\n");
+ 	} else
+ 		device->desc = &ndesc_ops;
+ 
+-	if (!device)
+-		return -ENOMEM;
+-
+ 	priv->hw = device;
+ 
+ 	priv->wolenabled = priv->hw->pmt;	/* PMT supported */
