@@ -1,30 +1,29 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Fri, 02 Jul 2010 20:11:21 +0000
-Subject: Re: [PATCH 1/7] Add a target to use the Coccinelle checker
-Message-Id: <4C2E47E9.5090408@suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Jul 2010 11:11:31 +0000
+Subject: [patch -next] caif: precedence bug
+Message-Id: <20100722111131.GB17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1275837307-4283-1-git-send-email-npalix@diku.dk> <1275837307-4283-2-git-send-email-npalix@diku.dk> <20100630185851.GA17502@shinshilla>
-In-Reply-To: <20100630185851.GA17502@shinshilla>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Nicolas Palix <npalix@diku.dk>, Randy Dunlap <rdunlap@xenotime.net>, Roland Dreier <rdreier@cisco.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Sam Ravnborg <sam@ravnborg.org>, Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, cocci@diku.dk, Wolfram Sang <w.sang@pengutronix.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, =?ISO-8859-1?Q?Am=E9rico_Wang?= <xiyou.wangcong@gmail.com>, Andy Isaacson <adi@hexapodia.org>, Linus Torvalds <torvalds@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>, walter harms <wharms@bfs.de>, Joerg Roedel <joro@8bytes.org>, Jan Engelhardt <jengelh@medozas.de>
+To: SjurBraendeland@stericsson.com
+Cc: "David S. Miller" <davem@davemloft.net>, Sjur Braendeland <sjur.brandeland@stericsson.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 30.6.2010 20:58, Kulikov Vasiliy wrote:
->> +if [ "$COCCI" = "" ] ; then
->> +    for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
->> +	coccinelle $f $srctree;
->> +    done
->> +else
->> +    coccinelle $COCCI $srctree
->> +fi
-> 
-> I think it is more usefull to use $M instead of $srctree to run simple
-> 'make coccicheck'.
+Negate has precedence over comparison so the original assert only
+checked that "rfml->fragment_size" was larger than 1 or 0.
 
-Good idea, but
-1) The right variable to look for is $KBUILD_EXTMOD
-2) If this is not set, the script should check files in $srctree as before
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Michal
+diff --git a/net/caif/cfrfml.c b/net/caif/cfrfml.c
+index 4b04d25..eb16020 100644
+--- a/net/caif/cfrfml.c
++++ b/net/caif/cfrfml.c
+@@ -193,7 +193,7 @@ out:
+ 
+ static int cfrfml_transmit_segment(struct cfrfml *rfml, struct cfpkt *pkt)
+ {
+-	caif_assert(!cfpkt_getlen(pkt) < rfml->fragment_size);
++	caif_assert(cfpkt_getlen(pkt) >= rfml->fragment_size);
+ 
+ 	/* Add info for MUX-layer to route the packet out. */
+ 	cfpkt_info(pkt)->channel_id = rfml->serv.layer.id;
