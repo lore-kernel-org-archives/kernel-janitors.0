@@ -1,34 +1,51 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 03 Jul 2010 16:04:43 +0000
-Subject: [PATCH 18/19] drivers/staging/vt6655: use for_each_pci_dev()
-Message-Id: <1278173084-12017-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 22 Jul 2010 08:50:28 +0000
+Subject: [patch -next] ath9k: snprintf() returns largish values
+Message-Id: <20100722085027.GU17585@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, =?UTF-8?q?Charles=20Cl=C3=A9ment?= <caratorn@gmail.com>, Jim Lieb <lieb@canonical.com>, "David S. Miller" <davem@davemloft.net>, Alexander Beregalov <a.beregalov@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: "Luis R. Rodriguez" <lrodriguez@atheros.com>
+Cc: Jouni Malinen <jmalinen@atheros.com>, Sujith Manoharan <Sujith.Manoharan@atheros.com>, Vasanthakumar Thiagarajan <vasanth@atheros.com>, Senthil Balasubramanian <senthilkumar@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, Vivek Natarajan <vnatarajan@atheros.com>, Felix Fietkau <nbd@openwrt.org>, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, kernel-janitors@vger.kernel.org
 
-Use for_each_pci_dev() to simplify the code.
+The snprintf() function returns the number of characters that would have
+been written (not counting the NUL character on the end).  It could
+potentially be larger than the size of the buffer.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/vt6655/device_main.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
-index 0d697d0..d498442 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -3655,7 +3655,7 @@ device_notify_reboot(struct notifier_block *nb, unsigned long event, void *p)
-     case SYS_DOWN:
-     case SYS_HALT:
-     case SYS_POWER_OFF:
--        while ((pdev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pdev)) != NULL) {
-+	for_each_pci_dev(pdev) {
-             if(pci_dev_driver(pdev) = &device_driver) {
-                 if (pci_get_drvdata(pdev))
-                     viawget_suspend(pdev, PMSG_HIBERNATE);
--- 
-1.7.0.4
-
+diff --git a/drivers/net/wireless/ath/ath9k/htc_drv_main.c b/drivers/net/wireless/ath/ath9k/htc_drv_main.c
+index 3243877..cf9bcc6 100644
+--- a/drivers/net/wireless/ath/ath9k/htc_drv_main.c
++++ b/drivers/net/wireless/ath/ath9k/htc_drv_main.c
+@@ -524,6 +524,9 @@ static ssize_t read_file_tgt_stats(struct file *file, char __user *user_buf,
+ 	len += snprintf(buf + len, sizeof(buf) - len,
+ 			"%19s : %10u\n", "TX Rate", priv->debug.txrate);
+ 
++	if (len > sizeof(buf))
++		len = sizeof(buf);
++
+ 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
+ }
+ 
+@@ -569,6 +572,9 @@ static ssize_t read_file_xmit(struct file *file, char __user *user_buf,
+ 			"%20s : %10u\n", "VO queued",
+ 			priv->debug.tx_stats.queue_stats[WME_AC_VO]);
+ 
++	if (len > sizeof(buf))
++		len = sizeof(buf);
++
+ 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
+ }
+ 
+@@ -595,6 +601,9 @@ static ssize_t read_file_recv(struct file *file, char __user *user_buf,
+ 			"%20s : %10u\n", "SKBs Dropped",
+ 			priv->debug.rx_stats.skb_dropped);
+ 
++	if (len > sizeof(buf))
++		len = sizeof(buf);
++
+ 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
+ }
+ 
