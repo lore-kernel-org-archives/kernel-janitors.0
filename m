@@ -1,33 +1,21 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 23 Jul 2010 16:44:44 +0000
-Subject: [PATCH] net: 3c59x: fix leak of iomaps
-Message-Id: <1279903485-28247-1-git-send-email-segooon@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 23 Jul 2010 20:06:13 +0000
+Subject: Re: [PATCH] net: 3c59x: fix leak of iomaps
+Message-Id: <20100723.130613.242150222.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1279903485-28247-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1279903485-28247-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Steffen Klassert <klassert@mathematik.tu-chemnitz.de>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, Ben Hutchings <ben@decadent.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Joe Perches <joe@perches.com>, netdev@vger.kernel.org
+To: segooon@gmail.com
+Cc: kernel-janitors@vger.kernel.org, klassert@mathematik.tu-chemnitz.de, eric.dumazet@gmail.com, ben@decadent.org.uk, adobriyan@gmail.com, joe@perches.com, netdev@vger.kernel.org
 
-If vortex_probe1() fails we should unmap ioaddr mapped earlier.
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 23 Jul 2010 20:44:44 +0400
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/net/3c59x.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+> If vortex_probe1() fails we should unmap ioaddr mapped earlier.
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-diff --git a/drivers/net/3c59x.c b/drivers/net/3c59x.c
-index 9b137e1..ebd4c19 100644
---- a/drivers/net/3c59x.c
-+++ b/drivers/net/3c59x.c
-@@ -1029,6 +1029,7 @@ static int __devinit vortex_init_one(struct pci_dev *pdev,
- 	rc = vortex_probe1(&pdev->dev, ioaddr, pdev->irq,
- 			   ent->driver_data, unit);
- 	if (rc < 0) {
-+		pci_iounmap(pdev, ioaddr);
- 		pci_disable_device(pdev);
- 		goto out;
- 	}
--- 
-1.7.0.4
-
+Applied.  Thanks for following up on this.
