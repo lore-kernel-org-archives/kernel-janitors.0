@@ -1,22 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 31 Jul 2010 06:29:06 +0000
-Subject: Re: [patch] dnet: fixup error handling in initialization
-Message-Id: <20100730.232906.48506176.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 23 Jul 2010 11:05:05 +0000
+Subject: [patch -next v2] mv643xx_eth: potential null dereference
+Message-Id: <20100723110504.GG26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100729082729.GS26313@bicker>
-In-Reply-To: <20100729082729.GS26313@bicker>
+References: <20100723101528.GF26313@bicker> <1279881177.24768.1623.camel@Joe-Laptop.home>
+In-Reply-To: <1279881177.24768.1623.camel@Joe-Laptop.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, shemminger@vyatta.com, eric.dumazet@gmail.com, elendil@planet.nl, richard.cochran@omicron.at, kernel-janitors@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Lennert Buytenhek <buytenh@wantstofly.org>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Denis Kirjanov <kirjanov@gmail.com>, Saeed Bishara <saeed@marvell.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 29 Jul 2010 10:27:29 +0200
+We assume that "pd" can be null on the previous line, and throughout the
+function so we should check it here as well.  This was introduced by
+9b2c2ff7a1c0 "mv643xx_eth: use sw csum for big packets"
 
-> There were two problems here.  We returned success if dnet_mii_init()
-> failed and there was a release_mem_region() missing.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+v2: style change
 
-Applied, thanks.
+diff --git a/drivers/net/mv643xx_eth.c b/drivers/net/mv643xx_eth.c
+index 73bb8ea..f5e72fe 100644
+--- a/drivers/net/mv643xx_eth.c
++++ b/drivers/net/mv643xx_eth.c
+@@ -2670,7 +2670,8 @@ static int mv643xx_eth_shared_probe(struct platform_device *pdev)
+ 	 * Detect hardware parameters.
+ 	 */
+ 	msp->t_clk = (pd != NULL && pd->t_clk != 0) ? pd->t_clk : 133000000;
+-	msp->tx_csum_limit = pd->tx_csum_limit ? pd->tx_csum_limit : 9 * 1024;
++	msp->tx_csum_limit = (pd != NULL && pd->tx_csum_limit) ?
++					pd->tx_csum_limit : 9 * 1024;
+ 	infer_hw_params(msp);
+ 
+ 	platform_set_drvdata(pdev, msp);
