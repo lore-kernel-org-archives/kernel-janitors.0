@@ -1,58 +1,43 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 26 Jul 2010 08:35:20 +0000
-Subject: Re: [PATCH] oss: au1550_ac97: simplify au1550_delay()
-Message-Id: <s5h1vaqy71z.wl%tiwai@suse.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 23 Jul 2010 10:12:33 +0000
+Subject: [patch -next] V4L: ivtv: remove unneeded NULL checks
+Message-Id: <20100723101232.GE26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280132913-8306-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280132913-8306-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, Manuel Lauss <manuel.lauss@gmail.com>
+To: Andy Walls <awalls@md.metrocast.net>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Ian Armstrong <ian@iarmst.demon.co.uk>, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Mon, 26 Jul 2010 12:28:32 +0400,
-Kulikov Vasiliy wrote:
-> 
-> au1550_delay() uses loop with schedule_timeout() to unconditionally wait
-> for msec. Use schedule_timeout_uninteruptible() instead.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+In ivtvfb_callback_cleanup() we dereference "itv" before checking that
+it's NULL.  "itv" is assigned with container_of() which basically never
+returns a NULL pointer so the check is pointless.  I removed it, along
+with a similar check in ivtvfb_callback_init().
 
-Thanks, applied both patches.
+I considered adding a check for v4l2_dev, but I looked at the code and I
+don't think that can be NULL either.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Takashi
-
-> ---
->  sound/oss/au1550_ac97.c |   11 +----------
->  1 files changed, 1 insertions(+), 10 deletions(-)
-> 
-> diff --git a/sound/oss/au1550_ac97.c b/sound/oss/au1550_ac97.c
-> index 0fd256c..c4a4cdc 100644
-> --- a/sound/oss/au1550_ac97.c
-> +++ b/sound/oss/au1550_ac97.c
-> @@ -163,19 +163,10 @@ ld2(unsigned int x)
->  static void
->  au1550_delay(int msec)
->  {
-> -	unsigned long   tmo;
-> -	signed long     tmo2;
-> -
->  	if (in_interrupt())
->  		return;
->  
-> -	tmo = jiffies + (msec * HZ) / 1000;
-> -	for (;;) {
-> -		tmo2 = tmo - jiffies;
-> -		if (tmo2 <= 0)
-> -			break;
-> -		schedule_timeout(tmo2);
-> -	}
-> +	schedule_timeout_uninterruptible(msecs_to_jiffies(msec));
->  }
->  
->  static u16
-> -- 
-> 1.7.0.4
-> 
+diff --git a/drivers/media/video/ivtv/ivtvfb.c b/drivers/media/video/ivtv/ivtvfb.c
+index 2c2d862..be03a71 100644
+--- a/drivers/media/video/ivtv/ivtvfb.c
++++ b/drivers/media/video/ivtv/ivtvfb.c
+@@ -1239,7 +1239,7 @@ static int __init ivtvfb_callback_init(struct device *dev, void *p)
+ 	struct v4l2_device *v4l2_dev = dev_get_drvdata(dev);
+ 	struct ivtv *itv = container_of(v4l2_dev, struct ivtv, v4l2_dev);
+ 
+-	if (itv && (itv->v4l2_cap & V4L2_CAP_VIDEO_OUTPUT)) {
++	if (itv->v4l2_cap & V4L2_CAP_VIDEO_OUTPUT) {
+ 		if (ivtvfb_init_card(itv) = 0) {
+ 			IVTVFB_INFO("Framebuffer registered on %s\n",
+ 					itv->v4l2_dev.name);
+@@ -1255,7 +1255,7 @@ static int ivtvfb_callback_cleanup(struct device *dev, void *p)
+ 	struct ivtv *itv = container_of(v4l2_dev, struct ivtv, v4l2_dev);
+ 	struct osd_info *oi = itv->osd_info;
+ 
+-	if (itv && (itv->v4l2_cap & V4L2_CAP_VIDEO_OUTPUT)) {
++	if (itv->v4l2_cap & V4L2_CAP_VIDEO_OUTPUT) {
+ 		if (unregister_framebuffer(&itv->osd_info->ivtvfb_info)) {
+ 			IVTVFB_WARN("Framebuffer %d is in use, cannot unload\n",
+ 				       itv->instance);
