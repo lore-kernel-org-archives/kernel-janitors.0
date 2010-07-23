@@ -1,63 +1,39 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Thu, 29 Jul 2010 10:40:06 +0000
-Subject: Re: [PATCH 09/10] oss: msnd: check request_region() return value
-Message-Id: <20100729104006.GA28465@albatros>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 23 Jul 2010 10:09:20 +0000
+Subject: [patch -next] V4L: au0828: move dereference below sanity checks
+Message-Id: <20100723100920.GC26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280335296-23475-1-git-send-email-segooon@gmail.com>
- <20100728200002.GP26313@bicker>
- <20100728212031.GQ26313@bicker>
- <s5h8w4utwod.wl%tiwai@suse.de>
-In-Reply-To: <s5h8w4utwod.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, Andrew Veliath <andrewtv@usa.net>, Jaroslav Kysela <perex@perex.cz>, Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Devin Heitmueller <dheitmueller@kernellabs.com>, Greg Kroah-Hartman <gregkh@suse.de>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 29, 2010 at 12:22 +0200, Takashi Iwai wrote:
-> At Wed, 28 Jul 2010 23:20:31 +0200,
-> Dan Carpenter wrote:
-> > 
-> > On Wed, Jul 28, 2010 at 10:00:02PM +0200, Dan Carpenter wrote:
-> > > This should be -EBUSY as well.  The same for "[PATCH 06/10] ALSA: msnd: 
-> > > check request_region() return value"
-> > > 
-> > > Another way to write that would be:
-> > > 
-> > 
-> > Gar.  I was thinking of request_resource().  request_region() returns a
-> > pointer of course.
-> > 
-> > But still the return code should probably be -EBUSY.  Resource
-> > conflicts are more likely than allocation failures.
-> 
-> Agreed.
-> 
-> Kulikov, could you rewrite the patches with -EBUSY?
-No problem, patches are coming.
+This function has sanity checks to make sure that "dev" is non-null.  I
+moved the dereference down below the checks.  In the current code "dev"
+is never actually null.
 
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-> > 
-> > regards,
-> > dan carpenter
-> > 
-> > > -	request_region(dev.io, dev.numio, dev.name);
-> > > +	err = request_region(dev.io, dev.numio, dev.name);
-> > > +	if (err) {
-> > > +		free_irq(dev.irq, &dev);
-> > > +		return err;
-> > > +	}
-> > > 
-> > > regards,
-> > > dan carpenter
-> > > 
-> > > > +	if (request_region(dev.io, dev.numio, dev.name) = NULL) {
-> > > > +		free_irq(dev.irq, &dev);
-> > > > +		return -ENOMEM;
-> > > > +	}
-> > 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/media/video/au0828/au0828-video.c b/drivers/media/video/au0828/au0828-video.c
+index d97e0a2..7989a7b 100644
+--- a/drivers/media/video/au0828/au0828-video.c
++++ b/drivers/media/video/au0828/au0828-video.c
+@@ -441,7 +441,7 @@ static void au0828_copy_vbi(struct au0828_dev *dev,
+ 			      unsigned char *outp, unsigned long len)
+ {
+ 	unsigned char *startwrite, *startread;
+-	int bytesperline = dev->vbi_width;
++	int bytesperline;
+ 	int i, j = 0;
+ 
+ 	if (dev = NULL) {
+@@ -464,6 +464,8 @@ static void au0828_copy_vbi(struct au0828_dev *dev,
+ 		return;
+ 	}
+ 
++	bytesperline = dev->vbi_width;
++
+ 	if (dma_q->pos + len > buf->vb.size)
+ 		len = buf->vb.size - dma_q->pos;
+ 
