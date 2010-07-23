@@ -1,47 +1,42 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 23 Jul 2010 17:48:17 +0000
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 23 Jul 2010 19:21:35 +0000
 Subject: Re: [patch -next] ath5k: snprintf() returns largish values
-Message-Id: <1279907297.24768.1678.camel@Joe-Laptop.home>
+Message-Id: <AANLkTi==h70Cgj-SzRShVU1eJ1CGkL93-5XV55Ry6-eD@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100722085202.GV17585@bicker>
-	 <201007231744.14922.br1@einfach.org>  <20100723095252.GA26313@bicker>
-In-Reply-To: <20100723095252.GA26313@bicker>
+References: <20100722085202.GV17585@bicker> <201007231744.14922.br1@einfach.org>
+	<20100723095252.GA26313@bicker> <1279907297.24768.1678.camel@Joe-Laptop.home>
+In-Reply-To: <1279907297.24768.1678.camel@Joe-Laptop.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Bruno Randolf <br1@einfach.org>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, Nick Kossifidis <mickflemm@gmail.com>, Jiri Slaby <jirislaby@gmail.com>, Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@lists.ath5k.org, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Joe Perches <joe@perches.com>
+Cc: Dan Carpenter <error27@gmail.com>, Bruno Randolf <br1@einfach.org>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, Nick Kossifidis <mickflemm@gmail.com>, Jiri Slaby <jirislaby@gmail.com>, Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@venema.h4ckr.net, kernel-janitors <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 2010-07-23 at 12:04 +0200, Dan Carpenter wrote:
-> This is a smatch thing.  I suppose someday I will fix smatch to
-> evaulate the strings themselves and verify that the buffer is large
-> enough.  But for now it's nice to be able to automatically check that
-> the buffers don't overflow.  
+On Fri, Jul 23, 2010 at 10:48 AM, Joe Perches <joe@perches.com> wrote:
+>
+> There are also many repeated uses of snprintf in kernel sources
+> that could similarly be a problem.
+>
+> =A0 =A0 =A0 =A0bar +=3D snprintf(foo + bar, ...)
+> =A0 =A0 =A0 =A0bar +=3D snprintf(foo + bar, ...)
+> or
+> =A0 =A0 =A0 =A0foo +=3D snprintf(foo, ...)
+> =A0 =A0 =A0 =A0foo +=3D snprintf(foo, ...)
 
-There are also many repeated uses of snprintf in kernel sources
-that could similarly be a problem.
+As long as the number of bytes is updated correctly, this won't be a
+security problem, although it can cause a (single) warning. The kernel
+vsnprintf does
 
-	bar += snprintf(foo + bar, ...)
-	bar += snprintf(foo + bar, ...)
-or
-	foo += snprintf(foo, ...)
-	foo += snprintf(foo, ...)
+        if (WARN_ON_ONCE((int) size < 0))
+                return 0;
 
-For instance:
+so if somebody overflows a buffer with multiple snprintf calls, it
+will all be ok as long as the buffer size thing is updated the natural
+way (possibly using pointer arithmetic, eg "end - bar").
 
-$ grep -P -n -A 4 -m 3 "\+=\s*snprintf" drivers/net/wireless/ath/ath5k/debug.c
-210:	len += snprintf(buf+len, sizeof(buf)-len,
-211-		"%-24s0x%08x\tintval: %d\tTIM: 0x%x\n",
-212-		"AR5K_BEACON", v, v & AR5K_BEACON_PERIOD,
-213-		(v & AR5K_BEACON_TIM) >> AR5K_BEACON_TIM_S);
-214-
-215:	len += snprintf(buf+len, sizeof(buf)-len, "%-24s0x%08x\n",
-216-		"AR5K_LAST_TSTP", ath5k_hw_reg_read(sc->ah, AR5K_LAST_TSTP));
-217-
-218:	len += snprintf(buf+len, sizeof(buf)-len, "%-24s0x%08x\n\n",
-219-		"AR5K_BEACON_CNT", ath5k_hw_reg_read(sc->ah, AR5K_BEACON_CNT));
-220-
-
-A conversion from snprintf to scnprintf might be appropriate
-for those patterns.
-
+                Linus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
