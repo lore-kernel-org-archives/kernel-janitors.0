@@ -1,27 +1,35 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Sat, 17 Jul 2010 18:47:05 +0000
-Subject: Re: [PATCH 13/15] sound/soc: davinci: check kzalloc() result (typo)
-Message-Id: <20100717184705.GA27456@rakim.wolfsonmicro.main>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 23 Jul 2010 16:34:53 +0000
+Subject: [PATCH] char: mxser: remove unnesesary NULL check
+Message-Id: <1279902893-27006-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279296977-25267-1-git-send-email-segooon@gmail.com>
-	<1279388733.3070.5.camel@odin>
-In-Reply-To: <1279388733.3070.5.camel@odin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Miguel Aguilar <miguel.aguilar@ridgerun.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Jiri Slaby <jirislaby@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
 
-On Sat, Jul 17, 2010 at 06:45:33PM +0100, Liam Girdwood wrote:
-> On Fri, 2010-07-16 at 20:16 +0400, Kulikov Vasiliy wrote:
-> > The code checks 'davinci_vc' after kzalloc() and do not checks
-> > 'davinci_vcif_dev' that kzalloc() result is assigned to. It seems that
-> > it is a typo (autocompletion?).
+mxser_transmit_chars(tty, port) is called only from mxser_interrupt().
+NULL check is performed in mxser_interrupt() so it is redundant here.
 
-> > Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/char/mxser.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> Acked-by: Liam Girdwood <lrg@slimlogic.co.uk>
+diff --git a/drivers/char/mxser.c b/drivers/char/mxser.c
+index d2692d4..3fc89da 100644
+--- a/drivers/char/mxser.c
++++ b/drivers/char/mxser.c
+@@ -2193,7 +2193,7 @@ static void mxser_transmit_chars(struct tty_struct *tty, struct mxser_port *port
+ 	port->mon_data.up_txcnt += (cnt - port->xmit_cnt);
+ 	port->icount.tx += (cnt - port->xmit_cnt);
+ 
+-	if (port->xmit_cnt < WAKEUP_CHARS && tty)
++	if (port->xmit_cnt < WAKEUP_CHARS)
+ 		tty_wakeup(tty);
+ 
+ 	if (port->xmit_cnt <= 0) {
+-- 
+1.7.0.4
 
-Applied, thanks.  Kulikov could you please check the subject lines
-you're using for your patches - try to be consistent with the rest of
-the patches for the same code area.
