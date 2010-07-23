@@ -1,29 +1,28 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 23 Jul 2010 10:08:26 +0000
-Subject: [patch -next] V4L: media/IR: testing the wrong variable
-Message-Id: <20100723100826.GB26313@bicker>
+From: Jarod Wilson <jarod@redhat.com>
+Date: Fri, 23 Jul 2010 13:16:04 +0000
+Subject: Re: [patch -next] V4L: media/IR: testing the wrong variable
+Message-Id: <20100723131604.GA20916@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100723100826.GB26313@bicker>
+In-Reply-To: <20100723100826.GB26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Jarod Wilson <jarod@redhat.com>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is a typo here.  We meant to test "rbuf" instead of "drv".  We
-already tested "drv" earlier.
+On Fri, Jul 23, 2010 at 12:08:26PM +0200, Dan Carpenter wrote:
+> There is a typo here.  We meant to test "rbuf" instead of "drv".  We
+> already tested "drv" earlier.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Gah. I swear that got fixed once already... Thanks!
 
-diff --git a/drivers/media/IR/ir-lirc-codec.c b/drivers/media/IR/ir-lirc-codec.c
-index 178bc5b..870000e 100644
---- a/drivers/media/IR/ir-lirc-codec.c
-+++ b/drivers/media/IR/ir-lirc-codec.c
-@@ -192,7 +192,7 @@ static int ir_lirc_register(struct input_dev *input_dev)
- 		return rc;
- 
- 	rbuf = kzalloc(sizeof(struct lirc_buffer), GFP_KERNEL);
--	if (!drv)
-+	if (!rbuf)
- 		goto rbuf_alloc_failed;
- 
- 	rc = lirc_buffer_init(rbuf, sizeof(int), LIRCBUF_SIZE);
+Acked-by: Jarod Wilson <jarod@redhat.com>
+
+
+-- 
+Jarod Wilson
+jarod@redhat.com
+
