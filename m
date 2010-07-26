@@ -1,34 +1,43 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 31 Jul 2010 16:34:30 +0000
-Subject: [PATCH] video: igafb: introduce lost 'return'
-Message-Id: <1280594070-3328-1-git-send-email-segooon@gmail.com>
+Date: Mon, 26 Jul 2010 08:29:22 +0000
+Subject: [PATCH] oss: waveartist: simplify waveartist_sleep()
+Message-Id: <1280132962-8346-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
 
-If iga_init() fails, code releases resources and continues to use it.
-It seems that after releasing resources 'return' should be.
+waveartist_sleep() uses loop with schedule_timeout() to unconditionally
+wait for msec. Use schedule_timeout_uninteruptible() instead.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/video/igafb.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ sound/oss/waveartist.c |   10 ++--------
+ 1 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/video/igafb.c b/drivers/video/igafb.c
-index 15d2001..c4e6fc0 100644
---- a/drivers/video/igafb.c
-+++ b/drivers/video/igafb.c
-@@ -531,6 +531,7 @@ int __init igafb_init(void)
- 		iounmap(info->screen_base);
- 		kfree(par->mmap_map);
- 		kfree(info);
-+		return -ENODEV;
-         }
+diff --git a/sound/oss/waveartist.c b/sound/oss/waveartist.c
+index e688dde..5246874 100644
+--- a/sound/oss/waveartist.c
++++ b/sound/oss/waveartist.c
+@@ -184,14 +184,8 @@ waveartist_iack(wavnc_info *devc)
+ static inline int
+ waveartist_sleep(int timeout_ms)
+ {
+-	unsigned int timeout = timeout_ms * 10 * HZ / 100;
+-
+-	do {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		timeout = schedule_timeout(timeout);
+-	} while (timeout);
+-
+-	return 0;
++	unsigned int timeout = msecs_to_jiffies(timeout_ms*100);
++	return schedule_timeout_interruptible(timeout);
+ }
  
- #ifdef CONFIG_SPARC
+ static int
 -- 
 1.7.0.4
 
