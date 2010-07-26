@@ -1,7 +1,7 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 25 Jul 2010 09:23:54 +0000
+From: "Ted Ts'o" <tytso@mit.edu>
+Date: Mon, 26 Jul 2010 11:23:17 +0000
 Subject: Re: check capabilities in open()
-Message-Id: <20100725092354.GA7728@albatros>
+Message-Id: <20100726112317.GB9185@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100724160701.GA4907@albatros>
  <20100724182355.GA9134@ZenIV.linux.org.uk>
@@ -10,25 +10,42 @@ In-Reply-To: <20100725054511.GB9018@albatros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jul 25, 2010 at 09:45 +0400, Vasiliy Kulikov wrote:
-> Btw, the list of such drivers is much smaller, some of them just return
-> -EPERM and open() fails, it is OK. I'll resend more precise list soon.
+On Sun, Jul 25, 2010 at 09:45:11AM +0400, Vasiliy Kulikov wrote:
+> 
+> Root can open apm file (as->suser would be true), pass it to
+> unpriviledged process and it would be able to suspend the system
+> (as->suser would be still true).
 
-The list is tiny:
+The flip side of this --- and why these devices were deliberately
+coded that way, is a setuid root program can open the apm file, and
+then drop its root privileges for safety, so that if there is a buffer
+overrun in the program, the attacker doesn't get root privileges.
+This is quite common in Unix/Linux implementation pattern; let a
+setuid program do wha it needs to do as root in terms of opening
+specific file descriptors, and then have it drop its privileges.
 
-arch/x86/kernel/apm_32.c
-drivers/char/agp/frontend.c
-drivers/char/apm-emulation.c
+So the way they are written is quite correct.  And it's consistent
+with a device file which is owned by root, mode 600.  A setuid root
+program can open the device, but once it is opened, the file
+descriptor continues to have access to the program even if its
+privileges are dropped, or the file descriptor is passed to another
+program.  (This is also sometimes done, deliberately; for example the
+original Berkely lpr/lpd program was written where the user would run
+lpr, and pass a file descriptor to the lpd daemon, which was not
+running as root, but as an unprivileged system process.  This allowed
+the lpd daemon to have access to the file, even though it might not be
+allowed to open a file that was mode 600.)
 
-Aslo comment from drivers/cahr/apm-emulation.c:
+The reason why the apm device needed to sample the suser() bit is that
+it can be opened by root and non-root processes, but it wanted to
+extend the Unix/Linux paradigm that privileges are tested at open()
+time.
 
-/*
- * XXX - this is a tiny bit broken, when we consider BSD
- * process accounting.  If the device is opened by root, we
- * instantly flag that we used superuser privs. Who knows,
- * we might close the device immediately without doing a
- * privileged operation -- cevans
- */
+So this is a not a bug, but quite deliberately, by design.
+
+Regards,
+
+						- Ted
