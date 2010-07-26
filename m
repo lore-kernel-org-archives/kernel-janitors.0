@@ -1,42 +1,44 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Fri, 30 Jul 2010 16:48:33 +0000
-Subject: Re: [PATCH 17/19] drivers/pci: use for_each_pci_dev()
-Message-Id: <20100730094833.47a3e638@virtuousgeek.org>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 26 Jul 2010 08:23:54 +0000
+Subject: [PATCH] drm: nouveau: set TASK_(UN)INTERRUPTIBLE before schedule_timeout()
+Message-Id: <1280132635-7961-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1278173080-11983-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1278173080-11983-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>, Francisco Jerez <currojerez@riseup.net>, Dave Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-On Sat,  3 Jul 2010 20:04:39 +0400
-Kulikov Vasiliy <segooon@gmail.com> wrote:
+set_current_state() is called only once before the first iteration.
+After return from schedule_timeout() current state is TASK_RUNNING. If
+we are going to wait again, set_current_state() must be called.
 
-> Use for_each_pci_dev() to simplify the code.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/pci/setup-irq.c |    3 +--
->  1 files changed, 1 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/setup-irq.c b/drivers/pci/setup-irq.c
-> index aa795fd..eec9738 100644
-> --- a/drivers/pci/setup-irq.c
-> +++ b/drivers/pci/setup-irq.c
-> @@ -59,7 +59,6 @@ pci_fixup_irqs(u8 (*swizzle)(struct pci_dev *, u8 *),
->  	       int (*map_irq)(struct pci_dev *, u8, u8))
->  {
->  	struct pci_dev *dev = NULL;
-> -	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-> +	for_each_pci_dev(dev)
->  		pdev_fixup_irq(dev, swizzle, map_irq);
-> -	}
->  }
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/gpu/drm/nouveau/nouveau_fence.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-Applied all of these to my linux-next branch.  I squashed all the PCI
-ones into a single commit, keeping only the x86 one separate.
-
+diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
+index 813d853..b7777ae 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_fence.c
++++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+@@ -186,7 +186,6 @@ nouveau_fence_wait(void *sync_obj, void *sync_arg, bool lazy, bool intr)
+ 	unsigned long timeout = jiffies + (3 * DRM_HZ);
+ 	int ret = 0;
+ 
+-	__set_current_state(intr ? TASK_INTERRUPTIBLE : TASK_UNINTERRUPTIBLE);
+ 
+ 	while (1) {
+ 		if (nouveau_fence_signalled(sync_obj, sync_arg))
+@@ -197,6 +196,8 @@ nouveau_fence_wait(void *sync_obj, void *sync_arg, bool lazy, bool intr)
+ 			break;
+ 		}
+ 
++		__set_current_state(intr ? TASK_INTERRUPTIBLE
++			: TASK_UNINTERRUPTIBLE);
+ 		if (lazy)
+ 			schedule_timeout(1);
+ 
 -- 
-Jesse Barnes, Intel Open Source Technology Center
+1.7.0.4
+
