@@ -1,40 +1,47 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 29 Jul 2010 08:56:21 +0000
-Subject: Re: [Cocci] correct handling of return values
-Message-Id: <Pine.LNX.4.64.1007291052410.18192@ask.diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 26 Jul 2010 08:28:32 +0000
+Subject: [PATCH] oss: au1550_ac97: simplify au1550_delay()
+Message-Id: <1280132913-8306-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4C51394B.2060306@users.sourceforge.net>
-In-Reply-To: <4C51394B.2060306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Ralf Baechle <ralf@linux-mips.org>, Manuel Lauss <manuel.lauss@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
 
-On Thu, 29 Jul 2010, SF Markus Elfring wrote:
+au1550_delay() uses loop with schedule_timeout() to unconditionally wait
+for msec. Use schedule_timeout_uninteruptible() instead.
 
-> > I'm currently working on this task:
-> > http://kernelnewbies.org/KernelJanitors/Todo/ReturnCodes
-> > 
-> > I think this task can be partly done with coccinelle. The most often cases of
-> > invalid handling is no handling :)
-> > 
-> > I am not guru of coccinelle, but I think it is very useful here. So,
-> > I've written basic script of finding common errors, but it is not ideal.
-> 
-> Were any improvements achieved since my request "Detection of ignored function
-> return values" that will help in this use case?
-> http://lists.diku.dk/pipermail/cocci/2010-February/000690.html
-> http://www.mail-archive.com/cocci@diku.dk/msg00157.html
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ sound/oss/au1550_ac97.c |   11 +----------
+ 1 files changed, 1 insertions(+), 10 deletions(-)
 
-Looking back at that disucssion, it sees that the main issue was whether 
-one would know the return type of a function.  If the function is not 
-local, one can know that from the prototype.  One then runs into the 
-problem that prototypes are often in header files, and Coccinelle takes 
-into account at most the header files that are mentioned in the file 
-explicitly.  Nothing has changed in that regard.
+diff --git a/sound/oss/au1550_ac97.c b/sound/oss/au1550_ac97.c
+index 0fd256c..c4a4cdc 100644
+--- a/sound/oss/au1550_ac97.c
++++ b/sound/oss/au1550_ac97.c
+@@ -163,19 +163,10 @@ ld2(unsigned int x)
+ static void
+ au1550_delay(int msec)
+ {
+-	unsigned long   tmo;
+-	signed long     tmo2;
+-
+ 	if (in_interrupt())
+ 		return;
+ 
+-	tmo = jiffies + (msec * HZ) / 1000;
+-	for (;;) {
+-		tmo2 = tmo - jiffies;
+-		if (tmo2 <= 0)
+-			break;
+-		schedule_timeout(tmo2);
+-	}
++	schedule_timeout_uninterruptible(msecs_to_jiffies(msec));
+ }
+ 
+ static u16
+-- 
+1.7.0.4
 
-If you care only about bug finding, but not automatic bug fixing, a 
-possibility is to run CPP first.  There is some support for doing this, 
-but I don't remember what it is.  Nicolas Palix should know, however.
-
-julia
