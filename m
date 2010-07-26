@@ -1,34 +1,36 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 31 Jul 2010 20:26:31 +0000
-Subject: [patch] ceph: create_workqueue() doesn't return ERR_PTR
-Message-Id: <20100731202631.GH26313@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 26 Jul 2010 08:24:42 +0000
+Subject: [PATCH] i2c-davinci: use schedule_timeout_uninterruptible()
+Message-Id: <1280132682-8055-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sage Weil <sage@newdream.net>
-Cc: Yehuda Sadeh <yehuda@hq.newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "Jean Delvare (PC drivers, core)" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "Ben Dooks (embedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-create_workqueue() returns a NULL pointer on errors.
+i2c_davinci_wait_bus_not_busy() uses schedule_timeout() without setting
+state to STATE_(UN)INTERRUPTIBLE. As it is called in cycle without
+checking of pending signals, use schedule_timeout_uninterruptible().
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/i2c/busses/i2c-davinci.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/ceph/messenger.c b/fs/ceph/messenger.c
-index 15167b2..d959dba 100644
---- a/fs/ceph/messenger.c
-+++ b/fs/ceph/messenger.c
-@@ -94,11 +94,9 @@ struct workqueue_struct *ceph_msgr_wq;
- int __init ceph_msgr_init(void)
- {
- 	ceph_msgr_wq = create_workqueue("ceph-msgr");
--	if (IS_ERR(ceph_msgr_wq)) {
--		int ret = PTR_ERR(ceph_msgr_wq);
--		pr_err("msgr_init failed to create workqueue: %d\n", ret);
--		ceph_msgr_wq = NULL;
--		return ret;
-+	if (!ceph_msgr_wq) {
-+		pr_err("msgr_init failed to create workqueue\n");
-+		return -ENOMEM;
+diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
+index 4523364..1d376a5 100644
+--- a/drivers/i2c/busses/i2c-davinci.c
++++ b/drivers/i2c/busses/i2c-davinci.c
+@@ -231,7 +231,7 @@ static int i2c_davinci_wait_bus_not_busy(struct davinci_i2c_dev *dev,
+ 			return -ETIMEDOUT;
+ 		}
+ 		if (allow_sleep)
+-			schedule_timeout(1);
++			schedule_timeout_uninterruptible(1);
  	}
+ 
  	return 0;
- }
+-- 
+1.7.0.4
+
