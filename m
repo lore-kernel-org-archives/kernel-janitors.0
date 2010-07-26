@@ -1,81 +1,36 @@
-From: Lennert Buytenhek <buytenh@wantstofly.org>
-Date: Sun, 25 Jul 2010 15:54:12 +0000
-Subject: Re: [patch -next v2] mv643xx_eth: potential null dereference
-Message-Id: <20100725155412.GF21121@mail.wantstofly.org>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 26 Jul 2010 08:25:42 +0000
+Subject: [PATCH] usbnet: use jiffies in schedule_timeout(), not msecs
+Message-Id: <1280132742-8126-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100723101528.GF26313@bicker> <1279881177.24768.1623.camel@Joe-Laptop.home> <20100723110504.GG26313@bicker> <4C49C39E.8020502@bfs.de> <20100723221514.GJ26313@bicker> <4C4AAB5B.2050901@bfs.de> <20100724190036.GA21121@mail.wantstofly.org> <4C4C4E75.4080603@bfs.de>
-In-Reply-To: <4C4C4E75.4080603@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Dan Carpenter <error27@gmail.com>, Joe Perches <joe@perches.com>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Denis Kirjanov <kirjanov@gmail.com>, Saeed Bishara <saeed@marvell.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, "David S. Miller" <davem@davemloft.net>, Ben Hutchings <ben@decadent.org.uk>, Joe Perches <joe@perches.com>, Stephen Hemminger <shemminger@vyatta.com>, Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jul 25, 2010 at 04:47:17PM +0200, walter harms wrote:
+usbnet_terminate_urbs() uses schedule_timeout() with argument 3 msecs.
+schedule_timeout() uses jiffies as argument, so convert msecs to jiffies
+with msecs_to_jiffies().
 
-> >> IMHO it would be better to make sure that pd->t_clk,pd->tx_csum_limit
-> >> have usefull values than adding a check but this is up to the maintainer.
-> > 
-> > I don't see the point of that at all.  We check against zero to see
-> > whether the caller bothered to fill in the field at all, but if the
-> > caller wants to pass in bogus values, that's up to the caller.
-> 
-> at first i have to admit i looked only at the patch.
-> for me the situation looks this way:
-> 
-> You check the values for 0 (and uses default) or take what ever in pd is.
-> The current code is setup like:
-> 
->   1. check if pd is set
->   2. check if pd->value is non zero and use it
-> 
-> the whole "check X" can be avoided if you could create a pd with all values
-> set to default and just take what comes from the user.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/usb/usbnet.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Why would you want to avoid "check X"?
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 7eab407..b243386 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -624,7 +624,7 @@ static void usbnet_terminate_urbs(struct usbnet *dev)
+ 	while (!skb_queue_empty(&dev->rxq)
+ 		&& !skb_queue_empty(&dev->txq)
+ 		&& !skb_queue_empty(&dev->done)) {
+-			schedule_timeout(UNLINK_TIMEOUT_MS);
++			schedule_timeout(msecs_to_jiffies(UNLINK_TIMEOUT_MS));
+ 			set_current_state(TASK_UNINTERRUPTIBLE);
+ 			netif_dbg(dev, ifdown, dev->net,
+ 				  "waited for %d urb completions\n", temp);
+-- 
+1.7.0.4
 
-
-> my objection agains this kind of code is that it is not obvious
-> what some one is trying to archive
-> (pd != NULL && pd->t_clk != 0) ? pd->t_clk : 133000000;
-> 
-> the pd check means: do i have a configuration  ?
-
-Yep.
-
-
-> the pd->t_clk != 0 means: should i use then or default ?
-
-Yep.
-
-
-> This is mixing two very different questions.
-
-And?
-
-You're arguing against the use of 'if (a && b)' in general?
-
-
-> therefore my idea in the last posting to have a default init if (!pd)
-> and then use the else to make clear that additional checks for
-> pd->value are expected.
-
-Again, I don't see the point of this, and I think we're just splitting
-hairs here and wasting everyone's time.
-
-
-> this this is the init code readability and simplicity should be king.
-
-'if (foo != NULL && foo->value <op> <value>)' is a fairly common C
-construct, in my opinion, and I don't see how expanding it into a
-multi-line nested if construct will make it either more readable or
-simpler.
-
-
-> hope that helps,
-
-Not really.
-
-
-thanks,
-Lennert
