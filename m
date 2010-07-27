@@ -1,111 +1,116 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 01 Jul 2010 11:22:51 +0000
-Subject: [PATCH 09/16] staging/otus: use ARRAY_SIZE
-Message-Id: <1277983372-29356-1-git-send-email-segooon@gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Tue, 27 Jul 2010 22:26:37 +0000
+Subject: Re: [PATCH] staging: xgifb: Fix compiler warnings about unused
+Message-Id: <20100727152637.91f12357.randy.dunlap@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Dan Carpenter <error27@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
+On Wed, 02 Jun 2010 17:12:44 +0400 Kulikov Vasiliy wrote:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+> Fix compiler warnings about unused variables and functions on
+> CONFIG_FB_XGI=m.
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+
+Hi,
+
+(if this patch is still wanted:)
+
+This patch does not apply cleanly because it has been mangled/munged (destroyed,
+mucked up, whatever).  Please fix your mail client and resend it, and when you
+resend it, please use this info along with the CC: to the driver author:
+
+STAGING SUBSYSTEM
+M:	Greg Kroah-Hartman <gregkh@suse.de>
+L:	devel@driverdev.osuosl.org
+
+
+Thanks.
+
+
+> diff --git a/drivers/staging/xgifb/XGI_main.h
+> b/drivers/staging/xgifb/XGI_main.h
+> index 4f4171e..dd6d6bd 100644
+> --- a/drivers/staging/xgifb/XGI_main.h
+> +++ b/drivers/staging/xgifb/XGI_main.h
+> @@ -388,7 +388,6 @@ static int currcon = 0;
+> static int XGIfb_registered;
+> static int XGIfb_tvmode = 0;
+> static int XGIfb_mem = 0;
+> -static int XGIfb_pdc = 0;
+> static int enable_dstn = 0;
+> static int XGIfb_ypan = -1;
+> 
+> diff --git a/drivers/staging/xgifb/XGI_main_26.c
+> b/drivers/staging/xgifb/XGI_main_26.c
+> index 867012b..4e3af91 100644
+> --- a/drivers/staging/xgifb/XGI_main_26.c
+> +++ b/drivers/staging/xgifb/XGI_main_26.c
+> @@ -855,6 +855,7 @@ static int XGIfb_validate_mode(int myindex)
+> 
+> }
+> 
+> +#ifndef MODULE
+> static void XGIfb_search_crt2type(const char *name)
+> {
+> int i = 0;
+> @@ -873,7 +874,9 @@ static void XGIfb_search_crt2type(const char *name)
+> if(XGIfb_crt2type < 0)
+> printk(KERN_INFO "XGIfb: Invalid CRT2 type: %s\n", name);
+> }
+> +#endif
+> 
+> +#ifndef MODULE
+> static void XGIfb_search_queuemode(const char *name)
+> {
+> int i = 0;
+> @@ -891,6 +894,7 @@ static void XGIfb_search_queuemode(const char *name)
+> if (XGIfb_queuemode < 0)
+> printk(KERN_INFO "XGIfb: Invalid queuemode type: %s\n", name);
+> }
+> +#endif
+> 
+> static u8 XGIfb_search_refresh_rate(unsigned int rate)
+> {
+> @@ -938,6 +942,7 @@ static u8 XGIfb_search_refresh_rate(unsigned int
+> rate)
+> }
+> }
+> 
+> +#ifndef MODULE
+> static void XGIfb_search_tvstd(const char *name)
+> {
+> int i = 0;
+> @@ -953,6 +958,7 @@ static void XGIfb_search_tvstd(const char *name)
+> i++;
+> }
+> }
+> +#endif
+> 
+> static BOOLEAN XGIfb_bridgeisslave(void)
+> {
+> @@ -2824,6 +2830,7 @@ static void XGIfb_post_setmode(void)
+> XGIINITSTATIC int __init XGIfb_setup(char *options)
+> {
+> char *this_opt;
+> + int XGIfb_pdc;
+> 
+> 
+> 
+> @@ -3585,7 +3592,6 @@ module_init(xgifb_init);
+> static char         *mode = NULL;
+> static int          vesa = 0;
+> static unsigned int rate = 0;
+> -static unsigned int crt1off = 1;
+> static unsigned int mem = 0;
+> static char         *forcecrt2type = NULL;
+> static int          forcecrt1 = -1;
+> -- 
+
+
 ---
- drivers/staging/otus/hal/hpani.c |   37 ++++++++++++++++---------------------
- 1 files changed, 16 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/staging/otus/hal/hpani.c b/drivers/staging/otus/hal/hpani.c
-index f53e483..6940ddc 100644
---- a/drivers/staging/otus/hal/hpani.c
-+++ b/drivers/staging/otus/hal/hpani.c
-@@ -72,7 +72,6 @@ s32_t BEACON_RSSI(zdev_t *dev)
- 
- void zfHpAniAttach(zdev_t *dev)
- {
--#define N(a)     (sizeof(a) / sizeof(a[0]))
-     u32_t i;
-     struct zsHpPriv *HpPriv;
- 
-@@ -125,7 +124,6 @@ void zfHpAniAttach(zdev_t *dev)
-     HpPriv->stats.ast_nodestats.ns_avgbrssi = ZM_RSSI_DUMMY_MARKER;
-     HpPriv->stats.ast_nodestats.ns_avgrssi = ZM_RSSI_DUMMY_MARKER;
-     HpPriv->stats.ast_nodestats.ns_avgtxrssi = ZM_RSSI_DUMMY_MARKER;
--#undef N
- }
- 
- /*
-@@ -133,7 +131,6 @@ void zfHpAniAttach(zdev_t *dev)
-  */
- u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
- {
--#define N(a) (sizeof(a)/sizeof(a[0]))
-     typedef s32_t TABLE[];
-     struct zsHpPriv *HpPriv;
-     struct zsAniState *aniState;
-@@ -148,11 +145,12 @@ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
-     {
-         u32_t level = param;
- 
--        if (level >= N(HpPriv->totalSizeDesired)) {
--          zm_debug_msg1("level out of range, desired level : ", level);
--          zm_debug_msg1("max level : ", N(HpPriv->totalSizeDesired));
--          return FALSE;
--        }
-+	if (level >= ARRAY_SIZE(HpPriv->totalSizeDesired)) {
-+		zm_debug_msg1("level out of range, desired level : ", level);
-+		zm_debug_msg1("max level : ",
-+			ARRAY_SIZE(HpPriv->totalSizeDesired));
-+		return FALSE;
-+	}
- 
-         zfDelayWriteInternalReg(dev, AR_PHY_DESIRED_SZ,
-                 (HpPriv->regPHYDesiredSZ & ~AR_PHY_DESIRED_SZ_TOT_DES)
-@@ -260,12 +258,11 @@ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
-         const TABLE firstep = { 0, 4, 8 };
-         u32_t level = param;
- 
--        if (level >= N(firstep))
--        {
--            zm_debug_msg1("level out of range, desired level : ", level);
--            zm_debug_msg1("max level : ", N(firstep));
--            return FALSE;
--        }
-+	if (level >= ARRAY_SIZE(firstep)) {
-+		zm_debug_msg1("level out of range, desired level : ", level);
-+		zm_debug_msg1("max level : ", ARRAY_SIZE(firstep));
-+		return FALSE;
-+	}
-         zfDelayWriteInternalReg(dev, AR_PHY_FIND_SIG,
-                 (HpPriv->regPHYFindSig & ~AR_PHY_FIND_SIG_FIRSTEP)
-                 | ((firstep[level] << AR_PHY_FIND_SIG_FIRSTEP_S)
-@@ -283,12 +280,11 @@ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
-         const TABLE cycpwrThr1 = { 2, 4, 6, 8, 10, 12, 14, 16 };
-         u32_t level = param;
- 
--        if (level >= N(cycpwrThr1))
--        {
--            zm_debug_msg1("level out of range, desired level : ", level);
--            zm_debug_msg1("max level : ", N(cycpwrThr1));
--            return FALSE;
--        }
-+	if (level >= ARRAY_SIZE(cycpwrThr1)) {
-+		zm_debug_msg1("level out of range, desired level : ", level);
-+		zm_debug_msg1("max level : ", ARRAY_SIZE(cycpwrThr1));
-+		return FALSE;
-+	}
-         zfDelayWriteInternalReg(dev, AR_PHY_TIMING5,
-                 (HpPriv->regPHYTiming5 & ~AR_PHY_TIMING5_CYCPWR_THR1)
-                 | ((cycpwrThr1[level] << AR_PHY_TIMING5_CYCPWR_THR1_S)
-@@ -335,7 +331,6 @@ u8_t zfHpAniControl(zdev_t *dev, ZM_HAL_ANI_CMD cmd, int param)
-         return FALSE;
-     }
-     return TRUE;
--#undef  N
- }
- 
- void zfHpAniRestart(zdev_t* dev)
--- 
-1.7.0.4
-
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
