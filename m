@@ -1,97 +1,40 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Date: Thu, 15 Jul 2010 06:52:58 +0000
-Subject: Re: [PATCH 02/11] arch/m68knommu/kernel/process.c: formatting of
-Message-Id: <4C3EB04A.90000@snapgear.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 27 Jul 2010 10:05:56 +0000
+Subject: [patch -next] ixgbe: potential null dereference
+Message-Id: <20100727100556.GM26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279130473-10737-1-git-send-email-segooon@gmail.com> <4C3E5672.4090606@snapgear.com> <20100715064354.GA5555@albatros>
-In-Reply-To: <20100715064354.GA5555@albatros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, John Kacur <jkacur@redhat.com>, Tejun Heo <tj@kernel.org>, Maxim Kuvyrkov <maxim@codesourcery.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, PJ Waskiewicz <peter.p.waskiewicz.jr@intel.com>, John Ronciak <john.ronciak@intel.com>, "David S. Miller" <davem@davemloft.net>, Don Skidmore <donald.c.skidmore@intel.com>, Mallikarjuna R Chilakala <mallikarjuna.chilakala@intel.com>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Kulikov Vasiliy wrote:
-> On Thu, Jul 15, 2010 at 10:29 +1000, Greg Ungerer wrote:
->> Hi Kulikov,
->>
->> Kulikov Vasiliy wrote:
->>> Use %p instead of %08x in printk().
->>>
->>> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
->> Acked-by: Greg Ungerer <gerg@uclinux.org>
->>
->> Do you want me to push this to Linus via the m68knommu git tree?
-> Yeah, it would be good.
+The e_dev_err() macro dereferences "adapter" which is NULL here.
 
-OK, done.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks
-Greg
-
-
-
->> Regards
->> Greg
->>
->>
->>
->>> ---
->>> arch/m68knommu/kernel/process.c |   10 +++++-----
->>> 1 files changed, 5 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/arch/m68knommu/kernel/process.c b/arch/m68knommu/kernel/process.c
->>> index 6aa6613..1096c0e 100644
->>> --- a/arch/m68knommu/kernel/process.c
->>> +++ b/arch/m68knommu/kernel/process.c
->>> @@ -316,14 +316,14 @@ void dump(struct pt_regs *fp)
->>> 		fp->d0, fp->d1, fp->d2, fp->d3);
->>> 	printk(KERN_EMERG "d4: %08lx    d5: %08lx    a0: %08lx    a1: %08lx\n",
->>> 		fp->d4, fp->d5, fp->a0, fp->a1);
->>> -	printk(KERN_EMERG "\nUSP: %08x   TRAPFRAME: %08x\n",
->>> -		(unsigned int) rdusp(), (unsigned int) fp);
->>> +	printk(KERN_EMERG "\nUSP: %08x   TRAPFRAME: %p\n",
->>> +		(unsigned int) rdusp(), fp);
->>> 	printk(KERN_EMERG "\nCODE:");
->>> 	tp = ((unsigned char *) fp->pc) - 0x20;
->>> 	for (sp = (unsigned long *) tp, i = 0; (i < 0x40);  i += 4) {
->>> 		if ((i % 0x10) = 0)
->>> -			printk(KERN_EMERG "%08x: ", (int) (tp + i));
->>> +			printk(KERN_EMERG "%p: ", tp + i);
->>> 		printk("%08x ", (int) *sp++);
->>> 	}
->>> 	printk(KERN_EMERG "\n");
->>> @@ -332,7 +332,7 @@ void dump(struct pt_regs *fp)
->>> 	tp = ((unsigned char *) fp) - 0x40;
->>> 	for (sp = (unsigned long *) tp, i = 0; (i < 0xc0); i += 4) {
->>> 		if ((i % 0x10) = 0)
->>> -			printk(KERN_EMERG "%08x: ", (int) (tp + i));
->>> +			printk(KERN_EMERG "%p: ", tp + i);
->>> 		printk("%08x ", (int) *sp++);
->>> 	}
->>> 	printk(KERN_EMERG "\n");
->>> @@ -341,7 +341,7 @@ void dump(struct pt_regs *fp)
->>> 	tp = (unsigned char *) (rdusp() - 0x10);
->>> 	for (sp = (unsigned long *) tp, i = 0; (i < 0x80); i += 4) {
->>> 		if ((i % 0x10) = 0)
->>> -			printk(KERN_EMERG "%08x: ", (int) (tp + i));
->>> +			printk(KERN_EMERG "%p: ", tp + i);
->>> 		printk("%08x ", (int) *sp++);
->>> 	}
->>> 	printk(KERN_EMERG "\n");
->>
->> -- 
->> ------------------------------------------------------------------------
->> Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
->> SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
->> 8 Gardner Close                             FAX:         +61 7 3217 5323
->> Milton, QLD, 4064, Australia                WEB: http://www.SnapGear.com
-> 
-
-
--- 
-------------------------------------------------------------------------
-Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
-SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
-8 Gardner Close                             FAX:         +61 7 3217 5323
-Milton, QLD, 4064, Australia                WEB: http://www.SnapGear.com
+diff --git a/drivers/net/ixgbe/ixgbe_main.c b/drivers/net/ixgbe/ixgbe_main.c
+index 9203759..0360260 100644
+--- a/drivers/net/ixgbe/ixgbe_main.c
++++ b/drivers/net/ixgbe/ixgbe_main.c
+@@ -6549,8 +6549,8 @@ static int __devinit ixgbe_probe(struct pci_dev *pdev,
+ 			err = dma_set_coherent_mask(&pdev->dev,
+ 						    DMA_BIT_MASK(32));
+ 			if (err) {
+-				e_dev_err("No usable DMA configuration, "
+-					  "aborting\n");
++				dev_err(&pdev->dev,
++					"No usable DMA configuration, aborting\n");
+ 				goto err_dma;
+ 			}
+ 		}
+@@ -6560,7 +6560,8 @@ static int __devinit ixgbe_probe(struct pci_dev *pdev,
+ 	err = pci_request_selected_regions(pdev, pci_select_bars(pdev,
+ 	                                   IORESOURCE_MEM), ixgbe_driver_name);
+ 	if (err) {
+-		e_dev_err("pci_request_selected_regions failed 0x%x\n", err);
++		dev_err(&pdev->dev,
++			"pci_request_selected_regions failed 0x%x\n", err);
+ 		goto err_pci_reg;
+ 	}
+ 
