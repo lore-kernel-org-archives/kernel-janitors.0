@@ -1,25 +1,41 @@
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Date: Thu, 29 Jul 2010 19:39:48 +0000
-Subject: Re: [patch] nouveau: unwind on load errors
-Message-Id: <20100729193948.GA4821@joi.lan>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 27 Jul 2010 18:42:40 +0000
+Subject: [PATCH] dvb: siano: free spinlock before schedule()
+Message-Id: <1280256161-7971-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100729180231.GV26313@bicker>
-In-Reply-To: <20100729180231.GV26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: nouveau@lists.freedesktop.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Grant Likely <grant.likely@secretlab.ca>, Ben Skeggs <bskeggs@redhat.com>, Dave Airlie <airlied@redhat.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Douglas Schilling Landgraf <dougsland@redhat.com>, Jiri Kosina <jkosina@suse.cz>, Roel Kluin <roel.kluin@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 29, 2010 at 08:02:31PM +0200, Dan Carpenter wrote:
-> nouveau_load() just returned directly if there was an error instead of
-> releasing resources.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Calling schedule() holding spinlock with disables irqs is improper. As
+spinlock protects list coredev->buffers, it can be unlocked untill wakeup.
+This bug was introduced in a9349315f65cd6a16e8fab1f6cf0fd40f379c4db.
 
-Patch looks good, but could you base it on top of nouveau tree? 
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/media/dvb/siano/smscoreapi.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
-git://anongit.freedesktop.org/nouveau/linux-2.6
-
-Marcin
+diff --git a/drivers/media/dvb/siano/smscoreapi.c b/drivers/media/dvb/siano/smscoreapi.c
+index 7f2c94a..d93468c 100644
+--- a/drivers/media/dvb/siano/smscoreapi.c
++++ b/drivers/media/dvb/siano/smscoreapi.c
+@@ -1113,9 +1113,11 @@ struct smscore_buffer_t *smscore_getbuffer(struct smscore_device_t *coredev)
+ 	 */
+ 
+ 	prepare_to_wait(&coredev->buffer_mng_waitq, &wait, TASK_INTERRUPTIBLE);
+-
+-	if (list_empty(&coredev->buffers))
++	if (list_empty(&coredev->buffers)) {
++		spin_unlock_irqrestore(&coredev->bufferslock, flags);
+ 		schedule();
++		spin_lock_irqsave(&coredev->bufferslock, flags);
++	}
+ 
+ 	finish_wait(&coredev->buffer_mng_waitq, &wait);
+ 
+-- 
+1.7.0.4
 
