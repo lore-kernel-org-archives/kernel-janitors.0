@@ -1,45 +1,85 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 18:36:41 +0000
-Subject: [PATCH 02/25] cpufreq: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
-Message-Id: <201007152036.41768.PeterHuewe@gmx.de>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Tue, 27 Jul 2010 17:46:53 +0000
+Subject: [PATCH v2] btrfs: set task state with
+Message-Id: <20100727174653.GA21048@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1280132864-8266-1-git-send-email-segooon@gmail.com>
+ <4C4E5560.9060905@cn.fujitsu.com>
+In-Reply-To: <4C4E5560.9060905@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Dave Jones <davej@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Tejun Heo <tj@kernel.org>, cpufreq@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Miao Xie <miaox@cn.fujitsu.com>
+Cc: kernel-janitors@vger.kernel.org, Chris Mason <chris.mason@oracle.com>, Tejun Heo <tj@kernel.org>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+schedule_timeout() is used without setting state to
+STATE_(UN)INTERRUPTIBLE. As it is called without checking of pending
+signals, use schedule_timeout_uninterruptible() instead.
 
-This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-PCI_VDEVICE macro, and thus improves readability.
-
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- arch/x86/kernel/cpu/cpufreq/gx-suspmod.c |    9 +++------
- 1 files changed, 3 insertions(+), 6 deletions(-)
+ fs/btrfs/async-thread.c |    2 +-
+ fs/btrfs/extent-tree.c  |    6 +++---
+ fs/btrfs/ordered-data.c |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
-index 16e3483..a7867ee 100644
---- a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
-+++ b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
-@@ -169,12 +169,9 @@ static int gx_freq_mult[16] = {
-  *	Low Level chipset interface				*
-  ****************************************************************/
- static struct pci_device_id gx_chipset_tbl[] __initdata = {
--	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510,
--		PCI_ANY_ID, PCI_ANY_ID },
-+	{ PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY), },
-+	{ PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5520), },
-+	{ PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5510), },
- 	{ 0, },
- };
+diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
+index 7ec1409..54eb070 100644
+--- a/fs/btrfs/async-thread.c
++++ b/fs/btrfs/async-thread.c
+@@ -362,7 +362,7 @@ again:
+ 				 * worker->working is still 1, so nobody
+ 				 * is going to try and wake us up
+ 				 */
+-				schedule_timeout(1);
++				schedule_timeout_uninterruptible(1);
+ 				smp_mb();
+ 				if (!list_empty(&worker->pending) ||
+ 				    !list_empty(&worker->prio_pending))
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index 32d0940..5b55a20 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -365,7 +365,7 @@ again:
+ 			up_read(&fs_info->extent_commit_sem);
+ 			mutex_unlock(&caching_ctl->mutex);
+ 			if (btrfs_transaction_in_commit(fs_info))
+-				schedule_timeout(1);
++				schedule_timeout_uninterruptible(1);
+ 			else
+ 				cond_resched();
+ 			goto again;
+@@ -2237,7 +2237,7 @@ again:
+ 			node = rb_next(node);
+ 		}
+ 		spin_unlock(&delayed_refs->lock);
+-		schedule_timeout(1);
++		schedule_timeout_uninterruptible(1);
+ 		goto again;
+ 	}
+ out:
+@@ -3686,7 +3686,7 @@ int btrfs_delalloc_reserve_metadata(struct inode *inode, u64 num_bytes)
+ 	int ret;
  
+ 	if (btrfs_transaction_in_commit(root->fs_info))
+-		schedule_timeout(1);
++		schedule_timeout_uninterruptible(1);
+ 
+ 	num_bytes = ALIGN(num_bytes, root->sectorsize);
+ again:
+diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+index e56c72b..9ff49e5 100644
+--- a/fs/btrfs/ordered-data.c
++++ b/fs/btrfs/ordered-data.c
+@@ -576,7 +576,7 @@ again:
+ 	}
+ 	if (found || test_range_bit(&BTRFS_I(inode)->io_tree, start, orig_end,
+ 			   EXTENT_DELALLOC, 0, NULL)) {
+-		schedule_timeout(1);
++		schedule_timeout_uninterruptible(1);
+ 		goto again;
+ 	}
+ 	return 0;
 -- 
-1.7.1
+1.7.0.4
 
