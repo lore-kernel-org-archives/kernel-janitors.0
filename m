@@ -1,60 +1,44 @@
-From: Lukas Czerner <lczerner@redhat.com>
-Date: Mon, 19 Jul 2010 11:09:40 +0000
-Subject: Re: [PATCH 2/2] turn BUG_ON for out of bound in
-Message-Id: <alpine.LFD.2.00.1007191308150.3435@localhost>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Date: Wed, 28 Jul 2010 18:29:52 +0000
+Subject: [PATCH] video/w100fb: ignore void return value / fix build failure
+Message-Id: <201007282029.52989.PeterHuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4C43083E.6020201@gmail.com>
-In-Reply-To: <4C43083E.6020201@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, 19 Jul 2010, shenghui wrote:
+From: Peter Huewe <peterhuewe@gmx.de>
 
-> Sorry. Will you recommend to me one mail client?
-> I have been suffering reformat by client these days.
-> Thanks,
+This patch fixes a build failure [1] (error: void value not ignored as
+it ought to be) by removing an assignment of a void return value.
+The functionality of the code is not changed.
 
-Mutt, or Alpine will be a very good choice.
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+KernelVersion: linux-next-20100728
+References:
+[1] http://kisskb.ellerman.id.au/kisskb/buildresult/2980912/
 
-This can be also useful:
+ drivers/video/w100fb.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
- Documentation/SubmittingPatches
- Documentation/email-clients.txt
+diff --git a/drivers/video/w100fb.c b/drivers/video/w100fb.c
+index e66b8b1..d8b12c3 100644
+--- a/drivers/video/w100fb.c
++++ b/drivers/video/w100fb.c
+@@ -858,9 +858,9 @@ unsigned long w100fb_gpio_read(int port)
+ void w100fb_gpio_write(int port, unsigned long value)
+ {
+ 	if (port=W100_GPIO_PORT_A)
+-		value = writel(value, remapped_regs + mmGPIO_DATA);
++		writel(value, remapped_regs + mmGPIO_DATA);
+ 	else
+-		value = writel(value, remapped_regs + mmGPIO_DATA2);
++		writel(value, remapped_regs + mmGPIO_DATA2);
+ }
+ EXPORT_SYMBOL(w100fb_gpio_read);
+ EXPORT_SYMBOL(w100fb_gpio_write);
+-- 
+1.7.1
 
-Cheers
--Lukas
-
-> 
-> 
-> Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
-> ---
-> fs/mbcache.c |    4 ++--
-> 1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/mbcache.c b/fs/mbcache.c
-> index 5697d9e..5f96b82 100644
-> --- a/fs/mbcache.c
-> +++ b/fs/mbcache.c
-> @@ -614,7 +614,7 @@ mb_cache_entry_find_first(struct mb_cache *cache, int
-> index,
-> 	struct list_head *l;
-> 	struct mb_cache_entry *ce;
-> 
-> -	mb_assert(index < mb_cache_indexes(cache));
-> +	BUG_ON(!(index < mb_cache_indexes(cache)));
-> 	spin_lock(&mb_cache_spinlock);
-> 	l = cache->c_indexes_hash[index][bucket].next;
-> 	ce = __mb_cache_entry_find(l, &cache->c_indexes_hash[index][bucket],
-> @@ -652,7 +652,7 @@ mb_cache_entry_find_next(struct mb_cache_entry *prev, int
-> index,
-> 	struct list_head *l;
-> 	struct mb_cache_entry *ce;
-> 
-> -	mb_assert(index < mb_cache_indexes(cache));
-> +	BUG_ON(!(index < mb_cache_indexes(cache)));
-> 	spin_lock(&mb_cache_spinlock);
-> 	l = prev->e_indexes[index].o_list.next;
-> 	ce = __mb_cache_entry_find(l, &cache->c_indexes_hash[index][bucket],
-> 
