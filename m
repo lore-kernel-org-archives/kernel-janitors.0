@@ -1,27 +1,58 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 31 Jul 2010 19:17:43 +0000
-Subject: Re: [PATCH 2/7] usb: fsl_udc_core: check return value of
-Message-Id: <20100731191743.GF26313@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 28 Jul 2010 16:41:56 +0000
+Subject: [PATCH 10/10] ALSA: asihpi: check return value of get_user()
+Message-Id: <1280335316-23515-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280597900-8405-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280597900-8405-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, linux-usb@vger.kernel.org, Anton Vorontsov <avorontsov@ru.mvista.com>, Dinh Nguyen <Dinh.Nguyen@freescale.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Eliot Blennerhassett <eblennerhassett@audioscience.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 31, 2010 at 09:38:20PM +0400, Kulikov Vasiliy wrote:
-> create_proc_read_entry() may fail, if so return -ENOMEM.
-> 
+get_user() may fail, if so return -EFAULT.
 
-It can fail, but also we return NULL if procfs is disabled.  I haven't
-looked at it very carefully, would this patch break the module if procfs
-was disabled?
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ sound/pci/asihpi/hpioctl.c |   17 +++++++++++++----
+ 1 files changed, 13 insertions(+), 4 deletions(-)
 
-The same applies to the similar patches in this set.
-
-regards,
-dan carpenter
-
+diff --git a/sound/pci/asihpi/hpioctl.c b/sound/pci/asihpi/hpioctl.c
+index 3114999..62895a7 100644
+--- a/sound/pci/asihpi/hpioctl.c
++++ b/sound/pci/asihpi/hpioctl.c
+@@ -121,11 +121,17 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	phpi_ioctl_data = (struct hpi_ioctl_linux __user *)arg;
+ 
+ 	/* Read the message and response pointers from user space.  */
+-	get_user(puhm, &phpi_ioctl_data->phm);
+-	get_user(puhr, &phpi_ioctl_data->phr);
++	if (get_user(puhm, &phpi_ioctl_data->phm) ||
++	    get_user(puhr, &phpi_ioctl_data->phr)) {
++		err = -EFAULT;
++		goto out;
++	}
+ 
+ 	/* Now read the message size and data from user space.  */
+-	get_user(hm->h.size, (u16 __user *)puhm);
++	if (get_user(hm->h.size, (u16 __user *)puhm)) {
++		err = -EFAULT;
++		goto out;
++	}
+ 	if (hm->h.size > sizeof(*hm))
+ 		hm->h.size = sizeof(*hm);
+ 
+@@ -138,7 +144,10 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		goto out;
+ 	}
+ 
+-	get_user(res_max_size, (u16 __user *)puhr);
++	if (get_user(res_max_size, (u16 __user *)puhr)) {
++		err = -EFAULT;
++		goto out;
++	}
+ 	/* printk(KERN_INFO "user response size %d\n", res_max_size); */
+ 	if (res_max_size < sizeof(struct hpi_response_header)) {
+ 		HPI_DEBUG_LOG(WARNING, "small res size %d\n", res_max_size);
+-- 
+1.7.0.4
 
