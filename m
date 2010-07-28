@@ -1,40 +1,19 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 19:01:21 +0000
-Subject: [PATCH 17/25] infiniband/hw/nes: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
-Message-Id: <201007152101.21810.PeterHuewe@gmx.de>
+From: Roland Dreier <rdreier@cisco.com>
+Date: Wed, 28 Jul 2010 17:44:26 +0000
+Subject: Re: [PATCH 17/25] infiniband/hw/nes: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used
+Message-Id: <adawrsfec1x.fsf@roland-alpha.cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201007152101.21810.PeterHuewe@gmx.de>
+In-Reply-To: <201007152101.21810.PeterHuewe-Mmb7MZpHnFY@public.gmane.org> ("Peter =?utf-8?Q?H?=
+ =?utf-8?Q?=C3=BCwe=22's?= message of
+	"Thu, 15 Jul 2010 21:01:21 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Faisal Latif <faisal.latif@intel.com>, Chien Tung <chien.tin.tung@intel.com>, Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter =?utf-8?Q?H=C3=BCwe?= <PeterHuewe-Mmb7MZpHnFY@public.gmane.org>
+Cc: Kernel Janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chien Tung <chien.tin.tung-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
-
-This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-PCI_VDEVICE macro, and thus improves readability.
-
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
- drivers/infiniband/hw/nes/nes.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/nes/nes.c b/drivers/infiniband/hw/nes/nes.c
-index de7b9d7..1f26927 100644
---- a/drivers/infiniband/hw/nes/nes.c
-+++ b/drivers/infiniband/hw/nes/nes.c
-@@ -110,8 +110,8 @@ static unsigned int sysfs_nonidx_addr;
- static unsigned int sysfs_idx_addr;
- 
- static struct pci_device_id nes_pci_table[] = {
--	{PCI_VENDOR_ID_NETEFFECT, PCI_DEVICE_ID_NETEFFECT_NE020, PCI_ANY_ID, PCI_ANY_ID},
--	{PCI_VENDOR_ID_NETEFFECT, PCI_DEVICE_ID_NETEFFECT_NE020_KR, PCI_ANY_ID, PCI_ANY_ID},
-+	{PCI_VDEVICE(NETEFFECT, PCI_DEVICE_ID_NETEFFECT_NE020), },
-+	{PCI_VDEVICE(NETEFFECT, PCI_DEVICE_ID_NETEFFECT_NE020_KR), },
- 	{0}
- };
- 
+thanks, applied.
 -- 
-1.7.1
-
+Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
+http://www.cisco.com/web/about/doing_business/legal/cri/index.html
