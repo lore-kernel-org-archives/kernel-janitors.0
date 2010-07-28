@@ -1,7 +1,7 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Date: Wed, 28 Jul 2010 16:48:15 +0000
+From: Andi Kleen <ak@linux.intel.com>
+Date: Wed, 28 Jul 2010 17:07:32 +0000
 Subject: Re: [PATCH 04/10] x86: mce: fix error handling
-Message-Id: <20100728164815.GG16250@aftab>
+Message-Id: <4C5063D4.4070108@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1280335185-23265-1-git-send-email-segooon@gmail.com>
 In-Reply-To: <1280335185-23265-1-git-send-email-segooon@gmail.com>
@@ -9,25 +9,22 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, Andi Kleen <ak@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, Borislav Petkov <borislav.petkov@amd.com>, linux-kernel@vger.kernel.org
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, Jul 28, 2010 at 12:39:44PM -0400
-
+  On 7/28/2010 6:39 PM, Kulikov Vasiliy wrote:
 > mcheck_init_device() poorly handles errors. If any request fails
 > unregister and free everything.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-Acked-by: Borislav Petkov <Borislav.Petkov@amd.com>
+Actually these are at early boot time and only contain memory errors,
+and if you run out of memory at this stage the system is usually
+dead in the water anyways. The best you can do at this stage
+is panicing, but silently returning from the the init function doesn't
+help anyone. But someone else will likely panic anyways.
 
--- 
-Regards/Gruss,
-Boris.
+e.g. boot time allocations of cpu masks generally do not check for memory
+failures and I think that's ok, not a bug.
 
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Gemeinde Aschheim, Landkreis Muenchen
-Registergericht Muenchen, HRB Nr. 43632
+Your patch would be good if the driver was modular, but it isn't.
+
+-Andi
 
