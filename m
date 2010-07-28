@@ -1,34 +1,22 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, 28 Jul 2010 16:38:47 +0000
-Subject: [PATCH 01/10] arm: leds: check return value of request_region()
-Message-Id: <1280335127-23145-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 28 Jul 2010 18:01:38 +0000
+Subject: Re: [PATCH 01/10] arm: leds: check return value of request_region()
+Message-Id: <20100728180138.GO26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1280335127-23145-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1280335127-23145-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-request_region() may fail, if so return -ENOMEM.
+On Wed, Jul 28, 2010 at 08:38:47PM +0400, Kulikov Vasiliy wrote:
+> request_region() may fail, if so return -ENOMEM.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- arch/arm/mach-shark/leds.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+I think -EBUSY is more normal, although some people return -ENODEV or
+-EIO.  But I would think -EBUSY is the right one.
 
-diff --git a/arch/arm/mach-shark/leds.c b/arch/arm/mach-shark/leds.c
-index c9e32de..cb1a8f2 100644
---- a/arch/arm/mach-shark/leds.c
-+++ b/arch/arm/mach-shark/leds.c
-@@ -155,7 +155,8 @@ static int __init leds_init(void)
- 	leds_event = sequoia_leds_event;
- 
- 	/* Make LEDs independent of power-state */
--	request_region(0x24,4,"sequoia");
-+	if (request_region(0x24, 4, "sequoia") = NULL)
-+		return -ENOMEM;
- 	temp = sequoia_read(0x09);
- 	temp |= 1<<10;
- 	sequoia_write(temp,0x09);
--- 
-1.7.0.4
+regards,
+dan carpenter
+
 
