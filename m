@@ -1,23 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 18 Jul 2010 22:07:40 +0000
-Subject: Re: [patch] arcnet: fix signed bug in probe function
-Message-Id: <20100718.150740.26966207.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 28 Jul 2010 16:41:36 +0000
+Subject: [PATCH 09/10] oss: msnd: check request_region() return value
+Message-Id: <1280335296-23475-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100717172127.GI17585@bicker>
-In-Reply-To: <20100717172127.GI17585@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Andrew Veliath <andrewtv@usa.net>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 17 Jul 2010 19:21:28 +0200
+request_region() may fail, if so return -ENOMEM.
 
-> probe_irq_off() returns the first irq found or if two irqs are found
-> then it returns the negative of the first irq found.  We can cast
-> dev->irq to an int so that the test for negative values works.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ sound/oss/msnd_pinnacle.c |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
 
-Applied.
+diff --git a/sound/oss/msnd_pinnacle.c b/sound/oss/msnd_pinnacle.c
+index bfaac5f..cd70b9a 100644
+--- a/sound/oss/msnd_pinnacle.c
++++ b/sound/oss/msnd_pinnacle.c
+@@ -1400,9 +1400,13 @@ static int __init attach_multisound(void)
+ 		printk(KERN_ERR LOGNAME ": Couldn't grab IRQ %d\n", dev.irq);
+ 		return err;
+ 	}
+-	request_region(dev.io, dev.numio, dev.name);
++	if (request_region(dev.io, dev.numio, dev.name) = NULL) {
++		free_irq(dev.irq, &dev);
++		return -ENOMEM;
++	}
+ 
+-        if ((err = dsp_full_reset()) < 0) {
++	err = dsp_full_reset();
++	if (err < 0) {
+ 		release_region(dev.io, dev.numio);
+ 		free_irq(dev.irq, &dev);
+ 		return err;
+-- 
+1.7.0.4
+
