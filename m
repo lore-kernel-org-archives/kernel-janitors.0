@@ -1,65 +1,69 @@
-From: Jarod Wilson <jarod@wilsonet.com>
-Date: Fri, 16 Jul 2010 18:07:07 +0000
-Subject: Re: [PATCH 24/25] video/ivtv: Convert pci_table entries to
-Message-Id: <AANLkTinqytzuGXJRakN45u1K91uN66Empk1_7FmdpOxT@mail.gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 28 Jul 2010 16:39:44 +0000
+Subject: [PATCH 04/10] x86: mce: fix error handling
+Message-Id: <1280335185-23265-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007152108.27175.PeterHuewe@gmx.de>
-	<1279230200.7920.23.camel@morgan.silverblock.net>
-	<AANLkTikFTK4KwxKgQqwIId3dPy5hf5X0WjsAYkE5pEd4@mail.gmail.com>
-	<1279280574.2905.18.camel@morgan.silverblock.net>
-In-Reply-To: <1279280574.2905.18.camel@morgan.silverblock.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Andy Walls <awalls@md.metrocast.net>
-Cc: Peter Huewe <PeterHuewe@gmx.de>, Kernel Janitors <kernel-janitors@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Ian Armstrong <ian@iarmst.demon.co.uk>, Douglas Schilling Landgraf <dougsland@redhat.com>, Steven Toth <stoth@kernellabs.com>, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, Borislav Petkov <borislav.petkov@amd.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
 
-On Fri, Jul 16, 2010 at 7:42 AM, Andy Walls <awalls@md.metrocast.net> wrote:
-> On Thu, 2010-07-15 at 18:07 -0400, Jarod Wilson wrote:
->> On Thu, Jul 15, 2010 at 5:43 PM, Andy Walls <awalls@md.metrocast.net> wr=
-ote:
->> > On Thu, 2010-07-15 at 21:08 +0200, Peter Huewe wrote:
->> >> From: Peter Huewe <peterhuewe@gmx.de>
->
->> > a. PCI_ANY_ID indicates to the reader a wildcard match is being
->> > performed. =A0The PCI_VDEVICE() macro hides that to some degree.
->> >
->> > b. PCI_VENDOR_ID_ICOMP clearly indicates that ICOMP is a vendor.
->> > "ICOMP" alone does not hint to the reader that is stands for a company
->> > (the now defunct "Internext Compression, Inc.").
->>
->> Personally, I'm a fan of comments around things like this to describe
->> *exactly* what device(s) they're referring to.
->
-> Something like this then for ivtv:
->
-> /* Claim every iTVC15/CX23415 or CX23416 based PCI Subsystem ever made */
->
-> ?
+mcheck_init_device() poorly handles errors. If any request fails
+unregister and free everything.
 
-More or less. Though perhaps more succinctly, just:
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ arch/x86/kernel/cpu/mcheck/mce.c |   24 ++++++++++++++++++++----
+ 1 files changed, 20 insertions(+), 4 deletions(-)
 
-/* All iTVC15/CX23415 and CX23416 based devices */
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index ed41562..a1119f1 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -2124,22 +2124,38 @@ static __init int mcheck_init_device(void)
+ 	if (!mce_available(&boot_cpu_data))
+ 		return -EIO;
+ 
+-	zalloc_cpumask_var(&mce_dev_initialized, GFP_KERNEL);
++	if (!zalloc_cpumask_var(&mce_dev_initialized, GFP_KERNEL))
++		return -ENOMEM;
+ 
+ 	mce_init_banks();
+ 
+ 	err = sysdev_class_register(&mce_sysclass);
+ 	if (err)
+-		return err;
++		goto err_free_cpumask_var;
+ 
+ 	for_each_online_cpu(i) {
+ 		err = mce_create_device(i);
+ 		if (err)
+-			return err;
++			goto mce_remove_devices;
+ 	}
+ 
+ 	register_hotcpu_notifier(&mce_cpu_notifier);
+-	misc_register(&mce_log_device);
++	err = misc_register(&mce_log_device);
++	if (err)
++		goto err_unreg_notifier;
++	return 0;
++
++err_unreg_notifier:
++	unregister_hotcpu_notifier(&mce_cpu_notifier);
++
++mce_remove_devices:
++	for_each_online_cpu(i)
++		mce_remove_device(i);
++
++	sysdev_class_unregister(&mce_sysclass);
++
++err_free_cpumask_var:
++	free_cpumask_var(mce_dev_initialized);
+ 
+ 	return err;
+ }
+-- 
+1.7.0.4
 
->> =A0Then ICOMP being all
->> alone without the prefix isn't really much of an issue (though it
->> could still be easily mistaken for something other than a pci vendor
->> id, I suppose).
->
-> Probably not. =A0Another minor side effect is that it breaks a tag search
-> for easily jumping to the definition to see the ID value. =A0"ICOMP" won't
-> be in the tags file, but "PCI_VENDOR_ID_ICOMP" will be.
-
-Hm. That's a fair point. I recall a time or three hunting for symbols
-using cscope, and having a bitch of a time, because some of them were
-obscured by macro magic.
-
-
---=20
-Jarod Wilson
-jarod@wilsonet.com
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
