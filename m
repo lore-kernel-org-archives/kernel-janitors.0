@@ -1,40 +1,19 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 27 Jul 2010 10:05:56 +0000
-Subject: [patch -next] ixgbe: potential null dereference
-Message-Id: <20100727100556.GM26313@bicker>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Date: Wed, 28 Jul 2010 00:10:02 +0000
+Subject: Re: [patch -next] ixgbe: potential null dereference
+Message-Id: <AANLkTim5LGj0KGs-0fGGAka7Fde3=NVVXWYBLbb_kVMs@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100727100556.GM26313@bicker>
+In-Reply-To: <20100727100556.GM26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, PJ Waskiewicz <peter.p.waskiewicz.jr@intel.com>, John Ronciak <john.ronciak@intel.com>, "David S. Miller" <davem@davemloft.net>, Don Skidmore <donald.c.skidmore@intel.com>, Mallikarjuna R Chilakala <mallikarjuna.chilakala@intel.com>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Mallikarjuna R Chilakala <mallikarjuna.chilakala@intel.com>, e1000-devel@lists.sourceforge.net, Bruce Allan <bruce.w.allan@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, John Ronciak <john.ronciak@intel.com>, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-The e_dev_err() macro dereferences "adapter" which is NULL here.
+On Tue, Jul 27, 2010 at 03:05, Dan Carpenter <error27@gmail.com> wrote:
+> The e_dev_err() macro dereferences "adapter" which is NULL here.
+>
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/net/ixgbe/ixgbe_main.c b/drivers/net/ixgbe/ixgbe_main.c
-index 9203759..0360260 100644
---- a/drivers/net/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ixgbe/ixgbe_main.c
-@@ -6549,8 +6549,8 @@ static int __devinit ixgbe_probe(struct pci_dev *pdev,
- 			err = dma_set_coherent_mask(&pdev->dev,
- 						    DMA_BIT_MASK(32));
- 			if (err) {
--				e_dev_err("No usable DMA configuration, "
--					  "aborting\n");
-+				dev_err(&pdev->dev,
-+					"No usable DMA configuration, aborting\n");
- 				goto err_dma;
- 			}
- 		}
-@@ -6560,7 +6560,8 @@ static int __devinit ixgbe_probe(struct pci_dev *pdev,
- 	err = pci_request_selected_regions(pdev, pci_select_bars(pdev,
- 	                                   IORESOURCE_MEM), ixgbe_driver_name);
- 	if (err) {
--		e_dev_err("pci_request_selected_regions failed 0x%x\n", err);
-+		dev_err(&pdev->dev,
-+			"pci_request_selected_regions failed 0x%x\n", err);
- 		goto err_pci_reg;
- 	}
- 
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
