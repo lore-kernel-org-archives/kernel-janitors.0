@@ -1,62 +1,123 @@
-From: shenghui <crosslonelyover@gmail.com>
-Date: Sun, 11 Jul 2010 08:31:35 +0000
-Subject: Re: [PATCH & RESEND] avoid NULL deference in ext2_xattr_get
-Message-Id: <AANLkTinjdTVM-Xqfszyi8KBe-aD-2I-jcvDFFtz9seD3@mail.gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Thu, 29 Jul 2010 19:15:57 +0000
+Subject: [Bug] check return of kmalloc()
+Message-Id: <20100729191557.GA9784@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007111016021569718@gmail.com>
-In-Reply-To: <201007111016021569718@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors <kernel-janitors@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>, error27 <error27@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org
 
-2010/7/11 crosslonelyover <crosslonelyover@gmail.com>:
-> Hi Dan Carpenter,
->
->     Thanks for your instructions. I regenerated the patch.
-> Please check it.
->
-> From 3149865e0d118b939c27659a4e4c884eaa6b3a4c Mon Sep 17 00:00:00 2001
-> From: Wang Sheng-Hui <crosslonelyover@gmail.com>
-> Date: Sat, 10 Jul 2010 22:07:37 -0400
-> Subject: [PATCH] avoid NULL deference in ext2_xattr_get
->
->
-> Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
-> ---
->  fs/ext2/xattr.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
-> index 7c39157..81ec1c6 100644
-> --- a/fs/ext2/xattr.c
-> +++ b/fs/ext2/xattr.c
-> @@ -156,11 +156,12 @@ ext2_xattr_get(struct inode *inode, int name_index, const char *name,
->        char *end;
->        int error;
->
-> +       if (name = NULL)
-> +               return -EINVAL;
-> +
->        ea_idebug(inode, "name=%d.%s, buffer=%p, buffer_size=%ld",
->                  name_index, name, buffer, (long)buffer_size);
->
-> -       if (name = NULL)
-> -               return -EINVAL;
->        down_read(&EXT2_I(inode)->xattr_sem);
->        error = -ENODATA;
->        if (!EXT2_I(inode)->i_file_acl)
-> --
-> 1.7.1.1
->
->
->
+Hi,
 
-Please ignore this patch. Just for gmail format check.
-Thanks for David Beal's explanation!
+I've discovered that some btrfs code doesn't check whether kmalloc()
+call succeeded. I poorly understand what this code does and how it can
+be changed, maybe it would be happy with __GFP_NOFAIL.
 
--- 
+Also there are BUG_ON() after kmalloc()'s, if they could be changed not
+to panic it would be great.
 
 
-Thanks and Best Regards,
-shenghui
+--- ./fs/btrfs/compression.c	2010-07-06 16:45:48.000000000 +0400
++++ /tmp/cocci-output-7773-0df3b6-compression.c	2010-07-28 18:43:07.000000000 +0400
+@@ -350,7 +350,6 @@ int btrfs_submit_compressed_write(struct
+ 	int ret;
+ 
+ 	WARN_ON(start & ((u64)PAGE_CACHE_SIZE - 1));
+-	cb = kmalloc(compressed_bio_size(root, compressed_len), GFP_NOFS);
+ 	atomic_set(&cb->pending_bios, 0);
+ 	cb->errors = 0;
+ 	cb->inode = inode;
+@@ -587,7 +586,6 @@ int btrfs_submit_compressed_read(struct
+ 	read_unlock(&em_tree->lock);
+ 
+ 	compressed_len = em->block_len;
+-	cb = kmalloc(compressed_bio_size(root, compressed_len), GFP_NOFS);
+ 	atomic_set(&cb->pending_bios, 0);
+ 	cb->errors = 0;
+ 	cb->inode = inode;
+--- ./fs/btrfs/tree-log.c	2010-07-06 16:45:48.000000000 +0400
++++ /tmp/cocci-output-7783-8f7d1b-tree-log.c	2010-07-28 18:43:08.000000000 +0400
+@@ -336,8 +336,6 @@ static noinline int overwrite_item(struc
+ 			btrfs_release_path(root, path);
+ 			return 0;
+ 		}
+-		dst_copy = kmalloc(item_size, GFP_NOFS);
+-		src_copy = kmalloc(item_size, GFP_NOFS);
+ 
+ 		read_extent_buffer(eb, src_copy, src_ptr, item_size);
+ 
+@@ -664,7 +662,6 @@ static noinline int drop_one_dir_item(st
+ 
+ 	btrfs_dir_item_key_to_cpu(leaf, di, &location);
+ 	name_len = btrfs_dir_name_len(leaf, di);
+-	name = kmalloc(name_len, GFP_NOFS);
+ 	read_extent_buffer(leaf, name, (unsigned long)(di + 1), name_len);
+ 	btrfs_release_path(root, path);
+ 
+@@ -819,7 +816,6 @@ again:
+ 	ref = (struct btrfs_inode_ref *)ref_ptr;
+ 
+ 	namelen = btrfs_inode_ref_name_len(eb, ref);
+-	name = kmalloc(namelen, GFP_NOFS);
+ 	BUG_ON(!name);
+ 
+ 	read_extent_buffer(eb, name, (unsigned long)(ref + 1), namelen);
+@@ -1182,7 +1177,6 @@ static noinline int replay_one_name(stru
+ 	BUG_ON(!dir);
+ 
+ 	name_len = btrfs_dir_name_len(eb, di);
+-	name = kmalloc(name_len, GFP_NOFS);
+ 	log_type = btrfs_dir_type(eb, di);
+ 	read_extent_buffer(eb, name, (unsigned long)(di + 1),
+ 		   name_len);
+@@ -2605,8 +2599,6 @@ static noinline int copy_items(struct bt
+ 
+ 	INIT_LIST_HEAD(&ordered_sums);
+ 
+-	ins_data = kmalloc(nr * sizeof(struct btrfs_key) +
+-			   nr * sizeof(u32), GFP_NOFS);
+ 	ins_sizes = (u32 *)ins_data;
+ 	ins_keys = (struct btrfs_key *)(ins_data + nr * sizeof(u32));
+ 
+--- ./fs/btrfs/file.c	2010-07-09 15:55:34.000000000 +0400
++++ /tmp/cocci-output-7826-b84666-file.c	2010-07-28 18:43:13.000000000 +0400
+@@ -925,7 +925,6 @@ static ssize_t btrfs_file_aio_write(stru
+ 	nrptrs = min((iov_iter_count(&i) + PAGE_CACHE_SIZE - 1) /
+ 		     PAGE_CACHE_SIZE, PAGE_CACHE_SIZE /
+ 		     (sizeof(struct page *)));
+-	pages = kmalloc(nrptrs * sizeof(struct page *), GFP_KERNEL);
+ 
+ 	/* generic_write_checks can change our pos */
+ 	start_pos = pos;
+--- ./fs/btrfs/inode.c	2010-07-28 08:11:33.000000000 +0400
++++ /tmp/cocci-output-7824-c1d367-inode.c	2010-07-28 18:43:15.000000000 +0400
+@@ -284,7 +284,6 @@ static noinline int add_async_extent(str
+ {
+ 	struct async_extent *async_extent;
+ 
+-	async_extent = kmalloc(sizeof(*async_extent), GFP_NOFS);
+ 	async_extent->start = start;
+ 	async_extent->ram_size = ram_size;
+ 	async_extent->compressed_size = compressed_size;
+@@ -940,7 +939,6 @@ static int cow_file_range_async(struct i
+ 	clear_extent_bit(&BTRFS_I(inode)->io_tree, start, end, EXTENT_LOCKED,
+ 			 1, 0, NULL, GFP_NOFS);
+ 	while (start < end) {
+-		async_cow = kmalloc(sizeof(*async_cow), GFP_NOFS);
+ 		async_cow->inode = inode;
+ 		async_cow->root = root;
+ 		async_cow->locked_page = locked_page;
+@@ -4891,7 +4888,6 @@ static noinline int uncompress_inline(st
+ 	max_size = btrfs_file_extent_ram_bytes(leaf, item);
+ 	inline_size = btrfs_file_extent_inline_item_len(leaf,
+ 					btrfs_item_nr(leaf, path->slots[0]));
+-	tmp = kmalloc(inline_size, GFP_NOFS);
+ 	ptr = btrfs_file_extent_inline_start(item);
+ 
+ 	read_extent_buffer(leaf, tmp, ptr, inline_size);
+
+
+
+Thanks,
+Vasiliy.
