@@ -1,31 +1,35 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 29 Jul 2010 08:50:14 +0000
-Subject: [patch] tmp_atmel: request correct region
-Message-Id: <20100729085014.GT26313@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 29 Jul 2010 15:55:15 +0000
+Subject: [PATCH] char: cs5535_gpio: check put_user() result
+Message-Id: <1280418915-5674-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Debora Velarde <debora@linux.vnet.ibm.com>
-Cc: Rajiv Andrade <srajiv@linux.vnet.ibm.com>, Marcel Selhorst <m.selhorst@sirrix.com>, tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
 
-We wanted to request "base".  "tpm_atmel.base" is zero here.  This bug
-was introduced by e0dd03caf20d "[PATCH] tpm: return chip from
-tpm_register_hardware".
+put_user() may fail, if so return -EFAULT.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
-Found with a static checker.  I don't have the hardware to test this.
+ drivers/char/cs5535_gpio.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_atmel.c
-index c64a1bc..090b3ec 100644
---- a/drivers/char/tpm/tpm_atmel.c
-+++ b/drivers/char/tpm/tpm_atmel.c
-@@ -205,7 +205,7 @@ static int __init init_atmel(void)
+diff --git a/drivers/char/cs5535_gpio.c b/drivers/char/cs5535_gpio.c
+index 4d830dc..fb7b888 100644
+--- a/drivers/char/cs5535_gpio.c
++++ b/drivers/char/cs5535_gpio.c
+@@ -146,7 +146,8 @@ static ssize_t cs5535_gpio_read(struct file *file, char __user *buf,
  
- 	have_region  	    (atmel_request_region
--	     (tpm_atmel.base, region_size, "tpm_atmel0") = NULL) ? 0 : 1;
-+	     (base, region_size, "tpm_atmel0") = NULL) ? 0 : 1;
+ 	/* add a line-feed if there is room */
+ 	if ((i = ARRAY_SIZE(rm)) && (count < len)) {
+-		put_user('\n', buf + count);
++		if (put_user('\n', buf + count))
++			return -EFAULT;
+ 		count++;
+ 	}
  
- 	pdev = platform_device_register_simple("tpm_atmel", -1, NULL, 0);
- 	if (IS_ERR(pdev)) {
+-- 
+1.7.0.4
+
