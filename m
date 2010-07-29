@@ -1,33 +1,37 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Thu, 22 Jul 2010 18:05:08 +0000
-Subject: Re: [PATCH 1/4] staging/spectra: remove duplicate GLOB_VERSION
-Message-Id: <AANLkTik7Xh9A-R8wVHg-S-Tgnod7iyjtpeMMXWuC_Sf7@mail.gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 29 Jul 2010 10:45:24 +0000
+Subject: [PATCH 06/10 v2] ALSA: msnd: check request_region() return value
+Message-Id: <1280400325-9405-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279399194.14049.18.camel@lenovo>
-In-Reply-To: <1279399194.14049.18.camel@lenovo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
->> This is the first patch of a patchset that removes all compilations warnings in staging/spectra.
->>
->> These patches are a delta from a previous patchset and it assumes that these three patches all already applied:
->>
->> [PATCH 1/3] fix staging/spectra: removes q->prepare_flush_fn
->> [PATCH 2/3] fix staging/spectra: use new REQ_FLUSH flag
->> [PATCH 3/3] fix staging/spectra: don't use locked_ioctl
->
-> I'll have to wait until the merge window opens to apply the first
-> patches, otherwise it breaks the build here.  So I'll have to wait on
-> these patches as well.
->
+request_region() may fail, if so return -EBUSY.
 
-Yes I know. I just wanted to send you the patches so you could queue
-it. Thanks a lot
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ sound/isa/msnd/msnd_pinnacle.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
 
-Best regards,
+diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.c
+index 60b6abd..ed42f8e 100644
+--- a/sound/isa/msnd/msnd_pinnacle.c
++++ b/sound/isa/msnd/msnd_pinnacle.c
+@@ -549,7 +549,10 @@ static int __devinit snd_msnd_attach(struct snd_card *card)
+ 		printk(KERN_ERR LOGNAME ": Couldn't grab IRQ %d\n", chip->irq);
+ 		return err;
+ 	}
+-	request_region(chip->io, DSP_NUMIO, card->shortname);
++	if (request_region(chip->io, DSP_NUMIO, card->shortname) = NULL) {
++		free_irq(chip->irq, chip);
++		return -EBUSY;
++	}
+ 
+ 	if (!request_mem_region(chip->base, BUFFSIZE, card->shortname)) {
+ 		printk(KERN_ERR LOGNAME
+-- 
+1.7.0.4
 
------------------------------------------
-Javier Martínez Canillas
-+595 981 88 66 58
