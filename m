@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 29 Jul 2010 18:00:07 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 29 Jul 2010 20:18:03 +0000
 Subject: Re: smatch: module_init unwinding on errors
-Message-Id: <20100729110007.e89ff732.rdunlap@xenotime.net>
+Message-Id: <20100729201803.GW26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100729174329.GU26313@bicker>
 In-Reply-To: <20100729174329.GU26313@bicker>
@@ -10,30 +10,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 29 Jul 2010 19:43:29 +0200 Dan Carpenter wrote:
-
-> Sort of inspired by Vasiliy's coccinelle work, I wrote a Smatch script to
-> verify that modules unwind on errors.
+On Thu, Jul 29, 2010 at 11:00:07AM -0700, Randy Dunlap wrote:
+> Hi Dan,
 > 
-> http://repo.or.cz/w/smatch.git/blob/HEAD:/check_unwind.c 
+> Most drivers just use the result of request_region() as a pass/fail indicator.
+> Only a very few of them actually save the result pointer;  mostly they just pass
+> bar to release_region().
 > 
-> The heuristic is if you
-> 	* call request_irq() 
-> 	* it possibly succeeded
-> 	* you don't call free_irq() 
-> 	* you're in a function that returns an int
-> 	* you are returning non-zero
-> Then complain.
-> 
-> One question that I had was for, "foo = request_region(bar, size)"
-> should we call release_region() on "foo" or on "bar"?
 
-Hi Dan,
+That was another thing which was concerning me.  request_region()
+returns freshly allocated memory.  Isn't it a leak to discard this?
 
-Most drivers just use the result of request_region() as a pass/fail indicator.
-Only a very few of them actually save the result pointer;  mostly they just pass
-bar to release_region().
+regards,
+dan carpenter
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
