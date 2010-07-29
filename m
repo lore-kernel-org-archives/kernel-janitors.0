@@ -1,42 +1,41 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Fri, 23 Jul 2010 19:18:51 +0000
-Subject: Re: [PATCH] char: mxser: remove unnesesary NULL check
-Message-Id: <4C49EB1B.1030700@gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 29 Jul 2010 10:45:50 +0000
+Subject: [PATCH 09/10 v2] oss: msnd: check request_region() return value
+Message-Id: <1280400351-11652-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1279902893-27006-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1279902893-27006-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Andrew Veliath <andrewtv@usa.net>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On 07/23/2010 06:34 PM, Kulikov Vasiliy wrote:
-> mxser_transmit_chars(tty, port) is called only from mxser_interrupt().
-> NULL check is performed in mxser_interrupt() so it is redundant here.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+request_region() may fail, if so return -EBUSY.
 
-Acked-by: Jiri Slaby <jirislaby@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ sound/oss/msnd_pinnacle.c |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/char/mxser.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/char/mxser.c b/drivers/char/mxser.c
-> index d2692d4..3fc89da 100644
-> --- a/drivers/char/mxser.c
-> +++ b/drivers/char/mxser.c
-> @@ -2193,7 +2193,7 @@ static void mxser_transmit_chars(struct tty_struct *tty, struct mxser_port *port
->  	port->mon_data.up_txcnt += (cnt - port->xmit_cnt);
->  	port->icount.tx += (cnt - port->xmit_cnt);
->  
-> -	if (port->xmit_cnt < WAKEUP_CHARS && tty)
-> +	if (port->xmit_cnt < WAKEUP_CHARS)
->  		tty_wakeup(tty);
->  
->  	if (port->xmit_cnt <= 0) {
-
-
+diff --git a/sound/oss/msnd_pinnacle.c b/sound/oss/msnd_pinnacle.c
+index bfaac5f..cd70b9a 100644
+--- a/sound/oss/msnd_pinnacle.c
++++ b/sound/oss/msnd_pinnacle.c
+@@ -1400,9 +1400,13 @@ static int __init attach_multisound(void)
+ 		printk(KERN_ERR LOGNAME ": Couldn't grab IRQ %d\n", dev.irq);
+ 		return err;
+ 	}
+-	request_region(dev.io, dev.numio, dev.name);
++	if (request_region(dev.io, dev.numio, dev.name) = NULL) {
++		free_irq(dev.irq, &dev);
++		return -EBUSY;
++	}
+ 
+-        if ((err = dsp_full_reset()) < 0) {
++	err = dsp_full_reset();
++	if (err < 0) {
+ 		release_region(dev.io, dev.numio);
+ 		free_irq(dev.irq, &dev);
+ 		return err;
 -- 
-js
+1.7.0.4
+
