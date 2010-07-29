@@ -1,27 +1,67 @@
-From: shenghui <crosslonelyover@gmail.com>
-Date: Tue, 13 Jul 2010 23:47:36 +0000
-Subject: Re: [PATCH] ext2: return -ENODATA for NULL i_file_acl in
-Message-Id: <AANLkTinbNujdr6qM7kMyOLFMqjRibwvLZIfMB6J3MzX3@mail.gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Thu, 29 Jul 2010 15:55:38 +0000
+Subject: [PATCH] char: ip2: check put_user() result
+Message-Id: <1280418938-5833-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4C3C7E59.8040905@gmail.com>
-	<7D4617C2-565E-4F34-94B4-3F308EB75D18@dilger.ca>
-In-Reply-To: <7D4617C2-565E-4F34-94B4-3F308EB75D18@dilger.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: kernel-janitors <kernel-janitors@vger.kernel.org>, linux-ext4 <linux-ext4@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: "Michael H. Warfield" <mhw@wittsend.com>, Greg Kroah-Hartman <gregkh@suse.de>, Rakib Mullick <rakib.mullick@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org
 
-2010/7/14 Andreas Dilger <adilger@dilger.ca>:
-> The "error" value gets overwritten almost immediately with -EIO, and then at the end of the function if there is an xattr block but it doesn't contain any attributes (I'm not sure if this could happen, but it seems possible) it will return "error = buffer_size - rest;  /* total size */", so 0 if "rest" was not changed from its initial value of buffer_size.
->
-> The question is why this return value should be changed to -ENODATA in the first place?  This isn't true for ext3_xattr_list() or ext4_xattr_list().  I tend to think it is not an error to get back an empty list, and applications shouldn't treat it as such.  Most applications will check "if (rc < 0)" and treat it as an error.  This is different than e.g. requesting a specific value by name (which does return -ENODATA) because it would otherwise be ambiguous whether the xattr existed but had zero size or didn't exist at all.
->
+put_user()/copy_to_user() may fail, if so return -EFAULT.
 
-Thanks for your explanation!
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/char/ip2/ip2main.c |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/char/ip2/ip2main.c b/drivers/char/ip2/ip2main.c
+index 07f3ea3..3f70a05 100644
+--- a/drivers/char/ip2/ip2main.c
++++ b/drivers/char/ip2/ip2main.c
+@@ -2813,9 +2813,9 @@ DumpTraceBuffer ( char __user *pData, int count )
+ 		return -EIO;
+ 	}
+ 	rc = put_user(tracewrap, pIndex );
+-	rc = put_user(TRACEMAX, ++pIndex );
+-	rc = put_user(tracestrip, ++pIndex );
+-	rc = put_user(tracestuff, ++pIndex );
++	rc |= put_user(TRACEMAX, ++pIndex);
++	rc |= put_user(tracestrip, ++pIndex);
++	rc |= put_user(tracestuff, ++pIndex);
+ 	pData += sizeof(int) * 6;
+ 	count -= sizeof(int) * 6;
+ 
+@@ -2828,7 +2828,7 @@ DumpTraceBuffer ( char __user *pData, int count )
+ 	}
+ 	chunk = TRACEMAX - tracestrip;
+ 	if ( dumpcount > chunk ) {
+-		rc = copy_to_user(pData, &tracebuf[tracestrip],
++		rc |= copy_to_user(pData, &tracebuf[tracestrip],
+ 			      chunk * sizeof(tracebuf[0]) );
+ 		pData += chunk * sizeof(tracebuf[0]);
+ 		tracestrip = 0;
+@@ -2836,15 +2836,15 @@ DumpTraceBuffer ( char __user *pData, int count )
+ 	} else {
+ 		chunk = dumpcount;
+ 	}
+-	rc = copy_to_user(pData, &tracebuf[tracestrip],
++	rc |= copy_to_user(pData, &tracebuf[tracestrip],
+ 		      chunk * sizeof(tracebuf[0]) );
+ 	tracestrip += chunk;
+ 	tracewrap = 0;
+ 
+-	rc = put_user(tracestrip, ++pIndex );
+-	rc = put_user(tracestuff, ++pIndex );
++	rc |= put_user(tracestrip, ++pIndex);
++	rc |= put_user(tracestuff, ++pIndex);
+ 
+-	return dumpcount;
++	return rc ? -EFAULT : dumpcount;
+ #else
+ 	return 0;
+ #endif
 -- 
+1.7.0.4
 
-
-Thanks and Best Regards,
-shenghui
