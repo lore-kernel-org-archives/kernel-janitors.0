@@ -1,8 +1,10 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 29 Jul 2010 10:45:50 +0000
+Date: Thu, 29 Jul 2010 10:48:16 +0000
 Subject: [PATCH 09/10 v2] oss: msnd: check request_region() return value
-Message-Id: <1280400351-11652-1-git-send-email-segooon@gmail.com>
+Message-Id: <1280400496-21921-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1280400351-11652-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1280400351-11652-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
