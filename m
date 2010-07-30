@@ -1,47 +1,45 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 15 Jul 2010 18:48:19 +0000
-Subject: [PATCH 8/8] sound: asihpi: fix sign bug
-Message-Id: <1279219700-12892-1-git-send-email-segooon@gmail.com>
+Date: Fri, 30 Jul 2010 11:09:02 +0000
+Subject: [PATCH 6/9] staging: rtl8192su: check whether requests succeeded
+Message-Id: <1280488143-20899-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Eliot Blennerhassett <eblennerhassett@audioscience.com>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-bytes_per_sec is unsigned, so if snd_pcm_format_width() return error we
-would not see it.
+rtl8192_usb_probe() does not check alloc_ieee80211() and
+register_netdev() return values for errors.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- sound/pci/asihpi/asihpi.c |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8192su/r8192U_core.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
 
-diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
-index 91218f7..c80b0b8 100644
---- a/sound/pci/asihpi/asihpi.c
-+++ b/sound/pci/asihpi/asihpi.c
-@@ -460,6 +460,7 @@ static int snd_card_asihpi_pcm_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_card_asihpi *card = snd_pcm_substream_chip(substream);
- 	int err;
- 	u16 format;
-+	int width;
- 	unsigned int bytes_per_sec;
+diff --git a/drivers/staging/rtl8192su/r8192U_core.c b/drivers/staging/rtl8192su/r8192U_core.c
+index b69e198..8acfaaf 100644
+--- a/drivers/staging/rtl8192su/r8192U_core.c
++++ b/drivers/staging/rtl8192su/r8192U_core.c
+@@ -7385,6 +7385,8 @@ static int __devinit rtl8192_usb_probe(struct usb_interface *intf,
+         RT_TRACE(COMP_INIT, "Oops: i'm coming\n");
  
- 	print_hwparams(params);
-@@ -512,9 +513,10 @@ static int snd_card_asihpi_pcm_hw_params(struct snd_pcm_substream *substream,
- 				dpcm->hpi_buffer_attached);
- 	}
- 	bytes_per_sec = params_rate(params) * params_channels(params);
--	bytes_per_sec *= snd_pcm_format_width(params_format(params));
-+	width = snd_pcm_format_width(params_format(params));
-+	bytes_per_sec *= width;
- 	bytes_per_sec /= 8;
--	if (bytes_per_sec <= 0)
-+	if (width < 0 || bytes_per_sec = 0)
- 		return -EINVAL;
+ 	dev = alloc_ieee80211(sizeof(struct r8192_priv));
++	if (dev = NULL)
++		return -ENOMEM;
  
- 	dpcm->bytes_per_sec = bytes_per_sec;
+ 	usb_set_intfdata(intf, dev);
+ 	SET_NETDEV_DEV(dev, &intf->dev);
+@@ -7422,7 +7424,8 @@ static int __devinit rtl8192_usb_probe(struct usb_interface *intf,
+ 	netif_carrier_off(dev);
+ 	netif_stop_queue(dev);
+ 
+-	register_netdev(dev);
++	if (register_netdev(dev))
++		goto fail;
+ 	RT_TRACE(COMP_INIT, "dev name====> %s\n",dev->name);
+ 	rtl8192_proc_init_one(dev);
+ 
 -- 
 1.7.0.4
 
