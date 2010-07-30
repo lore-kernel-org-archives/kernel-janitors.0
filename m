@@ -1,63 +1,70 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 17 Jul 2010 15:19:48 +0000
-Subject: [PATCH 3/5] dma: dmatest: fix potential sign bug
-Message-Id: <1279379988-15232-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 30 Jul 2010 15:16:58 +0000
+Subject: [PATCH 1/2] drivers/serial/icom.c: Eliminate use after free
+Message-Id: <Pine.LNX.4.64.1007301716250.17618@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Dan Williams <dan.j.williams@intel.com>, Andrew Morton <akpm@linux-foundation.org>, Maciej Sosnowski <maciej.sosnowski@intel.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Anatolij Gustschin <agust@denx.de>, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-'cnt' is unsigned, so this code may become wrong in future as
-dmatest_add_threads() can return error code:
+From: Julia Lawall <julia@diku.dk>
 
-	cnt = dmatest_add_threads(dtc, DMA_MEMCPY);
-	thread_count += cnt > 0 ? cnt : 0;
-		        ^^^^^^^
+Release_firmware has two definitions, one of which does nothing
+(include/linux/firmware.h) and one of which always frees its argument
+(drivers/base/firmware_class.c).  If the latter can be used, the access to
+the size field inthe argument of writeb represents a use after free.  The
+patch thus saves the size value before calling release_firmware and then
+uses it afterwards.
 
-Now it can return only -EINVAL if and only if second argument of
-dmatest_add_threads() is not one of DMA_MEMCPY, DMA_XOR, DMA_PQ.
-So, now it is not wrong but may become wrong in future.
-
-
-The semantic patch that finds this problem (many false-positive results):
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@ r1 @
-identifier f;
 @@
-int f(...) { ... }
-
-@@
-identifier r1.f;
-type T;
-unsigned T x;
+expression E,E2;
 @@
 
-*x = f(...)
- ...
-*x > 0
+release_firmware(E)
+...
+(
+  E = E2
+|
+* E
+)
+// </smpl>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/dma/dmatest.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Another possibility would be to put the call to remove_firmware later.  One
+could also wonder whether the first argument to writeb could be calculated
+using DIV_ROUND_UP, even though the semantics is not exactly the same.
 
-diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
-index 68d58c4..5589358 100644
---- a/drivers/dma/dmatest.c
-+++ b/drivers/dma/dmatest.c
-@@ -540,7 +540,7 @@ static int dmatest_add_channel(struct dma_chan *chan)
- 	struct dmatest_chan	*dtc;
- 	struct dma_device	*dma_dev = chan->device;
- 	unsigned int		thread_count = 0;
--	unsigned int		cnt;
-+	int cnt;
+ drivers/serial/icom.c               |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/serial/icom.c b/drivers/serial/icom.c
+index 53a4682..f82e95a 100644
+--- a/drivers/serial/icom.c
++++ b/drivers/serial/icom.c
+@@ -360,6 +360,7 @@ static void load_code(struct icom_port *icom_port)
+ 	unsigned char *new_page = NULL;
+ 	unsigned char cable_id = NO_CABLE;
+ 	struct pci_dev *dev = icom_port->adapter->pci_dev;
++	size_t size;
  
- 	dtc = kmalloc(sizeof(struct dmatest_chan), GFP_KERNEL);
- 	if (!dtc) {
--- 
-1.7.0.4
-
+ 	/* Clear out any pending interrupts */
+ 	writew(0x3FFF, icom_port->int_reg);
+@@ -454,9 +455,10 @@ static void load_code(struct icom_port *icom_port)
+ 	for (index = 0; index < fw->size; index++)
+ 		new_page[index] = fw->data[index];
+ 
++	size = fw->size;
+ 	release_firmware(fw);
+ 
+-	writeb((char) ((fw->size + 16)/16), &icom_port->dram->mac_length);
++	writeb((char) ((size + 16)/16), &icom_port->dram->mac_length);
+ 	writel(temp_pci, &icom_port->dram->mac_load_addr);
+ 
+ 	/*Setting the syncReg to 0x80 causes adapter to start downloading
