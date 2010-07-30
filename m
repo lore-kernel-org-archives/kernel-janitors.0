@@ -1,36 +1,23 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, 14 Jul 2010 18:04:42 +0000
-Subject: [PATCH 08/11] serial: crisv10: formatting of pointers in printk()
-Message-Id: <1279130682-13704-1-git-send-email-segooon@gmail.com>
+From: Jesper Nilsson <Jesper.Nilsson@axis.com>
+Date: Fri, 30 Jul 2010 17:31:54 +0000
+Subject: Re: [PATCH 08/11] serial: crisv10: formatting of pointers in
+Message-Id: <20100730173154.GH9784@axis.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1279130682-13704-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1279130682-13704-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Arnd Bergmann <arnd@arndb.de>, Jesper Nilsson <jesper.nilsson@axis.com>, Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@elte.hu>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Use %p instead of %08x in printk().
+On Wed, Jul 14, 2010 at 08:04:42PM +0200, Kulikov Vasiliy wrote:
+> Use %p instead of %08x in printk().
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/serial/crisv10.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
 
-diff --git a/drivers/serial/crisv10.c b/drivers/serial/crisv10.c
-index ca47072..1be395a 100644
---- a/drivers/serial/crisv10.c
-+++ b/drivers/serial/crisv10.c
-@@ -4522,8 +4522,8 @@ static int __init rs_init(void)
- 		INIT_WORK(&info->work, do_softint);
- 
- 		if (info->enabled) {
--			printk(KERN_INFO "%s%d at 0x%x is a builtin UART with DMA\n",
--			       serial_driver->name, info->line, (unsigned int)info->ioport);
-+			printk(KERN_INFO "%s%d at %p is a builtin UART with DMA\n",
-+			       serial_driver->name, info->line, info->ioport);
- 		}
- 	}
- #ifdef CONFIG_ETRAX_FAST_TIMER
+/^JN - Jesper Nilsson
 -- 
-1.7.0.4
-
+               Jesper Nilsson -- jesper.nilsson@axis.com
