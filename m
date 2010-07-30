@@ -1,33 +1,72 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 31 Jul 2010 19:09:08 +0000
-Subject: Re: [PATCH 1/7] 68328serial: check return value of copy_*_user()
-Message-Id: <20100731190907.GE26313@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 30 Jul 2010 11:08:20 +0000
+Subject: [PATCH 4/9] staging: panel: fix error path
+Message-Id: <1280488100-20819-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280597881-8365-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280597881-8365-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Greg Ungerer <gerg@uclinux.org>, Christoph Egger <siccegge@cs.fau.de>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Willy Tarreau <w@1wt.eu>, Peter Huewe <peterhuewe@gmx.de>, Andy Shevchenko <andy.shevchenko@gmail.com>, Julia Lawall <julia@diku.dk>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 31, 2010 at 09:38:00PM +0400, Kulikov Vasiliy wrote:
-> -						sizeof(struct m68k_serial)))
-> -				return -EFAULT;
-> -			copy_to_user((struct m68k_serial *) arg,
-> +			return copy_to_user((struct m68k_serial *) arg,
->  				    info, sizeof(struct m68k_serial));
+panel_attach() poorly handles errors. On error unregister everything we
+have registered.
 
-We should return if -EFAULT copy_to_user() failes here.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/panel/panel.c |   22 +++++++++++++++++++---
+ 1 files changed, 19 insertions(+), 3 deletions(-)
 
-> -			return 0;
-> -			
->  		default:
->  			return -ENOIOCTLCMD;
->  		}
+diff --git a/drivers/staging/panel/panel.c b/drivers/staging/panel/panel.c
+index 8bd7182..f58da32 100644
+--- a/drivers/staging/panel/panel.c
++++ b/drivers/staging/panel/panel.c
+@@ -2127,12 +2127,18 @@ static void panel_attach(struct parport *port)
+ 				       NULL,
+ 				       /*PARPORT_DEV_EXCL */
+ 				       0, (void *)&pprt);
++	if (pprt = NULL) {
++		pr_err("panel_attach(): port->number=%d parport=%d, "
++		       "parport_register_device() failed\n",
++		       port->number, parport);
++		return;
++	}
+ 
+ 	if (parport_claim(pprt)) {
+ 		printk(KERN_ERR
+ 		       "Panel: could not claim access to parport%d. "
+ 		       "Aborting.\n", parport);
+-		return;
++		goto err_unreg_device;
+ 	}
+ 
+ 	/* must init LCD first, just in case an IRQ from the keypad is
+@@ -2140,13 +2146,23 @@ static void panel_attach(struct parport *port)
+ 	 */
+ 	if (lcd_enabled) {
+ 		lcd_init();
+-		misc_register(&lcd_dev);
++		if (misc_register(&lcd_dev))
++			goto err_unreg_device;
+ 	}
+ 
+ 	if (keypad_enabled) {
+ 		keypad_init();
+-		misc_register(&keypad_dev);
++		if (misc_register(&keypad_dev))
++			goto err_lcd_unreg;
+ 	}
++	return;
++
++err_lcd_unreg:
++	if (lcd_enabled)
++		misc_deregister(&lcd_dev);
++err_unreg_device:
++	parport_unregister_device(pprt);
++	pprt = NULL;
+ }
+ 
+ static void panel_detach(struct parport *port)
+-- 
+1.7.0.4
 
-Smatch would have caught that but I don't have a cross compile
-environment set up.
-
-regards,
-dan carpenter
