@@ -1,28 +1,35 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Fri, 23 Jul 2010 13:16:04 +0000
-Subject: Re: [patch -next] V4L: media/IR: testing the wrong variable
-Message-Id: <20100723131604.GA20916@redhat.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 30 Jul 2010 11:09:50 +0000
+Subject: [PATCH 8/9] fs: nfs: misused copy_to_user() return value
+Message-Id: <1280488190-20979-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100723100826.GB26313@bicker>
-In-Reply-To: <20100723100826.GB26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 23, 2010 at 12:08:26PM +0200, Dan Carpenter wrote:
-> There is a typo here.  We meant to test "rbuf" instead of "drv".  We
-> already tested "drv" earlier.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+copy_to_user() returns nonzero value on error, this value may be any
+value between 0 and requested count, not only requested count.
 
-Gah. I swear that got fixed once already... Thanks!
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ fs/nfs/idmap.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Acked-by: Jarod Wilson <jarod@redhat.com>
-
-
+diff --git a/fs/nfs/idmap.c b/fs/nfs/idmap.c
+index 21a84d4..a9f2cd5 100644
+--- a/fs/nfs/idmap.c
++++ b/fs/nfs/idmap.c
+@@ -362,7 +362,7 @@ idmap_pipe_upcall(struct file *filp, struct rpc_pipe_msg *msg,
+ 	unsigned long left;
+ 
+ 	left = copy_to_user(dst, data, mlen);
+-	if (left = mlen) {
++	if (left)
+ 		msg->errno = -EFAULT;
+ 		return -EFAULT;
+ 	}
 -- 
-Jarod Wilson
-jarod@redhat.com
+1.7.0.4
 
