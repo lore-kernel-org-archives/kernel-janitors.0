@@ -1,63 +1,40 @@
-From: Peter Huewe <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 19:09:24 +0000
-Subject: [PATCH 25/25] message/fusion: Convert pci_table entries to PCI_VDEVICE (if PCI_ANY_ID is used)
-Message-Id: <201007152109.25219.PeterHuewe@gmx.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 30 Jul 2010 09:06:04 +0000
+Subject: [patch] hp100: unmap memory on error path
+Message-Id: <20100730090604.GY26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Eric Moore <Eric.Moore@lsi.com>, support@lsi.com, James Bottomley <James.Bottomley@suse.de>, Kashyap Desai <kashyap.desai@lsi.com>, Tejun Heo <tj@kernel.org>, Michael Reed <mdr@sgi.com>, "Desai, Kashyap" <Kashyap.Desai@lsi.com>, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Stephen Hemminger <shemminger@vyatta.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Huewe <peterhuewe@gmx.de>
+There was an error path where "mem_ptr_virt" didn't get unmapped.
 
-This patch converts pci_table entries, where .subvendor=PCI_ANY_ID and
-.subdevice=PCI_ANY_ID, .class=0 and .class_mask=0, to use the
-PCI_VDEVICE macro, and thus improves readability.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
- drivers/message/fusion/mptfc.c |   27 +++++++++------------------
- 1 files changed, 9 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/message/fusion/mptfc.c b/drivers/message/fusion/mptfc.c
-index b5f03ad..19dad15 100644
---- a/drivers/message/fusion/mptfc.c
-+++ b/drivers/message/fusion/mptfc.c
-@@ -139,24 +139,15 @@ static struct scsi_host_template mptfc_driver_template = {
-  */
+diff --git a/drivers/net/hp100.c b/drivers/net/hp100.c
+index acbf0d0..ce587f4 100644
+--- a/drivers/net/hp100.c
++++ b/drivers/net/hp100.c
+@@ -720,9 +720,10 @@ static int __devinit hp100_probe1(struct net_device *dev, int ioaddr,
+ 		/* Conversion to new PCI API :
+ 		 * Pages are always aligned and zeroed, no need to it ourself.
+ 		 * Doc says should be OK for EISA bus as well - Jean II */
+-		if ((lp->page_vaddr_algn = pci_alloc_consistent(lp->pci_dev, MAX_RINGSIZE, &page_baddr)) = NULL) {
++		lp->page_vaddr_algn = pci_alloc_consistent(lp->pci_dev, MAX_RINGSIZE, &page_baddr);
++		if (!lp->page_vaddr_algn) {
+ 			err = -ENOMEM;
+-			goto out2;
++			goto out_mem_ptr;
+ 		}
+ 		lp->whatever_offset = ((u_long) page_baddr) - ((u_long) lp->page_vaddr_algn);
  
- static struct pci_device_id mptfc_pci_table[] = {
--	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC909,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC919,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC929,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC919X,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC929X,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC939X,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC949X,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC949E,
--		PCI_ANY_ID, PCI_ANY_ID },
--	{ PCI_VENDOR_ID_BROCADE, MPI_MANUFACTPAGE_DEVICEID_FC949E,
--		PCI_ANY_ID, PCI_ANY_ID },
-+	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC909), },
-+	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC919), },
-+	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC929), },
-+	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC919X), },
-+	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC929X), },
-+	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC939X), },
-+	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC949X), },
-+	{ PCI_VDEVICE(LSI_LOGIC, MPI_MANUFACTPAGE_DEVICEID_FC949E), },
-+	{ PCI_VDEVICE(BROCADE, MPI_MANUFACTPAGE_DEVICEID_FC949E), },
- 	{0}	/* Terminating entry */
- };
- MODULE_DEVICE_TABLE(pci, mptfc_pci_table);
--- 
-1.7.1
-
+@@ -798,6 +799,7 @@ out3:
+ 		pci_free_consistent(lp->pci_dev, MAX_RINGSIZE + 0x0f,
+ 				    lp->page_vaddr_algn,
+ 				    virt_to_whatever(dev, lp->page_vaddr_algn));
++out_mem_ptr:
+ 	if (mem_ptr_virt)
+ 		iounmap(mem_ptr_virt);
+ out2:
