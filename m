@@ -1,60 +1,59 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sat, 17 Jul 2010 15:19:33 +0000
-Subject: [PATCH 2/5] arm: mach-pnx4008: fix sign bug
-Message-Id: <1279379974-15192-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 30 Jul 2010 15:17:28 +0000
+Subject: [PATCH 2/2] arch/arm/common: Eliminate use after free
+Message-Id: <Pine.LNX.4.64.1007301717040.17618@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-'ret' is unsigned, so this code is wrong:
+From: Julia Lawall <julia@diku.dk>
 
-    ret = gpio_read_bit(...);
-    ...
-    if (ret > 0)
+__sa1111_remove always frees its argument, so the subsequent reference to
+sachip->saved_state represents a use after free.  __sa1111_remove does not
+appear to use the saved_state field, so the patch simply frees it first.
 
-If gpio_read_bit() returns -EFAULT then (ret > 0) would be true.
-Make 'ret' signed.
-
-
-The semantic patch that finds this problem (many false-positive results):
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@ r1 @
-identifier f;
 @@
-int f(...) { ... }
-
-@@
-identifier r1.f;
-type T;
-unsigned T x;
+expression E,E2;
 @@
 
-*x = f(...)
- ...
-*x > 0
+__sa1111_remove(E)
+...
+(
+  E = E2
+|
+* E
+)
+// </smpl>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- arch/arm/mach-pnx4008/gpio.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+arch/arm/common/sa1111.c            |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-pnx4008/gpio.c b/arch/arm/mach-pnx4008/gpio.c
-index f219914..4a0c0eb 100644
---- a/arch/arm/mach-pnx4008/gpio.c
-+++ b/arch/arm/mach-pnx4008/gpio.c
-@@ -199,7 +199,7 @@ EXPORT_SYMBOL(pnx4008_gpio_unregister_pin);
+diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+index ac2fd44..517d50d 100644
+--- a/arch/arm/common/sa1111.c
++++ b/arch/arm/common/sa1111.c
+@@ -1025,13 +1025,12 @@ static int sa1111_remove(struct platform_device *pdev)
+ 	struct sa1111 *sachip = platform_get_drvdata(pdev);
  
- unsigned long pnx4008_gpio_read_pin(unsigned short pin)
- {
--	unsigned long ret = -EFAULT;
-+	int ret = -EFAULT;
- 	int gpio = GPIO_BIT_MASK(pin);
- 	gpio_lock();
- 	if (GPIO_ISOUT(pin)) {
--- 
-1.7.0.4
-
+ 	if (sachip) {
+-		__sa1111_remove(sachip);
+-		platform_set_drvdata(pdev, NULL);
+-
+ #ifdef CONFIG_PM
+ 		kfree(sachip->saved_state);
+ 		sachip->saved_state = NULL;
+ #endif
++		__sa1111_remove(sachip);
++		platform_set_drvdata(pdev, NULL);
+ 	}
+ 
+ 	return 0;
