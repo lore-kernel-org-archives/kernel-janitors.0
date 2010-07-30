@@ -1,44 +1,71 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon, 26 Jul 2010 08:23:54 +0000
-Subject: [PATCH] drm: nouveau: set TASK_(UN)INTERRUPTIBLE before schedule_timeout()
-Message-Id: <1280132635-7961-1-git-send-email-segooon@gmail.com>
+From: Francisco Jerez <currojerez@riseup.net>
+Date: Fri, 30 Jul 2010 11:31:49 +0000
+Subject: Re: [PATCH] drm: nouveau: set TASK_(UN)INTERRUPTIBLE before schedule_timeout()
+Message-Id: <87pqy5dx3u.fsf@riseup.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="==-=-="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>, Francisco Jerez <currojerez@riseup.net>, Dave Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <1280132635-7961-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1280132635-7961-1-git-send-email-segooon@gmail.com> (Kulikov
+	Vasiliy's message of "Mon, 26 Jul 2010 12:23:54 +0400")
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>, Dave Airlie <airlied@redhat.com>
 
-set_current_state() is called only once before the first iteration.
-After return from schedule_timeout() current state is TASK_RUNNING. If
-we are going to wait again, set_current_state() must be called.
+--==-=-=
+Content-Type: multipart/mixed; boundary="=-=-="
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/gpu/drm/nouveau/nouveau_fence.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/nouveau/nouveau_fence.c
-index 813d853..b7777ae 100644
---- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-@@ -186,7 +186,6 @@ nouveau_fence_wait(void *sync_obj, void *sync_arg, bool lazy, bool intr)
- 	unsigned long timeout = jiffies + (3 * DRM_HZ);
- 	int ret = 0;
- 
--	__set_current_state(intr ? TASK_INTERRUPTIBLE : TASK_UNINTERRUPTIBLE);
- 
- 	while (1) {
- 		if (nouveau_fence_signalled(sync_obj, sync_arg))
-@@ -197,6 +196,8 @@ nouveau_fence_wait(void *sync_obj, void *sync_arg, bool lazy, bool intr)
- 			break;
- 		}
- 
-+		__set_current_state(intr ? TASK_INTERRUPTIBLE
-+			: TASK_UNINTERRUPTIBLE);
- 		if (lazy)
- 			schedule_timeout(1);
- 
--- 
-1.7.0.4
+Kulikov Vasiliy <segooon@gmail.com> writes:
 
+> set_current_state() is called only once before the first iteration.
+> After return from schedule_timeout() current state is TASK_RUNNING. If
+> we are going to wait again, set_current_state() must be called.
+>
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_fence.c |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+>
+Thanks, I've pushed this patch to the Nouveau kernel tree.
+
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/no=
+uveau/nouveau_fence.c
+> index 813d853..b7777ae 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> @@ -186,7 +186,6 @@ nouveau_fence_wait(void *sync_obj, void *sync_arg, bo=
+ol lazy, bool intr)
+>  	unsigned long timeout =3D jiffies + (3 * DRM_HZ);
+>  	int ret =3D 0;
+>=20=20
+> -	__set_current_state(intr ? TASK_INTERRUPTIBLE : TASK_UNINTERRUPTIBLE);
+>=20=20
+>  	while (1) {
+>  		if (nouveau_fence_signalled(sync_obj, sync_arg))
+> @@ -197,6 +196,8 @@ nouveau_fence_wait(void *sync_obj, void *sync_arg, bo=
+ol lazy, bool intr)
+>  			break;
+>  		}
+>=20=20
+> +		__set_current_state(intr ? TASK_INTERRUPTIBLE
+> +			: TASK_UNINTERRUPTIBLE);
+>  		if (lazy)
+>  			schedule_timeout(1);
+
+--=-=-=--
+
+--==-=-=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iF4EAREIAAYFAkxSuCYACgkQg5k4nX1Sv1vadwD9FqBG3qG4YT1xRtBLXTV247+B
+CBR5DUsiwWuW+liC6rYBAJsea9gomnt1TvoYoHAZm8pKr+WYi0nK8kIsjCx1XxyK
+=p9i6
+-----END PGP SIGNATURE-----
+--==-=-=--
