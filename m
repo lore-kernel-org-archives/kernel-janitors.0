@@ -1,46 +1,34 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 22 Jul 2010 11:26:50 +0000
-Subject: [patch -next] wireless: remove unneeded variable from
-Message-Id: <20100722112650.GE17585@bicker>
+Date: Sat, 31 Jul 2010 20:26:31 +0000
+Subject: [patch] ceph: create_workqueue() doesn't return ERR_PTR
+Message-Id: <20100731202631.GH26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, "Luis R. Rodriguez" <mcgrof@gmail.com>, Benoit PAPILLAULT <benoit.papillault@free.fr>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sage Weil <sage@newdream.net>
+Cc: Yehuda Sadeh <yehuda@hq.newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The "rd" variable isn't needed any more since 4f366c5dabcb 
-"wireless: only use alpha2 regulatory information from country IE"
+create_workqueue() returns a NULL pointer on errors.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 48baf28..ec4e76f 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -1492,7 +1492,6 @@ void regulatory_hint_11d(struct wiphy *wiphy,
- 			 u8 *country_ie,
- 			 u8 country_ie_len)
+diff --git a/fs/ceph/messenger.c b/fs/ceph/messenger.c
+index 15167b2..d959dba 100644
+--- a/fs/ceph/messenger.c
++++ b/fs/ceph/messenger.c
+@@ -94,11 +94,9 @@ struct workqueue_struct *ceph_msgr_wq;
+ int __init ceph_msgr_init(void)
  {
--	struct ieee80211_regdomain *rd = NULL;
- 	char alpha2[2];
- 	enum environment_cap env = ENVIRON_ANY;
- 	struct regulatory_request *request;
-@@ -1529,7 +1528,7 @@ void regulatory_hint_11d(struct wiphy *wiphy,
- 
- 	request = kzalloc(sizeof(struct regulatory_request), GFP_KERNEL);
- 	if (!request)
--		goto free_rd_out;
-+		goto out;
- 
- 	request->wiphy_idx = get_wiphy_idx(wiphy);
- 	request->alpha2[0] = alpha2[0];
-@@ -1543,8 +1542,6 @@ void regulatory_hint_11d(struct wiphy *wiphy,
- 
- 	return;
- 
--free_rd_out:
--	kfree(rd);
- out:
- 	mutex_unlock(&reg_mutex);
+ 	ceph_msgr_wq = create_workqueue("ceph-msgr");
+-	if (IS_ERR(ceph_msgr_wq)) {
+-		int ret = PTR_ERR(ceph_msgr_wq);
+-		pr_err("msgr_init failed to create workqueue: %d\n", ret);
+-		ceph_msgr_wq = NULL;
+-		return ret;
++	if (!ceph_msgr_wq) {
++		pr_err("msgr_init failed to create workqueue\n");
++		return -ENOMEM;
+ 	}
+ 	return 0;
  }
