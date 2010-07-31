@@ -1,51 +1,28 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 20 Jul 2010 15:15:56 +0000
-Subject: Re: [PATCH 08/16] trivial: use ARRAY_SIZE
-Message-Id: <alpine.LNX.2.00.1007201715330.4741@pobox.suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 31 Jul 2010 20:25:53 +0000
+Subject: [patch] afs: destroy work queue on init failure
+Message-Id: <20100731202553.GG26313@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277726113-24666-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277726113-24666-1-git-send-email-segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kernel Janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "James E.J. Bottomley" <James.Bottomley-l3A5Bk7waGM@public.gmane.org>, devel-s9riP+hp16TNLxjTenLetw@public.gmane.org
+To: David Howells <dhowells@redhat.com>
+Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 28 Jun 2010, Kulikov Vasiliy wrote:
+We can clean up the work queue on this error path.  This function is
+called from afs_init().
 
-> Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/scsi/libfc/fc_exch.c |    4 +---
->  1 files changed, 1 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/libfc/fc_exch.c b/drivers/scsi/libfc/fc_exch.c
-> index 104e0fb..ca52bfa 100644
-> --- a/drivers/scsi/libfc/fc_exch.c
-> +++ b/drivers/scsi/libfc/fc_exch.c
-> @@ -219,8 +219,6 @@ static void fc_exch_els_rrq(struct fc_seq *, struct fc_frame *);
->   */
->  static char *fc_exch_rctl_names[] = FC_RCTL_NAMES_INIT;
->  
-> -#define FC_TABLE_SIZE(x)   (sizeof(x) / sizeof(x[0]))
-> -
->  /**
->   * fc_exch_name_lookup() - Lookup name by opcode
->   * @op:	       Opcode to be looked up
-> @@ -249,7 +247,7 @@ static inline const char *fc_exch_name_lookup(unsigned int op, char **table,
->  static const char *fc_exch_rctl_name(unsigned int op)
->  {
->  	return fc_exch_name_lookup(op, fc_exch_rctl_names,
-> -				   FC_TABLE_SIZE(fc_exch_rctl_names));
-> +				   ARRAY_SIZE(fc_exch_rctl_names));
->  }
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied. Please use better Subject: lines next time though. Having the 
-whole series have the same Subject: line doesn't really help.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index 67cf810..654d8fd 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -100,6 +100,7 @@ int afs_open_socket(void)
+ 	ret = kernel_bind(socket, (struct sockaddr *) &srx, sizeof(srx));
+ 	if (ret < 0) {
+ 		sock_release(socket);
++		destroy_workqueue(afs_async_calls);
+ 		_leave(" = %d [bind]", ret);
+ 		return ret;
+ 	}
