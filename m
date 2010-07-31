@@ -1,37 +1,47 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 29 Jul 2010 15:56:02 +0000
-Subject: [PATCH] scsi: ch: check put_user() result
-Message-Id: <1280418963-5984-1-git-send-email-segooon@gmail.com>
+Date: Sat, 31 Jul 2010 17:39:03 +0000
+Subject: [PATCH 4/7] usb: lh7a40x_udc: check return value of create_proc_read_entry()
+Message-Id: <1280597943-8485-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Davidlohr Bueso <dave@gnu.org>, Tejun Heo <tj@kernel.org>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-put_user() may fail, if so return -EFAULT.
+create_proc_read_entry() may fail, if so return -ENOMEM.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/scsi/ch.c |    5 ++++-
- 1 files changed, 4 insertions(+), 1 deletions(-)
+ drivers/usb/gadget/lh7a40x_udc.c |    9 +++++++--
+ 1 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/ch.c b/drivers/scsi/ch.c
-index 4799d43..978bf68 100644
---- a/drivers/scsi/ch.c
-+++ b/drivers/scsi/ch.c
-@@ -548,7 +548,10 @@ static int ch_gstatus(scsi_changer *ch, int type, unsigned char __user *dest)
- 			retval = -EIO;
- 			break;
- 		}
--		put_user(data[2], dest+i);
-+		if (put_user(data[2], dest+i)) {
-+			retval = -EFAULT;
-+			break;
-+		}
- 		if (data[2] & CESTATUS_EXCEPT)
- 			vprintk("element 0x%x: asc=0x%x, ascq=0x%x\n",
- 				ch->firsts[type]+i,
+diff --git a/drivers/usb/gadget/lh7a40x_udc.c b/drivers/usb/gadget/lh7a40x_udc.c
+index fded3fc..b04a62f 100644
+--- a/drivers/usb/gadget/lh7a40x_udc.c
++++ b/drivers/usb/gadget/lh7a40x_udc.c
+@@ -244,7 +244,7 @@ udc_proc_read(char *page, char **start, off_t off, int count,
+ 
+ #else	/* !CONFIG_USB_GADGET_DEBUG_FILES */
+ 
+-#define create_proc_files() do {} while (0)
++#define create_proc_files() ({ (void *)1; })
+ #define remove_proc_files() do {} while (0)
+ 
+ #endif	/* CONFIG_USB_GADGET_DEBUG_FILES */
+@@ -2092,7 +2092,12 @@ static int lh7a40x_udc_probe(struct platform_device *pdev)
+ 		return -EBUSY;
+ 	}
+ 
+-	create_proc_files();
++	if (create_proc_files() = NULL) {
++		DEBUG(KERN_ERR "%s: can't get irq %i, err %d\n", driver_name,
++		      IRQ_USBINTR, retval);
++		free_irq(IRQ_USBINTR, dev);
++		return -ENOMEM;
++	}
+ 
+ 	return retval;
+ }
 -- 
 1.7.0.4
 
