@@ -1,37 +1,37 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 10 Jul 2010 22:10:42 +0000
-Subject: [patch] hostap: fixup strlen() math
-Message-Id: <20100710221042.GA14911@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 31 Jul 2010 16:33:59 +0000
+Subject: [PATCH] net: wl12xx: do not use kfree'd memory
+Message-Id: <1280594039-3246-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jouni Malinen <j@w1.fi>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Martin Decky <martin@decky.cz>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Luciano Coelho <luciano.coelho@nokia.com>, "John W. Linville" <linville@tuxdriver.com>, Juuso Oikarinen <juuso.oikarinen@nokia.com>, Teemu Paasikivi <ext-teemu.3.paasikivi@nokia.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 
-In hostap_add_interface() we do:
-	sprintf(dev->name, "%s%s", prefix, name);
+wl1271_dump() uses cmd after kfree(cmd). Move kfree() just after
+wl1271_dump().
 
-dev->name has IFNAMSIZ (16) characters.
-prefix is local->dev->name.
-name is "wds%d"
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/wireless/wl12xx/wl1271_spi.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-strlen() returns the number of characters in the string not counting the
-NULL so if we have a string with 11 characters we get "12345678901wds%d"
-which is 16 characters and a NULL so we're past the end of the array.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/net/wireless/hostap/hostap_main.c b/drivers/net/wireless/hostap/hostap_main.c
-index eb57d1e..f1bc258 100644
---- a/drivers/net/wireless/hostap/hostap_main.c
-+++ b/drivers/net/wireless/hostap/hostap_main.c
-@@ -186,7 +186,7 @@ int prism2_wds_add(local_info_t *local, u8 *remote_addr,
- 		return -ENOBUFS;
+diff --git a/drivers/net/wireless/wl12xx/wl1271_spi.c b/drivers/net/wireless/wl12xx/wl1271_spi.c
+index 96d25fb..4cb99c5 100644
+--- a/drivers/net/wireless/wl12xx/wl1271_spi.c
++++ b/drivers/net/wireless/wl12xx/wl1271_spi.c
+@@ -160,9 +160,8 @@ static void wl1271_spi_init(struct wl1271 *wl)
+ 	spi_message_add_tail(&t, &m);
  
- 	/* verify that there is room for wds# postfix in the interface name */
--	if (strlen(local->dev->name) > IFNAMSIZ - 5) {
-+	if (strlen(local->dev->name) >= IFNAMSIZ - 5) {
- 		printk(KERN_DEBUG "'%s' too long base device name\n",
- 		       local->dev->name);
- 		return -EINVAL;
+ 	spi_sync(wl_to_spi(wl), &m);
+-	kfree(cmd);
+-
+ 	wl1271_dump(DEBUG_SPI, "spi init -> ", cmd, WSPI_INIT_CMD_LEN);
++	kfree(cmd);
+ }
+ 
+ #define WL1271_BUSY_WORD_TIMEOUT 1000
+-- 
+1.7.0.4
+
