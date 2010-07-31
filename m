@@ -1,36 +1,43 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Thu, 01 Jul 2010 13:16:57 +0000
-Subject: [PATCH 23/25] staging/wlags49_h2: remove casts from void*
-Message-Id: <1277990218-22851-1-git-send-email-segooon@gmail.com>
+Date: Sat, 31 Jul 2010 17:39:46 +0000
+Subject: [PATCH 6/7] usb: iowarrior: fix misuse of return value of copy_to_user()
+Message-Id: <1280597987-8565-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Henk de Groot <pe1dnn@amsat.org>, Andrew Morton <akpm@linux-foundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Oliver Neukum <oliver@neukum.org>, Mauro Carvalho Chehab <mchehab@redhat.com>, Daniel Mack <daniel@caiaq.de>, Kay Sievers <kay.sievers@vrfy.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove unnesessary casts from void*.
+copy_to_user() returns number of not copied bytes, not error code.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/staging/wlags49_h2/wl_netdev.c |    4 ++--
+ drivers/usb/misc/iowarrior.c |    4 ++--
  1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/wlags49_h2/wl_netdev.c b/drivers/staging/wlags49_h2/wl_netdev.c
-index 1aa61db..df38402 100644
---- a/drivers/staging/wlags49_h2/wl_netdev.c
-+++ b/drivers/staging/wlags49_h2/wl_netdev.c
-@@ -1905,8 +1905,8 @@ int wl_rx_dma( struct net_device *dev )
-     DBG_FUNC("wl_rx")
-     DBG_PARAM(DbgInfo, "dev", "%s (0x%p)", dev->name, dev);
- 
--    if((( lp = (struct wl_private *)dev->priv ) != NULL ) &&
--          !( lp->flags & WVLAN2_UIL_BUSY )) {
-+    lp = dev->priv;
-+    if (lp && !(lp->flags & WVLAN2_UIL_BUSY)) {
- 
- #ifdef USE_RTS
-         if( lp->useRTS = 1 ) {
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 2de49c8..bc88c79 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -542,7 +542,7 @@ static long iowarrior_ioctl(struct file *file, unsigned int cmd,
+ 			retval = io_res;
+ 		else {
+ 			io_res = copy_to_user(user_buffer, buffer, dev->report_size);
+-			if (io_res < 0)
++			if (io_res)
+ 				retval = -EFAULT;
+ 		}
+ 		break;
+@@ -574,7 +574,7 @@ static long iowarrior_ioctl(struct file *file, unsigned int cmd,
+ 			}
+ 			io_res = copy_to_user((struct iowarrior_info __user *)arg, &info,
+ 					 sizeof(struct iowarrior_info));
+-			if (io_res < 0)
++			if (io_res)
+ 				retval = -EFAULT;
+ 			break;
+ 		}
 -- 
 1.7.0.4
 
