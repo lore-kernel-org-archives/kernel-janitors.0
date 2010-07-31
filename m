@@ -1,45 +1,34 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 16 Jul 2010 16:16:34 +0000
-Subject: [PATCH 14/15] sound/soc: imx: check kzalloc() result and fix memory leak
-Message-Id: <1279296995-25307-1-git-send-email-segooon@gmail.com>
+Date: Sat, 31 Jul 2010 16:34:30 +0000
+Subject: [PATCH] video: igafb: introduce lost 'return'
+Message-Id: <1280594070-3328-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sascha Hauer <s.hauer@pengutronix.de>, Javier Martin <javier.martin@vista-silicon.com>, Tejun Heo <tj@kernel.org>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-If kzalloc() fails we must exit with -ENOMEM. Also we must free
-allocated runtime->private_data on error as it would be lost on next
-call to snd_imx_open().
+If iga_init() fails, code releases resources and continues to use it.
+It seems that after releasing resources 'return' should be.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- sound/soc/imx/imx-pcm-dma-mx2.c |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
+ drivers/video/igafb.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/sound/soc/imx/imx-pcm-dma-mx2.c b/sound/soc/imx/imx-pcm-dma-mx2.c
-index 05f19c9..0a595da 100644
---- a/sound/soc/imx/imx-pcm-dma-mx2.c
-+++ b/sound/soc/imx/imx-pcm-dma-mx2.c
-@@ -292,12 +292,16 @@ static int snd_imx_open(struct snd_pcm_substream *substream)
- 	int ret;
+diff --git a/drivers/video/igafb.c b/drivers/video/igafb.c
+index 15d2001..c4e6fc0 100644
+--- a/drivers/video/igafb.c
++++ b/drivers/video/igafb.c
+@@ -531,6 +531,7 @@ int __init igafb_init(void)
+ 		iounmap(info->screen_base);
+ 		kfree(par->mmap_map);
+ 		kfree(info);
++		return -ENODEV;
+         }
  
- 	iprtd = kzalloc(sizeof(*iprtd), GFP_KERNEL);
-+	if (iprtd = NULL)
-+		return -ENOMEM;
- 	runtime->private_data = iprtd;
- 
- 	ret = snd_pcm_hw_constraint_integer(substream->runtime,
- 			SNDRV_PCM_HW_PARAM_PERIODS);
--	if (ret < 0)
-+	if (ret < 0) {
-+		kfree(iprtd);
- 		return ret;
-+	}
- 
- 	snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
- 	return 0;
+ #ifdef CONFIG_SPARC
 -- 
 1.7.0.4
 
