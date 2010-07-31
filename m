@@ -1,7 +1,7 @@
 From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sat, 31 Jul 2010 18:18:45 +0000
+Date: Sat, 31 Jul 2010 19:07:21 +0000
 Subject: Re: [PATCH 04/10] x86: mce: fix error handling
-Message-Id: <20100731181845.GB9378@albatros>
+Message-Id: <20100731190721.GA16357@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1280335185-23265-1-git-send-email-segooon@gmail.com>
  <4C5063D4.4070108@linux.intel.com>
