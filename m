@@ -1,67 +1,54 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 20 Jul 2010 15:13:21 +0000
-Subject: Re: [PATCH 07/16] trivial: use ARRAY_SIZE
-Message-Id: <alpine.LNX.2.00.1007201713040.4741@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 31 Jul 2010 09:56:39 +0000
+Subject: [PATCH] net/rose: Use GFP_ATOMIC
+Message-Id: <Pine.LNX.4.64.1007311156180.6434@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277726109-24633-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277726109-24633-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, Jing Huang <huangj@brocade.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Krishna Gudipati <kgudipat@brocade.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 28 Jun 2010, Kulikov Vasiliy wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/scsi/bfa/bfa_fcs.c |   10 ++++------
->  1 files changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/scsi/bfa/bfa_fcs.c b/drivers/scsi/bfa/bfa_fcs.c
-> index 3516172..153cb2a 100644
-> --- a/drivers/scsi/bfa/bfa_fcs.c
-> +++ b/drivers/scsi/bfa/bfa_fcs.c
-> @@ -86,7 +86,7 @@ bfa_fcs_attach(struct bfa_fcs_s *fcs, struct bfa_s *bfa, struct bfad_s *bfad,
->  	bfa_attach_fcs(bfa);
->  	fcbuild_init();
->  
-> -	for (i = 0; i < sizeof(fcs_modules) / sizeof(fcs_modules[0]); i++) {
-> +	for (i = 0; i < ARRAY_SIZE(fcs_modules); i++) {
->  		mod = &fcs_modules[i];
->  		if (mod->attach)
->  			mod->attach(fcs);
-> @@ -102,7 +102,7 @@ bfa_fcs_init(struct bfa_fcs_s *fcs)
->  	int             i;
->  	struct bfa_fcs_mod_s  *mod;
->  
-> -	for (i = 0; i < sizeof(fcs_modules) / sizeof(fcs_modules[0]); i++) {
-> +	for (i = 0; i < ARRAY_SIZE(fcs_modules); i++) {
->  		mod = &fcs_modules[i];
->  		if (mod->modinit)
->  			mod->modinit(fcs);
-> @@ -163,13 +163,11 @@ void
->  bfa_fcs_exit(struct bfa_fcs_s *fcs)
->  {
->  	struct bfa_fcs_mod_s  *mod;
-> -	int             nmods, i;
-> +	int i;
->  
->  	bfa_wc_init(&fcs->wc, bfa_fcs_exit_comp, fcs);
->  
-> -	nmods = sizeof(fcs_modules) / sizeof(fcs_modules[0]);
-> -
-> -	for (i = 0; i < nmods; i++) {
-> +	for (i = 0; i < ARRAY_SIZE(fcs_modules); i++) {
->  
->  		mod = &fcs_modules[i];
->  		if (mod->modexit) {
+The other calls to kmalloc in the same function use GFP_ATOMIC, and indeed
+two locks are held within the body of the function.
 
-I have folded this patch into the other bfa change you made, and applied. 
-Thanks,
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+// <smpl>
+@@ identifier f; @@
+
+*f(...,GFP_ATOMIC,...)
+... when != spin_unlock(...)
+    when != read_unlock(...)
+    when != write_unlock(...)
+    when != read_unlock_irq(...)
+    when != write_unlock_irq(...)
+    when != read_unlock_irqrestore(...)
+    when != write_unlock_irqrestore(...)
+    when != spin_unlock_irq(...)
+    when != spin_unlock_irqrestore(...)
+*f(...,GFP_KERNEL,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/rose/rose_route.c               |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/net/rose/rose_route.c b/net/rose/rose_route.c
+index cbc244a..b4fdaac 100644
+--- a/net/rose/rose_route.c
++++ b/net/rose/rose_route.c
+@@ -109,7 +109,9 @@ static int __must_check rose_add_node(struct rose_route_struct *rose_route,
+ 		init_timer(&rose_neigh->t0timer);
+ 
+ 		if (rose_route->ndigis != 0) {
+-			if ((rose_neigh->digipeat = kmalloc(sizeof(ax25_digi), GFP_KERNEL)) = NULL) {
++			rose_neigh->digipeat +				kmalloc(sizeof(ax25_digi), GFP_ATOMIC);
++			if (rose_neigh->digipeat = NULL) {
+ 				kfree(rose_neigh);
+ 				res = -ENOMEM;
+ 				goto out;
