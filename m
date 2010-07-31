@@ -1,63 +1,68 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 20 Jul 2010 15:06:19 +0000
-Subject: Re: [PATCH 03/16] trivial: use ARRAY_SIZE
-Message-Id: <alpine.LNX.2.00.1007201706060.4741@pobox.suse.cz>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 31 Jul 2010 17:39:24 +0000
+Subject: [PATCH 5/7] usb: omap_udc: check return value of proc_create()
+Message-Id: <1280597965-8525-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1277726093-24500-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1277726093-24500-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@vger.kernel.org>, David Airlie <airlied@linux.ie>, Dave Airlie <airlied@redhat.com>, Adam Jackson <ajax@redhat.com>, Zhao Yakui <yakui.zhao@intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, Tony Lindgren <tony@atomide.com>, Cory Maccarrone <darkstar6262@gmail.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 28 Jun 2010, Kulikov Vasiliy wrote:
+proc_create() may fail, if so return -ENOMEM.
 
-> Change sizeof(x) / sizeof(*x) to ARRAY_SIZE(x).
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/gpu/drm/drm_edid.c |    7 ++-----
->  1 files changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index c198186..da06476 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -929,13 +929,11 @@ drm_mode_do_interlace_quirk(struct drm_display_mode *mode,
->  		{ 1440,  576 },
->  		{ 2880,  576 },
->  	};
-> -	static const int n_sizes > -		sizeof(cea_interlaced)/sizeof(cea_interlaced[0]);
->  
->  	if (!(pt->misc & DRM_EDID_PT_INTERLACED))
->  		return;
->  
-> -	for (i = 0; i < n_sizes; i++) {
-> +	for (i = 0; i < ARRAY_SIZE(cea_interlaced); i++) {
->  		if ((mode->hdisplay = cea_interlaced[i].w) &&
->  		    (mode->vdisplay = cea_interlaced[i].h / 2)) {
->  			mode->vdisplay *= 2;
-> @@ -1375,7 +1373,6 @@ static const struct {
->  	{ 1920, 1440, 60, 0 },
->  	{ 1920, 1440, 75, 0 },
->  };
-> -static const int num_est3_modes = sizeof(est3_modes) / sizeof(est3_modes[0]);
->  
->  static int
->  drm_est3_modes(struct drm_connector *connector, struct detailed_timing *timing)
-> @@ -1387,7 +1384,7 @@ drm_est3_modes(struct drm_connector *connector, struct detailed_timing *timing)
->  	for (i = 0; i < 6; i++) {
->  		for (j = 7; j > 0; j--) {
->  			m = (i * 8) + (7 - j);
-> -			if (m >= num_est3_modes)
-> +			if (m >= ARRAY_SIZE(est3_modes))
->  				break;
->  			if (est[i] & (1 << j)) {
->  				mode = drm_mode_find_dmt(connector->dev,
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/usb/gadget/omap_udc.c |   16 +++++++++++-----
+ 1 files changed, 11 insertions(+), 5 deletions(-)
 
-Not found in linux-next as of today. Applied, thanks.
-
+diff --git a/drivers/usb/gadget/omap_udc.c b/drivers/usb/gadget/omap_udc.c
+index f81e4f0..1083216 100644
+--- a/drivers/usb/gadget/omap_udc.c
++++ b/drivers/usb/gadget/omap_udc.c
+@@ -2544,9 +2544,9 @@ static const struct file_operations proc_ops = {
+ 	.release	= single_release,
+ };
+ 
+-static void create_proc_file(void)
++static int create_proc_file(void)
+ {
+-	proc_create(proc_filename, 0, NULL, &proc_ops);
++	return (proc_create(proc_filename, 0, NULL, &proc_ops) = NULL);
+ }
+ 
+ static void remove_proc_file(void)
+@@ -2556,7 +2556,7 @@ static void remove_proc_file(void)
+ 
+ #else
+ 
+-static inline void create_proc_file(void) {}
++static inline int create_proc_file(void) { return 0; }
+ static inline void remove_proc_file(void) {}
+ 
+ #endif
+@@ -2998,13 +2998,19 @@ known:
+ #endif
+ 	}
+ 
+-	create_proc_file();
++	if (create_proc_file()) {
++		status = -ENOMEM;
++		goto cleanup3;
++	}
++
+ 	status = device_add(&udc->gadget.dev);
+ 	if (!status)
+ 		return status;
+ 	/* If fail, fall through */
+-#ifdef	USE_ISO
++
++	remove_proc_file();
+ cleanup3:
++#ifdef	USE_ISO
+ 	free_irq(pdev->resource[2].start, udc);
+ #endif
+ 
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+1.7.0.4
+
