@@ -1,41 +1,88 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Thu, 15 Jul 2010 13:57:37 +0000
-Subject: Re: Convert pci_table entries with PCI_ANY_ID to PCI_DEVICE ?
-Message-Id: <201007151557.37555.PeterHuewe@gmx.de>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sat, 31 Jul 2010 17:38:00 +0000
+Subject: [PATCH 1/7] 68328serial: check return value of copy_*_user() instead of access_ok()
+Message-Id: <1280597881-8365-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201007151550.42146.PeterHuewe@gmx.de>
-In-Reply-To: <201007151550.42146.PeterHuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Greg Ungerer <gerg@uclinux.org>, Christoph Egger <siccegge@cs.fau.de>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
 
-Or even better convert them using PCI_VDEVICE,
+As copy_*_user() calls access_ok() it should not be called explicitly.
 
-Here's the same sample patch with PCI_VDEVICE:
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
-diff --git a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c 
-b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
-index 16e3483..581b29c 100644
---- a/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
-+++ b/arch/x86/kernel/cpu/cpufreq/gx-suspmod.c
-@@ -169,12 +169,9 @@ static int gx_freq_mult[16] = {
-  *     Low Level chipset interface                             *
-  ****************************************************************/
- static struct pci_device_id gx_chipset_tbl[] __initdata = {
--       { PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY,
--               PCI_ANY_ID, PCI_ANY_ID },
--       { PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520,
--               PCI_ANY_ID, PCI_ANY_ID },
--       { PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510,
--               PCI_ANY_ID, PCI_ANY_ID },
-+       { PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY) },
-+       { PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5520) },
-+       { PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5510) },
-        { 0, },
- };
----
+ drivers/serial/68328serial.c |   29 ++++++++++-------------------
+ 1 files changed, 10 insertions(+), 19 deletions(-)
 
-What do you think?
+diff --git a/drivers/serial/68328serial.c b/drivers/serial/68328serial.c
+index 7356a56..ab6ad8b 100644
+--- a/drivers/serial/68328serial.c
++++ b/drivers/serial/68328serial.c
+@@ -869,7 +869,9 @@ static int get_serial_info(struct m68k_serial * info,
+ 	tmp.close_delay = info->close_delay;
+ 	tmp.closing_wait = info->closing_wait;
+ 	tmp.custom_divisor = info->custom_divisor;
+-	copy_to_user(retinfo,&tmp,sizeof(*retinfo));
++	if (copy_to_user(retinfo, &tmp, sizeof(*retinfo)))
++		return -EFAULT;
++
+ 	return 0;
+ }
+ 
+@@ -882,7 +884,8 @@ static int set_serial_info(struct m68k_serial * info,
+ 
+ 	if (!new_info)
+ 		return -EFAULT;
+-	copy_from_user(&new_serial,new_info,sizeof(new_serial));
++	if (copy_from_user(&new_serial, new_info, sizeof(new_serial)))
++		return -EFAULT;
+ 	old_info = *info;
+ 
+ 	if (!capable(CAP_SYS_ADMIN)) {
+@@ -943,8 +946,7 @@ static int get_lsr_info(struct m68k_serial * info, unsigned int *value)
+ 	status = 0;
+ #endif
+ 	local_irq_restore(flags);
+-	put_user(status,value);
+-	return 0;
++	return put_user(status, value);
+ }
+ 
+ /*
+@@ -999,27 +1001,16 @@ static int rs_ioctl(struct tty_struct *tty, struct file * file,
+ 			send_break(info, arg ? arg*(100) : 250);
+ 			return 0;
+ 		case TIOCGSERIAL:
+-			if (access_ok(VERIFY_WRITE, (void *) arg,
+-						sizeof(struct serial_struct)))
+-				return get_serial_info(info,
+-					       (struct serial_struct *) arg);
+-			return -EFAULT;
++			return get_serial_info(info,
++				       (struct serial_struct *) arg);
+ 		case TIOCSSERIAL:
+ 			return set_serial_info(info,
+ 					       (struct serial_struct *) arg);
+ 		case TIOCSERGETLSR: /* Get line status register */
+-			if (access_ok(VERIFY_WRITE, (void *) arg,
+-						sizeof(unsigned int)))
+-				return get_lsr_info(info, (unsigned int *) arg);
+-			return -EFAULT;
++			return get_lsr_info(info, (unsigned int *) arg);
+ 		case TIOCSERGSTRUCT:
+-			if (!access_ok(VERIFY_WRITE, (void *) arg,
+-						sizeof(struct m68k_serial)))
+-				return -EFAULT;
+-			copy_to_user((struct m68k_serial *) arg,
++			return copy_to_user((struct m68k_serial *) arg,
+ 				    info, sizeof(struct m68k_serial));
+-			return 0;
+-			
+ 		default:
+ 			return -ENOIOCTLCMD;
+ 		}
+-- 
+1.7.0.4
 
