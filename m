@@ -1,31 +1,86 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 10 Jul 2010 10:06:44 +0000
-Subject: [patch] trace: strlen() return doesn't account for the NULL
-Message-Id: <20100710100644.GV19184@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 31 Jul 2010 20:35:28 +0000
+Subject: [PATCH] drivers/acpi: call rcu_read_unlock in default case
+Message-Id: <Pine.LNX.4.64.1007312234590.12199@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, Li Zefan <lizf@cn.fujitsu.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We need to add one to the strlen() return because of the NULL
-character.  The type->name here generally comes from the kernel and I
-don't think any of them come close to being MAX_TRACER_SIZE (100)
-characters long so this is basically a cleanup.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Adjust the default case so that it benefits from the call to rcu_read_unlock.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 086d363..5f13c35 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -729,7 +729,7 @@ __acquires(kernel_lock)
- 		return -1;
- 	}
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@rcu@
+position p1;
+@@
+
+rcu_read_lock@p1();
+...
+rcu_read_unlock();
+
+@@
+position rcu.p1;
+@@
+
+*rcu_read_lock@p1();
+... when != rcu_read_unlock();
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/acpi/atomicio.c             |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/acpi/atomicio.c b/drivers/acpi/atomicio.c
+index 8f8bd73..f426010 100644
+--- a/drivers/acpi/atomicio.c
++++ b/drivers/acpi/atomicio.c
+@@ -267,6 +267,7 @@ EXPORT_SYMBOL_GPL(acpi_post_unmap_gar);
+ static int acpi_atomic_read_mem(u64 paddr, u64 *val, u32 width)
+ {
+ 	void __iomem *addr;
++	int res = 0;
  
--	if (strlen(type->name) > MAX_TRACER_SIZE) {
-+	if (strlen(type->name) >= MAX_TRACER_SIZE) {
- 		pr_info("Tracer has a name longer than %d\n", MAX_TRACER_SIZE);
- 		return -1;
+ 	rcu_read_lock();
+ 	addr = __acpi_ioremap_fast(paddr, width);
+@@ -284,16 +285,17 @@ static int acpi_atomic_read_mem(u64 paddr, u64 *val, u32 width)
+ 		*val = readq(addr);
+ 		break;
+ 	default:
+-		return -EINVAL;
++		res = -EINVAL;
  	}
+ 	rcu_read_unlock();
+ 
+-	return 0;
++	return res;
+ }
+ 
+ static int acpi_atomic_write_mem(u64 paddr, u64 val, u32 width)
+ {
+ 	void __iomem *addr;
++	int res = 0;
+ 
+ 	rcu_read_lock();
+ 	addr = __acpi_ioremap_fast(paddr, width);
+@@ -311,11 +313,11 @@ static int acpi_atomic_write_mem(u64 paddr, u64 val, u32 width)
+ 		writeq(val, addr);
+ 		break;
+ 	default:
+-		return -EINVAL;
++		res = -EINVAL;
+ 	}
+ 	rcu_read_unlock();
+ 
+-	return 0;
++	return res;
+ }
+ 
+ /* GAR accessing in atomic (including NMI) or process context */
