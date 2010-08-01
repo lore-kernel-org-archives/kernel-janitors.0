@@ -1,36 +1,38 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:52:50 +0000
-Subject: [PATCH 12/18] staging: crystalhd: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124373-13756-1-git-send-email-segooon@gmail.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Date: Sun, 01 Aug 2010 10:06:38 +0000
+Subject: Re: [PATCH 5/7] usb: omap_udc: check return value of proc_create()
+Message-Id: <4C55472E.6000307@ru.mvista.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1280597965-8525-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1280597965-8525-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Jarod Wilson <jarod@redhat.com>, Manu Abraham <abraham.manu@gmail.com>, Scott Davilla <davilla@4pi.com>, Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, Tony Lindgren <tony@atomide.com>, Cory Maccarrone <darkstar6262@gmail.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error. Also it must not be called if pci_request_region() fails as
-it means that somebody uses device resources and rules the device.
+Hello.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/crystalhd/crystalhd_lnx.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Kulikov Vasiliy wrote:
 
-diff --git a/drivers/staging/crystalhd/crystalhd_lnx.c b/drivers/staging/crystalhd/crystalhd_lnx.c
-index fbb80f0..0e52075 100644
---- a/drivers/staging/crystalhd/crystalhd_lnx.c
-+++ b/drivers/staging/crystalhd/crystalhd_lnx.c
-@@ -570,6 +570,8 @@ static int __devinit chd_dec_pci_probe(struct pci_dev *pdev,
- 	rc = chd_pci_reserve_mem(pinfo);
- 	if (rc) {
- 		BCMLOG_ERR("Failed to setup memory regions.\n");
-+		if (rc != -EBUSY)
-+			pci_disable_device(pdev);
- 		return -ENOMEM;
- 	}
- 
--- 
-1.7.0.4
+> proc_create() may fail, if so return -ENOMEM.
 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+[...]
+> diff --git a/drivers/usb/gadget/omap_udc.c b/drivers/usb/gadget/omap_udc.c
+> index f81e4f0..1083216 100644
+> --- a/drivers/usb/gadget/omap_udc.c
+> +++ b/drivers/usb/gadget/omap_udc.c
+> @@ -2544,9 +2544,9 @@ static const struct file_operations proc_ops = {
+>  	.release	= single_release,
+>  };
+>  
+> -static void create_proc_file(void)
+> +static int create_proc_file(void)
+>  {
+> -	proc_create(proc_filename, 0, NULL, &proc_ops);
+> +	return (proc_create(proc_filename, 0, NULL, &proc_ops) = NULL);
+
+    Parens not needed around the *return* expression.
+
+WBR, Sergei
