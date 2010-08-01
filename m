@@ -1,51 +1,99 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Wed, 11 Aug 2010 08:01:19 +0000
-Subject: [PATCH] staging: tm6000: fix memory leak
-Message-Id: <1281513681-5395-1-git-send-email-segooon@gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Date: Sun, 01 Aug 2010 04:46:08 +0000
+Subject: Re: [PATCH] drivers/acpi: call rcu_read_unlock in default case
+Message-Id: <20100801044608.GG2470@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1007312234590.12199@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1007312234590.12199@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, Stefan Ringel <stefan.ringel@arcor.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Original code doesn't call kfree(chip) on error.
+On Sat, Jul 31, 2010 at 10:35:28PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Adjust the default case so that it benefits from the call to rcu_read_unlock.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @rcu@
+> position p1;
+> @@
+> 
+> rcu_read_lock@p1();
+> ...
+> rcu_read_unlock();
+> 
+> @@
+> position rcu.p1;
+> @@
+> 
+> *rcu_read_lock@p1();
+> ... when != rcu_read_unlock();
+> // </smpl>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/tm6000/tm6000-alsa.c |    7 +++++--
- 1 files changed, 5 insertions(+), 2 deletions(-)
+I don't claim to understand the SmPL above, but I do like the patch.
 
-diff --git a/drivers/staging/tm6000/tm6000-alsa.c b/drivers/staging/tm6000/tm6000-alsa.c
-index 087137d..6c09ef3 100644
---- a/drivers/staging/tm6000/tm6000-alsa.c
-+++ b/drivers/staging/tm6000/tm6000-alsa.c
-@@ -403,7 +403,7 @@ int tm6000_audio_init(struct tm6000_core *dev)
- 
- 	rc = snd_pcm_new(card, "TM6000 Audio", 0, 0, 1, &pcm);
- 	if (rc < 0)
--		goto error;
-+		goto error_chip;
- 
- 	pcm->info_flags = 0;
- 	pcm->private_data = chip;
-@@ -413,12 +413,15 @@ int tm6000_audio_init(struct tm6000_core *dev)
- 
- 	rc = snd_card_register(card);
- 	if (rc < 0)
--		goto error;
-+		goto error_chip;
- 
- 	dprintk(1,"Registered audio driver for %s\n", card->longname);
- 
- 	return 0;
- 
-+error_chip:
-+	kfree(chip);
-+	dev->adev = NULL;
- error:
- 	snd_card_free(card);
- 	return rc;
--- 
-1.7.0.4
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  drivers/acpi/atomicio.c             |   10 ++++++----
+>  1 files changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/acpi/atomicio.c b/drivers/acpi/atomicio.c
+> index 8f8bd73..f426010 100644
+> --- a/drivers/acpi/atomicio.c
+> +++ b/drivers/acpi/atomicio.c
+> @@ -267,6 +267,7 @@ EXPORT_SYMBOL_GPL(acpi_post_unmap_gar);
+>  static int acpi_atomic_read_mem(u64 paddr, u64 *val, u32 width)
+>  {
+>  	void __iomem *addr;
+> +	int res = 0;
+> 
+>  	rcu_read_lock();
+>  	addr = __acpi_ioremap_fast(paddr, width);
+> @@ -284,16 +285,17 @@ static int acpi_atomic_read_mem(u64 paddr, u64 *val, u32 width)
+>  		*val = readq(addr);
+>  		break;
+>  	default:
+> -		return -EINVAL;
+> +		res = -EINVAL;
+>  	}
+>  	rcu_read_unlock();
+> 
+> -	return 0;
+> +	return res;
+>  }
+> 
+>  static int acpi_atomic_write_mem(u64 paddr, u64 val, u32 width)
+>  {
+>  	void __iomem *addr;
+> +	int res = 0;
+> 
+>  	rcu_read_lock();
+>  	addr = __acpi_ioremap_fast(paddr, width);
+> @@ -311,11 +313,11 @@ static int acpi_atomic_write_mem(u64 paddr, u64 val, u32 width)
+>  		writeq(val, addr);
+>  		break;
+>  	default:
+> -		return -EINVAL;
+> +		res = -EINVAL;
+>  	}
+>  	rcu_read_unlock();
+> 
+> -	return 0;
+> +	return res;
+>  }
+> 
+>  /* GAR accessing in atomic (including NMI) or process context */
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
