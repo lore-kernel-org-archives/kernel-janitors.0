@@ -1,40 +1,116 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Tue, 31 Aug 2010 10:22:39 +0000
-Subject: Re: [PATCH 00/18] Add new semantic patches and reorganize existing
-Message-Id: <20100831102239.GA18142@sepie.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 01 Aug 2010 17:23:35 +0000
+Subject: [PATCH] drivers/scsi/pm8001: introduce missing kfree
+Message-Id: <Pine.LNX.4.64.1008011923120.2222@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
-In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Palix <npalix@diku.dk>
-Cc: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jack_wang@usish.com, lindar_liu@usish.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 24, 2010 at 05:38:54PM +0200, Nicolas Palix wrote:
-> The following series adds new semantic patches (SPs) in scripts/coccinelle.
-> Existing SPs are reorganized accordingly.
-> 
-> Nicolas Palix (18):
->   Coccinelle: Add null/eno.cocci
->   Coccinelle: Add null/kmerr.cocci
->   Coccinelle: Move deref_null.cocci to a more appropriate directory
->   Coccinelle: Add locks/call_kern.cocci
->   Coccinelle: Add locks/double_lock.cocci
->   Coccinelle: Add locks/mini_lock.cocci
->   Coccinelle: Add iterators/fen.cocci
->   Coccinelle: Add iterators/itnull.cocci
->   Coccinelle: Add iterators/list_entry_update.cocci
->   Coccinelle: Add free/kfree.cocci
->   Coccinelle: Add api/kstrdup.cocci
->   Coccinelle: Add api/memdup.cocci
->   Coccinelle: Add api/memdup_user
->   Coccinelle: Move err_cast.cocci to the api directory
->   Coccinelle: Move resource_size.cocci to the api directory
->   Coccinelle: Move alloc directory into api directory
->   Coccinelle: Add misc/doubleinit.cocci
->   Coccinelle: Add misc/ifcol.cocci
+From: Julia Lawall <julia@diku.dk>
 
-Applied, thanks.
+Error handling code following a kmalloc should free the allocated data.
 
-Michal
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+identifier f,f1;
+position p1,p2;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+<... when != x
+     when != if (...) { <+...x...+> }
+     when != (x) = NULL
+     when != (x) != NULL
+     when != (x) = 0
+     when != (x) != 0
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return <+...x...+>;
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+Another problem with this code is that there is no error checking for the
+calls to kzalloc that are used to initialize fw_control_context.  But the
+existing error handling code mostly returns the result of pm8001_tag_alloc,
+which uses constants of the enumerated type exec_status, defined in
+include/scsi/libsas.h, and it is not clear which of these values should be
+used in the case of insufficient memory.  Nevertheless, one of the
+functions affected by this patch does return -ENOMEM in case of
+insufficient memory.
+
+ drivers/scsi/pm8001/pm8001_hwi.c    |   13 ++++++++++---
+ 1 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+index 58d1134..9793aa6 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -4199,8 +4199,10 @@ static int pm8001_chip_get_nvmd_req(struct pm8001_hba_info *pm8001_ha,
+ 	circularQ = &pm8001_ha->inbnd_q_tbl[0];
+ 	memset(&nvmd_req, 0, sizeof(nvmd_req));
+ 	rc = pm8001_tag_alloc(pm8001_ha, &tag);
+-	if (rc)
++	if (rc) {
++		kfree(fw_control_context);
+ 		return rc;
++	}
+ 	ccb = &pm8001_ha->ccb_info[tag];
+ 	ccb->ccb_tag = tag;
+ 	ccb->fw_control_context = fw_control_context;
+@@ -4276,8 +4278,10 @@ static int pm8001_chip_set_nvmd_req(struct pm8001_hba_info *pm8001_ha,
+ 		ioctl_payload->length);
+ 	memset(&nvmd_req, 0, sizeof(nvmd_req));
+ 	rc = pm8001_tag_alloc(pm8001_ha, &tag);
+-	if (rc)
++	if (rc) {
++		kfree(fw_control_context);
+ 		return rc;
++	}
+ 	ccb = &pm8001_ha->ccb_info[tag];
+ 	ccb->fw_control_context = fw_control_context;
+ 	ccb->ccb_tag = tag;
+@@ -4387,6 +4391,7 @@ pm8001_chip_fw_flash_update_req(struct pm8001_hba_info *pm8001_ha,
+ 			fw_control->len, 0) != 0) {
+ 				PM8001_FAIL_DBG(pm8001_ha,
+ 					pm8001_printk("Mem alloc failure\n"));
++				kfree(fw_control_context);
+ 				return -ENOMEM;
+ 		}
+ 	}
+@@ -4401,8 +4406,10 @@ pm8001_chip_fw_flash_update_req(struct pm8001_hba_info *pm8001_ha,
+ 	fw_control_context->virtAddr = buffer;
+ 	fw_control_context->len = fw_control->len;
+ 	rc = pm8001_tag_alloc(pm8001_ha, &tag);
+-	if (rc)
++	if (rc) {
++		kfree(fw_control_context);
+ 		return rc;
++	}
+ 	ccb = &pm8001_ha->ccb_info[tag];
+ 	ccb->fw_control_context = fw_control_context;
+ 	ccb->ccb_tag = tag;
