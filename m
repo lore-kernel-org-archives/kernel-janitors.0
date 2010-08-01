@@ -1,44 +1,38 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Sat, 07 Aug 2010 23:48:53 +0000
-Subject: Re: [patch] intel_ips: potential null dereference
-Message-Id: <20100807164853.4c3818c9@virtuousgeek.org>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 01 Aug 2010 06:12:30 +0000
+Subject: Re: [PATCH 1/7] 68328serial: check return value of copy_*_user()
+Message-Id: <20100801061230.GA2650@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100807215703.GA9031@bicker>
-In-Reply-To: <20100807215703.GA9031@bicker>
+References: <1280597881-8365-1-git-send-email-segooon@gmail.com>
+ <20100731190907.GE26313@bicker>
+In-Reply-To: <20100731190907.GE26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Matthew Garrett <mjg@redhat.com>, Jiri Slaby <jslaby@suse.cz>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Greg Ungerer <gerg@uclinux.org>, Christoph Egger <siccegge@cs.fau.de>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
 
-On Sun, 8 Aug 2010 00:01:12 +0200
-Dan Carpenter <error27@gmail.com> wrote:
-
-> There is a potential NULL dereference of "limits."  We can just return
-> NULL earlier to avoid it.  The caller already handles NULL returns.
+On Sat, Jul 31, 2010 at 21:09 +0200, Dan Carpenter wrote:
+> On Sat, Jul 31, 2010 at 09:38:00PM +0400, Kulikov Vasiliy wrote:
+> > -						sizeof(struct m68k_serial)))
+> > -				return -EFAULT;
+> > -			copy_to_user((struct m68k_serial *) arg,
+> > +			return copy_to_user((struct m68k_serial *) arg,
+> >  				    info, sizeof(struct m68k_serial));
 > 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> We should return if -EFAULT copy_to_user() failes here.
+
+Right, I was looking for this bug and made it myself :)
+Thank you.
+
 > 
-> diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
-> index afe82e5..c908048 100644
-> --- a/drivers/platform/x86/intel_ips.c
-> +++ b/drivers/platform/x86/intel_ips.c
-> @@ -1342,8 +1342,10 @@ static struct ips_mcp_limits *ips_detect_cpu(struct ips_driver *ips)
->  		limits = &ips_lv_limits;
->  	else if (strstr(boot_cpu_data.x86_model_id, "CPU       U"))
->  		limits = &ips_ulv_limits;
-> -	else
-> +	else {
->  		dev_info(&ips->dev->dev, "No CPUID match found.\n");
-> +		goto out;
-> +	}
->  
->  	rdmsrl(TURBO_POWER_CURRENT_LIMIT, turbo_power);
->  	tdp = turbo_power & TURBO_TDP_MASK;
-
-Yep, good idea to catch this case.
-
-Reviewed-by: Jesse Barnes <jbarnes@virtuousgeek.org>
-
--- 
-Jesse Barnes, Intel Open Source Technology Center
+> > -			return 0;
+> > -			
+> >  		default:
+> >  			return -ENOIOCTLCMD;
+> >  		}
+> 
+> Smatch would have caught that but I don't have a cross compile
+> environment set up.
+> 
+> regards,
+> dan carpenter
