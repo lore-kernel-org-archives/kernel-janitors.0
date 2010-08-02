@@ -1,38 +1,64 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 19 Aug 2010 07:15:13 +0000
-Subject: Re: [PATCH net-next-2.6] atm: remove a net_device_stats clear
-Message-Id: <20100819.001513.212394625.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 02 Aug 2010 08:31:12 +0000
+Subject: [PATCH 1/9 v2] staging: dt3155: check put_user() return value
+Message-Id: <1280737873-5992-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100818083304.2ef2eea4@nehalam>
-	<20100818.131043.226780154.davem@davemloft.net>
-	<1282164274.2328.2.camel@edumazet-laptop>
-In-Reply-To: <1282164274.2328.2.camel@edumazet-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, H Hartley Sweeten <hsweeten@visionengravers.com>, Simon Horman <horms@verge.net.au>, Joe Eloff <kagen101@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Wed, 18 Aug 2010 22:44:34 +0200
+put_user() return code was not checked for errors. To simplify the code
+fill local struct dt3155_read with data and copy it with single
+copy_to_user() call.
 
-> Le mercredi 18 ao=FBt 2010 =E0 13:10 -0700, David Miller a =E9crit :
->> Yep, both the ether1 and ether3 patch have this problem.  Looks
->> like we'll see v4 coming some :-)
->=20
-> To be fair, we accepted some bits like that in the past ;)
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/staging/dt3155/dt3155_drv.c |   17 ++++++++---------
+ 1 files changed, 8 insertions(+), 9 deletions(-)
 
-Yes, but let's nip it in the butt immediately when we do
-notice it :-)
+diff --git a/drivers/staging/dt3155/dt3155_drv.c b/drivers/staging/dt3155/dt3155_drv.c
+index 7316996..4013f09 100644
+--- a/drivers/staging/dt3155/dt3155_drv.c
++++ b/drivers/staging/dt3155/dt3155_drv.c
+@@ -745,10 +745,11 @@ static ssize_t dt3155_read(struct file *filep, char __user *buf,
+   struct dt3155_status *dts = &dt3155_status[minor];
+   struct dt3155_fbuffer *fb = &dts->fbuffer;
+   struct frame_info	*frame_info;
++  struct dt3155_read dt_read;
+ 
+   /* TODO: this should check the error flag and */
+   /*   return an error on hardware failures */
+-  if (count != sizeof(struct dt3155_read))
++  if (count != sizeof(dt_read))
+     {
+       printk(KERN_INFO "DT3155 ERROR (NJC): count is not right\n");
+       return -EINVAL;
+@@ -797,17 +798,15 @@ static ssize_t dt3155_read(struct file *filep, char __user *buf,
+ 
+   /* make this an offset */
+   offset = frame_info->addr - dts->mem_addr;
++  dt_read.offset = offset;
++  dt_read.frame_seq = fb->frame_count;
++  dt_read.state = dts->state;
++  memcpy(&dt_read.frame_info, frame_info, sizeof(frame_info));
+ 
+-  put_user(offset, (unsigned int __user *)buf);
+-  buf += sizeof(u32);
+-  put_user(fb->frame_count, (unsigned int __user *)buf);
+-  buf += sizeof(u32);
+-  put_user(dts->state, (unsigned int __user *)buf);
+-  buf += sizeof(u32);
+-  if (copy_to_user(buf, frame_info, sizeof(*frame_info)))
++  if (copy_to_user(buf, &dt_read, sizeof(dt_read)))
+       return -EFAULT;
+ 
+-  return sizeof(struct dt3155_read);
++  return sizeof(dt_read);
+ }
+ 
+ static unsigned int dt3155_poll (struct file * filp, poll_table *wait)
+-- 
+1.7.0.4
 
-> [PATCH net-next-2.6] atm: remove a net_device_stats clear
->=20
-> No need to clear device stats in lec_open()
->=20
-> Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
-
-Applied, thanks!
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
