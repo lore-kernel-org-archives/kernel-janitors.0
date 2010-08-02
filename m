@@ -1,34 +1,63 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:53:16 +0000
-Subject: [PATCH 16/18] staging: sep: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124399-13929-1-git-send-email-segooon@gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Mon, 02 Aug 2010 23:01:29 +0000
+Subject: Re: [PATCH] video: igafb: introduce lost 'return'
+Message-Id: <20100802160129.8ca0cf05.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1280594070-3328-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1280594070-3328-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Ben Hutchings <ben@decadent.org.uk>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error.
+On Sat, 31 Jul 2010 20:34:30 +0400
+Kulikov Vasiliy <segooon@gmail.com> wrote:
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/sep/sep_driver.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+> If iga_init() fails, code releases resources and continues to use it.
+> It seems that after releasing resources 'return' should be.
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+> ---
+>  drivers/video/igafb.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/video/igafb.c b/drivers/video/igafb.c
+> index 15d2001..c4e6fc0 100644
+> --- a/drivers/video/igafb.c
+> +++ b/drivers/video/igafb.c
+> @@ -531,6 +531,7 @@ int __init igafb_init(void)
+>  		iounmap(info->screen_base);
+>  		kfree(par->mmap_map);
+>  		kfree(info);
+> +		return -ENODEV;
+>          }
+>  
+>  #ifdef CONFIG_SPARC
 
-diff --git a/drivers/staging/sep/sep_driver.c b/drivers/staging/sep/sep_driver.c
-index ecbde34..d456729 100644
---- a/drivers/staging/sep/sep_driver.c
-+++ b/drivers/staging/sep/sep_driver.c
-@@ -2614,6 +2614,7 @@ end_function_deallocate_sep_shared_area:
- 	sep_unmap_and_free_shared_area(sep, size);
- end_function_error:
- 	sep_dev = NULL;
-+	pci_disable_device(pdev);
- end_function:
- 	return error;
+Fair enough.
+
+We may as well do this, too:
+
+--- a/drivers/video/igafb.c~drivers-video-igafbc-make-igafb_setup-and-igafb_init-static
++++ a/drivers/video/igafb.c
+@@ -368,7 +368,7 @@ static int __init iga_init(struct fb_inf
+ 	return 1;
  }
--- 
-1.7.0.4
+ 
+-int __init igafb_init(void)
++static int __init igafb_init(void)
+ {
+         struct fb_info *info;
+         struct pci_dev *pdev;
+@@ -557,7 +557,7 @@ int __init igafb_init(void)
+ 	return 0;
+ }
+ 
+-int __init igafb_setup(char *options)
++static int __init igafb_setup(char *options)
+ {
+     char *this_opt;
+ 
+_
 
