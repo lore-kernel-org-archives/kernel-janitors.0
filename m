@@ -1,59 +1,21 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 10 Aug 2010 06:00:12 +0000
-Subject: [patch] Staging: vt6656: problems in error handling
-Message-Id: <20100810060012.GR9031@bicker>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 02 Aug 2010 23:08:55 +0000
+Subject: Re: [patch] hp100: unmap memory on error path
+Message-Id: <20100802.160855.214222892.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100730090604.GY26313@bicker>
+In-Reply-To: <20100730090604.GY26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Andres More <more.andres@gmail.com>, Forest Bond <forest@alittletooquiet.net>, Jim Lieb <lieb@canonical.com>, devel@driverdev.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: error27@gmail.com
+Cc: perex@perex.cz, jpirko@redhat.com, shemminger@vyatta.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The first kfree(pDevice) is pointless because pDevice is NULL.  The
-second kfree(pDevice) is a double free because pDevice is the driver's
-private data and that is already freed by free_netdev(netdev).  Also the
-free_netdev() error path doesn't call usb_put_dev().
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 30 Jul 2010 11:06:04 +0200
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+> There was an error path where "mem_ptr_virt" didn't get unmapped.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index c528ef0..4fdf837 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -771,10 +771,9 @@ vt6656_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 
- 	udev = usb_get_dev(udev);
- 	netdev = alloc_etherdev(sizeof(DEVICE_INFO));
--
- 	if (!netdev) {
- 		printk(KERN_ERR DEVICE_NAME ": allocate net device failed\n");
--		kfree(pDevice);
-+		rc = -ENOMEM;
- 		goto err_nomem;
- 	}
- 
-@@ -800,9 +799,7 @@ vt6656_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	rc = register_netdev(netdev);
- 	if (rc) {
- 		printk(KERN_ERR DEVICE_NAME " Failed to register netdev\n");
--		free_netdev(netdev);
--		kfree(pDevice);
--		return -ENODEV;
-+		goto err_netdev;
- 	}
- 
- 	usb_device_reset(pDevice);
-@@ -820,10 +817,12 @@ vt6656_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 
- 	return 0;
- 
-+err_netdev:
-+	free_netdev(netdev);
- err_nomem:
- 	usb_put_dev(udev);
- 
--	return -ENOMEM;
-+	return rc;
- }
- 
- static void device_free_tx_bufs(PSDevice pDevice)
+Applied, thanks Dan.
