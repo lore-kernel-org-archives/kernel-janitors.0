@@ -1,111 +1,81 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 16 Aug 2010 16:26:36 +0000
-Subject: [PATCH 7/16] drivers/staging: Use available error codes
-Message-Id: <Pine.LNX.4.64.1008161826140.19313@ask.diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 03 Aug 2010 15:42:34 +0000
+Subject: [PATCH 02/11] agp: intel-agp: do not use PCI resources before pci_enable_device()
+Message-Id: <1280850154-5010-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>, Zhenyu Wang <zhenyuw@linux.intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@redhat.com>, David Woodhouse <David.Woodhouse@intel.com>, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-
-An error code is stored in a variable, but 0 is returned instead.  Use the
-variable instead of 0.
+IRQ and resource[] may not have correct values until
+after PCI hotplug setup occurs at pci_enable_device() time.
 
 The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r@
-local idexpression x;
-constant C;
+@@
+identifier x;
+identifier request ~= "pci_request.*|pci_resource.*";
 @@
 
-if (...) { ...
-  x = -C
-  ... when != x
 (
-  return <+...x...+>;
+* x->irq
 |
-  return NULL;
+* x->resource
 |
-  return;
-|
-* return ...;
+* request(x, ...)
 )
-}
+ ...
+*pci_enable_device(x)
 // </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
-This changes the semantics and is not tested.
+ drivers/char/agp/intel-agp.c |   22 +++++++++++-----------
+ 1 files changed, 11 insertions(+), 11 deletions(-)
 
- drivers/staging/lirc/lirc_sasem.c |    2 +-
- drivers/staging/sep/sep_driver.c  |    4 ++--
- drivers/staging/vt6655/iwctl.c    |    2 +-
- drivers/staging/vt6656/iwctl.c    |    2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/staging/lirc/lirc_sasem.c b/drivers/staging/lirc/lirc_sasem.c
-index 73166c3..856487e 100644
---- a/drivers/staging/lirc/lirc_sasem.c
-+++ b/drivers/staging/lirc/lirc_sasem.c
-@@ -512,7 +512,7 @@ exit:
- 	mutex_unlock(&context->ctx_lock);
+diff --git a/drivers/char/agp/intel-agp.c b/drivers/char/agp/intel-agp.c
+index d836a71..237dd23 100644
+--- a/drivers/char/agp/intel-agp.c
++++ b/drivers/char/agp/intel-agp.c
+@@ -908,6 +908,17 @@ static int __devinit agp_intel_probe(struct pci_dev *pdev,
+ 	dev_info(&pdev->dev, "Intel %s Chipset\n", intel_agp_chipsets[i].name);
  
- 	mutex_unlock(&disconnect_lock);
--	return 0;
-+	return retval;
- }
- 
- /**
-diff --git a/drivers/staging/sep/sep_driver.c b/drivers/staging/sep/sep_driver.c
-index ecbde34..604965c 100644
---- a/drivers/staging/sep/sep_driver.c
-+++ b/drivers/staging/sep/sep_driver.c
-@@ -844,7 +844,7 @@ static int sep_lock_kernel_pages(struct sep_device *sep,
- 	*page_array_ptr = 0;
- end_function:
- 	dbg("SEP Driver:<-------- sep_lock_kernel_pages end\n");
--	return 0;
-+	return error;
- }
- 
- /*
-@@ -972,7 +972,7 @@ end_function_with_error1:
- 	kfree(page_array);
- end_function:
- 	dbg("SEP Driver:<-------- sep_lock_user_pages end\n");
--	return 0;
-+	return error;
- }
- 
- 
-diff --git a/drivers/staging/vt6655/iwctl.c b/drivers/staging/vt6655/iwctl.c
-index 4322761..4009c0b 100644
---- a/drivers/staging/vt6655/iwctl.c
-+++ b/drivers/staging/vt6655/iwctl.c
-@@ -1900,7 +1900,7 @@ int iwctl_siwgenie(struct net_device *dev,
+ 	/*
++	* If the device has not been properly setup, the following will catch
++	* the problem and should stop the system from crashing.
++	* 20030610 - hamish@zot.org
++	*/
++	if (pci_enable_device(pdev)) {
++		dev_err(&pdev->dev, "can't enable PCI device\n");
++		agp_put_bridge(bridge);
++		return -ENODEV;
++	}
++
++	/*
+ 	* The following fixes the case where the BIOS has "forgotten" to
+ 	* provide an address range for the GART.
+ 	* 20030610 - hamish@zot.org
+@@ -921,17 +932,6 @@ static int __devinit agp_intel_probe(struct pci_dev *pdev,
+ 		}
  	}
  
- 	out://not completely ...not necessary in wpa_supplicant 0.5.8
--	return 0;
-+	return ret;
- }
- 
- int iwctl_giwgenie(struct net_device *dev,
-diff --git a/drivers/staging/vt6656/iwctl.c b/drivers/staging/vt6656/iwctl.c
-index 016b8e7..8fb6518 100644
---- a/drivers/staging/vt6656/iwctl.c
-+++ b/drivers/staging/vt6656/iwctl.c
-@@ -1726,7 +1726,7 @@ int iwctl_siwgenie(struct net_device *dev,
- 	}
- 
- 	out://not completely ...not necessary in wpa_supplicant 0.5.8
--	return 0;
-+	return ret;
- }
- 
- int iwctl_giwgenie(struct net_device *dev,
+-	/*
+-	* If the device has not been properly setup, the following will catch
+-	* the problem and should stop the system from crashing.
+-	* 20030610 - hamish@zot.org
+-	*/
+-	if (pci_enable_device(pdev)) {
+-		dev_err(&pdev->dev, "can't enable PCI device\n");
+-		agp_put_bridge(bridge);
+-		return -ENODEV;
+-	}
+-
+ 	/* Fill in the mode register */
+ 	if (cap_ptr) {
+ 		pci_read_config_dword(pdev,
+-- 
+1.7.0.4
+
