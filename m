@@ -1,90 +1,58 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:23:34 +0000
-Subject: [PATCH 22/42] drivers/scsi/lpfc: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052223170.31692@ask.diku.dk>
+Date: Tue, 03 Aug 2010 21:34:00 +0000
+Subject: [PATCH 5/9] drivers/spi: Drop unnecessary null test
+Message-Id: <Pine.LNX.4.64.1008032333440.20393@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@emulex.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Brownell <dbrownell@users.sourceforge.net>, Grant Likely <grant.likely@secretlab.ca>, spi-devel-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger
 
 From: Julia Lawall <julia@diku.dk>
 
-In lpfc_init.c, the call to lpfc_destroy_vport_work_array only has an
-effect if vports is not NULL, so move it into the if branch that it is
-already aligned with.
+list_for_each_entry binds its first argument to a non-null value, and thus
+any null test on the value of that argument is superfluous.
 
-In lpfc_vport.c, ndlp has already been tested, so it is only useful to test
-it again in the if branch that it is already aligned with.
-
-The semantic match that finds this problem is as follows:
+The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
+@@
+iterator I;
+expression x,E;
 @@
 
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
+I(x,...) { <...
+- (x != NULL) &&
+  E
+  ...> }
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/lpfc/lpfc_init.c  |    3 ++-
- drivers/scsi/lpfc/lpfc_vport.c |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/spi/orion_spi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 2786ee3..6f4bd5e 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -2368,7 +2368,7 @@ lpfc_online(struct lpfc_hba *phba)
- 	}
- 
- 	vports = lpfc_create_vport_work_array(phba);
--	if (vports != NULL)
-+	if (vports != NULL) {
- 		for (i = 0; i <= phba->max_vports && vports[i] != NULL; i++) {
- 			struct Scsi_Host *shost;
- 			shost = lpfc_shost_from_vport(vports[i]);
-@@ -2381,6 +2381,7 @@ lpfc_online(struct lpfc_hba *phba)
- 			spin_unlock_irq(shost->host_lock);
+diff --git a/drivers/spi/orion_spi.c b/drivers/spi/orion_spi.c
+index 3aea50d..0b677dc 100644
+--- a/drivers/spi/orion_spi.c
++++ b/drivers/spi/orion_spi.c
+@@ -404,7 +404,7 @@ static int orion_spi_transfer(struct spi_device *spi, struct spi_message *m)
+ 			goto msg_rejected;
  		}
- 		lpfc_destroy_vport_work_array(phba, vports);
-+	}
  
- 	lpfc_unblock_mgmt_io(phba);
- 	return 0;
-diff --git a/drivers/scsi/lpfc/lpfc_vport.c b/drivers/scsi/lpfc/lpfc_vport.c
-index 1655507..8420d19 100644
---- a/drivers/scsi/lpfc/lpfc_vport.c
-+++ b/drivers/scsi/lpfc/lpfc_vport.c
-@@ -690,11 +690,12 @@ lpfc_vport_delete(struct fc_vport *fc_vport)
- 			/* Indicate free memory when release */
- 			NLP_SET_FREE_REQ(ndlp);
- 		} else {
--			if (!NLP_CHK_NODE_ACT(ndlp))
-+			if (!NLP_CHK_NODE_ACT(ndlp)) {
- 				ndlp = lpfc_enable_node(vport, ndlp,
- 						NLP_STE_UNUSED_NODE);
- 				if (!ndlp)
- 					goto skip_logo;
-+			}
+-		if ((t != NULL) && t->bits_per_word)
++		if (t->bits_per_word)
+ 			bits_per_word = t->bits_per_word;
  
- 			/* Remove ndlp from vport npld list */
- 			lpfc_dequeue_node(vport, ndlp);
+ 		if ((bits_per_word != 8) && (bits_per_word != 16)) {
+@@ -415,7 +415,7 @@ static int orion_spi_transfer(struct spi_device *spi, struct spi_message *m)
+ 			goto msg_rejected;
+ 		}
+ 		/*make sure buffer length is even when working in 16 bit mode*/
+-		if ((t != NULL) && (t->bits_per_word = 16) && (t->len & 1)) {
++		if ((t->bits_per_word = 16) && (t->len & 1)) {
+ 			dev_err(&spi->dev,
+ 				"message rejected : "
+ 				"odd data length (%d) while in 16 bit mode\n",
