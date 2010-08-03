@@ -1,72 +1,36 @@
-From: "Desai, Kashyap" <Kashyap.Desai@lsi.com>
-Date: Mon, 09 Aug 2010 14:31:40 +0000
-Subject: RE: [PATCH 34/42] drivers/message/fusion: Adjust confusing if
-Message-Id: <1C9608B8A4CD534FB19C7C7543CBB24902991CD598@inbmail02.lsi.com>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Tue, 03 Aug 2010 01:10:22 +0000
+Subject: [PATCH] wireless: ipw2100: check result of kzalloc()
+Message-Id: <1280797822.11158.55.camel@lovely.krouter>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052226570.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052226570.31692@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, "Moore, Eric" <Eric.Moore@lsi.com>, "Support, Software" <support@lsi.com>, DL-MPT Fusion Linux <DL-MPTFusionLinux@lsi.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: kernel-janitors <kernel-janitors@vger.kernel.org>, Zhu Yi <yi.zhu@intel.com>, "David S. Miller" <davem@davemloft.net>, Reinette Chatre <reinette.chatre@intel.com>, linux-wireless <linux-wireless@vger.kernel.org>
+
+If kzalloc() fails return with -ENOMEM from ipw2100_net_init() which is
+called by register_netdev.
+
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+---
+ drivers/net/wireless/ipw2x00/ipw2100.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/wireless/ipw2x00/ipw2100.c b/drivers/net/wireless/ipw2x00/ipw2100.c
+index 0bd4dfa..908c176 100644
+--- a/drivers/net/wireless/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/ipw2x00/ipw2100.c
+@@ -1924,6 +1924,8 @@ static int ipw2100_net_init(struct net_device *dev)
+ 		bg_band->channels  			kzalloc(geo->bg_channels *
+ 				sizeof(struct ieee80211_channel), GFP_KERNEL);
++		if (!bg_band->channels)
++			return -ENOMEM;
+ 		/* translate geo->bg to bg_band.channels */
+ 		for (i = 0; i < geo->bg_channels; i++) {
+ 			bg_band->channels[i].band = IEEE80211_BAND_2GHZ;
+-- 
+1.7.1
 
 
 
-> -----Original Message-----
-> From: Julia Lawall [mailto:julia@diku.dk]
-> Sent: Friday, August 06, 2010 1:57 AM
-> To: Moore, Eric; Support, Software; DL-MPT Fusion Linux; linux-
-> scsi@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [PATCH 34/42] drivers/message/fusion: Adjust confusing if
-> indentation
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Indent the branch of an if.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable braces4@
-> position p1,p2;
-> statement S1,S2;
-> @@
-> 
-> (
-> if (...) { ... }
-> |
-> if (...) S1@p1 S2@p2
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> if (p1[0].column = p2[0].column):
->   cocci.print_main("branch",p1)
->   cocci.print_secs("after",p2)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/message/fusion/mptbase.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/message/fusion/mptbase.c
-> b/drivers/message/fusion/mptbase.c
-> index d8c668d..92e4b25 100644
-> --- a/drivers/message/fusion/mptbase.c
-> +++ b/drivers/message/fusion/mptbase.c
-> @@ -8049,7 +8049,7 @@ union loginfo_type {
->  			code_desc = ir_code_str[sas_loginfo.dw.code];
->  			if (sas_loginfo.dw.subcode >>  			    ARRAY_SIZE(raid_sub_code_str))
-> -			break;
-> +				break;
-Agree. Please consider this patch as an ACKed.
-Thanks, Kashyap
->  			if (sas_loginfo.dw.code = 0)
->  				sub_code_desc >  				    raid_sub_code_str[sas_loginfo.dw.subcode];
