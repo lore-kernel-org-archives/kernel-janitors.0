@@ -1,30 +1,101 @@
-From: James Smart <james.smart@emulex.com>
-Date: Mon, 09 Aug 2010 14:03:26 +0000
-Subject: Re: [patch] lpfc: change spin_lock_irq() to spin_lock()
-Message-Id: <4C600AAE.8030507@emulex.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 03 Aug 2010 15:43:22 +0000
+Subject: [PATCH 06/11] rt2x00: do not use PCI resources before pci_enable_device()
+Message-Id: <1280850203-5532-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100807221517.GC9031@bicker>
-In-Reply-To: <20100807221517.GC9031@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, James Smart <james.smart@emulex.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Alex Iannicelli <alex.iannicelli@emulex.com>, linux-scsi@v
+To: kernel-janitors@vger.kernel.org
+Cc: Ivo van Doorn <IvDoorn@gmail.com>, Gertjan van Wingerde <gwingerde@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, Helmut Schaa <helmut.schaa@googlemail.com>, Alban Browaeys <prahal@yahoo.com>, linux-wireless@vger.kernel.org, users@rt2x00.serialmonkey.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+IRQ and resource[] may not have correct values until
+after PCI hotplug setup occurs at pci_enable_device() time.
 
+The semantic match that finds this problem is as follows:
 
-Dan Carpenter wrote:
-> In lpfc_cleanup_pending_mbox() we already have IRQs disabled so we don't
-> need to disable them again.
-> 
-> Also in lpfc_sli_intr_handler() there is a typo where it has
-> spin_unlock_irq() instead of just spin_unlock().
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+// <smpl>
+@@
+identifier x;
+identifier request ~= "pci_request.*|pci_resource.*";
+@@
 
-Acked-by: James Smart <james.smart@emulex.com>
+(
+* x->irq
+|
+* x->resource
+|
+* request(x, ...)
+)
+ ...
+*pci_enable_device(x)
+// </smpl>
 
-Thank You.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/wireless/rt2x00/rt2x00pci.c |   21 ++++++++++-----------
+ 1 files changed, 10 insertions(+), 11 deletions(-)
 
--- james s
+diff --git a/drivers/net/wireless/rt2x00/rt2x00pci.c b/drivers/net/wireless/rt2x00/rt2x00pci.c
+index 19b262e..63c2cc4 100644
+--- a/drivers/net/wireless/rt2x00/rt2x00pci.c
++++ b/drivers/net/wireless/rt2x00/rt2x00pci.c
+@@ -240,16 +240,16 @@ int rt2x00pci_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
+ 	struct rt2x00_dev *rt2x00dev;
+ 	int retval;
+ 
+-	retval = pci_request_regions(pci_dev, pci_name(pci_dev));
++	retval = pci_enable_device(pci_dev);
+ 	if (retval) {
+-		ERROR_PROBE("PCI request regions failed.\n");
++		ERROR_PROBE("Enable device failed.\n");
+ 		return retval;
+ 	}
+ 
+-	retval = pci_enable_device(pci_dev);
++	retval = pci_request_regions(pci_dev, pci_name(pci_dev));
+ 	if (retval) {
+-		ERROR_PROBE("Enable device failed.\n");
+-		goto exit_release_regions;
++		ERROR_PROBE("PCI request regions failed.\n");
++		goto exit_disable_device;
+ 	}
+ 
+ 	pci_set_master(pci_dev);
+@@ -260,14 +260,14 @@ int rt2x00pci_probe(struct pci_dev *pci_dev, const struct pci_device_id *id)
+ 	if (dma_set_mask(&pci_dev->dev, DMA_BIT_MASK(32))) {
+ 		ERROR_PROBE("PCI DMA not supported.\n");
+ 		retval = -EIO;
+-		goto exit_disable_device;
++		goto exit_release_regions;
+ 	}
+ 
+ 	hw = ieee80211_alloc_hw(sizeof(struct rt2x00_dev), ops->hw);
+ 	if (!hw) {
+ 		ERROR_PROBE("Failed to allocate hardware.\n");
+ 		retval = -ENOMEM;
+-		goto exit_disable_device;
++		goto exit_release_regions;
+ 	}
+ 
+ 	pci_set_drvdata(pci_dev, hw);
+@@ -300,13 +300,12 @@ exit_free_reg:
+ exit_free_device:
+ 	ieee80211_free_hw(hw);
+ 
+-exit_disable_device:
+-	if (retval != -EBUSY)
+-		pci_disable_device(pci_dev);
+-
+ exit_release_regions:
+ 	pci_release_regions(pci_dev);
+ 
++exit_disable_device:
++	pci_disable_device(pci_dev);
++
+ 	pci_set_drvdata(pci_dev, NULL);
+ 
+ 	return retval;
+-- 
+1.7.0.4
+
