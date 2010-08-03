@@ -1,43 +1,64 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Tue, 03 Aug 2010 10:28:42 +0000
-Subject: Re: [PATCH] wireless: ipw2100: check result of kzalloc()
-Message-Id: <1280831322.3034.7.camel@lovely.krouter>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 03 Aug 2010 15:44:13 +0000
+Subject: [PATCH 07/11] parisc: superio: do not use PCI resources before pci_enable_device()
+Message-Id: <1280850253-6128-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280797822.11158.55.camel@lovely.krouter>
-	 <20100803081701.GP26313@bicker>
-In-Reply-To: <20100803081701.GP26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, kernel-janitors <kernel-janitors@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Reinette Chatre <reinette.chatre@intel.com>, linux-wireless <linux-wireless@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
+Cc: Kyle McMartin <kyle@mcmartin.ca>, Helge Deller <deller@gmx.de>, "James E.J. Bottomley" <jejb@parisc-linux.org>, Frans Pop <elendil@planet.nl>, Thomas Gleixner <tglx@linutronix.de>, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2010-08-03 at 10:17 +0200, Dan Carpenter wrote:
-> On Tue, Aug 03, 2010 at 03:10:22AM +0200, Christoph Fritz wrote:
-> > If kzalloc() fails return with -ENOMEM from ipw2100_net_init() which is
-> > called by register_netdev.
-> > 
-> > Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
-> > ---
-> >  drivers/net/wireless/ipw2x00/ipw2100.c |    2 ++
-> >  1 files changed, 2 insertions(+), 0 deletions(-)
-> > 
-> > diff --git a/drivers/net/wireless/ipw2x00/ipw2100.c b/drivers/net/wireless/ipw2x00/ipw2100.c
-> > index 0bd4dfa..908c176 100644
-> > --- a/drivers/net/wireless/ipw2x00/ipw2100.c
-> > +++ b/drivers/net/wireless/ipw2x00/ipw2100.c
-> > @@ -1924,6 +1924,8 @@ static int ipw2100_net_init(struct net_device *dev)
-> >  		bg_band->channels > >  			kzalloc(geo->bg_channels *
-> >  				sizeof(struct ieee80211_channel), GFP_KERNEL);
-> > +		if (!bg_band->channels)
-> 
-> There should be an "ipw2100_down(priv);" on the error path here.
+IRQ and resource[] may not have correct values until
+after PCI hotplug setup occurs at pci_enable_device() time.
 
-thanks for pointing this out, I'll add this.
+The semantic match that finds this problem is as follows:
 
-> 
-> > +			return -ENOMEM;
-> >  		/* translate geo->bg to bg_band.channels */
-> 
+// <smpl>
+@@
+identifier x;
+identifier request ~= "pci_request.*|pci_resource.*";
+@@
 
+(
+* x->irq
+|
+* x->resource
+|
+* request(x, ...)
+)
+ ...
+*pci_enable_device(x)
+// </smpl>
+
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/parisc/superio.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/parisc/superio.c b/drivers/parisc/superio.c
+index f7806d8..c8a36a2 100644
+--- a/drivers/parisc/superio.c
++++ b/drivers/parisc/superio.c
+@@ -169,8 +169,6 @@ superio_init(struct pci_dev *pcidev)
+ 	/* ...then properly fixup the USB to point at suckyio PIC */
+ 	sio->usb_pdev->irq = superio_fixup_irq(sio->usb_pdev);
+ 
+-	printk(KERN_INFO PFX "Found NS87560 Legacy I/O device at %s (IRQ %i)\n",
+-	       pci_name(pdev), pdev->irq);
+ 
+ 	pci_read_config_dword (pdev, SIO_SP1BAR, &sio->sp1_base);
+ 	sio->sp1_base &= ~1;
+@@ -204,6 +202,9 @@ superio_init(struct pci_dev *pcidev)
+ 	ret = pci_enable_device(pdev);
+ 	BUG_ON(ret < 0);	/* not too much we can do about this... */
+ 
++	printk(KERN_INFO PFX "Found NS87560 Legacy I/O device at %s (IRQ %i)\n",
++	       pci_name(pdev), pdev->irq);
++
+ 	/*
+ 	 * Next project is programming the onboard interrupt controllers.
+ 	 * PDC hasn't done this for us, since it's using polled I/O.
+-- 
+1.7.0.4
 
