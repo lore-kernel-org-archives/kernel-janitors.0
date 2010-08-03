@@ -1,52 +1,107 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 28 Aug 2010 15:41:06 +0000
-Subject: [PATCH 7/7] net/wireless: Remove double test
-Message-Id: <1283010066-20935-8-git-send-email-julia@diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 03 Aug 2010 15:43:11 +0000
+Subject: [PATCH 03/11] cxgb3: do not use PCI resources before pci_enable_device()
+Message-Id: <1280850192-5408-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283010066-20935-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1283010066-20935-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Divy Le Ray <divy@chelsio.com>, "David S. Miller" <davem@davemloft.net>, Roland Dreier <rolandd@cisco.com>, Steve Wise <swise@opengridcomputing.com>, Ben Hutchings <ben@decadent.org.uk>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The same expression is tested twice and the result is the same each time.
+IRQ and resource[] may not have correct values until
+after PCI hotplug setup occurs at pci_enable_device() time.
 
-The sematic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+The semantic match that finds this problem is as follows:
 
 // <smpl>
-@expression@
-expression E;
+@@
+identifier x;
+identifier request ~= "pci_request.*|pci_resource.*";
 @@
 
 (
-* E
-  || ... || E
+* x->irq
 |
-* E
-  && ... && E
+* x->resource
+|
+* request(x, ...)
 )
+ ...
+*pci_enable_device(x)
 // </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- net/wireless/wext-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/cxgb3/cxgb3_main.c |   25 +++++++++++++------------
+ 1 files changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
-index 0ef17bc..4038593 100644
---- a/net/wireless/wext-core.c
-+++ b/net/wireless/wext-core.c
-@@ -611,7 +611,7 @@ struct iw_statistics *get_wireless_stats(struct net_device *dev)
- #endif
+diff --git a/drivers/net/cxgb3/cxgb3_main.c b/drivers/net/cxgb3/cxgb3_main.c
+index 066fd5b..ad19585 100644
+--- a/drivers/net/cxgb3/cxgb3_main.c
++++ b/drivers/net/cxgb3/cxgb3_main.c
+@@ -3198,17 +3198,17 @@ static int __devinit init_one(struct pci_dev *pdev,
+ 		}
+ 	}
  
- #ifdef CONFIG_CFG80211_WEXT
--	if (dev->ieee80211_ptr && dev->ieee80211_ptr &&
-+	if (dev->ieee80211_ptr &&
- 	    dev->ieee80211_ptr->wiphy &&
- 	    dev->ieee80211_ptr->wiphy->wext &&
- 	    dev->ieee80211_ptr->wiphy->wext->get_wireless_stats)
+-	err = pci_request_regions(pdev, DRV_NAME);
++	err = pci_enable_device(pdev);
+ 	if (err) {
+-		/* Just info, some other driver may have claimed the device. */
+-		dev_info(&pdev->dev, "cannot obtain PCI resources\n");
+-		return err;
++		dev_err(&pdev->dev, "cannot enable PCI device\n");
++		goto out;
+ 	}
+ 
+-	err = pci_enable_device(pdev);
++	err = pci_request_regions(pdev, DRV_NAME);
+ 	if (err) {
+-		dev_err(&pdev->dev, "cannot enable PCI device\n");
+-		goto out_release_regions;
++		/* Just info, some other driver may have claimed the device. */
++		dev_info(&pdev->dev, "cannot obtain PCI resources\n");
++		goto out_disable_device;
+ 	}
+ 
+ 	if (!pci_set_dma_mask(pdev, DMA_BIT_MASK(64))) {
+@@ -3217,11 +3217,11 @@ static int __devinit init_one(struct pci_dev *pdev,
+ 		if (err) {
+ 			dev_err(&pdev->dev, "unable to obtain 64-bit DMA for "
+ 			       "coherent allocations\n");
+-			goto out_disable_device;
++			goto out_release_regions;
+ 		}
+ 	} else if ((err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32))) != 0) {
+ 		dev_err(&pdev->dev, "no usable DMA configuration\n");
+-		goto out_disable_device;
++		goto out_release_regions;
+ 	}
+ 
+ 	pci_set_master(pdev);
+@@ -3234,7 +3234,7 @@ static int __devinit init_one(struct pci_dev *pdev,
+ 	adapter = kzalloc(sizeof(*adapter), GFP_KERNEL);
+ 	if (!adapter) {
+ 		err = -ENOMEM;
+-		goto out_disable_device;
++		goto out_release_regions;
+ 	}
+ 
+ 	adapter->nofail_skb @@ -3370,11 +3370,12 @@ out_free_dev:
+ out_free_adapter:
+ 	kfree(adapter);
+ 
+-out_disable_device:
+-	pci_disable_device(pdev);
+ out_release_regions:
+ 	pci_release_regions(pdev);
++out_disable_device:
++	pci_disable_device(pdev);
+ 	pci_set_drvdata(pdev, NULL);
++out:
+ 	return err;
+ }
+ 
+-- 
+1.7.0.4
 
