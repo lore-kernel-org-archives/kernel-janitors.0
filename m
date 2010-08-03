@@ -1,21 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 02 Aug 2010 23:08:55 +0000
-Subject: Re: [patch] hp100: unmap memory on error path
-Message-Id: <20100802.160855.214222892.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 03 Aug 2010 21:34:16 +0000
+Subject: [PATCH 6/9] fs/dlm: Drop unnecessary null test
+Message-Id: <Pine.LNX.4.64.1008032334010.20393@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100730090604.GY26313@bicker>
-In-Reply-To: <20100730090604.GY26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: perex@perex.cz, jpirko@redhat.com, shemminger@vyatta.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christine Caulfield <ccaulfie@redhat.com>, David Teigland <teigland@redhat.com>, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 30 Jul 2010 11:06:04 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> There was an error path where "mem_ptr_virt" didn't get unmapped.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+hlist_for_each_entry binds its first argument to a non-null value, and thus
+any null test on the value of that argument is superfluous.
 
-Applied, thanks Dan.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+iterator I;
+expression x,E,E1,E2;
+statement S,S1,S2;
+@@
+
+I(x,...) { <...
+- (x != NULL) &&
+  E
+  ...> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/dlm/lowcomms.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index c0d35c6..37a34c2 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -248,7 +248,7 @@ static struct connection *assoc2con(int assoc_id)
+ 
+ 	for (i = 0 ; i < CONN_HASH_SIZE; i++) {
+ 		hlist_for_each_entry(con, h, &connection_hash[i], list) {
+-			if (con && con->sctp_assoc = assoc_id) {
++			if (con->sctp_assoc = assoc_id) {
+ 				mutex_unlock(&connections_lock);
+ 				return con;
+ 			}
