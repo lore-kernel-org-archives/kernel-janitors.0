@@ -1,25 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 24 Aug 2010 21:51:03 +0000
-Subject: Re: [patch 4/4] pxa168_eth: silence gcc warnings
-Message-Id: <20100824.145103.70214095.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 03 Aug 2010 21:35:17 +0000
+Subject: [PATCH 8/9] arch/powerpc/kernel: Drop unnecessary null test
+Message-Id: <Pine.LNX.4.64.1008032334420.20393@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100824165505.GK29330@bicker>
-In-Reply-To: <20100824165505.GK29330@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: ssanap@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 24 Aug 2010 18:55:05 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> Casting "pep->tx_desc_dma" to to a struct tx_desc pointer makes gcc
-> complain:
-> 
-> drivers/net/pxa168_eth.c:657: warning:
-> 	cast to pointer from integer of different size
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+list_for_each_entry binds its first argument to a non-null value, and thus
+any null test on the value of that argument is superfluous.
 
-Applied.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+iterator I;
+expression x,E,E1,E2;
+statement S,S1,S2;
+@@
+
+I(x,...) { <...
+- if (x != NULL || ...)
+  S
+  ...> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/powerpc/kernel/pci_of_scan.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/kernel/pci_of_scan.c b/arch/powerpc/kernel/pci_of_scan.c
+index 6ddb795..62dd363 100644
+--- a/arch/powerpc/kernel/pci_of_scan.c
++++ b/arch/powerpc/kernel/pci_of_scan.c
+@@ -336,8 +336,7 @@ static void __devinit __of_scan_bus(struct device_node *node,
+ 		if (dev->hdr_type = PCI_HEADER_TYPE_BRIDGE ||
+ 		    dev->hdr_type = PCI_HEADER_TYPE_CARDBUS) {
+ 			struct device_node *child = pci_device_to_OF_node(dev);
+-			if (dev)
+-				of_scan_pci_bridge(child, dev);
++			of_scan_pci_bridge(child, dev);
+ 		}
+ 	}
+ }
