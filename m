@@ -1,35 +1,81 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 10 Aug 2010 18:54:23 +0000
-Subject: [patch] V4L/DVB: tm6000: remove unneeded NULL check
-Message-Id: <20100810185423.GH18431@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 03 Aug 2010 15:42:30 +0000
+Subject: [PATCH 01/11] agp: efficeon-agp: do not use PCI resources before pci_enable_device()
+Message-Id: <1280850150-4967-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org
 
-We're testing the wrong variable here, and anyway list_entry() never
-returns NULL.  We already verified that the list is not empty.
+IRQ and resource[] may not have correct values until
+after PCI hotplug setup occurs at pci_enable_device() time.
 
-This was added by: 721f507b694f "V4L/DVB (12842): tm6000: avoid kernel
-panic while retrieving the filling buffer"
+The semantic match that finds this problem is as follows:
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+// <smpl>
+@@
+identifier x;
+identifier request ~= "pci_request.*|pci_resource.*";
+@@
+
+(
+* x->irq
+|
+* x->resource
+|
+* request(x, ...)
+)
+ ...
+*pci_enable_device(x)
+// </smpl>
+
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
-It could be that this is really trying to check if it's the last item in
-the list?  In that case the fix is more complicated.
+ drivers/char/agp/efficeon-agp.c |   22 +++++++++++-----------
+ 1 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/tm6000/tm6000-video.c b/drivers/staging/tm6000/tm6000-video.c
-index ce0a089..cbd89ad 100644
---- a/drivers/staging/tm6000/tm6000-video.c
-+++ b/drivers/staging/tm6000/tm6000-video.c
-@@ -145,9 +145,6 @@ static inline void get_next_buf(struct tm6000_dmaqueue *dma_q,
- 	*buf = list_entry(dma_q->active.next,
- 			struct tm6000_buffer, vb.queue);
+diff --git a/drivers/char/agp/efficeon-agp.c b/drivers/char/agp/efficeon-agp.c
+index aa109cb..d607f53 100644
+--- a/drivers/char/agp/efficeon-agp.c
++++ b/drivers/char/agp/efficeon-agp.c
+@@ -372,6 +372,17 @@ static int __devinit agp_efficeon_probe(struct pci_dev *pdev,
+ 	bridge->capndx = cap_ptr;
  
--	if (!buf)
--		return;
+ 	/*
++	* If the device has not been properly setup, the following will catch
++	* the problem and should stop the system from crashing.
++	* 20030610 - hamish@zot.org
++	*/
++	if (pci_enable_device(pdev)) {
++		printk(KERN_ERR PFX "Unable to Enable PCI device\n");
++		agp_put_bridge(bridge);
++		return -ENODEV;
++	}
++
++	/*
+ 	* The following fixes the case where the BIOS has "forgotten" to
+ 	* provide an address range for the GART.
+ 	* 20030610 - hamish@zot.org
+@@ -385,17 +396,6 @@ static int __devinit agp_efficeon_probe(struct pci_dev *pdev,
+ 		}
+ 	}
+ 
+-	/*
+-	* If the device has not been properly setup, the following will catch
+-	* the problem and should stop the system from crashing.
+-	* 20030610 - hamish@zot.org
+-	*/
+-	if (pci_enable_device(pdev)) {
+-		printk(KERN_ERR PFX "Unable to Enable PCI device\n");
+-		agp_put_bridge(bridge);
+-		return -ENODEV;
+-	}
 -
- 	/* Cleans up buffer - Usefull for testing for frame/URB loss */
- 	outp = videobuf_to_vmalloc(&(*buf)->vb);
- 
+ 	/* Fill in the mode register */
+ 	if (cap_ptr) {
+ 		pci_read_config_dword(pdev,
+-- 
+1.7.0.4
+
