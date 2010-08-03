@@ -1,25 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 05 Aug 2010 20:21:55 +0000
-Subject: Re: [patch] isdn: fix information leak
-Message-Id: <20100805.132155.220076581.davem@davemloft.net>
+From: Namhyung Kim <namhyung@gmail.com>
+Date: Tue, 03 Aug 2010 07:25:23 +0000
+Subject: [PATCH 2/2] kprobes: verify jprobe entry point
+Message-Id: <1280820323-18929-2-git-send-email-namhyung@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100805093806.GF9031@bicker>
-In-Reply-To: <20100805093806.GF9031@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 5 Aug 2010 11:38:06 +0200
+verify jprobe's entry point is a function entry point
+using kallsyms' offset value.
 
-> The main motivation of this patch changing strcpy() to strlcpy().  
-> We strcpy() to copy a 48 byte buffers into a 49 byte buffers.  So at
-> best the last byte has leaked information, or maybe there is an
-> overflow?  Anyway, this patch closes the information leaks by zeroing
-> the memory and the calls to strlcpy() prevent overflows. 
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Namhyung Kim <namhyung@gmail.com>
 
-Applied.
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 8f96701..c7295f9 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1334,19 +1334,25 @@ unsigned long __weak arch_deref_entry_point(void *entry)
+ int __kprobes register_jprobes(struct jprobe **jps, int num)
+ {
+ 	struct jprobe *jp;
+-	int ret = 0, i;
++	int ret = -EINVAL, i;
+ 
+ 	if (num <= 0)
+-		return -EINVAL;
++		return ret;
+ 	for (i = 0; i < num; i++) {
+ 		unsigned long addr;
++		unsigned long size, offset;
++		char namebuf[KSYM_NAME_LEN];
++
+ 		jp = jps[i];
+ 		addr = arch_deref_entry_point(jp->entry);
+ 
+-		/* Todo: Verify probepoint is a function entry point */
+-		jp->kp.pre_handler = setjmp_pre_handler;
+-		jp->kp.break_handler = longjmp_break_handler;
+-		ret = register_kprobe(&jp->kp);
++		/* Verify probepoint is a function entry point */
++		if (kallsyms_lookup(addr, &size, &offset, NULL, namebuf) &&
++		    offset = 0) {
++			jp->kp.pre_handler = setjmp_pre_handler;
++			jp->kp.break_handler = longjmp_break_handler;
++			ret = register_kprobe(&jp->kp);
++		}
+ 
+ 		if (ret < 0) {
+ 			if (i > 0)
+-- 
+1.7.0.4
+
