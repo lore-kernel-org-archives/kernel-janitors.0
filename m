@@ -1,25 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 01 Aug 2010 07:32:39 +0000
-Subject: Re: [PATCH] net/rose: Use GFP_ATOMIC
-Message-Id: <20100801.003239.258116208.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 03 Aug 2010 15:43:18 +0000
+Subject: [PATCH 05/11] via-velocity: do not use PCI resources before pci_enable_device()
+Message-Id: <1280850199-5488-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1007311156180.6434@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1007311156180.6434@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: ralf@linux-mips.org, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Francois Romieu <romieu@fr.zoreil.com>, "David S. Miller" <davem@davemloft.net>, Simon Kagstrom <simon.kagstrom@netinsight.net>, Ben Hutchings <ben@decadent.org.uk>, Jiri Pirko <jpirko@redhat.com>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 31 Jul 2010 11:56:39 +0200 (CEST)
+IRQ and resource[] may not have correct values until
+after PCI hotplug setup occurs at pci_enable_device() time.
 
-> The other calls to kmalloc in the same function use GFP_ATOMIC, and indeed
-> two locks are held within the body of the function.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+The semantic match that finds this problem is as follows:
+
+// <smpl>
+@@
+identifier x;
+identifier request ~= "pci_request.*|pci_resource.*";
+@@
+
+(
+* x->irq
+|
+* x->resource
+|
+* request(x, ...)
+)
  ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+*pci_enable_device(x)
+// </smpl>
 
-Applied, thank you!
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/net/via-velocity.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/via-velocity.c b/drivers/net/via-velocity.c
+index 42dffd3..fd69095 100644
+--- a/drivers/net/via-velocity.c
++++ b/drivers/net/via-velocity.c
+@@ -2763,12 +2763,12 @@ static int __devinit velocity_found1(struct pci_dev *pdev, const struct pci_devi
+ 
+ 	vptr->dev = dev;
+ 
+-	dev->irq = pdev->irq;
+-
+ 	ret = pci_enable_device(pdev);
+ 	if (ret < 0)
+ 		goto err_free_dev;
+ 
++	dev->irq = pdev->irq;
++
+ 	ret = velocity_get_pci_info(vptr, pdev);
+ 	if (ret < 0) {
+ 		/* error message already printed */
+-- 
+1.7.0.4
+
