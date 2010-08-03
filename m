@@ -1,15 +1,70 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 17 Aug 2010 08:49:22 +0000
-Subject: Re: [PATCH 31/42] drivers/net: Adjust confusing if indentation
-Message-Id: <20100817.014922.39157339.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Tue, 03 Aug 2010 15:44:16 +0000
+Subject: [PATCH 08/11] x86: intel_ips: do not use PCI resources before pci_enable_device()
+Message-Id: <1280850257-6169-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052226050.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052226050.31692-QfmoRoYWmW9knbxzx/v8hQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia-dAYI7NvHqcQ@public.gmane.org
-Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
+Cc: Matthew Garrett <mjg@redhat.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Jiri Slaby <jslaby@suse.cz>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 
+IRQ and resource[] may not have correct values until
+after PCI hotplug setup occurs at pci_enable_device() time.
 
-Applied.
+The semantic match that finds this problem is as follows:
+
+// <smpl>
+@@
+identifier x;
+identifier request ~= "pci_request.*|pci_resource.*";
+@@
+
+(
+* x->irq
+|
+* x->resource
+|
+* request(x, ...)
+)
+ ...
+*pci_enable_device(x)
+// </smpl>
+
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/platform/x86/intel_ips.c |   11 ++++++-----
+ 1 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
+index 0344822..90c9549 100644
+--- a/drivers/platform/x86/intel_ips.c
++++ b/drivers/platform/x86/intel_ips.c
+@@ -1432,6 +1432,12 @@ static int ips_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 
+ 	spin_lock_init(&ips->turbo_status_lock);
+ 
++	ret = pci_enable_device(dev);
++	if (ret) {
++		dev_err(&dev->dev, "can't enable PCI device, aborting\n");
++		goto error_free;
++	}
++
+ 	if (!pci_resource_start(dev, 0)) {
+ 		dev_err(&dev->dev, "TBAR not assigned, aborting\n");
+ 		ret = -ENXIO;
+@@ -1444,11 +1450,6 @@ static int ips_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 		goto error_free;
+ 	}
+ 
+-	ret = pci_enable_device(dev);
+-	if (ret) {
+-		dev_err(&dev->dev, "can't enable PCI device, aborting\n");
+-		goto error_free;
+-	}
+ 
+ 	ips->regmap = ioremap(pci_resource_start(dev, 0),
+ 			      pci_resource_len(dev, 0));
+-- 
+1.7.0.4
+
