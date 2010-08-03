@@ -1,33 +1,52 @@
-From: wins <kolobo56@cox.net>
-Date: Mon, 23 Aug 2010 06:55:22 +0000
-Subject: Winner
-Message-Id: <20100823025522.YJEJ8.557352.imail@fed1rmwml37>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 03 Aug 2010 21:35:36 +0000
+Subject: [PATCH 9/9] drivers/infiniband/hw/ehca: Drop unnecessary null test
+Message-Id: <Pine.LNX.4.64.1008032335190.20393@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100823023603.73P18.557214.imail@fed1rmwml37>
-In-Reply-To: <20100823023603.73P18.557214.imail@fed1rmwml37>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Hoang-Nam Nguyen <hnguyen-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Christoph Raisch <raisch-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock@gmai>
 
-Your e mail address was choosed  in the UK promo  2010 that was held
-August 18th, and you are to claim the
-sum  of $1,000 000 USD.which means you are one of our five(5) lucky
-recipents . Your winning number is: (CT-222-6747,FGN/P-900-56).
+From: Julia Lawall <julia@diku.dk>
 
+list_for_each_entry binds its first argument to a non-null value, and thus
+any null test on the value of that argument is superfluous.
 
-You are to send us this details
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-NAME IN FULL:
+// <smpl>
+@@
+iterator I;
+expression x;
+statement S,S1,S2;
+@@
 
-DELIVERY ADDRESS:
+I(x,...) { <...
+- if (x = NULL && ...) S
+  ...> }
+// </smpl>
 
-AGE:
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-NATIONALITY: 
+---
+ drivers/infiniband/hw/ehca/ehca_mrmw.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
-OCCUPATION:
-
-PHONE:
-
-SEX:
+diff --git a/drivers/infiniband/hw/ehca/ehca_mrmw.c b/drivers/infiniband/hw/ehca/ehca_mrmw.c
+index 31a68b9..53f4cd4 100644
+--- a/drivers/infiniband/hw/ehca/ehca_mrmw.c
++++ b/drivers/infiniband/hw/ehca/ehca_mrmw.c
+@@ -933,11 +933,6 @@ int ehca_unmap_fmr(struct list_head *fmr_list)
+ 	/* check all FMR belong to same SHCA, and check internal flag */
+ 	list_for_each_entry(ib_fmr, fmr_list, list) {
+ 		prev_shca = shca;
+-		if (!ib_fmr) {
+-			ehca_gen_err("bad fmr=%p in list", ib_fmr);
+-			ret = -EINVAL;
+-			goto unmap_fmr_exit0;
+-		}
+ 		shca = container_of(ib_fmr->device, struct ehca_shca,
+ 				    ib_device);
+ 		e_fmr = container_of(ib_fmr, struct ehca_mr, ib.ib_fmr);
