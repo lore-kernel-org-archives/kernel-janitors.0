@@ -1,18 +1,20 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Tue, 03 Aug 2010 16:35:08 +0000
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Date: Tue, 03 Aug 2010 16:36:05 +0000
 Subject: Re: [PATCH 07/11] parisc: superio: do not use PCI resources before
-Message-Id: <20100803163508.GA7914@albatros>
+Message-Id: <20100803093605.21248480@virtuousgeek.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1280850253-6128-1-git-send-email-segooon@gmail.com>
- <1280851880.2774.36.camel@mulgrave.site>
+	<1280851880.2774.36.camel@mulgrave.site>
 In-Reply-To: <1280851880.2774.36.camel@mulgrave.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: kernel-janitors@vger.kernel.org, Kyle McMartin <kyle@mcmartin.ca>, Helge Deller <deller@gmx.de>, "James E.J. Bottomley" <jejb@parisc-linux.org>, Frans Pop <elendil@planet.nl>, Thomas Gleixner <tglx@linutronix.de>, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Kyle McMartin <kyle@mcmartin.ca>, Helge Deller <deller@gmx.de>, "James E.J. Bottomley" <jejb@parisc-linux.org>, Frans Pop <elendil@planet.nl>, Thomas Gleixner <tglx@linutronix.de>, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 03, 2010 at 11:11 -0500, James Bottomley wrote:
+On Tue, 03 Aug 2010 11:11:20 -0500
+James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+
 > On Tue, 2010-08-03 at 19:44 +0400, Kulikov Vasiliy wrote:
 > >  drivers/parisc/superio.c |    5 +++--
 > >  1 files changed, 3 insertions(+), 2 deletions(-)
@@ -42,11 +44,7 @@ On Tue, Aug 03, 2010 at 11:11 -0500, James Bottomley wrote:
 > >  	 * PDC hasn't done this for us, since it's using polled I/O.
 > 
 > This really makes no sense; we want the information printed before we
-> start all the discovery prints, not after.
-
-Right, I missed it.
-
-> I assume lots of
+> start all the discovery prints, not after.  I assume lots of
 > initialisers want this too, so it looks particularly silly not to have
 > pci_name() returning the correct value until enable time.
 > 
@@ -54,16 +52,12 @@ Right, I missed it.
 > isn't true for parisc, and even for other things, it would be better to
 > print something than nothing.
 
-Not name, but pdev-irq. I was not searching for pci_name() as you can
-see in coccinelle script :)
+Right.  Some of these "enable before use" patches are ok, for example
+in some cases the IRQ may not be fully set up or resources may not be
+enabled, so re-ordering things makes sense.
 
-As it is only printing wrong value, the worst case is fooling user that
-reads logs.
+But just printing these values at init time should be harmless.  So
+perhaps a smarter static check script is in order.
 
-
-Is it OK to move pci_enable_device() just before this printk()?
-
-> 
-> James
-> 
-> 
+-- 
+Jesse Barnes, Intel Open Source Technology Center
