@@ -1,23 +1,96 @@
-From: Jens Axboe <jaxboe@fusionio.com>
-Date: Tue, 03 Aug 2010 10:53:06 +0000
-Subject: Re: [PATCH] cpqarray: check put_user() result
-Message-Id: <4C57F512.5050509@fusionio.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 04 Aug 2010 19:54:26 +0000
+Subject: [PATCH] drivers/staging/iio: call mutex_unlock in error handling
+Message-Id: <Pine.LNX.4.64.1008042153460.30592@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280418885-5630-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280418885-5630-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Chirag Kantharia <chirag.kantharia@hp.com>, Andrew Morton <akpm@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>, "iss_storagedev@hp.com" <iss_storagedev@hp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2010-07-29 17:54, Kulikov Vasiliy wrote:
-> put_user() may fail, if so return -EFAULT.
+From: Julia Lawall <julia@diku.dk>
 
-Applied.
+Adjust the error handling code so that it benefits from the call to
+mutex_unlock at the end of the function.
 
--- 
-Jens Axboe
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@rcu exists@
+position p1;
+expression E;
+@@
 
-Confidentiality Notice: This e-mail message, its contents and any attachments to it are confidential to the intended recipient, and may contain information that is privileged and/or exempt from disclosure under applicable law. If you are not the intended recipient, please immediately notify the sender and destroy the original e-mail message and any attachments (and any copies that may have been made) from your system or otherwise. Any unauthorized use, copying, disclosure or distribution of this information is strictly prohibited.
+mutex_lock@p1(E);
+...
+mutex_unlock(E);
+
+@exists@
+position rcu.p1;
+expression E;
+@@
+
+*mutex_lock@p1(E);
+... when != mutex_unlock(E);
+?*return ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/staging/iio/magnetometer/hmc5843.c     |   25 +++++++++++++------
+ 1 files changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/iio/magnetometer/hmc5843.c b/drivers/staging/iio/magnetometer/hmc5843.c
+index 92f6c6f..ea5f749 100644
+--- a/drivers/staging/iio/magnetometer/hmc5843.c
++++ b/drivers/staging/iio/magnetometer/hmc5843.c
+@@ -220,11 +220,15 @@ static ssize_t hmc5843_set_operating_mode(struct device *dev,
+ 	int error;
+ 	mutex_lock(&data->lock);
+ 	error = strict_strtoul(buf, 10, &operating_mode);
+-	if (error)
+-		return error;
++	if (error) {
++		count = error;
++		goto exit;
++	}
+ 	dev_dbg(dev, "set Conversion mode to %lu\n", operating_mode);
+-	if (operating_mode > MODE_SLEEP)
+-			return -EINVAL;
++	if (operating_mode > MODE_SLEEP) {
++		count = -EINVAL;
++		goto exit;
++	}
+ 
+ 	status = i2c_smbus_write_byte_data(client, this_attr->address,
+ 					operating_mode);
+@@ -437,18 +441,23 @@ static ssize_t set_range(struct device *dev,
+ 	int error;
+ 	mutex_lock(&data->lock);
+ 	error = strict_strtoul(buf, 10, &range);
+-	if (error)
+-		return error;
++	if (error) {
++		count = error;
++		goto exit;
++	}
+ 	dev_dbg(dev, "set range to %lu\n", range);
+ 
+-	if (range > RANGE_6_5)
+-		return -EINVAL;
++	if (range > RANGE_6_5) {
++		count = -EINVAL;
++		goto exit;
++	}
+ 
+ 	data->range = range;
+ 	range = range << RANGE_GAIN_OFFSET;
+ 	if (i2c_smbus_write_byte_data(client, this_attr->address, range))
+ 		count = -EINVAL;
+ 
++exit:
+ 	mutex_unlock(&data->lock);
+ 	return count;
+ 
