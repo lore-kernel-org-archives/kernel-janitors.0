@@ -1,58 +1,52 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:21:02 +0000
-Subject: [PATCH 14/42] drivers/video/aty/mach64_ct.c: Adjust confusing if
-Message-Id: <Pine.LNX.4.64.1008052220440.31692@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 04 Aug 2010 16:29:03 +0000
+Subject: [patch] 9p: remove unneeded checks
+Message-Id: <20100804162903.GB9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+git_t is unsigned an can never be less than zero.
 
-Indent the branch of an if.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
-
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/video/aty/mach64_ct.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/aty/mach64_ct.c b/drivers/video/aty/mach64_ct.c
-index 2745b85..204b580 100644
---- a/drivers/video/aty/mach64_ct.c
-+++ b/drivers/video/aty/mach64_ct.c
-@@ -179,7 +179,7 @@ static int aty_dsp_gt(const struct fb_info *info, u32 bpp, struct pll_ct *pll)
- 		dsp_on = ((multiplier << vshift) + divider) / divider;
- 		tmp = ((ras_multiplier << xshift) + ras_divider) / ras_divider;
- 		if (dsp_on < tmp)
--		dsp_on = tmp;
-+			dsp_on = tmp;
- 		dsp_on = dsp_on + (tmp * 2) + (pll->xclkpagefaultdelay << xshift);
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 6e94f32..b6304b1 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -881,10 +881,6 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir, struct dentry *dentry,
  	}
+ 
+ 	gid = v9fs_get_fsgid_for_create(dir);
+-	if (gid < 0) {
+-		P9_DPRINTK(P9_DEBUG_VFS, "v9fs_get_fsgid_for_create failed\n");
+-		goto error;
+-	}
+ 
+ 	name = (char *) dentry->d_name.name;
+ 	err = p9_client_mkdir_dotl(dfid, name, mode, gid, &qid);
+@@ -1591,11 +1587,6 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
+ 
+ 	gid = v9fs_get_fsgid_for_create(dir);
+ 
+-	if (gid < 0) {
+-		P9_DPRINTK(P9_DEBUG_VFS, "v9fs_get_egid failed %d\n", gid);
+-		goto error;
+-	}
+-
+ 	/* Server doesn't alter fid on TSYMLINK. Hence no need to clone it. */
+ 	err = p9_client_symlink(dfid, name, (char *)symname, gid, &qid);
+ 
+@@ -1859,10 +1850,6 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, int mode,
+ 	}
+ 
+ 	gid = v9fs_get_fsgid_for_create(dir);
+-	if (gid < 0) {
+-		P9_DPRINTK(P9_DEBUG_VFS, "v9fs_get_fsgid_for_create failed\n");
+-		goto error;
+-	}
+ 
+ 	name = (char *) dentry->d_name.name;
  
