@@ -1,99 +1,87 @@
-From: David Brownell <david-b@pacbell.net>
-Date: Sat, 28 Aug 2010 18:24:24 +0000
-Subject: Re: [PATCH 2/7] drivers/usb/gadget/amd5536udc.c: Remove double test
-Message-Id: <634098.18332.qm@web180309.mail.gq1.yahoo.com>
+From: Namhyung Kim <namhyung@gmail.com>
+Date: Wed, 04 Aug 2010 16:09:41 +0000
+Subject: [PATCH] kprobes: minor code cleanups
+Message-Id: <1280938181-25878-1-git-send-email-namhyung@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.1008281846170.13508@ask.diku.dk>
-References: <Pine.LNX.4.64.1008281846170.13508@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008281846170.13508@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>, Julia Lawall <julia@diku.dk>
-Cc: Thomas Dahlmann <dahlmann.thomas@arcor.de>, kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+ * make internal functions static
+ * get rid of __dummy_buf on x86
+ * make sparse happier :-)
 
+Signed-off-by: Namhyung Kim <namhyung@gmail.com>
 
---- On Sat, 8/28/10, Julia Lawall <julia@diku.dk> wrote:
+diff --git a/arch/x86/kernel/kprobes.c b/arch/x86/kernel/kprobes.c
+index 675879b..a4ff35d 100644
+--- a/arch/x86/kernel/kprobes.c
++++ b/arch/x86/kernel/kprobes.c
+@@ -224,9 +224,6 @@ static int recover_probed_instruction(kprobe_opcode_t *buf, unsigned long addr)
+ 	return 0;
+ }
+ 
+-/* Dummy buffers for kallsyms_lookup */
+-static char __dummy_buf[KSYM_NAME_LEN];
+-
+ /* Check if paddr is at an instruction boundary */
+ static int __kprobes can_probe(unsigned long paddr)
+ {
+@@ -235,7 +232,7 @@ static int __kprobes can_probe(unsigned long paddr)
+ 	struct insn insn;
+ 	kprobe_opcode_t buf[MAX_INSN_SIZE];
+ 
+-	if (!kallsyms_lookup(paddr, NULL, &offset, NULL, __dummy_buf))
++	if (!kallsyms_lookup_size_offset(paddr, NULL, &offset))
+ 		return 0;
+ 
+ 	/* Decode instructions */
+@@ -1109,7 +1106,7 @@ static void __kprobes synthesize_set_arg1(kprobe_opcode_t *addr,
+ 	*(unsigned long *)addr = val;
+ }
+ 
+-void __kprobes kprobes_optinsn_template_holder(void)
++static void __used __kprobes kprobes_optinsn_template_holder(void)
+ {
+ 	asm volatile (
+ 			".global optprobe_template_entry\n"
+@@ -1249,11 +1246,9 @@ static int __kprobes can_optimize(unsigned long paddr)
+ 	unsigned long addr, size = 0, offset = 0;
+ 	struct insn insn;
+ 	kprobe_opcode_t buf[MAX_INSN_SIZE];
+-	/* Dummy buffers for lookup_symbol_attrs */
+-	static char __dummy_buf[KSYM_NAME_LEN];
+ 
+ 	/* Lookup symbol including addr */
+-	if (!kallsyms_lookup(paddr, &size, &offset, NULL, __dummy_buf))
++	if (!kallsyms_lookup_size_offset(paddr, &size, &offset))
+ 		return 0;
+ 
+ 	/* Check there is enough space for a relative jump. */
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 1b0dbe0..a8d0139 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -399,7 +399,7 @@ static inline int kprobe_optready(struct kprobe *p)
+  * Return an optimized kprobe whose optimizing code replaces
+  * instructions including addr (exclude breakpoint).
+  */
+-struct kprobe *__kprobes get_optimized_kprobe(unsigned long addr)
++static struct kprobe *__kprobes get_optimized_kprobe(unsigned long addr)
+ {
+ 	int i;
+ 	struct kprobe *p = NULL;
+@@ -857,7 +857,8 @@ void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
+ 	spin_unlock_irqrestore(hlist_lock, *flags);
+ }
+ 
+-void __kprobes kretprobe_table_unlock(unsigned long hash, unsigned long *flags)
++static void __kprobes kretprobe_table_unlock(unsigned long hash,
++	unsigned long *flags)
+ {
+ 	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
+ 	spin_unlock_irqrestore(hlist_lock, *flags);
+-- 
+1.7.0.4
 
-> From: Julia Lawall <julia@diku.dk>
-> Subject: Re: [PATCH 2/7] drivers/usb/gadget/amd5536udc.c: Remove double t=
-est
-> To: "Dan Carpenter" <error27@gmail.com>
-> Cc: "Thomas Dahlmann" <dahlmann.thomas@arcor.de>, kernel-janitors@vger.ke=
-rnel.org, "David Brownell" <dbrownell@users.sourceforge.net>, "Greg Kroah-H=
-artman" <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.k=
-ernel.org, linux-kernel@vger.kernel.org
-> Date: Saturday, August 28, 2010, 9:48 AM
-> The same expression is tested twice
-> and the result is the same each time.
-> Instead test for use_dma_ppb as in the test above.
->=20
-> The sematic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @expression@
-> expression E;
-> @@
->=20
-> (
-> * E
-> =A0 || ... || E
-> |
-> * E
-> =A0 && ... && E
-> )
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-
-
-OK by me unless the maintainer/author objects.
-
-Thank you!
-
-- Dave
-
-
-
->=20
-> ---
->  drivers/usb/gadget/amd5536udc.c |=A0 =A0 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/usb/gadget/amd5536udc.c
-> b/drivers/usb/gadget/amd5536udc.c
-> index 731150d..6c40c99 100644
-> --- a/drivers/usb/gadget/amd5536udc.c
-> +++ b/drivers/usb/gadget/amd5536udc.c
-> @@ -203,7 +203,7 @@ static void print_regs(struct udc
-> *dev)
->  =A0=A0=A0 =A0=A0=A0 DBG(dev, "DMA
-> mode=A0 =A0 =A0=A0=A0=3D PPBNDU (packet per
-> buffer "
->  =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> "WITHOUT desc. update)\n");
->  =A0=A0=A0 =A0=A0=A0
-> dev_info(&dev->pdev->dev, "DMA mode (%s)\n",
-> "PPBNDU");
-> -=A0=A0=A0 } else if (use_dma &&
-> use_dma_ppb_du && use_dma_ppb_du) {
-> +=A0=A0=A0 } else if (use_dma &&
-> use_dma_ppb && use_dma_ppb_du) {
->  =A0=A0=A0 =A0=A0=A0 DBG(dev, "DMA
-> mode=A0 =A0 =A0=A0=A0=3D PPBDU (packet per
-> buffer "
->  =A0=A0=A0 =A0=A0=A0 =A0=A0=A0
-> "WITH desc. update)\n");
->  =A0=A0=A0 =A0=A0=A0
-> dev_info(&dev->pdev->dev, "DMA mode (%s)\n",
-> "PPBDU");
->=20
->=20
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
