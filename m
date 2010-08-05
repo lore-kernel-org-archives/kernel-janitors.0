@@ -1,73 +1,45 @@
-From: Changli Gao <xiaosuo@gmail.com>
-Date: Thu, 05 Aug 2010 13:24:46 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 05 Aug 2010 13:55:11 +0000
 Subject: Re: [patch] isdn: fix information leak
-Message-Id: <AANLkTikd=rgUMFTjZ=K6Q7_X8HvO33QSQfZJ5TH7xz-h@mail.gmail.com>
+Message-Id: <20100805134910.GJ9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100805093806.GF9031@bicker> <AANLkTin4jtYuaxYfxDAgST857sD2K4Q28mPcPW=xd-V3@mail.gmail.com>
-	<20100805101938.GH9031@bicker> <AANLkTi=8ThVqTHpQmDfoon02C-VZ0JwBRtSrU7dzvvNt@mail.gmail.com>
-	<20100805113721.GI9031@bicker> <AANLkTikGNr8aVV7Rryq_dvSuYjUbEo_gRDLW3d49YwF-@mail.gmail.com>
+References: <20100805093806.GF9031@bicker> <AANLkTin4jtYuaxYfxDAgST857sD2K4Q28mPcPW=xd-V3@mail.gmail.com> <20100805101938.GH9031@bicker> <AANLkTi=8ThVqTHpQmDfoon02C-VZ0JwBRtSrU7dzvvNt@mail.gmail.com> <20100805113721.GI9031@bicker> <AANLkTikGNr8aVV7Rryq_dvSuYjUbEo_gRDLW3d49YwF-@mail.gmail.com>
 In-Reply-To: <AANLkTikGNr8aVV7Rryq_dvSuYjUbEo_gRDLW3d49YwF-@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Changli Gao <xiaosuo@gmail.com>
 Cc: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 5, 2010 at 9:18 PM, Changli Gao <xiaosuo@gmail.com> wrote:
-> On Thu, Aug 5, 2010 at 7:37 PM, Dan Carpenter <error27@gmail.com> wrote:
->>
->> Both strncpy() and strlcpy() take a limitter. =A0The difference is that
->> strlcpy() always takes on a terminator and strncpy() only adds a
->> terminator if there is space.
->>
->> strlcpy() is a BSD function that never caught on in Linux. =A0The glibc
->> maintainers think that if you accidentally chop off the last part of a
->> word that makes you an idiot. =A0They think you should known the length =
-of
->> your data at all times and use memcpy() or a proper string library.
->>
->> I prefer strlcpy() to strncpy(). =A0Some people do stuff like:
->> =A0 =A0 =A0 =A0strncpy(bar, foo, n);
->> =A0 =A0 =A0 =A0bar[n] =3D '\0';
->> You have to read through the code to find if n is "sizeof(bar)" or
->> "sizeof(bar) - 1". =A0Which is a pain in the arse. =A0strlcpy() is expli=
-cit
->> and it's just one line of code instead of two.
->>
->> The other tricky thing you should remember about strncpy() is that the
->> posix version writes NUL chars from the end of the string to the
->> limitter but the kernel version only copies one NUL character.
->>
->
-> You should spend some time on reading the source code of strlcpy() and
-> strncpy().
->
-> the example use of them is:
->
-> char dst[24];
-> char *src =3D "test";
->
-> strncpy(dst, src, sizeof(dst) - 1);
+First of all, I'm happy that you're reviewing these patches.  A lot of
+learner, often untested, patches go through kernel-janitors and the
+entire purpose of the list is to check each other's work.
 
-Oh, Sorry, I made a mistake here. As you said, the code should be
- strncpy(dst, src, sizeof(dst));
- dst[sizeof(dst) - 1] =3D '\0';
+Here is what I meant by an information leak.  The original code did:
+	spid = kmalloc(SCIOC_SPIDSIZE, GFP_KERNEL);
+	...
+	strcpy(spid, rcvmsg->msg_data.byte_array);
+	...
+	if (copy_to_user(data->dataptr, spid, SCIOC_SPIDSIZE)) {
 
-However, if you use strlcpy(), you really don't need to zero the dst buffer.
+When you allocate memory with kmalloc() it doesn't clear that memory.  It
+could have anything in there including passwords etc.  If there is a
+short string in "rcvmsg->msg_data.byte_array" like "123" then the
+strcpy() puts that in the first 4 bytes of "spid", but the rest of the
+buffer is still full of passwords.
 
-> strlcpy(dst, src, sizeof(dst));
->
-> both of them don't need to zero dst, and they don't need to pad zero
-> at then end of the dst.
->
+The copy_to_user() sends it to the user, and normally the user only reads
+as far as the terminator, but if they read past that then they would see
+all the passwords etc that were saved there.
 
+This function is in the ioctl() probably only root has open() permission
+on the device so it's not a big deal because root can already find your
+password.  But I didn't dig that far.  It's just simpler to zero out the
+memory instead of worrying about if it really is exploitable or not.
 
+Also it's quite possible that the strcpy can't overflow.  But it's weird
+for the code to leave space for the terminator and then not use it.  In
+the end, I decided to do the cautious thing and be done with it.
 
---=20
-Regards,
-Changli Gao(xiaosuo@gmail.com)
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards,
+dan carpenter
