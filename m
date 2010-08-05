@@ -1,29 +1,66 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 12 Aug 2010 07:52:36 +0000
-Subject: [patch 2/2] ip2: return -EFAULT on copy_to_user errors
-Message-Id: <20100812075236.GM645@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:21:24 +0000
+Subject: [PATCH 15/42] drivers/video/mbx/mbxfb.c: Adjust confusing if
+Message-Id: <Pine.LNX.4.64.1008052221020.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Michael H. Warfield" <mhw@wittsend.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Rakib Mullick <rakib.mullick@gmail.com>, Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-copy_to_user() returns the number of bytes remaining but we want to
-return a negative error code on errors.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Indent the branch of an if.
 
-diff --git a/drivers/char/ip2/ip2main.c b/drivers/char/ip2/ip2main.c
-index 8fa041e..d4b71e8 100644
---- a/drivers/char/ip2/ip2main.c
-+++ b/drivers/char/ip2/ip2main.c
-@@ -2930,6 +2930,8 @@ ip2_ipl_ioctl (struct file *pFile, UINT cmd, ULONG arg )
- 				if ( pCh )
- 				{
- 					rc = copy_to_user(argp, pCh, sizeof(i2ChanStr));
-+					if (rc)
-+						rc = -EFAULT;
- 				} else {
- 					rc = -ENODEV;
- 				}
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
+
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/video/mbx/mbxfb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/mbx/mbxfb.c b/drivers/video/mbx/mbxfb.c
+index afea9ab..aaf7612 100644
+--- a/drivers/video/mbx/mbxfb.c
++++ b/drivers/video/mbx/mbxfb.c
+@@ -629,14 +629,14 @@ static int mbxfb_ioctl(struct fb_info *info, unsigned int cmd,
+ 		case MBXFB_IOCS_PLANEORDER:
+ 			if (copy_from_user(&porder, (void __user*)arg,
+ 					sizeof(struct mbxfb_planeorder)))
+-			return -EFAULT;
++				return -EFAULT;
+ 
+ 			return mbxfb_ioctl_planeorder(&porder);
+ 
+ 		case MBXFB_IOCS_ALPHA:
+ 			if (copy_from_user(&alpha, (void __user*)arg,
+ 					sizeof(struct mbxfb_alphaCtl)))
+-			return -EFAULT;
++				return -EFAULT;
+ 
+ 			return mbxfb_ioctl_alphactl(&alpha);
+ 
