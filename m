@@ -1,35 +1,102 @@
-From: James Morris <jmorris@namei.org>
-Date: Sun, 15 Aug 2010 23:19:16 +0000
-Subject: Re: [patch] tomoyo: cleanup.  don't store bogus pointer
-Message-Id: <alpine.LRH.2.00.1008160919080.14791@tundra.namei.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:29:19 +0000
+Subject: [PATCH 40/42] drivers/isdn: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052228590.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100807221751.GD9031@bicker>
-In-Reply-To: <20100807221751.GD9031@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 10 Aug 2010, Tetsuo Handa wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Dan Carpenter wrote:
-> 
-> > If domain is NULL then &domain->list is a bogus address.  Let's leave
-> > head->r.domain NULL instead of saving an unusable pointer.
-> > 
-> > This is just a cleanup.  The current code always checks head->r.eof
-> > before dereferencing head->r.domain.
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> I see. Thank you.
-> 
-> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In hisax/hfc_sx.c and mISDN/l1oip_core.c, the code after the if is
+outdented so that it is not aligned with the if branch.
 
+In mISDN/dsp_cmx.c, an else is added between the original if branch and the
+following statement, in line with the code following it.  Without this
+change, the first assignment to dsp->rx_W has no useful effect.
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-James Morris
-<jmorris@namei.org>
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
+
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/isdn/hisax/hfc_sx.c     |   13 +++++++------
+ drivers/isdn/mISDN/dsp_cmx.c    |    1 +
+ drivers/isdn/mISDN/l1oip_core.c |    2 +-
+ 3 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/isdn/hisax/hfc_sx.c b/drivers/isdn/hisax/hfc_sx.c
+index be5faf4..5aa138e 100644
+--- a/drivers/isdn/hisax/hfc_sx.c
++++ b/drivers/isdn/hisax/hfc_sx.c
+@@ -234,13 +234,14 @@ read_fifo(struct IsdnCardState *cs, u_char fifo, int trans_max)
+ 	  count++;
+ 	  if (count > trans_max) 
+ 	    count = trans_max; /* limit length */
+-	    if ((skb = dev_alloc_skb(count))) {
+-	      dst = skb_put(skb, count);
+-	      while (count--) 
++	  skb = dev_alloc_skb(count);
++	  if (skb) {
++	    dst = skb_put(skb, count);
++	    while (count--)
+ 		*dst++ = Read_hfc(cs, HFCSX_FIF_DRD);
+-	      return(skb);
+-	    }
+-	    else return(NULL); /* no memory */
++	    return skb;
++	  } else
++		return NULL; /* no memory */
+ 	}
+ 
+ 	do {
+diff --git a/drivers/isdn/mISDN/dsp_cmx.c b/drivers/isdn/mISDN/dsp_cmx.c
+index 713ef2b..76d9e67 100644
+--- a/drivers/isdn/mISDN/dsp_cmx.c
++++ b/drivers/isdn/mISDN/dsp_cmx.c
+@@ -1237,6 +1237,7 @@ dsp_cmx_receive(struct dsp *dsp, struct sk_buff *skb)
+ 			if (dsp->cmx_delay)
+ 				dsp->rx_W = (dsp->rx_R + dsp->cmx_delay)
+ 					& CMX_BUFF_MASK;
++			else
+ 				dsp->rx_W = (dsp->rx_R + (dsp_poll >> 1))
+ 					& CMX_BUFF_MASK;
+ 		} else {
+diff --git a/drivers/isdn/mISDN/l1oip_core.c b/drivers/isdn/mISDN/l1oip_core.c
+index 22f38e4..5b59796 100644
+--- a/drivers/isdn/mISDN/l1oip_core.c
++++ b/drivers/isdn/mISDN/l1oip_core.c
+@@ -972,7 +972,7 @@ channel_dctrl(struct dchannel *dch, struct mISDN_ctrl_req *cq)
+ 		if (debug & DEBUG_L1OIP_SOCKET)
+ 			printk(KERN_DEBUG "%s: got new ip address from user "
+ 				"space.\n", __func__);
+-			l1oip_socket_open(hc);
++		l1oip_socket_open(hc);
+ 		break;
+ 	case MISDN_CTRL_UNSETPEER:
+ 		if (debug & DEBUG_L1OIP_SOCKET)
