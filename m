@@ -1,62 +1,69 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 28 Aug 2010 10:02:22 +0000
-Subject: Re: [patch] ALSA: pcm: add more format names
-Message-Id: <s5hfwxz9hsh.wl%tiwai@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:26:38 +0000
+Subject: [PATCH 32/42] drivers/net/bnx2x: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052226210.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100827200215.GA15220@bicker>
-In-Reply-To: <20100827200215.GA15220@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org, markgross <mgross@linux.intel.com>, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org, Ben Collins <bcollins@bluecherry.net>
+To: Eilon Greenstein <eilong@broadcom.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Fri, 27 Aug 2010 22:02:15 +0200,
-Dan Carpenter wrote:
-> 
-> There were some new formats added in commit 15c0cee6c809 "ALSA: pcm:
-> Define G723 3-bit and 5-bit formats".  That commit increased
-> SNDRV_PCM_FORMAT_LAST as well.  My concern is that there are a couple
-> places which do:
-> 
->         for (i = 0; i < SNDRV_PCM_FORMAT_LAST; i++) {
->                 if (dummy->pcm_hw.formats & (1ULL << i))
->                         snd_iprintf(buffer, " %s", snd_pcm_format_name(i));
->         }
-> 
-> I haven't tested these but it looks like if "i" were equal to
-> SNDRV_PCM_FORMAT_G723_24 or higher then we might read past the end of
-> the array. 
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Resending because I screwed up the CC lis on my first mail.
+From: Julia Lawall <julia@diku.dk>
 
-Applied now.  Thanks.
+Outdent the code following the if.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Takashi
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
-> 
-> diff --git a/sound/core/pcm.c b/sound/core/pcm.c
-> index cbe815d..204af48 100644
-> --- a/sound/core/pcm.c
-> +++ b/sound/core/pcm.c
-> @@ -203,10 +203,16 @@ static char *snd_pcm_format_names[] = {
->  	FORMAT(S18_3BE),
->  	FORMAT(U18_3LE),
->  	FORMAT(U18_3BE),
-> +	FORMAT(G723_24),
-> +	FORMAT(G723_24_1B),
-> +	FORMAT(G723_40),
-> +	FORMAT(G723_40_1B),
->  };
->  
->  const char *snd_pcm_format_name(snd_pcm_format_t format)
->  {
-> +	if (format >= ARRAY_SIZE(snd_pcm_format_names))
-> +		return "Unknown";
->  	return snd_pcm_format_names[format];
->  }
->  EXPORT_SYMBOL_GPL(snd_pcm_format_name);
-> 
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This patch doesn't change the semantics of the code.  But it might not be
+what is intended.
+
+ drivers/net/bnx2x/bnx2x_link.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/bnx2x/bnx2x_link.c b/drivers/net/bnx2x/bnx2x_link.c
+index 0383e30..0fa0991 100644
+--- a/drivers/net/bnx2x/bnx2x_link.c
++++ b/drivers/net/bnx2x/bnx2x_link.c
+@@ -1254,11 +1254,11 @@ static void bnx2x_set_autoneg(struct link_params *params,
+ 		    PORT_HW_CFG_SPEED_CAPABILITY_D0_1G)
+ 			reg_val |= MDIO_CL73_IEEEB1_AN_ADV2_ADVR_1000M_KX;
+ 
+-			CL45_WR_OVER_CL22(bp, params->port,
+-					      params->phy_addr,
+-					      MDIO_REG_BANK_CL73_IEEEB1,
+-					      MDIO_CL73_IEEEB1_AN_ADV2,
+-				      reg_val);
++		CL45_WR_OVER_CL22(bp, params->port,
++				      params->phy_addr,
++				      MDIO_REG_BANK_CL73_IEEEB1,
++				      MDIO_CL73_IEEEB1_AN_ADV2,
++			      reg_val);
+ 
+ 		/* CL73 Autoneg Enabled */
+ 		reg_val = MDIO_CL73_IEEEB0_CL73_AN_CONTROL_AN_EN;
