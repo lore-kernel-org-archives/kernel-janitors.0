@@ -1,60 +1,66 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 03 Aug 2010 15:43:18 +0000
-Subject: [PATCH 05/11] via-velocity: do not use PCI resources before pci_enable_device()
-Message-Id: <1280850199-5488-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:36:23 +0000
+Subject: [PATCH 26/42] drivers/spi/amba-pl022.c: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052235400.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <921858.63779.qm@web180313.mail.gq1.yahoo.com>
+In-Reply-To: <921858.63779.qm-4JhmkcZgSkn6X00i2u5GFvu2YVrzzGjVVpNB7YpNyf8@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Francois Romieu <romieu@fr.zoreil.com>, "David S. Miller" <davem@davemloft.net>, Simon Kagstrom <simon.kagstrom@netinsight.net>, Ben Hutchings <ben@decadent.org.uk>, Jiri Pirko <jpirko@redhat.com>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-IRQ and resource[] may not have correct values until
-after PCI hotplug setup occurs at pci_enable_device() time.
+From: Julia Lawall <julia@diku.dk>
+
+The return -EINVAL appears to only make sense if the if branch that it is
+aligned with is taken, so move it into that branch
 
 The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-identifier x;
-identifier request ~= "pci_request.*|pci_resource.*";
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
 @@
 
 (
-* x->irq
+if (...) { ... }
 |
-* x->resource
-|
-* request(x, ...)
+if (...) S1@p1 S2@p2
 )
- ...
-*pci_enable_device(x)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
 // </smpl>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/net/via-velocity.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+This patch changes the semantics, and the change might not be correct.
 
-diff --git a/drivers/net/via-velocity.c b/drivers/net/via-velocity.c
-index 42dffd3..fd69095 100644
---- a/drivers/net/via-velocity.c
-+++ b/drivers/net/via-velocity.c
-@@ -2763,12 +2763,12 @@ static int __devinit velocity_found1(struct pci_dev *pdev, const struct pci_devi
- 
- 	vptr->dev = dev;
- 
--	dev->irq = pdev->irq;
--
- 	ret = pci_enable_device(pdev);
- 	if (ret < 0)
- 		goto err_free_dev;
- 
-+	dev->irq = pdev->irq;
-+
- 	ret = velocity_get_pci_info(vptr, pdev);
- 	if (ret < 0) {
- 		/* error message already printed */
--- 
-1.7.0.4
+ drivers/spi/amba-pl022.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/spi/amba-pl022.c b/drivers/spi/amba-pl022.c
+index f0a1418..4de50de 100644
+--- a/drivers/spi/amba-pl022.c
++++ b/drivers/spi/amba-pl022.c
+@@ -1348,10 +1348,11 @@ static int verify_controller_parameters(struct pl022 *pl022,
+ 			if ((chip_info->duplex ! 			     SSP_MICROWIRE_CHANNEL_FULL_DUPLEX)
+ 			    && (chip_info->duplex !-				SSP_MICROWIRE_CHANNEL_HALF_DUPLEX))
++				SSP_MICROWIRE_CHANNEL_HALF_DUPLEX)) {
+ 				dev_err(chip_info->dev,
+ 					"Microwire duplex mode is configured incorrectly\n");
+ 				return -EINVAL;
++			}
+ 		} else {
+ 			if (chip_info->duplex != SSP_MICROWIRE_CHANNEL_FULL_DUPLEX)
+ 				dev_err(chip_info->dev,
