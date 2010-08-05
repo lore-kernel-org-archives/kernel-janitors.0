@@ -1,39 +1,58 @@
-From: Joel Becker <Joel.Becker@oracle.com>
-Date: Thu, 12 Aug 2010 09:31:41 +0000
-Subject: Re: [PATCH 1/2] fs/ocfs2/dlm: Eliminate update of
-Message-Id: <20100812093141.GA6561@mail.oracle.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:27:32 +0000
+Subject: [PATCH 35/42] sound/oss: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052227140.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008071108540.5821@ask.diku.dk>
- <20100812000355.GA7195@mail.oracle.com>
- <Pine.LNX.4.64.1008120735200.16027@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008120735200.16027@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Mark Fasheh <mfasheh@suse.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Sunil Mushran <sunil.mushran@oracle.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 12, 2010 at 07:46:13AM +0200, Julia Lawall wrote:
- 
-> This seems a bit ugly to me, since it exposes the implementation of the 
-> list abstraction.  What about the following:
+From: Julia Lawall <julia@diku.dk>
 
-	Actually, we're going to go back to the original list_for_each()
-and list_entry() version.  It's a well understood idiom.
-	We're also going to re-audit the rest of the patch that changed
-list_for_each() to list_for_each_entry(), just in case we missed another
-semantic error.
+Indent the branch of an if.
 
-Joel
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
-Life's Little Instruction Book #30
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
 
-	"Never buy a house without a fireplace."
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
 
-Joel Becker
-Consulting Software Developer
-Oracle
-E-mail: joel.becker@oracle.com
-Phone: (650) 506-8127
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/oss/ad1848.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/oss/ad1848.c b/sound/oss/ad1848.c
+index 24793c5..4d2a6ae 100644
+--- a/sound/oss/ad1848.c
++++ b/sound/oss/ad1848.c
+@@ -716,7 +716,7 @@ static int ad1848_mixer_ioctl(int dev, unsigned int cmd, void __user *arg)
+ 				
+ 				default:
+ 					if (get_user(val, (int __user *)arg))
+-					return -EFAULT;
++						return -EFAULT;
+ 					val = ad1848_mixer_set(devc, cmd & 0xff, val);
+ 					break;
+ 			} 
