@@ -1,30 +1,58 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Tue, 17 Aug 2010 21:52:46 +0000
-Subject: Re: [patch] pata_winbond: fix module init
-Message-Id: <4C6B04AE.1030304@pobox.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:22:00 +0000
+Subject: [PATCH 17/42] drivers/net/irda: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052221410.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100803152549.GQ26313@bicker> <201008162123.03208.bzolnier@gmail.com>
-In-Reply-To: <201008162123.03208.bzolnier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Dan Carpenter <error27@gmail.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, alan@lxorguk.ukuu.org.uk
+To: Samuel Ortiz <samuel@sortiz.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/16/2010 03:23 PM, Bartlomiej Zolnierkiewicz wrote:
->
-> Hi Dan,
->
-> On Tuesday 03 August 2010 05:27:47 pm Dan Carpenter wrote:
->> winbond_init_one() returns 0 on success and an error code on failure.
->> In the original code, we always just released the regions and return
->> -ENODEV.  This was introduce in 2006 by 7e45b0e5f6f6 "[PATCH] libata:
->> Winbond support".
->
-> You might like to pick up
->
-> 	http://patchwork.ozlabs.org/patch/39358/
+From: Julia Lawall <julia@diku.dk>
 
-Picked it up...
+Indent the branch of an if.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
+
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/irda/mcs7780.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/irda/mcs7780.c b/drivers/net/irda/mcs7780.c
+index 5b1036a..74b20f1 100644
+--- a/drivers/net/irda/mcs7780.c
++++ b/drivers/net/irda/mcs7780.c
+@@ -734,7 +734,7 @@ static int mcs_net_open(struct net_device *netdev)
+ 	}
+ 
+ 	if (!mcs_setup_urbs(mcs))
+-	goto error3;
++		goto error3;
+ 
+ 	ret = mcs_receive_start(mcs);
+ 	if (ret)
