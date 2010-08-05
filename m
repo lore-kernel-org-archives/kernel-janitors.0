@@ -1,52 +1,76 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Date: Tue, 03 Aug 2010 11:24:34 +0000
-Subject: Re: [PATCH 1/2] kprobes: remove redundant address check
-Message-Id: <4C57FC72.30906@hitachi.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:19:36 +0000
+Subject: [PATCH 9/42] drivers/scsi: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052219190.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280820323-18929-1-git-send-email-namhyung@gmail.com>
-In-Reply-To: <1280820323-18929-1-git-send-email-namhyung@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Namhyung Kim wrote:
-> remove call to kernel_text_address() in register_jprobes()
-> because it is called right after in register_kprobe().
+From: Julia Lawall <julia@diku.dk>
 
-Indeed. Thank you for finding that! :)
+Outdent the code following the if.
 
-> Signed-off-by: Namhyung Kim <namhyung@gmail.com>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
-> 
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 282035f..8f96701 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -1343,14 +1343,11 @@ int __kprobes register_jprobes(struct jprobe **jps, int num)
->  		jp = jps[i];
->  		addr = arch_deref_entry_point(jp->entry);
->  
-> -		if (!kernel_text_address(addr))
-> -			ret = -EINVAL;
-> -		else {
-> -			/* Todo: Verify probepoint is a function entry point */
-> -			jp->kp.pre_handler = setjmp_pre_handler;
-> -			jp->kp.break_handler = longjmp_break_handler;
-> -			ret = register_kprobe(&jp->kp);
-> -		}
-> +		/* Todo: Verify probepoint is a function entry point */
-> +		jp->kp.pre_handler = setjmp_pre_handler;
-> +		jp->kp.break_handler = longjmp_break_handler;
-> +		ret = register_kprobe(&jp->kp);
-> +
->  		if (ret < 0) {
->  			if (i > 0)
->  				unregister_jprobes(jps, i);
--- 
-Masami HIRAMATSU
-2nd Research Dept.
-Hitachi, Ltd., Systems Development Laboratory
-E-mail: masami.hiramatsu.pt@hitachi.com
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This might be the wrong fix, however it doesn't change the current semantics.
+
+ drivers/scsi/arcmsr/arcmsr_hba.c    |    4 ++--
+ drivers/scsi/mpt2sas/mpt2sas_base.c |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 95a895d..c4e5cdc 100644
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -877,8 +877,8 @@ static void arcmsr_report_ccb_state(struct AdapterControlBlock *acb,
+ 	if (!error) {
+ 		if (acb->devstate[id][lun] = ARECA_RAID_GONE)
+ 			acb->devstate[id][lun] = ARECA_RAID_GOOD;
+-			ccb->pcmd->result = DID_OK << 16;
+-			arcmsr_ccb_complete(ccb);
++		ccb->pcmd->result = DID_OK << 16;
++		arcmsr_ccb_complete(ccb);
+ 	}else{
+ 		switch (ccb->arcmsr_cdb.DeviceStatus) {
+ 		case ARCMSR_DEV_SELECT_TIMEOUT: {
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c b/drivers/scsi/mpt2sas/mpt2sas_base.c
+index 57bcd5c..12faf64 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_base.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_base.c
+@@ -534,7 +534,7 @@ _base_display_event_data(struct MPT2SAS_ADAPTER *ioc,
+ 		if (event_data->DiscoveryStatus)
+ 			printk("discovery_status(0x%08x)",
+ 			    le32_to_cpu(event_data->DiscoveryStatus));
+-			printk("\n");
++		printk("\n");
+ 		return;
+ 	}
+ 	case MPI2_EVENT_SAS_BROADCAST_PRIMITIVE:
