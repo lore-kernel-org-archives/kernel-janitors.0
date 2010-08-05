@@ -1,105 +1,58 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 19 Aug 2010 09:12:52 +0000
-Subject: Re: [PATCH] slip: Use net_device_stats from struct net_device
-Message-Id: <20100819091252.GB20793@distanz.ch>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:26:20 +0000
+Subject: [PATCH 31/42] drivers/net: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052226050.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282206313-10667-1-git-send-email-tklauser@distanz.ch> <1282207791.2549.16.camel@edumazet-laptop>
-In-Reply-To: <1282207791.2549.16.camel@edumazet-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 2010-08-19 at 10:49:51 +0200, Eric Dumazet <eric.dumazet@gmail.com> wrot=
-e:
-> Le jeudi 19 ao=FBt 2010 =E0 10:25 +0200, Tobias Klauser a =E9crit :
-> > Use net_device->stats for stats instead of private variable copies in
-> > struct slip.
-> >=20
-> > Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-> > ---
-> >  drivers/net/slip.c |   64 ++++++++++++++++++++++----------------------=
---------
-> >  drivers/net/slip.h |    9 -------
-> >  2 files changed, 27 insertions(+), 46 deletions(-)
->=20
->=20
-> > @@ -561,36 +562,25 @@ static int sl_change_mtu(struct net_device *dev, =
-int new_mtu)
-> >  static struct net_device_stats *
-> >  sl_get_stats(struct net_device *dev)
-> >  {
-> > -	static struct net_device_stats stats;
-> > +	struct net_device_stats *stats =3D &dev->stats;
-> >  	struct slip *sl =3D netdev_priv(dev);
-> >  #ifdef SL_INCLUDE_CSLIP
-> >  	struct slcompress *comp;
-> >  #endif
-> > =20
-> > -	memset(&stats, 0, sizeof(struct net_device_stats));
-> > -
-> > -	stats.rx_packets     =3D sl->rx_packets;
-> > -	stats.tx_packets     =3D sl->tx_packets;
-> > -	stats.rx_bytes	     =3D sl->rx_bytes;
-> > -	stats.tx_bytes	     =3D sl->tx_bytes;
-> > -	stats.rx_dropped     =3D sl->rx_dropped;
-> > -	stats.tx_dropped     =3D sl->tx_dropped;
-> > -	stats.tx_errors      =3D sl->tx_errors;
-> > -	stats.rx_errors      =3D sl->rx_errors;
-> > -	stats.rx_over_errors =3D sl->rx_over_errors;
-> >  #ifdef SL_INCLUDE_CSLIP
-> > -	stats.rx_fifo_errors =3D sl->rx_compressed;
-> > -	stats.tx_fifo_errors =3D sl->tx_compressed;
-> > -	stats.collisions     =3D sl->tx_misses;
-> > +	stats->rx_fifo_errors =3D sl->rx_compressed;
-> > +	stats->tx_fifo_errors =3D sl->tx_compressed;
-> > +	stats->collisions     =3D sl->tx_misses;
-> >  	comp =3D sl->slcomp;
-> >  	if (comp) {
-> > -		stats.rx_fifo_errors +=3D comp->sls_i_compressed;
-> > -		stats.rx_dropped     +=3D comp->sls_i_tossed;
-> > -		stats.tx_fifo_errors +=3D comp->sls_o_compressed;
-> > -		stats.collisions     +=3D comp->sls_o_misses;
-> > +		stats->rx_fifo_errors +=3D comp->sls_i_compressed;
-> > +		stats->rx_dropped     +=3D comp->sls_i_tossed;
-> > +		stats->tx_fifo_errors +=3D comp->sls_o_compressed;
-> > +		stats->collisions     +=3D comp->sls_o_misses;
-> >  	}
-> > -#endif /* CONFIG_INET */
-> > -	return (&stats);
-> > +#endif
-> > +	return stats;
-> >  }
-> > =20
->=20
-> Hmm, this is wrong.
->=20
-> Each time sl_get_stats() is called, you are adding stuff to dev->stats
+From: Julia Lawall <julia@diku.dk>
 
-Hmmm, yeah. Sorry for the mess. That's completely wrong.
+Outdent the code following the if.
 
-> Quite frankly I dont think its a kernel-janitors@vger.kernel.org patch,
-> its pretty normal netdev stuff.
->=20
-> Please take a look at prior patch posted yesterday.
->=20
-> http://marc.info/?l=3Dlinux-netdev&m=128213719605250&w=3D2
->=20
-> Because either you should build your patch on top of it, or ask David to
-> revert mine before ;)
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Oops, I didn't notice that one. I'll rebuild my patch on top of it.
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
-> I advise using a ndo_get_stats64() so that you can perform the adds on a
-> private destination buffer.
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
 
-I'll do that.
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
 
-Thanks a lot
-Tobias
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/gianfar.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/gianfar.c b/drivers/net/gianfar.c
+index a1b6301..36ccc37 100644
+--- a/drivers/net/gianfar.c
++++ b/drivers/net/gianfar.c
+@@ -1859,7 +1859,7 @@ static int register_grp_irqs(struct gfar_priv_grp *grp)
+ 				printk(KERN_ERR "%s: Can't get IRQ %d\n",
+ 					dev->name, grp->interruptError);
+ 
+-				goto err_irq_fail;
++			goto err_irq_fail;
+ 		}
+ 
+ 		if ((err = request_irq(grp->interruptTransmit, gfar_transmit,
