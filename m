@@ -1,41 +1,78 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sat, 07 Aug 2010 06:35:07 +0000
-Subject: [PATCH 04/14] staging: comedi (rtd520): use PCI_DEVICE() macro
-Message-Id: <1281162907.7976.11.camel@lenovo>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:24:12 +0000
+Subject: [PATCH 24/42] drivers/platform/x86: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052223550.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Corentin Chary <corentincj@iksaif.net>, Karol Kozimor <sziwan@users.sourceforge.net>, Matthew Garrett <mjg@redhat.com>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
+From: Julia Lawall <julia@diku.dk>
 
+The assignment of ret to -EIO appears to only make sense if the branch that
+it is aligned with is executed, so move it into that branch.
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
+
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/comedi/drivers/rtd520.c |    7 +++----
- 1 files changed, 3 insertions(+), 4 deletions(-)
+This patch changes the semantics and might not be what is intended.
 
-diff --git a/drivers/staging/comedi/drivers/rtd520.c b/drivers/staging/comedi/drivers/rtd520.c
-index 0367d2b..5858d97 100644
---- a/drivers/staging/comedi/drivers/rtd520.c
-+++ b/drivers/staging/comedi/drivers/rtd520.c
-@@ -329,10 +329,9 @@ static const struct rtdBoard rtd520Boards[] = {
- };
+ drivers/platform/x86/asus_acpi.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/asus_acpi.c b/drivers/platform/x86/asus_acpi.c
+index e058c2b..ca05aef 100644
+--- a/drivers/platform/x86/asus_acpi.c
++++ b/drivers/platform/x86/asus_acpi.c
+@@ -938,10 +938,11 @@ static int set_brightness(int value)
+ 	/* SPLV laptop */
+ 	if (hotk->methods->brightness_set) {
+ 		if (!write_acpi_int(hotk->handle, hotk->methods->brightness_set,
+-				    value, NULL))
++				    value, NULL)) {
+ 			printk(KERN_WARNING
+ 			       "Asus ACPI: Error changing brightness\n");
+ 			ret = -EIO;
++		}
+ 		goto out;
+ 	}
  
- static DEFINE_PCI_DEVICE_TABLE(rtd520_pci_table) = {
--	{
--	PCI_VENDOR_ID_RTD, 0x7520, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_RTD, 0x4520, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	0}
-+	{ PCI_DEVICE(PCI_VENDOR_ID_RTD, 0x7520) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_RTD, 0x4520) },
-+	{ 0 }
- };
- 
- MODULE_DEVICE_TABLE(pci, rtd520_pci_table);
--- 
-1.7.0.4
-
-
-
+@@ -953,10 +954,11 @@ static int set_brightness(int value)
+ 					      hotk->methods->brightness_down,
+ 					      NULL, NULL);
+ 		(value > 0) ? value-- : value++;
+-		if (ACPI_FAILURE(status))
++		if (ACPI_FAILURE(status)) {
+ 			printk(KERN_WARNING
+ 			       "Asus ACPI: Error changing brightness\n");
+ 			ret = -EIO;
++		}
+ 	}
+ out:
+ 	return ret;
