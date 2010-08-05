@@ -1,111 +1,63 @@
-From: Jonathan Cameron <kernel@jic23.retrosnub.co.uk>
-Date: Wed, 04 Aug 2010 20:20:57 +0000
-Subject: Re: [PATCH] drivers/staging/iio: call mutex_unlock in error handling
-Message-Id: <4C59CBA9.1030808@jic23.retrosnub.co.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:27:51 +0000
+Subject: [PATCH 36/42] tools/perf: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052227330.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008042153460.30592@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008042153460.30592@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@elte.hu>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/04/10 20:54, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-Youch bad reviewing on my part.
+From: Julia Lawall <julia@diku.dk>
 
-Had a quick look and I think you caught all instances of this...
+Outdent the code following the if.
 
-Acked-by: Jonathan Cameron <jic23@cam.ac.uk>
-> 
-> Adjust the error handling code so that it benefits from the call to
-> mutex_unlock at the end of the function.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @rcu exists@
-> position p1;
-> expression E;
-> @@
-> 
-> mutex_lock@p1(E);
-> ...
-> mutex_unlock(E);
-> 
-> @exists@
-> position rcu.p1;
-> expression E;
-> @@
-> 
-> *mutex_lock@p1(E);
-> ... when != mutex_unlock(E);
-> ?*return ...;
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/staging/iio/magnetometer/hmc5843.c     |   25 +++++++++++++------
->  1 files changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/magnetometer/hmc5843.c b/drivers/staging/iio/magnetometer/hmc5843.c
-> index 92f6c6f..ea5f749 100644
-> --- a/drivers/staging/iio/magnetometer/hmc5843.c
-> +++ b/drivers/staging/iio/magnetometer/hmc5843.c
-> @@ -220,11 +220,15 @@ static ssize_t hmc5843_set_operating_mode(struct device *dev,
->  	int error;
->  	mutex_lock(&data->lock);
->  	error = strict_strtoul(buf, 10, &operating_mode);
-> -	if (error)
-> -		return error;
-> +	if (error) {
-> +		count = error;
-> +		goto exit;
-> +	}
->  	dev_dbg(dev, "set Conversion mode to %lu\n", operating_mode);
-> -	if (operating_mode > MODE_SLEEP)
-> -			return -EINVAL;
-> +	if (operating_mode > MODE_SLEEP) {
-> +		count = -EINVAL;
-> +		goto exit;
-> +	}
->  
->  	status = i2c_smbus_write_byte_data(client, this_attr->address,
->  					operating_mode);
-> @@ -437,18 +441,23 @@ static ssize_t set_range(struct device *dev,
->  	int error;
->  	mutex_lock(&data->lock);
->  	error = strict_strtoul(buf, 10, &range);
-> -	if (error)
-> -		return error;
-> +	if (error) {
-> +		count = error;
-> +		goto exit;
-> +	}
->  	dev_dbg(dev, "set range to %lu\n", range);
->  
-> -	if (range > RANGE_6_5)
-> -		return -EINVAL;
-> +	if (range > RANGE_6_5) {
-> +		count = -EINVAL;
-> +		goto exit;
-> +	}
->  
->  	data->range = range;
->  	range = range << RANGE_GAIN_OFFSET;
->  	if (i2c_smbus_write_byte_data(client, this_attr->address, range))
->  		count = -EINVAL;
->  
-> +exit:
->  	mutex_unlock(&data->lock);
->  	return count;
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
+
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This patch does not change the semantics.  But it might not be the correct
+fix either.
+
+ tools/perf/builtin-timechart.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
+index 5161619..9bcc38f 100644
+--- a/tools/perf/builtin-timechart.c
++++ b/tools/perf/builtin-timechart.c
+@@ -455,8 +455,8 @@ static void sched_switch(int cpu, u64 timestamp, struct trace_entry *te)
+ 		if (p->current->state != TYPE_NONE)
+ 			pid_put_sample(sw->next_pid, p->current->state, cpu, p->current->state_since, timestamp);
+ 
+-			p->current->state_since = timestamp;
+-			p->current->state = TYPE_RUNNING;
++		p->current->state_since = timestamp;
++		p->current->state = TYPE_RUNNING;
+ 	}
+ 
+ 	if (prev_p->current) {
