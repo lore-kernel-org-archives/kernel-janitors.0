@@ -1,44 +1,56 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Date: Thu, 12 Aug 2010 11:17:05 +0000
-Subject: Re: [patch 2/2] mtd/m25p80: fix test for end of loop
-Message-Id: <20100812111705.GA9966@oksana.dev.rtsoft.ru>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:27:14 +0000
+Subject: [PATCH 34/42] drivers/message/fusion: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052226570.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100812075827.GO645@bicker>
-In-Reply-To: <20100812075827.GO645@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, Mike Frysinger <vapier@gentoo.org>, kernel-janitors@vger.kernel.org, Gabor Juhos <juhosg@openwrt.org>, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
+To: Eric Moore <Eric.Moore@lsi.com>, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 12, 2010 at 09:58:27AM +0200, Dan Carpenter wrote:
-> "plat_id" is always non-NULL here.  There is a zero element on the end
-> of the m25p_ids[] array and if we hit the end of the loop then plat_id
-> points to that.
-> 
-> This would lead to a NULL pointer dereference later on in the function.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Anton Vorontsov <cbouatmailru@gmail.com>
+Indent the branch of an if.
 
-Thanks,
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-> index 83c9086..6f512b5 100644
-> --- a/drivers/mtd/devices/m25p80.c
-> +++ b/drivers/mtd/devices/m25p80.c
-> @@ -793,7 +793,7 @@ static int __devinit m25p_probe(struct spi_device *spi)
->  			break;
->  		}
->  
-> -		if (plat_id)
-> +		if (i < ARRAY_SIZE(m25p_ids) - 1)
->  			id = plat_id;
->  		else
->  			dev_warn(&spi->dev, "unrecognized id %s\n", data->type);
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
--- 
-Anton Vorontsov
-email: cbouatmailru@gmail.com
-irc://irc.freenode.net/bd2
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/message/fusion/mptbase.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+index d8c668d..92e4b25 100644
+--- a/drivers/message/fusion/mptbase.c
++++ b/drivers/message/fusion/mptbase.c
+@@ -8049,7 +8049,7 @@ union loginfo_type {
+ 			code_desc = ir_code_str[sas_loginfo.dw.code];
+ 			if (sas_loginfo.dw.subcode > 			    ARRAY_SIZE(raid_sub_code_str))
+-			break;
++				break;
+ 			if (sas_loginfo.dw.code = 0)
+ 				sub_code_desc  				    raid_sub_code_str[sas_loginfo.dw.subcode];
