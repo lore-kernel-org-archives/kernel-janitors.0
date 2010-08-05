@@ -1,149 +1,67 @@
-From: John Johansen <john.johansen@canonical.com>
-Date: Thu, 12 Aug 2010 15:15:48 +0000
-Subject: Re: [patch] apparmor: issue with ns name without a following profile
-Message-Id: <4C641024.5070006@canonical.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------060605000509070104050402"
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:19:18 +0000
+Subject: [PATCH 8/42] drivers/net/ixgbe: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052219010.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100807110639.GY9031@bicker>
-In-Reply-To: <20100807110639.GY9031@bicker>
-To: Dan Carpenter <error27@gmail.com>, James Morris <jmorris@namei.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format.
---------------060605000509070104050402
-Content-Type: text/plain; charset=ISO-8859-1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, PJ Waskiewicz <peter.p.waskiewicz.jr@intel.com>, John Ronciak <john.ronciak@intel.com>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/07/2010 04:50 AM, Dan Carpenter wrote:
-> If we have a ns name without a following profile then in the original
-> code it did "*ns_name = &name[1];".  "name" is NULL so "*ns_name" is
-> 0x1.  That isn't useful and could cause an oops when this function is
-> called from aa_remove_profiles(). 
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-Indeed.  I am sorry to say this case was not enabled in the test suite :(
-However proposed patch is incorrect, in that it results in namespace
-name that starts at &name[1].
+Both ifs and assignments to autoc seem similar enough that they are both
+put in the if branch indicated by their indentation.
 
-I've attached two patches, the first fixes this issue, and the second
-fixes a locking bug in namespace removal, for this case (ie. where
-there is no profile name specified.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks for catching this
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
-John
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
 
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
 
---------------060605000509070104050402
-Content-Type: text/x-diff;
- name="0001-AppArmor-Fix-splitting-an-fqname-into-separate-names.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-AppArmor-Fix-splitting-an-fqname-into-separate-names.pa";
- filename*1="tch"
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
 
-From 07abf5de857614c13449031b9ac9e06c8efb7765 Mon Sep 17 00:00:00 2001
-From: John Johansen <john.johansen@canonical.com>
-Date: Mon, 9 Aug 2010 08:53:51 -0400
-Subject: [PATCH 1/2] AppArmor: Fix splitting an fqname into separate namespace and profile names
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-As per Dan Carpenter <error27@gmail.com>
-  If we have a ns name without a following profile then in the original
-  code it did "*ns_name = &name[1];".  "name" is NULL so "*ns_name" is
-  0x1.  That isn't useful and could cause an oops when this function is
-  called from aa_remove_profiles().
-
-Beyond this the assignment of the namespace name was wrong in the case
-where the profile name was provided as it was being set to &name[1]
-after name  = skip_spaces(split + 1);
-
-Move the ns_name assignment before updating name for the split and
-also add skip_spaces, making the interface more robust.
-
-Signed-off-by: John Johansen <john.johansen@canonical.com>
 ---
- security/apparmor/lib.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+This changes the semantics and might be the wrong fix.  Not tested.
 
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index 6e85cdb..506d2ba 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -40,6 +40,7 @@ char *aa_split_fqname(char *fqname, char **ns_name)
- 	*ns_name = NULL;
- 	if (name[0] == ':') {
- 		char *split = strchr(&name[1], ':');
-+		*ns_name = skip_spaces(&name[1]);
- 		if (split) {
- 			/* overwrite ':' with \0 */
- 			*split = 0;
-@@ -47,7 +48,6 @@ char *aa_split_fqname(char *fqname, char **ns_name)
- 		} else
- 			/* a ns name without a following profile is allowed */
- 			name = NULL;
--		*ns_name = &name[1];
- 	}
- 	if (name && *name == 0)
- 		name = NULL;
--- 
-1.7.1
+ drivers/net/ixgbe/ixgbe_82599.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
---------------060605000509070104050402
-Content-Type: text/x-diff;
- name="0002-AppArmor-Fix-locking-from-removal-of-profile-namespa.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0002-AppArmor-Fix-locking-from-removal-of-profile-namespa.pa";
- filename*1="tch"
-
-From 8109a95a05dd6e5349e43a2a6bb7149565cc886e Mon Sep 17 00:00:00 2001
-From: John Johansen <john.johansen@canonical.com>
-Date: Thu, 12 Aug 2010 07:49:12 -0400
-Subject: [PATCH 2/2] AppArmor: Fix locking from removal of profile namespace
-
-The locking for profile namespace removal is wrong, when removing a
-profile namespace, it needs to be removed from its parent's list.
-Lock the parent of namespace list instead of the namespace being removed.
-
-Signed-off-by: John Johansen <john.johansen@canonical.com>
----
- security/apparmor/policy.c |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index 3cdc1ad..52cc865 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -1151,12 +1151,14 @@ ssize_t aa_remove_profiles(char *fqname, size_t size)
- 		/* released below */
- 		ns = aa_get_namespace(root);
- 
--	write_lock(&ns->lock);
- 	if (!name) {
- 		/* remove namespace - can only happen if fqname[0] == ':' */
-+		write_lock(&ns->parent->lock);
- 		__remove_namespace(ns);
-+		write_unlock(&ns->parent->lock);
- 	} else {
- 		/* remove profile */
-+		write_lock(&ns->lock);
- 		profile = aa_get_profile(__lookup_profile(&ns->base, name));
- 		if (!profile) {
- 			error = -ENOENT;
-@@ -1165,8 +1167,8 @@ ssize_t aa_remove_profiles(char *fqname, size_t size)
- 		}
- 		name = profile->base.hname;
- 		__remove_profile(profile);
-+		write_unlock(&ns->lock);
- 	}
--	write_unlock(&ns->lock);
- 
- 	/* don't fail removal if audit fails */
- 	(void) audit_policy(OP_PROF_RM, GFP_KERNEL, name, info, error);
--- 
-1.7.1
-
-
---------------060605000509070104050402--
+diff --git a/drivers/net/ixgbe/ixgbe_82599.c b/drivers/net/ixgbe/ixgbe_82599.c
+index 3e06a61..a5fcdce 100644
+--- a/drivers/net/ixgbe/ixgbe_82599.c
++++ b/drivers/net/ixgbe/ixgbe_82599.c
+@@ -766,12 +766,13 @@ s32 ixgbe_setup_mac_link_82599(struct ixgbe_hw *hw,
+ 	    link_mode = IXGBE_AUTOC_LMS_KX4_KX_KR_SGMII) {
+ 		/* Set KX4/KX/KR support according to speed requested */
+ 		autoc &= ~(IXGBE_AUTOC_KX4_KX_SUPP_MASK | IXGBE_AUTOC_KR_SUPP);
+-		if (speed & IXGBE_LINK_SPEED_10GB_FULL)
++		if (speed & IXGBE_LINK_SPEED_10GB_FULL) {
+ 			if (orig_autoc & IXGBE_AUTOC_KX4_SUPP)
+ 				autoc |= IXGBE_AUTOC_KX4_SUPP;
+ 			if ((orig_autoc & IXGBE_AUTOC_KR_SUPP) &&
+ 			    (hw->phy.smart_speed_active = false))
+ 				autoc |= IXGBE_AUTOC_KR_SUPP;
++		}
+ 		if (speed & IXGBE_LINK_SPEED_1GB_FULL)
+ 			autoc |= IXGBE_AUTOC_KX_SUPP;
+ 	} else if ((pma_pmd_1g = IXGBE_AUTOC_1G_SFI) &&
