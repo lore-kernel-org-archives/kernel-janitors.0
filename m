@@ -1,83 +1,60 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 31 Aug 2010 15:48:58 +0000
-Subject: [PATCH 4/4] arch/powerpc/platforms/chrp/nvram.c: Add of_node_put to avoid memory leak
-Message-Id: <1283269738-14612-5-git-send-email-julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:23:00 +0000
+Subject: [PATCH 20/42] drivers/cpufreq: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052222450.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283269738-14612-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1283269738-14612-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: Dave Jones <davej@redhat.com>, cpufreq@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Add a call to of_node_put in the error handling code following a call to
-of_find_node_by_type.
+From: Julia Lawall <julia@diku.dk>
+
+Indent the body of for_each_cpu.
 
 The semantic match that finds this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r exists@
-local idexpression x;
-expression E,E1,E2;
-statement S;
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
 @@
 
-*x = 
-(of_find_node_by_path
-|of_find_node_by_name
-|of_find_node_by_phandle
-|of_get_parent
-|of_get_next_parent
-|of_get_next_child
-|of_find_compatible_node
-|of_match_node
-|of_find_node_by_type
-|of_find_node_with_property
-|of_find_matching_node
-|of_parse_phandle
-)(...);
-...
-if (x = NULL) S
-<... when != x = E
-*if (...) {
-  ... when != of_node_put(x)
-      when != if (...) { ... of_node_put(x); ... }
 (
-  return <+...x...+>;
+if (...) { ... }
 |
-*  return ...;
+if (...) S1@p1 S2@p2
 )
-}
-...>
-(
-E2 = x;
-|
-of_node_put(x);
-)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/powerpc/platforms/chrp/nvram.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/cpufreq/cpufreq.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/platforms/chrp/nvram.c b/arch/powerpc/platforms/chrp/nvram.c
-index ba3588f..d3ceff0 100644
---- a/arch/powerpc/platforms/chrp/nvram.c
-+++ b/arch/powerpc/platforms/chrp/nvram.c
-@@ -74,8 +74,10 @@ void __init chrp_nvram_init(void)
- 		return;
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 199dcb9..c63a438 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -918,8 +918,8 @@ static int cpufreq_add_dev_interface(unsigned int cpu,
  
- 	nbytes_p = of_get_property(nvram, "#bytes", &proplen);
--	if (nbytes_p = NULL || proplen != sizeof(unsigned int))
-+	if (nbytes_p = NULL || proplen != sizeof(unsigned int)) {
-+		of_node_put(nvram);
- 		return;
-+	}
- 
- 	nvram_size = *nbytes_p;
- 
-
+ 	spin_lock_irqsave(&cpufreq_driver_lock, flags);
+ 	for_each_cpu(j, policy->cpus) {
+-	if (!cpu_online(j))
+-		continue;
++		if (!cpu_online(j))
++			continue;
+ 		per_cpu(cpufreq_cpu_data, j) = policy;
+ 		per_cpu(cpufreq_policy_cpu, j) = policy->cpu;
+ 	}
