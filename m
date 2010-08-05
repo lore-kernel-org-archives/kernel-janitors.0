@@ -1,28 +1,66 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 10 Aug 2010 08:34:47 +0000
-Subject: Re: [patch 1/2 v2] qlcnic: clean up qlcnic_init_pci_info()
-Message-Id: <20100810.013447.245408526.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:17:43 +0000
+Subject: [PATCH 3/42] drivers/hwmon: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052217240.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100810074756.GF18431@bicker>
-In-Reply-To: <20100810074756.GF18431@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: amit.salecha@qlogic.com, anirban.chakraborty@qlogic.com, linux-driver@qlogic.com, sucheta.chakraborty@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Rudolf Marek <r.marek@assembler.cz>, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 10 Aug 2010 09:47:56 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> In the original code we allocated memory conditionally and freed it in
-> the error handling unconditionally.  It turns out that this function is
-> only called during initialization and "adapter->npars" and
-> "adapter->eswitch" are always NULL at the start of the function.  I
-> removed those checks.
-> 
-> Also since I was cleaning things, I changed the error handling for
-> qlcnic_get_pci_info() and pulled everything in an indent level.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Move the if(err) statement after the if into the if branch indicated by its
+indentation.  The preceding if(err) test implies that err cannot be nonzero
+unless the if branch is taken.
 
-Applied.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
+
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/hwmon/k8temp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/k8temp.c b/drivers/hwmon/k8temp.c
+index 8bdf80d..b9bb3e0 100644
+--- a/drivers/hwmon/k8temp.c
++++ b/drivers/hwmon/k8temp.c
+@@ -252,12 +252,13 @@ static int __devinit k8temp_probe(struct pci_dev *pdev,
+ 				   &sensor_dev_attr_temp3_input.dev_attr);
+ 		if (err)
+ 			goto exit_remove;
+-		if (data->sensorsp & SEL_PLACE)
++		if (data->sensorsp & SEL_PLACE) {
+ 			err = device_create_file(&pdev->dev,
+ 					   &sensor_dev_attr_temp4_input.
+ 					   dev_attr);
+ 			if (err)
+ 				goto exit_remove;
++		}
+ 	}
+ 
+ 	err = device_create_file(&pdev->dev, &dev_attr_name);
