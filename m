@@ -1,47 +1,58 @@
-From: =?UTF-8?B?SMOla29uIEzDuHZkYWw=?= <hlovdal@gmail.com>
-Date: Thu, 05 Aug 2010 11:14:57 +0000
-Subject: Re: [PATCH 2/2] kprobes: verify jprobe entry point
-Message-Id: <AANLkTikgH3NeWtqDPxu5gRFZUkcphZOLuNuso8AJ0KuT@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:17:22 +0000
+Subject: [PATCH 2/42] arch/mips/kernel: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052217010.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280820323-18929-2-git-send-email-namhyung@gmail.com>
-In-Reply-To: <1280820323-18929-2-git-send-email-namhyung@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 5 August 2010 11:47, Julia Lawall <julia@diku.dk> wrote:
-> On Thu, 5 Aug 2010, walter harms wrote:
->> I am a bit converned about this code here:
->>       if (kallsyms_lookup_size_offset(addr, NULL, &offset) &&  offset = 0)
->>
->> offset is set inside kallsyms_lookup_size_offset(), right ?
->> but can you guarantee that the calling sequence is the same on all processors ?
->> (it is  not in case of functions).
->
-> && should always be evaluated lazily from left to right.  Otherwise
-> x != NULL && x->y = z wouldn't be safe.
->
+From: Julia Lawall <julia@diku.dk>
 
-The && operator triggers a sequence point.
+Indent the branch of an if.
 
-I do not have access to the standard (ISO/IEC 9899:1990) any longer,
-so the following is from a draft (but in case the text changed, there
-are no functional differences for this):
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
-2.1.2.3 Program execution
-...
-At certain specified points in the execution sequence called
-sequence points, all side effects of previous evaluations shall
-be complete and no side effects of subsequent evaluations
-shall have taken place.
-...
-3.3.13 Logical AND operator
-...
-Unlike the bitwise binary & operator, the && operator guarantees
-left-to-right evaluation; there is a sequence point after the
-evaluation of the first operand.
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
 
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
 
-BR Håkon Løvdal
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/mips/kernel/kspd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/kernel/kspd.c b/arch/mips/kernel/kspd.c
+index 80e2ba6..29811f0 100644
+--- a/arch/mips/kernel/kspd.c
++++ b/arch/mips/kernel/kspd.c
+@@ -251,7 +251,7 @@ void sp_work_handle_request(void)
+  		memset(&tz, 0, sizeof(tz));
+  		if ((ret.retval = sp_syscall(__NR_gettimeofday, (int)&tv,
+ 					     (int)&tz, 0, 0)) = 0)
+-		ret.retval = tv.tv_sec;
++			ret.retval = tv.tv_sec;
+ 		break;
+ 
+  	case MTSP_SYSCALL_EXIT:
