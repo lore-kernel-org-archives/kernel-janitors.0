@@ -1,63 +1,59 @@
-From: "jack wang" <jack_wang@usish.com>
-Date: Wed, 18 Aug 2010 01:15:23 +0000
-Subject: RE: [patch] scsi/pm8001: handle allocation failures
-Message-Id: <BE124E04D5CE40BFBBCF6107FDF8B94D@usish.com.cn>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:18:01 +0000
+Subject: [PATCH 4/42] drivers/infiniband/hw/nes: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052217430.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100817115334.GG645@bicker>
-In-Reply-To: <20100817115334.GG645@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <error27@gmail.com>
-Cc: lindar_liu@usish.com, "'James E.J. Bottomley'" <James.Bottomley@suse.de>, 'Jiri Kosina' <jkosina@suse.cz>, 'Julia Lawall' <julia@diku.dk>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Faisal Latif <faisal.latif@intel.com>, Chien Tung <chien.tin.tung@intel.com>, Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-[Jack] Acked-by: Jack Wang <jack_wang@usish.com> 
-	Thanks!
-                                                                     
+It is not clear whether the assignment should be part of the if branch
+suggested by its indentation.  The patch preserves the current semantics.
 
-Return -ENOMEM if the allocations fail.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
-diff --git a/drivers/scsi/pm8001/pm8001_hwi.c
-b/drivers/scsi/pm8001/pm8001_hwi.c
-index 9793aa6..d8db013 100644
---- a/drivers/scsi/pm8001/pm8001_hwi.c
-+++ b/drivers/scsi/pm8001/pm8001_hwi.c
-@@ -4194,6 +4194,8 @@ static int pm8001_chip_get_nvmd_req(struct
-pm8001_hba_info *pm8001_ha,
- 
- 	nvmd_type = ioctl_payload->minor_function;
- 	fw_control_context = kzalloc(sizeof(struct fw_control_ex),
-GFP_KERNEL);
-+	if (!fw_control_context)
-+		return -ENOMEM;
- 	fw_control_context->usrAddr = (u8
-*)&ioctl_payload->func_specific[0];
- 	fw_control_context->len = ioctl_payload->length;
- 	circularQ = &pm8001_ha->inbnd_q_tbl[0];
-@@ -4272,6 +4274,8 @@ static int pm8001_chip_set_nvmd_req(struct
-pm8001_hba_info *pm8001_ha,
- 
- 	nvmd_type = ioctl_payload->minor_function;
- 	fw_control_context = kzalloc(sizeof(struct fw_control_ex),
-GFP_KERNEL);
-+	if (!fw_control_context)
-+		return -ENOMEM;
- 	circularQ = &pm8001_ha->inbnd_q_tbl[0];
- 	memcpy(pm8001_ha->memoryMap.region[NVMD].virt_ptr,
- 		ioctl_payload->func_specific,
-@@ -4381,6 +4385,8 @@ pm8001_chip_fw_flash_update_req(struct pm8001_hba_info
-*pm8001_ha,
- 	struct pm8001_ioctl_payload *ioctl_payload = payload;
- 
- 	fw_control_context = kzalloc(sizeof(struct fw_control_ex),
-GFP_KERNEL);
-+	if (!fw_control_context)
-+		return -ENOMEM;
- 	fw_control = (struct fw_control_info
-*)&ioctl_payload->func_specific[0];
- 	if (fw_control->len != 0) {
- 		if (pm8001_mem_alloc(pm8001_ha->pdev,
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
 
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/infiniband/hw/nes/nes_hw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/nes/nes_hw.c b/drivers/infiniband/hw/nes/nes_hw.c
+index f41d890..9a379d4 100644
+--- a/drivers/infiniband/hw/nes/nes_hw.c
++++ b/drivers/infiniband/hw/nes/nes_hw.c
+@@ -2740,7 +2740,7 @@ void nes_nic_ce_handler(struct nes_device *nesdev, struct nes_hw_nic_cq *cq)
+ 				/* restart the queue if it had been stopped */
+ 				if (netif_queue_stopped(nesvnic->netdev))
+ 					netif_wake_queue(nesvnic->netdev);
+-					sq_cqes = 0;
++				sq_cqes = 0;
+ 				}
+ 			} else {
+ 				rqes_processed ++;
