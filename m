@@ -1,69 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 24 Aug 2010 20:20:45 +0000
-Subject: Re: [PATCH 4/5] drivers/char/agp: Eliminate memory leak
-Message-Id: <Pine.LNX.4.64.1008242220170.14009@ask.diku.dk>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Thu, 05 Aug 2010 21:19:41 +0000
+Subject: Re: smatch: module_init unwinding on errors
+Message-Id: <20100805141941.89db91f0.rdunlap@xenotime.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008241639130.15172@ask.diku.dk>
- <20100824171644.GL29330@bicker>
-In-Reply-To: <20100824171644.GL29330@bicker>
+References: <20100729174329.GU26313@bicker>
+In-Reply-To: <20100729174329.GU26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Thu, 29 Jul 2010 22:18:03 +0200 Dan Carpenter wrote:
 
-alloc_pci_dev allocates some memory, so that memory should be freed before
-leaving the function in an error case.
+> On Thu, Jul 29, 2010 at 11:00:07AM -0700, Randy Dunlap wrote:
+> > Hi Dan,
+> > 
+> > Most drivers just use the result of request_region() as a pass/fail indicator.
+> > Only a very few of them actually save the result pointer;  mostly they just pass
+> > bar to release_region().
+> > 
+> 
+> That was another thing which was concerning me.  request_region()
+> returns freshly allocated memory.  Isn't it a leak to discard this?
 
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
+If I knew the answer, I would have already replied...
+I was hoping that someone else could help out here.
 
-// <smpl>
-@r exists@
-local idexpression x;
-expression E;
-identifier f1;
-iterator I;
-@@
-
-x = alloc_pci_dev(...);
-<... when != x
-     when != true (x = NULL || ...)
-     when != if (...) { <+...x...+> }
-     when != I (...) { <+...x...+> }
-(
- x = NULL
-|
- x = E
-|
- x->f1
-)
-...>
-* return ...;
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+I expect that if there was a leak, someone would have already noticed
+and pointed this out to us.  OTOH, this could be the last class of kernel
+leaks that needs to be fixed...  I dunno.
 
 ---
- drivers/char/agp/parisc-agp.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/char/agp/parisc-agp.c b/drivers/char/agp/parisc-agp.c
-index 1c12921..17e380f 100644
---- a/drivers/char/agp/parisc-agp.c
-+++ b/drivers/char/agp/parisc-agp.c
-@@ -358,8 +358,12 @@ parisc_agp_setup(void __iomem *ioc_hpa, void __iomem *lba_hpa)
- 	bridge->dev = fake_bridge_dev;
- 
- 	error = agp_add_bridge(bridge);
-+	if (error)
-+		goto fail;
-+	return 0;
- 
- fail:
-+	kfree(fake_bridge_dev);
- 	return error;
- }
- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
