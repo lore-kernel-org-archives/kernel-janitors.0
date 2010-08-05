@@ -1,55 +1,58 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Wed, 11 Aug 2010 01:09:41 +0000
-Subject: [PATCH] x86: hpet: clean up warning (hpet_freq)
-Message-Id: <1281488981.4423.6.camel@lovely.krouter>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:18:18 +0000
+Subject: [PATCH 5/42] arch/s390/kernel: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052218010.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-hpet_freq is (FSEC_PER_NSEC * NSEC_PER_SEC). This patch also fixes the
-below compile warning due to recently added preprocessor calculation for
-hpet_freq.
+From: Julia Lawall <julia@diku.dk>
 
-arch/x86/kernel/hpet.c: In function =A1hpet_clocksource_register=A2:
-arch/x86/kernel/hpet.c:840: warning: integer overflow in expression
+Indent the branch of an if.
 
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
+
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- arch/x86/kernel/hpet.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/kernel/kprobes.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 33dbcc4..86643ce 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -582,7 +582,7 @@ static void init_one_hpet_msi_clockevent(struct hpet_de=
-v *hdev, int cpu)
- 	 * scaled math multiplication factor for nanosecond to hpet tick
- 	 * conversion.
- 	 */
--	hpet_freq =3D 1000000000000000ULL;
-+	hpet_freq =3D (uint64_t)FSEC_PER_NSEC * (uint64_t)NSEC_PER_SEC;
- 	do_div(hpet_freq, hpet_period);
- 	evt->mult =3D div_sc((unsigned long) hpet_freq,
- 				      NSEC_PER_SEC, evt->shift);
-@@ -837,7 +837,7 @@ static int hpet_clocksource_register(void)
- 	 * cyc/sec =3D FSEC_PER_SEC/hpet_period(fsec/cyc)
- 	 * cyc/sec =3D (FSEC_PER_NSEC * NSEC_PER_SEC)/hpet_period
- 	 */
--	hpet_freq =3D FSEC_PER_NSEC * NSEC_PER_SEC;
-+	hpet_freq =3D (u64)FSEC_PER_NSEC * (u64)NSEC_PER_SEC;
- 	do_div(hpet_freq, hpet_period);
- 	clocksource_register_hz(&clocksource_hpet, (u32)hpet_freq);
-=20
---=20
-1.7.1
-
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/s390/kernel/kprobes.c b/arch/s390/kernel/kprobes.c
+index 2a3d2bf..5a7fccf 100644
+--- a/arch/s390/kernel/kprobes.c
++++ b/arch/s390/kernel/kprobes.c
+@@ -140,7 +140,7 @@ void __kprobes get_instruction_type(struct arch_specific_insn *ainsn)
+ 	case 0xc0:
+ 		if ((*ainsn->insn & 0x0f) = 0x00  /* larl  */
+ 			|| (*ainsn->insn & 0x0f) = 0x05) /* brasl */
+-		ainsn->fixup |= FIXUP_RETURN_REGISTER;
++			ainsn->fixup |= FIXUP_RETURN_REGISTER;
+ 		break;
+ 	case 0xeb:
+ 		if (*(((__u8 *) ainsn->insn) + 5 ) = 0x44 ||	/* bxhg  */
