@@ -1,7 +1,7 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Date: Thu, 05 Aug 2010 09:06:50 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 05 Aug 2010 09:41:41 +0000
 Subject: Re: [PATCH 2/2] kprobes: verify jprobe entry point
-Message-Id: <4C5A7F2A.5030806@hitachi.com>
+Message-Id: <4C5A8755.4010803@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1280820323-18929-2-git-send-email-namhyung@gmail.com>
 In-Reply-To: <1280820323-18929-2-git-send-email-namhyung@gmail.com>
@@ -10,17 +10,14 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Namhyung Kim wrote:
+
+
+Namhyung Kim schrieb:
 > verify jprobe's entry point is a function entry point
 > using kallsyms' offset value.
 > 
 > Signed-off-by: Namhyung Kim <namhyung@gmail.com>
-
-Looks good for me :) Thanks!
-
-Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-
-
+> 
 > ---
 > 
 > Here comes 3rd revision of the patch. Thanks to Masami Hiramatus for suggesting
@@ -54,12 +51,20 @@ Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 > 
 >  		if (ret < 0) {
 >  			if (i > 0)
-> --
-> 1.7.0.4
-> 
 
--- 
-Masami HIRAMATSU
-2nd Research Dept.
-Hitachi, Ltd., Systems Development Laboratory
-E-mail: masami.hiramatsu.pt@hitachi.com
+
+I am a bit converned about this code here:
+	if (kallsyms_lookup_size_offset(addr, NULL, &offset) &&  offset = 0)
+
+offset is set inside kallsyms_lookup_size_offset(), right ?
+but can you guarantee that the calling sequence is the same on all processors ?
+(it is  not in case of functions).
+
+perhaps it is more secure (and readable) to do:
+
+ret=kallsyms_lookup_size_offset(addr, NULL, &offset);
+if ( ret &&  offset = 0 )
+
+just my  2 cents,
+re,
+ wh
