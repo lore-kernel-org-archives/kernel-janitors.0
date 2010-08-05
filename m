@@ -1,28 +1,86 @@
-From: wfp5p@viridian.itc.virginia.edu (Bill Pemberton)
-Date: Fri, 13 Aug 2010 12:58:24 +0000
-Subject: Re: [patch] usb/serial/ssu100: uninitialized variable
-Message-Id: <20100813125824.87BC52389B@viridian.itc.virginia.edu>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:17:00 +0000
+Subject: [PATCH 1/42] drivers/net/wan: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052216400.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20100813123811.GA31262@bicker>
-References: <20100813123811.GA31262@bicker>
-In-Reply-To: <20100813123811.GA31262@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Krzysztof Halasa <khc@pm.waw.pl>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> 
-> GCC complains about the original code, because we're using an
-> unintialized variable "flag".  I think we should be setting flag based
-> on the UART_LSR_BRK_ERROR_BITS but I'm not sure...  I don't have this
-> hardware.  Probably passing TTY_NORMAL is better than the current code?
-> 
+From: Julia Lawall <julia@diku.dk>
 
-I took that function from ftdi_sio and stripped a lot out of it
-while developing the driver.  I see I missed adding back in the logic
-dealing with setting flag correctly.  I'll work up a patch to properly
-deal with it.
+Indent the branch of an if.
 
--- 
-Bill
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
+
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wan/c101.c      |    2 +-
+ drivers/net/wan/n2.c        |    2 +-
+ drivers/net/wan/pci200syn.c |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wan/c101.c b/drivers/net/wan/c101.c
+index 0bd898c..4ac85a0 100644
+--- a/drivers/net/wan/c101.c
++++ b/drivers/net/wan/c101.c
+@@ -264,7 +264,7 @@ static int c101_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 		    new_line.clock_type != CLOCK_TXFROMRX &&
+ 		    new_line.clock_type != CLOCK_INT &&
+ 		    new_line.clock_type != CLOCK_TXINT)
+-		return -EINVAL;	/* No such clock setting */
++			return -EINVAL;	/* No such clock setting */
+ 
+ 		if (new_line.loopback != 0 && new_line.loopback != 1)
+ 			return -EINVAL;
+diff --git a/drivers/net/wan/n2.c b/drivers/net/wan/n2.c
+index 5394b51..7a3720f 100644
+--- a/drivers/net/wan/n2.c
++++ b/drivers/net/wan/n2.c
+@@ -282,7 +282,7 @@ static int n2_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 		    new_line.clock_type != CLOCK_TXFROMRX &&
+ 		    new_line.clock_type != CLOCK_INT &&
+ 		    new_line.clock_type != CLOCK_TXINT)
+-		return -EINVAL;	/* No such clock setting */
++			return -EINVAL;	/* No such clock setting */
+ 
+ 		if (new_line.loopback != 0 && new_line.loopback != 1)
+ 			return -EINVAL;
+diff --git a/drivers/net/wan/pci200syn.c b/drivers/net/wan/pci200syn.c
+index e2cff64..fd73759 100644
+--- a/drivers/net/wan/pci200syn.c
++++ b/drivers/net/wan/pci200syn.c
+@@ -220,7 +220,7 @@ static int pci200_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 		    new_line.clock_type != CLOCK_TXFROMRX &&
+ 		    new_line.clock_type != CLOCK_INT &&
+ 		    new_line.clock_type != CLOCK_TXINT)
+-		return -EINVAL;	/* No such clock setting */
++			return -EINVAL;	/* No such clock setting */
+ 
+ 		if (new_line.loopback != 0 && new_line.loopback != 1)
+ 			return -EINVAL;
