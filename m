@@ -1,64 +1,59 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Date: Fri, 06 Aug 2010 02:23:31 +0000
-Subject: Re: [PATCH 3/4] kprobes: make functions static
-Message-Id: <4C5B7223.1050401@hitachi.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:28:12 +0000
+Subject: [PATCH 37/42] drivers/net/hamradio: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052227520.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281022194-23883-1-git-send-email-namhyung@gmail.com>
-In-Reply-To: <1281022194-23883-1-git-send-email-namhyung@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Joerg Reuter <jreuter@yaina.de>, Klaus Kudielka <klaus.kudielka@ieee.org>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Namhyung Kim wrote:
-> make following (internal) functions static to make sparse happier :-)
-> 
->  * get_optimized_kprobe: only called from static functions
->  * kretprobe_table_unlock: _lock function is static
->  * kprobes_optinsn_template_holder: never called
-	... but holding asm code.
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Indent the branch of an if.
 
-Thank you!
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> 
-> Signed-off-by: Namhyung Kim <namhyung@gmail.com>
-> 
-> diff --git a/arch/x86/kernel/kprobes.c b/arch/x86/kernel/kprobes.c
-> index 675879b..4986160 100644
-> --- a/arch/x86/kernel/kprobes.c
-> +++ b/arch/x86/kernel/kprobes.c
-> @@ -1109,7 +1109,7 @@ static void __kprobes synthesize_set_arg1(kprobe_opcode_t *addr,
->  	*(unsigned long *)addr = val;
->  }
->  
-> -void __kprobes kprobes_optinsn_template_holder(void)
-> +static void __used __kprobes kprobes_optinsn_template_holder(void)
->  {
->  	asm volatile (
->  			".global optprobe_template_entry\n"
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 1b0dbe0..c53aad5 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -399,7 +399,7 @@ static inline int kprobe_optready(struct kprobe *p)
->   * Return an optimized kprobe whose optimizing code replaces
->   * instructions including addr (exclude breakpoint).
->   */
-> -struct kprobe *__kprobes get_optimized_kprobe(unsigned long addr)
-> +static struct kprobe *__kprobes get_optimized_kprobe(unsigned long addr)
->  {
->  	int i;
->  	struct kprobe *p = NULL;
-> @@ -857,7 +857,8 @@ void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
->  	spin_unlock_irqrestore(hlist_lock, *flags);
->  }
->  
-> -void __kprobes kretprobe_table_unlock(unsigned long hash, unsigned long *flags)
-> +static void __kprobes kretprobe_table_unlock(unsigned long hash,
-> +       unsigned long *flags)
->  {
->  	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
->  	spin_unlock_irqrestore(hlist_lock, *flags);
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/hamradio/scc.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/hamradio/scc.c b/drivers/net/hamradio/scc.c
+index 9f64c86..3365581 100644
+--- a/drivers/net/hamradio/scc.c
++++ b/drivers/net/hamradio/scc.c
+@@ -1069,7 +1069,8 @@ static void scc_tx_done(struct scc_channel *scc)
+ 		case KISS_DUPLEX_LINK:
+ 			scc->stat.tx_state = TXS_IDLE2;
+ 			if (scc->kiss.idletime != TIMER_OFF)
+-			scc_start_tx_timer(scc, t_idle, scc->kiss.idletime*100);
++				scc_start_tx_timer(scc, t_idle,
++						   scc->kiss.idletime*100);
+ 			break;
+ 		case KISS_DUPLEX_OPTIMA:
+ 			scc_notify(scc, HWEV_ALL_SENT);
