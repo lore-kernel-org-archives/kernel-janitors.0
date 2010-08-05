@@ -1,61 +1,54 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:26:56 +0000
-Subject: [PATCH 33/42] drivers/net/wireless/ath/ath9k: Adjust confusing if
-Message-Id: <Pine.LNX.4.64.1008052226380.31692@ask.diku.dk>
+From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
+Date: Thu, 05 Aug 2010 20:47:56 +0000
+Subject: Re: [PATCH 33/42] drivers/net/wireless/ath/ath9k: Adjust confusing
+Message-Id: <20100805204756.GA1738@tux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1008052226380.31692@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1008052226380.31692@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <lrodriguez@atheros.com>, Jouni Malinen <jmalinen@atheros.com>, Sujith Manoharan <Sujith.Manoharan@atheros.com>, Vasanthakumar Thiagarajan <vasanth@atheros.com>, Senthil Balasubramanian <senthilkumar@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Luis Rodriguez <Luis.Rodriguez@Atheros.com>, Jouni Malinen <Jouni.Malinen@Atheros.com>, Sujith Manoharan <Sujith.Manoharan@Atheros.com>, Vasanth Thiagarajan <Vasanth.Thiagarajan@Atheros.com>, Senthilkumar Balasubramanian <Senthilkumar.Balasubramanian@Atheros.com>, "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "ath9k-devel@lists.ath9k.org" <ath9k-devel@lists.ath9k.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Julia Lawall <julia@diku.dk>
+On Thu, Aug 05, 2010 at 01:26:56PM -0700, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Outdent the code following the if.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r disable braces4@
+> position p1,p2;
+> statement S1,S2;
+> @@
+> 
+> (
+> if (...) { ... }
+> |
+> if (...) S1@p1 S2@p2
+> )
+> 
+> @script:python@
+> p1 << r.p1;
+> p2 << r.p2;
+> @@
+> 
+> if (p1[0].column = p2[0].column):
+>   cocci.print_main("branch",p1)
+>   cocci.print_secs("after",p2)
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Outdent the code following the if.
+Acked-by: Luis R. Rodriguez <lrodriguez@atheros.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+> ---
+> This patch doesn't change the semantics of the code.  But it might not be
+> what is intended.
 
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
+Your patch is correct, it wast a tab goof, thanks for fixing this.
 
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-This patch doesn't change the semantics of the code.  But it might not be
-what is intended.
-
- drivers/net/wireless/ath/ath9k/ar9003_mac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath9k/ar9003_mac.c b/drivers/net/wireless/ath/ath9k/ar9003_mac.c
-index 5b995be..a462da2 100644
---- a/drivers/net/wireless/ath/ath9k/ar9003_mac.c
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_mac.c
-@@ -185,7 +185,7 @@ static bool ar9003_hw_get_isr(struct ath_hw *ah, enum ath9k_int *masked)
- 			ath_print(common, ATH_DBG_INTERRUPT,
- 				  "AR_INTR_SYNC_LOCAL_TIMEOUT\n");
- 
--			REG_WRITE(ah, AR_INTR_SYNC_CAUSE_CLR, sync_cause);
-+		REG_WRITE(ah, AR_INTR_SYNC_CAUSE_CLR, sync_cause);
- 		(void) REG_READ(ah, AR_INTR_SYNC_CAUSE_CLR);
- 
- 	}
+  Luis
