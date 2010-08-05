@@ -1,59 +1,58 @@
-From: David Howells <dhowells@redhat.com>
-Date: Mon, 23 Aug 2010 13:31:34 +0000
-Subject: [PATCH] arch/mn10300/mm: eliminate NULL dereference
-Message-Id: <20100823133134.25674.77240.stgit@warthog.procyon.org.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:29:55 +0000
+Subject: [PATCH 42/42] drivers/media/video/bt8xx: Adjust confusing if
+Message-Id: <Pine.LNX.4.64.1008052229390.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008211129440.2637@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008211129440.2637@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: torvalds@osdl.org, akpm@linux-foundation.org
-Cc: linux-am33-list@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>, David Howells <dhowells@redhat.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-dev_name always dereferences its argument, so it should not be called if
-the argument is NULL.  The function indeed later tests the argument for
-being NULL.
+Indent the branch of an if.
 
 The semantic match that finds this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression dev,E;
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
 @@
 
-*dev_name(dev)
-... when != dev = E
 (
-*dev = NULL
+if (...) { ... }
 |
-*dev != NULL
+if (...) S1@p1 S2@p2
 )
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-Signed-off-by: David Howells <dhowells@redhat.com>
+
 ---
+ drivers/media/video/bt8xx/bttv-i2c.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/mn10300/mm/dma-alloc.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-
-diff --git a/arch/mn10300/mm/dma-alloc.c b/arch/mn10300/mm/dma-alloc.c
-index 4e34880..159acb0 100644
---- a/arch/mn10300/mm/dma-alloc.c
-+++ b/arch/mn10300/mm/dma-alloc.c
-@@ -25,7 +25,8 @@ void *dma_alloc_coherent(struct device *dev, size_t size,
- 	unsigned long addr;
- 	void *ret;
+diff --git a/drivers/media/video/bt8xx/bttv-i2c.c b/drivers/media/video/bt8xx/bttv-i2c.c
+index 685d659..695765c 100644
+--- a/drivers/media/video/bt8xx/bttv-i2c.c
++++ b/drivers/media/video/bt8xx/bttv-i2c.c
+@@ -123,7 +123,7 @@ bttv_i2c_wait_done(struct bttv *btv)
+ 	if (wait_event_interruptible_timeout(btv->i2c_queue,
+ 		btv->i2c_done, msecs_to_jiffies(85)) = -ERESTARTSYS)
  
--	printk("dma_alloc_coherent(%s,%zu,,%x)\n", dev_name(dev), size, gfp);
-+	pr_debug("dma_alloc_coherent(%s,%zu,%x)\n",
-+		 dev ? dev_name(dev) : "?", size, gfp);
+-	rc = -EIO;
++		rc = -EIO;
  
- 	if (0xbe000000 - pci_sram_allocated >= size) {
- 		size = (size + 255) & ~255;
-
+ 	if (btv->i2c_done & BT848_INT_RACK)
+ 		rc = 1;
