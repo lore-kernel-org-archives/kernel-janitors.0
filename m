@@ -1,73 +1,58 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 27 Aug 2010 05:57:19 +0000
-Subject: [PATCH 2/3] drivers/dma: Remove potential NULL dereference
-Message-Id: <1282888640-27042-3-git-send-email-julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:21:02 +0000
+Subject: [PATCH 14/42] drivers/video/aty/mach64_ct.c: Adjust confusing if
+Message-Id: <Pine.LNX.4.64.1008052220440.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282888640-27042-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1282888640-27042-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In each case, it appears that the NULL test is not necessary.  In the first
-case, the function pl08x_fill_llis_for_desc is only called in a case where
-its argument is computed using container_of.  In the second case, the
-function pl08x_tasklet is only used as the second argument of tasklet_init,
-from which its argument should be the third argument of tasklet_init.  But
-that value is not NULL at the point of calling tasklet_init, in
-pl08x_dma_init_virtual_channels.
+From: Julia Lawall <julia@diku.dk>
 
-The sematic patch that fixes this problem is as follows:
+Indent the branch of an if.
+
+The semantic match that finds this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
 @@
 
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/dma/amba-pl08x.c |    8 --------
- 1 file changed, 8 deletions(-)
+ drivers/video/aty/mach64_ct.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index fc5aaeb..ac675d2 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -626,11 +626,6 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 	struct lli *llis_va;
- 	struct lli *llis_bus;
+diff --git a/drivers/video/aty/mach64_ct.c b/drivers/video/aty/mach64_ct.c
+index 2745b85..204b580 100644
+--- a/drivers/video/aty/mach64_ct.c
++++ b/drivers/video/aty/mach64_ct.c
+@@ -179,7 +179,7 @@ static int aty_dsp_gt(const struct fb_info *info, u32 bpp, struct pll_ct *pll)
+ 		dsp_on = ((multiplier << vshift) + divider) / divider;
+ 		tmp = ((ras_multiplier << xshift) + ras_divider) / ras_divider;
+ 		if (dsp_on < tmp)
+-		dsp_on = tmp;
++			dsp_on = tmp;
+ 		dsp_on = dsp_on + (tmp * 2) + (pll->xclkpagefaultdelay << xshift);
+ 	}
  
--	if (!txd) {
--		dev_err(&pl08x->adev->dev, "%s no descriptor\n", __func__);
--		return 0;
--	}
--
- 	txd->llis_va = dma_pool_alloc(pl08x->pool, GFP_KERNEL,
- 				      &txd->llis_bus);
- 	if (!txd->llis_va) {
-@@ -1033,9 +1028,6 @@ static void pl08x_tasklet(unsigned long data)
- 	struct pl08x_driver_data *pl08x = plchan->host;
- 	unsigned long flags;
- 
--	if (!plchan)
--		BUG();
--
- 	spin_lock_irqsave(&plchan->lock, flags);
- 
- 	if (plchan->at) {
-
