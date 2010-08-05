@@ -1,68 +1,58 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 12 Aug 2010 07:53:52 +0000
-Subject: [patch 1/2] mtd/m25p80: retlen is never NULL
-Message-Id: <20100812075352.GN645@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 05 Aug 2010 20:21:41 +0000
+Subject: [PATCH 16/42] net/ipv6/netfilter: Adjust confusing if indentation
+Message-Id: <Pine.LNX.4.64.1008052221240.31692@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, Mike Frysinger <vapier@gentoo.org>, Anton Vorontsov <avorontsov@mvista.com>, kernel-janitors@vger.kernel.org, Gabor Juhos <juhosg@openwrt.org>, linux-mtd@lists.infradead.org
+To: Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is just a cleanup, it doesn't fix any bugs.
+From: Julia Lawall <julia@diku.dk>
 
-These functions all check retlen inconsistently and it generates a
-warning in Smatch (http://smatch.sf.net).  If retlen were ever NULL it
-would cause an oops and the code has been this way since 2006 so someone
-would have complained.  Also I looked at other places that implemented
-the mtd read and write functions and they dereference retlen without
-checking.
+Indent the branch of an if.
 
-I removed the checks.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+// <smpl>
+@r disable braces4@
+position p1,p2;
+statement S1,S2;
+@@
 
-diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-index f90941a..83c9086 100644
---- a/drivers/mtd/devices/m25p80.c
-+++ b/drivers/mtd/devices/m25p80.c
-@@ -347,8 +347,7 @@ static int m25p80_read(struct mtd_info *mtd, loff_t from, size_t len,
- 	spi_message_add_tail(&t[1], &m);
- 
- 	/* Byte count starts at zero. */
--	if (retlen)
--		*retlen = 0;
-+	*retlen = 0;
- 
- 	mutex_lock(&flash->lock);
- 
-@@ -394,8 +393,7 @@ static int m25p80_write(struct mtd_info *mtd, loff_t to, size_t len,
- 			dev_name(&flash->spi->dev), __func__, "to",
- 			(u32)to, len);
- 
--	if (retlen)
--		*retlen = 0;
-+	*retlen = 0;
- 
- 	/* sanity checks */
- 	if (!len)
-@@ -466,8 +464,7 @@ static int m25p80_write(struct mtd_info *mtd, loff_t to, size_t len,
- 
- 			spi_sync(flash->spi, &m);
- 
--			if (retlen)
--				*retlen += m.actual_length - m25p_cmdsz(flash);
-+			*retlen += m.actual_length - m25p_cmdsz(flash);
- 		}
+(
+if (...) { ... }
+|
+if (...) S1@p1 S2@p2
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].column = p2[0].column):
+  cocci.print_main("branch",p1)
+  cocci.print_secs("after",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c b/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
+index 1df3c8b..befccff 100644
+--- a/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
++++ b/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
+@@ -192,7 +192,7 @@ icmpv6_error(struct net *net, struct nf_conn *tmpl,
+ 	icmp6h = skb_header_pointer(skb, dataoff, sizeof(_ih), &_ih);
+ 	if (icmp6h = NULL) {
+ 		if (LOG_INVALID(net, IPPROTO_ICMPV6))
+-		nf_log_packet(PF_INET6, 0, skb, NULL, NULL, NULL,
++			nf_log_packet(PF_INET6, 0, skb, NULL, NULL, NULL,
+ 			      "nf_ct_icmpv6: short packet ");
+ 		return -NF_ACCEPT;
  	}
- 
-@@ -485,8 +482,7 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
- 	size_t actual;
- 	int cmd_sz, ret;
- 
--	if (retlen)
--		*retlen = 0;
-+	*retlen = 0;
- 
- 	/* sanity checks */
- 	if (!len)
