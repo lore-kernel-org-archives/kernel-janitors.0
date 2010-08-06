@@ -1,54 +1,36 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Tue, 24 Aug 2010 12:52:12 +0000
-Subject: Re: [PATCH 2/2] drivers/mtd/ubi: Eliminate update of
-Message-Id: <1282654332.24044.170.camel@localhost>
+From: Namhyung Kim <namhyung@gmail.com>
+Date: Fri, 06 Aug 2010 12:46:08 +0000
+Subject: [PATCH] percpu: remove address_space attribute if !SMP
+Message-Id: <1281098768-5724-1-git-send-email-namhyung@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008071109140.5821@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008071109140.5821@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: tj@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2010-08-07 at 11:09 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> list_for_each_entry uses its first argument to move from one element to the
-> next, so modifying it can break the iteration.  The variable re1 is already
-> used within the loop as a temporary variable, and is not live here.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> iterator name list_for_each_entry;
-> expression x,E;
-> position p1,p2;
-> @@
-> 
-> list_for_each_entry@p1(x,...) { <... x =@p2 E ...> }
-> 
-> @@
-> expression x,E;
-> position r.p1,r.p2;
-> statement S;
-> @@
-> 
-> *x =@p2 E
-> ...
-> list_for_each_entry@p1(x,...) S
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+percpu data has no special meaning in case of !CONFIG_SMP.
+This removes lots of sparse warnings.
 
-Pushed to ubi-2.6.git tree. This won't be seen in linux-next for some
-time though, but I'll make it visible in linux-next at some point soon.
+Signed-off-by: Namhyung Kim <namhyung@gmail.com>
 
-Thanks!
-
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index a5a472b..8dfd41d 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -15,7 +15,11 @@
+ # define __acquire(x)	__context__(x,1)
+ # define __release(x)	__context__(x,-1)
+ # define __cond_lock(x,c)	((c) ? ({ __acquire(x); 1; }) : 0)
+-# define __percpu	__attribute__((noderef, address_space(3)))
++# ifdef CONFIG_SMP
++#  define __percpu	__attribute__((noderef, address_space(3)))
++# else
++#  define __percpu
++# endif
+ extern void __chk_user_ptr(const volatile void __user *);
+ extern void __chk_io_ptr(const volatile void __iomem *);
+ #else
 -- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+1.7.0.4
 
