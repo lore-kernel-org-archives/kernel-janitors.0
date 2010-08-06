@@ -1,29 +1,34 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 19 Aug 2010 09:39:57 +0000
-Subject: [patch] drm: fix end of loop test
-Message-Id: <20100819093957.GK645@bicker>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 06 Aug 2010 19:50:39 +0000
+Subject: [PATCH 05/18] char: synclink: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281124241-13198-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Dave Airlie <airlied@redhat.com>, kernel-janitors@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Stephen Hemminger <shemminger@vyatta.com>, Jiri Slaby <jslaby@suse.cz>, "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 
-"agpmem" is never NULL here because it is the list cursor of a
-list_for_each_entry() list.
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/char/synclink.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_vm.c b/drivers/gpu/drm/drm_vm.c
-index 3778360..fda6746 100644
---- a/drivers/gpu/drm/drm_vm.c
-+++ b/drivers/gpu/drm/drm_vm.c
-@@ -138,7 +138,7 @@ static int drm_do_vm_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
- 				break;
- 		}
+diff --git a/drivers/char/synclink.c b/drivers/char/synclink.c
+index a2a5800..14e45c5 100644
+--- a/drivers/char/synclink.c
++++ b/drivers/char/synclink.c
+@@ -8079,6 +8079,7 @@ static int __devinit synclink_init_one (struct pci_dev *dev,
  
--		if (!agpmem)
-+		if (&agpmem->head = &dev->agp->memory)
- 			goto vm_fault_error;
+ 	if (!(info = mgsl_allocate_device())) {
+ 		printk("can't allocate device instance data.\n");
++		pci_disable_device(dev);
+ 		return -EIO;
+ 	}
  
- 		/*
+-- 
+1.7.0.4
+
