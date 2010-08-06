@@ -1,15 +1,26 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 06 Aug 2010 07:49:53 +0000
-Subject: Re: [PATCH 9/42] drivers/scsi: Adjust confusing if indentation
-Message-Id: <20100806074920.GR9031@bicker>
+From: "Nick Cheng" <nick.cheng@areca.com.tw>
+Date: Fri, 06 Aug 2010 09:42:37 +0000
+Subject: RE: [PATCH 9/42] drivers/scsi: Adjust confusing if indentation
+Message-Id: <125A3006922D4D419060126ED7EE2E56@areca4e4f859d4>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052219190.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052219190.31692@ask.diku.dk>
+References: <Pine.LNX.4.64.1008052219190.31692@ask.diku.dk> <20100806074920.GR9031@bicker>
+In-Reply-To: <20100806074920.GR9031@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, nick.cheng@areca.com.tw
+To: 'Dan Carpenter' <error27@gmail.com>, 'Julia Lawall' <julia@diku.dk>
+Cc: "'James E.J. Bottomley'" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+I agree.
+Signed-off-by: Nick Cheng <nick.cheng@areca.com.tw>
+-----Original Message-----
+From: Dan Carpenter [mailto:error27@gmail.com] 
+Sent: Friday, August 06, 2010 3:50 PM
+To: Julia Lawall
+Cc: James E.J. Bottomley; linux-scsi@vger.kernel.org;
+linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org;
+nick.cheng@areca.com.tw
+Subject: Re: [PATCH 9/42] drivers/scsi: Adjust confusing if indentation
 
 
 This should go to Nick Cheng.  He would know about the arcmsr driver.
@@ -50,17 +61,20 @@ On Thu, Aug 05, 2010 at 10:19:36PM +0200, Julia Lawall wrote:
 > Signed-off-by: Julia Lawall <julia@diku.dk>
 > 
 > ---
-> This might be the wrong fix, however it doesn't change the current semantics.
+> This might be the wrong fix, however it doesn't change the current
+semantics.
 > 
 >  drivers/scsi/arcmsr/arcmsr_hba.c    |    4 ++--
 >  drivers/scsi/mpt2sas/mpt2sas_base.c |    2 +-
 >  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+> diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c
+b/drivers/scsi/arcmsr/arcmsr_hba.c
 > index 95a895d..c4e5cdc 100644
 > --- a/drivers/scsi/arcmsr/arcmsr_hba.c
 > +++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-> @@ -877,8 +877,8 @@ static void arcmsr_report_ccb_state(struct AdapterControlBlock *acb,
+> @@ -877,8 +877,8 @@ static void arcmsr_report_ccb_state(struct
+AdapterControlBlock *acb,
 >  	if (!error) {
 >  		if (acb->devstate[id][lun] = ARECA_RAID_GONE)
 >  			acb->devstate[id][lun] = ARECA_RAID_GOOD;
@@ -71,7 +85,8 @@ On Thu, Aug 05, 2010 at 10:19:36PM +0200, Julia Lawall wrote:
 >  	}else{
 >  		switch (ccb->arcmsr_cdb.DeviceStatus) {
 >  		case ARCMSR_DEV_SELECT_TIMEOUT: {
-> diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c b/drivers/scsi/mpt2sas/mpt2sas_base.c
+> diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c
+b/drivers/scsi/mpt2sas/mpt2sas_base.c
 > index 57bcd5c..12faf64 100644
 > --- a/drivers/scsi/mpt2sas/mpt2sas_base.c
 > +++ b/drivers/scsi/mpt2sas/mpt2sas_base.c
@@ -85,6 +100,8 @@ On Thu, Aug 05, 2010 at 10:19:36PM +0200, Julia Lawall wrote:
 >  	}
 >  	case MPI2_EVENT_SAS_BROADCAST_PRIMITIVE:
 > --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors"
+in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
