@@ -1,28 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Aug 2010 21:28:42 +0000
-Subject: Re: [PATCH 16/16] drivers/net/qlcnic: Use available error codes
-Message-Id: <20100818.142842.28795157.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 06 Aug 2010 08:21:26 +0000
+Subject: [patch] isdn: gigaset: use after free
+Message-Id: <20100806082126.GT9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008161828520.19313@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008161828520.19313@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: amit.salecha@qlogic.com, anirban.chakraborty@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Hansjoerg Lipp <hjlipp@web.de>
+Cc: Tilman Schmidt <tilman@imap.cc>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Tejun Heo <tj@kernel.org>, Joe Perches <joe@perches.com>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 16 Aug 2010 18:29:13 +0200 (CEST)
+I moved the kfree(cb) below the dereferences.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The error code is stored in the variable err, but it is the variable ret
-> that is returned instead.  So store the error code in ret.  Err is then
-> useless.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/drivers/isdn/gigaset/bas-gigaset.c b/drivers/isdn/gigaset/bas-gigaset.c
+index 0ded364..707d9c9 100644
+--- a/drivers/isdn/gigaset/bas-gigaset.c
++++ b/drivers/isdn/gigaset/bas-gigaset.c
+@@ -1914,11 +1914,13 @@ static int gigaset_write_cmd(struct cardstate *cs, struct cmdbuf_t *cb)
+ 	 * The next command will reopen the AT channel automatically.
+ 	 */
+ 	if (cb->len = 3 && !memcmp(cb->buf, "+++", 3)) {
+-		kfree(cb);
+ 		rc = req_submit(cs->bcs, HD_CLOSE_ATCHANNEL, 0, BAS_TIMEOUT);
+ 		if (cb->wake_tasklet)
+ 			tasklet_schedule(cb->wake_tasklet);
+-		return rc < 0 ? rc : cb->len;
++		if (!rc)
++			rc = cb->len;
++		kfree(cb);
++		return rc;
+ 	}
+ 
+ 	spin_lock_irqsave(&cs->cmdlock, flags);
