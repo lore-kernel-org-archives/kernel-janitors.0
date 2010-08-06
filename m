@@ -1,45 +1,28 @@
-From: Roland Dreier <rdreier@cisco.com>
-Date: Thu, 05 Aug 2010 20:31:24 +0000
-Subject: Re: [PATCH 4/42] drivers/infiniband/hw/nes: Adjust confusing if indentation
-Message-Id: <adaiq3o4x9f.fsf@roland-alpha.cisco.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 06 Aug 2010 08:23:23 +0000
+Subject: [patch] isdn: gigaset: add missing unlock
+Message-Id: <20100806082323.GU9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052217430.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052217430.31692@ask.diku.dk> (Julia Lawall's
-	message of "Thu, 5 Aug 2010 22:18:01 +0200 (CEST)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Faisal Latif <faisal.latif@intel.com>, Chien Tung <chien.tin.tung@intel.com>, Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Hansjoerg Lipp <hjlipp@web.de>
+Cc: Tilman Schmidt <tilman@imap.cc>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Andy Shevchenko <ext-andriy.shevchenko@nokia.com>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
- > It is not clear whether the assignment should be part of the if branch
- > suggested by its indentation.  The patch preserves the current semantics.
+We should unlock here.  This is the only place where we return from the
+function with the lock held.  The caller isn't expecting it.
 
-Thanks.  Chien/Faisal -- are the current semantics correct or should we
-add braces { } to match the indentation?  From a quick look at the code,
-I think the patch we actually want is:
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
- drivers/infiniband/hw/nes/nes_hw.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/infiniband/hw/nes/nes_hw.c b/drivers/infiniband/hw/nes/nes_hw.c
-index 07c4004..f8233c8 100644
---- a/drivers/infiniband/hw/nes/nes_hw.c
-+++ b/drivers/infiniband/hw/nes/nes_hw.c
-@@ -2737,9 +2737,9 @@ void nes_nic_ce_handler(struct nes_device *nesdev, struct nes_hw_nic_cq *cq)
- 				nesnic->sq_tail &= nesnic->sq_size-1;
- 				if (sq_cqes > 128) {
- 					barrier();
--				/* restart the queue if it had been stopped */
--				if (netif_queue_stopped(nesvnic->netdev))
--					netif_wake_queue(nesvnic->netdev);
-+					/* restart the queue if it had been stopped */
-+					if (netif_queue_stopped(nesvnic->netdev))
-+						netif_wake_queue(nesvnic->netdev);
- 					sq_cqes = 0;
- 				}
- 			} else {
-
--- 
-Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
-http://www.cisco.com/web/about/doing_business/legal/cri/index.html
+diff --git a/drivers/isdn/gigaset/capi.c b/drivers/isdn/gigaset/capi.c
+index e5ea344..bcc174e 100644
+--- a/drivers/isdn/gigaset/capi.c
++++ b/drivers/isdn/gigaset/capi.c
+@@ -1052,6 +1052,7 @@ static inline void remove_appl_from_channel(struct bc_state *bcs,
+ 	do {
+ 		if (bcap->bcnext = ap) {
+ 			bcap->bcnext = bcap->bcnext->bcnext;
++			spin_unlock_irqrestore(&bcs->aplock, flags);
+ 			return;
+ 		}
+ 		bcap = bcap->bcnext;
