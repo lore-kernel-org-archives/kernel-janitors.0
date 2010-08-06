@@ -1,8 +1,10 @@
 From: Namhyung Kim <namhyung@gmail.com>
-Date: Fri, 06 Aug 2010 08:12:55 +0000
+Date: Fri, 06 Aug 2010 08:17:40 +0000
 Subject: [PATCH] kprobes: add sparse context annotation
-Message-Id: <1281082375-13356-1-git-send-email-namhyung@gmail.com>
+Message-Id: <1281082660-13469-1-git-send-email-namhyung@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1281082375-13356-1-git-send-email-namhyung@gmail.com>
+In-Reply-To: <1281082375-13356-1-git-send-email-namhyung@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -17,8 +19,13 @@ this removes following warnings when build with C=1
 
 Signed-off-by: Namhyung Kim <namhyung@gmail.com>
 
+---
+
+oops.. there was an typo. apply this version instead.
+Thanks.
+
 diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index c53aad5..89b7ef5 100644
+index c53aad5..6dd5359 100644
 --- a/kernel/kprobes.c
 +++ b/kernel/kprobes.c
 @@ -831,6 +831,7 @@ void __kprobes recycle_rp_inst(struct kretprobe_instance *ri,
@@ -41,7 +48,7 @@ index c53aad5..89b7ef5 100644
  
  void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
  	unsigned long *flags)
-+__releases(hlisk_lock)
++__releases(hlist_lock)
  {
  	unsigned long hash = hash_ptr(tsk, KPROBE_HASH_BITS);
  	spinlock_t *hlist_lock;
@@ -49,7 +56,7 @@ index c53aad5..89b7ef5 100644
  
  static void __kprobes kretprobe_table_unlock(unsigned long hash,
         unsigned long *flags)
-+__releases(hlisk_lock)
++__releases(hlist_lock)
  {
  	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
  	spin_unlock_irqrestore(hlist_lock, *flags);
