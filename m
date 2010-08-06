@@ -1,115 +1,61 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 03 Aug 2010 21:34:36 +0000
-Subject: [PATCH 7/9] drivers/staging: Drop unnecessary null test
-Message-Id: <Pine.LNX.4.64.1008032334160.20393@ask.diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 06 Aug 2010 19:52:57 +0000
+Subject: [PATCH 13/18] staging: cx25821: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281124379-13796-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, Palash Bandyopadhyay <Palash.Bandyopadhyay@conexant.com>, Olimpiu Pascariu <olimpiu.pascariu@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Peter Huewe <peterhuewe@gmx.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error. Also it must not be called if pci_request_region() fails as
+it means that somebody uses device resources and rules the device.
 
-list_for_each_entry binds its first argument to a non-null value, and thus
-any null test on the value of that argument is superfluous.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-iterator I;
-expression x;
-statement S;
-@@
-
-I(x,...) { <...
-- if (x != NULL || ...)
-  S
-  ...> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/staging/pohmelfs/config.c    |   34 ++++++++++++++++------------------
- drivers/staging/tm6000/tm6000-core.c |    6 ++----
- 2 files changed, 18 insertions(+), 22 deletions(-)
+ drivers/staging/cx25821/cx25821-core.c |   13 +++++++++----
+ 1 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/pohmelfs/config.c b/drivers/staging/pohmelfs/config.c
-index 8c8d1c2..89279ba 100644
---- a/drivers/staging/pohmelfs/config.c
-+++ b/drivers/staging/pohmelfs/config.c
-@@ -301,10 +301,8 @@ static int pohmelfs_cn_dump(struct cn_msg *msg)
+diff --git a/drivers/staging/cx25821/cx25821-core.c b/drivers/staging/cx25821/cx25821-core.c
+index c487c19..ad7ce01 100644
+--- a/drivers/staging/cx25821/cx25821-core.c
++++ b/drivers/staging/cx25821/cx25821-core.c
+@@ -962,7 +962,7 @@ static int cx25821_dev_setup(struct cx25821_dev *dev)
+ 		       dev->pci->subsystem_device);
  
- 	mutex_lock(&pohmelfs_config_lock);
- 
--	list_for_each_entry(g, &pohmelfs_config_list, group_entry) {
--		if (g)
--			total_msg += g->num_entry;
--	}
-+	list_for_each_entry(g, &pohmelfs_config_list, group_entry)
-+		total_msg += g->num_entry;
- 	if (total_msg = 0) {
- 		if (pohmelfs_send_reply(err, 0, POHMELFS_NOINFO_ACK, msg, NULL))
- 			err = -ENOMEM;
-@@ -312,15 +310,16 @@ static int pohmelfs_cn_dump(struct cn_msg *msg)
+ 		cx25821_devcount--;
+-		return -ENODEV;
++		return -EBUSY;
  	}
  
- 	list_for_each_entry(g, &pohmelfs_config_list, group_entry) {
--		if (g) {
--			list_for_each_entry_safe(c, tmp, &g->config_list, config_entry) {
--				struct pohmelfs_ctl *sc = &c->state.ctl;
--				if (pohmelfs_send_reply(err, total_msg - i, POHMELFS_CTLINFO_ACK, msg, sc)) {
--					err = -ENOMEM;
--					goto out_unlock;
--				}
--				i += 1;
-+		list_for_each_entry_safe(c, tmp, &g->config_list,
-+					 config_entry) {
-+			struct pohmelfs_ctl *sc = &c->state.ctl;
-+			if (pohmelfs_send_reply(err, total_msg - i,
-+						POHMELFS_CTLINFO_ACK, msg,
-+						sc)) {
-+				err = -ENOMEM;
-+				goto out_unlock;
- 			}
-+			i += 1;
- 		}
+ 	/* PCIe stuff */
+@@ -1412,9 +1412,12 @@ static int __devinit cx25821_initdev(struct pci_dev *pci_dev,
+ 
+ 	printk(KERN_INFO "cx25821 Athena pci enable !\n");
+ 
+-	if (cx25821_dev_setup(dev) < 0) {
+-		err = -EINVAL;
+-		goto fail_unregister_device;
++	err = cx25821_dev_setup(dev);
++	if (err) {
++		if (err = -EBUSY)
++			goto fail_unregister_device;
++		else
++			goto fail_unregister_pci;
  	}
  
-@@ -354,12 +353,11 @@ static int pohmelfs_cn_flush(struct cn_msg *msg)
- 		}
- 	} else {
- 		list_for_each_entry(g, &pohmelfs_config_list, group_entry) {
--			if (g) {
--				list_for_each_entry_safe(c, tmp, &g->config_list, config_entry) {
--					list_del(&c->config_entry);
--					g->num_entry--;
--					kfree(c);
--				}
-+			list_for_each_entry_safe(c, tmp, &g->config_list,
-+						 config_entry) {
-+				list_del(&c->config_entry);
-+				g->num_entry--;
-+				kfree(c);
- 			}
- 		}
- 	}
-diff --git a/drivers/staging/tm6000/tm6000-core.c b/drivers/staging/tm6000/tm6000-core.c
-index 2c38199..5d795e8 100644
---- a/drivers/staging/tm6000/tm6000-core.c
-+++ b/drivers/staging/tm6000/tm6000-core.c
-@@ -708,10 +708,8 @@ void tm6000_unregister_extension(struct tm6000_ops *ops)
- 	struct tm6000_core *dev = NULL;
+ 	/* print pci info */
+@@ -1448,6 +1451,8 @@ fail_irq:
+ 	printk(KERN_INFO "cx25821 cx25821_initdev() can't get IRQ !\n");
+ 	cx25821_dev_unregister(dev);
  
- 	mutex_lock(&tm6000_devlist_mutex);
--	list_for_each_entry(dev, &tm6000_devlist, devlist) {
--		if (dev)
--			ops->fini(dev);
--	}
-+	list_for_each_entry(dev, &tm6000_devlist, devlist)
-+		ops->fini(dev);
++fail_unregister_pci:
++	pci_disable_device(pci_dev);
+ fail_unregister_device:
+ 	v4l2_device_unregister(&dev->v4l2_dev);
  
- 	mutex_lock(&tm6000_extension_devlist_lock);
- 	printk(KERN_INFO "tm6000: Remove (%s) extension\n", ops->name);
+-- 
+1.7.0.4
+
