@@ -1,58 +1,16 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:17:22 +0000
-Subject: [PATCH 2/42] arch/mips/kernel: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052217010.31692@ask.diku.dk>
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Fri, 06 Aug 2010 16:10:54 +0000
+Subject: Re: [PATCH 2/42] arch/mips/kernel: Adjust confusing if indentation
+Message-Id: <20100806161054.GB4034@linux-mips.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1008052217010.31692@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1008052217010.31692@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Applied.  Thanks Julia,
 
-Indent the branch of an if.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
-
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- arch/mips/kernel/kspd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/mips/kernel/kspd.c b/arch/mips/kernel/kspd.c
-index 80e2ba6..29811f0 100644
---- a/arch/mips/kernel/kspd.c
-+++ b/arch/mips/kernel/kspd.c
-@@ -251,7 +251,7 @@ void sp_work_handle_request(void)
-  		memset(&tz, 0, sizeof(tz));
-  		if ((ret.retval = sp_syscall(__NR_gettimeofday, (int)&tv,
- 					     (int)&tz, 0, 0)) = 0)
--		ret.retval = tv.tv_sec;
-+			ret.retval = tv.tv_sec;
- 		break;
- 
-  	case MTSP_SYSCALL_EXIT:
+  Ralf
