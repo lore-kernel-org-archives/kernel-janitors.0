@@ -1,143 +1,62 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Wed, 18 Aug 2010 08:45:51 +0000
-Subject: [PATCH v3] ether1: Use net_device_stats from struct net_device
-Message-Id: <1282121151-7481-1-git-send-email-tklauser@distanz.ch>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 06 Aug 2010 19:51:54 +0000
+Subject: [PATCH 09/18] isdn: mISDN: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281124316-13626-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282061719-19645-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1282061719-19645-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
+Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Peter Huewe <peterhuewe@gmx.de>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org
 
-struct net_device has its own struct net_device_stats member, so use
-this one instead of a private copy in the ether1_priv struct. As the new
-ndo_get_stats function would just return dev->stats we can omit it.
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error. Also it must not be called if request_region() fails as
+it means that somebody uses device resources and rules the device.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/net/arm/ether1.c |   34 +++++++++++++---------------------
- drivers/net/arm/ether1.h |    1 -
- 2 files changed, 13 insertions(+), 22 deletions(-)
+ drivers/isdn/hardware/mISDN/mISDNinfineon.c |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/net/arm/ether1.c b/drivers/net/arm/ether1.c
-index b17ab51..ad90447 100644
---- a/drivers/net/arm/ether1.c
-+++ b/drivers/net/arm/ether1.c
-@@ -68,7 +68,6 @@ static int ether1_open(struct net_device *dev);
- static int ether1_sendpacket(struct sk_buff *skb, struct net_device *dev);
- static irqreturn_t ether1_interrupt(int irq, void *dev_id);
- static int ether1_close(struct net_device *dev);
--static struct net_device_stats *ether1_getstats(struct net_device *dev);
- static void ether1_setmulticastlist(struct net_device *dev);
- static void ether1_timeout(struct net_device *dev);
- 
-@@ -649,7 +648,7 @@ ether1_open (struct net_device *dev)
- 	if (request_irq(dev->irq, ether1_interrupt, 0, "ether1", dev))
- 		return -EAGAIN;
- 
--	memset (&priv(dev)->stats, 0, sizeof (struct net_device_stats));
-+	memset(&dev->stats, 0, sizeof(struct net_device_stats));
- 
- 	if (ether1_init_for_open (dev)) {
- 		free_irq (dev->irq, dev);
-@@ -673,7 +672,7 @@ ether1_timeout(struct net_device *dev)
- 	if (ether1_init_for_open (dev))
- 		printk (KERN_ERR "%s: unable to restart interface\n", dev->name);
- 
--	priv(dev)->stats.tx_errors++;
-+	dev->stats.tx_errors++;
- 	netif_wake_queue(dev);
- }
- 
-@@ -802,21 +801,21 @@ again:
- 
- 	while (nop.nop_status & STAT_COMPLETE) {
- 		if (nop.nop_status & STAT_OK) {
--			priv(dev)->stats.tx_packets ++;
--			priv(dev)->stats.collisions += (nop.nop_status & STAT_COLLISIONS);
-+			dev->stats.tx_packets++;
-+			dev->stats.collisions += (nop.nop_status & STAT_COLLISIONS);
- 		} else {
--			priv(dev)->stats.tx_errors ++;
-+			dev->stats.tx_errors++;
- 
- 			if (nop.nop_status & STAT_COLLAFTERTX)
--				priv(dev)->stats.collisions ++;
-+				dev->stats.collisions++;
- 			if (nop.nop_status & STAT_NOCARRIER)
--				priv(dev)->stats.tx_carrier_errors ++;
-+				dev->stats.tx_carrier_errors++;
- 			if (nop.nop_status & STAT_TXLOSTCTS)
- 				printk (KERN_WARNING "%s: cts lost\n", dev->name);
- 			if (nop.nop_status & STAT_TXSLOWDMA)
--				priv(dev)->stats.tx_fifo_errors ++;
-+				dev->stats.tx_fifo_errors++;
- 			if (nop.nop_status & STAT_COLLEXCESSIVE)
--				priv(dev)->stats.collisions += 16;
-+				dev->stats.collisions += 16;
- 		}
- 
- 		if (nop.nop_link = caddr) {
-@@ -879,13 +878,13 @@ ether1_recv_done (struct net_device *dev)
- 
- 				skb->protocol = eth_type_trans (skb, dev);
- 				netif_rx (skb);
--				priv(dev)->stats.rx_packets ++;
-+				dev->stats.rx_packets++;
- 			} else
--				priv(dev)->stats.rx_dropped ++;
-+				dev->stats.rx_dropped++;
- 		} else {
- 			printk(KERN_WARNING "%s: %s\n", dev->name,
- 				(rbd.rbd_status & RBD_EOF) ? "oversized packet" : "acnt not valid");
--			priv(dev)->stats.rx_dropped ++;
-+			dev->stats.rx_dropped++;
- 		}
- 
- 		nexttail = ether1_readw(dev, priv(dev)->rx_tail, rfd_t, rfd_link, NORMALIRQS);
-@@ -939,7 +938,7 @@ ether1_interrupt (int irq, void *dev_id)
- 				printk (KERN_WARNING "%s: RU went not ready: RU suspended\n", dev->name);
- 				ether1_writew(dev, SCB_CMDRXRESUME, SCB_ADDR, scb_t, scb_command, NORMALIRQS);
- 				writeb(CTRL_CA, REG_CONTROL);
--				priv(dev)->stats.rx_dropped ++;	/* we suspended due to lack of buffer space */
-+				dev->stats.rx_dropped++;	/* we suspended due to lack of buffer space */
- 			} else
- 				printk(KERN_WARNING "%s: RU went not ready: %04X\n", dev->name,
- 					ether1_readw(dev, SCB_ADDR, scb_t, scb_status, NORMALIRQS));
-@@ -962,12 +961,6 @@ ether1_close (struct net_device *dev)
- 	return 0;
- }
- 
--static struct net_device_stats *
--ether1_getstats (struct net_device *dev)
--{
--	return &priv(dev)->stats;
--}
--
- /*
-  * Set or clear the multicast filter for this adaptor.
-  * num_addrs = -1	Promiscuous mode, receive all packets.
-@@ -994,7 +987,6 @@ static const struct net_device_ops ether1_netdev_ops = {
- 	.ndo_open		= ether1_open,
- 	.ndo_stop		= ether1_close,
- 	.ndo_start_xmit		= ether1_sendpacket,
--	.ndo_get_stats		= ether1_getstats,
- 	.ndo_set_multicast_list	= ether1_setmulticastlist,
- 	.ndo_tx_timeout		= ether1_timeout,
- 	.ndo_validate_addr	= eth_validate_addr,
-diff --git a/drivers/net/arm/ether1.h b/drivers/net/arm/ether1.h
-index c8a4b23..3a5830a 100644
---- a/drivers/net/arm/ether1.h
-+++ b/drivers/net/arm/ether1.h
-@@ -38,7 +38,6 @@
- 
- struct ether1_priv {
- 	void __iomem *base;
--	struct net_device_stats stats;
- 	unsigned int tx_link;
- 	unsigned int tx_head;
- 	volatile unsigned int tx_tail;
+diff --git a/drivers/isdn/hardware/mISDN/mISDNinfineon.c b/drivers/isdn/hardware/mISDN/mISDNinfineon.c
+index d2dd61d..142744c 100644
+--- a/drivers/isdn/hardware/mISDN/mISDNinfineon.c
++++ b/drivers/isdn/hardware/mISDN/mISDNinfineon.c
+@@ -1094,6 +1094,7 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		pr_info("mISDN: do not have informations about adapter at %s\n",
+ 			pci_name(pdev));
+ 		kfree(card);
++		pci_disable_device(pdev);
+ 		return -EINVAL;
+ 	} else
+ 		pr_notice("mISDN: found adapter %s at %s\n",
+@@ -1103,7 +1104,8 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	pci_set_drvdata(pdev, card);
+ 	err = setup_instance(card);
+ 	if (err) {
+-		pci_disable_device(card->pdev);
++		if (err != -EBUSY)
++			pci_disable_device(pdev);
+ 		kfree(card);
+ 		pci_set_drvdata(pdev, NULL);
+ 	} else if (ent->driver_data = INF_SCT_1) {
+@@ -1114,6 +1116,7 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 			sc = kzalloc(sizeof(struct inf_hw), GFP_KERNEL);
+ 			if (!sc) {
+ 				release_card(card);
++				pci_disable_device(pdev);
+ 				return -ENOMEM;
+ 			}
+ 			sc->irq = card->irq;
+@@ -1121,6 +1124,8 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 			sc->ci = card->ci + i;
+ 			err = setup_instance(sc);
+ 			if (err) {
++				if (err != -EBUSY)
++					pci_disable_device(pdev);
+ 				kfree(sc);
+ 				release_card(card);
+ 				break;
 -- 
 1.7.0.4
 
