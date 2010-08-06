@@ -1,65 +1,35 @@
-From: Kumar Gala <galak@kernel.crashing.org>
-Date: Tue, 31 Aug 2010 21:41:24 +0000
-Subject: Re: [PATCH 5/7] arch/powerpc/sysdev/qe_lib/qe.c: Add of_node_put to avoid memory leak
-Message-Id: <7C2AF4A1-A33B-4D1F-859A-BCB48738D9D1@kernel.crashing.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 06 Aug 2010 07:59:14 +0000
+Subject: [PATCH] scsi: mpt2sas: Add space in printk
+Message-Id: <20100806075914.GS9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283075566-27441-1-git-send-email-julia@diku.dk>
-	<1283075566-27441-6-git-send-email-julia@diku.dk>
-In-Reply-To: <1283075566-27441-6-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
+References: <Pine.LNX.4.64.1008052219190.31692@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1008052219190.31692@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Timur Tabi <timur-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julia Lawall <julia@diku.dk>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, eric.moore@lsi.com, kashyap.desai@lsi.com
 
+Add a space in the output:
+old:  Discovery: (stop)discovery_status(0x%08x)
+new:  Discovery: (stop) discovery_status(0x%08x)
 
-On Aug 29, 2010, at 4:52 AM, Julia Lawall wrote:
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This goes on top of Julia's [PATCH 9/42] drivers/scsi: Adjust
+confusing if indentation 
 
-> Add a call to of_node_put in the error handling code following a call to
-> of_find_compatible_node.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> expression E,E1;
-> statement S;
-> @@
-> 
-> *x = 
-> (of_find_node_by_path
-> |of_find_node_by_name
-> |of_find_node_by_phandle
-> |of_get_parent
-> |of_get_next_parent
-> |of_get_next_child
-> |of_find_compatible_node
-> |of_match_node
-> )(...);
-> ...
-> if (x = NULL) S
-> <... when != x = E
-> *if (...) {
->  ... when != of_node_put(x)
->      when != if (...) { ... of_node_put(x); ... }
-> (
->  return <+...x...+>;
-> |
-> *  return ...;
-> )
-> }
-> ...>
-> of_node_put(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
-> arch/powerpc/sysdev/qe_lib/qe.c |    1 +
-> 1 file changed, 1 insertion(+)
-
-applied to merge
-
-- k
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c b/drivers/scsi/mpt2sas/mpt2sas_base.c
+index 12faf64..562b909 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_base.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_base.c
+@@ -532,7 +532,7 @@ _base_display_event_data(struct MPT2SAS_ADAPTER *ioc,
+ 		    (event_data->ReasonCode = MPI2_EVENT_SAS_DISC_RC_STARTED) ?
+ 		    "start" : "stop");
+ 		if (event_data->DiscoveryStatus)
+-			printk("discovery_status(0x%08x)",
++			printk(" discovery_status(0x%08x)",
+ 			    le32_to_cpu(event_data->DiscoveryStatus));
+ 		printk("\n");
+ 		return;
