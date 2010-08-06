@@ -1,72 +1,36 @@
 From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 03 Aug 2010 15:44:27 +0000
-Subject: [PATCH 11/11] sis: do not use PCI resources before pci_enable_device()
-Message-Id: <1280850268-6298-1-git-send-email-segooon@gmail.com>
+Date: Fri, 06 Aug 2010 19:51:35 +0000
+Subject: [PATCH 06/18] isdn: avm: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281124297-13492-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Thomas Winischhofer <thomas@winischhofer.net>, Andrew Morton <akpm@linux-foundation.org>, Roel Kluin <roel.kluin@gmail.com>, Dan Carpenter <error27@gmail.com>, Christoph Egger <siccegge@stud.informatik.uni-erlangen.de>, linux-kernel@vger.kernel.org
+Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Alexey Dobriyan <adobriyan@gmail.com>, Tilman Schmidt <tilman@imap.cc>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org
 
-IRQ and resource[] may not have correct values until
-after PCI hotplug setup occurs at pci_enable_device() time.
-
-The semantic match that finds this problem is as follows:
-
-// <smpl>
-@@
-identifier x;
-identifier request ~= "pci_request.*|pci_resource.*";
-@@
-
-(
-* x->irq
-|
-* x->resource
-|
-* request(x, ...)
-)
- ...
-*pci_enable_device(x)
-// </smpl>
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error. Also it must not be called if request_region() fails as
+it means that somebody uses device resources and rules the device.
 
 Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/video/sis/sis_main.c |   13 +++++--------
- 1 files changed, 5 insertions(+), 8 deletions(-)
+ drivers/isdn/hardware/avm/c4.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/video/sis/sis_main.c b/drivers/video/sis/sis_main.c
-index 559bf17..47ba64e 100644
---- a/drivers/video/sis/sis_main.c
-+++ b/drivers/video/sis/sis_main.c
-@@ -5782,6 +5782,11 @@ sisfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	ivideo->subsysvendor = pdev->subsystem_vendor;
- 	ivideo->subsysdevice = pdev->subsystem_device;
- 
-+	if (!ivideo->sisvga_enabled && pci_enable_device(pdev)) {
-+		framebuffer_release(sis_fb_info);
-+		return -EIO;
-+	}
-+
- #ifndef MODULE
- 	if(sisfb_mode_idx = -1) {
- 		sisfb_get_vga_mode_from_kernel();
-@@ -5923,14 +5928,6 @@ sisfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+diff --git a/drivers/isdn/hardware/avm/c4.c b/drivers/isdn/hardware/avm/c4.c
+index 7715d32..f255001 100644
+--- a/drivers/isdn/hardware/avm/c4.c
++++ b/drivers/isdn/hardware/avm/c4.c
+@@ -1273,6 +1273,8 @@ static int __devinit c4_probe(struct pci_dev *dev,
+ 	if (retval != 0) {
+ 		printk(KERN_ERR "c4: no AVM-C%d at i/o %#x, irq %d detected, mem %#x\n",
+ 		       nr, param.port, param.irq, param.membase);
++		if (retval != -EBUSY)
++			pci_disable_device(dev);
+ 		return -ENODEV;
  	}
- #endif
- 
--	if(!ivideo->sisvga_enabled) {
--		if(pci_enable_device(pdev)) {
--			if(ivideo->nbridge) pci_dev_put(ivideo->nbridge);
--			pci_set_drvdata(pdev, NULL);
--			framebuffer_release(sis_fb_info);
--			return -EIO;
--		}
--	}
- 
- 	ivideo->video_base = pci_resource_start(pdev, 0);
- 	ivideo->mmio_base  = pci_resource_start(pdev, 1);
+ 	return 0;
 -- 
 1.7.0.4
 
