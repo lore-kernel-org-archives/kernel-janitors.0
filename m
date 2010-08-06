@@ -1,60 +1,81 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 27 Aug 2010 05:57:20 +0000
-Subject: [PATCH 3/3] drivers/staging/tm6000: Remove potential NULL dereference
-Message-Id: <1282888640-27042-4-git-send-email-julia@diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Fri, 06 Aug 2010 19:53:09 +0000
+Subject: [PATCH 15/18] staging: rtl8187e: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281124392-13877-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282888640-27042-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1282888640-27042-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mike McCormack <mikem@ring3k.org>, Jeff Mahoney <jeffm@suse.com>, Julia Lawall <julia@diku.dk>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-If the NULL test is necessary, the initialization involving a dereference of
-the tested value should be moved after the NULL test.
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error. Also it must not be called if request_*_region() fails as
+it means that somebody uses device resources and rules the device.
 
-The sematic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
-@@
-
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/staging/tm6000/tm6000-alsa.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8192e/r8192E_core.c |   16 ++++++++++++----
+ 1 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/tm6000/tm6000-alsa.c b/drivers/staging/tm6000/tm6000-alsa.c
-index 087137d..a06b3c6 100644
---- a/drivers/staging/tm6000/tm6000-alsa.c
-+++ b/drivers/staging/tm6000/tm6000-alsa.c
-@@ -426,11 +426,12 @@ error:
+diff --git a/drivers/staging/rtl8192e/r8192E_core.c b/drivers/staging/rtl8192e/r8192E_core.c
+index 17a806f..7ea2959 100644
+--- a/drivers/staging/rtl8192e/r8192E_core.c
++++ b/drivers/staging/rtl8192e/r8192E_core.c
+@@ -6325,6 +6325,8 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
+ 	struct net_device *dev = NULL;
+ 	struct r8192_priv *priv= NULL;
+ 	u8 unit = 0;
++	int ret = -ENODEV;
++	int pci_dev_busy = 0;
  
- static int tm6000_audio_fini(struct tm6000_core *dev)
- {
--	struct snd_tm6000_card	*chip = dev->adev;
-+	struct snd_tm6000_card	*chip;
+ #ifdef CONFIG_RTL8192_IO_MAP
+ 	unsigned long pio_start, pio_len, pio_flags;
+@@ -6344,8 +6346,10 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
+ 	pci_set_dma_mask(pdev, 0xffffff00ULL);
+ 	pci_set_consistent_dma_mask(pdev,0xffffff00ULL);
+ 	dev = alloc_ieee80211(sizeof(struct r8192_priv));
+-	if (!dev)
+-		return -ENOMEM;
++	if (!dev) {
++		ret = -ENOMEM;
++		goto fail_free;
++	}
  
- 	if (!dev)
- 		return 0;
+ 	pci_set_drvdata(pdev, dev);
+ 	SET_NETDEV_DEV(dev, &pdev->dev);
+@@ -6373,6 +6377,7 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
+ 	//DMESG("IO space @ 0x%08lx", pio_start );
+ 	if( ! request_region( pio_start, pio_len, RTL819xE_MODULE_NAME ) ){
+ 		RT_TRACE(COMP_ERR,"request_region failed!");
++		pci_dev_busy = 1;
+ 		goto fail;
+ 	}
  
-+	chip = dev->adev;
- 	if (!chip)
- 		return 0;
+@@ -6393,6 +6398,7 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
+ 	//DMESG("Memory mapped space @ 0x%08lx ", pmem_start);
+ 	if( ! request_mem_region(pmem_start, pmem_len, RTL819xE_MODULE_NAME)) {
+ 		RT_TRACE(COMP_ERR,"request_mem_region failed!");
++		pci_dev_busy = 1;
+ 		goto fail;
+ 	}
  
+@@ -6494,11 +6500,13 @@ fail:
+ 		free_ieee80211(dev);
+ 	}
+ 
+-	pci_disable_device(pdev);
++fail_free:
++	if (!pci_dev_busy)
++		pci_disable_device(pdev);
+ 
+ 	DMESG("wlan driver load failed\n");
+ 	pci_set_drvdata(pdev, NULL);
+-	return -ENODEV;
++	return ret;
+ 
+ }
+ 
+-- 
+1.7.0.4
 
