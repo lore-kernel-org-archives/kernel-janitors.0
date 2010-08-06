@@ -1,45 +1,28 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 12 Aug 2010 08:02:14 +0000
-Subject: Re: [patch] usb/uvc_v4l2: cleanup test for end of loop
-Message-Id: <201008121002.15665.laurent.pinchart@ideasonboard.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 06 Aug 2010 06:30:06 +0000
+Subject: [patch] input: cy8ctmg100_ts: signedness bug
+Message-Id: <20100806063006.GM9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100812075958.GP645@bicker>
-In-Reply-To: <20100812075958.GP645@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alan Cox <alan@linux.intel.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+"ret" should be signed here or the error handling doesn't work.
 
-Thanks for the patch.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-On Thursday 12 August 2010 09:59:58 Dan Carpenter wrote:
-> We're trying to test for the the end of the loop here.  "format" is
-> never NULL.  We don't know what "format->fcc" is because we're past the
-> end of the loop and I think "fmt->fmt.pix.pixelformat" comes from the
-> user so we don't know what that is either.  It works, but it's cleaner
-> to just test to see if (i = ARRAY_SIZE(uvc_formats).
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> diff --git a/drivers/usb/gadget/uvc_v4l2.c b/drivers/usb/gadget/uvc_v4l2.c
-> index 2dcffda..5e807f0 100644
-> --- a/drivers/usb/gadget/uvc_v4l2.c
-> +++ b/drivers/usb/gadget/uvc_v4l2.c
-> @@ -94,7 +94,7 @@ uvc_v4l2_set_format(struct uvc_video *video, struct
-> v4l2_format *fmt) break;
->  	}
-> 
-> -	if (format = NULL || format->fcc != fmt->fmt.pix.pixelformat) {
-> +	if (i = ARRAY_SIZE(uvc_formats)) {
->  		printk(KERN_INFO "Unsupported format 0x%08x.\n",
->  			fmt->fmt.pix.pixelformat);
->  		return -EINVAL;
-
--- 
-Regards,
-
-Laurent Pinchart
+diff --git a/drivers/input/touchscreen/cy8ctmg110_ts.c b/drivers/input/touchscreen/cy8ctmg110_ts.c
+index 4eb7df0..f4e893f 100644
+--- a/drivers/input/touchscreen/cy8ctmg110_ts.c
++++ b/drivers/input/touchscreen/cy8ctmg110_ts.c
+@@ -96,7 +96,7 @@ static int cy8ctmg110_read_regs(struct cy8ctmg110 *tsc,
+ 		unsigned char *data, unsigned char len, unsigned char cmd)
+ {
+ 	struct i2c_client *client = tsc->client;
+-	unsigned int ret;
++	int ret;
+ 	struct i2c_msg msg[2] = {
+ 		/* first write slave position to i2c devices */
+ 		{ client->addr, 0, 1, &cmd },
