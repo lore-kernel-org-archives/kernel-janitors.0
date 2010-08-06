@@ -1,79 +1,82 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 23 Aug 2010 16:14:07 +0000
-Subject: [patch] i915: signedness bugs in i915 ring buffer
-Message-Id: <20100823161407.GB19909@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 06 Aug 2010 20:58:49 +0000
+Subject: [PATCH] fs/ecryptfs/file.c: introduce missing free
+Message-Id: <Pine.LNX.4.64.1008062258130.5466@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Eric Anholt <eric@anholt.net>, Chris Wilson <chris@chris-wilson.co.uk>, Zou Nan hai <nanhai.zou@intel.com>, Xiang Hai hao <haihao.xiang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tyler Hicks <tyhicks@linux.vnet.ibm.com>, Dustin Kirkland <kirkland@canonical.com>, ecryptfs-devel@lists.launchpad.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"ring->space" is unsigned so it's never less than zero.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+The comments in the code indicate that file_info should be released if the
+function fails.  This releasing is done at the label out_free, not out.
 
-diff --git a/drivers/gpu/drm/i915/intel_ringbuffer.c b/drivers/gpu/drm/i915/intel_ringbuffer.c
-index 51e9c9e..a331898 100644
---- a/drivers/gpu/drm/i915/intel_ringbuffer.c
-+++ b/drivers/gpu/drm/i915/intel_ringbuffer.c
-@@ -208,9 +208,10 @@ static int init_ring_common(struct drm_device *dev,
- 	else {
- 		ring->head = ring->get_head(dev, ring);
- 		ring->tail = ring->get_tail(dev, ring);
--		ring->space = ring->head - (ring->tail + 8);
--		if (ring->space < 0)
--			ring->space += ring->size;
-+		if (ring->head >= ring->tail + 8)
-+			ring->space = ring->head - (ring->tail + 8);
-+		else
-+			ring->space = ring->head - (ring->tail + 8) + ring->size;
+The semantic match that finds this problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = kmem_cache_zalloc(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return <+...x...+>;
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmem_cache_zalloc %s" % (p1[0].file,p1[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ fs/ecryptfs/file.c                  |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ecryptfs/file.c b/fs/ecryptfs/file.c
+index 6e4f84c..622c951 100644
+--- a/fs/ecryptfs/file.c
++++ b/fs/ecryptfs/file.c
+@@ -199,7 +199,7 @@ static int ecryptfs_open(struct inode *inode, struct file *file)
+ 			       "the persistent file for the dentry with name "
+ 			       "[%s]; rc = [%d]\n", __func__,
+ 			       ecryptfs_dentry->d_name.name, rc);
+-			goto out;
++			goto out_free;
+ 		}
  	}
- 	return 0;
- }
-@@ -666,9 +667,10 @@ int intel_init_ring_buffer(struct drm_device *dev,
- 	else {
- 		ring->head = ring->get_head(dev, ring);
- 		ring->tail = ring->get_tail(dev, ring);
--		ring->space = ring->head - (ring->tail + 8);
--		if (ring->space < 0)
--			ring->space += ring->size;
-+		if (ring->head >= ring->tail + 8)
-+			ring->space = ring->head - (ring->tail + 8);
-+		else
-+			ring->space = ring->head - (ring->tail + 8) + ring->size;
+ 	if ((ecryptfs_inode_to_private(inode)->lower_file->f_flags & O_RDONLY)
+@@ -207,7 +207,7 @@ static int ecryptfs_open(struct inode *inode, struct file *file)
+ 		rc = -EPERM;
+ 		printk(KERN_WARNING "%s: Lower persistent file is RO; eCryptfs "
+ 		       "file must hence be opened RO\n", __func__);
+-		goto out;
++		goto out_free;
  	}
- 	INIT_LIST_HEAD(&ring->active_list);
- 	INIT_LIST_HEAD(&ring->request_list);
-@@ -735,9 +737,10 @@ int intel_wait_ring_buffer(struct drm_device *dev,
- 	end = jiffies + 3 * HZ;
- 	do {
- 		ring->head = ring->get_head(dev, ring);
--		ring->space = ring->head - (ring->tail + 8);
--		if (ring->space < 0)
--			ring->space += ring->size;
-+		if (ring->head >= ring->tail + 8)
-+			ring->space = ring->head - (ring->tail + 8);
-+		else
-+			ring->space = ring->head - (ring->tail + 8) + ring->size;
- 		if (ring->space >= n) {
- 			trace_i915_ring_wait_end (dev);
- 			return 0;
-diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
-index 44af317..707f32f 100644
---- a/drivers/gpu/drm/i915/i915_dma.c
-+++ b/drivers/gpu/drm/i915/i915_dma.c
-@@ -109,9 +109,10 @@ void i915_kernel_lost_context(struct drm_device * dev)
- 
- 	ring->head = I915_READ(PRB0_HEAD) & HEAD_ADDR;
- 	ring->tail = I915_READ(PRB0_TAIL) & TAIL_ADDR;
--	ring->space = ring->head - (ring->tail + 8);
--	if (ring->space < 0)
--		ring->space += ring->size;
-+	if (ring->head >= ring->tail + 8)
-+		ring->space = ring->head - (ring->tail + 8);
-+	else
-+		ring->space = ring->head - (ring->tail + 8) + ring->size;
- 
- 	if (!dev->primary->master)
- 		return;
+ 	ecryptfs_set_file_lower(
+ 		file, ecryptfs_inode_to_private(inode)->lower_file);
