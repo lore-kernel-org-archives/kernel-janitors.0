@@ -1,22 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 10 Aug 2010 08:43:04 +0000
-Subject: Re: [PATCH 07/18 v2] isdn: avm: call disable_pci_device() if
-Message-Id: <20100810.014304.242143517.davem@davemloft.net>
+From: Roberto Rodriguez Alkala <rralcala@gmail.com>
+Date: Sat, 07 Aug 2010 23:52:29 +0000
+Subject: [PATCH] stating: otus: fix compile warning and some style issues
+Message-Id: <1281225149.10826.5.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281383448-14050-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1281383448-14050-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, isdn@linux-pingi.de, adobriyan@gmail.com, tilman@imap.cc, netdev@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon,  9 Aug 2010 23:50:47 +0400
+In today linux-next I got a compile warning in staging/otus driver. 
+This patch solves the issue and also improves the coding style.
 
-> Driver should call disable_pci_device() if it returns from pci_probe()
-> with error.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Roberto Rodriguez Alcala <rralcala@gmail.com>
+---
+ drivers/staging/otus/80211core/ratectrl.c |   26 +++++++++-----------------
+ 1 files changed, 9 insertions(+), 17 deletions(-)
 
-Applied, but as previously mentioned disable_pci_device() is wrong.
+diff --git a/drivers/staging/otus/80211core/ratectrl.c b/drivers/staging/otus/80211core/ratectrl.c
+index a1abe2f..283b2b5 100644
+--- a/drivers/staging/otus/80211core/ratectrl.c
++++ b/drivers/staging/otus/80211core/ratectrl.c
+@@ -422,23 +422,15 @@ u8_t zfRateCtrlRateDiff(struct zsRcCell* rcCell, u8_t retryRate)
+     u16_t i;
+ 
+     /* Find retryRate in operationRateSet[] */
+-    for (i=0; i<rcCell->operationRateCount; i++)
+-    {
+-        if (retryRate = rcCell->operationRateSet[i])
+-        {
+-            if (i < rcCell->currentRateIndex)
+-            {
+-                return ((rcCell->currentRateIndex - i)+1)>>1;
+-            }
+-            else if (i = rcCell->currentRateIndex = 0)
+-            {
+-                return 1;
+-            }
+-            else
+-            {
+-                return 0;
+-            }
+-        }
++    for (i = 0; i < rcCell->operationRateCount; i++) {
++	if (retryRate = rcCell->operationRateSet[i]) {
++		if (i < rcCell->currentRateIndex)
++			return ((rcCell->currentRateIndex - i)+1)>>1;
++		else if (i = rcCell->currentRateIndex && i = 0)
++			return 1;
++		else
++			return 0;
++	}
+     }
+     /* TODO : retry rate not in operation rate set */
+     zm_msg1_tx(ZM_LV_0, "Not in operation rate set:", retryRate);
+-- 
+1.7.0.4
+
+
+
