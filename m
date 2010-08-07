@@ -1,86 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:17:00 +0000
-Subject: [PATCH 1/42] drivers/net/wan: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052216400.31692@ask.diku.dk>
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Date: Sat, 07 Aug 2010 12:37:37 +0000
+Subject: Re: [PATCH 1/42] drivers/net/wan: Adjust confusing if indentation
+Message-Id: <m37hk21tv2.fsf@intrepid.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1008052216400.31692@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1008052216400.31692@ask.diku.dk> (Julia Lawall's
+	message of "Thu, 5 Aug 2010 22:17:00 +0200 (CEST)")
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Krzysztof Halasa <khc@pm.waw.pl>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Julia Lawall <julia@diku.dk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Julia Lawall <julia@diku.dk> writes:
 
-Indent the branch of an if.
+>  drivers/net/wan/c101.c      |    2 +-
+>  drivers/net/wan/n2.c        |    2 +-
+>  drivers/net/wan/pci200syn.c |    2 +-
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
-
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wan/c101.c      |    2 +-
- drivers/net/wan/n2.c        |    2 +-
- drivers/net/wan/pci200syn.c |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wan/c101.c b/drivers/net/wan/c101.c
-index 0bd898c..4ac85a0 100644
---- a/drivers/net/wan/c101.c
-+++ b/drivers/net/wan/c101.c
-@@ -264,7 +264,7 @@ static int c101_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 		    new_line.clock_type != CLOCK_TXFROMRX &&
- 		    new_line.clock_type != CLOCK_INT &&
- 		    new_line.clock_type != CLOCK_TXINT)
--		return -EINVAL;	/* No such clock setting */
-+			return -EINVAL;	/* No such clock setting */
- 
- 		if (new_line.loopback != 0 && new_line.loopback != 1)
- 			return -EINVAL;
-diff --git a/drivers/net/wan/n2.c b/drivers/net/wan/n2.c
-index 5394b51..7a3720f 100644
---- a/drivers/net/wan/n2.c
-+++ b/drivers/net/wan/n2.c
-@@ -282,7 +282,7 @@ static int n2_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 		    new_line.clock_type != CLOCK_TXFROMRX &&
- 		    new_line.clock_type != CLOCK_INT &&
- 		    new_line.clock_type != CLOCK_TXINT)
--		return -EINVAL;	/* No such clock setting */
-+			return -EINVAL;	/* No such clock setting */
- 
- 		if (new_line.loopback != 0 && new_line.loopback != 1)
- 			return -EINVAL;
-diff --git a/drivers/net/wan/pci200syn.c b/drivers/net/wan/pci200syn.c
-index e2cff64..fd73759 100644
---- a/drivers/net/wan/pci200syn.c
-+++ b/drivers/net/wan/pci200syn.c
-@@ -220,7 +220,7 @@ static int pci200_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 		    new_line.clock_type != CLOCK_TXFROMRX &&
- 		    new_line.clock_type != CLOCK_INT &&
- 		    new_line.clock_type != CLOCK_TXINT)
--		return -EINVAL;	/* No such clock setting */
-+			return -EINVAL;	/* No such clock setting */
- 
- 		if (new_line.loopback != 0 && new_line.loopback != 1)
- 			return -EINVAL;
+Fully Acked-by: Krzysztof Ha=C5=82asa <khc@pm.waw.pl>
+Thanks.
+--=20
+Krzysztof Halasa
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
