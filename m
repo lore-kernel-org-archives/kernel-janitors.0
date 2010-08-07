@@ -1,44 +1,46 @@
-From: Juuso Oikarinen <juuso.oikarinen@nokia.com>
-Date: Mon, 02 Aug 2010 05:04:11 +0000
-Subject: Re: [PATCH] net: wl12xx: do not use kfree'd memory
-Message-Id: <1280725451.6475.111.camel@wimaxnb.nmp.nokia.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 06:33:26 +0000
+Subject: [PATCH 03/14] staging: comedi (cb_pcidio): user PCI_DEVICE() macro
+Message-Id: <1281162806.7976.9.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280594039-3246-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280594039-3246-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ext Kulikov Vasiliy <segooon@gmail.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Coelho Luciano (Nokia-MS/Helsinki)" <Luciano.Coelho@nokia.com>, "John W. Linville" <linville@tuxdriver.com>, "Paasikivi Teemu.3 (EXT-Ixonos/Tampere)" <ext-teemu.3.paasikivi@nokia.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2010-07-31 at 18:33 +0200, ext Kulikov Vasiliy wrote:
-> wl1271_dump() uses cmd after kfree(cmd). Move kfree() just after
-> wl1271_dump().
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-> ---
->  drivers/net/wireless/wl12xx/wl1271_spi.c |    3 +--
->  1 files changed, 1 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/wl12xx/wl1271_spi.c b/drivers/net/wireless/wl12xx/wl1271_spi.c
-> index 96d25fb..4cb99c5 100644
-> --- a/drivers/net/wireless/wl12xx/wl1271_spi.c
-> +++ b/drivers/net/wireless/wl12xx/wl1271_spi.c
-> @@ -160,9 +160,8 @@ static void wl1271_spi_init(struct wl1271 *wl)
->  	spi_message_add_tail(&t, &m);
->  
->  	spi_sync(wl_to_spi(wl), &m);
-> -	kfree(cmd);
-> -
->  	wl1271_dump(DEBUG_SPI, "spi init -> ", cmd, WSPI_INIT_CMD_LEN);
-> +	kfree(cmd);
->  }
->  
->  #define WL1271_BUSY_WORD_TIMEOUT 1000
+Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
 
-Whoops ;) Good catch, thanks.
 
-Acked-by: Juuso Oikarinen <juuso.oikarinen@nokia.com>
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/comedi/drivers/cb_pcidio.c |    9 ++++-----
+ 1 files changed, 4 insertions(+), 5 deletions(-)
 
--Juuso
+diff --git a/drivers/staging/comedi/drivers/cb_pcidio.c b/drivers/staging/comedi/drivers/cb_pcidio.c
+index c1693c9..79477a5 100644
+--- a/drivers/staging/comedi/drivers/cb_pcidio.c
++++ b/drivers/staging/comedi/drivers/cb_pcidio.c
+@@ -91,11 +91,10 @@ static const struct pcidio_board pcidio_boards[] = {
+ /* Please add your PCI vendor ID to comedidev.h, and it will be forwarded
+  * upstream. */
+ static DEFINE_PCI_DEVICE_TABLE(pcidio_pci_table) = {
+-	{
+-	PCI_VENDOR_ID_CB, 0x0028, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x0014, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x000b, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	0}
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0028) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0014) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x000b) },
++	{ 0 }
+ };
+ 
+ MODULE_DEVICE_TABLE(pci, pcidio_pci_table);
+-- 
+1.7.0.4
+
+
+
+
+
 
