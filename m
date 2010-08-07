@@ -1,49 +1,47 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 10 Aug 2010 06:15:52 +0000
-Subject: [patch] Staging: rtl8192e: add curly braces to if statement
-Message-Id: <20100810061451.GC18431@bicker>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 06:41:17 +0000
+Subject: [PATCH 11/14] staging: comedi (adv_pci1710): use PCI_DEVICE() macro
+Message-Id: <1281163277.7976.18.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In the original code there was some extra semicolons after the if
-statement:
-	if (!channel_map[ieee->current_network.channel]);
-						       ^^^
-From the indenting it looked like that should be curly braces instead.
+Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
 
-Also I made some white space changes to stop checkpatch.pl from
-complaining.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/comedi/drivers/adv_pci1710.c |   13 ++++++-------
+ 1 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192e/ieee80211/ieee80211_softmac.c
-index b7ec1dd..f6d81fe 100644
---- a/drivers/staging/rtl8192e/ieee80211/ieee80211_softmac.c
-+++ b/drivers/staging/rtl8192e/ieee80211/ieee80211_softmac.c
-@@ -527,16 +527,16 @@ void ieee80211_softmac_scan_wq(struct work_struct *work)
- 	do{
- 		ieee->current_network.channel  			(ieee->current_network.channel + 1) % MAX_CHANNEL_NUMBER;
--		if (watchdog++ > MAX_CHANNEL_NUMBER)
--		{
--		//if current channel is not in channel map, set to default channel.
--		#ifdef ENABLE_DOT11D
--      			if (!channel_map[ieee->current_network.channel]);
--		#else
--			if (!ieee->channel_map[ieee->current_network.channel]);
--		#endif
-+		if (watchdog++ > MAX_CHANNEL_NUMBER) {
-+			/* if current channel is not in channel map, set to default channel. */
-+#ifdef ENABLE_DOT11D
-+			if (!channel_map[ieee->current_network.channel]) {
-+#else
-+			if (!ieee->channel_map[ieee->current_network.channel]) {
-+#endif
- 				ieee->current_network.channel = 6;
- 				goto out; /* no good chans */
-+			}
- 		}
- #ifdef ENABLE_DOT11D
-         }while(!channel_map[ieee->current_network.channel]);
+diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
+index bdd6954..466e69f 100644
+--- a/drivers/staging/comedi/drivers/adv_pci1710.c
++++ b/drivers/staging/comedi/drivers/adv_pci1710.c
+@@ -217,13 +217,12 @@ struct boardtype {
+ };
+ 
+ static DEFINE_PCI_DEVICE_TABLE(pci1710_pci_table) = {
+-	{
+-	PCI_VENDOR_ID_ADVANTECH, 0x1710, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_ADVANTECH, 0x1711, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_ADVANTECH, 0x1713, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_ADVANTECH, 0x1720, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_ADVANTECH, 0x1731, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	0}
++	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1710) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1711) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1713) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1720) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1731) },
++	{ 0 }
+ };
+ 
+ MODULE_DEVICE_TABLE(pci, pci1710_pci_table);
+-- 
+1.7.0.4
+
+
+
