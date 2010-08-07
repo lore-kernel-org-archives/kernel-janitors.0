@@ -1,29 +1,34 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 12 Aug 2010 07:51:41 +0000
-Subject: [patch 1/2] ip2: remove unneeded NULL check
-Message-Id: <20100812075141.GL645@bicker>
+Date: Sat, 07 Aug 2010 22:13:58 +0000
+Subject: [patch] bfa: dereferencing before testing
+Message-Id: <20100807221358.GB9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Michael H. Warfield" <mhw@wittsend.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Rakib Mullick <rakib.mullick@gmail.com>, linux-kernel@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>, kernel-janitors@vger.kernel.org
+To: Jing Huang <huangj@brocade.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Krishna Gudipati <kgudipat@brocade.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We don't pass NULL tty pointers to the close function, and anyway we
-already dereferenced it at this point.  This check can be removed.
+I moved the dereference of "port" after the check to verify it was
+non-NULL.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/char/ip2/ip2main.c b/drivers/char/ip2/ip2main.c
-index 07f3ea3..8fa041e 100644
---- a/drivers/char/ip2/ip2main.c
-+++ b/drivers/char/ip2/ip2main.c
-@@ -1650,7 +1650,7 @@ ip2_close( PTTY tty, struct file *pFile )
- 	/* disable DSS reporting */
- 	i2QueueCommands(PTYPE_INLINE, pCh, 100, 4,
- 				CMD_DCD_NREP, CMD_CTS_NREP, CMD_DSR_NREP, CMD_RI_NREP);
--	if ( !tty || (tty->termios->c_cflag & HUPCL) ) {
-+	if (tty->termios->c_cflag & HUPCL) {
- 		i2QueueCommands(PTYPE_INLINE, pCh, 100, 2, CMD_RTSDN, CMD_DTRDN);
- 		pCh->dataSetOut &= ~(I2_DTR | I2_RTS);
- 		i2QueueCommands( PTYPE_INLINE, pCh, 100, 1, CMD_PAUSE(25));
+diff --git a/drivers/scsi/bfa/lport_api.c b/drivers/scsi/bfa/lport_api.c
+index 72b3f50..5cd356a 100644
+--- a/drivers/scsi/bfa/lport_api.c
++++ b/drivers/scsi/bfa/lport_api.c
+@@ -149,11 +149,12 @@ bfa_fcs_port_get_rport_max_speed(struct bfa_fcs_port_s *port)
+ 	enum bfa_pport_speed max_speed = 0;
+ 	struct bfa_pport_attr_s pport_attr;
+ 	enum bfa_pport_speed pport_speed, rport_speed;
+-	bfa_boolean_t     trl_enabled = bfa_fcport_is_ratelim(port->fcs->bfa);
++	bfa_boolean_t trl_enabled;
+ 
+ 	if (port = NULL)
+ 		return 0;
+ 
++	trl_enabled = bfa_fcport_is_ratelim(port->fcs->bfa);
+ 	fcs = port->fcs;
+ 
+ 	/*
