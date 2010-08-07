@@ -1,36 +1,41 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Wed, 11 Aug 2010 02:12:56 +0000
-Subject: [PATCH] V4L/DVB: v4l2-ctrls: add inclusion of slab.h
-Message-Id: <1281492776.4423.14.camel@lovely.krouter>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 06:40:20 +0000
+Subject: [PATCH 10/14] staging: comedi (skel): use PCI_DEVICE() macro
+Message-Id: <1281163220.7976.17.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch adds inclusion of slab.h to get kzalloc, kfree and kmalloc
-to work.
+Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
 
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/media/video/v4l2-ctrls.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ drivers/staging/comedi/drivers/skel.c |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/video/v4l2-ctrls.c b/drivers/media/video/v4l2-ctrls.c
-index 84c1a53..ea8d32c 100644
---- a/drivers/media/video/v4l2-ctrls.c
-+++ b/drivers/media/video/v4l2-ctrls.c
-@@ -19,6 +19,7 @@
-  */
+diff --git a/drivers/staging/comedi/drivers/skel.c b/drivers/staging/comedi/drivers/skel.c
+index 0b9ecb1..ed69008 100644
+--- a/drivers/staging/comedi/drivers/skel.c
++++ b/drivers/staging/comedi/drivers/skel.c
+@@ -116,10 +116,9 @@ static const struct skel_board skel_boards[] = {
+  * upstream. */
+ #define PCI_VENDOR_ID_SKEL 0xdafe
+ static DEFINE_PCI_DEVICE_TABLE(skel_pci_table) = {
+-	{
+-	PCI_VENDOR_ID_SKEL, 0x0100, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_SKEL, 0x0200, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	0}
++	{ PCI_DEVICE(PCI_VENDOR_ID_SKEL, 0x0100) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_SKEL, 0x0200) },
++	{ 0 }
+ };
  
- #include <linux/ctype.h>
-+#include <linux/slab.h>
- #include <media/v4l2-ioctl.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-ctrls.h>
+ MODULE_DEVICE_TABLE(pci, skel_pci_table);
 -- 
-1.7.1
+1.7.0.4
 
 
 
