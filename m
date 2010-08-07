@@ -1,34 +1,37 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:50:39 +0000
-Subject: [PATCH 05/18] char: synclink: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124241-13198-1-git-send-email-segooon@gmail.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 07:06:52 +0000
+Subject: [PATCH] staging: xgifb: use DEFINE_PCI_DEVICE_TABLE() macro
+Message-Id: <1281164812.7976.25.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Stephen Hemminger <shemminger@vyatta.com>, Jiri Slaby <jslaby@suse.cz>, "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, Bill Pemberton <wfp5p@virginia.edu>, Arnaud Patard <apatard@mandriva.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error.
+Use DEFINE_PCI_DEVICE_TABLE() to make xgifb_pci_table const and marked as __devinitconst 
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/char/synclink.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ drivers/staging/xgifb/XGI_main.h |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/synclink.c b/drivers/char/synclink.c
-index a2a5800..14e45c5 100644
---- a/drivers/char/synclink.c
-+++ b/drivers/char/synclink.c
-@@ -8079,6 +8079,7 @@ static int __devinit synclink_init_one (struct pci_dev *dev,
+diff --git a/drivers/staging/xgifb/XGI_main.h b/drivers/staging/xgifb/XGI_main.h
+index fd1152e..06f62ee 100644
+--- a/drivers/staging/xgifb/XGI_main.h
++++ b/drivers/staging/xgifb/XGI_main.h
+@@ -46,8 +46,7 @@
+ #define XGI_IOTYPE2 __iomem
+ #define XGIINITSTATIC static
  
- 	if (!(info = mgsl_allocate_device())) {
- 		printk("can't allocate device instance data.\n");
-+		pci_disable_device(dev);
- 		return -EIO;
- 	}
- 
+-static struct pci_device_id __devinitdata xgifb_pci_table[] = {
+-
++static DEFINE_PCI_DEVICE_TABLE(xgifb_pci_table) = {
+ 	{ PCI_VENDOR_ID_XG, PCI_DEVICE_ID_XG_20, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+ 	{ PCI_VENDOR_ID_XG, PCI_DEVICE_ID_XG_27, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 1},
+ 	{ PCI_VENDOR_ID_XG, PCI_DEVICE_ID_XG_40, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 2},
 -- 
 1.7.0.4
+
+
 
