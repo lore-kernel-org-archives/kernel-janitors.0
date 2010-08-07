@@ -1,34 +1,51 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:51:48 +0000
-Subject: [PATCH 08/18] isdn: eicon: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124310-13582-1-git-send-email-segooon@gmail.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 06:43:44 +0000
+Subject: [PATCH 14/14] staging: comedi (dt3000): use PCI_DEVICE() macro
+Message-Id: <1281163424.7976.21.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Armin Schindler <mac@melware.de>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error.
+Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/isdn/hardware/eicon/divasmain.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ drivers/staging/comedi/drivers/dt3000.c |   17 ++++++++---------
+ 1 files changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/isdn/hardware/eicon/divasmain.c b/drivers/isdn/hardware/eicon/divasmain.c
-index ed9c555..61e077e 100644
---- a/drivers/isdn/hardware/eicon/divasmain.c
-+++ b/drivers/isdn/hardware/eicon/divasmain.c
-@@ -743,6 +743,7 @@ static int __devinit divas_init_one(struct pci_dev *pdev,
- 			CardProperties[ent->driver_data].
- 			Name, pdev->bus->number,
- 			pdev->devfn);
-+		pci_disable_device(pdev);
- 		return (-EIO);
- 	}
+diff --git a/drivers/staging/comedi/drivers/dt3000.c b/drivers/staging/comedi/drivers/dt3000.c
+index 656e7bb..6170f7b 100644
+--- a/drivers/staging/comedi/drivers/dt3000.c
++++ b/drivers/staging/comedi/drivers/dt3000.c
+@@ -165,15 +165,14 @@ static const struct dt3k_boardtype dt3k_boardtypes[] = {
+ #define this_board ((const struct dt3k_boardtype *)dev->board_ptr)
  
+ static DEFINE_PCI_DEVICE_TABLE(dt3k_pci_table) = {
+-	{
+-	PCI_VENDOR_ID_DT, 0x0022, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_DT, 0x0027, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_DT, 0x0023, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_DT, 0x0024, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_DT, 0x0028, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_DT, 0x0025, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_DT, 0x0026, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	0}
++	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0022) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0027) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0023) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0024) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0028) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0025) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0026) },
++	{ 0 }
+ };
+ 
+ MODULE_DEVICE_TABLE(pci, dt3k_pci_table);
 -- 
 1.7.0.4
+
+
 
