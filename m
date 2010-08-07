@@ -1,76 +1,40 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:53:23 +0000
-Subject: [PATCH 17/18] staging: sm7xx: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124405-13971-1-git-send-email-segooon@gmail.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 06:36:45 +0000
+Subject: [PATCH 06/14] staging: comedi (cb_pcimdas): use PCI_DEVICE() macro
+Message-Id: <1281163005.7976.13.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Wu Zhangjin <wuzhangjin@gmail.com>, Patrick Rooney <candyguitar@googlemail.com>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error.
+Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/staging/sm7xx/smtcfb.c |   13 ++++++++-----
- 1 files changed, 8 insertions(+), 5 deletions(-)
+ drivers/staging/comedi/drivers/cb_pcimdas.c |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/sm7xx/smtcfb.c b/drivers/staging/sm7xx/smtcfb.c
-index f6b401c..24f47d6 100644
---- a/drivers/staging/sm7xx/smtcfb.c
-+++ b/drivers/staging/sm7xx/smtcfb.c
-@@ -848,7 +848,6 @@ static int __devinit smtcfb_pci_probe(struct pci_dev *pdev,
- 		"Silicon Motion display driver " SMTC_LINUX_FB_VERSION "\n");
+diff --git a/drivers/staging/comedi/drivers/cb_pcimdas.c b/drivers/staging/comedi/drivers/cb_pcimdas.c
+index ced346a..16c322d 100644
+--- a/drivers/staging/comedi/drivers/cb_pcimdas.c
++++ b/drivers/staging/comedi/drivers/cb_pcimdas.c
+@@ -126,10 +126,8 @@ static const struct cb_pcimdas_board cb_pcimdas_boards[] = {
+ /* This is used by modprobe to translate PCI IDs to drivers.  Should
+  * only be used for PCI and ISA-PnP devices */
+ static DEFINE_PCI_DEVICE_TABLE(cb_pcimdas_pci_table) = {
+-	{
+-	PCI_VENDOR_ID_COMPUTERBOARDS, 0x0056, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+-	{
+-	0}
++	{ PCI_DEVICE(PCI_VENDOR_ID_COMPUTERBOARDS, 0x0056) },
++	{ 0 }
+ };
  
- 	err = pci_enable_device(pdev);	/* enable SMTC chip */
--
- 	if (err)
- 		return err;
- 	err = -ENOMEM;
-@@ -859,7 +858,7 @@ static int __devinit smtcfb_pci_probe(struct pci_dev *pdev,
- 	sfb = smtc_alloc_fb_info(pdev, name);
- 
- 	if (!sfb)
--		goto failed;
-+		goto failed_free;
- 	/* Jason (08/13/2009)
- 	 * Store fb_info to be further used when suspending and resuming
- 	 */
-@@ -917,7 +916,8 @@ static int __devinit smtcfb_pci_probe(struct pci_dev *pdev,
- 			printk(KERN_INFO
- 				"%s: unable to map memory mapped IO\n",
- 				sfb->fb.fix.id);
--			return -ENOMEM;
-+			err = -ENOMEM;
-+			goto failed_fb;
- 		}
- 
- 		/* set MCLK = 14.31818 * (0x16 / 0x2) */
-@@ -951,8 +951,7 @@ static int __devinit smtcfb_pci_probe(struct pci_dev *pdev,
- 		printk(KERN_INFO
- 		"No valid Silicon Motion display chip was detected!\n");
- 
--		smtc_free_fb_info(sfb);
--		return err;
-+		goto failed_fb;
- 	}
- 
- 	/* can support 32 bpp */
-@@ -986,8 +985,12 @@ static int __devinit smtcfb_pci_probe(struct pci_dev *pdev,
- 
- 	smtc_unmap_smem(sfb);
- 	smtc_unmap_mmio(sfb);
-+failed_fb:
- 	smtc_free_fb_info(sfb);
- 
-+failed_free:
-+	pci_disable_device(pdev);
-+
- 	return err;
- }
- 
+ MODULE_DEVICE_TABLE(pci, cb_pcimdas_pci_table);
 -- 
 1.7.0.4
+
+
 
