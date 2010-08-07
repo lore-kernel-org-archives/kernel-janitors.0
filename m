@@ -1,61 +1,61 @@
-From: Philipp Reisner <philipp.reisner@linbit.com>
-Date: Tue, 24 Aug 2010 09:10:37 +0000
-Subject: Re: [patch] drbd: cleanup: change "<= 0" to "== 0"
-Message-Id: <201008241110.37508.philipp.reisner@linbit.com>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Sat, 07 Aug 2010 13:14:09 +0000
+Subject: Re: [Cocci] correct handling of return values
+Message-Id: <201008071514.10405.npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100811223845.GE645@bicker>
-In-Reply-To: <20100811223845.GE645@bicker>
+References: <4C51394B.2060306@users.sourceforge.net>
+In-Reply-To: <4C51394B.2060306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Am Dienstag, 24. August 2010, um 10:41:31 schrieb Jens Axboe:
-> On 2010-08-24 10:38, Philipp Reisner wrote:
-> > Am Donnerstag, 12. August 2010, um 00:38:45 schrieb Dan Carpenter:
-> >> dt is unsigned so it's never less than zero.  We are calculating the
-> >> elapsed time, and that's never less than zero (unless there is a bug or
-> >> we invent time travel).  The comparison here is just to guard against
-> >> divide by zero bugs.
-> >> 
-> >> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> >> 
-> >> diff --git a/drivers/block/drbd/drbd_proc.c
-> >> b/drivers/block/drbd/drbd_proc.c index be3374b..4c0c4aa 100644
-> >> --- a/drivers/block/drbd/drbd_proc.c
-> >> +++ b/drivers/block/drbd/drbd_proc.c
-> >> @@ -118,7 +118,7 @@ static void drbd_syncer_progress(struct drbd_conf
-> >> *mdev, struct seq_file *seq) /* mean speed since syncer started
-> >> 
-> >>  	 * we do account for PausedSync periods */
-> >>  	
-> >>  	dt = (jiffies - mdev->rs_start - mdev->rs_paused) / HZ;
-> >> 
-> >> -	if (dt <= 0)
-> >> +	if (dt = 0)
-> >> 
-> >>  		dt = 1;
-> >>  	
-> >>  	db = mdev->rs_total - rs_left;
-> >>  	dbdt = Bit2KB(db/dt);
-> > 
-> > Hi Dan,
-> > 
-> > Please elaborate the improvement this patch brings.
-> > dt can actually get negative, on jiffie wrap. I see
-> > little value in displaying then a negative resync speed...
+Hi,
+
+On Thursday 29 July 2010 10:56:21 Julia Lawall wrote:
+> On Thu, 29 Jul 2010, SF Markus Elfring wrote:
 > 
-> Aren't all members unsigned long? If not, then you have
-> another bug.
+> > > I'm currently working on this task:
+> > > http://kernelnewbies.org/KernelJanitors/Todo/ReturnCodes
+> > > 
+> > > I think this task can be partly done with coccinelle. The most often cases of
+> > > invalid handling is no handling :)
+> > > 
+> > > I am not guru of coccinelle, but I think it is very useful here. So,
+> > > I've written basic script of finding common errors, but it is not ideal.
+> > 
+> > Were any improvements achieved since my request "Detection of ignored function
+> > return values" that will help in this use case?
+> > http://lists.diku.dk/pipermail/cocci/2010-February/000690.html
+> > http://www.mail-archive.com/cocci@diku.dk/msg00157.html
+> 
+> Looking back at that disucssion, it sees that the main issue was whether 
+> one would know the return type of a function.  If the function is not 
+> local, one can know that from the prototype.  One then runs into the 
+> problem that prototypes are often in header files, and Coccinelle takes 
+> into account at most the header files that are mentioned in the file 
+> explicitly.  Nothing has changed in that regard.
+> 
+> If you care only about bug finding, but not automatic bug fixing, a 
+> possibility is to run CPP first.  There is some support for doing this, 
+> but I don't remember what it is.  Nicolas Palix should know, however.
 
-Um, well that is right. Ok, patch goes in.
+It is with the spp tool. See tools/spp.ml and demos/spp in the source distribution.
 
-Best,
- Phil
+I added some information in the wiki.
+http://cocci.ekstranet.diku.dk/wiki/doku.php?id=using_cpp
+
+> 
+> julia
+> _______________________________________________
+> Cocci mailing list
+> Cocci@diku.dk
+> http://lists.diku.dk/mailman/listinfo/cocci
+> (Web access from inside DIKUs LAN only)
+> 
+
 -- 
-: Dipl-Ing Philipp Reisner
-: LINBIT | Your Way to High Availability
-: Tel: +43-1-8178292-50, Fax: +43-1-8178292-82
-: http://www.linbit.com
-
-DRBD(R) and LINBIT(R) are registered trademarks of LINBIT, Austria.
+Nicolas Palix
+Tel: (+33) 1 44 27 87 25
+Tel: (+33) 6 81 07 91 72
+Web: http://www.diku.dk/~npalix/
