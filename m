@@ -1,69 +1,63 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:53:29 +0000
-Subject: [PATCH 18/18] staging: spectra: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124411-14011-1-git-send-email-segooon@gmail.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 06:35:57 +0000
+Subject: [PATCH 05/14] staging: comedi (me4000): use PCI_DEVICE() macro
+Message-Id: <1281162957.7976.12.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, David Woodhouse <David.Woodhouse@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error. Also it must not be called if pci_request_region() fails as
-it means that somebody uses device resources and rules the device.
+Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/staging/spectra/lld_nand.c |   10 ++++++++--
- 1 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/staging/comedi/drivers/me4000.c |   29 ++++++++++++++---------------
+ 1 files changed, 14 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/staging/spectra/lld_nand.c b/drivers/staging/spectra/lld_nand.c
-index 13c3ad2..90eeb0a 100644
---- a/drivers/staging/spectra/lld_nand.c
-+++ b/drivers/staging/spectra/lld_nand.c
-@@ -2395,6 +2395,7 @@ static int nand_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	unsigned long csr_base;
- 	unsigned long csr_len;
- 	struct mrst_nand_info *pndev = &info;
-+	int pci_dev_busy = 0;
+diff --git a/drivers/staging/comedi/drivers/me4000.c b/drivers/staging/comedi/drivers/me4000.c
+index 1471384..e6825c2 100644
+--- a/drivers/staging/comedi/drivers/me4000.c
++++ b/drivers/staging/comedi/drivers/me4000.c
+@@ -71,21 +71,20 @@ broken.
+   ======================================*/
  
- 	nand_dbg_print(NAND_DBG_WARN, "%s, Line %d, Function: %s\n",
- 		       __FILE__, __LINE__, __func__);
-@@ -2411,19 +2412,22 @@ static int nand_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	csr_base = pci_resource_start(dev, 0);
- 	if (!csr_base) {
- 		printk(KERN_ERR "Spectra: pci_resource_start failed!\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto failed_req_csr;
- 	}
+ static DEFINE_PCI_DEVICE_TABLE(me4000_pci_table) = {
+-	{
+-	PCI_VENDOR_ID_MEILHAUS, 0x4650, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4660, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4661, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4662, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4663, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4670, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4671, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4672, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4673, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4680, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4681, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4682, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_MEILHAUS, 0x4683, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	0}
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4650) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4660) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4661) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4662) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4663) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4670) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4671) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4672) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4673) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4680) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4681) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4682) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_MEILHAUS, 0x4683) },
++	{ 0 }
+ };
  
- 	csr_len = pci_resource_len(dev, 0);
- 	if (!csr_len) {
- 		printk(KERN_ERR "Spectra: pci_resource_len failed!\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto failed_req_csr;
- 	}
- 
- 	ret = pci_request_regions(dev, SPECTRA_NAND_NAME);
- 	if (ret) {
- 		printk(KERN_ERR "Spectra: Unable to request "
- 		       "memory region\n");
-+		pci_dev_busy = 1;
- 		goto failed_req_csr;
- 	}
- 
-@@ -2464,6 +2468,8 @@ static int nand_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- failed_remap_csr:
- 	pci_release_regions(dev);
- failed_req_csr:
-+	if (!pci_dev_busy)
-+		pci_disable_device(dev);
- 
- 	return ret;
- }
+ MODULE_DEVICE_TABLE(pci, me4000_pci_table);
 -- 
 1.7.0.4
+
+
 
