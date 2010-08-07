@@ -1,47 +1,39 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 23 Aug 2010 11:28:28 +0000
-Subject: Re: [patch] i915: remove unneed NULL checks
-Message-Id: <20100823112828.GK6674@bicker>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 06:39:33 +0000
+Subject: [PATCH 09/14] staging: comedi (adl_pci9118): use PCI_DEVICE() macro
+Message-Id: <1281163173.7976.16.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100623170426.GB15424@bicker>
-In-Reply-To: <20100623170426.GB15424@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Eric Anholt <eric@anholt.net>, Jesse Barnes <jbarnes@virtuousgeek.org>, Zhenyu Wang <zhenyuw@linux.intel.com>, Zhao Yakui <yakui.zhao@intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 23, 2010 at 07:06:22PM +0200, Dan Carpenter wrote:
-> We don't need to check the list cursor in a list_for_each_entry().  It's
-> always non-null.
-> 
+Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
 
-Here is another one that never got applied.  I has a sad face.  :(
 
-regards,
-dan carpenter
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/comedi/drivers/adl_pci9118.c |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index cc8131f..8a2bdfc 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -745,7 +745,7 @@ bool intel_pipe_has_type (struct drm_crtc *crtc, int type)
->      struct drm_encoder *l_entry;
->  
->      list_for_each_entry(l_entry, &mode_config->encoder_list, head) {
-> -	    if (l_entry && l_entry->crtc = crtc) {
-> +	    if (l_entry->crtc = crtc) {
->  		    struct intel_encoder *intel_encoder = enc_to_intel_encoder(l_entry);
->  		    if (intel_encoder->type = type)
->  			    return true;
-> @@ -3322,7 +3322,7 @@ static int intel_crtc_mode_set(struct drm_crtc *crtc,
->  
->  	list_for_each_entry(encoder, &mode_config->encoder_list, head) {
->  
-> -		if (!encoder || encoder->crtc != crtc)
-> +		if (encoder->crtc != crtc)
->  			continue;
->  
->  		intel_encoder = enc_to_intel_encoder(encoder);
+diff --git a/drivers/staging/comedi/drivers/adl_pci9118.c b/drivers/staging/comedi/drivers/adl_pci9118.c
+index b0e39cb..a2bd4e6 100644
+--- a/drivers/staging/comedi/drivers/adl_pci9118.c
++++ b/drivers/staging/comedi/drivers/adl_pci9118.c
+@@ -252,9 +252,8 @@ struct boardtype {
+ };
+ 
+ static DEFINE_PCI_DEVICE_TABLE(pci9118_pci_table) = {
+-	{
+-	PCI_VENDOR_ID_AMCC, 0x80d9, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	0}
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMCC, 0x80d9) },
++	{ 0 }
+ };
+ 
+ MODULE_DEVICE_TABLE(pci, pci9118_pci_table);
+-- 
+1.7.0.4
+
+
+
