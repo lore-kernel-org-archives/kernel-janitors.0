@@ -1,99 +1,54 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Date: Sun, 01 Aug 2010 04:46:08 +0000
-Subject: Re: [PATCH] drivers/acpi: call rcu_read_unlock in default case
-Message-Id: <20100801044608.GG2470@linux.vnet.ibm.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 07 Aug 2010 06:31:07 +0000
+Subject: [PATCH 01/14] staging: comedi (cb_pcidas): use PCI_DEVICE() macro
+Message-Id: <1281162667.7976.6.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1007312234590.12199@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1007312234590.12199@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jul 31, 2010 at 10:35:28PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Adjust the default case so that it benefits from the call to rcu_read_unlock.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @rcu@
-> position p1;
-> @@
-> 
-> rcu_read_lock@p1();
-> ...
-> rcu_read_unlock();
-> 
-> @@
-> position rcu.p1;
-> @@
-> 
-> *rcu_read_lock@p1();
-> ... when != rcu_read_unlock();
-> // </smpl>
+This is the first of a patch series that uses PCI_DEVICE() macro for pci table entries on comedi drivers and thus improving readability.
 
-I don't claim to understand the SmPL above, but I do like the patch.
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/comedi/drivers/cb_pcidas.c |   19 +++++++++----------
+ 1 files changed, 9 insertions(+), 10 deletions(-)
 
-Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+diff --git a/drivers/staging/comedi/drivers/cb_pcidas.c b/drivers/staging/comedi/drivers/cb_pcidas.c
+index 6530b6c..3275fc5 100644
+--- a/drivers/staging/comedi/drivers/cb_pcidas.c
++++ b/drivers/staging/comedi/drivers/cb_pcidas.c
+@@ -377,16 +377,15 @@ static const struct cb_pcidas_board cb_pcidas_boards[] = {
+ };
+ 
+ static DEFINE_PCI_DEVICE_TABLE(cb_pcidas_pci_table) = {
+-	{
+-	PCI_VENDOR_ID_CB, 0x0001, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x000f, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x0010, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x0019, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x001c, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x004c, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x001a, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	PCI_VENDOR_ID_CB, 0x001b, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
+-	0}
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0001) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x000f) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0010) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0019) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x001c) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x004c) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x001a) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x001b) },
++	{ 0 }
+ };
+ 
+ MODULE_DEVICE_TABLE(pci, cb_pcidas_pci_table);
+-- 
+1.7.0.4
 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/acpi/atomicio.c             |   10 ++++++----
->  1 files changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/acpi/atomicio.c b/drivers/acpi/atomicio.c
-> index 8f8bd73..f426010 100644
-> --- a/drivers/acpi/atomicio.c
-> +++ b/drivers/acpi/atomicio.c
-> @@ -267,6 +267,7 @@ EXPORT_SYMBOL_GPL(acpi_post_unmap_gar);
->  static int acpi_atomic_read_mem(u64 paddr, u64 *val, u32 width)
->  {
->  	void __iomem *addr;
-> +	int res = 0;
-> 
->  	rcu_read_lock();
->  	addr = __acpi_ioremap_fast(paddr, width);
-> @@ -284,16 +285,17 @@ static int acpi_atomic_read_mem(u64 paddr, u64 *val, u32 width)
->  		*val = readq(addr);
->  		break;
->  	default:
-> -		return -EINVAL;
-> +		res = -EINVAL;
->  	}
->  	rcu_read_unlock();
-> 
-> -	return 0;
-> +	return res;
->  }
-> 
->  static int acpi_atomic_write_mem(u64 paddr, u64 val, u32 width)
->  {
->  	void __iomem *addr;
-> +	int res = 0;
-> 
->  	rcu_read_lock();
->  	addr = __acpi_ioremap_fast(paddr, width);
-> @@ -311,11 +313,11 @@ static int acpi_atomic_write_mem(u64 paddr, u64 val, u32 width)
->  		writeq(val, addr);
->  		break;
->  	default:
-> -		return -EINVAL;
-> +		res = -EINVAL;
->  	}
->  	rcu_read_unlock();
-> 
-> -	return 0;
-> +	return res;
->  }
-> 
->  /* GAR accessing in atomic (including NMI) or process context */
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+
+
+
+
