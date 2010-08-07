@@ -1,26 +1,65 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Tue, 17 Aug 2010 18:34:09 +0000
-Subject: Re: [PATCH] ether1: Use net_device_stats from struct net_device
-Message-Id: <20100817183409.GF15670@distanz.ch>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 07 Aug 2010 09:09:13 +0000
+Subject: [PATCH 1/2] fs/ocfs2/dlm: Eliminate update of list_for_each_entry
+Message-Id: <Pine.LNX.4.64.1008071108540.5821@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282061719-19645-1-git-send-email-tklauser@distanz.ch>
-	<20100817183205.GH645@bicker>
-In-Reply-To: <20100817183205.GH645@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Mark Fasheh <mfasheh@suse.com>, Joel Becker <joel.becker@oracle.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2010-08-17 at 20:32:05 +0200, Dan Carpenter <error27@gmail.com> wrote:
-> On Tue, Aug 17, 2010 at 06:15:19PM +0200, Tobias Klauser wrote:
-> > struct net_device has its own struct net_device_stats member, so use
-> > this one instead of a private copy in the ether1_priv struct.
-> > 
-> 
-> You missed one in ether1_open().
-> 
->         memset (&priv(dev)->stats, 0, sizeof (struct net_device_stats));
+From: Julia Lawall <julia@diku.dk>
 
-Thanks. I'll send an updated patch.
+list_for_each_entry uses its first argument to move from one element to the
+next, so modifying it can break the iteration.
 
-Tobias
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+iterator name list_for_each_entry;
+expression x,E;
+position p1,p2;
+@@
+
+list_for_each_entry@p1(x,...) { <... x =@p2 E ...> }
+
+@@
+expression x,E;
+position r.p1,r.p2;
+statement S;
+@@
+
+*x =@p2 E
+...
+list_for_each_entry@p1(x,...) S
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+I don't know whether this is the right solution, but it seems plausible
+considering the subsequent test on lock.  In any case, setting lock to NULL
+and then going back to the top of the loop does not work.
+
+ fs/ocfs2/dlm/dlmrecovery.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
+index 9dfaac7..7084a11 100644
+--- a/fs/ocfs2/dlm/dlmrecovery.c
++++ b/fs/ocfs2/dlm/dlmrecovery.c
+@@ -1792,10 +1792,10 @@ static int dlm_process_recovery_data(struct dlm_ctxt *dlm,
+ 			for (j = DLM_GRANTED_LIST; j <= DLM_BLOCKED_LIST; j++) {
+ 				tmpq = dlm_list_idx_to_ptr(res, j);
+ 				list_for_each_entry(lock, tmpq, list) {
+-					if (lock->ml.cookie != ml->cookie)
++					if (lock->ml.cookie != ml->cookie) {
+ 						lock = NULL;
+-					else
+ 						break;
++					}
+ 				}
+ 				if (lock)
+ 					break;
