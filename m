@@ -1,54 +1,30 @@
 From: "Eilon Greenstein" <eilong@broadcom.com>
-Date: Sun, 08 Aug 2010 19:13:05 +0000
+Date: Sun, 08 Aug 2010 19:14:53 +0000
 Subject: Re: [PATCH 32/42] drivers/net/bnx2x: Adjust confusing if
-Message-Id: <1281294785.21680.3.camel@lb-tlvb-eilong.il.broadcom.com>
+Message-Id: <1281294893.21680.5.camel@lb-tlvb-eilong.il.broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.1008052226210.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052226210.31692@ask.diku.dk>
+ <20100806070749.GP9031@bicker>
+In-Reply-To: <20100806070749.GP9031@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, yanivr@broadcom.com
+To: Dan Carpenter <error27@gmail.com>
+Cc: Julia Lawall <julia@diku.dk>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, yanivr@broadcom.com
 
-On Thu, 2010-08-05 at 13:26 -0700, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
+On Fri, 2010-08-06 at 00:07 -0700, Dan Carpenter wrote:
+> On Thu, Aug 05, 2010 at 10:26:38PM +0200, Julia Lawall wrote:
+> > ---
+> > This patch doesn't change the semantics of the code.  But it might not be
+> > what is intended.
+> > 
 > 
-> Outdent the code following the if.
+> I think there may have been some if statements which were removed before
+> the code was merged into the kernel?  Here is another one from that same
+> function.  Someone can roll this in with your patch.
 > 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable braces4@
-> position p1,p2;
-> statement S1,S2;
-> @@
-> 
-> (
-> if (...) { ... }
-> |
-> if (...) S1@p1 S2@p2
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> if (p1[0].column = p2[0].column):
->   cocci.print_main("branch",p1)
->   cocci.print_secs("after",p2)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Acked-by: Eilon Greenstein <eilong@broadcom.com>
-> ---
-> This patch doesn't change the semantics of the code.  But it might not be
-> what is intended.
-
-This is indeed just bad alignment, thanks for the fix
-
+Thanks Dan. We will send a more complete patch series for this file once
+net-next is open again.
 
 
