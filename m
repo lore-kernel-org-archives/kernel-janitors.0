@@ -1,70 +1,77 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Tue, 17 Aug 2010 21:41:08 +0000
-Subject: Re: [patch] Staging: lirc: remove unneeded variable
-Message-Id: <20100817214108.GE13566@redhat.com>
+From: Richard Zidlicky <rz@linux-m68k.org>
+Date: Sun, 08 Aug 2010 16:10:22 +0000
+Subject: Re: [PATCH] dvb: siano: free spinlock before schedule()
+Message-Id: <20100808161022.GB5594@linux-m68k.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100810061120.GB18431@bicker>
-In-Reply-To: <20100810061120.GB18431@bicker>
+References: <1280256161-7971-1-git-send-email-segooon@gmail.com> <4C4F5CA7.1030706@gmail.com>
+In-Reply-To: <4C4F5CA7.1030706@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Douglas Schilling Landgraf <dougsland@redhat.com>, Jiri Kosina <jkosina@suse.cz>, Roel Kluin <roel.kluin@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 13, 2010 at 03:38:40PM +0200, Dan Carpenter wrote:
-> On Wed, Aug 11, 2010 at 10:46:47PM -0400, Jarod Wilson wrote:
-> > On Tue, Aug 10, 2010 at 08:11:20AM +0200, Dan Carpenter wrote:
-> > > We never use control_req so I removed it.
-> > > 
-> > > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > 
-> > Leftover cruft from when lirc_imon also supported the devices now covered
-> > by the ir-core imon driver.
-> > 
-> 
-> Speak of left over stuff, it's weird that I didn't notice this before
-> but gcc complains about an unitialized variable in
-> imon_incoming_packet().
-> 
-> drivers/staging/lirc/lirc_imon.c: In function ‘imon_incoming_packet’:
-> drivers/staging/lirc/lirc_imon.c:661: warning: ‘chunk_num’ may be used
-> 	uninitialized in this function
-> 
-> I don't know how to fix that, but it looks important.
+On Wed, Jul 28, 2010 at 12:24:39AM +0200, Jiri Slaby wrote:
 
-Ew. Yeah, that doesn't look so hot like it is right now. The old lirc_imon
-driver had chunk_num = buf[7], and made much more extensive use of
-chunk_num. Simply removing chunk_num and using buf[7] should be fine.
+sorry for seeing this so late, was flooded with email lately.
 
-Signed-off-by: Jarod Wilson <jarod@redhat.com>
----
- drivers/staging/lirc/lirc_imon.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+> There is a better fix (which fixes the potential NULL dereference):
+> http://lkml.org/lkml/2010/6/7/175
 
-diff --git a/drivers/staging/lirc/lirc_imon.c b/drivers/staging/lirc/lirc_imon.c
-index 6649325..2351c88 100644
---- a/drivers/staging/lirc/lirc_imon.c
-+++ b/drivers/staging/lirc/lirc_imon.c
-@@ -599,7 +599,7 @@ static void imon_incoming_packet(struct imon_context *context,
- 	struct device *dev = context->driver->dev;
- 	int octet, bit;
- 	unsigned char mask;
--	int i, chunk_num;
-+	int i;
+> Richard, could you address the comments there and resend?
+
+I am running this patch since many weeks (after fixing the compile error obviously). 
+Did not implement your beautification suggestion yet, was doing all kinds of experiments
+with IR and had plenty of unrelated issues.
+
+Richard
+
+
+--- linux-2.6.34/drivers/media/dvb/siano/smscoreapi.c.rz	2010-06-03 21:58:11.000000000 +0200
++++ linux-2.6.34/drivers/media/dvb/siano/smscoreapi.c	2010-06-07 14:32:06.000000000 +0200
+@@ -1100,31 +1100,26 @@
+  *
+  * @return pointer to descriptor on success, NULL on error.
+  */
+-struct smscore_buffer_t *smscore_getbuffer(struct smscore_device_t *coredev)
++
++struct smscore_buffer_t *get_entry(struct smscore_device_t *coredev)
+ {
+ 	struct smscore_buffer_t *cb = NULL;
+ 	unsigned long flags;
  
- 	/*
- 	 * just bail out if no listening IR client
-@@ -658,7 +658,7 @@ static void imon_incoming_packet(struct imon_context *context,
- 		}
- 	}
+-	DEFINE_WAIT(wait);
+-
+ 	spin_lock_irqsave(&coredev->bufferslock, flags);
+-
+-	/* This function must return a valid buffer, since the buffer list is
+-	 * finite, we check that there is an available buffer, if not, we wait
+-	 * until such buffer become available.
+-	 */
+-
+-	prepare_to_wait(&coredev->buffer_mng_waitq, &wait, TASK_INTERRUPTIBLE);
+-
+-	if (list_empty(&coredev->buffers))
+-		schedule();
+-
+-	finish_wait(&coredev->buffer_mng_waitq, &wait);
+-
++	if (!list_empty(&coredev->buffers)) {
+ 	cb = (struct smscore_buffer_t *) coredev->buffers.next;
+ 	list_del(&cb->entry);
+-
++	}
+ 	spin_unlock_irqrestore(&coredev->bufferslock, flags);
++	return cb;
++}
++
++struct smscore_buffer_t *smscore_getbuffer(struct smscore_device_t *coredev)
++{
++	struct smscore_buffer_t *cb = NULL;
++
++	wait_event(coredev->buffer_mng_waitq, (cb = get_entry(coredev)));
  
--	if (chunk_num = 10) {
-+	if (buf[7] = 10) {
- 		if (context->rx.count) {
- 			submit_data(context);
- 			context->rx.count = 0;
+ 	return cb;
+ }
 
-
--- 
-Jarod Wilson
-jarod@redhat.com
 
