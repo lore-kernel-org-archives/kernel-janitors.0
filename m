@@ -1,81 +1,34 @@
-From: Wolfgang Grandegger <wg@grandegger.com>
-Date: Tue, 31 Aug 2010 19:22:07 +0000
-Subject: Re: [PATCH 3/4] drivers/net/can/mscan/mpc5xxx_can.c: Add	of_node_put
-Message-Id: <4C7D565F.307@grandegger.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 09 Aug 2010 19:50:47 +0000
+Subject: [PATCH 07/18 v2] isdn: avm: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281383448-14050-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283269738-14612-1-git-send-email-julia@diku.dk>
-	<1283269738-14612-4-git-send-email-julia@diku.dk>
-	<20100831165153.GB28015@pengutronix.de>
-	<Pine.LNX.4.64.1008311943280.2668@ask.diku.dk>
-	<20100831191014.GA9603@pengutronix.de>
-In-Reply-To: <20100831191014.GA9603-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: socketcan-core-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
+To: kernel-janitors@vger.kernel.org
+Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Alexey Dobriyan <adobriyan@gmail.com>, Tilman Schmidt <tilman@imap.cc>, netdev@vger.kernel.org
 
-On 08/31/2010 09:10 PM, Wolfram Sang wrote:
-> On Tue, Aug 31, 2010 at 07:44:00PM +0200, Julia Lawall wrote:
->> Add a call to of_node_put in the error handling code following a call to
->> of_find_matching_node.
->>
->> This patch also moves the existing call to of_node_put after the call to
->> iounmap in the error handling code, to make it possible to jump to
->> of_node_put without doing iounmap.  These appear to be disjoint operations,
->> so the ordering doesn't matter.
->>
->> This patch furthermore changes the -ENODEV result in the error handling
->> code for of_find_matching_node to a return of 0, as found in the error
->> handling code for of_iomap, because the return type of the function is
->> unsigned.
->>
->> The semantic match that finds this problem is as follows:
->> (http://coccinelle.lip6.fr/)
->>
->> // <smpl>
->> @r exists@
->> local idexpression x;
->> expression E,E1,E2;
->> statement S;
->> @@
->>
->> *x = 
->> (of_find_node_by_path
->> |of_find_node_by_name
->> |of_find_node_by_phandle
->> |of_get_parent
->> |of_get_next_parent
->> |of_get_next_child
->> |of_find_compatible_node
->> |of_match_node
->> |of_find_node_by_type
->> |of_find_node_with_property
->> |of_find_matching_node
->> |of_parse_phandle
->> )(...);
->> ...
->> if (x = NULL) S
->> <... when != x = E
->> *if (...) {
->>   ... when != of_node_put(x)
->>       when != if (...) { ... of_node_put(x); ... }
->> (
->>   return <+...x...+>;
->> |
->> *  return ...;
->> )
->> }
->> ...>
->> (
->> E2 = x;
->> |
->> of_node_put(x);
->> )
->> // </smpl>
->>
->> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> Reviewed-by: Wolfram Sang <w.sang@pengutronix.de>
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error.
 
-Acked-by: Wolfgang Grandegger <wg@grandegger.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/isdn/hardware/avm/t1pci.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/isdn/hardware/avm/t1pci.c b/drivers/isdn/hardware/avm/t1pci.c
+index 5a3f830..a79eb5a 100644
+--- a/drivers/isdn/hardware/avm/t1pci.c
++++ b/drivers/isdn/hardware/avm/t1pci.c
+@@ -210,6 +210,7 @@ static int __devinit t1pci_probe(struct pci_dev *dev,
+ 	if (retval != 0) {
+ 		printk(KERN_ERR "t1pci: no AVM-T1-PCI at i/o %#x, irq %d detected, mem %#x\n",
+ 		       param.port, param.irq, param.membase);
++		pci_disable_device(dev);
+ 		return -ENODEV;
+ 	}
+ 	return 0;
+-- 
+1.7.0.4
+
