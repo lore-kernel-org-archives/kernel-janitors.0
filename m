@@ -1,13 +1,29 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 09 Aug 2010 10:36:05 +0000
-Subject: [patch 1/2] qlcnic: clean up qlcnic_init_pci_info()
-Message-Id: <20100809103542.GG9031@bicker>
+From: Amit Salecha <amit.salecha@qlogic.com>
+Date: Mon, 09 Aug 2010 11:30:20 +0000
+Subject: RE: [patch 1/2] qlcnic: clean up qlcnic_init_pci_info()
+Message-Id: <99737F4847ED0A48AECC9F4A1974A4B80F86C418C7@MNEXMB2.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100809103542.GG9031@bicker>
+In-Reply-To: <20100809103542.GG9031@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amit Kumar Salecha <amit.salecha@qlogic.com>
-Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>, linux-driver@qlogic.com, "David S. Miller" <davem@davemloft.net>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>, Linux Driver <Linux-Driver@qlogic.com>, "David S. Miller" <davem@davemloft.net>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Ameen Rahman <ameen.rahman@qlogic.com>
+
+> In the original code we allocated memory conditionally
+>......
+
+Looks good from me.
+
+Thanks Dan.
+
+-----Original Message-----
+From: Dan Carpenter [mailto:error27@gmail.com] 
+Sent: Monday, August 09, 2010 4:06 PM
+To: Amit Salecha
+Cc: Anirban Chakraborty; Linux Driver; David S. Miller; Sucheta Chakraborty; netdev@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: [patch 1/2] qlcnic: clean up qlcnic_init_pci_info()
 
 In the original code we allocated memory conditionally and freed it in
 the error handling unconditionally.  It turns out that this function is
@@ -92,3 +108,4 @@ index b9615bd..2b0bc95 100644
  
  	return ret;
  }
+
