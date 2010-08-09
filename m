@@ -1,32 +1,34 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Thu, 05 Aug 2010 21:48:55 +0000
-Subject: Re: [PATCH 11/42] drivers/ieee1394: Adjust confusing if indentation
-Message-Id: <4C5B31C7.4000109@s5r6.in-berlin.de>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 09 Aug 2010 19:50:37 +0000
+Subject: [PATCH 06/18 v2] isdn: avm: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281383439-13988-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052219530.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052219530.31692@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia@diku.dk>
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Alexey Dobriyan <adobriyan@gmail.com>, Tilman Schmidt <tilman@imap.cc>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org
 
-Julia Lawall wrote:
-> Indent the branch of an if.
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error.
 
-Committed to linux1394-2.6.git.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/isdn/hardware/avm/c4.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-> The semantic match that finds this problem is as follows:
+diff --git a/drivers/isdn/hardware/avm/c4.c b/drivers/isdn/hardware/avm/c4.c
+index 7715d32..d3530f6 100644
+--- a/drivers/isdn/hardware/avm/c4.c
++++ b/drivers/isdn/hardware/avm/c4.c
+@@ -1273,6 +1273,7 @@ static int __devinit c4_probe(struct pci_dev *dev,
+ 	if (retval != 0) {
+ 		printk(KERN_ERR "c4: no AVM-C%d at i/o %#x, irq %d detected, mem %#x\n",
+ 		       nr, param.port, param.irq, param.membase);
++		pci_disable_device(dev);
+ 		return -ENODEV;
+ 	}
+ 	return 0;
+-- 
+1.7.0.4
 
-It did not find this line though:
-http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux-2.6.git;a=3Dblob=
-;f=3DDocumentation/feature-removal-schedule.txt;h=BE7030e4dd73697ed5b979f02=
-b6841dac7bb69c0#l549
---=20
-Stefan Richter
--=3D=3D=3D-=3D-=3D- =3D--- --=3D-http://arcgraph.de/sr/
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
