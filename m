@@ -1,24 +1,59 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Mon, 30 Aug 2010 08:31:05 +0000
-Subject: Re: [patch] pcmcia: comedi: fix compile error
-Message-Id: <20100830083105.GA1295@isilmar-3.linta.de>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 09 Aug 2010 19:50:53 +0000
+Subject: [PATCH 09/18 v2] isdn: mISDN: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281383456-14119-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100830081231.GL9832@bicker>
-In-Reply-To: <20100830081231.GL9832@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Marcel Holtmann <marcel@holtmann.org>, Alexander Kurz <linux@kbdbabel.org>, Andrea Gelmini <andrea.gelmini@gelma.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Peter Huewe <peterhuewe@gmx.de>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org
 
-Dan,
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error.
 
-On Mon, Aug 30, 2010 at 10:14:45AM +0200, Dan Carpenter wrote:
-> We changed struct pcmcia_device in 90abdc3b973229 "pcmcia: do not use
-> io_req_t when calling pcmcia_request_io()".  The rest of this file got
-> updated to the new API but this line was missed so my config doesn't
-> compile.
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/isdn/hardware/mISDN/mISDNinfineon.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
 
-a similar patch is already in my queue -- will send it to Linus for -rc4...
+diff --git a/drivers/isdn/hardware/mISDN/mISDNinfineon.c b/drivers/isdn/hardware/mISDN/mISDNinfineon.c
+index d2dd61d..af25e1f 100644
+--- a/drivers/isdn/hardware/mISDN/mISDNinfineon.c
++++ b/drivers/isdn/hardware/mISDN/mISDNinfineon.c
+@@ -1094,6 +1094,7 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		pr_info("mISDN: do not have informations about adapter at %s\n",
+ 			pci_name(pdev));
+ 		kfree(card);
++		pci_disable_device(pdev);
+ 		return -EINVAL;
+ 	} else
+ 		pr_notice("mISDN: found adapter %s at %s\n",
+@@ -1103,7 +1104,7 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	pci_set_drvdata(pdev, card);
+ 	err = setup_instance(card);
+ 	if (err) {
+-		pci_disable_device(card->pdev);
++		pci_disable_device(pdev);
+ 		kfree(card);
+ 		pci_set_drvdata(pdev, NULL);
+ 	} else if (ent->driver_data = INF_SCT_1) {
+@@ -1114,6 +1115,7 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 			sc = kzalloc(sizeof(struct inf_hw), GFP_KERNEL);
+ 			if (!sc) {
+ 				release_card(card);
++				pci_disable_device(pdev);
+ 				return -ENOMEM;
+ 			}
+ 			sc->irq = card->irq;
+@@ -1121,6 +1123,7 @@ inf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 			sc->ci = card->ci + i;
+ 			err = setup_instance(sc);
+ 			if (err) {
++				pci_disable_device(pdev);
+ 				kfree(sc);
+ 				release_card(card);
+ 				break;
+-- 
+1.7.0.4
 
-Thanks,
-	Dominik
