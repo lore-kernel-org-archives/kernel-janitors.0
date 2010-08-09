@@ -1,58 +1,61 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:24:32 +0000
-Subject: [PATCH 25/42] drivers/gpu/drm/radeon: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052224130.31692@ask.diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 09 Aug 2010 19:51:52 +0000
+Subject: [PATCH 14/18 v2] staging: rtl8187se: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281383515-14478-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Joe Perches <joe@perches.com>, "Prashant P. Shah" <pshah.mumbai@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error.
 
-Outdent the code following the if.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
-
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/gpu/drm/radeon/evergreen.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8187se/r8180_core.c |   10 +++++++---
+ 1 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/evergreen.c b/drivers/gpu/drm/radeon/evergreen.c
-index 957d506..1a2797c 100644
---- a/drivers/gpu/drm/radeon/evergreen.c
-+++ b/drivers/gpu/drm/radeon/evergreen.c
-@@ -136,7 +136,7 @@ bool evergreen_hpd_sense(struct radeon_device *rdev, enum radeon_hpd_id hpd)
- 	case RADEON_HPD_6:
- 		if (RREG32(DC_HPD6_INT_STATUS) & DC_HPDx_SENSE)
- 			connected = true;
--			break;
-+		break;
- 	default:
- 		break;
+diff --git a/drivers/staging/rtl8187se/r8180_core.c b/drivers/staging/rtl8187se/r8180_core.c
+index ed7457b..70ab008 100644
+--- a/drivers/staging/rtl8187se/r8180_core.c
++++ b/drivers/staging/rtl8187se/r8180_core.c
+@@ -3547,6 +3547,7 @@ static int __devinit rtl8180_pci_probe(struct pci_dev *pdev,
+ 	struct net_device *dev = NULL;
+ 	struct r8180_priv *priv = NULL;
+ 	u8 unit = 0;
++	int ret = -ENODEV;
+ 
+ 	unsigned long pmem_start, pmem_len, pmem_flags;
+ 
+@@ -3561,8 +3562,10 @@ static int __devinit rtl8180_pci_probe(struct pci_dev *pdev,
+ 	pci_set_dma_mask(pdev, 0xffffff00ULL);
+ 	pci_set_consistent_dma_mask(pdev, 0xffffff00ULL);
+ 	dev = alloc_ieee80211(sizeof(struct r8180_priv));
+-	if (!dev)
+-		return -ENOMEM;
++	if (!dev) {
++		ret = -ENOMEM;
++		goto fail_free;
++	}
+ 	priv = ieee80211_priv(dev);
+ 	priv->ieee80211 = netdev_priv(dev);
+ 
+@@ -3641,11 +3644,12 @@ fail:
+ 		free_ieee80211(dev);
  	}
+ 
++fail_free:
+ 	pci_disable_device(pdev);
+ 
+ 	DMESG("wlan driver load failed\n");
+ 	pci_set_drvdata(pdev, NULL);
+-	return -ENODEV;
++	return ret;
+ }
+ 
+ static void __devexit rtl8180_pci_remove(struct pci_dev *pdev)
+-- 
+1.7.0.4
+
