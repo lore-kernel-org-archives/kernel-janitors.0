@@ -1,61 +1,158 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 27 Aug 2010 05:57:18 +0000
-Subject: [PATCH 1/3] drivers/media/video/em28xx: Remove potential NULL dereference
-Message-Id: <1282888640-27042-2-git-send-email-julia@diku.dk>
+From: Jiri Slaby <jslaby@suse.cz>
+Date: Mon, 09 Aug 2010 20:19:25 +0000
+Subject: [PATCH 1/1] Char: mxser, call pci_disable_device from probe/remove
+Message-Id: <1281385165-8620-1-git-send-email-jslaby@suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282888640-27042-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1282888640-27042-1-git-send-email-julia@diku.dk>
+References: <4C6062BA.4070009@gmail.com>
+In-Reply-To: <4C6062BA.4070009@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@suse.de
+Cc: linux-kernel@vger.kernel.org, jirislaby@gmail.com, kernel-janitors@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Kulikov Vasiliy <segooon@gmail.com>
 
-If the NULL test is necessary, the initialization involving a dereference of
-the tested value should be moved after the NULL test.
+Vasiliy found that pci_disable_device is not called on fail paths in
+mxser_probe. Actually, it is called from nowhere in the driver.
 
-The sematic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+There are three changes needed:
+1) don't use pseudo-generic mxser_release_res. Let's use it only from
+   ISA paths from now on. All the pci stuff is moved to probe and
+   remove PCI-related functions.
+2) reorder fail-paths in the probe function so that it makes sense and
+   we can call them from the sequential code naturally (the further we
+   are the earlier label we go to).
+3) add pci_disable_device both to mxser_probe and mxser_remove.
 
-// <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
-@@
+There is a nit of adding CONFIG_PCI ifdef to mxser_remove. it is
+because this driver supports ISA-only compilations and it would choke
+up on the newly added calls now.
 
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/media/video/em28xx/em28xx-video.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/char/mxser.c |   47 ++++++++++++++++++++++-------------------------
+ 1 files changed, 22 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/media/video/em28xx/em28xx-video.c b/drivers/media/video/em28xx/em28xx-video.c
-index 7b9ec6e..95a4b60 100644
---- a/drivers/media/video/em28xx/em28xx-video.c
-+++ b/drivers/media/video/em28xx/em28xx-video.c
-@@ -277,12 +277,13 @@ static void em28xx_copy_vbi(struct em28xx *dev,
+diff --git a/drivers/char/mxser.c b/drivers/char/mxser.c
+index 3fc89da..8723f72 100644
+--- a/drivers/char/mxser.c
++++ b/drivers/char/mxser.c
+@@ -2339,20 +2339,11 @@ struct tty_port_operations mxser_port_ops = {
+  * The MOXA Smartio/Industio serial driver boot-time initialization code!
+  */
+ 
+-static void mxser_release_res(struct mxser_board *brd, struct pci_dev *pdev,
+-		unsigned int irq)
++static void mxser_release_ISA_res(struct mxser_board *brd);
  {
- 	void *startwrite, *startread;
- 	int  offset;
--	int bytesperline = dev->vbi_width;
-+	int bytesperline;
+-	if (irq)
+-		free_irq(brd->irq, brd);
+-	if (pdev != NULL) {	/* PCI */
+-#ifdef CONFIG_PCI
+-		pci_release_region(pdev, 2);
+-		pci_release_region(pdev, 3);
+-#endif
+-	} else {
+-		release_region(brd->ports[0].ioaddr, 8 * brd->info->nports);
+-		release_region(brd->vector, 1);
+-	}
++	free_irq(brd->irq, brd);
++	release_region(brd->ports[0].ioaddr, 8 * brd->info->nports);
++	release_region(brd->vector, 1);
+ }
  
- 	if (dev = NULL) {
- 		em28xx_isocdbg("dev is null\n");
- 		return;
- 	}
-+	bytesperline = dev->vbi_width;
+ static int __devinit mxser_initbrd(struct mxser_board *brd,
+@@ -2397,13 +2388,11 @@ static int __devinit mxser_initbrd(struct mxser_board *brd,
  
- 	if (dma_q = NULL) {
- 		em28xx_isocdbg("dma_q is null\n");
+ 	retval = request_irq(brd->irq, mxser_interrupt, IRQF_SHARED, "mxser",
+ 			brd);
+-	if (retval) {
++	if (retval)
+ 		printk(KERN_ERR "Board %s: Request irq failed, IRQ (%d) may "
+ 			"conflict with another device.\n",
+ 			brd->info->name, brd->irq);
+-		/* We hold resources, we need to release them. */
+-		mxser_release_res(brd, pdev, 0);
+-	}
++
+ 	return retval;
+ }
+ 
+@@ -2555,7 +2544,7 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
+ 	ioaddress = pci_resource_start(pdev, 2);
+ 	retval = pci_request_region(pdev, 2, "mxser(IO)");
+ 	if (retval)
+-		goto err;
++		goto err_dis;
+ 
+ 	brd->info = &mxser_cards[ent->driver_data];
+ 	for (i = 0; i < brd->info->nports; i++)
+@@ -2565,7 +2554,7 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
+ 	ioaddress = pci_resource_start(pdev, 3);
+ 	retval = pci_request_region(pdev, 3, "mxser(vector)");
+ 	if (retval)
+-		goto err_relio;
++		goto err_zero;
+ 	brd->vector = ioaddress;
+ 
+ 	/* irq */
+@@ -2608,7 +2597,7 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
+ 	/* mxser_initbrd will hook ISR. */
+ 	retval = mxser_initbrd(brd, pdev);
+ 	if (retval)
+-		goto err_null;
++		goto err_rel3;
+ 
+ 	for (i = 0; i < brd->info->nports; i++)
+ 		tty_register_device(mxvar_sdriver, brd->idx + i, &pdev->dev);
+@@ -2616,10 +2605,13 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
+ 	pci_set_drvdata(pdev, brd);
+ 
+ 	return 0;
+-err_relio:
+-	pci_release_region(pdev, 2);
+-err_null:
++err_rel3:
++	pci_release_region(pdev, 3);
++err_zero:
+ 	brd->info = NULL;
++	pci_release_region(pdev, 2);
++err_dis:
++	pci_disable_device(pdev);
+ err:
+ 	return retval;
+ #else
+@@ -2629,14 +2621,19 @@ err:
+ 
+ static void __devexit mxser_remove(struct pci_dev *pdev)
+ {
++#ifdef CONFIG_PCI
+ 	struct mxser_board *brd = pci_get_drvdata(pdev);
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < brd->info->nports; i++)
+ 		tty_unregister_device(mxvar_sdriver, brd->idx + i);
+ 
+-	mxser_release_res(brd, pdev, 1);
++	free_irq(pdev->irq);
++	pci_release_region(pdev, 2);
++	pci_release_region(pdev, 3);
++	pci_disable_device(pdev);
+ 	brd->info = NULL;
++#endif
+ }
+ 
+ static struct pci_driver mxser_driver = {
+@@ -2741,7 +2738,7 @@ static void __exit mxser_module_exit(void)
+ 
+ 	for (i = 0; i < MXSER_BOARDS; i++)
+ 		if (mxser_boards[i].info != NULL)
+-			mxser_release_res(&mxser_boards[i], NULL, 1);
++			mxser_release_ISA_res(&mxser_boards[i]);
+ }
+ 
+ module_init(mxser_module_init);
+-- 
+1.7.2.1
+
 
