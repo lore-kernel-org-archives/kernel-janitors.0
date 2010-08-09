@@ -1,139 +1,96 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Mon, 16 Aug 2010 21:45:54 +0000
-Subject: Re: [PATCH 1/16] drivers/firewire: Use available error codes
-Message-Id: <tkrat.def6ac6a673ffb1b@s5r6.in-berlin.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 09 Aug 2010 10:37:27 +0000
+Subject: [patch 2/2] qlcnic: using too much stack
+Message-Id: <20100809103727.GH9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008161824210.19313@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008161824210.19313@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Amit Kumar Salecha <amit.salecha@qlogic.com>
+Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>, linux-driver@qlogic.com, "David S. Miller" <davem@davemloft.net>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Subject: firewire: net: fix unicast reception RCODE in failure paths
+qlcnic_pci_info structs are 128 bytes so an array of 8 uses 1024 bytes.
+That's a lot if you run with 4K stacks.  I allocated them with kcalloc()
+instead.
 
-The incoming request hander fwnet_receive_packet() expects subsequent
-datagram handling code to return non-zero on errors.  However, almost
-none of the failure paths did so.  Fix them all.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-(This error reporting is used to send and RCODE_CONFLICT_ERROR to the
-sender node in such failure cases.  Two modes of failure exist:  Out of
-memory, or firewire-net is unaware of any peer node to which a fragment
-or an ARP packet belongs.  However, it is unclear whether a sender can
-actually make use of such information.  A Linux peer apparently can't.
-Maybe it should all be simplified to void functions.)
-
-Reported-by: Julia Lawall <julia@diku.dk>
-Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
----
- drivers/firewire/net.c |   28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
-
-Index: b/drivers/firewire/net.c
-=================================--- a/drivers/firewire/net.c
-+++ b/drivers/firewire/net.c
-@@ -579,7 +579,7 @@ static int fwnet_finish_incoming_packet(
- 		if (!peer) {
- 			fw_notify("No peer for ARP packet from %016llx\n",
- 				  (unsigned long long)peer_guid);
--			goto failed_proto;
-+			goto no_peer;
- 		}
+diff --git a/drivers/net/qlcnic/qlcnic_main.c b/drivers/net/qlcnic/qlcnic_main.c
+index 7f27e2a..da84229 100644
+--- a/drivers/net/qlcnic/qlcnic_main.c
++++ b/drivers/net/qlcnic/qlcnic_main.c
+@@ -473,14 +473,20 @@ qlcnic_cleanup_pci_map(struct qlcnic_adapter *adapter)
+ static int
+ qlcnic_init_pci_info(struct qlcnic_adapter *adapter)
+ {
+-	struct qlcnic_pci_info pci_info[QLCNIC_MAX_PCI_FUNC];
++	struct qlcnic_pci_info *pci_info;
+ 	int i, ret = 0, err;
+ 	u8 pfn;
  
- 		/*
-@@ -656,7 +656,7 @@ static int fwnet_finish_incoming_packet(
- 
- 	return 0;
- 
-- failed_proto:
-+ no_peer:
- 	net->stats.rx_errors++;
- 	net->stats.rx_dropped++;
- 
-@@ -664,7 +664,7 @@ static int fwnet_finish_incoming_packet(
- 	if (netif_queue_stopped(net))
- 		netif_wake_queue(net);
- 
--	return 0;
-+	return -ENOENT;
- }
- 
- static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
-@@ -701,7 +701,7 @@ static int fwnet_incoming_packet(struct 
- 			fw_error("out of memory\n");
- 			net->stats.rx_dropped++;
- 
--			return -1;
-+			return -ENOMEM;
- 		}
- 		skb_reserve(skb, (net->hard_header_len + 15) & ~15);
- 		memcpy(skb_put(skb, len), buf, len);
-@@ -726,8 +726,10 @@ static int fwnet_incoming_packet(struct 
- 	spin_lock_irqsave(&dev->lock, flags);
- 
- 	peer = fwnet_peer_find_by_node_id(dev, source_node_id, generation);
--	if (!peer)
--		goto bad_proto;
-+	if (!peer) {
-+		retval = -ENOENT;
-+		goto fail;
++	pci_info = kcalloc(QLCNIC_MAX_PCI_FUNC, sizeof(*pci_info), GFP_KERNEL);
++	if (!pci_info)
++		return -ENOMEM;
++
+ 	adapter->npars = kzalloc(sizeof(struct qlcnic_npar_info) *
+ 				QLCNIC_MAX_PCI_FUNC, GFP_KERNEL);
+-	if (!adapter->npars)
+-		return -ENOMEM;
++	if (!adapter->npars) {
++		err = -ENOMEM;
++		goto err_pci_info;
 +	}
  
- 	pd = fwnet_pd_find(peer, datagram_label);
- 	if (pd = NULL) {
-@@ -741,7 +743,7 @@ static int fwnet_incoming_packet(struct 
- 				  dg_size, buf, fg_off, len);
- 		if (pd = NULL) {
- 			retval = -ENOMEM;
--			goto bad_proto;
-+			goto fail;
- 		}
- 		peer->pdg_size++;
- 	} else {
-@@ -755,9 +757,9 @@ static int fwnet_incoming_packet(struct 
- 			pd = fwnet_pd_new(net, peer, datagram_label,
- 					  dg_size, buf, fg_off, len);
- 			if (pd = NULL) {
--				retval = -ENOMEM;
- 				peer->pdg_size--;
--				goto bad_proto;
-+				retval = -ENOMEM;
-+				goto fail;
- 			}
- 		} else {
- 			if (!fwnet_pd_update(peer, pd, buf, fg_off, len)) {
-@@ -768,7 +770,8 @@ static int fwnet_incoming_packet(struct 
- 				 */
- 				fwnet_pd_delete(pd);
- 				peer->pdg_size--;
--				goto bad_proto;
-+				retval = -ENOMEM;
-+				goto fail;
- 			}
- 		}
- 	} /* new datagram or add to existing one */
-@@ -794,14 +797,13 @@ static int fwnet_incoming_packet(struct 
- 	spin_unlock_irqrestore(&dev->lock, flags);
+ 	adapter->eswitch = kzalloc(sizeof(struct qlcnic_eswitch) *
+ 				QLCNIC_NIU_MAX_XG_PORTS, GFP_KERNEL);
+@@ -508,6 +514,7 @@ qlcnic_init_pci_info(struct qlcnic_adapter *adapter)
+ 	for (i = 0; i < QLCNIC_NIU_MAX_XG_PORTS; i++)
+ 		adapter->eswitch[i].flags |= QLCNIC_SWITCH_ENABLE;
  
++	kfree(pci_info);
  	return 0;
--
-- bad_proto:
-+ fail:
- 	spin_unlock_irqrestore(&dev->lock, flags);
  
- 	if (netif_queue_stopped(net))
- 		netif_wake_queue(net);
+ err_eswitch:
+@@ -516,6 +523,8 @@ err_eswitch:
+ err_npars:
+ 	kfree(adapter->npars);
+ 	adapter->eswitch = NULL;
++err_pci_info:
++	kfree(pci_info);
  
--	return 0;
-+	return retval;
+ 	return ret;
  }
+@@ -3362,15 +3371,21 @@ qlcnic_sysfs_read_pci_config(struct file *file, struct kobject *kobj,
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+ 	struct qlcnic_adapter *adapter = dev_get_drvdata(dev);
+ 	struct qlcnic_pci_func_cfg pci_cfg[QLCNIC_MAX_PCI_FUNC];
+-	struct qlcnic_pci_info	pci_info[QLCNIC_MAX_PCI_FUNC];
++	struct qlcnic_pci_info *pci_info;
+ 	int i, ret;
  
- static void fwnet_receive_packet(struct fw_card *card, struct fw_request *r,
-
-
--- 
-Stefan Richter
--===-=-=- =--- =----
-http://arcgraph.de/sr/
-
+ 	if (size != sizeof(pci_cfg))
+ 		return QL_STATUS_INVALID_PARAM;
+ 
++	pci_info = kcalloc(QLCNIC_MAX_PCI_FUNC, sizeof(*pci_info), GFP_KERNEL);
++	if (!pci_info)
++		return -ENOMEM;
++
+ 	ret = qlcnic_get_pci_info(adapter, pci_info);
+-	if (ret)
++	if (ret) {
++		kfree(pci_info);
+ 		return ret;
++	}
+ 
+ 	for (i = 0; i < QLCNIC_MAX_PCI_FUNC ; i++) {
+ 		pci_cfg[i].pci_func = pci_info[i].id;
+@@ -3381,8 +3396,8 @@ qlcnic_sysfs_read_pci_config(struct file *file, struct kobject *kobj,
+ 		memcpy(&pci_cfg[i].def_mac_addr, &pci_info[i].mac, ETH_ALEN);
+ 	}
+ 	memcpy(buf, &pci_cfg, size);
++	kfree(pci_info);
+ 	return size;
+-
+ }
+ static struct bin_attribute bin_attr_npar_config = {
+ 	.attr = {.name = "npar_config", .mode = (S_IRUGO | S_IWUSR)},
