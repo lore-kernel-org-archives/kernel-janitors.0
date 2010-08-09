@@ -1,65 +1,94 @@
-From: Tilman Schmidt <tilman@imap.cc>
-Date: Sun, 08 Aug 2010 12:50:02 +0000
-Subject: Re: [patch] isdn: gigaset: add missing unlock
-Message-Id: <4C5EA7FA.9020504@imap.cc>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------enig984294F52AD71101E34A4962"
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 09 Aug 2010 10:36:05 +0000
+Subject: [patch 1/2] qlcnic: clean up qlcnic_init_pci_info()
+Message-Id: <20100809103542.GG9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100806082323.GU9031@bicker>
-In-Reply-To: <20100806082323.GU9031@bicker>
-To: Dan Carpenter <error27@gmail.com>
-Cc: Hansjoerg Lipp <hjlipp@web.de>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Andy Shevchenko <ext-andriy.shevchenko@nokia.com>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Amit Kumar Salecha <amit.salecha@qlogic.com>
+Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>, linux-driver@qlogic.com, "David S. Miller" <davem@davemloft.net>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig984294F52AD71101E34A4962
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+In the original code we allocated memory conditionally and freed it in
+the error handling unconditionally.  It turns out that this function is
+only called during initialization and "adapter->npars" and
+"adapter->eswitch" are always NULL at the start of the function.  I
+removed those checks.
 
-Am 06.08.2010 10:23 schrieb Dan Carpenter:
-> We should unlock here.  This is the only place where we return from the=
+Also since I was cleaning things, I changed the error handling for
+qlcnic_get_pci_info() and pulled everything in an indent level.
 
-> function with the lock held.  The caller isn't expecting it.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks, good catch.
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Tilman Schmidt <tilman@imap.cc>
-
->=20
-> diff --git a/drivers/isdn/gigaset/capi.c b/drivers/isdn/gigaset/capi.c
-> index e5ea344..bcc174e 100644
-> --- a/drivers/isdn/gigaset/capi.c
-> +++ b/drivers/isdn/gigaset/capi.c
-> @@ -1052,6 +1052,7 @@ static inline void remove_appl_from_channel(struc=
-t bc_state *bcs,
->  	do {
->  		if (bcap->bcnext =3D=3D ap) {
->  			bcap->bcnext =3D bcap->bcnext->bcnext;
-> +			spin_unlock_irqrestore(&bcs->aplock, flags);
->  			return;
->  		}
->  		bcap =3D bcap->bcnext;
-
---=20
-Tilman Schmidt                    E-Mail: tilman@imap.cc
-Bonn, Germany
-Diese Nachricht besteht zu 100% aus wiederverwerteten Bits.
-Unge=F6ffnet mindestens haltbar bis: (siehe R=FCckseite)
-
-
---------------enig984294F52AD71101E34A4962
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.12 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAkxeqAYACgkQQ3+did9BuFsWaQCeM9gAi9DKGpMSVD4C+SYpI96e
-4IgAni97HQnQS5b5QBWfTJPGJ+LjxDIk
-=LjhY
------END PGP SIGNATURE-----
-
---------------enig984294F52AD71101E34A4962--
+diff --git a/drivers/net/qlcnic/qlcnic_main.c b/drivers/net/qlcnic/qlcnic_main.c
+index b9615bd..2b0bc95 100644
+--- a/drivers/net/qlcnic/qlcnic_main.c
++++ b/drivers/net/qlcnic/qlcnic_main.c
+@@ -477,44 +477,45 @@ qlcnic_init_pci_info(struct qlcnic_adapter *adapter)
+ 	int i, ret = 0, err;
+ 	u8 pfn;
+ 
+-	if (!adapter->npars)
+-		adapter->npars = kzalloc(sizeof(struct qlcnic_npar_info) *
++	adapter->npars = kzalloc(sizeof(struct qlcnic_npar_info) *
+ 				QLCNIC_MAX_PCI_FUNC, GFP_KERNEL);
+ 	if (!adapter->npars)
+ 		return -ENOMEM;
+ 
+-	if (!adapter->eswitch)
+-		adapter->eswitch = kzalloc(sizeof(struct qlcnic_eswitch) *
++	adapter->eswitch = kzalloc(sizeof(struct qlcnic_eswitch) *
+ 				QLCNIC_NIU_MAX_XG_PORTS, GFP_KERNEL);
+ 	if (!adapter->eswitch) {
+ 		err = -ENOMEM;
+-		goto err_eswitch;
++		goto err_npars;
+ 	}
+ 
+ 	ret = qlcnic_get_pci_info(adapter, pci_info);
+-	if (!ret) {
+-		for (i = 0; i < QLCNIC_MAX_PCI_FUNC; i++) {
+-			pfn = pci_info[i].id;
+-			if (pfn > QLCNIC_MAX_PCI_FUNC)
+-				return QL_STATUS_INVALID_PARAM;
+-			adapter->npars[pfn].active = pci_info[i].active;
+-			adapter->npars[pfn].type = pci_info[i].type;
+-			adapter->npars[pfn].phy_port = pci_info[i].default_port;
+-			adapter->npars[pfn].mac_learning = DEFAULT_MAC_LEARN;
+-			adapter->npars[pfn].min_bw = pci_info[i].tx_min_bw;
+-			adapter->npars[pfn].max_bw = pci_info[i].tx_max_bw;
+-		}
+-
+-		for (i = 0; i < QLCNIC_NIU_MAX_XG_PORTS; i++)
+-			adapter->eswitch[i].flags |= QLCNIC_SWITCH_ENABLE;
++	if (ret)
++		goto err_eswitch;
+ 
+-		return ret;
++	for (i = 0; i < QLCNIC_MAX_PCI_FUNC; i++) {
++		pfn = pci_info[i].id;
++		if (pfn > QLCNIC_MAX_PCI_FUNC)
++			return QL_STATUS_INVALID_PARAM;
++		adapter->npars[pfn].active = pci_info[i].active;
++		adapter->npars[pfn].type = pci_info[i].type;
++		adapter->npars[pfn].phy_port = pci_info[i].default_port;
++		adapter->npars[pfn].mac_learning = DEFAULT_MAC_LEARN;
++		adapter->npars[pfn].min_bw = pci_info[i].tx_min_bw;
++		adapter->npars[pfn].max_bw = pci_info[i].tx_max_bw;
+ 	}
+ 
++	for (i = 0; i < QLCNIC_NIU_MAX_XG_PORTS; i++)
++		adapter->eswitch[i].flags |= QLCNIC_SWITCH_ENABLE;
++
++	return 0;
++
++err_eswitch:
+ 	kfree(adapter->eswitch);
+ 	adapter->eswitch = NULL;
+-err_eswitch:
++err_npars:
+ 	kfree(adapter->npars);
++	adapter->eswitch = NULL;
+ 
+ 	return ret;
+ }
