@@ -1,28 +1,65 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 10 Aug 2010 08:42:46 +0000
-Subject: Re: [PATCH 06/18 v2] isdn: avm: call disable_pci_device() if
-Message-Id: <20100810.014246.15248571.davem@davemloft.net>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 09 Aug 2010 19:49:27 +0000
+Subject: [PATCH 02/18 v2] char: mxser: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281383369-13613-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281383439-13988-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1281383439-13988-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, isdn@linux-pingi.de, adobriyan@gmail.com, tilman@imap.cc, tj@kernel.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Jiri Slaby <jirislaby@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Kulikov Vasiliy <segooon@gmail.com>, linux-kernel@vger.kernel.org
 
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon,  9 Aug 2010 23:50:37 +0400
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error.
 
-> Driver should call disable_pci_device() if it returns from pci_probe()
-> with error.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+---
+ drivers/char/mxser.c |   16 +++++++++++-----
+ 1 files changed, 11 insertions(+), 5 deletions(-)
 
-Applied, but please fix the template you're using for the commit
-message header and the message itself, because in all of your
-patches you've transposed "disable" and "pci" in "pci_disable_device()"
+diff --git a/drivers/char/mxser.c b/drivers/char/mxser.c
+index 3fc89da..79009e2 100644
+--- a/drivers/char/mxser.c
++++ b/drivers/char/mxser.c
+@@ -2555,7 +2555,7 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
+ 	ioaddress = pci_resource_start(pdev, 2);
+ 	retval = pci_request_region(pdev, 2, "mxser(IO)");
+ 	if (retval)
+-		goto err;
++		goto err_disable;
+ 
+ 	brd->info = &mxser_cards[ent->driver_data];
+ 	for (i = 0; i < brd->info->nports; i++)
+@@ -2564,8 +2564,11 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
+ 	/* vector */
+ 	ioaddress = pci_resource_start(pdev, 3);
+ 	retval = pci_request_region(pdev, 3, "mxser(vector)");
+-	if (retval)
+-		goto err_relio;
++	if (retval) {
++		pci_release_region(pdev, 2);
++		brd->info = NULL;
++		goto err_release;
++	}
+ 	brd->vector = ioaddress;
+ 
+ 	/* irq */
+@@ -2616,10 +2619,13 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
+ 	pci_set_drvdata(pdev, brd);
+ 
+ 	return 0;
+-err_relio:
+-	pci_release_region(pdev, 2);
+ err_null:
+ 	brd->info = NULL;
++	pci_release_region(pdev, 2);
++err_release:
++	pci_release_region(pdev, 3);
++err_disable:
++	pci_disable_device(pdev);
+ err:
+ 	return retval;
+ #else
+-- 
+1.7.0.4
 
-So I have to fix it up two times in every patch I apply of your's.
-
-Thanks.
