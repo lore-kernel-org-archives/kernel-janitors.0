@@ -1,60 +1,52 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:23:00 +0000
-Subject: [PATCH 20/42] drivers/cpufreq: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052222450.31692@ask.diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon, 09 Aug 2010 19:52:06 +0000
+Subject: [PATCH 18/18 v2] staging: spectra: call disable_pci_device() if pci_probe() failed
+Message-Id: <1281383528-14558-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dave Jones <davej@redhat.com>, cpufreq@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, David Woodhouse <David.Woodhouse@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Driver should call disable_pci_device() if it returns from pci_probe()
+with error.
 
-Indent the body of for_each_cpu.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
-
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- drivers/cpufreq/cpufreq.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/spectra/lld_nand.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 199dcb9..c63a438 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -918,8 +918,8 @@ static int cpufreq_add_dev_interface(unsigned int cpu,
- 
- 	spin_lock_irqsave(&cpufreq_driver_lock, flags);
- 	for_each_cpu(j, policy->cpus) {
--	if (!cpu_online(j))
--		continue;
-+		if (!cpu_online(j))
-+			continue;
- 		per_cpu(cpufreq_cpu_data, j) = policy;
- 		per_cpu(cpufreq_policy_cpu, j) = policy->cpu;
+diff --git a/drivers/staging/spectra/lld_nand.c b/drivers/staging/spectra/lld_nand.c
+index 13c3ad2..0d647a8 100644
+--- a/drivers/staging/spectra/lld_nand.c
++++ b/drivers/staging/spectra/lld_nand.c
+@@ -2411,13 +2411,15 @@ static int nand_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	csr_base = pci_resource_start(dev, 0);
+ 	if (!csr_base) {
+ 		printk(KERN_ERR "Spectra: pci_resource_start failed!\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto failed_req_csr;
  	}
+ 
+ 	csr_len = pci_resource_len(dev, 0);
+ 	if (!csr_len) {
+ 		printk(KERN_ERR "Spectra: pci_resource_len failed!\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto failed_req_csr;
+ 	}
+ 
+ 	ret = pci_request_regions(dev, SPECTRA_NAND_NAME);
+@@ -2464,6 +2466,7 @@ static int nand_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ failed_remap_csr:
+ 	pci_release_regions(dev);
+ failed_req_csr:
++	pci_disable_device(dev);
+ 
+ 	return ret;
+ }
+-- 
+1.7.0.4
+
