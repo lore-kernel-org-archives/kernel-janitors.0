@@ -1,81 +1,49 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 03 Aug 2010 15:42:34 +0000
-Subject: [PATCH 02/11] agp: intel-agp: do not use PCI resources before pci_enable_device()
-Message-Id: <1280850154-5010-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 10 Aug 2010 06:15:52 +0000
+Subject: [patch] Staging: rtl8192e: add curly braces to if statement
+Message-Id: <20100810061451.GC18431@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: David Airlie <airlied@linux.ie>, Eric Anholt <eric@anholt.net>, Zhenyu Wang <zhenyuw@linux.intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Dave Airlie <airlied@redhat.com>, David Woodhouse <David.Woodhouse@intel.com>, linux-kernel@vger.kernel.org
 
-IRQ and resource[] may not have correct values until
-after PCI hotplug setup occurs at pci_enable_device() time.
+In the original code there was some extra semicolons after the if
+statement:
+	if (!channel_map[ieee->current_network.channel]);
+						       ^^^
+From the indenting it looked like that should be curly braces instead.
 
-The semantic match that finds this problem is as follows:
+Also I made some white space changes to stop checkpatch.pl from
+complaining.
 
-// <smpl>
-@@
-identifier x;
-identifier request ~= "pci_request.*|pci_resource.*";
-@@
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-(
-* x->irq
-|
-* x->resource
-|
-* request(x, ...)
-)
- ...
-*pci_enable_device(x)
-// </smpl>
-
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/char/agp/intel-agp.c |   22 +++++++++++-----------
- 1 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/char/agp/intel-agp.c b/drivers/char/agp/intel-agp.c
-index d836a71..237dd23 100644
---- a/drivers/char/agp/intel-agp.c
-+++ b/drivers/char/agp/intel-agp.c
-@@ -908,6 +908,17 @@ static int __devinit agp_intel_probe(struct pci_dev *pdev,
- 	dev_info(&pdev->dev, "Intel %s Chipset\n", intel_agp_chipsets[i].name);
- 
- 	/*
-+	* If the device has not been properly setup, the following will catch
-+	* the problem and should stop the system from crashing.
-+	* 20030610 - hamish@zot.org
-+	*/
-+	if (pci_enable_device(pdev)) {
-+		dev_err(&pdev->dev, "can't enable PCI device\n");
-+		agp_put_bridge(bridge);
-+		return -ENODEV;
-+	}
-+
-+	/*
- 	* The following fixes the case where the BIOS has "forgotten" to
- 	* provide an address range for the GART.
- 	* 20030610 - hamish@zot.org
-@@ -921,17 +932,6 @@ static int __devinit agp_intel_probe(struct pci_dev *pdev,
+diff --git a/drivers/staging/rtl8192e/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192e/ieee80211/ieee80211_softmac.c
+index b7ec1dd..f6d81fe 100644
+--- a/drivers/staging/rtl8192e/ieee80211/ieee80211_softmac.c
++++ b/drivers/staging/rtl8192e/ieee80211/ieee80211_softmac.c
+@@ -527,16 +527,16 @@ void ieee80211_softmac_scan_wq(struct work_struct *work)
+ 	do{
+ 		ieee->current_network.channel  			(ieee->current_network.channel + 1) % MAX_CHANNEL_NUMBER;
+-		if (watchdog++ > MAX_CHANNEL_NUMBER)
+-		{
+-		//if current channel is not in channel map, set to default channel.
+-		#ifdef ENABLE_DOT11D
+-      			if (!channel_map[ieee->current_network.channel]);
+-		#else
+-			if (!ieee->channel_map[ieee->current_network.channel]);
+-		#endif
++		if (watchdog++ > MAX_CHANNEL_NUMBER) {
++			/* if current channel is not in channel map, set to default channel. */
++#ifdef ENABLE_DOT11D
++			if (!channel_map[ieee->current_network.channel]) {
++#else
++			if (!ieee->channel_map[ieee->current_network.channel]) {
++#endif
+ 				ieee->current_network.channel = 6;
+ 				goto out; /* no good chans */
++			}
  		}
- 	}
- 
--	/*
--	* If the device has not been properly setup, the following will catch
--	* the problem and should stop the system from crashing.
--	* 20030610 - hamish@zot.org
--	*/
--	if (pci_enable_device(pdev)) {
--		dev_err(&pdev->dev, "can't enable PCI device\n");
--		agp_put_bridge(bridge);
--		return -ENODEV;
--	}
--
- 	/* Fill in the mode register */
- 	if (cap_ptr) {
- 		pci_read_config_dword(pdev,
--- 
-1.7.0.4
-
+ #ifdef ENABLE_DOT11D
+         }while(!channel_map[ieee->current_network.channel]);
