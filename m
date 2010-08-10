@@ -1,34 +1,28 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon, 09 Aug 2010 19:50:37 +0000
-Subject: [PATCH 06/18 v2] isdn: avm: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281383439-13988-1-git-send-email-segooon@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 10 Aug 2010 08:42:46 +0000
+Subject: Re: [PATCH 06/18 v2] isdn: avm: call disable_pci_device() if
+Message-Id: <20100810.014246.15248571.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1281383439-13988-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1281383439-13988-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Alexey Dobriyan <adobriyan@gmail.com>, Tilman Schmidt <tilman@imap.cc>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org
+To: segooon@gmail.com
+Cc: kernel-janitors@vger.kernel.org, isdn@linux-pingi.de, adobriyan@gmail.com, tilman@imap.cc, tj@kernel.org, netdev@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error.
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Mon,  9 Aug 2010 23:50:37 +0400
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/isdn/hardware/avm/c4.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+> Driver should call disable_pci_device() if it returns from pci_probe()
+> with error.
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-diff --git a/drivers/isdn/hardware/avm/c4.c b/drivers/isdn/hardware/avm/c4.c
-index 7715d32..d3530f6 100644
---- a/drivers/isdn/hardware/avm/c4.c
-+++ b/drivers/isdn/hardware/avm/c4.c
-@@ -1273,6 +1273,7 @@ static int __devinit c4_probe(struct pci_dev *dev,
- 	if (retval != 0) {
- 		printk(KERN_ERR "c4: no AVM-C%d at i/o %#x, irq %d detected, mem %#x\n",
- 		       nr, param.port, param.irq, param.membase);
-+		pci_disable_device(dev);
- 		return -ENODEV;
- 	}
- 	return 0;
--- 
-1.7.0.4
+Applied, but please fix the template you're using for the commit
+message header and the message itself, because in all of your
+patches you've transposed "disable" and "pci" in "pci_disable_device()"
 
+So I have to fix it up two times in every patch I apply of your's.
+
+Thanks.
