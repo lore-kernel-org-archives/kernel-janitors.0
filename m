@@ -1,40 +1,97 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 06 Aug 2010 06:28:51 +0000
-Subject: Re: smatch: module_init unwinding on errors
-Message-Id: <Pine.LNX.4.64.1008060825520.2332@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 10 Aug 2010 07:47:56 +0000
+Subject: [patch 1/2 v2] qlcnic: clean up qlcnic_init_pci_info()
+Message-Id: <20100810074756.GF18431@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100729174329.GU26313@bicker>
-In-Reply-To: <20100729174329.GU26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Amit Kumar Salecha <amit.salecha@qlogic.com>
+Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>, linux-driver@qlogic.com, "David S. Miller" <davem@davemloft.net>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 5 Aug 2010, Randy Dunlap wrote:
+In the original code we allocated memory conditionally and freed it in
+the error handling unconditionally.  It turns out that this function is
+only called during initialization and "adapter->npars" and
+"adapter->eswitch" are always NULL at the start of the function.  I
+removed those checks.
 
-> On Thu, 29 Jul 2010 22:18:03 +0200 Dan Carpenter wrote:
-> 
-> > On Thu, Jul 29, 2010 at 11:00:07AM -0700, Randy Dunlap wrote:
-> > > Hi Dan,
-> > > 
-> > > Most drivers just use the result of request_region() as a pass/fail indicator.
-> > > Only a very few of them actually save the result pointer;  mostly they just pass
-> > > bar to release_region().
-> > > 
-> > 
-> > That was another thing which was concerning me.  request_region()
-> > returns freshly allocated memory.  Isn't it a leak to discard this?
-> 
-> If I knew the answer, I would have already replied...
-> I was hoping that someone else could help out here.
-> 
-> I expect that if there was a leak, someone would have already noticed
-> and pointed this out to us.  OTOH, this could be the last class of kernel
-> leaks that needs to be fixed...  I dunno.
+Also since I was cleaning things, I changed the error handling for
+qlcnic_get_pci_info() and pulled everything in an indent level.
 
-request_region expands to a call to __request_region, which creates the 
-new memory and calls __request_resource.  __request_resource fortunately 
-puts it into a tree that release_region subsequently frees.  So there is 
-no problem with discarding the return value.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+V2:  fixed a typo.  I set eswitch to NULL twice instead of npars by
+mistake.
 
-julia
+diff --git a/drivers/net/qlcnic/qlcnic_main.c b/drivers/net/qlcnic/qlcnic_main.c
+index b9615bd..6b8df55 100644
+--- a/drivers/net/qlcnic/qlcnic_main.c
++++ b/drivers/net/qlcnic/qlcnic_main.c
+@@ -477,44 +477,45 @@ qlcnic_init_pci_info(struct qlcnic_adapter *adapter)
+ 	int i, ret = 0, err;
+ 	u8 pfn;
+ 
+-	if (!adapter->npars)
+-		adapter->npars = kzalloc(sizeof(struct qlcnic_npar_info) *
++	adapter->npars = kzalloc(sizeof(struct qlcnic_npar_info) *
+ 				QLCNIC_MAX_PCI_FUNC, GFP_KERNEL);
+ 	if (!adapter->npars)
+ 		return -ENOMEM;
+ 
+-	if (!adapter->eswitch)
+-		adapter->eswitch = kzalloc(sizeof(struct qlcnic_eswitch) *
++	adapter->eswitch = kzalloc(sizeof(struct qlcnic_eswitch) *
+ 				QLCNIC_NIU_MAX_XG_PORTS, GFP_KERNEL);
+ 	if (!adapter->eswitch) {
+ 		err = -ENOMEM;
+-		goto err_eswitch;
++		goto err_npars;
+ 	}
+ 
+ 	ret = qlcnic_get_pci_info(adapter, pci_info);
+-	if (!ret) {
+-		for (i = 0; i < QLCNIC_MAX_PCI_FUNC; i++) {
+-			pfn = pci_info[i].id;
+-			if (pfn > QLCNIC_MAX_PCI_FUNC)
+-				return QL_STATUS_INVALID_PARAM;
+-			adapter->npars[pfn].active = pci_info[i].active;
+-			adapter->npars[pfn].type = pci_info[i].type;
+-			adapter->npars[pfn].phy_port = pci_info[i].default_port;
+-			adapter->npars[pfn].mac_learning = DEFAULT_MAC_LEARN;
+-			adapter->npars[pfn].min_bw = pci_info[i].tx_min_bw;
+-			adapter->npars[pfn].max_bw = pci_info[i].tx_max_bw;
+-		}
+-
+-		for (i = 0; i < QLCNIC_NIU_MAX_XG_PORTS; i++)
+-			adapter->eswitch[i].flags |= QLCNIC_SWITCH_ENABLE;
++	if (ret)
++		goto err_eswitch;
+ 
+-		return ret;
++	for (i = 0; i < QLCNIC_MAX_PCI_FUNC; i++) {
++		pfn = pci_info[i].id;
++		if (pfn > QLCNIC_MAX_PCI_FUNC)
++			return QL_STATUS_INVALID_PARAM;
++		adapter->npars[pfn].active = pci_info[i].active;
++		adapter->npars[pfn].type = pci_info[i].type;
++		adapter->npars[pfn].phy_port = pci_info[i].default_port;
++		adapter->npars[pfn].mac_learning = DEFAULT_MAC_LEARN;
++		adapter->npars[pfn].min_bw = pci_info[i].tx_min_bw;
++		adapter->npars[pfn].max_bw = pci_info[i].tx_max_bw;
+ 	}
+ 
++	for (i = 0; i < QLCNIC_NIU_MAX_XG_PORTS; i++)
++		adapter->eswitch[i].flags |= QLCNIC_SWITCH_ENABLE;
++
++	return 0;
++
++err_eswitch:
+ 	kfree(adapter->eswitch);
+ 	adapter->eswitch = NULL;
+-err_eswitch:
++err_npars:
+ 	kfree(adapter->npars);
++	adapter->npars = NULL;
+ 
+ 	return ret;
+ }
