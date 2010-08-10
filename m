@@ -1,27 +1,35 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Fri, 13 Aug 2010 23:32:32 +0000
-Subject: Re: [PATCH 21/42] drivers/pci: Adjust confusing if indentation
-Message-Id: <20100813163232.56f93c28@virtuousgeek.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 10 Aug 2010 06:11:20 +0000
+Subject: [patch] Staging: lirc: remove unneeded variable
+Message-Id: <20100810061120.GB18431@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052223010.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052223010.31692@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 5 Aug 2010 22:23:16 +0200 (CEST)
-Julia Lawall <julia@diku.dk> wrote:
+We never use control_req so I removed it.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Indent the branch of an if.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied to my linux-next branch, thanks.
-
--- 
-Jesse Barnes, Intel Open Source Technology Center
+diff --git a/drivers/staging/lirc/lirc_imon.c b/drivers/staging/lirc/lirc_imon.c
+index 6649325..cb5699c 100644
+--- a/drivers/staging/lirc/lirc_imon.c
++++ b/drivers/staging/lirc/lirc_imon.c
+@@ -320,7 +320,6 @@ static int send_packet(struct imon_context *context)
+ 	unsigned int pipe;
+ 	int interval = 0;
+ 	int retval = 0;
+-	struct usb_ctrlrequest *control_req = NULL;
+ 
+ 	/* Check if we need to use control or interrupt urb */
+ 	pipe = usb_sndintpipe(context->usbdev,
+@@ -355,8 +354,6 @@ static int send_packet(struct imon_context *context)
+ 			err("%s: packet tx failed (%d)", __func__, retval);
+ 	}
+ 
+-	kfree(control_req);
+-
+ 	return retval;
+ }
+ 
