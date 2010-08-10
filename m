@@ -1,46 +1,31 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sat, 07 Aug 2010 06:33:26 +0000
-Subject: [PATCH 03/14] staging: comedi (cb_pcidio): user PCI_DEVICE() macro
-Message-Id: <1281162806.7976.9.camel@lenovo>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 10 Aug 2010 05:36:24 +0000
+Subject: [patch] Staging: ti-st: writing past end of array
+Message-Id: <20100810053624.GN9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
+In the original source it would write past the end of the array before
+returning the error code.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/comedi/drivers/cb_pcidio.c |    9 ++++-----
- 1 files changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/staging/comedi/drivers/cb_pcidio.c b/drivers/staging/comedi/drivers/cb_pcidio.c
-index c1693c9..79477a5 100644
---- a/drivers/staging/comedi/drivers/cb_pcidio.c
-+++ b/drivers/staging/comedi/drivers/cb_pcidio.c
-@@ -91,11 +91,10 @@ static const struct pcidio_board pcidio_boards[] = {
- /* Please add your PCI vendor ID to comedidev.h, and it will be forwarded
-  * upstream. */
- static DEFINE_PCI_DEVICE_TABLE(pcidio_pci_table) = {
--	{
--	PCI_VENDOR_ID_CB, 0x0028, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x0014, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x000b, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	0}
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0028) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0014) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x000b) },
-+	{ 0 }
- };
- 
- MODULE_DEVICE_TABLE(pci, pcidio_pci_table);
--- 
-1.7.0.4
-
-
-
-
-
-
+diff --git a/drivers/staging/ti-st/st_core.c b/drivers/staging/ti-st/st_core.c
+index 063c9b1..0dfed21 100644
+--- a/drivers/staging/ti-st/st_core.c
++++ b/drivers/staging/ti-st/st_core.c
+@@ -686,9 +686,8 @@ long st_register(struct st_proto_s *new_proto)
+ 		default:
+ 			pr_err("%d protocol not supported",
+ 				   new_proto->type);
+-			err = -EPROTONOSUPPORT;
+-			/* something wrong */
+-			break;
++			spin_unlock_irqrestore(&st_gdata->lock, flags);
++			return -EPROTONOSUPPORT;
+ 		}
+ 		st_gdata->list[new_proto->type] = new_proto;
+ 		st_gdata->protos_registered++;
