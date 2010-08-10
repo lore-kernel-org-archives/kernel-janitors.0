@@ -1,54 +1,59 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sat, 07 Aug 2010 06:31:07 +0000
-Subject: [PATCH 01/14] staging: comedi (cb_pcidas): use PCI_DEVICE() macro
-Message-Id: <1281162667.7976.6.camel@lenovo>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 10 Aug 2010 06:00:12 +0000
+Subject: [patch] Staging: vt6656: problems in error handling
+Message-Id: <20100810060012.GR9031@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Andres More <more.andres@gmail.com>, Forest Bond <forest@alittletooquiet.net>, Jim Lieb <lieb@canonical.com>, devel@driverdev.osuosl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is the first of a patch series that uses PCI_DEVICE() macro for pci table entries on comedi drivers and thus improving readability.
+The first kfree(pDevice) is pointless because pDevice is NULL.  The
+second kfree(pDevice) is a double free because pDevice is the driver's
+private data and that is already freed by free_netdev(netdev).  Also the
+free_netdev() error path doesn't call usb_put_dev().
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/comedi/drivers/cb_pcidas.c |   19 +++++++++----------
- 1 files changed, 9 insertions(+), 10 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/comedi/drivers/cb_pcidas.c b/drivers/staging/comedi/drivers/cb_pcidas.c
-index 6530b6c..3275fc5 100644
---- a/drivers/staging/comedi/drivers/cb_pcidas.c
-+++ b/drivers/staging/comedi/drivers/cb_pcidas.c
-@@ -377,16 +377,15 @@ static const struct cb_pcidas_board cb_pcidas_boards[] = {
- };
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index c528ef0..4fdf837 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -771,10 +771,9 @@ vt6656_probe(struct usb_interface *intf, const struct usb_device_id *id)
  
- static DEFINE_PCI_DEVICE_TABLE(cb_pcidas_pci_table) = {
--	{
--	PCI_VENDOR_ID_CB, 0x0001, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x000f, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x0010, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x0019, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x001c, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x004c, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x001a, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x001b, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	0}
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0001) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x000f) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0010) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0019) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x001c) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x004c) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x001a) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x001b) },
-+	{ 0 }
- };
+ 	udev = usb_get_dev(udev);
+ 	netdev = alloc_etherdev(sizeof(DEVICE_INFO));
+-
+ 	if (!netdev) {
+ 		printk(KERN_ERR DEVICE_NAME ": allocate net device failed\n");
+-		kfree(pDevice);
++		rc = -ENOMEM;
+ 		goto err_nomem;
+ 	}
  
- MODULE_DEVICE_TABLE(pci, cb_pcidas_pci_table);
--- 
-1.7.0.4
-
-
-
-
-
+@@ -800,9 +799,7 @@ vt6656_probe(struct usb_interface *intf, const struct usb_device_id *id)
+ 	rc = register_netdev(netdev);
+ 	if (rc) {
+ 		printk(KERN_ERR DEVICE_NAME " Failed to register netdev\n");
+-		free_netdev(netdev);
+-		kfree(pDevice);
+-		return -ENODEV;
++		goto err_netdev;
+ 	}
+ 
+ 	usb_device_reset(pDevice);
+@@ -820,10 +817,12 @@ vt6656_probe(struct usb_interface *intf, const struct usb_device_id *id)
+ 
+ 	return 0;
+ 
++err_netdev:
++	free_netdev(netdev);
+ err_nomem:
+ 	usb_put_dev(udev);
+ 
+-	return -ENOMEM;
++	return rc;
+ }
+ 
+ static void device_free_tx_bufs(PSDevice pDevice)
