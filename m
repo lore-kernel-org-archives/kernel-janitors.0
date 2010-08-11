@@ -1,27 +1,27 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Mon, 23 Aug 2010 17:47:55 +0000
-Subject: Re: [PATCH 12/18 v2] staging: crystalhd: call disable_pci_device()
-Message-Id: <20100823174755.GG28475@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 11 Aug 2010 18:00:09 +0000
+Subject: [patch] rocket: add a mutex_unlock()
+Message-Id: <20100811180009.GA645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281383506-14438-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1281383506-14438-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Manu Abraham <abraham.manu@gmail.com>, Scott Davilla <davilla@4pi.com>, Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 09, 2010 at 11:51:44PM +0400, Kulikov Vasiliy wrote:
-> Driver should call disable_pci_device() if it returns from pci_probe()
-> with error.
-> 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+This path needs a mutex_unlock().  This is stuff from the bkl to mutex
+transition.
 
-Looks fine by me.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Acked-by: Jarod Wilson <jarod@redhat.com>
-
--- 
-Jarod Wilson
-jarod@redhat.com
-
+diff --git a/drivers/char/rocket.c b/drivers/char/rocket.c
+index 79c3bc6..7c79d24 100644
+--- a/drivers/char/rocket.c
++++ b/drivers/char/rocket.c
+@@ -1244,6 +1244,7 @@ static int set_config(struct tty_struct *tty, struct r_port *info,
+ 		}
+ 		info->flags = ((info->flags & ~ROCKET_USR_MASK) | (new_serial.flags & ROCKET_USR_MASK));
+ 		configure_r_port(tty, info, NULL);
++		mutex_unlock(&info->port.mutex);
+ 		return 0;
+ 	}
+ 
