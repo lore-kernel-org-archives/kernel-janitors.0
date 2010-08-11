@@ -1,35 +1,54 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:49:29 +0000
-Subject: [PATCH 04/18] char: sx: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124171-12751-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 11 Aug 2010 07:41:57 +0000
+Subject: [patch 2/2] mvsas: dereferencing before checking
+Message-Id: <20100811074157.GB30429@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>
+Cc: Jiri Slaby <jslaby@suse.cz>, Srinivas <satyasrinivasp@hcl.in>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error. Also it must not be called if pci_request_region() fails as
-it means that somebody uses device resources and rules the device.
+If "mvi_dev" is NULL then we have to test it at the start of the function
+and return if it is null.  In the original code, we dereferenced "mvi_dev"
+before the check to assign "mvi" and then we dereferenced "mvi" to take
+the spin lock.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/char/sx.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/char/sx.c b/drivers/char/sx.c
-index 5b24db4..5140b0d 100644
---- a/drivers/char/sx.c
-+++ b/drivers/char/sx.c
-@@ -2711,6 +2711,7 @@ err_unmap:
- 	iounmap(board->base2);
- err_reg:
- 	pci_release_region(pdev, reg);
-+	pci_disable_device(pdev);
- err_flag:
- 	board->flags &= ~SX_BOARD_PRESENT;
- err:
--- 
-1.7.0.4
-
+diff --git a/drivers/scsi/mvsas/mv_sas.c b/drivers/scsi/mvsas/mv_sas.c
+index 406246c..a5c5aa5 100644
+--- a/drivers/scsi/mvsas/mv_sas.c
++++ b/drivers/scsi/mvsas/mv_sas.c
+@@ -1379,19 +1379,21 @@ void mvs_dev_gone_notify(struct domain_device *dev)
+ {
+ 	unsigned long flags = 0;
+ 	struct mvs_device *mvi_dev = dev->lldd_dev;
+-	struct mvs_info *mvi = mvi_dev->mvi_info;
+-
+-	spin_lock_irqsave(&mvi->lock, flags);
++	struct mvs_info *mvi;
+ 
+-	if (mvi_dev) {
+-		mv_dprintk("found dev[%d:%x] is gone.\n",
+-			mvi_dev->device_id, mvi_dev->dev_type);
+-		mvs_release_task(mvi, dev);
+-		mvs_free_reg_set(mvi, mvi_dev);
+-		mvs_free_dev(mvi_dev);
+-	} else {
++	if (!mvi_dev) {
+ 		mv_dprintk("found dev has gone.\n");
++		return;
+ 	}
++
++	mvi = mvi_dev->mvi_info;
++	spin_lock_irqsave(&mvi->lock, flags);
++
++	mv_dprintk("found dev[%d:%x] is gone.\n",
++		mvi_dev->device_id, mvi_dev->dev_type);
++	mvs_release_task(mvi, dev);
++	mvs_free_reg_set(mvi, mvi_dev);
++	mvs_free_dev(mvi_dev);
+ 	dev->lldd_dev = NULL;
+ 
+ 	spin_unlock_irqrestore(&mvi->lock, flags);
