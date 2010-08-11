@@ -1,71 +1,39 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 29 Aug 2010 09:52:45 +0000
-Subject: [PATCH 6/7] arch/powerpc/platforms/maple/setup.c: Add of_node_put to avoid memory leak
-Message-Id: <1283075566-27441-7-git-send-email-julia@diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 11 Aug 2010 08:02:10 +0000
+Subject: [PATCH] staging: usbip: fix memory leak
+Message-Id: <1281513732-5441-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283075566-27441-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1283075566-27441-1-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Kulikov Vasiliy <segooon@gmail.com>, Endre Kollar <taxy443@gmail.com>, Tejun Heo <tj@kernel.org>, "Brian G. Merrell" <bgmerrell@novell.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Add a call to of_node_put in the error handling code following a call to
-of_find_node_by_path.
+If stub_probe() failed then do not increase interf_count. In original
+code sdev was leaked as its interf_count never reaches 0.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-local idexpression x;
-expression E,E1;
-statement S;
-@@
-
-*x = 
-(of_find_node_by_path
-|of_find_node_by_name
-|of_find_node_by_phandle
-|of_get_parent
-|of_get_next_parent
-|of_get_next_child
-|of_find_compatible_node
-|of_match_node
-)(...);
-...
-if (x = NULL) S
-<... when != x = E
-*if (...) {
-  ... when != of_node_put(x)
-      when != if (...) { ... of_node_put(x); ... }
-(
-  return <+...x...+>;
-|
-*  return ...;
-)
-}
-...>
-of_node_put(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- arch/powerpc/platforms/maple/setup.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/usbip/stub_dev.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/powerpc/platforms/maple/setup.c b/arch/powerpc/platforms/maple/setup.c
-index 3fff8d9..fe34c3d 100644
---- a/arch/powerpc/platforms/maple/setup.c
-+++ b/arch/powerpc/platforms/maple/setup.c
-@@ -358,6 +358,7 @@ static int __init maple_cpc925_edac_setup(void)
- 	model = (const unsigned char *)of_get_property(np, "model", NULL);
- 	if (!model) {
- 		printk(KERN_ERR "%s: Unabel to get model info\n", __func__);
-+		of_node_put(np);
- 		return -ENODEV;
- 	}
+diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
+index b6b753a..b186b5f 100644
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@ -427,11 +427,11 @@ static int stub_probe(struct usb_interface *interface,
  
+ 
+ 	if (busid_priv->status = STUB_BUSID_ALLOC) {
+-		busid_priv->interf_count++;
+ 		sdev = busid_priv->sdev;
+ 		if (!sdev)
+ 			return -ENODEV;
+ 
++		busid_priv->interf_count++;
+ 		dev_info(&interface->dev,
+ 		 "USB/IP Stub: register a new interface "
+ 		 "(bus %u dev %u ifn %u)\n", udev->bus->busnum, udev->devnum,
+-- 
+1.7.0.4
 
