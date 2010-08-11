@@ -1,30 +1,64 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 06 Aug 2010 06:31:00 +0000
-Subject: [patch] media: ir-keytable: null dereference in debug code
-Message-Id: <20100806063059.GN9031@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 11 Aug 2010 10:10:48 +0000
+Subject: [PATCH 1/5] drivers/usb/gadget: Return -ENOMEM on memory allocation
+Message-Id: <Pine.LNX.4.64.1008111210291.8669@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"ir_dev->props" can be NULL.  We only use raw mode if "ir_dev->props" is
-non-NULL and "ir_dev->props->driver_type = RC_DRIVER_IR_RAW".
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+In this code, 0 is returned on memory allocation failure, even though other
+failures return -ENOMEM or other similar values.
 
-diff --git a/drivers/media/IR/ir-keytable.c b/drivers/media/IR/ir-keytable.c
-index 15a0f19..cf97427 100644
---- a/drivers/media/IR/ir-keytable.c
-+++ b/drivers/media/IR/ir-keytable.c
-@@ -499,7 +499,8 @@ int __ir_input_register(struct input_dev *input_dev,
- 
- 	IR_dprintk(1, "Registered input device on %s for %s remote%s.\n",
- 		   driver_name, rc_tab->name,
--		   ir_dev->props->driver_type = RC_DRIVER_IR_RAW ? " in raw mode" : "");
-+		   (ir_dev->props && ir_dev->props->driver_type = RC_DRIVER_IR_RAW) ?
-+			" in raw mode" : "");
- 
- 	return 0;
- 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ret;
+expression x,e1,e2,e3;
+@@
+
+ret = 0
+... when != ret = e1
+*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
+... when != ret = e2
+if (x = NULL) { ... when != ret = e3
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/gadget/m66592-udc.c   |    1 +
+ drivers/usb/gadget/r8a66597-udc.c |    1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/usb/gadget/r8a66597-udc.c b/drivers/usb/gadget/r8a66597-udc.c
+index 70a8178..2456ccd 100644
+--- a/drivers/usb/gadget/r8a66597-udc.c
++++ b/drivers/usb/gadget/r8a66597-udc.c
+@@ -1557,6 +1557,7 @@ static int __init r8a66597_probe(struct platform_device *pdev)
+ 	/* initialize ucd */
+ 	r8a66597 = kzalloc(sizeof(struct r8a66597), GFP_KERNEL);
+ 	if (r8a66597 = NULL) {
++		ret = -ENOMEM;
+ 		printk(KERN_ERR "kzalloc error\n");
+ 		goto clean_up;
+ 	}
+diff --git a/drivers/usb/gadget/m66592-udc.c b/drivers/usb/gadget/m66592-udc.c
+index 166bf71..e03058f 100644
+--- a/drivers/usb/gadget/m66592-udc.c
++++ b/drivers/usb/gadget/m66592-udc.c
+@@ -1609,6 +1609,7 @@ static int __init m66592_probe(struct platform_device *pdev)
+ 	/* initialize ucd */
+ 	m66592 = kzalloc(sizeof(struct m66592), GFP_KERNEL);
+ 	if (m66592 = NULL) {
++		ret = -ENOMEM;
+ 		pr_err("kzalloc error\n");
+ 		goto clean_up;
+ 	}
