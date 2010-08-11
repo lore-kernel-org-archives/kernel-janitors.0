@@ -1,37 +1,47 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 05 Aug 2010 21:08:56 +0000
-Subject: Re: [PATCH 42/42] drivers/media/video/bt8xx: Adjust confusing if indentation
-Message-Id: <201008052308.56592.arnd@arndb.de>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Wed, 11 Aug 2010 01:39:02 +0000
+Subject: [PATCH] jbd2: fix warning if CONFIG_JBD2_DEBUG is not used
+Message-Id: <1281490742.4423.10.camel@lovely.krouter>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052229390.31692@ask.diku.dk> <AANLkTi=YauQBWyZnGpuBtQpNq=Re8WUXY9mH6FSFMP+7@mail.gmail.com>
-In-Reply-To: <AANLkTi=YauQBWyZnGpuBtQpNq=Re8WUXY9mH6FSFMP+7@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Luca Tettamanti <kronos.it@gmail.com>
-Cc: Julia Lawall <julia@diku.dk>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andrew Morton <akpm@linux-foundation.org>, dingdinghua <dingdinghua@nrchpc.ac.cn>, Joel Becker <joel.becker@oracle.com>, Mark Fasheh <mfasheh@suse.com>, linux-ext4@vger.kernel.org, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On Thursday 05 August 2010 22:51:12 Luca Tettamanti wrote:
-> > diff --git a/drivers/media/video/bt8xx/bttv-i2c.c b/drivers/media/video/bt8xx/bttv-i2c.c
-> > index 685d659..695765c 100644
-> > --- a/drivers/media/video/bt8xx/bttv-i2c.c
-> > +++ b/drivers/media/video/bt8xx/bttv-i2c.c
-> > @@ -123,7 +123,7 @@ bttv_i2c_wait_done(struct bttv *btv)
-> >        if (wait_event_interruptible_timeout(btv->i2c_queue,
-> >                btv->i2c_done, msecs_to_jiffies(85)) = -ERESTARTSYS)
-> >
-> > -       rc = -EIO;
-> > +               rc = -EIO;
-> 
-> I'd also remove the empty line before the indented statement, it's confusing...
-> 
+Commit 8dd420466c7bfc459fa04680bd5690bfc41a4553 makes variable ts unused
+when CONFIG_JBD2_DEBUG is not used. This patch ifdefs it too.
 
-The entire function looks a bit weird to me. If you look at the caller,
-you'll notice that -EIO is treated in the same way as if the function had
-returned zero, so the entire if() clause is pointless (the wait_event_*
-probably is not).
+fs/jbd2/transaction.c: In function =A1start_this_handle=A2:
+fs/jbd2/transaction.c:98: warning: unused variable =A1ts=A2
 
-Moreover, returning -ERESTARTSYS is probably the right action here,
-why else would you make the wait interruptible?
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+---
+ fs/jbd2/transaction.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-	Arnd
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index d95cc9d..745d3b2 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -95,7 +95,9 @@ static int start_this_handle(journal_t *journal, handle_t=
+ *handle,
+ 	int needed;
+ 	int nblocks =3D handle->h_buffer_credits;
+ 	transaction_t *new_transaction =3D NULL;
++#ifdef CONFIG_JBD2_DEBUG
+ 	unsigned long ts =3D jiffies;
++#endif
+=20
+ 	if (nblocks > journal->j_max_transaction_buffers) {
+ 		printk(KERN_ERR "JBD: %s wants too many credits (%d > %d)\n",
+--=20
+1.7.1
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
