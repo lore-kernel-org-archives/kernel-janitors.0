@@ -1,86 +1,55 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 24 Aug 2010 15:39:11 +0000
-Subject: [PATCH 17/18] Coccinelle: Add misc/doubleinit.cocci
-Message-Id: <1282664352-15882-18-git-send-email-npalix@diku.dk>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Wed, 11 Aug 2010 01:09:41 +0000
+Subject: [PATCH] x86: hpet: clean up warning (hpet_freq)
+Message-Id: <1281488981.4423.6.camel@lovely.krouter>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
-In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
-Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Find duplicate field initializations.  This has a high rate of false
-positives due to #ifdefs, which Coccinelle is not aware of in a structure
-initialization.
+hpet_freq is (FSEC_PER_NSEC * NSEC_PER_SEC). This patch also fixes the
+below compile warning due to recently added preprocessor calculation for
+hpet_freq.
 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
+arch/x86/kernel/hpet.c: In function =A1hpet_clocksource_register=A2:
+arch/x86/kernel/hpet.c:840: warning: integer overflow in expression
+
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
 ---
- scripts/coccinelle/misc/doubleinit.cocci |   53 ++++++++++++++++++++++++++++++
- 1 files changed, 53 insertions(+), 0 deletions(-)
- create mode 100644 scripts/coccinelle/misc/doubleinit.cocci
+ arch/x86/kernel/hpet.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/coccinelle/misc/doubleinit.cocci b/scripts/coccinelle/misc/doubleinit.cocci
-new file mode 100644
-index 0000000..55d7dc1
---- /dev/null
-+++ b/scripts/coccinelle/misc/doubleinit.cocci
-@@ -0,0 +1,53 @@
-+/// Find duplicate field initializations.  This has a high rate of false
-+/// positives due to #ifdefs, which Coccinelle is not aware of in a structure
-+/// initialization.
-+///
-+// Confidence: Low
-+// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
-+// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
-+// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Comments:
-+// Options: -no_includes -include_headers
-+
-+virtual org
-+virtual report
-+
-+@r@
-+identifier I, s, fld;
-+position p0,p;
-+expression E;
-+@@
-+
-+struct I s =@p0 { ... .fld@p = E, ...};
-+
-+@s@
-+identifier I, s, r.fld;
-+position r.p0,p;
-+expression E;
-+@@
-+
-+struct I s =@p0 { ... .fld@p = E, ...};
-+
-+@script:python depends on org@
-+p0 << r.p0;
-+fld << r.fld;
-+ps << s.p;
-+pr << r.p;
-+@@
-+
-+if int(ps[0].line) < int(pr[0].line) or (int(ps[0].line) = int(pr[0].line) and int(ps[0].column) < int(pr[0].column)):
-+  cocci.print_main(fld,p0)
-+  cocci.print_secs("s",ps)
-+  cocci.print_secs("r",pr)
-+
-+@script:python depends on report@
-+p0 << r.p0;
-+fld << r.fld;
-+ps << s.p;
-+pr << r.p;
-+@@
-+
-+if int(ps[0].line) < int(pr[0].line) or (int(ps[0].line) = int(pr[0].line) and int(ps[0].column) < int(pr[0].column)):
-+  msg = "%s: first occurrence %s, second occurrence %s" % (fld,ps[0].line,pr[0].line)
-+  coccilib.report.print_report(p0[0],msg)
--- 
-1.7.0.4
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index 33dbcc4..86643ce 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -582,7 +582,7 @@ static void init_one_hpet_msi_clockevent(struct hpet_de=
+v *hdev, int cpu)
+ 	 * scaled math multiplication factor for nanosecond to hpet tick
+ 	 * conversion.
+ 	 */
+-	hpet_freq =3D 1000000000000000ULL;
++	hpet_freq =3D (uint64_t)FSEC_PER_NSEC * (uint64_t)NSEC_PER_SEC;
+ 	do_div(hpet_freq, hpet_period);
+ 	evt->mult =3D div_sc((unsigned long) hpet_freq,
+ 				      NSEC_PER_SEC, evt->shift);
+@@ -837,7 +837,7 @@ static int hpet_clocksource_register(void)
+ 	 * cyc/sec =3D FSEC_PER_SEC/hpet_period(fsec/cyc)
+ 	 * cyc/sec =3D (FSEC_PER_NSEC * NSEC_PER_SEC)/hpet_period
+ 	 */
+-	hpet_freq =3D FSEC_PER_NSEC * NSEC_PER_SEC;
++	hpet_freq =3D (u64)FSEC_PER_NSEC * (u64)NSEC_PER_SEC;
+ 	do_div(hpet_freq, hpet_period);
+ 	clocksource_register_hz(&clocksource_hpet, (u32)hpet_freq);
+=20
+--=20
+1.7.1
 
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
