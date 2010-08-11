@@ -1,43 +1,59 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Date: Tue, 10 Aug 2010 09:40:00 +0000
-Subject: Re: [patch 1/2] Staging: iio: signedness bug
-Message-Id: <4C611E70.5030902@cam.ac.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 11 Aug 2010 10:11:41 +0000
+Subject: [PATCH 4/5] fs/ecryptfs: Return -ENOMEM on memory allocation failure
+Message-Id: <Pine.LNX.4.64.1008111211240.8669@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100810053733.GO9031@bicker>
-In-Reply-To: <20100810053733.GO9031@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Tyler Hicks <tyhicks@linux.vnet.ibm.com>, Dustin Kirkland <kirkland@canonical.com>, ecryptfs-devel@lists.launchpad.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/10/10 06:37, Dan Carpenter wrote:
-> i2c_smbus_read_byte_data() returns an s32 type.  We need to change
-> "rate" to signed for the error handling to work.
-> 
-> Also I changed it to propogate the error code instead of just returning
-> -EINVAL.  Other error codes could be -EAGAIN for example.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-Acked-by: Jonathan Cameron <jic23@cam.ac.uk>
+From: Julia Lawall <julia@diku.dk>
 
-Thanks
-> 
-> diff --git a/drivers/staging/iio/magnetometer/hmc5843.c b/drivers/staging/iio/magnetometer/hmc5843.c
-> index 92f6c6f..3d3bac4 100644
-> --- a/drivers/staging/iio/magnetometer/hmc5843.c
-> +++ b/drivers/staging/iio/magnetometer/hmc5843.c
-> @@ -385,11 +385,11 @@ static ssize_t show_sampling_frequency(struct device *dev,
->  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
->  	struct i2c_client *client = to_i2c_client(indio_dev->dev.parent);
->  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-> -	u32 rate;
-> +	s32 rate;
->  
->  	rate = i2c_smbus_read_byte_data(client,  this_attr->address);
->  	if (rate < 0)
-> -		return -EINVAL;
-> +		return rate;
->  	rate = (rate & RATE_BITMASK) >> RATE_OFFSET;
->  	return sprintf(buf, "%s\n", regval_to_samp_freq[rate]);
->  }
+In this code, 0 is returned on memory allocation failure, even though other
+failures return -ENOMEM or other similar values.
 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ret;
+expression x,e1,e2,e3;
+@@
+
+ret = 0
+... when != ret = e1
+*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
+... when != ret = e2
+if (x = NULL) { ... when != ret = e3
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/ecryptfs/keystore.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+index 89c5476..73811cf 100644
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -515,6 +515,7 @@ ecryptfs_write_tag_70_packet(char *dest, size_t *remaining_bytes,
+ 	if (!s) {
+ 		printk(KERN_ERR "%s: Out of memory whilst trying to kmalloc "
+ 		       "[%zd] bytes of kernel memory\n", __func__, sizeof(*s));
++		rc = -ENOMEM;
+ 		goto out;
+ 	}
+ 	s->desc.flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+@@ -806,6 +807,7 @@ ecryptfs_parse_tag_70_packet(char **filename, size_t *filename_size,
+ 	if (!s) {
+ 		printk(KERN_ERR "%s: Out of memory whilst trying to kmalloc "
+ 		       "[%zd] bytes of kernel memory\n", __func__, sizeof(*s));
++		rc = -ENOMEM;
+ 		goto out;
+ 	}
+ 	s->desc.flags = CRYPTO_TFM_REQ_MAY_SLEEP;
