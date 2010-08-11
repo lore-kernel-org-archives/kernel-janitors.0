@@ -1,24 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 20 Aug 2010 00:19:26 +0000
-Subject: Re: [PATCH v2] ep93xx_eth: Use net_device_stats from struct
-Message-Id: <20100819.171926.241460691.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 11 Aug 2010 10:11:24 +0000
+Subject: [PATCH 3/5] drivers/message/fusion: Return -ENOMEM on memory allocation
+Message-Id: <Pine.LNX.4.64.1008111211080.8669@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282061678-19590-1-git-send-email-tklauser@distanz.ch>
-	<1282205434-9601-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1282205434-9601-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tklauser@distanz.ch
-Cc: kernel@wantstofly.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Eric Moore <Eric.Moore@lsi.com>, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 19 Aug 2010 10:10:34 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> struct net_device has its own struct net_device_stats member, so use
-> this one instead of a private copy in the ep93xx_priv struct. As the new
-> ndo_get_stats function would just return dev->stats we can omit it.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+In this code, 0 is returned on memory allocation failure, even though other
+failures return -ENOMEM or other similar values.
 
-Applied.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ret;
+expression x,e1,e2,e3;
+@@
+
+ret = 0
+... when != ret = e1
+*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
+... when != ret = e2
+if (x = NULL) { ... when != ret = e3
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/message/fusion/mptbase.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+index d8c668d..49f8ec1 100644
+--- a/drivers/message/fusion/mptbase.c
++++ b/drivers/message/fusion/mptbase.c
+@@ -5954,8 +5954,10 @@ mpt_findImVolumes(MPT_ADAPTER *ioc)
+ 		goto out;
+ 
+ 	mem = kmalloc(iocpage2sz, GFP_KERNEL);
+-	if (!mem)
++	if (!mem) {
++		rc = -ENOMEM;
+ 		goto out;
++	}
+ 
+ 	memcpy(mem, (u8 *)pIoc2, iocpage2sz);
+ 	ioc->raid_data.pIocPg2 = (IOCPage2_t *) mem;
