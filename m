@@ -1,26 +1,57 @@
-From: "Ted Ts'o" <tytso@mit.edu>
-Date: Wed, 11 Aug 2010 03:07:20 +0000
-Subject: Re: [PATCH] jbd2: fix warning if CONFIG_JBD2_DEBUG is not used
-Message-Id: <20100811030720.GO3635@thunk.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 11 Aug 2010 10:11:59 +0000
+Subject: [PATCH 5/5] drivers/serial: Return -ENOMEM on memory allocation
+Message-Id: <Pine.LNX.4.64.1008111211440.8669@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281490742.4423.10.camel@lovely.krouter>
-In-Reply-To: <1281490742.4423.10.camel@lovely.krouter>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Christoph Fritz <chf.fritz@googlemail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, dingdinghua <dingdinghua@nrchpc.ac.cn>, Joel Becker <joel.becker@oracle.com>, Mark Fasheh <mfasheh@suse.com>, linux-ext4@vger.kernel.org, kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Pat Gefre <pfg@sgi.com>, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Aug 11, 2010 at 03:39:02AM +0200, Christoph Fritz wrote:
-> Commit 8dd420466c7bfc459fa04680bd5690bfc41a4553 makes variable ts unused
-> when CONFIG_JBD2_DEBUG is not used. This patch ifdefs it too.
-> 
-> fs/jbd2/transaction.c: In function ‘start_this_handle’:
-> fs/jbd2/transaction.c:98: warning: unused variable ‘ts’
-> 
-> Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+From: Julia Lawall <julia@diku.dk>
 
-I have a patch queued up to fix this already, using an approach
-suggested by Linus.
+In this code, 0 is returned on memory allocation failure, even though other
+failures return -ENOMEM or other similar values.
 
-						- Ted
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ret;
+expression x,e1,e2,e3;
+@@
+
+ret = 0
+... when != ret = e1
+*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
+... when != ret = e2
+if (x = NULL) { ... when != ret = e3
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+I believe this code also leaks earlier instances of port, which are only
+referenced by card_ptr, which is freed in the error handling code at the
+end of the function.  A lot of operations are done on port on each
+iteration, however, so I'm not sure whether it is good enough to just free
+them.  Perhaps there is some way to call ioc3uart_remove?
+
+ drivers/serial/ioc3_serial.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/serial/ioc3_serial.c b/drivers/serial/ioc3_serial.c
+index 93de907..800c546 100644
+--- a/drivers/serial/ioc3_serial.c
++++ b/drivers/serial/ioc3_serial.c
+@@ -2044,6 +2044,7 @@ ioc3uart_probe(struct ioc3_submodule *is, struct ioc3_driver_data *idd)
+ 		if (!port) {
+ 			printk(KERN_WARNING
+ 			       "IOC3 serial memory not available for port\n");
++			ret = -ENOMEM;
+ 			goto out4;
+ 		}
+ 		spin_lock_init(&port->ip_lock);
