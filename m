@@ -1,71 +1,42 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 24 Aug 2010 15:39:06 +0000
-Subject: [PATCH 12/18] Coccinelle: Add api/memdup.cocci
-Message-Id: <1282664352-15882-13-git-send-email-npalix@diku.dk>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Wed, 11 Aug 2010 08:00:48 +0000
+Subject: [PATCH] staging: adis16255: fix sysfs leak
+Message-Id: <1281513650-5346-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
-In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
-Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Matthias Brugger <mensch0815@gmail.com>, Mike Frysinger <vapier@gentoo.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation
+Original code does not call sysfs_remove_group() on error. This can lead
+to NULL dereference.
 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 ---
- scripts/coccinelle/api/memdup.cocci |   40 +++++++++++++++++++++++++++++++++++
- 1 files changed, 40 insertions(+), 0 deletions(-)
- create mode 100644 scripts/coccinelle/api/memdup.cocci
+ drivers/staging/adis16255/adis16255.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-diff --git a/scripts/coccinelle/api/memdup.cocci b/scripts/coccinelle/api/memdup.cocci
-new file mode 100644
-index 0000000..b5d7220
---- /dev/null
-+++ b/scripts/coccinelle/api/memdup.cocci
-@@ -0,0 +1,40 @@
-+/// Use kmemdup rather than duplicating its implementation
-+///
-+// Confidence: High
-+// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
-+// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
-+// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Comments:
-+// Options: -no_includes -include_headers
-+
-+virtual patch
-+
-+@r1@
-+expression from,to;
-+expression flag;
-+position p;
-+@@
-+
-+   to = \(kmalloc@p\|kzalloc@p\)(strlen(from) + 1,flag);
-+
-+@r2@
-+expression x,from,to;
-+expression flag,E1;
-+position p;
-+@@
-+
-+    x = strlen(from) + 1;
-+    ... when != \( x = E1 \| from = E1 \)
-+    to = \(kmalloc@p\|kzalloc@p\)(x,flag);
-+
-+@@
-+expression from,to,size,flag;
-+position p != {r1.p,r2.p};
-+statement S;
-+@@
-+
-+-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
-++  to = kmemdup(from,size,flag);
-+   if (to=NULL || ...) S
-+-  memcpy(to, from, size);
+diff --git a/drivers/staging/adis16255/adis16255.c b/drivers/staging/adis16255/adis16255.c
+index c3e6a4d..8d4d7cb 100644
+--- a/drivers/staging/adis16255/adis16255.c
++++ b/drivers/staging/adis16255/adis16255.c
+@@ -406,12 +406,14 @@ static int __devinit spi_adis16255_probe(struct spi_device *spi)
+ 
+ 	status = spi_adis16255_bringup(spiadis);
+ 	if (status != 0)
+-		goto irq_err;
++		goto sysfs_err;
+ 
+ 	dev_info(&spi->dev, "spi_adis16255 driver added!\n");
+ 
+ 	return status;
+ 
++sysfs_err:
++	sysfs_remove_group(&spiadis->spi->dev.kobj, &adis16255_attr_group);
+ irq_err:
+ 	free_irq(spiadis->irq, spiadis);
+ gpio_err:
 -- 
 1.7.0.4
 
