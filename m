@@ -1,65 +1,68 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:25:46 +0000
-Subject: [PATCH 29/42] drivers/scsi: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052225240.31692@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 12 Aug 2010 07:53:52 +0000
+Subject: [patch 1/2] mtd/m25p80: retlen is never NULL
+Message-Id: <20100812075352.GN645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: =?iso-8859-1?Q?Kai_M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>, Willem Riede <osst@riede.org>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, Mike Frysinger <vapier@gentoo.org>, Anton Vorontsov <avorontsov@mvista.com>, kernel-janitors@vger.kernel.org, Gabor Juhos <juhosg@openwrt.org>, linux-mtd@lists.infradead.org
 
-From: Julia Lawall <julia@diku.dk>
+This is just a cleanup, it doesn't fix any bugs.
 
-Outdent the code following the if.
+These functions all check retlen inconsistently and it generates a
+warning in Smatch (http://smatch.sf.net).  If retlen were ever NULL it
+would cause an oops and the code has been this way since 2006 so someone
+would have complained.  Also I looked at other places that implemented
+the mtd read and write functions and they dereference retlen without
+checking.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+I removed the checks.
 
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-This patch doesn't change the semantics of the code.  But it might not be
-what is intended.
-
- drivers/scsi/st.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index 24211d0..9c57a50 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -4166,9 +4166,9 @@ out_free_tape:
- 			if (STm->cdevs[j]) {
- 				if (cdev = STm->cdevs[j])
- 					cdev = NULL;
--					device_destroy(st_sysfs_class,
--						       MKDEV(SCSI_TAPE_MAJOR,
--							     TAPE_MINOR(i, mode, j)));
-+				device_destroy(st_sysfs_class,
-+					       MKDEV(SCSI_TAPE_MAJOR,
-+						     TAPE_MINOR(i, mode, j)));
- 				cdev_del(STm->cdevs[j]);
- 			}
+diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
+index f90941a..83c9086 100644
+--- a/drivers/mtd/devices/m25p80.c
++++ b/drivers/mtd/devices/m25p80.c
+@@ -347,8 +347,7 @@ static int m25p80_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 	spi_message_add_tail(&t[1], &m);
+ 
+ 	/* Byte count starts at zero. */
+-	if (retlen)
+-		*retlen = 0;
++	*retlen = 0;
+ 
+ 	mutex_lock(&flash->lock);
+ 
+@@ -394,8 +393,7 @@ static int m25p80_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 			dev_name(&flash->spi->dev), __func__, "to",
+ 			(u32)to, len);
+ 
+-	if (retlen)
+-		*retlen = 0;
++	*retlen = 0;
+ 
+ 	/* sanity checks */
+ 	if (!len)
+@@ -466,8 +464,7 @@ static int m25p80_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 
+ 			spi_sync(flash->spi, &m);
+ 
+-			if (retlen)
+-				*retlen += m.actual_length - m25p_cmdsz(flash);
++			*retlen += m.actual_length - m25p_cmdsz(flash);
  		}
+ 	}
+ 
+@@ -485,8 +482,7 @@ static int sst_write(struct mtd_info *mtd, loff_t to, size_t len,
+ 	size_t actual;
+ 	int cmd_sz, ret;
+ 
+-	if (retlen)
+-		*retlen = 0;
++	*retlen = 0;
+ 
+ 	/* sanity checks */
+ 	if (!len)
