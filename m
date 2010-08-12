@@ -1,36 +1,29 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:51:35 +0000
-Subject: [PATCH 06/18] isdn: avm: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124297-13492-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 12 Aug 2010 07:52:36 +0000
+Subject: [patch 2/2] ip2: return -EFAULT on copy_to_user errors
+Message-Id: <20100812075236.GM645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Alexey Dobriyan <adobriyan@gmail.com>, Tilman Schmidt <tilman@imap.cc>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org
+To: "Michael H. Warfield" <mhw@wittsend.com>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Rakib Mullick <rakib.mullick@gmail.com>, Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error. Also it must not be called if request_region() fails as
-it means that somebody uses device resources and rules the device.
+copy_to_user() returns the number of bytes remaining but we want to
+return a negative error code on errors.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/isdn/hardware/avm/c4.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/isdn/hardware/avm/c4.c b/drivers/isdn/hardware/avm/c4.c
-index 7715d32..f255001 100644
---- a/drivers/isdn/hardware/avm/c4.c
-+++ b/drivers/isdn/hardware/avm/c4.c
-@@ -1273,6 +1273,8 @@ static int __devinit c4_probe(struct pci_dev *dev,
- 	if (retval != 0) {
- 		printk(KERN_ERR "c4: no AVM-C%d at i/o %#x, irq %d detected, mem %#x\n",
- 		       nr, param.port, param.irq, param.membase);
-+		if (retval != -EBUSY)
-+			pci_disable_device(dev);
- 		return -ENODEV;
- 	}
- 	return 0;
--- 
-1.7.0.4
-
+diff --git a/drivers/char/ip2/ip2main.c b/drivers/char/ip2/ip2main.c
+index 8fa041e..d4b71e8 100644
+--- a/drivers/char/ip2/ip2main.c
++++ b/drivers/char/ip2/ip2main.c
+@@ -2930,6 +2930,8 @@ ip2_ipl_ioctl (struct file *pFile, UINT cmd, ULONG arg )
+ 				if ( pCh )
+ 				{
+ 					rc = copy_to_user(argp, pCh, sizeof(i2ChanStr));
++					if (rc)
++						rc = -EFAULT;
+ 				} else {
+ 					rc = -ENODEV;
+ 				}
