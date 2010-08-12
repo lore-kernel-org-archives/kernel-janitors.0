@@ -1,125 +1,86 @@
-From: Maxim Levitsky <maximlevitsky@gmail.com>
-Date: Thu, 12 Aug 2010 14:35:04 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 12 Aug 2010 16:19:27 +0000
 Subject: Re: [patch] IR: ene_ir: problems in unwinding on probe
-Message-Id: <1281623704.10393.2.camel@maxim-laptop>
+Message-Id: <20100812161927.GQ645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100812074611.GI645@bicker>
-In-Reply-To: <20100812074611.GI645@bicker>
+References: <20100812074611.GI645@bicker> <1281623704.10393.2.camel@maxim-laptop>
+In-Reply-To: <1281623704.10393.2.camel@maxim-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
+To: Maxim Levitsky <maximlevitsky@gmail.com>
 Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2010-08-12 at 09:46 +0200, Dan Carpenter wrote: 
-> There were a couple issues here.  If the allocation failed for "dev"
-> then it would lead to a NULL dereference.  If request_irq() or
-> request_region() failed it would release the irq and the region even
-> though they were not successfully aquired.
+On Thu, Aug 12, 2010 at 05:35:04PM +0300, Maxim Levitsky wrote:
+> On Thu, 2010-08-12 at 09:46 +0200, Dan Carpenter wrote: 
+> > There were a couple issues here.  If the allocation failed for "dev"
+> > then it would lead to a NULL dereference.  If request_irq() or
+> > request_region() failed it would release the irq and the region even
+> > though they were not successfully aquired.
+> > 
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
 > 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-I don't think this is needed.
-I just alloc all the stuff, and if one of allocations fail, I free them
-all. {k}free on NULL pointer is perfectly legal.
-
-Same about IO and IRQ.
-IRQ0 and IO 0 isn't valid, and I do test that in error path.
-
-
-Best regards,
-Maxim Levitsky
-
-
+> I don't think this is needed.
+> I just alloc all the stuff, and if one of allocations fail, I free them
+> all. {k}free on NULL pointer is perfectly legal.
 > 
-> diff --git a/drivers/media/IR/ene_ir.c b/drivers/media/IR/ene_ir.c
-> index 5447750..8e5e964 100644
-> --- a/drivers/media/IR/ene_ir.c
-> +++ b/drivers/media/IR/ene_ir.c
-> @@ -781,21 +781,24 @@ static int ene_probe(struct pnp_dev *pnp_dev, const struct pnp_device_id *id)
->  
->  	/* allocate memory */
->  	input_dev = input_allocate_device();
-> +	if (!input_dev)
-> +		goto err_out;
->  	ir_props = kzalloc(sizeof(struct ir_dev_props), GFP_KERNEL);
-> +	if (!ir_props)
-> +		goto err_input_dev;
->  	dev = kzalloc(sizeof(struct ene_device), GFP_KERNEL);
-> -
-> -	if (!input_dev || !ir_props || !dev)
-> -		goto error;
-> +	if (!dev)
-> +		goto err_ir_props;
->  
->  	/* validate resources */
->  	error = -ENODEV;
->  
->  	if (!pnp_port_valid(pnp_dev, 0) ||
->  	    pnp_port_len(pnp_dev, 0) < ENE_MAX_IO)
-> -		goto error;
-> +		goto err_dev;
->  
->  	if (!pnp_irq_valid(pnp_dev, 0))
-> -		goto error;
-> +		goto err_dev;
->  
->  	dev->hw_io = pnp_port_start(pnp_dev, 0);
->  	dev->irq = pnp_irq(pnp_dev, 0);
-> @@ -804,11 +807,11 @@ static int ene_probe(struct pnp_dev *pnp_dev, const struct pnp_device_id *id)
->  	/* claim the resources */
->  	error = -EBUSY;
->  	if (!request_region(dev->hw_io, ENE_MAX_IO, ENE_DRIVER_NAME))
-> -		goto error;
-> +		goto err_dev;
->  
->  	if (request_irq(dev->irq, ene_isr,
->  			IRQF_SHARED, ENE_DRIVER_NAME, (void *)dev))
-> -		goto error;
-> +		goto err_region;
->  
->  	pnp_set_drvdata(pnp_dev, dev);
->  	dev->pnp_dev = pnp_dev;
-> @@ -816,7 +819,7 @@ static int ene_probe(struct pnp_dev *pnp_dev, const struct pnp_device_id *id)
->  	/* detect hardware version and features */
->  	error = ene_hw_detect(dev);
->  	if (error)
-> -		goto error;
-> +		goto err_irq;
->  
->  	ene_setup_settings(dev);
->  
-> @@ -889,20 +892,22 @@ static int ene_probe(struct pnp_dev *pnp_dev, const struct pnp_device_id *id)
->  	error = -ENODEV;
->  	if (ir_input_register(input_dev, RC_MAP_RC6_MCE, ir_props,
->  							ENE_DRIVER_NAME))
-> -		goto error;
-> -
-> +		goto err_irq;
->  
->  	ene_printk(KERN_NOTICE, "driver has been succesfully loaded\n");
->  	return 0;
-> -error:
-> -	if (dev->irq)
-> -		free_irq(dev->irq, dev);
-> -	if (dev->hw_io)
-> -		release_region(dev->hw_io, ENE_MAX_IO);
->  
-> -	input_free_device(input_dev);
-> -	kfree(ir_props);
-> +err_irq:
-> +	free_irq(dev->irq, dev);
-> +err_region:
-> +	release_region(dev->hw_io, ENE_MAX_IO);
-> +err_dev:
->  	kfree(dev);
-> +err_ir_props:
-> +	kfree(ir_props);
-> +err_input_dev:
-> +	input_free_device(input_dev);
-> +err_out:
->  	return error;
->  }
->  
+> Same about IO and IRQ.
+> IRQ0 and IO 0 isn't valid, and I do test that in error path.
+> 
+>
 
+Here is the original code:
+
+Here is where we set "dev".
+
+   785          dev = kzalloc(sizeof(struct ene_device), GFP_KERNEL);
+   786  
+   787          if (!input_dev || !ir_props || !dev)
+   788                  goto error;
+
+	[snip]
+
+Here is where we set the IO and IRQ:
+
+   800          dev->hw_io = pnp_port_start(pnp_dev, 0);
+   801          dev->irq = pnp_irq(pnp_dev, 0);
+
+	[snip]
+
+Here is where the request_region() and request_irq() are.
+
+   806          if (!request_region(dev->hw_io, ENE_MAX_IO, ENE_DRIVER_NAME))
+   807                  goto error;
+   808  
+   809          if (request_irq(dev->irq, ene_isr, 
+   810                          IRQF_SHARED, ENE_DRIVER_NAME, (void *)dev))
+   811                  goto error;
+
+	[snip]
+
+Here is the error label:
+
+   897  error:
+   898          if (dev->irq)
+		    ^^^^^^^^
+
+	Oops!  The allocation of dev failed and this is a NULL
+	dereference.
+
+   899                  free_irq(dev->irq, dev);
+
+	Oops!  Request region failed and dev->irq is non-zero but
+	request_irq() hasn't been called.
+
+   900          if (dev->hw_io)
+   901                  release_region(dev->hw_io, ENE_MAX_IO);
+
+	Oops! dev->hw_io is non-zero but request_region() failed and so
+	we just released someone else's region.
+
+
+Hehe.  :P
+
+regards,
+dan carpenter
 
