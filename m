@@ -1,35 +1,27 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 10 Aug 2010 06:11:20 +0000
-Subject: [patch] Staging: lirc: remove unneeded variable
-Message-Id: <20100810061120.GB18431@bicker>
+From: Jarod Wilson <jarod@redhat.com>
+Date: Thu, 12 Aug 2010 02:46:47 +0000
+Subject: Re: [patch] Staging: lirc: remove unneeded variable
+Message-Id: <20100812024647.GC4852@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100810061120.GB18431@bicker>
+In-Reply-To: <20100810061120.GB18431@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We never use control_req so I removed it.
+On Tue, Aug 10, 2010 at 08:11:20AM +0200, Dan Carpenter wrote:
+> We never use control_req so I removed it.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Leftover cruft from when lirc_imon also supported the devices now covered
+by the ir-core imon driver.
 
-diff --git a/drivers/staging/lirc/lirc_imon.c b/drivers/staging/lirc/lirc_imon.c
-index 6649325..cb5699c 100644
---- a/drivers/staging/lirc/lirc_imon.c
-+++ b/drivers/staging/lirc/lirc_imon.c
-@@ -320,7 +320,6 @@ static int send_packet(struct imon_context *context)
- 	unsigned int pipe;
- 	int interval = 0;
- 	int retval = 0;
--	struct usb_ctrlrequest *control_req = NULL;
- 
- 	/* Check if we need to use control or interrupt urb */
- 	pipe = usb_sndintpipe(context->usbdev,
-@@ -355,8 +354,6 @@ static int send_packet(struct imon_context *context)
- 			err("%s: packet tx failed (%d)", __func__, retval);
- 	}
- 
--	kfree(control_req);
--
- 	return retval;
- }
- 
+Acked-by: Jarod Wilson <jarod@redhat.com>
+
+
+-- 
+Jarod Wilson
+jarod@redhat.com
+
