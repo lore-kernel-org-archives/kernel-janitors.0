@@ -1,27 +1,29 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Mon, 30 Aug 2010 13:17:35 +0000
-Subject: Re: [patch] mtd/pcmciamtd: remove dead code
-Message-Id: <1283174255.12995.78.camel@brekeke>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 12 Aug 2010 07:41:58 +0000
+Subject: [patch] V4L/DVB: unlock on error path
+Message-Id: <20100812074158.GH645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100824115627.GD29330@bicker>
-In-Reply-To: <20100824115627.GD29330@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Karsten Keil <keil@b1-systems.de>, kernel-janitors@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>, Magnus Damm <damm@opensource.se>, Alexander Kurz <linux@kbdbabel.org>, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Pawel Osciak <p.osciak@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2010-08-24 at 13:56 +0200, Dan Carpenter wrote:
-> This code isn't reachable.  I looked through the git history and it
-> hasn't been reachable for years.  Someone removed the label to silence
-> gcc's unused label warning but these few lines accidentally got left
-> behind.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+If we return directly here then we miss out on some mutex_unlock()s
 
-Pushed to l2-mtd-2.6.git / master, thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-Best Regards,
-Artem Bityutskiy (Битюцкий Артём)
-
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index b151c7b..1beb226 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -822,7 +822,8 @@ static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 	} else {
+ 		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
+ 			 "Wrong buffer/video queue type (%d)\n", f->type);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto s_fmt_out;
+ 	}
+ 
+ 	pix = &f->fmt.pix;
