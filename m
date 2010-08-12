@@ -1,36 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 10 Aug 2010 07:01:21 +0000
-Subject: Re: [patch 2/2] qlcnic: using too much stack
-Message-Id: <20100810.000121.48516818.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 12 Aug 2010 07:58:27 +0000
+Subject: [patch 2/2] mtd/m25p80: fix test for end of loop
+Message-Id: <20100812075827.GO645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281405801.1954.65.camel@Joe-Laptop.home>
-	<D084A42E-7F2A-44F7-9273-DDD9214CB877@qlogic.com>
-	<1281411546.1954.102.camel@Joe-Laptop.home>
-In-Reply-To: <1281411546.1954.102.camel@Joe-Laptop.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: joe@perches.com
-Cc: anirban.chakraborty@qlogic.com, error27@gmail.com, amit.salecha@qlogic.com, Linux-Driver@qlogic.com, sucheta.chakraborty@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, Mike Frysinger <vapier@gentoo.org>, Anton Vorontsov <avorontsov@mvista.com>, kernel-janitors@vger.kernel.org, Gabor Juhos <juhosg@openwrt.org>, linux-mtd@lists.infradead.org
 
-From: Joe Perches <joe@perches.com>
-Date: Mon, 09 Aug 2010 20:39:06 -0700
+"plat_id" is always non-NULL here.  There is a zero element on the end
+of the m25p_ids[] array and if we hit the end of the loop then plat_id
+points to that.
 
-> On Mon, 2010-08-09 at 20:31 -0700, Anirban Chakraborty wrote:
->> On Aug 10, 2010, at 7:33 AM, Joe Perches wrote:
->> > On Mon, 2010-08-09 at 18:43 -0700, Anirban Chakraborty wrote:
->> >> Your patch is fine except that the preferred way is to use kzalloc over kaclloc. kzalloc does not need that extra
->> >> argument that you are passing to kcalloc.
->> > You probably meant to write "my preferred way"
->> > as the kcalloc to "kzalloc with a multiply"
->> > ratio is pretty high.
->> I was suggesting based on the following:
->> http://lwn.net/Articles/147014/
-> 
-> Note that article suggests kzalloc for allocating
-> a single zeroed object.
-> 
-> kcalloc is used for multiple zeroed objects and
-> protects against oversized allocations.
+This would lead to a NULL pointer dereference later on in the function.
 
-Agreed, kcalloc should be used here.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
+index 83c9086..6f512b5 100644
+--- a/drivers/mtd/devices/m25p80.c
++++ b/drivers/mtd/devices/m25p80.c
+@@ -793,7 +793,7 @@ static int __devinit m25p_probe(struct spi_device *spi)
+ 			break;
+ 		}
+ 
+-		if (plat_id)
++		if (i < ARRAY_SIZE(m25p_ids) - 1)
+ 			id = plat_id;
+ 		else
+ 			dev_warn(&spi->dev, "unrecognized id %s\n", data->type);
