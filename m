@@ -1,68 +1,63 @@
-From: Tyler Hicks <tyhicks@linux.vnet.ibm.com>
-Date: Thu, 12 Aug 2010 14:38:17 +0000
-Subject: Re: [PATCH 4/5] fs/ecryptfs: Return -ENOMEM on memory allocation
-Message-Id: <20100812143816.GA938@ecryptfs>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 13 Aug 2010 20:59:58 +0000
+Subject: [patch] kfifo: __must_check helper casts everything to unsigned
+Message-Id: <20100813205936.GS645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008111211240.8669@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008111211240.8669@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Dustin Kirkland <kirkland@canonical.com>, ecryptfs-devel@lists.launchpad.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stefani Seibold <stefani@seibold.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks Julia - Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/ecryptfs/ecryptfs-2.6.git#next
+There is a new wrapper to add a __must_check to kfifo macros.  The
+problem is that it casts everything to unsigned.  That breaks for places
+that check stuff like:
 
-Tyler
+	if (kfifo_alloc(&dlci->_fifo, 4096, GFP_KERNEL) < 0)
 
-On Wed Aug 11, 2010 at 12:11:41PM +0200, Julia Lawall <julia@diku.dk> wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> In this code, 0 is returned on memory allocation failure, even though other
-> failures return -ENOMEM or other similar values.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression ret;
-> expression x,e1,e2,e3;
-> @@
-> 
-> ret = 0
-> ... when != ret = e1
-> *x = \(kmalloc\|kcalloc\|kzalloc\)(...)
-> ... when != ret = e2
-> if (x = NULL) { ... when != ret = e3
->   return ret;
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  fs/ecryptfs/keystore.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
-> index 89c5476..73811cf 100644
-> --- a/fs/ecryptfs/keystore.c
-> +++ b/fs/ecryptfs/keystore.c
-> @@ -515,6 +515,7 @@ ecryptfs_write_tag_70_packet(char *dest, size_t *remaining_bytes,
->  	if (!s) {
->  		printk(KERN_ERR "%s: Out of memory whilst trying to kmalloc "
->  		       "[%zd] bytes of kernel memory\n", __func__, sizeof(*s));
-> +		rc = -ENOMEM;
->  		goto out;
->  	}
->  	s->desc.flags = CRYPTO_TFM_REQ_MAY_SLEEP;
-> @@ -806,6 +807,7 @@ ecryptfs_parse_tag_70_packet(char **filename, size_t *filename_size,
->  	if (!s) {
->  		printk(KERN_ERR "%s: Out of memory whilst trying to kmalloc "
->  		       "[%zd] bytes of kernel memory\n", __func__, sizeof(*s));
-> +		rc = -ENOMEM;
->  		goto out;
->  	}
->  	s->desc.flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
+index 311f875..437cc0d 100644
+--- a/include/linux/kfifo.h
++++ b/include/linux/kfifo.h
+@@ -177,6 +177,12 @@ __kfifo_must_check_helper(unsigned int val)
+ 	return val;
+ }
+ 
++static inline int __must_check
++__kfifo_must_check_helper_signed(int val)
++{
++	return val;
++}
++
+ /**
+  * kfifo_initialized - Check if the fifo is initialized
+  * @fifo: address of the fifo to check
+@@ -323,7 +329,7 @@ __kfifo_must_check_helper( \
+  * Return 0 if no error, otherwise an error code.
+  */
+ #define kfifo_alloc(fifo, size, gfp_mask) \
+-__kfifo_must_check_helper( \
++__kfifo_must_check_helper_signed( \
+ ({ \
+ 	typeof(fifo + 1) __tmp = (fifo); \
+ 	struct __kfifo *__kfifo = &__tmp->kfifo; \
+@@ -609,7 +615,7 @@ __kfifo_must_check_helper( \
+  * writer, you don't need extra locking to use these macro.
+  */
+ #define	kfifo_from_user(fifo, from, len, copied) \
+-__kfifo_must_check_helper( \
++__kfifo_must_check_helper_signed( \
+ ({ \
+ 	typeof(fifo + 1) __tmp = (fifo); \
+ 	const void __user *__from = (from); \
+@@ -637,7 +643,7 @@ __kfifo_must_check_helper( \
+  * writer, you don't need extra locking to use these macro.
+  */
+ #define	kfifo_to_user(fifo, to, len, copied) \
+-__kfifo_must_check_helper( \
++__kfifo_must_check_helper_signed( \
+ ({ \
+ 	typeof(fifo + 1) __tmp = (fifo); \
+ 	void __user *__to = (to); \
