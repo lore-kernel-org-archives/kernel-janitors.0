@@ -1,60 +1,39 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Date: Fri, 06 Aug 2010 02:22:18 +0000
-Subject: Re: [PATCH 4/4] kprobes: remove __dummy_buf
-Message-Id: <4C5B71DA.8080906@hitachi.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 13 Aug 2010 21:03:50 +0000
+Subject: [patch] qla4xxx: initialize some variables for gcc
+Message-Id: <20100813210350.GT645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281022194-23883-2-git-send-email-namhyung@gmail.com>
-In-Reply-To: <1281022194-23883-2-git-send-email-namhyung@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ravi Anand <ravi.anand@qlogic.com>
+Cc: Vikas Chaudhary <vikas.chaudhary@qlogic.com>, iscsi-driver@qlogic.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, Karen Higgins <karen.higgins@qlogic.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Namhyung Kim wrote:
-> remove __dummy_buf which is needed for kallsyms_lookup only.
-> use kallsysm_lookup_size_offset instead.
-> 
-> Signed-off-by: Namhyung Kim <namhyung@gmail.com>
+Gcc complains because these variables aren't initialized.
 
-Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+drivers/scsi/qla4xxx/ql4_nx.c: In function ‘qla4_8xxx_get_flash_info’:
+drivers/scsi/qla4xxx/ql4_nx.c:1952: warning: ‘fid’ may be used uninitialized in this function
+drivers/scsi/qla4xxx/ql4_nx.c:1952: note: ‘fid’ was declared here
+drivers/scsi/qla4xxx/ql4_nx.c:1952: warning: ‘mid’ may be used uninitialized in this function
+drivers/scsi/qla4xxx/ql4_nx.c:1952: note: ‘mid’ was declared here
 
-Thanks!
+It's not a big deal.  We only print the uninitialized value on error
+paths when debugging is enabled.  Still it's nice to clean it up and to
+stop gcc from grumbling.
 
-> 
-> diff --git a/arch/x86/kernel/kprobes.c b/arch/x86/kernel/kprobes.c
-> index 4986160..a4ff35d 100644
-> --- a/arch/x86/kernel/kprobes.c
-> +++ b/arch/x86/kernel/kprobes.c
-> @@ -224,9 +224,6 @@ static int recover_probed_instruction(kprobe_opcode_t *buf, unsigned long addr)
->  	return 0;
->  }
->  
-> -/* Dummy buffers for kallsyms_lookup */
-> -static char __dummy_buf[KSYM_NAME_LEN];
-> -
->  /* Check if paddr is at an instruction boundary */
->  static int __kprobes can_probe(unsigned long paddr)
->  {
-> @@ -235,7 +232,7 @@ static int __kprobes can_probe(unsigned long paddr)
->  	struct insn insn;
->  	kprobe_opcode_t buf[MAX_INSN_SIZE];
->  
-> -	if (!kallsyms_lookup(paddr, NULL, &offset, NULL, __dummy_buf))
-> +	if (!kallsyms_lookup_size_offset(paddr, NULL, &offset))
->  		return 0;
->  
->  	/* Decode instructions */
-> @@ -1249,11 +1246,9 @@ static int __kprobes can_optimize(unsigned long paddr)
->  	unsigned long addr, size = 0, offset = 0;
->  	struct insn insn;
->  	kprobe_opcode_t buf[MAX_INSN_SIZE];
-> -	/* Dummy buffers for lookup_symbol_attrs */
-> -	static char __dummy_buf[KSYM_NAME_LEN];
->  
->  	/* Lookup symbol including addr */
-> -	if (!kallsyms_lookup(paddr, &size, &offset, NULL, __dummy_buf))
-> +	if (!kallsyms_lookup_size_offset(paddr, &size, &offset))
->  		return 0;
->  
->  	/* Check there is enough space for a relative jump. */
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/drivers/scsi/qla4xxx/ql4_nx.c b/drivers/scsi/qla4xxx/ql4_nx.c
+index 3e119ae..e443fa6 100644
+--- a/drivers/scsi/qla4xxx/ql4_nx.c
++++ b/drivers/scsi/qla4xxx/ql4_nx.c
+@@ -1949,7 +1949,8 @@ qla4_8xxx_get_fdt_info(struct scsi_qla_host *ha)
+ 	uint16_t cnt, chksum;
+ 	uint16_t *wptr;
+ 	struct qla_fdt_layout *fdt;
+-	uint16_t mid, fid;
++	uint16_t mid = -1;
++	uint16_t fid = -1;
+ 	struct ql82xx_hw_data *hw = &ha->hw;
+ 
+ 	hw->flash_conf_off = FARX_ACCESS_FLASH_CONF;
