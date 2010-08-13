@@ -1,33 +1,43 @@
-From: "Tung, Chien Tin" <chien.tin.tung@intel.com>
-Date: Fri, 06 Aug 2010 10:21:31 +0000
-Subject: RE: [PATCH 4/42 v2] drivers/infiniband/hw/nes: Adjust confusing if
-Message-Id: <2EFBCAEF10980645BBCFB605689E08E9049F35CB95@azsmsx506.amr.corp.intel.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 13 Aug 2010 12:38:11 +0000
+Subject: [patch] usb/serial/ssu100: uninitialized variable
+Message-Id: <20100813123811.GA31262@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052217430.31692@ask.diku.dk>
- <20100805234831.GK9031@bicker>
-In-Reply-To: <20100805234831.GK9031@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: "Latif, Faisal" <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Bill Pemberton <wfp5p@virginia.edu>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> I think the white space is meant to look like this.  I did look at
-> whether the "sq_cqes = 0;" should only be done if netif_queue_stopped().
-> In the end I decided this was what was intended, but it would be
-> better if someone more familiar with the code reviewed it.
-> 
-> Reported-by: Julia Lawall <julia@diku.dk>
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> v2: changed different indents
+GCC complains about the original code, because we're using an
+unintialized variable "flag".  I think we should be setting flag based
+on the UART_LSR_BRK_ERROR_BITS but I'm not sure...  I don't have this
+hardware.  Probably passing TTY_NORMAL is better than the current code?
 
-Looks to me.  Thanks for the patch.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Acked-by: Chien Tung <chien.tin.tung@intel.com>
-
-Chien
-
-
-
-
+diff --git a/drivers/usb/serial/ssu100.c b/drivers/usb/serial/ssu100.c
+index 6e82d4f..494998c 100644
+--- a/drivers/usb/serial/ssu100.c
++++ b/drivers/usb/serial/ssu100.c
+@@ -563,7 +563,6 @@ static int ssu100_process_packet(struct tty_struct *tty,
+ 				 char *packet, int len)
+ {
+ 	int i;
+-	char flag;
+ 	char *ch;
+ 
+ 	dbg("%s - port %d", __func__, port->number);
+@@ -597,10 +596,10 @@ static int ssu100_process_packet(struct tty_struct *tty,
+ 	if (port->port.console && port->sysrq) {
+ 		for (i = 0; i < len; i++, ch++) {
+ 			if (!usb_serial_handle_sysrq_char(tty, port, *ch))
+-				tty_insert_flip_char(tty, *ch, flag);
++				tty_insert_flip_char(tty, *ch, TTY_NORMAL);
+ 		}
+ 	} else
+-		tty_insert_flip_string_fixed_flag(tty, ch, flag, len);
++		tty_insert_flip_string_fixed_flag(tty, ch, TTY_NORMAL, len);
+ 
+ 	return len;
+ }
