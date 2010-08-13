@@ -1,12 +1,14 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 13 Aug 2010 20:59:58 +0000
-Subject: [patch] kfifo: __must_check helper casts everything to unsigned
-Message-Id: <20100813205936.GS645@bicker>
+From: Stefani Seibold <stefani@seibold.net>
+Date: Fri, 13 Aug 2010 21:35:52 +0000
+Subject: Re: [patch] kfifo: __must_check helper casts everything to unsigned
+Message-Id: <1281735352.19775.1.camel@wall-e.seibold.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100813205936.GS645@bicker>
+In-Reply-To: <20100813205936.GS645@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefani Seibold <stefani@seibold.net>
+To: Dan Carpenter <error27@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 There is a new wrapper to add a __must_check to kfifo macros.  The
@@ -16,6 +18,7 @@ that check stuff like:
 	if (kfifo_alloc(&dlci->_fifo, 4096, GFP_KERNEL) < 0)
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
+Acked-by: Stefani Seibold <stefani@seibold.net>
 
 diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
 index 311f875..437cc0d 100644
@@ -61,3 +64,5 @@ index 311f875..437cc0d 100644
  ({ \
  	typeof(fifo + 1) __tmp = (fifo); \
  	void __user *__to = (to); \
+
+
