@@ -1,15 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 17 Aug 2010 08:49:28 +0000
-Subject: Re: [PATCH 37/42] drivers/net/hamradio: Adjust confusing if
-Message-Id: <20100817.014928.115911378.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 14 Aug 2010 17:29:53 +0000
+Subject: [patch v2] sound/usb/format: silence uninitialized variable
+Message-Id: <20100814172953.GA645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052227520.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052227520.31692@ask.diku.dk>
+References: <20100814085846.GV645@bicker> <s5hbp95xoem.wl%tiwai@suse.de>
+In-Reply-To: <s5hbp95xoem.wl%tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: jreuter@yaina.de, klaus.kudielka@ieee.org, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org
 
+Gcc complains that ret might be used uninitialized:
 
-Applied.
+sound/usb/format.c: In function ‘snd_usb_parse_audio_format’:
+sound/usb/format.c:354: warning: ‘ret’ may be used uninitialized in this function
+sound/usb/format.c:354: note: ‘ret’ was declared here
+sound/usb/format.c:414: warning: ‘ret’ may be used uninitialized in this function
+sound/usb/format.c:414: note: ‘ret’ was declared here
+
+I suppose it could be uninitialized if there is ever a UAC_VERSION_3
+released. Anyway this patch is worthwhile if only to silence the gcc
+warning.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+V2: Totally different.  Added printk()s
+
+diff --git a/sound/usb/format.c b/sound/usb/format.c
+index 4387f54..3a13754 100644
+--- a/sound/usb/format.c
++++ b/sound/usb/format.c
+@@ -392,6 +392,10 @@ static int parse_audio_format_i(struct snd_usb_audio *chip,
+ 		/* fp->channels is already set in this case */
+ 		ret = parse_audio_format_rates_v2(chip, fp);
+ 		break;
++	default:
++		snd_printk(KERN_ERR "%d:%u:%d : invalid protocol version %d\n",
++			   chip->dev->devnum, fp->iface, fp->altsetting, protocol);
++		return -EINVAL;
+ 	}
+ 
+ 	if (fp->channels < 1) {
+@@ -452,6 +456,10 @@ static int parse_audio_format_ii(struct snd_usb_audio *chip,
+ 		ret = parse_audio_format_rates_v2(chip, fp);
+ 		break;
+ 	}
++	default:
++		snd_printk(KERN_ERR "%d:%u:%d : invalid protocol version %d\n",
++			   chip->dev->devnum, fp->iface, fp->altsetting, protocol);
++		return -EINVAL;
+ 	}
+ 
+ 	return ret;
