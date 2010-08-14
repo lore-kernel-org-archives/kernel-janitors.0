@@ -1,39 +1,45 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 13 Aug 2010 21:03:50 +0000
-Subject: [patch] qla4xxx: initialize some variables for gcc
-Message-Id: <20100813210350.GT645@bicker>
+From: Vikas Chaudhary <vikas.chaudhary@qlogic.com>
+Date: Sat, 14 Aug 2010 02:40:51 +0000
+Subject: RE: [patch] qla4xxx: initialize some variables for gcc
+Message-Id: <5E4F49720D0BAD499EE1F01232234BA87128F84727@AVEXMB1.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100813210350.GT645@bicker>
+In-Reply-To: <20100813210350.GT645@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Ravi Anand <ravi.anand@qlogic.com>
-Cc: Vikas Chaudhary <vikas.chaudhary@qlogic.com>, iscsi-driver@qlogic.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, Karen Higgins <karen.higgins@qlogic.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Dan Carpenter <error27@gmail.com>, Ravi Anand <ravi.anand@qlogic.com>
+Cc: Dept_iscsi_driver <iscsi-driver@qlogic.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Karen Higgins <karen.higgins@qlogic.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Gcc complains because these variables aren't initialized.
-
-drivers/scsi/qla4xxx/ql4_nx.c: In function ‘qla4_8xxx_get_flash_info’:
-drivers/scsi/qla4xxx/ql4_nx.c:1952: warning: ‘fid’ may be used uninitialized in this function
-drivers/scsi/qla4xxx/ql4_nx.c:1952: note: ‘fid’ was declared here
-drivers/scsi/qla4xxx/ql4_nx.c:1952: warning: ‘mid’ may be used uninitialized in this function
-drivers/scsi/qla4xxx/ql4_nx.c:1952: note: ‘mid’ was declared here
-
-It's not a big deal.  We only print the uninitialized value on error
-paths when debugging is enabled.  Still it's nice to clean it up and to
-stop gcc from grumbling.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/scsi/qla4xxx/ql4_nx.c b/drivers/scsi/qla4xxx/ql4_nx.c
-index 3e119ae..e443fa6 100644
---- a/drivers/scsi/qla4xxx/ql4_nx.c
-+++ b/drivers/scsi/qla4xxx/ql4_nx.c
-@@ -1949,7 +1949,8 @@ qla4_8xxx_get_fdt_info(struct scsi_qla_host *ha)
- 	uint16_t cnt, chksum;
- 	uint16_t *wptr;
- 	struct qla_fdt_layout *fdt;
--	uint16_t mid, fid;
-+	uint16_t mid = -1;
-+	uint16_t fid = -1;
- 	struct ql82xx_hw_data *hw = &ha->hw;
- 
- 	hw->flash_conf_off = FARX_ACCESS_FLASH_CONF;
+Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj5Gcm9tOiBEYW4gQ2FycGVudGVyIFttYWlsdG86
+ZXJyb3IyN0BnbWFpbC5jb21dCj5TZW50OiBTYXR1cmRheSwgQXVndXN0IDE0LCAyMDEwIDI6MzQg
+QU0KPlRvOiBSYXZpIEFuYW5kCj5DYzogVmlrYXMgQ2hhdWRoYXJ5OyBEZXB0X2lzY3NpX2RyaXZl
+cjsgSmFtZXMgRS5KLiBCb3R0b21sZXk7IEthcmVuCj5IaWdnaW5zOyBsaW51eC1zY3NpQHZnZXIu
+a2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsga2VybmVsLQo+amFuaXRv
+cnNAdmdlci5rZXJuZWwub3JnCj5TdWJqZWN0OiBbcGF0Y2hdIHFsYTR4eHg6IGluaXRpYWxpemUg
+c29tZSB2YXJpYWJsZXMgZm9yIGdjYwo+Cj5HY2MgY29tcGxhaW5zIGJlY2F1c2UgdGhlc2UgdmFy
+aWFibGVzIGFyZW4ndCBpbml0aWFsaXplZC4KPgo+ZHJpdmVycy9zY3NpL3FsYTR4eHgvcWw0X254
+LmM6IEluIGZ1bmN0aW9uIOKAmHFsYTRfOHh4eF9nZXRfZmxhc2hfaW5mb+KAmToKPmRyaXZlcnMv
+c2NzaS9xbGE0eHh4L3FsNF9ueC5jOjE5NTI6IHdhcm5pbmc6IOKAmGZpZOKAmSBtYXkgYmUgdXNl
+ZAo+dW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uCj5kcml2ZXJzL3Njc2kvcWxhNHh4eC9x
+bDRfbnguYzoxOTUyOiBub3RlOiDigJhmaWTigJkgd2FzIGRlY2xhcmVkIGhlcmUKPmRyaXZlcnMv
+c2NzaS9xbGE0eHh4L3FsNF9ueC5jOjE5NTI6IHdhcm5pbmc6IOKAmG1pZOKAmSBtYXkgYmUgdXNl
+ZAo+dW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uCj5kcml2ZXJzL3Njc2kvcWxhNHh4eC9x
+bDRfbnguYzoxOTUyOiBub3RlOiDigJhtaWTigJkgd2FzIGRlY2xhcmVkIGhlcmUKPgo+SXQncyBu
+b3QgYSBiaWcgZGVhbC4gIFdlIG9ubHkgcHJpbnQgdGhlIHVuaW5pdGlhbGl6ZWQgdmFsdWUgb24g
+ZXJyb3IKPnBhdGhzIHdoZW4gZGVidWdnaW5nIGlzIGVuYWJsZWQuICBTdGlsbCBpdCdzIG5pY2Ug
+dG8gY2xlYW4gaXQgdXAgYW5kIHRvCj5zdG9wIGdjYyBmcm9tIGdydW1ibGluZy4KPgo+U2lnbmVk
+LW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZXJyb3IyN0BnbWFpbC5jb20+Cj4KPmRpZmYgLS1naXQg
+YS9kcml2ZXJzL3Njc2kvcWxhNHh4eC9xbDRfbnguYyBiL2RyaXZlcnMvc2NzaS9xbGE0eHh4L3Fs
+NF9ueC5jCj5pbmRleCAzZTExOWFlLi5lNDQzZmE2IDEwMDY0NAo+LS0tIGEvZHJpdmVycy9zY3Np
+L3FsYTR4eHgvcWw0X254LmMKPisrKyBiL2RyaXZlcnMvc2NzaS9xbGE0eHh4L3FsNF9ueC5jCj5A
+QCAtMTk0OSw3ICsxOTQ5LDggQEAgcWxhNF84eHh4X2dldF9mZHRfaW5mbyhzdHJ1Y3Qgc2NzaV9x
+bGFfaG9zdCAqaGEpCj4gCXVpbnQxNl90IGNudCwgY2hrc3VtOwo+IAl1aW50MTZfdCAqd3B0cjsK
+PiAJc3RydWN0IHFsYV9mZHRfbGF5b3V0ICpmZHQ7Cj4tCXVpbnQxNl90IG1pZCwgZmlkOwo+Kwl1
+aW50MTZfdCBtaWQgPSAtMTsKPisJdWludDE2X3QgZmlkID0gLTE7Cj4gCXN0cnVjdCBxbDgyeHhf
+aHdfZGF0YSAqaHcgPSAmaGEtPmh3Owo+Cj4gCWh3LT5mbGFzaF9jb25mX29mZiA9IEZBUlhfQUND
+RVNTX0ZMQVNIX0NPTkY7CgpJIGFscmVhZHkgc3VibWl0dGVkIHBhdGNoIHRvIGZpeCB0aGlzIHdh
+cm5pbmcgaW4gZm9sbG93aW5nIG1haWwgdGhyZWFkLgpodHRwOi8vbWFyYy5pbmZvLz9sPWxpbnV4
+LXNjc2kmbRI4MTUyMTU4NDAzODUzJnc9MgoK//Tounsubscribefromthislisv/sendthelinf/
+unsubscribekernel/janitors/inthebodyofamessagetomajordomo/vger/kernel/orgMor
+emajordomoinfoathttp///vger/kernel/org/majordomo/info/htCg==
