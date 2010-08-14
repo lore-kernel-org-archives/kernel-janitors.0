@@ -1,48 +1,36 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Sun, 08 Aug 2010 20:29:04 +0000
-Subject: Re: [PATCH 02/18] char: mxser: call disable_pci_device() if pci_probe()
-Message-Id: <4C5F1390.3040509@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 14 Aug 2010 09:01:45 +0000
+Subject: [patch] dma/shdma: move dereference below the NULL check
+Message-Id: <20100814090145.GW645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281124159-12671-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1281124159-12671-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Paul Mundt <lethal@linux-sh.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Magnus Damm <damm@opensource.se>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/06/2010 09:49 PM, Kulikov Vasiliy wrote:
-> --- a/drivers/char/mxser.c
-> +++ b/drivers/char/mxser.c
-> @@ -2564,8 +2564,11 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
->  	/* vector */
->  	ioaddress = pci_resource_start(pdev, 3);
->  	retval = pci_request_region(pdev, 3, "mxser(vector)");
-> -	if (retval)
-> -		goto err_relio;
-> +	if (retval) {
-> +		pci_release_region(pdev, 2);
-> +		brd->info = NULL;
-> +		goto err;
-> +	}
->  	brd->vector = ioaddress;
->  
->  	/* irq */
-> @@ -2616,10 +2619,11 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
->  	pci_set_drvdata(pdev, brd);
->  
->  	return 0;
-> -err_relio:
-> -	pci_release_region(pdev, 2);
->  err_null:
->  	brd->info = NULL;
-> +	pci_release_region(pdev, 2);
-> +	pci_release_region(pdev, 3);
-> +	pci_disable_device(pdev);
+"param" can be NULL here, so only dereference it after the check.
 
-Why did you reorder this so that you cannot jump here from the fail path
-above?
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-thanks,
--- 
-js
+diff --git a/drivers/dma/shdma.c b/drivers/dma/shdma.c
+index fb64cf3..eb6b54d 100644
+--- a/drivers/dma/shdma.c
++++ b/drivers/dma/shdma.c
+@@ -580,7 +580,6 @@ static struct dma_async_tx_descriptor *sh_dmae_prep_slave_sg(
+ 
+ 	sh_chan = to_sh_chan(chan);
+ 	param = chan->private;
+-	slave_addr = param->config->addr;
+ 
+ 	/* Someone calling slave DMA on a public channel? */
+ 	if (!param || !sg_len) {
+@@ -589,6 +588,8 @@ static struct dma_async_tx_descriptor *sh_dmae_prep_slave_sg(
+ 		return NULL;
+ 	}
+ 
++	slave_addr = param->config->addr;
++
+ 	/*
+ 	 * if (param != NULL), this is a successfully requested slave channel,
+ 	 * therefore param->config != NULL too.
