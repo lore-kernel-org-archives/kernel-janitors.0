@@ -1,25 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 19 Aug 2010 07:13:03 +0000
-Subject: Re: [PATCH v4] ether3: Use net_device_stats from struct net_device
-Message-Id: <20100819.001303.235703853.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 14 Aug 2010 21:09:49 +0000
+Subject: [patch] net/sched: remove unneeded NULL check
+Message-Id: <20100814210949.GB645@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282061733-19700-1-git-send-email-tklauser@distanz.ch>
-	<1282198531-4157-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1282198531-4157-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jamal Hadi Salim <hadi@cyberus.ca>
+Cc: "David S. Miller" <davem@davemloft.net>, Patrick McHardy <kaber@trash.net>, Jarek Poplawski <jarkao2@gmail.com>, Eric Dumazet <eric.dumazet@gmail.com>, Stephen Hemminger <shemminger@vyatta.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 19 Aug 2010 08:15:31 +0200
+There is no need to check "s".  nla_data() doesn't return NULL.  Also we
+already dereferenced "s" at this point so it would have oopsed ealier if
+it were NULL.
 
-> struct net_device has its own struct net_device_stats member, so use
-> this one instead of a private copy in the ether1_priv struct. As the new
-> ndo_get_stats function would just return dev->stats we can omit it. This
-> patch also removes an incorrect memset of the stats on open.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-> ---
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks.
+diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+index 408eea7..6fb3d41 100644
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -360,7 +360,7 @@ static struct qdisc_size_table *qdisc_get_stab(struct nlattr *opt)
+ 		tsize = nla_len(tb[TCA_STAB_DATA]) / sizeof(u16);
+ 	}
+ 
+-	if (!s || tsize != s->tsize || (!tab && tsize > 0))
++	if (tsize != s->tsize || (!tab && tsize > 0))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	spin_lock(&qdisc_stab_lock);
