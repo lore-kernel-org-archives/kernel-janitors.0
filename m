@@ -1,7 +1,7 @@
-From: Daniel Mack <daniel@caiaq.de>
-Date: Sat, 14 Aug 2010 17:38:24 +0000
-Subject: Re: [patch v2] sound/usb/format: silence uninitialized variable
-Message-Id: <20100814173824.GX17833@buzzloop.caiaq.de>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Sun, 15 Aug 2010 12:38:50 +0000
+Subject: Re: [patch v2] sound/usb/format: silence uninitialized variable	warnings
+Message-Id: <s5h8w48xd7p.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100814085846.GV645@bicker> <s5hbp95xoem.wl%tiwai@suse.de>
 	<20100814172953.GA645@bicker>
@@ -10,9 +10,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 To: Dan Carpenter <error27@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org
 
-On Sat, Aug 14, 2010 at 07:29:53PM +0200, Dan Carpenter wrote:
+At Sat, 14 Aug 2010 19:29:53 +0200,
+Dan Carpenter wrote:
+> 
 > Gcc complains that ret might be used uninitialized:
 > 
 > sound/usb/format.c: In function ‘snd_usb_parse_audio_format’:
@@ -26,19 +28,14 @@ On Sat, Aug 14, 2010 at 07:29:53PM +0200, Dan Carpenter wrote:
 > warning.
 > 
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Yes, such a check can't harm. You can have my 
-
-  Acked-by: Daniel Mack <daniel@caiaq.de>
-
-if you want :)
-
-
-Thanks,
-Daniel
-
 > ---
 > V2: Totally different.  Added printk()s
+
+Thanks, applied now.
+
+
+Takashi
+
 > 
 > diff --git a/sound/usb/format.c b/sound/usb/format.c
 > index 4387f54..3a13754 100644
@@ -66,3 +63,4 @@ Daniel
 >  	}
 >  
 >  	return ret;
+> 
