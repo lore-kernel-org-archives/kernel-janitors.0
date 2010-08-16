@@ -1,36 +1,21 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 14 Aug 2010 09:01:45 +0000
-Subject: [patch] dma/shdma: move dereference below the NULL check
-Message-Id: <20100814090145.GW645@bicker>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 16 Aug 2010 08:46:30 +0000
+Subject: Re: [patch] dma/shdma: move dereference below the NULL check
+Message-Id: <AANLkTikU6zTFhn7cTgTXD_DirG_i8=aqn6W8p-dd3F9_@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100814090145.GW645@bicker>
+In-Reply-To: <20100814090145.GW645@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Paul Mundt <lethal@linux-sh.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Magnus Damm <damm@opensource.se>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>, Dan Williams <dan.j.williams@intel.com>, Paul Mundt <lethal@linux-sh.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Magnus Damm <damm@opensource.se>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"param" can be NULL here, so only dereference it after the check.
+On Sat, Aug 14, 2010 at 2:01 AM, Dan Carpenter <error27@gmail.com> wrote:
+> "param" can be NULL here, so only dereference it after the check.
+>
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Thanks, applied as obviously correct.
 
-diff --git a/drivers/dma/shdma.c b/drivers/dma/shdma.c
-index fb64cf3..eb6b54d 100644
---- a/drivers/dma/shdma.c
-+++ b/drivers/dma/shdma.c
-@@ -580,7 +580,6 @@ static struct dma_async_tx_descriptor *sh_dmae_prep_slave_sg(
- 
- 	sh_chan = to_sh_chan(chan);
- 	param = chan->private;
--	slave_addr = param->config->addr;
- 
- 	/* Someone calling slave DMA on a public channel? */
- 	if (!param || !sg_len) {
-@@ -589,6 +588,8 @@ static struct dma_async_tx_descriptor *sh_dmae_prep_slave_sg(
- 		return NULL;
- 	}
- 
-+	slave_addr = param->config->addr;
-+
- 	/*
- 	 * if (param != NULL), this is a successfully requested slave channel,
- 	 * therefore param->config != NULL too.
+--
+Dan
