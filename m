@@ -1,21 +1,73 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 25 Aug 2010 23:37:11 +0000
-Subject: Re: [patch] plip: remove superflous return
-Message-Id: <20100825.163711.229731651.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 16:24:41 +0000
+Subject: [PATCH 1/16] drivers/firewire: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161824210.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100824120105.GF29330@bicker>
-In-Reply-To: <20100824120105.GF29330@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, joe@perches.com, kernel-janitors@vger.kernel.org
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>, linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 24 Aug 2010 14:01:05 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> This return isn't reachable and it obscures the goto on the line before.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Error codes are stored in retval, but the return value is always 0.  Return
+retval in the error case instead.
 
-Applied.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
+
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics of the code and has not been tested.
+Furthermore, there is another call, to fwnet_pd_update, where there is a
+goto to bad_proto (the label associated with the second block of code), and
+that does not set retval.  Perhaps a value should be chosen in that case.
+Or perhaps retval should just be dropped, if it is not going to be used.
+
+ drivers/firewire/net.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index da17d40..8d91484 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -681,7 +681,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
+ 	int fg_off;
+ 	int dg_size;
+ 	u16 datagram_label;
+-	int retval;
++	int retval = 0;
+ 	u16 ether_type;
+ 
+ 	hdr.w0 = be32_to_cpu(buf[0]);
+@@ -801,7 +801,7 @@ static int fwnet_incoming_packet(struct fwnet_device *dev, __be32 *buf, int len,
+ 	if (netif_queue_stopped(net))
+ 		netif_wake_queue(net);
+ 
+-	return 0;
++	return retval;
+ }
+ 
+ static void fwnet_receive_packet(struct fw_card *card, struct fw_request *r,
