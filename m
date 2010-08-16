@@ -1,54 +1,62 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 11 Aug 2010 07:41:57 +0000
-Subject: [patch 2/2] mvsas: dereferencing before checking
-Message-Id: <20100811074157.GB30429@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 16:27:47 +0000
+Subject: [PATCH 11/16] drivers/media/video: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161827310.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <James.Bottomley@suse.de>
-Cc: Jiri Slaby <jslaby@suse.cz>, Srinivas <satyasrinivasp@hcl.in>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If "mvi_dev" is NULL then we have to test it at the start of the function
-and return if it is null.  In the original code, we dereferenced "mvi_dev"
-before the check to assign "mvi" and then we dereferenced "mvi" to take
-the spin lock.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Error codes are stored in rc, but the return value is always 0.  Return rc
+instead.
 
-diff --git a/drivers/scsi/mvsas/mv_sas.c b/drivers/scsi/mvsas/mv_sas.c
-index 406246c..a5c5aa5 100644
---- a/drivers/scsi/mvsas/mv_sas.c
-+++ b/drivers/scsi/mvsas/mv_sas.c
-@@ -1379,19 +1379,21 @@ void mvs_dev_gone_notify(struct domain_device *dev)
- {
- 	unsigned long flags = 0;
- 	struct mvs_device *mvi_dev = dev->lldd_dev;
--	struct mvs_info *mvi = mvi_dev->mvi_info;
--
--	spin_lock_irqsave(&mvi->lock, flags);
-+	struct mvs_info *mvi;
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
+
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics of the function, but currently its return value
+is ignored.  Alternatively, the function could be converted to return
+nothing.
+
+ drivers/media/video/zr364xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/video/zr364xx.c b/drivers/media/video/zr364xx.c
+index a82b5bd..616c61f 100644
+--- a/drivers/media/video/zr364xx.c
++++ b/drivers/media/video/zr364xx.c
+@@ -572,7 +572,7 @@ static int zr364xx_got_frame(struct zr364xx_camera *cam, int jpgsize)
+ 	DBG("wakeup [buf/i] [%p/%d]\n", buf, buf->vb.i);
+ unlock:
+ 	spin_unlock_irqrestore(&cam->slock, flags);
+-	return 0;
++	return rc;
+ }
  
--	if (mvi_dev) {
--		mv_dprintk("found dev[%d:%x] is gone.\n",
--			mvi_dev->device_id, mvi_dev->dev_type);
--		mvs_release_task(mvi, dev);
--		mvs_free_reg_set(mvi, mvi_dev);
--		mvs_free_dev(mvi_dev);
--	} else {
-+	if (!mvi_dev) {
- 		mv_dprintk("found dev has gone.\n");
-+		return;
- 	}
-+
-+	mvi = mvi_dev->mvi_info;
-+	spin_lock_irqsave(&mvi->lock, flags);
-+
-+	mv_dprintk("found dev[%d:%x] is gone.\n",
-+		mvi_dev->device_id, mvi_dev->dev_type);
-+	mvs_release_task(mvi, dev);
-+	mvs_free_reg_set(mvi, mvi_dev);
-+	mvs_free_dev(mvi_dev);
- 	dev->lldd_dev = NULL;
- 
- 	spin_unlock_irqrestore(&mvi->lock, flags);
+ /* this function moves the usb stream read pipe data
