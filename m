@@ -1,49 +1,74 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Thu, 19 Aug 2010 16:16:50 +0000
-Subject: RE: [patch] V4L/DVB: unlock on error path
-Message-Id: <002801cb3fb9$ee00a370$ca01ea50$%nawrocki@samsung.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 16:25:21 +0000
+Subject: [PATCH 3/16] drivers/net/wireless/wl12xx: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161825010.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100812074158.GH645@bicker>
-In-Reply-To: <20100812074158.GH645@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <error27@gmail.com>
-Cc: 'Mauro Carvalho Chehab' <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kalle.valo@iki.fi>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thank you for catching this up. I had this fixed already, but due to hassle
-caused by having multiple versions of the driver this bug somehow made it
-unnoticed to mainline.
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+In each case, error codes are stored in ret, but the return value is always
+0.  Return ret instead.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:error27@gmail.com]
-> Sent: Thursday, August 12, 2010 9:42 AM
-> To: Mauro Carvalho Chehab
-> Cc: Pawel Osciak; Kyungmin Park; Sylwester Nawrocki; linux-
-> media@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch] V4L/DVB: unlock on error path
-> 
-> If we return directly here then we miss out on some mutex_unlock()s
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.c
-> b/drivers/media/video/s5p-fimc/fimc-core.c
-> index b151c7b..1beb226 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.c
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-> @@ -822,7 +822,8 @@ static int fimc_m2m_s_fmt(struct file *file, void
-> *priv, struct v4l2_format *f)
->  	} else {
->  		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
->  			 "Wrong buffer/video queue type (%d)\n", f->type);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto s_fmt_out;
->  	}
-> 
->  	pix = &f->fmt.pix;
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
 
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics and has not been tested.
+
+ drivers/net/wireless/wl12xx/wl1251_acx.c |    2 +-
+ drivers/net/wireless/wl12xx/wl1251_cmd.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/wl12xx/wl1251_acx.c b/drivers/net/wireless/wl12xx/wl1251_acx.c
+index 91891f9..2f8a2ba 100644
+--- a/drivers/net/wireless/wl12xx/wl1251_acx.c
++++ b/drivers/net/wireless/wl12xx/wl1251_acx.c
+@@ -380,7 +380,7 @@ int wl1251_acx_pd_threshold(struct wl1251 *wl)
+ 
+ out:
+ 	kfree(pd);
+-	return 0;
++	return ret;
+ }
+ 
+ int wl1251_acx_slot(struct wl1251 *wl, enum acx_slot_type slot_time)
+diff --git a/drivers/net/wireless/wl12xx/wl1251_cmd.c b/drivers/net/wireless/wl12xx/wl1251_cmd.c
+index a37b30c..949b6a3 100644
+--- a/drivers/net/wireless/wl12xx/wl1251_cmd.c
++++ b/drivers/net/wireless/wl12xx/wl1251_cmd.c
+@@ -200,7 +200,7 @@ int wl1251_cmd_vbm(struct wl1251 *wl, u8 identity,
+ 
+ out:
+ 	kfree(vbm);
+-	return 0;
++	return ret;
+ }
+ 
+ int wl1251_cmd_data_path(struct wl1251 *wl, u8 channel, bool enable)
