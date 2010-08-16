@@ -1,30 +1,71 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 20 Aug 2010 03:48:18 +0000
-Subject: Re: [patch v2] qlge: pull NULL check ahead of dereference
-Message-Id: <20100819.204818.13765444.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 16:28:52 +0000
+Subject: [PATCH 15/16] drivers/platform/x86: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161828350.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100819125933.GB14895@linux-ox1b.qlogic.org>
-	<20100819185244.GD6674@bicker>
-	<20100819202836.GD17233@linux-ox1b.qlogic.org>
-In-Reply-To: <20100819202836.GD17233@linux-ox1b.qlogic.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ron.mercer@qlogic.com
-Cc: error27@gmail.com, Linux-Driver@qlogic.com, leitao@linux.vnet.ibm.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Woithe <jwoithe@physics.adelaide.edu.au>, Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Ron Mercer <ron.mercer@qlogic.com>
-Date: Thu, 19 Aug 2010 13:28:36 -0700
+From: Julia Lawall <julia@diku.dk>
 
-> On Thu, Aug 19, 2010 at 11:52:44AM -0700, Dan Carpenter wrote:
->> There was a dereference before NULL check issue introduced in 1e213303d
->> "qlge: Add tx multiqueue support."  I've pulled the NULL check of
->> "net_rsp" forward a couple lines to avoid that.
->> 
->> Also Ron Mercer says that the early exit should be above the index
->> write.  ql_write_cq_idx(rx_ring);
->> 
-> 
-> Signed-off-by: Ron Mercer <ron.mercer@qlogic.com>
+An error code is stored in the variable error, but it is the variable
+result that is returned instead.  So store the error code in result.
 
-Applied to net-next-2.6, thanks guys.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
+
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics and has not been tested.  In each case, error is
+also assigned to the result of a function call.  Perhpas that should be
+changed to result as well, and error should be eliminated.
+
+ drivers/platform/x86/fujitsu-laptop.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+index f44cd26..e7d2259 100644
+--- a/drivers/platform/x86/fujitsu-laptop.c
++++ b/drivers/platform/x86/fujitsu-laptop.c
+@@ -668,7 +668,7 @@ static int acpi_fujitsu_add(struct acpi_device *device)
+ 
+ 	fujitsu->input = input = input_allocate_device();
+ 	if (!input) {
+-		error = -ENOMEM;
++		result = -ENOMEM;
+ 		goto err_stop;
+ 	}
+ 
+@@ -833,7 +833,7 @@ static int acpi_fujitsu_hotkey_add(struct acpi_device *device)
+ 
+ 	fujitsu_hotkey->input = input = input_allocate_device();
+ 	if (!input) {
+-		error = -ENOMEM;
++		result = -ENOMEM;
+ 		goto err_free_fifo;
+ 	}
+ 
