@@ -1,7 +1,7 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 16 Aug 2010 19:05:27 +0000
+Date: Mon, 16 Aug 2010 20:23:51 +0000
 Subject: Re: [PATCH 16/16] drivers/net/qlcnic: Use available error codes
-Message-Id: <Pine.LNX.4.64.1008162105120.12526@ask.diku.dk>
+Message-Id: <Pine.LNX.4.64.1008162222450.12526@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.1008161828520.19313@ask.diku.dk> <20100816183540.GE645@bicker>
 In-Reply-To: <20100816183540.GE645@bicker>
@@ -11,18 +11,73 @@ Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <error27@gmail.com>
 Cc: Amit Kumar Salecha <amit.salecha@qlogic.com>, Anirban Chakraborty <anirban.chakraborty@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 16 Aug 2010, Dan Carpenter wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Mon, Aug 16, 2010 at 06:29:13PM +0200, Julia Lawall wrote:
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > The error code is stored in the variable err, but it is the variable ret
-> > that is returned instead.  So store the error code in ret.  Err is then
-> > useless.
-> 
-> Could you redo this for the latest git?  (Sorry, I recently made the
-> problem slightly worse by adding another "err = -ENOMEM;")...
+The error code is stored in the variable err, but it is the variable ret
+that is returned instead.  So store the error code in ret.  Err is then
+useless.
 
-Sure.  I'll send it shortly.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-julia
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
+
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics and has not been tested.
+This version is based on a more recent version of the file than the 
+previous version.
+
+ drivers/net/qlcnic/qlcnic_main.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/qlcnic/qlcnic_main.c b/drivers/net/qlcnic/qlcnic_main.c
+index bf6d87a..81d9d75 100644
+--- a/drivers/net/qlcnic/qlcnic_main.c
++++ b/drivers/net/qlcnic/qlcnic_main.c
+@@ -474,7 +474,7 @@ static int
+ qlcnic_init_pci_info(struct qlcnic_adapter *adapter)
+ {
+ 	struct qlcnic_pci_info *pci_info;
+-	int i, ret = 0, err;
++	int i, ret = 0;
+ 	u8 pfn;
+ 
+ 	pci_info = kcalloc(QLCNIC_MAX_PCI_FUNC, sizeof(*pci_info), GFP_KERNEL);
+@@ -484,14 +484,14 @@ qlcnic_init_pci_info(struct qlcnic_adapter *adapter)
+ 	adapter->npars = kzalloc(sizeof(struct qlcnic_npar_info) *
+ 				QLCNIC_MAX_PCI_FUNC, GFP_KERNEL);
+ 	if (!adapter->npars) {
+-		err = -ENOMEM;
++		ret = -ENOMEM;
+ 		goto err_pci_info;
+ 	}
+ 
+ 	adapter->eswitch = kzalloc(sizeof(struct qlcnic_eswitch) *
+ 				QLCNIC_NIU_MAX_XG_PORTS, GFP_KERNEL);
+ 	if (!adapter->eswitch) {
+-		err = -ENOMEM;
++		ret = -ENOMEM;
+ 		goto err_npars;
+ 	}
+ 
