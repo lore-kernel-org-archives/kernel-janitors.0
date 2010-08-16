@@ -1,23 +1,69 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 20 Aug 2010 00:19:32 +0000
-Subject: Re: [PATCH v2] tehuti: Use net_device_stats from struct net_device
-Message-Id: <20100819.171932.52174904.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 16:26:57 +0000
+Subject: [PATCH 8/16] net/ax25: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161826390.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282061577-19484-1-git-send-email-tklauser@distanz.ch>
-	<1282205485-9652-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1282205485-9652-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tklauser@distanz.ch
-Cc: baum@tehutinetworks.net, andy@greyhouse.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 19 Aug 2010 10:11:25 +0200
+From: Julia Lawall <julia@diku.dk>
 
-> struct net_device has its own struct net_device_stats member, so use
-> this one instead of a private copy in the bdx_priv struct.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Error codes are stored in err, but the return value is always 0.  Return
+err instead.
 
-Applied.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
+
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics and has not been tested.
+
+ net/ax25/ax25_route.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/ax25/ax25_route.c b/net/ax25/ax25_route.c
+index 7805945..a169084 100644
+--- a/net/ax25/ax25_route.c
++++ b/net/ax25/ax25_route.c
+@@ -412,7 +412,7 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
+ {
+ 	ax25_uid_assoc *user;
+ 	ax25_route *ax25_rt;
+-	int err;
++	int err = 0;
+ 
+ 	if ((ax25_rt = ax25_get_route(addr, NULL)) = NULL)
+ 		return -EHOSTUNREACH;
+@@ -453,7 +453,7 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
+ put:
+ 	ax25_put_route(ax25_rt);
+ 
+-	return 0;
++	return err;
+ }
+ 
+ struct sk_buff *ax25_rt_build_path(struct sk_buff *skb, ax25_address *src,
