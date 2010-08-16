@@ -1,69 +1,56 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 16 Aug 2010 16:26:57 +0000
-Subject: [PATCH 8/16] net/ax25: Use available error codes
-Message-Id: <Pine.LNX.4.64.1008161826390.19313@ask.diku.dk>
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Mon, 16 Aug 2010 19:23:50 +0000
+Subject: Re: [PATCH 8/16] net/ax25: Use available error codes
+Message-Id: <20100816192350.GA10921@linux-mips.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1008161826390.19313@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1008161826390.19313@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Mon, Aug 16, 2010 at 06:26:57PM +0200, Julia Lawall wrote:
 
-Error codes are stored in err, but the return value is always 0.  Return
-err instead.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Error codes are stored in err, but the return value is always 0.  Return
+> err instead.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r@
+> local idexpression x;
+> constant C;
+> @@
+> 
+> if (...) { ...
+>   x = -C
+>   ... when != x
+> (
+>   return <+...x...+>;
+> |
+>   return NULL;
+> |
+>   return;
+> |
+> * return ...;
+> )
+> }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+> This changes the semantics and has not been tested.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+It restores the semantics to what they should be and used to be.  This
+probably happened during the introduction of proper refcounting and
+locking into the AX.25 stack.  Looks fine to me.
 
-// <smpl>
-@r@
-local idexpression x;
-constant C;
-@@
+Acked-by: Ralf Baechle <ralf@linux-mips.org>
 
-if (...) { ...
-  x = -C
-  ... when != x
-(
-  return <+...x...+>;
-|
-  return NULL;
-|
-  return;
-|
-* return ...;
-)
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-This changes the semantics and has not been tested.
-
- net/ax25/ax25_route.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/ax25/ax25_route.c b/net/ax25/ax25_route.c
-index 7805945..a169084 100644
---- a/net/ax25/ax25_route.c
-+++ b/net/ax25/ax25_route.c
-@@ -412,7 +412,7 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
- {
- 	ax25_uid_assoc *user;
- 	ax25_route *ax25_rt;
--	int err;
-+	int err = 0;
- 
- 	if ((ax25_rt = ax25_get_route(addr, NULL)) = NULL)
- 		return -EHOSTUNREACH;
-@@ -453,7 +453,7 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
- put:
- 	ax25_put_route(ax25_rt);
- 
--	return 0;
-+	return err;
- }
- 
- struct sk_buff *ax25_rt_build_path(struct sk_buff *skb, ax25_address *src,
+  Ralf
