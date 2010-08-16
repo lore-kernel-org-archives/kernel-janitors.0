@@ -1,66 +1,60 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 15 Aug 2010 12:38:50 +0000
-Subject: Re: [patch v2] sound/usb/format: silence uninitialized variable	warnings
-Message-Id: <s5h8w48xd7p.wl%tiwai@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 16:28:19 +0000
+Subject: [PATCH 13/16] net/ax25: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161828030.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100814085846.GV645@bicker> <s5hbp95xoem.wl%tiwai@suse.de>
-	<20100814172953.GA645@bicker>
-In-Reply-To: <20100814172953.GA645@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Joerg Reuter <jreuter@yaina.de>, Ralf Baechle <ralf@linux-mips.org>, "D, avid S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Sat, 14 Aug 2010 19:29:53 +0200,
-Dan Carpenter wrote:
-> 
-> Gcc complains that ret might be used uninitialized:
-> 
-> sound/usb/format.c: In function ‘snd_usb_parse_audio_format’:
-> sound/usb/format.c:354: warning: ‘ret’ may be used uninitialized in this function
-> sound/usb/format.c:354: note: ‘ret’ was declared here
-> sound/usb/format.c:414: warning: ‘ret’ may be used uninitialized in this function
-> sound/usb/format.c:414: note: ‘ret’ was declared here
-> 
-> I suppose it could be uninitialized if there is ever a UAC_VERSION_3
-> released. Anyway this patch is worthwhile if only to silence the gcc
-> warning.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> V2: Totally different.  Added printk()s
+From: Julia Lawall <julia@diku.dk>
 
-Thanks, applied now.
+Error codes are stored in err, but the return value is always 0.  Return
+err instead.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Takashi
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
 
-> 
-> diff --git a/sound/usb/format.c b/sound/usb/format.c
-> index 4387f54..3a13754 100644
-> --- a/sound/usb/format.c
-> +++ b/sound/usb/format.c
-> @@ -392,6 +392,10 @@ static int parse_audio_format_i(struct snd_usb_audio *chip,
->  		/* fp->channels is already set in this case */
->  		ret = parse_audio_format_rates_v2(chip, fp);
->  		break;
-> +	default:
-> +		snd_printk(KERN_ERR "%d:%u:%d : invalid protocol version %d\n",
-> +			   chip->dev->devnum, fp->iface, fp->altsetting, protocol);
-> +		return -EINVAL;
->  	}
->  
->  	if (fp->channels < 1) {
-> @@ -452,6 +456,10 @@ static int parse_audio_format_ii(struct snd_usb_audio *chip,
->  		ret = parse_audio_format_rates_v2(chip, fp);
->  		break;
->  	}
-> +	default:
-> +		snd_printk(KERN_ERR "%d:%u:%d : invalid protocol version %d\n",
-> +			   chip->dev->devnum, fp->iface, fp->altsetting, protocol);
-> +		return -EINVAL;
->  	}
->  
->  	return ret;
-> 
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics of the function and has not been tested.
+
+ net/ax25/af_ax25.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
+index cfdfd7e..26eaebf 100644
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -1103,7 +1103,7 @@ done:
+ out:
+ 	release_sock(sk);
+ 
+-	return 0;
++	return err;
+ }
+ 
+ /*
