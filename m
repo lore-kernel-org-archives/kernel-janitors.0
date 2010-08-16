@@ -1,87 +1,111 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 24 Aug 2010 14:39:12 +0000
-Subject: [PATCH 3/5] fs/btrfs: Eliminate memory leak
-Message-Id: <Pine.LNX.4.64.1008241638560.15172@ask.diku.dk>
+Date: Mon, 16 Aug 2010 16:26:36 +0000
+Subject: [PATCH 7/16] drivers/staging: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161826140.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-This code is preceded by a call to btrfs_alloc_path, which allocates some
-memory.  There is some error handling code at the end of the function that
-frees it, that can be taken advantage of with a little ordering adjustment.
+An error code is stored in a variable, but 0 is returned instead.  Use the
+variable instead of 0.
 
-A simplified version of the semantic match that finds this problem is:
+The semantic match that finds this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r exists@
+@r@
 local idexpression x;
-expression E;
-identifier f1;
-iterator I;
+constant C;
 @@
 
-x = btrfs_alloc_path(...);
-<... when != x
-     when != true (x = NULL || ...)
-     when != if (...) { <+...x...+> }
-     when != I (...) { <+...x...+> }
+if (...) { ...
+  x = -C
+  ... when != x
 (
- x = NULL
+  return <+...x...+>;
 |
- x = E
+  return NULL;
 |
- x->f1
-)
-...>
+  return;
+|
 * return ...;
+)
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- fs/btrfs/inode.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+This changes the semantics and is not tested.
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index c038644..d38587c 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4438,15 +4438,14 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
- 	BUG_ON(!path);
+ drivers/staging/lirc/lirc_sasem.c |    2 +-
+ drivers/staging/sep/sep_driver.c  |    4 ++--
+ drivers/staging/vt6655/iwctl.c    |    2 +-
+ drivers/staging/vt6656/iwctl.c    |    2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/lirc/lirc_sasem.c b/drivers/staging/lirc/lirc_sasem.c
+index 73166c3..856487e 100644
+--- a/drivers/staging/lirc/lirc_sasem.c
++++ b/drivers/staging/lirc/lirc_sasem.c
+@@ -512,7 +512,7 @@ exit:
+ 	mutex_unlock(&context->ctx_lock);
  
- 	inode = new_inode(root->fs_info->sb);
--	if (!inode)
--		return ERR_PTR(-ENOMEM);
--
-+	if (!inode) {
-+		ret = -ENOMEM;
-+		goto fail_path;
-+	}
- 	if (dir) {
- 		ret = btrfs_set_inode_index(dir, index);
--		if (ret) {
--			iput(inode);
--			return ERR_PTR(ret);
--		}
-+		if (ret)
-+			goto fail_inode;
- 	}
- 	/*
- 	 * index_cnt is ignored for everything but a dir,
-@@ -4519,8 +4518,10 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
- fail:
- 	if (dir)
- 		BTRFS_I(dir)->index_cnt--;
--	btrfs_free_path(path);
-+fail_inode:
- 	iput(inode);
-+fail_path:
-+	btrfs_free_path(path);
- 	return ERR_PTR(ret);
+ 	mutex_unlock(&disconnect_lock);
+-	return 0;
++	return retval;
  }
  
+ /**
+diff --git a/drivers/staging/sep/sep_driver.c b/drivers/staging/sep/sep_driver.c
+index ecbde34..604965c 100644
+--- a/drivers/staging/sep/sep_driver.c
++++ b/drivers/staging/sep/sep_driver.c
+@@ -844,7 +844,7 @@ static int sep_lock_kernel_pages(struct sep_device *sep,
+ 	*page_array_ptr = 0;
+ end_function:
+ 	dbg("SEP Driver:<-------- sep_lock_kernel_pages end\n");
+-	return 0;
++	return error;
+ }
+ 
+ /*
+@@ -972,7 +972,7 @@ end_function_with_error1:
+ 	kfree(page_array);
+ end_function:
+ 	dbg("SEP Driver:<-------- sep_lock_user_pages end\n");
+-	return 0;
++	return error;
+ }
+ 
+ 
+diff --git a/drivers/staging/vt6655/iwctl.c b/drivers/staging/vt6655/iwctl.c
+index 4322761..4009c0b 100644
+--- a/drivers/staging/vt6655/iwctl.c
++++ b/drivers/staging/vt6655/iwctl.c
+@@ -1900,7 +1900,7 @@ int iwctl_siwgenie(struct net_device *dev,
+ 	}
+ 
+ 	out://not completely ...not necessary in wpa_supplicant 0.5.8
+-	return 0;
++	return ret;
+ }
+ 
+ int iwctl_giwgenie(struct net_device *dev,
+diff --git a/drivers/staging/vt6656/iwctl.c b/drivers/staging/vt6656/iwctl.c
+index 016b8e7..8fb6518 100644
+--- a/drivers/staging/vt6656/iwctl.c
++++ b/drivers/staging/vt6656/iwctl.c
+@@ -1726,7 +1726,7 @@ int iwctl_siwgenie(struct net_device *dev,
+ 	}
+ 
+ 	out://not completely ...not necessary in wpa_supplicant 0.5.8
+-	return 0;
++	return ret;
+ }
+ 
+ int iwctl_giwgenie(struct net_device *dev,
