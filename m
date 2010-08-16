@@ -1,17 +1,17 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 16 Aug 2010 16:27:14 +0000
-Subject: [PATCH 9/16] fs/fscache: Remove unnecessary error code assignment
-Message-Id: <Pine.LNX.4.64.1008161826580.19313@ask.diku.dk>
+Date: Mon, 16 Aug 2010 16:25:39 +0000
+Subject: [PATCH 4/16] drivers/media/video/zoran: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161825220.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-In each case, the value of ret is not used.  If an error occurs, -ENOBUFS
-is returned explicitly.
+Error codes are stored in res, but the return value is always 0.  Return
+res instead.
 
 The semantic match that finds this problem is as follows:
 (http://coccinelle.lip6.fr/)
@@ -40,26 +40,21 @@ if (...) { ...
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- fs/fscache/page.c |    2 --
- 1 file changed, 2 deletions(-)
+This changes the semantics and has not been tested.
 
-diff --git a/fs/fscache/page.c b/fs/fscache/page.c
-index 41c441c..33538ed 100644
---- a/fs/fscache/page.c
-+++ b/fs/fscache/page.c
-@@ -784,7 +784,6 @@ int __fscache_write_page(struct fscache_cookie *cookie,
- 	if (ret < 0)
- 		goto nomem_free;
+ drivers/media/video/zoran/zoran_driver.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/video/zoran/zoran_driver.c b/drivers/media/video/zoran/zoran_driver.c
+index 6f89d0a..c155ddf 100644
+--- a/drivers/media/video/zoran/zoran_driver.c
++++ b/drivers/media/video/zoran/zoran_driver.c
+@@ -3322,7 +3322,7 @@ zoran_mmap (struct file           *file,
+ mmap_unlock_and_return:
+ 	mutex_unlock(&zr->resource_lock);
  
--	ret = -ENOBUFS;
- 	spin_lock(&cookie->lock);
+-	return 0;
++	return res;
+ }
  
- 	if (hlist_empty(&cookie->backing_objects))
-@@ -854,7 +853,6 @@ submit_failed:
- 	radix_tree_delete(&cookie->stores, page->index);
- 	spin_unlock(&cookie->stores_lock);
- 	page_cache_release(page);
--	ret = -ENOBUFS;
- 	goto nobufs;
- 
- nobufs_unlock_obj:
+ static const struct v4l2_ioctl_ops zoran_ioctl_ops = {
