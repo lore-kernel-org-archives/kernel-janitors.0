@@ -1,72 +1,75 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon, 09 Aug 2010 19:49:20 +0000
-Subject: [PATCH 01/18 v2] char: moxa: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281383362-13573-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 16:26:13 +0000
+Subject: [PATCH 6/16] drivers/media: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161825570.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, Rakib Mullick <rakib.mullick@gmail.com>, Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+In each case, error codes are stored in rc, but the return value is always
+0.  Return rc instead.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
+
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/char/moxa.c |   16 ++++++++++------
- 1 files changed, 10 insertions(+), 6 deletions(-)
+The changes change the semantics and are not tested.  In the second case,
+the function is used in only one place and the return value is igored.
 
-diff --git a/drivers/char/moxa.c b/drivers/char/moxa.c
-index 107b0bd..4d81c2b 100644
---- a/drivers/char/moxa.c
-+++ b/drivers/char/moxa.c
-@@ -939,11 +939,6 @@ static int __devinit moxa_pci_probe(struct pci_dev *pdev,
- 	int board_type = ent->driver_data;
- 	int retval;
+ drivers/media/dvb/frontends/drx397xD.c |    2 +-
+ drivers/media/video/s2255drv.c         |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/dvb/frontends/drx397xD.c b/drivers/media/dvb/frontends/drx397xD.c
+index f74cca6..a05007c 100644
+--- a/drivers/media/dvb/frontends/drx397xD.c
++++ b/drivers/media/dvb/frontends/drx397xD.c
+@@ -232,7 +232,7 @@ static int write_fw(struct drx397xD_state *s, enum blob_ix ix)
+ exit_rc:
+ 	read_unlock(&fw[s->chip_rev].lock);
  
--	retval = pci_enable_device(pdev);
--	if (retval) {
--		dev_err(&pdev->dev, "can't enable pci device\n");
--		goto err;
--	}
- 
- 	for (i = 0; i < MAX_BOARDS; i++)
- 		if (moxa_boards[i].basemem = NULL)
-@@ -956,16 +951,23 @@ static int __devinit moxa_pci_probe(struct pci_dev *pdev,
- 		goto err;
- 	}
- 
-+	retval = pci_enable_device(pdev);
-+	if (retval) {
-+		dev_err(&pdev->dev, "can't enable pci device\n");
-+		goto err;
-+	}
-+
- 	board = &moxa_boards[i];
- 
- 	retval = pci_request_region(pdev, 2, "moxa-base");
- 	if (retval) {
- 		dev_err(&pdev->dev, "can't request pci region 2\n");
--		goto err;
-+		goto err_disable;
- 	}
- 
- 	board->basemem = ioremap_nocache(pci_resource_start(pdev, 2), 0x4000);
- 	if (board->basemem = NULL) {
-+		retval = -ENOMEM;
- 		dev_err(&pdev->dev, "can't remap io space 2\n");
- 		goto err_reg;
- 	}
-@@ -1001,6 +1003,8 @@ err_base:
- 	board->basemem = NULL;
- err_reg:
- 	pci_release_region(pdev, 2);
-+err_disable:
-+	pci_disable_device(pdev);
- err:
- 	return retval;
+-	return 0;
++	return rc;
  }
--- 
-1.7.0.4
-
+ 
+ /* Function is not endian safe, use the RD16 wrapper below */
+diff --git a/drivers/media/video/s2255drv.c b/drivers/media/video/s2255drv.c
+index 8ec7c9a..8f74341 100644
+--- a/drivers/media/video/s2255drv.c
++++ b/drivers/media/video/s2255drv.c
+@@ -600,7 +600,7 @@ static int s2255_got_frame(struct s2255_channel *channel, int jpgsize)
+ 	dprintk(2, "%s: [buf/i] [%p/%d]\n", __func__, buf, buf->vb.i);
+ unlock:
+ 	spin_unlock_irqrestore(&dev->slock, flags);
+-	return 0;
++	return rc;
+ }
+ 
+ static const struct s2255_fmt *format_by_fourcc(int fourcc)
