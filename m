@@ -1,107 +1,60 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 24 Aug 2010 15:38:56 +0000
-Subject: [PATCH 02/18] Coccinelle: Add null/kmerr.cocci
-Message-Id: <1282664352-15882-3-git-send-email-npalix@diku.dk>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 16:28:34 +0000
+Subject: [PATCH 14/16] drivers/w1/masters: Use available error codes
+Message-Id: <Pine.LNX.4.64.1008161828190.19313@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
-In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
-Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Evgeniy Polyakov <johnpol@2ka.mipt.ru>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This semantic patch looks for kmalloc etc that are not followed by a
-NULL check.  It only gives a report in the case where there is some
-error handling code later in the function, which may be helpful
-in determining what the error handling code for the call to kmalloc etc
-should be.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Error codes are stored in ret, but the return value is always 0.  Return
+ret instead.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+local idexpression x;
+constant C;
+@@
+
+if (...) { ...
+  x = -C
+  ... when != x
+(
+  return <+...x...+>;
+|
+  return NULL;
+|
+  return;
+|
+* return ...;
+)
+}
+// </smpl>
+
 Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- scripts/coccinelle/null/kmerr.cocci |   72 +++++++++++++++++++++++++++++++++++
- 1 files changed, 72 insertions(+), 0 deletions(-)
- create mode 100644 scripts/coccinelle/null/kmerr.cocci
+This changes the semantics of the function and has not been tested.
 
-diff --git a/scripts/coccinelle/null/kmerr.cocci b/scripts/coccinelle/null/kmerr.cocci
-new file mode 100644
-index 0000000..949bf65
---- /dev/null
-+++ b/scripts/coccinelle/null/kmerr.cocci
-@@ -0,0 +1,72 @@
-+/// This semantic patch looks for kmalloc etc that are not followed by a
-+/// NULL check.  It only gives a report in the case where there is some
-+/// error handling code later in the function, which may be helpful
-+/// in determining what the error handling code for the call to kmalloc etc
-+/// should be.
-+///
-+// Confidence: High
-+// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
-+// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
-+// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Comments:
-+// Options: -no_includes -include_headers
-+
-+virtual context
-+virtual org
-+virtual report
-+
-+@withtest@
-+expression x;
-+position p;
-+identifier f,fld;
-+@@
-+
-+x@p = f(...);
-+... when != x->fld
-+\(x = NULL \| x != NULL\)
-+
-+@fixed depends on context && !org && !report@
-+expression x,x1;
-+position p1 != withtest.p;
-+statement S;
-+position any withtest.p;
-+identifier f;
-+@@
-+
-+*x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-+...
-+*x1@p = f(...);
-+if (!x1) S
-+
-+// ------------------------------------------------------------------------
-+
-+@rfixed depends on (org || report) && !context exists@
-+expression x,x1;
-+position p1 != withtest.p;
-+position p2;
-+statement S;
-+position any withtest.p;
-+identifier f;
-+@@
-+
-+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-+...
-+x1@p = f@p2(...);
-+if (!x1) S
-+
-+@script:python depends on org@
-+p1 << rfixed.p1;
-+p2 << rfixed.p2;
-+@@
-+
-+cocci.print_main("alloc call",p1)
-+cocci.print_secs("possible model",p2)
-+
-+@script:python depends on report@
-+p1 << rfixed.p1;
-+p2 << rfixed.p2;
-+@@
-+
-+msg = "alloc with no test, possible model on line %s" % (p2[0].line)
-+coccilib.report.print_report(p1[0],msg)
--- 
-1.7.0.4
+ drivers/w1/masters/omap_hdq.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/w1/masters/omap_hdq.c b/drivers/w1/masters/omap_hdq.c
+index 3a7e9ff..2a71e62 100644
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -396,7 +396,7 @@ static int hdq_read_byte(struct hdq_data *hdq_data, u8 *val)
+ out:
+ 	mutex_unlock(&hdq_data->hdq_mutex);
+ rtn:
+-	return 0;
++	return ret;
+ 
+ }
+ 
