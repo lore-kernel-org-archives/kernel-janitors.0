@@ -1,61 +1,101 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Sat, 07 Aug 2010 13:14:09 +0000
-Subject: Re: [Cocci] correct handling of return values
-Message-Id: <201008071514.10405.npalix@diku.dk>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Tue, 17 Aug 2010 16:12:57 +0000
+Subject: [PATCH] tehuti: Use net_device_stats from struct net_device
+Message-Id: <1282061577-19484-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4C51394B.2060306@users.sourceforge.net>
-In-Reply-To: <4C51394B.2060306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Alexander Indenbaum <baum@tehutinetworks.net>, Andy Gospodarek <andy@greyhouse.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Hi,
+struct net_device has its own struct net_device_stats member, so use
+this one instead of a private copy in the bdx_priv struct.
 
-On Thursday 29 July 2010 10:56:21 Julia Lawall wrote:
-> On Thu, 29 Jul 2010, SF Markus Elfring wrote:
-> 
-> > > I'm currently working on this task:
-> > > http://kernelnewbies.org/KernelJanitors/Todo/ReturnCodes
-> > > 
-> > > I think this task can be partly done with coccinelle. The most often cases of
-> > > invalid handling is no handling :)
-> > > 
-> > > I am not guru of coccinelle, but I think it is very useful here. So,
-> > > I've written basic script of finding common errors, but it is not ideal.
-> > 
-> > Were any improvements achieved since my request "Detection of ignored function
-> > return values" that will help in this use case?
-> > http://lists.diku.dk/pipermail/cocci/2010-February/000690.html
-> > http://www.mail-archive.com/cocci@diku.dk/msg00157.html
-> 
-> Looking back at that disucssion, it sees that the main issue was whether 
-> one would know the return type of a function.  If the function is not 
-> local, one can know that from the prototype.  One then runs into the 
-> problem that prototypes are often in header files, and Coccinelle takes 
-> into account at most the header files that are mentioned in the file 
-> explicitly.  Nothing has changed in that regard.
-> 
-> If you care only about bug finding, but not automatic bug fixing, a 
-> possibility is to run CPP first.  There is some support for doing this, 
-> but I don't remember what it is.  Nicolas Palix should know, however.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/net/tehuti.c |   17 ++++++++---------
+ drivers/net/tehuti.h |    1 -
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-It is with the spp tool. See tools/spp.ml and demos/spp in the source distribution.
-
-I added some information in the wiki.
-http://cocci.ekstranet.diku.dk/wiki/doku.php?id=using_cpp
-
-> 
-> julia
-> _______________________________________________
-> Cocci mailing list
-> Cocci@diku.dk
-> http://lists.diku.dk/mailman/listinfo/cocci
-> (Web access from inside DIKUs LAN only)
-> 
-
+diff --git a/drivers/net/tehuti.c b/drivers/net/tehuti.c
+index 737df60..663a4e7 100644
+--- a/drivers/net/tehuti.c
++++ b/drivers/net/tehuti.c
+@@ -929,9 +929,7 @@ static void bdx_update_stats(struct bdx_priv *priv)
+ 
+ static struct net_device_stats *bdx_get_stats(struct net_device *ndev)
+ {
+-	struct bdx_priv *priv = netdev_priv(ndev);
+-	struct net_device_stats *net_stat = &priv->net_stats;
+-	return net_stat;
++	return &ndev->stats;
+ }
+ 
+ static void print_rxdd(struct rxd_desc *rxdd, u32 rxd_val1, u16 len,
+@@ -1220,6 +1218,7 @@ static void bdx_recycle_skb(struct bdx_priv *priv, struct rxd_desc *rxdd)
+ 
+ static int bdx_rx_receive(struct bdx_priv *priv, struct rxd_fifo *f, int budget)
+ {
++	struct net_device *ndev = priv->ndev;
+ 	struct sk_buff *skb, *skb2;
+ 	struct rxd_desc *rxdd;
+ 	struct rx_map *dm;
+@@ -1273,7 +1272,7 @@ static int bdx_rx_receive(struct bdx_priv *priv, struct rxd_fifo *f, int budget)
+ 
+ 		if (unlikely(GET_RXD_ERR(rxd_val1))) {
+ 			DBG("rxd_err = 0x%x\n", GET_RXD_ERR(rxd_val1));
+-			priv->net_stats.rx_errors++;
++			ndev->stats.rx_errors++;
+ 			bdx_recycle_skb(priv, rxdd);
+ 			continue;
+ 		}
+@@ -1300,11 +1299,11 @@ static int bdx_rx_receive(struct bdx_priv *priv, struct rxd_fifo *f, int budget)
+ 			bdx_rxdb_free_elem(db, rxdd->va_lo);
+ 		}
+ 
+-		priv->net_stats.rx_bytes += len;
++		ndev->stats.rx_bytes += len;
+ 
+ 		skb_put(skb, len);
+ 		skb->ip_summed = CHECKSUM_UNNECESSARY;
+-		skb->protocol = eth_type_trans(skb, priv->ndev);
++		skb->protocol = eth_type_trans(skb, ndev);
+ 
+ 		/* Non-IP packets aren't checksum-offloaded */
+ 		if (GET_RXD_PKT_ID(rxd_val1) = 0)
+@@ -1316,7 +1315,7 @@ static int bdx_rx_receive(struct bdx_priv *priv, struct rxd_fifo *f, int budget)
+ 			break;
+ 	}
+ 
+-	priv->net_stats.rx_packets += done;
++	ndev->stats.rx_packets += done;
+ 
+ 	/* FIXME: do smth to minimize pci accesses    */
+ 	WRITE_REG(priv, f->m.reg_RPTR, f->m.rptr & TXF_WPTR_WR_PTR);
+@@ -1712,8 +1711,8 @@ static netdev_tx_t bdx_tx_transmit(struct sk_buff *skb,
+ #ifdef BDX_LLTX
+ 	ndev->trans_start = jiffies; /* NETIF_F_LLTX driver :( */
+ #endif
+-	priv->net_stats.tx_packets++;
+-	priv->net_stats.tx_bytes += skb->len;
++	ndev->stats.tx_packets++;
++	ndev->stats.tx_bytes += skb->len;
+ 
+ 	if (priv->tx_level < BDX_MIN_TX_LEVEL) {
+ 		DBG("%s: %s: TX Q STOP level %d\n",
+diff --git a/drivers/net/tehuti.h b/drivers/net/tehuti.h
+index 67e3b71..b6ba860 100644
+--- a/drivers/net/tehuti.h
++++ b/drivers/net/tehuti.h
+@@ -269,7 +269,6 @@ struct bdx_priv {
+ 	u32 msg_enable;
+ 	int stats_flag;
+ 	struct bdx_stats hw_stats;
+-	struct net_device_stats net_stats;
+ 	struct pci_dev *pdev;
+ 
+ 	struct pci_nic *nic;
 -- 
-Nicolas Palix
-Tel: (+33) 1 44 27 87 25
-Tel: (+33) 6 81 07 91 72
-Web: http://www.diku.dk/~npalix/
+1.7.0.4
+
