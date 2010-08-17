@@ -1,15 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 17 Aug 2010 08:49:38 +0000
-Subject: Re: [PATCH 40/42] drivers/isdn: Adjust confusing if indentation
-Message-Id: <20100817.014938.246512856.davem@davemloft.net>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Tue, 17 Aug 2010 16:13:05 +0000
+Subject: [PATCH] sunhme: Use return value of register_netdev
+Message-Id: <1282061585-19527-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052228590.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052228590.31692@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
+Use the return value provided by register_netdev on error instead of
+using a previously set value.
 
-Applied.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/net/sunhme.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/sunhme.c b/drivers/net/sunhme.c
+index bd0df1c..d96431e 100644
+--- a/drivers/net/sunhme.c
++++ b/drivers/net/sunhme.c
+@@ -2808,7 +2808,8 @@ static int __devinit happy_meal_sbus_probe_one(struct platform_device *op, int i
+ 	happy_meal_set_initial_advertisement(hp);
+ 	spin_unlock_irq(&hp->happy_lock);
+ 
+-	if (register_netdev(hp->dev)) {
++	err = register_netdev(hp->dev);
++	if (err) {
+ 		printk(KERN_ERR "happymeal: Cannot register net device, "
+ 		       "aborting.\n");
+ 		goto err_out_free_coherent;
+@@ -3130,7 +3131,8 @@ static int __devinit happy_meal_pci_probe(struct pci_dev *pdev,
+ 	happy_meal_set_initial_advertisement(hp);
+ 	spin_unlock_irq(&hp->happy_lock);
+ 
+-	if (register_netdev(hp->dev)) {
++	err = register_netdev(hp->dev);
++	if (err) {
+ 		printk(KERN_ERR "happymeal(PCI): Cannot register net device, "
+ 		       "aborting.\n");
+ 		goto err_out_iounmap;
+-- 
+1.7.0.4
+
