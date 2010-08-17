@@ -1,12 +1,14 @@
 From: Tobias Klauser <tklauser@distanz.ch>
-Date: Tue, 17 Aug 2010 16:11:24 +0000
+Date: Tue, 17 Aug 2010 16:12:07 +0000
 Subject: [PATCH] greth: Use return value of register_netdev
-Message-Id: <1282061484-19377-1-git-send-email-tklauser@distanz.ch>
+Message-Id: <1282061527-19429-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282061484-19377-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1282061484-19377-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Kristoffer Glembo <kristoffer@gaisler.com>, netdev@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org
 
 Use the return value provided by register_netdev on error instead of
