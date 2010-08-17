@@ -1,58 +1,15 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:22:00 +0000
-Subject: [PATCH 17/42] drivers/net/irda: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052221410.31692@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 17 Aug 2010 08:49:15 +0000
+Subject: Re: [PATCH 17/42] drivers/net/irda: Adjust confusing if indentation
+Message-Id: <20100817.014915.112625192.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1008052221410.31692@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1008052221410.31692@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <samuel@sortiz.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: samuel@sortiz.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-Indent the branch of an if.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
-
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/irda/mcs7780.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/irda/mcs7780.c b/drivers/net/irda/mcs7780.c
-index 5b1036a..74b20f1 100644
---- a/drivers/net/irda/mcs7780.c
-+++ b/drivers/net/irda/mcs7780.c
-@@ -734,7 +734,7 @@ static int mcs_net_open(struct net_device *netdev)
- 	}
- 
- 	if (!mcs_setup_urbs(mcs))
--	goto error3;
-+		goto error3;
- 
- 	ret = mcs_receive_start(mcs);
- 	if (ret)
+Applied.
