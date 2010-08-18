@@ -1,29 +1,59 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 21 Aug 2010 08:43:25 +0000
-Subject: [patch] ata/sata_dwc_460ex: signdness bug
-Message-Id: <20100821084325.GF6674@bicker>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Wed, 18 Aug 2010 20:44:34 +0000
+Subject: [PATCH net-next-2.6] atm: remove a net_device_stats clear
+Message-Id: <1282164274.2328.2.camel@edumazet-laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282061719-19645-1-git-send-email-tklauser@distanz.ch>
+	<1282115064-3701-1-git-send-email-tklauser@distanz.ch>
+	<20100818083304.2ef2eea4@nehalam>
+	<20100818.131043.226780154.davem@davemloft.net>
+In-Reply-To: <20100818.131043.226780154.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rupjyoti Sarmah <rsarmah@appliedmicro.com>, Prodyut Hazarika <phazarika@appliedmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-dma_dwc_xfer_setup() returns an int and "dma_chan" needs to be signed
-for the error handling to work.
+Le mercredi 18 août 2010 à 13:10 -0700, David Miller a écrit :
+> From: Stephen Hemminger <shemminger@vyatta.com>
+> Date: Wed, 18 Aug 2010 08:33:04 -0700
+> 
+> > On Wed, 18 Aug 2010 09:04:24 +0200
+> > Tobias Klauser <tklauser@distanz.ch> wrote:
+> > 
+> >>  
+> >> -	memset (&priv(dev)->stats, 0, sizeof (struct net_device_stats));
+> >> +	memset(&dev->stats, 0, sizeof(struct net_device_stats));
+> > 
+> > This is incorrect, just remove the memset.  The stats are initialized
+> > when device is created.  The Linux device driver convention is to
+> > keep stats when device is set down and brought back up; that is what
+> > the majority of other drivers do.
+> 
+> Yep, both the ether1 and ether3 patch have this problem.  Looks
+> like we'll see v4 coming some :-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+To be fair, we accepted some bits like that in the past ;)
 
-diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
-index 2673a3d..6cf57c5 100644
---- a/drivers/ata/sata_dwc_460ex.c
-+++ b/drivers/ata/sata_dwc_460ex.c
-@@ -1459,7 +1459,7 @@ static void sata_dwc_qc_prep_by_tag(struct ata_queued_cmd *qc, u8 tag)
+[PATCH net-next-2.6] atm: remove a net_device_stats clear
+
+No need to clear device stats in lec_open()
+
+Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
+---
+net/atm/lec.c |    1 -
+1 file changed, 1 deletion(-)
+
+diff --git a/net/atm/lec.c b/net/atm/lec.c
+index d98bde1..181d70c 100644
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -220,7 +220,6 @@ static unsigned char *get_tr_dst(unsigned char *packet, unsigned char *rdesc)
+ static int lec_open(struct net_device *dev)
  {
- 	struct scatterlist *sg = qc->sg;
- 	struct ata_port *ap = qc->ap;
--	u32 dma_chan;
-+	int dma_chan;
- 	struct sata_dwc_device *hsdev = HSDEV_FROM_AP(ap);
- 	struct sata_dwc_device_port *hsdevp = HSDEVP_FROM_AP(ap);
- 	int err;
+ 	netif_start_queue(dev);
+-	memset(&dev->stats, 0, sizeof(struct net_device_stats));
+ 
+ 	return 0;
+ }
+
+
