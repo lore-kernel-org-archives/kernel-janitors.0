@@ -1,17 +1,18 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Mon, 16 Aug 2010 19:23:50 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 18 Aug 2010 21:28:20 +0000
 Subject: Re: [PATCH 8/16] net/ax25: Use available error codes
-Message-Id: <20100816192350.GA10921@linux-mips.org>
+Message-Id: <20100818.142820.260103905.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.1008161826390.19313@ask.diku.dk>
 In-Reply-To: <Pine.LNX.4.64.1008161826390.19313@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: ralf@linux-mips.org, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Aug 16, 2010 at 06:26:57PM +0200, Julia Lawall wrote:
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 Aug 2010 18:26:57 +0200 (CEST)
 
 > From: Julia Lawall <julia@diku.dk>
 > 
@@ -20,37 +21,7 @@ On Mon, Aug 16, 2010 at 06:26:57PM +0200, Julia Lawall wrote:
 > 
 > The semantic match that finds this problem is as follows:
 > (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> local idexpression x;
-> constant C;
-> @@
-> 
-> if (...) { ...
->   x = -C
->   ... when != x
-> (
->   return <+...x...+>;
-> |
->   return NULL;
-> |
->   return;
-> |
-> * return ...;
-> )
-> }
-> // </smpl>
-> 
+ ...
 > Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
-> This changes the semantics and has not been tested.
 
-It restores the semantics to what they should be and used to be.  This
-probably happened during the introduction of proper refcounting and
-locking into the AX.25 stack.  Looks fine to me.
-
-Acked-by: Ralf Baechle <ralf@linux-mips.org>
-
-  Ralf
+Applied.
