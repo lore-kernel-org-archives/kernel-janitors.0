@@ -1,91 +1,105 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Thu, 19 Aug 2010 08:49:51 +0000
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 19 Aug 2010 09:12:52 +0000
 Subject: Re: [PATCH] slip: Use net_device_stats from struct net_device
-Message-Id: <1282207791.2549.16.camel@edumazet-laptop>
+Message-Id: <20100819091252.GB20793@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282206313-10667-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1282206313-10667-1-git-send-email-tklauser@distanz.ch>
+References: <1282206313-10667-1-git-send-email-tklauser@distanz.ch> <1282207791.2549.16.camel@edumazet-laptop>
+In-Reply-To: <1282207791.2549.16.camel@edumazet-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Tobias Klauser <tklauser@distanz.ch>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Eric Dumazet <eric.dumazet@gmail.com>
 Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le jeudi 19 août 2010 à 10:25 +0200, Tobias Klauser a écrit :
-> Use net_device->stats for stats instead of private variable copies in
-> struct slip.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-> ---
->  drivers/net/slip.c |   64 ++++++++++++++++++++++------------------------------
->  drivers/net/slip.h |    9 -------
->  2 files changed, 27 insertions(+), 46 deletions(-)
+On 2010-08-19 at 10:49:51 +0200, Eric Dumazet <eric.dumazet@gmail.com> wrot=
+e:
+> Le jeudi 19 ao=FBt 2010 =E0 10:25 +0200, Tobias Klauser a =E9crit :
+> > Use net_device->stats for stats instead of private variable copies in
+> > struct slip.
+> >=20
+> > Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+> > ---
+> >  drivers/net/slip.c |   64 ++++++++++++++++++++++----------------------=
+--------
+> >  drivers/net/slip.h |    9 -------
+> >  2 files changed, 27 insertions(+), 46 deletions(-)
+>=20
+>=20
+> > @@ -561,36 +562,25 @@ static int sl_change_mtu(struct net_device *dev, =
+int new_mtu)
+> >  static struct net_device_stats *
+> >  sl_get_stats(struct net_device *dev)
+> >  {
+> > -	static struct net_device_stats stats;
+> > +	struct net_device_stats *stats =3D &dev->stats;
+> >  	struct slip *sl =3D netdev_priv(dev);
+> >  #ifdef SL_INCLUDE_CSLIP
+> >  	struct slcompress *comp;
+> >  #endif
+> > =20
+> > -	memset(&stats, 0, sizeof(struct net_device_stats));
+> > -
+> > -	stats.rx_packets     =3D sl->rx_packets;
+> > -	stats.tx_packets     =3D sl->tx_packets;
+> > -	stats.rx_bytes	     =3D sl->rx_bytes;
+> > -	stats.tx_bytes	     =3D sl->tx_bytes;
+> > -	stats.rx_dropped     =3D sl->rx_dropped;
+> > -	stats.tx_dropped     =3D sl->tx_dropped;
+> > -	stats.tx_errors      =3D sl->tx_errors;
+> > -	stats.rx_errors      =3D sl->rx_errors;
+> > -	stats.rx_over_errors =3D sl->rx_over_errors;
+> >  #ifdef SL_INCLUDE_CSLIP
+> > -	stats.rx_fifo_errors =3D sl->rx_compressed;
+> > -	stats.tx_fifo_errors =3D sl->tx_compressed;
+> > -	stats.collisions     =3D sl->tx_misses;
+> > +	stats->rx_fifo_errors =3D sl->rx_compressed;
+> > +	stats->tx_fifo_errors =3D sl->tx_compressed;
+> > +	stats->collisions     =3D sl->tx_misses;
+> >  	comp =3D sl->slcomp;
+> >  	if (comp) {
+> > -		stats.rx_fifo_errors +=3D comp->sls_i_compressed;
+> > -		stats.rx_dropped     +=3D comp->sls_i_tossed;
+> > -		stats.tx_fifo_errors +=3D comp->sls_o_compressed;
+> > -		stats.collisions     +=3D comp->sls_o_misses;
+> > +		stats->rx_fifo_errors +=3D comp->sls_i_compressed;
+> > +		stats->rx_dropped     +=3D comp->sls_i_tossed;
+> > +		stats->tx_fifo_errors +=3D comp->sls_o_compressed;
+> > +		stats->collisions     +=3D comp->sls_o_misses;
+> >  	}
+> > -#endif /* CONFIG_INET */
+> > -	return (&stats);
+> > +#endif
+> > +	return stats;
+> >  }
+> > =20
+>=20
+> Hmm, this is wrong.
+>=20
+> Each time sl_get_stats() is called, you are adding stuff to dev->stats
 
+Hmmm, yeah. Sorry for the mess. That's completely wrong.
 
-> @@ -561,36 +562,25 @@ static int sl_change_mtu(struct net_device *dev, int new_mtu)
->  static struct net_device_stats *
->  sl_get_stats(struct net_device *dev)
->  {
-> -	static struct net_device_stats stats;
-> +	struct net_device_stats *stats = &dev->stats;
->  	struct slip *sl = netdev_priv(dev);
->  #ifdef SL_INCLUDE_CSLIP
->  	struct slcompress *comp;
->  #endif
->  
-> -	memset(&stats, 0, sizeof(struct net_device_stats));
-> -
-> -	stats.rx_packets     = sl->rx_packets;
-> -	stats.tx_packets     = sl->tx_packets;
-> -	stats.rx_bytes	     = sl->rx_bytes;
-> -	stats.tx_bytes	     = sl->tx_bytes;
-> -	stats.rx_dropped     = sl->rx_dropped;
-> -	stats.tx_dropped     = sl->tx_dropped;
-> -	stats.tx_errors      = sl->tx_errors;
-> -	stats.rx_errors      = sl->rx_errors;
-> -	stats.rx_over_errors = sl->rx_over_errors;
->  #ifdef SL_INCLUDE_CSLIP
-> -	stats.rx_fifo_errors = sl->rx_compressed;
-> -	stats.tx_fifo_errors = sl->tx_compressed;
-> -	stats.collisions     = sl->tx_misses;
-> +	stats->rx_fifo_errors = sl->rx_compressed;
-> +	stats->tx_fifo_errors = sl->tx_compressed;
-> +	stats->collisions     = sl->tx_misses;
->  	comp = sl->slcomp;
->  	if (comp) {
-> -		stats.rx_fifo_errors += comp->sls_i_compressed;
-> -		stats.rx_dropped     += comp->sls_i_tossed;
-> -		stats.tx_fifo_errors += comp->sls_o_compressed;
-> -		stats.collisions     += comp->sls_o_misses;
-> +		stats->rx_fifo_errors += comp->sls_i_compressed;
-> +		stats->rx_dropped     += comp->sls_i_tossed;
-> +		stats->tx_fifo_errors += comp->sls_o_compressed;
-> +		stats->collisions     += comp->sls_o_misses;
->  	}
-> -#endif /* CONFIG_INET */
-> -	return (&stats);
-> +#endif
-> +	return stats;
->  }
->  
+> Quite frankly I dont think its a kernel-janitors@vger.kernel.org patch,
+> its pretty normal netdev stuff.
+>=20
+> Please take a look at prior patch posted yesterday.
+>=20
+> http://marc.info/?l=3Dlinux-netdev&m=128213719605250&w=3D2
+>=20
+> Because either you should build your patch on top of it, or ask David to
+> revert mine before ;)
 
-Hmm, this is wrong.
+Oops, I didn't notice that one. I'll rebuild my patch on top of it.
 
-Each time sl_get_stats() is called, you are adding stuff to dev->stats
+> I advise using a ndo_get_stats64() so that you can perform the adds on a
+> private destination buffer.
 
-Quite frankly I dont think its a kernel-janitors@vger.kernel.org patch,
-its pretty normal netdev stuff.
+I'll do that.
 
-Please take a look at prior patch posted yesterday.
-
-http://marc.info/?l=linux-netdev&m8213719605250&w=2
-
-Because either you should build your patch on top of it, or ask David to
-revert mine before ;)
-
-I advise using a ndo_get_stats64() so that you can perform the adds on a
-private destination buffer.
-
-Thanks
-
-
+Thanks a lot
+Tobias
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
