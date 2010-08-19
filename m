@@ -1,38 +1,37 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 01 Aug 2010 06:12:30 +0000
-Subject: Re: [PATCH 1/7] 68328serial: check return value of copy_*_user()
-Message-Id: <20100801061230.GA2650@albatros>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 19 Aug 2010 10:04:38 +0000
+Subject: [patch] tokenring: remove unneeded NULL checks
+Message-Id: <20100819100438.GC6674@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280597881-8365-1-git-send-email-segooon@gmail.com>
- <20100731190907.GE26313@bicker>
-In-Reply-To: <20100731190907.GE26313@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Greg Ungerer <gerg@uclinux.org>, Christoph Egger <siccegge@cs.fau.de>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
 
-On Sat, Jul 31, 2010 at 21:09 +0200, Dan Carpenter wrote:
-> On Sat, Jul 31, 2010 at 09:38:00PM +0400, Kulikov Vasiliy wrote:
-> > -						sizeof(struct m68k_serial)))
-> > -				return -EFAULT;
-> > -			copy_to_user((struct m68k_serial *) arg,
-> > +			return copy_to_user((struct m68k_serial *) arg,
-> >  				    info, sizeof(struct m68k_serial));
-> 
-> We should return if -EFAULT copy_to_user() failes here.
+"fw_entry" is always non-NULL at this point and anyway
+release_firmware() handles NULL parameters.
 
-Right, I was looking for this bug and made it myself :)
-Thank you.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> 
-> > -			return 0;
-> > -			
-> >  		default:
-> >  			return -ENOIOCTLCMD;
-> >  		}
-> 
-> Smatch would have caught that but I don't have a cross compile
-> environment set up.
-> 
-> regards,
-> dan carpenter
+diff --git a/drivers/net/tokenring/tms380tr.c b/drivers/net/tokenring/tms380tr.c
+index 435ef7d..08182fd 100644
+--- a/drivers/net/tokenring/tms380tr.c
++++ b/drivers/net/tokenring/tms380tr.c
+@@ -1321,14 +1321,12 @@ static int tms380tr_reset_adapter(struct net_device *dev)
+ 
+ 			/* Clear CPHALT and start BUD */
+ 			SIFWRITEW(c, SIFACL);
+-			if (fw_entry)
+-				release_firmware(fw_entry);
++			release_firmware(fw_entry);
+ 			return (1);
+ 		}
+ 	} while(count = 0);
+ 
+-	if (fw_entry)
+-		release_firmware(fw_entry);
++	release_firmware(fw_entry);
+ 	printk(KERN_INFO "%s: Adapter Download Failed\n", dev->name);
+ 	return (-1);
+ }
