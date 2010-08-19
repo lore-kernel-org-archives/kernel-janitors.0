@@ -1,18 +1,22 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Tue, 17 Aug 2010 16:14:00 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 19 Aug 2010 07:05:52 +0000
 Subject: Re: [PATCH] greth: Use return value of register_netdev
-Message-Id: <20100817161400.GE15670@distanz.ch>
+Message-Id: <20100819.000552.220051390.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282061527-19429-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1282061527-19429-1-git-send-email-tklauser@distanz.ch>
+References: <1282061484-19377-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1282061484-19377-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: tklauser@distanz.ch
+Cc: kristoffer@gaisler.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2010-08-17 at 18:12:07 +0200, Tobias Klauser <tklauser@distanz.ch> wrote:
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Tue, 17 Aug 2010 18:11:24 +0200
+
 > Use the return value provided by register_netdev on error instead of
 > hard setting it to -ENOMEM.
+> 
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 
-Sorry for the duplicate, please disregard this one.
+Applied.
