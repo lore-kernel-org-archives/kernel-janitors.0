@@ -1,47 +1,41 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sat, 07 Aug 2010 06:41:17 +0000
-Subject: [PATCH 11/14] staging: comedi (adv_pci1710): use PCI_DEVICE() macro
-Message-Id: <1281163277.7976.18.camel@lenovo>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 19 Aug 2010 10:00:22 +0000
+Subject: [patch] V4L/DVB: saa7164: move dereference under NULL check
+Message-Id: <20100819100022.GA6674@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Steven Toth <stoth@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
+The original code dereferenced "port" before checking it for NULL.  I
+moved the test down below the check.  Also I changed the comparisons a
+little so people wouldn't get confused and think "port" and "buf" were
+ints instead of pointers.  (Probably that's what lead to this issue in
+the first place.)
 
+There is only one caller for this function and it passes non-NULL
+pointers, so this is essentially a cleanup rather than a bugfix.
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/comedi/drivers/adv_pci1710.c |   13 ++++++-------
- 1 files changed, 6 insertions(+), 7 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
-index bdd6954..466e69f 100644
---- a/drivers/staging/comedi/drivers/adv_pci1710.c
-+++ b/drivers/staging/comedi/drivers/adv_pci1710.c
-@@ -217,13 +217,12 @@ struct boardtype {
- };
+diff --git a/drivers/media/video/saa7164/saa7164-buffer.c b/drivers/media/video/saa7164/saa7164-buffer.c
+index 5713f3a..ddd25d3 100644
+--- a/drivers/media/video/saa7164/saa7164-buffer.c
++++ b/drivers/media/video/saa7164/saa7164-buffer.c
+@@ -136,10 +136,11 @@ ret:
+ int saa7164_buffer_dealloc(struct saa7164_tsport *port,
+ 	struct saa7164_buffer *buf)
+ {
+-	struct saa7164_dev *dev = port->dev;
++	struct saa7164_dev *dev;
  
- static DEFINE_PCI_DEVICE_TABLE(pci1710_pci_table) = {
--	{
--	PCI_VENDOR_ID_ADVANTECH, 0x1710, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_ADVANTECH, 0x1711, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_ADVANTECH, 0x1713, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_ADVANTECH, 0x1720, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_ADVANTECH, 0x1731, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	0}
-+	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1710) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1711) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1713) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1720) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_ADVANTECH, 0x1731) },
-+	{ 0 }
- };
+-	if ((buf = 0) || (port = 0))
++	if (!buf || !port)
+ 		return SAA_ERR_BAD_PARAMETER;
++	dev = port->dev;
  
- MODULE_DEVICE_TABLE(pci, pci1710_pci_table);
--- 
-1.7.0.4
-
-
+ 	dprintk(DBGLVL_BUF, "%s() deallocating buffer @ 0x%p\n", __func__, buf);
+ 
 
