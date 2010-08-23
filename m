@@ -1,31 +1,30 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 09 Aug 2010 15:51:29 +0000
-Subject: Re: [patch] radeon: handle errors in radeon_hwmon_init()
-Message-Id: <AANLkTinMg5vjSrEbB7mJmjxKSqseV+BHz3hU2K_4jL3P@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 23 Aug 2010 21:21:03 +0000
+Subject: [patch] pda_power: remove unneeded assignment
+Message-Id: <20100823212103.GA7340@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100807222042.GE9031@bicker>
-	<AANLkTi=ypWxuTiAZgYBi4s=Kda8eeihm7p4u0qQBy0Su@mail.gmail.com>
-In-Reply-To: <AANLkTi=ypWxuTiAZgYBi4s=Kda8eeihm7p4u0qQBy0Su@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>
-Cc: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>, Matthew Garrett <mjg@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Anton Vorontsov <cbouatmailru@gmail.com>
+Cc: Daniel Mack <daniel@caiaq.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2010/8/7 Rafał Miłecki <zajec5@gmail.com>:
-> 2010/8/8 Dan Carpenter <error27@gmail.com>:
->> Smatch complained that the ERR_PTR from hwmon_device_register() wasn't
->> handled.  I added some error handling in radeon_hwmon_init() to silence
->> the warning.
->>
->> Unfortunately errors from radeon_pm_init() aren't handled so this
->> doesn't really make a difference beyond silencing the warning.
->>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> Didn't we try to switch from DRM_ERROR to dev_err? I think that's
-> preferred method.
+We never use the "ret" value from this assignment, and also
+PTR_ERR(NULL) is zero.  I looked at it and this driver is designed to
+accept a NULL value for "ac_draw".  So there isn't a bug in the original
+code and we can just remove this confusing assignment.
 
-Other than that, the patch looks fine.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Reviewed-by: Alex Deucher <alexdeucher@gmail.com>
+diff --git a/drivers/power/pda_power.c b/drivers/power/pda_power.c
+index 69f8aa3..63a6a4d 100644
+--- a/drivers/power/pda_power.c
++++ b/drivers/power/pda_power.c
+@@ -279,7 +279,6 @@ static int pda_power_probe(struct platform_device *pdev)
+ 	if (IS_ERR(ac_draw)) {
+ 		dev_dbg(dev, "couldn't get ac_draw regulator\n");
+ 		ac_draw = NULL;
+-		ret = PTR_ERR(ac_draw);
+ 	}
+ 
+ 	if (pdata->is_ac_online) {
