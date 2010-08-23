@@ -1,8 +1,10 @@
-From: wins <inodos74@cox.net>
-Date: Mon, 23 Aug 2010 06:36:03 +0000
+From: wins <kolobo56@cox.net>
+Date: Mon, 23 Aug 2010 06:55:22 +0000
 Subject: Winner
-Message-Id: <20100823023603.73P18.557214.imail@fed1rmwml37>
+Message-Id: <20100823025522.YJEJ8.557352.imail@fed1rmwml37>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100823023603.73P18.557214.imail@fed1rmwml37>
+In-Reply-To: <20100823023603.73P18.557214.imail@fed1rmwml37>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
