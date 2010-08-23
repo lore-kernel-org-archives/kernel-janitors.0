@@ -1,12 +1,15 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 21 Aug 2010 09:30:17 +0000
+From: David Howells <dhowells@redhat.com>
+Date: Mon, 23 Aug 2010 13:31:34 +0000
 Subject: [PATCH] arch/mn10300/mm: eliminate NULL dereference
-Message-Id: <Pine.LNX.4.64.1008211129440.2637@ask.diku.dk>
+Message-Id: <20100823133134.25674.77240.stgit@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1008211129440.2637@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1008211129440.2637@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>, Koichi Yasutake <yasutake.koichi@jp.panasonic.com>, linux-am33-list@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: torvalds@osdl.org, akpm@linux-foundation.org
+Cc: linux-am33-list@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>, David Howells <dhowells@redhat.com>
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -32,10 +35,12 @@ expression dev,E;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
+
  arch/mn10300/mm/dma-alloc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
 
 diff --git a/arch/mn10300/mm/dma-alloc.c b/arch/mn10300/mm/dma-alloc.c
 index 4e34880..159acb0 100644
@@ -51,3 +56,4 @@ index 4e34880..159acb0 100644
  
  	if (0xbe000000 - pci_sram_allocated >= size) {
  		size = (size + 255) & ~255;
+
