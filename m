@@ -1,34 +1,27 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon, 09 Aug 2010 19:51:44 +0000
-Subject: [PATCH 12/18 v2] staging: crystalhd: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281383506-14438-1-git-send-email-segooon@gmail.com>
+From: Jarod Wilson <jarod@redhat.com>
+Date: Mon, 23 Aug 2010 17:47:55 +0000
+Subject: Re: [PATCH 12/18 v2] staging: crystalhd: call disable_pci_device()
+Message-Id: <20100823174755.GG28475@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1281383506-14438-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1281383506-14438-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Jarod Wilson <jarod@redhat.com>, Manu Abraham <abraham.manu@gmail.com>, Scott Davilla <davilla@4pi.com>, Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Kulikov Vasiliy <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Manu Abraham <abraham.manu@gmail.com>, Scott Davilla <davilla@4pi.com>, Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error.
+On Mon, Aug 09, 2010 at 11:51:44PM +0400, Kulikov Vasiliy wrote:
+> Driver should call disable_pci_device() if it returns from pci_probe()
+> with error.
+> 
+> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/staging/crystalhd/crystalhd_lnx.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Looks fine by me.
 
-diff --git a/drivers/staging/crystalhd/crystalhd_lnx.c b/drivers/staging/crystalhd/crystalhd_lnx.c
-index fbb80f0..115e79b 100644
---- a/drivers/staging/crystalhd/crystalhd_lnx.c
-+++ b/drivers/staging/crystalhd/crystalhd_lnx.c
-@@ -570,6 +570,7 @@ static int __devinit chd_dec_pci_probe(struct pci_dev *pdev,
- 	rc = chd_pci_reserve_mem(pinfo);
- 	if (rc) {
- 		BCMLOG_ERR("Failed to setup memory regions.\n");
-+		pci_disable_device(pdev);
- 		return -ENOMEM;
- 	}
- 
+Acked-by: Jarod Wilson <jarod@redhat.com>
+
 -- 
-1.7.0.4
+Jarod Wilson
+jarod@redhat.com
 
