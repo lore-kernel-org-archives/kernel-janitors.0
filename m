@@ -1,67 +1,79 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:28:59 +0000
-Subject: [PATCH 39/42] drivers/mfd: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052228320.31692@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 23 Aug 2010 16:14:07 +0000
+Subject: [patch] i915: signedness bugs in i915 ring buffer
+Message-Id: <20100823161407.GB19909@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Eric Anholt <eric@anholt.net>, Chris Wilson <chris@chris-wilson.co.uk>, Zou Nan hai <nanhai.zou@intel.com>, Xiang Hai hao <haihao.xiang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+"ring->space" is unsigned so it's never less than zero.
 
-Move the call to twl4030_config_sleep_sequence into the if branch that it
-is aligned with.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
-
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-This patch changes the semantics, and might not be what is intended.
-
- drivers/mfd/twl4030-power.c         |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/mfd/twl4030-power.c b/drivers/mfd/twl4030-power.c
-index 7efa878..9ab5a20 100644
---- a/drivers/mfd/twl4030-power.c
-+++ b/drivers/mfd/twl4030-power.c
-@@ -451,12 +451,13 @@ static int __init load_twl4030_script(struct twl4030_script *tscript,
- 		if (err)
- 			goto out;
+diff --git a/drivers/gpu/drm/i915/intel_ringbuffer.c b/drivers/gpu/drm/i915/intel_ringbuffer.c
+index 51e9c9e..a331898 100644
+--- a/drivers/gpu/drm/i915/intel_ringbuffer.c
++++ b/drivers/gpu/drm/i915/intel_ringbuffer.c
+@@ -208,9 +208,10 @@ static int init_ring_common(struct drm_device *dev,
+ 	else {
+ 		ring->head = ring->get_head(dev, ring);
+ 		ring->tail = ring->get_tail(dev, ring);
+-		ring->space = ring->head - (ring->tail + 8);
+-		if (ring->space < 0)
+-			ring->space += ring->size;
++		if (ring->head >= ring->tail + 8)
++			ring->space = ring->head - (ring->tail + 8);
++		else
++			ring->space = ring->head - (ring->tail + 8) + ring->size;
  	}
--	if (tscript->flags & TWL4030_SLEEP_SCRIPT)
-+	if (tscript->flags & TWL4030_SLEEP_SCRIPT) {
- 		if (order)
- 			pr_warning("TWL4030: Bad order of scripts (sleep "\
- 					"script before wakeup) Leads to boot"\
- 					"failure on some boards\n");
- 		err = twl4030_config_sleep_sequence(address);
-+	}
- out:
- 	return err;
+ 	return 0;
  }
+@@ -666,9 +667,10 @@ int intel_init_ring_buffer(struct drm_device *dev,
+ 	else {
+ 		ring->head = ring->get_head(dev, ring);
+ 		ring->tail = ring->get_tail(dev, ring);
+-		ring->space = ring->head - (ring->tail + 8);
+-		if (ring->space < 0)
+-			ring->space += ring->size;
++		if (ring->head >= ring->tail + 8)
++			ring->space = ring->head - (ring->tail + 8);
++		else
++			ring->space = ring->head - (ring->tail + 8) + ring->size;
+ 	}
+ 	INIT_LIST_HEAD(&ring->active_list);
+ 	INIT_LIST_HEAD(&ring->request_list);
+@@ -735,9 +737,10 @@ int intel_wait_ring_buffer(struct drm_device *dev,
+ 	end = jiffies + 3 * HZ;
+ 	do {
+ 		ring->head = ring->get_head(dev, ring);
+-		ring->space = ring->head - (ring->tail + 8);
+-		if (ring->space < 0)
+-			ring->space += ring->size;
++		if (ring->head >= ring->tail + 8)
++			ring->space = ring->head - (ring->tail + 8);
++		else
++			ring->space = ring->head - (ring->tail + 8) + ring->size;
+ 		if (ring->space >= n) {
+ 			trace_i915_ring_wait_end (dev);
+ 			return 0;
+diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
+index 44af317..707f32f 100644
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@ -109,9 +109,10 @@ void i915_kernel_lost_context(struct drm_device * dev)
+ 
+ 	ring->head = I915_READ(PRB0_HEAD) & HEAD_ADDR;
+ 	ring->tail = I915_READ(PRB0_TAIL) & TAIL_ADDR;
+-	ring->space = ring->head - (ring->tail + 8);
+-	if (ring->space < 0)
+-		ring->space += ring->size;
++	if (ring->head >= ring->tail + 8)
++		ring->space = ring->head - (ring->tail + 8);
++	else
++		ring->space = ring->head - (ring->tail + 8) + ring->size;
+ 
+ 	if (!dev->primary->master)
+ 		return;
