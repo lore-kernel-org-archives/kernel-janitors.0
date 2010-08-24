@@ -1,24 +1,70 @@
-From: Kalle Valo <kvalo@adurom.com>
-Date: Mon, 16 Aug 2010 17:47:56 +0000
-Subject: Re: [PATCH 3/16] drivers/net/wireless/wl12xx: Use available error
-Message-Id: <4C6979CC.80107@adurom.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 24 Aug 2010 14:39:49 +0000
+Subject: [PATCH 5/5] net/netfilter/ipvs: Eliminate memory leak
+Message-Id: <Pine.LNX.4.64.1008241639300.15172@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008161825010.19313@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008161825010.19313@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/16/2010 07:25 PM, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> In each case, error codes are stored in ret, but the return value is always
-> 0.  Return ret instead.
+From: Julia Lawall <julia@diku.dk>
 
-Thanks, looks correct to me.
+__ip_vs_service_get and __ip_vs_svc_fwm_get increment a reference count, so
+that reference count should be decremented before leaving the function in an
+error case.
 
-Acked-by: Kalle Valo <kvalo@adurom.com>
+A simplified version of the semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
 
-Kalle
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+identifier f1;
+iterator I;
+@@
+
+x = __ip_vs_service_get(...);
+<... when != x
+     when != true (x = NULL || ...)
+     when != if (...) { <+...x...+> }
+     when != I (...) { <+...x...+> }
+(
+ x = NULL
+|
+ x = E
+|
+ x->f1
+)
+...>
+* return ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/netfilter/ipvs/ip_vs_ctl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 0f0c079..f98169b 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2155,7 +2155,7 @@ do_ip_vs_set_ctl(struct sock *sk, int cmd, void __user *user, unsigned int len)
+ 	if (cmd != IP_VS_SO_SET_ADD
+ 	    && (svc = NULL || svc->protocol != usvc.protocol)) {
+ 		ret = -ESRCH;
+-		goto out_unlock;
++		goto out_drop_service;
+ 	}
+ 
+ 	switch (cmd) {
+@@ -2189,6 +2189,7 @@ do_ip_vs_set_ctl(struct sock *sk, int cmd, void __user *user, unsigned int len)
+ 		ret = -EINVAL;
+ 	}
+ 
++out_drop_service:
+ 	if (svc)
+ 		ip_vs_service_put(svc);
+ 
