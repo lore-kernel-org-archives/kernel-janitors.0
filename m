@@ -1,38 +1,67 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Date: Sun, 01 Aug 2010 10:06:38 +0000
-Subject: Re: [PATCH 5/7] usb: omap_udc: check return value of proc_create()
-Message-Id: <4C55472E.6000307@ru.mvista.com>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 24 Aug 2010 15:39:07 +0000
+Subject: [PATCH 13/18] Coccinelle: Add api/memdup_user
+Message-Id: <1282664352-15882-14-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280597965-8525-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1280597965-8525-1-git-send-email-segooon@gmail.com>
+References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, Tony Lindgren <tony@atomide.com>, Cory Maccarrone <darkstar6262@gmail.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
+Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello.
+Use kmemdup_user rather than duplicating its implementation
+This is a little bit restricted to reduce false positives
 
-Kulikov Vasiliy wrote:
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+ scripts/coccinelle/api/memdup_user.cocci |   35 ++++++++++++++++++++++++++++++
+ 1 files changed, 35 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/api/memdup_user.cocci
 
-> proc_create() may fail, if so return -ENOMEM.
+diff --git a/scripts/coccinelle/api/memdup_user.cocci b/scripts/coccinelle/api/memdup_user.cocci
+new file mode 100644
+index 0000000..72ce012
+--- /dev/null
++++ b/scripts/coccinelle/api/memdup_user.cocci
+@@ -0,0 +1,35 @@
++/// Use kmemdup_user rather than duplicating its implementation
++/// This is a little bit restricted to reduce false positives
++///
++// Confidence: High
++// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
++// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: -no_includes -include_headers
++
++virtual patch
++
++@@
++expression from,to,size,flag;
++position p;
++identifier l1,l2;
++@@
++
++-  to = \(kmalloc@p\|kzalloc@p\)(size,flag);
+++  to = memdup_user(from,size);
++   if (
++-      to=NULL
+++      IS_ERR(to)
++                 || ...) {
++   <+... when != goto l1;
++-  -ENOMEM
+++  PTR_ERR(to)
++   ...+>
++   }
++-  if (copy_from_user(to, from, size) != 0) {
++-    <+... when != goto l2;
++-    -EFAULT
++-    ...+>
++-  }
+-- 
+1.7.0.4
 
-> Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
-[...]
-> diff --git a/drivers/usb/gadget/omap_udc.c b/drivers/usb/gadget/omap_udc.c
-> index f81e4f0..1083216 100644
-> --- a/drivers/usb/gadget/omap_udc.c
-> +++ b/drivers/usb/gadget/omap_udc.c
-> @@ -2544,9 +2544,9 @@ static const struct file_operations proc_ops = {
->  	.release	= single_release,
->  };
->  
-> -static void create_proc_file(void)
-> +static int create_proc_file(void)
->  {
-> -	proc_create(proc_filename, 0, NULL, &proc_ops);
-> +	return (proc_create(proc_filename, 0, NULL, &proc_ops) = NULL);
-
-    Parens not needed around the *return* expression.
-
-WBR, Sergei
