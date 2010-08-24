@@ -1,61 +1,70 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Mon, 09 Aug 2010 19:51:52 +0000
-Subject: [PATCH 14/18 v2] staging: rtl8187se: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281383515-14478-1-git-send-email-segooon@gmail.com>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 24 Aug 2010 15:39:05 +0000
+Subject: [PATCH 11/18] Coccinelle: Add api/kstrdup.cocci
+Message-Id: <1282664352-15882-12-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Larry Finger <Larry.Finger@lwfinger.net>, Joe Perches <joe@perches.com>, "Prashant P. Shah" <pshah.mumbai@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
+Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error.
+Use kstrdup rather than duplicating its implementation
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/staging/rtl8187se/r8180_core.c |   10 +++++++---
- 1 files changed, 7 insertions(+), 3 deletions(-)
+ scripts/coccinelle/api/kstrdup.cocci |   39 ++++++++++++++++++++++++++++++++++
+ 1 files changed, 39 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/api/kstrdup.cocci
 
-diff --git a/drivers/staging/rtl8187se/r8180_core.c b/drivers/staging/rtl8187se/r8180_core.c
-index ed7457b..70ab008 100644
---- a/drivers/staging/rtl8187se/r8180_core.c
-+++ b/drivers/staging/rtl8187se/r8180_core.c
-@@ -3547,6 +3547,7 @@ static int __devinit rtl8180_pci_probe(struct pci_dev *pdev,
- 	struct net_device *dev = NULL;
- 	struct r8180_priv *priv = NULL;
- 	u8 unit = 0;
-+	int ret = -ENODEV;
- 
- 	unsigned long pmem_start, pmem_len, pmem_flags;
- 
-@@ -3561,8 +3562,10 @@ static int __devinit rtl8180_pci_probe(struct pci_dev *pdev,
- 	pci_set_dma_mask(pdev, 0xffffff00ULL);
- 	pci_set_consistent_dma_mask(pdev, 0xffffff00ULL);
- 	dev = alloc_ieee80211(sizeof(struct r8180_priv));
--	if (!dev)
--		return -ENOMEM;
-+	if (!dev) {
-+		ret = -ENOMEM;
-+		goto fail_free;
-+	}
- 	priv = ieee80211_priv(dev);
- 	priv->ieee80211 = netdev_priv(dev);
- 
-@@ -3641,11 +3644,12 @@ fail:
- 		free_ieee80211(dev);
- 	}
- 
-+fail_free:
- 	pci_disable_device(pdev);
- 
- 	DMESG("wlan driver load failed\n");
- 	pci_set_drvdata(pdev, NULL);
--	return -ENODEV;
-+	return ret;
- }
- 
- static void __devexit rtl8180_pci_remove(struct pci_dev *pdev)
+diff --git a/scripts/coccinelle/api/kstrdup.cocci b/scripts/coccinelle/api/kstrdup.cocci
+new file mode 100644
+index 0000000..e0805ad
+--- /dev/null
++++ b/scripts/coccinelle/api/kstrdup.cocci
+@@ -0,0 +1,39 @@
++/// Use kstrdup rather than duplicating its implementation
++///
++// Confidence: High
++// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
++// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: -no_includes -include_headers
++
++virtual patch
++
++@@
++expression from,to;
++expression flag,E1,E2;
++statement S;
++@@
++
++-  to = kmalloc(strlen(from) + 1,flag);
+++  to = kstrdup(from, flag);
++   ... when != \(from = E1 \| to = E1 \)
++   if (to=NULL || ...) S
++   ... when != \(from = E2 \| to = E2 \)
++-  strcpy(to, from);
++
++@@
++expression x,from,to;
++expression flag,E1,E2,E3;
++statement S;
++@@
++
++-   x = strlen(from) + 1;
++    ... when != \( x = E1 \| from = E1 \)
++-   to = \(kmalloc\|kzalloc\)(x,flag);
+++   to = kstrdup(from, flag);
++    ... when != \(x = E2 \| from = E2 \| to = E2 \)
++    if (to=NULL || ...) S
++    ... when != \(x = E3 \| from = E3 \| to = E3 \)
++-   memcpy(to, from, x);
 -- 
 1.7.0.4
 
