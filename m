@@ -1,62 +1,51 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 16 Aug 2010 16:27:47 +0000
-Subject: [PATCH 11/16] drivers/media/video: Use available error codes
-Message-Id: <Pine.LNX.4.64.1008161827310.19313@ask.diku.dk>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 24 Aug 2010 15:38:55 +0000
+Subject: [PATCH 01/18] Coccinelle: Add null/eno.cocci
+Message-Id: <1282664352-15882-2-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
+Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+The various basic memory allocation functions don't return ERR_PTR
 
-Error codes are stored in rc, but the return value is always 0.  Return rc
-instead.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-local idexpression x;
-constant C;
-@@
-
-if (...) { ...
-  x = -C
-  ... when != x
-(
-  return <+...x...+>;
-|
-  return NULL;
-|
-  return;
-|
-* return ...;
-)
-}
-// </smpl>
-
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
-This changes the semantics of the function, but currently its return value
-is ignored.  Alternatively, the function could be converted to return
-nothing.
+ scripts/coccinelle/null/eno.cocci |   20 ++++++++++++++++++++
+ 1 files changed, 20 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/null/eno.cocci
 
- drivers/media/video/zr364xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/scripts/coccinelle/null/eno.cocci b/scripts/coccinelle/null/eno.cocci
+new file mode 100644
+index 0000000..4c9c52b
+--- /dev/null
++++ b/scripts/coccinelle/null/eno.cocci
+@@ -0,0 +1,20 @@
++/// The various basic memory allocation functions don't return ERR_PTR
++///
++// Confidence: High
++// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
++// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: -no_includes -include_headers
++
++virtual patch
++
++@@
++expression x,E;
++@@
++
++x = \(kmalloc\|kzalloc\|kcalloc\|kmem_cache_alloc\|kmem_cache_zalloc\|kmem_cache_alloc_node\|kmalloc_node\|kzalloc_node\)(...)
++... when != x = E
++- IS_ERR(x)
+++ !x
+-- 
+1.7.0.4
 
-diff --git a/drivers/media/video/zr364xx.c b/drivers/media/video/zr364xx.c
-index a82b5bd..616c61f 100644
---- a/drivers/media/video/zr364xx.c
-+++ b/drivers/media/video/zr364xx.c
-@@ -572,7 +572,7 @@ static int zr364xx_got_frame(struct zr364xx_camera *cam, int jpgsize)
- 	DBG("wakeup [buf/i] [%p/%d]\n", buf, buf->vb.i);
- unlock:
- 	spin_unlock_irqrestore(&cam->slock, flags);
--	return 0;
-+	return rc;
- }
- 
- /* this function moves the usb stream read pipe data
