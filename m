@@ -1,68 +1,107 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 27 Aug 2010 21:01:29 +0000
-Subject: [PATCH 1/2] drivers/clocksource/cyclone.c: Move up iounmap
-Message-Id: <1282942890-465-1-git-send-email-julia@diku.dk>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 24 Aug 2010 15:38:56 +0000
+Subject: [PATCH 02/18] Coccinelle: Add null/kmerr.cocci
+Message-Id: <1282664352-15882-3-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
+Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-By moving the iounmap up above the test, it takes place whether the test
-succeeds or fails.
+This semantic patch looks for kmalloc etc that are not followed by a
+NULL check.  It only gives a report in the case where there is some
+error handling code later in the function, which may be helpful
+in determining what the error handling code for the call to kmalloc etc
+should be.
 
-The sematic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-local idexpression x;
-expression E,E1;
-identifier l;
-statement S;
-@@
-
-*x = ioremap_nocache(...);
-...
-if (x = NULL) S
-... when != iounmap(x)
-    when != if (...) { ... iounmap(x); ... }
-    when != E = x
-if (...) {
-  ... when != iounmap(x)
-      when != if (...) { ... iounmap(x); ... }
-(
-  return <+...x...+>;
-|
-* return ...;
-)
-}
-... when != x = E1
-iounmap(x);
-// </smpl>
-
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
- drivers/clocksource/cyclone.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/coccinelle/null/kmerr.cocci |   72 +++++++++++++++++++++++++++++++++++
+ 1 files changed, 72 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/null/kmerr.cocci
 
-diff --git a/drivers/clocksource/cyclone.c b/drivers/clocksource/cyclone.c
-index 64e528e..4c62e20 100644
---- a/drivers/clocksource/cyclone.c
-+++ b/drivers/clocksource/cyclone.c
-@@ -57,11 +57,11 @@ static int __init init_cyclone_clocksource(void)
- 	}
- 	/* even on 64bit systems, this is only 32bits: */
- 	base = readl(reg);
-+	iounmap(reg);
- 	if (!base) {
- 		printk(KERN_ERR "Summit chipset: Could not find valid CBAR value.\n");
- 		return -ENODEV;
- 	}
--	iounmap(reg);
- 
- 	/* setup PMCC: */
- 	offset = base + CYCLONE_PMCC_OFFSET;
+diff --git a/scripts/coccinelle/null/kmerr.cocci b/scripts/coccinelle/null/kmerr.cocci
+new file mode 100644
+index 0000000..949bf65
+--- /dev/null
++++ b/scripts/coccinelle/null/kmerr.cocci
+@@ -0,0 +1,72 @@
++/// This semantic patch looks for kmalloc etc that are not followed by a
++/// NULL check.  It only gives a report in the case where there is some
++/// error handling code later in the function, which may be helpful
++/// in determining what the error handling code for the call to kmalloc etc
++/// should be.
++///
++// Confidence: High
++// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
++// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: -no_includes -include_headers
++
++virtual context
++virtual org
++virtual report
++
++@withtest@
++expression x;
++position p;
++identifier f,fld;
++@@
++
++x@p = f(...);
++... when != x->fld
++\(x = NULL \| x != NULL\)
++
++@fixed depends on context && !org && !report@
++expression x,x1;
++position p1 != withtest.p;
++statement S;
++position any withtest.p;
++identifier f;
++@@
++
++*x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
++...
++*x1@p = f(...);
++if (!x1) S
++
++// ------------------------------------------------------------------------
++
++@rfixed depends on (org || report) && !context exists@
++expression x,x1;
++position p1 != withtest.p;
++position p2;
++statement S;
++position any withtest.p;
++identifier f;
++@@
++
++x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
++...
++x1@p = f@p2(...);
++if (!x1) S
++
++@script:python depends on org@
++p1 << rfixed.p1;
++p2 << rfixed.p2;
++@@
++
++cocci.print_main("alloc call",p1)
++cocci.print_secs("possible model",p2)
++
++@script:python depends on report@
++p1 << rfixed.p1;
++p2 << rfixed.p2;
++@@
++
++msg = "alloc with no test, possible model on line %s" % (p2[0].line)
++coccilib.report.print_report(p1[0],msg)
+-- 
+1.7.0.4
 
