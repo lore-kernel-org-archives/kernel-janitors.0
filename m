@@ -1,60 +1,108 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 16 Aug 2010 16:25:39 +0000
-Subject: [PATCH 4/16] drivers/media/video/zoran: Use available error codes
-Message-Id: <Pine.LNX.4.64.1008161825220.19313@ask.diku.dk>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 24 Aug 2010 15:38:58 +0000
+Subject: [PATCH 04/18] Coccinelle: Add locks/call_kern.cocci
+Message-Id: <1282664352-15882-5-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>, mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
+Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Find functions that refer to GFP_KERNEL but are called with locks held.
+The proposed change of converting the GFP_KERNEL is not necessarily the
+correct one.  It may be desired to unlock the lock, or to not call the
+function under the lock in the first place.
 
-Error codes are stored in res, but the return value is always 0.  Return
-res instead.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-local idexpression x;
-constant C;
-@@
-
-if (...) { ...
-  x = -C
-  ... when != x
-(
-  return <+...x...+>;
-|
-  return NULL;
-|
-  return;
-|
-* return ...;
-)
-}
-// </smpl>
-
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
-This changes the semantics and has not been tested.
+ scripts/coccinelle/locks/call_kern.cocci |   74 ++++++++++++++++++++++++++++++
+ 1 files changed, 74 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/locks/call_kern.cocci
 
- drivers/media/video/zoran/zoran_driver.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/scripts/coccinelle/locks/call_kern.cocci b/scripts/coccinelle/locks/call_kern.cocci
+new file mode 100644
+index 0000000..00af534
+--- /dev/null
++++ b/scripts/coccinelle/locks/call_kern.cocci
+@@ -0,0 +1,74 @@
++/// Find functions that refer to GFP_KERNEL but are called with locks held.
++/// The proposed change of converting the GFP_KERNEL is not necessarily the
++/// correct one.  It may be desired to unlock the lock, or to not call the
++/// function under the lock in the first place.
++///
++// Confidence: Moderate
++// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
++// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: -no_includes -include_headers
++
++virtual patch
++
++@gfp exists@
++identifier fn;
++position p;
++@@
++
++fn(...) {
++ ... when != read_unlock_irq(...)
++     when != write_unlock_irq(...)
++     when != read_unlock_irqrestore(...)
++     when != write_unlock_irqrestore(...)
++     when != spin_unlock(...)
++     when != spin_unlock_irq(...)
++     when != spin_unlock_irqrestore(...)
++     when != local_irq_enable(...)
++     when any
++ GFP_KERNEL@p
++ ... when any
++}
++
++@locked@
++identifier gfp.fn;
++@@
++
++(
++read_lock_irq
++|
++write_lock_irq
++|
++read_lock_irqsave
++|
++write_lock_irqsave
++|
++spin_lock
++|
++spin_trylock
++|
++spin_lock_irq
++|
++spin_lock_irqsave
++|
++local_irq_disable
++)
++ (...)
++...  when != read_unlock_irq(...)
++     when != write_unlock_irq(...)
++     when != read_unlock_irqrestore(...)
++     when != write_unlock_irqrestore(...)
++     when != spin_unlock(...)
++     when != spin_unlock_irq(...)
++     when != spin_unlock_irqrestore(...)
++     when != local_irq_enable(...)
++fn(...)
++
++@depends on locked@
++position gfp.p;
++@@
++
++- GFP_KERNEL@p
+++ GFP_ATOMIC
+-- 
+1.7.0.4
 
-diff --git a/drivers/media/video/zoran/zoran_driver.c b/drivers/media/video/zoran/zoran_driver.c
-index 6f89d0a..c155ddf 100644
---- a/drivers/media/video/zoran/zoran_driver.c
-+++ b/drivers/media/video/zoran/zoran_driver.c
-@@ -3322,7 +3322,7 @@ zoran_mmap (struct file           *file,
- mmap_unlock_and_return:
- 	mutex_unlock(&zr->resource_lock);
- 
--	return 0;
-+	return res;
- }
- 
- static const struct v4l2_ioctl_ops zoran_ioctl_ops = {
