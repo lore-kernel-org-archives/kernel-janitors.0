@@ -1,55 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 09 Aug 2010 14:45:19 +0000
-Subject: RE: [PATCH] scsi: mpt2sas: Add space in printk
-Message-Id: <Pine.LNX.4.64.1008091644280.28909@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 24 Aug 2010 16:55:05 +0000
+Subject: [patch 4/4] pxa168_eth: silence gcc warnings
+Message-Id: <20100824165505.GK29330@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052219190.31692@ask.diku.dk> <20100806075914.GS9031@bicker>
- <1C9608B8A4CD534FB19C7C7543CBB24902991CD597@inbmail02.lsi.com>
-In-Reply-To: <1C9608B8A4CD534FB19C7C7543CBB24902991CD597@inbmail02.lsi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Desai, Kashyap" <Kashyap.Desai@lsi.com>
-Cc: Dan Carpenter <error27@gmail.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Moore, Eric" <Eric.Moore@lsi.com>
+To: Sachin Sanap <ssanap@marvell.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 9 Aug 2010, Desai, Kashyap wrote:
+Casting "pep->tx_desc_dma" to to a struct tx_desc pointer makes gcc
+complain:
 
-> 
-> 
-> > -----Original Message-----
-> > From: Dan Carpenter [mailto:error27@gmail.com]
-> > Sent: Friday, August 06, 2010 1:29 PM
-> > To: Julia Lawall
-> > Cc: James E.J. Bottomley; linux-scsi@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Moore, Eric;
-> > Desai, Kashyap
-> > Subject: [PATCH] scsi: mpt2sas: Add space in printk
-> > 
-> > Add a space in the output:
-> > old:  Discovery: (stop)discovery_status(0x%08x)
-> > new:  Discovery: (stop) discovery_status(0x%08x)
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > ---
-> > This goes on top of Julia's [PATCH 9/42] drivers/scsi: Adjust
-> > confusing if indentation
-> > 
-> > diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c
-> > b/drivers/scsi/mpt2sas/mpt2sas_base.c
-> > index 12faf64..562b909 100644
-> > --- a/drivers/scsi/mpt2sas/mpt2sas_base.c
-> > +++ b/drivers/scsi/mpt2sas/mpt2sas_base.c
-> > @@ -532,7 +532,7 @@ _base_display_event_data(struct MPT2SAS_ADAPTER
-> > *ioc,
-> >  		    (event_data->ReasonCode =
-> > MPI2_EVENT_SAS_DISC_RC_STARTED) ?
-> >  		    "start" : "stop");
-> >  		if (event_data->DiscoveryStatus)
-> > -			printk("discovery_status(0x%08x)",
-> > +			printk(" discovery_status(0x%08x)",
-> I don't see any significant reason for changing print. It not adding any benefit.
+drivers/net/pxa168_eth.c:657: warning:
+	cast to pointer from integer of different size
 
-It would look a little nicer to have a space after the ) that is printed 
-by the previous statement.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-julia
+diff --git a/drivers/net/pxa168_eth.c b/drivers/net/pxa168_eth.c
+index f324b76..b1f440b 100644
+--- a/drivers/net/pxa168_eth.c
++++ b/drivers/net/pxa168_eth.c
+@@ -654,15 +654,15 @@ static void eth_port_start(struct net_device *dev)
+ 	/* Assignment of Tx CTRP of given queue */
+ 	tx_curr_desc = pep->tx_curr_desc_q;
+ 	wrl(pep, ETH_C_TX_DESC_1,
+-	    (u32) ((struct tx_desc *)pep->tx_desc_dma + tx_curr_desc));
++	    (u32) (pep->tx_desc_dma + tx_curr_desc * sizeof(struct tx_desc)));
+ 
+ 	/* Assignment of Rx CRDP of given queue */
+ 	rx_curr_desc = pep->rx_curr_desc_q;
+ 	wrl(pep, ETH_C_RX_DESC_0,
+-	    (u32) ((struct rx_desc *)pep->rx_desc_dma + rx_curr_desc));
++	    (u32) (pep->rx_desc_dma + rx_curr_desc * sizeof(struct rx_desc)));
+ 
+ 	wrl(pep, ETH_F_RX_DESC_0,
+-	    (u32) ((struct rx_desc *)pep->rx_desc_dma + rx_curr_desc));
++	    (u32) (pep->rx_desc_dma + rx_curr_desc * sizeof(struct rx_desc)));
+ 
+ 	/* Clear all interrupts */
+ 	wrl(pep, INT_CAUSE, 0);
