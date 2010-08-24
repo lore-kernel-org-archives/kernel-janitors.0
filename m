@@ -1,46 +1,36 @@
-From: Namhyung Kim <namhyung@gmail.com>
-Date: Fri, 06 Aug 2010 13:46:11 +0000
-Subject: Re: [PATCH] percpu: remove address_space attribute if !SMP
-Message-Id: <1281102371.1655.24.camel@leonhard>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 24 Aug 2010 12:07:43 +0000
+Subject: [rfc patch] libertas: fix if_spi_prog_helper_firmware()
+Message-Id: <20100824120743.GG29330@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281098768-5724-1-git-send-email-namhyung@gmail.com>
-	 <4C5C04D8.1080103@kernel.org> <1281099197.1655.11.camel@leonhard>
-	 <4C5C06A6.7070206@kernel.org> <1281101014.1655.20.camel@leonhard>
-	 <4C5C1011.6080209@kernel.org>
-In-Reply-To: <4C5C1011.6080209@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Williams <dcbw@redhat.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Ben Hutchings <ben@decadent.org.uk>, Mike Frysinger <vapier.adi@gmail.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2010-08-06 (=EA=B8=88), 15:37 +0200, Tejun Heo:
-> Hello,
->=20
+The indenting is not correct here.  I don't have this hardware and I'm
+just guessing as to what was intended.  I think that if there is an
+error we should return an error code, but if there isn't an error we
+should return success directly without releasing the firmware.
 
-Hi,
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> On 08/06/2010 03:23 PM, Namhyung Kim wrote:
-> > Sure. :-)
-> > Although I'm not sure that it is really needed, if so I'll do that.
->=20
-> Well, the whole __percpu markup thing is to detect misuse of percpu
-> pointers.  I think it would definitely be better to have the sanity
-> check for UP code too.  It's not like it's gonna cost any runtime
-> overhead and all the needed pieces are already there.
->=20
-> Thanks.
->=20
-
-I see. Thanks for the comments.
-
---=20
-Regards,
-Namhyung Kim
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/net/wireless/libertas/if_spi.c b/drivers/net/wireless/libertas/if_spi.c
+index fe3f080..123a541 100644
+--- a/drivers/net/wireless/libertas/if_spi.c
++++ b/drivers/net/wireless/libertas/if_spi.c
+@@ -471,9 +471,12 @@ static int if_spi_prog_helper_firmware(struct if_spi_card *card)
+ 		goto release_firmware;
+ 	err = spu_write_u16(card, IF_SPI_CARD_INT_CAUSE_REG,
+ 				IF_SPI_CIC_CMD_DOWNLOAD_OVER);
++	if (err)
+ 		goto release_firmware;
+ 
+-	lbs_deb_spi("waiting for helper to boot...\n");
++	lbs_deb_spi("helper firmware loaded...\n");
++
++	return 0;
+ 
+ release_firmware:
+ 	release_firmware(firmware);
