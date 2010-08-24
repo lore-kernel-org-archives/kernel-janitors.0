@@ -1,58 +1,149 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:18:18 +0000
-Subject: [PATCH 5/42] arch/s390/kernel: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052218010.31692@ask.diku.dk>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 24 Aug 2010 15:39:08 +0000
+Subject: [PATCH 14/18] Coccinelle: Move err_cast.cocci to the api directory
+Message-Id: <1282664352-15882-15-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
+Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-
-Indent the branch of an if.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
-@@
-
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
-// </smpl>
-
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
- arch/s390/kernel/kprobes.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/coccinelle/api/err_cast.cocci |   56 +++++++++++++++++++++++++++++++++
+ scripts/coccinelle/err_cast.cocci     |   56 ---------------------------------
+ 2 files changed, 56 insertions(+), 56 deletions(-)
+ create mode 100644 scripts/coccinelle/api/err_cast.cocci
+ delete mode 100644 scripts/coccinelle/err_cast.cocci
 
-diff --git a/arch/s390/kernel/kprobes.c b/arch/s390/kernel/kprobes.c
-index 2a3d2bf..5a7fccf 100644
---- a/arch/s390/kernel/kprobes.c
-+++ b/arch/s390/kernel/kprobes.c
-@@ -140,7 +140,7 @@ void __kprobes get_instruction_type(struct arch_specific_insn *ainsn)
- 	case 0xc0:
- 		if ((*ainsn->insn & 0x0f) = 0x00  /* larl  */
- 			|| (*ainsn->insn & 0x0f) = 0x05) /* brasl */
--		ainsn->fixup |= FIXUP_RETURN_REGISTER;
-+			ainsn->fixup |= FIXUP_RETURN_REGISTER;
- 		break;
- 	case 0xeb:
- 		if (*(((__u8 *) ainsn->insn) + 5 ) = 0x44 ||	/* bxhg  */
+diff --git a/scripts/coccinelle/api/err_cast.cocci b/scripts/coccinelle/api/err_cast.cocci
+new file mode 100644
+index 0000000..2ce1150
+--- /dev/null
++++ b/scripts/coccinelle/api/err_cast.cocci
+@@ -0,0 +1,56 @@
++///
++/// Use ERR_CAST inlined function instead of ERR_PTR(PTR_ERR(...))
++///
++// Confidence: High
++// Copyright: (C) 2009, 2010 Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2009, 2010 Julia Lawall, DIKU.  GPLv2.
++// Copyright: (C) 2009, 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options:
++//
++// Keywords: ERR_PTR, PTR_ERR, ERR_CAST
++// Version min: 2.6.25
++//
++
++virtual context
++virtual patch
++virtual org
++virtual report
++
++
++@ depends on context && !patch && !org && !report@
++expression x;
++@@
++
++* ERR_PTR(PTR_ERR(x))
++
++@ depends on !context && patch && !org && !report @
++expression x;
++@@
++
++- ERR_PTR(PTR_ERR(x))
+++ ERR_CAST(x)
++
++@r depends on !context && !patch && (org || report)@
++expression x;
++position p;
++@@
++
++ ERR_PTR@p(PTR_ERR(x))
++
++@script:python depends on org@
++p << r.p;
++x << r.x;
++@@
++
++msg="WARNING ERR_CAST can be used with %s" % (x)
++msg_safe=msg.replace("[","@(").replace("]",")")
++coccilib.org.print_todo(p[0], msg_safe)
++
++@script:python depends on report@
++p << r.p;
++x << r.x;
++@@
++
++msg="WARNING: ERR_CAST can be used with %s" % (x)
++coccilib.report.print_report(p[0], msg)
+diff --git a/scripts/coccinelle/err_cast.cocci b/scripts/coccinelle/err_cast.cocci
+deleted file mode 100644
+index 2ce1150..0000000
+--- a/scripts/coccinelle/err_cast.cocci
++++ /dev/null
+@@ -1,56 +0,0 @@
+-///
+-/// Use ERR_CAST inlined function instead of ERR_PTR(PTR_ERR(...))
+-///
+-// Confidence: High
+-// Copyright: (C) 2009, 2010 Nicolas Palix, DIKU.  GPLv2.
+-// Copyright: (C) 2009, 2010 Julia Lawall, DIKU.  GPLv2.
+-// Copyright: (C) 2009, 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
+-// URL: http://coccinelle.lip6.fr/
+-// Options:
+-//
+-// Keywords: ERR_PTR, PTR_ERR, ERR_CAST
+-// Version min: 2.6.25
+-//
+-
+-virtual context
+-virtual patch
+-virtual org
+-virtual report
+-
+-
+-@ depends on context && !patch && !org && !report@
+-expression x;
+-@@
+-
+-* ERR_PTR(PTR_ERR(x))
+-
+-@ depends on !context && patch && !org && !report @
+-expression x;
+-@@
+-
+-- ERR_PTR(PTR_ERR(x))
+-+ ERR_CAST(x)
+-
+-@r depends on !context && !patch && (org || report)@
+-expression x;
+-position p;
+-@@
+-
+- ERR_PTR@p(PTR_ERR(x))
+-
+-@script:python depends on org@
+-p << r.p;
+-x << r.x;
+-@@
+-
+-msg="WARNING ERR_CAST can be used with %s" % (x)
+-msg_safe=msg.replace("[","@(").replace("]",")")
+-coccilib.org.print_todo(p[0], msg_safe)
+-
+-@script:python depends on report@
+-p << r.p;
+-x << r.x;
+-@@
+-
+-msg="WARNING: ERR_CAST can be used with %s" % (x)
+-coccilib.report.print_report(p[0], msg)
+-- 
+1.7.0.4
+
