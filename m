@@ -1,51 +1,87 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sat, 07 Aug 2010 06:43:44 +0000
-Subject: [PATCH 14/14] staging: comedi (dt3000): use PCI_DEVICE() macro
-Message-Id: <1281163424.7976.21.camel@lenovo>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 24 Aug 2010 14:39:12 +0000
+Subject: [PATCH 3/5] fs/btrfs: Eliminate memory leak
+Message-Id: <Pine.LNX.4.64.1008241638560.15172@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@oracle.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
+From: Julia Lawall <julia@diku.dk>
 
+This code is preceded by a call to btrfs_alloc_path, which allocates some
+memory.  There is some error handling code at the end of the function that
+frees it, that can be taken advantage of with a little ordering adjustment.
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+A simplified version of the semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+expression E;
+identifier f1;
+iterator I;
+@@
+
+x = btrfs_alloc_path(...);
+<... when != x
+     when != true (x = NULL || ...)
+     when != if (...) { <+...x...+> }
+     when != I (...) { <+...x...+> }
+(
+ x = NULL
+|
+ x = E
+|
+ x->f1
+)
+...>
+* return ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/comedi/drivers/dt3000.c |   17 ++++++++---------
- 1 files changed, 8 insertions(+), 9 deletions(-)
+ fs/btrfs/inode.c |   17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/dt3000.c b/drivers/staging/comedi/drivers/dt3000.c
-index 656e7bb..6170f7b 100644
---- a/drivers/staging/comedi/drivers/dt3000.c
-+++ b/drivers/staging/comedi/drivers/dt3000.c
-@@ -165,15 +165,14 @@ static const struct dt3k_boardtype dt3k_boardtypes[] = {
- #define this_board ((const struct dt3k_boardtype *)dev->board_ptr)
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index c038644..d38587c 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -4438,15 +4438,14 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
+ 	BUG_ON(!path);
  
- static DEFINE_PCI_DEVICE_TABLE(dt3k_pci_table) = {
--	{
--	PCI_VENDOR_ID_DT, 0x0022, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_DT, 0x0027, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_DT, 0x0023, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_DT, 0x0024, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_DT, 0x0028, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_DT, 0x0025, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_DT, 0x0026, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	0}
-+	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0022) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0027) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0023) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0024) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0028) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0025) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_DT, 0x0026) },
-+	{ 0 }
- };
+ 	inode = new_inode(root->fs_info->sb);
+-	if (!inode)
+-		return ERR_PTR(-ENOMEM);
+-
++	if (!inode) {
++		ret = -ENOMEM;
++		goto fail_path;
++	}
+ 	if (dir) {
+ 		ret = btrfs_set_inode_index(dir, index);
+-		if (ret) {
+-			iput(inode);
+-			return ERR_PTR(ret);
+-		}
++		if (ret)
++			goto fail_inode;
+ 	}
+ 	/*
+ 	 * index_cnt is ignored for everything but a dir,
+@@ -4519,8 +4518,10 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
+ fail:
+ 	if (dir)
+ 		BTRFS_I(dir)->index_cnt--;
+-	btrfs_free_path(path);
++fail_inode:
+ 	iput(inode);
++fail_path:
++	btrfs_free_path(path);
+ 	return ERR_PTR(ret);
+ }
  
- MODULE_DEVICE_TABLE(pci, dt3k_pci_table);
--- 
-1.7.0.4
-
-
-
