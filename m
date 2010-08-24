@@ -1,81 +1,125 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Fri, 06 Aug 2010 19:53:09 +0000
-Subject: [PATCH 15/18] staging: rtl8187e: call disable_pci_device() if pci_probe() failed
-Message-Id: <1281124392-13877-1-git-send-email-segooon@gmail.com>
+From: Nicolas Palix <npalix@diku.dk>
+Date: Tue, 24 Aug 2010 15:38:59 +0000
+Subject: [PATCH 05/18] Coccinelle: Add locks/double_lock.cocci
+Message-Id: <1282664352-15882-6-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mike McCormack <mikem@ring3k.org>, Jeff Mahoney <jeffm@suse.com>, Julia Lawall <julia@diku.dk>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
+Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Driver should call disable_pci_device() if it returns from pci_probe()
-with error. Also it must not be called if request_*_region() fails as
-it means that somebody uses device resources and rules the device.
+Find double locks.  False positives may occur when some paths cannot
+occur at execution, due to the values of variables, and when there is
+an intervening function call that releases the lock.
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
+Signed-off-by: Nicolas Palix <npalix@diku.dk>
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/staging/rtl8192e/r8192E_core.c |   16 ++++++++++++----
- 1 files changed, 12 insertions(+), 4 deletions(-)
+ scripts/coccinelle/locks/double_lock.cocci |   92 ++++++++++++++++++++++++++++
+ 1 files changed, 92 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/locks/double_lock.cocci
 
-diff --git a/drivers/staging/rtl8192e/r8192E_core.c b/drivers/staging/rtl8192e/r8192E_core.c
-index 17a806f..7ea2959 100644
---- a/drivers/staging/rtl8192e/r8192E_core.c
-+++ b/drivers/staging/rtl8192e/r8192E_core.c
-@@ -6325,6 +6325,8 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
- 	struct net_device *dev = NULL;
- 	struct r8192_priv *priv= NULL;
- 	u8 unit = 0;
-+	int ret = -ENODEV;
-+	int pci_dev_busy = 0;
- 
- #ifdef CONFIG_RTL8192_IO_MAP
- 	unsigned long pio_start, pio_len, pio_flags;
-@@ -6344,8 +6346,10 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
- 	pci_set_dma_mask(pdev, 0xffffff00ULL);
- 	pci_set_consistent_dma_mask(pdev,0xffffff00ULL);
- 	dev = alloc_ieee80211(sizeof(struct r8192_priv));
--	if (!dev)
--		return -ENOMEM;
-+	if (!dev) {
-+		ret = -ENOMEM;
-+		goto fail_free;
-+	}
- 
- 	pci_set_drvdata(pdev, dev);
- 	SET_NETDEV_DEV(dev, &pdev->dev);
-@@ -6373,6 +6377,7 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
- 	//DMESG("IO space @ 0x%08lx", pio_start );
- 	if( ! request_region( pio_start, pio_len, RTL819xE_MODULE_NAME ) ){
- 		RT_TRACE(COMP_ERR,"request_region failed!");
-+		pci_dev_busy = 1;
- 		goto fail;
- 	}
- 
-@@ -6393,6 +6398,7 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
- 	//DMESG("Memory mapped space @ 0x%08lx ", pmem_start);
- 	if( ! request_mem_region(pmem_start, pmem_len, RTL819xE_MODULE_NAME)) {
- 		RT_TRACE(COMP_ERR,"request_mem_region failed!");
-+		pci_dev_busy = 1;
- 		goto fail;
- 	}
- 
-@@ -6494,11 +6500,13 @@ fail:
- 		free_ieee80211(dev);
- 	}
- 
--	pci_disable_device(pdev);
-+fail_free:
-+	if (!pci_dev_busy)
-+		pci_disable_device(pdev);
- 
- 	DMESG("wlan driver load failed\n");
- 	pci_set_drvdata(pdev, NULL);
--	return -ENODEV;
-+	return ret;
- 
- }
- 
+diff --git a/scripts/coccinelle/locks/double_lock.cocci b/scripts/coccinelle/locks/double_lock.cocci
+new file mode 100644
+index 0000000..63b24e6
+--- /dev/null
++++ b/scripts/coccinelle/locks/double_lock.cocci
+@@ -0,0 +1,92 @@
++/// Find double locks.  False positives may occur when some paths cannot
++/// occur at execution, due to the values of variables, and when there is
++/// an intervening function call that releases the lock.
++///
++// Confidence: Moderate
++// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
++// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
++// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: -no_includes -include_headers
++
++virtual org
++virtual report
++
++@locked@
++position p1;
++expression E1;
++position p;
++@@
++
++(
++mutex_lock@p1
++|
++mutex_trylock@p1
++|
++spin_lock@p1
++|
++spin_trylock@p1
++|
++read_lock@p1
++|
++read_trylock@p1
++|
++write_lock@p1
++|
++write_trylock@p1
++) (E1@p,...);
++
++@balanced@
++position p1 != locked.p1;
++position locked.p;
++identifier lock,unlock;
++expression x <= locked.E1;
++expression E,locked.E1;
++expression E2;
++@@
++
++if (E) {
++ <+... when != E1
++ lock(E1@p,...)
++ ...+>
++}
++... when != E1
++    when != \(x = E2\|&x\)
++    when forall
++if (E) {
++ <+... when != E1
++ unlock@p1(E1,...)
++ ...+>
++}
++
++@r depends on !balanced exists@
++expression x <= locked.E1;
++expression locked.E1;
++expression E2;
++identifier lock;
++position locked.p,p1,p2;
++@@
++
++lock@p1 (E1@p,...);
++... when != E1
++    when != \(x = E2\|&x\)
++lock@p2 (E1,...);
++
++@script:python depends on org@
++p1 << r.p1;
++p2 << r.p2;
++lock << r.lock;
++@@
++
++cocci.print_main(lock,p1)
++cocci.print_secs("second lock",p2)
++
++@script:python depends on report@
++p1 << r.p1;
++p2 << r.p2;
++lock << r.lock;
++@@
++
++msg = "second lock on line %s" % (p2[0].line)
++coccilib.report.print_report(p1[0],msg)
 -- 
 1.7.0.4
 
