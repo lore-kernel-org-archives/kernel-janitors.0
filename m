@@ -1,7 +1,7 @@
 From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 24 Aug 2010 15:38:57 +0000
-Subject: [PATCH 03/18] Coccinelle: Move deref_null.cocci to a more appropriate directory
-Message-Id: <1282664352-15882-4-git-send-email-npalix@diku.dk>
+Date: Tue, 24 Aug 2010 15:39:00 +0000
+Subject: [PATCH 06/18] Coccinelle: Add locks/mini_lock.cocci
+Message-Id: <1282664352-15882-7-git-send-email-npalix@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
@@ -11,616 +11,121 @@ Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
 Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-deref_null.cocci is moved to the 'null' directory
-which contains other null related rules.
+Find missing unlocks.  This semantic match considers the specific case
+where the unlock is missing from an if branch, and there is a lock
+before the if and an unlock after the if.  False positives are due to
+cases where the if branch represents a case where the function is
+supposed to exit with the lock held, or where there is some preceding
+function call that releases the lock.
 
 Signed-off-by: Nicolas Palix <npalix@diku.dk>
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- scripts/coccinelle/deref_null.cocci      |  293 ------------------------------
- scripts/coccinelle/null/deref_null.cocci |  293 ++++++++++++++++++++++++++++++
- 2 files changed, 293 insertions(+), 293 deletions(-)
- delete mode 100644 scripts/coccinelle/deref_null.cocci
- create mode 100644 scripts/coccinelle/null/deref_null.cocci
+ scripts/coccinelle/locks/mini_lock.cocci |   95 ++++++++++++++++++++++++++++++
+ 1 files changed, 95 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/coccinelle/locks/mini_lock.cocci
 
-diff --git a/scripts/coccinelle/deref_null.cocci b/scripts/coccinelle/deref_null.cocci
-deleted file mode 100644
-index 9969d76..0000000
---- a/scripts/coccinelle/deref_null.cocci
-+++ /dev/null
-@@ -1,293 +0,0 @@
--///
--/// A variable is dereference under a NULL test.
--/// Even though it is know to be NULL.
--///
--// Confidence: Moderate
--// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
--// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
--// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
--// URL: http://coccinelle.lip6.fr/
--// Comments: -I ... -all_includes can give more complete results
--// Options:
--
--virtual context
--virtual patch
--virtual org
--virtual report
--
--@initialize:python depends on !context && patch && !org && !report@
--
--import sys
--print >> sys.stderr, "This semantic patch does not support the 'patch' mode."
--
--@depends on patch@
--@@
--
--this_rule_should_never_matches();
--
--@ifm depends on !patch@
--expression *E;
--statement S1,S2;
--position p1;
--@@
--
--if@p1 ((E = NULL && ...) || ...) S1 else S2
--
--// The following two rules are separate, because both can match a single
--// expression in different ways
--@pr1 depends on !patch expression@
--expression *ifm.E;
--identifier f;
--position p1;
--@@
--
-- (E != NULL && ...) ? <+...E->f@p1...+> : ...
--
--@pr2 depends on !patch expression@
--expression *ifm.E;
--identifier f;
--position p2;
--@@
--
--(
--  (E != NULL) && ... && <+...E->f@p2...+>
--|
--  (E = NULL) || ... || <+...E->f@p2...+>
--|
-- sizeof(<+...E->f@p2...+>)
--)
--
--// For org and report modes
--
--@r depends on !context && !patch && (org || report) exists@
--expression subE <= ifm.E;
--expression *ifm.E;
--expression E1,E2;
--identifier f;
--statement S1,S2,S3,S4;
--iterator iter;
--position p!={pr1.p1,pr2.p2};
--position ifm.p1;
--@@
--
--if@p1 ((E = NULL && ...) || ...)
--{
--  ... when != if (...) S1 else S2
--(
-- iter(subE,...) S4 // no use
--|
-- list_remove_head(E2,subE,...)
--|
-- subE = E1
--|
-- for(subE = E1;...;...) S4
--|
-- subE++
--|
-- ++subE
--|
-- --subE
--|
-- subE--
--|
-- &subE
--|
-- E->f@p // bad use
--)
--  ... when any
--  return ...;
--}
--else S3
--
--@script:python depends on !context && !patch && !org && report@
--p << r.p;
--p1 << ifm.p1;
--x << ifm.E;
--@@
--
--msg="ERROR: %s is NULL but dereferenced." % (x)
--coccilib.report.print_report(p[0], msg)
--cocci.include_match(False)
--
--@script:python depends on !context && !patch && org && !report@
--p << r.p;
--p1 << ifm.p1;
--x << ifm.E;
--@@
--
--msg="ERROR: %s is NULL but dereferenced." % (x)
--msg_safe=msg.replace("[","@(").replace("]",")")
--cocci.print_main(msg_safe,p)
--cocci.include_match(False)
--
--@s depends on !context && !patch && (org || report) exists@
--expression subE <= ifm.E;
--expression *ifm.E;
--expression E1,E2;
--identifier f;
--statement S1,S2,S3,S4;
--iterator iter;
--position p!={pr1.p1,pr2.p2};
--position ifm.p1;
--@@
--
--if@p1 ((E = NULL && ...) || ...)
--{
--  ... when != if (...) S1 else S2
--(
-- iter(subE,...) S4 // no use
--|
-- list_remove_head(E2,subE,...)
--|
-- subE = E1
--|
-- for(subE = E1;...;...) S4
--|
-- subE++
--|
-- ++subE
--|
-- --subE
--|
-- subE--
--|
-- &subE
--|
-- E->f@p // bad use
--)
--  ... when any
--}
--else S3
--
--@script:python depends on !context && !patch && !org && report@
--p << s.p;
--p1 << ifm.p1;
--x << ifm.E;
--@@
--
--msg="ERROR: %s is NULL but dereferenced." % (x)
--coccilib.report.print_report(p[0], msg)
--
--@script:python depends on !context && !patch && org && !report@
--p << s.p;
--p1 << ifm.p1;
--x << ifm.E;
--@@
--
--msg="ERROR: %s is NULL but dereferenced." % (x)
--msg_safe=msg.replace("[","@(").replace("]",")")
--cocci.print_main(msg_safe,p)
--
--// For context mode
--
--@depends on context && !patch && !org && !report exists@
--expression subE <= ifm.E;
--expression *ifm.E;
--expression E1,E2;
--identifier f;
--statement S1,S2,S3,S4;
--iterator iter;
--position p!={pr1.p1,pr2.p2};
--position ifm.p1;
--@@
--
--if@p1 ((E = NULL && ...) || ...)
--{
--  ... when != if (...) S1 else S2
--(
-- iter(subE,...) S4 // no use
--|
-- list_remove_head(E2,subE,...)
--|
-- subE = E1
--|
-- for(subE = E1;...;...) S4
--|
-- subE++
--|
-- ++subE
--|
-- --subE
--|
-- subE--
--|
-- &subE
--|
--* E->f@p // bad use
--)
--  ... when any
--  return ...;
--}
--else S3
--
--// The following three rules are duplicates of ifm, pr1 and pr2 respectively.
--// It is need because the previous rule as already made a "change".
--
--@ifm1 depends on !patch@
--expression *E;
--statement S1,S2;
--position p1;
--@@
--
--if@p1 ((E = NULL && ...) || ...) S1 else S2
--
--@pr11 depends on !patch expression@
--expression *ifm1.E;
--identifier f;
--position p1;
--@@
--
-- (E != NULL && ...) ? <+...E->f@p1...+> : ...
--
--@pr12 depends on !patch expression@
--expression *ifm1.E;
--identifier f;
--position p2;
--@@
--
--(
--  (E != NULL) && ... && <+...E->f@p2...+>
--|
--  (E = NULL) || ... || <+...E->f@p2...+>
--|
-- sizeof(<+...E->f@p2...+>)
--)
--
--@depends on context && !patch && !org && !report exists@
--expression subE <= ifm1.E;
--expression *ifm1.E;
--expression E1,E2;
--identifier f;
--statement S1,S2,S3,S4;
--iterator iter;
--position p!={pr11.p1,pr12.p2};
--position ifm1.p1;
--@@
--
--if@p1 ((E = NULL && ...) || ...)
--{
--  ... when != if (...) S1 else S2
--(
-- iter(subE,...) S4 // no use
--|
-- list_remove_head(E2,subE,...)
--|
-- subE = E1
--|
-- for(subE = E1;...;...) S4
--|
-- subE++
--|
-- ++subE
--|
-- --subE
--|
-- subE--
--|
-- &subE
--|
--* E->f@p // bad use
--)
--  ... when any
--}
--else S3
-diff --git a/scripts/coccinelle/null/deref_null.cocci b/scripts/coccinelle/null/deref_null.cocci
+diff --git a/scripts/coccinelle/locks/mini_lock.cocci b/scripts/coccinelle/locks/mini_lock.cocci
 new file mode 100644
-index 0000000..9969d76
+index 0000000..7641a29
 --- /dev/null
-+++ b/scripts/coccinelle/null/deref_null.cocci
-@@ -0,0 +1,293 @@
-+///
-+/// A variable is dereference under a NULL test.
-+/// Even though it is know to be NULL.
++++ b/scripts/coccinelle/locks/mini_lock.cocci
+@@ -0,0 +1,95 @@
++/// Find missing unlocks.  This semantic match considers the specific case
++/// where the unlock is missing from an if branch, and there is a lock
++/// before the if and an unlock after the if.  False positives are due to
++/// cases where the if branch represents a case where the function is
++/// supposed to exit with the lock held, or where there is some preceding
++/// function call that releases the lock.
 +///
 +// Confidence: Moderate
 +// Copyright: (C) 2010 Nicolas Palix, DIKU.  GPLv2.
 +// Copyright: (C) 2010 Julia Lawall, DIKU.  GPLv2.
 +// Copyright: (C) 2010 Gilles Muller, INRIA/LiP6.  GPLv2.
 +// URL: http://coccinelle.lip6.fr/
-+// Comments: -I ... -all_includes can give more complete results
-+// Options:
++// Comments:
++// Options: -no_includes -include_headers
 +
-+virtual context
-+virtual patch
 +virtual org
 +virtual report
 +
-+@initialize:python depends on !context && patch && !org && !report@
-+
-+import sys
-+print >> sys.stderr, "This semantic patch does not support the 'patch' mode."
-+
-+@depends on patch@
-+@@
-+
-+this_rule_should_never_matches();
-+
-+@ifm depends on !patch@
-+expression *E;
-+statement S1,S2;
-+position p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...) S1 else S2
-+
-+// The following two rules are separate, because both can match a single
-+// expression in different ways
-+@pr1 depends on !patch expression@
-+expression *ifm.E;
-+identifier f;
-+position p1;
-+@@
-+
-+ (E != NULL && ...) ? <+...E->f@p1...+> : ...
-+
-+@pr2 depends on !patch expression@
-+expression *ifm.E;
-+identifier f;
-+position p2;
++@prelocked@
++position p1,p;
++expression E1;
 +@@
 +
 +(
-+  (E != NULL) && ... && <+...E->f@p2...+>
++mutex_lock@p1
 +|
-+  (E = NULL) || ... || <+...E->f@p2...+>
++mutex_trylock@p1
 +|
-+ sizeof(<+...E->f@p2...+>)
-+)
++spin_lock@p1
++|
++spin_trylock@p1
++|
++read_lock@p1
++|
++read_trylock@p1
++|
++write_lock@p1
++|
++write_trylock@p1
++|
++read_lock_irq@p1
++|
++write_lock_irq@p1
++|
++read_lock_irqsave@p1
++|
++write_lock_irqsave@p1
++|
++spin_lock_irq@p1
++|
++spin_lock_irqsave@p1
++) (E1@p,...);
 +
-+// For org and report modes
-+
-+@r depends on !context && !patch && (org || report) exists@
-+expression subE <= ifm.E;
-+expression *ifm.E;
-+expression E1,E2;
-+identifier f;
-+statement S1,S2,S3,S4;
-+iterator iter;
-+position p!={pr1.p1,pr2.p2};
-+position ifm.p1;
++@looped@
++position r;
 +@@
 +
-+if@p1 ((E = NULL && ...) || ...)
-+{
-+  ... when != if (...) S1 else S2
-+(
-+ iter(subE,...) S4 // no use
-+|
-+ list_remove_head(E2,subE,...)
-+|
-+ subE = E1
-+|
-+ for(subE = E1;...;...) S4
-+|
-+ subE++
-+|
-+ ++subE
-+|
-+ --subE
-+|
-+ subE--
-+|
-+ &subE
-+|
-+ E->f@p // bad use
-+)
-+  ... when any
-+  return ...;
++for(...;...;...) { <+... return@r ...; ...+> }
++
++@err@
++expression E1;
++position prelocked.p;
++position up != prelocked.p1;
++position r!=looped.r;
++identifier lock,unlock;
++@@
++
++lock(E1@p,...);
++<+... when != E1
++if (...) {
++  ... when != E1
++  return@r ...;
 +}
-+else S3
++...+>
++unlock@up(E1,...);
 +
-+@script:python depends on !context && !patch && !org && report@
-+p << r.p;
-+p1 << ifm.p1;
-+x << ifm.E;
++@script:python depends on org@
++p << prelocked.p1;
++lock << err.lock;
++unlock << err.unlock;
++p2 << err.r;
 +@@
 +
-+msg="ERROR: %s is NULL but dereferenced." % (x)
-+coccilib.report.print_report(p[0], msg)
-+cocci.include_match(False)
++cocci.print_main(lock,p)
++cocci.print_secs(unlock,p2)
 +
-+@script:python depends on !context && !patch && org && !report@
-+p << r.p;
-+p1 << ifm.p1;
-+x << ifm.E;
++@script:python depends on report@
++p << prelocked.p1;
++lock << err.lock;
++unlock << err.unlock;
++p2 << err.r;
 +@@
 +
-+msg="ERROR: %s is NULL but dereferenced." % (x)
-+msg_safe=msg.replace("[","@(").replace("]",")")
-+cocci.print_main(msg_safe,p)
-+cocci.include_match(False)
-+
-+@s depends on !context && !patch && (org || report) exists@
-+expression subE <= ifm.E;
-+expression *ifm.E;
-+expression E1,E2;
-+identifier f;
-+statement S1,S2,S3,S4;
-+iterator iter;
-+position p!={pr1.p1,pr2.p2};
-+position ifm.p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...)
-+{
-+  ... when != if (...) S1 else S2
-+(
-+ iter(subE,...) S4 // no use
-+|
-+ list_remove_head(E2,subE,...)
-+|
-+ subE = E1
-+|
-+ for(subE = E1;...;...) S4
-+|
-+ subE++
-+|
-+ ++subE
-+|
-+ --subE
-+|
-+ subE--
-+|
-+ &subE
-+|
-+ E->f@p // bad use
-+)
-+  ... when any
-+}
-+else S3
-+
-+@script:python depends on !context && !patch && !org && report@
-+p << s.p;
-+p1 << ifm.p1;
-+x << ifm.E;
-+@@
-+
-+msg="ERROR: %s is NULL but dereferenced." % (x)
-+coccilib.report.print_report(p[0], msg)
-+
-+@script:python depends on !context && !patch && org && !report@
-+p << s.p;
-+p1 << ifm.p1;
-+x << ifm.E;
-+@@
-+
-+msg="ERROR: %s is NULL but dereferenced." % (x)
-+msg_safe=msg.replace("[","@(").replace("]",")")
-+cocci.print_main(msg_safe,p)
-+
-+// For context mode
-+
-+@depends on context && !patch && !org && !report exists@
-+expression subE <= ifm.E;
-+expression *ifm.E;
-+expression E1,E2;
-+identifier f;
-+statement S1,S2,S3,S4;
-+iterator iter;
-+position p!={pr1.p1,pr2.p2};
-+position ifm.p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...)
-+{
-+  ... when != if (...) S1 else S2
-+(
-+ iter(subE,...) S4 // no use
-+|
-+ list_remove_head(E2,subE,...)
-+|
-+ subE = E1
-+|
-+ for(subE = E1;...;...) S4
-+|
-+ subE++
-+|
-+ ++subE
-+|
-+ --subE
-+|
-+ subE--
-+|
-+ &subE
-+|
-+* E->f@p // bad use
-+)
-+  ... when any
-+  return ...;
-+}
-+else S3
-+
-+// The following three rules are duplicates of ifm, pr1 and pr2 respectively.
-+// It is need because the previous rule as already made a "change".
-+
-+@ifm1 depends on !patch@
-+expression *E;
-+statement S1,S2;
-+position p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...) S1 else S2
-+
-+@pr11 depends on !patch expression@
-+expression *ifm1.E;
-+identifier f;
-+position p1;
-+@@
-+
-+ (E != NULL && ...) ? <+...E->f@p1...+> : ...
-+
-+@pr12 depends on !patch expression@
-+expression *ifm1.E;
-+identifier f;
-+position p2;
-+@@
-+
-+(
-+  (E != NULL) && ... && <+...E->f@p2...+>
-+|
-+  (E = NULL) || ... || <+...E->f@p2...+>
-+|
-+ sizeof(<+...E->f@p2...+>)
-+)
-+
-+@depends on context && !patch && !org && !report exists@
-+expression subE <= ifm1.E;
-+expression *ifm1.E;
-+expression E1,E2;
-+identifier f;
-+statement S1,S2,S3,S4;
-+iterator iter;
-+position p!={pr11.p1,pr12.p2};
-+position ifm1.p1;
-+@@
-+
-+if@p1 ((E = NULL && ...) || ...)
-+{
-+  ... when != if (...) S1 else S2
-+(
-+ iter(subE,...) S4 // no use
-+|
-+ list_remove_head(E2,subE,...)
-+|
-+ subE = E1
-+|
-+ for(subE = E1;...;...) S4
-+|
-+ subE++
-+|
-+ ++subE
-+|
-+ --subE
-+|
-+ subE--
-+|
-+ &subE
-+|
-+* E->f@p // bad use
-+)
-+  ... when any
-+}
-+else S3
++msg = "preceding lock on line %s" % (p[0].line)
++coccilib.report.print_report(p2[0],msg)
 -- 
 1.7.0.4
 
