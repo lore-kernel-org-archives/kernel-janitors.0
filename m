@@ -1,7 +1,7 @@
 From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Wed, 25 Aug 2010 08:42:31 +0000
+Date: Wed, 25 Aug 2010 08:42:47 +0000
 Subject: Re: [patch] sysfs: checking for NULL instead of ERR_PTR
-Message-Id: <m1d3t7f5hk.fsf@fess.ebiederm.org>
+Message-Id: <m1bp8rf5h4.fsf@fess.ebiederm.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100825071229.GP29330@bicker>
 In-Reply-To: <20100825071229.GP29330@bicker> (Dan Carpenter's message of "Wed,
