@@ -1,37 +1,38 @@
-From: David Brownell <david-b@pacbell.net>
-Date: Sat, 28 Aug 2010 18:19:39 +0000
-Subject: Re: [PATCH 2/7] drivers/usb/gadget: Remove double test
-Message-Id: <611014.87741.qm@web180303.mail.gq1.yahoo.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 26 Aug 2010 09:07:24 +0000
+Subject: [patch] ceph: ceph_mdsc_build_path() returns an ERR_PTR
+Message-Id: <20100826090724.GA20072@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <4C79435B.2030303@s5r6.in-berlin.de>
-References: <1283010066-20935-3-git-send-email-julia@diku.dk>
-In-Reply-To: <1283010066-20935-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia@diku.dk>, Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: Thomas Dahlmann <dahlmann.thomas@arcor.de>, kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sage Weil <sage@newdream.net>
+Cc: Yehuda Sadeh <yehuda@hq.newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+ceph_mdsc_build_path() returns an ERR_PTR but this code is set up to
+handle NULL returns.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
---- On Sat, 8/28/10, Stefan Richter <stefanr@s5r6.in-berlin.de> wrote:
-
-> There is only a drawback if the subject
-> is too broad /and/ > if the Cc list is
-> too short;=A0
-
-Not entirely true.  Recall that one of the roles
-of the patch summary is serving as a search key
-for Google or whatever ... changing it decouples patches from their discuss=
-ion,  complicating
-later troubleshooting (probably not in this
-case, but for some patches, very much so).
-
-- Dave
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 360c4f2..6fd8b20 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -171,6 +171,8 @@ static int mdsc_show(struct seq_file *s, void *p)
+ 		} else if (req->r_dentry) {
+ 			path = ceph_mdsc_build_path(req->r_dentry, &pathlen,
+ 						    &pathbase, 0);
++			if (IS_ERR(path))
++				path = NULL;
+ 			spin_lock(&req->r_dentry->d_lock);
+ 			seq_printf(s, " #%llx/%.*s (%s)",
+ 				   ceph_ino(req->r_dentry->d_parent->d_inode),
+@@ -187,6 +189,8 @@ static int mdsc_show(struct seq_file *s, void *p)
+ 		if (req->r_old_dentry) {
+ 			path = ceph_mdsc_build_path(req->r_old_dentry, &pathlen,
+ 						    &pathbase, 0);
++			if (IS_ERR(path))
++				path = NULL;
+ 			spin_lock(&req->r_old_dentry->d_lock);
+ 			seq_printf(s, " #%llx/%.*s (%s)",
+ 			   ceph_ino(req->r_old_dentry->d_parent->d_inode),
