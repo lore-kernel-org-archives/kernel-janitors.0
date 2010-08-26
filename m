@@ -1,100 +1,76 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Date: Thu, 05 Aug 2010 12:08:02 +0000
-Subject: Re: [PATCH] kprobes: minor code cleanups
-Message-Id: <4C5AA9A2.60202@hitachi.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 26 Aug 2010 09:12:38 +0000
+Subject: [patch] ceph: fix get_ticket_handler() error handling
+Message-Id: <20100826091238.GB20072@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280938181-25878-1-git-send-email-namhyung@gmail.com>
-In-Reply-To: <1280938181-25878-1-git-send-email-namhyung@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sage Weil <sage@newdream.net>
+Cc: Yehuda Sadeh <yehuda@hq.newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Namhyung Kim wrote:
->  * make internal functions static
->  * get rid of __dummy_buf on x86
->  * make sparse happier :-)
+get_ticket_handler() returns a valid pointer or it returns
+ERR_PTR(-ENOMEM) if kzalloc() fails.
 
-Thanks, and could you split those into 2 patches?
-(make function static, and remove __dummy_buf)
-It's better that a single change has a single reason.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thank you,
-
-> 
-> Signed-off-by: Namhyung Kim <namhyung@gmail.com>
-> 
-> diff --git a/arch/x86/kernel/kprobes.c b/arch/x86/kernel/kprobes.c
-> index 675879b..a4ff35d 100644
-> --- a/arch/x86/kernel/kprobes.c
-> +++ b/arch/x86/kernel/kprobes.c
-> @@ -224,9 +224,6 @@ static int recover_probed_instruction(kprobe_opcode_t *buf, unsigned long addr)
->  	return 0;
->  }
->  
-> -/* Dummy buffers for kallsyms_lookup */
-> -static char __dummy_buf[KSYM_NAME_LEN];
-> -
->  /* Check if paddr is at an instruction boundary */
->  static int __kprobes can_probe(unsigned long paddr)
->  {
-> @@ -235,7 +232,7 @@ static int __kprobes can_probe(unsigned long paddr)
->  	struct insn insn;
->  	kprobe_opcode_t buf[MAX_INSN_SIZE];
->  
-> -	if (!kallsyms_lookup(paddr, NULL, &offset, NULL, __dummy_buf))
-> +	if (!kallsyms_lookup_size_offset(paddr, NULL, &offset))
->  		return 0;
->  
->  	/* Decode instructions */
-> @@ -1109,7 +1106,7 @@ static void __kprobes synthesize_set_arg1(kprobe_opcode_t *addr,
->  	*(unsigned long *)addr = val;
->  }
->  
-> -void __kprobes kprobes_optinsn_template_holder(void)
-> +static void __used __kprobes kprobes_optinsn_template_holder(void)
->  {
->  	asm volatile (
->  			".global optprobe_template_entry\n"
-> @@ -1249,11 +1246,9 @@ static int __kprobes can_optimize(unsigned long paddr)
->  	unsigned long addr, size = 0, offset = 0;
->  	struct insn insn;
->  	kprobe_opcode_t buf[MAX_INSN_SIZE];
-> -	/* Dummy buffers for lookup_symbol_attrs */
-> -	static char __dummy_buf[KSYM_NAME_LEN];
->  
->  	/* Lookup symbol including addr */
-> -	if (!kallsyms_lookup(paddr, &size, &offset, NULL, __dummy_buf))
-> +	if (!kallsyms_lookup_size_offset(paddr, &size, &offset))
->  		return 0;
->  
->  	/* Check there is enough space for a relative jump. */
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 1b0dbe0..a8d0139 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -399,7 +399,7 @@ static inline int kprobe_optready(struct kprobe *p)
->   * Return an optimized kprobe whose optimizing code replaces
->   * instructions including addr (exclude breakpoint).
->   */
-> -struct kprobe *__kprobes get_optimized_kprobe(unsigned long addr)
-> +static struct kprobe *__kprobes get_optimized_kprobe(unsigned long addr)
->  {
->  	int i;
->  	struct kprobe *p = NULL;
-> @@ -857,7 +857,8 @@ void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
->  	spin_unlock_irqrestore(hlist_lock, *flags);
->  }
->  
-> -void __kprobes kretprobe_table_unlock(unsigned long hash, unsigned long *flags)
-> +static void __kprobes kretprobe_table_unlock(unsigned long hash,
-> +	unsigned long *flags)
->  {
->  	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
->  	spin_unlock_irqrestore(hlist_lock, *flags);
-
--- 
-Masami HIRAMATSU
-2nd Research Dept.
-Hitachi, Ltd., Systems Development Laboratory
-E-mail: masami.hiramatsu.pt@hitachi.com
+diff --git a/fs/ceph/auth_x.c b/fs/ceph/auth_x.c
+index 582e0b2..a2d002c 100644
+--- a/fs/ceph/auth_x.c
++++ b/fs/ceph/auth_x.c
+@@ -376,7 +376,7 @@ static void ceph_x_validate_tickets(struct ceph_auth_client *ac, int *pneed)
+ 
+ 		th = get_ticket_handler(ac, service);
+ 
+-		if (!th) {
++		if (IS_ERR(th)) {
+ 			*pneed |= service;
+ 			continue;
+ 		}
+@@ -399,6 +399,9 @@ static int ceph_x_build_request(struct ceph_auth_client *ac,
+ 	struct ceph_x_ticket_handler *th  		get_ticket_handler(ac, CEPH_ENTITY_TYPE_AUTH);
+ 
++	if (IS_ERR(th))
++		return PTR_ERR(th);
++
+ 	ceph_x_validate_tickets(ac, &need);
+ 
+ 	dout("build_request want %x have %x need %x\n",
+@@ -450,7 +453,6 @@ static int ceph_x_build_request(struct ceph_auth_client *ac,
+ 			return -ERANGE;
+ 		head->op = cpu_to_le16(CEPHX_GET_PRINCIPAL_SESSION_KEY);
+ 
+-		BUG_ON(!th);
+ 		ret = ceph_x_build_authorizer(ac, th, &xi->auth_authorizer);
+ 		if (ret)
+ 			return ret;
+@@ -505,7 +507,8 @@ static int ceph_x_handle_reply(struct ceph_auth_client *ac, int result,
+ 
+ 	case CEPHX_GET_PRINCIPAL_SESSION_KEY:
+ 		th = get_ticket_handler(ac, CEPH_ENTITY_TYPE_AUTH);
+-		BUG_ON(!th);
++		if (IS_ERR(th))
++			return PTR_ERR(th);
+ 		ret = ceph_x_proc_ticket_reply(ac, &th->session_key,
+ 					       buf + sizeof(*head), end);
+ 		break;
+@@ -563,8 +566,8 @@ static int ceph_x_verify_authorizer_reply(struct ceph_auth_client *ac,
+ 	void *end = p + sizeof(au->reply_buf);
+ 
+ 	th = get_ticket_handler(ac, au->service);
+-	if (!th)
+-		return -EIO;  /* hrm! */
++	if (IS_ERR(th))
++		return PTR_ERR(th);
+ 	ret = ceph_x_decrypt(&th->session_key, &p, end, &reply, sizeof(reply));
+ 	if (ret < 0)
+ 		return ret;
+@@ -626,7 +629,7 @@ static void ceph_x_invalidate_authorizer(struct ceph_auth_client *ac,
+ 	struct ceph_x_ticket_handler *th;
+ 
+ 	th = get_ticket_handler(ac, peer_type);
+-	if (th && !IS_ERR(th))
++	if (!IS_ERR(th))
+ 		remove_ticket_handler(ac, th);
+ }
+ 
