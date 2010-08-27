@@ -1,66 +1,61 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:36:23 +0000
-Subject: [PATCH 26/42] drivers/spi/amba-pl022.c: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052235400.31692@ask.diku.dk>
+Date: Fri, 27 Aug 2010 05:57:18 +0000
+Subject: [PATCH 1/3] drivers/media/video/em28xx: Remove potential NULL dereference
+Message-Id: <1282888640-27042-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <921858.63779.qm@web180313.mail.gq1.yahoo.com>
-In-Reply-To: <921858.63779.qm-4JhmkcZgSkn6X00i2u5GFvu2YVrzzGjVVpNB7YpNyf8@public.gmane.org>
+References: <1282888640-27042-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1282888640-27042-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+If the NULL test is necessary, the initialization involving a dereference of
+the tested value should be moved after the NULL test.
 
-The return -EINVAL appears to only make sense if the if branch that it is
-aligned with is taken, so move it into that branch
-
-The semantic match that finds this problem is as follows:
+The sematic patch that fixes this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
 @@
 
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-This patch changes the semantics, and the change might not be correct.
-
- drivers/spi/amba-pl022.c |    3 ++-
+ drivers/media/video/em28xx/em28xx-video.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/amba-pl022.c b/drivers/spi/amba-pl022.c
-index f0a1418..4de50de 100644
---- a/drivers/spi/amba-pl022.c
-+++ b/drivers/spi/amba-pl022.c
-@@ -1348,10 +1348,11 @@ static int verify_controller_parameters(struct pl022 *pl022,
- 			if ((chip_info->duplex ! 			     SSP_MICROWIRE_CHANNEL_FULL_DUPLEX)
- 			    && (chip_info->duplex !-				SSP_MICROWIRE_CHANNEL_HALF_DUPLEX))
-+				SSP_MICROWIRE_CHANNEL_HALF_DUPLEX)) {
- 				dev_err(chip_info->dev,
- 					"Microwire duplex mode is configured incorrectly\n");
- 				return -EINVAL;
-+			}
- 		} else {
- 			if (chip_info->duplex != SSP_MICROWIRE_CHANNEL_FULL_DUPLEX)
- 				dev_err(chip_info->dev,
+diff --git a/drivers/media/video/em28xx/em28xx-video.c b/drivers/media/video/em28xx/em28xx-video.c
+index 7b9ec6e..95a4b60 100644
+--- a/drivers/media/video/em28xx/em28xx-video.c
++++ b/drivers/media/video/em28xx/em28xx-video.c
+@@ -277,12 +277,13 @@ static void em28xx_copy_vbi(struct em28xx *dev,
+ {
+ 	void *startwrite, *startread;
+ 	int  offset;
+-	int bytesperline = dev->vbi_width;
++	int bytesperline;
+ 
+ 	if (dev = NULL) {
+ 		em28xx_isocdbg("dev is null\n");
+ 		return;
+ 	}
++	bytesperline = dev->vbi_width;
+ 
+ 	if (dma_q = NULL) {
+ 		em28xx_isocdbg("dma_q is null\n");
+
