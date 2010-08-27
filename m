@@ -1,70 +1,60 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 27 Aug 2010 21:01:30 +0000
-Subject: [PATCH 2/2] arch/ia64/kernel: Move up iounmap
-Message-Id: <1282942890-465-2-git-send-email-julia@diku.dk>
+Date: Fri, 27 Aug 2010 05:57:20 +0000
+Subject: [PATCH 3/3] drivers/staging/tm6000: Remove potential NULL dereference
+Message-Id: <1282888640-27042-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282888640-27042-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1282888640-27042-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tony Luck <tony.luck@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-By moving the iounmap up above the test, it takes place whether the test
-succeeds or fails.
+If the NULL test is necessary, the initialization involving a dereference of
+the tested value should be moved after the NULL test.
 
-The sematic match that finds this problem is as follows:
+The sematic patch that fixes this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r exists@
-local idexpression x;
-expression E,E1;
-identifier l;
+@@
+type T;
+expression E;
+identifier i,fld;
 statement S;
 @@
 
-*x = ioremap_nocache(...);
-...
-if (x = NULL) S
-... when != iounmap(x)
-    when != if (...) { ... iounmap(x); ... }
-    when != E = x
-if (...) {
-  ... when != iounmap(x)
-      when != if (...) { ... iounmap(x); ... }
-(
-  return <+...x...+>;
-|
-* return ...;
-)
-}
-... when != x = E1
-iounmap(x);
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- arch/ia64/kernel/cyclone.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/tm6000/tm6000-alsa.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/ia64/kernel/cyclone.c b/arch/ia64/kernel/cyclone.c
-index 71e3586..d52f1f7 100644
---- a/arch/ia64/kernel/cyclone.c
-+++ b/arch/ia64/kernel/cyclone.c
-@@ -59,13 +59,13 @@ int __init init_cyclone_clock(void)
- 		return -ENODEV;
- 	}
- 	base = readq(reg);
-+	iounmap(reg);
- 	if(!base){
- 		printk(KERN_ERR "Summit chipset: Could not find valid CBAR"
- 				" value.\n");
- 		use_cyclone = 0;
- 		return -ENODEV;
- 	}
--	iounmap(reg);
+diff --git a/drivers/staging/tm6000/tm6000-alsa.c b/drivers/staging/tm6000/tm6000-alsa.c
+index 087137d..a06b3c6 100644
+--- a/drivers/staging/tm6000/tm6000-alsa.c
++++ b/drivers/staging/tm6000/tm6000-alsa.c
+@@ -426,11 +426,12 @@ error:
  
- 	/* setup PMCC */
- 	offset = (base + CYCLONE_PMCC_OFFSET);
+ static int tm6000_audio_fini(struct tm6000_core *dev)
+ {
+-	struct snd_tm6000_card	*chip = dev->adev;
++	struct snd_tm6000_card	*chip;
+ 
+ 	if (!dev)
+ 		return 0;
+ 
++	chip = dev->adev;
+ 	if (!chip)
+ 		return 0;
+ 
 
