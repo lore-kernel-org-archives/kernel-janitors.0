@@ -1,58 +1,68 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:21:41 +0000
-Subject: [PATCH 16/42] net/ipv6/netfilter: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052221240.31692@ask.diku.dk>
+Date: Fri, 27 Aug 2010 21:01:29 +0000
+Subject: [PATCH 1/2] drivers/clocksource/cyclone.c: Move up iounmap
+Message-Id: <1282942890-465-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+By moving the iounmap up above the test, it takes place whether the test
+succeeds or fails.
 
-Indent the branch of an if.
-
-The semantic match that finds this problem is as follows:
+The sematic match that finds this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
+@r exists@
+local idexpression x;
+expression E,E1;
+identifier l;
+statement S;
 @@
 
+*x = ioremap_nocache(...);
+...
+if (x = NULL) S
+... when != iounmap(x)
+    when != if (...) { ... iounmap(x); ... }
+    when != E = x
+if (...) {
+  ... when != iounmap(x)
+      when != if (...) { ... iounmap(x); ... }
 (
-if (...) { ... }
+  return <+...x...+>;
 |
-if (...) S1@p1 S2@p2
+* return ...;
 )
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
+}
+... when != x = E1
+iounmap(x);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c |    2 +-
+ drivers/clocksource/cyclone.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c b/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
-index 1df3c8b..befccff 100644
---- a/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
-+++ b/net/ipv6/netfilter/nf_conntrack_proto_icmpv6.c
-@@ -192,7 +192,7 @@ icmpv6_error(struct net *net, struct nf_conn *tmpl,
- 	icmp6h = skb_header_pointer(skb, dataoff, sizeof(_ih), &_ih);
- 	if (icmp6h = NULL) {
- 		if (LOG_INVALID(net, IPPROTO_ICMPV6))
--		nf_log_packet(PF_INET6, 0, skb, NULL, NULL, NULL,
-+			nf_log_packet(PF_INET6, 0, skb, NULL, NULL, NULL,
- 			      "nf_ct_icmpv6: short packet ");
- 		return -NF_ACCEPT;
+diff --git a/drivers/clocksource/cyclone.c b/drivers/clocksource/cyclone.c
+index 64e528e..4c62e20 100644
+--- a/drivers/clocksource/cyclone.c
++++ b/drivers/clocksource/cyclone.c
+@@ -57,11 +57,11 @@ static int __init init_cyclone_clocksource(void)
  	}
+ 	/* even on 64bit systems, this is only 32bits: */
+ 	base = readl(reg);
++	iounmap(reg);
+ 	if (!base) {
+ 		printk(KERN_ERR "Summit chipset: Could not find valid CBAR value.\n");
+ 		return -ENODEV;
+ 	}
+-	iounmap(reg);
+ 
+ 	/* setup PMCC: */
+ 	offset = base + CYCLONE_PMCC_OFFSET;
+
