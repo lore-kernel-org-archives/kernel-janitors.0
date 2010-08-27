@@ -1,122 +1,70 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Tue, 03 Aug 2010 15:43:15 +0000
-Subject: [PATCH 04/11] cxgb4vf: do not use PCI resources before pci_enable_device()
-Message-Id: <1280850196-5448-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 27 Aug 2010 21:01:30 +0000
+Subject: [PATCH 2/2] arch/ia64/kernel: Move up iounmap
+Message-Id: <1282942890-465-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tony Luck <tony.luck@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org
 
-IRQ and resource[] may not have correct values until
-after PCI hotplug setup occurs at pci_enable_device() time.
+By moving the iounmap up above the test, it takes place whether the test
+succeeds or fails.
 
-The semantic match that finds this problem is as follows:
+The sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-identifier x;
-identifier request ~= "pci_request.*|pci_resource.*";
+@r exists@
+local idexpression x;
+expression E,E1;
+identifier l;
+statement S;
 @@
 
+*x = ioremap_nocache(...);
+...
+if (x = NULL) S
+... when != iounmap(x)
+    when != if (...) { ... iounmap(x); ... }
+    when != E = x
+if (...) {
+  ... when != iounmap(x)
+      when != if (...) { ... iounmap(x); ... }
 (
-* x->irq
+  return <+...x...+>;
 |
-* x->resource
-|
-* request(x, ...)
+* return ...;
 )
- ...
-*pci_enable_device(x)
+}
+... when != x = E1
+iounmap(x);
 // </smpl>
 
-Signed-off-by: Kulikov Vasiliy <segooon@gmail.com>
----
- drivers/net/cxgb4vf/cxgb4vf_main.c |   31 ++++++++++++++++---------------
- 1 files changed, 16 insertions(+), 15 deletions(-)
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-diff --git a/drivers/net/cxgb4vf/cxgb4vf_main.c b/drivers/net/cxgb4vf/cxgb4vf_main.c
-index a165632..7b6d07f 100644
---- a/drivers/net/cxgb4vf/cxgb4vf_main.c
-+++ b/drivers/net/cxgb4vf/cxgb4vf_main.c
-@@ -2462,23 +2462,24 @@ static int __devinit cxgb4vf_pci_probe(struct pci_dev *pdev,
- 		version_printed = 1;
+---
+ arch/ia64/kernel/cyclone.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/ia64/kernel/cyclone.c b/arch/ia64/kernel/cyclone.c
+index 71e3586..d52f1f7 100644
+--- a/arch/ia64/kernel/cyclone.c
++++ b/arch/ia64/kernel/cyclone.c
+@@ -59,13 +59,13 @@ int __init init_cyclone_clock(void)
+ 		return -ENODEV;
  	}
- 
-+
- 	/*
--	 * Reserve PCI resources for the device.  If we can't get them some
--	 * other driver may have already claimed the device ...
-+	 * Initialize generic PCI device state.
- 	 */
--	err = pci_request_regions(pdev, KBUILD_MODNAME);
-+	err = pci_enable_device(pdev);
- 	if (err) {
--		dev_err(&pdev->dev, "cannot obtain PCI resources\n");
-+		dev_err(&pdev->dev, "cannot enable PCI device\n");
- 		return err;
+ 	base = readq(reg);
++	iounmap(reg);
+ 	if(!base){
+ 		printk(KERN_ERR "Summit chipset: Could not find valid CBAR"
+ 				" value.\n");
+ 		use_cyclone = 0;
+ 		return -ENODEV;
  	}
+-	iounmap(reg);
  
- 	/*
--	 * Initialize generic PCI device state.
-+	 * Reserve PCI resources for the device.  If we can't get them some
-+	 * other driver may have already claimed the device ...
- 	 */
--	err = pci_enable_device(pdev);
-+	err = pci_request_regions(pdev, KBUILD_MODNAME);
- 	if (err) {
--		dev_err(&pdev->dev, "cannot enable PCI device\n");
--		goto err_release_regions;
-+		dev_err(&pdev->dev, "cannot obtain PCI resources\n");
-+		goto err_disable_device;
- 	}
- 
- 	/*
-@@ -2491,14 +2492,14 @@ static int __devinit cxgb4vf_pci_probe(struct pci_dev *pdev,
- 		if (err) {
- 			dev_err(&pdev->dev, "unable to obtain 64-bit DMA for"
- 				" coherent allocations\n");
--			goto err_disable_device;
-+			goto err_release_regions;
- 		}
- 		pci_using_dac = 1;
- 	} else {
- 		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
- 		if (err != 0) {
- 			dev_err(&pdev->dev, "no usable DMA configuration\n");
--			goto err_disable_device;
-+			goto err_release_regions;
- 		}
- 		pci_using_dac = 0;
- 	}
-@@ -2514,7 +2515,7 @@ static int __devinit cxgb4vf_pci_probe(struct pci_dev *pdev,
- 	adapter = kzalloc(sizeof(*adapter), GFP_KERNEL);
- 	if (!adapter) {
- 		err = -ENOMEM;
--		goto err_disable_device;
-+		goto err_release_regions;
- 	}
- 	pci_set_drvdata(pdev, adapter);
- 	adapter->pdev = pdev;
-@@ -2750,13 +2751,13 @@ err_free_adapter:
- 	kfree(adapter);
- 	pci_set_drvdata(pdev, NULL);
- 
--err_disable_device:
--	pci_disable_device(pdev);
--	pci_clear_master(pdev);
--
- err_release_regions:
- 	pci_release_regions(pdev);
- 	pci_set_drvdata(pdev, NULL);
-+	pci_clear_master(pdev);
-+
-+err_disable_device:
-+	pci_disable_device(pdev);
- 
- err_out:
- 	return err;
--- 
-1.7.0.4
+ 	/* setup PMCC */
+ 	offset = (base + CYCLONE_PMCC_OFFSET);
 
