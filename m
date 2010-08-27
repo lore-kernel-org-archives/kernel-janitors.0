@@ -1,78 +1,73 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:24:12 +0000
-Subject: [PATCH 24/42] drivers/platform/x86: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052223550.31692@ask.diku.dk>
+Date: Fri, 27 Aug 2010 05:57:19 +0000
+Subject: [PATCH 2/3] drivers/dma: Remove potential NULL dereference
+Message-Id: <1282888640-27042-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282888640-27042-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1282888640-27042-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Corentin Chary <corentincj@iksaif.net>, Karol Kozimor <sziwan@users.sourceforge.net>, Matthew Garrett <mjg@redhat.com>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+In each case, it appears that the NULL test is not necessary.  In the first
+case, the function pl08x_fill_llis_for_desc is only called in a case where
+its argument is computed using container_of.  In the second case, the
+function pl08x_tasklet is only used as the second argument of tasklet_init,
+from which its argument should be the third argument of tasklet_init.  But
+that value is not NULL at the point of calling tasklet_init, in
+pl08x_dma_init_virtual_channels.
 
-The assignment of ret to -EIO appears to only make sense if the branch that
-it is aligned with is executed, so move it into that branch.
-
-The semantic match that finds this problem is as follows:
+The sematic patch that fixes this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
 @@
 
-(
-if (...) { ... }
-|
-if (...) S1@p1 S2@p2
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-This patch changes the semantics and might not be what is intended.
+ drivers/dma/amba-pl08x.c |    8 --------
+ 1 file changed, 8 deletions(-)
 
- drivers/platform/x86/asus_acpi.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/platform/x86/asus_acpi.c b/drivers/platform/x86/asus_acpi.c
-index e058c2b..ca05aef 100644
---- a/drivers/platform/x86/asus_acpi.c
-+++ b/drivers/platform/x86/asus_acpi.c
-@@ -938,10 +938,11 @@ static int set_brightness(int value)
- 	/* SPLV laptop */
- 	if (hotk->methods->brightness_set) {
- 		if (!write_acpi_int(hotk->handle, hotk->methods->brightness_set,
--				    value, NULL))
-+				    value, NULL)) {
- 			printk(KERN_WARNING
- 			       "Asus ACPI: Error changing brightness\n");
- 			ret = -EIO;
-+		}
- 		goto out;
- 	}
+diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+index fc5aaeb..ac675d2 100644
+--- a/drivers/dma/amba-pl08x.c
++++ b/drivers/dma/amba-pl08x.c
+@@ -626,11 +626,6 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
+ 	struct lli *llis_va;
+ 	struct lli *llis_bus;
  
-@@ -953,10 +954,11 @@ static int set_brightness(int value)
- 					      hotk->methods->brightness_down,
- 					      NULL, NULL);
- 		(value > 0) ? value-- : value++;
--		if (ACPI_FAILURE(status))
-+		if (ACPI_FAILURE(status)) {
- 			printk(KERN_WARNING
- 			       "Asus ACPI: Error changing brightness\n");
- 			ret = -EIO;
-+		}
- 	}
- out:
- 	return ret;
+-	if (!txd) {
+-		dev_err(&pl08x->adev->dev, "%s no descriptor\n", __func__);
+-		return 0;
+-	}
+-
+ 	txd->llis_va = dma_pool_alloc(pl08x->pool, GFP_KERNEL,
+ 				      &txd->llis_bus);
+ 	if (!txd->llis_va) {
+@@ -1033,9 +1028,6 @@ static void pl08x_tasklet(unsigned long data)
+ 	struct pl08x_driver_data *pl08x = plchan->host;
+ 	unsigned long flags;
+ 
+-	if (!plchan)
+-		BUG();
+-
+ 	spin_lock_irqsave(&plchan->lock, flags);
+ 
+ 	if (plchan->at) {
+
