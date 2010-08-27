@@ -1,12 +1,15 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 27 Aug 2010 19:28:21 +0000
+Date: Fri, 27 Aug 2010 20:02:15 +0000
 Subject: [patch] ALSA: pcm: add more format names
-Message-Id: <20100827192821.GC9832@bicker>
+Message-Id: <20100827200215.GA15220@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100827192821.GC9832@bicker>
+In-Reply-To: <20100827192821.GC9832@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, markgross <mgross@linux.intel.com>, Takashi Iwai <tiwai@suse.de>, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org, Ben Collins <bcollins@bluecherry.net>
 
 There were some new formats added in commit 15c0cee6c809 "ALSA: pcm:
 Define G723 3-bit and 5-bit formats".  That commit increased
@@ -23,6 +26,8 @@ SNDRV_PCM_FORMAT_G723_24 or higher then we might read past the end of
 the array. 
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Resending because I screwed up the CC lis on my first mail.
 
 diff --git a/sound/core/pcm.c b/sound/core/pcm.c
 index cbe815d..204af48 100644
@@ -45,3 +50,4 @@ index cbe815d..204af48 100644
  	return snd_pcm_format_names[format];
  }
  EXPORT_SYMBOL_GPL(snd_pcm_format_name);
+
