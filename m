@@ -1,20 +1,37 @@
-From: David Brownell <david-b@pacbell.net>
-Date: Sat, 28 Aug 2010 16:10:12 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 28 Aug 2010 16:37:25 +0000
 Subject: Re: [PATCH 2/7] drivers/usb/gadget: Remove double test
-Message-Id: <581556.29157.qm@web180314.mail.gq1.yahoo.com>
+Message-Id: <20100828163725.GI9832@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1283010066-20935-3-git-send-email-julia@diku.dk>
-References: <1283010066-20935-3-git-send-email-julia@diku.dk>
+References: <1283010066-20935-1-git-send-email-julia@diku.dk> <1283010066-20935-3-git-send-email-julia@diku.dk>
 In-Reply-To: <1283010066-20935-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Dahlmann <dahlmann.thomas@arcor.de>, Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Thomas Dahlmann <dahlmann.thomas@arcor.de>, kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Please update $SUBJECT to say which driver is
-affected; it's not everything in that directory,
-and accurate GIT summaries help a lot.
+On Sat, Aug 28, 2010 at 05:41:01PM +0200, Julia Lawall wrote:
+> This is a guess as to what the code should be.  Perhaps something else
+> should have been tested instead.
+> 
+>  drivers/usb/gadget/amd5536udc.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/amd5536udc.c b/drivers/usb/gadget/amd5536udc.c
+> index 731150d..6c40c99 100644
+> --- a/drivers/usb/gadget/amd5536udc.c
+> +++ b/drivers/usb/gadget/amd5536udc.c
+> @@ -203,7 +203,7 @@ static void print_regs(struct udc *dev)
+>  		DBG(dev, "DMA mode       = PPBNDU (packet per buffer "
+>  			"WITHOUT desc. update)\n");
+>  		dev_info(&dev->pdev->dev, "DMA mode (%s)\n", "PPBNDU");
+> -	} else if (use_dma && use_dma_ppb_du && use_dma_ppb_du) {
+> +	} else if (use_dma && use_dma_ppb_du) {
 
 
+My guess is that "use_dma_ppb" was intended.
+
+regards,
+dan carpenter
 
