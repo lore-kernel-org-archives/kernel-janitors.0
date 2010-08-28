@@ -1,40 +1,55 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 01 Aug 2010 10:49:41 +0000
-Subject: Re: [PATCH 2/7] usb: fsl_udc_core: check return value of
-Message-Id: <20100801104941.GI26313@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 28 Aug 2010 15:41:03 +0000
+Subject: [PATCH 4/7] arch/x86/mm/kmemcheck: Remove double test
+Message-Id: <1283010066-20935-5-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280597900-8405-1-git-send-email-segooon@gmail.com>
-	<20100731191743.GF26313@bicker> <20100801061934.GB2650@albatros>
-In-Reply-To: <20100801061934.GB2650@albatros>
+References: <1283010066-20935-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1283010066-20935-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org, linux-usb@vger.kernel.org, Anton Vorontsov <avorontsov@ru.mvista.com>, Dinh Nguyen <Dinh.Nguyen@freescale.com>
+To: Vegard Nossum <vegardno@ifi.uio.no>
+Cc: kernel-janitors@vger.kernel.org, Pekka Enberg <penberg@cs.helsinki.fi>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Aug 01, 2010 at 10:19:34AM +0400, Vasiliy Kulikov wrote:
-> On Sat, Jul 31, 2010 at 21:17 +0200, Dan Carpenter wrote:
-> > On Sat, Jul 31, 2010 at 09:38:20PM +0400, Kulikov Vasiliy wrote:
-> > > create_proc_read_entry() may fail, if so return -ENOMEM.
-> > > 
-> > 
-> > It can fail, but also we return NULL if procfs is disabled.  I haven't
-> > looked at it very carefully, would this patch break the module if procfs
-> > was disabled?
-> Probably you are right, but many drivers in tree compare return value
-> with NULL. Some of them interpret this as error, some of them simply
-> call pr_warn("Hmm, I cannot create file in proc, strange..."). Maybe
-> there is more simplier way to check it without #ifdefs?
-> 
+The opcodes 0x2e and 0x3e are tested for in the first Group 2 line as well.
 
-If the allocation fails, there is already a warning so no need to add
-another.
+The sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-These things are one time allocation, normally near boot up when memory
-is plentifull.  The places that do check should be audited to make sure
-there isn't an unneeded dependency on PROC_FS.  I would just leave the
-rest.
+// <smpl>
+@expression@
+expression E;
+@@
 
-regards,
-dan carpenter
+(
+* E
+  || ... || E
+|
+* E
+  && ... && E
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This is a guess as to what the code should be.  Perhaps something else
+should have been tested instead.
+
+ arch/x86/mm/kmemcheck/opcode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/kmemcheck/opcode.c b/arch/x86/mm/kmemcheck/opcode.c
+index 63c19e2..324aa3f 100644
+--- a/arch/x86/mm/kmemcheck/opcode.c
++++ b/arch/x86/mm/kmemcheck/opcode.c
+@@ -9,7 +9,7 @@ static bool opcode_is_prefix(uint8_t b)
+ 		b = 0xf0 || b = 0xf2 || b = 0xf3
+ 		/* Group 2 */
+ 		|| b = 0x2e || b = 0x36 || b = 0x3e || b = 0x26
+-		|| b = 0x64 || b = 0x65 || b = 0x2e || b = 0x3e
++		|| b = 0x64 || b = 0x65
+ 		/* Group 3 */
+ 		|| b = 0x66
+ 		/* Group 4 */
 
