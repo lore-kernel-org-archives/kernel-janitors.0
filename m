@@ -1,56 +1,54 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 11 Aug 2010 16:23:28 +0000
-Subject: Re: [PATCH 5/5] drivers/serial: Return -ENOMEM on memory allocation
-Message-Id: <Pine.LNX.4.64.1008111818380.8669@ask.diku.dk>
+Date: Sat, 28 Aug 2010 16:48:56 +0000
+Subject: Re: [PATCH 2/7] drivers/usb/gadget/amd5536udc.c: Remove double test
+Message-Id: <Pine.LNX.4.64.1008281846170.13508@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008111211440.8669@ask.diku.dk> <4C62C8F3.3090405@sgi.com>
-In-Reply-To: <4C62C8F3.3090405@sgi.com>
+References: <1283010066-20935-1-git-send-email-julia@diku.dk>
+ <1283010066-20935-3-git-send-email-julia@diku.dk> <20100828163725.GI9832@bicker>
+In-Reply-To: <20100828163725.GI9832@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrick Gefre <pfg@sgi.com>
-Cc: linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Thomas Dahlmann <dahlmann.thomas@arcor.de>, kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> > I believe this code also leaks earlier instances of port, which are only
-> > referenced by card_ptr, which is freed in the error handling code at the
-> > end of the function.  A lot of operations are done on port on each
-> > iteration, however, so I'm not sure whether it is good enough to just free
-> > them.  Perhaps there is some way to call ioc3uart_remove?
-> > 
-> 
-> Yes you are right, there should be something like this for out4:
-> 
-> out4:
-> 	for (phys_port = 0; phys_port < PORTS_PER_CARD; phys_port++) {
-> 		port = card_ptr->ic_port[phys_port].icp_port;
-> 		if (port) {
-> 			pci_free_consistent(port->ip_idd->pdev,
->                                        TOTAL_RING_BUF_SIZE,
->                                        (void *)port->ip_cpu_ringbuf,
->                                        port->ip_dma_ringbuf);
-> 			kfree(port);
-> 		}
-> 	}
-> 	kfree(card_ptr);
-> 	return ret;
+The same expression is tested twice and the result is the same each time.
+Instead test for use_dma_ppb as in the test above.
 
-Actually, pci_alloc_consistent is only called when phys_port is 0.  In the 
-subsequent cases, the ip_dma_ringbuf field is just initialized to the 
-previous value.  So it could be:
+The sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-out4:
-        for (phys_port = 0; phys_port < PORTS_PER_CARD; phys_port++) {
-                port = card_ptr->ic_port[phys_port].icp_port;
-                if (port) {
-			if (phys_port = 0)
-	                        pci_free_consistent(port->ip_idd->pdev,
-                                       TOTAL_RING_BUF_SIZE,
-                                       (void *)port->ip_cpu_ringbuf,
-                                       port->ip_dma_ringbuf);
-                        kfree(port);
-                }
-        }
-        kfree(card_ptr);
-        return ret;
+// <smpl>
+@expression@
+expression E;
+@@
 
-julia
+(
+* E
+  || ... || E
+|
+* E
+  && ... && E
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/gadget/amd5536udc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/amd5536udc.c b/drivers/usb/gadget/amd5536udc.c
+index 731150d..6c40c99 100644
+--- a/drivers/usb/gadget/amd5536udc.c
++++ b/drivers/usb/gadget/amd5536udc.c
+@@ -203,7 +203,7 @@ static void print_regs(struct udc *dev)
+ 		DBG(dev, "DMA mode       = PPBNDU (packet per buffer "
+ 			"WITHOUT desc. update)\n");
+ 		dev_info(&dev->pdev->dev, "DMA mode (%s)\n", "PPBNDU");
+-	} else if (use_dma && use_dma_ppb_du && use_dma_ppb_du) {
++	} else if (use_dma && use_dma_ppb && use_dma_ppb_du) {
+ 		DBG(dev, "DMA mode       = PPBDU (packet per buffer "
+ 			"WITH desc. update)\n");
+ 		dev_info(&dev->pdev->dev, "DMA mode (%s)\n", "PPBDU");
+
