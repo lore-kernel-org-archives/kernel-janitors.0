@@ -1,48 +1,52 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sat, 07 Aug 2010 06:32:43 +0000
-Subject: [PATCH 02/14] staging: comedi (cb_pcidda): use PCI_DEVICE() macro
-Message-Id: <1281162763.7976.8.camel@lenovo>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 28 Aug 2010 15:41:06 +0000
+Subject: [PATCH 7/7] net/wireless: Remove double test
+Message-Id: <1283010066-20935-8-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1283010066-20935-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1283010066-20935-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrea Gelmini <andrea.gelmini@gelma.net>, Mithlesh Thukral <mithlesh@linsyssoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use PCI_DEVICE() macro for pci table entries on comedi driver and thus improves readability.
+The same expression is tested twice and the result is the same each time.
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+The sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@expression@
+expression E;
+@@
+
+(
+* E
+  || ... || E
+|
+* E
+  && ... && E
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/comedi/drivers/cb_pcidda.c |   15 +++++++--------
- 1 files changed, 7 insertions(+), 8 deletions(-)
+ net/wireless/wext-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/comedi/drivers/cb_pcidda.c b/drivers/staging/comedi/drivers/cb_pcidda.c
-index 2d35143..6383fc9 100644
---- a/drivers/staging/comedi/drivers/cb_pcidda.c
-+++ b/drivers/staging/comedi/drivers/cb_pcidda.c
-@@ -196,14 +196,13 @@ static const struct cb_pcidda_board cb_pcidda_boards[] = {
- };
+diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
+index 0ef17bc..4038593 100644
+--- a/net/wireless/wext-core.c
++++ b/net/wireless/wext-core.c
+@@ -611,7 +611,7 @@ struct iw_statistics *get_wireless_stats(struct net_device *dev)
+ #endif
  
- static DEFINE_PCI_DEVICE_TABLE(cb_pcidda_pci_table) = {
--	{
--	PCI_VENDOR_ID_CB, 0x0020, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x0021, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x0022, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x0023, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x0024, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	PCI_VENDOR_ID_CB, 0x0025, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0}, {
--	0}
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0020) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0021) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0022) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0023) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0024) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CB, 0x0025) },
-+	{ 0 }
- };
- 
- MODULE_DEVICE_TABLE(pci, cb_pcidda_pci_table);
--- 
-1.7.0.4
-
-
+ #ifdef CONFIG_CFG80211_WEXT
+-	if (dev->ieee80211_ptr && dev->ieee80211_ptr &&
++	if (dev->ieee80211_ptr &&
+ 	    dev->ieee80211_ptr->wiphy &&
+ 	    dev->ieee80211_ptr->wiphy->wext &&
+ 	    dev->ieee80211_ptr->wiphy->wext->get_wireless_stats)
 
