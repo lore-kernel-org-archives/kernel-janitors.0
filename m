@@ -1,52 +1,84 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 09 Aug 2010 20:27:28 +0000
-Subject: Re: [PATCH 02/18 v2] char: mxser: call disable_pci_device() if
-Message-Id: <20100809202634.GL9031@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 29 Aug 2010 19:47:18 +0000
+Subject: [PATCH] arch/powerpc/platforms/83xx/mpc837x_mds.c: Add missing iounmap
+Message-Id: <1283111238-3129-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281383369-13613-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1281383369-13613-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jirislaby@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+To: Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 
-On Mon, Aug 09, 2010 at 11:49:27PM +0400, Kulikov Vasiliy wrote:
-> @@ -2564,8 +2564,11 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
->  	/* vector */
->  	ioaddress = pci_resource_start(pdev, 3);
->  	retval = pci_request_region(pdev, 3, "mxser(vector)");
-> -	if (retval)
-> -		goto err_relio;
-> +	if (retval) {
-> +		pci_release_region(pdev, 2);
-> +		brd->info = NULL;
-> +		goto err_release;
+The function of_iomap returns the result of calling ioremap, so iounmap
+should be called on the result in the error handling code, as done in the
+normal exit of the function.
 
-This should just be goto err_null.  The original err_null had a bug that
-it didn't call pci_release_region(pdev, 2); but you already fixed that.
+The sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@r exists@
+local idexpression x;
+expression E,E1;
+identifier l;
+statement S;
+@@
 
-> +	}
->  	brd->vector = ioaddress;
->  
->  	/* irq */
-> @@ -2616,10 +2619,13 @@ static int __devinit mxser_probe(struct pci_dev *pdev,
->  	pci_set_drvdata(pdev, brd);
->  
->  	return 0;
-> -err_relio:
-> -	pci_release_region(pdev, 2);
->  err_null:
->  	brd->info = NULL;
-> +	pci_release_region(pdev, 2);
-> +err_release:
-> +	pci_release_region(pdev, 3);
-> +err_disable:
-> +	pci_disable_device(pdev);
->  err:
->  	return retval;
->  #else
+*x = of_iomap(...);
+...  when != iounmap(x)
+     when != if (...) { ... iounmap(x); ... }
+     when != E = x
+     when any
+(
+if (x = NULL) S
+|
+if (...) {
+  ... when != iounmap(x)
+      when != if (...) { ... iounmap(x); ... }
+(
+  return <+...x...+>;
+|
+*  return ...;
+)
+}
+)
+... when != x = E1
+    when any
+iounmap(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/powerpc/platforms/83xx/mpc837x_mds.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/platforms/83xx/mpc837x_mds.c b/arch/powerpc/platforms/83xx/mpc837x_mds.c
+index f9751c8..8306832 100644
+--- a/arch/powerpc/platforms/83xx/mpc837x_mds.c
++++ b/arch/powerpc/platforms/83xx/mpc837x_mds.c
+@@ -48,8 +48,10 @@ static int mpc837xmds_usb_cfg(void)
+ 		return -1;
+ 
+ 	np = of_find_node_by_name(NULL, "usb");
+-	if (!np)
+-		return -ENODEV;
++	if (!np) {
++		ret = -ENODEV;
++		goto out;
++	}
+ 	phy_type = of_get_property(np, "phy_type", NULL);
+ 	if (phy_type && !strcmp(phy_type, "ulpi")) {
+ 		clrbits8(bcsr_regs + 12, BCSR12_USB_SER_PIN);
+@@ -65,8 +67,9 @@ static int mpc837xmds_usb_cfg(void)
+ 	}
+ 
+ 	of_node_put(np);
++out:
+ 	iounmap(bcsr_regs);
+-	return 0;
++	return ret;
+ }
+ 
+ /* ************************************************************************
 
