@@ -1,58 +1,71 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 05 Aug 2010 20:18:39 +0000
-Subject: [PATCH 6/42] drivers/scsi: Adjust confusing if indentation
-Message-Id: <Pine.LNX.4.64.1008052218190.31692@ask.diku.dk>
+Date: Sun, 29 Aug 2010 09:52:45 +0000
+Subject: [PATCH 6/7] arch/powerpc/platforms/maple/setup.c: Add of_node_put to avoid memory leak
+Message-Id: <1283075566-27441-7-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1283075566-27441-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1283075566-27441-1-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Willem Riede <osst@riede.org>, "James E.J. Bottomley" <James.Bottomley@suse.de>, osst-users@lists.sourceforge.net, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-jan
+To: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 
-From: Julia Lawall <julia@diku.dk>
-
-Indent the branch of an if.
+Add a call to of_node_put in the error handling code following a call to
+of_find_node_by_path.
 
 The semantic match that finds this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r disable braces4@
-position p1,p2;
-statement S1,S2;
+@r exists@
+local idexpression x;
+expression E,E1;
+statement S;
 @@
 
+*x = 
+(of_find_node_by_path
+|of_find_node_by_name
+|of_find_node_by_phandle
+|of_get_parent
+|of_get_next_parent
+|of_get_next_child
+|of_find_compatible_node
+|of_match_node
+)(...);
+...
+if (x = NULL) S
+<... when != x = E
+*if (...) {
+  ... when != of_node_put(x)
+      when != if (...) { ... of_node_put(x); ... }
 (
-if (...) { ... }
+  return <+...x...+>;
 |
-if (...) S1@p1 S2@p2
+*  return ...;
 )
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].column = p2[0].column):
-  cocci.print_main("branch",p1)
-  cocci.print_secs("after",p2)
+}
+...>
+of_node_put(x);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/osst.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/maple/setup.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
-index d64b717..f974c10 100644
---- a/drivers/scsi/osst.c
-+++ b/drivers/scsi/osst.c
-@@ -4694,7 +4694,7 @@ static int __os_scsi_tape_open(struct inode * inode, struct file * filp)
- 						    STp->timeout, MAX_RETRIES, 1);
- 			if ((SRpnt->sense[0] & 0x70) != 0x70 ||
- 			    (SRpnt->sense[2] & 0x0f) = NOT_READY)
--			break;
-+				break;
+diff --git a/arch/powerpc/platforms/maple/setup.c b/arch/powerpc/platforms/maple/setup.c
+index 3fff8d9..fe34c3d 100644
+--- a/arch/powerpc/platforms/maple/setup.c
++++ b/arch/powerpc/platforms/maple/setup.c
+@@ -358,6 +358,7 @@ static int __init maple_cpc925_edac_setup(void)
+ 	model = (const unsigned char *)of_get_property(np, "model", NULL);
+ 	if (!model) {
+ 		printk(KERN_ERR "%s: Unabel to get model info\n", __func__);
++		of_node_put(np);
+ 		return -ENODEV;
+ 	}
  
- 			if ((SRpnt->sense[2] & 0x0f) = UNIT_ATTENTION) {
- 				STp->pos_unknown = 0;
+
