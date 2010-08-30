@@ -1,27 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 28 Aug 2010 22:37:21 +0000
-Subject: Re: [PATCH] econet: kill unnecessary spin_lock_init()
-Message-Id: <20100828.153721.59667226.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 30 Aug 2010 08:14:45 +0000
+Subject: [patch] pcmcia: comedi: fix compile error
+Message-Id: <20100830081231.GL9832@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1282963316-29938-1-git-send-email-akinobu.mita@gmail.com>
-In-Reply-To: <1282963316-29938-1-git-send-email-akinobu.mita@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akinobu.mita@gmail.com
-Cc: kernel-janitors@vger.kernel.org, julia@diku.dk, netdev@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>, Marcel Holtmann <marcel@holtmann.org>, Alexander Kurz <linux@kbdbabel.org>, Andrea Gelmini <andrea.gelmini@gelma.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Sat, 28 Aug 2010 11:41:56 +0900
+We changed struct pcmcia_device in 90abdc3b973229 "pcmcia: do not use
+io_req_t when calling pcmcia_request_io()".  The rest of this file got
+updated to the new API but this line was missed so my config doesn't
+compile.
 
-> The spinlock aun_queue_lock is initialized statically. It is unnecessary
-> to initialize by spin_lock_init() at module load time.
-> 
-> This is detected by the semantic patch.
- ...
-> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> Cc: Julia Lawall <julia@diku.dk>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: netdev@vger.kernel.org
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/drivers/staging/comedi/drivers/das08_cs.c b/drivers/staging/comedi/drivers/das08_cs.c
+index c6aa52f..729ba8f 100644
+--- a/drivers/staging/comedi/drivers/das08_cs.c
++++ b/drivers/staging/comedi/drivers/das08_cs.c
+@@ -222,7 +222,7 @@ static int das08_pcmcia_config_loop(struct pcmcia_device *p_dev,
+ 		p_dev->resource[0]->flags &= ~IO_DATA_PATH_WIDTH;
+ 		p_dev->resource[0]->flags | 			pcmcia_io_cfg_data_width(io->flags);
+-		p_dev->io.IOAddrLines = io->flags & CISTPL_IO_LINES_MASK;
++		p_dev->io_lines = io->flags & CISTPL_IO_LINES_MASK;
+ 		p_dev->resource[0]->start = io->win[0].base;
+ 		p_dev->resource[0]->end = io->win[0].len;
+ 		if (io->nwin > 1) {
