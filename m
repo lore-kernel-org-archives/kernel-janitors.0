@@ -1,131 +1,27 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Sun, 29 Aug 2010 15:47:44 +0000
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Mon, 30 Aug 2010 13:13:40 +0000
 Subject: Re: [PATCH 3/7] drivers/mtd/nand/mpc5121_nfc.c: Add of_node_put to
-Message-Id: <20100829154744.GB4647@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="p4qYPpj5QlsIQJ0K"
+Message-Id: <1283174020.12995.77.camel@brekeke>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1283075566-27441-1-git-send-email-julia@diku.dk>
-	<1283075566-27441-4-git-send-email-julia@diku.dk>
-In-Reply-To: <1283075566-27441-4-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+	 <1283075566-27441-4-git-send-email-julia@diku.dk>
+In-Reply-To: <1283075566-27441-4-git-send-email-julia@diku.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Julia Lawall <julia@diku.dk>
+Cc: David Woodhouse <dwmw2@infradead.org>, kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-
---p4qYPpj5QlsIQJ0K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Aug 29, 2010 at 11:52:42AM +0200, Julia Lawall wrote:
+On Sun, 2010-08-29 at 11:52 +0200, Julia Lawall wrote:
 > Add a call to of_node_put in the error handling code following a call to
 > of_find_compatible_node.
->=20
+> 
 > The semantic match that finds this problem is as follows:
 > (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> expression E,E1;
-> statement S;
-> @@
->=20
-> *x =3D=20
-> (of_find_node_by_path
-> |of_find_node_by_name
-> |of_find_node_by_phandle
-> |of_get_parent
-> |of_get_next_parent
-> |of_get_next_child
-> |of_find_compatible_node
-> |of_match_node
-> )(...);
-> ...
-> if (x =3D=3D NULL) S
-> <... when !=3D x =3D E
-> *if (...) {
->   ... when !=3D of_node_put(x)
->       when !=3D if (...) { ... of_node_put(x); ... }
-> (
->   return <+...x...+>;
-> |
-> *  return ...;
-> )
-> }
-> ...>
-> of_node_put(x);
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Acked-by: Wolfram Sang <w.sang@pengutronix.de>
+Pushed to l2-mtd-2.6.git / master, thanks.
 
-adding ppc-list to cc.
+-- 
+Best Regards,
+Artem Bityutskiy (Битюцкий Артём)
 
->=20
-> ---
->  drivers/mtd/nand/mpc5121_nfc.c |    7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/mtd/nand/mpc5121_nfc.c b/drivers/mtd/nand/mpc5121_nf=
-c.c
-> index df0c1da..f4610bc 100644
-> --- a/drivers/mtd/nand/mpc5121_nfc.c
-> +++ b/drivers/mtd/nand/mpc5121_nfc.c
-> @@ -568,6 +568,7 @@ static int mpc5121_nfc_read_hw_config(struct mtd_info=
- *mtd)
->  	uint rcw_width;
->  	uint rcwh;
->  	uint romloc, ps;
-> +	int ret =3D 0;
-> =20
->  	rmnode =3D of_find_compatible_node(NULL, NULL, "fsl,mpc5121-reset");
->  	if (!rmnode) {
-> @@ -579,7 +580,8 @@ static int mpc5121_nfc_read_hw_config(struct mtd_info=
- *mtd)
->  	rm =3D of_iomap(rmnode, 0);
->  	if (!rm) {
->  		dev_err(prv->dev, "Error mapping reset module node!\n");
-> -		return -EBUSY;
-> +		ret =3D -EBUSY;
-> +		goto out;
->  	}
-> =20
->  	rcwh =3D in_be32(&rm->rcwhr);
-> @@ -628,8 +630,9 @@ static int mpc5121_nfc_read_hw_config(struct mtd_info=
- *mtd)
->  				rcw_width * 8, rcw_pagesize,
->  				rcw_sparesize);
->  	iounmap(rm);
-> +out:
->  	of_node_put(rmnode);
-> -	return 0;
-> +	return ret;
->  }
-> =20
->  /* Free driver resources */
->=20
-> _______________________________________________
-> devicetree-discuss mailing list
-> devicetree-discuss@lists.ozlabs.org
-> https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---p4qYPpj5QlsIQJ0K
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkx6gSAACgkQD27XaX1/VRu0AgCgtucFBgSniN12c8AQGNzYv0jp
-B0AAnRHH0tAw2XCxIB4aR3p+Gk3D0luH
-=0rXz
------END PGP SIGNATURE-----
-
---p4qYPpj5QlsIQJ0K--
