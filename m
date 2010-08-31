@@ -1,84 +1,40 @@
-From: Nicolas Palix <npalix@diku.dk>
-Date: Tue, 24 Aug 2010 15:38:54 +0000
-Subject: [PATCH 00/18] Add new semantic patches and reorganize existing ones
-Message-Id: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+From: Michal Marek <mmarek@suse.cz>
+Date: Tue, 31 Aug 2010 10:22:39 +0000
+Subject: Re: [PATCH 00/18] Add new semantic patches and reorganize existing
+Message-Id: <20100831102239.GA18142@sepie.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1282664352-15882-1-git-send-email-npalix@diku.dk>
+In-Reply-To: <1282664352-15882-1-git-send-email-npalix@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix@diku.dk>, Michal Marek <mmarek@suse.cz>
-Cc: cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Nicolas Palix <npalix@diku.dk>
+Cc: Julia Lawall <julia@diku.dk>, Gilles Muller <Gilles.Muller@lip6.fr>, cocci@diku.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The following series adds new semantic patches (SPs) in scripts/coccinelle.
-Existing SPs are reorganized accordingly.
+On Tue, Aug 24, 2010 at 05:38:54PM +0200, Nicolas Palix wrote:
+> The following series adds new semantic patches (SPs) in scripts/coccinelle.
+> Existing SPs are reorganized accordingly.
+> 
+> Nicolas Palix (18):
+>   Coccinelle: Add null/eno.cocci
+>   Coccinelle: Add null/kmerr.cocci
+>   Coccinelle: Move deref_null.cocci to a more appropriate directory
+>   Coccinelle: Add locks/call_kern.cocci
+>   Coccinelle: Add locks/double_lock.cocci
+>   Coccinelle: Add locks/mini_lock.cocci
+>   Coccinelle: Add iterators/fen.cocci
+>   Coccinelle: Add iterators/itnull.cocci
+>   Coccinelle: Add iterators/list_entry_update.cocci
+>   Coccinelle: Add free/kfree.cocci
+>   Coccinelle: Add api/kstrdup.cocci
+>   Coccinelle: Add api/memdup.cocci
+>   Coccinelle: Add api/memdup_user
+>   Coccinelle: Move err_cast.cocci to the api directory
+>   Coccinelle: Move resource_size.cocci to the api directory
+>   Coccinelle: Move alloc directory into api directory
+>   Coccinelle: Add misc/doubleinit.cocci
+>   Coccinelle: Add misc/ifcol.cocci
 
-Nicolas Palix (18):
-  Coccinelle: Add null/eno.cocci
-  Coccinelle: Add null/kmerr.cocci
-  Coccinelle: Move deref_null.cocci to a more appropriate directory
-  Coccinelle: Add locks/call_kern.cocci
-  Coccinelle: Add locks/double_lock.cocci
-  Coccinelle: Add locks/mini_lock.cocci
-  Coccinelle: Add iterators/fen.cocci
-  Coccinelle: Add iterators/itnull.cocci
-  Coccinelle: Add iterators/list_entry_update.cocci
-  Coccinelle: Add free/kfree.cocci
-  Coccinelle: Add api/kstrdup.cocci
-  Coccinelle: Add api/memdup.cocci
-  Coccinelle: Add api/memdup_user
-  Coccinelle: Move err_cast.cocci to the api directory
-  Coccinelle: Move resource_size.cocci to the api directory
-  Coccinelle: Move alloc directory into api directory
-  Coccinelle: Add misc/doubleinit.cocci
-  Coccinelle: Add misc/ifcol.cocci
+Applied, thanks.
 
- scripts/coccinelle/alloc/drop_kmalloc_cast.cocci   |   67 -----
- scripts/coccinelle/alloc/kzalloc-simple.cocci      |   86 ------
- .../coccinelle/api/alloc/drop_kmalloc_cast.cocci   |   67 +++++
- scripts/coccinelle/api/alloc/kzalloc-simple.cocci  |   86 ++++++
- scripts/coccinelle/api/err_cast.cocci              |   56 ++++
- scripts/coccinelle/api/kstrdup.cocci               |   39 +++
- scripts/coccinelle/api/memdup.cocci                |   40 +++
- scripts/coccinelle/api/memdup_user.cocci           |   35 +++
- scripts/coccinelle/api/resource_size.cocci         |   93 ++++++
- scripts/coccinelle/deref_null.cocci                |  293 --------------------
- scripts/coccinelle/err_cast.cocci                  |   56 ----
- scripts/coccinelle/free/kfree.cocci                |  116 ++++++++
- scripts/coccinelle/iterators/fen.cocci             |   64 +++++
- scripts/coccinelle/iterators/itnull.cocci          |   58 ++++
- .../coccinelle/iterators/list_entry_update.cocci   |   62 ++++
- scripts/coccinelle/locks/call_kern.cocci           |   74 +++++
- scripts/coccinelle/locks/double_lock.cocci         |   92 ++++++
- scripts/coccinelle/locks/mini_lock.cocci           |   95 +++++++
- scripts/coccinelle/misc/doubleinit.cocci           |   53 ++++
- scripts/coccinelle/misc/ifcol.cocci                |   48 ++++
- scripts/coccinelle/null/deref_null.cocci           |  293 ++++++++++++++++++++
- scripts/coccinelle/null/eno.cocci                  |   20 ++
- scripts/coccinelle/null/kmerr.cocci                |   72 +++++
- scripts/coccinelle/resource_size.cocci             |   93 ------
- 24 files changed, 1463 insertions(+), 595 deletions(-)
- delete mode 100644 scripts/coccinelle/alloc/drop_kmalloc_cast.cocci
- delete mode 100644 scripts/coccinelle/alloc/kzalloc-simple.cocci
- create mode 100644 scripts/coccinelle/api/alloc/drop_kmalloc_cast.cocci
- create mode 100644 scripts/coccinelle/api/alloc/kzalloc-simple.cocci
- create mode 100644 scripts/coccinelle/api/err_cast.cocci
- create mode 100644 scripts/coccinelle/api/kstrdup.cocci
- create mode 100644 scripts/coccinelle/api/memdup.cocci
- create mode 100644 scripts/coccinelle/api/memdup_user.cocci
- create mode 100644 scripts/coccinelle/api/resource_size.cocci
- delete mode 100644 scripts/coccinelle/deref_null.cocci
- delete mode 100644 scripts/coccinelle/err_cast.cocci
- create mode 100644 scripts/coccinelle/free/kfree.cocci
- create mode 100644 scripts/coccinelle/iterators/fen.cocci
- create mode 100644 scripts/coccinelle/iterators/itnull.cocci
- create mode 100644 scripts/coccinelle/iterators/list_entry_update.cocci
- create mode 100644 scripts/coccinelle/locks/call_kern.cocci
- create mode 100644 scripts/coccinelle/locks/double_lock.cocci
- create mode 100644 scripts/coccinelle/locks/mini_lock.cocci
- create mode 100644 scripts/coccinelle/misc/doubleinit.cocci
- create mode 100644 scripts/coccinelle/misc/ifcol.cocci
- create mode 100644 scripts/coccinelle/null/deref_null.cocci
- create mode 100644 scripts/coccinelle/null/eno.cocci
- create mode 100644 scripts/coccinelle/null/kmerr.cocci
- delete mode 100644 scripts/coccinelle/resource_size.cocci
-
+Michal
