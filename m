@@ -1,53 +1,38 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Tue, 31 Aug 2010 16:33:52 +0000
-Subject: Re: [PATCH 1/7] drivers/macintosh/via-pmu-led.c: Add of_node_put to
-Message-Id: <AANLkTi=3b0NY5pFepv-TmjFDmPUBK9Ew16HyTn-+YguX@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Date: Tue, 31 Aug 2010 18:12:06 +0000
+Subject: Re: [PATCH] staging/wlan-ng: fix compile error updating to new
+Message-Id: <20100831181206.GA29005@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283075566-27441-1-git-send-email-julia@diku.dk>
- <1283075566-27441-2-git-send-email-julia@diku.dk> <4C7D247F.4060500@bfs.de>
- <Pine.LNX.4.64.1008311807470.2668@ask.diku.dk> <20100831161644.GA14505@albatros>
-In-Reply-To: <20100831161644.GA14505@albatros>
+References: <1277986723.1679.8.camel@lenovo>
+In-Reply-To: <1277986723.1679.8.camel@lenovo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: Julia Lawall <julia@diku.dk>, walter harms <wharms@bfs.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 31, 2010 at 10:16 AM, Vasiliy Kulikov <segooon@gmail.com> wrote:
-> On Tue, Aug 31, 2010 at 18:08 +0200, Julia Lawall wrote:
->> On Tue, 31 Aug 2010, walter harms wrote:
->> > > =A0 if (strncmp(model, "PowerBook", strlen("PowerBook")) !=3D 0 &&
->> > > =A0 =A0 =A0 strncmp(model, "iBook", strlen("iBook")) !=3D 0 &&
->> > > =A0 =A0 =A0 strcmp(model, "PowerMac7,2") !=3D 0 &&
->> > >
->> >
->> > is there any rule that says when to use strncmp ? it seems perfecly va=
-lid to use strcpy here
->> > (what is done in the last cmp).
->>
->> Perhaps there are some characters after eg PowerBook that one doesn't wa=
-nt
->> to compare with?
->
-> It seems to me that model has no '\0' in the end. If model is got from
-> the hardware then we should double check it - maybe harware is buggy.
-> Otherwise we'll overflow model.
+On Thu, Jul 01, 2010 at 08:18:43AM -0400, Javier Martinez Canillas wrote:
+> Hello, 
+> 
+> A few days ago I send this patch and didn't get any feedback. So I'm resending it.
+> 
+> In linux-next I got a compile error in wlan-ng:
+> 
+> CC [M]  drivers/staging/wlan-ng/p80211netdev.o
+> In file included from drivers/staging/wlan-ng/p80211netdev.c:91:
+> drivers/staging/wlan-ng/cfg80211.c:602: warning: ‘enum tx_power_setting’ declared inside parameter list
+> drivers/staging/wlan-ng/cfg80211.c:602: warning: its scope is only this definition or declaration, which is probably not what you want
+> drivers/staging/wlan-ng/cfg80211.c:602: error: parameter 2 (‘type’) has incomplete type
+> drivers/staging/wlan-ng/cfg80211.c: In function ‘prism2_set_tx_power’:
+> drivers/staging/wlan-ng/cfg80211.c:609: error: ‘TX_POWER_AUTOMATIC’ undeclared (first use in this function)
+> drivers/staging/wlan-ng/cfg80211.c:609: error: (Each undeclared identifier is reported only once
+> drivers/staging/wlan-ng/cfg80211.c:609: error: for each function it appears in.)
+> make[1]: *** [drivers/staging/wlan-ng/p80211netdev.o] Error 1
+> make: *** [_module_drivers/staging/wlan-ng] Error 2
+> 
+> The problem is that the 802.11 netlink interface changed and the driver was not updated
 
-Model does have \0 at the end.  This code is using strncmp to
-purposefully ignore the model suffix.
+I don't see this error anymore in Linus's tree, is it still needed?
 
-> But why strcmp(model, "PowerMac7,2")? IMO it should be replaced
-> with strncmp().
+thanks,
 
-We use strcmp when parsing the device tree because the the length of
-the model property string is unknown and in most cases we *must* match
-the exact entire string, such as with this PowerMac7,2 example.  Using
-strncmp would also happen to match with something like
-"PowerMac7,2345" which is not the desired behaviour.
-
-g.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+greg k-h
