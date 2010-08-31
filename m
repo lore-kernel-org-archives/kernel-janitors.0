@@ -1,38 +1,83 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Mon, 02 Aug 2010 12:47:04 +0000
-Subject: Re: [PATCH] cris: gpio: do not call
-Message-Id: <20100802124704.GA6050@albatros>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 31 Aug 2010 15:48:58 +0000
+Subject: [PATCH 4/4] arch/powerpc/platforms/chrp/nvram.c: Add of_node_put to avoid memory leak
+Message-Id: <1283269738-14612-5-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1280410338-21501-1-git-send-email-segooon@gmail.com>
- <20100802113316.GJ9784@axis.com>
-In-Reply-To: <20100802113316.GJ9784@axis.com>
+References: <1283269738-14612-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1283269738-14612-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jesper Nilsson <Jesper.Nilsson@axis.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Mikael Starvik <mikael.starvik@axis.com>, linux-cris-kernel <linux-cris-kernel@axis.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-On Mon, Aug 02, 2010 at 13:33 +0200, Jesper Nilsson wrote:
-> On Thu, Jul 29, 2010 at 03:32:18PM +0200, Kulikov Vasiliy wrote:
-> > copy_to_user()/copy_from_user() must not be used with spinlocks held.
-> > Move all cases of interaction with userspace out of global switch and
-> > lock spinlocks only where they are needed.
-> 
-> Thanks, but I'm thinking we should move the spinlock inside each case instead,
-> as in the below patch.
-> Unless there's any protests I'll add it to the cris-tree in the next couple of days:
+Add a call to of_node_put in the error handling code following a call to
+of_find_node_by_type.
 
-I'm fine with this.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> 
-> CRIS: gpio: don't call copy_to_user()/copy_from_user() while holding spinlocks
-> 
-> copy_to_user()/copy_from_user() must not be used with spinlocks held.
-> Move locks inside each case so we have better control of when the locks
-> are held.
-> 
-> Also, since we use spinlocks, we don't need to hold the BKL, so remove it.
-> 
-> Reported-by: Kulikov Vasiliy <segooon@gmail.com>
-> Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+// <smpl>
+@r exists@
+local idexpression x;
+expression E,E1,E2;
+statement S;
+@@
+
+*x = 
+(of_find_node_by_path
+|of_find_node_by_name
+|of_find_node_by_phandle
+|of_get_parent
+|of_get_next_parent
+|of_get_next_child
+|of_find_compatible_node
+|of_match_node
+|of_find_node_by_type
+|of_find_node_with_property
+|of_find_matching_node
+|of_parse_phandle
+)(...);
 ...
+if (x = NULL) S
+<... when != x = E
+*if (...) {
+  ... when != of_node_put(x)
+      when != if (...) { ... of_node_put(x); ... }
+(
+  return <+...x...+>;
+|
+*  return ...;
+)
+}
+...>
+(
+E2 = x;
+|
+of_node_put(x);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/powerpc/platforms/chrp/nvram.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/chrp/nvram.c b/arch/powerpc/platforms/chrp/nvram.c
+index ba3588f..d3ceff0 100644
+--- a/arch/powerpc/platforms/chrp/nvram.c
++++ b/arch/powerpc/platforms/chrp/nvram.c
+@@ -74,8 +74,10 @@ void __init chrp_nvram_init(void)
+ 		return;
+ 
+ 	nbytes_p = of_get_property(nvram, "#bytes", &proplen);
+-	if (nbytes_p = NULL || proplen != sizeof(unsigned int))
++	if (nbytes_p = NULL || proplen != sizeof(unsigned int)) {
++		of_node_put(nvram);
+ 		return;
++	}
+ 
+ 	nvram_size = *nbytes_p;
+ 
+
