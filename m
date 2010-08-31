@@ -1,54 +1,250 @@
-From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Date: Thu, 05 Aug 2010 20:47:56 +0000
-Subject: Re: [PATCH 33/42] drivers/net/wireless/ath/ath9k: Adjust confusing
-Message-Id: <20100805204756.GA1738@tux>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 31 Aug 2010 15:48:55 +0000
+Subject: [PATCH 1/4] drivers/serial/ucc_uart.c: Add of_node_put to avoid memory leak
+Message-Id: <1283269738-14612-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008052226380.31692@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1008052226380.31692@ask.diku.dk>
+References: <1283269738-14612-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1283269738-14612-1-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Luis Rodriguez <Luis.Rodriguez@Atheros.com>, Jouni Malinen <Jouni.Malinen@Atheros.com>, Sujith Manoharan <Sujith.Manoharan@Atheros.com>, Vasanth Thiagarajan <Vasanth.Thiagarajan@Atheros.com>, Senthilkumar Balasubramanian <Senthilkumar.Balasubramanian@Atheros.com>, "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "ath9k-devel@lists.ath9k.org" <ath9k-devel@lists.ath9k.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Timur Tabi <timur-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Cc: linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Thu, Aug 05, 2010 at 01:26:56PM -0700, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Outdent the code following the if.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable braces4@
-> position p1,p2;
-> statement S1,S2;
-> @@
-> 
-> (
-> if (...) { ... }
-> |
-> if (...) S1@p1 S2@p2
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> if (p1[0].column = p2[0].column):
->   cocci.print_main("branch",p1)
->   cocci.print_secs("after",p2)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Add a call to of_node_put in the error handling code following a call to
+of_find_compatible_node or of_find_node_by_type.
 
-Acked-by: Luis R. Rodriguez <lrodriguez@atheros.com>
+This patch also substantially reorganizes the error handling code in the
+function, to that it is possible first to jump to code that frees qe_port
+and then to jump to code that also puts np.
 
-> ---
-> This patch doesn't change the semantics of the code.  But it might not be
-> what is intended.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Your patch is correct, it wast a tab goof, thanks for fixing this.
+// <smpl>
+@r exists@
+local idexpression x;
+expression E,E1,E2;
+statement S;
+@@
 
-  Luis
+*x = 
+(of_find_node_by_path
+|of_find_node_by_name
+|of_find_node_by_phandle
+|of_get_parent
+|of_get_next_parent
+|of_get_next_child
+|of_find_compatible_node
+|of_match_node
+|of_find_node_by_type
+|of_find_node_with_property
+|of_find_matching_node
+|of_parse_phandle
+)(...);
+...
+if (x = NULL) S
+<... when != x = E
+*if (...) {
+  ... when != of_node_put(x)
+      when != if (...) { ... of_node_put(x); ... }
+(
+  return <+...x...+>;
+|
+*  return ...;
+)
+}
+...>
+(
+E2 = x;
+|
+of_node_put(x);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/serial/ucc_uart.c |   67 ++++++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/serial/ucc_uart.c b/drivers/serial/ucc_uart.c
+index 3f4848e..38a5ef0 100644
+--- a/drivers/serial/ucc_uart.c
++++ b/drivers/serial/ucc_uart.c
+@@ -1270,13 +1270,12 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 	ret = of_address_to_resource(np, 0, &res);
+ 	if (ret) {
+ 		dev_err(&ofdev->dev, "missing 'reg' property in device tree\n");
+-		kfree(qe_port);
+-		return ret;
++		goto out_free;
+ 	}
+ 	if (!res.start) {
+ 		dev_err(&ofdev->dev, "invalid 'reg' property in device tree\n");
+-		kfree(qe_port);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_free;
+ 	}
+ 	qe_port->port.mapbase = res.start;
+ 
+@@ -1286,17 +1285,17 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 	if (!iprop) {
+ 		iprop = of_get_property(np, "device-id", NULL);
+ 		if (!iprop) {
+-			kfree(qe_port);
+ 			dev_err(&ofdev->dev, "UCC is unspecified in "
+ 				"device tree\n");
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out_free;
+ 		}
+ 	}
+ 
+ 	if ((*iprop < 1) || (*iprop > UCC_MAX_NUM)) {
+ 		dev_err(&ofdev->dev, "no support for UCC%u\n", *iprop);
+-		kfree(qe_port);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_free;
+ 	}
+ 	qe_port->ucc_num = *iprop - 1;
+ 
+@@ -1310,16 +1309,16 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 	sprop = of_get_property(np, "rx-clock-name", NULL);
+ 	if (!sprop) {
+ 		dev_err(&ofdev->dev, "missing rx-clock-name in device tree\n");
+-		kfree(qe_port);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_free;
+ 	}
+ 
+ 	qe_port->us_info.rx_clock = qe_clock_source(sprop);
+ 	if ((qe_port->us_info.rx_clock < QE_BRG1) ||
+ 	    (qe_port->us_info.rx_clock > QE_BRG16)) {
+ 		dev_err(&ofdev->dev, "rx-clock-name must be a BRG for UART\n");
+-		kfree(qe_port);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_free;
+ 	}
+ 
+ #ifdef LOOPBACK
+@@ -1329,39 +1328,39 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 	sprop = of_get_property(np, "tx-clock-name", NULL);
+ 	if (!sprop) {
+ 		dev_err(&ofdev->dev, "missing tx-clock-name in device tree\n");
+-		kfree(qe_port);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_free;
+ 	}
+ 	qe_port->us_info.tx_clock = qe_clock_source(sprop);
+ #endif
+ 	if ((qe_port->us_info.tx_clock < QE_BRG1) ||
+ 	    (qe_port->us_info.tx_clock > QE_BRG16)) {
+ 		dev_err(&ofdev->dev, "tx-clock-name must be a BRG for UART\n");
+-		kfree(qe_port);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_free;
+ 	}
+ 
+ 	/* Get the port number, numbered 0-3 */
+ 	iprop = of_get_property(np, "port-number", NULL);
+ 	if (!iprop) {
+ 		dev_err(&ofdev->dev, "missing port-number in device tree\n");
+-		kfree(qe_port);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_free;
+ 	}
+ 	qe_port->port.line = *iprop;
+ 	if (qe_port->port.line >= UCC_MAX_UART) {
+ 		dev_err(&ofdev->dev, "port-number must be 0-%u\n",
+ 			UCC_MAX_UART - 1);
+-		kfree(qe_port);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_free;
+ 	}
+ 
+ 	qe_port->port.irq = irq_of_parse_and_map(np, 0);
+ 	if (qe_port->port.irq = NO_IRQ) {
+ 		dev_err(&ofdev->dev, "could not map IRQ for UCC%u\n",
+ 		       qe_port->ucc_num + 1);
+-		kfree(qe_port);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_free;
+ 	}
+ 
+ 	/*
+@@ -1373,8 +1372,8 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 		np = of_find_node_by_type(NULL, "qe");
+ 		if (!np) {
+ 			dev_err(&ofdev->dev, "could not find 'qe' node\n");
+-			kfree(qe_port);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out_free;
+ 		}
+ 	}
+ 
+@@ -1382,8 +1381,8 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 	if (!iprop) {
+ 		dev_err(&ofdev->dev,
+ 		       "missing brg-frequency in device tree\n");
+-		kfree(qe_port);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_np;
+ 	}
+ 
+ 	if (*iprop)
+@@ -1398,16 +1397,16 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 		if (!iprop) {
+ 			dev_err(&ofdev->dev,
+ 				"missing QE bus-frequency in device tree\n");
+-			kfree(qe_port);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out_np;
+ 		}
+ 		if (*iprop)
+ 			qe_port->port.uartclk = *iprop / 2;
+ 		else {
+ 			dev_err(&ofdev->dev,
+ 				"invalid QE bus-frequency in device tree\n");
+-			kfree(qe_port);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out_np;
+ 		}
+ 	}
+ 
+@@ -1445,8 +1444,7 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 	if (ret) {
+ 		dev_err(&ofdev->dev, "could not add /dev/ttyQE%u\n",
+ 		       qe_port->port.line);
+-		kfree(qe_port);
+-		return ret;
++		goto out_np;
+ 	}
+ 
+ 	dev_set_drvdata(&ofdev->dev, qe_port);
+@@ -1460,6 +1458,11 @@ static int ucc_uart_probe(struct platform_device *ofdev,
+ 	       SERIAL_QE_MINOR + qe_port->port.line);
+ 
+ 	return 0;
++out_np:
++	of_node_put(np);
++out_free:
++	kfree(qe_port);
++	return ret;
+ }
+ 
+ static int ucc_uart_remove(struct platform_device *ofdev)
+
