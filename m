@@ -1,69 +1,43 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Date: Thu, 02 Sep 2010 04:15:19 +0000
-Subject: Re: [PATCH] kprobes: add sparse context annotation
-Message-Id: <4C7F24D7.3010804@hitachi.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 01 Sep 2010 17:59:55 +0000
+Subject: Re: [PATCH 3/4] drivers/net/can/mscan/mpc5xxx_can.c: Add
+Message-Id: <20100901.105955.176668287.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1281082375-13356-1-git-send-email-namhyung@gmail.com>
-In-Reply-To: <1281082375-13356-1-git-send-email-namhyung@gmail.com>
+References: <Pine.LNX.4.64.1008311943280.2668@ask.diku.dk>
+	<20100831191014.GA9603@pengutronix.de>
+	<4C7D565F.307@grandegger.com>
+In-Reply-To: <4C7D565F.307-5Yr1BZd7O62+XT7JhA+gdA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: wg-5Yr1BZd7O62+XT7JhA+gdA@public.gmane.org
+Cc: socketcan-core-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, julia-dAYI7NvHqcQ@public.gmane.org
 
-(2010/08/06 17:17), Namhyung Kim wrote:
-> this removes following warnings when build with C=1
-> 
->  warning: context imbalance in 'kretprobe_hash_lock' - wrong count at exit
->  warning: context imbalance in 'kretprobe_table_lock' - wrong count at exit
->  warning: context imbalance in 'kretprobe_hash_unlock' - unexpected unlock
->  warning: context imbalance in 'kretprobe_table_unlock' - unexpected unlock
-> 
-> Signed-off-by: Namhyung Kim <namhyung@gmail.com>
+From: Wolfgang Grandegger <wg@grandegger.com>
+Date: Tue, 31 Aug 2010 21:22:07 +0200
 
-Thanks for the fix!
-
-Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-
+> On 08/31/2010 09:10 PM, Wolfram Sang wrote:
+>> On Tue, Aug 31, 2010 at 07:44:00PM +0200, Julia Lawall wrote:
+>>> Add a call to of_node_put in the error handling code following a call to
+>>> of_find_matching_node.
+>>>
+>>> This patch also moves the existing call to of_node_put after the call to
+>>> iounmap in the error handling code, to make it possible to jump to
+>>> of_node_put without doing iounmap.  These appear to be disjoint operations,
+>>> so the ordering doesn't matter.
+>>>
+>>> This patch furthermore changes the -ENODEV result in the error handling
+>>> code for of_find_matching_node to a return of 0, as found in the error
+>>> handling code for of_iomap, because the return type of the function is
+>>> unsigned.
+>>>
+>>> The semantic match that finds this problem is as follows:
+>>> (http://coccinelle.lip6.fr/)
+ ...
+>>> Signed-off-by: Julia Lawall <julia@diku.dk>
+>> 
+>> Reviewed-by: Wolfram Sang <w.sang@pengutronix.de>
 > 
-> ---
-> 
-> oops.. there was an typo. apply this version instead.
-> Thanks.
-> 
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index c53aad5..6dd5359 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -831,6 +831,7 @@ void __kprobes recycle_rp_inst(struct kretprobe_instance *ri,
->  
->  void __kprobes kretprobe_hash_lock(struct task_struct *tsk,
->  			 struct hlist_head **head, unsigned long *flags)
-> +__acquires(hlist_lock)
->  {
->  	unsigned long hash = hash_ptr(tsk, KPROBE_HASH_BITS);
->  	spinlock_t *hlist_lock;
-> @@ -842,6 +843,7 @@ void __kprobes kretprobe_hash_lock(struct task_struct *tsk,
->  
->  static void __kprobes kretprobe_table_lock(unsigned long hash,
->  	unsigned long *flags)
-> +__acquires(hlist_lock)
->  {
->  	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
->  	spin_lock_irqsave(hlist_lock, *flags);
-> @@ -849,6 +851,7 @@ static void __kprobes kretprobe_table_lock(unsigned long hash,
->  
->  void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
->  	unsigned long *flags)
-> +__releases(hlist_lock)
->  {
->  	unsigned long hash = hash_ptr(tsk, KPROBE_HASH_BITS);
->  	spinlock_t *hlist_lock;
-> @@ -859,6 +862,7 @@ void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
->  
->  static void __kprobes kretprobe_table_unlock(unsigned long hash,
->         unsigned long *flags)
-> +__releases(hlist_lock)
->  {
->  	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
->  	spin_unlock_irqrestore(hlist_lock, *flags);
+> Acked-by: Wolfgang Grandegger <wg@grandegger.com>
 
+Applied.
