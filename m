@@ -1,24 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 07 Sep 2010 01:30:20 +0000
-Subject: Re: [patch] isdn: cleanup: make buffer smaller
-Message-Id: <20100906.183020.233685314.davem@davemloft.net>
+From: Timur Tabi <timur@freescale.com>
+Date: Wed, 01 Sep 2010 18:40:05 +0000
+Subject: Re: [PATCH 1/4] drivers/serial/ucc_uart.c: Add of_node_put to avoid
+Message-Id: <AANLkTikDfFkwKMmn8d1pqUrn+=KL4YH_PE3uXehq-6FG@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100904183303.GN5437@bicker>
-In-Reply-To: <20100904183303.GN5437@bicker>
+References: <1283269738-14612-1-git-send-email-julia@diku.dk>
+	<1283269738-14612-2-git-send-email-julia@diku.dk>
+In-Reply-To: <1283269738-14612-2-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: isdn@linux-pingi.de, tilman@imap.cc, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 4 Sep 2010 20:33:03 +0200
+On Tue, Aug 31, 2010 at 10:48 AM, Julia Lawall <julia@diku.dk> wrote:
+> Add a call to of_node_put in the error handling code following a call to
+> of_find_compatible_node or of_find_node_by_type.
+>
+> This patch also substantially reorganizes the error handling code in the
+> function, to that it is possible first to jump to code that frees qe_port
+> and then to jump to code that also puts np.
 
-> This showed up in my audit because we use strcpy() to copy "ds" into a
-> 32 character buffer inside the isdn_tty_dial() function.  But it turns
-> out that we only ever use the first 32 characters so it's OK.  I have
-> changed the declaration to make the static checkers happy.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Acked-by: Timur Tabi <timur@freescale.com>
 
-Applied.
+Thanks, Julia.
+
+-- 
+Timur Tabi
+Linux kernel developer at Freescale
