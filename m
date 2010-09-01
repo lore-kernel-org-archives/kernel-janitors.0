@@ -1,25 +1,51 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sun, 26 Sep 2010 10:00:18 +0000
-Subject: Re: [PATCH] touchscreen: tnetv107x: fix input_device leak
-Message-Id: <A36AFE1D-1D31-4B93-B569-830215F0FD14@gmail.com>
+From: walter harms <wharms@bfs.de>
+Date: Wed, 01 Sep 2010 15:03:06 +0000
+Subject: Re: [PATCH 1/7] drivers/macintosh/via-pmu-led.c: Add of_node_put
+Message-Id: <4C7E6B2A.6030907@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285491587-32707-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1285491587-32707-1-git-send-email-segooon@gmail.com>
+References: <1283075566-27441-1-git-send-email-julia@diku.dk> <1283075566-27441-2-git-send-email-julia@diku.dk> <4C7D247F.4060500@bfs.de> <Pine.LNX.4.64.1008311807470.2668@ask.diku.dk> <20100831161644.GA14505@albatros> <AANLkTi=3b0NY5pFepv-TmjFDmPUBK9Ew16HyTn-+YguX@mail.gmail.com>
+In-Reply-To: <AANLkTi=3b0NY5pFepv-TmjFDmPUBK9Ew16HyTn-+YguX@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Cyril Chemparathy <cyril@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Vasiliy Kulikov <segooon@gmail.com>, Julia Lawall <julia@diku.dk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-On Sep 26, 2010, at 1:59 AM, Vasiliy Kulikov <segooon@gmail.com> wrote:
 
-> tsc_probe() calls input_free_device() on error, but tsc_remove()
-> doesn't.
 
-NAK. It is forbidden to call input_free_device() after unregister.
+Grant Likely schrieb:
+> On Tue, Aug 31, 2010 at 10:16 AM, Vasiliy Kulikov <segooon@gmail.com> wrote:
+>> On Tue, Aug 31, 2010 at 18:08 +0200, Julia Lawall wrote:
+>>> On Tue, 31 Aug 2010, walter harms wrote:
+>>>>>   if (strncmp(model, "PowerBook", strlen("PowerBook")) != 0 &&
+>>>>>       strncmp(model, "iBook", strlen("iBook")) != 0 &&
+>>>>>       strcmp(model, "PowerMac7,2") != 0 &&
+>>>>>
+>>>> is there any rule that says when to use strncmp ? it seems perfecly valid to use strcpy here
+>>>> (what is done in the last cmp).
+>>> Perhaps there are some characters after eg PowerBook that one doesn't want
+>>> to compare with?
+>> It seems to me that model has no '\0' in the end. If model is got from
+>> the hardware then we should double check it - maybe harware is buggy.
+>> Otherwise we'll overflow model.
+> 
+> Model does have \0 at the end.  This code is using strncmp to
+> purposefully ignore the model suffix.
+> 
+>> But why strcmp(model, "PowerMac7,2")? IMO it should be replaced
+>> with strncmp().
+> 
+> We use strcmp when parsing the device tree because the the length of
+> the model property string is unknown and in most cases we *must* match
+> the exact entire string, such as with this PowerMac7,2 example.  Using
+> strncmp would also happen to match with something like
+> "PowerMac7,2345" which is not the desired behaviour.
+> 
 
-Thanks. 
+hi Grant,
+whould you mind to use you explanation as comment in the code ?
+Tthat the strncpy/strcpy difference is important should be noted. that would be clearly a
+bonos with further audits.
 
--- 
-Dmitry
-
+re,
+ wh
