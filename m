@@ -1,42 +1,98 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 06 Sep 2010 18:02:40 +0000
-Subject: Re: [PATCH 06/14] staging: rtl8192u: improve error path
-Message-Id: <20100906180240.GC2764@bicker>
+From: Thomas Dahlmann <dahlmann.thomas@arcor.de>
+Date: Wed, 01 Sep 2010 10:03:45 +0000
+Subject: Re: [PATCH 2/7] drivers/usb/gadget/amd5536udc.c: Remove double test
+Message-Id: <4C7E2501.4050004@arcor.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283711561-7332-1-git-send-email-segooon@gmail.com> <20100906101138.GA31249@bicker> <20100906135055.GA9632@albatros>
-In-Reply-To: <20100906135055.GA9632@albatros>
+References: <634098.18332.qm@web180309.mail.gq1.yahoo.com>
+In-Reply-To: <634098.18332.qm@web180309.mail.gq1.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, Julia Lawall <julia@diku.dk>, Ben Hutchings <ben@decadent.org.uk>, Mike Gilks <mike.kernel@gilksonline.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: David Brownell <david-b@pacbell.net>
+Cc: Dan Carpenter <error27@gmail.com>, Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Sep 06, 2010 at 05:50:56PM +0400, Kulikov Vasiliy wrote:
-> On Mon, Sep 06, 2010 at 12:11 +0200, Dan Carpenter wrote:
-> > On Sun, Sep 05, 2010 at 10:32:41PM +0400, Kulikov Vasiliy wrote:
-> > > +fail2:
-> > > +	rtl8192_down(dev);
-> > > +	if (priv->pFirmware) {
-> > > +		kfree(priv->pFirmware);
-> > > +		priv->pFirmware = NULL;
-> > > +	}
-> > > +	rtl8192_usb_deleteendpoints(dev);
-> > > +	destroy_workqueue(priv->priv_wq);
-> > > +	mdelay(10);
-> > 
-> > What's this delay for?
-> 
-> It was copied from rtl8192_usb_disconnect(), I don't know why it has
-> mdelay(10). But it's better to keep the old deallocation code, it should
-> have the same problems (if original code has any).
-> 
+David Brownell schrieb:
+> --- On Sat, 8/28/10, Julia Lawall <julia@diku.dk> wrote:
+>
+>   
+>> From: Julia Lawall <julia@diku.dk>
+>> Subject: Re: [PATCH 2/7] drivers/usb/gadget/amd5536udc.c: Remove double test
+>> To: "Dan Carpenter" <error27@gmail.com>
+>> Cc: "Thomas Dahlmann" <dahlmann.thomas@arcor.de>, kernel-janitors@vger.kernel.org, "David Brownell" <dbrownell@users.sourceforge.net>, "Greg Kroah-Hartman" <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+>> Date: Saturday, August 28, 2010, 9:48 AM
+>> The same expression is tested twice
+>> and the result is the same each time.
+>> Instead test for use_dma_ppb as in the test above.
+>>
+>> The sematic match that finds this problem is as follows:
+>> (http://coccinelle.lip6.fr/)
+>>
+>> // <smpl>
+>> @expression@
+>> expression E;
+>> @@
+>>
+>> (
+>> * E
+>>   || ... || E
+>> |
+>> * E
+>>   && ... && E
+>> )
+>> // </smpl>
+>>
+>> Signed-off-by: Julia Lawall <julia@diku.dk>
+>>     
+>
+>
+> OK by me unless the maintainer/author objects.
+>
+> Thank you!
+>
+> - Dave
+>
+>   
 
-I think the delay in rtl8192_usb_disconnect() is because we reset the
-device.  (Of course, in that case, it would have been better to move the
-delay into rtl8192_reset().  And also the reset code has been commented
-out.)
+This fix is OK. Thank you for figuring this out!
 
-In this case here, the delay is serves no purpose and should be removed.
+- Thomas
 
-regards,
-dan carpenter
+>
+>   
+>> ---
+>>  drivers/usb/gadget/amd5536udc.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/gadget/amd5536udc.c
+>> b/drivers/usb/gadget/amd5536udc.c
+>> index 731150d..6c40c99 100644
+>> --- a/drivers/usb/gadget/amd5536udc.c
+>> +++ b/drivers/usb/gadget/amd5536udc.c
+>> @@ -203,7 +203,7 @@ static void print_regs(struct udc
+>> *dev)
+>>          DBG(dev, "DMA
+>> mode       = PPBNDU (packet per
+>> buffer "
+>>             
+>> "WITHOUT desc. update)\n");
+>>         
+>> dev_info(&dev->pdev->dev, "DMA mode (%s)\n",
+>> "PPBNDU");
+>> -    } else if (use_dma &&
+>> use_dma_ppb_du && use_dma_ppb_du) {
+>> +    } else if (use_dma &&
+>> use_dma_ppb && use_dma_ppb_du) {
+>>          DBG(dev, "DMA
+>> mode       = PPBDU (packet per
+>> buffer "
+>>             
+>> "WITH desc. update)\n");
+>>         
+>> dev_info(&dev->pdev->dev, "DMA mode (%s)\n",
+>> "PPBDU");
+>>
+>>
+>>     
+>
+>   
+
