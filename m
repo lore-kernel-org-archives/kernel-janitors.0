@@ -1,66 +1,34 @@
-From: Greg KH <gregkh@suse.de>
-Date: Thu, 30 Sep 2010 19:53:07 +0000
-Subject: Re: [PATCH] staging: ft1000: fix skb, netdev, memory leaks
-Message-Id: <20100930195307.GA30952@suse.de>
+From: Timur Tabi <timur@freescale.com>
+Date: Wed, 01 Sep 2010 18:39:04 +0000
+Subject: Re: [alsa-devel] [PATCH 2/4] sound/soc/fsl/p1022_ds.c: Add
+Message-Id: <AANLkTinpRVStYfHHaGTyLusMCjMQDH=MvcGVVKaxvHtN@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285696175-5654-1-git-send-email-segooon@gmail.com>
- <20100930111345.GA9978@kroah.com>
- <20100930192303.GA10342@albatros>
-In-Reply-To: <20100930192303.GA10342@albatros>
+References: <1283269738-14612-1-git-send-email-julia@diku.dk> <1283269738-14612-3-git-send-email-julia@diku.dk>
+In-Reply-To: <1283269738-14612-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: Greg KH <greg@kroah.com>, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, Marek Belisko <marek.belisko@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Julia Lawall <julia@diku.dk>
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>
 
-On Thu, Sep 30, 2010 at 11:23:03PM +0400, Vasiliy Kulikov wrote:
-> On Thu, Sep 30, 2010 at 04:13 -0700, Greg KH wrote:
-> > On Tue, Sep 28, 2010 at 09:49:35PM +0400, Vasiliy Kulikov wrote:
-> > > ft1000_copy_up_pkt() doesn't free skb on errors.
-> > > init_ft1000_card() doesn't free netdev with free_netdev() but with kfree().
-> > > init_ft1000_card() doesn't check request_region()'s return value
-> > > and doesn't free region on error.
-> > > 
-> > > Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> > > ---
-> > >  Compile tested.
-> > 
-> > No you didn't
-> 
-> No I did:
-> 
-> make -C /home/vasya/linux drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.o
-> make: Вход в каталог `/home/vasya/dev/linux-next'
->   CHK     include/linux/version.h
->   CHK     include/generated/utsrelease.h
->   CALL    scripts/checksyscalls.sh
->   CC      drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.o
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c: In function ‘ft1000_reset_card’:
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c:525: warning: passing argument 2 of ‘card_download’ discards qualifiers from pointer target type
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000_hw.c:56: note: expected ‘void *’ but argument is of type ‘const u8 * const’
-> make: Выход из каталога `/home/vasya/dev/linux-next'
+On Tue, Aug 31, 2010 at 10:48 AM, Julia Lawall <julia@diku.dk> wrote:
+> Add a call to of_node_put in the error handling code following a call to
+> of_parse_phandle.
+>
+> This patch also moves the existing call to of_node_put tothe end of the
+> error handling code, to make it possible to jump to of_node_put without
+> doing the other cleanup operations. =A0These appear to be disjoint
+> operations, so the ordering doesn't matter.
 
-Heh, I didn't think to try that, amazed that it worked at all.
+Acked-by: Timur Tabi <timur@freescale.com>
 
-> However, 
-> 
->     cd ../drivers/staging/ft1000/ft1000-pcmcia/
->     LANG=C make -C ~/linux ft1000_hw.o
->     make: Entering directory `/home/vasya/dev/linux-next'
->     make: *** No rule to make target `ft1000_hw.o'.  Stop.
->     make: Leaving directory `/home/vasya/dev/linux-next'
-> 
-> 
-> Is "make" from linux root buggy/not supported for staging/everything?
+Thanks, Julia.
 
-This driver is marked broken, look at the Kconfig file:
-	config FT1000_PCMCIA
-	        tristate "Driver for ft1000 pcmcia device."
-	        depends on PCMCIA && BROKEN
-
-
-It will be fixed up soon hopefully.
-
-thanks,
-
-greg k-h
+--=20
+Timur Tabi
+Linux kernel developer at Freescale
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
