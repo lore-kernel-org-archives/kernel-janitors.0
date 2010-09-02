@@ -1,46 +1,69 @@
-From: Neil Brown <neilb@suse.de>
-Date: Fri, 17 Sep 2010 03:18:53 +0000
-Subject: Re: [PATCH] md: do not use ++ in rcu_dereference() argument
-Message-Id: <20100917131853.225f6fa1@notabene>
+From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Date: Thu, 02 Sep 2010 04:15:19 +0000
+Subject: Re: [PATCH] kprobes: add sparse context annotation
+Message-Id: <4C7F24D7.3010804@hitachi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283711539-7123-1-git-send-email-segooon@gmail.com>
-	<20100905190139.GA3163@merkur.ravnborg.org>
-	<20100905192335.GA8140@albatros>
-	<20100905203908.GA3228@merkur.ravnborg.org>
-	<20100906152931.1d4a1d07@notabene>
-	<4C921385.2080205@redhat.com>
-In-Reply-To: <4C921385.2080205@redhat.com>
+References: <1281082375-13356-1-git-send-email-namhyung@gmail.com>
+In-Reply-To: <1281082375-13356-1-git-send-email-namhyung@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Avi Kivity <avi@redhat.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 16 Sep 2010 14:54:29 +0200
-Avi Kivity <avi@redhat.com> wrote:
-
->   On 09/06/2010 08:29 AM, Neil Brown wrote:
-> > I've taken the opportunity to substantially re-write that code.
-> >
-> >
+(2010/08/06 17:17), Namhyung Kim wrote:
+> this removes following warnings when build with C=1
 > 
-> It's better to have two patches, one a backportable one liner that fixes 
-> the bug, the other, on top, that cleans up the code but has no sematic 
-> changes.
+>  warning: context imbalance in 'kretprobe_hash_lock' - wrong count at exit
+>  warning: context imbalance in 'kretprobe_table_lock' - wrong count at exit
+>  warning: context imbalance in 'kretprobe_hash_unlock' - unexpected unlock
+>  warning: context imbalance in 'kretprobe_table_unlock' - unexpected unlock
 > 
-> This makes it substantially easier to review.  When considering the 
-> first patch you see the change plainly.  When reviewing the second patch 
-> you make sure no semantic changes were made at all.
+> Signed-off-by: Namhyung Kim <namhyung@gmail.com>
+
+Thanks for the fix!
+
+Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+
 > 
+> ---
+> 
+> oops.. there was an typo. apply this version instead.
+> Thanks.
+> 
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index c53aad5..6dd5359 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -831,6 +831,7 @@ void __kprobes recycle_rp_inst(struct kretprobe_instance *ri,
+>  
+>  void __kprobes kretprobe_hash_lock(struct task_struct *tsk,
+>  			 struct hlist_head **head, unsigned long *flags)
+> +__acquires(hlist_lock)
+>  {
+>  	unsigned long hash = hash_ptr(tsk, KPROBE_HASH_BITS);
+>  	spinlock_t *hlist_lock;
+> @@ -842,6 +843,7 @@ void __kprobes kretprobe_hash_lock(struct task_struct *tsk,
+>  
+>  static void __kprobes kretprobe_table_lock(unsigned long hash,
+>  	unsigned long *flags)
+> +__acquires(hlist_lock)
+>  {
+>  	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
+>  	spin_lock_irqsave(hlist_lock, *flags);
+> @@ -849,6 +851,7 @@ static void __kprobes kretprobe_table_lock(unsigned long hash,
+>  
+>  void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
+>  	unsigned long *flags)
+> +__releases(hlist_lock)
+>  {
+>  	unsigned long hash = hash_ptr(tsk, KPROBE_HASH_BITS);
+>  	spinlock_t *hlist_lock;
+> @@ -859,6 +862,7 @@ void __kprobes kretprobe_hash_unlock(struct task_struct *tsk,
+>  
+>  static void __kprobes kretprobe_table_unlock(unsigned long hash,
+>         unsigned long *flags)
+> +__releases(hlist_lock)
+>  {
+>  	spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
+>  	spin_unlock_irqrestore(hlist_lock, *flags);
 
-Good advice, I agree.
-
-However the conversation seem have drifted towards viewing the new macro
-definition as the bug, and the pre-increment in an argument as a valid thing
-to do.
-In that case, there is no bug to fix, just a code clean up required.
-So I'm currently planning on just submitting that cleanup in the next merge
-window, and leaving the rcu guys to 'fix' the macro.
-
-Thanks,
-NeilBrown
