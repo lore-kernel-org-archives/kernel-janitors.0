@@ -1,22 +1,34 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 30 Sep 2010 01:17:48 +0000
-Subject: Re: [PATCH] Input: i8042 - use unsigned char for 0x90
-Message-Id: <20100930011748.GA5260@core.coreip.homeip.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 03 Sep 2010 12:41:06 +0000
+Subject: [patch] pm_qos_params: cleanup: terminate a string
+Message-Id: <20100903124105.GJ5437@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285749246.7370.5.camel@lovely>
-In-Reply-To: <1285749246.7370.5.camel@lovely>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Fritz <chf.fritz@googlemail.com>
-Cc: kernel-janitors <kernel-janitors@vger.kernel.org>, linux-input <linux-input@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: mark gross <markgross@thegnar.org>, James Bottomley <James.Bottomley@suse.de>, Frederic Weisbecker <fweisbec@gmail.com>, Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 29, 2010 at 10:34:06AM +0200, Christoph Fritz wrote:
-> Keep the file consistent and make clear that we mean 144 instead of -112.
-> 
-> Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+This is just a picky thing, but we pass an possibly unterminated string
+to printk if debugging is turned on.  Also printk level is set to
+"debug" by pr_debug() so the "KERN_ERR" isn't used.
 
-Applied, thanks Christoph.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-Dmitry
+diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
+index b7e4c36..310a51e 100644
+--- a/kernel/pm_qos_params.c
++++ b/kernel/pm_qos_params.c
+@@ -389,10 +389,11 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
+ 	} else if (count = 11) { /* len('0x12345678/0') */
+ 		if (copy_from_user(ascii_value, buf, 11))
+ 			return -EFAULT;
++		ascii_value[10] = '\0';
+ 		x = sscanf(ascii_value, "%x", &value);
+ 		if (x != 1)
+ 			return -EINVAL;
+-		pr_debug(KERN_ERR "%s, %d, 0x%x\n", ascii_value, x, value);
++		pr_debug("%s, %d, 0x%x\n", ascii_value, x, value);
+ 	} else
+ 		return -EINVAL;
+ 
