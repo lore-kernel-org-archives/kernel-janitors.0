@@ -1,62 +1,84 @@
-From: =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>
-Date: Thu, 23 Sep 2010 17:50:05 +0000
-Subject: Re: [RFC PATCH] sit-send-email.pl: Add --to-cmd
-Message-Id: <AANLkTinCx=+n6bMZw4tQqrQ7WC1o_aeGG_n_PxywTyb8@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 04 Sep 2010 07:13:17 +0000
+Subject: [PATCH] arch/powerpc/platforms/52xx/efika.c: Add of_node_put to avoid memory leak
+Message-Id: <1283584397-7697-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTinsM5jdU194FR8L3hTvBXk0Tr_oV2E5752NOUpq@mail.gmail.com>
-	<AANLkTikkJNwF4LS9rx5=bHM2R0Pm751Y1u9V8iAt0w1A@mail.gmail.com>
-	<1285227413.7286.47.camel@Joe-Laptop>
-	<Pine.LNX.4.64.1009231054230.15528@ask.diku.dk>
-	<20100923090931.GA29789@albatros>
-	<20100923120024.GA26715@albatros>
-	<1285253867.31572.13.camel@Joe-Laptop>
-	<Pine.LNX.4.64.1009231757090.11585@ask.diku.dk>
-	<1285262237.31572.18.camel@Joe-Laptop>
-	<AANLkTin_Y8w4ujNGTqGJPNDNfYz7hcjBVLcOG0emBjYn@mail.gmail.com>
-	<1285263993.31572.25.camel@Joe-Laptop>
-In-Reply-To: <1285263993.31572.25.camel@Joe-Laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>
-Cc: Julia Lawall <julia@diku.dk>, git <git@vger.kernel.org>, Vasiliy Kulikov <segooon@gmail.com>, matt mooney <mfmooney@gmail.com>, kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-On Thu, Sep 23, 2010 at 17:46, Joe Perches <joe@perches.com> wrote:
-> On Thu, 2010-09-23 at 17:29 +0000, Ævar Arnfjörð Bjarmason wrote:
->> On Thu, Sep 23, 2010 at 17:17, Joe Perches <joe@perches.com> wrote:
->> > I know there's a test harness in git, but
->> > I don't know how to wire up the new options.
->> You'd add the tests to t9001-send-email.sh and --tocmd out to some
->> program you create. Is there anything in particular you need help
->> with?
->
-> Just the doing.  I was (am) being lazy.
->
->> > -if (!@to) {
->> > +if (!@to && $to_cmd eq "") {
->>
->> Why compare $to_cmd to "" instead of checking definedness?
->
-> No real reason.  Using define is the style used in the rest of
-> the file and it should be changed.
->
->> > @@ -1238,6 +1242,23 @@ foreach my $t (@files) {
->> >        }
->> >        close F;
->> >
->> > +       if (defined $to_cmd) {
->> > +               open(F, "$to_cmd \Q$t\E |")
->>
->> quotemeta() is for escaping regexes, not shell syntax. You probably
->> want IPC::Open2 or PC::Open3's functions which'll escape arguments for
->> you.
->
-> I just copied the style from the equivalent cc_cmd section below,
-> so if it's necessary, it should be changed there too.
->
->> I.e. do you need to strip whitespace from the beginning of the string?
->
-> I think so.
+This function is implemented as though the function of_get_next_child does
+not increment the reference count of its result, but actually it does.
+Thus the patch adds of_node_put in error handling code and drops a call to
+of_node_get.
 
-This all sounds reasonable, but I really need to go through
-git-send-email.perl and fix all these bugs at some point...
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+local idexpression x;
+expression E1;
+position p1,p2;
+@@
+
+x@p1 = of_get_next_child(...);
+... when != x = E1
+of_node_get@p2(x)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+cocci.print_main("call",p1)
+cocci.print_secs("get",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/powerpc/platforms/52xx/efika.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/platforms/52xx/efika.c b/arch/powerpc/platforms/52xx/efika.c
+index 45c0cb9..18c1048 100644
+--- a/arch/powerpc/platforms/52xx/efika.c
++++ b/arch/powerpc/platforms/52xx/efika.c
+@@ -99,7 +99,7 @@ static void __init efika_pcisetup(void)
+ 	if (bus_range = NULL || len < 2 * sizeof(int)) {
+ 		printk(KERN_WARNING EFIKA_PLATFORM_NAME
+ 		       ": Can't get bus-range for %s\n", pcictrl->full_name);
+-		return;
++		goto out_put;
+ 	}
+ 
+ 	if (bus_range[1] = bus_range[0])
+@@ -111,12 +111,12 @@ static void __init efika_pcisetup(void)
+ 	printk(" controlled by %s\n", pcictrl->full_name);
+ 	printk("\n");
+ 
+-	hose = pcibios_alloc_controller(of_node_get(pcictrl));
++	hose = pcibios_alloc_controller(pcictrl);
+ 	if (!hose) {
+ 		printk(KERN_WARNING EFIKA_PLATFORM_NAME
+ 		       ": Can't allocate PCI controller structure for %s\n",
+ 		       pcictrl->full_name);
+-		return;
++		goto out_put;
+ 	}
+ 
+ 	hose->first_busno = bus_range[0];
+@@ -124,6 +124,9 @@ static void __init efika_pcisetup(void)
+ 	hose->ops = &rtas_pci_ops;
+ 
+ 	pci_process_bridge_OF_ranges(hose, pcictrl, 0);
++	return;
++out_put:
++	of_node_put(pcictrl);
+ }
+ 
+ #else
+
