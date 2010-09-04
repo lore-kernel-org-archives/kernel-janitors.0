@@ -1,42 +1,60 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sun, 05 Sep 2010 18:32:45 +0000
-Subject: [PATCH 07/14] staging: tidspbridge: check return code of get_user
-Message-Id: <1283711565-7375-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 04 Sep 2010 10:12:44 +0000
+Subject: [PATCH 2/2] arch/powerpc/kernel/irq.c: Add of_node_put to avoid memory leak
+Message-Id: <1283595164-29146-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Vasiliy Kulikov <segooon@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Ernesto Ramos <ernesto@ti.com>, Nishanth Menon <nm@ti.com>, Ivan Gomez Castellanos <ivan.gomez@ti.com>, Felipe Contreras <felipe.contreras@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-From: Vasiliy Kulikov <segooon@gmail.com>
+In this case, a device_node structure is stored in another structure that
+is then freed without first decrementing the reference count of the
+device_node structure.
 
-Function get_user may fail. Check for it.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+// <smpl>
+@r exists@
+expression x;
+identifier f;
+position p1,p2;
+@@
+
+x@p1->f = \(of_find_node_by_path\|of_find_node_by_name\|of_find_node_by_phandle\|of_get_parent\|of_get_next_parent\|of_get_next_child\|of_find_compatible_node\|of_match_node\|of_find_node_by_type\|of_find_node_with_property\|of_find_matching_node\|of_parse_phandle\|of_node_get\)(...);
+... when != of_node_put(x)
+kfree@p2(x)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+cocci.print_main("call",p1)
+cocci.print_secs("free",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- I couldn't compile this driver at all, so it is not tested.
+ arch/powerpc/kernel/irq.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- drivers/staging/tidspbridge/pmgr/dspapi.c |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/tidspbridge/pmgr/dspapi.c b/drivers/staging/tidspbridge/pmgr/dspapi.c
-index b23591b..faf8304 100644
---- a/drivers/staging/tidspbridge/pmgr/dspapi.c
-+++ b/drivers/staging/tidspbridge/pmgr/dspapi.c
-@@ -872,7 +872,11 @@ u32 procwrap_load(union trapped_args *args, void *pr_ctxt)
- 		/* number of elements in the envp array including NULL */
- 		count = 0;
- 		do {
--			get_user(temp, args->args_proc_load.user_envp + count);
-+			if (get_user(temp,
-+				     args->args_proc_load.user_envp + count)) {
-+				status = -EFAULT;
-+				goto func_cont;
+diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
+index 4a65386..0a5bbe5 100644
+--- a/arch/powerpc/kernel/irq.c
++++ b/arch/powerpc/kernel/irq.c
+@@ -587,8 +587,10 @@ struct irq_host *irq_alloc_host(struct device_node *of_node,
+ 			 * this will be fixed once slab is made available early
+ 			 * instead of the current cruft
+ 			 */
+-			if (mem_init_done)
++			if (mem_init_done) {
++				of_node_put(host->of_node);
+ 				kfree(host);
 +			}
- 			count++;
- 		} while (temp);
- 		envp = kmalloc(count * sizeof(u8 *), GFP_KERNEL);
--- 
-1.7.0.4
+ 			return NULL;
+ 		}
+ 		irq_map[0].host = host;
 
