@@ -1,58 +1,65 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:33:33 +0000
-Subject: [PATCH v2 16/22] Staging: rtl8192u: ieee80211: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285371213-9097-1-git-send-email-tdent48227@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 04 Sep 2010 10:12:43 +0000
+Subject: [PATCH 1/2] drivers/net/fs_enet/fs_enet-main.c: Add of_node_put to avoid memory leak
+Message-Id: <1283595164-29146-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-16-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-16-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Pantelis Antoniou <pantelis.antoniou@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Vitaly Bordug <vbordug@ru.mvista.com>, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-Changed yo use the proper ccflags-y option
+In this case, a device_node structure is stored in another structure that
+is then freed without first decrementing the reference count of the
+device_node structure.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression x;
+identifier f;
+position p1,p2;
+@@
+
+x@p1->f = \(of_find_node_by_path\|of_find_node_by_name\|of_find_node_by_phandle\|of_get_parent\|of_get_next_parent\|of_get_next_child\|of_find_compatible_node\|of_match_node\|of_find_node_by_type\|of_find_node_with_property\|of_find_matching_node\|of_parse_phandle\|of_node_get\)(...);
+... when != of_node_put(x)
+kfree@p2(x)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+cocci.print_main("call",p1)
+cocci.print_secs("free",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/rtl8192u/ieee80211/Makefile |   16 ++++++++--------
- 1 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/fs_enet/fs_enet-main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/Makefile b/drivers/staging/rtl8192u/ieee80211/Makefile
-index 71ca5d9..c45ebf9 100644
---- a/drivers/staging/rtl8192u/ieee80211/Makefile
-+++ b/drivers/staging/rtl8192u/ieee80211/Makefile
-@@ -5,22 +5,22 @@ MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/$(NIC_SELECT)
+diff --git a/drivers/net/fs_enet/fs_enet-main.c b/drivers/net/fs_enet/fs_enet-main.c
+index d6e3111..d684f18 100644
+--- a/drivers/net/fs_enet/fs_enet-main.c
++++ b/drivers/net/fs_enet/fs_enet-main.c
+@@ -1036,7 +1036,7 @@ static int __devinit fs_enet_probe(struct platform_device *ofdev,
+ 	ndev = alloc_etherdev(privsize);
+ 	if (!ndev) {
+ 		ret = -ENOMEM;
+-		goto out_free_fpi;
++		goto out_put;
+ 	}
  
- CC = gcc
- ifneq ($(shell uname -r|cut -d. -f1,2), 2.4)
--EXTRA_CFLAGS += -I$(TOPDIR)/drivers/net/wireless
--EXTRA_CFLAGS += -O2
--EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
-+ccflags-y := -I$(TOPDIR)/drivers/net/wireless
-+ccflags-y := -O2
-+ccflags-y := -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
- 
- #it will fail to compile in suse linux enterprise 10 sp2. This flag is to solve this problem.
- ifeq ($(shell uname -r | cut -d. -f1,2,3,4), 2.6.16.60-0)
--EXTRA_CFLAGS += -DOPENSUSE_SLED
-+ccflags-y := -DOPENSUSE_SLED
- endif
- 
- ifeq ($(NIC_SELECT),RTL8192U)
--#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
--#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
-+#ccflags-y := -DUSB_TX_DRIVER_AGGREGATION_ENABLE
-+#ccflags-y := -DUSB_RX_AGGREGATION_SUPPORT
- endif
--#EXTRA_CFLAGS += -DJOHN_NOCPY
-+#ccflags-y := -DJOHN_NOCPY
- #flags to enable or disble 80211D feature
--EXTRA_CFLAGS += -DENABLE_DOT11D
-+ccflags-y := -DENABLE_DOT11D
- ieee80211-rsl-objs := ieee80211_rx.o \
- 		      ieee80211_softmac.o \
- 		      ieee80211_tx.o \
--- 
-1.7.3
+ 	SET_NETDEV_DEV(ndev, &ofdev->dev);
+@@ -1099,6 +1099,7 @@ out_cleanup_data:
+ out_free_dev:
+ 	free_netdev(ndev);
+ 	dev_set_drvdata(&ofdev->dev, NULL);
++out_put:
+ 	of_node_put(fpi->phy_node);
+ out_free_fpi:
+ 	kfree(fpi);
 
