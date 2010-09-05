@@ -1,36 +1,51 @@
-From: Wang Sheng-Hui <crosslonelyover@gmail.com>
-Date: Sat, 11 Sep 2010 02:07:57 +0000
-Subject: [PATCH] trivial: header.S: replace i386 with x86 in comment for type_of_loader
-Message-Id: <4C8AE47D.9020507@gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sun, 05 Sep 2010 18:32:49 +0000
+Subject: [PATCH 08/14] staging: tidspbridge: check return code of kzalloc
+Message-Id: <1283711569-7418-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Vasiliy Kulikov <segooon@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Rene Sapiens <rene.sapiens@ti.com>, Nishanth Menon <nm@ti.com>, Ernesto Ramos <ernesto@ti.com>, Felipe Contreras <felipe.contreras@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-For i386 dir under arch and Documentation renamed to x86, 
-the comment should be modified accordingly.
+From: Vasiliy Kulikov <segooon@gmail.com>
 
-The patch is against 2.6.36-rc3. Please check it.
+Function kzalloc may fail. Check for it.
 
-
-Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- arch/x86/boot/header.S |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ I couldn't compile this driver at all, so it is not tested.
 
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index 93e689f..bdb4d45 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -129,7 +129,7 @@ start_sys_seg:	.word	SYSSEG		# obsolete and meaningless, but just
+ drivers/staging/tidspbridge/rmgr/dbdcd.c |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/staging/tidspbridge/rmgr/dbdcd.c b/drivers/staging/tidspbridge/rmgr/dbdcd.c
+index f71e860..3581a55 100644
+--- a/drivers/staging/tidspbridge/rmgr/dbdcd.c
++++ b/drivers/staging/tidspbridge/rmgr/dbdcd.c
+@@ -487,6 +487,10 @@ int dcd_get_object_def(struct dcd_manager *hdcd_mgr,
  
- type_of_loader:	.byte	0	# 0 means ancient bootloader, newer
- 					# bootloaders know to change this.
--					# See Documentation/i386/boot.txt for
-+					# See Documentation/x86/boot.txt for
- 					# assigned ids
+ 	/* Allocate zeroed buffer. */
+ 	psz_coff_buf = kzalloc(ul_len + 4, GFP_KERNEL);
++	if (psz_coff_buf = NULL) {
++		status = -ENOMEM;
++		goto func_end;
++	}
+ #ifdef _DB_TIOMAP
+ 	if (strstr(dcd_key->path, "iva") = NULL) {
+ 		/* Locate section by objectID and read its content. */
+@@ -571,6 +575,10 @@ int dcd_get_objects(struct dcd_manager *hdcd_mgr,
  
- # flags, unused bits must be zero (RFU) bit within loadflags
+ 	/* Allocate zeroed buffer. */
+ 	psz_coff_buf = kzalloc(ul_len + 4, GFP_KERNEL);
++	if (psz_coff_buf = NULL) {
++		status = -ENOMEM;
++		goto func_cont;
++	}
+ #ifdef _DB_TIOMAP
+ 	if (strstr(sz_coff_path, "iva") = NULL) {
+ 		/* Locate section by objectID and read its content. */
 -- 
-1.6.3.3
+1.7.0.4
+
