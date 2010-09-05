@@ -1,30 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 27 Sep 2010 01:56:15 +0000
-Subject: Re: [PATCH 4/9] s390: use free_netdev(netdev) instead of kfree()
-Message-Id: <20100926.185615.212684376.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 05 Sep 2010 19:00:21 +0000
+Subject: [PATCH 3/8] net/9p/trans_fd.c: Fix unsigned return type
+Message-Id: <1283713226-8429-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285495090-22002-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1285495090-22002-1-git-send-email-segooon@gmail.com>
+References: <1283713226-8429-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1283713226-8429-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, ursula.braun@de.ibm.com, blaschka@linux.vnet.ibm.com, linux390@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, julia@diku.dk, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 13:58:09 +0400
+The function has an unsigned return type, but returns a negative constant
+to indicate an error condition.  The result of calling the function is
+always stored in a variable of type (signed) int, and thus unsigned can be
+dropped from the return type.
 
-> Freeing netdev without free_netdev() leads to net, tx leaks.
-> I might lead to dereferencing freed pointer.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> @@
-> struct net_device* dev;
-> @@
-> 
-> -kfree(dev)
-> +free_netdev(dev)
+A sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied.
+// <smpl>
+@exists@
+identifier f;
+constant C;
+@@
+
+ unsigned f(...)
+ { <+...
+*  return -C;
+ ...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/9p/trans_fd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index c85109d..078eb16 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -222,7 +222,7 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+ 	}
+ }
+ 
+-static unsigned int
++static int
+ p9_fd_poll(struct p9_client *client, struct poll_table_struct *pt)
+ {
+ 	int ret, n;
+
