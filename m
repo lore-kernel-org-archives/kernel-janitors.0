@@ -1,36 +1,48 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:28:08 +0000
-Subject: [PATCH v2 20/22] Staging: vt6656: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-20-git-send-email-tdent48227@gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sun, 05 Sep 2010 18:32:15 +0000
+Subject: [PATCH 01/14] avr32/mach-at32ap/clock: check return code of clk_get
+Message-Id: <1283711535-7082-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Vasiliy Kulikov <segooon@gmail.com>, Haavard Skinnemoen <hskinnemoen@atmel.com>, linux-kernel@vger.kernel.org
 
-Changed to use proper ccflags-y option
+From: Vasiliy Kulikov <segooon@gmail.com>
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Function clk_get may return ERR_PTR(...). Check for it.
+
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/vt6656/Makefile |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ arch/avr32/mach-at32ap/clock.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/staging/vt6656/Makefile b/drivers/staging/vt6656/Makefile
-index 582a35197..6a85a0e 100644
---- a/drivers/staging/vt6656/Makefile
-+++ b/drivers/staging/vt6656/Makefile
-@@ -1,6 +1,6 @@
- # TODO: all of these should be removed
--EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -DEXPORT_SYMTAB -D__NO_VERSION__
--EXTRA_CFLAGS += -DHOSTAP
-+ccflags-y := -DLINUX -D__KERNEL__ -DEXPORT_SYMTAB -D__NO_VERSION__
-+ccflags-y := -DHOSTAP
+diff --git a/arch/avr32/mach-at32ap/clock.c b/arch/avr32/mach-at32ap/clock.c
+index 442f08c..133a475 100644
+--- a/arch/avr32/mach-at32ap/clock.c
++++ b/arch/avr32/mach-at32ap/clock.c
+@@ -258,14 +258,20 @@ static int clk_show(struct seq_file *s, void *unused)
  
- vt6656_stage-y +=	main_usb.o \
- 			card.o  \
+ 	/* show clock tree as derived from the three oscillators */
+ 	clk = clk_get(NULL, "osc32k");
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 	dump_clock(clk, &r);
+ 	clk_put(clk);
+ 
+ 	clk = clk_get(NULL, "osc0");
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 	dump_clock(clk, &r);
+ 	clk_put(clk);
+ 
+ 	clk = clk_get(NULL, "osc1");
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
+ 	dump_clock(clk, &r);
+ 	clk_put(clk);
+ 
 -- 
-1.7.3
+1.7.0.4
 
