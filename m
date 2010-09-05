@@ -1,60 +1,47 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Thu, 23 Sep 2010 12:10:24 +0000
-Subject: Re: [PATCH 04/14] memstick: core: fix device_register() error
-Message-Id: <20100923121024.GA26888@albatros>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sun, 05 Sep 2010 18:32:56 +0000
+Subject: [PATCH 10/14] hppfs: check for IS_ERR() instead of != NULL
+Message-Id: <1283711577-7505-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284900889-24369-1-git-send-email-segooon@gmail.com>
- <20100921152031.30365b3f.akpm@linux-foundation.org>
- <20100921224947.GA20183@kroah.com>
- <AANLkTimQWtQTBe3RBSbYd7vM4Y+SckkoBDbO8E+SwtJj@mail.gmail.com>
- <20100922155004.GC26178@kroah.com>
-In-Reply-To: <20100922155004.GC26178@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Greg KH <greg@kroah.com>
-Cc: Kay Sievers <kay.sievers@vrfy.org>, Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>, Jiri Slaby <jirislaby@gmail.com>, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@suse.de>, Dan Carpenter <error27@gmail.com>, Boaz Harrosh <bharrosh@panasas.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: Vasiliy Kulikov <segooon@gmail.com>, Jeff Dike <jdike@addtoit.com>, Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-On Wed, Sep 22, 2010 at 08:50 -0700, Greg KH wrote:
-> On Wed, Sep 22, 2010 at 10:53:21AM +0200, Kay Sievers wrote:
-> > On Wed, Sep 22, 2010 at 00:49, Greg KH <greg@kroah.com> wrote:
-> >=20
-> > > =A0int device_register(struct device *dev)
-> > > =A0{
-> > > + =A0 =A0 =A0 int retval;
-> > > +
-> > > =A0 =A0 =A0 =A0device_initialize(dev);
-> > > - =A0 =A0 =A0 return device_add(dev);
-> > > + =A0 =A0 =A0 retval =3D device_add(dev);
-> > > + =A0 =A0 =A0 if (retval)
-> > > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 put_device(dev);
-> > > + =A0 =A0 =A0 return retval;
-> > > =A0}
-> >=20
-> > > Kay, what am I missing here, why can't we just do this? =A0Hm, the
-> > > side-affect might be that if device_register() fails, NO ONE had bett=
-er
-> > > touch that device again, as it might have just been freed from the
-> > > system. =A0I wonder if that will cause problems...
-> >=20
-> > That looks right, besides that there might be callers already doing
-> > this. Which needs to be checked.
->=20
-> Yes, it would be.  I'll go through the tree.
+From: Vasiliy Kulikov <segooon@gmail.com>
 
-As I see with this in-device_register patch we should check for 2 things:
+Function get_inode may return ERR_PTR(...). Check for it.
 
-1) nobody should call put_device() because of failed device_register().
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-2) dev has to be already got, other words its ref counter should not be zer=
-o.
+ fs/hppfs/hppfs.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Correct?
+diff --git a/fs/hppfs/hppfs.c b/fs/hppfs/hppfs.c
+index 7b02772..e7d6535 100644
+--- a/fs/hppfs/hppfs.c
++++ b/fs/hppfs/hppfs.c
+@@ -173,7 +173,7 @@ static struct dentry *hppfs_lookup(struct inode *ino, struct dentry *dentry,
+ 
+ 	err = -ENOMEM;
+ 	inode = get_inode(ino->i_sb, proc_dentry);
+-	if (!inode)
++	if (IS_ERR_OR_NULL(inode))
+ 		goto out_dput;
+ 
+  	d_add(dentry, inode);
+@@ -730,7 +730,7 @@ static int hppfs_fill_super(struct super_block *sb, void *d, int silent)
+ 
+ 	err = -ENOMEM;
+ 	root_inode = get_inode(sb, proc_mnt->mnt_sb->s_root);
+-	if (!root_inode)
++	if (IS_ERR_OR_NULL(root_inode))
+ 		goto out_mntput;
+ 
+ 	sb->s_root = d_alloc_root(root_inode);
+-- 
+1.7.0.4
 
---=20
-Vasiliy
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
