@@ -1,91 +1,80 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:50:12 +0000
-Subject: [PATCH 03/20] alpha: change to new flag variables
-Message-Id: <1285224612-29529-1-git-send-email-mfm@muteddisk.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 05 Sep 2010 19:00:24 +0000
+Subject: [PATCH 6/8] drivers/staging/comedi/drivers: Fix unsigned return type
+Message-Id: <1283713226-8429-7-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1283713226-8429-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1283713226-8429-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
+In each case, the function has an unsigned return type, but returns a
+negative constant to indicate an error condition.  For move_block_from_dma,
+there is only one call and the return value is dropped, so it need not be
+unsigned.  For labpc_eeprom_write, there is only one call and the result is
+stored in a signed variable, so again the unsigned return type is not
+necessary.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+A sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@exists@
+identifier f;
+constant C;
+@@
+
+ unsigned f(...)
+ { <+...
+*  return -C;
+ ...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- arch/alpha/kernel/Makefile   |    4 ++--
- arch/alpha/lib/Makefile      |    4 ++--
- arch/alpha/math-emu/Makefile |    2 +-
- arch/alpha/mm/Makefile       |    2 +-
- arch/alpha/oprofile/Makefile |    2 +-
- 5 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/comedi/drivers/adl_pci9118.c |    2 +-
+ drivers/staging/comedi/drivers/ni_labpc.c    |    6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/alpha/kernel/Makefile b/arch/alpha/kernel/Makefile
-index 1ee9b5b..9bb7b85 100644
---- a/arch/alpha/kernel/Makefile
-+++ b/arch/alpha/kernel/Makefile
-@@ -3,8 +3,8 @@
- #
+diff --git a/drivers/staging/comedi/drivers/adl_pci9118.c b/drivers/staging/comedi/drivers/adl_pci9118.c
+index a2bd4e6..cb2843d 100644
+--- a/drivers/staging/comedi/drivers/adl_pci9118.c
++++ b/drivers/staging/comedi/drivers/adl_pci9118.c
+@@ -634,7 +634,7 @@ static unsigned int defragment_dma_buffer(struct comedi_device *dev,
+ /*
+ =======================================
+ */
+-static unsigned int move_block_from_dma(struct comedi_device *dev,
++static int move_block_from_dma(struct comedi_device *dev,
+ 					struct comedi_subdevice *s,
+ 					short *dma_buffer,
+ 					unsigned int num_samples)
+diff --git a/drivers/staging/comedi/drivers/ni_labpc.c b/drivers/staging/comedi/drivers/ni_labpc.c
+index 3acf7e6..19f79e8 100644
+--- a/drivers/staging/comedi/drivers/ni_labpc.c
++++ b/drivers/staging/comedi/drivers/ni_labpc.c
+@@ -250,7 +250,7 @@ static unsigned int labpc_serial_in(struct comedi_device *dev);
+ static unsigned int labpc_eeprom_read(struct comedi_device *dev,
+ 				      unsigned int address);
+ static unsigned int labpc_eeprom_read_status(struct comedi_device *dev);
+-static unsigned int labpc_eeprom_write(struct comedi_device *dev,
++static int labpc_eeprom_write(struct comedi_device *dev,
+ 				       unsigned int address,
+ 				       unsigned int value);
+ static void write_caldac(struct comedi_device *dev, unsigned int channel,
+@@ -1986,8 +1986,8 @@ static unsigned int labpc_eeprom_read(struct comedi_device *dev,
+ 	return value;
+ }
  
- extra-y		:= head.o vmlinux.lds
--EXTRA_AFLAGS	:= $(KBUILD_CFLAGS)
--EXTRA_CFLAGS	:= -Werror -Wno-sign-compare
-+asflags-y	:= $(KBUILD_CFLAGS)
-+ccflags-y	:= -Werror -Wno-sign-compare
- 
- obj-y    := entry.o traps.o process.o init_task.o osf_sys.o irq.o \
- 	    irq_alpha.o signal.o setup.o ptrace.o time.o \
-diff --git a/arch/alpha/lib/Makefile b/arch/alpha/lib/Makefile
-index 9b72c59..c0a83ab 100644
---- a/arch/alpha/lib/Makefile
-+++ b/arch/alpha/lib/Makefile
-@@ -2,8 +2,8 @@
- # Makefile for alpha-specific library files..
- #
- 
--EXTRA_AFLAGS := $(KBUILD_CFLAGS)
--EXTRA_CFLAGS := -Werror
-+asflags-y := $(KBUILD_CFLAGS)
-+ccflags-y := -Werror
- 
- # Many of these routines have implementations tuned for ev6.
- # Choose them iff we're targeting ev6 specifically.
-diff --git a/arch/alpha/math-emu/Makefile b/arch/alpha/math-emu/Makefile
-index 359ef08..7f46719 100644
---- a/arch/alpha/math-emu/Makefile
-+++ b/arch/alpha/math-emu/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for the FPU instruction emulation.
- #
- 
--EXTRA_CFLAGS := -w
-+ccflags-y := -w
- 
- obj-$(CONFIG_MATHEMU) += math-emu.o
- 
-diff --git a/arch/alpha/mm/Makefile b/arch/alpha/mm/Makefile
-index 09399c5..c993d3f 100644
---- a/arch/alpha/mm/Makefile
-+++ b/arch/alpha/mm/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for the linux alpha-specific parts of the memory manager.
- #
- 
--EXTRA_CFLAGS := -Werror
-+ccflags-y := -Werror
- 
- obj-y	:= init.o fault.o extable.o
- 
-diff --git a/arch/alpha/oprofile/Makefile b/arch/alpha/oprofile/Makefile
-index 4aa5624..3473de7 100644
---- a/arch/alpha/oprofile/Makefile
-+++ b/arch/alpha/oprofile/Makefile
-@@ -1,4 +1,4 @@
--EXTRA_CFLAGS := -Werror -Wno-sign-compare
-+ccflags-y := -Werror -Wno-sign-compare
- 
- obj-$(CONFIG_OPROFILE) += oprofile.o
- 
--- 
-1.7.2.1
+-static unsigned int labpc_eeprom_write(struct comedi_device *dev,
+-				       unsigned int address, unsigned int value)
++static int labpc_eeprom_write(struct comedi_device *dev,
++				unsigned int address, unsigned int value)
+ {
+ 	const int write_enable_instruction = 0x6;
+ 	const int write_instruction = 0x2;
 
