@@ -1,36 +1,56 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:28:06 +0000
-Subject: [PATCH v2 18/22] Staging: usbip: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-18-git-send-email-tdent48227@gmail.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sun, 05 Sep 2010 18:32:25 +0000
+Subject: [PATCH 03/14] md: check return code of read_sb_page
+Message-Id: <1283711546-7205-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Vasiliy Kulikov <segooon@gmail.com>, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Changed to use proper ccflags-y option
+From: Vasiliy Kulikov <segooon@gmail.com>
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Function read_sb_page may return ERR_PTR(...). Check for it.
+
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/usbip/Makefile |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
+ Compile tested.
 
-diff --git a/drivers/staging/usbip/Makefile b/drivers/staging/usbip/Makefile
-index 6f2916b..10307f8 100644
---- a/drivers/staging/usbip/Makefile
-+++ b/drivers/staging/usbip/Makefile
-@@ -7,6 +7,5 @@ vhci-hcd-objs := vhci_sysfs.o vhci_tx.o vhci_rx.o vhci_hcd.o
- obj-$(CONFIG_USB_IP_HOST) += usbip.o
- usbip-objs := stub_dev.o stub_main.o stub_rx.o stub_tx.o
+ drivers/md/bitmap.c |    9 +++++++--
+ 1 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index ed4900a..33531da 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -936,6 +936,7 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 	int outofdate;
+ 	int ret = -ENOSPC;
+ 	void *paddr;
++	struct page *p;
  
--ifeq ($(CONFIG_USB_IP_DEBUG_ENABLE),y)
--	EXTRA_CFLAGS += -DDEBUG
--endif
-+ccflags-$(CONFIG_USB_IP_DEBUG_ENABLE) := -DDEBUG
-+
+ 	chunks = bitmap->chunks;
+ 	file = bitmap->file;
+@@ -999,11 +1000,16 @@ static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
+ 				 */
+ 				page = bitmap->sb_page;
+ 				offset = sizeof(bitmap_super_t);
+-				if (!file)
+-					read_sb_page(bitmap->mddev,
++				if (!file) {
++					p = read_sb_page(bitmap->mddev,
+ 						     bitmap->mddev->bitmap_info.offset,
+ 						     page,
+ 						     index, count);
++					if (IS_ERR(p)) {
++						ret = PTR_ERR(p);
++						goto err;
++					}
++				}
+ 			} else if (file) {
+ 				page = read_page(file, index, bitmap, count);
+ 				offset = 0;
 -- 
-1.7.3
+1.7.0.4
 
