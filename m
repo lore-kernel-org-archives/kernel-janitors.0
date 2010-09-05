@@ -1,68 +1,50 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 30 Sep 2010 06:18:52 +0000
-Subject: Re: [PATCH v2 11/22] Staging: rtl8187se: Makefile: cleaned up
-Message-Id: <20100930061852.GA8707@kroah.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sun, 05 Sep 2010 18:33:00 +0000
+Subject: [PATCH 11/14] ubifs: check return code of ubifs_lpt_lookup
+Message-Id: <1283711580-7546-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com> <1285370890-8984-11-git-send-email-tdent48227@gmail.com> <4C9DD2A4.6080508@bfs.de>
-In-Reply-To: <4C9DD2A4.6080508@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Tracey Dent <tdent48227@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Artem Bityutskiy <dedekind1@gmail.com>, Vasiliy Kulikov <segooon@gmail.com>, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@nokia.com>
 
-On Sat, Sep 25, 2010 at 12:44:52PM +0200, walter harms wrote:
-> 
-> 
-> Tracey Dent schrieb:
-> > Changed to use proper ccflags-y option
-> > 
-> > Signed-off-by: Tracey Dent <tdent48227@gmail.com>
-> > ---
-> >  drivers/staging/rtl8187se/Makefile |   20 ++++++++++----------
-> >  1 files changed, 10 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/staging/rtl8187se/Makefile b/drivers/staging/rtl8187se/Makefile
-> > index e6adf91..51fbd24 100644
-> > --- a/drivers/staging/rtl8187se/Makefile
-> > +++ b/drivers/staging/rtl8187se/Makefile
-> > @@ -1,20 +1,20 @@
-> >  
-> > -#EXTRA_CFLAGS += -DCONFIG_IEEE80211_NOWEP=y
-> > -#EXTRA_CFLAGS += -std=gnu89
-> > -#EXTRA_CFLAGS += -O2
-> > +#ccflags-y := -DCONFIG_IEEE80211_NOWEP=y
-> > +#ccflags-y := -std=gnu89
-> > +#ccflags-y := -O2
-> >  #CC            = gcc
-> >  
-> > -EXTRA_CFLAGS += -DSW_ANTE
-> > -EXTRA_CFLAGS += -DTX_TRACK
-> > -EXTRA_CFLAGS += -DHIGH_POWER
-> > -EXTRA_CFLAGS += -DSW_DIG
-> > -EXTRA_CFLAGS += -DRATE_ADAPT
-> > +ccflags-y := -DSW_ANTE
-> > +ccflags-y := -DTX_TRACK
-> > +ccflags-y := -DHIGH_POWER
-> > +ccflags-y := -DSW_DIG
-> > +ccflags-y := -DRATE_ADAPT
-> >  
-> >  #enable it for legacy power save, disable it for leisure  power save
-> > -EXTRA_CFLAGS += -DENABLE_LPS
-> > +ccflags-y := -DENABLE_LPS
-> >  
-> >  
-> > -#EXTRA_CFLAGS += -mhard-float -DCONFIG_FORCE_HARD_FLOAT=y
-> > +#ccflags-y := -mhard-float -DCONFIG_FORCE_HARD_FLOAT=y
-> >  
-> 
-> I do not understand this. If CONFIG_FORCE_HARD_FLOAT is required by the
-> driver so he should fail if CONFIG_FORCE_HARD_FLOAT=n
-> Or you need to protect the -mhard-float with an if().
+From: Vasiliy Kulikov <segooon@gmail.com>
 
-That line is commented out, it doesn't do anything, so I wouldn't worry
-about it :)
+Function ubifs_lpt_lookup may return ERR_PTR(...). Check for it.
 
-thanks,
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-greg k-h
+ fs/ubifs/lpt.c |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+diff --git a/fs/ubifs/lpt.c b/fs/ubifs/lpt.c
+index 0084a33..841bb36 100644
+--- a/fs/ubifs/lpt.c
++++ b/fs/ubifs/lpt.c
+@@ -1351,6 +1351,7 @@ static int read_lsave(struct ubifs_info *c)
+ {
+ 	int err, i;
+ 	void *buf;
++	struct ubifs_lprops *perr;
+ 
+ 	buf = vmalloc(c->lsave_sz);
+ 	if (!buf)
+@@ -1370,7 +1371,11 @@ static int read_lsave(struct ubifs_info *c)
+ 		 */
+ 		if (lnum >= c->leb_cnt)
+ 			continue;
+-		ubifs_lpt_lookup(c, lnum);
++		perr = ubifs_lpt_lookup(c, lnum);
++		if (IS_ERR(perr)) {
++			err = PTR_ERR(perr);
++			goto out;
++		}
+ 	}
+ out:
+ 	vfree(buf);
+-- 
+1.7.0.4
+
