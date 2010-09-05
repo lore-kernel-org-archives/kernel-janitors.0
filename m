@@ -1,52 +1,47 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 21 Sep 2010 07:23:12 +0000
-Subject: Re: [PATCH] drivers/block/cciss.c (2.6.35.7): Fixed useless	compile
-Message-Id: <4C985D60.5060803@bfs.de>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sun, 05 Sep 2010 18:33:12 +0000
+Subject: [PATCH 14/14] mm: oom_kill: use IS_ERR() instead of strict checking
+Message-Id: <1283711592-7669-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <115163.69814.qm@web45812.mail.sp1.yahoo.com>
-In-Reply-To: <115163.69814.qm@web45812.mail.sp1.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Vasiliy Kulikov <segooon@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, David Rientjes <rientjes@google.com>, Minchan Kim <minchan.kim@gmail.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
 
-please CC: dev-etrax@axis.com also
-so the criss develloper see it.
+From: Vasiliy Kulikov <segooon@gmail.com>
 
-re,
- wh
+Use IS_ERR() instead of strict checking.
 
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-Dan Carpenter schrieb:
-> Which version of gcc are you using?  It doesn't print any error message
-> for me on version 4.3.2 (which is really old).
-> 
-> The idea is fine but the patch is all messed up.  First of all the it's
-> reversed.  It says '+' where it should say '-' and '-' where it should
-> say '+'.
-> 
-> Also your mail client has completely mangled it.  It has removed spaces
-> from the start of lines and changed the tabs to spaces.  Please read
-> Documentation/email-clients.txt and send an email to yourself.  Save the
-> email as raw text.  cat email.txt | patch -p1.
-> 
-> When that works resend it.  Add these people to the CC list:
-> 
-> Mike Miller <mike.miller@hp.com>
-> Jens Axboe <jaxboe@fusionio.com>
-> "Stephen M. Cameron" <scameron@beardog.cce.hp.com>
-> iss_storagedev@hp.com
-> 
-> Also you don't need to copy all 16 lines of error messages.  Just a
-> couple will do.  But do say which version of gcc you are using.
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
+ mm/oom_kill.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index fc81cb2..2ee3350 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -514,7 +514,7 @@ void mem_cgroup_out_of_memory(struct mem_cgroup *mem, gfp_t gfp_mask)
+ 	read_lock(&tasklist_lock);
+ retry:
+ 	p = select_bad_process(&points, limit, mem, NULL);
+-	if (!p || PTR_ERR(p) = -1UL)
++	if (IS_ERR_OR_NULL(p))
+ 		goto out;
+ 
+ 	if (oom_kill_process(p, gfp_mask, 0, points, limit, mem, NULL,
+@@ -691,7 +691,7 @@ retry:
+ 	p = select_bad_process(&points, totalpages, NULL,
+ 			constraint = CONSTRAINT_MEMORY_POLICY ? nodemask :
+ 								 NULL);
+-	if (PTR_ERR(p) = -1UL)
++	if (IS_ERR(p))
+ 		goto out;
+ 
+ 	/* Found nothing?!?! Either we hang forever, or we panic. */
+-- 
+1.7.0.4
+
