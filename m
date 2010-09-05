@@ -1,40 +1,72 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 24 Sep 2010 19:17:19 +0000
-Subject: [PATCH 09/24] input: change to new flag variable
-Message-Id: <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sun, 05 Sep 2010 18:32:22 +0000
+Subject: [PATCH 02/14] char: tty_io: check return code of tty_register_device
+Message-Id: <1283711542-7164-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
- <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
- <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
- <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
- <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
- <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
- <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Vasiliy Kulikov <segooon@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>, Nick Piggin <npiggin@kernel.dk>, linux-kernel@vger.kernel.org
 
-Replace EXTRA_CFLAGS with ccflags-y.
+From: Vasiliy Kulikov <segooon@gmail.com>
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Function tty_register_device may return ERR_PTR(...). Check for it.
+
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/input/joystick/iforce/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ Probably we need another resource deallocation in err.
+ Compile tested.
 
-diff --git a/drivers/input/joystick/iforce/Makefile b/drivers/input/joystick/iforce/Makefile
-index 74daff4..2648189 100644
---- a/drivers/input/joystick/iforce/Makefile
-+++ b/drivers/input/joystick/iforce/Makefile
-@@ -17,4 +17,4 @@ ifeq ($(CONFIG_JOYSTICK_IFORCE_USB),y)
- 	iforce-objs += iforce-usb.o
- endif
+ drivers/char/tty_io.c |   24 ++++++++++++++++++++++--
+ 1 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/tty_io.c b/drivers/char/tty_io.c
+index d6c659f..e185db3 100644
+--- a/drivers/char/tty_io.c
++++ b/drivers/char/tty_io.c
+@@ -3004,6 +3004,7 @@ int tty_register_driver(struct tty_driver *driver)
+ 	int i;
+ 	dev_t dev;
+ 	void **p = NULL;
++	struct device *d;
  
--EXTRA_CFLAGS = -Werror-implicit-function-declaration
-+ccflags-y := -Werror-implicit-function-declaration
+ 	if (!(driver->flags & TTY_DRIVER_DEVPTS_MEM) && driver->num) {
+ 		p = kzalloc(driver->num * 2 * sizeof(void *), GFP_KERNEL);
+@@ -3051,12 +3052,31 @@ int tty_register_driver(struct tty_driver *driver)
+ 	mutex_unlock(&tty_mutex);
+ 
+ 	if (!(driver->flags & TTY_DRIVER_DYNAMIC_DEV)) {
+-		for (i = 0; i < driver->num; i++)
+-		    tty_register_device(driver, i, NULL);
++		for (i = 0; i < driver->num; i++) {
++			d = tty_register_device(driver, i, NULL);
++			if (IS_ERR(d)) {
++				error = PTR_ERR(d);
++				goto err;
++			}
++		}
+ 	}
+ 	proc_tty_register_driver(driver);
+ 	driver->flags |= TTY_DRIVER_INSTALLED;
+ 	return 0;
++
++err:
++	for (i--; i >= 0; i--)
++		tty_unregister_device(driver, i);
++
++	mutex_lock(&tty_mutex);
++	list_del(&driver->tty_drivers);
++	mutex_unlock(&tty_mutex);
++
++	unregister_chrdev_region(dev, driver->num);
++	driver->ttys = NULL;
++	driver->termios = NULL;
++	kfree(p);
++	return error;
+ }
+ 
+ EXPORT_SYMBOL(tty_register_driver);
 -- 
-1.7.2.1
+1.7.0.4
 
