@@ -1,51 +1,69 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 12 Sep 2010 18:56:35 +0000
-Subject: [PATCH] staging: comedi: fix signess bug
-Message-Id: <1284317799-4804-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 05 Sep 2010 19:00:20 +0000
+Subject: [PATCH 2/8] arch/x86/kernel/cpu/cpufreq: Fix unsigned return type
+Message-Id: <1283713226-8429-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1283713226-8429-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1283713226-8429-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Jason Wong <tsanghan@gmail.com>, Arun Thomas <arun.thomas@gmail.com>, Kulikov Vasiliy <segooon@gmail.com>, Javier Martinez Canillas <martinez.javier@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Julia Lawall <julia@diku.dk>, Jiri Kosina <jkosina@suse.cz>, Morgan Gatti <morgan.gatti@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dave Jones <davej@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, cpufreq@vger.kernel.org, linux-kernel@vger.kernel.org
 
-ai_count and ao_counter are unsigned, check for < 0 doesn't make sense.
-Cast them to int.
+In each case, the function has an unsigned return type, but returns a
+negative constant to indicate an error condition.  Each function is only
+called once.  For nforce2_detect_chipset, the result is only compared to 0,
+and for longrun_determine_freqs, the result is stored in a variable of type
+(signed) int.  Thus, for both functions, unsigned can be dropped from the
+return type.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+A sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@exists@
+identifier f;
+constant C;
+@@
+
+ unsigned f(...)
+ { <+...
+*  return -C;
+ ...+> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- Compile tested.
-
- drivers/staging/comedi/drivers/cb_pcidas64.c |    2 +-
- drivers/staging/comedi/drivers/usbdux.c      |    2 +-
+ arch/x86/kernel/cpu/cpufreq/cpufreq-nforce2.c |    2 +-
+ arch/x86/kernel/cpu/cpufreq/longrun.c         |    2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/cb_pcidas64.c b/drivers/staging/comedi/drivers/cb_pcidas64.c
-index 9b1dd3c..2583e16 100644
---- a/drivers/staging/comedi/drivers/cb_pcidas64.c
-+++ b/drivers/staging/comedi/drivers/cb_pcidas64.c
-@@ -3078,7 +3078,7 @@ static void handle_ai_interrupt(struct comedi_device *dev,
- 			spin_unlock_irqrestore(&dev->spinlock, flags);
- 	}
- 	/*  if we are have all the data, then quit */
--	if ((cmd->stop_src = TRIG_COUNT && priv(dev)->ai_count <= 0) ||
-+	if ((cmd->stop_src = TRIG_COUNT && (int)priv(dev)->ai_count <= 0) ||
- 	    (cmd->stop_src = TRIG_EXT && (status & ADC_STOP_BIT))) {
- 		async->events |= COMEDI_CB_EOA;
- 	}
-diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
-index 4b320b1..6131e2d 100644
---- a/drivers/staging/comedi/drivers/usbdux.c
-+++ b/drivers/staging/comedi/drivers/usbdux.c
-@@ -649,7 +649,7 @@ static void usbduxsub_ao_IsocIrq(struct urb *urb)
- 
- 	/* normal operation: executing a command in this subdevice */
- 	this_usbduxsub->ao_counter--;
--	if (this_usbduxsub->ao_counter <= 0) {
-+	if ((int)this_usbduxsub->ao_counter <= 0) {
- 		/* timer zero */
- 		this_usbduxsub->ao_counter = this_usbduxsub->ao_timer;
- 
--- 
-1.7.0.4
+diff --git a/arch/x86/kernel/cpu/cpufreq/cpufreq-nforce2.c b/arch/x86/kernel/cpu/cpufreq/cpufreq-nforce2.c
+index 733093d..141abeb 100644
+--- a/arch/x86/kernel/cpu/cpufreq/cpufreq-nforce2.c
++++ b/arch/x86/kernel/cpu/cpufreq/cpufreq-nforce2.c
+@@ -393,7 +393,7 @@ static struct cpufreq_driver nforce2_driver = {
+  * Detects nForce2 A2 and C1 stepping
+  *
+  */
+-static unsigned int nforce2_detect_chipset(void)
++static int nforce2_detect_chipset(void)
+ {
+ 	nforce2_dev = pci_get_subsys(PCI_VENDOR_ID_NVIDIA,
+ 					PCI_DEVICE_ID_NVIDIA_NFORCE2,
+diff --git a/arch/x86/kernel/cpu/cpufreq/longrun.c b/arch/x86/kernel/cpu/cpufreq/longrun.c
+index fc09f14..77945bf 100644
+--- a/arch/x86/kernel/cpu/cpufreq/longrun.c
++++ b/arch/x86/kernel/cpu/cpufreq/longrun.c
+@@ -165,7 +165,7 @@ static unsigned int longrun_get(unsigned int cpu)
+  * TMTA rules:
+  * performance_pctg = (target_freq - low_freq)/(high_freq - low_freq)
+  */
+-static unsigned int __cpuinit longrun_determine_freqs(unsigned int *low_freq,
++static int __cpuinit longrun_determine_freqs(unsigned int *low_freq,
+ 						      unsigned int *high_freq)
+ {
+ 	u32 msr_lo, msr_hi;
 
