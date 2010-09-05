@@ -1,49 +1,39 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 24 Sep 2010 19:17:26 +0000
-Subject: [PATCH 16/24] pci: change to new flag variable
-Message-Id: <f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
+From: Kulikov Vasiliy <segooon@gmail.com>
+Date: Sun, 05 Sep 2010 18:33:04 +0000
+Subject: [PATCH 12/14] ubifs: check return code of pnode_lookup
+Message-Id: <1283711584-7587-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
- <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
- <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
- <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
- <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
- <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
- <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
- <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
- <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
- <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
- <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
- <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
- <efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
- <facbf79cadc81f9043e89160b7b3b8a90926aba1.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <facbf79cadc81f9043e89160b7b3b8a90926aba1.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Artem Bityutskiy <dedekind1@gmail.com>, Vasiliy Kulikov <segooon@gmail.com>, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@nokia.com>
 
-Replace EXTRA_CFLAGS with ccflags-y.
+From: Vasiliy Kulikov <segooon@gmail.com>
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Function pnode_lookup may return ERR_PTR(...). Check for it.
+
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/pci/Makefile |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+ Compile tested.
 
-diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-index dc1aa09..dcd7ace 100644
---- a/drivers/pci/Makefile
-+++ b/drivers/pci/Makefile
-@@ -65,6 +65,4 @@ obj-$(CONFIG_PCI_SYSCALL) += syscall.o
+ fs/ubifs/lpt_commit.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/fs/ubifs/lpt_commit.c b/fs/ubifs/lpt_commit.c
+index d12535b..5c90dec 100644
+--- a/fs/ubifs/lpt_commit.c
++++ b/fs/ubifs/lpt_commit.c
+@@ -705,6 +705,9 @@ static int make_tree_dirty(struct ubifs_info *c)
+ 	struct ubifs_pnode *pnode;
  
- obj-$(CONFIG_PCI_STUB) += pci-stub.o
- 
--ifeq ($(CONFIG_PCI_DEBUG),y)
--EXTRA_CFLAGS += -DDEBUG
--endif
-+ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
+ 	pnode = pnode_lookup(c, 0);
++	if (IS_ERR(pnode))
++		return PTR_ERR(pnode);
++
+ 	while (pnode) {
+ 		do_make_pnode_dirty(c, pnode);
+ 		pnode = next_pnode_to_dirty(c, pnode);
 -- 
-1.7.2.1
+1.7.0.4
 
