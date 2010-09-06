@@ -1,33 +1,45 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Wed, 29 Sep 2010 23:19:04 +0000
-Subject: Re: [PATCH] Documentation/kbuild: correct variable definitions in
-Message-Id: <20100929231904.GB21930@haskell.muteddisk.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 06 Sep 2010 12:26:39 +0000
+Subject: [patch] sctp: fix test for end of loop
+Message-Id: <20100906122344.GA2764@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284964412-32211-1-git-send-email-mfm@muteddisk.com>
- <4CA35541.9090106@suse.cz>
- <20100929175031.GA9278@merkur.ravnborg.org>
-In-Reply-To: <20100929175031.GA9278@merkur.ravnborg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Michal Marek <mmarek@suse.cz>, Randy Dunlap <rdunlap@xenotime.net>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Vlad Yasevich <vladislav.yasevich@hp.com>
+Cc: Sridhar Samudrala <sri@us.ibm.com>, "David S. Miller" <davem@davemloft.net>, Wei Yongjun <yjwei@cn.fujitsu.com>, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 19:50 Wed 29 Sep     , Sam Ravnborg wrote:
-> On Wed, Sep 29, 2010 at 05:03:29PM +0200, Michal Marek wrote:
-> > On 20.9.2010 08:33, matt mooney wrote:
-> > > Change $(src) and $(obj) definitions to state the path as absolute and
-> > > not relative.
-> > 
-> > It _is_ a relative patch, AFAICS. What makes you think otherwise?
-> 
-> With extenal modules $(src) and $(obj) are absolute - but in nomal use they are relative.
-> And again in normal use they are also equal. I usually say that we have two just to document
-> what is srource and what is generated.
+"new_addr" is the list cursor here and it's always non-NULL.
 
-Ah, I see. Sorry, I should have looked into this more. Now you did say in normal
-use they are equal, but I thought they were also equal when used for an external
-module too. Am I missing something?
+We're trying to test if we exited because the loop ended or we hit the
+break statement.  Really testing !found is enough so long as 
+"new_asoc->peer.transport_addr_list" is not empty and I believe it never
+is empty at this point.  So this is never really a bug with the current
+code.
 
-Thanks,
-mfm
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Compile tested only.
+
+diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
+index 24b2cd5..cb76d2e 100644
+--- a/net/sctp/sm_statefuns.c
++++ b/net/sctp/sm_statefuns.c
+@@ -1254,7 +1254,6 @@ static int sctp_sf_check_restart_addrs(const struct sctp_association *new_asoc,
+ 	/* Search through all current addresses and make sure
+ 	 * we aren't adding any new ones.
+ 	 */
+-	new_addr = NULL;
+ 	found = 0;
+ 
+ 	list_for_each_entry(new_addr, &new_asoc->peer.transport_addr_list,
+@@ -1273,7 +1272,8 @@ static int sctp_sf_check_restart_addrs(const struct sctp_association *new_asoc,
+ 	}
+ 
+ 	/* If a new address was added, ABORT the sender. */
+-	if (!found && new_addr) {
++	if (!found &&
++	    &new_addr->transports != &new_asoc->peer.transport_addr_list) {
+ 		sctp_sf_send_restart_abort(&new_addr->ipaddr, init, commands);
+ 	}
+ 
