@@ -1,53 +1,38 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 05 Sep 2010 19:00:22 +0000
-Subject: [PATCH 4/8] drivers/i2c/busses/i2c-pasemi.c: Fix unsigned return type
-Message-Id: <1283713226-8429-5-git-send-email-julia@diku.dk>
+From: Olof Johansson <olof@lixom.net>
+Date: Mon, 06 Sep 2010 16:30:44 +0000
+Subject: Re: [PATCH 4/8] drivers/i2c/busses/i2c-pasemi.c: Fix unsigned
+Message-Id: <20100906163044.GA14188@lixom.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283713226-8429-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1283713226-8429-1-git-send-email-julia@diku.dk>
+References: <1283713226-8429-1-git-send-email-julia@diku.dk> <1283713226-8429-5-git-send-email-julia@diku.dk>
+In-Reply-To: <1283713226-8429-5-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Olof Johansson <olof@lixom.net>
+To: Julia Lawall <julia@diku.dk>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>, "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>, linuxppc-dev@lists.ozlabs.org
 
-The function has an unsigned return type, but returns a negative constant
-to indicate an error condition.  The result of calling the function is
-always stored in a variable of type (signed) int, and thus unsigned can be
-dropped from the return type.
+On Sun, Sep 05, 2010 at 09:00:22PM +0200, Julia Lawall wrote:
+> The function has an unsigned return type, but returns a negative constant
+> to indicate an error condition.  The result of calling the function is
+> always stored in a variable of type (signed) int, and thus unsigned can be
+> dropped from the return type.
+> 
+> A sematic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @exists@
+> identifier f;
+> constant C;
+> @@
+> 
+>  unsigned f(...)
+>  { <+...
+> *  return -C;
+>  ...+> }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-A sematic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@exists@
-identifier f;
-constant C;
-@@
-
- unsigned f(...)
- { <+...
-*  return -C;
- ...+> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/i2c/busses/i2c-pasemi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-pasemi.c b/drivers/i2c/busses/i2c-pasemi.c
-index 4174101..837b8c1 100644
---- a/drivers/i2c/busses/i2c-pasemi.c
-+++ b/drivers/i2c/busses/i2c-pasemi.c
-@@ -88,7 +88,7 @@ static void pasemi_smb_clear(struct pasemi_smbus *smbus)
- 	reg_write(smbus, REG_SMSTA, status);
- }
- 
--static unsigned int pasemi_smb_waitready(struct pasemi_smbus *smbus)
-+static int pasemi_smb_waitready(struct pasemi_smbus *smbus)
- {
- 	int timeout = 10;
- 	unsigned int status;
+Acked-by: Olof Johansson <olof@lixom.net>
 
