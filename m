@@ -1,145 +1,195 @@
-From: Neil Brown <neilb@suse.de>
-Date: Mon, 06 Sep 2010 11:05:43 +0000
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Mon, 06 Sep 2010 19:21:28 +0000
 Subject: Re: [PATCH] md: do not use ++ in rcu_dereference() argument
-Message-Id: <20100906210543.34c2dbad@notabene>
+Message-Id: <20100906192128.GA4760@merkur.ravnborg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283711539-7123-1-git-send-email-segooon@gmail.com>
-	<20100905190139.GA3163@merkur.ravnborg.org>
-	<20100905192335.GA8140@albatros>
-	<20100905203908.GA3228@merkur.ravnborg.org>
-	<20100906152931.1d4a1d07@notabene>
-	<4C849BA4.1080106@bfs.de>
-In-Reply-To: <4C849BA4.1080106@bfs.de>
+References: <1283711539-7123-1-git-send-email-segooon@gmail.com> <20100905190139.GA3163@merkur.ravnborg.org> <20100905192335.GA8140@albatros> <20100905203908.GA3228@merkur.ravnborg.org> <20100906152931.1d4a1d07@notabene>
+In-Reply-To: <20100906152931.1d4a1d07@notabene>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: Sam Ravnborg <sam@ravnborg.org>, Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Neil Brown <neilb@suse.de>
+Cc: Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 06 Sep 2010 09:43:32 +0200
-walter harms <wharms@bfs.de> wrote:
+> Comments?
 
+Looks better but can still use a few improvements.
+See below.
+
+	Sam
 > 
+> Thanks,
+> NeilBrown
 > 
-> Neil Brown schrieb: 
-> > I've taken the opportunity to substantially re-write that code.
-> > 
-> > Comments?
-> > 
-> > Thanks,
-> > NeilBrown
-> > 
-> > commit e4062735c8f7233923df5858ed20f1278f3ee669
-> > Author: NeilBrown <neilb@suse.de>
-> > Date:   Mon Sep 6 14:10:08 2010 +1000
-> > 
-> >     md: tidy up device searches in read_balance.
-> >     
-> >     We have a pre-increment side-effect in the arg to a macro:
-> >       rcu_dereference
-> >     
-> >     This is poor form and triggers a warning.  Rather than just fix that,
-> >     take the opportunity to re-write the code it make it more readable.
-> >     
-> >     Reported-by: Kulikov Vasiliy <segooon@gmail.com>
-> >     Signed-off-by: NeilBrown <neilb@suse.de>
-> > 
-> > diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> > index ad83a4d..e29e13f 100644
-> > --- a/drivers/md/raid1.c
-> > +++ b/drivers/md/raid1.c
-> > @@ -420,11 +420,13 @@ static void raid1_end_write_request(struct bio *bio, int error)
-> >  static int read_balance(conf_t *conf, r1bio_t *r1_bio)
-> >  {
-> >  	const sector_t this_sector = r1_bio->sector;
-> > -	int new_disk = conf->last_used, disk = new_disk;
-> > -	int wonly_disk = -1;
-> > +	int new_disk = -1;
-> > +	int start_disk;
-> > +	int i;
-> >  	const int sectors = r1_bio->sectors;
-> >  	sector_t new_distance, current_distance;
-> >  	mdk_rdev_t *rdev;
-> > +	int choose_first;
-> >  
-> >  	rcu_read_lock();
-> >  	/*
-> > @@ -435,54 +437,35 @@ static int read_balance(conf_t *conf, r1bio_t *r1_bio)
-> >   retry:
-> >  	if (conf->mddev->recovery_cp < MaxSector &&
-> >  	    (this_sector + sectors >= conf->next_resync)) {
-> > -		/* Choose the first operational device, for consistancy */
-> > -		new_disk = 0;
-> > -
-> > -		for (rdev = rcu_dereference(conf->mirrors[new_disk].rdev);
-> > -		     r1_bio->bios[new_disk] = IO_BLOCKED ||
-> > -		     !rdev || !test_bit(In_sync, &rdev->flags)
-> > -			     || test_bit(WriteMostly, &rdev->flags);
-> > -		     rdev = rcu_dereference(conf->mirrors[++new_disk].rdev)) {
-> > -
-> > -			if (rdev && test_bit(In_sync, &rdev->flags) &&
-> > -				r1_bio->bios[new_disk] != IO_BLOCKED)
-> > -				wonly_disk = new_disk;
-> > -
-> > -			if (new_disk = conf->raid_disks - 1) {
-> > -				new_disk = wonly_disk;
-> > -				break;
-> > -			}
-> > -		}
-> > -		goto rb_out;
-> > +		choose_first = 1;
-> > +		start_disk = 0;
-> > +	} else {
-> > +		choose_first = 0;
-> > +		start_disk = conf->last_used;
-> >  	}
-> >  
+> commit e4062735c8f7233923df5858ed20f1278f3ee669
+> Author: NeilBrown <neilb@suse.de>
+> Date:   Mon Sep 6 14:10:08 2010 +1000
 > 
+>     md: tidy up device searches in read_balance.
+>     
+>     We have a pre-increment side-effect in the arg to a macro:
+>       rcu_dereference
+>     
+>     This is poor form and triggers a warning.  Rather than just fix that,
+>     take the opportunity to re-write the code it make it more readable.
+>     
+>     Reported-by: Kulikov Vasiliy <segooon@gmail.com>
+>     Signed-off-by: NeilBrown <neilb@suse.de>
 > 
-> perhaps you can drop the else when you init with
-> choose_first = 0;
-> start_disk = conf->last_used;
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index ad83a4d..e29e13f 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -420,11 +420,13 @@ static void raid1_end_write_request(struct bio *bio, int error)
+>  static int read_balance(conf_t *conf, r1bio_t *r1_bio)
+>  {
+>  	const sector_t this_sector = r1_bio->sector;
+> -	int new_disk = conf->last_used, disk = new_disk;
+> -	int wonly_disk = -1;
+> +	int new_disk = -1;
+> +	int start_disk;
+> +	int i;
+>  	const int sectors = r1_bio->sectors;
+>  	sector_t new_distance, current_distance;
+>  	mdk_rdev_t *rdev;
+> +	int choose_first;
 
-Perhaps.  Though given the 'retry' loop it isn't obvious that would do the
-right thing.
-I think I'll keep this bit as-is.  I think it helps see to two cases more
-clearly.
+To increase readability the general recommendation is:
+1) Sort variable definitions with the longest first.
+2) Do not assing variables when they are defined, do that on a separate line
+   below the variable definitions.
+   With one empty line after variable definitions.
+
+>  
+>  	rcu_read_lock();
+>  	/*
+> @@ -435,54 +437,35 @@ static int read_balance(conf_t *conf, r1bio_t *r1_bio)
+>   retry:
+>  	if (conf->mddev->recovery_cp < MaxSector &&
+>  	    (this_sector + sectors >= conf->next_resync)) {
+> -		/* Choose the first operational device, for consistancy */
+> -		new_disk = 0;
+> -
+> -		for (rdev = rcu_dereference(conf->mirrors[new_disk].rdev);
+> -		     r1_bio->bios[new_disk] = IO_BLOCKED ||
+> -		     !rdev || !test_bit(In_sync, &rdev->flags)
+> -			     || test_bit(WriteMostly, &rdev->flags);
+> -		     rdev = rcu_dereference(conf->mirrors[++new_disk].rdev)) {
+> -
+> -			if (rdev && test_bit(In_sync, &rdev->flags) &&
+> -				r1_bio->bios[new_disk] != IO_BLOCKED)
+> -				wonly_disk = new_disk;
+> -
+> -			if (new_disk = conf->raid_disks - 1) {
+> -				new_disk = wonly_disk;
+> -				break;
+> -			}
+> -		}
+> -		goto rb_out;
+> +		choose_first = 1;
+> +		start_disk = 0;
+> +	} else {
+> +		choose_first = 0;
+> +		start_disk = conf->last_used;
+>  	}
+>  
+> -
+>  	/* make sure the disk is operational */
+> -	for (rdev = rcu_dereference(conf->mirrors[new_disk].rdev);
+> -	     r1_bio->bios[new_disk] = IO_BLOCKED ||
+> -	     !rdev || !test_bit(In_sync, &rdev->flags) ||
+> -		     test_bit(WriteMostly, &rdev->flags);
+> -	     rdev = rcu_dereference(conf->mirrors[new_disk].rdev)) {
+> -
+> -		if (rdev && test_bit(In_sync, &rdev->flags) &&
+> -		    r1_bio->bios[new_disk] != IO_BLOCKED)
+> -			wonly_disk = new_disk;
+> -
+> -		if (new_disk <= 0)
+> -			new_disk = conf->raid_disks;
+> -		new_disk--;
+> -		if (new_disk = disk) {
+> -			new_disk = wonly_disk;
+> -			break;
+> +	for (i = 0 ; i < conf->raid_disks ; i++) {
+> +		int disk = start_disk + i;
+> +		if (disk >= conf->raid_disks)
+> +			disk -= conf->raid_disks;
+1) Please comment on the purpose of the for loop
+2) See comments above aboyt variable definitions
+
+> +
+> +		if (r1_bio->bios[disk] = IO_BLOCKED
+> +		    || !(rdev = rcu_dereference(conf->mirrors[disk].rdev))
+> +		    || !test_bit(In_sync, &rdev->flags))
+The rather complex expression - which includes a well hidden assignment -
+is repeated a few lines later.
+Please use a helper function and do not use such hidden assignments.
 
 
+> +			continue;
+> +
+> +		if (test_bit(WriteMostly, &rdev->flags)) {
+> +			new_disk = disk;
+> +			continue;
+>  		}
+> +		new_disk = disk;
+> +		break;
+>  	}
+>  
+> @@ -491,20 +474,20 @@ static int read_balance(conf_t *conf, r1bio_t *r1_bio)
+>  	if (this_sector = conf->mirrors[new_disk].head_position)
+>  		goto rb_out;
+>  
+> -	current_distance = abs(this_sector - conf->mirrors[disk].head_position);
+> +	current_distance = abs(this_sector 
+> +			       - conf->mirrors[new_disk].head_position);
+>  
+> -	/* Find the disk whose head is closest */
+> +	/* look for a better disk - i.e. head is closer */
+> +	start_disk = new_disk;
+> +	for (i = 1; i < conf->raid_disks; i++) {
+> +		int disk = start_disk + 1;
+> +		if (disk >= conf->raid_disks)
+> +			disk -= conf->raid_disks;
+See comments about for loop above.
+I also cannot see why we suddenly start with 1 where the other
+almost identical for loop starts with 0?
+If I wonder then someone else will wonder too => comment please.
 
-> > +		if (r1_bio->bios[disk] = IO_BLOCKED
-> > +		    || !(rdev = rcu_dereference(conf->mirrors[disk].rdev))
-> > +		    || !test_bit(In_sync, &rdev->flags))
-> > +			continue;
+>  
+> -	do {
+> -		if (disk <= 0)
+> -			disk = conf->raid_disks;
+> -		disk--;
+> -
+> -		rdev = rcu_dereference(conf->mirrors[disk].rdev);
+> -
+> -		if (!rdev || r1_bio->bios[disk] = IO_BLOCKED ||
+> -		    !test_bit(In_sync, &rdev->flags) ||
+> -		    test_bit(WriteMostly, &rdev->flags))
+> +		if (r1_bio->bios[disk] = IO_BLOCKED
+> +		    || !(rdev = rcu_dereference(conf->mirrors[disk].rdev))
+> +		    || !test_bit(In_sync, &rdev->flags)
+> +		    || test_bit(WriteMostly, &rdev->flags))
+>  			continue;
+Here the complex expression is repeated - at least almost identical.
+
+>  
+>  		if (!atomic_read(&rdev->nr_pending)) {
+> @@ -516,11 +499,9 @@ static int read_balance(conf_t *conf, r1bio_t *r1_bio)
+>  			current_distance = new_distance;
+>  			new_disk = disk;
+>  		}
+> -	} while (disk != conf->last_used);
+> +	}
+>  
+>   rb_out:
+> -
+> -
+>  	if (new_disk >= 0) {
+>  		rdev = rcu_dereference(conf->mirrors[new_disk].rdev);
+>  		if (!rdev)
 > 
-> i think it is more readable to use:
-> 
->   rdev = rcu_dereference(conf->mirrors[disk].rdev);
->   if ()
-> 
 
-I think assignments inside 'if' statements have their place, but it seems
-that this is far from universal.  I've made this change, thanks.
-
-> 
-> 
-> > +		if (test_bit(WriteMostly, &rdev->flags)) {
-> > +			new_disk = disk;
-> > +			continue;
-> >  		}
-> > +		new_disk = disk;
-> > +		break;
-> >  	}
-> 
-> to improve readability:
-> 
-> 	new_disk = disk;
-> 	if ( ! test_bit(WriteMostly, &rdev->flags) )
-> 		break;
-
-Yes, that is a distinct improvement.  I've made that change too.
-
-Thanks a lot for your review!!
-
-NeilBrown
-
+	Sam
