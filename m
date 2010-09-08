@@ -1,58 +1,94 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:28:10 +0000
-Subject: [PATCH v2 22/22] Staging: wlags49_h25: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-22-git-send-email-tdent48227@gmail.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Date: Wed, 08 Sep 2010 19:54:17 +0000
+Subject: Re: [PATCH 4/7] arch/powerpc/platforms/powermac/pfunc_core.c: Add
+Message-Id: <20100908195417.GC7065@angua.secretlab.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+References: <1283075566-27441-1-git-send-email-julia@diku.dk>
+	<1283075566-27441-5-git-send-email-julia@diku.dk>
+In-Reply-To: <1283075566-27441-5-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Julia Lawall <julia@diku.dk>
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
 
-Changed to use proper ccflags-y option
+[cc'ing linuxppc-dev]
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
----
- drivers/staging/wlags49_h25/Makefile |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+On Sun, Aug 29, 2010 at 11:52:43AM +0200, Julia Lawall wrote:
+> Add a call to of_node_put in the error handling code following a call to
+> of_find_node_by_phandle.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r exists@
+> local idexpression x;
+> expression E,E1;
+> statement S;
+> @@
+> 
+> *x = 
+> (of_find_node_by_path
+> |of_find_node_by_name
+> |of_find_node_by_phandle
+> |of_get_parent
+> |of_get_next_parent
+> |of_get_next_child
+> |of_find_compatible_node
+> |of_match_node
+> )(...);
+> ...
+> if (x = NULL) S
+> <... when != x = E
+> *if (...) {
+>   ... when != of_node_put(x)
+>       when != if (...) { ... of_node_put(x); ... }
+> (
+>   return <+...x...+>;
+> |
+> *  return ...;
+> )
+> }
+> ...>
+> of_node_put(x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-diff --git a/drivers/staging/wlags49_h25/Makefile b/drivers/staging/wlags49_h25/Makefile
-index d0b23d4..f04976f 100644
---- a/drivers/staging/wlags49_h25/Makefile
-+++ b/drivers/staging/wlags49_h25/Makefile
-@@ -12,8 +12,8 @@
- #  If you want to build AP support (untested), comment out -DSTA_ONLY
- 
- INSTALLDIR := /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless
--EXTRA_CFLAGS += -I$(KERNELDIR)/include
--EXTRA_CFLAGS += -I$(src) \
-+ccflags-y := -I$(KERNELDIR)/include
-+ccflags-y := -I$(src) \
- 		-DBUS_PCMCIA \
- 		-DUSE_WPA \
- 		-DUSE_WEXT \
-@@ -25,16 +25,16 @@ EXTRA_CFLAGS += -I$(src) \
- #		-DUSE_UIL \
- #		-DUSE_PROFILE \
- 
--ifeq ($(findstring HERMES25,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring HERMES25,$(ccflags-y)),)
- WLNAME := wlags49_h2_cs
- $(WLNAME)-y := sta_h2.o
--ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
- $(WLNAME)-y += ap_h2.o
- endif
- else
- WLNAME=wlags49_h25_cs
- $(WLNAME)-y := sta_h25.o
--ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
- $(WLNAME)-y += ap_h25.o
- endif
- endif
--- 
-1.7.3
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
+> 
+> ---
+>  arch/powerpc/platforms/powermac/pfunc_core.c |    9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/powermac/pfunc_core.c b/arch/powerpc/platforms/powermac/pfunc_core.c
+> index cec6359..b0c3777 100644
+> --- a/arch/powerpc/platforms/powermac/pfunc_core.c
+> +++ b/arch/powerpc/platforms/powermac/pfunc_core.c
+> @@ -837,8 +837,10 @@ struct pmf_function *__pmf_find_function(struct device_node *target,
+>  		return NULL;
+>   find_it:
+>  	dev = pmf_find_device(actor);
+> -	if (dev = NULL)
+> -		return NULL;
+> +	if (dev = NULL) {
+> +		result = NULL;
+> +		goto out;
+> +	}
+>  
+>  	list_for_each_entry(func, &dev->functions, link) {
+>  		if (name && strcmp(name, func->name))
+> @@ -850,8 +852,9 @@ struct pmf_function *__pmf_find_function(struct device_node *target,
+>  		result = func;
+>  		break;
+>  	}
+> -	of_node_put(actor);
+>  	pmf_put_device(dev);
+> +out:
+> +	of_node_put(actor);
+>  	return result;
+>  }
+>  
+> 
