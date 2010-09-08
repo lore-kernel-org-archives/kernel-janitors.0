@@ -1,22 +1,31 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Tue, 28 Sep 2010 16:55:19 +0000
-Subject: Re: [PATCH 1/3 RESEND] arm: remove cast from void*
-Message-Id: <20100928165518.GD3117@atomide.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 08 Sep 2010 19:39:56 +0000
+Subject: [patch] mtd: sanity check input
+Message-Id: <20100908193956.GB3463@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1285638395.git.mfm@muteddisk.com>
-	<3502bb742dfb494eaa0faeb155fedb98dae2b946.1285638395.git.mfm@muteddisk.com>
-In-Reply-To: <3502bb742dfb494eaa0faeb155fedb98dae2b946.1285638395.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, H Hartley Sweeten <hsweeten@visionengravers.com>, linux-mtd@lists.infradead.org, Ben Hutchings <bhutchings@solarflare.com>, "Kirill A. Shutemov" <kirill@shutemov.name>
 
-* matt mooney <mfm@muteddisk.com> [100927 18:57]:
-> Unnecessary cast from void* in assignment.
-> 
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
-> Acked-by: Hiroshi DOYU <Hiroshi.DOYU@nokia.com>
+If "ur_idx" is wrong we could go past the end of the array.  The
+"ur_idx" comes from root so it's not a huge deal, but adding a sanity
+check makes the code more robust.
 
-Thanks, queuing this for the upcoming merge window.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Tony
+diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+index a825002..9c00549 100644
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -513,6 +513,9 @@ static int mtd_ioctl(struct file *file, u_int cmd, u_long arg)
+ 		if (get_user(ur_idx, &(ur->regionindex)))
+ 			return -EFAULT;
+ 
++		if (ur_idx >= mtd->numeraseregions)
++			return -EINVAL;
++
+ 		kr = &(mtd->eraseregions[ur_idx]);
+ 
+ 		if (put_user(kr->offset, &(ur->offset))
