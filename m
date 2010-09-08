@@ -1,12 +1,16 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 05 Sep 2010 18:59:52 +0000
-Subject: [PATCH 7/8] drivers/i2c/busses/i2c-amd8111.c: Fix unsigned return type
-Message-Id: <1283713226-8429-8-git-send-email-julia@diku.dk>
+Date: Wed, 08 Sep 2010 05:58:45 +0000
+Subject: [PATCH 7/8] drivers/i2c/busses/i2c-amd8111.c: Fix unsigned return
+Message-Id: <Pine.LNX.4.64.1009080757050.27892@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1283713226-8429-8-git-send-email-julia@diku.dk>
+In-Reply-To: <1283713226-8429-8-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Jean Delvare (PC drivers, core)" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "Ben Dooks (em, bedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janit
+
+From: Julia Lawall <julia@diku.dk>
 
 In each case, the function has an unsigned return type, but returns a
 negative constant to indicate an error condition.  The result of calling
