@@ -1,82 +1,97 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 24 Sep 2010 19:17:21 +0000
-Subject: [PATCH 11/24] memstick: change to new flag variable
-Message-Id: <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Date: Wed, 08 Sep 2010 19:46:58 +0000
+Subject: Re: [PATCH 7/7] arch/powerpc/platforms/cell: Add of_node_put to
+Message-Id: <20100908194658.GA7065@angua.secretlab.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
- <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
- <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
- <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
- <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
- <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
- <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
- <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
- <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
+References: <1283075566-27441-1-git-send-email-julia@diku.dk>
+ <1283075566-27441-8-git-send-email-julia@diku.dk>
+In-Reply-To: <1283075566-27441-8-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, cbe-oss-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-The EXTRA_CFLAGS assignment in memstick/Makefile was not accomplishing
-anything because this flag only has effect on sources at the same level
-as the makefile (i.e., per directory). Since both core/ and host/ rely
-on MEMSTICK_DEBUG, the subdir-ccflags-y variant seems to be the
-appropriate choice.
+On Sun, Aug 29, 2010 at 11:52:46AM +0200, Julia Lawall wrote:
+> Add calls to of_node_put in the error handling code following calls to
+> of_find_node_by_path and of_find_node_by_phandle.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r exists@
+> local idexpression x;
+> expression E,E1;
+> statement S;
+> @@
+> 
+> *x = 
+> (of_find_node_by_path
+> |of_find_node_by_name
+> |of_find_node_by_phandle
+> |of_get_parent
+> |of_get_next_parent
+> |of_get_next_child
+> |of_find_compatible_node
+> |of_match_node
+> )(...);
+> ...
+> if (x = NULL) S
+> <... when != x = E
+> *if (...) {
+>   ... when != of_node_put(x)
+>       when != if (...) { ... of_node_put(x); ... }
+> (
+>   return <+...x...+>;
+> |
+> *  return ...;
+> )
+> }
+> ...>
+> of_node_put(x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
----
- drivers/memstick/Makefile      |    4 +---
- drivers/memstick/core/Makefile |    4 ----
- drivers/memstick/host/Makefile |    4 ----
- 3 files changed, 1 insertions(+), 11 deletions(-)
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
-diff --git a/drivers/memstick/Makefile b/drivers/memstick/Makefile
-index dc160fb..9862359 100644
---- a/drivers/memstick/Makefile
-+++ b/drivers/memstick/Makefile
-@@ -2,9 +2,7 @@
- # Makefile for the kernel MemoryStick device drivers.
- #
- 
--ifeq ($(CONFIG_MEMSTICK_DEBUG),y)
--	EXTRA_CFLAGS		+= -DDEBUG
--endif
-+subdir-ccflags-$(CONFIG_MEMSTICK_DEBUG) := -DDEBUG
- 
- obj-$(CONFIG_MEMSTICK)		+= core/
- obj-$(CONFIG_MEMSTICK)		+= host/
-diff --git a/drivers/memstick/core/Makefile b/drivers/memstick/core/Makefile
-index 8b2b529..ecd0299 100644
---- a/drivers/memstick/core/Makefile
-+++ b/drivers/memstick/core/Makefile
-@@ -2,10 +2,6 @@
- # Makefile for the kernel MemoryStick core.
- #
- 
--ifeq ($(CONFIG_MEMSTICK_DEBUG),y)
--	EXTRA_CFLAGS		+= -DDEBUG
--endif
--
- obj-$(CONFIG_MEMSTICK)		+= memstick.o
- 
- obj-$(CONFIG_MSPRO_BLOCK)	+= mspro_block.o
-diff --git a/drivers/memstick/host/Makefile b/drivers/memstick/host/Makefile
-index 12530e4..a1815e9 100644
---- a/drivers/memstick/host/Makefile
-+++ b/drivers/memstick/host/Makefile
-@@ -2,9 +2,5 @@
- # Makefile for MemoryStick host controller drivers
- #
- 
--ifeq ($(CONFIG_MEMSTICK_DEBUG),y)
--	EXTRA_CFLAGS			+= -DDEBUG
--endif
--
- obj-$(CONFIG_MEMSTICK_TIFM_MS)		+= tifm_ms.o
- obj-$(CONFIG_MEMSTICK_JMICRON_38X)	+= jmb38x_ms.o
--- 
-1.7.2.1
-
+> 
+> ---
+>  arch/powerpc/platforms/cell/ras.c        |    4 +++-
+>  arch/powerpc/platforms/cell/spider-pic.c |    4 +++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/cell/ras.c b/arch/powerpc/platforms/cell/ras.c
+> index 1d3c4ef..5ec1e47 100644
+> --- a/arch/powerpc/platforms/cell/ras.c
+> +++ b/arch/powerpc/platforms/cell/ras.c
+> @@ -173,8 +173,10 @@ static int __init cbe_ptcal_enable(void)
+>  		return -ENODEV;
+>  
+>  	size = of_get_property(np, "ibm,cbe-ptcal-size", NULL);
+> -	if (!size)
+> +	if (!size) {
+> +		of_node_put(np);
+>  		return -ENODEV;
+> +	}
+>  
+>  	pr_debug("%s: enabling PTCAL, size = 0x%x\n", __func__, *size);
+>  	order = get_order(*size);
+> diff --git a/arch/powerpc/platforms/cell/spider-pic.c b/arch/powerpc/platforms/cell/spider-pic.c
+> index 5876e88..3f2e557 100644
+> --- a/arch/powerpc/platforms/cell/spider-pic.c
+> +++ b/arch/powerpc/platforms/cell/spider-pic.c
+> @@ -258,8 +258,10 @@ static unsigned int __init spider_find_cascade_and_node(struct spider_pic *pic)
+>  		return NO_IRQ;
+>  	imap += intsize + 1;
+>  	tmp = of_get_property(iic, "#interrupt-cells", NULL);
+> -	if (tmp = NULL)
+> +	if (tmp = NULL) {
+> +		of_node_put(iic);
+>  		return NO_IRQ;
+> +	}
+>  	intsize = *tmp;
+>  	/* Assume unit is last entry of interrupt specifier */
+>  	unit = imap[intsize - 1];
+> 
