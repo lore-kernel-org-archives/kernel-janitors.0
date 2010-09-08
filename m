@@ -1,53 +1,105 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 16 Sep 2010 21:11:47 +0000
-Subject: Re: [patch] ALSA: usb/mixer: remove bogus cast
-Message-Id: <s5hhbhpieb0.wl%tiwai@suse.de>
+From: Joe Perches <joe@perches.com>
+Date: Wed, 08 Sep 2010 21:04:21 +0000
+Subject: [Alternative PATCH net-next] sctp: fix test for end of loop
+Message-Id: <1283979861.2479.21.camel@Joe-Laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100916181347.GC7867@bicker>
-In-Reply-To: <20100916181347.GC7867@bicker>
+References: <20100906122344.GA2764@bicker>
+	 <20100908.132420.179918700.davem@davemloft.net> <4C87F366.3070002@hp.com>
+	 <20100908.133747.232732909.davem@davemloft.net>
+In-Reply-To: <20100908.133747.232732909.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: vladislav.yasevich@hp.com, error27@gmail.com, sri@us.ibm.com, yjwei@cn.fujitsu.com, cascardo@holoscopio.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 16 Sep 2010 20:13:47 +0200,
-Dan Carpenter wrote:
-> 
-> "uinfo->value.enumerated.item" is an unsigned int.  If it's negative
-> when we do the comparison:
-> 	if ((int)uinfo->value.enumerated.item >= cval->max)
-> then we would read past the end of the array on the next line.
+Perhaps something like this is clearer?
 
-This cast was for the old crappy gcc who spews bogus warnings when
-compared with signed and unsigned ints.  The kernel sets a compile flag
-for avoiding this since long time ago, so we can get rid of such
-cast gracefully now, indeed.
+Add a list_has_sctp_addr function to simplify loop
 
-> I also changed the strcpy() to strlcpy() out of paranoia.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Based on a patches by Dan Carpenter and David Miller
 
-Applied now.  Thanks.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ net/sctp/sm_statefuns.c |   46 +++++++++++++++++++++++-----------------------
+ 1 files changed, 23 insertions(+), 23 deletions(-)
+
+diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
+index 8b28443..4b4eb7c 100644
+--- a/net/sctp/sm_statefuns.c
++++ b/net/sctp/sm_statefuns.c
+@@ -1232,6 +1232,18 @@ out:
+ 	return 0;
+ }
+ 
++static bool list_has_sctp_addr(const struct list_head *list,
++			       union sctp_addr *ipaddr)
++{
++	struct sctp_transport *addr;
++
++	list_for_each_entry(addr, list, transports) {
++		if (sctp_cmp_addr_exact(ipaddr, &addr->ipaddr))
++			return true;
++	}
++
++	return false;
++}
+ /* A restart is occurring, check to make sure no new addresses
+  * are being added as we may be under a takeover attack.
+  */
+@@ -1240,10 +1252,10 @@ static int sctp_sf_check_restart_addrs(const struct sctp_association *new_asoc,
+ 				       struct sctp_chunk *init,
+ 				       sctp_cmd_seq_t *commands)
+ {
+-	struct sctp_transport *new_addr, *addr;
+-	int found;
++	struct sctp_transport *new_addr;
++	int ret = 1;
+ 
+-	/* Implementor's Guide - Sectin 5.2.2
++	/* Implementor's Guide - Section 5.2.2
+ 	 * ...
+ 	 * Before responding the endpoint MUST check to see if the
+ 	 * unexpected INIT adds new addresses to the association. If new
+@@ -1254,31 +1266,19 @@ static int sctp_sf_check_restart_addrs(const struct sctp_association *new_asoc,
+ 	/* Search through all current addresses and make sure
+ 	 * we aren't adding any new ones.
+ 	 */
+-	new_addr = NULL;
+-	found = 0;
+-
+ 	list_for_each_entry(new_addr, &new_asoc->peer.transport_addr_list,
+-			transports) {
+-		found = 0;
+-		list_for_each_entry(addr, &asoc->peer.transport_addr_list,
+-				transports) {
+-			if (sctp_cmp_addr_exact(&new_addr->ipaddr,
+-						&addr->ipaddr)) {
+-				found = 1;
+-				break;
+-			}
+-		}
+-		if (!found)
++			    transports) {
++		if (!list_has_sctp_addr(&asoc->peer.transport_addr_list,
++					&new_addr->ipaddr)) {
++			sctp_sf_send_restart_abort(&new_addr->ipaddr, init,
++						   commands);
++			ret = 0;
+ 			break;
+-	}
+-
+-	/* If a new address was added, ABORT the sender. */
+-	if (!found && new_addr) {
+-		sctp_sf_send_restart_abort(&new_addr->ipaddr, init, commands);
++		}
+ 	}
+ 
+ 	/* Return success if all addresses were found. */
+-	return found;
++	return ret;
+ }
+ 
+ /* Populate the verification/tie tags based on overlapping INIT
 
 
-Takashi
-
-> diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-> index 3ed3901..93c95c5 100644
-> --- a/sound/usb/mixer.c
-> +++ b/sound/usb/mixer.c
-> @@ -1642,9 +1642,10 @@ static int mixer_ctl_selector_info(struct snd_kcontrol *kcontrol, struct snd_ctl
->  	uinfo->type = SNDRV_CTL_ELEM_TYPE_ENUMERATED;
->  	uinfo->count = 1;
->  	uinfo->value.enumerated.items = cval->max;
-> -	if ((int)uinfo->value.enumerated.item >= cval->max)
-> +	if (uinfo->value.enumerated.item >= cval->max)
->  		uinfo->value.enumerated.item = cval->max - 1;
-> -	strcpy(uinfo->value.enumerated.name, itemlist[uinfo->value.enumerated.item]);
-> +	strlcpy(uinfo->value.enumerated.name, itemlist[uinfo->value.enumerated.item],
-> +		sizeof(uinfo->value.enumerated.name));
->  	return 0;
->  }
->  
-> 
