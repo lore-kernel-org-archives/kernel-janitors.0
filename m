@@ -1,7 +1,7 @@
-From: Andre Nogueira <andre.neo.net@gmail.com>
-Date: Thu, 09 Sep 2010 10:45:38 +0000
+From: Kevin McKinney <klmckinney1@gmail.com>
+Date: Thu, 09 Sep 2010 13:08:58 +0000
 Subject: Re: Opinion about Linux Foundation courses
-Message-Id: <AANLkTimDCH-3u2Hu+dUzL1+aTuZyHFqxwF-GW5PaSF44@mail.gmail.com>
+Message-Id: <AANLkTikLRLwTOaVRf9qhpxm7ZuqOnN88u37tr_5WUbVB@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTikugt28Lsf9wgCyOD=t4SK4pMyCNxCU5Yahs_nz@mail.gmail.com>
 In-Reply-To: <AANLkTikugt28Lsf9wgCyOD=t4SK4pMyCNxCU5Yahs_nz@mail.gmail.com>
@@ -10,56 +10,44 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hi.
+Hi All,
 
-I understand you opinion Greg.
-
-There are lots of documentation about Linux Kernel. For example, I
-have been studying  "Linux Kernel Development 3rd Edition".
-
-But if you want a job as Linux Kernel developer, is this type of
-training important?
-
-If you have experience it is "easy" to get the job. But you have to
-start from somewhere (even if you have the knowledge and skills).
-
-thanks
-
-On Thu, Sep 9, 2010 at 2:15 AM, Greg KH <greg@kroah.com> wrote:
-> On Wed, Sep 08, 2010 at 05:08:08PM -0700, Adarsh Joshi wrote:
->> Hi everyone,
->>
->> The documentation is great but I think Andre means that the courses give
->> more confidence.
+On Thu, Sep 9, 2010 at 6:45 AM, Andre Nogueira <andre.neo.net@gmail.com> wr=
+ote:
 >
-> Why?
+> Hi.
 >
->> I am a kernel newbie as well and as all beginners are suggested, I have
->> subscribed to kernel.org mailing lists. I do understand some of the mails
->> but not most of them. It just gets a bit overwhelming most of the times
->> which is not very helpful.
+> I understand you opinion Greg.
 >
-> Then don't subscribe to the lists, but start with the documentation that
-> we have. =A0It's a lot. =A0Then ask specific questions on the kernelnewbi=
-es
-> mailing list if you have them, or on the subsystem mailing lists.
->
->> It would be great if there is there any documentation on how to interpret
->> these emails and start working on them.
->
-> Ask questions about them, we don't know what you are having problems
-> with unless you say.
->
-> thanks,
->
-> greg k-h
->
+> There are lots of documentation about Linux Kernel. For example, I
+> have been studying =A0"Linux Kernel Development 3rd Edition".
 
+I am a newbie also and have read/studied tons of books on the Linux
+kernel over the last three years; however, the best way to learn the
+kernel and device drivers is to take on a small project.  By doing
+this I have learned so much more.
 
+Some very helpful documentation reside on the https://help.ubuntu.com
+site. However I need more documentation, specifically on debugging the
+arm/armel kernel that eventually gets ported to an embedded device.
+Can someone send documentation on this?
 
---=20
-Andr=E9 Nogueira
-http://sites.google.com/site/andrenogueirasite/
+In addition, I spent a lot of time trying to create a serial TTL port
+to RS232 serial cable with no luck. I understand the need for this;
+(to boot into a specific kernel); however I am not sure how to create
+this cable.  I was able to boot into a kernel of my choosing a
+different way; but can someone provide guidance on the creation of the
+cable for my own edification.
+
+Thanks,
+Kevin
+
+> Andr=E9 Nogueira
+> http://sites.google.com/site/andrenogueirasite/
+> _______________________________________________
+> devel mailing list
+> devel@linuxdriverproject.org
+> http://driverdev.linuxdriverproject.org/mailman/listinfo/devel
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
