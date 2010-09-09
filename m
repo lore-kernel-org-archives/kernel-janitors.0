@@ -1,7 +1,7 @@
-From: Jason <linuxdriverproject@lakedaemon.net>
-Date: Thu, 09 Sep 2010 16:23:12 +0000
+From: Greg KH <greg@kroah.com>
+Date: Thu, 09 Sep 2010 20:28:11 +0000
 Subject: Re: Opinion about Linux Foundation courses
-Message-Id: <4C8909F0.7090308@lakedaemon.net>
+Message-Id: <20100909202811.GB691@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTikugt28Lsf9wgCyOD=t4SK4pMyCNxCU5Yahs_nz@mail.gmail.com>
 In-Reply-To: <AANLkTikugt28Lsf9wgCyOD=t4SK4pMyCNxCU5Yahs_nz@mail.gmail.com>
@@ -10,19 +10,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Kevin McKinney wrote:
-> On Thu, Sep 9, 2010 at 10:28 AM, Jason
-> <linuxdriverproject@lakedaemon.net> wrote:
->> I've had very good luck with this [1] cable.  You can get the wire-end
->> variant, but honestly, I like the plug better.  The pins come out easily, so
->> I can reorder the pins depending on the project.
+On Thu, Sep 09, 2010 at 11:45:38AM +0100, Andre Nogueira wrote:
+> Hi.
 > 
-> The pin layout of my TTL port is 3V3 TXD RXD GND; would this work with
-> the cable you suggested; It has two extra pins?  Thanks for your help.
+> I understand you opinion Greg.
 > 
+> There are lots of documentation about Linux Kernel. For example, I
+> have been studying  "Linux Kernel Development 3rd Edition".
+> 
+> But if you want a job as Linux Kernel developer, is this type of
+> training important?
 
-Just pull the unneeded pins out of the plug and wrap them (independently) with electrical tape. ;-)
+It depends on the employer, but usually experience counts, not training.
 
-hth,
+> If you have experience it is "easy" to get the job. But you have to
+> start from somewhere (even if you have the knowledge and skills).
 
-Jason.
+So, you have _no_ problems with how the kernel works for you and your
+systems?  If not, then work on fixing that.
+
+If everything is fine, then look at the list of janitor projects, or the
+drivers/staging/*/TODO files, and start working on them if you don't
+know what else to do.  After getting some changes done there you might
+find some areas that interest you and you will know what to work on as
+it will be apparent.
+
+good luck,
+
+greg k-h
