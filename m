@@ -1,7 +1,7 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 09 Sep 2010 07:07:35 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 09 Sep 2010 07:23:04 +0000
 Subject: Re: [patch v3] ALSA: rawmidi: fix the get next midi device ioctl
-Message-Id: <s5hiq2fs8co.wl%tiwai@suse.de>
+Message-Id: <4C888B58.9060702@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20100908085308.GC32047@bicker> <20100908193641.GA3463@bicker>
 	<s5hvd6grova.wl%tiwai@suse.de>
@@ -12,11 +12,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <error27@gmail.com>
-Cc: ALSA development <alsa-devel@alsa-project.org>, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org, Kyle McMartin <kyle@mcmartin.ca>, Ulrich Drepper <drepper@redhat.com>
+Cc: ALSA development <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>, Kyle McMartin <kyle@mcmartin.ca>, Ulrich Drepper <drepper@redhat.com>
 
-At Thu, 9 Sep 2010 00:11:41 +0200,
-Dan Carpenter wrote:
-> 
+
+
+Dan Carpenter schrieb:
 > If we pass in a device which is higher than SNDRV_RAWMIDI_DEVICES then
 > the "next device" should be -1.  This function just returns device + 1.
 > 
@@ -42,19 +42,22 @@ Dan Carpenter wrote:
 >  		mutex_lock(&register_mutex);
 >  		device = device < 0 ? 0 : device + 1;
 >  		while (device < SNDRV_RAWMIDI_DEVICES) {
-> 
-
-We still need to cover the case device = SNDRV_RAWMIDI_DEVICES.
-Also, device is incremented, so it has to be SNDRV_RAWMIDI_DEVICE - 1.
-i.e.
-
-> +		if (device >= SNDRV_RAWMIDI_DEVICES) /* next device is -1 */
-> +			device = SNDRV_RAWMIDI_DEVICES - 1;
 
 
-I applied the fixed patch now.
+i am not the expert here but i sound a good idea to put all device changes into one place. like:
+
+if (device > SNDRV_RAWMIDI_DEVICES )
+	device = SNDRV_RAWMIDI_DEVICES;
+else if (device < 0 )
+	device = 0;
+else
+        device++;
+
+just my 2 cents,
+re,
+ wh
 
 
-thanks,
 
-Takashi
+
+
