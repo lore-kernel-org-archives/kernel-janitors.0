@@ -1,7 +1,7 @@
-From: Maciej Grela <maciej.grela@gmail.com>
-Date: Thu, 09 Sep 2010 13:53:24 +0000
+From: Jason <linuxdriverproject@lakedaemon.net>
+Date: Thu, 09 Sep 2010 14:28:50 +0000
 Subject: Re: Opinion about Linux Foundation courses
-Message-Id: <AANLkTinuwdXpjVv47ui+i4Xr-oANMLB3w46eP-eC_Mxe@mail.gmail.com>
+Message-Id: <4C88EF22.3020602@lakedaemon.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTikugt28Lsf9wgCyOD=t4SK4pMyCNxCU5Yahs_nz@mail.gmail.com>
 In-Reply-To: <AANLkTikugt28Lsf9wgCyOD=t4SK4pMyCNxCU5Yahs_nz@mail.gmail.com>
@@ -10,29 +10,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-2010/9/9 Kevin McKinney <klmckinney1@gmail.com>:
+Kevin McKinney wrote:
 > Hi All,
->
-> On Thu, Sep 9, 2010 at 6:45 AM, Andre Nogueira <andre.neo.net@gmail.com> wrote:
->>
+> 
+> On Thu, Sep 9, 2010 at 6:45 AM, Andre Nogueira
+> <andre.neo.net@gmail.com> wrote:
 >> Hi.
->>
->
+>> 
+>> I understand you opinion Greg.
+>> 
+>> There are lots of documentation about Linux Kernel. For example, I 
+>> have been studying  "Linux Kernel Development 3rd Edition".
+> 
+> I am a newbie also and have read/studied tons of books on the Linux 
+> kernel over the last three years; however, the best way to learn the 
+> kernel and device drivers is to take on a small project.  By doing 
+> this I have learned so much more.
+> 
+
+agreed.
+
 > In addition, I spent a lot of time trying to create a serial TTL port
-> to RS232 serial cable with no luck. I understand the need for this;
+>  to RS232 serial cable with no luck. I understand the need for this; 
 > (to boot into a specific kernel); however I am not sure how to create
-> this cable.  I was able to boot into a kernel of my choosing a
-> different way; but can someone provide guidance on the creation of the
-> cable for my own edification.
->
+>  this cable.  I was able to boot into a kernel of my choosing a 
+> different way; but can someone provide guidance on the creation of
+> the cable for my own edification.
+> 
 
-The best approach to do this is to buy a USB cable used to connect an
-old cellphone to a PC. They're pretty cheap and contain a USB <->
-RS232 3.3 V converter (usually PL2303). Most popular converter chips
-work with Linux out-of-the-box.
-You need to take the cable apart and just solder your own plug on the
-"cellphone" side. Before that, make sure you know which pin is the
-TXD, RXD and GND using the chip's datasheet and a continuity meter.
+I've had very good luck with this [1] cable.  You can get the wire-end variant, but honestly, I like the plug better.  The pins come out easily, so I can reorder the pins depending on the project.
 
-Br,
-Maciej Grela
+hth,
+
+Jason.
+
+[1] http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&namev8-1015-ND
