@@ -1,41 +1,36 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:19 +0000
-Subject: [PATCH 06/21] Staging: easycap: Makefile: cleaned up makefile cflags lines
-Message-Id: <1285352314-5939-6-git-send-email-tdent48227@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 10 Sep 2010 19:35:15 +0000
+Subject: [patch] USB: ohci-sm501: add iounmap on error path
+Message-Id: <20100910193515.GH5959@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+This ioremap() was leaked on an error path.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
----
- drivers/staging/easycap/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/easycap/Makefile b/drivers/staging/easycap/Makefile
-index d93bd6b..0746ad0 100644
---- a/drivers/staging/easycap/Makefile
-+++ b/drivers/staging/easycap/Makefile
-@@ -5,9 +5,9 @@ easycap-objs	:= easycap_main.o easycap_low.o easycap_sound.o
- easycap-objs	+= easycap_ioctl.o easycap_settings.o
- easycap-objs	+= easycap_testcard.o
+diff --git a/drivers/usb/host/ohci-sm501.c b/drivers/usb/host/ohci-sm501.c
+index cff2363..041d30f 100644
+--- a/drivers/usb/host/ohci-sm501.c
++++ b/drivers/usb/host/ohci-sm501.c
+@@ -168,7 +168,7 @@ static int ohci_hcd_sm501_drv_probe(struct platform_device *pdev)
  
--EXTRA_CFLAGS += -Wall
-+ccflags-y += -Wall
- # Impose all or none of the following:
--EXTRA_CFLAGS += -DEASYCAP_IS_VIDEODEV_CLIENT
--EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_DEVICE_H
--EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_FOPS
-+ccflags-y += -DEASYCAP_IS_VIDEODEV_CLIENT
-+ccflags-y += -DEASYCAP_NEEDS_V4L2_DEVICE_H
-+ccflags-y += -DEASYCAP_NEEDS_V4L2_FOPS
+ 	retval = usb_add_hcd(hcd, irq, IRQF_DISABLED | IRQF_SHARED);
+ 	if (retval)
+-		goto err4;
++		goto err5;
  
--- 
-1.7.3
-
+ 	/* enable power and unmask interrupts */
+ 
+@@ -176,6 +176,8 @@ static int ohci_hcd_sm501_drv_probe(struct platform_device *pdev)
+ 	sm501_modify_reg(dev->parent, SM501_IRQ_MASK, 1 << 6, 0);
+ 
+ 	return 0;
++err5:
++	iounmap(hcd->regs);
+ err4:
+ 	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ err3:
