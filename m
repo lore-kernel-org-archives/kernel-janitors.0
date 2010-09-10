@@ -1,54 +1,33 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:27 +0000
-Subject: [PATCH 14/21] Staging: rtl8192u: Makefile: cleaned up make cflag files
-Message-Id: <1285352314-5939-14-git-send-email-tdent48227@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 10 Sep 2010 19:33:44 +0000
+Subject: [patch] logfs: signedness issue in mtd_find_last_sb()
+Message-Id: <20100910193344.GG5959@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+"*ofs" is unsigned here so it's never less than zero.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/staging/rtl8192u/Makefile |   20 ++++++++++----------
- 1 files changed, 10 insertions(+), 10 deletions(-)
+This was found by a static checker and I have only compile tested it.
+Sorry about that.
 
-diff --git a/drivers/staging/rtl8192u/Makefile b/drivers/staging/rtl8192u/Makefile
-index 738f4a8..d6cc80f 100644
---- a/drivers/staging/rtl8192u/Makefile
-+++ b/drivers/staging/rtl8192u/Makefile
-@@ -1,16 +1,16 @@
- NIC_SELECT = RTL8192U
+diff --git a/fs/logfs/dev_mtd.c b/fs/logfs/dev_mtd.c
+index a85d47d..99b3d4c 100644
+--- a/fs/logfs/dev_mtd.c
++++ b/fs/logfs/dev_mtd.c
+@@ -175,9 +175,9 @@ static struct page *mtd_find_last_sb(struct super_block *sb, u64 *ofs)
  
--EXTRA_CFLAGS += -std=gnu89
--EXTRA_CFLAGS += -O2
-+ccflags-y += -std=gnu89
-+ccflags-y += -O2
- 
--EXTRA_CFLAGS += -DCONFIG_FORCE_HARD_FLOAT=y
--EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
--EXTRA_CFLAGS += -DTHOMAS_BEACON -DTHOMAS_TASKLET -DTHOMAS_SKB -DTHOMAS_TURBO
--#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
--#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
--EXTRA_CFLAGS += -DUSE_ONE_PIPE
--EXTRA_CFLAGS += -DENABLE_DOT11D
--EXTRA_CFLAGS += -Idrivers/staging/rtl8192u/ieee80211
-+ccflags-y += -DCONFIG_FORCE_HARD_FLOAT=y
-+ccflags-y += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
-+ccflags-y += -DTHOMAS_BEACON -DTHOMAS_TASKLET -DTHOMAS_SKB -DTHOMAS_TURBO
-+#ccflags-y += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
-+#ccflags-y += -DUSB_RX_AGGREGATION_SUPPORT
-+ccflags-y += -DUSE_ONE_PIPE
-+ccflags-y += -DENABLE_DOT11D
-+ccflags-y += -Idrivers/staging/rtl8192u/ieee80211
- 
- r8192u_usb-objs := r8192U_core.o r8180_93cx6.o r8192U_wx.o		\
- 		  r8190_rtl8256.o r819xU_phy.o r819xU_firmware.o	\
--- 
-1.7.3
-
+ 	*ofs = mtd->size - mtd->erasesize;
+ 	while (mtd->block_isbad(mtd, *ofs)) {
+-		*ofs -= mtd->erasesize;
+-		if (*ofs <= 0)
++		if (*ofs <= mtd->erasesize)
+ 			return NULL;
++		*ofs -= mtd->erasesize;
+ 	}
+ 	*ofs = *ofs + mtd->erasesize - 0x1000;
+ 	BUG_ON(*ofs & ~PAGE_MASK);
