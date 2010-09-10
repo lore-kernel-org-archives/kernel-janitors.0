@@ -1,30 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 27 Sep 2010 01:55:29 +0000
-Subject: Re: [PATCH 3/9] sgiseeq: use free_netdev(netdev) instead of kfree()
-Message-Id: <20100926.185529.200365761.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 10 Sep 2010 11:54:23 +0000
+Subject: [patch] vxge: potential NULL dereference
+Message-Id: <20100910115423.GC5959@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285495086-21956-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1285495086-21956-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, eric.dumazet@gmail.com, u.kleine-koenig@pengutronix.de, julia@diku.dk, tj@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ramkrishna Vepa <ramkrishna.vepa@exar.com>
+Cc: Sivakumar Subramani <sivakumar.subramani@exar.com>, Sreenivasa Honnur <sreenivasa.honnur@exar.com>, Jon Mason <jon.mason@exar.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 13:58:06 +0400
+At the start of the function we test whether the "vpath" is NULL but we
+need another test here as well.
 
-> Freeing netdev without free_netdev() leads to net, tx leaks.
-> I might lead to dereferencing freed pointer.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> @@
-> struct net_device* dev;
-> @@
-> 
-> -kfree(dev)
-> +free_netdev(dev)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This is a static checker bug, I'm not sure if we ever pass a NULL
+pointer for "vpath".
 
-Applied.
+diff --git a/drivers/net/vxge/vxge-traffic.c b/drivers/net/vxge/vxge-traffic.c
+index cedf08f..1790748 100644
+--- a/drivers/net/vxge/vxge-traffic.c
++++ b/drivers/net/vxge/vxge-traffic.c
+@@ -2157,7 +2157,8 @@ out2:
+ 		(alarm_event = VXGE_HW_EVENT_UNKNOWN))
+ 		return VXGE_HW_OK;
+ 
+-	__vxge_hw_device_handle_error(hldev, vpath->vp_id, alarm_event);
++	if (vpath)
++		__vxge_hw_device_handle_error(hldev, vpath->vp_id, alarm_event);
+ 
+ 	if (alarm_event = VXGE_HW_EVENT_SERR)
+ 		return VXGE_HW_ERR_CRITICAL;
