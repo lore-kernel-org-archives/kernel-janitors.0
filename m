@@ -1,54 +1,32 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Tue, 28 Sep 2010 17:07:55 +0000
-Subject: [PATCH 5/9] staging: ath6kl: use free_netdev(netdev) instead of kfree()
-Message-Id: <1285693675-4637-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 10 Sep 2010 11:56:16 +0000
+Subject: [patch] net/llc: make opt unsigned in llc_ui_setsockopt()
+Message-Id: <20100910115616.GD5959@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285495099-22069-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1285495099-22069-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Vipin Mehta <vmehta@atheros.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
+Cc: "David S. Miller" <davem@davemloft.net>, Octavian Purdila <opurdila@ixiacom.com>, Stephen Hemminger <shemminger@vyatta.com>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-It is not guaranteed that free_netdev() is macro.
-Freeing netdev without free_netdev() leads to net, tx leaks.
-I might lead to dereferencing freed pointer.
+The members of struct llc_sock are unsigned so if we pass a negative
+value for "opt" it can cause a sign bug.  Also it can cause an integer
+overflow when we multiply "opt * HZ".
 
+CC: stable@kernel.org
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
----
- drivers/staging/ath6kl/os/linux/ar6000_drv.c |    8 --------
- 1 files changed, 0 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/ath6kl/os/linux/ar6000_drv.c b/drivers/staging/ath6kl/os/linux/ar6000_drv.c
-index daba6e4..c5a6d6c 100644
---- a/drivers/staging/ath6kl/os/linux/ar6000_drv.c
-+++ b/drivers/staging/ath6kl/os/linux/ar6000_drv.c
-@@ -2143,11 +2143,7 @@ ar6000_destroy(struct net_device *dev, unsigned int unregister)
-         unregister_netdev(dev);
-         is_netdev_registered = 0;
-     }
--#ifndef free_netdev
--    kfree(dev);
--#else
-     free_netdev(dev);
--#endif
+diff --git a/net/llc/af_llc.c b/net/llc/af_llc.c
+index 023ba82..5826129 100644
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -1024,7 +1024,8 @@ static int llc_ui_setsockopt(struct socket *sock, int level, int optname,
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct llc_sock *llc = llc_sk(sk);
+-	int rc = -EINVAL, opt;
++	unsigned int opt;
++	int rc = -EINVAL;
  
- #ifdef ATH6K_CONFIG_CFG80211
-     ar6k_cfg80211_deinit(ar);
-@@ -6429,11 +6425,7 @@ A_STATUS ar6000_remove_ap_interface(AR_SOFTC_T *ar)
-         ar6000_stop_ap_interface(ar);
- 
-         unregister_netdev(arApNetDev);
--#ifndef free_netdev
--        kfree(arApNetDev);
--#else
-         free_netdev(apApNetDev);
--#endif
- 
-         A_PRINTF("Remove AP interface\n");
-     }
--- 
-1.7.0.4
-
+ 	lock_sock(sk);
+ 	if (unlikely(level != SOL_LLC || optlen != sizeof(int)))
