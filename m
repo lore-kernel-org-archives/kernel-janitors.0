@@ -1,58 +1,36 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 24 Sep 2010 19:17:34 +0000
-Subject: [PATCH 24/24] video: change to new flag variable
-Message-Id: <a46ccb29d75d29ec20a10c9a11acd5e12a693316.1285355033.git.mfm@muteddisk.com>
+From: Wang Sheng-Hui <crosslonelyover@gmail.com>
+Date: Sat, 11 Sep 2010 02:07:57 +0000
+Subject: [PATCH] trivial: header.S: replace i386 with x86 in comment for type_of_loader
+Message-Id: <4C8AE47D.9020507@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
- <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
- <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
- <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
- <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
- <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
- <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
- <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
- <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
- <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
- <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
- <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
- <efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
- <facbf79cadc81f9043e89160b7b3b8a90926aba1.1285355033.git.mfm@muteddisk.com>
- <f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
- <0472f95473283ce75285e458b22b86ff791d7a42.1285355033.git.mfm@muteddisk.com>
- <75da5e0e0a547b4acbc7cfbdf35c29a24512ca37.1285355033.git.mfm@muteddisk.com>
- <30c1ad7f4200136e00723fd76da1e58200e6e5b0.1285355033.git.mfm@muteddisk.com>
- <06e70fe4f8a51f65f3582c353329939a8548d897.1285355033.git.mfm@muteddisk.com>
- <a2fd5831df37b0a306ab4ca51d2e86ea7ee06425.1285355033.git.mfm@muteddisk.com>
- <58b418c2e7311bffb13606a6b94e33ddb7569346.1285355033.git.mfm@muteddisk.com>
- <1dd0f4a1709a9b139fe87f2b311cc0d129900b3f.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <1dd0f4a1709a9b139fe87f2b311cc0d129900b3f.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Maik Broemme <mbroemme@plusserver.de>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace EXTRA_CFLAGS with ccflags-y.
+For i386 dir under arch and Documentation renamed to x86, 
+the comment should be modified accordingly.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+The patch is against 2.6.36-rc3. Please check it.
+
+
+Signed-off-by: Wang Sheng-Hui <crosslonelyover@gmail.com>
 ---
- drivers/video/intelfb/Makefile |    5 +----
- 1 files changed, 1 insertions(+), 4 deletions(-)
+ arch/x86/boot/header.S |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/video/intelfb/Makefile b/drivers/video/intelfb/Makefile
-index 6c782d3..f7d631e 100644
---- a/drivers/video/intelfb/Makefile
-+++ b/drivers/video/intelfb/Makefile
-@@ -4,7 +4,4 @@ intelfb-y := intelfbdrv.o intelfbhw.o
- intelfb-$(CONFIG_FB_INTEL_I2C) += intelfb_i2c.o
- intelfb-objs := $(intelfb-y)
+diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+index 93e689f..bdb4d45 100644
+--- a/arch/x86/boot/header.S
++++ b/arch/x86/boot/header.S
+@@ -129,7 +129,7 @@ start_sys_seg:	.word	SYSSEG		# obsolete and meaningless, but just
  
--ifdef CONFIG_FB_INTEL_DEBUG
--#EXTRA_CFLAGS += -DDEBUG -DVERBOSE -DREGDUMP
--EXTRA_CFLAGS += -DDEBUG -DREGDUMP
--endif
-+ccflags-$(CONFIG_FB_INTEL_DEBUG) := -DDEBUG -DREGDUMP
+ type_of_loader:	.byte	0	# 0 means ancient bootloader, newer
+ 					# bootloaders know to change this.
+-					# See Documentation/i386/boot.txt for
++					# See Documentation/x86/boot.txt for
+ 					# assigned ids
+ 
+ # flags, unused bits must be zero (RFU) bit within loadflags
 -- 
-1.7.2.1
-
+1.6.3.3
