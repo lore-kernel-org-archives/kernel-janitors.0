@@ -1,94 +1,65 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Wed, 08 Sep 2010 19:54:17 +0000
-Subject: Re: [PATCH 4/7] arch/powerpc/platforms/powermac/pfunc_core.c: Add
-Message-Id: <20100908195417.GC7065@angua.secretlab.ca>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 11 Sep 2010 23:48:33 +0000
+Subject: [patch v2] airo: remove "basic_rate" module option
+Message-Id: <20100911234833.GD25351@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283075566-27441-1-git-send-email-julia@diku.dk>
-	<1283075566-27441-5-git-send-email-julia@diku.dk>
-In-Reply-To: <1283075566-27441-5-git-send-email-julia@diku.dk>
+References: <20100910115714.GE5959@bicker> <20100910133401.GF2398@redhat.com>
+In-Reply-To: <20100910133401.GF2398@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Matthieu CASTET <castet.matthieu@free.fr>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[cc'ing linuxppc-dev]
+The "basic_rate" module option is not implemented correctly.  If the
+rate was set to zero it was supposed to set it to "basic_rate | 0x80".
+Unfortunately the check to see if what zero was wrong and it checked
+"!ai->config.rates" (which is always false) instead of
+"!ai->config.rates[i]".
 
-On Sun, Aug 29, 2010 at 11:52:43AM +0200, Julia Lawall wrote:
-> Add a call to of_node_put in the error handling code following a call to
-> of_find_node_by_phandle.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> expression E,E1;
-> statement S;
-> @@
-> 
-> *x = 
-> (of_find_node_by_path
-> |of_find_node_by_name
-> |of_find_node_by_phandle
-> |of_get_parent
-> |of_get_next_parent
-> |of_get_next_child
-> |of_find_compatible_node
-> |of_match_node
-> )(...);
-> ...
-> if (x = NULL) S
-> <... when != x = E
-> *if (...) {
->   ... when != of_node_put(x)
->       when != if (...) { ... of_node_put(x); ... }
-> (
->   return <+...x...+>;
-> |
-> *  return ...;
-> )
-> }
-> ...>
-> of_node_put(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+This option was just used for development and it wasn't documented
+anywhere.  Instead of fixing it, we can just remove it.
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Reported-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+V2:  Version 1 was just a cleanup to please the static checkers but
+didn't fix anything.  Stanislaw suggests that we can remove the feature
+entirely so that's what I've done in version 2.
 
-> 
-> ---
->  arch/powerpc/platforms/powermac/pfunc_core.c |    9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powermac/pfunc_core.c b/arch/powerpc/platforms/powermac/pfunc_core.c
-> index cec6359..b0c3777 100644
-> --- a/arch/powerpc/platforms/powermac/pfunc_core.c
-> +++ b/arch/powerpc/platforms/powermac/pfunc_core.c
-> @@ -837,8 +837,10 @@ struct pmf_function *__pmf_find_function(struct device_node *target,
->  		return NULL;
->   find_it:
->  	dev = pmf_find_device(actor);
-> -	if (dev = NULL)
-> -		return NULL;
-> +	if (dev = NULL) {
-> +		result = NULL;
-> +		goto out;
-> +	}
->  
->  	list_for_each_entry(func, &dev->functions, link) {
->  		if (name && strcmp(name, func->name))
-> @@ -850,8 +852,9 @@ struct pmf_function *__pmf_find_function(struct device_node *target,
->  		result = func;
->  		break;
->  	}
-> -	of_node_put(actor);
->  	pmf_put_device(dev);
-> +out:
-> +	of_node_put(actor);
->  	return result;
->  }
->  
-> 
+diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
+index 1d05445..c20cad7 100644
+--- a/drivers/net/wireless/airo.c
++++ b/drivers/net/wireless/airo.c
+@@ -217,7 +217,6 @@ static char *statsLabels[] = {
+    (no spaces) list of rates (up to 8). */
+ 
+ static int rates[8];
+-static int basic_rate;
+ static char *ssids[3];
+ 
+ static int io[4];
+@@ -250,7 +249,6 @@ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_SUPPORTED_DEVICE("Aironet 4500, 4800 and Cisco 340/350");
+ module_param_array(io, int, NULL, 0);
+ module_param_array(irq, int, NULL, 0);
+-module_param(basic_rate, int, 0);
+ module_param_array(rates, int, NULL, 0);
+ module_param_array(ssids, charp, NULL, 0);
+ module_param(auto_wep, int, 0);
+@@ -3884,15 +3882,6 @@ static u16 setup_card(struct airo_info *ai, u8 *mac, int lock)
+ 				ai->config.rates[i] = rates[i];
+ 			}
+ 		}
+-		if ( basic_rate > 0 ) {
+-			for( i = 0; i < 8; i++ ) {
+-				if ( ai->config.rates[i] = basic_rate ||
+-				     !ai->config.rates ) {
+-					ai->config.rates[i] = basic_rate | 0x80;
+-					break;
+-				}
+-			}
+-		}
+ 		set_bit (FLAG_COMMIT, &ai->flags);
+ 	}
+ 
