@@ -1,33 +1,37 @@
-From: David Vrabel <david.vrabel@csr.com>
-Date: Wed, 22 Sep 2010 11:36:29 +0000
-Subject: Re: [PATCH 13/14] uwb: fix device_register() error handling
-Message-Id: <4C99EA3D.7050405@csr.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 12 Sep 2010 18:57:24 +0000
+Subject: [PATCH] gpio: sx150x: fix error code value
+Message-Id: <1284317845-5181-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284900918-24770-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1284900918-24770-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Gregory Bean <gbean@codeaurora.org>, linux-kernel@vger.kernel.org
 
-Vasiliy Kulikov wrote:
-> If device_register() fails then call put_device().
-> See comment to device_register.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+The return code of sx150x_get_io() is propagated as error code,
+so it should look like standard code.
 
-Acked-by: David Vrabel <david.vrabel@csr.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-What's the preferred way of handling these sorts of patch sets?  Merged
-via some kernel-janitor tree or is it expected that subsystem
-maintainers pick up the individual patches?
+ drivers/gpio/sx150x.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-David
+diff --git a/drivers/gpio/sx150x.c b/drivers/gpio/sx150x.c
+index b42f42c..b0eed89 100644
+--- a/drivers/gpio/sx150x.c
++++ b/drivers/gpio/sx150x.c
+@@ -179,7 +179,7 @@ static int sx150x_get_io(struct sx150x_chip *chip, unsigned offset)
+ 	sx150x_find_cfg(offset, 1, &reg, &mask, &shift);
+ 	err = sx150x_i2c_read(chip->client, reg, &data);
+ 	if (err >= 0)
+-		err = (data & mask) != 0 ? 1 : 0;
++		err = (data & mask) != 0 ? -EIO : 0;
+ 
+ 	return err;
+ }
 -- 
-David Vrabel, Senior Software Engineer, Drivers
-CSR, Churchill House, Cambridge Business Park,  Tel: +44 (0)1223 692562
-Cowley Road, Cambridge, CB4 0WZ                 http://www.csr.com/
+1.7.0.4
 
-
-Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
