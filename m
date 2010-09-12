@@ -1,26 +1,86 @@
-From: Gregory Bean <gbean@codeaurora.org>
-Date: Mon, 13 Sep 2010 16:23:03 +0000
-Subject: Re: [PATCH] gpio: sx150x: fix error code value
-Message-Id: <4C8E4FE7.4080808@codeaurora.org>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 12 Sep 2010 18:57:08 +0000
+Subject: [PATCH] ata: sata_dwc_460ex: fix error path
+Message-Id: <1284317830-5022-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284317845-5181-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1284317845-5181-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Jeff Garzik <jgarzik@pobox.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Rupjyoti Sarmah <rsarmah@appliedmicro.com>, Prodyut Hazarika <phazarika@appliedmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
->   	err = sx150x_i2c_read(chip->client, reg,&data);
->   	if (err>= 0)
-> -		err = (data&  mask) != 0 ? 1 : 0;
-> +		err = (data&  mask) != 0 ? -EIO : 0;
->
+Free all allocated resources on error path.
 
-This doesn't work.  The IO pins are gpio data pins, which are used as 0 
-or 1 data values (see sx150x_gpio_get).  Returning -EIO whenever an 
-attempt is made to gpio_get_value on a non-zero gpio line will break things.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ I cannot compile this driver at all, so it is not tested.
 
---
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+ drivers/ata/sata_dwc_460ex.c |   21 ++++++++++++++-------
+ 1 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
+index 6cf57c5..ad0535f 100644
+--- a/drivers/ata/sata_dwc_460ex.c
++++ b/drivers/ata/sata_dwc_460ex.c
+@@ -727,11 +727,15 @@ static int dma_dwc_xfer_setup(struct scatterlist *sg, int num_elems,
+ static void dma_dwc_exit(struct sata_dwc_device *hsdev)
+ {
+ 	dev_dbg(host_pvt.dwc_dev, "%s:\n", __func__);
+-	if (host_pvt.sata_dma_regs)
++	if (host_pvt.sata_dma_regs) {
+ 		iounmap(host_pvt.sata_dma_regs);
++		host_pvt.sata_dma_regs = NULL;
++	}
+ 
+-	if (hsdev->irq_dma)
++	if (hsdev->irq_dma) {
+ 		free_irq(hsdev->irq_dma, hsdev);
++		hsdev->irq_dma = 0;
++	}
+ }
+ 
+ /*
+@@ -1606,7 +1610,7 @@ static int sata_dwc_probe(struct platform_device *ofdev,
+ 	if (hsdev = NULL) {
+ 		dev_err(&ofdev->dev, "kmalloc failed for hsdev\n");
+ 		err = -ENOMEM;
+-		goto error_out;
++		goto error;
+ 	}
+ 	memset(hsdev, 0, sizeof(*hsdev));
+ 
+@@ -1616,7 +1620,7 @@ static int sata_dwc_probe(struct platform_device *ofdev,
+ 		dev_err(&ofdev->dev, "ioremap failed for SATA register"
+ 			" address\n");
+ 		err = -ENODEV;
+-		goto error_out;
++		goto error_kmalloc;
+ 	}
+ 	hsdev->reg_base = base;
+ 	dev_dbg(&ofdev->dev, "ioremap done for SATA register address\n");
+@@ -1629,7 +1633,7 @@ static int sata_dwc_probe(struct platform_device *ofdev,
+ 	if (!host) {
+ 		dev_err(&ofdev->dev, "ata_host_alloc_pinfo failed\n");
+ 		err = -ENOMEM;
+-		goto error_out;
++		goto error_iomap;
+ 	}
+ 
+ 	host->private_data = hsdev;
+@@ -1697,8 +1701,11 @@ error_out:
+ 	/* Free SATA DMA resources */
+ 	dma_dwc_exit(hsdev);
+ 
+-	if (base)
+-		iounmap(base);
++error_iomap:
++	iounmap(base);
++error_kmalloc:
++	kfree(hsdev);
++error:
+ 	return err;
+ }
+ 
+-- 
+1.7.0.4
+
