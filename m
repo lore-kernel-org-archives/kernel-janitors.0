@@ -1,110 +1,28 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 12 Sep 2010 18:56:43 +0000
-Subject: [PATCH] staging: keucr: check kmalloc() return value
-Message-Id: <1284317808-4850-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 12 Sep 2010 20:52:49 +0000
+Subject: Re: [PATCH] staging: keucr: check kmalloc() return value
+Message-Id: <20100912205248.GE25351@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1284317808-4850-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1284317808-4850-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Al Cho <acho@novell.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Al Cho <acho@novell.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-kmalloc() may fail, if so return error code.
-Also don't alloc 16 bytes from the heap, use stack instead.
+On Sun, Sep 12, 2010 at 10:56:43PM +0400, Vasiliy Kulikov wrote:
+> kmalloc() may fail, if so return error code.
+> Also don't alloc 16 bytes from the heap, use stack instead.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
----
- Compile tested.
+I don't have ENE_SendScsiCmd() in my repo, but I think it's a DMA
+function.  You're not supposed to use stack memory for DMA transfers.
+This is documented in:  Documentation/DMA-API-HOWTO.txt
 
- drivers/staging/keucr/init.c            |    2 +
- drivers/staging/keucr/msscsi.c          |    4 ++
- drivers/staging/keucr/smilsub.c         |    4 +--
- drivers/staging/keucr/smscsi.c          |    4 ++
- 5 files changed, 71 insertions(+), 3 deletions(-)
- create mode 100644 drivers/staging/keucr/check-return.list
+So the original code is correct here (except that there is no error
+handling).
 
-diff --git a/drivers/staging/keucr/init.c b/drivers/staging/keucr/init.c
-index 2ae129b..1934805 100644
---- a/drivers/staging/keucr/init.c
-+++ b/drivers/staging/keucr/init.c
-@@ -300,6 +300,8 @@ int ENE_LoadBinCode(struct us_data *us, BYTE flag)
- 		return USB_STOR_TRANSPORT_GOOD;
- 
- 	buf = kmalloc(0x800, GFP_KERNEL);
-+	if (buf = NULL)
-+		return USB_STOR_TRANSPORT_ERROR;
- 	switch ( flag )
- 	{
- 		// For SD
-diff --git a/drivers/staging/keucr/msscsi.c b/drivers/staging/keucr/msscsi.c
-index b908a23..ad0c5c6 100644
---- a/drivers/staging/keucr/msscsi.c
-+++ b/drivers/staging/keucr/msscsi.c
-@@ -168,6 +168,8 @@ int MS_SCSI_Read(struct us_data *us, struct scsi_cmnd *srb)
- 		DWORD	blkno;
- 
- 		buf = kmalloc(blenByte, GFP_KERNEL);
-+		if (buf = NULL)
-+			return USB_STOR_TRANSPORT_ERROR;
- 
- 		result = ENE_LoadBinCode(us, MS_RW_PATTERN);
- 		if (result != USB_STOR_XFER_GOOD)
-@@ -271,6 +273,8 @@ int MS_SCSI_Write(struct us_data *us, struct scsi_cmnd *srb)
- 		WORD	len, oldphy, newphy;
- 
- 		buf = kmalloc(blenByte, GFP_KERNEL);
-+		if (buf = NULL)
-+			return USB_STOR_TRANSPORT_ERROR;
- 		usb_stor_set_xfer_buf(us, buf, blenByte, srb, FROM_XFER_BUF);
- 
- 		result = ENE_LoadBinCode(us, MS_RW_PATTERN);
-diff --git a/drivers/staging/keucr/smilsub.c b/drivers/staging/keucr/smilsub.c
-index 844b659..293ea09 100644
---- a/drivers/staging/keucr/smilsub.c
-+++ b/drivers/staging/keucr/smilsub.c
-@@ -815,7 +815,7 @@ int Ssfdc_D_ReadRedtData(struct us_data *us, BYTE *redundant)
- 	struct bulk_cb_wrap *bcb = (struct bulk_cb_wrap *) us->iobuf;
- 	int	result;
- 	WORD	addr;
--	BYTE  *buf;
-+	BYTE buf[0x10];
- 
- 	result = ENE_LoadBinCode(us, SM_RW_PATTERN);
- 	if (result != USB_STOR_XFER_GOOD)
-@@ -839,11 +839,9 @@ int Ssfdc_D_ReadRedtData(struct us_data *us, BYTE *redundant)
- 	bcb->CDB[8]			= 0;
- 	bcb->CDB[9]			= 1;
- 
--	buf = kmalloc(0x10, GFP_KERNEL);
- 	//result = ENE_SendScsiCmd(us, FDIR_READ, redundant, 0);
- 	result = ENE_SendScsiCmd(us, FDIR_READ, buf, 0);
- 	memcpy(redundant, buf, 0x10);
--	kfree(buf);
- 	if (result != USB_STOR_XFER_GOOD)
- 		return USB_STOR_TRANSPORT_ERROR;
- 
-diff --git a/drivers/staging/keucr/smscsi.c b/drivers/staging/keucr/smscsi.c
-index 43e32c6..6211686 100644
---- a/drivers/staging/keucr/smscsi.c
-+++ b/drivers/staging/keucr/smscsi.c
-@@ -145,6 +145,8 @@ int SM_SCSI_Read(struct us_data *us, struct scsi_cmnd *srb)
- 		return USB_STOR_TRANSPORT_ERROR;
- 
- 	buf = kmalloc(blenByte, GFP_KERNEL);
-+	if (buf = NULL)
-+		return USB_STOR_TRANSPORT_ERROR;
- 	result = Media_D_ReadSector(us, bn, blen, buf);
- 	usb_stor_set_xfer_buf(us, buf, blenByte, srb, TO_XFER_BUF);
- 	kfree(buf);
-@@ -175,6 +177,8 @@ int SM_SCSI_Write(struct us_data *us, struct scsi_cmnd *srb)
- 		return USB_STOR_TRANSPORT_ERROR;
- 
- 	buf = kmalloc(blenByte, GFP_KERNEL);
-+	if (buf = NULL)
-+		return USB_STOR_TRANSPORT_ERROR;
- 	usb_stor_set_xfer_buf(us, buf, blenByte, srb, FROM_XFER_BUF);
- 	result = Media_D_CopySector(us, bn, blen, buf);
- 	kfree(buf);
--- 
-1.7.0.4
+regards,
+dan carpenter
+
 
