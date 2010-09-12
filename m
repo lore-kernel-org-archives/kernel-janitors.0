@@ -1,60 +1,45 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Sep 2010 19:41:43 +0000
-Subject: Re: [PATCH 14/14] zorro: fix device_register() error handling
-Message-Id: <AANLkTik9amOXStCu=MJdV7BsYWUbShFDUH1iM0DMT0M8@mail.gmail.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 12 Sep 2010 13:48:25 +0000
+Subject: [PATCH] ACPI: apei: Cast u64 to unsigned long, fix compile warning
+Message-Id: <1284299305.7239.4.camel@lenovo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284900921-24814-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1284900921-24814-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Len Brown <lenb@kernel.org>, Huang Ying <ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Sep 19, 2010 at 14:55, Vasiliy Kulikov <segooon@gmail.com> wrote:
-> If device_register() fails then call put_device().
-> See comment to device_register.
->
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+In today linux-net I got a compile warning in acpi/apei
 
-Thanks, applied to m68k tree, queued for 2.6.37.
+drivers/acpi/apei/erst.c: In function ‘erst_exec_move_data’:
+drivers/acpi/apei/erst.c:273: warning: cast to pointer from integer of different size
+drivers/acpi/apei/erst.c:274: warning: cast to pointer from integer of different size
 
-> ---
->  I cannot compile this driver, so it is not tested at all.
->
->  drivers/zorro/zorro.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/zorro/zorro.c b/drivers/zorro/zorro.c
-> index 6455f3a..e0c2807 100644
-> --- a/drivers/zorro/zorro.c
-> +++ b/drivers/zorro/zorro.c
-> @@ -142,6 +142,7 @@ static int __init amiga_zorro_probe(struct platform_device *pdev)
->        error = device_register(&bus->dev);
->        if (error) {
->                pr_err("Zorro: Error registering zorro_bus\n");
-> +               put_device(&bus->dev);
->                kfree(bus);
->                return error;
->        }
-> @@ -175,6 +176,7 @@ static int __init amiga_zorro_probe(struct platform_device *pdev)
->                if (error) {
->                        dev_err(&bus->dev, "Error registering device %s\n",
->                                z->name);
-> +                       put_device(&z->dev);
->                        continue;
->                }
->                error = zorro_create_sysfs_dev_files(z);
-> --
-> 1.7.0.4
+The problem is that apei_exec_context->dst_base type is u64.
+But in 32 bits architecture void * is 32 bits long. 
+Casting it to unsigned long solves the issue
 
-Gr{oetje,eeting}s,
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/acpi/apei/erst.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-                        Geert
+diff --git a/drivers/acpi/apei/erst.c b/drivers/acpi/apei/erst.c
+index a4904f1..37d7a05 100644
+--- a/drivers/acpi/apei/erst.c
++++ b/drivers/acpi/apei/erst.c
+@@ -270,8 +270,8 @@ static int erst_exec_move_data(struct apei_exec_context *ctx,
+ 	rc = __apei_exec_read_register(entry, &offset);
+ 	if (rc)
+ 		return rc;
+-	memmove((void *)ctx->dst_base + offset,
+-		(void *)ctx->src_base + offset,
++	memmove((void *)(unsigned long)ctx->dst_base + offset,
++		(void *)(unsigned long)ctx->src_base + offset,
+ 		ctx->var2);
+ 
+ 	return 0;
+-- 
+1.7.0.4
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
