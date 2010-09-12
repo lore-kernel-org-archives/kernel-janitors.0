@@ -1,37 +1,37 @@
 From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Tue, 28 Sep 2010 17:49:38 +0000
-Subject: [PATCH] statistics_write: ft1000: fix kernel info leak to userland
-Message-Id: <1285696178-5696-1-git-send-email-segooon@gmail.com>
+Date: Sun, 12 Sep 2010 18:56:51 +0000
+Subject: [PATCH] staging: crystalhd: fix signed bug
+Message-Id: <1284317813-4895-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285491593-325-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1285491593-325-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Marek Belisko <marek.belisko@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Jarod Wilson <jarod@redhat.com>, Manu Abraham <abraham.manu@gmail.com>, Scott Davilla <davilla@4pi.com>, Lars Lindley <lindley@coyote.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-get_stat_data is not fully initialized before copy_to_user() call,
-e.g. LedStat is not always set.
+chd_dec_major is unsigned, so check chd_dec_major < 0 doesn't make sense.
+Since it is used as signed, declare it as int.
 
 Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c |    2 +-
+ Compile tested.
+
+ drivers/staging/crystalhd/crystalhd_lnx.h |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-index 65087ce..467fd31 100644
---- a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-+++ b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-@@ -623,7 +623,7 @@ static int ft1000_ChIoctl (struct file *File, unsigned int Command,
-         break;
-     case IOCTL_GET_DSP_STAT_CMD:
-         //DEBUG("FT1000:ft1000_ChIoctl: IOCTL_FT1000_GET_DSP_STAT called\n");
--
-+	memset(get_stat_data, 0, sizeof(get_stat_data));
-         memcpy(get_stat_data.DspVer, info->DspVer, DSPVERSZ);
-         memcpy(get_stat_data.HwSerNum, info->HwSerNum, HWSERNUMSZ);
-         memcpy(get_stat_data.Sku, info->Sku, SKUSZ);
+diff --git a/drivers/staging/crystalhd/crystalhd_lnx.h b/drivers/staging/crystalhd/crystalhd_lnx.h
+index c951e43..a2b5a56 100644
+--- a/drivers/staging/crystalhd/crystalhd_lnx.h
++++ b/drivers/staging/crystalhd/crystalhd_lnx.h
+@@ -76,7 +76,7 @@ struct crystalhd_adp {
+ 	spinlock_t		lock;
+ 
+ 	/* API Related */
+-	unsigned int		chd_dec_major;
++	int		chd_dec_major;
+ 	unsigned int		cfg_users;
+ 
+ 	struct crystalhd_ioctl_data	*idata_free_head;	/* ioctl data pool */
 -- 
 1.7.0.4
 
