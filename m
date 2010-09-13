@@ -1,48 +1,26 @@
-From: Chris Metcalf <cmetcalf@tilera.com>
-Date: Mon, 13 Sep 2010 13:12:53 +0000
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Mon, 13 Sep 2010 13:32:08 +0000
 Subject: Re: [PATCH] char: hvc: check for error case
-Message-Id: <4C8E2355.60807@tilera.com>
+Message-Id: <20100913133208.GA11032@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1284317835-5086-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1284317835-5086-1-git-send-email-segooon@gmail.com>
+	<4C8E2355.60807@tilera.com>
+In-Reply-To: <4C8E2355.60807@tilera.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
+To: Chris Metcalf <cmetcalf@tilera.com>
 Cc: Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Paul Mundt <lethal@linux-sh.org>, linuxppc-dev@lists.ozlabs.org
 
- On 9/12/2010 2:57 PM, Vasiliy Kulikov wrote:
-> hvc_alloc() may fail, if so exit from init() with error.
->
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+On Mon, Sep 13, 2010 at 09:12 -0400, Chris Metcalf wrote:
+> Thanks, accepted into my tree (for the next merge window).  In practice all
+> this means is in debug mode we'll get a warning from do_one_initcall()
+> rather than silence, but you're right, it's technically better. :-)
 
-Thanks, accepted into my tree (for the next merge window).  In practice all
-this means is in debug mode we'll get a warning from do_one_initcall()
-rather than silence, but you're right, it's technically better. :-)
+Anyway it's better, if user sees warning in the dmesg, he/she might
+response to this situation.
 
-> ---
->  I cannot compile this driver at all, so it is not tested.
->
->  drivers/char/hvc_tile.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/char/hvc_tile.c b/drivers/char/hvc_tile.c
-> index c4efb55..7a84a05 100644
-> --- a/drivers/char/hvc_tile.c
-> +++ b/drivers/char/hvc_tile.c
-> @@ -61,7 +61,8 @@ console_initcall(hvc_tile_console_init);
->  
->  static int __init hvc_tile_init(void)
->  {
-> -	hvc_alloc(0, 0, &hvc_tile_get_put_ops, 128);
-> -	return 0;
-> +	struct hvc_struct *s;
-> +	s = hvc_alloc(0, 0, &hvc_tile_get_put_ops, 128);
-> +	return IS_ERR(s) ? PTR_ERR(s) : 0;
->  }
->  device_initcall(hvc_tile_init);
 
+Best,
 -- 
-Chris Metcalf, Tilera Corp.
-http://www.tilera.com
-
+Vasiliy
