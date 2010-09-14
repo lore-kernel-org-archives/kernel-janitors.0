@@ -1,47 +1,49 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Tue, 14 Sep 2010 05:27:39 +0000
-Subject: [PATCH 2/4] alpha: remove cast from void*
-Message-Id: <1284442059-11641-1-git-send-email-mfm@muteddisk.com>
+From: Jan-Benedict Glaw <jbglaw@lug-owl.de>
+Date: Tue, 14 Sep 2010 09:20:02 +0000
+Subject: Re: [PATCH 2/4] alpha: remove cast from void*
+Message-Id: <20100914092002.GF19227@lug-owl.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="IbVRjBtIbJdbeK1C"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <1284442059-11641-1-git-send-email-mfm@muteddisk.com>
+In-Reply-To: <1284442059-11641-1-git-send-email-mfm@muteddisk.com>
 To: kernel-janitors@vger.kernel.org
 
-Unnecessary cast from void* in assignment.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
----
- arch/alpha/kernel/pci-sysfs.c |    2 +-
- arch/alpha/kernel/srm_env.c   |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+--IbVRjBtIbJdbeK1C
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/alpha/kernel/pci-sysfs.c b/arch/alpha/kernel/pci-sysfs.c
-index 738fc82..b899e95 100644
---- a/arch/alpha/kernel/pci-sysfs.c
-+++ b/arch/alpha/kernel/pci-sysfs.c
-@@ -66,7 +66,7 @@ static int pci_mmap_resource(struct kobject *kobj,
- {
- 	struct pci_dev *pdev = to_pci_dev(container_of(kobj,
- 						       struct device, kobj));
--	struct resource *res = (struct resource *)attr->private;
-+	struct resource *res = attr->private;
- 	enum pci_mmap_state mmap_type;
- 	struct pci_bus_region bar;
- 	int i;
-diff --git a/arch/alpha/kernel/srm_env.c b/arch/alpha/kernel/srm_env.c
-index 4afc1a1..f0df3fb 100644
---- a/arch/alpha/kernel/srm_env.c
-+++ b/arch/alpha/kernel/srm_env.c
-@@ -87,7 +87,7 @@ static int srm_env_proc_show(struct seq_file *m, void *v)
- 	srm_env_t	*entry;
- 	char		*page;
- 
--	entry = (srm_env_t *)m->private;
-+	entry = m->private;
- 	page = (char *)__get_free_page(GFP_USER);
- 	if (!page)
- 		return -ENOMEM;
--- 
-1.7.2.1
+On Mon, 2010-09-13 22:27:39 -0700, matt mooney <mfm@muteddisk.com> wrote:
+> Unnecessary cast from void* in assignment.
+>=20
+> Signed-off-by: matt mooney <mfm@muteddisk.com>
 
+The second part (regarding srm-env) is
+
+ACKed-by: Jan-Benedict Glaw <jbglaw@lug-owl.de>
+
+MfG, JBG
+
+--=20
+      Jan-Benedict Glaw      jbglaw@lug-owl.de              +49-172-7608481
+  Signature of:                        Lauf nicht vor Deinem Gl=C3=BCck dav=
+on:
+  the second  :                             Es k=C3=B6nnte hinter Dir stehe=
+n!
+
+--IbVRjBtIbJdbeK1C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkyPPkIACgkQHb1edYOZ4bvWLgCeMXGArlhIwYGTmk7Wo9INY8m9
+n9gAn3YMLhWUPJS7S0/pyv6npp04tRK+
+=oENJ
+-----END PGP SIGNATURE-----
+
+--IbVRjBtIbJdbeK1C--
