@@ -1,33 +1,60 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Date: Sun, 26 Sep 2010 10:31:38 +0000
-Subject: Re: [PATCH 07/24] ieee802154: change to new flag variable
-Message-Id: <AANLkTik1ngVjK9ZObC_BfS6Cb-b5trcCAGk2i26TgEz_@mail.gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Tue, 14 Sep 2010 05:30:16 +0000
+Subject: [PATCH 3/4] arm: remove cast from void*
+Message-Id: <1284442216-11710-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
-	<036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
-	<ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
-	<b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
-	<e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
-	<70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
-	<40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfm@muteddisk.com>
-Cc: kernel-janitors@vger.kernel.org, Sergey Lapin <slapin@ossfans.org>, linux-zigbee-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 9/24/10, matt mooney <mfm@muteddisk.com> wrote:
-> Replace EXTRA_CFLAGS with ccflags-y.
->
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
-Acked-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Unnecessary cast from void* in assignment.
 
-> ---
->  drivers/ieee802154/Makefile |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ arch/arm/mach-omap2/mailbox.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-
+diff --git a/arch/arm/mach-omap2/mailbox.c b/arch/arm/mach-omap2/mailbox.c
+index 42dbfa4..40ddeca 100644
+--- a/arch/arm/mach-omap2/mailbox.c
++++ b/arch/arm/mach-omap2/mailbox.c
+@@ -181,7 +181,7 @@ static int omap2_mbox_fifo_full(struct omap_mbox *mbox)
+ static void omap2_mbox_enable_irq(struct omap_mbox *mbox,
+ 		omap_mbox_type_t irq)
+ {
+-	struct omap_mbox2_priv *p = (struct omap_mbox2_priv *)mbox->priv;
++	struct omap_mbox2_priv *p = mbox->priv;
+ 	u32 l, bit = (irq = IRQ_TX) ? p->notfull_bit : p->newmsg_bit;
+ 
+ 	l = mbox_read_reg(p->irqenable);
+@@ -192,7 +192,7 @@ static void omap2_mbox_enable_irq(struct omap_mbox *mbox,
+ static void omap2_mbox_disable_irq(struct omap_mbox *mbox,
+ 		omap_mbox_type_t irq)
+ {
+-	struct omap_mbox2_priv *p = (struct omap_mbox2_priv *)mbox->priv;
++	struct omap_mbox2_priv *p = mbox->priv;
+ 	u32 l, bit = (irq = IRQ_TX) ? p->notfull_bit : p->newmsg_bit;
+ 	l = mbox_read_reg(p->irqdisable);
+ 	l &= ~bit;
+@@ -202,7 +202,7 @@ static void omap2_mbox_disable_irq(struct omap_mbox *mbox,
+ static void omap2_mbox_ack_irq(struct omap_mbox *mbox,
+ 		omap_mbox_type_t irq)
+ {
+-	struct omap_mbox2_priv *p = (struct omap_mbox2_priv *)mbox->priv;
++	struct omap_mbox2_priv *p = mbox->priv;
+ 	u32 bit = (irq = IRQ_TX) ? p->notfull_bit : p->newmsg_bit;
+ 
+ 	mbox_write_reg(bit, p->irqstatus);
+@@ -214,7 +214,7 @@ static void omap2_mbox_ack_irq(struct omap_mbox *mbox,
+ static int omap2_mbox_is_irq(struct omap_mbox *mbox,
+ 		omap_mbox_type_t irq)
+ {
+-	struct omap_mbox2_priv *p = (struct omap_mbox2_priv *)mbox->priv;
++	struct omap_mbox2_priv *p = mbox->priv;
+ 	u32 bit = (irq = IRQ_TX) ? p->notfull_bit : p->newmsg_bit;
+ 	u32 enable = mbox_read_reg(p->irqenable);
+ 	u32 status = mbox_read_reg(p->irqstatus);
 -- 
-With best wishes
-Dmitry
+1.7.2.1
+
