@@ -1,48 +1,34 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:28:00 +0000
-Subject: [PATCH v2 12/22] Staging: rt8192e: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-12-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Tue, 14 Sep 2010 05:32:21 +0000
+Subject: [PATCH 4/4] powerpc: remove cast from void*
+Message-Id: <1284442341-11787-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: xen-devel@lists.xensource.com, kernel-janitors@vger.kernel.org, linuxppc-dev@ozlabs.org, Paul Mackerras <paulus@samba.org>, Anton Blanchard <anton@samba.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Changed to use proper ccflags-y option
+Unnecessary cast from void* in assignment.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/rtl8192e/Makefile |   14 +++++++-------
- 1 files changed, 7 insertions(+), 7 deletions(-)
+ arch/powerpc/platforms/pseries/hvCall_inst.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/Makefile b/drivers/staging/rtl8192e/Makefile
-index 41cb4d3..96e7abf 100644
---- a/drivers/staging/rtl8192e/Makefile
-+++ b/drivers/staging/rtl8192e/Makefile
-@@ -1,13 +1,13 @@
- NIC_SELECT = RTL8192E
+diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
+index e19ff02..f106662 100644
+--- a/arch/powerpc/platforms/pseries/hvCall_inst.c
++++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
+@@ -55,7 +55,7 @@ static void hc_stop(struct seq_file *m, void *p)
+ static int hc_show(struct seq_file *m, void *p)
+ {
+ 	unsigned long h_num = (unsigned long)p;
+-	struct hcall_stats *hs = (struct hcall_stats *)m->private;
++	struct hcall_stats *hs = m->private;
  
--EXTRA_CFLAGS += -DRTL8192E
--EXTRA_CFLAGS += -std=gnu89
--EXTRA_CFLAGS += -O2
--EXTRA_CFLAGS += -DTHOMAS_TURBO
--EXTRA_CFLAGS += -DENABLE_DOT11D
-+ccflags-y := -DRTL8192E
-+ccflags-y := -std=gnu89
-+ccflags-y := -O2
-+ccflags-y := -DTHOMAS_TURBO
-+ccflags-y := -DENABLE_DOT11D
- 
--EXTRA_CFLAGS += -DENABLE_IPS
--EXTRA_CFLAGS += -DENABLE_LPS
-+ccflags-y := -DENABLE_IPS
-+ccflags-y := -DENABLE_LPS
- 
- r8192e_pci-objs :=		\
- 	r8192E_core.o		\
+ 	if (hs[h_num].num_calls) {
+ 		if (cpu_has_feature(CPU_FTR_PURR))
 -- 
-1.7.3
+1.7.2.1
 
