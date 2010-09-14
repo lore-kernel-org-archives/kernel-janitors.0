@@ -1,13 +1,32 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 12 Sep 2010 21:40:33 +0000
-Subject: [patch] qla2xxx: locking problem in qla2x00_init_rings()
-Message-Id: <20100912214033.GF25351@bicker>
+From: Madhu Iyengar <madhu.iyengar@qlogic.com>
+Date: Tue, 14 Sep 2010 23:52:15 +0000
+Subject: RE: [patch] qla2xxx: locking problem in qla2x00_init_rings()
+Message-Id: <5E4F49720D0BAD499EE1F01232234BA8712925CF9B@AVEXMB1.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20100912214033.GF25351@bicker>
+In-Reply-To: <20100912214033.GF25351@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Vasquez <andrew.vasquez-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>
-Cc: linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Lalit Chandivade <lalit.chandivade-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>, "James E.J. Bottomley" <James.Bottomley-l3A5Bk7waGM@public.gmane.org>, linux-driver-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org, arun.easi-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org, Giridhar Malavali <giridhar.malavali-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>
+To: Dan Carpenter <error27@gmail.com>, Andrew Vasquez <andrew.vasquez@qlogic.com>
+Cc: Linux Driver <Linux-Driver@qlogic.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Giridhar Malavali <giridhar.malavali@qlogic.com>, Lalit Chandivade <lalit.chandivade@qlogic.com>, Grant Likely <grant.likely@secretlab.ca>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Arun Easi <arun.easi@qlogic.com>, Madhu Iyengar <madhu.iyengar@qlogic.com>
+
+Dan,
+
+Thanks. We'll test this patch.
+
+Patch-reviewed-by: Giridhar Malavali <giridhar.malavali@qlogic.com>
+Acked-by: Madhu Iyengar <madhu.iyengar@qlogic.com>
+
+Cheers,
+Madhu
+
+-----Original Message-----
+From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-owner@vger.kernel.org] On Behalf Of Dan Carpenter
+Sent: Sunday, September 12, 2010 2:41 PM
+To: Andrew Vasquez
+Cc: Linux Driver; James E.J. Bottomley; Giridhar Malavali; Lalit Chandivade; Grant Likely; linux-scsi@vger.kernel.org; devicetree-discuss@lists.ozlabs.org; kernel-janitors@vger.kernel.org; Arun Easi
+Subject: [patch] qla2xxx: locking problem in qla2x00_init_rings()
 
 IRQs are already disabled here so we don't need to disable them again.
 But more importantly, the spin_lock_irqsave() overwrites "flags" and
@@ -40,3 +59,8 @@ index 9c383ba..9f4ba28 100644
  
  	ha->isp_ops->config_rings(vha);
  
+--
+To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
