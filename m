@@ -1,38 +1,31 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Date: Mon, 13 Sep 2010 08:53:43 +0000
-Subject: Re: [patch] mtd: sanity check input
-Message-Id: <1284368023.27765.179.camel@localhost>
+From: Patrick McHardy <kaber@trash.net>
+Date: Thu, 16 Sep 2010 05:42:43 +0000
+Subject: Re: [PATCH 5/5] net/netfilter/ipvs: Eliminate memory leak
+Message-Id: <4C91AE53.2050901@trash.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100908193956.GB3463@bicker>
-In-Reply-To: <20100908193956.GB3463@bicker>
+References: <Pine.LNX.4.64.1008241639300.15172@ask.diku.dk>	<20100825013443.GC7237@verge.net.au> <20100825.163812.242150096.davem@davemloft.net>
+In-Reply-To: <20100825.163812.242150096.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, H Hartley Sweeten <hsweeten@visionengravers.com>, linux-mtd@lists.infradead.org, Ben Hutchings <bhutchings@solarflare.com>, "Kirill A. Shutemov" <kirill@shutemov.name>, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Miller <davem@davemloft.net>
+Cc: horms@verge.net.au, julia@diku.dk, wensong@linux-vs.org, ja@ssi.bg, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2010-09-08 at 21:39 +0200, Dan Carpenter wrote:
-> If "ur_idx" is wrong we could go past the end of the array.  The
-> "ur_idx" comes from root so it's not a huge deal, but adding a sanity
-> check makes the code more robust.
+On 26.08.2010 01:38, David Miller wrote:
+> From: Simon Horman <horms@verge.net.au>
+> Date: Wed, 25 Aug 2010 10:34:43 +0900
 > 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+>> On Tue, Aug 24, 2010 at 04:39:49PM +0200, Julia Lawall wrote:
+>>> Signed-off-by: Julia Lawall <julia@diku.dk>
+>>
+>> Thanks Julia, that looks good to me.
+>>
+>> Signed-off-by: Simon Horman <horms@verge.net.au>
+>>
+>> Patrick, I guess that this should go through nf-next-2.6.
 > 
-> diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-> index a825002..9c00549 100644
-> --- a/drivers/mtd/mtdchar.c
-> +++ b/drivers/mtd/mtdchar.c
-> @@ -513,6 +513,9 @@ static int mtd_ioctl(struct file *file, u_int cmd, u_long arg)
->  		if (get_user(ur_idx, &(ur->regionindex)))
->  			return -EFAULT;
->  
-> +		if (ur_idx >= mtd->numeraseregions)
-> +			return -EINVAL;
-> +
+> Since Patrick appears to be offline, I'll apply this directly so
+> he has less to do when he comes back online :)
 
-Pushed to l2-mtd-2.6.git with my "Signed-off-by", thanks.
-
--- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
-
+Thanks Dave. I should be done catching up by tonight and will start
+taking care of IPVS patches again.
