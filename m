@@ -1,7 +1,7 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 12 Sep 2010 20:52:49 +0000
+From: Greg KH <greg@kroah.com>
+Date: Thu, 16 Sep 2010 19:32:01 +0000
 Subject: Re: [PATCH] staging: keucr: check kmalloc() return value
-Message-Id: <20100912205248.GE25351@bicker>
+Message-Id: <20100916193201.GC10397@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1284317808-4850-1-git-send-email-segooon@gmail.com>
 In-Reply-To: <1284317808-4850-1-git-send-email-segooon@gmail.com>
@@ -15,14 +15,9 @@ On Sun, Sep 12, 2010 at 10:56:43PM +0400, Vasiliy Kulikov wrote:
 > kmalloc() may fail, if so return error code.
 > Also don't alloc 16 bytes from the heap, use stack instead.
 
-I don't have ENE_SendScsiCmd() in my repo, but I think it's a DMA
-function.  You're not supposed to use stack memory for DMA transfers.
-This is documented in:  Documentation/DMA-API-HOWTO.txt
+Nope, you can't do that for USB drivers, sorry.  Please read the
+documentation, it states this very clearly.
 
-So the original code is correct here (except that there is no error
-handling).
+thanks,
 
-regards,
-dan carpenter
-
-
+greg k-h
