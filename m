@@ -1,48 +1,36 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 10 Sep 2010 17:09:13 +0000
-Subject: Re: Opinion about Linux Foundation courses
-Message-Id: <20100910170913.GC6193@kroah.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 16 Sep 2010 18:13:47 +0000
+Subject: [patch] ALSA: usb/mixer: remove bogus cast
+Message-Id: <20100916181347.GC7867@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTikugt28Lsf9wgCyOD=t4SK4pMyCNxCU5Yahs_nz@mail.gmail.com>
-In-Reply-To: <AANLkTikugt28Lsf9wgCyOD=t4SK4pMyCNxCU5Yahs_nz@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 10, 2010 at 03:31:14PM +0530, Rahul Ruikar wrote:
-> Thanks Greg,
-> I have query related to which git tree to take as reference for bug
-> fix / code review . .etc
+"uinfo->value.enumerated.item" is an unsigned int.  If it's negative
+when we do the comparison:
+	if ((int)uinfo->value.enumerated.item >= cval->max)
+then we would read past the end of the array on the next line.
 
-It depends on the subsystem you are concerned about.
+I also changed the strcpy() to strlcpy() out of paranoia.
 
->  I am aware of this one
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb-2.6.git
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-That is for no one to use, didn't you notice the description of it:
-	"Junk tree, do not use".
-
-I use that ONLY to send patches to Linus, so consider it a private tree
-for just me to use occasionally in this manner.
-
->  I mean developers who post their patches in "linux-usb" mailing
-> list.. Do they always refer to above git tree. ?
-
-No.
-
-See the MAINTAINERS file for the locations of the developer trees for
-the different subsystems, they are all specified there.
-
-If you want to see all of the developer trees together, use the
-linux-next tree, that is what it is there for.
-
-If you want to report bugs, they can be reported against any tree you
-find :)
-
-But most importantly, test Linus's tree, that is where we care about
-bugs the most.
-
-Hope this helps,
-
-greg k-h
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 3ed3901..93c95c5 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1642,9 +1642,10 @@ static int mixer_ctl_selector_info(struct snd_kcontrol *kcontrol, struct snd_ctl
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_ENUMERATED;
+ 	uinfo->count = 1;
+ 	uinfo->value.enumerated.items = cval->max;
+-	if ((int)uinfo->value.enumerated.item >= cval->max)
++	if (uinfo->value.enumerated.item >= cval->max)
+ 		uinfo->value.enumerated.item = cval->max - 1;
+-	strcpy(uinfo->value.enumerated.name, itemlist[uinfo->value.enumerated.item]);
++	strlcpy(uinfo->value.enumerated.name, itemlist[uinfo->value.enumerated.item],
++		sizeof(uinfo->value.enumerated.name));
+ 	return 0;
+ }
+ 
