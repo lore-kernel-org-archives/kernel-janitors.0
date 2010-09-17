@@ -1,50 +1,57 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Mon, 27 Sep 2010 17:23:13 +0000
-Subject: Re: [PATCH 04/24] hwmon: change to new flag variable
-Message-Id: <20100927172313.GC4598@haskell.muteddisk.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 17 Sep 2010 19:26:03 +0000
+Subject: [patch] ipmi: make static checkers happy about range checks
+Message-Id: <20100917190702.GA5384@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
- <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
- <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
- <12873.1285599840@localhost>
-In-Reply-To: <12873.1285599840@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Valdis.Kletnieks@vt.edu
-Cc: kernel-janitors@vger.kernel.org, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 11:04 Mon 27 Sep     , Valdis.Kletnieks@vt.edu wrote:
-> On Fri, 24 Sep 2010 12:17:14 PDT, matt mooney said:
-> > Replace EXTRA_CFLAGS with ccflags-y.
-> > 
-> > Signed-off-by: matt mooney <mfm@muteddisk.com>
-> > ---
-> >  drivers/hwmon/Makefile |    4 +---
-> >  1 files changed, 1 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> > index e3c2484..764b4db 100644
-> > --- a/drivers/hwmon/Makefile
-> > +++ b/drivers/hwmon/Makefile
-> > @@ -109,7 +109,5 @@ obj-$(CONFIG_SENSORS_W83L786NG)	+= w83l786ng.o
-> >  obj-$(CONFIG_SENSORS_WM831X)	+= wm831x-hwmon.o
-> >  obj-$(CONFIG_SENSORS_WM8350)	+= wm8350-hwmon.o
-> >  
-> > -ifeq ($(CONFIG_HWMON_DEBUG_CHIP),y)
-> > -EXTRA_CFLAGS += -DDEBUG
-> > -endif
-> > +ccflags-$(CONFIG_HWMON_DEBUG_CHIP) := -DDEBUG
-> 
-> Was this series intended as := rather than += as it seems that
-> overriding the entirely of a passed-in ccflags-y may not be what
-> we wanted to do.
+I'm working on a Smatch check that complains that addr->channel comes
+from the user and it might be negative.  It actually can *not* be
+negative because we already checked that when we called
+ipmi_validate_addr() from handle_send_req().  Also it can't be greater
+than or equal to IPMI_MAX_CHANNELS because we already verified that as
+well.
 
-That is exactly why I changed += to :=. ccflags-y (and the older EXTRA_CFLAGS)
-is a per directory variable that only has effect on the current directory, so
-there is no passing in of ccflags-y.
+Although this change doesn't do anything, it's still a cleanup because
+it makes the checking consistent and also it silences the static
+analysis warnings.
 
--mfm
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Really, I would prefer to just make ->channel unsigned but the type
+comes from the IPMI spec.
 
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 4f3f8c9..57f4c80 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -1527,7 +1527,7 @@ static int i_ipmi_request(ipmi_user_t          user,
+ 		long                  seqid;
+ 		int                   broadcast = 0;
+ 
+-		if (addr->channel >= IPMI_MAX_CHANNELS) {
++		if (addr->channel < 0 || addr->channel >= IPMI_MAX_CHANNELS) {
+ 			ipmi_inc_stat(intf, sent_invalid_commands);
+ 			rv = -EINVAL;
+ 			goto out_err;
+@@ -1657,7 +1657,7 @@ static int i_ipmi_request(ipmi_user_t          user,
+ 		unsigned char         ipmb_seq;
+ 		long                  seqid;
+ 
+-		if (addr->channel >= IPMI_MAX_CHANNELS) {
++		if (addr->channel < 0 || addr->channel >= IPMI_MAX_CHANNELS) {
+ 			ipmi_inc_stat(intf, sent_invalid_commands);
+ 			rv = -EINVAL;
+ 			goto out_err;
+@@ -1797,7 +1797,7 @@ static int check_addr(ipmi_smi_t       intf,
+ 		      unsigned char    *saddr,
+ 		      unsigned char    *lun)
+ {
+-	if (addr->channel >= IPMI_MAX_CHANNELS)
++	if (addr->channel < 0 || addr->channel >= IPMI_MAX_CHANNELS)
+ 		return -EINVAL;
+ 	*lun = intf->channels[addr->channel].lun;
+ 	*saddr = intf->channels[addr->channel].address;
