@@ -1,28 +1,112 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 07 Sep 2010 01:39:57 +0000
-Subject: Re: [PATCH 3/8] net/9p/trans_fd.c: Fix unsigned return type
-Message-Id: <20100906.183957.13763018.davem@davemloft.net>
+From: Nils Radtke <lkml@Think-Future.com>
+Date: Sat, 18 Sep 2010 18:30:52 +0000
+Subject: [PATCH] Staging: wlan-ng: p80211netdev.c cleanup
+Message-Id: <1284834652-26171-1-git-send-email-lkml@Think-Future.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283713226-8429-1-git-send-email-julia@diku.dk>
-	<1283713226-8429-4-git-send-email-julia@diku.dk>
-In-Reply-To: <1283713226-8429-4-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@suse.de
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sun,  5 Sep 2010 21:00:21 +0200
+Effected preliminary cleanup lead by the idea of kerneljanitor.org .
+As recommended I'm asking for approval of the location of cleanup
+and the manner it happened to know I'm heading in the right
+direction.
 
-> The function has an unsigned return type, but returns a negative constant
-> to indicate an error condition.  The result of calling the function is
-> always stored in a variable of type (signed) int, and thus unsigned can be
-> dropped from the return type.
-> 
-> A sematic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Compiles. Not tested.
 
-Applied.
+Signed-off-by: Nils Radtke <lkml@Think-Future.com>
+---
+ drivers/staging/wlan-ng/p80211netdev.c |   50 +++++++++++++++++++-------------
+ 1 files changed, 30 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/staging/wlan-ng/p80211netdev.c b/drivers/staging/wlan-ng/p80211netdev.c
+index aa1792c..8104e11 100644
+--- a/drivers/staging/wlan-ng/p80211netdev.c
++++ b/drivers/staging/wlan-ng/p80211netdev.c
+@@ -176,25 +176,30 @@ static struct net_device_stats *p80211knetdev_get_stats(netdevice_t * netdev)
+ ----------------------------------------------------------------*/
+ static int p80211knetdev_open(netdevice_t *netdev)
+ {
+-	int result = 0;		/* success */
++	int ret = 0;
+ 	wlandevice_t *wlandev = netdev->ml_priv;
+ 
+ 	/* Check to make sure the MSD is running */
+-	if (wlandev->msdstate != WLAN_MSD_RUNNING)
+-		return -ENODEV;
++	if (wlandev->msdstate != WLAN_MSD_RUNNING) {
++		ret = -ENODEV;
++		goto end;
++	}
+ 
+ 	/* Tell the MSD to open */
+-	if (wlandev->open != NULL) {
+-		result = wlandev->open(wlandev);
+-		if (result = 0) {
+-			netif_start_queue(wlandev->netdev);
+-			wlandev->state = WLAN_DEVICE_OPEN;
+-		}
+-	} else {
+-		result = -EAGAIN;
++	if (wlandev->open = NULL) {
++		printk(KERN_ERR "Sorry, got wlandev->open = NULL.\n");
++		ret = -EAGAIN;
++		goto end;
+ 	}
+ 
+-	return result;
++	ret = wlandev->open(wlandev);
++	if (ret) {
++		netif_start_queue(wlandev->netdev);
++		wlandev->state = WLAN_DEVICE_OPEN;
++	}
++
++end:
++	return ret;
+ }
+ 
+ /*----------------------------------------------------------------
+@@ -211,16 +216,23 @@ static int p80211knetdev_open(netdevice_t *netdev)
+ ----------------------------------------------------------------*/
+ static int p80211knetdev_stop(netdevice_t *netdev)
+ {
+-	int result = 0;
++	int ret = -EFAULT;
+ 	wlandevice_t *wlandev = netdev->ml_priv;
+ 
+-	if (wlandev->close != NULL)
+-		result = wlandev->close(wlandev);
++	if (wlandev->close = NULL) {
++		printk(KERN_ERR "Sorry, got wlandev->close = NULL.\n");
++		ret = -EFAULT; /* FIXME: nr: correct return code? */
++		goto end;
++	}
+ 
+-	netif_stop_queue(wlandev->netdev);
+-	wlandev->state = WLAN_DEVICE_CLOSED;
++	ret = wlandev->close(wlandev);
++	if (ret) {
++		netif_stop_queue(wlandev->netdev);
++		wlandev->state = WLAN_DEVICE_CLOSED;
++	}
+ 
+-	return result;
++end:
++	return ret;
+ }
+ 
+ /*----------------------------------------------------------------
+@@ -242,8 +254,6 @@ void p80211netdev_rx(wlandevice_t *wlandev, struct sk_buff *skb)
+ 	skb_queue_tail(&wlandev->nsd_rxq, skb);
+ 
+ 	tasklet_schedule(&wlandev->rx_bh);
+-
+-	return;
+ }
+ 
+ /*----------------------------------------------------------------
+-- 
+1.7.1
+
