@@ -1,27 +1,29 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Date: Sat, 25 Sep 2010 02:52:20 +0000
-Subject: Re: [PATCH 01/24] base: change to new flag variable
-Message-Id: <AANLkTinDVs46mn1apGUy2ALauzO+f5sOhKhWr8MGk8=n@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 18 Sep 2010 23:42:25 +0000
+Subject: [patch -next] rds: signedness bug
+Message-Id: <20100918234224.GC6236@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfm@muteddisk.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>, Michal Marek <mmarek@suse.cz>
+To: Andy Grover <andy.grover@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Sep 25, 2010 at 3:17 AM, matt mooney <mfm@muteddisk.com> wrote:
-> Replace EXTRA_CFLAGS with ccflags-y.
->
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
+In the original code if the copy_from_user() fails in rds_rdma_pages()
+then the error handling fails and we get a stack trace from kmalloc().
 
-Nice work, matt!
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The whole patch set looks good for me:
-
-Acked-by: WANG Cong <xiyou.wangcong@gmail.com>
-
-Just please do remember to Cc linux-kbuild and Michal next time.
-
-Thanks!
+diff --git a/net/rds/rdma.c b/net/rds/rdma.c
+index 4806467..1a41deb 100644
+--- a/net/rds/rdma.c
++++ b/net/rds/rdma.c
+@@ -522,7 +522,7 @@ int rds_cmsg_rdma_args(struct rds_sock *rs, struct rds_message *rm,
+ 	struct rds_rdma_args *args;
+ 	struct rds_iovec vec;
+ 	struct rm_rdma_op *op = &rm->rdma;
+-	unsigned int nr_pages;
++	int nr_pages;
+ 	unsigned int nr_bytes;
+ 	struct page **pages = NULL;
+ 	struct rds_iovec __user *local_vec;
