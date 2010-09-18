@@ -1,26 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 07 Sep 2010 01:29:35 +0000
-Subject: Re: [PATCH 1/2] drivers/net/fs_enet/fs_enet-main.c: Add
-Message-Id: <20100906.182935.212701145.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 18 Sep 2010 23:42:59 +0000
+Subject: [patch -next] rds: double unlock in rds_ib_cm_handle_connect()
+Message-Id: <20100918234259.GD6236@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283595164-29146-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1283595164-29146-1-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia-dAYI7NvHqcQ@public.gmane.org
-Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vbordug-hkdhdckH98+B+jHODAdFcQ@public.gmane.org, pantelis.antoniou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Andy Grover <andy.grover@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Zach Brown <zach.brown@oracle.com>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sat,  4 Sep 2010 12:12:43 +0200
+We unlock after we goto out.
 
-> In this case, a device_node structure is stored in another structure that
-> is then freed without first decrementing the reference count of the
-> device_node structure.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
+index bc3dbc1..ee369d2 100644
+--- a/net/rds/ib_cm.c
++++ b/net/rds/ib_cm.c
+@@ -521,7 +521,6 @@ int rds_ib_cm_handle_connect(struct rdma_cm_id *cm_id,
+ 	err = rds_ib_setup_qp(conn);
+ 	if (err) {
+ 		rds_ib_conn_error(conn, "rds_ib_setup_qp failed (%d)\n", err);
+-		mutex_unlock(&conn->c_cm_lock);
+ 		goto out;
+ 	}
+ 
