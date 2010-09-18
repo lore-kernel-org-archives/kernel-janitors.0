@@ -1,24 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 13 Sep 2010 19:45:01 +0000
-Subject: Re: [patch] net/llc: make opt unsigned in llc_ui_setsockopt()
-Message-Id: <20100913.124501.59676416.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 18 Sep 2010 23:44:14 +0000
+Subject: [patch -next] rds: spin_lock_irq() is not nestable
+Message-Id: <20100918234414.GE6236@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100910115616.GD5959@bicker>
-In-Reply-To: <20100910115616.GD5959@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: acme@ghostprotocols.net, opurdila@ixiacom.com, shemminger@vyatta.com, eric.dumazet@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andy Grover <andy.grover@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Zach Brown <zach.brown@oracle.com>, Chris Mason <chris.mason@oracle.com>, rds-devel@oss.oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 10 Sep 2010 13:56:16 +0200
+This is basically just a cleanup.  IRQs were disabled on the previous
+line so we don't need to do it again here.  In the current code IRQs
+would get turned on one line earlier than intended.
 
-> The members of struct llc_sock are unsigned so if we pass a negative
-> value for "opt" it can cause a sign bug.  Also it can cause an integer
-> overflow when we multiply "opt * HZ".
-> 
-> CC: stable@kernel.org
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Andy Grover acked part of this patch before but it didn't get pushed.
 
-Applied.
+diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
+index 8f6e221..b5a8841 100644
+--- a/net/rds/ib_rdma.c
++++ b/net/rds/ib_rdma.c
+@@ -171,9 +171,9 @@ void rds_ib_add_conn(struct rds_ib_device *rds_ibdev, struct rds_connection *con
+ 	BUG_ON(list_empty(&ic->ib_node));
+ 	list_del(&ic->ib_node);
+ 
+-	spin_lock_irq(&rds_ibdev->spinlock);
++	spin_lock(&rds_ibdev->spinlock);
+ 	list_add_tail(&ic->ib_node, &rds_ibdev->conn_list);
+-	spin_unlock_irq(&rds_ibdev->spinlock);
++	spin_unlock(&rds_ibdev->spinlock);
+ 	spin_unlock_irq(&ib_nodev_conns_lock);
+ 
+ 	ic->rds_ibdev = rds_ibdev;
+diff --git a/net/rds/iw_rdma.c b/net/rds/iw_rdma.c
+index 4e152e2..0e7accc 100644
+--- a/net/rds/iw_rdma.c
++++ b/net/rds/iw_rdma.c
+@@ -206,9 +206,9 @@ void rds_iw_add_conn(struct rds_iw_device *rds_iwdev, struct rds_connection *con
+ 	BUG_ON(list_empty(&ic->iw_node));
+ 	list_del(&ic->iw_node);
+ 
+-	spin_lock_irq(&rds_iwdev->spinlock);
++	spin_lock(&rds_iwdev->spinlock);
+ 	list_add_tail(&ic->iw_node, &rds_iwdev->conn_list);
+-	spin_unlock_irq(&rds_iwdev->spinlock);
++	spin_unlock(&rds_iwdev->spinlock);
+ 	spin_unlock_irq(&iw_nodev_conns_lock);
+ 
+ 	ic->rds_iwdev = rds_iwdev;
