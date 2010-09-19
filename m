@@ -1,42 +1,36 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:27:58 +0000
-Subject: [PATCH v2 10/22]  Staging: rt2870: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-10-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 19 Sep 2010 12:54:40 +0000
+Subject: [PATCH] staging: spectra: off by one
+Message-Id: <1284900881-24243-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Javier Martinez Canillas <martinez.javier@gmail.com>, David Woodhouse <David.Woodhouse@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Changed to use proper ccflags-y option
+g_pBlockTable has only DeviceInfo.wDataBlockNum elements.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/rt2870/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ compile tested.
 
-diff --git a/drivers/staging/rt2870/Makefile b/drivers/staging/rt2870/Makefile
-index 523e7e7..fed4466 100644
---- a/drivers/staging/rt2870/Makefile
-+++ b/drivers/staging/rt2870/Makefile
-@@ -2,10 +2,10 @@
- obj-$(CONFIG_RT2870)	+= rt2870sta.o
+ drivers/staging/spectra/flash.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/spectra/flash.c b/drivers/staging/spectra/flash.c
+index 9b5218b..4e6e451 100644
+--- a/drivers/staging/spectra/flash.c
++++ b/drivers/staging/spectra/flash.c
+@@ -1604,7 +1604,7 @@ static int get_l2_cache_blks(void)
  
- # TODO: all of these should be removed
--EXTRA_CFLAGS += -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
--EXTRA_CFLAGS += -DRTMP_MAC_USB -DRTMP_USB_SUPPORT -DRT2870 -DRTMP_TIMER_TASK_SUPPORT
--EXTRA_CFLAGS += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3070
--EXTRA_CFLAGS += -DDBG
-+ccflags-y := -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
-+ccflags-y := -DRTMP_MAC_USB -DRTMP_USB_SUPPORT -DRT2870 -DRTMP_TIMER_TASK_SUPPORT
-+ccflags-y := -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3070
-+ccflags-y := -DDBG
- 
- rt2870sta-objs :=		\
- 	common/crypt_md5.o	\
+ 	for (n = 0; n < BLK_NUM_FOR_L2_CACHE; n++) {
+ 		blk = find_least_worn_blk_for_l2_cache();
+-		if (blk > DeviceInfo.wDataBlockNum) {
++		if (blk >= DeviceInfo.wDataBlockNum) {
+ 			nand_dbg_print(NAND_DBG_WARN,
+ 				"find_least_worn_blk_for_l2_cache: "
+ 				"No enough free NAND blocks (n: %d) for L2 Cache!\n", n);
 -- 
-1.7.3
+1.7.0.4
 
