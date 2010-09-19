@@ -1,7 +1,7 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 18 Sep 2010 20:41:12 +0000
+From: walter harms <wharms@bfs.de>
+Date: Sun, 19 Sep 2010 12:40:31 +0000
 Subject: Re: [PATCH] Staging: wlan-ng: p80211netdev.c cleanup
-Message-Id: <20100918204112.GA6236@bicker>
+Message-Id: <4C9604BF.1090809@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1284834652-26171-1-git-send-email-lkml@Think-Future.com>
 In-Reply-To: <1284834652-26171-1-git-send-email-lkml@Think-Future.com>
@@ -11,7 +11,21 @@ Content-Transfer-Encoding: 7bit
 To: Nils Radtke <lkml@Think-Future.com>
 Cc: gregkh@suse.de, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 18, 2010 at 08:30:52PM +0200, Nils Radtke wrote:
+
+
+Nils Radtke schrieb:
+> Effected preliminary cleanup lead by the idea of kerneljanitor.org .
+> As recommended I'm asking for approval of the location of cleanup
+> and the manner it happened to know I'm heading in the right
+> direction.
+> 
+> Compiles. Not tested.
+> 
+> Signed-off-by: Nils Radtke <lkml@Think-Future.com>
+> ---
+>  drivers/staging/wlan-ng/p80211netdev.c |   50 +++++++++++++++++++-------------
+>  1 files changed, 30 insertions(+), 20 deletions(-)
+> 
 > diff --git a/drivers/staging/wlan-ng/p80211netdev.c b/drivers/staging/wlan-ng/p80211netdev.c
 > index aa1792c..8104e11 100644
 > --- a/drivers/staging/wlan-ng/p80211netdev.c
@@ -22,10 +36,6 @@ On Sat, Sep 18, 2010 at 08:30:52PM +0200, Nils Radtke wrote:
 >  {
 > -	int result = 0;		/* success */
 > +	int ret = 0;
-
-If it was new code then I also would have prefered "ret" I suppose, but
-really it's not a good idea to rename things for no reason.
-
 >  	wlandevice_t *wlandev = netdev->ml_priv;
 >  
 >  	/* Check to make sure the MSD is running */
@@ -35,11 +45,6 @@ really it's not a good idea to rename things for no reason.
 > +		ret = -ENODEV;
 > +		goto end;
 > +	}
-
-It's better to just return directly.  This code makes me wonder what
-happens after I goto end, but actually nothing happens.  So it's
-a little annoying.
-
 >  
 >  	/* Tell the MSD to open */
 > -	if (wlandev->open != NULL) {
@@ -52,21 +57,13 @@ a little annoying.
 > -		result = -EAGAIN;
 > +	if (wlandev->open = NULL) {
 > +		printk(KERN_ERR "Sorry, got wlandev->open = NULL.\n");
-
-This printk is not needed.  I haven't looked at this code, but if the
-user can trigger this error message then it can be used to flood
-/var/log/messages and cause a denial of service attack.
-
+> +		ret = -EAGAIN;
+> +		goto end;
+>  	}
 >  
 > -	return result;
 > +	ret = wlandev->open(wlandev);
 > +	if (ret) {
-
-This test is reversed (we return zero on success).  It should be:
-	if (ret)
-		return ret;
-And then the other stuff can be pulled in an indent level.
-
 > +		netif_start_queue(wlandev->netdev);
 > +		wlandev->state = WLAN_DEVICE_OPEN;
 > +	}
@@ -74,55 +71,63 @@ And then the other stuff can be pulled in an indent level.
 > +end:
 > +	return ret;
 >  }
+>  
 
-The other function had many of the same issues.
+unwinding is always good :)
 
-The change log for this should have been something like:
-	This is a cleanup of p80211knetdev_open().  I rearranged the
-	to unify all the return paths so there was just one return
-	statement.  I also changed the if statements so I could pull 
-	the code in one indent level and simplify things a bit.  And I
-	added a couple printk() to the let the user know about errors.
 
-(Except that adding printk()s is a functional change so it goes into a
-separate patch instead of hidden inside a "cleanup" patch.  But you get
-the idea).
 
-It's always dangerous writing patches when you can't test them. Most of
-my patches are one liners because and when people ask me to rewrite them
-in a more complicated way I tell them I don't feel comfortable doing
-that because I can't test it.
 
-Really though my advice is to start out by fixing bugs instead of
-focusing on cleanup.  I've fixed many of the interesting buffer
-overflows in main kernel but if you run smatch on staging then there are
-a bunch remaining.  Even reading through the false positives is good
-practise for reading code.
 
-Here's one the wlan-ng driver that you were working on:
+>  /*----------------------------------------------------------------
+> @@ -211,16 +216,23 @@ static int p80211knetdev_open(netdevice_t *netdev)
+>  ----------------------------------------------------------------*/
+>  static int p80211knetdev_stop(netdevice_t *netdev)
+>  {
+> -	int result = 0;
+> +	int ret = -EFAULT;
+>  	wlandevice_t *wlandev = netdev->ml_priv;
+>  
+> -	if (wlandev->close != NULL)
+> -		result = wlandev->close(wlandev);
+> +	if (wlandev->close = NULL) {
+> +		printk(KERN_ERR "Sorry, got wlandev->close = NULL.\n");
+> +		ret = -EFAULT; /* FIXME: nr: correct return code? */
+> +		goto end;
+> +	}
+>  
+> -	netif_stop_queue(wlandev->netdev);
+> -	wlandev->state = WLAN_DEVICE_CLOSED;
+> +	ret = wlandev->close(wlandev);
+> +	if (ret) {
+> +		netif_stop_queue(wlandev->netdev);
+> +		wlandev->state = WLAN_DEVICE_CLOSED;
+> +	}
+>  
+> -	return result;
+> +end:
+> +	return ret;
+>  }
+>  
 
-drivers/staging/wlan-ng/prism2fw.c +594 mkpdrlist(9)
-	error: buffer overflow 'pda16' 512 <= 512
-drivers/staging/wlan-ng/prism2fw.c +634 mkpdrlist(49)
-	error: buffer overflow 'pda16' 512 <= 512
+but i wonder if the the test for wlandev->open in X_close() is needed
+can wlandev->close vanish between open() and stop() ?
 
-   592          curroff = 0;
-   593          while (curroff < (HFA384x_PDA_LEN_MAX / 2) &&
-                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	We check that the array offset is within bounds here
+I am wondering who to use the error message "Sorry, got wlandev->open = NULL"
+is true but what help ? Give the reader a change and add __func__ to figure out
+what hit him.
 
-   594                 le16_to_cpu(pda16[curroff + 1]) != HFA384x_PDR_END_OF_PDA) {
-                                         ^^^^^^^^^^^
-	and then we add one here which puts us out of bounds.
+re,
+ wh
 
-   595                  pda->rec[pda->nrec] = (hfa384x_pdrec_t *) &(pda16[curroff]);
-   596  
 
-Fixing overflows is way more interesting than cleanup patches.  So don't
-resend this patch.  The original code works and it's not even that ugly.
-You are a true hacker and have more awesome things to do.  That's my
-advice to newbie hackers.
-
-regards,
-dan carpenter
-
+>  /*----------------------------------------------------------------
+> @@ -242,8 +254,6 @@ void p80211netdev_rx(wlandevice_t *wlandev, struct sk_buff *skb)
+>  	skb_queue_tail(&wlandev->nsd_rxq, skb);
+>  
+>  	tasklet_schedule(&wlandev->rx_bh);
+> -
+> -	return;
+>  }
+>  
+>  /*----------------------------------------------------------------
