@@ -1,58 +1,40 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:34 +0000
-Subject: [PATCH 21/21] Staging: wlags49_h25: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352314-5939-21-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 19 Sep 2010 12:55:14 +0000
+Subject: [PATCH 12/14] staging: vme: fix device_register() error handling
+Message-Id: <1284900914-24728-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Martyn Welch <martyn.welch@ge.com>, Bill Pemberton <wfp5p@virginia.edu>, Tejun Heo <tj@kernel.org>, Huang Weiyi <weiyi.huang@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+If device_register() fails then call put_device().
+See comment to device_register.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/wlags49_h25/Makefile |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ compile tested.
 
-diff --git a/drivers/staging/wlags49_h25/Makefile b/drivers/staging/wlags49_h25/Makefile
-index d0b23d4..66fd6de 100644
---- a/drivers/staging/wlags49_h25/Makefile
-+++ b/drivers/staging/wlags49_h25/Makefile
-@@ -12,8 +12,8 @@
- #  If you want to build AP support (untested), comment out -DSTA_ONLY
+ drivers/staging/vme/vme.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/vme/vme.c b/drivers/staging/vme/vme.c
+index 093fbff..c08668d 100644
+--- a/drivers/staging/vme/vme.c
++++ b/drivers/staging/vme/vme.c
+@@ -1357,8 +1357,10 @@ int vme_register_bridge(struct vme_bridge *bridge)
+ 		dev_set_name(dev, "vme-%x.%x", bridge->num, i + 1);
  
- INSTALLDIR := /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless
--EXTRA_CFLAGS += -I$(KERNELDIR)/include
--EXTRA_CFLAGS += -I$(src) \
-+ccflags-y += -I$(KERNELDIR)/include
-+ccflags-y += -I$(src) \
- 		-DBUS_PCMCIA \
- 		-DUSE_WPA \
- 		-DUSE_WEXT \
-@@ -25,16 +25,16 @@ EXTRA_CFLAGS += -I$(src) \
- #		-DUSE_UIL \
- #		-DUSE_PROFILE \
+ 		retval = device_register(dev);
+-		if (retval)
++		if (retval) {
++			put_device(dev);
+ 			goto err_reg;
++		}
+ 	}
  
--ifeq ($(findstring HERMES25,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring HERMES25,$(ccflags-y)),)
- WLNAME := wlags49_h2_cs
- $(WLNAME)-y := sta_h2.o
--ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
- $(WLNAME)-y += ap_h2.o
- endif
- else
- WLNAME=wlags49_h25_cs
- $(WLNAME)-y := sta_h25.o
--ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
- $(WLNAME)-y += ap_h25.o
- endif
- endif
+ 	return retval;
 -- 
-1.7.3
+1.7.0.4
 
