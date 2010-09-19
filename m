@@ -1,39 +1,46 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:21:41 +0000
-Subject: [PATCH 01/21] Staging: cx25821: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352501-6011-1-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 19 Sep 2010 12:55:07 +0000
+Subject: [PATCH 10/14] scsi: osd: fix device_register() error handling
+Message-Id: <1284900907-24621-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Boaz Harrosh <bharrosh@panasas.com>, Benny Halevy <bhalevy@panasas.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Tejun Heo <tj@kernel.org>, Arnd Bergmann <arnd@arndb.de>, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Changed to use proper ccflags-y option.
+If device_register() fails then call put_device().
+See comment to device_register.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/cx25821/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ compile tested.
 
-diff --git a/drivers/staging/cx25821/Makefile b/drivers/staging/cx25821/Makefile
-index d0eb16e..77cbb83 100644
---- a/drivers/staging/cx25821/Makefile
-+++ b/drivers/staging/cx25821/Makefile
-@@ -7,7 +7,7 @@ cx25821-objs   := cx25821-core.o cx25821-cards.o cx25821-i2c.o \
- obj-$(CONFIG_VIDEO_CX25821) += cx25821.o
- obj-$(CONFIG_VIDEO_CX25821_ALSA) += cx25821-alsa.o
+ drivers/scsi/osd/osd_uld.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
+index cefb2c0..3e0edc2 100644
+--- a/drivers/scsi/osd/osd_uld.c
++++ b/drivers/scsi/osd/osd_uld.c
+@@ -474,7 +474,7 @@ static int osd_probe(struct device *dev)
+ 	error = device_register(&oud->class_dev);
+ 	if (error) {
+ 		OSD_ERR("device_register failed => %d\n", error);
+-		goto err_put_cdev;
++		goto err_put_device;
+ 	}
  
--EXTRA_CFLAGS += -Idrivers/media/video
--EXTRA_CFLAGS += -Idrivers/media/common/tuners
--EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core
--EXTRA_CFLAGS += -Idrivers/media/dvb/frontends
-+ccflags-y += -Idrivers/media/video
-+ccflags-y += -Idrivers/media/common/tuners
-+ccflags-y += -Idrivers/media/dvb/dvb-core
-+ccflags-y += -Idrivers/media/dvb/frontends
+ 	get_device(&oud->class_dev);
+@@ -482,6 +482,8 @@ static int osd_probe(struct device *dev)
+ 	OSD_INFO("osd_probe %s\n", disk->disk_name);
+ 	return 0;
+ 
++err_put_device:
++	put_device(&oud->class_dev);
+ err_put_cdev:
+ 	cdev_del(&oud->cdev);
+ err_put_disk:
 -- 
-1.7.3
+1.7.0.4
 
