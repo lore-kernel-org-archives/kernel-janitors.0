@@ -1,42 +1,44 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:23 +0000
-Subject: [PATCH 10/21] Staging: rt2870: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352314-5939-10-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 19 Sep 2010 12:54:44 +0000
+Subject: [PATCH 02/14] dio: fix device_register() error handling
+Message-Id: <1284900884-24285-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Changed to use proper ccflags-y option
+If device_register() fails then call put_device().
+See comment to device_register.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/rt2870/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ I cannot compile this driver, so it is not tested at all.
 
-diff --git a/drivers/staging/rt2870/Makefile b/drivers/staging/rt2870/Makefile
-index 523e7e7..f6e542a 100644
---- a/drivers/staging/rt2870/Makefile
-+++ b/drivers/staging/rt2870/Makefile
-@@ -2,10 +2,10 @@
- obj-$(CONFIG_RT2870)	+= rt2870sta.o
+ drivers/dio/dio.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/dio/dio.c b/drivers/dio/dio.c
+index 55dd88d..d2ede72 100644
+--- a/drivers/dio/dio.c
++++ b/drivers/dio/dio.c
+@@ -186,6 +186,7 @@ static int __init dio_init(void)
+ 	error = device_register(&dio_bus.dev);
+ 	if (error) {
+ 		pr_err("DIO: Error registering dio_bus\n");
++		put_device(&dio_bus.dev);
+ 		return error;
+ 	}
  
- # TODO: all of these should be removed
--EXTRA_CFLAGS += -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
--EXTRA_CFLAGS += -DRTMP_MAC_USB -DRTMP_USB_SUPPORT -DRT2870 -DRTMP_TIMER_TASK_SUPPORT
--EXTRA_CFLAGS += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3070
--EXTRA_CFLAGS += -DDBG
-+ccflags-y += -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
-+ccflags-y += -DRTMP_MAC_USB -DRTMP_USB_SUPPORT -DRT2870 -DRTMP_TIMER_TASK_SUPPORT
-+ccflags-y += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3070
-+ccflags-y += -DDBG
- 
- rt2870sta-objs :=		\
- 	common/crypt_md5.o	\
+@@ -261,6 +262,7 @@ static int __init dio_init(void)
+ 		if (error) {
+ 			pr_err("DIO: Error registering device %s\n",
+ 			       dev->name);
++			put_device(&dev->dev);
+ 			continue;
+ 		}
+ 		error = dio_create_sysfs_dev_files(dev);
 -- 
-1.7.3
+1.7.0.4
 
