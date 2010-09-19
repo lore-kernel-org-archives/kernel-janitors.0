@@ -1,83 +1,36 @@
 From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 12 Sep 2010 18:57:03 +0000
-Subject: [PATCH] acpi: ec_sys: access user space with get_user()/put_user()
-Message-Id: <1284317825-4980-1-git-send-email-segooon@gmail.com>
+Date: Sun, 19 Sep 2010 12:55:11 +0000
+Subject: [PATCH 11/14] staging: hv: fix device_register() error handling
+Message-Id: <1284900911-24684-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Len Brown <lenb@kernel.org>, Thomas Renninger <trenn@suse.de>, Matthew Garrett <mjg@redhat.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Hank Janssen <hjanssen@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Bill Pemberton <wfp5p@virginia.edu>, Milan Dadok <milan@dadok.name>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-User space pointer may not be dereferenced. Use get_user()/put_user()
-instead and check their return codes.
+If device_register() fails then call put_device().
+See comment to device_register.
 
 Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- Compile tested.
+ compile tested.
 
- drivers/acpi/ec_sys.c |   18 ++++++++++++++----
- 1 files changed, 14 insertions(+), 4 deletions(-)
+ drivers/staging/hv/vmbus_drv.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/acpi/ec_sys.c b/drivers/acpi/ec_sys.c
-index 0e869b3..cc007d8 100644
---- a/drivers/acpi/ec_sys.c
-+++ b/drivers/acpi/ec_sys.c
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/acpi.h>
- #include <linux/debugfs.h>
-+#include <linux/uaccess.h>
- #include "internal.h"
+diff --git a/drivers/staging/hv/vmbus_drv.c b/drivers/staging/hv/vmbus_drv.c
+index ad29887..255e4b2 100644
+--- a/drivers/staging/hv/vmbus_drv.c
++++ b/drivers/staging/hv/vmbus_drv.c
+@@ -345,6 +345,7 @@ static int vmbus_bus_init(int (*drv_init)(struct hv_driver *drv))
+ 		DPRINT_ERR(VMBUS_DRV,
+ 			   "ERROR - Unable to register vmbus root device");
  
- MODULE_AUTHOR("Thomas Renninger <trenn@suse.de>");
-@@ -43,7 +44,6 @@ static ssize_t acpi_ec_read_io(struct file *f, char __user *buf,
- 	 * struct acpi_ec *ec = ((struct seq_file *)f->private_data)->private;
- 	 */
- 	unsigned int size = EC_SPACE_SIZE;
--	u8 *data = (u8 *) buf;
- 	loff_t init_off = *off;
- 	int err = 0;
++		put_device(&dev_ctx->device);
+ 		free_irq(vmbus_irq, NULL);
+ 		bus_unregister(&vmbus_drv_ctx->bus);
  
-@@ -56,9 +56,15 @@ static ssize_t acpi_ec_read_io(struct file *f, char __user *buf,
- 		size = count;
- 
- 	while (size) {
--		err = ec_read(*off, &data[*off - init_off]);
-+		u8 byte_read;
-+		err = ec_read(*off, &byte_read);
- 		if (err)
- 			return err;
-+		if (put_user(byte_read, buf + *off - init_off)) {
-+			if (*off - init_off)
-+				return *off - init_off; /* partial read */
-+			return -EFAULT;
-+		}
- 		*off += 1;
- 		size--;
- 	}
-@@ -74,7 +80,6 @@ static ssize_t acpi_ec_write_io(struct file *f, const char __user *buf,
- 
- 	unsigned int size = count;
- 	loff_t init_off = *off;
--	u8 *data = (u8 *) buf;
- 	int err = 0;
- 
- 	if (*off >= EC_SPACE_SIZE)
-@@ -85,7 +90,12 @@ static ssize_t acpi_ec_write_io(struct file *f, const char __user *buf,
- 	}
- 
- 	while (size) {
--		u8 byte_write = data[*off - init_off];
-+		u8 byte_write;
-+		if (get_user(byte_write, buf + *off - init_off)) {
-+			if (*off - init_off)
-+				return *off - init_off; /* partial write */
-+			return -EFAULT;
-+		}
- 		err = ec_write(*off, byte_write);
- 		if (err)
- 			return err;
 -- 
 1.7.0.4
 
