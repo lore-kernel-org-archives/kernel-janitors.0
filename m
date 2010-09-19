@@ -1,23 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 24 Sep 2010 20:01:16 +0000
-Subject: Re: [PATCH 06/24] ide: change to new flag variable
-Message-Id: <20100924.130116.48506170.davem@davemloft.net>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 19 Sep 2010 12:54:55 +0000
+Subject: [PATCH 06/14] pcmcia: cs: fix device_register() error handling
+Message-Id: <1284900895-24453-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
-	<e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
-	<70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mfm@muteddisk.com
-Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-pcmcia@lists.infradead.org, linux-kernel@vger.kernel.org
 
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 24 Sep 2010 12:17:16 -0700
+If device_register() fails then call put_device().
+See comment to device_register.
 
-> Replace EXTRA_CFLAGS with ccflags-y.
-> 
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ compile tested.
 
-Acked-by: David S. Miller <davem@davemloft.net>
+ drivers/pcmcia/cs.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c
+index d8189d4..9e8ab51 100644
+--- a/drivers/pcmcia/cs.c
++++ b/drivers/pcmcia/cs.c
+@@ -592,6 +592,7 @@ static int pccardd(void *__skt)
+ 	if (ret) {
+ 		dev_printk(KERN_WARNING, &skt->dev,
+ 			   "PCMCIA: unable to register socket\n");
++		put_device(&skt->dev);
+ 		skt->thread = NULL;
+ 		complete(&skt->thread_done);
+ 		return 0;
+-- 
+1.7.0.4
+
