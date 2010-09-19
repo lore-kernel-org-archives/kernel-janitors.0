@@ -1,23 +1,48 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Date: Sat, 25 Sep 2010 02:25:43 +0000
-Subject: Re: [PATCH 01/20] kernel: change to new flag variable
-Message-Id: <AANLkTimvJ_2ud1Lksv7J3WbdJQOMw+346v6YByk_pVok@mail.gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 19 Sep 2010 12:54:46 +0000
+Subject: [PATCH 03/14] mca: fix device_register() error handling
+Message-Id: <1284900887-24327-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285224585-29457-1-git-send-email-mfm@muteddisk.com>
-In-Reply-To: <1285224585-29457-1-git-send-email-mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfm@muteddisk.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rjw@sisk.pl>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, linux-pm@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-kernel@vger.kernel.org
 
-On Thu, Sep 23, 2010 at 2:49 PM, matt mooney <mfm@muteddisk.com> wrote:
-> Replace EXTRA_CFLAGS with ccflags-y.
->
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
+If device_register() fails then call put_device().
+See comment to device_register.
 
-ACK to the whole patch set.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ I cannot compile this driver, so it is not tested at all.
 
-Please Cc linux-kbuild when you send patches for makefiles.
+ drivers/mca/mca-bus.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
 
-Thanks!
+diff --git a/drivers/mca/mca-bus.c b/drivers/mca/mca-bus.c
+index ada5ebb..7162f08 100644
+--- a/drivers/mca/mca-bus.c
++++ b/drivers/mca/mca-bus.c
+@@ -116,8 +116,10 @@ int __init mca_register_device(int bus, struct mca_device *mca_dev)
+ 	mca_dev->dev.coherent_dma_mask = mca_dev->dma_mask;
+ 
+ 	rc = device_register(&mca_dev->dev);
+-	if (rc)
++	if (rc) {
++		put_device(&mca_dev->dev);
+ 		goto err_out;
++	}
+ 
+ 	rc = device_create_file(&mca_dev->dev, &dev_attr_id);
+ 	if (rc) goto err_out_devreg;
+@@ -154,6 +156,7 @@ struct mca_bus * __devinit mca_attach_bus(int bus)
+ 	dev_set_name(&mca_bus->dev, "mca%d", bus);
+ 	sprintf(mca_bus->name,"Host %s MCA Bridge", bus ? "Secondary" : "Primary");
+ 	if (device_register(&mca_bus->dev)) {
++		put_device(&mca_bus->dev);
+ 		kfree(mca_bus);
+ 		return NULL;
+ 	}
+-- 
+1.7.0.4
+
