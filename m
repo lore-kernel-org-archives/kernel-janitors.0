@@ -1,36 +1,40 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Tue, 28 Sep 2010 02:04:44 +0000
-Subject: [PATCH 2/3 RESEND] powerpc: remove cast from void*
-Message-Id: <f7d601da574581e9dfdc1314a969475c73491c00.1285638395.git.mfm@muteddisk.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 19 Sep 2010 12:55:04 +0000
+Subject: [PATCH 09/14] rtc: fix device_register() error handling
+Message-Id: <1284900904-24579-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1285638395.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1285638395.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <trivial@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: kernel-janitors@vger.kernel.org
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Aaro Koskinen <aaro.koskinen@nokia.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
-Unnecessary cast from void* in assignment.
+If device_register() fails then call put_device().
+See comment to device_register.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- arch/powerpc/platforms/pseries/hvCall_inst.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ compile tested.
 
-diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
-index e19ff02..f106662 100644
---- a/arch/powerpc/platforms/pseries/hvCall_inst.c
-+++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
-@@ -55,7 +55,7 @@ static void hc_stop(struct seq_file *m, void *p)
- static int hc_show(struct seq_file *m, void *p)
- {
- 	unsigned long h_num = (unsigned long)p;
--	struct hcall_stats *hs = (struct hcall_stats *)m->private;
-+	struct hcall_stats *hs = m->private;
+ drivers/rtc/class.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
+index 565562b..e6539cb 100644
+--- a/drivers/rtc/class.c
++++ b/drivers/rtc/class.c
+@@ -158,8 +158,10 @@ struct rtc_device *rtc_device_register(const char *name, struct device *dev,
+ 	rtc_dev_prepare(rtc);
  
- 	if (hs[h_num].num_calls) {
- 		if (cpu_has_feature(CPU_FTR_PURR))
+ 	err = device_register(&rtc->dev);
+-	if (err)
++	if (err) {
++		put_device(&rtc->dev);
+ 		goto exit_kfree;
++	}
+ 
+ 	rtc_dev_add_device(rtc);
+ 	rtc_sysfs_add_device(rtc);
 -- 
-1.7.2.1
+1.7.0.4
 
