@@ -1,36 +1,75 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 09 Sep 2010 22:00:51 +0000
-Subject: Re: [Alternative PATCH net-next] sctp: fix test for end of loop
-Message-Id: <20100909.150051.115922917.davem@davemloft.net>
+From: Poyo VL <poyo_vl@yahoo.com>
+Date: Mon, 20 Sep 2010 17:48:08 +0000
+Subject: [PATCH] drivers/block/cciss.c (2.6.35.7): Fixed useless compile warning
+Message-Id: <115163.69814.qm@web45812.mail.sp1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100908.133747.232732909.davem@davemloft.net>
-	<1283979861.2479.21.camel@Joe-Laptop>
-	<4C88E7CB.7060804@hp.com>
-In-Reply-To: <4C88E7CB.7060804@hp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: vladislav.yasevich@hp.com
-Cc: joe@perches.com, error27@gmail.com, sri@us.ibm.com, yjwei@cn.fujitsu.com, cascardo@holoscopio.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Vlad Yasevich <vladislav.yasevich@hp.com>
-Date: Thu, 09 Sep 2010 09:57:31 -0400
+I am sorry if I sent this wrong, but someone told me to send this to this e-mail 
+adress.
+There isn't practically any problem, but the compiler can't know that, because 
+sn is initialized in a conditional expression (else return snprintf(...)...), 
+and it throws those ugly warnings:
+drivers/block/cciss.c: In function ‘dev_show_unique_id’:
+drivers/block/cciss.c:564:7: warning: ‘sn[0]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[1]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[2]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[3]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[4]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[5]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[6]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[7]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[8]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[9]’ may be used uninitialized in this 
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[10]’ may be used uninitialized in this 
 
-> On 09/08/2010 05:04 PM, Joe Perches wrote:
->> Perhaps something like this is clearer?
->> 
->> Add a list_has_sctp_addr function to simplify loop
->> 
->> Based on a patches by Dan Carpenter and David Miller
->> 
->> Signed-off-by: Joe Perches <joe@perches.com>
-> 
-> Thanks Joe
-> 
-> I like this.  Nice and clean. :)
-> 
-> Acked-by: Vlad Yasevich <vladislav.yasevich@hp.com>
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[11]’ may be used uninitialized in this 
 
-Applied to net-2.6 since this is reasonably important bug fix.
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[12]’ may be used uninitialized in this 
 
-Thanks guys!
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[13]’ may be used uninitialized in this 
+
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[14]’ may be used uninitialized in this 
+
+function
+drivers/block/cciss.c:564:7: warning: ‘sn[15]’ may be used uninitialized in this 
+
+function
+Just have to initialize sn[] with 0. It is practically useless, but the compiler 
+
+wan't throw that warnings anymore.
+Patch downer. Thanks.
+
+Signed-off-by: Ionut Gabriel Popescu <poyo_vl@yahoo.com>
+---
+
+--- a/drivers/block/cciss.c    2010-09-17 20:17:49.844010958 +0300
++++ b/drivers/block/cciss.c    2010-09-13 19:54:58.000000000 +0300
+@@ -561,7 +561,7 @@ static ssize_t dev_show_unique_id(struct
+{
+     drive_info_struct *drv = to_drv(dev);
+     struct ctlr_info *h = to_hba(drv->dev.parent);
+-    __u8 sn[16] = {0};
++    __u8 sn[16];
+     unsigned long flags;
+     int ret = 0;
+
+
+      
