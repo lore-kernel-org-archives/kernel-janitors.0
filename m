@@ -1,38 +1,36 @@
 From: Jeremy Fitzhardinge <jeremy@goop.org>
-Date: Tue, 14 Sep 2010 18:46:47 +0000
+Date: Tue, 21 Sep 2010 18:39:23 +0000
 Subject: Re: [PATCH 1/4] x86: remove cast from void*
-Message-Id: <4C8FC317.8080408@goop.org>
+Message-Id: <4C98FBDB.6030601@goop.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1284441511-11511-1-git-send-email-mfm@muteddisk.com>
-	<4C8FB5C3.3050806@goop.org> <4C8FBD01.40900@zytor.com>
-In-Reply-To: <4C8FBD01.40900@zytor.com>
+In-Reply-To: <1284441511-11511-1-git-send-email-mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: xen-devel@lists.xensource.com, Jeremy Fitzhardinge <jeremy@xensource.com>, matt mooney <mfm@muteddisk.com>, x86@kernel.org, kernel-janitors@vger.kernel.org, Chris Wright <chrisw@sous-sol.org>, virtualization@lists.osdl.org, Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ian Campbell <ian.campbell@citrix.com>
+To: matt mooney <mfm@muteddisk.com>
+Cc: xen-devel@lists.xensource.com, Jeremy Fitzhardinge <jeremy@xensource.com>, x86@kernel.org, kernel-janitors@vger.kernel.org, Chris Wright <chrisw@sous-sol.org>, virtualization@lists.osdl.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ian Campbell <ian.campbell@citrix.com>
 
- On 09/14/2010 11:20 AM, H. Peter Anvin wrote:
-> On 09/14/2010 10:49 AM, Jeremy Fitzhardinge wrote:
->>  On 09/13/2010 10:18 PM, matt mooney wrote:
->>> Unnecessary cast from void* in assignment.
->> Not very keen on this.  The cast may not be strictly required, but it
->> does document what's going on there.
->>
-> But unnecessary casts are problematic in that if the type changes, they
-> can hide a real bug in the future.
+ On 09/13/2010 10:18 PM, matt mooney wrote:
+> Unnecessary cast from void* in assignment.
+>
+> Signed-off-by: matt mooney <mfm@muteddisk.com>
+> ---
+>  arch/x86/xen/mmu.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
+> index 42086ac..7436283 100644
+> --- a/arch/x86/xen/mmu.c
+> +++ b/arch/x86/xen/mmu.c
+> @@ -737,7 +737,7 @@ pgd_t *xen_get_user_pgd(pgd_t *pgd)
+>  
+>  	if (offset < pgd_index(USER_LIMIT)) {
+>  		struct page *page = virt_to_page(pgd_page);
+> -		user_ptr = (pgd_t *)page->private;
+> +		user_ptr = page->private;
 
-If page->private changes in a way which invalidates this kind of usage,
-I would hope it would also change name to something more descriptive of
-its new role.  If it changes type but is broadly compatible with this
-usage (say, void * -> unsigned long), then the cast won't matter, or
-will become a requirement.
-
-I'm more concerned about "user_ptr" changing type, in which case the
-cast will highlight the problem.
-
-In general, the casts from these kinds of generic/polymorphic fields let
-you easily eyeball how they're being used, without having to work out
-what the type of the other side is.
+Um, page->private is unsigned long anyway, so this is needed either way.
 
     J
+
