@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 19 Sep 2010 12:40:31 +0000
+From: Greg KH <greg@kroah.com>
+Date: Tue, 21 Sep 2010 00:07:47 +0000
 Subject: Re: [PATCH] Staging: wlan-ng: p80211netdev.c cleanup
-Message-Id: <4C9604BF.1090809@bfs.de>
+Message-Id: <20100921000747.GA15932@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1284834652-26171-1-git-send-email-lkml@Think-Future.com>
 In-Reply-To: <1284834652-26171-1-git-send-email-lkml@Think-Future.com>
@@ -11,9 +11,7 @@ Content-Transfer-Encoding: 7bit
 To: Nils Radtke <lkml@Think-Future.com>
 Cc: gregkh@suse.de, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-
-
-Nils Radtke schrieb:
+On Sat, Sep 18, 2010 at 08:30:52PM +0200, Nils Radtke wrote:
 > Effected preliminary cleanup lead by the idea of kerneljanitor.org .
 > As recommended I'm asking for approval of the location of cleanup
 > and the manner it happened to know I'm heading in the right
@@ -36,6 +34,9 @@ Nils Radtke schrieb:
 >  {
 > -	int result = 0;		/* success */
 > +	int ret = 0;
+
+Why rename the variable if you don't have to?
+
 >  	wlandevice_t *wlandev = netdev->ml_priv;
 >  
 >  	/* Check to make sure the MSD is running */
@@ -59,6 +60,10 @@ Nils Radtke schrieb:
 > +		printk(KERN_ERR "Sorry, got wlandev->open = NULL.\n");
 > +		ret = -EAGAIN;
 > +		goto end;
+
+Why are you adding new printk() calls?  Please use dev_err() if you
+really want to do this.
+
 >  	}
 >  
 > -	return result;
@@ -70,64 +75,11 @@ Nils Radtke schrieb:
 > +
 > +end:
 > +	return ret;
->  }
->  
 
-unwinding is always good :)
+Please clean up properly for errors.
 
+Same goes for other parts of this patch, care to redo it?
 
+thanks,
 
-
-
->  /*----------------------------------------------------------------
-> @@ -211,16 +216,23 @@ static int p80211knetdev_open(netdevice_t *netdev)
->  ----------------------------------------------------------------*/
->  static int p80211knetdev_stop(netdevice_t *netdev)
->  {
-> -	int result = 0;
-> +	int ret = -EFAULT;
->  	wlandevice_t *wlandev = netdev->ml_priv;
->  
-> -	if (wlandev->close != NULL)
-> -		result = wlandev->close(wlandev);
-> +	if (wlandev->close = NULL) {
-> +		printk(KERN_ERR "Sorry, got wlandev->close = NULL.\n");
-> +		ret = -EFAULT; /* FIXME: nr: correct return code? */
-> +		goto end;
-> +	}
->  
-> -	netif_stop_queue(wlandev->netdev);
-> -	wlandev->state = WLAN_DEVICE_CLOSED;
-> +	ret = wlandev->close(wlandev);
-> +	if (ret) {
-> +		netif_stop_queue(wlandev->netdev);
-> +		wlandev->state = WLAN_DEVICE_CLOSED;
-> +	}
->  
-> -	return result;
-> +end:
-> +	return ret;
->  }
->  
-
-but i wonder if the the test for wlandev->open in X_close() is needed
-can wlandev->close vanish between open() and stop() ?
-
-I am wondering who to use the error message "Sorry, got wlandev->open = NULL"
-is true but what help ? Give the reader a change and add __func__ to figure out
-what hit him.
-
-re,
- wh
-
-
->  /*----------------------------------------------------------------
-> @@ -242,8 +254,6 @@ void p80211netdev_rx(wlandevice_t *wlandev, struct sk_buff *skb)
->  	skb_queue_tail(&wlandev->nsd_rxq, skb);
->  
->  	tasklet_schedule(&wlandev->rx_bh);
-> -
-> -	return;
->  }
->  
->  /*----------------------------------------------------------------
+greg k-h
