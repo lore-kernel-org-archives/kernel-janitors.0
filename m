@@ -1,75 +1,39 @@
-From: Poyo VL <poyo_vl@yahoo.com>
-Date: Mon, 20 Sep 2010 17:48:08 +0000
-Subject: [PATCH] drivers/block/cciss.c (2.6.35.7): Fixed useless compile warning
-Message-Id: <115163.69814.qm@web45812.mail.sp1.yahoo.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 21 Sep 2010 07:05:59 +0000
+Subject: Re: [PATCH] drivers/block/cciss.c (2.6.35.7): Fixed useless
+Message-Id: <20100921070558.GA6234@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <115163.69814.qm@web45812.mail.sp1.yahoo.com>
+In-Reply-To: <115163.69814.qm@web45812.mail.sp1.yahoo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I am sorry if I sent this wrong, but someone told me to send this to this e-mail 
-adress.
-There isn't practically any problem, but the compiler can't know that, because 
-sn is initialized in a conditional expression (else return snprintf(...)...), 
-and it throws those ugly warnings:
-drivers/block/cciss.c: In function ‘dev_show_unique_id’:
-drivers/block/cciss.c:564:7: warning: ‘sn[0]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[1]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[2]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[3]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[4]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[5]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[6]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[7]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[8]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[9]’ may be used uninitialized in this 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[10]’ may be used uninitialized in this 
 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[11]’ may be used uninitialized in this 
+Which version of gcc are you using?  It doesn't print any error message
+for me on version 4.3.2 (which is really old).
 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[12]’ may be used uninitialized in this 
+The idea is fine but the patch is all messed up.  First of all the it's
+reversed.  It says '+' where it should say '-' and '-' where it should
+say '+'.
 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[13]’ may be used uninitialized in this 
+Also your mail client has completely mangled it.  It has removed spaces
+from the start of lines and changed the tabs to spaces.  Please read
+Documentation/email-clients.txt and send an email to yourself.  Save the
+email as raw text.  cat email.txt | patch -p1.
 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[14]’ may be used uninitialized in this 
+When that works resend it.  Add these people to the CC list:
 
-function
-drivers/block/cciss.c:564:7: warning: ‘sn[15]’ may be used uninitialized in this 
+Mike Miller <mike.miller@hp.com>
+Jens Axboe <jaxboe@fusionio.com>
+"Stephen M. Cameron" <scameron@beardog.cce.hp.com>
+iss_storagedev@hp.com
 
-function
-Just have to initialize sn[] with 0. It is practically useless, but the compiler 
+Also you don't need to copy all 16 lines of error messages.  Just a
+couple will do.  But do say which version of gcc you are using.
 
-wan't throw that warnings anymore.
-Patch downer. Thanks.
-
-Signed-off-by: Ionut Gabriel Popescu <poyo_vl@yahoo.com>
----
-
---- a/drivers/block/cciss.c    2010-09-17 20:17:49.844010958 +0300
-+++ b/drivers/block/cciss.c    2010-09-13 19:54:58.000000000 +0300
-@@ -561,7 +561,7 @@ static ssize_t dev_show_unique_id(struct
-{
-     drive_info_struct *drv = to_drv(dev);
-     struct ctlr_info *h = to_hba(drv->dev.parent);
--    __u8 sn[16] = {0};
-+    __u8 sn[16];
-     unsigned long flags;
-     int ret = 0;
+regards,
+dan carpenter
 
 
-      
