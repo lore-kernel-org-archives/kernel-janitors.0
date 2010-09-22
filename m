@@ -1,36 +1,33 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 19 Sep 2010 12:55:18 +0000
-Subject: [PATCH 13/14] uwb: fix device_register() error handling
-Message-Id: <1284900918-24770-1-git-send-email-segooon@gmail.com>
+From: David Vrabel <david.vrabel@csr.com>
+Date: Wed, 22 Sep 2010 11:36:29 +0000
+Subject: Re: [PATCH 13/14] uwb: fix device_register() error handling
+Message-Id: <4C99EA3D.7050405@csr.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1284900918-24770-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1284900918-24770-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: David Vrabel <david.vrabel@csr.com>, Tejun Heo <tj@kernel.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If device_register() fails then call put_device().
-See comment to device_register.
+Vasiliy Kulikov wrote:
+> If device_register() fails then call put_device().
+> See comment to device_register.
+> 
+> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
----
- compile tested.
+Acked-by: David Vrabel <david.vrabel@csr.com>
 
- drivers/uwb/umc-dev.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+What's the preferred way of handling these sorts of patch sets?  Merged
+via some kernel-janitor tree or is it expected that subsystem
+maintainers pick up the individual patches?
 
-diff --git a/drivers/uwb/umc-dev.c b/drivers/uwb/umc-dev.c
-index 43ea998..e8e06ee 100644
---- a/drivers/uwb/umc-dev.c
-+++ b/drivers/uwb/umc-dev.c
-@@ -68,6 +68,7 @@ int umc_device_register(struct umc_dev *umc)
- 	return 0;
- 
- error_device_register:
-+	put_device(&umc->dev);
- 	release_resource(&umc->resource);
- error_request_resource:
- 	return err;
+David
 -- 
-1.7.0.4
+David Vrabel, Senior Software Engineer, Drivers
+CSR, Churchill House, Cambridge Business Park,  Tel: +44 (0)1223 692562
+Cowley Road, Cambridge, CB4 0WZ                 http://www.csr.com/
 
+
+Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
