@@ -1,34 +1,31 @@
-From: Clemens Ladisch <clemens@ladisch.de>
-Date: Wed, 08 Sep 2010 09:40:16 +0000
-Subject: Re: [patch] ALSA: rawmidi: cleanup the get next midi device ioctl
-Message-Id: <4C875A00.7030005@ladisch.de>
+From: Rahul Ruikar <rahul.ruikar@gmail.com>
+Date: Wed, 22 Sep 2010 16:21:01 +0000
+Subject: kernel compilation error linux-2.6.35.5
+Message-Id: <AANLkTini3-so-=GNdVZiLA9XXLfunosGgAtMB_iC67q-@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100908085308.GC32047@bicker>
-In-Reply-To: <20100908085308.GC32047@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Kyle McMartin <kyle@mcmartin.ca>, Ulrich Drepper <drepper@redhat.com>
+To: kernel-janitors@vger.kernel.org
 
-Dan Carpenter wrote:
-> I'm doing an audit to find integer overflows and my static checker
-> complained that in the original code "device + 1" could overflow.  The
-> overflow is harmless, but it's still worth cleaning up.  The other thing
-> that I noticed is that if you pass in a device which is higher than
-> SNDRV_RAWMIDI_DEVICES then it doesn't return an error code but just
-> tells you that the next device is "device + 1".
-> 
-> I have rewritten it to just return -EINVAL if you pass in a bogus value
-> that's either too high or too low.
+Hi All,
 
-A negative value is a valid input.
+I compiled kernel 2.6.35.5 on Fedora 13 ( laptop ) i got following errors.
+After completing installation I boot up system with this kernel but
+sound is not working ..that is
 
-> +		if (device > SNDRV_RAWMIDI_DEVICES)
-> +			return -EINVAL;
-
-		if (device >= SNDRV_RAWMIDI_DEVICES)
-
-
-Regards,
-Clemens
+[root@Ganesha linux-2.6.35.5]# make install
+sh /home/rahul/Downloads/stable/linux-2.6.35.5/arch/x86/boot/install.sh
+2.6.35.5 arch/x86/boot/bzImage \
+		System.map "/boot"
+ERROR: modinfo: could not find module snd_hda_codec_idt
+ERROR: modinfo: could not find module snd_hda_intel
+ERROR: modinfo: could not find module snd_hda_codec
+ERROR: modinfo: could not find module snd_hwdep
+ERROR: modinfo: could not find module snd_seq
+ERROR: modinfo: could not find module snd_seq_device
+ERROR: modinfo: could not find module snd_pcm
+ERROR: modinfo: could not find module snd_timer
+ERROR: modinfo: could not find module snd
+ERROR: modinfo: could not find module soundcore
+ERROR: modinfo: could not find module snd_page_alloc
