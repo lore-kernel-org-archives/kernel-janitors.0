@@ -1,57 +1,126 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 29 Sep 2010 08:41:05 +0000
-Subject: [patch v2] tlb_uv: use allocated buffer in tunables_read()
-Message-Id: <20100929083118.GA6376@bicker>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:01 +0000
+Subject: [PATCH 10/20] mips: change to new flag variable
+Message-Id: <1285224661-29797-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100816105502.GC645@bicker> <20100927161203.732833b0.akpm@linux-foundation.org>
-In-Reply-To: <20100927161203.732833b0.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Cliff Wickman <cpw@sgi.com>, Jack Steiner <steiner@sgi.com>, Robin Holt <holt@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Wu Zhangjin <wuzhangjin@gmail.com>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The original code didn't check that the value returned from snprintf()
-was less than the size of the buffer.  Although it didn't cause a
-runtime bug in this case, it makes the static checkers complain.
+Replace EXTRA_CFLAGS with ccflags-y.
 
-Andrew Morton suggested a dynamically sized buffer would be cleaner.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
-I don't have an x86_64 system so I haven't been able to compile this
-code.  Sorry for that.
+ arch/mips/Makefile                     |    4 ++--
+ arch/mips/bcm63xx/boards/Makefile      |    2 +-
+ arch/mips/fw/arc/Makefile              |    2 +-
+ arch/mips/jz4740/Makefile              |    2 +-
+ arch/mips/oprofile/Makefile            |    2 +-
+ arch/mips/pmc-sierra/yosemite/Makefile |    2 +-
+ arch/mips/powertv/Makefile             |    2 +-
+ arch/mips/powertv/asic/Makefile        |    2 +-
+ arch/mips/powertv/pci/Makefile         |    2 +-
+ 9 files changed, 10 insertions(+), 10 deletions(-)
 
-V2:  The first version was yuk.
+diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+index f4a4b66..c14c392 100644
+--- a/arch/mips/Makefile
++++ b/arch/mips/Makefile
+@@ -288,11 +288,11 @@ CLEAN_FILES += vmlinux.32 vmlinux.64
+ archprepare:
+ ifdef CONFIG_MIPS32_N32
+ 	@echo '  Checking missing-syscalls for N32'
+-	$(Q)$(MAKE) $(build)=. missing-syscalls EXTRA_CFLAGS="-mabi=n32"
++	$(Q)$(MAKE) $(build)=. missing-syscalls ccflags-y="-mabi=n32"
+ endif
+ ifdef CONFIG_MIPS32_O32
+ 	@echo '  Checking missing-syscalls for O32'
+-	$(Q)$(MAKE) $(build)=. missing-syscalls EXTRA_CFLAGS="-mabi2"
++	$(Q)$(MAKE) $(build)=. missing-syscalls ccflags-y="-mabi2"
+ endif
+ 
+ install:
+diff --git a/arch/mips/bcm63xx/boards/Makefile b/arch/mips/bcm63xx/boards/Makefile
+index e5cc86d..9f64fb4 100644
+--- a/arch/mips/bcm63xx/boards/Makefile
++++ b/arch/mips/bcm63xx/boards/Makefile
+@@ -1,3 +1,3 @@
+ obj-$(CONFIG_BOARD_BCM963XX)		+= board_bcm963xx.o
+ 
+-EXTRA_CFLAGS += -Werror
++ccflags-y := -Werror
+diff --git a/arch/mips/fw/arc/Makefile b/arch/mips/fw/arc/Makefile
+index e0aaad4..5314b37 100644
+--- a/arch/mips/fw/arc/Makefile
++++ b/arch/mips/fw/arc/Makefile
+@@ -9,4 +9,4 @@ lib-$(CONFIG_ARC_MEMORY)	+= memory.o
+ lib-$(CONFIG_ARC_CONSOLE)	+= arc_con.o
+ lib-$(CONFIG_ARC_PROMLIB)	+= promlib.o
+ 
+-EXTRA_CFLAGS			+= -Werror
++ccflags-y			:= -Werror
+diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
+index a604eae..a9dff33 100644
+--- a/arch/mips/jz4740/Makefile
++++ b/arch/mips/jz4740/Makefile
+@@ -17,4 +17,4 @@ obj-$(CONFIG_JZ4740_QI_LB60)	+= board-qi_lb60.o
+ 
+ obj-$(CONFIG_PM) += pm.o
+ 
+-EXTRA_CFLAGS += -Werror -Wall
++ccflags-y := -Werror -Wall
+diff --git a/arch/mips/oprofile/Makefile b/arch/mips/oprofile/Makefile
+index 02cc65e..4b9d704 100644
+--- a/arch/mips/oprofile/Makefile
++++ b/arch/mips/oprofile/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS := -Werror
++ccflags-y := -Werror
+ 
+ obj-$(CONFIG_OPROFILE) += oprofile.o
+ 
+diff --git a/arch/mips/pmc-sierra/yosemite/Makefile b/arch/mips/pmc-sierra/yosemite/Makefile
+index b16f95c..02f5fb9 100644
+--- a/arch/mips/pmc-sierra/yosemite/Makefile
++++ b/arch/mips/pmc-sierra/yosemite/Makefile
+@@ -6,4 +6,4 @@ obj-y    += irq.o prom.o py-console.o setup.o
+ 
+ obj-$(CONFIG_SMP)		+= smp.o
+ 
+-EXTRA_CFLAGS += -Werror
++ccflags-y := -Werror
+diff --git a/arch/mips/powertv/Makefile b/arch/mips/powertv/Makefile
+index baf6e90..348d2e8 100644
+--- a/arch/mips/powertv/Makefile
++++ b/arch/mips/powertv/Makefile
+@@ -28,4 +28,4 @@ obj-y += init.o ioremap.o memory.o powertv_setup.o reset.o time.o \
+ 
+ obj-$(CONFIG_USB) += powertv-usb.o
+ 
+-EXTRA_CFLAGS += -Wall
++ccflags-y := -Wall
+diff --git a/arch/mips/powertv/asic/Makefile b/arch/mips/powertv/asic/Makefile
+index f0e95dc..d810a33 100644
+--- a/arch/mips/powertv/asic/Makefile
++++ b/arch/mips/powertv/asic/Makefile
+@@ -20,4 +20,4 @@ obj-y += asic-calliope.o asic-cronus.o asic-gaia.o asic-zeus.o \
+ 	asic_devices.o asic_int.o irq_asic.o prealloc-calliope.o \
+ 	prealloc-cronus.o prealloc-cronuslite.o prealloc-gaia.o prealloc-zeus.o
+ 
+-EXTRA_CFLAGS += -Wall -Werror
++ccflags-y := -Wall -Werror
+diff --git a/arch/mips/powertv/pci/Makefile b/arch/mips/powertv/pci/Makefile
+index f5c6246..5783201 100644
+--- a/arch/mips/powertv/pci/Makefile
++++ b/arch/mips/powertv/pci/Makefile
+@@ -18,4 +18,4 @@
+ 
+ obj-$(CONFIG_PCI)	+= fixup-powertv.o
+ 
+-EXTRA_CFLAGS += -Wall -Werror
++ccflags-y := -Wall -Werror
+-- 
+1.7.2.1
 
-diff --git a/arch/x86/kernel/tlb_uv.c b/arch/x86/kernel/tlb_uv.c
-index 312ef02..33e77e4 100644
---- a/arch/x86/kernel/tlb_uv.c
-+++ b/arch/x86/kernel/tlb_uv.c
-@@ -1001,10 +1001,10 @@ static int uv_ptc_seq_show(struct seq_file *file, void *data)
- static ssize_t tunables_read(struct file *file, char __user *userbuf,
- 						size_t count, loff_t *ppos)
- {
--	char buf[300];
-+	char *buf;
- 	int ret;
- 
--	ret = snprintf(buf, 300, "%s %s %s\n%d %d %d %d %d %d %d %d %d\n",
-+	buf = kasprintf(GFP_KERNEL, "%s %s %s\n%d %d %d %d %d %d %d %d %d\n",
- 		"max_bau_concurrent plugged_delay plugsb4reset",
- 		"timeoutsb4reset ipi_reset_limit complete_threshold",
- 		"congested_response_us congested_reps congested_period",
-@@ -1012,7 +1012,12 @@ static ssize_t tunables_read(struct file *file, char __user *userbuf,
- 		timeoutsb4reset, ipi_reset_limit, complete_threshold,
- 		congested_response_us, congested_reps, congested_period);
- 
--	return simple_read_from_buffer(userbuf, count, ppos, buf, ret);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	ret = simple_read_from_buffer(userbuf, count, ppos, buf, strlen(buf));
-+	kfree(buf);
-+	return ret;
- }
- 
- /*
