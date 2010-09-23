@@ -1,126 +1,59 @@
 From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:51:01 +0000
-Subject: [PATCH 10/20] mips: change to new flag variable
-Message-Id: <1285224661-29797-1-git-send-email-mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:17 +0000
+Subject: [PATCH 13/20] s390: change to new flag variable
+Message-Id: <1285224677-29899-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Wu Zhangjin <wuzhangjin@gmail.com>, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, linux390@de.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Replace EXTRA_CFLAGS with ccflags-y.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- arch/mips/Makefile                     |    4 ++--
- arch/mips/bcm63xx/boards/Makefile      |    2 +-
- arch/mips/fw/arc/Makefile              |    2 +-
- arch/mips/jz4740/Makefile              |    2 +-
- arch/mips/oprofile/Makefile            |    2 +-
- arch/mips/pmc-sierra/yosemite/Makefile |    2 +-
- arch/mips/powertv/Makefile             |    2 +-
- arch/mips/powertv/asic/Makefile        |    2 +-
- arch/mips/powertv/pci/Makefile         |    2 +-
- 9 files changed, 10 insertions(+), 10 deletions(-)
+ arch/s390/boot/Makefile     |    2 +-
+ arch/s390/kvm/Makefile      |    2 +-
+ arch/s390/math-emu/Makefile |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-index f4a4b66..c14c392 100644
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -288,11 +288,11 @@ CLEAN_FILES += vmlinux.32 vmlinux.64
- archprepare:
- ifdef CONFIG_MIPS32_N32
- 	@echo '  Checking missing-syscalls for N32'
--	$(Q)$(MAKE) $(build)=. missing-syscalls EXTRA_CFLAGS="-mabi=n32"
-+	$(Q)$(MAKE) $(build)=. missing-syscalls ccflags-y="-mabi=n32"
- endif
- ifdef CONFIG_MIPS32_O32
- 	@echo '  Checking missing-syscalls for O32'
--	$(Q)$(MAKE) $(build)=. missing-syscalls EXTRA_CFLAGS="-mabi2"
-+	$(Q)$(MAKE) $(build)=. missing-syscalls ccflags-y="-mabi2"
- endif
+diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
+index 8800cf09..635d677 100644
+--- a/arch/s390/boot/Makefile
++++ b/arch/s390/boot/Makefile
+@@ -6,7 +6,7 @@ COMPILE_VERSION := __linux_compile_version_id__`hostname |  \
+ 			tr -c '[0-9A-Za-z]' '_'`__`date | \
+ 			tr -c '[0-9A-Za-z]' '_'`_t
  
- install:
-diff --git a/arch/mips/bcm63xx/boards/Makefile b/arch/mips/bcm63xx/boards/Makefile
-index e5cc86d..9f64fb4 100644
---- a/arch/mips/bcm63xx/boards/Makefile
-+++ b/arch/mips/bcm63xx/boards/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_BOARD_BCM963XX)		+= board_bcm963xx.o
+-EXTRA_CFLAGS  := -DCOMPILE_VERSION=$(COMPILE_VERSION) -gstabs -I.
++ccflags-y  := -DCOMPILE_VERSION=$(COMPILE_VERSION) -gstabs -I.
  
--EXTRA_CFLAGS += -Werror
-+ccflags-y := -Werror
-diff --git a/arch/mips/fw/arc/Makefile b/arch/mips/fw/arc/Makefile
-index e0aaad4..5314b37 100644
---- a/arch/mips/fw/arc/Makefile
-+++ b/arch/mips/fw/arc/Makefile
-@@ -9,4 +9,4 @@ lib-$(CONFIG_ARC_MEMORY)	+= memory.o
- lib-$(CONFIG_ARC_CONSOLE)	+= arc_con.o
- lib-$(CONFIG_ARC_PROMLIB)	+= promlib.o
+ targets := image
+ targets += bzImage
+diff --git a/arch/s390/kvm/Makefile b/arch/s390/kvm/Makefile
+index e5221ec..860d265 100644
+--- a/arch/s390/kvm/Makefile
++++ b/arch/s390/kvm/Makefile
+@@ -8,7 +8,7 @@
  
--EXTRA_CFLAGS			+= -Werror
-+ccflags-y			:= -Werror
-diff --git a/arch/mips/jz4740/Makefile b/arch/mips/jz4740/Makefile
-index a604eae..a9dff33 100644
---- a/arch/mips/jz4740/Makefile
-+++ b/arch/mips/jz4740/Makefile
-@@ -17,4 +17,4 @@ obj-$(CONFIG_JZ4740_QI_LB60)	+= board-qi_lb60.o
+ common-objs = $(addprefix ../../../virt/kvm/, kvm_main.o)
  
- obj-$(CONFIG_PM) += pm.o
+-EXTRA_CFLAGS += -Ivirt/kvm -Iarch/s390/kvm
++ccflags-y := -Ivirt/kvm -Iarch/s390/kvm
  
--EXTRA_CFLAGS += -Werror -Wall
-+ccflags-y := -Werror -Wall
-diff --git a/arch/mips/oprofile/Makefile b/arch/mips/oprofile/Makefile
-index 02cc65e..4b9d704 100644
---- a/arch/mips/oprofile/Makefile
-+++ b/arch/mips/oprofile/Makefile
-@@ -1,4 +1,4 @@
--EXTRA_CFLAGS := -Werror
-+ccflags-y := -Werror
+ kvm-objs := $(common-objs) kvm-s390.o sie64a.o intercept.o interrupt.o priv.o sigp.o diag.o
+ obj-$(CONFIG_KVM) += kvm.o
+diff --git a/arch/s390/math-emu/Makefile b/arch/s390/math-emu/Makefile
+index c848903..51d3995 100644
+--- a/arch/s390/math-emu/Makefile
++++ b/arch/s390/math-emu/Makefile
+@@ -4,4 +4,4 @@
  
- obj-$(CONFIG_OPROFILE) += oprofile.o
+ obj-$(CONFIG_MATHEMU) := math.o
  
-diff --git a/arch/mips/pmc-sierra/yosemite/Makefile b/arch/mips/pmc-sierra/yosemite/Makefile
-index b16f95c..02f5fb9 100644
---- a/arch/mips/pmc-sierra/yosemite/Makefile
-+++ b/arch/mips/pmc-sierra/yosemite/Makefile
-@@ -6,4 +6,4 @@ obj-y    += irq.o prom.o py-console.o setup.o
- 
- obj-$(CONFIG_SMP)		+= smp.o
- 
--EXTRA_CFLAGS += -Werror
-+ccflags-y := -Werror
-diff --git a/arch/mips/powertv/Makefile b/arch/mips/powertv/Makefile
-index baf6e90..348d2e8 100644
---- a/arch/mips/powertv/Makefile
-+++ b/arch/mips/powertv/Makefile
-@@ -28,4 +28,4 @@ obj-y += init.o ioremap.o memory.o powertv_setup.o reset.o time.o \
- 
- obj-$(CONFIG_USB) += powertv-usb.o
- 
--EXTRA_CFLAGS += -Wall
-+ccflags-y := -Wall
-diff --git a/arch/mips/powertv/asic/Makefile b/arch/mips/powertv/asic/Makefile
-index f0e95dc..d810a33 100644
---- a/arch/mips/powertv/asic/Makefile
-+++ b/arch/mips/powertv/asic/Makefile
-@@ -20,4 +20,4 @@ obj-y += asic-calliope.o asic-cronus.o asic-gaia.o asic-zeus.o \
- 	asic_devices.o asic_int.o irq_asic.o prealloc-calliope.o \
- 	prealloc-cronus.o prealloc-cronuslite.o prealloc-gaia.o prealloc-zeus.o
- 
--EXTRA_CFLAGS += -Wall -Werror
-+ccflags-y := -Wall -Werror
-diff --git a/arch/mips/powertv/pci/Makefile b/arch/mips/powertv/pci/Makefile
-index f5c6246..5783201 100644
---- a/arch/mips/powertv/pci/Makefile
-+++ b/arch/mips/powertv/pci/Makefile
-@@ -18,4 +18,4 @@
- 
- obj-$(CONFIG_PCI)	+= fixup-powertv.o
- 
--EXTRA_CFLAGS += -Wall -Werror
-+ccflags-y := -Wall -Werror
+-EXTRA_CFLAGS := -I$(src) -Iinclude/math-emu -w
++ccflags-y := -I$(src) -Iinclude/math-emu -w
 -- 
 1.7.2.1
 
