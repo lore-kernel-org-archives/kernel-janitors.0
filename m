@@ -1,28 +1,34 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Tue, 28 Sep 2010 19:01:26 +0000
-Subject: Re: [PATCH] staging: crystalhd: fix signed bug
-Message-Id: <20100928190126.GG8726@redhat.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:05 +0000
+Subject: [PATCH 11/20] parisc: change to new flag variable
+Message-Id: <1285224665-29831-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284317813-4895-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1284317813-4895-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Manu Abraham <abraham.manu@gmail.com>, Scott Davilla <davilla@4pi.com>, Lars Lindley <lindley@coyote.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Kyle McMartin <kyle@mcmartin.ca>
+Cc: Helge Deller <deller@gmx.de>, "James E.J. Bottomley" <jejb@parisc-linux.org>, Andrew Morton <akpm@linux-foundation.org>, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Sep 12, 2010 at 10:56:51PM +0400, Vasiliy Kulikov wrote:
-> chd_dec_major is unsigned, so check chd_dec_major < 0 doesn't make sense.
-> Since it is used as signed, declare it as int.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Replace EXTRA_CFLAGS with ccflags-y.
 
-Indeed, Bad Things here when we try to store the ret from register_chrdev
-in an unsigned int and test it for < 0...
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ arch/parisc/math-emu/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Acked-by: Jarod Wilson <jarod@redhat.com>
-
+diff --git a/arch/parisc/math-emu/Makefile b/arch/parisc/math-emu/Makefile
+index 1f3f225..0bd63b0 100644
+--- a/arch/parisc/math-emu/Makefile
++++ b/arch/parisc/math-emu/Makefile
+@@ -3,7 +3,7 @@
+ #
+ 
+ # See arch/parisc/math-emu/README
+-EXTRA_CFLAGS += -Wno-parentheses -Wno-implicit-function-declaration \
++ccflags-y := -Wno-parentheses -Wno-implicit-function-declaration \
+ 	-Wno-uninitialized -Wno-strict-prototypes -Wno-return-type \
+ 	-Wno-implicit-int
+ 
 -- 
-Jarod Wilson
-jarod@redhat.com
+1.7.2.1
 
