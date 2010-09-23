@@ -1,54 +1,63 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 05 Sep 2010 19:00:26 +0000
-Subject: [PATCH 8/8] drivers/net/wireless/iwlwifi/iwl-agn.c: Fix return value from an unsigned function
-Message-Id: <1283713226-8429-9-git-send-email-julia@diku.dk>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:31 +0000
+Subject: [PATCH 16/20] um: change to new flag variables
+Message-Id: <1285224691-30001-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283713226-8429-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1283713226-8429-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Dike <jdike@addtoit.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@infradead.org>, Jiri Kosina <jkosina@suse.cz>, user-mode-linux-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The function has an unsigned return type, but returns a negative constant
-to indicate an error condition.  Another error condition in the same
-function is indicated by returning 0, and indeed the only call to the
-function checks for 0 to detect errors, so the return of a negative value
-it converted to a return of 0.
+Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
 
-A sematic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@exists@
-identifier f;
-constant C;
-@@
-
- unsigned f(...)
- { <+...
-*  return -C;
- ...+> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/net/wireless/iwlwifi/iwl-agn.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/um/sys-ppc/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/iwlwifi/iwl-agn.c b/drivers/net/wireless/iwlwifi/iwl-agn.c
-index ad0e67f..86b55c2 100644
---- a/drivers/net/wireless/iwlwifi/iwl-agn.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-agn.c
-@@ -369,7 +369,7 @@ static unsigned int iwl_hw_get_beacon_cmd(struct iwl_priv *priv,
+diff --git a/arch/um/sys-ppc/Makefile b/arch/um/sys-ppc/Makefile
+index b8bc844..20d363b 100644
+--- a/arch/um/sys-ppc/Makefile
++++ b/arch/um/sys-ppc/Makefile
+@@ -6,7 +6,7 @@ OBJ = built-in.o
+ OBJS = ptrace.o sigcontext.o checksum.o miscthings.o misc.o \
+ 	ptrace_user.o sysrq.o
  
- 	if (!priv->beacon_ctx) {
- 		IWL_ERR(priv, "trying to build beacon w/o beacon context!\n");
--		return -EINVAL;
-+		return 0;
- 	}
+-EXTRA_AFLAGS := -DCONFIG_PPC32 -I. -I$(srctree)/arch/ppc/kernel
++asflags-y := -DCONFIG_PPC32 -I. -I$(srctree)/arch/ppc/kernel
  
- 	/* Initialize memory */
+ all: $(OBJ)
+ 
+@@ -15,10 +15,10 @@ $(OBJ): $(OBJS)
+ 	$(LD) $(LINKFLAGS) --start-group $^ --end-group -o $@
+ 
+ ptrace_user.o: ptrace_user.c
+-	$(CC) -D__KERNEL__ $(USER_CFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
++	$(CC) -D__KERNEL__ $(USER_CFLAGS) $(ccflags-y) -c -o $@ $<
+ 
+ sigcontext.o: sigcontext.c
+-	$(CC) $(USER_CFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
++	$(CC) $(USER_CFLAGS) $(ccflags-y) -c -o $@ $<
+ 
+ checksum.S:
+ 	rm -f $@
+@@ -53,13 +53,13 @@ ppc_defs.h: mk_defs.c ppc_defs.head \
+ checksum.o: checksum.S
+ 	rm -f asm
+ 	ln -s $(srctree)/include/asm-ppc asm
+-	$(CC) $(EXTRA_AFLAGS) $(KBUILD_AFLAGS) -D__ASSEMBLY__ -D__UM_PPC__ -c $< -o $*.o
++	$(CC) $(asflags-y) $(KBUILD_AFLAGS) -D__ASSEMBLY__ -D__UM_PPC__ -c $< -o $*.o
+ 	rm -f asm
+ 
+ misc.o: misc.S ppc_defs.h
+ 	rm -f asm
+ 	ln -s $(srctree)/include/asm-ppc asm
+-	$(CC) $(EXTRA_AFLAGS) $(KBUILD_AFLAGS) -D__ASSEMBLY__ -D__UM_PPC__ -c $< -o $*.o
++	$(CC) $(asflags-y) $(KBUILD_AFLAGS) -D__ASSEMBLY__ -D__UM_PPC__ -c $< -o $*.o
+ 	rm -f asm
+ 
+ clean-files := $(OBJS) ppc_defs.h checksum.S mk_defs.c
+-- 
+1.7.2.1
 
