@@ -1,39 +1,36 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:15 +0000
-Subject: [PATCH 02/21] Staging: cxlel: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352314-5939-2-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:50:38 +0000
+Subject: [PATCH 07/20] m68k: change to new flag variables
+Message-Id: <1285224638-29684-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Roman Zippel <zippel@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/cxt1e1/Makefile |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ arch/m68k/math-emu/Makefile |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/cxt1e1/Makefile b/drivers/staging/cxt1e1/Makefile
-index 10020d7..f946b91 100644
---- a/drivers/staging/cxt1e1/Makefile
-+++ b/drivers/staging/cxt1e1/Makefile
-@@ -1,8 +1,8 @@
- obj-$(CONFIG_CXT1E1)	+= cxt1e1.o
+diff --git a/arch/m68k/math-emu/Makefile b/arch/m68k/math-emu/Makefile
+index a0935bf..547c23c 100644
+--- a/arch/m68k/math-emu/Makefile
++++ b/arch/m68k/math-emu/Makefile
+@@ -2,8 +2,8 @@
+ # Makefile for the linux kernel.
+ #
  
--EXTRA_CFLAGS += -DSBE_PMCC4_ENABLE
--EXTRA_CFLAGS += -DSBE_ISR_TASKLET
--EXTRA_CFLAGS += -DSBE_INCLUDE_SYMBOLS
-+ccflags-y += -DSBE_PMCC4_ENABLE
-+ccflags-y += -DSBE_ISR_TASKLET
-+ccflags-y += -DSBE_INCLUDE_SYMBOLS
+-#EXTRA_AFLAGS += -DFPU_EMU_DEBUG
+-#EXTRA_CFLAGS += -DFPU_EMU_DEBUG
++#asflags-y := -DFPU_EMU_DEBUG
++#ccflags-y := -DFPU_EMU_DEBUG
  
- cxt1e1-objs += 	\
-   ossiRelease.o 	\
+ obj-y		:= fp_entry.o fp_scan.o fp_util.o fp_move.o fp_movem.o \
+ 			fp_cond.o fp_arith.o fp_log.o fp_trig.o
 -- 
-1.7.3
+1.7.2.1
 
