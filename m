@@ -1,144 +1,58 @@
-From: =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>
-Date: Thu, 23 Sep 2010 17:29:16 +0000
+From: Joe Perches <joe@perches.com>
+Date: Thu, 23 Sep 2010 17:46:33 +0000
 Subject: Re: [RFC PATCH] sit-send-email.pl: Add --to-cmd
-Message-Id: <AANLkTin_Y8w4ujNGTqGJPNDNfYz7hcjBVLcOG0emBjYn@mail.gmail.com>
+Message-Id: <1285263993.31572.25.camel@Joe-Laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTinsM5jdU194FR8L3hTvBXk0Tr_oV2E5752NOUpq@mail.gmail.com>
-	<AANLkTikkJNwF4LS9rx5=bHM2R0Pm751Y1u9V8iAt0w1A@mail.gmail.com>
-	<1285227413.7286.47.camel@Joe-Laptop>
-	<Pine.LNX.4.64.1009231054230.15528@ask.diku.dk>
-	<20100923090931.GA29789@albatros>
-	<20100923120024.GA26715@albatros>
-	<1285253867.31572.13.camel@Joe-Laptop>
-	<Pine.LNX.4.64.1009231757090.11585@ask.diku.dk>
-	<1285262237.31572.18.camel@Joe-Laptop>
-In-Reply-To: <1285262237.31572.18.camel@Joe-Laptop>
+	 <AANLkTikkJNwF4LS9rx5=bHM2R0Pm751Y1u9V8iAt0w1A@mail.gmail.com>
+	 <1285227413.7286.47.camel@Joe-Laptop>
+	 <Pine.LNX.4.64.1009231054230.15528@ask.diku.dk>
+	 <20100923090931.GA29789@albatros> <20100923120024.GA26715@albatros>
+	 <1285253867.31572.13.camel@Joe-Laptop>
+	 <Pine.LNX.4.64.1009231757090.11585@ask.diku.dk>
+	 <1285262237.31572.18.camel@Joe-Laptop>
+	 <AANLkTin_Y8w4ujNGTqGJPNDNfYz7hcjBVLcOG0emBjYn@mail.gmail.com>
+In-Reply-To: <AANLkTin_Y8w4ujNGTqGJPNDNfYz7hcjBVLcOG0emBjYn@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Joe Perches <joe@perches.com>
+To: =?ISO-8859-1?Q?=C6var_Arnfj=F6r=F0?= Bjarmason <avarab@gmail.com>
 Cc: Julia Lawall <julia@diku.dk>, git <git@vger.kernel.org>, Vasiliy Kulikov <segooon@gmail.com>, matt mooney <mfmooney@gmail.com>, kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>
 
-On Thu, Sep 23, 2010 at 17:17, Joe Perches <joe@perches.com> wrote:
-> On Thu, 2010-09-23 at 17:58 +0200, Julia Lawall wrote:
->> On Thu, 23 Sep 2010, Joe Perches wrote:
->> > On Thu, 2010-09-23 at 16:00 +0400, Vasiliy Kulikov wrote:
->> > > On Thu, Sep 23, 2010 at 13:09 +0400, Vasiliy Kulikov wrote:
->> > > > On Thu, Sep 23, 2010 at 10:55 +0200, Julia Lawall wrote:
->> > > > > I made some changes to git-send-email to get it to send mail to different
->> > > > > people, ie a different set of addresses for each patch.  Is that now
->> > > > > possible with the standard version?  If not I can submit a patch with my
->> > > > > changes at some point.
->> > > > I use git-send-email --cc-cmd=script_to_form_cc_list.
->> > I believe that Julia means some mechanism to vary the
->> > "to" addresses for each patch, ie: some "--to-cmd=cmd".
->> Yes, sort of.  I took the strategy of precomputing the To addresses, so I
->> just have a collection of files that have different To and Cc addresses.
->> But a --to-cmd option seems like a good idea too.
->
-> Perhaps something like this?
->
-> Lightly tested only.
->
-> I know there's a test harness in git, but
-> I don't know how to wire up the new options.
+On Thu, 2010-09-23 at 17:29 +0000, Ævar Arnfjörð Bjarmason wrote:
+> On Thu, Sep 23, 2010 at 17:17, Joe Perches <joe@perches.com> wrote:
+> > I know there's a test harness in git, but
+> > I don't know how to wire up the new options.
+> You'd add the tests to t9001-send-email.sh and --tocmd out to some
+> program you create. Is there anything in particular you need help
+> with?
 
-You'd add the tests to t9001-send-email.sh and --tocmd out to some
-program you create. Is there anything in particular you need help
-with?
+Just the doing.  I was (am) being lazy.
 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  git-send-email.perl |   25 +++++++++++++++++++++++--
->  1 files changed, 23 insertions(+), 2 deletions(-)
->
-> diff --git a/git-send-email.perl b/git-send-email.perl
-> index 6dab3bf..8e8e4c4 100755
-> --- a/git-send-email.perl
-> +++ b/git-send-email.perl
-> @@ -70,6 +70,7 @@ git send-email [options] <file | directory | rev-list options >
->
->   Automating:
->     --identity              <str>  * Use the sendemail.<id> options.
-> +    --to-cmd                <str>  * Email To: via `<str> \$patch_path`
->     --cc-cmd                <str>  * Email Cc: via `<str> \$patch_path`
->     --suppress-cc           <str>  * author, self, sob, cc, cccmd, body, bodycc, all.
->     --[no-]signed-off-by-cc        * Send to Signed-off-by: addresses. Default on.
-> @@ -187,7 +188,8 @@ sub do_edit {
->  }
->
->  # Variables with corresponding config settings
-> -my ($thread, $chain_reply_to, $suppress_from, $signed_off_by_cc, $cc_cmd);
-> +my ($thread, $chain_reply_to, $suppress_from, $signed_off_by_cc);
-> +my ($to_cmd, $cc_cmd);
->  my ($smtp_server, $smtp_server_port, $smtp_authuser, $smtp_encryption);
->  my ($identity, $aliasfiletype, @alias_files, @smtp_host_parts, $smtp_domain);
->  my ($validate, $confirm);
-> @@ -214,6 +216,7 @@ my %config_settings = (
->     "smtppass" => \$smtp_authpass,
->        "smtpdomain" => \$smtp_domain,
->     "to" => \@to,
-> +    "tocmd" => \$to_cmd,
->     "cc" => \@initial_cc,
->     "cccmd" => \$cc_cmd,
->     "aliasfiletype" => \$aliasfiletype,
-> @@ -272,6 +275,7 @@ my $rc = GetOptions("sender|from=s" => \$sender,
->                     "in-reply-to=s" => \$initial_reply_to,
->                    "subject=s" => \$initial_subject,
->                    "to=s" => \@to,
-> +                   "to-cmd=s" => \$to_cmd,
->                    "no-to" => \$no_to,
->                    "cc=s" => \@initial_cc,
->                    "no-cc" => \$no_cc,
-> @@ -711,7 +715,7 @@ if (!defined $sender) {
->        $prompting++;
->  }
->
-> -if (!@to) {
-> +if (!@to && $to_cmd eq "") {
+> > -if (!@to) {
+> > +if (!@to && $to_cmd eq "") {
+> 
+> Why compare $to_cmd to "" instead of checking definedness?
 
-Why compare $to_cmd to "" instead of checking definedness?
+No real reason.  Using define is the style used in the rest of
+the file and it should be changed.
 
->        my $to = ask("Who should the emails be sent to? ");
->        push @to, parse_address_line($to) if defined $to; # sanitized/validated later
->        $prompting++;
-> @@ -1238,6 +1242,23 @@ foreach my $t (@files) {
->        }
->        close F;
->
-> +       if (defined $to_cmd) {
-> +               open(F, "$to_cmd \Q$t\E |")
+> > @@ -1238,6 +1242,23 @@ foreach my $t (@files) {
+> >        }
+> >        close F;
+> >
+> > +       if (defined $to_cmd) {
+> > +               open(F, "$to_cmd \Q$t\E |")
+> 
+> quotemeta() is for escaping regexes, not shell syntax. You probably
+> want IPC::Open2 or PC::Open3's functions which'll escape arguments for
+> you.
 
-quotemeta() is for escaping regexes, not shell syntax. You probably
-want IPC::Open2 or PC::Open3's functions which'll escape arguments for
-you.
+I just copied the style from the equivalent cc_cmd section below,
+so if it's necessary, it should be changed there too.
 
-Also "open my $f" is better, but I see the existing code uses glob
-filehandles (urghl).
+> I.e. do you need to strip whitespace from the beginning of the string?
 
-> +                       or die "(to-cmd) Could not execute '$to_cmd'";
-> +               while(<F>) {
-> +                       my $t = $_;
-> +                       $t =~ s/^\s*//g;
-> +                       $t =~ s/\n$//g;
+I think so.
 
-Shouldn't this just be:
 
-    while (my $address = <$f>) {
-        chomp $address;
-        ...
-
-I.e. do you need to strip whitespace from the beginning of the string?
-
-> +                       next if ($t eq $sender and $suppress_from);
-> +                       push @to, parse_address_line($t)
-> +                           if defined $t; # sanitized/validated later
-> +                       printf("(to-cmd) Adding To: %s from: '%s'\n",
-> +                               $t, $to_cmd) unless $quiet;
-> +               }
-> +               close F
-> +                       or die "(to-cmd) failed to close pipe to '$to_cmd'";
-> +       }
-
-close F could be skipped if we used lexical handes, but see urghl
-above.
