@@ -1,125 +1,199 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 26 Sep 2010 12:50:22 +0000
-Subject: Re: [PATCH 1/1] bridge:rerouting after NAT
-Message-Id: <20100926125022.GB6134@bicker>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:09 +0000
+Subject: [PATCH 12/20] powerpc: change to new flag variables
+Message-Id: <1285224669-29865-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTi=cEH_48+5r32SuwGGHnM4+PTxxFmZ-aM9skkzL@mail.gmail.com>
-In-Reply-To: <AANLkTi=cEH_48+5r32SuwGGHnM4+PTxxFmZ-aM9skkzL@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Alexander Graf <agraf@suse.de>, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Avi Kivity <avi@redhat.com>, linuxppc-dev@lists.ozlabs.org
 
-Hi Mary,
+Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
 
-Thank you for your patch.  There are some few details which need to be
-changed and the patch resent.
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ arch/powerpc/kernel/vdso32/Makefile     |    6 +++---
+ arch/powerpc/kernel/vdso64/Makefile     |    6 +++---
+ arch/powerpc/kvm/Makefile               |    2 +-
+ arch/powerpc/lib/Makefile               |    4 +---
+ arch/powerpc/math-emu/Makefile          |    2 +-
+ arch/powerpc/mm/Makefile                |    4 +---
+ arch/powerpc/oprofile/Makefile          |    4 +---
+ arch/powerpc/platforms/iseries/Makefile |    2 +-
+ arch/powerpc/platforms/pseries/Makefile |   11 +++--------
+ arch/powerpc/sysdev/Makefile            |    4 +---
+ arch/powerpc/xmon/Makefile              |    4 +---
+ 11 files changed, 17 insertions(+), 32 deletions(-)
 
-1)  2.6.8 is way too old.  We don't have a ebt_nat_dst() function any
-more.  Here is what the file looks like these days
-http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=blob_plain;f=net/bridge/netfilter/ebtable_nat.c
-
-2)  This patch needs to get sent to:
-	ebtables-devel@lists.sourceforge.net
-	netfilter-devel@vger.kernel.org
-	bridge@lists.linux-foundation.org
-	netdev@vger.kernel.org
-
-3) Your email client is line wrapping the patch so it doesn't apply.
-   Please read Documentation/email-clients.txt.
-   Send the  patch to yourself and the check that it applies by saving
-   it as a raw email with the headers and everything and then
-   cat raw_email.txt | patch -p1
+diff --git a/arch/powerpc/kernel/vdso32/Makefile b/arch/powerpc/kernel/vdso32/Makefile
+index 51ead52..9a7946c 100644
+--- a/arch/powerpc/kernel/vdso32/Makefile
++++ b/arch/powerpc/kernel/vdso32/Makefile
+@@ -14,10 +14,10 @@ obj-vdso32 := $(addprefix $(obj)/, $(obj-vdso32))
  
-4) It needs a Signed-off-by line:
-Signed-off-by: Your Name <email@address.com>
-
-On Sun, Sep 26, 2010 at 02:28:01PM +0800, marywangran wrote:
-> Hi,everyone
-> 
-> As we know,the NAT netfilter-hook for IP hooking at OUTPUT is called
-> after routing,so we must rerouting if the destinaton or source address
-> is changed by NAT after the hook.It's all right as the kernel shown
-> for us.But I don't see any logic for rerouting after the
-> bridged-NAT.If bridge-NAT changes a destination or source MAC
-> address,we should do bridge-rerouting as the IP-layer do.
-> I have only the kernel of version 2.6.8,so I patch on it.Thought the
-> bridge-logic of kernel source of version 2.6.3X has not been
-> changed,it's no matter to patch on kernel of version 2.6.8.
-> 
-> Best wishes
-> 
-> --- kernel-source-2.6.8/net/bridge/netfilter/ebtable_nat.c	2004-08-14
-> 01:38:09.000000000 -0400
-> +++ kernel-source-2.6.8/net/bridge/netfilter/ebtable_nat.c	2010-09-25
-> 23:18:13.040825944 -0400
-> @@ -10,6 +10,7 @@
-> 
->  #include <linux/netfilter_bridge/ebtables.h>
->  #include <linux/module.h>
-> +#include "../br_private.h"
-> 
->  #define NAT_VALID_HOOKS ((1 << NF_BR_PRE_ROUTING) | (1 << NF_BR_LOCAL_OUT) | \
->     (1 << NF_BR_POST_ROUTING))
-> @@ -61,6 +62,30 @@
->  };
-> 
->  static unsigned int
-> +ebt_nat_dst_local(unsigned int hook, struct sk_buff **pskb, const
-> struct net_device *in
-> +   , const struct net_device *out, int (*okfn)(struct sk_buff *))
-      ^
-this comma belongs on the previous line
-
-> +{
-> +	struct net_bridge *br = netdev_priv(out);
-> +	struct net_bridge_fdb_entry *dst;
-> +	char orig_mac[ETH_ALEN] = {0};
-> +	unsigned int ret = 0;
-
-put a blank line here (after the declarations and before the
-statements).
-
-> +	memcpy(orig_mac, ((**pskb).mac.ethernet)->h_dest, ETH_ALEN *
-> sizeof(unsigned char));
-  ^^^^^^^^^^^^^^^^^^^^^
-
-Sizeof char is always 1 so this is not needed.  Just "ETH_ALEN" is enough.       
-
-Thanks again for your patch.  Kernel-janitors mostly works on clean up
-code and small bug fixes so we wouldn't know about these features of
-netfilter but the other mailing lists I mentioned will know.
-
-regards,
-dan carpenter
-
-> +	ret = ebt_do_table(hook, pskb, in, out, &frame_nat);
-> +	if (strncmp(((**pskb).mac.ethernet)->h_dest, orig_mac, ETH_ALEN)) {
-> +		rcu_read_lock();
-> +		if ((((**pskb).mac.ethernet)->h_dest)[0] & 1)
-> +			br_flood_deliver(br, *pskb, 0);
-> +		else if ((dst = __br_fdb_get(br, ((**pskb).mac.ethernet)->h_dest)) != NULL)
-> +			br_deliver(dst->dst, *pskb);
-> +		else
-> +			br_flood_deliver(br, *pskb, 0);
-> +		rcu_read_unlock();
-> +		return NF_STOLEN;
-> +				
-> +	}
-> +	return ret;
-> +}
-> +static unsigned int
->  ebt_nat_dst(unsigned int hook, struct sk_buff **pskb, const struct
-> net_device *in
->     , const struct net_device *out, int (*okfn)(struct sk_buff *))
->  {
-> @@ -76,7 +101,7 @@
-> 
->  static struct nf_hook_ops ebt_ops_nat[] = {
->  	{
-> -		.hook		= ebt_nat_dst,
-> +		.hook		= ebt_nat_dst_local,
->  		.owner		= THIS_MODULE,
->  		.pf		= PF_BRIDGE,
->  		.hooknum	= NF_BR_LOCAL_OUT,
+ GCOV_PROFILE := n
+ 
+-EXTRA_CFLAGS := -shared -fno-common -fno-builtin
+-EXTRA_CFLAGS += -nostdlib -Wl,-soname=linux-vdso32.so.1 \
++ccflags-y := -shared -fno-common -fno-builtin
++ccflags-y += -nostdlib -Wl,-soname=linux-vdso32.so.1 \
+ 		$(call cc-ldoption, -Wl$(comma)--hash-style=sysv)
+-EXTRA_AFLAGS := -D__VDSO32__ -s
++asflags-y := -D__VDSO32__ -s
+ 
+ obj-y += vdso32_wrapper.o
+ extra-y += vdso32.lds
+diff --git a/arch/powerpc/kernel/vdso64/Makefile b/arch/powerpc/kernel/vdso64/Makefile
+index 79da65d..8c500d8 100644
+--- a/arch/powerpc/kernel/vdso64/Makefile
++++ b/arch/powerpc/kernel/vdso64/Makefile
+@@ -9,10 +9,10 @@ obj-vdso64 := $(addprefix $(obj)/, $(obj-vdso64))
+ 
+ GCOV_PROFILE := n
+ 
+-EXTRA_CFLAGS := -shared -fno-common -fno-builtin
+-EXTRA_CFLAGS += -nostdlib -Wl,-soname=linux-vdso64.so.1 \
++ccflags-y := -shared -fno-common -fno-builtin
++ccflags-y += -nostdlib -Wl,-soname=linux-vdso64.so.1 \
+ 		$(call cc-ldoption, -Wl$(comma)--hash-style=sysv)
+-EXTRA_AFLAGS := -D__VDSO64__ -s
++asflags-y := -D__VDSO64__ -s
+ 
+ obj-y += vdso64_wrapper.o
+ extra-y += vdso64.lds
+diff --git a/arch/powerpc/kvm/Makefile b/arch/powerpc/kvm/Makefile
+index d45c818..4d68638 100644
+--- a/arch/powerpc/kvm/Makefile
++++ b/arch/powerpc/kvm/Makefile
+@@ -4,7 +4,7 @@
+ 
+ subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
+ 
+-EXTRA_CFLAGS += -Ivirt/kvm -Iarch/powerpc/kvm
++ccflags-y := -Ivirt/kvm -Iarch/powerpc/kvm
+ 
+ common-objs-y = $(addprefix ../../../virt/kvm/, kvm_main.o coalesced_mmio.o)
+ 
+diff --git a/arch/powerpc/lib/Makefile b/arch/powerpc/lib/Makefile
+index 5bb89c8..e4b0c07 100644
+--- a/arch/powerpc/lib/Makefile
++++ b/arch/powerpc/lib/Makefile
+@@ -4,9 +4,7 @@
+ 
+ subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
+ 
+-ifeq ($(CONFIG_PPC64),y)
+-EXTRA_CFLAGS		+= -mno-minimal-toc
+-endif
++ccflags-$(CONFIG_PPC64)	:= -mno-minimal-toc
+ 
+ CFLAGS_REMOVE_code-patching.o = -pg
+ CFLAGS_REMOVE_feature-fixups.o = -pg
+diff --git a/arch/powerpc/math-emu/Makefile b/arch/powerpc/math-emu/Makefile
+index 0c16ab9..7d1dba0 100644
+--- a/arch/powerpc/math-emu/Makefile
++++ b/arch/powerpc/math-emu/Makefile
+@@ -15,4 +15,4 @@ obj-$(CONFIG_SPE)		+= math_efp.o
+ CFLAGS_fabs.o = -fno-builtin-fabs
+ CFLAGS_math.o = -fno-builtin-fabs
+ 
+-EXTRA_CFLAGS = -I. -Iinclude/math-emu -w
++ccflags-y = -I. -Iinclude/math-emu -w
+diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
+index ce68708..53102f3 100644
+--- a/arch/powerpc/mm/Makefile
++++ b/arch/powerpc/mm/Makefile
+@@ -4,9 +4,7 @@
+ 
+ subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
+ 
+-ifeq ($(CONFIG_PPC64),y)
+-EXTRA_CFLAGS	+= -mno-minimal-toc
+-endif
++ccflags-$(CONFIG_PPC64)	:= -mno-minimal-toc
+ 
+ obj-y				:= fault.o mem.o pgtable.o gup.o \
+ 				   init_$(CONFIG_WORD_SIZE).o \
+diff --git a/arch/powerpc/oprofile/Makefile b/arch/powerpc/oprofile/Makefile
+index e219ca4..73456c4 100644
+--- a/arch/powerpc/oprofile/Makefile
++++ b/arch/powerpc/oprofile/Makefile
+@@ -1,8 +1,6 @@
+ subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
+ 
+-ifeq ($(CONFIG_PPC64),y)
+-EXTRA_CFLAGS	+= -mno-minimal-toc
+-endif
++ccflags-$(CONFIG_PPC64)	:= -mno-minimal-toc
+ 
+ obj-$(CONFIG_OPROFILE) += oprofile.o
+ 
+diff --git a/arch/powerpc/platforms/iseries/Makefile b/arch/powerpc/platforms/iseries/Makefile
+index ce01492..a7602b1 100644
+--- a/arch/powerpc/platforms/iseries/Makefile
++++ b/arch/powerpc/platforms/iseries/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS	+= -mno-minimal-toc
++ccflags-y	:= -mno-minimal-toc
+ 
+ obj-y += exception.o
+ obj-y += hvlog.o hvlpconfig.o lpardata.o setup.o dt.o mf.o lpevents.o \
+diff --git a/arch/powerpc/platforms/pseries/Makefile b/arch/powerpc/platforms/pseries/Makefile
+index 046ace9..7ee1599 100644
+--- a/arch/powerpc/platforms/pseries/Makefile
++++ b/arch/powerpc/platforms/pseries/Makefile
+@@ -1,10 +1,5 @@
+-ifeq ($(CONFIG_PPC64),y)
+-EXTRA_CFLAGS		+= -mno-minimal-toc
+-endif
+-
+-ifeq ($(CONFIG_PPC_PSERIES_DEBUG),y)
+-EXTRA_CFLAGS		+= -DDEBUG
+-endif
++ccflags-$(CONFIG_PPC64)			:= -mno-minimal-toc
++ccflags-$(CONFIG_PPC_PSERIES_DEBUG)	+= -DDEBUG
+ 
+ obj-y			:= lpar.o hvCall.o nvram.o reconfig.o \
+ 			   setup.o iommu.o event_sources.o ras.o \
+@@ -23,7 +18,7 @@ obj-$(CONFIG_MEMORY_HOTPLUG)	+= hotplug-memory.o
+ obj-$(CONFIG_HVC_CONSOLE)	+= hvconsole.o
+ obj-$(CONFIG_HVCS)		+= hvcserver.o
+ obj-$(CONFIG_HCALL_STATS)	+= hvCall_inst.o
+-obj-$(CONFIG_PHYP_DUMP)	+= phyp_dump.o
++obj-$(CONFIG_PHYP_DUMP)		+= phyp_dump.o
+ obj-$(CONFIG_CMM)		+= cmm.o
+ obj-$(CONFIG_DTL)		+= dtl.o
+ 
+diff --git a/arch/powerpc/sysdev/Makefile b/arch/powerpc/sysdev/Makefile
+index 5642924..c20ad6d 100644
+--- a/arch/powerpc/sysdev/Makefile
++++ b/arch/powerpc/sysdev/Makefile
+@@ -1,8 +1,6 @@
+ subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
+ 
+-ifeq ($(CONFIG_PPC64),y)
+-EXTRA_CFLAGS			+= -mno-minimal-toc
+-endif
++ccflags-$(CONFIG_PPC64)		:= -mno-minimal-toc
+ 
+ mpic-msi-obj-$(CONFIG_PCI_MSI)	+= mpic_msi.o mpic_u3msi.o mpic_pasemi_msi.o
+ obj-$(CONFIG_MPIC)		+= mpic.o $(mpic-msi-obj-y)
+diff --git a/arch/powerpc/xmon/Makefile b/arch/powerpc/xmon/Makefile
+index faa81b6..c168c54 100644
+--- a/arch/powerpc/xmon/Makefile
++++ b/arch/powerpc/xmon/Makefile
+@@ -4,9 +4,7 @@ subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
+ 
+ GCOV_PROFILE := n
+ 
+-ifdef CONFIG_PPC64
+-EXTRA_CFLAGS += -mno-minimal-toc
+-endif
++ccflags-$(CONFIG_PPC64) := -mno-minimal-toc
+ 
+ obj-y			+= xmon.o start.o nonstdio.o
+ 
+-- 
+1.7.2.1
 
