@@ -1,70 +1,60 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:27:56 +0000
-Subject: [PATCH v2 08/22] Staging: otus: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-8-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:38 +0000
+Subject: [PATCH 17/20] x86: change to new flag variables
+Message-Id: <1285224698-30035-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Avi Kivity <avi@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed to use proper ccflags-y option
+Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/otus/Makefile |   34 +++++++++++++++++-----------------
- 1 files changed, 17 insertions(+), 17 deletions(-)
+ arch/x86/kvm/Makefile      |    2 +-
+ arch/x86/math-emu/Makefile |    4 ++--
+ arch/x86/pci/Makefile      |    4 +---
+ 3 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/otus/Makefile b/drivers/staging/otus/Makefile
-index debcc5c..c4d979d 100644
---- a/drivers/staging/otus/Makefile
-+++ b/drivers/staging/otus/Makefile
-@@ -1,25 +1,25 @@
- obj-$(CONFIG_OTUS)	+= arusb_lnx.o
+diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
+index 31a7035..0feb536 100644
+--- a/arch/x86/kvm/Makefile
++++ b/arch/x86/kvm/Makefile
+@@ -1,5 +1,5 @@
  
--EXTRA_CFLAGS += -DAMAC
--EXTRA_CFLAGS += -DGCCK
--EXTRA_CFLAGS += -DOFDM
--EXTRA_CFLAGS += -DTXQ_IN_ISR
--EXTRA_CFLAGS += -DWLAN_HOSTIF=0 #0:USB, 1:PCI
-+ccflags-y := -DAMAC
-+ccflags-y := -DGCCK
-+ccflags-y := -DOFDM
-+ccflags-y := -DTXQ_IN_ISR
-+ccflags-y := -DWLAN_HOSTIF=0 #0:USB, 1:PCI
+-EXTRA_CFLAGS += -Ivirt/kvm -Iarch/x86/kvm
++ccflags-y := -Ivirt/kvm -Iarch/x86/kvm
  
- #Test Mode
--EXTRA_CFLAGS += -DZM_USB_STREAM_MODE=1
--EXTRA_CFLAGS += -DZM_USB_TX_STREAM_MODE=0
--EXTRA_CFLAGS += -DZM_PCI_DMA_TEST=0
--EXTRA_CFLAGS += -DZM_LARGEPAYLOAD_TEST=0
--EXTRA_CFLAGS += -DZM_FW_LOOP_BACK=0
--EXTRA_CFLAGS += -DZM_LINUX_TPC=1
--#EXTRA_CFLAGS += -DZM_DONT_COPY_RX_BUFFER
-+ccflags-y := -DZM_USB_STREAM_MODE=1
-+ccflags-y := -DZM_USB_TX_STREAM_MODE=0
-+ccflags-y := -DZM_PCI_DMA_TEST=0
-+ccflags-y := -DZM_LARGEPAYLOAD_TEST=0
-+ccflags-y := -DZM_FW_LOOP_BACK=0
-+ccflags-y := -DZM_LINUX_TPC=1
-+#ccflags-y := -DZM_DONT_COPY_RX_BUFFER
+ CFLAGS_x86.o := -I.
+ CFLAGS_svm.o := -I.
+diff --git a/arch/x86/math-emu/Makefile b/arch/x86/math-emu/Makefile
+index 9b0c63b..a88eac2 100644
+--- a/arch/x86/math-emu/Makefile
++++ b/arch/x86/math-emu/Makefile
+@@ -5,8 +5,8 @@
+ #DEBUG	= -DDEBUGGING
+ DEBUG	 PARANOID = -DPARANOID
+-EXTRA_CFLAGS	:= $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
+-EXTRA_AFLAGS	:= $(PARANOID)
++ccflags-y := $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
++asflags-y := $(PARANOID)
  
--EXTRA_CFLAGS += -DZM_HOSTAPD_SUPPORT
--#EXTRA_CFLAGS += -DfTX_GAIN_OFDM=0
--#EXTRA_CFLAGS += -DZM_CONFIG_BIG_ENDIAN -DBIG_ENDIAN
--EXTRA_CFLAGS += -DZM_HALPLUS_LOCK
--EXTRA_CFLAGS += -DZM_OTUS_LINUX_PHASE_2
-+ccflags-y := -DZM_HOSTAPD_SUPPORT
-+ccflags-y := -DfTX_GAIN_OFDM=0
-+ccflags-y := -DZM_CONFIG_BIG_ENDIAN -DBIG_ENDIAN
-+ccflags-y := -DZM_HALPLUS_LOCK
-+ccflags-y := -DZM_OTUS_LINUX_PHASE_2
+ # From 'C' language sources:
+ C_OBJS =fpu_entry.o errors.o \
+diff --git a/arch/x86/pci/Makefile b/arch/x86/pci/Makefile
+index a0207a7..8e60497 100644
+--- a/arch/x86/pci/Makefile
++++ b/arch/x86/pci/Makefile
+@@ -20,6 +20,4 @@ obj-y				+= amd_bus.o bus_numa.o
  
- arusb_lnx-objs := \
- 	usbdrv.o \
+ obj-$(CONFIG_PCI_CNB20LE_QUIRK)	+= broadcom_bus.o
+ 
+-ifeq ($(CONFIG_PCI_DEBUG),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
 -- 
-1.7.3
+1.7.2.1
 
