@@ -1,70 +1,28 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 23 Sep 2010 08:55:47 +0000
+From: Joe Perches <joe@perches.com>
+Date: Thu, 23 Sep 2010 09:05:38 +0000
 Subject: Re: threaded patch series
-Message-Id: <Pine.LNX.4.64.1009231054230.15528@ask.diku.dk>
+Message-Id: <1285232738.31572.6.camel@Joe-Laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTikkJNwF4LS9rx5=bHM2R0Pm751Y1u9V8iAt0w1A@mail.gmail.com>
-In-Reply-To: <AANLkTikkJNwF4LS9rx5=bHM2R0Pm751Y1u9V8iAt0w1A@mail.gmail.com>
+References: <AANLkTinsM5jdU194FR8L3hTvBXk0Tr_oV2E5752NOUpq@mail.gmail.com>
+	 <AANLkTikkJNwF4LS9rx5=bHM2R0Pm751Y1u9V8iAt0w1A@mail.gmail.com>
+	 <1285227413.7286.47.camel@Joe-Laptop>
+	 <Pine.LNX.4.64.1009231054230.15528@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1009231054230.15528@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, git <git@vger.kernel.org>
+Cc: matt mooney <mfmooney@gmail.com>, kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>
 
-I made some changes to git-send-email to get it to send mail to different 
-people, ie a different set of addresses for each patch.  Is that now 
-possible with the standard version?  If not I can submit a patch with my 
-changes at some point.
+On Thu, 2010-09-23 at 10:55 +0200, Julia Lawall wrote:
+> I made some changes to git-send-email to get it to send mail to different 
+> people, ie a different set of addresses for each patch.  Is that now 
+> possible with the standard version?  If not I can submit a patch with my 
+> changes at some point.
 
-julia
+I believe it's not currently possible to have
+different "to:" addresses in a git send-email
+patch series and that could be a useful patch
+to submit.
 
 
-On Thu, 23 Sep 2010, Joe Perches wrote:
-
-> On Thu, 2010-09-23 at 00:11 -0700, matt mooney wrote:
-> > What is needed to get a patch series to be threaded?
-> > In the recent patch series I sent, I used "git
-> > send-email" in a script that listed the commands with cc's and such.
-> > What should I have done?
-> 
-> It depends on what version of git you're using.
-> I think 1.7 changed the defaults.
-> 
-> I use:
-> $ git format-patch --thread=shallow --cover-letter ...
-> then
-> $ git send-email --nothread --no-chain-reply-to --suppress-cc=self ...
-> 
-> I also sometimes use an option to send-email that generates
-> the cc's using a shell script with scripts/get_maintainer.pl 
-> 
-> $ git send-email --nothread --no-chain-reply-to --suppress-cc=self \
->       --cc-cmd=<file> ...
-> 
-> Where <file> could be:
-> 
-> $ cat scripts/send-email-listed-MAINTAINERS-only
-> #!/bin/bash
-> if [[ $(basename $1) =~ ^0000- ]] ; then
->     ./scripts/get_maintainer.pl --nogit $(dirname $1)/*
-> else
->     ./scripts/get_maintainer.pl --nogit $1
-> fi
-> 
-> If the cc list is very long, vger might not accept
-> the cover letter 0000-<foo> email, so adding --nom
-> like this could be better:
-> 
-> $ cat scripts/send-email-listed-MAINTAINERS-only
-> #!/bin/bash
-> if [[ $(basename $1) =~ ^0000- ]] ; then
->     ./scripts/get_maintainer.pl --nogit --nom $(dirname $1)/*
-> else
->     ./scripts/get_maintainer.pl --nogit $1
-> fi
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
