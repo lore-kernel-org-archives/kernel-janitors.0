@@ -1,33 +1,34 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 10 Sep 2010 19:33:44 +0000
-Subject: [patch] logfs: signedness issue in mtd_find_last_sb()
-Message-Id: <20100910193344.GG5959@bicker>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:50:23 +0000
+Subject: [PATCH 05/20] h8300: change to new flag variable
+Message-Id: <1285224623-29602-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: David Howells <dhowells@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"*ofs" is unsigned here so it's never less than zero.
+Replace EXTRA_AFLAGS with asflags-y.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
-This was found by a static checker and I have only compile tested it.
-Sorry about that.
+ arch/h8300/boot/compressed/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/fs/logfs/dev_mtd.c b/fs/logfs/dev_mtd.c
-index a85d47d..99b3d4c 100644
---- a/fs/logfs/dev_mtd.c
-+++ b/fs/logfs/dev_mtd.c
-@@ -175,9 +175,9 @@ static struct page *mtd_find_last_sb(struct super_block *sb, u64 *ofs)
+diff --git a/arch/h8300/boot/compressed/Makefile b/arch/h8300/boot/compressed/Makefile
+index d6189e0..6745cb1 100644
+--- a/arch/h8300/boot/compressed/Makefile
++++ b/arch/h8300/boot/compressed/Makefile
+@@ -5,7 +5,7 @@
+ #
  
- 	*ofs = mtd->size - mtd->erasesize;
- 	while (mtd->block_isbad(mtd, *ofs)) {
--		*ofs -= mtd->erasesize;
--		if (*ofs <= 0)
-+		if (*ofs <= mtd->erasesize)
- 			return NULL;
-+		*ofs -= mtd->erasesize;
- 	}
- 	*ofs = *ofs + mtd->erasesize - 0x1000;
- 	BUG_ON(*ofs & ~PAGE_MASK);
+ targets		:= vmlinux vmlinux.bin vmlinux.bin.gz head.o misc.o piggy.o
+-EXTRA_AFLAGS	:= -traditional
++asflags-y	:= -traditional
+ 
+ OBJECTS = $(obj)/head.o $(obj)/misc.o
+ 
+-- 
+1.7.2.1
+
