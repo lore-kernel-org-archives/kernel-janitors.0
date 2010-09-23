@@ -1,41 +1,34 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:27:54 +0000
-Subject: [PATCH v2 06/22] Staging: easycap: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-6-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:26 +0000
+Subject: [PATCH 15/20] sparc: change to new flag variable
+Message-Id: <1285224686-29967-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Andrew Morton <akpm@linux-foundation.org>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed to use proper ccflags-y option
+Replace EXTRA_LDFLAGS with ldflags-y.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/easycap/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ arch/sparc/boot/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/easycap/Makefile b/drivers/staging/easycap/Makefile
-index d93bd6b..d3133f8 100644
---- a/drivers/staging/easycap/Makefile
-+++ b/drivers/staging/easycap/Makefile
-@@ -5,9 +5,9 @@ easycap-objs	:= easycap_main.o easycap_low.o easycap_sound.o
- easycap-objs	+= easycap_ioctl.o easycap_settings.o
- easycap-objs	+= easycap_testcard.o
- 
--EXTRA_CFLAGS += -Wall
-+ccflags-y := -Wall
- # Impose all or none of the following:
--EXTRA_CFLAGS += -DEASYCAP_IS_VIDEODEV_CLIENT
--EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_DEVICE_H
--EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_FOPS
-+ccflags-y := -DEASYCAP_IS_VIDEODEV_CLIENT
-+ccflags-y := -DEASYCAP_NEEDS_V4L2_DEVICE_H
-+ccflags-y := -DEASYCAP_NEEDS_V4L2_FOPS
+diff --git a/arch/sparc/boot/Makefile b/arch/sparc/boot/Makefile
+index 97e3feb..9a22b4a 100644
+--- a/arch/sparc/boot/Makefile
++++ b/arch/sparc/boot/Makefile
+@@ -21,7 +21,7 @@ quiet_cmd_btfix		= BTFIX   $@
+ quiet_cmd_sysmap        = SYSMAP  $(obj)/System.map
+       cmd_sysmap        = $(CONFIG_SHELL) $(srctree)/scripts/mksysmap
+ quiet_cmd_image = LD      $@
+-      cmd_image = $(LD) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LDFLAGS_$(@F)) -o $@
++      cmd_image = $(LD) $(LDFLAGS) $(ldflags-y) $(LDFLAGS_$(@F)) -o $@
+ quiet_cmd_strip = STRIP   $@
+       cmd_strip = $(STRIP) -R .comment -R .note -K sun4u_init -K _end -K _start $(obj)/image -o $@
  
 -- 
-1.7.3
+1.7.2.1
 
