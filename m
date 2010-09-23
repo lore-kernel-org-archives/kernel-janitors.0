@@ -1,31 +1,91 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:27:53 +0000
-Subject: [PATCH v2 05/22] Staging: dream: qdsp5: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-5-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:50:12 +0000
+Subject: [PATCH 03/20] alpha: change to new flag variables
+Message-Id: <1285224612-29529-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed to use proper ccflags-y option
+Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
+
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/dream/qdsp5/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/alpha/kernel/Makefile   |    4 ++--
+ arch/alpha/lib/Makefile      |    4 ++--
+ arch/alpha/math-emu/Makefile |    2 +-
+ arch/alpha/mm/Makefile       |    2 +-
+ arch/alpha/oprofile/Makefile |    2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/dream/qdsp5/Makefile b/drivers/staging/dream/qdsp5/Makefile
-index beedaaf..44ae6b4 100644
---- a/drivers/staging/dream/qdsp5/Makefile
-+++ b/drivers/staging/dream/qdsp5/Makefile
+diff --git a/arch/alpha/kernel/Makefile b/arch/alpha/kernel/Makefile
+index 1ee9b5b..9bb7b85 100644
+--- a/arch/alpha/kernel/Makefile
++++ b/arch/alpha/kernel/Makefile
+@@ -3,8 +3,8 @@
+ #
+ 
+ extra-y		:= head.o vmlinux.lds
+-EXTRA_AFLAGS	:= $(KBUILD_CFLAGS)
+-EXTRA_CFLAGS	:= -Werror -Wno-sign-compare
++asflags-y	:= $(KBUILD_CFLAGS)
++ccflags-y	:= -Werror -Wno-sign-compare
+ 
+ obj-y    := entry.o traps.o process.o init_task.o osf_sys.o irq.o \
+ 	    irq_alpha.o signal.o setup.o ptrace.o time.o \
+diff --git a/arch/alpha/lib/Makefile b/arch/alpha/lib/Makefile
+index 9b72c59..c0a83ab 100644
+--- a/arch/alpha/lib/Makefile
++++ b/arch/alpha/lib/Makefile
+@@ -2,8 +2,8 @@
+ # Makefile for alpha-specific library files..
+ #
+ 
+-EXTRA_AFLAGS := $(KBUILD_CFLAGS)
+-EXTRA_CFLAGS := -Werror
++asflags-y := $(KBUILD_CFLAGS)
++ccflags-y := -Werror
+ 
+ # Many of these routines have implementations tuned for ev6.
+ # Choose them iff we're targeting ev6 specifically.
+diff --git a/arch/alpha/math-emu/Makefile b/arch/alpha/math-emu/Makefile
+index 359ef08..7f46719 100644
+--- a/arch/alpha/math-emu/Makefile
++++ b/arch/alpha/math-emu/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for the FPU instruction emulation.
+ #
+ 
+-EXTRA_CFLAGS := -w
++ccflags-y := -w
+ 
+ obj-$(CONFIG_MATHEMU) += math-emu.o
+ 
+diff --git a/arch/alpha/mm/Makefile b/arch/alpha/mm/Makefile
+index 09399c5..c993d3f 100644
+--- a/arch/alpha/mm/Makefile
++++ b/arch/alpha/mm/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for the linux alpha-specific parts of the memory manager.
+ #
+ 
+-EXTRA_CFLAGS := -Werror
++ccflags-y := -Werror
+ 
+ obj-y	:= init.o fault.o extable.o
+ 
+diff --git a/arch/alpha/oprofile/Makefile b/arch/alpha/oprofile/Makefile
+index 4aa5624..3473de7 100644
+--- a/arch/alpha/oprofile/Makefile
++++ b/arch/alpha/oprofile/Makefile
 @@ -1,4 +1,4 @@
--EXTRA_CFLAGS=-Idrivers/staging/dream/include
-+ccflags-y:=-Idrivers/staging/dream/include
- obj-y += adsp.o
- ifeq ($(CONFIG_MSM_AMSS_VERSION_6350),y)
- obj-y += adsp_info.o
+-EXTRA_CFLAGS := -Werror -Wno-sign-compare
++ccflags-y := -Werror -Wno-sign-compare
+ 
+ obj-$(CONFIG_OPROFILE) += oprofile.o
+ 
 -- 
-1.7.3
+1.7.2.1
 
