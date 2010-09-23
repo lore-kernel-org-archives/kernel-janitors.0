@@ -1,97 +1,210 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Wed, 08 Sep 2010 19:46:58 +0000
-Subject: Re: [PATCH 7/7] arch/powerpc/platforms/cell: Add of_node_put to
-Message-Id: <20100908194658.GA7065@angua.secretlab.ca>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:48 +0000
+Subject: [PATCH 19/20] fs: change to new flag variable
+Message-Id: <1285224708-30103-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283075566-27441-1-git-send-email-julia@diku.dk>
- <1283075566-27441-8-git-send-email-julia@diku.dk>
-In-Reply-To: <1283075566-27441-8-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, cbe-oss-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Sage Weil <sage@newdream.net>, Christoph Hellwig <hch@lst.de>, Trond Myklebust <Trond.Myklebust@netapp.com>, Andrew Morton <akpm@linux-foundation.org>, Anton Altaparmakov <aia21@cantab.net>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Aug 29, 2010 at 11:52:46AM +0200, Julia Lawall wrote:
-> Add calls to of_node_put in the error handling code following calls to
-> of_find_node_by_path and of_find_node_by_phandle.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> expression E,E1;
-> statement S;
-> @@
-> 
-> *x = 
-> (of_find_node_by_path
-> |of_find_node_by_name
-> |of_find_node_by_phandle
-> |of_get_parent
-> |of_get_next_parent
-> |of_get_next_child
-> |of_find_compatible_node
-> |of_match_node
-> )(...);
-> ...
-> if (x = NULL) S
-> <... when != x = E
-> *if (...) {
->   ... when != of_node_put(x)
->       when != if (...) { ... of_node_put(x); ... }
-> (
->   return <+...x...+>;
-> |
-> *  return ...;
-> )
-> }
-> ...>
-> of_node_put(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Replace EXTRA_CFLAGS with ccflags-y. And change ntfs-objs to ntfs-y
+for cleaner conditional inclusion.
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ fs/affs/Makefile        |    2 +-
+ fs/coda/Makefile        |    2 +-
+ fs/gfs2/Makefile        |    2 +-
+ fs/jfs/Makefile         |    2 +-
+ fs/ncpfs/Makefile       |    2 +-
+ fs/ntfs/Makefile        |   19 +++++++------------
+ fs/ocfs2/Makefile       |    4 ++--
+ fs/ocfs2/dlm/Makefile   |    2 +-
+ fs/ocfs2/dlmfs/Makefile |    2 +-
+ fs/reiserfs/Makefile    |    4 +---
+ fs/smbfs/Makefile       |   12 ++++++------
+ fs/xfs/Makefile         |    7 ++-----
+ 12 files changed, 25 insertions(+), 35 deletions(-)
 
-> 
-> ---
->  arch/powerpc/platforms/cell/ras.c        |    4 +++-
->  arch/powerpc/platforms/cell/spider-pic.c |    4 +++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/cell/ras.c b/arch/powerpc/platforms/cell/ras.c
-> index 1d3c4ef..5ec1e47 100644
-> --- a/arch/powerpc/platforms/cell/ras.c
-> +++ b/arch/powerpc/platforms/cell/ras.c
-> @@ -173,8 +173,10 @@ static int __init cbe_ptcal_enable(void)
->  		return -ENODEV;
->  
->  	size = of_get_property(np, "ibm,cbe-ptcal-size", NULL);
-> -	if (!size)
-> +	if (!size) {
-> +		of_node_put(np);
->  		return -ENODEV;
-> +	}
->  
->  	pr_debug("%s: enabling PTCAL, size = 0x%x\n", __func__, *size);
->  	order = get_order(*size);
-> diff --git a/arch/powerpc/platforms/cell/spider-pic.c b/arch/powerpc/platforms/cell/spider-pic.c
-> index 5876e88..3f2e557 100644
-> --- a/arch/powerpc/platforms/cell/spider-pic.c
-> +++ b/arch/powerpc/platforms/cell/spider-pic.c
-> @@ -258,8 +258,10 @@ static unsigned int __init spider_find_cascade_and_node(struct spider_pic *pic)
->  		return NO_IRQ;
->  	imap += intsize + 1;
->  	tmp = of_get_property(iic, "#interrupt-cells", NULL);
-> -	if (tmp = NULL)
-> +	if (tmp = NULL) {
-> +		of_node_put(iic);
->  		return NO_IRQ;
-> +	}
->  	intsize = *tmp;
->  	/* Assume unit is last entry of interrupt specifier */
->  	unit = imap[intsize - 1];
-> 
+diff --git a/fs/affs/Makefile b/fs/affs/Makefile
+index b2c4f54..3988b4a 100644
+--- a/fs/affs/Makefile
++++ b/fs/affs/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for the Linux affs filesystem routines.
+ #
+ 
+-#EXTRA_CFLAGS=-DDEBUG=1
++#ccflags-y := -DDEBUG=1
+ 
+ obj-$(CONFIG_AFFS_FS) += affs.o
+ 
+diff --git a/fs/coda/Makefile b/fs/coda/Makefile
+index 6c22e61..1bab69a 100644
+--- a/fs/coda/Makefile
++++ b/fs/coda/Makefile
+@@ -9,4 +9,4 @@ coda-objs := psdev.o cache.o cnode.o inode.o dir.o file.o upcall.o \
+ 
+ # If you want debugging output, please uncomment the following line.
+ 
+-# EXTRA_CFLAGS += -DDEBUG -DDEBUG_SMB_MALLOC=1
++# ccflags-y := -DDEBUG -DDEBUG_SMB_MALLOC=1
+diff --git a/fs/gfs2/Makefile b/fs/gfs2/Makefile
+index 21f7e46..f3d23ef 100644
+--- a/fs/gfs2/Makefile
++++ b/fs/gfs2/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS := -I$(src)
++ccflags-y := -I$(src)
+ obj-$(CONFIG_GFS2_FS) += gfs2.o
+ gfs2-y := acl.o bmap.o dir.o xattr.o glock.o \
+ 	glops.o inode.o log.o lops.o main.o meta_io.o \
+diff --git a/fs/jfs/Makefile b/fs/jfs/Makefile
+index 3adb639..a58fa72 100644
+--- a/fs/jfs/Makefile
++++ b/fs/jfs/Makefile
+@@ -13,4 +13,4 @@ jfs-y    := super.o file.o inode.o namei.o jfs_mount.o jfs_umount.o \
+ 
+ jfs-$(CONFIG_JFS_POSIX_ACL) += acl.o
+ 
+-EXTRA_CFLAGS += -D_JFS_4K
++ccflags-y := -D_JFS_4K
+diff --git a/fs/ncpfs/Makefile b/fs/ncpfs/Makefile
+index 68ea095..c66af56 100644
+--- a/fs/ncpfs/Makefile
++++ b/fs/ncpfs/Makefile
+@@ -11,6 +11,6 @@ ncpfs-$(CONFIG_NCPFS_EXTRAS)   += symlink.o
+ ncpfs-$(CONFIG_NCPFS_NFS_NS)   += symlink.o
+ 
+ # If you want debugging output, please uncomment the following line
+-# EXTRA_CFLAGS += -DDEBUG_NCP=1
++# ccflags-y := -DDEBUG_NCP=1
+ 
+ CFLAGS_ncplib_kernel.o := -finline-functions
+diff --git a/fs/ntfs/Makefile b/fs/ntfs/Makefile
+index 58b6be9..f12e913 100644
+--- a/fs/ntfs/Makefile
++++ b/fs/ntfs/Makefile
+@@ -2,18 +2,13 @@
+ 
+ obj-$(CONFIG_NTFS_FS) += ntfs.o
+ 
+-ntfs-objs := aops.o attrib.o collate.o compress.o debug.o dir.o file.o \
+-	     index.o inode.o mft.o mst.o namei.o runlist.o super.o sysctl.o \
+-	     unistr.o upcase.o
++ntfs-y := aops.o attrib.o collate.o compress.o debug.o dir.o file.o \
++	  index.o inode.o mft.o mst.o namei.o runlist.o super.o sysctl.o \
++	  unistr.o upcase.o
+ 
+-EXTRA_CFLAGS = -DNTFS_VERSION=\"2.1.29\"
++ntfs-$(CONFIG_NTFS_RW) += bitmap.o lcnalloc.o logfile.o quota.o usnjrnl.o
+ 
+-ifeq ($(CONFIG_NTFS_DEBUG),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-y := -DNTFS_VERSION=\"2.1.29\"
++ccflags-$(CONFIG_NTFS_DEBUG)	+= -DDEBUG
++ccflags-$(CONFIG_NTFS_RW)	+= -DNTFS_RW
+ 
+-ifeq ($(CONFIG_NTFS_RW),y)
+-EXTRA_CFLAGS += -DNTFS_RW
+-
+-ntfs-objs += bitmap.o lcnalloc.o logfile.o quota.o usnjrnl.o
+-endif
+diff --git a/fs/ocfs2/Makefile b/fs/ocfs2/Makefile
+index 07d9fd8..d8a0313 100644
+--- a/fs/ocfs2/Makefile
++++ b/fs/ocfs2/Makefile
+@@ -1,6 +1,6 @@
+-EXTRA_CFLAGS += -Ifs/ocfs2
++ccflags-y := -Ifs/ocfs2
+ 
+-EXTRA_CFLAGS += -DCATCH_BH_JBD_RACES
++ccflags-y += -DCATCH_BH_JBD_RACES
+ 
+ obj-$(CONFIG_OCFS2_FS) += 	\
+ 	ocfs2.o			\
+diff --git a/fs/ocfs2/dlm/Makefile b/fs/ocfs2/dlm/Makefile
+index dcebf0d..c8a044e 100644
+--- a/fs/ocfs2/dlm/Makefile
++++ b/fs/ocfs2/dlm/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS += -Ifs/ocfs2
++ccflags-y := -Ifs/ocfs2
+ 
+ obj-$(CONFIG_OCFS2_FS_O2CB) += ocfs2_dlm.o
+ 
+diff --git a/fs/ocfs2/dlmfs/Makefile b/fs/ocfs2/dlmfs/Makefile
+index df69b48..f14be89 100644
+--- a/fs/ocfs2/dlmfs/Makefile
++++ b/fs/ocfs2/dlmfs/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS += -Ifs/ocfs2
++ccflags-y := -Ifs/ocfs2
+ 
+ obj-$(CONFIG_OCFS2_FS) += ocfs2_dlmfs.o
+ 
+diff --git a/fs/reiserfs/Makefile b/fs/reiserfs/Makefile
+index 792b3cb..3c3b001 100644
+--- a/fs/reiserfs/Makefile
++++ b/fs/reiserfs/Makefile
+@@ -31,9 +31,7 @@ endif
+ # and causing a panic. Since this behavior only affects ppc32, this ifeq
+ # will work around it. If any other architecture displays this behavior,
+ # add it here.
+-ifeq ($(CONFIG_PPC32),y)
+-EXTRA_CFLAGS := $(call cc-ifversion, -lt, 0400, -O1)
+-endif
++ccflags-$(CONFIG_PPC32) := $(call cc-ifversion, -lt, 0400, -O1)
+ 
+ TAGS:
+ 	etags *.c
+diff --git a/fs/smbfs/Makefile b/fs/smbfs/Makefile
+index 4faf8c4..74c7039 100644
+--- a/fs/smbfs/Makefile
++++ b/fs/smbfs/Makefile
+@@ -7,12 +7,12 @@ obj-$(CONFIG_SMB_FS) += smbfs.o
+ smbfs-objs := proc.o dir.o cache.o sock.o inode.o file.o ioctl.o getopt.o \
+ 		symlink.o smbiod.o request.o
+ 
+-# If you want debugging output, you may add these flags to the EXTRA_CFLAGS
++# If you want debugging output, you may add these flags to the ccflags-y
+ # SMBFS_PARANOIA should normally be enabled.
+ 
+-EXTRA_CFLAGS += -DSMBFS_PARANOIA
+-#EXTRA_CFLAGS += -DSMBFS_DEBUG
+-#EXTRA_CFLAGS += -DSMBFS_DEBUG_VERBOSE
+-#EXTRA_CFLAGS += -DDEBUG_SMB_TIMESTAMP
+-#EXTRA_CFLAGS += -Werror
++ccflags-y := -DSMBFS_PARANOIA
++#ccflags-y += -DSMBFS_DEBUG
++#ccflags-y += -DSMBFS_DEBUG_VERBOSE
++#ccflags-y += -DDEBUG_SMB_TIMESTAMP
++#ccflags-y += -Werror
+ 
+diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+index 0dce969..be0fd0c 100644
+--- a/fs/xfs/Makefile
++++ b/fs/xfs/Makefile
+@@ -16,14 +16,11 @@
+ # Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ #
+ 
+-EXTRA_CFLAGS +=	 -I$(src) -I$(src)/linux-2.6
++ccflags-y := -I$(src) -I$(src)/linux-2.6
++ccflags-$(CONFIG_XFS_DEBUG) += -g
+ 
+ XFS_LINUX := linux-2.6
+ 
+-ifeq ($(CONFIG_XFS_DEBUG),y)
+-	EXTRA_CFLAGS += -g
+-endif
+-
+ obj-$(CONFIG_XFS_FS)		+= xfs.o
+ 
+ xfs-y				+= linux-2.6/xfs_trace.o
+-- 
+1.7.2.1
+
