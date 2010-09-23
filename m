@@ -1,27 +1,47 @@
-From: James Morris <jmorris@namei.org>
-Date: Thu, 23 Sep 2010 23:40:30 +0000
-Subject: Re: [PATCH 02/20] security/selinux: change to new flag variable
-Message-Id: <alpine.LRH.2.00.1009240940070.4317@tundra.namei.org>
+From: matt mooney <mfm@muteddisk.com>
+Date: Thu, 23 Sep 2010 06:51:55 +0000
+Subject: [PATCH 20/20] net: change to new flag variable
+Message-Id: <1285224715-30137-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285224606-29493-1-git-send-email-mfm@muteddisk.com>
-In-Reply-To: <1285224606-29493-1-git-send-email-mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfm@muteddisk.com>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 22 Sep 2010, matt mooney wrote:
+Replace EXTRA_CFLAGS with ccflags-y.
 
-> Replace EXTRA_CFLAGS with ccflags-y.
-> 
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ net/caif/Makefile |    4 +---
+ net/rds/Makefile  |    4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
-
-(with a couple of fixups).
-
+diff --git a/net/caif/Makefile b/net/caif/Makefile
+index f87481f..38581ba 100644
+--- a/net/caif/Makefile
++++ b/net/caif/Makefile
+@@ -1,6 +1,4 @@
+-ifeq ($(CONFIG_CAIF_DEBUG),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_CAIF_DEBUG) := -DDEBUG
+ 
+ caif-objs := caif_dev.o \
+ 	cfcnfg.o cfmuxl.o cfctrl.o  \
+diff --git a/net/rds/Makefile b/net/rds/Makefile
+index b46eca1..f00fb19 100644
+--- a/net/rds/Makefile
++++ b/net/rds/Makefile
+@@ -15,7 +15,5 @@ obj-$(CONFIG_RDS_TCP) += rds_tcp.o
+ rds_tcp-objs :=		tcp.o tcp_connect.o tcp_listen.o tcp_recv.o \
+ 			tcp_send.o tcp_stats.o
+ 
+-ifeq ($(CONFIG_RDS_DEBUG), y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_RDS_DEBUG) := -DDEBUG
+ 
 -- 
-James Morris
-<jmorris@namei.org>
+1.7.2.1
+
