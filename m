@@ -1,48 +1,70 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:51:42 +0000
-Subject: [PATCH 18/20] xtensa: change to new flag variable
-Message-Id: <1285224702-30069-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:27:56 +0000
+Subject: [PATCH v2 08/22] Staging: otus: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-8-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Zankel <chris@zankel.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_CFLAGS with ccflags-y.
+Changed to use proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/xtensa/boot/Makefile     |    2 +-
- arch/xtensa/boot/lib/Makefile |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/otus/Makefile |   34 +++++++++++++++++-----------------
+ 1 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/arch/xtensa/boot/Makefile b/arch/xtensa/boot/Makefile
-index 40aa55b4..70fd145 100644
---- a/arch/xtensa/boot/Makefile
-+++ b/arch/xtensa/boot/Makefile
-@@ -14,7 +14,7 @@ HOSTFLAGS	+= -Iarch/$(ARCH)/boot/include
+diff --git a/drivers/staging/otus/Makefile b/drivers/staging/otus/Makefile
+index debcc5c..c4d979d 100644
+--- a/drivers/staging/otus/Makefile
++++ b/drivers/staging/otus/Makefile
+@@ -1,25 +1,25 @@
+ obj-$(CONFIG_OTUS)	+= arusb_lnx.o
  
- BIG_ENDIAN	:= $(shell echo -e __XTENSA_EB__ | $(CC) -E - | grep -v "\#")
+-EXTRA_CFLAGS += -DAMAC
+-EXTRA_CFLAGS += -DGCCK
+-EXTRA_CFLAGS += -DOFDM
+-EXTRA_CFLAGS += -DTXQ_IN_ISR
+-EXTRA_CFLAGS += -DWLAN_HOSTIF=0 #0:USB, 1:PCI
++ccflags-y := -DAMAC
++ccflags-y := -DGCCK
++ccflags-y := -DOFDM
++ccflags-y := -DTXQ_IN_ISR
++ccflags-y := -DWLAN_HOSTIF=0 #0:USB, 1:PCI
  
--export EXTRA_CFLAGS
-+export ccflags-y
- export BIG_ENDIAN
+ #Test Mode
+-EXTRA_CFLAGS += -DZM_USB_STREAM_MODE=1
+-EXTRA_CFLAGS += -DZM_USB_TX_STREAM_MODE=0
+-EXTRA_CFLAGS += -DZM_PCI_DMA_TEST=0
+-EXTRA_CFLAGS += -DZM_LARGEPAYLOAD_TEST=0
+-EXTRA_CFLAGS += -DZM_FW_LOOP_BACK=0
+-EXTRA_CFLAGS += -DZM_LINUX_TPC=1
+-#EXTRA_CFLAGS += -DZM_DONT_COPY_RX_BUFFER
++ccflags-y := -DZM_USB_STREAM_MODE=1
++ccflags-y := -DZM_USB_TX_STREAM_MODE=0
++ccflags-y := -DZM_PCI_DMA_TEST=0
++ccflags-y := -DZM_LARGEPAYLOAD_TEST=0
++ccflags-y := -DZM_FW_LOOP_BACK=0
++ccflags-y := -DZM_LINUX_TPC=1
++#ccflags-y := -DZM_DONT_COPY_RX_BUFFER
  
- subdir-y	:= lib
-diff --git a/arch/xtensa/boot/lib/Makefile b/arch/xtensa/boot/lib/Makefile
-index d3d2aa2..ad8952e 100644
---- a/arch/xtensa/boot/lib/Makefile
-+++ b/arch/xtensa/boot/lib/Makefile
-@@ -6,7 +6,7 @@ zlib	:= inffast.c inflate.c inftrees.c
+-EXTRA_CFLAGS += -DZM_HOSTAPD_SUPPORT
+-#EXTRA_CFLAGS += -DfTX_GAIN_OFDM=0
+-#EXTRA_CFLAGS += -DZM_CONFIG_BIG_ENDIAN -DBIG_ENDIAN
+-EXTRA_CFLAGS += -DZM_HALPLUS_LOCK
+-EXTRA_CFLAGS += -DZM_OTUS_LINUX_PHASE_2
++ccflags-y := -DZM_HOSTAPD_SUPPORT
++ccflags-y := -DfTX_GAIN_OFDM=0
++ccflags-y := -DZM_CONFIG_BIG_ENDIAN -DBIG_ENDIAN
++ccflags-y := -DZM_HALPLUS_LOCK
++ccflags-y := -DZM_OTUS_LINUX_PHASE_2
  
- lib-y	+= $(zlib:.c=.o) zmem.o
- 
--EXTRA_CFLAGS	+= -Ilib/zlib_inflate
-+ccflags-y	:= -Ilib/zlib_inflate
- 
- quiet_cmd_copy_zlib = COPY    $@
-       cmd_copy_zlib = cat $< > $@
+ arusb_lnx-objs := \
+ 	usbdrv.o \
 -- 
-1.7.2.1
+1.7.3
 
