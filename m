@@ -1,48 +1,51 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:24 +0000
-Subject: [PATCH 11/21] Staging: rtl8192e: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352314-5939-11-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:28 +0000
+Subject: [PATCH 18/24] pps: change to new flag variable
+Message-Id: <75da5e0e0a547b4acbc7cfbdf35c29a24512ca37.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+ <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+ <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
+ <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
+ <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
+ <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
+ <efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
+ <facbf79cadc81f9043e89160b7b3b8a90926aba1.1285355033.git.mfm@muteddisk.com>
+ <f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
+ <0472f95473283ce75285e458b22b86ff791d7a42.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <0472f95473283ce75285e458b22b86ff791d7a42.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Rodolfo Giometti <giometti@enneenne.com>, linux-kernel@vger.kernel.org
 
-Changed to use proper ccflags-y option
+Replace EXTRA_CFLAGS with ccflags-y.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/rtl8192e/Makefile |   14 +++++++-------
- 1 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/pps/clients/Makefile |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/Makefile b/drivers/staging/rtl8192e/Makefile
-index 41cb4d3..0bad423 100644
---- a/drivers/staging/rtl8192e/Makefile
-+++ b/drivers/staging/rtl8192e/Makefile
-@@ -1,13 +1,13 @@
- NIC_SELECT = RTL8192E
+diff --git a/drivers/pps/clients/Makefile b/drivers/pps/clients/Makefile
+index 812c9b1..b52dbb8 100644
+--- a/drivers/pps/clients/Makefile
++++ b/drivers/pps/clients/Makefile
+@@ -5,6 +5,4 @@
+ obj-$(CONFIG_PPS_CLIENT_KTIMER)	+= pps-ktimer.o
+ obj-$(CONFIG_PPS_CLIENT_LDISC)	+= pps-ldisc.o
  
--EXTRA_CFLAGS += -DRTL8192E
--EXTRA_CFLAGS += -std=gnu89
--EXTRA_CFLAGS += -O2
--EXTRA_CFLAGS += -DTHOMAS_TURBO
--EXTRA_CFLAGS += -DENABLE_DOT11D
-+ccflags-y += -DRTL8192E
-+ccflags-y += -std=gnu89
-+ccflags-y += -O2
-+ccflags-y += -DTHOMAS_TURBO
-+ccflags-y += -DENABLE_DOT11D
- 
--EXTRA_CFLAGS += -DENABLE_IPS
--EXTRA_CFLAGS += -DENABLE_LPS
-+ccflags-y += -DENABLE_IPS
-+ccflags-y += -DENABLE_LPS
- 
- r8192e_pci-objs :=		\
- 	r8192E_core.o		\
+-ifeq ($(CONFIG_PPS_DEBUG),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_PPS_DEBUG) := -DDEBUG
 -- 
-1.7.3
+1.7.2.1
 
