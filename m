@@ -1,46 +1,41 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 24 Sep 2010 19:17:22 +0000
-Subject: [PATCH 12/24] message: change to new flag variable
-Message-Id: <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:19 +0000
+Subject: [PATCH 06/21] Staging: easycap: Makefile: cleaned up makefile cflags lines
+Message-Id: <1285352314-5939-6-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
- <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
- <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
- <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
- <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
- <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
- <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
- <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
- <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
- <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Eric Moore <Eric.Moore@lsi.com>, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_CFLAGS with ccflags-y.
+Changed to use the proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/message/fusion/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/staging/easycap/Makefile |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/message/fusion/Makefile b/drivers/message/fusion/Makefile
-index 95c9532..d182a24 100644
---- a/drivers/message/fusion/Makefile
-+++ b/drivers/message/fusion/Makefile
-@@ -2,7 +2,7 @@
+diff --git a/drivers/staging/easycap/Makefile b/drivers/staging/easycap/Makefile
+index d93bd6b..0746ad0 100644
+--- a/drivers/staging/easycap/Makefile
++++ b/drivers/staging/easycap/Makefile
+@@ -5,9 +5,9 @@ easycap-objs	:= easycap_main.o easycap_low.o easycap_sound.o
+ easycap-objs	+= easycap_ioctl.o easycap_settings.o
+ easycap-objs	+= easycap_testcard.o
  
- # enable verbose logging
- # CONFIG_FUSION_LOGGING needs to be enabled in Kconfig
--#EXTRA_CFLAGS += -DMPT_DEBUG_VERBOSE
-+#ccflags-y := -DMPT_DEBUG_VERBOSE
+-EXTRA_CFLAGS += -Wall
++ccflags-y += -Wall
+ # Impose all or none of the following:
+-EXTRA_CFLAGS += -DEASYCAP_IS_VIDEODEV_CLIENT
+-EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_DEVICE_H
+-EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_FOPS
++ccflags-y += -DEASYCAP_IS_VIDEODEV_CLIENT
++ccflags-y += -DEASYCAP_NEEDS_V4L2_DEVICE_H
++ccflags-y += -DEASYCAP_NEEDS_V4L2_FOPS
  
- 
- #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-} LSI_LOGIC
 -- 
-1.7.2.1
+1.7.3
 
