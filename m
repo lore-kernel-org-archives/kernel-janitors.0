@@ -1,33 +1,102 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:27:52 +0000
-Subject: [PATCH v2 04/22] Staging: dream: camera: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-4-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:24 +0000
+Subject: [PATCH 14/24] mmc: change to new flag variable
+Message-Id: <efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+ <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+ <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
+ <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
+ <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
+ <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+The EXTRA_CFLAGS assignment in mmc/Makefile was not accomplishing
+anything because this flag only has effect on sources at the same level
+as the makefile (i.e., per directory). Since card/, core/, and host/
+rely on MMC_DEBUG, the subdir-ccflags-y variant seems to be the
+appropriate choice.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/dream/camera/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/mmc/Makefile      |    4 +---
+ drivers/mmc/card/Makefile |    4 ----
+ drivers/mmc/core/Makefile |    4 ----
+ drivers/mmc/host/Makefile |    4 ----
+ 4 files changed, 1 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/staging/dream/camera/Makefile b/drivers/staging/dream/camera/Makefile
-index db228d7..03711dc 100644
---- a/drivers/staging/dream/camera/Makefile
-+++ b/drivers/staging/dream/camera/Makefile
-@@ -1,4 +1,4 @@
--EXTRA_CFLAGS=-Idrivers/staging/dream/include
-+ccflags-y:=-Idrivers/staging/dream/include
- obj-$(CONFIG_MT9T013) += mt9t013.o mt9t013_reg.o
- obj-$(CONFIG_MT9D112) += mt9d112.o mt9d112_reg.o
- obj-$(CONFIG_MT9P012) += mt9p012_fox.o mt9p012_reg.o
+diff --git a/drivers/mmc/Makefile b/drivers/mmc/Makefile
+index 9979f5e..12eef39 100644
+--- a/drivers/mmc/Makefile
++++ b/drivers/mmc/Makefile
+@@ -2,9 +2,7 @@
+ # Makefile for the kernel mmc device drivers.
+ #
+ 
+-ifeq ($(CONFIG_MMC_DEBUG),y)
+-	EXTRA_CFLAGS		+= -DDEBUG
+-endif
++subdir-ccflags-$(CONFIG_MMC_DEBUG) := -DDEBUG
+ 
+ obj-$(CONFIG_MMC)		+= core/
+ obj-$(CONFIG_MMC)		+= card/
+diff --git a/drivers/mmc/card/Makefile b/drivers/mmc/card/Makefile
+index 0d40751..c73b406 100644
+--- a/drivers/mmc/card/Makefile
++++ b/drivers/mmc/card/Makefile
+@@ -2,10 +2,6 @@
+ # Makefile for MMC/SD card drivers
+ #
+ 
+-ifeq ($(CONFIG_MMC_DEBUG),y)
+-	EXTRA_CFLAGS		+= -DDEBUG
+-endif
+-
+ obj-$(CONFIG_MMC_BLOCK)		+= mmc_block.o
+ mmc_block-objs			:= block.o queue.o
+ obj-$(CONFIG_MMC_TEST)		+= mmc_test.o
+diff --git a/drivers/mmc/core/Makefile b/drivers/mmc/core/Makefile
+index 889e5f8..86b4791 100644
+--- a/drivers/mmc/core/Makefile
++++ b/drivers/mmc/core/Makefile
+@@ -2,10 +2,6 @@
+ # Makefile for the kernel mmc core.
+ #
+ 
+-ifeq ($(CONFIG_MMC_DEBUG),y)
+-	EXTRA_CFLAGS		+= -DDEBUG
+-endif
+-
+ obj-$(CONFIG_MMC)		+= mmc_core.o
+ mmc_core-y			:= core.o bus.o host.o \
+ 				   mmc.o mmc_ops.o sd.o sd_ops.o \
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 840bcb5..e35e778 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -2,10 +2,6 @@
+ # Makefile for MMC/SD host controller drivers
+ #
+ 
+-ifeq ($(CONFIG_MMC_DEBUG),y)
+-	EXTRA_CFLAGS		+= -DDEBUG
+-endif
+-
+ obj-$(CONFIG_MMC_ARMMMCI)	+= mmci.o
+ obj-$(CONFIG_MMC_PXA)		+= pxamci.o
+ obj-$(CONFIG_MMC_IMX)		+= imxmmc.o
 -- 
-1.7.3
+1.7.2.1
 
