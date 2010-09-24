@@ -1,51 +1,36 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:50:18 +0000
-Subject: [PATCH 04/20] arm: change to new flag variables
-Message-Id: <1285224618-29564-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:28:06 +0000
+Subject: [PATCH v2 18/22] Staging: usbip: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-18-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
+Changed to use proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/arm/boot/compressed/Makefile |    4 ++--
- arch/arm/vfp/Makefile             |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/usbip/Makefile |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index b23f6bc..9ba5726 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -76,8 +76,8 @@ ORIG_CFLAGS := $(KBUILD_CFLAGS)
- KBUILD_CFLAGS = $(subst -pg, , $(ORIG_CFLAGS))
- endif
+diff --git a/drivers/staging/usbip/Makefile b/drivers/staging/usbip/Makefile
+index 6f2916b..10307f8 100644
+--- a/drivers/staging/usbip/Makefile
++++ b/drivers/staging/usbip/Makefile
+@@ -7,6 +7,5 @@ vhci-hcd-objs := vhci_sysfs.o vhci_tx.o vhci_rx.o vhci_hcd.o
+ obj-$(CONFIG_USB_IP_HOST) += usbip.o
+ usbip-objs := stub_dev.o stub_main.o stub_rx.o stub_tx.o
  
--EXTRA_CFLAGS  := -fpic -fno-builtin
--EXTRA_AFLAGS  := -Wa,-march=all
-+ccflags-y := -fpic -fno-builtin
-+asflags-y := -Wa,-march=all
- 
- # Supply ZRELADDR to the decompressor via a linker symbol.
- ifneq ($(CONFIG_AUTO_ZRELADDR),y)
-diff --git a/arch/arm/vfp/Makefile b/arch/arm/vfp/Makefile
-index 39f6d8e..6de73aa 100644
---- a/arch/arm/vfp/Makefile
-+++ b/arch/arm/vfp/Makefile
-@@ -4,8 +4,8 @@
- # Copyright (C) 2001 ARM Limited
- #
- 
--# EXTRA_CFLAGS := -DDEBUG
--# EXTRA_AFLAGS := -DDEBUG
-+# ccflags-y := -DDEBUG
-+# asflags-y := -DDEBUG
- 
- KBUILD_AFLAGS	:=$(KBUILD_AFLAGS:-msoft-float=-Wa,-mfpu=softvfp+vfp)
- LDFLAGS		+=--no-warn-mismatch
+-ifeq ($(CONFIG_USB_IP_DEBUG_ENABLE),y)
+-	EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_USB_IP_DEBUG_ENABLE) := -DDEBUG
++
 -- 
-1.7.2.1
+1.7.3
 
