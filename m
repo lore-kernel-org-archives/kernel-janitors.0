@@ -1,80 +1,82 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 05 Sep 2010 19:00:24 +0000
-Subject: [PATCH 6/8] drivers/staging/comedi/drivers: Fix unsigned return type
-Message-Id: <1283713226-8429-7-git-send-email-julia@diku.dk>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:21 +0000
+Subject: [PATCH 11/24] memstick: change to new flag variable
+Message-Id: <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283713226-8429-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1283713226-8429-1-git-send-email-julia@diku.dk>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+ <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+ <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-In each case, the function has an unsigned return type, but returns a
-negative constant to indicate an error condition.  For move_block_from_dma,
-there is only one call and the return value is dropped, so it need not be
-unsigned.  For labpc_eeprom_write, there is only one call and the result is
-stored in a signed variable, so again the unsigned return type is not
-necessary.
+The EXTRA_CFLAGS assignment in memstick/Makefile was not accomplishing
+anything because this flag only has effect on sources at the same level
+as the makefile (i.e., per directory). Since both core/ and host/ rely
+on MEMSTICK_DEBUG, the subdir-ccflags-y variant seems to be the
+appropriate choice.
 
-A sematic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@exists@
-identifier f;
-constant C;
-@@
-
- unsigned f(...)
- { <+...
-*  return -C;
- ...+> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/comedi/drivers/adl_pci9118.c |    2 +-
- drivers/staging/comedi/drivers/ni_labpc.c    |    6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/memstick/Makefile      |    4 +---
+ drivers/memstick/core/Makefile |    4 ----
+ drivers/memstick/host/Makefile |    4 ----
+ 3 files changed, 1 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/adl_pci9118.c b/drivers/staging/comedi/drivers/adl_pci9118.c
-index a2bd4e6..cb2843d 100644
---- a/drivers/staging/comedi/drivers/adl_pci9118.c
-+++ b/drivers/staging/comedi/drivers/adl_pci9118.c
-@@ -634,7 +634,7 @@ static unsigned int defragment_dma_buffer(struct comedi_device *dev,
- /*
- =======================================
- */
--static unsigned int move_block_from_dma(struct comedi_device *dev,
-+static int move_block_from_dma(struct comedi_device *dev,
- 					struct comedi_subdevice *s,
- 					short *dma_buffer,
- 					unsigned int num_samples)
-diff --git a/drivers/staging/comedi/drivers/ni_labpc.c b/drivers/staging/comedi/drivers/ni_labpc.c
-index 3acf7e6..19f79e8 100644
---- a/drivers/staging/comedi/drivers/ni_labpc.c
-+++ b/drivers/staging/comedi/drivers/ni_labpc.c
-@@ -250,7 +250,7 @@ static unsigned int labpc_serial_in(struct comedi_device *dev);
- static unsigned int labpc_eeprom_read(struct comedi_device *dev,
- 				      unsigned int address);
- static unsigned int labpc_eeprom_read_status(struct comedi_device *dev);
--static unsigned int labpc_eeprom_write(struct comedi_device *dev,
-+static int labpc_eeprom_write(struct comedi_device *dev,
- 				       unsigned int address,
- 				       unsigned int value);
- static void write_caldac(struct comedi_device *dev, unsigned int channel,
-@@ -1986,8 +1986,8 @@ static unsigned int labpc_eeprom_read(struct comedi_device *dev,
- 	return value;
- }
+diff --git a/drivers/memstick/Makefile b/drivers/memstick/Makefile
+index dc160fb..9862359 100644
+--- a/drivers/memstick/Makefile
++++ b/drivers/memstick/Makefile
+@@ -2,9 +2,7 @@
+ # Makefile for the kernel MemoryStick device drivers.
+ #
  
--static unsigned int labpc_eeprom_write(struct comedi_device *dev,
--				       unsigned int address, unsigned int value)
-+static int labpc_eeprom_write(struct comedi_device *dev,
-+				unsigned int address, unsigned int value)
- {
- 	const int write_enable_instruction = 0x6;
- 	const int write_instruction = 0x2;
+-ifeq ($(CONFIG_MEMSTICK_DEBUG),y)
+-	EXTRA_CFLAGS		+= -DDEBUG
+-endif
++subdir-ccflags-$(CONFIG_MEMSTICK_DEBUG) := -DDEBUG
+ 
+ obj-$(CONFIG_MEMSTICK)		+= core/
+ obj-$(CONFIG_MEMSTICK)		+= host/
+diff --git a/drivers/memstick/core/Makefile b/drivers/memstick/core/Makefile
+index 8b2b529..ecd0299 100644
+--- a/drivers/memstick/core/Makefile
++++ b/drivers/memstick/core/Makefile
+@@ -2,10 +2,6 @@
+ # Makefile for the kernel MemoryStick core.
+ #
+ 
+-ifeq ($(CONFIG_MEMSTICK_DEBUG),y)
+-	EXTRA_CFLAGS		+= -DDEBUG
+-endif
+-
+ obj-$(CONFIG_MEMSTICK)		+= memstick.o
+ 
+ obj-$(CONFIG_MSPRO_BLOCK)	+= mspro_block.o
+diff --git a/drivers/memstick/host/Makefile b/drivers/memstick/host/Makefile
+index 12530e4..a1815e9 100644
+--- a/drivers/memstick/host/Makefile
++++ b/drivers/memstick/host/Makefile
+@@ -2,9 +2,5 @@
+ # Makefile for MemoryStick host controller drivers
+ #
+ 
+-ifeq ($(CONFIG_MEMSTICK_DEBUG),y)
+-	EXTRA_CFLAGS			+= -DDEBUG
+-endif
+-
+ obj-$(CONFIG_MEMSTICK_TIFM_MS)		+= tifm_ms.o
+ obj-$(CONFIG_MEMSTICK_JMICRON_38X)	+= jmb38x_ms.o
+-- 
+1.7.2.1
 
