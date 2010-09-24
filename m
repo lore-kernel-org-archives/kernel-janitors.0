@@ -1,46 +1,58 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Wed, 29 Sep 2010 22:55:54 +0000
-Subject: Re: [PATCH 13/24] misc: change to new flag variable
-Message-Id: <20100929225553.GA19372@haskell.muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:27:59 +0000
+Subject: [PATCH v2 11/22] Staging: rtl8187se: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-11-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
- <20100928130214.GC3388@rere.qmqm.pl>
-In-Reply-To: <20100928130214.GC3388@rere.qmqm.pl>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: kernel-janitors@vger.kernel.org, Jack Steiner <steiner@sgi.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-On 15:02 Tue 28 Sep     , Michał Mirosław wrote:
-> On Fri, Sep 24, 2010 at 12:17:23PM -0700, matt mooney wrote:
-> > Replace EXTRA_CFLAGS with ccflags-y.
-> > 
-> > Signed-off-by: matt mooney <mfm@muteddisk.com>
-> > ---
-> >  drivers/misc/cb710/Makefile   |    4 +---
-> >  drivers/misc/sgi-gru/Makefile |    4 +---
-> >  2 files changed, 2 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/misc/cb710/Makefile b/drivers/misc/cb710/Makefile
-> > index 7b80cbf..467c8e9 100644
-> > --- a/drivers/misc/cb710/Makefile
-> > +++ b/drivers/misc/cb710/Makefile
-> > @@ -1,6 +1,4 @@
-> > -ifeq ($(CONFIG_CB710_DEBUG),y)
-> > -	EXTRA_CFLAGS		+= -DDEBUG
-> > -endif
-> > +ccflags-$(CONFIG_CB710_DEBUG)	:= -DDEBUG
-> >  
-> >  obj-$(CONFIG_CB710_CORE)	+= cb710.o
-> >  
-> 
-> In case you need it:
-> 
-> Acked-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Changed to use proper ccflags-y option
 
-Always helps!
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8187se/Makefile |   20 ++++++++++----------
+ 1 files changed, 10 insertions(+), 10 deletions(-)
 
-Thanks,
-mfm
+diff --git a/drivers/staging/rtl8187se/Makefile b/drivers/staging/rtl8187se/Makefile
+index e6adf91..51fbd24 100644
+--- a/drivers/staging/rtl8187se/Makefile
++++ b/drivers/staging/rtl8187se/Makefile
+@@ -1,20 +1,20 @@
+ 
+-#EXTRA_CFLAGS += -DCONFIG_IEEE80211_NOWEP=y
+-#EXTRA_CFLAGS += -std=gnu89
+-#EXTRA_CFLAGS += -O2
++#ccflags-y := -DCONFIG_IEEE80211_NOWEP=y
++#ccflags-y := -std=gnu89
++#ccflags-y := -O2
+ #CC            = gcc
+ 
+-EXTRA_CFLAGS += -DSW_ANTE
+-EXTRA_CFLAGS += -DTX_TRACK
+-EXTRA_CFLAGS += -DHIGH_POWER
+-EXTRA_CFLAGS += -DSW_DIG
+-EXTRA_CFLAGS += -DRATE_ADAPT
++ccflags-y := -DSW_ANTE
++ccflags-y := -DTX_TRACK
++ccflags-y := -DHIGH_POWER
++ccflags-y := -DSW_DIG
++ccflags-y := -DRATE_ADAPT
+ 
+ #enable it for legacy power save, disable it for leisure  power save
+-EXTRA_CFLAGS += -DENABLE_LPS
++ccflags-y := -DENABLE_LPS
+ 
+ 
+-#EXTRA_CFLAGS += -mhard-float -DCONFIG_FORCE_HARD_FLOAT=y
++#ccflags-y := -mhard-float -DCONFIG_FORCE_HARD_FLOAT=y
+ 
+ r8187se-objs :=			\
+ 		r8180_core.o		\
+-- 
+1.7.3
+
