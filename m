@@ -1,51 +1,33 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sun, 05 Sep 2010 18:32:49 +0000
-Subject: [PATCH 08/14] staging: tidspbridge: check return code of kzalloc
-Message-Id: <1283711569-7418-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:27:52 +0000
+Subject: [PATCH v2 04/22] Staging: dream: camera: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-4-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Vasiliy Kulikov <segooon@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Rene Sapiens <rene.sapiens@ti.com>, Nishanth Menon <nm@ti.com>, Ernesto Ramos <ernesto@ti.com>, Felipe Contreras <felipe.contreras@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-From: Vasiliy Kulikov <segooon@gmail.com>
+Changed to use the proper ccflags-y option
 
-Function kzalloc may fail. Check for it.
-
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- I couldn't compile this driver at all, so it is not tested.
+ drivers/staging/dream/camera/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
- drivers/staging/tidspbridge/rmgr/dbdcd.c |    8 ++++++++
- 1 files changed, 8 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/staging/tidspbridge/rmgr/dbdcd.c b/drivers/staging/tidspbridge/rmgr/dbdcd.c
-index f71e860..3581a55 100644
---- a/drivers/staging/tidspbridge/rmgr/dbdcd.c
-+++ b/drivers/staging/tidspbridge/rmgr/dbdcd.c
-@@ -487,6 +487,10 @@ int dcd_get_object_def(struct dcd_manager *hdcd_mgr,
- 
- 	/* Allocate zeroed buffer. */
- 	psz_coff_buf = kzalloc(ul_len + 4, GFP_KERNEL);
-+	if (psz_coff_buf = NULL) {
-+		status = -ENOMEM;
-+		goto func_end;
-+	}
- #ifdef _DB_TIOMAP
- 	if (strstr(dcd_key->path, "iva") = NULL) {
- 		/* Locate section by objectID and read its content. */
-@@ -571,6 +575,10 @@ int dcd_get_objects(struct dcd_manager *hdcd_mgr,
- 
- 	/* Allocate zeroed buffer. */
- 	psz_coff_buf = kzalloc(ul_len + 4, GFP_KERNEL);
-+	if (psz_coff_buf = NULL) {
-+		status = -ENOMEM;
-+		goto func_cont;
-+	}
- #ifdef _DB_TIOMAP
- 	if (strstr(sz_coff_path, "iva") = NULL) {
- 		/* Locate section by objectID and read its content. */
+diff --git a/drivers/staging/dream/camera/Makefile b/drivers/staging/dream/camera/Makefile
+index db228d7..03711dc 100644
+--- a/drivers/staging/dream/camera/Makefile
++++ b/drivers/staging/dream/camera/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS=-Idrivers/staging/dream/include
++ccflags-y:=-Idrivers/staging/dream/include
+ obj-$(CONFIG_MT9T013) += mt9t013.o mt9t013_reg.o
+ obj-$(CONFIG_MT9D112) += mt9d112.o mt9d112_reg.o
+ obj-$(CONFIG_MT9P012) += mt9p012_fox.o mt9p012_reg.o
 -- 
-1.7.0.4
+1.7.3
 
