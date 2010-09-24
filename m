@@ -1,19 +1,19 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:28:04 +0000
+Date: Fri, 24 Sep 2010 23:33:33 +0000
 Subject: [PATCH v2 16/22] Staging: rtl8192u: ieee80211: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-16-git-send-email-tdent48227@gmail.com>
+Message-Id: <1285371213-9097-1-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+References: <1285370890-8984-16-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-16-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>, Tracey Dent <tdent48277@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
 Changed yo use the proper ccflags-y option
 
-Signed-off-by: Tracey Dent <tdent48277@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
  drivers/staging/rtl8192u/ieee80211/Makefile |   16 ++++++++--------
  1 files changed, 8 insertions(+), 8 deletions(-)
