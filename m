@@ -1,105 +1,58 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:50:29 +0000
-Subject: [PATCH 06/20] ia64: change to new flag variables
-Message-Id: <1285224629-29640-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:34 +0000
+Subject: [PATCH 21/21] Staging: wlags49_h25: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285352314-5939-21-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Xiantao Zhang <xiantao.zhang@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>, Avi Kivity <avi@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
+Changed to use the proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/ia64/kvm/Makefile           |    4 ++--
- arch/ia64/sn/kernel/Makefile     |    2 +-
- arch/ia64/sn/kernel/sn2/Makefile |    2 +-
- arch/ia64/sn/pci/Makefile        |    2 +-
- arch/ia64/sn/pci/pcibr/Makefile  |    2 +-
- arch/ia64/uv/kernel/Makefile     |    2 +-
- 6 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/wlags49_h25/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/ia64/kvm/Makefile b/arch/ia64/kvm/Makefile
-index 1089b3e..db3d7c5 100644
---- a/arch/ia64/kvm/Makefile
-+++ b/arch/ia64/kvm/Makefile
-@@ -45,8 +45,8 @@ FORCE : $(obj)/$(offsets-file)
- # Makefile for Kernel-based Virtual Machine module
- #
+diff --git a/drivers/staging/wlags49_h25/Makefile b/drivers/staging/wlags49_h25/Makefile
+index d0b23d4..66fd6de 100644
+--- a/drivers/staging/wlags49_h25/Makefile
++++ b/drivers/staging/wlags49_h25/Makefile
+@@ -12,8 +12,8 @@
+ #  If you want to build AP support (untested), comment out -DSTA_ONLY
  
--EXTRA_CFLAGS += -Ivirt/kvm -Iarch/ia64/kvm/
--EXTRA_AFLAGS += -Ivirt/kvm -Iarch/ia64/kvm/
-+ccflags-y := -Ivirt/kvm -Iarch/ia64/kvm/
-+asflags-y := -Ivirt/kvm -Iarch/ia64/kvm/
+ INSTALLDIR := /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless
+-EXTRA_CFLAGS += -I$(KERNELDIR)/include
+-EXTRA_CFLAGS += -I$(src) \
++ccflags-y += -I$(KERNELDIR)/include
++ccflags-y += -I$(src) \
+ 		-DBUS_PCMCIA \
+ 		-DUSE_WPA \
+ 		-DUSE_WEXT \
+@@ -25,16 +25,16 @@ EXTRA_CFLAGS += -I$(src) \
+ #		-DUSE_UIL \
+ #		-DUSE_PROFILE \
  
- common-objs = $(addprefix ../../../virt/kvm/, kvm_main.o ioapic.o \
- 		coalesced_mmio.o irq_comm.o assigned-dev.o)
-diff --git a/arch/ia64/sn/kernel/Makefile b/arch/ia64/sn/kernel/Makefile
-index 0591038..d27df1d 100644
---- a/arch/ia64/sn/kernel/Makefile
-+++ b/arch/ia64/sn/kernel/Makefile
-@@ -7,7 +7,7 @@
- # Copyright (C) 1999,2001-2006,2008 Silicon Graphics, Inc.  All Rights Reserved.
- #
- 
--EXTRA_CFLAGS += -Iarch/ia64/sn/include
-+ccflags-y := -Iarch/ia64/sn/include
- 
- obj-y				+= setup.o bte.o bte_error.o irq.o mca.o idle.o \
- 				   huberror.o io_acpi_init.o io_common.o \
-diff --git a/arch/ia64/sn/kernel/sn2/Makefile b/arch/ia64/sn/kernel/sn2/Makefile
-index 08e6565..3d09108 100644
---- a/arch/ia64/sn/kernel/sn2/Makefile
-+++ b/arch/ia64/sn/kernel/sn2/Makefile
-@@ -9,7 +9,7 @@
- # sn2 specific kernel files
- #
- 
--EXTRA_CFLAGS += -Iarch/ia64/sn/include
-+ccflags-y := -Iarch/ia64/sn/include
- 
- obj-y += cache.o io.o ptc_deadlock.o sn2_smp.o sn_proc_fs.o \
- 	 prominfo_proc.o timer.o timer_interrupt.o sn_hwperf.o
-diff --git a/arch/ia64/sn/pci/Makefile b/arch/ia64/sn/pci/Makefile
-index ad4ef34..df2a901 100644
---- a/arch/ia64/sn/pci/Makefile
-+++ b/arch/ia64/sn/pci/Makefile
-@@ -7,6 +7,6 @@
- #
- # Makefile for the sn pci general routines.
- 
--EXTRA_CFLAGS += -Iarch/ia64/sn/include
-+ccflags-y := -Iarch/ia64/sn/include
- 
- obj-y := pci_dma.o tioca_provider.o tioce_provider.o pcibr/
-diff --git a/arch/ia64/sn/pci/pcibr/Makefile b/arch/ia64/sn/pci/pcibr/Makefile
-index 01192d3..396bcae 100644
---- a/arch/ia64/sn/pci/pcibr/Makefile
-+++ b/arch/ia64/sn/pci/pcibr/Makefile
-@@ -7,7 +7,7 @@
- #
- # Makefile for the sn2 io routines.
- 
--EXTRA_CFLAGS += -Iarch/ia64/sn/include
-+ccflags-y := -Iarch/ia64/sn/include
- 
- obj-y				+=  pcibr_dma.o pcibr_reg.o \
- 				    pcibr_ate.o pcibr_provider.o
-diff --git a/arch/ia64/uv/kernel/Makefile b/arch/ia64/uv/kernel/Makefile
-index 8d92b46..124e441 100644
---- a/arch/ia64/uv/kernel/Makefile
-+++ b/arch/ia64/uv/kernel/Makefile
-@@ -7,7 +7,7 @@
- # Copyright (C) 2008 Silicon Graphics, Inc.  All Rights Reserved.
- #
- 
--EXTRA_CFLAGS += -Iarch/ia64/sn/include
-+ccflags-y := -Iarch/ia64/sn/include
- 
- obj-y				+= setup.o
- obj-$(CONFIG_IA64_GENERIC)      += machvec.o
+-ifeq ($(findstring HERMES25,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring HERMES25,$(ccflags-y)),)
+ WLNAME := wlags49_h2_cs
+ $(WLNAME)-y := sta_h2.o
+-ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
+ $(WLNAME)-y += ap_h2.o
+ endif
+ else
+ WLNAME=wlags49_h25_cs
+ $(WLNAME)-y := sta_h25.o
+-ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
+ $(WLNAME)-y += ap_h25.o
+ endif
+ endif
 -- 
-1.7.2.1
+1.7.3
 
