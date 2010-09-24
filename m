@@ -1,57 +1,77 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 19 Sep 2010 16:53:48 +0000
-Subject: Re: [PATCH 03/14] mca: fix device_register() error handling
-Message-Id: <4C96401C.1000707@bfs.de>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:15 +0000
+Subject: [PATCH 05/24] i2c: change to new flag variable
+Message-Id: <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284900887-24327-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1284900887-24327-1-git-send-email-segooon@gmail.com>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>, "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Replace EXTRA_CFLAGS with ccflags-y.
 
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/i2c/Makefile        |    4 +---
+ drivers/i2c/algos/Makefile  |    4 +---
+ drivers/i2c/busses/Makefile |    4 +---
+ drivers/i2c/muxes/Makefile  |    4 +---
+ 4 files changed, 4 insertions(+), 12 deletions(-)
 
-Vasiliy Kulikov schrieb:
-> If device_register() fails then call put_device().
-> See comment to device_register.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
->  I cannot compile this driver, so it is not tested at all.
-> 
->  drivers/mca/mca-bus.c |    5 ++++-
->  1 files changed, 4 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/mca/mca-bus.c b/drivers/mca/mca-bus.c
-> index ada5ebb..7162f08 100644
-> --- a/drivers/mca/mca-bus.c
-> +++ b/drivers/mca/mca-bus.c
-> @@ -116,8 +116,10 @@ int __init mca_register_device(int bus, struct mca_device *mca_dev)
->  	mca_dev->dev.coherent_dma_mask = mca_dev->dma_mask;
->  
->  	rc = device_register(&mca_dev->dev);
-> -	if (rc)
-> +	if (rc) {
-> +		put_device(&mca_dev->dev);
->  		goto err_out;
-> +	}
->  
->  	rc = device_create_file(&mca_dev->dev, &dev_attr_id);
->  	if (rc) goto err_out_devreg;
-> @@ -154,6 +156,7 @@ struct mca_bus * __devinit mca_attach_bus(int bus)
->  	dev_set_name(&mca_bus->dev, "mca%d", bus);
->  	sprintf(mca_bus->name,"Host %s MCA Bridge", bus ? "Secondary" : "Primary");
->  	if (device_register(&mca_bus->dev)) {
-> +		put_device(&mca_bus->dev);
->  		kfree(mca_bus);
->  		return NULL;
->  	}
-
-just a minor: dev_set_name() is not check here. (But is in other places).
-
-re,
- wh
-
+diff --git a/drivers/i2c/Makefile b/drivers/i2c/Makefile
+index c00fd66..23ac61e 100644
+--- a/drivers/i2c/Makefile
++++ b/drivers/i2c/Makefile
+@@ -9,6 +9,4 @@ obj-$(CONFIG_I2C_CHARDEV)	+= i2c-dev.o
+ obj-$(CONFIG_I2C_MUX)		+= i2c-mux.o
+ obj-y				+= algos/ busses/ muxes/
+ 
+-ifeq ($(CONFIG_I2C_DEBUG_CORE),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_I2C_DEBUG_CORE) := -DDEBUG
+diff --git a/drivers/i2c/algos/Makefile b/drivers/i2c/algos/Makefile
+index 18b3e96..215303f 100644
+--- a/drivers/i2c/algos/Makefile
++++ b/drivers/i2c/algos/Makefile
+@@ -6,6 +6,4 @@ obj-$(CONFIG_I2C_ALGOBIT)	+= i2c-algo-bit.o
+ obj-$(CONFIG_I2C_ALGOPCF)	+= i2c-algo-pcf.o
+ obj-$(CONFIG_I2C_ALGOPCA)	+= i2c-algo-pca.o
+ 
+-ifeq ($(CONFIG_I2C_DEBUG_ALGO),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_I2C_DEBUG_ALGO) := -DDEBUG
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index c3ef492..033ad41 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -76,6 +76,4 @@ obj-$(CONFIG_I2C_STUB)		+= i2c-stub.o
+ obj-$(CONFIG_SCx200_ACB)	+= scx200_acb.o
+ obj-$(CONFIG_SCx200_I2C)	+= scx200_i2c.o
+ 
+-ifeq ($(CONFIG_I2C_DEBUG_BUS),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_I2C_DEBUG_BUS) := -DDEBUG
+diff --git a/drivers/i2c/muxes/Makefile b/drivers/i2c/muxes/Makefile
+index bd83b52..6f49786 100644
+--- a/drivers/i2c/muxes/Makefile
++++ b/drivers/i2c/muxes/Makefile
+@@ -3,6 +3,4 @@
+ 
+ obj-$(CONFIG_I2C_MUX_PCA954x)	+= pca954x.o
+ 
+-ifeq ($(CONFIG_I2C_DEBUG_BUS),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_I2C_DEBUG_BUS) := -DDEBUG
+-- 
+1.7.2.1
 
