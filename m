@@ -1,7 +1,7 @@
 From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 24 Sep 2010 19:17:24 +0000
-Subject: [PATCH 14/24] mmc: change to new flag variable
-Message-Id: <efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:27 +0000
+Subject: [PATCH 17/24] power: change to new flag variable
+Message-Id: <0472f95473283ce75285e458b22b86ff791d7a42.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
  <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
@@ -16,87 +16,38 @@ References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddi
  <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
  <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
  <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
+ <efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
+ <facbf79cadc81f9043e89160b7b3b8a90926aba1.1285355033.git.mfm@muteddisk.com>
+ <f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-The EXTRA_CFLAGS assignment in mmc/Makefile was not accomplishing
-anything because this flag only has effect on sources at the same level
-as the makefile (i.e., per directory). Since card/, core/, and host/
-rely on MMC_DEBUG, the subdir-ccflags-y variant seems to be the
-appropriate choice.
+Replace EXTRA_CFLAGS with ccflags-y.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/mmc/Makefile      |    4 +---
- drivers/mmc/card/Makefile |    4 ----
- drivers/mmc/core/Makefile |    4 ----
- drivers/mmc/host/Makefile |    4 ----
- 4 files changed, 1 insertions(+), 15 deletions(-)
+ drivers/power/Makefile |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/Makefile b/drivers/mmc/Makefile
-index 9979f5e..12eef39 100644
---- a/drivers/mmc/Makefile
-+++ b/drivers/mmc/Makefile
-@@ -2,9 +2,7 @@
- # Makefile for the kernel mmc device drivers.
- #
+diff --git a/drivers/power/Makefile b/drivers/power/Makefile
+index 10143aa..a0cffe0 100644
+--- a/drivers/power/Makefile
++++ b/drivers/power/Makefile
+@@ -8,9 +8,7 @@ ifeq ($(CONFIG_LEDS_TRIGGERS),y)
+ power_supply-objs += power_supply_leds.o
+ endif
  
--ifeq ($(CONFIG_MMC_DEBUG),y)
--	EXTRA_CFLAGS		+= -DDEBUG
+-ifeq ($(CONFIG_POWER_SUPPLY_DEBUG),y)
+-EXTRA_CFLAGS += -DDEBUG
 -endif
-+subdir-ccflags-$(CONFIG_MMC_DEBUG) := -DDEBUG
++ccflags-$(CONFIG_POWER_SUPPLY_DEBUG) := -DDEBUG
  
- obj-$(CONFIG_MMC)		+= core/
- obj-$(CONFIG_MMC)		+= card/
-diff --git a/drivers/mmc/card/Makefile b/drivers/mmc/card/Makefile
-index 0d40751..c73b406 100644
---- a/drivers/mmc/card/Makefile
-+++ b/drivers/mmc/card/Makefile
-@@ -2,10 +2,6 @@
- # Makefile for MMC/SD card drivers
- #
+ obj-$(CONFIG_POWER_SUPPLY)	+= power_supply.o
  
--ifeq ($(CONFIG_MMC_DEBUG),y)
--	EXTRA_CFLAGS		+= -DDEBUG
--endif
--
- obj-$(CONFIG_MMC_BLOCK)		+= mmc_block.o
- mmc_block-objs			:= block.o queue.o
- obj-$(CONFIG_MMC_TEST)		+= mmc_test.o
-diff --git a/drivers/mmc/core/Makefile b/drivers/mmc/core/Makefile
-index 889e5f8..86b4791 100644
---- a/drivers/mmc/core/Makefile
-+++ b/drivers/mmc/core/Makefile
-@@ -2,10 +2,6 @@
- # Makefile for the kernel mmc core.
- #
- 
--ifeq ($(CONFIG_MMC_DEBUG),y)
--	EXTRA_CFLAGS		+= -DDEBUG
--endif
--
- obj-$(CONFIG_MMC)		+= mmc_core.o
- mmc_core-y			:= core.o bus.o host.o \
- 				   mmc.o mmc_ops.o sd.o sd_ops.o \
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 840bcb5..e35e778 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -2,10 +2,6 @@
- # Makefile for MMC/SD host controller drivers
- #
- 
--ifeq ($(CONFIG_MMC_DEBUG),y)
--	EXTRA_CFLAGS		+= -DDEBUG
--endif
--
- obj-$(CONFIG_MMC_ARMMMCI)	+= mmci.o
- obj-$(CONFIG_MMC_PXA)		+= pxamci.o
- obj-$(CONFIG_MMC_IMX)		+= imxmmc.o
 -- 
 1.7.2.1
 
