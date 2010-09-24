@@ -1,48 +1,46 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sun, 05 Sep 2010 18:32:15 +0000
-Subject: [PATCH 01/14] avr32/mach-at32ap/clock: check return code of clk_get
-Message-Id: <1283711535-7082-1-git-send-email-segooon@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:22 +0000
+Subject: [PATCH 12/24] message: change to new flag variable
+Message-Id: <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+ <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+ <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
+ <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Vasiliy Kulikov <segooon@gmail.com>, Haavard Skinnemoen <hskinnemoen@atmel.com>, linux-kernel@vger.kernel.org
+Cc: Eric Moore <Eric.Moore@lsi.com>, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Vasiliy Kulikov <segooon@gmail.com>
+Replace EXTRA_CFLAGS with ccflags-y.
 
-Function clk_get may return ERR_PTR(...). Check for it.
-
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- arch/avr32/mach-at32ap/clock.c |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+ drivers/message/fusion/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/avr32/mach-at32ap/clock.c b/arch/avr32/mach-at32ap/clock.c
-index 442f08c..133a475 100644
---- a/arch/avr32/mach-at32ap/clock.c
-+++ b/arch/avr32/mach-at32ap/clock.c
-@@ -258,14 +258,20 @@ static int clk_show(struct seq_file *s, void *unused)
+diff --git a/drivers/message/fusion/Makefile b/drivers/message/fusion/Makefile
+index 95c9532..d182a24 100644
+--- a/drivers/message/fusion/Makefile
++++ b/drivers/message/fusion/Makefile
+@@ -2,7 +2,7 @@
  
- 	/* show clock tree as derived from the three oscillators */
- 	clk = clk_get(NULL, "osc32k");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
- 	dump_clock(clk, &r);
- 	clk_put(clk);
+ # enable verbose logging
+ # CONFIG_FUSION_LOGGING needs to be enabled in Kconfig
+-#EXTRA_CFLAGS += -DMPT_DEBUG_VERBOSE
++#ccflags-y := -DMPT_DEBUG_VERBOSE
  
- 	clk = clk_get(NULL, "osc0");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
- 	dump_clock(clk, &r);
- 	clk_put(clk);
  
- 	clk = clk_get(NULL, "osc1");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
- 	dump_clock(clk, &r);
- 	clk_put(clk);
- 
+ #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-} LSI_LOGIC
 -- 
-1.7.0.4
+1.7.2.1
 
