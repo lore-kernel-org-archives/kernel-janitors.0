@@ -1,51 +1,48 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 24 Sep 2010 19:17:12 +0000
-Subject: [PATCH 02/24] char: change to new flag variable
-Message-Id: <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:24 +0000
+Subject: [PATCH 11/21] Staging: rtl8192e: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285352314-5939-11-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_CFLAGS with ccflags-y.
+Changed to use proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/char/mwave/Makefile |    4 ++--
- drivers/char/mwave/README   |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8192e/Makefile |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/char/mwave/Makefile b/drivers/char/mwave/Makefile
-index 754c9e2..c0cf57e 100644
---- a/drivers/char/mwave/Makefile
-+++ b/drivers/char/mwave/Makefile
-@@ -9,7 +9,7 @@ obj-$(CONFIG_MWAVE) += mwave.o
- mwave-objs := mwavedd.o smapi.o tp3780i.o 3780i.o
+diff --git a/drivers/staging/rtl8192e/Makefile b/drivers/staging/rtl8192e/Makefile
+index 41cb4d3..0bad423 100644
+--- a/drivers/staging/rtl8192e/Makefile
++++ b/drivers/staging/rtl8192e/Makefile
+@@ -1,13 +1,13 @@
+ NIC_SELECT = RTL8192E
  
- # To have the mwave driver disable other uarts if necessary
--# EXTRA_CFLAGS += -DMWAVE_FUTZ_WITH_OTHER_DEVICES
-+# ccflags-y := -DMWAVE_FUTZ_WITH_OTHER_DEVICES
+-EXTRA_CFLAGS += -DRTL8192E
+-EXTRA_CFLAGS += -std=gnu89
+-EXTRA_CFLAGS += -O2
+-EXTRA_CFLAGS += -DTHOMAS_TURBO
+-EXTRA_CFLAGS += -DENABLE_DOT11D
++ccflags-y += -DRTL8192E
++ccflags-y += -std=gnu89
++ccflags-y += -O2
++ccflags-y += -DTHOMAS_TURBO
++ccflags-y += -DENABLE_DOT11D
  
- # To compile in lots (~20 KiB) of run-time enablable printk()s for debugging:
--EXTRA_CFLAGS += -DMW_TRACE
-+ccflags-y += -DMW_TRACE
-diff --git a/drivers/char/mwave/README b/drivers/char/mwave/README
-index 480251f..c2a58f4 100644
---- a/drivers/char/mwave/README
-+++ b/drivers/char/mwave/README
-@@ -11,7 +11,7 @@ are not saved by the BIOS and so do not persist after unload and reload.
- 	0x0008 tp3780i tracing
+-EXTRA_CFLAGS += -DENABLE_IPS
+-EXTRA_CFLAGS += -DENABLE_LPS
++ccflags-y += -DENABLE_IPS
++ccflags-y += -DENABLE_LPS
  
-         Tracing only occurs if the driver has been compiled with the
--        MW_TRACE macro #defined  (i.e. let EXTRA_CFLAGS += -DMW_TRACE
-+        MW_TRACE macro #defined  (i.e. let ccflags-y := -DMW_TRACE
-         in the Makefile).
- 
-   mwave_3780i_irq=5/7/10/11/15
+ r8192e_pci-objs :=		\
+ 	r8192E_core.o		\
 -- 
-1.7.2.1
+1.7.3
 
