@@ -1,62 +1,59 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Mon, 27 Sep 2010 10:01:42 +0000
-Subject: Re: [PATCH] gpio: stmpe: fix error path
-Message-Id: <20100927100141.GC2560@sortiz-mobl>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:23 +0000
+Subject: [PATCH 13/24] misc: change to new flag variable
+Message-Id: <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284317840-5131-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1284317840-5131-1-git-send-email-segooon@gmail.com>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+ <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+ <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
+ <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
+ <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Rabin Vincent <rabin.vincent@stericsson.com>, Wolfram Sang <w.sang@pengutronix.de>, Luotao Fu <l.fu@pengutronix.de>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, Jack Steiner <steiner@sgi.com>, linux-kernel@vger.kernel.org
 
-Hi Vasiliy,
+Replace EXTRA_CFLAGS with ccflags-y.
 
-On Sun, Sep 12, 2010 at 10:57:19PM +0400, Vasiliy Kulikov wrote:
-> Free allocated memory.  Call stmpe_disable() if it was enabled.
-Patch applied, thanks.
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/misc/cb710/Makefile   |    4 +---
+ drivers/misc/sgi-gru/Makefile |    4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
->  Compile tested.
->  Maybe It needs better error path.
-> 
->  drivers/gpio/stmpe-gpio.c |    6 ++++--
->  1 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/stmpe-gpio.c b/drivers/gpio/stmpe-gpio.c
-> index 65b9960..6e28afa 100644
-> --- a/drivers/gpio/stmpe-gpio.c
-> +++ b/drivers/gpio/stmpe-gpio.c
-> @@ -317,11 +317,11 @@ static int __devinit stmpe_gpio_probe(struct platform_device *pdev)
->  
->  	ret = stmpe_enable(stmpe, STMPE_BLOCK_GPIO);
->  	if (ret)
-> -		return ret;
-> +		goto out_free;
->  
->  	ret = stmpe_gpio_irq_init(stmpe_gpio);
->  	if (ret)
-> -		goto out_free;
-> +		goto out_disable;
->  
->  	ret = request_threaded_irq(irq, NULL, stmpe_gpio_irq, IRQF_ONESHOT,
->  				   "stmpe-gpio", stmpe_gpio);
-> @@ -347,6 +347,8 @@ out_freeirq:
->  	free_irq(irq, stmpe_gpio);
->  out_removeirq:
->  	stmpe_gpio_irq_remove(stmpe_gpio);
-> +out_disable:
-> +	stmpe_disable(stmpe, STMPE_BLOCK_GPIO);
->  out_free:
->  	kfree(stmpe_gpio);
->  	return ret;
-> -- 
-> 1.7.0.4
-> 
-
+diff --git a/drivers/misc/cb710/Makefile b/drivers/misc/cb710/Makefile
+index 7b80cbf..467c8e9 100644
+--- a/drivers/misc/cb710/Makefile
++++ b/drivers/misc/cb710/Makefile
+@@ -1,6 +1,4 @@
+-ifeq ($(CONFIG_CB710_DEBUG),y)
+-	EXTRA_CFLAGS		+= -DDEBUG
+-endif
++ccflags-$(CONFIG_CB710_DEBUG)	:= -DDEBUG
+ 
+ obj-$(CONFIG_CB710_CORE)	+= cb710.o
+ 
+diff --git a/drivers/misc/sgi-gru/Makefile b/drivers/misc/sgi-gru/Makefile
+index 7c4c306..0003a1d 100644
+--- a/drivers/misc/sgi-gru/Makefile
++++ b/drivers/misc/sgi-gru/Makefile
+@@ -1,6 +1,4 @@
+-ifdef CONFIG_SGI_GRU_DEBUG
+-  EXTRA_CFLAGS	+= -DDEBUG
+-endif
++ccflags-$(CONFIG_SGI_GRU_DEBUG)	:= -DDEBUG
+ 
+ obj-$(CONFIG_SGI_GRU) := gru.o
+ gru-y := grufile.o grumain.o grufault.o grutlbpurge.o gruprocfs.o grukservices.o gruhandles.o grukdump.o
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+1.7.2.1
+
