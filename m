@@ -1,46 +1,48 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 06 Sep 2010 12:32:30 +0000
-Subject: [patch] Staging: vt6655: buffer overflow
-Message-Id: <20100906123230.GB2764@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:28:00 +0000
+Subject: [PATCH v2 12/22] Staging: rt8192e: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-12-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-"param->u.wpa_associate.wpa_ie_len" comes from the user.  We should
-check it so that the copy_from_user() doesn't overflow the buffer.
+Changed to use proper ccflags-y option
 
-Also further down in the function, we assume that if
-"param->u.wpa_associate.wpa_ie_len" is set then "abyWPAIE[0]" is
-initialized.  To make that work, I changed the test here to say that if
-"wpa_ie_len" is set then "wpa_ie" has to be a valid pointer or we return
--EINVAL.
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8192e/Makefile |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
 
-Oddly, we only use the first element of the abyWPAIE[] array.  So I
-suspect there may be some other issues in this function.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/staging/vt6655/wpactl.c b/drivers/staging/vt6655/wpactl.c
-index 0142338..4bdb836 100644
---- a/drivers/staging/vt6655/wpactl.c
-+++ b/drivers/staging/vt6655/wpactl.c
-@@ -766,9 +766,14 @@ static int wpa_set_associate(PSDevice pDevice,
-     DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "wpa_ie_len = %d\n", param->u.wpa_associate.wpa_ie_len);
+diff --git a/drivers/staging/rtl8192e/Makefile b/drivers/staging/rtl8192e/Makefile
+index 41cb4d3..96e7abf 100644
+--- a/drivers/staging/rtl8192e/Makefile
++++ b/drivers/staging/rtl8192e/Makefile
+@@ -1,13 +1,13 @@
+ NIC_SELECT = RTL8192E
  
+-EXTRA_CFLAGS += -DRTL8192E
+-EXTRA_CFLAGS += -std=gnu89
+-EXTRA_CFLAGS += -O2
+-EXTRA_CFLAGS += -DTHOMAS_TURBO
+-EXTRA_CFLAGS += -DENABLE_DOT11D
++ccflags-y := -DRTL8192E
++ccflags-y := -std=gnu89
++ccflags-y := -O2
++ccflags-y := -DTHOMAS_TURBO
++ccflags-y := -DENABLE_DOT11D
  
--	if (param->u.wpa_associate.wpa_ie &&
--	    copy_from_user(&abyWPAIE[0], param->u.wpa_associate.wpa_ie, param->u.wpa_associate.wpa_ie_len))
--	    return -EINVAL;
-+	if (param->u.wpa_associate.wpa_ie_len) {
-+		if (!param->u.wpa_associate.wpa_ie)
-+			return -EINVAL;
-+		if (param->u.wpa_associate.wpa_ie_len > sizeof(abyWPAIE))
-+			return -EINVAL;
-+		if (copy_from_user(&abyWPAIE[0], param->u.wpa_associate.wpa_ie, param->u.wpa_associate.wpa_ie_len))
-+			return -EFAULT;
-+	}
+-EXTRA_CFLAGS += -DENABLE_IPS
+-EXTRA_CFLAGS += -DENABLE_LPS
++ccflags-y := -DENABLE_IPS
++ccflags-y := -DENABLE_LPS
  
- 	if (param->u.wpa_associate.mode = 1)
- 	    pMgmt->eConfigMode = WMAC_CONFIG_IBSS_STA;
+ r8192e_pci-objs :=		\
+ 	r8192E_core.o		\
+-- 
+1.7.3
+
