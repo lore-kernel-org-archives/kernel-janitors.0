@@ -1,51 +1,45 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 12 Sep 2010 18:56:57 +0000
-Subject: [PATCH] staging: solo6010: fix signess bug
-Message-Id: <1284317820-4937-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:20 +0000
+Subject: [PATCH 07/21] Staging: go7007: Makefile: cleaned up makefile cflags lines
+Message-Id: <1285352314-5939-7-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Ben Collins <bcollins@bluecherry.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-video_nr is unsigned, so check video_nr >= 0 doesn't make sense.
-The only "negative" value may be -1, so explicitly check for it.
+Changed to use proper ccflags-y option
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- Compile tested.
+ drivers/staging/go7007/Makefile |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
- drivers/staging/solo6x10/solo6010-v4l2-enc.c |    2 +-
- drivers/staging/solo6x10/solo6010-v4l2.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/solo6x10/solo6010-v4l2-enc.c b/drivers/staging/solo6x10/solo6010-v4l2-enc.c
-index f114b4b..bbf3d9c 100644
---- a/drivers/staging/solo6x10/solo6010-v4l2-enc.c
-+++ b/drivers/staging/solo6x10/solo6010-v4l2-enc.c
-@@ -1497,7 +1497,7 @@ static struct solo_enc_dev *solo_enc_alloc(struct solo6010_dev *solo_dev, u8 ch)
- 		 "%s-enc (%i/%i)", SOLO6010_NAME, solo_dev->vfd->num,
- 		 solo_enc->vfd->num);
+diff --git a/drivers/staging/go7007/Makefile b/drivers/staging/go7007/Makefile
+index d37b7ed..618e526e 100644
+--- a/drivers/staging/go7007/Makefile
++++ b/drivers/staging/go7007/Makefile
+@@ -22,13 +22,13 @@ s2250-objs += s2250-board.o
+ # Uncomment when the saa7134 patches get into upstream
+ #ifneq ($(CONFIG_VIDEO_SAA7134),)
+ #obj-$(CONFIG_VIDEO_SAA7134) += saa7134-go7007.o
+-#EXTRA_CFLAGS += -Idrivers/media/video/saa7134 -DSAA7134_MPEG_GO7007=3
++#ccflags-y += -Idrivers/media/video/saa7134 -DSAA7134_MPEG_GO7007=3
+ #endif
  
--	if (video_nr >= 0)
-+	if (video_nr != -1)
- 		video_nr++;
+ # S2250 needs cypress ezusb loader from dvb-usb
+ ifneq ($(CONFIG_VIDEO_GO7007_USB_S2250_BOARD),)
+-EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-usb
++ccflags-y += -Idrivers/media/dvb/dvb-usb
+ endif
  
- 	spin_lock_init(&solo_enc->lock);
-diff --git a/drivers/staging/solo6x10/solo6010-v4l2.c b/drivers/staging/solo6x10/solo6010-v4l2.c
-index 9537cc6..9731fa0 100644
---- a/drivers/staging/solo6x10/solo6010-v4l2.c
-+++ b/drivers/staging/solo6x10/solo6010-v4l2.c
-@@ -825,7 +825,7 @@ int solo_v4l2_init(struct solo6010_dev *solo_dev)
- 	snprintf(solo_dev->vfd->name, sizeof(solo_dev->vfd->name), "%s (%i)",
- 		 SOLO6010_NAME, solo_dev->vfd->num);
- 
--	if (video_nr >= 0)
-+	if (video_nr != -1)
- 		video_nr++;
- 
- 	dev_info(&solo_dev->pdev->dev, "Display as /dev/video%d with "
+-EXTRA_CFLAGS += -Idrivers/media/dvb/frontends
+-EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core
++ccflags-y += -Idrivers/media/dvb/frontends
++ccflags-y += -Idrivers/media/dvb/dvb-core
 -- 
-1.7.0.4
+1.7.3
 
