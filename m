@@ -1,36 +1,66 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:31 +0000
-Subject: [PATCH 18/21] Staging: vt6655: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352314-5939-18-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:29 +0000
+Subject: [PATCH 19/24] rapidio: change to new flag variable
+Message-Id: <30c1ad7f4200136e00723fd76da1e58200e6e5b0.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+ <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+ <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
+ <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
+ <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
+ <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
+ <efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
+ <facbf79cadc81f9043e89160b7b3b8a90926aba1.1285355033.git.mfm@muteddisk.com>
+ <f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
+ <0472f95473283ce75285e458b22b86ff791d7a42.1285355033.git.mfm@muteddisk.com>
+ <75da5e0e0a547b4acbc7cfbdf35c29a24512ca37.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <75da5e0e0a547b4acbc7cfbdf35c29a24512ca37.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Matt Porter <mporter@kernel.crashing.org>, linux-kernel@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+switches/ depends on RAPIDIO_DEBUG so the subdir-ccflags-y variant
+seems to be appropriate here.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/vt6655/Makefile |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/rapidio/Makefile          |    4 +---
+ drivers/rapidio/switches/Makefile |    4 ----
+ 2 files changed, 1 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/vt6655/Makefile b/drivers/staging/vt6655/Makefile
-index 824c971..3c5da6f 100644
---- a/drivers/staging/vt6655/Makefile
-+++ b/drivers/staging/vt6655/Makefile
-@@ -1,6 +1,6 @@
- # TODO: all of these should be removed
--EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -D__NO_VERSION__
--EXTRA_CFLAGS += -DHOSTAP
-+ccflags-y += -DLINUX -D__KERNEL__ -D__NO_VERSION__
-+ccflags-y += -DHOSTAP
+diff --git a/drivers/rapidio/Makefile b/drivers/rapidio/Makefile
+index b6139fe..89b8eca 100644
+--- a/drivers/rapidio/Makefile
++++ b/drivers/rapidio/Makefile
+@@ -5,6 +5,4 @@ obj-y += rio.o rio-access.o rio-driver.o rio-scan.o rio-sysfs.o
  
- vt6655_stage-y +=	device_main.o \
- 	card.o \
+ obj-$(CONFIG_RAPIDIO)		+= switches/
+ 
+-ifeq ($(CONFIG_RAPIDIO_DEBUG),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++subdir-ccflags-$(CONFIG_RAPIDIO_DEBUG) := -DDEBUG
+diff --git a/drivers/rapidio/switches/Makefile b/drivers/rapidio/switches/Makefile
+index fe4adc3..0fece0e 100644
+--- a/drivers/rapidio/switches/Makefile
++++ b/drivers/rapidio/switches/Makefile
+@@ -6,7 +6,3 @@ obj-$(CONFIG_RAPIDIO_TSI57X)	+= tsi57x.o
+ obj-$(CONFIG_RAPIDIO_CPS_XX)	+= idtcps.o
+ obj-$(CONFIG_RAPIDIO_TSI568)	+= tsi568.o
+ obj-$(CONFIG_RAPIDIO_TSI500)	+= tsi500.o
+-
+-ifeq ($(CONFIG_RAPIDIO_DEBUG),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
 -- 
-1.7.3
+1.7.2.1
 
