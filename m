@@ -1,66 +1,56 @@
-From: Madhu Iyengar <madhu.iyengar@qlogic.com>
-Date: Tue, 14 Sep 2010 23:52:15 +0000
-Subject: RE: [patch] qla2xxx: locking problem in qla2x00_init_rings()
-Message-Id: <5E4F49720D0BAD499EE1F01232234BA8712925CF9B@AVEXMB1.qlogic.org>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:30 +0000
+Subject: [PATCH 20/24] rtc: change to new flag variable
+Message-Id: <06e70fe4f8a51f65f3582c353329939a8548d897.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100912214033.GF25351@bicker>
-In-Reply-To: <20100912214033.GF25351@bicker>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+ <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+ <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
+ <8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
+ <e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
+ <c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
+ <efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
+ <facbf79cadc81f9043e89160b7b3b8a90926aba1.1285355033.git.mfm@muteddisk.com>
+ <f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
+ <0472f95473283ce75285e458b22b86ff791d7a42.1285355033.git.mfm@muteddisk.com>
+ <75da5e0e0a547b4acbc7cfbdf35c29a24512ca37.1285355033.git.mfm@muteddisk.com>
+ <30c1ad7f4200136e00723fd76da1e58200e6e5b0.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <30c1ad7f4200136e00723fd76da1e58200e6e5b0.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Andrew Vasquez <andrew.vasquez@qlogic.com>
-Cc: Linux Driver <Linux-Driver@qlogic.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Giridhar Malavali <giridhar.malavali@qlogic.com>, Lalit Chandivade <lalit.chandivade@qlogic.com>, Grant Likely <grant.likely@secretlab.ca>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Arun Easi <arun.easi@qlogic.com>, Madhu Iyengar <madhu.iyengar@qlogic.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
-Dan,
+Replace EXTRA_CFLAGS with ccflags-y.
 
-Thanks. We'll test this patch.
-
-Patch-reviewed-by: Giridhar Malavali <giridhar.malavali@qlogic.com>
-Acked-by: Madhu Iyengar <madhu.iyengar@qlogic.com>
-
-Cheers,
-Madhu
-
------Original Message-----
-From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-owner@vger.kernel.org] On Behalf Of Dan Carpenter
-Sent: Sunday, September 12, 2010 2:41 PM
-To: Andrew Vasquez
-Cc: Linux Driver; James E.J. Bottomley; Giridhar Malavali; Lalit Chandivade; Grant Likely; linux-scsi@vger.kernel.org; devicetree-discuss@lists.ozlabs.org; kernel-janitors@vger.kernel.org; Arun Easi
-Subject: [patch] qla2xxx: locking problem in qla2x00_init_rings()
-
-IRQs are already disabled here so we don't need to disable them again.
-But more importantly, the spin_lock_irqsave() overwrites "flags" and
-that breaks things when we want to re-enable the IRQs when we call
-spin_unlock_irqrestore(&ha->hardware_lock, flags);
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
-This seems like an important bug.  I don't have this hardware but could
-someone from QLogic test this out and maybe queue it up for 2.6.36?
+ drivers/rtc/Makefile |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index 9c383ba..9f4ba28 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1787,14 +1787,14 @@ qla2x00_init_rings(scsi_qla_host_t *vha)
- 		qla2x00_init_response_q_entries(rsp);
- 	}
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index 0f207b3..f2d69d5 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -2,9 +2,7 @@
+ # Makefile for RTC class/drivers.
+ #
  
--	spin_lock_irqsave(&ha->vport_slock, flags);
-+	spin_lock(&ha->vport_slock);
- 	/* Clear RSCN queue. */
- 	list_for_each_entry(vp, &ha->vp_list, list) {
- 		vp->rscn_in_ptr = 0;
- 		vp->rscn_out_ptr = 0;
- 	}
+-ifeq ($(CONFIG_RTC_DEBUG),y)
+-	EXTRA_CFLAGS		+= -DDEBUG
+-endif
++ccflags-$(CONFIG_RTC_DEBUG)	:= -DDEBUG
  
--	spin_unlock_irqrestore(&ha->vport_slock, flags);
-+	spin_unlock(&ha->vport_slock);
- 
- 	ha->isp_ops->config_rings(vha);
- 
---
-To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ obj-$(CONFIG_RTC_LIB)		+= rtc-lib.o
+ obj-$(CONFIG_RTC_HCTOSYS)	+= hctosys.o
+-- 
+1.7.2.1
 
