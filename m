@@ -1,34 +1,45 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:50:57 +0000
-Subject: [PATCH 09/20] microblaze: change to new flag variable
-Message-Id: <1285224657-29763-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:28:01 +0000
+Subject: [PATCH v2 13/22] Staging: rtl8192su: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-13-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michal Simek <monstr@monstr.eu>
-Cc: Grant Likely <grant.likely@secretlab.ca>, "David S. Miller" <davem@davemloft.net>, microblaze-uclinux@itee.uq.edu.au, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_CFLAGS with ccflags-y.
+Changed to use proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/microblaze/kernel/cpu/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/staging/rtl8192su/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/microblaze/kernel/cpu/Makefile b/arch/microblaze/kernel/cpu/Makefile
-index 59cc7bc..fceed4e 100644
---- a/arch/microblaze/kernel/cpu/Makefile
-+++ b/arch/microblaze/kernel/cpu/Makefile
-@@ -6,7 +6,7 @@ ifdef CONFIG_FUNCTION_TRACER
- CFLAGS_REMOVE_cache.o = -pg
- endif
+diff --git a/drivers/staging/rtl8192su/Makefile b/drivers/staging/rtl8192su/Makefile
+index 7133894..88bcd97 100644
+--- a/drivers/staging/rtl8192su/Makefile
++++ b/drivers/staging/rtl8192su/Makefile
+@@ -1,12 +1,12 @@
+ NIC_SELECT = RTL8192SU
  
--EXTRA_CFLAGS += -DCPU_MAJOR=$(CPU_MAJOR) -DCPU_MINOR=$(CPU_MINOR) \
-+ccflags-y := -DCPU_MAJOR=$(CPU_MAJOR) -DCPU_MINOR=$(CPU_MINOR) \
- 		-DCPU_REV=$(CPU_REV)
+-EXTRA_CFLAGS += -std=gnu89
+-EXTRA_CFLAGS += -O2
++ccflags-y := -std=gnu89
++ccflags-y := -O2
  
- obj-y += cache.o cpuinfo.o cpuinfo-pvr-full.o cpuinfo-static.o mb.o pvr.o
+-EXTRA_CFLAGS += -DJACKSON_NEW_RX
+-EXTRA_CFLAGS += -DTHOMAS_BEACON
++ccflags-y := -DJACKSON_NEW_RX
++ccflags-y := -DTHOMAS_BEACON
+ 
+-#EXTRA_CFLAGS += -DMUTIPLE_BULK_OUT
++#ccflags-y := -DMUTIPLE_BULK_OUT
+ 
+ r8192s_usb-objs :=		\
+ 	r8192U_wx.o		\
 -- 
-1.7.2.1
+1.7.3
 
