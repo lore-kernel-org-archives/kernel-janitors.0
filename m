@@ -1,30 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 27 Sep 2010 01:54:57 +0000
-Subject: Re: [PATCH 1/9] ibm_newemac: use free_netdev(netdev) instead of
-Message-Id: <20100926.185457.242128057.davem@davemloft.net>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:17 +0000
+Subject: [PATCH 07/24] ieee802154: change to new flag variable
+Message-Id: <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285495080-21857-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1285495080-21857-1-git-send-email-segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: jpirko-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Sergey Lapin <slapin@ossfans.org>, linux-zigbee-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 13:58:00 +0400
+Replace EXTRA_CFLAGS with ccflags-y.
 
-> Freeing netdev without free_netdev() leads to net, tx leaks.
-> I might lead to dereferencing freed pointer.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> @@
-> struct net_device* dev;
-> @@
-> 
-> -kfree(dev)
-> +free_netdev(dev)
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/ieee802154/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Applied.
+diff --git a/drivers/ieee802154/Makefile b/drivers/ieee802154/Makefile
+index e0e8e1a..6899913 100644
+--- a/drivers/ieee802154/Makefile
++++ b/drivers/ieee802154/Makefile
+@@ -1,3 +1,3 @@
+ obj-$(CONFIG_IEEE802154_FAKEHARD) += fakehard.o
+ 
+-EXTRA_CFLAGS += -DDEBUG -DCONFIG_FFD
++ccflags-y := -DDEBUG -DCONFIG_FFD
+-- 
+1.7.2.1
+
