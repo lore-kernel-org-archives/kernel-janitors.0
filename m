@@ -1,39 +1,33 @@
-From: Kulikov Vasiliy <segooon@gmail.com>
-Date: Sun, 05 Sep 2010 18:33:04 +0000
-Subject: [PATCH 12/14] ubifs: check return code of pnode_lookup
-Message-Id: <1283711584-7587-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:16 +0000
+Subject: [PATCH 03/21] Staging: dream: Makefile: cleaned up makedile cflag lines
+Message-Id: <1285352314-5939-3-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Artem Bityutskiy <dedekind1@gmail.com>, Vasiliy Kulikov <segooon@gmail.com>, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@nokia.com>
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-From: Vasiliy Kulikov <segooon@gmail.com>
+Changed to use the proper ccflags-y option
 
-Function pnode_lookup may return ERR_PTR(...). Check for it.
-
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- Compile tested.
+ drivers/staging/dream/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
- fs/ubifs/lpt_commit.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
-
-diff --git a/fs/ubifs/lpt_commit.c b/fs/ubifs/lpt_commit.c
-index d12535b..5c90dec 100644
---- a/fs/ubifs/lpt_commit.c
-+++ b/fs/ubifs/lpt_commit.c
-@@ -705,6 +705,9 @@ static int make_tree_dirty(struct ubifs_info *c)
- 	struct ubifs_pnode *pnode;
- 
- 	pnode = pnode_lookup(c, 0);
-+	if (IS_ERR(pnode))
-+		return PTR_ERR(pnode);
-+
- 	while (pnode) {
- 		do_make_pnode_dirty(c, pnode);
- 		pnode = next_pnode_to_dirty(c, pnode);
+diff --git a/drivers/staging/dream/Makefile b/drivers/staging/dream/Makefile
+index fbea0ab..6492523 100644
+--- a/drivers/staging/dream/Makefile
++++ b/drivers/staging/dream/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS=-Idrivers/staging/dream/include
++ccflags-y=-Idrivers/staging/dream/include
+ obj-$(CONFIG_MSM_ADSP)		+= qdsp5/
+ obj-$(CONFIG_MSM_CAMERA)	+= camera/
+ obj-$(CONFIG_INPUT_GPIO)	+= gpio_axis.o gpio_event.o gpio_input.o gpio_matrix.o gpio_output.o
 -- 
-1.7.0.4
+1.7.3
 
