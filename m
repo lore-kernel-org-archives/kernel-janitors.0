@@ -1,36 +1,54 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 19 Sep 2010 12:54:40 +0000
-Subject: [PATCH] staging: spectra: off by one
-Message-Id: <1284900881-24243-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:27 +0000
+Subject: [PATCH 14/21] Staging: rtl8192u: Makefile: cleaned up make cflag files
+Message-Id: <1285352314-5939-14-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Javier Martinez Canillas <martinez.javier@gmail.com>, David Woodhouse <David.Woodhouse@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-g_pBlockTable has only DeviceInfo.wDataBlockNum elements.
+Changed to use the proper ccflags-y option
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- compile tested.
+ drivers/staging/rtl8192u/Makefile |   20 ++++++++++----------
+ 1 files changed, 10 insertions(+), 10 deletions(-)
 
- drivers/staging/spectra/flash.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/spectra/flash.c b/drivers/staging/spectra/flash.c
-index 9b5218b..4e6e451 100644
---- a/drivers/staging/spectra/flash.c
-+++ b/drivers/staging/spectra/flash.c
-@@ -1604,7 +1604,7 @@ static int get_l2_cache_blks(void)
+diff --git a/drivers/staging/rtl8192u/Makefile b/drivers/staging/rtl8192u/Makefile
+index 738f4a8..d6cc80f 100644
+--- a/drivers/staging/rtl8192u/Makefile
++++ b/drivers/staging/rtl8192u/Makefile
+@@ -1,16 +1,16 @@
+ NIC_SELECT = RTL8192U
  
- 	for (n = 0; n < BLK_NUM_FOR_L2_CACHE; n++) {
- 		blk = find_least_worn_blk_for_l2_cache();
--		if (blk > DeviceInfo.wDataBlockNum) {
-+		if (blk >= DeviceInfo.wDataBlockNum) {
- 			nand_dbg_print(NAND_DBG_WARN,
- 				"find_least_worn_blk_for_l2_cache: "
- 				"No enough free NAND blocks (n: %d) for L2 Cache!\n", n);
+-EXTRA_CFLAGS += -std=gnu89
+-EXTRA_CFLAGS += -O2
++ccflags-y += -std=gnu89
++ccflags-y += -O2
+ 
+-EXTRA_CFLAGS += -DCONFIG_FORCE_HARD_FLOAT=y
+-EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
+-EXTRA_CFLAGS += -DTHOMAS_BEACON -DTHOMAS_TASKLET -DTHOMAS_SKB -DTHOMAS_TURBO
+-#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
+-#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
+-EXTRA_CFLAGS += -DUSE_ONE_PIPE
+-EXTRA_CFLAGS += -DENABLE_DOT11D
+-EXTRA_CFLAGS += -Idrivers/staging/rtl8192u/ieee80211
++ccflags-y += -DCONFIG_FORCE_HARD_FLOAT=y
++ccflags-y += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
++ccflags-y += -DTHOMAS_BEACON -DTHOMAS_TASKLET -DTHOMAS_SKB -DTHOMAS_TURBO
++#ccflags-y += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
++#ccflags-y += -DUSB_RX_AGGREGATION_SUPPORT
++ccflags-y += -DUSE_ONE_PIPE
++ccflags-y += -DENABLE_DOT11D
++ccflags-y += -Idrivers/staging/rtl8192u/ieee80211
+ 
+ r8192u_usb-objs := r8192U_core.o r8180_93cx6.o r8192U_wx.o		\
+ 		  r8190_rtl8256.o r819xU_phy.o r819xU_firmware.o	\
 -- 
-1.7.0.4
+1.7.3
 
