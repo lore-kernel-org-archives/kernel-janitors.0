@@ -1,53 +1,51 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 05 Sep 2010 19:00:19 +0000
-Subject: [PATCH 1/8] drivers/video/matrox/matroxfb_maven.c: Fix unsigned return type
-Message-Id: <1283713226-8429-2-git-send-email-julia@diku.dk>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:12 +0000
+Subject: [PATCH 02/24] char: change to new flag variable
+Message-Id: <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283713226-8429-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1283713226-8429-1-git-send-email-julia@diku.dk>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Petr Vandrovec <vandrove@vc.cvut.cz>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-The function has an unsigned return type, but returns a negative constant
-to indicate an error condition.  The result of calling the function is only
-tested by comparison to 0, and thus unsigned is not needed and can be
-dropped from the return type.
+Replace EXTRA_CFLAGS with ccflags-y.
 
-A sematic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@exists@
-identifier f;
-constant C;
-@@
-
- unsigned f(...)
- { <+...
-*  return -C;
- ...+> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/video/matrox/matroxfb_maven.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/mwave/Makefile |    4 ++--
+ drivers/char/mwave/README   |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/video/matrox/matroxfb_maven.c b/drivers/video/matrox/matroxfb_maven.c
-index 1e3e8f1..a78611a 100644
---- a/drivers/video/matrox/matroxfb_maven.c
-+++ b/drivers/video/matrox/matroxfb_maven.c
-@@ -280,7 +280,7 @@ static int matroxfb_PLL_mavenclock(const struct matrox_pll_features2* pll,
- 	return fxtal * (*feed) / (*in) * ctl->den;
- }
+diff --git a/drivers/char/mwave/Makefile b/drivers/char/mwave/Makefile
+index 754c9e2..c0cf57e 100644
+--- a/drivers/char/mwave/Makefile
++++ b/drivers/char/mwave/Makefile
+@@ -9,7 +9,7 @@ obj-$(CONFIG_MWAVE) += mwave.o
+ mwave-objs := mwavedd.o smapi.o tp3780i.o 3780i.o
  
--static unsigned int matroxfb_mavenclock(const struct matrox_pll_ctl* ctl,
-+static int matroxfb_mavenclock(const struct matrox_pll_ctl *ctl,
- 		unsigned int htotal, unsigned int vtotal,
- 		unsigned int* in, unsigned int* feed, unsigned int* post,
- 		unsigned int* htotal2) {
+ # To have the mwave driver disable other uarts if necessary
+-# EXTRA_CFLAGS += -DMWAVE_FUTZ_WITH_OTHER_DEVICES
++# ccflags-y := -DMWAVE_FUTZ_WITH_OTHER_DEVICES
+ 
+ # To compile in lots (~20 KiB) of run-time enablable printk()s for debugging:
+-EXTRA_CFLAGS += -DMW_TRACE
++ccflags-y += -DMW_TRACE
+diff --git a/drivers/char/mwave/README b/drivers/char/mwave/README
+index 480251f..c2a58f4 100644
+--- a/drivers/char/mwave/README
++++ b/drivers/char/mwave/README
+@@ -11,7 +11,7 @@ are not saved by the BIOS and so do not persist after unload and reload.
+ 	0x0008 tp3780i tracing
+ 
+         Tracing only occurs if the driver has been compiled with the
+-        MW_TRACE macro #defined  (i.e. let EXTRA_CFLAGS += -DMW_TRACE
++        MW_TRACE macro #defined  (i.e. let ccflags-y := -DMW_TRACE
+         in the Makefile).
+ 
+   mwave_3780i_irq=5/7/10/11/15
+-- 
+1.7.2.1
 
