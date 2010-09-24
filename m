@@ -1,93 +1,58 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Date: Thu, 09 Sep 2010 21:21:24 +0000
-Subject: Re: [patch] pm_qos_params: cleanup: terminate a string
-Message-Id: <201009092321.24644.rjw@sisk.pl>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:28:04 +0000
+Subject: [PATCH v2 16/22] Staging: rtl8192u: ieee80211: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-16-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100903124105.GJ5437@bicker> <201009090014.00158.rjw@sisk.pl> <20100909025619.GA5049@gvim.org>
-In-Reply-To: <20100909025619.GA5049@gvim.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: markgross@thegnar.org
-Cc: Dan Carpenter <error27@gmail.com>, James Bottomley <James.Bottomley@suse.de>, Frederic Weisbecker <fweisbec@gmail.com>, Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>, Tracey Dent <tdent48277@gmail.com>
 
-On Thursday, September 09, 2010, mark gross wrote:
-> On Thu, Sep 09, 2010 at 12:13:59AM +0200, Rafael J. Wysocki wrote:
-> > On Tuesday, September 07, 2010, mark gross wrote:
-> > > On Mon, Sep 06, 2010 at 11:22:27PM -0700, mark gross wrote:
-> > > > On Fri, Sep 03, 2010 at 02:41:06PM +0200, Dan Carpenter wrote:
-> > ...
-> > > 
-> > > updated patch 
-> > > 
-> > > Signed-off-by: mark gross <markgross@thegnar.org>
-> > > 
-> > > --mgross 
-> > > 
-> > > Subject: [PATCH] correct some pr_debug misuse and add a stronger parrameter check to
-> > >  pm_qos_write for the ascii hex value case.  Thanks to Dan Carpenter for
-> > >  pointing out the problem!
-> > > 
-> > > ---
-> > >  kernel/pm_qos_params.c |    6 ++++--
-> > >  1 files changed, 4 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
-> > > index f42d3f7..aae58d2 100644
-> > > --- a/kernel/pm_qos_params.c
-> > > +++ b/kernel/pm_qos_params.c
-> > > @@ -155,7 +155,7 @@ static void update_target(int pm_qos_class)
-> > >  		call_notifier = 1;
-> > >  		atomic_set(&pm_qos_array[pm_qos_class]->target_value,
-> > >  				extreme_value);
-> > > -		pr_debug(KERN_ERR "new target for qos %d is %d\n", pm_qos_class,
-> > > +		pr_debug("new target for qos %d is %d\n", pm_qos_class,
-> > >  			atomic_read(&pm_qos_array[pm_qos_class]->target_value));
-> > >  	}
-> > >  	spin_unlock_irqrestore(&pm_qos_lock, flags);
-> > 
-> > The above doesn't apply to the Linus' tree any more.  Care to fix?
-> > 
-> > Rafael
-> 
-> no problem.  (I screwed up on my fetch and forgot to merge the linus
-> remote....) This bit doesn't apply post 2.6.35.
-> --mgross
+Changed yo use the proper ccflags-y option
 
-Thanks, applied to suspend-2.6/linux-next .
+Signed-off-by: Tracey Dent <tdent48277@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/Makefile |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
 
-Rafael
-
-
-> Signed-off-by: mark gross <markgross@thegnar.org)
-> 
-> 
-> From 64753f68e2baaef21783192566469abc54aca90d Mon Sep 17 00:00:00 2001
-> From: mgross <mgross@mgross-laptop.(none)>
-> Date: Wed, 8 Sep 2010 19:52:39 -0700
-> Subject: [PATCH] make it harder to misuse the pm_qos user mode api.
-> 
-> ---
->  kernel/pm_qos_params.c |    4 +++-
->  1 files changed, 3 insertions(+), 1 deletions(-)
-> 
-> diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
-> index b7e4c36..645e541 100644
-> --- a/kernel/pm_qos_params.c
-> +++ b/kernel/pm_qos_params.c
-> @@ -389,10 +389,12 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
->  	} else if (count = 11) { /* len('0x12345678/0') */
->  		if (copy_from_user(ascii_value, buf, 11))
->  			return -EFAULT;
-> +		if (strlen(ascii_value) != 10)
-> +			return -EINVAL;
->  		x = sscanf(ascii_value, "%x", &value);
->  		if (x != 1)
->  			return -EINVAL;
-> -		pr_debug(KERN_ERR "%s, %d, 0x%x\n", ascii_value, x, value);
-> +		pr_debug("%s, %d, 0x%x\n", ascii_value, x, value);
->  	} else
->  		return -EINVAL;
->  
-> 
+diff --git a/drivers/staging/rtl8192u/ieee80211/Makefile b/drivers/staging/rtl8192u/ieee80211/Makefile
+index 71ca5d9..c45ebf9 100644
+--- a/drivers/staging/rtl8192u/ieee80211/Makefile
++++ b/drivers/staging/rtl8192u/ieee80211/Makefile
+@@ -5,22 +5,22 @@ MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/$(NIC_SELECT)
+ 
+ CC = gcc
+ ifneq ($(shell uname -r|cut -d. -f1,2), 2.4)
+-EXTRA_CFLAGS += -I$(TOPDIR)/drivers/net/wireless
+-EXTRA_CFLAGS += -O2
+-EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
++ccflags-y := -I$(TOPDIR)/drivers/net/wireless
++ccflags-y := -O2
++ccflags-y := -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
+ 
+ #it will fail to compile in suse linux enterprise 10 sp2. This flag is to solve this problem.
+ ifeq ($(shell uname -r | cut -d. -f1,2,3,4), 2.6.16.60-0)
+-EXTRA_CFLAGS += -DOPENSUSE_SLED
++ccflags-y := -DOPENSUSE_SLED
+ endif
+ 
+ ifeq ($(NIC_SELECT),RTL8192U)
+-#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
+-#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
++#ccflags-y := -DUSB_TX_DRIVER_AGGREGATION_ENABLE
++#ccflags-y := -DUSB_RX_AGGREGATION_SUPPORT
+ endif
+-#EXTRA_CFLAGS += -DJOHN_NOCPY
++#ccflags-y := -DJOHN_NOCPY
+ #flags to enable or disble 80211D feature
+-EXTRA_CFLAGS += -DENABLE_DOT11D
++ccflags-y := -DENABLE_DOT11D
+ ieee80211-rsl-objs := ieee80211_rx.o \
+ 		      ieee80211_softmac.o \
+ 		      ieee80211_tx.o \
+-- 
+1.7.3
 
