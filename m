@@ -1,40 +1,43 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 19 Sep 2010 12:55:04 +0000
-Subject: [PATCH 09/14] rtc: fix device_register() error handling
-Message-Id: <1284900904-24579-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:26 +0000
+Subject: [PATCH 13/21] Staging: rtl8192su: ieee80211: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285352314-5939-13-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Aaro Koskinen <aaro.koskinen@nokia.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-If device_register() fails then call put_device().
-See comment to device_register.
+Changed to use the proper ccflags-y option
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- compile tested.
+ drivers/staging/rtl8192su/ieee80211/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
- drivers/rtc/class.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
-index 565562b..e6539cb 100644
---- a/drivers/rtc/class.c
-+++ b/drivers/rtc/class.c
-@@ -158,8 +158,10 @@ struct rtc_device *rtc_device_register(const char *name, struct device *dev,
- 	rtc_dev_prepare(rtc);
+diff --git a/drivers/staging/rtl8192su/ieee80211/Makefile b/drivers/staging/rtl8192su/ieee80211/Makefile
+index a500bfa..41fd157 100644
+--- a/drivers/staging/rtl8192su/ieee80211/Makefile
++++ b/drivers/staging/rtl8192su/ieee80211/Makefile
+@@ -1,10 +1,10 @@
+ NIC_SELECT = RTL8192SU
  
- 	err = device_register(&rtc->dev);
--	if (err)
-+	if (err) {
-+		put_device(&rtc->dev);
- 		goto exit_kfree;
-+	}
+-EXTRA_CFLAGS += -O2
+-EXTRA_CFLAGS += -DRTL8192S_DISABLE_FW_DM=0
+-EXTRA_CFLAGS += -DRTL8192SU
+-#EXTRA_CFLAGS += -DJOHN_NOCPY
+-EXTRA_CFLAGS += -DTHOMAS_TURBO
++ccflags-y += -O2
++ccflags-y += -DRTL8192S_DISABLE_FW_DM=0
++ccflags-y += -DRTL8192SU
++#ccflags-y += -DJOHN_NOCPY
++ccflags-y += -DTHOMAS_TURBO
  
- 	rtc_dev_add_device(rtc);
- 	rtc_sysfs_add_device(rtc);
+ ieee80211-rsl-objs := ieee80211_rx.o \
+ 		      ieee80211_softmac.o \
 -- 
-1.7.0.4
+1.7.3
 
