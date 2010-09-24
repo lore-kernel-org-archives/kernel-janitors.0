@@ -1,25 +1,34 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Date: Tue, 07 Sep 2010 02:04:07 +0000
-Subject: Re: [PATCH 13/14] mm: mempolicy: Check return code of check_range
-Message-Id: <20100907110254.C8F2.A69D9226@jp.fujitsu.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:11 +0000
+Subject: [PATCH 01/24] base: change to new flag variable
+Message-Id: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100906093610.C8B5.A69D9226@jp.fujitsu.com> <alpine.DEB.2.00.1009062058270.1485@router.home>
-In-Reply-To: <alpine.DEB.2.00.1009062058270.1485@router.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Lameter <cl@linux.com>
-Cc: kosaki.motohiro@jp.fujitsu.com, Kulikov Vasiliy <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Lee Schermerhorn <lee.schermerhorn@hp.com>, David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org
 
-> On Mon, 6 Sep 2010, KOSAKI Motohiro wrote:
-> 
-> > I think both case is not happen in real. Am I overlooking anything?
-> 
-> Its good to check the return code regardless. There is a lot of tinkering
-> going on with that code.
+Replace EXTRA_CFLAGS with ccflags-y.
 
-OK. so, I'm convinced this is not -stable material.
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/base/Makefile |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-	Reviewed-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index c12c7f2..5f51c3b 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -19,7 +19,5 @@ obj-$(CONFIG_MODULES)	+= module.o
+ endif
+ obj-$(CONFIG_SYS_HYPERVISOR) += hypervisor.o
+ 
+-ifeq ($(CONFIG_DEBUG_DRIVER),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_DEBUG_DRIVER) := -DDEBUG
+ 
+-- 
+1.7.2.1
 
