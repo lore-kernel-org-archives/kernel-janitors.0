@@ -1,27 +1,44 @@
-From: Jens Axboe <jaxboe@fusionio.com>
-Date: Mon, 13 Sep 2010 12:09:00 +0000
-Subject: Re: [patch] cciss: freeing uninitialized data on error path
-Message-Id: <4C8E145C.4020204@fusionio.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:20 +0000
+Subject: [PATCH 10/24] isdn: change to new flag variable
+Message-Id: <ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100911233947.GC25351@bicker>
-In-Reply-To: <20100911233947.GC25351@bicker>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+ <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2010-09-12 01:39, Dan Carpenter wrote:
-> The "h->scatter_list" is allocated inside a for loop.  If any of those
-> allocations fail, then the rest of the list is uninitialized data.  When
-> we free it we should start from the top and free backwards so that we
-> don't call kfree() on uninitialized pointers.
-> 
-> Also if the allocation for "h->scatter_list" fails then we would get an
-> Oops here.  I should have noticed this when I send: 4ee69851c "cciss:
-> handle allocation failure."  but I didn't.  Sorry about that.
+Replace EXTRA_CFLAGS with ccflags-y.
 
-Thanks Dan, applied.
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/isdn/hisax/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
+diff --git a/drivers/isdn/hisax/Makefile b/drivers/isdn/hisax/Makefile
+index ab638b08..646368f 100644
+--- a/drivers/isdn/hisax/Makefile
++++ b/drivers/isdn/hisax/Makefile
+@@ -4,7 +4,7 @@
+ 
+ # Define maximum number of cards
+ 
+-EXTRA_CFLAGS      += -DHISAX_MAX_CARDS=$(CONFIG_HISAX_MAX_CARDS)
++ccflags-y      := -DHISAX_MAX_CARDS=$(CONFIG_HISAX_MAX_CARDS)
+ 
+ obj-$(CONFIG_ISDN_DRV_HISAX)		+= hisax.o
+ obj-$(CONFIG_HISAX_SEDLBAUER_CS)	+= sedlbauer_cs.o
 -- 
-Jens Axboe
+1.7.2.1
 
