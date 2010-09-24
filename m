@@ -1,59 +1,36 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:51:17 +0000
-Subject: [PATCH 13/20] s390: change to new flag variable
-Message-Id: <1285224677-29899-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:28:07 +0000
+Subject: [PATCH v2 19/22] Staging:  vt6655: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-19-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, linux390@de.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_CFLAGS with ccflags-y.
+Changed to use proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/s390/boot/Makefile     |    2 +-
- arch/s390/kvm/Makefile      |    2 +-
- arch/s390/math-emu/Makefile |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/vt6655/Makefile |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
-index 8800cf09..635d677 100644
---- a/arch/s390/boot/Makefile
-+++ b/arch/s390/boot/Makefile
-@@ -6,7 +6,7 @@ COMPILE_VERSION := __linux_compile_version_id__`hostname |  \
- 			tr -c '[0-9A-Za-z]' '_'`__`date | \
- 			tr -c '[0-9A-Za-z]' '_'`_t
+diff --git a/drivers/staging/vt6655/Makefile b/drivers/staging/vt6655/Makefile
+index 824c971..b7cb1d5 100644
+--- a/drivers/staging/vt6655/Makefile
++++ b/drivers/staging/vt6655/Makefile
+@@ -1,6 +1,6 @@
+ # TODO: all of these should be removed
+-EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -D__NO_VERSION__
+-EXTRA_CFLAGS += -DHOSTAP
++ccflags-y := -DLINUX -D__KERNEL__ -D__NO_VERSION__
++ccflags-y := -DHOSTAP
  
--EXTRA_CFLAGS  := -DCOMPILE_VERSION=$(COMPILE_VERSION) -gstabs -I.
-+ccflags-y  := -DCOMPILE_VERSION=$(COMPILE_VERSION) -gstabs -I.
- 
- targets := image
- targets += bzImage
-diff --git a/arch/s390/kvm/Makefile b/arch/s390/kvm/Makefile
-index e5221ec..860d265 100644
---- a/arch/s390/kvm/Makefile
-+++ b/arch/s390/kvm/Makefile
-@@ -8,7 +8,7 @@
- 
- common-objs = $(addprefix ../../../virt/kvm/, kvm_main.o)
- 
--EXTRA_CFLAGS += -Ivirt/kvm -Iarch/s390/kvm
-+ccflags-y := -Ivirt/kvm -Iarch/s390/kvm
- 
- kvm-objs := $(common-objs) kvm-s390.o sie64a.o intercept.o interrupt.o priv.o sigp.o diag.o
- obj-$(CONFIG_KVM) += kvm.o
-diff --git a/arch/s390/math-emu/Makefile b/arch/s390/math-emu/Makefile
-index c848903..51d3995 100644
---- a/arch/s390/math-emu/Makefile
-+++ b/arch/s390/math-emu/Makefile
-@@ -4,4 +4,4 @@
- 
- obj-$(CONFIG_MATHEMU) := math.o
- 
--EXTRA_CFLAGS := -I$(src) -Iinclude/math-emu -w
-+ccflags-y := -I$(src) -Iinclude/math-emu -w
+ vt6655_stage-y +=	device_main.o \
+ 	card.o \
 -- 
-1.7.2.1
+1.7.3
 
