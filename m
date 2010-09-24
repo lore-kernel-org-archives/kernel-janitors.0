@@ -1,28 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 07 Sep 2010 01:40:07 +0000
-Subject: Re: [PATCH 5/8] drivers/atm/firestream.c: Fix unsigned return type
-Message-Id: <20100906.184007.58449609.davem@davemloft.net>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:28:03 +0000
+Subject: [PATCH v2 15/22] Staging: rtl8192u: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-15-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283713226-8429-1-git-send-email-julia@diku.dk>
-	<1283713226-8429-6-git-send-email-julia@diku.dk>
-In-Reply-To: <1283713226-8429-6-git-send-email-julia@diku.dk>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: chas@cmf.nrl.navy.mil, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sun,  5 Sep 2010 21:00:23 +0200
+Changed to use proper ccflags-y option
 
-> The function has an unsigned return type, but returns a negative constant
-> to indicate an error condition.  The result of calling the function is
-> always stored in a variable of type (signed) int, and thus unsigned can be
-> dropped from the return type.
-> 
-> A sematic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8192u/Makefile |   20 ++++++++++----------
+ 1 files changed, 10 insertions(+), 10 deletions(-)
 
-Applied.
+diff --git a/drivers/staging/rtl8192u/Makefile b/drivers/staging/rtl8192u/Makefile
+index 738f4a8..1710921 100644
+--- a/drivers/staging/rtl8192u/Makefile
++++ b/drivers/staging/rtl8192u/Makefile
+@@ -1,16 +1,16 @@
+ NIC_SELECT = RTL8192U
+ 
+-EXTRA_CFLAGS += -std=gnu89
+-EXTRA_CFLAGS += -O2
++ccflags-y := -std=gnu89
++ccflags-y := -O2
+ 
+-EXTRA_CFLAGS += -DCONFIG_FORCE_HARD_FLOAT=y
+-EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
+-EXTRA_CFLAGS += -DTHOMAS_BEACON -DTHOMAS_TASKLET -DTHOMAS_SKB -DTHOMAS_TURBO
+-#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
+-#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
+-EXTRA_CFLAGS += -DUSE_ONE_PIPE
+-EXTRA_CFLAGS += -DENABLE_DOT11D
+-EXTRA_CFLAGS += -Idrivers/staging/rtl8192u/ieee80211
++ccflags-y := -DCONFIG_FORCE_HARD_FLOAT=y
++ccflags-y := -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
++ccflags-y += -DTHOMAS_BEACON -DTHOMAS_TASKLET -DTHOMAS_SKB -DTHOMAS_TURBO
++#ccflags-y := -DUSB_TX_DRIVER_AGGREGATION_ENABLE
++#ccflags-y := -DUSB_RX_AGGREGATION_SUPPORT
++ccflags-y += -DUSE_ONE_PIPE
++ccflags-y += -DENABLE_DOT11D
++ccflags-y += -Idrivers/staging/rtl8192u/ieee80211
+ 
+ r8192u_usb-objs := r8192U_core.o r8180_93cx6.o r8192U_wx.o		\
+ 		  r8190_rtl8256.o r819xU_phy.o r819xU_firmware.o	\
+-- 
+1.7.3
+
