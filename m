@@ -1,34 +1,36 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:51:26 +0000
-Subject: [PATCH 15/20] sparc: change to new flag variable
-Message-Id: <1285224686-29967-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:28:08 +0000
+Subject: [PATCH v2 20/22] Staging: vt6656: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-20-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Andrew Morton <akpm@linux-foundation.org>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_LDFLAGS with ldflags-y.
+Changed to use proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/sparc/boot/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/staging/vt6656/Makefile |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/sparc/boot/Makefile b/arch/sparc/boot/Makefile
-index 97e3feb..9a22b4a 100644
---- a/arch/sparc/boot/Makefile
-+++ b/arch/sparc/boot/Makefile
-@@ -21,7 +21,7 @@ quiet_cmd_btfix		= BTFIX   $@
- quiet_cmd_sysmap        = SYSMAP  $(obj)/System.map
-       cmd_sysmap        = $(CONFIG_SHELL) $(srctree)/scripts/mksysmap
- quiet_cmd_image = LD      $@
--      cmd_image = $(LD) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LDFLAGS_$(@F)) -o $@
-+      cmd_image = $(LD) $(LDFLAGS) $(ldflags-y) $(LDFLAGS_$(@F)) -o $@
- quiet_cmd_strip = STRIP   $@
-       cmd_strip = $(STRIP) -R .comment -R .note -K sun4u_init -K _end -K _start $(obj)/image -o $@
+diff --git a/drivers/staging/vt6656/Makefile b/drivers/staging/vt6656/Makefile
+index 582a35197..6a85a0e 100644
+--- a/drivers/staging/vt6656/Makefile
++++ b/drivers/staging/vt6656/Makefile
+@@ -1,6 +1,6 @@
+ # TODO: all of these should be removed
+-EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -DEXPORT_SYMTAB -D__NO_VERSION__
+-EXTRA_CFLAGS += -DHOSTAP
++ccflags-y := -DLINUX -D__KERNEL__ -DEXPORT_SYMTAB -D__NO_VERSION__
++ccflags-y := -DHOSTAP
  
+ vt6656_stage-y +=	main_usb.o \
+ 			card.o  \
 -- 
-1.7.2.1
+1.7.3
 
