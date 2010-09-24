@@ -1,343 +1,214 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 30 Sep 2010 20:27:02 +0000
-Subject: Re: [PATCH 7/8] drivers/i2c/busses/i2c-amd8111.c: Fix unsigned return
-Message-Id: <Pine.LNX.4.64.1009302226270.10470@ask.diku.dk>
+From: Joe Perches <joe@perches.com>
+Date: Fri, 24 Sep 2010 01:18:18 +0000
+Subject: [PATCH V3] git-send-email.perl: Add --to-cmd
+Message-Id: <1285291098.25928.220.camel@Joe-Laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1009080757050.27892@ask.diku.dk>
- <20100908093449.0adef429@hyperion.delvare> <Pine.LNX.4.64.1009081148040.3297@ask.diku.dk>
- <20100929174606.616e564c@endymion.delvare> <Pine.LNX.4.64.1009292147060.25609@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1009292147060.25609-QfmoRoYWmW9knbxzx/v8hQ@public.gmane.org>
+References: <AANLkTinsM5jdU194FR8L3hTvBXk0Tr_oV2E5752NOUpq@mail.gmail.com>
+	 <AANLkTikkJNwF4LS9rx5=bHM2R0Pm751Y1u9V8iAt0w1A@mail.gmail.com>
+	 <1285227413.7286.47.camel@Joe-Laptop>
+	 <Pine.LNX.4.64.1009231054230.15528@ask.diku.dk>
+	 <20100923090931.GA29789@albatros> <20100923120024.GA26715@albatros>
+	 <1285253867.31572.13.camel@Joe-Laptop>
+	 <Pine.LNX.4.64.1009231757090.11585@ask.diku.dk>
+	 <1285262237.31572.18.camel@Joe-Laptop>
+	 <AANLkTin_Y8w4ujNGTqGJPNDNfYz7hcjBVLcOG0emBjYn@mail.gmail.com>
+	 <1285263993.31572.25.camel@Joe-Laptop>
+	 <AANLkTinCx=+n6bMZw4tQqrQ7WC1o_aeGG_n_PxywTyb8@mail.gmail.com>
+	 <1285267520.31572.34.camel@Joe-Laptop>
+	 <7v62xwqe7i.fsf@alter.siamese.dyndns.org>
+In-Reply-To: <7v62xwqe7i.fsf@alter.siamese.dyndns.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "Ben Dooks (em, bedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Junio C Hamano <gitster@pobox.com>
+Cc: =?ISO-8859-1?Q?=C6var_Arnfj=F6r=F0?= Bjarmason <avarab@gmail.com>, Julia Lawall <julia@diku.dk>, git <git@vger.kernel.org>, Vasiliy Kulikov <segooon@gmail.com>, matt mooney <mfmooney@gmail.com>, kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>
 
-The functions the functions amd_ec_wait_write and amd_ec_wait_read have an
-unsigned return type, but return a negative constant to indicate an error
-condition.
+Add the ability to use a command line --to-cmd=3Dcmd
+to create the list of "To:" addresses.
 
-A sematic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Used a shared routine for --cc-cmd and --to-cmd.
 
-// <smpl>
-@exists@
-identifier f;
-constant C;
-@@
+Did not use IPC::Open2, leaving that for =C3=86var if
+ever he decides to fix the other bugs he might find.
 
- unsigned f(...)
- { <+...
-*  return -C;
- ...+> }
-// </smpl>
-
-Fixing amd_ec_wait_write and amd_ec_wait_read leads to the need to adjust
-the return type of the functions amd_ec_write and amd_ec_read, which are
-the only functions that call amd_ec_wait_write and amd_ec_wait_read.
-amd_ec_write and amd_ec_read, in turn, are only called from within the
-function amd8111_access, which already returns a signed typed value.  Each
-of the calls to amd_ec_write and amd_ec_read are updated using the
-following semantic patch:
-
-// <smpl>
-@@
-@@
-
-+ status = amd_ec_write
-- amd_ec_write
-  (...);
-+ if (status) return status;
-
-@@
-@@
-
-+ status = amd_ec_read
-- amd_ec_read
-  (...);
-+ if (status) return status;
-// </smpl>
-
-The patch also adds the declaration of the status variable.
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Joe Perches <joe@perches.com>
 ---
-Only compile tested.
+ Documentation/git-send-email.txt |    8 +++++-
+ git-send-email.perl              |   51 +++++++++++++++++++++++++---------=
+---
+ t/t9001-send-email.sh            |   18 +++++++++++++
+ 3 files changed, 59 insertions(+), 18 deletions(-)
 
- drivers/i2c/busses/i2c-amd8111.c    |  152 ++++++++++++++------
- 1 files changed, 110 insertions(+), 42 deletions(-)
+diff --git a/Documentation/git-send-email.txt b/Documentation/git-send-emai=
+l.txt
+index c283084..fff97a3 100644
+--- a/Documentation/git-send-email.txt
++++ b/Documentation/git-send-email.txt
+@@ -97,7 +97,7 @@ See the CONFIGURATION section for 'sendemail.multiedit'.
+ 	Specify the primary recipient of the emails generated. Generally, this
+ 	will be the upstream maintainer of the project involved. Default is the
+ 	value of the 'sendemail.to' configuration value; if that is unspecified,
+-	this will be prompted for.
++	and --to-cmd is not specified, this will be prompted for.
+ +
+ The --to option must be repeated for each user you want on the to list.
+=20
+@@ -177,6 +177,12 @@ user is prompted for a password while the input is mas=
+ked for privacy.
+ Automating
+ ~~~~~~~~~~
+=20
++--to-cmd=3D<command>::
++	Specify a command to execute once per patch file which
++	should generate patch file specific "To:" entries.
++	Output of this command must be single email address per line.
++	Default is the value of 'sendemail.tocmd' configuration value.
++
+ --cc-cmd=3D<command>::
+ 	Specify a command to execute once per patch file which
+ 	should generate patch file specific "Cc:" entries.
+diff --git a/git-send-email.perl b/git-send-email.perl
+index 6dab3bf..e148269 100755
+--- a/git-send-email.perl
++++ b/git-send-email.perl
+@@ -70,6 +70,7 @@ git send-email [options] <file | directory | rev-list opt=
+ions >
+=20
+   Automating:
+     --identity              <str>  * Use the sendemail.<id> options.
++    --to-cmd                <str>  * Email To: via `<str> \$patch_path`
+     --cc-cmd                <str>  * Email Cc: via `<str> \$patch_path`
+     --suppress-cc           <str>  * author, self, sob, cc, cccmd, body, b=
+odycc, all.
+     --[no-]signed-off-by-cc        * Send to Signed-off-by: addresses. Def=
+ault on.
+@@ -187,7 +188,8 @@ sub do_edit {
+ }
+=20
+ # Variables with corresponding config settings
+-my ($thread, $chain_reply_to, $suppress_from, $signed_off_by_cc, $cc_cmd);
++my ($thread, $chain_reply_to, $suppress_from, $signed_off_by_cc);
++my ($to_cmd, $cc_cmd);
+ my ($smtp_server, $smtp_server_port, $smtp_authuser, $smtp_encryption);
+ my ($identity, $aliasfiletype, @alias_files, @smtp_host_parts, $smtp_domai=
+n);
+ my ($validate, $confirm);
+@@ -214,6 +216,7 @@ my %config_settings =3D (
+     "smtppass" =3D> \$smtp_authpass,
+ 	"smtpdomain" =3D> \$smtp_domain,
+     "to" =3D> \@to,
++    "tocmd" =3D> \$to_cmd,
+     "cc" =3D> \@initial_cc,
+     "cccmd" =3D> \$cc_cmd,
+     "aliasfiletype" =3D> \$aliasfiletype,
+@@ -272,6 +275,7 @@ my $rc =3D GetOptions("sender|from=3Ds" =3D> \$sender,
+                     "in-reply-to=3Ds" =3D> \$initial_reply_to,
+ 		    "subject=3Ds" =3D> \$initial_subject,
+ 		    "to=3Ds" =3D> \@to,
++		    "to-cmd=3Ds" =3D> \$to_cmd,
+ 		    "no-to" =3D> \$no_to,
+ 		    "cc=3Ds" =3D> \@initial_cc,
+ 		    "no-cc" =3D> \$no_cc,
+@@ -711,7 +715,7 @@ if (!defined $sender) {
+ 	$prompting++;
+ }
+=20
+-if (!@to) {
++if (!@to && !defined $to_cmd) {
+ 	my $to =3D ask("Who should the emails be sent to? ");
+ 	push @to, parse_address_line($to) if defined $to; # sanitized/validated l=
+ater
+ 	$prompting++;
+@@ -1238,21 +1242,10 @@ foreach my $t (@files) {
+ 	}
+ 	close F;
+=20
+-	if (defined $cc_cmd && !$suppress_cc{'cccmd'}) {
+-		open(F, "$cc_cmd \Q$t\E |")
+-			or die "(cc-cmd) Could not execute '$cc_cmd'";
+-		while(<F>) {
+-			my $c =3D $_;
+-			$c =3D~ s/^\s*//g;
+-			$c =3D~ s/\n$//g;
+-			next if ($c eq $sender and $suppress_from);
+-			push @cc, $c;
+-			printf("(cc-cmd) Adding cc: %s from: '%s'\n",
+-				$c, $cc_cmd) unless $quiet;
+-		}
+-		close F
+-			or die "(cc-cmd) failed to close pipe to '$cc_cmd'";
+-	}
++	push @to, recipients_cmd("to-cmd", "to", $to_cmd, $t)
++		if defined $to_cmd;
++	push @cc, recipients_cmd("cc-cmd", "cc", $cc_cmd, $t)
++		if defined $cc_cmd && !$suppress_cc{'cccmd'};
+=20
+ 	if ($broken_encoding{$t} && !$has_content_type) {
+ 		$has_content_type =3D 1;
+@@ -1310,6 +1303,30 @@ foreach my $t (@files) {
+ 	$message_id =3D undef;
+ }
+=20
++# Execute a command (ie: $to_cmd) to get a list of email addresses
++# and return a results array
++sub recipients_cmd(@) {
++	my ($prefix, $what, $cmd, $file) =3D @_;
++
++	my $sanitized_sender =3D sanitize_address($sender);
++	my @addresses =3D ();
++	open(F, "$cmd \Q$file\E |")
++	    or die "($prefix) Could not execute '$cmd'";
++	while(<F>) {
++		my $address =3D $_;
++		$address =3D~ s/^\s*//g;
++		$address =3D~ s/\n$//g;
++		$address =3D sanitize_address($address);
++		next if ($address eq $sanitized_sender and $suppress_from);
++		push @addresses, $address;
++		printf("($prefix) Adding %s: %s from: '%s'\n",
++		       $what, $address, $cmd) unless $quiet;
++		}
++	close F
++	    or die "($prefix) failed to close pipe to '$cmd'";
++	return @addresses;
++}
++
+ cleanup_compose_files();
+=20
+ sub cleanup_compose_files() {
+diff --git a/t/t9001-send-email.sh b/t/t9001-send-email.sh
+index 71b3df9..36cf421 100755
+--- a/t/t9001-send-email.sh
++++ b/t/t9001-send-email.sh
+@@ -201,6 +201,24 @@ test_expect_success $PREREQ 'Prompting works' '
+ 		grep "^To: to@example.com\$" msgtxt1
+ '
+=20
++test_expect_success $PREREQ 'tocmd works' '
++	clean_fake_sendmail &&
++	cp $patches tocmd.patch &&
++	echo tocmd--tocmd@example.com >>tocmd.patch &&
++	{
++	  echo "#!$SHELL_PATH"
++	  echo sed -n -e s/^tocmd--//p \"\$1\"
++	} > tocmd-sed &&
++	chmod +x tocmd-sed &&
++	git send-email \
++		--from=3D"Example <nobody@example.com>" \
++		--to-cmd=3D./tocmd-sed \
++		--smtp-server=3D"$(pwd)/fake.sendmail" \
++		tocmd.patch \
++		&&
++	grep "^To: tocmd@example.com" msgtxt1
++'
++
+ test_expect_success $PREREQ 'cccmd works' '
+ 	clean_fake_sendmail &&
+ 	cp $patches cccmd.patch &&
 
-diff --git a/drivers/i2c/busses/i2c-amd8111.c b/drivers/i2c/busses/i2c-amd8111.c
-index af1e5e2..e12c584 100644
---- a/drivers/i2c/busses/i2c-amd8111.c
-+++ b/drivers/i2c/busses/i2c-amd8111.c
-@@ -69,7 +69,7 @@ static struct pci_driver amd8111_driver;
-  * ACPI 2.0 chapter 13 access of registers of the EC
-  */
- 
--static unsigned int amd_ec_wait_write(struct amd_smbus *smbus)
-+static int amd_ec_wait_write(struct amd_smbus *smbus)
- {
- 	int timeout = 500;
- 
-@@ -85,7 +85,7 @@ static unsigned int amd_ec_wait_write(struct amd_smbus *smbus)
- 	return 0;
- }
- 
--static unsigned int amd_ec_wait_read(struct amd_smbus *smbus)
-+static int amd_ec_wait_read(struct amd_smbus *smbus)
- {
- 	int timeout = 500;
- 
-@@ -101,7 +101,7 @@ static unsigned int amd_ec_wait_read(struct amd_smbus *smbus)
- 	return 0;
- }
- 
--static unsigned int amd_ec_read(struct amd_smbus *smbus, unsigned char address,
-+static int amd_ec_read(struct amd_smbus *smbus, unsigned char address,
- 		unsigned char *data)
- {
- 	int status;
-@@ -124,7 +124,7 @@ static unsigned int amd_ec_read(struct amd_smbus *smbus, unsigned char address,
- 	return 0;
- }
- 
--static unsigned int amd_ec_write(struct amd_smbus *smbus, unsigned char address,
-+static int amd_ec_write(struct amd_smbus *smbus, unsigned char address,
- 		unsigned char data)
- {
- 	int status;
-@@ -196,7 +196,7 @@ static s32 amd8111_access(struct i2c_adapter * adap, u16 addr,
- {
- 	struct amd_smbus *smbus = adap->algo_data;
- 	unsigned char protocol, len, pec, temp[2];
--	int i;
-+	int i, status;
- 
- 	protocol = (read_write = I2C_SMBUS_READ) ? AMD_SMB_PRTCL_READ
- 						  : AMD_SMB_PRTCL_WRITE;
-@@ -209,38 +209,62 @@ static s32 amd8111_access(struct i2c_adapter * adap, u16 addr,
- 			break;
- 
- 		case I2C_SMBUS_BYTE:
--			if (read_write = I2C_SMBUS_WRITE)
--				amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			if (read_write = I2C_SMBUS_WRITE) {
-+				status = amd_ec_write(smbus, AMD_SMB_CMD,
-+							command);
-+				if (status)
-+					return status;
-+			}
- 			protocol |= AMD_SMB_PRTCL_BYTE;
- 			break;
- 
- 		case I2C_SMBUS_BYTE_DATA:
--			amd_ec_write(smbus, AMD_SMB_CMD, command);
--			if (read_write = I2C_SMBUS_WRITE)
--				amd_ec_write(smbus, AMD_SMB_DATA, data->byte);
-+			status = amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			if (status)
-+				return status;
-+			if (read_write = I2C_SMBUS_WRITE) {
-+				status = amd_ec_write(smbus, AMD_SMB_DATA,
-+							data->byte);
-+				if (status)
-+					return status;
-+			}
- 			protocol |= AMD_SMB_PRTCL_BYTE_DATA;
- 			break;
- 
- 		case I2C_SMBUS_WORD_DATA:
--			amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			status = amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			if (status)
-+				return status;
- 			if (read_write = I2C_SMBUS_WRITE) {
--				amd_ec_write(smbus, AMD_SMB_DATA,
-+				status = amd_ec_write(smbus, AMD_SMB_DATA,
- 					     data->word & 0xff);
--				amd_ec_write(smbus, AMD_SMB_DATA + 1,
-+				if (status)
-+					return status;
-+				status = amd_ec_write(smbus, AMD_SMB_DATA + 1,
- 					     data->word >> 8);
-+				if (status)
-+					return status;
- 			}
- 			protocol |= AMD_SMB_PRTCL_WORD_DATA | pec;
- 			break;
- 
- 		case I2C_SMBUS_BLOCK_DATA:
--			amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			status = amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			if (status)
-+				return status;
- 			if (read_write = I2C_SMBUS_WRITE) {
- 				len = min_t(u8, data->block[0],
- 					    I2C_SMBUS_BLOCK_MAX);
--				amd_ec_write(smbus, AMD_SMB_BCNT, len);
--				for (i = 0; i < len; i++)
--					amd_ec_write(smbus, AMD_SMB_DATA + i,
--						     data->block[i + 1]);
-+				status = amd_ec_write(smbus, AMD_SMB_BCNT, len);
-+				if (status)
-+					return status;
-+				for (i = 0; i < len; i++) {
-+					status +					  amd_ec_write(smbus, AMD_SMB_DATA + i,
-+						       data->block[i + 1]);
-+					if (status)
-+						return status;
-+				}
- 			}
- 			protocol |= AMD_SMB_PRTCL_BLOCK_DATA | pec;
- 			break;
-@@ -248,19 +272,35 @@ static s32 amd8111_access(struct i2c_adapter * adap, u16 addr,
- 		case I2C_SMBUS_I2C_BLOCK_DATA:
- 			len = min_t(u8, data->block[0],
- 				    I2C_SMBUS_BLOCK_MAX);
--			amd_ec_write(smbus, AMD_SMB_CMD, command);
--			amd_ec_write(smbus, AMD_SMB_BCNT, len);
-+			status = amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			if (status)
-+				return status;
-+			status = amd_ec_write(smbus, AMD_SMB_BCNT, len);
-+			if (status)
-+				return status;
- 			if (read_write = I2C_SMBUS_WRITE)
--				for (i = 0; i < len; i++)
--					amd_ec_write(smbus, AMD_SMB_DATA + i,
--						     data->block[i + 1]);
-+				for (i = 0; i < len; i++) {
-+					status +					  amd_ec_write(smbus, AMD_SMB_DATA + i,
-+						       data->block[i + 1]);
-+					if (status)
-+						return status;
-+				}
- 			protocol |= AMD_SMB_PRTCL_I2C_BLOCK_DATA;
- 			break;
- 
- 		case I2C_SMBUS_PROC_CALL:
--			amd_ec_write(smbus, AMD_SMB_CMD, command);
--			amd_ec_write(smbus, AMD_SMB_DATA, data->word & 0xff);
--			amd_ec_write(smbus, AMD_SMB_DATA + 1, data->word >> 8);
-+			status = amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			if (status)
-+				return status;
-+			status = amd_ec_write(smbus, AMD_SMB_DATA,
-+						data->word & 0xff);
-+			if (status)
-+				return status;
-+			status = amd_ec_write(smbus, AMD_SMB_DATA + 1,
-+						data->word >> 8);
-+			if (status)
-+				return status;
- 			protocol = AMD_SMB_PRTCL_PROC_CALL | pec;
- 			read_write = I2C_SMBUS_READ;
- 			break;
-@@ -268,11 +308,18 @@ static s32 amd8111_access(struct i2c_adapter * adap, u16 addr,
- 		case I2C_SMBUS_BLOCK_PROC_CALL:
- 			len = min_t(u8, data->block[0],
- 				    I2C_SMBUS_BLOCK_MAX - 1);
--			amd_ec_write(smbus, AMD_SMB_CMD, command);
--			amd_ec_write(smbus, AMD_SMB_BCNT, len);
--			for (i = 0; i < len; i++)
--				amd_ec_write(smbus, AMD_SMB_DATA + i,
-+			status = amd_ec_write(smbus, AMD_SMB_CMD, command);
-+			if (status)
-+				return status;
-+			status = amd_ec_write(smbus, AMD_SMB_BCNT, len);
-+			if (status)
-+				return status;
-+			for (i = 0; i < len; i++) {
-+				status = amd_ec_write(smbus, AMD_SMB_DATA + i,
- 					     data->block[i + 1]);
-+				if (status)
-+					return status;
-+			}
- 			protocol = AMD_SMB_PRTCL_BLOCK_PROC_CALL | pec;
- 			read_write = I2C_SMBUS_READ;
- 			break;
-@@ -282,24 +329,34 @@ static s32 amd8111_access(struct i2c_adapter * adap, u16 addr,
- 			return -EOPNOTSUPP;
- 	}
- 
--	amd_ec_write(smbus, AMD_SMB_ADDR, addr << 1);
--	amd_ec_write(smbus, AMD_SMB_PRTCL, protocol);
-+	status = amd_ec_write(smbus, AMD_SMB_ADDR, addr << 1);
-+	if (status)
-+		return status;
-+	status = amd_ec_write(smbus, AMD_SMB_PRTCL, protocol);
-+	if (status)
-+		return status;
- 
- 	/* FIXME this discards status from ec_read(); so temp[0] will
- 	 * hold stack garbage ... the rest of this routine will act
- 	 * nonsensically.  Ignored ec_write() status might explain
- 	 * some such failures...
- 	 */
--	amd_ec_read(smbus, AMD_SMB_STS, temp + 0);
-+	status = amd_ec_read(smbus, AMD_SMB_STS, temp + 0);
-+	if (status)
-+		return status;
- 
- 	if (~temp[0] & AMD_SMB_STS_DONE) {
- 		udelay(500);
--		amd_ec_read(smbus, AMD_SMB_STS, temp + 0);
-+		status = amd_ec_read(smbus, AMD_SMB_STS, temp + 0);
-+		if (status)
-+			return status;
- 	}
- 
- 	if (~temp[0] & AMD_SMB_STS_DONE) {
- 		msleep(1);
--		amd_ec_read(smbus, AMD_SMB_STS, temp + 0);
-+		status = amd_ec_read(smbus, AMD_SMB_STS, temp + 0);
-+		if (status)
-+			return status;
- 	}
- 
- 	if ((~temp[0] & AMD_SMB_STS_DONE) || (temp[0] & AMD_SMB_STS_STATUS))
-@@ -311,24 +368,35 @@ static s32 amd8111_access(struct i2c_adapter * adap, u16 addr,
- 	switch (size) {
- 		case I2C_SMBUS_BYTE:
- 		case I2C_SMBUS_BYTE_DATA:
--			amd_ec_read(smbus, AMD_SMB_DATA, &data->byte);
-+			status = amd_ec_read(smbus, AMD_SMB_DATA, &data->byte);
-+			if (status)
-+				return status;
- 			break;
- 
- 		case I2C_SMBUS_WORD_DATA:
- 		case I2C_SMBUS_PROC_CALL:
--			amd_ec_read(smbus, AMD_SMB_DATA, temp + 0);
--			amd_ec_read(smbus, AMD_SMB_DATA + 1, temp + 1);
-+			status = amd_ec_read(smbus, AMD_SMB_DATA, temp + 0);
-+			if (status)
-+				return status;
-+			status = amd_ec_read(smbus, AMD_SMB_DATA + 1, temp + 1);
-+			if (status)
-+				return status;
- 			data->word = (temp[1] << 8) | temp[0];
- 			break;
- 
- 		case I2C_SMBUS_BLOCK_DATA:
- 		case I2C_SMBUS_BLOCK_PROC_CALL:
--			amd_ec_read(smbus, AMD_SMB_BCNT, &len);
-+			status = amd_ec_read(smbus, AMD_SMB_BCNT, &len);
-+			if (status)
-+				return status;
- 			len = min_t(u8, len, I2C_SMBUS_BLOCK_MAX);
- 		case I2C_SMBUS_I2C_BLOCK_DATA:
--			for (i = 0; i < len; i++)
--				amd_ec_read(smbus, AMD_SMB_DATA + i,
--					    data->block + i + 1);
-+			for (i = 0; i < len; i++) {
-+				status = amd_ec_read(smbus, AMD_SMB_DATA + i,
-+							data->block + i + 1);
-+				if (status)
-+					return status;
-+			}
- 			data->block[0] = len;
- 			break;
- 	}
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
