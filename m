@@ -1,60 +1,81 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 04 Sep 2010 10:12:44 +0000
-Subject: [PATCH 2/2] arch/powerpc/kernel/irq.c: Add of_node_put to avoid memory leak
-Message-Id: <1283595164-29146-2-git-send-email-julia@diku.dk>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:18 +0000
+Subject: [PATCH 08/24] infiniband: change to new flag variable
+Message-Id: <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Tom Tucker <tom@opengridcomputing.com>, Steve Wise <swise@opengridcomputing.com>, Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Ralph Campbell <infinipath@qlogic.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In this case, a device_node structure is stored in another structure that
-is then freed without first decrementing the reference count of the
-device_node structure.
+Replace EXTRA_CFLAGS with ccflags-y.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-expression x;
-identifier f;
-position p1,p2;
-@@
-
-x@p1->f = \(of_find_node_by_path\|of_find_node_by_name\|of_find_node_by_phandle\|of_get_parent\|of_get_next_parent\|of_get_next_child\|of_find_compatible_node\|of_match_node\|of_find_node_by_type\|of_find_node_with_property\|of_find_matching_node\|of_parse_phandle\|of_node_get\)(...);
-... when != of_node_put(x)
-kfree@p2(x)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-cocci.print_main("call",p1)
-cocci.print_secs("free",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- arch/powerpc/kernel/irq.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/amso1100/Kbuild |    4 +---
+ drivers/infiniband/hw/cxgb3/Makefile  |    6 ++----
+ drivers/infiniband/hw/cxgb4/Makefile  |    2 +-
+ drivers/infiniband/hw/ipath/Makefile  |    2 +-
+ 4 files changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-index 4a65386..0a5bbe5 100644
---- a/arch/powerpc/kernel/irq.c
-+++ b/arch/powerpc/kernel/irq.c
-@@ -587,8 +587,10 @@ struct irq_host *irq_alloc_host(struct device_node *of_node,
- 			 * this will be fixed once slab is made available early
- 			 * instead of the current cruft
- 			 */
--			if (mem_init_done)
-+			if (mem_init_done) {
-+				of_node_put(host->of_node);
- 				kfree(host);
-+			}
- 			return NULL;
- 		}
- 		irq_map[0].host = host;
+diff --git a/drivers/infiniband/hw/amso1100/Kbuild b/drivers/infiniband/hw/amso1100/Kbuild
+index 06964c4..950dfab 100644
+--- a/drivers/infiniband/hw/amso1100/Kbuild
++++ b/drivers/infiniband/hw/amso1100/Kbuild
+@@ -1,6 +1,4 @@
+-ifdef CONFIG_INFINIBAND_AMSO1100_DEBUG
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_INFINIBAND_AMSO1100_DEBUG) := -DDEBUG
+ 
+ obj-$(CONFIG_INFINIBAND_AMSO1100) += iw_c2.o
+ 
+diff --git a/drivers/infiniband/hw/cxgb3/Makefile b/drivers/infiniband/hw/cxgb3/Makefile
+index 7e7b5a6..621619c 100644
+--- a/drivers/infiniband/hw/cxgb3/Makefile
++++ b/drivers/infiniband/hw/cxgb3/Makefile
+@@ -1,10 +1,8 @@
+-EXTRA_CFLAGS += -Idrivers/net/cxgb3
++ccflags-y := -Idrivers/net/cxgb3
+ 
+ obj-$(CONFIG_INFINIBAND_CXGB3) += iw_cxgb3.o
+ 
+ iw_cxgb3-y :=  iwch_cm.o iwch_ev.o iwch_cq.o iwch_qp.o iwch_mem.o \
+ 	       iwch_provider.o iwch.o cxio_hal.o cxio_resource.o
+ 
+-ifdef CONFIG_INFINIBAND_CXGB3_DEBUG
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++ccflags-$(CONFIG_INFINIBAND_CXGB3_DEBUG) += -DDEBUG
+diff --git a/drivers/infiniband/hw/cxgb4/Makefile b/drivers/infiniband/hw/cxgb4/Makefile
+index e31a499..cd20b13 100644
+--- a/drivers/infiniband/hw/cxgb4/Makefile
++++ b/drivers/infiniband/hw/cxgb4/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS += -Idrivers/net/cxgb4
++ccflags-y := -Idrivers/net/cxgb4
+ 
+ obj-$(CONFIG_INFINIBAND_CXGB4) += iw_cxgb4.o
+ 
+diff --git a/drivers/infiniband/hw/ipath/Makefile b/drivers/infiniband/hw/ipath/Makefile
+index fa3df82..4496f28 100644
+--- a/drivers/infiniband/hw/ipath/Makefile
++++ b/drivers/infiniband/hw/ipath/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS += -DIPATH_IDSTR='"QLogic kernel.org driver"' \
++ccflags-y := -DIPATH_IDSTR='"QLogic kernel.org driver"' \
+ 	-DIPATH_KERN_TYPE=0
+ 
+ obj-$(CONFIG_INFINIBAND_IPATH) += ib_ipath.o
+-- 
+1.7.2.1
 
