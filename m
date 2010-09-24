@@ -1,49 +1,41 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Tue, 14 Sep 2010 23:31:47 +0000
-Subject: [PATCH] trace: remove cast from void*
-Message-Id: <1284507107-19546-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:27:54 +0000
+Subject: [PATCH v2 06/22] Staging: easycap: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-6-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Unnecessary cast from void* in assignment.
+Changed to use proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- kernel/trace/ftrace.c |    4 ++--
- kernel/trace/trace.c  |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/easycap/Makefile |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index fa7ece6..f1bd6ff 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -1601,8 +1601,8 @@ ftrace_failures_open(struct inode *inode, struct file *file)
+diff --git a/drivers/staging/easycap/Makefile b/drivers/staging/easycap/Makefile
+index d93bd6b..d3133f8 100644
+--- a/drivers/staging/easycap/Makefile
++++ b/drivers/staging/easycap/Makefile
+@@ -5,9 +5,9 @@ easycap-objs	:= easycap_main.o easycap_low.o easycap_sound.o
+ easycap-objs	+= easycap_ioctl.o easycap_settings.o
+ easycap-objs	+= easycap_testcard.o
  
- 	ret = ftrace_avail_open(inode, file);
- 	if (!ret) {
--		m = (struct seq_file *)file->private_data;
--		iter = (struct ftrace_iterator *)m->private;
-+		m = file->private_data;
-+		iter = m->private;
- 		iter->flags = FTRACE_ITER_FAILURES;
- 	}
- 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 9ec59f5..001bcd2 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2196,7 +2196,7 @@ int tracing_open_generic(struct inode *inode, struct file *filp)
- 
- static int tracing_release(struct inode *inode, struct file *file)
- {
--	struct seq_file *m = (struct seq_file *)file->private_data;
-+	struct seq_file *m = file->private_data;
- 	struct trace_iterator *iter;
- 	int cpu;
+-EXTRA_CFLAGS += -Wall
++ccflags-y := -Wall
+ # Impose all or none of the following:
+-EXTRA_CFLAGS += -DEASYCAP_IS_VIDEODEV_CLIENT
+-EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_DEVICE_H
+-EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_FOPS
++ccflags-y := -DEASYCAP_IS_VIDEODEV_CLIENT
++ccflags-y := -DEASYCAP_NEEDS_V4L2_DEVICE_H
++ccflags-y := -DEASYCAP_NEEDS_V4L2_FOPS
  
 -- 
-1.7.2.1
+1.7.3
 
