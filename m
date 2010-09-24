@@ -1,43 +1,40 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:26 +0000
-Subject: [PATCH 13/21] Staging: rtl8192su: ieee80211: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352314-5939-13-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 24 Sep 2010 19:17:19 +0000
+Subject: [PATCH 09/24] input: change to new flag variable
+Message-Id: <2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
+ <036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
+ <ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
+ <b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
+ <70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
+ <40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
+ <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+Replace EXTRA_CFLAGS with ccflags-y.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/rtl8192su/ieee80211/Makefile |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/input/joystick/iforce/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/rtl8192su/ieee80211/Makefile b/drivers/staging/rtl8192su/ieee80211/Makefile
-index a500bfa..41fd157 100644
---- a/drivers/staging/rtl8192su/ieee80211/Makefile
-+++ b/drivers/staging/rtl8192su/ieee80211/Makefile
-@@ -1,10 +1,10 @@
- NIC_SELECT = RTL8192SU
+diff --git a/drivers/input/joystick/iforce/Makefile b/drivers/input/joystick/iforce/Makefile
+index 74daff4..2648189 100644
+--- a/drivers/input/joystick/iforce/Makefile
++++ b/drivers/input/joystick/iforce/Makefile
+@@ -17,4 +17,4 @@ ifeq ($(CONFIG_JOYSTICK_IFORCE_USB),y)
+ 	iforce-objs += iforce-usb.o
+ endif
  
--EXTRA_CFLAGS += -O2
--EXTRA_CFLAGS += -DRTL8192S_DISABLE_FW_DM=0
--EXTRA_CFLAGS += -DRTL8192SU
--#EXTRA_CFLAGS += -DJOHN_NOCPY
--EXTRA_CFLAGS += -DTHOMAS_TURBO
-+ccflags-y += -O2
-+ccflags-y += -DRTL8192S_DISABLE_FW_DM=0
-+ccflags-y += -DRTL8192SU
-+#ccflags-y += -DJOHN_NOCPY
-+ccflags-y += -DTHOMAS_TURBO
- 
- ieee80211-rsl-objs := ieee80211_rx.o \
- 		      ieee80211_softmac.o \
+-EXTRA_CFLAGS = -Werror-implicit-function-declaration
++ccflags-y := -Werror-implicit-function-declaration
 -- 
-1.7.3
+1.7.2.1
 
