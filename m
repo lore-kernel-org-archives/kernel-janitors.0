@@ -1,60 +1,58 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Thu, 23 Sep 2010 06:51:38 +0000
-Subject: [PATCH 17/20] x86: change to new flag variables
-Message-Id: <1285224698-30035-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:33 +0000
+Subject: [PATCH 20/21] Staging: wlags49_h2: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285352314-5939-20-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Avi Kivity <avi@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
+Changed to use the proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/x86/kvm/Makefile      |    2 +-
- arch/x86/math-emu/Makefile |    4 ++--
- arch/x86/pci/Makefile      |    4 +---
- 3 files changed, 4 insertions(+), 6 deletions(-)
+ drivers/staging/wlags49_h2/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-index 31a7035..0feb536 100644
---- a/arch/x86/kvm/Makefile
-+++ b/arch/x86/kvm/Makefile
-@@ -1,5 +1,5 @@
+diff --git a/drivers/staging/wlags49_h2/Makefile b/drivers/staging/wlags49_h2/Makefile
+index 25d0a8a..1af4bc6 100644
+--- a/drivers/staging/wlags49_h2/Makefile
++++ b/drivers/staging/wlags49_h2/Makefile
+@@ -12,8 +12,8 @@
+ #  If you want to build AP support (untested), comment out -DSTA_ONLY
  
--EXTRA_CFLAGS += -Ivirt/kvm -Iarch/x86/kvm
-+ccflags-y := -Ivirt/kvm -Iarch/x86/kvm
+ INSTALLDIR := /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless
+-EXTRA_CFLAGS += -I$(KERNELDIR)/include
+-EXTRA_CFLAGS += -I$(src) \
++ccflags-y += -I$(KERNELDIR)/include
++ccflags-y += -I$(src) \
+ 		-DBUS_PCMCIA \
+ 		-DUSE_WPA \
+ 		-DUSE_WEXT \
+@@ -25,16 +25,16 @@ EXTRA_CFLAGS += -I$(src) \
+ #		-DUSE_UIL \
+ #		-DUSE_PROFILE \
  
- CFLAGS_x86.o := -I.
- CFLAGS_svm.o := -I.
-diff --git a/arch/x86/math-emu/Makefile b/arch/x86/math-emu/Makefile
-index 9b0c63b..a88eac2 100644
---- a/arch/x86/math-emu/Makefile
-+++ b/arch/x86/math-emu/Makefile
-@@ -5,8 +5,8 @@
- #DEBUG	= -DDEBUGGING
- DEBUG	 PARANOID = -DPARANOID
--EXTRA_CFLAGS	:= $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
--EXTRA_AFLAGS	:= $(PARANOID)
-+ccflags-y := $(PARANOID) $(DEBUG) -fno-builtin $(MATH_EMULATION)
-+asflags-y := $(PARANOID)
- 
- # From 'C' language sources:
- C_OBJS =fpu_entry.o errors.o \
-diff --git a/arch/x86/pci/Makefile b/arch/x86/pci/Makefile
-index a0207a7..8e60497 100644
---- a/arch/x86/pci/Makefile
-+++ b/arch/x86/pci/Makefile
-@@ -20,6 +20,4 @@ obj-y				+= amd_bus.o bus_numa.o
- 
- obj-$(CONFIG_PCI_CNB20LE_QUIRK)	+= broadcom_bus.o
- 
--ifeq ($(CONFIG_PCI_DEBUG),y)
--EXTRA_CFLAGS += -DDEBUG
--endif
-+ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
+-ifeq ($(findstring HERMES25,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring HERMES25,$(ccflags-y)),)
+ WLNAME := wlags49_h2_cs
+ $(WLNAME)-y := sta_h2.o
+-ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
+ $(WLNAME)-y += ap_h2.o
+ endif
+ else
+ WLNAME=wlags49_h25_cs
+ $(WLNAME)-y := sta_h25.o
+-ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
+ $(WLNAME)-y += ap_h25.o
+ endif
+ endif
 -- 
-1.7.2.1
+1.7.3
 
