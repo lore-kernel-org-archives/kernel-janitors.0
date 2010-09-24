@@ -1,34 +1,36 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Tue, 14 Sep 2010 05:32:21 +0000
-Subject: [PATCH 4/4] powerpc: remove cast from void*
-Message-Id: <1284442341-11787-1-git-send-email-mfm@muteddisk.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 18:18:31 +0000
+Subject: [PATCH 18/21] Staging: vt6655: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285352314-5939-18-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: xen-devel@lists.xensource.com, kernel-janitors@vger.kernel.org, linuxppc-dev@ozlabs.org, Paul Mackerras <paulus@samba.org>, Anton Blanchard <anton@samba.org>, Andrew Morton <akpm@linux-foundation.org>
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Unnecessary cast from void* in assignment.
+Changed to use the proper ccflags-y option
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/powerpc/platforms/pseries/hvCall_inst.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/staging/vt6655/Makefile |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
-index e19ff02..f106662 100644
---- a/arch/powerpc/platforms/pseries/hvCall_inst.c
-+++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
-@@ -55,7 +55,7 @@ static void hc_stop(struct seq_file *m, void *p)
- static int hc_show(struct seq_file *m, void *p)
- {
- 	unsigned long h_num = (unsigned long)p;
--	struct hcall_stats *hs = (struct hcall_stats *)m->private;
-+	struct hcall_stats *hs = m->private;
+diff --git a/drivers/staging/vt6655/Makefile b/drivers/staging/vt6655/Makefile
+index 824c971..3c5da6f 100644
+--- a/drivers/staging/vt6655/Makefile
++++ b/drivers/staging/vt6655/Makefile
+@@ -1,6 +1,6 @@
+ # TODO: all of these should be removed
+-EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -D__NO_VERSION__
+-EXTRA_CFLAGS += -DHOSTAP
++ccflags-y += -DLINUX -D__KERNEL__ -D__NO_VERSION__
++ccflags-y += -DHOSTAP
  
- 	if (hs[h_num].num_calls) {
- 		if (cpu_has_feature(CPU_FTR_PURR))
+ vt6655_stage-y +=	device_main.o \
+ 	card.o \
 -- 
-1.7.2.1
+1.7.3
 
