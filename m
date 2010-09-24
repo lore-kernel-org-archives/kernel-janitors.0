@@ -1,88 +1,58 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Wed, 08 Sep 2010 20:00:16 +0000
-Subject: Re: [PATCH 4/4] arch/powerpc/platforms/chrp/nvram.c: Add
-Message-Id: <20100908200016.GE7065@angua.secretlab.ca>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 24 Sep 2010 23:28:10 +0000
+Subject: [PATCH v2 22/22] Staging: wlags49_h25: Makefile: cleaned up makefile cflag lines
+Message-Id: <1285370890-8984-22-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283269738-14612-1-git-send-email-julia@diku.dk>
-	<1283269738-14612-5-git-send-email-julia@diku.dk>
-In-Reply-To: <1283269738-14612-5-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
+References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: greg@kroah.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-On Tue, Aug 31, 2010 at 05:48:58PM +0200, Julia Lawall wrote:
-> Add a call to of_node_put in the error handling code following a call to
-> of_find_node_by_type.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> expression E,E1,E2;
-> statement S;
-> @@
-> 
-> *x = 
-> (of_find_node_by_path
-> |of_find_node_by_name
-> |of_find_node_by_phandle
-> |of_get_parent
-> |of_get_next_parent
-> |of_get_next_child
-> |of_find_compatible_node
-> |of_match_node
-> |of_find_node_by_type
-> |of_find_node_with_property
-> |of_find_matching_node
-> |of_parse_phandle
-> )(...);
-> ...
-> if (x = NULL) S
-> <... when != x = E
-> *if (...) {
->   ... when != of_node_put(x)
->       when != if (...) { ... of_node_put(x); ... }
-> (
->   return <+...x...+>;
-> |
-> *  return ...;
-> )
-> }
-> ...>
-> (
-> E2 = x;
-> |
-> of_node_put(x);
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Changed to use proper ccflags-y option
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/wlags49_h25/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-> 
-> ---
->  arch/powerpc/platforms/chrp/nvram.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/platforms/chrp/nvram.c b/arch/powerpc/platforms/chrp/nvram.c
-> index ba3588f..d3ceff0 100644
-> --- a/arch/powerpc/platforms/chrp/nvram.c
-> +++ b/arch/powerpc/platforms/chrp/nvram.c
-> @@ -74,8 +74,10 @@ void __init chrp_nvram_init(void)
->  		return;
->  
->  	nbytes_p = of_get_property(nvram, "#bytes", &proplen);
-> -	if (nbytes_p = NULL || proplen != sizeof(unsigned int))
-> +	if (nbytes_p = NULL || proplen != sizeof(unsigned int)) {
-> +		of_node_put(nvram);
->  		return;
-> +	}
->  
->  	nvram_size = *nbytes_p;
->  
-> 
+diff --git a/drivers/staging/wlags49_h25/Makefile b/drivers/staging/wlags49_h25/Makefile
+index d0b23d4..f04976f 100644
+--- a/drivers/staging/wlags49_h25/Makefile
++++ b/drivers/staging/wlags49_h25/Makefile
+@@ -12,8 +12,8 @@
+ #  If you want to build AP support (untested), comment out -DSTA_ONLY
+ 
+ INSTALLDIR := /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless
+-EXTRA_CFLAGS += -I$(KERNELDIR)/include
+-EXTRA_CFLAGS += -I$(src) \
++ccflags-y := -I$(KERNELDIR)/include
++ccflags-y := -I$(src) \
+ 		-DBUS_PCMCIA \
+ 		-DUSE_WPA \
+ 		-DUSE_WEXT \
+@@ -25,16 +25,16 @@ EXTRA_CFLAGS += -I$(src) \
+ #		-DUSE_UIL \
+ #		-DUSE_PROFILE \
+ 
+-ifeq ($(findstring HERMES25,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring HERMES25,$(ccflags-y)),)
+ WLNAME := wlags49_h2_cs
+ $(WLNAME)-y := sta_h2.o
+-ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
+ $(WLNAME)-y += ap_h2.o
+ endif
+ else
+ WLNAME=wlags49_h25_cs
+ $(WLNAME)-y := sta_h25.o
+-ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
+ $(WLNAME)-y += ap_h25.o
+ endif
+ endif
+-- 
+1.7.3
+
