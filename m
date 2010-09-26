@@ -1,19 +1,45 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Thu, 02 Sep 2010 15:30:56 +0000
-Subject: Re: [PATCH 2/4] sound/soc/fsl/p1022_ds.c: Add of_node_put to avoid
-Message-Id: <20100902153056.GE5809@rakim.wolfsonmicro.main>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 26 Sep 2010 09:58:25 +0000
+Subject: [PATCH 7/9] staging: otus: use free_netdev(netdev) instead of kfree()
+Message-Id: <1285495105-22154-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283269738-14612-1-git-send-email-julia@diku.dk>
-	<1283269738-14612-3-git-send-email-julia@diku.dk>
-In-Reply-To: <1283269738-14612-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Liam Girdwood <lrg@slimlogic.co.uk>
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Tejun Heo <tj@kernel.org>, Jeff Mahoney <jeffm@suse.com>, Mithlesh Thukral <mithlesh@linsyssoft.com>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 31, 2010 at 05:48:56PM +0200, Julia Lawall wrote:
-> Add a call to of_node_put in the error handling code following a call to
-> of_parse_phandle.
+Freeing netdev without free_netdev() leads to net, tx leaks.
+I might lead to dereferencing freed pointer.
 
-Applied, thanks.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+@@
+struct net_device* dev;
+@@
+
+-kfree(dev)
++free_netdev(dev)
+---
+ Compile tested.
+
+ drivers/staging/otus/usbdrv.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/otus/usbdrv.c b/drivers/staging/otus/usbdrv.c
+index 165a82b..9a5c415 100644
+--- a/drivers/staging/otus/usbdrv.c
++++ b/drivers/staging/otus/usbdrv.c
+@@ -690,7 +690,7 @@ void usbdrv_clear_structs(struct net_device *dev)
+ 
+     kfree(macp);
+ 
+-    kfree(dev);
++    free_netdev(dev);
+ 
+ }
+ 
+-- 
+1.7.0.4
+
