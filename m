@@ -1,30 +1,66 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 13 Sep 2010 19:45:30 +0000
-Subject: Re: [patch] ppp: potential NULL dereference in ppp_mp_explode()
-Message-Id: <20100913.124530.115933711.davem@davemloft.net>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 26 Sep 2010 08:59:37 +0000
+Subject: [PATCH] block: rbd: fixed may leaks
+Message-Id: <1285491578-32580-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100910115809.GF5959@bicker>
-In-Reply-To: <20100910115809.GF5959@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: paulus@samba.org, simon@fire.lp0.eu, ben@netservers.co.uk, shemminger@vyatta.com, lsorense@csclub.uwaterloo.ca, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Yehuda Sadeh <yehuda@hq.newdream.net>, Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 10 Sep 2010 13:58:10 +0200
+rbd_client_create() doesn't free rbdc, this leads to many leaks.
 
-> Smatch complains because we check whether "pch->chan" is NULL and then
-> dereference it unconditionally on the next line.  Partly the reason this
-> bug was introduced is because code was too complicated.  I've simplified
-> it a little.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Compile tested only.  Perhaps it would be better to set pch->speed to
-> zero?  The comments say that zero implies the speed hasn't been set.
+seg_len in rbd_do_op() is unsigned, so (seg_len < 0) makes no sense.
+Also if fixed check fails then seg_name is leaked.
+---
+ Compile tested.
 
-I think how you've fixed it is OK, actually this whole MP rewrite
-could use some more auditing :-)
+ drivers/block/rbd.c |   14 ++++++++------
+ 1 files changed, 8 insertions(+), 6 deletions(-)
 
-Applied, thanks Dan.
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index c42f305..83b15dd 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -241,6 +241,7 @@ static struct rbd_client *rbd_client_create(struct ceph_options *opt)
+ 	rbdc->client = ceph_create_client(opt, rbdc);
+ 	if (IS_ERR(rbdc->client))
+ 		goto out_rbdc;
++	opt = NULL; /* Now rbdc->client is responsible for opt */
+ 
+ 	ret = ceph_open_session(rbdc->client);
+ 	if (ret < 0)
+@@ -255,13 +256,12 @@ static struct rbd_client *rbd_client_create(struct ceph_options *opt)
+ 
+ out_err:
+ 	ceph_destroy_client(rbdc->client);
+-	return ERR_PTR(ret);
+-
+ out_rbdc:
+ 	kfree(rbdc);
+ out_opt:
+-	ceph_destroy_options(opt);
+-	return ERR_PTR(-ENOMEM);
++	if (opt)
++		ceph_destroy_options(opt);
++	return ERR_PTR(ret);
+ }
+ 
+ /*
+@@ -889,8 +889,10 @@ static int rbd_do_op(struct request *rq,
+ 				  rbd_dev->header.block_name,
+ 				  ofs, len,
+ 				  seg_name, &seg_ofs);
+-	if (seg_len < 0)
+-		return seg_len;
++	if ((s64)seg_len < 0) {
++		ret = seg_len;
++		goto done;
++	}
+ 
+ 	payload_len = (flags & CEPH_OSD_FLAG_WRITE ? seg_len : 0);
+ 
+-- 
+1.7.0.4
+
