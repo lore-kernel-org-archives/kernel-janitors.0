@@ -1,81 +1,52 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Mon, 20 Sep 2010 16:31:48 +0000
-Subject: Re: [PATCH 10/14] scsi: osd: fix device_register() error handling
-Message-Id: <4C978C74.1040104@panasas.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 26 Sep 2010 09:58:09 +0000
+Subject: [PATCH 4/9] s390: use free_netdev(netdev) instead of kfree()
+Message-Id: <1285495090-22002-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284900907-24621-1-git-send-email-segooon@gmail.com>	 <20100919142653.GF6236@bicker> <1284983897.2973.11.camel@mulgrave.site>	 <20100920151029.GA25386@suse.de>  <20100920151317.GA25506@suse.de>	 <1284996062.2973.85.camel@mulgrave.site>  <4C9780D5.8000804@panasas.com> <1284998106.2973.125.camel@mulgrave.site>
-In-Reply-To: <1284998106.2973.125.camel@mulgrave.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Bottomley <James.Bottomley@suse.de>
-Cc: Greg KH <gregkh@suse.de>, Dan Carpenter <error27@gmail.com>, Vasiliy Kulikov <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Benny Halevy <bhalevy@panasas.com>, Tejun Heo <tj@kernel.org>, Arnd Bergmann <arnd@arndb.de>, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, cornelia.huck@de.ibm.com, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+To: kernel-janitors@vger.kernel.org
+Cc: Ursula Braun <ursula.braun@de.ibm.com>, Frank Blaschka <blaschka@linux.vnet.ibm.com>, linux390@de.ibm.com, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, "David S. Miller" <davem@davemloft.net>, Julia Lawall <julia@diku.dk>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/20/2010 05:55 PM, James Bottomley wrote:
-> On Mon, 2010-09-20 at 17:42 +0200, Boaz Harrosh wrote:
->> I think I have a compromise. If it is indeed the dev_set_name() leak
->> then we can just deallocate the name on the error return path. Therefore
->> any drivers that have the device embedded and rely on it been freed without
->> calling _put will be fine as before. And these calling _put will be fine
->> as well.
->>
->> See below
->> Boaz
->> ---
->> git diff --stat -p -M drivers/base/core.c
->>  drivers/base/core.c |    1 +
->>  1 files changed, 1 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/base/core.c b/drivers/base/core.c
->> index d1b2c9a..054fac2 100644
->> --- a/drivers/base/core.c
->> +++ b/drivers/base/core.c
->> @@ -1068,6 +1068,7 @@ done:
->>  	if (parent)
->>  		put_device(parent);
->>  name_error:
->> +	kfree(dev->kobj.name);
->>  	kfree(dev->p);
->>  	dev->p = NULL;
->>  	goto done;
-> 
-> That's not really good enough ... it will result in a double free
-> because the final put (if there is one) will free the name again.
-> 
-> This would work, but it feels a bit wrong to be poking at the kobject
-> from within the driver core ... perhaps a kobject_free_name() call might
-> be better?
-> 
+Freeing netdev without free_netdev() leads to net, tx leaks.
+I might lead to dereferencing freed pointer.
 
-It would not be the first place to directly access kobj. members but sure
-that will work as well.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> James
-> 
-> ---
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index d1b2c9a..88ffaca 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -1067,6 +1067,8 @@ done:
->  	cleanup_device_parent(dev);
->  	if (parent)
->  		put_device(parent);
-> +	kfree(dev->kobj.name);
-> +	dev->kobj.name = NULL;
+@@
+struct net_device* dev;
+@@
 
-Rrr thanks, the NULL. Therefore the lack of a signed-off ;-)
+-kfree(dev)
++free_netdev(dev)
+---
+ drivers/s390/net/ctcm_main.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-I take it that you agree with me that for some code it would be nice
-if we add support for not mandating a device_put after a device_register
-for the embedded types? For sake of already written code?
+diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
+index 6edf20b..2c7d2d9 100644
+--- a/drivers/s390/net/ctcm_main.c
++++ b/drivers/s390/net/ctcm_main.c
+@@ -1154,7 +1154,7 @@ static struct net_device *ctcm_init_netdevice(struct ctcm_priv *priv)
+ 				dev_fsm, dev_fsm_len, GFP_KERNEL);
+ 	if (priv->fsm = NULL) {
+ 		CTCMY_DBF_DEV(SETUP, dev, "init_fsm error");
+-		kfree(dev);
++		free_netdev(dev);
+ 		return NULL;
+ 	}
+ 	fsm_newstate(priv->fsm, DEV_STATE_STOPPED);
+@@ -1165,7 +1165,7 @@ static struct net_device *ctcm_init_netdevice(struct ctcm_priv *priv)
+ 		grp = ctcmpc_init_mpc_group(priv);
+ 		if (grp = NULL) {
+ 			MPC_DBF_DEV(SETUP, dev, "init_mpc_group error");
+-			kfree(dev);
++			free_netdev(dev);
+ 			return NULL;
+ 		}
+ 		tasklet_init(&grp->mpc_tasklet2,
+-- 
+1.7.0.4
 
->  name_error:
->  	kfree(dev->p);
->  	dev->p = NULL;
-> 
-> 
-
-Thanks
-Boaz
