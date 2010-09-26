@@ -1,43 +1,33 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Wed, 29 Sep 2010 13:56:09 +0000
-Subject: Re: [PATCH 05/24] i2c: change to new flag variable
-Message-Id: <20100929155609.00a70ee0@endymion.delvare>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 26 Sep 2010 08:59:52 +0000
+Subject: [PATCH] statistics_write: ft1000: fix kernel info leak to userland
+Message-Id: <1285491593-325-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
-	<9968d4260be8850200cc9c7dfe08addf611468b4.1285355033.git.mfm@muteddisk.com>
-	<036514b5dd23c5af14303519d79d60d79adccbee.1285355033.git.mfm@muteddisk.com>
-	<ffbd189ef2d414ea7c87ffe2b40fce87877dc014.1285355033.git.mfm@muteddisk.com>
-	<b3e2061e1e6703f7b84c0484030e07de6000546a.1285355033.git.mfm@muteddisk.com>
-	<20100925132611.03ef0882@endymion.delvare>
-	<20100926021217.GC8191@haskell.muteddisk.com>
-	<20100926092931.68980448@endymion.delvare>
-	<20100926180726.GD8191@haskell.muteddisk.com>
-In-Reply-To: <20100926180726.GD8191@haskell.muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfm@muteddisk.com>
-Cc: kernel-janitors@vger.kernel.org, "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Marek Belisko <marek.belisko@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sun, 26 Sep 2010 11:07:26 -0700, matt mooney wrote:
-> On 09:29 Sun 26 Sep     , Jean Delvare wrote:
-> > On Sat, 25 Sep 2010 19:12:17 -0700, matt mooney wrote:
-> > > Sam had implemented these newer style flag variables a while back as an
-> > > eloquent way of handling conditional flags. A lot of newer (and some older)
-> > > modules and subsystems were using them already, so to provide uniformity and for
-> > > an eventual removal of the deprecated flags, I converted all remaining instances
-> > > to the newer style. (IMHO, I think it flows better with the way the rest of the
-> > > build system works.)
-> > 
-> > Fine with me. What's the planned merge path for this patch? Will you
-> > push all the patches upstream yourself, or do you expect me to pick
-> > this one?
-> 
-> I was hoping subsystem maintainers would pick them up, but a lot of the patches
-> have been acked without being applied. My new plan is to have the unapplied ones
-> go through the kbuild tree. So you can either pick it up or just ack it.
+get_stat_data is not fully initialized before copy_to_user() call,
+e.g. LedStat is not always set.
+---
+ drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-I've picked the patch, it's now in my i2c tree, scheduled for merge in 2.6.37.
-
+diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
+index 65087ce..467fd31 100644
+--- a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
++++ b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
+@@ -623,7 +623,7 @@ static int ft1000_ChIoctl (struct file *File, unsigned int Command,
+         break;
+     case IOCTL_GET_DSP_STAT_CMD:
+         //DEBUG("FT1000:ft1000_ChIoctl: IOCTL_FT1000_GET_DSP_STAT called\n");
+-
++	memset(get_stat_data, 0, sizeof(get_stat_data));
+         memcpy(get_stat_data.DspVer, info->DspVer, DSPVERSZ);
+         memcpy(get_stat_data.HwSerNum, info->HwSerNum, HWSERNUMSZ);
+         memcpy(get_stat_data.Sku, info->Sku, SKUSZ);
 -- 
-Jean Delvare
+1.7.0.4
+
