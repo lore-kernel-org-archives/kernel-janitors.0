@@ -1,45 +1,58 @@
-From: Stanislaw Gruszka <sgruszka@redhat.com>
-Date: Fri, 10 Sep 2010 13:34:03 +0000
-Subject: Re: [patch] airo: remove pointless check
-Message-Id: <20100910133401.GF2398@redhat.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 26 Sep 2010 09:58:21 +0000
+Subject: [PATCH 6/9] staging: octeon: use free_netdev(netdev) instead of kfree()
+Message-Id: <1285495102-22111-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100910115714.GE5959@bicker>
-In-Reply-To: <20100910115714.GE5959@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Matthieu CASTET <castet.matthieu@free.fr>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Ralf Baechle <ralf@linux-mips.org>, David Daney <ddaney@caviumnetworks.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "David S. Miller" <davem@davemloft.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 10, 2010 at 01:57:14PM +0200, Dan Carpenter wrote:
-> It doesn't make sense to check "!ai->config.rates" here.
-> "ai->config.rates" is the address of an eight bytes array and it
-> can't ever be null here.  Also if it were NULL then trying to set:
-> 	ai->config.rates[i] = basic_rate | 0x80;
-> would cause an oops.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
-> index 1d05445..d806497 100644
-> --- a/drivers/net/wireless/airo.c
-> +++ b/drivers/net/wireless/airo.c
-> @@ -3886,8 +3886,7 @@ static u16 setup_card(struct airo_info *ai, u8 *mac, int lock)
->  		}
->  		if ( basic_rate > 0 ) {
->  			for( i = 0; i < 8; i++ ) {
-> -				if ( ai->config.rates[i] = basic_rate ||
-> -				     !ai->config.rates ) {
-> +				if (ai->config.rates[i] = basic_rate) {
->  					ai->config.rates[i] = basic_rate | 0x80;
->  					break;
->  				}
+It is not guaranteed that free_netdev() is macro.
+Freeing netdev without free_netdev() leads to net, tx leaks.
+I might lead to dereferencing freed pointer.
 
-I think code author wonted to do "!ai->config.rates[i], what mean "if
-rate is invalid use basic rate". 
+---
+ drivers/staging/octeon/ethernet.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-I'm not sure if basic_rate module parameter is used by anyone. It's not
-described, seems it was created for development purpose. I think we can
-remove it ...
+diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
+index fb568a9..a8f780e 100644
+--- a/drivers/staging/octeon/ethernet.c
++++ b/drivers/staging/octeon/ethernet.c
+@@ -670,7 +670,7 @@ static int __init cvm_oct_init_module(void)
+ 
+ 			if (register_netdev(dev) < 0) {
+ 				pr_err("Failed to register ethernet device for POW\n");
+-				kfree(dev);
++				free_netdev(dev);
+ 			} else {
+ 				cvm_oct_device[CVMX_PIP_NUM_INPUT_PORTS] = dev;
+ 				pr_info("%s: POW send group %d, receive group %d\n",
+@@ -756,12 +756,12 @@ static int __init cvm_oct_init_module(void)
+ 			}
+ 
+ 			if (!dev->netdev_ops) {
+-				kfree(dev);
++				free_netdev(dev);
+ 			} else if (register_netdev(dev) < 0) {
+ 				pr_err("Failed to register ethernet device "
+ 					 "for interface %d, port %d\n",
+ 					 interface, priv->port);
+-				kfree(dev);
++				free_netdev(dev);
+ 			} else {
+ 				cvm_oct_device[priv->port] = dev;
+ 				fau -@@ -815,7 +815,7 @@ static void __exit cvm_oct_cleanup_module(void)
+ 
+ 			cvm_oct_tx_shutdown_dev(dev);
+ 			unregister_netdev(dev);
+-			kfree(dev);
++			free_netdev(dev);
+ 			cvm_oct_device[port] = NULL;
+ 		}
+ 	}
+-- 
+1.7.0.4
 
-Stanislaw
