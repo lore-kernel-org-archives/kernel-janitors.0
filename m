@@ -1,29 +1,45 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Tue, 07 Sep 2010 09:32:39 +0000
-Subject: Re: [PATCH 11/14] ubifs: check return code of ubifs_lpt_lookup
-Message-Id: <1283851959.2979.27.camel@localhost>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 26 Sep 2010 09:58:31 +0000
+Subject: [PATCH 9/9] staging: wlags49_h2: use free_netdev(netdev) instead of kfree()
+Message-Id: <1285495111-22238-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283711580-7546-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1283711580-7546-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Kulikov Vasiliy <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@nokia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Henk de Groot <pe1dnn@amsat.org>, Andrew Morton <akpm@linux-foundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sun, 2010-09-05 at 22:33 +0400, Kulikov Vasiliy wrote:
-> From: Vasiliy Kulikov <segooon@gmail.com>
-> 
-> Function ubifs_lpt_lookup may return ERR_PTR(...). Check for it.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
+Freeing netdev without free_netdev() leads to net, tx leaks.
+I might lead to dereferencing freed pointer.
 
-Pushed both patches to the UBIFS tree, thanks:
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-http://git.infradead.org/ubifs-2.6.git
+@@
+struct net_device* dev;
+@@
 
+-kfree(dev)
++free_netdev(dev)
+---
+ Compile tested.
+
+ drivers/staging/wlags49_h2/wl_netdev.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/wlags49_h2/wl_netdev.c b/drivers/staging/wlags49_h2/wl_netdev.c
+index e2a7ad0..954bece 100644
+--- a/drivers/staging/wlags49_h2/wl_netdev.c
++++ b/drivers/staging/wlags49_h2/wl_netdev.c
+@@ -1586,7 +1586,7 @@ void wl_wds_device_dealloc( struct wl_private *lp )
+                 dev_wds->flags &= ~( IFF_UP | IFF_RUNNING );
+             }
+ 
+-            kfree( dev_wds );
++            free_netdev(dev_wds);
+             lp->wds_port[count].dev = NULL;
+         }
+     }
 -- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+1.7.0.4
 
