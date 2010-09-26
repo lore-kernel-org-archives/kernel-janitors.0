@@ -1,114 +1,52 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 08 Sep 2010 09:50:20 +0000
-Subject: Re: [patch] sound/oss: potential integer overflow
-Message-Id: <4C875C5C.8080608@bfs.de>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 26 Sep 2010 09:58:00 +0000
+Subject: [PATCH 1/9] ibm_newemac: use free_netdev(netdev) instead of kfree()
+Message-Id: <1285495080-21857-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100908072632.GB32047@bicker> <s5h39tkvfez.wl%tiwai@suse.de>
-In-Reply-To: <s5h39tkvfez.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Dan Carpenter <error27@gmail.com>
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Jiri Pirko <jpirko-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
 
+Freeing netdev without free_netdev() leads to net, tx leaks.
+I might lead to dereferencing freed pointer.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Takashi Iwai schrieb:
-> At Wed, 8 Sep 2010 09:26:32 +0200,
-> Dan Carpenter wrote:
->> We don't want "pre_event_timeout" to be negative because that would
->> result in a stack traces in dmesg when we schedule a negative timeout.
->> In the original code "HZ * val" could overflow so I just moved the 
->> check for negative below the multiply.
-> 
-> This would bring another side-effect.  When a value like 0x80001234
-> is passed, this would result in a positive value in turn.
-> We need additional check like below.
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-> ---
-> diff --git a/sound/core/seq/oss/seq_oss_ioctl.c b/sound/core/seq/oss/seq_oss_ioctl.c
-> index 5ac701c..b2e0789 100644
-> --- a/sound/core/seq/oss/seq_oss_ioctl.c
-> +++ b/sound/core/seq/oss/seq_oss_ioctl.c
-> @@ -191,10 +191,13 @@ snd_seq_oss_ioctl(struct seq_oss_devinfo *dp, unsigned int cmd, unsigned long ca
->  			return 0;
->  		if (get_user(val, p))
->  			return -EFAULT;
-> -		if (val <= 0)
-> -			val = -1;
-> -		else
-> +		if (val < 0)
-> +			val = 0;
-> +		else {
->  			val = (HZ * val) / 10;
-> +			if (val < 0) /* check overflow */
-> +				val = 0;
-> +		}
->  		dp->readq->pre_event_timeout = val;
->  		return put_user(val, p) ? -EFAULT : 0;
->  
-> diff --git a/sound/oss/midibuf.c b/sound/oss/midibuf.c
-> index 782b3b8..b8da210 100644
-> --- a/sound/oss/midibuf.c
-> +++ b/sound/oss/midibuf.c
-> @@ -382,7 +382,11 @@ int MIDIbuf_ioctl(int dev, struct file *file,
->  					return -EFAULT;
->  				if (val < 0)
->  					val = 0;
-> -				val = (HZ * val) / 10;
-> +				else {
-> +					val = (HZ * val) / 10;
-> +					if (val < 0) /* check overflow */
-> +						val = 0;
-> +				}
->  				parms[dev].prech_timeout = val;
->  				return put_user(val, (int __user *)arg);
->  			
-> diff --git a/sound/oss/sequencer.c b/sound/oss/sequencer.c
-> index e85789e..f579210 100644
-> --- a/sound/oss/sequencer.c
-> +++ b/sound/oss/sequencer.c
-> @@ -1509,7 +1509,11 @@ int sequencer_ioctl(int dev, struct file *file, unsigned int cmd, void __user *a
->  				return -EFAULT;
->  			if (val < 0)
->  				val = 0;
-> -			val = (HZ * val) / 10;
-> +			else {
-> +				val = (HZ * val) / 10;
-> +				if (val < 0) /* check overflow */
-> +					val = 0;
-> +			}
->  			pre_event_timeout = val;
->  			break;
->  
-> --
+@@
+struct net_device* dev;
+@@
 
-Perhaps a recalc_val() is here better ? That would avoid duplication
-and make sure that they behave equal.
-(see: > -		if (val <= 0)
-      > -			val = -1;
-)
+-kfree(dev)
++free_netdev(dev)
+---
+ drivers/net/ibm_newemac/core.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-
-int  recalc_val(int hz, int val)
-{
-	if (val < 0)
-		return 0
-        val = (hz * val) / 10;
-	if (val < 0)
-		return 0
-
-	return val;
-}
-
-
-just my 2 cents,
-not a tested patch.
-re,
- wh
+diff --git a/drivers/net/ibm_newemac/core.c b/drivers/net/ibm_newemac/core.c
+index 3506fd6..519e19e 100644
+--- a/drivers/net/ibm_newemac/core.c
++++ b/drivers/net/ibm_newemac/core.c
+@@ -2928,7 +2928,7 @@ static int __devinit emac_probe(struct platform_device *ofdev,
+ 	if (dev->emac_irq != NO_IRQ)
+ 		irq_dispose_mapping(dev->emac_irq);
+  err_free:
+-	kfree(ndev);
++	free_netdev(ndev);
+  err_gone:
+ 	/* if we were on the bootlist, remove us as we won't show up and
+ 	 * wake up all waiters to notify them in case they were waiting
+@@ -2971,7 +2971,7 @@ static int __devexit emac_remove(struct platform_device *ofdev)
+ 	if (dev->emac_irq != NO_IRQ)
+ 		irq_dispose_mapping(dev->emac_irq);
+ 
+-	kfree(dev->ndev);
++	free_netdev(dev->ndev);
+ 
+ 	return 0;
+ }
+-- 
+1.7.0.4
 
