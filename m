@@ -1,51 +1,79 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 01 Sep 2010 15:03:06 +0000
-Subject: Re: [PATCH 1/7] drivers/macintosh/via-pmu-led.c: Add of_node_put
-Message-Id: <4C7E6B2A.6030907@bfs.de>
+From: marywangran <marywangran@gmail.com>
+Date: Sun, 26 Sep 2010 06:28:01 +0000
+Subject: [PATCH 1/1] bridge:rerouting after NAT
+Message-Id: <AANLkTi=cEH_48+5r32SuwGGHnM4+PTxxFmZ-aM9skkzL@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283075566-27441-1-git-send-email-julia@diku.dk> <1283075566-27441-2-git-send-email-julia@diku.dk> <4C7D247F.4060500@bfs.de> <Pine.LNX.4.64.1008311807470.2668@ask.diku.dk> <20100831161644.GA14505@albatros> <AANLkTi=3b0NY5pFepv-TmjFDmPUBK9Ew16HyTn-+YguX@mail.gmail.com>
-In-Reply-To: <AANLkTi=3b0NY5pFepv-TmjFDmPUBK9Ew16HyTn-+YguX@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Vasiliy Kulikov <segooon@gmail.com>, Julia Lawall <julia@diku.dk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: kernel-janitors@vger.kernel.org
 
+Hi,everyone
 
+As we know,the NAT netfilter-hook for IP hooking at OUTPUT is called
+after routing,so we must rerouting if the destinaton or source address
+is changed by NAT after the hook.It's all right as the kernel shown
+for us.But I don't see any logic for rerouting after the
+bridged-NAT.If bridge-NAT changes a destination or source MAC
+address,we should do bridge-rerouting as the IP-layer do.
+I have only the kernel of version 2.6.8,so I patch on it.Thought the
+bridge-logic of kernel source of version 2.6.3X has not been
+changed,it's no matter to patch on kernel of version 2.6.8.
 
-Grant Likely schrieb:
-> On Tue, Aug 31, 2010 at 10:16 AM, Vasiliy Kulikov <segooon@gmail.com> wrote:
->> On Tue, Aug 31, 2010 at 18:08 +0200, Julia Lawall wrote:
->>> On Tue, 31 Aug 2010, walter harms wrote:
->>>>>   if (strncmp(model, "PowerBook", strlen("PowerBook")) != 0 &&
->>>>>       strncmp(model, "iBook", strlen("iBook")) != 0 &&
->>>>>       strcmp(model, "PowerMac7,2") != 0 &&
->>>>>
->>>> is there any rule that says when to use strncmp ? it seems perfecly valid to use strcpy here
->>>> (what is done in the last cmp).
->>> Perhaps there are some characters after eg PowerBook that one doesn't want
->>> to compare with?
->> It seems to me that model has no '\0' in the end. If model is got from
->> the hardware then we should double check it - maybe harware is buggy.
->> Otherwise we'll overflow model.
-> 
-> Model does have \0 at the end.  This code is using strncmp to
-> purposefully ignore the model suffix.
-> 
->> But why strcmp(model, "PowerMac7,2")? IMO it should be replaced
->> with strncmp().
-> 
-> We use strcmp when parsing the device tree because the the length of
-> the model property string is unknown and in most cases we *must* match
-> the exact entire string, such as with this PowerMac7,2 example.  Using
-> strncmp would also happen to match with something like
-> "PowerMac7,2345" which is not the desired behaviour.
-> 
+Best wishes
 
-hi Grant,
-whould you mind to use you explanation as comment in the code ?
-Tthat the strncpy/strcpy difference is important should be noted. that would be clearly a
-bonos with further audits.
+--- kernel-source-2.6.8/net/bridge/netfilter/ebtable_nat.c	2004-08-14
+01:38:09.000000000 -0400
++++ kernel-source-2.6.8/net/bridge/netfilter/ebtable_nat.c	2010-09-25
+23:18:13.040825944 -0400
+@@ -10,6 +10,7 @@
 
-re,
- wh
+ #include <linux/netfilter_bridge/ebtables.h>
+ #include <linux/module.h>
++#include "../br_private.h"
+
+ #define NAT_VALID_HOOKS ((1 << NF_BR_PRE_ROUTING) | (1 << NF_BR_LOCAL_OUT) | \
+    (1 << NF_BR_POST_ROUTING))
+@@ -61,6 +62,30 @@
+ };
+
+ static unsigned int
++ebt_nat_dst_local(unsigned int hook, struct sk_buff **pskb, const
+struct net_device *in
++   , const struct net_device *out, int (*okfn)(struct sk_buff *))
++{
++	struct net_bridge *br = netdev_priv(out);
++	struct net_bridge_fdb_entry *dst;
++	char orig_mac[ETH_ALEN] = {0};
++	unsigned int ret = 0;
++	memcpy(orig_mac, ((**pskb).mac.ethernet)->h_dest, ETH_ALEN *
+sizeof(unsigned char));
++	ret = ebt_do_table(hook, pskb, in, out, &frame_nat);
++	if (strncmp(((**pskb).mac.ethernet)->h_dest, orig_mac, ETH_ALEN)) {
++		rcu_read_lock();
++		if ((((**pskb).mac.ethernet)->h_dest)[0] & 1)
++			br_flood_deliver(br, *pskb, 0);
++		else if ((dst = __br_fdb_get(br, ((**pskb).mac.ethernet)->h_dest)) != NULL)
++			br_deliver(dst->dst, *pskb);
++		else
++			br_flood_deliver(br, *pskb, 0);
++		rcu_read_unlock();
++		return NF_STOLEN;
++				
++	}
++	return ret;
++}
++static unsigned int
+ ebt_nat_dst(unsigned int hook, struct sk_buff **pskb, const struct
+net_device *in
+    , const struct net_device *out, int (*okfn)(struct sk_buff *))
+ {
+@@ -76,7 +101,7 @@
+
+ static struct nf_hook_ops ebt_ops_nat[] = {
+ 	{
+-		.hook		= ebt_nat_dst,
++		.hook		= ebt_nat_dst_local,
+ 		.owner		= THIS_MODULE,
+ 		.pf		= PF_BRIDGE,
+ 		.hooknum	= NF_BR_LOCAL_OUT,
