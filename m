@@ -1,43 +1,30 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 09:58:06 +0000
-Subject: [PATCH 3/9] sgiseeq: use free_netdev(netdev) instead of kfree()
-Message-Id: <1285495086-21956-1-git-send-email-segooon@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 27 Sep 2010 01:55:29 +0000
+Subject: Re: [PATCH 3/9] sgiseeq: use free_netdev(netdev) instead of kfree()
+Message-Id: <20100926.185529.200365761.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285495086-21956-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1285495086-21956-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: segooon@gmail.com
+Cc: kernel-janitors@vger.kernel.org, eric.dumazet@gmail.com, u.kleine-koenig@pengutronix.de, julia@diku.dk, tj@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Freeing netdev without free_netdev() leads to net, tx leaks.
-I might lead to dereferencing freed pointer.
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 26 Sep 2010 13:58:06 +0400
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+> Freeing netdev without free_netdev() leads to net, tx leaks.
+> I might lead to dereferencing freed pointer.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> @@
+> struct net_device* dev;
+> @@
+> 
+> -kfree(dev)
+> +free_netdev(dev)
 
-@@
-struct net_device* dev;
-@@
-
--kfree(dev)
-+free_netdev(dev)
----
- drivers/net/sgiseeq.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/sgiseeq.c b/drivers/net/sgiseeq.c
-index cc4bd8c..9265315 100644
---- a/drivers/net/sgiseeq.c
-+++ b/drivers/net/sgiseeq.c
-@@ -804,7 +804,7 @@ static int __devinit sgiseeq_probe(struct platform_device *pdev)
- err_out_free_page:
- 	free_page((unsigned long) sp->srings);
- err_out_free_dev:
--	kfree(dev);
-+	free_netdev(dev);
- 
- err_out:
- 	return err;
--- 
-1.7.0.4
-
+Applied.
