@@ -1,66 +1,24 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 08:59:37 +0000
-Subject: [PATCH] block: rbd: fixed may leaks
-Message-Id: <1285491578-32580-1-git-send-email-segooon@gmail.com>
+From: Yehuda Sadeh Weinraub <yehuda@hq.newdream.net>
+Date: Mon, 27 Sep 2010 17:47:21 +0000
+Subject: Re: [PATCH] block: rbd: fixed may leaks
+Message-Id: <AANLkTinN_o2O1amBvsM7nFp_ozp13zRPZm=RNH5cp+DV@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285491578-32580-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1285491578-32580-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Yehuda Sadeh <yehuda@hq.newdream.net>, Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-rbd_client_create() doesn't free rbdc, this leads to many leaks.
+On Sun, Sep 26, 2010 at 1:59 AM, Vasiliy Kulikov <segooon@gmail.com> wrote:
+> rbd_client_create() doesn't free rbdc, this leads to many leaks.
+>
+> seg_len in rbd_do_op() is unsigned, so (seg_len < 0) makes no sense.
+> Also if fixed check fails then seg_name is leaked.
+> ---
 
-seg_len in rbd_do_op() is unsigned, so (seg_len < 0) makes no sense.
-Also if fixed check fails then seg_name is leaked.
----
- Compile tested.
+Pushed to our unstable tree. Added missing signed-off by.
 
- drivers/block/rbd.c |   14 ++++++++------
- 1 files changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index c42f305..83b15dd 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -241,6 +241,7 @@ static struct rbd_client *rbd_client_create(struct ceph_options *opt)
- 	rbdc->client = ceph_create_client(opt, rbdc);
- 	if (IS_ERR(rbdc->client))
- 		goto out_rbdc;
-+	opt = NULL; /* Now rbdc->client is responsible for opt */
- 
- 	ret = ceph_open_session(rbdc->client);
- 	if (ret < 0)
-@@ -255,13 +256,12 @@ static struct rbd_client *rbd_client_create(struct ceph_options *opt)
- 
- out_err:
- 	ceph_destroy_client(rbdc->client);
--	return ERR_PTR(ret);
--
- out_rbdc:
- 	kfree(rbdc);
- out_opt:
--	ceph_destroy_options(opt);
--	return ERR_PTR(-ENOMEM);
-+	if (opt)
-+		ceph_destroy_options(opt);
-+	return ERR_PTR(ret);
- }
- 
- /*
-@@ -889,8 +889,10 @@ static int rbd_do_op(struct request *rq,
- 				  rbd_dev->header.block_name,
- 				  ofs, len,
- 				  seg_name, &seg_ofs);
--	if (seg_len < 0)
--		return seg_len;
-+	if ((s64)seg_len < 0) {
-+		ret = seg_len;
-+		goto done;
-+	}
- 
- 	payload_len = (flags & CEPH_OSD_FLAG_WRITE ? seg_len : 0);
- 
--- 
-1.7.0.4
-
+Thanks,
+Yehuda
