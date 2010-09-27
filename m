@@ -1,49 +1,37 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Tue, 28 Sep 2010 17:08:11 +0000
-Subject: [PATCH 9/9] staging: wlags49_h2: use free_netdev(netdev) instead of kfree()
-Message-Id: <1285693692-4805-1-git-send-email-segooon@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Mon, 27 Sep 2010 02:11:12 +0000
+Subject: [PATCH] kbuild: remove duplicate -I flag in addtree
+Message-Id: <1285553472-924-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285495111-22238-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1285495111-22238-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Henk de Groot <pe1dnn@amsat.org>, Andrew Morton <akpm@linux-foundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Freeing netdev without free_netdev() leads to net, tx leaks.
-I might lead to dereferencing freed pointer.
+When O= is used, any -I flag given that is not an absolute path gets
+duplicated. The $(1) appended to the conditional clause covers the
+absolute case, but due to being outside of the conditional statement
+it gets added everytime.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-@@
-struct net_device* dev;
-@@
-
--kfree(dev)
-+free_netdev(dev)
-
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- Compile tested.
-
- drivers/staging/wlags49_h2/wl_netdev.c |    2 +-
+ scripts/Kbuild.include |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/wlags49_h2/wl_netdev.c b/drivers/staging/wlags49_h2/wl_netdev.c
-index e2a7ad0..954bece 100644
---- a/drivers/staging/wlags49_h2/wl_netdev.c
-+++ b/drivers/staging/wlags49_h2/wl_netdev.c
-@@ -1586,7 +1586,7 @@ void wl_wds_device_dealloc( struct wl_private *lp )
-                 dev_wds->flags &= ~( IFF_UP | IFF_RUNNING );
-             }
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index ed2773e..08c74ed 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -158,7 +158,7 @@ modbuiltin := -f $(if $(KBUILD_SRC),$(srctree)/)scripts/Makefile.modbuiltin obj
+ # Prefix -I with $(srctree) if it is not an absolute path.
+ # skip if -I has no parameter
+ addtree = $(if $(patsubst -I%,%,$(1)), \
+-$(if $(filter-out -I/%,$(1)),$(patsubst -I%,-I$(srctree)/%,$(1))) $(1))
++$(if $(filter-out -I/%,$(1)),$(patsubst -I%,-I$(srctree)/%,$(1)),$(1)))
  
--            kfree( dev_wds );
-+            free_netdev(dev_wds);
-             lp->wds_port[count].dev = NULL;
-         }
-     }
+ # Find all -I options and call addtree
+ flags = $(foreach o,$($(1)),$(if $(filter -I%,$(o)),$(call addtree,$(o)),$(o)))
 -- 
-1.7.0.4
+1.7.2.1
 
