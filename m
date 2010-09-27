@@ -1,42 +1,45 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:22 +0000
-Subject: [PATCH 09/21] Staging: rt2860: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352314-5939-9-git-send-email-tdent48227@gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Mon, 27 Sep 2010 23:12:03 +0000
+Subject: Re: [patch] tlb_uv: handle large snprintf() returns
+Message-Id: <20100927161203.732833b0.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+References: <20100816105502.GC645@bicker>
+In-Reply-To: <20100816105502.GC645@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Cliff Wickman <cpw@sgi.com>, Jack Steiner <steiner@sgi.com>, Robin Holt <holt@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+On Mon, 16 Aug 2010 12:55:02 +0200
+Dan Carpenter <error27@gmail.com> wrote:
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
----
- drivers/staging/rt2860/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+> snprintf() returns the number of bytes that *would* have been copied if
+> the buffer was large enough, so it can be larger than the size of the
+> buffer.  In this case it's ok, but let's put a cap on it anyway so it's
+> easier to audit.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> diff --git a/arch/x86/kernel/tlb_uv.c b/arch/x86/kernel/tlb_uv.c
+> index 312ef02..5e88b3a 100644
+> --- a/arch/x86/kernel/tlb_uv.c
+> +++ b/arch/x86/kernel/tlb_uv.c
+> @@ -1012,6 +1012,9 @@ static ssize_t tunables_read(struct file *file, char __user *userbuf,
+>  		timeoutsb4reset, ipi_reset_limit, complete_threshold,
+>  		congested_response_us, congested_reps, congested_period);
+>  
+> +	if (ret > 300)
+> +		ret = 300;
+> +
+>  	return simple_read_from_buffer(userbuf, count, ppos, buf, ret);
+>  }
 
-diff --git a/drivers/staging/rt2860/Makefile b/drivers/staging/rt2860/Makefile
-index 23ae07f..dd6b192 100644
---- a/drivers/staging/rt2860/Makefile
-+++ b/drivers/staging/rt2860/Makefile
-@@ -1,10 +1,10 @@
- obj-$(CONFIG_RT2860)	+= rt2860sta.o
- 
- # TODO: all of these should be removed
--EXTRA_CFLAGS += -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
--EXTRA_CFLAGS += -DRTMP_MAC_PCI -DRTMP_PCI_SUPPORT -DRT2860
--EXTRA_CFLAGS += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3090
--EXTRA_CFLAGS += -DDBG
-+ccflags-y += -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
-+ccflags-y += -DRTMP_MAC_PCI -DRTMP_PCI_SUPPORT -DRT2860
-+ccflags-y += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3090
-+ccflags-y += -DDBG
- 
- rt2860sta-objs :=	\
- 	common/crypt_md5.o	\
--- 
-1.7.3
+That 300-byte local array is yuk.
+
+Duplicating the "300" later in the function (instead of using sizeof)
+is also yuk.
+
+The code can be deyukked by using sprintf_to_user(), only we don't have
+one.  But we do have kasprintf().
 
