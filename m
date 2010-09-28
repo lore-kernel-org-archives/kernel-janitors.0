@@ -1,45 +1,49 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 23:28:01 +0000
-Subject: [PATCH v2 13/22] Staging: rtl8192su: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285370890-8984-13-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Tue, 28 Sep 2010 02:04:53 +0000
+Subject: [PATCH 3/3 RESEND] trace: remove cast from void*
+Message-Id: <74a39e380e35d0e6a9bf326669974e51d60f41b4.1285638395.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285370890-8984-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Changed to use proper ccflags-y option
+Unnecessary cast from void* in assignment.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/rtl8192su/Makefile |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ kernel/trace/ftrace.c |    4 ++--
+ kernel/trace/trace.c  |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8192su/Makefile b/drivers/staging/rtl8192su/Makefile
-index 7133894..88bcd97 100644
---- a/drivers/staging/rtl8192su/Makefile
-+++ b/drivers/staging/rtl8192su/Makefile
-@@ -1,12 +1,12 @@
- NIC_SELECT = RTL8192SU
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index fa7ece6..f1bd6ff 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -1601,8 +1601,8 @@ ftrace_failures_open(struct inode *inode, struct file *file)
  
--EXTRA_CFLAGS += -std=gnu89
--EXTRA_CFLAGS += -O2
-+ccflags-y := -std=gnu89
-+ccflags-y := -O2
+ 	ret = ftrace_avail_open(inode, file);
+ 	if (!ret) {
+-		m = (struct seq_file *)file->private_data;
+-		iter = (struct ftrace_iterator *)m->private;
++		m = file->private_data;
++		iter = m->private;
+ 		iter->flags = FTRACE_ITER_FAILURES;
+ 	}
  
--EXTRA_CFLAGS += -DJACKSON_NEW_RX
--EXTRA_CFLAGS += -DTHOMAS_BEACON
-+ccflags-y := -DJACKSON_NEW_RX
-+ccflags-y := -DTHOMAS_BEACON
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 9ec59f5..001bcd2 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2196,7 +2196,7 @@ int tracing_open_generic(struct inode *inode, struct file *filp)
  
--#EXTRA_CFLAGS += -DMUTIPLE_BULK_OUT
-+#ccflags-y := -DMUTIPLE_BULK_OUT
+ static int tracing_release(struct inode *inode, struct file *file)
+ {
+-	struct seq_file *m = (struct seq_file *)file->private_data;
++	struct seq_file *m = file->private_data;
+ 	struct trace_iterator *iter;
+ 	int cpu;
  
- r8192s_usb-objs :=		\
- 	r8192U_wx.o		\
 -- 
-1.7.3
+1.7.2.1
 
