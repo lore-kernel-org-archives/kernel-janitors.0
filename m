@@ -1,8 +1,10 @@
 From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 09:58:18 +0000
+Date: Tue, 28 Sep 2010 17:07:55 +0000
 Subject: [PATCH 5/9] staging: ath6kl: use free_netdev(netdev) instead of kfree()
-Message-Id: <1285495099-22069-1-git-send-email-segooon@gmail.com>
+Message-Id: <1285693675-4637-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285495099-22069-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1285495099-22069-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,6 +15,8 @@ It is not guaranteed that free_netdev() is macro.
 Freeing netdev without free_netdev() leads to net, tx leaks.
 I might lead to dereferencing freed pointer.
 
+
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
  drivers/staging/ath6kl/os/linux/ar6000_drv.c |    8 --------
  1 files changed, 0 insertions(+), 8 deletions(-)
