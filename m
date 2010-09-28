@@ -1,8 +1,10 @@
 From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 08:59:52 +0000
+Date: Tue, 28 Sep 2010 17:49:38 +0000
 Subject: [PATCH] statistics_write: ft1000: fix kernel info leak to userland
-Message-Id: <1285491593-325-1-git-send-email-segooon@gmail.com>
+Message-Id: <1285696178-5696-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285491593-325-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1285491593-325-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,6 +13,8 @@ Cc: Greg Kroah-Hartman <gregkh@suse.de>, Marek Belisko <marek.belisko@gmail.com>
 
 get_stat_data is not fully initialized before copy_to_user() call,
 e.g. LedStat is not always set.
+
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
  drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
