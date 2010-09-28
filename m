@@ -1,8 +1,10 @@
 From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 09:58:25 +0000
+Date: Tue, 28 Sep 2010 17:08:04 +0000
 Subject: [PATCH 7/9] staging: otus: use free_netdev(netdev) instead of kfree()
-Message-Id: <1285495105-22154-1-git-send-email-segooon@gmail.com>
+Message-Id: <1285693685-4721-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285495105-22154-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1285495105-22154-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -21,6 +23,8 @@ struct net_device* dev;
 
 -kfree(dev)
 +free_netdev(dev)
+
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
  Compile tested.
 
