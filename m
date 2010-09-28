@@ -1,8 +1,10 @@
 From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 26 Sep 2010 08:59:49 +0000
+Date: Tue, 28 Sep 2010 17:49:35 +0000
 Subject: [PATCH] staging: ft1000: fix skb, netdev, memory leaks
-Message-Id: <1285491590-32750-1-git-send-email-segooon@gmail.com>
+Message-Id: <1285696175-5654-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1285491590-32750-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1285491590-32750-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,6 +15,8 @@ ft1000_copy_up_pkt() doesn't free skb on errors.
 init_ft1000_card() doesn't free netdev with free_netdev() but with kfree().
 init_ft1000_card() doesn't check request_region()'s return value
 and doesn't free region on error.
+
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
  Compile tested.
 
