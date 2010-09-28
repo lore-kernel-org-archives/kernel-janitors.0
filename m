@@ -1,55 +1,36 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 24 Sep 2010 18:18:28 +0000
-Subject: [PATCH 15/21] Staging: rtl8192u: ieee80211: Makefile: cleaned up makefile cflag lines
-Message-Id: <1285352314-5939-15-git-send-email-tdent48227@gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Tue, 28 Sep 2010 02:04:44 +0000
+Subject: [PATCH 2/3 RESEND] powerpc: remove cast from void*
+Message-Id: <f7d601da574581e9dfdc1314a969475c73491c00.1285638395.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1285352314-5939-1-git-send-email-tdent48227@gmail.com>
+References: <cover.1285638395.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1285638395.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Jiri Kosina <trivial@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-Changed to use the proper ccflags-y option
+Unnecessary cast from void* in assignment.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/rtl8192u/ieee80211/Makefile |   14 +++++++-------
- 1 files changed, 7 insertions(+), 7 deletions(-)
+ arch/powerpc/platforms/pseries/hvCall_inst.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/Makefile b/drivers/staging/rtl8192u/ieee80211/Makefile
-index 71ca5d9..d19b49f 100644
---- a/drivers/staging/rtl8192u/ieee80211/Makefile
-+++ b/drivers/staging/rtl8192u/ieee80211/Makefile
-@@ -5,20 +5,20 @@ MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/$(NIC_SELECT)
+diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
+index e19ff02..f106662 100644
+--- a/arch/powerpc/platforms/pseries/hvCall_inst.c
++++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
+@@ -55,7 +55,7 @@ static void hc_stop(struct seq_file *m, void *p)
+ static int hc_show(struct seq_file *m, void *p)
+ {
+ 	unsigned long h_num = (unsigned long)p;
+-	struct hcall_stats *hs = (struct hcall_stats *)m->private;
++	struct hcall_stats *hs = m->private;
  
- CC = gcc
- ifneq ($(shell uname -r|cut -d. -f1,2), 2.4)
--EXTRA_CFLAGS += -I$(TOPDIR)/drivers/net/wireless
--EXTRA_CFLAGS += -O2
--EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
-+ccflags-y += -I$(TOPDIR)/drivers/net/wireless
-+ccflags-y += -O2
-+ccflags-y += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
- 
- #it will fail to compile in suse linux enterprise 10 sp2. This flag is to solve this problem.
- ifeq ($(shell uname -r | cut -d. -f1,2,3,4), 2.6.16.60-0)
--EXTRA_CFLAGS += -DOPENSUSE_SLED
-+ccflags-y += -DOPENSUSE_SLED
- endif
- 
- ifeq ($(NIC_SELECT),RTL8192U)
--#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
--#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
-+#ccflags-y += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
-+#ccflags-y += -DUSB_RX_AGGREGATION_SUPPORT
- endif
--#EXTRA_CFLAGS += -DJOHN_NOCPY
-+#ccflags-y += -DJOHN_NOCPY
- #flags to enable or disble 80211D feature
- EXTRA_CFLAGS += -DENABLE_DOT11D
- ieee80211-rsl-objs := ieee80211_rx.o \
+ 	if (hs[h_num].num_calls) {
+ 		if (cpu_has_feature(CPU_FTR_PURR))
 -- 
-1.7.3
+1.7.2.1
 
