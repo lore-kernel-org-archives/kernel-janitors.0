@@ -1,68 +1,34 @@
-From: Corey Minyard <minyard@acm.org>
-Date: Sat, 18 Sep 2010 19:19:19 +0000
-Subject: Re: [patch] ipmi: make static checkers happy about range checks
-Message-Id: <4C9510B7.6050903@acm.org>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Wed, 29 Sep 2010 08:34:06 +0000
+Subject: [PATCH] Input: i8042 - use unsigned char for 0x90
+Message-Id: <1285749246.7370.5.camel@lovely>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100917190702.GA5384@bicker>
-In-Reply-To: <20100917190702.GA5384@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kernel-janitors <kernel-janitors@vger.kernel.org>, linux-input <linux-input@vger.kernel.org>
 
-I'm ok with this, I don't think it will make any real difference besides 
-the compiler converting that comparison to unsigned.  I wish I had made 
-that unsigned.
+Keep the file consistent and make clear that we mean 144 instead of -112.
 
--corey
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+---
+ drivers/input/serio/i8042.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-On 09/17/2010 02:26 PM, Dan Carpenter wrote:
-> I'm working on a Smatch check that complains that addr->channel comes
-> from the user and it might be negative.  It actually can *not* be
-> negative because we already checked that when we called
-> ipmi_validate_addr() from handle_send_req().  Also it can't be greater
-> than or equal to IPMI_MAX_CHANNELS because we already verified that as
-> well.
->
-> Although this change doesn't do anything, it's still a cleanup because
-> it makes the checking consistent and also it silences the static
-> analysis warnings.
->
-> Signed-off-by: Dan Carpenter<error27@gmail.com>
-> ---
-> Really, I would prefer to just make ->channel unsigned but the type
-> comes from the IPMI spec.
->
-> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-> index 4f3f8c9..57f4c80 100644
-> --- a/drivers/char/ipmi/ipmi_msghandler.c
-> +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> @@ -1527,7 +1527,7 @@ static int i_ipmi_request(ipmi_user_t          user,
->   		long                  seqid;
->   		int                   broadcast = 0;
->
-> -		if (addr->channel>= IPMI_MAX_CHANNELS) {
-> +		if (addr->channel<  0 || addr->channel>= IPMI_MAX_CHANNELS) {
->   			ipmi_inc_stat(intf, sent_invalid_commands);
->   			rv = -EINVAL;
->   			goto out_err;
-> @@ -1657,7 +1657,7 @@ static int i_ipmi_request(ipmi_user_t          user,
->   		unsigned char         ipmb_seq;
->   		long                  seqid;
->
-> -		if (addr->channel>= IPMI_MAX_CHANNELS) {
-> +		if (addr->channel<  0 || addr->channel>= IPMI_MAX_CHANNELS) {
->   			ipmi_inc_stat(intf, sent_invalid_commands);
->   			rv = -EINVAL;
->   			goto out_err;
-> @@ -1797,7 +1797,7 @@ static int check_addr(ipmi_smi_t       intf,
->   		      unsigned char    *saddr,
->   		      unsigned char    *lun)
->   {
-> -	if (addr->channel>= IPMI_MAX_CHANNELS)
-> +	if (addr->channel<  0 || addr->channel>= IPMI_MAX_CHANNELS)
->   		return -EINVAL;
->   	*lun = intf->channels[addr->channel].lun;
->   	*saddr = intf->channels[addr->channel].address;
->    
+diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
+index f585131..18db5a8 100644
+--- a/drivers/input/serio/i8042.c
++++ b/drivers/input/serio/i8042.c
+@@ -1063,7 +1063,7 @@ static long i8042_panic_blink(int state)
+ #ifdef CONFIG_X86
+ static void i8042_dritek_enable(void)
+ {
+-	char param = 0x90;
++	unsigned char param = 0x90;
+ 	int error;
+ 
+ 	error = i8042_command(&param, 0x1059);
+-- 
+1.7.1
 
