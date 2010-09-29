@@ -1,64 +1,26 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Date: Tue, 28 Sep 2010 13:22:22 +0000
+From: Michal Marek <mmarek@suse.cz>
+Date: Wed, 29 Sep 2010 14:36:59 +0000
 Subject: Re: [PATCH 08/20] m68knommu: change to new flag variables
-Message-Id: <4CA1EC0E.2020304@snapgear.com>
+Message-Id: <4CA34F0B.6010605@suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1285224645-29728-1-git-send-email-mfm@muteddisk.com> <4CA18E00.7090207@snapgear.com> <20100928071606.GA13303@haskell.muteddisk.com>
 In-Reply-To: <20100928071606.GA13303@haskell.muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Ungerer <gerg@uclinux.org>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, Tim Abbott <tabbott@ksplice.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kbuild@vger.kernel.org
+To: matt mooney <mfm@muteddisk.com>
+Cc: Greg Ungerer <gerg@snapgear.com>, Greg Ungerer <gerg@uclinux.org>, Andrew Morton <akpm@linux-foundation.org>, David Howells <dhowells@redhat.com>, Tim Abbott <tabbott@ksplice.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kbuild@vger.kernel.org
 
-
-Hi Matt,
-
-On 28/09/10 17:16, matt mooney wrote:
-> On 16:41 Tue 28 Sep     , Greg Ungerer wrote:
->>
->> Hi Matt,
->>
->> On 23/09/10 16:50, matt mooney wrote:
->>> Replace EXTRA_CFLAGS with ccflags-y and EXTRA_AFLAGS with asflags-y.
->>>
->>> Signed-off-by: matt mooney<mfm@muteddisk.com>
->>
->> Looks fine to me. Are you looking for this to go through
->> maintainer trees, or the whole patch series in one go?
->
-> Hi Greg,
->
+On 28.9.2010 09:16, matt mooney wrote:
 > My original intent was through the maintainer trees; however, I am starting to
 > realize that it probably would have been best to all go into the kbuild tree as
 > one patch series. That being said, some people have picked them up and others
 > have just acked, so really whatever is easiest for you. All unapplied will
 > eventually go through the kbuild tree.
 
-I am happy to pick up the m68knommu change and send up-stream.
+Please try push as much through maintainer trees as possible, to avoid
+unnecessary merge conflicts. Of course, if you end up with some patches
+that nobody is picking up, I'll apply them to the kbuild tree.
 
-Regards
-Greg
-
-
->> Acked-by: Greg Ungerer<gerg@uclinux.org>
->>
->> Regards
->> Greg
->>
->>
->>> ---
->>>   arch/m68knommu/platform/5206/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/5206e/Makefile    |    4 ++--
->>>   arch/m68knommu/platform/520x/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/523x/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/5249/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/5272/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/527x/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/528x/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/5307/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/532x/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/5407/Makefile     |    4 ++--
->>>   arch/m68knommu/platform/coldfire/Makefile |    4 ++--
->>>   12 files changed, 24 insertions(+), 24 deletions(-)
->>>
-
+Thanks,
+Michal
