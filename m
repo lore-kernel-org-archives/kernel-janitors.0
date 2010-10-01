@@ -1,37 +1,42 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sat, 30 Oct 2010 14:26:21 +0000
-Subject: [PATCH] bluetooth: bnep: fix information leak to userland
-Message-Id: <1288448782-5582-1-git-send-email-segooon@gmail.com>
+From: Michal Marek <mmarek@suse.cz>
+Date: Fri, 01 Oct 2010 20:56:46 +0000
+Subject: Re: [PATCH] Documentation/kbuild: correct variable definitions in
+Message-Id: <20101001205646.GA10988@sepie.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1284964412-32211-1-git-send-email-mfm@muteddisk.com>
+ <4CA35541.9090106@suse.cz>
+ <20100929175031.GA9278@merkur.ravnborg.org>
+ <20100929231904.GB21930@haskell.muteddisk.com>
+In-Reply-To: <20100929231904.GB21930@haskell.muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: matt mooney <mfm@muteddisk.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Randy Dunlap <rdunlap@xenotime.net>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Structure bnep_conninfo is copied to userland with the field "device"
-that has the last elements unitialized.  It leads to leaking of
-contents of kernel stack memory.
+On Wed, Sep 29, 2010 at 04:19:04PM -0700, matt mooney wrote:
+> On 19:50 Wed 29 Sep     , Sam Ravnborg wrote:
+> > On Wed, Sep 29, 2010 at 05:03:29PM +0200, Michal Marek wrote:
+> > > On 20.9.2010 08:33, matt mooney wrote:
+> > > > Change $(src) and $(obj) definitions to state the path as absolute and
+> > > > not relative.
+> > > 
+> > > It _is_ a relative patch, AFAICS. What makes you think otherwise?
+> > 
+> > With extenal modules $(src) and $(obj) are absolute - but in nomal
+> > use they are relative.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
----
- Compile tested.
+Ah, I see. Then we should simply say "path", without any adjectives.
 
- net/bluetooth/bnep/core.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/net/bluetooth/bnep/core.c b/net/bluetooth/bnep/core.c
-index f10b41f..5868597 100644
---- a/net/bluetooth/bnep/core.c
-+++ b/net/bluetooth/bnep/core.c
-@@ -648,6 +648,7 @@ int bnep_del_connection(struct bnep_conndel_req *req)
- 
- static void __bnep_copy_ci(struct bnep_conninfo *ci, struct bnep_session *s)
- {
-+	memset(ci, 0, sizeof(*ci));
- 	memcpy(ci->dst, s->eh.h_source, ETH_ALEN);
- 	strcpy(ci->device, s->dev->name);
- 	ci->flags = s->flags;
--- 
-1.7.0.4
+> > And again in normal use they are also equal. I usually say that we
+> > have two just to document what is srource and what is generated.
+> 
+> Ah, I see. Sorry, I should have looked into this more. Now you did say
+> in normal use they are equal, but I thought they were also equal when
+> used for an external module too.
 
+Yes, they are, using $(src) for shipped files and $(obj) for generated
+ones is just a service for the reader of the Makefile.
+
+Michal
