@@ -1,64 +1,36 @@
-From: Robin Holt <holt@sgi.com>
-Date: Wed, 20 Oct 2010 02:51:31 +0000
-Subject: Re: [PATCH 4/4] drivers/misc/sgi-xp/xpc_uv.c: convert nested
-Message-Id: <20101020025130.GE14068@sgi.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:38:07 +0000
+Subject: [PATCH v3 18/20] Staging: vt6656: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-18-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287481436-26656-4-git-send-email-julia@diku.dk>
-In-Reply-To: <1287481436-26656-4-git-send-email-julia@diku.dk>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Robin Holt <holt@sgi.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-On Tue, Oct 19, 2010 at 11:43:56AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> If spin_lock_irqsave is called twice in a row with the same second
-> argument, the interrupt state at the point of the second call overwrites
-> the value saved by the first call.  Indeed, the second call does not need
-> to save the interrupt state, so it is changed to a simple spin_lock.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression lock1,lock2;
-> expression flags;
-> @@
-> 
-> *spin_lock_irqsave(lock1,flags)
-> ... when != flags
-> *spin_lock_irqsave(lock2,flags)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Changed to use the proper ccflags-y option
 
-Acked-by: Robin Holt <holt@sgi.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/vt6656/Makefile |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> ---
->  drivers/misc/sgi-xp/xpc_uv.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/sgi-xp/xpc_uv.c b/drivers/misc/sgi-xp/xpc_uv.c
-> index 1f59ee2..7aeaef7 100644
-> --- a/drivers/misc/sgi-xp/xpc_uv.c
-> +++ b/drivers/misc/sgi-xp/xpc_uv.c
-> @@ -451,9 +451,9 @@ xpc_handle_activate_mq_msg_uv(struct xpc_partition *part,
->  
->  		if (msg->activate_gru_mq_desc_gpa !>  		    part_uv->activate_gru_mq_desc_gpa) {
-> -			spin_lock_irqsave(&part_uv->flags_lock, irq_flags);
-> +			spin_lock(&part_uv->flags_lock);
->  			part_uv->flags &= ~XPC_P_CACHED_ACTIVATE_GRU_MQ_DESC_UV;
-> -			spin_unlock_irqrestore(&part_uv->flags_lock, irq_flags);
-> +			spin_unlock(&part_uv->flags_lock);
->  			part_uv->activate_gru_mq_desc_gpa >  			    msg->activate_gru_mq_desc_gpa;
->  		}
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+diff --git a/drivers/staging/vt6656/Makefile b/drivers/staging/vt6656/Makefile
+index 582a35197..41ed06b 100644
+--- a/drivers/staging/vt6656/Makefile
++++ b/drivers/staging/vt6656/Makefile
+@@ -1,6 +1,6 @@
+ # TODO: all of these should be removed
+-EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -DEXPORT_SYMTAB -D__NO_VERSION__
+-EXTRA_CFLAGS += -DHOSTAP
++ccflags-y := -DLINUX -D__KERNEL__ -DEXPORT_SYMTAB -D__NO_VERSION__
++ccflags-y += -DHOSTAP
+ 
+ vt6656_stage-y +=	main_usb.o \
+ 			card.o  \
+-- 
+1.7.3.1.50.g1e633
+
