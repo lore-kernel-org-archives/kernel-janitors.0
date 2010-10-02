@@ -1,92 +1,58 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Wed, 06 Oct 2010 01:00:29 +0000
-Subject: [PATCH 14/28] Staging: comedi: drivers: adl_pci2608.c: Edit file so that checkpatch.pl has 0 errors
-Message-Id: <1286326843-6170-14-git-send-email-tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:38:08 +0000
+Subject: [PATCH v3 19/20] Staging: wlags49_h2: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-19-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-Changed a few lines that made checkpatch.pl complain. All warnings were
-WARNING: please, no space for starting a line.
+Changed to use the proper ccflags-y option
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/comedi/drivers/adl_pci6208.c |   42 +++++++++++++-------------
- 1 files changed, 21 insertions(+), 21 deletions(-)
+ drivers/staging/wlags49_h2/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/adl_pci6208.c b/drivers/staging/comedi/drivers/adl_pci6208.c
-index 073d024..8c8c691 100644
---- a/drivers/staging/comedi/drivers/adl_pci6208.c
-+++ b/drivers/staging/comedi/drivers/adl_pci6208.c
-@@ -1,29 +1,29 @@
- /*
--    comedi/drivers/adl_pci6208.c
--
--    Hardware driver for ADLink 6208 series cards:
--	card	     | voltage output    | current output
--	-------------+-------------------+---------------
--	PCI-6208V    |  8 channels       | -
--	PCI-6216V    | 16 channels       | -
--	PCI-6208A    |  8 channels       | 8 channels
--
--    COMEDI - Linux Control and Measurement Device Interface
--    Copyright (C) 2000 David A. Schleef <ds@schleef.org>
--
--    This program is free software; you can redistribute it and/or modify
--    it under the terms of the GNU General Public License as published by
--    the Free Software Foundation; either version 2 of the License, or
--    (at your option) any later version.
--
--    This program is distributed in the hope that it will be useful,
--    but WITHOUT ANY WARRANTY; without even the implied warranty of
--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--    GNU General Public License for more details.
--
--    You should have received a copy of the GNU General Public License
--    along with this program; if not, write to the Free Software
--    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-+	comedi/drivers/adl_pci6208.c
-+
-+	Hardware driver for ADLink 6208 series cards:
-+		card	     | voltage output    | current output
-+		-------------+-------------------+---------------
-+		PCI-6208V    |  8 channels       | -
-+		PCI-6216V    | 16 channels       | -
-+		PCI-6208A    |  8 channels       | 8 channels
-+
-+	COMEDI - Linux Control and Measurement Device Interface
-+	Copyright (C) 2000 David A. Schleef <ds@schleef.org>
-+
-+	This program is free software; you can redistribute it and/or modify
-+	it under the terms of the GNU General Public License as published by
-+	the Free Software Foundation; either version 2 of the License, or
-+	(at your option) any later version.
-+
-+	This program is distributed in the hope that it will be useful,
-+	but WITHOUT ANY WARRANTY; without even the implied warranty of
-+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+	GNU General Public License for more details.
-+
-+	You should have received a copy of the GNU General Public License
-+	along with this program; if not, write to the Free Software
-+	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
- /*
- Driver: adl_pci6208
-@@ -34,7 +34,7 @@ Updated: Fri, 30 Jan 2004 14:44:27 +0800
- Status: untested
+diff --git a/drivers/staging/wlags49_h2/Makefile b/drivers/staging/wlags49_h2/Makefile
+index 25d0a8a..e604ebd 100644
+--- a/drivers/staging/wlags49_h2/Makefile
++++ b/drivers/staging/wlags49_h2/Makefile
+@@ -12,8 +12,8 @@
+ #  If you want to build AP support (untested), comment out -DSTA_ONLY
  
- Configuration Options:
--  none
-+	none
+ INSTALLDIR := /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless
+-EXTRA_CFLAGS += -I$(KERNELDIR)/include
+-EXTRA_CFLAGS += -I$(src) \
++ccflags-y := -I$(KERNELDIR)/include
++ccflags-y += -I$(src) \
+ 		-DBUS_PCMCIA \
+ 		-DUSE_WPA \
+ 		-DUSE_WEXT \
+@@ -25,16 +25,16 @@ EXTRA_CFLAGS += -I$(src) \
+ #		-DUSE_UIL \
+ #		-DUSE_PROFILE \
  
- References:
- 	- ni_660x.c
+-ifeq ($(findstring HERMES25,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring HERMES25,$(ccflags-y)),)
+ WLNAME := wlags49_h2_cs
+ $(WLNAME)-y := sta_h2.o
+-ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
+ $(WLNAME)-y += ap_h2.o
+ endif
+ else
+ WLNAME=wlags49_h25_cs
+ $(WLNAME)-y := sta_h25.o
+-ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
++ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
+ $(WLNAME)-y += ap_h25.o
+ endif
+ endif
 -- 
 1.7.3.1.50.g1e633
 
