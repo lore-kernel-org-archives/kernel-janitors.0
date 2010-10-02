@@ -1,52 +1,43 @@
-From: Onkalo Samu <samu.p.onkalo@nokia.com>
-Date: Fri, 29 Oct 2010 11:27:54 +0000
-Subject: Re: [patch] misc/bh1770glc: error handling in
-Message-Id: <1288351674.30706.4.camel@4fid08082>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:38:01 +0000
+Subject: [PATCH v3 12/20] Staging: rtl8192su: ieee80211: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-12-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101028044149.GU6062@bicker>
-In-Reply-To: <20101028044149.GU6062@bicker>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ext Dan Carpenter <error27@gmail.com>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-On Thu, 2010-10-28 at 06:41 +0200, ext Dan Carpenter wrote:
-> There was a signedness bug so "ret" was never less than zero and that
-> breaks the error handling.  Also in the original code it would overwrite
-> ret and the result is still negative but it's bogus number instead of
-> the correct error code.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Changed to use the proper ccflags-y option
 
-Acked-by: Samu Onkalo <samu.p.onkalo@nokia.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8192su/ieee80211/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-> 
-> diff --git a/drivers/misc/bh1770glc.c b/drivers/misc/bh1770glc.c
-> index cee632e..d79a972 100644
-> --- a/drivers/misc/bh1770glc.c
-> +++ b/drivers/misc/bh1770glc.c
-> @@ -649,7 +649,7 @@ static ssize_t bh1770_power_state_store(struct device *dev,
->  {
->  	struct bh1770_chip *chip =  dev_get_drvdata(dev);
->  	unsigned long value;
-> -	size_t ret;
-> +	ssize_t ret;
->  
->  	if (strict_strtoul(buf, 0, &value))
->  		return -EINVAL;
-> @@ -659,8 +659,12 @@ static ssize_t bh1770_power_state_store(struct device *dev,
->  		pm_runtime_get_sync(dev);
->  
->  		ret = bh1770_lux_rate(chip, chip->lux_rate_index);
-> -		ret |= bh1770_lux_interrupt_control(chip, BH1770_ENABLE);
-> +		if (ret < 0) {
-> +			pm_runtime_put(dev);
-> +			goto leave;
-> +		}
->  
-> +		ret = bh1770_lux_interrupt_control(chip, BH1770_ENABLE);
->  		if (ret < 0) {
->  			pm_runtime_put(dev);
->  			goto leave;
+diff --git a/drivers/staging/rtl8192su/ieee80211/Makefile b/drivers/staging/rtl8192su/ieee80211/Makefile
+index a500bfa..5bee643 100644
+--- a/drivers/staging/rtl8192su/ieee80211/Makefile
++++ b/drivers/staging/rtl8192su/ieee80211/Makefile
+@@ -1,10 +1,10 @@
+ NIC_SELECT = RTL8192SU
+ 
+-EXTRA_CFLAGS += -O2
+-EXTRA_CFLAGS += -DRTL8192S_DISABLE_FW_DM=0
+-EXTRA_CFLAGS += -DRTL8192SU
+-#EXTRA_CFLAGS += -DJOHN_NOCPY
+-EXTRA_CFLAGS += -DTHOMAS_TURBO
++ccflags-y := -O2
++ccflags-y += -DRTL8192S_DISABLE_FW_DM=0
++ccflags-y += -DRTL8192SU
++#ccflags-y += -DJOHN_NOCPY
++ccflags-y += -DTHOMAS_TURBO
+ 
+ ieee80211-rsl-objs := ieee80211_rx.o \
+ 		      ieee80211_softmac.o \
+-- 
+1.7.3.1.50.g1e633
 
