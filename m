@@ -1,22 +1,58 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Sat, 02 Oct 2010 14:07:54 +0000
-Subject: Re: [PATCH 3/4] drivers/gpu/drm/i915/i915_gem.c: Add missing error handling code
-Message-Id: <8u3s94$gm2ivf@orsmga002.jf.intel.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:38:03 +0000
+Subject: [PATCH v3 14/20] Staging: rtl8192u: ieee80211: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-14-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286027958-7333-3-git-send-email-julia@diku.dk>
-In-Reply-To: <1286027958-7333-3-git-send-email-julia@diku.dk>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-On Sat,  2 Oct 2010 15:59:17 +0200, Julia Lawall <julia@diku.dk> wrote:
-> Extend the error handling code with operations found in other nearby error
-> handling code
+Changed to use the proper ccflags-y option
 
-Thanks, your fix was correct. Applied.
--Chris
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/Makefile |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/staging/rtl8192u/ieee80211/Makefile b/drivers/staging/rtl8192u/ieee80211/Makefile
+index 71ca5d9..45704f8 100644
+--- a/drivers/staging/rtl8192u/ieee80211/Makefile
++++ b/drivers/staging/rtl8192u/ieee80211/Makefile
+@@ -5,22 +5,22 @@ MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/$(NIC_SELECT)
+ 
+ CC = gcc
+ ifneq ($(shell uname -r|cut -d. -f1,2), 2.4)
+-EXTRA_CFLAGS += -I$(TOPDIR)/drivers/net/wireless
+-EXTRA_CFLAGS += -O2
+-EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
++ccflags-y := -I$(TOPDIR)/drivers/net/wireless
++ccflags-y += -O2
++ccflags-y += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
+ 
+ #it will fail to compile in suse linux enterprise 10 sp2. This flag is to solve this problem.
+ ifeq ($(shell uname -r | cut -d. -f1,2,3,4), 2.6.16.60-0)
+-EXTRA_CFLAGS += -DOPENSUSE_SLED
++ccflags-y := -DOPENSUSE_SLED
+ endif
+ 
+ ifeq ($(NIC_SELECT),RTL8192U)
+-#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
+-#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
++#ccflags-y := -DUSB_TX_DRIVER_AGGREGATION_ENABLE
++#ccflags-y := -DUSB_RX_AGGREGATION_SUPPORT
+ endif
+-#EXTRA_CFLAGS += -DJOHN_NOCPY
++#ccflags-y := -DJOHN_NOCPY
+ #flags to enable or disble 80211D feature
+-EXTRA_CFLAGS += -DENABLE_DOT11D
++ccflags-y += -DENABLE_DOT11D
+ ieee80211-rsl-objs := ieee80211_rx.o \
+ 		      ieee80211_softmac.o \
+ 		      ieee80211_tx.o \
 -- 
-Chris Wilson, Intel Open Source Technology Centre
+1.7.3.1.50.g1e633
+
