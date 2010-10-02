@@ -1,26 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 05 Oct 2010 19:02:30 +0000
-Subject: Re: [PATCH v3 11/20] Staging: rtl8192su: Makefile: cleaned up
-Message-Id: <20101005190230.GA3410@kroah.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 Oct 2010 13:59:17 +0000
+Subject: [PATCH 3/4] drivers/gpu/drm/i915/i915_gem.c: Add missing error handling code
+Message-Id: <1286027958-7333-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
- <1286037489-28439-11-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-11-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tracey Dent <tdent48227@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 02, 2010 at 12:38:00PM -0400, Tracey Dent wrote:
-> Changed to use the proper ccflags-y option
-> 
-> Signed-off-by: Tracey Dent <tdent48227@gmail.com>
-> ---
->  drivers/staging/rtl8192su/Makefile |   10 +++++-----
+Extend the error handling code with operations found in other nearby error
+handling code
 
-This file is no longer in linux-next.
+A simplified version of the sematic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-thanks,
+// <smpl>
+@r exists@
+@r@
+statement S1,S2,S3;
+constant C1,C2,C3;
+@@
 
-greg k-h
+*if (...)
+ {... S1 return -C1;}
+...
+*if (...)
+ {... when != S1
+    return -C2;}
+...
+*if (...)
+ {... S1 return -C3;}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This is only a suggestion.  All of the other ways out of this function call
+these two functions.  But I don't understand the code well enough to know
+why, or whether there is a reason not to do it in this case.
+
+ drivers/gpu/drm/i915/i915_gem.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index bced9b2..cfe5978 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -3258,6 +3258,8 @@ i915_gem_object_pin_and_relocate(struct drm_gem_object *obj,
+ 				  (int) reloc->offset,
+ 				  reloc->read_domains,
+ 				  reloc->write_domain);
++			drm_gem_object_unreference(target_obj);
++			i915_gem_object_unpin(obj);
+ 			return -EINVAL;
+ 		}
+ 		if (reloc->write_domain & I915_GEM_DOMAIN_CPU ||
+
