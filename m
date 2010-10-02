@@ -1,48 +1,39 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Thu, 28 Oct 2010 20:02:01 +0000
-Subject: [PATCH 6/8] staging: dream: fix information leak to userland
-Message-Id: <1288296122-19212-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:37:51 +0000
+Subject: [PATCH v3 02/20] Staging: cxt1e1: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-2-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Pavel Machek <pavel@ucw.cz>, Tejun Heo <tj@kernel.org>, Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-Structure msm_audio_stats is copied to userland with some fields unitialized.
-It leads to leaking of contents of kernel stack memory.
-Also struct msm_audio_config has field "unused" of type array of 3 elements,
-not 4.  Instead of this, initialize field "type".
+Changed to use the proper ccflags-y option
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/dream/qdsp5/audio_out.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ drivers/staging/cxt1e1/Makefile |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/dream/qdsp5/audio_out.c b/drivers/staging/dream/qdsp5/audio_out.c
-index d20e895..923818d 100644
---- a/drivers/staging/dream/qdsp5/audio_out.c
-+++ b/drivers/staging/dream/qdsp5/audio_out.c
-@@ -496,6 +496,7 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+diff --git a/drivers/staging/cxt1e1/Makefile b/drivers/staging/cxt1e1/Makefile
+index 10020d7..a524a62 100644
+--- a/drivers/staging/cxt1e1/Makefile
++++ b/drivers/staging/cxt1e1/Makefile
+@@ -1,8 +1,8 @@
+ obj-$(CONFIG_CXT1E1)	+= cxt1e1.o
  
- 	if (cmd = AUDIO_GET_STATS) {
- 		struct msm_audio_stats stats;
-+		memset(&stats, 0, sizeof(stats));
- 		stats.byte_count = atomic_read(&audio->out_bytes);
- 		if (copy_to_user((void*) arg, &stats, sizeof(stats)))
- 			return -EFAULT;
-@@ -561,10 +562,10 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		} else {
- 			config.channel_count = 2;
- 		}
-+		config.type = 0;
- 		config.unused[0] = 0;
- 		config.unused[1] = 0;
- 		config.unused[2] = 0;
--		config.unused[3] = 0;
- 		if (copy_to_user((void*) arg, &config, sizeof(config))) {
- 			rc = -EFAULT;
- 		} else {
+-EXTRA_CFLAGS += -DSBE_PMCC4_ENABLE
+-EXTRA_CFLAGS += -DSBE_ISR_TASKLET
+-EXTRA_CFLAGS += -DSBE_INCLUDE_SYMBOLS
++ccflags-y := -DSBE_PMCC4_ENABLE
++ccflags-y += -DSBE_ISR_TASKLET
++ccflags-y += -DSBE_INCLUDE_SYMBOLS
+ 
+ cxt1e1-objs += 	\
+   ossiRelease.o 	\
 -- 
-1.7.0.4
+1.7.3.1.50.g1e633
 
