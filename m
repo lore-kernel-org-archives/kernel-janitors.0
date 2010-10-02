@@ -1,118 +1,33 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 21 Oct 2010 05:46:58 +0000
-Subject: [patch] Staging: bcm: use get_user() to access user pointers
-Message-Id: <20101021054657.GE5985@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:37:53 +0000
+Subject: [PATCH v3 04/20] Staging: dream: camera: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-4-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-This fixes some places that dereference user pointers directly instead
-of using get_user().
+Changed to use the proper ccflags-y option
 
-Please especially check my changes to IOCTL_BCM_GET_CURRENT_STATUS.  The
-original code modified the struct which "arg" was pointing to.  I think
-this was a bug in the original code and that we only wanted to write to
-the OutputBuffer. Also with the original code you could read as much 
-memory as you wanted so I had to put a cap on OutputLength.  The only
-value of OutputLength that makes sense is sizeof(LINK_STATE) so now if
-OutputLength is not sizeof(LINK_STATE) it returns -EINVAL.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
-I don't have this hardware.  Compile tested only.
+ drivers/staging/dream/camera/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/bcm/Bcmchar.c b/drivers/staging/bcm/Bcmchar.c
-index 77fdfe2..fead9c5 100644
---- a/drivers/staging/bcm/Bcmchar.c
-+++ b/drivers/staging/bcm/Bcmchar.c
-@@ -1001,13 +1001,15 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
- 		}
- #endif
- 		case IOCTL_BE_BUCKET_SIZE:
--			Adapter->BEBucketSize = *(PULONG)arg;
--			Status = STATUS_SUCCESS;
-+			Status = 0;
-+			if (get_user(Adapter->BEBucketSize, (unsigned long __user *)arg))
-+				Status = -EFAULT;
- 			break;
- 
- 		case IOCTL_RTPS_BUCKET_SIZE:
--			Adapter->rtPSBucketSize = *(PULONG)arg;
--			Status = STATUS_SUCCESS;
-+			Status = 0;
-+			if (get_user(Adapter->rtPSBucketSize, (unsigned long __user *)arg))
-+				Status = -EFAULT;
- 			break;
- 		case IOCTL_CHIP_RESET:
- 	    {
-@@ -1028,11 +1030,15 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
- 		case IOCTL_QOS_THRESHOLD:
- 		{
- 			USHORT uiLoopIndex;
--			for(uiLoopIndex = 0 ; uiLoopIndex < NO_OF_QUEUES ; uiLoopIndex++)
--			{
--				Adapter->PackInfo[uiLoopIndex].uiThreshold = *(PULONG)arg;
-+
-+			Status = 0;
-+			for (uiLoopIndex = 0; uiLoopIndex < NO_OF_QUEUES; uiLoopIndex++) {
-+				if (get_user(Adapter->PackInfo[uiLoopIndex].uiThreshold,
-+						(unsigned long __user *)arg)) {
-+					Status = -EFAULT;
-+					break;
-+				}
- 			}
--			Status = STATUS_SUCCESS;
- 			break;
- 		}
- 
-@@ -1093,7 +1099,8 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
- 		}
- 		case IOCTL_BCM_GET_CURRENT_STATUS:
- 		{
--			LINK_STATE *plink_state = NULL;
-+			LINK_STATE plink_state;
-+
- 			/* Copy Ioctl Buffer structure */
- 			if(copy_from_user(&IoBuffer, argp, sizeof(IOCTL_BUFFER)))
- 			{
-@@ -1101,13 +1108,19 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
- 				Status = -EFAULT;
- 				break;
- 			}
--			plink_state = (LINK_STATE*)arg;
--			plink_state->bIdleMode = (UCHAR)Adapter->IdleMode;
--			plink_state->bShutdownMode = Adapter->bShutStatus;
--			plink_state->ucLinkStatus = (UCHAR)Adapter->LinkStatus;
--			if(copy_to_user(IoBuffer.OutputBuffer,
--				(PUCHAR)plink_state, (UINT)IoBuffer.OutputLength))
--			{
-+			if (IoBuffer.OutputLength != sizeof(plink_state)) {
-+				Status = -EINVAL;
-+				break;
-+			}
-+
-+			if (copy_from_user(&plink_state, (void __user *)arg, sizeof(plink_state))) {
-+				Status = -EFAULT;
-+				break;
-+			}
-+			plink_state.bIdleMode = (UCHAR)Adapter->IdleMode;
-+			plink_state.bShutdownMode = Adapter->bShutStatus;
-+			plink_state.ucLinkStatus = (UCHAR)Adapter->LinkStatus;
-+			if (copy_to_user(IoBuffer.OutputBuffer, &plink_state, IoBuffer.OutputLength)) {
- 				BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0, "Copy_to_user Failed..\n");
- 				Status = -EFAULT;
- 				break;
-@@ -1331,7 +1344,9 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
- 						BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0,"Copy From User space failed. status :%d", Status);
- 						return -EFAULT;
- 					}
--					uiSectorSize = *((PUINT)(IoBuffer.InputBuffer)); /* FIXME: unchecked __user access */
-+					if (get_user(uiSectorSize, (unsigned int __user *)IoBuffer.InputBuffer))
-+						return -EFAULT;
-+
- 					if((uiSectorSize < MIN_SECTOR_SIZE) || (uiSectorSize > MAX_SECTOR_SIZE))
- 					{
- 
+diff --git a/drivers/staging/dream/camera/Makefile b/drivers/staging/dream/camera/Makefile
+index db228d7..03711dc 100644
+--- a/drivers/staging/dream/camera/Makefile
++++ b/drivers/staging/dream/camera/Makefile
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS=-Idrivers/staging/dream/include
++ccflags-y:=-Idrivers/staging/dream/include
+ obj-$(CONFIG_MT9T013) += mt9t013.o mt9t013_reg.o
+ obj-$(CONFIG_MT9D112) += mt9d112.o mt9d112_reg.o
+ obj-$(CONFIG_MT9P012) += mt9p012_fox.o mt9p012_reg.o
+-- 
+1.7.3.1.50.g1e633
+
