@@ -1,58 +1,39 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 02 Oct 2010 13:59:16 +0000
-Subject: [PATCH 2/4] drivers/message/fusion/mptctl.c: Add missing error handling code
-Message-Id: <1286027958-7333-2-git-send-email-julia@diku.dk>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:38:04 +0000
+Subject: [PATCH v3 15/20] Staging: tm6000: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-15-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Moore <Eric.Moore@lsi.com>
-Cc: kernel-janitors@vger.kernel.org, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-karg is allocated using kmalloc and is completely local to this function.
-It should thus be freed before exiting the function in an error case.
+Changed to use the proper ccflags-y option
 
-A simplified version of the sematic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-@r@
-statement S1,S2,S3;
-constant C1,C2,C3;
-@@
-
-*if (...)
- {... S1 return -C1;}
-...
-*if (...)
- {... when != S1
-    return -C2;}
-...
-*if (...)
- {... S1 return -C3;}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/message/fusion/mptctl.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/staging/tm6000/Makefile |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-index a3856ed..1dcc13a 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -1307,8 +1307,10 @@ mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
- 	else
- 		karg->adapterType = MPT_IOCTL_INTERFACE_SCSI;
+diff --git a/drivers/staging/tm6000/Makefile b/drivers/staging/tm6000/Makefile
+index 77e06bf..d8ccdaa 100644
+--- a/drivers/staging/tm6000/Makefile
++++ b/drivers/staging/tm6000/Makefile
+@@ -9,7 +9,7 @@ obj-$(CONFIG_VIDEO_TM6000) += tm6000.o
+ obj-$(CONFIG_VIDEO_TM6000_ALSA) += tm6000-alsa.o
+ obj-$(CONFIG_VIDEO_TM6000_DVB) += tm6000-dvb.o
  
--	if (karg->hdr.port > 1)
-+	if (karg->hdr.port > 1) {
-+		kfree(karg);
- 		return -EINVAL;
-+	}
- 	port = karg->hdr.port;
- 
- 	karg->port = port;
+-EXTRA_CFLAGS = -Idrivers/media/video
+-EXTRA_CFLAGS += -Idrivers/media/common/tuners
+-EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core
+-EXTRA_CFLAGS += -Idrivers/media/dvb/frontends
++ccflags-y := -Idrivers/media/video
++ccflags-y += -Idrivers/media/common/tuners
++ccflags-y += -Idrivers/media/dvb/dvb-core
++ccflags-y += -Idrivers/media/dvb/frontends
+-- 
+1.7.3.1.50.g1e633
 
