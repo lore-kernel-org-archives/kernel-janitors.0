@@ -1,71 +1,54 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Fri, 08 Oct 2010 20:02:39 +0000
-Subject: Re: [PATCH 00/33] Staging: Fixed <module-objs> to <module>-y
-Message-Id: <20101008200239.GA28912@merkur.ravnborg.org>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:38:02 +0000
+Subject: [PATCH v3 13/20] Staging: rtl8192u: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-13-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTi=Hc2eWzOQ_xKBYsqfwkkiKGU0v42jUhLQ8K7dU@mail.gmail.com> <AANLkTinynZj9bYFAyfRTF2uopmLe6Ls4YGdZPqCAJTpR@mail.gmail.com> <20101008134654.GA6600@kroah.com> <AANLkTi=9N4e7fBekOaUa7OmPcaqicAgkC2aDT0HbJE8p@mail.gmail.com>
-In-Reply-To: <AANLkTi=9N4e7fBekOaUa7OmPcaqicAgkC2aDT0HbJE8p@mail.gmail.com>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: matt mooney <mfmooney@gmail.com>
-Cc: Greg KH <greg@kroah.com>, T Dent <tdent48227@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-On Fri, Oct 08, 2010 at 11:09:11AM -0700, matt mooney wrote:
-> On Fri, Oct 8, 2010 at 6:46 AM, Greg KH <greg@kroah.com> wrote:
-> > On Fri, Oct 08, 2010 at 12:16:35AM -0700, matt mooney wrote:
-> >> On Thu, Oct 7, 2010 at 6:35 PM, T Dent <tdent48227@gmail.com> wrote:
-> >> > I patch against the next-20101006 tree.
-> >> >
-> >> > The patch series replace use of <module>-objs with <module>-y in the
-> >> > staging directory.
-> >>
-> >> Commit messages are written in the present tense. You happen to be
-> >> using two different tenses within the commit message, which is truly
-> >> odd. =A0And why did you not split apart those atrocious statements with
-> >> the infinite column width?
-> >
-> > As Dan said, we understand what is happening here, and we do not have
-> > grammer police for changelog comments, thank goodness.
-> >
-> >> This patch series adds little benefit. =A0As Sam has suggested, a more
-> >> general cleanup would be a better goal, and staging is an area that
-> >> needs extra attention some of which has already been pointed out in
-> >> other emails.
-> >
-> > But these patches are all good to have, so I will be applying them,
-> > please don't think they are unwanted at all.
-> >
->=20
-> This is good to know. I wonder how well received these changes will be
-> in other parts of the kernel though. I purposefully started in a
-> subsystem you maintain since I figured any criticism from you would be
-> constructive and you wouldn't just knack without reason.
+Changed to use the proper ccflags-y option
 
-In staging it is OK with small very janitorial patches - at
-least I see lots of these applied there.
-But in the world outside staging most maintainers would expect
-you to do a full update if you decide to clean up their Makefile.
-If the updates are bigger then split it up.
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8192u/Makefile |   20 ++++++++++----------
+ 1 files changed, 10 insertions(+), 10 deletions(-)
 
-But for trivial updates batch the Makefiles.
+diff --git a/drivers/staging/rtl8192u/Makefile b/drivers/staging/rtl8192u/Makefile
+index 738f4a8..cba4344 100644
+--- a/drivers/staging/rtl8192u/Makefile
++++ b/drivers/staging/rtl8192u/Makefile
+@@ -1,16 +1,16 @@
+ NIC_SELECT = RTL8192U
+ 
+-EXTRA_CFLAGS += -std=gnu89
+-EXTRA_CFLAGS += -O2
++ccflags-y := -std=gnu89
++ccflags-y += -O2
+ 
+-EXTRA_CFLAGS += -DCONFIG_FORCE_HARD_FLOAT=y
+-EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
+-EXTRA_CFLAGS += -DTHOMAS_BEACON -DTHOMAS_TASKLET -DTHOMAS_SKB -DTHOMAS_TURBO
+-#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
+-#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
+-EXTRA_CFLAGS += -DUSE_ONE_PIPE
+-EXTRA_CFLAGS += -DENABLE_DOT11D
+-EXTRA_CFLAGS += -Idrivers/staging/rtl8192u/ieee80211
++ccflags-y += -DCONFIG_FORCE_HARD_FLOAT=y
++ccflags-y += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
++ccflags-y += -DTHOMAS_BEACON -DTHOMAS_TASKLET -DTHOMAS_SKB -DTHOMAS_TURBO
++#ccflags-y += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
++#ccflags-y += -DUSB_RX_AGGREGATION_SUPPORT
++ccflags-y += -DUSE_ONE_PIPE
++ccflags-y += -DENABLE_DOT11D
++ccflags-y += -Idrivers/staging/rtl8192u/ieee80211
+ 
+ r8192u_usb-objs := r8192U_core.o r8180_93cx6.o r8192U_wx.o		\
+ 		  r8190_rtl8256.o r819xU_phy.o r819xU_firmware.o	\
+-- 
+1.7.3.1.50.g1e633
 
-If you final patches end up:
-1) Making the files more readable, and more standard looking
-2) and do not add a lot of lines
-
-then you will likely see that most maintainers will accept it.
-
-But you also have to convince tham that you did a proper job
-testing your changes.
-
-A good test on Makefile cleanup is that nothing should rebuild
-due to the patch being applied. This simple test have saved me
-from a few brown papaer bag bugs in the past.
-
-	Sam
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
