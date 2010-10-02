@@ -1,36 +1,58 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 17 Oct 2010 14:41:12 +0000
-Subject: [PATCH 1/8] char: applicom: fix information leak to userland
-Message-Id: <1287326472-7897-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 Oct 2010 13:59:16 +0000
+Subject: [PATCH 2/4] drivers/message/fusion/mptctl.c: Add missing error handling code
+Message-Id: <1286027958-7333-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, Frederic Weisbecker <fweisbec@gmail.com>, Julia Lawall <julia@diku.dk>, Jiri Kosina <jkosina@suse.cz>, linux-kernel@vger.kernel.org
+To: Eric Moore <Eric.Moore@lsi.com>
+Cc: kernel-janitors@vger.kernel.org, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Structure st_loc is copied to userland with some fields unitialized.
-It leads to leaking of stack memory.
+karg is allocated using kmalloc and is completely local to this function.
+It should thus be freed before exiting the function in an error case.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+A simplified version of the sematic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+@r@
+statement S1,S2,S3;
+constant C1,C2,C3;
+@@
+
+*if (...)
+ {... S1 return -C1;}
+...
+*if (...)
+ {... when != S1
+    return -C2;}
+...
+*if (...)
+ {... S1 return -C3;}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- Compile tested.
+ drivers/message/fusion/mptctl.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- drivers/char/applicom.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/char/applicom.c b/drivers/char/applicom.c
-index e7ba774..25373df 100644
---- a/drivers/char/applicom.c
-+++ b/drivers/char/applicom.c
-@@ -566,6 +566,7 @@ static ssize_t ac_read (struct file *filp, char __user *buf, size_t count, loff_
- 				struct mailbox mailbox;
+diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
+index a3856ed..1dcc13a 100644
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -1307,8 +1307,10 @@ mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
+ 	else
+ 		karg->adapterType = MPT_IOCTL_INTERFACE_SCSI;
  
- 				/* Got a packet for us */
-+				memset(&st_loc, 0, sizeof(st_loc));
- 				ret = do_ac_read(i, buf, &st_loc, &mailbox);
- 				spin_unlock_irqrestore(&apbs[i].mutex, flags);
- 				set_current_state(TASK_RUNNING);
--- 
-1.7.0.4
+-	if (karg->hdr.port > 1)
++	if (karg->hdr.port > 1) {
++		kfree(karg);
+ 		return -EINVAL;
++	}
+ 	port = karg->hdr.port;
+ 
+ 	karg->port = port;
 
