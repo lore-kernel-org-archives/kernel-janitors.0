@@ -1,7 +1,7 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Sat, 02 Oct 2010 16:38:09 +0000
-Subject: [PATCH v3 20/20] Staging: wlags49_h25: Makefile: cleaned up Makefile cflag lines
-Message-Id: <1286037489-28439-20-git-send-email-tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:37:56 +0000
+Subject: [PATCH v3 07/20] Staging: rt2860: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-7-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
@@ -15,44 +15,28 @@ Changed to use the proper ccflags-y option
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/wlags49_h25/Makefile |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/rt2860/Makefile |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/wlags49_h25/Makefile b/drivers/staging/wlags49_h25/Makefile
-index d0b23d4..7d4b563 100644
---- a/drivers/staging/wlags49_h25/Makefile
-+++ b/drivers/staging/wlags49_h25/Makefile
-@@ -12,8 +12,8 @@
- #  If you want to build AP support (untested), comment out -DSTA_ONLY
+diff --git a/drivers/staging/rt2860/Makefile b/drivers/staging/rt2860/Makefile
+index 23ae07f..d816ddb 100644
+--- a/drivers/staging/rt2860/Makefile
++++ b/drivers/staging/rt2860/Makefile
+@@ -1,10 +1,10 @@
+ obj-$(CONFIG_RT2860)	+= rt2860sta.o
  
- INSTALLDIR := /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless
--EXTRA_CFLAGS += -I$(KERNELDIR)/include
--EXTRA_CFLAGS += -I$(src) \
-+ccflags-y := -I$(KERNELDIR)/include
-+ccflags-y += -I$(src) \
- 		-DBUS_PCMCIA \
- 		-DUSE_WPA \
- 		-DUSE_WEXT \
-@@ -25,16 +25,16 @@ EXTRA_CFLAGS += -I$(src) \
- #		-DUSE_UIL \
- #		-DUSE_PROFILE \
+ # TODO: all of these should be removed
+-EXTRA_CFLAGS += -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
+-EXTRA_CFLAGS += -DRTMP_MAC_PCI -DRTMP_PCI_SUPPORT -DRT2860
+-EXTRA_CFLAGS += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3090
+-EXTRA_CFLAGS += -DDBG
++ccflags-y := -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
++ccflags-y += -DRTMP_MAC_PCI -DRTMP_PCI_SUPPORT -DRT2860
++ccflags-y += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3090
++ccflags-y += -DDBG
  
--ifeq ($(findstring HERMES25,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring HERMES25,$(ccflags-y)),)
- WLNAME := wlags49_h2_cs
- $(WLNAME)-y := sta_h2.o
--ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
- $(WLNAME)-y += ap_h2.o
- endif
- else
- WLNAME=wlags49_h25_cs
- $(WLNAME)-y := sta_h25.o
--ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
- $(WLNAME)-y += ap_h25.o
- endif
- endif
+ rt2860sta-objs :=	\
+ 	common/crypt_md5.o	\
 -- 
 1.7.3.1.50.g1e633
 
