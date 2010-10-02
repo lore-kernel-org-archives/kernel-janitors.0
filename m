@@ -1,93 +1,41 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 10 Oct 2010 17:28:51 +0000
-Subject: [PATCH] staging: stradis: fix error handling and information leak to userland
-Message-Id: <1286731732-18082-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:37:55 +0000
+Subject: [PATCH v3 06/20] Stagng: easycap: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-6-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-configure_saa7146() didn't free irq on error.
-saa_open() didn't decrease reference count of saa on error.
-saa_ioctl() leaked information from the kernel stack to userland as it
-didn't fill copied structs with zeros.
+Changed to use the proper ccflags-y option
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- Compile tested.
+ drivers/staging/easycap/Makefile |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
- drivers/staging/stradis/stradis.c |   11 ++++++++++-
- 1 files changed, 10 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/stradis/stradis.c b/drivers/staging/stradis/stradis.c
-index a057824..807dd7e 100644
---- a/drivers/staging/stradis/stradis.c
-+++ b/drivers/staging/stradis/stradis.c
-@@ -1286,6 +1286,7 @@ static long saa_ioctl(struct file *file,
- 	case VIDIOCGCAP:
- 		{
- 			struct video_capability b;
-+			memset(&b, 0, sizeof(b));
- 			strcpy(b.name, saa->video_dev.name);
- 			b.type = VID_TYPE_CAPTURE | VID_TYPE_OVERLAY |
- 				VID_TYPE_CLIPPING | VID_TYPE_FRAMERAM |
-@@ -1416,6 +1417,7 @@ static long saa_ioctl(struct file *file,
- 	case VIDIOCGWIN:
- 		{
- 			struct video_window vw;
-+			memset(&vw, 0, sizeof(vw));
- 			vw.x = saa->win.x;
- 			vw.y = saa->win.y;
- 			vw.width = saa->win.width;
-@@ -1448,6 +1450,7 @@ static long saa_ioctl(struct file *file,
- 	case VIDIOCGFBUF:
- 		{
- 			struct video_buffer v;
-+			memset(&v, 0, sizeof(v));
- 			v.base = (void *)saa->win.vidadr;
- 			v.height = saa->win.sheight;
- 			v.width = saa->win.swidth;
-@@ -1492,6 +1495,7 @@ static long saa_ioctl(struct file *file,
- 	case VIDIOCGAUDIO:
- 		{
- 			struct video_audio v;
-+			memset(&v, 0, sizeof(v));
- 			v = saa->audio_dev;
- 			v.flags &= ~(VIDEO_AUDIO_MUTE | VIDEO_AUDIO_MUTABLE);
- 			v.flags |= VIDEO_AUDIO_MUTABLE | VIDEO_AUDIO_VOLUME;
-@@ -1534,6 +1538,7 @@ static long saa_ioctl(struct file *file,
- 	case VIDIOCGUNIT:
- 		{
- 			struct video_unit vu;
-+			memset(&vu, 0, sizeof(vu));
- 			vu.video = saa->video_dev.minor;
- 			vu.vbi = VIDEO_NO_UNIT;
- 			vu.radio = VIDEO_NO_UNIT;
-@@ -1888,6 +1893,7 @@ static int saa_open(struct file *file)
+diff --git a/drivers/staging/easycap/Makefile b/drivers/staging/easycap/Makefile
+index d93bd6b..680f370 100644
+--- a/drivers/staging/easycap/Makefile
++++ b/drivers/staging/easycap/Makefile
+@@ -5,9 +5,9 @@ easycap-objs	:= easycap_main.o easycap_low.o easycap_sound.o
+ easycap-objs	+= easycap_ioctl.o easycap_settings.o
+ easycap-objs	+= easycap_testcard.o
  
- 	saa->user++;
- 	if (saa->user > 1) {
-+		saa->user--;
- 		unlock_kernel();
- 		return 0;	/* device open already, don't reset */
- 	}
-@@ -2000,10 +2006,13 @@ static int __devinit configure_saa7146(struct pci_dev *pdev, int num)
- 	if (retval < 0) {
- 		dev_err(&pdev->dev, "%d: error in registering video device!\n",
- 			num);
--		goto errio;
-+		goto errirq;
- 	}
+-EXTRA_CFLAGS += -Wall
++ccflags-y := -Wall
+ # Impose all or none of the following:
+-EXTRA_CFLAGS += -DEASYCAP_IS_VIDEODEV_CLIENT
+-EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_DEVICE_H
+-EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_FOPS
++ccflags-y += -DEASYCAP_IS_VIDEODEV_CLIENT
++ccflags-y += -DEASYCAP_NEEDS_V4L2_DEVICE_H
++ccflags-y += -DEASYCAP_NEEDS_V4L2_FOPS
  
- 	return 0;
-+
-+errirq:
-+	free_irq(saa->irq, saa);
- errio:
- 	iounmap(saa->saa7146_mem);
- err:
 -- 
-1.7.0.4
+1.7.3.1.50.g1e633
 
