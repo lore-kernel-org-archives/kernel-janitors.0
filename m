@@ -1,47 +1,48 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Oct 2010 12:58:45 +0000
-Subject: [patch] Staging: bcm: silence off by one warning
-Message-Id: <20101008125845.GO11681@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Sat, 02 Oct 2010 16:37:59 +0000
+Subject: [PATCH v3 10/20] Staging: rtl8192e: Makefile: cleaned up Makefile cflag lines
+Message-Id: <1286037489-28439-10-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
 
-"status" is used as an index into the Adapter->PackInfo[] array, which
-has NO_OF_QUEUES elements.
+Changed to use the proper ccflags-y option
 
-This code actually works OK.  The SearchSfid() function always returns
-a valid index or it returns NO_OF_QUEUES + 1.  But it looks sloppy and
-it makes the static checkers complain.
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8192e/Makefile |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/staging/bcm/CmHost.c b/drivers/staging/bcm/CmHost.c
-index 0329f7d..37187c4 100644
---- a/drivers/staging/bcm/CmHost.c
-+++ b/drivers/staging/bcm/CmHost.c
-@@ -2368,8 +2368,7 @@ int get_dsx_sf_data_to_application(PMINI_ADAPTER Adapter, UINT uiSFId, void __us
- 	struct _packet_info *psSfInfo=NULL;
- 	BCM_DEBUG_PRINT( Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "status =%d",status);
- 	status = SearchSfid(Adapter, uiSFId);
--	if(status>NO_OF_QUEUES)
--	{
-+	if (status  >= NO_OF_QUEUES) {
- 		BCM_DEBUG_PRINT(Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "SFID %d not present in queue !!!", uiSFId );
- 		return -EINVAL;
- 	}
-diff --git a/drivers/staging/bcm/Qos.c b/drivers/staging/bcm/Qos.c
-index 913a1e1..75b2b87 100644
---- a/drivers/staging/bcm/Qos.c
-+++ b/drivers/staging/bcm/Qos.c
-@@ -587,8 +587,7 @@ USHORT ClassifyPacket(PMINI_ADAPTER Adapter,struct sk_buff* skb)
- 			pstClassifierRule = &Adapter->astClassifierTable[uiLoopIndex];
+diff --git a/drivers/staging/rtl8192e/Makefile b/drivers/staging/rtl8192e/Makefile
+index 41cb4d3..6e41067 100644
+--- a/drivers/staging/rtl8192e/Makefile
++++ b/drivers/staging/rtl8192e/Makefile
+@@ -1,13 +1,13 @@
+ NIC_SELECT = RTL8192E
  
- 			uiSfIndex = SearchSfid(Adapter,pstClassifierRule->ulSFID);
--			if(uiSfIndex > NO_OF_QUEUES)
--			{
-+			if (uiSfIndex >= NO_OF_QUEUES) {
- 				BCM_DEBUG_PRINT(Adapter, DBG_TYPE_TX, IPV4_DBG, DBG_LVL_ALL,  "Queue Not Valid. SearchSfid for this classifier Failed\n");
- 				break;
- 			}
+-EXTRA_CFLAGS += -DRTL8192E
+-EXTRA_CFLAGS += -std=gnu89
+-EXTRA_CFLAGS += -O2
+-EXTRA_CFLAGS += -DTHOMAS_TURBO
+-EXTRA_CFLAGS += -DENABLE_DOT11D
++ccflags-y := -DRTL8192E
++ccflags-y += -std=gnu89
++ccflags-y += -O2
++ccflags-y += -DTHOMAS_TURBO
++ccflags-y += -DENABLE_DOT11D
+ 
+-EXTRA_CFLAGS += -DENABLE_IPS
+-EXTRA_CFLAGS += -DENABLE_LPS
++ccflags-y += -DENABLE_IPS
++ccflags-y += -DENABLE_LPS
+ 
+ r8192e_pci-objs :=		\
+ 	r8192E_core.o		\
+-- 
+1.7.3.1.50.g1e633
+
