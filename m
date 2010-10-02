@@ -1,26 +1,58 @@
-From: "Koul, Vinod" <vinod.koul@intel.com>
-Date: Thu, 21 Oct 2010 14:28:34 +0000
-Subject: RE: [patch 3/3] Staging: sst: fixups in SNDRV_SST_STREAM_DECODE
-Message-Id: <438BB0150E931F4B9CE701519A44630104BE8125B7@bgsmsx502.gar.corp.intel.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 02 Oct 2010 13:59:18 +0000
+Subject: [PATCH 4/4] drivers/atm/idt77252.c: Remove unnecessary error check
+Message-Id: <1286027958-7333-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101019055748.GE5839@bicker>
-In-Reply-To: <20101019055748.GE5839@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "Harsha, Priya" <priya.harsha@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Alan Cox <alan@linux.intel.com>
+To: Chas Williams <chas@cmf.nrl.navy.mil>
+Cc: kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> This is another patch about copying data to the kernel before using it.
-> 
-> SNDRV_SST_STREAM_DECODE is sort of tricky because we need to do a
-> copy_from_user() that gives us another two pointers and we have copy
-> those.  Those again give us some more pointers that we have to copy.
-> 
-> Besides those problems, the code had a stack overflow:
-> -	struct snd_sst_buff_entry ibuf_temp[param->ibufs->entries],
-> -		obuf_temp[param->obufs->entries];
-> param->ibufs->entries comes from the user.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
+This code does not call deinit_card(card); in an error case, as done in
+other error-handling code in the same function.  But actually, the called
+function init_sram can only return 0, so there is no need for the error
+check at all.
+
+A simplified version of the sematic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+@r@
+statement S1,S2,S3;
+constant C1,C2,C3;
+@@
+
+*if (...)
+ {... S1 return -C1;}
+...
+*if (...)
+ {... when != S1
+    return -C2;}
+...
+*if (...)
+ {... S1 return -C3;}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/atm/idt77252.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index 1679cbf..08ccde6 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -3410,8 +3410,7 @@ init_card(struct atm_dev *dev)
+ 
+ 	writel(readl(SAR_REG_CFG) | conf, SAR_REG_CFG);
+ 
+-	if (init_sram(card) < 0)
+-		return -1;
++	init_sram(card);
+ 
+ /********************************************************************/
+ /*  A L L O C   R A M   A N D   S E T   V A R I O U S   T H I N G S */
+
