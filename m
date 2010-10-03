@@ -1,33 +1,35 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:48 +0000
-Subject: [PATCH 28/33] Staging: tm6000: Makefile: replace the use of <module>-objs with <module>-y
-Message-Id: <1286496113-11897-28-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 03 Oct 2010 17:22:48 +0000
+Subject: [PATCH v2] staging: ft1000: fix kernel info leak to userland for statistics
+Message-Id: <1286126569-20666-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Marek Belisko <marek.belisko@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Changed <module>-objs to <module>-y in Makefile.
+get_stat_data is not fully initialized before copy_to_user() call,
+e.g. LedStat is not always set.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/tm6000/Makefile |    2 +-
+ drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/tm6000/Makefile b/drivers/staging/tm6000/Makefile
-index d8ccdaa..395515b 100644
---- a/drivers/staging/tm6000/Makefile
-+++ b/drivers/staging/tm6000/Makefile
-@@ -1,4 +1,4 @@
--tm6000-objs := tm6000-cards.o \
-+tm6000-y := tm6000-cards.o \
- 		   tm6000-core.o  \
- 		   tm6000-i2c.o   \
- 		   tm6000-video.o \
+diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
+index 65087ce..b666ae6 100644
+--- a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
++++ b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
+@@ -623,7 +623,7 @@ static int ft1000_ChIoctl (struct file *File, unsigned int Command,
+         break;
+     case IOCTL_GET_DSP_STAT_CMD:
+         //DEBUG("FT1000:ft1000_ChIoctl: IOCTL_FT1000_GET_DSP_STAT called\n");
+-
++	memset(&get_stat_data, 0, sizeof(get_stat_data));
+         memcpy(get_stat_data.DspVer, info->DspVer, DSPVERSZ);
+         memcpy(get_stat_data.HwSerNum, info->HwSerNum, HWSERNUMSZ);
+         memcpy(get_stat_data.Sku, info->Sku, SKUSZ);
 -- 
-1.7.3.1.50.g1e633
+1.7.0.4
 
