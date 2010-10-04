@@ -1,30 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 07 Oct 2010 06:30:52 +0000
-Subject: Re: [patch] eicon: make buffer larger
-Message-Id: <20101006.233052.233715980.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 04 Oct 2010 12:28:36 +0000
+Subject: [patch] cls_u32: signedness bug
+Message-Id: <20101004122836.GB5692@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101004192459.GE5692@bicker>
-In-Reply-To: <20101004192459.GE5692@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: mac@melware.de, isdn@linux-pingi.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jamal Hadi Salim <hadi@cyberus.ca>
+Cc: "David S. Miller" <davem@davemloft.net>, Stephen Hemminger <shemminger@vyatta.com>, Frans Pop <elendil@planet.nl>, Changli Gao <xiaosuo@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 4 Oct 2010 21:24:59 +0200
+skb_headroom() is unsigned so "skb_headroom(skb) + toff" is also
+unsigned and can't be less than zero.  This test was added in 66d50d25:
+"u32: negative offset fix"  It was supposed to fix a regression.
 
-> In diva_mnt_add_xdi_adapter() we do this:
->   strcpy (clients[id].drvName,     tmp);
->   strcpy (clients[id].Dbg.drvName, tmp);
-> 
-> The "clients[id].drvName" is a 128 character buffer and
-> "clients[id].Dbg.drvName" was originally a 16 character buffer but I've
-> changed it to 128 as well.  We don't actually use 128 characters but we
-> do use more than 16.
-> 
-> I've also changed the size of "tmp" to 128 characters instead of 256.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Compile tested only.  Please check.
 
-Applied.
+diff --git a/net/sched/cls_u32.c b/net/sched/cls_u32.c
+index 7416a5c..b0c2a82 100644
+--- a/net/sched/cls_u32.c
++++ b/net/sched/cls_u32.c
+@@ -137,7 +137,7 @@ next_knode:
+ 			int toff = off + key->off + (off2 & key->offmask);
+ 			__be32 *data, _data;
+ 
+-			if (skb_headroom(skb) + toff < 0)
++			if (skb_headroom(skb) + toff > INT_MAX)
+ 				goto out;
+ 
+ 			data = skb_header_pointer(skb, toff, 4, &_data);
