@@ -1,31 +1,27 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 27 Oct 2010 22:20:37 +0000
-Subject: Re: [patch] nfsd: fix NULL dereference in setattr()
-Message-Id: <20101027222037.GO6062@bicker>
+Date: Mon, 04 Oct 2010 19:26:41 +0000
+Subject: [patch] staging: rtl8192su: initializing past the end of array
+Message-Id: <20101004192641.GF5692@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101027211904.GJ6062@bicker> <20101027215025.GB29477@fieldses.org>
-In-Reply-To: <20101027215025.GB29477@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Neil Brown <neilb@suse.de>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 27, 2010 at 05:50:25PM -0400, J. Bruce Fields wrote:
-> On Wed, Oct 27, 2010 at 11:19:04PM +0200, Dan Carpenter wrote:
-> > The original code would oops if this were called from nfsd4_setattr()
-> > because "filpp" is NULL.
-> 
-> I believe it's impossible to reach this case: we never give out write
-> delegations, so the preceding nfs4_check_delegmode will always fail when
-> called from setattr.
-> 
-> We should do this anyway, but I'll probably queue it up for the next
-> merge window.
+We go past the end of the array when we initialize this array.
 
-Sounds good.  This was a static checker patch not a run time bug (as
-you obviously realized).
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/staging/rtl8192su/r8192S_rtl6052.c b/drivers/staging/rtl8192su/r8192S_rtl6052.c
+index 2239809..f8a9536 100644
+--- a/drivers/staging/rtl8192su/r8192S_rtl6052.c
++++ b/drivers/staging/rtl8192su/r8192S_rtl6052.c
+@@ -827,7 +827,7 @@ extern void PHY_RFShadowRefresh(struct net_device  * dev)
+ 
+ 	for (eRFPath = 0; eRFPath < RF6052_MAX_PATH; eRFPath++)
+ 	{
+-		for (Offset = 0; Offset <= RF6052_MAX_REG; Offset++)
++		for (Offset = 0; Offset < RF6052_MAX_REG; Offset++)
+ 		{
+ 			RF_Shadow[eRFPath][Offset].Value = 0;
+ 			RF_Shadow[eRFPath][Offset].Compare = false;
