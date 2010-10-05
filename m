@@ -1,27 +1,28 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 04 Oct 2010 19:26:41 +0000
-Subject: [patch] staging: rtl8192su: initializing past the end of array
-Message-Id: <20101004192641.GF5692@bicker>
+From: Greg KH <greg@kroah.com>
+Date: Tue, 05 Oct 2010 18:43:57 +0000
+Subject: Re: [patch] staging: rtl8192su: initializing past the end of array
+Message-Id: <20101005184357.GA24708@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101004192641.GF5692@bicker>
+In-Reply-To: <20101004192641.GF5692@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We go past the end of the array when we initialize this array.
+On Mon, Oct 04, 2010 at 09:26:41PM +0200, Dan Carpenter wrote:
+> We go past the end of the array when we initialize this array.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> diff --git a/drivers/staging/rtl8192su/r8192S_rtl6052.c b/drivers/staging/rtl8192su/r8192S_rtl6052.c
+> index 2239809..f8a9536 100644
+> --- a/drivers/staging/rtl8192su/r8192S_rtl6052.c
+> +++ b/drivers/staging/rtl8192su/r8192S_rtl6052.c
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+This driver has now been removed from the kernel, so there's no file to
+patch in linux-next :)
 
-diff --git a/drivers/staging/rtl8192su/r8192S_rtl6052.c b/drivers/staging/rtl8192su/r8192S_rtl6052.c
-index 2239809..f8a9536 100644
---- a/drivers/staging/rtl8192su/r8192S_rtl6052.c
-+++ b/drivers/staging/rtl8192su/r8192S_rtl6052.c
-@@ -827,7 +827,7 @@ extern void PHY_RFShadowRefresh(struct net_device  * dev)
- 
- 	for (eRFPath = 0; eRFPath < RF6052_MAX_PATH; eRFPath++)
- 	{
--		for (Offset = 0; Offset <= RF6052_MAX_REG; Offset++)
-+		for (Offset = 0; Offset < RF6052_MAX_REG; Offset++)
- 		{
- 			RF_Shadow[eRFPath][Offset].Value = 0;
- 			RF_Shadow[eRFPath][Offset].Compare = false;
+thanks,
+
+greg k-h
