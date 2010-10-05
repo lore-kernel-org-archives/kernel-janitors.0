@@ -1,61 +1,64 @@
-From: T Dent <tdent48227@gmail.com>
-Date: Wed, 06 Oct 2010 02:01:27 +0000
-Subject: Re: [PATCH 01/28] Staging: comedi: comedi.h: Edit file so
-Message-Id: <AANLkTikmKH4veQPFQ4ob4_UDbCf20esgM7QZ+uZYXsVH@mail.gmail.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Tue, 05 Oct 2010 14:29:06 +0000
+Subject: Re: [RFC PATCH] media: consolidation of -I flags
+Message-Id: <20101005142906.GA20059@merkur.ravnborg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
-	<20101006015038.GA22340@kroah.com>
-In-Reply-To: <20101006015038.GA22340@kroah.com>
+References: <1285534847-31463-1-git-send-email-mfm@muteddisk.com>
+In-Reply-To: <1285534847-31463-1-git-send-email-mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <greg@kroah.com>
-Cc: abbotti@mev.co.uk, fmhess@users.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: matt mooney <mfm@muteddisk.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Michal Marek <mmarek@suse.cz>, linux-media@vger.kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 10/5/10, Greg KH <greg@kroah.com> wrote:
-> On Tue, Oct 05, 2010 at 09:00:16PM -0400, Tracey Dent wrote:
->> Changed lines in the file so that checkpatch.pl wont complain. Fixed every
->> warning/error message such as; WARNING: storage class should be at the
->> beginning of the declaration, WARNING: please, no space for starting a
->> line, and last but not least WARNING: line over 80 characters.
->
-> Your changelog comment is longer than 80 characters wide :)
->
-Ik sorry about that.
->>
->> Signed-off-by: Tracey Dent <tdent48227@gmail.com>
->> ---
->>  drivers/staging/comedi/comedi.h |   78
->> ++++++++++++++++++++-------------------
->>  1 files changed, 40 insertions(+), 38 deletions(-)
->>
->> diff --git a/drivers/staging/comedi/comedi.h
->> b/drivers/staging/comedi/comedi.h
->> index 6c900e2..680cef8 100644
->> --- a/drivers/staging/comedi/comedi.h
->> +++ b/drivers/staging/comedi/comedi.h
->> @@ -1,23 +1,23 @@
->>  /*
->> -    include/comedi.h (installed as /usr/include/comedi.h)
->> -    header file for comedi
->> +	include/comedi.h (installed as /usr/include/comedi.h)
->> +	header file for comedi
->>
->> -    COMEDI - Linux Control and Measurement Device Interface
->> -    Copyright (C) 1998-2001 David A. Schleef <ds@schleef.org>
->> +	COMEDI - Linux Control and Measurement Device Interface
->> +	Copyright (C) 1998-2001 David A. Schleef <ds@schleef.org>
->
-> Ick, no, these are all just fine, they are not an issue, go bug the
-> checkpatch.pl author about resolving this.  These comments don't need to
-> be changed, sorry.
+On Sun, Sep 26, 2010 at 02:00:47PM -0700, matt mooney wrote:
+> I have been doing cleanup of makefiles, namely replacing the older style
+> compilation flag variables with the newer style. While doing this, I
+> noticed that the majority of drivers in the media subsystem seem to rely
+> on a few core header files:
+> 
+> 	-Idrivers/media/video
+> 	-Idrivers/media/common/tuners
+> 	-Idrivers/media/dvb/dvb-core
+> 	-Idrivers/media/dvb/frontends
+> 
+> This patch removes them from the individual makefiles and puts them in
+> the main makefile under media.
+Using subdir-ccflags-y has one drawback you need to be aware of.
+The variable is _not_ picked up if you build individual drivers like
+this:
 
-I thought that I just wanted to get rid of the all the warnings. The
-author should take it out if its not an issue.
->
-> thanks,
->
-> greg k-h
-thanks,
 
-Tracey D
+     make drivers/media/dvb/b2c2/
+
+So with this patch applied it is no longer possible to do so.
+It is better to accept the duplication rather than breaking
+the build of individual drivers.
+
+> 
+> If neither idea is considered beneficial, I will go ahead and replace
+> the older variables with the newer ones as is.
+
+This is the right approach.
+
+You could consider to do a more general cleanup:
+1) replace EXTRA_CFLAGS with ccflags-y (the one you suggest)
+2) replace use of <module>-objs with <module>-y
+3) break continued lines into several assignments
+   People very often uses '\' to break long lines, where a
+   simple += would be much more readable.
+   But this topic may be personal - I never uses "\" in my .c code unless in macros,
+   and I have applied the same rule for Makefiles.
+   An ugly example is drivers/media/Makefile
+4) In general use ":=" instead of "=".
+   Add using "+=" as first assignment is OK - but it just looks plain wrong
+5) some files has a mixture of spaces/tabs (are red in my vim)
+   dvb-core/Makefile is one such example
+6) remove useless stuff
+   siano/Makefile has some strange assignments to EXTRA_CFLAGS
+7) Likely a few more items to look after...
+
+This is more work - but then you finish a Makefile rather than doing a simple
+conversion.
+
+	Sam
