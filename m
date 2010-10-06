@@ -1,48 +1,72 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 26 Oct 2010 10:25:40 +0000
-Subject: [PATCH 11/14] drivers/serial/vr41xx_siu.c: delete double assignment
-Message-Id: <1288088743-3725-12-git-send-email-julia@diku.dk>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:17 +0000
+Subject: [PATCH 02/28] Staging: comedi: comedi_compat32.c: Edit file so that checkpatch.pl has 0 errors and w
+Message-Id: <1286326843-6170-2-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-From: Julia Lawall <julia@diku.dk>
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line.
 
-Delete successive assignments to the same location.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression i;
-@@
-
-*i = ...;
- i = ...;
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/serial/vr41xx_siu.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/staging/comedi/comedi_compat32.c |   34 +++++++++++++++---------------
+ 1 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/serial/vr41xx_siu.c b/drivers/serial/vr41xx_siu.c
-index 3beb6ab..121a33e 100644
---- a/drivers/serial/vr41xx_siu.c
-+++ b/drivers/serial/vr41xx_siu.c
-@@ -849,7 +849,6 @@ void __init vr41xx_siu_early_setup(struct uart_port *port)
- 	siu_uart_ports[port->line].type = port->type;
- 	siu_uart_ports[port->line].uartclk = SIU_BAUD_BASE * 16;
- 	siu_uart_ports[port->line].mapbase = port->mapbase;
--	siu_uart_ports[port->line].mapbase = port->mapbase;
- 	siu_uart_ports[port->line].ops = &siu_uart_ops;
- }
+diff --git a/drivers/staging/comedi/comedi_compat32.c b/drivers/staging/comedi/comedi_compat32.c
+index 41a7a62..99057b1 100644
+--- a/drivers/staging/comedi/comedi_compat32.c
++++ b/drivers/staging/comedi/comedi_compat32.c
+@@ -1,26 +1,26 @@
+ /*
+-    comedi/comedi_compat32.c
+-    32-bit ioctl compatibility for 64-bit comedi kernel module.
++	comedi/comedi_compat32.c
++	32-bit ioctl compatibility for 64-bit comedi kernel module.
  
+-    Author: Ian Abbott, MEV Ltd. <abbotti@mev.co.uk>
+-    Copyright (C) 2007 MEV Ltd. <http://www.mev.co.uk/>
++	Author: Ian Abbott, MEV Ltd. <abbotti@mev.co.uk>
++	Copyright (C) 2007 MEV Ltd. <http://www.mev.co.uk/>
+ 
+-    COMEDI - Linux Control and Measurement Device Interface
+-    Copyright (C) 1997-2007 David A. Schleef <ds@schleef.org>
++	COMEDI - Linux Control and Measurement Device Interface
++	Copyright (C) 1997-2007 David A. Schleef <ds@schleef.org>
+ 
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
+ 
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ */
+ 
+-- 
+1.7.3.1.50.g1e633
 
