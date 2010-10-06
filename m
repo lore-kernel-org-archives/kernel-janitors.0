@@ -1,64 +1,67 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 17 Oct 2010 14:51:46 +0000
-Subject: [PATCH] x86: kernel: olpc-xo1: fix error handling code
-Message-Id: <1287327106-9111-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:23 +0000
+Subject: [PATCH 08/28] Staging: comedi: proc.c: Edit file so that checkpatch.pl has 0 errors and warnings
+Message-Id: <1286326843-6170-8-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Daniel Drake <dsd@laptop.org>, linux-kernel@vger.kernel.org
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-If anything failed during initialization then setup_bases() should
-call pci_disable_device().  Also reference got from pci_get_device()
-should be freed with pci_dev_put().
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- arch/x86/kernel/olpc-xo1.c |   12 +++++++++---
- 1 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/staging/comedi/proc.c |   30 +++++++++++++++---------------
+ 1 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/kernel/olpc-xo1.c b/arch/x86/kernel/olpc-xo1.c
-index f5442c0..05331cf 100644
---- a/arch/x86/kernel/olpc-xo1.c
-+++ b/arch/x86/kernel/olpc-xo1.c
-@@ -71,20 +71,25 @@ static int __devinit setup_bases(struct pci_dev *pdev)
- 	r = pci_request_region(pdev, ACPI_BAR, DRV_NAME);
- 	if (r) {
- 		dev_err(&pdev->dev, "can't alloc PCI BAR #%d\n", ACPI_BAR);
--		return r;
-+		goto err_disable;
- 	}
+diff --git a/drivers/staging/comedi/proc.c b/drivers/staging/comedi/proc.c
+index 2aa487b..688449e 100644
+--- a/drivers/staging/comedi/proc.c
++++ b/drivers/staging/comedi/proc.c
+@@ -1,23 +1,23 @@
+ /*
+-    module/proc.c
+-    /proc interface for comedi
++	module/proc.c
++	/proc interface for comedi
  
- 	r = pci_request_region(pdev, PMS_BAR, DRV_NAME);
- 	if (r) {
- 		dev_err(&pdev->dev, "can't alloc PCI BAR #%d\n", PMS_BAR);
--		pci_release_region(pdev, ACPI_BAR);
--		return r;
-+		goto err_region1;
- 	}
+-    COMEDI - Linux Control and Measurement Device Interface
+-    Copyright (C) 1998 David A. Schleef <ds@schleef.org>
++	COMEDI - Linux Control and Measurement Device Interface
++	Copyright (C) 1998 David A. Schleef <ds@schleef.org>
  
- 	acpi_base = pci_resource_start(pdev, ACPI_BAR);
- 	pms_base = pci_resource_start(pdev, PMS_BAR);
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
  
- 	return 0;
-+
-+err_region1:
-+	pci_release_region(pdev, ACPI_BAR);
-+err_disable:
-+	pci_disable_device(pdev);
-+	return r;
- }
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
  
- static int __devinit olpc_xo1_probe(struct platform_device *pdev)
-@@ -98,6 +103,7 @@ static int __devinit olpc_xo1_probe(struct platform_device *pdev)
- 		return -ENODEV;
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
- 	r = setup_bases(pcidev);
-+	pci_dev_put(pcidev);
- 	if (r)
- 		return r;
+ */
  
 -- 
-1.7.0.4
+1.7.3.1.50.g1e633
 
