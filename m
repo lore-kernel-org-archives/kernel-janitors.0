@@ -1,7 +1,7 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Wed, 06 Oct 2010 01:00:42 +0000
-Subject: [PATCH 27/28] Staging: comedi: drivers: am9513.h: Edit file so that checkpatch.pl has 0 errors and w
-Message-Id: <1286326843-6170-27-git-send-email-tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:21 +0000
+Subject: [PATCH 06/28] Staging: comedi: comedilib.h: Edit file so that checkpatch.pl has 0 errors and warning
+Message-Id: <1286326843-6170-6-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
@@ -16,24 +16,24 @@ WARNING: please, no space for starting a line.
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/comedi/drivers/am9513.h |   30 +++++++++++++++---------------
+ drivers/staging/comedi/comedilib.h |   30 +++++++++++++++---------------
  1 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/am9513.h b/drivers/staging/comedi/drivers/am9513.h
-index 0bb839e..35a909e 100644
---- a/drivers/staging/comedi/drivers/am9513.h
-+++ b/drivers/staging/comedi/drivers/am9513.h
+diff --git a/drivers/staging/comedi/comedilib.h b/drivers/staging/comedi/comedilib.h
+index ca92c43..8a699c5 100644
+--- a/drivers/staging/comedi/comedilib.h
++++ b/drivers/staging/comedi/comedilib.h
 @@ -1,23 +1,23 @@
  /*
--    module/am9513.h
--    value added preprocessor definitions for Am9513 timer chip
-+	module/am9513.h
-+	value added preprocessor definitions for Am9513 timer chip
+-    linux/include/comedilib.h
+-    header file for kcomedilib
++	linux/include/comedilib.h
++	header file for kcomedilib
  
 -    COMEDI - Linux Control and Measurement Device Interface
--    Copyright (C) 1998 David A. Schleef <ds@schleef.org>
+-    Copyright (C) 1998-2001 David A. Schleef <ds@schleef.org>
 +	COMEDI - Linux Control and Measurement Device Interface
-+	Copyright (C) 1998 David A. Schleef <ds@schleef.org>
++	Copyright (C) 1998-2001 David A. Schleef <ds@schleef.org>
  
 -    This program is free software; you can redistribute it and/or modify
 -    it under the terms of the GNU General Public License as published by
