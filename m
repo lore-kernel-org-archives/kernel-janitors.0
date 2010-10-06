@@ -1,39 +1,72 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:35 +0000
-Subject: [PATCH 15/33] Staging: keucr: Makefile: Makefile clean up
-Message-Id: <1286496113-11897-15-git-send-email-tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:18 +0000
+Subject: [PATCH 03/28] Staging: comedi: comedi_compat32.h: Edit file so that checkpatch.pl has 0 errors and w
+Message-Id: <1286326843-6170-3-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Changed <module>-objs to <module>-y in Makefile.
-Also, Replace EXTRA_CFLAGS with ccflags-y.
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line.
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/keucr/Makefile |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/comedi/comedi_compat32.h |   34 +++++++++++++++---------------
+ 1 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/staging/keucr/Makefile b/drivers/staging/keucr/Makefile
-index 2a4200f..5c19b7b 100644
---- a/drivers/staging/keucr/Makefile
-+++ b/drivers/staging/keucr/Makefile
-@@ -1,8 +1,8 @@
--EXTRA_CFLAGS += -Idrivers/scsi
-+ccflags-y := -Idrivers/scsi
+diff --git a/drivers/staging/comedi/comedi_compat32.h b/drivers/staging/comedi/comedi_compat32.h
+index 0340a89..77f4216 100644
+--- a/drivers/staging/comedi/comedi_compat32.h
++++ b/drivers/staging/comedi/comedi_compat32.h
+@@ -1,26 +1,26 @@
+ /*
+-    comedi/comedi_compat32.h
+-    32-bit ioctl compatibility for 64-bit comedi kernel module.
++	comedi/comedi_compat32.h
++	32-bit ioctl compatibility for 64-bit comedi kernel module.
  
- obj-$(CONFIG_USB_ENESTORAGE)	+= keucr.o
+-    Author: Ian Abbott, MEV Ltd. <abbotti@mev.co.uk>
+-    Copyright (C) 2007 MEV Ltd. <http://www.mev.co.uk/>
++	Author: Ian Abbott, MEV Ltd. <abbotti@mev.co.uk>
++	Copyright (C) 2007 MEV Ltd. <http://www.mev.co.uk/>
  
--keucr-objs :=			\
-+keucr-y :=			\
- 		usb.o		\
- 		scsiglue.o	\
- 		transport.o	\
+-    COMEDI - Linux Control and Measurement Device Interface
+-    Copyright (C) 1997-2007 David A. Schleef <ds@schleef.org>
++	COMEDI - Linux Control and Measurement Device Interface
++	Copyright (C) 1997-2007 David A. Schleef <ds@schleef.org>
+ 
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
+ 
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ */
+ 
 -- 
 1.7.3.1.50.g1e633
 
