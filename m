@@ -1,7 +1,7 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Wed, 06 Oct 2010 01:00:36 +0000
-Subject: [PATCH 21/28] Staging: comedi: drivers: adq12b.c: Edit file so that checkpatch.pl has 0 errors and 2
-Message-Id: <1286326843-6170-21-git-send-email-tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:30 +0000
+Subject: [PATCH 15/28] Staging: comedi: drivers: adl_pci7230.c: Edit file so that checkpatch.pl has 0 errors
+Message-Id: <1286326843-6170-15-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
@@ -11,30 +11,27 @@ Content-Transfer-Encoding: 7bit
 To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Changed a lot lines that made checkpatch.pl complain. Most  warnings were
-WARNING: please, no space for starting a line. The only remainig warnings are
-WARNING: line over 80 characters.
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line.
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/comedi/drivers/adq12b.c |   88 +++++++++++++++---------------
- 1 files changed, 44 insertions(+), 44 deletions(-)
+ drivers/staging/comedi/drivers/adl_pci7230.c |   36 +++++++++++++-------------
+ 1 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/adq12b.c b/drivers/staging/comedi/drivers/adq12b.c
-index 4b47000..6e5f72f 100644
---- a/drivers/staging/comedi/drivers/adq12b.c
-+++ b/drivers/staging/comedi/drivers/adq12b.c
-@@ -1,23 +1,23 @@
+diff --git a/drivers/staging/comedi/drivers/adl_pci7230.c b/drivers/staging/comedi/drivers/adl_pci7230.c
+index 72a7258..afc26bb 100644
+--- a/drivers/staging/comedi/drivers/adl_pci7230.c
++++ b/drivers/staging/comedi/drivers/adl_pci7230.c
+@@ -1,22 +1,22 @@
  /*
--    comedi/drivers/adq12b.c
--    driver for MicroAxial ADQ12-B data acquisition and control card
-+	comedi/drivers/adq12b.c
-+	driver for MicroAxial ADQ12-B data acquisition and control card
+-    comedi/drivers/adl_pci7230.c
++	comedi/drivers/adl_pci7230.c
  
--    COMEDI - Linux Control and Measurement Device Interface
--    Copyright (C) 2000 David A. Schleef <ds@schleef.org>
-+	COMEDI - Linux Control and Measurement Device Interface
-+	Copyright (C) 2000 David A. Schleef <ds@schleef.org>
+-    Hardware comedi driver fot PCI7230 Adlink card
+-    Copyright (C) 2010 David Fernandez <dfcastelao@gmail.com>
++	Hardware comedi driver fot PCI7230 Adlink card
++	Copyright (C) 2010 David Fernandez <dfcastelao@gmail.com>
  
 -    This program is free software; you can redistribute it and/or modify
 -    it under the terms of the GNU General Public License as published by
@@ -63,95 +60,21 @@ index 4b47000..6e5f72f 100644
  
  */
  /*
-@@ -30,50 +30,50 @@ Status: works
+@@ -28,10 +28,10 @@ Status: experimental
+ Updated: Mon, 14 Apr 2008 15:08:14 +0100
  
- Driver for the acquisition card ADQ12-B (without any add-on).
- 
-- - Analog input is subdevice 0 (16 channels single-ended or 8 differential)
-- - Digital input is subdevice 1 (5 channels)
-- - Digital output is subdevice 1 (8 channels)
-- - The PACER is not supported in this version
-+- Analog input is subdevice 0 (16 channels single-ended or 8 differential)
-+- Digital input is subdevice 1 (5 channels)
-+- Digital output is subdevice 1 (8 channels)
-+- The PACER is not supported in this version
- 
- If you do not specify any options, they will default to
- 
--  # comedi_config /dev/comedi0 adq12b 0x300,0,0
-+	# comedi_config /dev/comedi0 adq12b 0x300,0,0
- 
--  option 1: I/O base address. The following table is provided as a help
--   of the hardware jumpers.
-+	option 1: I/O base address. The following table is provided as a help
-+	of the hardware jumpers.
- 
--	 address            jumper JADR
--	  0x300                 1 (factory default)
--	  0x320                 2
--	  0x340                 3
--	  0x360                 4
--	  0x380                 5
--	  0x3A0                 6
-+	address            jumper JADR
-+	 0x300                 1 (factory default)
-+	 0x320                 2
-+	 0x340                 3
-+	 0x360                 4
-+	 0x380                 5
-+	 0x3A0                 6
- 
--  option 2: unipolar/bipolar ADC selection: 0 -> bipolar, 1 -> unipolar
-+	option 2: unipolar/bipolar ADC selection: 0 -> bipolar, 1 -> unipolar
- 
- 	selection         comedi_config option            JUB
- 	 bipolar                0                         2-3 (factory default)
- 	 unipolar               1                         1-2
- 
--  option 3: single-ended/differential AI selection: 0 -> SE, 1 -> differential
-+	option 3: single-ended/differential AI selection: 0 -> SE, 1 -> differential
- 
- 	selection         comedi_config option     JCHA    JCHB
--       single-ended             0                  1-2     1-2 (factory default)
--       differential             1                  2-3     2-3
-+	 single-ended             0                  1-2     1-2 (factory default)
-+	 differential             1                  2-3     2-3
- 
--   written by jeremy theler <thelerg@ib.cnea.gov.ar>
-+	written by jeremy theler <thelerg@ib.cnea.gov.ar>
- 
--   instituto balseiro
--   comision nacional de energia atomica
--   universidad nacional de cuyo
--   argentina
-+	instituto balseiro
-+	comision nacional de energia atomica
-+	universidad nacional de cuyo
-+	argentina
- 
--   21-feb-2008
--     + changed supported devices string (missused the [] and ())
-+	21-feb-2008
-+		+ changed supported devices string (missused the [] and ())
- 
--   13-oct-2007
--     + first try
-+	13-oct-2007
-+		+ first try
- 
- 
+ Configuration Options:
+-  [0] - PCI bus of device (optional)
+-  [1] - PCI slot of device (optional)
+-  If bus/slot is not specified, the first supported
+-  PCI device found will be used.
++	[0] - PCI bus of device (optional)
++	[1] - PCI slot of device (optional)
++	If bus/slot is not specified, the first supported
++	PCI device found will be used.
  */
-@@ -238,8 +238,8 @@ static int adq12b_attach(struct comedi_device *dev, struct comedi_devconfig *it)
- 	devpriv->unipolar = unipolar;
- 	devpriv->differential = differential;
- 	devpriv->digital_state = 0;
--/* initialize channel and range to -1 so we make sure we always write
--   at least once to the CTREG in the instruction */
-+/*initialize channel and range to -1 so we make sure we always write
-+ *at least once to the CTREG in the instruction */
- 	devpriv->last_channel = -1;
- 	devpriv->last_range = -1;
  
+ #include "../comedidev.h"
 -- 
 1.7.3.1.50.g1e633
 
