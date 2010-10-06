@@ -1,36 +1,80 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:30 +0000
-Subject: [PATCH 10/33] Staging: et131x: Makefile: replace the use of <module>-objs with <module>-y
-Message-Id: <1286496113-11897-10-git-send-email-tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:32 +0000
+Subject: [PATCH 17/28] Staging: comedi: drivers: adl_pci7432.c: Edit file so that checkpatch.pl has 0 errors
+Message-Id: <1286326843-6170-17-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Changed <module>-objs to <module>-y in Makefile.
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line.
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/et131x/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/staging/comedi/drivers/adl_pci7432.c |   36 +++++++++++++-------------
+ 1 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/staging/et131x/Makefile b/drivers/staging/et131x/Makefile
-index 95c645d..dfcd2bf 100644
---- a/drivers/staging/et131x/Makefile
-+++ b/drivers/staging/et131x/Makefile
-@@ -4,7 +4,7 @@
+diff --git a/drivers/staging/comedi/drivers/adl_pci7432.c b/drivers/staging/comedi/drivers/adl_pci7432.c
+index 262da7b..9f5a065 100644
+--- a/drivers/staging/comedi/drivers/adl_pci7432.c
++++ b/drivers/staging/comedi/drivers/adl_pci7432.c
+@@ -1,22 +1,22 @@
+ /*
+-    comedi/drivers/adl_pci7432.c
++	comedi/drivers/adl_pci7432.c
  
- obj-$(CONFIG_ET131X) += et131x.o
+-    Hardware comedi driver fot PCI7432 Adlink card
+-    Copyright (C) 2004 Michel Lachine <mike@mikelachaine.ca>
++	Hardware comedi driver fot PCI7432 Adlink card
++	Copyright (C) 2004 Michel Lachine <mike@mikelachaine.ca>
  
--et131x-objs :=	et1310_eeprom.o \
-+et131x-y :=	et1310_eeprom.o \
- 		et1310_mac.o \
- 		et1310_phy.o \
- 		et1310_pm.o \
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
+ 
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ */
+ /*
+@@ -28,10 +28,10 @@ Status: experimental
+ Updated: Mon, 14 Apr 2008 15:08:14 +0100
+ 
+ Configuration Options:
+-  [0] - PCI bus of device (optional)
+-  [1] - PCI slot of device (optional)
+-  If bus/slot is not specified, the first supported
+-  PCI device found will be used.
++	[0] - PCI bus of device (optional)
++	[1] - PCI slot of device (optional)
++	If bus/slot is not specified, the first supported
++	PCI device found will be used.
+ */
+ 
+ #include "../comedidev.h"
 -- 
 1.7.3.1.50.g1e633
 
