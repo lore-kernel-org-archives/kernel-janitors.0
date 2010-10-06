@@ -1,95 +1,80 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 20 Oct 2010 06:57:34 +0000
-Subject: [patch 1/2] Staging: sst: user pointers in
-Message-Id: <20101020065734.GA5985@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:41 +0000
+Subject: [PATCH 26/28] Staging: comedi: drivers: aio_iiro_16.c: Edit file so that checkpatch.pl has 0 errors
+Message-Id: <1286326843-6170-26-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-There were some places in intel_sst_mmap_play_capture() that
-dereferenced user pointers instead of copying the data to the kernel.
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line.
 
-I removed the BUG_ON(!mmap_buf) and BUG_ON(!buf_entry) since those are
-never possible in the current code.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
-These apply on top of the three I sent yesterday.
+ drivers/staging/comedi/drivers/aio_iiro_16.c |   32 +++++++++++++-------------
+ 1 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/intel_sst/intel_sst_app_interface.c b/drivers/staging/intel_sst/intel_sst_app_interface.c
-index d20724d..0592eb3 100644
---- a/drivers/staging/intel_sst/intel_sst_app_interface.c
-+++ b/drivers/staging/intel_sst/intel_sst_app_interface.c
-@@ -244,12 +244,12 @@ static int intel_sst_mmap_play_capture(u32 str_id,
- 	int retval, i;
- 	struct stream_info *stream;
- 	struct snd_sst_mmap_buff_entry *buf_entry;
-+	struct snd_sst_mmap_buff_entry *tmp_buf;
+diff --git a/drivers/staging/comedi/drivers/aio_iiro_16.c b/drivers/staging/comedi/drivers/aio_iiro_16.c
+index 4875995..d0b9800 100644
+--- a/drivers/staging/comedi/drivers/aio_iiro_16.c
++++ b/drivers/staging/comedi/drivers/aio_iiro_16.c
+@@ -1,23 +1,23 @@
+ /*
  
- 	pr_debug("sst:called for str_id %d\n", str_id);
- 	retval = sst_validate_strid(str_id);
- 	if (retval)
- 		return -EINVAL;
--	BUG_ON(!mmap_buf);
+-    comedi/drivers/aio_iiro_16.c
++	comedi/drivers/aio_iiro_16.c
  
- 	stream = &sst_drv_ctx->streams[str_id];
- 	if (stream->mmapped != true)
-@@ -262,14 +262,24 @@ static int intel_sst_mmap_play_capture(u32 str_id,
- 	stream->curr_bytes = 0;
- 	stream->cumm_bytes = 0;
+-    Driver for Acces I/O Products PC-104 AIO-IIRO-16 Digital I/O board
+-    Copyright (C) 2006 C&C Technologies, Inc.
++	Driver for Acces I/O Products PC-104 AIO-IIRO-16 Digital I/O board
++	Copyright (C) 2006 C&C Technologies, Inc.
  
-+	tmp_buf = kcalloc(mmap_buf->entries, sizeof(*tmp_buf), GFP_KERNEL);
-+	if (!tmp_buf)
-+		return -ENOMEM;
-+	if (copy_from_user(tmp_buf, (void __user *)mmap_buf->buff,
-+			mmap_buf->entries * sizeof(*tmp_buf))) {
-+		retval = -EFAULT;
-+		goto out_free;
-+	}
-+
- 	pr_debug("sst:new buffers count %d status %d\n",
- 			mmap_buf->entries, stream->status);
--	buf_entry = mmap_buf->buff;
-+	buf_entry = tmp_buf;
- 	for (i = 0; i < mmap_buf->entries; i++) {
--		BUG_ON(!buf_entry);
- 		bufs = kzalloc(sizeof(*bufs), GFP_KERNEL);
--		if (!bufs)
--			return -ENOMEM;
-+		if (!bufs) {
-+			retval = -ENOMEM;
-+			goto out_free;
-+		}
- 		bufs->size = buf_entry->size;
- 		bufs->offset = buf_entry->offset;
- 		bufs->addr = sst_drv_ctx->mmap_mem;
-@@ -293,13 +303,15 @@ static int intel_sst_mmap_play_capture(u32 str_id,
- 			if (sst_play_frame(str_id) < 0) {
- 				pr_warn("sst: play frames fail\n");
- 				mutex_unlock(&stream->lock);
--				return -EIO;
-+				retval = -EIO;
-+				goto out_free;
- 			}
- 		} else if (stream->ops = STREAM_OPS_CAPTURE) {
- 			if (sst_capture_frame(str_id) < 0) {
- 				pr_warn("sst: capture frame fail\n");
- 				mutex_unlock(&stream->lock);
--				return -EIO;
-+				retval = -EIO;
-+				goto out_free;
- 			}
- 		}
- 	}
-@@ -314,6 +326,9 @@ static int intel_sst_mmap_play_capture(u32 str_id,
- 	if (retval >= 0)
- 		retval = stream->cumm_bytes;
- 	pr_debug("sst:end of play/rec ioctl bytes = %d!!\n", retval);
-+
-+out_free:
-+	kfree(tmp_buf);
- 	return retval;
- }
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
  
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+ 
+ /*
+@@ -26,11 +26,11 @@ Driver: aio_iiro_16
+ Description: Acces I/O Products PC-104 IIRO16 Relay And Isolated Input Board
+ Author: Zachary Ware <zach.ware@cctechnol.com>
+ Devices:
+- [Acces I/O] PC-104 AIO12-8
++	[Acces I/O] PC-104 AIO12-8
+ Status: experimental
+ 
+ Configuration Options:
+-  [0] - I/O port base address
++	[0] - I/O port base address
+ 
+ */
+ 
+-- 
+1.7.3.1.50.g1e633
+
