@@ -1,7 +1,7 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Wed, 06 Oct 2010 01:00:26 +0000
-Subject: [PATCH 11/28] Staging: comedi: drivers: 8253.h:  Edit file so that checkpatch.pl has 0 errors and wa
-Message-Id: <1286326843-6170-11-git-send-email-tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:37 +0000
+Subject: [PATCH 22/28] Staging: comedi: drivers: adv_pci1710.c: Edit file so that checkpatch.pl complains a l
+Message-Id: <1286326843-6170-22-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
@@ -11,57 +11,66 @@ Content-Transfer-Encoding: 7bit
 To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Changed a few lines that made checkpatch.pl complain. All warnings were
-WARNING: please, no space for starting a line.
+Changed a few lines that made checkpatch.pl complain. All warnings that I correcct were
+WARNING: please, no space for starting a line and a few WARNING: line over 80 characters.
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/comedi/drivers/8253.h |   30 +++++++++++++++---------------
- 1 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/staging/comedi/drivers/adv_pci1710.c |   21 +++++++++++----------
+ 1 files changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/comedi/drivers/8253.h b/drivers/staging/comedi/drivers/8253.h
-index 3eb45d4..8ef9360 100644
---- a/drivers/staging/comedi/drivers/8253.h
-+++ b/drivers/staging/comedi/drivers/8253.h
-@@ -1,23 +1,23 @@
- /*
--    comedi/drivers/8253.h
--    Header file for 8253
-+	comedi/drivers/8253.h
-+	Header file for 8253
+diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
+index bdd6954..2afa36b 100644
+--- a/drivers/staging/comedi/drivers/adv_pci1710.c
++++ b/drivers/staging/comedi/drivers/adv_pci1710.c
+@@ -22,8 +22,8 @@ Description: Advantech PCI-1710, PCI-1710HG, PCI-1711, PCI-1713,
+ 	     Advantech PCI-1720, PCI-1731
+ Author: Michal Dobes <dobes@tesnet.cz>
+ Devices: [Advantech] PCI-1710 (adv_pci1710), PCI-1710HG (pci1710hg),
+-  PCI-1711 (adv_pci1710), PCI-1713, PCI-1720,
+-  PCI-1731
++	PCI-1711 (adv_pci1710), PCI-1713, PCI-1720,
++	PCI-1731
+ Status: works
  
--    COMEDI - Linux Control and Measurement Device Interface
--    Copyright (C) 2000 David A. Schleef <ds@schleef.org>
-+	COMEDI - Linux Control and Measurement Device Interface
-+	Copyright (C) 2000 David A. Schleef <ds@schleef.org>
+ This driver supports AI, AO, DI and DO subdevices.
+@@ -35,10 +35,10 @@ driver cannot distinguish between them, as would be normal for a
+ PCI driver.
  
--    This program is free software; you can redistribute it and/or modify
--    it under the terms of the GNU General Public License as published by
--    the Free Software Foundation; either version 2 of the License, or
--    (at your option) any later version.
-+	This program is free software; you can redistribute it and/or modify
-+	it under the terms of the GNU General Public License as published by
-+	the Free Software Foundation; either version 2 of the License, or
-+	(at your option) any later version.
- 
--    This program is distributed in the hope that it will be useful,
--    but WITHOUT ANY WARRANTY; without even the implied warranty of
--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--    GNU General Public License for more details.
-+	This program is distributed in the hope that it will be useful,
-+	but WITHOUT ANY WARRANTY; without even the implied warranty of
-+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+	GNU General Public License for more details.
- 
--    You should have received a copy of the GNU General Public License
--    along with this program; if not, write to the Free Software
--    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-+	You should have received a copy of the GNU General Public License
-+	along with this program; if not, write to the Free Software
-+	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
+ Configuration options:
+-  [0] - PCI bus of device (optional)
+-  [1] - PCI slot of device (optional)
+-	If bus/slot is not specified, the first available PCI
+-	device will be used.
++	[0] - PCI bus of device (optional)
++	[1] - PCI slot of device (optional)
++		If bus/slot is not specified, the first available PCI
++		device will be used.
  */
  
+ #include <linux/interrupt.h>
+@@ -645,7 +645,8 @@ static void interrupt_pci1710_every_sample(void *d)
+ 			if ((sampl & 0xf000) ! 			    devpriv->act_chanlist[s->async->cur_chan]) {
+ 				printk
+-				    ("comedi: A/D data dropout: received data from channel %d, expected %d!\n",
++				    ("comedi: A/D data dropout: received data \
++					from channel %d, expected %d!\n",
+ 				     (sampl & 0xf000) >> 12,
+ 				     (devpriv->
+ 				      act_chanlist[s->
+@@ -1143,9 +1144,9 @@ static int pci171x_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
+ 
+ /*
+ =======================================
+- Check if channel list from user is builded correctly
+- If it's ok, then program scan/gain logic.
+- This works for all cards.
++	Check if channel list from user is builded correctly
++	If it's ok, then program scan/gain logic.
++	This works for all cards.
+ */
+ static int check_channel_list(struct comedi_device *dev,
+ 			      struct comedi_subdevice *s,
 -- 
 1.7.3.1.50.g1e633
 
