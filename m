@@ -1,64 +1,78 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Oct 2010 14:25:58 +0000
-Subject: [patch v2] infiniband: uverbs: limit the number of entries
-Message-Id: <20101008142557.GP11681@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:19 +0000
+Subject: [PATCH 04/28] Staging: comedi: comedidev.h: Edit file so that checkpatch.pl has 0 errors and warning
+Message-Id: <1286326843-6170-4-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101007071610.GC11681@bicker> <20101007161649.GD21206@obsidianresearch.com> <20101007165947.GD11681@bicker> <AANLkTin5zou2JHsdDyhGESuxyPonOs3kLo9Th0vg-kd8@mail.gmail.com>
-In-Reply-To: <AANLkTin5zou2JHsdDyhGESuxyPonOs3kLo9Th0vg-kd8-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Palix <Nicolas.Palix-MZpvjPyXg2s@public.gmane.org>
-Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line.
 
-If we don't limit cmd.ne then the multiplications can overflow.  This
-will allocate a small amount of RAM successfully for the "resp" and
-"wc" buffers.  The heap will get corrupted when we call ib_poll_cq().
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/comedi/comedidev.h |   34 +++++++++++++++++-----------------
+ 1 files changed, 17 insertions(+), 17 deletions(-)
 
-Documentation/infiniband/user_verbs.txt suggests this function is meant
-for unprivileged access.
-
-I chose to limit the number of entries to 500.  That limits the
-allocations to 26 kb of RAM at the most.
-
-Also we don't necessarily fill the "resp" buffer so I changed the
-kmalloc() to a kzalloc() to avoid an information leak.  And I changed
-the wc allocation to kcalloc() as a cleanup.
-
-CC: stable@kernel.org
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
---- a/drivers/infiniband/core/uverbs.h
-+++ b/drivers/infiniband/core/uverbs.h
-@@ -162,6 +162,7 @@ void ib_uverbs_srq_event_handler(struct ib_event *event, void *context_ptr);
- void ib_uverbs_event_handler(struct ib_event_handler *handler,
- 			     struct ib_event *event);
+diff --git a/drivers/staging/comedi/comedidev.h b/drivers/staging/comedi/comedidev.h
+index 68aa917..65a3559 100644
+--- a/drivers/staging/comedi/comedidev.h
++++ b/drivers/staging/comedi/comedidev.h
+@@ -1,23 +1,23 @@
+ /*
+-    include/linux/comedidev.h
+-    header file for kernel-only structures, variables, and constants
++	include/linux/comedidev.h
++	header file for kernel-only structures, variables, and constants
  
-+#define UVERBS_MAX_NUM_ENTRIES 500
- #define IB_UVERBS_DECLARE_CMD(name)					\
- 	ssize_t ib_uverbs_##name(struct ib_uverbs_file *file,		\
- 				 const char __user *buf, int in_len,	\
-diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -906,12 +906,15 @@ ssize_t ib_uverbs_poll_cq(struct ib_uverbs_file *file,
- 	if (copy_from_user(&cmd, buf, sizeof cmd))
- 		return -EFAULT;
+-    COMEDI - Linux Control and Measurement Device Interface
+-    Copyright (C) 1997-2000 David A. Schleef <ds@schleef.org>
++	COMEDI - Linux Control and Measurement Device Interface
++	Copyright (C) 1997-2000 David A. Schleef <ds@schleef.org>
  
-+	if (cmd.ne > UVERBS_MAX_NUM_ENTRIES)
-+		cmd.ne = UVERBS_MAX_NUM_ENTRIES;
-+
--	wc = kmalloc(cmd.ne * sizeof *wc, GFP_KERNEL);
-+	wc = kcalloc(cmd.ne, sizeof *wc, GFP_KERNEL);
- 	if (!wc)
- 		return -ENOMEM;
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
  
- 	rsize = sizeof *resp + cmd.ne * sizeof(struct ib_uverbs_wc);
--	resp = kmalloc(rsize, GFP_KERNEL);
-+	resp = kzalloc(rsize, GFP_KERNEL);
- 	if (!resp) {
- 		ret = -ENOMEM;
- 		goto out_wc;
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ */
+ 
+@@ -253,8 +253,8 @@ void comedi_event(struct comedi_device *dev, struct comedi_subdevice *s);
+ void comedi_error(const struct comedi_device *dev, const char *s);
+ 
+ /* we can expand the number of bits used to encode devices/subdevices into
+- the minor number soon, after more distros support > 8 bit minor numbers
+- (like after Debian Etch gets released) */
++the minor number soon, after more distros support > 8 bit minor numbers
++(like after Debian Etch gets released) */
+ enum comedi_minor_bits {
+ 	COMEDI_DEVICE_MINOR_MASK = 0xf,
+ 	COMEDI_SUBDEVICE_MINOR_MASK = 0xf0
+-- 
+1.7.3.1.50.g1e633
 
