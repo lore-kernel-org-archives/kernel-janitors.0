@@ -1,284 +1,293 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 18 Oct 2010 20:43:40 +0000
-Subject: Re: [PATCH 1/3] drivers/staging/cx25821: Use kstrdup
-Message-Id: <Pine.LNX.4.64.1010182243260.22877@ask.diku.dk>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:34 +0000
+Subject: [PATCH 19/28] Staging: comedi: drivers: adl_pci9111.c: Edit file so that checkpatch.pl has 30 warnin
+Message-Id: <1286326843-6170-19-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287341311-11161-1-git-send-email-julia@diku.dk> 
- <1287341311-11161-2-git-send-email-julia@diku.dk> <4CBBF407.7060705@bfs.de>
-  <Pine.LNX.4.64.1010181019370.22530@ask.diku.dk> <4CBC12EC.60109@bfs.de> 
- <Pine.LNX.4.64.1010181421240.25099@ask.diku.dk> <1287423539.20968.115.camel@Joe-Laptop>
-In-Reply-To: <1287423539.20968.115.camel@Joe-Laptop>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: walter harms <wharms@bfs.de>, devel@driverdev.osuosl.org, gregkh@suse.de, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-From nobody Sun Oct 17 20:14:32 CEST 2010
-From: Julia Lawall <julia@diku.dk>
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: devel@driverdev.osuosl.org,linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] drivers/staging/cx25821: Use kstrdup
+Changed a few lines that made checkpatch.pl complain. Could not get ever error but
+I got the warnings down to 65 less than the orignal file, The warnings and errors that are left are
+ WARNING: line over 80 characters, ERROR: Macros with multiple statements should be enclosed in a do - while loop,
+ WARNING: printk() should include KERN_ facility level.
 
-Rewrite the initialization of a dev field.  In the original code, in each
-case there was a kmalloc followed by a memcpy, as illustrated by the
-semantic patch below.  In the case that the provided string was the empty
-string, the allocated memory was then overwritten with a constant string,
-causing a memory leak.  Finally, there was no provision for returning
--ENOMEM in case of failure of the memory allocation.  Indeed, the return
-value in an error case was err, a variable that was never initialized to
-anything other than 0.
-
-The following patch rewrites the above code to first select a string based
-on various conditions, and then to copy it into a newly allocated memory
-region, using kstrdup.  This decreases subtantially the code size
-and removes the memory leak.  The instruction for getting the length of the
-string and the associated variable declaration are also deleted.
-
-The patch also drops err, changes the return value to retval, which in each
-file was already initialized elsewhere to an error code, and initializes
-retval to -ENOMEM when kstrdup fails.
-
-The semantic patch that motivated this transformation is:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression a,flag,len;
-expression arg,e1,e2;
-statement S;
-@@
-
-  len = strlen(arg)
-  ... when != len = e1
-      when != arg = e2
-  a -  \(kmalloc\|kzalloc\)(len+1,flag)
-+  kstrdup(arg,flag)
-  <... when != a
-  if (a = NULL || ...) S
-  ...>
-- memcpy(a,arg,len+1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
-This patch makes quite a lot of changes and is only compile tested.
-As compared to the previous version, the local variable filename is readded
-and the nested ifs in the second and third file are reorganized.
+ drivers/staging/comedi/drivers/adl_pci9111.c |  170 +++++++++++++-------------
+ 1 files changed, 85 insertions(+), 85 deletions(-)
 
- drivers/staging/cx25821/cx25821-audio-upstream.c     |   35 +++--------
- drivers/staging/cx25821/cx25821-video-upstream-ch2.c |   58 +++++++------------
- drivers/staging/cx25821/cx25821-video-upstream.c     |   55 +++++++-----------
- 3 files changed, 54 insertions(+), 94 deletions(-)
+diff --git a/drivers/staging/comedi/drivers/adl_pci9111.c b/drivers/staging/comedi/drivers/adl_pci9111.c
+index b2a02b0..7fb6509 100644
+--- a/drivers/staging/comedi/drivers/adl_pci9111.c
++++ b/drivers/staging/comedi/drivers/adl_pci9111.c
+@@ -1,26 +1,26 @@
+ /*
+ 
+-   comedi/drivers/adl_pci9111.c
++	comedi/drivers/adl_pci9111.c
+ 
+-   Hardware driver for PCI9111 ADLink cards:
++	Hardware driver for PCI9111 ADLink cards:
+ 
+-     PCI-9111HR
++		PCI-9111HR
+ 
+-   Copyright (C) 2002-2005 Emmanuel Pacaud <emmanuel.pacaud@univ-poitiers.fr>
++	Copyright (C) 2002-2005 Emmanuel Pacaud <emmanuel.pacaud@univ-poitiers.fr>
+ 
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
+ 
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+ 
+ /*
+@@ -32,46 +32,46 @@ Status: experimental
+ 
+ Supports:
+ 
+-  - ai_insn read
+-  - ao_insn read/write
+-  - di_insn read
+-  - do_insn read/write
+-  - ai_do_cmd mode with the following sources:
++	- ai_insn read
++	- ao_insn read/write
++	- di_insn read
++	- do_insn read/write
++	- ai_do_cmd mode with the following sources:
+ 
+-    - start_src			TRIG_NOW
+-    - scan_begin_src		TRIG_FOLLOW	TRIG_TIMER	TRIG_EXT
+-    - convert_src				TRIG_TIMER	TRIG_EXT
+-    - scan_end_src		TRIG_COUNT
+-    - stop_src			TRIG_COUNT	TRIG_NONE
++	- start_src			TRIG_NOW
++	- scan_begin_src		TRIG_FOLLOW	TRIG_TIMER	TRIG_EXT
++	- convert_src				TRIG_TIMER	TRIG_EXT
++	- scan_end_src		TRIG_COUNT
++	- stop_src			TRIG_COUNT	TRIG_NONE
+ 
+-    The scanned channels must be consecutive and start from 0. They must
+-    all have the same range and aref.
++	The scanned channels must be consecutive and start from 0. They must
++	all have the same range and aref.
+ 
+ Configuration options:
+ 
+-    [0] - PCI bus number (optional)
+-    [1] - PCI slot number (optional)
++	[0] - PCI bus number (optional)
++	[1] - PCI slot number (optional)
+ 
+-    If bus/slot is not specified, the first available PCI
+-    device will be used.
++	If bus/slot is not specified, the first available PCI
++	device will be used.
+ 
+ */
+ 
+ /*
+ CHANGELOG:
+ 
+-  2005/02/17 Extend AI streaming capabilities. Now, scan_begin_arg can be
+-  a multiple of chanlist_len*convert_arg.
+-  2002/02/19 Fixed the two's complement conversion in pci9111_(hr_)ai_get_data.
+-  2002/02/18 Added external trigger support for analog input.
++	2005/02/17 Extend AI streaming capabilities. Now, scan_begin_arg can be
++	a multiple of chanlist_len*convert_arg.
++	2002/02/19 Fixed the two's complement conversion in pci9111_(hr_)ai_get_data.
++	2002/02/18 Added external trigger support for analog input.
+ 
+ TODO:
+ 
+-  - Really test implemented functionality.
+-  - Add support for the PCI-9111DG with a probe routine to identify the card
+-    type (perhaps with the help of the channel number readback of the A/D Data
+-    register).
+-  - Add external multiplexer support.
++	- Really test implemented functionality.
++	- Add support for the PCI-9111DG with a probe routine to identify the
++	  card type (perhaps with the help of the channel number readback of
++	  the A/D Data register).
++	- Add external multiplexer support.
+ 
+ */
+ 
+@@ -187,95 +187,95 @@ TODO:
+  */
+ 
+ #define pci9111_trigger_and_autoscan_get() \
+-  (inb(PCI9111_IO_BASE+PCI9111_REGISTER_AD_MODE_INTERRUPT_READBACK)&0x0F)
++	(inb(PCI9111_IO_BASE+PCI9111_REGISTER_AD_MODE_INTERRUPT_READBACK)&0x0F)
+ 
+ #define pci9111_trigger_and_autoscan_set(flags) \
+-  outb(flags, PCI9111_IO_BASE+PCI9111_REGISTER_TRIGGER_MODE_CONTROL)
++	outb(flags, PCI9111_IO_BASE+PCI9111_REGISTER_TRIGGER_MODE_CONTROL)
+ 
+ #define pci9111_interrupt_and_fifo_get()				   \
+-  ((inb(PCI9111_IO_BASE+PCI9111_REGISTER_AD_MODE_INTERRUPT_READBACK) >> 4) \
+-   &0x03)
++	((inb(PCI9111_IO_BASE+PCI9111_REGISTER_AD_MODE_INTERRUPT_READBACK) >> 4) \
++	&0x03)
+ 
+ #define pci9111_interrupt_and_fifo_set(flags) \
+-  outb(flags, PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CONTROL)
++	outb(flags, PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CONTROL)
+ 
+ #define pci9111_interrupt_clear() \
+-  outb(0, PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CLEAR)
++	outb(0, PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CLEAR)
+ 
+ #define pci9111_software_trigger() \
+-  outb(0, PCI9111_IO_BASE+PCI9111_REGISTER_SOFTWARE_TRIGGER)
++	outb(0, PCI9111_IO_BASE+PCI9111_REGISTER_SOFTWARE_TRIGGER)
+ 
+ #define pci9111_fifo_reset() do {					\
+-  outb(PCI9111_FFEN_SET_FIFO_ENABLE,					\
+-       PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CONTROL);		\
+-  outb(PCI9111_FFEN_SET_FIFO_DISABLE,					\
+-       PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CONTROL);		\
+-  outb(PCI9111_FFEN_SET_FIFO_ENABLE,					\
+-       PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CONTROL);		\
++	outb(PCI9111_FFEN_SET_FIFO_ENABLE,					\
++		PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CONTROL);		\
++	outb(PCI9111_FFEN_SET_FIFO_DISABLE,					\
++		PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CONTROL);		\
++	outb(PCI9111_FFEN_SET_FIFO_ENABLE,					\
++		PCI9111_IO_BASE+PCI9111_REGISTER_INTERRUPT_CONTROL);		\
+   } while (0)
+ 
+ #define pci9111_is_fifo_full() \
+-  ((inb(PCI9111_IO_BASE+PCI9111_REGISTER_RANGE_STATUS_READBACK)& \
+-    PCI9111_FIFO_FULL_MASK) = 0)
++	((inb(PCI9111_IO_BASE+PCI9111_REGISTER_RANGE_STATUS_READBACK)& \
++		PCI9111_FIFO_FULL_MASK) = 0)
+ 
+ #define pci9111_is_fifo_half_full() \
+-  ((inb(PCI9111_IO_BASE+PCI9111_REGISTER_RANGE_STATUS_READBACK)& \
+-    PCI9111_FIFO_HALF_FULL_MASK) = 0)
++	((inb(PCI9111_IO_BASE+PCI9111_REGISTER_RANGE_STATUS_READBACK)& \
++		PCI9111_FIFO_HALF_FULL_MASK) = 0)
+ 
+ #define pci9111_is_fifo_empty() \
+-  ((inb(PCI9111_IO_BASE+PCI9111_REGISTER_RANGE_STATUS_READBACK)& \
+-    PCI9111_FIFO_EMPTY_MASK) = 0)
++	((inb(PCI9111_IO_BASE+PCI9111_REGISTER_RANGE_STATUS_READBACK)& \
++		PCI9111_FIFO_EMPTY_MASK) = 0)
+ 
+ #define pci9111_ai_channel_set(channel)					\
+-  outb((channel)&PCI9111_CHANNEL_MASK,					\
+-       PCI9111_IO_BASE+PCI9111_REGISTER_AD_CHANNEL_CONTROL)
++	outb((channel)&PCI9111_CHANNEL_MASK,					\
++		PCI9111_IO_BASE+PCI9111_REGISTER_AD_CHANNEL_CONTROL)
+ 
+ #define pci9111_ai_channel_get()					\
+-  (inb(PCI9111_IO_BASE+PCI9111_REGISTER_AD_CHANNEL_READBACK)		\
+-   &PCI9111_CHANNEL_MASK)
++	(inb(PCI9111_IO_BASE+PCI9111_REGISTER_AD_CHANNEL_READBACK)		\
++		&PCI9111_CHANNEL_MASK)
+ 
+ #define pci9111_ai_range_set(range)					\
+-  outb((range)&PCI9111_RANGE_MASK,					\
+-       PCI9111_IO_BASE+PCI9111_REGISTER_INPUT_SIGNAL_RANGE)
++	outb((range)&PCI9111_RANGE_MASK,					\
++		PCI9111_IO_BASE+PCI9111_REGISTER_INPUT_SIGNAL_RANGE)
+ 
+ #define pci9111_ai_range_get()						\
+-  (inb(PCI9111_IO_BASE+PCI9111_REGISTER_RANGE_STATUS_READBACK)		\
+-   &PCI9111_RANGE_MASK)
++	(inb(PCI9111_IO_BASE+PCI9111_REGISTER_RANGE_STATUS_READBACK)		\
++	&PCI9111_RANGE_MASK)
+ 
+ #define pci9111_ai_get_data()						\
+-  (((inw(PCI9111_IO_BASE+PCI9111_REGISTER_AD_FIFO_VALUE)>>4)		\
+-    &PCI9111_AI_RESOLUTION_MASK)					\
+-   ^ PCI9111_AI_RESOLUTION_2_CMP_BIT)
++	(((inw(PCI9111_IO_BASE+PCI9111_REGISTER_AD_FIFO_VALUE)>>4)		\
++	&PCI9111_AI_RESOLUTION_MASK)					\
++		^ PCI9111_AI_RESOLUTION_2_CMP_BIT)
+ 
+ #define pci9111_hr_ai_get_data()					\
+-  ((inw(PCI9111_IO_BASE+PCI9111_REGISTER_AD_FIFO_VALUE)			\
+-    & PCI9111_HR_AI_RESOLUTION_MASK)					\
+-   ^ PCI9111_HR_AI_RESOLUTION_2_CMP_BIT)
++	((inw(PCI9111_IO_BASE+PCI9111_REGISTER_AD_FIFO_VALUE)			\
++	& PCI9111_HR_AI_RESOLUTION_MASK)					\
++	^ PCI9111_HR_AI_RESOLUTION_2_CMP_BIT)
+ 
+ #define pci9111_ao_set_data(data)					\
+-  outw(data&PCI9111_AO_RESOLUTION_MASK,					\
+-       PCI9111_IO_BASE+PCI9111_REGISTER_DA_OUTPUT)
++	outw(data&PCI9111_AO_RESOLUTION_MASK,					\
++		PCI9111_IO_BASE+PCI9111_REGISTER_DA_OUTPUT)
+ 
+ #define pci9111_di_get_bits() \
+-  inw(PCI9111_IO_BASE+PCI9111_REGISTER_DIGITAL_IO)
++	inw(PCI9111_IO_BASE+PCI9111_REGISTER_DIGITAL_IO)
+ 
+ #define pci9111_do_set_bits(bits) \
+-  outw(bits, PCI9111_IO_BASE+PCI9111_REGISTER_DIGITAL_IO)
++	outw(bits, PCI9111_IO_BASE+PCI9111_REGISTER_DIGITAL_IO)
+ 
+ #define pci9111_8254_control_set(flags) \
+-  outb(flags, PCI9111_IO_BASE+PCI9111_REGISTER_8254_CONTROL)
++	outb(flags, PCI9111_IO_BASE+PCI9111_REGISTER_8254_CONTROL)
+ 
+ #define pci9111_8254_counter_0_set(data) \
+-  outb(data & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_0); \
+-  outb((data >> 8) & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_0)
++	outb(data & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_0); \
++	outb((data >> 8) & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_0)
+ 
+ #define pci9111_8254_counter_1_set(data) \
+-  outb(data & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_1); \
+-  outb((data >> 8) & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_1)
++	outb(data & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_1); \
++	outb((data >> 8) & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_1)
+ 
+ #define pci9111_8254_counter_2_set(data) \
+-  outb(data & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_2); \
+-  outb((data >> 8) & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_2)
++	outb(data & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_2); \
++	outb((data >> 8) & 0xFF, PCI9111_IO_BASE+PCI9111_REGISTER_8254_COUNTER_2)
+ 
+ /*  Function prototypes */
+ 
+@@ -342,7 +342,7 @@ static const struct pci9111_board pci9111_boards[] = {
+ };
+ 
+ #define pci9111_board_nbr \
+-  (sizeof(pci9111_boards)/sizeof(struct pci9111_board))
++	(sizeof(pci9111_boards)/sizeof(struct pci9111_board))
+ 
+ static struct comedi_driver pci9111_driver = {
+ 	.driver_name = PCI9111_DRIVER_NAME,
+-- 
+1.7.3.1.50.g1e633
 
-diff --git a/drivers/staging/cx25821/cx25821-audio-upstream.c b/drivers/staging/cx25821/cx25821-audio-upstream.c
-index 27087db..252aa49 100644
---- a/drivers/staging/cx25821/cx25821-audio-upstream.c
-+++ b/drivers/staging/cx25821/cx25821-audio-upstream.c
-@@ -723,8 +723,7 @@ int cx25821_audio_upstream_init(struct cx25821_dev *dev, int channel_select)
- {
- 	struct sram_channel *sram_ch;
- 	int retval = 0;
--	int err = 0;
--	int str_length = 0;
-+	char *filename;
- 
- 	if (dev->_audio_is_running) {
- 		printk(KERN_WARNING "Audio Channel is still running so return!\n");
-@@ -752,28 +751,14 @@ int cx25821_audio_upstream_init(struct cx25821_dev *dev, int channel_select)
- 	dev->_audio_lines_count = LINES_PER_AUDIO_BUFFER;
- 	_line_size = AUDIO_LINE_SIZE;
- 
--	if (dev->input_audiofilename) {
--		str_length = strlen(dev->input_audiofilename);
--		dev->_audiofilename = kmalloc(str_length + 1, GFP_KERNEL);
--
--		if (!dev->_audiofilename)
--			goto error;
--
--		memcpy(dev->_audiofilename, dev->input_audiofilename,
--		       str_length + 1);
--
--		/* Default if filename is empty string */
--		if (strcmp(dev->input_audiofilename, "") = 0)
--			dev->_audiofilename = "/root/audioGOOD.wav";
--
--	} else {
--		str_length = strlen(_defaultAudioName);
--		dev->_audiofilename = kmalloc(str_length + 1, GFP_KERNEL);
--
--		if (!dev->_audiofilename)
--			goto error;
--
--		memcpy(dev->_audiofilename, _defaultAudioName, str_length + 1);
-+	if (!dev->input_audiofilename || *dev->input_audiofilename = 0)
-+		filename = _defaultAudioName;
-+	else
-+		filename = dev->input_audiofilename;
-+	dev->_audiofilename = kstrdup(filename, GFP_KERNEL);
-+	if (!dev->_audiofilename) {
-+		retval = -ENOMEM;
-+		goto error;
- 	}
- 
- 	retval @@ -802,5 +787,5 @@ int cx25821_audio_upstream_init(struct cx25821_dev *dev, int channel_select)
- error:
- 	cx25821_dev_unregister(dev);
- 
--	return err;
-+	return retval;
- }
-diff --git a/drivers/staging/cx25821/cx25821-video-upstream-ch2.c b/drivers/staging/cx25821/cx25821-video-upstream-ch2.c
-index d12dbb5..3d276c1 100644
---- a/drivers/staging/cx25821/cx25821-video-upstream-ch2.c
-+++ b/drivers/staging/cx25821/cx25821-video-upstream-ch2.c
-@@ -747,10 +747,9 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *dev, int channel_select,
- 	struct sram_channel *sram_ch;
- 	u32 tmp;
- 	int retval = 0;
--	int err = 0;
- 	int data_frame_size = 0;
- 	int risc_buffer_size = 0;
--	int str_length = 0;
-+	char *filename;
- 
- 	if (dev->_is_running_ch2) {
- 		printk("Video Channel is still running so return!\n");
-@@ -788,39 +787,26 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *dev, int channel_select,
- 	risc_buffer_size  	    dev->_isNTSC_ch2 ? NTSC_RISC_BUF_SIZE : PAL_RISC_BUF_SIZE;
- 
--	if (dev->input_filename_ch2) {
--		str_length = strlen(dev->input_filename_ch2);
--		dev->_filename_ch2 = kmalloc(str_length + 1, GFP_KERNEL);
--
--		if (!dev->_filename_ch2)
--			goto error;
--
--		memcpy(dev->_filename_ch2, dev->input_filename_ch2,
--		       str_length + 1);
--	} else {
--		str_length = strlen(dev->_defaultname_ch2);
--		dev->_filename_ch2 = kmalloc(str_length + 1, GFP_KERNEL);
--
--		if (!dev->_filename_ch2)
--			goto error;
--
--		memcpy(dev->_filename_ch2, dev->_defaultname_ch2,
--		       str_length + 1);
--	}
--
--       /* Default if filename is empty string */
--	if (strcmp(dev->input_filename_ch2, "") = 0) {
--		if (dev->_isNTSC_ch2) {
--			dev->_filename_ch2 -			    (dev->_pixel_format_ch2 =
--			     PIXEL_FRMT_411) ? "/root/vid411.yuv" :
--			    "/root/vidtest.yuv";
--		} else {
--			dev->_filename_ch2 -			    (dev->_pixel_format_ch2 =
--			     PIXEL_FRMT_411) ? "/root/pal411.yuv" :
--			    "/root/pal422.yuv";
--		}
-+	if (dev->input_filename_ch2 && *dev->input_filename_ch2 = 0) {
-+		/* Default if filename is empty string */
-+		if (dev->_isNTSC_ch2)
-+			filename +				(dev->_pixel_format_ch2 = PIXEL_FRMT_411) ?
-+				"/root/vid411.yuv" :
-+				"/root/vidtest.yuv";
-+		else
-+			filename +				(dev->_pixel_format_ch2 = PIXEL_FRMT_411) ?
-+				"/root/pal411.yuv" :
-+				"/root/pal422.yuv";
-+	} else if (dev->input_filename_ch2)
-+		filename = dev->input_filename_ch2;
-+	else
-+		filename = dev->_defaultname_ch2;
-+	dev->_filename_ch2 = kstrdup(filename, GFP_KERNEL);
-+	if (!dev->_filename_ch2) {
-+		retval = -ENOMEM;
-+		goto error;
- 	}
- 
- 	retval @@ -851,5 +837,5 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *dev, int channel_select,
-       error:
- 	cx25821_dev_unregister(dev);
- 
--	return err;
-+	return retval;
- }
-diff --git a/drivers/staging/cx25821/cx25821-video-upstream.c b/drivers/staging/cx25821/cx25821-video-upstream.c
-index 756a820..465c2b2 100644
---- a/drivers/staging/cx25821/cx25821-video-upstream.c
-+++ b/drivers/staging/cx25821/cx25821-video-upstream.c
-@@ -800,10 +800,9 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
- 	struct sram_channel *sram_ch;
- 	u32 tmp;
- 	int retval = 0;
--	int err = 0;
- 	int data_frame_size = 0;
- 	int risc_buffer_size = 0;
--	int str_length = 0;
-+	char *filename;
- 
- 	if (dev->_is_running) {
- 		printk(KERN_INFO "Video Channel is still running so return!\n");
-@@ -840,37 +839,27 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
- 	risc_buffer_size  	    dev->_isNTSC ? NTSC_RISC_BUF_SIZE : PAL_RISC_BUF_SIZE;
- 
--	if (dev->input_filename) {
--		str_length = strlen(dev->input_filename);
--		dev->_filename = kmalloc(str_length + 1, GFP_KERNEL);
--
--		if (!dev->_filename)
--			goto error;
--
--		memcpy(dev->_filename, dev->input_filename, str_length + 1);
--	} else {
--		str_length = strlen(dev->_defaultname);
--		dev->_filename = kmalloc(str_length + 1, GFP_KERNEL);
--
--		if (!dev->_filename)
--			goto error;
--
--		memcpy(dev->_filename, dev->_defaultname, str_length + 1);
--	}
-+	if (dev->input_filename && *dev->input_filename = 0) {
-+		/* Default if filename is empty string */
-+		if (dev->_isNTSC)
-+			filename +				(dev->_pixel_format = PIXEL_FRMT_411) ?
-+				"/root/vid411.yuv" :
-+				"/root/vidtest.yuv";
-+		else
-+			filename +				(dev->_pixel_format = PIXEL_FRMT_411) ?
-+				"/root/pal411.yuv" :
-+				"/root/pal422.yuv";
-+	} else if (dev->input_filename)
-+		filename = dev->input_filename;
-+	else
-+		filename = dev->_defaultname;
- 
--	/* Default if filename is empty string */
--	if (strcmp(dev->input_filename, "") = 0) {
--		if (dev->_isNTSC) {
--			dev->_filename -			    (dev->_pixel_format =
--			     PIXEL_FRMT_411) ? "/root/vid411.yuv" :
--			    "/root/vidtest.yuv";
--		} else {
--			dev->_filename -			    (dev->_pixel_format =
--			     PIXEL_FRMT_411) ? "/root/pal411.yuv" :
--			    "/root/pal422.yuv";
--		}
-+	dev->_filename = kstrdup(filename, GFP_KERNEL);
-+	if (!dev->_filename) {
-+		retval = -ENOMEM;
-+		goto error;
- 	}
- 
- 	dev->_is_running = 0;
-@@ -908,5 +897,5 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
- error:
- 	cx25821_dev_unregister(dev);
- 
--	return err;
-+	return retval;
- }
