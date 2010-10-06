@@ -1,46 +1,131 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 09 Oct 2010 11:54:06 +0000
-Subject: [patch] Staging: brcm80211: make interface name buffer smaller
-Message-Id: <20101009115406.GR11681@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:38 +0000
+Subject: [PATCH 23/28] Staging: comedi: drivers: adv_pci1723.c: Edit file so that checkpatch.pl has 0 warning
+Message-Id: <1286326843-6170-23-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>
-Cc: Henry Ptasinski <henryp@broadcom.com>, Nohee Ko <noheek@broadcom.com>, Greg Kroah-Hartman <gregkh@suse.de>, Jason Cooper <jason@lakedaemon.net>, Grant Grundler <grundler@chromium.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-In the original code the interface name was IFNAMSIZ + 1, but that
-caused problems in dhd_ifname2idx() which does:
-	strncmp(dhd->iflist[i]->name, name, IFNAMSIZ)
+Changed a few lines that made checkpatch.pl complain. All were WARNING: please, no space before tabs and WARNING: unnecessary whitespace before a quoted newline.
 
-The wl_event_msg_t struct can only store 16 character names as well.
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/comedi/drivers/adv_pci1723.c |   52 +++++++++++++-------------
+ 1 files changed, 26 insertions(+), 26 deletions(-)
 
-And thirdly there is a potential buffer overflow in dhd_op_if() because
-if->net->name is IFNAMSIZ and we do:
-	strcpy(ifp->net->name, ifp->name);
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/staging/brcm80211/brcmfmac/dhd_linux.c b/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
-index 72eed5b..d513069 100644
---- a/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
-+++ b/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
-@@ -217,7 +217,7 @@ typedef struct dhd_if {
- 	u8 mac_addr[ETHER_ADDR_LEN];	/* assigned MAC address */
- 	bool attached;		/* Delayed attachment when unset */
- 	bool txflowcontrol;	/* Per interface flow control indicator */
--	char name[IFNAMSIZ + 1];	/* linux interface name */
-+	char name[IFNAMSIZ];	/* linux interface name */
- } dhd_if_t;
+diff --git a/drivers/staging/comedi/drivers/adv_pci1723.c b/drivers/staging/comedi/drivers/adv_pci1723.c
+index b133bb8..cbb62d4 100644
+--- a/drivers/staging/comedi/drivers/adv_pci1723.c
++++ b/drivers/staging/comedi/drivers/adv_pci1723.c
+@@ -1,22 +1,22 @@
+ /*******************************************************************************
+-   comedi/drivers/pci1723.c
++	comedi/drivers/pci1723.c
  
- /* Local private structure (extension of pub) */
-@@ -1871,8 +1871,7 @@ dhd_add_if(dhd_info_t *dhd, int ifidx, void *handle, char *name,
- 	memset(ifp, 0, sizeof(dhd_if_t));
- 	ifp->info = dhd;
- 	dhd->iflist[ifidx] = ifp;
--	strncpy(ifp->name, name, IFNAMSIZ);
--	ifp->name[IFNAMSIZ] = '\0';
-+	strlcpy(ifp->name, name, IFNAMSIZ);
- 	if (mac_addr != NULL)
- 		memcpy(&ifp->mac_addr, mac_addr, ETHER_ADDR_LEN);
+-   COMEDI - Linux Control and Measurement Device Interface
+-   Copyright (C) 2000 David A. Schleef <ds@schleef.org>
++	COMEDI - Linux Control and Measurement Device Interface
++	Copyright (C) 2000 David A. Schleef <ds@schleef.org>
  
+-   This program is free software; you can redistribute it and/or modify
+-   it under the terms of the GNU General Public License as published by
+-   the Free Software Foundation; either version 2 of the License, or
+-   (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
+ 
+-   This program is distributed in the hope that it will be useful,
+-   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-   GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-   You should have received a copy of the GNU General Public License
+-   along with this program; if not, write to the Free Software
+-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ *******************************************************************************/
+ /*
+@@ -28,11 +28,11 @@ Updated: Mon, 14 Apr 2008 15:12:56 +0100
+ Status: works
+ 
+ Configuration Options:
+-  [0] - PCI bus of device (optional)
+-  [1] - PCI slot of device (optional)
++	[0] - PCI bus of device (optional)
++	1] - PCI slot of device (optional)
+ 
+-  If bus/slot is not specified, the first supported
+-  PCI device found will be used.
++	If bus/slot is not specified, the first supported
++	PCI device found will be used.
+ 
+ Subdevice 0 is 8-channel AO, 16-bit, range +/- 10 V.
+ 
+@@ -42,10 +42,10 @@ configures all channels in the same group.
+ 
+ TODO:
+ 
+-1. Add the two milliamp ranges to the AO subdevice (0 to 20 mA, 4 to 20 mA).
+-2. Read the initial ranges and values of the AO subdevice at start-up instead
+-   of reinitializing them.
+-3. Implement calibration.
++1.Add the two milliamp ranges to the AO subdevice (0 to 20 mA, 4 to 20 mA).
++2.Read the initial ranges and values of the AO subdevice at start-up instead
++	of reinitializing them.
++3.Implement calibration.
+ */
+ 
+ #include "../comedidev.h"
+@@ -235,7 +235,7 @@ static int pci1723_insn_read_ao(struct comedi_device *dev,
+ 	int n, chan;
+ 
+ 	chan = CR_CHAN(insn->chanspec);
+-	DPRINTK(" adv_PCI1723 DEBUG: pci1723_insn_read_ao() ----- \n");
++	DPRINTK(" adv_PCI1723 DEBUG: pci1723_insn_read_ao() -----\n");
+ 	for (n = 0; n < insn->n; n++)
+ 		data[n] = devpriv->ao_data[chan];
+ 
+@@ -243,7 +243,7 @@ static int pci1723_insn_read_ao(struct comedi_device *dev,
+ }
+ 
+ /*
+-  analog data output;
++	analog data output;
+ */
+ static int pci1723_ao_write_winsn(struct comedi_device *dev,
+ 				  struct comedi_subdevice *s,
+@@ -264,7 +264,7 @@ static int pci1723_ao_write_winsn(struct comedi_device *dev,
+ }
+ 
+ /*
+-  digital i/o config/query
++	digital i/o config/query
+ */
+ static int pci1723_dio_insn_config(struct comedi_device *dev,
+ 				   struct comedi_subdevice *s,
+@@ -305,7 +305,7 @@ static int pci1723_dio_insn_config(struct comedi_device *dev,
+ }
+ 
+ /*
+-  digital i/o bits read/write
++	digital i/o bits read/write
+ */
+ static int pci1723_dio_insn_bits(struct comedi_device *dev,
+ 				 struct comedi_subdevice *s,
+-- 
+1.7.3.1.50.g1e633
+
