@@ -1,108 +1,99 @@
-From: Stepan Moskovchenko <stepanm@codeaurora.org>
-Date: Mon, 18 Oct 2010 19:32:13 +0000
-Subject: Re: [PATCH] arm: mach-msm: fix error handling in msm_iommu_probe()
-Message-Id: <4CBCA0BD.7060609@codeaurora.org>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:22 +0000
+Subject: [PATCH 07/28] Staging: comedi: drivers.c: Edit file so that checkpatch.pl has 4 warnings and 0 error
+Message-Id: <1286326843-6170-7-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287327097-9025-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1287327097-9025-1-git-send-email-segooon@gmail.com>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-  On 10/17/2010 7:51 AM, Vasiliy Kulikov wrote:
-> msm_iommu_probe() didn't free mem_region and mapped IO.
-> Also if request_mem_region() failed then error handling
-> code dereferenced NULL pointer.
->
-> Signed-off-by: Vasiliy Kulikov<segooon@gmail.com>
-> ---
->   arch/arm/mach-msm/iommu_dev.c |   22 +++++++++++++---------
->   1 files changed, 13 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/arm/mach-msm/iommu_dev.c b/arch/arm/mach-msm/iommu_dev.c
-> index c33ae78..9019cee 100644
-> --- a/arch/arm/mach-msm/iommu_dev.c
-> +++ b/arch/arm/mach-msm/iommu_dev.c
-> @@ -128,7 +128,7 @@ static void msm_iommu_reset(void __iomem *base)
->
->   static int msm_iommu_probe(struct platform_device *pdev)
->   {
-> -	struct resource *r;
-> +	struct resource *r, *r2;
->   	struct clk *iommu_clk;
->   	struct msm_iommu_drvdata *drvdata;
->   	struct msm_iommu_dev *iommu_dev = pdev->dev.platform_data;
-> @@ -183,27 +183,27 @@ static int msm_iommu_probe(struct platform_device *pdev)
->
->   		len = r->end - r->start + 1;
->
-> -		r = request_mem_region(r->start, len, r->name);
-> -		if (!r) {
-> +		r2 = request_mem_region(r->start, len, r->name);
-> +		if (!r2) {
->   			pr_err("Could not request memory region: "
->   			"start=%p, len=%d\n", (void *) r->start, len);
->   			ret = -EBUSY;
->   			goto fail;
->   		}
->
-> -		regs_base = ioremap(r->start, len);
-> +		regs_base = ioremap(r2->start, len);
->
->   		if (!regs_base) {
->   			pr_err("Could not ioremap: start=%p, len=%d\n",
-> -				 (void *) r->start, len);
-> +				 (void *) r2->start, len);
->   			ret = -EBUSY;
-> -			goto fail;
-> +			goto fail_mem;
->   		}
->
->   		irq = platform_get_irq_byname(pdev, "secure_irq");
->   		if (irq<  0) {
->   			ret = -ENODEV;
-> -			goto fail;
-> +			goto fail_io;
->   		}
->
->   		mb();
-> @@ -211,14 +211,14 @@ static int msm_iommu_probe(struct platform_device *pdev)
->   		if (GET_IDR(regs_base) = 0) {
->   			pr_err("Invalid IDR value detected\n");
->   			ret = -ENODEV;
-> -			goto fail;
-> +			goto fail_io;
->   		}
->
->   		ret = request_irq(irq, msm_iommu_fault_handler, 0,
->   				"msm_iommu_secure_irpt_handler", drvdata);
->   		if (ret) {
->   			pr_err("Request IRQ %d failed with ret=%d\n", irq, ret);
-> -			goto fail;
-> +			goto fail_io;
->   		}
->
->   		msm_iommu_reset(regs_base);
-> @@ -237,6 +237,10 @@ static int msm_iommu_probe(struct platform_device *pdev)
->
->   	return 0;
->
-> +fail_io:
-> +	iounmap(regs_base);
-> +fail_mem:
-> +	release_mem_region(r->start, len);
->   fail:
->   	kfree(drvdata);
->   	return ret;
+Changed a few lines that made checkpatch.pl complain. Could not get ever warning but
+I got it down to to just 4, WARNING: line over 80 characters.
 
-Tested on hardware. Looks good. Thanks!
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/comedi/drivers.c |   41 ++++++++++++++++++++-----------------
+ 1 files changed, 22 insertions(+), 19 deletions(-)
 
-Acked-by: Stepan Moskovchenko <stepanm@codeaurora.org>
-
+diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+index 4a29ed7..849fa9a 100644
+--- a/drivers/staging/comedi/drivers.c
++++ b/drivers/staging/comedi/drivers.c
+@@ -1,23 +1,23 @@
+ /*
+-    module/drivers.c
+-    functions for manipulating drivers
++	module/drivers.c
++	functions for manipulating drivers
+ 
+-    COMEDI - Linux Control and Measurement Device Interface
+-    Copyright (C) 1997-2000 David A. Schleef <ds@schleef.org>
++	COMEDI - Linux Control and Measurement Device Interface
++	Copyright (C) 1997-2000 David A. Schleef <ds@schleef.org>
+ 
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
+ 
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ */
+ 
+@@ -118,7 +118,8 @@ int comedi_device_attach(struct comedi_device *dev, struct comedi_devconfig *it)
+ 	for (driv = comedi_drivers; driv; driv = driv->next) {
+ 		if (!try_module_get(driv->module)) {
+ 			printk
+-			    (KERN_INFO "comedi: failed to increment module count, skipping\n");
++			    (KERN_INFO "comedi: failed to increment	\
++					module count, skipping\n");
+ 			continue;
+ 		}
+ 		if (driv->num_names) {
+@@ -206,8 +207,9 @@ int comedi_driver_unregister(struct comedi_driver *driver)
+ 		if (dev->attached && dev->driver = driver) {
+ 			if (dev->use_count)
+ 				printk
+-				    (KERN_WARNING "BUG! detaching device with use_count=%d\n",
+-				     dev->use_count);
++				    (KERN_WARNING "BUG! detaching device     \
++							with use_count=%d\n",
++							dev->use_count);
+ 			comedi_device_detach(dev);
+ 		}
+ 		mutex_unlock(&dev->mutex);
+@@ -647,7 +649,8 @@ unsigned comedi_buf_write_free(struct comedi_async *async, unsigned int nbytes)
+ 	if ((int)(async->buf_write_count + nbytes -
+ 		  async->buf_write_alloc_count) > 0) {
+ 		printk
+-		    (KERN_INFO "comedi: attempted to write-free more bytes than have been write-allocated.\n");
++		    (KERN_INFO "comedi: attempted to write-free more	\
++				bytes than have been write-allocated.\n");
+ 		nbytes = async->buf_write_alloc_count - async->buf_write_count;
+ 	}
+ 	async->buf_write_count += nbytes;
 -- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
-
-
+1.7.3.1.50.g1e633
 
