@@ -1,21 +1,49 @@
-From: Alan Cox <alan@linux.intel.com>
-Date: Wed, 13 Oct 2010 09:20:17 +0000
-Subject: Re: [PATCH] staging: intel_sst: use signed int for error codes
-Message-Id: <20101013102017.7d60090c@linux.intel.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Wed, 06 Oct 2010 07:46:27 +0000
+Subject: [PATCH] power: makefile cleanup
+Message-Id: <1286351187-24245-1-git-send-email-mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286731724-17996-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1286731724-17996-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Harsha Priya <priya.harsha@intel.com>, Vinod Koul <vinod.koul@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Anton Vorontsov <cbouatmailru@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 10 Oct 2010 21:28:43 +0400
-Vasiliy Kulikov <segooon@gmail.com> wrote:
+Replace EXTRA_CFLAGS with ccflags-y; remove if-statements and replace
+with lists using the kbuild idiom.
 
-> As retval stores error code, it should be signed int.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+None of the dependencies are modified.
 
-Acked-by: Alan Cox <alan@linux.intel.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/power/Makefile |   16 ++++------------
+ 1 files changed, 4 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/power/Makefile b/drivers/power/Makefile
+index 10143aa..430243e 100644
+--- a/drivers/power/Makefile
++++ b/drivers/power/Makefile
+@@ -1,16 +1,8 @@
+-power_supply-objs := power_supply_core.o
++ccflags-$(CONFIG_POWER_SUPPLY_DEBUG) := -DDEBUG
+ 
+-ifeq ($(CONFIG_SYSFS),y)
+-power_supply-objs += power_supply_sysfs.o
+-endif
+-
+-ifeq ($(CONFIG_LEDS_TRIGGERS),y)
+-power_supply-objs += power_supply_leds.o
+-endif
+-
+-ifeq ($(CONFIG_POWER_SUPPLY_DEBUG),y)
+-EXTRA_CFLAGS += -DDEBUG
+-endif
++power_supply-y				:= power_supply_core.o
++power_supply-$(CONFIG_SYSFS)		+= power_supply_sysfs.o
++power_supply-$(CONFIG_LEDS_TRIGGERS)	+= power_supply_leds.o
+ 
+ obj-$(CONFIG_POWER_SUPPLY)	+= power_supply.o
+ 
+-- 
+1.7.2.3
+
