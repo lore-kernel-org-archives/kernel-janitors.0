@@ -1,58 +1,67 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Sat, 02 Oct 2010 16:38:08 +0000
-Subject: [PATCH v3 19/20] Staging: wlags49_h2: Makefile: cleaned up Makefile cflag lines
-Message-Id: <1286037489-28439-19-git-send-email-tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:26 +0000
+Subject: [PATCH 11/28] Staging: comedi: drivers: 8253.h:  Edit file so that checkpatch.pl has 0 errors and wa
+Message-Id: <1286326843-6170-11-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Changed to use the proper ccflags-y option
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line.
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/wlags49_h2/Makefile |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/comedi/drivers/8253.h |   30 +++++++++++++++---------------
+ 1 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/staging/wlags49_h2/Makefile b/drivers/staging/wlags49_h2/Makefile
-index 25d0a8a..e604ebd 100644
---- a/drivers/staging/wlags49_h2/Makefile
-+++ b/drivers/staging/wlags49_h2/Makefile
-@@ -12,8 +12,8 @@
- #  If you want to build AP support (untested), comment out -DSTA_ONLY
+diff --git a/drivers/staging/comedi/drivers/8253.h b/drivers/staging/comedi/drivers/8253.h
+index 3eb45d4..8ef9360 100644
+--- a/drivers/staging/comedi/drivers/8253.h
++++ b/drivers/staging/comedi/drivers/8253.h
+@@ -1,23 +1,23 @@
+ /*
+-    comedi/drivers/8253.h
+-    Header file for 8253
++	comedi/drivers/8253.h
++	Header file for 8253
  
- INSTALLDIR := /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless
--EXTRA_CFLAGS += -I$(KERNELDIR)/include
--EXTRA_CFLAGS += -I$(src) \
-+ccflags-y := -I$(KERNELDIR)/include
-+ccflags-y += -I$(src) \
- 		-DBUS_PCMCIA \
- 		-DUSE_WPA \
- 		-DUSE_WEXT \
-@@ -25,16 +25,16 @@ EXTRA_CFLAGS += -I$(src) \
- #		-DUSE_UIL \
- #		-DUSE_PROFILE \
+-    COMEDI - Linux Control and Measurement Device Interface
+-    Copyright (C) 2000 David A. Schleef <ds@schleef.org>
++	COMEDI - Linux Control and Measurement Device Interface
++	Copyright (C) 2000 David A. Schleef <ds@schleef.org>
  
--ifeq ($(findstring HERMES25,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring HERMES25,$(ccflags-y)),)
- WLNAME := wlags49_h2_cs
- $(WLNAME)-y := sta_h2.o
--ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
- $(WLNAME)-y += ap_h2.o
- endif
- else
- WLNAME=wlags49_h25_cs
- $(WLNAME)-y := sta_h25.o
--ifeq ($(findstring STA_ONLY,$(EXTRA_CFLAGS)),)
-+ifeq ($(findstring STA_ONLY,$(ccflags-y)),)
- $(WLNAME)-y += ap_h25.o
- endif
- endif
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
+ 
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ */
+ 
 -- 
 1.7.3.1.50.g1e633
 
