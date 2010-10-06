@@ -1,7 +1,7 @@
 From: Greg KH <greg@kroah.com>
-Date: Wed, 06 Oct 2010 01:27:47 +0000
+Date: Wed, 06 Oct 2010 01:52:04 +0000
 Subject: Re: [PATCH 00/28] Staging: comedi: Fixed numerous file so that it
-Message-Id: <20101006012747.GA7881@kroah.com>
+Message-Id: <20101006015204.GA22411@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTi=GrHjrZaKdX8DiDf2nT-SByifSxn2sW_0NQWd_@mail.gmail.com>
 In-Reply-To: <AANLkTi=GrHjrZaKdX8DiDf2nT-SByifSxn2sW_0NQWd_@mail.gmail.com>
@@ -21,8 +21,10 @@ On Tue, Oct 05, 2010 at 09:15:16PM -0400, T Dent wrote:
 > This is my last full scale checkpatch.pl patch series, as I'm going to
 > try to contribute more interesting things to the Linux kernel. :)
 
-Did you make this against Linus's tree, or the linux-next tree?
+As mentioned in the response to 01/28, these are all just fine as-is and
+don't need to be changed, sorry.  Go bug the checkpatch author to remove
+this from the tool.
 
-thanks,
+sorry,
 
 greg k-h
