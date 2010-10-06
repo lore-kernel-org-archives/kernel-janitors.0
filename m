@@ -1,41 +1,77 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sat, 30 Oct 2010 14:22:49 +0000
-Subject: [PATCH] ipc: shm: fix information leak to userland
-Message-Id: <20101030142249.GA9835@albatros>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:25 +0000
+Subject: [PATCH 10/28] Staging: comedi: kcomedilib: kcomedilib_main.c: Edit file so that checkpatch.pl has 0
+Message-Id: <1286326843-6170-10-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288429477-21920-1-git-send-email-segooon@gmail.com>
- <20101030090644.GX19804@ZenIV.linux.org.uk>
-In-Reply-To: <20101030090644.GX19804@ZenIV.linux.org.uk>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Helge Deller <deller@gmx.de>, David Howells <dhowells@redhat.com>, Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Structure shmid_ds is copied to userland with shm_unused{,2,3}
-fields unitialized.  It leads to leaking of contents of kernel stack
-memory.
+Changed a few lines that made checkpatch.pl complain. All warnings were
+WARNING: please, no space for starting a line and
+WARNING: consider using strict_strtoul in preference to simple_strtoul.
 
-Cc: stable@kernel.org
-Acked-by: Al Viro <viro@ZenIV.linux.org.uk>
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- Compile tested.
+ .../staging/comedi/kcomedilib/kcomedilib_main.c    |   32 ++++++++++----------
+ 1 files changed, 16 insertions(+), 16 deletions(-)
 
- ipc/shm.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/ipc/shm.c b/ipc/shm.c
-index fd658a1..7d3bb22 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -479,6 +479,7 @@ static inline unsigned long copy_shmid_to_user(void __user *buf, struct shmid64_
- 	    {
- 		struct shmid_ds out;
+diff --git a/drivers/staging/comedi/kcomedilib/kcomedilib_main.c b/drivers/staging/comedi/kcomedilib/kcomedilib_main.c
+index 0252b44..dd8d8a4 100644
+--- a/drivers/staging/comedi/kcomedilib/kcomedilib_main.c
++++ b/drivers/staging/comedi/kcomedilib/kcomedilib_main.c
+@@ -1,23 +1,23 @@
+ /*
+-    kcomedilib/kcomedilib.c
+-    a comedlib interface for kernel modules
++	kcomedilib/kcomedilib.c
++	a comedlib interface for kernel modules
  
-+		memset(&out, 0, sizeof(out));
- 		ipc64_perm_to_ipc_perm(&in->shm_perm, &out.shm_perm);
- 		out.shm_segsz	= in->shm_segsz;
- 		out.shm_atime	= in->shm_atime;
+-    COMEDI - Linux Control and Measurement Device Interface
+-    Copyright (C) 1997-2000 David A. Schleef <ds@schleef.org>
++	COMEDI - Linux Control and Measurement Device Interface
++	Copyright (C) 1997-2000 David A. Schleef <ds@schleef.org>
+ 
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
+ 
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
+ 
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++	You should have received a copy of the GNU General Public License
++	along with this program; if not, write to the Free Software
++	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ */
+ 
+@@ -50,7 +50,7 @@ struct comedi_device *comedi_open(const char *filename)
+ 	if (strncmp(filename, "/dev/comedi", 11) != 0)
+ 		return NULL;
+ 
+-	minor = simple_strtoul(filename + 11, NULL, 0);
++	minor = strict_strtoul(filename + 11, NULL, 0);
+ 
+ 	if (minor >= COMEDI_NUM_BOARD_MINORS)
+ 		return NULL;
 -- 
-1.7.0.4
+1.7.3.1.50.g1e633
+
