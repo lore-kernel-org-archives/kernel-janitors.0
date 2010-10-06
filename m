@@ -1,37 +1,57 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sat, 30 Oct 2010 09:04:24 +0000
-Subject: [PATCH] powerpc: kvm: fix information leak to userland
-Message-Id: <1288429464-21763-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Wed, 06 Oct 2010 01:00:39 +0000
+Subject: [PATCH 24/28] Staging: comedi: drivers: adv_pci_dio.c: Edit file so that checkpatch.pl has 3 warning
+Message-Id: <1286326843-6170-24-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: kvm@vger.kernel.org, Marcelo Tosatti <mtosatti@redhat.com>, Alexander Graf <agraf@suse.de>, kvm-ppc@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Avi Kivity <avi@redhat.com>, linuxppc-dev@lists.ozlabs.org
+To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Structure kvm_ppc_pvinfo is copied to userland with flags and
-pad fields unitialized.  It leads to leaking of contents of
-kernel stack memory.
+Changed a few lines that made checkpatch.pl complain. Except a few warnings and
+error.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- I cannot compile this driver, so it is not tested at all.
+ drivers/staging/comedi/drivers/adv_pci_dio.c |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
 
- arch/powerpc/kvm/powerpc.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-index 2f87a16..38f756f 100644
---- a/arch/powerpc/kvm/powerpc.c
-+++ b/arch/powerpc/kvm/powerpc.c
-@@ -617,6 +617,7 @@ long kvm_arch_vm_ioctl(struct file *filp,
- 	switch (ioctl) {
- 	case KVM_PPC_GET_PVINFO: {
- 		struct kvm_ppc_pvinfo pvinfo;
-+		memset(&pvinfo, 0, sizeof(pvinfo));
- 		r = kvm_vm_ioctl_get_pvinfo(&pvinfo);
- 		if (copy_to_user(argp, &pvinfo, sizeof(pvinfo))) {
- 			r = -EFAULT;
+diff --git a/drivers/staging/comedi/drivers/adv_pci_dio.c b/drivers/staging/comedi/drivers/adv_pci_dio.c
+index d018bb4..aafefd8 100644
+--- a/drivers/staging/comedi/drivers/adv_pci_dio.c
++++ b/drivers/staging/comedi/drivers/adv_pci_dio.c
+@@ -12,20 +12,20 @@ Description: Advantech PCI-1730, PCI-1733, PCI-1734, PCI-1735U,
+ 	PCI-1754, PCI-1756, PCI-1762
+ Author: Michal Dobes <dobes@tesnet.cz>
+ Devices: [Advantech] PCI-1730 (adv_pci_dio), PCI-1733,
+-  PCI-1734, PCI-1735U, PCI-1736UP, PCI-1750,
+-  PCI-1751, PCI-1752, PCI-1753,
+-  PCI-1753+PCI-1753E, PCI-1754, PCI-1756,
+-  PCI-1760, PCI-1762
++	PCI-1734, PCI-1735U, PCI-1736UP, PCI-1750,
++	PCI-1751, PCI-1752, PCI-1753,
++	PCI-1753+PCI-1753E, PCI-1754, PCI-1756,
++	PCI-1760, PCI-1762
+ Status: untested
+ Updated: Tue, 04 May 2010 13:00:00 +0000
+ 
+ This driver supports now only insn interface for DI/DO/DIO.
+ 
+ Configuration options:
+-  [0] - PCI bus of device (optional)
+-  [1] - PCI slot of device (optional)
+-	If bus/slot is not specified, the first available PCI
+-	device will be used.
++	[0] - PCI bus of device (optional)
++	[1] - PCI slot of device (optional)
++		If bus/slot is not specified, the first available PCI
++		device will be used.
+ 
+ */
+ 
 -- 
-1.7.0.4
+1.7.3.1.50.g1e633
 
