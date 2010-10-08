@@ -1,21 +1,42 @@
-From: Christoph Hellwig <hch@lst.de>
-Date: Mon, 25 Oct 2010 18:44:03 +0000
-Subject: Re: [patch] hfsplus: fix double lock typo in ioctl
-Message-Id: <20101025184403.GA18094@lst.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 08 Oct 2010 07:03:07 +0000
+Subject: [patch] gdth: integer overflow in ioctl
+Message-Id: <20101008070307.GF11681@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101025045326.GW5985@bicker>
-In-Reply-To: <20101025045326.GW5985@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Achim Leubner <achim_leubner@adaptec.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 25, 2010 at 06:53:27AM +0200, Dan Carpenter wrote:
-> This was supposed to be a mutex_unlock() instead of a mutex_lock().
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+gdth_ioctl_alloc() takes the size variable as an int.
+copy_from_user() takes the size variable as an unsigned long.
+gen.data_len and gen.sense_len are unsigned longs.
+On x86_64 longs are 64 bit and ints are 32 bit.
 
-Thanks,
+We could pass in a very large number and the allocation would truncate
+the size to 32 bits and allocate a small buffer.  Then when we do the
+copy_from_user(), it would result in a memory corruption.
 
-applied.
+CC: stable@kernel.org
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
+index b860d65..4cf7ffa 100644
+--- a/drivers/scsi/gdth.c
++++ b/drivers/scsi/gdth.c
+@@ -4175,6 +4175,14 @@ static int ioc_general(void __user *arg, char *cmnd)
+     ha = gdth_find_ha(gen.ionode);
+     if (!ha)
+         return -EFAULT;
++
++    if (gen.data_len > INT_MAX)
++        return -EINVAL;
++    if (gen.sense_len > INT_MAX)
++        return -EINVAL;
++    if (gen.data_len + gen.sense_len > INT_MAX)
++        return -EINVAL;
++
+     if (gen.data_len + gen.sense_len != 0) {
+         if (!(buf = gdth_ioctl_alloc(ha, gen.data_len + gen.sense_len,
+                                      FALSE, &paddr)))
