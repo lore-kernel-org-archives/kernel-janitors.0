@@ -1,45 +1,33 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Fri, 08 Oct 2010 18:33:51 +0000
-Subject: Re: [PATCH 22/24] spi: change to new flag variable
-Message-Id: <20101008183351.GK3863@angua.secretlab.ca>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:42 +0000
+Subject: [PATCH 22/33] Staging: rtl8712: Makefile: replace the use of <module>-objs with <module>-y
+Message-Id: <1286496113-11897-22-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
- <58b418c2e7311bffb13606a6b94e33ddb7569346.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <58b418c2e7311bffb13606a6b94e33ddb7569346.1285355033.git.mfm@muteddisk.com>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfm@muteddisk.com>
-Cc: kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, spi-devel-general@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-On Fri, Sep 24, 2010 at 12:17:32PM -0700, matt mooney wrote:
-> Replace EXTRA_CFLAGS with ccflags-y.
-> 
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
+Changed <module>-objs to <module>-y in Makefile.
 
-Applied, thanks.
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8712/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-g.
+diff --git a/drivers/staging/rtl8712/Makefile b/drivers/staging/rtl8712/Makefile
+index 1ccd251..6f8500c 100644
+--- a/drivers/staging/rtl8712/Makefile
++++ b/drivers/staging/rtl8712/Makefile
+@@ -1,4 +1,4 @@
+-r8712u-objs :=				\
++r8712u-y :=				\
+ 		rtl871x_cmd.o		\
+ 		rtl8712_cmd.o		\
+ 		rtl871x_security.o	\
+-- 
+1.7.3.1.50.g1e633
 
-> ---
->  drivers/spi/Makefile |    4 +---
->  1 files changed, 1 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-> index e9cbd18..66c0c47 100644
-> --- a/drivers/spi/Makefile
-> +++ b/drivers/spi/Makefile
-> @@ -2,9 +2,7 @@
->  # Makefile for kernel SPI drivers.
->  #
->  
-> -ifeq ($(CONFIG_SPI_DEBUG),y)
-> -EXTRA_CFLAGS += -DDEBUG
-> -endif
-> +ccflags-$(CONFIG_SPI_DEBUG) := -DDEBUG
->  
->  # small core, mostly translating board-specific
->  # config declarations into driver model code
-> -- 
-> 1.7.2.1
-> 
