@@ -1,93 +1,39 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 26 Oct 2010 10:25:30 +0000
-Subject: [PATCH 1/14] drivers/staging: delete double assignment
-Message-Id: <1288088743-3725-2-git-send-email-julia@diku.dk>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:35 +0000
+Subject: [PATCH 15/33] Staging: keucr: Makefile: Makefile clean up
+Message-Id: <1286496113-11897-15-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-From: Julia Lawall <julia@diku.dk>
+Changed <module>-objs to <module>-y in Makefile.
+Also, Replace EXTRA_CFLAGS with ccflags-y.
 
-Delete successive assignments to the same location.  In three of the cases,
-the two assignments are identical.  In the case of the file
-rt2860/common/cmm_aes.c, the assigned variable i is never used, so both
-assignments are dropped.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression i;
-@@
-
-*i = ...;
- i = ...;
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c     |    1 -
- drivers/staging/hv/hv_utils.c                        |    3 ---
- drivers/staging/rt2860/common/cmm_aes.c              |    2 --
- drivers/staging/westbridge/astoria/api/src/cyasusb.c |    1 -
- 4 files changed, 7 deletions(-)
+ drivers/staging/keucr/Makefile |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-index 87a6487..20d5098 100644
---- a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-+++ b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-@@ -286,7 +286,6 @@ int ft1000_CreateDevice(struct ft1000_device *dev)
-     pid = kernel_thread (exec_mknod, (void *)info, 0);
+diff --git a/drivers/staging/keucr/Makefile b/drivers/staging/keucr/Makefile
+index 2a4200f..5c19b7b 100644
+--- a/drivers/staging/keucr/Makefile
++++ b/drivers/staging/keucr/Makefile
+@@ -1,8 +1,8 @@
+-EXTRA_CFLAGS += -Idrivers/scsi
++ccflags-y := -Idrivers/scsi
  
-     // initialize application information
--    info->appcnt = 0;
+ obj-$(CONFIG_USB_ENESTORAGE)	+= keucr.o
  
- //    if (ft1000_flarion_cnt = 0) {
- //
-diff --git a/drivers/staging/hv/hv_utils.c b/drivers/staging/hv/hv_utils.c
-index 702a478..a99e900 100644
---- a/drivers/staging/hv/hv_utils.c
-+++ b/drivers/staging/hv/hv_utils.c
-@@ -212,9 +212,6 @@ static void heartbeat_onchannelcallback(void *context)
- 			   recvlen, requestid);
- 
- 		icmsghdrp = (struct icmsg_hdr *)&buf[
--			sizeof(struct vmbuspipe_hdr)];
--
--		icmsghdrp = (struct icmsg_hdr *)&buf[
- 				sizeof(struct vmbuspipe_hdr)];
- 
- 		if (icmsghdrp->icmsgtype = ICMSGTYPE_NEGOTIATE) {
-diff --git a/drivers/staging/rt2860/common/cmm_aes.c b/drivers/staging/rt2860/common/cmm_aes.c
-index 1d159ff..a99879b 100644
---- a/drivers/staging/rt2860/common/cmm_aes.c
-+++ b/drivers/staging/rt2860/common/cmm_aes.c
-@@ -330,8 +330,6 @@ void construct_mic_iv(unsigned char *mic_iv,
- 	for (i = 8; i < 14; i++)
- 		mic_iv[i] = pn_vector[13 - i];	/* mic_iv[8:13] = PN[5:0] */
- #endif
--	i = (payload_length / 256);
--	i = (payload_length % 256);
- 	mic_iv[14] = (unsigned char)(payload_length / 256);
- 	mic_iv[15] = (unsigned char)(payload_length % 256);
- 
-diff --git a/drivers/staging/westbridge/astoria/api/src/cyasusb.c b/drivers/staging/westbridge/astoria/api/src/cyasusb.c
-index 5a21970..7777d9a 100644
---- a/drivers/staging/westbridge/astoria/api/src/cyasusb.c
-+++ b/drivers/staging/westbridge/astoria/api/src/cyasusb.c
-@@ -1417,7 +1417,6 @@ cy_as_usb_set_enum_config(cy_as_device_handle handle,
- 	 */
- 	bus_mask   = 0;
- 	media_mask = 0;
--	media_mask = 0;
- 	for (bus = 0; bus < CY_AS_MAX_BUSES; bus++) {
- 		for (device = 0; device < CY_AS_MAX_STORAGE_DEVICES; device++) {
- 			if (config_p->devices_to_enumerate[bus][device] =
+-keucr-objs :=			\
++keucr-y :=			\
+ 		usb.o		\
+ 		scsiglue.o	\
+ 		transport.o	\
+-- 
+1.7.3.1.50.g1e633
 
