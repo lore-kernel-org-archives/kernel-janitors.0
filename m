@@ -1,50 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 26 Oct 2010 10:25:33 +0000
-Subject: [PATCH 4/14] drivers/staging/brcm80211/brcmfmac/dhd_linux.c: delete double assignment
-Message-Id: <1288088743-3725-5-git-send-email-julia@diku.dk>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:49 +0000
+Subject: [PATCH 29/33] Staging: usbip: Makefile: replace the use of <module>-objs with <module>-y
+Message-Id: <1286496113-11897-29-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, Henry Ptasinski <henryp@broadcom.com>, Nohee Ko <noheek@broadcom.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-From: Julia Lawall <julia@diku.dk>
+Changed <module>-objs to <module>-y in Makefile.
 
-Delete successive assignments to the same location.  dhd_ops_virt contains
-a subset of the definitions of dhd_ops_pri.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression i;
-@@
-
-*i = ...;
- i = ...;
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/brcm80211/brcmfmac/dhd_linux.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/usbip/Makefile |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/brcm80211/brcmfmac/dhd_linux.c b/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
-index e535787..30b8e9b 100644
---- a/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
-+++ b/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
-@@ -2222,8 +2222,6 @@ int dhd_net_attach(dhd_pub_t *dhdp, int ifidx)
- 	ASSERT(net);
+diff --git a/drivers/staging/usbip/Makefile b/drivers/staging/usbip/Makefile
+index 10307f8..279f3cc 100644
+--- a/drivers/staging/usbip/Makefile
++++ b/drivers/staging/usbip/Makefile
+@@ -1,11 +1,11 @@
+ obj-$(CONFIG_USB_IP_COMMON) += usbip_common_mod.o
+-usbip_common_mod-objs := usbip_common.o usbip_event.o
++usbip_common_mod-y := usbip_common.o usbip_event.o
  
- 	ASSERT(!net->netdev_ops);
--	net->netdev_ops = &dhd_ops_virt;
--
- 	net->netdev_ops = &dhd_ops_pri;
+ obj-$(CONFIG_USB_IP_VHCI_HCD) += vhci-hcd.o
+-vhci-hcd-objs := vhci_sysfs.o vhci_tx.o vhci_rx.o vhci_hcd.o
++vhci-hcd-y := vhci_sysfs.o vhci_tx.o vhci_rx.o vhci_hcd.o
  
- 	/*
+ obj-$(CONFIG_USB_IP_HOST) += usbip.o
+-usbip-objs := stub_dev.o stub_main.o stub_rx.o stub_tx.o
++usbip-y := stub_dev.o stub_main.o stub_rx.o stub_tx.o
+ 
+ ccflags-$(CONFIG_USB_IP_DEBUG_ENABLE) := -DDEBUG
+ 
+-- 
+1.7.3.1.50.g1e633
 
