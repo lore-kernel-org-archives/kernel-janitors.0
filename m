@@ -1,50 +1,36 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Oct 2010 13:49:04 +0000
-Subject: [patch v2] Staging: bcm: silence off by one warning
-Message-Id: <20101008134904.GA1267@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:38 +0000
+Subject: [PATCH 18/33] Staging: rt2860: Makefile: replace the use of <module>-objs with <module>-y
+Message-Id: <1286496113-11897-18-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-"status" is used as an index into the Adapter->PackInfo[] array, which
-has NO_OF_QUEUES elements.
+Changed <module>-objs to <module>-y in Makefile.
 
-This code actually works OK.  The SearchSfid() function always returns
-a valid index or it returns NO_OF_QUEUES + 1.  But it looks sloppy and
-it makes the static checkers complain.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
-v2:  whitespace issue
+ drivers/staging/rt2860/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/bcm/CmHost.c b/drivers/staging/bcm/CmHost.c
-index 0329f7d..37187c4 100644
---- a/drivers/staging/bcm/CmHost.c
-+++ b/drivers/staging/bcm/CmHost.c
-@@ -2368,8 +2368,7 @@ int get_dsx_sf_data_to_application(PMINI_ADAPTER Adapter, UINT uiSFId, void __us
- 	struct _packet_info *psSfInfo=NULL;
- 	BCM_DEBUG_PRINT( Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "status =%d",status);
- 	status = SearchSfid(Adapter, uiSFId);
--	if(status>NO_OF_QUEUES)
--	{
-+	if (status >= NO_OF_QUEUES) {
- 		BCM_DEBUG_PRINT(Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "SFID %d not present in queue !!!", uiSFId );
- 		return -EINVAL;
- 	}
-diff --git a/drivers/staging/bcm/Qos.c b/drivers/staging/bcm/Qos.c
-index 913a1e1..75b2b87 100644
---- a/drivers/staging/bcm/Qos.c
-+++ b/drivers/staging/bcm/Qos.c
-@@ -587,8 +587,7 @@ USHORT ClassifyPacket(PMINI_ADAPTER Adapter,struct sk_buff* skb)
- 			pstClassifierRule = &Adapter->astClassifierTable[uiLoopIndex];
+diff --git a/drivers/staging/rt2860/Makefile b/drivers/staging/rt2860/Makefile
+index d816ddb..6dd0aa5 100644
+--- a/drivers/staging/rt2860/Makefile
++++ b/drivers/staging/rt2860/Makefile
+@@ -6,7 +6,7 @@ ccflags-y += -DRTMP_MAC_PCI -DRTMP_PCI_SUPPORT -DRT2860
+ ccflags-y += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3090
+ ccflags-y += -DDBG
  
- 			uiSfIndex = SearchSfid(Adapter,pstClassifierRule->ulSFID);
--			if(uiSfIndex > NO_OF_QUEUES)
--			{
-+			if (uiSfIndex >= NO_OF_QUEUES) {
- 				BCM_DEBUG_PRINT(Adapter, DBG_TYPE_TX, IPV4_DBG, DBG_LVL_ALL,  "Queue Not Valid. SearchSfid for this classifier Failed\n");
- 				break;
- 			}
+-rt2860sta-objs :=	\
++rt2860sta-y :=	\
+ 	common/crypt_md5.o	\
+ 	common/crypt_sha2.o	\
+ 	common/crypt_hmac.o	\
+-- 
+1.7.3.1.50.g1e633
 
