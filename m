@@ -1,18 +1,15 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 08 Oct 2010 18:33:47 +0000
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Fri, 08 Oct 2010 20:02:39 +0000
 Subject: Re: [PATCH 00/33] Staging: Fixed <module-objs> to <module>-y
-Message-Id: <20101008183347.GA23712@kroah.com>
+Message-Id: <20101008200239.GA28912@merkur.ravnborg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTi=Hc2eWzOQ_xKBYsqfwkkiKGU0v42jUhLQ8K7dU@mail.gmail.com>
- <AANLkTinynZj9bYFAyfRTF2uopmLe6Ls4YGdZPqCAJTpR@mail.gmail.com>
- <20101008134654.GA6600@kroah.com>
- <AANLkTi=9N4e7fBekOaUa7OmPcaqicAgkC2aDT0HbJE8p@mail.gmail.com>
+References: <AANLkTi=Hc2eWzOQ_xKBYsqfwkkiKGU0v42jUhLQ8K7dU@mail.gmail.com> <AANLkTinynZj9bYFAyfRTF2uopmLe6Ls4YGdZPqCAJTpR@mail.gmail.com> <20101008134654.GA6600@kroah.com> <AANLkTi=9N4e7fBekOaUa7OmPcaqicAgkC2aDT0HbJE8p@mail.gmail.com>
 In-Reply-To: <AANLkTi=9N4e7fBekOaUa7OmPcaqicAgkC2aDT0HbJE8p@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: matt mooney <mfmooney@gmail.com>
-Cc: T Dent <tdent48227@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org
+Cc: Greg KH <greg@kroah.com>, T Dent <tdent48227@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kbuild@vger.kernel.org
 
 On Fri, Oct 08, 2010 at 11:09:11AM -0700, matt mooney wrote:
 > On Fri, Oct 8, 2010 at 6:46 AM, Greg KH <greg@kroah.com> wrote:
@@ -41,13 +38,32 @@ On Fri, Oct 08, 2010 at 11:09:11AM -0700, matt mooney wrote:
 > >
 >=20
 > This is good to know. I wonder how well received these changes will be
-> in other parts of the kernel though.
+> in other parts of the kernel though. I purposefully started in a
+> subsystem you maintain since I figured any criticism from you would be
+> constructive and you wouldn't just knack without reason.
 
-It depends on the subsystem maintainer.
+In staging it is OK with small very janitorial patches - at
+least I see lots of these applied there.
+But in the world outside staging most maintainers would expect
+you to do a full update if you decide to clean up their Makefile.
+If the updates are bigger then split it up.
 
-good luck,
+But for trivial updates batch the Makefiles.
 
-greg k-h
+If you final patches end up:
+1) Making the files more readable, and more standard looking
+2) and do not add a lot of lines
+
+then you will likely see that most maintainers will accept it.
+
+But you also have to convince tham that you did a proper job
+testing your changes.
+
+A good test on Makefile cleanup is that nothing should rebuild
+due to the patch being applied. This simple test have saved me
+from a few brown papaer bag bugs in the past.
+
+	Sam
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
