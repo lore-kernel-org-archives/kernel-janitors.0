@@ -1,36 +1,31 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Sat, 02 Oct 2010 16:38:05 +0000
-Subject: [PATCH v3 16/20] Staging: usbip: Makefile: cleaned up Makefile cflag lines
-Message-Id: <1286037489-28439-16-git-send-email-tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:21 +0000
+Subject: [PATCH 01/33] Staging: autofs: Makefile: replace the use of <module>-objs with <module>-y
+Message-Id: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Changed to use the proper ccflags-y option
+Changed Makefile <module>-objs to <module>-y lines.
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/usbip/Makefile |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/staging/autofs/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/staging/usbip/Makefile b/drivers/staging/usbip/Makefile
-index 6f2916b..10307f8 100644
---- a/drivers/staging/usbip/Makefile
-+++ b/drivers/staging/usbip/Makefile
-@@ -7,6 +7,5 @@ vhci-hcd-objs := vhci_sysfs.o vhci_tx.o vhci_rx.o vhci_hcd.o
- obj-$(CONFIG_USB_IP_HOST) += usbip.o
- usbip-objs := stub_dev.o stub_main.o stub_rx.o stub_tx.o
+diff --git a/drivers/staging/autofs/Makefile b/drivers/staging/autofs/Makefile
+index 453a60f..f48781c 100644
+--- a/drivers/staging/autofs/Makefile
++++ b/drivers/staging/autofs/Makefile
+@@ -4,4 +4,4 @@
  
--ifeq ($(CONFIG_USB_IP_DEBUG_ENABLE),y)
--	EXTRA_CFLAGS += -DDEBUG
--endif
-+ccflags-$(CONFIG_USB_IP_DEBUG_ENABLE) := -DDEBUG
-+
+ obj-$(CONFIG_AUTOFS_FS) += autofs.o
+ 
+-autofs-objs := dirhash.o init.o inode.o root.o symlink.o waitq.o
++autofs-y := dirhash.o init.o inode.o root.o symlink.o waitq.o
 -- 
 1.7.3.1.50.g1e633
 
