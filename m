@@ -1,37 +1,40 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 17 Oct 2010 14:41:28 +0000
-Subject: [PATCH 5/8] char: ppdev: fix information leak to userland
-Message-Id: <1287326489-8071-1-git-send-email-segooon@gmail.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:28 +0000
+Subject: [PATCH 08/33] Staging: easycap: Makefile: replace the use of <module>-objs with <module>-y
+Message-Id: <1286496113-11897-8-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Structure par_timeout is copied to userland with some padding fields unitialized.
-Field tv_usec has type __kernel_suseconds_t, it differs from tv_sec's type on
-some architectures.  It leads to leaking of stack memory.
+Changed <module>-objs to <module>-y in Makefile.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- Compile tested.
+ drivers/staging/easycap/Makefile |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
- drivers/char/ppdev.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
-index 723152d..f176dba 100644
---- a/drivers/char/ppdev.c
-+++ b/drivers/char/ppdev.c
-@@ -613,6 +613,7 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+diff --git a/drivers/staging/easycap/Makefile b/drivers/staging/easycap/Makefile
+index 680f370..8a3d911 100644
+--- a/drivers/staging/easycap/Makefile
++++ b/drivers/staging/easycap/Makefile
+@@ -1,9 +1,9 @@
  
- 	case PPGETTIME:
- 		to_jiffies = pp->pdev->timeout;
-+		memset(&par_timeout, 0, sizeof(par_timeout));
- 		par_timeout.tv_sec = to_jiffies / HZ;
- 		par_timeout.tv_usec = (to_jiffies % (long)HZ) * (1000000/HZ);
- 		if (copy_to_user (argp, &par_timeout, sizeof(struct timeval)))
+ obj-$(CONFIG_EASYCAP)	+= easycap.o
+ 
+-easycap-objs	:= easycap_main.o easycap_low.o easycap_sound.o
+-easycap-objs	+= easycap_ioctl.o easycap_settings.o
+-easycap-objs	+= easycap_testcard.o
++easycap-y	:= easycap_main.o easycap_low.o easycap_sound.o
++easycap-y	+= easycap_ioctl.o easycap_settings.o
++easycap-y	+= easycap_testcard.o
+ 
+ ccflags-y := -Wall
+ # Impose all or none of the following:
 -- 
-1.7.0.4
+1.7.3.1.50.g1e633
 
