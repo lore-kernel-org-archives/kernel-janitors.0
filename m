@@ -1,37 +1,36 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 14 Oct 2010 18:21:59 +0000
-Subject: [patch -next] megaraid: unlock on error path
-Message-Id: <20101014182159.GB6614@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:40 +0000
+Subject: [PATCH 20/33] Staging: rtl8187se: Makefile: replace the use of <module>-objs with <module>-y
+Message-Id: <1286496113-11897-20-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Neela Syam Kolli <megaraidlinux@lsi.com>, bo yang <boyang1288@gmail.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-We need to release the semaphore here before returning.
+Changed <module>-objs to <module>-y in Makefile.
 
-This was introduced in 39a985547cb: "[SCSI] megaraid_sas: Add Online
-Controller Reset to MegaRAID SAS drive"
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/rtl8187se/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/scsi/megaraid/megaraid_sas.c b/drivers/scsi/megaraid/megaraid_sas.c
-index 55951f4..ab28bae 100644
---- a/drivers/scsi/megaraid/megaraid_sas.c
-+++ b/drivers/scsi/megaraid/megaraid_sas.c
-@@ -4436,11 +4436,13 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
- 		printk(KERN_ERR "megaraid_sas: timed out while"
- 			"waiting for HBA to recover\n");
- 		error = -ENODEV;
--		goto out_kfree_ioc;
-+		goto out_up;
- 	}
- 	spin_unlock_irqrestore(&instance->hba_lock, flags);
+diff --git a/drivers/staging/rtl8187se/Makefile b/drivers/staging/rtl8187se/Makefile
+index adc3849..11a9226 100644
+--- a/drivers/staging/rtl8187se/Makefile
++++ b/drivers/staging/rtl8187se/Makefile
+@@ -16,7 +16,7 @@ ccflags-y += -DENABLE_LPS
  
- 	error = megasas_mgmt_fw_ioctl(instance, user_ioc, ioc);
-+
-+      out_up:
- 	up(&instance->ioctl_sem);
+ #ccflags-y := -mhard-float -DCONFIG_FORCE_HARD_FLOAT=y
  
-       out_kfree_ioc:
+-r8187se-objs :=			\
++r8187se-y :=			\
+ 		r8180_core.o		\
+ 		r8180_wx.o		\
+ 		r8180_rtl8225z2.o	\
+-- 
+1.7.3.1.50.g1e633
+
