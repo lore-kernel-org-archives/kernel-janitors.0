@@ -1,39 +1,45 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 21 Oct 2010 19:21:45 +0000
-Subject: [patch] V4L/DVB: cx88: uninitialized variable
-Message-Id: <20101021192145.GH5985@bicker>
+From: Grant Likely <grant.likely@secretlab.ca>
+Date: Fri, 08 Oct 2010 18:33:51 +0000
+Subject: Re: [PATCH 22/24] spi: change to new flag variable
+Message-Id: <20101008183351.GK3863@angua.secretlab.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
+ <58b418c2e7311bffb13606a6b94e33ddb7569346.1285355033.git.mfm@muteddisk.com>
+In-Reply-To: <58b418c2e7311bffb13606a6b94e33ddb7569346.1285355033.git.mfm@muteddisk.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, Istvan Varga <istvanv@users.sourceforge.net>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: matt mooney <mfm@muteddisk.com>
+Cc: kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, spi-devel-general@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-Fixes a gcc warning:
+On Fri, Sep 24, 2010 at 12:17:32PM -0700, matt mooney wrote:
+> Replace EXTRA_CFLAGS with ccflags-y.
+> 
+> Signed-off-by: matt mooney <mfm@muteddisk.com>
 
-drivers/media/video/cx88/cx88-video.c:772:
-	warning: ‘core’ may be used uninitialized in this function
+Applied, thanks.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+g.
 
-diff --git a/drivers/media/video/cx88/cx88-video.c b/drivers/media/video/cx88/cx88-video.c
-index 19c64a7..c19ec71 100644
---- a/drivers/media/video/cx88/cx88-video.c
-+++ b/drivers/media/video/cx88/cx88-video.c
-@@ -752,7 +752,7 @@ static int video_open(struct file *file)
- {
- 	struct video_device *vdev = video_devdata(file);
- 	struct cx8800_dev *dev = video_drvdata(file);
--	struct cx88_core *core;
-+	struct cx88_core *core = dev->core;
- 	struct cx8800_fh *fh;
- 	enum v4l2_buf_type type = 0;
- 	int radio = 0;
-@@ -786,7 +786,6 @@ static int video_open(struct file *file)
- 	fh->fmt      = format_by_fourcc(V4L2_PIX_FMT_BGR24);
- 
- 	mutex_lock(&core->lock);
--	core = dev->core;
- 
- 	videobuf_queue_sg_init(&fh->vidq, &cx8800_video_qops,
- 			    &dev->pci->dev, &dev->slock,
+> ---
+>  drivers/spi/Makefile |    4 +---
+>  1 files changed, 1 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+> index e9cbd18..66c0c47 100644
+> --- a/drivers/spi/Makefile
+> +++ b/drivers/spi/Makefile
+> @@ -2,9 +2,7 @@
+>  # Makefile for kernel SPI drivers.
+>  #
+>  
+> -ifeq ($(CONFIG_SPI_DEBUG),y)
+> -EXTRA_CFLAGS += -DDEBUG
+> -endif
+> +ccflags-$(CONFIG_SPI_DEBUG) := -DDEBUG
+>  
+>  # small core, mostly translating board-specific
+>  # config declarations into driver model code
+> -- 
+> 1.7.2.1
+> 
