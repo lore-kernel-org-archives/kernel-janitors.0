@@ -1,33 +1,47 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 11 Oct 2010 19:15:11 +0000
-Subject: [patch 2/2 -next] rbd: passing wrong variable to bvec_kunmap_irq()
-Message-Id: <20101011191511.GJ5851@bicker>
+Date: Fri, 08 Oct 2010 12:58:45 +0000
+Subject: [patch] Staging: bcm: silence off by one warning
+Message-Id: <20101008125845.GO11681@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yehuda Sadeh <yehuda@hq.newdream.net>
-Cc: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We should be passing "buf" here insead of "bv".  This is tricky because
-it's not the same as kmap() and kunmap().  GCC does warn about it if you
-compile on i386 with CONFIG_HIGHMEM.
+"status" is used as an index into the Adapter->PackInfo[] array, which
+has NO_OF_QUEUES elements.
+
+This code actually works OK.  The SearchSfid() function always returns
+a valid index or it returns NO_OF_QUEUES + 1.  But it looks sloppy and
+it makes the static checkers complain.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-If it's any consolation, out of three callers to bvec_kunmap_irq() only
-one caller was correct.  :P
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 52f9420..6ec9d53 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -554,7 +554,7 @@ static void zero_bio_chain(struct bio *chain, int start_ofs)
- 				buf = bvec_kmap_irq(bv, &flags);
- 				memset(buf + remainder, 0,
- 				       bv->bv_len - remainder);
--				bvec_kunmap_irq(bv, &flags);
-+				bvec_kunmap_irq(buf, &flags);
+diff --git a/drivers/staging/bcm/CmHost.c b/drivers/staging/bcm/CmHost.c
+index 0329f7d..37187c4 100644
+--- a/drivers/staging/bcm/CmHost.c
++++ b/drivers/staging/bcm/CmHost.c
+@@ -2368,8 +2368,7 @@ int get_dsx_sf_data_to_application(PMINI_ADAPTER Adapter, UINT uiSFId, void __us
+ 	struct _packet_info *psSfInfo=NULL;
+ 	BCM_DEBUG_PRINT( Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "status =%d",status);
+ 	status = SearchSfid(Adapter, uiSFId);
+-	if(status>NO_OF_QUEUES)
+-	{
++	if (status  >= NO_OF_QUEUES) {
+ 		BCM_DEBUG_PRINT(Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "SFID %d not present in queue !!!", uiSFId );
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/staging/bcm/Qos.c b/drivers/staging/bcm/Qos.c
+index 913a1e1..75b2b87 100644
+--- a/drivers/staging/bcm/Qos.c
++++ b/drivers/staging/bcm/Qos.c
+@@ -587,8 +587,7 @@ USHORT ClassifyPacket(PMINI_ADAPTER Adapter,struct sk_buff* skb)
+ 			pstClassifierRule = &Adapter->astClassifierTable[uiLoopIndex];
+ 
+ 			uiSfIndex = SearchSfid(Adapter,pstClassifierRule->ulSFID);
+-			if(uiSfIndex > NO_OF_QUEUES)
+-			{
++			if (uiSfIndex >= NO_OF_QUEUES) {
+ 				BCM_DEBUG_PRINT(Adapter, DBG_TYPE_TX, IPV4_DBG, DBG_LVL_ALL,  "Queue Not Valid. SearchSfid for this classifier Failed\n");
+ 				break;
  			}
- 			pos += bv->bv_len;
- 		}
