@@ -1,54 +1,33 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Fri, 01 Oct 2010 19:07:17 +0000
-Subject: Re: [PATCH 3/3 RESEND] trace: remove cast from void*
-Message-Id: <1285960037.6750.1.camel@gandalf.stny.rr.com>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:50 +0000
+Subject: [PATCH 30/33] Staging: winbond: Makefile: replace the use of <module>-objs with <module>-y
+Message-Id: <1286496113-11897-30-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-On Mon, 2010-09-27 at 19:04 -0700, matt mooney wrote:
-> Unnecessary cast from void* in assignment.
-> 
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
+Changed <module>-objs to <module>-y in Makefile.
 
-Applied, thanks!
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/winbond/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
--- Steve
-
-> ---
->  kernel/trace/ftrace.c |    4 ++--
->  kernel/trace/trace.c  |    2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index fa7ece6..f1bd6ff 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -1601,8 +1601,8 @@ ftrace_failures_open(struct inode *inode, struct file *file)
->  
->  	ret = ftrace_avail_open(inode, file);
->  	if (!ret) {
-> -		m = (struct seq_file *)file->private_data;
-> -		iter = (struct ftrace_iterator *)m->private;
-> +		m = file->private_data;
-> +		iter = m->private;
->  		iter->flags = FTRACE_ITER_FAILURES;
->  	}
->  
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 9ec59f5..001bcd2 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -2196,7 +2196,7 @@ int tracing_open_generic(struct inode *inode, struct file *filp)
->  
->  static int tracing_release(struct inode *inode, struct file *file)
->  {
-> -	struct seq_file *m = (struct seq_file *)file->private_data;
-> +	struct seq_file *m = file->private_data;
->  	struct trace_iterator *iter;
->  	int cpu;
->  
-
+diff --git a/drivers/staging/winbond/Makefile b/drivers/staging/winbond/Makefile
+index fb2b7d4..79fa227 100644
+--- a/drivers/staging/winbond/Makefile
++++ b/drivers/staging/winbond/Makefile
+@@ -1,4 +1,4 @@
+-w35und-objs :=			\
++w35und-y :=			\
+ 	mds.o			\
+ 	mlmetxrx.o		\
+ 	mto.o			\
+-- 
+1.7.3.1.50.g1e633
 
