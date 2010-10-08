@@ -1,33 +1,29 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 28 Oct 2010 13:41:56 +0000
-Subject: [patch] dma/intel_mid_dma: remove unneeded null check
-Message-Id: <20101028134156.GD6062@bicker>
+Date: Fri, 08 Oct 2010 12:54:33 +0000
+Subject: [patch] Staging: bcm: make major and minor signed
+Message-Id: <20101008125433.GJ11681@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yong Wang <yong.y.wang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch complains because we dereference "mid" before checking it.  It
-turns out that "mid" is always a valid pointer here so we can just
-remove the check.
+We assume that major is signed in register_control_device_interface(). 
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/dma/intel_mid_dma.c b/drivers/dma/intel_mid_dma.c
-index 338bc4e..41941d0 100644
---- a/drivers/dma/intel_mid_dma.c
-+++ b/drivers/dma/intel_mid_dma.c
-@@ -1021,11 +1021,6 @@ static irqreturn_t intel_mid_dma_interrupt(int irq, void *data)
+diff --git a/drivers/staging/bcm/Adapter.h b/drivers/staging/bcm/Adapter.h
+index 742ddeb..748460e 100644
+--- a/drivers/staging/bcm/Adapter.h
++++ b/drivers/staging/bcm/Adapter.h
+@@ -484,8 +484,8 @@ struct _MINI_ADAPTER
+ 	BOOLEAN			    AutoSyncup;
  
- 	/*DMA Interrupt*/
- 	pr_debug("MDMA:Got an interrupt on irq %d\n", irq);
--	if (!mid) {
--		pr_err("ERR_MDMA:null pointer mid\n");
--		return -EINVAL;
--	}
--
- 	pr_debug("MDMA: Status %x, Mask %x\n", tfr_status, mid->intr_mask);
- 	tfr_status &= mid->intr_mask;
- 	if (tfr_status) {
+ 	struct net_device	*dev;
+-	UINT				major;
+-	UINT				minor;
++	int				major;
++	int				minor;
+ 	wait_queue_head_t 	tx_packet_wait_queue;
+ 	wait_queue_head_t 	process_rx_cntrlpkt;
+ 	atomic_t			process_waiting;
