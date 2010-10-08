@@ -1,35 +1,32 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Oct 2010 12:57:44 +0000
-Subject: [patch] Staging: bcm: remove unneeded NULL check
-Message-Id: <20101008125744.GN11681@bicker>
+From: Tracey Dent <tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:53 +0000
+Subject: [PATCH 33/33] Staging: zram: Makefile: replace the use of <module>-objs with <module>-y
+Message-Id: <1286496113-11897-33-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-The error handling here is wrong.  If psIntfAdapter were NULL then we
-would have a NULL dereference in the debug output on the error path.
-But this function is only called from usbbcm_device_probe() when
-psIntfAdapter is non-NULL.
+Changed <module>-objs to <module>-y in Makefile.
 
-Since the check isn't needed and I removed it instead of fixing it.
+Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+---
+ drivers/staging/zram/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/staging/bcm/InterfaceInit.c b/drivers/staging/bcm/InterfaceInit.c
-index 81523b1..824f9a4 100644
---- a/drivers/staging/bcm/InterfaceInit.c
-+++ b/drivers/staging/bcm/InterfaceInit.c
-@@ -529,11 +529,6 @@ INT InterfaceAdapterInit(PS_INTERFACE_ADAPTER psIntfAdapter)
- 	BOOLEAN bBcm16 = FALSE;
- 	UINT uiData = 0;
+diff --git a/drivers/staging/zram/Makefile b/drivers/staging/zram/Makefile
+index c01160a..b1709c5 100644
+--- a/drivers/staging/zram/Makefile
++++ b/drivers/staging/zram/Makefile
+@@ -1,3 +1,3 @@
+-zram-objs	:=	zram_drv.o zram_sysfs.o xvmalloc.o
++zram-y	:=	zram_drv.o zram_sysfs.o xvmalloc.o
  
--	if(psIntfAdapter = NULL)
--	{
--		BCM_DEBUG_PRINT(psIntfAdapter->psAdapter,DBG_TYPE_INITEXIT, DRV_ENTRY, DBG_LVL_ALL, "Interface Adapter is NULL");
--		return -EINVAL;
--	}
- 	/* Store the usb dev into interface adapter */
- 	psIntfAdapter->udev = usb_get_dev(interface_to_usbdev(
- 								psIntfAdapter->interface));
+ obj-$(CONFIG_ZRAM)	+=	zram.o
+-- 
+1.7.3.1.50.g1e633
+
