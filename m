@@ -1,31 +1,52 @@
 From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:21 +0000
-Subject: [PATCH 01/33] Staging: autofs: Makefile: replace the use of <module>-objs with <module>-y
-Message-Id: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+Date: Fri, 08 Oct 2010 00:01:29 +0000
+Subject: [PATCH 09/33] Staging: go7007: Makefile: makefile cleanup
+Message-Id: <1286496113-11897-9-git-send-email-tdent48227@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
+In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: greg@kroah.com
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
 
-Changed Makefile <module>-objs to <module>-y lines.
+Changed <module>-objs to <module>-y in Makefile. Also, Replace EXTRA_CFLAGS with ccflags-y
 
 Signed-off-by: Tracey Dent <tdent48227@gmail.com>
 ---
- drivers/staging/autofs/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/staging/go7007/Makefile |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/autofs/Makefile b/drivers/staging/autofs/Makefile
-index 453a60f..f48781c 100644
---- a/drivers/staging/autofs/Makefile
-+++ b/drivers/staging/autofs/Makefile
-@@ -4,4 +4,4 @@
+diff --git a/drivers/staging/go7007/Makefile b/drivers/staging/go7007/Makefile
+index d37b7ed..60a9185 100644
+--- a/drivers/staging/go7007/Makefile
++++ b/drivers/staging/go7007/Makefile
+@@ -14,10 +14,10 @@ obj-$(CONFIG_VIDEO_GO7007_UDA1342) += wis-uda1342.o
+ obj-$(CONFIG_VIDEO_GO7007_SONY_TUNER) += wis-sony-tuner.o
+ obj-$(CONFIG_VIDEO_GO7007_TW2804) += wis-tw2804.o
  
- obj-$(CONFIG_AUTOFS_FS) += autofs.o
+-go7007-objs += go7007-v4l2.o go7007-driver.o go7007-i2c.o go7007-fw.o \
++go7007-y := go7007-v4l2.o go7007-driver.o go7007-i2c.o go7007-fw.o \
+ 		snd-go7007.o
  
--autofs-objs := dirhash.o init.o inode.o root.o symlink.o waitq.o
-+autofs-y := dirhash.o init.o inode.o root.o symlink.o waitq.o
+-s2250-objs += s2250-board.o
++s2250-y := s2250-board.o
+ 
+ # Uncomment when the saa7134 patches get into upstream
+ #ifneq ($(CONFIG_VIDEO_SAA7134),)
+@@ -27,8 +27,8 @@ s2250-objs += s2250-board.o
+ 
+ # S2250 needs cypress ezusb loader from dvb-usb
+ ifneq ($(CONFIG_VIDEO_GO7007_USB_S2250_BOARD),)
+-EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-usb
++ccflags-y := -Idrivers/media/dvb/dvb-usb
+ endif
+ 
+-EXTRA_CFLAGS += -Idrivers/media/dvb/frontends
+-EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core
++ccflags-y += -Idrivers/media/dvb/frontends
++ccflags-y += -Idrivers/media/dvb/dvb-core
 -- 
 1.7.3.1.50.g1e633
 
