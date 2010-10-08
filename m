@@ -1,44 +1,50 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 17 Oct 2010 14:51:41 +0000
-Subject: [PATCH] powerpc: sysdev: fix signedness bug
-Message-Id: <1287327102-9068-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 08 Oct 2010 13:49:04 +0000
+Subject: [patch v2] Staging: bcm: silence off by one warning
+Message-Id: <20101008134904.GA1267@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Vivek Mahajan <vivek.mahajan@freescale.com>, Kumar Gala <galak@kernel.crashing.org>, Harninder Rai <harninder.rai@freescale.com>, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-sram_params.sram_size and sram_params.sram_offset were unsigned.
-If get_cache_sram_size() or get_cache_sram_offset() returns error code
-then it is not seen to the caller.  Made sram_size and sram_offset signed.
+"status" is used as an index into the Adapter->PackInfo[] array, which
+has NO_OF_QUEUES elements.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+This code actually works OK.  The SearchSfid() function always returns
+a valid index or it returns NO_OF_QUEUES + 1.  But it looks sloppy and
+it makes the static checkers complain.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- arch/powerpc/sysdev/fsl_85xx_l2ctlr.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+v2:  whitespace issue
 
-diff --git a/arch/powerpc/sysdev/fsl_85xx_l2ctlr.c b/arch/powerpc/sysdev/fsl_85xx_l2ctlr.c
-index cc8d655..23b85ac 100644
---- a/arch/powerpc/sysdev/fsl_85xx_l2ctlr.c
-+++ b/arch/powerpc/sysdev/fsl_85xx_l2ctlr.c
-@@ -94,14 +94,14 @@ static int __devinit mpc85xx_l2ctlr_of_probe(struct platform_device *dev,
- 	l2cache_size = *prop;
- 
- 	sram_params.sram_size  = get_cache_sram_size();
--	if (sram_params.sram_size <= 0) {
-+	if ((int)sram_params.sram_size <= 0) {
- 		dev_err(&dev->dev,
- 			"Entire L2 as cache, Aborting Cache-SRAM stuff\n");
+diff --git a/drivers/staging/bcm/CmHost.c b/drivers/staging/bcm/CmHost.c
+index 0329f7d..37187c4 100644
+--- a/drivers/staging/bcm/CmHost.c
++++ b/drivers/staging/bcm/CmHost.c
+@@ -2368,8 +2368,7 @@ int get_dsx_sf_data_to_application(PMINI_ADAPTER Adapter, UINT uiSFId, void __us
+ 	struct _packet_info *psSfInfo=NULL;
+ 	BCM_DEBUG_PRINT( Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "status =%d",status);
+ 	status = SearchSfid(Adapter, uiSFId);
+-	if(status>NO_OF_QUEUES)
+-	{
++	if (status >= NO_OF_QUEUES) {
+ 		BCM_DEBUG_PRINT(Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "SFID %d not present in queue !!!", uiSFId );
  		return -EINVAL;
  	}
+diff --git a/drivers/staging/bcm/Qos.c b/drivers/staging/bcm/Qos.c
+index 913a1e1..75b2b87 100644
+--- a/drivers/staging/bcm/Qos.c
++++ b/drivers/staging/bcm/Qos.c
+@@ -587,8 +587,7 @@ USHORT ClassifyPacket(PMINI_ADAPTER Adapter,struct sk_buff* skb)
+ 			pstClassifierRule = &Adapter->astClassifierTable[uiLoopIndex];
  
- 	sram_params.sram_offset  = get_cache_sram_offset();
--	if (sram_params.sram_offset <= 0) {
-+	if ((int64_t)sram_params.sram_offset <= 0) {
- 		dev_err(&dev->dev,
- 			"Entire L2 as cache, provide a valid sram offset\n");
- 		return -EINVAL;
--- 
-1.7.0.4
+ 			uiSfIndex = SearchSfid(Adapter,pstClassifierRule->ulSFID);
+-			if(uiSfIndex > NO_OF_QUEUES)
+-			{
++			if (uiSfIndex >= NO_OF_QUEUES) {
+ 				BCM_DEBUG_PRINT(Adapter, DBG_TYPE_TX, IPV4_DBG, DBG_LVL_ALL,  "Queue Not Valid. SearchSfid for this classifier Failed\n");
+ 				break;
+ 			}
 
