@@ -1,57 +1,69 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 27 Oct 2010 07:13:35 +0000
-Subject: Re: [PATCH 9/14] sound/oss/sb_ess.c: delete double assignment
-Message-Id: <s5h1v7c5crk.wl%tiwai@suse.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 09 Oct 2010 19:31:31 +0000
+Subject: [patch] ASoC: checking kzalloc() for IS_ERR() instead of NULL
+Message-Id: <20101009193131.GA5851@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
-	<1288088743-3725-10-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-10-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Ian Lartey <ian@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
 
-At Tue, 26 Oct 2010 12:25:38 +0200,
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Delete successive assignments to the same location.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression i;
-> @@
-> 
-> *i = ...;
->  i = ...;
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+There is a typo here that got copy and pasted to several probe
+functions.  kzalloc() returns NULL on allocation failures and not an
+ERR_PTR.
 
-Thanks, applied now.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
-Takashi
-
-> ---
->  sound/oss/sb_ess.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/sound/oss/sb_ess.c b/sound/oss/sb_ess.c
-> index 51a3d38..9890cf2 100644
-> --- a/sound/oss/sb_ess.c
-> +++ b/sound/oss/sb_ess.c
-> @@ -1722,7 +1722,6 @@ printk (KERN_INFO "FKS: es_rec_set_recmask mask = %x\n", mask);
->  				right = (value & 0x0000ff00) >> 8;
->  			} else {				/* Turn it off (3)  */
->  				left  = 0;
-> -				left  = 0;
->  				right = 0;
->  			}
->  			sb_common_mixer_set(devc, i + ES_REC_MIXER_RECDIFF, left, right);
-> 
+diff --git a/sound/soc/codecs/wm8804.c b/sound/soc/codecs/wm8804.c
+index 642b07c..4599e8e 100644
+--- a/sound/soc/codecs/wm8804.c
++++ b/sound/soc/codecs/wm8804.c
+@@ -720,8 +720,8 @@ static int __devinit wm8804_spi_probe(struct spi_device *spi)
+ 	int ret;
+ 
+ 	wm8804 = kzalloc(sizeof *wm8804, GFP_KERNEL);
+-	if (IS_ERR(wm8804))
+-		return PTR_ERR(wm8804);
++	if (!wm8804)
++		return -ENOMEM;
+ 
+ 	wm8804->control_type = SND_SOC_SPI;
+ 	spi_set_drvdata(spi, wm8804);
+@@ -758,8 +758,8 @@ static __devinit int wm8804_i2c_probe(struct i2c_client *i2c,
+ 	int ret;
+ 
+ 	wm8804 = kzalloc(sizeof *wm8804, GFP_KERNEL);
+-	if (IS_ERR(wm8804))
+-		return PTR_ERR(wm8804);
++	if (!wm8804)
++		return -ENOMEM;
+ 
+ 	wm8804->control_type = SND_SOC_I2C;
+ 	i2c_set_clientdata(i2c, wm8804);
+diff --git a/sound/soc/codecs/wm8985.c b/sound/soc/codecs/wm8985.c
+index ae9020a..fd2e7cc 100644
+--- a/sound/soc/codecs/wm8985.c
++++ b/sound/soc/codecs/wm8985.c
+@@ -1079,8 +1079,8 @@ static int __devinit wm8985_spi_probe(struct spi_device *spi)
+ 	int ret;
+ 
+ 	wm8985 = kzalloc(sizeof *wm8985, GFP_KERNEL);
+-	if (IS_ERR(wm8985))
+-		return PTR_ERR(wm8985);
++	if (!wm8985)
++		return -ENOMEM;
+ 
+ 	wm8985->control_type = SND_SOC_SPI;
+ 	spi_set_drvdata(spi, wm8985);
+@@ -1117,8 +1117,8 @@ static __devinit int wm8985_i2c_probe(struct i2c_client *i2c,
+ 	int ret;
+ 
+ 	wm8985 = kzalloc(sizeof *wm8985, GFP_KERNEL);
+-	if (IS_ERR(wm8985))
+-		return PTR_ERR(wm8985);
++	if (!wm8985)
++		return -ENOMEM;
+ 
+ 	wm8985->control_type = SND_SOC_I2C;
+ 	i2c_set_clientdata(i2c, wm8985);
