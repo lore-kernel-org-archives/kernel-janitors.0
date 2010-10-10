@@ -1,38 +1,93 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 28 Oct 2010 04:40:37 +0000
-Subject: [patch] misc/isl29020: signedness bug in als_sensing_range_store()
-Message-Id: <20101028044037.GS6062@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 10 Oct 2010 17:28:51 +0000
+Subject: [PATCH] staging: stradis: fix error handling and information leak to userland
+Message-Id: <1286731732-18082-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liu Hong <hong.liu@intel.com>
-Cc: Kalhan Trisal <kalhan.trisal@intel.com>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-"ret_val" is supposed to be signed here or the error handling breaks.
-Also we should check the return value from i2c_smbus_read_byte_data().
+configure_saa7146() didn't free irq on error.
+saa_open() didn't decrease reference count of saa on error.
+saa_ioctl() leaked information from the kernel stack to userland as it
+didn't fill copied structs with zeros.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-diff --git a/drivers/misc/isl29020.c b/drivers/misc/isl29020.c
-index 34fe835..ca47e62 100644
---- a/drivers/misc/isl29020.c
-+++ b/drivers/misc/isl29020.c
-@@ -87,7 +87,7 @@ static ssize_t als_sensing_range_store(struct device *dev,
- 		struct device_attribute *attr, const  char *buf, size_t count)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
--	unsigned int ret_val;
-+	int ret_val;
- 	unsigned long val;
+ drivers/staging/stradis/stradis.c |   11 ++++++++++-
+ 1 files changed, 10 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/stradis/stradis.c b/drivers/staging/stradis/stradis.c
+index a057824..807dd7e 100644
+--- a/drivers/staging/stradis/stradis.c
++++ b/drivers/staging/stradis/stradis.c
+@@ -1286,6 +1286,7 @@ static long saa_ioctl(struct file *file,
+ 	case VIDIOCGCAP:
+ 		{
+ 			struct video_capability b;
++			memset(&b, 0, sizeof(b));
+ 			strcpy(b.name, saa->video_dev.name);
+ 			b.type = VID_TYPE_CAPTURE | VID_TYPE_OVERLAY |
+ 				VID_TYPE_CLIPPING | VID_TYPE_FRAMERAM |
+@@ -1416,6 +1417,7 @@ static long saa_ioctl(struct file *file,
+ 	case VIDIOCGWIN:
+ 		{
+ 			struct video_window vw;
++			memset(&vw, 0, sizeof(vw));
+ 			vw.x = saa->win.x;
+ 			vw.y = saa->win.y;
+ 			vw.width = saa->win.width;
+@@ -1448,6 +1450,7 @@ static long saa_ioctl(struct file *file,
+ 	case VIDIOCGFBUF:
+ 		{
+ 			struct video_buffer v;
++			memset(&v, 0, sizeof(v));
+ 			v.base = (void *)saa->win.vidadr;
+ 			v.height = saa->win.sheight;
+ 			v.width = saa->win.swidth;
+@@ -1492,6 +1495,7 @@ static long saa_ioctl(struct file *file,
+ 	case VIDIOCGAUDIO:
+ 		{
+ 			struct video_audio v;
++			memset(&v, 0, sizeof(v));
+ 			v = saa->audio_dev;
+ 			v.flags &= ~(VIDEO_AUDIO_MUTE | VIDEO_AUDIO_MUTABLE);
+ 			v.flags |= VIDEO_AUDIO_MUTABLE | VIDEO_AUDIO_VOLUME;
+@@ -1534,6 +1538,7 @@ static long saa_ioctl(struct file *file,
+ 	case VIDIOCGUNIT:
+ 		{
+ 			struct video_unit vu;
++			memset(&vu, 0, sizeof(vu));
+ 			vu.video = saa->video_dev.minor;
+ 			vu.vbi = VIDEO_NO_UNIT;
+ 			vu.radio = VIDEO_NO_UNIT;
+@@ -1888,6 +1893,7 @@ static int saa_open(struct file *file)
  
- 	if (strict_strtoul(buf, 10, &val))
-@@ -106,6 +106,8 @@ static ssize_t als_sensing_range_store(struct device *dev,
- 		val = 4;
+ 	saa->user++;
+ 	if (saa->user > 1) {
++		saa->user--;
+ 		unlock_kernel();
+ 		return 0;	/* device open already, don't reset */
+ 	}
+@@ -2000,10 +2006,13 @@ static int __devinit configure_saa7146(struct pci_dev *pdev, int num)
+ 	if (retval < 0) {
+ 		dev_err(&pdev->dev, "%d: error in registering video device!\n",
+ 			num);
+-		goto errio;
++		goto errirq;
+ 	}
  
- 	ret_val = i2c_smbus_read_byte_data(client, 0x00);
-+	if (ret_val < 0)
-+		return ret_val;
- 
- 	ret_val &= 0xFC; /*reset the bit before setting them */
- 	ret_val |= val - 1;
+ 	return 0;
++
++errirq:
++	free_irq(saa->irq, saa);
+ errio:
+ 	iounmap(saa->saa7146_mem);
+ err:
+-- 
+1.7.0.4
+
