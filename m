@@ -1,61 +1,73 @@
-From: Benny Halevy <bhalevy@panasas.com>
-Date: Fri, 29 Oct 2010 07:33:29 +0000
-Subject: Re: [patch] nfs: check kmalloc() return
-Message-Id: <4CCA78C9.5000308@panasas.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 10 Oct 2010 17:29:04 +0000
+Subject: [PATCH] ASoC: wm8804: fix error handling code
+Message-Id: <1286731745-18169-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101028044403.GV6062@bicker> <4CC92338.7070304@bfs.de> <1288273273.3194.16.camel@heimdal.trondhjem.org> <4CC98534.40907@panasas.com> <20101028165708.GH6062@bicker>
-In-Reply-To: <20101028165708.GH6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, wharms@bfs.de, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Ian Lartey <ian@opensource.wolfsonmicro.com>, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On 2010-10-28 18:57, Dan Carpenter wrote:
-> On Thu, Oct 28, 2010 at 04:14:12PM +0200, Benny Halevy wrote:
->>>>> diff --git a/fs/nfs/nfs4filelayoutdev.c b/fs/nfs/nfs4filelayoutdev.c
->>>>> index 51fe64a..098113c 100644
->>>>> --- a/fs/nfs/nfs4filelayoutdev.c
->>>>> +++ b/fs/nfs/nfs4filelayoutdev.c
->>>>> @@ -219,6 +219,8 @@ decode_and_add_ds(__be32 **pp, struct inode *inode)
->>>>>  		goto out_err;
->>>>>  	}
->>>>>  	buf = kmalloc(rlen + 1, GFP_KERNEL);
->>>>> +	if (!buf)
->>>>> +		goto out_err;
->>>>>  	buf[rlen] = '\0';
->>>>>  	memcpy(buf, r_addr, rlen);
->>>>>  
->>>>
->>>> it seems that r_addr is a string, then kstdup() is emulated here.
->>>>
->>>> re,
->>>>  wh
->>>
->>> Not quite. kstrdup() requires that the argument be a NUL-terminated
->>> string. The above code doesn't.
->>
->> Right.  kmemdup is the right one.
->>
-> 
-> We need to duplicate the data and also add a NUL char on the end.
+kzalloc() returns NULL on error, not ERR_PTR().
+Also wm8804_modinit() didn't called i2c_del_driver() if
+spi_register_driver() failed.
 
-You're right.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-> kmemdup() only does the first bit.  You could copy one char past the end
-> so you have space for the NUL but that's not the right idea.
+ sound/soc/codecs/wm8804.c |   15 +++++++++++----
+ 1 files changed, 11 insertions(+), 4 deletions(-)
 
-If rlen is divisible by 4 you can't be sure you'll have an extra character to
-copy.
+diff --git a/sound/soc/codecs/wm8804.c b/sound/soc/codecs/wm8804.c
+index 642b07c..ff4dffd 100644
+--- a/sound/soc/codecs/wm8804.c
++++ b/sound/soc/codecs/wm8804.c
+@@ -720,8 +720,8 @@ static int __devinit wm8804_spi_probe(struct spi_device *spi)
+ 	int ret;
+ 
+ 	wm8804 = kzalloc(sizeof *wm8804, GFP_KERNEL);
+-	if (IS_ERR(wm8804))
+-		return PTR_ERR(wm8804);
++	if (!wm8804)
++		return -ENOMEM;
+ 
+ 	wm8804->control_type = SND_SOC_SPI;
+ 	spi_set_drvdata(spi, wm8804);
+@@ -758,8 +758,8 @@ static __devinit int wm8804_i2c_probe(struct i2c_client *i2c,
+ 	int ret;
+ 
+ 	wm8804 = kzalloc(sizeof *wm8804, GFP_KERNEL);
+-	if (IS_ERR(wm8804))
+-		return PTR_ERR(wm8804);
++	if (!wm8804)
++		return -ENOMEM;
+ 
+ 	wm8804->control_type = SND_SOC_I2C;
+ 	i2c_set_clientdata(i2c, wm8804);
+@@ -804,6 +804,7 @@ static int __init wm8804_modinit(void)
+ 	if (ret) {
+ 		printk(KERN_ERR "Failed to register wm8804 I2C driver: %d\n",
+ 		       ret);
++		goto err;
+ 	}
+ #endif
+ #if defined(CONFIG_SPI_MASTER)
+@@ -811,7 +812,13 @@ static int __init wm8804_modinit(void)
+ 	if (ret != 0) {
+ 		printk(KERN_ERR "Failed to register wm8804 SPI driver: %d\n",
+ 		       ret);
++		goto err_i2c;
+ 	}
++err_i2c:
++#endif
++#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
++	i2c_del_driver(&wm8804_i2c_driver);
++err:
+ #endif
+ 	return ret;
+ }
+-- 
+1.7.0.4
 
-So the check you added is probably the simplest solution.
-
-Benny
-
-> 
-> Anyway, I'm out of here for the next few days.  :)  See you after the
-> weekend.
-> 
-> regards,
-> dan carpenter
-> 
