@@ -1,33 +1,44 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:43 +0000
-Subject: [PATCH 23/33] Staging: sbe-2t3e3: Makefile: replace the use of <module>-objs with <module>-y
-Message-Id: <1286496113-11897-23-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 10 Oct 2010 17:28:39 +0000
+Subject: [PATCH] staging: cpia: fix camera file owner in cpia_open()
+Message-Id: <1286731719-17953-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Changed <module>-objs to <module>-y in Makefile.
+Use effective UID instead of real UID for camera owner.
+There is no need to check for pending signals just before successfull
+return.  Exit in case of pending signal also leaved camera in open state.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/sbe-2t3e3/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ Compile tested.
 
-diff --git a/drivers/staging/sbe-2t3e3/Makefile b/drivers/staging/sbe-2t3e3/Makefile
-index 2c7b097..cce2a7a 100644
---- a/drivers/staging/sbe-2t3e3/Makefile
-+++ b/drivers/staging/sbe-2t3e3/Makefile
-@@ -1,4 +1,4 @@
- obj-$(CONFIG_SBE_2T3E3) += sbe-2t3e3.o
+ drivers/staging/cpia/cpia.c |    6 +-----
+ 1 files changed, 1 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/cpia/cpia.c b/drivers/staging/cpia/cpia.c
+index 933ae4c..0e740b8 100644
+--- a/drivers/staging/cpia/cpia.c
++++ b/drivers/staging/cpia/cpia.c
+@@ -3184,13 +3184,9 @@ static int cpia_open(struct file *file)
+ 		goto oops;
+ 	}
  
--sbe-2t3e3-objs := module.o netdev.o maps.o	\
-+sbe-2t3e3-y := module.o netdev.o maps.o	\
- 	main.o cpld.o intr.o ctrl.o io.o dc.o exar7250.o exar7300.o
+-	err = -EINTR;
+-	if(signal_pending(current))
+-		goto oops;
+-
+ 	/* Set ownership of /proc/cpia/videoX to current user */
+ 	if(cam->proc_entry)
+-		cam->proc_entry->uid = current_uid();
++		cam->proc_entry->uid = current_euid();
+ 
+ 	/* set mark for loading first frame uncompressed */
+ 	cam->first_frame = 1;
 -- 
-1.7.3.1.50.g1e633
+1.7.0.4
 
