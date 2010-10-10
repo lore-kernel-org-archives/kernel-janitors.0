@@ -1,56 +1,37 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 15 Oct 2010 12:54:48 +0000
-Subject: [PATCH 5/7] drivers/scsi/libsas/sas_ata.c: Return -ENOMEM on memory allocation failure
-Message-Id: <1287147610-8041-5-git-send-email-julia@diku.dk>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 10 Oct 2010 17:28:55 +0000
+Subject: [PATCH] staging: tidspbridge: fix signess error
+Message-Id: <1286731736-18125-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <James.Bottomley@suse.de>
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Fernando Guzman Lugo <x0095840@ti.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+i was unsigned, so check for (i < 0) made no sense.  Made it signed.
 
-In this code, 0 is returned on memory allocation failure, even though other
-failures return -ENOMEM or other similar values.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression ret;
-expression x,e1,e2,e3;
-@@
-
-ret = 0
-... when != ret = e1
-*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
-... when != ret = e2
-if (x = NULL) { ... when != ret = e3
-  return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/scsi/libsas/sas_ata.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ I cannot compile this driver, so it is not tested.
 
-diff -u -p a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
---- a/drivers/scsi/libsas/sas_ata.c
-+++ b/drivers/scsi/libsas/sas_ata.c
-@@ -464,8 +464,10 @@ static int sas_execute_task(struct sas_t
- 
- 	if (dma_dir != DMA_NONE) {
- 		scatter = kzalloc(sizeof(*scatter), GFP_KERNEL);
--		if (!scatter)
-+		if (!scatter) {
-+			res = -ENOMEM;
- 			goto out;
-+		}
- 
- 		sg_init_one(scatter, buffer, size);
- 		num_scatter = 1;
+ drivers/staging/tidspbridge/core/dsp-mmu.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/tidspbridge/core/dsp-mmu.c b/drivers/staging/tidspbridge/core/dsp-mmu.c
+index 3c978f9..983c95a 100644
+--- a/drivers/staging/tidspbridge/core/dsp-mmu.c
++++ b/drivers/staging/tidspbridge/core/dsp-mmu.c
+@@ -219,7 +219,8 @@ u32 user_to_dsp_map(struct iommu *mmu, u32 uva, u32 da, u32 size,
+ 				struct page **usr_pgs)
+ {
+ 	int res, w;
+-	unsigned pages, i;
++	unsigned pages;
++	int i;
+ 	struct vm_area_struct *vma;
+ 	struct mm_struct *mm = current->mm;
+ 	struct sg_table *sgt;
+-- 
+1.7.0.4
 
