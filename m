@@ -1,57 +1,46 @@
-From: T Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 21:41:01 +0000
-Subject: Re: [PATCH 27/33] Staging: ti-st: Makefile: replace the use of
-Message-Id: <AANLkTim5wzc6wTHbjA1AtXBLRuxeVB6QGCXcHe9a0_MD@mail.gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 10 Oct 2010 17:28:27 +0000
+Subject: [PATCH] sh: boards/mach-x3proto: gpio: fix error handling code
+Message-Id: <1286731708-17822-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-	<1286496113-11897-27-git-send-email-tdent48227@gmail.com>
-	<20101008142434.GA23666@kroah.com>
-	<AANLkTinVkaOWd7bK10CiuOh7MPz3XjSAmDnkwHLsY-pz@mail.gmail.com>
-In-Reply-To: <AANLkTinVkaOWd7bK10CiuOh7MPz3XjSAmDnkwHLsY-pz@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Paul Mundt <lethal@linux-sh.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/8/10, T Dent <tdent48227@gmail.com> wrote:
-> On 10/8/10, Greg KH <greg@kroah.com> wrote:
->> On Thu, Oct 07, 2010 at 08:01:47PM -0400, Tracey Dent wrote:
->>> Changed <module>-objs to <module>-y in Makefile.
->>>
->>> Signed-off-by: Tracey Dent <tdent48227@gmail.com>
->>> ---
->>>  drivers/staging/ti-st/Makefile |    2 +-
->>>  1 files changed, 1 insertions(+), 1 deletions(-)
->>>
->>> diff --git a/drivers/staging/ti-st/Makefile
->>> b/drivers/staging/ti-st/Makefile
->>> index 0167d1d..4b6ca18 100644
->>> --- a/drivers/staging/ti-st/Makefile
->>> +++ b/drivers/staging/ti-st/Makefile
->>> @@ -3,5 +3,5 @@
->>>  # and its protocol drivers (BT, FM, GPS)
->>>  #
->>>  obj-$(CONFIG_TI_ST) 		+= st_drv.o
->>> -st_drv-objs			:= st_core.o st_kim.o st_ll.o
->>> +st_drv-y			:= st_core.o st_kim.o st_ll.o
->>>  obj-$(CONFIG_ST_BT) 		+= bt_drv.o
->>
->> For some odd reason, this patch didn't apply to the tree, but all of the
->> 32 other patches in the series did.  Care to redo this one and resend it
->> to me?
->>
+Checks for (irq < 0) and (ilsel < 0) didn't make sense since they were
+unsigned.  Made them signed.
 
-The file changed, that why it cant be applied.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ I cannot compile this driver, so it is not tested.
 
->
-> Strange but okay.
->
->> thanks,
->>
->> greg k-h
->>
-> Thanks,
->
-> Tracey D
->
+ arch/sh/boards/mach-x3proto/gpio.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/sh/boards/mach-x3proto/gpio.c b/arch/sh/boards/mach-x3proto/gpio.c
+index 9fcd7ce..594adf7 100644
+--- a/arch/sh/boards/mach-x3proto/gpio.c
++++ b/arch/sh/boards/mach-x3proto/gpio.c
+@@ -79,7 +79,7 @@ struct gpio_chip x3proto_gpio_chip = {
+ 
+ int __init x3proto_gpio_setup(void)
+ {
+-	unsigned int ilsel;
++	int ilsel;
+ 	int ret, i;
+ 
+ 	ilsel = ilsel_enable(ILSEL_KEY);
+@@ -92,7 +92,7 @@ int __init x3proto_gpio_setup(void)
+ 
+ 	for (i = 0; i < NR_BASEBOARD_GPIOS; i++) {
+ 		unsigned long flags;
+-		unsigned int irq = create_irq();
++		int irq = create_irq();
+ 
+ 		if (unlikely(irq < 0)) {
+ 			ret = -EINVAL;
+-- 
+1.7.0.4
+
