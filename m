@@ -1,48 +1,37 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 04 Oct 2010 19:28:01 +0000
-Subject: [patch] V4L/DVB: saa7134: add test after for loop
-Message-Id: <20101004192801.GG5692@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 10 Oct 2010 17:28:31 +0000
+Subject: [PATCH] drivers: mfd: fix off by one error
+Message-Id: <1286731711-17865-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, Herton Ronaldo Krzesinski <herton@mandriva.com.br>, Sean Young <sean@mess.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Samuel Ortiz <sameo@linux.intel.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org
 
-Add a check after the for loops to see if we found what we were looking
-for or if we reached the end of the list.
+snprintf() is overflowed iff result is greater or equal than
+argument "size".
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-diff --git a/drivers/media/video/saa7134/saa7134-video.c b/drivers/media/video/saa7134/saa7134-video.c
-index 45f0ac8..24c3a78 100644
---- a/drivers/media/video/saa7134/saa7134-video.c
-+++ b/drivers/media/video/saa7134/saa7134-video.c
-@@ -1871,9 +1871,12 @@ int saa7134_s_std_internal(struct saa7134_dev *dev, struct saa7134_fh *fh, v4l2_
- 			else
- 				fixup = V4L2_STD_SECAM;
- 		}
--		for (i = 0; i < TVNORMS; i++)
-+		for (i = 0; i < TVNORMS; i++) {
- 			if (fixup = tvnorms[i].id)
- 				break;
-+		}
-+		if (i = TVNORMS)
-+			return -EINVAL;
- 	}
+ drivers/mfd/mc13xxx-core.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/mfd/mc13xxx-core.c b/drivers/mfd/mc13xxx-core.c
+index 93258ad..cd4d670 100644
+--- a/drivers/mfd/mc13xxx-core.c
++++ b/drivers/mfd/mc13xxx-core.c
+@@ -696,7 +696,7 @@ static int mc13xxx_add_subdevice_pdata(struct mc13xxx *mc13xxx,
+ 	};
  
- 	*id = tvnorms[i].id;
-@@ -1997,9 +2000,12 @@ static int saa7134_g_tuner(struct file *file, void *priv,
- 	if (0 != t->index)
- 		return -EINVAL;
- 	memset(t, 0, sizeof(*t));
--	for (n = 0; n < SAA7134_INPUT_MAX; n++)
-+	for (n = 0; n < SAA7134_INPUT_MAX; n++) {
- 		if (card_in(dev, n).tv)
- 			break;
-+	}
-+	if (n = SAA7134_INPUT_MAX)
-+		return -EINVAL;
- 	if (NULL != card_in(dev, n).name) {
- 		strcpy(t->name, "Television");
- 		t->type = V4L2_TUNER_ANALOG_TV;
+ 	/* there is no asnprintf in the kernel :-( */
+-	if (snprintf(buf, sizeof(buf), format, name) > sizeof(buf))
++	if (snprintf(buf, sizeof(buf), format, name) >= sizeof(buf))
+ 		return -E2BIG;
+ 
+ 	cell.name = kmemdup(buf, strlen(buf) + 1, GFP_KERNEL);
+-- 
+1.7.0.4
+
