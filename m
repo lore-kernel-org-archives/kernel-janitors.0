@@ -1,51 +1,36 @@
-From: Belisko Marek <marek.belisko@gmail.com>
-Date: Fri, 15 Oct 2010 06:19:07 +0000
-Subject: Re: [patch 1/2] Staging: ft1000-usb: use the correct list head
-Message-Id: <AANLkTim9UBjJ9AN2MPjBtru6r8fpofwpK+ccELpg9i5x@mail.gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 10 Oct 2010 17:28:23 +0000
+Subject: [PATCH] arch: arm/imx: fix memory init in imx_dma_request()
+Message-Id: <1286731703-17775-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101015034042.GF6614@bicker>
-In-Reply-To: <20101015034042.GF6614@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Oct 15, 2010 at 5:40 AM, Dan Carpenter <error27@gmail.com> wrote:
-> Using pdpram_blk here would cause an oops.  We intended to use
-> &freercvpool.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_hw.c b/drivers/staging/ft1000/ft1000-usb/ft1000_hw.c
-> index d0637c3..076ba75 100644
-> --- a/drivers/staging/ft1000/ft1000-usb/ft1000_hw.c
-> +++ b/drivers/staging/ft1000/ft1000-usb/ft1000_hw.c
-> @@ -1115,7 +1115,7 @@ u16 init_ft1000_netdev(struct ft1000_device *ft1000dev)
->
->
->  err_free:
-> -       list_for_each_safe(cur, tmp, &pdpram_blk->list) {
-> +       list_for_each_safe(cur, tmp, &freercvpool) {
->                pdpram_blk = list_entry(cur, DPRAM_BLK, list);
->                list_del(&pdpram_blk->list);
->                kfree(pdpram_blk->pbuffer);
->
+imx_dma_request() didn't fill struct pointed by imxdma with zeroes
+as it passed sizeof(pointer), not sizeof(struct) to memset().
 
-Greg, you can add my Tested by: Marek Belisko <marek.belisko@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ I cannot compile this driver, so it is not tested.
 
-@Dan, good catch. Thanks.
+ arch/arm/mach-imx/dma-v1.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Marek
-
-
+diff --git a/arch/arm/mach-imx/dma-v1.c b/arch/arm/mach-imx/dma-v1.c
+index 3e8c47c..b5cc027 100644
+--- a/arch/arm/mach-imx/dma-v1.c
++++ b/arch/arm/mach-imx/dma-v1.c
+@@ -699,7 +699,7 @@ int imx_dma_request(int channel, const char *name)
+ 		local_irq_restore(flags);
+ 		return -EBUSY;
+ 	}
+-	memset(imxdma, 0, sizeof(imxdma));
++	memset(imxdma, 0, sizeof(*imxdma));
+ 	imxdma->name = name;
+ 	local_irq_restore(flags); /* request_irq() can block */
+ 
 -- 
-as simple and primitive as possible
--------------------------------------------------
-Marek Belisko - OPEN-NANDRA
-Freelance Developer
+1.7.0.4
 
-Ruska Nova Ves 219 | Presov, 08005 Slovak Republic
-Tel: +421 915 052 184
-skype: marekwhite
-icq: 290551086
-web: http://open-nandra.com
