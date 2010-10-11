@@ -1,67 +1,33 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Wed, 06 Oct 2010 01:00:21 +0000
-Subject: [PATCH 06/28] Staging: comedi: comedilib.h: Edit file so that checkpatch.pl has 0 errors and warning
-Message-Id: <1286326843-6170-6-git-send-email-tdent48227@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 11 Oct 2010 19:15:11 +0000
+Subject: [patch 2/2 -next] rbd: passing wrong variable to bvec_kunmap_irq()
+Message-Id: <20101011191511.GJ5851@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Yehuda Sadeh <yehuda@hq.newdream.net>
+Cc: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed a few lines that made checkpatch.pl complain. All warnings were
-WARNING: please, no space for starting a line.
+We should be passing "buf" here insead of "bv".  This is tricky because
+it's not the same as kmap() and kunmap().  GCC does warn about it if you
+compile on i386 with CONFIG_HIGHMEM.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/staging/comedi/comedilib.h |   30 +++++++++++++++---------------
- 1 files changed, 15 insertions(+), 15 deletions(-)
+If it's any consolation, out of three callers to bvec_kunmap_irq() only
+one caller was correct.  :P
 
-diff --git a/drivers/staging/comedi/comedilib.h b/drivers/staging/comedi/comedilib.h
-index ca92c43..8a699c5 100644
---- a/drivers/staging/comedi/comedilib.h
-+++ b/drivers/staging/comedi/comedilib.h
-@@ -1,23 +1,23 @@
- /*
--    linux/include/comedilib.h
--    header file for kcomedilib
-+	linux/include/comedilib.h
-+	header file for kcomedilib
- 
--    COMEDI - Linux Control and Measurement Device Interface
--    Copyright (C) 1998-2001 David A. Schleef <ds@schleef.org>
-+	COMEDI - Linux Control and Measurement Device Interface
-+	Copyright (C) 1998-2001 David A. Schleef <ds@schleef.org>
- 
--    This program is free software; you can redistribute it and/or modify
--    it under the terms of the GNU General Public License as published by
--    the Free Software Foundation; either version 2 of the License, or
--    (at your option) any later version.
-+	This program is free software; you can redistribute it and/or modify
-+	it under the terms of the GNU General Public License as published by
-+	the Free Software Foundation; either version 2 of the License, or
-+	(at your option) any later version.
- 
--    This program is distributed in the hope that it will be useful,
--    but WITHOUT ANY WARRANTY; without even the implied warranty of
--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--    GNU General Public License for more details.
-+	This program is distributed in the hope that it will be useful,
-+	but WITHOUT ANY WARRANTY; without even the implied warranty of
-+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+	GNU General Public License for more details.
- 
--    You should have received a copy of the GNU General Public License
--    along with this program; if not, write to the Free Software
--    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-+	You should have received a copy of the GNU General Public License
-+	along with this program; if not, write to the Free Software
-+	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
- */
- 
--- 
-1.7.3.1.50.g1e633
-
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 52f9420..6ec9d53 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -554,7 +554,7 @@ static void zero_bio_chain(struct bio *chain, int start_ofs)
+ 				buf = bvec_kmap_irq(bv, &flags);
+ 				memset(buf + remainder, 0,
+ 				       bv->bv_len - remainder);
+-				bvec_kunmap_irq(bv, &flags);
++				bvec_kunmap_irq(buf, &flags);
+ 			}
+ 			pos += bv->bv_len;
+ 		}
