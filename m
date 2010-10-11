@@ -1,33 +1,30 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:42 +0000
-Subject: [PATCH 22/33] Staging: rtl8712: Makefile: replace the use of <module>-objs with <module>-y
-Message-Id: <1286496113-11897-22-git-send-email-tdent48227@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 11 Oct 2010 19:14:23 +0000
+Subject: [patch 1/2 -next] rbd: null vs ERR_PTR
+Message-Id: <20101011191423.GI5851@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Yehuda Sadeh <yehuda@hq.newdream.net>
+Cc: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed <module>-objs to <module>-y in Makefile.
+ceph_alloc_page_vector() returns ERR_PTR(-ENOMEM) on errors.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
----
- drivers/staging/rtl8712/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/rtl8712/Makefile b/drivers/staging/rtl8712/Makefile
-index 1ccd251..6f8500c 100644
---- a/drivers/staging/rtl8712/Makefile
-+++ b/drivers/staging/rtl8712/Makefile
-@@ -1,4 +1,4 @@
--r8712u-objs :=				\
-+r8712u-y :=				\
- 		rtl871x_cmd.o		\
- 		rtl8712_cmd.o		\
- 		rtl871x_security.o	\
--- 
-1.7.3.1.50.g1e633
-
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 1ac87f1..52f9420 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -826,8 +826,8 @@ static int rbd_req_sync_op(struct rbd_device *dev,
+ 
+ 	num_pages = calc_pages_for(ofs , len);
+ 	pages = ceph_alloc_page_vector(num_pages, GFP_KERNEL);
+-	if (!pages)
+-		return -ENOMEM;
++	if (IS_ERR(pages))
++		return PTR_ERR(pages);
+ 
+ 	if (!orig_ops) {
+ 		payload_len = (flags & CEPH_OSD_FLAG_WRITE ? len : 0);
