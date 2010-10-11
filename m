@@ -1,38 +1,29 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Tue, 12 Oct 2010 20:21:05 +0000
-Subject: Re: [PATCH] serial: omap-serial: fix signess error
-Message-Id: <20101012202105.GW25462@atomide.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 11 Oct 2010 19:13:35 +0000
+Subject: [patch] ps3disk: passing wrong variable to bvec_kunmap_irq()
+Message-Id: <20101011191335.GH5851@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286731715-17908-1-git-send-email-segooon@gmail.com>
- <8739sb1cif.fsf@deeprootsystems.com>
-In-Reply-To: <8739sb1cif.fsf@deeprootsystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kevin Hilman <khilman@deeprootsystems.com>
-Cc: Vasiliy Kulikov <segooon@gmail.com>, kernel-janitors@vger.kernel.org, "Govindraj.R" <govindraj.raja@ti.com>, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: Geoff Levand <geoff@infradead.org>
+Cc: cbe-oss-dev@lists.ozlabs.org, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <jaxboe@fusionio.com>, kernel-janitors@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, linuxppc-dev@lists.ozlabs.org
 
-* Kevin Hilman <khilman@deeprootsystems.com> [101012 11:30]:
-> [adding linux-omap list]
-> 
-> Vasiliy Kulikov <segooon@gmail.com> writes:
-> 
-> > "ret" is unsigned, so check for (ret < 0) made no sense.
-> > Made it signed.
-> >
-> > Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> > ---
-> >  I cannot compile this driver, so it is not tested.
-> 
-> Acked-by: Kevin Hilman <khilman@deeprootsystems.com>
-> 
-> Since the original driver is being queued via the omap tree, we can
-> queue this one as well.
-> 
-> Tony, can you add this one to the 2.6.37 queue?
+This should pass "buf" to bvec_kunmap_irq() instead of "bv".  The api is
+like kmap_atomic() instead of kmap().
 
-Thanks, adding into omap-for-linus.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Regards,
-
-Tony
+diff --git a/drivers/block/ps3disk.c b/drivers/block/ps3disk.c
+index e9da874..03688c2 100644
+--- a/drivers/block/ps3disk.c
++++ b/drivers/block/ps3disk.c
+@@ -113,7 +113,7 @@ static void ps3disk_scatter_gather(struct ps3_storage_device *dev,
+ 			memcpy(buf, dev->bounce_buf+offset, size);
+ 		offset += size;
+ 		flush_kernel_dcache_page(bvec->bv_page);
+-		bvec_kunmap_irq(bvec, &flags);
++		bvec_kunmap_irq(buf, &flags);
+ 		i++;
+ 	}
+ }
