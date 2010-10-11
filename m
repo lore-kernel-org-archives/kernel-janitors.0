@@ -1,64 +1,60 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 03 Oct 2010 12:47:37 +0000
-Subject: Re: [PATCH v3 09/20] Staging: rtl8187se: Makefile: cleaned up Makefile
-Message-Id: <4CA87B69.3060105@bfs.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 11 Oct 2010 03:54:17 +0000
+Subject: [patch] ASoC: soc: snprintf() doesn't return negative
+Message-Id: <20101011035416.GD5851@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com> <1286037489-28439-9-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-9-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tracey Dent <tdent48227@gmail.com>
-Cc: greg@kroah.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: alsa-devel@alsa-project.org, Jassi Brar <jassi.brar@samsung.com>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Peter Ujfalusi <peter.ujfalusi@nokia.com>
 
+In user space snprintf() returns negative on errors but the kernel
+version only returns positives.  It could potentially return sizes
+larger than the size of the buffer so we should check for that.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Tracey Dent schrieb:
-> Changed to use the proper ccflags-y option
-> 
-> Signed-off-by: Tracey Dent <tdent48227@gmail.com>
-> ---
->  drivers/staging/rtl8187se/Makefile |   14 +++++++-------
->  1 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8187se/Makefile b/drivers/staging/rtl8187se/Makefile
-> index e6adf91..adc3849 100644
-> --- a/drivers/staging/rtl8187se/Makefile
-> +++ b/drivers/staging/rtl8187se/Makefile
-> @@ -4,17 +4,17 @@
->  #EXTRA_CFLAGS += -O2
->  #CC            = gcc
->  
-> -EXTRA_CFLAGS += -DSW_ANTE
-> -EXTRA_CFLAGS += -DTX_TRACK
-> -EXTRA_CFLAGS += -DHIGH_POWER
-> -EXTRA_CFLAGS += -DSW_DIG
-> -EXTRA_CFLAGS += -DRATE_ADAPT
-> +ccflags-y := -DSW_ANTE
-> +ccflags-y += -DTX_TRACK
-> +ccflags-y += -DHIGH_POWER
-> +ccflags-y += -DSW_DIG
-> +ccflags-y += -DRATE_ADAPT
->  
->  #enable it for legacy power save, disable it for leisure  power save
-> -EXTRA_CFLAGS += -DENABLE_LPS
-> +ccflags-y += -DENABLE_LPS
->  
->  
-> -#EXTRA_CFLAGS += -mhard-float -DCONFIG_FORCE_HARD_FLOAT=y
-> +#ccflags-y := -mhard-float -DCONFIG_FORCE_HARD_FLOAT=y
->  
-
-so every time someone selects "my cpu does not have hard-float
-they will try it again, and to make sure that it will cause max
-confusion it sets CONFIG_FORCE_HARD_FLOAT to yes.
-
-re,
- wh
-
-
-
-
-
->  r8187se-objs :=			\
->  		r8180_core.o		\
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 8751efd..8da307b 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -284,8 +284,10 @@ static ssize_t codec_list_read_file(struct file *file, char __user *user_buf,
+ 		ret += snprintf(buf + ret, PAGE_SIZE - ret, "%s\n",
+ 				codec->name);
+ 
+-	if (ret >= 0)
+-		ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
++	if (ret > PAGE_SIZE)
++		ret = PAGE_SIZE;
++
++	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
+ 
+ 	kfree(buf);
+ 
+@@ -310,8 +312,10 @@ static ssize_t dai_list_read_file(struct file *file, char __user *user_buf,
+ 	list_for_each_entry(dai, &dai_list, list)
+ 		ret += snprintf(buf + ret, PAGE_SIZE - ret, "%s\n", dai->name);
+ 
+-	if (ret >= 0)
+-		ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
++	if (ret > PAGE_SIZE)
++		ret = PAGE_SIZE;
++
++	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
+ 
+ 	kfree(buf);
+ 
+@@ -338,8 +342,10 @@ static ssize_t platform_list_read_file(struct file *file,
+ 		ret += snprintf(buf + ret, PAGE_SIZE - ret, "%s\n",
+ 				platform->name);
+ 
+-	if (ret >= 0)
+-		ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
++	if (ret > PAGE_SIZE)
++		ret = PAGE_SIZE;
++
++	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
+ 
+ 	kfree(buf);
+ 
