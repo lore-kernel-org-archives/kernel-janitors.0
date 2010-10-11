@@ -1,61 +1,29 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Mon, 11 Oct 2010 12:15:55 +0000
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Mon, 11 Oct 2010 12:36:09 +0000
 Subject: Re: [PATCH] ASoC: wm8804: fix error handling code
-Message-Id: <20101011121555.GA32652@albatros>
+Message-Id: <20101011123609.GL9231@rakim.wolfsonmicro.main>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1286731745-18169-1-git-send-email-segooon@gmail.com>
- <20101011120014.GJ9231@rakim.wolfsonmicro.main>
-In-Reply-To: <20101011120014.GJ9231@rakim.wolfsonmicro.main>
+	<20101011120014.GJ9231@rakim.wolfsonmicro.main>
+	<20101011121555.GA32652@albatros>
+In-Reply-To: <20101011121555.GA32652@albatros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: kernel-janitors@vger.kernel.org, Ian Lartey <ian@opensource.wolfsonmicro.com>, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ian Lartey <ian@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
 
-Hi Mark,
+On Mon, Oct 11, 2010 at 04:15:55PM +0400, Vasiliy Kulikov wrote:
+> On Mon, Oct 11, 2010 at 13:00 +0100, Mark Brown wrote:
 
-On Mon, Oct 11, 2010 at 13:00 +0100, Mark Brown wrote:
-> On Sun, Oct 10, 2010 at 09:29:04PM +0400, Vasiliy Kulikov wrote:
-> > kzalloc() returns NULL on error, not ERR_PTR().
-> > Also wm8804_modinit() didn't called i2c_del_driver() if
-> > spi_register_driver() failed.
-> > 
-> > Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> 
-> Please try to follow Documentation/SubmittingPatches - in particular,
-> you should always split unrelated changes into separate patches.  In
-> this case your I2C and kzalloc() changes have nothing to do with each
-> other and so should be in separate patches,
+> > ...it's not clear to me that this change is an improvement - it'll make
+> > the driver more fragile in the face of errors, I don't see a benefit in
+> > refusing to register the variant for one bus if the other fails?
 
-Agreed, thanks.
+> I tried to implement your variant with depca driver in past, but it was
+> rejected by David Miller:
+> http://lists.openwall.net/netdev/2010/07/12/9
 
-> and the kzalloc() changes
-> were already applied from a patch by someone else.
-
-Yes, it was sent by Dan just one day before my patch ;)
-
-> For the registration
-> changes...
-
-> > @@ -804,6 +804,7 @@ static int __init wm8804_modinit(void)
-> >  	if (ret) {
-> >  		printk(KERN_ERR "Failed to register wm8804 I2C driver: %d\n",
-> >  		       ret);
-> > +		goto err;
-> >  	}
-> >  #endif
-> >  #if defined(CONFIG_SPI_MASTER)
-> 
-> ...it's not clear to me that this change is an improvement - it'll make
-> the driver more fragile in the face of errors, I don't see a benefit in
-> refusing to register the variant for one bus if the other fails?
-
-I tried to implement your variant with depca driver in past, but it was
-rejected by David Miller:
-http://lists.openwall.net/netdev/2010/07/12/9
-
-
-Thanks,
-
--- 
-Vasiliy
+I disagree with David here, and in any case if you're going to make a
+style change like this they really ought to be applied over all drivers
+rather than just a few individual ones.
