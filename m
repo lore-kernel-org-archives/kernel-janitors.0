@@ -1,7 +1,7 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 11 Oct 2010 20:57:40 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 11 Oct 2010 21:11:38 +0000
 Subject: Re: [patch] ASoC: soc: snprintf() doesn't return negative
-Message-Id: <s5hpqvg1m7v.wl%tiwai@suse.de>
+Message-Id: <20101011211138.GL5851@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20101011035416.GD5851@bicker>
 	<20101011104009.GB9231@rakim.wolfsonmicro.main>
@@ -12,12 +12,9 @@ In-Reply-To: <20101011194502.GK5851@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org, Jassi Brar <jassi.brar@samsung.com>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Peter Ujfalusi <peter.ujfalusi@nokia.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Peter Ujfalusi <peter.ujfalusi@n>
 
-At Mon, 11 Oct 2010 21:45:02 +0200,
-Dan Carpenter wrote:
-> 
+On Mon, Oct 11, 2010 at 09:45:02PM +0200, Dan Carpenter wrote:
 > On Mon, Oct 11, 2010 at 07:51:48PM +0100, Mark Brown wrote:
 > > In actual fact quite a few devices have enough registers to be
 > > truncated, meaning that it's not only possible but likely we'll exercise
@@ -42,26 +39,14 @@ Dan Carpenter wrote:
 > there would be information leaked from the kernel.  If the reader
 > program had allocated a large enough buffer to handle the extra
 > information it wouldn't cause a problem.
+> 
 
-Well, actually we should fix either:
-
-- check the return of snprintf() at each time properly,
-
-	list_for_each_entry(dai, &dai_list, list) {
-		int len = snprintf(buf + ret, PAGE_SIZE - ret, "%s\n", dai->name);
-		if (len < 0)
-			return len;
-		ret += len;
-	}
-
-- or just assume it's never negative (as is on Linux kernel code)
-
-In either case, a negative check after for loop is superfluous.
-
-And, when no negative return value is assured (or filtered out like
-above), there can't be overflow, too.  snprintf() fills the string
-at most the size including NUL-char.  OTOH, it returns the size that
-doesn't include NUL-char.
+Actually it will never cause a problem with userspace because we pass
+the size of the userspace buffer to the kernel.  The only issues are the
+information leak if the user passes in a 8k buffer and the also the
+WARN_ON_ONCE()
 
 
-Takashi
+regards,
+dan carpenter
+
