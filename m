@@ -1,43 +1,29 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Mon, 11 Oct 2010 12:50:56 +0000
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Mon, 11 Oct 2010 12:59:34 +0000
 Subject: Re: [PATCH] ASoC: wm8804: fix error handling code
-Message-Id: <20101011125056.GA25041@albatros>
+Message-Id: <20101011125934.GM9231@rakim.wolfsonmicro.main>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1286731745-18169-1-git-send-email-segooon@gmail.com>
- <20101011120014.GJ9231@rakim.wolfsonmicro.main>
- <20101011121555.GA32652@albatros>
- <20101011123609.GL9231@rakim.wolfsonmicro.main>
-In-Reply-To: <20101011123609.GL9231@rakim.wolfsonmicro.main>
+	<20101011120014.GJ9231@rakim.wolfsonmicro.main>
+	<20101011121555.GA32652@albatros>
+	<20101011123609.GL9231@rakim.wolfsonmicro.main>
+	<20101011125056.GA25041@albatros>
+In-Reply-To: <20101011125056.GA25041@albatros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: kernel-janitors@vger.kernel.org, Ian Lartey <ian@opensource.wolfsonmicro.com>, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ian Lartey <ian@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
 
-On Mon, Oct 11, 2010 at 13:36 +0100, Mark Brown wrote:
-> On Mon, Oct 11, 2010 at 04:15:55PM +0400, Vasiliy Kulikov wrote:
-> > On Mon, Oct 11, 2010 at 13:00 +0100, Mark Brown wrote:
-> 
-> > > ...it's not clear to me that this change is an improvement - it'll make
-> > > the driver more fragile in the face of errors, I don't see a benefit in
-> > > refusing to register the variant for one bus if the other fails?
-> 
-> > I tried to implement your variant with depca driver in past, but it was
-> > rejected by David Miller:
-> > http://lists.openwall.net/netdev/2010/07/12/9
-> 
-> I disagree with David here, and in any case if you're going to make a
-> style change like this they really ought to be applied over all drivers
-> rather than just a few individual ones.
+On Mon, Oct 11, 2010 at 04:50:56PM +0400, Vasiliy Kulikov wrote:
 
-It is not greppable situation to simply change the behavior of all
-drivers.  I was looking for memory leak bugs in drivers/net/ and fixed
-some of them.  Manual looking through _all_ drivers takes much more
-time.  In general I try to search for repeatable bugs with coccinelle,
-but it is rare case.
+> It is not greppable situation to simply change the behavior of all
+> drivers.  I was looking for memory leak bugs in drivers/net/ and fixed
+> some of them.  Manual looking through _all_ drivers takes much more
+> time.  In general I try to search for repeatable bugs with coccinelle,
+> but it is rare case.
 
-
-Thanks,
-
--- 
-Vasiliy
+The method you're using to generate the patches is pretty much
+orthogonal to anything else, except of course in the case where you're
+also submitting the automation for checking (which is useful where
+possible).
