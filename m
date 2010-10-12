@@ -1,36 +1,46 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sat, 30 Oct 2010 14:26:26 +0000
-Subject: [PATCH] bluetooth: cmtp: fix information leak to userland
-Message-Id: <1288448787-5848-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 12 Oct 2010 06:01:11 +0000
+Subject: [patch -next] V4L/DVB: IR/streamzap: fix usec to nsec conversion
+Message-Id: <20101012060110.GA13176@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Jarod Wilson <jarod@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Structure cmtp_conninfo is copied to userland with some padding fields
-unitialized.  It leads to leaking of contents of kernel stack memory.
+There is an integer overflow here because 0x03000000 * 1000 is too large
+for 31 bits.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
----
- Compile tested.
+rawir.duration should be in terms of nsecs.
+IR_MAX_DURATION and 0x03000000 are already in terms of nsecs.
+STREAMZAP_TIMEOUT and STREAMZAP_RESOLUTION are 255 and 256 respectively
+and are in terms of usecs.
 
- net/bluetooth/cmtp/core.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+The original code had a deadline of 1.005 seconds and the new code has a
+deadline of .065 seconds. 
 
-diff --git a/net/bluetooth/cmtp/core.c b/net/bluetooth/cmtp/core.c
-index ec0a134..8e5f292 100644
---- a/net/bluetooth/cmtp/core.c
-+++ b/net/bluetooth/cmtp/core.c
-@@ -78,6 +78,7 @@ static void __cmtp_unlink_session(struct cmtp_session *session)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/media/IR/streamzap.c b/drivers/media/IR/streamzap.c
+index 2cf57e6..d5d3cee 100644
+--- a/drivers/media/IR/streamzap.c
++++ b/drivers/media/IR/streamzap.c
+@@ -221,7 +221,7 @@ static void streamzap_callback(struct urb *urb)
+ 	struct streamzap_ir *sz;
+ 	unsigned int i;
+ 	int len;
+-	static int timeout = (((STREAMZAP_TIMEOUT * STREAMZAP_RESOLUTION) &
++	static int timeout = (((STREAMZAP_TIMEOUT * STREAMZAP_RESOLUTION * 1000) &
+ 				IR_MAX_DURATION) | 0x03000000);
  
- static void __cmtp_copy_session(struct cmtp_session *session, struct cmtp_conninfo *ci)
- {
-+	memset(ci, 0, sizeof(*ci));
- 	bacpy(&ci->bdaddr, &session->bdaddr);
+ 	if (!urb)
+@@ -273,7 +273,7 @@ static void streamzap_callback(struct urb *urb)
+ 				struct ir_raw_event rawir;
  
- 	ci->flags = session->flags;
--- 
-1.7.0.4
-
+ 				rawir.pulse = false;
+-				rawir.duration = timeout * 1000;
++				rawir.duration = timeout;
+ 				sz->idle = true;
+ 				if (sz->timeout_enabled)
+ 					sz_push(sz, rawir);
