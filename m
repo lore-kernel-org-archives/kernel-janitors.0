@@ -1,7 +1,7 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Mon, 11 Oct 2010 17:26:39 +0000
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Date: Tue, 12 Oct 2010 12:25:48 +0000
 Subject: Re: [patch 1/2] vhost: potential integer overflows
-Message-Id: <20101011172639.GL19804@ZenIV.linux.org.uk>
+Message-Id: <20101012122548.GA25446@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20101011172256.GF5851@bicker>
 In-Reply-To: <20101011172256.GF5851@bicker>
@@ -9,14 +9,12 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <error27@gmail.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Juan Quintela <quintela@redhat.com>, "David S. Miller" <davem@davemloft.net>, Rusty Russell <rusty@rustcorp.com.au>, kvm@vger.kernel.org, virtualization@lists.osdl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Juan Quintela <quintela@redhat.com>, "David S. Miller" <davem@davemloft.net>, Rusty Russell <rusty@rustcorp.com.au>, kvm@vger.kernel.org, virtualization@lists.osdl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 On Mon, Oct 11, 2010 at 07:22:57PM +0200, Dan Carpenter wrote:
 > I did an audit for potential integer overflows of values which get passed
 > to access_ok() and here are the results.
-
-FWIW, UINT_MAX is wrong here.  What you want is maximal size_t value.
-
+> 
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
 > 
 > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
@@ -70,7 +68,18 @@ FWIW, UINT_MAX is wrong here.  What you want is maximal size_t value.
 >  			}
 >  		}
 >  
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+As far as I can see, maximum value for num is 64K - 1:
+
+                if (!s.num || s.num > 0xffff || (s.num & (s.num - 1))) {
+                        r = -EINVAL;
+                        break;
+                }
+
+How can any of the above two trigger?
+It seems easier to check value for sanity at a single place where it's
+passed from userspace to kernel.
+
+-- 
+MST
