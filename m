@@ -1,52 +1,52 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 11 Oct 2010 21:11:38 +0000
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Tue, 12 Oct 2010 09:35:07 +0000
 Subject: Re: [patch] ASoC: soc: snprintf() doesn't return negative
-Message-Id: <20101011211138.GL5851@bicker>
+Message-Id: <20101012093506.GB30933@rakim.wolfsonmicro.main>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20101011035416.GD5851@bicker>
 	<20101011104009.GB9231@rakim.wolfsonmicro.main>
 	<20101011164038.GE5851@bicker>
 	<20101011185148.GB22355@opensource.wolfsonmicro.com>
-	<20101011194502.GK5851@bicker>
-In-Reply-To: <20101011194502.GK5851@bicker>
+	<20101011194502.GK5851@bicker> <s5hpqvg1m7v.wl%tiwai@suse.de>
+In-Reply-To: <s5hpqvg1m7v.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Peter Ujfalusi <peter.ujfalusi@n>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: alsa-devel@alsa-project.org, Dan Carpenter <error27@gmail.com>, Jassi Brar <jassi.brar@samsung.com>, kernel-janitors@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>
 
-On Mon, Oct 11, 2010 at 09:45:02PM +0200, Dan Carpenter wrote:
-> On Mon, Oct 11, 2010 at 07:51:48PM +0100, Mark Brown wrote:
-> > In actual fact quite a few devices have enough registers to be
-> > truncated, meaning that it's not only possible but likely we'll exercise
-> > the cases that deal with the end of buffer.  If snprintf() is returning
-> > values larger than buffer size it was given we're likely to have an
-> > issue but it seems that there's something missing in your analysis since
-> > we're never seeing WARN_ON()s and are instead seeing the behaviour the
-> > code is intended to give, which is to truncate the output when we run
-> > out of space.
-> > 
-> > Could you re-check your analysis, please?
+On Mon, Oct 11, 2010 at 10:57:40PM +0200, Takashi Iwai wrote:
+> Dan Carpenter wrote:
+
+> Well, actually we should fix either:
+
+> - check the return of snprintf() at each time properly,
 > 
-> That's odd.  I'm sorry, I can't explain why you wouldn't see a stack
-> trace...  The code is straight forward:
-> 
->         /* Reject out-of-range values early.  Large positive sizes are
->            used for unknown buffer sizes. */
->         if (WARN_ON_ONCE((int) size < 0))
->                 return 0;
-> 
-> It would still give you truncated output but after the NULL terminator
-> there would be information leaked from the kernel.  If the reader
-> program had allocated a large enough buffer to handle the extra
-> information it wouldn't cause a problem.
-> 
+> 	list_for_each_entry(dai, &dai_list, list) {
+> 		int len = snprintf(buf + ret, PAGE_SIZE - ret, "%s\n", dai->name);
+> 		if (len < 0)
+> 			return len;
+> 		ret += len;
+> 	}
 
-Actually it will never cause a problem with userspace because we pass
-the size of the userspace buffer to the kernel.  The only issues are the
-information leak if the user passes in a 8k buffer and the also the
-WARN_ON_ONCE()
+In this case we're deliberately eating the error since all these files
+are about getting diagnostics out - the code is intentionally soldiering
+on and trying to get as much data out as possible rather than giving up
+on error.
 
+> In either case, a negative check after for loop is superfluous.
 
-regards,
-dan carpenter
+In those ones, yes - it's pretty much there for paranoia since the copy
+to userspace is more likely to explode than random memory corruption.
 
+> And, when no negative return value is assured (or filtered out like
+> above), there can't be overflow, too.  snprintf() fills the string
+> at most the size including NUL-char.  OTOH, it returns the size that
+> doesn't include NUL-char.
+
+Dan was saying that it would return sizes larger than the string it
+wrote (which is a behaviour of some implementations) which would be
+an issue since it would cause us to pass bad buffer pointers into
+subsequent snprintf() calls.
+
+I've not had time to look at this properly but Dan's analysis seems off.
