@@ -1,85 +1,32 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Tue, 12 Oct 2010 12:25:48 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 12 Oct 2010 14:51:20 +0000
 Subject: Re: [patch 1/2] vhost: potential integer overflows
-Message-Id: <20101012122548.GA25446@redhat.com>
+Message-Id: <20101012145120.GC6742@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101011172256.GF5851@bicker>
-In-Reply-To: <20101011172256.GF5851@bicker>
+References: <20101011172256.GF5851@bicker> <20101012122548.GA25446@redhat.com>
+In-Reply-To: <20101012122548.GA25446@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
 Cc: Juan Quintela <quintela@redhat.com>, "David S. Miller" <davem@davemloft.net>, Rusty Russell <rusty@rustcorp.com.au>, kvm@vger.kernel.org, virtualization@lists.osdl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 11, 2010 at 07:22:57PM +0200, Dan Carpenter wrote:
-> I did an audit for potential integer overflows of values which get passed
-> to access_ok() and here are the results.
+On Tue, Oct 12, 2010 at 02:25:48PM +0200, Michael S. Tsirkin wrote:
 > 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> As far as I can see, maximum value for num is 64K - 1:
 > 
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index dd3d6f7..c2aa12c 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -429,6 +429,14 @@ static int vq_access_ok(unsigned int num,
->  			struct vring_avail __user *avail,
->  			struct vring_used __user *used)
->  {
-> +
-> +	if (num > UINT_MAX / sizeof *desc)
-> +		return 0;
-> +	if (num > UINT_MAX / sizeof *avail->ring - sizeof *avail)
-> +		return 0;
-> +	if (num > UINT_MAX / sizeof *used->ring - sizeof *used)
-> +		return 0;
-> +
->  	return access_ok(VERIFY_READ, desc, num * sizeof *desc) &&
->  	       access_ok(VERIFY_READ, avail,
->  			 sizeof *avail + num * sizeof *avail->ring) &&
-> @@ -447,6 +455,9 @@ int vhost_log_access_ok(struct vhost_dev *dev)
->  /* Caller should have vq mutex and device mutex */
->  static int vq_log_access_ok(struct vhost_virtqueue *vq, void __user *log_base)
->  {
-> +	if (vq->num > UINT_MAX / sizeof *vq->used->ring - sizeof *vq->used)
-> +		return 0;
-> +
->  	return vq_memory_access_ok(log_base, vq->dev->memory,
->  			    vhost_has_feature(vq->dev, VHOST_F_LOG_ALL)) &&
->  		(!vq->log_used || log_access_ok(log_base, vq->log_addr,
-> @@ -606,12 +617,17 @@ static long vhost_set_vring(struct vhost_dev *d, int ioctl, void __user *argp)
->  			}
->  
->  			/* Also validate log access for used ring if enabled. */
-> -			if ((a.flags & (0x1 << VHOST_VRING_F_LOG)) &&
-> -			    !log_access_ok(vq->log_base, a.log_guest_addr,
-> +			if (a.flags & (0x1 << VHOST_VRING_F_LOG)) {
-> +				if (vq->num > UINT_MAX / sizeof *vq->used->ring - sizeof *vq->used) {
-> +					r = -EINVAL;
-> +					break;
-> +				}
-> +				if (!log_access_ok(vq->log_base, a.log_guest_addr,
->  					   sizeof *vq->used +
->  					   vq->num * sizeof *vq->used->ring)) {
-> -				r = -EINVAL;
-> -				break;
-> +					r = -EINVAL;
-> +					break;
-> +				}
->  			}
->  		}
->  
+>                 if (!s.num || s.num > 0xffff || (s.num & (s.num - 1))) {
+>                         r = -EINVAL;
+>                         break;
+>                 }
+> 
+> How can any of the above two trigger?
+> It seems easier to check value for sanity at a single place where it's
+> passed from userspace to kernel.
+> 
 
+Gar.  Sorry for that.  My mistake.
 
-As far as I can see, maximum value for num is 64K - 1:
+regards,
+dan carpenter
 
-                if (!s.num || s.num > 0xffff || (s.num & (s.num - 1))) {
-                        r = -EINVAL;
-                        break;
-                }
-
-How can any of the above two trigger?
-It seems easier to check value for sanity at a single place where it's
-passed from userspace to kernel.
-
--- 
-MST
