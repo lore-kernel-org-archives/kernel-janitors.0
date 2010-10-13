@@ -1,56 +1,37 @@
-From: Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>
-Date: Fri, 29 Oct 2010 00:38:53 +0000
-Subject: Re: [patch] memcg: null dereference on allocation failure
-Message-Id: <20101029093853.49e75309.nishimura@mxp.nes.nec.co.jp>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 13 Oct 2010 19:18:53 +0000
+Subject: [patch] ns83820: spin_lock_irq() => spin_lock()
+Message-Id: <20101013191852.GD6060@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101028111241.GC6062@bicker>
-In-Reply-To: <20101028111241.GC6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Balbir Singh <balbir@linux.vnet.ibm.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, mingo@elte.hu
 
-(I add Andrew to CC-list)
+This is essentially cosmetic.  At this point the IRQs are already
+disabled because we called spin_lock_irq(&dev->rx_info.lock).
 
-On Thu, 28 Oct 2010 13:12:41 +0200
-Dan Carpenter <error27@gmail.com> wrote:
+The real bug here was fixed back in 2006 in 3a10ccebe: "[PATCH] lock
+validator: fix ns83820.c irq-flags bug".  Prior to that patch, it was
+a "spin_lock_irq is not nestable" type bug.  The 2006 patch changes the
+unlock to not re-enable IRQs, which eliminates the potential deadlock.
 
-> The original code had a null dereference if alloc_percpu() failed.
-> This was introduced in 711d3d2c9bc3 "memcg: cpu hotplug aware percpu
-> count updates"
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
+But this bit was missed.  We should change the lock function as well so
+it balances nicely.
 
-Acked-by: Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 9a99cfa..2efa8ea 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4208,15 +4208,17 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
->  
->  	memset(mem, 0, size);
->  	mem->stat = alloc_percpu(struct mem_cgroup_stat_cpu);
-> -	if (!mem->stat) {
-> -		if (size < PAGE_SIZE)
-> -			kfree(mem);
-> -		else
-> -			vfree(mem);
-> -		mem = NULL;
-> -	}
-> +	if (!mem->stat)
-> +		goto out_free;
->  	spin_lock_init(&mem->pcp_counter_lock);
->  	return mem;
-> +
-> +out_free:
-> +	if (size < PAGE_SIZE)
-> +		kfree(mem);
-> +	else
-> +		vfree(mem);
-> +	return NULL;
->  }
->  
->  /*
+diff --git a/drivers/net/ns83820.c b/drivers/net/ns83820.c
+index 3bbd0aa..84134c7 100644
+--- a/drivers/net/ns83820.c
++++ b/drivers/net/ns83820.c
+@@ -772,7 +772,7 @@ static int ns83820_setup_rx(struct net_device *ndev)
+ 		phy_intr(ndev);
+ 
+ 		/* Okay, let it rip */
+-		spin_lock_irq(&dev->misc_lock);
++		spin_lock(&dev->misc_lock);
+ 		dev->IMR_cache |= ISR_PHY;
+ 		dev->IMR_cache |= ISR_RXRCMP;
+ 		//dev->IMR_cache |= ISR_RXERR;
