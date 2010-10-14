@@ -1,52 +1,33 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:29 +0000
-Subject: [PATCH 09/33] Staging: go7007: Makefile: makefile cleanup
-Message-Id: <1286496113-11897-9-git-send-email-tdent48227@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 14 Oct 2010 16:38:49 +0000
+Subject: [patch -next] lpfc: unlock etc on error path
+Message-Id: <20101014163849.GA6614@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: James Smart <james.smart@emulex.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Alex Iannicelli <alex.iannicelli@emulex.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed <module>-objs to <module>-y in Makefile. Also, Replace EXTRA_CFLAGS with ccflags-y
+All the other error paths call sysfs_mbox_idle() and unlock before
+returning. 
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
----
- drivers/staging/go7007/Makefile |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/go7007/Makefile b/drivers/staging/go7007/Makefile
-index d37b7ed..60a9185 100644
---- a/drivers/staging/go7007/Makefile
-+++ b/drivers/staging/go7007/Makefile
-@@ -14,10 +14,10 @@ obj-$(CONFIG_VIDEO_GO7007_UDA1342) += wis-uda1342.o
- obj-$(CONFIG_VIDEO_GO7007_SONY_TUNER) += wis-sony-tuner.o
- obj-$(CONFIG_VIDEO_GO7007_TW2804) += wis-tw2804.o
- 
--go7007-objs += go7007-v4l2.o go7007-driver.o go7007-i2c.o go7007-fw.o \
-+go7007-y := go7007-v4l2.o go7007-driver.o go7007-i2c.o go7007-fw.o \
- 		snd-go7007.o
- 
--s2250-objs += s2250-board.o
-+s2250-y := s2250-board.o
- 
- # Uncomment when the saa7134 patches get into upstream
- #ifneq ($(CONFIG_VIDEO_SAA7134),)
-@@ -27,8 +27,8 @@ s2250-objs += s2250-board.o
- 
- # S2250 needs cypress ezusb loader from dvb-usb
- ifneq ($(CONFIG_VIDEO_GO7007_USB_S2250_BOARD),)
--EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-usb
-+ccflags-y := -Idrivers/media/dvb/dvb-usb
- endif
- 
--EXTRA_CFLAGS += -Idrivers/media/dvb/frontends
--EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core
-+ccflags-y += -Idrivers/media/dvb/frontends
-+ccflags-y += -Idrivers/media/dvb/dvb-core
--- 
-1.7.3.1.50.g1e633
-
+diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+index f681eea..5f7d9e6 100644
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -3789,8 +3789,11 @@ sysfs_mbox_read(struct file *filp, struct kobject *kobj,
+ 			break;
+ 		case MBX_SECURITY_MGMT:
+ 		case MBX_AUTH_PORT:
+-			if (phba->pci_dev_grp = LPFC_PCI_DEV_OC)
++			if (phba->pci_dev_grp = LPFC_PCI_DEV_OC) {
++				sysfs_mbox_idle(phba);
++				spin_unlock_irq(&phba->hbalock);
+ 				return -EPERM;
++			}
+ 			break;
+ 		case MBX_READ_SPARM64:
+ 		case MBX_READ_LA:
