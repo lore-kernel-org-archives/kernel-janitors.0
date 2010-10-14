@@ -1,30 +1,46 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 11 Oct 2010 19:14:23 +0000
-Subject: [patch 1/2 -next] rbd: null vs ERR_PTR
-Message-Id: <20101011191423.GI5851@bicker>
+Date: Thu, 14 Oct 2010 18:22:37 +0000
+Subject: [patch -next] qla2xxx: list cursors are not null
+Message-Id: <20101014182237.GC6614@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yehuda Sadeh <yehuda@hq.newdream.net>
-Cc: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Vasquez <andrew.vasquez@qlogic.com>
+Cc: linux-driver@qlogic.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, Giridhar Malavali <giridhar.malavali@qlogic.com>, Lalit Chandivade <lalit.chandivade@qlogic.com>, Grant Likely <grant.likely@secretlab.ca>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-ceph_alloc_page_vector() returns ERR_PTR(-ENOMEM) on errors.
+This is just a cleanup.
+
+The unneeded NULL check annoys static checkers because we already
+derefenced it and the we check it and then (if it's not the _safe()
+version) we dereference it again without checking.  And the static
+checker is all, "Wah?  Is it null or not?"
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 1ac87f1..52f9420 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -826,8 +826,8 @@ static int rbd_req_sync_op(struct rbd_device *dev,
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index c2d7bb8..f5cf356 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -3830,7 +3830,7 @@ qla2x00_update_fcports(scsi_qla_host_t *base_vha)
+ 	/* Go with deferred removal of rport references. */
+ 	list_for_each_entry_safe(vha, tvp, &base_vha->hw->vp_list, list)
+ 		list_for_each_entry(fcport, &vha->vp_fcports, list)
+-			if (fcport && fcport->drport &&
++			if (fcport->drport &&
+ 			    atomic_read(&fcport->state) != FCS_UNCONFIGURED)
+ 				qla2x00_rport_del(fcport);
+ }
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index bdd53f0..374670b 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -2351,7 +2351,7 @@ qla2x00_remove_one(struct pci_dev *pdev)
+ 	ha = base_vha->hw;
  
- 	num_pages = calc_pages_for(ofs , len);
- 	pages = ceph_alloc_page_vector(num_pages, GFP_KERNEL);
--	if (!pages)
--		return -ENOMEM;
-+	if (IS_ERR(pages))
-+		return PTR_ERR(pages);
+ 	list_for_each_entry_safe(vha, temp, &ha->vp_list, list) {
+-		if (vha && vha->fc_vport)
++		if (vha->fc_vport)
+ 			fc_vport_terminate(vha->fc_vport);
+ 	}
  
- 	if (!orig_ops) {
- 		payload_len = (flags & CEPH_OSD_FLAG_WRITE ? len : 0);
