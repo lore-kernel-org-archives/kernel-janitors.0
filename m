@@ -1,50 +1,35 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:44 +0000
-Subject: [PATCH 24/33] Staging: smbfs: Makefile: Makefile clean up
-Message-Id: <1286496113-11897-24-git-send-email-tdent48227@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 14 Oct 2010 18:23:30 +0000
+Subject: [patch -next] scsi_transport_fc: remove unneeded check
+Message-Id: <20101014182330.GD6614@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>
+Cc: James Smart <james.smart@emulex.com>, Christof Schmitt <christof.schmitt@de.ibm.com>, Hannes Reinecke <hare@suse.de>, Mike Christie <michaelc@cs.wisc.edu>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Changed <module>-objs to <module>-y in Makefile.
-Also Replace EXTRA_CFLAGS with ccflags-y.
+"val" can never be less than zero here.  It's unsigned and
+simple_strtoul() always returns positive values.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+I also cleaned up the check.  "*cp != '\0'" is more explicit than "*cp"
+and I removed some parenthesis that weren't needed.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/staging/smbfs/Makefile |   12 ++++++------
- 1 files changed, 6 insertions(+), 6 deletions(-)
+I sent this patch some months back but didn't recieve any feedback.
 
-diff --git a/drivers/staging/smbfs/Makefile b/drivers/staging/smbfs/Makefile
-index 4faf8c4..d2a92c5 100644
---- a/drivers/staging/smbfs/Makefile
-+++ b/drivers/staging/smbfs/Makefile
-@@ -4,15 +4,15 @@
+diff --git a/drivers/scsi/scsi_transport_fc.c b/drivers/scsi/scsi_transport_fc.c
+index 0681378..b108a9b 100644
+--- a/drivers/scsi/scsi_transport_fc.c
++++ b/drivers/scsi/scsi_transport_fc.c
+@@ -844,7 +844,7 @@ store_fc_rport_dev_loss_tmo(struct device *dev, struct device_attribute *attr,
+ 	    (rport->port_state = FC_PORTSTATE_NOTPRESENT))
+ 		return -EBUSY;
+ 	val = simple_strtoul(buf, &cp, 0);
+-	if ((*cp && (*cp != '\n')) || (val < 0))
++	if (*cp != '\0' && *cp != '\n')
+ 		return -EINVAL;
  
- obj-$(CONFIG_SMB_FS) += smbfs.o
- 
--smbfs-objs := proc.o dir.o cache.o sock.o inode.o file.o ioctl.o getopt.o \
-+smbfs-y := proc.o dir.o cache.o sock.o inode.o file.o ioctl.o getopt.o \
- 		symlink.o smbiod.o request.o
- 
- # If you want debugging output, you may add these flags to the EXTRA_CFLAGS
- # SMBFS_PARANOIA should normally be enabled.
- 
--EXTRA_CFLAGS += -DSMBFS_PARANOIA
--#EXTRA_CFLAGS += -DSMBFS_DEBUG
--#EXTRA_CFLAGS += -DSMBFS_DEBUG_VERBOSE
--#EXTRA_CFLAGS += -DDEBUG_SMB_TIMESTAMP
--#EXTRA_CFLAGS += -Werror
-+ccflags-y := -DSMBFS_PARANOIA
-+#ccflags-y += -DSMBFS_DEBUG
-+#ccflags-y += -DSMBFS_DEBUG_VERBOSE
-+#ccflags-y += -DDEBUG_SMB_TIMESTAMP
-+#ccflags-y += -Werror
- 
--- 
-1.7.3.1.50.g1e633
+ 	/*
 
