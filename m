@@ -1,65 +1,37 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 17 Oct 2010 14:51:53 +0000
-Subject: [PATCH] staging: speakup: fix leaks of sysfs groups
-Message-Id: <1287327114-9201-1-git-send-email-segooon@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 14 Oct 2010 18:21:59 +0000
+Subject: [patch -next] megaraid: unlock on error path
+Message-Id: <20101014182159.GB6614@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, William Hubbs <w.d.hubbs@gmail.com>, Samuel Thibault <samuel.thibault@ens-lyon.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Neela Syam Kolli <megaraidlinux@lsi.com>, bo yang <boyang1288@gmail.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-speakup_kobj_init() and speakup_kobj_exit() didn't remove
-i18n_attr_group and main_attr_group sysfs groups.
+We need to release the semaphore here before returning.
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
----
- drivers/staging/speakup/kobjects.c |   18 ++++++++++++++----
- 1 files changed, 14 insertions(+), 4 deletions(-)
+This was introduced in 39a985547cb: "[SCSI] megaraid_sas: Add Online
+Controller Reset to MegaRAID SAS drive"
 
-diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
-index e12b0e7..cc79f9e 100644
---- a/drivers/staging/speakup/kobjects.c
-+++ b/drivers/staging/speakup/kobjects.c
-@@ -989,24 +989,34 @@ int speakup_kobj_init(void)
- 
- 	speakup_kobj = kobject_create_and_add("speakup", accessibility_kobj);
- 	if (!speakup_kobj) {
--		kobject_put(accessibility_kobj);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto err_acc;
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/scsi/megaraid/megaraid_sas.c b/drivers/scsi/megaraid/megaraid_sas.c
+index 55951f4..ab28bae 100644
+--- a/drivers/scsi/megaraid/megaraid_sas.c
++++ b/drivers/scsi/megaraid/megaraid_sas.c
+@@ -4436,11 +4436,13 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
+ 		printk(KERN_ERR "megaraid_sas: timed out while"
+ 			"waiting for HBA to recover\n");
+ 		error = -ENODEV;
+-		goto out_kfree_ioc;
++		goto out_up;
  	}
+ 	spin_unlock_irqrestore(&instance->hba_lock, flags);
  
- 	/* Create the files associated with this kobject */
- 	retval = sysfs_create_group(speakup_kobj, &main_attr_group);
- 	if (retval)
--		speakup_kobj_exit();
-+		goto err_speakup;
- 
- 	retval = sysfs_create_group(speakup_kobj, &i18n_attr_group);
- 	if (retval)
--		speakup_kobj_exit();
-+		goto err_group;
+ 	error = megasas_mgmt_fw_ioctl(instance, user_ioc, ioc);
 +
-+	return 0;
++      out_up:
+ 	up(&instance->ioctl_sem);
  
-+err_group:
-+	sysfs_remove_group(speakup_kobj, &main_attr_group);
-+err_speakup:
-+	kobject_put(speakup_kobj);
-+err_acc:
-+	kobject_put(accessibility_kobj);
- 	return retval;
- }
- 
- void speakup_kobj_exit(void)
- {
-+	sysfs_remove_group(speakup_kobj, &i18n_attr_group);
-+	sysfs_remove_group(speakup_kobj, &main_attr_group);
- 	kobject_put(speakup_kobj);
- 	kobject_put(accessibility_kobj);
- }
--- 
-1.7.0.4
-
+       out_kfree_ioc:
