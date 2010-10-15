@@ -1,41 +1,37 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 05 Oct 2010 22:20:15 +0000
-Subject: Re: [PATCH v3 12/20] Staging: rtl8192su: ieee80211: Makefile:
-Message-Id: <20101005222015.GA28165@kroah.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 15 Oct 2010 03:44:07 +0000
+Subject: [patch 1/2] Staging: intel_sst: return -EFAULT if copy_to_user()
+Message-Id: <20101015034407.GI6614@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
- <1286037489-28439-12-git-send-email-tdent48227@gmail.com>
- <20101005190209.GA3386@kroah.com>
- <AANLkTimY3iVfQgpNqJAVATFCMaQ1b=xyvyVKctyxMkFs@mail.gmail.com>
-In-Reply-To: <AANLkTimY3iVfQgpNqJAVATFCMaQ1b=xyvyVKctyxMkFs@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: T Dent <tdent48227@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 05, 2010 at 05:47:23PM -0400, T Dent wrote:
-> On 10/5/10, Greg KH <greg@kroah.com> wrote:
-> > On Sat, Oct 02, 2010 at 12:38:01PM -0400, Tracey Dent wrote:
-> >> Changed to use the proper ccflags-y option
-> >>
-> >> Signed-off-by: Tracey Dent <tdent48227@gmail.com>
-> >> ---
-> >>  drivers/staging/rtl8192su/ieee80211/Makefile |   10 +++++-----
-> >
-> > This file is no longer in linux-next.
-> 
-> I Didn't know that. I guess because I did the patches based on the
-> current linus tree.
+copy_to_user() returns the number of bytes remaining to be copied but we
+want to return an error code.  And that error code is -EFAULT not -EIO.
 
-You should always send patches against the linux-next tree, as it
-contains the accumulated patches that will be sent to Linus next time
-around.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> So you want me to resend it without this driver?
-
-Nope, I got your other ones.
-
-thanks,
-
-greg k-h
+diff --git a/drivers/staging/intel_sst/intel_sst_app_interface.c b/drivers/staging/intel_sst/intel_sst_app_interface.c
+index baf0ddc..5ead4d1 100644
+--- a/drivers/staging/intel_sst/intel_sst_app_interface.c
++++ b/drivers/staging/intel_sst/intel_sst_app_interface.c
+@@ -865,6 +865,8 @@ long intel_sst_ioctl(struct file *file_ptr, unsigned int cmd, unsigned long arg)
+ 				str_info->src = SST_DRV;
+ 				retval = copy_to_user(&str_param->stream_id,
+ 						&retval, sizeof(__u32));
++				if (retval)
++					retval = -EFAULT;
+ 			} else {
+ 				if (retval = -SST_ERR_INVALID_PARAMS)
+ 					retval = -EINVAL;
+@@ -938,7 +940,7 @@ long intel_sst_ioctl(struct file *file_ptr, unsigned int cmd, unsigned long arg)
+ 		retval = copy_to_user((struct snd_sst_vol *)arg,
+ 						&get_vol, sizeof(get_vol));
+ 		if (retval) {
+-			retval = -EIO;
++			retval = -EFAULT;
+ 			break;
+ 		}
+ 		/*sst_print_get_vol_info(str_id, &get_vol);*/
