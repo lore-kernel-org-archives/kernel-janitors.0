@@ -1,41 +1,56 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Sat, 02 Oct 2010 16:37:55 +0000
-Subject: [PATCH v3 06/20] Stagng: easycap: Makefile: cleaned up Makefile cflag lines
-Message-Id: <1286037489-28439-6-git-send-email-tdent48227@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 15 Oct 2010 12:54:48 +0000
+Subject: [PATCH 5/7] drivers/scsi/libsas/sas_ata.c: Return -ENOMEM on memory allocation failure
+Message-Id: <1287147610-8041-5-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>
+Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+In this code, 0 is returned on memory allocation failure, even though other
+failures return -ENOMEM or other similar values.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ret;
+expression x,e1,e2,e3;
+@@
+
+ret = 0
+... when != ret = e1
+*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
+... when != ret = e2
+if (x = NULL) { ... when != ret = e3
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/easycap/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/scsi/libsas/sas_ata.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/easycap/Makefile b/drivers/staging/easycap/Makefile
-index d93bd6b..680f370 100644
---- a/drivers/staging/easycap/Makefile
-+++ b/drivers/staging/easycap/Makefile
-@@ -5,9 +5,9 @@ easycap-objs	:= easycap_main.o easycap_low.o easycap_sound.o
- easycap-objs	+= easycap_ioctl.o easycap_settings.o
- easycap-objs	+= easycap_testcard.o
+diff -u -p a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+--- a/drivers/scsi/libsas/sas_ata.c
++++ b/drivers/scsi/libsas/sas_ata.c
+@@ -464,8 +464,10 @@ static int sas_execute_task(struct sas_t
  
--EXTRA_CFLAGS += -Wall
-+ccflags-y := -Wall
- # Impose all or none of the following:
--EXTRA_CFLAGS += -DEASYCAP_IS_VIDEODEV_CLIENT
--EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_DEVICE_H
--EXTRA_CFLAGS += -DEASYCAP_NEEDS_V4L2_FOPS
-+ccflags-y += -DEASYCAP_IS_VIDEODEV_CLIENT
-+ccflags-y += -DEASYCAP_NEEDS_V4L2_DEVICE_H
-+ccflags-y += -DEASYCAP_NEEDS_V4L2_FOPS
+ 	if (dma_dir != DMA_NONE) {
+ 		scatter = kzalloc(sizeof(*scatter), GFP_KERNEL);
+-		if (!scatter)
++		if (!scatter) {
++			res = -ENOMEM;
+ 			goto out;
++		}
  
--- 
-1.7.3.1.50.g1e633
+ 		sg_init_one(scatter, buffer, size);
+ 		num_scatter = 1;
 
