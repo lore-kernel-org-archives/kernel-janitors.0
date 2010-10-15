@@ -1,63 +1,47 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 22 Oct 2010 08:13:04 +0000
-Subject: Re: [patch 3/3] V4L/DVB: s5p-fimc: dubious one-bit signed bitfields
-Message-Id: <20101022081304.GQ5985@bicker>
+Date: Fri, 15 Oct 2010 20:36:48 +0000
+Subject: [patch] Staging: intel_sst: off by one bug
+Message-Id: <20101015203644.GO6614@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101021192424.GL5985@bicker> <000a01cb71b8$465248f0$d2f6dad0$%nawrocki@samsung.com>
-In-Reply-To: <000a01cb71b8$465248f0$d2f6dad0$%nawrocki@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: 'Mauro Carvalho Chehab' <mchehab@infradead.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 22, 2010 at 09:10:57AM +0200, Sylwester Nawrocki wrote:
-> > -----Original Message-----
-> > From: Dan Carpenter [mailto:error27@gmail.com]
-> > Sent: Thursday, October 21, 2010 9:24 PM
-> > To: Mauro Carvalho Chehab
-> > Cc: Kyungmin Park; Sylwester Nawrocki; Pawel Osciak; Marek Szyprowski;
-> > linux-media@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > Subject: [patch 3/3] V4L/DVB: s5p-fimc: dubious one-bit signed
-> > bitfields
-> > 
-> > These are signed so instead of being 1 and 0 as intended they are -1
-> > and
-> > 0.  It doesn't cause a bug in the current code but Sparse warns about
-> > it:
-> > 
-> > drivers/media/video/s5p-fimc/fimc-core.h:226:28:
-> > 	error: dubious one-bit signed bitfield
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > 
-> > diff --git a/drivers/media/video/s5p-fimc/fimc-core.h
-> > b/drivers/media/video/s5p-fimc/fimc-core.h
-> > index e3a7c6a..7665a3f 100644
-> > --- a/drivers/media/video/s5p-fimc/fimc-core.h
-> > +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-> > @@ -222,10 +223,10 @@ struct fimc_effect {
-> >   * @real_height:	source pixel (height - offset)
-> >   */
-> >  struct fimc_scaler {
-> > -	int	scaleup_h:1;
-> > -	int	scaleup_v:1;
-> > -	int	copy_mode:1;
-> > -	int	enabled:1;
-> > +	unsigned int	scaleup_h:1;
-> > +	unsigned int	caleup_v:1;
-> > +	unsigned int	copy_mode:1;
-> > +	unsigned int	enabled:1;
-> >  	u32	hfactor;
-> >  	u32	vfactor;
-> >  	u32	pre_hratio;
-> 
-> In general I agree, however this patch would change scaleup_v:1 
-> to caleup_v, so it cannot be applied in current form.
+This should be >= instead of > or we go passed the end of the array.
 
-Crap!  I suck.  Thanks for catching that.
+Also the arrays are declared with size MAX_NUM_STREAMS.  This is the
+only place that uses MAX_NUM_STREAMS_MFLD.  It seems like asking for
+trouble to use two variables for the same information.  I've changed
+everything to use MAX_NUM_STREAMS.
 
-regards,
-dan carpenter
+This bug isn't really harmful.  In the worst case, if you enabled
+debugging then you would see a message.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/drivers/staging/intel_sst/intel_sst_fw_ipc.h b/drivers/staging/intel_sst/intel_sst_fw_ipc.h
+index 1a2f67f..9d3c368 100644
+--- a/drivers/staging/intel_sst/intel_sst_fw_ipc.h
++++ b/drivers/staging/intel_sst/intel_sst_fw_ipc.h
+@@ -31,7 +31,6 @@
+ */
+ 
+ #define MAX_NUM_STREAMS_MRST 3
+-#define MAX_NUM_STREAMS_MFLD 6
+ #define MAX_NUM_STREAMS 6
+ #define MAX_DBG_RW_BYTES 80
+ #define MAX_NUM_SCATTER_BUFFERS 8
+diff --git a/drivers/staging/intel_sst/intel_sst_stream.c b/drivers/staging/intel_sst/intel_sst_stream.c
+index 1ce3a9c..b2c4b70 100644
+--- a/drivers/staging/intel_sst/intel_sst_stream.c
++++ b/drivers/staging/intel_sst/intel_sst_stream.c
+@@ -45,7 +45,7 @@
+  */
+ int sst_check_device_type(u32 device, u32 num_chan, u32 *pcm_slot)
+ {
+-	if (device > MAX_NUM_STREAMS_MFLD) {
++	if (device >= MAX_NUM_STREAMS) {
+ 		pr_debug("sst: device type invalid %d\n", device);
+ 		return -EINVAL;
+ 	}
