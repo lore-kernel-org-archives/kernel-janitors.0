@@ -1,40 +1,72 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:28 +0000
-Subject: [PATCH 08/33] Staging: easycap: Makefile: replace the use of <module>-objs with <module>-y
-Message-Id: <1286496113-11897-8-git-send-email-tdent48227@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 15 Oct 2010 12:54:31 +0000
+Subject: [PATCH 7/7] drivers/staging: Clean up error-handling code
+Message-Id: <1287147610-8041-7-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Changed <module>-objs to <module>-y in Makefile.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+In the first hunk, 0 is returned on memory allocation failure, even though
+other failures return -ENOMEM or other similar values.
+
+In the second hunk, there was error handling code that returned without
+freeing psz_path_name.
+
+A simplified version of the semantic match that finds the first problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ret;
+expression x,e1,e2,e3;
+@@
+
+ret = 0
+... when != ret = e1
+*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
+... when != ret = e2
+if (x = NULL) { ... when != ret = e3
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/easycap/Makefile |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/tidspbridge/pmgr/dspapi.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/easycap/Makefile b/drivers/staging/easycap/Makefile
-index 680f370..8a3d911 100644
---- a/drivers/staging/easycap/Makefile
-+++ b/drivers/staging/easycap/Makefile
-@@ -1,9 +1,9 @@
+diff -u -p a/drivers/staging/tidspbridge/pmgr/dspapi.c b/drivers/staging/tidspbridge/pmgr/dspapi.c
+--- a/drivers/staging/tidspbridge/pmgr/dspapi.c
++++ b/drivers/staging/tidspbridge/pmgr/dspapi.c
+@@ -493,8 +493,10 @@ u32 mgrwrap_register_object(union trappe
+ 				args->args_mgr_registerobject.psz_path_name) +
+ 	    1;
+ 	psz_path_name = kmalloc(path_size, GFP_KERNEL);
+-	if (!psz_path_name)
++	if (!psz_path_name) {
++		status = -ENOMEM;
+ 		goto func_end;
++	}
+ 	ret = strncpy_from_user(psz_path_name,
+ 				(char *)args->args_mgr_registerobject.
+ 				psz_path_name, path_size);
+@@ -503,8 +505,10 @@ u32 mgrwrap_register_object(union trappe
+ 		goto func_end;
+ 	}
  
- obj-$(CONFIG_EASYCAP)	+= easycap.o
+-	if (args->args_mgr_registerobject.obj_type >= DSP_DCDMAXOBJTYPE)
+-		return -EINVAL;
++	if (args->args_mgr_registerobject.obj_type >= DSP_DCDMAXOBJTYPE) {
++		status = -EINVAL;
++		goto func_end;
++	}
  
--easycap-objs	:= easycap_main.o easycap_low.o easycap_sound.o
--easycap-objs	+= easycap_ioctl.o easycap_settings.o
--easycap-objs	+= easycap_testcard.o
-+easycap-y	:= easycap_main.o easycap_low.o easycap_sound.o
-+easycap-y	+= easycap_ioctl.o easycap_settings.o
-+easycap-y	+= easycap_testcard.o
- 
- ccflags-y := -Wall
- # Impose all or none of the following:
--- 
-1.7.3.1.50.g1e633
+ 	status = dcd_register_object(&uuid_obj,
+ 				     args->args_mgr_registerobject.obj_type,
 
