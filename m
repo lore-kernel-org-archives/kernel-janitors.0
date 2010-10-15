@@ -1,51 +1,67 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Tue, 26 Oct 2010 11:06:44 +0000
-Subject: Re: [PATCH 3/14] drivers/vhost/vhost.c: delete double assignment
-Message-Id: <20101026110644.GA7922@redhat.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 15 Oct 2010 12:56:01 +0000
+Subject: [PATCH 1/7] drivers/net/irda/irtty-sir.c: Return -ENOMEM on memory allocation failure
+Message-Id: <1287147610-8041-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
-	<1288088743-3725-4-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-4-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: virtualization@lists.osdl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, netdev@vger.kernel.org
+To: Samuel Ortiz <samuel@sortiz.org>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 26, 2010 at 12:25:32PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Delete successive assignments to the same location.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression i;
-> @@
-> 
-> *i = ...;
->  i = ...;
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia@diku.dk>
 
-Thanks, applied.
+In this code, 0 is returned on memory allocation failure, even though other
+failures return -ENOMEM or other similar values.
 
-> ---
->  drivers/vhost/vhost.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index 94701ff..ed27727 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -157,7 +157,6 @@ static void vhost_vq_reset(struct vhost_dev *dev,
->  	vq->avail_idx = 0;
->  	vq->last_used_idx = 0;
->  	vq->used_flags = 0;
-> -	vq->used_flags = 0;
->  	vq->log_used = false;
->  	vq->log_addr = -1ull;
->  	vq->vhost_hlen = 0;
+The initial value of ret as 0 is never used, so drop the initialization.
+
+A simplified version of the semantic match that finds the first problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ret;
+expression x,e1,e2,e3;
+@@
+
+ret = 0
+... when != ret = e1
+*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
+... when != ret = e2
+if (x = NULL) { ... when != ret = e3
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/irda/irtty-sir.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/net/irda/irtty-sir.c b/drivers/net/irda/irtty-sir.c
+--- a/drivers/net/irda/irtty-sir.c
++++ b/drivers/net/irda/irtty-sir.c
+@@ -426,7 +426,7 @@ static int irtty_open(struct tty_struct 
+ {
+ 	struct sir_dev *dev;
+ 	struct sirtty_cb *priv;
+-	int ret = 0;
++	int ret;
+ 
+ 	/* Module stuff handled via irda_ldisc.owner - Jean II */
+ 
+@@ -459,8 +459,10 @@ static int irtty_open(struct tty_struct 
+ 
+ 	/* allocate private device info block */
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+-	if (!priv)
++	if (!priv) {
++		ret = -ENOMEM;
+ 		goto out_put;
++	}
+ 
+ 	priv->magic = IRTTY_MAGIC;
+ 	priv->tty = tty;
+
