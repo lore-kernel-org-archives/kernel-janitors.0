@@ -1,30 +1,56 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 28 Oct 2010 03:44:34 +0000
-Subject: Re: [patch 2/2] cifs: dereferencing first then checking
-Message-Id: <20101028034434.GR6062@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 15 Oct 2010 12:56:39 +0000
+Subject: [PATCH 3/7] drivers/net/wireless/p54/eeprom.c: Return -ENOMEM on memory allocation failure
+Message-Id: <1287147610-8041-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101027212253.GL6062@bicker> <20101027195123.0a712a53@tlielax.poochiereds.net>
-In-Reply-To: <20101027195123.0a712a53-9yPaYZwiELC+kQycOl6kW4xkIHaj4LzF@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 27, 2010 at 07:51:23PM -0400, Jeff Layton wrote:
-> 
-> The above delta shouldn't be needed once the patches in Steve's tree
-> are pushed to Linus. I think what we should probably do is wait for
-> Steve to push to Linus and then do a patch to remove the first two
-> checks.
-> 
-> Sound like a plan?
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Sounds like a plan.
+In this code, 0 is returned on memory allocation failure, even though other
+failures return -ENOMEM or other similar values.
 
-regards,
-dan carpenter
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> -- 
-> Jeff Layton <jlayton@redhat.com>
+// <smpl>
+@@
+expression ret;
+expression x,e1,e2,e3;
+@@
+
+ret = 0
+... when != ret = e1
+*x = \(kmalloc\|kcalloc\|kzalloc\)(...)
+... when != ret = e2
+if (x = NULL) { ... when != ret = e3
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wireless/p54/eeprom.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff -u -p a/drivers/net/wireless/p54/eeprom.c b/drivers/net/wireless/p54/eeprom.c
+--- a/drivers/net/wireless/p54/eeprom.c
++++ b/drivers/net/wireless/p54/eeprom.c
+@@ -261,8 +261,10 @@ static int p54_generate_channel_lists(st
+ 	list->max_entries = max_channel_num;
+ 	list->channels = kzalloc(sizeof(struct p54_channel_entry) *
+ 				 max_channel_num, GFP_KERNEL);
+-	if (!list->channels)
++	if (!list->channels) {
++		ret = -ENOMEM;
+ 		goto free;
++	}
+ 
+ 	for (i = 0; i < max_channel_num; i++) {
+ 		if (i < priv->iq_autocal_len) {
+
