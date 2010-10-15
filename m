@@ -1,23 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 30 Oct 2010 23:49:54 +0000
-Subject: Re: [PATCH] isdn: mISDN: socket: fix information leak to userland
-Message-Id: <20101030.164954.179924837.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 15 Oct 2010 03:42:35 +0000
+Subject: [patch] Staging: lirc: fix PTR_ERR() check
+Message-Id: <20101015034235.GH6614@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288429473-21864-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288429473-21864-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, isdn@linux-pingi.de, acme@redhat.com, tj@kernel.org, eparis@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sat, 30 Oct 2010 13:04:33 +0400
+This is a typo.  It's supposed to be IS_ERR() here instead of PTR_ERR().
 
-> Structure mISDN_devinfo is copied to userland with the field "name"
-> that has the last elements unitialized.  It leads to leaking of
-> contents of kernel stack memory.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/drivers/staging/lirc/lirc_sasem.c b/drivers/staging/lirc/lirc_sasem.c
+index d1ac099..2e681cf 100644
+--- a/drivers/staging/lirc/lirc_sasem.c
++++ b/drivers/staging/lirc/lirc_sasem.c
+@@ -386,7 +386,7 @@ static ssize_t vfd_write(struct file *file, const char *buf,
+ 	}
+ 
+ 	data_buf = memdup_user(buf, n_bytes);
+-	if (PTR_ERR(data_buf)) {
++	if (IS_ERR(data_buf)) {
+ 		retval = PTR_ERR(data_buf);
+ 		goto exit;
+ 	}
