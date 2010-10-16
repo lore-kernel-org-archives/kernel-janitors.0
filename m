@@ -1,34 +1,31 @@
-From: "Mrs.Irena Ruddy" <callattn@gmail.com>
-Date: Mon, 25 Oct 2010 13:20:59 +0000
-Subject: Do email us !!!,
-Message-Id: <20101025212059.19011w0mntl9e9f4@webmail.stpeter.com.ph>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 16 Oct 2010 18:39:45 +0000
+Subject: bug report: ath6kl: use after free
+Message-Id: <20101016183944.GR6614@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi Vipin,
 
+There is a use after free bug in ar6000_ioctl_set_channelParams().  I'm
+not sure how to fix it.
 
-Attn,call us !!!
-This is to inform you that your e-mail address has won  
-us$2,000,000,00.{Two Million Dollars} from Eu lucky day lottery Nl in  
-computer balloting system draw 2010 kindly contact your claim agent  
-Mr.Jong Ramco by via e-mail: payagency3@netscape.net  ,Expiring date  
-is 15th of november 2010 in all email user
+drivers/staging/ath6kl/os/linux/ioctl.c +374
+	ar6000_ioctl_set_channelParams(51) warn: 'cmdp' was already freed.
+   370      if (cmd.numChannels > 1) {
+   371          kfree(cmdp);
+                      ^^^^
+	freed here.
 
-All response should be send Via agent e-mail: payagency3@netscape.net
-telex-fax, +31-6111-464-78,telephone numbers : +31-617-444-557,
+   372      }
+   373
+   374      ar->ap_wmode = cmdp->phyMode;
+                           ^^^^^^
+	dereferenced here.
 
-Clarification and procedure Contact Mr,Jong Ramco the agent via e-mail to
-claim: payagency3@netscape.net ,Payment Number:V/4768-194,Ticket  
-Number:Y/5222-88o,serial,Number:A/1027/413,lucky Draw  
-No:G/950/7701,code Number: x-510.
-
-Mrs.Irena Ruddy
-Lottery Award Coordinator Congratulations Once More Again.
-
-----------------------------------------------------------------
-This message was sent using IMP, the Internet Messaging Program.
-
+regards,
+dan carpenter
 
