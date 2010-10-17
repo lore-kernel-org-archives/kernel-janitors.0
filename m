@@ -1,62 +1,60 @@
-From: "Miller, Mike (OS Dev)" <Mike.Miller@hp.com>
-Date: Wed, 27 Oct 2010 15:47:57 +0000
-Subject: RE: [PATCH] scsi: hpsa: fix information leak to userland
-Message-Id: <0F5B06BAB751E047AB5C87D1F77A77887D0E579A63@GVW0547EXC.americas.hpqcorp.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 17 Oct 2010 18:48:30 +0000
+Subject: [PATCH 2/3] fs/ceph/xattr.c: Use kasprintf
+Message-Id: <1287341311-11161-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288194054-9276-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288194054-9276-1-git-send-email-segooon@gmail.com>
+References: <1287341311-11161-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1287341311-11161-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: "Stephen M. Cameron" <scameron@beardog.cce.hp.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, ISS StorageDev <iss_storagedev@hp.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sage Weil <sage@newdream.net>
+Cc: kernel-janitors@vger.kernel.org, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Convert a sequence of kmalloc and memcpy to use kasprintf.  The argument is
+checked for being a string by the presence of a previous call to strlen.
 
+The semantic patch that performs this transformation is:
+(http://coccinelle.lip6.fr/)
 
-> -----Original Message-----
-> From: Vasiliy Kulikov [mailto:segooon@gmail.com]
-> Sent: Wednesday, October 27, 2010 10:41 AM
-> To: kernel-janitors@vger.kernel.org
-> Cc: Stephen M. Cameron; James E.J. Bottomley; Miller, Mike (OS Dev);
-> ISS StorageDev; linux-scsi@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: [PATCH] scsi: hpsa: fix information leak to userland
-> 
-> Structure IOCTL_Command_struct is copied to userland with
-> some padding fields at the end of the struct unitialized.
-> It leads to leaking of contents of kernel stack memory.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
->  Compile tested.
-> 
->  drivers/scsi/hpsa.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> index c5d0606..641a38c 100644
-> --- a/drivers/scsi/hpsa.c
-> +++ b/drivers/scsi/hpsa.c
-> @@ -2298,6 +2298,7 @@ static int hpsa_ioctl32_passthru(struct
-> scsi_device *dev, int cmd, void *arg)
->  	int err;
->  	u32 cp;
-> 
-> +	memset(&arg64, 0, sizeof(arg64));
->  	err = 0;
->  	err |= copy_from_user(&arg64.LUN_info, &arg32->LUN_info,
->  			   sizeof(arg64.LUN_info));
-> @@ -2334,6 +2335,7 @@ static int hpsa_ioctl32_big_passthru(struct
-> scsi_device *dev,
->  	int err;
->  	u32 cp;
-> 
-> +	memset(&arg64, 0, sizeof(arg64));
->  	err = 0;
->  	err |= copy_from_user(&arg64.LUN_info, &arg32->LUN_info,
->  			   sizeof(arg64.LUN_info));
-> --
-> 1.7.0.4
+// <smpl>
+@@
+expression a,flag,len;
+expression arg,e1,e2;
+statement S;
+@@
 
-Acked-by: Mike Milelr <mike.miller@hp.com>
+  len = strlen(arg)
+  ... when != len = e1
+      when != arg = e2
+  a -  \(kmalloc\|kzalloc\)(len+1,flag)
++  kasprintf(flag,"%s",arg)
+  <... when != a
+  if (a = NULL || ...) S
+  ...>
+- memcpy(a,arg,len+1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/ceph/xattr.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index 70e9199..b8dd1f0 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -716,10 +716,9 @@ int ceph_setxattr(struct dentry *dentry, const char *name,
+ 
+ 	/* preallocate memory for xattr name, value, index node */
+ 	err = -ENOMEM;
+-	newname = kmalloc(name_len + 1, GFP_NOFS);
++	newname = kasprintf(GFP_NOFS, "%s", name);
+ 	if (!newname)
+ 		goto out;
+-	memcpy(newname, name, name_len + 1);
+ 
+ 	if (val_len) {
+ 		newval = kmalloc(val_len + 1, GFP_NOFS);
 
