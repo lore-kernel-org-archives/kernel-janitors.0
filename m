@@ -1,36 +1,37 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:41 +0000
-Subject: [PATCH 21/33] Staging: rtl8192u: Makefile: replace the use of <module>-objs with <module>-y
-Message-Id: <1286496113-11897-21-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:41:20 +0000
+Subject: [PATCH 3/8] char: mwave: fix information leak to userland
+Message-Id: <1287326481-7985-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 
-Changed <module>-objs to <module>-y in Makefile.
+Structure rAbilities is copied to userland with uart_enable, mwave_os_name
+and bios_task_name array end elements and some padding fields unitialized.
+It leads to leaking of stack memory.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/rtl8192u/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ Compile tested.
 
-diff --git a/drivers/staging/rtl8192u/Makefile b/drivers/staging/rtl8192u/Makefile
-index cba4344..206d924 100644
---- a/drivers/staging/rtl8192u/Makefile
-+++ b/drivers/staging/rtl8192u/Makefile
-@@ -12,7 +12,7 @@ ccflags-y += -DUSE_ONE_PIPE
- ccflags-y += -DENABLE_DOT11D
- ccflags-y += -Idrivers/staging/rtl8192u/ieee80211
- 
--r8192u_usb-objs := r8192U_core.o r8180_93cx6.o r8192U_wx.o		\
-+r8192u_usb-y := r8192U_core.o r8180_93cx6.o r8192U_wx.o		\
- 		  r8190_rtl8256.o r819xU_phy.o r819xU_firmware.o	\
- 		  r819xU_cmdpkt.o r8192U_dm.o r819xU_firmware_img.o	\
- 		  ieee80211/ieee80211_crypt.o				\
+ drivers/char/mwave/mwavedd.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/char/mwave/mwavedd.c b/drivers/char/mwave/mwavedd.c
+index 1d82d58..73b6880 100644
+--- a/drivers/char/mwave/mwavedd.c
++++ b/drivers/char/mwave/mwavedd.c
+@@ -165,6 +165,7 @@ static long mwave_ioctl(struct file *file, unsigned int iocmd,
+ 				"mwavedd::mwave_ioctl,"
+ 				" IOCTL_MW_DSP_ABILITIES calling"
+ 				" tp3780I_QueryAbilities\n");
++			memset(&rAbilities, 0, sizeof(MW_ABILITIES));
+ 			mutex_lock(&mwave_mutex);
+ 			retval = tp3780I_QueryAbilities(&pDrvData->rBDData,
+ 					&rAbilities);
 -- 
-1.7.3.1.50.g1e633
+1.7.0.4
 
