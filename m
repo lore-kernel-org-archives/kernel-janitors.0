@@ -1,28 +1,65 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 28 Oct 2010 04:41:11 +0000
-Subject: [patch] misc/apds9802als: signedness bug in
-Message-Id: <20101028044111.GT6062@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:51:53 +0000
+Subject: [PATCH] staging: speakup: fix leaks of sysfs groups
+Message-Id: <1287327114-9201-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hong Liu <hong.liu@intel.com>
-Cc: Alan Cox <alan@linux.intel.com>, Anantha Narayanan <anantha.narayanan@intel.com>, Jonathan Cameron <jic23@cam.ac.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, William Hubbs <w.d.hubbs@gmail.com>, Samuel Thibault <samuel.thibault@ens-lyon.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-The error handling breaks if "ret_val" is unsigned here.
+speakup_kobj_init() and speakup_kobj_exit() didn't remove
+i18n_attr_group and main_attr_group sysfs groups.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ drivers/staging/speakup/kobjects.c |   18 ++++++++++++++----
+ 1 files changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/apds9802als.c b/drivers/misc/apds9802als.c
-index f9b91ba..0ed0935 100644
---- a/drivers/misc/apds9802als.c
-+++ b/drivers/misc/apds9802als.c
-@@ -123,7 +123,7 @@ static ssize_t als_sensing_range_store(struct device *dev,
- {
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct als_data *data = i2c_get_clientdata(client);
--	unsigned int ret_val;
-+	int ret_val;
- 	unsigned long val;
+diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
+index e12b0e7..cc79f9e 100644
+--- a/drivers/staging/speakup/kobjects.c
++++ b/drivers/staging/speakup/kobjects.c
+@@ -989,24 +989,34 @@ int speakup_kobj_init(void)
  
- 	if (strict_strtoul(buf, 10, &val))
+ 	speakup_kobj = kobject_create_and_add("speakup", accessibility_kobj);
+ 	if (!speakup_kobj) {
+-		kobject_put(accessibility_kobj);
+-		return -ENOMEM;
++		retval = -ENOMEM;
++		goto err_acc;
+ 	}
+ 
+ 	/* Create the files associated with this kobject */
+ 	retval = sysfs_create_group(speakup_kobj, &main_attr_group);
+ 	if (retval)
+-		speakup_kobj_exit();
++		goto err_speakup;
+ 
+ 	retval = sysfs_create_group(speakup_kobj, &i18n_attr_group);
+ 	if (retval)
+-		speakup_kobj_exit();
++		goto err_group;
++
++	return 0;
+ 
++err_group:
++	sysfs_remove_group(speakup_kobj, &main_attr_group);
++err_speakup:
++	kobject_put(speakup_kobj);
++err_acc:
++	kobject_put(accessibility_kobj);
+ 	return retval;
+ }
+ 
+ void speakup_kobj_exit(void)
+ {
++	sysfs_remove_group(speakup_kobj, &i18n_attr_group);
++	sysfs_remove_group(speakup_kobj, &main_attr_group);
+ 	kobject_put(speakup_kobj);
+ 	kobject_put(accessibility_kobj);
+ }
+-- 
+1.7.0.4
+
