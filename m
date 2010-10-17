@@ -1,18 +1,36 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 18 Oct 2010 23:31:45 +0000
-Subject: Re: [PATCH 1/2] sound/soc/davinci/davinci-mcasp.c: Return error
-Message-Id: <20101018233112.GA26745@opensource.wolfsonmicro.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:51:50 +0000
+Subject: [PATCH] dma: imx-dma: fix signedness bug
+Message-Id: <1287327110-9158-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287411074-19825-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1287411074-19825-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>
+To: kernel-janitors@vger.kernel.org
+Cc: Dan Williams <dan.j.williams@intel.com>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org
 
-On Mon, Oct 18, 2010 at 04:11:13PM +0200, Julia Lawall wrote:
-> In this code, 0 is returned on failure, even though other
-> failures return -ENOMEM or other similar values.
+mxdmac->channel was unsigned, so check (imxdmac->channel < 0) for
+failed imx_dma_request_by_prio() made no sence.  Explicitly check
+signed values.
 
-Applied, thanks.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ drivers/dma/imx-dma.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/dma/imx-dma.c b/drivers/dma/imx-dma.c
+index 346be62..75d870f 100644
+--- a/drivers/dma/imx-dma.c
++++ b/drivers/dma/imx-dma.c
+@@ -335,7 +335,7 @@ static int __init imxdma_probe(struct platform_device *pdev)
+ 
+ 		imxdmac->imxdma_channel = imx_dma_request_by_prio("dmaengine",
+ 				DMA_PRIO_MEDIUM);
+-		if (imxdmac->channel < 0)
++		if ((int)imxdmac->channel < 0)
+ 			goto err_init;
+ 
+ 		imx_dma_setup_handlers(imxdmac->imxdma_channel,
+-- 
+1.7.0.4
+
