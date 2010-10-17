@@ -1,33 +1,37 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Oct 2010 12:56:04 +0000
-Subject: [patch] Staging: bcm: mocro expansion bug
-Message-Id: <20101008125604.GK11681@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:41:24 +0000
+Subject: [PATCH 4/8] char: pcmcia: synclink_cs: fix information leak to userland
+Message-Id: <1287326485-8028-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>, "Gustavo F. Padovan" <padovan@profusion.mobi>, Marcel Holtmann <marcel@holtmann.org>, Greg Kroah-Hartman <gregkh@suse.de>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org
 
-The WIMAX_MAX_MTU macro is used in drivers/staging/bcm/CmHost.c like
-this:
+Structure new_line is copied to userland with some padding fields unitialized.
+It leads to leaking of stack memory.
 
-    if (Adapter->PackInfo[uiSearchRuleIndex].uiMaxBucketSize < WIMAX_MAX_MTU * 8)
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-The multiplication by eight has precedence over the addition so the
-macro needs parenthesis to work.
+ drivers/char/pcmcia/synclink_cs.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/staging/bcm/Macros.h b/drivers/staging/bcm/Macros.h
-index 6ee1480..0241234 100644
---- a/drivers/staging/bcm/Macros.h
-+++ b/drivers/staging/bcm/Macros.h
-@@ -231,7 +231,7 @@ typedef enum _E_PHS_DSC_ACTION
+diff --git a/drivers/char/pcmcia/synclink_cs.c b/drivers/char/pcmcia/synclink_cs.c
+index db9efbe..bfc10f8 100644
+--- a/drivers/char/pcmcia/synclink_cs.c
++++ b/drivers/char/pcmcia/synclink_cs.c
+@@ -4091,6 +4091,8 @@ static int hdlcdev_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 	if (cmd != SIOCWANDEV)
+ 		return hdlc_ioctl(dev, ifr, cmd);
  
- #define MAX_PENDING_CTRL_PACKET (MAX_CTRL_QUEUE_LEN-10)
++	memset(&new_line, 0, size);
++
+ 	switch(ifr->ifr_settings.type) {
+ 	case IF_GET_IFACE: /* return current sync_serial_settings */
  
--#define WIMAX_MAX_MTU 					MTU_SIZE + ETH_HLEN
-+#define WIMAX_MAX_MTU			(MTU_SIZE + ETH_HLEN)
- #define AUTO_LINKUP_ENABLE              0x2
- #define AUTO_SYNC_DISABLE              	0x1
- #define AUTO_FIRM_DOWNLOAD              0x1
+-- 
+1.7.0.4
+
