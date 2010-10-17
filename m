@@ -1,41 +1,45 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 03 Oct 2010 13:09:36 +0000
-Subject: Re: [PATCH v3 18/20] Staging: vt6656: Makefile: cleaned up Makefile
-Message-Id: <4CA88090.2030100@bfs.de>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:41:36 +0000
+Subject: [PATCH 7/8] char: synclink_gt: fix information leak to userland
+Message-Id: <1287326496-8178-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com> <1286037489-28439-18-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-18-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tracey Dent <tdent48227@gmail.com>
-Cc: greg@kroah.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Paul Fulghum <paulkf@microgate.com>, Kulikov Vasiliy <segooon@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
 
+Structures tmp_params and new_line are copied to userland with some padding
+fields unitialized.  It leads to leaking of stack memory.
 
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-Tracey Dent schrieb:
-> Changed to use the proper ccflags-y option
-> 
-> Signed-off-by: Tracey Dent <tdent48227@gmail.com>
-> ---
->  drivers/staging/vt6656/Makefile |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/vt6656/Makefile b/drivers/staging/vt6656/Makefile
-> index 582a35197..41ed06b 100644
-> --- a/drivers/staging/vt6656/Makefile
-> +++ b/drivers/staging/vt6656/Makefile
-> @@ -1,6 +1,6 @@
->  # TODO: all of these should be removed
-> -EXTRA_CFLAGS += -DLINUX -D__KERNEL__ -DEXPORT_SYMTAB -D__NO_VERSION__
-> -EXTRA_CFLAGS += -DHOSTAP
-> +ccflags-y := -DLINUX -D__KERNEL__ -DEXPORT_SYMTAB -D__NO_VERSION__
-> +ccflags-y += -DHOSTAP
->  
->  vt6656_stage-y +=	main_usb.o \
->  			card.o  \
+ drivers/char/synclink_gt.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
+diff --git a/drivers/char/synclink_gt.c b/drivers/char/synclink_gt.c
+index 1746d91..c3c2cf8 100644
+--- a/drivers/char/synclink_gt.c
++++ b/drivers/char/synclink_gt.c
+@@ -1132,6 +1132,7 @@ static long get_params32(struct slgt_info *info, struct MGSL_PARAMS32 __user *us
+ 	struct MGSL_PARAMS32 tmp_params;
+ 
+ 	DBGINFO(("%s get_params32\n", info->device_name));
++	memset(&tmp_params, 0, sizeof(tmp_params));
+ 	tmp_params.mode            = (compat_ulong_t)info->params.mode;
+ 	tmp_params.loopback        = info->params.loopback;
+ 	tmp_params.flags           = info->params.flags;
+@@ -1617,6 +1618,8 @@ static int hdlcdev_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 	if (cmd != SIOCWANDEV)
+ 		return hdlc_ioctl(dev, ifr, cmd);
+ 
++	memset(&new_line, 0, sizeof(new_line));
++
+ 	switch(ifr->ifr_settings.type) {
+ 	case IF_GET_IFACE: /* return current sync_serial_settings */
+ 
+-- 
+1.7.0.4
 
-I am wondering what will happen when we remove -DLINUX will it think we are _DOS_ ?
-re,
- wh
