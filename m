@@ -1,32 +1,97 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 04 Oct 2010 05:06:25 +0000
-Subject: Re: [PATCH 4/4] drivers/atm/idt77252.c: Remove unnecessary error
-Message-Id: <20101003.220625.260083752.davem@davemloft.net>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:51:37 +0000
+Subject: [PATCH] arm: mach-msm: fix error handling in msm_iommu_probe()
+Message-Id: <1287327097-9025-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286027958-7333-4-git-send-email-julia@diku.dk>
-	<4CA73D26.7090109@bfs.de>
-	<Pine.LNX.4.64.1010021636330.21879@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1010021636330.21879@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: wharms@bfs.de, chas@cmf.nrl.navy.mil, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 2 Oct 2010 16:37:07 +0200 (CEST)
+msm_iommu_probe() didn't free mem_region and mapped IO.
+Also if request_mem_region() failed then error handling
+code dereferenced NULL pointer.
 
-> This code does not call deinit_card(card); in an error case, as done in
-> other error-handling code in the same function.  But actually, the called
-> function init_sram can only return 0, so there is no need for the error
-> check at all.
-> 
-> init_sram is also given a void return type, and its single return statement
-> at the end of the function is dropped.
-> 
-> A simplified version of the sematic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ arch/arm/mach-msm/iommu_dev.c |   22 +++++++++++++---------
+ 1 files changed, 13 insertions(+), 9 deletions(-)
 
-Applied, thank you.
+diff --git a/arch/arm/mach-msm/iommu_dev.c b/arch/arm/mach-msm/iommu_dev.c
+index c33ae78..9019cee 100644
+--- a/arch/arm/mach-msm/iommu_dev.c
++++ b/arch/arm/mach-msm/iommu_dev.c
+@@ -128,7 +128,7 @@ static void msm_iommu_reset(void __iomem *base)
+ 
+ static int msm_iommu_probe(struct platform_device *pdev)
+ {
+-	struct resource *r;
++	struct resource *r, *r2;
+ 	struct clk *iommu_clk;
+ 	struct msm_iommu_drvdata *drvdata;
+ 	struct msm_iommu_dev *iommu_dev = pdev->dev.platform_data;
+@@ -183,27 +183,27 @@ static int msm_iommu_probe(struct platform_device *pdev)
+ 
+ 		len = r->end - r->start + 1;
+ 
+-		r = request_mem_region(r->start, len, r->name);
+-		if (!r) {
++		r2 = request_mem_region(r->start, len, r->name);
++		if (!r2) {
+ 			pr_err("Could not request memory region: "
+ 			"start=%p, len=%d\n", (void *) r->start, len);
+ 			ret = -EBUSY;
+ 			goto fail;
+ 		}
+ 
+-		regs_base = ioremap(r->start, len);
++		regs_base = ioremap(r2->start, len);
+ 
+ 		if (!regs_base) {
+ 			pr_err("Could not ioremap: start=%p, len=%d\n",
+-				 (void *) r->start, len);
++				 (void *) r2->start, len);
+ 			ret = -EBUSY;
+-			goto fail;
++			goto fail_mem;
+ 		}
+ 
+ 		irq = platform_get_irq_byname(pdev, "secure_irq");
+ 		if (irq < 0) {
+ 			ret = -ENODEV;
+-			goto fail;
++			goto fail_io;
+ 		}
+ 
+ 		mb();
+@@ -211,14 +211,14 @@ static int msm_iommu_probe(struct platform_device *pdev)
+ 		if (GET_IDR(regs_base) = 0) {
+ 			pr_err("Invalid IDR value detected\n");
+ 			ret = -ENODEV;
+-			goto fail;
++			goto fail_io;
+ 		}
+ 
+ 		ret = request_irq(irq, msm_iommu_fault_handler, 0,
+ 				"msm_iommu_secure_irpt_handler", drvdata);
+ 		if (ret) {
+ 			pr_err("Request IRQ %d failed with ret=%d\n", irq, ret);
+-			goto fail;
++			goto fail_io;
+ 		}
+ 
+ 		msm_iommu_reset(regs_base);
+@@ -237,6 +237,10 @@ static int msm_iommu_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++fail_io:
++	iounmap(regs_base);
++fail_mem:
++	release_mem_region(r->start, len);
+ fail:
+ 	kfree(drvdata);
+ 	return ret;
+-- 
+1.7.0.4
+
