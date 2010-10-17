@@ -1,42 +1,37 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Sat, 02 Oct 2010 16:37:56 +0000
-Subject: [PATCH v3 07/20] Staging: rt2860: Makefile: cleaned up Makefile cflag lines
-Message-Id: <1286037489-28439-7-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:41:28 +0000
+Subject: [PATCH 5/8] char: ppdev: fix information leak to userland
+Message-Id: <1287326489-8071-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Julia Lawall <julia@diku.dk>, Tejun Heo <tj@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+Structure par_timeout is copied to userland with some padding fields unitialized.
+Field tv_usec has type __kernel_suseconds_t, it differs from tv_sec's type on
+some architectures.  It leads to leaking of stack memory.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/rt2860/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ Compile tested.
 
-diff --git a/drivers/staging/rt2860/Makefile b/drivers/staging/rt2860/Makefile
-index 23ae07f..d816ddb 100644
---- a/drivers/staging/rt2860/Makefile
-+++ b/drivers/staging/rt2860/Makefile
-@@ -1,10 +1,10 @@
- obj-$(CONFIG_RT2860)	+= rt2860sta.o
+ drivers/char/ppdev.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
+index 723152d..f176dba 100644
+--- a/drivers/char/ppdev.c
++++ b/drivers/char/ppdev.c
+@@ -613,6 +613,7 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  
- # TODO: all of these should be removed
--EXTRA_CFLAGS += -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
--EXTRA_CFLAGS += -DRTMP_MAC_PCI -DRTMP_PCI_SUPPORT -DRT2860
--EXTRA_CFLAGS += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3090
--EXTRA_CFLAGS += -DDBG
-+ccflags-y := -DLINUX -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT
-+ccflags-y += -DRTMP_MAC_PCI -DRTMP_PCI_SUPPORT -DRT2860
-+ccflags-y += -DRTMP_RF_RW_SUPPORT -DRTMP_EFUSE_SUPPORT -DRT30xx -DRT3090
-+ccflags-y += -DDBG
- 
- rt2860sta-objs :=	\
- 	common/crypt_md5.o	\
+ 	case PPGETTIME:
+ 		to_jiffies = pp->pdev->timeout;
++		memset(&par_timeout, 0, sizeof(par_timeout));
+ 		par_timeout.tv_sec = to_jiffies / HZ;
+ 		par_timeout.tv_usec = (to_jiffies % (long)HZ) * (1000000/HZ);
+ 		if (copy_to_user (argp, &par_timeout, sizeof(struct timeval)))
 -- 
-1.7.3.1.50.g1e633
+1.7.0.4
 
