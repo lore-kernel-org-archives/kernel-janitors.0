@@ -1,54 +1,276 @@
-From: Joel Becker <Joel.Becker@oracle.com>
-Date: Thu, 28 Oct 2010 11:55:32 +0000
-Subject: Re: [patch v2] configfs: documentation: remove unneeded check
-Message-Id: <20101028115531.GG11937@mail.oracle.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 17 Oct 2010 18:48:29 +0000
+Subject: [PATCH 1/3] drivers/staging/cx25821: Use kasprintf
+Message-Id: <1287341311-11161-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101027100735.GE6062@bicker>
- <20101027112207.GA17439@mail.oracle.com>
- <20101027145031.GG6062@bicker>
-In-Reply-To: <20101027145031.GG6062@bicker>
+References: <1287341311-11161-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1287341311-11161-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Randy Dunlap <rdunlap@xenotime.net>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 27, 2010 at 04:50:31PM +0200, Dan Carpenter wrote:
-> If "p" is NULL then it will cause an oops when we pass it to
-> simple_strtoul().  In this case "p" can not be NULL so I removed the
-> check.  I also changed the check a little to make it more explicit that
-> we are testing whether p points to the NUL char.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Rewrite the initialization of a dev field.  In the original code, in each
+case there was a kmalloc followed by a memcpy, as illustrated by the
+semantic patch below.  In the case that the provided string was the empty
+string, the allocated memory was then overwritten with a constant string,
+causing a memory leak.  Finally, there was no provision for returning
+-ENOMEM in case of failure of the memory allocation.  Indeed, the return
+value in an error case was err, a variable that was never initialized to
+anything other than 0.
 
-Acked-by: Joel Becker <joel.becker@oracle.com>
+The following patch rewrites the above code to first select a string based
+on various conditions, and then to copy it into a newly allocated memory
+region, using kasprintf.  This decreases subtantially the code size
+and removes the memory leak.  The instruction for getting the length of the
+string and the associated variable declaration are also deleted.
 
-> ---
-> V2: Added some parenthesis to make the precedence more clear.
-> 
-> diff --git a/Documentation/filesystems/configfs/configfs_example_explicit.c b/Documentation/filesystems/configfs/configfs_example_explicit.c
-> index d428cc9..63ff248 100644
-> --- a/Documentation/filesystems/configfs/configfs_example_explicit.c
-> +++ b/Documentation/filesystems/configfs/configfs_example_explicit.c
-> @@ -89,7 +89,7 @@ static ssize_t childless_storeme_write(struct childless *childless,
->  	char *p = (char *) page;
->  
->  	tmp = simple_strtoul(p, &p, 10);
-> -	if (!p || (*p && (*p != '\n')))
-> +	if ((*p != '\0') && (*p != '\n'))
->  		return -EINVAL;
->  
->  	if (tmp > INT_MAX)
-> 
+The patch also drops err, changes the return value to retval, which in each
+file was already initialized elsewhere to an error code, and initializes
+retval to -ENOMEM when kasprintf fails.
 
--- 
+The semantic patch that motivated this transformation is:
+(http://coccinelle.lip6.fr/)
 
-"Sometimes I think the surest sign intelligent
- life exists elsewhere in the universe is that
- none of it has tried to contact us."
-                                -Calvin & Hobbes
+// <smpl>
+@@
+expression a,flag,len;
+expression arg,e1,e2;
+statement S;
+@@
 
-Joel Becker
-Senior Development Manager
-Oracle
-E-mail: joel.becker@oracle.com
-Phone: (650) 506-8127
+  len = strlen(arg)
+  ... when != len = e1
+      when != arg = e2
+  a -  \(kmalloc\|kzalloc\)(len+1,flag)
++  kasprintf(flag,"%s",arg)
+  <... when != a
+  if (a = NULL || ...) S
+  ...>
+- memcpy(a,arg,len+1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This patch makes quite a lot of changes and is only compile tested.
+
+ drivers/staging/cx25821/cx25821-audio-upstream.c     |   36 +++---------
+ drivers/staging/cx25821/cx25821-video-upstream-ch2.c |   57 +++++++------------
+ drivers/staging/cx25821/cx25821-video-upstream.c     |   56 +++++++-----------
+ 3 files changed, 56 insertions(+), 93 deletions(-)
+
+diff --git a/drivers/staging/cx25821/cx25821-audio-upstream.c b/drivers/staging/cx25821/cx25821-audio-upstream.c
+index 27087db..a8f6343 100644
+--- a/drivers/staging/cx25821/cx25821-audio-upstream.c
++++ b/drivers/staging/cx25821/cx25821-audio-upstream.c
+@@ -723,8 +723,7 @@ int cx25821_audio_upstream_init(struct cx25821_dev *dev, int channel_select)
+ {
+ 	struct sram_channel *sram_ch;
+ 	int retval = 0;
+-	int err = 0;
+-	int str_length = 0;
++	char *filename;
+ 
+ 	if (dev->_audio_is_running) {
+ 		printk(KERN_WARNING "Audio Channel is still running so return!\n");
+@@ -752,28 +751,15 @@ int cx25821_audio_upstream_init(struct cx25821_dev *dev, int channel_select)
+ 	dev->_audio_lines_count = LINES_PER_AUDIO_BUFFER;
+ 	_line_size = AUDIO_LINE_SIZE;
+ 
+-	if (dev->input_audiofilename) {
+-		str_length = strlen(dev->input_audiofilename);
+-		dev->_audiofilename = kmalloc(str_length + 1, GFP_KERNEL);
+-
+-		if (!dev->_audiofilename)
+-			goto error;
+-
+-		memcpy(dev->_audiofilename, dev->input_audiofilename,
+-		       str_length + 1);
+-
+-		/* Default if filename is empty string */
+-		if (strcmp(dev->input_audiofilename, "") = 0)
+-			dev->_audiofilename = "/root/audioGOOD.wav";
+-
+-	} else {
+-		str_length = strlen(_defaultAudioName);
+-		dev->_audiofilename = kmalloc(str_length + 1, GFP_KERNEL);
+-
+-		if (!dev->_audiofilename)
+-			goto error;
+-
+-		memcpy(dev->_audiofilename, _defaultAudioName, str_length + 1);
++	if (dev->input_audiofilename &&
++	    strcmp(dev->input_audiofilename, "") != 0)
++		filename = dev->input_audiofilename;
++	else
++		filename = _defaultAudioName;
++	dev->_audiofilename = kasprintf(GFP_KERNEL, "%s", filename);
++	if (!dev->_audiofilename) {
++		retval = -ENOMEM;
++		goto error;
+ 	}
+ 
+ 	retval @@ -802,5 +788,5 @@ int cx25821_audio_upstream_init(struct cx25821_dev *dev, int channel_select)
+ error:
+ 	cx25821_dev_unregister(dev);
+ 
+-	return err;
++	return retval;
+ }
+diff --git a/drivers/staging/cx25821/cx25821-video-upstream-ch2.c b/drivers/staging/cx25821/cx25821-video-upstream-ch2.c
+index d12dbb5..531e0c4 100644
+--- a/drivers/staging/cx25821/cx25821-video-upstream-ch2.c
++++ b/drivers/staging/cx25821/cx25821-video-upstream-ch2.c
+@@ -747,10 +747,9 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *dev, int channel_select,
+ 	struct sram_channel *sram_ch;
+ 	u32 tmp;
+ 	int retval = 0;
+-	int err = 0;
+ 	int data_frame_size = 0;
+ 	int risc_buffer_size = 0;
+-	int str_length = 0;
++	char *filename;
+ 
+ 	if (dev->_is_running_ch2) {
+ 		printk("Video Channel is still running so return!\n");
+@@ -789,38 +788,26 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *dev, int channel_select,
+ 	    dev->_isNTSC_ch2 ? NTSC_RISC_BUF_SIZE : PAL_RISC_BUF_SIZE;
+ 
+ 	if (dev->input_filename_ch2) {
+-		str_length = strlen(dev->input_filename_ch2);
+-		dev->_filename_ch2 = kmalloc(str_length + 1, GFP_KERNEL);
+-
+-		if (!dev->_filename_ch2)
+-			goto error;
+-
+-		memcpy(dev->_filename_ch2, dev->input_filename_ch2,
+-		       str_length + 1);
+-	} else {
+-		str_length = strlen(dev->_defaultname_ch2);
+-		dev->_filename_ch2 = kmalloc(str_length + 1, GFP_KERNEL);
+-
+-		if (!dev->_filename_ch2)
+-			goto error;
+-
+-		memcpy(dev->_filename_ch2, dev->_defaultname_ch2,
+-		       str_length + 1);
+-	}
+-
+-       /* Default if filename is empty string */
+-	if (strcmp(dev->input_filename_ch2, "") = 0) {
+-		if (dev->_isNTSC_ch2) {
+-			dev->_filename_ch2 -			    (dev->_pixel_format_ch2 =
+-			     PIXEL_FRMT_411) ? "/root/vid411.yuv" :
+-			    "/root/vidtest.yuv";
+-		} else {
+-			dev->_filename_ch2 -			    (dev->_pixel_format_ch2 =
+-			     PIXEL_FRMT_411) ? "/root/pal411.yuv" :
+-			    "/root/pal422.yuv";
+-		}
++		/* Default if filename is empty string */
++		if (strcmp(dev->input_filename_ch2, "") = 0) {
++			if (dev->_isNTSC_ch2)
++				filename +					(dev->_pixel_format_ch2 =
++					PIXEL_FRMT_411) ? "/root/vid411.yuv" :
++					"/root/vidtest.yuv";
++			else
++				filename +					(dev->_pixel_format_ch2 =
++					PIXEL_FRMT_411) ? "/root/pal411.yuv" :
++					"/root/pal422.yuv";
++		} else
++			filename = dev->input_filename_ch2;
++	} else
++		filename = dev->_defaultname_ch2;
++	dev->_filename_ch2 = kasprintf(GFP_KERNEL, "%s", filename);
++	if (!dev->_filename_ch2) {
++		retval = -ENOMEM;
++		goto error;
+ 	}
+ 
+ 	retval @@ -851,5 +838,5 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *dev, int channel_select,
+       error:
+ 	cx25821_dev_unregister(dev);
+ 
+-	return err;
++	return retval;
+ }
+diff --git a/drivers/staging/cx25821/cx25821-video-upstream.c b/drivers/staging/cx25821/cx25821-video-upstream.c
+index 756a820..040f795 100644
+--- a/drivers/staging/cx25821/cx25821-video-upstream.c
++++ b/drivers/staging/cx25821/cx25821-video-upstream.c
+@@ -800,10 +800,9 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
+ 	struct sram_channel *sram_ch;
+ 	u32 tmp;
+ 	int retval = 0;
+-	int err = 0;
+ 	int data_frame_size = 0;
+ 	int risc_buffer_size = 0;
+-	int str_length = 0;
++	char *filename;
+ 
+ 	if (dev->_is_running) {
+ 		printk(KERN_INFO "Video Channel is still running so return!\n");
+@@ -841,36 +840,27 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
+ 	    dev->_isNTSC ? NTSC_RISC_BUF_SIZE : PAL_RISC_BUF_SIZE;
+ 
+ 	if (dev->input_filename) {
+-		str_length = strlen(dev->input_filename);
+-		dev->_filename = kmalloc(str_length + 1, GFP_KERNEL);
+-
+-		if (!dev->_filename)
+-			goto error;
+-
+-		memcpy(dev->_filename, dev->input_filename, str_length + 1);
+-	} else {
+-		str_length = strlen(dev->_defaultname);
+-		dev->_filename = kmalloc(str_length + 1, GFP_KERNEL);
+-
+-		if (!dev->_filename)
+-			goto error;
+-
+-		memcpy(dev->_filename, dev->_defaultname, str_length + 1);
+-	}
+-
+-	/* Default if filename is empty string */
+-	if (strcmp(dev->input_filename, "") = 0) {
+-		if (dev->_isNTSC) {
+-			dev->_filename -			    (dev->_pixel_format =
+-			     PIXEL_FRMT_411) ? "/root/vid411.yuv" :
+-			    "/root/vidtest.yuv";
+-		} else {
+-			dev->_filename -			    (dev->_pixel_format =
+-			     PIXEL_FRMT_411) ? "/root/pal411.yuv" :
+-			    "/root/pal422.yuv";
+-		}
++		/* Default if filename is empty string */
++		if (strcmp(dev->input_filename, "") = 0) {
++			if (dev->_isNTSC)
++				filename +					(dev->_pixel_format =
++					PIXEL_FRMT_411) ? "/root/vid411.yuv" :
++					"/root/vidtest.yuv";
++			else
++				filename +					(dev->_pixel_format =
++					PIXEL_FRMT_411) ? "/root/pal411.yuv" :
++					"/root/pal422.yuv";
++		} else
++			filename = dev->input_filename;
++	} else
++		filename = dev->_defaultname;
++
++	dev->_filename = kasprintf(GFP_KERNEL, "%s", filename);
++	if (!dev->_filename) {
++		retval = -ENOMEM;
++		goto error;
+ 	}
+ 
+ 	dev->_is_running = 0;
+@@ -908,5 +898,5 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
+ error:
+ 	cx25821_dev_unregister(dev);
+ 
+-	return err;
++	return retval;
+ }
+
