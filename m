@@ -1,72 +1,40 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Wed, 06 Oct 2010 01:00:18 +0000
-Subject: [PATCH 03/28] Staging: comedi: comedi_compat32.h: Edit file so that checkpatch.pl has 0 errors and w
-Message-Id: <1286326843-6170-3-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:51:57 +0000
+Subject: [PATCH] staging: speakup: fix memory leak
+Message-Id: <1287327118-9244-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, William Hubbs <w.d.hubbs@gmail.com>, Samuel Thibault <samuel.thibault@ens-lyon.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Changed a few lines that made checkpatch.pl complain. All warnings were
-WARNING: please, no space for starting a line.
+speakup_init() didn't free first_console if speakup_kobj_init() fails.
+Also propagate speakup_kobj_init()'s return code.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/comedi/comedi_compat32.h |   34 +++++++++++++++---------------
- 1 files changed, 17 insertions(+), 17 deletions(-)
+ drivers/staging/speakup/main.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/comedi/comedi_compat32.h b/drivers/staging/comedi/comedi_compat32.h
-index 0340a89..77f4216 100644
---- a/drivers/staging/comedi/comedi_compat32.h
-+++ b/drivers/staging/comedi/comedi_compat32.h
-@@ -1,26 +1,26 @@
- /*
--    comedi/comedi_compat32.h
--    32-bit ioctl compatibility for 64-bit comedi kernel module.
-+	comedi/comedi_compat32.h
-+	32-bit ioctl compatibility for 64-bit comedi kernel module.
+diff --git a/drivers/staging/speakup/main.c b/drivers/staging/speakup/main.c
+index 2ef3b39..b02a61f 100644
+--- a/drivers/staging/speakup/main.c
++++ b/drivers/staging/speakup/main.c
+@@ -2255,8 +2255,11 @@ static int __init speakup_init(void)
+ 	first_console = kzalloc(sizeof(*first_console), GFP_KERNEL);
+ 	if (!first_console)
+ 		return -ENOMEM;
+-	if (speakup_kobj_init() < 0) 
+-		return -ENOMEM;
++	err = speakup_kobj_init();
++	if (err) {
++		kfree(first_console);
++		return err;
++	}
  
--    Author: Ian Abbott, MEV Ltd. <abbotti@mev.co.uk>
--    Copyright (C) 2007 MEV Ltd. <http://www.mev.co.uk/>
-+	Author: Ian Abbott, MEV Ltd. <abbotti@mev.co.uk>
-+	Copyright (C) 2007 MEV Ltd. <http://www.mev.co.uk/>
- 
--    COMEDI - Linux Control and Measurement Device Interface
--    Copyright (C) 1997-2007 David A. Schleef <ds@schleef.org>
-+	COMEDI - Linux Control and Measurement Device Interface
-+	Copyright (C) 1997-2007 David A. Schleef <ds@schleef.org>
- 
--    This program is free software; you can redistribute it and/or modify
--    it under the terms of the GNU General Public License as published by
--    the Free Software Foundation; either version 2 of the License, or
--    (at your option) any later version.
-+	This program is free software; you can redistribute it and/or modify
-+	it under the terms of the GNU General Public License as published by
-+	the Free Software Foundation; either version 2 of the License, or
-+	(at your option) any later version.
- 
--    This program is distributed in the hope that it will be useful,
--    but WITHOUT ANY WARRANTY; without even the implied warranty of
--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--    GNU General Public License for more details.
-+	This program is distributed in the hope that it will be useful,
-+	but WITHOUT ANY WARRANTY; without even the implied warranty of
-+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+	GNU General Public License for more details.
- 
--    You should have received a copy of the GNU General Public License
--    along with this program; if not, write to the Free Software
--    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-+	You should have received a copy of the GNU General Public License
-+	along with this program; if not, write to the Free Software
-+	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
- */
- 
+ 	reset_default_chars();
+ 	reset_default_chartab();
 -- 
-1.7.3.1.50.g1e633
+1.7.0.4
 
