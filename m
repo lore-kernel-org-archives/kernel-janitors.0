@@ -1,25 +1,37 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Wed, 27 Oct 2010 21:58:45 +0000
-Subject: Re: [patch] i915: signedness bug in check_overlay_src()
-Message-Id: <b9dded$gtljue@orsmga002.jf.intel.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 17 Oct 2010 14:41:32 +0000
+Subject: [PATCH 6/8] char: synclink: fix information leak to userland
+Message-Id: <1287326493-8134-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101027211724.GI6062@bicker>
-In-Reply-To: <20101027211724.GI6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 
-On Wed, 27 Oct 2010 23:17:25 +0200, Dan Carpenter <error27@gmail.com> wrote:
-> "depth" should be signed in case packed_depth_bytes() returns -EINVAL.
-> 
-> This probably doesn't make a difference at runtime.  In the original
-> code we would return -EINVAL later if (rec->offset_Y % 4294967274) is
-> non-zero.
+Structure new_line is copied to userland with some padding fields unitialized.
+It leads to leaking of stack memory.
 
-Applied to fixes, thanks.
--Chris
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
+ drivers/char/synclink.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/char/synclink.c b/drivers/char/synclink.c
+index 3a6824f..abd0867 100644
+--- a/drivers/char/synclink.c
++++ b/drivers/char/synclink.c
+@@ -7846,6 +7846,8 @@ static int hdlcdev_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 	if (cmd != SIOCWANDEV)
+ 		return hdlc_ioctl(dev, ifr, cmd);
+ 
++	memset(&new_line, 0, size);
++
+ 	switch(ifr->ifr_settings.type) {
+ 	case IF_GET_IFACE: /* return current sync_serial_settings */
+ 
 -- 
-Chris Wilson, Intel Open Source Technology Centre
+1.7.0.4
+
