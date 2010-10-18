@@ -1,7 +1,7 @@
-From: "Koul, Vinod" <vinod.koul@intel.com>
-Date: Sun, 17 Oct 2010 10:55:50 +0000
+From: "Harsha, Priya" <priya.harsha@intel.com>
+Date: Mon, 18 Oct 2010 15:38:13 +0000
 Subject: RE: [patch] Staging: intel_sst: off by one bug
-Message-Id: <438BB0150E931F4B9CE701519A44630104BE763768@bgsmsx502.gar.corp.intel.com>
+Message-Id: <98769532B4BB14429434178695419EAE053605A670@bgsmsx501.gar.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20101015203644.GO6614@bicker>
 In-Reply-To: <20101015203644.GO6614@bicker>
@@ -10,6 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+ 
 > This should be >= instead of > or we go passed the end of the array.
 > 
 > Also the arrays are declared with size MAX_NUM_STREAMS.  This is the
@@ -21,4 +22,5 @@ To: kernel-janitors@vger.kernel.org
 > debugging then you would see a message.
 > 
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
+> 
+Acked-by: Harsha Priya <priya.harsha@intel.com>
