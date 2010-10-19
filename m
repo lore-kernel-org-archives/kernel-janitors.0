@@ -1,13 +1,31 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 19 Oct 2010 09:43:53 +0000
-Subject: [PATCH 1/4] drivers/scsi/qla2xxx/qla_init.c: convert nested spin_lock_irqsave to spin_lock
-Message-Id: <1287481436-26656-1-git-send-email-julia@diku.dk>
+From: Madhu Iyengar <madhu.iyengar@qlogic.com>
+Date: Tue, 19 Oct 2010 16:21:05 +0000
+Subject: RE: [PATCH 1/4] drivers/scsi/qla2xxx/qla_init.c: convert nested
+Message-Id: <5E4F49720D0BAD499EE1F01232234BA871294F61E8@AVEXMB1.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1287481436-26656-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1287481436-26656-1-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Vasquez <andrew.vasquez@qlogic.com>
-Cc: kernel-janitors@vger.kernel.org, linux-driver@qlogic.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, Grant Likely <grant.likely@secretlab.ca>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, Andrew Vasquez <andrew.vasquez-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>, Madhu Iyengar <madhu.iyengar-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>, Giridhar Malavali <giridhar.malavali-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "James E.J. Bottomley" <James.Bottomley-l3A5Bk7waGM@public.gmane.org>, Linux Driver <Linux-Driver-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>
+
+Julia,
+
+We've submitted this patch upstream to scsi-misc already on Oct 15th (Dan Carpenter had flagged this). Here's the submission info (patch (01/12) or item #12 in the link below:
+
+http://marc.info/?l=linux-scsi&w=2&r=1&s=qla2xxx&q=b
+
+Thanks,
+Madhu
+
+-----Original Message-----
+From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-owner@vger.kernel.org] On Behalf Of Julia Lawall
+Sent: Tuesday, October 19, 2010 2:44 AM
+To: Andrew Vasquez
+Cc: kernel-janitors@vger.kernel.org; Linux Driver; James E.J. Bottomley; Grant Likely; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; devicetree-discuss@lists.ozlabs.org
+Subject: [PATCH 1/4] drivers/scsi/qla2xxx/qla_init.c: convert nested spin_lock_irqsave to spin_lock
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -57,4 +75,9 @@ index 3cafbef..c8d0b12 100644
  
  	ha->isp_ops->config_rings(vha);
  
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
