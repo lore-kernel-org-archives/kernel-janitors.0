@@ -1,39 +1,55 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Sat, 02 Oct 2010 16:38:04 +0000
-Subject: [PATCH v3 15/20] Staging: tm6000: Makefile: cleaned up Makefile cflag lines
-Message-Id: <1286037489-28439-15-git-send-email-tdent48227@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 19 Oct 2010 09:43:54 +0000
+Subject: [PATCH 2/4] drivers/char/generic_serial.c: convert nested spin_lock_irqsave to spin_lock
+Message-Id: <1287481436-26656-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, Tracey Dent <tdent48227@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Changed to use the proper ccflags-y option
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+If spin_lock_irqsave is called twice in a row with the same second
+argument, the interrupt state at the point of the second call overwrites
+the value saved by the first call.  Indeed, the second call does not need
+to save the interrupt state, so it is changed to a simple spin_lock.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression lock1,lock2;
+expression flags;
+@@
+
+*spin_lock_irqsave(lock1,flags)
+... when != flags
+*spin_lock_irqsave(lock2,flags)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/tm6000/Makefile |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/char/generic_serial.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/tm6000/Makefile b/drivers/staging/tm6000/Makefile
-index 77e06bf..d8ccdaa 100644
---- a/drivers/staging/tm6000/Makefile
-+++ b/drivers/staging/tm6000/Makefile
-@@ -9,7 +9,7 @@ obj-$(CONFIG_VIDEO_TM6000) += tm6000.o
- obj-$(CONFIG_VIDEO_TM6000_ALSA) += tm6000-alsa.o
- obj-$(CONFIG_VIDEO_TM6000_DVB) += tm6000-dvb.o
+diff --git a/drivers/char/generic_serial.c b/drivers/char/generic_serial.c
+index 5954ee1..466988d 100644
+--- a/drivers/char/generic_serial.c
++++ b/drivers/char/generic_serial.c
+@@ -566,9 +566,9 @@ void gs_close(struct tty_struct * tty, struct file * filp)
+ 	 * line status register.
+ 	 */
  
--EXTRA_CFLAGS = -Idrivers/media/video
--EXTRA_CFLAGS += -Idrivers/media/common/tuners
--EXTRA_CFLAGS += -Idrivers/media/dvb/dvb-core
--EXTRA_CFLAGS += -Idrivers/media/dvb/frontends
-+ccflags-y := -Idrivers/media/video
-+ccflags-y += -Idrivers/media/common/tuners
-+ccflags-y += -Idrivers/media/dvb/dvb-core
-+ccflags-y += -Idrivers/media/dvb/frontends
--- 
-1.7.3.1.50.g1e633
+-	spin_lock_irqsave(&port->driver_lock, flags);
++	spin_lock(&port->driver_lock);
+ 	port->rd->disable_rx_interrupts (port);
+-	spin_unlock_irqrestore(&port->driver_lock, flags);
++	spin_unlock(&port->driver_lock);
+ 	spin_unlock_irqrestore(&port->port.lock, flags);
+ 
+ 	/* close has no way of returning "EINTR", so discard return value */
 
