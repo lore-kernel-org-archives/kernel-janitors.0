@@ -1,40 +1,58 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Oct 2010 12:56:35 +0000
-Subject: [patch] Staging: bcm: dereferencing before checking
-Message-Id: <20101008125635.GL11681@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 19 Oct 2010 09:43:55 +0000
+Subject: [PATCH 3/4] drivers/scsi/lpfc/lpfc_bsg.c: convert nested spin_lock_irqsave to spin_lock
+Message-Id: <1287481436-26656-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@emulex.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I moved the check to see if "Adapter" was null in front of the
-dereference.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+If spin_lock_irqsave is called twice in a row with the same second
+argument, the interrupt state at the point of the second call overwrites
+the value saved by the first call.  Indeed, the second call does not need
+to save the interrupt state, so it is changed to a simple spin_lock.
 
-diff --git a/drivers/staging/bcm/CmHost.c b/drivers/staging/bcm/CmHost.c
-index 37187c4..46f3a7d 100644
---- a/drivers/staging/bcm/CmHost.c
-+++ b/drivers/staging/bcm/CmHost.c
-@@ -1943,15 +1943,14 @@ ULONG SetUpTargetDsxBuffers(PMINI_ADAPTER Adapter)
- 	ULONG ulIndex=0;
- 	int Status;
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression lock1,lock2;
+expression flags;
+@@
+
+*spin_lock_irqsave(lock1,flags)
+... when != flags
+*spin_lock_irqsave(lock2,flags)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/lpfc/lpfc_bsg.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
+index f5d60b5..7260c3a 100644
+--- a/drivers/scsi/lpfc/lpfc_bsg.c
++++ b/drivers/scsi/lpfc/lpfc_bsg.c
+@@ -3142,12 +3142,12 @@ lpfc_bsg_menlo_cmd_cmp(struct lpfc_hba *phba,
+ 	job = menlo->set_job;
+ 	job->dd_data = NULL; /* so timeout handler does not reply */
  
-+	if (!Adapter) {
-+		BCM_DEBUG_PRINT(Adapter, DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "Adapter was NULL!!!");
-+		return 0;
-+	}
-+
- 	if(Adapter->astTargetDsxBuffer[0].ulTargetDsxBuffer)
- 		return 1;
+-	spin_lock_irqsave(&phba->hbalock, flags);
++	spin_lock(&phba->hbalock);
+ 	cmdiocbq->iocb_flag |= LPFC_IO_WAKE;
+ 	if (cmdiocbq->context2 && rspiocbq)
+ 		memcpy(&((struct lpfc_iocbq *)cmdiocbq->context2)->iocb,
+ 		       &rspiocbq->iocb, sizeof(IOCB_t));
+-	spin_unlock_irqrestore(&phba->hbalock, flags);
++	spin_unlock(&phba->hbalock);
  
--	 if(NULL = Adapter)
--	 {
--		 BCM_DEBUG_PRINT( Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "Adapter was NULL!!!");
--		 return 0;
--	 }
--
- 	BCM_DEBUG_PRINT( Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "Size of Each DSX Buffer(Also size of ServiceFlowParamSI): %zx ",sizeof(stServiceFlowParamSI));
- 	BCM_DEBUG_PRINT( Adapter,DBG_TYPE_OTHERS, CONN_MSG, DBG_LVL_ALL, "Reading DSX buffer From Target location %x ",DSX_MESSAGE_EXCHANGE_BUFFER);
- 
+ 	bmp = menlo->bmp;
+ 	rspiocbq = menlo->rspiocbq;
+
