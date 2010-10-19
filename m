@@ -1,28 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 05 Oct 2010 18:43:57 +0000
-Subject: Re: [patch] staging: rtl8192su: initializing past the end of array
-Message-Id: <20101005184357.GA24708@kroah.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 19 Oct 2010 09:43:56 +0000
+Subject: [PATCH 4/4] drivers/misc/sgi-xp/xpc_uv.c: convert nested spin_lock_irqsave to spin_lock
+Message-Id: <1287481436-26656-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101004192641.GF5692@bicker>
-In-Reply-To: <20101004192641.GF5692@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Robin Holt <holt@sgi.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 04, 2010 at 09:26:41PM +0200, Dan Carpenter wrote:
-> We go past the end of the array when we initialize this array.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/staging/rtl8192su/r8192S_rtl6052.c b/drivers/staging/rtl8192su/r8192S_rtl6052.c
-> index 2239809..f8a9536 100644
-> --- a/drivers/staging/rtl8192su/r8192S_rtl6052.c
-> +++ b/drivers/staging/rtl8192su/r8192S_rtl6052.c
+From: Julia Lawall <julia@diku.dk>
 
-This driver has now been removed from the kernel, so there's no file to
-patch in linux-next :)
+If spin_lock_irqsave is called twice in a row with the same second
+argument, the interrupt state at the point of the second call overwrites
+the value saved by the first call.  Indeed, the second call does not need
+to save the interrupt state, so it is changed to a simple spin_lock.
 
-thanks,
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-greg k-h
+// <smpl>
+@@
+expression lock1,lock2;
+expression flags;
+@@
+
+*spin_lock_irqsave(lock1,flags)
+... when != flags
+*spin_lock_irqsave(lock2,flags)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/misc/sgi-xp/xpc_uv.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/sgi-xp/xpc_uv.c b/drivers/misc/sgi-xp/xpc_uv.c
+index 1f59ee2..7aeaef7 100644
+--- a/drivers/misc/sgi-xp/xpc_uv.c
++++ b/drivers/misc/sgi-xp/xpc_uv.c
+@@ -451,9 +451,9 @@ xpc_handle_activate_mq_msg_uv(struct xpc_partition *part,
+ 
+ 		if (msg->activate_gru_mq_desc_gpa ! 		    part_uv->activate_gru_mq_desc_gpa) {
+-			spin_lock_irqsave(&part_uv->flags_lock, irq_flags);
++			spin_lock(&part_uv->flags_lock);
+ 			part_uv->flags &= ~XPC_P_CACHED_ACTIVATE_GRU_MQ_DESC_UV;
+-			spin_unlock_irqrestore(&part_uv->flags_lock, irq_flags);
++			spin_unlock(&part_uv->flags_lock);
+ 			part_uv->activate_gru_mq_desc_gpa  			    msg->activate_gru_mq_desc_gpa;
+ 		}
+
