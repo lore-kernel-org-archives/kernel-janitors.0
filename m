@@ -1,34 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 Oct 2010 19:24:38 +0000
-Subject: Re: [PATCH 10/14] drivers/isdn: delete double assignment
-Message-Id: <20101027.122438.191405610.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 19 Oct 2010 09:43:53 +0000
+Subject: [PATCH 1/4] drivers/scsi/qla2xxx/qla_init.c: convert nested spin_lock_irqsave to spin_lock
+Message-Id: <1287481436-26656-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-11-git-send-email-julia@diku.dk>
-	<4CC6C1C0.8020005@bfs.de>
-	<Pine.LNX.4.64.1010261419510.25281@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1010261419510.25281@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: wharms@bfs.de, isdn@linux-pingi.de, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Vasquez <andrew.vasquez@qlogic.com>
+Cc: kernel-janitors@vger.kernel.org, linux-driver@qlogic.com, "James E.J. Bottomley" <James.Bottomley@suse.de>, Grant Likely <grant.likely@secretlab.ca>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 26 Oct 2010 14:20:56 +0200 (CEST)
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Delete successive assignments to the same location.  In the first case, the
-> hscx array has two elements, so change the assignment to initialize the
-> second one.  In the second case, the two assignments are simply identical.
-> Furthermore, neither is necessary, because the effect of the assignment is
-> only visible in the next line, in the assignment in the if test.  The patch
-> inlines the right hand side value in the latter assignment and pulls that
-> assignment out of the if test.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+If spin_lock_irqsave is called twice in a row with the same second
+argument, the interrupt state at the point of the second call overwrites
+the value saved by the first call.  Indeed, the second call does not need
+to save the interrupt state, so it is changed to a simple spin_lock.
 
-Applied.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression lock1,lock2;
+expression flags;
+@@
+
+*spin_lock_irqsave(lock1,flags)
+... when != flags
+*spin_lock_irqsave(lock2,flags)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/qla2xxx/qla_init.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 3cafbef..c8d0b12 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -1818,14 +1818,14 @@ qla2x00_init_rings(scsi_qla_host_t *vha)
+ 		qla2x00_init_response_q_entries(rsp);
+ 	}
+ 
+-	spin_lock_irqsave(&ha->vport_slock, flags);
++	spin_lock(&ha->vport_slock);
+ 	/* Clear RSCN queue. */
+ 	list_for_each_entry(vp, &ha->vp_list, list) {
+ 		vp->rscn_in_ptr = 0;
+ 		vp->rscn_out_ptr = 0;
+ 	}
+ 
+-	spin_unlock_irqrestore(&ha->vport_slock, flags);
++	spin_unlock(&ha->vport_slock);
+ 
+ 	ha->isp_ops->config_rings(vha);
+ 
+
