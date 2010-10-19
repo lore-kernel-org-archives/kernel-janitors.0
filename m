@@ -1,57 +1,144 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Tue, 05 Oct 2010 03:30:28 +0000
-Subject: Re: [PATCH] kbuild: remove duplicate -I flag in addtree
-Message-Id: <20101005033028.GD10162@haskell.muteddisk.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 19 Oct 2010 05:57:48 +0000
+Subject: [patch 3/3] Staging: sst: fixups in SNDRV_SST_STREAM_DECODE
+Message-Id: <20101019055748.GE5839@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1285553472-924-1-git-send-email-mfm@muteddisk.com>
- <20101004151045.GA5637@sepie.suse.cz>
-In-Reply-To: <20101004151045.GA5637@sepie.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michal Marek <mmarek@suse.cz>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Vinod Koul <vinod.koul@intel.com>, devel@driverdev.osuosl.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
-On 17:10 Mon 04 Oct     , Michal Marek wrote:
-> On Sun, Sep 26, 2010 at 07:11:12PM -0700, matt mooney wrote:
-> > When O= is used, any -I flag given that is not an absolute path gets
-> > duplicated. The $(1) appended to the conditional clause covers the
-> > absolute case, but due to being outside of the conditional statement
-> > it gets added everytime.
-> > 
-> > Signed-off-by: matt mooney <mfm@muteddisk.com>
-> > ---
-> >  scripts/Kbuild.include |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-> > index ed2773e..08c74ed 100644
-> > --- a/scripts/Kbuild.include
-> > +++ b/scripts/Kbuild.include
-> > @@ -158,7 +158,7 @@ modbuiltin := -f $(if $(KBUILD_SRC),$(srctree)/)scripts/Makefile.modbuiltin obj
-> >  # Prefix -I with $(srctree) if it is not an absolute path.
-> >  # skip if -I has no parameter
-> >  addtree = $(if $(patsubst -I%,%,$(1)), \
-> > -$(if $(filter-out -I/%,$(1)),$(patsubst -I%,-I$(srctree)/%,$(1))) $(1))
-> > +$(if $(filter-out -I/%,$(1)),$(patsubst -I%,-I$(srctree)/%,$(1)),$(1)))
-> 
-> $ mkdir _build-new; make O=_build-new defconfig; make O=_build-new V=1 all
-> fails with
-> 
->   perl /home/mmarek/linux-2.6/kernel/timeconst.pl 1000 > kernel/timeconst.h
->   gcc -Wp,-MD,kernel/.time.o.d  -nostdinc -isystem /usr/lib64/gcc/x86_64-suse-linux/4.5/include -I/home/mmarek/linux-2.6/arch/x86/include -Iinclude  -I/home/mmarek/linux-2.6/include -include include/generated/autoconf.h  -I/home/mmarek/linux-2.6/kernel -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Os -m64 -mtune=generic -mno-red-zone -mcmodel=kernel -funit-at-a-time -maccumulate-outgoing-args -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -Wframe-larger-than 48 -fno-stack-protector -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack    -D"KBUILD_STR(s)=#s" -D"KBUILD_BASENAME=KBUILD_STR(time)"  -D"KBUILD_MODNAME=KBUILD_STR(time)"  -c -o kernel/time.o /home/mmarek
-> /linux-2.6/kernel/time.c
-> /home/mmarek/linux-2.6/kernel/time.c:44:23: fatal error: timeconst.h: No such file or directory
-> 
-> The correct gcc line without your patch is 
->   gcc -Wp,-MD,kernel/.time.o.d  -nostdinc -isystem /usr/lib64/gcc/x86_64-suse-linux/4.5/include -I/home/mmarek/linux-2.6/arch/x86/include -Iinclude  -I/home/mmarek/linux-2.6/include -include include/generated/autoconf.h  -I/home/mmarek/linux-2.6/kernel -Ikernel -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Os -m64 -mtune=generic -mno-red-zone -mcmodel=kernel -funit-at-a-time -maccumulate-outgoing-args -DCONFIG_AS_CFI=1 -DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1 -pipe -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -Wframe-larger-than 48 -fno-stack-protector -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack    -D"KBUILD_STR(s)=#s" -D"KBUILD_BASENAME=KBUILD_STR(time)"  -D"KBUILD_MODNAME=KBUILD_STR(time)"  -c -o kernel/time.o /ho
-> me/mmarek/linux-2.6/kernel/time.c
-> 
-> The difference is that with your patch it is lacking the -Ikernel
-> include, so it does not search for generated header files in $(obj).
+This is another patch about copying data to the kernel before using it.
 
-Ugh! I tested it for an external module and I built every driver under media/
-thinking this covered all cases. I completely forgot about generated files.
+SNDRV_SST_STREAM_DECODE is sort of tricky because we need to do a 
+copy_from_user() that gives us another two pointers and we have copy
+those.  Those again give us some more pointers that we have to copy.
 
-Thanks,
-mfm
+Besides those problems, the code had a stack overflow:
+-	struct snd_sst_buff_entry ibuf_temp[param->ibufs->entries],
+-		obuf_temp[param->obufs->entries];
+param->ibufs->entries comes from the user.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Is there no standard API for this kind of thing?
+
+diff --git a/drivers/staging/intel_sst/intel_sst_app_interface.c b/drivers/staging/intel_sst/intel_sst_app_interface.c
+index 8390aa7..d20724d 100644
+--- a/drivers/staging/intel_sst/intel_sst_app_interface.c
++++ b/drivers/staging/intel_sst/intel_sst_app_interface.c
+@@ -1105,62 +1105,83 @@ long intel_sst_ioctl(struct file *file_ptr, unsigned int cmd, unsigned long arg)
+ 	}
+ 
+ 	case _IOC_NR(SNDRV_SST_STREAM_DECODE): {
+-		struct snd_sst_dbufs *param -				(struct snd_sst_dbufs *)arg, dbufs_local;
+-		int i;
++		struct snd_sst_dbufs param;
++		struct snd_sst_dbufs dbufs_local;
+ 		struct snd_sst_buffs ibufs, obufs;
+-		struct snd_sst_buff_entry ibuf_temp[param->ibufs->entries],
+-				obuf_temp[param->obufs->entries];
++		struct snd_sst_buff_entry *ibuf_tmp, *obuf_tmp;
++		char __user *dest;
+ 
+ 		pr_debug("sst: SNDRV_SST_STREAM_DECODE recived\n");
+ 		if (minor != STREAM_MODULE) {
+ 			retval = -EBADRQC;
+ 			break;
+ 		}
+-		if (!param) {
+-			retval = -EINVAL;
++		if (copy_from_user(&param, (void __user *)arg,
++				sizeof(param))) {
++			retval = -EFAULT;
+ 			break;
+ 		}
+ 
+-		dbufs_local.input_bytes_consumed = param->input_bytes_consumed;
++		dbufs_local.input_bytes_consumed = param.input_bytes_consumed;
+ 		dbufs_local.output_bytes_produced -					param->output_bytes_produced;
+-		dbufs_local.ibufs = &ibufs;
+-		dbufs_local.obufs = &obufs;
+-		dbufs_local.ibufs->entries = param->ibufs->entries;
+-		dbufs_local.ibufs->type = param->ibufs->type;
+-		dbufs_local.obufs->entries = param->obufs->entries;
+-		dbufs_local.obufs->type = param->obufs->type;
+-
+-		dbufs_local.ibufs->buff_entry = ibuf_temp;
+-		for (i = 0; i < dbufs_local.ibufs->entries; i++) {
+-			ibuf_temp[i].buffer -				param->ibufs->buff_entry[i].buffer;
+-			ibuf_temp[i].size -				param->ibufs->buff_entry[i].size;
++					param.output_bytes_produced;
++
++		if (copy_from_user(&ibufs, param.ibufs, sizeof(ibufs))) {
++			retval = -EFAULT;
++			break;
++		}
++		if (copy_from_user(&obufs, param.obufs, sizeof(obufs))) {
++			retval = -EFAULT;
++			break;
++		}
++
++		ibuf_tmp = kcalloc(ibufs.entries, sizeof(*ibuf_tmp), GFP_KERNEL);
++		obuf_tmp = kcalloc(obufs.entries, sizeof(*obuf_tmp), GFP_KERNEL);
++		if (!ibuf_tmp || !obuf_tmp) {
++			retval = -ENOMEM;
++			goto free_iobufs;
++		}
++
++		if (copy_from_user(ibuf_tmp, ibufs.buff_entry,
++				ibufs.entries * sizeof(*ibuf_tmp))) {
++			retval = -EFAULT;
++			goto free_iobufs;
+ 		}
+-		dbufs_local.obufs->buff_entry = obuf_temp;
+-		for (i = 0; i < dbufs_local.obufs->entries; i++) {
+-			obuf_temp[i].buffer -				param->obufs->buff_entry[i].buffer;
+-			obuf_temp[i].size -				param->obufs->buff_entry[i].size;
++		ibufs.buff_entry = ibuf_tmp;
++		dbufs_local.ibufs = &ibufs;
++
++		if (copy_from_user(obuf_tmp, obufs.buff_entry,
++				obufs.entries * sizeof(*obuf_tmp))) {
++			retval = -EFAULT;
++			goto free_iobufs;
+ 		}
++		obufs.buff_entry = obuf_tmp;
++		dbufs_local.obufs = &obufs;
++
+ 		retval = sst_decode(str_id, &dbufs_local);
+-		if (retval)
+-			retval =  -EAGAIN;
+-		if (copy_to_user(&param->input_bytes_consumed,
++		if (retval) {
++			retval = -EAGAIN;
++			goto free_iobufs;
++		}
++
++		dest = (char *)arg + offsetof(struct snd_sst_dbufs, input_bytes_consumed);
++		if (copy_to_user(dest,
+ 				&dbufs_local.input_bytes_consumed,
+ 				sizeof(unsigned long long))) {
+-			retval =  -EFAULT;
+-			break;
++			retval = -EFAULT;
++			goto free_iobufs;
+ 		}
+-		if (copy_to_user(&param->output_bytes_produced,
++
++		dest = (char *)arg + offsetof(struct snd_sst_dbufs, input_bytes_consumed);
++		if (copy_to_user(dest,
+ 				&dbufs_local.output_bytes_produced,
+ 				sizeof(unsigned long long))) {
+-			retval =  -EFAULT;
+-			break;
++			retval = -EFAULT;
++			goto free_iobufs;
+ 		}
++free_iobufs:
++		kfree(ibuf_tmp);
++		kfree(obuf_tmp);
+ 		break;
+ 	}
+ 
