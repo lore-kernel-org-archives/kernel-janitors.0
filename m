@@ -1,23 +1,18 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-Date: Fri, 15 Oct 2010 13:18:48 +0000
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Tue, 19 Oct 2010 10:50:54 +0000
 Subject: Re: [PATCH] mfd/mc13xxx: don't open code kasprintf
-Message-Id: <20101015131848.GA16893@pengutronix.de>
+Message-Id: <20101019105053.GM2736@sortiz-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286731711-17865-1-git-send-email-segooon@gmail.com> <1286739586-32745-1-git-send-email-u.kleine-koenig@pengutronix.de>
+References: <1286731711-17865-1-git-send-email-segooon@gmail.com>
+ <1286739586-32745-1-git-send-email-u.kleine-koenig@pengutronix.de>
 In-Reply-To: <1286739586-32745-1-git-send-email-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, Vasiliy Kulikov <segooon@gmail.com>, linux-kernel@vger.kernel.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Vasiliy Kulikov <segooon@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Samuel,
-
-would you mind to take this patch (or squash it into
-0c9b33e5a23e2053165c9e30ffff3b3a3cf1b2b8)?
-
-Thanks
-Uwe
+Hi Uwe,
 
 On Sun, Oct 10, 2010 at 09:39:46PM +0200, Uwe Kleine-K=F6nig wrote:
 > This fixes an off by one error noticed by Vasiliy Kulikov en passant.
@@ -50,17 +45,24 @@ x *mc13xxx,
 > -
 > -	cell.name =3D kmemdup(buf, strlen(buf) + 1, GFP_KERNEL);
 > +	cell.name =3D kasprintf(GFP_KERNEL, format, name);
+I don't think you need to allocate a name pointer here.
+cell.name =3D mc13xxx_get_chipname(mc13xxx); should be enough as
+platform_device_alloc() will memcpy it into an allocated buffer.
+
+Cheers,
+Samuel.
+
+
 >  	if (!cell.name)
 >  		return -ENOMEM;
 > =20
 > --=20
 > 1.7.2.3
 >=20
->=20
 
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Intel Open Source Technology Centre
+http://oss.intel.com/
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
