@@ -1,48 +1,118 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 26 Oct 2010 10:25:43 +0000
-Subject: [PATCH 14/14] drivers/ata/pata_octeon_cf.c: delete double assignment
-Message-Id: <1288088743-3725-15-git-send-email-julia@diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 21 Oct 2010 05:46:58 +0000
+Subject: [patch] Staging: bcm: use get_user() to access user pointers
+Message-Id: <20101021054657.GE5985@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+This fixes some places that dereference user pointers directly instead
+of using get_user().
 
-Delete successive assignments to the same location.
+Please especially check my changes to IOCTL_BCM_GET_CURRENT_STATUS.  The
+original code modified the struct which "arg" was pointing to.  I think
+this was a bug in the original code and that we only wanted to write to
+the OutputBuffer. Also with the original code you could read as much 
+memory as you wanted so I had to put a cap on OutputLength.  The only
+value of OutputLength that makes sense is sizeof(LINK_STATE) so now if
+OutputLength is not sizeof(LINK_STATE) it returns -EINVAL.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression i;
-@@
-
-*i = ...;
- i = ...;
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/ata/pata_octeon_cf.c |    2 --
- 1 file changed, 2 deletions(-)
+I don't have this hardware.  Compile tested only.
 
-diff --git a/drivers/ata/pata_octeon_cf.c b/drivers/ata/pata_octeon_cf.c
-index 74b8298..fa1b95a 100644
---- a/drivers/ata/pata_octeon_cf.c
-+++ b/drivers/ata/pata_octeon_cf.c
-@@ -653,8 +653,6 @@ static irqreturn_t octeon_cf_interrupt(int irq, void *dev_instance)
+diff --git a/drivers/staging/bcm/Bcmchar.c b/drivers/staging/bcm/Bcmchar.c
+index 77fdfe2..fead9c5 100644
+--- a/drivers/staging/bcm/Bcmchar.c
++++ b/drivers/staging/bcm/Bcmchar.c
+@@ -1001,13 +1001,15 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
+ 		}
+ #endif
+ 		case IOCTL_BE_BUCKET_SIZE:
+-			Adapter->BEBucketSize = *(PULONG)arg;
+-			Status = STATUS_SUCCESS;
++			Status = 0;
++			if (get_user(Adapter->BEBucketSize, (unsigned long __user *)arg))
++				Status = -EFAULT;
+ 			break;
  
- 		ap = host->ports[i];
- 		ocd = ap->dev->platform_data;
--
--		ocd = ap->dev->platform_data;
- 		cf_port = ap->private_data;
- 		dma_int.u64  			cvmx_read_csr(CVMX_MIO_BOOT_DMA_INTX(ocd->dma_engine));
-
+ 		case IOCTL_RTPS_BUCKET_SIZE:
+-			Adapter->rtPSBucketSize = *(PULONG)arg;
+-			Status = STATUS_SUCCESS;
++			Status = 0;
++			if (get_user(Adapter->rtPSBucketSize, (unsigned long __user *)arg))
++				Status = -EFAULT;
+ 			break;
+ 		case IOCTL_CHIP_RESET:
+ 	    {
+@@ -1028,11 +1030,15 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
+ 		case IOCTL_QOS_THRESHOLD:
+ 		{
+ 			USHORT uiLoopIndex;
+-			for(uiLoopIndex = 0 ; uiLoopIndex < NO_OF_QUEUES ; uiLoopIndex++)
+-			{
+-				Adapter->PackInfo[uiLoopIndex].uiThreshold = *(PULONG)arg;
++
++			Status = 0;
++			for (uiLoopIndex = 0; uiLoopIndex < NO_OF_QUEUES; uiLoopIndex++) {
++				if (get_user(Adapter->PackInfo[uiLoopIndex].uiThreshold,
++						(unsigned long __user *)arg)) {
++					Status = -EFAULT;
++					break;
++				}
+ 			}
+-			Status = STATUS_SUCCESS;
+ 			break;
+ 		}
+ 
+@@ -1093,7 +1099,8 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
+ 		}
+ 		case IOCTL_BCM_GET_CURRENT_STATUS:
+ 		{
+-			LINK_STATE *plink_state = NULL;
++			LINK_STATE plink_state;
++
+ 			/* Copy Ioctl Buffer structure */
+ 			if(copy_from_user(&IoBuffer, argp, sizeof(IOCTL_BUFFER)))
+ 			{
+@@ -1101,13 +1108,19 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
+ 				Status = -EFAULT;
+ 				break;
+ 			}
+-			plink_state = (LINK_STATE*)arg;
+-			plink_state->bIdleMode = (UCHAR)Adapter->IdleMode;
+-			plink_state->bShutdownMode = Adapter->bShutStatus;
+-			plink_state->ucLinkStatus = (UCHAR)Adapter->LinkStatus;
+-			if(copy_to_user(IoBuffer.OutputBuffer,
+-				(PUCHAR)plink_state, (UINT)IoBuffer.OutputLength))
+-			{
++			if (IoBuffer.OutputLength != sizeof(plink_state)) {
++				Status = -EINVAL;
++				break;
++			}
++
++			if (copy_from_user(&plink_state, (void __user *)arg, sizeof(plink_state))) {
++				Status = -EFAULT;
++				break;
++			}
++			plink_state.bIdleMode = (UCHAR)Adapter->IdleMode;
++			plink_state.bShutdownMode = Adapter->bShutStatus;
++			plink_state.ucLinkStatus = (UCHAR)Adapter->LinkStatus;
++			if (copy_to_user(IoBuffer.OutputBuffer, &plink_state, IoBuffer.OutputLength)) {
+ 				BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0, "Copy_to_user Failed..\n");
+ 				Status = -EFAULT;
+ 				break;
+@@ -1331,7 +1344,9 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
+ 						BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0,"Copy From User space failed. status :%d", Status);
+ 						return -EFAULT;
+ 					}
+-					uiSectorSize = *((PUINT)(IoBuffer.InputBuffer)); /* FIXME: unchecked __user access */
++					if (get_user(uiSectorSize, (unsigned int __user *)IoBuffer.InputBuffer))
++						return -EFAULT;
++
+ 					if((uiSectorSize < MIN_SECTOR_SIZE) || (uiSectorSize > MAX_SECTOR_SIZE))
+ 					{
+ 
