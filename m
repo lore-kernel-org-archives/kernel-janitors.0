@@ -1,56 +1,53 @@
-From: Thomas Dahlmann <dahlmann.thomas@arcor.de>
-Date: Tue, 26 Oct 2010 13:43:05 +0000
-Subject: Re: [PATCH 2/14] drivers/usb/gadget/amd5536udc.c: delete double assignment
-Message-Id: <4CC6DAE9.1070402@arcor.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 21 Oct 2010 19:24:00 +0000
+Subject: [patch 2/3] V4L/DVB: s5p-fimc: make it compile
+Message-Id: <20101021192400.GK5985@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk> <1288088743-3725-3-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Pawel Osciak <p.osciak@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-ACK
+The work_queue was partially removed in f93000ac11: "[media] s5p-fimc:
+mem2mem driver refactoring and cleanup" but this bit was missed.  Also
+we need to include sched.h otherwise the compile fails with:
 
-Thanks!
-Thomas
+drivers/media/video/s5p-fimc/fimc-core.c:
+	In function ‘fimc_capture_handler’:
+drivers/media/video/s5p-fimc/fimc-core.c:286:
+	error: ‘TASK_NORMAL’ undeclared (first use in this function)
 
-On 10/26/2010 12:25 PM, Julia Lawall wrote:
-> From: Julia Lawall<julia@diku.dk>
->
-> Delete successive assignments to the same location.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> //<smpl>
-> @@
-> expression i;
-> @@
->
-> *i = ...;
->   i = ...;
-> //</smpl>
->
-> Signed-off-by: Julia Lawall<julia@diku.dk>
->
-> ---
->   drivers/usb/gadget/amd5536udc.c |    1 -
->   1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/usb/gadget/amd5536udc.c b/drivers/usb/gadget/amd5536udc.c
-> index 9034e03..f8dd726 100644
-> --- a/drivers/usb/gadget/amd5536udc.c
-> +++ b/drivers/usb/gadget/amd5536udc.c
-> @@ -3359,7 +3359,6 @@ static int udc_probe(struct udc *dev)
->   	dev_set_name(&dev->gadget.dev, "gadget");
->   	dev->gadget.dev.release = gadget_release;
->   	dev->gadget.name = name;
-> -	dev->gadget.name = name;
->   	dev->gadget.is_dualspeed = 1;
->
->   	/* init registers, interrupts, ... */
->
->    
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Compile tested only.                                       :P
 
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index e3a7c6a..1c1437c 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -14,6 +14,7 @@
+ /*#define DEBUG*/
+ 
+ #include <linux/types.h>
++#include <linux/sched.h>
+ #include <media/videobuf-core.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-mem2mem.h>
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 8335045..cf9bc8e 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -1593,12 +1593,6 @@ static int fimc_probe(struct platform_device *pdev)
+ 		goto err_clk;
+ 	}
+ 
+-	fimc->work_queue = create_workqueue(dev_name(&fimc->pdev->dev));
+-	if (!fimc->work_queue) {
+-		ret = -ENOMEM;
+-		goto err_irq;
+-	}
+-
+ 	ret = fimc_register_m2m_device(fimc);
+ 	if (ret)
+ 		goto err_irq;
