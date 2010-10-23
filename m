@@ -1,46 +1,34 @@
-From: Nicolas Kaiser <nikai@nikai.net>
-Date: Tue, 26 Oct 2010 12:36:50 +0000
-Subject: Re: [PATCH 12/14] drivers/video/omap/blizzard.c: delete double
-Message-Id: <20101026143650.14c836eb@absol.kitzblitz>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 23 Oct 2010 08:25:11 +0000
+Subject: [PATCH 1/2] block: cciss: fix information leak to userland
+Message-Id: <1287822311-14783-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
-	<1288088743-3725-13-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-13-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Tomi Valkeinen <tomi.valkeinen@nokia.com>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Mike Miller <mike.miller@hp.com>, Jens Axboe <jaxboe@fusionio.com>, "Stephen M. Cameron" <scameron@beardog.cce.hp.com>, Andrew Morton <akpm@linux-foundation.org>, iss_storagedev@hp.com, linux-kernel@vger.kernel.org
 
-* Julia Lawall <julia@diku.dk>:
-> Delete successive assignments to the same location.  Initialize the out_y
-> field as well as the out_x field, rather than initializing the out_x field
-> twice.
+Structure IOCTL_Command_struct is copied to userland with some
+padding fields at the end of the struct unitialized.
+It leads to leaking of stack memory.
 
-Hi there!
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ drivers/block/cciss.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-An identical patch is already in the -mm tree:
+diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
+index 762a81a..cd08324 100644
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -1142,6 +1142,7 @@ static int cciss_ioctl32_passthru(struct block_device *bdev, fmode_t mode,
+ 	int err;
+ 	u32 cp;
+ 
++	memset(&arg64, 0, sizeof(arg64));
+ 	err = 0;
+ 	err | 	    copy_from_user(&arg64.LUN_info, &arg32->LUN_info,
+-- 
+1.7.0.4
 
-> The patch titled
->      drivers/video/omap/blizzard.c: suspected typo in assignment
-> has been added to the -mm tree.  Its filename is
->      video-omap-suspected-typo-in-assignment.patch
-
-> See http://userweb.kernel.org/~akpm/stuff/added-to-mm.txt to find
-> out what to do about this
-> 
-> The current -mm tree may be found at http://userweb.kernel.org/~akpm/mmotm/
-> 
-> ------------------------------------------------------
-> Subject: drivers/video/omap/blizzard.c: suspected typo in assignment
-> From: Nicolas Kaiser <nikai@nikai.net>
-> 
-> Untested, but looks like an obvious typo to me.
-> 
-> Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
-> Cc: Tomi Valkeinen <tomi.valkeinen@nokia.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
-Best regards,
-Nicolas Kaiser
