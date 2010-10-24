@@ -1,38 +1,38 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 11 Oct 2010 11:59:45 +0000
-Subject: Re: [patch 2/2] OSS: soundcard: fix return value of sound_open()
-Message-Id: <s5hr5fxgcsu.wl%tiwai@suse.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 24 Oct 2010 21:55:04 +0000
+Subject: potential NULL dereference in sysfs_merge_group()
+Message-Id: <20101024215504.GV5985@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101010173422.GC5851@bicker>
-In-Reply-To: <20101010173422.GC5851@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-At Sun, 10 Oct 2010 19:34:22 +0200,
-Dan Carpenter wrote:
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Hi Alan,
 
-Applied.  Thanks.
+There is a bug in sysfs_merge_group() where it doesn't handle a NULL
+grp parameter properly.  The only caller in the kernel passes in a valid
+grp pointer so it doesn't affect anything yet.
 
+fs/sysfs/group.c +175 sysfs_merge_group(15)
+	error: we previously assumed 'grp' could be null.
+   168		if (grp)
+                    ^^^
+	assumes that grp can be NULL.
 
-Takashi
+   169			dir_sd = sysfs_get_dirent(kobj->sd, NULL, grp->name);
+   170		else
+   171			dir_sd = sysfs_get(kobj->sd);
+   172		if (!dir_sd)
+   173			return -ENOENT;
+   174	
+   175		for ((i = 0, attr = grp->attrs); *attr && !error; (++i, ++attr))
+                                    ^^^^^
+	grp is dereferenced here.
 
+   176			error = sysfs_add_file(dir_sd, *attr, SYSFS_KOBJ_ATTR);
 
-> diff --git a/sound/oss/soundcard.c b/sound/oss/soundcard.c
-> index a5ab61e..46c0d03 100644
-> --- a/sound/oss/soundcard.c
-> +++ b/sound/oss/soundcard.c
-> @@ -249,7 +249,7 @@ static int sound_open(struct inode *inode, struct file *file)
->  	}
->  
->  	mutex_unlock(&soundcard_mutex);
-> -	return 0;
-> +	return retval;
->  }
->  
->  static int sound_release(struct inode *inode, struct file *file)
-> 
+I'm not sure how you want to handle this.
+
+regards,
+dan carpenter
