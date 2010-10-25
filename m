@@ -1,48 +1,28 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Mon, 25 Oct 2010 01:43:47 +0000
-Subject: Re: potential NULL dereference in sysfs_merge_group()
-Message-Id: <Pine.LNX.4.44L0.1010242141310.25577-100000@netrider.rowland.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 25 Oct 2010 04:53:27 +0000
+Subject: [patch] hfsplus: fix double lock typo in ioctl
+Message-Id: <20101025045326.GW5985@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101024215504.GV5985@bicker>
-In-Reply-To: <20101024215504.GV5985@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Christoph Hellwig <hch@tuxera.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 24 Oct 2010, Dan Carpenter wrote:
+This was supposed to be a mutex_unlock() instead of a mutex_lock().
 
-> Hi Alan,
-> 
-> There is a bug in sysfs_merge_group() where it doesn't handle a NULL
-> grp parameter properly.  The only caller in the kernel passes in a valid
-> grp pointer so it doesn't affect anything yet.
-> 
-> fs/sysfs/group.c +175 sysfs_merge_group(15)
-> 	error: we previously assumed 'grp' could be null.
->    168		if (grp)
->                     ^^^
-> 	assumes that grp can be NULL.
-> 
->    169			dir_sd = sysfs_get_dirent(kobj->sd, NULL, grp->name);
->    170		else
->    171			dir_sd = sysfs_get(kobj->sd);
->    172		if (!dir_sd)
->    173			return -ENOENT;
->    174	
->    175		for ((i = 0, attr = grp->attrs); *attr && !error; (++i, ++attr))
->                                     ^^^^^
-> 	grp is dereferenced here.
-> 
->    176			error = sysfs_add_file(dir_sd, *attr, SYSFS_KOBJ_ATTR);
-> 
-> I'm not sure how you want to handle this.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-You're right, and I'm embarrassed not to have seen it before.
-
-Since there's no point in calling this function if there are no 
-attributes, we should require that grp always be non-NULL.  The initial 
-test can be removed.  The same is true for sysfs_unmerge_group().
-
-Alan Stern
-
+diff --git a/fs/hfsplus/ioctl.c b/fs/hfsplus/ioctl.c
+index 5b4667e..40a85a3 100644
+--- a/fs/hfsplus/ioctl.c
++++ b/fs/hfsplus/ioctl.c
+@@ -92,7 +92,7 @@ static int hfsplus_ioctl_setflags(struct file *file, int __user *user_flags)
+ 	mark_inode_dirty(inode);
+ 
+ out_unlock_inode:
+-	mutex_lock(&inode->i_mutex);
++	mutex_unlock(&inode->i_mutex);
+ out_drop_write:
+ 	mnt_drop_write(file->f_path.mnt);
+ out:
