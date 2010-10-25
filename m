@@ -1,37 +1,29 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Date: Wed, 27 Oct 2010 01:24:50 +0000
-Subject: Re: [ibm-acpi-devel] [PATCH 8/14]
-Message-Id: <20101027012450.GB29299@khazad-dum.debian.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 25 Oct 2010 05:28:03 +0000
+Subject: [patch] serial/mrst_max3110: make buffer larger
+Message-Id: <20101025052802.GY5985@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
- <1288088743-3725-9-git-send-email-julia@diku.dk>
- <20101027010908.GA29299@khazad-dum.debian.net>
-In-Reply-To: <20101027010908.GA29299@khazad-dum.debian.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, Matthew Garrett <mjg@redhat.com>
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Alan Cox <alan@linux.intel.com>, Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 26 Oct 2010, Henrique de Moraes Holschuh wrote:
-> On Tue, 26 Oct 2010, Julia Lawall wrote:
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > Delete successive assignments to the same location.
-> 
-> There are often results of mismerges or other assorted screw ups, often
-> done by the maintainer itself (e.g. me in thinkpad-acpi's case) during
-> development.
+This is used to store the spi_device ->modalias so they have to be the same
+size.  SPI_NAME_SIZE is 32.
 
-Which was the case, and the error was just a duplicate line indeed and not
-anything more damaging in one of my commits done a few years ago.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-So,
-
-Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-
--- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
+diff --git a/drivers/serial/mrst_max3110.c b/drivers/serial/mrst_max3110.c
+index b62857b..37e13c3 100644
+--- a/drivers/serial/mrst_max3110.c
++++ b/drivers/serial/mrst_max3110.c
+@@ -51,7 +51,7 @@
+ struct uart_max3110 {
+ 	struct uart_port port;
+ 	struct spi_device *spi;
+-	char name[24];
++	char name[SPI_NAME_SIZE];
+ 
+ 	wait_queue_head_t wq;
+ 	struct task_struct *main_thread;
