@@ -1,28 +1,20 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 25 Oct 2010 04:53:27 +0000
-Subject: [patch] hfsplus: fix double lock typo in ioctl
-Message-Id: <20101025045326.GW5985@bicker>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 25 Oct 2010 10:55:24 +0000
+Subject: Re: [patch] hfsplus: fix double lock typo in ioctl
+Message-Id: <201010251255.24670.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101025045326.GW5985@bicker>
+In-Reply-To: <20101025045326.GW5985@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@tuxera.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Christoph Hellwig <hch@tuxera.com>, Frederic Weisbecker <fweisbec@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This was supposed to be a mutex_unlock() instead of a mutex_lock().
+On Monday 25 October 2010, Dan Carpenter wrote:
+> This was supposed to be a mutex_unlock() instead of a mutex_lock().
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/fs/hfsplus/ioctl.c b/fs/hfsplus/ioctl.c
-index 5b4667e..40a85a3 100644
---- a/fs/hfsplus/ioctl.c
-+++ b/fs/hfsplus/ioctl.c
-@@ -92,7 +92,7 @@ static int hfsplus_ioctl_setflags(struct file *file, int __user *user_flags)
- 	mark_inode_dirty(inode);
- 
- out_unlock_inode:
--	mutex_lock(&inode->i_mutex);
-+	mutex_unlock(&inode->i_mutex);
- out_drop_write:
- 	mnt_drop_write(file->f_path.mnt);
- out:
