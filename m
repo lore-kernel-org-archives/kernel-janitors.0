@@ -1,32 +1,31 @@
-From: Clemens Ladisch <clemens@ladisch.de>
-Date: Mon, 18 Oct 2010 15:10:20 +0000
-Subject: Re: [PATCH 2/8] char: hpet: fix information leak to userland
-Message-Id: <4CBC635C.6030500@ladisch.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 25 Oct 2010 05:02:56 +0000
+Subject: [patch] cifs: cifs_convert_address() returns zero on error
+Message-Id: <20101025050256.GX5985@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287326477-7940-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1287326477-7940-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, Frederic Weisbecker <fweisbec@gmail.com>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Suresh Jayaraman <sjayaraman-l3A5Bk7waGM@public.gmane.org>, Shirish Pargaonkar <shirishpargaonkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Vasiliy Kulikov wrote:
-> Structure info is copied to userland with some padding fields unitialized.
-> It leads to leaking of stack memory.
+The cifs_convert_address() returns zero on error but this caller is
+testing for negative returns.
 
-> --- a/drivers/char/hpet.c
-> +++ b/drivers/char/hpet.c
-> @@ -581,6 +581,7 @@ hpet_ioctl_common(struct hpet_dev *devp, int cmd, unsigned long arg,
->  		break;
->  	case HPET_INFO:
->  		{
-> +			memset(info, 0, sizeof(*info));
->  			if (devp->hd_ireqfreq)
->  				info->hi_ireqfreq >  					hpet_time_div(hpetp, devp->hd_ireqfreq);
+Btw. "i" is unsigned here, so it's never negative.
 
-This makes the following assignment "info->hi_ireqfreq = 0;" superfluous.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
-Regards,
-Clemens
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 7e73176..ad6a4ea 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -1064,7 +1064,7 @@ cifs_parse_mount_options(char *options, const char *devname,
+ 			}
+ 			i = cifs_convert_address((struct sockaddr *)&vol->srcaddr,
+ 						 value, strlen(value));
+-			if (i < 0) {
++			if (i = 0) {
+ 				printk(KERN_WARNING "CIFS:  Could not parse"
+ 				       " srcaddr: %s\n",
+ 				       value);
