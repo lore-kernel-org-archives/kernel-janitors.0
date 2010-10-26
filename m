@@ -1,37 +1,48 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Date: Wed, 06 Oct 2010 17:54:11 +0000
-Subject: Re: [PATCH 07/28] Staging: comedi: drivers.c: Edit file so that checkpatch.pl
-Message-Id: <4CACB7C3.9030000@caviumnetworks.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 26 Oct 2010 10:25:37 +0000
+Subject: [PATCH 8/14] drivers/platform/x86/thinkpad_acpi.c: delete double assignment
+Message-Id: <1288088743-3725-9-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com> <1286326843-6170-7-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286326843-6170-7-git-send-email-tdent48227@gmail.com>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tracey Dent <tdent48227@gmail.com>
-Cc: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
+Cc: kernel-janitors@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/05/2010 06:00 PM, Tracey Dent wrote:
-> Changed a few lines that made checkpatch.pl complain. Could not get ever warning but
-> I got it down to to just 4, WARNING: line over 80 characters.
+From: Julia Lawall <julia@diku.dk>
 
-The overall goal is to improve the code, not placate checkpatch.pl
+Delete successive assignments to the same location.
 
-[...]
->   				printk
-> -				    (KERN_WARNING "BUG! detaching device with use_count=%d\n",
-> -				     dev->use_count);
-> +				    (KERN_WARNING "BUG! detaching device     \
-> +							with use_count=%d\n",
-> +							dev->use_count);
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Is that really an improvement?
+// <smpl>
+@@
+expression i;
+@@
 
-And even if it were, is that really how strings should be split up?
+*i = ...;
+ i = ...;
+// </smpl>
 
-Hint:
-	pr_warning("BUG! detaching device with use_count=%d\n",
-		   dev->use_count);
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ drivers/platform/x86/thinkpad_acpi.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-David Daney
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 2d61186..e8c2199 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -8497,7 +8497,6 @@ static void ibm_exit(struct ibm_struct *ibm)
+ 					   ibm->acpi->type,
+ 					   dispatch_acpi_notify);
+ 		ibm->flags.acpi_notify_installed = 0;
+-		ibm->flags.acpi_notify_installed = 0;
+ 	}
+ 
+ 	if (ibm->flags.proc_created) {
+
