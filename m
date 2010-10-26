@@ -1,29 +1,48 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 11 Oct 2010 12:59:34 +0000
-Subject: Re: [PATCH] ASoC: wm8804: fix error handling code
-Message-Id: <20101011125934.GM9231@rakim.wolfsonmicro.main>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 26 Oct 2010 10:25:38 +0000
+Subject: [PATCH 9/14] sound/oss/sb_ess.c: delete double assignment
+Message-Id: <1288088743-3725-10-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286731745-18169-1-git-send-email-segooon@gmail.com>
-	<20101011120014.GJ9231@rakim.wolfsonmicro.main>
-	<20101011121555.GA32652@albatros>
-	<20101011123609.GL9231@rakim.wolfsonmicro.main>
-	<20101011125056.GA25041@albatros>
-In-Reply-To: <20101011125056.GA25041@albatros>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ian Lartey <ian@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 11, 2010 at 04:50:56PM +0400, Vasiliy Kulikov wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> It is not greppable situation to simply change the behavior of all
-> drivers.  I was looking for memory leak bugs in drivers/net/ and fixed
-> some of them.  Manual looking through _all_ drivers takes much more
-> time.  In general I try to search for repeatable bugs with coccinelle,
-> but it is rare case.
+Delete successive assignments to the same location.
 
-The method you're using to generate the patches is pretty much
-orthogonal to anything else, except of course in the case where you're
-also submitting the automation for checking (which is useful where
-possible).
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression i;
+@@
+
+*i = ...;
+ i = ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/oss/sb_ess.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/oss/sb_ess.c b/sound/oss/sb_ess.c
+index 51a3d38..9890cf2 100644
+--- a/sound/oss/sb_ess.c
++++ b/sound/oss/sb_ess.c
+@@ -1722,7 +1722,6 @@ printk (KERN_INFO "FKS: es_rec_set_recmask mask = %x\n", mask);
+ 				right = (value & 0x0000ff00) >> 8;
+ 			} else {				/* Turn it off (3)  */
+ 				left  = 0;
+-				left  = 0;
+ 				right = 0;
+ 			}
+ 			sb_common_mixer_set(devc, i + ES_REC_MIXER_RECDIFF, left, right);
+
