@@ -1,33 +1,48 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 21 Oct 2010 07:29:39 +0000
-Subject: Re: [patch] gdth: integer overflow in ioctl
-Message-Id: <20101021072939.GF5985@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 26 Oct 2010 10:25:32 +0000
+Subject: [PATCH 3/14] drivers/vhost/vhost.c: delete double assignment
+Message-Id: <1288088743-3725-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101008070307.GF11681@bicker>
-In-Reply-To: <20101008070307.GF11681@bicker>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Achim Leubner <achim_leubner@adaptec.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: virtualization@lists.osdl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, netdev@vger.kernel.org
 
-On Fri, Oct 08, 2010 at 09:03:07AM +0200, Dan Carpenter wrote:
-> gdth_ioctl_alloc() takes the size variable as an int.
-> copy_from_user() takes the size variable as an unsigned long.
-> gen.data_len and gen.sense_len are unsigned longs.
-> On x86_64 longs are 64 bit and ints are 32 bit.
-> 
-> We could pass in a very large number and the allocation would truncate
-> the size to 32 bits and allocate a small buffer.  Then when we do the
-> copy_from_user(), it would result in a memory corruption.
-> 
-> CC: stable@kernel.org
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
+From: Julia Lawall <julia@diku.dk>
 
-I never know if anyone gets my emails and so I has a small sad face on
-the front of my head here: --------------->   :(
+Delete successive assignments to the same location.
 
-regards,
-dan carpenter
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression i;
+@@
+
+*i = ...;
+ i = ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/vhost/vhost.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 94701ff..ed27727 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -157,7 +157,6 @@ static void vhost_vq_reset(struct vhost_dev *dev,
+ 	vq->avail_idx = 0;
+ 	vq->last_used_idx = 0;
+ 	vq->used_flags = 0;
+-	vq->used_flags = 0;
+ 	vq->log_used = false;
+ 	vq->log_addr = -1ull;
+ 	vq->vhost_hlen = 0;
 
