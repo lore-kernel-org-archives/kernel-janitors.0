@@ -1,32 +1,48 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Thu, 07 Oct 2010 07:54:25 +0000
-Subject: Re: [PATCH] usb: makefile cleanup
-Message-Id: <20101007075425.GH686@legolas.emea.dhcp.ti.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 26 Oct 2010 10:25:31 +0000
+Subject: [PATCH 2/14] drivers/usb/gadget/amd5536udc.c: delete double assignment
+Message-Id: <1288088743-3725-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286417006-32510-1-git-send-email-mfm@muteddisk.com>
-In-Reply-To: <1286417006-32510-1-git-send-email-mfm@muteddisk.com>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfm@muteddisk.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, David Vrabel <david.vrabel@csr.com>, Peter Korsgaard <jacmet@sunsite.dk>, "Balbi, Felipe" <balbi@ti.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "usb-storage@lists.one-eyed-alien.net" <usb-storage@lists.one-eyed-alien.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Thomas Dahlmann <dahlmann.thomas@arcor.de>
+Cc: kernel-janitors@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, linux-geode@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+From: Julia Lawall <julia@diku.dk>
 
-On Wed, Oct 06, 2010 at 09:03:26PM -0500, matt mooney wrote:
->For all modules, change <module>-objs to <module>-y; remove
->if-statements and replace with lists using the kbuild idiom; move
->flags to the top of the file; and fix alignment while trying to
->maintain the original scheme in each file.
->
->None of the dependencies are modified.
->
->Signed-off-by: matt mooney <mfm@muteddisk.com>
->Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Delete successive assignments to the same location.
 
-for musb parts:
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Acked-by: Felipe Balbi <balbi@ti.com>
+// <smpl>
+@@
+expression i;
+@@
 
--- 
-balbi
+*i = ...;
+ i = ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/usb/gadget/amd5536udc.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/amd5536udc.c b/drivers/usb/gadget/amd5536udc.c
+index 9034e03..f8dd726 100644
+--- a/drivers/usb/gadget/amd5536udc.c
++++ b/drivers/usb/gadget/amd5536udc.c
+@@ -3359,7 +3359,6 @@ static int udc_probe(struct udc *dev)
+ 	dev_set_name(&dev->gadget.dev, "gadget");
+ 	dev->gadget.dev.release = gadget_release;
+ 	dev->gadget.name = name;
+-	dev->gadget.name = name;
+ 	dev->gadget.is_dualspeed = 1;
+ 
+ 	/* init registers, interrupts, ... */
+
