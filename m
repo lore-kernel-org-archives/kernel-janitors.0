@@ -1,38 +1,48 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sun, 10 Oct 2010 17:28:47 +0000
-Subject: [PATCH] staging: intel_sst: fix signess error
-Message-Id: <1286731728-18039-1-git-send-email-segooon@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 26 Oct 2010 10:25:40 +0000
+Subject: [PATCH 11/14] drivers/serial/vr41xx_siu.c: delete double assignment
+Message-Id: <1288088743-3725-12-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Harsha Priya <priya.harsha@intel.com>, Vinod Koul <vinod.koul@intel.com>, Alan Cox <alan@linux.intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-str_id was unsigned, so check for (str_id <= 0) made no sense.
-Made it signed.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Delete successive assignments to the same location.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression i;
+@@
+
+*i = ...;
+ i = ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- Compile tested.
+ drivers/serial/vr41xx_siu.c |    1 -
+ 1 file changed, 1 deletion(-)
 
- drivers/staging/intel_sst/intel_sst_stream.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/intel_sst/intel_sst_stream.c b/drivers/staging/intel_sst/intel_sst_stream.c
-index ff46d5c..1ce3a9c 100644
---- a/drivers/staging/intel_sst/intel_sst_stream.c
-+++ b/drivers/staging/intel_sst/intel_sst_stream.c
-@@ -117,7 +117,8 @@ int sst_alloc_stream(char *params, unsigned int stream_ops,
- {
- 	struct ipc_post *msg = NULL;
- 	struct snd_sst_alloc_params alloc_param;
--	unsigned int pcm_slot = 0, num_ch, str_id;
-+	unsigned int pcm_slot = 0, num_ch;
-+	int str_id;
- 	struct snd_sst_stream_params *sparams;
- 	struct stream_info *str_info;
+diff --git a/drivers/serial/vr41xx_siu.c b/drivers/serial/vr41xx_siu.c
+index 3beb6ab..121a33e 100644
+--- a/drivers/serial/vr41xx_siu.c
++++ b/drivers/serial/vr41xx_siu.c
+@@ -849,7 +849,6 @@ void __init vr41xx_siu_early_setup(struct uart_port *port)
+ 	siu_uart_ports[port->line].type = port->type;
+ 	siu_uart_ports[port->line].uartclk = SIU_BAUD_BASE * 16;
+ 	siu_uart_ports[port->line].mapbase = port->mapbase;
+-	siu_uart_ports[port->line].mapbase = port->mapbase;
+ 	siu_uart_ports[port->line].ops = &siu_uart_ops;
+ }
  
--- 
-1.7.0.4
 
