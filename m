@@ -1,44 +1,57 @@
-From: Alexander Graf <agraf@suse.de>
-Date: Sat, 30 Oct 2010 19:16:57 +0000
-Subject: Re: [PATCH v2] powerpc: kvm: powerpc: fix information leak to userland
-Message-Id: <1480CDBF-0A4A-49EC-AF4C-CED1D63BB911@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 26 Oct 2010 10:25:34 +0000
+Subject: [PATCH 5/14] drivers/net/sb1000.c: delete double assignment
+Message-Id: <1288088743-3725-6-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288464922-8812-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288464922-8812-1-git-send-email-segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Avi Kivity <avi-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Marcelo Tosatti <mtosatti-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, kvm-ppc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-On 30.10.2010, at 11:55, Vasiliy Kulikov wrote:
+The other code around these duplicated assignments initializes the 0 1 2
+and 3 elements of an array, so change the initialization of the
+rx_session_id array to do the same.
 
-> Structure kvm_ppc_pvinfo is copied to userland with "flags" and "pad"
-> fields unitialized.  It leads to leaking of contents of kernel stack
-> memory.  We have to initialize them to zero.
-> 
-> In patch v1 Jan Kiszka suggested to fill reserved fields with zeros
-> instead of memset'ting the whole struct.  It makes sense as these
-> fields are explicitly marked as padding.  No more fields need zeroing.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
-> arch/powerpc/kvm/powerpc.c |    2 ++
-> 1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-> index 2f87a16..5962336 100644
-> --- a/arch/powerpc/kvm/powerpc.c
-> +++ b/arch/powerpc/kvm/powerpc.c
-> @@ -604,6 +604,8 @@ static int kvm_vm_ioctl_get_pvinfo(struct kvm_ppc_pvinfo *pvinfo)
-> 	pvinfo->hcall[1] = inst_ori | (KVM_SC_MAGIC_R0 & inst_imm_mask);
-> 	pvinfo->hcall[2] = inst_sc;
-> 	pvinfo->hcall[3] = inst_nop;
-> +	pvinfo->flags = 0;
-> +	memset(&pvinfo->pad, 0, sizeof(pvinfo->pad));
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-This should only be memset(pvinfo->pad), no? It's an array after all which automatically translates to a pointer when referenced.
+// <smpl>
+@@
+expression i;
+@@
 
-Alex
+*i = ...;
+ i = ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics and has not been tested.
+
+ drivers/net/sb1000.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/sb1000.c b/drivers/net/sb1000.c
+index a9ae505..66c2f1a 100644
+--- a/drivers/net/sb1000.c
++++ b/drivers/net/sb1000.c
+@@ -961,9 +961,9 @@ sb1000_open(struct net_device *dev)
+ 	lp->rx_error_count = 0;
+ 	lp->rx_error_dpc_count = 0;
+ 	lp->rx_session_id[0] = 0x50;
+-	lp->rx_session_id[0] = 0x48;
+-	lp->rx_session_id[0] = 0x44;
+-	lp->rx_session_id[0] = 0x42;
++	lp->rx_session_id[1] = 0x48;
++	lp->rx_session_id[2] = 0x44;
++	lp->rx_session_id[3] = 0x42;
+ 	lp->rx_frame_id[0] = 0;
+ 	lp->rx_frame_id[1] = 0;
+ 	lp->rx_frame_id[2] = 0;
 
