@@ -1,58 +1,50 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 19 Oct 2010 09:43:55 +0000
-Subject: [PATCH 3/4] drivers/scsi/lpfc/lpfc_bsg.c: convert nested spin_lock_irqsave to spin_lock
-Message-Id: <1287481436-26656-3-git-send-email-julia@diku.dk>
+Date: Tue, 26 Oct 2010 10:25:33 +0000
+Subject: [PATCH 4/14] drivers/staging/brcm80211/brcmfmac/dhd_linux.c: delete double assignment
+Message-Id: <1288088743-3725-5-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@emulex.com>
-Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brett Rudley <brudley@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, Henry Ptasinski <henryp@broadcom.com>, Nohee Ko <noheek@broadcom.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-If spin_lock_irqsave is called twice in a row with the same second
-argument, the interrupt state at the point of the second call overwrites
-the value saved by the first call.  Indeed, the second call does not need
-to save the interrupt state, so it is changed to a simple spin_lock.
+Delete successive assignments to the same location.  dhd_ops_virt contains
+a subset of the definitions of dhd_ops_pri.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression lock1,lock2;
-expression flags;
+expression i;
 @@
 
-*spin_lock_irqsave(lock1,flags)
-... when != flags
-*spin_lock_irqsave(lock2,flags)
+*i = ...;
+ i = ...;
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/scsi/lpfc/lpfc_bsg.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/brcm80211/brcmfmac/dhd_linux.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
-index f5d60b5..7260c3a 100644
---- a/drivers/scsi/lpfc/lpfc_bsg.c
-+++ b/drivers/scsi/lpfc/lpfc_bsg.c
-@@ -3142,12 +3142,12 @@ lpfc_bsg_menlo_cmd_cmp(struct lpfc_hba *phba,
- 	job = menlo->set_job;
- 	job->dd_data = NULL; /* so timeout handler does not reply */
+diff --git a/drivers/staging/brcm80211/brcmfmac/dhd_linux.c b/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
+index e535787..30b8e9b 100644
+--- a/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
++++ b/drivers/staging/brcm80211/brcmfmac/dhd_linux.c
+@@ -2222,8 +2222,6 @@ int dhd_net_attach(dhd_pub_t *dhdp, int ifidx)
+ 	ASSERT(net);
  
--	spin_lock_irqsave(&phba->hbalock, flags);
-+	spin_lock(&phba->hbalock);
- 	cmdiocbq->iocb_flag |= LPFC_IO_WAKE;
- 	if (cmdiocbq->context2 && rspiocbq)
- 		memcpy(&((struct lpfc_iocbq *)cmdiocbq->context2)->iocb,
- 		       &rspiocbq->iocb, sizeof(IOCB_t));
--	spin_unlock_irqrestore(&phba->hbalock, flags);
-+	spin_unlock(&phba->hbalock);
+ 	ASSERT(!net->netdev_ops);
+-	net->netdev_ops = &dhd_ops_virt;
+-
+ 	net->netdev_ops = &dhd_ops_pri;
  
- 	bmp = menlo->bmp;
- 	rspiocbq = menlo->rspiocbq;
+ 	/*
 
