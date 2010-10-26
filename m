@@ -1,47 +1,53 @@
-From: Jeff Layton <jlayton@samba.org>
-Date: Mon, 25 Oct 2010 15:31:35 +0000
-Subject: Re: [patch] cifs: cifs_convert_address() returns zero on error
-Message-Id: <20101025113135.152f52ee@corrin.poochiereds.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 26 Oct 2010 10:25:41 +0000
+Subject: [PATCH 12/14] drivers/video/omap/blizzard.c: delete double assignment
+Message-Id: <1288088743-3725-13-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101025050256.GX5985@bicker>
-In-Reply-To: <20101025050256.GX5985@bicker>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1288088743-3725-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Suresh Jayaraman <sjayaraman-l3A5Bk7waGM@public.gmane.org>, Shirish Pargaonkar <shirishpargaonkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 25 Oct 2010 07:02:56 +0200
-Dan Carpenter <error27@gmail.com> wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> The cifs_convert_address() returns zero on error but this caller is
-> testing for negative returns.
-> 
-> Btw. "i" is unsigned here, so it's never negative.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> index 7e73176..ad6a4ea 100644
-> --- a/fs/cifs/connect.c
-> +++ b/fs/cifs/connect.c
-> @@ -1064,7 +1064,7 @@ cifs_parse_mount_options(char *options, const char *devname,
->  			}
->  			i = cifs_convert_address((struct sockaddr *)&vol->srcaddr,
->  						 value, strlen(value));
-> -			if (i < 0) {
-> +			if (i = 0) {
->  				printk(KERN_WARNING "CIFS:  Could not parse"
->  				       " srcaddr: %s\n",
->  				       value);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Delete successive assignments to the same location.  Initialize the out_y
+field as well as the out_x field, rather than initializing the out_x field
+twice.
 
-Good catch. Looks right to me.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Reviewed-by:
--- 
-Jeff Layton <jlayton@samba.org>
+// <smpl>
+@@
+expression i;
+@@
+
+*i = ...;
+ i = ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This changes the semantics and has not been tested.
+
+ drivers/video/omap/blizzard.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/omap/blizzard.c b/drivers/video/omap/blizzard.c
+index 2ffb34a..87785c2 100644
+--- a/drivers/video/omap/blizzard.c
++++ b/drivers/video/omap/blizzard.c
+@@ -1590,7 +1590,7 @@ static int blizzard_init(struct omapfb_device *fbdev, int ext_mode,
+ 	blizzard.auto_update_window.width = fbdev->panel->x_res;
+ 	blizzard.auto_update_window.height = fbdev->panel->y_res;
+ 	blizzard.auto_update_window.out_x = 0;
+-	blizzard.auto_update_window.out_x = 0;
++	blizzard.auto_update_window.out_y = 0;
+ 	blizzard.auto_update_window.out_width = fbdev->panel->x_res;
+ 	blizzard.auto_update_window.out_height = fbdev->panel->y_res;
+ 	blizzard.auto_update_window.format = 0;
+
