@@ -1,34 +1,25 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 27 Oct 2010 21:17:25 +0000
-Subject: [patch] i915: signedness bug in check_overlay_src()
-Message-Id: <20101027211724.GI6062@bicker>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Wed, 27 Oct 2010 21:58:45 +0000
+Subject: Re: [patch] i915: signedness bug in check_overlay_src()
+Message-Id: <b9dded$gtljue@orsmga002.jf.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101027211724.GI6062@bicker>
+In-Reply-To: <20101027211724.GI6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Wilson <chris@chris-wilson.co.uk>
+To: Dan Carpenter <error27@gmail.com>
 Cc: intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-"depth" should be signed in case packed_depth_bytes() returns -EINVAL.
+On Wed, 27 Oct 2010 23:17:25 +0200, Dan Carpenter <error27@gmail.com> wrote:
+> "depth" should be signed in case packed_depth_bytes() returns -EINVAL.
+> 
+> This probably doesn't make a difference at runtime.  In the original
+> code we would return -EINVAL later if (rec->offset_Y % 4294967274) is
+> non-zero.
 
-This probably doesn't make a difference at runtime.  In the original
-code we would return -EINVAL later if (rec->offset_Y % 4294967274) is
-non-zero.
+Applied to fixes, thanks.
+-Chris
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/gpu/drm/i915/intel_overlay.c b/drivers/gpu/drm/i915/intel_overlay.c
-index afb96d2..02ff0a4 100644
---- a/drivers/gpu/drm/i915/intel_overlay.c
-+++ b/drivers/gpu/drm/i915/intel_overlay.c
-@@ -946,7 +946,9 @@ static int check_overlay_src(struct drm_device *dev,
- {
- 	int uv_hscale = uv_hsubsampling(rec->flags);
- 	int uv_vscale = uv_vsubsampling(rec->flags);
--	u32 stride_mask, depth, tmp;
-+	u32 stride_mask;
-+	int depth;
-+	u32 tmp;
- 
- 	/* check src dimensions */
- 	if (IS_845G(dev) || IS_I830(dev)) {
+-- 
+Chris Wilson, Intel Open Source Technology Centre
