@@ -1,81 +1,45 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 03 Oct 2010 13:06:14 +0000
-Subject: Re: [PATCH v3 14/20] Staging: rtl8192u: ieee80211: Makefile: cleaned
-Message-Id: <4CA87FC6.40208@bfs.de>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Wed, 27 Oct 2010 15:40:54 +0000
+Subject: [PATCH] scsi: hpsa: fix information leak to userland
+Message-Id: <1288194054-9276-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286037489-28439-1-git-send-email-tdent48227@gmail.com> <1286037489-28439-14-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286037489-28439-14-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tracey Dent <tdent48227@gmail.com>
-Cc: greg@kroah.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org
+To: kernel-janitors@vger.kernel.org
+Cc: "Stephen M. Cameron" <scameron@beardog.cce.hp.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, Mike Miller <mike.miller@hp.com>, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Structure IOCTL_Command_struct is copied to userland with
+some padding fields at the end of the struct unitialized.
+It leads to leaking of contents of kernel stack memory.
 
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-Tracey Dent schrieb:
-> Changed to use the proper ccflags-y option
-> 
-> Signed-off-by: Tracey Dent <tdent48227@gmail.com>
-> ---
->  drivers/staging/rtl8192u/ieee80211/Makefile |   16 ++++++++--------
->  1 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192u/ieee80211/Makefile b/drivers/staging/rtl8192u/ieee80211/Makefile
-> index 71ca5d9..45704f8 100644
-> --- a/drivers/staging/rtl8192u/ieee80211/Makefile
-> +++ b/drivers/staging/rtl8192u/ieee80211/Makefile
-> @@ -5,22 +5,22 @@ MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/$(NIC_SELECT)
->  
->  CC = gcc
+ drivers/scsi/hpsa.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-does this mean we can compile with gcc only ? where are the icc users ?
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index c5d0606..641a38c 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -2298,6 +2298,7 @@ static int hpsa_ioctl32_passthru(struct scsi_device *dev, int cmd, void *arg)
+ 	int err;
+ 	u32 cp;
+ 
++	memset(&arg64, 0, sizeof(arg64));
+ 	err = 0;
+ 	err |= copy_from_user(&arg64.LUN_info, &arg32->LUN_info,
+ 			   sizeof(arg64.LUN_info));
+@@ -2334,6 +2335,7 @@ static int hpsa_ioctl32_big_passthru(struct scsi_device *dev,
+ 	int err;
+ 	u32 cp;
+ 
++	memset(&arg64, 0, sizeof(arg64));
+ 	err = 0;
+ 	err |= copy_from_user(&arg64.LUN_info, &arg32->LUN_info,
+ 			   sizeof(arg64.LUN_info));
+-- 
+1.7.0.4
 
->  ifneq ($(shell uname -r|cut -d. -f1,2), 2.4)
-
-I can guess what the author intended but this will only check *on*
-what system i am compiling, not what linux version i try *to conpile*.
-see: KERNEL_VERSION macro
-
-
-
-> -EXTRA_CFLAGS += -I$(TOPDIR)/drivers/net/wireless
-> -EXTRA_CFLAGS += -O2
-
-no optimisation, please
-
-> -EXTRA_CFLAGS += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
-> +ccflags-y := -I$(TOPDIR)/drivers/net/wireless
-> +ccflags-y += -O2
-> +ccflags-y += -DJACKSON_NEW_8187 -DJACKSON_NEW_RX
->  
->  #it will fail to compile in suse linux enterprise 10 sp2. This flag is to solve this problem.
->  ifeq ($(shell uname -r | cut -d. -f1,2,3,4), 2.6.16.60-0)
-> -EXTRA_CFLAGS += -DOPENSUSE_SLED
-> +ccflags-y := -DOPENSUSE_SLED
->  endif
-
-this should be something like .....
-
-# if LINUX_VERSION_CODE = KERNEL_VERSION(2,6,16)
-#define OPENSUSE_SLED
-#endif
-
->  ifeq ($(NIC_SELECT),RTL8192U)
-> -#EXTRA_CFLAGS += -DUSB_TX_DRIVER_AGGREGATION_ENABLE
-> -#EXTRA_CFLAGS += -DUSB_RX_AGGREGATION_SUPPORT
-> +#ccflags-y := -DUSB_TX_DRIVER_AGGREGATION_ENABLE
-> +#ccflags-y := -DUSB_RX_AGGREGATION_SUPPORT
->  endif
-> -#EXTRA_CFLAGS += -DJOHN_NOCPY
-> +#ccflags-y := -DJOHN_NOCPY
->  #flags to enable or disble 80211D feature
-> -EXTRA_CFLAGS += -DENABLE_DOT11D
-> +ccflags-y += -DENABLE_DOT11D
->  ieee80211-rsl-objs := ieee80211_rx.o \
->  		      ieee80211_softmac.o \
->  		      ieee80211_tx.o \
-
-
-just my 2 cents,
- wh
