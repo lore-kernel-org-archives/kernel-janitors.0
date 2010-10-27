@@ -1,28 +1,45 @@
-From: "Harsha, Priya" <priya.harsha@intel.com>
-Date: Mon, 18 Oct 2010 15:43:08 +0000
-Subject: RE: [patch 3/2] Staging: sst: more copy_to_user() changes
-Message-Id: <98769532B4BB14429434178695419EAE053605A67C@bgsmsx501.gar.corp.intel.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 27 Oct 2010 10:08:22 +0000
+Subject: [patch] touchscreen/bu21013_ts: null dereference in error handling
+Message-Id: <20101027100822.GF6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101015191044.GM6614@bicker>
-In-Reply-To: <20101015191044.GM6614@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Henrik Rydberg <rydberg@euromail.se>, Naveen Kumar Gaddipati <naveen.gaddipati@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+If kzalloc() returned NULL then it would lead to a NULL deref after the
+goto.
 
-> Vinod wanted the copy_to_user() calls in this format:
-> 	if (copy_to_user())
-> 		retval = -EFAULT;
-> instead of this:
-> 	retval = copy_to_user();
-> 	if (retval)
-> 		retval = -EFAULt;
-> 
-> I've done that for the whole intel_sst_app_interface.c file.  In the
-> process I noticed a couple more places that returned -EBUSY or -EAGAIN
-> instead of -EFAULT.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-Acked-by: Harsha Priya <priya.harsha@intel.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/input/touchscreen/bu21013_ts.c b/drivers/input/touchscreen/bu21013_ts.c
+index ccde586..8f120b1 100644
+--- a/drivers/input/touchscreen/bu21013_ts.c
++++ b/drivers/input/touchscreen/bu21013_ts.c
+@@ -446,11 +446,14 @@ static int __devinit bu21013_probe(struct i2c_client *client,
+ 	}
+ 
+ 	bu21013_data = kzalloc(sizeof(struct bu21013_ts_data), GFP_KERNEL);
++	if (!bu21013_data)
++		return -ENOMEM;
++
+ 	in_dev = input_allocate_device();
+-	if (!bu21013_data || !in_dev) {
++	if (!in_dev) {
+ 		dev_err(&client->dev, "device memory alloc failed\n");
+ 		error = -ENOMEM;
+-		goto err_free_mem;
++		goto err_free;
+ 	}
+ 
+ 	bu21013_data->in_dev = in_dev;
+@@ -515,6 +518,7 @@ err_cs_disable:
+ 	pdata->cs_dis(pdata->cs_pin);
+ err_free_mem:
+ 	input_free_device(bu21013_data->in_dev);
++err_free:
+ 	kfree(bu21013_data);
+ 
+ 	return error;
