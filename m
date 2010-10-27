@@ -1,42 +1,95 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Date: Wed, 27 Oct 2010 21:42:37 +0000
-Subject: Re: [PATCH 8/14] drivers/platform/x86/thinkpad_acpi.c: delete
-Message-Id: <20101027214237.GD27847@khazad-dum.debian.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 27 Oct 2010 21:22:53 +0000
+Subject: [patch 2/2] cifs: dereferencing first then checking
+Message-Id: <20101027212253.GL6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
- <1288088743-3725-9-git-send-email-julia@diku.dk>
- <20101027010908.GA29299@khazad-dum.debian.net>
- <20101027035449.GB6062@bicker>
-In-Reply-To: <20101027035449.GB6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Julia Lawall <julia@diku.dk>, Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, kernel-janitors@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, 27 Oct 2010, Dan Carpenter wrote:
-> On Tue, Oct 26, 2010 at 11:09:08PM -0200, Henrique de Moraes Holschuh wrote:
-> > On Tue, 26 Oct 2010, Julia Lawall wrote:
-> > > From: Julia Lawall <julia@diku.dk>
-> > > 
-> > > Delete successive assignments to the same location.
-> > 
-> > There are often results of mismerges or other assorted screw ups, often
-> > done by the maintainer itself (e.g. me in thinkpad-acpi's case) during
-> > development.
-> > 
-> > The patch is correct, and I thank you for the head's up.  But let me
-> > track down what caused it first, hmm?  I also highly recommend that this
-> > should be done in all cases you find, instead of just blindly fixing the
-> > assignment.
-> 
-> I've reviewed the entire patchset per your suggestion and Julia
-> obviously didn't do it blindly.  It all looks good.  The patcheset fixes
-> a number of bugs.
+Smatch complained about a couple checking for NULL after dereferencing
+bugs.  I'm not super familiar with the code so I did the conservative
+thing and move the dereferences after the checks.
 
-Thank you, Dan and Julia.
+The dereferences in cifs_lock() and cifs_fsync() were added in
+ba00ba64cf0 "cifs: make various routines use the cifsFileInfo->tcon
+pointer".  The dereference in find_writable_file() was added in 
+6508d904e6f "cifs: have find_readable/writable_file filter by fsuid".
+The comments there say it's possible to trigger the NULL dereference
+under stress.
 
--- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 06a006b..33a19b4 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -775,13 +775,13 @@ int cifs_lock(struct file *file, int cmd, struct file_lock *pfLock)
+ 		cFYI(1, "Unknown type of lock");
+ 
+ 	cifs_sb = CIFS_SB(file->f_path.dentry->d_sb);
+-	tcon = tlink_tcon(((struct cifsFileInfo *)file->private_data)->tlink);
+ 
+ 	if (file->private_data = NULL) {
+ 		rc = -EBADF;
+ 		FreeXid(xid);
+ 		return rc;
+ 	}
++	tcon = tlink_tcon(((struct cifsFileInfo *)file->private_data)->tlink);
+ 	netfid = ((struct cifsFileInfo *)file->private_data)->netfid;
+ 
+ 	if ((tcon->ses->capabilities & CAP_UNIX) &&
+@@ -1179,7 +1179,7 @@ struct cifsFileInfo *find_writable_file(struct cifsInodeInfo *cifs_inode,
+ 					bool fsuid_only)
+ {
+ 	struct cifsFileInfo *open_file;
+-	struct cifs_sb_info *cifs_sb = CIFS_SB(cifs_inode->vfs_inode.i_sb);
++	struct cifs_sb_info *cifs_sb;
+ 	bool any_available = false;
+ 	int rc;
+ 
+@@ -1192,6 +1192,7 @@ struct cifsFileInfo *find_writable_file(struct cifsInodeInfo *cifs_inode,
+ 		dump_stack();
+ 		return NULL;
+ 	}
++	cifs_sb = CIFS_SB(cifs_inode->vfs_inode.i_sb);
+ 
+ 	/* only filter by fsuid on multiuser mounts */
+ 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MULTIUSER))
+@@ -1628,15 +1629,26 @@ int cifs_fsync(struct file *file, int datasync)
+ 		file->f_path.dentry->d_name.name, datasync);
+ 
+ 	rc = filemap_write_and_wait(inode->i_mapping);
+-	if (rc = 0) {
+-		rc = CIFS_I(inode)->write_behind_rc;
+-		CIFS_I(inode)->write_behind_rc = 0;
+-		tcon = tlink_tcon(smbfile->tlink);
+-		if (!rc && tcon && smbfile &&
+-		   !(CIFS_SB(inode->i_sb)->mnt_cifs_flags & CIFS_MOUNT_NOSSYNC))
+-			rc = CIFSSMBFlush(xid, tcon, smbfile->netfid);
+-	}
++	if (rc)
++		goto err_out;
++
++	rc = CIFS_I(inode)->write_behind_rc;
++	CIFS_I(inode)->write_behind_rc = 0;
++	if (rc)
++		goto err_out;
++
++	if (CIFS_SB(inode->i_sb)->mnt_cifs_flags & CIFS_MOUNT_NOSSYNC)
++		goto done;
++	if (!smbfile)
++		goto done;
++	tcon = tlink_tcon(smbfile->tlink);
++	if (!tcon)
++		goto done;
++
++	rc = CIFSSMBFlush(xid, tcon, smbfile->netfid);
+ 
++err_out:
++done:
+ 	FreeXid(xid);
+ 	return rc;
+ }
