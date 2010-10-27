@@ -1,57 +1,33 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 27 Oct 2010 15:46:13 +0000
-Subject: Re: [patch] touchscreen/bu21013_ts: null dereference in error
-Message-Id: <20101027154613.GA8745@core.coreip.homeip.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 27 Oct 2010 21:19:04 +0000
+Subject: [patch] nfsd: fix NULL dereference in setattr()
+Message-Id: <20101027211904.GJ6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101027100822.GF6062@bicker>
-In-Reply-To: <20101027100822.GF6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Henrik Rydberg <rydberg@euromail.se>, Naveen Kumar Gaddipati <naveen.gaddipati@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Neil Brown <neilb@suse.de>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+The original code would oops if this were called from nfsd4_setattr()
+because "filpp" is NULL.
 
-On Wed, Oct 27, 2010 at 12:08:22PM +0200, Dan Carpenter wrote:
-> If kzalloc() returned NULL then it would lead to a NULL deref after the
-> goto.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Just changing the error path to do input_free_device(in_dev); is much
-simpler.
-
-> 
-> diff --git a/drivers/input/touchscreen/bu21013_ts.c b/drivers/input/touchscreen/bu21013_ts.c
-> index ccde586..8f120b1 100644
-> --- a/drivers/input/touchscreen/bu21013_ts.c
-> +++ b/drivers/input/touchscreen/bu21013_ts.c
-> @@ -446,11 +446,14 @@ static int __devinit bu21013_probe(struct i2c_client *client,
->  	}
->  
->  	bu21013_data = kzalloc(sizeof(struct bu21013_ts_data), GFP_KERNEL);
-> +	if (!bu21013_data)
-> +		return -ENOMEM;
-> +
->  	in_dev = input_allocate_device();
-> -	if (!bu21013_data || !in_dev) {
-> +	if (!in_dev) {
->  		dev_err(&client->dev, "device memory alloc failed\n");
->  		error = -ENOMEM;
-> -		goto err_free_mem;
-> +		goto err_free;
->  	}
->  
->  	bu21013_data->in_dev = in_dev;
-> @@ -515,6 +518,7 @@ err_cs_disable:
->  	pdata->cs_dis(pdata->cs_pin);
->  err_free_mem:
->  	input_free_device(bu21013_data->in_dev);
-> +err_free:
->  	kfree(bu21013_data);
->  
->  	return error;
-
--- 
-Dmitry
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 9019e8e..e044d04 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -3083,9 +3083,10 @@ nfs4_preprocess_stateid_op(struct nfsd4_compound_state *cstate,
+ 		if (status)
+ 			goto out;
+ 		renew_client(dp->dl_client);
+-		if (filpp)
++		if (filpp) {
+ 			*filpp = find_readable_file(dp->dl_file);
+-		BUG_ON(!*filpp);
++			BUG_ON(!*filpp);
++		}
+ 	} else { /* open or lock stateid */
+ 		stp = find_stateid(stateid, flags);
+ 		if (!stp)
