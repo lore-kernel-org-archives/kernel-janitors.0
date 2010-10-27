@@ -1,27 +1,34 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 17 Oct 2010 18:44:58 +0000
-Subject: Re: [PATCH 2/7] drivers/staging: Return -ENOMEM on memory allocation
-Message-Id: <Pine.LNX.4.64.1010172043320.394@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 27 Oct 2010 21:25:34 +0000
+Subject: [patch] i915: fix impossible BUG_ON() test
+Message-Id: <20101027212534.GM6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287147610-8041-2-git-send-email-julia@diku.dk> <4CB86431.5000305@bfs.de>
- <Pine.LNX.4.64.1010152157440.29421@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1010152157440.29421@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Fri, 15 Oct 2010, Julia Lawall wrote:
+obj_priv->pin_count is unsigned so the BUG_ON(obj_priv->pin_count < 0)
+will never trigger.
 
-> On Fri, 15 Oct 2010, walter harms wrote:
-> 
-> > This looks like a case for kasprintf().
-> 
-> OK, I will take a look at it.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Instead, I have found some other occurrences of kmalloc + memcpy that 
-could be kasprintf, so I have done them all in another patch series, with 
-the subject "Use kasprintf".
-
-julia
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index 8eb8453..151d9c8 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -4082,10 +4082,11 @@ i915_gem_object_unpin(struct drm_gem_object *obj)
+ 	struct drm_i915_gem_object *obj_priv = to_intel_bo(obj);
+ 
+ 	WARN_ON(i915_verify_lists(dev));
+-	obj_priv->pin_count--;
+-	BUG_ON(obj_priv->pin_count < 0);
++	BUG_ON(obj_priv->pin_count = 0);
+ 	BUG_ON(obj_priv->gtt_space = NULL);
+ 
++	obj_priv->pin_count--;
++
+ 	/* If the object is no longer pinned, and is
+ 	 * neither active nor being flushed, then stick it on
+ 	 * the inactive list
