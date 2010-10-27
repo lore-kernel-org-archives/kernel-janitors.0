@@ -1,30 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 18 Oct 2010 08:53:49 +0000
-Subject: Re: [patch] ns83820: spin_lock_irq() => spin_lock()
-Message-Id: <20101018.015349.226761791.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 27 Oct 2010 14:50:31 +0000
+Subject: [patch v2] configfs: documentation: remove unneeded check
+Message-Id: <20101027145031.GG6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101013191852.GD6060@bicker>
-In-Reply-To: <20101013191852.GD6060@bicker>
+References: <20101027100735.GE6062@bicker> <20101027112207.GA17439@mail.oracle.com>
+In-Reply-To: <20101027112207.GA17439@mail.oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, mingo@elte.hu
+To: Joel Becker <Joel.Becker@oracle.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 13 Oct 2010 21:18:53 +0200
+If "p" is NULL then it will cause an oops when we pass it to
+simple_strtoul().  In this case "p" can not be NULL so I removed the
+check.  I also changed the check a little to make it more explicit that
+we are testing whether p points to the NUL char.
 
-> This is essentially cosmetic.  At this point the IRQs are already
-> disabled because we called spin_lock_irq(&dev->rx_info.lock).
-> 
-> The real bug here was fixed back in 2006 in 3a10ccebe: "[PATCH] lock
-> validator: fix ns83820.c irq-flags bug".  Prior to that patch, it was
-> a "spin_lock_irq is not nestable" type bug.  The 2006 patch changes the
-> unlock to not re-enable IRQs, which eliminates the potential deadlock.
-> 
-> But this bit was missed.  We should change the lock function as well so
-> it balances nicely.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+V2: Added some parenthesis to make the precedence more clear.
 
-Applied.
+diff --git a/Documentation/filesystems/configfs/configfs_example_explicit.c b/Documentation/filesystems/configfs/configfs_example_explicit.c
+index d428cc9..63ff248 100644
+--- a/Documentation/filesystems/configfs/configfs_example_explicit.c
++++ b/Documentation/filesystems/configfs/configfs_example_explicit.c
+@@ -89,7 +89,7 @@ static ssize_t childless_storeme_write(struct childless *childless,
+ 	char *p = (char *) page;
+ 
+ 	tmp = simple_strtoul(p, &p, 10);
+-	if (!p || (*p && (*p != '\n')))
++	if ((*p != '\0') && (*p != '\n'))
+ 		return -EINVAL;
+ 
+ 	if (tmp > INT_MAX)
+
