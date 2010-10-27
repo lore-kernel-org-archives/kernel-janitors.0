@@ -1,51 +1,37 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Fri, 15 Oct 2010 19:54:40 +0000
-Subject: Re: [PATCH 16/24] pci: change to new flag variable
-Message-Id: <20101015125440.6e5f6dfc@jbarnes-desktop>
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Date: Wed, 27 Oct 2010 01:24:50 +0000
+Subject: Re: [ibm-acpi-devel] [PATCH 8/14]
+Message-Id: <20101027012450.GB29299@khazad-dum.debian.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e0bdab5d2e8c52041c003de68ba774c3e706716c.1285355033.git.mfm@muteddisk.com>
-	<70fe6b462b3ee22922698a12d62d650cf029033a.1285355033.git.mfm@muteddisk.com>
-	<40a2d76d013ad025d08a411992af10f6bbef0a13.1285355033.git.mfm@muteddisk.com>
-	<b484ccf548e1700e09ac7f731289503bf3e7b3bf.1285355033.git.mfm@muteddisk.com>
-	<2c0fbcaafb18007c5c83823cb33e35120fe15091.1285355033.git.mfm@muteddisk.com>
-	<ec9520aca140f253d8bad33cf35b8e668e7e9c9c.1285355033.git.mfm@muteddisk.com>
-	<8cea68a58c5ddba79fc96e93fa0b23681e6a7ffe.1285355033.git.mfm@muteddisk.com>
-	<e93a3f1af26d2b0fc798b4c15401b3422ae6e2bd.1285355033.git.mfm@muteddisk.com>
-	<c2f1ef5590660ae574e9bdaf7136213741081404.1285355033.git.mfm@muteddisk.com>
-	<efe88633e146de3e173afea14f777c41c37e5db2.1285355033.git.mfm@muteddisk.com>
-	<facbf79cadc81f9043e89160b7b3b8a90926aba1.1285355033.git.mfm@muteddisk.com>
-	<f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
-In-Reply-To: <f8ffc630c8a56ebd5da0aa2227d63fecc21d4ee7.1285355033.git.mfm@muteddisk.com>
+References: <1288088743-3725-1-git-send-email-julia@diku.dk>
+ <1288088743-3725-9-git-send-email-julia@diku.dk>
+ <20101027010908.GA29299@khazad-dum.debian.net>
+In-Reply-To: <20101027010908.GA29299@khazad-dum.debian.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfm@muteddisk.com>
-Cc: kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, Matthew Garrett <mjg@redhat.com>
 
-On Fri, 24 Sep 2010 12:17:26 -0700
-matt mooney <mfm@muteddisk.com> wrote:
-
-> Replace EXTRA_CFLAGS with ccflags-y.
+On Tue, 26 Oct 2010, Henrique de Moraes Holschuh wrote:
+> On Tue, 26 Oct 2010, Julia Lawall wrote:
+> > From: Julia Lawall <julia@diku.dk>
+> > 
+> > Delete successive assignments to the same location.
 > 
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
-> ---
->  drivers/pci/Makefile |    4 +---
->  1 files changed, 1 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> index dc1aa09..dcd7ace 100644
-> --- a/drivers/pci/Makefile
-> +++ b/drivers/pci/Makefile
-> @@ -65,6 +65,4 @@ obj-$(CONFIG_PCI_SYSCALL) += syscall.o
->  
->  obj-$(CONFIG_PCI_STUB) += pci-stub.o
->  
-> -ifeq ($(CONFIG_PCI_DEBUG),y)
-> -EXTRA_CFLAGS += -DDEBUG
-> -endif
-> +ccflags-$(CONFIG_PCI_DEBUG) := -DDEBUG
+> There are often results of mismerges or other assorted screw ups, often
+> done by the maintainer itself (e.g. me in thinkpad-acpi's case) during
+> development.
 
-Applied, thanks.
+Which was the case, and the error was just a duplicate line indeed and not
+anything more damaging in one of my commits done a few years ago.
+
+So,
+
+Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
 
 -- 
-Jesse Barnes, Intel Open Source Technology Center
+  "One disk to rule them all, One disk to find them. One disk to bring
+  them all and in the darkness grind them. In the Land of Redmond
+  where the shadows lie." -- The Silicon Valley Tarot
+  Henrique Holschuh
