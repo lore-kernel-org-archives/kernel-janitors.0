@@ -1,29 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 30 Oct 2010 19:12:38 +0000
-Subject: Re: [PATCH] net: core: scm: fix information leak to userland
-Message-Id: <20101030.121238.189687981.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 28 Oct 2010 14:07:13 +0000
+Subject: [patch] rtc: ds3232: remove unneeded check
+Message-Id: <20101028140713.GF6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288448796-6147-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288448796-6147-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, ebiederm@xmission.com, eric.dumazet@gmail.com, tj@kernel.org, serge@hallyn.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+bcd2bin() returns unsigned values so they're never less than zero.  I
+asked Jack Lan and he said I could just remove that part of the check.
 
-Your patches are almost entirely baseless.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-You haven't even made an effort to show a real case, in detail,
-where your patches actually fix a bug.  The CMSG case shows
-that you didn't even bother to look at the assembly of even
-one architecture to see if padding bytes even existed in the
-structure, and that furthermore even if they existed that they
-would leak out ever.
-
-I don't even buy the "preventative nature" argument for the
-address[128] thing.  If a protocol is leaking kernel memory in that
-case, it also isn't filling in the address value properly, which is a
-bug times two.
-
-I absolutely am not applying these patches, sorry.
+diff --git a/drivers/rtc/rtc-ds3232.c b/drivers/rtc/rtc-ds3232.c
+index 5706355..7767b4f 100644
+--- a/drivers/rtc/rtc-ds3232.c
++++ b/drivers/rtc/rtc-ds3232.c
+@@ -289,14 +289,10 @@ static void ds3232_update_alarm(struct i2c_client *client)
+ 	if (ret < 0)
+ 		goto unlock;
+ 
+-	buf[0] = bcd2bin(buf[0]) < 0 || (ds3232->rtc->irq_data & RTC_UF) ?
+-								0x80 : buf[0];
+-	buf[1] = bcd2bin(buf[1]) < 0 || (ds3232->rtc->irq_data & RTC_UF) ?
+-								0x80 : buf[1];
+-	buf[2] = bcd2bin(buf[2]) < 0 || (ds3232->rtc->irq_data & RTC_UF) ?
+-								0x80 : buf[2];
+-	buf[3] = bcd2bin(buf[3]) < 0 || (ds3232->rtc->irq_data & RTC_UF) ?
+-								0x80 : buf[3];
++	buf[0] = (ds3232->rtc->irq_data & RTC_UF) ? 0x80 : buf[0];
++	buf[1] = (ds3232->rtc->irq_data & RTC_UF) ? 0x80 : buf[1];
++	buf[2] = (ds3232->rtc->irq_data & RTC_UF) ? 0x80 : buf[2];
++	buf[3] = (ds3232->rtc->irq_data & RTC_UF) ? 0x80 : buf[3];
+ 
+ 	ret = i2c_smbus_write_i2c_block_data(client, DS3232_REG_ALARM1, 4, buf);
+ 	if (ret < 0)
