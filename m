@@ -1,25 +1,45 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Wed, 27 Oct 2010 21:30:08 +0000
-Subject: Re: [patch] i915: fix impossible BUG_ON() test
-Message-Id: <5b55a1$ig5qui@fmsmga002.fm.intel.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 28 Oct 2010 04:41:49 +0000
+Subject: [patch] misc/bh1770glc: error handling in
+Message-Id: <20101028044149.GU6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101027212534.GM6062@bicker>
-In-Reply-To: <20101027212534.GM6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Samu Onkalo <samu.p.onkalo@nokia.com>
+Cc: Jonathan Cameron <jic23@cam.ac.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 27 Oct 2010 23:25:34 +0200, Dan Carpenter <error27@gmail.com> wrote:
-> obj_priv->pin_count is unsigned so the BUG_ON(obj_priv->pin_count < 0)
-> will never trigger.
+There was a signedness bug so "ret" was never less than zero and that
+breaks the error handling.  Also in the original code it would overwrite
+ret and the result is still negative but it's bogus number instead of
+the correct error code.
 
-I have the same change pending, but not queued for -fixes since it is
-impossible.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks,
--Chris
-
--- 
-Chris Wilson, Intel Open Source Technology Centre
+diff --git a/drivers/misc/bh1770glc.c b/drivers/misc/bh1770glc.c
+index cee632e..d79a972 100644
+--- a/drivers/misc/bh1770glc.c
++++ b/drivers/misc/bh1770glc.c
+@@ -649,7 +649,7 @@ static ssize_t bh1770_power_state_store(struct device *dev,
+ {
+ 	struct bh1770_chip *chip =  dev_get_drvdata(dev);
+ 	unsigned long value;
+-	size_t ret;
++	ssize_t ret;
+ 
+ 	if (strict_strtoul(buf, 0, &value))
+ 		return -EINVAL;
+@@ -659,8 +659,12 @@ static ssize_t bh1770_power_state_store(struct device *dev,
+ 		pm_runtime_get_sync(dev);
+ 
+ 		ret = bh1770_lux_rate(chip, chip->lux_rate_index);
+-		ret |= bh1770_lux_interrupt_control(chip, BH1770_ENABLE);
++		if (ret < 0) {
++			pm_runtime_put(dev);
++			goto leave;
++		}
+ 
++		ret = bh1770_lux_interrupt_control(chip, BH1770_ENABLE);
+ 		if (ret < 0) {
+ 			pm_runtime_put(dev);
+ 			goto leave;
