@@ -1,20 +1,32 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Date: Mon, 11 Oct 2010 15:33:28 +0000
-Subject: Re: [PATCH] sh: boards/mach-x3proto: gpio: fix error handling code
-Message-Id: <20101011153328.GB12338@linux-sh.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 28 Oct 2010 08:35:03 +0000
+Subject: bug report: signedness issue in ds3232_update_alarm()
+Message-Id: <20101028083503.GZ6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286731708-17822-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1286731708-17822-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Oct 10, 2010 at 09:28:27PM +0400, Vasiliy Kulikov wrote:
-> Checks for (irq < 0) and (ilsel < 0) didn't make sense since they were
-> unsigned.  Made them signed.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Hi Jack,
 
-Applied, thanks.
+This code was added in f46418c5cadf "drivers/rtc/rtc-ds3232.c: add alarm
+function".  Smatch complains because bcd2bin() returns an unsigned so
+it's never less than zero and the whole block is a no-op.  I'm not sure
+what was intended here, could you take a look?
+
+drivers/rtc/rtc-ds3232.c +292 ds3232_update_alarm(13)
+	warn: unsigned 'bcd2bin(buf[0])' is never less than zero.
+   291
+   292          buf[0] = bcd2bin(buf[0]) < 0 || (ds3232->rtc->irq_data & RTC_UF) ?
+   293									0x80 : buf[0];
+   294          buf[1] = bcd2bin(buf[1]) < 0 || (ds3232->rtc->irq_data & RTC_UF) ?
+   295									0x80 : buf[1];
+   296          buf[2] = bcd2bin(buf[2]) < 0 || (ds3232->rtc->irq_data & RTC_UF) ?
+   297									0x80 : buf[2];
+   298          buf[3] = bcd2bin(buf[3]) < 0 || (ds3232->rtc->irq_data & RTC_UF) ?
+   299									0x80 : buf[3];
+   300
+
+regards,
+dan carpenter
