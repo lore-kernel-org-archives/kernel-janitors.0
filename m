@@ -1,29 +1,38 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 18 Oct 2010 20:02:53 +0000
-Subject: Re: [PATCH 0/3] Use kasprintf
-Message-Id: <Pine.LNX.4.64.1010182202260.22877@ask.diku.dk>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Thu, 28 Oct 2010 11:14:03 +0000
+Subject: [PATCH] misc: isl29020: fix signedness bug
+Message-Id: <1288264443-10627-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287341311-11161-1-git-send-email-julia@diku.dk>
- <4CBC8D4E.90008@grupopie.com>
-In-Reply-To: <4CBC8D4E.90008@grupopie.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paulo Marques <pmarques@grupopie.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Liu Hong <hong.liu@intel.com>, Andrew Morton <akpm@linux-foundation.org>, Kalhan Trisal <kalhan.trisal@intel.com>, Arjan van de Ven <arjan@linux.intel.com>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org
 
-On Mon, 18 Oct 2010, Paulo Marques wrote:
+i2c_smbus_write_byte_data() may return negative error code.  This is not
+seen to als_sensing_range_store() as the result is stored in unsigned int.
+Made it signed.
 
-> Julia Lawall wrote:
-> > These patches convert a sequence of kmalloc and memcpy to use kasprintf
-> > instead.
-> 
-> Aren't these patches just a more convoluted way of doing a kstrdup?
-> 
-> I would imagine that a kasprintf would make more sense when the format
-> string is more complex than "%s", or am I missing something?
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-They have all already been changed to either kmemdup or kstrdup.
+ drivers/misc/isl29020.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-thanks,
-julia
+diff --git a/drivers/misc/isl29020.c b/drivers/misc/isl29020.c
+index 34fe835..629d31e 100644
+--- a/drivers/misc/isl29020.c
++++ b/drivers/misc/isl29020.c
+@@ -87,7 +87,7 @@ static ssize_t als_sensing_range_store(struct device *dev,
+ 		struct device_attribute *attr, const  char *buf, size_t count)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+-	unsigned int ret_val;
++	int ret_val;
+ 	unsigned long val;
+ 
+ 	if (strict_strtoul(buf, 10, &val))
+-- 
+1.7.0.4
+
