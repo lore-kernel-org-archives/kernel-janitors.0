@@ -1,30 +1,46 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Fri, 15 Oct 2010 14:08:19 +0000
-Subject: Re: [PATCH 6/7] drivers/serial/ioc3_serial.c: Return -ENOMEM on
-Message-Id: <20101015140819.GA3163@linux-mips.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 28 Oct 2010 11:12:41 +0000
+Subject: [patch] memcg: null dereference on allocation failure
+Message-Id: <20101028111241.GC6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287147610-8041-6-git-send-email-julia@diku.dk>
-In-Reply-To: <1287147610-8041-6-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Pat Gefre <pfg@sgi.com>, kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+To: Balbir Singh <balbir@linux.vnet.ibm.com>
+Cc: Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Oct 15, 2010 at 03:00:09PM +0200, Julia Lawall wrote:
+The original code had a null dereference if alloc_percpu() failed.
+This was introduced in 711d3d2c9bc3 "memcg: cpu hotplug aware percpu
+count updates"
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> In this code, 0 is returned on memory allocation failure, even though other
-> failures return -ENOMEM or other similar values.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Dunno why linux-mips rsp. myself keep receiving patches for the ioc3 serial
-driver - it's only being used on SGI IA64 machines.
-
-Either way, I'm willing to funnel this patch upstream - I'm building a
-pull rq for tonight anyway.
-
-  Ralf
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 9a99cfa..2efa8ea 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4208,15 +4208,17 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ 
+ 	memset(mem, 0, size);
+ 	mem->stat = alloc_percpu(struct mem_cgroup_stat_cpu);
+-	if (!mem->stat) {
+-		if (size < PAGE_SIZE)
+-			kfree(mem);
+-		else
+-			vfree(mem);
+-		mem = NULL;
+-	}
++	if (!mem->stat)
++		goto out_free;
+ 	spin_lock_init(&mem->pcp_counter_lock);
+ 	return mem;
++
++out_free:
++	if (size < PAGE_SIZE)
++		kfree(mem);
++	else
++		vfree(mem);
++	return NULL;
+ }
+ 
+ /*
