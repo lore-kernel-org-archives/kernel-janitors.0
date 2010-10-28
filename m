@@ -1,29 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 Oct 2010 19:24:21 +0000
-Subject: Re: [PATCH 7/14] drivers/net/typhoon.c: delete double assignment
-Message-Id: <20101027.122421.27814587.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 28 Oct 2010 14:06:21 +0000
+Subject: [patch] rapidio: use resource_size()
+Message-Id: <20101028140621.GE6062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk>
-	<1288088743-3725-8-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-8-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: dave@thedillows.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexandre Bounine <alexandre.bounine@idt.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Li Yang <leoli@freescale.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 26 Oct 2010 12:25:36 +0200
+The size calculation is done incorrectly here because it should include
+both the start and end (end - start + 1).  It's easiest to just use
+resource_size() which does the right thing.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Delete successive assignments to the same location.  The current definition
-> does not initialize the respRing structure, which has the same type as the
-> cmdRing structure, so initialize that one instead.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+I was worried there was something non-standard going on because the
+printk() subtracts "end - 1", but the rest of the file uses the normal
+resource size calculations.  This function is only called from
+fsl_rio_setup() in arch/powerpc/sysdev/fsl_rio.c and the calculation
+there is also:
+	port->iores.start = law_start;
+	port->iores.end = law_start + law_size - 1;
+So I think this is the correct fix.
 
-Applied.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Compile tested only.
+
+diff --git a/drivers/rapidio/rio.c b/drivers/rapidio/rio.c
+index 68cf0c9..7b5080c 100644
+--- a/drivers/rapidio/rio.c
++++ b/drivers/rapidio/rio.c
+@@ -1159,11 +1159,11 @@ int __devinit rio_init_mports(void)
+ 
+ 	list_for_each_entry(port, &rio_mports, node) {
+ 		if (!request_mem_region(port->iores.start,
+-					port->iores.end - port->iores.start,
++					resource_size(&port->iores),
+ 					port->name)) {
+ 			printk(KERN_ERR
+ 			       "RIO: Error requesting master port region 0x%016llx-0x%016llx\n",
+-			       (u64)port->iores.start, (u64)port->iores.end - 1);
++			       (u64)port->iores.start, (u64)port->iores.end);
+ 			rc = -ENOMEM;
+ 			goto out;
+ 		}
