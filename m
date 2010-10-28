@@ -1,33 +1,38 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 14 Oct 2010 16:38:49 +0000
-Subject: [patch -next] lpfc: unlock etc on error path
-Message-Id: <20101014163849.GA6614@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Thu, 28 Oct 2010 11:13:58 +0000
+Subject: [PATCH] misc: apds9802als: fix signedness bug
+Message-Id: <1288264438-10578-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@emulex.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Alex Iannicelli <alex.iannicelli@emulex.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hong Liu <hong.liu@intel.com>, Alan Cox <alan@linux.intel.com>, Anantha Narayanan <anantha.narayanan@intel.com>, Jonathan Cameron <jic23@cam.ac.uk>, linux-kernel@vger.kernel.org
 
-All the other error paths call sysfs_mbox_idle() and unlock before
-returning. 
+i2c_smbus_read_byte_data() may return negative error code.  This is not
+seen to als_sensing_range_store() as the result is stored in unsigned int.
+Made it signed.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
-index f681eea..5f7d9e6 100644
---- a/drivers/scsi/lpfc/lpfc_attr.c
-+++ b/drivers/scsi/lpfc/lpfc_attr.c
-@@ -3789,8 +3789,11 @@ sysfs_mbox_read(struct file *filp, struct kobject *kobj,
- 			break;
- 		case MBX_SECURITY_MGMT:
- 		case MBX_AUTH_PORT:
--			if (phba->pci_dev_grp = LPFC_PCI_DEV_OC)
-+			if (phba->pci_dev_grp = LPFC_PCI_DEV_OC) {
-+				sysfs_mbox_idle(phba);
-+				spin_unlock_irq(&phba->hbalock);
- 				return -EPERM;
-+			}
- 			break;
- 		case MBX_READ_SPARM64:
- 		case MBX_READ_LA:
+ drivers/misc/apds9802als.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/misc/apds9802als.c b/drivers/misc/apds9802als.c
+index f9b91ba..0ed0935 100644
+--- a/drivers/misc/apds9802als.c
++++ b/drivers/misc/apds9802als.c
+@@ -123,7 +123,7 @@ static ssize_t als_sensing_range_store(struct device *dev,
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct als_data *data = i2c_get_clientdata(client);
+-	unsigned int ret_val;
++	int ret_val;
+ 	unsigned long val;
+ 
+ 	if (strict_strtoul(buf, 10, &val))
+-- 
+1.7.0.4
+
