@@ -1,28 +1,33 @@
-From: Bryan Huntsman <bryanh@codeaurora.org>
-Date: Fri, 29 Oct 2010 18:27:00 +0000
+From: Greg KH <greg@kroah.com>
+Date: Fri, 29 Oct 2010 19:40:07 +0000
 Subject: Re: [PATCH 1/8] staging: dream: fix information leak to userland
-Message-Id: <4CCB11F4.9080908@codeaurora.org>
+Message-Id: <20101029194007.GA12349@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288296098-18936-1-git-send-email-segooon@gmail.com> <20101028204509.GC22785@kroah.com> <20101028205831.GD19421@elf.ucw.cz> <20101028210802.GA23773@kroah.com> <4CCA2445.7070705@codeaurora.org> <20101029013843.GA9922@kroah.com>
-In-Reply-To: <20101029013843.GA9922@kroah.com>
+References: <1288296098-18936-1-git-send-email-segooon@gmail.com>
+ <20101028204509.GC22785@kroah.com>
+ <20101028205831.GD19421@elf.ucw.cz>
+ <20101028210802.GA23773@kroah.com>
+ <4CCA2445.7070705@codeaurora.org>
+ <20101029013843.GA9922@kroah.com>
+ <4CCB11F4.9080908@codeaurora.org>
+In-Reply-To: <4CCB11F4.9080908@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <greg@kroah.com>
+To: Bryan Huntsman <bryanh@codeaurora.org>
 Cc: Pavel Machek <pavel@ucw.cz>, Vasiliy Kulikov <segooon@gmail.com>, Iliyan Malchev <ibm@android.com>, Brian Swetland <swetland@google.com>, San Mehat <san@android.com>, kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org
 
-
->> Greg, I'll check around internally and see if there are any concerns
->> about dropping it.  I'll get back to you soon.  Thanks.
+On Fri, Oct 29, 2010 at 11:27:00AM -0700, Bryan Huntsman wrote:
 > 
-> Wonderful, thanks for doing this.
+> >> Greg, I'll check around internally and see if there are any concerns
+> >> about dropping it.  I'll get back to you soon.  Thanks.
+> > 
+> > Wonderful, thanks for doing this.
+> > 
+> > greg k-h
 > 
-> greg k-h
+> No concerns from us.  Feel free to drop it.  Thanks.
 
-No concerns from us.  Feel free to drop it.  Thanks.
+Great, will do, thanks for letting me know.
 
-- Bryan
-
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+greg k-h
