@@ -1,7 +1,7 @@
-From: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-Date: Thu, 28 Oct 2010 23:39:17 +0000
+From: Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>
+Date: Fri, 29 Oct 2010 00:38:53 +0000
 Subject: Re: [patch] memcg: null dereference on allocation failure
-Message-Id: <20101029083917.610f9b0b.kamezawa.hiroyu@jp.fujitsu.com>
+Message-Id: <20101029093853.49e75309.nishimura@mxp.nes.nec.co.jp>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20101028111241.GC6062@bicker>
 In-Reply-To: <20101028111241.GC6062@bicker>
@@ -9,7 +9,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <error27@gmail.com>
-Cc: Balbir Singh <balbir@linux.vnet.ibm.com>, Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Balbir Singh <balbir@linux.vnet.ibm.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>
+
+(I add Andrew to CC-list)
 
 On Thu, 28 Oct 2010 13:12:41 +0200
 Dan Carpenter <error27@gmail.com> wrote:
@@ -19,9 +21,36 @@ Dan Carpenter <error27@gmail.com> wrote:
 > count updates"
 > 
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
 
+Acked-by: Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>
 
-Ah, my fault. Thank you for catching.
-
-Acked-by: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 9a99cfa..2efa8ea 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4208,15 +4208,17 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+>  
+>  	memset(mem, 0, size);
+>  	mem->stat = alloc_percpu(struct mem_cgroup_stat_cpu);
+> -	if (!mem->stat) {
+> -		if (size < PAGE_SIZE)
+> -			kfree(mem);
+> -		else
+> -			vfree(mem);
+> -		mem = NULL;
+> -	}
+> +	if (!mem->stat)
+> +		goto out_free;
+>  	spin_lock_init(&mem->pcp_counter_lock);
+>  	return mem;
+> +
+> +out_free:
+> +	if (size < PAGE_SIZE)
+> +		kfree(mem);
+> +	else
+> +		vfree(mem);
+> +	return NULL;
+>  }
+>  
+>  /*
