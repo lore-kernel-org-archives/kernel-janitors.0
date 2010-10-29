@@ -1,56 +1,31 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 28 Oct 2010 21:08:02 +0000
+From: Bryan Huntsman <bryanh@codeaurora.org>
+Date: Fri, 29 Oct 2010 01:32:53 +0000
 Subject: Re: [PATCH 1/8] staging: dream: fix information leak to userland
-Message-Id: <20101028210802.GA23773@kroah.com>
+Message-Id: <4CCA2445.7070705@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288296098-18936-1-git-send-email-segooon@gmail.com>
- <20101028204509.GC22785@kroah.com>
- <20101028205831.GD19421@elf.ucw.cz>
-In-Reply-To: <20101028205831.GD19421@elf.ucw.cz>
+References: <1288296098-18936-1-git-send-email-segooon@gmail.com> <20101028204509.GC22785@kroah.com> <20101028205831.GD19421@elf.ucw.cz> <20101028210802.GA23773@kroah.com>
+In-Reply-To: <20101028210802.GA23773@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Vasiliy Kulikov <segooon@gmail.com>, Iliyan Malchev <ibm@android.com>, Brian Swetland <swetland@google.com>, San Mehat <san@android.com>, kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: Greg KH <greg@kroah.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Vasiliy Kulikov <segooon@gmail.com>, Iliyan Malchev <ibm@android.com>, Brian Swetland <swetland@google.com>, San Mehat <san@android.com>, kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org
 
-On Thu, Oct 28, 2010 at 10:58:31PM +0200, Pavel Machek wrote:
-> Hi!
+>>> Pavel, it looks like you're not doing any dream work anymore, any
+>>> problems with me dropping it?
+>>
+>> Too busy to do any real work on Dream, sorry :-(.
 > 
-> > > Structure msm_audio_stats is copied to userland with some fields unitialized.
-> > > It leads to leaking of contents of kernel stack memory.
-> > > Also struct msm_audio_config has field "unused" of type array of 3 elements,
-> > > not 4.  Instead of this, initialize field "type".
-> > > 
-> > > Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> > > ---
-> > >  drivers/staging/dream/qdsp5/audio_aac.c |    3 ++-
-> > 
-> > {sigh}
-> > 
-> > I'd really like to just drop this whole driver as I feel it's _way_
-> > behind whatever anyone is really using "in the wild".
-> > 
-> > Actually, I doubt that anyone even uses this thing, do they?
+> Ok, I think I'll just drop it unless someone screams.
 > 
-> Not sure, you should definitely talk to codeaurora folks.
+> thanks,
 > 
-> > Any objection to me just dropping the drivers/staging/dream/ tree?
-> > People should be working on the chipset-specific driver tree here
-> > instead, right?
-> 
-> codeaurora people should know...
+> greg k-h
 
-Which specific ones?  No one seems to be contributing to the
-drivers/staging/dream/ anymore, and there are a number of out-of-tree
-dream trees floating around now.
+Greg, I'll check around internally and see if there are any concerns about dropping it.  I'll get back to you soon.  Thanks.
 
-> > Pavel, it looks like you're not doing any dream work anymore, any
-> > problems with me dropping it?
-> 
-> Too busy to do any real work on Dream, sorry :-(.
+- Bryan
 
-Ok, I think I'll just drop it unless someone screams.
-
-thanks,
-
-greg k-h
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
