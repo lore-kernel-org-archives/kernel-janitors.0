@@ -1,80 +1,38 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Wed, 06 Oct 2010 01:00:32 +0000
-Subject: [PATCH 17/28] Staging: comedi: drivers: adl_pci7432.c: Edit file so that checkpatch.pl has 0 errors
-Message-Id: <1286326843-6170-17-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 30 Oct 2010 14:26:17 +0000
+Subject: [PATCH] xfs: linux-2.6: xfs_ioctl: fix information leak to userland
+Message-Id: <1288448778-5373-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286326843-6170-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Eric Sandeen <sandeen@redhat.com>, Alex Elder <aelder@sgi.com>, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, xfs-masters@oss.sgi.com, Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>
 
-Changed a few lines that made checkpatch.pl complain. All warnings were
-WARNING: please, no space for starting a line.
+al_hreq is copied from userland.  If al_hreq.buflen is not properly aligned then
+xfs_attr_list will ignore the last bytes of kbuf.  These bytes are unitialized.
+It leads to leaking of contents of kernel stack memory.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/comedi/drivers/adl_pci7432.c |   36 +++++++++++++-------------
- 1 files changed, 18 insertions(+), 18 deletions(-)
+ Compile tested.
 
-diff --git a/drivers/staging/comedi/drivers/adl_pci7432.c b/drivers/staging/comedi/drivers/adl_pci7432.c
-index 262da7b..9f5a065 100644
---- a/drivers/staging/comedi/drivers/adl_pci7432.c
-+++ b/drivers/staging/comedi/drivers/adl_pci7432.c
-@@ -1,22 +1,22 @@
- /*
--    comedi/drivers/adl_pci7432.c
-+	comedi/drivers/adl_pci7432.c
+ fs/xfs/linux-2.6/xfs_ioctl.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/xfs/linux-2.6/xfs_ioctl.c b/fs/xfs/linux-2.6/xfs_ioctl.c
+index 2ea238f..ad442d9 100644
+--- a/fs/xfs/linux-2.6/xfs_ioctl.c
++++ b/fs/xfs/linux-2.6/xfs_ioctl.c
+@@ -416,7 +416,7 @@ xfs_attrlist_by_handle(
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
  
--    Hardware comedi driver fot PCI7432 Adlink card
--    Copyright (C) 2004 Michel Lachine <mike@mikelachaine.ca>
-+	Hardware comedi driver fot PCI7432 Adlink card
-+	Copyright (C) 2004 Michel Lachine <mike@mikelachaine.ca>
+-	kbuf = kmalloc(al_hreq.buflen, GFP_KERNEL);
++	kbuf = kzalloc(al_hreq.buflen, GFP_KERNEL);
+ 	if (!kbuf)
+ 		goto out_dput;
  
--    This program is free software; you can redistribute it and/or modify
--    it under the terms of the GNU General Public License as published by
--    the Free Software Foundation; either version 2 of the License, or
--    (at your option) any later version.
-+	This program is free software; you can redistribute it and/or modify
-+	it under the terms of the GNU General Public License as published by
-+	the Free Software Foundation; either version 2 of the License, or
-+	(at your option) any later version.
- 
--    This program is distributed in the hope that it will be useful,
--    but WITHOUT ANY WARRANTY; without even the implied warranty of
--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--    GNU General Public License for more details.
-+	This program is distributed in the hope that it will be useful,
-+	but WITHOUT ANY WARRANTY; without even the implied warranty of
-+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+	GNU General Public License for more details.
- 
--    You should have received a copy of the GNU General Public License
--    along with this program; if not, write to the Free Software
--    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-+	You should have received a copy of the GNU General Public License
-+	along with this program; if not, write to the Free Software
-+	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
- */
- /*
-@@ -28,10 +28,10 @@ Status: experimental
- Updated: Mon, 14 Apr 2008 15:08:14 +0100
- 
- Configuration Options:
--  [0] - PCI bus of device (optional)
--  [1] - PCI slot of device (optional)
--  If bus/slot is not specified, the first supported
--  PCI device found will be used.
-+	[0] - PCI bus of device (optional)
-+	[1] - PCI slot of device (optional)
-+	If bus/slot is not specified, the first supported
-+	PCI device found will be used.
- */
- 
- #include "../comedidev.h"
 -- 
-1.7.3.1.50.g1e633
+1.7.0.4
 
