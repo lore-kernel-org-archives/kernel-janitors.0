@@ -1,49 +1,40 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 12 Oct 2010 10:40:22 +0000
-Subject: Re: [patch] ASoC: soc: snprintf() doesn't return negative
-Message-Id: <20101012104022.GA6742@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 30 Oct 2010 18:55:22 +0000
+Subject: [PATCH v2] powerpc: kvm: powerpc: fix information leak to userland
+Message-Id: <1288464922-8812-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101011035416.GD5851@bicker>
-	<20101011104009.GB9231@rakim.wolfsonmicro.main>
-	<20101011164038.GE5851@bicker>
-	<20101011185148.GB22355@opensource.wolfsonmicro.com>
-	<20101011194502.GK5851@bicker> <s5hpqvg1m7v.wl%tiwai@suse.de>
-	<20101012093506.GB30933@rakim.wolfsonmicro.main>
-	<s5hvd57eo60.wl%tiwai@suse.de>
-	<20101012095605.GC30933@rakim.wolfsonmicro.main>
-In-Reply-To: <20101012095605.GC30933@rakim.wolfsonmicro.main>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, Jassi Brar <jassi.brar@samsung.com>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>
+To: kernel-janitors@vger.kernel.org
+Cc: Alexander Graf <agraf@suse.de>, Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 12, 2010 at 10:56:05AM +0100, Mark Brown wrote:
-> On Tue, Oct 12, 2010 at 11:49:27AM +0200, Takashi Iwai wrote:
-> > Mark Brown wrote:
-> 
-> > Argh, yes, I'm (again) confused by that behavior.
-> > The problem is the potential buffer overflow, indeed.  snprintf()
-> > returns the size that would be printed.  Thus a safe code would be
-> > like:
-> > 
-> > 	list_for_each_entry(dai, &dai_list, list) {
-> >  		int len = snprintf(buf + ret, PAGE_SIZE - ret, "%s\n", dai->name);
-> >  		if (len < 0)
-> >  			continue;
-> >  		ret += len;
-> > 		if (ret >= PAGE_SIZE) {
-> > 			ret = PAGE_SIZE;
-> > 			break;
-> > 		}
-> > 	}
-> 
-> Yes, this form is better for that variant of the loop - that is safe and
-> legible without relying on current implementation details of snprintf().
+Structure kvm_ppc_pvinfo is copied to userland with "flags" and "pad"
+fields unitialized.  It leads to leaking of contents of kernel stack
+memory.  We have to initialize them to zero.
 
-This is fine with me as well.  My original patch had a problem with the
-WARN_ON() so your version is better.
+In patch v1 Jan Kiszka suggested to fill reserved fields with zeros
+instead of memset'ting the whole struct.  It makes sense as these
+fields are explicitly marked as padding.  No more fields need zeroing.
 
-regards,
-dan carpenter
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ arch/powerpc/kvm/powerpc.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+index 2f87a16..5962336 100644
+--- a/arch/powerpc/kvm/powerpc.c
++++ b/arch/powerpc/kvm/powerpc.c
+@@ -604,6 +604,8 @@ static int kvm_vm_ioctl_get_pvinfo(struct kvm_ppc_pvinfo *pvinfo)
+ 	pvinfo->hcall[1] = inst_ori | (KVM_SC_MAGIC_R0 & inst_imm_mask);
+ 	pvinfo->hcall[2] = inst_sc;
+ 	pvinfo->hcall[3] = inst_nop;
++	pvinfo->flags = 0;
++	memset(&pvinfo->pad, 0, sizeof(pvinfo->pad));
+ 
+ 	return 0;
+ }
+-- 
+1.7.0.4
 
