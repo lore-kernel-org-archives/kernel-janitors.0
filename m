@@ -1,32 +1,36 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 12 Oct 2010 14:51:20 +0000
-Subject: Re: [patch 1/2] vhost: potential integer overflows
-Message-Id: <20101012145120.GC6742@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 30 Oct 2010 14:26:26 +0000
+Subject: [PATCH] bluetooth: cmtp: fix information leak to userland
+Message-Id: <1288448787-5848-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101011172256.GF5851@bicker> <20101012122548.GA25446@redhat.com>
-In-Reply-To: <20101012122548.GA25446@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Juan Quintela <quintela@redhat.com>, "David S. Miller" <davem@davemloft.net>, Rusty Russell <rusty@rustcorp.com.au>, kvm@vger.kernel.org, virtualization@lists.osdl.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 12, 2010 at 02:25:48PM +0200, Michael S. Tsirkin wrote:
-> 
-> As far as I can see, maximum value for num is 64K - 1:
-> 
->                 if (!s.num || s.num > 0xffff || (s.num & (s.num - 1))) {
->                         r = -EINVAL;
->                         break;
->                 }
-> 
-> How can any of the above two trigger?
-> It seems easier to check value for sanity at a single place where it's
-> passed from userspace to kernel.
-> 
+Structure cmtp_conninfo is copied to userland with some padding fields
+unitialized.  It leads to leaking of contents of kernel stack memory.
 
-Gar.  Sorry for that.  My mistake.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-regards,
-dan carpenter
+ net/bluetooth/cmtp/core.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/net/bluetooth/cmtp/core.c b/net/bluetooth/cmtp/core.c
+index ec0a134..8e5f292 100644
+--- a/net/bluetooth/cmtp/core.c
++++ b/net/bluetooth/cmtp/core.c
+@@ -78,6 +78,7 @@ static void __cmtp_unlink_session(struct cmtp_session *session)
+ 
+ static void __cmtp_copy_session(struct cmtp_session *session, struct cmtp_conninfo *ci)
+ {
++	memset(ci, 0, sizeof(*ci));
+ 	bacpy(&ci->bdaddr, &session->bdaddr);
+ 
+ 	ci->flags = session->flags;
+-- 
+1.7.0.4
 
