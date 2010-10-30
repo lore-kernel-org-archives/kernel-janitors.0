@@ -1,93 +1,97 @@
-From: Jan Kiszka <jan.kiszka@web.de>
-Date: Sat, 30 Oct 2010 14:34:57 +0000
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 30 Oct 2010 15:31:47 +0000
 Subject: Re: [PATCH v2] x86: kvm: fix information leak to userland
-Message-Id: <4CCC2D11.7090109@web.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------enigE46FB154DC145DF8A04926C2"
+Message-Id: <20101030153147.GA14169@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1288447871-7715-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288447871-7715-1-git-send-email-segooon@gmail.com>
-To: Vasiliy Kulikov <segooon@gmail.com>
+ <4CCC2D11.7090109@web.de>
+In-Reply-To: <4CCC2D11.7090109@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jan Kiszka <jan.kiszka@web.de>
 Cc: kernel-janitors@vger.kernel.org, Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enigE46FB154DC145DF8A04926C2
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: quoted-printable
+On Sat, Oct 30, 2010 at 16:34 +0200, Jan Kiszka wrote:
+> Am 30.10.2010 16:11, Vasiliy Kulikov wrote:
+> > Structure kvm_ppc_pvinfo is copied to userland with pad field
+> > unitialized.  Structure kvm_clock_data is copied to userland with
+> > flags and pad fields unitialized.  It leads to leaking of contents
+> > of kernel stack memory.
+> 
+> This description only partially matches your patch, please fix.
 
-Am 30.10.2010 16:11, Vasiliy Kulikov wrote:
-> Structure kvm_ppc_pvinfo is copied to userland with pad field
-> unitialized.  Structure kvm_clock_data is copied to userland with
-> flags and pad fields unitialized.  It leads to leaking of contents
-> of kernel stack memory.
+What do you mean?  Two structures are copied with some fields with old
+stack values.  Smth valuable else?
 
-This description only partially matches your patch, please fix.
+> > 
+> > Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+> > ---
+> >  I cannot compile this driver, so it is not tested at all.
+> 
+> Why? It should be compilable (provided you have a x86 toolchain).
 
->=20
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
->  I cannot compile this driver, so it is not tested at all.
+Hmm, I can't say...  Now it is compilable, but I precisely know that it
+failed with "no such header" or smth like this.  Forget it.
 
-Why? It should be compilable (provided you have a x86 toolchain).
+> > 
+> >  As it is not compilable, I've missed and typed wrong var name in v1, sorry.
+> > 
+> >  arch/x86/kvm/x86.c |    3 ++-
+> >  1 files changed, 2 insertions(+), 1 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index b0818f6..261f3d0 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -2896,6 +2896,7 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+> >  	case KVM_GET_DEBUGREGS: {
+> >  		struct kvm_debugregs dbgregs;
+> >  
+> > +		memset(&dbgregs, 0, sizeof(dbgregs));
+> >  		kvm_vcpu_ioctl_x86_get_debugregs(vcpu, &dbgregs);
+> >  
+> >  		r = -EFAULT;
+> > @@ -3481,11 +3482,11 @@ long kvm_arch_vm_ioctl(struct file *filp,
+> >  		struct kvm_clock_data user_ns;
+> >  		u64 now_ns;
+> >  
+> > +		memset(&user_ns, 0, sizeof(user_ns));
+> >  		local_irq_disable();
+> >  		now_ns = get_kernel_ns();
+> >  		user_ns.clock = kvm->arch.kvmclock_offset + now_ns;
+> >  		local_irq_enable();
+> > -		user_ns.flags = 0;
+> >  
+> >  		r = -EFAULT;
+> >  		if (copy_to_user(argp, &user_ns, sizeof(user_ns)))
+> 
+> I would rather clear the padding/reserved fields (in both cases). No
+> need to double-initialize properly set fields.
 
->=20
->  As it is not compilable, I've missed and typed wrong var name in v1, s=
-orry.
->=20
->  arch/x86/kvm/x86.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
->=20
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index b0818f6..261f3d0 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2896,6 +2896,7 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
->  	case KVM_GET_DEBUGREGS: {
->  		struct kvm_debugregs dbgregs;
-> =20
-> +		memset(&dbgregs, 0, sizeof(dbgregs));
->  		kvm_vcpu_ioctl_x86_get_debugregs(vcpu, &dbgregs);
-> =20
->  		r =3D -EFAULT;
-> @@ -3481,11 +3482,11 @@ long kvm_arch_vm_ioctl(struct file *filp,
->  		struct kvm_clock_data user_ns;
->  		u64 now_ns;
-> =20
-> +		memset(&user_ns, 0, sizeof(user_ns));
->  		local_irq_disable();
->  		now_ns =3D get_kernel_ns();
->  		user_ns.clock =3D kvm->arch.kvmclock_offset + now_ns;
->  		local_irq_enable();
-> -		user_ns.flags =3D 0;
-> =20
->  		r =3D -EFAULT;
->  		if (copy_to_user(argp, &user_ns, sizeof(user_ns)))
+Maybe you're right, but from my point of view it's much safer to
+explicitly set it to zeroes and then maybe change some of the fields.
+Anybody like me who search for such bug will know that it is initialized
+at the copy_to_user() level.  If somebody wants to add smth to this code
+might move field initalizing to new function; to explore this situation
+one should explore this function, etc.
 
-I would rather clear the padding/reserved fields (in both cases). No
-need to double-initialize properly set fields.
+E.g. I searched this bug with copy_to_user() copying struct without
+explicit copy_from_user() or memset().
 
-There are more interfaces in KVM for obtaining data from the kernel via
-padded structures. Did you check them all (kvm_vcpu_events come to my min=
-d)?
+Weaker argument: setting fields to zeroes logically related to
+copy_to_user() level, but not initialization as it is correct data unit
+with some unitialized not-used-yet field.  On kernel level (without
+sending it to userspace) it is OK and even faster.
 
-Nevertheless, looks like a worthwhile hardening of the KVM interfaces.
+> There are more interfaces in KVM for obtaining data from the kernel via
+> padded structures. Did you check them all (kvm_vcpu_events come to my mind)?
+
+Not all of them yet, at least one place with kvm_vcpu_events is not initialized too.
+I'll send the patch today.
+
 
 Thanks,
-Jan
 
-
---------------enigE46FB154DC145DF8A04926C2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.15 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAkzMLRQACgkQitSsb3rl5xTSeQCfT9X2QF3u+91mMr54HQRvvIZM
-TWsAoKgc0mHqtc9gooX3aB2AxFmymSFs
-=qQMV
------END PGP SIGNATURE-----
-
---------------enigE46FB154DC145DF8A04926C2--
+-- 
+Vasiliy
