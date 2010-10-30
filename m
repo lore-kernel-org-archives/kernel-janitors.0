@@ -1,38 +1,37 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 17 Oct 2010 19:02:39 +0000
-Subject: Re: [PATCH 2/3] fs/ceph/xattr.c: Use kasprintf
-Message-Id: <Pine.LNX.4.64.1010172101570.394@ask.diku.dk>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 30 Oct 2010 14:26:35 +0000
+Subject: [PATCH] net: core: scm: fix information leak to userland
+Message-Id: <1288448796-6147-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287341311-11161-1-git-send-email-julia@diku.dk>
- <1287341311-11161-3-git-send-email-julia@diku.dk> <1287341657.20968.61.camel@Joe-Laptop>
-In-Reply-To: <1287341657.20968.61.camel@Joe-Laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Sage Weil <sage@newdream.net>, kernel-janitors@vger.kernel.org, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, "Eric W. Biederman" <ebiederm@xmission.com>, Eric Dumazet <eric.dumazet@gmail.com>, Tejun Heo <tj@kernel.org>, "Serge E. Hallyn" <serge@hallyn.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 17 Oct 2010, Joe Perches wrote:
+Structure cmsghdr is copied to userland with padding bytes
+unitialized on architectures where __kernel_size_t is unsigned long.
+It leads to leaking of contents of kernel stack memory.
 
-> On Sun, 2010-10-17 at 20:48 +0200, Julia Lawall wrote:
-> > Convert a sequence of kmalloc and memcpy to use kasprintf.  The argument is
-> > checked for being a string by the presence of a previous call to strlen.
-> []
-> > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> []
-> > @@ -716,10 +716,9 @@ int ceph_setxattr(struct dentry *dentry, const char *name,
-> >  
-> >  	/* preallocate memory for xattr name, value, index node */
-> >  	err = -ENOMEM;
-> > -	newname = kmalloc(name_len + 1, GFP_NOFS);
-> > +	newname = kasprintf(GFP_NOFS, "%s", name);
-> 
-> This one is probably better converted to kmemdup
-> as name_len is already known and is used later
-> in the routine.
-> 
-> kstrdup is also a possibility.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-That calculates the length again, so I will change it to kmemdup.
+ net/core/scm.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-julia
+diff --git a/net/core/scm.c b/net/core/scm.c
+index 413cab8..a4a9b70 100644
+--- a/net/core/scm.c
++++ b/net/core/scm.c
+@@ -233,6 +233,7 @@ int put_cmsg(struct msghdr * msg, int level, int type, int len, void *data)
+ 		msg->msg_flags |= MSG_CTRUNC;
+ 		cmlen = msg->msg_controllen;
+ 	}
++	memset(&cmhdr, 0, sizeof(cmhdr));
+ 	cmhdr.cmsg_level = level;
+ 	cmhdr.cmsg_type = type;
+ 	cmhdr.cmsg_len = cmlen;
+-- 
+1.7.0.4
+
