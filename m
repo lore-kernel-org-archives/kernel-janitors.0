@@ -1,33 +1,51 @@
-From: Tracey Dent <tdent48227@gmail.com>
-Date: Fri, 08 Oct 2010 00:01:45 +0000
-Subject: [PATCH 25/33] Staging: solo6x10: Makefile: replace the use of <module>-objs with <module>-y
-Message-Id: <1286496113-11897-25-git-send-email-tdent48227@gmail.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 30 Oct 2010 09:04:29 +0000
+Subject: [PATCH] x86: kvm: fix information leak to userland
+Message-Id: <1288429469-21807-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286496113-11897-1-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sam@ravnborg.org, linux-kbuild@vger.kernel.org, Tracey Dent <tdent48227@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Changed <module>-objs to <module>-y in Makefile.
+Structure kvm_ppc_pvinfo is copied to userland with pad field
+unitialized.  Structure kvm_clock_data is copied to userland with
+flags and pad fields unitialized.  It leads to leaking of contents
+of kernel stack memory.
 
-Signed-off-by: Tracey Dent <tdent48227@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- drivers/staging/solo6x10/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ I cannot compile this driver, so it is not tested at all.
 
-diff --git a/drivers/staging/solo6x10/Makefile b/drivers/staging/solo6x10/Makefile
-index 7e70044..1616b55 100644
---- a/drivers/staging/solo6x10/Makefile
-+++ b/drivers/staging/solo6x10/Makefile
-@@ -1,4 +1,4 @@
--solo6x10-objs	:= solo6010-core.o solo6010-i2c.o solo6010-p2m.o \
-+solo6x10-y	:= solo6010-core.o solo6010-i2c.o solo6010-p2m.o \
- 		   solo6010-v4l2.o solo6010-tw28.o solo6010-gpio.o \
- 		   solo6010-disp.o solo6010-enc.o solo6010-v4l2-enc.o \
- 		   solo6010-g723.o
+ arch/x86/kvm/x86.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index b0818f6..261f3d0 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2896,6 +2896,7 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 	case KVM_GET_DEBUGREGS: {
+ 		struct kvm_debugregs dbgregs;
+ 
++		memset(&gdgr, 0, sizeof(gdgr));
+ 		kvm_vcpu_ioctl_x86_get_debugregs(vcpu, &dbgregs);
+ 
+ 		r = -EFAULT;
+@@ -3481,11 +3482,11 @@ long kvm_arch_vm_ioctl(struct file *filp,
+ 		struct kvm_clock_data user_ns;
+ 		u64 now_ns;
+ 
++		memset(&user_ns, 0, sizefo(user_ns));
+ 		local_irq_disable();
+ 		now_ns = get_kernel_ns();
+ 		user_ns.clock = kvm->arch.kvmclock_offset + now_ns;
+ 		local_irq_enable();
+-		user_ns.flags = 0;
+ 
+ 		r = -EFAULT;
+ 		if (copy_to_user(argp, &user_ns, sizeof(user_ns)))
 -- 
-1.7.3.1.50.g1e633
+1.7.0.4
 
