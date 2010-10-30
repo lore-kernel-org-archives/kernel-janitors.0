@@ -1,27 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 05 Oct 2010 07:40:01 +0000
-Subject: Re: [patch] cls_u32: signedness bug
-Message-Id: <20101005.004001.214209669.davem@davemloft.net>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 30 Oct 2010 09:04:33 +0000
+Subject: [PATCH] isdn: mISDN: socket: fix information leak to userland
+Message-Id: <1288429473-21864-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101004122836.GB5692@bicker>
-In-Reply-To: <20101004122836.GB5692@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: hadi@cyberus.ca, shemminger@vyatta.com, elendil@planet.nl, xiaosuo@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Karsten Keil <isdn@linux-pingi.de>, Arnaldo Carvalho de Melo <acme@redhat.com>, "David S. Miller" <davem@davemloft.net>, Tejun Heo <tj@kernel.org>, Eric Paris <eparis@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 4 Oct 2010 14:28:36 +0200
+Structure mISDN_devinfo is copied to userland with the field "name"
+that has the last elements unitialized.  It leads to leaking of
+contents of kernel stack memory.
 
-> skb_headroom() is unsigned so "skb_headroom(skb) + toff" is also
-> unsigned and can't be less than zero.  This test was added in 66d50d25:
-> "u32: negative offset fix"  It was supposed to fix a regression.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Compile tested only.  Please check.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-This looks correct to me, thanks for fixing this.
+ drivers/isdn/mISDN/socket.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-Applied.
+diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
+index 3232206..7446d8b 100644
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -392,6 +392,7 @@ data_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 		if (dev) {
+ 			struct mISDN_devinfo di;
+ 
++			memset(&di, 0, sizeof(di));
+ 			di.id = dev->id;
+ 			di.Dprotocols = dev->Dprotocols;
+ 			di.Bprotocols = dev->Bprotocols | get_all_Bprotocols();
+@@ -672,6 +673,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 		if (dev) {
+ 			struct mISDN_devinfo di;
+ 
++			memset(&di, 0, sizeof(di));
+ 			di.id = dev->id;
+ 			di.Dprotocols = dev->Dprotocols;
+ 			di.Bprotocols = dev->Bprotocols | get_all_Bprotocols();
+-- 
+1.7.0.4
+
