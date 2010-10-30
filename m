@@ -1,24 +1,38 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Sat, 02 Oct 2010 17:48:43 +0000
-Subject: Re: [PATCH v3 00/20]
-Message-Id: <20101002174843.GA15707@merkur.ravnborg.org>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 30 Oct 2010 14:26:40 +0000
+Subject: [PATCH] net: core: sock: fix information leak to userland
+Message-Id: <1288448801-6303-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTinLkZM4O66CKg+wpZ1k4k8hDQErCO3-Q-21Bps7@mail.gmail.com>
-In-Reply-To: <AANLkTinLkZM4O66CKg+wpZ1k4k8hDQErCO3-Q-21Bps7@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: T Dent <tdent48227@gmail.com>
-Cc: greg@kroah.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, "Eric W. Biederman" <ebiederm@xmission.com>, Herbert Xu <herbert@gondor.hengli.com.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 02, 2010 at 12:42:56PM -0400, T Dent wrote:
-> I took another try at correcting EXTRA_CFLAGS to ccflags-y option in
-> most of the staging directory Makefile(s).
+"Address" variable might be not fully initialized in sock->ops->get_name().
+The only current implementation is get_name(), it leaves some padding
+fields of sockaddr_tipc uninitialized.  It leads to leaking of contents
+of kernel stack memory.
 
-Skimmed all patches - looked good.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-The whole serie has my:
+ net/core/sock.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 3eed542..759dd81 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -930,6 +930,7 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
+ 	{
+ 		char address[128];
+ 
++		memset(&address, 0, sizeof(address));
+ 		if (sock->ops->getname(sock, (struct sockaddr *)address, &lv, 2))
+ 			return -ENOTCONN;
+ 		if (lv < len)
+-- 
+1.7.0.4
 
-	Sam
