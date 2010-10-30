@@ -1,51 +1,37 @@
 From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Sat, 30 Oct 2010 09:04:29 +0000
-Subject: [PATCH] x86: kvm: fix information leak to userland
-Message-Id: <1288429469-21807-1-git-send-email-segooon@gmail.com>
+Date: Sat, 30 Oct 2010 14:26:45 +0000
+Subject: [PATCH] ipv4: netfilter: arp_tables: fix information leak to userland
+Message-Id: <1288448806-6470-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Structure kvm_ppc_pvinfo is copied to userland with pad field
-unitialized.  Structure kvm_clock_data is copied to userland with
-flags and pad fields unitialized.  It leads to leaking of contents
-of kernel stack memory.
+Structure arpt_getinfo is copied to userland with the field "name"
+that has the last elements unitialized.  It leads to leaking of
+contents of kernel stack memory.
 
 Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
- I cannot compile this driver, so it is not tested at all.
+ Compile tested.
 
- arch/x86/kvm/x86.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ net/ipv4/netfilter/arp_tables.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b0818f6..261f3d0 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2896,6 +2896,7 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
- 	case KVM_GET_DEBUGREGS: {
- 		struct kvm_debugregs dbgregs;
- 
-+		memset(&gdgr, 0, sizeof(gdgr));
- 		kvm_vcpu_ioctl_x86_get_debugregs(vcpu, &dbgregs);
- 
- 		r = -EFAULT;
-@@ -3481,11 +3482,11 @@ long kvm_arch_vm_ioctl(struct file *filp,
- 		struct kvm_clock_data user_ns;
- 		u64 now_ns;
- 
-+		memset(&user_ns, 0, sizefo(user_ns));
- 		local_irq_disable();
- 		now_ns = get_kernel_ns();
- 		user_ns.clock = kvm->arch.kvmclock_offset + now_ns;
- 		local_irq_enable();
--		user_ns.flags = 0;
- 
- 		r = -EFAULT;
- 		if (copy_to_user(argp, &user_ns, sizeof(user_ns)))
+diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
+index 3cad259..3fac340 100644
+--- a/net/ipv4/netfilter/arp_tables.c
++++ b/net/ipv4/netfilter/arp_tables.c
+@@ -927,6 +927,7 @@ static int get_info(struct net *net, void __user *user,
+ 			private = &tmp;
+ 		}
+ #endif
++		memset(&info, 0, sizeof(info));
+ 		info.valid_hooks = t->valid_hooks;
+ 		memcpy(info.hook_entry, private->hook_entry,
+ 		       sizeof(info.hook_entry));
 -- 
 1.7.0.4
 
