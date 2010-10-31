@@ -1,37 +1,35 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 06 Oct 2010 04:44:00 +0000
-Subject: Re: [PATCH 10/28] Staging: comedi: kcomedilib: kcomedilib_main.c:
-Message-Id: <20101006044400.GB5409@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 31 Oct 2010 17:10:22 +0000
+Subject: [PATCH 1/3] net: ax25: fix information leak to userland
+Message-Id: <1288545022-16393-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1286326843-6170-1-git-send-email-tdent48227@gmail.com> <1286326843-6170-10-git-send-email-tdent48227@gmail.com>
-In-Reply-To: <1286326843-6170-10-git-send-email-tdent48227@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Tracey Dent <tdent48227@gmail.com>
-Cc: greg@kroah.com, abbotti@mev.co.uk, fmhess@users.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: Joerg Reuter <jreuter@yaina.de>, Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 05, 2010 at 09:00:25PM -0400, Tracey Dent wrote:
-> @@ -50,7 +50,7 @@ struct comedi_device *comedi_open(const char *filename)
->  	if (strncmp(filename, "/dev/comedi", 11) != 0)
->  		return NULL;
->  
-> -	minor = simple_strtoul(filename + 11, NULL, 0);
-> +	minor = strict_strtoul(filename + 11, NULL, 0);
->  
+Sometimes ax25_getname() doesn't initialize all members of fsa_digipeater
+field of fsa struct.  This structure is then copied to userland.  It leads to
+leaking of contents of kernel stack memory.  We have to initialize them to zero.
 
-No, this doesn't work.  strict_strtoul() only returns zero and -EINVAL.
-It doesn't return the number.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ net/ax25/af_ax25.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-GCC even warns about this change:
-drivers/staging/comedi/kcomedilib/kcomedilib_main.c: In function ‘comedi_open’:
-drivers/staging/comedi/kcomedilib/kcomedilib_main.c:53: warning:
-passing argument 2 of ‘strict_strtoul’ makes integer from pointer without a cast
+diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
+index 26eaebf..a324d83 100644
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -1392,6 +1392,7 @@ static int ax25_getname(struct socket *sock, struct sockaddr *uaddr,
+ 	ax25_cb *ax25;
+ 	int err = 0;
+ 
++	memset(&fsa->fsa_digipeater, 0, sizeof(fsa->fsa_digipeater));
+ 	lock_sock(sk);
+ 	ax25 = ax25_sk(sk);
+ 
+-- 
+1.7.0.4
 
-Please at least compile these before sending.  :(
-
->  	if (minor >= COMEDI_NUM_BOARD_MINORS)
->  		return NULL;
-
-regards,
-dan carpenter
