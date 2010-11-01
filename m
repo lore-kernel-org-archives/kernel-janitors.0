@@ -1,27 +1,23 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 19 Nov 2010 13:20:23 +0000
-Subject: Re: [patch] UBI: release locks in check_corruption()
-Message-Id: <1290172823.4768.1.camel@localhost>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Mon, 01 Nov 2010 10:30:13 +0000
+Subject: Re: [PATCH] drm/i915: opregion_setup: iounmap correct address
+Message-Id: <c6d829$pdch63@fmsmga001.fm.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101118035804.GM31724@bicker>
-In-Reply-To: <20101118035804.GM31724@bicker>
+References: <1288607542.3425.4.camel@lovely>
+In-Reply-To: <1288607542.3425.4.camel@lovely>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Christoph Fritz <chf.fritz@googlemail.com>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On Thu, 2010-11-18 at 06:58 +0300, Dan Carpenter wrote:
-> Commit 45aafd32996e27 "UBI: tighten the corrupted PEB criteria"
-> introduced some return paths that didn't release the ubi->buf_mutex;
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/mtd/ubi/scan.c b/drivers/mtd/ubi/scan.c
+On Mon, 01 Nov 2010 11:32:22 +0100, Christoph Fritz <chf.fritz@googlemail.com> wrote:
+> In case of an opregion signature mismatch in intel_opregion_setup(),
+> iounmap the correct address.
 
-Thank you, pushed to ubi-2.6.git tree.
+Applied to -fixes and tagged for stable.
+Thanks!
+-Chris
 
 -- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
-
+Chris Wilson, Intel Open Source Technology Centre
