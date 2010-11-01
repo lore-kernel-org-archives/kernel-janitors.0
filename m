@@ -1,25 +1,65 @@
-From: Greg KH <gregkh@suse.de>
-Date: Wed, 17 Nov 2010 19:51:38 +0000
-Subject: Re: [patch] Staging: speakup: free after input_unregister_device()
-Message-Id: <20101117195138.GA13892@suse.de>
+From: walter harms <wharms@bfs.de>
+Date: Mon, 01 Nov 2010 09:14:10 +0000
+Subject: Re: [PATCH 2/3] net: packet: fix information leak to userland
+Message-Id: <4CCE84E2.9050801@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101112050835.GE3533@bicker>
-In-Reply-To: <20101112050835.GE3533@bicker>
+References: <1288545028-16436-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1288545028-16436-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jiri Pirko <jpirko@redhat.com>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 17, 2010 at 01:42:22PM -0600, William Hubbs wrote:
-> Hi Greg,
+
+
+Vasiliy Kulikov schrieb:
+> packet_getname_spkt() doesn't initialize all members of sa_data field of
+> sockaddr struct if strlen(dev->name) < 13.  This structure is then copied
+> to userland.  It leads to leaking of contents of kernel stack memory.
+> We have to fully fill sa_data with strncpy() instead of strlcpy().
 > 
-> what is the status of this patch?  I have looked at it and should
-> definitely go in.  Should it go to your staging-next tree or Linus's
-> tree though since it is a bug fix?
+> The same with packet_getname(): it doesn't initialize sll_pkttype field of
+> sockaddr_ll.  Set it to zero.
+> 
+> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+> ---
+>  net/packet/af_packet.c |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+> 
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index 3616f27..0856a13 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -1719,7 +1719,7 @@ static int packet_getname_spkt(struct socket *sock, struct sockaddr *uaddr,
+>  	rcu_read_lock();
+>  	dev = dev_get_by_index_rcu(sock_net(sk), pkt_sk(sk)->ifindex);
+>  	if (dev)
+> -		strlcpy(uaddr->sa_data, dev->name, 15);
+> +		strncpy(uaddr->sa_data, dev->name, 14);
+>  	else
+>  		memset(uaddr->sa_data, 0, 14);
 
-It's already included in my "staging-linus" git tree that will get sent
-to Linus on Friday to be included in the .37 final release.
+if i understand the code correcly the max size for dev->name is IFNAMSIZ.
+You can simply that part:
 
-thanks,
+memset(uaddr->sa_data, 0, IFNAMSIZ);
+dev = dev_get_by_index_rcu(sock_net(sk), pkt_sk(sk)->ifindex);
+if (dev)
+	strlcpy(uaddr->sa_data, dev->name, IFNAMSIZ);
 
-greg k-h
+
+you should send that as separate patch.
+re,
+ wh
+
+
+>  	rcu_read_unlock();
+> @@ -1742,6 +1742,7 @@ static int packet_getname(struct socket *sock, struct sockaddr *uaddr,
+>  	sll->sll_family = AF_PACKET;
+>  	sll->sll_ifindex = po->ifindex;
+>  	sll->sll_protocol = po->num;
+> +	sll->sll_pkttype = 0;
+>  	rcu_read_lock();
+>  	dev = dev_get_by_index_rcu(sock_net(sk), po->ifindex);
+>  	if (dev) {
