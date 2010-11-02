@@ -1,26 +1,28 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 26 Nov 2010 16:05:59 +0000
-Subject: Re: [PATCH] fs: jffs2: fix error value sign
-Message-Id: <1290787559.2552.29.camel@localhost>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Tue, 02 Nov 2010 15:35:31 +0000
+Subject: Re: [PATCH] bluetooth: bnep: fix information leak to userland
+Message-Id: <1288712131.3322.178.camel@aeonflux>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1289765320-6071-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1289765320-6071-1-git-send-email-segoon@openwall.com>
+References: <1288448782-5582-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1288448782-5582-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Vasiliy Kulikov <segoon@openwall.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, "Gustavo F. Padovan" <padovan@profusion.mobi>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, Tejun Heo <tj@kernel.org>, Jiri Kosina <jkosina@suse.cz>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2010-11-14 at 23:08 +0300, Vasiliy Kulikov wrote:
-> do_verify_xattr_datum(), do_load_xattr_datum(), load_xattr_datum()
-> and verify_xattr_ref() should return negative value on error.
-> Sometimes they return EIO that is positive.  Change this to -EIO.
+Hi Vasiiy,
+
+> Structure bnep_conninfo is copied to userland with the field "device"
+> that has the last elements unitialized.  It leads to leaking of
+> contents of kernel stack memory.
 > 
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 
-Pushed to l2-mtd-2.6.git, thanks.
+Acked-by: Marcel Holtmann <marcel@holtmann.org>
 
--- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+Regards
+
+Marcel
+
 
