@@ -1,39 +1,38 @@
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Date: Mon, 08 Nov 2010 15:40:59 +0000
-Subject: Re: [PATCH] gpu: drm: vmwgfx: fix information leak to userland
-Message-Id: <4CD81A0B.30209@vmware.com>
+From: Jon Povey <Jon.Povey@racelogic.co.uk>
+Date: Tue, 02 Nov 2010 01:24:54 +0000
+Subject: RE: [PATCH] trivial: nandsim.c spell fixes in comments
+Message-Id: <70E876B0EA86DD4BAF101844BC814DFE093EEF9923@Cloud.RL.local>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1289054477-18100-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1289054477-18100-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <AANLkTimGScstLNC2Hs1v-h6BF0y8GFTw4TJw8JEt+j8X@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: Dan Carpenter <error27@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Jerome Glisse <jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>
+To: srimugunthan dhandapani <srimugunthan.dhandapani@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
 
-On 11/06/2010 03:41 PM, Vasiliy Kulikov wrote:
-> Structure drm_vmw_fence_rep is copied to userland with field "pad64"
-> uninitialized.  It leads to leaking of contents of kernel stack memory.
+linux-mtd-bounces@lists.infradead.org wrote:
+> attached patch has trivial spell fixes in comments in nandsim.c
+> Signed-off-by: srimugunthan  <srimugunthan.dhandapani@gmail.com>
 >
-> Signed-off-by: Vasiliy Kulikov<segooon@gmail.com>
-> ---
->   Compile tested.
->
->   drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |    1 +
->   1 files changed, 1 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> index 51d9f9f..76954e3 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> @@ -691,6 +691,7 @@ int vmw_execbuf_ioctl(struct drm_device *dev, void *data,
->
->   	fence_rep.error = ret;
->   	fence_rep.fence_seq = (uint64_t) sequence;
-> +	fence_rep.pad64 = 0;
->
->   	user_fence_rep = (struct drm_vmw_fence_rep __user *)
->   	    (unsigned long)arg->fence_rep;
->    
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+> ------
+> diff --git a/drivers/mtd/nand/nandsim.c b/drivers/mtd/nand/nandsim.c
+> index a6a73aa..697979c 100644 --- a/drivers/mtd/nand/nandsim.c
+> +++ b/drivers/mtd/nand/nandsim.c
+
+...
+
+> - * only needed for page programm operation with preceeded read command
+> + * only needed for page programm operation with preceded read command
+
+Might as well fix programm -> program while you are there?
+
+--
+Jon Povey
+jon.povey@racelogic.co.uk
+
+Racelogic is a limited company registered in England. Registered number 2743719 .
+Registered Office Unit 10, Swan Business Centre, Osier Way, Buckingham, Bucks, MK18 1TB .
+
+The information contained in this electronic mail transmission is intended by Racelogic Ltd for the use of the named individual or entity to which it is directed and may contain information that is confidential or privileged. If you have received this electronic mail transmission in error, please delete it from your system without copying or forwarding it, and notify the sender of the error by reply email so that the sender's address records can be corrected. The views expressed by the sender of this communication do not necessarily represent those of Racelogic Ltd. Please note that Racelogic reserves the right to monitor e-mail communications passing through its network
+
 
