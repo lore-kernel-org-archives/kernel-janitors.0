@@ -1,40 +1,106 @@
-From: Kevin Hilman <khilman@deeprootsystems.com>
-Date: Mon, 29 Nov 2010 15:29:22 +0000
-Subject: Re: [PATCH] arm: plat-omap: counter_32k: use IS_ERR() instead of NULL check
-Message-Id: <87tyj0ywq5.fsf@deeprootsystems.com>
+From: Jeff Layton <jlayton@redhat.com>
+Date: Tue, 02 Nov 2010 20:22:50 +0000
+Subject: Re: [patch 2/2] cifs: dereferencing first then checking
+Message-Id: <20101102162250.3a2aa670@tlielax.poochiereds.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290791163-21190-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1290791163-21190-1-git-send-email-segoon@openwall.com> (Vasiliy
-	Kulikov's message of "Fri, 26 Nov 2010 20:06:02 +0300")
+References: <20101027212253.GL6062@bicker>
+	<20101027195123.0a712a53@tlielax.poochiereds.net>
+	<20101028034434.GR6062@bicker>
+In-Reply-To: <20101028034434.GR6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Vasiliy Kulikov <segoon@openwall.com> writes:
+On Thu, 28 Oct 2010 05:44:34 +0200
+Dan Carpenter <error27@gmail.com> wrote:
 
-> clk_get() returns ERR_PTR() on error, not NULL.
->
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> On Wed, Oct 27, 2010 at 07:51:23PM -0400, Jeff Layton wrote:
+> > 
+> > The above delta shouldn't be needed once the patches in Steve's tree
+> > are pushed to Linus. I think what we should probably do is wait for
+> > Steve to push to Linus and then do a patch to remove the first two
+> > checks.
+> > 
+> > Sound like a plan?
+> > 
+> 
+> Sounds like a plan.
+> 
+> regards,
+> dan carpenter
+> 
 
-Acked-by: Kevin Hilman <khilman@deeprootsystems.com>
+Here's a respun patch that should fix these problems. I chickened out
+on removing the check in find_writable_file.
 
-> ---
->  Cannot compile this driver, so it is not tested at all.
->
->  arch/arm/plat-omap/counter_32k.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/arch/arm/plat-omap/counter_32k.c b/arch/arm/plat-omap/counter_32k.c
-> index 155fe43..c1e0d00 100644
-> --- a/arch/arm/plat-omap/counter_32k.c
-> +++ b/arch/arm/plat-omap/counter_32k.c
-> @@ -164,7 +164,7 @@ static int __init omap_init_clocksource_32k(void)
->  			return -ENODEV;
->  
->  		sync_32k_ick = clk_get(NULL, "omap_32ksync_ick");
-> -		if (sync_32k_ick)
-> +		if (!IS_ERR(sync_32k_ick))
->  			clk_enable(sync_32k_ick);
->  
->  		clocksource_32k.mult = clocksource_hz2mult(32768,
+It still seems like a bogus cargo-cult sort of thing. It should
+probably be a BUG() if you call that function with a NULL pointer, but
+I don't feel like tackling that just yet.
+
+Dan, does this look ok to you? If so, I'll resend to Steve as an
+"official" patch.
+
+---------------------[snip]-----------------------
+
+cifs: dereferencing first then checking (try #2)
+
+This patch is based on Dan's original patch. His original description is
+below:
+
+Smatch complained about a couple checking for NULL after dereferencing
+bugs.  I'm not super familiar with the code so I did the conservative
+thing and move the dereferences after the checks.
+
+The dereferences in cifs_lock() and cifs_fsync() were added in
+ba00ba64cf0 "cifs: make various routines use the cifsFileInfo->tcon
+pointer".  The dereference in find_writable_file() was added in
+6508d904e6f "cifs: have find_readable/writable_file filter by fsuid".
+The comments there say it's possible to trigger the NULL dereference
+under stress.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ fs/cifs/file.c |   10 +++-------
+ 1 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index a566f15..a59b53f 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -755,12 +755,6 @@ int cifs_lock(struct file *file, int cmd, struct file_lock *pfLock)
+ 
+ 	cifs_sb = CIFS_SB(file->f_path.dentry->d_sb);
+ 	tcon = tlink_tcon(((struct cifsFileInfo *)file->private_data)->tlink);
+-
+-	if (file->private_data = NULL) {
+-		rc = -EBADF;
+-		FreeXid(xid);
+-		return rc;
+-	}
+ 	netfid = ((struct cifsFileInfo *)file->private_data)->netfid;
+ 
+ 	if ((tcon->ses->capabilities & CAP_UNIX) &&
+@@ -1155,7 +1149,7 @@ struct cifsFileInfo *find_writable_file(struct cifsInodeInfo *cifs_inode,
+ 					bool fsuid_only)
+ {
+ 	struct cifsFileInfo *open_file;
+-	struct cifs_sb_info *cifs_sb = CIFS_SB(cifs_inode->vfs_inode.i_sb);
++	struct cifs_sb_info *cifs_sb;
+ 	bool any_available = false;
+ 	int rc;
+ 
+@@ -1169,6 +1163,8 @@ struct cifsFileInfo *find_writable_file(struct cifsInodeInfo *cifs_inode,
+ 		return NULL;
+ 	}
+ 
++	cifs_sb = CIFS_SB(cifs_inode->vfs_inode.i_sb);
++
+ 	/* only filter by fsuid on multiuser mounts */
+ 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MULTIUSER))
+ 		fsuid_only = false;
+-- 
+1.7.2.3
+
