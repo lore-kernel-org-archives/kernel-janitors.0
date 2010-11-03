@@ -1,41 +1,45 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Thu, 25 Nov 2010 09:34:03 +0000
-Subject: Re: [PATCH] virt: kvm: coding style cleanups
-Message-Id: <AANLkTi=gQw7+tVnEgYmn0r6XdbEEr0jsYEvmYcxYikSQ@mail.gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Wed, 03 Nov 2010 14:15:48 +0000
+Subject: Re: [PATCH 2/3 RESEND] powerpc: remove cast from void*
+Message-Id: <alpine.LNX.2.00.1011031015150.15851@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290644937.6078.9.camel@javier-laptop>
-In-Reply-To: <1290644937.6078.9.camel@javier-laptop>
+References: <cover.1285638395.git.mfm@muteddisk.com>
+	<f7d601da574581e9dfdc1314a969475c73491c00.1285638395.git.mfm@muteddisk.com>
+In-Reply-To: <f7d601da574581e9dfdc1314a969475c73491c00.1285638395.git.mfm@muteddisk.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: matt mooney <mfm@muteddisk.com>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
->> +                     kzalloc(sizeof(struct msix_entry) *entry_nr->entry_nr,
->
-> The original code was right and the new code is wrong.
->
+On Mon, 27 Sep 2010, matt mooney wrote:
 
-Sorry for not looking at the code closely.
+> Unnecessary cast from void* in assignment.
+> 
+> Signed-off-by: matt mooney <mfm@muteddisk.com>
+> ---
+>  arch/powerpc/platforms/pseries/hvCall_inst.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
+> index e19ff02..f106662 100644
+> --- a/arch/powerpc/platforms/pseries/hvCall_inst.c
+> +++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
+> @@ -55,7 +55,7 @@ static void hc_stop(struct seq_file *m, void *p)
+>  static int hc_show(struct seq_file *m, void *p)
+>  {
+>  	unsigned long h_num = (unsigned long)p;
+> -	struct hcall_stats *hs = (struct hcall_stats *)m->private;
+> +	struct hcall_stats *hs = m->private;
+>  
+>  	if (hs[h_num].num_calls) {
+>  		if (cpu_has_feature(CPU_FTR_PURR))
 
->
-> You're wasting people's time here and we like newbies but it makes
-> everyone annoyed.
->
-> regards,
-> dan carpenter
->
+This doesn't seem to be present in 37-rc1, so I am taking it to trivial 
+queue. If this has been already merged to another tree, let me know.
 
-The Linux kernel learning curve is getting bigger and bigger, the only
-way we (newbies) can enter the development process is trough trivial
-patches. So yes we are annoying although necessary.
-
-Sorry for the noise it won't happen again.
-
-Thanks a lot.
+Thanks,
 
 -- 
-Best regards,
-
------------------------------------------
-Javier Martínez Canillas
-(+34) 682 39 81 69
+Jiri Kosina
+SUSE Labs, Novell Inc.
