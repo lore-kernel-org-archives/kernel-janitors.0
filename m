@@ -1,27 +1,30 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 02 Nov 2010 15:35:58 +0000
+From: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Date: Wed, 03 Nov 2010 18:36:30 +0000
 Subject: Re: [PATCH] bluetooth: cmtp: fix information leak to userland
-Message-Id: <1288712158.3322.179.camel@aeonflux>
+Message-Id: <20101103183630.GC17943@vigoh>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1288448787-5848-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288448787-5848-1-git-send-email-segooon@gmail.com>
+ <1288712158.3322.179.camel@aeonflux>
+In-Reply-To: <1288712158.3322.179.camel@aeonflux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "Gustavo F. Padovan" <padovan@profusion.mobi>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Vasiliy Kulikov <segooon@gmail.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Vasiliy,
+* Marcel Holtmann <marcel@holtmann.org> [2010-11-02 16:35:58 +0100]:
 
-> Structure cmtp_conninfo is copied to userland with some padding fields
-> unitialized.  It leads to leaking of contents of kernel stack memory.
+> Hi Vasiliy,
 > 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+> > Structure cmtp_conninfo is copied to userland with some padding fields
+> > unitialized.  It leads to leaking of contents of kernel stack memory.
+> > 
+> > Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+> 
+> Acked-by: Marcel Holtmann <marcel@holtmann.org>
 
-Acked-by: Marcel Holtmann <marcel@holtmann.org>
+Applied, thanks.  
 
-Regards
-
-Marcel
-
-
+-- 
+Gustavo F. Padovan
+ProFUSION embedded systems - http://profusion.mobi
