@@ -1,57 +1,38 @@
-From: "Hefty, Sean" <sean.hefty@intel.com>
-Date: Fri, 12 Nov 2010 18:28:55 +0000
-Subject: RE: [PATCH] infiniband: core: fix information leak to userland
-Message-Id: <CF9C39F99A89134C9CF9C4CCB68B8DDF25B85224A6@orsmsx501.amr.corp.intel.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Thu, 04 Nov 2010 14:48:15 +0000
+Subject: [PATCH] block: ioctl: fix information leak to userland
+Message-Id: <1288882096-13456-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1289054481-18145-1-git-send-email-segooon@gmail.com>
- <ada39r8ohiz.fsf@cisco.com> <20101112180844.GA11533@albatros>
-In-Reply-To: <20101112180844.GA11533@albatros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Roland Dreier <rdreier-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-Cc: "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Chiang <achiang-VXdhtT5mjnY@public.gmane.org>, Andi Kleen <ak-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: kernel-janitors@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
 
-> diff --git a/drivers/infiniband/core/ucm.c
-> b/drivers/infiniband/core/ucm.c
-> index 08f948d..f7256f3 100644
-> --- a/drivers/infiniband/core/ucm.c
-> +++ b/drivers/infiniband/core/ucm.c
-> @@ -629,6 +629,7 @@ static ssize_t ib_ucm_init_qp_attr(struct ib_ucm_file
-> *file,
->         if (result)
->                 goto out;
-> 
-> +       resp.qp_state = 0;
->         ib_copy_qp_attr_to_user(&resp, &qp_attr);
+Structure hd_geometry is copied to userland with 4 padding bytes
+between cylinders and start fields uninitialized on 64-bit platforms.
+It leads to leaking of contents of kernel stack memory.
 
-I believe we want ib_copy_qp_attr_to_user() to assign	resp->qp_state = qp_attr->qp_state
+Currently there is no memset() in real implementations of getgeo()
+in drivers/block/, so it makes sense to have memset() in blkdev_ioctl().
 
-> diff --git a/drivers/infiniband/core/ucma.c
-> b/drivers/infiniband/core/ucma.c
-> index ca12acf..07fd247 100644
-> --- a/drivers/infiniband/core/ucma.c
-> +++ b/drivers/infiniband/core/ucma.c
-> @@ -842,6 +842,7 @@ static ssize_t ucma_init_qp_attr(struct ucma_file
-> *file,
->         if (ret)
->                 goto out;
-> 
-> +       resp.qp_state = 0;
->         ib_copy_qp_attr_to_user(&resp, &qp_attr);
->         if (copy_to_user((void __user *)(unsigned long)cmd.response,
->                          &resp, sizeof(resp)))
-> diff --git a/drivers/infiniband/core/uverbs_marshall.c
-> b/drivers/infiniband/core/uverbs_marshall.c
-> index 5440da0..cceaf33 100644
-> --- a/drivers/infiniband/core/uverbs_marshall.c
-> +++ b/drivers/infiniband/core/uverbs_marshall.c
-> @@ -35,6 +35,7 @@
->  void ib_copy_ah_attr_to_user(struct ib_uverbs_ah_attr *dst, struct
-> ib_ah_attr *src)
->  {
-> +       memset(&dst->grh, 0, sizeof(dst->grh));
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ block/ioctl.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-We only need to set dst->grh.reserved = 0.  The other fields are assigned. 
+diff --git a/block/ioctl.c b/block/ioctl.c
+index d724ceb..60bae81 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -242,6 +242,7 @@ int blkdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+ 		 * We need to set the startsect first, the driver may
+ 		 * want to override it.
+ 		 */
++		memset(&geo, 0, sizeof(geo));
+ 		geo.start = get_start_sect(bdev);
+ 		ret = disk->fops->getgeo(bdev, &geo);
+ 		if (ret)
+-- 
+1.7.0.4
 
-- Sean
