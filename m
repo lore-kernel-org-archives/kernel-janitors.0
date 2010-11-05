@@ -1,38 +1,71 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 18 Nov 2010 03:56:37 +0000
-Subject: [patch] [media] cx231xx: stray unlock on error path
-Message-Id: <20101118035637.GL31724@bicker>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Fri, 05 Nov 2010 20:40:18 +0000
+Subject: Re: [RFC] [patch] fbcmap: integer overflow bug
+Message-Id: <20101105134018.2c11f283.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101027093716.GD6062@bicker>
+In-Reply-To: <20101027093716.GD6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Devin Heitmueller <dheitmueller@hauppauge.com>, Sri Devi <Srinivasa.Deevi@conexant.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jarod Wilson <jarod@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The lock isn't held here and doesn't need to be unlocked.  The code has
-been like this since the driver was merged. 
+On Wed, 27 Oct 2010 11:37:16 +0200
+Dan Carpenter <error27@gmail.com> wrote:
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+> There is an integer overflow bug in the FBIOPUTCMAP ioctl if
+> cmap->len * 2 overflows.
+> 
+> It's harmless, except that it messes up the cmap until someone types
+> `reset`.  It could have been caught by checking the return from
+> fb_copy_cmap().
+> 
+> Or it could have been caught by limiting the size of the cmaps to one
+> page.  The cmaps are allocated with GFP_ATOMIC and it makes sense to
+> limit them.
+> 
+> Different drivers use different sizes of cmaps.  There are about 150
+> drivers.  I've checked a bunch (50) of them and the larges cmap.len I've
+> found is gxt4500 which maxes out at 1024 so PAGE_SIZE is about twice that
+> length.  For some of the 50 I wasn't sure on the limit.
+> 
+> Is PAGE_SIZE a reasonable limit?  Does anyone know or do I have to audit
+> all 150 drivers?
 
-diff --git a/drivers/media/video/cx231xx/cx231xx-cards.c b/drivers/media/video/cx231xx/cx231xx-cards.c
-index 56c2d81..b7b905f 100644
---- a/drivers/media/video/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/video/cx231xx/cx231xx-cards.c
-@@ -731,16 +731,12 @@ static int cx231xx_init_dev(struct cx231xx **devhandle, struct usb_device *udev,
- 	retval = cx231xx_register_analog_devices(dev);
- 	if (retval < 0) {
- 		cx231xx_release_resources(dev);
--		goto fail_reg_devices;
-+		return retval;
- 	}
- 
- 	cx231xx_init_extension(dev);
- 
- 	return 0;
--
--fail_reg_devices:
--	mutex_unlock(&dev->lock);
--	return retval;
- }
- 
- #if defined(CONFIG_MODULES) && defined(MODULE)
+No signed-off-by:.
+
+> diff --git a/drivers/video/fbcmap.c b/drivers/video/fbcmap.c
+> index f53b9f1..6dc5817 100644
+> --- a/drivers/video/fbcmap.c
+> +++ b/drivers/video/fbcmap.c
+> @@ -110,7 +110,9 @@ int fb_alloc_cmap(struct fb_cmap *cmap, int len, int transp)
+>      }
+>      cmap->start = 0;
+>      cmap->len = len;
+> -    fb_copy_cmap(fb_default_cmap(len), cmap);
+> +    if (fb_copy_cmap(fb_default_cmap(len), cmap))
+> +	goto fail;
+> +
+>      return 0;
+>  
+>  fail:
+> @@ -250,6 +252,9 @@ int fb_set_user_cmap(struct fb_cmap_user *cmap, struct fb_info *info)
+>  	int rc, size = cmap->len * sizeof(u16);
+>  	struct fb_cmap umap;
+>  
+> +	if (cmap->len > PAGE_SIZE || cmap->len * sizeof(u16) > PAGE_SIZE)
+> +		return -EINVAL;
+> +
+>  	memset(&umap, 0, sizeof(struct fb_cmap));
+>  	rc = fb_alloc_cmap(&umap, cmap->len, cmap->transp != NULL);
+>  	if (rc)
+
+A suitable way to fix this would be to detect the overflow only, and
+then just throw the passed-in length at kmalloc(), and let kmalloc()
+decide whether it is sane or not.
+
+To do that, one would need to implement a new
+fb_alloc_cmap_not_stupid() which takes a gfp_t, and pass in GFP_KERNEL.
+
+Feel free to sanitise the fb_alloc_cmap() indenting in [patch 1/2] as well ;)
