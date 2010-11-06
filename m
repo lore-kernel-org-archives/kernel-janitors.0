@@ -1,64 +1,45 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 28 Nov 2010 21:19:55 +0000
-Subject: Re: [PATCH] Fix sparse message rtl8192u
-Message-Id: <20101128211955.GD30799@bicker>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 06 Nov 2010 14:41:24 +0000
+Subject: [PATCH] mtd: mtdchar: fix information leak to userland
+Message-Id: <1289054485-18190-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290634903.4ced8697b0603@webmail.aliceadsl.fr>
-In-Reply-To: <1290634903.4ced8697b0603@webmail.aliceadsl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-On Sat, Nov 27, 2010 at 11:37:48PM +0100, David Chosrova wrote:
-> Hello,
-> 
->  In this patch I have removed the #ifdef ENABLE_DOT11D. 
-> 
+Structure mtd_info_user is copied to userland with padding byted
+between "type" and "flags" fields uninitialized.  It leads to leaking
+of contents of kernel stack memory.
 
-Cool man.  Looks good.
-
-There are several places where ENABLE_DOT11D is still there in the
-comments.  Can do a: grep ENABLE_DOT11D drivers/staging/rtl8192u/ -R
-and remove all those?
-
-Then add an:
-Acked-by: Dan Carpenter <error27@gmail.com>
-
-When people apply patches they try to automate the process.  They
-have scripts that automatically take an email and creates a kernel
-patch.  So choose a good subject and write a patch description.
-I would normally write this:
-
-Subject: [patch] Staging: rtl8192u: remove dead code to disable dot11d
-
-This patch removes all the ENABLE_DOT11D ifdefs.  It's always enabled
-for this driver.  DOT11D has to do with regulatory domains.
-
-What prompted this patch was a warning message in Sparse:
-
-drivers/staging/rtl8192u/r8192U_core.c:247:1: warning: "eqMacAddr"
-redefined in file included from drivers/staging/rtl8192u/:81:81:
-drivers/staging/rtl8192u/dot11d.h:35:1: warning: this is the location
-of the previous definition                                                                                                   
-
-Now there are no ifdefs around dot11d.h it made no sense to have this
-second definition, so I removed that macro as well.
-
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 ---
-Edit that however you want.  That's just an idea.
+ Compile tested.
 
-Don't put the "Hello etc" into the message because Greg will have to
-strip those bits out of the patch description by hand.
+ drivers/mtd/mtdchar.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-After the Signed-off-by: line put three dashes "---".  Things below that
-line get stripped out of the patch description.  That's where you can
-put the "Compile tested."  or "Feedback requested" stuff if you want.
+diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+index 3eff1e5..2a0bc9e 100644
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -601,6 +601,7 @@ static int mtd_ioctl(struct file *file, u_int cmd, u_long arg)
+ 	}
+ 
+ 	case MEMGETINFO:
++		memset(&info, 0, sizeof(info));
+ 		info.type	= mtd->type;
+ 		info.flags	= mtd->flags;
+ 		info.size	= mtd->size;
+@@ -609,7 +610,6 @@ static int mtd_ioctl(struct file *file, u_int cmd, u_long arg)
+ 		info.oobsize	= mtd->oobsize;
+ 		/* The below fields are obsolete */
+ 		info.ecctype	= -1;
+-		info.eccsize	= 0;
+ 		if (copy_to_user(argp, &info, sizeof(struct mtd_info_user)))
+ 			return -EFAULT;
+ 		break;
+-- 
+1.7.0.4
 
-Send your email to: gregkh@suse.de
-CC these addresses: devel@driverdev.osuosl.org, error27@gmail.com, 
-andreamrl@tiscali.it, linux-wireless@vger.kernel.org,
-kernel-janitors@vger.kernel.org
-
-regards,
-dan carpenter
