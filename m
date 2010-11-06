@@ -1,28 +1,44 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 19 Nov 2010 18:13:41 +0000
-Subject: Re: [patch] Staging: spectra: update blk_queue_ordered()
-Message-Id: <20101119181341.GA7228@kroah.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 06 Nov 2010 14:41:28 +0000
+Subject: [PATCH] usb: core: fix information leak to userland
+Message-Id: <1289054488-18233-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101118050544.GO31724@bicker>
-In-Reply-To: <20101118050544.GO31724@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Oliver Neukum <oliver@neukum.org>, Alan Stern <stern@rowland.harvard.edu>, Andi Kleen <ak@linux.intel.com>, Chris Frey <cdfrey@foursquare.net>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 18, 2010 at 09:00:50AM +0200, Pekka Enberg wrote:
-> On 11/18/10 7:05 AM, Dan Carpenter wrote:
-> >blk_queue_ordered() isn't around anymore so this causes a compile error.
-> >That change was in 4913efe456c "block: deprecate barrier and replace
-> >blk_queue_ordered() with blk_queue_flush()"
-> >
-> >Signed-off-by: Dan Carpenter<error27@gmail.com>
-> 
-> Acked-by: Pekka Enberg <penberg@kernel.org>
+Structure usbdevfs_connectinfo is copied to userland with padding byted
+after "slow" field uninitialized.  It leads to leaking of contents of
+kernel stack memory.
 
-Heh, someone else already sent me this patch, it's on the way to Linus
-shortly.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-thanks,
+ drivers/usb/core/devio.c |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
 
-greg k-h
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index f1aaff6..045bb4b 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -965,10 +965,11 @@ static int proc_getdriver(struct dev_state *ps, void __user *arg)
+ 
+ static int proc_connectinfo(struct dev_state *ps, void __user *arg)
+ {
+-	struct usbdevfs_connectinfo ci;
++	struct usbdevfs_connectinfo ci = {
++		.devnum = ps->dev->devnum,
++		.slow = ps->dev->speed = USB_SPEED_LOW
++	};
+ 
+-	ci.devnum = ps->dev->devnum;
+-	ci.slow = ps->dev->speed = USB_SPEED_LOW;
+ 	if (copy_to_user(arg, &ci, sizeof(ci)))
+ 		return -EFAULT;
+ 	return 0;
+-- 
+1.7.0.4
+
