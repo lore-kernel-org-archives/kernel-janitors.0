@@ -1,53 +1,40 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Sat, 06 Nov 2010 18:21:50 +0000
+From: David Brownell <david-b@pacbell.net>
+Date: Sat, 06 Nov 2010 18:30:40 +0000
 Subject: Re: [PATCH] usb: core: fix information leak to userland
-Message-Id: <Pine.LNX.4.44L0.1011061419490.28403-100000@netrider.rowland.org>
+Message-Id: <502882.59497.qm@web180306.mail.gq1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1289054488-18233-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <Pine.LNX.4.44L0.1011061419490.28403-100000@netrider.rowland.org>
 References: <1289054488-18233-1-git-send-email-segooon@gmail.com>
 In-Reply-To: <1289054488-18233-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Vasiliy Kulikov <segooon@gmail.com>, Alan Stern <stern@rowland.harvard.edu>
 Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Oliver Neukum <oliver@neukum.org>, Andi Kleen <ak@linux.intel.com>, Chris Frey <cdfrey@foursquare.net>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 6 Nov 2010, Vasiliy Kulikov wrote:
 
-> Structure usbdevfs_connectinfo is copied to userland with padding byted
-> after "slow" field uninitialized.  It leads to leaking of contents of
-> kernel stack memory.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
->  Compile tested.
-> 
->  drivers/usb/core/devio.c |    7 ++++---
->  1 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-> index f1aaff6..045bb4b 100644
-> --- a/drivers/usb/core/devio.c
-> +++ b/drivers/usb/core/devio.c
-> @@ -965,10 +965,11 @@ static int proc_getdriver(struct dev_state *ps, void __user *arg)
->  
->  static int proc_connectinfo(struct dev_state *ps, void __user *arg)
->  {
-> -	struct usbdevfs_connectinfo ci;
-> +	struct usbdevfs_connectinfo ci = {
-> +		.devnum = ps->dev->devnum,
-> +		.slow = ps->dev->speed = USB_SPEED_LOW
-> +	};
->  
-> -	ci.devnum = ps->dev->devnum;
-> -	ci.slow = ps->dev->speed = USB_SPEED_LOW;
->  	if (copy_to_user(arg, &ci, sizeof(ci)))
->  		return -EFAULT;
->  	return 0;
 
-Are you sure that adding an initializer like this will zero out the 
-padding bytes?  It might be safer just to call memset.  This is not 
-exactly a hot path, after all.
+--- On Sat, 11/6/10, Alan Stern <stern@rowland.harvard.edu> wrote:
 
-Alan Stern
+> Are you sure that adding an initializer
+> like this will zero out the=20
+> padding bytes?=A0 It might be safer just to call
+> memset.
 
+ISTR the C standard says things get initted to
+zero in this case too ... and that compilers will
+as a rule use memset to do it.  One could look
+at the generated code to make sure of that.
+
+There's certainly a fair amount of code I've seen
+that uses runtime initializers like that, to zero
+memory.  I can't believe i's _all_ broken!  ;)
+
+- Dave
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
