@@ -1,23 +1,37 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Tue, 23 Nov 2010 17:45:16 +0000
-Subject: Re: [alsa-devel] [PATCH] ASoC: s3c24xx: test wrong variable
-Message-Id: <20101123174514.GF15156@sirena.org.uk>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 06 Nov 2010 14:41:31 +0000
+Subject: [PATCH] usb: misc: iowarrior: fix information leak to userland
+Message-Id: <1289054492-18278-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290361223-15211-1-git-send-email-segoon@openwall.com>
-	<20101122140002.GB18960@rakim.wolfsonmicro.main>
-	<AANLkTimXOk8FXK5NqbuW9qa6HUt5_4Fgvc+7h8OrJO_j@mail.gmail.com>
-In-Reply-To: <AANLkTimXOk8FXK5NqbuW9qa6HUt5_4Fgvc+7h8OrJO_j@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: alsa-devel@alsa-project.org, Jassi Brar <jassi.brar@samsung.com>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Vasiliy Kulikov <segoon@openwall.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Arnd Bergmann <arnd@arndb.de>, Oliver Neukum <oliver@neukum.org>, Kees Cook <kees.cook@canonical.com>, Joe Perches <joe@perches.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 23, 2010 at 06:53:58AM +0900, Jassi Brar wrote:
+Structure iowarrior_info is copied to userland with padding byted
+between "serial" and "revision" fields uninitialized.  It leads to
+leaking of contents of kernel stack memory.
 
-> Wierd, it is CC to me as well but I didn't receive it.
-> Though the change is ok.
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-Could be greylisting - don't recall if the Samsung mail system does that
-or not but I've seen issues with that causing random delays before.
-Either that or the anti-spam system eating it.
+ drivers/usb/misc/iowarrior.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 3756641..c9078e4 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -553,6 +553,7 @@ static long iowarrior_ioctl(struct file *file, unsigned int cmd,
+ 			/* needed for power consumption */
+ 			struct usb_config_descriptor *cfg_descriptor = &dev->udev->actconfig->desc;
+ 
++			memset(&info, 0, sizeof(info));
+ 			/* directly from the descriptor */
+ 			info.vendor = le16_to_cpu(dev->udev->descriptor.idVendor);
+ 			info.product = dev->product_id;
+-- 
+1.7.0.4
+
