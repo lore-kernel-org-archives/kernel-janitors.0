@@ -1,38 +1,38 @@
-From: "Sosnowski, Maciej" <maciej.sosnowski@intel.com>
-Date: Mon, 22 Nov 2010 16:49:45 +0000
-Subject: RE: [patch v2] dca: remove unneeded NULL check
-Message-Id: <129600E5E5FB004392DDC3FB599660D70104DAF162@irsmsx504.ger.corp.intel.com>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sat, 06 Nov 2010 14:41:20 +0000
+Subject: [PATCH] infiniband: core: fix information leak to userland
+Message-Id: <1289054481-18145-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101117051032.GC31724@bicker>
- <20101119145937.60c5f688.akpm@linux-foundation.org>
- <20101120181008.GB1522@bicker>
-In-Reply-To: <20101120181008.GB1522@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: "David S. Miller" <davem@davemloft.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Chiang <achiang-VXdhtT5mjnY@public.gmane.org>, Andi Kleen <ak-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Dan Carpenter wrote:
-> The return here doesn't release the locks or re-enable IRQs.  But as
-> Andrew Morton points out, domain is never NULL.  list_first_entry()
-> essentially never returns NULL and also we already verified that the
-> list is not empty.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/dca/dca-core.c b/drivers/dca/dca-core.c index
-> b98c676..c461eda 100644
-> --- a/drivers/dca/dca-core.c
-> +++ b/drivers/dca/dca-core.c
-> @@ -110,8 +110,6 @@ static void unregister_dca_providers(void)
-> 
->  	/* at this point only one domain in the list is expected */
->  	domain = list_first_entry(&dca_domains, struct dca_domain, node);
-> -	if (!domain)
-> -		return;
-> 
->  	list_for_each_entry_safe(dca, _dca, &domain->dca_providers, node) {
->  		list_del(&dca->node);
+Structure ib_uverbs_qp_attr is copied to userland with allmost all
+fields uninitialized (140 bytes on x86).  It leads to leaking of
+contents of kernel stack memory.
 
-Acked-by: Maciej Sosnowski <maciej.sosnowski@intel.com>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
+
+ drivers/infiniband/core/ucm.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/infiniband/core/ucm.c b/drivers/infiniband/core/ucm.c
+index 08f948d..ccfa4f9 100644
+--- a/drivers/infiniband/core/ucm.c
++++ b/drivers/infiniband/core/ucm.c
+@@ -622,7 +622,7 @@ static ssize_t ib_ucm_init_qp_attr(struct ib_ucm_file *file,
+ 	if (IS_ERR(ctx))
+ 		return PTR_ERR(ctx);
+ 
+-	resp.qp_attr_mask = 0;
++	memset(&resp, 0, sizeof(resp));
+ 	memset(&qp_attr, 0, sizeof qp_attr);
+ 	qp_attr.qp_state = cmd.qp_state;
+ 	result = ib_cm_init_qp_attr(ctx->cm_id, &qp_attr, &resp.qp_attr_mask);
+-- 
+1.7.0.4
+
