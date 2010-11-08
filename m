@@ -1,30 +1,43 @@
-From: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Date: Wed, 03 Nov 2010 18:36:30 +0000
-Subject: Re: [PATCH] bluetooth: cmtp: fix information leak to userland
-Message-Id: <20101103183630.GC17943@vigoh>
+From: Maximiliano David Bustos <md.bustos90@gmail.com>
+Date: Mon, 08 Nov 2010 20:35:35 +0000
+Subject: [PATCH 2/2] Staging: wlan-ng: Fix lines over 80 characters in p80211netdev.c
+Message-Id: <1289248535-10792-1-git-send-email-md.bustos90@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288448787-5848-1-git-send-email-segooon@gmail.com>
- <1288712158.3322.179.camel@aeonflux>
-In-Reply-To: <1288712158.3322.179.camel@aeonflux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Vasiliy Kulikov <segooon@gmail.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-* Marcel Holtmann <marcel@holtmann.org> [2010-11-02 16:35:58 +0100]:
+This patch fixes over 80 characters bugs reported by checkpatch.pl
+Signed-off-by: Maximiliano David Bustos <md.bustos90@gmail.com>
+---
+ drivers/staging/wlan-ng/p80211netdev.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
-> Hi Vasiliy,
-> 
-> > Structure cmtp_conninfo is copied to userland with some padding fields
-> > unitialized.  It leads to leaking of contents of kernel stack memory.
-> > 
-> > Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> 
-> Acked-by: Marcel Holtmann <marcel@holtmann.org>
-
-Applied, thanks.  
-
+diff --git a/drivers/staging/wlan-ng/p80211netdev.c b/drivers/staging/wlan-ng/p80211netdev.c
+index b7b4a73..314eff0 100644
+--- a/drivers/staging/wlan-ng/p80211netdev.c
++++ b/drivers/staging/wlan-ng/p80211netdev.c
+@@ -301,7 +301,8 @@ static void p80211netdev_rx_bh(unsigned long arg)
+ 					if (memcmp
+ 					    (hdr->a1, wlandev->netdev->dev_addr,
+ 					     ETH_ALEN) != 0) {
+-						/* but reject anything else that isn't multicast */
++						/* but reject anything else that
++						 isn't multicast */
+ 						if (!(hdr->a1[0] & 0x01)) {
+ 							dev_kfree_skb(skb);
+ 							continue;
+@@ -770,7 +771,8 @@ int wlan_setup(wlandevice_t *wlandev, struct device *physdev)
+ 	}
+ 
+ 	/* Allocate and initialize the struct device */
+-	netdev = alloc_netdev(sizeof(struct wireless_dev), "wlan%d", ether_setup);
++	netdev = alloc_netdev(sizeof(struct wireless_dev), "wlan%d",
++			      ether_setup);
+ 	if (netdev = NULL) {
+ 		printk(KERN_ERR "Failed to alloc netdev.\n");
+ 		wlan_free_wiphy(wiphy);
 -- 
-Gustavo F. Padovan
-ProFUSION embedded systems - http://profusion.mobi
+1.7.1
+
