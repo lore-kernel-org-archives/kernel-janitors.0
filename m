@@ -1,71 +1,108 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 05 Nov 2010 20:40:18 +0000
-Subject: Re: [RFC] [patch] fbcmap: integer overflow bug
-Message-Id: <20101105134018.2c11f283.akpm@linux-foundation.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 09 Nov 2010 21:51:46 +0000
+Subject: [PATCH] sound/pci/ctxfi/ctpcm.c: Remove potential for use after free
+Message-Id: <1289340041-15433-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101027093716.GD6062@bicker>
-In-Reply-To: <20101027093716.GD6062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, clemens@ladisch.de, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Wed, 27 Oct 2010 11:37:16 +0200
-Dan Carpenter <error27@gmail.com> wrote:
+In each function, the value apcm is stored in the private_data field of
+runtime.  At the same time the function ct_atc_pcm_free_substream is stored
+in the private_free field of the same structure.  ct_atc_pcm_free_substream
+dereferences and ultimately frees the value in the private_data field.  But
+each function can exit in an error case with apcm having been freed, in
+which case a subsequent call to the private_free function would perform a
+dereference after free.  On the other hand, if the private_free field is
+not initialized, it is NULL, and not invoked (see snd_pcm_detach_substream
+in sound/core/pcm.c).  To avoid the introduction of a dangling pointer, the
+initializations of the private_data and private_free fields are moved to
+the end of the function, past any possible free of apcm.  This is safe
+because the previous calls to snd_pcm_hw_constraint_integer and
+snd_pcm_hw_constraint_minmax, which take runtime as an argument, do not
+refer to either of these fields.
 
-> There is an integer overflow bug in the FBIOPUTCMAP ioctl if
-> cmap->len * 2 overflows.
-> 
-> It's harmless, except that it messes up the cmap until someone types
-> `reset`.  It could have been caught by checking the return from
-> fb_copy_cmap().
-> 
-> Or it could have been caught by limiting the size of the cmaps to one
-> page.  The cmaps are allocated with GFP_ATOMIC and it makes sense to
-> limit them.
-> 
-> Different drivers use different sizes of cmaps.  There are about 150
-> drivers.  I've checked a bunch (50) of them and the larges cmap.len I've
-> found is gxt4500 which maxes out at 1024 so PAGE_SIZE is about twice that
-> length.  For some of the 50 I wasn't sure on the limit.
-> 
-> Is PAGE_SIZE a reasonable limit?  Does anyone know or do I have to audit
-> all 150 drivers?
+In each function, there is one error case where apcm needs to be freed, and
+a call to kfree is added.
 
-No signed-off-by:.
+The sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> diff --git a/drivers/video/fbcmap.c b/drivers/video/fbcmap.c
-> index f53b9f1..6dc5817 100644
-> --- a/drivers/video/fbcmap.c
-> +++ b/drivers/video/fbcmap.c
-> @@ -110,7 +110,9 @@ int fb_alloc_cmap(struct fb_cmap *cmap, int len, int transp)
->      }
->      cmap->start = 0;
->      cmap->len = len;
-> -    fb_copy_cmap(fb_default_cmap(len), cmap);
-> +    if (fb_copy_cmap(fb_default_cmap(len), cmap))
-> +	goto fail;
-> +
->      return 0;
->  
->  fail:
-> @@ -250,6 +252,9 @@ int fb_set_user_cmap(struct fb_cmap_user *cmap, struct fb_info *info)
->  	int rc, size = cmap->len * sizeof(u16);
->  	struct fb_cmap umap;
->  
-> +	if (cmap->len > PAGE_SIZE || cmap->len * sizeof(u16) > PAGE_SIZE)
-> +		return -EINVAL;
-> +
->  	memset(&umap, 0, sizeof(struct fb_cmap));
->  	rc = fb_alloc_cmap(&umap, cmap->len, cmap->transp != NULL);
->  	if (rc)
+// <smpl>
+@@
+expression e,e1,e2,e3;
+identifier f,free1,free2;
+expression a;
+@@
 
-A suitable way to fix this would be to detect the overflow only, and
-then just throw the passed-in length at kmalloc(), and let kmalloc()
-decide whether it is sane or not.
+*e->f = a
+... when != e->f = e1
+    when any
+if (...) {
+  ... when != free1(...,e,...)
+      when != e->f = e2
+* kfree(a)
+  ... when != free2(...,e,...)
+      when != e->f = e3
+}
+// </smpl>
 
-To do that, one would need to implement a new
-fb_alloc_cmap_not_stupid() which takes a gfp_t, and pass in GFP_KERNEL.
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Feel free to sanitise the fb_alloc_cmap() indenting in [patch 1/2] as well ;)
+---
+ sound/pci/ctxfi/ctpcm.c |   16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/sound/pci/ctxfi/ctpcm.c b/sound/pci/ctxfi/ctpcm.c
+index 85ab43e..457d211 100644
+--- a/sound/pci/ctxfi/ctpcm.c
++++ b/sound/pci/ctxfi/ctpcm.c
+@@ -129,8 +129,6 @@ static int ct_pcm_playback_open(struct snd_pcm_substream *substream)
+ 
+ 	apcm->substream = substream;
+ 	apcm->interrupt = ct_atc_pcm_interrupt;
+-	runtime->private_data = apcm;
+-	runtime->private_free = ct_atc_pcm_free_substream;
+ 	if (IEC958 = substream->pcm->device) {
+ 		runtime->hw = ct_spdif_passthru_playback_hw;
+ 		atc->spdif_out_passthru(atc, 1);
+@@ -155,8 +153,12 @@ static int ct_pcm_playback_open(struct snd_pcm_substream *substream)
+ 	}
+ 
+ 	apcm->timer = ct_timer_instance_new(atc->timer, apcm);
+-	if (!apcm->timer)
++	if (!apcm->timer) {
++		kfree(apcm);
+ 		return -ENOMEM;
++	}
++	runtime->private_data = apcm;
++	runtime->private_free = ct_atc_pcm_free_substream;
+ 
+ 	return 0;
+ }
+@@ -278,8 +280,6 @@ static int ct_pcm_capture_open(struct snd_pcm_substream *substream)
+ 	apcm->started = 0;
+ 	apcm->substream = substream;
+ 	apcm->interrupt = ct_atc_pcm_interrupt;
+-	runtime->private_data = apcm;
+-	runtime->private_free = ct_atc_pcm_free_substream;
+ 	runtime->hw = ct_pcm_capture_hw;
+ 	runtime->hw.rate_max = atc->rsr * atc->msr;
+ 
+@@ -298,8 +298,12 @@ static int ct_pcm_capture_open(struct snd_pcm_substream *substream)
+ 	}
+ 
+ 	apcm->timer = ct_timer_instance_new(atc->timer, apcm);
+-	if (!apcm->timer)
++	if (!apcm->timer) {
++		kfree(apcm);
+ 		return -ENOMEM;
++	}
++	runtime->private_data = apcm;
++	runtime->private_free = ct_atc_pcm_free_substream;
+ 
+ 	return 0;
+ }
+
