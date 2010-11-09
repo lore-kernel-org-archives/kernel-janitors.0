@@ -1,43 +1,26 @@
-From: Kevin Hilman <khilman@deeprootsystems.com>
-Date: Fri, 19 Nov 2010 00:28:08 +0000
-Subject: Re: [PATCH] mach-davinci: signedness bug
-Message-Id: <87lj4qduna.fsf@deeprootsystems.com>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 09 Nov 2010 17:26:30 +0000
+Subject: Re: [PATCH 3/3] net: tipc: fix information leak to userland
+Message-Id: <20101109.092630.260076036.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101115194028.30f8b7f0@absol.kitzblitz>
-	<B85A65D85D7EB246BE421B3FB0FBB5930234A2AF08@dbde02.ent.ti.com>
-In-Reply-To: <B85A65D85D7EB246BE421B3FB0FBB5930234A2AF08@dbde02.ent.ti.com>
-	(Sekhar Nori's message of "Tue, 16 Nov 2010 10:19:49 +0530")
+References: <1288545032-16481-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1288545032-16481-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nori, Sekhar" <nsekhar@ti.com>
-Cc: Nicolas Kaiser <nikai@nikai.net>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: segooon@gmail.com
+Cc: kernel-janitors@vger.kernel.org, jon.maloy@ericsson.com, allan.stephens@windriver.com, tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"Nori, Sekhar" <nsekhar@ti.com> writes:
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Sun, 31 Oct 2010 20:10:32 +0300
 
-> Hi Nicolas,
->
-> On Tue, Nov 16, 2010 at 00:10:28, Nicolas Kaiser wrote:
->> aemif_calc_rate() can return a negative error value, so all the
->> variables that get tested for this value need to be signed.
->>
->> The maximum bit width of WSETUP(WSETUP_MAX) appears to be 30 bits
->> (0xf << 26). Using a signed instead of an unsigned integer
->> shouldn't make a difference here.
->>
->> Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
->
-> Thanks for the fix. You could use the subject:
->
-> "davinci: signedness bug in davinci_aemif_setup_timing()"
->
-> Other than that:
->
-> Acked-by: Sekhar Nori <nsekhar@ti.com>
+> Structure sockaddr_tipc is copied to userland with padding bytes after
+> "id" field in union field "name" unitialized.  It leads to leaking of
+> contents of kernel stack memory.  We have to initialize them to zero.
+> 
+> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
 
-Thanks, I fixed up the subject as Sekhar suggested.
+Applied.
 
-Applied, queuing for 2.6.38.
-
-Kevin
-
+Patches #1 and #2 were given feedback which I need you to integrate
+and submit new patches based upon, thanks.
