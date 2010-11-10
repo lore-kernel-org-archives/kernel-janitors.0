@@ -1,31 +1,39 @@
-From: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Date: Wed, 03 Nov 2010 18:37:17 +0000
-Subject: Re: [PATCH] bluetooth: hidp: fix information leak to userland
-Message-Id: <20101103183717.GD17943@vigoh>
+From: Vasiliy Kulikov <segooon@gmail.com>
+Date: Wed, 10 Nov 2010 20:38:08 +0000
+Subject: [PATCH] lib: vsprintf: fix invalid arg check
+Message-Id: <1289421490-23950-1-git-send-email-segooon@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288448791-6009-1-git-send-email-segooon@gmail.com>
- <1288712189.3322.180.camel@aeonflux>
-In-Reply-To: <1288712189.3322.180.camel@aeonflux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Vasiliy Kulikov <segooon@gmail.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jiri Kosina <jkosina@suse.cz>, Michael Poole <mdpoole@troilus.org>, Bastien Nocera <hadess@hadess.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, =?UTF-8?q?Andr=C3=A9=20Goddard=20Rosa?= <andre.goddard@gmail.com>, Joe Perches <joe@perches.com>, Frederic Weisbecker <fweisbec@gmail.com>, Bjorn Helgaas <bjorn.helgaas@hp.com>, linux-kernel@vger.kernel.org
 
-* Marcel Holtmann <marcel@holtmann.org> [2010-11-02 16:36:29 +0100]:
+"size" is size_t.  If we want to check whether it was underflowed
+then we should cast it to ssize_t instead of int.  When
+sizeof(size_t) > sizeof(int) the code sees UINT_MAX as underflow,
+but it is not.
 
-> Hi Vasiliy,
-> 
-> > Structure hidp_conninfo is copied to userland with version, product,
-> > vendor and name fields unitialized if both session->input and session->hid
-> > are NULL.  It leads to leaking of contents of kernel stack memory.
-> > 
-> > Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> 
-> Acked-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+---
+ Compile tested.
 
-Applied, thanks.
+ lib/vsprintf.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index c150d3d..e7cf674 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1290,7 +1290,7 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
+ 
+ 	/* Reject out-of-range values early.  Large positive sizes are
+ 	   used for unknown buffer sizes. */
+-	if (WARN_ON_ONCE((int) size < 0))
++	if (WARN_ON_ONCE((ssize_t) size < 0))
+ 		return 0;
+ 
+ 	str = buf;
 -- 
-Gustavo F. Padovan
-ProFUSION embedded systems - http://profusion.mobi
+1.7.0.4
+
