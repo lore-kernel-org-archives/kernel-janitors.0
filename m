@@ -1,106 +1,67 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Fri, 26 Nov 2010 17:06:12 +0000
-Subject: [PATCH] avr32: boards: setup: use IS_ERR() instead of NULL check
-Message-Id: <1290791179-21298-1-git-send-email-segoon@openwall.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 11 Nov 2010 07:28:30 +0000
+Subject: [patch] input: pcf8574_keypad: use after input_unregister_device()
+Message-Id: <20101111062429.GA3610@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Hans-Christian Egtvedt <hans-christian.egtvedt@atmel.com>, Haavard Skinnemoen <haavard.skinnemoen@atmel.com>, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jean Delvare <khali@linux-fr.org>, Mike Frysinger <vapier@gentoo.org>, Richard Purdie <rpurdie@linux.intel.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-clk_get() returns ERR_PTR() on error, not NULL.
+input_unregister_device() is tricky because it frees the argument.  So
+in the original code the call to input_set_drvdata(idev, NULL) is a use
+after free bug.  The other problem is the input_set_drvdata() makes the 
+input_free_device() into a no-op.
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- Cannot compile this driver, so it is not tested at all.
+The prefered style in input/ is to make input_register_device() the
+last function in the probe which can fail.  That way we don't need to
+call input_unregister_device().
 
- arch/avr32/boards/atngw100/setup.c      |    2 +-
- arch/avr32/boards/atstk1000/atstk1002.c |    2 +-
- arch/avr32/boards/favr-32/setup.c       |    2 +-
- arch/avr32/boards/hammerhead/setup.c    |    2 +-
- arch/avr32/boards/merisc/setup.c        |    2 +-
- arch/avr32/boards/mimc200/setup.c       |    2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/arch/avr32/boards/atngw100/setup.c b/arch/avr32/boards/atngw100/setup.c
-index 8c6a244..659d119 100644
---- a/arch/avr32/boards/atngw100/setup.c
-+++ b/arch/avr32/boards/atngw100/setup.c
-@@ -188,7 +188,7 @@ static void __init set_hw_addr(struct platform_device *pdev)
- 	 */
- 	regs = (void __iomem __force *)res->start;
- 	pclk = clk_get(&pdev->dev, "pclk");
--	if (!pclk)
-+	if (IS_ERR(pclk))
- 		return;
+diff --git a/drivers/input/misc/pcf8574_keypad.c b/drivers/input/misc/pcf8574_keypad.c
+index 4b42ffc..d0b0e36 100644
+--- a/drivers/input/misc/pcf8574_keypad.c
++++ b/drivers/input/misc/pcf8574_keypad.c
+@@ -129,12 +129,6 @@ static int __devinit pcf8574_kp_probe(struct i2c_client *client, const struct i2
  
- 	clk_enable(pclk);
-diff --git a/arch/avr32/boards/atstk1000/atstk1002.c b/arch/avr32/boards/atstk1000/atstk1002.c
-index 2adc261..6ce30fb 100644
---- a/arch/avr32/boards/atstk1000/atstk1002.c
-+++ b/arch/avr32/boards/atstk1000/atstk1002.c
-@@ -203,7 +203,7 @@ static void __init set_hw_addr(struct platform_device *pdev)
- 	 */
- 	regs = (void __iomem __force *)res->start;
- 	pclk = clk_get(&pdev->dev, "pclk");
--	if (!pclk)
-+	if (IS_ERR(pclk))
- 		return;
+ 	input_set_drvdata(idev, lp);
  
- 	clk_enable(pclk);
-diff --git a/arch/avr32/boards/favr-32/setup.c b/arch/avr32/boards/favr-32/setup.c
-index 75f19f4..86fab77 100644
---- a/arch/avr32/boards/favr-32/setup.c
-+++ b/arch/avr32/boards/favr-32/setup.c
-@@ -206,7 +206,7 @@ static void __init set_hw_addr(struct platform_device *pdev)
- 	 */
- 	regs = (void __iomem __force *)res->start;
- 	pclk = clk_get(&pdev->dev, "pclk");
--	if (!pclk)
-+	if (IS_ERR(pclk))
- 		return;
+-	ret = input_register_device(idev);
+-	if (ret) {
+-		dev_err(&client->dev, "input_register_device() failed\n");
+-		goto fail_register;
+-	}
+-
+ 	lp->laststate = read_state(lp);
  
- 	clk_enable(pclk);
-diff --git a/arch/avr32/boards/hammerhead/setup.c b/arch/avr32/boards/hammerhead/setup.c
-index dd00987..da14fbd 100644
---- a/arch/avr32/boards/hammerhead/setup.c
-+++ b/arch/avr32/boards/hammerhead/setup.c
-@@ -150,7 +150,7 @@ static void __init set_hw_addr(struct platform_device *pdev)
- 	regs = (void __iomem __force *)res->start;
- 	pclk = clk_get(&pdev->dev, "pclk");
+ 	ret = request_threaded_irq(client->irq, NULL, pcf8574_kp_irq_handler,
+@@ -142,16 +136,22 @@ static int __devinit pcf8574_kp_probe(struct i2c_client *client, const struct i2
+ 				   DRV_NAME, lp);
+ 	if (ret) {
+ 		dev_err(&client->dev, "IRQ %d is not free\n", client->irq);
+-		goto fail_irq;
++		goto fail_free_device;
+ 	}
  
--	if (!pclk)
-+	if (IS_ERR(pclk))
- 		return;
+ 	i2c_set_clientdata(client, lp);
++
++	ret = input_register_device(idev);
++	if (ret) {
++		dev_err(&client->dev, "input_register_device() failed\n");
++		goto fail_free_irq;
++	}
++
+ 	return 0;
  
- 	clk_enable(pclk);
-diff --git a/arch/avr32/boards/merisc/setup.c b/arch/avr32/boards/merisc/setup.c
-index 623b077..e61bc94 100644
---- a/arch/avr32/boards/merisc/setup.c
-+++ b/arch/avr32/boards/merisc/setup.c
-@@ -134,7 +134,7 @@ static void __init set_hw_addr(struct platform_device *pdev)
- 
- 	regs = (void __iomem __force *)res->start;
- 	pclk = clk_get(&pdev->dev, "pclk");
--	if (!pclk)
-+	if (IS_ERR(pclk))
- 		return;
- 
- 	clk_enable(pclk);
-diff --git a/arch/avr32/boards/mimc200/setup.c b/arch/avr32/boards/mimc200/setup.c
-index 523d8e1..c4da5cb 100644
---- a/arch/avr32/boards/mimc200/setup.c
-+++ b/arch/avr32/boards/mimc200/setup.c
-@@ -162,7 +162,7 @@ static void __init set_hw_addr(struct platform_device *pdev)
- 	 */
- 	regs = (void __iomem __force *)res->start;
- 	pclk = clk_get(&pdev->dev, "pclk");
--	if (!pclk)
-+	if (IS_ERR(pclk))
- 		return;
- 
- 	clk_enable(pclk);
--- 
-1.7.0.4
-
+- fail_irq:
+-	input_unregister_device(idev);
+- fail_register:
+-	input_set_drvdata(idev, NULL);
++ fail_free_irq:
++	free_irq(client->irq, lp);
++ fail_free_device:
+ 	input_free_device(idev);
+  fail_allocate:
+ 	kfree(lp);
