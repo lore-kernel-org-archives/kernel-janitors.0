@@ -1,27 +1,51 @@
-From: Marcelo Tosatti <mtosatti@redhat.com>
-Date: Mon, 01 Nov 2010 17:19:49 +0000
-Subject: Re: [PATCH] powerpc: kvm: fix information leak to userland
-Message-Id: <20101101171949.GB4484@amt.cnet>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 12 Nov 2010 05:04:43 +0000
+Subject: [patch] Staging: quickstart: free after input_unregister_device()
+Message-Id: <20101112050443.GD3533@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288429464-21763-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288429464-21763-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Alexander Graf <agraf@suse.de>, Avi Kivity <avi@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, Oct 30, 2010 at 01:04:24PM +0400, Vasiliy Kulikov wrote:
-> Structure kvm_ppc_pvinfo is copied to userland with flags and
-> pad fields unitialized.  It leads to leaking of contents of
-> kernel stack memory.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
->  I cannot compile this driver, so it is not tested at all.
-> 
->  arch/powerpc/kvm/powerpc.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+input_unregister_device() releases "quickstart_input" so the
+input_free_device() is a double free.  Also I noticed that there is a
+memory leak if the call to input_register_device() fails.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index d746715..d83bec8 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -355,7 +355,6 @@ static int quickstart_acpi_remove(struct acpi_device *device, int type)
+ static void quickstart_exit(void)
+ {
+ 	input_unregister_device(quickstart_input);
+-	input_free_device(quickstart_input);
+ 
+ 	device_remove_file(&pf_device->dev, &dev_attr_pressed_button);
+ 	device_remove_file(&pf_device->dev, &dev_attr_buttons);
+@@ -375,6 +374,7 @@ static int __init quickstart_init_input(void)
+ {
+ 	struct quickstart_btn **ptr = &quickstart_data.btn_lst;
+ 	int count;
++	int ret;
+ 
+ 	quickstart_input = input_allocate_device();
+ 
+@@ -391,7 +391,13 @@ static int __init quickstart_init_input(void)
+ 		ptr = &((*ptr)->next);
+ 	}
+ 
+-	return input_register_device(quickstart_input);
++	ret = input_register_device(quickstart_input);
++	if (ret) {
++		input_free_device(quickstart_input);
++		return ret;
++	}
++
++	return 0;
+ }
+ 
+ static int __init quickstart_init(void)
