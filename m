@@ -1,30 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 17 Nov 2010 20:30:21 +0000
-Subject: Re: [PATCH] net: ipv4: tcp_probe: cleanup snprintf() use
-Message-Id: <20101117.123021.241451290.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 12 Nov 2010 04:31:46 +0000
+Subject: [patch] scsi/osd: checking NULL instead of ERR_PTR()
+Message-Id: <20101112043146.GC3533@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1289754368-31660-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1289754368-31660-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segoon@openwall.com
-Cc: kernel-janitors@vger.kernel.org, kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: Benny Halevy <bhalevy@panasas.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Sun, 14 Nov 2010 20:06:08 +0300
+bio_map_kern() returns ERR_PTRs on failure and never returns NULL.
 
-> snprintf() returns number of bytes that were copied if there is no overflow.
-> This code uses return value as number of copied bytes.  Theoretically format
-> string '%lu.%09lu %pI4:%u %pI4:%u %d %#x %#x %u %u %u %u\n' may be expanded
-> up to 163 bytes.  In reality tv.tv_sec is just few bytes instead of 20, 2 ports
-> are just 5 bytes each instead of 10, length is 5 bytes instead of 10.  The rest
-> is an unstrusted input.  Theoretically if tv_sec is big then copy_to_user() would
-> overflow tbuf.
-> 
-> tbuf was increased to fit in 163 bytes.  snprintf() is used to follow return
-> value semantic.
-> 
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks.
+diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
+index 0433ea6..b798919 100644
+--- a/drivers/scsi/osd/osd_initiator.c
++++ b/drivers/scsi/osd/osd_initiator.c
+@@ -951,8 +951,8 @@ static int _osd_req_finalize_cdb_cont(struct osd_request *or, const u8 *cap_key)
+ 	/* create a bio for continuation segment */
+ 	bio = bio_map_kern(req_q, or->cdb_cont.buff, or->cdb_cont.total_bytes,
+ 			   GFP_KERNEL);
+-	if (unlikely(!bio))
+-		return -ENOMEM;
++	if (unlikely(IS_ERR(bio)))
++		return PTR_ERR(bio);
+ 
+ 	bio->bi_rw |= REQ_WRITE;
+ 
