@@ -1,26 +1,27 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 16 Nov 2010 13:14:50 +0000
-Subject: Re: [PATCH 1/3 v2] backlight: constify backlight_ops
-Message-Id: <alpine.LNX.2.00.1011161414230.7420@pobox.suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 12 Nov 2010 05:08:35 +0000
+Subject: [patch] Staging: speakup: free after input_unregister_device()
+Message-Id: <20101112050835.GE3533@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <902792.32985.qm@smtp148.mail.ukl.yahoo.com>
-In-Reply-To: <902792.32985.qm@smtp148.mail.ukl.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lionel Debroux <lionel_debroux@yahoo.fr>
-Cc: kernel-janitors@vger.kernel.org, Kees Cook <kees.cook@canonical.com>, Emese Revfy <re.emese@gmail.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 9 Nov 2010, Lionel Debroux wrote:
+input_unregister_device() frees the device so the call to
+input_free_device() is a double free.
 
-> Patch against mainline.
-> 
-> One non-const struct instance constified by this patch was added after the
-> the introduction of backlight_ops in checkpatch.pl's list of "should be const"
-> structs (79404849e90a41ea2109bd0e2f7c7164b0c4ce73).
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Added Ingo's Ack, and applied the whole series. Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+diff --git a/drivers/staging/speakup/fakekey.c b/drivers/staging/speakup/fakekey.c
+index adb93f2..65b2311 100644
+--- a/drivers/staging/speakup/fakekey.c
++++ b/drivers/staging/speakup/fakekey.c
+@@ -62,7 +62,6 @@ void speakup_remove_virtual_keyboard(void)
+ {
+ 	if (virt_keyboard != NULL) {
+ 		input_unregister_device(virt_keyboard);
+-		input_free_device(virt_keyboard);
+ 		virt_keyboard = NULL;
+ 	}
+ }
