@@ -1,28 +1,28 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 17 Nov 2010 08:54:35 +0000
-Subject: [patch] Staging: ft1000-usb: freeing uninitialized pointer
-Message-Id: <20101117085435.GI31724@bicker>
+Date: Sat, 13 Nov 2010 08:24:22 +0000
+Subject: [patch] Staging: bcm: signedness bug in
+Message-Id: <20101113082422.GK3533@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-GCC complains that if (info->CardReady) is false we kfree() an
-uninitialized pointer.
+status is used to store negative error codes throughout.  The only place
+where this is a runtime bug is if create_worker_threads() fails. 
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-index 7b496332..76cee9e 100644
---- a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-+++ b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
-@@ -650,7 +650,7 @@ static long ft1000_ChIoctl (struct file *File, unsigned int Command,
-         break;
-     case IOCTL_SET_DPRAM_CMD:
-         {
--            IOCTL_DPRAM_BLK *dpram_data;
-+            IOCTL_DPRAM_BLK *dpram_data = NULL;
-             //IOCTL_DPRAM_COMMAND dpram_command;
-             u16 qtype;
-             u16 msgsz;
+diff --git a/drivers/staging/bcm/Misc.c b/drivers/staging/bcm/Misc.c
+index 1bb6a1d..440b9cd 100644
+--- a/drivers/staging/bcm/Misc.c
++++ b/drivers/staging/bcm/Misc.c
+@@ -1079,7 +1079,7 @@ int run_card_proc(PMINI_ADAPTER ps_adapter )
+ int InitCardAndDownloadFirmware(PMINI_ADAPTER ps_adapter)
+ {
+ 
+-	UINT status = STATUS_SUCCESS;
++	int status;
+ 	UINT value = 0;
+ 	/*
+  	 * Create the threads first and then download the
