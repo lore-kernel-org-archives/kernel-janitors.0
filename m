@@ -1,38 +1,35 @@
-From: Jon Povey <Jon.Povey@racelogic.co.uk>
-Date: Tue, 02 Nov 2010 01:24:54 +0000
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Sat, 13 Nov 2010 10:48:59 +0000
 Subject: RE: [PATCH] trivial: nandsim.c spell fixes in comments
-Message-Id: <70E876B0EA86DD4BAF101844BC814DFE093EEF9923@Cloud.RL.local>
+Message-Id: <1289645339.2218.13.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <AANLkTimGScstLNC2Hs1v-h6BF0y8GFTw4TJw8JEt+j8X@mail.gmail.com>
+References: <AANLkTimGScstLNC2Hs1v-h6BF0y8GFTw4TJw8JEt+j8X@mail.gmail.com>
+	<70E876B0EA86DD4BAF101844BC814DFE093EEF9923@Cloud.RL.local>
+	<AANLkTi=ON7CSbGq=X9wOBNcNjY05-ECJzpjxXFiE0fQM@mail.gmail.com>
+In-Reply-To: <AANLkTi=ON7CSbGq=X9wOBNcNjY05-ECJzpjxXFiE0fQM@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: srimugunthan dhandapani <srimugunthan.dhandapani@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Cc: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: srimugunthan dhandapani <srimugunthan.dhandapani@gmail.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Jon Povey <Jon.Povey@racelogic.co.uk>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
 
-linux-mtd-bounces@lists.infradead.org wrote:
-> attached patch has trivial spell fixes in comments in nandsim.c
+On Tue, 2010-11-02 at 16:20 +0530, srimugunthan dhandapani wrote:
+> attached patch fixes the program->programm and other  spellfixes in
+> comments in nandsim.c
+> 
 > Signed-off-by: srimugunthan  <srimugunthan.dhandapani@gmail.com>
->
-> ------
-> diff --git a/drivers/mtd/nand/nandsim.c b/drivers/mtd/nand/nandsim.c
-> index a6a73aa..697979c 100644 --- a/drivers/mtd/nand/nandsim.c
-> +++ b/drivers/mtd/nand/nandsim.c
 
-...
+I've applied this patch to l2-mtd-2.6.git, but please, next time send
+patches so that I could just save the e-mail and apply with git-am. In
+this case I had to do a lot of work:
 
-> - * only needed for page programm operation with preceeded read command
-> + * only needed for page programm operation with preceded read command
+1. Try git-am to the body and fail
+2. Check that your attachment matches the body
+3. Edit your attachement and add author/signoff-by/etc for you.
 
-Might as well fix programm -> program while you are there?
+But thanks for the fixes anyway.
 
---
-Jon Povey
-jon.povey@racelogic.co.uk
-
-Racelogic is a limited company registered in England. Registered number 2743719 .
-Registered Office Unit 10, Swan Business Centre, Osier Way, Buckingham, Bucks, MK18 1TB .
-
-The information contained in this electronic mail transmission is intended by Racelogic Ltd for the use of the named individual or entity to which it is directed and may contain information that is confidential or privileged. If you have received this electronic mail transmission in error, please delete it from your system without copying or forwarding it, and notify the sender of the error by reply email so that the sender's address records can be corrected. The views expressed by the sender of this communication do not necessarily represent those of Racelogic Ltd. Please note that Racelogic reserves the right to monitor e-mail communications passing through its network
-
+-- 
+Best Regards,
+Artem Bityutskiy (Артём Битюцкий)
 
