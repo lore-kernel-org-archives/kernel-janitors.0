@@ -1,69 +1,48 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 12 Nov 2010 20:08:34 +0000
+From: Andreas Dilger <adilger.kernel@dilger.ca>
+Date: Sat, 13 Nov 2010 21:38:19 +0000
 Subject: Re: [PATCH] fs: select: fix information leak to userspace
-Message-Id: <20101112120834.33062900.akpm@linux-foundation.org>
+Message-Id: <8D90F8B2-EA29-4EB9-9807-294CE0D5523B@dilger.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1289421483-23907-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1289421483-23907-1-git-send-email-segooon@gmail.com>
+References: <1289421483-23907-1-git-send-email-segooon@gmail.com> <20101112120834.33062900.akpm@linux-foundation.org>
+In-Reply-To: <20101112120834.33062900.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vasiliy Kulikov <segooon@gmail.com>, kernel-janitors@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 10 Nov 2010 23:38:02 +0300
-Vasiliy Kulikov <segooon@gmail.com> wrote:
-
-> On some architectures __kernel_suseconds_t is int.
-
-On sparc and parisc.  On all other architectures this patch is a waste
-of cycles.
-
->  On these archs
-> struct timeval has padding bytes at the end.  This struct is copied to
-> userspace with these padding bytes uninitialized.  This leads to leaking
-> of contents of kernel stack memory.
+On 2010-11-12, at 13:08, Andrew Morton wrote:
+> On Wed, 10 Nov 2010 23:38:02 +0300
+> Vasiliy Kulikov <segooon@gmail.com> wrote:
+>> On some architectures __kernel_suseconds_t is int.
 > 
-> This bug was added with v2.6.27-rc5-286-gb773ad4.
+> On sparc and parisc.  On all other architectures this patch is a waste
+> of cycles.
 > 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
->  Compile tested.
+> --- a/fs/select.c~fs-select-fix-information-leak-to-userspace-fix
+> +++ a/fs/select.c
+> @@ -306,7 +306,8 @@ static int poll_select_copy_remaining(st
+> 		rts.tv_sec = rts.tv_nsec = 0;
 > 
->  fs/select.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+> 	if (timeval) {
+> -		memset(&rtv, 0, sizeof(rtv));
+> +		if (sizeof(rtv) > sizeof(rtv.tv_sec) + sizeof(rtv.tv_usec))
+> +			memset(&rtv, 0, sizeof(rtv));
+> 		rtv.tv_sec = rts.tv_sec;
+> 		rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
 > 
-> diff --git a/fs/select.c b/fs/select.c
-> index b7b10aa..32cf018 100644
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -306,6 +306,7 @@ static int poll_select_copy_remaining(struct timespec *end_time, void __user *p,
->  		rts.tv_sec = rts.tv_nsec = 0;
->  
->  	if (timeval) {
-> +		memset(&rtv, 0, sizeof(rtv));
->  		rtv.tv_sec = rts.tv_sec;
->  		rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
+> _
+> 
+> 
+> The `if' gets eliminated at compile time.  With this approach we add
+> four bytes of text to the sparc64 build and zero bytes of text to the
+> x86_64 build.
 
-How about this?
+It's nice to have comments (or at least a good commit message) for unusual code like this, so that in the future it is clear when this kind of workaround can be removed (e.g. if the time_t is changed to always be a 64-bit value for Y2038 issues, even on 32-bit arches). 
 
---- a/fs/select.c~fs-select-fix-information-leak-to-userspace-fix
-+++ a/fs/select.c
-@@ -306,7 +306,8 @@ static int poll_select_copy_remaining(st
- 		rts.tv_sec = rts.tv_nsec = 0;
- 
- 	if (timeval) {
--		memset(&rtv, 0, sizeof(rtv));
-+		if (sizeof(rtv) > sizeof(rtv.tv_sec) + sizeof(rtv.tv_usec))
-+			memset(&rtv, 0, sizeof(rtv));
- 		rtv.tv_sec = rts.tv_sec;
- 		rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
- 
-_
+Cheers, Andreas
 
 
-The `if' gets eliminated at compile time.  With this approach we add
-four bytes of text to the sparc64 build and zero bytes of text to the
-x86_64 build.
+
 
 
