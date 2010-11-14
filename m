@@ -1,57 +1,56 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Thu, 18 Nov 2010 21:27:10 +0000
-Subject: Re: [PATCH 1/4] x86: platform: mrst: check platform_device_register()
-Message-Id: <alpine.LFD.2.00.1011182224590.2900@localhost6.localdomain6>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Sun, 14 Nov 2010 09:25:33 +0000
+Subject: [PATCH v2] fs: select: fix information leak to userspace
+Message-Id: <20101114092533.GB5323@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290104207-31279-1-git-send-email-segoon@openwall.com> <20101118181814.290811f0@linux.intel.com> <20101118184419.GA31886@albatros> <20101118201808.06731611@linux.intel.com>
-In-Reply-To: <20101118201808.06731611@linux.intel.com>
+References: <1289421483-23907-1-git-send-email-segooon@gmail.com>
+ <20101112120834.33062900.akpm@linux-foundation.org>
+ <8D90F8B2-EA29-4EB9-9807-294CE0D5523B@dilger.ca>
+In-Reply-To: <8D90F8B2-EA29-4EB9-9807-294CE0D5523B@dilger.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@linux.intel.com>
-Cc: Vasiliy Kulikov <segoon@openwall.com>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Feng Tang <feng.tang@intel.com>, Arjan van de Ven <arjan@linux.intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, linux-kernel@vger.kernel.org
+To: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 18 Nov 2010, Alan Cox wrote:
-> On Thu, 18 Nov 2010 21:44:21 +0300
-> Vasiliy Kulikov <segoon@openwall.com> wrote:
-> 
-> > On Thu, Nov 18, 2010 at 18:18 +0000, Alan Cox wrote:
-> > > >  I cannot compile this driver in next-20101117, so it is not
-> > > > tested at all.
-> > > 
-> > > Compile or test - if it bombs out compiling for you please send me
-> > > (off list the .config that fails so I can fix that
-> > > 
-> > > Otherwise NAK the patch because it needs to do the cleanup but
-> > > thanks for finding the bug - you've done the hard 99%
-> > 
-> > make -C /home/vasya/linux arch/x86/platform/mrst/vrtc.o
-> > make: Entering directory `/home/vasya/dev/linux-next'
-> >   CHK     include/linux/version.h
-> >   CHK     include/generated/utsrelease.h
-> >   CALL    scripts/checksyscalls.sh
-> >   CC      arch/x86/platform/mrst/vrtc.o
-> > arch/x86/platform/mrst/vrtc.c: In function 'mrst_rtc_init':
-> > arch/x86/platform/mrst/vrtc.c:113: error: 'FIX_LNW_VRTC' undeclared
-> > (first use in this function) arch/x86/platform/mrst/vrtc.c:113:
-> > error: (Each undeclared identifier is reported only once
-> > arch/x86/platform/mrst/vrtc.c:113: error: for each function it
-> > appears in.) make[1]: *** [arch/x86/platform/mrst/vrtc.o] Error 1
-> > 
-> > Both with allyesconfig and allmodconfig, x86_64.
-> 
-> I can't duplicate this.
-> 
-> It's defined if CONFIG_X86_MRST is defined, and the file in question is
-> only compiled if CONFIG_X86_MRST is defined
+On some architectures __kernel_suseconds_t is int.  On these archs
+struct timeval has padding bytes at the end.  This struct is copied to
+userspace with these padding bytes uninitialized.  This leads to leaking
+of contents of kernel stack memory.
 
-Of course you can't duplicate this:
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Patch v1 used memset(), it was waste of cycles on almost all archs.
 
-> > make -C /home/vasya/linux arch/x86/platform/mrst/vrtc.o
+ Compile tested.
 
-Vasiliy forced a manual compile of that file with a 64bit config which has
-CONFIG_X86_MRST=n. That's PEBKAC not a build failure :)
+ fs/select.c |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
 
-Thanks,
-
-	tglx
+diff --git a/fs/select.c b/fs/select.c
+index b7b10aa..43d4805 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -288,7 +288,6 @@ static int poll_select_copy_remaining(struct timespec *end_time, void __user *p,
+ 				      int timeval, int ret)
+ {
+ 	struct timespec rts;
+-	struct timeval rtv;
+ 
+ 	if (!p)
+ 		return ret;
+@@ -306,8 +305,10 @@ static int poll_select_copy_remaining(struct timespec *end_time, void __user *p,
+ 		rts.tv_sec = rts.tv_nsec = 0;
+ 
+ 	if (timeval) {
+-		rtv.tv_sec = rts.tv_sec;
+-		rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
++		struct timeval rtv = {
++			.tv_sec = rts.tv_sec,
++			.tv_usec = rts.tv_nsec / NSEC_PER_USEC
++		};
+ 
+ 		if (!copy_to_user(p, &rtv, sizeof(rtv)))
+ 			return ret;
+-- 
+1.7.0.4
