@@ -1,48 +1,64 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date: Wed, 03 Nov 2010 14:18:01 +0000
-Subject: Re: [PATCH 2/3 RESEND] powerpc: remove cast from void*
-Message-Id: <1288793881.2147.73.camel@pasglop>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Sun, 14 Nov 2010 09:22:52 +0000
+Subject: [PATCH v2] infiniband: core: fix information leak to userspace
+Message-Id: <20101114092252.GA5323@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1285638395.git.mfm@muteddisk.com>
-	<f7d601da574581e9dfdc1314a969475c73491c00.1285638395.git.mfm@muteddisk.com>
-	<alpine.LNX.2.00.1011031015150.15851@pobox.suse.cz>
-In-Reply-To: <alpine.LNX.2.00.1011031015150.15851@pobox.suse.cz>
+References: <1289054481-18145-1-git-send-email-segooon@gmail.com>
+ <ada39r8ohiz.fsf@cisco.com>
+ <20101112180844.GA11533@albatros>
+ <CF9C39F99A89134C9CF9C4CCB68B8DDF25B85224A6@orsmsx501.amr.corp.intel.com>
+In-Reply-To: <CF9C39F99A89134C9CF9C4CCB68B8DDF25B85224A6-osO9UTpF0USkrb+BlOpmy7fspsVTdybXVpNB7YpNyf8@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: matt mooney <mfm@muteddisk.com>, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+To: "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Roland Dreier <rdreier-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Chiang <achiang-VXdhtT5mjnY@public.gmane.org>, Andi Kleen <ak-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-On Wed, 2010-11-03 at 10:15 -0400, Jiri Kosina wrote:
-> On Mon, 27 Sep 2010, matt mooney wrote:
-> 
-> > Unnecessary cast from void* in assignment.
-> > 
-> > Signed-off-by: matt mooney <mfm@muteddisk.com>
-> > ---
-> >  arch/powerpc/platforms/pseries/hvCall_inst.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
-> > index e19ff02..f106662 100644
-> > --- a/arch/powerpc/platforms/pseries/hvCall_inst.c
-> > +++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
-> > @@ -55,7 +55,7 @@ static void hc_stop(struct seq_file *m, void *p)
-> >  static int hc_show(struct seq_file *m, void *p)
-> >  {
-> >  	unsigned long h_num = (unsigned long)p;
-> > -	struct hcall_stats *hs = (struct hcall_stats *)m->private;
-> > +	struct hcall_stats *hs = m->private;
-> >  
-> >  	if (hs[h_num].num_calls) {
-> >  		if (cpu_has_feature(CPU_FTR_PURR))
-> 
-> This doesn't seem to be present in 37-rc1, so I am taking it to trivial 
-> queue. If this has been already merged to another tree, let me know.
+ib_ucm_init_qp_attr() and ucma_init_qp_attr() pass struct ib_uverbs_qp_attr
+with reserved, qp_state, {ah_attr,alt_ah_attr}{reserved,->grh.reserved}
+fields uninitialized to copy_to_user().  It leads to leaking of contents of
+kernel stack memory to userspace.
 
-Looks like I missed it, but Ack.
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested.
 
-Cheers,
-Ben.
+ drivers/infiniband/core/uverbs_marshall.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-
+diff --git a/drivers/infiniband/core/uverbs_marshall.c b/drivers/infiniband/core/uverbs_marshall.c
+index 5440da0..1b1146f 100644
+--- a/drivers/infiniband/core/uverbs_marshall.c
++++ b/drivers/infiniband/core/uverbs_marshall.c
+@@ -40,18 +40,21 @@ void ib_copy_ah_attr_to_user(struct ib_uverbs_ah_attr *dst,
+ 	dst->grh.sgid_index        = src->grh.sgid_index;
+ 	dst->grh.hop_limit         = src->grh.hop_limit;
+ 	dst->grh.traffic_class     = src->grh.traffic_class;
++	memset(&dst->grh.reserved, 0, sizeof(dst->grh.reserved));
+ 	dst->dlid 	    	   = src->dlid;
+ 	dst->sl   	    	   = src->sl;
+ 	dst->src_path_bits 	   = src->src_path_bits;
+ 	dst->static_rate   	   = src->static_rate;
+ 	dst->is_global             = src->ah_flags & IB_AH_GRH ? 1 : 0;
+ 	dst->port_num 	    	   = src->port_num;
++	dst->reserved 		   = 0;
+ }
+ EXPORT_SYMBOL(ib_copy_ah_attr_to_user);
+ 
+ void ib_copy_qp_attr_to_user(struct ib_uverbs_qp_attr *dst,
+ 			     struct ib_qp_attr *src)
+ {
++	dst->qp_state	        = src->qp_state;
+ 	dst->cur_qp_state	= src->cur_qp_state;
+ 	dst->path_mtu		= src->path_mtu;
+ 	dst->path_mig_state	= src->path_mig_state;
+@@ -83,6 +86,7 @@ void ib_copy_qp_attr_to_user(struct ib_uverbs_qp_attr *dst,
+ 	dst->rnr_retry		= src->rnr_retry;
+ 	dst->alt_port_num	= src->alt_port_num;
+ 	dst->alt_timeout	= src->alt_timeout;
++	memset(dst->reserved, 0, sizeof(dst->reserved));
+ }
+ EXPORT_SYMBOL(ib_copy_qp_attr_to_user);
+ 
+-- 
+1.7.0.4
