@@ -1,24 +1,21 @@
-From: "Eilon Greenstein" <eilong@broadcom.com>
-Date: Sun, 14 Nov 2010 20:26:43 +0000
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Sun, 14 Nov 2010 20:29:43 +0000
 Subject: Re: [PATCH] net: bnx2x: fix error value sign
-Message-Id: <1289766403.29137.0.camel@lb-tlvb-eilong.il.broadcom.com>
+Message-Id: <1289766583.2743.144.camel@edumazet-laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1289765315-6028-1-git-send-email-segoon@openwall.com>
 In-Reply-To: <1289765315-6028-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: Vasiliy Kulikov <segoon@openwall.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Eilon Greenstein <eilong@broadcom.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2010-11-14 at 12:08 -0800, Vasiliy Kulikov wrote:
+Le dimanche 14 novembre 2010 à 23:08 +0300, Vasiliy Kulikov a écrit :
 > bnx2x_init_one() should return negative value on error.
 > By mistake it returns ENODEV instead of -ENODEV.
 > 
 > Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
-Thanks Vasiliy!
-
-Acked-by: Eilon Greenstein <eilong@broadcom.com>
 > ---
 >  Compile tested.
 > 
@@ -39,6 +36,7 @@ Acked-by: Eilon Greenstein <eilong@broadcom.com>
 >  
 >  	cid_count += CNIC_CONTEXT_USE;
 
+I remember sending same patch in the past... it was lost somehow...
 
 
 
