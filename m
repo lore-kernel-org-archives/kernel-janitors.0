@@ -1,37 +1,38 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Mon, 01 Nov 2010 10:32:22 +0000
-Subject: [PATCH] drm/i915: opregion_setup: iounmap correct address
-Message-Id: <1288607542.3425.4.camel@lovely>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Mon, 15 Nov 2010 18:40:28 +0000
+Subject: [PATCH] mach-davinci: signedness bug
+Message-Id: <20101115194028.30f8b7f0@absol.kitzblitz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c6d829$pdch63@fmsmga001.fm.intel.com>
-In-Reply-To: <c6d829$pdch63@fmsmga001.fm.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, davinci-linux-open-source@linux.davincidsp.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In case of an opregion signature mismatch in intel_opregion_setup(),
-iounmap the correct address.
+aemif_calc_rate() can return a negative error value, so all the
+variables that get tested for this value need to be signed.
 
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+The maximum bit width of WSETUP(WSETUP_MAX) appears to be 30 bits
+(0xf << 26). Using a signed instead of an unsigned integer
+shouldn't make a difference here.
+
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
 ---
- drivers/gpu/drm/i915/intel_opregion.c |    2 +-
+ arch/arm/mach-davinci/aemif.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_opregion.c b/drivers/gpu/drm/i915/intel_opregion.c
-index 917c7dc..9b0d9a8 100644
---- a/drivers/gpu/drm/i915/intel_opregion.c
-+++ b/drivers/gpu/drm/i915/intel_opregion.c
-@@ -512,6 +512,6 @@ int intel_opregion_setup(struct drm_device *dev)
- 	return 0;
- 
- err_out:
--	iounmap(opregion->header);
-+	iounmap(base);
- 	return err;
- }
+diff --git a/arch/arm/mach-davinci/aemif.c b/arch/arm/mach-davinci/aemif.c
+index 9c3f500..1ce70a9 100644
+--- a/arch/arm/mach-davinci/aemif.c
++++ b/arch/arm/mach-davinci/aemif.c
+@@ -90,7 +90,7 @@ int davinci_aemif_setup_timing(struct davinci_aemif_timing *t,
+ 					void __iomem *base, unsigned cs)
+ {
+ 	unsigned set, val;
+-	unsigned ta, rhold, rstrobe, rsetup, whold, wstrobe, wsetup;
++	int ta, rhold, rstrobe, rsetup, whold, wstrobe, wsetup;
+ 	unsigned offset = A1CR_OFFSET + cs * 4;
+ 	struct clk *aemif_clk;
+ 	unsigned long clkrate;
 -- 
-1.7.1
-
-
-
+1.7.2.2
