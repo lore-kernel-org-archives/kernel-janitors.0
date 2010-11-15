@@ -1,54 +1,42 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Wed, 24 Nov 2010 18:33:00 +0000
-Subject: Re: [PATCH v2] gpu: vga: limit kmalloc'ed memory size
-Message-Id: <20101124183300.GA31411@albatros>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Mon, 15 Nov 2010 20:59:42 +0000
+Subject: [PATCH] gianfar: fix signedness issue
+Message-Id: <20101115215942.354b0394@absol.kitzblitz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290445864-13657-1-git-send-email-segoon@openwall.com>
- <20101122100915.5bf966fe.akpm@linux-foundation.org>
- <20101123190828.GA27159@albatros>
- <20101123124600.4401ea43.akpm@linux-foundation.org>
-In-Reply-To: <20101123124600.4401ea43.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, Dave Airlie <airlied@redhat.com>, Tiago Vignatti <tiago.vignatti@nokia.com>, Mike Travis <travis@sgi.com>, "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+To: Kumar Gala <galak@kernel.crashing.org>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Andrew,
+irq_of_parse_and_map() has an unsigned return type.
+Testing for a negative error value doesn't work here.
 
-On Tue, Nov 23, 2010 at 12:46 -0800, Andrew Morton wrote:
-> What I'm suggesting is that we simply do
-> 
-> 	kbuf = strndup_user(buf, count);
-> 
-> and make strndup_user() do the right thing if `count' turned out to be
-> crazy large.  THis way we don't have to sprinkle decisions about "crazy
-> largeness" all over the kernel.
-> 
-> And the way in which I suggest that strndup_user() decides whether the
-> length is too great is to try to kmalloc that amount of memory. 
-> If it succeeds then fine, proceed.
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
+---
+I see that in numerous places the return value is tested
+for NO_IRQ. I hope it's the right thing to do here as well?
 
-I don't think that it is a good idea - the process would have an ability
-to allocate too much system memory bypassing any limits.  Assuming that
-the kernel would only double the memory is not right - even if the
-process is limited in physical memory it may pass address of e.g. mapped file.
+ drivers/net/gianfar.c |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
 
-
-Also this specific driver is happy with very low limit of copied string.
-
-> If it fails then return an error,
-> probably ENOMEM.
-
-It is already done in strndup_user().
-
-> And that attempt to invoke kmalloc() shouldn't spew a
-> warning.
-
-It is not obvious for me to change strndup_user's behaviour, I'm not
-familiar with this code.
-
-
+diff --git a/drivers/net/gianfar.c b/drivers/net/gianfar.c
+index 49e4ce1..d1bec62 100644
+--- a/drivers/net/gianfar.c
++++ b/drivers/net/gianfar.c
+@@ -577,11 +577,10 @@ static int gfar_parse_group(struct device_node *np,
+ 			irq_of_parse_and_map(np, 1);
+ 		priv->gfargrp[priv->num_grps].interruptError  			irq_of_parse_and_map(np,2);
+-		if (priv->gfargrp[priv->num_grps].interruptTransmit < 0 ||
+-			priv->gfargrp[priv->num_grps].interruptReceive < 0 ||
+-			priv->gfargrp[priv->num_grps].interruptError < 0) {
++		if (priv->gfargrp[priv->num_grps].interruptTransmit = NO_IRQ ||
++		    priv->gfargrp[priv->num_grps].interruptReceive  = NO_IRQ ||
++		    priv->gfargrp[priv->num_grps].interruptError    = NO_IRQ)
+ 			return -EINVAL;
+-		}
+ 	}
+ 
+ 	priv->gfargrp[priv->num_grps].grp_id = priv->num_grps;
 -- 
-Vasiliy Kulikov
-http://www.openwall.com - bringing security into open computing environments
+1.7.2.2
