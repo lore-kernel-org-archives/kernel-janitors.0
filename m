@@ -1,56 +1,61 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Sun, 14 Nov 2010 09:25:33 +0000
-Subject: [PATCH v2] fs: select: fix information leak to userspace
-Message-Id: <20101114092533.GB5323@albatros>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Mon, 15 Nov 2010 02:06:43 +0000
+Subject: Re: [PATCH v2] fs: select: fix information leak to userspace
+Message-Id: <20101114180643.593d19ac.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1289421483-23907-1-git-send-email-segooon@gmail.com>
- <20101112120834.33062900.akpm@linux-foundation.org>
- <8D90F8B2-EA29-4EB9-9807-294CE0D5523B@dilger.ca>
-In-Reply-To: <8D90F8B2-EA29-4EB9-9807-294CE0D5523B@dilger.ca>
+	<20101112120834.33062900.akpm@linux-foundation.org>
+	<8D90F8B2-EA29-4EB9-9807-294CE0D5523B@dilger.ca>
+	<20101114092533.GB5323@albatros>
+In-Reply-To: <20101114092533.GB5323@albatros>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segoon@openwall.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, kernel-janitors@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On some architectures __kernel_suseconds_t is int.  On these archs
-struct timeval has padding bytes at the end.  This struct is copied to
-userspace with these padding bytes uninitialized.  This leads to leaking
-of contents of kernel stack memory.
+On Sun, 14 Nov 2010 12:25:33 +0300 Vasiliy Kulikov <segoon@openwall.com> wrote:
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- Patch v1 used memset(), it was waste of cycles on almost all archs.
+> On some architectures __kernel_suseconds_t is int.  On these archs
+> struct timeval has padding bytes at the end.  This struct is copied to
+> userspace with these padding bytes uninitialized.  This leads to leaking
+> of contents of kernel stack memory.
+> 
+> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> ---
+>  Patch v1 used memset(), it was waste of cycles on almost all archs.
+> 
+>  Compile tested.
+> 
+>  fs/select.c |    7 ++++---
+>  1 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/select.c b/fs/select.c
+> index b7b10aa..43d4805 100644
+> --- a/fs/select.c
+> +++ b/fs/select.c
+> @@ -288,7 +288,6 @@ static int poll_select_copy_remaining(struct timespec *end_time, void __user *p,
+>  				      int timeval, int ret)
+>  {
+>  	struct timespec rts;
+> -	struct timeval rtv;
+>  
+>  	if (!p)
+>  		return ret;
+> @@ -306,8 +305,10 @@ static int poll_select_copy_remaining(struct timespec *end_time, void __user *p,
+>  		rts.tv_sec = rts.tv_nsec = 0;
+>  
+>  	if (timeval) {
+> -		rtv.tv_sec = rts.tv_sec;
+> -		rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
+> +		struct timeval rtv = {
+> +			.tv_sec = rts.tv_sec,
+> +			.tv_usec = rts.tv_nsec / NSEC_PER_USEC
+> +		};
+>  
+>  		if (!copy_to_user(p, &rtv, sizeof(rtv)))
+>  			return ret;
 
- Compile tested.
+Please check the assembly code - this will still leave four bytes of
+uninitalised stack data in 'rtv', surely.
 
- fs/select.c |    7 ++++---
- 1 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/fs/select.c b/fs/select.c
-index b7b10aa..43d4805 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -288,7 +288,6 @@ static int poll_select_copy_remaining(struct timespec *end_time, void __user *p,
- 				      int timeval, int ret)
- {
- 	struct timespec rts;
--	struct timeval rtv;
- 
- 	if (!p)
- 		return ret;
-@@ -306,8 +305,10 @@ static int poll_select_copy_remaining(struct timespec *end_time, void __user *p,
- 		rts.tv_sec = rts.tv_nsec = 0;
- 
- 	if (timeval) {
--		rtv.tv_sec = rts.tv_sec;
--		rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
-+		struct timeval rtv = {
-+			.tv_sec = rts.tv_sec,
-+			.tv_usec = rts.tv_nsec / NSEC_PER_USEC
-+		};
- 
- 		if (!copy_to_user(p, &rtv, sizeof(rtv)))
- 			return ret;
--- 
-1.7.0.4
