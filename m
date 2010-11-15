@@ -1,29 +1,61 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 14 Nov 2010 20:29:05 +0000
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Mon, 15 Nov 2010 14:37:37 +0000
 Subject: Re: [PATCH] fs: jffs2: fix error value sign
-Message-Id: <20101114202905.GA21614@bicker>
+Message-Id: <20101115143735.GA4548@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1289765320-6071-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1289765320-6071-1-git-send-email-segoon@openwall.com>
+	<20101114202905.GA21614@bicker>
+In-Reply-To: <20101114202905.GA21614@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segoon@openwall.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Sun, Nov 14, 2010 at 11:08:39PM +0300, Vasiliy Kulikov wrote:
-> do_verify_xattr_datum(), do_load_xattr_datum(), load_xattr_datum()
-> and verify_xattr_ref() should return negative value on error.
-> Sometimes they return EIO that is positive.  Change this to -EIO.
+On Sun, Nov 14, 2010 at 23:29 +0300, Dan Carpenter wrote:
+> On Sun, Nov 14, 2010 at 11:08:39PM +0300, Vasiliy Kulikov wrote:
+> > do_verify_xattr_datum(), do_load_xattr_datum(), load_xattr_datum()
+> > and verify_xattr_ref() should return negative value on error.
+> > Sometimes they return EIO that is positive.  Change this to -EIO.
+> > 
+> > Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> > ---
+> >  This driver is not compilable, so the patch is not tested.
+> > 
 > 
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
-> ---
->  This driver is not compilable, so the patch is not tested.
+> It compiles.
+
+Really?
+
+x86_64, linux-next:
+
+make -C /home/vasya/linux fs/jffs2/xattr.o
+make: Вход в каталог `/home/vasya/dev/linux-next'
+  CHK     include/linux/version.h
+  CHK     include/generated/utsrelease.h
+  CALL    scripts/checksyscalls.sh
+  CC      fs/jffs2/xattr.o
+fs/jffs2/xattr.c: In function ‘unload_xattr_datum’:
+fs/jffs2/xattr.c:87: error: ‘struct jffs2_sb_info’ has no member named ‘xdatum_mem_usage’
+fs/jffs2/xattr.c: In function ‘reclaim_xattr_datum’: fs/jffs2/xattr.c:105: error: ‘struct jffs2_sb_info’ has no member named
+‘xdatum_mem_threshold’ fs/jffs2/xattr.c:105: error: ‘struct jffs2_sb_info’ has no member named
+‘xdatum_mem_usage’ fs/jffs2/xattr.c:108: error: ‘struct jffs2_sb_info’ has no member named
+‘xdatum_mem_usage’ fs/jffs2/xattr.c:109: error: ‘struct jffs2_sb_info’ has no member named
+‘xdatum_mem_usage’ fs/jffs2/xattr.c:110: error: ‘XATTRINDEX_HASHSIZE’ undeclared (first use
+in this function) fs/jffs2/xattr.c:110: error: (Each undeclared identifier is reported
+only once
+fs/jffs2/xattr.c:110: error: for each function it appears in.)
+
+
+For both defconfig and allyesconfig.
+
+> regards,
+> dan carpenter
 > 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-It compiles.
-
-regards,
-dan carpenter
-
-
+-- 
+Vasiliy
