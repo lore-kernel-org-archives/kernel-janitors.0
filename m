@@ -1,36 +1,24 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Fri, 19 Nov 2010 18:41:49 +0000
-Subject: [PATCH] media: video: pvrusb2: fix memory leak
-Message-Id: <1290192109-11611-1-git-send-email-segoon@openwall.com>
+From: s_rz@netspace.net.au
+Date: Mon, 15 Nov 2010 10:33:56 +0000
+Subject: 
+Message-Id: <1289817236.4ce10c940ce7e@webmail.netspace.net.au>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
-Cc: Mike Isely <isely@pobox.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Use put_device() instead of kfree() because of device name leak.
+Congrats (=A31,000,000.00 GBP).send your=20
+FullName|Address|Age|Sex|Occupation|Tel|Country.
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- Compile tested only.
 
- drivers/media/video/pvrusb2/pvrusb2-sysfs.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/media/video/pvrusb2/pvrusb2-sysfs.c b/drivers/media/video/pvrusb2/pvrusb2-sysfs.c
-index 3d7e5aa..281806b 100644
---- a/drivers/media/video/pvrusb2/pvrusb2-sysfs.c
-+++ b/drivers/media/video/pvrusb2/pvrusb2-sysfs.c
-@@ -647,7 +647,7 @@ static void class_dev_create(struct pvr2_sysfs *sfp,
- 	if (ret) {
- 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
- 			   "device_register failed");
--		kfree(class_dev);
-+		put_device(class_dev);
- 		return;
- 	}
- 
--- 
-1.7.0.4
 
+------------------------------------------------------------
+This email was sent from Netspace Webmail: http://www.netspace.net.au
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
