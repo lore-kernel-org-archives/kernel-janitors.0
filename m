@@ -1,26 +1,59 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 08 Nov 2010 13:42:57 +0000
-Subject: Re: [PATCH] block: ioctl: fix information leak to userland
-Message-Id: <4CD7FE61.4000606@kernel.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 17 Nov 2010 05:13:39 +0000
+Subject: [patch 2/3] [media] lirc_dev: add some __user annotations
+Message-Id: <20101117051339.GE31724@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288882096-13456-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288882096-13456-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Jarod Wilson <jarod@redhat.com>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2010-11-04 15:48, Vasiliy Kulikov wrote:
-> Structure hd_geometry is copied to userland with 4 padding bytes
-> between cylinders and start fields uninitialized on 64-bit platforms.
-> It leads to leaking of contents of kernel stack memory.
-> 
-> Currently there is no memset() in real implementations of getgeo()
-> in drivers/block/, so it makes sense to have memset() in blkdev_ioctl().
+Sparse complains because there are no __user annotations.
 
-Thanks, applied.
+drivers/media/IR/lirc_dev.c:156:27: warning:
+	incorrect type in initializer (incompatible argument 2 (different address spaces))
+drivers/media/IR/lirc_dev.c:156:27:    expected int ( *read )( ... )
+drivers/media/IR/lirc_dev.c:156:27:    got int ( extern [toplevel] *<noident> )( ... )
 
--- 
-Jens Axboe
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/include/media/lirc_dev.h b/include/media/lirc_dev.h
+index 54780a5..630e702 100644
+--- a/include/media/lirc_dev.h
++++ b/include/media/lirc_dev.h
+@@ -217,9 +217,9 @@ int lirc_dev_fop_open(struct inode *inode, struct file *file);
+ int lirc_dev_fop_close(struct inode *inode, struct file *file);
+ unsigned int lirc_dev_fop_poll(struct file *file, poll_table *wait);
+ long lirc_dev_fop_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+-ssize_t lirc_dev_fop_read(struct file *file, char *buffer, size_t length,
++ssize_t lirc_dev_fop_read(struct file *file, char __user *buffer, size_t length,
+ 			  loff_t *ppos);
+-ssize_t lirc_dev_fop_write(struct file *file, const char *buffer, size_t length,
+-			   loff_t *ppos);
++ssize_t lirc_dev_fop_write(struct file *file, const char __user *buffer,
++			   size_t length, loff_t *ppos);
+ 
+ #endif
+diff --git a/drivers/media/IR/lirc_dev.c b/drivers/media/IR/lirc_dev.c
+index 8ab9d87..fbca94f 100644
+--- a/drivers/media/IR/lirc_dev.c
++++ b/drivers/media/IR/lirc_dev.c
+@@ -627,7 +627,7 @@ long lirc_dev_fop_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ EXPORT_SYMBOL(lirc_dev_fop_ioctl);
+ 
+ ssize_t lirc_dev_fop_read(struct file *file,
+-			  char *buffer,
++			  char __user *buffer,
+ 			  size_t length,
+ 			  loff_t *ppos)
+ {
+@@ -742,7 +742,7 @@ void *lirc_get_pdata(struct file *file)
+ EXPORT_SYMBOL(lirc_get_pdata);
+ 
+ 
+-ssize_t lirc_dev_fop_write(struct file *file, const char *buffer,
++ssize_t lirc_dev_fop_write(struct file *file, const char __user *buffer,
+ 			   size_t length, loff_t *ppos)
+ {
+ 	struct irctl *ir = irctls[iminor(file->f_dentry->d_inode)];
