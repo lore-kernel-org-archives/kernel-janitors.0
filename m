@@ -1,38 +1,31 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Mon, 29 Nov 2010 14:28:08 +0000
-Subject: Re: Tasks to do
-Message-Id: <alpine.DEB.2.00.1011290927370.10860@localhost6.localdomain6>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 17 Nov 2010 05:10:32 +0000
+Subject: [patch] dca: missing unlock in unregister_dca_providers()
+Message-Id: <20101117051032.GC31724@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4CF31519.5030404@gmail.com>
-In-Reply-To: <4CF31519.5030404@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Maciej Sosnowski <maciej.sosnowski@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 29 Nov 2010, Jorge Merlino wrote:
+We return here with the lock held and IRQs disabled by mistake.
 
-> Hi all
->
-> I'm interested in helping with the deveopment of the linux kernel
-> and found this mailing list. I saw a few related todo lists but all
-> of them seem quite old.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> I'd like to know where do I look for some task to do and if I neet
-> to tell anybody I'm working on that in order to prevent duplication
-> of work.
-
-  is there, in fact, a relatively up-to-date TO DO list for kernel
-janitorial work these days?
-
-rday
-
--- 
-
-====================================
-Robert P. J. Day                               Waterloo, Ontario, CANADA
-                        http://crashcourse.ca
-
-Twitter:                                       http://twitter.com/rpjday
-LinkedIn:                               http://ca.linkedin.com/in/rpjday
-====================================
+diff --git a/drivers/dca/dca-core.c b/drivers/dca/dca-core.c
+index b98c676..b4c95be 100644
+--- a/drivers/dca/dca-core.c
++++ b/drivers/dca/dca-core.c
+@@ -110,8 +110,10 @@ static void unregister_dca_providers(void)
+ 
+ 	/* at this point only one domain in the list is expected */
+ 	domain = list_first_entry(&dca_domains, struct dca_domain, node);
+-	if (!domain)
++	if (!domain) {
++		spin_unlock_irqrestore(&dca_lock, flags);
+ 		return;
++	}
+ 
+ 	list_for_each_entry_safe(dca, _dca, &domain->dca_providers, node) {
+ 		list_del(&dca->node);
