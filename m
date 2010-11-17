@@ -1,28 +1,86 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Date: Wed, 24 Nov 2010 06:59:21 +0000
-Subject: Re: [PATCH] video: arcfb: fix buffer overflow
-Message-Id: <20101124065921.GH11705@linux-sh.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 17 Nov 2010 05:20:15 +0000
+Subject: [patch 3/3] [media] lirc_dev: fixes in lirc_dev_fop_read()
+Message-Id: <20101117052015.GF31724@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290361202-15065-1-git-send-email-segoon@openwall.com> <20101124062558.GF11705@linux-sh.org> <20101124064649.GQ1522@bicker>
-In-Reply-To: <20101124064649.GQ1522@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Vasiliy Kulikov <segoon@openwall.com>, kernel-janitors@vger.kernel.org, Jaya Kumar <jayalk@intworks.biz>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Jarod Wilson <jarod@redhat.com>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Nov 24, 2010 at 09:46:49AM +0300, Dan Carpenter wrote:
-> On Wed, Nov 24, 2010 at 03:25:58PM +0900, Paul Mundt wrote:
-> > On Sun, Nov 21, 2010 at 08:40:01PM +0300, Vasiliy Kulikov wrote:
-> > > (count + p) is not checked for integer overflow.  If p < fbmemlength
-> > > and count = (size_t)(1 - p) (very big unsigned integer) then
-> > > count + p = 1 < fbmemlength and copy_to_user(base_addr+p, buf, count)
-> > > overflows base_addr.
-> > > 
-> > > Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
-> > 
-> > Applied, thanks.
-> 
-> The patch is harmless, but the integer overflow would actually be caught
-> in rw_verify_area().
-> 
-Ah, so it is, I'll drop it then, thanks.
+This makes several changes but they're in one function and sort of
+related:
+
+"buf" was leaked on error.  The leak if we try to read an invalid
+length is the main concern because it could be triggered over and
+over.
+
+If the copy_to_user() failed, then the original code returned the 
+number of bytes remaining.  read() is supposed to be the opposite way,
+where we return the number of bytes copied.  I changed it to just return
+-EFAULT on errors.
+
+Also I changed the debug output from "-EFAULT" to just "<fail>" because
+it isn't -EFAULT necessarily.  And since we go though that path if the
+length is invalid now, there was another debug print that I removed.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/media/IR/lirc_dev.c b/drivers/media/IR/lirc_dev.c
+index fbca94f..6b9fc74 100644
+--- a/drivers/media/IR/lirc_dev.c
++++ b/drivers/media/IR/lirc_dev.c
+@@ -647,18 +647,18 @@ ssize_t lirc_dev_fop_read(struct file *file,
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	if (mutex_lock_interruptible(&ir->irctl_lock))
+-		return -ERESTARTSYS;
++	if (mutex_lock_interruptible(&ir->irctl_lock)) {
++		ret = -ERESTARTSYS;
++		goto out_unlocked;
++	}
+ 	if (!ir->attached) {
+-		mutex_unlock(&ir->irctl_lock);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_locked;
+ 	}
+ 
+ 	if (length % ir->chunk_size) {
+-		dev_dbg(ir->d.dev, LOGHEAD "read result = -EINVAL\n",
+-			ir->d.name, ir->d.minor);
+-		mutex_unlock(&ir->irctl_lock);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_locked;
+ 	}
+ 
+ 	/*
+@@ -709,18 +709,23 @@ ssize_t lirc_dev_fop_read(struct file *file,
+ 			lirc_buffer_read(ir->buf, buf);
+ 			ret = copy_to_user((void *)buffer+written, buf,
+ 					   ir->buf->chunk_size);
+-			written += ir->buf->chunk_size;
++			if (!ret)
++				written += ir->buf->chunk_size;
++			else
++				ret = -EFAULT;
+ 		}
+ 	}
+ 
+ 	remove_wait_queue(&ir->buf->wait_poll, &wait);
+ 	set_current_state(TASK_RUNNING);
++
++out_locked:
+ 	mutex_unlock(&ir->irctl_lock);
+ 
+ out_unlocked:
+ 	kfree(buf);
+ 	dev_dbg(ir->d.dev, LOGHEAD "read result = %s (%d)\n",
+-		ir->d.name, ir->d.minor, ret ? "-EFAULT" : "OK", ret);
++		ir->d.name, ir->d.minor, ret ? "<fail>" : "<ok>", ret);
+ 
+ 	return ret ? ret : written;
+ }
