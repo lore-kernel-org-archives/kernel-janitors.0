@@ -1,33 +1,23 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 17 Nov 2010 05:07:32 +0000
-Subject: [patch] ext4: missing unlock in ext4_clear_request_list()
-Message-Id: <20101117050732.GB31724@bicker>
+From: "Ted Ts'o" <tytso@mit.edu>
+Date: Wed, 17 Nov 2010 19:01:25 +0000
+Subject: Re: [patch] ext4: missing unlock in ext4_clear_request_list()
+Message-Id: <20101117190125.GJ3290@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101117050732.GB31724@bicker>
+In-Reply-To: <20101117050732.GB31724@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>, Lukas Czerner <lczerner@redhat.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>, Lukas Czerner <lczerner@redhat.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-ja
 
-If the the li_request_list was empty then it returned with the lock
-held.  Instead of adding a "goto unlock" I just removed that special
-case and let it go past the empty list_for_each_safe().
+On Wed, Nov 17, 2010 at 08:07:32AM +0300, Dan Carpenter wrote:
+> If the the li_request_list was empty then it returned with the lock
+> held.  Instead of adding a "goto unlock" I just removed that special
+> case and let it go past the empty list_for_each_safe().
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-This is a static checker patch.
+Nice catch.  Thanks, I've grabbed this and put it into the ext4 patch
+queue and will be pushing it to Linus ASAP.
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 61182fe..ef09d14 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2799,9 +2799,6 @@ static void ext4_clear_request_list(void)
- 	struct ext4_li_request *elr;
- 
- 	mutex_lock(&ext4_li_info->li_list_mtx);
--	if (list_empty(&ext4_li_info->li_request_list))
--		return;
--
- 	list_for_each_safe(pos, n, &ext4_li_info->li_request_list) {
- 		elr = list_entry(pos, struct ext4_li_request,
- 				 lr_request);
+					- Ted
