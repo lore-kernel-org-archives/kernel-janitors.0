@@ -1,62 +1,49 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Tue, 30 Nov 2010 10:22:47 +0000
-Subject: Re: [patch] scsi/osd: checking NULL instead of ERR_PTR()
-Message-Id: <4CF4D077.8070004@panasas.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 17 Nov 2010 06:55:05 +0000
+Subject: [patch] Staging: ft1000-usb: copying to wrong location
+Message-Id: <20101117065505.GG31724@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101112043146.GC3533@bicker> <4CDFE6A9.10704@panasas.com> <4CE8F510.3090801@panasas.com>
-In-Reply-To: <4CE8F510.3090801@panasas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <James.Bottomley@suse.de>
-Cc: Dan Carpenter <error27@gmail.com>, Benny Halevy <bhalevy@panasas.com>, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On 11/21/2010 12:31 PM, Boaz Harrosh wrote:
-> On 11/14/2010 03:39 PM, Boaz Harrosh wrote:
->> On 11/12/2010 06:31 AM, Dan Carpenter wrote:
->>> bio_map_kern() returns ERR_PTRs on failure and never returns NULL.
->>>
->>> Signed-off-by: Dan Carpenter <error27@gmail.com>
->>>
->>
->> Acked-by: Boaz Harrosh <bharrosh@panasas.com>
->>
-> 
-> James! Please submit this patch for scsi-rc-fixes. It is an important
-> fix for code that went into this merge window.
-> 
-> Thanks
-> Boaz
-> 
+We made "dpram_data" a pointer ealier but missed one place which needs
+to be changed.  It causes a compile error with
+CONFIG_DEBUG_STRICT_USER_COPY_CHECKS=y
 
-James, ping?
+In function ‘copy_from_user’,
+    inlined from ‘ft1000_ChIoctl’ at
+	drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c:701:
+	arch/x86/include/asm/uaccess_32.h:212: 	error: call to
+	‘copy_from_user_overflow’ declared with attribute error:
+	copy_from_user() buffer size is not provably correct
+make[4]: *** [drivers/staging/ft1000/ft1000-usb/ft1000_chdev.o] Error 1
 
->>> diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
->>> index 0433ea6..b798919 100644
->>> --- a/drivers/scsi/osd/osd_initiator.c
->>> +++ b/drivers/scsi/osd/osd_initiator.c
->>> @@ -951,8 +951,8 @@ static int _osd_req_finalize_cdb_cont(struct osd_request *or, const u8 *cap_key)
->>>  	/* create a bio for continuation segment */
->>>  	bio = bio_map_kern(req_q, or->cdb_cont.buff, or->cdb_cont.total_bytes,
->>>  			   GFP_KERNEL);
->>> -	if (unlikely(!bio))
->>> -		return -ENOMEM;
->>> +	if (unlikely(IS_ERR(bio)))
->>> +		return PTR_ERR(bio);
->>>  
->>>  	bio->bi_rw |= REQ_WRITE;
->>>  
->>
->> Wahoo, good catch, thanks! This is new code in 2.6.37-rc1. It should be pushed
->> for current Kernel.
->>
->> James: please apply to scsi-rc-fixes for the next round of fixes?
->>
->> Thanks
->> Boaz
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Also I initialized "dpram_data" to NULL.  That silences a compiler
+warning from where we pass uninitialized data to the kfree(dpram_data);
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
+index 20d5098..d546750 100644
+--- a/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
++++ b/drivers/staging/ft1000/ft1000-usb/ft1000_chdev.c
+@@ -650,7 +650,7 @@ static long ft1000_ChIoctl (struct file *File, unsigned int Command,
+         break;
+     case IOCTL_SET_DPRAM_CMD:
+         {
+-            IOCTL_DPRAM_BLK *dpram_data;
++            IOCTL_DPRAM_BLK *dpram_data = NULL;
+             //IOCTL_DPRAM_COMMAND dpram_command;
+             USHORT qtype;
+             USHORT msgsz;
+@@ -698,7 +698,7 @@ static long ft1000_ChIoctl (struct file *File, unsigned int Command,
+ 			break;
+ 
+                 //if ( copy_from_user(&(dpram_command.dpram_blk), (PIOCTL_DPRAM_BLK)Argument, msgsz+2) ) {
+-                if ( copy_from_user(&dpram_data, argp, msgsz+2) ) {
++                if (copy_from_user(dpram_data, argp, msgsz + 2)) {
+                     DEBUG("FT1000:ft1000_ChIoctl: copy fault occurred\n");
+                     result = -EFAULT;
+                 }
