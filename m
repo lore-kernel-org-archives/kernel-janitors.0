@@ -1,25 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 18 Nov 2010 18:36:18 +0000
-Subject: Re: [PATCH 4/4] net: caif: spi: fix potential NULL dereference
-Message-Id: <20101118.103618.102550300.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 17 Nov 2010 05:12:23 +0000
+Subject: [patch 1/3] [media] lirc_dev: stray unlock in lirc_dev_fop_poll()
+Message-Id: <20101117051223.GD31724@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290104226-31428-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1290104226-31428-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segoon@openwall.com
-Cc: kernel-janitors@vger.kernel.org, sjur.brandeland@stericsson.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Jarod Wilson <jarod@redhat.com>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Thu, 18 Nov 2010 21:17:05 +0300
+We shouldn't unlock here.  I think this was a cut and paste error.
 
-> alloc_netdev() is not checked here for NULL return value.  dev is
-> check instead.  It might lead to NULL dereference of ndev.
-> 
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
-> ---
->  Compile tested.
->  Maybe dev is also must be checked here, but it looks like a trivial typo.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Definitely looks correct to me, applied, thanks!
+diff --git a/drivers/media/IR/lirc_dev.c b/drivers/media/IR/lirc_dev.c
+index 8418b14..8ab9d87 100644
+--- a/drivers/media/IR/lirc_dev.c
++++ b/drivers/media/IR/lirc_dev.c
+@@ -522,10 +522,8 @@ unsigned int lirc_dev_fop_poll(struct file *file, poll_table *wait)
+ 
+ 	dev_dbg(ir->d.dev, LOGHEAD "poll called\n", ir->d.name, ir->d.minor);
+ 
+-	if (!ir->attached) {
+-		mutex_unlock(&ir->irctl_lock);
++	if (!ir->attached)
+ 		return POLLERR;
+-	}
+ 
+ 	poll_wait(file, &ir->buf->wait_poll, wait);
+ 
