@@ -1,26 +1,38 @@
-From: =?UTF-8?B?IlBldGVyIFBhbijmvZjljavlubMpIg==?=
-Date: Mon, 08 Nov 2010 06:24:06 +0000
-Subject: Re: [PATCH] ext4:memset is needless in ext4_ext_remove_space()
-Message-Id: <4CD79786.9000303@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 18 Nov 2010 03:56:37 +0000
+Subject: [patch] [media] cx231xx: stray unlock on error path
+Message-Id: <20101118035637.GL31724@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4CD75033.7080902@redflag-linux.com> <20101108043752.GB5563@bicker>
-In-Reply-To: <20101108043752.GB5563@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>, =?UTF-8?B?Iua9mOWNq+W5syhQZXRlciBQ?= =?UTF-8?B?YW4pIg==?= <wppan@redflag-linux.com>, tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kerne
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Devin Heitmueller <dheitmueller@hauppauge.com>, Sri Devi <Srinivasa.Deevi@conexant.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jarod Wilson <jarod@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2010年11月08日 12:37, Dan Carpenter wrote:
-> This is inside a loop and sometimes we do i++ and sometimes i--. Are
-> you absolutely positive that path + i isn't initialized?
->
-> I haven't followed this code through all the way but my instinct is
-> that the memset is there for a reason.
->    
-I know that I misunderstood it.
+The lock isn't held here and doesn't need to be unlocked.  The code has
+been like this since the driver was merged. 
 
-Thank you!
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Regards
-
-Peter Pan
+diff --git a/drivers/media/video/cx231xx/cx231xx-cards.c b/drivers/media/video/cx231xx/cx231xx-cards.c
+index 56c2d81..b7b905f 100644
+--- a/drivers/media/video/cx231xx/cx231xx-cards.c
++++ b/drivers/media/video/cx231xx/cx231xx-cards.c
+@@ -731,16 +731,12 @@ static int cx231xx_init_dev(struct cx231xx **devhandle, struct usb_device *udev,
+ 	retval = cx231xx_register_analog_devices(dev);
+ 	if (retval < 0) {
+ 		cx231xx_release_resources(dev);
+-		goto fail_reg_devices;
++		return retval;
+ 	}
+ 
+ 	cx231xx_init_extension(dev);
+ 
+ 	return 0;
+-
+-fail_reg_devices:
+-	mutex_unlock(&dev->lock);
+-	return retval;
+ }
+ 
+ #if defined(CONFIG_MODULES) && defined(MODULE)
