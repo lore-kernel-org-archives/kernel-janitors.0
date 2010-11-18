@@ -1,32 +1,55 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 12 Nov 2010 15:30:54 +0000
-Subject: Re: [patch] Staging: rtl8712: signedness bug in init
-Message-Id: <20101112153054.GH3533@bicker>
+Date: Thu, 18 Nov 2010 03:58:04 +0000
+Subject: [patch] UBI: release locks in check_corruption()
+Message-Id: <20101118035804.GM31724@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101112051113.GF3533@bicker>
-In-Reply-To: <20101112051113.GF3533@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
 
-On Fri, Nov 12, 2010 at 07:24:24AM -0600, Larry Finger wrote:
-> On 11/11/2010 11:11 PM, Dan Carpenter wrote:
-> > PollingCnt is 20 and that means we loop 20 times and then run the
-> > timeout code.  After the end of the loop PollingCnt should be -1 but
-> > because it's an unsigned char, it's actually 255 and the timeout
-> > code never runs.
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-> 
-> As a point of interest, did you actually hit a timeout, or was this found by a
-> code audit?
+Commit 45aafd32996e27 "UBI: tighten the corrupted PEB criteria"
+introduced some return paths that didn't release the ubi->buf_mutex;
 
-This was a static check thing.  (http://smatch.sf.net)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-regards,
-dan carpenter
-
-
+diff --git a/drivers/mtd/ubi/scan.c b/drivers/mtd/ubi/scan.c
+index 3c63186..204345b 100644
+--- a/drivers/mtd/ubi/scan.c
++++ b/drivers/mtd/ubi/scan.c
+@@ -787,16 +787,15 @@ static int check_corruption(struct ubi_device *ubi, struct ubi_vid_hdr *vid_hdr,
+ 		 * erased, so it became unstable and corrupted, and should be
+ 		 * erased.
+ 		 */
+-		return 0;
++		err = 0;
++		goto out_unlock;
+ 	}
+ 
+ 	if (err)
+-		return err;
++		goto out_unlock;
+ 
+-	if (ubi_check_pattern(ubi->peb_buf1, 0xFF, ubi->leb_size)) {
+-		mutex_unlock(&ubi->buf_mutex);
+-		return 0;
+-	}
++	if (ubi_check_pattern(ubi->peb_buf1, 0xFF, ubi->leb_size))
++		goto out_unlock;
+ 
+ 	ubi_err("PEB %d contains corrupted VID header, and the data does not "
+ 		"contain all 0xFF, this may be a non-UBI PEB or a severe VID "
+@@ -806,8 +805,11 @@ static int check_corruption(struct ubi_device *ubi, struct ubi_vid_hdr *vid_hdr,
+ 		pnum, ubi->leb_start, ubi->leb_size);
+ 	ubi_dbg_print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_OFFSET, 32, 1,
+ 			       ubi->peb_buf1, ubi->leb_size, 1);
++	err = 1;
++
++out_unlock:
+ 	mutex_unlock(&ubi->buf_mutex);
+-	return 1;
++	return err;
+ }
+ 
+ /**
