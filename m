@@ -1,51 +1,38 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 12 Nov 2010 05:04:43 +0000
-Subject: [patch] Staging: quickstart: free after input_unregister_device()
-Message-Id: <20101112050443.GD3533@bicker>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Thu, 18 Nov 2010 18:16:54 +0000
+Subject: [PATCH 2/4] x86: platform: olpc: fix potential NULL pointer dereference
+Message-Id: <1290104216-31326-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org
 
-input_unregister_device() releases "quickstart_input" so the
-input_free_device() is a double free.  Also I noticed that there is a
-memory leak if the call to input_register_device() fails.
+pdev is never NULL here, instead we should check pcidev as
+it is returned from pci_get_device() and may be NULL.
+This code dereferences NULL in pci_enable_device_io() call.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested.
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index d746715..d83bec8 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -355,7 +355,6 @@ static int quickstart_acpi_remove(struct acpi_device *device, int type)
- static void quickstart_exit(void)
- {
- 	input_unregister_device(quickstart_input);
--	input_free_device(quickstart_input);
+ arch/x86/platform/olpc/olpc-xo1.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/platform/olpc/olpc-xo1.c b/arch/x86/platform/olpc/olpc-xo1.c
+index f5442c0..c35d03a 100644
+--- a/arch/x86/platform/olpc/olpc-xo1.c
++++ b/arch/x86/platform/olpc/olpc-xo1.c
+@@ -94,7 +94,7 @@ static int __devinit olpc_xo1_probe(struct platform_device *pdev)
  
- 	device_remove_file(&pf_device->dev, &dev_attr_pressed_button);
- 	device_remove_file(&pf_device->dev, &dev_attr_buttons);
-@@ -375,6 +374,7 @@ static int __init quickstart_init_input(void)
- {
- 	struct quickstart_btn **ptr = &quickstart_data.btn_lst;
- 	int count;
-+	int ret;
+ 	pcidev = pci_get_device(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CS5536_ISA,
+ 				NULL);
+-	if (!pdev)
++	if (!pcidev)
+ 		return -ENODEV;
  
- 	quickstart_input = input_allocate_device();
- 
-@@ -391,7 +391,13 @@ static int __init quickstart_init_input(void)
- 		ptr = &((*ptr)->next);
- 	}
- 
--	return input_register_device(quickstart_input);
-+	ret = input_register_device(quickstart_input);
-+	if (ret) {
-+		input_free_device(quickstart_input);
-+		return ret;
-+	}
-+
-+	return 0;
- }
- 
- static int __init quickstart_init(void)
+ 	r = setup_bases(pcidev);
+-- 
+1.7.0.4
+
