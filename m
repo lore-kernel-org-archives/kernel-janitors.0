@@ -1,38 +1,57 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Thu, 18 Nov 2010 18:16:45 +0000
-Subject: [PATCH 1/4] x86: platform: mrst: check platform_device_register() return code
-Message-Id: <1290104207-31279-1-git-send-email-segoon@openwall.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Thu, 18 Nov 2010 21:27:10 +0000
+Subject: Re: [PATCH 1/4] x86: platform: mrst: check platform_device_register()
+Message-Id: <alpine.LFD.2.00.1011182224590.2900@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1290104207-31279-1-git-send-email-segoon@openwall.com> <20101118181814.290811f0@linux.intel.com> <20101118184419.GA31886@albatros> <20101118201808.06731611@linux.intel.com>
+In-Reply-To: <20101118201808.06731611@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Feng Tang <feng.tang@intel.com>, Alan Cox <alan@linux.intel.com>, Arjan van de Ven <arjan@linux.intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, linux-kernel@vger.kernel.org
+To: Alan Cox <alan@linux.intel.com>
+Cc: Vasiliy Kulikov <segoon@openwall.com>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Feng Tang <feng.tang@intel.com>, Arjan van de Ven <arjan@linux.intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, linux-kernel@vger.kernel.org
 
-platform_device_register() may fail, if so propagate the return
-code from mrst_device_create().
+On Thu, 18 Nov 2010, Alan Cox wrote:
+> On Thu, 18 Nov 2010 21:44:21 +0300
+> Vasiliy Kulikov <segoon@openwall.com> wrote:
+> 
+> > On Thu, Nov 18, 2010 at 18:18 +0000, Alan Cox wrote:
+> > > >  I cannot compile this driver in next-20101117, so it is not
+> > > > tested at all.
+> > > 
+> > > Compile or test - if it bombs out compiling for you please send me
+> > > (off list the .config that fails so I can fix that
+> > > 
+> > > Otherwise NAK the patch because it needs to do the cleanup but
+> > > thanks for finding the bug - you've done the hard 99%
+> > 
+> > make -C /home/vasya/linux arch/x86/platform/mrst/vrtc.o
+> > make: Entering directory `/home/vasya/dev/linux-next'
+> >   CHK     include/linux/version.h
+> >   CHK     include/generated/utsrelease.h
+> >   CALL    scripts/checksyscalls.sh
+> >   CC      arch/x86/platform/mrst/vrtc.o
+> > arch/x86/platform/mrst/vrtc.c: In function 'mrst_rtc_init':
+> > arch/x86/platform/mrst/vrtc.c:113: error: 'FIX_LNW_VRTC' undeclared
+> > (first use in this function) arch/x86/platform/mrst/vrtc.c:113:
+> > error: (Each undeclared identifier is reported only once
+> > arch/x86/platform/mrst/vrtc.c:113: error: for each function it
+> > appears in.) make[1]: *** [arch/x86/platform/mrst/vrtc.o] Error 1
+> > 
+> > Both with allyesconfig and allmodconfig, x86_64.
+> 
+> I can't duplicate this.
+> 
+> It's defined if CONFIG_X86_MRST is defined, and the file in question is
+> only compiled if CONFIG_X86_MRST is defined
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- I cannot compile this driver in next-20101117, so it is not tested at all.
+Of course you can't duplicate this:
 
- arch/x86/platform/mrst/vrtc.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+> > make -C /home/vasya/linux arch/x86/platform/mrst/vrtc.o
 
-diff --git a/arch/x86/platform/mrst/vrtc.c b/arch/x86/platform/mrst/vrtc.c
-index 4d3f770..32cd7ed 100644
---- a/arch/x86/platform/mrst/vrtc.c
-+++ b/arch/x86/platform/mrst/vrtc.c
-@@ -159,8 +159,7 @@ static int __init mrst_device_create(void)
- 	vrtc_resources[1].start = sfi_mrtc_array[0].irq;
- 	vrtc_resources[1].end = sfi_mrtc_array[0].irq;
- 
--	platform_device_register(&vrtc_device);
--	return 0;
-+	return platform_device_register(&vrtc_device);
- }
- 
- module_init(mrst_device_create);
--- 
-1.7.0.4
+Vasiliy forced a manual compile of that file with a 64bit config which has
+CONFIG_X86_MRST=n. That's PEBKAC not a build failure :)
 
+Thanks,
+
+	tglx
