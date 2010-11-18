@@ -1,26 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 10 Nov 2010 18:14:49 +0000
-Subject: Re: [PATCH v2] net: ax25: fix information leak to userland
-Message-Id: <20101110.101449.104041941.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 18 Nov 2010 04:18:43 +0000
+Subject: [patch] [SCSI] libfc: unlocking wrong lock in fc_eh_abort()
+Message-Id: <20101118041843.GN31724@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1289412757-11411-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1289412757-11411-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: segooon@gmail.com
-Cc: kernel-janitors@vger.kernel.org, jreuter@yaina.de, ralf@linux-mips.org, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Robert Love <robert.w.love@intel.com>, Vasu Dev <vasu.dev@intel.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, devel@open-fcoe.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Wed, 10 Nov 2010 21:12:36 +0300
+In commit 8b7ac2bb07bb "[SCSI] libfc: possible race could panic system
+due to NULL fsp->cmd" we changed the lock which was used in this
+function, but this path was missed.
 
-> Sometimes ax25_getname() doesn't initialize all members of fsa_digipeater
-> field of fsa struct, also the struct has padding bytes between
-> sax25_call and sax25_ndigis fields.  This structure is then copied to
-> userland.  It leads to leaking of contents of kernel stack memory.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This is a static checker fix.  Compile tested only.
 
-Looks good to me, applied.
-
-Thanks!
+diff --git a/drivers/scsi/libfc/fc_fcp.c b/drivers/scsi/libfc/fc_fcp.c
+index 2924363..b9ad74d 100644
+--- a/drivers/scsi/libfc/fc_fcp.c
++++ b/drivers/scsi/libfc/fc_fcp.c
+@@ -2004,7 +2004,7 @@ int fc_eh_abort(struct scsi_cmnd *sc_cmd)
+ 	fsp = CMD_SP(sc_cmd);
+ 	if (!fsp) {
+ 		/* command completed while scsi eh was setting up */
+-		spin_unlock_irqrestore(lport->host->host_lock, flags);
++		spin_unlock_irqrestore(&si->scsi_queue_lock, flags);
+ 		return SUCCESS;
+ 	}
+ 	/* grab a ref so the fsp and sc_cmd cannot be relased from under us */
