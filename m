@@ -1,69 +1,63 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 17 Nov 2010 21:32:46 +0000
+From: Nils Radtke <lkml@Think-Future.com>
+Date: Thu, 18 Nov 2010 10:31:17 +0000
 Subject: Re: [PATCH] Staging: wlan-ng: p80211netdev.c cleanup
-Message-Id: <20101117213246.GJ31724@bicker>
+Message-Id: <20101118103117.GO8821@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1284834652-26171-1-git-send-email-lkml@Think-Future.com>
  <20100918204112.GA6236@bicker>
  <20101117145548.GA6794@localhost>
-In-Reply-To: <20101117145548.GA6794@localhost>
+ <20101117213246.GJ31724@bicker>
+In-Reply-To: <20101117213246.GJ31724@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nils Radtke <Nils.Radtke@Think-Future.de>, gregkh@suse.de, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>, gregkh@suse.de, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-I don't want to be rude, but it's basically a kernel hacker rule that
-after you introduce a bug (and your last cleanup patch did) that you
-have to fix a bug to make up for it.  One excellent source of easy bugs
-is using static checkers.
+  Hi Dan,
 
-I've found a static checker bug for you.
+  Thank you for your reply.
 
-drivers/staging/comedi/drivers/usbdux.c +1488
-	usbdux_ao_inttrig(38) warn: inconsistent returns sem:&this_usbduxsub->sem:
-	locked (1468) unlocked (1457,1462,1479,1488) 
+# I don't want to be rude, but it's basically a kernel hacker rule that
+# after you introduce a bug (and your last cleanup patch did) that you
+# have to fix a bug to make up for it.  One excellent source of easy bugs
+No offense taken. There are already other mails in 
+the pipe to actually do that last "multi"-patch properly. Just felt
+to finally give feedback at least.
 
-Here are some questions to help guide you.
+# is using static checkers.
+I just used smatch as you proposed. That's where I started to dive into
+some code that I had to understand before continuing "fixing" something else.
+And I still try to figure out some pieces (had a big break for the locality 
+change too).. More in the upcoming mails. 
 
-1)  Does it look like a bug?
-2)  Who introduced the bug and in which commit?
-	Use: "git log -p" and "git blame"
-	If it's a real bug and you fix it, by deductive reasoning that
-	means you are smarter than the person who introduced it.
-3)  What is the return code on line 1468?
-4)  Is it a special case where the caller handles it differently?
-	Use cscope for this.
-	make cscope
-	Use "cscope -d" for speed.
-	Configure vim to use cscope.
-	:cs find c inttrig
-	^] takes you back a step.
-	cscope is an essential kernel hacking tool.
-5)  usbdux_ai_inttrig() is basically the same as usbdux_ao_inttrig().
-    Does the ai version ever return with a lock held?
-6)  What are the implications if we return with the lock held?
-7)  How is the bug triggered?
-8)  Can the user trigger the bug?
-9)  Can a regular user trigger the bug or only root?
-	I sometimes have to use google for this to try figure out how
-	people set up the permissions.
-10) Should this go into the -stable kernel?
+# I've found a static checker bug for you.
+You've been invaluable already, thank you. I'll try myself one after another. 
+Maybe first the bug found by smatch (some offset prob), then this one. Hm, we'll see.
 
-You don't have to answer all the questions, just enough to know what the
-correct fix is.  You can fix a different bug if you want to...  It
-doesn't matter so long as it is at least equal to the bug you
-introduced.
+Some answer right away, the rest gets pushed on the todo stack.
 
-regards,
-dan carpenter
+# 4)  Is it a special case where the caller handles it differently?
+# 	Use cscope for this.
+# 	^] takes you back a step.
+Good hint, thx. Hitting esc+alt+] is so "expensive" with this kb layout (you risk 
+breaking your hand doing that).. ;)
 
-PS:
+# 	cscope is an essential kernel hacking tool.
+Thank you very much for your detailed explanation. I am already familiar 
+with cscope, in this case.
 
-> - When checking skb for NULL, which one is better? (I suppose the former one)
->   skb = NULL or !skb 
->   Rewrite occurrences of the other one for cleanup?
+# !skb is better as Al Viro explains in this email:
+# http://lwn.net/Articles/331593/
+Great, thank you!
 
-You shouldn't even think about changing these.  But in new code then
-!skb is better as Al Viro explains in this email:
-http://lwn.net/Articles/331593/
+      Cheers,
 
+
+            Nils
+
+
+-- 
+:x            Think-Future.com                                    :)
+   Yevtushenko has... an ego that can crack crystal at a distance of
+   twenty feet.   -- John Cheever 
+   
