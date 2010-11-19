@@ -1,19 +1,42 @@
-From: Patrick McHardy <kaber@trash.net>
-Date: Wed, 03 Nov 2010 07:45:26 +0000
-Subject: Re: [PATCH] ipv4: netfilter: ip_tables: fix information leak to userland
-Message-Id: <4CD11316.3080707@trash.net>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 19 Nov 2010 18:41:58 +0000
+Subject: [PATCH] power: power_supply_core: fix use after free and memory leak
+Message-Id: <1290192119-11704-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288448810-6628-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1288448810-6628-1-git-send-email-segooon@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-On 30.10.2010 16:26, Vasiliy Kulikov wrote:
-> Structure ipt_getinfo is copied to userland with the field "name"
-> that has the last elements unitialized.  It leads to leaking of
-> contents of kernel stack memory.
+device_unregister() might free its argument.  This leads to freed
+memory use in kfree().  Also use put_device() instead of kfree()
+as dev may be already used in another layer after call to device_add().
 
-Also applied, thanks.
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested only.
+
+ drivers/power/power_supply_core.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+index 91606bb..f06bad0 100644
+--- a/drivers/power/power_supply_core.c
++++ b/drivers/power/power_supply_core.c
+@@ -190,10 +190,10 @@ int power_supply_register(struct device *parent, struct power_supply *psy)
+ 	goto success;
+ 
+ create_triggers_failed:
+-	device_unregister(psy->dev);
++	device_del(dev);
+ kobject_set_name_failed:
+ device_add_failed:
+-	kfree(dev);
++	put_device(dev);
+ success:
+ 	return rc;
+ }
+-- 
+1.7.0.4
+
