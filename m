@@ -1,27 +1,39 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Wed, 10 Nov 2010 15:54:26 +0000
-Subject: Re: [PATCH 3/3] net: tipc: fix information leak to userland
-Message-Id: <20101110155426.GA6484@albatros>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 19 Nov 2010 18:41:54 +0000
+Subject: [PATCH] power: gpio-charger: fix potential NULL dereference
+Message-Id: <1290192114-11659-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288545032-16481-1-git-send-email-segooon@gmail.com>
- <20101109.092630.260076036.davem@davemloft.net>
- <20101109203317.GA24933@albatros>
- <4CDA88FE.8040801@bfs.de>
-In-Reply-To: <4CDA88FE.8040801@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: David Miller <davem@davemloft.net>, kernel-janitors@vger.kernel.org, jon.maloy@ericsson.com, allan.stephens@windriver.com, tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Anton Vorontsov <cbouatmailru@gmail.com>, linux-kernel@vger.kernel.org
 
-On Wed, Nov 10, 2010 at 12:58 +0100, walter harms wrote:
-> NTL the core problem was that sizeof sa_data is 14 while dev->name is IFNAMESZ.
+kzalloc() result is not compared with NULL.  It might lead to NULL
+pointer dereference in OOM situation.
 
-With this code it is NOT a bug because the output buffer is much bigger
-than 14 (128 bytes).  I think it was just designed to overflow 14 bytes,
-assign sa_data[14] = 0 and ignore it (lack of snprintf() those days?).
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested only.
 
-Anywhere else sa_data[14] = ... is a bug.
+ drivers/power/gpio-charger.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
+diff --git a/drivers/power/gpio-charger.c b/drivers/power/gpio-charger.c
+index fccbe99..b07a71c 100644
+--- a/drivers/power/gpio-charger.c
++++ b/drivers/power/gpio-charger.c
+@@ -87,6 +87,10 @@ static int __devinit gpio_charger_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	gpio_charger = kzalloc(sizeof(*gpio_charger), GFP_KERNEL);
++	if (!gpio_charger) {
++		dev_err(&pdev->dev, "kzalloc failed\n");
++		return -ENOMEM;
++	}
+ 
+ 	charger = &gpio_charger->charger;
+ 
 -- 
-Vasiliy
+1.7.0.4
+
