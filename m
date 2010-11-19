@@ -1,48 +1,46 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 02 Nov 2010 03:22:23 +0000
-Subject: [patch] [media] saa7164: make buffer smaller
-Message-Id: <20101102032223.GD14069@bicker>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 19 Nov 2010 18:42:03 +0000
+Subject: [PATCH] serial: ifx6x60: free IRQ on error
+Message-Id: <1290192123-11747-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Steven Toth <stoth@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Russ Gorby <richardx.r.gorby@intel.com>, linux-kernel@vger.kernel.org
 
-This isn't a runtime bug, it's just to make static checkers happy.
+If second request_irq() failed then the first IRQ must be freed in
+error handling code.
 
-In vidioc_querycap() we copy a saa7164_dev ->name driver array into a
-v4l2_capability -> driver array.  The ->driver array is only 16 chars
-long so ->name also can't be more than 16 characters.
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested only.
 
-The ->name gets set in v4l2_capability() and it always is less than 16
-characters so we can easily make the buffer smaller.
+ drivers/serial/ifx6x60.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/media/video/saa7164/saa7164.h b/drivers/media/video/saa7164/saa7164.h
-index 1d9c5cb..8b3e844 100644
---- a/drivers/media/video/saa7164/saa7164.h
-+++ b/drivers/media/video/saa7164/saa7164.h
-@@ -448,7 +448,7 @@ struct saa7164_dev {
- 	int	nr;
- 	int	hwrevision;
- 	u32	board;
--	char	name[32];
-+	char	name[16];
+diff --git a/drivers/serial/ifx6x60.c b/drivers/serial/ifx6x60.c
+index 803264a..3f8d5ee 100644
+--- a/drivers/serial/ifx6x60.c
++++ b/drivers/serial/ifx6x60.c
+@@ -1133,7 +1133,7 @@ static int ifx_spi_spi_probe(struct spi_device *spi)
+ 	if (ret) {
+ 		dev_err(&spi->dev, "Unable to get irq %x",
+ 			gpio_to_irq(ifx_dev->gpio.srdy));
+-		goto error_ret6;
++		goto error_ret7;
+ 	}
  
- 	/* firmware status */
- 	struct saa7164_fw_status	fw_status;
-diff --git a/drivers/media/video/saa7164/saa7164-core.c b/drivers/media/video/saa7164/saa7164-core.c
-index e1bac50..b66f78f 100644
---- a/drivers/media/video/saa7164/saa7164-core.c
-+++ b/drivers/media/video/saa7164/saa7164-core.c
-@@ -1001,7 +1001,7 @@ static int saa7164_dev_setup(struct saa7164_dev *dev)
- 	atomic_inc(&dev->refcount);
- 	dev->nr = saa7164_devcount++;
+ 	/* set pm runtime power state and register with power system */
+@@ -1153,6 +1153,8 @@ static int ifx_spi_spi_probe(struct spi_device *spi)
+ 		mrdy_set_low(ifx_dev);
+ 	return 0;
  
--	sprintf(dev->name, "saa7164[%d]", dev->nr);
-+	snprintf(dev->name, sizeof(dev->name), "saa7164[%d]", dev->nr);
- 
- 	mutex_lock(&devlist);
- 	list_add_tail(&dev->devlist, &saa7164_devlist);
++error_ret7:
++	free_irq(gpio_to_irq(ifx_dev->gpio.reset_out), (void *)ifx_dev);
+ error_ret6:
+ 	gpio_free(ifx_dev->gpio.srdy);
+ error_ret5:
+-- 
+1.7.0.4
+
