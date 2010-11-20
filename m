@@ -1,41 +1,34 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Wed, 17 Nov 2010 20:23:58 +0000
-Subject: Re: [patch 3/3] [media] lirc_dev: fixes in lirc_dev_fop_read()
-Message-Id: <20101117202358.GD24814@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 20 Nov 2010 18:10:16 +0000
+Subject: [patch v2] dca: remove unneeded NULL check
+Message-Id: <20101120181008.GB1522@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101117052015.GF31724@bicker>
-In-Reply-To: <20101117052015.GF31724@bicker>
+References: <20101117051032.GC31724@bicker>
+ <20101119145937.60c5f688.akpm@linux-foundation.org>
+In-Reply-To: <20101119145937.60c5f688.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Maciej Sosnowski <maciej.sosnowski@intel.com>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Nov 17, 2010 at 08:20:15AM +0300, Dan Carpenter wrote:
-> This makes several changes but they're in one function and sort of
-> related:
-> 
-> "buf" was leaked on error.  The leak if we try to read an invalid
-> length is the main concern because it could be triggered over and
-> over.
-> 
-> If the copy_to_user() failed, then the original code returned the 
-> number of bytes remaining.  read() is supposed to be the opposite way,
-> where we return the number of bytes copied.  I changed it to just return
-> -EFAULT on errors.
-> 
-> Also I changed the debug output from "-EFAULT" to just "<fail>" because
-> it isn't -EFAULT necessarily.  And since we go though that path if the
-> length is invalid now, there was another debug print that I removed.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+The return here doesn't release the locks or re-enable IRQs.  But as
+Andrew Morton points out, domain is never NULL.  list_first_entry() 
+essentially never returns NULL and also we already verified that the
+list is not empty. 
 
-Looks good, thanks much.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Reviewed-by: Jarod Wilson <jarod@redhat.com>
-Acked-by: Jarod Wilson <jarod@redhat.com>
-
--- 
-Jarod Wilson
-jarod@redhat.com
-
+diff --git a/drivers/dca/dca-core.c b/drivers/dca/dca-core.c
+index b98c676..c461eda 100644
+--- a/drivers/dca/dca-core.c
++++ b/drivers/dca/dca-core.c
+@@ -110,8 +110,6 @@ static void unregister_dca_providers(void)
+ 
+ 	/* at this point only one domain in the list is expected */
+ 	domain = list_first_entry(&dca_domains, struct dca_domain, node);
+-	if (!domain)
+-		return;
+ 
+ 	list_for_each_entry_safe(dca, _dca, &domain->dca_providers, node) {
+ 		list_del(&dca->node);
