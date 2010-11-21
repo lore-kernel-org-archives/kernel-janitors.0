@@ -1,36 +1,46 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Date: Thu, 25 Nov 2010 04:13:37 +0000
-Subject: Re: [patch v4] infiniband: uverbs: handle large number of entries
-Message-Id: <20101125041337.GA11049@obsidianresearch.com>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Sun, 21 Nov 2010 17:40:21 +0000
+Subject: [PATCH] ASoC: s3c24xx: test wrong variable
+Message-Id: <1290361223-15211-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101007161649.GD21206@obsidianresearch.com> <20101007165947.GD11681@bicker> <20101009231607.GA24649@obsidianresearch.com> <20101012113117.GB6742@bicker> <20101012210118.GR24268@obsidianresearch.com> <20101013091312.GB6060@bicker> <20101123071025.GI1522@bicker> <adahbf6gytv.fsf@cisco.com> <20101124221845.GH2369@obsidianresearch.com> <adad3pugi90.fsf@cisco.com>
-In-Reply-To: <adad3pugi90.fsf-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <rdreier-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-Cc: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
+Cc: Jassi Brar <jassi.brar@samsung.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 24, 2010 at 08:05:47PM -0800, Roland Dreier wrote:
+After clk_get() mclk is checked three times instead of mout_epll
+and sclk_spdif checks.
 
->  > So if you are worried about how many times ib_poll_cq is called then
->  > bound the kzalloc size and wrap the whole thing in a loop, but
->  > realistically I have to think the performance trade off of
->  > kzalloc/free vs calling ib_poll more often is not entirely obvious.
-> 
-> That's true... maybe doing things one at a time but avoiding the allocs
-> is the right tradeoff.
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Cannot compile this driver, so it is not tested.
 
-Hmm, considering your list is everything but Mellanox, maybe it makes
-much more sense to push the copy_to_user down into the driver - 
-ie a ibv_poll_cq_user - then the driver can construct each CQ entry on
-the stack and copy it to userspace, avoid the double copy, allocation
-and avoid any fixed overhead of ibv_poll_cq.
+ sound/soc/s3c24xx/smdk_spdif.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-A bigger change to be sure, but remember this old thread:
+diff --git a/sound/soc/s3c24xx/smdk_spdif.c b/sound/soc/s3c24xx/smdk_spdif.c
+index 11c88b1..761e02b 100644
+--- a/sound/soc/s3c24xx/smdk_spdif.c
++++ b/sound/soc/s3c24xx/smdk_spdif.c
+@@ -38,7 +38,7 @@ static int set_audio_clock_heirachy(struct platform_device *pdev)
+ 	}
+ 
+ 	mout_epll = clk_get(NULL, "mout_epll");
+-	if (IS_ERR(fout_epll)) {
++	if (IS_ERR(mout_epll)) {
+ 		printk(KERN_WARNING "%s: Cannot find mout_epll.\n",
+ 				__func__);
+ 		ret = -EINVAL;
+@@ -54,7 +54,7 @@ static int set_audio_clock_heirachy(struct platform_device *pdev)
+ 	}
+ 
+ 	sclk_spdif = clk_get(NULL, "sclk_spdif");
+-	if (IS_ERR(fout_epll)) {
++	if (IS_ERR(sclk_spdif)) {
+ 		printk(KERN_WARNING "%s: Cannot find sclk_spdif.\n",
+ 				__func__);
+ 		ret = -EINVAL;
+-- 
+1.7.0.4
 
-http://www.mail-archive.com/linux-rdma@vger.kernel.org/msg05114.html
-
-2x improvement by removing allocs on the post path..
-
-Jason
