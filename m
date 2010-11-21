@@ -1,49 +1,36 @@
 From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Fri, 26 Nov 2010 17:06:35 +0000
-Subject: [PATCH] media: rc: ir-lirc-codec: fix potential integer overflow
-Message-Id: <1290791197-21403-1-git-send-email-segoon@openwall.com>
+Date: Sun, 21 Nov 2010 17:40:14 +0000
+Subject: [PATCH] ASoC: atmel: test wrong variable
+Message-Id: <1290361216-15166-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, =?UTF-8?q?David=20H=C3=A4rdeman?= <david@hardeman.nu>, Jarod Wilson <jarod@redhat.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Timur Tabi <timur@freescale.com>, Jarkko Nikula <jhnikula@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-'n' may be bigger than MAX_INT*sizeof(int), if so checking of truncated
-(int)(n/sizeof(int)) for LIRCBUF_SIZE overflow and then using nontruncated 'count'
-doesn't make sense.  Also n may be up to sizeof(int)-1 bytes bigger than expected,
-so check value of (n % sizeof(int)) too.
+After clk_get() mclk is checked second time instead of pllb check.
 
 Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
 ---
- Compile tested only.
+ Cannot compile this driver, so it is not tested.
 
- drivers/media/rc/ir-lirc-codec.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+ sound/soc/atmel/sam9g20_wm8731.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/media/rc/ir-lirc-codec.c b/drivers/media/rc/ir-lirc-codec.c
-index 1e87ee8..f011c5d 100644
---- a/drivers/media/rc/ir-lirc-codec.c
-+++ b/drivers/media/rc/ir-lirc-codec.c
-@@ -100,7 +100,8 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char *buf,
- 	struct lirc_codec *lirc;
- 	struct rc_dev *dev;
- 	int *txbuf; /* buffer with values to transmit */
--	int ret = 0, count;
-+	int ret = 0;
-+	size_t count;
+diff --git a/sound/soc/atmel/sam9g20_wm8731.c b/sound/soc/atmel/sam9g20_wm8731.c
+index da9c303..68072a2 100644
+--- a/sound/soc/atmel/sam9g20_wm8731.c
++++ b/sound/soc/atmel/sam9g20_wm8731.c
+@@ -223,7 +223,7 @@ static int __init at91sam9g20ek_init(void)
+ 	}
  
- 	lirc = lirc_get_pdata(file);
- 	if (!lirc)
-@@ -110,7 +111,7 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char *buf,
- 		return -EINVAL;
- 
- 	count = n / sizeof(int);
--	if (count > LIRCBUF_SIZE || count % 2 = 0)
-+	if (count > LIRCBUF_SIZE || count % 2 = 0 || n % sizeof(int) != 0)
- 		return -EINVAL;
- 
- 	txbuf = memdup_user(buf, n);
+ 	pllb = clk_get(NULL, "pllb");
+-	if (IS_ERR(mclk)) {
++	if (IS_ERR(pllb)) {
+ 		printk(KERN_ERR "ASoC: Failed to get PLLB\n");
+ 		ret = PTR_ERR(mclk);
+ 		goto err_mclk;
 -- 
 1.7.0.4
 
