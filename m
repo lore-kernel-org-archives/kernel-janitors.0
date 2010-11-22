@@ -1,48 +1,64 @@
 From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 22 Nov 2010 06:56:41 +0000
+Date: Mon, 22 Nov 2010 08:01:10 +0000
 Subject: Re: [PATCH] ALSA: snd-atmel-abdac: test wrong variable
-Message-Id: <s5htyj9rgly.wl%tiwai@suse.de>
+Message-Id: <s5hsjytvlbt.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1290361209-15121-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1290361209-15121-1-git-send-email-segoon@openwall.com>
+	<s5htyj9rgly.wl%tiwai@suse.de>
+In-Reply-To: <s5htyj9rgly.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segoon@openwall.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Vasiliy Kulikov <segoon@openwall.com>
 
-At Sun, 21 Nov 2010 20:40:07 +0300,
-Vasiliy Kulikov wrote:
+At Mon, 22 Nov 2010 07:56:41 +0100,
+Takashi Iwai wrote:
 > 
-> After clk_get() pclk is checked second time instead of sample_clk check.
+> At Sun, 21 Nov 2010 20:40:07 +0300,
+> Vasiliy Kulikov wrote:
+> > 
+> > After clk_get() pclk is checked second time instead of sample_clk check.
+> > 
+> > Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
 > 
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> Applied now.  Thanks.
 
-Applied now.  Thanks.
+Ah, I found out that PTR_ERR() should be fixed as well.
+An additional patch applied as below.
 
+
+thanks,
 
 Takashi
 
+=From e61aabdb7608fd63d9705ab8bbf16f5145acead2 Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 22 Nov 2010 08:58:13 +0100
+Subject: [PATCH] ALSA: atmel - Fix the return value in error path
 
-> ---
->  Compile tested only.
-> 
->  sound/atmel/abdac.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/sound/atmel/abdac.c b/sound/atmel/abdac.c
-> index f2f41c8..4e47baa 100644
-> --- a/sound/atmel/abdac.c
-> +++ b/sound/atmel/abdac.c
-> @@ -420,7 +420,7 @@ static int __devinit atmel_abdac_probe(struct platform_device *pdev)
->  		return PTR_ERR(pclk);
->  	}
->  	sample_clk = clk_get(&pdev->dev, "sample_clk");
-> -	if (IS_ERR(pclk)) {
-> +	if (IS_ERR(sample_clk)) {
->  		dev_dbg(&pdev->dev, "no sample clock\n");
->  		retval = PTR_ERR(pclk);
->  		goto out_put_pclk;
-> -- 
-> 1.7.0.4
-> 
+In the commit 5ad57d20c91bdaf743bd8e3015df5a388314df8d
+    ALSA: snd-atmel-abdac: test wrong variable
+the return value via PTR_ERR() had to be fixed as well.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ sound/atmel/abdac.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/sound/atmel/abdac.c b/sound/atmel/abdac.c
+index 4e47baad..6e24091 100644
+--- a/sound/atmel/abdac.c
++++ b/sound/atmel/abdac.c
+@@ -422,7 +422,7 @@ static int __devinit atmel_abdac_probe(struct platform_device *pdev)
+ 	sample_clk = clk_get(&pdev->dev, "sample_clk");
+ 	if (IS_ERR(sample_clk)) {
+ 		dev_dbg(&pdev->dev, "no sample clock\n");
+-		retval = PTR_ERR(pclk);
++		retval = PTR_ERR(sample_clk);
+ 		goto out_put_pclk;
+ 	}
+ 	clk_enable(pclk);
+-- 
+1.7.3.1
+
