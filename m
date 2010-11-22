@@ -1,26 +1,40 @@
-From: Robert Love <robert.w.love@intel.com>
-Date: Thu, 18 Nov 2010 19:02:13 +0000
-Subject: Re: [patch] [SCSI] libfc: unlocking wrong lock in fc_eh_abort()
-Message-Id: <1290106933.1482.78.camel@fritz>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Mon, 22 Nov 2010 15:59:13 +0000
+Subject: [PATCH v2] ASoC: atmel: test wrong variable
+Message-Id: <20101122155913.GA9089@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101118041843.GN31724@bicker>
-In-Reply-To: <20101118041843.GN31724@bicker>
+References: <1290361216-15166-1-git-send-email-segoon@openwall.com>
+ <20101122094353.f76830b5.jhnikula@gmail.com>
+In-Reply-To: <20101122094353.f76830b5.jhnikula@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "Dev, Vasu" <vasu.dev@intel.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, "devel@open-fcoe.org" <devel@open-fcoe.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Timur Tabi <timur@freescale.com>, Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, Jarkko Nikula <jhnikula@gmail.com>
 
-On Wed, 2010-11-17 at 20:18 -0800, Dan Carpenter wrote:
-> In commit 8b7ac2bb07bb "[SCSI] libfc: possible race could panic system
-> due to NULL fsp->cmd" we changed the lock which was used in this
-> function, but this path was missed.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+After clk_get() mclk is checked second time instead of pllb check.
+In patch v1 Jarkko Nikula noticed that PTR_ERR() is also has wrong argument.
 
-Hi Dan,
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ sound/soc/atmel/sam9g20_wm8731.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-   I found this bug too and have a patch in my tree.
-
-Thanks, //Rob
-
+diff --git a/sound/soc/atmel/sam9g20_wm8731.c b/sound/soc/atmel/sam9g20_wm8731.c
+index da9c303..f16e00c 100644
+--- a/sound/soc/atmel/sam9g20_wm8731.c
++++ b/sound/soc/atmel/sam9g20_wm8731.c
+@@ -223,9 +223,9 @@ static int __init at91sam9g20ek_init(void)
+ 	}
+ 
+ 	pllb = clk_get(NULL, "pllb");
+-	if (IS_ERR(mclk)) {
++	if (IS_ERR(pllb)) {
+ 		printk(KERN_ERR "ASoC: Failed to get PLLB\n");
+-		ret = PTR_ERR(mclk);
++		ret = PTR_ERR(pllb);
+ 		goto err_mclk;
+ 	}
+ 	ret = clk_set_parent(mclk, pllb);
+-- 
+1.7.0.4
