@@ -1,32 +1,30 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Tue, 30 Nov 2010 19:15:30 +0000
-Subject: Re: [PATCH 3/3 v2] hibernation: constify platform_hibernation_ops
-Message-Id: <20101130191530.GA4156@ucw.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 23 Nov 2010 06:26:02 +0000
+Subject: [patch] nilfs2: nilfs_iget_for_gc() returns ERR_PTR
+Message-Id: <20101123062602.GG1522@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <285897.77932.qm@smtp128.mail.ukl.yahoo.com>
-In-Reply-To: <285897.77932.qm@smtp128.mail.ukl.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lionel Debroux <lionel_debroux@yahoo.fr>
-Cc: kernel-janitors@vger.kernel.org, Kees Cook <kees.cook@canonical.com>, Emese Revfy <re.emese@gmail.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue 2010-11-09 21:48:49, Lionel Debroux wrote:
-> Patch against mainline.
-> 
-> Changes since v1: added one hunk; no longer adding "const" qualifier to
-> pointers in platform_hibernation_ops after seeing
-> b4144e4f6e3b448d322095ca08af393682a69e33.
-> ---
-> 
-> Subject: [PATCH 3/3] hibernation: constify platform_hibernation_ops
-> 
-> Derived from the grsecurity patch.
-> 
-> Signed-off-by: Lionel Debroux <lionel_debroux@yahoo.fr>
+nilfs_iget_for_gc() returns an ERR_PTR() on failure and doesn't return
+NULL.
 
-ack.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
+index 3e90f86..5bf426f 100644
+--- a/fs/nilfs2/ioctl.c
++++ b/fs/nilfs2/ioctl.c
+@@ -349,8 +349,8 @@ static int nilfs_ioctl_move_blocks(struct super_block *sb,
+ 		ino = vdesc->vd_ino;
+ 		cno = vdesc->vd_cno;
+ 		inode = nilfs_iget_for_gc(sb, ino, cno);
+-		if (unlikely(inode = NULL)) {
+-			ret = -ENOMEM;
++		if (unlikely(IS_ERR(inode))) {
++			ret = PTR_ERR(inode);
+ 			goto failed;
+ 		}
+ 		do {
