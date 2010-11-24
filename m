@@ -1,46 +1,37 @@
-From: =?utf-8?Q?Am=C3=A9rico?= Wang <xiyou.wangcong@gmail.com>
-Date: Wed, 24 Nov 2010 12:32:13 +0000
+From: walter harms <wharms@bfs.de>
+Date: Wed, 24 Nov 2010 16:06:50 +0000
 Subject: Re: [PATCH v2] fs: select: fix information leak to userspace
-Message-Id: <20101124123213.GB2922@hack>
+Message-Id: <4CED381A.5060100@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8D90F8B2-EA29-4EB9-9807-294CE0D5523B@dilger.ca> <20101114092533.GB5323@albatros> <20101114180643.593d19ac.akpm@linux-foundation.org> <1289848341.2607.125.camel@edumazet-laptop> <20101123140111.GA3816@hack> <4CEBD37E.5060107@bfs.de> <203E1F2A-2D04-4B7F-8D1B-9DC24522CB5E@dilger.ca> <4CECECA2.6070301@draigBrady.com> <20101124110535.GD5139@cr0.nay.redhat.com> <4CECFB19.1090003@draigBrady.com>
-In-Reply-To: <4CECFB19.1090003@draigBrady.com>
+References: <1289421483-23907-1-git-send-email-segooon@gmail.com>	<20101112120834.33062900.akpm@linux-foundation.org>	<8D90F8B2-EA29-4EB9-9807-294CE0D5523B@dilger.ca>	<20101114092533.GB5323@albatros>	<20101114180643.593d19ac.akpm@linux-foundation.org>	<1289848341.2607.125.camel@edumazet-laptop>	<20101123140111.GA3816@hack>	<4CEBD37E.5060107@bfs.de>	<203E1F2A-2D04-4B7F-8D1B-9DC24522CB5E@dilger.ca> <20101123121840.e9d17d91.akpm@linux-foundation.org>
+In-Reply-To: <20101123121840.e9d17d91.akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?utf-8?Q?P=C3=A1draig?= Brady <P@draigBrady.com>
-Cc: =?utf-8?Q?Am=C3=A9rico?= Wang <xiyou.wangcong@gmail.com>, Andreas Dilger <adilger.kernel@dilger.ca>, wharms@bfs.de, Eric Dumazet <eric.dumazet@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Vasiliy Kulikov <segoon@openwall.com>, kernel-janitors@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jakub Jelinek <jakub@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, =?ISO-8859-1?Q?Am=E9rico_?= =?ISO-8859-1?Q?Wang?= <xiyou.wangcong@gmail.com>, Eric Dumazet <eric.dumazet@gmail.com>, Vasiliy Kulikov <segoon@openwall.com>, kernel-janitors@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jakub Jelinek <jakub@redhat.com>
 
-On Wed, Nov 24, 2010 at 11:46:33AM +0000, Pádraig Brady wrote:
->On 24/11/10 11:05, Américo Wang wrote:
->> On Wed, Nov 24, 2010 at 10:44:50AM +0000, Pádraig Brady wrote:
->>> On 23/11/10 18:02, Andreas Dilger wrote:
->>>> On 2010-11-23, at 07:45, walter harms wrote:
->>>>> Maybe we can convince the gcc people to make 0 padding default. That will not solve the problems for other compilers but when they claim "works like gcc" we can press then to support this also. I can imagine that this will close some other subtle leaks also.
->>>>
->>>> It makes the most sense to tackle this at the GCC level, since the added overhead of doing memset(0) on the whole struct may be non-trivial for commonly-used and/or large structures.  Since GCC is already explicitly zeroing the _used_ fields in the struct, it can much more easily determine whether there is padding in the structure, and zero those few bytes as needed.
->>>
->>> Zero padding structs is part of C90. Details here:
->>> http://www.pixelbeat.org/programming/gcc/auto_init.html
->> 
->> Nope.
->> 
->>>
->>> gcc doesn't zero pad when _all_ elements are specified.
->>>
->> 
->> That is what gcc does, not what C standard specifies.
->
->Looks like gcc is following the standard exactly.
->
->C90 - 6.5.7
->C99 - 6.7.8
->
->  If there are fewer initializers in a brace-enclosed list than
->  there are elements or members of an aggregate ... the remainder
->  of the aggregate shall be initialized implicitly the same as
->  objects that have static storage duration.
->
 
-Depends on if "the remainder of the aggregate" includes padding bytes
-or not.
+
+Am 23.11.2010 21:18, schrieb Andrew Morton:
+> On Tue, 23 Nov 2010 11:02:44 -0700
+> Andreas Dilger <adilger.kernel@dilger.ca> wrote:
+> 
+>> On 2010-11-23, at 07:45, walter harms wrote:
+>>> Maybe we can convince the gcc people to make 0 padding default. That will not solve the problems for other compilers but when they claim "works like gcc" we can press then to support this also. I can imagine that this will close some other subtle leaks also.
+>>
+>> It makes the most sense to tackle this at the GCC level, since the added overhead of doing memset(0) on the whole struct may be non-trivial for commonly-used and/or large structures.
+> 
+> (My, what long lines you have!)
+> 
+> We can't reasonably address this with gcc changes.  If gcc starts doing
+> what we want in the next release, how long will it be until that
+> release is the *oldest* version of gcc which the kernel may be compiled
+> with?  Five years?
+> 
+> 
+agreed, but it does not mean not to talk to the gcc people that there is
+an interesse to change.
+
+re,
+ wh
