@@ -1,29 +1,67 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 11 Nov 2010 09:04:23 +0000
-Subject: Re: [patch] input: pcf8574_keypad: use after
-Message-Id: <20101111090423.GH24415@core.coreip.homeip.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 24 Nov 2010 05:36:57 +0000
+Subject: [patch] [media] saa7164: poll mask set incorrectly
+Message-Id: <20101124053656.GO1522@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101111062429.GA3610@bicker>
-In-Reply-To: <20101111062429.GA3610@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Jean Delvare <khali@linux-fr.org>, Mike Frysinger <vapier@gentoo.org>, Richard Purdie <rpurdie@linux.intel.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Steven Toth <stoth@kernellabs.com>, Gavin Hurlbut <gjhurlbu@gmail.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 11, 2010 at 10:28:30AM +0300, Dan Carpenter wrote:
-> input_unregister_device() is tricky because it frees the argument.  So
-> in the original code the call to input_set_drvdata(idev, NULL) is a use
-> after free bug.  The other problem is the input_set_drvdata() makes the 
-> input_free_device() into a no-op.
-> 
-> The prefered style in input/ is to make input_register_device() the
-> last function in the probe which can fail.  That way we don't need to
-> call input_unregister_device().
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+list_first_entry() always returns non-null here.  I think the intent was
+to test whether there were any entries in the used list.
 
-Applied, thanks Dan.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+I don't have this hardware so I can't test this.  Please check
+carefully.
 
--- 
-Dmitry
+diff --git a/drivers/media/video/saa7164/saa7164-encoder.c b/drivers/media/video/saa7164/saa7164-encoder.c
+index cbb53d0..f4b8ac7 100644
+--- a/drivers/media/video/saa7164/saa7164-encoder.c
++++ b/drivers/media/video/saa7164/saa7164-encoder.c
+@@ -1238,7 +1238,6 @@ static unsigned int fops_poll(struct file *file, poll_table *wait)
+ {
+ 	struct saa7164_encoder_fh *fh = (struct saa7164_encoder_fh *)file->private_data;
+ 	struct saa7164_port *port = fh->port;
+-	struct saa7164_user_buffer *ubuf;
+ 	unsigned int mask = 0;
+ 
+ 	port->last_poll_msecs_diff = port->last_poll_msecs;
+@@ -1271,10 +1270,7 @@ static unsigned int fops_poll(struct file *file, poll_table *wait)
+ 	}
+ 
+ 	/* Pull the first buffer from the used list */
+-	ubuf = list_first_entry(&port->list_buf_used.list,
+-		struct saa7164_user_buffer, list);
+-
+-	if (ubuf)
++	if (!list_empty(&port->list_buf_used.list))
+ 		mask |= POLLIN | POLLRDNORM;
+ 
+ 	return mask;
+diff --git a/drivers/media/video/saa7164/saa7164-vbi.c b/drivers/media/video/saa7164/saa7164-vbi.c
+index 323c7cd..8025631 100644
+--- a/drivers/media/video/saa7164/saa7164-vbi.c
++++ b/drivers/media/video/saa7164/saa7164-vbi.c
+@@ -1186,7 +1186,6 @@ static unsigned int fops_poll(struct file *file, poll_table *wait)
+ {
+ 	struct saa7164_vbi_fh *fh = (struct saa7164_vbi_fh *)file->private_data;
+ 	struct saa7164_port *port = fh->port;
+-	struct saa7164_user_buffer *ubuf;
+ 	unsigned int mask = 0;
+ 
+ 	port->last_poll_msecs_diff = port->last_poll_msecs;
+@@ -1219,10 +1218,7 @@ static unsigned int fops_poll(struct file *file, poll_table *wait)
+ 	}
+ 
+ 	/* Pull the first buffer from the used list */
+-	ubuf = list_first_entry(&port->list_buf_used.list,
+-		struct saa7164_user_buffer, list);
+-
+-	if (ubuf)
++	if (!list_empty(&port->list_buf_used.list))
+ 		mask |= POLLIN | POLLRDNORM;
+ 
+ 	return mask;
