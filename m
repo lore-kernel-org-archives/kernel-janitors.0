@@ -1,24 +1,52 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Wed, 17 Nov 2010 20:21:30 +0000
-Subject: Re: [patch 1/3] [media] lirc_dev: stray unlock in lirc_dev_fop_poll()
-Message-Id: <20101117202130.GB24814@redhat.com>
+From: david.chosrova@libertysurf.fr
+Date: Wed, 24 Nov 2010 21:41:43 +0000
+Subject: [PATCH] Fix sparse message rtl8192u
+Message-Id: <1290634903.4ced8697b0603@webmail.aliceadsl.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101117051223.GD31724@bicker>
-In-Reply-To: <20101117051223.GD31724@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 17, 2010 at 08:12:23AM +0300, Dan Carpenter wrote:
-> We shouldn't unlock here.  I think this was a cut and paste error.
 
-Yeah, looks like it.
 
-Acked-by: Jarod Wilson <jarod@redhat.com>
+Hello,
 
--- 
-Jarod Wilson
-jarod@redhat.com
+Fix sparse message:
+
+drivers/staging/rtl8192u/r8192U_core.c:247:1: warning: "eqMacAddr" redefined
+In file included from drivers/staging/rtl8192u/:81:81:
+drivers/staging/rtl8192u/dot11d.h:35:1: warning: this is the location of the
+previous definition
+
+
+if ENABLE_DOT11D is enabled eqMacAddr is defined twice.
+
+Signed-off-by: David Chosrova <david.chosrova@libertysurf.fr>
+
+
+
+
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c
+b/drivers/staging/rtl8192u/r8192U_core.c
+index 494f180..4a4a747 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -242,10 +242,12 @@ static void rtl819x_set_channel_map(u8 channel_plan,
+struct r8192_priv* priv)
+        }
+        return;
+ }
+-#endif
++#else
+
+ #define eqMacAddr(a,b) ( ((a)[0]=(b)[0] && (a)[1]=(b)[1] && (a)[2]=(b)[2] &&
+(a)[3]=(b)[3] && (a)[4]=(b)[4] && (a)[5]=(b)[5]) ? 1:0 )
+
++#endif
++
+ #define        rx_hal_is_cck_rate(_pdrvinfo)\
+                        (_pdrvinfo->RxRate = DESC90_RATE1M ||\
+                        _pdrvinfo->RxRate = DESC90_RATE2M ||\
+
 
