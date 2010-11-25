@@ -1,40 +1,45 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 19 Nov 2010 22:59:37 +0000
-Subject: Re: [patch] dca: missing unlock in unregister_dca_providers()
-Message-Id: <20101119145937.60c5f688.akpm@linux-foundation.org>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Thu, 25 Nov 2010 00:28:57 +0000
+Subject: [PATCH] virt: kvm: coding style cleanups
+Message-Id: <1290644937.6078.9.camel@javier-laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101117051032.GC31724@bicker>
-In-Reply-To: <20101117051032.GC31724@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Maciej Sosnowski <maciej.sosnowski@intel.com>, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 17 Nov 2010 08:10:32 +0300
-Dan Carpenter <error27@gmail.com> wrote:
+Fixes coding style issues on virt/kvm/assigned-dev.c
 
-> We return here with the lock held and IRQs disabled by mistake.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/dca/dca-core.c b/drivers/dca/dca-core.c
-> index b98c676..b4c95be 100644
-> --- a/drivers/dca/dca-core.c
-> +++ b/drivers/dca/dca-core.c
-> @@ -110,8 +110,10 @@ static void unregister_dca_providers(void)
->  
->  	/* at this point only one domain in the list is expected */
->  	domain = list_first_entry(&dca_domains, struct dca_domain, node);
-> -	if (!domain)
-> +	if (!domain) {
-> +		spin_unlock_irqrestore(&dca_lock, flags);
->  		return;
-> +	}
->  
->  	list_for_each_entry_safe(dca, _dca, &domain->dca_providers, node) {
->  		list_del(&dca->node);
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ virt/kvm/assigned-dev.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-I think the code's just bogus, actually. 
-list_first_entry(&dca_domains) can't return NULL.
+diff --git a/virt/kvm/assigned-dev.c b/virt/kvm/assigned-dev.c
+index ae72ae6..c9dd690 100644
+--- a/virt/kvm/assigned-dev.c
++++ b/virt/kvm/assigned-dev.c
+@@ -620,7 +620,7 @@ static int kvm_vm_ioctl_set_msix_nr(struct kvm *kvm,
+ 			goto msix_nr_out;
+ 		}
+ 		adev->guest_msix_entries -			kzalloc(sizeof(struct msix_entry) * entry_nr->entry_nr,
++			kzalloc(sizeof(struct msix_entry) *entry_nr->entry_nr,
+ 				GFP_KERNEL);
+ 		if (!adev->guest_msix_entries) {
+ 			kfree(adev->host_msix_entries);
+@@ -750,7 +750,7 @@ long kvm_vm_ioctl_assigned_device(struct kvm *kvm, unsigned ioctl,
+ 			goto out_free_irq_routing;
+ 		r = kvm_set_irq_routing(kvm, entries, routing.nr,
+ 					routing.flags);
+-	out_free_irq_routing:
++out_free_irq_routing:
+ 		vfree(entries);
+ 		break;
+ 	}
+-- 
+1.7.0.4
+
+
+
+
 
