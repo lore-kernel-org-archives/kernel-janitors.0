@@ -1,39 +1,41 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 25 Nov 2010 04:00:32 +0000
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Thu, 25 Nov 2010 09:34:03 +0000
 Subject: Re: [PATCH] virt: kvm: coding style cleanups
-Message-Id: <20101125040032.GR1522@bicker>
+Message-Id: <AANLkTi=gQw7+tVnEgYmn0r6XdbEEr0jsYEvmYcxYikSQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1290644937.6078.9.camel@javier-laptop>
 In-Reply-To: <1290644937.6078.9.camel@javier-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Javier Martinez Canillas <martinez.javier@gmail.com>
-Cc: Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Nov 25, 2010 at 01:28:57AM +0100, Javier Martinez Canillas wrote:
->  		adev->guest_msix_entries > -			kzalloc(sizeof(struct msix_entry) * entry_nr->entry_nr,
-> +			kzalloc(sizeof(struct msix_entry) *entry_nr->entry_nr,
+>> +                     kzalloc(sizeof(struct msix_entry) *entry_nr->entry_nr,
+>
+> The original code was right and the new code is wrong.
+>
 
-The original code was right and the new code is wrong.
+Sorry for not looking at the code closely.
 
->  				GFP_KERNEL);
->  		if (!adev->guest_msix_entries) {
->  			kfree(adev->host_msix_entries);
-> @@ -750,7 +750,7 @@ long kvm_vm_ioctl_assigned_device(struct kvm *kvm, unsigned ioctl,
->  			goto out_free_irq_routing;
->  		r = kvm_set_irq_routing(kvm, entries, routing.nr,
->  					routing.flags);
-> -	out_free_irq_routing:
-> +out_free_irq_routing:
+>
+> You're wasting people's time here and we like newbies but it makes
+> everyone annoyed.
+>
+> regards,
+> dan carpenter
+>
 
-This is a pointless change.
+The Linux kernel learning curve is getting bigger and bigger, the only
+way we (newbies) can enter the development process is trough trivial
+patches. So yes we are annoying although necessary.
 
->  		vfree(entries);
->  		break;
+Sorry for the noise it won't happen again.
 
-You're wasting people's time here and we like newbies but it makes
-everyone annoyed.
+Thanks a lot.
 
-regards,
-dan carpenter
+-- 
+Best regards,
+
+-----------------------------------------
+Javier Martínez Canillas
+(+34) 682 39 81 69
