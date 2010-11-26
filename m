@@ -1,29 +1,44 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Wed, 17 Nov 2010 20:22:00 +0000
-Subject: Re: [patch 2/3] [media] lirc_dev: add some __user annotations
-Message-Id: <20101117202200.GC24814@redhat.com>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 26 Nov 2010 17:06:28 +0000
+Subject: [PATCH] sh: boards: mach-se: use IS_ERR() instead of NULL check
+Message-Id: <1290791190-21358-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101117051339.GE31724@bicker>
-In-Reply-To: <20101117051339.GE31724@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Paul Mundt <lethal@linux-sh.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Magnus Damm <damm@opensource.se>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Nov 17, 2010 at 08:13:39AM +0300, Dan Carpenter wrote:
-> Sparse complains because there are no __user annotations.
-> 
-> drivers/media/IR/lirc_dev.c:156:27: warning:
-> 	incorrect type in initializer (incompatible argument 2 (different address spaces))
-> drivers/media/IR/lirc_dev.c:156:27:    expected int ( *read )( ... )
-> drivers/media/IR/lirc_dev.c:156:27:    got int ( extern [toplevel] *<noident> )( ... )
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+clk_get() returns ERR_PTR() on error, not NULL.
 
-Acked-by: Jarod Wilson <jarod@redhat.com>
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Cannot compile this driver, so it is not tested at all.
 
+ arch/sh/boards/mach-se/7724/setup.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/sh/boards/mach-se/7724/setup.c b/arch/sh/boards/mach-se/7724/setup.c
+index c31d228..6735305 100644
+--- a/arch/sh/boards/mach-se/7724/setup.c
++++ b/arch/sh/boards/mach-se/7724/setup.c
+@@ -871,14 +871,14 @@ static int __init devices_setup(void)
+ 
+ 	/* set SPU2 clock to 83.4 MHz */
+ 	clk = clk_get(NULL, "spu_clk");
+-	if (clk) {
++	if (!IS_ERR(clk)) {
+ 		clk_set_rate(clk, clk_round_rate(clk, 83333333));
+ 		clk_put(clk);
+ 	}
+ 
+ 	/* change parent of FSI A */
+ 	clk = clk_get(NULL, "fsia_clk");
+-	if (clk) {
++	if (!IS_ERR(clk)) {
+ 		clk_register(&fsimcka_clk);
+ 		clk_set_parent(clk, &fsimcka_clk);
+ 		clk_set_rate(clk, 11000);
 -- 
-Jarod Wilson
-jarod@redhat.com
+1.7.0.4
 
