@@ -1,17 +1,35 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Date: Wed, 24 Nov 2010 16:51:19 +0000
-Subject: Re: [PATCH 8/14] drivers/platform/x86/thinkpad_acpi.c: delete
-Message-Id: <20101124165119.GD2150@srcf.ucam.org>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 26 Nov 2010 17:06:02 +0000
+Subject: [PATCH] arm: plat-omap: counter_32k: use IS_ERR() instead of NULL check
+Message-Id: <1290791163-21190-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288088743-3725-1-git-send-email-julia@diku.dk> <1288088743-3725-9-git-send-email-julia@diku.dk>
-In-Reply-To: <1288088743-3725-9-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>, kernel-janitors@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Applied, thanks.
+clk_get() returns ERR_PTR() on error, not NULL.
 
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Cannot compile this driver, so it is not tested at all.
+
+ arch/arm/plat-omap/counter_32k.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/plat-omap/counter_32k.c b/arch/arm/plat-omap/counter_32k.c
+index 155fe43..c1e0d00 100644
+--- a/arch/arm/plat-omap/counter_32k.c
++++ b/arch/arm/plat-omap/counter_32k.c
+@@ -164,7 +164,7 @@ static int __init omap_init_clocksource_32k(void)
+ 			return -ENODEV;
+ 
+ 		sync_32k_ick = clk_get(NULL, "omap_32ksync_ick");
+-		if (sync_32k_ick)
++		if (!IS_ERR(sync_32k_ick))
+ 			clk_enable(sync_32k_ick);
+ 
+ 		clocksource_32k.mult = clocksource_hz2mult(32768,
 -- 
-Matthew Garrett | mjg59@srcf.ucam.org
+1.7.0.4
+
