@@ -1,25 +1,24 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 15 Nov 2010 18:20:05 +0000
-Subject: [patch] jffs2: typo in comment
-Message-Id: <20101115182005.GA3941@bicker>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Fri, 26 Nov 2010 16:26:08 +0000
+Subject: Re: [patch] jffs2: typo in comment
+Message-Id: <1290788768.2552.36.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101115182005.GA3941@bicker>
+In-Reply-To: <20101115182005.GA3941@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <error27@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
 
-It says FB instead of FS (file system).
+On Mon, 2010-11-15 at 21:20 +0300, Dan Carpenter wrote:
+> It says FB instead of FS (file system).
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Pushed to l2-mtd-2.6.git, thanks!
 
-diff --git a/fs/jffs2/jffs2_fs_sb.h b/fs/jffs2/jffs2_fs_sb.h
-index f864005..0bc6a6c 100644
---- a/fs/jffs2/jffs2_fs_sb.h
-+++ b/fs/jffs2/jffs2_fs_sb.h
-@@ -144,4 +144,4 @@ struct jffs2_sb_info {
- 	void *os_priv;
- };
- 
--#endif /* _JFFS2_FB_SB */
-+#endif /* _JFFS2_FS_SB */
+-- 
+Best Regards,
+Artem Bityutskiy (Артём Битюцкий)
+
