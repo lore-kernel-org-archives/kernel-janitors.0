@@ -1,42 +1,38 @@
 From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Fri, 19 Nov 2010 18:41:58 +0000
-Subject: [PATCH] power: power_supply_core: fix use after free and memory leak
-Message-Id: <1290192119-11704-1-git-send-email-segoon@openwall.com>
+Date: Fri, 26 Nov 2010 17:06:41 +0000
+Subject: [PATCH] media: rc: lirc_dev: check kobject_set_name() result
+Message-Id: <1290791203-21448-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-device_unregister() might free its argument.  This leads to freed
-memory use in kfree().  Also use put_device() instead of kfree()
-as dev may be already used in another layer after call to device_add().
+kobject_set_name() may fail with -ENOMEM, check for it.
 
 Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
 ---
  Compile tested only.
 
- drivers/power/power_supply_core.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/rc/lirc_dev.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-index 91606bb..f06bad0 100644
---- a/drivers/power/power_supply_core.c
-+++ b/drivers/power/power_supply_core.c
-@@ -190,10 +190,10 @@ int power_supply_register(struct device *parent, struct power_supply *psy)
- 	goto success;
+diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
+index 8418b14..0a2d267 100644
+--- a/drivers/media/rc/lirc_dev.c
++++ b/drivers/media/rc/lirc_dev.c
+@@ -178,7 +178,9 @@ static int lirc_cdev_add(struct irctl *ir)
+ 		cdev_init(cdev, &lirc_dev_fops);
+ 		cdev->owner = THIS_MODULE;
+ 	}
+-	kobject_set_name(&cdev->kobj, "lirc%d", d->minor);
++	retval = kobject_set_name(&cdev->kobj, "lirc%d", d->minor);
++	if (retval)
++		return retval;
  
- create_triggers_failed:
--	device_unregister(psy->dev);
-+	device_del(dev);
- kobject_set_name_failed:
- device_add_failed:
--	kfree(dev);
-+	put_device(dev);
- success:
- 	return rc;
- }
+ 	retval = cdev_add(cdev, MKDEV(MAJOR(lirc_base_dev), d->minor), 1);
+ 	if (retval)
 -- 
 1.7.0.4
 
