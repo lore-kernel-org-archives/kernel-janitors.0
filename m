@@ -1,25 +1,36 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Tue, 09 Nov 2010 13:46:17 +0000
-Subject: Re: [patch] serial/mrst_max3110: make buffer larger
-Message-Id: <20101109134617.7786f984@lxorguk.ukuu.org.uk>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 26 Nov 2010 17:05:55 +0000
+Subject: [PATCH] arm: dma: check clk_get() result
+Message-Id: <1290791157-21096-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101025052802.GY5985@bicker>
-In-Reply-To: <20101025052802.GY5985@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, 25 Oct 2010 07:28:03 +0200
-Dan Carpenter <error27@gmail.com> wrote:
+clk_get() may return ERR_PTR(), if so propagate return code as
+imx_dma_init() return code.
 
-> This is used to store the spi_device ->modalias so they have to be the same
-> size.  SPI_NAME_SIZE is 32.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Cannot compile this driver, so it is not tested at all.
 
-Ack, added to my tree
+ arch/arm/mach-imx/dma-v1.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-Thanks
-Alan
+diff --git a/arch/arm/mach-imx/dma-v1.c b/arch/arm/mach-imx/dma-v1.c
+index dcb24a9..e9f1769 100644
+--- a/arch/arm/mach-imx/dma-v1.c
++++ b/arch/arm/mach-imx/dma-v1.c
+@@ -821,6 +821,8 @@ static int __init imx_dma_init(void)
+ 		return 0;
+ 
+ 	dma_clk = clk_get(NULL, "dma");
++	if (IS_ERR(dma_clk))
++		return PTR_ERR(dma_clk);
+ 	clk_enable(dma_clk);
+ 
+ 	/* reset DMA module */
+-- 
+1.7.0.4
+
