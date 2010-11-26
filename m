@@ -1,31 +1,49 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 03 Nov 2010 16:40:59 +0000
-Subject: Re: [patch 2/2] cifs: dereferencing first then checking
-Message-Id: <20101103164059.GH14069@bicker>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 26 Nov 2010 17:06:35 +0000
+Subject: [PATCH] media: rc: ir-lirc-codec: fix potential integer overflow
+Message-Id: <1290791197-21403-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101027212253.GL6062@bicker> <20101027195123.0a712a53@tlielax.poochiereds.net> <20101028034434.GR6062@bicker> <20101102162250.3a2aa670@tlielax.poochiereds.net>
-In-Reply-To: <20101102162250.3a2aa670-9yPaYZwiELC+kQycOl6kW4xkIHaj4LzF@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, =?UTF-8?q?David=20H=C3=A4rdeman?= <david@hardeman.nu>, Jarod Wilson <jarod@redhat.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 02, 2010 at 04:22:50PM -0400, Jeff Layton wrote:
-> Here's a respun patch that should fix these problems. I chickened out
-> on removing the check in find_writable_file.
-> 
-> It still seems like a bogus cargo-cult sort of thing. It should
-> probably be a BUG() if you call that function with a NULL pointer, but
-> I don't feel like tackling that just yet.
-> 
-> Dan, does this look ok to you? If so, I'll resend to Steve as an
-> "official" patch.
-> 
+'n' may be bigger than MAX_INT*sizeof(int), if so checking of truncated
+(int)(n/sizeof(int)) for LIRCBUF_SIZE overflow and then using nontruncated 'count'
+doesn't make sense.  Also n may be up to sizeof(int)-1 bytes bigger than expected,
+so check value of (n % sizeof(int)) too.
 
-Looks fine to me.  Obviously, I've already said that I don't know if the
-checks are needed or not.  I defer to your greater knowledge.  ;)
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested only.
 
-regards,
-dan carpenter
+ drivers/media/rc/ir-lirc-codec.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/rc/ir-lirc-codec.c b/drivers/media/rc/ir-lirc-codec.c
+index 1e87ee8..f011c5d 100644
+--- a/drivers/media/rc/ir-lirc-codec.c
++++ b/drivers/media/rc/ir-lirc-codec.c
+@@ -100,7 +100,8 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char *buf,
+ 	struct lirc_codec *lirc;
+ 	struct rc_dev *dev;
+ 	int *txbuf; /* buffer with values to transmit */
+-	int ret = 0, count;
++	int ret = 0;
++	size_t count;
+ 
+ 	lirc = lirc_get_pdata(file);
+ 	if (!lirc)
+@@ -110,7 +111,7 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char *buf,
+ 		return -EINVAL;
+ 
+ 	count = n / sizeof(int);
+-	if (count > LIRCBUF_SIZE || count % 2 = 0)
++	if (count > LIRCBUF_SIZE || count % 2 = 0 || n % sizeof(int) != 0)
+ 		return -EINVAL;
+ 
+ 	txbuf = memdup_user(buf, n);
+-- 
+1.7.0.4
 
