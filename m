@@ -1,35 +1,42 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Sat, 13 Nov 2010 10:48:59 +0000
-Subject: RE: [PATCH] trivial: nandsim.c spell fixes in comments
-Message-Id: <1289645339.2218.13.camel@localhost>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 26 Nov 2010 17:06:07 +0000
+Subject: [PATCH] arm: plat-spear: time: use IS_ERR() instead of NULL check
+Message-Id: <1290791168-21255-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTimGScstLNC2Hs1v-h6BF0y8GFTw4TJw8JEt+j8X@mail.gmail.com>
-	<70E876B0EA86DD4BAF101844BC814DFE093EEF9923@Cloud.RL.local>
-	<AANLkTi=ON7CSbGq=X9wOBNcNjY05-ECJzpjxXFiE0fQM@mail.gmail.com>
-In-Reply-To: <AANLkTi=ON7CSbGq=X9wOBNcNjY05-ECJzpjxXFiE0fQM@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: srimugunthan dhandapani <srimugunthan.dhandapani@gmail.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Jon Povey <Jon.Povey@racelogic.co.uk>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue, 2010-11-02 at 16:20 +0530, srimugunthan dhandapani wrote:
-> attached patch fixes the program->programm and other  spellfixes in
-> comments in nandsim.c
-> 
-> Signed-off-by: srimugunthan  <srimugunthan.dhandapani@gmail.com>
+clk_get() returns ERR_PTR() on error, not NULL.
 
-I've applied this patch to l2-mtd-2.6.git, but please, next time send
-patches so that I could just save the e-mail and apply with git-am. In
-this case I had to do a lot of work:
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Cannot compile this driver, so it is not tested at all.
 
-1. Try git-am to the body and fail
-2. Check that your attachment matches the body
-3. Edit your attachement and add author/signoff-by/etc for you.
+ arch/arm/plat-spear/time.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-But thanks for the fixes anyway.
-
+diff --git a/arch/arm/plat-spear/time.c b/arch/arm/plat-spear/time.c
+index ab21165..678df18 100644
+--- a/arch/arm/plat-spear/time.c
++++ b/arch/arm/plat-spear/time.c
+@@ -229,13 +229,13 @@ void __init spear_setup_timer(void)
+ 	}
+ 
+ 	gpt_clk = clk_get_sys("gpt0", NULL);
+-	if (!gpt_clk) {
++	if (IS_ERR(gpt_clk)) {
+ 		pr_err("%s:couldn't get clk for gpt\n", __func__);
+ 		goto err_iomap;
+ 	}
+ 
+ 	pll3_clk = clk_get(NULL, "pll3_48m_clk");
+-	if (!pll3_clk) {
++	if (IS_ERR(pll3_clk)) {
+ 		pr_err("%s:couldn't get PLL3 as parent for gpt\n", __func__);
+ 		goto err_iomap;
+ 	}
 -- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+1.7.0.4
 
