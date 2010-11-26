@@ -1,36 +1,26 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Mon, 15 Nov 2010 19:18:51 +0000
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Fri, 26 Nov 2010 16:05:59 +0000
 Subject: Re: [PATCH] fs: jffs2: fix error value sign
-Message-Id: <20101115191851.GA6450@albatros>
+Message-Id: <1290787559.2552.29.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1289765320-6071-1-git-send-email-segoon@openwall.com>
-	<20101114202905.GA21614@bicker> <20101115143735.GA4548@albatros>
-	<20101115184531.GA24643@bicker>
-In-Reply-To: <20101115184531.GA24643@bicker>
+In-Reply-To: <1289765320-6071-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segoon@openwall.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
 
-On Mon, Nov 15, 2010 at 21:45 +0300, Dan Carpenter wrote:
-> On Mon, Nov 15, 2010 at 05:37:37PM +0300, Vasiliy Kulikov wrote:
-> > 
-> > x86_64, linux-next:
-> > 
-> > make -C /home/vasya/linux fs/jffs2/xattr.o
-> > make: Вход в каталог `/home/vasya/dev/linux-next'
->         ^^^^^^^^^^^^^^
+On Sun, 2010-11-14 at 23:08 +0300, Vasiliy Kulikov wrote:
+> do_verify_xattr_datum(), do_load_xattr_datum(), load_xattr_datum()
+> and verify_xattr_ref() should return negative value on error.
+> Sometimes they return EIO that is positive.  Change this to -EIO.
 > 
-> This means "Entering directory" right?  So /home/vasya/linux is a
-> symlink to /home/vasya/dev/linux-next.  It still compiles for me
-> when I create a symlink and use the -C option...
+> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
 
-Correct, but the same with cd ~linux/ && make fs/jffs2/xattr.o.
-
-I've just updated to next-2010111 and it became compilable ;)
-linux next is just very nonstable...
-
-Thanks,
+Pushed to l2-mtd-2.6.git, thanks.
 
 -- 
-Vasiliy
+Best Regards,
+Artem Bityutskiy (Артём Битюцкий)
+
