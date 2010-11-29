@@ -1,42 +1,46 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Fri, 26 Nov 2010 17:06:07 +0000
-Subject: [PATCH] arm: plat-spear: time: use IS_ERR() instead of NULL check
-Message-Id: <1290791168-21255-1-git-send-email-segoon@openwall.com>
+From: viresh kumar <viresh.linux@gmail.com>
+Date: Mon, 29 Nov 2010 06:44:08 +0000
+Subject: Re: [PATCH] arm: plat-spear: time: use IS_ERR() instead of NULL check
+Message-Id: <AANLkTi==K=pYU-x5ZQQ9ACLD-MN8o9N61JbVqpBZnQWT@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1290791168-21255-1-git-send-email-segoon@openwall.com>
+In-Reply-To: <1290791168-21255-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: linux-arm-kernel@lists.infradead.org
 
-clk_get() returns ERR_PTR() on error, not NULL.
+On Fri, Nov 26, 2010 at 10:36 PM, Vasiliy Kulikov <segoon@openwall.com> wrote:
+> clk_get() returns ERR_PTR() on error, not NULL.
+>
+> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> ---
+>  Cannot compile this driver, so it is not tested at all.
+>
+>  arch/arm/plat-spear/time.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/plat-spear/time.c b/arch/arm/plat-spear/time.c
+> index ab21165..678df18 100644
+> --- a/arch/arm/plat-spear/time.c
+> +++ b/arch/arm/plat-spear/time.c
+> @@ -229,13 +229,13 @@ void __init spear_setup_timer(void)
+>        }
+>
+>        gpt_clk = clk_get_sys("gpt0", NULL);
+> -       if (!gpt_clk) {
+> +       if (IS_ERR(gpt_clk)) {
+>                pr_err("%s:couldn't get clk for gpt\n", __func__);
+>                goto err_iomap;
+>        }
+>
+>        pll3_clk = clk_get(NULL, "pll3_48m_clk");
+> -       if (!pll3_clk) {
+> +       if (IS_ERR(pll3_clk)) {
+>                pr_err("%s:couldn't get PLL3 as parent for gpt\n", __func__);
+>                goto err_iomap;
+>        }
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- Cannot compile this driver, so it is not tested at all.
+Compiled & tested.
 
- arch/arm/plat-spear/time.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/plat-spear/time.c b/arch/arm/plat-spear/time.c
-index ab21165..678df18 100644
---- a/arch/arm/plat-spear/time.c
-+++ b/arch/arm/plat-spear/time.c
-@@ -229,13 +229,13 @@ void __init spear_setup_timer(void)
- 	}
- 
- 	gpt_clk = clk_get_sys("gpt0", NULL);
--	if (!gpt_clk) {
-+	if (IS_ERR(gpt_clk)) {
- 		pr_err("%s:couldn't get clk for gpt\n", __func__);
- 		goto err_iomap;
- 	}
- 
- 	pll3_clk = clk_get(NULL, "pll3_48m_clk");
--	if (!pll3_clk) {
-+	if (IS_ERR(pll3_clk)) {
- 		pr_err("%s:couldn't get PLL3 as parent for gpt\n", __func__);
- 		goto err_iomap;
- 	}
--- 
-1.7.0.4
-
+Acked-by: Viresh Kumar <viresh.kumar@st.com>
