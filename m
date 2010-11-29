@@ -1,7 +1,7 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 29 Nov 2010 12:59:06 +0000
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Mon, 29 Nov 2010 14:28:08 +0000
 Subject: Re: Tasks to do
-Message-Id: <20101129125906.GE30799@bicker>
+Message-Id: <alpine.DEB.2.00.1011290927370.10860@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4CF31519.5030404@gmail.com>
 In-Reply-To: <4CF31519.5030404@gmail.com>
@@ -10,35 +10,29 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 29, 2010 at 12:51:05AM -0200, Jorge Merlino wrote:
-> Hi all	
-> 
-> I'm interested in helping with the deveopment of the linux kernel and
-> found this mailing list. I saw a few related todo lists but all of them
-> seem quite old.
-> I'd like to know where do I look for some task to do and if I neet to
-> tell anybody I'm working on that in order to prevent duplication of work.
-> 
+On Mon, 29 Nov 2010, Jorge Merlino wrote:
 
-There isn't a list.
+> Hi all
+>
+> I'm interested in helping with the deveopment of the linux kernel
+> and found this mailing list. I saw a few related todo lists but all
+> of them seem quite old.
 
-One easy place to start is if you have any hardware which uses a driver 
-from staging.  Just send your patches against linux-next and you won't
-conflict with anyone.
+> I'd like to know where do I look for some task to do and if I neet
+> to tell anybody I'm working on that in order to prevent duplication
+> of work.
 
-Maybe pick a driver and do this:
-1) Fix all the white space.
-2) Use sparse and figure out what can be declared as static.
-2a) Make sparse not complain.
-3) Fix all the messed up naming for static functions and data.
-4) Check that it always returns the correct error codes on failure.
-5) Use ARRAY_SIZE() through out.
-6) Use the kernel min()/max() macros.
-7) Break up any really long functions into smaller functions.
-8) Etc.
+  is there, in fact, a relatively up-to-date TO DO list for kernel
+janitorial work these days?
 
-But it really helps if you have the hardware and can test these changes.
+rday
 
-regards,
-dan carpenter
+-- 
 
+====================================
+Robert P. J. Day                               Waterloo, Ontario, CANADA
+                        http://crashcourse.ca
+
+Twitter:                                       http://twitter.com/rpjday
+LinkedIn:                               http://ca.linkedin.com/in/rpjday
+====================================
