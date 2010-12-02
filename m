@@ -1,32 +1,18 @@
-From: David Chosrova <david.chosrova@libertysurf.fr>
-Date: Wed, 01 Dec 2010 12:42:16 +0000
-Subject: [PATCH] Staging: rtl8192u: check return code kmalloc.
-Message-Id: <20101201124216.GA28979@debian.home>
+From: Roland Dreier <rdreier@cisco.com>
+Date: Thu, 02 Dec 2010 00:33:34 +0000
+Subject: Re: [PATCH v2] infiniband: core: fix information leak to userspace
+Message-Id: <adafwuhm2sh.fsf@cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1289054481-18145-1-git-send-email-segooon@gmail.com>
+	<ada39r8ohiz.fsf@cisco.com> <20101112180844.GA11533@albatros>
+	<CF9C39F99A89134C9CF9C4CCB68B8DDF25B85224A6@orsmsx501.amr.corp.intel.com>
+	<20101114092252.GA5323@albatros>
+In-Reply-To: <20101114092252.GA5323@albatros> (Vasiliy Kulikov's message of
+	"Sun, 14 Nov 2010 12:22:52 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de
-Cc: devel@driverdev.osuosl.org, error27@gmail.com, andreamrl@tiscali.it, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Vasiliy Kulikov <segoon-cxoSlKxDwOJWk0Htik3J/w@public.gmane.org>
+Cc: "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Chiang <achiang-VXdhtT5mjnY@public.gmane.org>, Andi Kleen <ak-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, "linux-rdma@vger.kernel.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-This patch checks the return code of  kmalloc when trying to allocate memory for priv->rx_urb in rtl8192_usb_initendpoints(), return -ENOMEM when failed.
-
-
-Signed-off-by: David Chosrova <david.chosrova@libertysurf.fr>
-
----
-Compiled
-
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 494f180..67ba8f7 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -2203,6 +2203,8 @@ short rtl8192_usb_initendpoints(struct net_device *dev)
- 
- 	priv->rx_urb = kmalloc(sizeof(struct urb *) * (MAX_RX_URB+1),
- 				GFP_KERNEL);
-+	if (priv->rx_urb = NULL)
-+		return -ENOMEM;
- 
- #ifndef JACKSON_NEW_RX
- 	for(i=0;i<(MAX_RX_URB+1);i++){
+thanks, applied
