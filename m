@@ -1,52 +1,40 @@
-From: Jarod Wilson <jarod@wilsonet.com>
-Date: Thu, 02 Dec 2010 18:55:34 +0000
-Subject: Re: [PATCH] media: rc: ir-lirc-codec: fix potential integer overflow
-Message-Id: <1FD24437-CC81-41A5-A28E-129166754553@wilsonet.com>
+From: Andy Walls <awalls@md.metrocast.net>
+Date: Thu, 02 Dec 2010 21:08:55 +0000
+Subject: Re: [PATCH] media: rc: ir-lirc-codec: fix potential integer
+Message-Id: <5riroj2l9iwsfksrf7xjglim.1291324135751@email.android.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101202045126.GA1784@bicker> <20101202150045.GA32168@redhat.com>
-In-Reply-To: <20101202150045.GA32168@redhat.com>
+References: <1290791197-21403-1-git-send-email-segoon@openwall.com>
+In-Reply-To: <1290791197-21403-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Vasiliy Kulikov <segoon@openwall.com>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, =?iso-8859-1?Q?David_H=E4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Jarod Wilson <jarod@redhat.com>, Dan Carpenter <error27@gmail.com>, Vasiliy Kulikov <segoon@openwall.com>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, =?ISO-8859-1?Q?David_H=E4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Dec 2, 2010, at 10:00 AM, Jarod Wilson wrote:
-
-> On Thu, Dec 02, 2010 at 07:51:26AM +0300, Dan Carpenter wrote:
->> On Fri, Nov 26, 2010 at 08:06:35PM +0300, Vasiliy Kulikov wrote:
->>> 	count = n / sizeof(int);
->>> -	if (count > LIRCBUF_SIZE || count % 2 = 0)
->>> +	if (count > LIRCBUF_SIZE || count % 2 = 0 || n % sizeof(int) != 0)
->>                                                      ^^^^^^^^^^^^^^^^^^^^
->> 
->> Wait, what?  We just checked this a couple lines before.
-> 
-> Bah. I'd only looked at the diff, which didn't have enough context. I
-> thought that looked familiar. Indeed, this part seems to be unnecessary.
-> 
->> The rest of the patch is right and a clever catch.  It would affect 
->> x86_64 systems and not i386.  This doesn't have security implications
->> does it?  You'd just catch the kmalloc() stack trace for insanely large
->> allocations.
-> 
-> Even on x86_64, it looks to my (relatively untrained) eye like you'd
-> actually be fine. n is a size_t (so, 64-bit on x86_64). count is an int
-> (so 32-bit on x86_64). We initialize count to some 64-bit value / 4, so
-> at most, 16 bits, which always fits just fine in the 32-bit int, no?
-
-Never mind, I shouldn't be allowed near computers on too little sleep.
-Its been pointed out to me how incredibly incorrect and stupid what I
-said above is. :)
-
-(i.e., we're not dividing the bits by 4, we're dividing a 64-bit value
-by 4, so you're still in 62-bit territory.)
-
-/me sticks head back in sand
-
--- 
-Jarod Wilson
-jarod@wilsonet.com
-
-
-
+NjQgYml0IHZhbHVlIC8gNCA9IDYyIGJpdCB2YWx1ZSwgcmlnaHQ/CgoKSmFyb2QgV2lsc29uIDxq
+YXJvZEByZWRoYXQuY29tPiB3cm90ZToKCj5PbiBUaHUsIERlYyAwMiwgMjAxMCBhdCAwNzo1MToy
+NkFNICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+PiBPbiBGcmksIE5vdiAyNiwgMjAxMCBh
+dCAwODowNjozNVBNICswMzAwLCBWYXNpbGl5IEt1bGlrb3Ygd3JvdGU6Cj4+ID4gIAljb3VudCA9
+IG4gLyBzaXplb2YoaW50KTsKPj4gPiAtCWlmIChjb3VudCA+IExJUkNCVUZfU0laRSB8fCBjb3Vu
+dCAlIDIgPSAwKQo+PiA+ICsJaWYgKGNvdW50ID4gTElSQ0JVRl9TSVpFIHx8IGNvdW50ICUgMiA9
+IDAgfHwgbiAlIHNpemVvZihpbnQpICE9IDApCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIF5eXl5eXl5eXl5eXl5eXl5eXl5eCj4+IAo+PiBX
+YWl0LCB3aGF0PyAgV2UganVzdCBjaGVja2VkIHRoaXMgYSBjb3VwbGUgbGluZXMgYmVmb3JlLgo+
+Cj5CYWguIEknZCBvbmx5IGxvb2tlZCBhdCB0aGUgZGlmZiwgd2hpY2ggZGlkbid0IGhhdmUgZW5v
+dWdoIGNvbnRleHQuIEkKPnRob3VnaHQgdGhhdCBsb29rZWQgZmFtaWxpYXIuIEluZGVlZCwgdGhp
+cyBwYXJ0IHNlZW1zIHRvIGJlIHVubmVjZXNzYXJ5Lgo+Cj4+IFRoZSByZXN0IG9mIHRoZSBwYXRj
+aCBpcyByaWdodCBhbmQgYSBjbGV2ZXIgY2F0Y2guICBJdCB3b3VsZCBhZmZlY3QgCj4+IHg4Nl82
+NCBzeXN0ZW1zIGFuZCBub3QgaTM4Ni4gIFRoaXMgZG9lc24ndCBoYXZlIHNlY3VyaXR5IGltcGxp
+Y2F0aW9ucwo+PiBkb2VzIGl0PyAgWW91J2QganVzdCBjYXRjaCB0aGUga21hbGxvYygpIHN0YWNr
+IHRyYWNlIGZvciBpbnNhbmVseSBsYXJnZQo+PiBhbGxvY2F0aW9ucy4KPgo+RXZlbiBvbiB4ODZf
+NjQsIGl0IGxvb2tzIHRvIG15IChyZWxhdGl2ZWx5IHVudHJhaW5lZCkgZXllIGxpa2UgeW91J2QK
+PmFjdHVhbGx5IGJlIGZpbmUuIG4gaXMgYSBzaXplX3QgKHNvLCA2NC1iaXQgb24geDg2XzY0KS4g
+Y291bnQgaXMgYW4gaW50Cj4oc28gMzItYml0IG9uIHg4Nl82NCkuIFdlIGluaXRpYWxpemUgY291
+bnQgdG8gc29tZSA2NC1iaXQgdmFsdWUgLyA0LCBzbwo+YXQgbW9zdCwgMTYgYml0cywgd2hpY2gg
+YWx3YXlzIGZpdHMganVzdCBmaW5lIGluIHRoZSAzMi1iaXQgaW50LCBubz8KPgo+LS0gCj5KYXJv
+ZCBXaWxzb24KPmphcm9kQHJlZGhhdC5jb20KPgo+LS0KPlRvIHVuc3Vic2NyaWJlIGZyb20gdGhp
+cyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1tZWRpYSIgaW4KPnRoZSBi
+b2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj5Nb3JlIG1ham9y
+ZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwK
+//Tounsubscribefromthislisv/sendthelinf/unsubscribekernel/janitors/inthebody
+ofamessagetomajordomo/vger/kernel/orgMoremajordomoinfoathttp///vger/kernel/o
+rg/majordomo/info/htCg==
