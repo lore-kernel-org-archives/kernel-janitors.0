@@ -1,34 +1,31 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 09 Dec 2010 14:53:28 +0000
-Subject: [PATCH] NFS: Remove redundant unlikely()
-Message-Id: <1291906408-859-1-git-send-email-tklauser@distanz.ch>
+From: Jarod Wilson <jarod@wilsonet.com>
+Date: Thu, 02 Dec 2010 02:45:39 +0000
+Subject: Re: [PATCH] media: rc: lirc_dev: check kobject_set_name() result
+Message-Id: <3F92DE6F-9421-4AE3-B5DB-C69567A95D09@wilsonet.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1290791203-21448-1-git-send-email-segoon@openwall.com>
+In-Reply-To: <1290791203-21448-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Vasiliy Kulikov <segoon@openwall.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-IS_ERR() already implies unlikely(), so it can be omitted here.
+On Nov 26, 2010, at 12:06 PM, Vasiliy Kulikov wrote:
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- fs/nfs/mount_clnt.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> kobject_set_name() may fail with -ENOMEM, check for it.
+> 
+> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> ---
+> Compile tested only.
 
-diff --git a/fs/nfs/mount_clnt.c b/fs/nfs/mount_clnt.c
-index eceafe7..3f2a6be 100644
---- a/fs/nfs/mount_clnt.c
-+++ b/fs/nfs/mount_clnt.c
-@@ -248,7 +248,7 @@ void nfs_umount(const struct nfs_mount_request *info)
- 		args.flags |= RPC_CLNT_CREATE_NONPRIVPORT;
- 
- 	clnt = rpc_create(&args);
--	if (unlikely(IS_ERR(clnt)))
-+	if (IS_ERR(clnt))
- 		goto out_clnt_err;
- 
- 	dprintk("NFS: sending UMNT request for %s:%s\n",
+Works for me.
+
+Acked-by: Jarod Wilson <jarod@redhat.com>
+
 -- 
-1.7.0.4
+Jarod Wilson
+jarod@wilsonet.com
+
+
 
