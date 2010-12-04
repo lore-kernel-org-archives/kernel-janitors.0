@@ -1,52 +1,40 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 15 Dec 2010 13:01:18 +0000
-Subject: Re: question about schedule_timeout
-Message-Id: <Pine.LNX.4.64.1012151359390.8557@pc-004.diku.dk>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Sat, 04 Dec 2010 21:05:22 +0000
+Subject: [PATCH v2] media: rc: ir-lirc-codec: fix integer overflow
+Message-Id: <20101204210522.GA5244@albatros>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1012151256280.8557@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1012151256280.8557@pc-004.diku.dk>
+References: <20101202045126.GA1784@bicker>
+In-Reply-To: <20101202045126.GA1784@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, Jarod Wilson <jarod@redhat.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 15 Dec 2010, Matthew Wilcox wrote:
+'n' may be bigger than MAX_INT*sizeof(int), if so checking of truncated
+(int)(n/sizeof(int)) for LIRCBUF_SIZE overflows and then using nontruncated 'count'
+doesn't make sense.  This is not a security issue as too big 'n' is catched in
+kmalloc() in memdup_user() call.  However, it's better to prevent WARN() in kmalloc().
 
-> On Wed, Dec 15, 2010 at 12:58:49PM +0100, Julia Lawall wrote:
-> > I am wondering about the interaction between schedule_timeout and 
-> > functions like local_irq_save, that turn off interrupts.  To my 
-> > understanding, with schedule_timeout one sleeps until a timer interrupt is 
-> > received.  But how can that be received if interrupts have been turned 
-> > off?  I find this mostly in older code, but there are still some 
-> > occurrences, and even in older code, I'm not sure to understand how it 
-> > could have worked.
-> 
-> My memory was that interrupts were reenabled when you called schedule(),
-> then restored when schedule() returned to you.  That turns out not to
-> be true today, and I don't know whether it was ever true.
-> 
-> What actually happens is this:
-> 
-> asmlinkage void __sched schedule(void)
-> {
-> ...
->         preempt_disable();
-> ...
->         raw_spin_lock_irq(&rq->lock);
-> ...
->                 raw_spin_unlock_irq(&rq->lock);
-> ...
->         preempt_enable_no_resched();
-> }
-> 
-> (there are two paths which lead to the rq->lock being dropped, the other one
-> is slightly more complex than this).
-> 
-> So in plain english, if you call schedule(), or schedule_timeout(),
-> when it returns interrupts will be enabled.  It's almost certainly
-> a bug, and it'd be good to put a test for it in schedule(), possibly
-> under DEBUG_SPINLOCK_SLEEP.
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested only.
 
-Very helpful.  Thanks!
+ drivers/media/rc/ir-lirc-codec.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-julia
+diff --git a/drivers/media/rc/ir-lirc-codec.c b/drivers/media/rc/ir-lirc-codec.c
+index 1e87ee8..a7e91e6 100644
+--- a/drivers/media/rc/ir-lirc-codec.c
++++ b/drivers/media/rc/ir-lirc-codec.c
+@@ -100,7 +100,8 @@ static ssize_t ir_lirc_transmit_ir(struct file *file, const char *buf,
+ 	struct lirc_codec *lirc;
+ 	struct rc_dev *dev;
+ 	int *txbuf; /* buffer with values to transmit */
+-	int ret = 0, count;
++	int ret = 0;
++	size_t count;
+ 
+ 	lirc = lirc_get_pdata(file);
+ 	if (!lirc)
+-- 
+1.7.0.4
