@@ -1,40 +1,43 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Sun, 12 Dec 2010 14:50:04 +0000
-Subject: Re: [PATCH] exofs: Remove redundant unlikely()
-Message-Id: <4D04E11C.6070809@panasas.com>
+From: Tony Lindgren <tony@atomide.com>
+Date: Mon, 06 Dec 2010 23:51:58 +0000
+Subject: Re: [PATCH] arm: plat-omap: counter_32k: use IS_ERR() instead of
+Message-Id: <20101206235158.GU8345@atomide.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1291906521-1087-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1291906521-1087-1-git-send-email-tklauser@distanz.ch>
+References: <1290791163-21190-1-git-send-email-segoon@openwall.com>
+In-Reply-To: <1290791163-21190-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 12/09/2010 04:55 PM, Tobias Klauser wrote:
-> IS_ERR() already implies unlikely(), so it can be omitted here.
+* Vasiliy Kulikov <segoon@openwall.com> [101126 08:56]:
+> clk_get() returns ERR_PTR() on error, not NULL.
 > 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
 > ---
->  fs/exofs/super.c |    2 +-
+>  Cannot compile this driver, so it is not tested at all.
+
+Thanks will merge this.
+
+Tony
+
+> 
+>  arch/arm/plat-omap/counter_32k.c |    2 +-
 >  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> diff --git a/fs/exofs/super.c b/fs/exofs/super.c
-> index 79c3ae6..b2b12a8 100644
-> --- a/fs/exofs/super.c
-> +++ b/fs/exofs/super.c
-> @@ -488,7 +488,7 @@ static int exofs_read_lookup_dev_table(struct exofs_sb_info **psbi,
->  		}
+> diff --git a/arch/arm/plat-omap/counter_32k.c b/arch/arm/plat-omap/counter_32k.c
+> index 155fe43..c1e0d00 100644
+> --- a/arch/arm/plat-omap/counter_32k.c
+> +++ b/arch/arm/plat-omap/counter_32k.c
+> @@ -164,7 +164,7 @@ static int __init omap_init_clocksource_32k(void)
+>  			return -ENODEV;
 >  
->  		od = osduld_info_lookup(&odi);
-> -		if (unlikely(IS_ERR(od))) {
-> +		if (IS_ERR(od)) {
->  			ret = PTR_ERR(od);
->  			EXOFS_ERR("ERROR: device requested is not found "
->  				  "osd_name-%s =>%d\n", odi.osdname, ret);
-
-I've applied it in my local tree, it'll be included in the next linux-next
-version I release. For the next merge window.
-
-Thanks. Good catch
-Boaz
-
+>  		sync_32k_ick = clk_get(NULL, "omap_32ksync_ick");
+> -		if (sync_32k_ick)
+> +		if (!IS_ERR(sync_32k_ick))
+>  			clk_enable(sync_32k_ick);
+>  
+>  		clocksource_32k.mult = clocksource_hz2mult(32768,
+> -- 
+> 1.7.0.4
+> 
