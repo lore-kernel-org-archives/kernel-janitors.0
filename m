@@ -1,32 +1,20 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 07 Dec 2010 11:01:38 +0000
-Subject: [patch] econet: unlock on -EPERM path
-Message-Id: <20101207110138.GM10623@bicker>
+From: Jarek Poplawski <jarkao2@gmail.com>
+Date: Tue, 07 Dec 2010 22:01:38 +0000
+Subject: Re: [patch] econet: unlock on -EPERM path
+Message-Id: <4CFEAEC2.7080506@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101207110138.GM10623@bicker>
+In-Reply-To: <20101207110138.GM10623@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: Phil Blundell <philb@gnu.org>, Eric Dumazet <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: netdev@vger.kernel.org, Phil Blundell <philb@gnu.org>, Eric Dumazet <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
 
-We need to do a mutex_unlock() and a put_dev() before returning.
+Dan Carpenter wrote:
+> We need to do a mutex_unlock() and a put_dev() before returning.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Good catch! Btw, isn't this put_dev() below, in case SIOCGIFADDR,
+superfluous?
 
-diff --git a/net/econet/af_econet.c b/net/econet/af_econet.c
-index 13992e1..f180371 100644
---- a/net/econet/af_econet.c
-+++ b/net/econet/af_econet.c
-@@ -661,8 +661,10 @@ static int ec_dev_ioctl(struct socket *sock, unsigned int cmd, void __user *arg)
- 	err = 0;
- 	switch (cmd) {
- 	case SIOCSIFADDR:
--		if (!capable(CAP_NET_ADMIN))
--			return -EPERM;
-+		if (!capable(CAP_NET_ADMIN)) {
-+			err = -EPERM;
-+			break;
-+		}
- 
- 		edev = dev->ec_ptr;
- 		if (edev = NULL) {
+Jarek P.
