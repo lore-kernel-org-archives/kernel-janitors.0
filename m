@@ -1,23 +1,23 @@
-From: Jarek Poplawski <jarkao2@gmail.com>
-Date: Tue, 07 Dec 2010 22:09:41 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 08 Dec 2010 18:14:24 +0000
 Subject: Re: [patch] econet: unlock on -EPERM path
-Message-Id: <4CFEB0A5.8040506@gmail.com>
+Message-Id: <20101208.101424.189706549.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101207110138.GM10623@bicker> <4CFEAEC2.7080506@gmail.com>
-In-Reply-To: <4CFEAEC2.7080506@gmail.com>
+References: <20101207110138.GM10623@bicker>
+In-Reply-To: <20101207110138.GM10623@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: netdev@vger.kernel.org, Phil Blundell <philb@gnu.org>, Eric Dumazet <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
+To: error27@gmail.com
+Cc: netdev@vger.kernel.org, philb@gnu.org, eric.dumazet@gmail.com, kernel-janitors@vger.kernel.org
 
-Jarek Poplawski wrote:
-> Dan Carpenter wrote:
->> We need to do a mutex_unlock() and a put_dev() before returning.
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 7 Dec 2010 14:01:38 +0300
+
+> We need to do a mutex_unlock() and a put_dev() before returning.
 > 
-> Good catch! Btw, isn't this put_dev() below, in case SIOCGIFADDR,
-> superfluous?
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Hmm... put_dev() a.k.a. dev_put() ;-)
+Nelson Elhage beat you to this one, so I integrates his version.
 
-Jarek P.
+Thanks.
