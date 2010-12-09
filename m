@@ -1,43 +1,34 @@
-From: =?UTF-8?q?Toralf=20F=C3=B6rster?= <toralf.foerster@gmx.de>
-Date: Mon, 13 Dec 2010 16:19:35 +0000
-Subject: [PATCH] fix : ERROR: space required after that ',' (ctx:WxV)
-Message-Id: <1292257175-7810-1-git-send-email-toralf.foerster@gmx.de>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 15:01:07 +0000
+Subject: [PATCH] staging: brcm80211: Remove redundant unlikely()
+Message-Id: <1291906867-1485-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Brett Rudley <brudley@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>, Nohee Ko <noheek@broadcom.com>, Greg Kroah-Hartman <gregkh@suse.de>
+Cc: linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-Signed-off-by: Toralf F=C3=B6rster <toralf.foerster@gmx.de>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 ---
- kernel/cred.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 6a1aa00..aab705a 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -20,10 +20,10 @@
-=20
- #if 0
- #define kdebug(FMT, ...) \
--	printk("[%-5.5s%5u] "FMT"\n", current->comm, current->pid ,##__VA_ARGS__)
-+	printk("[%-5.5s%5u] "FMT"\n", current->comm, current->pid, ##__VA_ARGS__)
- #else
- #define kdebug(FMT, ...) \
--	no_printk("[%-5.5s%5u] "FMT"\n", current->comm, current->pid ,##__VA_ARGS=
-__)
-+	no_printk("[%-5.5s%5u] "FMT"\n", current->comm, current->pid, ##__VA_ARGS=
-__)
- #endif
-=20
- static struct kmem_cache *cred_jar;
---=20
-1.7.2.2
+diff --git a/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
+index 0d7aa4a..edf300d 100644
+--- a/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
++++ b/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
+@@ -3196,7 +3196,7 @@ s32 wl_cfg80211_attach(struct net_device *ndev, void *data)
+ 	}
+ 	WL_DBG(("func %p\n", wl_cfg80211_get_sdio_func()));
+ 	wdev = wl_alloc_wdev(sizeof(struct wl_iface), &wl_cfg80211_get_sdio_func()->dev);
+-	if (unlikely(IS_ERR(wdev)))
++	if (IS_ERR(wdev))
+ 		return -ENOMEM;
+ 
+ 	wdev->iftype = wl_mode_to_nl80211_iftype(WL_MODE_BSS);
+-- 
+1.7.0.4
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
