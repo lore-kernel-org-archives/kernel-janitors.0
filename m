@@ -1,23 +1,34 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 11 Dec 2010 05:07:20 +0000
-Subject: Re: [patch] isdn: return -EFAULT if copy_from_user() fails
-Message-Id: <20101211050720.GF10623@bicker>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:45:04 +0000
+Subject: [PATCH] vmalloc: Remove redundant unlikely()
+Message-Id: <1291905904-32716-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101211014154.3157588b@absol.kitzblitz>
- <20101210.164721.85429801.davem@davemloft.net>
- <20101210.165003.267942493.davem@davemloft.net>
- <20101210.165259.22054320.davem@davemloft.net>
-In-Reply-To: <20101210.165259.22054320.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: nikai@nikai.net, isdn@linux-pingi.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org
 
-> >>> Ahem, we're printing this return value:
-> >>> 
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-Doh!  Thanks for that guys.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ mm/vmalloc.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index eb5cc7d..31dcb64 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -748,7 +748,7 @@ static struct vmap_block *new_vmap_block(gfp_t gfp_mask)
+ 	va = alloc_vmap_area(VMAP_BLOCK_SIZE, VMAP_BLOCK_SIZE,
+ 					VMALLOC_START, VMALLOC_END,
+ 					node, gfp_mask);
+-	if (unlikely(IS_ERR(va))) {
++	if (IS_ERR(va)) {
+ 		kfree(vb);
+ 		return ERR_CAST(va);
+ 	}
+-- 
+1.7.0.4
+
