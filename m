@@ -1,34 +1,24 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 09 Dec 2010 14:45:04 +0000
-Subject: [PATCH] vmalloc: Remove redundant unlikely()
-Message-Id: <1291905904-32716-1-git-send-email-tklauser@distanz.ch>
+From: Minchan Kim <minchan.kim@gmail.com>
+Date: Thu, 09 Dec 2010 16:09:34 +0000
+Subject: Re: [PATCH] vmalloc: Remove redundant unlikely()
+Message-Id: <AANLkTimNdZ4qRRFfrMUnmyZgPuoe2M8eVdCQykg1Dk-u@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1291905904-32716-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1291905904-32716-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org
+To: Tobias Klauser <tklauser@distanz.ch>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-IS_ERR() already implies unlikely(), so it can be omitted here.
+On Thu, Dec 9, 2010 at 11:45 PM, Tobias Klauser <tklauser@distanz.ch> wrote:
+> IS_ERR() already implies unlikely(), so it can be omitted here.
+>
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Reviewed-by: Minchan Kim <minchan.kim@gmail.com>
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- mm/vmalloc.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Nice catch.
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index eb5cc7d..31dcb64 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -748,7 +748,7 @@ static struct vmap_block *new_vmap_block(gfp_t gfp_mask)
- 	va = alloc_vmap_area(VMAP_BLOCK_SIZE, VMAP_BLOCK_SIZE,
- 					VMALLOC_START, VMALLOC_END,
- 					node, gfp_mask);
--	if (unlikely(IS_ERR(va))) {
-+	if (IS_ERR(va)) {
- 		kfree(vb);
- 		return ERR_CAST(va);
- 	}
 -- 
-1.7.0.4
-
+Kind regards,
+Minchan Kim
