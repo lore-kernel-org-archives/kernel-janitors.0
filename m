@@ -1,31 +1,34 @@
-From: Jarod Wilson <jarod@wilsonet.com>
-Date: Thu, 02 Dec 2010 02:45:39 +0000
-Subject: Re: [PATCH] media: rc: lirc_dev: check kobject_set_name() result
-Message-Id: <3F92DE6F-9421-4AE3-B5DB-C69567A95D09@wilsonet.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:40:38 +0000
+Subject: [PATCH] ext4: Remove redundant unlikely()
+Message-Id: <1291905638-32410-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290791203-21448-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1290791203-21448-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segoon@openwall.com>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Nov 26, 2010, at 12:06 PM, Vasiliy Kulikov wrote:
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-> kobject_set_name() may fail with -ENOMEM, check for it.
-> 
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
-> ---
-> Compile tested only.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ fs/ext4/namei.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Works for me.
-
-Acked-by: Jarod Wilson <jarod@redhat.com>
-
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 92203b8..cec88ce 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1036,7 +1036,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, stru
+ 			return ERR_PTR(-EIO);
+ 		}
+ 		inode = ext4_iget(dir->i_sb, ino);
+-		if (unlikely(IS_ERR(inode))) {
++		if (IS_ERR(inode)) {
+ 			if (PTR_ERR(inode) = -ESTALE) {
+ 				EXT4_ERROR_INODE(dir,
+ 						 "deleted inode referenced: %u",
 -- 
-Jarod Wilson
-jarod@wilsonet.com
-
-
+1.7.0.4
 
