@@ -1,27 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 31 Dec 2010 20:52:23 +0000
-Subject: Re: [PATCH] drivers/atm/atmtcp.c: add missing atm_dev_put
-Message-Id: <20101231.125223.212690412.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 09 Dec 2010 11:28:21 +0000
+Subject: [patch] kgdb: strlen() doesn't count the terminator
+Message-Id: <20101209112821.GU10623@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1012291500310.8559@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1012291500310.8559@pc-004.diku.dk>
+References: <20100710092920.GT19184@bicker>
+In-Reply-To: <20100710092920.GT19184@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: chas@cmf.nrl.navy.mil, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: Paul Mundt <lethal@linux-sh.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, Tilman Sauerbeck <tilman@code-monkey.de>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 29 Dec 2010 15:01:03 +0100 (CET)
+This is an off by one because strlen() doesn't count the null
+terminator.  We strcpy() these strings into an array of size
+MAX_CONFIG_LEN.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The earlier call to atm_dev_lookup increases the reference count of dev,
-> so decrease it on the way out.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thank you.
+diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
+index 59c118c..27dc463 100644
+--- a/drivers/misc/kgdbts.c
++++ b/drivers/misc/kgdbts.c
+@@ -988,7 +988,7 @@ static void kgdbts_run_tests(void)
+ 
+ static int kgdbts_option_setup(char *opt)
+ {
+-	if (strlen(opt) > MAX_CONFIG_LEN) {
++	if (strlen(opt) >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdbts: config string too long\n");
+ 		return -ENOSPC;
+ 	}
+diff --git a/drivers/serial/kgdboc.c b/drivers/serial/kgdboc.c
+index 3374618..ec1748b 100644
+--- a/drivers/serial/kgdboc.c
++++ b/drivers/serial/kgdboc.c
+@@ -130,7 +130,7 @@ static void kgdboc_unregister_kbd(void)
+ 
+ static int kgdboc_option_setup(char *opt)
+ {
+-	if (strlen(opt) > MAX_CONFIG_LEN) {
++	if (strlen(opt) >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdboc: config string too long\n");
+ 		return -ENOSPC;
+ 	}
