@@ -1,44 +1,34 @@
-From: David Brown <davidb@codeaurora.org>
-Date: Thu, 09 Dec 2010 18:30:21 +0000
-Subject: Re: [PATCH] msm_serial: Remove redundant unlikely()
-Message-Id: <20101209183021.GB21726@huya.qualcomm.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:50:22 +0000
+Subject: [PATCH] stmmac: Remove redundant unlikely()
+Message-Id: <1291906222-575-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1291906292-669-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1291906292-669-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@codeaurora.org>, Bryan Huntsman <bryanh@codeaurora.org>, linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Thu, Dec 09, 2010 at 03:51:32PM +0100, Tobias Klauser wrote:
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-> IS_ERR() already implies unlikely(), so it can be omitted here.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/net/stmmac/stmmac_main.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Acked-by: David Brown <davidb@codeaurora.org>
-
->  drivers/serial/msm_serial.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/serial/msm_serial.c b/drivers/serial/msm_serial.c
-> index f8c816e..8e43a7b 100644
-> --- a/drivers/serial/msm_serial.c
-> +++ b/drivers/serial/msm_serial.c
-> @@ -686,7 +686,7 @@ static int __init msm_serial_probe(struct platform_device *pdev)
->  	msm_port = UART_TO_MSM(port);
->  
->  	msm_port->clk = clk_get(&pdev->dev, "uart_clk");
-> -	if (unlikely(IS_ERR(msm_port->clk)))
-> +	if (IS_ERR(msm_port->clk))
->  		return PTR_ERR(msm_port->clk);
->  	port->uartclk = clk_get_rate(msm_port->clk);
->  	printk(KERN_INFO "uartclk = %d\n", port->uartclk);
-> -- 
-> 1.7.0.4
-> 
-
+diff --git a/drivers/net/stmmac/stmmac_main.c b/drivers/net/stmmac/stmmac_main.c
+index c0dc785..20f803d 100644
+--- a/drivers/net/stmmac/stmmac_main.c
++++ b/drivers/net/stmmac/stmmac_main.c
+@@ -949,7 +949,7 @@ static int stmmac_sw_tso(struct stmmac_priv *priv, struct sk_buff *skb)
+ 	       skb, skb->len);
+ 
+ 	segs = skb_gso_segment(skb, priv->dev->features & ~NETIF_F_TSO);
+-	if (unlikely(IS_ERR(segs)))
++	if (IS_ERR(segs))
+ 		goto sw_tso_end;
+ 
+ 	do {
 -- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+1.7.0.4
+
