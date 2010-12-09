@@ -1,49 +1,33 @@
-From: Thiago Farina <tfransosi@gmail.com>
-Date: Tue, 14 Dec 2010 16:17:26 +0000
-Subject: Re: [PATCH] checkpatch.pl: fix 2 of 2 errors in ./kernek/panic.c
-Message-Id: <AANLkTi=32w8Td-0ajaB5A9E6bE7g1-_hKk=oGcULHyFK@mail.gmail.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:55:21 +0000
+Subject: [PATCH] exofs: Remove redundant unlikely()
+Message-Id: <1291906521-1087-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1292333615-17860-1-git-send-email-toralf.foerster@gmx.de>
-In-Reply-To: <1292333615-17860-1-git-send-email-toralf.foerster@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?UTF-8?Q?Toralf_F=C3=B6rster?= <toralf.foerster@gmx.de>
-Cc: kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-2010/12/14 Toralf Förster <toralf.foerster@gmx.de>:
->
-> Signed-off-by: Toralf Förster <toralf.foerster@gmx.de>
-> ---
->  kernel/panic.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 4c13b1a..13623e4 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -56,7 +56,7 @@ EXPORT_SYMBOL(panic_blink);
->  *
->  *     This function never returns.
->  */
-> -NORET_TYPE void panic(const char * fmt, ...)
-> +NORET_TYPE void panic(const char *fmt, ...)
->  {
->        static char buf[1024];
->        va_list args;
-> @@ -75,7 +75,7 @@ NORET_TYPE void panic(const char * fmt, ...)
->        va_start(args, fmt);
->        vsnprintf(buf, sizeof(buf), fmt, args);
->        va_end(args);
-> -       printk(KERN_EMERG "Kernel panic - not syncing: %s\n",buf);
-> +       printk(KERN_EMERG "Kernel panic - not syncing: %s\n", buf);
->  #ifdef CONFIG_DEBUG_BUGVERBOSE
->        dump_stack();
->  #endif
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-Can you put in the change log message the description of those errors
-and resend?  Looking at this patch it seems they are just whitespace
-changes or something very trivial like this.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ fs/exofs/super.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-The subject line could be something more like:
-kernek/panic.c: Fix two checkpatch.pl errors:
+diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+index 79c3ae6..b2b12a8 100644
+--- a/fs/exofs/super.c
++++ b/fs/exofs/super.c
+@@ -488,7 +488,7 @@ static int exofs_read_lookup_dev_table(struct exofs_sb_info **psbi,
+ 		}
+ 
+ 		od = osduld_info_lookup(&odi);
+-		if (unlikely(IS_ERR(od))) {
++		if (IS_ERR(od)) {
+ 			ret = PTR_ERR(od);
+ 			EXOFS_ERR("ERROR: device requested is not found "
+ 				  "osd_name-%s =>%d\n", odi.osdname, ret);
+-- 
+1.7.0.4
+
