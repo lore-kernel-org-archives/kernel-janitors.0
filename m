@@ -1,31 +1,34 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 09 Dec 2010 13:48:20 +0000
-Subject: [patch] c2port: class_create() returns an ERR_PTR
-Message-Id: <20101209134819.GW10623@bicker>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:56:24 +0000
+Subject: [PATCH] [SCSI] scsi/osd: Remove redundant unlikely()
+Message-Id: <1291906584-1198-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: giometti@linux.it
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Boaz Harrosh <bharrosh@panasas.com>, Benny Halevy <bhalevy@panasas.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>
+Cc: osd-dev@open-osd.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-class_create() returns an ERR_PTR and it doesn't return a NULL.
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/scsi/osd/osd_initiator.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/misc/c2port/core.c b/drivers/misc/c2port/core.c
-index 19fc7c1..f428d86 100644
---- a/drivers/misc/c2port/core.c
-+++ b/drivers/misc/c2port/core.c
-@@ -984,9 +984,9 @@ static int __init c2port_init(void)
- 		" - (C) 2007 Rodolfo Giometti\n");
+diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
+index b798919..b37c8a3 100644
+--- a/drivers/scsi/osd/osd_initiator.c
++++ b/drivers/scsi/osd/osd_initiator.c
+@@ -951,7 +951,7 @@ static int _osd_req_finalize_cdb_cont(struct osd_request *or, const u8 *cap_key)
+ 	/* create a bio for continuation segment */
+ 	bio = bio_map_kern(req_q, or->cdb_cont.buff, or->cdb_cont.total_bytes,
+ 			   GFP_KERNEL);
+-	if (unlikely(IS_ERR(bio)))
++	if (IS_ERR(bio))
+ 		return PTR_ERR(bio);
  
- 	c2port_class = class_create(THIS_MODULE, "c2port");
--	if (!c2port_class) {
-+	if (IS_ERR(c2port_class)) {
- 		printk(KERN_ERR "c2port: failed to allocate class\n");
--		return -ENOMEM;
-+		return PTR_ERR(c2port_class);
- 	}
- 	c2port_class->dev_attrs = c2port_attrs;
- 
+ 	bio->bi_rw |= REQ_WRITE;
+-- 
+1.7.0.4
+
