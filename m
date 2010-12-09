@@ -1,78 +1,31 @@
-From: Mike Galbraith <efault@gmx.de>
-Date: Fri, 31 Dec 2010 08:32:30 +0000
-Subject: [PATCH] Re: [PATCH] sched, cgroup: Use exit hook to avoid
-Message-Id: <1293784350.6839.2.camel@marge.simson.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 09 Dec 2010 13:48:20 +0000
+Subject: [patch] c2port: class_create() returns an ERR_PTR
+Message-Id: <20101209134819.GW10623@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <AANLkTi=1GMKF4emms0Qpx31=xk-FZXOTaeONmCohzWb2@mail.gmail.com>
-	 <1293106330.2170.618.camel@laptop> <1293107624.2170.642.camel@laptop>
-	 <1293128670.2170.748.camel@laptop>
-	 <1293132304.6798.6.camel@marge.simson.net>
-	 <1293132862.25981.22.camel@laptop>
-	 <1293187425.7138.2.camel@marge.simson.net>
-	 <1293188091.25981.200.camel@laptop>
-	 <1293192999.18035.4.camel@marge.simson.net>
-	 <1293206353.29444.205.camel@laptop>  <20101229152522.GA23825@elte.hu>
-In-Reply-To: <20101229152522.GA23825@elte.hu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Peter Zijlstra <peterz@infradead.org>, Miklos Vajna <vmiklos@frugalware.org>, shenghui <crosslonelyover@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Paul Turner <pjt@google.com>, Yong Zhang <yong.zhang0@gmail.com>, Li Zefan <lizf@cn.fujitsu.com>, Paul Menage <menage@google.com>, Balbir Singh <balbir@linux.vnet.ibm.com>, Srivatsa Vaddagiri <vatsa@in.ibm.com>
+To: giometti@linux.it
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2010-12-29 at 16:25 +0100, Ingo Molnar wrote:
+class_create() returns an ERR_PTR and it doesn't return a NULL.
 
-> I tried this patch, but it causes a boot crash:
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The below should fix it.
-
-sched: fix autogroup reference leak and cpu_cgroup_exit() explosion
-
-In the event of a fork failure, the new cpu_cgroup_exit() method tries to
-move an unhashed task.  Since PF_EXITING isn't set in that case, autogroup
-will dig aground in a freed signal_struct.  Neither cgroups nor autogroup
-has anything it needs to do with this shade, so don't go there.
-
-This also uncovered a struct autogroup reference leak. copy_process() was
-simply freeing vs putting the signal_struct, stranding a reference.
-
-Signed-off-by: Mike Galbraith <efault@gmx.de>
-
----
- kernel/fork.c  |    2 +-
- kernel/sched.c |   10 ++++++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
-Index: linux-2.6.37.git/kernel/fork.c
-=================================--- linux-2.6.37.git.orig/kernel/fork.c
-+++ linux-2.6.37.git/kernel/fork.c
-@@ -1318,7 +1318,7 @@ bad_fork_cleanup_mm:
- 	}
- bad_fork_cleanup_signal:
- 	if (!(clone_flags & CLONE_THREAD))
--		free_signal_struct(p->signal);
-+		put_signal_struct(p->signal);
- bad_fork_cleanup_sighand:
- 	__cleanup_sighand(p->sighand);
- bad_fork_cleanup_fs:
-Index: linux-2.6.37.git/kernel/sched.c
-=================================--- linux-2.6.37.git.orig/kernel/sched.c
-+++ linux-2.6.37.git/kernel/sched.c
-@@ -9193,6 +9193,16 @@ cpu_cgroup_attach(struct cgroup_subsys *
- static void
- cpu_cgroup_exit(struct cgroup_subsys *ss, struct task_struct *task)
- {
-+	/*
-+	 * cgroup_exit() is called in the copy_process failure path.
-+	 * The task isn't hashed, and we don't want to make autogroup
-+	 * dig into a freed signal_struct, so just go away.
-+	 *
-+	 * XXX: why are cgroup methods diddling unattached tasks?
-+	 */
-+	if (!(task->flags & PF_EXITING))
-+		return;
-+
- 	sched_move_task(task);
- }
+diff --git a/drivers/misc/c2port/core.c b/drivers/misc/c2port/core.c
+index 19fc7c1..f428d86 100644
+--- a/drivers/misc/c2port/core.c
++++ b/drivers/misc/c2port/core.c
+@@ -984,9 +984,9 @@ static int __init c2port_init(void)
+ 		" - (C) 2007 Rodolfo Giometti\n");
  
-
-
+ 	c2port_class = class_create(THIS_MODULE, "c2port");
+-	if (!c2port_class) {
++	if (IS_ERR(c2port_class)) {
+ 		printk(KERN_ERR "c2port: failed to allocate class\n");
+-		return -ENOMEM;
++		return PTR_ERR(c2port_class);
+ 	}
+ 	c2port_class->dev_attrs = c2port_attrs;
+ 
