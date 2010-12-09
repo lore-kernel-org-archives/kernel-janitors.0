@@ -1,40 +1,34 @@
-From: Andy Walls <awalls@md.metrocast.net>
-Date: Thu, 02 Dec 2010 21:08:55 +0000
-Subject: Re: [PATCH] media: rc: ir-lirc-codec: fix potential integer
-Message-Id: <5riroj2l9iwsfksrf7xjglim.1291324135751@email.android.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:39:34 +0000
+Subject: [PATCH] ext3: Remove redundant unlikely()
+Message-Id: <1291905574-32355-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1290791197-21403-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1290791197-21403-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Jarod Wilson <jarod@redhat.com>, Dan Carpenter <error27@gmail.com>, Vasiliy Kulikov <segoon@openwall.com>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, =?ISO-8859-1?Q?David_H=E4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-NjQgYml0IHZhbHVlIC8gNCA9IDYyIGJpdCB2YWx1ZSwgcmlnaHQ/CgoKSmFyb2QgV2lsc29uIDxq
-YXJvZEByZWRoYXQuY29tPiB3cm90ZToKCj5PbiBUaHUsIERlYyAwMiwgMjAxMCBhdCAwNzo1MToy
-NkFNICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+PiBPbiBGcmksIE5vdiAyNiwgMjAxMCBh
-dCAwODowNjozNVBNICswMzAwLCBWYXNpbGl5IEt1bGlrb3Ygd3JvdGU6Cj4+ID4gIAljb3VudCA9
-IG4gLyBzaXplb2YoaW50KTsKPj4gPiAtCWlmIChjb3VudCA+IExJUkNCVUZfU0laRSB8fCBjb3Vu
-dCAlIDIgPSAwKQo+PiA+ICsJaWYgKGNvdW50ID4gTElSQ0JVRl9TSVpFIHx8IGNvdW50ICUgMiA9
-IDAgfHwgbiAlIHNpemVvZihpbnQpICE9IDApCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIF5eXl5eXl5eXl5eXl5eXl5eXl5eCj4+IAo+PiBX
-YWl0LCB3aGF0PyAgV2UganVzdCBjaGVja2VkIHRoaXMgYSBjb3VwbGUgbGluZXMgYmVmb3JlLgo+
-Cj5CYWguIEknZCBvbmx5IGxvb2tlZCBhdCB0aGUgZGlmZiwgd2hpY2ggZGlkbid0IGhhdmUgZW5v
-dWdoIGNvbnRleHQuIEkKPnRob3VnaHQgdGhhdCBsb29rZWQgZmFtaWxpYXIuIEluZGVlZCwgdGhp
-cyBwYXJ0IHNlZW1zIHRvIGJlIHVubmVjZXNzYXJ5Lgo+Cj4+IFRoZSByZXN0IG9mIHRoZSBwYXRj
-aCBpcyByaWdodCBhbmQgYSBjbGV2ZXIgY2F0Y2guICBJdCB3b3VsZCBhZmZlY3QgCj4+IHg4Nl82
-NCBzeXN0ZW1zIGFuZCBub3QgaTM4Ni4gIFRoaXMgZG9lc24ndCBoYXZlIHNlY3VyaXR5IGltcGxp
-Y2F0aW9ucwo+PiBkb2VzIGl0PyAgWW91J2QganVzdCBjYXRjaCB0aGUga21hbGxvYygpIHN0YWNr
-IHRyYWNlIGZvciBpbnNhbmVseSBsYXJnZQo+PiBhbGxvY2F0aW9ucy4KPgo+RXZlbiBvbiB4ODZf
-NjQsIGl0IGxvb2tzIHRvIG15IChyZWxhdGl2ZWx5IHVudHJhaW5lZCkgZXllIGxpa2UgeW91J2QK
-PmFjdHVhbGx5IGJlIGZpbmUuIG4gaXMgYSBzaXplX3QgKHNvLCA2NC1iaXQgb24geDg2XzY0KS4g
-Y291bnQgaXMgYW4gaW50Cj4oc28gMzItYml0IG9uIHg4Nl82NCkuIFdlIGluaXRpYWxpemUgY291
-bnQgdG8gc29tZSA2NC1iaXQgdmFsdWUgLyA0LCBzbwo+YXQgbW9zdCwgMTYgYml0cywgd2hpY2gg
-YWx3YXlzIGZpdHMganVzdCBmaW5lIGluIHRoZSAzMi1iaXQgaW50LCBubz8KPgo+LS0gCj5KYXJv
-ZCBXaWxzb24KPmphcm9kQHJlZGhhdC5jb20KPgo+LS0KPlRvIHVuc3Vic2NyaWJlIGZyb20gdGhp
-cyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1tZWRpYSIgaW4KPnRoZSBi
-b2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj5Nb3JlIG1ham9y
-ZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwK
-//Tounsubscribefromthislisv/sendthelinf/unsubscribekernel/janitors/inthebody
-ofamessagetomajordomo/vger/kernel/orgMoremajordomoinfoathttp///vger/kernel/o
-rg/majordomo/info/htCg==
+IS_ERR() already implies unlikely(), so it can be omitted here.
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ fs/ext3/namei.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/ext3/namei.c b/fs/ext3/namei.c
+index bce9dce..268f776 100644
+--- a/fs/ext3/namei.c
++++ b/fs/ext3/namei.c
+@@ -1047,7 +1047,7 @@ static struct dentry *ext3_lookup(struct inode * dir, struct dentry *dentry, str
+ 			return ERR_PTR(-EIO);
+ 		}
+ 		inode = ext3_iget(dir->i_sb, ino);
+-		if (unlikely(IS_ERR(inode))) {
++		if (IS_ERR(inode)) {
+ 			if (PTR_ERR(inode) = -ESTALE) {
+ 				ext3_error(dir->i_sb, __func__,
+ 						"deleted inode referenced: %lu",
+-- 
+1.7.0.4
+
