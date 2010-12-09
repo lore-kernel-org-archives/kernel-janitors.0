@@ -1,22 +1,34 @@
-From: "Ted Ts'o" <tytso@mit.edu>
-Date: Fri, 24 Dec 2010 09:57:22 +0000
-Subject: Re: [patch] ext4: testing the wrong variable in ext4_init_pageio()
-Message-Id: <20101224095722.GH12763@thunk.org>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:37:48 +0000
+Subject: [PATCH] inet6: Remove redundant unlikely()
+Message-Id: <1291905468-32174-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101223190911.GM1936@bicker>
-In-Reply-To: <20101223190911.GM1936@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yosh>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 23, 2010 at 10:09:11PM +0300, Dan Carpenter wrote:
-> This is a copy and paste error.  The intent was to check
-> "io_page_cachep".  We tested "io_page_cachep" earlier.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-Thanks, added to the ext4 patch queue.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ net/ipv6/af_inet6.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-					- Ted
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 54e8e42..059a3de 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -810,7 +810,7 @@ static struct sk_buff *ipv6_gso_segment(struct sk_buff *skb, int features)
+ 	}
+ 	rcu_read_unlock();
+ 
+-	if (unlikely(IS_ERR(segs)))
++	if (IS_ERR(segs))
+ 		goto out;
+ 
+ 	for (skb = segs; skb; skb = skb->next) {
+-- 
+1.7.0.4
+
