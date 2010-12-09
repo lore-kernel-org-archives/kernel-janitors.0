@@ -1,26 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 23 Dec 2010 18:22:16 +0000
-Subject: Re: [patch] USB: mcs7830: return negative if auto negotiate fails
-Message-Id: <20101223.102216.260073588.davem@davemloft.net>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:48:46 +0000
+Subject: [PATCH] rtc-bfin: Remove redundant unlikely()
+Message-Id: <1291906126-475-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101217132542.GL1639@bicker>
-In-Reply-To: <20101217132542.GL1639@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: gregkh@suse.de, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 17 Dec 2010 16:25:43 +0300
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-> The original code returns 0 on success and 1 on failure.  In fact, at
-> this point, "ret" is already either zero or a negative error code so
-> we can just return it directly.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/rtc/rtc-bfin.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Indeed, the USBNET ->bind() method, which this return value propagates
-to, expects negative return values on error.
+diff --git a/drivers/rtc/rtc-bfin.c b/drivers/rtc/rtc-bfin.c
+index b4b6087..4ba3e33 100644
+--- a/drivers/rtc/rtc-bfin.c
++++ b/drivers/rtc/rtc-bfin.c
+@@ -383,7 +383,7 @@ static int __devinit bfin_rtc_probe(struct platform_device *pdev)
+ 	/* Register our RTC with the RTC framework */
+ 	rtc->rtc_dev = rtc_device_register(pdev->name, dev, &bfin_rtc_ops,
+ 						THIS_MODULE);
+-	if (unlikely(IS_ERR(rtc->rtc_dev))) {
++	if (IS_ERR(rtc->rtc_dev)) {
+ 		ret = PTR_ERR(rtc->rtc_dev);
+ 		goto err;
+ 	}
+-- 
+1.7.0.4
 
-Applied, and queued up for -stable, thanks Dan.
