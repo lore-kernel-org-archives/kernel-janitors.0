@@ -1,34 +1,41 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 09 Dec 2010 15:01:07 +0000
-Subject: [PATCH] staging: brcm80211: Remove redundant unlikely()
-Message-Id: <1291906867-1485-1-git-send-email-tklauser@distanz.ch>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 09 Dec 2010 05:35:40 +0000
+Subject: [patch] drm: use after free in drm_queue_vblank_event()
+Message-Id: <20101209053540.GR10623@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>, Nohee Ko <noheek@broadcom.com>, Greg Kroah-Hartman <gregkh@suse.de>
-Cc: linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-IS_ERR() already implies unlikely(), so it can be omitted here.
+The "e" pointer is either NULL or freed when we call
+drm_vblank_put(dev, e->pipe) on the error path.  Just pass the "pipe"
+variable directly instead.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+I changed another caller to use "pipe" as well for consistency.
 
-diff --git a/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
-index 0d7aa4a..edf300d 100644
---- a/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
-+++ b/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
-@@ -3196,7 +3196,7 @@ s32 wl_cfg80211_attach(struct net_device *ndev, void *data)
- 	}
- 	WL_DBG(("func %p\n", wl_cfg80211_get_sdio_func()));
- 	wdev = wl_alloc_wdev(sizeof(struct wl_iface), &wl_cfg80211_get_sdio_func()->dev);
--	if (unlikely(IS_ERR(wdev)))
-+	if (IS_ERR(wdev))
- 		return -ENOMEM;
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/gpu/drm/drm_irq.c b/drivers/gpu/drm/drm_irq.c
+index 722700d..16d5155 100644
+--- a/drivers/gpu/drm/drm_irq.c
++++ b/drivers/gpu/drm/drm_irq.c
+@@ -628,7 +628,7 @@ static int drm_queue_vblank_event(struct drm_device *dev, int pipe,
+ 	if ((seq - vblwait->request.sequence) <= (1 << 23)) {
+ 		e->event.tv_sec = now.tv_sec;
+ 		e->event.tv_usec = now.tv_usec;
+-		drm_vblank_put(dev, e->pipe);
++		drm_vblank_put(dev, pipe);
+ 		list_add_tail(&e->base.link, &e->base.file_priv->event_list);
+ 		wake_up_interruptible(&e->base.file_priv->event_wait);
+ 		trace_drm_vblank_event_delivered(current->pid, pipe,
+@@ -645,7 +645,7 @@ err_unlock:
+ 	spin_unlock_irqrestore(&dev->event_lock, flags);
+ 	kfree(e);
+ err_put:
+-	drm_vblank_put(dev, e->pipe);
++	drm_vblank_put(dev, pipe);
+ 	return ret;
+ }
  
- 	wdev->iftype = wl_mode_to_nl80211_iftype(WL_MODE_BSS);
--- 
-1.7.0.4
-
