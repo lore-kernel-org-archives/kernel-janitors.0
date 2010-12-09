@@ -1,21 +1,34 @@
-From: "Ted Ts'o" <tytso@mit.edu>
-Date: Mon, 20 Dec 2010 02:39:59 +0000
-Subject: Re: ext4: Remove redundant unlikely()
-Message-Id: <20101220023959.GA24990@thunk.org>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 14:53:28 +0000
+Subject: [PATCH] NFS: Remove redundant unlikely()
+Message-Id: <1291906408-859-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1291905638-32410-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1291905638-32410-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Thu, Dec 09, 2010 at 04:40:38AM -0000, Tobias Klauser wrote:
-> IS_ERR() already implies unlikely(), so it can be omitted here.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-Thanks, added to ext4 patch queue.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ fs/nfs/mount_clnt.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-					- Ted
+diff --git a/fs/nfs/mount_clnt.c b/fs/nfs/mount_clnt.c
+index eceafe7..3f2a6be 100644
+--- a/fs/nfs/mount_clnt.c
++++ b/fs/nfs/mount_clnt.c
+@@ -248,7 +248,7 @@ void nfs_umount(const struct nfs_mount_request *info)
+ 		args.flags |= RPC_CLNT_CREATE_NONPRIVPORT;
+ 
+ 	clnt = rpc_create(&args);
+-	if (unlikely(IS_ERR(clnt)))
++	if (IS_ERR(clnt))
+ 		goto out_clnt_err;
+ 
+ 	dprintk("NFS: sending UMNT request for %s:%s\n",
+-- 
+1.7.0.4
+
