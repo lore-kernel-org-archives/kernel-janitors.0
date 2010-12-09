@@ -1,8 +1,10 @@
 From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 09 Dec 2010 15:00:00 +0000
+Date: Thu, 09 Dec 2010 15:00:01 +0000
 Subject: [PATCH] c2port: Remove redundant unlikely()
-Message-Id: <1291906801-1389-1-git-send-email-tklauser@distanz.ch>
+Message-Id: <1291906801-1389-2-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1291906801-1389-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1291906801-1389-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
