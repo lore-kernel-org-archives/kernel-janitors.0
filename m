@@ -1,31 +1,34 @@
-From: Toralf =?iso-8859-1?q?F=F6rster?= <toralf.foerster@gmx.de>
-Date: Tue, 14 Dec 2010 18:50:24 +0000
-Subject: Re: [RESEND] [PATCH] kernel/panic.c: Fix two checkpatch.pl errors (whitespace cleanup)
-Message-Id: <201012141950.25521.toralf.foerster@gmx.de>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Thu, 09 Dec 2010 15:00:00 +0000
+Subject: [PATCH] c2port: Remove redundant unlikely()
+Message-Id: <1291906801-1389-1-git-send-email-tklauser@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1292345888-19129-1-git-send-email-toralf.foerster@gmx.de> <20101214184253.GB1639@bicker>
-In-Reply-To: <20101214184253.GB1639@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
-Cc: tfransosi@gmail.com, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: giometti@linux.it
+Cc: Dan Carpenter <error27@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+IS_ERR() already implies unlikely(), so it can be omitted here.
 
-Dan Carpenter wrote at 19:42:57
-> The problem is that pointless churn clutters up the log and breaks git=20
-blame.
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/misc/c2port/core.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Ok, understood.
+diff --git a/drivers/misc/c2port/core.c b/drivers/misc/c2port/core.c
+index 19fc7c1..95a82de 100644
+--- a/drivers/misc/c2port/core.c
++++ b/drivers/misc/c2port/core.c
+@@ -913,7 +913,7 @@ struct c2port_device *c2port_device_register(char *name,
+ 
+ 	c2dev->dev = device_create(c2port_class, NULL, 0, c2dev,
+ 					"c2port%d", id);
+-	if (unlikely(IS_ERR(c2dev->dev))) {
++	if (IS_ERR(c2dev->dev)) {
+ 		ret = PTR_ERR(c2dev->dev);
+ 		goto error_device_create;
+ 	}
+-- 
+1.7.0.4
 
---=20
-MfG/Kind regards
-Toralf F=F6rster
-
-pgp finger print: 7B1A 07F4 EC82 0F90 D4C2 8936 872A E508 7DB6 9DA3
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
