@@ -1,49 +1,31 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Fri, 31 Dec 2010 19:28:31 +0000
-Subject: [PATCH 3/4] staging: keucr: Delete StringCmp() and StringCopy custom functions
-Message-Id: <1293823712-6273-4-git-send-email-martinez.javier@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 10 Dec 2010 12:41:18 +0000
+Subject: [patch] Staging: rtl8192u: add missing curly braces
+Message-Id: <20101210124118.GD10623@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+The if condition was ignored in the original code and we just used the
+default channel.
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/keucr/smilsub.c |   19 -------------------
- 1 files changed, 0 insertions(+), 19 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/keucr/smilsub.c b/drivers/staging/keucr/smilsub.c
-index 8256fad..5f20c43 100644
---- a/drivers/staging/keucr/smilsub.c
-+++ b/drivers/staging/keucr/smilsub.c
-@@ -1592,25 +1592,6 @@ char Bit_D_CountWord(WORD cdata)
-     return((char)bitcount);
- }
- 
--void StringCopy(char *stringA, char *stringB, int count)
--{
--    int i;
--
--    for(i=0; i<count; i++)
--        *stringA++ = *stringB++;
--}
--
--//-----
--int StringCmp(char *stringA, char *stringB, int count)
--{
--    int i;
--
--    for (i=0;i<count;i++)
--        if (*stringA++ != *stringB++)
--            return(ERROR);
--
--    return(SUCCESS);
--}
- /*
- //----- SM_ReadBlock() ---------------------------------------------
- int SM_ReadBlock(PFDO_DEVICE_EXTENSION fdoExt, BYTE *buf,BYTE *redundant)
--- 
-1.7.0.4
-
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
+index 1285888..20f8c34 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
+@@ -509,9 +509,10 @@ void ieee80211_softmac_scan_wq(struct work_struct *work)
+ 		if (watchdog++ > MAX_CHANNEL_NUMBER)
+ 		{
+ 		//if current channel is not in channel map, set to default channel.
+-			if (!channel_map[ieee->current_network.channel]);
++			if (!channel_map[ieee->current_network.channel]) {
+ 				ieee->current_network.channel = 6;
+ 				goto out; /* no good chans */
++			}
+ 		}
+ 	}while(!channel_map[ieee->current_network.channel]);
+ 	if (ieee->scanning = 0 )
