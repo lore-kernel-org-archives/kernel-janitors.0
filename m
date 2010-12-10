@@ -1,42 +1,27 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 09 Dec 2010 14:52:39 +0000
-Subject: [PATCH] usb: gadget: f_fs: Remove redundant unlikely()
-Message-Id: <1291906359-775-1-git-send-email-tklauser@distanz.ch>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 10 Dec 2010 12:39:34 +0000
+Subject: [patch] [media] zoran: bit-wise vs logical and
+Message-Id: <20101210123934.GB10623@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-IS_ERR() already implies unlikely(), so it can be omitted here.
+zr->frame_num is a counter and && was intended here instead of &.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- drivers/usb/gadget/f_fs.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/usb/gadget/f_fs.c b/drivers/usb/gadget/f_fs.c
-index a21349c..1499f9e 100644
---- a/drivers/usb/gadget/f_fs.c
-+++ b/drivers/usb/gadget/f_fs.c
-@@ -426,7 +426,7 @@ static ssize_t ffs_ep0_write(struct file *file, const char __user *buf,
+diff --git a/drivers/media/video/zoran/zoran_device.c b/drivers/media/video/zoran/zoran_device.c
+index b02007e..e8a2784 100644
+--- a/drivers/media/video/zoran/zoran_device.c
++++ b/drivers/media/video/zoran/zoran_device.c
+@@ -1523,7 +1523,7 @@ zoran_irq (int             irq,
+ 		    zr->JPEG_missed > 25 ||
+ 		    zr->JPEG_error = 1	||
+ 		    ((zr->codec_mode = BUZ_MODE_MOTION_DECOMPRESS) &&
+-		     (zr->frame_num & (zr->JPEG_missed > zr->jpg_settings.field_per_buff)))) {
++		     (zr->frame_num && (zr->JPEG_missed > zr->jpg_settings.field_per_buff)))) {
+ 			error_handler(zr, astat, stat);
  		}
  
- 		data = ffs_prepare_buffer(buf, len);
--		if (unlikely(IS_ERR(data))) {
-+		if (IS_ERR(data)) {
- 			ret = PTR_ERR(data);
- 			break;
- 		}
-@@ -499,7 +499,7 @@ static ssize_t ffs_ep0_write(struct file *file, const char __user *buf,
- 		spin_unlock_irq(&ffs->ev.waitq.lock);
- 
- 		data = ffs_prepare_buffer(buf, len);
--		if (unlikely(IS_ERR(data))) {
-+		if (IS_ERR(data)) {
- 			ret = PTR_ERR(data);
- 			break;
- 		}
--- 
-1.7.0.4
-
