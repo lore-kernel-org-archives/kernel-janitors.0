@@ -1,29 +1,43 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 20 Dec 2010 12:53:16 +0000
-Subject: [patch -next] [media] timblogiw: too large value for strncpy()
-Message-Id: <20101220125316.GW1936@bicker>
+From: =?UTF-8?q?Toralf=20F=C3=B6rster?= <toralf.foerster@gmx.de>
+Date: Mon, 13 Dec 2010 16:19:35 +0000
+Subject: [PATCH] fix : ERROR: space required after that ',' (ctx:WxV)
+Message-Id: <1292257175-7810-1-git-send-email-toralf.foerster@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Richard =?iso-8859-1?Q?R=F6jfors?= <richard.rojfors@pelagicore.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-This is a copy and paste error.  It should be using sizeof(cap->driver)
-instead of sizeof(cap->card).
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Toralf F=C3=B6rster <toralf.foerster@gmx.de>
+---
+ kernel/cred.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/video/timblogiw.c b/drivers/media/video/timblogiw.c
-index cf48aa9..ef1b7a5 100644
---- a/drivers/media/video/timblogiw.c
-+++ b/drivers/media/video/timblogiw.c
-@@ -241,7 +241,7 @@ static int timblogiw_querycap(struct file *file, void  *priv,
- 	dev_dbg(&vdev->dev, "%s: Entry\n",  __func__);
- 	memset(cap, 0, sizeof(*cap));
- 	strncpy(cap->card, TIMBLOGIWIN_NAME, sizeof(cap->card)-1);
--	strncpy(cap->driver, DRIVER_NAME, sizeof(cap->card)-1);
-+	strncpy(cap->driver, DRIVER_NAME, sizeof(cap->driver) - 1);
- 	strlcpy(cap->bus_info, vdev->name, sizeof(cap->bus_info));
- 	cap->version = TIMBLOGIW_VERSION_CODE;
- 	cap->capabilities = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 6a1aa00..aab705a 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -20,10 +20,10 @@
+=20
+ #if 0
+ #define kdebug(FMT, ...) \
+-	printk("[%-5.5s%5u] "FMT"\n", current->comm, current->pid ,##__VA_ARGS__)
++	printk("[%-5.5s%5u] "FMT"\n", current->comm, current->pid, ##__VA_ARGS__)
+ #else
+ #define kdebug(FMT, ...) \
+-	no_printk("[%-5.5s%5u] "FMT"\n", current->comm, current->pid ,##__VA_ARGS=
+__)
++	no_printk("[%-5.5s%5u] "FMT"\n", current->comm, current->pid, ##__VA_ARGS=
+__)
+ #endif
+=20
+ static struct kmem_cache *cred_jar;
+--=20
+1.7.2.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
