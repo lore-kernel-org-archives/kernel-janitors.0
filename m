@@ -1,32 +1,22 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Wed, 08 Dec 2010 16:15:56 +0000
-Subject: Re: [PATCH v2] media: rc: ir-lirc-codec: fix integer overflow
-Message-Id: <20101208161556.GB6586@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 13 Dec 2010 19:46:42 +0000
+Subject: Re: [patch] perf: off by one in perf_swevent_init()
+Message-Id: <20101213194641.GH1620@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101202045126.GA1784@bicker>
- <20101204210522.GA5244@albatros>
-In-Reply-To: <20101204210522.GA5244@albatros>
+References: <20101024195041.GT5985@bicker>
+In-Reply-To: <20101024195041.GT5985@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segoon@openwall.com>
-Cc: Dan Carpenter <error27@gmail.com>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@elte.hu>, Arnaldo Carvalho de Melo <acme@redhat.com>, Frederic Weisbecker <fweisbec@gmail.com>, Stephane Eranian <eranian@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Dec 05, 2010 at 12:05:22AM +0300, Vasiliy Kulikov wrote:
-> 'n' may be bigger than MAX_INT*sizeof(int), if so checking of truncated
-> (int)(n/sizeof(int)) for LIRCBUF_SIZE overflows and then using nontruncated 'count'
-> doesn't make sense.  This is not a security issue as too big 'n' is catched in
-> kmalloc() in memdup_user() call.  However, it's better to prevent WARN() in kmalloc().
+On Sun, Oct 24, 2010 at 09:50:42PM +0200, Dan Carpenter wrote:
+> The perf_swevent_enabled[] array has PERF_COUNT_SW_MAX elements.
 > 
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Now that I have my head out of my arse wrt the actual issue here, the
-redundancy issue from v1 is resolved, and I've managed a full night's
-sleep... ;)
+Ping.
 
-Acked-by: Jarod Wilson <jarod@redhat.com>
-
--- 
-Jarod Wilson
-jarod@redhat.com
+regards,
+dan carpenter
 
