@@ -1,36 +1,48 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 31 Dec 2010 10:09:52 +0000
-Subject: Re: [PATCH 1/4] staging: keucr: Use strncmp() instead of custom
-Message-Id: <20101231100952.GD1886@bicker>
+From: =?UTF-8?q?Toralf=20F=C3=B6rster?= <toralf.foerster@gmx.de>
+Date: Tue, 14 Dec 2010 16:58:08 +0000
+Subject: [RESEND] [PATCH] kernel/panic.c: Fix two checkpatch.pl errors (whitespace cleanup)
+Message-Id: <1292345888-19129-1-git-send-email-toralf.foerster@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1293787164-7056-2-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1293787164-7056-2-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: tfransosi@gmail.com
+Cc: kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Toralf=20F=C3=B6rster?= <toralf.foerster@gmx.de>
 
-T24gRnJpLCBEZWMgMzEsIDIwMTAgYXQgMTA6MTk6MjFBTSArMDEwMCwgSmF2aWVyIE1hcnRpbmV6
-IENhbmlsbGFzIHdyb3RlOgo+ICAvLy0tLS0tIENoZWNrX0RfQ0lTZGF0YSgpIC0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgaW50IENoZWNrX0RfQ0lTZGF0
-YShCWVRFICpidWYsIEJZVEUgKnJlZHVuZGFudCkKPiAgewo+IC0gICAgQllURSBjaXNbXT17MHgw
-MSwweDAzLDB4RDksMHgwMSwweEZGLDB4MTgsMHgwMiwweERGLDB4MDEsMHgyMH07Cj4gKwlCWVRF
-IGNpc1tdID0gezB4MDEsIDB4MDMsIDB4RDksIDB4MDEsIDB4RkYsIDB4MTgsIDB4MDIsCj4gKwkJ
-ICAgICAgMHhERiwgMHgwMSwgMHgyMH07Cj4gIAo+IC0gICAgaWYgKCFJc1NTRkRDQ29tcGxpYW5j
-ZSAmJiAhSXNYRENvbXBsaWFuY2UpCj4gLSAgICAgICAgcmV0dXJuKFNVQ0NFU1MpOyAgICAgICAg
-ICAgICAvLyCl2KtlrLCxaqjuIFNVQ0NFU1MgW0Fybm9sZCAwMi0wOC0yM10gU1NGREMgtPq41Swg
-pKOv4LFqqO4gU1VDQ0VTUwo+ICsJaWYgKCFJc1NTRkRDQ29tcGxpYW5jZSAmJiAhSXNYRENvbXBs
-aWFuY2UpCj4gKwkJcmV0dXJuIFNVQ0NFU1M7Cj4gIAo+IC0gICAgaWYgKCFTdHJpbmdDbXAoKGNo
-YXIgKikocmVkdW5kYW50KzB4MEQpLChjaGFyICopRWNjQnVmLDMpKQo+IC0gICAgICAgIHJldHVy
-bihTdHJpbmdDbXAoKGNoYXIgKilidWYsKGNoYXIgKiljaXMsMTApKTsKPiArCWlmICghc3RybmNt
-cCgoY2hhciAqKShyZWR1bmRhbnQrMHgwRCksIChjaGFyICopRWNjQnVmLCAzKSkKPiArCQlyZXR1
-cm4gc3RybmNtcCgoY2hhciAqKWJ1ZiwgKGNoYXIgKiljaXMsIDEwKTsKCgoiY2lzIiBpc24ndCBh
-IHN0cmluZy4gIEkgc3VzcGVjdCBub25lIG9mIHRoZXNlIGFyZS4gIFVzZSBtZW1jbXAoKQppbnN0
-ZWFkIG9mIHN0cm5jbXAoKS4gIFdpdGggbWVtY21wKCkgeW91IGNhbiBnZXQgcmlkIG9mIHRoZSBj
-YXN0LiAgQWxzbwp1c2Ugc2l6ZW9mKGNpcykgaW5zdGVhZCBvZiBoYXJkY29kaW5nIGl0IHRvIDEw
-LgoKRXZlbnR1YWxseSB3ZSBzaG91bGQgYWxzbyBwdXQgYWxsIHRoZSAweDBEIG1hZ2ljIHZhcmlh
-YmxlcyBpbiBkZWZpbmVzIGFzCndlbGwuCgpyZWdhcmRzLApkYW4gY2FycGVudGVyCgotLQpUbyB1
-bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2Vy
-bmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIu
-a2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3Jn
-L21ham9yZG9tby1pbmZvLmh0bWw=
+nothing else
+
+Signed-off-by: Toralf F=C3=B6rster <toralf.foerster@gmx.de>
+---
+ kernel/panic.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 4c13b1a..13623e4 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -56,7 +56,7 @@ EXPORT_SYMBOL(panic_blink);
+  *
+  *	This function never returns.
+  */
+-NORET_TYPE void panic(const char * fmt, ...)
++NORET_TYPE void panic(const char *fmt, ...)
+ {
+ 	static char buf[1024];
+ 	va_list args;
+@@ -75,7 +75,7 @@ NORET_TYPE void panic(const char * fmt, ...)
+ 	va_start(args, fmt);
+ 	vsnprintf(buf, sizeof(buf), fmt, args);
+ 	va_end(args);
+-	printk(KERN_EMERG "Kernel panic - not syncing: %s\n",buf);
++	printk(KERN_EMERG "Kernel panic - not syncing: %s\n", buf);
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
+ 	dump_stack();
+ #endif
+--=20
+1.7.3.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
