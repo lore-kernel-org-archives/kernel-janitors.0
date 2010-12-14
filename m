@@ -1,42 +1,44 @@
 From: =?UTF-8?q?Toralf=20F=C3=B6rster?= <toralf.foerster@gmx.de>
-Date: Tue, 14 Dec 2010 12:55:48 +0000
-Subject: [PATCH] checkpatch.pl: fix 2 of 2 errors in ./kernel/user.c
-Message-Id: <1292331348-27268-1-git-send-email-toralf.foerster@gmx.de>
+Date: Tue, 14 Dec 2010 13:33:35 +0000
+Subject: [PATCH] checkpatch.pl: fix 2 of 2 errors in ./kernek/panic.c
+Message-Id: <1292333615-17860-1-git-send-email-toralf.foerster@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1292331348-27268-1-git-send-email-toralf.foerster@gmx.de>
+In-Reply-To: <1292331348-27268-1-git-send-email-toralf.foerster@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, =?UTF-8?q?Toralf=20F=C3=B6rster?= <toralf.foerster@gmx.de>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Toralf=20F=C3=B6rster?= <toralf.foerster@gmx.de>
 
 
 Signed-off-by: Toralf F=C3=B6rster <toralf.foerster@gmx.de>
 ---
- kernel/user.c |    4 ++--
+ kernel/panic.c |    4 ++--
  1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/user.c b/kernel/user.c
-index 2c7d8d5..6db8ed9 100644
---- a/kernel/user.c
-+++ b/kernel/user.c
-@@ -5,7 +5,7 @@
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 4c13b1a..13623e4 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -56,7 +56,7 @@ EXPORT_SYMBOL(panic_blink);
   *
-  * We have a per-user structure to keep track of how many
-  * processes, files etc the user has claimed, in order to be
-- * able to have per-user limits for system resources.=20
-+ * able to have per-user limits for system resources.
+  *	This function never returns.
   */
-=20
- #include <linux/init.h>
-@@ -181,7 +181,7 @@ static int __init uid_cache_init(void)
- 	uid_cachep =3D kmem_cache_create("uid_cache", sizeof(struct user_struct),
- 			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
-=20
--	for(n =3D 0; n < UIDHASH_SZ; ++n)
-+	for (n =3D 0; n < UIDHASH_SZ; ++n)
- 		INIT_HLIST_HEAD(init_user_ns.uidhash_table + n);
-=20
- 	/* Insert the root user immediately (init already runs as root) */
+-NORET_TYPE void panic(const char * fmt, ...)
++NORET_TYPE void panic(const char *fmt, ...)
+ {
+ 	static char buf[1024];
+ 	va_list args;
+@@ -75,7 +75,7 @@ NORET_TYPE void panic(const char * fmt, ...)
+ 	va_start(args, fmt);
+ 	vsnprintf(buf, sizeof(buf), fmt, args);
+ 	va_end(args);
+-	printk(KERN_EMERG "Kernel panic - not syncing: %s\n",buf);
++	printk(KERN_EMERG "Kernel panic - not syncing: %s\n", buf);
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
+ 	dump_stack();
+ #endif
 --=20
 1.7.3.3
 
