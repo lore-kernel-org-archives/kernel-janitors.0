@@ -1,21 +1,20 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 10 Dec 2010 22:57:44 +0000
-Subject: Re: [PATCH] inet6: Remove redundant unlikely()
-Message-Id: <20101210.145744.13732812.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 15 Dec 2010 11:58:49 +0000
+Subject: question about schedule_timeout
+Message-Id: <Pine.LNX.4.64.1012151256280.8557@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1291905468-32174-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1291905468-32174-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tklauser@distanz.ch
-Cc: kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu,  9 Dec 2010 15:37:48 +0100
+I am wondering about the interaction between schedule_timeout and 
+functions like local_irq_save, that turn off interrupts.  To my 
+understanding, with schedule_timeout one sleeps until a timer interrupt is 
+received.  But how can that be received if interrupts have been turned 
+off?  I find this mostly in older code, but there are still some 
+occurrences, and even in older code, I'm not sure to understand how it 
+could have worked.
 
-> IS_ERR() already implies unlikely(), so it can be omitted here.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-
-Applied.
+thanks,
+julia
