@@ -1,83 +1,73 @@
-From: "Tomoya MORINAGA" <tomoya-linux@dsn.okisemi.com>
-Date: Tue, 21 Dec 2010 23:58:51 +0000
-Subject: Re: [patch -next] pch_can: off by one bugs
-Message-Id: <B4EA6EF7414747D3B1331DC53D6C2E6A@hacdom.okisemi.com>
+From: Miklos Vajna <vmiklos@frugalware.org>
+Date: Sun, 19 Dec 2010 02:03:13 +0000
+Subject: Re: [PATCH] avoid race condition in pick_next_task_fair in
+Message-Id: <20101219020313.GJ31750@genesis.frugalware.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="XbHSybK3LHOYQtWI"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101220092601.GS1936@bicker> <4D111110.2030609@grandegger.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg-5Yr1BZd7O62+XT7JhA+gdA@public.gmane.org>, Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: socketcan-core-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <AANLkTin49UHeVhfS-iFwWvPIg29HPhXaP3DorBAa-a0I@mail.gmail.com>
+ <1277808215.1868.5.camel@laptop>
+In-Reply-To: <1277808215.1868.5.camel@laptop>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: shenghui <crosslonelyover@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, Greg KH <greg@kroah.com>
 
-On Wednesday, December 22, 2010 5:41 AM, Wolfgang Grandegger wrote:
-> This fix does not look correct too me.
-I agree with Wolfgang's comments.
 
-> Dan
-Thank you for your report.
-I will post the patch by this week.
+--XbHSybK3LHOYQtWI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jun 29, 2010 at 12:43:35PM +0200, Peter Zijlstra <peterz@infradead.=
+org> wrote:
+> On Tue, 2010-06-29 at 15:10 +0800, shenghui wrote:
+> > I think some lock on the metadata can fix this issue, but we may
+> > change plenty of code to add support for lock. I think the easist
+> > way is just substacting nr_running before dequing tasks.=20
+>=20
+> But all that is fully serialized by the rq->lock.. so I'm really not
+> seeing how this can happen.
+
+Hi,
+
+Here is a panic I got today:
+
+http://frugalware.org/~vmiklos/pics/bug/2.6.37-rc6.png
+
+More details:
+
+I get this sometimes on boot or shutdown when testing systemd. I did not
+get it with sysvinit, so I guess it may be related to systemd's heavy
+cgroups usage, but I'm not sure. Sadly it isn't 100% reproducible but I
+usually hit it at least once a day.
+
+The config is here:
+http://frugalware.org/~vmiklos/logs/2.6.37-rc6.config (I just did a
+yes "" | make config to update it to 2.6.37-rc6.)
+
+I got something similar with 2.6.36.1 as well:
+
+http://frugalware.org/~vmiklos/pics/bug/2.6.36.1.png
+
+Ah, and this is on i686 in VMware - though given that I never had this
+problem with systemd, I guess it won't be an emulator bug. :)
+
+I'm not familiar with the sched code, is it possible that this is
+related?
 
 Thanks,
----
-Tomoya MORINAGA
-OKI SEMICONDUCTOR CO., LTD.
 
------ Original Message ----- 
-From: "Wolfgang Grandegger" <wg@grandegger.com>
-To: "Dan Carpenter" <error27@gmail.com>
-Cc: <socketcan-core@lists.berlios.de>; <netdev@vger.kernel.org>; 
-<kernel-janitors@vger.kernel.org>; "Tomoya MORINAGA" 
-<tomoya-linux@dsn.okisemi.com>
-Sent: Wednesday, December 22, 2010 5:41 AM
-Subject: Re: [patch -next] pch_can: off by one bugs
+Miklos
 
+--XbHSybK3LHOYQtWI
+Content-Type: application/pgp-signature
+Content-Disposition: inline
 
-> Hello,
->
-> On 12/20/2010 10:26 AM, Dan Carpenter wrote:
->> priv->tx_enable[] has PCH_TX_OBJ_END elements so this code is
->> reading and writing one past the end of the array.
->>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->>
->> diff --git a/drivers/net/can/pch_can.c b/drivers/net/can/pch_can.c
->> index 8d45fdd..b2c1292 100644
->> --- a/drivers/net/can/pch_can.c
->> +++ b/drivers/net/can/pch_can.c
->> @@ -1077,7 +1077,7 @@ static int pch_can_suspend(struct pci_dev *pdev, 
->> pm_message_t state)
->>  pch_can_set_int_enables(priv, PCH_CAN_DISABLE);
->>
->>  /* Save Tx buffer enable state */
->> - for (i = PCH_TX_OBJ_START; i <= PCH_TX_OBJ_END; i++)
->> + for (i = PCH_TX_OBJ_START; i < PCH_TX_OBJ_END; i++)
->>  priv->tx_enable[i] = pch_can_get_rxtx_ir(priv, i, PCH_TX_IFREG);
->>
->>  /* Disable all Transmit buffers */
->> @@ -1138,7 +1138,7 @@ static int pch_can_resume(struct pci_dev *pdev)
->>  pch_can_set_optmode(priv);
->>
->>  /* Enabling the transmit buffer. */
->> - for (i = PCH_TX_OBJ_START; i <= PCH_TX_OBJ_END; i++)
->> + for (i = PCH_TX_OBJ_START; i < PCH_TX_OBJ_END; i++)
->>  pch_can_set_rxtx(priv, i, priv->tx_enable[i], PCH_TX_IFREG);
->>
->>  /* Configuring the receive buffer and enabling them. */
->>
->
-> This fix does not look correct too me. There are much more loop using
-> "i <= PCH_TX_OBJ_END" and the message numbering is from 1..32. Therefore
-> using "priv->tx_enable[i - 1]" seems more appropriate to me. Tomaya,
-> could you please check.
->
-> Thanks,
->
-> Wolfgang.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
+iEYEARECAAYFAk0NZ+EACgkQe81tAgORUJZIhwCgo4frOYAEfEX8RWWxIUrKFtZK
+XTEAniwYuFB7UsKLSSgtKUAaqJkRzqi0
+=XIDa
+-----END PGP SIGNATURE-----
+
+--XbHSybK3LHOYQtWI--
