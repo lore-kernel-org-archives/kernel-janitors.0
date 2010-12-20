@@ -1,36 +1,28 @@
-From: Ben Skeggs <bskeggs@redhat.com>
-Date: Tue, 21 Dec 2010 01:12:33 +0000
-Subject: Re: [patch -next] nouveua: sizeof() vs ARRAY_SIZE()
-Message-Id: <1292893956.2214.14.camel@nisroch>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 20 Dec 2010 13:08:56 +0000
+Subject: [patch -next] power/gpio-charger: check for kzalloc() failure
+Message-Id: <20101220130856.GZ1936@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101220092626.GT1936@bicker>
-In-Reply-To: <20101220092626.GT1936@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Anton Vorontsov <cbouatmailru@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2010-12-20 at 12:26 +0300, Dan Carpenter wrote:
-> ARRAY_SIZE() was intended here, sizeof() is too large.
-Thanks, I've queued this patch.
+Return -ENOMEM if kzalloc() fails.
 
-Ben.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nv50_vram.c b/drivers/gpu/drm/nouveau/nv50_vram.c
-> index 47489ed..58e98ad 100644
-> --- a/drivers/gpu/drm/nouveau/nv50_vram.c
-> +++ b/drivers/gpu/drm/nouveau/nv50_vram.c
-> @@ -42,7 +42,7 @@ nv50_vram_flags_valid(struct drm_device *dev, u32 tile_flags)
->  {
->  	int type = (tile_flags & NOUVEAU_GEM_TILE_LAYOUT_MASK) >> 8;
->  
-> -	if (likely(type < sizeof(types) && types[type]))
-> +	if (likely(type < ARRAY_SIZE(types) && types[type]))
->  		return true;
->  	return false;
->  }
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
+diff --git a/drivers/power/gpio-charger.c b/drivers/power/gpio-charger.c
+index fccbe99..06a74f0 100644
+--- a/drivers/power/gpio-charger.c
++++ b/drivers/power/gpio-charger.c
+@@ -87,6 +87,8 @@ static int __devinit gpio_charger_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	gpio_charger = kzalloc(sizeof(*gpio_charger), GFP_KERNEL);
++	if (!gpio_charger)
++		return -ENOMEM;
+ 
+ 	charger = &gpio_charger->charger;
+ 
