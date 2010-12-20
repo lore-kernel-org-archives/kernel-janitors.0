@@ -1,22 +1,21 @@
 From: "Ted Ts'o" <tytso@mit.edu>
-Date: Thu, 30 Dec 2010 03:55:53 +0000
-Subject: Re: [patch] ext4: checking NULL instead of ERR_PTR
-Message-Id: <20101230035553.GL10149@thunk.org>
+Date: Mon, 20 Dec 2010 02:39:59 +0000
+Subject: Re: ext4: Remove redundant unlikely()
+Message-Id: <20101220023959.GA24990@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100826091619.GC20072@bicker>
-In-Reply-To: <20100826091619.GC20072@bicker>
+References: <1291905638-32410-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1291905638-32410-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, Eric Sandeen <sandeen@redhat.com>, Dmitry Monakhov <dmonakhov@openvz.org>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tobias Klauser <tklauser@distanz.ch>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 26, 2010 at 11:16:54AM +0200, Dan Carpenter wrote:
-> d_path() returns an ERR_PTR and it doesn't return NULL.  This is in
-> ext4_error_file() and no one actually calls ext4_error_file().
+On Thu, Dec 09, 2010 at 04:40:38AM -0000, Tobias Klauser wrote:
+> IS_ERR() already implies unlikely(), so it can be omitted here.
 > 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 
-Thanks, I've added this to the ext4 patch tree.
+Thanks, added to ext4 patch queue.
 
-	     	   	       	    	  - Ted
+					- Ted
