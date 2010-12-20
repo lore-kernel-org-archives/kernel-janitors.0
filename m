@@ -1,42 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 28 Dec 2010 21:55:15 +0000
-Subject: Re: [patch] skfp: testing the wrong variable in skfp_driver_init()
-Message-Id: <20101228.135515.48512926.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 20 Dec 2010 13:00:18 +0000
+Subject: [patch -next] typhoon: memory corruption in typhoon_get_drvinfo()
+Message-Id: <20101220130018.GX1936@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101224051734.GO1936@bicker>
-	<20101224084538.GA2791@psychotron.redhat.com>
-In-Reply-To: <20101224084538.GA2791@psychotron.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jpirko@redhat.com
-Cc: error27@gmail.com, netdev@vger.kernel.org, eric.dumazet@gmail.com, hsweeten@visionengravers.com, kernel-janitors@vger.kernel.org
+To: David Dillow <dave@thedillows.org>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Jiri Pirko <jpirko@redhat.com>
-Date: Fri, 24 Dec 2010 09:45:39 +0100
+info->version only has space for 32 characters but my UTS_RELEASE is
+"2.6.37-rc6-next-20101217-05817-ge935fc8-dirty" so it doesn't fit.
+This is supposed to be the version of the driver, not the kernel
+version.  This driver doesn't have a version so lets just leave it
+blank.
 
-> Fri, Dec 24, 2010 at 06:17:34AM CET, error27@gmail.com wrote:
->>The intent here was to test if the allocation failed but we tested 
->>"SharedMemSize" instead of "SharedMemAddr" by mistake.
->>
->>Signed-off-by: Dan Carpenter <error27@gmail.com>
->>
->>diff --git a/drivers/net/skfp/skfddi.c b/drivers/net/skfp/skfddi.c
->>index 0a66fed..16c6265 100644
->>--- a/drivers/net/skfp/skfddi.c
->>+++ b/drivers/net/skfp/skfddi.c
->>@@ -412,7 +412,7 @@ static  int skfp_driver_init(struct net_device *dev)
->> 		bp->SharedMemAddr = pci_alloc_consistent(&bp->pdev,
->> 							 bp->SharedMemSize,
->> 							 &bp->SharedMemDMA);
->>-		if (!bp->SharedMemSize) {
->>+		if (!bp->SharedMemAddr) {
->> 			printk("could not allocate mem for ");
->> 			printk("hardware module: %ld byte\n",
->> 			       bp->SharedMemSize);
-> 
-> Looks obvious.
-> 
-> Reviewed-by: Jiri Pirko <jpirko@redhat.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Found with static analysis.  Compile tested.
 
-Applied, thanks.
+diff --git a/drivers/net/typhoon.c b/drivers/net/typhoon.c
+index 5b83c3f..a3c46f6 100644
+--- a/drivers/net/typhoon.c
++++ b/drivers/net/typhoon.c
+@@ -1004,7 +1004,6 @@ typhoon_get_drvinfo(struct net_device *dev, struct ethtool_drvinfo *info)
+ 	}
+ 
+ 	strcpy(info->driver, KBUILD_MODNAME);
+-	strcpy(info->version, UTS_RELEASE);
+ 	strcpy(info->bus_info, pci_name(pci_dev));
+ }
+ 
