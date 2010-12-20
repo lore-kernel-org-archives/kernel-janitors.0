@@ -1,29 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 21 Dec 2010 18:51:48 +0000
-Subject: Re: [patch -next] bnx2x: remove bogus check
-Message-Id: <20101221.105148.71131041.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 20 Dec 2010 09:26:26 +0000
+Subject: [patch -next] nouveua: sizeof() vs ARRAY_SIZE()
+Message-Id: <20101220092626.GT1936@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101221070401.GF1936@bicker>
-	<1292939316.21210.7084.camel@lb-tlvb-eilong.il.broadcom.com>
-In-Reply-To: <1292939316.21210.7084.camel@lb-tlvb-eilong.il.broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: eilong@broadcom.com
-Cc: error27@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
 
-From: "Eilon Greenstein" <eilong@broadcom.com>
-Date: Tue, 21 Dec 2010 15:48:36 +0200
+ARRAY_SIZE() was intended here, sizeof() is too large.
 
-> On Mon, 2010-12-20 at 23:04 -0800, Dan Carpenter wrote:
->> We dereferenced params on the line before so it's too late to check if
->> params is NULL.  In fact, params can never be NULL and strict_cos is
->> either 0 or 1 so that part of the check is bogus too.  Let's remove it.
->> 
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> Thanks Dan!
-> 
-> Acked-by: Eilon Greenstein <eilong@broadcom.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks everyone.
+diff --git a/drivers/gpu/drm/nouveau/nv50_vram.c b/drivers/gpu/drm/nouveau/nv50_vram.c
+index 47489ed..58e98ad 100644
+--- a/drivers/gpu/drm/nouveau/nv50_vram.c
++++ b/drivers/gpu/drm/nouveau/nv50_vram.c
+@@ -42,7 +42,7 @@ nv50_vram_flags_valid(struct drm_device *dev, u32 tile_flags)
+ {
+ 	int type = (tile_flags & NOUVEAU_GEM_TILE_LAYOUT_MASK) >> 8;
+ 
+-	if (likely(type < sizeof(types) && types[type]))
++	if (likely(type < ARRAY_SIZE(types) && types[type]))
+ 		return true;
+ 	return false;
+ }
