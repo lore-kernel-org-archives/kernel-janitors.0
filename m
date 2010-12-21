@@ -1,25 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 20 Dec 2010 18:43:21 +0000
-Subject: Re: [patch -next] typhoon: memory corruption in
-Message-Id: <20101220.104321.183048943.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 21 Dec 2010 04:01:37 +0000
+Subject: [patch -next] libfc: dereferencing ERR_PTR in fc_tm_done()
+Message-Id: <20101221040137.GE1936@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101220130018.GX1936@bicker>
-In-Reply-To: <20101220130018.GX1936@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: dave@thedillows.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Robert Love <robert.w.love@intel.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, devel@open-fcoe.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 20 Dec 2010 16:00:18 +0300
+If we goto out, then it tries to call kfree_skb() on an ERR_PTR which
+will oops.  Just return directly.
 
-> info->version only has space for 32 characters but my UTS_RELEASE is
-> "2.6.37-rc6-next-20101217-05817-ge935fc8-dirty" so it doesn't fit.
-> This is supposed to be the version of the driver, not the kernel
-> version.  This driver doesn't have a version so lets just leave it
-> blank.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks.
+diff --git a/drivers/scsi/libfc/fc_fcp.c b/drivers/scsi/libfc/fc_fcp.c
+index 5962d1a..a918807 100644
+--- a/drivers/scsi/libfc/fc_fcp.c
++++ b/drivers/scsi/libfc/fc_fcp.c
+@@ -1321,7 +1321,7 @@ static void fc_tm_done(struct fc_seq *seq, struct fc_frame *fp, void *arg)
+ 		 *
+ 		 * scsi-eh will escalate for when either happens.
+ 		 */
+-		goto out;
++		return;
+ 	}
+ 
+ 	if (fc_fcp_lock_pkt(fsp))
