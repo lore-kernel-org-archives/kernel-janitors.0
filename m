@@ -1,31 +1,26 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 21 Dec 2010 04:00:13 +0000
-Subject: [patch -next] wl12xx: use after free in debug code
-Message-Id: <20101221040012.GD1936@bicker>
+From: Luciano Coelho <luciano.coelho@nokia.com>
+Date: Tue, 21 Dec 2010 09:44:25 +0000
+Subject: Re: [patch -next] wl12xx: use after free in debug code
+Message-Id: <1292924665.19436.12.camel@chilepepper>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101221040012.GD1936@bicker>
+In-Reply-To: <20101221040012.GD1936@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Luciano Coelho <luciano.coelho@nokia.com>, Shahar Levi <shahar_levi@ti.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ext Dan Carpenter <error27@gmail.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Shahar Levi <shahar_levi@ti.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If debugging is turned on, then wl1271_dump() dereferences a freed
-variable.
+On Tue, 2010-12-21 at 07:00 +0300, ext Dan Carpenter wrote:
+> If debugging is turned on, then wl1271_dump() dereferences a freed
+> variable.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Applied, thank you!
 
-diff --git a/drivers/net/wireless/wl12xx/spi.c b/drivers/net/wireless/wl12xx/spi.c
-index 4671491..8f7ea2c 100644
---- a/drivers/net/wireless/wl12xx/spi.c
-+++ b/drivers/net/wireless/wl12xx/spi.c
-@@ -110,9 +110,9 @@ static void wl1271_spi_reset(struct wl1271 *wl)
- 	spi_message_add_tail(&t, &m);
- 
- 	spi_sync(wl_to_spi(wl), &m);
--	kfree(cmd);
- 
- 	wl1271_dump(DEBUG_SPI, "spi reset -> ", cmd, WSPI_INIT_CMD_LEN);
-+	kfree(cmd);
- }
- 
- static void wl1271_spi_init(struct wl1271 *wl)
+
+-- 
+Cheers,
+Luca.
+
