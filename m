@@ -1,21 +1,31 @@
-From: Roland Dreier <rdreier@cisco.com>
-Date: Thu, 09 Dec 2010 07:32:28 +0000
-Subject: Re: [PATCH] IB/uverbs: Handle large number of entries in poll CQ
-Message-Id: <adatyiniepf.fsf@cisco.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 21 Dec 2010 04:00:13 +0000
+Subject: [patch -next] wl12xx: use after free in debug code
+Message-Id: <20101221040012.GD1936@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <adaaakfkeee.fsf@cisco.com> <20101209060442.GS10623@bicker>
-In-Reply-To: <20101209060442.GS10623@bicker> (Dan Carpenter's message of "Thu,
-	9 Dec 2010 09:04:42 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Luciano Coelho <luciano.coelho@nokia.com>, Shahar Levi <shahar_levi@ti.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
- > > +	tmp.reserved		= wc->port_num;
+If debugging is turned on, then wl1271_dump() dereferences a freed
+variable.
 
- > I would probably have put a zero in tmp.reserved.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Ugh, that's what I meant to do.  Thanks.
-
- - R.
+diff --git a/drivers/net/wireless/wl12xx/spi.c b/drivers/net/wireless/wl12xx/spi.c
+index 4671491..8f7ea2c 100644
+--- a/drivers/net/wireless/wl12xx/spi.c
++++ b/drivers/net/wireless/wl12xx/spi.c
+@@ -110,9 +110,9 @@ static void wl1271_spi_reset(struct wl1271 *wl)
+ 	spi_message_add_tail(&t, &m);
+ 
+ 	spi_sync(wl_to_spi(wl), &m);
+-	kfree(cmd);
+ 
+ 	wl1271_dump(DEBUG_SPI, "spi reset -> ", cmd, WSPI_INIT_CMD_LEN);
++	kfree(cmd);
+ }
+ 
+ static void wl1271_spi_init(struct wl1271 *wl)
