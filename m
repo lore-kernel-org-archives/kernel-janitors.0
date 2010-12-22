@@ -1,7 +1,7 @@
 From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed, 22 Dec 2010 14:00:22 +0000
+Date: Wed, 22 Dec 2010 14:11:52 +0000
 Subject: Re: [PATCH] avoid race condition in pick_next_task_fair in
-Message-Id: <1293026422.2170.136.camel@laptop>
+Message-Id: <1293027112.2170.140.camel@laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTin49UHeVhfS-iFwWvPIg29HPhXaP3DorBAa-a0I@mail.gmail.com>
 	 <1277808215.1868.5.camel@laptop>
@@ -11,28 +11,47 @@ References: <AANLkTin49UHeVhfS-iFwWvPIg29HPhXaP3DorBAa-a0I@mail.gmail.com>
 	 <1293007311.11370.172.camel@marge.simson.net>
 	 <1293008842.2170.70.camel@laptop>
 	 <20101222133154.GS10557@genesis.frugalware.org>
-In-Reply-To: <20101222133154.GS10557@genesis.frugalware.org>
+	 <1293026422.2170.136.camel@laptop>
+In-Reply-To: <1293026422.2170.136.camel@laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Miklos Vajna <vmiklos@frugalware.org>
 Cc: Mike Galbraith <efault@gmx.de>, shenghui <crosslonelyover@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, Greg KH <greg@kroah.com>
 
-On Wed, 2010-12-22 at 14:31 +0100, Miklos Vajna wrote:
+On Wed, 2010-12-22 at 15:00 +0100, Peter Zijlstra wrote:
+> On Wed, 2010-12-22 at 14:31 +0100, Miklos Vajna wrote:
+> > 
+> > http://frugalware.org/~vmiklos/files/systemd.img
+> > 
+> > Here is how I started it:
+> > 
+> > qemu-kvm -vnc :0 -m 1G -hda systemd.img 
 > 
-> http://frugalware.org/~vmiklos/files/systemd.img
+> awesome, thanks!
 > 
-> Here is how I started it:
+> I started it with something like: 
+>  qemu -kernel foo-build/arch/x86/boot/bzImage -append "root=/dev/sda1
+> debug sched_debug ignore_loglevel sysrq_always_enabled console=ttyS0"
+> -hda systemd.img -serial stdio -m 1G
 > 
-> qemu-kvm -vnc :0 -m 1G -hda systemd.img 
+> Where foo-build/ contains a kernel build using your .config.
+> 
+> I'll have a poke at it..
 
-awesome, thanks!
+Hrm,. its not really wanting to start properly..
 
-I started it with something like: 
- qemu -kernel foo-build/arch/x86/boot/bzImage -append "root=/dev/sda1
-debug sched_debug ignore_loglevel sysrq_always_enabled console=ttyS0"
--hda systemd.img -serial stdio -m 1G
+---
+EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+VFS: Mounted root (ext4 filesystem) readonly on device 8:1.
+Freeing unused kernel memory: 520k freed
+EXT4-fs (sda1): re-mounted. Opts: (null)
+md: stopping all md devices.
+Restarting system.
+machine restart
+---
 
-Where foo-build/ contains a kernel build using your .config.
+Does it _require_ initrd like muck? Or are there some modules that need
+to get built-in in order for the thing to boot?
 
-I'll have a poke at it..
+This is an utter lack of error reporting here, no idea what's wrong.
