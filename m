@@ -1,42 +1,51 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 10 Dec 2010 07:20:56 +0000
-Subject: [patch] IB: handle -ENOMEM in forward_trap()
-Message-Id: <20101210072056.GZ10623@bicker>
+From: Anton Vorontsov <cbouatmailru@gmail.com>
+Date: Wed, 22 Dec 2010 00:05:45 +0000
+Subject: Re: [PATCH] power: power_supply_core: fix use after free and
+Message-Id: <20101222000545.GC24834@oksana.dev.rtsoft.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1290192119-11704-1-git-send-email-segoon@openwall.com>
+In-Reply-To: <1290192119-11704-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eli Cohen <eli-VPRAkNaXOzVS1MOuV/RT9w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vasiliy Kulikov <segoon@openwall.com>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-ib_create_send_mad() can return ERR_PTR(-ENOMEM) here.
+On Fri, Nov 19, 2010 at 09:41:58PM +0300, Vasiliy Kulikov wrote:
+> device_unregister() might free its argument.  This leads to freed
+> memory use in kfree().  Also use put_device() instead of kfree()
+> as dev may be already used in another layer after call to device_add().
+> 
+> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Applied, thanks!
 
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index c9a8dd6..a1add16 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -211,6 +211,9 @@ static void forward_trap(struct mlx4_ib_dev *dev, u8 port_num, struct ib_mad *ma
- 	if (agent) {
- 		send_buf = ib_create_send_mad(agent, qpn, 0, 0, IB_MGMT_MAD_HDR,
- 					      IB_MGMT_MAD_DATA, GFP_ATOMIC);
-+
-+		if (IS_ERR(send_buf))
-+			return;
- 		/*
- 		 * We rely here on the fact that MLX QPs don't use the
- 		 * address handle after the send is posted (this is
-diff --git a/drivers/infiniband/hw/mthca/mthca_mad.c b/drivers/infiniband/hw/mthca/mthca_mad.c
-index 5648659..03a59534 100644
---- a/drivers/infiniband/hw/mthca/mthca_mad.c
-+++ b/drivers/infiniband/hw/mthca/mthca_mad.c
-@@ -171,6 +171,8 @@ static void forward_trap(struct mthca_dev *dev,
- 	if (agent) {
- 		send_buf = ib_create_send_mad(agent, qpn, 0, 0, IB_MGMT_MAD_HDR,
- 					      IB_MGMT_MAD_DATA, GFP_ATOMIC);
-+		if (IS_ERR(send_buf))
-+			return;
- 		/*
- 		 * We rely here on the fact that MLX QPs don't use the
- 		 * address handle after the send is posted (this is
+> ---
+>  Compile tested only.
+> 
+>  drivers/power/power_supply_core.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+> index 91606bb..f06bad0 100644
+> --- a/drivers/power/power_supply_core.c
+> +++ b/drivers/power/power_supply_core.c
+> @@ -190,10 +190,10 @@ int power_supply_register(struct device *parent, struct power_supply *psy)
+>  	goto success;
+>  
+>  create_triggers_failed:
+> -	device_unregister(psy->dev);
+> +	device_del(dev);
+>  kobject_set_name_failed:
+>  device_add_failed:
+> -	kfree(dev);
+> +	put_device(dev);
+>  success:
+>  	return rc;
+>  }
+> -- 
+> 1.7.0.4
+
+-- 
+Anton Vorontsov
+Email: cbouatmailru@gmail.com
