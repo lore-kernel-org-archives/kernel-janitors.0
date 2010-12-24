@@ -1,7 +1,7 @@
-From: Mike Galbraith <efault@gmx.de>
-Date: Fri, 24 Dec 2010 16:48:17 +0000
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Fri, 24 Dec 2010 17:07:37 +0000
 Subject: Re: [PATCH] sched, cgroup: Use exit hook to avoid use-after-free
-Message-Id: <1293209297.14433.4.camel@marge.simson.net>
+Message-Id: <1293210457.29444.206.camel@laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTin49UHeVhfS-iFwWvPIg29HPhXaP3DorBAa-a0I@mail.gmail.com>
 	 <1277808215.1868.5.camel@laptop>
@@ -23,21 +23,25 @@ References: <AANLkTin49UHeVhfS-iFwWvPIg29HPhXaP3DorBAa-a0I@mail.gmail.com>
 	 <1293188091.25981.200.camel@laptop>
 	 <1293192999.18035.4.camel@marge.simson.net>
 	 <1293206353.29444.205.camel@laptop>
-In-Reply-To: <1293206353.29444.205.camel@laptop>
+	 <1293209297.14433.4.camel@marge.simson.net>
+In-Reply-To: <1293209297.14433.4.camel@marge.simson.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
+To: Mike Galbraith <efault@gmx.de>
 Cc: Miklos Vajna <vmiklos@frugalware.org>, shenghui <crosslonelyover@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, Greg KH <greg@kroah.com>, Paul Turner <pjt@google.com>, Yong Zhang <yong.zhang0@gmail.com>, Li Zefan <lizf@cn.fujitsu.com>, Paul Menage <menage@google.com>, Balbir Singh <balbir@linux.vnet.ibm.com>, Srivatsa Vaddagiri <vatsa@in.ibm.com>
 
-On Fri, 2010-12-24 at 16:59 +0100, Peter Zijlstra wrote:
+On Fri, 2010-12-24 at 17:48 +0100, Mike Galbraith wrote:
+> On Fri, 2010-12-24 at 16:59 +0100, Peter Zijlstra wrote:
+> 
+> > So cgroup moves a task without calling cgroup_subsys::attach() which is
+> > odd, but it does have an ::exit method, sadly it calls that _before_
+> > re-assigning the task, which means we have to jump through some hoops.
+> 
+> Could you do the move in cgroup_exit() in the CONFIG_PREEMPT case?
 
-> So cgroup moves a task without calling cgroup_subsys::attach() which is
-> odd, but it does have an ::exit method, sadly it calls that _before_
-> re-assigning the task, which means we have to jump through some hoops.
-
-Could you do the move in cgroup_exit() in the CONFIG_PREEMPT case?
-
-	-Mike
+I'm not really comfortable relying on that.. voluntary might just grow a
+cond_resched() somewhere in the exit path and lead us down the same
+path, also I think that !preempt smp might have the same race.
 
 
