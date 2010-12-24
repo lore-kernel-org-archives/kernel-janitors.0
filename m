@@ -1,78 +1,29 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 31 Dec 2010 20:26:00 +0000
-Subject: Re: [PATCH 1/2] staging: keucr: Use memcmp() instaed of custom
-Message-Id: <1293827160.4058.17.camel@Joe-Laptop>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 24 Dec 2010 05:17:34 +0000
+Subject: [patch] skfp: testing the wrong variable in skfp_driver_init()
+Message-Id: <20101224051734.GO1936@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1293823712-6273-2-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1293823712-6273-2-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: Jiri Pirko <jpirko@redhat.com>, Eric Dumazet <eric.dumazet@gmail.com>, H Hartley Sweeten <hsweeten@visionengravers.com>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
 
-On Fri, 2010-12-31 at 20:28 +0100, Javier Martinez Canillas wrote:
-> Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+The intent here was to test if the allocation failed but we tested 
+"SharedMemSize" instead of "SharedMemAddr" by mistake.
 
-Hi Javier.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> diff --git a/drivers/staging/keucr/smilsub.c b/drivers/staging/keucr/smilsub.c
-
-[]
-
->  int Check_D_ReadError(BYTE *redundant)
->  {
-> -    // Driver 䣰 ECC Check
-> -    return(SUCCESS);
-> -    if (!StringCmp((char *)(redundant+0x0D),(char *)EccBuf,3))
-> -        if (!StringCmp((char *)(redundant+0x08),(char *)(EccBuf+0x03),3))
-> -            return(SUCCESS);
-> +	/* Driver ECC Check */
-> +	return SUCCESS;
-> +	if (!memcmp(redundant+0x0D, EccBuf, 3))
-> +		if (!memcmp(redundant+0x08, EccBuf+0x03, 3))
-> +			return SUCCESS;
-
-Generally, it's better to have success at the end
-of a function and either a goto error or return
-error for error conditions.
-
-Something like:
-
-	if (!(!memcmp(redundant+0x0D, EccBuf, 3) &&
-	      !memcmp(redundant+0x08, EccBuf+0x03, 3)))
-		return ERROR;
-
-	return SUCCESS;
-
->  int Check_D_Correct(BYTE *buf,BYTE *redundant)
->  {
-> -    // Driver 䣰 ECC Check
-> -    return(SUCCESS);
-> -    if (StringCmp((char *)(redundant+0x0D),(char *)EccBuf,3))
-> -        if (_Correct_D_SwECC(buf,redundant+0x0D,EccBuf))
-> -            return(ERROR);
-> -
-> -    buf+=0x100;
-> -    if (StringCmp((char *)(redundant+0x08),(char *)(EccBuf+0x03),3))
-> -        if (_Correct_D_SwECC(buf,redundant+0x08,EccBuf+0x03))
-> -            return(ERROR);
-> -
-> -    return(SUCCESS);
-> +	/* Driver ECC Check */
-> +	return SUCCESS;
-> +	if (memcmp(redundant+0x0D, EccBuf, 3))
-> +		if (_Correct_D_SwECC(buf, redundant+0x0D, EccBuf))
-> +			return ERROR;
-
-You might as well take out useless code after returns
-instead of just changing function names.
-
-If you keep it you should reformat it.
-
-	if (memcmp(redundant+0x0D, EccBuf, 3) &&
-	    _Correct_D_SwECC(buf, redundant+0x0D, EccBuf))
-		return ERROR;
-
-etc...
-
-
+diff --git a/drivers/net/skfp/skfddi.c b/drivers/net/skfp/skfddi.c
+index 0a66fed..16c6265 100644
+--- a/drivers/net/skfp/skfddi.c
++++ b/drivers/net/skfp/skfddi.c
+@@ -412,7 +412,7 @@ static  int skfp_driver_init(struct net_device *dev)
+ 		bp->SharedMemAddr = pci_alloc_consistent(&bp->pdev,
+ 							 bp->SharedMemSize,
+ 							 &bp->SharedMemDMA);
+-		if (!bp->SharedMemSize) {
++		if (!bp->SharedMemAddr) {
+ 			printk("could not allocate mem for ");
+ 			printk("hardware module: %ld byte\n",
+ 			       bp->SharedMemSize);
