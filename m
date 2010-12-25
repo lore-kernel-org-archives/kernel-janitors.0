@@ -1,24 +1,33 @@
-From: Minchan Kim <minchan.kim@gmail.com>
-Date: Thu, 09 Dec 2010 16:09:34 +0000
-Subject: Re: [PATCH] vmalloc: Remove redundant unlikely()
-Message-Id: <AANLkTimNdZ4qRRFfrMUnmyZgPuoe2M8eVdCQykg1Dk-u@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 25 Dec 2010 22:23:42 +0000
+Subject: [patch] USB: cdc_ether: remove unneeded check
+Message-Id: <20101225222341.GS1936@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1291905904-32716-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1291905904-32716-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Oliver Neukum <oliver@neukum.name>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 9, 2010 at 11:45 PM, Tobias Klauser <tklauser@distanz.ch> wrote:
-> IS_ERR() already implies unlikely(), so it can be omitted here.
->
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-Reviewed-by: Minchan Kim <minchan.kim@gmail.com>
+We already verified that "dev->udev->actconfig->extralen" was non-zero
+so "len" is non-zero here as well.
 
-Nice catch.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Compile tested.
 
--- 
-Kind regards,
-Minchan Kim
+diff --git a/drivers/net/usb/cdc_ether.c b/drivers/net/usb/cdc_ether.c
+index b3fe0de..9a60e41 100644
+--- a/drivers/net/usb/cdc_ether.c
++++ b/drivers/net/usb/cdc_ether.c
+@@ -99,9 +99,7 @@ int usbnet_generic_cdc_bind(struct usbnet *dev, struct usb_interface *intf)
+ 		 */
+ 		buf = dev->udev->actconfig->extra;
+ 		len = dev->udev->actconfig->extralen;
+-		if (len)
+-			dev_dbg(&intf->dev,
+-				"CDC descriptors on config\n");
++		dev_dbg(&intf->dev, "CDC descriptors on config\n");
+ 	}
+ 
+ 	/* Maybe CDC descriptors are after the endpoint?  This bug has
