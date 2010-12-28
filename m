@@ -1,108 +1,46 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 29 Dec 2010 14:57:54 +0000
-Subject: [PATCH] drivers/scsi/gdth{_proc.c}.c: Add missing call to gdth_ioctl_free
-Message-Id: <Pine.LNX.4.64.1012291557270.8559@pc-004.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 28 Dec 2010 00:04:58 +0000
+Subject: [patch] [media] cx231xx: use bitwise negate instead of logical
+Message-Id: <20101228000458.GX1936@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Achim Leubner <achim_leubner@adaptec.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Devin Heitmueller <dheitmueller@hauppauge.com>, Sri Deevi <Srinivasa.Deevi@conexant.com>, Palash Bandyopadhyay <palash.bandyopadhyay@conexant.com>, Michael Krufky <mkrufky@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Bitwise negate was intended here.  INPUT_SEL_MASK is 0x30.
 
-Add missing call to gdth_ioctl_free before aborting.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression buf,ha,len,addr,E;
-@@
-
-buf = gdth_ioctl_alloc(ha, len, FALSE, &addr)
-... when != false buf != NULL
-    when != true buf = NULL
-    when != \(E = buf\|buf = E\)
-    when != gdth_ioctl_free(ha, len, buf, addr)
-*return ...;
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-This code is badly indented throughout, making the patch look like it is
-badly indented.
-
- drivers/scsi/gdth.c      |    4 +++-
- drivers/scsi/gdth_proc.c |   16 ++++++++++++----
- 2 files changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/scsi/gdth_proc.c b/drivers/scsi/gdth_proc.c
-index 0572b9b..6527543 100644
---- a/drivers/scsi/gdth_proc.c
-+++ b/drivers/scsi/gdth_proc.c
-@@ -365,8 +365,10 @@ static int gdth_get_info(char *buffer,char **start,off_t offset,int length,
-                     len = 0;
-                     begin = pos;
-                 }
--                if (pos > offset + length)
-+		if (pos > offset + length) {
-+		    gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
-                     goto stop_output;
-+		}
-             }
-         }
-         gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
-@@ -450,8 +452,10 @@ static int gdth_get_info(char *buffer,char **start,off_t offset,int length,
-                     len = 0;
-                     begin = pos;
-                 }
--                if (pos > offset + length)
-+		if (pos > offset + length) {
-+		    gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
-                     goto stop_output;
-+		}
-             } while (drv_no != -1);
-              
-             if (is_mirr) {
-@@ -472,8 +476,10 @@ static int gdth_get_info(char *buffer,char **start,off_t offset,int length,
-                 len = 0;
-                 begin = pos;
-             }
--            if (pos > offset + length)
-+	    if (pos > offset + length) {
-+		gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
-                 goto stop_output;
-+	    }
-         }       
-         gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
-         
-@@ -542,8 +548,10 @@ static int gdth_get_info(char *buffer,char **start,off_t offset,int length,
-                     len = 0;
-                     begin = pos;
-                 }
--                if (pos > offset + length)
-+		if (pos > offset + length) {
-+		    gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
-                     goto stop_output;
-+		}
-             }
-         }
-         gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
-diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
-index 7636570..3242bca 100644
---- a/drivers/scsi/gdth.c
-+++ b/drivers/scsi/gdth.c
-@@ -4273,8 +4273,10 @@ static int ioc_general(void __user *arg, char *cmnd)
-     }
+diff --git a/drivers/media/video/cx231xx/cx231xx-avcore.c b/drivers/media/video/cx231xx/cx231xx-avcore.c
+index d52955c..c53e972 100644
+--- a/drivers/media/video/cx231xx/cx231xx-avcore.c
++++ b/drivers/media/video/cx231xx/cx231xx-avcore.c
+@@ -274,7 +274,7 @@ int cx231xx_afe_set_input_mux(struct cx231xx *dev, u32 input_mux)
  
-     rval = __gdth_execute(ha->sdev, &gen.command, cmnd, gen.timeout, &gen.info);
--    if (rval < 0)
-+    if (rval < 0) {
-+	gdth_ioctl_free(ha, gen.data_len+gen.sense_len, buf, paddr);
-         return rval;
-+    }
-     gen.status = rval;
+ 	if (ch1_setting != 0) {
+ 		status = afe_read_byte(dev, ADC_INPUT_CH1, &value);
+-		value &= (!INPUT_SEL_MASK);
++		value &= ~INPUT_SEL_MASK;
+ 		value |= (ch1_setting - 1) << 4;
+ 		value &= 0xff;
+ 		status = afe_write_byte(dev, ADC_INPUT_CH1, value);
+@@ -282,7 +282,7 @@ int cx231xx_afe_set_input_mux(struct cx231xx *dev, u32 input_mux)
  
-     if (copy_to_user(arg + sizeof(gdth_ioctl_general), buf, 
+ 	if (ch2_setting != 0) {
+ 		status = afe_read_byte(dev, ADC_INPUT_CH2, &value);
+-		value &= (!INPUT_SEL_MASK);
++		value &= ~INPUT_SEL_MASK;
+ 		value |= (ch2_setting - 1) << 4;
+ 		value &= 0xff;
+ 		status = afe_write_byte(dev, ADC_INPUT_CH2, value);
+@@ -292,7 +292,7 @@ int cx231xx_afe_set_input_mux(struct cx231xx *dev, u32 input_mux)
+ 	   7 less than the input number */
+ 	if (ch3_setting != 0) {
+ 		status = afe_read_byte(dev, ADC_INPUT_CH3, &value);
+-		value &= (!INPUT_SEL_MASK);
++		value &= ~INPUT_SEL_MASK;
+ 		value |= (ch3_setting - 1) << 4;
+ 		value &= 0xff;
+ 		status = afe_write_byte(dev, ADC_INPUT_CH3, value);
