@@ -1,43 +1,35 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 09 Dec 2010 14:46:58 +0000
-Subject: [PATCH] drm/ttm: Remove redundant unlikely()
-Message-Id: <1291906018-363-1-git-send-email-tklauser@distanz.ch>
+From: Ramkrishna Vepa <Ramkrishna.Vepa@exar.com>
+Date: Tue, 28 Dec 2010 21:51:27 +0000
+Subject: RE: [patch] vxge: remove duplicated part of check {nodisc}
+Message-Id: <FCA91A92EE52B041906A0358FC28FCC38EF8E701E1@FRE1EXCH02.hq.exar.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20101224061539.GP1936@bicker>
+In-Reply-To: <20101224061539.GP1936@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Sivakumar Subramani <Sivakumar.Subramani@exar.com>, Sreenivasa Honnur <Sreenivasa.Honnur@exar.com>, Jon Mason <Jon.Mason@exar.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-IS_ERR() already implies unlikely(), so it can be omitted here.
+> This is just a cleanup to make the static checkers happy.  We don't need
+> to check "own" twice.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> diff --git a/drivers/net/vxge/vxge-traffic.c b/drivers/net/vxge/vxge-
+> traffic.c
+> index 42cc298..4c10d6c 100644
+> --- a/drivers/net/vxge/vxge-traffic.c
+> +++ b/drivers/net/vxge/vxge-traffic.c
+> @@ -1240,7 +1240,7 @@ enum vxge_hw_status vxge_hw_ring_rxd_next_completed(
+>  	*t_code	= (u8)VXGE_HW_RING_RXD_T_CODE_GET(control_0);
+> 
+>  	/* check whether it is not the end */
+> -	if (!own || ((*t_code = VXGE_HW_RING_T_CODE_FRM_DROP) && own)) {
+> +	if (!own || *t_code = VXGE_HW_RING_T_CODE_FRM_DROP) {
+> 
+>  		vxge_assert(((struct vxge_hw_ring_rxd_1 *)rxdp)->host_control
+> !>  				0);
+Looks good, thanks.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- drivers/gpu/drm/ttm/ttm_tt.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm_tt.c
-index af789dc..fb83a90 100644
---- a/drivers/gpu/drm/ttm/ttm_tt.c
-+++ b/drivers/gpu/drm/ttm/ttm_tt.c
-@@ -538,7 +538,7 @@ int ttm_tt_swapout(struct ttm_tt *ttm, struct file *persistant_swap_storage)
- 		swap_storage = shmem_file_setup("ttm swap",
- 						ttm->num_pages << PAGE_SHIFT,
- 						0);
--		if (unlikely(IS_ERR(swap_storage))) {
-+		if (IS_ERR(swap_storage)) {
- 			printk(KERN_ERR "Failed allocating swap storage.\n");
- 			return PTR_ERR(swap_storage);
- 		}
-@@ -552,7 +552,7 @@ int ttm_tt_swapout(struct ttm_tt *ttm, struct file *persistant_swap_storage)
- 		if (unlikely(from_page = NULL))
- 			continue;
- 		to_page = read_mapping_page(swap_space, i, NULL);
--		if (unlikely(IS_ERR(to_page))) {
-+		if (IS_ERR(to_page)) {
- 			ret = PTR_ERR(to_page);
- 			goto out_err;
- 		}
--- 
-1.7.0.4
-
+Acked-by: Ram Vepa <ram.vepa@exar.com>
