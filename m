@@ -1,22 +1,54 @@
-From: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Date: Mon, 13 Dec 2010 22:38:15 +0000
-Subject: Re: [patch] perf: off by one in perf_swevent_init()
-Message-Id: <1292279895.6803.688.camel@twins>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 29 Dec 2010 14:01:03 +0000
+Subject: [PATCH] drivers/atm/atmtcp.c: add missing atm_dev_put
+Message-Id: <Pine.LNX.4.64.1012291500310.8559@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101024195041.GT5985@bicker>  <20101213194641.GH1620@bicker>
-In-Reply-To: <20101213194641.GH1620@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@elte.hu>, Arnaldo Carvalho de Melo <acme@redhat.com>, Frederic Weisbecker <fweisbec@gmail.com>, Stephane Eranian <eranian@google.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chas Williams <chas@cmf.nrl.navy.mil>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2010-12-13 at 22:46 +0300, Dan Carpenter wrote:
-> On Sun, Oct 24, 2010 at 09:50:42PM +0200, Dan Carpenter wrote:
-> > The perf_swevent_enabled[] array has PERF_COUNT_SW_MAX elements.
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> Ping.
+From: Julia Lawall <julia@diku.dk>
 
-Thanks for the reminder, queued!
+The earlier call to atm_dev_lookup increases the reference count of dev,
+so decrease it on the way out.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x, E;
+constant C;
+@@
+
+x = atm_dev_lookup(...);
+... when != false x != NULL
+    when != true x = NULL
+    when != \(E = x\|x = E\)
+    when != atm_dev_put(dev);
+*return -C;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/atm/atmtcp.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/atm/atmtcp.c b/drivers/atm/atmtcp.c
+index 2b464b6..0b06250 100644
+--- a/drivers/atm/atmtcp.c
++++ b/drivers/atm/atmtcp.c
+@@ -392,7 +392,10 @@ static int atmtcp_attach(struct atm_vcc *vcc,int itf)
+ 			atm_dev_put(dev);
+ 			return -EMEDIUMTYPE;
+ 		}
+-		if (PRIV(dev)->vcc) return -EBUSY;
++		if (PRIV(dev)->vcc) {
++			atm_dev_put(dev);
++			return -EBUSY;
++		}
+ 	}
+ 	else {
+ 		int error;
