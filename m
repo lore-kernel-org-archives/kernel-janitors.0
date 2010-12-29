@@ -1,18 +1,108 @@
-From: Roland Dreier <rdreier@cisco.com>
-Date: Thu, 02 Dec 2010 00:33:34 +0000
-Subject: Re: [PATCH v2] infiniband: core: fix information leak to userspace
-Message-Id: <adafwuhm2sh.fsf@cisco.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 29 Dec 2010 14:57:54 +0000
+Subject: [PATCH] drivers/scsi/gdth{_proc.c}.c: Add missing call to gdth_ioctl_free
+Message-Id: <Pine.LNX.4.64.1012291557270.8559@pc-004.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1289054481-18145-1-git-send-email-segooon@gmail.com>
-	<ada39r8ohiz.fsf@cisco.com> <20101112180844.GA11533@albatros>
-	<CF9C39F99A89134C9CF9C4CCB68B8DDF25B85224A6@orsmsx501.amr.corp.intel.com>
-	<20101114092252.GA5323@albatros>
-In-Reply-To: <20101114092252.GA5323@albatros> (Vasiliy Kulikov's message of
-	"Sun, 14 Nov 2010 12:22:52 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segoon-cxoSlKxDwOJWk0Htik3J/w@public.gmane.org>
-Cc: "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Chiang <achiang-VXdhtT5mjnY@public.gmane.org>, Andi Kleen <ak-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, "linux-rdma@vger.kernel.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Achim Leubner <achim_leubner@adaptec.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-thanks, applied
+From: Julia Lawall <julia@diku.dk>
+
+Add missing call to gdth_ioctl_free before aborting.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression buf,ha,len,addr,E;
+@@
+
+buf = gdth_ioctl_alloc(ha, len, FALSE, &addr)
+... when != false buf != NULL
+    when != true buf = NULL
+    when != \(E = buf\|buf = E\)
+    when != gdth_ioctl_free(ha, len, buf, addr)
+*return ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This code is badly indented throughout, making the patch look like it is
+badly indented.
+
+ drivers/scsi/gdth.c      |    4 +++-
+ drivers/scsi/gdth_proc.c |   16 ++++++++++++----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/gdth_proc.c b/drivers/scsi/gdth_proc.c
+index 0572b9b..6527543 100644
+--- a/drivers/scsi/gdth_proc.c
++++ b/drivers/scsi/gdth_proc.c
+@@ -365,8 +365,10 @@ static int gdth_get_info(char *buffer,char **start,off_t offset,int length,
+                     len = 0;
+                     begin = pos;
+                 }
+-                if (pos > offset + length)
++		if (pos > offset + length) {
++		    gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
+                     goto stop_output;
++		}
+             }
+         }
+         gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
+@@ -450,8 +452,10 @@ static int gdth_get_info(char *buffer,char **start,off_t offset,int length,
+                     len = 0;
+                     begin = pos;
+                 }
+-                if (pos > offset + length)
++		if (pos > offset + length) {
++		    gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
+                     goto stop_output;
++		}
+             } while (drv_no != -1);
+              
+             if (is_mirr) {
+@@ -472,8 +476,10 @@ static int gdth_get_info(char *buffer,char **start,off_t offset,int length,
+                 len = 0;
+                 begin = pos;
+             }
+-            if (pos > offset + length)
++	    if (pos > offset + length) {
++		gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
+                 goto stop_output;
++	    }
+         }       
+         gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
+         
+@@ -542,8 +548,10 @@ static int gdth_get_info(char *buffer,char **start,off_t offset,int length,
+                     len = 0;
+                     begin = pos;
+                 }
+-                if (pos > offset + length)
++		if (pos > offset + length) {
++		    gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
+                     goto stop_output;
++		}
+             }
+         }
+         gdth_ioctl_free(ha, GDTH_SCRATCH, buf, paddr);
+diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
+index 7636570..3242bca 100644
+--- a/drivers/scsi/gdth.c
++++ b/drivers/scsi/gdth.c
+@@ -4273,8 +4273,10 @@ static int ioc_general(void __user *arg, char *cmnd)
+     }
+ 
+     rval = __gdth_execute(ha->sdev, &gen.command, cmnd, gen.timeout, &gen.info);
+-    if (rval < 0)
++    if (rval < 0) {
++	gdth_ioctl_free(ha, gen.data_len+gen.sense_len, buf, paddr);
+         return rval;
++    }
+     gen.status = rval;
+ 
+     if (copy_to_user(arg + sizeof(gdth_ioctl_general), buf, 
