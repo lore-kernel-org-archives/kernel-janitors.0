@@ -1,26 +1,46 @@
-From: Kalle Valo <kvalo@adurom.com>
-Date: Sat, 18 Dec 2010 09:12:10 +0000
-Subject: Re: [patch -next] wl1251: wl12xx_get_platform_data() returns an ERR_PTR
-Message-Id: <8762urigwl.fsf@purkki.adurom.net>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Fri, 31 Dec 2010 19:28:30 +0000
+Subject: [PATCH 2/2] staging: keucr: Use memcpy() instad of custom StringCopy() and some style cleanups
+Message-Id: <1293823712-6273-3-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101218085210.GO1639@bicker>
-In-Reply-To: <20101218085210.GO1639@bicker> (Dan Carpenter's message of "Sat\, 18 Dec 2010 11\:52\:10 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <error27@gmail.com> writes:
 
-> wl12xx_get_platform_data() returns an ERR_PTR on failure and it never
-> returns a NULL.
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/keucr/smilecc.c |   16 +++++++++-------
+ 1 files changed, 9 insertions(+), 7 deletions(-)
 
-Yes, that's true. Good that you found this.
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Kalle Valo <kvalo@adurom.com>
-
+diff --git a/drivers/staging/keucr/smilecc.c b/drivers/staging/keucr/smilecc.c
+index daf322a..f9e515d 100644
+--- a/drivers/staging/keucr/smilecc.c
++++ b/drivers/staging/keucr/smilecc.c
+@@ -182,13 +182,15 @@ BYTE *buf;
+ BYTE *redundant_ecc;
+ BYTE *calculate_ecc;
+ {
+-    DWORD err;
+-
+-    err=correct_data(buf,redundant_ecc,*(calculate_ecc+1),*(calculate_ecc),*(calculate_ecc+2));
+-    if (err=1) StringCopy(calculate_ecc,redundant_ecc,3);
+-        if (err=0 || err=1 || err=2)
+-            return(0);
+-    return(-1);
++	DWORD err;
++	err = correct_data(buf, redundant_ecc, *(calculate_ecc+1),
++			   *(calculate_ecc), *(calculate_ecc+2));
++	if (err = 1)
++		memcpy(calculate_ecc, redundant_ecc, 3);
++
++	if (err = 0 || err = 1 || err = 2)
++		return 0;
++	return -1;
+ }
+ 
+ void _Calculate_D_SwECC(buf,ecc)
 -- 
-Kalle Valo
+1.7.0.4
+
