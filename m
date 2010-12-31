@@ -1,27 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 21 Dec 2010 18:53:30 +0000
-Subject: Re: [patch -next] stmmac: unwind properly in stmmac_dvr_probe()
-Message-Id: <20101221.105330.104073991.davem@davemloft.net>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Fri, 31 Dec 2010 09:19:22 +0000
+Subject: [PATCH 2/4] staging: keucr: Use strncpy() instead of custom StringCopy() and some style cleanups
+Message-Id: <1293787164-7056-3-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20101221073456.GG1936@bicker>
-In-Reply-To: <20101221073456.GG1936@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: peppe.cavallaro@st.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 21 Dec 2010 10:34:56 +0300
 
-> The original code had a several problems:
-> *) It had potential null dereferences of "priv" and "res".
-> *) It released the memory region before it was aquired.
-> *) It didn't free "ndev" after it was allocated.
-> *) It didn't call unregister_netdev() after calling stmmac_probe().
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/keucr/smilecc.c |   16 +++++++++-------
+ 1 files changed, 9 insertions(+), 7 deletions(-)
 
-Nice work, applied.
+diff --git a/drivers/staging/keucr/smilecc.c b/drivers/staging/keucr/smilecc.c
+index daf322a..f4ff9ac 100644
+--- a/drivers/staging/keucr/smilecc.c
++++ b/drivers/staging/keucr/smilecc.c
+@@ -182,13 +182,15 @@ BYTE *buf;
+ BYTE *redundant_ecc;
+ BYTE *calculate_ecc;
+ {
+-    DWORD err;
+-
+-    err=correct_data(buf,redundant_ecc,*(calculate_ecc+1),*(calculate_ecc),*(calculate_ecc+2));
+-    if (err=1) StringCopy(calculate_ecc,redundant_ecc,3);
+-        if (err=0 || err=1 || err=2)
+-            return(0);
+-    return(-1);
++	DWORD err;
++	err = correct_data(buf, redundant_ecc, *(calculate_ecc+1),
++			   *(calculate_ecc), *(calculate_ecc+2));
++	if (err = 1)
++		strncpy(calculate_ecc, redundant_ecc, 3);
++
++	if (err = 0 || err = 1 || err = 2)
++		return 0;
++	return -1;
+ }
+ 
+ void _Calculate_D_SwECC(buf,ecc)
+-- 
+1.7.0.4
 
-Thanks Dan.
