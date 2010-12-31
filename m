@@ -1,34 +1,20 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 09 Dec 2010 14:56:24 +0000
-Subject: [PATCH] [SCSI] scsi/osd: Remove redundant unlikely()
-Message-Id: <1291906584-1198-1-git-send-email-tklauser@distanz.ch>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Fri, 31 Dec 2010 19:28:28 +0000
+Subject: [PATCHv2] staging: keucr: Use memcmp() & memcpy() instead of custom String[Cmp|Copy] functions
+Message-Id: <1293823712-6273-1-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Boaz Harrosh <bharrosh@panasas.com>, Benny Halevy <bhalevy@panasas.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>
-Cc: osd-dev@open-osd.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-IS_ERR() already implies unlikely(), so it can be omitted here.
+This patchset make some cleanup to staging/keucr. Use memcmp and memcpy instead of custom functions.
+Also some style cleanups.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
----
- drivers/scsi/osd/osd_initiator.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+The patches in this patchset are the following:
 
-diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
-index b798919..b37c8a3 100644
---- a/drivers/scsi/osd/osd_initiator.c
-+++ b/drivers/scsi/osd/osd_initiator.c
-@@ -951,7 +951,7 @@ static int _osd_req_finalize_cdb_cont(struct osd_request *or, const u8 *cap_key)
- 	/* create a bio for continuation segment */
- 	bio = bio_map_kern(req_q, or->cdb_cont.buff, or->cdb_cont.total_bytes,
- 			   GFP_KERNEL);
--	if (unlikely(IS_ERR(bio)))
-+	if (IS_ERR(bio))
- 		return PTR_ERR(bio);
- 
- 	bio->bi_rw |= REQ_WRITE;
--- 
-1.7.0.4
+[PATCH 1/2] staging: keucr: Use memcmp() instaed of custom StringCmp() and some style cleanups
+[PATCH 2/2] staging: keucr: Use memcpy() instad of custom StringCopy() and some style cleanups
+[PATCH 3/4] staging: keucr: Delete StringCmp() and StringCopy custom functions
+[PATCH 4/4] staging: keucr: Delete use kernel strcmp() & strcpy() from TODO file
 
