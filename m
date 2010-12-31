@@ -1,34 +1,49 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Thu, 09 Dec 2010 14:40:38 +0000
-Subject: [PATCH] ext4: Remove redundant unlikely()
-Message-Id: <1291905638-32410-1-git-send-email-tklauser@distanz.ch>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Fri, 31 Dec 2010 09:19:23 +0000
+Subject: [PATCH 3/4] staging: keucr: Delete custom StringCmp() and StringCopy() functions
+Message-Id: <1293787164-7056-4-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-IS_ERR() already implies unlikely(), so it can be omitted here.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- fs/ext4/namei.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/staging/keucr/smilsub.c |   19 -------------------
+ 1 files changed, 0 insertions(+), 19 deletions(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 92203b8..cec88ce 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1036,7 +1036,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, stru
- 			return ERR_PTR(-EIO);
- 		}
- 		inode = ext4_iget(dir->i_sb, ino);
--		if (unlikely(IS_ERR(inode))) {
-+		if (IS_ERR(inode)) {
- 			if (PTR_ERR(inode) = -ESTALE) {
- 				EXT4_ERROR_INODE(dir,
- 						 "deleted inode referenced: %u",
+diff --git a/drivers/staging/keucr/smilsub.c b/drivers/staging/keucr/smilsub.c
+index 6aa29d9..043fa91 100644
+--- a/drivers/staging/keucr/smilsub.c
++++ b/drivers/staging/keucr/smilsub.c
+@@ -1591,25 +1591,6 @@ char Bit_D_CountWord(WORD cdata)
+     return((char)bitcount);
+ }
+ 
+-void StringCopy(char *stringA, char *stringB, int count)
+-{
+-    int i;
+-
+-    for(i=0; i<count; i++)
+-        *stringA++ = *stringB++;
+-}
+-
+-//-----
+-int StringCmp(char *stringA, char *stringB, int count)
+-{
+-    int i;
+-
+-    for (i=0;i<count;i++)
+-        if (*stringA++ != *stringB++)
+-            return(ERROR);
+-
+-    return(SUCCESS);
+-}
+ /*
+ //----- SM_ReadBlock() ---------------------------------------------
+ int SM_ReadBlock(PFDO_DEVICE_EXTENSION fdoExt, BYTE *buf,BYTE *redundant)
 -- 
 1.7.0.4
 
