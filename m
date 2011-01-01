@@ -1,35 +1,72 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Fri, 28 Jan 2011 00:26:21 +0000
-Subject: Re: [PATCH 1/2] arch/arm/mach-omap2/dma.c: Convert IS_ERR result
-Message-Id: <20110128002620.GR23412@atomide.com>
+From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
+Date: Sat, 01 Jan 2011 23:41:33 +0000
+Subject: Re: [PATCH 2/2] staging: keucr: Use memcpy() instad of custom
+Message-Id: <AANLkTi=B21AWtgOTZTx10GnmNCvpRTJS3+TzYvx3XwUw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1296143347-17508-1-git-send-email-julia@diku.dk>
-	<20110127210225.07de155f.jhnikula@gmail.com>
-In-Reply-To: <20110127210225.07de155f.jhnikula@gmail.com>
+References: <1293823712-6273-3-git-send-email-martinez.javier@gmail.com>
+In-Reply-To: <1293823712-6273-3-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-* Jarkko Nikula <jhnikula@gmail.com> [110127 11:03]:
-> On Thu, 27 Jan 2011 16:49:06 +0100
-> Julia Lawall <julia@diku.dk> wrote:
-> 
-> > diff -u -p a/arch/arm/mach-omap2/dma.c b/arch/arm/mach-omap2/dma.c
-> > --- a/arch/arm/mach-omap2/dma.c
-> > +++ b/arch/arm/mach-omap2/dma.c
-> > @@ -264,7 +264,7 @@ static int __init omap2_system_dma_init_
-> >  	if (IS_ERR(od)) {
-> >  		pr_err("%s: Cant build omap_device for %s:%s.\n",
-> >  			__func__, name, oh->name);
-> > -		return IS_ERR(od);
-> > +		return PTR_ERR(od);
-> >  	}
-> >  
-> FWIW,
-> 
-> Acked-by: Jarkko Nikula <jhnikula@gmail.com>
+On Fri, Dec 31, 2010 at 8:28 PM, Javier Martinez Canillas
+<martinez.javier@gmail.com> wrote:
+>
+> Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+> ---
+> =A0drivers/staging/keucr/smilecc.c | =A0 16 +++++++++-------
+> =A01 files changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/staging/keucr/smilecc.c b/drivers/staging/keucr/smil=
+ecc.c
+> index daf322a..f9e515d 100644
+> --- a/drivers/staging/keucr/smilecc.c
+> +++ b/drivers/staging/keucr/smilecc.c
+> @@ -182,13 +182,15 @@ BYTE *buf;
+> =A0BYTE *redundant_ecc;
+> =A0BYTE *calculate_ecc;
+> =A0{
+> - =A0 =A0DWORD err;
+> -
+> - =A0 =A0err=3Dcorrect_data(buf,redundant_ecc,*(calculate_ecc+1),*(calcul=
+ate_ecc),*(calculate_ecc+2));
+> - =A0 =A0if (err=3D1) StringCopy(calculate_ecc,redundant_ecc,3);
+> - =A0 =A0 =A0 =A0if (err=3D0 || err=3D1 || err=3D2)
+> - =A0 =A0 =A0 =A0 =A0 =A0return(0);
+> - =A0 =A0return(-1);
+> + =A0 =A0 =A0 DWORD err;
+> + =A0 =A0 =A0 err =3D correct_data(buf, redundant_ecc, *(calculate_ecc+1),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*(calculate_ecc), *(=
+calculate_ecc+2));
 
-Thanks, will queue as a fix during the -rc cycle.
+Any reason why you didn't unify these 2 lines? Like this: DWORD err correct=
+_data(...);
 
-Tony
+> + =A0 =A0 =A0 if (err =3D 1)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 memcpy(calculate_ecc, redundant_ecc, 3);
+> +
+> + =A0 =A0 =A0 if (err =3D 0 || err =3D 1 || err =3D 2)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+> + =A0 =A0 =A0 return -1;
+> =A0}
+>
+> =A0void _Calculate_D_SwECC(buf,ecc)
+> --
+> 1.7.0.4
+>
+> _______________________________________________
+> devel mailing list
+> devel@linuxdriverproject.org
+> http://driverdev.linuxdriverproject.org/mailman/listinfo/devel
+>
+
+
+
+--=20
+Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
