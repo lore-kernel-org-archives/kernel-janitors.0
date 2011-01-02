@@ -1,67 +1,49 @@
 From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sun, 02 Jan 2011 22:14:26 +0000
-Subject: [PATCH 1/4] staging: keucr: Use memcmp() instead custom StringCmp() and some style cleanups
-Message-Id: <1294006469-4400-2-git-send-email-martinez.javier@gmail.com>
+Date: Sun, 02 Jan 2011 21:01:36 +0000
+Subject: [PATCH 3/3] staging: keucr: Delete StringCmp() and StringCopy custom functions
+Message-Id: <1294002097-3058-4-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-c3RhZ2luZzoga2V1Y3I6IFVzZSBtZW1jbXAoKSBpbnN0ZWFkIGN1c3RvbSBTdHJpbmdDbXAoKSBh
-bmQgc29tZSBzdHlsZSBjbGVhbnVwcwoKU2lnbmVkLW9mZi1ieTogSmF2aWVyIE1hcnRpbmV6IENh
-bmlsbGFzIDxtYXJ0aW5lei5qYXZpZXJAZ21haWwuY29tPgotLS0KIGRyaXZlcnMvc3RhZ2luZy9r
-ZXVjci9zbWlsc3ViLmMgfCAgIDUwICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQogMSBmaWxlcyBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAzMiBkZWxldGlvbnMoLSkK
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcva2V1Y3Ivc21pbHN1Yi5jIGIvZHJpdmVycy9z
-dGFnaW5nL2tldWNyL3NtaWxzdWIuYwppbmRleCBjZTEwY2YyLi44MWVkMGFhIDEwMDY0NAotLS0g
-YS9kcml2ZXJzL3N0YWdpbmcva2V1Y3Ivc21pbHN1Yi5jCisrKyBiL2RyaXZlcnMvc3RhZ2luZy9r
-ZXVjci9zbWlsc3ViLmMKQEAgLTE0ODIsNTQgKzE0ODIsNDAgQEAgQllURSBfQ2hlY2tfRF9EZXZD
-b2RlKEJZVEUgZGNvZGUpCiAvLy0tLS0tIENoZWNrX0RfUmVhZEVycm9yKCkgLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogaW50IENoZWNrX0RfUmVhZEVycm9y
-KEJZVEUgKnJlZHVuZGFudCkKIHsKLSAgICAvLyBEcml2ZXIgpKOwtSBFQ0MgQ2hlY2sKLSAgICBy
-ZXR1cm4oU1VDQ0VTUyk7Ci0gICAgaWYgKCFTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4
-MEQpLChjaGFyICopRWNjQnVmLDMpKQotICAgICAgICBpZiAoIVN0cmluZ0NtcCgoY2hhciAqKShy
-ZWR1bmRhbnQrMHgwOCksKGNoYXIgKikoRWNjQnVmKzB4MDMpLDMpKQotICAgICAgICAgICAgcmV0
-dXJuKFNVQ0NFU1MpOwotCi0gICAgcmV0dXJuKEVSUk9SKTsKKwlyZXR1cm4gU1VDQ0VTUzsKIH0K
-IAogLy8tLS0tLSBDaGVja19EX0NvcnJlY3QoKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tCiBpbnQgQ2hlY2tfRF9Db3JyZWN0KEJZVEUgKmJ1ZixCWVRFICpy
-ZWR1bmRhbnQpCiB7Ci0gICAgLy8gRHJpdmVyIKSjsLUgRUNDIENoZWNrCi0gICAgcmV0dXJuKFNV
-Q0NFU1MpOwotICAgIGlmIChTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4MEQpLChjaGFy
-ICopRWNjQnVmLDMpKQotICAgICAgICBpZiAoX0NvcnJlY3RfRF9Td0VDQyhidWYscmVkdW5kYW50
-KzB4MEQsRWNjQnVmKSkKLSAgICAgICAgICAgIHJldHVybihFUlJPUik7Ci0KLSAgICBidWYrPTB4
-MTAwOwotICAgIGlmIChTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4MDgpLChjaGFyICop
-KEVjY0J1ZisweDAzKSwzKSkKLSAgICAgICAgaWYgKF9Db3JyZWN0X0RfU3dFQ0MoYnVmLHJlZHVu
-ZGFudCsweDA4LEVjY0J1ZisweDAzKSkKLSAgICAgICAgICAgIHJldHVybihFUlJPUik7Ci0KLSAg
-ICByZXR1cm4oU1VDQ0VTUyk7CisJcmV0dXJuIFNVQ0NFU1M7CiB9CiAKIC8vLS0tLS0gQ2hlY2tf
-RF9DSVNkYXRhKCkgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQogaW50IENoZWNrX0RfQ0lTZGF0YShCWVRFICpidWYsIEJZVEUgKnJlZHVuZGFudCkKIHsKLSAg
-ICBCWVRFIGNpc1tdPXsweDAxLDB4MDMsMHhEOSwweDAxLDB4RkYsMHgxOCwweDAyLDB4REYsMHgw
-MSwweDIwfTsKKwlCWVRFIGNpc1tdID0gezB4MDEsIDB4MDMsIDB4RDksIDB4MDEsIDB4RkYsIDB4
-MTgsIDB4MDIsCisJCSAgICAgIDB4REYsIDB4MDEsIDB4MjB9OworCisJaW50IGNpc19sZW4gPSBz
-aXplb2YoY2lzKTsKIAotICAgIGlmICghSXNTU0ZEQ0NvbXBsaWFuY2UgJiYgIUlzWERDb21wbGlh
-bmNlKQotICAgICAgICByZXR1cm4oU1VDQ0VTUyk7ICAgICAgICAgICAgIC8vIKXYq2WssLFqqO4g
-U1VDQ0VTUyBbQXJub2xkIDAyLTA4LTIzXSBTU0ZEQyC0+rjVLCCko6/gsWqo7iBTVUNDRVNTCisJ
-aWYgKCFJc1NTRkRDQ29tcGxpYW5jZSAmJiAhSXNYRENvbXBsaWFuY2UpCisJCXJldHVybiBTVUND
-RVNTOwogCi0gICAgaWYgKCFTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4MEQpLChjaGFy
-ICopRWNjQnVmLDMpKQotICAgICAgICByZXR1cm4oU3RyaW5nQ21wKChjaGFyICopYnVmLChjaGFy
-ICopY2lzLDEwKSk7CisJaWYgKCFtZW1jbXAocmVkdW5kYW50ICsgMHgwRCwgRWNjQnVmLCAzKSkK
-KwkJcmV0dXJuIG1lbWNtcChidWYsIGNpcywgY2lzX2xlbik7CiAKLSAgICBpZiAoIV9Db3JyZWN0
-X0RfU3dFQ0MoYnVmLHJlZHVuZGFudCsweDBELEVjY0J1ZikpCi0gICAgICAgIHJldHVybihTdHJp
-bmdDbXAoKGNoYXIgKilidWYsKGNoYXIgKiljaXMsMTApKTsKKwlpZiAoIV9Db3JyZWN0X0RfU3dF
-Q0MoYnVmLCByZWR1bmRhbnQgKyAweDBELCBFY2NCdWYpKQorCQlyZXR1cm4gbWVtY21wKGJ1Ziwg
-Y2lzLCBjaXNfbGVuKTsKIAotICAgIGJ1Zis9MHgxMDA7Ci0gICAgaWYgKCFTdHJpbmdDbXAoKGNo
-YXIgKikocmVkdW5kYW50KzB4MDgpLChjaGFyICopKEVjY0J1ZisweDAzKSwzKSkKLSAgICAgICAg
-cmV0dXJuKFN0cmluZ0NtcCgoY2hhciAqKWJ1ZiwoY2hhciAqKWNpcywxMCkpOworCWJ1ZiArPSAw
-eDEwMDsKKwlpZiAoIW1lbWNtcChyZWR1bmRhbnQgKyAweDA4LCBFY2NCdWYgKyAweDAzLCAzKSkK
-KwkJcmV0dXJuIG1lbWNtcChidWYsIGNpcywgY2lzX2xlbik7CiAKLSAgICBpZiAoIV9Db3JyZWN0
-X0RfU3dFQ0MoYnVmLHJlZHVuZGFudCsweDA4LEVjY0J1ZisweDAzKSkKLSAgICAgICAgcmV0dXJu
-KFN0cmluZ0NtcCgoY2hhciAqKWJ1ZiwoY2hhciAqKWNpcywxMCkpOworCWlmICghX0NvcnJlY3Rf
-RF9Td0VDQyhidWYsIHJlZHVuZGFudCArIDB4MDgsIEVjY0J1ZiArIDB4MDMpKQorCQlyZXR1cm4g
-bWVtY21wKGJ1ZiwgY2lzLCBjaXNfbGVuKTsKIAotICAgIHJldHVybihFUlJPUik7CisJcmV0dXJu
-IEVSUk9SOwogfQogCiAvLy0tLS0tIFNldF9EX1JpZ2h0RUNDKCkgLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQotLSAKMS43LjAuNAoKLS0KVG8gdW5zdWJzY3Jp
-YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5p
-dG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5v
-cmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
-bW8taW5mby5odG1s
+
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/keucr/smilsub.c |   19 -------------------
+ 1 files changed, 0 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/staging/keucr/smilsub.c b/drivers/staging/keucr/smilsub.c
+index a15cc02..326a04c 100644
+--- a/drivers/staging/keucr/smilsub.c
++++ b/drivers/staging/keucr/smilsub.c
+@@ -1590,25 +1590,6 @@ char Bit_D_CountWord(WORD cdata)
+     return((char)bitcount);
+ }
+ 
+-void StringCopy(char *stringA, char *stringB, int count)
+-{
+-    int i;
+-
+-    for(i=0; i<count; i++)
+-        *stringA++ = *stringB++;
+-}
+-
+-//-----
+-int StringCmp(char *stringA, char *stringB, int count)
+-{
+-    int i;
+-
+-    for (i=0;i<count;i++)
+-        if (*stringA++ != *stringB++)
+-            return(ERROR);
+-
+-    return(SUCCESS);
+-}
+ /*
+ //----- SM_ReadBlock() ---------------------------------------------
+ int SM_ReadBlock(PFDO_DEVICE_EXTENSION fdoExt, BYTE *buf,BYTE *redundant)
+-- 
+1.7.0.4
+
