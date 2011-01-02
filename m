@@ -1,41 +1,30 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 03 Jan 2011 05:46:29 +0000
-Subject: [patch -next] ath5k: ath5k_eeprom_mode_from_channel() returns
-Message-Id: <20110103054629.GR1886@bicker>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 02 Jan 2011 21:01:33 +0000
+Subject: [PATCHv3 0/4] staging: keucr: Use memcmp() & memcpy() instead of custom String[Cmp|Copy] functions
+Message-Id: <1294002097-3058-1-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Cc: Nick Kossifidis <mickflemm@gmail.com>, Jiri Slaby <jirislaby@gmail.com>, Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@lists.ath5k.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-ath5k_eeprom_mode_from_channel() returns -1 on error but we're storing
-the result in "ee_mode" which is an unsigned char.  This breaks the
-error handling.  This patch makes "ee_mode" an int.
+This patchset make some cleanup to staging/keucr. Use memcmp and memcpy ins=
+tead of custom functions.
+Also some style cleanups recomended by Dan Carpenter, Joe Perches and G=C3=
+=A1bor Stefanik.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+The patches in this patchset are the following:
 
-diff --git a/drivers/net/wireless/ath/ath5k/phy.c b/drivers/net/wireless/ath/ath5k/phy.c
-index 9306d5f..78c26fd 100644
---- a/drivers/net/wireless/ath/ath5k/phy.c
-+++ b/drivers/net/wireless/ath/ath5k/phy.c
-@@ -1916,7 +1916,8 @@ ath5k_hw_set_antenna_mode(struct ath5k_hw *ah, u8 ant_mode)
- 	struct ieee80211_channel *channel = ah->ah_current_channel;
- 	bool use_def_for_tx, update_def_on_tx, use_def_for_rts, fast_div;
- 	bool use_def_for_sg;
--	u8 def_ant, tx_ant, ee_mode;
-+	int ee_mode;
-+	u8 def_ant, tx_ant;
- 	u32 sta_id1 = 0;
- 
- 	/* if channel is not initialized yet we can't set the antennas
-@@ -3081,7 +3082,8 @@ ath5k_hw_txpower(struct ath5k_hw *ah, struct ieee80211_channel *channel,
- {
- 	struct ath5k_rate_pcal_info rate_info;
- 	struct ieee80211_channel *curr_channel = ah->ah_current_channel;
--	u8 type, ee_mode;
-+	int ee_mode;
-+	u8 type;
- 	int ret;
- 
- 	if (txpower > AR5K_TUNE_MAX_TXPOWER) {
+[PATCH 1/3] staging: keucr: Use memcmp() instead custom StringCmp() and som=
+e style cleanups
+[PATCH 2/3] staging: keucr: Use memcpy() instead custom StringCopy() and so=
+me style cleanups
+[PATCH 3/3] staging: keucr: Delete StringCmp() and StringCopy custom functi=
+ons
+[PATCH 4/4] staging: keucr: Delete use kernel strcmp() & strcpy() from TODO=
+ file
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
