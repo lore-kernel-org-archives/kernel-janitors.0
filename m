@@ -1,44 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 13 Jan 2011 20:30:02 +0000
-Subject: Re: [patch v2] phonet: some signedness bugs
-Message-Id: <20110113.123002.46348652.davem@davemloft.net>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 02 Jan 2011 22:14:27 +0000
+Subject: [PATCH 2/4] staging: keucr: Use memcpy() instead custom StringCopy() and some style cleanups
+Message-Id: <1294006469-4400-3-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110110140658.GB2721@bicker>
-	<20110110.160620.133889003.davem@davemloft.net>
-	<201101131432.58059.remi.denis-courmont@nokia.com>
-In-Reply-To: <201101131432.58059.remi.denis-courmont@nokia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: remi.denis-courmont@nokia.com
-Cc: error27@gmail.com, dan.j.rosenberg@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-From: "R=E9mi Denis-Courmont" <remi.denis-courmont@nokia.com>
-Date: Thu, 13 Jan 2011 14:32:57 +0200
+staging: keucr: Use memcpy() instead custom StringCopy() and some style cleanups
 
-> On Tuesday 11 January 2011 02:06:20 ext David Miller, you wrote:
->> From: Dan Carpenter <error27@gmail.com>
->> Date: Mon, 10 Jan 2011 17:06:58 +0300
->>=20
->> > Dan Rosenberg pointed out that there were some signed comparison bugs
->> > in the phonet protocol.
->> >=20
->> > http://marc.info/?l=3Dfull-disclosure&m=129424528425330&w=3D2
->> >=20
->> > The problem is that we check for array overflows but "protocol" is
->> > signed and we don't check for array underflows.  If you have already
->> > have CAP_SYS_ADMIN then you could use the bugs to get root, or someone
->> > could cause an oops by mistake.
->> >=20
->> > Signed-off-by: Dan Carpenter <error27@gmail.com>
->>=20
->> Applied.
->=20
-> Shouldn't this be sent to stable trees?
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/keucr/smilecc.c |   16 ++++++++++------
+ 1 files changed, 10 insertions(+), 6 deletions(-)
 
-It will be.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/keucr/smilecc.c b/drivers/staging/keucr/smilecc.c
+index daf322a..5659dea 100644
+--- a/drivers/staging/keucr/smilecc.c
++++ b/drivers/staging/keucr/smilecc.c
+@@ -182,13 +182,17 @@ BYTE *buf;
+ BYTE *redundant_ecc;
+ BYTE *calculate_ecc;
+ {
+-    DWORD err;
++	DWORD err;
+ 
+-    err=correct_data(buf,redundant_ecc,*(calculate_ecc+1),*(calculate_ecc),*(calculate_ecc+2));
+-    if (err=1) StringCopy(calculate_ecc,redundant_ecc,3);
+-        if (err=0 || err=1 || err=2)
+-            return(0);
+-    return(-1);
++	err = correct_data(buf, redundant_ecc, *(calculate_ecc + 1),
++			   *(calculate_ecc), *(calculate_ecc + 2));
++	if (err = 1)
++		memcpy(calculate_ecc, redundant_ecc, 3);
++
++	if (err = 0 || err = 1 || err = 2)
++		return 0;
++
++	return -1;
+ }
+ 
+ void _Calculate_D_SwECC(buf,ecc)
+-- 
+1.7.0.4
+
