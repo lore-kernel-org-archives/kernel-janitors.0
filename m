@@ -1,62 +1,67 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Jan 2011 19:55:19 +0000
-Subject: [PATCH 1/4] fs/btrfs/inode.c: Add missing IS_ERR test
-Message-Id: <1295898922-18822-2-git-send-email-julia@diku.dk>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 02 Jan 2011 22:14:26 +0000
+Subject: [PATCH 1/4] staging: keucr: Use memcmp() instead custom StringCmp() and some style cleanups
+Message-Id: <1294006469-4400-2-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1295898922-18822-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1295898922-18822-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
+To: kernel-janitors@vger.kernel.org
 
-After the conditional that precedes the following code, inode may be an
-ERR_PTR value.  This can eg result from a memory allocation failure via the
-call to btrfs_iget, and thus does not imply that root is different than
-sub_root.  Thus, an IS_ERR check is added to ensure that there is no
-dereference of inode in this case.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-identifier f;
-@@
-f(...) { ... return ERR_PTR(...); }
-
-@@
-identifier r.f, fld;
-expression x;
-statement S1,S2;
-@@
- x = f(...)
- ... when != IS_ERR(x)
-(
- if (IS_ERR(x) ||...) S1 else S2
-|
-*x->fld
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- fs/btrfs/inode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 160b55b..b322158 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4134,7 +4134,7 @@ struct inode *btrfs_lookup_dentry(struct inode *dir, struct dentry *dentry)
- 	}
- 	srcu_read_unlock(&root->fs_info->subvol_srcu, index);
- 
--	if (root != sub_root) {
-+	if (!IS_ERR(inode) && root != sub_root) {
- 		down_read(&root->fs_info->cleanup_work_sem);
- 		if (!(inode->i_sb->s_flags & MS_RDONLY))
- 			btrfs_orphan_cleanup(sub_root);
-
+c3RhZ2luZzoga2V1Y3I6IFVzZSBtZW1jbXAoKSBpbnN0ZWFkIGN1c3RvbSBTdHJpbmdDbXAoKSBh
+bmQgc29tZSBzdHlsZSBjbGVhbnVwcwoKU2lnbmVkLW9mZi1ieTogSmF2aWVyIE1hcnRpbmV6IENh
+bmlsbGFzIDxtYXJ0aW5lei5qYXZpZXJAZ21haWwuY29tPgotLS0KIGRyaXZlcnMvc3RhZ2luZy9r
+ZXVjci9zbWlsc3ViLmMgfCAgIDUwICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQogMSBmaWxlcyBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAzMiBkZWxldGlvbnMoLSkK
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcva2V1Y3Ivc21pbHN1Yi5jIGIvZHJpdmVycy9z
+dGFnaW5nL2tldWNyL3NtaWxzdWIuYwppbmRleCBjZTEwY2YyLi44MWVkMGFhIDEwMDY0NAotLS0g
+YS9kcml2ZXJzL3N0YWdpbmcva2V1Y3Ivc21pbHN1Yi5jCisrKyBiL2RyaXZlcnMvc3RhZ2luZy9r
+ZXVjci9zbWlsc3ViLmMKQEAgLTE0ODIsNTQgKzE0ODIsNDAgQEAgQllURSBfQ2hlY2tfRF9EZXZD
+b2RlKEJZVEUgZGNvZGUpCiAvLy0tLS0tIENoZWNrX0RfUmVhZEVycm9yKCkgLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogaW50IENoZWNrX0RfUmVhZEVycm9y
+KEJZVEUgKnJlZHVuZGFudCkKIHsKLSAgICAvLyBEcml2ZXIgpKOwtSBFQ0MgQ2hlY2sKLSAgICBy
+ZXR1cm4oU1VDQ0VTUyk7Ci0gICAgaWYgKCFTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4
+MEQpLChjaGFyICopRWNjQnVmLDMpKQotICAgICAgICBpZiAoIVN0cmluZ0NtcCgoY2hhciAqKShy
+ZWR1bmRhbnQrMHgwOCksKGNoYXIgKikoRWNjQnVmKzB4MDMpLDMpKQotICAgICAgICAgICAgcmV0
+dXJuKFNVQ0NFU1MpOwotCi0gICAgcmV0dXJuKEVSUk9SKTsKKwlyZXR1cm4gU1VDQ0VTUzsKIH0K
+IAogLy8tLS0tLSBDaGVja19EX0NvcnJlY3QoKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tCiBpbnQgQ2hlY2tfRF9Db3JyZWN0KEJZVEUgKmJ1ZixCWVRFICpy
+ZWR1bmRhbnQpCiB7Ci0gICAgLy8gRHJpdmVyIKSjsLUgRUNDIENoZWNrCi0gICAgcmV0dXJuKFNV
+Q0NFU1MpOwotICAgIGlmIChTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4MEQpLChjaGFy
+ICopRWNjQnVmLDMpKQotICAgICAgICBpZiAoX0NvcnJlY3RfRF9Td0VDQyhidWYscmVkdW5kYW50
+KzB4MEQsRWNjQnVmKSkKLSAgICAgICAgICAgIHJldHVybihFUlJPUik7Ci0KLSAgICBidWYrPTB4
+MTAwOwotICAgIGlmIChTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4MDgpLChjaGFyICop
+KEVjY0J1ZisweDAzKSwzKSkKLSAgICAgICAgaWYgKF9Db3JyZWN0X0RfU3dFQ0MoYnVmLHJlZHVu
+ZGFudCsweDA4LEVjY0J1ZisweDAzKSkKLSAgICAgICAgICAgIHJldHVybihFUlJPUik7Ci0KLSAg
+ICByZXR1cm4oU1VDQ0VTUyk7CisJcmV0dXJuIFNVQ0NFU1M7CiB9CiAKIC8vLS0tLS0gQ2hlY2tf
+RF9DSVNkYXRhKCkgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQogaW50IENoZWNrX0RfQ0lTZGF0YShCWVRFICpidWYsIEJZVEUgKnJlZHVuZGFudCkKIHsKLSAg
+ICBCWVRFIGNpc1tdPXsweDAxLDB4MDMsMHhEOSwweDAxLDB4RkYsMHgxOCwweDAyLDB4REYsMHgw
+MSwweDIwfTsKKwlCWVRFIGNpc1tdID0gezB4MDEsIDB4MDMsIDB4RDksIDB4MDEsIDB4RkYsIDB4
+MTgsIDB4MDIsCisJCSAgICAgIDB4REYsIDB4MDEsIDB4MjB9OworCisJaW50IGNpc19sZW4gPSBz
+aXplb2YoY2lzKTsKIAotICAgIGlmICghSXNTU0ZEQ0NvbXBsaWFuY2UgJiYgIUlzWERDb21wbGlh
+bmNlKQotICAgICAgICByZXR1cm4oU1VDQ0VTUyk7ICAgICAgICAgICAgIC8vIKXYq2WssLFqqO4g
+U1VDQ0VTUyBbQXJub2xkIDAyLTA4LTIzXSBTU0ZEQyC0+rjVLCCko6/gsWqo7iBTVUNDRVNTCisJ
+aWYgKCFJc1NTRkRDQ29tcGxpYW5jZSAmJiAhSXNYRENvbXBsaWFuY2UpCisJCXJldHVybiBTVUND
+RVNTOwogCi0gICAgaWYgKCFTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4MEQpLChjaGFy
+ICopRWNjQnVmLDMpKQotICAgICAgICByZXR1cm4oU3RyaW5nQ21wKChjaGFyICopYnVmLChjaGFy
+ICopY2lzLDEwKSk7CisJaWYgKCFtZW1jbXAocmVkdW5kYW50ICsgMHgwRCwgRWNjQnVmLCAzKSkK
+KwkJcmV0dXJuIG1lbWNtcChidWYsIGNpcywgY2lzX2xlbik7CiAKLSAgICBpZiAoIV9Db3JyZWN0
+X0RfU3dFQ0MoYnVmLHJlZHVuZGFudCsweDBELEVjY0J1ZikpCi0gICAgICAgIHJldHVybihTdHJp
+bmdDbXAoKGNoYXIgKilidWYsKGNoYXIgKiljaXMsMTApKTsKKwlpZiAoIV9Db3JyZWN0X0RfU3dF
+Q0MoYnVmLCByZWR1bmRhbnQgKyAweDBELCBFY2NCdWYpKQorCQlyZXR1cm4gbWVtY21wKGJ1Ziwg
+Y2lzLCBjaXNfbGVuKTsKIAotICAgIGJ1Zis9MHgxMDA7Ci0gICAgaWYgKCFTdHJpbmdDbXAoKGNo
+YXIgKikocmVkdW5kYW50KzB4MDgpLChjaGFyICopKEVjY0J1ZisweDAzKSwzKSkKLSAgICAgICAg
+cmV0dXJuKFN0cmluZ0NtcCgoY2hhciAqKWJ1ZiwoY2hhciAqKWNpcywxMCkpOworCWJ1ZiArPSAw
+eDEwMDsKKwlpZiAoIW1lbWNtcChyZWR1bmRhbnQgKyAweDA4LCBFY2NCdWYgKyAweDAzLCAzKSkK
+KwkJcmV0dXJuIG1lbWNtcChidWYsIGNpcywgY2lzX2xlbik7CiAKLSAgICBpZiAoIV9Db3JyZWN0
+X0RfU3dFQ0MoYnVmLHJlZHVuZGFudCsweDA4LEVjY0J1ZisweDAzKSkKLSAgICAgICAgcmV0dXJu
+KFN0cmluZ0NtcCgoY2hhciAqKWJ1ZiwoY2hhciAqKWNpcywxMCkpOworCWlmICghX0NvcnJlY3Rf
+RF9Td0VDQyhidWYsIHJlZHVuZGFudCArIDB4MDgsIEVjY0J1ZiArIDB4MDMpKQorCQlyZXR1cm4g
+bWVtY21wKGJ1ZiwgY2lzLCBjaXNfbGVuKTsKIAotICAgIHJldHVybihFUlJPUik7CisJcmV0dXJu
+IEVSUk9SOwogfQogCiAvLy0tLS0tIFNldF9EX1JpZ2h0RUNDKCkgLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQotLSAKMS43LjAuNAoKLS0KVG8gdW5zdWJzY3Jp
+YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5p
+dG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5v
+cmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
+bW8taW5mby5odG1s
