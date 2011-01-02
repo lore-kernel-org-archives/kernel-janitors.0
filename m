@@ -1,7 +1,7 @@
-From: =?ISO-8859-1?Q?G=E1bor_Stefanik?= <netrolller.3d@gmail.com>
-Date: Sat, 01 Jan 2011 23:41:33 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 02 Jan 2011 05:34:09 +0000
 Subject: Re: [PATCH 2/2] staging: keucr: Use memcpy() instad of custom
-Message-Id: <AANLkTi=B21AWtgOTZTx10GnmNCvpRTJS3+TzYvx3XwUw@mail.gmail.com>
+Message-Id: <20110102053409.GK1886@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1293823712-6273-3-git-send-email-martinez.javier@gmail.com>
 In-Reply-To: <1293823712-6273-3-git-send-email-martinez.javier@gmail.com>
@@ -10,61 +10,43 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Dec 31, 2010 at 8:28 PM, Javier Martinez Canillas
-<martinez.javier@gmail.com> wrote:
->
-> Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
-> ---
-> =A0drivers/staging/keucr/smilecc.c | =A0 16 +++++++++-------
-> =A01 files changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/staging/keucr/smilecc.c b/drivers/staging/keucr/smil=
-ecc.c
-> index daf322a..f9e515d 100644
-> --- a/drivers/staging/keucr/smilecc.c
-> +++ b/drivers/staging/keucr/smilecc.c
-> @@ -182,13 +182,15 @@ BYTE *buf;
-> =A0BYTE *redundant_ecc;
-> =A0BYTE *calculate_ecc;
-> =A0{
-> - =A0 =A0DWORD err;
-> -
-> - =A0 =A0err=3Dcorrect_data(buf,redundant_ecc,*(calculate_ecc+1),*(calcul=
-ate_ecc),*(calculate_ecc+2));
-> - =A0 =A0if (err=3D1) StringCopy(calculate_ecc,redundant_ecc,3);
-> - =A0 =A0 =A0 =A0if (err=3D0 || err=3D1 || err=3D2)
-> - =A0 =A0 =A0 =A0 =A0 =A0return(0);
-> - =A0 =A0return(-1);
-> + =A0 =A0 =A0 DWORD err;
-> + =A0 =A0 =A0 err =3D correct_data(buf, redundant_ecc, *(calculate_ecc+1),
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*(calculate_ecc), *(=
-calculate_ecc+2));
+On Sun, Jan 02, 2011 at 12:41:33AM +0100, G=E1bor Stefanik wrote:
+> On Fri, Dec 31, 2010 at 8:28 PM, Javier Martinez Canillas
+> <martinez.javier@gmail.com> wrote:
+> > + =A0 =A0 =A0 DWORD err;
+> > + =A0 =A0 =A0 err =3D correct_data(buf, redundant_ecc, *(calculate_ecc+=
+1),
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*(calculate_ecc), =
+*(calculate_ecc+2));
+>=20
+> Any reason why you didn't unify these 2 lines? Like this: DWORD err > cor=
+rect_data(...);
+>=20
 
-Any reason why you didn't unify these 2 lines? Like this: DWORD err correct=
-_data(...);
+These kind of things aren't described in CodingStyle so they're up to
+whoever writes the code to decide.  Or if the maintainer is a
+micromanager the maintainer can decide.
 
-> + =A0 =A0 =A0 if (err =3D 1)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 memcpy(calculate_ecc, redundant_ecc, 3);
-> +
-> + =A0 =A0 =A0 if (err =3D 0 || err =3D 1 || err =3D 2)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
-> + =A0 =A0 =A0 return -1;
-> =A0}
->
-> =A0void _Calculate_D_SwECC(buf,ecc)
-> --
-> 1.7.0.4
->
-> _______________________________________________
-> devel mailing list
-> devel@linuxdriverproject.org
-> http://driverdev.linuxdriverproject.org/mailman/listinfo/devel
->
+But personally I much prefer to put anything complicated on separate
+lines.  No one reads the initializers.  In my work with Smatch I see a
+lot of bugs like this:
 
+	int x =3D foo->bar;
 
+	if (!foo)
+		return -EINVAL;
 
---=20
-Vista: [V]iruses, [I]ntruders, [S]pyware, [T]rojans and [A]dware. :-)
+It's astounding how many.  The famous tun.c security bug was one of
+these.
+
+But there should  have been a blank line between the initializers and
+the code.  Otherwise people will think the code is initiliazation and
+ignore it.  That is in CodingStyle I think.  We can fix that when we get
+rid of the DWORD data type in a later patch (don't resend).
+
+regards,
+dan carpenter
+
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
