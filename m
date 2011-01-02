@@ -1,44 +1,34 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 12 Jan 2011 15:49:01 +0000
-Subject: Re: [patch v3] [media] av7110: check for negative array offset
-Message-Id: <4D2DCD6D.8030900@bfs.de>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 02 Jan 2011 22:14:25 +0000
+Subject: [PATCHv4 0/4] staging: keucr: Use memcmp() & memcpy() instead of custom String[Cmp|Copy] functions
+Message-Id: <1294006469-4400-1-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110107194153.GA1959@bicker>
-In-Reply-To: <20110107194153.GA1959@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
+This patchset make some cleanup to staging/keucr. Use memcmp and memcpy ins=
+tead of custom functions.
+Also some style cleanups recomended by Dan Carpenter, Joe Perches and G=C3=
+=A1bor Stefanik.
 
+The patches in this patchset are the following:
 
-Am 12.01.2011 14:30, schrieb Jorge Merlino:
-> El 12/01/11 10:44, walter harms escribi=F3:
->>> diff --git a/drivers/media/dvb/ttpci/av7110_ca.c b/drivers/media/dvb/tt=
-pci/av7110_ca.c
->>> index 122c728..923a8e2 100644
->>> --- a/drivers/media/dvb/ttpci/av7110_ca.c
->>> +++ b/drivers/media/dvb/ttpci/av7110_ca.c
->>> @@ -277,7 +277,7 @@ static int dvb_ca_ioctl(struct file *file, unsigned=
- int cmd, void *parg)
->>>  	{
->>>  		ca_slot_info_t *info=3D(ca_slot_info_t *)parg;
->>> =20
->>> -		if (info->num > 1)
->>> +		if (info->num < 0 || info->num > 1)
->>>  			return -EINVAL;
->>
->> maybe i miss the point but anything else than 0 will cause -EINVAL ?
->> Is that intended ?
->=20
-> Anything else than 0 or 1.
+[PATCH 1/4] staging: keucr: Use memcmp() instead custom StringCmp() and som=
+e style cleanups
+[PATCH 2/4] staging: keucr: Use memcpy() instead custom StringCopy() and so=
+me style cleanups
+[PATCH 3/4] staging: keucr: Delete StringCmp() and StringCopy custom functi=
+ons
+[PATCH 4/4] staging: keucr: Delete use kernel strcmp() & strcpy() from TODO=
+ file
 
-
-mmmh, yes my bad,
-ntl can the "1" be replaced with array_size(av7110->ci_slot)-1 ?
-
-re,
- wh
+drivers/staging/keucr/TODO      |    3 +-
+drivers/staging/keucr/smilecc.c |   16 ++++++---
+drivers/staging/keucr/smilsub.c |   69 ++++++++++--------------------------=
+--
+3 files changed, 29 insertions(+), 59 deletions(-)
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
