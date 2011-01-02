@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sun, 02 Jan 2011 21:01:37 +0000
+Date: Sun, 02 Jan 2011 22:14:29 +0000
 Subject: [PATCH 4/4] staging: keucr: Delete use kernel strcmp() & strcpy() from TODO file
-Message-Id: <1294002097-3058-5-git-send-email-martinez.javier@gmail.com>
+Message-Id: <1294006469-4400-5-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1293787164-7056-5-git-send-email-martinez.javier@gmail.com>
 In-Reply-To: <1293787164-7056-5-git-send-email-martinez.javier@gmail.com>
@@ -10,6 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+staging: keucr: Delete use kernel strcmp() & strcpy() from TODO file
 
 Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
