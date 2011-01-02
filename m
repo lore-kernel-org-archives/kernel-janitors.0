@@ -1,30 +1,50 @@
 From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sun, 02 Jan 2011 21:01:33 +0000
-Subject: [PATCHv3 0/4] staging: keucr: Use memcmp() & memcpy() instead of custom String[Cmp|Copy] functions
-Message-Id: <1294002097-3058-1-git-send-email-martinez.javier@gmail.com>
+Date: Sun, 02 Jan 2011 22:14:28 +0000
+Subject: [PATCH 3/4] staging: keucr: Delete StringCmp() and StringCopy custom functions
+Message-Id: <1294006469-4400-4-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This patchset make some cleanup to staging/keucr. Use memcmp and memcpy ins=
-tead of custom functions.
-Also some style cleanups recomended by Dan Carpenter, Joe Perches and G=C3=
-=A1bor Stefanik.
+staging: keucr: Delete StringCmp() and StringCopy custom functions
 
-The patches in this patchset are the following:
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/keucr/smilsub.c |   19 -------------------
+ 1 files changed, 0 insertions(+), 19 deletions(-)
 
-[PATCH 1/3] staging: keucr: Use memcmp() instead custom StringCmp() and som=
-e style cleanups
-[PATCH 2/3] staging: keucr: Use memcpy() instead custom StringCopy() and so=
-me style cleanups
-[PATCH 3/3] staging: keucr: Delete StringCmp() and StringCopy custom functi=
-ons
-[PATCH 4/4] staging: keucr: Delete use kernel strcmp() & strcpy() from TODO=
- file
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/keucr/smilsub.c b/drivers/staging/keucr/smilsub.c
+index 81ed0aa..6dbc81d 100644
+--- a/drivers/staging/keucr/smilsub.c
++++ b/drivers/staging/keucr/smilsub.c
+@@ -1575,25 +1575,6 @@ char Bit_D_CountWord(WORD cdata)
+     return((char)bitcount);
+ }
+ 
+-void StringCopy(char *stringA, char *stringB, int count)
+-{
+-    int i;
+-
+-    for(i=0; i<count; i++)
+-        *stringA++ = *stringB++;
+-}
+-
+-//-----
+-int StringCmp(char *stringA, char *stringB, int count)
+-{
+-    int i;
+-
+-    for (i=0;i<count;i++)
+-        if (*stringA++ != *stringB++)
+-            return(ERROR);
+-
+-    return(SUCCESS);
+-}
+ /*
+ //----- SM_ReadBlock() ---------------------------------------------
+ int SM_ReadBlock(PFDO_DEVICE_EXTENSION fdoExt, BYTE *buf,BYTE *redundant)
+-- 
+1.7.0.4
+
