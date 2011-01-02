@@ -1,73 +1,57 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sun, 02 Jan 2011 21:01:34 +0000
-Subject: [PATCH 1/3] staging: keucr: Use memcmp() instead custom StringCmp() and some style cleanups
-Message-Id: <1294002097-3058-2-git-send-email-martinez.javier@gmail.com>
+From: Joe Perches <joe@perches.com>
+Date: Sun, 02 Jan 2011 21:10:56 +0000
+Subject: Re: [PATCH 1/3] staging: keucr: Use memcmp() instead custom
+Message-Id: <1294002656.23422.7.camel@Joe-Laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1294002097-3058-2-git-send-email-martinez.javier@gmail.com>
+In-Reply-To: <1294002097-3058-2-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-ClNpZ25lZC1vZmYtYnk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8bWFydGluZXouamF2aWVy
-QGdtYWlsLmNvbT4KLS0tCiBkcml2ZXJzL3N0YWdpbmcva2V1Y3Ivc21pbHN1Yi5jIHwgICA1OSAr
-KysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZXMgY2hhbmdlZCwg
-MzAgaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9z
-dGFnaW5nL2tldWNyL3NtaWxzdWIuYyBiL2RyaXZlcnMvc3RhZ2luZy9rZXVjci9zbWlsc3ViLmMK
-aW5kZXggY2UxMGNmMi4uYTE1Y2MwMiAxMDA2NDQKLS0tIGEvZHJpdmVycy9zdGFnaW5nL2tldWNy
-L3NtaWxzdWIuYworKysgYi9kcml2ZXJzL3N0YWdpbmcva2V1Y3Ivc21pbHN1Yi5jCkBAIC0xNDgy
-LDU0ICsxNDgyLDU1IEBAIEJZVEUgX0NoZWNrX0RfRGV2Q29kZShCWVRFIGRjb2RlKQogLy8tLS0t
-LSBDaGVja19EX1JlYWRFcnJvcigpIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KIGludCBDaGVja19EX1JlYWRFcnJvcihCWVRFICpyZWR1bmRhbnQpCiB7Ci0g
-ICAgLy8gRHJpdmVyIKSjsLUgRUNDIENoZWNrCi0gICAgcmV0dXJuKFNVQ0NFU1MpOwotICAgIGlm
-ICghU3RyaW5nQ21wKChjaGFyICopKHJlZHVuZGFudCsweDBEKSwoY2hhciAqKUVjY0J1ZiwzKSkK
-LSAgICAgICAgaWYgKCFTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4MDgpLChjaGFyICop
-KEVjY0J1ZisweDAzKSwzKSkKLSAgICAgICAgICAgIHJldHVybihTVUNDRVNTKTsKKwkvKiBEcml2
-ZXIgRUNDIENoZWNrICovCisJaWYgKG1lbWNtcChyZWR1bmRhbnQgKyAweDBELCBFY2NCdWYsIDMp
-IHx8CisJICAgIG1lbWNtcChyZWR1bmRhbnQgKyAweDA4LCBFY2NCdWYgKyAweDAzLCAzKSkKKwkJ
-cmV0dXJuIEVSUk9SOwogCi0gICAgcmV0dXJuKEVSUk9SKTsKKwlyZXR1cm4gU1VDQ0VTUzsKIH0K
-IAogLy8tLS0tLSBDaGVja19EX0NvcnJlY3QoKSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tCiBpbnQgQ2hlY2tfRF9Db3JyZWN0KEJZVEUgKmJ1ZixCWVRFICpy
-ZWR1bmRhbnQpCiB7Ci0gICAgLy8gRHJpdmVyIKSjsLUgRUNDIENoZWNrCi0gICAgcmV0dXJuKFNV
-Q0NFU1MpOwotICAgIGlmIChTdHJpbmdDbXAoKGNoYXIgKikocmVkdW5kYW50KzB4MEQpLChjaGFy
-ICopRWNjQnVmLDMpKQotICAgICAgICBpZiAoX0NvcnJlY3RfRF9Td0VDQyhidWYscmVkdW5kYW50
-KzB4MEQsRWNjQnVmKSkKLSAgICAgICAgICAgIHJldHVybihFUlJPUik7CisJLyogRHJpdmVyIEVD
-QyBDaGVjayAqLworCWlmIChtZW1jbXAocmVkdW5kYW50ICsgMHgwRCwgRWNjQnVmLCAzKSAmJgor
-CSAgICBfQ29ycmVjdF9EX1N3RUNDKGJ1ZiwgcmVkdW5kYW50ICsgMHgwRCwgRWNjQnVmKSkKKwkJ
-cmV0dXJuIEVSUk9SOwogCi0gICAgYnVmKz0weDEwMDsKLSAgICBpZiAoU3RyaW5nQ21wKChjaGFy
-ICopKHJlZHVuZGFudCsweDA4KSwoY2hhciAqKShFY2NCdWYrMHgwMyksMykpCi0gICAgICAgIGlm
-IChfQ29ycmVjdF9EX1N3RUNDKGJ1ZixyZWR1bmRhbnQrMHgwOCxFY2NCdWYrMHgwMykpCi0gICAg
-ICAgICAgICByZXR1cm4oRVJST1IpOworCWJ1ZiArPSAweDEwMDsKKwlpZiAobWVtY21wKHJlZHVu
-ZGFudCArIDB4MDgsIEVjY0J1ZiArIDB4MDMsIDMpICYmCisJICAgIF9Db3JyZWN0X0RfU3dFQ0Mo
-YnVmLCByZWR1bmRhbnQgKyAweDA4LCBFY2NCdWYgKyAweDAzKSkKKwkJcmV0dXJuIEVSUk9SOwog
-Ci0gICAgcmV0dXJuKFNVQ0NFU1MpOworCXJldHVybiBTVUNDRVNTOwogfQogCiAvLy0tLS0tIENo
-ZWNrX0RfQ0lTZGF0YSgpIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0KIGludCBDaGVja19EX0NJU2RhdGEoQllURSAqYnVmLCBCWVRFICpyZWR1bmRhbnQpCiB7
-Ci0gICAgQllURSBjaXNbXT17MHgwMSwweDAzLDB4RDksMHgwMSwweEZGLDB4MTgsMHgwMiwweERG
-LDB4MDEsMHgyMH07CisJQllURSBjaXNbXSA9IHsweDAxLCAweDAzLCAweEQ5LCAweDAxLCAweEZG
-LCAweDE4LCAweDAyLAorCQkgICAgICAweERGLCAweDAxLCAweDIwfTsKKworCWludCBjaXNfbGVu
-ID0gc2l6ZW9mKGNpcyk7CiAKLSAgICBpZiAoIUlzU1NGRENDb21wbGlhbmNlICYmICFJc1hEQ29t
-cGxpYW5jZSkKLSAgICAgICAgcmV0dXJuKFNVQ0NFU1MpOyAgICAgICAgICAgICAvLyCl2KtlrLCx
-aqjuIFNVQ0NFU1MgW0Fybm9sZCAwMi0wOC0yM10gU1NGREMgtPq41SwgpKOv4LFqqO4gU1VDQ0VT
-UworCWlmICghSXNTU0ZEQ0NvbXBsaWFuY2UgJiYgIUlzWERDb21wbGlhbmNlKQorCQlyZXR1cm4g
-U1VDQ0VTUzsKIAotICAgIGlmICghU3RyaW5nQ21wKChjaGFyICopKHJlZHVuZGFudCsweDBEKSwo
-Y2hhciAqKUVjY0J1ZiwzKSkKLSAgICAgICAgcmV0dXJuKFN0cmluZ0NtcCgoY2hhciAqKWJ1Ziwo
-Y2hhciAqKWNpcywxMCkpOworCWlmICghbWVtY21wKHJlZHVuZGFudCArIDB4MEQsIEVjY0J1Ziwg
-MykpCisJCXJldHVybiBtZW1jbXAoYnVmLCBjaXMsIGNpc19sZW4pOwogCi0gICAgaWYgKCFfQ29y
-cmVjdF9EX1N3RUNDKGJ1ZixyZWR1bmRhbnQrMHgwRCxFY2NCdWYpKQotICAgICAgICByZXR1cm4o
-U3RyaW5nQ21wKChjaGFyICopYnVmLChjaGFyICopY2lzLDEwKSk7CisJaWYgKCFfQ29ycmVjdF9E
-X1N3RUNDKGJ1ZiwgcmVkdW5kYW50ICsgMHgwRCwgRWNjQnVmKSkKKwkJcmV0dXJuIG1lbWNtcChi
-dWYsIGNpcywgY2lzX2xlbik7CiAKLSAgICBidWYrPTB4MTAwOwotICAgIGlmICghU3RyaW5nQ21w
-KChjaGFyICopKHJlZHVuZGFudCsweDA4KSwoY2hhciAqKShFY2NCdWYrMHgwMyksMykpCi0gICAg
-ICAgIHJldHVybihTdHJpbmdDbXAoKGNoYXIgKilidWYsKGNoYXIgKiljaXMsMTApKTsKKwlidWYg
-Kz0gMHgxMDA7CisJaWYgKCFtZW1jbXAocmVkdW5kYW50ICsgMHgwOCwgRWNjQnVmICsgMHgwMywg
-MykpCisJCXJldHVybiBtZW1jbXAoYnVmLCBjaXMsIGNpc19sZW4pOwogCi0gICAgaWYgKCFfQ29y
-cmVjdF9EX1N3RUNDKGJ1ZixyZWR1bmRhbnQrMHgwOCxFY2NCdWYrMHgwMykpCi0gICAgICAgIHJl
-dHVybihTdHJpbmdDbXAoKGNoYXIgKilidWYsKGNoYXIgKiljaXMsMTApKTsKKwlpZiAoIV9Db3Jy
-ZWN0X0RfU3dFQ0MoYnVmLCByZWR1bmRhbnQgKyAweDA4LCBFY2NCdWYgKyAweDAzKSkKKwkJcmV0
-dXJuIG1lbWNtcChidWYsIGNpcywgY2lzX2xlbik7CiAKLSAgICByZXR1cm4oRVJST1IpOworCXJl
-dHVybiBFUlJPUjsKIH0KIAogLy8tLS0tLSBTZXRfRF9SaWdodEVDQygpIC0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KLS0gCjEuNy4wLjQKCi0tClRvIHVuc3Vi
-c2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwt
-amFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
-ZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFq
-b3Jkb21vLWluZm8uaHRtbA==
+On Sun, 2011-01-02 at 22:01 +0100, Javier Martinez Canillas wrote:
+> Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+> diff --git a/drivers/staging/keucr/smilsub.c b/drivers/staging/keucr/smilsub.c
+> @@ -1482,54 +1482,55 @@ BYTE _Check_D_DevCode(BYTE dcode)
+>  //----- Check_D_ReadError() ----------------------------------------------
+>  int Check_D_ReadError(BYTE *redundant)
+>  {
+> -    // Driver 䣰 ECC Check
+> -    return(SUCCESS);
+> -    if (!StringCmp((char *)(redundant+0x0D),(char *)EccBuf,3))
+> -        if (!StringCmp((char *)(redundant+0x08),(char *)(EccBuf+0x03),3))
+> -            return(SUCCESS);
+> +	/* Driver ECC Check */
+> +	if (memcmp(redundant + 0x0D, EccBuf, 3) ||
+> +	    memcmp(redundant + 0x08, EccBuf + 0x03, 3))
+> +		return ERROR;
+>  
+> -    return(ERROR);
+> +	return SUCCESS;
+>  }
+
+This code isn't the same.
+
+Before, the return was always SUCCESS and the code
+after the first return was ignored.
+
+You deleted that return and now you do the driver ECC check.
+Is that correct?
+ 
+>  //----- Check_D_Correct() ----------------------------------------------
+>  int Check_D_Correct(BYTE *buf,BYTE *redundant)
+>  {
+> -    // Driver 䣰 ECC Check
+> -    return(SUCCESS);
+> -    if (StringCmp((char *)(redundant+0x0D),(char *)EccBuf,3))
+> -        if (_Correct_D_SwECC(buf,redundant+0x0D,EccBuf))
+> -            return(ERROR);
+> +	/* Driver ECC Check */
+> +	if (memcmp(redundant + 0x0D, EccBuf, 3) &&
+> +	    _Correct_D_SwECC(buf, redundant + 0x0D, EccBuf))
+> +		return ERROR
+
+Here too.
+
+
