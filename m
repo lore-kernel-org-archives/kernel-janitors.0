@@ -1,50 +1,28 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sun, 02 Jan 2011 22:14:28 +0000
-Subject: [PATCH 3/4] staging: keucr: Delete StringCmp() and StringCopy custom functions
-Message-Id: <1294006469-4400-4-git-send-email-martinez.javier@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 03 Jan 2011 05:44:38 +0000
+Subject: [patch 1/2] Staging: tm6000: check usb_alloc_urb() return
+Message-Id: <20110103054438.GQ1886@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-staging: keucr: Delete StringCmp() and StringCopy custom functions
+usb_alloc_urb() can return NULL so check for that and return
+-ENOMEM if it happens.
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/keucr/smilsub.c |   19 -------------------
- 1 files changed, 0 insertions(+), 19 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/keucr/smilsub.c b/drivers/staging/keucr/smilsub.c
-index 81ed0aa..6dbc81d 100644
---- a/drivers/staging/keucr/smilsub.c
-+++ b/drivers/staging/keucr/smilsub.c
-@@ -1575,25 +1575,6 @@ char Bit_D_CountWord(WORD cdata)
-     return((char)bitcount);
- }
+diff --git a/drivers/staging/tm6000/tm6000-input.c b/drivers/staging/tm6000/tm6000-input.c
+index 21e7da4..aee5e85 100644
+--- a/drivers/staging/tm6000/tm6000-input.c
++++ b/drivers/staging/tm6000/tm6000-input.c
+@@ -313,6 +313,8 @@ int tm6000_ir_int_start(struct tm6000_core *dev)
+ 		return -ENODEV;
  
--void StringCopy(char *stringA, char *stringB, int count)
--{
--    int i;
--
--    for(i=0; i<count; i++)
--        *stringA++ = *stringB++;
--}
--
--//-----
--int StringCmp(char *stringA, char *stringB, int count)
--{
--    int i;
--
--    for (i=0;i<count;i++)
--        if (*stringA++ != *stringB++)
--            return(ERROR);
--
--    return(SUCCESS);
--}
- /*
- //----- SM_ReadBlock() ---------------------------------------------
- int SM_ReadBlock(PFDO_DEVICE_EXTENSION fdoExt, BYTE *buf,BYTE *redundant)
--- 
-1.7.0.4
-
+ 	ir->int_urb = usb_alloc_urb(0, GFP_KERNEL);
++	if (!ir->int_urb)
++		return -ENOMEM;
+ 
+ 	pipe = usb_rcvintpipe(dev->udev,
+ 		dev->int_in.endp->desc.bEndpointAddress
