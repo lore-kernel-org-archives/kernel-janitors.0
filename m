@@ -1,42 +1,28 @@
-From: Chuck Lever <chuck.lever@oracle.com>
-Date: Mon, 03 Jan 2011 15:59:36 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 03 Jan 2011 16:34:36 +0000
 Subject: Re: [patch -next] lockd: double unlock in next_host_state()
-Message-Id: <001458D4-F513-4959-9BE7-476F8542D009@oracle.com>
+Message-Id: <20110103163403.GY1886@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110102202042.GN1886@bicker>
-In-Reply-To: <20110102202042.GN1886@bicker>
+ <001458D4-F513-4959-9BE7-476F8542D009@oracle.com>
+In-Reply-To: <001458D4-F513-4959-9BE7-476F8542D009@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>
 Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, Neil Brown <neilb@suse.de>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-On Jan 2, 2011, at 3:20 PM, Dan Carpenter wrote:
-
-> We unlock again after we goto out.
+On Mon, Jan 03, 2011 at 10:59:36AM -0500, Chuck Lever wrote:
+> > -			mutex_unlock(&nlm_host_mutex);
+> > 			goto out;
+> > 		}
+> > 	}
 > 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/fs/lockd/host.c b/fs/lockd/host.c
-> index c106d6a..5f1bcb2 100644
-> --- a/fs/lockd/host.c
-> +++ b/fs/lockd/host.c
-> @@ -532,7 +532,6 @@ static struct nlm_host *next_host_state(struct hlist_head *cache,
-> 			host->h_state++;
-> 
-> 			nlm_get_host(host);
-> -			mutex_unlock(&nlm_host_mutex);
-> 			goto out;
-> 		}
-> 	}
+> Would it also make sense to replace the "goto out;" with a "break;" ?
 
-Would it also make sense to replace the "goto out;" with a "break;" ?
+No.  for_each_host() is a nested for loop, so a break would only take
+you out of the inner most loop.
 
--- 
-Chuck Lever
-chuck[dot]lever[at]oracle[dot]com
-
-
-
+regards,
+dan carpenter
 
