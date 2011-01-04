@@ -1,31 +1,57 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 04 Jan 2011 09:24:31 +0000
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Date: Tue, 04 Jan 2011 16:38:36 +0000
 Subject: Re: [patch] checkpatch: putting the && or || on the wrong line
-Message-Id: <20110104092431.GB1886@bicker>
+Message-Id: <20110104163836.GA30317@fieldses.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110104055900.GA5062@bicker>
- <1294124330.6617.15.camel@Joe-Laptop>
-In-Reply-To: <1294124330.6617.15.camel@Joe-Laptop>
+In-Reply-To: <20110104055900.GA5062@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>, Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, joe@perches.com
 
-On Mon, Jan 03, 2011 at 10:58:50PM -0800, Joe Perches wrote:
-> On Tue, 2011-01-04 at 08:59 +0300, Dan Carpenter wrote:
-> > +			WARN("put the && or || at the end of the previous line\n" . $herecurr);
+On Tue, Jan 04, 2011 at 08:59:00AM +0300, Dan Carpenter wrote:
+> This patch makes checkpatch.pl complain if you break up conditions in
+> the wrong way.
 > 
-> I've submitted something like this a couple of times and gotten
-> various objections but I think it's sensible.
+> Wrong:
+> 	if ((really_long_condition)
+> 		&& (second_condition)) { ...
+> Right:
+> 	if ((really_long_condition) &&
+> 		(second_condition)) { ...
+
+As far as I can tell, the convention in mathematical typesetting is to
+put operators on the left, not the right.  When the conditions are short
+of there are more lines, that allows you to left-align on the repeated
+operator.
+
+--b.
+
 > 
-> https://lkml.org/lkml/2009/12/5/65
-> https://lkml.org/lkml/2010/7/11/92
-
-If everyone except you thinks it's a waste of time, then stop asking me
-to redo my patches.  :/  I don't care either way so long as CodingStyle
-and checkpatch reflect the rules.
-
-regards,
-dan carpenter
-
+> If you do it in the wrong way the message is:  "put the && or || at the
+> end of the previous line"
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index e3c7fc0..0a813db 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -1509,6 +1509,11 @@ sub process {
+>  			WARN("please, no space before tabs\n" . $herevet);
+>  		}
+>  
+> +# check for && or || at the start of a line
+> +		if ($rawline =~ /^\+\W+(&&|\|\|)/) {
+> +			WARN("put the && or || at the end of the previous line\n" . $herecurr);
+> +		}
+> +
+>  # check for spaces at the beginning of a line.
+>  # Exceptions:
+>  #  1) within comments
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
