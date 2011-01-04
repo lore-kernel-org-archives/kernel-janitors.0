@@ -1,28 +1,42 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 03 Jan 2011 16:34:36 +0000
-Subject: Re: [patch -next] lockd: double unlock in next_host_state()
-Message-Id: <20110103163403.GY1886@bicker>
+Date: Tue, 04 Jan 2011 05:59:00 +0000
+Subject: [patch] checkpatch: putting the && or || on the wrong line
+Message-Id: <20110104055900.GA5062@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110102202042.GN1886@bicker>
- <001458D4-F513-4959-9BE7-476F8542D009@oracle.com>
-In-Reply-To: <001458D4-F513-4959-9BE7-476F8542D009@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, Neil Brown <neilb@suse.de>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andy Whitcroft <apw@canonical.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, joe@perches.com
 
-On Mon, Jan 03, 2011 at 10:59:36AM -0500, Chuck Lever wrote:
-> > -			mutex_unlock(&nlm_host_mutex);
-> > 			goto out;
-> > 		}
-> > 	}
-> 
-> Would it also make sense to replace the "goto out;" with a "break;" ?
+This patch makes checkpatch.pl complain if you break up conditions in
+the wrong way.
 
-No.  for_each_host() is a nested for loop, so a break would only take
-you out of the inner most loop.
+Wrong:
+	if ((really_long_condition)
+		&& (second_condition)) { ...
+Right:
+	if ((really_long_condition) &&
+		(second_condition)) { ...
 
-regards,
-dan carpenter
+If you do it in the wrong way the message is:  "put the && or || at the
+end of the previous line"
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index e3c7fc0..0a813db 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -1509,6 +1509,11 @@ sub process {
+ 			WARN("please, no space before tabs\n" . $herevet);
+ 		}
+ 
++# check for && or || at the start of a line
++		if ($rawline =~ /^\+\W+(&&|\|\|)/) {
++			WARN("put the && or || at the end of the previous line\n" . $herecurr);
++		}
++
+ # check for spaces at the beginning of a line.
+ # Exceptions:
+ #  1) within comments
