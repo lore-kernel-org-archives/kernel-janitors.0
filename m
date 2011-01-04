@@ -1,34 +1,39 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 28 Jan 2011 15:43:40 +0000
-Subject: [PATCH] include/net/genetlink.h: Allow genlmsg_cancel to accept a
-Message-Id: <Pine.LNX.4.64.1101281642080.8546@pc-004.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 04 Jan 2011 04:58:08 +0000
+Subject: [patch] Staging: xgfib: put parenthesis in the right place
+Message-Id: <20110104045807.GZ1886@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, paul.moore@hp.com, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-nlmsg_cancel can accept NULL as its second argument, so for similarity,
-this patch extends genlmsg_cancel to be able to accept a NULL second
-argument as well.
+In the original code the parenthesis are in the wrong position, so the
+conditions are always true.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- include/net/genetlink.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Compile tested only.
 
-diff --git a/include/net/genetlink.h b/include/net/genetlink.h
-index 8a64b81..b4c7c1c 100644
---- a/include/net/genetlink.h
-+++ b/include/net/genetlink.h
-@@ -195,7 +195,8 @@ static inline int genlmsg_end(struct sk_buff *skb, void *hdr)
-  */
- static inline void genlmsg_cancel(struct sk_buff *skb, void *hdr)
+diff --git a/drivers/staging/xgifb/vb_setmode.c b/drivers/staging/xgifb/vb_setmode.c
+index 7016fdd..0d69a88 100644
+--- a/drivers/staging/xgifb/vb_setmode.c
++++ b/drivers/staging/xgifb/vb_setmode.c
+@@ -3954,7 +3954,7 @@ void XGI_GetCRT2ResInfo(unsigned short ModeNo, unsigned short ModeIdIndex,
+ unsigned char XGI_IsLCDDualLink(struct vb_device_info *pVBInfo)
  {
--	nlmsg_cancel(skb, hdr - GENL_HDRLEN - NLMSG_HDRLEN);
-+	if (hdr)
-+		nlmsg_cancel(skb, hdr - GENL_HDRLEN - NLMSG_HDRLEN);
- }
  
- /**
+-	if ((((pVBInfo->VBInfo & SetCRT2ToLCD) | SetCRT2ToLCDA))
++	if ((pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA))
+ 			&& (pVBInfo->LCDInfo & SetLCDDualLink)) /* shampoo0129 */
+ 		return 1;
+ 
+@@ -8773,7 +8773,7 @@ unsigned short XGI_GetVCLK2Ptr(unsigned short ModeNo,
+ 
+ 	if (pVBInfo->IF_DEF_LVDS = 0) {
+ 		CRT2Index = CRT2Index >> 6; /*  for LCD */
+-		if (((pVBInfo->VBInfo & SetCRT2ToLCD) | SetCRT2ToLCDA)) { /*301b*/
++		if (pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA)) { /*301b*/
+ 			if (pVBInfo->LCDResInfo != Panel1024x768)
+ 				VCLKIndex = LCDXlat2VCLK[CRT2Index];
+ 			else
