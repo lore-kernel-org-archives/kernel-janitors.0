@@ -1,38 +1,65 @@
-From: "Moger, Babu" <Babu.Moger@lsi.com>
-Date: Tue, 04 Jan 2011 19:50:33 +0000
+From: James Bottomley <James.Bottomley@suse.de>
+Date: Tue, 04 Jan 2011 19:58:41 +0000
 Subject: RE: [patch] [SCSI] scsi_dh: potential null dereference in
-Message-Id: <E463DF2B2E584B4A82673F53D62C2EF4F5583074@cosmail01.lsi.com>
+Message-Id: <1294171121.7879.6.camel@mulgrave.site>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110103054833.GT1886@bicker>
 	 <E463DF2B2E584B4A82673F53D62C2EF4F5582F42@cosmail01.lsi.com>
- <1294158279.4726.17.camel@mulgrave.site>
-In-Reply-To: <1294158279.4726.17.camel@mulgrave.site>
+	 <1294158279.4726.17.camel@mulgrave.site>
+	 <E463DF2B2E584B4A82673F53D62C2EF4F5583074@cosmail01.lsi.com>
+In-Reply-To: <E463DF2B2E584B4A82673F53D62C2EF4F5583074@cosmail01.lsi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: James Bottomley <James.Bottomley@suse.de>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: "Moger, Babu" <Babu.Moger@lsi.com>
 Cc: Dan Carpenter <error27@gmail.com>, Mike Snitzer <snitzer@redhat.com>, Menny Hamburger <Menny_Hamburger@Dell.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Cj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiBGcm9tOiBKYW1lcyBCb3R0b21sZXkgW21h
-aWx0bzpKYW1lcy5Cb3R0b21sZXlAc3VzZS5kZV0KPiBTZW50OiBUdWVzZGF5LCBKYW51YXJ5IDA0
-LCAyMDExIDEwOjI1IEFNCj4gVG86IE1vZ2VyLCBCYWJ1Cj4gQ2M6IERhbiBDYXJwZW50ZXI7IE1p
-a2UgU25pdHplcjsgTWVubnkgSGFtYnVyZ2VyOyBsaW51eC0KPiBzY3NpQHZnZXIua2VybmVsLm9y
-Zzsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZwo+IFN1YmplY3Q6IFJFOiBbcGF0Y2hd
-IFtTQ1NJXSBzY3NpX2RoOiBwb3RlbnRpYWwgbnVsbCBkZXJlZmVyZW5jZSBpbgo+IHNjc2lfZGhf
-YWN0aXZhdGUoKQo+IAo+IE9uIFR1ZSwgMjAxMS0wMS0wNCBhdCAwOToxMyAtMDcwMCwgTW9nZXIs
-IEJhYnUgd3JvdGU6Cj4gPiBMb29rcyBnb29kIHRvIG1lLgo+IAo+IEl0IGRvZXM/ICBUaGUgZmly
-c3QgY2hlY2sgaXMgdGhlIGJvZ3VzIG9uZSwgc3VyZWx5LiAgVGhlIHF1ZXVlIGlzCj4gY3JlYXRl
-ZCBhbmQgZGVzdHJveWVkIGJ5IHNjc2lfYWxsb2Nfc2RldigpLCBzbyBxdWV1ZWRhdGEgY2FuIG5l
-dmVyIGJlCj4gTlVMTCBmb3IgYSBTQ1NJIHF1ZXVlLiAgVGhlcmUncyBubyBjaGVjayBhbnl3aGVy
-ZSBpbiB0aGUgcmVzdCBvZiBTQ1NJLAo+IHNvIHRoZXJlIHNob3VsZG4ndCBiZSBvbmUgaGVyZSwg
-c2hvdWxkIHRoZXJlPwoKWW91IGFyZSByaWdodC4gVGhpcyBjaGVjayBtYXkgbm90IGJlIHJlcXVp
-cmVkLgoKQnV0IEkgYW0gbm90IHN1cmUgd2h5IHRoZXJlIGlzIGEgY2hlY2sgaW4gc2NzaV9kZXZp
-Y2VfZnJvbV9xdWV1ZS4gCklzIHRoZXJlIGEgcG9zc2liaWxpdHkgb2YgcmVxdWVzdF9mbiBvdGhl
-ciB0aGFuIHNjc2lfcmVxdWVzdF9mbiBmb3Igc2NzaSBkZXZpY2U/ICBJIGRvbuKAmXQga25vdy4g
-IEhlcmUgaXMgdGhlIGNvZGUuLgoKc3RydWN0IHNjc2lfZGV2aWNlICpzY3NpX2RldmljZV9mcm9t
-X3F1ZXVlKHN0cnVjdCByZXF1ZXN0X3F1ZXVlICpxKQp7CiAgICAgICAgc3RydWN0IHNjc2lfZGV2
-aWNlICpzZGV2ID0gTlVMTDsKCiAgICAgICAgaWYgKHEtPnJlcXVlc3RfZm4gPSBzY3NpX3JlcXVl
-c3RfZm4pCiAgICAgICAgICAgICAgICBzZGV2ID0gcS0+cXVldWVkYXRhOwoKICAgICAgICByZXR1
-cm4gc2RldjsKfQogCv/06Lp7Lm7HK4m3n66JrYYrJYrL/7Hp3bYXpYp3/7p7Lm7HK4m3pHq53pf4
-2p4raK7P4p7YXm6HcqH2pnrLGoHraJmo6K3aJqP74Hq/5Hq53pf6K4DKK3pmo6K3aJqIp36GrYbb
-af//74Hq/5Hq53pf6K4P5mo6K3aJqP4p36P4bQo=
+On Tue, 2011-01-04 at 12:50 -0700, Moger, Babu wrote:
+> > -----Original Message-----
+> > From: James Bottomley [mailto:James.Bottomley@suse.de]
+> > Sent: Tuesday, January 04, 2011 10:25 AM
+> > To: Moger, Babu
+> > Cc: Dan Carpenter; Mike Snitzer; Menny Hamburger; linux-
+> > scsi@vger.kernel.org; kernel-janitors@vger.kernel.org
+> > Subject: RE: [patch] [SCSI] scsi_dh: potential null dereference in
+> > scsi_dh_activate()
+> >=20
+> > On Tue, 2011-01-04 at 09:13 -0700, Moger, Babu wrote:
+> > > Looks good to me.
+> >=20
+> > It does?  The first check is the bogus one, surely.  The queue is
+> > created and destroyed by scsi_alloc_sdev(), so queuedata can never be
+> > NULL for a SCSI queue.  There's no check anywhere in the rest of SCSI,
+> > so there shouldn't be one here, should there?
+>=20
+> You are right. This check may not be required.
+>=20
+> But I am not sure why there is a check in scsi_device_from_queue.=20
+> Is there a possibility of request_fn other than scsi_request_fn for scsi =
+device?  I don=E2=80=99t know.  Here is the code..
+>=20
+> struct scsi_device *scsi_device_from_queue(struct request_queue *q)
+> {
+>         struct scsi_device *sdev =3D NULL;
+>=20
+>         if (q->request_fn =3D scsi_request_fn)
+>                 sdev =3D q->queuedata;
+>=20
+>         return sdev;
+
+It can be called for any queue so it returns NULL for a non-SCSI queue.
+If you think the queue scsi_dh_activate() is called on may be a non-scsi
+one, then you need to use scsi_device_from_queue() and check the result.
+Checking q->queuedata for NULL isn't sufficient because other devices
+are perfectly entitled to use q->queuedata for their own purposes.  If
+you know you have a SCSI queue, you can just pick sdev out of
+q->queuedata.
+
+James
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
