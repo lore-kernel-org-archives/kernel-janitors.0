@@ -1,29 +1,42 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 03 Jan 2011 05:47:40 +0000
-Subject: [patch 2/2] Staging: tm6000: silence Sparse warning "dubious: !x |
-Message-Id: <20110103054740.GS1886@bicker>
+Date: Tue, 04 Jan 2011 06:02:27 +0000
+Subject: [patch v2] Staging: xgfib: put parenthesis in the right place
+Message-Id: <20110104060227.GA1886@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Bitwise and logical or are the equivalent here, so this doesn't affect
-runtime, but logical or was intended.  The original code causes a
-warning in Sparse:  "warning: dubious: !x | !y"
+In the original code the parenthesis are in the wrong position, so the
+conditions are always true.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+v2:  white space changes.
+Compile tested only.
 
-diff --git a/drivers/staging/tm6000/tm6000-input.c b/drivers/staging/tm6000/tm6000-input.c
-index aee5e85..dae2f1f 100644
---- a/drivers/staging/tm6000/tm6000-input.c
-+++ b/drivers/staging/tm6000/tm6000-input.c
-@@ -376,7 +376,7 @@ int tm6000_ir_init(struct tm6000_core *dev)
+diff --git a/drivers/staging/xgifb/vb_setmode.c b/drivers/staging/xgifb/vb_setmode.c
+index 7016fdd..e19b932 100644
+--- a/drivers/staging/xgifb/vb_setmode.c
++++ b/drivers/staging/xgifb/vb_setmode.c
+@@ -3954,8 +3954,8 @@ void XGI_GetCRT2ResInfo(unsigned short ModeNo, unsigned short ModeIdIndex,
+ unsigned char XGI_IsLCDDualLink(struct vb_device_info *pVBInfo)
+ {
  
- 	ir = kzalloc(sizeof(*ir), GFP_KERNEL);
- 	rc = rc_allocate_device();
--	if (!ir | !rc)
-+	if (!ir || !rc)
- 		goto out;
+-	if ((((pVBInfo->VBInfo & SetCRT2ToLCD) | SetCRT2ToLCDA))
+-			&& (pVBInfo->LCDInfo & SetLCDDualLink)) /* shampoo0129 */
++	if ((pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA)) &&
++			(pVBInfo->LCDInfo & SetLCDDualLink)) /* shampoo0129 */
+ 		return 1;
  
- 	/* record handles to ourself */
+ 	return 0;
+@@ -8773,7 +8773,7 @@ unsigned short XGI_GetVCLK2Ptr(unsigned short ModeNo,
+ 
+ 	if (pVBInfo->IF_DEF_LVDS = 0) {
+ 		CRT2Index = CRT2Index >> 6; /*  for LCD */
+-		if (((pVBInfo->VBInfo & SetCRT2ToLCD) | SetCRT2ToLCDA)) { /*301b*/
++		if (pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA)) { /*301b*/
+ 			if (pVBInfo->LCDResInfo != Panel1024x768)
+ 				VCLKIndex = LCDXlat2VCLK[CRT2Index];
+ 			else
