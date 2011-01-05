@@ -1,55 +1,54 @@
-From: Martin Knoblauch <spamtrap@knobisoft.de>
-Date: Wed, 05 Jan 2011 10:24:46 +0000
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Date: Wed, 05 Jan 2011 17:38:07 +0000
 Subject: Re: [patch] checkpatch: putting the && or || on the wrong line
-Message-Id: <232289.97320.qm@web113301.mail.gq1.yahoo.com>
+Message-Id: <m3fwt7i740.fsf@intrepid.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110104055900.GA5062@bicker> <1294124330.6617.15.camel@Joe-Laptop> <20110104092431.GB1886@bicker>
-In-Reply-To: <20110104092431.GB1886@bicker>
+References: <20110104055900.GA5062@bicker>
+	<20110104163836.GA30317@fieldses.org>
+	<20110104164414.GX5875@const.bordeaux.inria.fr>
+	<1294160834.6617.51.camel@Joe-Laptop>
+In-Reply-To: <1294160834.6617.51.camel@Joe-Laptop> (Joe Perches's message of
+	"Tue, 04 Jan 2011 09:07:14 -0800")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Joe Perches <joe@perches.com>
-Cc: Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>, "J. Bruce Fields" <bfields@fieldses.org>, Dan Carpenter <error27@gmail.com>, Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
------ Original Message ----
+Joe Perches <joe@perches.com> writes:
 
-> From: Dan Carpenter <error27@gmail.com>
-> To: Joe Perches <joe@perches.com>
-> Cc: Andy Whitcroft <apw@canonical.com>; linux-kernel@vger.kernel.org; 
->kernel-janitors@vger.kernel.org
-> Sent: Tue, January 4, 2011 10:24:31 AM
-> Subject: Re: [patch] checkpatch: putting the && or || on the wrong line
-> 
-> On Mon, Jan 03, 2011 at 10:58:50PM -0800, Joe Perches wrote:
-> > On Tue,  2011-01-04 at 08:59 +0300, Dan Carpenter wrote:
-> > > +             WARN("put the && or || at the end  of the previous line\n" . 
->$herecurr);
-> > 
-> > I've submitted something  like this a couple of times and gotten
-> > various objections but I think  it's sensible.
-> > 
-> > https://lkml.org/lkml/2009/12/5/65
-> > https://lkml.org/lkml/2010/7/11/92
-> 
-> If everyone except you thinks  it's a waste of time, then stop asking me
-> to redo my patches.  :/   I don't care either way so long as CodingStyle
-> and checkpatch reflect the  rules.
-> 
+> As do I, but perhaps coding style in a project like this
+> shouldn't be personal but collective.
 
- The problem is that CodingStyle (here and elsewhere) is viewed a the holy-grail 
-or at least natural-law by some. It should not. It is just about style/taste and 
-that will never suit everybody. Insisting to much on style is just driving those 
-away that:
+I think there is nothing like a collective style.
+What you can eventually achieve is a style everybody hates.
 
-a) just want to contribute content
-b1) have their own style for decades
-b2) detest uniformity
+> The trailing style outnumbers the leading style ~ 5:1.
+>
+> $ grep -rP --include=*.[ch] "(\|\||&&)[ \t]*$" * | wc -l
+> 39890
+> $ grep -rP --include=*.[ch] "^[ \t]*(\|\||&&)" * | wc -l
+> 8244
+>
+> If you take out drivers/staging, trailing is used ~ 6:1.
+>
+> I think that high enough to be declared the preferred style.
 
- For *me* the sensible thing is to keep "style" when you make small 
-modifications/patches to existing stuff, but use whatever style is best for you 
-when contributing new stuff.
+This is a very weak reason (if any at all) to do so. Increasing e.g.
+readability of the code would be a good reason, but statistics?
 
- Anyway, I just wanted to say "Happy New Year" to Linux :-)
+Maybe: Microsoft Windows outnumbers Linux X:1, so it should be declared
+the "preferred" system (= the only allowed, as with CodingStyle and
+checkpatch "errors").
 
-Cheers
-Martin
+Or: cars outnumber trucks X:1, declare the trucks illegal.
+Coffee drinkers outnumber tee drinkers, kill the later.
+
+
+Yes, we need some basic common style (tabs length, unless/until we can
+use any tab length), K&R (or other) parentheses, void *var instead of
+void* var (void* var1, var2 bugs), (no) spaces etc. Anything less make
+the code unreadable or less readable. We should stop dictating the
+details when the benefits end, and they end pretty fast.
+-- 
+Krzysztof Halasa
