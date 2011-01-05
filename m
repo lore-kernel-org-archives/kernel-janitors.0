@@ -1,40 +1,38 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Tue, 04 Jan 2011 23:40:37 +0000
-Subject: Re: [patch 2/2] [SCSI] target: unlock on error path in configfs
-Message-Id: <1294184437.29002.24.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 05 Jan 2011 07:03:12 +0000
+Subject: [patch 1/2] dcb: unlock on error in dcbnl_ieee_get()
+Message-Id: <20110105070312.GA24847@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110103055920.GV1886@bicker>
-In-Reply-To: <20110103055920.GV1886@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: James Bottomley <James.Bottomley@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: John Fastabend <john.r.fastabend@intel.com>, Shmulik Ravid <shmulikr@broadcom.com>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
 
-On Mon, 2011-01-03 at 08:59 +0300, Dan Carpenter wrote:
-> If the user wrote a wrong value to the file the it would lead to a dead
-> lock eventually.
-> 
+There is a "goto nla_put_failure" hidden inside the NLA_PUT() macro, but
+we're holding the dcb_lock so we need to unlock first.
 
-Good catch on this one.  Commited as 827447968 and pushed into
-lio-core-2.6.git.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks!
-
---nab
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-> index d7b977d..2764510 100644
-> --- a/drivers/target/target_core_configfs.c
-> +++ b/drivers/target/target_core_configfs.c
-> @@ -660,6 +660,7 @@ static ssize_t target_core_dev_store_attr_##_name(			\
->  	}								\
->  	ret = strict_strtoul(page, 0, &val);				\
->  	if (ret < 0) {							\
-> +		spin_unlock(&se_dev->se_dev_lock);                      \
->  		printk(KERN_ERR "strict_strtoul() failed with"		\
->  			" ret: %d\n", ret);				\
->  		return -EINVAL;						\
-
+diff --git a/net/dcb/dcbnl.c b/net/dcb/dcbnl.c
+index ff3c12d..8881cb5 100644
+--- a/net/dcb/dcbnl.c
++++ b/net/dcb/dcbnl.c
+@@ -1264,9 +1264,14 @@ static int dcbnl_ieee_get(struct net_device *netdev, struct nlattr **tb,
+ 
+ 	spin_lock(&dcb_lock);
+ 	list_for_each_entry(itr, &dcb_app_list, list) {
+-		if (strncmp(itr->name, netdev->name, IFNAMSIZ) = 0)
+-			NLA_PUT(skb, DCB_ATTR_IEEE_APP,
+-				sizeof(itr->app), &itr->app);
++		if (strncmp(itr->name, netdev->name, IFNAMSIZ) = 0) {
++			err = nla_put(skb, DCB_ATTR_IEEE_APP, sizeof(itr->app),
++					 &itr->app);
++			if (err) {
++				spin_unlock(&dcb_lock);
++				goto nla_put_failure;
++			}
++		}
+ 	}
+ 	spin_unlock(&dcb_lock);
+ 	nla_nest_end(skb, app);
