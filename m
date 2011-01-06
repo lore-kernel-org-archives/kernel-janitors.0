@@ -1,39 +1,63 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Date: Thu, 06 Jan 2011 21:14:48 +0000
+From: Joe Perches <joe@perches.com>
+Date: Thu, 06 Jan 2011 21:38:38 +0000
 Subject: Re: [patch] checkpatch: putting the && or || on the wrong line
-Message-Id: <m37hehloon.fsf@intrepid.localdomain>
+Message-Id: <1294349918.12561.142.camel@Joe-Laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110104055900.GA5062@bicker>
-	<20110104163836.GA30317@fieldses.org>
-	<20110104164414.GX5875@const.bordeaux.inria.fr>
-	<1294160834.6617.51.camel@Joe-Laptop>
-	<m3fwt7i740.fsf@intrepid.localdomain>
-	<1294249529.6617.118.camel@Joe-Laptop>
-	<m339p6p5zo.fsf@intrepid.localdomain>
-	<1294336674.12561.81.camel@Joe-Laptop>
-	<m3r5cplr2m.fsf@intrepid.localdomain>
-	<1294347753.12561.106.camel@Joe-Laptop>
-In-Reply-To: <1294347753.12561.106.camel@Joe-Laptop> (Joe Perches's message of
-	"Thu, 06 Jan 2011 13:02:33 -0800")
+	 <20110104163836.GA30317@fieldses.org>
+	 <20110104164414.GX5875@const.bordeaux.inria.fr>
+	 <1294160834.6617.51.camel@Joe-Laptop> <m3fwt7i740.fsf@intrepid.localdomain>
+	 <1294249529.6617.118.camel@Joe-Laptop>
+	 <m339p6p5zo.fsf@intrepid.localdomain>
+	 <1294336674.12561.81.camel@Joe-Laptop>
+	 <m3r5cplr2m.fsf@intrepid.localdomain>
+	 <1294347753.12561.106.camel@Joe-Laptop>
+	 <m37hehloon.fsf@intrepid.localdomain>
+In-Reply-To: <m37hehloon.fsf@intrepid.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
+To: Krzysztof Halasa <khc@pm.waw.pl>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Joe Perches <joe@perches.com> writes:
+On Thu, 2011-01-06 at 22:14 +0100, Krzysztof Halasa wrote:
+> Joe Perches <joe@perches.com> writes:
+> >> >> Sure, standardization is a good thing - to a certain point.
+> >> >> We've passed this point long ago.
+> > Right.  It's all exactly the same.
+> > We agree.  Cites aren't necessary.
+> People complained on lkml and other lists that the CodingStyle /
+> checkpatch went way too far many times. So the evidence is there, in the
+> list archives, and I guess even now you're getting feedback on this.
 
->> >> Sure, standardization is a good thing - to a certain point.
->> >> We've passed this point long ago.
+People complain, that's a fact.
 
-> Right.  It's all exactly the same.
-> We agree.  Cites aren't necessary.
+> OTOH you failed to show evidence that super-strict standardization
+> benefits anyone.
 
-People complained on lkml and other lists that the CodingStyle /
-checkpatch went way too far many times. So the evidence is there, in the
-list archives, and I guess even now you're getting feedback on this.
+I don't need to.
 
-OTOH you failed to show evidence that super-strict standardization
-benefits anyone.
--- 
-Krzysztof Halasa
+If you don't agree with the assertion,
+facts likely won't change your mind.
+You'll more likely dispute the facts.
+
+Look up this paper if you care to though:
+
+Evaluating the Relation Between Coding
+Standard Violations and Faults Within and
+Across Software Versions
+
+Cathal Boogerd and Leon Moonen
+
+http://swerl.tudelft.nl/twiki/pub/Main/TechnicalReports/TUD-SERG-2009-008.pdf
+
+RQ2 Are files or modules with a higher violation
+density more fault-prone?
+
+This holds for 10 rules in the standard, with some reserva-
+tions. There is no reliable prediction for files without ac-
+tive development (no changes) nor for files without viola-
+tions. Also, the observed relation becomes less pronounced
+in time, as the number of registered open faults decreases.
+
+
