@@ -1,37 +1,44 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Mon, 17 Jan 2011 10:08:52 +0000
-Subject: [PATCH] tty: serial: bfin_sport_uart: fix signedness error
-Message-Id: <1295258933-31395-1-git-send-email-segoon@openwall.com>
+From: Jan Kara <jack@suse.cz>
+Date: Thu, 06 Jan 2011 15:44:03 +0000
+Subject: Re: [PATCH] ext2: Remove redundant unlikely()
+Message-Id: <20110106154403.GM4641@quack.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1291905540-32296-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1291905540-32296-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org
+To: Tobias Klauser <tklauser@distanz.ch>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-sport->port.irq is unsigned, check for <0 doesn't make sense.
-Explicitly cast it to int to check for error.
+On Thu 09-12-10 15:39:00, Tobias Klauser wrote:
+> IS_ERR() already implies unlikely(), so it can be omitted here.
+  Thanks. Merged.
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- Cannot compile this driver, so it is not tested at all.
+								Honza
 
- drivers/tty/serial/bfin_sport_uart.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/tty/serial/bfin_sport_uart.c b/drivers/tty/serial/bfin_sport_uart.c
-index e95c524..c3ec0a6 100644
---- a/drivers/tty/serial/bfin_sport_uart.c
-+++ b/drivers/tty/serial/bfin_sport_uart.c
-@@ -788,7 +788,7 @@ static int __devinit sport_uart_probe(struct platform_device *pdev)
- 		sport->port.mapbase = res->start;
- 
- 		sport->port.irq = platform_get_irq(pdev, 0);
--		if (sport->port.irq < 0) {
-+		if ((int)sport->port.irq < 0) {
- 			dev_err(&pdev->dev, "No sport RX/TX IRQ specified\n");
- 			ret = -ENOENT;
- 			goto out_error_unmap;
+> 
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+> ---
+>  fs/ext2/namei.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+> index f8aecd2..2e1d834 100644
+> --- a/fs/ext2/namei.c
+> +++ b/fs/ext2/namei.c
+> @@ -67,7 +67,7 @@ static struct dentry *ext2_lookup(struct inode * dir, struct dentry *dentry, str
+>  	inode = NULL;
+>  	if (ino) {
+>  		inode = ext2_iget(dir->i_sb, ino);
+> -		if (unlikely(IS_ERR(inode))) {
+> +		if (IS_ERR(inode)) {
+>  			if (PTR_ERR(inode) = -ESTALE) {
+>  				ext2_error(dir->i_sb, __func__,
+>  						"deleted inode referenced: %lu",
+> -- 
+> 1.7.0.4
+> 
 -- 
-1.7.0.4
-
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
