@@ -1,62 +1,44 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Tue, 25 Jan 2011 00:46:18 +0000
-Subject: [PATCH] Staging: bcm: Check correct user provided length and fix
-Message-Id: <1295916378.5935.10.camel@javier-laptop>
+From: Jan Kara <jack@suse.cz>
+Date: Thu, 06 Jan 2011 15:44:13 +0000
+Subject: Re: [PATCH] ext3: Remove redundant unlikely()
+Message-Id: <20110106154413.GN4641@quack.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1291905574-32355-1-git-send-email-tklauser@distanz.ch>
+In-Reply-To: <1291905574-32355-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Tobias Klauser <tklauser@distanz.ch>
+Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-bcm driver copies a buffer length provided by userpace without checking it.
+On Thu 09-12-10 15:39:34, Tobias Klauser wrote:
+> IS_ERR() already implies unlikely(), so it can be omitted here.
+  Thanks. Merged.
 
-RxCntrlMsgBitMask is of type unsigned long so only makes sense to copy
-sizeof(unsigned long) bytes.
+								Honza
 
-Also, copy_from_user() returns the number of bytes that could not be copied.
-The driver is returning that value as error code instead of -EFAULT.
-
-This patch solves both issues.
-
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
-
-Dan, Stephen,
-This patch only changes the code needed to solve the bugs commented before
-and just ignore the surrounding code since there are so many style issues.
-In later patches I can clean up the driver since only checkpatch reports
-933 errors and 544 warnings.
-
- drivers/staging/bcm/Bcmchar.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/staging/bcm/Bcmchar.c b/drivers/staging/bcm/Bcmchar.c
-index 31674ea..7dff283 100644
---- a/drivers/staging/bcm/Bcmchar.c
-+++ b/drivers/staging/bcm/Bcmchar.c
-@@ -2024,6 +2024,12 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
- 				if(Status)
- 				{
- 					BCM_DEBUG_PRINT(Adapter,DBG_TYPE_OTHERS, OSAL_DBG, DBG_LVL_ALL,"copy of Ioctl buffer is failed from user space");
-+					Status = -EFAULT;
-+					break;
-+				}
-+
-+				if (IoBuffer.InputLength != sizeof(unsigned long)) {
-+					Status = -EINVAL;
- 					break;
- 				}
- 
-@@ -2031,6 +2037,7 @@ static long bcm_char_ioctl(struct file *filp, UINT cmd, ULONG arg)
- 				if(Status)
- 				{
- 					BCM_DEBUG_PRINT(Adapter,DBG_TYPE_OTHERS, OSAL_DBG, DBG_LVL_ALL,"copy of control bit mask failed from user space");
-+					Status = -EFAULT;
- 					break;
- 				}
- 				BCM_DEBUG_PRINT(Adapter,DBG_TYPE_OTHERS, OSAL_DBG, DBG_LVL_ALL,"\n Got user defined cntrl msg bit mask :%lx", RxCntrlMsgBitMask);
+> 
+> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+> ---
+>  fs/ext3/namei.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/fs/ext3/namei.c b/fs/ext3/namei.c
+> index bce9dce..268f776 100644
+> --- a/fs/ext3/namei.c
+> +++ b/fs/ext3/namei.c
+> @@ -1047,7 +1047,7 @@ static struct dentry *ext3_lookup(struct inode * dir, struct dentry *dentry, str
+>  			return ERR_PTR(-EIO);
+>  		}
+>  		inode = ext3_iget(dir->i_sb, ino);
+> -		if (unlikely(IS_ERR(inode))) {
+> +		if (IS_ERR(inode)) {
+>  			if (PTR_ERR(inode) = -ESTALE) {
+>  				ext3_error(dir->i_sb, __func__,
+>  						"deleted inode referenced: %lu",
+> -- 
+> 1.7.0.4
+> 
 -- 
-1.7.0.4
-
-
-
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
