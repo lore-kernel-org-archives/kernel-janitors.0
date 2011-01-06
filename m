@@ -1,32 +1,22 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 05 Jan 2011 07:03:44 +0000
-Subject: [patch 2/2] dcb: use after free in dcb_flushapp()
-Message-Id: <20110105070344.GB24847@bicker>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 06 Jan 2011 19:17:12 +0000
+Subject: Re: [patch 2/2] dcb: use after free in dcb_flushapp()
+Message-Id: <20110106.111712.183045224.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110105070344.GB24847@bicker>
+In-Reply-To: <20110105070344.GB24847@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: John Fastabend <john.r.fastabend@intel.com>, Shmulik Ravid <shmulikr@broadcom.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: error27@gmail.com
+Cc: netdev@vger.kernel.org, john.r.fastabend@intel.com, shmulikr@broadcom.com, kernel-janitors@vger.kernel.org
 
-The original code has a use after free bug because it's not using the
-_safe() version of the list_for_each_entry() macro.
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 5 Jan 2011 10:03:44 +0300
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+> The original code has a use after free bug because it's not using the
+> _safe() version of the list_for_each_entry() macro.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/net/dcb/dcbnl.c b/net/dcb/dcbnl.c
-index 8881cb5..11bf6a2 100644
---- a/net/dcb/dcbnl.c
-+++ b/net/dcb/dcbnl.c
-@@ -1650,9 +1650,10 @@ EXPORT_SYMBOL(dcb_setapp);
- static void dcb_flushapp(void)
- {
- 	struct dcb_app_type *app;
-+	struct dcb_app_type *tmp;
- 
- 	spin_lock(&dcb_lock);
--	list_for_each_entry(app, &dcb_app_list, list) {
-+	list_for_each_entry_safe(app, tmp, &dcb_app_list, list) {
- 		list_del(&app->list);
- 		kfree(app);
- 	}
+Also applied.
