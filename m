@@ -1,36 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 16 Jan 2011 05:05:17 +0000
-Subject: Re: [patch] caif: checking the wrong variable
-Message-Id: <20110115.210517.112602810.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 07 Jan 2011 19:41:54 +0000
+Subject: [patch v3] [media] av7110: check for negative array offset
+Message-Id: <20110107194153.GA1959@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110115130639.GA2721@bicker>
-	<AANLkTimyZQ1BEJ=tPK4LrYWhQaGd+xhYUsVEENibEVoU@mail.gmail.com>
-In-Reply-To: <AANLkTimyZQ1BEJ=tPK4LrYWhQaGd+xhYUsVEENibEVoU@mail.gmail.com>
+References: <20110106194059.GC1717@bicker>
+ <4D270A9F.7080104@linuxtv.org>
+ <20110107134651.GH1717@bicker>
+ <201101072001.20850@orion.escape-edv.de>
+In-Reply-To: <201101072001.20850@orion.escape-edv.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: sjurbren@gmail.com
-Cc: error27@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-media@vger.kernel.org
+Cc: Andreas Oberritter <obi@linuxtv.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org
 
-From: Sjur Br=E6ndeland <sjurbren@gmail.com>
-Date: Sat, 15 Jan 2011 15:03:31 +0100
+info->num comes from the user.  It's type int.  If the user passes
+in a negative value that would cause memory corruption.
 
->> In the original code we check if (servl =3D NULL) twice. =A0The first ti=
-me
->> should print the message that cfmuxl_remove_uplayer() failed and set
->> "ret" correctly, but instead it just returns success. =A0The second check
->> should be checking the value of "ret" instead of "servl".
->>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->=20
-> Thank you for spotting and correcting this.
-> Looks good to me (reviewed only)
->=20
-> Acked-by: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+V2: change the check instead of making num and unsigned int
+V3: white space changes
 
-Applied, thanks.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/media/dvb/ttpci/av7110_ca.c b/drivers/media/dvb/ttpci/av7110_ca.c
+index 122c728..923a8e2 100644
+--- a/drivers/media/dvb/ttpci/av7110_ca.c
++++ b/drivers/media/dvb/ttpci/av7110_ca.c
+@@ -277,7 +277,7 @@ static int dvb_ca_ioctl(struct file *file, unsigned int cmd, void *parg)
+ 	{
+ 		ca_slot_info_t *info=(ca_slot_info_t *)parg;
+ 
+-		if (info->num > 1)
++		if (info->num < 0 || info->num > 1)
+ 			return -EINVAL;
+ 		av7110->ci_slot[info->num].num = info->num;
+ 		av7110->ci_slot[info->num].type = FW_CI_LL_SUPPORT(av7110->arm_app) ?
+
