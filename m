@@ -1,7 +1,7 @@
-From: Greg KH <gregkh@suse.de>
-Date: Thu, 13 Jan 2011 03:05:30 +0000
-Subject: Re: [PATCH] Removes warning related to use of uninitialized
-Message-Id: <20110113030530.GA28033@suse.de>
+From: Sukanto Ghosh <sukanto.cse.iitb@gmail.com>
+Date: Thu, 13 Jan 2011 04:05:10 +0000
+Subject: Re: [PATCH] Removes warning related to use of uninitialized variable i
+Message-Id: <AANLkTikx_zOZb_h_WNVpB837i_6ygNuVvApBnuAORv6D@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AANLkTi=h20J0XhFp2=iGH0WF-uZmWS0cv4018X=h5YBn@mail.gmail.com>
 In-Reply-To: <AANLkTi=h20J0XhFp2=iGH0WF-uZmWS0cv4018X=h5YBn@mail.gmail.com>
@@ -10,40 +10,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Jan 12, 2011 at 06:26:43PM -0800, Sukanto Ghosh wrote:
-> Diff against 2.6.37
-> 
-> 
-> Signed-off-by: Sukanto Ghosh <sukanto.cse.iitb@gmail.com>
-> 
-> ----
-> diff --git a/drivers/serial/8250.c b/drivers/serial/8250.c
-> index b25e6e4..add97dd 100644
-> --- a/drivers/serial/8250.c
-> +++ b/drivers/serial/8250.c
-> @@ -1724,7 +1724,7 @@ static int serial_link_irq_chain(struct
-> uart_8250_port *up)
-> 
->  static void serial_unlink_irq_chain(struct uart_8250_port *up)
->  {
-> -       struct irq_info *i;
-> +       struct irq_info *i = NULL;
->         struct hlist_node *n;
->         struct hlist_head *h;
-> 
-> @@ -1739,7 +1739,7 @@ static void serial_unlink_irq_chain(struct
-> uart_8250_port *up)
->         }
-> 
->         BUG_ON(n = NULL);
-> -       BUG_ON(i->head = NULL);
-> +       BUG_ON(i = NULL || i->head = NULL);
+> If you just set it to NULL, how could it ever not be NULL, so why add
+> this check?
+>
+Because, there is an assignment to i inside the for-each loop (hlist_for_each)
+if it enters the loop.
 
-If you just set it to NULL, how could it ever not be NULL, so why add
-this check?
+> Also, no, this isn't correct, i is used in the hlist traversal.
+>
+Indeed it is being used but what if it doesn't enters the loop i.e. if
+h->first is NULL
+It is a different issue whether (h->first != NULL) is a precondition
+to this function
+but the compiler is warning because there exists a path to access of i->head
+where it might be left uninitialized.
 
-Also, no, this isn't correct, i is used in the hlist traversal.
-
-thanks,
-
-greg k-h
+-- 
+Regards,
+Sukanto Ghosh
