@@ -1,45 +1,29 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Wed, 19 Jan 2011 12:57:22 +0000
-Subject: [PATCH v2] arm: mach-omap2: potential NULL dereference
-Message-Id: <20110119125721.GA9203@albatros>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 15 Jan 2011 13:46:05 +0000
+Subject: [patch] reiserfs: potential ERR_PTR dereference
+Message-Id: <20110115134605.GB2721@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1295258922-31242-1-git-send-email-segoon@openwall.com>
-	<4D341C35.80506@bfs.de>
-In-Reply-To: <4D341C35.80506@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: reiserfs-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-kzalloc() may fail, if so return -ENOMEM.  Also Walter Harms suggested
-to use kasprintf() instead of kzalloc+strcpy+strcat.
+reiserfs_iget() returns an ERR_PTR on allocation failures.  All the
+other callers check for it so we should check here too.
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- Cannot compile this driver, so it is not tested at all.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
- arch/arm/mach-omap2/smartreflex.c |    8 +++++---
- 1 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-omap2/smartreflex.c b/arch/arm/mach-omap2/smartreflex.c
-index 77ecebf..697d8d4 100644
---- a/arch/arm/mach-omap2/smartreflex.c
-+++ b/arch/arm/mach-omap2/smartreflex.c
-@@ -260,9 +260,11 @@ static int sr_late_init(struct omap_sr *sr_info)
- 	if (sr_class->class_type = SR_CLASS2 &&
- 		sr_class->notify_flags && sr_info->irq) {
+diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
+index 0aab04f..6949b98 100644
+--- a/fs/reiserfs/super.c
++++ b/fs/reiserfs/super.c
+@@ -237,7 +237,7 @@ static int finish_unfinished(struct super_block *s)
+ 		pathrelse(&path);
  
--		name = kzalloc(SMARTREFLEX_NAME_LEN + 1, GFP_KERNEL);
--		strcpy(name, "sr_");
--		strcat(name, sr_info->voltdm->name);
-+		name = kasprintf(GFP_KERNEL, "sr_%s", sr_info->voltdm->name);
-+		if (name = NULL) {
-+			ret = -ENOMEM;
-+			goto error;
-+		}
- 		ret = request_irq(sr_info->irq, sr_interrupt,
- 				0, name, (void *)sr_info);
- 		if (ret)
--- 
-Vasiliy Kulikov
-http://www.openwall.com - bringing security into open computing environments
+ 		inode = reiserfs_iget(s, &obj_key);
+-		if (!inode) {
++		if (IS_ERR_OR_NULL(inode)) {
+ 			/* the unlink almost completed, it just did not manage to remove
+ 			   "save" link and release objectid */
+ 			reiserfs_warning(s, "vs-2180", "iget failed for %K",
