@@ -1,36 +1,29 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sun, 02 Jan 2011 21:57:29 +0000
-Subject: Re: [PATCH 2/3] staging: keucr: Use memcpy() instead custom
-Message-Id: <AANLkTin4jytjGGHex4FxzJ=vawT+DBjra=pd6eX31Kbt@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 15 Jan 2011 14:03:00 +0000
+Subject: [patch] [SCSI] target: checking for NULL instead of IS_ERR
+Message-Id: <20110115140300.GC2721@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1294002097-3058-3-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1294002097-3058-3-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: James Bottomley <James.Bottomley@suse.de>, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> +     if (err = 1)
->> +             memcpy(calculate_ecc, redundant_ecc, 3);
->> +
->> +     if (err = 0 || err = 2)
->> +             return 0;
->> +
->> +     return -1;
->>  }
->
-> That's wrong. Before your change when correct_data returned 1 this function
-> returned 0. Now it returns -1.
->
-> Marcin
->
->
+blkdev_get_by_path() returns an ERR_PTR() or error and it doesn't return
+a NULL.  It looks like this bug would be easy to trigger by mistake.
 
-Yes, I'm preparing a new patchset that also corrects that. Thanks
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-Best regards,
-
------------------------------------------
-Javier Martínez Canillas
-(+34) 682 39 81 69
+diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
+index c6e0d75..3456135 100644
+--- a/drivers/target/target_core_iblock.c
++++ b/drivers/target/target_core_iblock.c
+@@ -154,7 +154,7 @@ static struct se_device *iblock_create_virtdevice(
+ 
+ 	bd = blkdev_get_by_path(ib_dev->ibd_udev_path,
+ 				FMODE_WRITE|FMODE_READ|FMODE_EXCL, ib_dev);
+-	if (!(bd))
++	if (IS_ERR(bd))
+ 		goto failed;
+ 	/*
+ 	 * Setup the local scope queue_limits from struct request_queue->limits
