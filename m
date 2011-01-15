@@ -1,22 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 06 Jan 2011 19:17:06 +0000
-Subject: Re: [patch 1/2] dcb: unlock on error in dcbnl_ieee_get()
-Message-Id: <20110106.111706.112600632.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 15 Jan 2011 20:35:39 +0000
+Subject: [patch] 9p: fix min_t() casting
+Message-Id: <20110115203539.GF2721@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110105070312.GA24847@bicker>
-In-Reply-To: <20110105070312.GA24847@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: netdev@vger.kernel.org, john.r.fastabend@intel.com, shmulikr@broadcom.com, kernel-janitors@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Sripathi Kodi <sripathik@in.ibm.com>, Venkateswararao Jujjuri <jvrao@linux.vnet.ibm.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 5 Jan 2011 10:03:12 +0300
+The intent here was to cap the length to USHRT_MAX, but what the
+code actually does is it just casts the return from strlen() to
+unsigned short and truncates the significant bits away.
 
-> There is a "goto nla_put_failure" hidden inside the NLA_PUT() macro, but
-> we're holding the dcb_lock so we need to unlock first.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks Dan.
+diff --git a/net/9p/protocol.c b/net/9p/protocol.c
+index 1e308f2..0422581 100644
+--- a/net/9p/protocol.c
++++ b/net/9p/protocol.c
+@@ -403,7 +403,7 @@ p9pdu_vwritef(struct p9_fcall *pdu, int proto_version, const char *fmt,
+ 				const char *sptr = va_arg(ap, const char *);
+ 				uint16_t len = 0;
+ 				if (sptr)
+-					len = min_t(uint16_t, strlen(sptr),
++					len = min_t(size_t, strlen(sptr),
+ 								USHRT_MAX);
+ 
+ 				errcode = p9pdu_writef(pdu, proto_version,
