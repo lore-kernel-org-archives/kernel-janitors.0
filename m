@@ -1,24 +1,36 @@
-From: =?UTF-8?Q?Sjur_Br=C3=A6ndeland?= <sjurbren@gmail.com>
-Date: Sat, 15 Jan 2011 14:03:31 +0000
+From: David Miller <davem@davemloft.net>
+Date: Sun, 16 Jan 2011 05:05:17 +0000
 Subject: Re: [patch] caif: checking the wrong variable
-Message-Id: <AANLkTimyZQ1BEJ=tPK4LrYWhQaGd+xhYUsVEENibEVoU@mail.gmail.com>
+Message-Id: <20110115.210517.112602810.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110115130639.GA2721@bicker>
-In-Reply-To: <20110115130639.GA2721@bicker>
+	<AANLkTimyZQ1BEJ=tPK4LrYWhQaGd+xhYUsVEENibEVoU@mail.gmail.com>
+In-Reply-To: <AANLkTimyZQ1BEJ=tPK4LrYWhQaGd+xhYUsVEENibEVoU@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: sjurbren@gmail.com
+Cc: error27@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> In the original code we check if (servl = NULL) twice.  The first time
-> should print the message that cfmuxl_remove_uplayer() failed and set
-> "ret" correctly, but instead it just returns success.  The second check
-> should be checking the value of "ret" instead of "servl".
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+From: Sjur Br=E6ndeland <sjurbren@gmail.com>
+Date: Sat, 15 Jan 2011 15:03:31 +0100
 
-Thank you for spotting and correcting this.
-Looks good to me (reviewed only)
+>> In the original code we check if (servl =3D NULL) twice. =A0The first ti=
+me
+>> should print the message that cfmuxl_remove_uplayer() failed and set
+>> "ret" correctly, but instead it just returns success. =A0The second check
+>> should be checking the value of "ret" instead of "servl".
+>>
+>> Signed-off-by: Dan Carpenter <error27@gmail.com>
+>=20
+> Thank you for spotting and correcting this.
+> Looks good to me (reviewed only)
+>=20
+> Acked-by: Sjur Braendeland <sjur.brandeland@stericsson.com>
 
-Acked-by: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Applied, thanks.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
