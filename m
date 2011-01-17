@@ -1,40 +1,47 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 03 Jan 2011 05:34:51 +0000
-Subject: Re: [PATCHv4 0/4] staging: keucr: Use memcmp() & memcpy() instead
-Message-Id: <20110103053451.GO1886@bicker>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Mon, 17 Jan 2011 10:08:45 +0000
+Subject: [PATCH] hid: hid-roccat-koneplus: potential NULL dereference
+Message-Id: <1295258925-31288-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1294006469-4400-1-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1294006469-4400-1-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 02, 2011 at 11:14:25PM +0100, Javier Martinez Canillas wrote:
-> This patchset make some cleanup to staging/keucr. Use memcmp and memcpy i=
-nstead of custom functions.
-> Also some style cleanups recomended by Dan Carpenter, Joe Perches and G=
-=E1bor Stefanik.
->=20
-> The patches in this patchset are the following:
->=20
-> [PATCH 1/4] staging: keucr: Use memcmp() instead custom StringCmp() and s=
-ome style cleanups
-> [PATCH 2/4] staging: keucr: Use memcpy() instead custom StringCopy() and =
-some style cleanups
-> [PATCH 3/4] staging: keucr: Delete StringCmp() and StringCopy custom func=
-tions
-> [PATCH 4/4] staging: keucr: Delete use kernel strcmp() & strcpy() from TO=
-DO file
->=20
+kmalloc() may fail, if so return -ENOMEM.
+Also koneplus_init_koneplus_device_struct() should check return code
+of koneplus_get_startup_profile() and propagate its return code.
 
-Looks good.  v1 made me grumpy.  v2 was ok.  v4 is what all patches
-should look like.  :)
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested only.
 
-Acked-by: Dan Carpenter <error27@gmail.com>
+ drivers/hid/hid-roccat-koneplus.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/hid/hid-roccat-koneplus.c b/drivers/hid/hid-roccat-koneplus.c
+index 1608c8d..591a97c 100644
+--- a/drivers/hid/hid-roccat-koneplus.c
++++ b/drivers/hid/hid-roccat-koneplus.c
+@@ -220,6 +220,8 @@ static int koneplus_get_startup_profile(struct usb_device *usb_dev)
+ 	int retval;
+ 
+ 	buf = kmalloc(sizeof(struct koneplus_startup_profile), GFP_KERNEL);
++	if (buf = NULL)
++		return -ENOMEM;
+ 
+ 	retval = koneplus_receive(usb_dev, KONEPLUS_USB_COMMAND_STARTUP_PROFILE,
+ 			buf, sizeof(struct koneplus_startup_profile));
+@@ -614,6 +616,8 @@ static int koneplus_init_koneplus_device_struct(struct usb_device *usb_dev,
+ 	mutex_init(&koneplus->koneplus_lock);
+ 
+ 	koneplus->startup_profile = koneplus_get_startup_profile(usb_dev);
++	if (koneplus->startup_profile < 0)
++		return koneplus->startup_profile;
+ 
+ 	msleep(wait);
+ 	retval = koneplus_get_info(usb_dev, &koneplus->info);
+-- 
+1.7.0.4
+
