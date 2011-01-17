@@ -1,44 +1,37 @@
-From: Jan Kara <jack@suse.cz>
-Date: Thu, 06 Jan 2011 15:44:13 +0000
-Subject: Re: [PATCH] ext3: Remove redundant unlikely()
-Message-Id: <20110106154413.GN4641@quack.suse.cz>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Mon, 17 Jan 2011 10:08:52 +0000
+Subject: [PATCH] tty: serial: bfin_sport_uart: fix signedness error
+Message-Id: <1295258933-31395-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1291905574-32355-1-git-send-email-tklauser@distanz.ch>
-In-Reply-To: <1291905574-32355-1-git-send-email-tklauser@distanz.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tobias Klauser <tklauser@distanz.ch>
-Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org
 
-On Thu 09-12-10 15:39:34, Tobias Klauser wrote:
-> IS_ERR() already implies unlikely(), so it can be omitted here.
-  Thanks. Merged.
+sport->port.irq is unsigned, check for <0 doesn't make sense.
+Explicitly cast it to int to check for error.
 
-								Honza
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Cannot compile this driver, so it is not tested at all.
 
-> 
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-> ---
->  fs/ext3/namei.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/fs/ext3/namei.c b/fs/ext3/namei.c
-> index bce9dce..268f776 100644
-> --- a/fs/ext3/namei.c
-> +++ b/fs/ext3/namei.c
-> @@ -1047,7 +1047,7 @@ static struct dentry *ext3_lookup(struct inode * dir, struct dentry *dentry, str
->  			return ERR_PTR(-EIO);
->  		}
->  		inode = ext3_iget(dir->i_sb, ino);
-> -		if (unlikely(IS_ERR(inode))) {
-> +		if (IS_ERR(inode)) {
->  			if (PTR_ERR(inode) = -ESTALE) {
->  				ext3_error(dir->i_sb, __func__,
->  						"deleted inode referenced: %lu",
-> -- 
-> 1.7.0.4
-> 
+ drivers/tty/serial/bfin_sport_uart.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/tty/serial/bfin_sport_uart.c b/drivers/tty/serial/bfin_sport_uart.c
+index e95c524..c3ec0a6 100644
+--- a/drivers/tty/serial/bfin_sport_uart.c
++++ b/drivers/tty/serial/bfin_sport_uart.c
+@@ -788,7 +788,7 @@ static int __devinit sport_uart_probe(struct platform_device *pdev)
+ 		sport->port.mapbase = res->start;
+ 
+ 		sport->port.irq = platform_get_irq(pdev, 0);
+-		if (sport->port.irq < 0) {
++		if ((int)sport->port.irq < 0) {
+ 			dev_err(&pdev->dev, "No sport RX/TX IRQ specified\n");
+ 			ret = -ENOENT;
+ 			goto out_error_unmap;
 -- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+1.7.0.4
+
