@@ -1,28 +1,40 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 04 Jan 2011 05:20:02 +0000
-Subject: Re: [patch] Staging: xgfib: put parenthesis in the right place
-Message-Id: <1294118402.6617.8.camel@Joe-Laptop>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Mon, 17 Jan 2011 10:08:37 +0000
+Subject: [PATCH] net: bluetooth: fix locking problem
+Message-Id: <1295258917-31092-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110104045807.GZ1886@bicker>
-In-Reply-To: <20110104045807.GZ1886@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2011-01-04 at 07:58 +0300, Dan Carpenter wrote:
-> diff --git a/drivers/staging/xgifb/vb_setmode.c b/drivers/staging/xgifb/vb_setmode.c
-> @@ -3954,7 +3954,7 @@ void XGI_GetCRT2ResInfo(unsigned short ModeNo, unsigned short ModeIdIndex,
->  unsigned char XGI_IsLCDDualLink(struct vb_device_info *pVBInfo)
->  {
->  
-> -	if ((((pVBInfo->VBInfo & SetCRT2ToLCD) | SetCRT2ToLCDA))
-> +	if ((pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA))
->  			&& (pVBInfo->LCDInfo & SetLCDDualLink)) /* shampoo0129 */
+If alloc_skb() failed we still hold hci_dev_list_lock.  The code should
+unlock it before exit.
 
-Perhaps more legible and standard as:
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested only.
 
-	if ((pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA)) &&
-	    (pVBInfo->LCDInfo & SetLCDDualLink))
+ net/bluetooth/mgmt.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index f827fd9..ace8726 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -111,8 +111,10 @@ static int read_index_list(struct sock *sk)
+ 
+ 	body_len = sizeof(*ev) + sizeof(*rp) + (2 * count);
+ 	skb = alloc_skb(sizeof(*hdr) + body_len, GFP_ATOMIC);
+-	if (!skb)
++	if (!skb) {
++		read_unlock(&hci_dev_list_lock);
+ 		return -ENOMEM;
++	}
+ 
+ 	hdr = (void *) skb_put(skb, sizeof(*hdr));
+ 	hdr->opcode = cpu_to_le16(MGMT_EV_CMD_COMPLETE);
+-- 
+1.7.0.4
 
