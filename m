@@ -1,101 +1,108 @@
-From: Paul Moore <paul.moore@hp.com>
-Date: Fri, 28 Jan 2011 15:46:51 +0000
-Subject: Re: [PATCH 2/2] net/netlabel: Avoid call to genlmsg_cancel
-Message-Id: <1296229611.5511.15.camel@sifl>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Mon, 17 Jan 2011 10:08:32 +0000
+Subject: [PATCH] arm: mach-omap2: potential NULL dereference
+Message-Id: <1295258913-31048-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1296224232-8115-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1296224232-8115-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 2011-01-28 at 15:17 +0100, Julia Lawall wrote:
-> genlmsg_cancel subtracts some constants from its second argument before
-> calling nlmsg_cancel.  nlmsg_cancel then calls nlmsg_trim on the same
-> arguments.  nlmsg_trim tests for NULL before doing any computation, but a
-> NULL second argument to genlmsg_cancel is no longer NULL due to the initial
-> subtraction.  Nothing else happens in this execution, so the call to
-> genlmsg_cancel is simply unnecessary in this case.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression data;
-> @@
-> 
-> if (data = NULL) { ...
-> * genlmsg_cancel(..., data);
->   ...
->   return ...;
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+If kzalloc() failed, return -ENOMEM.
+sr_dev_init() should signal by return value that there is an error.
 
-Acked-by: Paul Moore <paul.moore@hp.com>
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Cannot compile this driver, so it is not tested at all.
 
-> ---
->  net/netlabel/netlabel_cipso_v4.c  |    2 +-
->  net/netlabel/netlabel_mgmt.c      |    4 ++--
->  net/netlabel/netlabel_unlabeled.c |    2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/netlabel/netlabel_cipso_v4.c b/net/netlabel/netlabel_cipso_v4.c
-> index 5f14c84..0a1f77b 100644
-> --- a/net/netlabel/netlabel_cipso_v4.c
-> +++ b/net/netlabel/netlabel_cipso_v4.c
-> @@ -635,7 +635,7 @@ static int netlbl_cipsov4_listall_cb(struct cipso_v4_doi *doi_def, void *arg)
->  			   cb_arg->seq, &netlbl_cipsov4_gnl_family,
->  			   NLM_F_MULTI, NLBL_CIPSOV4_C_LISTALL);
->  	if (data = NULL)
-> -		goto listall_cb_failure;
-> +		return ret_val;
->  
->  	ret_val = nla_put_u32(cb_arg->skb, NLBL_CIPSOV4_A_DOI, doi_def->doi);
->  	if (ret_val != 0)
-> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
-> index 998e85e..daaa01d 100644
-> --- a/net/netlabel/netlabel_mgmt.c
-> +++ b/net/netlabel/netlabel_mgmt.c
-> @@ -452,7 +452,7 @@ static int netlbl_mgmt_listall_cb(struct netlbl_dom_map *entry, void *arg)
->  			   cb_arg->seq, &netlbl_mgmt_gnl_family,
->  			   NLM_F_MULTI, NLBL_MGMT_C_LISTALL);
->  	if (data = NULL)
-> -		goto listall_cb_failure;
-> +		return ret_val;
->  
->  	ret_val = netlbl_mgmt_listentry(cb_arg->skb, entry);
->  	if (ret_val != 0)
-> @@ -617,7 +617,7 @@ static int netlbl_mgmt_protocols_cb(struct sk_buff *skb,
->  			   &netlbl_mgmt_gnl_family, NLM_F_MULTI,
->  			   NLBL_MGMT_C_PROTOCOLS);
->  	if (data = NULL)
-> -		goto protocols_cb_failure;
-> +		return ret_val;
->  
->  	ret_val = nla_put_u32(skb, NLBL_MGMT_A_PROTOCOL, protocol);
->  	if (ret_val != 0)
-> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-> index e2b0a68..b5d3945 100644
-> --- a/net/netlabel/netlabel_unlabeled.c
-> +++ b/net/netlabel/netlabel_unlabeled.c
-> @@ -1141,7 +1141,7 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
->  			   cb_arg->seq, &netlbl_unlabel_gnl_family,
->  			   NLM_F_MULTI, cmd);
->  	if (data = NULL)
-> -		goto list_cb_failure;
-> +		return ret_val;
->  
->  	if (iface->ifindex > 0) {
->  		dev = dev_get_by_index(&init_net, iface->ifindex);
-> 
+ arch/arm/mach-omap2/sr_device.c |   19 +++++++++++++++----
+ 1 files changed, 15 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/mach-omap2/sr_device.c b/arch/arm/mach-omap2/sr_device.c
+index b1e0af1..20fccfb 100644
+--- a/arch/arm/mach-omap2/sr_device.c
++++ b/arch/arm/mach-omap2/sr_device.c
+@@ -40,7 +40,7 @@ static struct omap_device_pm_latency omap_sr_latency[] = {
+ };
+ 
+ /* Read EFUSE values from control registers for OMAP3430 */
+-static void __init sr_set_nvalues(struct omap_volt_data *volt_data,
++static int __init sr_set_nvalues(struct omap_volt_data *volt_data,
+ 				struct omap_sr_data *sr_data)
+ {
+ 	struct omap_sr_nvalue_table *nvalue_table;
+@@ -51,6 +51,8 @@ static void __init sr_set_nvalues(struct omap_volt_data *volt_data,
+ 
+ 	nvalue_table = kzalloc(sizeof(struct omap_sr_nvalue_table)*count,
+ 			GFP_KERNEL);
++	if (nvalue_table = NULL)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < count; i++) {
+ 		u32 v;
+@@ -75,6 +77,8 @@ static void __init sr_set_nvalues(struct omap_volt_data *volt_data,
+ 
+ 	sr_data->nvalue_table = nvalue_table;
+ 	sr_data->nvalue_count = count;
++
++	return 0;
+ }
+ 
+ static int sr_dev_init(struct omap_hwmod *oh, void *user)
+@@ -84,15 +88,18 @@ static int sr_dev_init(struct omap_hwmod *oh, void *user)
+ 	struct omap_volt_data *volt_data;
+ 	char *name = "smartreflex";
+ 	static int i;
++	int err = 0;
+ 
+ 	sr_data = kzalloc(sizeof(struct omap_sr_data), GFP_KERNEL);
+ 	if (!sr_data) {
++		err = -ENOMEM;
+ 		pr_err("%s: Unable to allocate memory for %s sr_data.Error!\n",
+ 			__func__, oh->name);
+-		return -ENOMEM;
++		goto exit;
+ 	}
+ 
+ 	if (!oh->vdd_name) {
++		err = -EINVAL;
+ 		pr_err("%s: No voltage domain specified for %s."
+ 			"Cannot initialize\n", __func__, oh->name);
+ 		goto exit;
+@@ -104,6 +111,7 @@ static int sr_dev_init(struct omap_hwmod *oh, void *user)
+ 
+ 	sr_data->voltdm = omap_voltage_domain_lookup(oh->vdd_name);
+ 	if (IS_ERR(sr_data->voltdm)) {
++		err = PTR_ERR(sr_data->voltdm);
+ 		pr_err("%s: Unable to get voltage domain pointer for VDD %s\n",
+ 			__func__, oh->vdd_name);
+ 		goto exit;
+@@ -111,12 +119,15 @@ static int sr_dev_init(struct omap_hwmod *oh, void *user)
+ 
+ 	omap_voltage_get_volttable(sr_data->voltdm, &volt_data);
+ 	if (!volt_data) {
++		err = -EINVAL;
+ 		pr_warning("%s: No Voltage table registerd fo VDD%d."
+ 			"Something really wrong\n\n", __func__, i + 1);
+ 		goto exit;
+ 	}
+ 
+-	sr_set_nvalues(volt_data, sr_data);
++	err = sr_set_nvalues(volt_data, sr_data);
++	if (err)
++		goto exit;
+ 
+ 	sr_data->enable_on_init = sr_enable_on_init;
+ 
+@@ -129,7 +140,7 @@ static int sr_dev_init(struct omap_hwmod *oh, void *user)
+ exit:
+ 	i++;
+ 	kfree(sr_data);
+-	return 0;
++	return err;
+ }
+ 
+ /*
 -- 
-paul moore
-linux @ hp
-
+1.7.0.4
 
