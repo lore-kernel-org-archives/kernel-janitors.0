@@ -1,29 +1,37 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 15 Jan 2011 13:46:05 +0000
-Subject: [patch] reiserfs: potential ERR_PTR dereference
-Message-Id: <20110115134605.GB2721@bicker>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Mon, 17 Jan 2011 10:08:49 +0000
+Subject: [PATCH] staging: cs5535_gpio: check put_user() return code
+Message-Id: <1295258929-31350-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Ben Gardner <bgardner@wabtec.com>, Andres Salomon <dilinger@queued.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-reiserfs_iget() returns an ERR_PTR on allocation failures.  All the
-other callers check for it so we should check here too.
+put_user() may fail, if so return -EFAULT.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ Compile tested only.
 
-diff --git a/fs/reiserfs/super.c b/fs/reiserfs/super.c
-index 0aab04f..6949b98 100644
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -237,7 +237,7 @@ static int finish_unfinished(struct super_block *s)
- 		pathrelse(&path);
+ drivers/staging/cs5535_gpio/cs5535_gpio.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/cs5535_gpio/cs5535_gpio.c b/drivers/staging/cs5535_gpio/cs5535_gpio.c
+index 0cf1e5f..b25f9d1 100644
+--- a/drivers/staging/cs5535_gpio/cs5535_gpio.c
++++ b/drivers/staging/cs5535_gpio/cs5535_gpio.c
+@@ -146,7 +146,8 @@ static ssize_t cs5535_gpio_read(struct file *file, char __user *buf,
  
- 		inode = reiserfs_iget(s, &obj_key);
--		if (!inode) {
-+		if (IS_ERR_OR_NULL(inode)) {
- 			/* the unlink almost completed, it just did not manage to remove
- 			   "save" link and release objectid */
- 			reiserfs_warning(s, "vs-2180", "iget failed for %K",
+ 	/* add a line-feed if there is room */
+ 	if ((i = ARRAY_SIZE(rm)) && (count < len)) {
+-		put_user('\n', buf + count);
++		if (put_user('\n', buf + count))
++			return -EFAULT;
+ 		count++;
+ 	}
+ 
+-- 
+1.7.0.4
+
