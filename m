@@ -1,28 +1,34 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 03 Jan 2011 05:44:38 +0000
-Subject: [patch 1/2] Staging: tm6000: check usb_alloc_urb() return
-Message-Id: <20110103054438.GQ1886@bicker>
+Date: Wed, 19 Jan 2011 14:28:27 +0000
+Subject: [patch 1/2] [media] dib9000: fix return type in
+Message-Id: <20110119142827.GP2721@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Patrick Boettcher <patrick.boettcher@dibcom.fr>, Olivier Grenie <olivier.grenie@dibcom.fr>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-usb_alloc_urb() can return NULL so check for that and return
--ENOMEM if it happens.
+dib9000_mbx_send_attr() returns an int.  It doesn't work to save
+negative error codes in an unsigned char, so I've made "ret" an int
+type.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/tm6000/tm6000-input.c b/drivers/staging/tm6000/tm6000-input.c
-index 21e7da4..aee5e85 100644
---- a/drivers/staging/tm6000/tm6000-input.c
-+++ b/drivers/staging/tm6000/tm6000-input.c
-@@ -313,6 +313,8 @@ int tm6000_ir_int_start(struct tm6000_core *dev)
- 		return -ENODEV;
+diff --git a/drivers/media/dvb/frontends/dib9000.c b/drivers/media/dvb/frontends/dib9000.c
+index 43fb6e4..9151876 100644
+--- a/drivers/media/dvb/frontends/dib9000.c
++++ b/drivers/media/dvb/frontends/dib9000.c
+@@ -486,10 +486,11 @@ static int dib9000_mbx_host_init(struct dib9000_state *state, u8 risc_id)
+ #define MAX_MAILBOX_TRY 100
+ static int dib9000_mbx_send_attr(struct dib9000_state *state, u8 id, u16 * data, u8 len, u16 attr)
+ {
+-	u8 ret = 0, *d, b[2];
++	u8 *d, b[2];
+ 	u16 tmp;
+ 	u16 size;
+ 	u32 i;
++	int ret = 0;
  
- 	ir->int_urb = usb_alloc_urb(0, GFP_KERNEL);
-+	if (!ir->int_urb)
-+		return -ENOMEM;
- 
- 	pipe = usb_rcvintpipe(dev->udev,
- 		dev->int_in.endp->desc.bEndpointAddress
+ 	if (!state->platform.risc.fw_is_running)
+ 		return -EINVAL;
