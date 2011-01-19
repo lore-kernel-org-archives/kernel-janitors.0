@@ -1,37 +1,28 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Mon, 17 Jan 2011 10:08:49 +0000
-Subject: [PATCH] staging: cs5535_gpio: check put_user() return code
-Message-Id: <1295258929-31350-1-git-send-email-segoon@openwall.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 19 Jan 2011 14:27:58 +0000
+Subject: [patch 1/2] [media] dib8000: fix small memory leak on error
+Message-Id: <20110119142758.GO2721@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Ben Gardner <bgardner@wabtec.com>, Andres Salomon <dilinger@queued.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Patrick Boettcher <patrick.boettcher@dibcom.fr>, Olivier Grenie <olivier.grenie@dibcom.fr>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-put_user() may fail, if so return -EFAULT.
+kfree(state) if fe allocation fails.
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- Compile tested only.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
- drivers/staging/cs5535_gpio/cs5535_gpio.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/cs5535_gpio/cs5535_gpio.c b/drivers/staging/cs5535_gpio/cs5535_gpio.c
-index 0cf1e5f..b25f9d1 100644
---- a/drivers/staging/cs5535_gpio/cs5535_gpio.c
-+++ b/drivers/staging/cs5535_gpio/cs5535_gpio.c
-@@ -146,7 +146,8 @@ static ssize_t cs5535_gpio_read(struct file *file, char __user *buf,
+diff --git a/drivers/media/dvb/frontends/dib8000.c b/drivers/media/dvb/frontends/dib8000.c
+index 3e20aa8..c1c3e26 100644
+--- a/drivers/media/dvb/frontends/dib8000.c
++++ b/drivers/media/dvb/frontends/dib8000.c
+@@ -2514,7 +2514,7 @@ struct dvb_frontend *dib8000_attach(struct i2c_adapter *i2c_adap, u8 i2c_addr, s
+ 		return NULL;
+ 	fe = kzalloc(sizeof(struct dvb_frontend), GFP_KERNEL);
+ 	if (fe = NULL)
+-		return NULL;
++		goto error;
  
- 	/* add a line-feed if there is room */
- 	if ((i = ARRAY_SIZE(rm)) && (count < len)) {
--		put_user('\n', buf + count);
-+		if (put_user('\n', buf + count))
-+			return -EFAULT;
- 		count++;
- 	}
- 
--- 
-1.7.0.4
-
+ 	memcpy(&state->cfg, cfg, sizeof(struct dib8000_config));
+ 	state->i2c.adap = i2c_adap;
