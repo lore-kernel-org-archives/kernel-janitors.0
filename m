@@ -1,29 +1,80 @@
-From: David Brown <davidb@codeaurora.org>
-Date: Thu, 27 Jan 2011 19:00:55 +0000
-Subject: Re: [PATCH 2/2] drivers/staging/msm/lcdc.c: Convert IS_ERR result to PTR_ERR
-Message-Id: <8yabp325fyw.fsf@huya.qualcomm.com>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Thu, 20 Jan 2011 20:08:06 +0000
+Subject: [PATCH] acpi: debugfs: fix buffer overflows, double free
+Message-Id: <1295554086-23873-1-git-send-email-segoon@openwall.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1296143347-17508-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1296143347-17508-2-git-send-email-julia@diku.dk> (Julia Lawall's
-	message of "Thu, 27 Jan 2011 16:49:07 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, Daniel Walker <dwalker@codeaurora.org>, Stepan Moskovchenko <stepanm@codeaurora.org>, Abhijeet Dharmapurikar <adharmap@codeaurora.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 27 2011, Julia Lawall wrote:
+File position is not controlled, it may lead to overwrites of arbitrary
+kernel memory.  Also the code may kfree() the same pointer multiple
+times.
 
-> This code elsewhere returns a negative constant to an indicate an error,
-> while IS_ERR returns the result of a >= operation.
->
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+One more flaw is still present: if multiple processes open the file then
+all 3 static variables are shared, leading to various race conditions.
+They should be moved to file->private_data.
 
-Acked-by: David Brown <davidb@codeaurora.org>
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+---
+ drivers/acpi/debugfs.c |   20 ++++++++++++++------
+ 1 files changed, 14 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/acpi/debugfs.c b/drivers/acpi/debugfs.c
+index 5df67f1..384f7ab 100644
+--- a/drivers/acpi/debugfs.c
++++ b/drivers/acpi/debugfs.c
+@@ -26,7 +26,9 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 			size_t count, loff_t *ppos)
+ {
+ 	static char *buf;
+-	static int uncopied_bytes;
++	static u32 max_size;
++	static u32 uncopied_bytes;
++
+ 	struct acpi_table_header table;
+ 	acpi_status status;
+ 
+@@ -37,19 +39,24 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 		if (copy_from_user(&table, user_buf,
+ 				   sizeof(struct acpi_table_header)))
+ 			return -EFAULT;
+-		uncopied_bytes = table.length;
+-		buf = kzalloc(uncopied_bytes, GFP_KERNEL);
++		uncopied_bytes = max_size = table.length;
++		buf = kzalloc(max_size, GFP_KERNEL);
+ 		if (!buf)
+ 			return -ENOMEM;
+ 	}
+ 
+-	if (uncopied_bytes < count) {
+-		kfree(buf);
++	if (buf = NULL)
++		return -EINVAL;
++
++	if ((*ppos > max_size) ||
++	    (*ppos + count > max_size) ||
++	    (*ppos + count < count) ||
++	    (count > uncopied_bytes))
+ 		return -EINVAL;
+-	}
+ 
+ 	if (copy_from_user(buf + (*ppos), user_buf, count)) {
+ 		kfree(buf);
++		buf = NULL;
+ 		return -EFAULT;
+ 	}
+ 
+@@ -59,6 +66,7 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 	if (!uncopied_bytes) {
+ 		status = acpi_install_method(buf);
+ 		kfree(buf);
++		buf = NULL;
+ 		if (ACPI_FAILURE(status))
+ 			return -EINVAL;
+ 		add_taint(TAINT_OVERRIDDEN_ACPI_TABLE);
 -- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+1.7.0.4
+
