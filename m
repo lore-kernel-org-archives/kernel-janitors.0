@@ -1,36 +1,23 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Fri, 21 Jan 2011 09:43:07 +0000
-Subject: [PATCH] atm: idt77105: fix fetch_stats() result
-Message-Id: <1295602987-11688-1-git-send-email-segoon@openwall.com>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 22 Jan 2011 00:24:32 +0000
+Subject: Re: [PATCH] atm: idt77105: fix fetch_stats() result
+Message-Id: <20110121.162432.77330574.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1295602987-11688-1-git-send-email-segoon@openwall.com>
+In-Reply-To: <1295602987-11688-1-git-send-email-segoon@openwall.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Chas Williams <chas@cmf.nrl.navy.mil>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: segoon@openwall.com
+Cc: kernel-janitors@vger.kernel.org, chas@cmf.nrl.navy.mil, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-copy_to_user() used PRIV(dev)->stats instead of local stats variable.
-Zero stats were returned to user in case of (zero != 0), also memcpy()
-was pointless.
+From: Vasiliy Kulikov <segoon@openwall.com>
+Date: Fri, 21 Jan 2011 12:43:07 +0300
 
-Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
----
- drivers/atm/idt77105.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> copy_to_user() used PRIV(dev)->stats instead of local stats variable.
+> Zero stats were returned to user in case of (zero != 0), also memcpy()
+> was pointless.
+> 
+> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
 
-diff --git a/drivers/atm/idt77105.c b/drivers/atm/idt77105.c
-index bca9cb8..487a547 100644
---- a/drivers/atm/idt77105.c
-+++ b/drivers/atm/idt77105.c
-@@ -151,7 +151,7 @@ static int fetch_stats(struct atm_dev *dev,struct idt77105_stats __user *arg,int
- 	spin_unlock_irqrestore(&idt77105_priv_lock, flags);
- 	if (arg = NULL)
- 		return 0;
--	return copy_to_user(arg, &PRIV(dev)->stats,
-+	return copy_to_user(arg, &stats,
- 		    sizeof(struct idt77105_stats)) ? -EFAULT : 0;
- }
- 
--- 
-1.7.0.4
-
+Applied, thanks.
