@@ -1,26 +1,58 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 17 Jan 2011 12:21:27 +0000
-Subject: Re: [PATCH] hid: hid-roccat-koneplus: potential NULL dereference
-Message-Id: <alpine.LNX.2.00.1101171321140.26685@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Jan 2011 19:55:22 +0000
+Subject: [PATCH 4/4] arch/arm/mach-omap2/smartreflex.c: Add missing IS_ERR test
+Message-Id: <1295898922-18822-5-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1295258925-31288-1-git-send-email-segoon@openwall.com>
-In-Reply-To: <1295258925-31288-1-git-send-email-segoon@openwall.com>
+References: <1295898922-18822-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1295898922-18822-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segoon@openwall.com>
-Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, 17 Jan 2011, Vasiliy Kulikov wrote:
+Function _sr_lookup, defined in the same file, returns ERR_PTR not NULL in
+an error case.
 
-> kmalloc() may fail, if so return -ENOMEM.
-> Also koneplus_init_koneplus_device_struct() should check return code
-> of koneplus_get_startup_profile() and propagate its return code.
-> 
-> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied, thanks Vasiliy.
+// <smpl>
+@r@
+identifier f;
+@@
+f(...) { ... return ERR_PTR(...); }
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+@@
+identifier r.f, fld;
+expression x;
+statement S1,S2;
+@@
+ x = f(...)
+ ... when != IS_ERR(x)
+(
+ if (IS_ERR(x) ||...) S1 else S2
+|
+*x->fld
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/arm/mach-omap2/smartreflex.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-omap2/smartreflex.c b/arch/arm/mach-omap2/smartreflex.c
+index 77ecebf..d7deadf 100644
+--- a/arch/arm/mach-omap2/smartreflex.c
++++ b/arch/arm/mach-omap2/smartreflex.c
+@@ -966,7 +966,7 @@ static int __devexit omap_sr_remove(struct platform_device *pdev)
+ 	}
+ 
+ 	sr_info = _sr_lookup(pdata->voltdm);
+-	if (!sr_info) {
++	if (IS_ERR(sr_info)) {
+ 		dev_warn(&pdev->dev, "%s: omap_sr struct not found\n",
+ 			__func__);
+ 		return -EINVAL;
+
