@@ -1,35 +1,27 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Mon, 24 Jan 2011 20:14:48 +0000
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Jan 2011 20:28:17 +0000
 Subject: Re: [PATCH 2/4] arch/arm/mach-at91/clock.c: Add missing IS_ERR test
-Message-Id: <20110124201447.GA31162@albatros>
+Message-Id: <Pine.LNX.4.64.1101242126570.3167@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1295898922-18822-1-git-send-email-julia@diku.dk>
 	<1295898922-18822-3-git-send-email-julia@diku.dk>
 	<4D3DD964.9020107@bluewatersys.com>
 	<Pine.LNX.4.64.1101242058430.3167@ask.diku.dk>
 	<20110124200515.GA30963@albatros>
-	<Pine.LNX.4.64.1101242108180.3167@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1101242108180.3167@ask.diku.dk>
+	<4D3DDD07.1030809@bluewatersys.com>
+In-Reply-To: <4D3DDD07.1030809@bluewatersys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Jan 24, 2011 at 21:09 +0100, Julia Lawall wrote:
-> On Mon, 24 Jan 2011, Vasiliy Kulikov wrote:
-> > clk_get() is defined per-architecture, sometimes it is NULL only.
-> 
-> In this case there is a definition in the same file, so it doesn't seem 
-> necessary to worry about possible other ones.  Unless there is some goal 
-> in the future to remove the local one?
+> Julia is correct. Some architectures can return NULL from clk_get, but I
+> didn't check the at91 before posting :-/. If we can't return NULL from
+> clk_get then we shouldn't bother checking for it. I do think we should
+> drop the !IS_ERR(clk_get(dev, func)) check though.
 
-My oppinion is that even such architecture dependent code written in
-architecure indepenent way is highly desirable.  Besides more clean code
-it is probably review by smaller group of people, so it is potentially
-more buggy.
+It seems a bit subtle, because the clk manipulated by clk_get in the call 
+of clk_get(dev, func) is not necessarily the same as the one in 
+clock_associate.  But perhaps this is the only possibility in practice?
 
-
-Thanks,
-
--- 
-Vasiliy
+julia
