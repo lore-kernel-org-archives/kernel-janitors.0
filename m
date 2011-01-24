@@ -1,40 +1,169 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Mon, 03 Jan 2011 07:45:38 +0000
-Subject: Re: [patch] mac80211: potential null dereference in mesh forwarding
-Message-Id: <1294040738.2535.265.camel@edumazet-laptop>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Jan 2011 19:55:21 +0000
+Subject: [PATCH 3/4] drivers/video/bf537-lq035.c: Add missing IS_ERR test
+Message-Id: <1295898922-18822-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110103054355.GP1886@bicker>
-In-Reply-To: <20110103054355.GP1886@bicker>
+References: <1295898922-18822-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1295898922-18822-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: kernel-janitors@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, Michael Hennerich <michael.hennerich@analog.com>, Bryan Wu <cooloney@kernel.org>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le lundi 03 janvier 2011 à 08:43 +0300, Dan Carpenter a écrit :
-> The printk() is supposed to be ratelimited but we should always goto out
-> when fwd_skb is NULL.  Otherwise it gets dereferenced on the next line.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-> index 5e9d3bc..dc8b566 100644
-> --- a/net/mac80211/rx.c
-> +++ b/net/mac80211/rx.c
-> @@ -1831,8 +1831,9 @@ ieee80211_rx_h_mesh_fwding(struct ieee80211_rx_data *rx)
->  
->  			fwd_skb = skb_copy(skb, GFP_ATOMIC);
->  
-> -			if (!fwd_skb && net_ratelimit()) {
-> -				printk(KERN_DEBUG "%s: failed to clone mesh frame\n",
-> +			if (!fwd_skb) {
-> +				if (net_ratelimit())
-> +					printk(KERN_DEBUG "%s: failed to clone mesh frame\n",
->  						   sdata->name);
->  				goto out;
->  			}
+lcd_device_register may return ERR_PTR, so a check is added for this value
+before the dereference.  All of the other changes reorganize the error
+handling code in this function to avoid duplicating all of it in the added
+case.
 
-Already discovered/coped by Milton Miller.
+In the original code, in one case, the global variable fb_buffer was set to
+NULL in error code that appears after this variable is initialized.  This
+is done now in all error handling code that has this property.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r@
+identifier f;
+@@
+f(...) { ... return ERR_PTR(...); }
+
+@@
+identifier r.f, fld;
+expression x;
+statement S1,S2;
+@@
+ x = f(...)
+ ... when != IS_ERR(x)
+(
+ if (IS_ERR(x) ||...) S1 else S2
+|
+*x->fld
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/video/bf537-lq035.c |   58 +++++++++++++++++++++++++-------------------
+ 1 file changed, 33 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/video/bf537-lq035.c b/drivers/video/bf537-lq035.c
+index 18c5078..47c21fb 100644
+--- a/drivers/video/bf537-lq035.c
++++ b/drivers/video/bf537-lq035.c
+@@ -696,6 +696,7 @@ static int __devinit bfin_lq035_probe(struct platform_device *pdev)
+ {
+ 	struct backlight_properties props;
+ 	dma_addr_t dma_handle;
++	int ret;
+ 
+ 	if (request_dma(CH_PPI, KBUILD_MODNAME)) {
+ 		pr_err("couldn't request PPI DMA\n");
+@@ -704,17 +705,16 @@ static int __devinit bfin_lq035_probe(struct platform_device *pdev)
+ 
+ 	if (request_ports()) {
+ 		pr_err("couldn't request gpio port\n");
+-		free_dma(CH_PPI);
+-		return -EFAULT;
++		ret = -EFAULT;
++		goto out_ports;
+ 	}
+ 
+ 	fb_buffer = dma_alloc_coherent(NULL, TOTAL_VIDEO_MEM_SIZE,
+ 				       &dma_handle, GFP_KERNEL);
+ 	if (fb_buffer = NULL) {
+ 		pr_err("couldn't allocate dma buffer\n");
+-		free_dma(CH_PPI);
+-		free_ports();
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out_dma_coherent;
+ 	}
+ 
+ 	if (L1_DATA_A_LENGTH)
+@@ -725,10 +725,8 @@ static int __devinit bfin_lq035_probe(struct platform_device *pdev)
+ 
+ 	if (dma_desc_table = NULL) {
+ 		pr_err("couldn't allocate dma descriptor\n");
+-		free_dma(CH_PPI);
+-		free_ports();
+-		dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out_table;
+ 	}
+ 
+ 	bfin_lq035_fb.screen_base = (void *)fb_buffer;
+@@ -771,31 +769,21 @@ static int __devinit bfin_lq035_probe(struct platform_device *pdev)
+ 	bfin_lq035_fb.pseudo_palette = kzalloc(sizeof(u32) * 16, GFP_KERNEL);
+ 	if (bfin_lq035_fb.pseudo_palette = NULL) {
+ 		pr_err("failed to allocate pseudo_palette\n");
+-		free_dma(CH_PPI);
+-		free_ports();
+-		dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out_palette;
+ 	}
+ 
+ 	if (fb_alloc_cmap(&bfin_lq035_fb.cmap, NBR_PALETTE, 0) < 0) {
+ 		pr_err("failed to allocate colormap (%d entries)\n",
+ 			NBR_PALETTE);
+-		free_dma(CH_PPI);
+-		free_ports();
+-		dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
+-		kfree(bfin_lq035_fb.pseudo_palette);
+-		return -EFAULT;
++		ret = -EFAULT;
++		goto out_cmap;
+ 	}
+ 
+ 	if (register_framebuffer(&bfin_lq035_fb) < 0) {
+ 		pr_err("unable to register framebuffer\n");
+-		free_dma(CH_PPI);
+-		free_ports();
+-		dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
+-		fb_buffer = NULL;
+-		kfree(bfin_lq035_fb.pseudo_palette);
+-		fb_dealloc_cmap(&bfin_lq035_fb.cmap);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out_reg;
+ 	}
+ 
+ 	i2c_add_driver(&ad5280_driver);
+@@ -807,11 +795,31 @@ static int __devinit bfin_lq035_probe(struct platform_device *pdev)
+ 
+ 	lcd_dev = lcd_device_register(KBUILD_MODNAME, &pdev->dev, NULL,
+ 				      &bfin_lcd_ops);
++	if (IS_ERR(lcd_dev)) {
++		pr_err("unable to register lcd\n");
++		ret = PTR_ERR(lcd_dev);
++		goto out_lcd;
++	}
+ 	lcd_dev->props.max_contrast = 255,
+ 
+ 	pr_info("initialized");
+ 
+ 	return 0;
++out_lcd:
++	unregister_framebuffer(&bfin_lq035_fb);
++out_reg:
++	fb_dealloc_cmap(&bfin_lq035_fb.cmap);
++out_cmap:
++	kfree(bfin_lq035_fb.pseudo_palette);
++out_palette:
++out_table:
++	dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
++	fb_buffer = NULL;
++out_dma_coherent:
++	free_ports();
++out_ports:
++	free_dma(CH_PPI);
++	return ret;
+ }
+ 
+ static int __devexit bfin_lq035_remove(struct platform_device *pdev)
 
