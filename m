@@ -1,11 +1,9 @@
-From: Ryan Mallon <ryan@bluewatersys.com>
-Date: Mon, 24 Jan 2011 21:51:38 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Date: Mon, 24 Jan 2011 23:23:02 +0000
 Subject: Re: [PATCH 2/4] arch/arm/mach-at91/clock.c: Add missing IS_ERR test
-Message-Id: <4D3DF46A.1030009@bluewatersys.com>
+Message-Id: <20110124232302.GQ24104@n2100.arm.linux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1295898922-18822-1-git-send-email-julia@diku.dk>
-	<1295898922-18822-3-git-send-email-julia@diku.dk>
-	<4D3DD964.9020107@bluewatersys.com>
+References: <4D3DD964.9020107@bluewatersys.com>
 	<Pine.LNX.4.64.1101242058430.3167@ask.diku.dk>
 	<20110124200515.GA30963@albatros>
 	<4D3DDD07.1030809@bluewatersys.com>
@@ -14,84 +12,71 @@ References: <1295898922-18822-1-git-send-email-julia@diku.dk>
 	<Pine.LNX.4.64.1101242200500.3167@ask.diku.dk>
 	<4D3DE9CD.2040800@bluewatersys.com>
 	<Pine.LNX.4.64.1101242231240.3167@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1101242231240.3167@ask.diku.dk>
+	<4D3DF46A.1030009@bluewatersys.com>
+In-Reply-To: <4D3DF46A.1030009@bluewatersys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On 01/25/2011 10:31 AM, Julia Lawall wrote:
-> On Tue, 25 Jan 2011, Ryan Mallon wrote:
+On Tue, Jan 25, 2011 at 10:51:38AM +1300, Ryan Mallon wrote:
+> You could, but it would not be helpful. Clock associations are used so
+> that _different_ devices can have the same function and map to the
+> correct clock. This is used when there are multiple instances of a
+> single peripheral. For example, the uart clocks work like this:
 > 
->> On 01/25/2011 10:01 AM, Julia Lawall wrote:
->>> On Tue, 25 Jan 2011, Ryan Mallon wrote:
->>>
->>>> On 01/25/2011 09:28 AM, Julia Lawall wrote:
->>>>>> Julia is correct. Some architectures can return NULL from clk_get, but I
->>>>>> didn't check the at91 before posting :-/. If we can't return NULL from
->>>>>> clk_get then we shouldn't bother checking for it. I do think we should
->>>>>> drop the !IS_ERR(clk_get(dev, func)) check though.
->>>>>
->>>>> It seems a bit subtle, because the clk manipulated by clk_get in the call 
->>>>> of clk_get(dev, func) is not necessarily the same as the one in 
->>>>> clock_associate.  But perhaps this is the only possibility in practice?
->>>>
->>>> Not sure I follow. The at91 clk_get does not modify the clk. In
->>>> at91_clock_associate we have:
->>>>
->>>> 	clk->function = func;
->>>> 	clk->dev = dev;
->>>>
->>>> and in clk_get we have:
->>>>
->>>> 	if (clk->function && (dev = clk->dev) &&
->>>> 		strcmp(id, clk->function) = 0)
->>>>             return clk;
->>>>
->>>> So at91_clock_associate sets the function for a clock, and clk_get
->>>> returns clocks based on the function association if the name lookup
->>>> fails. The only caveat to this is that the the clock function name
->>>> (clk->function) is not the same as any others clock's clk->name.
->>>
->>> Right, that was what I was worried about.  That one would find the same 
->>> information already present but somewhere else.  But perhaps it can't 
->>> happen, or it doesn't matter if it does?
->>
->> I think that users are expected to ensure that clock names and clock
->> function names do not overlap.
+> 	at91_clock_associate("usart1_clk", &pdev->dev, "usart");
 > 
-> One can't have a clock with a different name but the same device and 
-> function?
+> so then you can do this in a driver:
+> 	
+> 	uart_clk = clk_get(&pdev->dev, "usart");
+> 
+> Rather than:
+> 
+> 	uart_clk = clk_get(NULL, "usart1_clk");
+> 
+> The former will find the correct uart clock for the device. Because each
+> uart is a separate device the correct clock will be selected for each uart.
+> 	
+> My point was that there should be no overlap between clk->name and
+> clk->function otherwise clk_get will not be able to return the correct
+> clock.
 
-You could, but it would not be helpful. Clock associations are used so
-that _different_ devices can have the same function and map to the
-correct clock. This is used when there are multiple instances of a
-single peripheral. For example, the uart clocks work like this:
+It would be nice if AT91 could switch over to using clkdev at some
+point, which greatly helps with associating struct clk's with their
+device/function names - and reduces the amount of "different" code.
 
-	at91_clock_associate("usart1_clk", &pdev->dev, "usart");
-
-so then you can do this in a driver:
-	
-	uart_clk = clk_get(&pdev->dev, "usart");
-
-Rather than:
-
-	uart_clk = clk_get(NULL, "usart1_clk");
-
-The former will find the correct uart clock for the device. Because each
-uart is a separate device the correct clock will be selected for each uart.
-	
-My point was that there should be no overlap between clk->name and
-clk->function otherwise clk_get will not be able to return the correct
+You can then use clk_add_alias() to create aliases of an existing
 clock.
 
-~Ryan
+Looking at your clk_get(), I think one way to do this would be, in
+clk_register():
 
--- 
-Bluewater Systems Ltd - ARM Technology Solution Centre
+	struct clk_lookup *cl;
 
-Ryan Mallon         		5 Amuri Park, 404 Barbadoes St
-ryan@bluewatersys.com         	PO Box 13 889, Christchurch 8013
-http://www.bluewatersys.com	New Zealand
-Phone: +64 3 3779127		Freecall: Australia 1800 148 751
-Fax:   +64 3 3779135			  USA 1800 261 2934
+	/* create function-only entry */
+	cl = clkdev_alloc(clk, clk->name, NULL);
+	if (!cl)
+		return -ENOMEM;
+	clkdev_add(cl);
+
+	/* not sure if you need this? */
+	if (clk->dev && clk->function) {
+		cl = clkdev_alloc(clk, clk->function, "%s", dev_name(clk->dev));
+		if (!cl)
+			return -ENOMEM;
+		clkdev_add(cl);
+	}
+
+at91_clock_associate() becomes:
+
+	err = clk_add_alias(func, dev_name(dev), id, NULL);
+	return err;
+
+Although maybe in the long run see about removing at91_clock_associate()
+entirely as its just a wrapper.
+
+The only requirement there is that 'dev' in each case is a registered
+device, otherwise dev_name() won't work.
+
+You can then use the generic clk_get()/clk_put() which clkdev provides.
