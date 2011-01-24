@@ -1,58 +1,71 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Jan 2011 19:55:22 +0000
-Subject: [PATCH 4/4] arch/arm/mach-omap2/smartreflex.c: Add missing IS_ERR test
-Message-Id: <1295898922-18822-5-git-send-email-julia@diku.dk>
+From: Kevin Hilman <khilman@ti.com>
+Date: Mon, 24 Jan 2011 21:24:00 +0000
+Subject: Re: [PATCH 4/4] arch/arm/mach-omap2/smartreflex.c: Add missing IS_ERR test
+Message-Id: <87tygy807j.fsf@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1295898922-18822-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1295898922-18822-1-git-send-email-julia@diku.dk>
+	<1295898922-18822-5-git-send-email-julia@diku.dk>
+In-Reply-To: <1295898922-18822-5-git-send-email-julia@diku.dk> (Julia Lawall's
+	message of "Mon, 24 Jan 2011 20:55:22 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Function _sr_lookup, defined in the same file, returns ERR_PTR not NULL in
-an error case.
+Julia Lawall <julia@diku.dk> writes:
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+> Function _sr_lookup, defined in the same file, returns ERR_PTR not NULL in
+> an error case.
 
-// <smpl>
-@r@
-identifier f;
-@@
-f(...) { ... return ERR_PTR(...); }
+Thanks, will queue this via the OMAP tree for 2.6.38-rc.
 
-@@
-identifier r.f, fld;
-expression x;
-statement S1,S2;
-@@
- x = f(...)
- ... when != IS_ERR(x)
-(
- if (IS_ERR(x) ||...) S1 else S2
-|
-*x->fld
-)
-// </smpl>
+Kevin
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- arch/arm/mach-omap2/smartreflex.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-omap2/smartreflex.c b/arch/arm/mach-omap2/smartreflex.c
-index 77ecebf..d7deadf 100644
---- a/arch/arm/mach-omap2/smartreflex.c
-+++ b/arch/arm/mach-omap2/smartreflex.c
-@@ -966,7 +966,7 @@ static int __devexit omap_sr_remove(struct platform_device *pdev)
- 	}
- 
- 	sr_info = _sr_lookup(pdata->voltdm);
--	if (!sr_info) {
-+	if (IS_ERR(sr_info)) {
- 		dev_warn(&pdev->dev, "%s: omap_sr struct not found\n",
- 			__func__);
- 		return -EINVAL;
-
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @r@
+> identifier f;
+> @@
+> f(...) { ... return ERR_PTR(...); }
+>
+> @@
+> identifier r.f, fld;
+> expression x;
+> statement S1,S2;
+> @@
+>  x = f(...)
+>  ... when != IS_ERR(x)
+> (
+>  if (IS_ERR(x) ||...) S1 else S2
+> |
+> *x->fld
+> )
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+>
+> ---
+>  arch/arm/mach-omap2/smartreflex.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-omap2/smartreflex.c b/arch/arm/mach-omap2/smartreflex.c
+> index 77ecebf..d7deadf 100644
+> --- a/arch/arm/mach-omap2/smartreflex.c
+> +++ b/arch/arm/mach-omap2/smartreflex.c
+> @@ -966,7 +966,7 @@ static int __devexit omap_sr_remove(struct platform_device *pdev)
+>  	}
+>  
+>  	sr_info = _sr_lookup(pdata->voltdm);
+> -	if (!sr_info) {
+> +	if (IS_ERR(sr_info)) {
+>  		dev_warn(&pdev->dev, "%s: omap_sr struct not found\n",
+>  			__func__);
+>  		return -EINVAL;
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
