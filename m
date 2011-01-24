@@ -1,59 +1,30 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Date: Tue, 25 Jan 2011 17:23:47 +0000
-Subject: Re: [PATCH 2/4] arch/arm/mach-at91/clock.c: Add missing IS_ERR test
-Message-Id: <20110125172347.GC1441@game.jcrosoft.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 24 Jan 2011 18:32:13 +0000
+Subject: [patch] hid: check for kmalloc() failure
+Message-Id: <20110124183213.GA2721@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4D3DDD07.1030809@bluewatersys.com>
-	<Pine.LNX.4.64.1101242126570.3167@ask.diku.dk>
-	<4D3DE35B.1030102@bluewatersys.com>
-	<Pine.LNX.4.64.1101242200500.3167@ask.diku.dk>
-	<4D3DE9CD.2040800@bluewatersys.com>
-	<Pine.LNX.4.64.1101242231240.3167@ask.diku.dk>
-	<4D3DF46A.1030009@bluewatersys.com>
-	<20110124232302.GQ24104@n2100.arm.linux.org.uk>
-	<20110125014428.GO24284@game.jcrosoft.org>
-	<Pine.LNX.4.64.1101250712110.29909@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1101250712110.29909@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jiri Kosina <jkosina@suse.cz>, erazor_de@users.sourceforge.net
+Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 07:12 Tue 25 Jan     , Julia Lawall wrote:
-> On Tue, 25 Jan 2011, Jean-Christophe PLAGNIOL-VILLARD wrote:
-> 
-> > On 23:23 Mon 24 Jan     , Russell King - ARM Linux wrote:
-> > > On Tue, Jan 25, 2011 at 10:51:38AM +1300, Ryan Mallon wrote:
-> > > > You could, but it would not be helpful. Clock associations are used so
-> > > > that _different_ devices can have the same function and map to the
-> > > > correct clock. This is used when there are multiple instances of a
-> > > > single peripheral. For example, the uart clocks work like this:
-> > > > 
-> > > > 	at91_clock_associate("usart1_clk", &pdev->dev, "usart");
-> > > > 
-> > > > so then you can do this in a driver:
-> > > > 	
-> > > > 	uart_clk = clk_get(&pdev->dev, "usart");
-> > > > 
-> > > > Rather than:
-> > > > 
-> > > > 	uart_clk = clk_get(NULL, "usart1_clk");
-> > > > 
-> > > > The former will find the correct uart clock for the device. Because each
-> > > > uart is a separate device the correct clock will be selected for each uart.
-> > > > 	
-> > > > My point was that there should be no overlap between clk->name and
-> > > > clk->function otherwise clk_get will not be able to return the correct
-> > > > clock.
-> > > 
-> > > It would be nice if AT91 could switch over to using clkdev at some
-> > > point, which greatly helps with associating struct clk's with their
-> > > device/function names - and reduces the amount of "different" code.
-> > I working on it that's was one of the reason I move clkdev to drivers
-> > as AT91 and AVR32 need to switch
-> 
-> Shall I just leave the patch as is then?
-I'll try to send a patch before chinese new year
+Return -ENOMEM if kmalloc() fails.
 
-Best Regards,
-J.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/hid/hid-roccat-koneplus.c b/drivers/hid/hid-roccat-koneplus.c
+index 1608c8d..c27bc91 100644
+--- a/drivers/hid/hid-roccat-koneplus.c
++++ b/drivers/hid/hid-roccat-koneplus.c
+@@ -220,6 +220,10 @@ static int koneplus_get_startup_profile(struct usb_device *usb_dev)
+ 	int retval;
+ 
+ 	buf = kmalloc(sizeof(struct koneplus_startup_profile), GFP_KERNEL);
++	if (!buf) {
++		retval = -ENOMEM;
++		goto out;
++	}
+ 
+ 	retval = koneplus_receive(usb_dev, KONEPLUS_USB_COMMAND_STARTUP_PROFILE,
+ 			buf, sizeof(struct koneplus_startup_profile));
