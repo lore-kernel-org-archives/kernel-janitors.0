@@ -1,72 +1,59 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 25 Jan 2011 11:31:55 +0000
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Date: Tue, 25 Jan 2011 17:23:47 +0000
 Subject: Re: [PATCH 2/4] arch/arm/mach-at91/clock.c: Add missing IS_ERR test
-Message-Id: <Pine.LNX.4.64.1101251231060.12123@pc-004.diku.dk>
+Message-Id: <20110125172347.GC1441@game.jcrosoft.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1295898922-18822-1-git-send-email-julia@diku.dk>
-	<1295898922-18822-3-git-send-email-julia@diku.dk>
-	<4D3DD964.9020107@bluewatersys.com>
-	<Pine.LNX.4.64.1101242058430.3167@ask.diku.dk>
-	<20110124200515.GA30963@albatros>
-	<Pine.LNX.4.64.1101242108180.3167@ask.diku.dk>
-	<4D3EA6EC.5050305@bfs.de>
-	<20110125104333.GE11507@n2100.arm.linux.org.uk>
-	<4D3EB02D.6090302@bfs.de>
-	<Pine.LNX.4.64.1101251216190.12123@pc-004.diku.dk>
-	<20110125112641.GG11507@n2100.arm.linux.org.uk>
-In-Reply-To: <20110125112641.GG11507@n2100.arm.linux.org.uk>
+References: <4D3DDD07.1030809@bluewatersys.com>
+	<Pine.LNX.4.64.1101242126570.3167@ask.diku.dk>
+	<4D3DE35B.1030102@bluewatersys.com>
+	<Pine.LNX.4.64.1101242200500.3167@ask.diku.dk>
+	<4D3DE9CD.2040800@bluewatersys.com>
+	<Pine.LNX.4.64.1101242231240.3167@ask.diku.dk>
+	<4D3DF46A.1030009@bluewatersys.com>
+	<20110124232302.GQ24104@n2100.arm.linux.org.uk>
+	<20110125014428.GO24284@game.jcrosoft.org>
+	<Pine.LNX.4.64.1101250712110.29909@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1101250712110.29909@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Tue, 25 Jan 2011, Russell King - ARM Linux wrote:
-
-> On Tue, Jan 25, 2011 at 12:18:40PM +0100, Julia Lawall wrote:
-> > On Tue, 25 Jan 2011, walter harms wrote:
-> > > So these is a bug ? They should return -ENOENT ?
+On 07:12 Tue 25 Jan     , Julia Lawall wrote:
+> On Tue, 25 Jan 2011, Jean-Christophe PLAGNIOL-VILLARD wrote:
+> 
+> > On 23:23 Mon 24 Jan     , Russell King - ARM Linux wrote:
+> > > On Tue, Jan 25, 2011 at 10:51:38AM +1300, Ryan Mallon wrote:
+> > > > You could, but it would not be helpful. Clock associations are used so
+> > > > that _different_ devices can have the same function and map to the
+> > > > correct clock. This is used when there are multiple instances of a
+> > > > single peripheral. For example, the uart clocks work like this:
+> > > > 
+> > > > 	at91_clock_associate("usart1_clk", &pdev->dev, "usart");
+> > > > 
+> > > > so then you can do this in a driver:
+> > > > 	
+> > > > 	uart_clk = clk_get(&pdev->dev, "usart");
+> > > > 
+> > > > Rather than:
+> > > > 
+> > > > 	uart_clk = clk_get(NULL, "usart1_clk");
+> > > > 
+> > > > The former will find the correct uart clock for the device. Because each
+> > > > uart is a separate device the correct clock will be selected for each uart.
+> > > > 	
+> > > > My point was that there should be no overlap between clk->name and
+> > > > clk->function otherwise clk_get will not be able to return the correct
+> > > > clock.
 > > > 
-> > > The interessting question is: what to do with an error ?
-> > > 
-> > > Obviously some architecture can live with NULL, so it is not an critical
-> > > error. An the patch shows a code that is simply a return, not even the
-> > > user is informed that something did not work as expected.
-> > > 
-> > > From that point of view i would like question if it is useful to have
-> > > a "detailed" error instead of just returning NULL.
-> > 
-> > Somewhat unrelatedly, I often run into code where error handling code is 
-> > needed, but not present, and the function returns void, so nothing is 
-> > provided for propagating the error further.  I generally consider these 
-> > cases to be beyond my expertise to fix...
+> > > It would be nice if AT91 could switch over to using clkdev at some
+> > > point, which greatly helps with associating struct clk's with their
+> > > device/function names - and reduces the amount of "different" code.
+> > I working on it that's was one of the reason I move clkdev to drivers
+> > as AT91 and AVR32 need to switch
 > 
-> That is a pain, but so is returning NULL in error conditions.  If you've
-> got several layers of nesting, and every level returns NULL on error,
-> it's an awful lot of debugging to find out _why_ a failure happened.
-> 
-> With error codes, it narrows down the number of places which could have
-> returned that error code, and as error codes can be descriptive, it
-> turns it into an "oh, I forgot about doing X" or "it's failing *there*"
-> rather than a puzzle.
-> 
-> The only place where it really makes sense to return NULL is with memory
-> allocators.  NULL is an accepted value for meaning "I couldn't allocate
-> memory" as its not a useful pointer value.
-> 
-> The alternative is to have an API like:
-> 
-> 	struct clk *clk_get(int *error, ...)
-> or
-> 	int clk_get(struct clk **, ...)
-> 
-> but that then leads to _additional_ errors made by driver authors and by
-> implementations - you can no longer guarantee that *error will always be
-> initialized, and this is why the whole ERR_PTR/PTR_ERR/IS_ERR stuff was
-> implemented.  The kernel used to have such things in it and they were
-> buggy.
+> Shall I just leave the patch as is then?
+I'll try to send a patch before chinese new year
 
-I agree that error codes are very useful.  The problem is rather how to 
-propagate any sort of error indicator, whether ERR_PTR, NULL, an negative 
-integer, etc.
-
-julia
+Best Regards,
+J.
