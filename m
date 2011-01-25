@@ -1,7 +1,7 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 25 Jan 2011 11:18:40 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Date: Tue, 25 Jan 2011 11:26:41 +0000
 Subject: Re: [PATCH 2/4] arch/arm/mach-at91/clock.c: Add missing IS_ERR test
-Message-Id: <Pine.LNX.4.64.1101251216190.12123@pc-004.diku.dk>
+Message-Id: <20110125112641.GG11507@n2100.arm.linux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1295898922-18822-1-git-send-email-julia@diku.dk>
 	<1295898922-18822-3-git-send-email-julia@diku.dk>
@@ -12,58 +12,52 @@ References: <1295898922-18822-1-git-send-email-julia@diku.dk>
 	<4D3EA6EC.5050305@bfs.de>
 	<20110125104333.GE11507@n2100.arm.linux.org.uk>
 	<4D3EB02D.6090302@bfs.de>
-In-Reply-To: <4D3EB02D.6090302@bfs.de>
+	<Pine.LNX.4.64.1101251216190.12123@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1101251216190.12123@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Tue, 25 Jan 2011, walter harms wrote:
+On Tue, Jan 25, 2011 at 12:18:40PM +0100, Julia Lawall wrote:
+> On Tue, 25 Jan 2011, walter harms wrote:
+> > So these is a bug ? They should return -ENOENT ?
+> > 
+> > The interessting question is: what to do with an error ?
+> > 
+> > Obviously some architecture can live with NULL, so it is not an critical
+> > error. An the patch shows a code that is simply a return, not even the
+> > user is informed that something did not work as expected.
+> > 
+> > From that point of view i would like question if it is useful to have
+> > a "detailed" error instead of just returning NULL.
+> 
+> Somewhat unrelatedly, I often run into code where error handling code is 
+> needed, but not present, and the function returns void, so nothing is 
+> provided for propagating the error further.  I generally consider these 
+> cases to be beyond my expertise to fix...
 
-> 
-> 
-> Am 25.01.2011 11:43, schrieb Russell King - ARM Linux:
-> > On Tue, Jan 25, 2011 at 11:33:16AM +0100, walter harms wrote:
-> >> Would it be more easy to return NULL in the error case of clk_get() instead
-> >> of ERR_PTR(-ENOENT) ?
-> >>
-> >> So the default could be return NULL and an architecture depending solution
-> >> replacing that.
-> > 
-> > That's not how the API is defined.  The API defines error-pointers to be
-> > errors, everything should be considered valid.  Please don't go down the
-> > route of doing something architecturally different from that.
-> > 
-> > What if, say, you couldn't return the struct clk because maybe it could
-> > only be controlled by one user?  Returning an EBUSY error pointer would
-> > indicate this condition.  What if the module providing the struct clk
-> > hasn't finished initializing - that's another reason for EBUSY rather
-> > than ENOENT.
-> > 
-> > Error codes are useful to describe why something failed.  NULL pointers
-> > can't do that.
-> > 
-> 
-> On Mon, 24 Jan 2011, Vasiliy Kulikov wrote:
-> > 
-> ...
-> > clk_get() is defined per-architecture, sometimes it is NULL only.
-> >
-> 
-> So these is a bug ? They should return -ENOENT ?
-> 
-> The interessting question is: what to do with an error ?
-> 
-> Obviously some architecture can live with NULL, so it is not an critical
-> error. An the patch shows a code that is simply a return, not even the
-> user is informed that something did not work as expected.
-> 
-> From that point of view i would like question if it is useful to have
-> a "detailed" error instead of just returning NULL.
+That is a pain, but so is returning NULL in error conditions.  If you've
+got several layers of nesting, and every level returns NULL on error,
+it's an awful lot of debugging to find out _why_ a failure happened.
 
-Somewhat unrelatedly, I often run into code where error handling code is 
-needed, but not present, and the function returns void, so nothing is 
-provided for propagating the error further.  I generally consider these 
-cases to be beyond my expertise to fix...
+With error codes, it narrows down the number of places which could have
+returned that error code, and as error codes can be descriptive, it
+turns it into an "oh, I forgot about doing X" or "it's failing *there*"
+rather than a puzzle.
 
-julia
+The only place where it really makes sense to return NULL is with memory
+allocators.  NULL is an accepted value for meaning "I couldn't allocate
+memory" as its not a useful pointer value.
+
+The alternative is to have an API like:
+
+	struct clk *clk_get(int *error, ...)
+or
+	int clk_get(struct clk **, ...)
+
+but that then leads to _additional_ errors made by driver authors and by
+implementations - you can no longer guarantee that *error will always be
+initialized, and this is why the whole ERR_PTR/PTR_ERR/IS_ERR stuff was
+implemented.  The kernel used to have such things in it and they were
+buggy.
