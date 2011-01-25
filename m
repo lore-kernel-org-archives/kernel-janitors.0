@@ -1,56 +1,60 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 25 Jan 2011 06:12:34 +0000
+From: walter harms <wharms@bfs.de>
+Date: Tue, 25 Jan 2011 10:33:16 +0000
 Subject: Re: [PATCH 2/4] arch/arm/mach-at91/clock.c: Add missing IS_ERR test
-Message-Id: <Pine.LNX.4.64.1101250712110.29909@ask.diku.dk>
+Message-Id: <4D3EA6EC.5050305@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1101242058430.3167@ask.diku.dk>
-	<20110124200515.GA30963@albatros> <4D3DDD07.1030809@bluewatersys.com>
-	<Pine.LNX.4.64.1101242126570.3167@ask.diku.dk>
-	<4D3DE35B.1030102@bluewatersys.com>
-	<Pine.LNX.4.64.1101242200500.3167@ask.diku.dk>
-	<4D3DE9CD.2040800@bluewatersys.com>
-	<Pine.LNX.4.64.1101242231240.3167@ask.diku.dk>
-	<4D3DF46A.1030009@bluewatersys.com>
-	<20110124232302.GQ24104@n2100.arm.linux.org.uk>
-	<20110125014428.GO24284@game.jcrosoft.org>
-In-Reply-To: <20110125014428.GO24284@game.jcrosoft.org>
+References: <1295898922-18822-1-git-send-email-julia@diku.dk>
+	<1295898922-18822-3-git-send-email-julia@diku.dk>
+	<4D3DD964.9020107@bluewatersys.com>
+	<Pine.LNX.4.64.1101242058430.3167@ask.diku.dk>
+	<20110124200515.GA30963@albatros>
+	<Pine.LNX.4.64.1101242108180.3167@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1101242108180.3167@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Tue, 25 Jan 2011, Jean-Christophe PLAGNIOL-VILLARD wrote:
 
-> On 23:23 Mon 24 Jan     , Russell King - ARM Linux wrote:
-> > On Tue, Jan 25, 2011 at 10:51:38AM +1300, Ryan Mallon wrote:
-> > > You could, but it would not be helpful. Clock associations are used so
-> > > that _different_ devices can have the same function and map to the
-> > > correct clock. This is used when there are multiple instances of a
-> > > single peripheral. For example, the uart clocks work like this:
-> > > 
-> > > 	at91_clock_associate("usart1_clk", &pdev->dev, "usart");
-> > > 
-> > > so then you can do this in a driver:
-> > > 	
-> > > 	uart_clk = clk_get(&pdev->dev, "usart");
-> > > 
-> > > Rather than:
-> > > 
-> > > 	uart_clk = clk_get(NULL, "usart1_clk");
-> > > 
-> > > The former will find the correct uart clock for the device. Because each
-> > > uart is a separate device the correct clock will be selected for each uart.
-> > > 	
-> > > My point was that there should be no overlap between clk->name and
-> > > clk->function otherwise clk_get will not be able to return the correct
-> > > clock.
-> > 
-> > It would be nice if AT91 could switch over to using clkdev at some
-> > point, which greatly helps with associating struct clk's with their
-> > device/function names - and reduces the amount of "different" code.
-> I working on it that's was one of the reason I move clkdev to drivers
-> as AT91 and AVR32 need to switch
 
-Shall I just leave the patch as is then?
+Am 24.01.2011 21:09, schrieb Julia Lawall:
+> On Mon, 24 Jan 2011, Vasiliy Kulikov wrote:
+> 
+>> On Mon, Jan 24, 2011 at 21:00 +0100, Julia Lawall wrote:
+>>> On Tue, 25 Jan 2011, Ryan Mallon wrote:
+>>>
+>>>> On 01/25/2011 08:55 AM, Julia Lawall wrote:
+>>>>> @@ -224,7 +224,7 @@ void __init at91_clock_associate(const char *id, struct device *dev, const char
+>>>>>  {
+>>>>>  	struct clk *clk = clk_get(NULL, id);
+>>>>>  
+>>>>> -	if (!dev || !clk || !IS_ERR(clk_get(dev, func)))
+>>>>> +	if (!dev || IS_ERR(clk) || !IS_ERR(clk_get(dev, func)))
+>>>>>  		return;
+>>>>
+>>>> I think we want:
+>>>>
+>>>> 	if (!dev || !clk || IS_ERR(clk) || !IS_ERR(clk_get(dev, func)))
+>>>> 		return;
+>>>>
+>>>> Since it is valid to return a NULL clk, and we don't want to try and
+>>>> dereference it if that is the case.
+>>>
+>>> Looking at the given defintion of clk_get, I can't see how that could 
+>>> happen:
+>>
+>> clk_get() is defined per-architecture, sometimes it is NULL only.
+> 
+> In this case there is a definition in the same file, so it doesn't seem 
+> necessary to worry about possible other ones.  Unless there is some goal 
+> in the future to remove the local one?
+> 
 
-julia
+Would it be more easy to return NULL in the error case of clk_get() instead
+of ERR_PTR(-ENOENT) ?
+
+So the default could be return NULL and an architecture depending solution
+replacing that.
+
+re,
+ wh
