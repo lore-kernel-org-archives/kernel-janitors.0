@@ -1,83 +1,103 @@
-From: Devin Heitmueller <dheitmueller@kernellabs.com>
-Date: Tue, 25 Jan 2011 23:05:37 +0000
-Subject: Re: [PATCH] video/saa7164: Fix sparse warning: Using plain integer as
-Message-Id: <AANLkTinap-4djdUORmOnnnVFtTm4wSxMqTNVxrfg2jYw@mail.gmail.com>
+From: Andy Walls <awalls@md.metrocast.net>
+Date: Wed, 26 Jan 2011 00:30:13 +0000
+Subject: Re: [PATCH] video/saa7164: Fix sparse warning: Using plain integer
+Message-Id: <1296001813.25686.27.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1295988851-23561-1-git-send-email-peterhuewe@gmx.de>
-	<Pine.LNX.4.64.1101252319570.3668@ask.diku.dk>
-	<201101252354.31217.PeterHuewe@gmx.de>
-In-Reply-To: <201101252354.31217.PeterHuewe@gmx.de>
+	 <Pine.LNX.4.64.1101252319570.3668@ask.diku.dk>
+	 <201101252354.31217.PeterHuewe@gmx.de>
+	 <AANLkTinap-4djdUORmOnnnVFtTm4wSxMqTNVxrfg2jYw@mail.gmail.com>
+In-Reply-To: <AANLkTinap-4djdUORmOnnnVFtTm4wSxMqTNVxrfg2jYw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: =?ISO-8859-1?Q?Peter_H=FCwe?= <PeterHuewe@gmx.de>
-Cc: Julia Lawall <julia@diku.dk>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Steven Toth <stoth@kernellabs.com>, Tejun Heo <tj@kernel.org>, Dan Carpenter <error27@gmail.com>
+To: Devin Heitmueller <dheitmueller@kernellabs.com>
+Cc: Peter =?ISO-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>, Julia Lawall <julia@diku.dk>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Steven Toth <stoth@kernellabs.com>, Tejun Heo <tj@kernel.org>, Dan Carpenter <error27@gmail.com>
 
-On Tue, Jan 25, 2011 at 5:54 PM, Peter H=FCwe <PeterHuewe@gmx.de> wrote:
-> Hi Julia,
->
-> thanks for your input.
-> So do I understand you correctly if I say
-> if(!x) is better than if(x=3DNULL) in any case?
->
-> Or only for the kmalloc family?
->
-> Do you remember the reason why !x should be preferred?
->
-> In Documentation/CodingStyle , =A0Chapter 7: Centralized exiting of funct=
+On Tue, 2011-01-25 at 18:05 -0500, Devin Heitmueller wrote:
+> On Tue, Jan 25, 2011 at 5:54 PM, Peter H=C3=BCwe <PeterHuewe@gmx.de> wrot=
+e:
+> > Hi Julia,
+> >
+> > thanks for your input.
+> > So do I understand you correctly if I say
+> > if(!x) is better than if(x=3DNULL) in any case?
+
+The machine code should be equivalent in size and speed.
+
+
+> > Or only for the kmalloc family?
+> >
+> > Do you remember the reason why !x should be preferred?
+> >
+> > In Documentation/CodingStyle ,  Chapter 7: Centralized exiting of funct=
 ions
-> there is a function fun with looks like this:
-> int fun(int a)
-> {
-> =A0 =A0int result =3D 0;
-> =A0 =A0char *buffer =3D kmalloc(SIZE);
->
-> =A0 =A0if (buffer =3D NULL)
-> =A0 =A0 =A0 =A0return -ENOMEM;
->
-> =A0 =A0if (condition1) {
-> =A0 =A0 =A0 =A0while (loop1) {
-> =A0 =A0 =A0 =A0 =A0 =A0...
-> =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0result =3D 1;
-> =A0 =A0 =A0 =A0goto out;
-> =A0 =A0}
-> =A0 =A0...
-> out:
-> =A0 =A0kfree(buffer);
-> =A0 =A0return result;
-> }
->
->
-> --> =A0So =A0 if (buffer =3D NULL) is in the official CodingStyle - maybe=
- we should
-> add a paragraph there as well ;)
->
->
-> Don't get me wrong, I just want to learn ;)
+> > there is a function fun with looks like this:
+> > int fun(int a)
+> > {
+> >    int result =3D 0;
+> >    char *buffer =3D kmalloc(SIZE);
+> >
+> >    if (buffer =3D NULL)
+> >        return -ENOMEM;
 
-To my knowledge, the current CodingStyle doesn't enforce a particular
-standard in this regard, leaving it at the discretion of the author.
+> >
+> > -->  So   if (buffer =3D NULL) is in the official CodingStyle - maybe w=
+e should
+> > add a paragraph there as well ;)
 
-Whether to do (!foo) or (foo =3D NULL) is one of those debates people
-have similar to whether to use tabs as whitespace.  People have
-differing opinions and there is no clearly "right" answer.  Personally
-I strongly prefer (foo =3D NULL) as it makes it blindingly obvious that
-it's a pointer comparison, whereas (!foo) leaves you wondering whether
-it's an integer or pointer comparison.
 
-All that said, you shouldn't submit patches which arbitrarily change
-from one format to the other.  With regards to the proposed patch, you
-should follow whatever style the author employed in the rest of the
-file.
+CodingStyle shouldn't specify anything on the matter.  There is no
+overall, optimal choice for all contexts.   Arguing either way is as
+pointless as the Lilliputians' little-end vs. big-end dispute.
 
-Cheers,
 
-Devin
+> To my knowledge, the current CodingStyle doesn't enforce a particular
+> standard in this regard, leaving it at the discretion of the author.
 
---=20
-Devin J. Heitmueller - Kernel Labs
-http://www.kernellabs.com
+Correct, it does not.  I just checked CodingStyle and checkpatch
+yesterday.
+
+
+> Whether to do (!foo) or (foo =3D NULL) is one of those debates people
+> have similar to whether to use tabs as whitespace.  People have
+> differing opinions and there is no clearly "right" answer.
+
+It depends on one's measurement criteria for "optimizing" the written
+form of source code.
+
+I prefer more explicit statement of action is taking place over
+statements with fewer characters.  It usually saves me time when
+revisiting code.
+
+More genrally I prefer any coding practice that saves me time when
+revisiting code.  (Note the word "me" carries a lot of context with it.)
+
+Ambiguity and implicit behaviors ultimately waste my time.
+
+
+>   Personally
+> I strongly prefer (foo =3D NULL) as it makes it blindingly obvious that
+> it's a pointer comparison, whereas (!foo) leaves you wondering whether
+> it's an integer or pointer comparison.
+
+<usenet>
+Me too.
+</usenet>
+
+
+> All that said, you shouldn't submit patches which arbitrarily change
+> from one format to the other.  With regards to the proposed patch, you
+> should follow whatever style the author employed in the rest of the
+> file.
+
+That is another reasonable critereon in "optimizing" the written form of
+the source code.  I tend to give it less weight though.
+
+
+Regards,
+Andy
+
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
