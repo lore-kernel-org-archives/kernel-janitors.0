@@ -1,30 +1,46 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 02 Jan 2011 21:25:21 +0000
-Subject: Re: [PATCH 1/3] staging: keucr: Use memcmp() instead custom
-Message-Id: <1294003521.23422.23.camel@Joe-Laptop>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 27 Jan 2011 15:49:06 +0000
+Subject: [PATCH 1/2] arch/arm/mach-omap2/dma.c: Convert IS_ERR result to PTR_ERR
+Message-Id: <1296143347-17508-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1294002097-3058-2-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1294002097-3058-2-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Sun, 2011-01-02 at 22:21 +0100, Javier Martinez Canillas wrote:
-> > This code isn't the same.
-> > You deleted that return and now you do the driver ECC check.
-> > Is that correct?
-> You are right Joe, sorry for that. Should I remove the dead code after
-> the return SUCCESS or keep it?
+This code elsewhere returns a negative constant to an indicate an error,
+while IS_ERR returns the result of a >= operation.
 
-As I said before, I think you should delete it.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-On Fri, 2010-12-31 at 12:26 -0800, Joe Perches wrote:
-> You might as well take out useless code after returns
-> instead of just changing function names.
-> If you keep it you should reformat it.
+// <smpl>
+@@
+expression x;
+@@
 
-Doesn't matter much though.
+ if (...) { ...
+- return IS_ERR(x);
++ return PTR_ERR(x);
+}
+// </smpl>
 
-cheers, Joe
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/arm/mach-omap2/dma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/arch/arm/mach-omap2/dma.c b/arch/arm/mach-omap2/dma.c
+--- a/arch/arm/mach-omap2/dma.c
++++ b/arch/arm/mach-omap2/dma.c
+@@ -264,7 +264,7 @@ static int __init omap2_system_dma_init_
+ 	if (IS_ERR(od)) {
+ 		pr_err("%s: Cant build omap_device for %s:%s.\n",
+ 			__func__, name, oh->name);
+-		return IS_ERR(od);
++		return PTR_ERR(od);
+ 	}
+ 
+ 	mem = platform_get_resource(&od->pdev, IORESOURCE_MEM, 0);
 
