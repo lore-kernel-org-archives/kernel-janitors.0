@@ -1,45 +1,53 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 08 Jan 2011 17:12:09 +0000
-Subject: Re: [patch] checkpatch: putting the && or || on the wrong line
-Message-Id: <1294506729.10091.13.camel@Joe-Laptop>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 27 Jan 2011 15:49:07 +0000
+Subject: [PATCH 2/2] drivers/staging/msm/lcdc.c: Convert IS_ERR result to PTR_ERR
+Message-Id: <1296143347-17508-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110104055900.GA5062@bicker>
-	 <20110104163836.GA30317@fieldses.org>
-	 <20110104164414.GX5875@const.bordeaux.inria.fr>
-	 <1294160834.6617.51.camel@Joe-Laptop> <m3fwt7i740.fsf@intrepid.localdomain>
-	 <1294249529.6617.118.camel@Joe-Laptop>
-	 <m339p6p5zo.fsf@intrepid.localdomain>
-	 <1294336674.12561.81.camel@Joe-Laptop>
-	 <m3r5cplr2m.fsf@intrepid.localdomain>
-	 <1294347753.12561.106.camel@Joe-Laptop>
-	 <m37hehloon.fsf@intrepid.localdomain>
-	 <1294349918.12561.142.camel@Joe-Laptop>
-	 <m3zkrbv7e5.fsf@intrepid.localdomain>
-In-Reply-To: <m3zkrbv7e5.fsf@intrepid.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, Daniel Walker <dwalker@codeaurora.org>, Stepan Moskovchenko <stepanm@codeaurora.org>, Abhijeet Dharmapurikar <adharmap@codeaurora.org>, David Brown <davidb@codeaurora.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sat, 2011-01-08 at 14:42 +0100, Krzysztof Halasa wrote:
-> Joe Perches <joe@perches.com> writes:
-> >> OTOH you failed to show evidence that super-strict standardization
-> >> benefits anyone.
-> > I don't need to.
-> > If you don't agree with the assertion,
-> > facts likely won't change your mind.
-> > You'll more likely dispute the facts.
-> Sounds like you have the hard facts. Why not let us know anyway?
-> > Look up this paper if you care to though:
-> > Evaluating the Relation Between Coding
-> > Standard Violations and Faults Within and
-> > Across Software Versions
-> This is apples vs oranges, nobody disputes a need for sensible rules.
+This code elsewhere returns a negative constant to an indicate an error,
+while IS_ERR returns the result of a >= operation.
 
-Classic example of the disutility of fact based argumentation.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Krzyzstof, let's chat about something like the weather next time.
+// <smpl>
+@@
+expression x;
+@@
 
-cheers, Joe
+ if (...) { ...
+- return IS_ERR(x);
++ return PTR_ERR(x);
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/staging/msm/lcdc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/staging/msm/lcdc.c b/drivers/staging/msm/lcdc.c
+--- a/drivers/staging/msm/lcdc.c
++++ b/drivers/staging/msm/lcdc.c
+@@ -224,12 +224,12 @@ static int __init lcdc_driver_init(void)
+ 	mdp_lcdc_pclk_clk = clk_get(NULL, "mdp_lcdc_pclk_clk");
+ 	if (IS_ERR(mdp_lcdc_pclk_clk)) {
+ 		printk(KERN_ERR "error: can't get mdp_lcdc_pclk_clk!\n");
+-		return IS_ERR(mdp_lcdc_pclk_clk);
++		return PTR_ERR(mdp_lcdc_pclk_clk);
+ 	}
+ 	mdp_lcdc_pad_pclk_clk = clk_get(NULL, "mdp_lcdc_pad_pclk_clk");
+ 	if (IS_ERR(mdp_lcdc_pad_pclk_clk)) {
+ 		printk(KERN_ERR "error: can't get mdp_lcdc_pad_pclk_clk!\n");
+-		return IS_ERR(mdp_lcdc_pad_pclk_clk);
++		return PTR_ERR(mdp_lcdc_pad_pclk_clk);
+ 	}
+ //	pm_qos_add_requirement(PM_QOS_SYSTEM_BUS_FREQ , "lcdc",
+ //				PM_QOS_DEFAULT_VALUE);
 
