@@ -1,56 +1,78 @@
-From: Oliver Endriss <o.endriss@gmx.de>
-Date: Fri, 07 Jan 2011 19:01:19 +0000
-Subject: Re: [patch v2] [media] av7110: check for negative array offset
-Message-Id: <201101072001.20850@orion.escape-edv.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 28 Jan 2011 13:57:41 +0000
+Subject: [PATCH 1/2] net/wireless/nl80211.c: Avoid call to genlmsg_cancel
+Message-Id: <1296224232-8115-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110106194059.GC1717@bicker> <4D270A9F.7080104@linuxtv.org> <20110107134651.GH1717@bicker>
-In-Reply-To: <20110107134651.GH1717@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Andreas Oberritter <obi@linuxtv.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+genlmsg_cancel subtracts some constants from its second argument before
+calling nlmsg_cancel.  nlmsg_cancel then calls nlmsg_trim on the same
+arguments.  nlmsg_trim tests for NULL before doing any computation, but a
+NULL second argument to genlmsg_cancel is no longer NULL due to the initial
+subtraction.  Nothing else happens in this execution, so the call to
+genlmsg_cancel is simply unnecessary in this case.
 
-On Friday 07 January 2011 14:46:51 Dan Carpenter wrote:
-> info->num comes from the user.  It's type int.  If the user passes
-> in a negative value that would cause memory corruption.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> V2: change the check instead of making num and unsigned int
-> 
-> diff --git a/drivers/media/dvb/ttpci/av7110_ca.c b/drivers/media/dvb/ttpci/av7110_ca.c
-> index 122c728..923a8e2 100644
-> --- a/drivers/media/dvb/ttpci/av7110_ca.c
-> +++ b/drivers/media/dvb/ttpci/av7110_ca.c
-> @@ -277,7 +277,7 @@ static int dvb_ca_ioctl(struct file *file, unsigned int cmd, void *parg)
->  	{
->  		ca_slot_info_t *info=(ca_slot_info_t *)parg;
->  
-> -		if (info->num > 1)
-> +		if ((unsigned)info->num > 1)
->  			return -EINVAL;
->  		av7110->ci_slot[info->num].num = info->num;
->  		av7110->ci_slot[info->num].type = FW_CI_LL_SUPPORT(av7110->arm_app) ?
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Imho casts are a last resort and should be avoided, if there is a better
-way to do it. The obvious fix is
+// <smpl>
+@@
+expression data;
+@@
 
-  if (info->num < 0 || info->num > 1)
-        return -EINVAL;
-   
-CU
-Oliver
+if (data = NULL) { ...
+* genlmsg_cancel(..., data);
+  ...
+  return ...;
+}
+// </smpl>
 
--- 
-----------------------------------------------------------------
-VDR Remote Plugin 0.4.0: http://www.escape-edv.de/endriss/vdr/
-4 MByte Mod: http://www.escape-edv.de/endriss/dvb-mem-mod/
-Full-TS Mod: http://www.escape-edv.de/endriss/dvb-full-ts-mod/
-----------------------------------------------------------------
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/wireless/nl80211.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 9b62710..864ddfb 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -2718,7 +2718,7 @@ static int nl80211_get_mesh_config(struct sk_buff *skb,
+ 	hdr = nl80211hdr_put(msg, info->snd_pid, info->snd_seq, 0,
+ 			     NL80211_CMD_GET_MESH_CONFIG);
+ 	if (!hdr)
+-		goto nla_put_failure;
++		goto out;
+ 	pinfoattr = nla_nest_start(msg, NL80211_ATTR_MESH_CONFIG);
+ 	if (!pinfoattr)
+ 		goto nla_put_failure;
+@@ -2759,6 +2759,7 @@ static int nl80211_get_mesh_config(struct sk_buff *skb,
+ 
+  nla_put_failure:
+ 	genlmsg_cancel(msg, hdr);
++ out:
+ 	nlmsg_free(msg);
+ 	return -ENOBUFS;
+ }
+@@ -2954,7 +2955,7 @@ static int nl80211_get_reg(struct sk_buff *skb, struct genl_info *info)
+ 	hdr = nl80211hdr_put(msg, info->snd_pid, info->snd_seq, 0,
+ 			     NL80211_CMD_GET_REG);
+ 	if (!hdr)
+-		goto nla_put_failure;
++		goto put_failure;
+ 
+ 	NLA_PUT_STRING(msg, NL80211_ATTR_REG_ALPHA2,
+ 		cfg80211_regdomain->alpha2);
+@@ -3001,6 +3002,7 @@ static int nl80211_get_reg(struct sk_buff *skb, struct genl_info *info)
+ 
+ nla_put_failure:
+ 	genlmsg_cancel(msg, hdr);
++put_failure:
+ 	nlmsg_free(msg);
+ 	err = -EMSGSIZE;
+ out:
+
