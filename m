@@ -1,238 +1,51 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 26 Feb 2011 16:34:39 +0000
-Subject: [PATCH 2/2] drivers/watchdog: Convert release_resource to release_region/release_mem_region
-Message-Id: <1298738079-28893-2-git-send-email-julia@diku.dk>
+From: Kevin Hilman <khilman@ti.com>
+Date: Tue, 01 Feb 2011 22:22:19 +0000
+Subject: Re: [PATCH v2] arm: mach-omap2: potential NULL dereference
+Message-Id: <87lj1zpf8k.fsf@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1295258922-31242-1-git-send-email-segoon@openwall.com>
+	<4D341C35.80506@bfs.de> <20110119125721.GA9203@albatros>
+In-Reply-To: <20110119125721.GA9203@albatros> (Vasiliy Kulikov's message of
+	"Wed, 19 Jan 2011 15:57:22 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Request_mem_region should be used with release_mem_region, not
-release_resource.
+Vasiliy Kulikov <segoon@openwall.com> writes:
 
-In pnx4008_wdt.c, a missing clk_put is added as well.
+> kzalloc() may fail, if so return -ENOMEM.  Also Walter Harms suggested
+> to use kasprintf() instead of kzalloc+strcpy+strcat.
+>
+> Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
+> ---
+>  Cannot compile this driver, so it is not tested at all.
 
-The semantic match that finds the first problem is as follows:
-(http://coccinelle.lip6.fr/)
+Boot tested on 3430/n900 and 3630/Zoom3.
 
-// <smpl>
-@@
-expression x,E;
-@@
-*x = request_mem_region(...)
-... when != release_mem_region(x)
-    when != x = E
-* release_resource(x);
-// </smpl>
+Queueing for 2.6.39 (branch: for_2.6.39/pm-misc)
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Kevin
 
----
- drivers/watchdog/davinci_wdt.c |   22 ++++++++++------------
- drivers/watchdog/max63xx_wdt.c |   20 ++++++++------------
- drivers/watchdog/pnx4008_wdt.c |   28 +++++++++++++---------------
- 3 files changed, 31 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/watchdog/davinci_wdt.c b/drivers/watchdog/davinci_wdt.c
-index 596ba60..51b5551 100644
---- a/drivers/watchdog/davinci_wdt.c
-+++ b/drivers/watchdog/davinci_wdt.c
-@@ -202,7 +202,6 @@ static struct miscdevice davinci_wdt_miscdev = {
- static int __devinit davinci_wdt_probe(struct platform_device *pdev)
- {
- 	int ret = 0, size;
--	struct resource *res;
- 	struct device *dev = &pdev->dev;
- 
- 	wdt_clk = clk_get(dev, NULL);
-@@ -216,31 +215,31 @@ static int __devinit davinci_wdt_probe(struct platform_device *pdev)
- 
- 	dev_info(dev, "heartbeat %d sec\n", heartbeat);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res = NULL) {
-+	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (wdt_mem = NULL) {
- 		dev_err(dev, "failed to get memory region resource\n");
- 		return -ENOENT;
- 	}
- 
--	size = resource_size(res);
--	wdt_mem = request_mem_region(res->start, size, pdev->name);
--
--	if (wdt_mem = NULL) {
-+	size = resource_size(wdt_mem);
-+	if (!request_mem_region(wdt_mem->start, size, pdev->name)) {
- 		dev_err(dev, "failed to get memory region\n");
- 		return -ENOENT;
- 	}
- 
--	wdt_base = ioremap(res->start, size);
-+	wdt_base = ioremap(wdt_mem->start, size);
- 	if (!wdt_base) {
- 		dev_err(dev, "failed to map memory region\n");
-+		release_mem_region(wdt_mem->start, size);
-+		wdt_mem = NULL;
- 		return -ENOMEM;
- 	}
- 
- 	ret = misc_register(&davinci_wdt_miscdev);
- 	if (ret < 0) {
- 		dev_err(dev, "cannot register misc device\n");
--		release_resource(wdt_mem);
--		kfree(wdt_mem);
-+		release_mem_region(wdt_mem->start, size);
-+		wdt_mem = NULL;
- 	} else {
- 		set_bit(WDT_DEVICE_INITED, &wdt_status);
- 	}
-@@ -253,8 +252,7 @@ static int __devexit davinci_wdt_remove(struct platform_device *pdev)
- {
- 	misc_deregister(&davinci_wdt_miscdev);
- 	if (wdt_mem) {
--		release_resource(wdt_mem);
--		kfree(wdt_mem);
-+		release_mem_region(wdt_mem->start, resource_size(wdt_mem));
- 		wdt_mem = NULL;
- 	}
- 
-diff --git a/drivers/watchdog/max63xx_wdt.c b/drivers/watchdog/max63xx_wdt.c
-index 7a82ce5..73ba2fd 100644
---- a/drivers/watchdog/max63xx_wdt.c
-+++ b/drivers/watchdog/max63xx_wdt.c
-@@ -270,7 +270,6 @@ static int __devinit max63xx_wdt_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
- 	int size;
--	struct resource *res;
- 	struct device *dev = &pdev->dev;
- 	struct max63xx_timeout *table;
- 
-@@ -294,21 +293,19 @@ static int __devinit max63xx_wdt_probe(struct platform_device *pdev)
- 
- 	max63xx_pdev = pdev;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res = NULL) {
-+	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (wdt_mem = NULL) {
- 		dev_err(dev, "failed to get memory region resource\n");
- 		return -ENOENT;
- 	}
- 
--	size = resource_size(res);
--	wdt_mem = request_mem_region(res->start, size, pdev->name);
--
--	if (wdt_mem = NULL) {
-+	size = resource_size(wdt_mem);
-+	if (!request_mem_region(wdt_mem->start, size, pdev->name)) {
- 		dev_err(dev, "failed to get memory region\n");
- 		return -ENOENT;
- 	}
- 
--	wdt_base = ioremap(res->start, size);
-+	wdt_base = ioremap(wdt_mem->start, size);
- 	if (!wdt_base) {
- 		dev_err(dev, "failed to map memory region\n");
- 		ret = -ENOMEM;
-@@ -326,8 +323,8 @@ static int __devinit max63xx_wdt_probe(struct platform_device *pdev)
- out_unmap:
- 	iounmap(wdt_base);
- out_request:
--	release_resource(wdt_mem);
--	kfree(wdt_mem);
-+	release_mem_region(wdt_mem->start, size);
-+	wdt_mem = NULL;
- 
- 	return ret;
- }
-@@ -336,8 +333,7 @@ static int __devexit max63xx_wdt_remove(struct platform_device *pdev)
- {
- 	misc_deregister(&max63xx_wdt_miscdev);
- 	if (wdt_mem) {
--		release_resource(wdt_mem);
--		kfree(wdt_mem);
-+		release_mem_region(wdt_mem->start, resource_size(wdt_mem));
- 		wdt_mem = NULL;
- 	}
- 
-diff --git a/drivers/watchdog/pnx4008_wdt.c b/drivers/watchdog/pnx4008_wdt.c
-index c7cf4cb..6149332 100644
---- a/drivers/watchdog/pnx4008_wdt.c
-+++ b/drivers/watchdog/pnx4008_wdt.c
-@@ -254,7 +254,6 @@ static struct miscdevice pnx4008_wdt_miscdev = {
- static int __devinit pnx4008_wdt_probe(struct platform_device *pdev)
- {
- 	int ret = 0, size;
--	struct resource *res;
- 
- 	if (heartbeat < 1 || heartbeat > MAX_HEARTBEAT)
- 		heartbeat = DEFAULT_HEARTBEAT;
-@@ -262,42 +261,42 @@ static int __devinit pnx4008_wdt_probe(struct platform_device *pdev)
- 	printk(KERN_INFO MODULE_NAME
- 		"PNX4008 Watchdog Timer: heartbeat %d sec\n", heartbeat);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res = NULL) {
-+	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (wdt_mem = NULL) {
- 		printk(KERN_INFO MODULE_NAME
- 			"failed to get memory region resouce\n");
- 		return -ENOENT;
- 	}
- 
--	size = resource_size(res);
--	wdt_mem = request_mem_region(res->start, size, pdev->name);
-+	size = resource_size(wdt_mem);
- 
--	if (wdt_mem = NULL) {
-+	if (!request_mem_region(wdt_mem->start, size, pdev->name)) {
- 		printk(KERN_INFO MODULE_NAME "failed to get memory region\n");
- 		return -ENOENT;
- 	}
--	wdt_base = (void __iomem *)IO_ADDRESS(res->start);
-+	wdt_base = (void __iomem *)IO_ADDRESS(wdt_mem->start);
- 
- 	wdt_clk = clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(wdt_clk)) {
- 		ret = PTR_ERR(wdt_clk);
--		release_resource(wdt_mem);
--		kfree(wdt_mem);
-+		release_mem_region(wdt_mem->start, size);
-+		wdt_mem = NULL;
- 		goto out;
- 	}
- 
- 	ret = clk_enable(wdt_clk);
- 	if (ret) {
--		release_resource(wdt_mem);
--		kfree(wdt_mem);
-+		release_mem_region(wdt_mem->start, size);
-+		wdt_mem = NULL;
-+		clk_put(wdt_clk);
- 		goto out;
- 	}
- 
- 	ret = misc_register(&pnx4008_wdt_miscdev);
- 	if (ret < 0) {
- 		printk(KERN_ERR MODULE_NAME "cannot register misc device\n");
--		release_resource(wdt_mem);
--		kfree(wdt_mem);
-+		release_mem_region(wdt_mem->start, size);
-+		wdt_mem = NULL;
- 		clk_disable(wdt_clk);
- 		clk_put(wdt_clk);
- 	} else {
-@@ -320,8 +319,7 @@ static int __devexit pnx4008_wdt_remove(struct platform_device *pdev)
- 	clk_put(wdt_clk);
- 
- 	if (wdt_mem) {
--		release_resource(wdt_mem);
--		kfree(wdt_mem);
-+		release_mem_region(wdt_mem->start, resource_size(wdt_mem));
- 		wdt_mem = NULL;
- 	}
- 	return 0;
-
+>  arch/arm/mach-omap2/smartreflex.c |    8 +++++---
+>  1 files changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/mach-omap2/smartreflex.c b/arch/arm/mach-omap2/smartreflex.c
+> index 77ecebf..697d8d4 100644
+> --- a/arch/arm/mach-omap2/smartreflex.c
+> +++ b/arch/arm/mach-omap2/smartreflex.c
+> @@ -260,9 +260,11 @@ static int sr_late_init(struct omap_sr *sr_info)
+>  	if (sr_class->class_type = SR_CLASS2 &&
+>  		sr_class->notify_flags && sr_info->irq) {
+>  
+> -		name = kzalloc(SMARTREFLEX_NAME_LEN + 1, GFP_KERNEL);
+> -		strcpy(name, "sr_");
+> -		strcat(name, sr_info->voltdm->name);
+> +		name = kasprintf(GFP_KERNEL, "sr_%s", sr_info->voltdm->name);
+> +		if (name = NULL) {
+> +			ret = -ENOMEM;
+> +			goto error;
+> +		}
+>  		ret = request_irq(sr_info->irq, sr_interrupt,
+>  				0, name, (void *)sr_info);
+>  		if (ret)
