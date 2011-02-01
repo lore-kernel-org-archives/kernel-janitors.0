@@ -1,26 +1,55 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 03 Feb 2011 19:07:41 +0000
-Subject: Re: request_region/release_resource
-Message-Id: <20110203190741.GT20606@bicker>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 01 Feb 2011 22:54:10 +0000
+Subject: Re: [PATCH] include/net/genetlink.h: Allow genlmsg_cancel to
+Message-Id: <20110201.145410.115936566.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1102031731380.14058@pc-004.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1102031731380.14058@pc-004.diku.dk>
+References: <Pine.LNX.4.64.1101281642080.8546@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1101281642080.8546@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, paul.moore@hp.com, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 03, 2011 at 05:33:28PM +0100, Julia Lawall wrote:
-> Is there any circumstance in which it is ok to call release_resource on 
-> the result of calling request(_mem)_region?  One issue is that 
-> release_resource doesn't free its argument, but then what if the call to 
-> release_resource is followed by a call to kfree?
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 28 Jan 2011 16:43:40 +0100 (CET)
+
+> nlmsg_cancel can accept NULL as its second argument, so for similarity,
+> this patch extends genlmsg_cancel to be able to accept a NULL second
+> argument as well.
 > 
-> Example:
-> drivers/watchdog/s3c2410_wdt.c, in the function s3c2410wdt_probe
-> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Best to ask on lkml.  Greg is the maintainer for driver core so CC him.
+I did a scan of all of the cases where this interface is used, and
+I cannot find a situation where this capability would even be useful.
 
-regards,
-dan carpenter
+The use pattern is always:
+
+	hdr = genlmsg_put(skb, ...);
+	if (!hdr)
+		goto out;
+
+	NLA_PUT_*();
+	NLA_PUT_*();
+	....
+
+	return genlmsg_end(skb, hdr);
+
+nla_put_failure:
+	genlmsg_cancel(skb, hdr);
+out:
+	return -EWHATEVER;
+
+Always, hdr will be non-NULL.
+
+We have to allocate the header first, then put the netlink
+attributes.
+
+Looking over users of nlmsg_cancel(), the situation seems to
+match identically.
+
+Therefore, it seems to me that it makes more sense to remove
+the NULL check from nlmsg_cancel() than to add the NULL check
+to genlmsg_cancel().
+
+Thanks.
