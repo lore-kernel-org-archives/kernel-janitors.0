@@ -1,115 +1,69 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sat, 12 Feb 2011 03:38:23 +0000
-Subject: [PATCH 2/4] Staging: bcm: Bcmchar: Fix style issues on bcm_char_release()
-Message-Id: <1297481905-22331-3-git-send-email-martinez.javier@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 02 Feb 2011 17:56:23 +0000
+Subject: [PATCH] drivers/char/specialix.c: Convert func_enter to func_exit
+Message-Id: <1296669383-4386-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Roger Wolff <R.E.Wolff@BitWizard.nl>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+Convert calls to func_enter on leaving a function to func_exit.
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+@@
+
+- func_enter();
++ func_exit();
+  return...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/bcm/Bcmchar.c |   68 ++++++++++++++++++----------------------
- 1 files changed, 31 insertions(+), 37 deletions(-)
+ drivers/char/specialix.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/bcm/Bcmchar.c b/drivers/staging/bcm/Bcmchar.c
-index edcd0c0..2a3f64c 100644
---- a/drivers/staging/bcm/Bcmchar.c
-+++ b/drivers/staging/bcm/Bcmchar.c
-@@ -45,61 +45,55 @@ static int bcm_char_open(struct inode *inode, struct file * filp)
+diff -u -p a/drivers/char/specialix.c b/drivers/char/specialix.c
+--- a/drivers/char/specialix.c
++++ b/drivers/char/specialix.c
+@@ -1416,7 +1416,7 @@ static int sx_open(struct tty_struct *tt
+ 				 board, bp, port, SX_PORT(tty->index));
  
- static int bcm_char_release(struct inode *inode, struct file *filp)
- {
--    PPER_TARANG_DATA pTarang, tmp, ptmp;
--	PMINI_ADAPTER Adapter=NULL;
--    struct sk_buff * pkt, * npkt;
-+	PPER_TARANG_DATA pTarang, tmp, ptmp;
-+	PMINI_ADAPTER Adapter = NULL;
-+	struct sk_buff *pkt, *npkt;
- 
--    pTarang = (PPER_TARANG_DATA)filp->private_data;
-+	pTarang = (PPER_TARANG_DATA)filp->private_data;
- 
--    if(pTarang = NULL)
--	{
--	BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0, "ptarang is null\n");
--	return 0;
-+	if (pTarang = NULL) {
-+		BCM_DEBUG_PRINT(Adapter, DBG_TYPE_PRINTK, 0, 0,
-+				"ptarang is null\n");
-+		return 0;
+ 	if (sx_paranoia_check(port, tty->name, "sx_open")) {
+-		func_enter();
++		func_exit();
+ 		return -ENODEV;
  	}
  
- 	Adapter = pTarang->Adapter;
+@@ -1435,13 +1435,13 @@ static int sx_open(struct tty_struct *tt
  
--    down( &Adapter->RxAppControlQueuelock);
-+	down(&Adapter->RxAppControlQueuelock);
- 
--    tmp = Adapter->pTarangs;
--    for ( ptmp = NULL; tmp; ptmp = tmp, tmp = tmp->next )
--	{
--        if ( tmp = pTarang )
-+	tmp = Adapter->pTarangs;
-+	for (ptmp = NULL; tmp; ptmp = tmp, tmp = tmp->next) {
-+		if (tmp = pTarang)
- 			break;
+ 	error = sx_setup_port(bp, port);
+ 	if (error) {
+-		func_enter();
++		func_exit();
+ 		return error;
  	}
  
--    if ( tmp )
--	{
--        if ( !ptmp )
--            Adapter->pTarangs = tmp->next;
--        else
--            ptmp->next = tmp->next;
-+	if (tmp) {
-+		if (!ptmp)
-+			Adapter->pTarangs = tmp->next;
-+		else
-+			ptmp->next = tmp->next;
-+	} else {
-+		up(&Adapter->RxAppControlQueuelock);
-+		return 0;
+ 	error = block_til_ready(tty, filp, port);
+ 	if (error) {
+-		func_enter();
++		func_exit();
+ 		return error;
  	}
  
--    else
--	{
--    	up( &Adapter->RxAppControlQueuelock);
--	return 0;
--	}
--
--    pkt = pTarang->RxAppControlHead;
--    while ( pkt )
--	{
--        npkt = pkt->next;
--        kfree_skb(pkt);
--        pkt = npkt;
-+	pkt = pTarang->RxAppControlHead;
-+	while (pkt) {
-+		npkt = pkt->next;
-+		kfree_skb(pkt);
-+		pkt = npkt;
+@@ -1860,7 +1860,7 @@ static int sx_set_serial_info(struct spe
+ 	func_enter();
+ 
+ 	if (copy_from_user(&tmp, newinfo, sizeof(tmp))) {
+-		func_enter();
++		func_exit();
+ 		return -EFAULT;
  	}
  
--    up( &Adapter->RxAppControlQueuelock);
-+	up(&Adapter->RxAppControlQueuelock);
- 
--    /*Stop Queuing the control response Packets*/
--    atomic_dec(&Adapter->ApplicationRunning);
-+	/*Stop Queuing the control response Packets*/
-+	atomic_dec(&Adapter->ApplicationRunning);
- 
--    kfree(pTarang);
-+	kfree(pTarang);
- 
- 	/* remove this filp from the asynchronously notified filp's */
--    filp->private_data = NULL;
--    return 0;
-+	filp->private_data = NULL;
-+	return 0;
- }
- 
- static ssize_t bcm_char_read(struct file *filp, char __user *buf, size_t size, loff_t *f_pos)
--- 
-1.7.0.4
 
