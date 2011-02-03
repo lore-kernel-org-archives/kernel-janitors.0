@@ -1,193 +1,104 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Wed, 16 Feb 2011 08:44:50 +0000
-Subject: Re: [PATCH 3/5] drivers/char/pcmcia/ipwireless/main.c: Convert
-Message-Id: <alpine.LNX.2.00.1102160944340.2160@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 03 Feb 2011 17:37:47 +0000
+Subject: [PATCH] drivers/w1/masters/omap_hdq.c: Add missing clk_put
+Message-Id: <1296754667-18049-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1297599132-7226-1-git-send-email-julia@diku.dk> <1297599132-7226-4-git-send-email-julia@diku.dk> <20110216072118.GA27029@comet.dominikbrodowski.net>
-In-Reply-To: <20110216072118.GA27029@comet.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org, David Sterba <dsterba@suse.cz>, linux-kernel@vger.kernel.org
+To: Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+Cc: kernel-janitors@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Andrew Morton <akpm@linux-foundation.org>, Amit Kucheria <amit.kucheria@canonical.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
 
-On Wed, 16 Feb 2011, Dominik Brodowski wrote:
+This code makes two calls to clk_get, then test both return values
+and fails if either failed.  The problem is that in the first inner if,
+where the first call to clk_get has failed, it don't know if the second
+call has failed as well.  So it don't know whether clk_get should be called
+on the result of the second call.  Of course, it would be possible to test
+that value again.  A simpler solution is just to test the result of calling
+clk_get directly after each call.
 
-> Applied to the pcmcia treee, thanks.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-FWIW
+// <smpl>
+@r@
+position p1,p2;
+expression e;
+statement S;
+@@
 
-	Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+e = clk_get@p1(...)
+...
+if@p2 (IS_ERR(e)) S
 
-> On Sun, Feb 13, 2011 at 01:12:10PM +0100, Julia Lawall wrote:
-> > Request_region should be used with release_region, not release_resource.
-> > 
-> > This patch contains a number of changes, related to calls to request_region,
-> > request_mem_region, and the associated error handling code.
-> > 
-> > 1. For the call to request_region, the variable io_resource storing the
-> > result is dropped.  The call to release_resource at the end of the function
-> > is changed to a call to release_region with the first two arguments of
-> > request_region as its arguments.  The same call to release_region is also
-> > added to release_ipwireless.
-> > 
-> > 2. The first call to request_mem_region is now tested and ret is set to
-> > -EBUSY if the the call has failed.  This call was associated with the
-> > initialization of ipw->attr_memory.  But the error handling code was
-> > testing ipw->common_memory.  The definition of release_ipwireless also
-> > suggests that this call should be associated with ipw->common_memory, not
-> > ipw->attr_memory.
-> > 
-> > 3. The second call to request_mem_region is now tested and ret is
-> > set to -EBUSY if the the call has failed.
-> > 
-> > 4. The various gotos to the error handling code is adjusted so that there
-> > is no need for ifs.
-> > 
-> > 5. Return the value stored in the ret variable rather than -1.
-> > 
-> > The semantic match that finds this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> > 
-> > // <smpl>
-> > @@
-> > expression x,E;
-> > @@
-> > (
-> > *x = request_region(...)
-> > |
-> > *x = request_mem_region(...)
-> > )
-> > ... when != release_region(x)
-> >     when != x = E
-> > * release_resource(x);
-> > // </smpl>
-> > 
-> > Signed-off-by: Julia Lawall <julia@diku.dk>
-> > 
-> > ---
-> > Compiled, not tested.
-> > In release_ipwireless, should the added call to release_region be protected
-> > by some if?
-> > 
-> >  drivers/char/pcmcia/ipwireless/main.c |   52 ++++++++++++++++++++--------------
-> >  1 file changed, 32 insertions(+), 20 deletions(-)
-> > 
-> > diff --git a/drivers/char/pcmcia/ipwireless/main.c b/drivers/char/pcmcia/ipwireless/main.c
-> > index 94b8eb4..444155a 100644
-> > --- a/drivers/char/pcmcia/ipwireless/main.c
-> > +++ b/drivers/char/pcmcia/ipwireless/main.c
-> > @@ -78,7 +78,6 @@ static void signalled_reboot_callback(void *callback_data)
-> >  static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
-> >  {
-> >  	struct ipw_dev *ipw = priv_data;
-> > -	struct resource *io_resource;
-> >  	int ret;
-> >  
-> >  	p_dev->resource[0]->flags &= ~IO_DATA_PATH_WIDTH;
-> > @@ -92,9 +91,12 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	io_resource = request_region(p_dev->resource[0]->start,
-> > -				resource_size(p_dev->resource[0]),
-> > -				IPWIRELESS_PCCARD_NAME);
-> > +	if (!request_region(p_dev->resource[0]->start,
-> > +			    resource_size(p_dev->resource[0]),
-> > +			    IPWIRELESS_PCCARD_NAME)) {
-> > +		ret = -EBUSY;
-> > +		goto exit;
-> > +	}
-> >  
-> >  	p_dev->resource[2]->flags |> >  		WIN_DATA_WIDTH_16 | WIN_MEMORY_TYPE_CM | WIN_ENABLE;
-> > @@ -105,22 +107,25 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
-> >  
-> >  	ret = pcmcia_map_mem_page(p_dev, p_dev->resource[2], p_dev->card_addr);
-> >  	if (ret != 0)
-> > -		goto exit2;
-> > +		goto exit1;
-> >  
-> >  	ipw->is_v2_card = resource_size(p_dev->resource[2]) = 0x100;
-> >  
-> > -	ipw->attr_memory = ioremap(p_dev->resource[2]->start,
-> > +	ipw->common_memory = ioremap(p_dev->resource[2]->start,
-> >  				resource_size(p_dev->resource[2]));
-> > -	request_mem_region(p_dev->resource[2]->start,
-> > -			resource_size(p_dev->resource[2]),
-> > -			IPWIRELESS_PCCARD_NAME);
-> > +	if (!request_mem_region(p_dev->resource[2]->start,
-> > +				resource_size(p_dev->resource[2]),
-> > +				IPWIRELESS_PCCARD_NAME)) {
-> > +		ret = -EBUSY;
-> > +		goto exit2;
-> > +	}
-> >  
-> >  	p_dev->resource[3]->flags |= WIN_DATA_WIDTH_16 | WIN_MEMORY_TYPE_AM |
-> >  					WIN_ENABLE;
-> >  	p_dev->resource[3]->end = 0; /* this used to be 0x1000 */
-> >  	ret = pcmcia_request_window(p_dev, p_dev->resource[3], 0);
-> >  	if (ret != 0)
-> > -		goto exit2;
-> > +		goto exit3;
-> >  
-> >  	ret = pcmcia_map_mem_page(p_dev, p_dev->resource[3], 0);
-> >  	if (ret != 0)
-> > @@ -128,23 +133,28 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
-> >  
-> >  	ipw->attr_memory = ioremap(p_dev->resource[3]->start,
-> >  				resource_size(p_dev->resource[3]));
-> > -	request_mem_region(p_dev->resource[3]->start,
-> > -			resource_size(p_dev->resource[3]),
-> > -			IPWIRELESS_PCCARD_NAME);
-> > +	if (!request_mem_region(p_dev->resource[3]->start,
-> > +				resource_size(p_dev->resource[3]),
-> > +				IPWIRELESS_PCCARD_NAME)) {
-> > +		ret = -EBUSY;
-> > +		goto exit4;
-> > +	}
-> >  
-> >  	return 0;
-> >  
-> > +exit4:
-> > +	iounmap(ipw->attr_memory);
-> >  exit3:
-> > +	release_mem_region(p_dev->resource[2]->start,
-> > +			resource_size(p_dev->resource[2]));
-> >  exit2:
-> > -	if (ipw->common_memory) {
-> > -		release_mem_region(p_dev->resource[2]->start,
-> > -				resource_size(p_dev->resource[2]));
-> > -		iounmap(ipw->common_memory);
-> > -	}
-> > +	iounmap(ipw->common_memory);
-> >  exit1:
-> > -	release_resource(io_resource);
-> > +	release_region(p_dev->resource[0]->start,
-> > +		       resource_size(p_dev->resource[0]));
-> > +exit:
-> >  	pcmcia_disable_device(p_dev);
-> > -	return -1;
-> > +	return ret;
-> >  }
-> >  
-> >  static int config_ipwireless(struct ipw_dev *ipw)
-> > @@ -219,6 +229,8 @@ exit:
-> >  
-> >  static void release_ipwireless(struct ipw_dev *ipw)
-> >  {
-> > +	release_region(ipw->link->resource[0]->start,
-> > +		       resource_size(ipw->link->resource[0]));
-> >  	if (ipw->common_memory) {
-> >  		release_mem_region(ipw->link->resource[2]->start,
-> >  				resource_size(ipw->link->resource[2]));
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > Please read the FAQ at  http://www.tux.org/lkml/
-> 
+@@
+expression e;
+statement S;
+identifier l;
+position r.p1, p2 != r.p2;
+@@
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+*e = clk_get@p1(...)
+... when != clk_put(e)
+*if@p2 (...)
+{
+  ... when != clk_put(e)
+* return ...;
+}// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/w1/masters/omap_hdq.c |   28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/w1/masters/omap_hdq.c b/drivers/w1/masters/omap_hdq.c
+index 3a7e9ff..38e96ab 100644
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -593,19 +593,17 @@ static int __devinit omap_hdq_probe(struct platform_device *pdev)
+ 
+ 	/* get interface & functional clock objects */
+ 	hdq_data->hdq_ick = clk_get(&pdev->dev, "ick");
+-	hdq_data->hdq_fck = clk_get(&pdev->dev, "fck");
++	if (IS_ERR(hdq_data->hdq_ick)) {
++		dev_dbg(&pdev->dev, "Can't get HDQ ick clock object\n");
++		ret = PTR_ERR(hdq_data->hdq_ick);
++		goto err_ick;
++	}
+ 
+-	if (IS_ERR(hdq_data->hdq_ick) || IS_ERR(hdq_data->hdq_fck)) {
+-		dev_dbg(&pdev->dev, "Can't get HDQ clock objects\n");
+-		if (IS_ERR(hdq_data->hdq_ick)) {
+-			ret = PTR_ERR(hdq_data->hdq_ick);
+-			goto err_clk;
+-		}
+-		if (IS_ERR(hdq_data->hdq_fck)) {
+-			ret = PTR_ERR(hdq_data->hdq_fck);
+-			clk_put(hdq_data->hdq_ick);
+-			goto err_clk;
+-		}
++	hdq_data->hdq_fck = clk_get(&pdev->dev, "fck");
++	if (IS_ERR(hdq_data->hdq_fck)) {
++		dev_dbg(&pdev->dev, "Can't get HDQ fck clock object\n");
++		ret = PTR_ERR(hdq_data->hdq_fck);
++		goto err_fck;
+ 	}
+ 
+ 	hdq_data->hdq_usecount = 0;
+@@ -665,10 +663,12 @@ err_fnclk:
+ 	clk_disable(hdq_data->hdq_ick);
+ 
+ err_intfclk:
+-	clk_put(hdq_data->hdq_ick);
+ 	clk_put(hdq_data->hdq_fck);
+ 
+-err_clk:
++err_fck:
++	clk_put(hdq_data->hdq_ick);
++
++err_ick:
+ 	iounmap(hdq_data->hdq_base);
+ 
+ err_ioremap:
+
