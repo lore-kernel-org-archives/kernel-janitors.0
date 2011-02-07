@@ -1,70 +1,29 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 08 Feb 2011 22:45:13 +0000
-Subject: [patch] Staging: rtl8712: fix math errors in snprintf()
-Message-Id: <20110208224513.GQ4384@bicker>
+Date: Mon, 07 Feb 2011 16:59:58 +0000
+Subject: [patch] [SCSI] hpsa: precedence bug in
+Message-Id: <20110207165957.GG4384@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Stephen M. Cameron" <scameron@beardog.cce.hp.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The original code had calls to snprintf(p, 7, "wpa_ie=") but that string
-is 8 characters (because snprintf() puts a NUL terminator on the end).
-So instead of an '=' the what gets written to buf is a NUL terminator
-followed by the rest of the string.
-
-And actually the %02x formats are three chars as well when you include
-the terminator.
+'!' has higher precedence than '&'.  CFGTBL_ChangeReq is 0x1 so the
+original code is equivelent to if (!doorbell_value) {...
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-Compile tested only.
 
-diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-index 685a7b1..ddd068c 100644
---- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-+++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-@@ -280,18 +280,20 @@ static inline char *translate_scan(struct _adapter *padapter,
- 	/* parsing WPA/WPA2 IE */
- 	{
- 		u16 wpa_len = 0, rsn_len = 0;
--		u8 *p;
-+		int n;
- 		sint out_len = 0;
- 		out_len = r8712_get_sec_ie(pnetwork->network.IEs,
- 					   pnetwork->network.
- 					   IELength, rsn_ie, &rsn_len,
- 					   wpa_ie, &wpa_len);
- 		if (wpa_len > 0) {
--			p = buf;
- 			memset(buf, 0, MAX_WPA_IE_LEN);
--			p += snprintf(p, 7, "wpa_ie=");
--			for (i = 0; i < wpa_len; i++)
--				p += snprintf(p, 2, "%02x", wpa_ie[i]);
-+			n = sprintf(buf, "wpa_ie=");
-+			for (i = 0; i < wpa_len; i++) {
-+				n += snprintf(buf + n, MAX_WPA_IE_LEN - n, "%02x", wpa_ie[i]);
-+				if (n >= MAX_WPA_IE_LEN)
-+					break;
-+			}
- 			memset(&iwe, 0, sizeof(iwe));
- 			iwe.cmd = IWEVCUSTOM;
- 			iwe.u.data.length = (u16)strlen(buf);
-@@ -304,11 +306,13 @@ static inline char *translate_scan(struct _adapter *padapter,
- 				&iwe, wpa_ie);
- 		}
- 		if (rsn_len > 0) {
--			p = buf;
- 			memset(buf, 0, MAX_WPA_IE_LEN);
--			p += snprintf(p, 7, "rsn_ie=");
--			for (i = 0; i < rsn_len; i++)
--				p += snprintf(p, 2, "%02x", rsn_ie[i]);
-+			n = sprintf(buf, "rsn_ie=");
-+			for (i = 0; i < rsn_len; i++) {
-+				n += snprintf(buf + n, MAX_WPA_IE_LEN - n, "%02x", rsn_ie[i]);
-+				if (n >= MAX_WPA_IE_LEN)
-+					break;
-+			}
- 			memset(&iwe, 0, sizeof(iwe));
- 			iwe.cmd = IWEVCUSTOM;
- 			iwe.u.data.length = strlen(buf);
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 959eeb2..f46f92a 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -3591,7 +3591,7 @@ static void __devinit hpsa_wait_for_mode_change_ack(struct ctlr_info *h)
+ 		spin_lock_irqsave(&h->lock, flags);
+ 		doorbell_value = readl(h->vaddr + SA5_DOORBELL);
+ 		spin_unlock_irqrestore(&h->lock, flags);
+-		if (!doorbell_value & CFGTBL_ChangeReq)
++		if (!(doorbell_value & CFGTBL_ChangeReq))
+ 			break;
+ 		/* delay and try again */
+ 		usleep_range(10000, 20000);
