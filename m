@@ -1,76 +1,29 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 26 Feb 2011 01:48:18 +0000
-Subject: [patch] drm/radeon/r600_cs: off by one errors
-Message-Id: <20110226014818.GB18043@bicker>
+Date: Mon, 07 Feb 2011 19:03:35 +0000
+Subject: [patch] mac80211: remove unneeded check
+Message-Id: <20110207190335.GK4384@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There are a bunch of off by one errors in the sanity checks here.
+"ap" is the address of sdata->u.ap so it can never be NULL here.  Also
+we dereferenced it on the previous line.  I removed the check.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/gpu/drm/radeon/r600_cs.c b/drivers/gpu/drm/radeon/r600_cs.c
-index 79ac676..41da786 100644
---- a/drivers/gpu/drm/radeon/r600_cs.c
-+++ b/drivers/gpu/drm/radeon/r600_cs.c
-@@ -159,7 +159,7 @@ static const struct gpu_formats color_formats_table[] = {
- 
- static inline bool fmt_is_valid_color(u32 format)
- {
--	if (format > ARRAY_SIZE(color_formats_table))
-+	if (format >= ARRAY_SIZE(color_formats_table))
- 		return false;
- 	
- 	if (color_formats_table[format].valid_color)
-@@ -170,7 +170,7 @@ static inline bool fmt_is_valid_color(u32 format)
- 
- static inline bool fmt_is_valid_texture(u32 format)
- {
--	if (format > ARRAY_SIZE(color_formats_table))
-+	if (format >= ARRAY_SIZE(color_formats_table))
- 		return false;
- 	
- 	if (color_formats_table[format].blockwidth > 0)
-@@ -181,7 +181,7 @@ static inline bool fmt_is_valid_texture(u32 format)
- 
- static inline int fmt_get_blocksize(u32 format)
- {
--	if (format > ARRAY_SIZE(color_formats_table))
-+	if (format >= ARRAY_SIZE(color_formats_table))
- 		return 0;
- 
- 	return color_formats_table[format].blocksize;
-@@ -190,7 +190,8 @@ static inline int fmt_get_blocksize(u32 format)
- static inline int fmt_get_nblocksx(u32 format, u32 w)
- {
- 	unsigned bw;
--	if (format > ARRAY_SIZE(color_formats_table))
-+
-+	if (format >= ARRAY_SIZE(color_formats_table))
- 		return 0;
- 
- 	bw = color_formats_table[format].blockwidth;
-@@ -203,7 +204,8 @@ static inline int fmt_get_nblocksx(u32 format, u32 w)
- static inline int fmt_get_nblocksy(u32 format, u32 h)
- {
- 	unsigned bh;
--	if (format > ARRAY_SIZE(color_formats_table))
-+
-+	if (format >= ARRAY_SIZE(color_formats_table))
- 		return 0;
- 
- 	bh = color_formats_table[format].blockheight;
-@@ -216,7 +218,8 @@ static inline int fmt_get_nblocksy(u32 format, u32 h)
- static inline int r600_bpe_from_format(u32 *bpe, u32 format)
- {
-  	unsigned res;
--	if (format > ARRAY_SIZE(color_formats_table))
-+
-+	if (format >= ARRAY_SIZE(color_formats_table))
- 		goto fail;
- 
- 	res = color_formats_table[format].blocksize;
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index f305835..ce01bee 100644
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -2242,7 +2242,7 @@ struct sk_buff *ieee80211_beacon_get_tim(struct ieee80211_hw *hw,
+ 	if (sdata->vif.type = NL80211_IFTYPE_AP) {
+ 		ap = &sdata->u.ap;
+ 		beacon = rcu_dereference(ap->beacon);
+-		if (ap && beacon) {
++		if (beacon) {
+ 			/*
+ 			 * headroom, head length,
+ 			 * tail length and maximum TIM length
