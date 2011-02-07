@@ -1,46 +1,29 @@
-From: Mattia Dongili <malattia@linux.it>
-Date: Sun, 27 Feb 2011 12:14:42 +0000
-Subject: Re: [patch 3/3] sony-laptop: handle allocation failures
-Message-Id: <20110227121442.GC29319@kamineko.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 07 Feb 2011 08:38:55 +0000
+Subject: [patch] IPVS: precedence bug in ip_vs_sync_switch_mode()
+Message-Id: <20110207083855.GD4384@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110226125524.GK18043@bicker>
-In-Reply-To: <20110226125524.GK18043@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wensong Zhang <wensong@linux-vs.org>
+Cc: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, hans.schillstrom@ericsson.com, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Feb 26, 2011 at 03:55:24PM +0300, Dan Carpenter wrote:
-> Return -ENOMEM if kzalloc() fails.  The callers already handle error
-> returns.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+'!' has higher precedence than '&'.  IP_VS_STATE_MASTER is 0x1 so
+the original code is equivelent to if (!ipvs->sync_state) ...
 
-Acked-by: Mattia Dongili <malattia@linux.it>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
-> index d0d0522..0db9049 100644
-> --- a/drivers/platform/x86/sony-laptop.c
-> +++ b/drivers/platform/x86/sony-laptop.c
-> @@ -768,6 +768,8 @@ static int sony_nc_handles_setup(struct platform_device *pd)
->  	int result;
->  
->  	handles = kzalloc(sizeof(*handles), GFP_KERNEL);
-> +	if (!handles)
-> +		return -ENOMEM;
->  
->  	sysfs_attr_init(&handles->devattr.attr);
->  	handles->devattr.attr.name = "handles";
-> @@ -1458,6 +1460,8 @@ static int sony_nc_kbd_backlight_setup(struct platform_device *pd)
->  		return 0;
->  
->  	kbdbl_handle = kzalloc(sizeof(*kbdbl_handle), GFP_KERNEL);
-> +	if (!kbdbl_handle)
-> +		return -ENOMEM;
->  
->  	sysfs_attr_init(&kbdbl_handle->mode_attr.attr);
->  	kbdbl_handle->mode_attr.attr.name = "kbd_backlight";
--- 
-mattia
-:wq!
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index 2a2a836..d1b7298 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -392,7 +392,7 @@ void ip_vs_sync_switch_mode(struct net *net, int mode)
+ {
+ 	struct netns_ipvs *ipvs = net_ipvs(net);
+ 
+-	if (!ipvs->sync_state & IP_VS_STATE_MASTER)
++	if (!(ipvs->sync_state & IP_VS_STATE_MASTER))
+ 		return;
+ 	if (mode = ipvs->sysctl_sync_ver || !ipvs->sync_buff)
+ 		return;
