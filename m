@@ -1,28 +1,29 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Date: Mon, 21 Feb 2011 15:31:15 +0000
-Subject: Re: [PATCH] ata: sata_dwc_460ex: fix error path
-Message-Id: <4D628543.5090700@mvista.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 07 Feb 2011 16:47:42 +0000
+Subject: [patch] wl12xx: change type from u8 to int
+Message-Id: <20110207164742.GE4384@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284317830-5022-1-git-send-email-segooon@gmail.com> <4D5C1326.2010101@ru.mvista.com>
-In-Reply-To: <4D5C1326.2010101@ru.mvista.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon@gmail.com>, Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Rupjyoti Sarmah <rsarmah@appliedmicro.com>, Prodyut Hazarika <phazarika@appliedmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Luciano Coelho <coelho@ti.com>, shahar_levi@ti.com
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello.
+ret is used to store int types.  Using an u8 will break the error
+handling.
 
-I wrote:
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
->> Free all allocated resources on error path.
-
->> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
->> ---
->>  I cannot compile this driver at all, so it is not tested.
-
->    I can at least compile-test the patch...
-
-    No new errors/warnings are added by the patch.
-
-WBR, Sergei
+diff --git a/drivers/net/wireless/wl12xx/init.c b/drivers/net/wireless/wl12xx/init.c
+index 70b3dc8..e430b2a 100644
+--- a/drivers/net/wireless/wl12xx/init.c
++++ b/drivers/net/wireless/wl12xx/init.c
+@@ -470,7 +470,7 @@ static void wl1271_check_ba_support(struct wl1271 *wl)
+ static int wl1271_set_ba_policies(struct wl1271 *wl)
+ {
+ 	u8 tid_index;
+-	u8 ret = 0;
++	int ret = 0;
+ 
+ 	/* Reset the BA RX indicators */
+ 	wl->ba_rx_bitmap = 0;
