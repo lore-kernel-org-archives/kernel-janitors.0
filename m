@@ -1,75 +1,70 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 13 Feb 2011 11:50:54 +0000
-Subject: [PATCH 0/5] Convert release_resource to release_region/release_mem_region
-Message-Id: <1297599132-7226-1-git-send-email-julia@diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 08 Feb 2011 22:45:13 +0000
+Subject: [patch] Staging: rtl8712: fix math errors in snprintf()
+Message-Id: <20110208224513.GQ4384@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Request_region should be used with release_region, not release_resource.
+The original code had calls to snprintf(p, 7, "wpa_ie=") but that string
+is 8 characters (because snprintf() puts a NUL terminator on the end).
+So instead of an '=' the what gets written to buf is a NUL terminator
+followed by the rest of the string.
 
-The changes are somewhat complicated, so I have only done a few cases to
-start with.
+And actually the %02x formats are three chars as well when you include
+the terminator.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Compile tested only.
 
-// <smpl>
-@@
-expression x,E;
-@@
-(
-*x = request_region(...)
-|
-*x = request_mem_region(...)
-)
-... when != release_region(x)
-    when != x = E
-* release_resource(x);
-// </smpl>
-
-The complete set of files in which this semantic match finds problesm is as
-follows:
-
-arch/unicore32/kernel/rtc.c
-arch/x86/pci/direct.c
-drivers/char/hw_random/omap-rng.c
-drivers/char/pcmcia/ipwireless/main.c
-drivers/i2c/busses/i2c-au1550.c
-drivers/i2c/busses/i2c-nuc900.c
-drivers/i2c/busses/i2c-s3c2410.c
-drivers/i2c/busses/i2c-sh7760.c
-drivers/i2c/busses/i2c-simtec.c
-drivers/media/video/s5p-fimc/fimc-core.c
-drivers/mfd/sm501.c
-drivers/misc/atmel_tclib.c
-drivers/mmc/host/au1xmmc.c
-drivers/mmc/host/davinci_mmc.c
-drivers/mmc/host/mvsdio.c
-drivers/mmc/host/pxamci.c
-drivers/mmc/host/sdhci-s3c.c
-drivers/mtd/maps/ceiva.c
-drivers/net/a2065.c
-drivers/net/ariadne.c
-drivers/net/arm/ixp4xx_eth.c
-drivers/net/ax88796.c
-drivers/parport/parport_ax88796.c
-drivers/parport/parport_pc.c
-drivers/rtc/rtc-s3c.c
-drivers/spi/au1550_spi.c
-drivers/spi/spi_s3c24xx.c
-drivers/tty/serial/sh-sci.c
-drivers/tty/serial/vr41xx_siu.c
-drivers/usb/gadget/s3c-hsotg.c
-drivers/video/s3c-fb.c
-drivers/video/s3c2410fb.c
-drivers/video/sh7760fb.c
-drivers/video/sm501fb.c
-drivers/watchdog/davinci_wdt.c
-drivers/watchdog/max63xx_wdt.c
-drivers/watchdog/pnx4008_wdt.c
-drivers/watchdog/s3c2410_wdt.c
-
+diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+index 685a7b1..ddd068c 100644
+--- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
++++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+@@ -280,18 +280,20 @@ static inline char *translate_scan(struct _adapter *padapter,
+ 	/* parsing WPA/WPA2 IE */
+ 	{
+ 		u16 wpa_len = 0, rsn_len = 0;
+-		u8 *p;
++		int n;
+ 		sint out_len = 0;
+ 		out_len = r8712_get_sec_ie(pnetwork->network.IEs,
+ 					   pnetwork->network.
+ 					   IELength, rsn_ie, &rsn_len,
+ 					   wpa_ie, &wpa_len);
+ 		if (wpa_len > 0) {
+-			p = buf;
+ 			memset(buf, 0, MAX_WPA_IE_LEN);
+-			p += snprintf(p, 7, "wpa_ie=");
+-			for (i = 0; i < wpa_len; i++)
+-				p += snprintf(p, 2, "%02x", wpa_ie[i]);
++			n = sprintf(buf, "wpa_ie=");
++			for (i = 0; i < wpa_len; i++) {
++				n += snprintf(buf + n, MAX_WPA_IE_LEN - n, "%02x", wpa_ie[i]);
++				if (n >= MAX_WPA_IE_LEN)
++					break;
++			}
+ 			memset(&iwe, 0, sizeof(iwe));
+ 			iwe.cmd = IWEVCUSTOM;
+ 			iwe.u.data.length = (u16)strlen(buf);
+@@ -304,11 +306,13 @@ static inline char *translate_scan(struct _adapter *padapter,
+ 				&iwe, wpa_ie);
+ 		}
+ 		if (rsn_len > 0) {
+-			p = buf;
+ 			memset(buf, 0, MAX_WPA_IE_LEN);
+-			p += snprintf(p, 7, "rsn_ie=");
+-			for (i = 0; i < rsn_len; i++)
+-				p += snprintf(p, 2, "%02x", rsn_ie[i]);
++			n = sprintf(buf, "rsn_ie=");
++			for (i = 0; i < rsn_len; i++) {
++				n += snprintf(buf + n, MAX_WPA_IE_LEN - n, "%02x", rsn_ie[i]);
++				if (n >= MAX_WPA_IE_LEN)
++					break;
++			}
+ 			memset(&iwe, 0, sizeof(iwe));
+ 			iwe.cmd = IWEVCUSTOM;
+ 			iwe.u.data.length = strlen(buf);
