@@ -1,133 +1,115 @@
 From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Mon, 21 Feb 2011 09:09:06 +0000
-Subject: [PATCH 2/3] Staging: xgifb: Remove unused functions
-Message-Id: <1298279347-8825-3-git-send-email-martinez.javier@gmail.com>
+Date: Sat, 12 Feb 2011 03:38:23 +0000
+Subject: [PATCH 2/4] Staging: bcm: Bcmchar: Fix style issues on bcm_char_release()
+Message-Id: <1297481905-22331-3-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Earlier patch removed code that never got executed because it depended on
-XGIfb_accel variable value to de distinct than 0. But this variable is
-always 0 in current driver.
-
-That dead code used a set of functions that not remains unused.
-
-This patch removes these unused functions.
-
 Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
 ---
- drivers/staging/xgifb/XGI_accel.c |   96 -------------------------------------
- 1 files changed, 0 insertions(+), 96 deletions(-)
+ drivers/staging/bcm/Bcmchar.c |   68 ++++++++++++++++++----------------------
+ 1 files changed, 31 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/staging/xgifb/XGI_accel.c b/drivers/staging/xgifb/XGI_accel.c
-index 7f485fe..e6241fe 100644
---- a/drivers/staging/xgifb/XGI_accel.c
-+++ b/drivers/staging/xgifb/XGI_accel.c
-@@ -99,102 +99,6 @@ XGI310Sync(void)
- 	XGI310Idle
+diff --git a/drivers/staging/bcm/Bcmchar.c b/drivers/staging/bcm/Bcmchar.c
+index edcd0c0..2a3f64c 100644
+--- a/drivers/staging/bcm/Bcmchar.c
++++ b/drivers/staging/bcm/Bcmchar.c
+@@ -45,61 +45,55 @@ static int bcm_char_open(struct inode *inode, struct file * filp)
+ 
+ static int bcm_char_release(struct inode *inode, struct file *filp)
+ {
+-    PPER_TARANG_DATA pTarang, tmp, ptmp;
+-	PMINI_ADAPTER Adapter=NULL;
+-    struct sk_buff * pkt, * npkt;
++	PPER_TARANG_DATA pTarang, tmp, ptmp;
++	PMINI_ADAPTER Adapter = NULL;
++	struct sk_buff *pkt, *npkt;
+ 
+-    pTarang = (PPER_TARANG_DATA)filp->private_data;
++	pTarang = (PPER_TARANG_DATA)filp->private_data;
+ 
+-    if(pTarang = NULL)
+-	{
+-	BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0, "ptarang is null\n");
+-	return 0;
++	if (pTarang = NULL) {
++		BCM_DEBUG_PRINT(Adapter, DBG_TYPE_PRINTK, 0, 0,
++				"ptarang is null\n");
++		return 0;
+ 	}
+ 
+ 	Adapter = pTarang->Adapter;
+ 
+-    down( &Adapter->RxAppControlQueuelock);
++	down(&Adapter->RxAppControlQueuelock);
+ 
+-    tmp = Adapter->pTarangs;
+-    for ( ptmp = NULL; tmp; ptmp = tmp, tmp = tmp->next )
+-	{
+-        if ( tmp = pTarang )
++	tmp = Adapter->pTarangs;
++	for (ptmp = NULL; tmp; ptmp = tmp, tmp = tmp->next) {
++		if (tmp = pTarang)
+ 			break;
+ 	}
+ 
+-    if ( tmp )
+-	{
+-        if ( !ptmp )
+-            Adapter->pTarangs = tmp->next;
+-        else
+-            ptmp->next = tmp->next;
++	if (tmp) {
++		if (!ptmp)
++			Adapter->pTarangs = tmp->next;
++		else
++			ptmp->next = tmp->next;
++	} else {
++		up(&Adapter->RxAppControlQueuelock);
++		return 0;
+ 	}
+ 
+-    else
+-	{
+-    	up( &Adapter->RxAppControlQueuelock);
+-	return 0;
+-	}
+-
+-    pkt = pTarang->RxAppControlHead;
+-    while ( pkt )
+-	{
+-        npkt = pkt->next;
+-        kfree_skb(pkt);
+-        pkt = npkt;
++	pkt = pTarang->RxAppControlHead;
++	while (pkt) {
++		npkt = pkt->next;
++		kfree_skb(pkt);
++		pkt = npkt;
+ 	}
+ 
+-    up( &Adapter->RxAppControlQueuelock);
++	up(&Adapter->RxAppControlQueuelock);
+ 
+-    /*Stop Queuing the control response Packets*/
+-    atomic_dec(&Adapter->ApplicationRunning);
++	/*Stop Queuing the control response Packets*/
++	atomic_dec(&Adapter->ApplicationRunning);
+ 
+-    kfree(pTarang);
++	kfree(pTarang);
+ 
+ 	/* remove this filp from the asynchronously notified filp's */
+-    filp->private_data = NULL;
+-    return 0;
++	filp->private_data = NULL;
++	return 0;
  }
  
--/* 310/325 series ------------------------------------------------ */
--
--static void
--XGI310SetupForScreenToScreenCopy(int xdir, int ydir, int rop,
--                                unsigned int planemask, int trans_color)
--{
--	XGI310SetupDSTColorDepth(xgi_video_info.DstColor);
--	XGI310SetupSRCPitch(xgi_video_info.video_linelength)
--	XGI310SetupDSTRect(xgi_video_info.video_linelength, 0xFFF)
--	if (trans_color != -1) {
--		XGI310SetupROP(0x0A)
--		XGI310SetupSRCTrans(trans_color)
--		XGI310SetupCMDFlag(TRANSPARENT_BITBLT)
--	} else {
--	        XGI310SetupROP(XGIALUConv[rop])
--		/* Set command - not needed, both 0 */
--		/* XGISetupCMDFlag(BITBLT | SRCVIDEO) */
--	}
--	XGI310SetupCMDFlag(xgi_video_info.XGI310_AccelDepth)
--	/* TW: The 310/325 series is smart enough to know the direction */
--}
--
--static void
--XGI310SubsequentScreenToScreenCopy(int src_x, int src_y, int dst_x, int dst_y,
--                                int width, int height)
--{
--	long srcbase, dstbase;
--	int mymin, mymax;
--
--	srcbase = dstbase = 0;
--	mymin = min(src_y, dst_y);
--	mymax = max(src_y, dst_y);
--
--	/* Although the chip knows the direction to use
--	 * if the source and destination areas overlap,
--	 * that logic fails if we fiddle with the bitmap
--	 * addresses. Therefore, we check if the source
--	 * and destination blitting areas overlap and
--	 * adapt the bitmap addresses synchronously
--	 * if the coordinates exceed the valid range.
--	 * The the areas do not overlap, we do our
--	 * normal check.
--	 */
--	if((mymax - mymin) < height) {
--	   if((src_y >= 2048) || (dst_y >= 2048)) {
--	      srcbase = xgi_video_info.video_linelength * mymin;
--	      dstbase = xgi_video_info.video_linelength * mymin;
--	      src_y -= mymin;
--	      dst_y -= mymin;
--	   }
--	} else {
--	   if(src_y >= 2048) {
--	      srcbase = xgi_video_info.video_linelength * src_y;
--	      src_y = 0;
--	   }
--	   if(dst_y >= 2048) {
--	      dstbase = xgi_video_info.video_linelength * dst_y;
--	      dst_y = 0;
--	   }
--	}
--
--	XGI310SetupSRCBase(srcbase);
--	XGI310SetupDSTBase(dstbase);
--	XGI310SetupRect(width, height)
--	XGI310SetupSRCXY(src_x, src_y)
--	XGI310SetupDSTXY(dst_x, dst_y)
--	XGI310DoCMD
--}
--
--static void
--XGI310SetupForSolidFill(int color, int rop, unsigned int planemask)
--{
--	XGI310SetupPATFG(color)
--	XGI310SetupDSTRect(xgi_video_info.video_linelength, 0xFFF)
--	XGI310SetupDSTColorDepth(xgi_video_info.DstColor);
--	XGI310SetupROP(XGIPatALUConv[rop])
--	XGI310SetupCMDFlag(PATFG | xgi_video_info.XGI310_AccelDepth)
--}
--
--static void
--XGI310SubsequentSolidFillRect(int x, int y, int w, int h)
--{
--	long dstbase;
--
--	dstbase = 0;
--	if(y >= 2048) {
--		dstbase = xgi_video_info.video_linelength * y;
--		y = 0;
--	}
--	XGI310SetupDSTBase(dstbase)
--	XGI310SetupDSTXY(x,y)
--	XGI310SetupRect(w,h)
--	XGI310SetupCMDFlag(BITBLT)
--	XGI310DoCMD
--}
--
- /* --------------------------------------------------------------------- */
- 
- /* The exported routines */
+ static ssize_t bcm_char_read(struct file *filp, char __user *buf, size_t size, loff_t *f_pos)
 -- 
 1.7.0.4
 
