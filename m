@@ -1,29 +1,18 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 07 Feb 2011 16:59:58 +0000
-Subject: [patch] [SCSI] hpsa: precedence bug in
-Message-Id: <20110207165957.GG4384@bicker>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 12 Feb 2011 03:38:21 +0000
+Subject: [PATCH 0/4] Staging: bcm: Bcmchar: Fix coding style issues
+Message-Id: <1297481905-22331-1-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Stephen M. Cameron" <scameron@beardog.cce.hp.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-'!' has higher precedence than '&'.  CFGTBL_ChangeReq is 0x1 so the
-original code is equivelent to if (!doorbell_value) {...
+This patchset fixes a few coding style issues in Beceem WIMAX driver.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+The patches in this patchset are the following:
 
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 959eeb2..f46f92a 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -3591,7 +3591,7 @@ static void __devinit hpsa_wait_for_mode_change_ack(struct ctlr_info *h)
- 		spin_lock_irqsave(&h->lock, flags);
- 		doorbell_value = readl(h->vaddr + SA5_DOORBELL);
- 		spin_unlock_irqrestore(&h->lock, flags);
--		if (!doorbell_value & CFGTBL_ChangeReq)
-+		if (!(doorbell_value & CFGTBL_ChangeReq))
- 			break;
- 		/* delay and try again */
- 		usleep_range(10000, 20000);
+[PATCH 1/4] Staging: bcm: Bcmchar: Fix style issues on bcm_char_open()
+[PATCH 2/4] Staging: bcm: Bcmchar: Fix style issues on bcm_char_release()
+[PATCH 3/4] Staging: bcm: Bcmchar: Fix style issues on bcm_char_read()
+[PATCH 4/4] Staging: bcm: Bcmchar: Fix some checkpatch errors
