@@ -1,29 +1,63 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 07 Feb 2011 17:01:36 +0000
-Subject: [patch] usb: fusb300_udc: add more "ep%d" names
-Message-Id: <20110207170136.GH4384@bicker>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sat, 12 Feb 2011 03:38:22 +0000
+Subject: [PATCH 1/4] Staging: bcm: Bcmchar: Fix style issues on bcm_char_open()
+Message-Id: <1297481905-22331-2-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We need FUSB300_MAX_NUM_EP (16) names otherwise the last 8 names get
-initialized to garbage values in fusb300_probe().
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/bcm/Bcmchar.c |   22 ++++++++++++----------
+ 1 files changed, 12 insertions(+), 10 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+diff --git a/drivers/staging/bcm/Bcmchar.c b/drivers/staging/bcm/Bcmchar.c
+index 7dff283..edcd0c0 100644
+--- a/drivers/staging/bcm/Bcmchar.c
++++ b/drivers/staging/bcm/Bcmchar.c
+@@ -15,21 +15,22 @@
+ 
+ static int bcm_char_open(struct inode *inode, struct file * filp)
+ {
+-	PMINI_ADAPTER 		Adapter = NULL;
+-    PPER_TARANG_DATA 	pTarang = NULL;
++	PMINI_ADAPTER       Adapter = NULL;
++	PPER_TARANG_DATA    pTarang = NULL;
+ 
+ 	Adapter = GET_BCM_ADAPTER(gblpnetdev);
+-    pTarang = (PPER_TARANG_DATA)kmalloc(sizeof(PER_TARANG_DATA), GFP_KERNEL);
+-    if (!pTarang)
+-        return -ENOMEM;
++	pTarang = (PPER_TARANG_DATA)kmalloc(sizeof(PER_TARANG_DATA),
++					    GFP_KERNEL);
++	if (!pTarang)
++		return -ENOMEM;
+ 
+-	memset (pTarang, 0, sizeof(PER_TARANG_DATA));
+-    pTarang->Adapter = Adapter;
+-	pTarang->RxCntrlMsgBitMask = 0xFFFFFFFF & ~(1 << 0xB) ;
++	memset(pTarang, 0, sizeof(PER_TARANG_DATA));
++	pTarang->Adapter = Adapter;
++	pTarang->RxCntrlMsgBitMask = 0xFFFFFFFF & ~(1 << 0xB);
+ 
+ 	down(&Adapter->RxAppControlQueuelock);
+-    pTarang->next = Adapter->pTarangs;
+-    Adapter->pTarangs = pTarang;
++	pTarang->next = Adapter->pTarangs;
++	Adapter->pTarangs = pTarang;
+ 	up(&Adapter->RxAppControlQueuelock);
+ 
+ 	/* Store the Adapter structure */
+@@ -41,6 +42,7 @@ static int bcm_char_open(struct inode *inode, struct file * filp)
+ 	nonseekable_open(inode, filp);
+ 	return 0;
+ }
++
+ static int bcm_char_release(struct inode *inode, struct file *filp)
+ {
+     PPER_TARANG_DATA pTarang, tmp, ptmp;
+-- 
+1.7.0.4
 
-diff --git a/drivers/usb/gadget/fusb300_udc.c b/drivers/usb/gadget/fusb300_udc.c
-index fd4fd69..763d462 100644
---- a/drivers/usb/gadget/fusb300_udc.c
-+++ b/drivers/usb/gadget/fusb300_udc.c
-@@ -38,7 +38,8 @@ MODULE_ALIAS("platform:fusb300_udc");
- 
- static const char udc_name[] = "fusb300_udc";
- static const char * const fusb300_ep_name[] = {
--	"ep0", "ep1", "ep2", "ep3", "ep4", "ep5", "ep6", "ep7"
-+	"ep0", "ep1", "ep2", "ep3", "ep4", "ep5", "ep6", "ep7", "ep8", "ep9",
-+	"ep10", "ep11", "ep12", "ep13", "ep14", "ep15"
- };
- 
- static void done(struct fusb300_ep *ep, struct fusb300_request *req,
