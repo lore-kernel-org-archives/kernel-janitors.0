@@ -1,62 +1,97 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 20 Feb 2011 17:53:49 +0000
-Subject: Re: [PATCH 1/2] Staging: xgifb: Remove CRIT[FLAGS | BEGIN | END]
-Message-Id: <20110220175349.GD1898@bicker>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 13 Feb 2011 11:51:29 +0000
+Subject: [PATCH 5/5] drivers/i2c/busses/i2c-nuc900.c: Convert release_resource to release_region/release_mem_
+Message-Id: <1297599132-7226-6-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
- <1298220798-2942-2-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1298220798-2942-2-git-send-email-martinez.javier@gmail.com>
+References: <1297599132-7226-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1297599132-7226-1-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Javier Martinez Canillas <martinez.javier@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaud Patard <apatard@mandriva.com>
+To: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Hi Javier,
+Request_region should be used with release_region, not release_resource.
 
-Your idea was good but there are a couple problems with this patch.  I'm
-afraid you're going to need to fix it and resend.
+The result of request_mem_region is no longer stored.  Instead the field
+ioarea is used to store a pointer to the resource structure that contains
+the start address.  This is the information that is needed later in
+nuc900_i2c_remove to release the region.  The field ioarea is also printed
+in some debugging code.
 
-You put the patch description in the 0/2 patch.  It was a pretty decent
-patch description.  Unfortunately the 0/2 descriptions get thrown away,
-and do not get included in the final git log.  So they should go with
-the individual patches.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-On Sun, Feb 20, 2011 at 05:53:17PM +0100, Javier Martinez Canillas wrote:
->  int fbcon_XGI_sync(struct fb_info *info)
->  {
-> -    if(!XGIfb_accel) return 0;
-> -    CRITFLAGS
-> +	unsigned long critflags = 0;
+// <smpl>
+@@
+expression x,E;
+@@
+(
+*x = request_region(...)
+|
+*x = request_mem_region(...)
+)
+... when != release_region(x)
+    when != x = E
+* release_resource(x);
+// </smpl>
 
-It's better to just call it "flags" instead of "critflags" so that it's
-consistent with the rest of the kernel.
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-It's also not a good idea to initialize it to zero.  I know that gcc
-prints a warning, but you can't just set it to zero to silence the
-warning. Also this change should have been mentioned in the patch
-description.  Every behavior change should be described in the change
-log.
+---
+Not compiled due to incompatible architecture.
 
->  
-> -    XGI310Sync();
-> +	if (!XGIfb_accel)
-> +		return 0;
-> +
-> +	XGI310Sync();
->  
-> -   CRITEND
-> -   return 0;
-> +	spin_unlock_irqrestore(&xgi_video_info.lockaccel, critflags);
+ drivers/i2c/busses/i2c-nuc900.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-I know you didn't introduce it, but this makes no sense at all.  It's a
-random unlock, and in the original code critflags was uninitialized.
-
-The only reason this works is because XGIfb_accel is always 0.  So you 
-can remove this function, and remove all the code that depends on
-XGIfb_accel.  (In a separate patch of course).
-
-regards,
-dan carpenter
-
+diff --git a/drivers/i2c/busses/i2c-nuc900.c b/drivers/i2c/busses/i2c-nuc900.c
+index 7243426..97b16b7 100644
+--- a/drivers/i2c/busses/i2c-nuc900.c
++++ b/drivers/i2c/busses/i2c-nuc900.c
+@@ -568,15 +568,13 @@ static int __devinit nuc900_i2c_probe(struct platform_device *pdev)
+ 		goto err_clk;
+ 	}
+ 
+-	i2c->ioarea = request_mem_region(res->start, resource_size(res),
+-					 pdev->name);
+-
+-	if (i2c->ioarea = NULL) {
++	if (!request_mem_region(res->start, resource_size(res), pdev->name)) {
+ 		dev_err(&pdev->dev, "cannot request IO\n");
+ 		ret = -ENXIO;
+ 		goto err_clk;
+ 	}
+ 
++	i2c->ioarea = res;
+ 	i2c->regs = ioremap(res->start, resource_size(res));
+ 
+ 	if (i2c->regs = NULL) {
+@@ -645,8 +643,7 @@ static int __devinit nuc900_i2c_probe(struct platform_device *pdev)
+ 	iounmap(i2c->regs);
+ 
+  err_ioarea:
+-	release_resource(i2c->ioarea);
+-	kfree(i2c->ioarea);
++	release_mem_region(res->start, resource_size(res));
+ 
+  err_clk:
+ 	clk_disable(i2c->clk);
+@@ -665,6 +662,7 @@ static int __devinit nuc900_i2c_probe(struct platform_device *pdev)
+ static int __devexit nuc900_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct nuc900_i2c *i2c = platform_get_drvdata(pdev);
++	struct resource *res = i2c->ioarea;
+ 
+ 	i2c_del_adapter(&i2c->adap);
+ 	free_irq(i2c->irq, i2c);
+@@ -674,8 +672,7 @@ static int __devexit nuc900_i2c_remove(struct platform_device *pdev)
+ 
+ 	iounmap(i2c->regs);
+ 
+-	release_resource(i2c->ioarea);
+-	kfree(i2c->ioarea);
++	release_mem_region(res->start, resource_size(res));
+ 	kfree(i2c);
+ 
+ 	return 0;
 
