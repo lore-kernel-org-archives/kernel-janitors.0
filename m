@@ -1,37 +1,63 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 26 Feb 2011 12:48:12 +0000
-Subject: [patch] staging: gma500: fix some swapped gotos
-Message-Id: <20110226124812.GH18043@bicker>
+Date: Tue, 15 Feb 2011 10:10:08 +0000
+Subject: [patch v2] [media] stv090x: handle allocation failures
+Message-Id: <20110215101008.GO4384@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110207165650.GF4384@bicker>
+ <201102150300.19650@orion.escape-edv.de>
+In-Reply-To: <201102150300.19650@orion.escape-edv.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Oliver Endriss <o.endriss@gmx.de>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Manu Abraham <manu@linuxtv.org>, Andreas Regel <andreas.regel@gmx.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These gotos were swapped.  In the original code, the first would result
-in a NULL dereference and the second would result in a memory leak.
+kmalloc() can fail so check whether state->internal is NULL.
+append_internal() can return NULL on allocation failures so check that.
+Also if we hit the error condition later in the function then there is
+a memory leak and we need to call remove_dev() to fix it.
+
+Also Oliver Endriss pointed out an additional leak that I missed in the
+first version of this patch.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+v2:  Fix the leak Oliver noticed.
 
-diff --git a/drivers/staging/gma500/psb_fb.c b/drivers/staging/gma500/psb_fb.c
-index 6585e88..9f4b570 100644
---- a/drivers/staging/gma500/psb_fb.c
-+++ b/drivers/staging/gma500/psb_fb.c
-@@ -458,7 +458,7 @@ static int psbfb_create(struct psb_fbdev *fbdev,
- 	if (!fb) {
- 		DRM_ERROR("failed to allocate fb.\n");
- 		ret = -ENOMEM;
--		goto out_err0;
-+		goto out_err1;
- 	}
- 	psbfb = to_psb_fb(fb);
- 	psbfb->size = size;
-@@ -466,7 +466,7 @@ static int psbfb_create(struct psb_fbdev *fbdev,
- 	info = framebuffer_alloc(sizeof(struct psb_fbdev), device);
- 	if (!info) {
- 		ret = -ENOMEM;
--		goto out_err1;
-+		goto out_err0;
+diff --git a/drivers/media/dvb/frontends/stv090x.c b/drivers/media/dvb/frontends/stv090x.c
+index d3362d0..41d0f0a 100644
+--- a/drivers/media/dvb/frontends/stv090x.c
++++ b/drivers/media/dvb/frontends/stv090x.c
+@@ -4783,7 +4783,13 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
+ 	} else {
+ 		state->internal = kmalloc(sizeof(struct stv090x_internal),
+ 					  GFP_KERNEL);
++		if (!state->internal)
++			goto error;
+ 		temp_int = append_internal(state->internal);
++		if (!temp_int) {
++			kfree(state->internal);
++			goto error;
++		}
+ 		state->internal->num_used = 1;
+ 		state->internal->mclk = 0;
+ 		state->internal->dev_ver = 0;
+@@ -4796,7 +4802,7 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
+ 
+ 		if (stv090x_setup(&state->frontend) < 0) {
+ 			dprintk(FE_ERROR, 1, "Error setting up device");
+-			goto error;
++			goto err_remove;
+ 		}
  	}
  
- 	info->par = fbdev;
+@@ -4811,6 +4817,9 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
+ 
+ 	return &state->frontend;
+ 
++err_remove:
++	remove_dev(state->internal);
++	kfree(state->internal);
+ error:
+ 	kfree(state);
+ 	return NULL;
