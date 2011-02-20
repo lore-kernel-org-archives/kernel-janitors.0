@@ -1,102 +1,62 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sun, 20 Feb 2011 16:53:17 +0000
-Subject: [PATCH 1/2] Staging: xgifb: Remove CRIT[FLAGS | BEGIN | END] defines usage
-Message-Id: <1298220798-2942-2-git-send-email-martinez.javier@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 20 Feb 2011 17:53:49 +0000
+Subject: Re: [PATCH 1/2] Staging: xgifb: Remove CRIT[FLAGS | BEGIN | END]
+Message-Id: <20110220175349.GD1898@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
+ <1298220798-2942-2-git-send-email-martinez.javier@gmail.com>
+In-Reply-To: <1298220798-2942-2-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Bill Pemberton <wfp5p@virginia.edu>, Arnaud Patard <apatard@mandriva.com>, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Javier Martinez Canillas <martinez.javier@gmail.com>
+To: Javier Martinez Canillas <martinez.javier@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaud Patard <apatard@mandriva.com>
 
+Hi Javier,
 
-Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
----
- drivers/staging/xgifb/XGI_accel.c |   43 ++++++++++++++++++++----------------
- 1 files changed, 24 insertions(+), 19 deletions(-)
+Your idea was good but there are a couple problems with this patch.  I'm
+afraid you're going to need to fix it and resend.
 
-diff --git a/drivers/staging/xgifb/XGI_accel.c b/drivers/staging/xgifb/XGI_accel.c
-index 7954974..6ef2148 100644
---- a/drivers/staging/xgifb/XGI_accel.c
-+++ b/drivers/staging/xgifb/XGI_accel.c
-@@ -216,19 +216,21 @@ void XGIfb_syncaccel(void)
- 
- int fbcon_XGI_sync(struct fb_info *info)
- {
--    if(!XGIfb_accel) return 0;
--    CRITFLAGS
-+	unsigned long critflags = 0;
- 
--    XGI310Sync();
-+	if (!XGIfb_accel)
-+		return 0;
-+
-+	XGI310Sync();
- 
--   CRITEND
--   return 0;
-+	spin_unlock_irqrestore(&xgi_video_info.lockaccel, critflags);
-+	return 0;
- }
- 
- void fbcon_XGI_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
- {
--   int col=0;
--   CRITFLAGS
-+	int col = 0;
-+	unsigned long critflags;
- 
- 
-    if(!rect->width || !rect->height)
-@@ -249,19 +251,20 @@ void fbcon_XGI_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
- 	}
- 
- 
--	   CRITBEGIN
--	   XGI310SetupForSolidFill(col, myrops[rect->rop], 0);
--	   XGI310SubsequentSolidFillRect(rect->dx, rect->dy, rect->width, rect->height);
--	   CRITEND
--	   XGI310Sync();
-+	spin_lock_irqsave(&xgi_video_info.lockaccel, critflags);
-+	XGI310SetupForSolidFill(col, myrops[rect->rop], 0);
-+	XGI310SubsequentSolidFillRect(rect->dx, rect->dy, rect->width,
-+				      rect->height);
-+	spin_unlock_irqrestore(&xgi_video_info.lockaccel, critflags);
-+	XGI310Sync();
- 
- 
- }
- 
- void fbcon_XGI_copyarea(struct fb_info *info, const struct fb_copyarea *area)
- {
--   int xdir, ydir;
--   CRITFLAGS
-+	int xdir, ydir;
-+	unsigned long critflags;
- 
- 
-    if(!XGIfb_accel) {
-@@ -277,11 +280,13 @@ void fbcon_XGI_copyarea(struct fb_info *info, const struct fb_copyarea *area)
-    if(area->sy < area->dy) ydir = 0;
-    else                    ydir = 1;
- 
--      CRITBEGIN
--      XGI310SetupForScreenToScreenCopy(xdir, ydir, 3, 0, -1);
--      XGI310SubsequentScreenToScreenCopy(area->sx, area->sy, area->dx, area->dy, area->width, area->height);
--      CRITEND
--      XGI310Sync();
-+	spin_lock_irqsave(&xgi_video_info.lockaccel, critflags);
-+	XGI310SetupForScreenToScreenCopy(xdir, ydir, 3, 0, -1);
-+	XGI310SubsequentScreenToScreenCopy(area->sx, area->sy, area->dx,
-+					   area->dy, area->width,
-+					   area->height);
-+	spin_unlock_irqrestore(&xgi_video_info.lockaccel, critflags);
-+	XGI310Sync();
- 
- }
- 
--- 
-1.7.2.3
+You put the patch description in the 0/2 patch.  It was a pretty decent
+patch description.  Unfortunately the 0/2 descriptions get thrown away,
+and do not get included in the final git log.  So they should go with
+the individual patches.
+
+On Sun, Feb 20, 2011 at 05:53:17PM +0100, Javier Martinez Canillas wrote:
+>  int fbcon_XGI_sync(struct fb_info *info)
+>  {
+> -    if(!XGIfb_accel) return 0;
+> -    CRITFLAGS
+> +	unsigned long critflags = 0;
+
+It's better to just call it "flags" instead of "critflags" so that it's
+consistent with the rest of the kernel.
+
+It's also not a good idea to initialize it to zero.  I know that gcc
+prints a warning, but you can't just set it to zero to silence the
+warning. Also this change should have been mentioned in the patch
+description.  Every behavior change should be described in the change
+log.
+
+>  
+> -    XGI310Sync();
+> +	if (!XGIfb_accel)
+> +		return 0;
+> +
+> +	XGI310Sync();
+>  
+> -   CRITEND
+> -   return 0;
+> +	spin_unlock_irqrestore(&xgi_video_info.lockaccel, critflags);
+
+I know you didn't introduce it, but this makes no sense at all.  It's a
+random unlock, and in the original code critflags was uninitialized.
+
+The only reason this works is because XGIfb_accel is always 0.  So you 
+can remove this function, and remove all the code that depends on
+XGIfb_accel.  (In a separate patch of course).
+
+regards,
+dan carpenter
+
 
