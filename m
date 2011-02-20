@@ -1,37 +1,46 @@
-From: scameron@beardog.cce.hp.com
-Date: Mon, 07 Feb 2011 17:11:48 +0000
-Subject: Re: [patch] [SCSI] hpsa: precedence bug in hpsa_wait_for_mode_change_ack()
-Message-Id: <20110207171148.GT9565@beardog.cce.hp.com>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 20 Feb 2011 16:53:18 +0000
+Subject: [PATCH 2/2] Staging: xgifb: Removes CRIT[FLAGS | BEGIN | END] defines and conditional spinlock compi
+Message-Id: <1298220798-2942-3-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110207165957.GG4384@bicker>
-In-Reply-To: <20110207165957.GG4384@bicker>
+References: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
+In-Reply-To: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Bill Pemberton <wfp5p@virginia.edu>, Arnaud Patard <apatard@mandriva.com>, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Javier Martinez Canillas <martinez.javier@gmail.com>
 
-On Mon, Feb 07, 2011 at 07:59:58PM +0300, Dan Carpenter wrote:
-> '!' has higher precedence than '&'.  CFGTBL_ChangeReq is 0x1 so the
-> original code is equivelent to if (!doorbell_value) {...
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-> index 959eeb2..f46f92a 100644
-> --- a/drivers/scsi/hpsa.c
-> +++ b/drivers/scsi/hpsa.c
-> @@ -3591,7 +3591,7 @@ static void __devinit hpsa_wait_for_mode_change_ack(struct ctlr_info *h)
->  		spin_lock_irqsave(&h->lock, flags);
->  		doorbell_value = readl(h->vaddr + SA5_DOORBELL);
->  		spin_unlock_irqrestore(&h->lock, flags);
-> -		if (!doorbell_value & CFGTBL_ChangeReq)
-> +		if (!(doorbell_value & CFGTBL_ChangeReq))
->  			break;
->  		/* delay and try again */
->  		usleep_range(10000, 20000);
 
-Thanks.  This looks correct.
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/xgifb/XGI_accel.h |   11 -----------
+ 1 files changed, 0 insertions(+), 11 deletions(-)
 
--- steve
+diff --git a/drivers/staging/xgifb/XGI_accel.h b/drivers/staging/xgifb/XGI_accel.h
+index 5a0395b..786ac24 100644
+--- a/drivers/staging/xgifb/XGI_accel.h
++++ b/drivers/staging/xgifb/XGI_accel.h
+@@ -18,19 +18,8 @@
+ #ifndef _XGIFB_ACCEL_H
+ #define _XGIFB_ACCEL_H
+ 
+-/* Guard accelerator accesses with spin_lock_irqsave? Works well without. */
+-#undef XGIFB_USE_SPINLOCKS
+ 
+-#ifdef XGIFB_USE_SPINLOCKS
+ #include <linux/spinlock.h>
+-#define CRITBEGIN  spin_lock_irqsave(&xgi_video_info.lockaccel), critflags);
+-#define CRITEND	   spin_unlock_irqrestore(&xgi_video_info.lockaccel), critflags);
+-#define CRITFLAGS  unsigned long critflags;
+-#else
+-#define CRITBEGIN
+-#define CRITEND
+-#define CRITFLAGS
+-#endif
+ 
+ /* Definitions for the XGI engine communication. */
+ 
+-- 
+1.7.2.3
 
