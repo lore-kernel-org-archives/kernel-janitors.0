@@ -1,26 +1,28 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Sun, 06 Feb 2011 15:08:24 +0000
-Subject: Re: [PATCH] drivers/mtd/maps/ts5500_flash.c: avoid calling
-Message-Id: <1297004904.4460.31.camel@localhost>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 20 Feb 2011 16:53:16 +0000
+Subject: [PATCH 0/2] Staging: xgifb: Remove CRIT[FLAGS | BEGIN | END] defines nd conditional spinlock compila
+Message-Id: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1296666816-21610-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1296666816-21610-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Bill Pemberton <wfp5p@virginia.edu>, Arnaud Patard <apatard@mandriva.com>, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2011-02-02 at 18:13 +0100, Julia Lawall wrote:
-> map_destroy dereferences its argument.  The call is furthermore only
-> reachable when this argument is NULL.  Thus the call is dropped.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+xgifb staging driver uses a set of defines that hides the synchronization
+mechanism used to access critical sections. Also, the use of spinlocks
+can be disabled in compile time.
 
-Pushed to l2-mtd-2.6.git, thanks!
+Since the spinlocks ABI only are used in contexts were critical section exists
+(UP with preemption enabled and SMP machines), I think we should always have
+the spinlocks enabled and let the spinlock ABI choose to include the spinlocks
+or not. In the other hand if the driver doesn't need locking at all, then
+maybe we should just delete the spinlock logic.
 
--- 
-Best Regards,
-Artem Bityutskiy (Артём Битюцкий)
+This patchset first replaces all the defines used with explicit definitions,
+then removes all the defines and the spinlocks optional compilation logic.
 
+The patchset is composed of the following patches:
+
+[PATCH 1/2] Staging: xgifb: Remove CRIT[FLAGS | BEGIN | END] defines usage
+[PATCH 2/2] Staging: xgifb: Removes CRIT[FLAGS | BEGIN | END] defines and conditional spinlock compilation logic
