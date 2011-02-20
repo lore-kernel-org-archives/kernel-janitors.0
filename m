@@ -1,34 +1,102 @@
-From: Herbert Xu <herbert@gondor.hengli.com.au>
-Date: Mon, 14 Feb 2011 22:47:12 +0000
-Subject: Re: [PATCH 2/5] drivers/char/hw_random/omap-rng.c: Convert
-Message-Id: <20110214224712.GA25913@gondor.apana.org.au>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 20 Feb 2011 16:53:17 +0000
+Subject: [PATCH 1/2] Staging: xgifb: Remove CRIT[FLAGS | BEGIN | END] defines usage
+Message-Id: <1298220798-2942-2-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1297599132-7226-1-git-send-email-julia@diku.dk> <1297599132-7226-3-git-send-email-julia@diku.dk> <1297723344.5929.28.camel@calx>
-In-Reply-To: <1297723344.5929.28.camel@calx>
+References: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
+In-Reply-To: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Mackall <mpm@selenic.com>
-Cc: Julia Lawall <julia@diku.dk>, Deepak Saxena <dsaxena@plexity.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Bill Pemberton <wfp5p@virginia.edu>, Arnaud Patard <apatard@mandriva.com>, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Javier Martinez Canillas <martinez.javier@gmail.com>
 
-On Mon, Feb 14, 2011 at 04:42:24PM -0600, Matt Mackall wrote:
-> On Sun, 2011-02-13 at 13:12 +0100, Julia Lawall wrote:
-> > Request_region should be used with release_region, not release_resource.
-> > 
-> > The local variable mem, storing the result of request_mem_region, is
-> > dropped and instead the pointer res is stored in the drvdata field of the
-> > platform device.  This information is retrieved in omap_rng_remove to
-> > release the region.  The drvdata field is not used elsewhere.
-> > 
-> > The semantic match that finds this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> 
-> Looks ok to me, Herbert?
 
-Yes I will apply it today.
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/xgifb/XGI_accel.c |   43 ++++++++++++++++++++----------------
+ 1 files changed, 24 insertions(+), 19 deletions(-)
 
-Thanks,
+diff --git a/drivers/staging/xgifb/XGI_accel.c b/drivers/staging/xgifb/XGI_accel.c
+index 7954974..6ef2148 100644
+--- a/drivers/staging/xgifb/XGI_accel.c
++++ b/drivers/staging/xgifb/XGI_accel.c
+@@ -216,19 +216,21 @@ void XGIfb_syncaccel(void)
+ 
+ int fbcon_XGI_sync(struct fb_info *info)
+ {
+-    if(!XGIfb_accel) return 0;
+-    CRITFLAGS
++	unsigned long critflags = 0;
+ 
+-    XGI310Sync();
++	if (!XGIfb_accel)
++		return 0;
++
++	XGI310Sync();
+ 
+-   CRITEND
+-   return 0;
++	spin_unlock_irqrestore(&xgi_video_info.lockaccel, critflags);
++	return 0;
+ }
+ 
+ void fbcon_XGI_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
+ {
+-   int col=0;
+-   CRITFLAGS
++	int col = 0;
++	unsigned long critflags;
+ 
+ 
+    if(!rect->width || !rect->height)
+@@ -249,19 +251,20 @@ void fbcon_XGI_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
+ 	}
+ 
+ 
+-	   CRITBEGIN
+-	   XGI310SetupForSolidFill(col, myrops[rect->rop], 0);
+-	   XGI310SubsequentSolidFillRect(rect->dx, rect->dy, rect->width, rect->height);
+-	   CRITEND
+-	   XGI310Sync();
++	spin_lock_irqsave(&xgi_video_info.lockaccel, critflags);
++	XGI310SetupForSolidFill(col, myrops[rect->rop], 0);
++	XGI310SubsequentSolidFillRect(rect->dx, rect->dy, rect->width,
++				      rect->height);
++	spin_unlock_irqrestore(&xgi_video_info.lockaccel, critflags);
++	XGI310Sync();
+ 
+ 
+ }
+ 
+ void fbcon_XGI_copyarea(struct fb_info *info, const struct fb_copyarea *area)
+ {
+-   int xdir, ydir;
+-   CRITFLAGS
++	int xdir, ydir;
++	unsigned long critflags;
+ 
+ 
+    if(!XGIfb_accel) {
+@@ -277,11 +280,13 @@ void fbcon_XGI_copyarea(struct fb_info *info, const struct fb_copyarea *area)
+    if(area->sy < area->dy) ydir = 0;
+    else                    ydir = 1;
+ 
+-      CRITBEGIN
+-      XGI310SetupForScreenToScreenCopy(xdir, ydir, 3, 0, -1);
+-      XGI310SubsequentScreenToScreenCopy(area->sx, area->sy, area->dx, area->dy, area->width, area->height);
+-      CRITEND
+-      XGI310Sync();
++	spin_lock_irqsave(&xgi_video_info.lockaccel, critflags);
++	XGI310SetupForScreenToScreenCopy(xdir, ydir, 3, 0, -1);
++	XGI310SubsequentScreenToScreenCopy(area->sx, area->sy, area->dx,
++					   area->dy, area->width,
++					   area->height);
++	spin_unlock_irqrestore(&xgi_video_info.lockaccel, critflags);
++	XGI310Sync();
+ 
+ }
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.7.2.3
+
