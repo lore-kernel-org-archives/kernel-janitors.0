@@ -1,28 +1,31 @@
-From: Greg KH <gregkh@suse.de>
-Date: Mon, 28 Feb 2011 21:06:03 +0000
-Subject: Re: [patch] Staging: generic_serial: fix double locking bug
-Message-Id: <20110228210603.GA8320@suse.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 20 Feb 2011 12:49:53 +0000
+Subject: [patch 2/2] staging: ath6kl: buffer overflow in SEND_FRAME ioctl
+Message-Id: <20110220124953.GB1898@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110228192831.GI18043@bicker>
-In-Reply-To: <20110228192831.GI18043@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 28, 2011 at 10:28:31PM +0300, Dan Carpenter wrote:
-> spin_lock_irqsave() is not nestable.  The second time that it gets
-> called it overwrites the "flags" variable and so IRQs can't be restored
-> properly.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> Oh.  Crap.  I don't want to adopt these drivers.  But I already wrote
-> the patch before I read the TODO file, so I'm still going to submit it.
+We should check that optTxFrmCmd.optIEDataLen isn't too large before we
+copy it into the data buffer.
 
-Heh, don't worry, you don't "own" them, I'll just take this fix for now
-and still leave them in the "abandoned" category :)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-thanks,
-
-greg k-h
+diff --git a/drivers/staging/ath6kl/os/linux/ioctl.c b/drivers/staging/ath6kl/os/linux/ioctl.c
+index 17ba543..9a9a324 100644
+--- a/drivers/staging/ath6kl/os/linux/ioctl.c
++++ b/drivers/staging/ath6kl/os/linux/ioctl.c
+@@ -3153,6 +3153,11 @@ int ar6000_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+                 break;
+             }
+ 
++            if (optTxFrmCmd.optIEDataLen > MAX_OPT_DATA_LEN) {
++                ret = -EINVAL;
++                break;
++            }
++
+             if (copy_from_user(data, userdata+sizeof(WMI_OPT_TX_FRAME_CMD) - 1,
+                                    optTxFrmCmd.optIEDataLen)) {
+                 ret = -EFAULT;
