@@ -1,62 +1,105 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 25 Feb 2011 10:25:29 +0000
-Subject: [patch] ufs: truncated values handling 64 bit metadata
-Message-Id: <20110225102529.GB1936@bicker>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Mon, 21 Feb 2011 09:09:05 +0000
+Subject: [PATCH 1/3] Staging: xgifb: Removes dead code
+Message-Id: <1298279347-8825-2-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Evgeniy Dushistov <dushistov@mail.ru>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Originally i_lastfrag was 32 bits but then we added support for handling
-64 bit metadata and it became a 64 bit variable.  That was during 2007,
-in 54fb996ac15c "[PATCH] ufs2 write: block allocation update".
-Unfortunately these casts got left behind so the value got truncated to
-32 bit again.
+xgifb staging driver has code that dependens on XGIfb_accel != 0.
+But as Dan Carpenter noticed, XGIfb_accel value is always 0 in current driver.
+So there is code that never gets executed.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+This patch removes this dead code.
 
-diff --git a/fs/ufs/balloc.c b/fs/ufs/balloc.c
-index 46f7a80..100d2ee 100644
---- a/fs/ufs/balloc.c
-+++ b/fs/ufs/balloc.c
-@@ -424,7 +424,7 @@ u64 ufs_new_fragments(struct inode *inode, void *p, u64 fragment,
- 			ufs_cpu_to_data_ptr(sb, p, result);
- 			*err = 0;
- 			UFS_I(inode)->i_lastfrag -				max_t(u32, UFS_I(inode)->i_lastfrag,
-+				max_t(u64, UFS_I(inode)->i_lastfrag,
- 				      fragment + count);
- 			ufs_clear_frags(inode, result + oldcount,
- 					newcount - oldcount, locked_page != NULL);
-@@ -440,7 +440,7 @@ u64 ufs_new_fragments(struct inode *inode, void *p, u64 fragment,
- 	result = ufs_add_fragments (inode, tmp, oldcount, newcount, err);
- 	if (result) {
- 		*err = 0;
--		UFS_I(inode)->i_lastfrag = max_t(u32, UFS_I(inode)->i_lastfrag, fragment + count);
-+		UFS_I(inode)->i_lastfrag = max_t(u64, UFS_I(inode)->i_lastfrag, fragment + count);
- 		ufs_clear_frags(inode, result + oldcount, newcount - oldcount,
- 				locked_page != NULL);
- 		unlock_super(sb);
-@@ -479,7 +479,7 @@ u64 ufs_new_fragments(struct inode *inode, void *p, u64 fragment,
- 				   uspi->s_sbbase + result, locked_page);
- 		ufs_cpu_to_data_ptr(sb, p, result);
- 		*err = 0;
--		UFS_I(inode)->i_lastfrag = max_t(u32, UFS_I(inode)->i_lastfrag, fragment + count);
-+		UFS_I(inode)->i_lastfrag = max_t(u64, UFS_I(inode)->i_lastfrag, fragment + count);
- 		unlock_super(sb);
- 		if (newcount < request)
- 			ufs_free_fragments (inode, result + newcount, request - newcount);
-diff --git a/fs/ufs/truncate.c b/fs/ufs/truncate.c
-index a58f915..9b2a193 100644
---- a/fs/ufs/truncate.c
-+++ b/fs/ufs/truncate.c
-@@ -85,7 +85,7 @@ static int ufs_trunc_direct(struct inode *inode)
- 	retry = 0;
- 	
- 	frag1 = DIRECT_FRAGMENT;
--	frag4 = min_t(u32, UFS_NDIR_FRAGMENT, ufsi->i_lastfrag);
-+	frag4 = min_t(u64, UFS_NDIR_FRAGMENT, ufsi->i_lastfrag);
- 	frag2 = ((frag1 & uspi->s_fpbmask) ? ((frag1 | uspi->s_fpbmask) + 1) : frag1);
- 	frag3 = frag4 & ~uspi->s_fpbmask;
- 	block1 = block2 = 0;
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/xgifb/XGI_accel.c |   57 ++-----------------------------------
+ 1 files changed, 3 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/staging/xgifb/XGI_accel.c b/drivers/staging/xgifb/XGI_accel.c
+index 7954974..7f485fe 100644
+--- a/drivers/staging/xgifb/XGI_accel.c
++++ b/drivers/staging/xgifb/XGI_accel.c
+@@ -216,73 +216,22 @@ void XGIfb_syncaccel(void)
+ 
+ int fbcon_XGI_sync(struct fb_info *info)
+ {
+-    if(!XGIfb_accel) return 0;
+-    CRITFLAGS
+-
+-    XGI310Sync();
+-
+-   CRITEND
+-   return 0;
++	return 0;
+ }
+ 
+ void fbcon_XGI_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
+ {
+-   int col=0;
+-   CRITFLAGS
+-
+-
+-   if(!rect->width || !rect->height)
+-   	return;
++	if (!rect->width || !rect->height)
++		return;
+ 
+-   if(!XGIfb_accel) {
+ 	cfb_fillrect(info, rect);
+ 	return;
+-   }
+-
+-   switch(info->var.bits_per_pixel) {
+-		case 8: col = rect->color;
+-			break;
+-		case 16: col = ((u32 *)(info->pseudo_palette))[rect->color];
+-			 break;
+-		case 32: col = ((u32 *)(info->pseudo_palette))[rect->color];
+-			 break;
+-	}
+-
+-
+-	   CRITBEGIN
+-	   XGI310SetupForSolidFill(col, myrops[rect->rop], 0);
+-	   XGI310SubsequentSolidFillRect(rect->dx, rect->dy, rect->width, rect->height);
+-	   CRITEND
+-	   XGI310Sync();
+-
+-
+ }
+ 
+ void fbcon_XGI_copyarea(struct fb_info *info, const struct fb_copyarea *area)
+ {
+-   int xdir, ydir;
+-   CRITFLAGS
+-
+-
+-   if(!XGIfb_accel) {
+    	cfb_copyarea(info, area);
+ 	return;
+-   }
+-
+-   if(!area->width || !area->height)
+-   	return;
+-
+-   if(area->sx < area->dx) xdir = 0;
+-   else                    xdir = 1;
+-   if(area->sy < area->dy) ydir = 0;
+-   else                    ydir = 1;
+-
+-      CRITBEGIN
+-      XGI310SetupForScreenToScreenCopy(xdir, ydir, 3, 0, -1);
+-      XGI310SubsequentScreenToScreenCopy(area->sx, area->sy, area->dx, area->dy, area->width, area->height);
+-      CRITEND
+-      XGI310Sync();
+-
+ }
+ 
+ 
+-- 
+1.7.0.4
+
