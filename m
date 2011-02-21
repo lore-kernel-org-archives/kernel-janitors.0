@@ -1,25 +1,33 @@
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Mon, 21 Feb 2011 09:09:04 +0000
-Subject: [PATCH 0/3] Staging: xgifb: Removes dead code and unused spinlock conditional compilation logic
-Message-Id: <1298279347-8825-1-git-send-email-martinez.javier@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 21 Feb 2011 09:43:29 +0000
+Subject: Re: [PATCH 0/3] Staging: xgifb: Removes dead code and unused
+Message-Id: <20110221094329.GG1898@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1298279347-8825-1-git-send-email-martinez.javier@gmail.com>
+In-Reply-To: <1298279347-8825-1-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-In an earlier patch-set I was replacing a set of defines in staging xgifb driver
-that hides the synchronization mechanism used to access critical sections.
+On Mon, Feb 21, 2011 at 10:09:04AM +0100, Javier Martinez Canillas wrote:
+> [PATCH 1/3] Staging: xgifb: Removes dead code
+> [PATCH 2/3] Staging: xgifb: Remove unused functions
+> [PATCH 3/3] Staging: xgifb: Remove unused spinlock conditional compilation logic
 
-As Dan Carpenter pointed me, this code depende on the accelerator engine being
-activated (XGIfb_accel != 0), but in current driver this seems to be always
-deactivated (XGIfb_accel = 0). 
+Acked-by: Dan Carpenter <error27@gmail.com>
 
-So this patchset removes all the unused code and this spinlock conditional
-compilation logic only used in the acceleration mode code.
+Looks good.  If you wanted to send some follow on patches, there are
+some related things you could delete as well.
 
-The patch-set is composed of the following patches:
+1)  All references to XGIfb_accel in drivers/staging/xgifb/XGI_accel.h
+and drivers/staging/xgifb/XGI_main_26.c
 
-[PATCH 1/3] Staging: xgifb: Removes dead code
-[PATCH 2/3] Staging: xgifb: Remove unused functions
-[PATCH 3/3] Staging: xgifb: Remove unused spinlock conditional compilation logic
+2) spinlock_t lockaccel; from the video_info struct in 
+drivers/staging/xgifb/XGIfb.h
+
+3) The fbcon_XGI_sync() function doesn't do anything.  You can delete
+all references to it.  Leave the ->fb_sync function pointer NULL.
+
+regards,
+dan carpenter
