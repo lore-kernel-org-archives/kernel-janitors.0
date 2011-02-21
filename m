@@ -1,40 +1,25 @@
-From: Oliver Endriss <o.endriss@gmx.de>
-Date: Sun, 27 Feb 2011 14:36:17 +0000
-Subject: Re: [patch v2] [media] stv090x: handle allocation failures
-Message-Id: <201102271536.18905@orion.escape-edv.de>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Mon, 21 Feb 2011 09:09:04 +0000
+Subject: [PATCH 0/3] Staging: xgifb: Removes dead code and unused spinlock conditional compilation logic
+Message-Id: <1298279347-8825-1-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110207165650.GF4384@bicker> <201102150300.19650@orion.escape-edv.de> <20110215101008.GO4384@bicker>
-In-Reply-To: <20110215101008.GO4384@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Manu Abraham <manu@linuxtv.org>, Andreas Regel <andreas.regel@gmx.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tuesday 15 February 2011 11:10:08 Dan Carpenter wrote:
-> kmalloc() can fail so check whether state->internal is NULL.
-> append_internal() can return NULL on allocation failures so check that.
-> Also if we hit the error condition later in the function then there is
-> a memory leak and we need to call remove_dev() to fix it.
-> 
-> Also Oliver Endriss pointed out an additional leak that I missed in the
-> first version of this patch.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> v2:  Fix the leak Oliver noticed.
-> 
-> diff --git a/drivers/media/dvb/frontends/stv090x.c b/drivers/media/dvb/frontends/stv090x.c
-> ...
+In an earlier patch-set I was replacing a set of defines in staging xgifb driver
+that hides the synchronization mechanism used to access critical sections.
 
-Acked-by: Oliver Endriss <o.endriss@gmx.de>
+As Dan Carpenter pointed me, this code depende on the accelerator engine being
+activated (XGIfb_accel != 0), but in current driver this seems to be always
+deactivated (XGIfb_accel = 0). 
 
-CU
-Oliver
+So this patchset removes all the unused code and this spinlock conditional
+compilation logic only used in the acceleration mode code.
 
--- 
-----------------------------------------------------------------
-VDR Remote Plugin 0.4.0: http://www.escape-edv.de/endriss/vdr/
-4 MByte Mod: http://www.escape-edv.de/endriss/dvb-mem-mod/
-Full-TS Mod: http://www.escape-edv.de/endriss/dvb-full-ts-mod/
-----------------------------------------------------------------
+The patch-set is composed of the following patches:
+
+[PATCH 1/3] Staging: xgifb: Removes dead code
+[PATCH 2/3] Staging: xgifb: Remove unused functions
+[PATCH 3/3] Staging: xgifb: Remove unused spinlock conditional compilation logic
