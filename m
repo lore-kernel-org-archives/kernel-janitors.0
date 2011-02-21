@@ -1,60 +1,28 @@
-From: Vasiliy Kulikov <segooon@gmail.com>
-Date: Fri, 18 Feb 2011 17:27:42 +0000
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Date: Mon, 21 Feb 2011 15:31:15 +0000
 Subject: Re: [PATCH] ata: sata_dwc_460ex: fix error path
-Message-Id: <20110218172742.GA5238@albatros>
+Message-Id: <4D628543.5090700@mvista.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1284317830-5022-1-git-send-email-segooon@gmail.com>
- <4D5C1326.2010101@ru.mvista.com>
+References: <1284317830-5022-1-git-send-email-segooon@gmail.com> <4D5C1326.2010101@ru.mvista.com>
 In-Reply-To: <4D5C1326.2010101@ru.mvista.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sshtylyov@mvista.com>
-Cc: Jeff Garzik <jgarzik@pobox.com>, kernel-janitors@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Rupjyoti Sarmah <rsarmah@appliedmicro.com>, Prodyut Hazarika <phazarika@appliedmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>, Jeff Garzik <jgarzik@pobox.com>
+Cc: kernel-janitors@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Rupjyoti Sarmah <rsarmah@appliedmicro.com>, Prodyut Hazarika <phazarika@appliedmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Sergei,
+Hello.
 
-On Wed, Feb 16, 2011 at 21:10 +0300, Sergei Shtylyov wrote:
-> >@@ -727,11 +727,15 @@ static int dma_dwc_xfer_setup(struct scatterlist *sg, int num_elems,
-> > static void dma_dwc_exit(struct sata_dwc_device *hsdev)
-> > {
-> > 	dev_dbg(host_pvt.dwc_dev, "%s:\n", __func__);
-> >-	if (host_pvt.sata_dma_regs)
-> >+	if (host_pvt.sata_dma_regs) {
-> > 		iounmap(host_pvt.sata_dma_regs);
-> >+		host_pvt.sata_dma_regs = NULL;
-> >+	}
-> >-	if (hsdev->irq_dma)
-> >+	if (hsdev->irq_dma) {
-> > 		free_irq(hsdev->irq_dma, hsdev);
-> >+		hsdev->irq_dma = 0;
-> >+	}
-> > }
-> 
->    Are those changes really necessary, i.e. is dma_dwc_exit() called
-> more than once?
+I wrote:
 
-Because this function may be called once again before
-host_pvt.sata_dma_regs gains new value in sata_dwc_probe().  This would
-lead to double iounmap() and double free_irq().
+>> Free all allocated resources on error path.
 
-> >@@ -1606,7 +1610,7 @@ static int sata_dwc_probe(struct platform_device *ofdev,
-> > 	if (hsdev = NULL) {
-> > 		dev_err(&ofdev->dev, "kmalloc failed for hsdev\n");
-> > 		err = -ENOMEM;
-> >-		goto error_out;
-> >+		goto error;
-> 
->    Why not just:
-> 
-> 		return err;
+>> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+>> ---
+>>  I cannot compile this driver at all, so it is not tested.
 
-If some resource allocation is added before this line in future then
-"return err" should be changed.  With goto the single cleanup is just
-added to the end of the function.
+>    I can at least compile-test the patch...
 
+    No new errors/warnings are added by the patch.
 
-Thanks,
-
--- 
-Vasiliy
+WBR, Sergei
