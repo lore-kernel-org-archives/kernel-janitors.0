@@ -1,33 +1,32 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 21 Feb 2011 09:43:29 +0000
-Subject: Re: [PATCH 0/3] Staging: xgifb: Removes dead code and unused
-Message-Id: <20110221094329.GG1898@bicker>
+Date: Wed, 23 Feb 2011 20:26:01 +0000
+Subject: [patch] watchdog: sch311x_wdt: fix printk condition
+Message-Id: <20110223202601.GH19898@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1298279347-8825-1-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1298279347-8825-1-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 21, 2011 at 10:09:04AM +0100, Javier Martinez Canillas wrote:
-> [PATCH 1/3] Staging: xgifb: Removes dead code
-> [PATCH 2/3] Staging: xgifb: Remove unused functions
-> [PATCH 3/3] Staging: xgifb: Remove unused spinlock conditional compilation logic
+"=" has higher precedence than "&".  Since
+if (sch311x_sio_inb(sio_config_port, 0x30) & (0x01 = 0)) is always
+false the message is never printed.
 
-Acked-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Btw, is this printk() even worth printing?
 
-Looks good.  If you wanted to send some follow on patches, there are
-some related things you could delete as well.
-
-1)  All references to XGIfb_accel in drivers/staging/xgifb/XGI_accel.h
-and drivers/staging/xgifb/XGI_main_26.c
-
-2) spinlock_t lockaccel; from the video_info struct in 
-drivers/staging/xgifb/XGIfb.h
-
-3) The fbcon_XGI_sync() function doesn't do anything.  You can delete
-all references to it.  Leave the ->fb_sync function pointer NULL.
-
-regards,
-dan carpenter
+diff --git a/drivers/watchdog/sch311x_wdt.c b/drivers/watchdog/sch311x_wdt.c
+index 7b687e9..b61ab1c 100644
+--- a/drivers/watchdog/sch311x_wdt.c
++++ b/drivers/watchdog/sch311x_wdt.c
+@@ -508,7 +508,7 @@ static int __init sch311x_detect(int sio_config_port, unsigned short *addr)
+ 	sch311x_sio_outb(sio_config_port, 0x07, 0x0a);
+ 
+ 	/* Check if Logical Device Register is currently active */
+-	if (sch311x_sio_inb(sio_config_port, 0x30) & 0x01 = 0)
++	if ((sch311x_sio_inb(sio_config_port, 0x30) & 0x01) = 0)
+ 		printk(KERN_INFO PFX "Seems that LDN 0x0a is not active...\n");
+ 
+ 	/* Get the base address of the runtime registers */
