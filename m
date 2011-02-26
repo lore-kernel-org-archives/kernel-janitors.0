@@ -1,20 +1,38 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Tue, 08 Feb 2011 11:32:57 +0000
-Subject: Re: [patch] ALSA: soc-cache: dereferencing before checking
-Message-Id: <20110208113256.GC29850@opensource.wolfsonmicro.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 26 Feb 2011 12:55:24 +0000
+Subject: [patch 3/3] sony-laptop: handle allocation failures
+Message-Id: <20110226125524.GK18043@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110207190141.GJ4384@bicker>
-In-Reply-To: <20110207190141.GJ4384@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>
+To: Mattia Dongili <malattia@linux.it>
+Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 07, 2011 at 10:01:41PM +0300, Dan Carpenter wrote:
-> The patch c358e640a66 "ASoC: soc-cache: Add trace event for
-> snd_soc_cache_sync()" introduced a dereference of "codec->cache_ops"
-> before we had checked it for NULL.
+Return -ENOMEM if kzalloc() fails.  The callers already handle error
+returns.
 
-Applied, thanks.  Please try to use subject lines for your patches which
-are consistent with the subsystem you're submitting to.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index d0d0522..0db9049 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -768,6 +768,8 @@ static int sony_nc_handles_setup(struct platform_device *pd)
+ 	int result;
+ 
+ 	handles = kzalloc(sizeof(*handles), GFP_KERNEL);
++	if (!handles)
++		return -ENOMEM;
+ 
+ 	sysfs_attr_init(&handles->devattr.attr);
+ 	handles->devattr.attr.name = "handles";
+@@ -1458,6 +1460,8 @@ static int sony_nc_kbd_backlight_setup(struct platform_device *pd)
+ 		return 0;
+ 
+ 	kbdbl_handle = kzalloc(sizeof(*kbdbl_handle), GFP_KERNEL);
++	if (!kbdbl_handle)
++		return -ENOMEM;
+ 
+ 	sysfs_attr_init(&kbdbl_handle->mode_attr.attr);
+ 	kbdbl_handle->mode_attr.attr.name = "kbd_backlight";
