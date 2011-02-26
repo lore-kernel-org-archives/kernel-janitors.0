@@ -1,30 +1,31 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 23 Feb 2011 18:54:19 +0000
-Subject: Re: [patch 2/2] staging: ath6kl: buffer overflow in SEND_FRAME ioctl
-Message-Id: <20110223185419.GA686@kroah.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 26 Feb 2011 01:56:53 +0000
+Subject: [patch] iwlwifi: remove duplicate initialization
+Message-Id: <20110226015653.GC18043@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110220124953.GB1898@bicker>
-In-Reply-To: <20110220124953.GB1898@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Wey-Yi Guy <wey-yi.w.guy@intel.com>, Meenakshi Venkataraman <meenakshi.venkataraman@intel.com>, Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 23, 2011 at 10:40:50AM -0800, Luis R. Rodriguez wrote:
-> On Sun, Feb 20, 2011 at 7:18 AM, Vipin Mehta <vmehta@atheros.com> wrote:
-> 
-> > Acked-by: Vipin Mehta <vipin.mehta@atheros.com>
-> 
-> Greg, Joe is not sure if these patches will be applied as-is and his
-> cleanup depends on code being static, I think they would be there is a
-> chance you might muck them a bit and this would break any cleanup
-> work. Will these patches be merged as-is, can Joe for example git am
-> these into his tree as-is and work off of the assumption that they
-> will reflect the top of staging-next + these patches?
+rate_mask is initialized again later so this can be removed.  Btw, if 
+rate_control_send_low(sta, priv_sta, txrc) returns false, that means
+that "sta" is non-NULL.  That's why the second initialization of
+rate_mask is a little simpler than the first.
 
-I already answered Joe about this yesterday, was that response somehow
-not sufficient?
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-thanks,
-
-greg "tired of repeating myself" k-h
+diff --git a/drivers/net/wireless/iwlegacy/iwl-3945-rs.c b/drivers/net/wireless/iwlegacy/iwl-3945-rs.c
+index 4fabc54..977bd24 100644
+--- a/drivers/net/wireless/iwlegacy/iwl-3945-rs.c
++++ b/drivers/net/wireless/iwlegacy/iwl-3945-rs.c
+@@ -644,7 +644,7 @@ static void iwl3945_rs_get_rate(void *priv_r, struct ieee80211_sta *sta,
+ 	u32 fail_count;
+ 	s8 scale_action = 0;
+ 	unsigned long flags;
+-	u16 rate_mask = sta ? sta->supp_rates[sband->band] : 0;
++	u16 rate_mask;
+ 	s8 max_rate_idx = -1;
+ 	struct iwl_priv *priv __maybe_unused = (struct iwl_priv *)priv_r;
+ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
