@@ -1,47 +1,33 @@
-From: "Hans Schillstrom" <hans@schillstrom.com>
-Date: Mon, 07 Feb 2011 09:34:46 +0000
-Subject: Re: [patch] IPVS: precedence bug in ip_vs_sync_switch_mode()
-Message-Id: <div5b80.5723d88b3447e2cae7eaaffaea275f79@obelix.schillstrom.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 26 Feb 2011 12:56:11 +0000
+Subject: [patch 4/4] sony-laptop: potential null dereference
+Message-Id: <20110226125611.GL18043@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110207083855.GD4384@bicker>
-In-Reply-To: <20110207083855.GD4384@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, hans.schillstrom@ericsson.com, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mattia Dongili <malattia@linux.it>
+Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->---- Original Message ----
->From: Dan Carpenter <error27@gmail.com>
->To: "Wensong Zhang" <wensong@linux-vs.org>
->Cc: "Simon Horman" <horms@verge.net.au>, "Julian Anastasov" <ja@ssi.bg>, hans.schillstrom@ericsson.com, "Patrick McHardy" <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
->Sent: Mon, Feb 7, 2011, 9:39 AM
->Subject: [patch] IPVS: precedence bug in ip_vs_sync_switch_mode()
->
->'!' has higher precedence than '&'.  IP_VS_STATE_MASTER is 0x1 so
->the original code is equivelent to if (!ipvs->sync_state) ...
->
-Oops,
-Thanks
-Hans
+In the original code, if "device_enum" was NULL then it would
+dereference it when it printed the error message.
 
->Signed-off-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: Hans Schillstrom <hans.schillstrom@ericsson.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
->
->diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
->index 2a2a836..d1b7298 100644
->--- a/net/netfilter/ipvs/ip_vs_sync.c
->+++ b/net/netfilter/ipvs/ip_vs_sync.c
->@@ -392,7 +392,7 @@ void ip_vs_sync_switch_mode(struct net *net, int mode)
-> {
-> 	struct netns_ipvs *ipvs = net_ipvs(net);
-> 
->-	if (!ipvs->sync_state & IP_VS_STATE_MASTER)
->+	if (!(ipvs->sync_state & IP_VS_STATE_MASTER))
-> 		return;
-> 	if (mode = ipvs->sysctl_sync_ver || !ipvs->sync_buff)
-> 		return;
->--
-
-
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index 0db9049..c24aa4a 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -1311,7 +1311,11 @@ static void sony_nc_rfkill_setup(struct acpi_device *device)
+ 	}
+ 
+ 	device_enum = (union acpi_object *) buffer.pointer;
+-	if (!device_enum || device_enum->type != ACPI_TYPE_BUFFER) {
++	if (!device_enum) {
++		pr_err(DRV_PFX "Invalid SN06 return object.");
++		goto out_no_enum;
++	}
++	if (device_enum->type != ACPI_TYPE_BUFFER) {
+ 		pr_err(DRV_PFX "Invalid SN06 return object 0x%.2x\n",
+ 				device_enum->type);
+ 		goto out_no_enum;
