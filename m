@@ -1,31 +1,39 @@
-From: <aaro.koskinen@nokia.com>
-Date: Sun, 20 Feb 2011 19:36:18 +0000
-Subject: RE: [PATCH 0/2] Staging: xgifb: Remove CRIT[FLAGS | BEGIN | END]
-Message-Id: <CA1B555B4D79E3448D96A7C9847C7D98027F2A@008-AM1MPN1-032.mgdnok.nokia.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 27 Feb 2011 14:13:25 +0000
+Subject: [patch 4/4 v2] sony-laptop: potential null dereference
+Message-Id: <20110227141238.GU18043@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1298220798-2942-1-git-send-email-martinez.javier@gmail.com>
+References: <20110226125611.GL18043@bicker>
+ <20110227122027.GD29319@kamineko.org>
+In-Reply-To: <20110227122027.GD29319@kamineko.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: martinez.javier@gmail.com, gregkh@suse.de
-Cc: wfp5p@virginia.edu, apatard@mandriva.com, randy.dunlap@oracle.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mattia Dongili <malattia@linux.it>
+Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+In the original code, if "device_enum" was NULL then it would
+dereference it when it printed the error message.
 
-From: Javier Martinez Canillas [martinez.javier@gmail.com]:
-> xgifb staging driver uses a set of defines that hides the synchronization
-> mechanism used to access critical sections. Also, the use of spinlocks
-> can be disabled in compile time.
->
-> Since the spinlocks ABI only are used in contexts were critical section exists
-> (UP with preemption enabled and SMP machines), I think we should always have
-> the spinlocks enabled and let the spinlock ABI choose to include the spinlocks
-> or not. In the other hand if the driver doesn't need locking at all, then
-> maybe we should just delete the spinlock logic.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+v2:  Fixed the error message.
 
-I think these should be just deleted. The acceleration functions are used by the framebuffer
-layer which should take care of concurrent access. Or can you point out some real scenario
-where the spinlocks are needed?
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index 0db9049..c24aa4a 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -1311,7 +1311,11 @@ static void sony_nc_rfkill_setup(struct acpi_device *device)
+ 	}
+ 
+ 	device_enum = (union acpi_object *) buffer.pointer;
+-	if (!device_enum || device_enum->type != ACPI_TYPE_BUFFER) {
++	if (!device_enum) {
++		pr_err(DRV_PFX "No SN06 return object.");
++		goto out_no_enum;
++	}
++	if (device_enum->type != ACPI_TYPE_BUFFER) {
+ 		pr_err(DRV_PFX "Invalid SN06 return object 0x%.2x\n",
+ 				device_enum->type);
+ 		goto out_no_enum;
 
-A.
