@@ -1,71 +1,35 @@
-From: Oliver Endriss <o.endriss@gmx.de>
-Date: Tue, 15 Feb 2011 02:00:17 +0000
-Subject: Re: [patch] [media] stv090x: handle allocation failures
-Message-Id: <201102150300.19650@orion.escape-edv.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 28 Feb 2011 19:28:31 +0000
+Subject: [patch] Staging: generic_serial: fix double locking bug
+Message-Id: <20110228192831.GI18043@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110207165650.GF4384@bicker>
-In-Reply-To: <20110207165650.GF4384@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Manu Abraham <manu@linuxtv.org>, Andreas Regel <andreas.regel@gmx.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Monday 07 February 2011 17:56:50 Dan Carpenter wrote:
-> kmalloc() can fail so check whether state->internal is NULL.
-> append_internal() can return NULL on allocation failures so check that.
-> Also if we hit the error condition later in the function then there is
-> a memory leak and we need to call remove_dev() to fix it.
-> ...
+spin_lock_irqsave() is not nestable.  The second time that it gets
+called it overwrites the "flags" variable and so IRQs can't be restored
+properly.
 
-Thanks for the patch. See my comment below.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Oh.  Crap.  I don't want to adopt these drivers.  But I already wrote
+the patch before I read the TODO file, so I'm still going to submit it.
 
-> --- a/drivers/media/dvb/frontends/stv090x.c
-> +++ b/drivers/media/dvb/frontends/stv090x.c
-> @@ -4783,7 +4783,13 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
->  	} else {
->  		state->internal = kmalloc(sizeof(struct stv090x_internal),
->  					  GFP_KERNEL);
-> +		if (!state->internal)
-> +			goto error;
->  		temp_int = append_internal(state->internal);
-> +		if (!temp_int) {
-> +			kfree(state->internal);
-> +			goto error;
-> +		}
->  		state->internal->num_used = 1;
->  		state->internal->mclk = 0;
->  		state->internal->dev_ver = 0;
-> @@ -4796,7 +4802,7 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
->  
->  		if (stv090x_setup(&state->frontend) < 0) {
->  			dprintk(FE_ERROR, 1, "Error setting up device");
-> -			goto error;
-> +			goto err_remove;
->  		}
->  	}
->  
-> @@ -4811,6 +4817,8 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
->  
->  	return &state->frontend;
->  
-> +err_remove:
-> +	remove_dev(state->internal);
-
-AFAICS
-        kfree(state->internal);
-must be added here, as we allocated state->internal, state and temp_int.
-
->  error:
->  	kfree(state);
->  	return NULL;
-
-CU
-Oliver
-
--- 
-----------------------------------------------------------------
-VDR Remote Plugin 0.4.0: http://www.escape-edv.de/endriss/vdr/
-4 MByte Mod: http://www.escape-edv.de/endriss/dvb-mem-mod/
-Full-TS Mod: http://www.escape-edv.de/endriss/dvb-full-ts-mod/
-----------------------------------------------------------------
+diff --git a/drivers/staging/generic_serial/generic_serial.c b/drivers/staging/generic_serial/generic_serial.c
+index 5954ee1..466988d 100644
+--- a/drivers/staging/generic_serial/generic_serial.c
++++ b/drivers/staging/generic_serial/generic_serial.c
+@@ -566,9 +566,9 @@ void gs_close(struct tty_struct * tty, struct file * filp)
+ 	 * line status register.
+ 	 */
+ 
+-	spin_lock_irqsave(&port->driver_lock, flags);
++	spin_lock(&port->driver_lock);
+ 	port->rd->disable_rx_interrupts (port);
+-	spin_unlock_irqrestore(&port->driver_lock, flags);
++	spin_unlock(&port->driver_lock);
+ 	spin_unlock_irqrestore(&port->port.lock, flags);
+ 
+ 	/* close has no way of returning "EINTR", so discard return value */
