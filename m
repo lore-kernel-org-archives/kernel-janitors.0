@@ -1,48 +1,43 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 14 Mar 2011 09:25:11 +0000
-Subject: [patch] drbd: change int to unsigned int
-Message-Id: <20110314092511.GK2008@bicker>
+Date: Sun, 06 Mar 2011 13:40:11 +0000
+Subject: [patch 1/2] [media] stv0367: signedness bug in
+Message-Id: <20110306134011.GO3416@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars Ellenberg <drbd-dev@lists.linbit.com>
-Cc: drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: "Igor M. Liplianin" <liplianin@netup.ru>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These are changes to make my static checker happy.  I don't know the
-code well enough to say if it makes a difference at run-time but it
-doesn't hurt to fix these up.
+We use err to store negative error codes so it should be signed.  And
+if we return an error from stv0367_get_tuner_freq() that needs to be
+handled properly as well.  (param->frequency is a u32).
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index fe1564c..f33575c 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -1383,7 +1383,7 @@ static int recv_dless_read(struct drbd_conf *mdev, struct drbd_request *req,
- 	D_ASSERT(sector = bio->bi_sector);
+diff --git a/drivers/media/dvb/frontends/stv0367.c b/drivers/media/dvb/frontends/stv0367.c
+index eecdf23..7117ce9 100644
+--- a/drivers/media/dvb/frontends/stv0367.c
++++ b/drivers/media/dvb/frontends/stv0367.c
+@@ -913,7 +913,7 @@ static u32 stv0367_get_tuner_freq(struct dvb_frontend *fe)
+ 	struct dvb_frontend_ops	*frontend_ops = NULL;
+ 	struct dvb_tuner_ops	*tuner_ops = NULL;
+ 	u32 freq = 0;
+-	u32 err = 0;
++	int err = 0;
  
- 	bio_for_each_segment(bvec, bio, i) {
--		expect = min_t(int, data_size, bvec->bv_len);
-+		expect = min_t(unsigned int, data_size, bvec->bv_len);
- 		rr = drbd_recv(mdev,
- 			     kmap(bvec->bv_page)+bvec->bv_offset,
- 			     expect);
-@@ -3996,7 +3996,7 @@ static int drbd_do_handshake(struct drbd_conf *mdev)
- 	    PRO_VERSION_MIN > p->protocol_max)
- 		goto incompat;
+ 	dprintk("%s:\n", __func__);
  
--	mdev->agreed_pro_version = min_t(int, PRO_VERSION_MAX, p->protocol_max);
-+	mdev->agreed_pro_version = min_t(unsigned int, PRO_VERSION_MAX, p->protocol_max);
+diff --git a/drivers/media/dvb/frontends/stv0367.c b/drivers/media/dvb/frontends/stv0367.c
+index ec9de40..1304618 100644
+--- a/drivers/media/dvb/frontends/stv0367.c
++++ b/drivers/media/dvb/frontends/stv0367.c
+@@ -1940,7 +1940,7 @@ static int stv0367ter_get_frontend(struct dvb_frontend *fe,
+ 	int constell = 0,/* snr = 0,*/ Data = 0;
  
- 	dev_info(DEV, "Handshake successful: "
- 	     "Agreed network protocol version %d\n", mdev->agreed_pro_version);
-@@ -4515,7 +4515,7 @@ struct asender_cmd {
- 	int (*process)(struct drbd_conf *mdev, struct p_header80 *h);
- };
+ 	param->frequency = stv0367_get_tuner_freq(fe);
+-	if (param->frequency < 0)
++	if ((int)param->frequency < 0)
+ 		param->frequency = c->frequency;
  
--static struct asender_cmd *get_asender_cmd(int cmd)
-+static struct asender_cmd *get_asender_cmd(unsigned int cmd)
- {
- 	static struct asender_cmd asender_tbl[] = {
- 		/* anything missing from this table is in
+ 	constell = stv0367_readbits(state, F367TER_TPS_CONST);
