@@ -1,20 +1,32 @@
-From: PEPSI BOTTLING COMPANY PLC <promo@pepsi.co.uk>
-Date: Sun, 20 Mar 2011 15:57:41 +0000
-Subject: You have won =?iso-8859-1?b?ozUwMCwwMDAuMDBQT1VORFM/?=
-Message-Id: <20110320095741.14831vnxqz65wlx1@webmail.freedomnw.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 07 Mar 2011 21:13:11 +0000
+Subject: [patch resend] V4L/DVB: tm6000: remove unneeded NULL check
+Message-Id: <20110307211311.GZ3416@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-You have won =A3500,000.00POUNDS from Pepsi Company award 2011, Please =20
-provide your Full name, Age, Sex, Country,Occupation,Phone and =20
-Address.and send them to: Mrs. FRANCESS DAVE, Phone# :+447011150911 =20
-+4407024015829 E MAIL: francessdavepepsi@hotmail.co.uk
+We're testing the wrong variable here, and anyway list_entry() never
+returns NULL.  We already verified that the list is not empty.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This was added by: 721f507b694f "V4L/DVB (12842): tm6000: avoid kernel
+panic while retrieving the filling buffer"
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/staging/tm6000/tm6000-video.c b/drivers/staging/tm6000/tm6000-video.c
+index b550340..e1c6ec8 100644
+--- a/drivers/staging/tm6000/tm6000-video.c
++++ b/drivers/staging/tm6000/tm6000-video.c
+@@ -179,9 +179,6 @@ static inline void get_next_buf(struct tm6000_dmaqueue *dma_q,
+ 	*buf = list_entry(dma_q->active.next,
+ 			struct tm6000_buffer, vb.queue);
+ 
+-	if (!buf)
+-		return;
+-
+ 	/* Cleans up buffer - Usefull for testing for frame/URB loss */
+ 	outp = videobuf_to_vmalloc(&(*buf)->vb);
+ 
