@@ -1,31 +1,34 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 19 Mar 2011 05:44:34 +0000
-Subject: [patch 1/2] xen-gntdev: return -EFAULT on copy_to_user failure
-Message-Id: <20110319054434.GD2008@bicker>
+Date: Tue, 08 Mar 2011 11:39:24 +0000
+Subject: [patch] ASoC: sgtl5000: use after free in ldo_regulator_register()
+Message-Id: <20110308113924.GC3416@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
-Cc: kernel-janitors@vger.kernel.org, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: alsa-devel@alsa-project.org, Zeng Zhaoming <b32542@freescale.com>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org
 
-copy_to_user() returns the amount of data remaining to be copied.  We
-want to return a negative error code here.  The upper layers just
-call WARN_ON() if we return non-zero so this doesn't change the
-behavior.  But returning -EFAULT is still cleaner.
+The "ldo" variable was dereferenced after free on the error path.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index 017ce60..b0f9e8f 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -273,7 +273,7 @@ static int __unmap_grant_pages(struct grant_map *map, int offset, int pages)
- 				map->vma->vm_start + map->notify.addr;
- 			err = copy_to_user(tmp, &err, 1);
- 			if (err)
--				return err;
-+				return -EFAULT;
- 			map->notify.flags &= ~UNMAP_NOTIFY_CLEAR_BYTE;
- 		} else if (pgno >= offset && pgno < offset + pages) {
- 			uint8_t *tmp = kmap(map->pages[pgno]);
+diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
+index b7e97c0..1f7217f 100644
+--- a/sound/soc/codecs/sgtl5000.c
++++ b/sound/soc/codecs/sgtl5000.c
+@@ -875,11 +875,13 @@ static int ldo_regulator_register(struct snd_soc_codec *codec,
+ 	ldo->dev = regulator_register(&ldo->desc, codec->dev,
+ 					  init_data, ldo);
+ 	if (IS_ERR(ldo->dev)) {
++		int ret = PTR_ERR(ldo->dev);
++
+ 		dev_err(codec->dev, "failed to register regulator\n");
+ 		kfree(ldo->desc.name);
+ 		kfree(ldo);
+ 
+-		return PTR_ERR(ldo->dev);
++		return ret;
+ 	}
+ 
+ 	return 0;
