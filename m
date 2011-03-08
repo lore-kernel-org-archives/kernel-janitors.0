@@ -1,21 +1,20 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 28 Mar 2011 01:38:43 +0000
-Subject: Re: [PATCH 1/3] tg3: use <linux/io.h> and <linux/uaccess.h>
-Message-Id: <20110327.183843.116365744.davem@davemloft.net>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Date: Tue, 08 Mar 2011 18:00:14 +0000
+Subject: Re: [alsa-devel] [patch] ASoC: sgtl5000: use after free in
+Message-Id: <1299607214.3374.11.camel@odin>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1301193753-10045-1-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1301193753-10045-1-git-send-email-martinez.javier@gmail.com>
+References: <20110308113924.GC3416@bicker>
+In-Reply-To: <20110308113924.GC3416@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: martinez.javier@gmail.com
-Cc: mcarlson@broadcom.com, mchan@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, Zeng Zhaoming <b32542@freescale.com>
 
-From: Javier Martinez Canillas <martinez.javier@gmail.com>
-Date: Sun, 27 Mar 2011 04:42:31 +0200
-
-> It is proper style to include linux/foo.h instead asm/foo.h if both exist
+On Tue, 2011-03-08 at 14:39 +0300, Dan Carpenter wrote:
+> The "ldo" variable was dereferenced after free on the error path.
 > 
-> Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+Acked-by: Liam Girdwood <lrg@ti.com>
+
