@@ -1,52 +1,52 @@
-From: Mike Isely <isely@isely.net>
-Date: Sat, 26 Mar 2011 04:35:53 +0000
-Subject: Re: [PATCH 5/5] [media] pvrusb2: delete generic_standards_cnt
-Message-Id: <alpine.DEB.1.10.1103252335170.12072@ivanova.isely.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 10 Mar 2011 15:23:26 +0000
+Subject: [patch] libertas: fix write past end of array in mesh_id_get()
+Message-Id: <20110310152326.GA2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110326015434.GJ2008@bicker>
-In-Reply-To: <20110326015434.GJ2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Mike Isely <isely@isely.net>
+To: Dan Williams <dcbw@redhat.com>, javier@cozybit.com
+Cc: "John W. Linville" <linville@tuxdriver.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+defs.meshie.val.mesh_id is 32 chars long.  It's not supposed to be NUL
+terminated.  This code puts a terminator on the end to make it easier to
+print to sysfs.  The problem is that if the mesh_id fills the entire
+buffer the original code puts the terminator one spot past the end.
 
-Are you actually serious about this?  Well it's a small change...
+The way the original code was written, there was a check to make sure
+that maxlen was less than PAGE_SIZE.  Since we know that maxlen is at
+most 34 chars, I just removed the check.
 
-Acked-By: Mike Isely <isely@pobox.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
-On Sat, 26 Mar 2011, Dan Carpenter wrote:
-
-> The generic_standards_cnt define is only used in one place and it's
-> more readable to just call ARRAY_SIZE(generic_standards) directly.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/media/video/pvrusb2/pvrusb2-std.c b/drivers/media/video/pvrusb2/pvrusb2-std.c
-> index d5a679f..9bebc08 100644
-> --- a/drivers/media/video/pvrusb2/pvrusb2-std.c
-> +++ b/drivers/media/video/pvrusb2/pvrusb2-std.c
-> @@ -287,13 +287,11 @@ static struct v4l2_standard generic_standards[] = {
->  	}
->  };
->  
-> -#define generic_standards_cnt ARRAY_SIZE(generic_standards)
-> -
->  static struct v4l2_standard *match_std(v4l2_std_id id)
->  {
->  	unsigned int idx;
->  
-> -	for (idx = 0; idx < generic_standards_cnt; idx++) {
-> +	for (idx = 0; idx < ARRAY_SIZE(generic_standards); idx++) {
->  		if (generic_standards[idx].id & id)
->  			return generic_standards + idx;
->  	}
-> 
-
--- 
-
-Mike Isely
-isely @ isely (dot) net
-PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
+diff --git a/drivers/net/wireless/libertas/mesh.c b/drivers/net/wireless/libertas/mesh.c
+index acf3bf6..9d097b9 100644
+--- a/drivers/net/wireless/libertas/mesh.c
++++ b/drivers/net/wireless/libertas/mesh.c
+@@ -918,7 +918,6 @@ static ssize_t mesh_id_get(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
+ {
+ 	struct mrvl_mesh_defaults defs;
+-	int maxlen;
+ 	int ret;
+ 
+ 	ret = mesh_get_default_parameters(dev, &defs);
+@@ -931,13 +930,11 @@ static ssize_t mesh_id_get(struct device *dev, struct device_attribute *attr,
+ 		defs.meshie.val.mesh_id_len = IEEE80211_MAX_SSID_LEN;
+ 	}
+ 
+-	/* SSID not null terminated: reserve room for \0 + \n */
+-	maxlen = defs.meshie.val.mesh_id_len + 2;
+-	maxlen = (PAGE_SIZE > maxlen) ? maxlen : PAGE_SIZE;
++	memcpy(buf, defs.meshie.val.mesh_id, defs.meshie.val.mesh_id_len);
++	buf[defs.meshie.val.mesh_id_len] = '\n';
++	buf[defs.meshie.val.mesh_id_len + 1] = '\0';
+ 
+-	defs.meshie.val.mesh_id[defs.meshie.val.mesh_id_len] = '\0';
+-
+-	return snprintf(buf, maxlen, "%s\n", defs.meshie.val.mesh_id);
++	return defs.meshie.val.mesh_id_len + 1;
+ }
+ 
+ /**
