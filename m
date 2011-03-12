@@ -1,39 +1,42 @@
-From: Corentin Chary <corentin.chary@gmail.com>
-Date: Tue, 15 Mar 2011 07:27:19 +0000
-Subject: Re: [patch 1/2] asus-wmi: signedness bug in read_brightness()
-Message-Id: <AANLkTikEQdjPBKbGAB_mVqSVqx0_Ba6hw0rQh400KPZM@mail.gmail.com>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Date: Sat, 12 Mar 2011 15:31:35 +0000
+Subject: Re: [PATCH] video/via: drop deprecated (and unused) i2c_adapter.id
+Message-Id: <4D7B91D7.807@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110315070623.GS2008@bicker>
-In-Reply-To: <20110315070623.GS2008@bicker>
+References: <1295991264-8640-1-git-send-email-peterhuewe@gmx.de>
+In-Reply-To: <1295991264-8640-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Matthew Garrett <mjg@redhat.com>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Peter Huewe <peterhuewe@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
 
-On Tue, Mar 15, 2011 at 8:06 AM, Dan Carpenter <error27@gmail.com> wrote:
-> "err" needs to be signed for the error handling to work.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 5b779a9..a038595 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -946,7 +946,8 @@ static int read_brightness_max(struct asus_wmi *asus)
->  static int read_brightness(struct backlight_device *bd)
->  {
->        struct asus_wmi *asus = bl_get_data(bd);
-> -       u32 retval, err;
-> +       u32 retval;
-> +       int err;
->
->        err = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_BRIGHTNESS, &retval);
+Peter Huewe schrieb:
+> This patch removes an assignment to the deprecated i2c_adapter.id
+> field. Since the field isn't used anywhere else in the driver it is
+> save to remove it.
+> 
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 
-Hm, Thanks,
+Applied. Thanks,
 
-Acked-by: Corentin Chary <corentin.chary@gmail.com>
 
--- 
-Corentin Chary
-http://xf.iksaif.net
+Florian Tobias Schandinat
+
+> ---
+>  drivers/video/via/via_i2c.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/video/via/via_i2c.c b/drivers/video/via/via_i2c.c
+> index 3844b55..a172a31 100644
+> --- a/drivers/video/via/via_i2c.c
+> +++ b/drivers/video/via/via_i2c.c
+> @@ -209,7 +209,6 @@ static int create_i2c_bus(struct i2c_adapter *adapter,
+>  	sprintf(adapter->name, "viafb i2c io_port idx 0x%02x",
+>  		adap_cfg->ioport_index);
+>  	adapter->owner = THIS_MODULE;
+> -	adapter->id = 0x01FFFF;
+>  	adapter->class = I2C_CLASS_DDC;
+>  	adapter->algo_data = algo;
+>  	if (pdev)
+
