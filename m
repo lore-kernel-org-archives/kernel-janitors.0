@@ -1,41 +1,32 @@
-From: "Bounine, Alexandre" <Alexandre.Bounine@idt.com>
-Date: Mon, 21 Mar 2011 18:34:44 +0000
-Subject: RE: [patch] rapidio: potential null deref on failure path
-Message-Id: <0CE8B6BE3C4AD74AB97D9D29BD24E55201A58AA6@CORPEXCH1.na.ads.idt.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 13 Mar 2011 20:59:37 +0000
+Subject: [patch] block: NULL dereference on error path in __blkdev_get()
+Message-Id: <20110313205937.GI2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110319044032.GC2008@bicker>
-In-Reply-To: <20110319044032.GC2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Matt Porter <mporter@kernel.crashing.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>, tj@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> From: Dan Carpenter [mailto:error27@gmail.com]
-> Sent: Saturday, March 19, 2011 12:41 AM
-> To: Matt Porter
-> Cc: Bounine, Alexandre; linux-kernel@vger.kernel.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [patch] rapidio: potential null deref on failure path
-> 
-> If rio is not a switch then "rswitch" is null.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
-> index a50391b..3a59d5f 100644
-> --- a/drivers/rapidio/rio-scan.c
-> +++ b/drivers/rapidio/rio-scan.c
-> @@ -517,7 +517,7 @@ static struct rio_dev __devinit
-> *rio_setup_device(struct rio_net *net,
->  	return rdev;
-> 
->  cleanup:
-> -	if (rswitch->route_table)
-> +	if (rio_is_switch(rdev))
->  		kfree(rswitch->route_table);
-> 
->  	kfree(rdev);
+"disk" is always NULL when we goto out.  There was a check for this
+before, but it was removed in 69e02c59a7d9 "block: Don't check events
+while open is in progress".
 
-Acked-by: Alexandre Bounine <alexandre.bounine@idt.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index fbe05cb..7d02afb 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1181,9 +1181,9 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
+  out_unlock_bdev:
+ 	mutex_unlock(&bdev->bd_mutex);
+ 	disk_unblock_events(disk);
+- out:
+ 	module_put(disk->fops->owner);
+ 	put_disk(disk);
++ out:
+ 	bdput(bdev);
+ 
+ 	return ret;
