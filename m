@@ -1,26 +1,36 @@
 From: Richard Genoud <richard.genoud@gmail.com>
-Date: Sun, 13 Mar 2011 22:45:17 +0000
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_cifssmb=3A_=5BFIX=5D_warning=3A_=E2=80=98pdata=E2=80=99_may_?=
-Message-Id: <AANLkTikJVqk7UO6Be1A12SRp62z0h7rjEdhUa-uMYH2t@mail.gmail.com>
+Date: Sun, 13 Mar 2011 16:23:46 +0000
+Subject: [PATCH] =?UTF-8?q?cifssmb:=20[FIX]=20warning:=20=E2=80=98pdata=E2=80=99=20may=20be=20used=20uninitia
+Message-Id: <1300033426-22404-1-git-send-email-richard.genoud@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1300033426-22404-1-git-send-email-richard.genoud@gmail.com> <AANLkTiko9Y6z79XwkxN7dEAyikQbO=Azdiu0hhK+uiJc@mail.gmail.com>
-In-Reply-To: <AANLkTiko9Y6z79XwkxN7dEAyikQbO=Azdiu0hhK+uiJc-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Genoud <richard.genoud-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-2011/3/13 Steve French <smfrench@gmail.com>:
-> This does look a problem with the compiler. =C2=A0Which compiler version?
->
-> As you noted, pdata is either initialized or we return rc!=3D0 and don't =
-use it.
->
-The compiler is gcc from ubuntu 10.10 :
-gcc (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This suppress the warning, as far as there's no way pdata is
+uninitialized, because validate_ntransact() will initialize pdata or
+return rc != 0. In this case (goto qsec_out), pdata won't be used.
+
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+---
+ fs/cifs/cifssmb.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index 904aa47..efa3f8e 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -3138,7 +3138,7 @@ CIFSSMBGetCIFSACL(const int xid, struct cifsTconInfo *tcon, __u16 fid,
+ 		__u32 parm_len;
+ 		__u32 acl_len;
+ 		struct smb_com_ntransact_rsp *pSMBr;
+-		char *pdata;
++		char *pdata = NULL;
+ 
+ /* validate_nttransact */
+ 		rc = validate_ntransact(iov[0].iov_base, (char **)&parm,
+-- 
+1.7.1
+
