@@ -1,41 +1,41 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Date: Fri, 18 Mar 2011 09:12:50 +0000
-Subject: Re: [PATCH 1/2] drivers/watchdog/s3c2410_wdt.c: Convert
-Message-Id: <20110318091250.GT1751@infomag.iguana.be>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 14 Mar 2011 09:33:37 +0000
+Subject: [patch 1/2] Staging: crystalhd: change GFP_ATOMIC to GFP_KERNEL
+Message-Id: <20110314093125.GL2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1298738079-28893-1-git-send-email-julia@diku.dk>
-	<002e01cbd72f$448ac150$cda043f0$%kim@samsung.com>
-	<Pine.LNX.4.64.1102281110090.14560@pc-004.diku.dk>
-	<20110318081140.GS1751@infomag.iguana.be>
-	<Pine.LNX.4.64.1103180933590.2698@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1103180933590.2698@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Julia,
+These two allocations are only called from the probe() path and there
+aren't any locks held for probe().
 
-> Actually, I later realized that one can also use the result of 
-> request_mem_region in place of res.  Even though it is not the same 
-> structure, it has the same start and end field information, which is the 
-> only information that is used.  But I haven't had a chance to send a patch 
-> that follows that strategy.  So if it is preferred to keep res, then that 
-> can be done.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+These apply on top of Alexander Beregalov's patches. 
 
-If you look at the driver then you will see that it will use wdt_base to control the device:
-static void __iomem     *wdt_base;
-...
-res=platform_get_resource(pdev, IORESOURCE_MEM, 0);
-...
-wdt_base = ioremap(res->start, size);
-
-So the memory resource is only used for:
-1) requesting the memory region
-2) ioremapping the memory so that we can use the registers.
-
-My opinion: res can go out so that wdt_mem and wdt_irq get similar platform resource info.
-
-Kind regards,
-Wim.
-
+diff --git a/drivers/staging/crystalhd/crystalhd_lnx.c b/drivers/staging/crystalhd/crystalhd_lnx.c
+index 2b47ef9..4197111 100644
+--- a/drivers/staging/crystalhd/crystalhd_lnx.c
++++ b/drivers/staging/crystalhd/crystalhd_lnx.c
+@@ -393,8 +393,7 @@ static int __devinit chd_dec_init_chdev(struct crystalhd_adp *adp)
+ 
+ 	/* Allocate general purpose ioctl pool. */
+ 	for (i = 0; i < CHD_IODATA_POOL_SZ; i++) {
+-		/* FIXME: jarod: why atomic? */
+-		temp = kzalloc(sizeof(struct crystalhd_ioctl_data), GFP_ATOMIC);
++		temp = kzalloc(sizeof(struct crystalhd_ioctl_data), GFP_KERNEL);
+ 		if (!temp) {
+ 			BCMLOG_ERR("ioctl data pool kzalloc failed\n");
+ 			rc = -ENOMEM;
+@@ -549,8 +548,7 @@ static int __devinit chd_dec_pci_probe(struct pci_dev *pdev,
+ 	       pdev->vendor, pdev->device, pdev->subsystem_vendor,
+ 	       pdev->subsystem_device);
+ 
+-	/* FIXME: jarod: why atomic? */
+-	pinfo = kzalloc(sizeof(struct crystalhd_adp), GFP_ATOMIC);
++	pinfo = kzalloc(sizeof(struct crystalhd_adp), GFP_KERNEL);
+ 	if (!pinfo) {
+ 		BCMLOG_ERR("Failed to allocate memory\n");
+ 		return -ENOMEM;
