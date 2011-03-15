@@ -1,55 +1,28 @@
-From: Shuxian Cai <caisx25@gmail.com>
-Date: Mon, 21 Mar 2011 11:36:14 +0000
-Subject: [PATCH] be2net: change explicit jiffies comparison
-Message-Id: <1300707374.2324.8.camel@diviner-dev>
+From: Kumar Gala <galak@kernel.crashing.org>
+Date: Tue, 15 Mar 2011 19:19:23 +0000
+Subject: Re: [PATCH] powerpc: sysdev: fix signedness bug
+Message-Id: <EA2A84CF-6A11-4CEC-B4FD-96F1262ED9AF@kernel.crashing.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1287327102-9068-1-git-send-email-segooon@gmail.com>
+In-Reply-To: <1287327102-9068-1-git-send-email-segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-
-From: Shuxian Cai <caisx25@gmail.com>
-
-Use time_after()/time_before() instead of explicit compare
-Signed-off-by: Shuxian Cai <caisx25@gmail.com>
----
-diff -uprN -X linux-2.6.38/Documentation/dontdiff linux-2.6.38/drivers/net/benet/be_main.c linux-2.6.38.new/drivers/net/benet/be_main.c
---- linux-2.6.38/drivers/net/benet/be_main.c	2011-03-18 23:22:48.000000000 +0800
-+++ linux-2.6.38.new/drivers/net/benet/be_main.c	2011-03-20 20:04:30.000000000 +0800
-@@ -18,6 +18,7 @@
- #include "be.h"
- #include "be_cmds.h"
- #include <asm/div64.h>
-+#include <linux/jiffies.h>
- 
- MODULE_VERSION(DRV_VER);
- MODULE_DEVICE_TABLE(pci, be_dev_ids);
-@@ -340,7 +341,7 @@ static void be_rx_eqd_update(struct be_a
- 	}
- 
- 	/* Update once a second */
--	if ((now - stats->rx_fps_jiffies) < HZ)
-+	if (time_before(now, stats->rx_fps_jiffies + HZ))
- 		return;
- 
- 	stats->rx_fps = (stats->rx_frags - stats->prev_rx_frags) /
-@@ -385,7 +386,7 @@ static void be_tx_rate_update(struct be_
- 	}
- 
- 	/* Update tx rate once in two seconds */
--	if ((now - stats->be_tx_jiffies) > 2 * HZ) {
-+	if (time_after(now, stats->be_tx_jiffies + 2*HZ)) {
- 		stats->be_tx_rate = be_calc_rate(stats->be_tx_bytes
- 						  - stats->be_tx_bytes_prev,
- 						 now - stats->be_tx_jiffies);
-@@ -842,7 +843,7 @@ static void be_rx_rate_update(struct be_
- 	}
- 
- 	/* Update the rate once in two seconds */
--	if ((now - stats->rx_jiffies) < 2 * HZ)
-+	if (time_before(now, stats->rx_jiffies + 2 * HZ))
- 		return;
- 
- 	stats->rx_rate = be_calc_rate(stats->rx_bytes - stats->rx_bytes_prev,
+To: Vasiliy Kulikov <segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Harninder Rai <harninder.rai-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Vivek Mahajan <vivek.mahajan-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
 
 
+On Oct 17, 2010, at 9:51 AM, Vasiliy Kulikov wrote:
+
+> sram_params.sram_size and sram_params.sram_offset were unsigned.
+> If get_cache_sram_size() or get_cache_sram_offset() returns error code
+> then it is not seen to the caller.  Made sram_size and sram_offset signed.
+> 
+> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+> ---
+> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c |    4 ++--
+> 1 files changed, 2 insertions(+), 2 deletions(-)
+
+applied
+
+- k
