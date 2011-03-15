@@ -1,23 +1,33 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Tue, 22 Mar 2011 09:21:19 +0000
-Subject: Re: [patch 2/4] USB: musb: using 0 instead of NULL
-Message-Id: <20110322092117.GT1837@legolas.emea.dhcp.ti.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 15 Mar 2011 07:07:37 +0000
+Subject: [patch 2/2] asus-wmi: potential NULL dereference in show_call()
+Message-Id: <20110315070737.GT2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110320111524.GJ2008@bicker>
-In-Reply-To: <20110320111524.GJ2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Corentin Chary <corentincj@iksaif.net>
+Cc: Matthew Garrett <mjg@redhat.com>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Mar 20, 2011 at 02:15:24PM +0300, Dan Carpenter wrote:
-> Sparse complains (and rightly so):
-> drivers/usb/musb/cppi_dma.c:1458:33:
-> 	warning: Using plain integer as NULL pointer
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+In the earlier check we assumed that "obj" could be NULL.  I looked at
+some of the other places that call evaluate_object() and they check
+for NULL as well.
 
-applied, thanks
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Can obj actually be NULL here?  Perhaps a better fix would be to remove
+the first check.
 
--- 
-balbi
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index a038595..efc776c 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -1343,7 +1343,7 @@ static int show_call(struct seq_file *m, void *data)
+ 	else
+ 		seq_printf(m, "%#x(%#x, %#x) = t:%d\n", asus->debug.method_id,
+ 			   asus->debug.dev_id, asus->debug.ctrl_param,
+-			   obj->type);
++			   obj ? obj->type : -1);
+ 
+ 	kfree(obj);
+ 
