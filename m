@@ -1,63 +1,29 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Date: Wed, 23 Mar 2011 14:01:00 +0000
-Subject: Re: [patch] sh: clkfwk: potential null deref in debug code
-Message-Id: <Pine.LNX.4.64.1103231459290.6836@axis700.grange>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 15 Mar 2011 07:06:23 +0000
+Subject: [patch 1/2] asus-wmi: signedness bug in read_brightness()
+Message-Id: <20110315070623.GS2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110320111249.GH2008@bicker>
-In-Reply-To: <20110320111249.GH2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sh@vger.kernel.org
+To: Corentin Chary <corentincj@iksaif.net>
+Cc: Matthew Garrett <mjg@redhat.com>, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 23 Mar 2011, Paul Mundt wrote:
+"err" needs to be signed for the error handling to work.
 
-> On Sun, Mar 20, 2011 at 04:57:50PM +0100, Guennadi Liakhovetski wrote:
-> > Hi Dan
-> > 
-> > On Sun, 20 Mar 2011, Dan Carpenter wrote:
-> > 
-> > > This function is designed to accept a NULL for "best_freq" but the
-> > > debug code dereferences it unconditionally.
-> > > 
-> > > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > > ---
-> > > Btw.  Smatch complains that "best" could NULL as well, but I don't
-> > > know if actually that's possible so I left it as is.
-> > > 
-> > > diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
-> > > index 5f63c3b..dee971c 100644
-> > > --- a/drivers/sh/clk/core.c
-> > > +++ b/drivers/sh/clk/core.c
-> > > @@ -616,7 +616,7 @@ long clk_round_parent(struct clk *clk, unsigned long target,
-> > >  
-> > >  		pr_debug("%u / %lu = %lu, / %lu = %lu, best %lu, parent %u\n",
-> > >  			 freq->frequency, div, freq_high, div + 1, freq_low,
-> > > -			 *best_freq, best->frequency);
-> > > +			 best_freq ? *best_freq : -1, best->frequency);
-> > 
-> > What about another occasion of dereferencing best_freq at the top of the 
-> > clk_round_parent() function:
-> > 
-> > 	if (!parent) {
-> > 		*parent_freq = 0;
-> > 		*best_freq = clk_round_rate(clk, target);
-> > 		return abs(target - *best_freq);
-> > 	}
-> > 
-> > ?
-> > 
-> Do we actually have users that are passing in NULL for best_freq? I don't
-> recall writing this code, so I assume you did :-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-That seems very likely;) Yes, that's from my patch, and so far we have 
-only one user - ap4evb_clk_optimize() and it doesn't pass NULL to the fn. 
-But perhaps it is better to be consistent and if the variable is checked 
-for NULL on some occasions, it should be checked everywhere.
-
-Thanks
-Guennadi
----
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 5b779a9..a038595 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -946,7 +946,8 @@ static int read_brightness_max(struct asus_wmi *asus)
+ static int read_brightness(struct backlight_device *bd)
+ {
+ 	struct asus_wmi *asus = bl_get_data(bd);
+-	u32 retval, err;
++	u32 retval;
++	int err;
+ 
+ 	err = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_BRIGHTNESS, &retval);
+ 
