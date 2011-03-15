@@ -1,34 +1,77 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 08 Mar 2011 11:39:24 +0000
-Subject: [patch] ASoC: sgtl5000: use after free in ldo_regulator_register()
-Message-Id: <20110308113924.GC3416@bicker>
+From: Kumar Gala <galak@kernel.crashing.org>
+Date: Tue, 15 Mar 2011 15:51:23 +0000
+Subject: Re: [PATCH 1/4] drivers/serial/ucc_uart.c: Add of_node_put to avoid memory leak
+Message-Id: <2452483F-04B7-4B44-B59D-94A9D18F5DA4@kernel.crashing.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1283269738-14612-1-git-send-email-julia@diku.dk>
+	<1283269738-14612-2-git-send-email-julia@diku.dk>
+In-Reply-To: <1283269738-14612-2-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: alsa-devel@alsa-project.org, Zeng Zhaoming <b32542@freescale.com>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Timur Tabi <timur-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The "ldo" variable was dereferenced after free on the error path.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+On Aug 31, 2010, at 10:48 AM, Julia Lawall wrote:
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index b7e97c0..1f7217f 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -875,11 +875,13 @@ static int ldo_regulator_register(struct snd_soc_codec *codec,
- 	ldo->dev = regulator_register(&ldo->desc, codec->dev,
- 					  init_data, ldo);
- 	if (IS_ERR(ldo->dev)) {
-+		int ret = PTR_ERR(ldo->dev);
-+
- 		dev_err(codec->dev, "failed to register regulator\n");
- 		kfree(ldo->desc.name);
- 		kfree(ldo);
- 
--		return PTR_ERR(ldo->dev);
-+		return ret;
- 	}
- 
- 	return 0;
+> Add a call to of_node_put in the error handling code following a call to
+> of_find_compatible_node or of_find_node_by_type.
+> 
+> This patch also substantially reorganizes the error handling code in the
+> function, to that it is possible first to jump to code that frees qe_port
+> and then to jump to code that also puts np.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r exists@
+> local idexpression x;
+> expression E,E1,E2;
+> statement S;
+> @@
+> 
+> *x = 
+> (of_find_node_by_path
+> |of_find_node_by_name
+> |of_find_node_by_phandle
+> |of_get_parent
+> |of_get_next_parent
+> |of_get_next_child
+> |of_find_compatible_node
+> |of_match_node
+> |of_find_node_by_type
+> |of_find_node_with_property
+> |of_find_matching_node
+> |of_parse_phandle
+> )(...);
+> ...
+> if (x = NULL) S
+> <... when != x = E
+> *if (...) {
+>  ... when != of_node_put(x)
+>      when != if (...) { ... of_node_put(x); ... }
+> (
+>  return <+...x...+>;
+> |
+> *  return ...;
+> )
+> }
+> ...>
+> (
+> E2 = x;
+> |
+> of_node_put(x);
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+> drivers/serial/ucc_uart.c |   67 ++++++++++++++++++++++++----------------------
+> 1 file changed, 35 insertions(+), 32 deletions(-)
+
+applied
+
+- k
