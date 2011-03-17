@@ -1,84 +1,93 @@
-From: "Janorkar, Mayuresh" <mayur@ti.com>
-Date: Mon, 21 Mar 2011 05:43:36 +0000
-Subject: RE: [patch] fbdev: sh_mobile_lcdc: checking NULL instead of IS_ERR()
-Message-Id: <EAF47CD23C76F840A9E7FCE10091EFAB033D22EB9A@dbde02.ent.ti.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 17 Mar 2011 19:39:49 +0000
+Subject: [patch] USB: xhci: unsigned char never equals -1
+Message-Id: <20110317193949.GN2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110319043647.GZ2008@bicker>
-In-Reply-To: <20110319043647.GZ2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+There were some places that compared port_speed = -1 where port_speed
+is a u8.  This doesn't work unless we cast the -1 to u8.  Some places
+did it correctly.
 
+Instead of using -1 directly, I've created a DUPLICATE_ENTRY define
+which does the cast and is more descriptive as well.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:error27@gmail.com]
-> Sent: Monday, March 21, 2011 10:09 AM
-> To: Janorkar, Mayuresh
-> Cc: Guennadi Liakhovetski; Magnus Damm; linux-fbdev@vger.kernel.org;
-> kernel-janitors@vger.kernel.org; Paul Mundt
-> Subject: Re: [patch] fbdev: sh_mobile_lcdc: checking NULL instead of
-> IS_ERR()
-> 
-> On Mon, Mar 21, 2011 at 09:47:50AM +0530, Janorkar, Mayuresh wrote:
-> > > backlight_device_register() returns an ERR_PTR.  It doesn't return
-> NULL.
-> >
-> > The patch is not applying on the master branch of fbdev tree.
-> > I could find another branch: 	fbdev/shmobile on the tree.
-> > It is a good idea to mention this in the description of the patch.
-> >
-> 
-> Sorry, I'm working against linux-next so I wasn't aware.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+I'm not super familiar with this code...  Compile tested only.
 
-That's fine :). I saw fbdev in the subject line and To: Paul Mundt so thought this has been developed on fbdev master. But its good idea to mention the base of your patch.
-
-> 
-> > >
-> > > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> > >
-> > > diff --git a/drivers/video/sh_mobile_lcdcfb.c
-> > > b/drivers/video/sh_mobile_lcdcfb.c
-> > > index bf2629f..a53abe1 100644
-> > > --- a/drivers/video/sh_mobile_lcdcfb.c
-> > > +++ b/drivers/video/sh_mobile_lcdcfb.c
-> > > @@ -1088,7 +1088,7 @@ static struct backlight_device
-> > > *sh_mobile_lcdc_bl_probe(struct device *parent,
-> > >
-> > >  	bl = backlight_device_register(ch->cfg.bl_info.name, parent, ch,
-> > >  				       &sh_mobile_lcdc_bl_ops, NULL);
-> > > -	if (!bl) {
-> > > +	if (IS_ERR(bl)) {
-> > >  		dev_err(parent, "unable to register backlight device\n");
-> >
-> >
-> > How about printing the error number here?
-> >
-> 
-> Ok.  That's a good idea.
-> 
-> > >  		return NULL;
-> >
-> > Code is not checking for return value where this function is called.
-> >
-> > A code snippet where this function is called:
-> > /* probe the backlight is there is one defined */
-> >                  if (ch->cfg.bl_info.max_brightness)
-> >                        ch->bl = sh_mobile_lcdc_bl_probe(&pdev->dev, ch);
-> >
-> > If the return value is not checked then whats the use of return value?
-> >
-> 
-> It is checked actually.  Look at the places which would dereference
-> ->bl.
-
-Yes, got it, it is checked it in start and stop.
-
-> 
-> > >  	}
-> > > --
-> > > To unsubscribe from this list: send the line "unsubscribe linux-fbdev"
-> in
-> > > the body of a message to majordomo@vger.kernel.org
-> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index a003e79..ab7fc2b 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -846,7 +846,7 @@ static u32 xhci_find_real_port_number(struct xhci_hcd *xhci,
+ 		 * Skip ports that don't have known speeds, or have duplicate
+ 		 * Extended Capabilities port speed entries.
+ 		 */
+-		if (port_speed = 0 || port_speed = -1)
++		if (port_speed = 0 || port_speed = DUPLICATE_ENTRY)
+ 			continue;
+ 
+ 		/*
+@@ -1727,12 +1727,12 @@ static void xhci_add_in_port(struct xhci_hcd *xhci, unsigned int num_ports,
+ 			 * found a similar duplicate.
+ 			 */
+ 			if (xhci->port_array[i] != major_revision &&
+-				xhci->port_array[i] != (u8) -1) {
++				xhci->port_array[i] != DUPLICATE_ENTRY) {
+ 				if (xhci->port_array[i] = 0x03)
+ 					xhci->num_usb3_ports--;
+ 				else
+ 					xhci->num_usb2_ports--;
+-				xhci->port_array[i] = (u8) -1;
++				xhci->port_array[i] = DUPLICATE_ENTRY;
+ 			}
+ 			/* FIXME: Should we disable the port? */
+ 			continue;
+@@ -1831,7 +1831,7 @@ static int xhci_setup_port_arrays(struct xhci_hcd *xhci, gfp_t flags)
+ 		for (i = 0; i < num_ports; i++) {
+ 			if (xhci->port_array[i] = 0x03 ||
+ 					xhci->port_array[i] = 0 ||
+-					xhci->port_array[i] = -1)
++					xhci->port_array[i] = DUPLICATE_ENTRY)
+ 				continue;
+ 
+ 			xhci->usb2_ports[port_index] diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index cfc1ad9..c6d1462 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1209,7 +1209,7 @@ static unsigned int find_faked_portnum_from_hw_portnum(struct usb_hcd *hcd,
+ 		 * Skip ports that don't have known speeds, or have duplicate
+ 		 * Extended Capabilities port speed entries.
+ 		 */
+-		if (port_speed = 0 || port_speed = -1)
++		if (port_speed = 0 || port_speed = DUPLICATE_ENTRY)
+ 			continue;
+ 
+ 		/*
+@@ -1260,7 +1260,7 @@ static void handle_port_status(struct xhci_hcd *xhci,
+ 				port_id);
+ 		goto cleanup;
+ 	}
+-	if (major_revision = (u8) -1) {
++	if (major_revision = DUPLICATE_ENTRY) {
+ 		xhci_warn(xhci, "Event for port %u duplicated in"
+ 				"Extended Capabilities, ignoring.\n",
+ 				port_id);
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 711de25..45bd5a2 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -348,6 +348,9 @@ struct xhci_op_regs {
+ /* Initiate a warm port reset - complete when PORT_WRC is '1' */
+ #define PORT_WR		(1 << 31)
+ 
++/* We mark duplicate entries with -1 */
++#define DUPLICATE_ENTRY ((u8)(-1))
++
+ /* Port Power Management Status and Control - port_power_base bitmasks */
+ /* Inactivity timer value for transitions into U1, in microseconds.
+  * Timeout can be up to 127us.  0xFF means an infinite timeout.
