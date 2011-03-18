@@ -1,43 +1,78 @@
-From: "xianai@nju.edu.cn" <xianai@nju.edu.cn>
-Date: Fri, 18 Mar 2011 06:44:27 +0000
+From: Nai Xia <nai.xia@gmail.com>
+Date: Fri, 18 Mar 2011 07:16:37 +0000
 Subject: Re: [PATCH] ksm: add vm_stat and meminfo entry to reflect pte mapping to ksm pages
-Message-Id: <201103181444.27725.xianai@nju.edu.cn>
+Message-Id: <201103181516.37671.nai.xia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201102262256.31565.nai.xia@gmail.com> <1298946108.9138.1173.camel@nimitz>
-In-Reply-To: <1298946108.9138.1173.camel@nimitz>
+References: <201102262256.31565.nai.xia@gmail.com> <20110301154100.212c4ff9.akpm@linux-foundation.org>
+In-Reply-To: <20110301154100.212c4ff9.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dave Hansen <dave@linux.vnet.ibm.com>
-Cc: Izik Eidus <ieidus@redhat.com>, Hugh Dickins <hugh.dickins@tiscali.co.uk>, Andrea Arcangeli <aarcange@redhat.com>, Chris Wright <chrisw@sous-sol.org>, Rik van Riel <riel@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Izik Eidus <ieidus@redhat.com>, Hugh Dickins <hugh.dickins@tiscali.co.uk>, Andrea Arcangeli <aarcange@redhat.com>, Chris Wright <chrisw@sous-sol.org>, Rik van Riel <riel@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
 
->On Tuesday 01 March 2011, at 10:21:48, <Dave Hansen <dave@linux.vnet.ibm.com>> wrote
-> On Sat, 2011-02-26 at 22:56 +0800, Nai Xia wrote
-> > @@ -904,6 +905,10 @@ static int try_to_merge_one_page(struct vm_area_struct 
-> > *vma,
-> >                          */
-> >                         set_page_stable_node(page, NULL);
-> >                         mark_page_accessed(page);
-> > +                       if (mapcount)
-> > +                               add_zone_page_state(page_zone(page),
-> > +                                                   NR_KSM_PAGES_SHARING,
-> > +                                                   mapcount);
-> >                         err = 0;
-> >                 } else if (pages_identical(page, kpage))
-> >                         err = replace_page(vma, page, kpage, orig_pte); 
+>On Wednesday 02 March 2011, at 07:41:00, <Andrew Morton <akpm@linux-foundation.org>> wrote
+> On Sat, 26 Feb 2011 22:56:31 +0800
+> Nai Xia <nai.xia@gmail.com> wrote:
 > 
-> If you're going to store this per-zone, does it make sense to have it
-> show up in /proc/zoneinfo?  meminfo's also getting pretty porky these
-> days, so I almost wonder if it should stay in zoneinfo only.
+> > ksm_pages_sharing is updated by ksmd periodically.  In some cases, it cannot 
+> > reflect the actual savings and makes the benchmarks on volatile VMAs very 
+> > inaccurate.
+> > 
+> > This patch add a vm_stat entry and let the /proc/meminfo show information 
+> > about how much virutal address pte is being mapped to ksm pages.  With default 
+> > ksm paramters (pages_to_scan=100 && sleep_millisecs=20), this can result in 
+> > 50% more accurate averaged savings result for the following test program. 
+> > Bigger sleep_millisecs values will increase this deviation. 
+> 
+> So I think you're saying that the existing ksm_pages_sharing sysfs file
+> is no good.
+> 
+> You added a new entry to /proc/meminfo and left ksm_pages_sharing
+> as-is.  Why not leave /proc/meminfo alone, and fix up the existing
+> ksm_pages_sharing?
 
-Yes, thanks for pointing out, I will fix it soon. And sorry for the late 
-response,there was a bug in my mail client which prevents this mail from being 
-filtered out.
+
+The ksm_pages_sharing is really a count for how many "rmap_item"s is currently
+linked in stable_nodes. ksmd updates ksm_pages_sharing whenever it's waken up.
+However, just during the time ksmd is sleeping, many shared KSM pages can be 
+broken because of page writes. So ksm_pages_sharing means much more an internal
+state for ksm than a real count for how much pages is being shared at some time
+point. Since the state of the internal data structures of ksm is only updated 
+by ksmd privately. I think it's hard to make it correctly reflect the real time
+memory saving. So I just added another count and let ksm_pages_sharing still 
+focus on it original role.
+
+> 
+> Also, the patch accumulates the NR_KSM_PAGES_SHARING counts on a
+> per-zone basis as well as on a global basis, but only provides the
+> global count to userspace.  The per-zone counts are potentially
+> interesting?  If not, maintaining the per-zone counters is wasted
+> overhead.
+
+Yes, I will make it to the zoneinfo, soon. 
+
+> 
+> > 
+> > --- test.c-----
+> >
+> 
+> The "^---" token conventionally means "end of changelog".  Please avoid
+> inserting it into the middle of the changelog.
+
+OK, I understand now. :)
+
+> 
+> > +++ b/mm/ksm.c
+> > @@ -897,6 +897,7 @@ static int try_to_merge_one_page(struct vm_area_struct 
+> > *vma,
+> 
+> Your email client wordwraps the patches.
+
+Oops, sorry for the crappy client it is also responsible for my late reply.
+I will fix it soon.
 
 Nai
 
-> 
-> -- Dave
-> 
 > 
