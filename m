@@ -1,97 +1,78 @@
-From: Nai Xia <nai.xia@gmail.com>
-Date: Fri, 18 Mar 2011 07:29:43 +0000
-Subject: Re: [PATCH] ksm: add vm_stat and meminfo entry to reflect pte mapping to ksm pages
-Message-Id: <201103181529.43659.nai.xia@gmail.com>
+From: Hugh Dickins <hughd@google.com>
+Date: Fri, 18 Mar 2011 22:40:00 +0000
+Subject: Re: [PATCH] ksm: add vm_stat and meminfo entry to reflect pte mapping
+Message-Id: <alpine.LSU.2.00.1103181448100.2092@sister.anvils>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201102262256.31565.nai.xia@gmail.com> <20110302143142.a3c0002b.akpm@linux-foundation.org>
-In-Reply-To: <20110302143142.a3c0002b.akpm@linux-foundation.org>
+References: <201102262256.31565.nai.xia@gmail.com> <20110302143142.a3c0002b.akpm@linux-foundation.org> <201103181529.43659.nai.xia@gmail.com>
+In-Reply-To: <201103181529.43659.nai.xia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Izik Eidus <ieidus@redhat.com>, Hugh Dickins <hugh.dickins@tiscali.co.uk>, Andrea Arcangeli <aarcange@redhat.com>, Chris Wright <chrisw@sous-sol.org>, Rik van Riel <riel@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Nai Xia <nai.xia@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andrea Arcangeli <aarcange@redhat.com>, Chris Wright <chrisw@sous-sol.org>, Rik van Riel <riel@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-
->On Thursday 03 March 2011, at 06:31:42, <Andrew Morton <akpm@linux-foundation.org>> wrote
-> This patch obviously wasn't tested with CONFIG_KSM=n, which was a
-> pretty basic patch-testing failure :(
-
-Oops, I will be careful to avoid similar mistakes next time.
-
+On Fri, 18 Mar 2011, Nai Xia wrote:
+> >On Thursday 03 March 2011, at 06:31:42, <Andrew Morton <akpm@linux-foundation.org>> wrote
+> > This patch obviously wasn't tested with CONFIG_KSM=n, which was a
+> > pretty basic patch-testing failure :(
 > 
-> I fixed up my tree with the below, but really the amount of ifdeffing
-> is unacceptable - please find a cleaner way to fix up this patch.
+> Oops, I will be careful to avoid similar mistakes next time.
+> 
+> > 
+> > I fixed up my tree with the below, but really the amount of ifdeffing
+> > is unacceptable - please find a cleaner way to fix up this patch.
+> 
+> Ok, I will have a try in my next patch submit. 
 
-Ok, I will have a try in my next patch submit. 
+A couple of notes on that.
 
-Thanks,
--Nai
-> 
-> --- a/mm/ksm.c~ksm-add-vm_stat-and-meminfo-entry-to-reflect-pte-mapping-to-ksm-pages-fix
-> +++ a/mm/ksm.c
-> @@ -883,7 +883,6 @@ static int try_to_merge_one_page(struct 
->  	 */
->  	if (write_protect_page(vma, page, &orig_pte) = 0) {
->  		if (!kpage) {
-> -			long mapcount = page_mapcount(page);
->  			/*
->  			 * While we hold page lock, upgrade page from
->  			 * PageAnon+anon_vma to PageKsm+NULL stable_node:
-> @@ -891,10 +890,12 @@ static int try_to_merge_one_page(struct 
->  			 */
->  			set_page_stable_node(page, NULL);
->  			mark_page_accessed(page);
-> -			if (mapcount)
-> +#ifdef CONFIG_KSM
-> +			if (page_mapcount(page))
->  				add_zone_page_state(page_zone(page),
->  						    NR_KSM_PAGES_SHARING,
->  						    mapcount);
-> +#endif
->  			err = 0;
->  		} else if (pages_identical(page, kpage))
->  			err = replace_page(vma, page, kpage, orig_pte);
-> --- a/mm/memory.c~ksm-add-vm_stat-and-meminfo-entry-to-reflect-pte-mapping-to-ksm-pages-fix
-> +++ a/mm/memory.c
-> @@ -719,8 +719,10 @@ copy_one_pte(struct mm_struct *dst_mm, s
->  			rss[MM_ANONPAGES]++;
->  		else
->  			rss[MM_FILEPAGES]++;
-> +#ifdef CONFIG_KSM
->  		if (PageKsm(page)) /* follows page_dup_rmap() */
->  			inc_zone_page_state(page, NR_KSM_PAGES_SHARING);
-> +#endif
->  	}
->  
->  out_set_pte:
-> --- a/mm/rmap.c~ksm-add-vm_stat-and-meminfo-entry-to-reflect-pte-mapping-to-ksm-pages-fix
-> +++ a/mm/rmap.c
-> @@ -893,11 +893,12 @@ void do_page_add_anon_rmap(struct page *
->  			__inc_zone_page_state(page,
->  					      NR_ANON_TRANSPARENT_HUGEPAGES);
->  	}
-> +#ifdef CONFIG_KSM
->  	if (unlikely(PageKsm(page))) {
->  		__inc_zone_page_state(page, NR_KSM_PAGES_SHARING);
->  		return;
->  	}
-> -
-> +#endif
->  	VM_BUG_ON(!PageLocked(page));
->  	VM_BUG_ON(address < vma->vm_start || address >= vma->vm_end);
->  	if (first)
-> @@ -955,9 +956,10 @@ void page_add_file_rmap(struct page *pag
->   */
->  void page_remove_rmap(struct page *page)
->  {
-> +#ifdef CONFIG_KSM
->  	if (PageKsm(page))
->  		__dec_zone_page_state(page, NR_KSM_PAGES_SHARING);
-> -
-> +#endif
->  	/* page still mapped by someone else? */
->  	if (!atomic_add_negative(-1, &page->_mapcount))
->  		return;
-> _
-> 
-> 
+akpm's fixup introduced an #ifdef CONFIG_KSM in mm/ksm.c: that should
+be, er, unnecessary - since ksm.c is only compiled when CONFIG_KSM=y.
+
+And PageKsm(page) evaluates to 0 when CONFIG_KSM is not set, so the
+optimizer should eliminate code from most places without #ifdef:
+though you need to keep the #ifdef around display in /proc/meminfo
+itself, so as not to annoy non-KSM people with an always 0kB line.
+
+But I am uncomfortable with the whole patch.
+
+Can you make a stronger case for it?  KSM is designed to have its own
+cycle, and to keep out of the way of the rest of mm as much as possible
+(not as much as originally hoped, I admit).  Do we really want to show
+its statistics in /proc/meminfo now?  And do we really care that they
+don't keep up with exiting processes when the scan rate is low?
+
+I am not asserting that we don't, nor am I nacking your patch:
+but I would like to hear more support for it, before it adds
+yet another line to our user interface in /proc/meminfo.
+
+And there is an awkward little bug in your patch, which amplifies
+a more significant and shameful pair of bugs of mine in KSM itself -
+no wonder that I'm anxious about your patch going in!
+
+Your bug is precisely where akpm added the #ifdef in ksm.c.  The
+problem is that page_mapcount() is maintained atomically, generally
+without spinlock or pagelock: so the value of mapcount there, unless
+it is 1, can go up or down racily (as other processes sharing that
+anonymous page fork or unmap at the same time).
+
+I could hardly complain about that, while suggesting above that more
+approximate numbers are good enough!  Except that, when KSM is turned
+off, there's a chance that you'd be left showing a non-0 kB in
+/proc/meminfo.  Then people will want a fix, and I don't yet know
+what that fix will be.
+
+My first bug is in the break_cow() technique used to get back to
+normal, when merging into a KSM page fails for one reason or another:
+that technique misses other mappings of the page.  I did have a patch
+in progress to fix that a few months ago, but it wasn't quite working,
+and then I realized the second bug: that even when successful, if
+VM_UNMERGEABLE has been used in forked processes, then we could end up
+with a KSM page in a VM_UNMERGEABLE area, which is against the spec.
+
+A solution to all three problems would be to revert to allocating a
+separate KSM page, instead of using one of the pages already there.
+But that feels like a regression, and I don't think anybody is really
+hurting from the current situation, so I've not jumped to fix it yet.
+
+Hugh
