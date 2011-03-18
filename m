@@ -1,34 +1,45 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Fri, 18 Mar 2011 08:32:02 +0000
-Subject: Re: [patch] block: NULL dereference on error path in __blkdev_get()
-Message-Id: <20110318083202.GC8571@htj.dyndns.org>
+From: Wim Van Sebroeck <wim@iguana.be>
+Date: Fri, 18 Mar 2011 08:11:40 +0000
+Subject: Re: [PATCH 1/2] drivers/watchdog/s3c2410_wdt.c: Convert
+Message-Id: <20110318081140.GS1751@infomag.iguana.be>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110313205937.GI2008@bicker>
- <20110314085819.GJ2005@htj.dyndns.org>
-In-Reply-To: <20110314085819.GJ2005@htj.dyndns.org>
+References: <1298738079-28893-1-git-send-email-julia@diku.dk>
+	<002e01cbd72f$448ac150$cda043f0$%kim@samsung.com>
+	<Pine.LNX.4.64.1102281110090.14560@pc-004.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1102281110090.14560@pc-004.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Mar 14, 2011 at 09:58:19AM +0100, Tejun Heo wrote:
-> Hello,
+Hi Julia, Kukjin Kim,
+
+> > Hmm...I think, 'res' is better for platform_get_resource().
+> > Do we _really_ need to change the name?...
 > 
-> On Sun, Mar 13, 2011 at 11:59:37PM +0300, Dan Carpenter wrote:
-> > "disk" is always NULL when we goto out.  There was a check for this
-> > before, but it was removed in 69e02c59a7d9 "block: Don't check events
-> > while open is in progress".
-> > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
->  Acked-by: Tejun Heo <tj@kernel.org>
-> 
-> Sorry about the trouble.  I hate that function.  :-(
+> wdt_mem is a global variable.  Is res a good name for a global variable?  
+> One could say wdt_mem = res, if that seems better.
 
-I thought Jens was cc'd.  I'll forward the patch to him & LKML.
+If you look at the code then you have:
+static struct resource  *wdt_mem;
+static struct resource  *wdt_irq;
 
-Thanks.
+and in the probe function you have:
+        res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	...
+	wdt_mem = request_mem_region(res->start, size, pdev->name);
+	...
+	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
 
--- 
-tejun
+So doing Julia's:
+	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	...
+	if (!request_mem_region(wdt_mem->start, size, pdev->name)) {
+	...
+	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0)
+
+seems the best solution to me (since you then have both resources being polulated via platform_get_resource(pdev,... ).
+
+Kind regards,
+Wim.
+
