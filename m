@@ -1,8 +1,10 @@
 From: Maksym Planeta <mcsim.planeta@gmail.com>
-Date: Sat, 19 Mar 2011 16:08:01 +0000
+Date: Sat, 19 Mar 2011 16:25:47 +0000
 Subject: [PATCH] x86: page: get_order() optimization
-Message-Id: <1300550881-22091-1-git-send-email-mcsim.planeta@gmail.com>
+Message-Id: <1300551947-22279-1-git-send-email-mcsim.planeta@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1300550881-22091-1-git-send-email-mcsim.planeta@gmail.com>
+In-Reply-To: <1300550881-22091-1-git-send-email-mcsim.planeta@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,6 +13,10 @@ Cc: kernel-janitors@vger.kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.
 
 For x86 architecture get_order function can be optimized due to
 assembler instruction bsr.
+
+I'm sorry. I've forgot about Signed-off, so the same, but with the sign.
+
+Signed-off-by: Maksym Planeta <mcsim.planeta@gmail.com>
 ---
  arch/x86/include/asm/page.h |   20 +++++++++++++++++++-
  1 files changed, 19 insertions(+), 1 deletions(-)
