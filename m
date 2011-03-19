@@ -1,42 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 28 Mar 2011 01:38:56 +0000
-Subject: Re: [PATCH 2/3] tg3: Don't use IRQF_SAMPLE_RANDOM
-Message-Id: <20110327.183856.200383919.davem@davemloft.net>
+From: Maksym Planeta <mcsim.planeta@gmail.com>
+Date: Sat, 19 Mar 2011 16:08:01 +0000
+Subject: [PATCH] x86: page: get_order() optimization
+Message-Id: <1300550881-22091-1-git-send-email-mcsim.planeta@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1301193753-10045-1-git-send-email-martinez.javier@gmail.com>
-	<1301193753-10045-2-git-send-email-martinez.javier@gmail.com>
-	<20110327030830.GF1885@bicker>
-In-Reply-To: <20110327030830.GF1885@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: martinez.javier@gmail.com, mcarlson@broadcom.com, mchan@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: tglx@linutronix.de
+Cc: kernel-janitors@vger.kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org, Maksym Planeta <mcsim.planeta@gmail.com>
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 27 Mar 2011 06:08:30 +0300
+For x86 architecture get_order function can be optimized due to
+assembler instruction bsr.
+---
+ arch/x86/include/asm/page.h |   20 +++++++++++++++++++-
+ 1 files changed, 19 insertions(+), 1 deletions(-)
 
-> On Sun, Mar 27, 2011 at 04:42:32AM +0200, Javier Martinez Canillas wrote:
->> This flag is scheduled for removal so we shouldn't used it.
->> 
->> Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
->> ---
->>  drivers/net/tg3.c |    5 ++---
->>  1 files changed, 2 insertions(+), 3 deletions(-)
->> 
->> diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
->> index c67eb19..58c6049 100644
->> --- a/drivers/net/tg3.c
->> +++ b/drivers/net/tg3.c
->> @@ -8844,12 +8844,11 @@ static int tg3_request_irq(struct tg3 *tp, int irq_num)
->>  		fn = tg3_msi;
->>  		if (tp->tg3_flags2 & TG3_FLG2_1SHOT_MSI)
->>  			fn = tg3_msi_1shot;
->> -		flags = IRQF_SAMPLE_RANDOM;
-> 
-> You need initialize flags to zero here.  Apparently gcc doesn't catch
-> this.  I'm using gcc 4.4.3-4ubuntu5.
+diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
+index 8ca8283..339ae26 100644
+--- a/arch/x86/include/asm/page.h
++++ b/arch/x86/include/asm/page.h
+@@ -60,10 +60,28 @@ static inline void copy_user_page(void *to, void *from, unsigned long vaddr,
+ extern bool __virt_addr_valid(unsigned long kaddr);
+ #define virt_addr_valid(kaddr)	__virt_addr_valid((unsigned long) (kaddr))
+ 
++/* Pure 2^n version of get_order */
++static inline __attribute_const__ int get_order(unsigned long size)
++{
++	int order;
++
++	size = (size - 1) >> (PAGE_SHIFT - 1);
++#ifdef CONFIG_X86_CMOV
++	asm("bsr %1,%0\n\t"
++	    "cmovzl %2,%0"
++	    : "=&r" (order) : "rm" (size), "rm" (0));
++#else
++	asm("bsr %1,%0\n\t"
++	    "jnz 1f\n\t"
++	    "movl $0,%0\n"
++	    "1:" : "=r" (order) : "rm" (size));
++#endif
++	return order;
++}
++
+ #endif	/* __ASSEMBLY__ */
+ 
+ #include <asm-generic/memory_model.h>
+-#include <asm-generic/getorder.h>
+ 
+ #define __HAVE_ARCH_GATE_AREA 1
+ 
+-- 
+1.7.2.3
 
-Javier please fix this up and resubmit your patch.
-
-Thanks.
