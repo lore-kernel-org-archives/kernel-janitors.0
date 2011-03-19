@@ -1,20 +1,27 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Tue, 08 Mar 2011 18:57:26 +0000
-Subject: Re: [patch] ASoC: sgtl5000: use after free in
-Message-Id: <20110308185726.GD21538@opensource.wolfsonmicro.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 19 Mar 2011 04:36:47 +0000
+Subject: [patch] fbdev: sh_mobile_lcdc: checking NULL instead of IS_ERR()
+Message-Id: <20110319043647.GZ2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110308113924.GC3416@bicker>
-In-Reply-To: <20110308113924.GC3416@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: alsa-devel@alsa-project.org, Zeng Zhaoming <b32542@freescale.com>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>
+To: linux-fbdev@vger.kernel.org
 
-On Tue, Mar 08, 2011 at 02:39:24PM +0300, Dan Carpenter wrote:
-> The "ldo" variable was dereferenced after free on the error path.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
+backlight_device_register() returns an ERR_PTR.  It doesn't return NULL.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/video/sh_mobile_lcdcfb.c b/drivers/video/sh_mobile_lcdcfb.c
+index bf2629f..a53abe1 100644
+--- a/drivers/video/sh_mobile_lcdcfb.c
++++ b/drivers/video/sh_mobile_lcdcfb.c
+@@ -1088,7 +1088,7 @@ static struct backlight_device *sh_mobile_lcdc_bl_probe(struct device *parent,
+ 
+ 	bl = backlight_device_register(ch->cfg.bl_info.name, parent, ch,
+ 				       &sh_mobile_lcdc_bl_ops, NULL);
+-	if (!bl) {
++	if (IS_ERR(bl)) {
+ 		dev_err(parent, "unable to register backlight device\n");
+ 		return NULL;
+ 	}
