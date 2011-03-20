@@ -1,24 +1,37 @@
-From: Mike Waychison <mikew@google.com>
-Date: Fri, 18 Mar 2011 09:23:00 +0000
-Subject: Re: [patch 1/2] efivars: memory leak on error in create_efivars_bin_attributes()
-Message-Id: <AANLkTim7uAt_TR9XCZkPBDo7VwfNqvFSguKYndzyw0P7@mail.gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 20 Mar 2011 11:22:07 +0000
+Subject: [patch] nfs: lock() vs unlock() typo
+Message-Id: <20110320112207.GM2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110318071214.GV2008@bicker>
-In-Reply-To: <20110318071214.GV2008@bicker>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, Mike Waychison <mikew@google.com>, Chris Wright <chrisw@sous-sol.org>, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: linux-nfs@vger.kernel.org, viro@zeniv.linux.org.uk, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 18, 2011 at 12:12 AM, Dan Carpenter <error27@gmail.com> wrote:
-> This is a cut and paste bug. =A0We intended to free ->del_var and
-> ->new_var but we only free ->new_var.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+These should be spin_unlock() instead of spin_lock().  It's a typo.
 
-Acked-by: Mike Waychison <mikew@google.com>
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
+index c0b8344..bf1c680 100644
+--- a/fs/nfs/namespace.c
++++ b/fs/nfs/namespace.c
+@@ -98,7 +98,7 @@ rename_retry:
+ 		namelen--;
+ 	buflen -= namelen;
+ 	if (buflen < 0) {
+-		spin_lock(&dentry->d_lock);
++		spin_unlock(&dentry->d_lock);
+ 		rcu_read_unlock();
+ 		goto Elong;
+ 	}
+@@ -108,7 +108,7 @@ rename_retry:
+ 	rcu_read_unlock();
+ 	return end;
+ Elong_unlock:
+-	spin_lock(&dentry->d_lock);
++	spin_unlock(&dentry->d_lock);
+ 	rcu_read_unlock();
+ 	if (read_seqretry(&rename_lock, seq))
+ 		goto rename_retry;
