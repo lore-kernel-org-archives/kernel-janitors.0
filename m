@@ -1,21 +1,31 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Tue, 22 Mar 2011 09:21:06 +0000
-Subject: Re: [patch 1/4] USB: musb: add missing unlock in cppi_interrupt()
-Message-Id: <20110322092105.GS1837@legolas.emea.dhcp.ti.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 20 Mar 2011 11:12:49 +0000
+Subject: [patch] sh: clkfwk: potential null deref in debug code
+Message-Id: <20110320111249.GH2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110320111436.GI2008@bicker>
-In-Reply-To: <20110320111436.GI2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-sh@vger.kernel.org
 
-On Sun, Mar 20, 2011 at 02:14:36PM +0300, Dan Carpenter wrote:
-> We should unlock before returning here.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+This function is designed to accept a NULL for "best_freq" but the
+debug code dereferences it unconditionally.
 
-applied, thanks
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Btw.  Smatch complains that "best" could NULL as well, but I don't
+know if actually that's possible so I left it as is.
 
--- 
-balbi
+diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
+index 5f63c3b..dee971c 100644
+--- a/drivers/sh/clk/core.c
++++ b/drivers/sh/clk/core.c
+@@ -616,7 +616,7 @@ long clk_round_parent(struct clk *clk, unsigned long target,
+ 
+ 		pr_debug("%u / %lu = %lu, / %lu = %lu, best %lu, parent %u\n",
+ 			 freq->frequency, div, freq_high, div + 1, freq_low,
+-			 *best_freq, best->frequency);
++			 best_freq ? *best_freq : -1, best->frequency);
+ 
+ 		if (!error)
+ 			break;
