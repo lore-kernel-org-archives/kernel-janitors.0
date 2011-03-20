@@ -1,32 +1,44 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 01 Mar 2011 15:22:50 +0000
-Subject: [patch] [S390] keyboard: integer underflow bug
-Message-Id: <20110301152250.GR18043@bicker>
+Date: Sun, 20 Mar 2011 11:09:50 +0000
+Subject: [patch] usb: pch_udc: unlock on allocation failure
+Message-Id: <20110320110949.GF2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The "ct" variable should be an unsigned int.  Both struct kbdiacrs
-->kb_cnt and struct kbd_data ->accent_table_size are unsigned ints.
+There was an unlock missing on the error path.
 
-Making it signed causes a problem in KBDIACRUC because the user could
-set the signed bit and cause a buffer overflow.
+Also I did a small cleanup by changing ep->dev->lock for just dev->lock.
+They're the same lock, but dev->lock is shorter and that's how it is
+used for the spin_unlock_irqrestore() call.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/s390/char/keyboard.c b/drivers/s390/char/keyboard.c
-index d667334..8065881 100644
---- a/drivers/s390/char/keyboard.c
-+++ b/drivers/s390/char/keyboard.c
-@@ -458,7 +458,8 @@ do_kdgkb_ioctl(struct kbd_data *kbd, struct kbsentry __user *u_kbs,
- int kbd_ioctl(struct kbd_data *kbd, unsigned int cmd, unsigned long arg)
- {
- 	void __user *argp;
--	int ct, perm;
-+	unsigned int ct;
-+	int perm;
- 
- 	argp = (void __user *)arg;
- 
+diff --git a/drivers/usb/gadget/pch_udc.c b/drivers/usb/gadget/pch_udc.c
+index 3e4b35e..68dbcc3 100644
+--- a/drivers/usb/gadget/pch_udc.c
++++ b/drivers/usb/gadget/pch_udc.c
+@@ -1608,7 +1608,7 @@ static int pch_udc_pcd_queue(struct usb_ep *usbep, struct usb_request *usbreq,
+ 		return -EINVAL;
+ 	if (!dev->driver || (dev->gadget.speed = USB_SPEED_UNKNOWN))
+ 		return -ESHUTDOWN;
+-	spin_lock_irqsave(&ep->dev->lock, iflags);
++	spin_lock_irqsave(&dev->lock, iflags);
+ 	/* map the buffer for dma */
+ 	if (usbreq->length &&
+ 	    ((usbreq->dma = DMA_ADDR_INVALID) || !usbreq->dma)) {
+@@ -1625,8 +1625,10 @@ static int pch_udc_pcd_queue(struct usb_ep *usbep, struct usb_request *usbreq,
+ 							     DMA_FROM_DEVICE);
+ 		} else {
+ 			req->buf = kzalloc(usbreq->length, GFP_ATOMIC);
+-			if (!req->buf)
+-				return -ENOMEM;
++			if (!req->buf) {
++				retval = -ENOMEM;
++				goto probe_end;
++			}
+ 			if (ep->in) {
+ 				memcpy(req->buf, usbreq->buf, usbreq->length);
+ 				req->dma = dma_map_single(&dev->pdev->dev,
