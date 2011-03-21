@@ -1,64 +1,55 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Mar 2011 17:14:54 +0000
-Subject: [PATCH 2/3] drivers/misc/atmel_tclib.c: Convert release_resource to release_mem_region
-Message-Id: <1300814095-25278-2-git-send-email-julia@diku.dk>
+From: Shuxian Cai <caisx25@gmail.com>
+Date: Mon, 21 Mar 2011 11:36:14 +0000
+Subject: [PATCH] be2net: change explicit jiffies comparison
+Message-Id: <1300707374.2324.8.camel@diviner-dev>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tejun Heo <tj@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Request_mem_region should be used with release_mem_region, not
-release_resource.
+From: Shuxian Cai <caisx25@gmail.com>
 
-A semantic patch that partially fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@b@
-expression x,E;
-@@
-
-x = request_mem_region(x->start,...)
-... when != release_mem_region(x->start,...)
-    when != x = E
-(
-- release_resource(x);
-- kfree(x);
-+  release_mem_region(x->start,resource_size(x));
-|
-?- release_resource(x);
-+  release_mem_region(x->start,resource_size(x));
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Use time_after()/time_before() instead of explicit compare
+Signed-off-by: Shuxian Cai <caisx25@gmail.com>
 ---
- drivers/misc/atmel_tclib.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/misc/atmel_tclib.c b/drivers/misc/atmel_tclib.c
-index 3891124..0ce9d63 100644
---- a/drivers/misc/atmel_tclib.c
-+++ b/drivers/misc/atmel_tclib.c
-@@ -75,7 +75,7 @@ out:
- 	return tc;
+diff -uprN -X linux-2.6.38/Documentation/dontdiff linux-2.6.38/drivers/net/benet/be_main.c linux-2.6.38.new/drivers/net/benet/be_main.c
+--- linux-2.6.38/drivers/net/benet/be_main.c	2011-03-18 23:22:48.000000000 +0800
++++ linux-2.6.38.new/drivers/net/benet/be_main.c	2011-03-20 20:04:30.000000000 +0800
+@@ -18,6 +18,7 @@
+ #include "be.h"
+ #include "be_cmds.h"
+ #include <asm/div64.h>
++#include <linux/jiffies.h>
  
- fail_ioremap:
--	release_resource(r);
-+	release_mem_region(r->start, resource_size(r));
- fail:
- 	tc = NULL;
- 	goto out;
-@@ -95,7 +95,7 @@ void atmel_tc_free(struct atmel_tc *tc)
- 	spin_lock(&tc_list_lock);
- 	if (tc->regs) {
- 		iounmap(tc->regs);
--		release_resource(tc->iomem);
-+		release_mem_region(tc->iomem->start, resource_size(tc->iomem));
- 		tc->regs = NULL;
- 		tc->iomem = NULL;
+ MODULE_VERSION(DRV_VER);
+ MODULE_DEVICE_TABLE(pci, be_dev_ids);
+@@ -340,7 +341,7 @@ static void be_rx_eqd_update(struct be_a
  	}
+ 
+ 	/* Update once a second */
+-	if ((now - stats->rx_fps_jiffies) < HZ)
++	if (time_before(now, stats->rx_fps_jiffies + HZ))
+ 		return;
+ 
+ 	stats->rx_fps = (stats->rx_frags - stats->prev_rx_frags) /
+@@ -385,7 +386,7 @@ static void be_tx_rate_update(struct be_
+ 	}
+ 
+ 	/* Update tx rate once in two seconds */
+-	if ((now - stats->be_tx_jiffies) > 2 * HZ) {
++	if (time_after(now, stats->be_tx_jiffies + 2*HZ)) {
+ 		stats->be_tx_rate = be_calc_rate(stats->be_tx_bytes
+ 						  - stats->be_tx_bytes_prev,
+ 						 now - stats->be_tx_jiffies);
+@@ -842,7 +843,7 @@ static void be_rx_rate_update(struct be_
+ 	}
+ 
+ 	/* Update the rate once in two seconds */
+-	if ((now - stats->rx_jiffies) < 2 * HZ)
++	if (time_before(now, stats->rx_jiffies + 2 * HZ))
+ 		return;
+ 
+ 	stats->rx_rate = be_calc_rate(stats->rx_bytes - stats->rx_bytes_prev,
+
 
