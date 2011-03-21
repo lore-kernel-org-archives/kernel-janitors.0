@@ -1,50 +1,32 @@
-From: "Bounine, Alexandre" <Alexandre.Bounine@idt.com>
-Date: Mon, 21 Mar 2011 12:49:06 +0000
-Subject: RE: [patch] rapidio: potential null deref on failure path
-Message-Id: <0CE8B6BE3C4AD74AB97D9D29BD24E55201A588F5@CORPEXCH1.na.ads.idt.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 21 Mar 2011 14:59:48 +0000
+Subject: Re: [patch] rapidio: potential null deref on failure path
+Message-Id: <20110321145948.GP2008@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110319044032.GC2008@bicker>
-In-Reply-To: <20110319044032.GC2008@bicker>
+ <0CE8B6BE3C4AD74AB97D9D29BD24E55201A588F5@CORPEXCH1.na.ads.idt.com>
+In-Reply-To: <0CE8B6BE3C4AD74AB97D9D29BD24E55201A588F5@CORPEXCH1.na.ads.idt.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Matt Porter <mporter@kernel.crashing.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Bounine, Alexandre" <Alexandre.Bounine@idt.com>
+Cc: Matt Porter <mporter@kernel.crashing.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Better to combine both conditions:
+On Mon, Mar 21, 2011 at 05:49:06AM -0700, Bounine, Alexandre wrote:
+> Better to combine both conditions:
+> 
+> if (rio_is_switch(rdev) && rswitch->route_table))
+>  		kfree(rswitch->route_table);
+> 
+> Because there is situation when routine fails to allocate route_table
+> for a switch.
+> 
 
-if (rio_is_switch(rdev) && rswitch->route_table))
- 		kfree(rswitch->route_table);
+kfree() accepts NULL pointers.  People have been removing these checks
+all over the tree by the hundreds...  Sorry I should have mentioned 
+that.
 
-Because there is situation when routine fails to allocate route_table
-for a switch.
-
-Alex. 
+regards,
+dan carpenter
 
 
------Original Message-----
-From: Dan Carpenter [mailto:error27@gmail.com] 
-Sent: Saturday, March 19, 2011 12:41 AM
-To: Matt Porter
-Cc: Bounine, Alexandre; linux-kernel@vger.kernel.org;
-kernel-janitors@vger.kernel.org
-Subject: [patch] rapidio: potential null deref on failure path
-
-If rio is not a switch then "rswitch" is null.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
-index a50391b..3a59d5f 100644
---- a/drivers/rapidio/rio-scan.c
-+++ b/drivers/rapidio/rio-scan.c
-@@ -517,7 +517,7 @@ static struct rio_dev __devinit
-*rio_setup_device(struct rio_net *net,
- 	return rdev;
- 
- cleanup:
--	if (rswitch->route_table)
-+	if (rio_is_switch(rdev))
- 		kfree(rswitch->route_table);
- 
- 	kfree(rdev);
