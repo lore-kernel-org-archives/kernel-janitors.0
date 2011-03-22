@@ -1,50 +1,64 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Date: Fri, 25 Mar 2011 15:04:10 +0000
-Subject: Re: [Xen-devel] [patch 2/2] xen-gntdev: unlock on error path in
-Message-Id: <20110325150410.GF27651@dumpdata.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 22 Mar 2011 17:14:54 +0000
+Subject: [PATCH 2/3] drivers/misc/atmel_tclib.c: Convert release_resource to release_mem_region
+Message-Id: <1300814095-25278-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110319054543.GE2008@bicker>
-In-Reply-To: <20110319054543.GE2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, kernel-janitors@vger.kernel.org, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org
+To: Tejun Heo <tj@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Mar 19, 2011 at 08:45:43AM +0300, Dan Carpenter wrote:
-> We should unlock here and also decrement the number of &map->users.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> I'm not very familiar with this code.  Please review carefully.
+Request_mem_region should be used with release_mem_region, not
+release_resource.
 
-It looks right. -EINVAL is still returned so that is OK. Put it
-on the rc1 train.
-> 
-> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-> index 017ce60..b0f9e8f 100644
-> --- a/drivers/xen/gntdev.c
-> +++ b/drivers/xen/gntdev.c
-> @@ -662,7 +662,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
->  	if (map->flags) {
->  		if ((vma->vm_flags & VM_WRITE) &&
->  				(map->flags & GNTMAP_readonly))
-> -			return -EINVAL;
-> +			goto out_unlock_put;
->  	} else {
->  		map->flags = GNTMAP_host_map;
->  		if (!(vma->vm_flags & VM_WRITE))
-> @@ -700,6 +700,8 @@ unlock_out:
->  	spin_unlock(&priv->lock);
->  	return err;
->  
-> +out_unlock_put:
-> +	spin_unlock(&priv->lock);
->  out_put_map:
->  	if (use_ptemod)
->  		map->vma = NULL;
-> 
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xensource.com
-> http://lists.xensource.com/xen-devel
+A semantic patch that partially fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@b@
+expression x,E;
+@@
+
+x = request_mem_region(x->start,...)
+... when != release_mem_region(x->start,...)
+    when != x = E
+(
+- release_resource(x);
+- kfree(x);
++  release_mem_region(x->start,resource_size(x));
+|
+?- release_resource(x);
++  release_mem_region(x->start,resource_size(x));
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/misc/atmel_tclib.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/atmel_tclib.c b/drivers/misc/atmel_tclib.c
+index 3891124..0ce9d63 100644
+--- a/drivers/misc/atmel_tclib.c
++++ b/drivers/misc/atmel_tclib.c
+@@ -75,7 +75,7 @@ out:
+ 	return tc;
+ 
+ fail_ioremap:
+-	release_resource(r);
++	release_mem_region(r->start, resource_size(r));
+ fail:
+ 	tc = NULL;
+ 	goto out;
+@@ -95,7 +95,7 @@ void atmel_tc_free(struct atmel_tc *tc)
+ 	spin_lock(&tc_list_lock);
+ 	if (tc->regs) {
+ 		iounmap(tc->regs);
+-		release_resource(tc->iomem);
++		release_mem_region(tc->iomem->start, resource_size(tc->iomem));
+ 		tc->regs = NULL;
+ 		tc->iomem = NULL;
+ 	}
+
