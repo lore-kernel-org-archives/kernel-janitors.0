@@ -1,91 +1,67 @@
-From: Jarod Wilson <jarod@wilsonet.com>
-Date: Mon, 28 Mar 2011 20:24:35 +0000
-Subject: Re: [PATCH 6/6] [media] pvrusb2: replace !0 with 1
-Message-Id: <907BA542-7FBE-497D-93B3-BB20012F4FD3@wilsonet.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 22 Mar 2011 17:15:21 +0000
+Subject: [PATCH 1/3] drivers/net/ariadne.c: Convert release_resource to release_region/release_mem_region
+Message-Id: <1300814123-25314-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110326015530.GK2008@bicker> <alpine.DEB.1.10.1103252335590.12072@ivanova.isely.net>
-In-Reply-To: <alpine.DEB.1.10.1103252335590.12072@ivanova.isely.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Isely <isely@isely.net>
-Cc: Dan Carpenter <error27@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, Tejun Heo <tj@kernel.org>, Jinqiu Yang <crindy646@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mar 26, 2011, at 12:37 AM, Mike Isely wrote:
+Request_mem_region should be used with release_mem_region, not
+release_resource.
 
-> 
-> That's an opinion which I as the driver author disagree with.  Strongly.  
-> How hard is it to read "not false"?
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression x,E;
+@@
+*x = request_mem_region(...)
+... when != release_mem_region(x)
+    when != x = E
+* release_resource(x);
+// </smpl>
 
-Personally, I prefer use of "true" and "false" over both...
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ drivers/net/ariadne.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> On Sat, 26 Mar 2011, Dan Carpenter wrote:
-> 
->> Using !0 is less readable than just saying 1.
->> 
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
->> 
->> diff --git a/drivers/media/video/pvrusb2/pvrusb2-std.c b/drivers/media/video/pvrusb2/pvrusb2-std.c
->> index 9bebc08..ca4f67b 100644
->> --- a/drivers/media/video/pvrusb2/pvrusb2-std.c
->> +++ b/drivers/media/video/pvrusb2/pvrusb2-std.c
->> @@ -158,7 +158,7 @@ int pvr2_std_str_to_id(v4l2_std_id *idPtr, const char *buf,
->> 			cnt++;
->> 			buf += cnt;
->> 			buf_size -= cnt;
->> -			mMode = !0;
->> +			mMode = 1;
->> 			cmsk = sp->id;
->> 			continue;
->> 		}
->> @@ -190,7 +190,7 @@ int pvr2_std_str_to_id(v4l2_std_id *idPtr, const char *buf,
->> 
->> 	if (idPtr)
->> 		*idPtr = id;
->> -	return !0;
->> +	return 1;
->> }
->> 
->> unsigned int pvr2_std_id_to_str(char *buf, unsigned int buf_size,
->> @@ -217,10 +217,10 @@ unsigned int pvr2_std_id_to_str(char *buf, unsigned int buf_size,
->> 					buf_size -= c2;
->> 					buf += c2;
->> 				}
->> -				cfl = !0;
->> +				cfl = 1;
->> 				c2 = scnprintf(buf, buf_size,
->> 					       "%s-", gp->name);
->> -				gfl = !0;
->> +				gfl = 1;
->> 			} else {
->> 				c2 = scnprintf(buf, buf_size, "/");
->> 			}
->> @@ -315,7 +315,7 @@ static int pvr2_std_fill(struct v4l2_standard *std, v4l2_std_id id)
->> 	std->name[bcnt] = 0;
->> 	pvr2_trace(PVR2_TRACE_STD, "Set up standard idx=%u name=%s",
->> 		   std->index, std->name);
->> -	return !0;
->> +	return 1;
->> }
->> 
->> /*
->> 
-> 
-> -- 
-> 
-> Mike Isely
-> isely @ isely (dot) net
-> PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
-Jarod Wilson
-jarod@wilsonet.com
-
-
+diff --git a/drivers/net/ariadne.c b/drivers/net/ariadne.c
+index 7ca0ede..b7f45cd 100644
+--- a/drivers/net/ariadne.c
++++ b/drivers/net/ariadne.c
+@@ -182,14 +182,14 @@ static int __devinit ariadne_init_one(struct zorro_dev *z,
+ 	return -EBUSY;
+     r2 = request_mem_region(mem_start, ARIADNE_RAM_SIZE, "RAM");
+     if (!r2) {
+-	release_resource(r1);
++	release_mem_region(base_addr, sizeof(struct Am79C960));
+ 	return -EBUSY;
+     }
+ 
+     dev = alloc_etherdev(sizeof(struct ariadne_private));
+     if (dev = NULL) {
+-	release_resource(r1);
+-	release_resource(r2);
++	release_mem_region(base_addr, sizeof(struct Am79C960));
++	release_mem_region(mem_start, ARIADNE_RAM_SIZE);
+ 	return -ENOMEM;
+     }
+ 
+@@ -213,8 +213,8 @@ static int __devinit ariadne_init_one(struct zorro_dev *z,
+ 
+     err = register_netdev(dev);
+     if (err) {
+-	release_resource(r1);
+-	release_resource(r2);
++	release_mem_region(base_addr, sizeof(struct Am79C960));
++	release_mem_region(mem_start, ARIADNE_RAM_SIZE);
+ 	free_netdev(dev);
+ 	return err;
+     }
 
