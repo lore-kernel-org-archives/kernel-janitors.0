@@ -1,35 +1,64 @@
-From: Florian Fainelli <florian@openwrt.org>
-Date: Mon, 21 Mar 2011 12:25:48 +0000
-Subject: Re: [patch] vlynq: fix resource size calculation
-Message-Id: <201103211325.49061.florian@openwrt.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 22 Mar 2011 17:14:53 +0000
+Subject: [PATCH 1/3] drivers/mmc/host/mvsdio.c: Convert release_resource to release_mem_region
+Message-Id: <1300814095-25278-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110319043813.GA2008@bicker>
-In-Reply-To: <20110319043813.GA2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Nicolas Pitre <nico@fluxnic.net>
+Cc: kernel-janitors@vger.kernel.org, Chris Ball <cjb@laptop.org>, Andrew Morton <akpm@linux-foundation.org>, Michal Miroslaw <mirq-linux@rere.qmqm.pl>, Anton Vorontsov <cbouatmailru@gmail.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Sascha Sommer <saschasommer@freenet.de>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Saturday 19 March 2011 05:38:13 Dan Carpenter wrote:
-> The original code had an off-by-one error so we didn't release the
-> entire memory region on remove().
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Request_mem_region should be used with release_mem_region, not
+release_resource.
 
-Acked-by: Florian Fainelli <florian@openwrt.org>
+A semantic patch that partially fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> 
-> diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
-> index f885c86..1d37553 100644
-> --- a/drivers/vlynq/vlynq.c
-> +++ b/drivers/vlynq/vlynq.c
-> @@ -764,7 +764,7 @@ static int vlynq_remove(struct platform_device *pdev)
-> 
->  	device_unregister(&dev->dev);
->  	iounmap(dev->local);
-> -	release_mem_region(dev->regs_start, dev->regs_end - dev->regs_start);
-> +	release_mem_region(dev->regs_start, dev->regs_end - dev->regs_start + 1);
-> 
->  	kfree(dev);
+// <smpl>
+@b@
+expression x,E;
+@@
+
+x = request_mem_region(x->start,...)
+... when != release_mem_region(x->start,...)
+    when != x = E
+(
+- release_resource(x);
+- kfree(x);
++  release_mem_region(x->start,resource_size(x));
+|
+?- release_resource(x);
++  release_mem_region(x->start,resource_size(x));
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/mmc/host/mvsdio.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
+index a5bf60e..4606087 100644
+--- a/drivers/mmc/host/mvsdio.c
++++ b/drivers/mmc/host/mvsdio.c
+@@ -825,7 +825,7 @@ out:
+ 			iounmap(host->base);
+ 	}
+ 	if (r)
+-		release_resource(r);
++		release_mem_region(r->start, resource_size(r));
+ 	if (mmc)
+ 		mmc_free_host(mmc);
+ 
+@@ -850,7 +850,7 @@ static int __exit mvsd_remove(struct platform_device *pdev)
+ 		del_timer_sync(&host->timer);
+ 		mvsd_power_down(host);
+ 		iounmap(host->base);
+-		release_resource(host->res);
++		release_mem_region(host->res->start, resource_size(host->res));
+ 		mmc_free_host(mmc);
+ 	}
+ 	platform_set_drvdata(pdev, NULL);
 
