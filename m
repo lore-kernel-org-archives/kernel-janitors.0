@@ -1,67 +1,25 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Mar 2011 17:15:23 +0000
-Subject: [PATCH 3/3] drivers/net/a2065.c: Convert release_resource to release_region/release_mem_region
-Message-Id: <1300814123-25314-3-git-send-email-julia@diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 23 Mar 2011 21:10:59 +0000
+Subject: Re: [PATCH 3/3] drivers/net/a2065.c: Convert release_resource to
+Message-Id: <20110323.141059.27811716.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1300814123-25314-3-git-send-email-julia@diku.dk>
+In-Reply-To: <1300814123-25314-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, Tejun Heo <tj@kernel.org>, Jiri Pirko <jpirko@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: julia@diku.dk
+Cc: kernel-janitors@vger.kernel.org, eric.dumazet@gmail.com, tj@kernel.org, jpirko@redhat.com, geert@linux-m68k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Request_mem_region should be used with release_mem_region, not
-release_resource.
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 22 Mar 2011 18:15:23 +0100
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+> Request_mem_region should be used with release_mem_region, not
+> release_resource.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+ ...
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-// <smpl>
-@@
-expression x,E;
-@@
-*x = request_mem_region(...)
-... when != release_mem_region(x)
-    when != x = E
-* release_resource(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/a2065.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/a2065.c b/drivers/net/a2065.c
-index f142cc2..deaa8bc 100644
---- a/drivers/net/a2065.c
-+++ b/drivers/net/a2065.c
-@@ -711,14 +711,14 @@ static int __devinit a2065_init_one(struct zorro_dev *z,
- 		return -EBUSY;
- 	r2 = request_mem_region(mem_start, A2065_RAM_SIZE, "RAM");
- 	if (!r2) {
--		release_resource(r1);
-+		release_mem_region(base_addr, sizeof(struct lance_regs));
- 		return -EBUSY;
- 	}
- 
- 	dev = alloc_etherdev(sizeof(struct lance_private));
- 	if (dev = NULL) {
--		release_resource(r1);
--		release_resource(r2);
-+		release_mem_region(base_addr, sizeof(struct lance_regs));
-+		release_mem_region(mem_start, A2065_RAM_SIZE);
- 		return -ENOMEM;
- 	}
- 
-@@ -764,8 +764,8 @@ static int __devinit a2065_init_one(struct zorro_dev *z,
- 
- 	err = register_netdev(dev);
- 	if (err) {
--		release_resource(r1);
--		release_resource(r2);
-+		release_mem_region(base_addr, sizeof(struct lance_regs));
-+		release_mem_region(mem_start, A2065_RAM_SIZE);
- 		free_netdev(dev);
- 		return err;
- 	}
-
+Applied.
