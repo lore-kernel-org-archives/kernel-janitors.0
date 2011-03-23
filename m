@@ -1,67 +1,25 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 22 Mar 2011 17:15:21 +0000
-Subject: [PATCH 1/3] drivers/net/ariadne.c: Convert release_resource to release_region/release_mem_region
-Message-Id: <1300814123-25314-1-git-send-email-julia@diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 23 Mar 2011 21:10:48 +0000
+Subject: Re: [PATCH 1/3] drivers/net/ariadne.c: Convert release_resource to
+Message-Id: <20110323.141048.68130582.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1300814123-25314-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1300814123-25314-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, Tejun Heo <tj@kernel.org>, Jinqiu Yang <crindy646@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: julia@diku.dk
+Cc: kernel-janitors@vger.kernel.org, eric.dumazet@gmail.com, tj@kernel.org, crindy646@gmail.com, geert@linux-m68k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Request_mem_region should be used with release_mem_region, not
-release_resource.
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 22 Mar 2011 18:15:21 +0100
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+> Request_mem_region should be used with release_mem_region, not
+> release_resource.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+ ...
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-// <smpl>
-@@
-expression x,E;
-@@
-*x = request_mem_region(...)
-... when != release_mem_region(x)
-    when != x = E
-* release_resource(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/ariadne.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ariadne.c b/drivers/net/ariadne.c
-index 7ca0ede..b7f45cd 100644
---- a/drivers/net/ariadne.c
-+++ b/drivers/net/ariadne.c
-@@ -182,14 +182,14 @@ static int __devinit ariadne_init_one(struct zorro_dev *z,
- 	return -EBUSY;
-     r2 = request_mem_region(mem_start, ARIADNE_RAM_SIZE, "RAM");
-     if (!r2) {
--	release_resource(r1);
-+	release_mem_region(base_addr, sizeof(struct Am79C960));
- 	return -EBUSY;
-     }
- 
-     dev = alloc_etherdev(sizeof(struct ariadne_private));
-     if (dev = NULL) {
--	release_resource(r1);
--	release_resource(r2);
-+	release_mem_region(base_addr, sizeof(struct Am79C960));
-+	release_mem_region(mem_start, ARIADNE_RAM_SIZE);
- 	return -ENOMEM;
-     }
- 
-@@ -213,8 +213,8 @@ static int __devinit ariadne_init_one(struct zorro_dev *z,
- 
-     err = register_netdev(dev);
-     if (err) {
--	release_resource(r1);
--	release_resource(r2);
-+	release_mem_region(base_addr, sizeof(struct Am79C960));
-+	release_mem_region(mem_start, ARIADNE_RAM_SIZE);
- 	free_netdev(dev);
- 	return err;
-     }
-
+Applied.
