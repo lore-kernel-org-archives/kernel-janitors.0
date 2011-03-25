@@ -1,77 +1,41 @@
-From: Kumar Gala <galak@kernel.crashing.org>
-Date: Tue, 15 Mar 2011 15:51:23 +0000
-Subject: Re: [PATCH 1/4] drivers/serial/ucc_uart.c: Add of_node_put to avoid memory leak
-Message-Id: <2452483F-04B7-4B44-B59D-94A9D18F5DA4@kernel.crashing.org>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Date: Fri, 25 Mar 2011 15:04:38 +0000
+Subject: Re: [Xen-devel] [patch 1/2] xen-gntdev: return -EFAULT on
+Message-Id: <20110325150438.GG27651@dumpdata.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1283269738-14612-1-git-send-email-julia@diku.dk>
-	<1283269738-14612-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1283269738-14612-2-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
+References: <20110319054434.GD2008@bicker>
+In-Reply-To: <20110319054434.GD2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Timur Tabi <timur-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, kernel-janitors@vger.kernel.org, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org
 
+On Sat, Mar 19, 2011 at 08:44:34AM +0300, Dan Carpenter wrote:
+> copy_to_user() returns the amount of data remaining to be copied.  We
+> want to return a negative error code here.  The upper layers just
+> call WARN_ON() if we return non-zero so this doesn't change the
+> behavior.  But returning -EFAULT is still cleaner.
 
-On Aug 31, 2010, at 10:48 AM, Julia Lawall wrote:
-
-> Add a call to of_node_put in the error handling code following a call to
-> of_find_compatible_node or of_find_node_by_type.
+Thank you. Will put it on rc1 train.
 > 
-> This patch also substantially reorganizes the error handling code in the
-> function, to that it is possible first to jump to code that frees qe_port
-> and then to jump to code that also puts np.
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 > 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> index 017ce60..b0f9e8f 100644
+> --- a/drivers/xen/gntdev.c
+> +++ b/drivers/xen/gntdev.c
+> @@ -273,7 +273,7 @@ static int __unmap_grant_pages(struct grant_map *map, int offset, int pages)
+>  				map->vma->vm_start + map->notify.addr;
+>  			err = copy_to_user(tmp, &err, 1);
+>  			if (err)
+> -				return err;
+> +				return -EFAULT;
+>  			map->notify.flags &= ~UNMAP_NOTIFY_CLEAR_BYTE;
+>  		} else if (pgno >= offset && pgno < offset + pages) {
+>  			uint8_t *tmp = kmap(map->pages[pgno]);
 > 
-> // <smpl>
-> @r exists@
-> local idexpression x;
-> expression E,E1,E2;
-> statement S;
-> @@
-> 
-> *x = 
-> (of_find_node_by_path
-> |of_find_node_by_name
-> |of_find_node_by_phandle
-> |of_get_parent
-> |of_get_next_parent
-> |of_get_next_child
-> |of_find_compatible_node
-> |of_match_node
-> |of_find_node_by_type
-> |of_find_node_with_property
-> |of_find_matching_node
-> |of_parse_phandle
-> )(...);
-> ...
-> if (x = NULL) S
-> <... when != x = E
-> *if (...) {
->  ... when != of_node_put(x)
->      when != if (...) { ... of_node_put(x); ... }
-> (
->  return <+...x...+>;
-> |
-> *  return ...;
-> )
-> }
-> ...>
-> (
-> E2 = x;
-> |
-> of_node_put(x);
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
-> drivers/serial/ucc_uart.c |   67 ++++++++++++++++++++++++----------------------
-> 1 file changed, 35 insertions(+), 32 deletions(-)
-
-applied
-
-- k
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xensource.com
+> http://lists.xensource.com/xen-devel
