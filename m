@@ -1,63 +1,94 @@
-From: Dan Williams <dcbw@redhat.com>
-Date: Thu, 10 Mar 2011 17:02:02 +0000
-Subject: Re: [patch] libertas: fix write past end of array in mesh_id_get()
-Message-Id: <1299776524.17443.14.camel@dcbw.foobar.com>
+From: Maksym Planeta <mcsim.planeta@gmail.com>
+Date: Sun, 27 Mar 2011 08:45:56 +0000
+Subject: [PATCH v2] x86: page: get_order() optimization
+Message-Id: <1301215556-8898-1-git-send-email-mcsim.planeta@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110310152326.GA2008@bicker>
-In-Reply-To: <20110310152326.GA2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: javier@cozybit.com, "John W. Linville" <linville@tuxdriver.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mingo@redhat.com
+Cc: kernel-janitors@vger.kernel.org, namhyung@gmail.com, linux-kernel@vger.kernel.org, Maksym Planeta <mcsim.planeta@gmail.com>
 
-On Thu, 2011-03-10 at 18:23 +0300, Dan Carpenter wrote:
-> defs.meshie.val.mesh_id is 32 chars long.  It's not supposed to be NUL
-> terminated.  This code puts a terminator on the end to make it easier to
-> print to sysfs.  The problem is that if the mesh_id fills the entire
-> buffer the original code puts the terminator one spot past the end.
-> 
-> The way the original code was written, there was a check to make sure
-> that maxlen was less than PAGE_SIZE.  Since we know that maxlen is at
-> most 34 chars, I just removed the check.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+For x86 architecture get_order function can be optimized due to
+assembler instruction bsr.
 
-Acked-by: Dan Williams <dcbw@redhat.com>
+This is second version of patch where for constants gcc precompute the
+result.
 
-> diff --git a/drivers/net/wireless/libertas/mesh.c b/drivers/net/wireless/libertas/mesh.c
-> index acf3bf6..9d097b9 100644
-> --- a/drivers/net/wireless/libertas/mesh.c
-> +++ b/drivers/net/wireless/libertas/mesh.c
-> @@ -918,7 +918,6 @@ static ssize_t mesh_id_get(struct device *dev, struct device_attribute *attr,
->  			   char *buf)
->  {
->  	struct mrvl_mesh_defaults defs;
-> -	int maxlen;
->  	int ret;
->  
->  	ret = mesh_get_default_parameters(dev, &defs);
-> @@ -931,13 +930,11 @@ static ssize_t mesh_id_get(struct device *dev, struct device_attribute *attr,
->  		defs.meshie.val.mesh_id_len = IEEE80211_MAX_SSID_LEN;
->  	}
->  
-> -	/* SSID not null terminated: reserve room for \0 + \n */
-> -	maxlen = defs.meshie.val.mesh_id_len + 2;
-> -	maxlen = (PAGE_SIZE > maxlen) ? maxlen : PAGE_SIZE;
-> +	memcpy(buf, defs.meshie.val.mesh_id, defs.meshie.val.mesh_id_len);
-> +	buf[defs.meshie.val.mesh_id_len] = '\n';
-> +	buf[defs.meshie.val.mesh_id_len + 1] = '\0';
->  
-> -	defs.meshie.val.mesh_id[defs.meshie.val.mesh_id_len] = '\0';
-> -
-> -	return snprintf(buf, maxlen, "%s\n", defs.meshie.val.mesh_id);
-> +	return defs.meshie.val.mesh_id_len + 1;
->  }
->  
->  /**
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Maksym Planeta <mcsim.planeta@gmail.com>
+---
+ arch/x86/include/asm/getorder.h |   48 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/page.h     |    2 +-
+ 2 files changed, 49 insertions(+), 1 deletions(-)
+ create mode 100644 arch/x86/include/asm/getorder.h
 
+diff --git a/arch/x86/include/asm/getorder.h b/arch/x86/include/asm/getorder.h
+new file mode 100644
+index 0000000..b0c6f57
+--- /dev/null
++++ b/arch/x86/include/asm/getorder.h
+@@ -0,0 +1,48 @@
++#ifndef __ASM_GENERIC_GETORDER_H
++#define __ASM_GENERIC_GETORDER_H
++
++#ifndef __ASSEMBLY__
++
++#include <linux/compiler.h>
++
++#ifdef CONFIG_X86_CMOV
++#define ASM_CMOVZ(op, dest) \
++		"cmovzl %" #op ",%" #dest ";\n\t"
++#else
++#define ASM_CMOVZ(op, dest) \
++		"jnz 1f;\n\t" \
++		"movl %" #op ", %" #dest ";\n\t" \
++		"1: "
++#endif
++
++static __always_inline int __get_order(unsigned long size)
++{
++	int order;
++
++	size = (size - 1) >> (PAGE_SHIFT - 1);
++	asm("bsr %1, %0\n\t"
++		ASM_CMOVZ(2, 0)
++		: "=&r" (order) : "rm" (size), "rm" (0));
++	return order;
++}
++
++/* Pure 2^n version of get_order */
++static inline __attribute_const__  int get_order(unsigned long size)
++{
++	int order;
++
++	if (__builtin_constant_p(size)) {
++		size = (size - 1) >> (PAGE_SHIFT - 1);
++		order = -1;
++		do {
++			size >>= 1;
++			order++;
++		} while (size);
++		return order;
++	}
++	return __get_order(size);
++}
++
++#endif	/* __ASSEMBLY__ */
++
++#endif	/* __ASM_GENERIC_GETORDER_H */
+diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
+index 8ca8283..10e4c45 100644
+--- a/arch/x86/include/asm/page.h
++++ b/arch/x86/include/asm/page.h
+@@ -63,7 +63,7 @@ extern bool __virt_addr_valid(unsigned long kaddr);
+ #endif	/* __ASSEMBLY__ */
+ 
+ #include <asm-generic/memory_model.h>
+-#include <asm-generic/getorder.h>
++#include <asm/getorder.h>
+ 
+ #define __HAVE_ARCH_GATE_AREA 1
+ 
+-- 
+1.7.2.3
 
