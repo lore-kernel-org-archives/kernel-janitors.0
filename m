@@ -1,46 +1,37 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Thu, 17 Mar 2011 20:08:20 +0000
-Subject: Re: [patch] genirq: incorrect unlock in __setup_irq()
-Message-Id: <20110317200820.GF14675@home.goodmis.org>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Sun, 27 Mar 2011 02:42:31 +0000
+Subject: [PATCH 1/3] tg3: use <linux/io.h> and <linux/uaccess.h> instead <asm/io.h> and <asm/uaccess.h>
+Message-Id: <1301193753-10045-1-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110317114307.GJ2008@bicker>
-In-Reply-To: <20110317114307.GJ2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matt Carlson <mcarlson@broadcom.com>
+Cc: Michael Chan <mchan@broadcom.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Javier Martinez Canillas <martinez.javier@gmail.com>
 
-On Thu, Mar 17, 2011 at 02:43:07PM +0300, Dan Carpenter wrote:
-> goto out_thread is called before we take the lock.  It causes a gcc
-> warning: "kernel/irq/manage.c:858: warning: ???flags??? may be used
-> uninitialized in this function"
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-> index acd599a..cdcdf13 100644
-> --- a/kernel/irq/manage.c
-> +++ b/kernel/irq/manage.c
-> @@ -1065,9 +1065,9 @@ mismatch:
->  
->  out_mask:
->  	free_cpumask_var(mask);
-> +	raw_spin_unlock_irqrestore(&desc->lock, flags);
->  
->  out_thread:
-> -	raw_spin_unlock_irqrestore(&desc->lock, flags);
+It is proper style to include linux/foo.h instead asm/foo.h if both exist
 
-That's more than a warning fix, this is a real bug.
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/net/tg3.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Steven Rostedt <rostedt@goodims.org>
+diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
+index 6be4185..4410d73 100644
+--- a/drivers/net/tg3.c
++++ b/drivers/net/tg3.c
+@@ -48,9 +48,9 @@
+ #include <net/ip.h>
+ 
+ #include <asm/system.h>
+-#include <asm/io.h>
++#include <linux/io.h>
+ #include <asm/byteorder.h>
+-#include <asm/uaccess.h>
++#include <linux/uaccess.h>
+ 
+ #ifdef CONFIG_SPARC
+ #include <asm/idprom.h>
+-- 
+1.7.2.3
 
--- Steve
-
->  	if (new->thread) {
->  		struct task_struct *t = new->thread;
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
