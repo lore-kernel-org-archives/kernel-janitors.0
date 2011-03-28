@@ -1,43 +1,44 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Mon, 28 Mar 2011 12:25:52 +0000
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Mon, 28 Mar 2011 15:46:23 +0000
 Subject: Re: [PATCH 2/2 v2] tg3: Don't use IRQF_SAMPLE_RANDOM
-Message-Id: <1301315152.3182.19.camel@edumazet-laptop>
+Message-Id: <AANLkTi=Qkf2qn6nQ-6AXE8LtFSD++=eZRxa6ND6KPsk1@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1301314543-3666-1-git-send-email-martinez.javier@gmail.com>
-In-Reply-To: <1301314543-3666-1-git-send-email-martinez.javier@gmail.com>
+References: <1301314543-3666-1-git-send-email-martinez.javier@gmail.com> <1301315152.3182.19.camel@edumazet-laptop>
+In-Reply-To: <1301315152.3182.19.camel@edumazet-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Javier Martinez Canillas <martinez.javier@gmail.com>
+To: Eric Dumazet <eric.dumazet@gmail.com>
 Cc: David Miller <davem@davemloft.net>, Dan Carpenter <error27@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Le lundi 28 mars 2011 à 14:15 +0200, Javier Martinez Canillas a écrit :
-> This flag is scheduled for removal so we shouldn't used it.
-> 
-> Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
-> ---
-> v2: Initialize flags to zero suggested by Dan Carpenter.
-> 
->  drivers/net/tg3.c |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
+On Mon, Mar 28, 2011 at 2:25 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+> 1) We dont believe its Janitor material ;)
+>
+> http://thread.gmane.org/gmane.linux.kernel/680723
+>
+> http://kerneltrap.org/mailarchive/linux-netdev/2009/4/6/5417754
+>
 
-1) We dont believe its Janitor material ;)
+I wasn't aware of this discussion. In one hand network drivers are not
+a good source of entropy because they can be controlled externally,
+but in embedded systems with only network cards (no video, audio,
+keyboard, etc) the only source of entropy they have is their network
+cards (at the kernel level i.e: not using EGD to feed /dev/random).
 
-http://thread.gmane.org/gmane.linux.kernel/680723
+Yes this definitely is not janitor material :)
 
-http://kerneltrap.org/mailarchive/linux-netdev/2009/4/6/5417754
+I just sent the patch because I saw IRQF_SAMPLE_RANDOM in
+Documentation/feature-removal-schedule.txt. I can resend a patch
+removing the macro in the remaining network cards if the decision is
+to remove IRQF_SAMPLE_RANDOM.
 
-2) If removal is accepted, we should patch all drivers at once
+Best regards,
 
-drivers/net/xen-netfront.c:1419:					IRQF_SAMPLE_RANDOM, netdev->name,
-drivers/net/cris/eth_v10.c:495:			IRQF_SAMPLE_RANDOM, cardname, (void *)dev)) {
-drivers/net/ibmlana.c:785:	result = request_irq(priv->realirq, irq_handler, IRQF_SHARED | IRQF_SAMPLE_RANDOM, dev->name, dev);
-drivers/net/qla3xxx.c:3471:	unsigned long irq_flags = IRQF_SAMPLE_RANDOM | IRQF_SHARED;
-drivers/net/netxen/netxen_nic_main.c:908:	unsigned long flags = IRQF_SAMPLE_RANDOM;
-drivers/net/atlx/atl1.c:2575:	int irq_flags = IRQF_SAMPLE_RANDOM;
-drivers/net/macb.c:1174:	err = request_irq(dev->irq, macb_interrupt, IRQF_SAMPLE_RANDOM,
-drivers/net/bcm63xx_enet.c:843:			  IRQF_SAMPLE_RANDOM | IRQF_DISABLED, dev->name, dev);
-drivers/net/niu.c:6075:				  IRQF_SHARED | IRQF_SAMPLE_RANDOM,
-drivers/net/tg3.c:8842:		flags = IRQF_SAMPLE_RANDOM;
-
-
+-----------------------------------------
+Javier Martínez Canillas
+(+34) 682 39 81 69
+PhD Student in High Performance Computing
+Computer Architecture and Operating System Department (CAOS)
+Universitat Autònoma de Barcelona
+Barcelona, Spain
