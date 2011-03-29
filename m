@@ -1,35 +1,37 @@
-From: Maksym Planeta <mcsim.planeta@gmail.com>
-Date: Sun, 27 Mar 2011 08:57:59 +0000
-Subject: Re: [PATCH] x86: page: get_order() optimization
-Message-Id: <1301216279.15393.9.camel@debian>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 29 Mar 2011 03:25:59 +0000
+Subject: [patch 2/2] ceph: unlock on error in ceph_osdc_start_request()
+Message-Id: <20110329032559.GF9856@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1300551947-22279-1-git-send-email-mcsim.planeta@gmail.com>
-	 <20110323100757.GA14245@elte.hu>
-In-Reply-To: <20110323100757.GA14245@elte.hu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@elte.hu>
-Cc: tglx@linutronix.de, kernel-janitors@vger.kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
+To: Sage Weil <sage@newdream.net>
+Cc: ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 23/03/2011 at 11:07 +0100, Ingo Molnar wrote:
+There was a missing unlock on the error path if __map_request() failed.
 
-> Ok, that's certainly a nice optimization.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks, I rewrote patch according to your observations.
-
-> One detail: in many cases 'size' is a constant. Have you checked recent GCC, 
-> does it turn the generic version of get_order() into a loop even for constants, 
-> or is it able does it perhaps recognize the pattern and precompute the result?
-
-Yes, gcc precomputes the result, so I added case for constants.
-
-> With no #ifdefs in get_order().
-
-And removed #ifdefs from get_order().
-
--- 
-Thanks,
-
-Maksym Planeta
-
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index b6776cb..03740e8 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -1672,7 +1672,7 @@ int ceph_osdc_start_request(struct ceph_osd_client *osdc,
+ 	if (req->r_sent = 0) {
+ 		rc = __map_request(osdc, req);
+ 		if (rc < 0)
+-			return rc;
++			goto out_unlock;
+ 		if (req->r_osd = NULL) {
+ 			dout("send_request %p no up osds in pg\n", req);
+ 			ceph_monc_request_next_osdmap(&osdc->client->monc);
+@@ -1689,6 +1689,8 @@ int ceph_osdc_start_request(struct ceph_osd_client *osdc,
+ 			}
+ 		}
+ 	}
++
++out_unlock:
+ 	mutex_unlock(&osdc->request_mutex);
+ 	up_read(&osdc->map_sem);
+ 	return rc;
