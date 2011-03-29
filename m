@@ -1,521 +1,193 @@
-From: Mike Isely <isely@isely.net>
-Date: Sat, 26 Mar 2011 04:31:55 +0000
-Subject: Re: [PATCH 1/6] [media] pvrusb2: white space changes
-Message-Id: <alpine.DEB.1.10.1103252328490.12072@ivanova.isely.net>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Tue, 29 Mar 2011 02:27:31 +0000
+Subject: [PATCH] drivers/net: Remove IRQF_SAMPLE_RANDOM flag from network drivers
+Message-Id: <1301365651-9106-1-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110326014918.GF2008@bicker>
-In-Reply-To: <20110326014918.GF2008@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Mike Isely <isely@isely.net>
+To: David Miller <davem@davemloft.net>
+Cc: Ben Hutchings <bhutchings@solarflare.com>, Florian Fainelli <ffainelli@freebox.fr>, Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <martinez.javier@gmail.com>
 
+The IRQF_SAMPLE_RANDOM flag is marked as deprecated and will be removed.
 
-I vehemently object to this scale of disruption to the pvrusb2 driver 
-source code purely to move around a bunch of braces and whitespace.  
-ESPECIALLY the massive ridiculous changes having to do with if-statement 
-syntax!
+Every input point to the kernel's entropy pool have to better document the
+type of entropy source it is.
 
-Nacked-By: Mike Isely <isely@pobox.com>
+drivers/char/random.c now implements a set of interfaces that can be used for
+devices to collect enviromental noise. IRQF_SAMPLE_RANDOM will be replaced
+with these add_*_randomness exported functions.
 
+Network drivers are not a good source of entropy. They use as a source of
+entropy essentially a remote host. Which means that the source of entropy can
+be potentially controlled by an attacker. Also, with heavy workloads the
+entropy decreases due to less hardware interrupts happening thanks to irq
+mitigation and NAPI.
 
-On Sat, 26 Mar 2011, Dan Carpenter wrote:
+If a system relies in its network interface as a entropy source it has a false
+sense of security. Systems that don't have devices whose drivers are good
+sources of entropy, should either use a hardware random number generator or
+feed the kernel's entropy pool from userspace using other sources of entropy
+such as EGD, video_entropyd, timer_entropyd and audio-entropyd.
 
-> * Broke up if statements so that the condition and the body are on
->   separate lines.
-> * Added spaces around commas and other operator characters.
-> * Removed extra blank lines.
-> * Added blank lines after declarations.
-> * Changed C99 comments into kernel style.
-> * Fixed checkpatch complaints where "{" char was on its own line but it
->   wasn't the start of a function.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/media/video/pvrusb2/pvrusb2-std.c b/drivers/media/video/pvrusb2/pvrusb2-std.c
-> index ca9f83a..a5d4867 100644
-> --- a/drivers/media/video/pvrusb2/pvrusb2-std.c
-> +++ b/drivers/media/video/pvrusb2/pvrusb2-std.c
-> @@ -28,39 +28,38 @@ struct std_name {
->  	v4l2_std_id id;
->  };
->  
-> -
->  #define CSTD_PAL \
-> -	(V4L2_STD_PAL_B| \
-> -	 V4L2_STD_PAL_B1| \
-> -	 V4L2_STD_PAL_G| \
-> -	 V4L2_STD_PAL_H| \
-> -	 V4L2_STD_PAL_I| \
-> -	 V4L2_STD_PAL_D| \
-> -	 V4L2_STD_PAL_D1| \
-> -	 V4L2_STD_PAL_K| \
-> -	 V4L2_STD_PAL_M| \
-> -	 V4L2_STD_PAL_N| \
-> -	 V4L2_STD_PAL_Nc| \
-> +	(V4L2_STD_PAL_B  | \
-> +	 V4L2_STD_PAL_B1 | \
-> +	 V4L2_STD_PAL_G  | \
-> +	 V4L2_STD_PAL_H  | \
-> +	 V4L2_STD_PAL_I  | \
-> +	 V4L2_STD_PAL_D  | \
-> +	 V4L2_STD_PAL_D1 | \
-> +	 V4L2_STD_PAL_K  | \
-> +	 V4L2_STD_PAL_M  | \
-> +	 V4L2_STD_PAL_N  | \
-> +	 V4L2_STD_PAL_Nc | \
->  	 V4L2_STD_PAL_60)
->  
->  #define CSTD_NTSC \
-> -	(V4L2_STD_NTSC_M| \
-> -	 V4L2_STD_NTSC_M_JP| \
-> -	 V4L2_STD_NTSC_M_KR| \
-> +	(V4L2_STD_NTSC_M    | \
-> +	 V4L2_STD_NTSC_M_JP | \
-> +	 V4L2_STD_NTSC_M_KR | \
->  	 V4L2_STD_NTSC_443)
->  
->  #define CSTD_ATSC \
-> -	(V4L2_STD_ATSC_8_VSB| \
-> +	(V4L2_STD_ATSC_8_VSB | \
->  	 V4L2_STD_ATSC_16_VSB)
->  
->  #define CSTD_SECAM \
-> -	(V4L2_STD_SECAM_B| \
-> -	 V4L2_STD_SECAM_D| \
-> -	 V4L2_STD_SECAM_G| \
-> -	 V4L2_STD_SECAM_H| \
-> -	 V4L2_STD_SECAM_K| \
-> -	 V4L2_STD_SECAM_K1| \
-> -	 V4L2_STD_SECAM_L| \
-> +	(V4L2_STD_SECAM_B  | \
-> +	 V4L2_STD_SECAM_D  | \
-> +	 V4L2_STD_SECAM_G  | \
-> +	 V4L2_STD_SECAM_H  | \
-> +	 V4L2_STD_SECAM_K  | \
-> +	 V4L2_STD_SECAM_K1 | \
-> +	 V4L2_STD_SECAM_L  | \
->  	 V4L2_STD_SECAM_LC)
->  
->  #define TSTD_B   (V4L2_STD_PAL_B|V4L2_STD_SECAM_B)
-> @@ -82,39 +81,40 @@ struct std_name {
->  
->  /* Mapping of standard bits to color system */
->  static const struct std_name std_groups[] = {
-> -	{"PAL",CSTD_PAL},
-> -	{"NTSC",CSTD_NTSC},
-> -	{"SECAM",CSTD_SECAM},
-> -	{"ATSC",CSTD_ATSC},
-> +	{"PAL",   CSTD_PAL},
-> +	{"NTSC",  CSTD_NTSC},
-> +	{"SECAM", CSTD_SECAM},
-> +	{"ATSC",  CSTD_ATSC},
->  };
->  
->  /* Mapping of standard bits to modulation system */
->  static const struct std_name std_items[] = {
-> -	{"B",TSTD_B},
-> -	{"B1",TSTD_B1},
-> -	{"D",TSTD_D},
-> -	{"D1",TSTD_D1},
-> -	{"G",TSTD_G},
-> -	{"H",TSTD_H},
-> -	{"I",TSTD_I},
-> -	{"K",TSTD_K},
-> -	{"K1",TSTD_K1},
-> -	{"L",TSTD_L},
-> -	{"LC",V4L2_STD_SECAM_LC},
-> -	{"M",TSTD_M},
-> -	{"Mj",V4L2_STD_NTSC_M_JP},
-> -	{"443",V4L2_STD_NTSC_443},
-> -	{"Mk",V4L2_STD_NTSC_M_KR},
-> -	{"N",TSTD_N},
-> -	{"Nc",TSTD_Nc},
-> -	{"60",TSTD_60},
-> -	{"8VSB",V4L2_STD_ATSC_8_VSB},
-> -	{"16VSB",V4L2_STD_ATSC_16_VSB},
-> +	{"B",     TSTD_B},
-> +	{"B1",    TSTD_B1},
-> +	{"D",     TSTD_D},
-> +	{"D1",    TSTD_D1},
-> +	{"G",     TSTD_G},
-> +	{"H",     TSTD_H},
-> +	{"I",     TSTD_I},
-> +	{"K",     TSTD_K},
-> +	{"K1",    TSTD_K1},
-> +	{"L",     TSTD_L},
-> +	{"LC",    V4L2_STD_SECAM_LC},
-> +	{"M",     TSTD_M},
-> +	{"Mj",    V4L2_STD_NTSC_M_JP},
-> +	{"443",   V4L2_STD_NTSC_443},
-> +	{"Mk",    V4L2_STD_NTSC_M_KR},
-> +	{"N",     TSTD_N},
-> +	{"Nc",    TSTD_Nc},
-> +	{"60",    TSTD_60},
-> +	{"8VSB",  V4L2_STD_ATSC_8_VSB},
-> +	{"16VSB", V4L2_STD_ATSC_16_VSB},
->  };
->  
-> -
-> -// Search an array of std_name structures and return a pointer to the
-> -// element with the matching name.
-> +/*
-> + * Search an array of std_name structures and return a pointer to the
-> + * element with the matching name.
-> + */
->  static const struct std_name *find_std_name(const struct std_name *arrPtr,
->  					    unsigned int arrSize,
->  					    const char *bufPtr,
-> @@ -122,16 +122,18 @@ static const struct std_name *find_std_name(const struct std_name *arrPtr,
->  {
->  	unsigned int idx;
->  	const struct std_name *p;
-> +
->  	for (idx = 0; idx < arrSize; idx++) {
->  		p = arrPtr + idx;
-> -		if (strlen(p->name) != bufSize) continue;
-> -		if (!memcmp(bufPtr,p->name,bufSize)) return p;
-> +		if (strlen(p->name) != bufSize)
-> +			continue;
-> +		if (!memcmp(bufPtr, p->name, bufSize))
-> +			return p;
->  	}
->  	return NULL;
->  }
->  
-> -
-> -int pvr2_std_str_to_id(v4l2_std_id *idPtr,const char *bufPtr,
-> +int pvr2_std_str_to_id(v4l2_std_id *idPtr, const char *bufPtr,
->  		       unsigned int bufSize)
->  {
->  	v4l2_std_id id = 0;
-> @@ -145,11 +147,14 @@ int pvr2_std_str_to_id(v4l2_std_id *idPtr,const char *bufPtr,
->  	while (bufSize) {
->  		if (!mMode) {
->  			cnt = 0;
-> -			while ((cnt < bufSize) && (bufPtr[cnt] != '-')) cnt++;
-> -			if (cnt >= bufSize) return 0; // No more characters
-> +			while ((cnt < bufSize) && (bufPtr[cnt] != '-'))
-> +				cnt++;
-> +			if (cnt >= bufSize)
-> +				return 0; /* No more characters */
->  			sp = find_std_name(std_groups, ARRAY_SIZE(std_groups),
-> -					   bufPtr,cnt);
-> -			if (!sp) return 0; // Illegal color system name
-> +					   bufPtr, cnt);
-> +			if (!sp)
-> +				return 0; /* Illegal color system name */
->  			cnt++;
->  			bufPtr += cnt;
->  			bufSize -= cnt;
-> @@ -164,58 +169,65 @@ int pvr2_std_str_to_id(v4l2_std_id *idPtr,const char *bufPtr,
->  				mMode = 0;
->  				break;
->  			}
-> -			if (ch = '/') break;
-> +			if (ch = '/')
-> +				break;
->  			cnt++;
->  		}
->  		sp = find_std_name(std_items, ARRAY_SIZE(std_items),
-> -				   bufPtr,cnt);
-> -		if (!sp) return 0; // Illegal modulation system ID
-> +				   bufPtr, cnt);
-> +		if (!sp)
-> +			return 0; /* Illegal modulation system ID */
->  		t = sp->id & cmsk;
-> -		if (!t) return 0; // Specific color + modulation system illegal
-> +		if (!t)
-> +			return 0; /* Specific color + modulation system
-> +				     illegal */
->  		id |= t;
-> -		if (cnt < bufSize) cnt++;
-> +		if (cnt < bufSize)
-> +			cnt++;
->  		bufPtr += cnt;
->  		bufSize -= cnt;
->  	}
->  
-> -	if (idPtr) *idPtr = id;
-> +	if (idPtr)
-> +		*idPtr = id;
->  	return !0;
->  }
->  
-> -
->  unsigned int pvr2_std_id_to_str(char *bufPtr, unsigned int bufSize,
->  				v4l2_std_id id)
->  {
-> -	unsigned int idx1,idx2;
-> -	const struct std_name *ip,*gp;
-> -	int gfl,cfl;
-> -	unsigned int c1,c2;
-> +	unsigned int idx1, idx2;
-> +	const struct std_name *ip, *gp;
-> +	int gfl, cfl;
-> +	unsigned int c1, c2;
->  	cfl = 0;
->  	c1 = 0;
-> +
->  	for (idx1 = 0; idx1 < ARRAY_SIZE(std_groups); idx1++) {
->  		gp = std_groups + idx1;
->  		gfl = 0;
->  		for (idx2 = 0; idx2 < ARRAY_SIZE(std_items); idx2++) {
->  			ip = std_items + idx2;
-> -			if (!(gp->id & ip->id & id)) continue;
-> +			if (!(gp->id & ip->id & id))
-> +				continue;
->  			if (!gfl) {
->  				if (cfl) {
-> -					c2 = scnprintf(bufPtr,bufSize,";");
-> +					c2 = scnprintf(bufPtr, bufSize, ";");
->  					c1 += c2;
->  					bufSize -= c2;
->  					bufPtr += c2;
->  				}
->  				cfl = !0;
-> -				c2 = scnprintf(bufPtr,bufSize,
-> -					       "%s-",gp->name);
-> +				c2 = scnprintf(bufPtr, bufSize,
-> +					       "%s-", gp->name);
->  				gfl = !0;
->  			} else {
-> -				c2 = scnprintf(bufPtr,bufSize,"/");
-> +				c2 = scnprintf(bufPtr, bufSize, "/");
->  			}
->  			c1 += c2;
->  			bufSize -= c2;
->  			bufPtr += c2;
-> -			c2 = scnprintf(bufPtr,bufSize,
-> +			c2 = scnprintf(bufPtr, bufSize,
->  				       ip->name);
->  			c1 += c2;
->  			bufSize -= c2;
-> @@ -225,9 +237,10 @@ unsigned int pvr2_std_id_to_str(char *bufPtr, unsigned int bufSize,
->  	return c1;
->  }
->  
-> -
-> -// Template data for possible enumerated video standards.  Here we group
-> -// standards which share common frame rates and resolution.
-> +/*
-> + * Template data for possible enumerated video standards.  Here we group
-> + * standards which share common frame rates and resolution.
-> + */
->  static struct v4l2_standard generic_standards[] = {
->  	{
->  		.id             = (TSTD_B|TSTD_B1|
-> @@ -239,42 +252,38 @@ static struct v4l2_standard generic_standards[] = {
->  				   TSTD_L|
->  				   V4L2_STD_SECAM_LC |
->  				   TSTD_N|TSTD_Nc),
-> -		.frameperiod    > -		{
-> -			.numerator  = 1,
-> -			.denominator= 25
-> +		.frameperiod    = {
-> +			.numerator   = 1,
-> +			.denominator = 25
->  		},
->  		.framelines     = 625,
-> -		.reserved       = {0,0,0,0}
-> +		.reserved       = {0, 0, 0, 0}
->  	}, {
->  		.id             = (TSTD_M|
->  				   V4L2_STD_NTSC_M_JP|
->  				   V4L2_STD_NTSC_M_KR),
-> -		.frameperiod    > -		{
-> -			.numerator  = 1001,
-> -			.denominator= 30000
-> +		.frameperiod    = {
-> +			.numerator   = 1001,
-> +			.denominator = 30000
->  		},
->  		.framelines     = 525,
-> -		.reserved       = {0,0,0,0}
-> -	}, { // This is a total wild guess
-> +		.reserved       = {0, 0, 0, 0}
-> +	}, { /* This is a total wild guess */
->  		.id             = (TSTD_60),
-> -		.frameperiod    > -		{
-> -			.numerator  = 1001,
-> -			.denominator= 30000
-> +		.frameperiod    = {
-> +			.numerator   = 1001,
-> +			.denominator = 30000
->  		},
->  		.framelines     = 525,
-> -		.reserved       = {0,0,0,0}
-> -	}, { // This is total wild guess
-> +		.reserved       = {0, 0, 0, 0}
-> +	}, { /* This is total wild guess */
->  		.id             = V4L2_STD_NTSC_443,
-> -		.frameperiod    > -		{
-> -			.numerator  = 1001,
-> -			.denominator= 30000
-> +		.frameperiod    = {
-> +			.numerator   = 1001,
-> +			.denominator = 30000
->  		},
->  		.framelines     = 525,
-> -		.reserved       = {0,0,0,0}
-> +		.reserved       = {0, 0, 0, 0}
->  	}
->  };
->  
-> @@ -283,6 +292,7 @@ static struct v4l2_standard generic_standards[] = {
->  static struct v4l2_standard *match_std(v4l2_std_id id)
->  {
->  	unsigned int idx;
-> +
->  	for (idx = 0; idx < generic_standards_cnt; idx++) {
->  		if (generic_standards[idx].id & id) {
->  			return generic_standards + idx;
-> @@ -291,26 +301,30 @@ static struct v4l2_standard *match_std(v4l2_std_id id)
->  	return NULL;
->  }
->  
-> -static int pvr2_std_fill(struct v4l2_standard *std,v4l2_std_id id)
-> +static int pvr2_std_fill(struct v4l2_standard *std, v4l2_std_id id)
->  {
->  	struct v4l2_standard *template;
->  	int idx;
->  	unsigned int bcnt;
-> +
->  	template = match_std(id);
-> -	if (!template) return 0;
-> +	if (!template)
-> +		return 0;
->  	idx = std->index;
-> -	memcpy(std,template,sizeof(*template));
-> +	memcpy(std, template, sizeof(*template));
->  	std->index = idx;
->  	std->id = id;
-> -	bcnt = pvr2_std_id_to_str(std->name,sizeof(std->name)-1,id);
-> +	bcnt = pvr2_std_id_to_str(std->name, sizeof(std->name) - 1, id);
->  	std->name[bcnt] = 0;
-> -	pvr2_trace(PVR2_TRACE_STD,"Set up standard idx=%u name=%s",
-> -		   std->index,std->name);
-> +	pvr2_trace(PVR2_TRACE_STD, "Set up standard idx=%u name=%s",
-> +		   std->index, std->name);
->  	return !0;
->  }
->  
-> -/* These are special cases of combined standards that we should enumerate
-> -   separately if the component pieces are present. */
-> +/*
-> + * These are special cases of combined standards that we should enumerate
-> + * separately if the component pieces are present.
-> + */
->  static v4l2_std_id std_mixes[] = {
->  	V4L2_STD_PAL_B | V4L2_STD_PAL_G,
->  	V4L2_STD_PAL_D | V4L2_STD_PAL_K,
-> @@ -322,23 +336,25 @@ struct v4l2_standard *pvr2_std_create_enum(unsigned int *countptr,
->  					   v4l2_std_id id)
->  {
->  	unsigned int std_cnt = 0;
-> -	unsigned int idx,bcnt,idx2;
-> -	v4l2_std_id idmsk,cmsk,fmsk;
-> +	unsigned int idx, bcnt, idx2;
-> +	v4l2_std_id idmsk, cmsk, fmsk;
->  	struct v4l2_standard *stddefs;
->  
->  	if (pvrusb2_debug & PVR2_TRACE_STD) {
->  		char buf[100];
-> -		bcnt = pvr2_std_id_to_str(buf,sizeof(buf),id);
-> +
-> +		bcnt = pvr2_std_id_to_str(buf, sizeof(buf), id);
->  		pvr2_trace(
-> -			PVR2_TRACE_STD,"Mapping standards mask=0x%x (%.*s)",
-> -			(int)id,bcnt,buf);
-> +			PVR2_TRACE_STD, "Mapping standards mask=0x%x (%.*s)",
-> +			(int)id, bcnt, buf);
->  	}
->  
->  	*countptr = 0;
->  	std_cnt = 0;
->  	fmsk = 0;
->  	for (idmsk = 1, cmsk = id; cmsk; idmsk <<= 1) {
-> -		if (!(idmsk & cmsk)) continue;
-> +		if (!(idmsk & cmsk))
-> +			continue;
->  		cmsk &= ~idmsk;
->  		if (match_std(idmsk)) {
->  			std_cnt++;
-> @@ -348,7 +364,8 @@ struct v4l2_standard *pvr2_std_create_enum(unsigned int *countptr,
->  	}
->  
->  	for (idx2 = 0; idx2 < ARRAY_SIZE(std_mixes); idx2++) {
-> -		if ((id & std_mixes[idx2]) = std_mixes[idx2]) std_cnt++;
-> +		if ((id & std_mixes[idx2]) = std_mixes[idx2])
-> +			std_cnt++;
->  	}
->  
->  	/* Don't complain about ATSC standard values */
-> @@ -356,35 +373,42 @@ struct v4l2_standard *pvr2_std_create_enum(unsigned int *countptr,
->  
->  	if (fmsk) {
->  		char buf[100];
-> -		bcnt = pvr2_std_id_to_str(buf,sizeof(buf),fmsk);
-> +
-> +		bcnt = pvr2_std_id_to_str(buf, sizeof(buf), fmsk);
->  		pvr2_trace(
->  			PVR2_TRACE_ERROR_LEGS,
->  			"WARNING:"
->  			" Failed to classify the following standard(s): %.*s",
-> -			bcnt,buf);
-> +			bcnt, buf);
->  	}
->  
-> -	pvr2_trace(PVR2_TRACE_STD,"Setting up %u unique standard(s)",
-> +	pvr2_trace(PVR2_TRACE_STD, "Setting up %u unique standard(s)",
->  		   std_cnt);
-> -	if (!std_cnt) return NULL; // paranoia
-> +	if (!std_cnt)
-> +		return NULL; /* paranoia */
->  
->  	stddefs = kzalloc(sizeof(struct v4l2_standard) * std_cnt,
->  			  GFP_KERNEL);
-> -	for (idx = 0; idx < std_cnt; idx++) stddefs[idx].index = idx;
-> +	for (idx = 0; idx < std_cnt; idx++)
-> +		stddefs[idx].index = idx;
->  
->  	idx = 0;
->  
->  	/* Enumerate potential special cases */
->  	for (idx2 = 0; (idx2 < ARRAY_SIZE(std_mixes)) && (idx < std_cnt);
->  	     idx2++) {
-> -		if (!(id & std_mixes[idx2])) continue;
-> -		if (pvr2_std_fill(stddefs+idx,std_mixes[idx2])) idx++;
-> +		if (!(id & std_mixes[idx2]))
-> +			continue;
-> +		if (pvr2_std_fill(stddefs + idx, std_mixes[idx2]))
-> +			idx++;
->  	}
->  	/* Now enumerate individual pieces */
->  	for (idmsk = 1, cmsk = id; cmsk && (idx < std_cnt); idmsk <<= 1) {
-> -		if (!(idmsk & cmsk)) continue;
-> +		if (!(idmsk & cmsk))
-> +			continue;
->  		cmsk &= ~idmsk;
-> -		if (!pvr2_std_fill(stddefs+idx,idmsk)) continue;
-> +		if (!pvr2_std_fill(stddefs + idx, idmsk))
-> +			continue;
->  		idx++;
->  	}
->  
-> @@ -397,7 +421,6 @@ v4l2_std_id pvr2_std_get_usable(void)
->  	return CSTD_ALL;
->  }
->  
-> -
->  /*
->    Stuff for Emacs to see, in order to encourage consistent editing style:
->    *** Local Variables: ***
-> 
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/net/atlx/atl1.c              |    2 +-
+ drivers/net/bcm63xx_enet.c           |    4 ++--
+ drivers/net/cris/eth_v10.c           |    4 ++--
+ drivers/net/ibmlana.c                |    3 ++-
+ drivers/net/macb.c                   |    3 +--
+ drivers/net/netxen/netxen_nic_main.c |    2 +-
+ drivers/net/niu.c                    |    3 +--
+ drivers/net/qla3xxx.c                |    2 +-
+ drivers/net/tg3.c                    |    4 ++--
+ drivers/net/xen-netfront.c           |    3 +--
+ 10 files changed, 14 insertions(+), 16 deletions(-)
 
+diff --git a/drivers/net/atlx/atl1.c b/drivers/net/atlx/atl1.c
+index 67f40b9..e973d05 100644
+--- a/drivers/net/atlx/atl1.c
++++ b/drivers/net/atlx/atl1.c
+@@ -2572,7 +2572,7 @@ static s32 atl1_up(struct atl1_adapter *adapter)
+ {
+ 	struct net_device *netdev = adapter->netdev;
+ 	int err;
+-	int irq_flags = IRQF_SAMPLE_RANDOM;
++	int irq_flags = 0;
+ 
+ 	/* hardware has been reset, we need to reload some things */
+ 	atlx_set_multi(netdev);
+diff --git a/drivers/net/bcm63xx_enet.c b/drivers/net/bcm63xx_enet.c
+index e94a966a..2af413f 100644
+--- a/drivers/net/bcm63xx_enet.c
++++ b/drivers/net/bcm63xx_enet.c
+@@ -839,8 +839,8 @@ static int bcm_enet_open(struct net_device *dev)
+ 	if (ret)
+ 		goto out_phy_disconnect;
+ 
+-	ret = request_irq(priv->irq_rx, bcm_enet_isr_dma,
+-			  IRQF_SAMPLE_RANDOM | IRQF_DISABLED, dev->name, dev);
++	ret = request_irq(priv->irq_rx, bcm_enet_isr_dma, IRQF_DISABLED,
++			  dev->name, dev);
+ 	if (ret)
+ 		goto out_freeirq;
+ 
+diff --git a/drivers/net/cris/eth_v10.c b/drivers/net/cris/eth_v10.c
+index 80c2fee..e759d74 100644
+--- a/drivers/net/cris/eth_v10.c
++++ b/drivers/net/cris/eth_v10.c
+@@ -491,8 +491,8 @@ e100_open(struct net_device *dev)
+ 
+ 	/* allocate the irq corresponding to the receiving DMA */
+ 
+-	if (request_irq(NETWORK_DMA_RX_IRQ_NBR, e100rxtx_interrupt,
+-			IRQF_SAMPLE_RANDOM, cardname, (void *)dev)) {
++	if (request_irq(NETWORK_DMA_RX_IRQ_NBR, e100rxtx_interrupt, 0, cardname,
++			(void *)dev)) {
+ 		goto grace_exit0;
+ 	}
+ 
+diff --git a/drivers/net/ibmlana.c b/drivers/net/ibmlana.c
+index 94d9969..f872f96 100644
+--- a/drivers/net/ibmlana.c
++++ b/drivers/net/ibmlana.c
+@@ -782,7 +782,8 @@ static int ibmlana_open(struct net_device *dev)
+ 
+ 	/* register resources - only necessary for IRQ */
+ 
+-	result = request_irq(priv->realirq, irq_handler, IRQF_SHARED | IRQF_SAMPLE_RANDOM, dev->name, dev);
++	result = request_irq(priv->realirq, irq_handler, IRQF_SHARED,
++			     dev->name, dev);
+ 	if (result != 0) {
+ 		printk(KERN_ERR "%s: failed to register irq %d\n", dev->name, dev->irq);
+ 		return result;
+diff --git a/drivers/net/macb.c b/drivers/net/macb.c
+index 79ccb54..2cb4e792 100644
+--- a/drivers/net/macb.c
++++ b/drivers/net/macb.c
+@@ -1171,8 +1171,7 @@ static int __init macb_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	dev->irq = platform_get_irq(pdev, 0);
+-	err = request_irq(dev->irq, macb_interrupt, IRQF_SAMPLE_RANDOM,
+-			  dev->name, dev);
++	err = request_irq(dev->irq, macb_interrupt, 0, dev->name, dev);
+ 	if (err) {
+ 		printk(KERN_ERR
+ 		       "%s: Unable to request IRQ %d (error %d)\n",
+diff --git a/drivers/net/netxen/netxen_nic_main.c b/drivers/net/netxen/netxen_nic_main.c
+index 83348dc..9336715 100644
+--- a/drivers/net/netxen/netxen_nic_main.c
++++ b/drivers/net/netxen/netxen_nic_main.c
+@@ -905,7 +905,7 @@ netxen_nic_request_irq(struct netxen_adapter *adapter)
+ 	struct nx_host_sds_ring *sds_ring;
+ 	int err, ring;
+ 
+-	unsigned long flags = IRQF_SAMPLE_RANDOM;
++	unsigned long flags = 0;
+ 	struct net_device *netdev = adapter->netdev;
+ 	struct netxen_recv_context *recv_ctx = &adapter->recv_ctx;
+ 
+diff --git a/drivers/net/niu.c b/drivers/net/niu.c
+index 32678b6..681a42c 100644
+--- a/drivers/net/niu.c
++++ b/drivers/net/niu.c
+@@ -6071,8 +6071,7 @@ static int niu_request_irq(struct niu *np)
+ 	for (i = 0; i < np->num_ldg; i++) {
+ 		struct niu_ldg *lp = &np->ldg[i];
+ 
+-		err = request_irq(lp->irq, niu_interrupt,
+-				  IRQF_SHARED | IRQF_SAMPLE_RANDOM,
++		err = request_irq(lp->irq, niu_interrupt, IRQF_SHARED,
+ 				  np->irq_name[i], lp);
+ 		if (err)
+ 			goto out_free_irqs;
+diff --git a/drivers/net/qla3xxx.c b/drivers/net/qla3xxx.c
+index 348b4f136..f3f737b 100644
+--- a/drivers/net/qla3xxx.c
++++ b/drivers/net/qla3xxx.c
+@@ -3468,7 +3468,7 @@ static int ql_adapter_up(struct ql3_adapter *qdev)
+ {
+ 	struct net_device *ndev = qdev->ndev;
+ 	int err;
+-	unsigned long irq_flags = IRQF_SAMPLE_RANDOM | IRQF_SHARED;
++	unsigned long irq_flags = IRQF_SHARED;
+ 	unsigned long hw_flags;
+ 
+ 	if (ql_alloc_mem_resources(qdev)) {
+diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
+index ebec888..89b76f0 100644
+--- a/drivers/net/tg3.c
++++ b/drivers/net/tg3.c
+@@ -8839,12 +8839,12 @@ static int tg3_request_irq(struct tg3 *tp, int irq_num)
+ 		fn = tg3_msi;
+ 		if (tp->tg3_flags2 & TG3_FLG2_1SHOT_MSI)
+ 			fn = tg3_msi_1shot;
+-		flags = IRQF_SAMPLE_RANDOM;
++		flags = 0;
+ 	} else {
+ 		fn = tg3_interrupt;
+ 		if (tp->tg3_flags & TG3_FLAG_TAGGED_STATUS)
+ 			fn = tg3_interrupt_tagged;
+-		flags = IRQF_SHARED | IRQF_SAMPLE_RANDOM;
++		flags = IRQF_SHARED;
+ 	}
+ 
+ 	return request_irq(tnapi->irq_vec, fn, flags, name, tnapi);
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index 5c8d9c3..c06f5a0 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1416,8 +1416,7 @@ static int setup_netfront(struct xenbus_device *dev, struct netfront_info *info)
+ 		goto fail;
+ 
+ 	err = bind_evtchn_to_irqhandler(info->evtchn, xennet_interrupt,
+-					IRQF_SAMPLE_RANDOM, netdev->name,
+-					netdev);
++					0, netdev->name, netdev);
+ 	if (err < 0)
+ 		goto fail;
+ 	netdev->irq = err;
 -- 
+1.7.2.5
 
-Mike Isely
-isely @ isely (dot) net
-PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
