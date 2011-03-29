@@ -1,28 +1,28 @@
-From: Kumar Gala <galak@kernel.crashing.org>
-Date: Tue, 15 Mar 2011 19:19:23 +0000
-Subject: Re: [PATCH] powerpc: sysdev: fix signedness bug
-Message-Id: <EA2A84CF-6A11-4CEC-B4FD-96F1262ED9AF@kernel.crashing.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 29 Mar 2011 03:18:04 +0000
+Subject: [patch] [SCSI] tcm_loop: off by one in tcm_loop_make_naa_tpg()
+Message-Id: <20110329031804.GB9856@bicker>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1287327102-9068-1-git-send-email-segooon@gmail.com>
-In-Reply-To: <1287327102-9068-1-git-send-email-segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segooon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Harninder Rai <harninder.rai-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Vivek Mahajan <vivek.mahajan-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: James Bottomley <James.Bottomley@suse.de>, Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+This is an off by one that could result in memory corruption.
 
-On Oct 17, 2010, at 9:51 AM, Vasiliy Kulikov wrote:
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> sram_params.sram_size and sram_params.sram_offset were unsigned.
-> If get_cache_sram_size() or get_cache_sram_offset() returns error code
-> then it is not seen to the caller.  Made sram_size and sram_offset signed.
-> 
-> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
-> ---
-> arch/powerpc/sysdev/fsl_85xx_l2ctlr.c |    4 ++--
-> 1 files changed, 2 insertions(+), 2 deletions(-)
-
-applied
-
-- k
+diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
+index aed4e46..2bb5062 100644
+--- a/drivers/target/loopback/tcm_loop.c
++++ b/drivers/target/loopback/tcm_loop.c
+@@ -1239,7 +1239,7 @@ struct se_portal_group *tcm_loop_make_naa_tpg(
+ 	tpgt_str += 5; /* Skip ahead of "tpgt_" */
+ 	tpgt = (unsigned short int) simple_strtoul(tpgt_str, &end_ptr, 0);
+ 
+-	if (tpgt > TL_TPGS_PER_HBA) {
++	if (tpgt >= TL_TPGS_PER_HBA) {
+ 		printk(KERN_ERR "Passed tpgt: %hu exceeds TL_TPGS_PER_HBA:"
+ 				" %u\n", tpgt, TL_TPGS_PER_HBA);
+ 		return ERR_PTR(-EINVAL);
