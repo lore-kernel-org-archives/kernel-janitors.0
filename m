@@ -1,53 +1,88 @@
-From: Maksym Planeta <mcsim.planeta@gmail.com>
-Date: Fri, 01 Apr 2011 14:08:44 +0000
-Subject: Re: [PATCH v2] x86: page: get_order() optimization
-Message-Id: <1301666924.734.6.camel@debian>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 01 Apr 2011 14:23:46 +0000
+Subject: [PATCH 5/6] drivers/scsi/bnx2fc/bnx2fc_hwi.c: introduce missing kfree
+Message-Id: <1301667827-20056-5-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1301215556-8898-1-git-send-email-mcsim.planeta@gmail.com>
-	 <20110327113323.GA27825@elte.hu> <1301246136.2291.49.camel@debian>
-	 <20110328050844.GC26322@elte.hu> <1301340822.6302.90.camel@debian>
-	 <4D90E539.7060908@zytor.com>
-In-Reply-To: <4D90E539.7060908@zytor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@elte.hu>, mingo@redhat.com, kernel-janitors@vger.kernel.org, namhyung@gmail.com, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jan Beulich <JBeulich@novell.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "James E.J. Bottomley" <James.Bottomley@suse.de>
+Cc: kernel-janitors@vger.kernel.org, Bhanu Prakash Gollapudi <bprakash@broadcom.com>, Nithin Nayak Sujir <nsujir@broadcom.com>, Michael Chan <mchan@broadcom.com>, Mike Christie <michaelc@cs.wisc.edu>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 28/03/2011 at 12:44 -0700, H. Peter Anvin wrote:
-> With what options?
->=20
-> 	-hpa
+Error handling code following a kmalloc should free the allocated data.
 
-$ gcc -v
-Using built-in specs.
-COLLECT_GCC=3Dgcc
-COLLECT_LTO_WRAPPER=3D/usr/lib/gcc/x86_64-linux-gnu/4.5.2/lto-wrapper
-Target: x86_64-linux-gnu
-Configured with: ../src/configure -v --with-pkgversion=3D'Debian 4.5.2-4'
---with-bugurl=3Dfile:///usr/share/doc/gcc-4.5/README.Bugs
---enable-languages=3Dc,c++,fortran,objc,obj-c++ --prefix=3D/usr
---program-suffix=3D-4.5 --enable-shared --enable-multiarch
---enable-linker-build-id --with-system-zlib --libexecdir=3D/usr/lib
---without-included-gettext --enable-threads=3Dposix
---with-gxx-include-dir=3D/usr/include/c++/4.5 --libdir=3D/usr/lib
---enable-nls --enable-clocale=3Dgnu --enable-libstdcxx-debug
---enable-libstdcxx-time=3Dyes --enable-plugin --enable-gold
---enable-ld=DEfault --with-plugin-ld=3Dld.gold --enable-objc-gc
---with-arch-32=3Di586 --with-tune=3Dgeneric --enable-checking=3Drelease
---build=3Dx86_64-linux-gnu --host=3Dx86_64-linux-gnu
---target=3Dx86_64-linux-gnu
-Thread model: posix
-gcc version 4.5.2 (Debian 4.5.2-4)=20
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-for compiling kernel I've used: make defconfig && make -j3
---=20
-Thanks,
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
-Maksym Planeta
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/bnx2fc/bnx2fc_hwi.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_hwi.c b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+index 1b680e2..f756d5f 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_hwi.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+@@ -522,6 +522,7 @@ void bnx2fc_process_l2_frame_compl(struct bnx2fc_rport *tgt,
+ 	fp = fc_frame_alloc(lport, payload_len);
+ 	if (!fp) {
+ 		printk(KERN_ERR PFX "fc_frame_alloc failure\n");
++		kfree(unsol_els);
+ 		return;
+ 	}
+ 
+@@ -547,6 +548,7 @@ void bnx2fc_process_l2_frame_compl(struct bnx2fc_rport *tgt,
+ 				 */
+ 				printk(KERN_ERR PFX "dropping ELS 0x%x\n", op);
+ 				kfree_skb(skb);
++				kfree(unsol_els);
+ 				return;
+ 			}
+ 		}
+@@ -563,6 +565,7 @@ void bnx2fc_process_l2_frame_compl(struct bnx2fc_rport *tgt,
+ 	} else {
+ 		BNX2FC_HBA_DBG(lport, "fh_r_ctl = 0x%x\n", fh->fh_r_ctl);
+ 		kfree_skb(skb);
++		kfree(unsol_els);
+ 	}
+ }
+ 
+
