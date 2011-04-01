@@ -1,60 +1,90 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Sat, 23 Apr 2011 16:51:23 +0000
-Subject: [PATCH] drivers/char/ppdev.c: Put gotten port value
-Message-Id: <1303577483-16064-1-git-send-email-julia@diku.dk>
+Date: Fri, 01 Apr 2011 14:23:45 +0000
+Subject: [PATCH 4/6] drivers/staging/intel_sst/intel_sst_app_interface.c: introduce missing kfree
+Message-Id: <1301667827-20056-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Carpenter <error27@gmail.com>, Alan Cox <alan@linux.intel.com>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-parport_find_number calls parport_get_port on its result, so there should
-be a corresponding call to parport_put_port before dropping the reference.
-Similar code is found in the function register_device in the same file.
+Stream_bufs is initialized at the beginning of the function, and then the
+#ifdef code declares a new variable with the same name and initializes
+that.  If the if in the ifdef is taken, the then branch returns, implying
+that the first stream_bufs is never used and is leaked.  The first
+initialization is thus moved down after the ifdef.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@exists@
-local idexpression struct parport * x;
-expression ra,rr;
-statement S1,S2;
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
 @@
 
-x = parport_find_number(...)
-... when != x = rr
-    when any
-    when != parport_put_port(x,...)
-    when != if (...) { ... parport_put_port(x,...) ...}
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
 (
-if(<+...x...+>) S1 else S2
+x->f1 = E
 |
-if(...) { ... when != x = ra
-     when forall
-     when != parport_put_port(x,...)
-*return...;
-}
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
 )
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/char/ppdev.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/intel_sst/intel_sst_app_interface.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
-index f176dba..3fcf80f 100644
---- a/drivers/char/ppdev.c
-+++ b/drivers/char/ppdev.c
-@@ -457,6 +457,7 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 			return -ENODEV;
+diff --git a/drivers/staging/intel_sst/intel_sst_app_interface.c b/drivers/staging/intel_sst/intel_sst_app_interface.c
+index a367991..401961a 100644
+--- a/drivers/staging/intel_sst/intel_sst_app_interface.c
++++ b/drivers/staging/intel_sst/intel_sst_app_interface.c
+@@ -418,10 +418,6 @@ static int snd_sst_fill_kernel_list(struct stream_info *stream,
+ 	static int sent_offset;
+ 	static unsigned long sent_index;
  
- 		modes = port->modes;
-+		parport_put_port(port);
- 		if (copy_to_user (argp, &modes, sizeof (modes))) {
- 			return -EFAULT;
- 		}
+-	stream_bufs = kzalloc(sizeof(*stream_bufs), GFP_KERNEL);
+-	if (!stream_bufs)
+-		return -ENOMEM;
+-	stream_bufs->addr = sst_drv_ctx->mmap_mem;
+ #ifdef CONFIG_MRST_RAR_HANDLER
+ 	if (stream->ops = STREAM_OPS_PLAYBACK_DRM) {
+ 		for (index = stream->sg_index; index < nr_segs; index++) {
+@@ -448,6 +444,10 @@ static int snd_sst_fill_kernel_list(struct stream_info *stream,
+ 		return retval;
+ 	}
+ #endif
++	stream_bufs = kzalloc(sizeof(*stream_bufs), GFP_KERNEL);
++	if (!stream_bufs)
++		return -ENOMEM;
++	stream_bufs->addr = sst_drv_ctx->mmap_mem;
+ 	mmap_len = sst_drv_ctx->mmap_len;
+ 	stream_bufs->addr = sst_drv_ctx->mmap_mem;
+ 	bufp = stream->cur_ptr;
 
