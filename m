@@ -1,83 +1,72 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 22 Apr 2011 20:11:21 +0000
-Subject: [PATCH 1/3] drivers/video: Convert release_resource to release_mem_region
-Message-Id: <1303503083-26170-1-git-send-email-julia@diku.dk>
+Date: Fri, 01 Apr 2011 14:23:44 +0000
+Subject: [PATCH 3/6] drivers/staging/cx25821/cx25821-video.c: introduce missing kfree
+Message-Id: <1301667827-20056-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, Hans Verkuil <hverkuil@xs4all.nl>, Palash Bandyopadhyay <palash.bandyopadhyay@conexant.com>, Andreas Bombe <aeb@debian.org>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Request_mem_region should be used with release_mem_region, not
-release_resource.
+Error handling code following a kmalloc should free the allocated data.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@s exists@
-expression e1,e2,e3,e4,e;
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
 @@
 
-*e4 = request_mem_region(e1,e2,e3)
-... when != e4 = e
-*release_resource(e4);
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/video/s3c-fb.c   |    6 ++----
- drivers/video/sh7760fb.c |    6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ drivers/staging/cx25821/cx25821-video.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 3fa7911..d570e58 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -1449,8 +1449,7 @@ err_ioremap:
- 	iounmap(sfb->regs);
+diff --git a/drivers/staging/cx25821/cx25821-video.c b/drivers/staging/cx25821/cx25821-video.c
+index ab05392..04b18f4 100644
+--- a/drivers/staging/cx25821/cx25821-video.c
++++ b/drivers/staging/cx25821/cx25821-video.c
+@@ -832,6 +832,7 @@ static int video_open(struct file *file)
  
- err_req_region:
--	release_resource(sfb->regs_res);
--	kfree(sfb->regs_res);
-+	release_mem_region(sfb->regs_res->start, resource_size(sfb->regs_res));
- 
- err_clk:
- 	clk_disable(sfb->bus_clk);
-@@ -1486,8 +1485,7 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
- 	clk_disable(sfb->bus_clk);
- 	clk_put(sfb->bus_clk);
- 
--	release_resource(sfb->regs_res);
--	kfree(sfb->regs_res);
-+	release_mem_region(sfb->regs_res->start, resource_size(sfb->regs_res));
- 
- 	kfree(sfb);
- 
-diff --git a/drivers/video/sh7760fb.c b/drivers/video/sh7760fb.c
-index 8fe1958..45e47d8 100644
---- a/drivers/video/sh7760fb.c
-+++ b/drivers/video/sh7760fb.c
-@@ -551,8 +551,7 @@ out_unmap:
- 		free_irq(par->irq, &par->vsync);
- 	iounmap(par->base);
- out_res:
--	release_resource(par->ioarea);
--	kfree(par->ioarea);
-+	release_mem_region(res->start, resource_size(res));
- out_fb:
- 	framebuffer_release(info);
- 	return ret;
-@@ -570,8 +569,7 @@ static int __devexit sh7760fb_remove(struct platform_device *dev)
- 	if (par->irq >= 0)
- 		free_irq(par->irq, par);
- 	iounmap(par->base);
--	release_resource(par->ioarea);
--	kfree(par->ioarea);
-+	release_mem_region(par->ioarea->start, resource_size(par->ioarea));
- 	framebuffer_release(info);
- 	platform_set_drvdata(dev, NULL);
+        if (NULL = dev) {
+ 		mutex_unlock(&cx25821_devlist_mutex);
++		kfree(fh);
+ 		return -ENODEV;
+        }
  
 
