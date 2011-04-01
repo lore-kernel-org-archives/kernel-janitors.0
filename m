@@ -1,108 +1,72 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 08 Apr 2011 05:14:48 +0000
-Subject: Re: [PATCH] drivers/rtc/rtc-mrst.c: Use release_mem_region after
-Message-Id: <Pine.LNX.4.64.1104080657520.16547@ask.diku.dk>
+Date: Fri, 01 Apr 2011 14:23:43 +0000
+Subject: [PATCH 2/6] drivers/crypto/caam/caamalg.c: introduce missing kfree
+Message-Id: <1301667827-20056-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1300136425-3311-1-git-send-email-julia@diku.dk>
- <20110407160142.0a9d399c.akpm@linux-foundation.org>
-In-Reply-To: <20110407160142.0a9d399c.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, kernel-janitors@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Kim Phillips <kim.phillips@freescale.com>, Steve Cornelius <sec@pobox.com>, Dan Carpenter <error27@gmail.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 7 Apr 2011, Andrew Morton wrote:
+Error handling code following a kmalloc should free the allocated data.
 
-> On Mon, 14 Mar 2011 22:00:25 +0100
-> Julia Lawall <julia@diku.dk> wrote:
-> 
-> > The memory allocated using request_mem_region should be released using
-> > release_mem_region, not release_region.
-> > 
-> > The semantic patch that fixes part of this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> > 
-> > // <smpl>
-> > @@
-> > expression E1,E2,E3;
-> > @@
-> > 
-> > request_mem_region(E1,E2,E3)
-> > ...
-> > ?- release_region(E1,E2)
-> > + release_mem_region(E1,E2)
-> > // </smpl>
-> > 
-> > Signed-off-by: Julia Lawall <julia@diku.dk>
-> > 
-> > ---
-> >  drivers/rtc/rtc-mrst.c |    4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/rtc/rtc-mrst.c b/drivers/rtc/rtc-mrst.c
-> > index b86bc32..558dd7d 100644
-> > --- a/drivers/rtc/rtc-mrst.c
-> > +++ b/drivers/rtc/rtc-mrst.c
-> > @@ -379,7 +379,7 @@ cleanup1:
-> >  	mrst_rtc.dev = NULL;
-> >  	rtc_device_unregister(mrst_rtc.rtc);
-> >  cleanup0:
-> > -	release_region(iomem->start, iomem->end + 1 - iomem->start);
-> > +	release_mem_region(iomem->start, iomem->end + 1 - iomem->start);
-> >  	dev_err(dev, "rtc-mrst: unable to initialise\n");
-> >  	return retval;
-> >  }
-> > @@ -405,7 +405,7 @@ static void __exit rtc_mrst_do_remove(struct device *dev)
-> >  	mrst->rtc = NULL;
-> >  
-> >  	iomem = mrst->iomem;
-> > -	release_region(iomem->start, iomem->end + 1 - iomem->start);
-> > +	release_mem_region(iomem->start, iomem->end + 1 - iomem->start);
-> >  	mrst->iomem = NULL;
-> >  
-> >  	mrst->dev = NULL;
-> 
-> We may as well clean this up too.
-> 
-> --- a/drivers/rtc/rtc-mrst.c~drivers-rtc-rtc-mrstc-use-release_mem_region-after-request_mem_region-fix
-> +++ a/drivers/rtc/rtc-mrst.c
-> @@ -380,7 +380,7 @@ cleanup1:
->  cleanup0:
->  	dev_set_drvdata(dev, NULL);
->  	mrst_rtc.dev = NULL;
-> -	release_mem_region(iomem->start, iomem->end + 1 - iomem->start);
-> +	release_mem_region(iomem->start, resource_size(iomem));
->  	dev_err(dev, "rtc-mrst: unable to initialise\n");
->  	return retval;
->  }
-> @@ -406,7 +406,7 @@ static void __devexit rtc_mrst_do_remove
->  	mrst->rtc = NULL;
->  
->  	iomem = mrst->iomem;
-> -	release_mem_region(iomem->start, iomem->end + 1 - iomem->start);
-> +	release_mem_region(iomem->start, resource_size(iomem));
->  	mrst->iomem = NULL;
->  
->  	mrst->dev = NULL;
-> _
-> 
-> which makes one wonder why we don't have
-> 
-> void release_resource_mem(struct resource *r)
-> {
-> 	release_mem_region(r->start, resource_size(r));
-> }
+The semantic match that finds the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Perhaps the name is not quite good, because release resource is something 
-different from:
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+expression E;
+identifier f,f1,l;
+position p1,p2;
+expression *ptr != NULL;
+@@
 
-void release_resource(struct resource *r)
-{
-      release_region(r->start, resource_size(r));
-}
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+(
+x->f1 = E
+|
+ (x->f1 = NULL || ...)
+|
+ f(...,x->f1,...)
+)
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
 
-It would be really nice to have such a wrapper for both of them, since the 
-code is so common, and the size computation is so error prone.
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
 
-julia
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/crypto/caam/caamalg.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.c
+index dce44b2..20e1215 100644
+--- a/drivers/crypto/caam/caamalg.c
++++ b/drivers/crypto/caam/caamalg.c
+@@ -1120,6 +1120,7 @@ static int __init caam_algapi_init(void)
+ 	if (err < 0 && i = 0) {
+ 		dev_err(ctrldev, "algapi error in job ring registration: %d\n",
+ 			err);
++		kfree(jrdev);
+ 		return err;
+ 	}
+ 
+
