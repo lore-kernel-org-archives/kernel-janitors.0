@@ -1,90 +1,45 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 01 Apr 2011 14:23:45 +0000
-Subject: [PATCH 4/6] drivers/staging/intel_sst/intel_sst_app_interface.c: introduce missing kfree
-Message-Id: <1301667827-20056-4-git-send-email-julia@diku.dk>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Date: Sat, 02 Apr 2011 21:01:33 +0000
+Subject: Re: [patch] [SCSI] tcm_loop: off by one in tcm_loop_make_naa_tpg()
+Message-Id: <1301778093.2319.435.camel@haakon2.linux-iscsi.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110329031804.GB9856@bicker>
+In-Reply-To: <20110329031804.GB9856@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: kernel-janitors@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Carpenter <error27@gmail.com>, Alan Cox <alan@linux.intel.com>, Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>
+Cc: James Bottomley <James.Bottomley@suse.de>, Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Stream_bufs is initialized at the beginning of the function, and then the
-#ifdef code declares a new variable with the same name and initializes
-that.  If the if in the ifdef is taken, the then branch returns, implying
-that the first stream_bufs is never used and is leaked.  The first
-initialization is thus moved down after the ifdef.
+On Tue, 2011-03-29 at 06:18 +0300, Dan Carpenter wrote:
+> This is an off by one that could result in memory corruption.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Hi Dan,
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
+Apologies for the delayed response on here..
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
+This has been included as commit fb9b35be into lio-core-2.6.git/lio-4.1
+@ .39-rc1, and will get this queued to James as a 'for-39' mainline
+bugfix item.
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
+Thank you!
 
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
+--nab
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/staging/intel_sst/intel_sst_app_interface.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/intel_sst/intel_sst_app_interface.c b/drivers/staging/intel_sst/intel_sst_app_interface.c
-index a367991..401961a 100644
---- a/drivers/staging/intel_sst/intel_sst_app_interface.c
-+++ b/drivers/staging/intel_sst/intel_sst_app_interface.c
-@@ -418,10 +418,6 @@ static int snd_sst_fill_kernel_list(struct stream_info *stream,
- 	static int sent_offset;
- 	static unsigned long sent_index;
- 
--	stream_bufs = kzalloc(sizeof(*stream_bufs), GFP_KERNEL);
--	if (!stream_bufs)
--		return -ENOMEM;
--	stream_bufs->addr = sst_drv_ctx->mmap_mem;
- #ifdef CONFIG_MRST_RAR_HANDLER
- 	if (stream->ops = STREAM_OPS_PLAYBACK_DRM) {
- 		for (index = stream->sg_index; index < nr_segs; index++) {
-@@ -448,6 +444,10 @@ static int snd_sst_fill_kernel_list(struct stream_info *stream,
- 		return retval;
- 	}
- #endif
-+	stream_bufs = kzalloc(sizeof(*stream_bufs), GFP_KERNEL);
-+	if (!stream_bufs)
-+		return -ENOMEM;
-+	stream_bufs->addr = sst_drv_ctx->mmap_mem;
- 	mmap_len = sst_drv_ctx->mmap_len;
- 	stream_bufs->addr = sst_drv_ctx->mmap_mem;
- 	bufp = stream->cur_ptr;
+> diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
+> index aed4e46..2bb5062 100644
+> --- a/drivers/target/loopback/tcm_loop.c
+> +++ b/drivers/target/loopback/tcm_loop.c
+> @@ -1239,7 +1239,7 @@ struct se_portal_group *tcm_loop_make_naa_tpg(
+>  	tpgt_str += 5; /* Skip ahead of "tpgt_" */
+>  	tpgt = (unsigned short int) simple_strtoul(tpgt_str, &end_ptr, 0);
+>  
+> -	if (tpgt > TL_TPGS_PER_HBA) {
+> +	if (tpgt >= TL_TPGS_PER_HBA) {
+>  		printk(KERN_ERR "Passed tpgt: %hu exceeds TL_TPGS_PER_HBA:"
+>  				" %u\n", tpgt, TL_TPGS_PER_HBA);
+>  		return ERR_PTR(-EINVAL);
 
