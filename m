@@ -1,20 +1,33 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Date: Wed, 06 Apr 2011 16:46:17 +0000
-Subject: Re: [PATCH 6/6] drivers/video/bfin-lq035q1-fb.c: introduce missing kfree
-Message-Id: <20110406164617.GD11820@linux-sh.org>
+From: Jonathan Nieder <jrnieder@gmail.com>
+Date: Tue, 05 Apr 2011 20:35:14 +0000
+Subject: Re: [patch v2] bio-integrity: use hardware sectors instead of block
+Message-Id: <20110405203435.GA13179@elie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1301667827-20056-6-git-send-email-julia@diku.dk> <BANLkTinF-Z_1J8UiPJ0wnaDLxgHRv0MsPw@mail.gmail.com>
-In-Reply-To: <BANLkTinF-Z_1J8UiPJ0wnaDLxgHRv0MsPw@mail.gmail.com>
+References: <20100507082928.GT27064@bicker>
+ <20100507095414.GH27064@bicker>
+ <yq1ljbi8i1z.fsf@sermon.lab.mkp.net>
+In-Reply-To: <yq1ljbi8i1z.fsf@sermon.lab.mkp.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Dan Carpenter <error27@gmail.com>, Jens Axboe <jens.axboe@oracle.com>, Chuck Ebbert <cebbert@redhat.com>, linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org
 
-On Sat, Apr 02, 2011 at 01:05:57AM -0400, Mike Frysinger wrote:
-> On Fri, Apr 1, 2011 at 10:23, Julia Lawall wrote:
-> > Error handling code following a kmalloc should free the allocated data.
-> 
-> Acked-by: Mike Frysinger <vapier@gentoo.org>
+Hi,
 
-Applied, thanks.
+On 2010-05-17, Martin K. Petersen wrote:
+
+> The change is obviously functionally correct.  But I object to the
+> notion of hw_sectors.  The 1:1 mapping of DIF tuples and logical blocks
+> is even going away in SBC3.  So let's not perpetuate that.
+>
+> I have a patch in my queue that gets rid of all the hw_sector references
+> in the integrity code.  I'll make sure to include your fix.
+>
+> So thanks for spotting this.  I obviously haven't tested PI drives with
+> a 4KB logical block size in combination with device mapper...
+
+I'm just curious: did anything come of this?  Nowadays gcc 4.6 warns
+about the same unused nr_sector var smatch warned about, so new
+readers are coming to the same question of why this function doesn't
+use hardware sectors.
