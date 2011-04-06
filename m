@@ -1,22 +1,108 @@
-From: Prashant Shah <pshah.mumbai@gmail.com>
-Date: Fri, 22 Apr 2011 15:49:54 +0000
-Subject: stimulate usb device
-Message-Id: <BANLkTikU4s+6SH+iKGoEKFcXCuQn0TLpoQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 06 Apr 2011 19:43:19 +0000
+Subject: [PATCH] m68knommu: Remove obsolete #include <linux/sys.h>
+Message-Id: <alpine.DEB.2.00.1104062141370.28556@ayla.of.borg>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <BANLkTinoHSY3sYj2u9HV1kxzf2LbnGRjxw@mail.gmail.com>
-In-Reply-To: <BANLkTinoHSY3sYj2u9HV1kxzf2LbnGRjxw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Ungerer <gerg@uclinux.org>
+Cc: uClinux list <uclinux-dev@uclinux.org>, Linux/m68k <linux-m68k@vger.kernel.org>, Linux Kernel Development <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi,
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+Janitors: "git grep linux/sys.h" shows many more.
 
-I am trying to write a driver for a USB based Data Acquisition Device.
-I have limited access to the hardware device and I want to test the
-attach and probe calls. Is there anyway to stimulate or create a dummy
-USB device so that the kernel can make those calls.
+ arch/m68k/kernel/entry_no.S         |    1 -
+ arch/m68k/kernel/syscalltable.S     |    1 -
+ arch/m68k/platform/68328/entry.S    |    1 -
+ arch/m68k/platform/68360/entry.S    |    1 -
+ arch/m68k/platform/coldfire/entry.S |    1 -
+ arch/m68k/platform/coldfire/head.S  |    1 -
+ 6 files changed, 0 insertions(+), 6 deletions(-)
 
-Any information will be helpful.
+diff --git a/arch/m68k/kernel/entry_no.S b/arch/m68k/kernel/entry_no.S
+index 2783f25..5f0f6b5 100644
+--- a/arch/m68k/kernel/entry_no.S
++++ b/arch/m68k/kernel/entry_no.S
+@@ -24,7 +24,6 @@
+  * linux 2.4 support David McCullough <davidm@snapgear.com>
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ #include <asm/errno.h>
+ #include <asm/setup.h>
+diff --git a/arch/m68k/kernel/syscalltable.S b/arch/m68k/kernel/syscalltable.S
+index 79b1ed1..935e10a 100644
+--- a/arch/m68k/kernel/syscalltable.S
++++ b/arch/m68k/kernel/syscalltable.S
+@@ -11,7 +11,6 @@
+  *  Copyright (C) 1991, 1992  Linus Torvalds
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ #include <asm/unistd.h>
+ 
+diff --git a/arch/m68k/platform/68328/entry.S b/arch/m68k/platform/68328/entry.S
+index 676960c..0747318 100644
+--- a/arch/m68k/platform/68328/entry.S
++++ b/arch/m68k/platform/68328/entry.S
+@@ -10,7 +10,6 @@
+  * Linux/m68k support by Hamish Macdonald
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ #include <asm/thread_info.h>
+ #include <asm/unistd.h>
+diff --git a/arch/m68k/platform/68360/entry.S b/arch/m68k/platform/68360/entry.S
+index 46c1b18..e1477f2 100644
+--- a/arch/m68k/platform/68360/entry.S
++++ b/arch/m68k/platform/68360/entry.S
+@@ -12,7 +12,6 @@
+  * M68360 Port by SED Systems, and Lineo.
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ #include <asm/thread_info.h>
+ #include <asm/unistd.h>
+diff --git a/arch/m68k/platform/coldfire/entry.S b/arch/m68k/platform/coldfire/entry.S
+index 5837cf0..bc15bea 100644
+--- a/arch/m68k/platform/coldfire/entry.S
++++ b/arch/m68k/platform/coldfire/entry.S
+@@ -26,7 +26,6 @@
+  * Bug, speed and maintainability fixes by Philippe De Muyter <phdm@macqel.be>
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ #include <asm/unistd.h>
+ #include <asm/thread_info.h>
+diff --git a/arch/m68k/platform/coldfire/head.S b/arch/m68k/platform/coldfire/head.S
+index 129bff4..da21180 100644
+--- a/arch/m68k/platform/coldfire/head.S
++++ b/arch/m68k/platform/coldfire/head.S
+@@ -8,7 +8,6 @@
+ 
+ /*****************************************************************************/
+ 
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ #include <linux/init.h>
+ #include <asm/asm-offsets.h>
+-- 
+1.7.0.4
 
-Regards.
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
