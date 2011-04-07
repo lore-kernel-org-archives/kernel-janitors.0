@@ -1,100 +1,92 @@
-From: "Bhanu Gollapudi" <bprakash@broadcom.com>
-Date: Fri, 01 Apr 2011 21:23:06 +0000
-Subject: Re: [PATCH 5/6] drivers/scsi/bnx2fc/bnx2fc_hwi.c: introduce
-Message-Id: <1301692986.4340.2.camel@LTSJC-BPRAKASH.corp.ad.broadcom.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Thu, 07 Apr 2011 23:01:42 +0000
+Subject: Re: [PATCH] drivers/rtc/rtc-mrst.c: Use release_mem_region after
+Message-Id: <20110407160142.0a9d399c.akpm@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1301667827-20056-5-git-send-email-julia@diku.dk>
-In-Reply-To: <1301667827-20056-5-git-send-email-julia@diku.dk>
+References: <1300136425-3311-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1300136425-3311-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia@diku.dk>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Nithin Sujir <nsujir@broadcom.com>, Michael Chan <mchan@broadcom.com>, Mike Christie <michaelc@cs.wisc.edu>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, kernel-janitors@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
-On Fri, 2011-04-01 at 07:23 -0700, Julia Lawall wrote: 
-> Error handling code following a kmalloc should free the allocated data.
+On Mon, 14 Mar 2011 22:00:25 +0100
+Julia Lawall <julia@diku.dk> wrote:
+
+> The memory allocated using request_mem_region should be released using
+> release_mem_region, not release_region.
 > 
-> The semantic match that finds the problem is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
+> The semantic patch that fixes part of this problem is as follows:
+> (http://coccinelle.lip6.fr/)
 > 
 > // <smpl>
-> @r exists@
-> local idexpression x;
-> statement S;
-> expression E;
-> identifier f,f1,l;
-> position p1,p2;
-> expression *ptr != NULL;
+> @@
+> expression E1,E2,E3;
 > @@
 > 
-> x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+> request_mem_region(E1,E2,E3)
 > ...
-> if (x = NULL) S
-> <... when != x
->      when != if (...) { <+...x...+> }
-> (
-> x->f1 = E
-> |
->  (x->f1 = NULL || ...)
-> |
->  f(...,x->f1,...)
-> )
-> ...>
-> (
->  return \(0\|<+...x...+>\|ptr\);
-> |
->  return@p2 ...;
-> )
-> 
-> @script:python@
-> p1 << r.p1;
-> p2 << r.p2;
-> @@
-> 
-> print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+> ?- release_region(E1,E2)
+> + release_mem_region(E1,E2)
 > // </smpl>
 > 
 > Signed-off-by: Julia Lawall <julia@diku.dk>
-
-Thanks Julia. 
-
-Acked-by: Bhanu Prakash Gollapudi <bprakash@broadcom.com>
-
 > 
 > ---
->  drivers/scsi/bnx2fc/bnx2fc_hwi.c |    3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/rtc/rtc-mrst.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/scsi/bnx2fc/bnx2fc_hwi.c b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-> index 1b680e2..f756d5f 100644
-> --- a/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-> +++ b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-> @@ -522,6 +522,7 @@ void bnx2fc_process_l2_frame_compl(struct bnx2fc_rport *tgt,
->  	fp = fc_frame_alloc(lport, payload_len);
->  	if (!fp) {
->  		printk(KERN_ERR PFX "fc_frame_alloc failure\n");
-> +		kfree(unsol_els);
->  		return;
->  	}
->  
-> @@ -547,6 +548,7 @@ void bnx2fc_process_l2_frame_compl(struct bnx2fc_rport *tgt,
->  				 */
->  				printk(KERN_ERR PFX "dropping ELS 0x%x\n", op);
->  				kfree_skb(skb);
-> +				kfree(unsol_els);
->  				return;
->  			}
->  		}
-> @@ -563,6 +565,7 @@ void bnx2fc_process_l2_frame_compl(struct bnx2fc_rport *tgt,
->  	} else {
->  		BNX2FC_HBA_DBG(lport, "fh_r_ctl = 0x%x\n", fh->fh_r_ctl);
->  		kfree_skb(skb);
-> +		kfree(unsol_els);
->  	}
+> diff --git a/drivers/rtc/rtc-mrst.c b/drivers/rtc/rtc-mrst.c
+> index b86bc32..558dd7d 100644
+> --- a/drivers/rtc/rtc-mrst.c
+> +++ b/drivers/rtc/rtc-mrst.c
+> @@ -379,7 +379,7 @@ cleanup1:
+>  	mrst_rtc.dev = NULL;
+>  	rtc_device_unregister(mrst_rtc.rtc);
+>  cleanup0:
+> -	release_region(iomem->start, iomem->end + 1 - iomem->start);
+> +	release_mem_region(iomem->start, iomem->end + 1 - iomem->start);
+>  	dev_err(dev, "rtc-mrst: unable to initialise\n");
+>  	return retval;
 >  }
+> @@ -405,7 +405,7 @@ static void __exit rtc_mrst_do_remove(struct device *dev)
+>  	mrst->rtc = NULL;
 >  
-> 
-> 
+>  	iomem = mrst->iomem;
+> -	release_region(iomem->start, iomem->end + 1 - iomem->start);
+> +	release_mem_region(iomem->start, iomem->end + 1 - iomem->start);
+>  	mrst->iomem = NULL;
+>  
+>  	mrst->dev = NULL;
 
+We may as well clean this up too.
 
+--- a/drivers/rtc/rtc-mrst.c~drivers-rtc-rtc-mrstc-use-release_mem_region-after-request_mem_region-fix
++++ a/drivers/rtc/rtc-mrst.c
+@@ -380,7 +380,7 @@ cleanup1:
+ cleanup0:
+ 	dev_set_drvdata(dev, NULL);
+ 	mrst_rtc.dev = NULL;
+-	release_mem_region(iomem->start, iomem->end + 1 - iomem->start);
++	release_mem_region(iomem->start, resource_size(iomem));
+ 	dev_err(dev, "rtc-mrst: unable to initialise\n");
+ 	return retval;
+ }
+@@ -406,7 +406,7 @@ static void __devexit rtc_mrst_do_remove
+ 	mrst->rtc = NULL;
+ 
+ 	iomem = mrst->iomem;
+-	release_mem_region(iomem->start, iomem->end + 1 - iomem->start);
++	release_mem_region(iomem->start, resource_size(iomem));
+ 	mrst->iomem = NULL;
+ 
+ 	mrst->dev = NULL;
+_
 
+which makes one wonder why we don't have
+
+void release_resource_mem(struct resource *r)
+{
+	release_mem_region(r->start, resource_size(r));
+}
