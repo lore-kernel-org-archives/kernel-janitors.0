@@ -1,91 +1,30 @@
-From: Niels de Vos <ndevos@redhat.com>
-Date: Mon, 11 Apr 2011 07:19:28 +0000
-Subject: Re: [PATCH 2/3] drivers/parport/parport_pc.c: Convert release_resource
-Message-Id: <4DA2AB80.5070209@redhat.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Date: Fri, 08 Apr 2011 19:50:18 +0000
+Subject: Re: [PATCH 4/5] arch/x86/pci/direct.c: Convert release_resource to
+Message-Id: <20110408125018.49c6860f@jbarnes-desktop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1300814123-25314-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1300814123-25314-2-git-send-email-julia@diku.dk>
+References: <1297599132-7226-1-git-send-email-julia@diku.dk>
+	<1297599132-7226-5-git-send-email-julia@diku.dk>
+In-Reply-To: <1297599132-7226-5-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia@diku.dk>
-Cc: Jiri Kosina <jkosina@suse.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org
 
-On 03/22/2011 05:15 PM, Julia Lawall wrote:
-> Request_region should be used with release_region, not
-> release_resource.
+On Sun, 13 Feb 2011 13:12:11 +0100
+Julia Lawall <julia@diku.dk> wrote:
+
+> Request_region should be used with release_region, not release_resource.
 > 
-> base_res is also dropped because it is no longer needed.
+> The local variables region and region2 are dropped and the calls to
+> release_resource are replaced with calls to release_region, using the first
+> two arguments of the corresponding calls to request_region.
 > 
 > The semantic match that finds this problem is as follows:
 > (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,E;
-> @@
-> *x = request_region(...)
-> ... when != release_region(x)
->     when != x = E
-> * release_resource(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
-> In the original code, the second argument of request_region is 32 and the
-> second argument of the following release_region is 0x8.  I have thus used
-> 0x8 as the second argument of the call to release_region introduced to
-> replace the call to release_resource.  But shouldn't the second arguments
-> of all of the functions be the same?
 
-Yes, they should. The size of the requested region was changed with
-commit e7c310c36e5fdf1b83a459e5db167bfbd86137db, but one occurrence of
-release_region() was not changed accordingly.
-
-
->  drivers/parport/parport_pc.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
-> index 8d62fb7..320a4df 100644
-> --- a/drivers/parport/parport_pc.c
-> +++ b/drivers/parport/parport_pc.c
-> @@ -2550,7 +2550,6 @@ static int __devinit sio_ite_8872_probe(struct pci_dev *pdev, int autoirq,
->  					 const struct parport_pc_via_data *via)
->  {
->  	short inta_addr[6] = { 0x2A0, 0x2C0, 0x220, 0x240, 0x1E0 };
-> -	struct resource *base_res;
->  	u32 ite8872set;
->  	u32 ite8872_lpt, ite8872_lpthi;
->  	u8 ite8872_irq, type;
-> @@ -2561,8 +2560,7 @@ static int __devinit sio_ite_8872_probe(struct pci_dev *pdev, int autoirq,
->  
->  	/* make sure which one chip */
->  	for (i = 0; i < 5; i++) {
-> -		base_res = request_region(inta_addr[i], 32, "it887x");
-> -		if (base_res) {
-> +		if (request_region(inta_addr[i], 32, "it887x")) {
->  			int test;
->  			pci_write_config_dword(pdev, 0x60,
->  						0xe5000000 | inta_addr[i]);
-> @@ -2635,7 +2633,7 @@ static int __devinit sio_ite_8872_probe(struct pci_dev *pdev, int autoirq,
->  	/*
->  	 * Release the resource so that parport_pc_probe_port can get it.
->  	 */
-> -	release_resource(base_res);
-> +	release_region(inta_addr[i], 0x8);
-
-0x8 is not the correct size, this should be 32. As there is an other
-occurance already, I'll post an updated patch in a bit.
-
->  	if (parport_pc_probe_port(ite8872_lpt, ite8872_lpthi,
->  				   irq, PARPORT_DMA_NONE, &pdev->dev, 0)) {
->  		printk(KERN_INFO
-> 
+Applied to linux-next, thanks.
 
 -- 
-Niels de Vos, RHCE
-Senior Technical Support Engineer
-Global Support Services
-Red Hat UK, Ltd.
+Jesse Barnes, Intel Open Source Technology Center
