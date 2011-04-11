@@ -1,79 +1,91 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 01 Apr 2011 14:23:42 +0000
-Subject: [PATCH 1/6] drivers/staging/brcm80211/brcmfmac/wl_iw.c: introduce missing kfree
-Message-Id: <1301667827-20056-1-git-send-email-julia@diku.dk>
+From: Niels de Vos <ndevos@redhat.com>
+Date: Mon, 11 Apr 2011 07:19:28 +0000
+Subject: Re: [PATCH 2/3] drivers/parport/parport_pc.c: Convert release_resource
+Message-Id: <4DA2AB80.5070209@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1300814123-25314-2-git-send-email-julia@diku.dk>
+In-Reply-To: <1300814123-25314-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, Henry Ptasinski <henryp@broadcom.com>, Dowan Kim <dowan@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, Greg Kroah-Hartman <gregkh@suse.de>, Jason Cooper <jason@lakedaemon.net>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Jiri Kosina <jkosina@suse.cz>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Error handling code following a kmalloc should free the allocated data.
+On 03/22/2011 05:15 PM, Julia Lawall wrote:
+> Request_region should be used with release_region, not
+> release_resource.
+> 
+> base_res is also dropped because it is no longer needed.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression x,E;
+> @@
+> *x = request_region(...)
+> ... when != release_region(x)
+>     when != x = E
+> * release_resource(x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+> In the original code, the second argument of request_region is 32 and the
+> second argument of the following release_region is 0x8.  I have thus used
+> 0x8 as the second argument of the call to release_region introduced to
+> replace the call to release_resource.  But shouldn't the second arguments
+> of all of the functions be the same?
 
-The semantic match that finds the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+Yes, they should. The size of the requested region was changed with
+commit e7c310c36e5fdf1b83a459e5db167bfbd86137db, but one occurrence of
+release_region() was not changed accordingly.
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-expression E;
-identifier f,f1,l;
-position p1,p2;
-expression *ptr != NULL;
-@@
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-(
-x->f1 = E
-|
- (x->f1 = NULL || ...)
-|
- f(...,x->f1,...)
-)
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
+>  drivers/parport/parport_pc.c |    6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
+> index 8d62fb7..320a4df 100644
+> --- a/drivers/parport/parport_pc.c
+> +++ b/drivers/parport/parport_pc.c
+> @@ -2550,7 +2550,6 @@ static int __devinit sio_ite_8872_probe(struct pci_dev *pdev, int autoirq,
+>  					 const struct parport_pc_via_data *via)
+>  {
+>  	short inta_addr[6] = { 0x2A0, 0x2C0, 0x220, 0x240, 0x1E0 };
+> -	struct resource *base_res;
+>  	u32 ite8872set;
+>  	u32 ite8872_lpt, ite8872_lpthi;
+>  	u8 ite8872_irq, type;
+> @@ -2561,8 +2560,7 @@ static int __devinit sio_ite_8872_probe(struct pci_dev *pdev, int autoirq,
+>  
+>  	/* make sure which one chip */
+>  	for (i = 0; i < 5; i++) {
+> -		base_res = request_region(inta_addr[i], 32, "it887x");
+> -		if (base_res) {
+> +		if (request_region(inta_addr[i], 32, "it887x")) {
+>  			int test;
+>  			pci_write_config_dword(pdev, 0x60,
+>  						0xe5000000 | inta_addr[i]);
+> @@ -2635,7 +2633,7 @@ static int __devinit sio_ite_8872_probe(struct pci_dev *pdev, int autoirq,
+>  	/*
+>  	 * Release the resource so that parport_pc_probe_port can get it.
+>  	 */
+> -	release_resource(base_res);
+> +	release_region(inta_addr[i], 0x8);
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
+0x8 is not the correct size, this should be 32. As there is an other
+occurance already, I'll post an updated patch in a bit.
 
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
+>  	if (parport_pc_probe_port(ite8872_lpt, ite8872_lpthi,
+>  				   irq, PARPORT_DMA_NONE, &pdev->dev, 0)) {
+>  		printk(KERN_INFO
+> 
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-There is some other error handling code about 10 lines down where it looks
-like a kfree is needed as well.  If that is the case, I can extend the patch.
-
- drivers/staging/brcm80211/brcmfmac/wl_iw.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/brcm80211/brcmfmac/wl_iw.c b/drivers/staging/brcm80211/brcmfmac/wl_iw.c
-index b49957f..4e4cf36 100644
---- a/drivers/staging/brcm80211/brcmfmac/wl_iw.c
-+++ b/drivers/staging/brcm80211/brcmfmac/wl_iw.c
-@@ -3672,8 +3672,10 @@ int wl_iw_attach(struct net_device *dev, void *dhdp)
- 		return -ENOMEM;
- 
- 	iscan->iscan_ex_params_p = kmalloc(params_size, GFP_KERNEL);
--	if (!iscan->iscan_ex_params_p)
-+	if (!iscan->iscan_ex_params_p) {
-+		kfree(iscan);
- 		return -ENOMEM;
-+	}
- 	iscan->iscan_ex_param_size = params_size;
- 	iscan->sysioc_tsk = NULL;
- 
-
+-- 
+Niels de Vos, RHCE
+Senior Technical Support Engineer
+Global Support Services
+Red Hat UK, Ltd.
