@@ -1,33 +1,61 @@
-From: Jonathan Nieder <jrnieder@gmail.com>
-Date: Tue, 05 Apr 2011 20:35:14 +0000
-Subject: Re: [patch v2] bio-integrity: use hardware sectors instead of block
-Message-Id: <20110405203435.GA13179@elie>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 22 Apr 2011 20:46:21 +0000
+Subject: [PATCH] drivers/tty/moxa.c: Put correct tty value
+Message-Id: <1303505181-16359-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20100507082928.GT27064@bicker>
- <20100507095414.GH27064@bicker>
- <yq1ljbi8i1z.fsf@sermon.lab.mkp.net>
-In-Reply-To: <yq1ljbi8i1z.fsf@sermon.lab.mkp.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Dan Carpenter <error27@gmail.com>, Jens Axboe <jens.axboe@oracle.com>, Chuck Ebbert <cebbert@redhat.com>, linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+The tty value that should be put is the one that was just gotten by
+tty_port_tty_get, not the one that is the argument to the enclosing
+function.
 
-On 2010-05-17, Martin K. Petersen wrote:
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> The change is obviously functionally correct.  But I object to the
-> notion of hw_sectors.  The 1:1 mapping of DIF tuples and logical blocks
-> is even going away in SBC3.  So let's not perpetuate that.
->
-> I have a patch in my queue that gets rid of all the hw_sector references
-> in the integrity code.  I'll make sure to include your fix.
->
-> So thanks for spotting this.  I obviously haven't tested PI drives with
-> a 4KB logical block size in combination with device mapper...
+// <smpl>
+@exists@
+local idexpression struct tty_struct *x;
+expression ra,rr;
+statement S1,S2;
+@@
 
-I'm just curious: did anything come of this?  Nowadays gcc 4.6 warns
-about the same unused nr_sector var smatch warned about, so new
-readers are coming to the same question of why this function doesn't
-use hardware sectors.
+x = tty_port_tty_get(...)
+... when != x = rr
+    when any
+    when != tty_kref_put(x,...)
+    when != if (...) { ... tty_kref_put(x,...) ...}
+(
+if(<+...x...+>) S1 else S2
+|
+if(...) { ... when != x = ra
+     when forall
+     when != tty_kref_put(x,...)
+*return...;
+}
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/tty/moxa.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
+index 35b0c38..e097a23 100644
+--- a/drivers/tty/moxa.c
++++ b/drivers/tty/moxa.c
+@@ -371,7 +371,7 @@ static int moxa_ioctl(struct tty_struct *tty,
+ 					tmp.cflag = p->cflag;
+ 				else
+ 					tmp.cflag = ttyp->termios->c_cflag;
+-				tty_kref_put(tty);
++				tty_kref_put(ttyp);
+ copy:
+ 				if (copy_to_user(argm, &tmp, sizeof(tmp)))
+ 					return -EFAULT;
+
