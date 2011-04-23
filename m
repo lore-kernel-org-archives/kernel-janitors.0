@@ -1,7 +1,7 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 23 Apr 2011 08:38:34 +0000
+Date: Sat, 23 Apr 2011 14:51:28 +0000
 Subject: Re: Getting started as a janitor
-Message-Id: <BANLkTikMtSes3TOb8MtnXiLfE2xfTNQtWA@mail.gmail.com>
+Message-Id: <BANLkTi=nF+RLxY812rq3d-S8WL9qDvGPPA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <BANLkTi=1H5-RpvfWbfCMQBn4EktZOWvdCw@mail.gmail.com>
 In-Reply-To: <BANLkTi=1H5-RpvfWbfCMQBn4EktZOWvdCw@mail.gmail.com>
@@ -11,26 +11,32 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 On 4/22/11, Manuel Mejia <me@manuelmejia.com> wrote:
-> Hello All,
+> That makes sense. So gar, I feel comfortable with C, but need to get a
+> better feel for system calls and the like.
+
+There are a couple books on the linux kernel.  Linux Device Drivers
+is good and a free download.  Robert Love's book is good.
+lwn.net has good information.
+
 >
-> My name is Manuel. I've been itching to get some more experience
-> working with a lower level language (C/C++) since I have developed
-> mainly in higher level languages like PHP, C#, Java, and C++/Qt.I
-> thought the best way would be to contribute to open source as I use it
-> all the time. I was wondering if someone out there could take the time
-> to guide me a bit on how to get started with some of the tasks for
-> kernel janitors.
+> Would you happen to have a link to get more info on staging drivers?
+
+http://linuxdriverproject.org/foswiki/bin/view
+Look through the mailing list archive to see what people are working on.
+
+> Ultimately, my goal is to contribute towards hardware drivers and display (x
+> server) once I gain enough knowledge. Currentfy going to school for computer
+> engineering Maybe you have other suggestions based on that? I've been
+> looking around for a while, googling, but there isn't a whole lot on how to
+> get started (info looks outdated usually) or points to kernel newbies.
 >
 
-Kernel coding isn't really a good place to start learning C.  It's
-normally assumed that you are proficient in C already when you
-start sending patches.
+In the end the mailing lists are the only up to date sources of information.
 
-Mostly these days kernel janitors is just static checker stuff and
-auditing code.  Like for example, auditing the error handling for
-copy_to/from_user() calls.  The other thing is you could do if you
-wanted would be to fix up a staging driver.  But mostly those
-patches get sent to the staging list and not to kernel janitors.
+If you downloaded linux-next and used Smatch to check the code from
+3 weeks ago and the code from today and then used the new_bugs.sh
+script to show the difference the two runs, you would probably find quite
+a few valid bugs.  I haven't been checking Smatch output for a while.
 
 regards,
 dan carpenter
