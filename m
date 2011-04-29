@@ -1,66 +1,40 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 22 Apr 2011 20:11:23 +0000
-Subject: [PATCH 3/3] drivers/video/s3c2410fb.c: Convert release_resource to release_mem_region
-Message-Id: <1303503083-26170-3-git-send-email-julia@diku.dk>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 29 Apr 2011 21:14:02 +0000
+Subject: [PATCH 2/2] driver-core: modify FIRMWARE_IN_KERNEL help message
+Message-Id: <ab0bdf28351608def0ffee25605f8aff4b64fcd1.1304111377.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Request_mem_region should be used with release_mem_region, not
-release_resource.
+The help message for the configuration variable was inconsistent
+with the way "make firmware_install" really works.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@s exists@
-expression e1,e2,e3,e4,e;
-@@
-
-*e4 = request_mem_region(e1,e2,e3)
-... when != e4 = e
-*release_resource(e4);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/video/s3c2410fb.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/base/Kconfig |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/video/s3c2410fb.c b/drivers/video/s3c2410fb.c
-index 61c819e..0aa1376 100644
---- a/drivers/video/s3c2410fb.c
-+++ b/drivers/video/s3c2410fb.c
-@@ -867,7 +867,7 @@ static int __devinit s3c24xxfb_probe(struct platform_device *pdev,
- 		goto dealloc_fb;
- 	}
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index 5fe7fd2..52c6758 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -84,10 +84,10 @@ config FIRMWARE_IN_KERNEL
+ 	help
+ 	  The kernel source tree includes a number of firmware 'blobs'
+ 	  that are used by various drivers. The recommended way to
+-	  use these is to run "make firmware_install" and to copy the
+-	  resulting binary files created in usr/lib/firmware/ of the
+-	  kernel tree to /lib/firmware/ on your system so that they can
+-	  be loaded by userspace helpers on request.
++	  use these is to run "make firmware_install", which, after
++	  converting ihex files to binary, copies all of the needed
++	  binary files in firmware/ to /lib/firmware/ on your system so
++	  that they can be loaded by userspace helpers on request.
  
--	size = (res->end - res->start) + 1;
-+	size = resource_size(res);
- 	info->mem = request_mem_region(res->start, size, pdev->name);
- 	if (info->mem = NULL) {
- 		dev_err(&pdev->dev, "failed to get memory region\n");
-@@ -997,8 +997,7 @@ release_irq:
- release_regs:
- 	iounmap(info->io);
- release_mem:
--	release_resource(info->mem);
--	kfree(info->mem);
-+	release_mem_region(res->start, size);
- dealloc_fb:
- 	platform_set_drvdata(pdev, NULL);
- 	framebuffer_release(fbinfo);
-@@ -1044,8 +1043,7 @@ static int __devexit s3c2410fb_remove(struct platform_device *pdev)
- 
- 	iounmap(info->io);
- 
--	release_resource(info->mem);
--	kfree(info->mem);
-+	release_mem_region(info->mem->start, resource_size(info->mem));
- 
- 	platform_set_drvdata(pdev, NULL);
- 	framebuffer_release(fbinfo);
+ 	  Enabling this option will build each required firmware blob
+ 	  into the kernel directly, where request_firmware() will find
+-- 
+1.7.4.4
 
