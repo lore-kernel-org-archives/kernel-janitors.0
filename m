@@ -1,7 +1,7 @@
 From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 06 May 2011 10:47:55 +0000
-Subject: [PATCH 15/16] staging: usbip: remove section dividers
-Message-Id: <7b231e55ae3a86c60fe268077103c92fe5c7de08.1304676742.git.mfm@muteddisk.com>
+Date: Fri, 06 May 2011 10:47:41 +0000
+Subject: [PATCH 01/16] staging: usbip: stub_dev.c: coding style cleanup
+Message-Id: <f8dae1ba6dc2fd17652689dc51f4210d803e51c2.1304676742.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <cover.1304676742.git.mfm@muteddisk.com>
 In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
@@ -11,339 +11,197 @@ Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Also, removes the one-line comments that were associated with some of
-the dividers because they provided no additional information.
+Fix alignment for consistency and remove extraneous lines.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/usbip/stub.h         |    3 ---
- drivers/staging/usbip/stub_dev.c     |   13 -------------
- drivers/staging/usbip/stub_main.c    |   10 ----------
- drivers/staging/usbip/stub_tx.c      |   11 -----------
- drivers/staging/usbip/usbip_common.c |   11 -----------
- drivers/staging/usbip/usbip_common.h |   10 ----------
- drivers/staging/usbip/vhci.h         |    3 ---
- drivers/staging/usbip/vhci_hcd.c     |   13 -------------
- drivers/staging/usbip/vhci_rx.c      |    2 --
- drivers/staging/usbip/vhci_tx.c      |    4 ----
- 10 files changed, 0 insertions(+), 80 deletions(-)
+ drivers/staging/usbip/stub_dev.c |   44 ++++++++++---------------------------
+ 1 files changed, 12 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/staging/usbip/stub.h b/drivers/staging/usbip/stub.h
-index 6d252b8..bfea5dc 100644
---- a/drivers/staging/usbip/stub.h
-+++ b/drivers/staging/usbip/stub.h
-@@ -88,9 +88,6 @@ struct bus_id_priv {
- 
- extern struct kmem_cache *stub_priv_cache;
- 
--/*-------------------------------------------------------------------------*/
--/* prototype declarations */
--
- /* stub_tx.c */
- void stub_complete(struct urb *);
- int stub_tx_loop(void *data);
 diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
-index 8a55068..919d558 100644
+index bce7d03..8a55068 100644
 --- a/drivers/staging/usbip/stub_dev.c
 +++ b/drivers/staging/usbip/stub_dev.c
-@@ -61,11 +61,6 @@ struct usb_driver stub_driver = {
+@@ -23,13 +23,10 @@
+ #include "usbip_common.h"
+ #include "stub.h"
+ 
+-
+-
+ static int stub_probe(struct usb_interface *interface,
+-				const struct usb_device_id *id);
++		      const struct usb_device_id *id);
+ static void stub_disconnect(struct usb_interface *interface);
+ 
+-
+ /*
+  * Define device IDs here if you want to explicitly limit exportable devices.
+  * In the most cases, wild card matching will be ok because driver binding can
+@@ -64,7 +61,6 @@ struct usb_driver stub_driver = {
  	.id_table	= stub_table,
  };
  
--/*-------------------------------------------------------------------------*/
 -
--/* Define sysfs entries for a usbip-bound device */
+ /*-------------------------------------------------------------------------*/
+ 
+ /* Define sysfs entries for a usbip-bound device */
+@@ -128,13 +124,11 @@ static ssize_t store_sockfd(struct device *dev, struct device_attribute *attr,
+ 			spin_unlock(&sdev->ud.lock);
+ 			return -EINVAL;
+ 		}
 -
+ #if 0
+ 		setnodelay(socket);
+ 		setkeepalive(socket);
+ 		setreuse(socket);
+ #endif
 -
- /*
-  * usbip_status shows status of usbip as long as this driver is bound to the
-  * target device.
-@@ -190,10 +185,6 @@ static void stub_remove_files(struct device *dev)
+ 		sdev->ud.tcp_socket = socket;
+ 
+ 		spin_unlock(&sdev->ud.lock);
+@@ -183,10 +177,8 @@ static int stub_add_files(struct device *dev)
+ 
+ err_debug:
+ 	device_remove_file(dev, &dev_attr_usbip_sockfd);
+-
+ err_sockfd:
+ 	device_remove_file(dev, &dev_attr_usbip_status);
+-
+ err_status:
+ 	return err;
+ }
+@@ -198,8 +190,6 @@ static void stub_remove_files(struct device *dev)
  	device_remove_file(dev, &dev_attr_usbip_debug);
  }
  
--/*-------------------------------------------------------------------------*/
 -
--/* Event handler functions called by an event handler thread */
 -
- static void stub_shutdown_connection(struct usbip_device *ud)
- {
- 	struct stub_device *sdev = container_of(ud, struct stub_device, ud);
-@@ -292,8 +283,6 @@ static void stub_device_unusable(struct usbip_device *ud)
+ /*-------------------------------------------------------------------------*/
+ 
+ /* Event handler functions called by an event handler thread */
+@@ -244,18 +234,15 @@ static void stub_shutdown_connection(struct usbip_device *ud)
+ 		struct stub_unlink *unlink, *tmp;
+ 
+ 		spin_lock_irqsave(&sdev->priv_lock, flags);
+-
+ 		list_for_each_entry_safe(unlink, tmp, &sdev->unlink_tx, list) {
+ 			list_del(&unlink->list);
+ 			kfree(unlink);
+ 		}
+-
+ 		list_for_each_entry_safe(unlink, tmp,
+ 						 &sdev->unlink_free, list) {
+ 			list_del(&unlink->list);
+ 			kfree(unlink);
+ 		}
+-
+ 		spin_unlock_irqrestore(&sdev->priv_lock, flags);
+ 	}
+ }
+@@ -275,7 +262,6 @@ static void stub_device_reset(struct usbip_device *ud)
+ 		spin_lock(&ud->lock);
+ 		ud->status = SDEV_ST_ERROR;
+ 		spin_unlock(&ud->lock);
+-
+ 		return;
+ 	}
+ 
+@@ -306,7 +292,6 @@ static void stub_device_unusable(struct usbip_device *ud)
  	spin_unlock(&ud->lock);
  }
  
--/*-------------------------------------------------------------------------*/
 -
+ /*-------------------------------------------------------------------------*/
+ 
  /**
-  * stub_device_alloc - allocate a new stub_device struct
-  * @interface: usb_interface of a new device
-@@ -362,8 +351,6 @@ static int stub_device_free(struct stub_device *sdev)
+@@ -339,13 +324,12 @@ static struct stub_device *stub_device_alloc(struct usb_device *udev,
+ 	 * devnum may change later if a device is reset. However, devid never
+ 	 * changes during a usbip connection.
+ 	 */
+-	sdev->devid     = (busnum << 16) | devnum;
+-
+-	sdev->ud.side = USBIP_STUB;
+-	sdev->ud.status = SDEV_ST_AVAILABLE;
++	sdev->devid		= (busnum << 16) | devnum;
++	sdev->ud.side		= USBIP_STUB;
++	sdev->ud.status		= SDEV_ST_AVAILABLE;
+ 	/* sdev->ud.lock = SPIN_LOCK_UNLOCKED; */
+ 	spin_lock_init(&sdev->ud.lock);
+-	sdev->ud.tcp_socket = NULL;
++	sdev->ud.tcp_socket	= NULL;
+ 
+ 	INIT_LIST_HEAD(&sdev->priv_init);
+ 	INIT_LIST_HEAD(&sdev->priv_tx);
+@@ -378,7 +362,6 @@ static int stub_device_free(struct stub_device *sdev)
  	return 0;
  }
  
--/*-------------------------------------------------------------------------*/
 -
- /*
-  * If a usb device has multiple active interfaces, this driver is bound to all
-  * the active interfaces. However, usbip exports *a* usb device (i.e., not *an*
-diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
-index 4ba00bb..6634e07 100644
---- a/drivers/staging/usbip/stub_main.c
-+++ b/drivers/staging/usbip/stub_main.c
-@@ -30,10 +30,6 @@
- /* stub_priv is allocated from stub_priv_cache */
- struct kmem_cache *stub_priv_cache;
+ /*-------------------------------------------------------------------------*/
  
--/*-------------------------------------------------------------------------*/
--
--/* Define sysfs entries for the usbip driver */
--
  /*
-  * busid_tables defines matching busids that usbip can grab. A user can change
-  * dynamically what device is locally used and what device is exported to a
-@@ -200,10 +196,6 @@ static ssize_t store_match_busid(struct device_driver *dev, const char *buf,
- static DRIVER_ATTR(match_busid, S_IRUSR|S_IWUSR, show_match_busid,
- 		   store_match_busid);
+@@ -405,7 +388,7 @@ static int stub_probe(struct usb_interface *interface,
+ 	/* check we should claim or not by busid_table */
+ 	busid_priv = get_busid_priv(udev_busid);
+ 	if (!busid_priv  || (busid_priv->status = STUB_BUSID_REMOV) ||
+-			     (busid_priv->status = STUB_BUSID_OTHER)) {
++	    (busid_priv->status = STUB_BUSID_OTHER)) {
+ 		dev_info(&interface->dev,
+ 			 "this device %s is not in match_busid table. skip!\n",
+ 			 udev_busid);
+@@ -420,17 +403,16 @@ static int stub_probe(struct usb_interface *interface,
  
--/*-------------------------------------------------------------------------*/
--
--/* Cleanup functions used to free private data */
--
- static struct stub_priv *stub_priv_pop_from_listhead(struct list_head *listhead)
- {
- 	struct stub_priv *priv, *tmp;
-@@ -266,8 +258,6 @@ void stub_device_cleanup_urbs(struct stub_device *sdev)
+ 	if (udev->descriptor.bDeviceClass =  USB_CLASS_HUB) {
+ 		usbip_udbg("this device %s is a usb hub device. skip!\n",
+-								udev_busid);
++			   udev_busid);
+ 		return -ENODEV;
  	}
- }
  
--/*-------------------------------------------------------------------------*/
--
- static int __init usb_stub_init(void)
- {
- 	int ret;
-diff --git a/drivers/staging/usbip/stub_tx.c b/drivers/staging/usbip/stub_tx.c
-index 76d82b2..fc02261 100644
---- a/drivers/staging/usbip/stub_tx.c
-+++ b/drivers/staging/usbip/stub_tx.c
-@@ -109,9 +109,6 @@ void stub_complete(struct urb *urb)
- 	wake_up(&sdev->tx_waitq);
- }
- 
--/*-------------------------------------------------------------------------*/
--/* fill PDU */
--
- static inline void setup_base_pdu(struct usbip_header_basic *base,
- 				  __u32 command, __u32 seqnum)
- {
-@@ -137,9 +134,6 @@ static void setup_ret_unlink_pdu(struct usbip_header *rpdu,
- 	rpdu->u.ret_unlink.status = unlink->status;
- }
- 
--/*-------------------------------------------------------------------------*/
--/* send RET_SUBMIT */
--
- static struct stub_priv *dequeue_from_priv_tx(struct stub_device *sdev)
- {
- 	unsigned long flags;
-@@ -292,9 +286,6 @@ static int stub_send_ret_submit(struct stub_device *sdev)
- 	return total_size;
- }
- 
--/*-------------------------------------------------------------------------*/
--/* send RET_UNLINK */
--
- static struct stub_unlink *dequeue_from_unlink_tx(struct stub_device *sdev)
- {
- 	unsigned long flags;
-@@ -369,8 +360,6 @@ static int stub_send_ret_unlink(struct stub_device *sdev)
- 	return total_size;
- }
- 
--/*-------------------------------------------------------------------------*/
--
- int stub_tx_loop(void *data)
- {
- 	struct usbip_device *ud = data;
-diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
-index a6ae67c..5d842f9 100644
---- a/drivers/staging/usbip/usbip_common.c
-+++ b/drivers/staging/usbip/usbip_common.c
-@@ -31,9 +31,6 @@
- 	"Takahiro Hirofuchi <hirofuchi _at_ users.sourceforge.net>"
- #define DRIVER_DESC "usbip common driver"
- 
--/*-------------------------------------------------------------------------*/
--/* debug routines */
--
- #ifdef CONFIG_USB_IP_DEBUG_ENABLE
- unsigned long usbip_debug_flag = 0xffffffff;
- #else
-@@ -352,9 +349,6 @@ void usbip_dump_header(struct usbip_header *pdu)
- }
- EXPORT_SYMBOL_GPL(usbip_dump_header);
- 
--/*-------------------------------------------------------------------------*/
--/* socket routines */
--
- /* Send/receive messages over TCP/IP. I refer drivers/block/nbd.c */
- int usbip_xmit(int send, struct socket *sock, char *buf,
- 	       int size, int msg_flags)
-@@ -469,9 +463,6 @@ struct socket *sockfd_to_socket(unsigned int sockfd)
- }
- EXPORT_SYMBOL_GPL(sockfd_to_socket);
- 
--/*-------------------------------------------------------------------------*/
--/* pdu routines */
--
- /* there may be more cases to tweak the flags. */
- static unsigned int tweak_transfer_flags(unsigned int flags)
- {
-@@ -869,8 +860,6 @@ int usbip_recv_xbuff(struct usbip_device *ud, struct urb *urb)
- }
- EXPORT_SYMBOL_GPL(usbip_recv_xbuff);
- 
--/*-------------------------------------------------------------------------*/
--
- static int __init usbip_common_init(void)
- {
- 	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC "" DRIVER_VERSION);
-diff --git a/drivers/staging/usbip/usbip_common.h b/drivers/staging/usbip/usbip_common.h
-index 7acec75..0b61d71 100644
---- a/drivers/staging/usbip/usbip_common.h
-+++ b/drivers/staging/usbip/usbip_common.h
-@@ -26,12 +26,6 @@
- #include <asm/byteorder.h>
- #include <net/sock.h>
- 
--/*-------------------------------------------------------------------------*/
--
--/*
-- * define macros to print messages
-- */
--
- /**
-  * usbip_udbg - print debug messages if CONFIG_USB_IP_DEBUG_ENABLE is defined
-  * @fmt:
-@@ -137,8 +131,6 @@ extern struct device_attribute dev_attr_usbip_debug;
- 		printk(KERN_INFO "usbip: " fmt , ## args);	\
- 	} while (0)
- 
--/*-------------------------------------------------------------------------*/
--
- /*
-  * USB/IP request headers.
-  * Currently, we define 4 request types:
-@@ -257,8 +249,6 @@ struct usbip_header {
- 	} u;
- } __packed;
- 
--/*-------------------------------------------------------------------------*/
--
- int usbip_xmit(int, struct socket *, char *, int, int);
- int usbip_sendmsg(struct socket *, struct msghdr *, int);
- 
-diff --git a/drivers/staging/usbip/vhci.h b/drivers/staging/usbip/vhci.h
-index 6e17a00..f4834df 100644
---- a/drivers/staging/usbip/vhci.h
-+++ b/drivers/staging/usbip/vhci.h
-@@ -101,9 +101,6 @@ struct vhci_hcd {
- extern struct vhci_hcd *the_controller;
- extern struct attribute_group dev_attr_group;
- 
--/*-------------------------------------------------------------------------*/
--/* prototype declaration */
--
- /* vhci_hcd.c */
- void rh_port_connect(int rhport, enum usb_device_speed speed);
- void rh_port_disconnect(int rhport);
-diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
-index 47884d1..da5e73a 100644
---- a/drivers/staging/usbip/vhci_hcd.c
-+++ b/drivers/staging/usbip/vhci_hcd.c
-@@ -154,8 +154,6 @@ void rh_port_disconnect(int rhport)
- 	usb_hcd_poll_rh_status(vhci_to_hcd(the_controller));
- }
- 
--/*----------------------------------------------------------------------*/
--
- #define PORT_C_MASK				\
- 	((USB_PORT_STAT_C_CONNECTION		\
- 	  | USB_PORT_STAT_C_ENABLE		\
-@@ -478,10 +476,6 @@ static int vhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
- 	return retval;
- }
- 
--
--
--/*----------------------------------------------------------------------*/
--
- static struct vhci_device *get_vdev(struct usb_device *udev)
- {
- 	int i;
-@@ -950,9 +944,6 @@ static void vhci_device_init(struct vhci_device *vdev)
- 	usbip_start_eh(&vdev->ud);
- }
- 
--
--/*----------------------------------------------------------------------*/
--
- static int vhci_start(struct usb_hcd *hcd)
- {
- 	struct vhci_hcd *vhci = hcd_to_vhci(hcd);
-@@ -1007,8 +998,6 @@ static void vhci_stop(struct usb_hcd *hcd)
- 	usbip_uinfo("vhci_stop done\n");
- }
- 
--/*----------------------------------------------------------------------*/
--
- static int vhci_get_frame_number(struct usb_hcd *hcd)
- {
- 	usbip_uerr("Not yet implemented\n");
-@@ -1214,8 +1203,6 @@ static struct platform_driver vhci_driver = {
- 	},
- };
- 
--/*----------------------------------------------------------------------*/
--
- /*
-  * The VHCI 'device' is 'virtual'; not a real plug&play hardware.
-  * We need to add this virtual device as a platform device arbitrarily:
-diff --git a/drivers/staging/usbip/vhci_rx.c b/drivers/staging/usbip/vhci_rx.c
-index 46f2ee5..fedc442 100644
---- a/drivers/staging/usbip/vhci_rx.c
-+++ b/drivers/staging/usbip/vhci_rx.c
-@@ -255,8 +255,6 @@ static void vhci_rx_pdu(struct usbip_device *ud)
+ 	if (!strcmp(udev->bus->bus_name, "vhci_hcd")) {
+ 		usbip_udbg("this device %s is attached on vhci_hcd. skip!\n",
+-								udev_busid);
++			   udev_busid);
+ 		return -ENODEV;
  	}
+ 
+-
+ 	if (busid_priv->status = STUB_BUSID_ALLOC) {
+ 		sdev = busid_priv->sdev;
+ 		if (!sdev)
+@@ -438,9 +420,10 @@ static int stub_probe(struct usb_interface *interface,
+ 
+ 		busid_priv->interf_count++;
+ 		dev_info(&interface->dev,
+-		 "USB/IP Stub: register a new interface "
+-		 "(bus %u dev %u ifn %u)\n", udev->bus->busnum, udev->devnum,
+-		 interface->cur_altsetting->desc.bInterfaceNumber);
++			 "USB/IP Stub: register a new interface "
++			 "(bus %u dev %u ifn %u)\n",
++			 udev->bus->busnum, udev->devnum,
++			 interface->cur_altsetting->desc.bInterfaceNumber);
+ 
+ 		/* set private data to usb_interface */
+ 		usb_set_intfdata(interface, sdev);
+@@ -504,10 +487,8 @@ static void shutdown_busid(struct bus_id_priv *busid_priv)
+ 		/* 2. wait for the stop of the event handler */
+ 		usbip_stop_eh(&busid_priv->sdev->ud);
+ 	}
+-
  }
  
--/*-------------------------------------------------------------------------*/
 -
- int vhci_rx_loop(void *data)
- {
- 	struct usbip_device *ud = data;
-diff --git a/drivers/staging/usbip/vhci_tx.c b/drivers/staging/usbip/vhci_tx.c
-index 6ececa8..62c9acb 100644
---- a/drivers/staging/usbip/vhci_tx.c
-+++ b/drivers/staging/usbip/vhci_tx.c
-@@ -134,8 +134,6 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
- 	return total_size;
- }
+ /*
+  * called in usb_disconnect() or usb_deregister()
+  * but only if actconfig(active configuration) exists
+@@ -559,7 +540,6 @@ static void stub_disconnect(struct usb_interface *interface)
  
--/*-------------------------------------------------------------------------*/
--
- static struct vhci_unlink *dequeue_from_unlink_tx(struct vhci_device *vdev)
- {
- 	unsigned long flags;
-@@ -204,8 +202,6 @@ static int vhci_send_cmd_unlink(struct vhci_device *vdev)
- 	return total_size;
- }
+ 	busid_priv->interf_count = 0;
  
--/*-------------------------------------------------------------------------*/
 -
- int vhci_tx_loop(void *data)
- {
- 	struct usbip_device *ud = data;
+ 	/* 1. shutdown the current connection */
+ 	shutdown_busid(busid_priv);
+ 
 -- 
 1.7.5.1
 
