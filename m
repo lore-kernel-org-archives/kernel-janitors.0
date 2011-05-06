@@ -1,121 +1,252 @@
-From: matt mooney <mfmooney@gmail.com>
-Date: Wed, 11 May 2011 08:54:14 +0000
-Subject: [PATCH 02/12] staging: usbip: use single version for all modules
-Message-Id: <0795ecfdf15daf7fe2e7b9c158888eb758153a78.1305103212.git.mfm@muteddisk.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 06 May 2011 10:47:45 +0000
+Subject: [PATCH 05/16] staging: usbip: usbip_common.h: coding style cleanup
+Message-Id: <412e28859e38bdbe9b279629a89aa646c518e95f.1304676742.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305103212.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1305103212.git.mfm@muteddisk.com>
+References: <cover.1304676742.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Having separate versions in this situation makes little sense, so
-USBIP_VERSION will be used by all modules.
+Use the compiler macro __packed, fix a few alignment issues, and
+remove extraneous lines.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/usbip/stub_main.c    |    5 ++---
- drivers/staging/usbip/usbip_common.c |    5 ++---
- drivers/staging/usbip/usbip_common.h |    2 ++
- drivers/staging/usbip/vhci_hcd.c     |    5 ++---
- 4 files changed, 8 insertions(+), 9 deletions(-)
+ drivers/staging/usbip/usbip_common.h |   75 +++++++++++++---------------------
+ 1 files changed, 29 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
-index c139f0e..a3c73b2 100644
---- a/drivers/staging/usbip/stub_main.c
-+++ b/drivers/staging/usbip/stub_main.c
-@@ -22,7 +22,6 @@
- #include "usbip_common.h"
- #include "stub.h"
- 
--#define DRIVER_VERSION "1.0"
- #define DRIVER_AUTHOR "Takahiro Hirofuchi"
- #define DRIVER_DESC "Stub Driver for USB/IP"
- 
-@@ -278,7 +277,7 @@ static int __init usb_stub_init(void)
- 		goto error_usb_register;
- 	}
- 
--	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC " " DRIVER_VERSION
-+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC " " USBIP_VERSION
- 	       "\n");
- 
- 	init_busid_table();
-@@ -319,4 +318,4 @@ module_exit(usb_stub_exit);
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
- MODULE_LICENSE("GPL");
--MODULE_VERSION(DRIVER_VERSION);
-+MODULE_VERSION(USBIP_VERSION);
-diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
-index 279cad4..6c44fa4 100644
---- a/drivers/staging/usbip/usbip_common.c
-+++ b/drivers/staging/usbip/usbip_common.c
-@@ -26,7 +26,6 @@
- 
- #include "usbip_common.h"
- 
--#define DRIVER_VERSION "1.0"
- #define DRIVER_AUTHOR "Takahiro Hirofuchi <hirofuchi@users.sourceforge.net>"
- #define DRIVER_DESC "USB/IP Common Driver"
- 
-@@ -861,7 +860,7 @@ EXPORT_SYMBOL_GPL(usbip_recv_xbuff);
- 
- static int __init usbip_common_init(void)
- {
--	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC " " DRIVER_VERSION
-+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC " " USBIP_VERSION
- 	       "\n");
- 	return 0;
- }
-@@ -877,4 +876,4 @@ module_exit(usbip_common_exit);
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
- MODULE_LICENSE("GPL");
--MODULE_VERSION(DRIVER_VERSION);
-+MODULE_VERSION(USBIP_VERSION);
 diff --git a/drivers/staging/usbip/usbip_common.h b/drivers/staging/usbip/usbip_common.h
-index c84bed9..aa5d576 100644
+index c767f52..7acec75 100644
 --- a/drivers/staging/usbip/usbip_common.h
 +++ b/drivers/staging/usbip/usbip_common.h
-@@ -26,6 +26,8 @@
+@@ -20,8 +20,8 @@
+ #ifndef __VHCI_COMMON_H
+ #define __VHCI_COMMON_H
+ 
+-
+ #include <linux/version.h>
++#include <linux/compiler.h>
+ #include <linux/usb.h>
  #include <asm/byteorder.h>
  #include <net/sock.h>
- 
-+#define USBIP_VERSION "1.0.0"
-+
- /**
-  * usbip_udbg - print debug messages if CONFIG_USB_IP_DEBUG is defined
+@@ -37,23 +37,21 @@
   * @fmt:
-diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
-index 5a07431..bfb0b5f 100644
---- a/drivers/staging/usbip/vhci_hcd.c
-+++ b/drivers/staging/usbip/vhci_hcd.c
-@@ -23,7 +23,6 @@
- #include "usbip_common.h"
- #include "vhci.h"
+  * @args:
+  */
+-
+ #ifdef CONFIG_USB_IP_DEBUG_ENABLE
  
--#define DRIVER_VERSION "1.0"
- #define DRIVER_AUTHOR "Takahiro Hirofuchi"
- #define DRIVER_DESC "Virtual Host Controller Interface Driver for USB/IP"
+ #define usbip_udbg(fmt, args...)					\
+ 	do {								\
+ 		printk(KERN_DEBUG "%-10s:(%s,%d) %s: " fmt,		\
+-			(in_interrupt() ? "interrupt" : (current)->comm),\
+-			__FILE__, __LINE__, __func__, ##args);		\
++		       (in_interrupt() ? "interrupt" : (current)->comm),\
++		       __FILE__, __LINE__, __func__, ##args);		\
+ 	} while (0)
  
-@@ -1231,7 +1230,7 @@ static int __init vhci_init(void)
- 		return -ENODEV;
+ #else  /* CONFIG_USB_IP_DEBUG_ENABLE */
  
- 	printk(KERN_INFO KBUILD_MODNAME ": %s, %s\n", driver_name,
--	       DRIVER_VERSION);
-+	       USBIP_VERSION);
+-#define usbip_udbg(fmt, args...)		do { } while (0)
++#define usbip_udbg(fmt, args...)	do { } while (0)
  
- 	ret = platform_driver_register(&vhci_driver);
- 	if (ret < 0)
-@@ -1268,4 +1267,4 @@ module_exit(vhci_cleanup);
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
- MODULE_LICENSE("GPL");
--MODULE_VERSION(DRIVER_VERSION);
-+MODULE_VERSION(USBIP_VERSION);
+ #endif /* CONFIG_USB_IP_DEBUG_ENABLE */
+ 
+-
+ enum {
+ 	usbip_debug_xmit	= (1 << 0),
+ 	usbip_debug_sysfs	= (1 << 1),
+@@ -87,16 +85,16 @@ extern struct device_attribute dev_attr_usbip_debug;
+ #define usbip_dbg_with_flag(flag, fmt, args...)		\
+ 	do {						\
+ 		if (flag & usbip_debug_flag)		\
+-			usbip_udbg(fmt , ##args);		\
++			usbip_udbg(fmt , ##args);	\
+ 	} while (0)
+ 
+-#define usbip_dbg_sysfs(fmt, args...)		\
++#define usbip_dbg_sysfs(fmt, args...) \
+ 	usbip_dbg_with_flag(usbip_debug_sysfs, fmt , ##args)
+-#define usbip_dbg_xmit(fmt, args...)		\
++#define usbip_dbg_xmit(fmt, args...) \
+ 	usbip_dbg_with_flag(usbip_debug_xmit, fmt , ##args)
+-#define usbip_dbg_urb(fmt, args...)		\
++#define usbip_dbg_urb(fmt, args...) \
+ 	usbip_dbg_with_flag(usbip_debug_urb, fmt , ##args)
+-#define usbip_dbg_eh(fmt, args...)		\
++#define usbip_dbg_eh(fmt, args...) \
+ 	usbip_dbg_with_flag(usbip_debug_eh, fmt , ##args)
+ 
+ #define usbip_dbg_vhci_rh(fmt, args...)	\
+@@ -107,17 +105,16 @@ extern struct device_attribute dev_attr_usbip_debug;
+ 	usbip_dbg_with_flag(usbip_debug_vhci_rx, fmt , ##args)
+ #define usbip_dbg_vhci_tx(fmt, args...)	\
+ 	usbip_dbg_with_flag(usbip_debug_vhci_tx, fmt , ##args)
+-#define usbip_dbg_vhci_sysfs(fmt, args...)	\
++#define usbip_dbg_vhci_sysfs(fmt, args...) \
+ 	usbip_dbg_with_flag(usbip_debug_vhci_sysfs, fmt , ##args)
+ 
+-#define usbip_dbg_stub_cmp(fmt, args...)	\
++#define usbip_dbg_stub_cmp(fmt, args...) \
+ 	usbip_dbg_with_flag(usbip_debug_stub_cmp, fmt , ##args)
+-#define usbip_dbg_stub_rx(fmt, args...)	\
++#define usbip_dbg_stub_rx(fmt, args...) \
+ 	usbip_dbg_with_flag(usbip_debug_stub_rx, fmt , ##args)
+-#define usbip_dbg_stub_tx(fmt, args...)	\
++#define usbip_dbg_stub_tx(fmt, args...) \
+ 	usbip_dbg_with_flag(usbip_debug_stub_tx, fmt , ##args)
+ 
+-
+ /**
+  * usbip_uerr - print error messages
+  * @fmt:
+@@ -126,8 +123,8 @@ extern struct device_attribute dev_attr_usbip_debug;
+ #define usbip_uerr(fmt, args...)					\
+ 	do {								\
+ 		printk(KERN_ERR "%-10s: ***ERROR*** (%s,%d) %s: " fmt,	\
+-			(in_interrupt() ? "interrupt" : (current)->comm),\
+-			__FILE__, __LINE__, __func__, ##args);	\
++		       (in_interrupt() ? "interrupt" : (current)->comm),\
++		       __FILE__, __LINE__, __func__, ##args);		\
+ 	} while (0)
+ 
+ /**
+@@ -140,7 +137,6 @@ extern struct device_attribute dev_attr_usbip_debug;
+ 		printk(KERN_INFO "usbip: " fmt , ## args);	\
+ 	} while (0)
+ 
+-
+ /*-------------------------------------------------------------------------*/
+ 
+ /*
+@@ -185,7 +181,7 @@ struct usbip_header_basic {
+ #define USBIP_DIR_IN	1
+ 	__u32 direction;
+ 	__u32 ep;     /* endpoint number */
+-} __attribute__ ((packed));
++} __packed;
+ 
+ /*
+  * An additional header for a CMD_SUBMIT packet.
+@@ -212,43 +208,40 @@ struct usbip_header_cmd_submit {
+ 
+ 	/* set setup packet data for a CTRL request */
+ 	unsigned char setup[8];
+-} __attribute__ ((packed));
++} __packed;
+ 
+ /*
+  * An additional header for a RET_SUBMIT packet.
+  */
+ struct usbip_header_ret_submit {
+ 	__s32 status;
+-	__s32 actual_length; /* returned data length */
+-	__s32 start_frame; /* ISO and INT */
+-	__s32 number_of_packets;  /* ISO only */
+-	__s32 error_count; /* ISO only */
+-} __attribute__ ((packed));
++	__s32 actual_length;		/* returned data length */
++	__s32 start_frame;		/* ISO and INT */
++	__s32 number_of_packets;	/* ISO only */
++	__s32 error_count;		/* ISO only */
++} __packed;
+ 
+ /*
+  * An additional header for a CMD_UNLINK packet.
+  */
+ struct usbip_header_cmd_unlink {
+-	__u32 seqnum; /* URB's seqnum which will be unlinked */
+-} __attribute__ ((packed));
+-
++	__u32 seqnum;			/* URB's seqnum that will be unlinked */
++} __packed;
+ 
+ /*
+  * An additional header for a RET_UNLINK packet.
+  */
+ struct usbip_header_ret_unlink {
+ 	__s32 status;
+-} __attribute__ ((packed));
+-
++} __packed;
+ 
+ /* the same as usb_iso_packet_descriptor but packed for pdu */
+ struct usbip_iso_packet_descriptor {
+ 	__u32 offset;
+-	__u32 length;            /* expected length */
++	__u32 length;			/* expected length */
+ 	__u32 actual_length;
+ 	__u32 status;
+-} __attribute__ ((packed));
+-
++} __packed;
+ 
+ /*
+  * All usbip packets use a common header to keep code simple.
+@@ -262,18 +255,13 @@ struct usbip_header {
+ 		struct usbip_header_cmd_unlink	cmd_unlink;
+ 		struct usbip_header_ret_unlink	ret_unlink;
+ 	} u;
+-} __attribute__ ((packed));
+-
+-
+-
++} __packed;
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-
+ int usbip_xmit(int, struct socket *, char *, int, int);
+ int usbip_sendmsg(struct socket *, struct msghdr *, int);
+ 
+-
+ static inline int interface_to_busnum(struct usb_interface *interface)
+ {
+ 	struct usb_device *udev = interface_to_usbdev(interface);
+@@ -304,7 +292,6 @@ int set_sockaddr(struct socket *socket, struct sockaddr_storage *ss);
+ void usbip_dump_urb(struct urb *purb);
+ void usbip_dump_header(struct usbip_header *pdu);
+ 
+-
+ struct usbip_device;
+ 
+ enum usbip_side {
+@@ -331,7 +318,6 @@ enum usbip_status {
+ /* a common structure for stub_device and vhci_device */
+ struct usbip_device {
+ 	enum usbip_side side;
+-
+ 	enum usbip_status status;
+ 
+ 	/* lock for status */
+@@ -370,9 +356,8 @@ struct usbip_device {
+ 	} eh_ops;
+ };
+ 
+-
+ void usbip_pack_pdu(struct usbip_header *pdu, struct urb *urb, int cmd,
+-								int pack);
++		    int pack);
+ 
+ void usbip_header_correct_endian(struct usbip_header *pdu, int send);
+ /* some members of urb must be substituted before. */
+@@ -383,12 +368,10 @@ int usbip_recv_iso(struct usbip_device *ud, struct urb *urb);
+ int usbip_pad_iso(struct usbip_device *ud, struct urb *urb);
+ void *usbip_alloc_iso_desc_pdu(struct urb *urb, ssize_t *bufflen);
+ 
+-
+ /* usbip_event.c */
+ int usbip_start_eh(struct usbip_device *ud);
+ void usbip_stop_eh(struct usbip_device *ud);
+ void usbip_event_add(struct usbip_device *ud, unsigned long event);
+ int usbip_event_happened(struct usbip_device *ud);
+ 
+-
+ #endif
 -- 
 1.7.5.1
 
