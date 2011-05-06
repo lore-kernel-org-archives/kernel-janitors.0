@@ -1,37 +1,55 @@
-From: Keith Packard <keithp@keithp.com>
-Date: Wed, 25 May 2011 15:47:34 +0000
-Subject: Re: [patch] drm/i915: fix if statement in ivybridge irq handler
-Message-Id: <yunfwo2hje1.fsf@aiko.keithp.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-=-="
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 06 May 2011 10:47:40 +0000
+Subject: [PATCH 00/16] staging: usbip: cleanup
+Message-Id: <cover.1304676742.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110525095656.GC1358@shale.localdomain>
-In-Reply-To: <20110525095656.GC1358@shale.localdomain>
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---=-=-=
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-On Wed, 25 May 2011 12:56:56 +0300, Dan Carpenter <error27@gmail.com> wrote:
+Here is a set of extremely trivial changes; more substantial changes
+will follow.
 
-> The extra semicolon was not intended.
->=20
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Thanks,
+matt
 
-Merged to drm-intel-next.
+matt mooney (16):
+  staging: usbip: stub_dev.c: coding style cleanup
+  staging: usbip: stub_main.c: coding style cleanup
+  staging: usbip: stub_rx.c: coding style cleanup
+  staging: usbip: stub_tx.c: coding style cleanup
+  staging: usbip: usbip_common.h: coding style cleanup
+  staging: usbip: usbip_common.c: coding style cleanup
+  staging: usbip: usbip_event.c: coding style cleanup
+  staging: usbip: stub.h: coding style cleanup
+  staging: usbip: vhci.h: coding style cleanup
+  staging: usbip: vhci_hcd.c: coding style cleanup
+  staging: usbip: vhci_rx.c: coding style cleanup
+  staging: usbip: vhci_sysfs.c: coding style cleanup
+  staging: usbip: vhci_tx.c: coding style cleanup
+  staging: usbip: add break to default case in switch statements
+  staging: usbip: remove section dividers
+  staging: usbip: fixup MODULE_ macros
 
-=2D-=20
-keith.packard@intel.com
+ drivers/staging/usbip/stub.h         |    5 -
+ drivers/staging/usbip/stub_dev.c     |   57 ++--------
+ drivers/staging/usbip/stub_main.c    |   31 +----
+ drivers/staging/usbip/stub_rx.c      |   52 ++++-----
+ drivers/staging/usbip/stub_tx.c      |   68 ++++-------
+ drivers/staging/usbip/usbip_common.c |  138 ++++++++++-------------
+ drivers/staging/usbip/usbip_common.h |   85 +++++---------
+ drivers/staging/usbip/usbip_event.c  |   18 +--
+ drivers/staging/usbip/vhci.h         |   24 +---
+ drivers/staging/usbip/vhci_hcd.c     |  204 +++++++++++++---------------------
+ drivers/staging/usbip/vhci_rx.c      |   49 +++------
+ drivers/staging/usbip/vhci_sysfs.c   |   15 +--
+ drivers/staging/usbip/vhci_tx.c      |   36 ++----
+ 13 files changed, 278 insertions(+), 504 deletions(-)
 
---=-=-=
-Content-Type: application/pgp-signature
+-- 
+1.7.5.1
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iD8DBQFN3SSWQp8BWwlsTdMRAtRJAKDbD44Ziz6rXf4hSDv+c9Juv5MHWQCfTm+y
-cp/lkqc/BccDdJiS9YoA+2M=
-=wGQb
------END PGP SIGNATURE-----
---=-=-=--
