@@ -1,54 +1,107 @@
 From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 20 May 2011 04:37:01 +0000
-Subject: [PATCH 07/12] staging: usbip: usbip_common.c: fix misspelled function name
-Message-Id: <bc5a64e373593174e9eeec9d1be66d782358a9ee.1305866084.git.mfm@muteddisk.com>
+Date: Fri, 06 May 2011 10:47:49 +0000
+Subject: [PATCH 09/16] staging: usbip: vhci.h: coding style cleanup
+Message-Id: <08a41b8854887b0467c9509d61beb64e615bec3e.1304676742.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305866084.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
+References: <cover.1304676742.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Change pakcet to packet in usbip_iso_packet_correct_endian().
+Fix a few alignment issues and remove extraneous lines.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/usbip/usbip_common.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/usbip/vhci.h |   21 +++++++--------------
+ 1 files changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
-index 954d90d..b204e6f 100644
---- a/drivers/staging/usbip/usbip_common.c
-+++ b/drivers/staging/usbip/usbip_common.c
-@@ -627,7 +627,7 @@ void usbip_header_correct_endian(struct usbip_header *pdu, int send)
- }
- EXPORT_SYMBOL_GPL(usbip_header_correct_endian);
+diff --git a/drivers/staging/usbip/vhci.h b/drivers/staging/usbip/vhci.h
+index d3f1e5f..6e17a00 100644
+--- a/drivers/staging/usbip/vhci.h
++++ b/drivers/staging/usbip/vhci.h
+@@ -20,7 +20,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/usb/hcd.h>
  
--static void usbip_iso_pakcet_correct_endian(
-+static void usbip_iso_packet_correct_endian(
- 		struct usbip_iso_packet_descriptor *iso, int send)
+-
+ struct vhci_device {
+ 	struct usb_device *udev;
+ 
+@@ -33,12 +32,11 @@ struct vhci_device {
+ 	/* speed of a remote device */
+ 	enum usb_device_speed speed;
+ 
+-	/*  vhci root-hub port to which this device is attached  */
++	/* vhci root-hub port to which this device is attached */
+ 	__u32 rhport;
+ 
+ 	struct usbip_device ud;
+ 
+-
+ 	/* lock for the below link lists */
+ 	spinlock_t priv_lock;
+ 
+@@ -54,7 +52,6 @@ struct vhci_device {
+ 	wait_queue_head_t waitq_tx;
+ };
+ 
+-
+ /* urb->hcpriv, use container_of() */
+ struct vhci_priv {
+ 	unsigned long seqnum;
+@@ -64,7 +61,6 @@ struct vhci_priv {
+ 	struct urb *urb;
+ };
+ 
+-
+ struct vhci_unlink {
+ 	/* seqnum of this request */
+ 	unsigned long seqnum;
+@@ -85,12 +81,12 @@ struct vhci_unlink {
+ 
+ /* for usb_bus.hcpriv */
+ struct vhci_hcd {
+-	spinlock_t	lock;
++	spinlock_t lock;
+ 
+-	u32	port_status[VHCI_NPORTS];
++	u32 port_status[VHCI_NPORTS];
+ 
+-	unsigned	resuming:1;
+-	unsigned long	re_timeout;
++	unsigned resuming:1;
++	unsigned long re_timeout;
+ 
+ 	atomic_t seqnum;
+ 
+@@ -102,11 +98,9 @@ struct vhci_hcd {
+ 	struct vhci_device vdev[VHCI_NPORTS];
+ };
+ 
+-
+ extern struct vhci_hcd *the_controller;
+ extern struct attribute_group dev_attr_group;
+ 
+-
+ /*-------------------------------------------------------------------------*/
+ /* prototype declaration */
+ 
+@@ -116,10 +110,9 @@ void rh_port_disconnect(int rhport);
+ int vhci_rx_loop(void *data);
+ int vhci_tx_loop(void *data);
+ 
+-struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev,
+-					    __u32 seqnum);
++struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev, __u32 seqnum);
+ 
+-#define hardware		(&the_controller->pdev.dev)
++#define hardware (&the_controller->pdev.dev)
+ 
+ static inline struct vhci_device *port_to_vdev(__u32 port)
  {
- 	/* does not need all members. but copy all simply. */
-@@ -677,7 +677,7 @@ void *usbip_alloc_iso_desc_pdu(struct urb *urb, ssize_t *bufflen)
- 		iso = buff + (i * sizeof(*iso));
- 
- 		usbip_pack_iso(iso, &urb->iso_frame_desc[i], 1);
--		usbip_iso_pakcet_correct_endian(iso, 1);
-+		usbip_iso_packet_correct_endian(iso, 1);
- 	}
- 
- 	*bufflen = size;
-@@ -728,7 +728,7 @@ int usbip_recv_iso(struct usbip_device *ud, struct urb *urb)
- 	for (i = 0; i < np; i++) {
- 		iso = buff + (i * sizeof(*iso));
- 
--		usbip_iso_pakcet_correct_endian(iso, 0);
-+		usbip_iso_packet_correct_endian(iso, 0);
- 		usbip_pack_iso(iso, &urb->iso_frame_desc[i], 0);
- 		total_length += urb->iso_frame_desc[i].actual_length;
- 	}
 -- 
 1.7.5.1
 
