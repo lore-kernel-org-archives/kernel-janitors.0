@@ -1,305 +1,130 @@
-From: matt mooney <mfmooney@gmail.com>
-Date: Wed, 11 May 2011 08:54:17 +0000
-Subject: [PATCH 05/12] staging: usbip: remove unnecessary lines and extra return statements
-Message-Id: <54877bad7238e44cdf07dab3bcbf88210abbb0e9.1305103212.git.mfm@muteddisk.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 06 May 2011 10:47:53 +0000
+Subject: [PATCH 13/16] staging: usbip: vhci_tx.c: coding style cleanup
+Message-Id: <3ace7eca2f5c9073a1d64e8935a504577bb569d0.1304676742.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305103212.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1305103212.git.mfm@muteddisk.com>
+References: <cover.1304676742.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Also, fix a few alignment issues that were originally missed.
+Fix a few alignment issues and remove extraneous lines.
+Use ternary operator for pdup->base.direction assignment.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/usbip/stub.h         |    1 +
- drivers/staging/usbip/stub_dev.c     |    6 ------
- drivers/staging/usbip/stub_main.c    |   13 -------------
- drivers/staging/usbip/stub_tx.c      |   13 ++++++-------
- drivers/staging/usbip/usbip_common.c |   13 ++++++-------
- drivers/staging/usbip/usbip_common.h |    2 +-
- drivers/staging/usbip/vhci_hcd.c     |    9 +++------
- drivers/staging/usbip/vhci_rx.c      |    2 --
- 8 files changed, 17 insertions(+), 42 deletions(-)
+ drivers/staging/usbip/vhci_tx.c |   32 +++++++++++---------------------
+ 1 files changed, 11 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/staging/usbip/stub.h b/drivers/staging/usbip/stub.h
-index 3d60394..a3adc2c 100644
---- a/drivers/staging/usbip/stub.h
-+++ b/drivers/staging/usbip/stub.h
-@@ -77,6 +77,7 @@ struct stub_unlink {
- };
+diff --git a/drivers/staging/usbip/vhci_tx.c b/drivers/staging/usbip/vhci_tx.c
+index d9ab49d..6ececa8 100644
+--- a/drivers/staging/usbip/vhci_tx.c
++++ b/drivers/staging/usbip/vhci_tx.c
+@@ -23,23 +23,20 @@
+ #include "usbip_common.h"
+ #include "vhci.h"
  
- #define BUSID_SIZE 20
-+
- struct bus_id_priv {
- 	char name[BUSID_SIZE];
- 	char status;
-diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
-index 0c0d838..ae29a83 100644
---- a/drivers/staging/usbip/stub_dev.c
-+++ b/drivers/staging/usbip/stub_dev.c
-@@ -249,7 +249,6 @@ static void stub_device_reset(struct usbip_device *ud)
- 	ret = usb_lock_device_for_reset(udev, sdev->interface);
- 	if (ret < 0) {
- 		dev_err(&udev->dev, "lock for reset\n");
 -
- 		spin_lock(&ud->lock);
- 		ud->status = SDEV_ST_ERROR;
- 		spin_unlock(&ud->lock);
-@@ -258,22 +257,17 @@ static void stub_device_reset(struct usbip_device *ud)
+ static void setup_cmd_submit_pdu(struct usbip_header *pdup,  struct urb *urb)
+ {
+ 	struct vhci_priv *priv = ((struct vhci_priv *)urb->hcpriv);
+ 	struct vhci_device *vdev = priv->vdev;
  
- 	/* try to reset the device */
- 	ret = usb_reset_device(udev);
--
- 	usb_unlock_device(udev);
+ 	usbip_dbg_vhci_tx("URB, local devnum %u, remote devid %u\n",
+-				usb_pipedevice(urb->pipe), vdev->devid);
++			  usb_pipedevice(urb->pipe), vdev->devid);
  
- 	spin_lock(&ud->lock);
- 	if (ret) {
- 		dev_err(&udev->dev, "device reset\n");
- 		ud->status = SDEV_ST_ERROR;
--
- 	} else {
- 		dev_info(&udev->dev, "device reset\n");
- 		ud->status = SDEV_ST_AVAILABLE;
--
- 	}
- 	spin_unlock(&ud->lock);
--
--	return;
- }
+-	pdup->base.command = USBIP_CMD_SUBMIT;
+-	pdup->base.seqnum  = priv->seqnum;
+-	pdup->base.devid   = vdev->devid;
+-	if (usb_pipein(urb->pipe))
+-		pdup->base.direction = USBIP_DIR_IN;
+-	else
+-		pdup->base.direction = USBIP_DIR_OUT;
+-	pdup->base.ep      = usb_pipeendpoint(urb->pipe);
++	pdup->base.command   = USBIP_CMD_SUBMIT;
++	pdup->base.seqnum    = priv->seqnum;
++	pdup->base.devid     = vdev->devid;
++	pdup->base.direction = usb_pipein(urb->pipe) ?
++		USBIP_DIR_IN : USBIP_DIR_OUT;
++	pdup->base.ep	     = usb_pipeendpoint(urb->pipe);
  
- static void stub_device_unusable(struct usbip_device *ud)
-diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
-index 95f2e43..5de33c2 100644
---- a/drivers/staging/usbip/stub_main.c
-+++ b/drivers/staging/usbip/stub_main.c
-@@ -25,9 +25,7 @@
- #define DRIVER_AUTHOR "Takahiro Hirofuchi"
- #define DRIVER_DESC "Stub Driver for USB/IP"
+ 	usbip_pack_pdu(pdup, urb, USBIP_CMD_SUBMIT, 1);
  
--/* stub_priv is allocated from stub_priv_cache */
- struct kmem_cache *stub_priv_cache;
--
- /*
-  * busid_tables defines matching busids that usbip can grab. A user can change
-  * dynamically what device is locally used and what device is exported to a
-@@ -42,7 +40,6 @@ int match_busid(const char *busid)
- 	int i;
- 
- 	spin_lock(&busid_table_lock);
--
- 	for (i = 0; i < MAX_BUSID; i++)
- 		if (busid_table[i].name[0])
- 			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
-@@ -50,7 +47,6 @@ int match_busid(const char *busid)
- 				spin_unlock(&busid_table_lock);
- 				return 0;
- 			}
--
- 	spin_unlock(&busid_table_lock);
- 
- 	return 1;
-@@ -61,7 +57,6 @@ struct bus_id_priv *get_busid_priv(const char *busid)
- 	int i;
- 
- 	spin_lock(&busid_table_lock);
--
- 	for (i = 0; i < MAX_BUSID; i++)
- 		if (busid_table[i].name[0])
- 			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
-@@ -69,7 +64,6 @@ struct bus_id_priv *get_busid_priv(const char *busid)
- 				spin_unlock(&busid_table_lock);
- 				return &(busid_table[i]);
- 			}
--
- 	spin_unlock(&busid_table_lock);
- 
+@@ -65,8 +62,6 @@ static struct vhci_priv *dequeue_from_priv_tx(struct vhci_device *vdev)
  	return NULL;
-@@ -81,15 +75,12 @@ static ssize_t show_match_busid(struct device_driver *drv, char *buf)
- 	char *out = buf;
- 
- 	spin_lock(&busid_table_lock);
--
- 	for (i = 0; i < MAX_BUSID; i++)
- 		if (busid_table[i].name[0])
- 			out += sprintf(out, "%s ", busid_table[i].name);
--
- 	spin_unlock(&busid_table_lock);
- 
- 	out += sprintf(out, "\n");
--
- 	return out - buf;
  }
  
-@@ -101,7 +92,6 @@ static int add_match_busid(char *busid)
- 		return 0;
- 
- 	spin_lock(&busid_table_lock);
 -
- 	for (i = 0; i < MAX_BUSID; i++)
- 		if (!busid_table[i].name[0]) {
- 			strncpy(busid_table[i].name, busid, BUSID_SIZE);
-@@ -111,7 +101,6 @@ static int add_match_busid(char *busid)
- 			spin_unlock(&busid_table_lock);
- 			return 0;
+-
+ static int vhci_send_cmd_submit(struct vhci_device *vdev)
+ {
+ 	struct vhci_priv *priv = NULL;
+@@ -90,7 +85,6 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
+ 
+ 		usbip_dbg_vhci_tx("setup txdata urb %p\n", urb);
+ 
+-
+ 		/* 1. setup usbip_header */
+ 		setup_cmd_submit_pdu(&pdu_header, urb);
+ 		usbip_header_correct_endian(&pdu_header, 1);
+@@ -125,7 +119,7 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
+ 		ret = kernel_sendmsg(vdev->ud.tcp_socket, &msg, iov, 3, txsize);
+ 		if (ret != txsize) {
+ 			usbip_uerr("sendmsg failed!, retval %d for %zd\n", ret,
+-									txsize);
++				   txsize);
+ 			kfree(iso_buffer);
+ 			usbip_event_add(&vdev->ud, VDEV_EVENT_ERROR_TCP);
+ 			return -1;
+@@ -140,7 +134,6 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
+ 	return total_size;
+ }
+ 
+-
+ /*-------------------------------------------------------------------------*/
+ 
+ static struct vhci_unlink *dequeue_from_unlink_tx(struct vhci_device *vdev)
+@@ -182,7 +175,6 @@ static int vhci_send_cmd_unlink(struct vhci_device *vdev)
+ 
+ 		usbip_dbg_vhci_tx("setup cmd unlink, %lu\n", unlink->seqnum);
+ 
+-
+ 		/* 1. setup usbip_header */
+ 		pdu_header.base.command = USBIP_CMD_UNLINK;
+ 		pdu_header.base.seqnum  = unlink->seqnum;
+@@ -204,7 +196,6 @@ static int vhci_send_cmd_unlink(struct vhci_device *vdev)
+ 			return -1;
  		}
--
- 	spin_unlock(&busid_table_lock);
  
- 	return -1;
-@@ -122,7 +111,6 @@ int del_match_busid(char *busid)
- 	int i;
- 
- 	spin_lock(&busid_table_lock);
 -
- 	for (i = 0; i < MAX_BUSID; i++)
- 		if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
- 			/* found */
-@@ -135,7 +123,6 @@ int del_match_busid(char *busid)
- 			spin_unlock(&busid_table_lock);
- 			return 0;
- 		}
--
- 	spin_unlock(&busid_table_lock);
+ 		usbip_dbg_vhci_tx("send txdata\n");
  
- 	return -1;
-diff --git a/drivers/staging/usbip/stub_tx.c b/drivers/staging/usbip/stub_tx.c
-index 28426f5..1967fff 100644
---- a/drivers/staging/usbip/stub_tx.c
-+++ b/drivers/staging/usbip/stub_tx.c
-@@ -96,13 +96,12 @@ void stub_complete(struct urb *urb)
- 
- 	/* link a urb to the queue of tx. */
- 	spin_lock_irqsave(&sdev->priv_lock, flags);
--
- 	if (priv->unlinking) {
- 		stub_enqueue_ret_unlink(sdev, priv->seqnum, urb->status);
- 		stub_free_priv_and_urb(priv);
--	} else
-+	} else {
- 		list_move_tail(&priv->list, &sdev->priv_tx);
--
-+	}
- 	spin_unlock_irqrestore(&sdev->priv_lock, flags);
- 
- 	/* wake up tx_thread */
-@@ -112,10 +111,10 @@ void stub_complete(struct urb *urb)
- static inline void setup_base_pdu(struct usbip_header_basic *base,
- 				  __u32 command, __u32 seqnum)
- {
--	base->command = command;
--	base->seqnum  = seqnum;
--	base->devid   = 0;
--	base->ep      = 0;
-+	base->command	= command;
-+	base->seqnum	= seqnum;
-+	base->devid	= 0;
-+	base->ep	= 0;
- 	base->direction = 0;
+ 		total_size += txsize;
+@@ -213,7 +204,6 @@ static int vhci_send_cmd_unlink(struct vhci_device *vdev)
+ 	return total_size;
  }
  
-diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
-index fcfb740..fbf549c 100644
---- a/drivers/staging/usbip/usbip_common.c
-+++ b/drivers/staging/usbip/usbip_common.c
-@@ -63,9 +63,9 @@ static void usbip_dump_buffer(char *buff, int bufflen)
- static void usbip_dump_pipe(unsigned int p)
- {
- 	unsigned char type = usb_pipetype(p);
--	unsigned char ep = usb_pipeendpoint(p);
--	unsigned char dev = usb_pipedevice(p);
--	unsigned char dir = usb_pipein(p);
-+	unsigned char ep   = usb_pipeendpoint(p);
-+	unsigned char dev  = usb_pipedevice(p);
-+	unsigned char dir  = usb_pipein(p);
- 
- 	pr_debug("dev(%d) ep(%d) [%s] ", dev, ep, dir ? "IN" : "OUT");
- 
-@@ -334,8 +334,8 @@ void usbip_dump_header(struct usbip_header *pdu)
- EXPORT_SYMBOL_GPL(usbip_dump_header);
- 
- /* Send/receive messages over TCP/IP. I refer drivers/block/nbd.c */
--int usbip_xmit(int send, struct socket *sock, char *buf,
--	       int size, int msg_flags)
-+int usbip_xmit(int send, struct socket *sock, char *buf, int size,
-+	       int msg_flags)
- {
- 	int result;
- 	struct msghdr msg;
-@@ -628,8 +628,7 @@ void usbip_header_correct_endian(struct usbip_header *pdu, int send)
- EXPORT_SYMBOL_GPL(usbip_header_correct_endian);
- 
- static void usbip_iso_pakcet_correct_endian(
--	struct usbip_iso_packet_descriptor *iso,
--	int send)
-+		struct usbip_iso_packet_descriptor *iso, int send)
- {
- 	/* does not need all members. but copy all simply. */
- 	if (send) {
-diff --git a/drivers/staging/usbip/usbip_common.h b/drivers/staging/usbip/usbip_common.h
-index 4a641c5..83f8c1e 100644
---- a/drivers/staging/usbip/usbip_common.h
-+++ b/drivers/staging/usbip/usbip_common.h
-@@ -65,7 +65,7 @@ enum {
- #define usbip_dbg_flag_vhci_tx	(usbip_debug_flag & usbip_debug_vhci_tx)
- #define usbip_dbg_flag_stub_rx	(usbip_debug_flag & usbip_debug_stub_rx)
- #define usbip_dbg_flag_stub_tx	(usbip_debug_flag & usbip_debug_stub_tx)
--#define usbip_dbg_flag_vhci_sysfs   (usbip_debug_flag & usbip_debug_vhci_sysfs)
-+#define usbip_dbg_flag_vhci_sysfs  (usbip_debug_flag & usbip_debug_vhci_sysfs)
- 
- extern unsigned long usbip_debug_flag;
- extern struct device_attribute dev_attr_usbip_debug;
-diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
-index a118227..069a7c7 100644
---- a/drivers/staging/usbip/vhci_hcd.c
-+++ b/drivers/staging/usbip/vhci_hcd.c
-@@ -344,9 +344,9 @@ static int vhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
- 		 *                                   */
- 		if (dum->resuming && time_after(jiffies, dum->re_timeout)) {
- 			dum->port_status[rhport] |-					(1 << USB_PORT_FEAT_C_SUSPEND);
-+				(1 << USB_PORT_FEAT_C_SUSPEND);
- 			dum->port_status[rhport] &-					~(1 << USB_PORT_FEAT_SUSPEND);
-+				~(1 << USB_PORT_FEAT_SUSPEND);
- 			dum->resuming = 0;
- 			dum->re_timeout = 0;
- 			/* if (dum->driver && dum->driver->resume) {
-@@ -639,9 +639,7 @@ no_need_xmit:
- 	usb_hcd_unlink_urb_from_ep(hcd, urb);
- no_need_unlink:
- 	spin_unlock_irqrestore(&the_controller->lock, flags);
 -
- 	usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb, urb->status);
--
- 	return ret;
- }
+ /*-------------------------------------------------------------------------*/
  
-@@ -1033,9 +1031,8 @@ static int vhci_bus_resume(struct usb_hcd *hcd)
- 		hcd->state = HC_STATE_RUNNING;
+ int vhci_tx_loop(void *data)
+@@ -229,9 +219,9 @@ int vhci_tx_loop(void *data)
+ 			break;
+ 
+ 		wait_event_interruptible(vdev->waitq_tx,
+-				(!list_empty(&vdev->priv_tx) ||
+-				 !list_empty(&vdev->unlink_tx) ||
+-				 kthread_should_stop()));
++					 (!list_empty(&vdev->priv_tx) ||
++					  !list_empty(&vdev->unlink_tx) ||
++					  kthread_should_stop()));
+ 
+ 		usbip_dbg_vhci_tx("pending urbs ?, now wake up\n");
  	}
- 	spin_unlock_irq(&vhci->lock);
--	return rc;
- 
--	return 0;
-+	return rc;
- }
- 
- #else
-diff --git a/drivers/staging/usbip/vhci_rx.c b/drivers/staging/usbip/vhci_rx.c
-index e42ce9d..09c44ab 100644
---- a/drivers/staging/usbip/vhci_rx.c
-+++ b/drivers/staging/usbip/vhci_rx.c
-@@ -179,8 +179,6 @@ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
- 	}
- 
- 	kfree(unlink);
--
--	return;
- }
- 
- static int vhci_priv_tx_empty(struct vhci_device *vdev)
 -- 
 1.7.5.1
 
