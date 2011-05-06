@@ -1,184 +1,215 @@
-From: mfmooney@gmail.com
-Date: Thu, 12 May 2011 05:33:44 +0000
-Subject: [PATCH 2/2] staging: usbip: edit Kconfig and rename CONFIG options
-Message-Id: <b6b196f84ae6b8f3c74ae20f4096b556e96503ee.1305178390.git.mfm@muteddisk.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 06 May 2011 10:47:51 +0000
+Subject: [PATCH 11/16] staging: usbip: vhci_rx.c: coding style cleanup
+Message-Id: <094477ed7e0cab360d865d4ead28180f77077b1c.1304676742.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d889ac7da74d0a6d438b2e0855a76fc5e5299362.1305178390.git.mfm@muteddisk.com>
-In-Reply-To: <d889ac7da74d0a6d438b2e0855a76fc5e5299362.1305178390.git.mfm@muteddisk.com>
+References: <cover.1304676742.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: matt mooney <mfm@muteddisk.com>
-
-Change modules usbip_common_mod to usbip-core and usbip to usbip-host;
-edit configuration option help text; rename CONFIG options to use a
-USBIP prefix and change COMMON to CORE in both the Kconfig and
-Makefiles; edit the menu entries; and edit the driver descriptions.
+Fix alignment for consistency and remove extraneous lines.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/Makefile             |    2 +-
- drivers/staging/usbip/Kconfig        |   52 +++++++++++++++++----------------
- drivers/staging/usbip/Makefile       |   12 ++++----
- drivers/staging/usbip/stub_main.c    |    2 +-
- drivers/staging/usbip/usbip_common.c |    4 +-
- drivers/staging/usbip/vhci_hcd.c     |    2 +-
- 6 files changed, 38 insertions(+), 36 deletions(-)
+ drivers/staging/usbip/vhci_rx.c |   44 +++++++++++---------------------------
+ 1 files changed, 13 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-index 7d38925..e150a45 100644
---- a/drivers/staging/Makefile
-+++ b/drivers/staging/Makefile
-@@ -12,7 +12,7 @@ obj-$(CONFIG_VIDEO_CX25821)	+= cx25821/
- obj-$(CONFIG_VIDEO_TM6000)	+= tm6000/
- obj-$(CONFIG_DVB_CXD2099)	+= cxd2099/
- obj-$(CONFIG_LIRC_STAGING)	+= lirc/
--obj-$(CONFIG_USB_IP_COMMON)	+= usbip/
-+obj-$(CONFIG_USBIP_CORE)	+= usbip/
- obj-$(CONFIG_W35UND)		+= winbond/
- obj-$(CONFIG_PRISM2_USB)	+= wlan-ng/
- obj-$(CONFIG_ECHO)		+= echo/
-diff --git a/drivers/staging/usbip/Kconfig b/drivers/staging/usbip/Kconfig
-index 466f0d3..dd13c02 100644
---- a/drivers/staging/usbip/Kconfig
-+++ b/drivers/staging/usbip/Kconfig
-@@ -1,43 +1,45 @@
--config USB_IP_COMMON
--	tristate "USB IP support (EXPERIMENTAL)"
-+config USBIP_CORE
-+	tristate "USB/IP support (EXPERIMENTAL)"
- 	depends on USB && NET && EXPERIMENTAL
- 	default N
- 	---help---
- 	  This enables pushing USB packets over IP to allow remote
--	  machines access to USB devices directly.  For more details,
--	  and links to the userspace utility programs to let this work
--	  properly, see http://usbip.sourceforge.net/.
-+	  machines direct access to USB devices. It provides the
-+	  USB/IP core that is required by both drivers.
- 
--	  To compile this driver as a module, choose M here: the
--	  module will be called usbip_common_mod.
-+	  For more details, and to get the userspace utility
-+	  programs, please see http://usbip.sourceforge.net/.
-+
-+	  To compile this as a module, choose M here: the module will
-+	  be called usbip-core.
- 
- 	  If unsure, say N.
- 
--config USB_IP_VHCI_HCD
--	tristate "USB IP client driver"
--	depends on USB_IP_COMMON
-+config USBIP_VHCI_HCD
-+	tristate "VHCI hcd"
-+	depends on USBIP_CORE
- 	default N
- 	---help---
--	 This enables the USB IP host controller driver which will
--	 run on the client machine.
-+	  This enables the USB/IP virtual host controller driver,
-+	  which is run on the remote machine.
- 
--	 To compile this driver as a module, choose M here: the
--	 module will be called vhci_hcd.
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called vhci-hcd.
- 
--config USB_IP_HOST
--	tristate "USB IP host driver"
--	depends on USB_IP_COMMON
-+config USBIP_HOST
-+	tristate "Host driver"
-+	depends on USBIP_CORE
- 	default N
- 	---help---
--	 This enables the USB IP device driver which will run on the
--	 host machine.
-+	  This enables the USB/IP host driver, which is run on the
-+	  machine that is sharing the USB devices.
- 
--	 To compile this driver as a module, choose M here: the
--	 module will be called usbip.
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called usbip-host.
- 
--config USB_IP_DEBUG
--	bool "USB/IP debug messages"
--	depends on USB_IP_COMMON
-+config USBIP_DEBUG
-+	bool "Debug messages for USB/IP"
-+	depends on USBIP_CORE
- 	default N
- 	---help---
--	  This enables the debug messages from the USB-IP drivers.
-+	  This enables the debug messages from the USB/IP drivers.
-diff --git a/drivers/staging/usbip/Makefile b/drivers/staging/usbip/Makefile
-index a43a890..9ecd615 100644
---- a/drivers/staging/usbip/Makefile
-+++ b/drivers/staging/usbip/Makefile
-@@ -1,10 +1,10 @@
--ccflags-$(CONFIG_USB_IP_DEBUG) := -DDEBUG
-+ccflags-$(CONFIG_USBIP_DEBUG) := -DDEBUG
- 
--obj-$(CONFIG_USB_IP_COMMON) += usbip_common_mod.o
--usbip_common_mod-y := usbip_common.o usbip_event.o
-+obj-$(CONFIG_USBIP_CORE) += usbip-core.o
-+usbip-core-y := usbip_common.o usbip_event.o
- 
--obj-$(CONFIG_USB_IP_VHCI_HCD) += vhci-hcd.o
-+obj-$(CONFIG_USBIP_VHCI_HCD) += vhci-hcd.o
- vhci-hcd-y := vhci_sysfs.o vhci_tx.o vhci_rx.o vhci_hcd.o
- 
--obj-$(CONFIG_USB_IP_HOST) += usbip.o
--usbip-y := stub_dev.o stub_main.o stub_rx.o stub_tx.o
-+obj-$(CONFIG_USBIP_HOST) += usbip-host.o
-+usbip-host-y := stub_dev.o stub_main.o stub_rx.o stub_tx.o
-diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
-index 1f8fc5e..5568110 100644
---- a/drivers/staging/usbip/stub_main.c
-+++ b/drivers/staging/usbip/stub_main.c
-@@ -23,7 +23,7 @@
- #include "stub.h"
- 
- #define DRIVER_AUTHOR "Takahiro Hirofuchi"
--#define DRIVER_DESC "Stub Driver for USB/IP"
-+#define DRIVER_DESC "USB/IP Host Driver"
- 
- /* stub_priv is allocated from stub_priv_cache */
- struct kmem_cache *stub_priv_cache;
-diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
-index fb95edf..0f2cd97 100644
---- a/drivers/staging/usbip/usbip_common.c
-+++ b/drivers/staging/usbip/usbip_common.c
-@@ -27,9 +27,9 @@
+diff --git a/drivers/staging/usbip/vhci_rx.c b/drivers/staging/usbip/vhci_rx.c
+index 2ffc96a..61b9fc7 100644
+--- a/drivers/staging/usbip/vhci_rx.c
++++ b/drivers/staging/usbip/vhci_rx.c
+@@ -23,10 +23,8 @@
  #include "usbip_common.h"
- 
- #define DRIVER_AUTHOR "Takahiro Hirofuchi <hirofuchi@users.sourceforge.net>"
--#define DRIVER_DESC "USB/IP Common Driver"
-+#define DRIVER_DESC "USB/IP Core"
- 
--#ifdef CONFIG_USB_IP_DEBUG
-+#ifdef CONFIG_USBIP_DEBUG
- unsigned long usbip_debug_flag = 0xffffffff;
- #else
- unsigned long usbip_debug_flag;
-diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
-index facd58e..fad10c5 100644
---- a/drivers/staging/usbip/vhci_hcd.c
-+++ b/drivers/staging/usbip/vhci_hcd.c
-@@ -28,7 +28,7 @@
  #include "vhci.h"
  
- #define DRIVER_AUTHOR "Takahiro Hirofuchi"
--#define DRIVER_DESC "Virtual Host Controller Interface Driver for USB/IP"
-+#define DRIVER_DESC "USB/IP 'Virtual' Host Controller (VHCI) Driver"
+-
+ /* get URB from transmitted urb queue. caller must hold vdev->priv_lock */
+-struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev,
+-					    __u32 seqnum)
++struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev, __u32 seqnum)
+ {
+ 	struct vhci_priv *priv, *tmp;
+ 	struct urb *urb = NULL;
+@@ -38,12 +36,12 @@ struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev,
+ 			status = urb->status;
  
- /*
-  * TODO
+ 			usbip_dbg_vhci_rx("find urb %p vurb %p seqnum %u\n",
+-				    urb, priv, seqnum);
++					  urb, priv, seqnum);
+ 
+ 			/* TODO: fix logic here to improve indent situtation */
+ 			if (status != -EINPROGRESS) {
+ 				if (status = -ENOENT ||
+-				     status = -ECONNRESET)
++				    status = -ECONNRESET)
+ 					dev_info(&urb->dev->dev,
+ 						 "urb %p was unlinked "
+ 						 "%ssynchronuously.\n", urb,
+@@ -66,36 +64,31 @@ struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev,
+ }
+ 
+ static void vhci_recv_ret_submit(struct vhci_device *vdev,
+-						struct usbip_header *pdu)
++				 struct usbip_header *pdu)
+ {
+ 	struct usbip_device *ud = &vdev->ud;
+ 	struct urb *urb;
+ 
+ 	spin_lock(&vdev->priv_lock);
+-
+ 	urb = pickup_urb_and_free_priv(vdev, pdu->base.seqnum);
+-
+ 	spin_unlock(&vdev->priv_lock);
+ 
+ 	if (!urb) {
+ 		usbip_uerr("cannot find a urb of seqnum %u\n",
+-							pdu->base.seqnum);
++			   pdu->base.seqnum);
+ 		usbip_uinfo("max seqnum %d\n",
+-					atomic_read(&the_controller->seqnum));
++			    atomic_read(&the_controller->seqnum));
+ 		usbip_event_add(ud, VDEV_EVENT_ERROR_TCP);
+ 		return;
+ 	}
+ 
+-
+ 	/* unpack the pdu to a urb */
+ 	usbip_pack_pdu(pdu, urb, USBIP_RET_SUBMIT, 0);
+ 
+-
+ 	/* recv transfer buffer */
+ 	if (usbip_recv_xbuff(ud, urb) < 0)
+ 		return;
+ 
+-
+ 	/* recv iso_packet_descriptor */
+ 	if (usbip_recv_iso(ud, urb) < 0)
+ 		return;
+@@ -107,7 +100,6 @@ static void vhci_recv_ret_submit(struct vhci_device *vdev,
+ 	if (usbip_dbg_flag_vhci_rx)
+ 		usbip_dump_urb(urb);
+ 
+-
+ 	usbip_dbg_vhci_rx("now giveback urb %p\n", urb);
+ 
+ 	spin_lock(&the_controller->lock);
+@@ -116,15 +108,13 @@ static void vhci_recv_ret_submit(struct vhci_device *vdev,
+ 
+ 	usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb, urb->status);
+ 
+-
+ 	usbip_dbg_vhci_rx("Leave\n");
+ 
+ 	return;
+ }
+ 
+-
+ static struct vhci_unlink *dequeue_pending_unlink(struct vhci_device *vdev,
+-		struct usbip_header *pdu)
++						  struct usbip_header *pdu)
+ {
+ 	struct vhci_unlink *unlink, *tmp;
+ 
+@@ -134,7 +124,7 @@ static struct vhci_unlink *dequeue_pending_unlink(struct vhci_device *vdev,
+ 		usbip_uinfo("unlink->seqnum %lu\n", unlink->seqnum);
+ 		if (unlink->seqnum = pdu->base.seqnum) {
+ 			usbip_dbg_vhci_rx("found pending unlink, %lu\n",
+-							unlink->seqnum);
++					  unlink->seqnum);
+ 			list_del(&unlink->list);
+ 
+ 			spin_unlock(&vdev->priv_lock);
+@@ -147,9 +137,8 @@ static struct vhci_unlink *dequeue_pending_unlink(struct vhci_device *vdev,
+ 	return NULL;
+ }
+ 
+-
+ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
+-						struct usbip_header *pdu)
++				 struct usbip_header *pdu)
+ {
+ 	struct vhci_unlink *unlink;
+ 	struct urb *urb;
+@@ -159,14 +148,12 @@ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
+ 	unlink = dequeue_pending_unlink(vdev, pdu);
+ 	if (!unlink) {
+ 		usbip_uinfo("cannot find the pending unlink %u\n",
+-							pdu->base.seqnum);
++			    pdu->base.seqnum);
+ 		return;
+ 	}
+ 
+ 	spin_lock(&vdev->priv_lock);
+-
+ 	urb = pickup_urb_and_free_priv(vdev, unlink->unlink_seqnum);
+-
+ 	spin_unlock(&vdev->priv_lock);
+ 
+ 	if (!urb) {
+@@ -176,7 +163,7 @@ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
+ 		 * back the URB.
+ 		 */
+ 		usbip_uinfo("the urb (seqnum %d) was already given backed\n",
+-							pdu->base.seqnum);
++			    pdu->base.seqnum);
+ 	} else {
+ 		usbip_dbg_vhci_rx("now giveback urb %p\n", urb);
+ 
+@@ -189,7 +176,7 @@ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
+ 		spin_unlock(&the_controller->lock);
+ 
+ 		usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb,
+-								urb->status);
++				     urb->status);
+ 	}
+ 
+ 	kfree(unlink);
+@@ -202,9 +189,7 @@ static int vhci_priv_tx_empty(struct vhci_device *vdev)
+ 	int empty = 0;
+ 
+ 	spin_lock(&vdev->priv_lock);
+-
+ 	empty = list_empty(&vdev->priv_rx);
+-
+ 	spin_unlock(&vdev->priv_lock);
+ 
+ 	return empty;
+@@ -217,7 +202,6 @@ static void vhci_rx_pdu(struct usbip_device *ud)
+ 	struct usbip_header pdu;
+ 	struct vhci_device *vdev = container_of(ud, struct vhci_device, ud);
+ 
+-
+ 	usbip_dbg_vhci_rx("Enter\n");
+ 
+ 	memset(&pdu, 0, sizeof(pdu));
+@@ -245,7 +229,7 @@ static void vhci_rx_pdu(struct usbip_device *ud)
+ 	}
+ 	if (ret != sizeof(pdu)) {
+ 		usbip_uerr("received pdu size is %d, should be %d\n",
+-					ret, (unsigned int)sizeof(pdu));
++			   ret, (unsigned int)sizeof(pdu));
+ 		usbip_event_add(ud, VDEV_EVENT_ERROR_TCP);
+ 		return;
+ 	}
+@@ -270,14 +254,12 @@ static void vhci_rx_pdu(struct usbip_device *ud)
+ 	}
+ }
+ 
+-
+ /*-------------------------------------------------------------------------*/
+ 
+ int vhci_rx_loop(void *data)
+ {
+ 	struct usbip_device *ud = data;
+ 
+-
+ 	while (!kthread_should_stop()) {
+ 		if (usbip_event_happened(ud))
+ 			break;
 -- 
 1.7.5.1
 
