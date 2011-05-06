@@ -1,7 +1,7 @@
 From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 06 May 2011 10:47:44 +0000
-Subject: [PATCH 04/16] staging: usbip: stub_tx.c: coding style cleanup
-Message-Id: <1b65ea26f5738445f69669e55d57b3cc6c88497a.1304676742.git.mfm@muteddisk.com>
+Date: Fri, 06 May 2011 10:47:56 +0000
+Subject: [PATCH 16/16] staging: usbip: fixup MODULE_ macros
+Message-Id: <bc543454026b89f47b088b0e6fb7cf04ba6183a1.1304676742.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <cover.1304676742.git.mfm@muteddisk.com>
 In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
@@ -11,224 +11,97 @@ Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fix alignment for consistency, checkpatch.pl warnings for lines
-over 80 characters, remove extraneous lines, and change conversion
-specifier within a format string to remove warning.
+Modify description and email address for usbip_common_mod; export
+module version number; and modify __init messages slightly.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/usbip/stub_tx.c |   56 ++++++++++++++++-----------------------
- 1 files changed, 23 insertions(+), 33 deletions(-)
+ drivers/staging/usbip/stub_main.c    |    4 ++--
+ drivers/staging/usbip/usbip_common.c |   11 ++++++-----
+ drivers/staging/usbip/vhci_hcd.c     |    4 ++--
+ 3 files changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/usbip/stub_tx.c b/drivers/staging/usbip/stub_tx.c
-index 64a52b2..bbf207d 100644
---- a/drivers/staging/usbip/stub_tx.c
-+++ b/drivers/staging/usbip/stub_tx.c
-@@ -23,7 +23,6 @@
+diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
+index 6634e07..c139f0e 100644
+--- a/drivers/staging/usbip/stub_main.c
++++ b/drivers/staging/usbip/stub_main.c
+@@ -22,7 +22,6 @@
  #include "usbip_common.h"
  #include "stub.h"
  
--
- static void stub_free_priv_and_urb(struct stub_priv *priv)
+-/* Version Information */
+ #define DRIVER_VERSION "1.0"
+ #define DRIVER_AUTHOR "Takahiro Hirofuchi"
+ #define DRIVER_DESC "Stub Driver for USB/IP"
+@@ -279,7 +278,7 @@ static int __init usb_stub_init(void)
+ 		goto error_usb_register;
+ 	}
+ 
+-	printk(KERN_INFO KBUILD_MODNAME ":" DRIVER_DESC ":" DRIVER_VERSION
++	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC " " DRIVER_VERSION
+ 	       "\n");
+ 
+ 	init_busid_table();
+@@ -320,3 +319,4 @@ module_exit(usb_stub_exit);
+ MODULE_AUTHOR(DRIVER_AUTHOR);
+ MODULE_DESCRIPTION(DRIVER_DESC);
+ MODULE_LICENSE("GPL");
++MODULE_VERSION(DRIVER_VERSION);
+diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
+index 5d842f9..b46e9b5 100644
+--- a/drivers/staging/usbip/usbip_common.c
++++ b/drivers/staging/usbip/usbip_common.c
+@@ -23,13 +23,12 @@
+ #include <linux/in.h>
+ #include <linux/kthread.h>
+ #include <linux/slab.h>
++
+ #include "usbip_common.h"
+ 
+-/* version information */
+ #define DRIVER_VERSION "1.0"
+-#define DRIVER_AUTHOR \
+-	"Takahiro Hirofuchi <hirofuchi _at_ users.sourceforge.net>"
+-#define DRIVER_DESC "usbip common driver"
++#define DRIVER_AUTHOR "Takahiro Hirofuchi <hirofuchi@users.sourceforge.net>"
++#define DRIVER_DESC "USB/IP Common Driver"
+ 
+ #ifdef CONFIG_USB_IP_DEBUG_ENABLE
+ unsigned long usbip_debug_flag = 0xffffffff;
+@@ -862,7 +861,8 @@ EXPORT_SYMBOL_GPL(usbip_recv_xbuff);
+ 
+ static int __init usbip_common_init(void)
  {
- 	struct urb *urb = priv->urb;
-@@ -71,28 +70,27 @@ void stub_complete(struct urb *urb)
- 
- 	usbip_dbg_stub_tx("complete! status %d\n", urb->status);
- 
--
- 	switch (urb->status) {
- 	case 0:
- 		/* OK */
- 		break;
- 	case -ENOENT:
- 		usbip_uinfo("stopped by a call of usb_kill_urb() because of"
--					"cleaning up a virtual connection\n");
-+			    "cleaning up a virtual connection\n");
- 		return;
- 	case -ECONNRESET:
- 		usbip_uinfo("unlinked by a call of usb_unlink_urb()\n");
- 		break;
- 	case -EPIPE:
- 		usbip_uinfo("endpoint %d is stalled\n",
--						usb_pipeendpoint(urb->pipe));
-+			    usb_pipeendpoint(urb->pipe));
- 		break;
- 	case -ESHUTDOWN:
- 		usbip_uinfo("device removed?\n");
- 		break;
- 	default:
- 		usbip_uinfo("urb completion with non-zero status %d\n",
--							urb->status);
-+			    urb->status);
- 	}
- 
- 	/* link a urb to the queue of tx. */
-@@ -104,25 +102,23 @@ void stub_complete(struct urb *urb)
- 	} else
- 		list_move_tail(&priv->list, &sdev->priv_tx);
- 
--
- 	spin_unlock_irqrestore(&sdev->priv_lock, flags);
- 
- 	/* wake up tx_thread */
- 	wake_up(&sdev->tx_waitq);
- }
- 
--
- /*-------------------------------------------------------------------------*/
- /* fill PDU */
- 
- static inline void setup_base_pdu(struct usbip_header_basic *base,
--		__u32 command, __u32 seqnum)
-+				  __u32 command, __u32 seqnum)
- {
- 	base->command = command;
- 	base->seqnum  = seqnum;
- 	base->devid   = 0;
- 	base->ep      = 0;
--	base->direction   = 0;
-+	base->direction = 0;
- }
- 
- static void setup_ret_submit_pdu(struct usbip_header *rpdu, struct urb *urb)
-@@ -130,19 +126,16 @@ static void setup_ret_submit_pdu(struct usbip_header *rpdu, struct urb *urb)
- 	struct stub_priv *priv = (struct stub_priv *) urb->context;
- 
- 	setup_base_pdu(&rpdu->base, USBIP_RET_SUBMIT, priv->seqnum);
--
- 	usbip_pack_pdu(rpdu, urb, USBIP_RET_SUBMIT, 1);
- }
- 
- static void setup_ret_unlink_pdu(struct usbip_header *rpdu,
--		struct stub_unlink *unlink)
-+				 struct stub_unlink *unlink)
- {
- 	setup_base_pdu(&rpdu->base, USBIP_RET_UNLINK, unlink->seqnum);
--
- 	rpdu->u.ret_unlink.status = unlink->status;
- }
- 
--
- /*-------------------------------------------------------------------------*/
- /* send RET_SUBMIT */
- 
-@@ -203,7 +196,7 @@ static int stub_send_ret_submit(struct stub_device *sdev)
- 		/* 1. setup usbip_header */
- 		setup_ret_submit_pdu(&pdu_header, urb);
- 		usbip_dbg_stub_tx("setup txdata seqnum: %d urb: %p\n",
--						pdu_header.base.seqnum, urb);
-+				  pdu_header.base.seqnum, urb);
- 		/*usbip_dump_header(pdu_header);*/
- 		usbip_header_correct_endian(&pdu_header, 1);
- 
-@@ -214,14 +207,14 @@ static int stub_send_ret_submit(struct stub_device *sdev)
- 
- 		/* 2. setup transfer buffer */
- 		if (usb_pipein(urb->pipe) &&
--				usb_pipetype(urb->pipe) != PIPE_ISOCHRONOUS &&
--					urb->actual_length > 0) {
-+		    usb_pipetype(urb->pipe) != PIPE_ISOCHRONOUS &&
-+		    urb->actual_length > 0) {
- 			iov[iovnum].iov_base = urb->transfer_buffer;
- 			iov[iovnum].iov_len  = urb->actual_length;
- 			iovnum++;
- 			txsize += urb->actual_length;
- 		} else if (usb_pipein(urb->pipe) &&
--				usb_pipetype(urb->pipe) = PIPE_ISOCHRONOUS) {
-+			   usb_pipetype(urb->pipe) = PIPE_ISOCHRONOUS) {
- 			/*
- 			 * For isochronous packets: actual length is the sum of
- 			 * the actual length of the individual, packets, but as
-@@ -232,18 +225,23 @@ static int stub_send_ret_submit(struct stub_device *sdev)
- 
- 			int i;
- 			for (i = 0; i < urb->number_of_packets; i++) {
--				iov[iovnum].iov_base = urb->transfer_buffer + urb->iso_frame_desc[i].offset;
--				iov[iovnum].iov_len = urb->iso_frame_desc[i].actual_length;
-+				iov[iovnum].iov_base = urb->transfer_buffer +
-+					urb->iso_frame_desc[i].offset;
-+				iov[iovnum].iov_len +					urb->iso_frame_desc[i].actual_length;
- 				iovnum++;
- 				txsize += urb->iso_frame_desc[i].actual_length;
- 			}
- 
- 			if (txsize != sizeof(pdu_header) + urb->actual_length) {
- 				dev_err(&sdev->interface->dev,
--					"actual length of urb (%d) does not match iso packet sizes (%d)\n",
--					urb->actual_length, txsize-sizeof(pdu_header));
-+					"actual length of urb %d does not "
-+					"match iso packet sizes %lu\n",
-+					urb->actual_length,
-+					txsize-sizeof(pdu_header));
- 				kfree(iov);
--				usbip_event_add(&sdev->ud, SDEV_EVENT_ERROR_TCP);
-+				usbip_event_add(&sdev->ud,
-+						SDEV_EVENT_ERROR_TCP);
- 			   return -1;
- 			}
- 		}
-@@ -285,17 +283,14 @@ static int stub_send_ret_submit(struct stub_device *sdev)
- 	}
- 
- 	spin_lock_irqsave(&sdev->priv_lock, flags);
--
- 	list_for_each_entry_safe(priv, tmp, &sdev->priv_free, list) {
- 		stub_free_priv_and_urb(priv);
- 	}
--
- 	spin_unlock_irqrestore(&sdev->priv_lock, flags);
- 
- 	return total_size;
- }
- 
--
- /*-------------------------------------------------------------------------*/
- /* send RET_UNLINK */
- 
-@@ -317,7 +312,6 @@ static struct stub_unlink *dequeue_from_unlink_tx(struct stub_device *sdev)
- 	return NULL;
- }
- 
--
- static int stub_send_ret_unlink(struct stub_device *sdev)
- {
- 	unsigned long flags;
-@@ -358,13 +352,10 @@ static int stub_send_ret_unlink(struct stub_device *sdev)
- 			return -1;
- 		}
- 
--
- 		usbip_dbg_stub_tx("send txdata\n");
--
- 		total_size += txsize;
- 	}
- 
--
- 	spin_lock_irqsave(&sdev->priv_lock, flags);
- 
- 	list_for_each_entry_safe(unlink, tmp, &sdev->unlink_free, list) {
-@@ -377,7 +368,6 @@ static int stub_send_ret_unlink(struct stub_device *sdev)
- 	return total_size;
- }
- 
--
- /*-------------------------------------------------------------------------*/
- 
- int stub_tx_loop(void *data)
-@@ -410,9 +400,9 @@ int stub_tx_loop(void *data)
- 			break;
- 
- 		wait_event_interruptible(sdev->tx_waitq,
--				(!list_empty(&sdev->priv_tx) ||
--				 !list_empty(&sdev->unlink_tx) ||
--				 kthread_should_stop()));
-+					 (!list_empty(&sdev->priv_tx) ||
-+					  !list_empty(&sdev->unlink_tx) ||
-+					  kthread_should_stop()));
- 	}
- 
+-	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC "" DRIVER_VERSION);
++	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC " " DRIVER_VERSION
++	       "\n");
  	return 0;
+ }
+ 
+@@ -877,3 +877,4 @@ module_exit(usbip_common_exit);
+ MODULE_AUTHOR(DRIVER_AUTHOR);
+ MODULE_DESCRIPTION(DRIVER_DESC);
+ MODULE_LICENSE("GPL");
++MODULE_VERSION(DRIVER_VERSION);
+diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
+index da5e73a..5a07431 100644
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -26,7 +26,6 @@
+ #define DRIVER_VERSION "1.0"
+ #define DRIVER_AUTHOR "Takahiro Hirofuchi"
+ #define DRIVER_DESC "Virtual Host Controller Interface Driver for USB/IP"
+-#define DRIVER_LICENCE "GPL"
+ 
+ /*
+  * TODO
+@@ -1268,4 +1267,5 @@ module_exit(vhci_cleanup);
+ 
+ MODULE_AUTHOR(DRIVER_AUTHOR);
+ MODULE_DESCRIPTION(DRIVER_DESC);
+-MODULE_LICENSE(DRIVER_LICENCE);
++MODULE_LICENSE("GPL");
++MODULE_VERSION(DRIVER_VERSION);
 -- 
 1.7.5.1
 
