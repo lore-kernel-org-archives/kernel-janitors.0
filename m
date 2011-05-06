@@ -1,56 +1,117 @@
-From: mfmooney@gmail.com
-Date: Fri, 13 May 2011 00:09:03 +0000
-Subject: [PATCH v2] package: Makefile: fix perf target bug
-Message-Id: <e5dfdb7d9a9909d6f9faa20c45115142ebce2ae2.1305244842.git.mfm@muteddisk.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 06 May 2011 10:47:42 +0000
+Subject: [PATCH 02/16] staging: usbip: stub_main.c: coding style cleanup
+Message-Id: <a0714cc3fdbacd7b8234e92d81151c10d373ad56.1304676742.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <BANLkTimrW=ZG2sGG1Q8QehSnh5rW1eBzGw@mail.gmail.com>
+References: <cover.1304676742.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michal Marek <mmarek@suse.cz>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: matt mooney <mfm@muteddisk.com>
-
-Specify --git-dir and --work-tree when building perf targets to
-allow out-of-tree builds using O=<build-dir>.
-
-The cat command had to be changed to allow proper file name expansion
-of the files listed in MANIFEST.
+Fix alignment for consistency and remove extraneous lines.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
-Okay, so I decided to just go ahead and send this. It removes the --work-tree
-option from the git rev-parse command. I did test it the way you said, without
---work-tree on either statement, but the git archive command fails in that case.
+ drivers/staging/usbip/stub_main.c |   19 ++++++-------------
+ 1 files changed, 6 insertions(+), 13 deletions(-)
 
-Thanks,
-matt
-
- scripts/package/Makefile |    9 ++++++---
- 1 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/package/Makefile b/scripts/package/Makefile
-index 1b7eaea..2747f1f 100644
---- a/scripts/package/Makefile
-+++ b/scripts/package/Makefile
-@@ -118,10 +118,13 @@ perf-tar=perf-$(KERNELVERSION)
+diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
+index 076a7e5..4ba00bb 100644
+--- a/drivers/staging/usbip/stub_main.c
++++ b/drivers/staging/usbip/stub_main.c
+@@ -34,7 +34,6 @@ struct kmem_cache *stub_priv_cache;
  
- quiet_cmd_perf_tar = TAR
-       cmd_perf_tar = \
--git archive --prefix=$(perf-tar)/ HEAD^{tree}                       \
--	$$(cat $(srctree)/tools/perf/MANIFEST) -o $(perf-tar).tar;  \
-+git --git-dir=$(srctree)/.git --work-tree=$(srctree)                \
-+	archive --prefix=$(perf-tar)/ HEAD^{tree}                   \
-+	$(addprefix $(srctree)/,                                    \
-+	  $(shell cat $(srctree)/tools/perf/MANIFEST))              \
-+	-o $(perf-tar).tar;                                         \
- mkdir -p $(perf-tar);                                               \
--git rev-parse HEAD > $(perf-tar)/HEAD;                              \
-+git --git-dir=$(srctree)/.git rev-parse HEAD > $(perf-tar)/HEAD;    \
- tar rf $(perf-tar).tar $(perf-tar)/HEAD;                            \
- rm -r $(perf-tar);                                                  \
- $(if $(findstring tar-src,$@),,                                     \
+ /* Define sysfs entries for the usbip driver */
+ 
+-
+ /*
+  * busid_tables defines matching busids that usbip can grab. A user can change
+  * dynamically what device is locally used and what device is exported to a
+@@ -44,7 +43,6 @@ struct kmem_cache *stub_priv_cache;
+ static struct bus_id_priv busid_table[MAX_BUSID];
+ static spinlock_t busid_table_lock;
+ 
+-
+ int match_busid(const char *busid)
+ {
+ 	int i;
+@@ -148,11 +146,11 @@ int del_match_busid(char *busid)
+ 
+ 	return -1;
+ }
++
+ static void init_busid_table(void)
+ {
+ 	int i;
+ 
+-
+ 	for (i = 0; i < MAX_BUSID; i++) {
+ 		memset(busid_table[i].name, 0, BUSID_SIZE);
+ 		busid_table[i].status = STUB_BUSID_OTHER;
+@@ -160,11 +158,12 @@ static void init_busid_table(void)
+ 		busid_table[i].sdev = NULL;
+ 		busid_table[i].shutdown_busid = 0;
+ 	}
++
+ 	spin_lock_init(&busid_table_lock);
+ }
+ 
+ static ssize_t store_match_busid(struct device_driver *dev, const char *buf,
+-		size_t count)
++				 size_t count)
+ {
+ 	int len;
+ 	char busid[BUSID_SIZE];
+@@ -181,7 +180,6 @@ static ssize_t store_match_busid(struct device_driver *dev, const char *buf,
+ 
+ 	strncpy(busid, buf + 4, BUSID_SIZE);
+ 
+-
+ 	if (!strncmp(buf, "add ", 4)) {
+ 		if (add_match_busid(busid) < 0)
+ 			return -ENOMEM;
+@@ -199,11 +197,8 @@ static ssize_t store_match_busid(struct device_driver *dev, const char *buf,
+ 	} else
+ 		return -EINVAL;
+ }
+-
+ static DRIVER_ATTR(match_busid, S_IRUSR|S_IWUSR, show_match_busid,
+-							store_match_busid);
+-
+-
++		   store_match_busid);
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+@@ -265,14 +260,12 @@ void stub_device_cleanup_urbs(struct stub_device *sdev)
+ 		kmem_cache_free(stub_priv_cache, priv);
+ 
+ 		kfree(urb->transfer_buffer);
+-
+ 		kfree(urb->setup_packet);
+ 
+ 		usb_free_urb(urb);
+ 	}
+ }
+ 
+-
+ /*-------------------------------------------------------------------------*/
+ 
+ static int __init usb_stub_init(void)
+@@ -296,8 +289,8 @@ static int __init usb_stub_init(void)
+ 		goto error_usb_register;
+ 	}
+ 
+-	printk(KERN_INFO KBUILD_MODNAME ":"
+-	       DRIVER_DESC ":" DRIVER_VERSION "\n");
++	printk(KERN_INFO KBUILD_MODNAME ":" DRIVER_DESC ":" DRIVER_VERSION
++	       "\n");
+ 
+ 	init_busid_table();
+ 
 -- 
-1.7.4.4
+1.7.5.1
 
