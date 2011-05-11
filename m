@@ -1,98 +1,270 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Tue, 31 May 2011 07:40:54 +0000
-Subject: Re: [PATCH] arch/arm/mach-omap1/dma.c: Invert calls to
-Message-Id: <20110531074054.GL11352@atomide.com>
+From: matt mooney <mfmooney@gmail.com>
+Date: Wed, 11 May 2011 08:54:15 +0000
+Subject: [PATCH 03/12] staging: usbip: fix header includes
+Message-Id: <56b004a084644ec7e9f632d6633aa34177a59818.1305103212.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1305305170-16922-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1305305170-16922-1-git-send-email-julia@diku.dk>
+References: <cover.1305103212.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305103212.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-* Julia Lawall <julia@diku.dk> [110513 09:42]:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Platform_device_del should be called before platform_device_put, as
-> platform_device_put can delete the structure.
-> 
-> Additionally, improve the error handling code for the call to ioremap, so
-> that it calls platform_device_put.
-> 
-> The semantic match that finds this problem is:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e1,e2;
-> @@
-> 
-> *platform_device_put(e1);
-> ... when != e1 = e2
-> *platform_device_del(e1);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Modify header directives to include what is needed by each file and
+not already included in its own header.
 
-Thanks, applying into fixes.
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/staging/usbip/stub.h         |    9 ++++-----
+ drivers/staging/usbip/stub_dev.c     |    2 +-
+ drivers/staging/usbip/stub_main.c    |    2 +-
+ drivers/staging/usbip/stub_rx.c      |    5 +++--
+ drivers/staging/usbip/stub_tx.c      |    2 +-
+ drivers/staging/usbip/usbip_common.c |    8 ++++----
+ drivers/staging/usbip/usbip_common.h |   16 ++++++++++------
+ drivers/staging/usbip/usbip_event.c  |    1 +
+ drivers/staging/usbip/vhci.h         |    8 +++++++-
+ drivers/staging/usbip/vhci_hcd.c     |    6 +++++-
+ drivers/staging/usbip/vhci_rx.c      |    2 +-
+ drivers/staging/usbip/vhci_sysfs.c   |    5 ++---
+ drivers/staging/usbip/vhci_tx.c      |    2 +-
+ 13 files changed, 41 insertions(+), 27 deletions(-)
 
-> 
-> ---
-> Is an ioremap needed also?  Not clear, because dma_base i a global variable.
-
-I guess you mean iounmap instead of ioremap? In this case we have static
-mappings for ioremap, so iounmap is not doing anything. But should be done
-for correct handling.
-
-Regards,
-
-Tony
+diff --git a/drivers/staging/usbip/stub.h b/drivers/staging/usbip/stub.h
+index bfea5dc..3d60394 100644
+--- a/drivers/staging/usbip/stub.h
++++ b/drivers/staging/usbip/stub.h
+@@ -17,13 +17,12 @@
+  * USA.
+  */
  
->  arch/arm/mach-omap1/dma.c |   11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/mach-omap1/dma.c b/arch/arm/mach-omap1/dma.c
-> index d855934..f5a5220 100644
-> --- a/arch/arm/mach-omap1/dma.c
-> +++ b/arch/arm/mach-omap1/dma.c
-> @@ -284,14 +284,15 @@ static int __init omap1_system_dma_init(void)
->  	dma_base = ioremap(res[0].start, resource_size(&res[0]));
->  	if (!dma_base) {
->  		pr_err("%s: Unable to ioremap\n", __func__);
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto exit_device_put;
->  	}
->  
->  	ret = platform_device_add_resources(pdev, res, ARRAY_SIZE(res));
->  	if (ret) {
->  		dev_err(&pdev->dev, "%s: Unable to add resources for %s%d\n",
->  			__func__, pdev->name, pdev->id);
-> -		goto exit_device_del;
-> +		goto exit_device_put;
->  	}
->  
->  	p = kzalloc(sizeof(struct omap_system_dma_plat_info), GFP_KERNEL);
-> @@ -299,7 +300,7 @@ static int __init omap1_system_dma_init(void)
->  		dev_err(&pdev->dev, "%s: Unable to allocate 'p' for %s\n",
->  			__func__, pdev->name);
->  		ret = -ENOMEM;
-> -		goto exit_device_put;
-> +		goto exit_device_del;
->  	}
->  
->  	d = kzalloc(sizeof(struct omap_dma_dev_attr), GFP_KERNEL);
-> @@ -380,10 +381,10 @@ exit_release_d:
->  	kfree(d);
->  exit_release_p:
->  	kfree(p);
-> -exit_device_put:
-> -	platform_device_put(pdev);
->  exit_device_del:
->  	platform_device_del(pdev);
-> +exit_device_put:
-> +	platform_device_put(pdev);
->  
->  	return ret;
->  }
-> 
+-#include <linux/kernel.h>
+ #include <linux/list.h>
+-#include <linux/spinlock.h>
+ #include <linux/slab.h>
+-#include <linux/string.h>
+-#include <linux/module.h>
+-#include <linux/net.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
++#include <linux/usb.h>
++#include <linux/wait.h>
+ 
+ #define STUB_BUSID_OTHER 0
+ #define STUB_BUSID_REMOV 1
+diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
+index 919d558..c71d0a3 100644
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@ -17,7 +17,7 @@
+  * USA.
+  */
+ 
+-#include <linux/slab.h>
++#include <linux/device.h>
+ #include <linux/kthread.h>
+ 
+ #include "usbip_common.h"
+diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
+index a3c73b2..1f8fc5e 100644
+--- a/drivers/staging/usbip/stub_main.c
++++ b/drivers/staging/usbip/stub_main.c
+@@ -17,7 +17,7 @@
+  * USA.
+  */
+ 
+-#include <linux/slab.h>
++#include <linux/string.h>
+ 
+ #include "usbip_common.h"
+ #include "stub.h"
+diff --git a/drivers/staging/usbip/stub_rx.c b/drivers/staging/usbip/stub_rx.c
+index e11ac2a..e245609 100644
+--- a/drivers/staging/usbip/stub_rx.c
++++ b/drivers/staging/usbip/stub_rx.c
+@@ -17,12 +17,13 @@
+  * USA.
+  */
+ 
+-#include <linux/slab.h>
++#include <asm/byteorder.h>
+ #include <linux/kthread.h>
++#include <linux/usb.h>
++#include <linux/usb/hcd.h>
+ 
+ #include "usbip_common.h"
+ #include "stub.h"
+-#include <linux/usb/hcd.h>
+ 
+ static int is_clear_halt_cmd(struct urb *urb)
+ {
+diff --git a/drivers/staging/usbip/stub_tx.c b/drivers/staging/usbip/stub_tx.c
+index fc02261..3c332c2 100644
+--- a/drivers/staging/usbip/stub_tx.c
++++ b/drivers/staging/usbip/stub_tx.c
+@@ -17,8 +17,8 @@
+  * USA.
+  */
+ 
+-#include <linux/slab.h>
+ #include <linux/kthread.h>
++#include <linux/socket.h>
+ 
+ #include "usbip_common.h"
+ #include "stub.h"
+diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
+index 6c44fa4..fb95edf 100644
+--- a/drivers/staging/usbip/usbip_common.c
++++ b/drivers/staging/usbip/usbip_common.c
+@@ -17,12 +17,12 @@
+  * USA.
+  */
+ 
+-#include <linux/kernel.h>
++#include <asm/byteorder.h>
+ #include <linux/file.h>
+-#include <linux/tcp.h>
+-#include <linux/in.h>
+-#include <linux/kthread.h>
++#include <linux/fs.h>
++#include <linux/kernel.h>
+ #include <linux/slab.h>
++#include <net/sock.h>
+ 
+ #include "usbip_common.h"
+ 
+diff --git a/drivers/staging/usbip/usbip_common.h b/drivers/staging/usbip/usbip_common.h
+index aa5d576..fd84ab2 100644
+--- a/drivers/staging/usbip/usbip_common.h
++++ b/drivers/staging/usbip/usbip_common.h
+@@ -17,14 +17,18 @@
+  * USA.
+  */
+ 
+-#ifndef __VHCI_COMMON_H
+-#define __VHCI_COMMON_H
++#ifndef __USBIP_COMMON_H
++#define __USBIP_COMMON_H
+ 
+-#include <linux/version.h>
+ #include <linux/compiler.h>
++#include <linux/device.h>
++#include <linux/interrupt.h>
++#include <linux/net.h>
++#include <linux/printk.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
+ #include <linux/usb.h>
+-#include <asm/byteorder.h>
+-#include <net/sock.h>
++#include <linux/wait.h>
+ 
+ #define USBIP_VERSION "1.0.0"
+ 
+@@ -366,4 +370,4 @@ void usbip_stop_eh(struct usbip_device *ud);
+ void usbip_event_add(struct usbip_device *ud, unsigned long event);
+ int usbip_event_happened(struct usbip_device *ud);
+ 
+-#endif
++#endif /* __USBIP_COMMON_H */
+diff --git a/drivers/staging/usbip/usbip_event.c b/drivers/staging/usbip/usbip_event.c
+index 8861e3b..da6074d 100644
+--- a/drivers/staging/usbip/usbip_event.c
++++ b/drivers/staging/usbip/usbip_event.c
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include <linux/kthread.h>
++
+ #include "usbip_common.h"
+ 
+ static int event_handler(struct usbip_device *ud)
+diff --git a/drivers/staging/usbip/vhci.h b/drivers/staging/usbip/vhci.h
+index f4834df..691cf74 100644
+--- a/drivers/staging/usbip/vhci.h
++++ b/drivers/staging/usbip/vhci.h
+@@ -17,8 +17,14 @@
+  * USA.
+  */
+ 
+-#include <linux/platform_device.h>
++#include <linux/device.h>
++#include <linux/list.h>
++#include <linux/spinlock.h>
++#include <linux/sysfs.h>
++#include <linux/types.h>
++#include <linux/usb.h>
+ #include <linux/usb/hcd.h>
++#include <linux/wait.h>
+ 
+ struct vhci_device {
+ 	struct usb_device *udev;
+diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
+index bfb0b5f..b47d6b1 100644
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -17,8 +17,12 @@
+  * USA.
+  */
+ 
+-#include <linux/slab.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
+ #include <linux/kthread.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
+ 
+ #include "usbip_common.h"
+ #include "vhci.h"
+diff --git a/drivers/staging/usbip/vhci_rx.c b/drivers/staging/usbip/vhci_rx.c
+index fedc442..2fe6cbf 100644
+--- a/drivers/staging/usbip/vhci_rx.c
++++ b/drivers/staging/usbip/vhci_rx.c
+@@ -17,8 +17,8 @@
+  * USA.
+  */
+ 
+-#include <linux/slab.h>
+ #include <linux/kthread.h>
++#include <linux/slab.h>
+ 
+ #include "usbip_common.h"
+ #include "vhci.h"
+diff --git a/drivers/staging/usbip/vhci_sysfs.c b/drivers/staging/usbip/vhci_sysfs.c
+index be851d8..03083f8 100644
+--- a/drivers/staging/usbip/vhci_sysfs.c
++++ b/drivers/staging/usbip/vhci_sysfs.c
+@@ -17,12 +17,11 @@
+  * USA.
+  */
+ 
++#include <linux/kthread.h>
++
+ #include "usbip_common.h"
+ #include "vhci.h"
+ 
+-#include <linux/in.h>
+-#include <linux/kthread.h>
+-
+ /* TODO: refine locking ?*/
+ 
+ /* Sysfs entry to show port status */
+diff --git a/drivers/staging/usbip/vhci_tx.c b/drivers/staging/usbip/vhci_tx.c
+index 62c9acb..c1aa03b 100644
+--- a/drivers/staging/usbip/vhci_tx.c
++++ b/drivers/staging/usbip/vhci_tx.c
+@@ -17,8 +17,8 @@
+  * USA.
+  */
+ 
+-#include <linux/slab.h>
+ #include <linux/kthread.h>
++#include <linux/slab.h>
+ 
+ #include "usbip_common.h"
+ #include "vhci.h"
+-- 
+1.7.5.1
+
