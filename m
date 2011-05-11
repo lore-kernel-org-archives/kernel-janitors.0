@@ -1,59 +1,78 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 11 May 2011 21:06:39 +0000
+From: matt mooney <mfmooney@gmail.com>
+Date: Wed, 11 May 2011 22:51:58 +0000
 Subject: Re: [PATCH 04/12] staging: usbip: replace usbip_u{dbg,err,info} and
-Message-Id: <20110511210639.GA4679@kroah.com>
+Message-Id: <BANLkTimBxkF4KbXfm7Ma8cmpDF9EPjfMWQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <cover.1305103212.git.mfm@muteddisk.com>
- <0c3a71ba4811a3ab470d307650067e9c2b52379b.1305103212.git.mfm@muteddisk.com>
-In-Reply-To: <0c3a71ba4811a3ab470d307650067e9c2b52379b.1305103212.git.mfm@muteddisk.com>
+	<0c3a71ba4811a3ab470d307650067e9c2b52379b.1305103212.git.mfm@muteddisk.com>
+	<20110511210639.GA4679@kroah.com>
+In-Reply-To: <20110511210639.GA4679@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: matt mooney <mfmooney@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Greg KH <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 11, 2011 at 01:54:16AM -0700, matt mooney wrote:
-> This switches all of the non dev_<level> print statements to use the
-> pr_<level> macros. And a few debug statements are removed.
+On Wed, May 11, 2011 at 2:06 PM, Greg KH <greg@kroah.com> wrote:
+> On Wed, May 11, 2011 at 01:54:16AM -0700, matt mooney wrote:
+>> This switches all of the non dev_<level> print statements to use the
+>> pr_<level> macros. And a few debug statements are removed.
+>
+> Can't most of these be moved to use the dev_* calls instead?
 
-Can't most of these be moved to use the dev_* calls instead?
+I believe so and had planned to do this is in a second pass.
 
-> 
-> Signed-off-by: matt mooney <mfm@muteddisk.com>
-> ---
->  drivers/staging/usbip/stub_dev.c     |   22 ++--
->  drivers/staging/usbip/stub_main.c    |   19 ++--
->  drivers/staging/usbip/stub_rx.c      |   24 ++--
->  drivers/staging/usbip/stub_tx.c      |   16 ++--
->  drivers/staging/usbip/usbip_common.c |  228 +++++++++++++++------------------
->  drivers/staging/usbip/usbip_common.h |   46 +------
->  drivers/staging/usbip/usbip_event.c  |    3 +-
->  drivers/staging/usbip/vhci_hcd.c     |   87 +++++--------
->  drivers/staging/usbip/vhci_rx.c      |   33 +++---
->  drivers/staging/usbip/vhci_sysfs.c   |   14 +-
->  drivers/staging/usbip/vhci_tx.c      |    8 +-
->  11 files changed, 209 insertions(+), 291 deletions(-)
-> 
-> diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
-> index c71d0a3..0c0d838 100644
-> --- a/drivers/staging/usbip/stub_dev.c
-> +++ b/drivers/staging/usbip/stub_dev.c
-> @@ -196,7 +196,7 @@ static void stub_shutdown_connection(struct usbip_device *ud)
->  	 * step 1?
->  	 */
->  	if (ud->tcp_socket) {
-> -		usbip_udbg("shutdown tcp_socket %p\n", ud->tcp_socket);
-> +		pr_debug("shutdown tcp_socket %p\n", ud->tcp_socket);
+>>
+>> Signed-off-by: matt mooney <mfm@muteddisk.com>
+>> ---
+>> =A0drivers/staging/usbip/stub_dev.c =A0 =A0 | =A0 22 ++--
+>> =A0drivers/staging/usbip/stub_main.c =A0 =A0| =A0 19 ++--
+>> =A0drivers/staging/usbip/stub_rx.c =A0 =A0 =A0| =A0 24 ++--
+>> =A0drivers/staging/usbip/stub_tx.c =A0 =A0 =A0| =A0 16 ++--
+>> =A0drivers/staging/usbip/usbip_common.c | =A0228 +++++++++++++++--------=
+----------
+>> =A0drivers/staging/usbip/usbip_common.h | =A0 46 +------
+>> =A0drivers/staging/usbip/usbip_event.c =A0| =A0 =A03 +-
+>> =A0drivers/staging/usbip/vhci_hcd.c =A0 =A0 | =A0 87 +++++--------
+>> =A0drivers/staging/usbip/vhci_rx.c =A0 =A0 =A0| =A0 33 +++---
+>> =A0drivers/staging/usbip/vhci_sysfs.c =A0 | =A0 14 +-
+>> =A0drivers/staging/usbip/vhci_tx.c =A0 =A0 =A0| =A0 =A08 +-
+>> =A011 files changed, 209 insertions(+), 291 deletions(-)
+>>
+>> diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/st=
+ub_dev.c
+>> index c71d0a3..0c0d838 100644
+>> --- a/drivers/staging/usbip/stub_dev.c
+>> +++ b/drivers/staging/usbip/stub_dev.c
+>> @@ -196,7 +196,7 @@ static void stub_shutdown_connection(struct usbip_de=
+vice *ud)
+>> =A0 =A0 =A0 =A0* step 1?
+>> =A0 =A0 =A0 =A0*/
+>> =A0 =A0 =A0 if (ud->tcp_socket) {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 usbip_udbg("shutdown tcp_socket %p\n", ud->tcp=
+_socket);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 pr_debug("shutdown tcp_socket %p\n", ud->tcp_s=
+ocket);
+>
+> Like here, we have a valid struct device pointer from what I can tell,
+> so we should use dev_dbg() instead of pr_debug().
+>
+> I think a lot of these conversions could use those calls here, right?
+>
+> So care to split this into 2 patches, one that converts to valid usages
+> of the dev_* calls, and the other a patch that converts the rest to pr_*
+> calls?
 
-Like here, we have a valid struct device pointer from what I can tell,
-so we should use dev_dbg() instead of pr_debug().
+Do you mind just taking this as is for now? That way I can do the
+dev_dbg() conversion on a case by case basis as I become more familiar
+with the code, which was kind of my original plan. This patch still
+provides a fair amount of cleanup ;)
 
-I think a lot of these conversions could use those calls here, right?
 
-So care to split this into 2 patches, one that converts to valid usages
-of the dev_* calls, and the other a patch that converts the rest to pr_*
-calls?
-
-thanks,
-
-greg k-h
+--=20
+GPG-Key: 9AFE00EA
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
