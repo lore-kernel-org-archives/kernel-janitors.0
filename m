@@ -1,46 +1,49 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 20 May 2011 04:36:54 +0000
-Subject: [PATCH 00/12] staging: usbip
-Message-Id: <cover.1305866084.git.mfm@muteddisk.com>
+From: matt mooney <mfmooney@gmail.com>
+Date: Wed, 11 May 2011 08:54:23 +0000
+Subject: [PATCH 11/12] staging: usbip: vhci.h: reorganize
+Message-Id: <cf3104ab782e4017b0953845c32bf9d4b002ad8e.1305103213.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1305103212.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305103212.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-matt mooney (12):
-  staging: usbip: replace usbip_u{dbg,err,info} and printk with dev_
-    and pr_
-  staging: usbip: remove unnecessary lines and extra return statements
-  staging: usbip: stub_main.c: reorder functions
-  staging: usbip: stub_main.c: code cleanup
-  staging: usbip: stub_main.c: rename init and exit functions
-  staging: usbip: stub_main.c: use KMEM_CACHE macro
-  staging: usbip: usbip_common.c: fix misspelled function name
-  staging: usbip: usbip_common.h: reorganize and document request
-    headers
-  staging: usbip: stub_dev.c: move stub_driver definition and update
-    driver name
-  staging: usbip: userspace: bind_driver.c: update kernel module name
-  staging: usbip: usbip_common.c: rename init and exit functions
-  staging: usbip: vhci_hcd.c: rename init and exit functions
+Split function declarations by source file.
 
- drivers/staging/usbip/stub.h                      |    1 +
- drivers/staging/usbip/stub_dev.c                  |   93 +++----
- drivers/staging/usbip/stub_main.c                 |  212 +++++++---------
- drivers/staging/usbip/stub_rx.c                   |   23 +-
- drivers/staging/usbip/stub_tx.c                   |   30 +-
- drivers/staging/usbip/usbip_common.c              |  257 +++++++++----------
- drivers/staging/usbip/usbip_common.h              |  284 +++++++++-----------
- drivers/staging/usbip/usbip_event.c               |    3 +-
- drivers/staging/usbip/userspace/src/bind-driver.c |    4 +-
- drivers/staging/usbip/vhci_hcd.c                  |  106 +++-----
- drivers/staging/usbip/vhci_rx.c                   |   35 ++--
- drivers/staging/usbip/vhci_sysfs.c                |   14 +-
- drivers/staging/usbip/vhci_tx.c                   |    8 +-
- 13 files changed, 479 insertions(+), 591 deletions(-)
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/staging/usbip/vhci.h |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/staging/usbip/vhci.h b/drivers/staging/usbip/vhci.h
+index 691cf74..d5bc8e7 100644
+--- a/drivers/staging/usbip/vhci.h
++++ b/drivers/staging/usbip/vhci.h
+@@ -106,16 +106,18 @@ struct vhci_hcd {
+ 
+ extern struct vhci_hcd *the_controller;
+ extern struct attribute_group dev_attr_group;
++#define hardware (&the_controller->pdev.dev)
+ 
+ /* vhci_hcd.c */
+ void rh_port_connect(int rhport, enum usb_device_speed speed);
+ void rh_port_disconnect(int rhport);
+-int vhci_rx_loop(void *data);
+-int vhci_tx_loop(void *data);
+ 
++/* vhci_rx.c */
+ struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev, __u32 seqnum);
++int vhci_rx_loop(void *data);
+ 
+-#define hardware (&the_controller->pdev.dev)
++/* vhci_tx.c */
++int vhci_tx_loop(void *data);
+ 
+ static inline struct vhci_device *port_to_vdev(__u32 port)
+ {
 -- 
 1.7.5.1
 
