@@ -1,304 +1,305 @@
-From: Marcos <marcos.mage@gmail.com>
-Date: Tue, 10 May 2011 16:04:18 +0000
-Subject: [PATCH] include: linux: pnp.h: Fix identation issue
-Message-Id: <4dc9619f.c84dec0a.5eb3.04ff@mx.google.com>
+From: matt mooney <mfmooney@gmail.com>
+Date: Wed, 11 May 2011 08:54:17 +0000
+Subject: [PATCH 05/12] staging: usbip: remove unnecessary lines and extra return statements
+Message-Id: <54877bad7238e44cdf07dab3bcbf88210abbb0e9.1305103212.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1305103212.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305103212.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From d066854271f11c7fa0fc39ae86724cdd3b340153 Mon Sep 17 00:00:00 2001
-From: marcos-paulo <marcos-paulo@bahamut>
-Date: Tue, 10 May 2011 12:11:48 -0300
-Subject: [PATCH] include: linux: pnp.h: Fix identation issue
+Also, fix a few alignment issues that were originally missed.
 
-Fix some identation issue on formal parameter of functions
-
-Signed-off-by: Marcos Paulo de Souza <marcos.mage@gmail.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- include/linux/pnp.h |   94 +++++++++++++++++++++++++++++++-------------------
- 1 files changed, 58 insertions(+), 36 deletions(-)
+ drivers/staging/usbip/stub.h         |    1 +
+ drivers/staging/usbip/stub_dev.c     |    6 ------
+ drivers/staging/usbip/stub_main.c    |   13 -------------
+ drivers/staging/usbip/stub_tx.c      |   13 ++++++-------
+ drivers/staging/usbip/usbip_common.c |   13 ++++++-------
+ drivers/staging/usbip/usbip_common.h |    2 +-
+ drivers/staging/usbip/vhci_hcd.c     |    9 +++------
+ drivers/staging/usbip/vhci_rx.c      |    2 --
+ 8 files changed, 17 insertions(+), 42 deletions(-)
 
-diff --git a/include/linux/pnp.h b/include/linux/pnp.h
-index 1bc1338..75ca306 100644
---- a/include/linux/pnp.h
-+++ b/include/linux/pnp.h
-@@ -22,11 +22,13 @@ struct pnp_dev;
-  * Resource Management
-  */
- #ifdef CONFIG_PNP
--struct resource *pnp_get_resource(struct pnp_dev *dev, unsigned long type,
--				unsigned int num);
-+struct resource *pnp_get_resource(struct pnp_dev *dev,
-+				  unsigned long type,
-+				  unsigned int num);
- #else
- static inline struct resource *pnp_get_resource(struct pnp_dev *dev,
--			unsigned long type, unsigned int num)
-+						unsigned long type,
-+						unsigned int num)
- {
- 	return NULL;
- }
-@@ -84,7 +86,8 @@ static inline unsigned long pnp_port_flags(struct pnp_dev *dev,
- 	return IORESOURCE_IO | IORESOURCE_AUTO;
- }
+diff --git a/drivers/staging/usbip/stub.h b/drivers/staging/usbip/stub.h
+index 3d60394..a3adc2c 100644
+--- a/drivers/staging/usbip/stub.h
++++ b/drivers/staging/usbip/stub.h
+@@ -77,6 +77,7 @@ struct stub_unlink {
+ };
  
--static inline int pnp_port_valid(struct pnp_dev *dev, unsigned int bar)
-+static inline int pnp_port_valid(struct pnp_dev *dev,
-+				 unsigned int bar)
- {
- 	return pnp_resource_valid(pnp_get_resource(dev, IORESOURCE_IO, bar));
- }
-@@ -120,7 +123,8 @@ static inline resource_size_t pnp_mem_end(struct pnp_dev *dev,
- 	return 0;
- }
+ #define BUSID_SIZE 20
++
+ struct bus_id_priv {
+ 	char name[BUSID_SIZE];
+ 	char status;
+diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
+index 0c0d838..ae29a83 100644
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@ -249,7 +249,6 @@ static void stub_device_reset(struct usbip_device *ud)
+ 	ret = usb_lock_device_for_reset(udev, sdev->interface);
+ 	if (ret < 0) {
+ 		dev_err(&udev->dev, "lock for reset\n");
+-
+ 		spin_lock(&ud->lock);
+ 		ud->status = SDEV_ST_ERROR;
+ 		spin_unlock(&ud->lock);
+@@ -258,22 +257,17 @@ static void stub_device_reset(struct usbip_device *ud)
  
--static inline unsigned long pnp_mem_flags(struct pnp_dev *dev, unsigned int bar)
-+static inline unsigned long pnp_mem_flags(struct pnp_dev *dev,
-+					  unsigned int bar)
- {
- 	struct resource *res = pnp_get_resource(dev, IORESOURCE_MEM, bar);
+ 	/* try to reset the device */
+ 	ret = usb_reset_device(udev);
+-
+ 	usb_unlock_device(udev);
  
-@@ -129,7 +133,8 @@ static inline unsigned long pnp_mem_flags(struct pnp_dev *dev, unsigned int bar)
- 	return IORESOURCE_MEM | IORESOURCE_AUTO;
- }
- 
--static inline int pnp_mem_valid(struct pnp_dev *dev, unsigned int bar)
-+static inline int pnp_mem_valid(struct pnp_dev *dev,
-+				unsigned int bar)
- {
- 	return pnp_resource_valid(pnp_get_resource(dev, IORESOURCE_MEM, bar));
- }
-@@ -145,7 +150,8 @@ static inline resource_size_t pnp_mem_len(struct pnp_dev *dev,
+ 	spin_lock(&ud->lock);
+ 	if (ret) {
+ 		dev_err(&udev->dev, "device reset\n");
+ 		ud->status = SDEV_ST_ERROR;
+-
+ 	} else {
+ 		dev_info(&udev->dev, "device reset\n");
+ 		ud->status = SDEV_ST_AVAILABLE;
+-
+ 	}
+ 	spin_unlock(&ud->lock);
+-
+-	return;
  }
  
+ static void stub_device_unusable(struct usbip_device *ud)
+diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
+index 95f2e43..5de33c2 100644
+--- a/drivers/staging/usbip/stub_main.c
++++ b/drivers/staging/usbip/stub_main.c
+@@ -25,9 +25,7 @@
+ #define DRIVER_AUTHOR "Takahiro Hirofuchi"
+ #define DRIVER_DESC "Stub Driver for USB/IP"
  
--static inline resource_size_t pnp_irq(struct pnp_dev *dev, unsigned int bar)
-+static inline resource_size_t pnp_irq(struct pnp_dev *dev,
-+				      unsigned int bar)
- {
- 	struct resource *res = pnp_get_resource(dev, IORESOURCE_IRQ, bar);
- 
-@@ -154,7 +160,8 @@ static inline resource_size_t pnp_irq(struct pnp_dev *dev, unsigned int bar)
- 	return -1;
- }
- 
--static inline unsigned long pnp_irq_flags(struct pnp_dev *dev, unsigned int bar)
-+static inline unsigned long pnp_irq_flags(struct pnp_dev *dev,
-+					  unsigned int bar)
- {
- 	struct resource *res = pnp_get_resource(dev, IORESOURCE_IRQ, bar);
- 
-@@ -163,13 +170,15 @@ static inline unsigned long pnp_irq_flags(struct pnp_dev *dev, unsigned int bar)
- 	return IORESOURCE_IRQ | IORESOURCE_AUTO;
- }
- 
--static inline int pnp_irq_valid(struct pnp_dev *dev, unsigned int bar)
-+static inline int pnp_irq_valid(struct pnp_dev *dev,
-+				unsigned int bar)
- {
- 	return pnp_resource_valid(pnp_get_resource(dev, IORESOURCE_IRQ, bar));
- }
- 
- 
--static inline resource_size_t pnp_dma(struct pnp_dev *dev, unsigned int bar)
-+static inline resource_size_t pnp_dma(struct pnp_dev *dev,
-+				      unsigned int bar)
- {
- 	struct resource *res = pnp_get_resource(dev, IORESOURCE_DMA, bar);
- 
-@@ -178,7 +187,8 @@ static inline resource_size_t pnp_dma(struct pnp_dev *dev, unsigned int bar)
- 	return -1;
- }
- 
--static inline unsigned long pnp_dma_flags(struct pnp_dev *dev, unsigned int bar)
-+static inline unsigned long pnp_dma_flags(struct pnp_dev *dev,
-+					  unsigned int bar)
- {
- 	struct resource *res = pnp_get_resource(dev, IORESOURCE_DMA, bar);
- 
-@@ -187,12 +197,12 @@ static inline unsigned long pnp_dma_flags(struct pnp_dev *dev, unsigned int bar)
- 	return IORESOURCE_DMA | IORESOURCE_AUTO;
- }
- 
--static inline int pnp_dma_valid(struct pnp_dev *dev, unsigned int bar)
-+static inline int pnp_dma_valid(struct pnp_dev *dev,
-+				unsigned int bar)
- {
- 	return pnp_resource_valid(pnp_get_resource(dev, IORESOURCE_DMA, bar));
- }
- 
+-/* stub_priv is allocated from stub_priv_cache */
+ struct kmem_cache *stub_priv_cache;
 -
  /*
-  * Device Management
-  */
-@@ -212,14 +222,14 @@ struct pnp_card {
- 	unsigned char productver;	/* product version */
- 	unsigned int serial;		/* serial number */
- 	unsigned char checksum;		/* if zero - checksum passed */
--	struct proc_dir_entry *procdir;	/* directory entry in /proc/bus/isapnp */
-+	struct proc_dir_entry *procdir;	/* directory entry in /proc/bus/isapnp*/
- };
+  * busid_tables defines matching busids that usbip can grab. A user can change
+  * dynamically what device is locally used and what device is exported to a
+@@ -42,7 +40,6 @@ int match_busid(const char *busid)
+ 	int i;
  
- #define global_to_pnp_card(n) list_entry(n, struct pnp_card, global_list)
- #define protocol_to_pnp_card(n) list_entry(n, struct pnp_card, protocol_list)
- #define to_pnp_card(n) container_of(n, struct pnp_card, dev)
- #define pnp_for_each_card(card) \
--	for((card) = global_to_pnp_card(pnp_cards.next); \
-+	for ((card) = global_to_pnp_card(pnp_cards.next); \
- 	(card) != global_to_pnp_card(&pnp_cards); \
- 	(card) = global_to_pnp_card((card)->global_list.next))
+ 	spin_lock(&busid_table_lock);
+-
+ 	for (i = 0; i < MAX_BUSID; i++)
+ 		if (busid_table[i].name[0])
+ 			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
+@@ -50,7 +47,6 @@ int match_busid(const char *busid)
+ 				spin_unlock(&busid_table_lock);
+ 				return 0;
+ 			}
+-
+ 	spin_unlock(&busid_table_lock);
  
-@@ -235,7 +245,8 @@ static inline void *pnp_get_card_drvdata(struct pnp_card_link *pcard)
- 	return pcard->driver_data;
+ 	return 1;
+@@ -61,7 +57,6 @@ struct bus_id_priv *get_busid_priv(const char *busid)
+ 	int i;
+ 
+ 	spin_lock(&busid_table_lock);
+-
+ 	for (i = 0; i < MAX_BUSID; i++)
+ 		if (busid_table[i].name[0])
+ 			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
+@@ -69,7 +64,6 @@ struct bus_id_priv *get_busid_priv(const char *busid)
+ 				spin_unlock(&busid_table_lock);
+ 				return &(busid_table[i]);
+ 			}
+-
+ 	spin_unlock(&busid_table_lock);
+ 
+ 	return NULL;
+@@ -81,15 +75,12 @@ static ssize_t show_match_busid(struct device_driver *drv, char *buf)
+ 	char *out = buf;
+ 
+ 	spin_lock(&busid_table_lock);
+-
+ 	for (i = 0; i < MAX_BUSID; i++)
+ 		if (busid_table[i].name[0])
+ 			out += sprintf(out, "%s ", busid_table[i].name);
+-
+ 	spin_unlock(&busid_table_lock);
+ 
+ 	out += sprintf(out, "\n");
+-
+ 	return out - buf;
  }
  
--static inline void pnp_set_card_drvdata(struct pnp_card_link *pcard, void *data)
-+static inline void pnp_set_card_drvdata(struct pnp_card_link *pcard,
-+					void *data)
+@@ -101,7 +92,6 @@ static int add_match_busid(char *busid)
+ 		return 0;
+ 
+ 	spin_lock(&busid_table_lock);
+-
+ 	for (i = 0; i < MAX_BUSID; i++)
+ 		if (!busid_table[i].name[0]) {
+ 			strncpy(busid_table[i].name, busid, BUSID_SIZE);
+@@ -111,7 +101,6 @@ static int add_match_busid(char *busid)
+ 			spin_unlock(&busid_table_lock);
+ 			return 0;
+ 		}
+-
+ 	spin_unlock(&busid_table_lock);
+ 
+ 	return -1;
+@@ -122,7 +111,6 @@ int del_match_busid(char *busid)
+ 	int i;
+ 
+ 	spin_lock(&busid_table_lock);
+-
+ 	for (i = 0; i < MAX_BUSID; i++)
+ 		if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
+ 			/* found */
+@@ -135,7 +123,6 @@ int del_match_busid(char *busid)
+ 			spin_unlock(&busid_table_lock);
+ 			return 0;
+ 		}
+-
+ 	spin_unlock(&busid_table_lock);
+ 
+ 	return -1;
+diff --git a/drivers/staging/usbip/stub_tx.c b/drivers/staging/usbip/stub_tx.c
+index 28426f5..1967fff 100644
+--- a/drivers/staging/usbip/stub_tx.c
++++ b/drivers/staging/usbip/stub_tx.c
+@@ -96,13 +96,12 @@ void stub_complete(struct urb *urb)
+ 
+ 	/* link a urb to the queue of tx. */
+ 	spin_lock_irqsave(&sdev->priv_lock, flags);
+-
+ 	if (priv->unlinking) {
+ 		stub_enqueue_ret_unlink(sdev, priv->seqnum, urb->status);
+ 		stub_free_priv_and_urb(priv);
+-	} else
++	} else {
+ 		list_move_tail(&priv->list, &sdev->priv_tx);
+-
++	}
+ 	spin_unlock_irqrestore(&sdev->priv_lock, flags);
+ 
+ 	/* wake up tx_thread */
+@@ -112,10 +111,10 @@ void stub_complete(struct urb *urb)
+ static inline void setup_base_pdu(struct usbip_header_basic *base,
+ 				  __u32 command, __u32 seqnum)
  {
- 	pcard->driver_data = data;
+-	base->command = command;
+-	base->seqnum  = seqnum;
+-	base->devid   = 0;
+-	base->ep      = 0;
++	base->command	= command;
++	base->seqnum	= seqnum;
++	base->devid	= 0;
++	base->ep	= 0;
+ 	base->direction = 0;
  }
-@@ -275,28 +286,29 @@ struct pnp_dev {
- #define protocol_to_pnp_dev(n) list_entry(n, struct pnp_dev, protocol_list)
- #define	to_pnp_dev(n) container_of(n, struct pnp_dev, dev)
- #define pnp_for_each_dev(dev) \
--	for((dev) = global_to_pnp_dev(pnp_global.next); \
-+	for ((dev) = global_to_pnp_dev(pnp_global.next); \
- 	(dev) != global_to_pnp_dev(&pnp_global); \
- 	(dev) = global_to_pnp_dev((dev)->global_list.next))
--#define card_for_each_dev(card,dev) \
--	for((dev) = card_to_pnp_dev((card)->devices.next); \
-+#define card_for_each_dev(card, dev) \
-+	for ((dev) = card_to_pnp_dev((card)->devices.next); \
- 	(dev) != card_to_pnp_dev(&(card)->devices); \
- 	(dev) = card_to_pnp_dev((dev)->card_list.next))
--#define pnp_dev_name(dev) (dev)->name
-+#define pnp_dev_name(dev) ((dev)->name)
  
- static inline void *pnp_get_drvdata(struct pnp_dev *pdev)
+diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
+index fcfb740..fbf549c 100644
+--- a/drivers/staging/usbip/usbip_common.c
++++ b/drivers/staging/usbip/usbip_common.c
+@@ -63,9 +63,9 @@ static void usbip_dump_buffer(char *buff, int bufflen)
+ static void usbip_dump_pipe(unsigned int p)
  {
- 	return dev_get_drvdata(&pdev->dev);
- }
+ 	unsigned char type = usb_pipetype(p);
+-	unsigned char ep = usb_pipeendpoint(p);
+-	unsigned char dev = usb_pipedevice(p);
+-	unsigned char dir = usb_pipein(p);
++	unsigned char ep   = usb_pipeendpoint(p);
++	unsigned char dev  = usb_pipedevice(p);
++	unsigned char dir  = usb_pipein(p);
  
--static inline void pnp_set_drvdata(struct pnp_dev *pdev, void *data)
-+static inline void pnp_set_drvdata(struct pnp_dev *pdev,
-+				   void *data)
+ 	pr_debug("dev(%d) ep(%d) [%s] ", dev, ep, dir ? "IN" : "OUT");
+ 
+@@ -334,8 +334,8 @@ void usbip_dump_header(struct usbip_header *pdu)
+ EXPORT_SYMBOL_GPL(usbip_dump_header);
+ 
+ /* Send/receive messages over TCP/IP. I refer drivers/block/nbd.c */
+-int usbip_xmit(int send, struct socket *sock, char *buf,
+-	       int size, int msg_flags)
++int usbip_xmit(int send, struct socket *sock, char *buf, int size,
++	       int msg_flags)
  {
- 	dev_set_drvdata(&pdev->dev, data);
+ 	int result;
+ 	struct msghdr msg;
+@@ -628,8 +628,7 @@ void usbip_header_correct_endian(struct usbip_header *pdu, int send)
+ EXPORT_SYMBOL_GPL(usbip_header_correct_endian);
+ 
+ static void usbip_iso_pakcet_correct_endian(
+-	struct usbip_iso_packet_descriptor *iso,
+-	int send)
++		struct usbip_iso_packet_descriptor *iso, int send)
+ {
+ 	/* does not need all members. but copy all simply. */
+ 	if (send) {
+diff --git a/drivers/staging/usbip/usbip_common.h b/drivers/staging/usbip/usbip_common.h
+index 4a641c5..83f8c1e 100644
+--- a/drivers/staging/usbip/usbip_common.h
++++ b/drivers/staging/usbip/usbip_common.h
+@@ -65,7 +65,7 @@ enum {
+ #define usbip_dbg_flag_vhci_tx	(usbip_debug_flag & usbip_debug_vhci_tx)
+ #define usbip_dbg_flag_stub_rx	(usbip_debug_flag & usbip_debug_stub_rx)
+ #define usbip_dbg_flag_stub_tx	(usbip_debug_flag & usbip_debug_stub_tx)
+-#define usbip_dbg_flag_vhci_sysfs   (usbip_debug_flag & usbip_debug_vhci_sysfs)
++#define usbip_dbg_flag_vhci_sysfs  (usbip_debug_flag & usbip_debug_vhci_sysfs)
+ 
+ extern unsigned long usbip_debug_flag;
+ extern struct device_attribute dev_attr_usbip_debug;
+diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
+index a118227..069a7c7 100644
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -344,9 +344,9 @@ static int vhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 		 *                                   */
+ 		if (dum->resuming && time_after(jiffies, dum->re_timeout)) {
+ 			dum->port_status[rhport] |-					(1 << USB_PORT_FEAT_C_SUSPEND);
++				(1 << USB_PORT_FEAT_C_SUSPEND);
+ 			dum->port_status[rhport] &-					~(1 << USB_PORT_FEAT_SUSPEND);
++				~(1 << USB_PORT_FEAT_SUSPEND);
+ 			dum->resuming = 0;
+ 			dum->re_timeout = 0;
+ 			/* if (dum->driver && dum->driver->resume) {
+@@ -639,9 +639,7 @@ no_need_xmit:
+ 	usb_hcd_unlink_urb_from_ep(hcd, urb);
+ no_need_unlink:
+ 	spin_unlock_irqrestore(&the_controller->lock, flags);
+-
+ 	usb_hcd_giveback_urb(vhci_to_hcd(the_controller), urb, urb->status);
+-
+ 	return ret;
  }
  
- struct pnp_fixup {
- 	char id[7];
--	void (*quirk_function) (struct pnp_dev * dev);	/* fixup function */
-+	void (*quirk_function) (struct pnp_dev *dev);	/* fixup function */
- };
+@@ -1033,9 +1031,8 @@ static int vhci_bus_resume(struct usb_hcd *hcd)
+ 		hcd->state = HC_STATE_RUNNING;
+ 	}
+ 	spin_unlock_irq(&vhci->lock);
+-	return rc;
  
- /* config parameters */
-@@ -415,8 +427,8 @@ struct pnp_protocol {
+-	return 0;
++	return rc;
+ }
  
- 	/* protocol specific suspend/resume */
- 	bool (*can_wakeup) (struct pnp_dev *dev);
--	int (*suspend) (struct pnp_dev * dev, pm_message_t state);
--	int (*resume) (struct pnp_dev * dev);
-+	int (*suspend) (struct pnp_dev *dev, pm_message_t state);
-+	int (*resume) (struct pnp_dev *dev);
+ #else
+diff --git a/drivers/staging/usbip/vhci_rx.c b/drivers/staging/usbip/vhci_rx.c
+index e42ce9d..09c44ab 100644
+--- a/drivers/staging/usbip/vhci_rx.c
++++ b/drivers/staging/usbip/vhci_rx.c
+@@ -179,8 +179,6 @@ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
+ 	}
  
- 	/* used by pnp layer only (look but don't touch) */
- 	unsigned char number;	/* protocol number */
-@@ -426,12 +438,12 @@ struct pnp_protocol {
- };
+ 	kfree(unlink);
+-
+-	return;
+ }
  
- #define to_pnp_protocol(n) list_entry(n, struct pnp_protocol, protocol_list)
--#define protocol_for_each_card(protocol,card) \
--	for((card) = protocol_to_pnp_card((protocol)->cards.next); \
-+#define protocol_for_each_card(protocol, card) \
-+	for ((card) = protocol_to_pnp_card((protocol)->cards.next); \
- 	(card) != protocol_to_pnp_card(&(protocol)->cards); \
- 	(card) = protocol_to_pnp_card((card)->protocol_list.next))
--#define protocol_for_each_dev(protocol,dev) \
--	for((dev) = protocol_to_pnp_dev((protocol)->devices.next); \
-+#define protocol_for_each_dev(protocol, dev) \
-+	for ((dev) = protocol_to_pnp_dev((protocol)->devices.next); \
- 	(dev) != protocol_to_pnp_dev(&(protocol)->devices); \
- 	(dev) = protocol_to_pnp_dev((dev)->protocol_list.next))
- 
-@@ -447,25 +459,30 @@ extern int pnp_platform_devices;
- 
- /* multidevice card support */
- struct pnp_dev *pnp_request_card_device(struct pnp_card_link *clink,
--					const char *id, struct pnp_dev *from);
-+					const char *id,
-+					struct pnp_dev *from);
- void pnp_release_card_device(struct pnp_dev *dev);
- int pnp_register_card_driver(struct pnp_card_driver *drv);
- void pnp_unregister_card_driver(struct pnp_card_driver *drv);
- extern struct list_head pnp_cards;
- 
- /* resource management */
--int pnp_possible_config(struct pnp_dev *dev, int type, resource_size_t base,
-+int pnp_possible_config(struct pnp_dev *dev,
-+			int type,
-+			resource_size_t base,
- 			resource_size_t size);
- int pnp_auto_config_dev(struct pnp_dev *dev);
- int pnp_start_dev(struct pnp_dev *dev);
- int pnp_stop_dev(struct pnp_dev *dev);
- int pnp_activate_dev(struct pnp_dev *dev);
- int pnp_disable_dev(struct pnp_dev *dev);
--int pnp_range_reserved(resource_size_t start, resource_size_t end);
-+int pnp_range_reserved(resource_size_t start,
-+		       resource_size_t end);
- 
- /* protocol helpers */
- int pnp_is_active(struct pnp_dev *dev);
--int compare_pnp_id(struct pnp_id *pos, const char *id);
-+int compare_pnp_id(struct pnp_id *pos,
-+		   const char *id);
- int pnp_register_driver(struct pnp_driver *drv);
- void pnp_unregister_driver(struct pnp_driver *drv);
- 
-@@ -478,13 +495,16 @@ static inline void pnp_device_detach(struct pnp_dev *pnp_dev) { }
- #define pnp_platform_devices 0
- 
- /* multidevice card support */
--static inline struct pnp_dev *pnp_request_card_device(struct pnp_card_link *clink, const char *id, struct pnp_dev *from) { return NULL; }
-+static inline struct pnp_dev *pnp_request_card_device(struct pnp_card_link *clink,
-+						      const char *id,
-+						      struct pnp_dev *from) { return NULL; }
- static inline void pnp_release_card_device(struct pnp_dev *dev) { }
- static inline int pnp_register_card_driver(struct pnp_card_driver *drv) { return -ENODEV; }
- static inline void pnp_unregister_card_driver(struct pnp_card_driver *drv) { }
- 
- /* resource management */
--static inline int pnp_possible_config(struct pnp_dev *dev, int type,
-+static inline int pnp_possible_config(struct pnp_dev *dev,
-+				      int type,
- 				      resource_size_t base,
- 				      resource_size_t size) { return 0; }
- static inline int pnp_auto_config_dev(struct pnp_dev *dev) { return -ENODEV; }
-@@ -492,11 +512,13 @@ static inline int pnp_start_dev(struct pnp_dev *dev) { return -ENODEV; }
- static inline int pnp_stop_dev(struct pnp_dev *dev) { return -ENODEV; }
- static inline int pnp_activate_dev(struct pnp_dev *dev) { return -ENODEV; }
- static inline int pnp_disable_dev(struct pnp_dev *dev) { return -ENODEV; }
--static inline int pnp_range_reserved(resource_size_t start, resource_size_t end) { return 0;}
-+static inline int pnp_range_reserved(resource_size_t start,
-+				     resource_size_t end) { return 0; }
- 
- /* protocol helpers */
- static inline int pnp_is_active(struct pnp_dev *dev) { return 0; }
--static inline int compare_pnp_id(struct pnp_id *pos, const char *id) { return -ENODEV; }
-+static inline int compare_pnp_id(struct pnp_id *pos,
-+				 const char *id) { return -ENODEV; }
- static inline int pnp_register_driver(struct pnp_driver *drv) { return -ENODEV; }
- static inline void pnp_unregister_driver(struct pnp_driver *drv) { }
- 
+ static int vhci_priv_tx_empty(struct vhci_device *vdev)
 -- 
-1.7.1
+1.7.5.1
 
-
-
-Marcos Paulo de Souza
-[Sent for my Alpine Client]
