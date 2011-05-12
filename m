@@ -1,43 +1,79 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Thu, 12 May 2011 20:30:29 +0000
+From: matt mooney <mfmooney@gmail.com>
+Date: Thu, 12 May 2011 21:07:57 +0000
 Subject: Re: [Resend PATCH] package: Makefile: fix perf target bug
-Message-Id: <4DCC4365.3030907@suse.cz>
+Message-Id: <BANLkTimKpJoUnoYx8gXi6KCYgVpnXno4ow@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1d7d3b31c0da82ce8ce75778922155b7004a8f7e.1305224477.git.mfm@muteddisk.com>
-In-Reply-To: <1d7d3b31c0da82ce8ce75778922155b7004a8f7e.1305224477.git.mfm@muteddisk.com>
+	<4DCC4365.3030907@suse.cz>
+In-Reply-To: <4DCC4365.3030907@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: mfmooney@gmail.com
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Michal Marek <mmarek@suse.cz>
 Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 12.5.2011 20:25, mfmooney@gmail.com wrote:
-> diff --git a/scripts/package/Makefile b/scripts/package/Makefile
-> index 1b7eaea..a32dc2d 100644
-> --- a/scripts/package/Makefile
-> +++ b/scripts/package/Makefile
-> @@ -118,10 +118,14 @@ perf-tar=perf-$(KERNELVERSION)
->  
->  quiet_cmd_perf_tar = TAR
->        cmd_perf_tar = \
-> -git archive --prefix=$(perf-tar)/ HEAD^{tree}                       \
-> -	$$(cat $(srctree)/tools/perf/MANIFEST) -o $(perf-tar).tar;  \
-> +git --git-dir=$(srctree)/.git --work-tree=$(srctree)                \
+2011/5/12 Michal Marek <mmarek@suse.cz>:
+> On 12.5.2011 20:25, mfmooney@gmail.com wrote:
+>> diff --git a/scripts/package/Makefile b/scripts/package/Makefile
+>> index 1b7eaea..a32dc2d 100644
+>> --- a/scripts/package/Makefile
+>> +++ b/scripts/package/Makefile
+>> @@ -118,10 +118,14 @@ perf-tar=3Dperf-$(KERNELVERSION)
+>>
+>> =A0quiet_cmd_perf_tar =3D TAR
+>> =A0 =A0 =A0 =A0cmd_perf_tar =3D \
+>> -git archive --prefix=3D$(perf-tar)/ HEAD^{tree} =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 \
+>> - =A0 =A0 $$(cat $(srctree)/tools/perf/MANIFEST) -o $(perf-tar).tar; =A0\
+>> +git --git-dir=3D$(srctree)/.git --work-tree=3D$(srctree) =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0\
+>
+> Neither git archive not git rev-parse need the work tree, --git-dir=3D..
+> is sufficient.
 
-Neither git archive not git rev-parse need the work tree, --git-dir=..
-is sufficient.
+Are you sure? --git-dir points to the .git directory and --work-tree
+points to the actual source code directory. Both are needed when you
+are out of the source tree and the .git directory is not really
+located at .git from the $PWD.
 
-Michal
+From an empirical standpoint, this as well as any git command that is
+issued from outside of the working directory fails to function
+properly without --work-tree.
 
-> +	archive --prefix=$(perf-tar)/ HEAD^{tree}                   \
-> +	$(addprefix $(srctree)/,                                    \
-> +	  $(shell cat $(srctree)/tools/perf/MANIFEST))              \
-> +	-o $(perf-tar).tar;                                         \
->  mkdir -p $(perf-tar);                                               \
-> -git rev-parse HEAD > $(perf-tar)/HEAD;                              \
-> +git --git-dir=$(srctree)/.git --work-tree=$(srctree)                \
-> +	rev-parse HEAD > $(perf-tar)/HEAD;                          \
->  tar rf $(perf-tar).tar $(perf-tar)/HEAD;                            \
->  rm -r $(perf-tar);                                                  \
->  $(if $(findstring tar-src,$@),,                                     \
+-matt
 
+>
+>> + =A0 =A0 archive --prefix=3D$(perf-tar)/ HEAD^{tree} =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 \
+>> + =A0 =A0 $(addprefix $(srctree)/, =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
+>> + =A0 =A0 =A0 $(shell cat $(srctree)/tools/perf/MANIFEST)) =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0\
+>> + =A0 =A0 -o $(perf-tar).tar; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
+>> =A0mkdir -p $(perf-tar); =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
+>> -git rev-parse HEAD > $(perf-tar)/HEAD; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0\
+>> +git --git-dir=3D$(srctree)/.git --work-tree=3D$(srctree) =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0\
+>> + =A0 =A0 rev-parse HEAD > $(perf-tar)/HEAD; =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0\
+>> =A0tar rf $(perf-tar).tar $(perf-tar)/HEAD; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0\
+>> =A0rm -r $(perf-tar); =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
+>> =A0$(if $(findstring tar-src,$@),, =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
+>
+>
+
+
+
+--=20
+GPG-Key: 9AFE00EA
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
