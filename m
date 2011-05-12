@@ -1,354 +1,186 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 20 May 2011 04:37:02 +0000
-Subject: [PATCH 08/12] staging: usbip: usbip_common.h: reorganize and document request headers
-Message-Id: <e7dc06e3e829e8aebe0129ef1f6108158dabaf09.1305866084.git.mfm@muteddisk.com>
+From: mfmooney@gmail.com
+Date: Thu, 12 May 2011 05:17:08 +0000
+Subject: [PATCH 09/12 v3] staging: usbip: edit Kconfig and rename CONFIG options
+Message-Id: <b6b196f84ae6b8f3c74ae20f4096b556e96503ee.1305177223.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305866084.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305103212.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Document the request header structures; move #defines out of the
-structures; organize function declarations by source file; and move
-inline functions to the end of file.
+From: matt mooney <mfm@muteddisk.com>
+
+Change modules usbip_common_mod to usbip-core and usbip to usbip-host;
+edit configuration option help text; rename CONFIG options to use a
+USBIP prefix and change COMMON to CORE in both the Kconfig and
+Makefiles; edit the menu entries and the driver descriptions.
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/usbip/usbip_common.h |  236 +++++++++++++++++-----------------
- 1 files changed, 121 insertions(+), 115 deletions(-)
+I actually change to module names in this patch now, and I had forgot to add that
+into the commit message.
 
-diff --git a/drivers/staging/usbip/usbip_common.h b/drivers/staging/usbip/usbip_common.h
-index 83f8c1e..074ac42 100644
---- a/drivers/staging/usbip/usbip_common.h
-+++ b/drivers/staging/usbip/usbip_common.h
-@@ -104,111 +104,110 @@ extern struct device_attribute dev_attr_usbip_debug;
- 	usbip_dbg_with_flag(usbip_debug_stub_tx, fmt , ##args)
+ drivers/staging/Makefile             |    2 +-
+ drivers/staging/usbip/Kconfig        |   52 +++++++++++++++++----------------
+ drivers/staging/usbip/Makefile       |   12 ++++----
+ drivers/staging/usbip/stub_main.c    |    2 +-
+ drivers/staging/usbip/usbip_common.c |    4 +-
+ drivers/staging/usbip/vhci_hcd.c     |    2 +-
+ 6 files changed, 38 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
+index 7d38925..e150a45 100644
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@ -12,7 +12,7 @@ obj-$(CONFIG_VIDEO_CX25821)	+= cx25821/
+ obj-$(CONFIG_VIDEO_TM6000)	+= tm6000/
+ obj-$(CONFIG_DVB_CXD2099)	+= cxd2099/
+ obj-$(CONFIG_LIRC_STAGING)	+= lirc/
+-obj-$(CONFIG_USB_IP_COMMON)	+= usbip/
++obj-$(CONFIG_USBIP_CORE)	+= usbip/
+ obj-$(CONFIG_W35UND)		+= winbond/
+ obj-$(CONFIG_PRISM2_USB)	+= wlan-ng/
+ obj-$(CONFIG_ECHO)		+= echo/
+diff --git a/drivers/staging/usbip/Kconfig b/drivers/staging/usbip/Kconfig
+index 466f0d3..dd13c02 100644
+--- a/drivers/staging/usbip/Kconfig
++++ b/drivers/staging/usbip/Kconfig
+@@ -1,43 +1,45 @@
+-config USB_IP_COMMON
+-	tristate "USB IP support (EXPERIMENTAL)"
++config USBIP_CORE
++	tristate "USB/IP support (EXPERIMENTAL)"
+ 	depends on USB && NET && EXPERIMENTAL
+ 	default N
+ 	---help---
+ 	  This enables pushing USB packets over IP to allow remote
+-	  machines access to USB devices directly.  For more details,
+-	  and links to the userspace utility programs to let this work
+-	  properly, see http://usbip.sourceforge.net/.
++	  machines direct access to USB devices. It provides the
++	  USB/IP core that is required by both drivers.
+ 
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called usbip_common_mod.
++	  For more details, and to get the userspace utility
++	  programs, please see http://usbip.sourceforge.net/.
++
++	  To compile this as a module, choose M here: the module will
++	  be called usbip-core.
+ 
+ 	  If unsure, say N.
+ 
+-config USB_IP_VHCI_HCD
+-	tristate "USB IP client driver"
+-	depends on USB_IP_COMMON
++config USBIP_VHCI_HCD
++	tristate "VHCI hcd"
++	depends on USBIP_CORE
+ 	default N
+ 	---help---
+-	 This enables the USB IP host controller driver which will
+-	 run on the client machine.
++	  This enables the USB/IP virtual host controller driver,
++	  which is run on the remote machine.
+ 
+-	 To compile this driver as a module, choose M here: the
+-	 module will be called vhci_hcd.
++	  To compile this driver as a module, choose M here: the
++	  module will be called vhci-hcd.
+ 
+-config USB_IP_HOST
+-	tristate "USB IP host driver"
+-	depends on USB_IP_COMMON
++config USBIP_HOST
++	tristate "Host driver"
++	depends on USBIP_CORE
+ 	default N
+ 	---help---
+-	 This enables the USB IP device driver which will run on the
+-	 host machine.
++	  This enables the USB/IP host driver, which is run on the
++	  machine that is sharing the USB devices.
+ 
+-	 To compile this driver as a module, choose M here: the
+-	 module will be called usbip.
++	  To compile this driver as a module, choose M here: the
++	  module will be called usbip-host.
+ 
+-config USB_IP_DEBUG
+-	bool "USB/IP debug messages"
+-	depends on USB_IP_COMMON
++config USBIP_DEBUG
++	bool "Debug messages for USB/IP"
++	depends on USBIP_CORE
+ 	default N
+ 	---help---
+-	  This enables the debug messages from the USB-IP drivers.
++	  This enables the debug messages from the USB/IP drivers.
+diff --git a/drivers/staging/usbip/Makefile b/drivers/staging/usbip/Makefile
+index a43a890..9ecd615 100644
+--- a/drivers/staging/usbip/Makefile
++++ b/drivers/staging/usbip/Makefile
+@@ -1,10 +1,10 @@
+-ccflags-$(CONFIG_USB_IP_DEBUG) := -DDEBUG
++ccflags-$(CONFIG_USBIP_DEBUG) := -DDEBUG
+ 
+-obj-$(CONFIG_USB_IP_COMMON) += usbip_common_mod.o
+-usbip_common_mod-y := usbip_common.o usbip_event.o
++obj-$(CONFIG_USBIP_CORE) += usbip-core.o
++usbip-core-y := usbip_common.o usbip_event.o
+ 
+-obj-$(CONFIG_USB_IP_VHCI_HCD) += vhci-hcd.o
++obj-$(CONFIG_USBIP_VHCI_HCD) += vhci-hcd.o
+ vhci-hcd-y := vhci_sysfs.o vhci_tx.o vhci_rx.o vhci_hcd.o
+ 
+-obj-$(CONFIG_USB_IP_HOST) += usbip.o
+-usbip-y := stub_dev.o stub_main.o stub_rx.o stub_tx.o
++obj-$(CONFIG_USBIP_HOST) += usbip-host.o
++usbip-host-y := stub_dev.o stub_main.o stub_rx.o stub_tx.o
+diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
+index 1f8fc5e..5568110 100644
+--- a/drivers/staging/usbip/stub_main.c
++++ b/drivers/staging/usbip/stub_main.c
+@@ -23,7 +23,7 @@
+ #include "stub.h"
+ 
+ #define DRIVER_AUTHOR "Takahiro Hirofuchi"
+-#define DRIVER_DESC "Stub Driver for USB/IP"
++#define DRIVER_DESC "USB/IP Host Driver"
+ 
+ /* stub_priv is allocated from stub_priv_cache */
+ struct kmem_cache *stub_priv_cache;
+diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
+index fb95edf..0f2cd97 100644
+--- a/drivers/staging/usbip/usbip_common.c
++++ b/drivers/staging/usbip/usbip_common.c
+@@ -27,9 +27,9 @@
+ #include "usbip_common.h"
+ 
+ #define DRIVER_AUTHOR "Takahiro Hirofuchi <hirofuchi@users.sourceforge.net>"
+-#define DRIVER_DESC "USB/IP Common Driver"
++#define DRIVER_DESC "USB/IP Core"
+ 
+-#ifdef CONFIG_USB_IP_DEBUG
++#ifdef CONFIG_USBIP_DEBUG
+ unsigned long usbip_debug_flag = 0xffffffff;
+ #else
+ unsigned long usbip_debug_flag;
+diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
+index facd58e..fad10c5 100644
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -28,7 +28,7 @@
+ #include "vhci.h"
+ 
+ #define DRIVER_AUTHOR "Takahiro Hirofuchi"
+-#define DRIVER_DESC "Virtual Host Controller Interface Driver for USB/IP"
++#define DRIVER_DESC "USB/IP 'Virtual' Host Controller (VHCI) Driver"
  
  /*
-- * USB/IP request headers.
-- * Currently, we define 4 request types:
-+ * USB/IP request headers
-  *
-- *  - CMD_SUBMIT transfers a USB request, corresponding to usb_submit_urb().
-- *    (client to server)
-- *  - RET_RETURN transfers the result of CMD_SUBMIT.
-- *    (server to client)
-- *  - CMD_UNLINK transfers an unlink request of a pending USB request.
-+ * Each request is transferred across the network to its counterpart, which
-+ * facilitates the normal USB communication. The values contained in the headers
-+ * are basically the same as in a URB. Currently, four request types are
-+ * defined:
-+ *
-+ *  - USBIP_CMD_SUBMIT: a USB request block, corresponds to usb_submit_urb()
-  *    (client to server)
-- *  - RET_UNLINK transfers the result of CMD_UNLINK.
-+ *
-+ *  - USBIP_RET_SUBMIT: the result of USBIP_CMD_SUBMIT
-  *    (server to client)
-  *
-- * Note: The below request formats are based on the USB subsystem of Linux. Its
-- * details will be defined when other implementations come.
-+ *  - USBIP_CMD_UNLINK: an unlink request of a pending USBIP_CMD_SUBMIT,
-+ *    corresponds to usb_unlink_urb()
-+ *    (client to server)
-  *
-+ *  - USBIP_RET_UNLINK: the result of USBIP_CMD_UNLINK
-+ *    (server to client)
-  *
-  */
-+#define USBIP_CMD_SUBMIT	0x0001
-+#define USBIP_RET_SUBMIT	0x0002
-+#define USBIP_CMD_UNLINK	0x0003
-+#define USBIP_RET_UNLINK	0x0004
- 
--/*
-- * A basic header followed by other additional headers.
-+#define USBIP_DIR_IN	0x00
-+#define USBIP_DIR_OUT	0x01
-+
-+/**
-+ * struct usbip_header_basic - data pertinent to every request
-+ * @command: the usbip request type
-+ * @seqnum: sequential number that identifies requests; incremented per
-+ *	    connection
-+ * @devid: specifies a remote USB device uniquely instead of busnum and devnum;
-+ *	   in the stub driver, this value is ((busnum << 16) | devnum)
-+ * @direction: direction of the transfer
-+ * @ep: endpoint number
-  */
- struct usbip_header_basic {
--#define USBIP_CMD_SUBMIT	0x0001
--#define USBIP_CMD_UNLINK	0x0002
--#define USBIP_RET_SUBMIT	0x0003
--#define USBIP_RET_UNLINK	0x0004
- 	__u32 command;
--
--	 /* sequential number which identifies requests.
--	  * incremented per connections */
- 	__u32 seqnum;
--
--	/* devid is used to specify a remote USB device uniquely instead
--	 * of busnum and devnum in Linux. In the case of Linux stub_driver,
--	 * this value is ((busnum << 16) | devnum) */
- 	__u32 devid;
--
--#define USBIP_DIR_OUT	0
--#define USBIP_DIR_IN	1
- 	__u32 direction;
--	__u32 ep;     /* endpoint number */
-+	__u32 ep;
- } __packed;
- 
--/*
-- * An additional header for a CMD_SUBMIT packet.
-+/**
-+ * struct usbip_header_cmd_submit - USBIP_CMD_SUBMIT packet header
-+ * @transfer_flags: URB flags
-+ * @transfer_buffer_length: the data size for (in) or (out) transfer
-+ * @start_frame: initial frame for isochronous or interrupt transfers
-+ * @number_of_packets: number of isochronous packets
-+ * @interval: maximum time for the request on the server-side host controller
-+ * @setup: setup data for a control request
-  */
- struct usbip_header_cmd_submit {
--	/* these values are basically the same as in a URB. */
--
--	/* the same in a URB. */
- 	__u32 transfer_flags;
--
--	/* set the following data size (out),
--	 * or expected reading data size (in) */
- 	__s32 transfer_buffer_length;
- 
- 	/* it is difficult for usbip to sync frames (reserved only?) */
- 	__s32 start_frame;
--
--	/* the number of iso descriptors that follows this header */
- 	__s32 number_of_packets;
--
--	/* the maximum time within which this request works in a host
--	 * controller of a server side */
- 	__s32 interval;
- 
--	/* set setup packet data for a CTRL request */
- 	unsigned char setup[8];
- } __packed;
- 
--/*
-- * An additional header for a RET_SUBMIT packet.
-+/**
-+ * struct usbip_header_ret_submit - USBIP_RET_SUBMIT packet header
-+ * @status: return status of a non-iso request
-+ * @actual_length: number of bytes transferred
-+ * @start_frame: initial frame for isochronous or interrupt transfers
-+ * @number_of_packets: number of isochronous packets
-+ * @error_count: number of errors for isochronous transfers
-  */
- struct usbip_header_ret_submit {
- 	__s32 status;
--	__s32 actual_length;		/* returned data length */
--	__s32 start_frame;		/* ISO and INT */
--	__s32 number_of_packets;	/* ISO only */
--	__s32 error_count;		/* ISO only */
-+	__s32 actual_length;
-+	__s32 start_frame;
-+	__s32 number_of_packets;
-+	__s32 error_count;
- } __packed;
- 
--/*
-- * An additional header for a CMD_UNLINK packet.
-+/**
-+ * struct usbip_header_cmd_unlink - USBIP_CMD_UNLINK packet header
-+ * @seqnum: the URB seqnum to unlink
-  */
- struct usbip_header_cmd_unlink {
--	__u32 seqnum;			/* URB's seqnum that will be unlinked */
-+	__u32 seqnum;
- } __packed;
- 
--/*
-- * An additional header for a RET_UNLINK packet.
-+/**
-+ * struct usbip_header_ret_unlink - USBIP_RET_UNLINK packet header
-+ * @status: return status of the request
-  */
- struct usbip_header_ret_unlink {
- 	__s32 status;
- } __packed;
- 
--/* the same as usb_iso_packet_descriptor but packed for pdu */
--struct usbip_iso_packet_descriptor {
--	__u32 offset;
--	__u32 length;			/* expected length */
--	__u32 actual_length;
--	__u32 status;
--} __packed;
--
--/*
-- * All usbip packets use a common header to keep code simple.
-+/**
-+ * struct usbip_header - common header for all usbip packets
-+ * @base: the basic header
-+ * @u: packet type dependent header
-  */
- struct usbip_header {
- 	struct usbip_header_basic base;
-@@ -221,40 +220,15 @@ struct usbip_header {
- 	} u;
- } __packed;
- 
--int usbip_xmit(int, struct socket *, char *, int, int);
--int usbip_sendmsg(struct socket *, struct msghdr *, int);
--
--static inline int interface_to_busnum(struct usb_interface *interface)
--{
--	struct usb_device *udev = interface_to_usbdev(interface);
--	return udev->bus->busnum;
--}
--
--static inline int interface_to_devnum(struct usb_interface *interface)
--{
--	struct usb_device *udev = interface_to_usbdev(interface);
--	return udev->devnum;
--}
--
--static inline int interface_to_infnum(struct usb_interface *interface)
--{
--	return interface->cur_altsetting->desc.bInterfaceNumber;
--}
--
--#if 0
--int setnodelay(struct socket *);
--int setquickack(struct socket *);
--int setkeepalive(struct socket *socket);
--void setreuse(struct socket *);
--#endif
--
--struct socket *sockfd_to_socket(unsigned int);
--int set_sockaddr(struct socket *socket, struct sockaddr_storage *ss);
--
--void usbip_dump_urb(struct urb *purb);
--void usbip_dump_header(struct usbip_header *pdu);
--
--struct usbip_device;
-+/*
-+ * This is the same as usb_iso_packet_descriptor but packed for pdu.
-+ */
-+struct usbip_iso_packet_descriptor {
-+	__u32 offset;
-+	__u32 length;			/* expected length */
-+	__u32 actual_length;
-+	__u32 status;
-+} __packed;
- 
- enum usbip_side {
- 	USBIP_VHCI,
-@@ -277,20 +251,7 @@ enum usbip_status {
- 	VDEV_ST_ERROR
- };
- 
--/* a common structure for stub_device and vhci_device */
--struct usbip_device {
--	enum usbip_side side;
--	enum usbip_status status;
--
--	/* lock for status */
--	spinlock_t lock;
--
--	struct socket *tcp_socket;
--
--	struct task_struct *tcp_rx;
--	struct task_struct *tcp_tx;
--
--	/* event handler */
-+/* event handler */
- #define USBIP_EH_SHUTDOWN	(1 << 0)
- #define USBIP_EH_BYE		(1 << 1)
- #define USBIP_EH_RESET		(1 << 2)
-@@ -307,6 +268,19 @@ struct usbip_device {
- #define	VDEV_EVENT_ERROR_TCP	(USBIP_EH_SHUTDOWN | USBIP_EH_RESET)
- #define	VDEV_EVENT_ERROR_MALLOC	(USBIP_EH_SHUTDOWN | USBIP_EH_UNUSABLE)
- 
-+/* a common structure for stub_device and vhci_device */
-+struct usbip_device {
-+	enum usbip_side side;
-+	enum usbip_status status;
-+
-+	/* lock for status */
-+	spinlock_t lock;
-+
-+	struct socket *tcp_socket;
-+
-+	struct task_struct *tcp_rx;
-+	struct task_struct *tcp_tx;
-+
- 	unsigned long event;
- 	struct task_struct *eh;
- 	wait_queue_head_t eh_waitq;
-@@ -318,17 +292,32 @@ struct usbip_device {
- 	} eh_ops;
- };
- 
-+#if 0
-+int usbip_sendmsg(struct socket *, struct msghdr *, int);
-+int set_sockaddr(struct socket *socket, struct sockaddr_storage *ss);
-+int setnodelay(struct socket *);
-+int setquickack(struct socket *);
-+int setkeepalive(struct socket *socket);
-+void setreuse(struct socket *);
-+#endif
-+
-+/* usbip_common.c */
-+void usbip_dump_urb(struct urb *purb);
-+void usbip_dump_header(struct usbip_header *pdu);
-+
-+int usbip_xmit(int send, struct socket *sock, char *buf, int size,
-+	       int msg_flags);
-+struct socket *sockfd_to_socket(unsigned int sockfd);
-+
- void usbip_pack_pdu(struct usbip_header *pdu, struct urb *urb, int cmd,
- 		    int pack);
--
- void usbip_header_correct_endian(struct usbip_header *pdu, int send);
--/* some members of urb must be substituted before. */
--int usbip_recv_xbuff(struct usbip_device *ud, struct urb *urb);
-+
-+void *usbip_alloc_iso_desc_pdu(struct urb *urb, ssize_t *bufflen);
- /* some members of urb must be substituted before. */
- int usbip_recv_iso(struct usbip_device *ud, struct urb *urb);
--/* some members of urb must be substituted before. */
- int usbip_pad_iso(struct usbip_device *ud, struct urb *urb);
--void *usbip_alloc_iso_desc_pdu(struct urb *urb, ssize_t *bufflen);
-+int usbip_recv_xbuff(struct usbip_device *ud, struct urb *urb);
- 
- /* usbip_event.c */
- int usbip_start_eh(struct usbip_device *ud);
-@@ -336,4 +325,21 @@ void usbip_stop_eh(struct usbip_device *ud);
- void usbip_event_add(struct usbip_device *ud, unsigned long event);
- int usbip_event_happened(struct usbip_device *ud);
- 
-+static inline int interface_to_busnum(struct usb_interface *interface)
-+{
-+	struct usb_device *udev = interface_to_usbdev(interface);
-+	return udev->bus->busnum;
-+}
-+
-+static inline int interface_to_devnum(struct usb_interface *interface)
-+{
-+	struct usb_device *udev = interface_to_usbdev(interface);
-+	return udev->devnum;
-+}
-+
-+static inline int interface_to_infnum(struct usb_interface *interface)
-+{
-+	return interface->cur_altsetting->desc.bInterfaceNumber;
-+}
-+
- #endif /* __USBIP_COMMON_H */
+  * TODO
 -- 
 1.7.5.1
 
