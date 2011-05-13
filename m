@@ -1,34 +1,24 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Sun, 08 May 2011 09:55:07 +0000
-Subject: [PATCH] mfd: WL1273 FM Radio: remove unused variable
-Message-Id: <1304848507.2755.4.camel@mars>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Fri, 13 May 2011 17:23:45 +0000
+Subject: Re: [PATCH] mfd: WL1273 FM Radio: remove unused variable
+Message-Id: <20110513172344.GQ8970@sortiz-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1304848507.2755.4.camel@mars>
+In-Reply-To: <1304848507.2755.4.camel@mars>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This patch removes an unused variable in wl1273_fm_set_volume().
+Hi Christoph,
 
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
----
- drivers/mfd/wl1273-core.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+On Sun, May 08, 2011 at 11:55:07AM +0200, Christoph Fritz wrote:
+> This patch removes an unused variable in wl1273_fm_set_volume().
+This patch is already applied to my for-next branch.
 
-diff --git a/drivers/mfd/wl1273-core.c b/drivers/mfd/wl1273-core.c
-index 04914f2..37af778 100644
---- a/drivers/mfd/wl1273-core.c
-+++ b/drivers/mfd/wl1273-core.c
-@@ -153,7 +153,6 @@ out:
-  */
- static int wl1273_fm_set_volume(struct wl1273_core *core, unsigned int volume)
- {
--	u16 val;
- 	int r;
- 
- 	if (volume > WL1273_MAX_VOLUME)
+Cheers,
+Samuel.
+
 -- 
-1.7.2.3
-
-
-
+Intel Open Source Technology Centre
+http://oss.intel.com/
