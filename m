@@ -1,86 +1,75 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 11 May 2011 23:19:22 +0000
-Subject: Re: [PATCH 04/12] staging: usbip: replace usbip_u{dbg,err,info} and
-Message-Id: <20110511231922.GD7362@kroah.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 13 May 2011 14:15:39 +0000
+Subject: [PATCH] drivers/isdn/hisax: Drop unused list
+Message-Id: <1305296139-16773-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305103212.git.mfm@muteddisk.com>
- <0c3a71ba4811a3ab470d307650067e9c2b52379b.1305103212.git.mfm@muteddisk.com>
- <20110511210639.GA4679@kroah.com>
- <BANLkTimBxkF4KbXfm7Ma8cmpDF9EPjfMWQ@mail.gmail.com>
-In-Reply-To: <BANLkTimBxkF4KbXfm7Ma8cmpDF9EPjfMWQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: matt mooney <mfmooney@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 11, 2011 at 03:51:58PM -0700, matt mooney wrote:
-> On Wed, May 11, 2011 at 2:06 PM, Greg KH <greg@kroah.com> wrote:
-> > On Wed, May 11, 2011 at 01:54:16AM -0700, matt mooney wrote:
-> >> This switches all of the non dev_<level> print statements to use the
-> >> pr_<level> macros. And a few debug statements are removed.
-> >
-> > Can't most of these be moved to use the dev_* calls instead?
->=20
-> I believe so and had planned to do this is in a second pass.
+The file st5481_init.c locally defines and initializes the adapter_list
+variable, but does not use it for anything.  Removing the list makes it
+possible to remove the list field from the st5481_adapter data structure.
+In the function probe_st5481, it also makes it possible to free the locally
+allocated adapter value on an error exit.
 
-Ah, you didn't say that :)
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-> >> Signed-off-by: matt mooney <mfm@muteddisk.com>
-> >> ---
-> >> =A0drivers/staging/usbip/stub_dev.c =A0 =A0 | =A0 22 ++--
-> >> =A0drivers/staging/usbip/stub_main.c =A0 =A0| =A0 19 ++--
-> >> =A0drivers/staging/usbip/stub_rx.c =A0 =A0 =A0| =A0 24 ++--
-> >> =A0drivers/staging/usbip/stub_tx.c =A0 =A0 =A0| =A0 16 ++--
-> >> =A0drivers/staging/usbip/usbip_common.c | =A0228 +++++++++++++++------=
-------------
-> >> =A0drivers/staging/usbip/usbip_common.h | =A0 46 +------
-> >> =A0drivers/staging/usbip/usbip_event.c =A0| =A0 =A03 +-
-> >> =A0drivers/staging/usbip/vhci_hcd.c =A0 =A0 | =A0 87 +++++--------
-> >> =A0drivers/staging/usbip/vhci_rx.c =A0 =A0 =A0| =A0 33 +++---
-> >> =A0drivers/staging/usbip/vhci_sysfs.c =A0 | =A0 14 +-
-> >> =A0drivers/staging/usbip/vhci_tx.c =A0 =A0 =A0| =A0 =A08 +-
-> >> =A011 files changed, 209 insertions(+), 291 deletions(-)
-> >>
-> >> diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/=
-stub_dev.c
-> >> index c71d0a3..0c0d838 100644
-> >> --- a/drivers/staging/usbip/stub_dev.c
-> >> +++ b/drivers/staging/usbip/stub_dev.c
-> >> @@ -196,7 +196,7 @@ static void stub_shutdown_connection(struct usbip_=
-device *ud)
-> >> =A0 =A0 =A0 =A0* step 1?
-> >> =A0 =A0 =A0 =A0*/
-> >> =A0 =A0 =A0 if (ud->tcp_socket) {
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 usbip_udbg("shutdown tcp_socket %p\n", ud->t=
-cp_socket);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 pr_debug("shutdown tcp_socket %p\n", ud->tcp=
-_socket);
-> >
-> > Like here, we have a valid struct device pointer from what I can tell,
-> > so we should use dev_dbg() instead of pr_debug().
-> >
-> > I think a lot of these conversions could use those calls here, right?
-> >
-> > So care to split this into 2 patches, one that converts to valid usages
-> > of the dev_* calls, and the other a patch that converts the rest to pr_*
-> > calls?
->=20
-> Do you mind just taking this as is for now? That way I can do the
-> dev_dbg() conversion on a case by case basis as I become more familiar
-> with the code, which was kind of my original plan. This patch still
-> provides a fair amount of cleanup ;)
+---
+ drivers/isdn/hisax/st5481.h      |    1 -
+ drivers/isdn/hisax/st5481_init.c |    6 +-----
+ 2 files changed, 1 insertion(+), 6 deletions(-)
 
-Yes it does, but I would prefer if you did it right the first time.
-It's neater that way and makes more sense.
+diff --git a/drivers/isdn/hisax/st5481.h b/drivers/isdn/hisax/st5481.h
+index 64f78a8..b9054cb 100644
+--- a/drivers/isdn/hisax/st5481.h
++++ b/drivers/isdn/hisax/st5481.h
+@@ -377,7 +377,6 @@ struct st5481_bcs {
+ };
+ 
+ struct st5481_adapter {
+-	struct list_head list;
+ 	int number_of_leds;
+ 	struct usb_device *usb_dev;
+ 	struct hisax_d_if hisax_d_if;
+diff --git a/drivers/isdn/hisax/st5481_init.c b/drivers/isdn/hisax/st5481_init.c
+index 1375123..9f7fd18 100644
+--- a/drivers/isdn/hisax/st5481_init.c
++++ b/drivers/isdn/hisax/st5481_init.c
+@@ -46,8 +46,6 @@ module_param(debug, int, 0);
+ #endif
+ int st5481_debug;
+ 
+-static LIST_HEAD(adapter_list);
+-
+ /* ===================================
+  * registration/deregistration with the USB layer
+  */
+@@ -86,7 +84,6 @@ static int probe_st5481(struct usb_interface *intf,
+ 		adapter->bcs[i].b_if.ifc.priv = &adapter->bcs[i];
+ 		adapter->bcs[i].b_if.ifc.l2l1 = st5481_b_l2l1;
+ 	}
+-	list_add(&adapter->list, &adapter_list);
+ 
+ 	retval = st5481_setup_usb(adapter);
+ 	if (retval < 0)
+@@ -125,6 +122,7 @@ static int probe_st5481(struct usb_interface *intf,
+  err_usb:
+ 	st5481_release_usb(adapter);
+  err:
++	kfree(adapter);
+ 	return -EIO;
+ }
+ 
+@@ -142,8 +140,6 @@ static void disconnect_st5481(struct usb_interface *intf)
+ 	if (!adapter)
+ 		return;
+ 	
+-	list_del(&adapter->list);
+-
+ 	st5481_stop(adapter);
+ 	st5481_release_b(&adapter->bcs[1]);
+ 	st5481_release_b(&adapter->bcs[0]);
 
-So, can you please redo this and resend it?
-
-thanks,
-
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
