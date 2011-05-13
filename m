@@ -1,57 +1,63 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 20 May 2011 04:36:59 +0000
-Subject: [PATCH 05/12] staging: usbip: stub_main.c: rename init and exit functions
-Message-Id: <919bb9f191949190dbab8088269ad0105983ce9a.1305866084.git.mfm@muteddisk.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 13 May 2011 13:52:11 +0000
+Subject: [PATCH 3/3] drivers/gpu/drm/drm_bufs.c: Avoid leaving freed data in a list
+Message-Id: <1305294731-12127-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305866084.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Change the prefix of the __init and __exit functions to usbip_host_ to
-correspond with the modules name.
+If the call to drm_map_handle fails, list is freed, but not removed from
+&dev->maplist.  &dev->maplist is not used by drm_map_handle, so the
+list_add is moved after the call.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+The sematic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression E,E1,E2;
+identifier l;
+@@
+
+*list_add(&E->l,E1);
+... when != E1
+    when != list_del(&E->l)
+    when != list_del_init(&E->l)
+    when != E = E2
+*kfree(E);// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/usbip/stub_main.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+I have only verified that the list is not accessed by drm_map_handle by
+inspecting the code.  If this analysis is not correct, the other solution
+would be to leave the list_add where it is and delete the element from the
+list explicitly.
 
-diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
-index 00398a6..53d6977 100644
---- a/drivers/staging/usbip/stub_main.c
-+++ b/drivers/staging/usbip/stub_main.c
-@@ -245,7 +245,7 @@ void stub_device_cleanup_urbs(struct stub_device *sdev)
+ drivers/gpu/drm/drm_bufs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
+index 3e257a5..16cd5c4 100644
+--- a/drivers/gpu/drm/drm_bufs.c
++++ b/drivers/gpu/drm/drm_bufs.c
+@@ -338,7 +338,6 @@ static int drm_addmap_core(struct drm_device * dev, resource_size_t offset,
+ 	list->map = map;
+ 
+ 	mutex_lock(&dev->struct_mutex);
+-	list_add(&list->head, &dev->maplist);
+ 
+ 	/* Assign a 32-bit handle */
+ 	/* We do it here so that dev->struct_mutex protects the increment */
+@@ -355,6 +354,7 @@ static int drm_addmap_core(struct drm_device * dev, resource_size_t offset,
+ 		return ret;
  	}
- }
  
--static int __init usb_stub_init(void)
-+static int __init usbip_host_init(void)
- {
- 	int ret;
++	list_add(&list->head, &dev->maplist);
+ 	list->user_token = list->hash.key << PAGE_SHIFT;
+ 	mutex_unlock(&dev->struct_mutex);
  
-@@ -281,7 +281,7 @@ err_usb_register:
- 	return ret;
- }
- 
--static void __exit usb_stub_exit(void)
-+static void __exit usbip_host_exit(void)
- {
- 	driver_remove_file(&stub_driver.drvwrap.driver,
- 			   &driver_attr_match_busid);
-@@ -295,8 +295,8 @@ static void __exit usb_stub_exit(void)
- 	kmem_cache_destroy(stub_priv_cache);
- }
- 
--module_init(usb_stub_init);
--module_exit(usb_stub_exit);
-+module_init(usbip_host_init);
-+module_exit(usbip_host_exit);
- 
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
--- 
-1.7.5.1
 
