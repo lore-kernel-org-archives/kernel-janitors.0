@@ -1,49 +1,35 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 18 May 2011 19:20:43 +0000
-Subject: [PATCH] drivers/staging/cptm1217/clearpad_tm1217.c: Correct call to input_free_device
-Message-Id: <1305746443-694-1-git-send-email-julia@diku.dk>
+Date: Sat, 14 May 2011 07:10:51 +0000
+Subject: [PATCH] fs/btrfs: Add missing btrfs_free_path
+Message-Id: <1305357051-5288-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: kernel-janitors@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Ramesh Agarwal <ramesh.agarwal@intel.com>, Dan Carpenter <error27@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Chris Mason <chris.mason@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-This code is in a loop that currently is only executed once.  Because of
-this property, the first block of code is currently actually correct.
-Nevertheless, the comments associated with the code suggest that the loop
-is planned to take more than one iteration in the future, and thus this
-patch is made with that case in mind.
+Btrfs_alloc_path should be matched with btrfs_free_path in error-handling code.
 
-In the first block of code, there is currently an immediate abort from the
-function.  It is changed to jump to the error handling code at fail, to be
-able to unregister and free the resources allocated on previous iterations.
-
-In the second block of code, the input_dev for the current iteration has
-been allocated, but has not been registered.  It has also not been stored
-in ts->cp_input_info[i].input.  Thus on jumping to fail, it will not be
-freed.  In this case, we want to free, but not unregister, so the free for
-this most recently allocated resource is put before the jump.
-
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @r exists@
-local idexpression struct input_dev * x;
-expression ra,rr;
+local idexpression struct btrfs_path * x;
+expression ra,rb;
 position p1,p2;
 @@
 
-x = input_allocate_device@p1(...)
-...  when != x = rr
-     when != input_free_device(x,...)
-     when != if (...) { ... input_free_device(x,...) ...}
-if(...) { ... when != x = ra
+x = btrfs_alloc_path@p1(...)
+...  when != btrfs_free_path(x,...)
+     when != if (...) { ... btrfs_free_path(x,...) ...}
+     when != x = ra
+if(...) { ... when != x = rb
      when forall
-     when != input_free_device(x,...)
+     when != btrfs_free_path(x,...)
  \(return <+...x...+>; \| return@p2...; \) }
 
 @script:python@
@@ -51,39 +37,43 @@ p1 << r.p1;
 p2 << r.p2;
 @@
 
-cocci.print_main("input_allocate_device",p1)
-cocci.print_secs("input_free_device",p2)
+cocci.print_main("alloc",p1)
+cocci.print_secs("return",p2)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-Only compile tested.
+ fs/btrfs/inode.c |    1 +
+ fs/btrfs/super.c |    4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
- drivers/staging/cptm1217/clearpad_tm1217.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/cptm1217/clearpad_tm1217.c b/drivers/staging/cptm1217/clearpad_tm1217.c
-index 0fe713e..5456f82 100644
---- a/drivers/staging/cptm1217/clearpad_tm1217.c
-+++ b/drivers/staging/cptm1217/clearpad_tm1217.c
-@@ -462,8 +462,8 @@ static int cp_tm1217_probe(struct i2c_client *client,
- 		if (input_dev = NULL) {
- 			dev_err(ts->dev,
- 				"cp_tm1217:Input Device Struct alloc failed\n");
--			kfree(ts);
--			return -ENOMEM;
-+			retval = -ENOMEM;
-+			goto fail;
- 		}
- 		input_info = &ts->cp_input_info[i];
- 		snprintf(input_info->name, sizeof(input_info->name),
-@@ -486,6 +486,7 @@ static int cp_tm1217_probe(struct i2c_client *client,
- 			dev_err(ts->dev,
- 				"Input dev registration failed for %s\n",
- 					input_dev->name);
-+			input_free_device(input_dev);
- 			goto fail;
- 		}
- 		input_info->input = input_dev;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 7cd8ab0..079a8df 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -7315,6 +7315,7 @@ static int btrfs_symlink(struct inode *dir, struct dentry *dentry,
+ 				      datasize);
+ 	if (err) {
+ 		drop_inode = 1;
++		btrfs_free_path(path);
+ 		goto out_unlock;
+ 	}
+ 	leaf = path->nodes[0];
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index be4ffa1..6ee0d04 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -507,8 +507,10 @@ static struct dentry *get_default_root(struct super_block *sb,
+ 	 */
+ 	dir_id = btrfs_super_root_dir(&root->fs_info->super_copy);
+ 	di = btrfs_lookup_dir_item(NULL, root, path, dir_id, "default", 7, 0);
+-	if (IS_ERR(di))
++	if (IS_ERR(di)) {
++		btrfs_free_path(path);
+ 		return ERR_CAST(di);
++	}
+ 	if (!di) {
+ 		/*
+ 		 * Ok the default dir item isn't there.  This is weird since
 
