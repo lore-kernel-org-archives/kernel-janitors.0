@@ -1,63 +1,64 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 13 May 2011 13:52:11 +0000
-Subject: [PATCH 3/3] drivers/gpu/drm/drm_bufs.c: Avoid leaving freed data in a list
-Message-Id: <1305294731-12127-3-git-send-email-julia@diku.dk>
+Date: Sat, 14 May 2011 14:18:54 +0000
+Subject: [PATCH 1/2] drivers/input/touchscreen/atmel_tsadcc.c: Correct call to input_free_device
+Message-Id: <1305382735-11474-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If the call to drm_map_handle fails, list is freed, but not removed from
-&dev->maplist.  &dev->maplist is not used by drm_map_handle, so the
-list_add is moved after the call.
+From: Julia Lawall <julia@diku.dk>
 
-The sematic match that finds this problem is as follows:
+This error handling code can be reached before ts_dev->input is
+initialized, so it is safer to always use the original name, input_dev.
+
+A simplified version of the semantic match that finds this problem is:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression E,E1,E2;
-identifier l;
+@r exists@
+local idexpression struct input_dev * x;
+expression ra,rr;
+position p1,p2;
 @@
 
-*list_add(&E->l,E1);
-... when != E1
-    when != list_del(&E->l)
-    when != list_del_init(&E->l)
-    when != E = E2
-*kfree(E);// </smpl>
+x = input_allocate_device@p1(...)
+...  when != x = rr
+     when != input_free_device(x,...)
+     when != if (...) { ... input_free_device(x,...) ...}
+if(...) { ... when != x = ra
+     when forall
+     when != input_free_device(x,...)
+ \(return <+...x...+>; \| return@p2...; \) }
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+cocci.print_main("input_allocate_device",p1)
+cocci.print_secs("input_free_device",p2)
+// </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-I have only verified that the list is not accessed by drm_map_handle by
-inspecting the code.  If this analysis is not correct, the other solution
-would be to leave the list_add where it is and delete the element from the
-list explicitly.
-
- drivers/gpu/drm/drm_bufs.c |    2 +-
+ drivers/input/touchscreen/atmel_tsadcc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index 3e257a5..16cd5c4 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -338,7 +338,6 @@ static int drm_addmap_core(struct drm_device * dev, resource_size_t offset,
- 	list->map = map;
- 
- 	mutex_lock(&dev->struct_mutex);
--	list_add(&list->head, &dev->maplist);
- 
- 	/* Assign a 32-bit handle */
- 	/* We do it here so that dev->struct_mutex protects the increment */
-@@ -355,6 +354,7 @@ static int drm_addmap_core(struct drm_device * dev, resource_size_t offset,
- 		return ret;
- 	}
- 
-+	list_add(&list->head, &dev->maplist);
- 	list->user_token = list->hash.key << PAGE_SHIFT;
- 	mutex_unlock(&dev->struct_mutex);
- 
+diff --git a/drivers/input/touchscreen/atmel_tsadcc.c b/drivers/input/touchscreen/atmel_tsadcc.c
+index 3d9b516..432c69b 100644
+--- a/drivers/input/touchscreen/atmel_tsadcc.c
++++ b/drivers/input/touchscreen/atmel_tsadcc.c
+@@ -317,7 +317,7 @@ err_unmap_regs:
+ err_release_mem:
+ 	release_mem_region(res->start, resource_size(res));
+ err_free_dev:
+-	input_free_device(ts_dev->input);
++	input_free_device(input_dev);
+ err_free_mem:
+ 	kfree(ts_dev);
+ 	return err;
 
