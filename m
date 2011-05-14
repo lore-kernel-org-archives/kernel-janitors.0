@@ -1,43 +1,65 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 06 May 2011 10:47:48 +0000
-Subject: [PATCH 08/16] staging: usbip: stub.h: coding style cleanup
-Message-Id: <70fd590bd9756fe52331f7efbe5250310fa5cea7.1304676742.git.mfm@muteddisk.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 14 May 2011 14:18:55 +0000
+Subject: [PATCH 2/2] drivers/media/rc/imon.c: Correct call to input_free_device
+Message-Id: <1305382735-11474-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1304676742.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Jarod Wilson <jarod@redhat.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, =?UTF-8?q?David=20H=C3=A4rdeman?= <david@hardeman.nu>, Joe Perches <joe@perches.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Remove extraneous lines.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+ictx->touch is intialied in imon_init_intf1, to the result of calling the
+function that contains this code.  Thus, in this code, input_free_device
+should be called on touch itself.
+
+A simplified version of the semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+local idexpression struct input_dev * x;
+expression ra,rr;
+position p1,p2;
+@@
+
+x = input_allocate_device@p1(...)
+...  when != x = rr
+     when != input_free_device(x,...)
+     when != if (...) { ... input_free_device(x,...) ...}
+if(...) { ... when != x = ra
+     when forall
+     when != input_free_device(x,...)
+ \(return <+...x...+>; \| return@p2...; \) }
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+cocci.print_main("input_allocate_device",p1)
+cocci.print_secs("input_free_device",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/usbip/stub.h |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+ drivers/media/rc/imon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/usbip/stub.h b/drivers/staging/usbip/stub.h
-index 6004fcd..6d252b8 100644
---- a/drivers/staging/usbip/stub.h
-+++ b/drivers/staging/usbip/stub.h
-@@ -58,7 +58,6 @@ struct stub_device {
- 	struct list_head unlink_tx;
- 	struct list_head unlink_free;
+diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
+index 8fc0f08..c400318 100644
+--- a/drivers/media/rc/imon.c
++++ b/drivers/media/rc/imon.c
+@@ -1982,7 +1982,7 @@ static struct input_dev *imon_init_touch(struct imon_context *ictx)
+ 	return touch;
  
--
- 	wait_queue_head_t tx_waitq;
- };
+ touch_register_failed:
+-	input_free_device(ictx->touch);
++	input_free_device(touch);
  
-@@ -89,7 +88,6 @@ struct bus_id_priv {
- 
- extern struct kmem_cache *stub_priv_cache;
- 
--
- /*-------------------------------------------------------------------------*/
- /* prototype declarations */
- 
--- 
-1.7.5.1
+ touch_alloc_failed:
+ 	return NULL;
 
