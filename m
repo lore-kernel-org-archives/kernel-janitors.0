@@ -1,44 +1,42 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 27 May 2011 08:49:24 +0000
-Subject: [PATCH] staging: usbip: stub_main.c: simplify busid_table initialization
-Message-Id: <8b7b3dd5fe3719c032f351fd2388b2f3feed142a.1306486060.git.mfm@muteddisk.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 16 May 2011 12:24:57 +0000
+Subject: [PATCH] drivers/staging/line6/driver.c: Drop unneeded put functions.
+Message-Id: <1305548697-27591-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, Markus Grabner <grabner@icg.tugraz.at>, Kulikov Vasiliy <segooon@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Set the whole structure to zero instead of individually setting each
-member, which simplifies the for loop.
+From: Julia Lawall <julia@diku.dk>
 
-This was suggested by walter harms <wharms@bfs.de>.
+This seems to be the result of patches ab366c1a and 1027f476 crossing each
+other.  Patch ab366c1a adds calls to usb_put_intf and usb_put_dev at the
+end of the function line6_probe, in the error handling code, while patch
+1027f476 moves the calls to the corresponding get function from the
+beginning to the end of line6_probe, making the calls to put in the error
+handling code unnecessary.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/usbip/stub_main.c |    8 ++------
- 1 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/staging/line6/driver.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
-index 45a0f5d..a34249a 100644
---- a/drivers/staging/usbip/stub_main.c
-+++ b/drivers/staging/usbip/stub_main.c
-@@ -39,13 +39,9 @@ static void init_busid_table(void)
- {
- 	int i;
- 
--	for (i = 0; i < MAX_BUSID; i++) {
--		memset(busid_table[i].name, 0, BUSID_SIZE);
-+	memset(busid_table, 0, sizeof(busid_table));
-+	for (i = 0; i < MAX_BUSID; i++)
- 		busid_table[i].status = STUB_BUSID_OTHER;
--		busid_table[i].interf_count = 0;
--		busid_table[i].sdev = NULL;
--		busid_table[i].shutdown_busid = 0;
--	}
- 
- 	spin_lock_init(&busid_table_lock);
+diff --git a/drivers/staging/line6/driver.c b/drivers/staging/line6/driver.c
+index ea9209d..851b762 100644
+--- a/drivers/staging/line6/driver.c
++++ b/drivers/staging/line6/driver.c
+@@ -1094,8 +1094,6 @@ static int line6_probe(struct usb_interface *interface,
+ err_destruct:
+ 	line6_destruct(interface);
+ err_put:
+-	usb_put_intf(interface);
+-	usb_put_dev(usbdev);
+ 	return ret;
  }
--- 
-1.7.5.1
+ 
 
