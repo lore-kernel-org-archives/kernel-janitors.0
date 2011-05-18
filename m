@@ -1,115 +1,89 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 21 May 2011 11:45:31 +0000
-Subject: Re: [PATCH 04/12] staging: usbip: stub_main.c: code cleanup
-Message-Id: <4DD7A5DB.7050000@bfs.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 18 May 2011 19:20:43 +0000
+Subject: [PATCH] drivers/staging/cptm1217/clearpad_tm1217.c: Correct call to input_free_device
+Message-Id: <1305746443-694-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305866084.git.mfm@muteddisk.com> <14e39daa97f8475ec12c9ed6a2e95ba344f1c1ee.1305866084.git.mfm@muteddisk.com> <4DD62F8A.90208@bfs.de> <20110520184517.GB83316@haskell.muteddisk.com>
-In-Reply-To: <20110520184517.GB83316@haskell.muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Ramesh Agarwal <ramesh.agarwal@intel.com>, Dan Carpenter <error27@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
+This code is in a loop that currently is only executed once.  Because of
+this property, the first block of code is currently actually correct.
+Nevertheless, the comments associated with the code suggest that the loop
+is planned to take more than one iteration in the future, and thus this
+patch is made with that case in mind.
 
-Am 20.05.2011 20:45, schrieb matt mooney:
-> On 11:08 Fri 20 May     , walter harms wrote:
->>
->>
->> Am 20.05.2011 06:36, schrieb matt mooney:
->>> Remove match_find() and replace with get_busid_idx(); change
->>> get_busid_priv(), add_match_busid(), and del_match_busid() to use
->>> get_busid_idx(); and cleanup code in the other functions.
->>>
->>> Signed-off-by: matt mooney <mfm@muteddisk.com>
->>> ---
->>>  drivers/staging/usbip/stub_main.c |  147 ++++++++++++++++++-------------------
->>>  1 files changed, 73 insertions(+), 74 deletions(-)
->>>
->>> diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
->>> index 0ca1462..00398a6 100644
->>> --- a/drivers/staging/usbip/stub_main.c
->>> +++ b/drivers/staging/usbip/stub_main.c
->>> @@ -50,82 +50,90 @@ static void init_busid_table(void)
->>>  	spin_lock_init(&busid_table_lock);
->>>  }
->>>  
->>> -int match_busid(const char *busid)
->>> +/*
->>> + * Find the index of the busid by name.
->>> + * Must be called with busid_table_lock held.
->>> + */
->>> +static int get_busid_idx(const char *busid)
->>>  {
->>>  	int i;
->>> +	int idx = -1;
->>>  
->>> -	spin_lock(&busid_table_lock);
->>>  	for (i = 0; i < MAX_BUSID; i++)
->>>  		if (busid_table[i].name[0])
->>>  			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
->>> -				/* already registerd */
->>> -				spin_unlock(&busid_table_lock);
->>> -				return 0;
->>> +				idx = i;
->>> +				break;
->>>  			}
->>> -	spin_unlock(&busid_table_lock);
->>> -
->>> -	return 1;
->>> +	return idx;
->>>  }
->>>  
->>>  struct bus_id_priv *get_busid_priv(const char *busid)
->>>  {
->>> -	int i;
->>> +	int idx;
->>> +	struct bus_id_priv *bid = NULL;
->>>  
->>>  	spin_lock(&busid_table_lock);
->>> -	for (i = 0; i < MAX_BUSID; i++)
->>> -		if (busid_table[i].name[0])
->>> -			if (!strncmp(busid_table[i].name, busid, BUSID_SIZE)) {
->>> -				/* already registerd */
->>> -				spin_unlock(&busid_table_lock);
->>> -				return &(busid_table[i]);
->>> -			}
->>> +	idx = get_busid_idx(busid);
->>> +	if (idx >= 0)
->>> +		bid = &(busid_table[idx]);
->>>  	spin_unlock(&busid_table_lock);
->>>  
->>> -	return NULL;
->>> +	return bid;
->>>  }
->>>  
->>>  static int add_match_busid(char *busid)
->>>  {
->>>  	int i;
->>> -
->>> -	if (!match_busid(busid))
->>> -		return 0;
->>> +	int ret = -1;
->>>  
->>>  	spin_lock(&busid_table_lock);
->>> +	/* already registered? */
->>> +	if (get_busid_idx(busid) >= 0) {
->>> +		ret = 0;
->>> +		goto out;
->>> +	}
->>> +
->>>  	for (i = 0; i < MAX_BUSID; i++)
->>>  		if (!busid_table[i].name[0]) {
->>>  			strncpy(busid_table[i].name, busid, BUSID_SIZE);
->>
->> i am missing an if() here ??
-> 
-> I am not sure what you mean. It should be correct.
->  
+In the first block of code, there is currently an immediate abort from the
+function.  It is changed to jump to the error handling code at fail, to be
+able to unregister and free the resources allocated on previous iterations.
 
-ups, sorry my fault
-missread it as strcmp() everything is fine now.
+In the second block of code, the input_dev for the current iteration has
+been allocated, but has not been registered.  It has also not been stored
+in ts->cp_input_info[i].input.  Thus on jumping to fail, it will not be
+freed.  In this case, we want to free, but not unregister, so the free for
+this most recently allocated resource is put before the jump.
 
-re,
- wh
+A simplified version of the semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+local idexpression struct input_dev * x;
+expression ra,rr;
+position p1,p2;
+@@
+
+x = input_allocate_device@p1(...)
+...  when != x = rr
+     when != input_free_device(x,...)
+     when != if (...) { ... input_free_device(x,...) ...}
+if(...) { ... when != x = ra
+     when forall
+     when != input_free_device(x,...)
+ \(return <+...x...+>; \| return@p2...; \) }
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+cocci.print_main("input_allocate_device",p1)
+cocci.print_secs("input_free_device",p2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+Only compile tested.
+
+ drivers/staging/cptm1217/clearpad_tm1217.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/cptm1217/clearpad_tm1217.c b/drivers/staging/cptm1217/clearpad_tm1217.c
+index 0fe713e..5456f82 100644
+--- a/drivers/staging/cptm1217/clearpad_tm1217.c
++++ b/drivers/staging/cptm1217/clearpad_tm1217.c
+@@ -462,8 +462,8 @@ static int cp_tm1217_probe(struct i2c_client *client,
+ 		if (input_dev = NULL) {
+ 			dev_err(ts->dev,
+ 				"cp_tm1217:Input Device Struct alloc failed\n");
+-			kfree(ts);
+-			return -ENOMEM;
++			retval = -ENOMEM;
++			goto fail;
+ 		}
+ 		input_info = &ts->cp_input_info[i];
+ 		snprintf(input_info->name, sizeof(input_info->name),
+@@ -486,6 +486,7 @@ static int cp_tm1217_probe(struct i2c_client *client,
+ 			dev_err(ts->dev,
+ 				"Input dev registration failed for %s\n",
+ 					input_dev->name);
++			input_free_device(input_dev);
+ 			goto fail;
+ 		}
+ 		input_info->input = input_dev;
 
