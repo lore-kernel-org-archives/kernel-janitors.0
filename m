@@ -1,72 +1,56 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 16 May 2011 09:54:59 +0000
-Subject: [PATCH] drivers/gpu/drm/i915/i915_gem.c: Add missing error handling code
-Message-Id: <1305539699-14096-1-git-send-email-julia@diku.dk>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 20 May 2011 04:37:06 +0000
+Subject: [PATCH 12/12] staging: usbip: vhci_hcd.c: rename init and exit functions
+Message-Id: <bd7f81f595fb8b19530f0a5373092fa27d58e7c1.1305866084.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1305866084.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Change the prefix of the __init and __exit functions to vhci_hcd_ to
+correspond with the modules name. And change the suffix of the __exit
+function to exit instead of cleanup.
 
-The cleanup code at the end of the function should also be carried out when
-the function only partly completes its work.
-
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-local idexpression struct page ** x;
-expression ra,rr;
-position p1,p2;
-@@
-
-x = drm_malloc_ab@p1(...)
-...  when != x = rr
-     when != drm_free_large(x,...)
-     when != if (...) { ... drm_free_large(x,...) ...}
-if(...) { ... when != x = ra
-     when forall
-     when != drm_free_large(x,...)
- \(return <+...x...+>; \| return@p2...; \) }
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-cocci.print_main("drm_malloc_ab",p1)
-cocci.print_secs("return",p2)
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
-This is only compile-tested.  It may be that processing all of the pages is
-not correct when they have been partially treated.
+ drivers/staging/usbip/vhci_hcd.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
- drivers/gpu/drm/i915/i915_gem.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index 7ce3f35..ef000e6 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -467,8 +467,10 @@ i915_gem_shmem_pread_slow(struct drm_device *dev,
+diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
+index 5b94b80..359b464 100644
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -1209,7 +1209,7 @@ static struct platform_device the_pdev = {
+ 	},
+ };
  
- 		page = read_cache_page_gfp(mapping, offset >> PAGE_SHIFT,
- 					   GFP_HIGHUSER | __GFP_RECLAIMABLE);
--		if (IS_ERR(page))
--			return PTR_ERR(page);
-+		if (IS_ERR(page)) {
-+			ret = PTR_ERR(page);
-+			goto out;
-+		}
+-static int __init vhci_init(void)
++static int __init vhci_hcd_init(void)
+ {
+ 	int ret;
  
- 		if (do_bit17_swizzling) {
- 			slow_shmem_bit17_copy(page,
+@@ -1233,14 +1233,14 @@ err_driver_register:
+ 	return ret;
+ }
+ 
+-static void __exit vhci_cleanup(void)
++static void __exit vhci_hcd_exit(void)
+ {
+ 	platform_device_unregister(&the_pdev);
+ 	platform_driver_unregister(&vhci_driver);
+ }
+ 
+-module_init(vhci_init);
+-module_exit(vhci_cleanup);
++module_init(vhci_hcd_init);
++module_exit(vhci_hcd_exit);
+ 
+ MODULE_AUTHOR(DRIVER_AUTHOR);
+ MODULE_DESCRIPTION(DRIVER_DESC);
+-- 
+1.7.5.1
 
