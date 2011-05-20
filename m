@@ -1,41 +1,39 @@
-From: matt mooney <mfmooney@gmail.com>
-Date: Wed, 11 May 2011 22:56:04 +0000
-Subject: Re: [PATCH 06/12] staging: usbip: stub_main.c: code cleanup
-Message-Id: <BANLkTikg-oZrevgm-g+M=FO+O-uj5OyaEQ@mail.gmail.com>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 20 May 2011 04:37:00 +0000
+Subject: [PATCH 06/12] staging: usbip: stub_main.c: use KMEM_CACHE macro
+Message-Id: <810a17cd0703bc6899a73d83dc30dcfe575ec5e9.1305866084.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305103212.git.mfm@muteddisk.com>
-	<3a932c55376e57a96881a654a0f6c3e6837f400e.1305103212.git.mfm@muteddisk.com>
-	<20110511210837.GA4893@kroah.com>
-In-Reply-To: <20110511210837.GA4893@kroah.com>
+References: <cover.1305866084.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <greg@kroah.com>
+To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 11, 2011 at 2:08 PM, Greg KH <greg@kroah.com> wrote:
-> On Wed, May 11, 2011 at 01:54:18AM -0700, matt mooney wrote:
->> Reorder functions; remove match_find() and replace with
->> get_busid_idx(); change other functions to use get_busid_idx(); and
->> code cleanup in the other functions.
->>
->> Signed-off-by: matt mooney <mfm@muteddisk.com>
->> ---
->> I apologize for this one. I realize that I should have split it into two with
->> the reorder being separate.
->
-> Yes, please split it up.
+Change kmem_cache_create() to the KMEM_CACHE() macro.
 
-Okay, I have to try and figure out a sane way of doing this but I will split it.
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/staging/usbip/stub_main.c |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
->> Also, it seems as if there is a synchronization problem carried over from the
->> original code in get_busid_priv(). An address into the busid_table is returned
->> and then the element is accessed and modified elsewhere. Right? Or am I missing
->> something.
->
-> You might be correct, I don't really know.
->
-Yeah I will have to figure that out as I go.
-
+diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
+index 53d6977..45a0f5d 100644
+--- a/drivers/staging/usbip/stub_main.c
++++ b/drivers/staging/usbip/stub_main.c
+@@ -249,9 +249,8 @@ static int __init usbip_host_init(void)
+ {
+ 	int ret;
+ 
+-	stub_priv_cache = kmem_cache_create("stub_priv",
+-					    sizeof(struct stub_priv), 0,
+-					    SLAB_HWCACHE_ALIGN, NULL);
++	stub_priv_cache = KMEM_CACHE(stub_priv, SLAB_HWCACHE_ALIGN);
++
+ 	if (!stub_priv_cache) {
+ 		pr_err("kmem_cache_create failed\n");
+ 		return -ENOMEM;
 -- 
-GPG-Key: 9AFE00EA
+1.7.5.1
+
