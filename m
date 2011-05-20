@@ -1,68 +1,101 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Date: Sun, 15 May 2011 09:36:29 +0000
-Subject: Re: [PATCH 1/3] arch/x86/kernel/cpu/mcheck/mce_amd.c: Avoid
-Message-Id: <20110515093629.GB10319@aftab>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 20 May 2011 04:36:57 +0000
+Subject: [PATCH 03/12] staging: usbip: stub_main.c: reorder functions
+Message-Id: <90bf8151c9cdbd53fd40b53e1d0c9466fae815a5.1305866084.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1305294731-12127-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1305294731-12127-1-git-send-email-julia@diku.dk>
+References: <cover.1305866084.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "Richter, Robert" <robert.richter@amd.com>, Yinghai Lu <yinghai@kernel.org>, "Herrmann3, Andreas" <Andreas.Herrmann3@amd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, May 13, 2011 at 09:52:09AM -0400, Julia Lawall wrote:
-> b may be added to a list, but is not removed before being freed in the case
-> of an error.  This is done in the corresponding deallocation function, so
-> the code here has been changed to follow that.
-> 
-> The sematic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression E,E1,E2;
-> identifier l;
-> @@
-> 
-> *list_add(&E->l,E1);
-> ... when != E1
->     when != list_del(&E->l)
->     when != list_del_init(&E->l)
->     when != E = E2
-> *kfree(E);// </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Reorder functions so sysfs_ops, show() and store(), are adjacent, and
+init_busid_table() is at the beginning of the file.
 
-Acked-by: Borislav Petkov <borislav.petkov@amd.com>
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/staging/usbip/stub_main.c |   48 ++++++++++++++++++------------------
+ 1 files changed, 24 insertions(+), 24 deletions(-)
 
-> 
-> ---
->  arch/x86/kernel/cpu/mcheck/mce_amd.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-> index 167f97b..bb0adad 100644
-> --- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-> +++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-> @@ -509,6 +509,7 @@ recurse:
->  out_free:
->  	if (b) {
->  		kobject_put(&b->kobj);
-> +		list_del(&b->miscj);
->  		kfree(b);
->  	}
->  	return err;
-> 
-> 
-
+diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
+index 44671ee..0ca1462 100644
+--- a/drivers/staging/usbip/stub_main.c
++++ b/drivers/staging/usbip/stub_main.c
+@@ -35,6 +35,21 @@ struct kmem_cache *stub_priv_cache;
+ static struct bus_id_priv busid_table[MAX_BUSID];
+ static spinlock_t busid_table_lock;
+ 
++static void init_busid_table(void)
++{
++	int i;
++
++	for (i = 0; i < MAX_BUSID; i++) {
++		memset(busid_table[i].name, 0, BUSID_SIZE);
++		busid_table[i].status = STUB_BUSID_OTHER;
++		busid_table[i].interf_count = 0;
++		busid_table[i].sdev = NULL;
++		busid_table[i].shutdown_busid = 0;
++	}
++
++	spin_lock_init(&busid_table_lock);
++}
++
+ int match_busid(const char *busid)
+ {
+ 	int i;
+@@ -69,21 +84,6 @@ struct bus_id_priv *get_busid_priv(const char *busid)
+ 	return NULL;
+ }
+ 
+-static ssize_t show_match_busid(struct device_driver *drv, char *buf)
+-{
+-	int i;
+-	char *out = buf;
+-
+-	spin_lock(&busid_table_lock);
+-	for (i = 0; i < MAX_BUSID; i++)
+-		if (busid_table[i].name[0])
+-			out += sprintf(out, "%s ", busid_table[i].name);
+-	spin_unlock(&busid_table_lock);
+-
+-	out += sprintf(out, "\n");
+-	return out - buf;
+-}
+-
+ static int add_match_busid(char *busid)
+ {
+ 	int i;
+@@ -128,19 +128,19 @@ int del_match_busid(char *busid)
+ 	return -1;
+ }
+ 
+-static void init_busid_table(void)
++static ssize_t show_match_busid(struct device_driver *drv, char *buf)
+ {
+ 	int i;
++	char *out = buf;
+ 
+-	for (i = 0; i < MAX_BUSID; i++) {
+-		memset(busid_table[i].name, 0, BUSID_SIZE);
+-		busid_table[i].status = STUB_BUSID_OTHER;
+-		busid_table[i].interf_count = 0;
+-		busid_table[i].sdev = NULL;
+-		busid_table[i].shutdown_busid = 0;
+-	}
++	spin_lock(&busid_table_lock);
++	for (i = 0; i < MAX_BUSID; i++)
++		if (busid_table[i].name[0])
++			out += sprintf(out, "%s ", busid_table[i].name);
++	spin_unlock(&busid_table_lock);
+ 
+-	spin_lock_init(&busid_table_lock);
++	out += sprintf(out, "\n");
++	return out - buf;
+ }
+ 
+ static ssize_t store_match_busid(struct device_driver *dev, const char *buf,
 -- 
-Regards/Gruss,
-Boris.
-
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Gemeinde Aschheim, Landkreis Muenchen
-Registergericht Muenchen, HRB Nr. 43632
+1.7.5.1
 
