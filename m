@@ -1,64 +1,45 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 14 May 2011 14:18:54 +0000
-Subject: [PATCH 1/2] drivers/input/touchscreen/atmel_tsadcc.c: Correct call to input_free_device
-Message-Id: <1305382735-11474-1-git-send-email-julia@diku.dk>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 20 May 2011 04:37:04 +0000
+Subject: [PATCH 10/12] staging: usbip: userspace: bind_driver.c: update kernel module name
+Message-Id: <7d1b45b1168cc014fde245ad766b81cf303c4e66.1305866084.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <cover.1305866084.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Change kernel module name to usbip-host.
 
-This error handling code can be reached before ts_dev->input is
-initialized, so it is safer to always use the original name, input_dev.
-
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-local idexpression struct input_dev * x;
-expression ra,rr;
-position p1,p2;
-@@
-
-x = input_allocate_device@p1(...)
-...  when != x = rr
-     when != input_free_device(x,...)
-     when != if (...) { ... input_free_device(x,...) ...}
-if(...) { ... when != x = ra
-     when forall
-     when != input_free_device(x,...)
- \(return <+...x...+>; \| return@p2...; \) }
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-cocci.print_main("input_allocate_device",p1)
-cocci.print_secs("input_free_device",p2)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/input/touchscreen/atmel_tsadcc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/usbip/userspace/src/bind-driver.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/atmel_tsadcc.c b/drivers/input/touchscreen/atmel_tsadcc.c
-index 3d9b516..432c69b 100644
---- a/drivers/input/touchscreen/atmel_tsadcc.c
-+++ b/drivers/input/touchscreen/atmel_tsadcc.c
-@@ -317,7 +317,7 @@ err_unmap_regs:
- err_release_mem:
- 	release_mem_region(res->start, resource_size(res));
- err_free_dev:
--	input_free_device(ts_dev->input);
-+	input_free_device(input_dev);
- err_free_mem:
- 	kfree(ts_dev);
- 	return err;
+diff --git a/drivers/staging/usbip/userspace/src/bind-driver.c b/drivers/staging/usbip/userspace/src/bind-driver.c
+index 201ffbb..dcc540a 100644
+--- a/drivers/staging/usbip/userspace/src/bind-driver.c
++++ b/drivers/staging/usbip/userspace/src/bind-driver.c
+@@ -27,7 +27,7 @@ static const struct option longopts[] = {
+ 	{NULL,		0,			NULL,  0}
+ };
+ 
+-static const char match_busid_path[] = "/sys/bus/usb/drivers/usbip/match_busid";
++static const char match_busid_path[] = "/sys/bus/usb/drivers/usbip-host/match_busid";
+ 
+ 
+ static void show_help(void)
+@@ -228,7 +228,7 @@ static int bind_to_usbip(char *busid)
+ 	for (i = 0; i < ninterface; i++) {
+ 		int ret;
+ 
+-		ret = bind_interface(busid, configvalue, i, "usbip");
++		ret = bind_interface(busid, configvalue, i, "usbip-host");
+ 		if (ret < 0) {
+ 			g_warning("bind usbip at %s:%d.%d, failed",
+ 					busid, configvalue, i);
+-- 
+1.7.5.1
 
