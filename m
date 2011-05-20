@@ -1,107 +1,54 @@
 From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 06 May 2011 10:47:56 +0000
-Subject: [PATCH 16/16] staging: usbip: fixup MODULE_ macros
-Message-Id: <bc543454026b89f47b088b0e6fb7cf04ba6183a1.1304676742.git.mfm@muteddisk.com>
+Date: Fri, 20 May 2011 04:37:01 +0000
+Subject: [PATCH 07/12] staging: usbip: usbip_common.c: fix misspelled function name
+Message-Id: <bc5a64e373593174e9eeec9d1be66d782358a9ee.1305866084.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1304676742.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
+References: <cover.1305866084.git.mfm@muteddisk.com>
+In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Greg Kroah-Hartman <greg@kroah.com>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Modify description and email address for usbip_common_mod; export
-module version number; and modify __init messages slightly.
+Change pakcet to packet in usbip_iso_packet_correct_endian().
 
 Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/staging/usbip/stub_main.c    |    4 ++--
- drivers/staging/usbip/usbip_common.c |   11 ++++++-----
- drivers/staging/usbip/vhci_hcd.c     |    4 ++--
- 3 files changed, 10 insertions(+), 9 deletions(-)
+ drivers/staging/usbip/usbip_common.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
-index 6634e07..c139f0e 100644
---- a/drivers/staging/usbip/stub_main.c
-+++ b/drivers/staging/usbip/stub_main.c
-@@ -22,7 +22,6 @@
- #include "usbip_common.h"
- #include "stub.h"
- 
--/* Version Information */
- #define DRIVER_VERSION "1.0"
- #define DRIVER_AUTHOR "Takahiro Hirofuchi"
- #define DRIVER_DESC "Stub Driver for USB/IP"
-@@ -279,7 +278,7 @@ static int __init usb_stub_init(void)
- 		goto error_usb_register;
- 	}
- 
--	printk(KERN_INFO KBUILD_MODNAME ":" DRIVER_DESC ":" DRIVER_VERSION
-+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC " " DRIVER_VERSION
- 	       "\n");
- 
- 	init_busid_table();
-@@ -320,3 +319,4 @@ module_exit(usb_stub_exit);
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
- MODULE_LICENSE("GPL");
-+MODULE_VERSION(DRIVER_VERSION);
 diff --git a/drivers/staging/usbip/usbip_common.c b/drivers/staging/usbip/usbip_common.c
-index 5d842f9..b46e9b5 100644
+index 954d90d..b204e6f 100644
 --- a/drivers/staging/usbip/usbip_common.c
 +++ b/drivers/staging/usbip/usbip_common.c
-@@ -23,13 +23,12 @@
- #include <linux/in.h>
- #include <linux/kthread.h>
- #include <linux/slab.h>
-+
- #include "usbip_common.h"
- 
--/* version information */
- #define DRIVER_VERSION "1.0"
--#define DRIVER_AUTHOR \
--	"Takahiro Hirofuchi <hirofuchi _at_ users.sourceforge.net>"
--#define DRIVER_DESC "usbip common driver"
-+#define DRIVER_AUTHOR "Takahiro Hirofuchi <hirofuchi@users.sourceforge.net>"
-+#define DRIVER_DESC "USB/IP Common Driver"
- 
- #ifdef CONFIG_USB_IP_DEBUG_ENABLE
- unsigned long usbip_debug_flag = 0xffffffff;
-@@ -862,7 +861,8 @@ EXPORT_SYMBOL_GPL(usbip_recv_xbuff);
- 
- static int __init usbip_common_init(void)
- {
--	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC "" DRIVER_VERSION);
-+	printk(KERN_INFO KBUILD_MODNAME ": " DRIVER_DESC " " DRIVER_VERSION
-+	       "\n");
- 	return 0;
+@@ -627,7 +627,7 @@ void usbip_header_correct_endian(struct usbip_header *pdu, int send)
  }
+ EXPORT_SYMBOL_GPL(usbip_header_correct_endian);
  
-@@ -877,3 +877,4 @@ module_exit(usbip_common_exit);
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
- MODULE_LICENSE("GPL");
-+MODULE_VERSION(DRIVER_VERSION);
-diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
-index da5e73a..5a07431 100644
---- a/drivers/staging/usbip/vhci_hcd.c
-+++ b/drivers/staging/usbip/vhci_hcd.c
-@@ -26,7 +26,6 @@
- #define DRIVER_VERSION "1.0"
- #define DRIVER_AUTHOR "Takahiro Hirofuchi"
- #define DRIVER_DESC "Virtual Host Controller Interface Driver for USB/IP"
--#define DRIVER_LICENCE "GPL"
+-static void usbip_iso_pakcet_correct_endian(
++static void usbip_iso_packet_correct_endian(
+ 		struct usbip_iso_packet_descriptor *iso, int send)
+ {
+ 	/* does not need all members. but copy all simply. */
+@@ -677,7 +677,7 @@ void *usbip_alloc_iso_desc_pdu(struct urb *urb, ssize_t *bufflen)
+ 		iso = buff + (i * sizeof(*iso));
  
- /*
-  * TODO
-@@ -1268,4 +1267,5 @@ module_exit(vhci_cleanup);
+ 		usbip_pack_iso(iso, &urb->iso_frame_desc[i], 1);
+-		usbip_iso_pakcet_correct_endian(iso, 1);
++		usbip_iso_packet_correct_endian(iso, 1);
+ 	}
  
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
--MODULE_LICENSE(DRIVER_LICENCE);
-+MODULE_LICENSE("GPL");
-+MODULE_VERSION(DRIVER_VERSION);
+ 	*bufflen = size;
+@@ -728,7 +728,7 @@ int usbip_recv_iso(struct usbip_device *ud, struct urb *urb)
+ 	for (i = 0; i < np; i++) {
+ 		iso = buff + (i * sizeof(*iso));
+ 
+-		usbip_iso_pakcet_correct_endian(iso, 0);
++		usbip_iso_packet_correct_endian(iso, 0);
+ 		usbip_pack_iso(iso, &urb->iso_frame_desc[i], 0);
+ 		total_length += urb->iso_frame_desc[i].actual_length;
+ 	}
 -- 
 1.7.5.1
 
