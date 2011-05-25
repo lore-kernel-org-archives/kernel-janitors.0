@@ -1,26 +1,28 @@
-From: Jarod Wilson <jarod@redhat.com>
-Date: Thu, 26 May 2011 14:51:34 +0000
-Subject: Re: [patch] [media] rc/redrat3: dereferencing null pointer
-Message-Id: <4DDE68F6.8080901@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 25 May 2011 09:56:56 +0000
+Subject: [patch] drm/i915: fix if statement in ivybridge irq handler
+Message-Id: <20110525095656.GC1358@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110526085508.GG14591@shale.localdomain>
-In-Reply-To: <20110526085508.GG14591@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "open list:MEDIA INPUT INFRA..." <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Keith Packard <keithp@keithp.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Dan Carpenter wrote:
-> In the original code, if the allocation failed we dereference "rr3"
-> when it was NULL.
+The extra semicolon was not intended.
 
-D'oh, yeah, thanks for the fix.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Acked-by: Jarod Wilson <jarod@redhat.com>
-
--- 
-Jarod Wilson
-jarod@redhat.com
-
-
+diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
+index b79619a..b9fafe3 100644
+--- a/drivers/gpu/drm/i915/i915_irq.c
++++ b/drivers/gpu/drm/i915/i915_irq.c
+@@ -517,7 +517,7 @@ irqreturn_t ivybridge_irq_handler(DRM_IRQ_ARGS)
+ 	if (de_iir & DE_PIPEA_VBLANK_IVB)
+ 		drm_handle_vblank(dev, 0);
+ 
+-	if (de_iir & DE_PIPEB_VBLANK_IVB);
++	if (de_iir & DE_PIPEB_VBLANK_IVB)
+ 		drm_handle_vblank(dev, 1);
+ 
+ 	/* check event from PCH */
