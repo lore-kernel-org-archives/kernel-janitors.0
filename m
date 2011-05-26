@@ -1,86 +1,55 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 20 May 2011 04:37:03 +0000
-Subject: [PATCH 09/12] staging: usbip: stub_dev.c: move stub_driver definition and update driver name
-Message-Id: <91b3e9e7b24eb432f40edc93ef175f3c41114bf7.1305866084.git.mfm@muteddisk.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 26 May 2011 08:47:35 +0000
+Subject: [patch] ALSA: fm801: add error handling if auto-detect fails
+Message-Id: <20110526084735.GC14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305866084.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Ondrej Zary <linux@rainbow-software.org>
 
-Move the stub_driver definition to the end of file and, therefore,
-remove foward declarations. Update driver name to usbip-host.
+In the original code if auto detect failed and tea575x_tuner = 4
+then we copy bogus information to chip->tea.card.  I've changed the
+autodetect code to cleanup and return -ENODEV on error instead.
 
-A few comments were slightly edited too.
+I made the previous chunk return on error as well.  Potentially the
+hardware should limp along without the radio?  I don't know this
+hardware well enough to say.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/staging/usbip/stub_dev.c |   28 ++++++++++++----------------
- 1 files changed, 12 insertions(+), 16 deletions(-)
+Compile tested only.
 
-diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
-index e35d62c..e26b2ee 100644
---- a/drivers/staging/usbip/stub_dev.c
-+++ b/drivers/staging/usbip/stub_dev.c
-@@ -23,14 +23,10 @@
- #include "usbip_common.h"
- #include "stub.h"
+diff --git a/sound/pci/fm801.c b/sound/pci/fm801.c
+index eacd490..a7ec703 100644
+--- a/sound/pci/fm801.c
++++ b/sound/pci/fm801.c
+@@ -1234,9 +1234,12 @@ static int __devinit snd_fm801_create(struct snd_card *card,
+ 	sprintf(chip->tea.bus_info, "PCI:%s", pci_name(pci));
+ 	if ((tea575x_tuner & TUNER_TYPE_MASK) > 0 &&
+ 	    (tea575x_tuner & TUNER_TYPE_MASK) < 4) {
+-		if (snd_tea575x_init(&chip->tea))
++		if (snd_tea575x_init(&chip->tea)) {
+ 			snd_printk(KERN_ERR "TEA575x radio not found\n");
+-	} else if ((tea575x_tuner & TUNER_TYPE_MASK) = 0)
++			snd_fm801_free(chip);
++			return -ENODEV;
++		}
++	} else if ((tea575x_tuner & TUNER_TYPE_MASK) = 0) {
+ 		/* autodetect tuner connection */
+ 		for (tea575x_tuner = 1; tea575x_tuner <= 3; tea575x_tuner++) {
+ 			chip->tea575x_tuner = tea575x_tuner;
+@@ -1246,6 +1249,12 @@ static int __devinit snd_fm801_create(struct snd_card *card,
+ 				break;
+ 			}
+ 		}
++		if (tea575x_tuner = 4) {
++			snd_printk(KERN_ERR "TEA575x radio not found\n");
++			snd_fm801_free(chip);
++			return -ENODEV;
++		}
++	}
+ 	strlcpy(chip->tea.card, snd_fm801_tea575x_gpios[(tea575x_tuner & TUNER_TYPE_MASK) - 1].name, sizeof(chip->tea.card));
+ #endif
  
--static int stub_probe(struct usb_interface *interface,
--		      const struct usb_device_id *id);
--static void stub_disconnect(struct usb_interface *interface);
--
- /*
-  * Define device IDs here if you want to explicitly limit exportable devices.
-- * In the most cases, wild card matching will be ok because driver binding can
-- * be changed dynamically by a userland program.
-+ * In most cases, wildcard matching will be okay because driver binding can be
-+ * changed dynamically by a userland program.
-  */
- static struct usb_device_id stub_table[] = {
- #if 0
-@@ -54,16 +50,9 @@ static struct usb_device_id stub_table[] = {
- };
- MODULE_DEVICE_TABLE(usb, stub_table);
- 
--struct usb_driver stub_driver = {
--	.name		= "usbip",
--	.probe		= stub_probe,
--	.disconnect	= stub_disconnect,
--	.id_table	= stub_table,
--};
--
- /*
-- * usbip_status shows status of usbip as long as this driver is bound to the
-- * target device.
-+ * usbip_status shows the status of usbip-host as long as this driver is bound
-+ * to the target device.
-  */
- static ssize_t show_status(struct device *dev, struct device_attribute *attr,
- 			   char *buf)
-@@ -423,7 +412,7 @@ static int stub_probe(struct usb_interface *interface,
- 		return 0;
- 	}
- 
--	/* ok. this is my device. */
-+	/* ok, this is my device */
- 	sdev = stub_device_alloc(udev, interface);
- 	if (!sdev)
- 		return -ENOMEM;
-@@ -534,3 +523,10 @@ static void stub_disconnect(struct usb_interface *interface)
- 		del_match_busid((char *)udev_busid);
- 	}
- }
-+
-+struct usb_driver stub_driver = {
-+	.name		= "usbip-host",
-+	.probe		= stub_probe,
-+	.disconnect	= stub_disconnect,
-+	.id_table	= stub_table,
-+};
--- 
-1.7.5.1
-
