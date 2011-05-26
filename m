@@ -1,59 +1,40 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Date: Mon, 30 May 2011 06:16:40 +0000
-Subject: Re: [patch 2/2] ptp: fix some locking bugs in ptp_read()
-Message-Id: <20110530061640.GB3166@riccoc20.at.omicron.at>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 26 May 2011 08:50:18 +0000
+Subject: [patch 2/2] usbhid: fix some error codes in hiddev_connect()
+Message-Id: <20110526085018.GE14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110529195407.GB3099@shale.localdomain>
-In-Reply-To: <20110529195407.GB3099@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Richard Cochran <richard.cochran@omicron.at>, "David S. Miller" <davem@davemloft.net>, John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+To: Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>
+Cc: "open list:USB HID/HIDBP DRI..." <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:HID CORE LAYER" <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, May 29, 2011 at 10:54:07PM +0300, Dan Carpenter wrote:
-> There was an unlock missing on an error path, and a double unlock on
-> another error path.
+Returning -1 is -EPERM which is inappropriate here.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/hid/usbhid/hiddev.c b/drivers/hid/usbhid/hiddev.c
+index b2f9a3a..80b8e76 100644
+--- a/drivers/hid/usbhid/hiddev.c
++++ b/drivers/hid/usbhid/hiddev.c
+@@ -890,8 +890,9 @@ int hiddev_connect(struct hid_device *hid, unsigned int force)
+ 			return -1;
+ 	}
  
-Sloppy, sloppy me.
-
-Again, please take this for 3.0-rc2.
-
-Thanks,
-Richard
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
-> index 93fa22d..e7f301da2 100644
-> --- a/drivers/ptp/ptp_chardev.c
-> +++ b/drivers/ptp/ptp_chardev.c
-> @@ -130,8 +130,10 @@ ssize_t ptp_read(struct posix_clock *pc,
->  		return -ERESTARTSYS;
->  	}
->  
-> -	if (ptp->defunct)
-> +	if (ptp->defunct) {
-> +		mutex_unlock(&ptp->tsevq_mux);
->  		return -ENODEV;
-> +	}
->  
->  	spin_lock_irqsave(&queue->lock, flags);
->  
-> @@ -151,10 +153,8 @@ ssize_t ptp_read(struct posix_clock *pc,
->  
->  	mutex_unlock(&ptp->tsevq_mux);
->  
-> -	if (copy_to_user(buf, event, cnt)) {
-> -		mutex_unlock(&ptp->tsevq_mux);
-> +	if (copy_to_user(buf, event, cnt))
->  		return -EFAULT;
-> -	}
->  
->  	return cnt;
->  }
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-	if (!(hiddev = kzalloc(sizeof(struct hiddev), GFP_KERNEL)))
+-		return -1;
++	hiddev = kzalloc(sizeof(struct hiddev), GFP_KERNEL);
++	if (!hiddev)
++		return -ENOMEM;
+ 
+ 	init_waitqueue_head(&hiddev->wait);
+ 	INIT_LIST_HEAD(&hiddev->list);
+@@ -905,7 +906,7 @@ int hiddev_connect(struct hid_device *hid, unsigned int force)
+ 		hid_err(hid, "Not able to get a minor for this device\n");
+ 		hid->hiddev = NULL;
+ 		kfree(hiddev);
+-		return -1;
++		return retval;
+ 	}
+ 	return 0;
+ }
