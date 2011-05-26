@@ -1,33 +1,29 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Mon, 16 May 2011 08:19:56 +0000
-Subject: Re: [PATCH v3] package: Makefile: fix perf target bug
-Message-Id: <4DD0DE2C.4060806@suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 26 May 2011 08:44:52 +0000
+Subject: [patch] [media] DVB: dvb_frontend: off by one in dtv_property_dump()
+Message-Id: <20110526084452.GB14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4DCD8CE4.4090404@suse.cz> <b07e7ecdce48bc90a2cf83e8867494dae7cd174f.1305329845.git.mfm@muteddisk.com> <20110515154002.GB6274@ghostprotocols.net>
-In-Reply-To: <20110515154002.GB6274@ghostprotocols.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
-Cc: mfmooney@gmail.com, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Andreas Oberritter <obi@linuxtv.org>, Arnd Bergmann <arnd@arndb.de>, Steven Toth <stoth@kernellabs.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 15.5.2011 17:40, Arnaldo Carvalho de Melo wrote:
-> Em Fri, May 13, 2011 at 04:41:12PM -0700, mfmooney@gmail.com escreveu:
->> From: matt mooney<mfm@muteddisk.com>
->>
->> Specify --git-dir when building perf targets to allow out-of-tree
->> builds using O=<build-dir>.
->>
->> The shell command in `git archive' had to be modified to allow proper
->> file name expansion of the files listed in MANIFEST.
->>
->> Signed-off-by: matt mooney<mfm@muteddisk.com>
->
-> Michal,
->
-> 	Can I have your Reviewed-by or Acked-by for this one? Assuming
-> all is ok by now :)
+If the tvp->cmd = DTV_MAX_COMMAND then we read past the end of the
+array.
 
-Reviewed-by: Michal Marek <mmarek@suse.cz>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Michal
+diff --git a/drivers/media/dvb/dvb-core/dvb_frontend.c b/drivers/media/dvb/dvb-core/dvb_frontend.c
+index 9827804..607e293 100644
+--- a/drivers/media/dvb/dvb-core/dvb_frontend.c
++++ b/drivers/media/dvb/dvb-core/dvb_frontend.c
+@@ -981,7 +981,7 @@ static void dtv_property_dump(struct dtv_property *tvp)
+ {
+ 	int i;
+ 
+-	if (tvp->cmd <= 0 || tvp->cmd > DTV_MAX_COMMAND) {
++	if (tvp->cmd <= 0 || tvp->cmd >= DTV_MAX_COMMAND) {
+ 		printk(KERN_WARNING "%s: tvp.cmd = 0x%08x undefined\n",
+ 			__func__, tvp->cmd);
+ 		return;
