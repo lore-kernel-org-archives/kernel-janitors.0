@@ -1,44 +1,40 @@
-From: Chris Ball <cjb@laptop.org>
-Date: Wed, 11 May 2011 04:03:39 +0000
-Subject: Re: [PATCH] drivers/mmc/card/block.c: fix potential null dereference 'idata'
-Message-Id: <m31v0551es.fsf@pullcord.laptop.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 26 May 2011 08:52:01 +0000
+Subject: [patch] [media] rc: double unlock in rc_register_device()
+Message-Id: <20110526085201.GF14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4DC7F4AB.90607@gmail.com>
-	<Pine.LNX.4.64.1105091631400.15483@pc-004.diku.dk>
-	<4DC802C0.9040302@gmail.com>
-	<Pine.LNX.4.64.1105091713080.15483@pc-004.diku.dk>
-	<4DC8117C.7060200@gmail.com>
-	<Pine.LNX.4.64.1105091811320.15483@pc-004.diku.dk>
-	<4DC85094.4050401@gmail.com>
-In-Reply-To: <4DC85094.4050401@gmail.com> (Vladimir Motyka's message of "Mon,
-	09 May 2011 22:37:40 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vladimir Motyka <vladimir.motyka@gmail.com>
-Cc: Julia Lawall <julia@diku.dk>, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Jarod Wilson <jarod@redhat.com>, David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, Dmitry Torokhov <dtor@mail.ru>, "open list:MEDIA INPUT INFRA..." <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi,
+If change_protocol() fails and we goto out_raw, then it calls unlock
+twice.  I noticed that the other time we called change_protocol() we
+held the &dev->lock, so I changed it to hold it here too.
 
-On Mon, May 09 2011, Vladimir Motyka wrote:
-> When allocation of idata failed there was a null dereference. Also avoid
-> calling kfree where it is needn't.
->
-> ---
-> diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
-> index 407836d..126c7f4 100644
-> --- a/drivers/mmc/card/block.c
-> +++ b/drivers/mmc/card/block.c
-> @@ -237,24 +237,24 @@ static struct mmc_blk_ioc_data
-> *mmc_blk_ioctl_copy_from_user(
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Compile tested only.
 
-Thanks, I've pushed this version of the patch to mmc-next.
-
-(The patch you sent was corrupted by gmail; it added a line break on the
-last line quoted above where there shouldn't be one.  Please fix that
-for next time.)
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
+index f57cd56..136a6c6 100644
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -1097,7 +1097,6 @@ int rc_register_device(struct rc_dev *dev)
+ 		if (rc < 0)
+ 			goto out_input;
+ 	}
+-	mutex_unlock(&dev->lock);
+ 
+ 	if (dev->change_protocol) {
+ 		rc = dev->change_protocol(dev, rc_map->rc_type);
+@@ -1105,6 +1104,8 @@ int rc_register_device(struct rc_dev *dev)
+ 			goto out_raw;
+ 	}
+ 
++	mutex_unlock(&dev->lock);
++
+ 	IR_dprintk(1, "Registered rc%ld (driver: %s, remote: %s, mode %s)\n",
+ 		   dev->devno,
+ 		   dev->driver_name ? dev->driver_name : "unknown",
