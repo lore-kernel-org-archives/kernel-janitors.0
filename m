@@ -1,54 +1,44 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 29 May 2011 19:57:16 +0000
-Subject: [patch] ocfs2: null deref on allocation error
-Message-Id: <20110529195716.GD3099@shale.localdomain>
+From: matt mooney <mfm@muteddisk.com>
+Date: Fri, 27 May 2011 08:49:24 +0000
+Subject: [PATCH] staging: usbip: stub_main.c: simplify busid_table initialization
+Message-Id: <8b7b3dd5fe3719c032f351fd2388b2f3feed142a.1306486060.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The original code had a null derefence in the error handling.
+Set the whole structure to zero instead of individually setting each
+member, which simplifies the for loop.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+This was suggested by walter harms <wharms@bfs.de>.
 
-diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
-index bc91072..d9a6ce7 100644
---- a/fs/ocfs2/ioctl.c
-+++ b/fs/ocfs2/ioctl.c
-@@ -381,7 +381,7 @@ int ocfs2_info_handle_freeinode(struct inode *inode,
- 	if (!oifi) {
- 		status = -ENOMEM;
- 		mlog_errno(status);
--		goto bail;
-+		goto out_err;
- 	}
+Signed-off-by: matt mooney <mfm@muteddisk.com>
+---
+ drivers/staging/usbip/stub_main.c |    8 ++------
+ 1 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/usbip/stub_main.c b/drivers/staging/usbip/stub_main.c
+index 45a0f5d..a34249a 100644
+--- a/drivers/staging/usbip/stub_main.c
++++ b/drivers/staging/usbip/stub_main.c
+@@ -39,13 +39,9 @@ static void init_busid_table(void)
+ {
+ 	int i;
  
- 	if (o2info_from_user(*oifi, req))
-@@ -431,7 +431,7 @@ bail:
- 		o2info_set_request_error(&oifi->ifi_req, req);
+-	for (i = 0; i < MAX_BUSID; i++) {
+-		memset(busid_table[i].name, 0, BUSID_SIZE);
++	memset(busid_table, 0, sizeof(busid_table));
++	for (i = 0; i < MAX_BUSID; i++)
+ 		busid_table[i].status = STUB_BUSID_OTHER;
+-		busid_table[i].interf_count = 0;
+-		busid_table[i].sdev = NULL;
+-		busid_table[i].shutdown_busid = 0;
+-	}
  
- 	kfree(oifi);
--
-+out_err:
- 	return status;
+ 	spin_lock_init(&busid_table_lock);
  }
- 
-@@ -666,7 +666,7 @@ int ocfs2_info_handle_freefrag(struct inode *inode,
- 	if (!oiff) {
- 		status = -ENOMEM;
- 		mlog_errno(status);
--		goto bail;
-+		goto out_err;
- 	}
- 
- 	if (o2info_from_user(*oiff, req))
-@@ -716,7 +716,7 @@ bail:
- 		o2info_set_request_error(&oiff->iff_req, req);
- 
- 	kfree(oiff);
--
-+out_err:
- 	return status;
- }
- 
+-- 
+1.7.5.1
+
