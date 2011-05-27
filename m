@@ -1,45 +1,31 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 20 May 2011 04:37:04 +0000
-Subject: [PATCH 10/12] staging: usbip: userspace: bind_driver.c: update kernel module name
-Message-Id: <7d1b45b1168cc014fde245ad766b81cf303c4e66.1305866084.git.mfm@muteddisk.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 27 May 2011 06:27:16 +0000
+Subject: [patch] xen/blkback: potential null dereference in error handling
+Message-Id: <20110527062701.GK14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1305866084.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1305866084.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Jan Beulich <jbeulich@novell.com>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Change kernel module name to usbip-host.
+blkbk->pending_pages can be NULL here so I added a check for it.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/staging/usbip/userspace/src/bind-driver.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Perhaps this is not the a very optimized solution, but it's error
+handling code so it's not performance critical.
 
-diff --git a/drivers/staging/usbip/userspace/src/bind-driver.c b/drivers/staging/usbip/userspace/src/bind-driver.c
-index 201ffbb..dcc540a 100644
---- a/drivers/staging/usbip/userspace/src/bind-driver.c
-+++ b/drivers/staging/usbip/userspace/src/bind-driver.c
-@@ -27,7 +27,7 @@ static const struct option longopts[] = {
- 	{NULL,		0,			NULL,  0}
- };
- 
--static const char match_busid_path[] = "/sys/bus/usb/drivers/usbip/match_busid";
-+static const char match_busid_path[] = "/sys/bus/usb/drivers/usbip-host/match_busid";
- 
- 
- static void show_help(void)
-@@ -228,7 +228,7 @@ static int bind_to_usbip(char *busid)
- 	for (i = 0; i < ninterface; i++) {
- 		int ret;
- 
--		ret = bind_interface(busid, configvalue, i, "usbip");
-+		ret = bind_interface(busid, configvalue, i, "usbip-host");
- 		if (ret < 0) {
- 			g_warning("bind usbip at %s:%d.%d, failed",
- 					busid, configvalue, i);
--- 
-1.7.5.1
-
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index c73910c..1c7a59d 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -810,7 +810,7 @@ static int __init xen_blkif_init(void)
+ 	kfree(blkbk->pending_reqs);
+ 	kfree(blkbk->pending_grant_handles);
+ 	for (i = 0; i < mmap_pages; i++) {
+-		if (blkbk->pending_pages[i])
++		if (blkbk->pending_pages && blkbk->pending_pages[i])
+ 			__free_page(blkbk->pending_pages[i]);
+ 	}
+ 	kfree(blkbk->pending_pages);
