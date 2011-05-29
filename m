@@ -1,44 +1,30 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 12 May 2011 00:59:12 +0000
-Subject: Re: [PATCH net-next-2.6] net/bonding: adjust codingstyle for
-Message-Id: <1305161952.19586.231.camel@Joe-Laptop>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 29 May 2011 19:53:12 +0000
+Subject: [patch 1/2] ptp: return -EFAULT on copy_to_user() errors
+Message-Id: <20110529195312.GA3099@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110511225208.GA18851@x61.tchesoft.com>
-	 <20110512015237.32d6d92b@absol.kitzblitz>
-	 <20110512001858.GA2435@x61.tchesoft.com>
-In-Reply-To: <20110512001858.GA2435@x61.tchesoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rafael Aquini <aquini@linux.com>
-Cc: Jay Vosburgh <fubar@us.ibm.com>, kernel-janitors@vger.kernel.org, David Miller <davem@davemloft.net>, Andy Gospodarek <andy@greyhouse.net>, shemminger@vyatta.com, Nicolas Kaiser <nikai@nikai.net>, netdev <netdev@vger.kernel.org>
+To: Richard Cochran <richard.cochran@omicron.at>
+Cc: "David S. Miller" <davem@davemloft.net>, John Stultz <john.stultz@linaro.org>, Arnd Bergmann <arnd@arndb.de>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 2011-05-11 at 21:18 -0300, Rafael Aquini wrote:
-> My bad, sorry. I'll be re-posting soon.
+copy_to_user() returns the number of bytes remaining, but we want a
+negative error code here.
 
-When you repost, it's considered useful and polite to have a
-version # in the [PATCH net-next-2.6 v#] subject line
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-And add a changelog describing what's different in this version
-below your sign-off is also good form.
-
-The changelog doesn't get put into git history, but it's useful
-for others to see what you've changed so reviewers can skip over
-stuff that's been previously commented on and find the new stuff
-easier.
-
-Generally the email body contains
-
-verbose patch description
-
-Signed-off-by: you
-Any Acks/Reviewed-bys: others
-
---- ( <- 3 dashes as a separator)
-
-patch changelog if it exists
-
-patch
-
-cheers, Joe
-
+diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+index a8d03ae..93fa22d 100644
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -46,7 +46,8 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		caps.n_ext_ts = ptp->info->n_ext_ts;
+ 		caps.n_per_out = ptp->info->n_per_out;
+ 		caps.pps = ptp->info->pps;
+-		err = copy_to_user((void __user *)arg, &caps, sizeof(caps));
++		if (copy_to_user((void __user *)arg, &caps, sizeof(caps)))
++			err = -EFAULT;
+ 		break;
+ 
+ 	case PTP_EXTTS_REQUEST:
