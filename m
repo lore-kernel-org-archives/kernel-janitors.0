@@ -1,130 +1,54 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 06 May 2011 10:47:53 +0000
-Subject: [PATCH 13/16] staging: usbip: vhci_tx.c: coding style cleanup
-Message-Id: <3ace7eca2f5c9073a1d64e8935a504577bb569d0.1304676742.git.mfm@muteddisk.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sun, 29 May 2011 19:57:16 +0000
+Subject: [patch] ocfs2: null deref on allocation error
+Message-Id: <20110529195716.GD3099@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1304676742.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-Fix a few alignment issues and remove extraneous lines.
-Use ternary operator for pdup->base.direction assignment.
+The original code had a null derefence in the error handling.
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
----
- drivers/staging/usbip/vhci_tx.c |   32 +++++++++++---------------------
- 1 files changed, 11 insertions(+), 21 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/usbip/vhci_tx.c b/drivers/staging/usbip/vhci_tx.c
-index d9ab49d..6ececa8 100644
---- a/drivers/staging/usbip/vhci_tx.c
-+++ b/drivers/staging/usbip/vhci_tx.c
-@@ -23,23 +23,20 @@
- #include "usbip_common.h"
- #include "vhci.h"
- 
--
- static void setup_cmd_submit_pdu(struct usbip_header *pdup,  struct urb *urb)
- {
- 	struct vhci_priv *priv = ((struct vhci_priv *)urb->hcpriv);
- 	struct vhci_device *vdev = priv->vdev;
- 
- 	usbip_dbg_vhci_tx("URB, local devnum %u, remote devid %u\n",
--				usb_pipedevice(urb->pipe), vdev->devid);
-+			  usb_pipedevice(urb->pipe), vdev->devid);
- 
--	pdup->base.command = USBIP_CMD_SUBMIT;
--	pdup->base.seqnum  = priv->seqnum;
--	pdup->base.devid   = vdev->devid;
--	if (usb_pipein(urb->pipe))
--		pdup->base.direction = USBIP_DIR_IN;
--	else
--		pdup->base.direction = USBIP_DIR_OUT;
--	pdup->base.ep      = usb_pipeendpoint(urb->pipe);
-+	pdup->base.command   = USBIP_CMD_SUBMIT;
-+	pdup->base.seqnum    = priv->seqnum;
-+	pdup->base.devid     = vdev->devid;
-+	pdup->base.direction = usb_pipein(urb->pipe) ?
-+		USBIP_DIR_IN : USBIP_DIR_OUT;
-+	pdup->base.ep	     = usb_pipeendpoint(urb->pipe);
- 
- 	usbip_pack_pdu(pdup, urb, USBIP_CMD_SUBMIT, 1);
- 
-@@ -65,8 +62,6 @@ static struct vhci_priv *dequeue_from_priv_tx(struct vhci_device *vdev)
- 	return NULL;
- }
- 
--
--
- static int vhci_send_cmd_submit(struct vhci_device *vdev)
- {
- 	struct vhci_priv *priv = NULL;
-@@ -90,7 +85,6 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
- 
- 		usbip_dbg_vhci_tx("setup txdata urb %p\n", urb);
- 
--
- 		/* 1. setup usbip_header */
- 		setup_cmd_submit_pdu(&pdu_header, urb);
- 		usbip_header_correct_endian(&pdu_header, 1);
-@@ -125,7 +119,7 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
- 		ret = kernel_sendmsg(vdev->ud.tcp_socket, &msg, iov, 3, txsize);
- 		if (ret != txsize) {
- 			usbip_uerr("sendmsg failed!, retval %d for %zd\n", ret,
--									txsize);
-+				   txsize);
- 			kfree(iso_buffer);
- 			usbip_event_add(&vdev->ud, VDEV_EVENT_ERROR_TCP);
- 			return -1;
-@@ -140,7 +134,6 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
- 	return total_size;
- }
- 
--
- /*-------------------------------------------------------------------------*/
- 
- static struct vhci_unlink *dequeue_from_unlink_tx(struct vhci_device *vdev)
-@@ -182,7 +175,6 @@ static int vhci_send_cmd_unlink(struct vhci_device *vdev)
- 
- 		usbip_dbg_vhci_tx("setup cmd unlink, %lu\n", unlink->seqnum);
- 
--
- 		/* 1. setup usbip_header */
- 		pdu_header.base.command = USBIP_CMD_UNLINK;
- 		pdu_header.base.seqnum  = unlink->seqnum;
-@@ -204,7 +196,6 @@ static int vhci_send_cmd_unlink(struct vhci_device *vdev)
- 			return -1;
- 		}
- 
--
- 		usbip_dbg_vhci_tx("send txdata\n");
- 
- 		total_size += txsize;
-@@ -213,7 +204,6 @@ static int vhci_send_cmd_unlink(struct vhci_device *vdev)
- 	return total_size;
- }
- 
--
- /*-------------------------------------------------------------------------*/
- 
- int vhci_tx_loop(void *data)
-@@ -229,9 +219,9 @@ int vhci_tx_loop(void *data)
- 			break;
- 
- 		wait_event_interruptible(vdev->waitq_tx,
--				(!list_empty(&vdev->priv_tx) ||
--				 !list_empty(&vdev->unlink_tx) ||
--				 kthread_should_stop()));
-+					 (!list_empty(&vdev->priv_tx) ||
-+					  !list_empty(&vdev->unlink_tx) ||
-+					  kthread_should_stop()));
- 
- 		usbip_dbg_vhci_tx("pending urbs ?, now wake up\n");
+diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
+index bc91072..d9a6ce7 100644
+--- a/fs/ocfs2/ioctl.c
++++ b/fs/ocfs2/ioctl.c
+@@ -381,7 +381,7 @@ int ocfs2_info_handle_freeinode(struct inode *inode,
+ 	if (!oifi) {
+ 		status = -ENOMEM;
+ 		mlog_errno(status);
+-		goto bail;
++		goto out_err;
  	}
--- 
-1.7.5.1
-
+ 
+ 	if (o2info_from_user(*oifi, req))
+@@ -431,7 +431,7 @@ bail:
+ 		o2info_set_request_error(&oifi->ifi_req, req);
+ 
+ 	kfree(oifi);
+-
++out_err:
+ 	return status;
+ }
+ 
+@@ -666,7 +666,7 @@ int ocfs2_info_handle_freefrag(struct inode *inode,
+ 	if (!oiff) {
+ 		status = -ENOMEM;
+ 		mlog_errno(status);
+-		goto bail;
++		goto out_err;
+ 	}
+ 
+ 	if (o2info_from_user(*oiff, req))
+@@ -716,7 +716,7 @@ bail:
+ 		o2info_set_request_error(&oiff->iff_req, req);
+ 
+ 	kfree(oiff);
+-
++out_err:
+ 	return status;
+ }
+ 
