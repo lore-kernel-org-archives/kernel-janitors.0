@@ -1,59 +1,94 @@
-From: matt mooney <mfmooney@gmail.com>
-Date: Fri, 20 May 2011 04:31:49 +0000
-Subject: Re: [PATCH] staging: usbip: replace usbip_u{dbg,err,info} and printk
-Message-Id: <BANLkTimJr=SXCs+0u4wutHz9TawVcvkcVg@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 31 May 2011 14:16:49 +0000
+Subject: [PATCH] drivers/scsi/ipr.c: reorder error handling code to include iounmap
+Message-Id: <1306851409-14963-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2db81796703063c0816d0d99040c6fbd6da50007.1305847719.git.mfm@muteddisk.com>
-	<20110520000013.GA8908@kroah.com>
-	<BANLkTik=S-FRB25gNHcb0OLMW5dhqLE1eA@mail.gmail.com>
-	<20110520002401.GA17623@kroah.com>
-	<BANLkTi=FZ57TrOa48qxkO6Myf0pwgtPp7g@mail.gmail.com>
-	<20110520041244.GA986@kroah.com>
-In-Reply-To: <20110520041244.GA986@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Greg KH <greg@kroah.com>
-Cc: matt mooney <mfm@muteddisk.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Brian King <brking@us.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 19, 2011 at 9:12 PM, Greg KH <greg@kroah.com> wrote:
-> On Thu, May 19, 2011 at 07:30:39PM -0700, matt mooney wrote:
->> On Thu, May 19, 2011 at 5:24 PM, Greg KH <greg@kroah.com> wrote:
->> > On Thu, May 19, 2011 at 05:17:45PM -0700, matt mooney wrote:
->> >> On Thu, May 19, 2011 at 5:00 PM, Greg KH <greg@kroah.com> wrote:
->> >> > Also, the merge window for the .40 tree for the staging tree is now
->> >> > closed, so I'll only take bugfixes for the usbip code for now.
->> >>
->> >> The userspace code isn't getting merged in .40, is it? Because my
->> >> patch "staging: usbip: userspace: stub_driver.c: update kernel module
->> >> name" actually relies on a change in my own tree, so I made a mistake
->> >> by thinking that it was needed right away to get the userspace tools
->> >> working.
->> >
->> > It's in my tree, so yes. =A0You can send me patches to fix the problem=
-, as
->> > I would recommend :)
->>
->> Can I send you a 10 patch series (or 9 if you apply the patch in this
->> thread)? The changes I have that fix that are towards the end. The
->> problem is a lot of my changes rely on the patch sent in this thread
->> and one that follows it, so to avoid any conflicts it is easiest (at
->> least for me :) to just send the whole series. They have been tested
->> and pretty much leave usbip in the state it was originally in.
->
-> I don't know, I would have to see the patches. =A0Please send them on.
+From: Julia Lawall <julia@diku.dk>
 
-You probably won't like it; there is quite a bit of change. Maybe
-reverting that patch would be easiest for both of us. I will send them
-anyway, so you can make the decision.
+The out_msi_disable label should be before cleanup_nomem to additionally
+benefit from the call to iounmap.  Subsequent gotos are adjusted to go to
+out_msi_disable instead of cleanup_nomem, which now follows it.  This is
+safe because pci_disable_msi does nothing if pci_enable_msi was not called.
 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
--matt
+// <smpl>
+@r@
+expression e1,e2;
+statement S;
+@@
 
---=20
-GPG-Key: 9AFE00EA
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+e1 = pci_ioremap_bar(...);
+... when != e1 = e2
+    when != iounmap(e1)
+    when any
+(
+ if (<+...e1...+>) S
+|
+ if(...) { ... return 0; }
+|
+ if (...) { ... when != iounmap(e1)
+                when != if (...) { ... iounmap(e1) ... }
+* return ...;
+ } else S
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/ipr.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
+index 888086c..8d63630 100644
+--- a/drivers/scsi/ipr.c
++++ b/drivers/scsi/ipr.c
+@@ -8778,14 +8778,14 @@ static int __devinit ipr_probe_ioa(struct pci_dev *pdev,
+ 	if (rc != PCIBIOS_SUCCESSFUL) {
+ 		dev_err(&pdev->dev, "Failed to save PCI config space\n");
+ 		rc = -EIO;
+-		goto cleanup_nomem;
++		goto out_msi_disable;
+ 	}
+ 
+ 	if ((rc = ipr_save_pcix_cmd_reg(ioa_cfg)))
+-		goto cleanup_nomem;
++		goto out_msi_disable;
+ 
+ 	if ((rc = ipr_set_pcix_cmd_reg(ioa_cfg)))
+-		goto cleanup_nomem;
++		goto out_msi_disable;
+ 
+ 	if (ioa_cfg->sis64)
+ 		ioa_cfg->cfg_table_size = (sizeof(struct ipr_config_table_hdr64)
+@@ -8800,7 +8800,7 @@ static int __devinit ipr_probe_ioa(struct pci_dev *pdev,
+ 	if (rc < 0) {
+ 		dev_err(&pdev->dev,
+ 			"Couldn't allocate enough memory for device driver!\n");
+-		goto cleanup_nomem;
++		goto out_msi_disable;
+ 	}
+ 
+ 	/*
+@@ -8845,10 +8845,10 @@ out:
+ 
+ cleanup_nolog:
+ 	ipr_free_mem(ioa_cfg);
+-cleanup_nomem:
+-	iounmap(ipr_regs);
+ out_msi_disable:
+ 	pci_disable_msi(pdev);
++cleanup_nomem:
++	iounmap(ipr_regs);
+ out_release_regions:
+ 	pci_release_regions(pdev);
+ out_scsi_host_put:
+
