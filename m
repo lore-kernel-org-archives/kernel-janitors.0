@@ -1,275 +1,30 @@
-From: Peter Huewe <peterhuewe@gmx.de>
-Date: Tue, 07 Jun 2011 19:58:27 +0000
-Subject: [PATCH] kernel/trace: Convert to kstrtoul_from_user
-Message-Id: <1307476707-14762-1-git-send-email-peterhuewe@gmx.de>
+From: Joel Becker <jlbec@evilplan.org>
+Date: Wed, 01 Jun 2011 02:24:06 +0000
+Subject: Re: [patch] ocfs2: null deref on allocation error
+Message-Id: <20110601022405.GC29741@noexit.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110529195716.GD3099@shale.localdomain>
+In-Reply-To: <20110529195716.GD3099@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>
+To: ocfs2-devel@oss.oracle.com
 
-This patch replaces the code for getting an unsigned long from a
-userspace buffer by a simple call to kstroul_from_user.
-This makes it easier to read and less error prone.
+On Sun, May 29, 2011 at 10:57:16PM +0300, Dan Carpenter wrote:
+> The original code had a null derefence in the error handling.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Kernel Version: v3.0-rc2
+This patch is now in the 'fixes' branch of ocfs2.git.
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
- kernel/trace/ftrace.c       |   13 +-------
- kernel/trace/ring_buffer.c  |   13 +-------
- kernel/trace/trace.c        |   65 ++++++------------------------------------
- kernel/trace/trace_events.c |   26 ++--------------
- kernel/trace/trace_stack.c  |   13 +-------
- 5 files changed, 20 insertions(+), 110 deletions(-)
+Joel
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 1ee417f..508dcb4 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -806,19 +806,10 @@ ftrace_profile_write(struct file *filp, const char __user *ubuf,
- 		     size_t cnt, loff_t *ppos)
- {
- 	unsigned long val;
--	char buf[64];		/* big enough to hold a number */
- 	int ret;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	val = !!val;
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index b0c7aa4..6c59dd9 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -3978,20 +3978,11 @@ rb_simple_write(struct file *filp, const char __user *ubuf,
- 		size_t cnt, loff_t *ppos)
- {
- 	unsigned long *p = filp->private_data;
--	char buf[64];
- 	unsigned long val;
- 	int ret;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	if (val)
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index ee9c921..2bdc019 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2701,20 +2701,11 @@ tracing_ctrl_write(struct file *filp, const char __user *ubuf,
- 		   size_t cnt, loff_t *ppos)
- {
- 	struct trace_array *tr = filp->private_data;
--	char buf[64];
- 	unsigned long val;
- 	int ret;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	val = !!val;
-@@ -2966,20 +2957,11 @@ tracing_max_lat_write(struct file *filp, const char __user *ubuf,
- 		      size_t cnt, loff_t *ppos)
- {
- 	unsigned long *ptr = filp->private_data;
--	char buf[64];
- 	unsigned long val;
- 	int ret;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	*ptr = val * 1000;
-@@ -3434,19 +3416,10 @@ tracing_entries_write(struct file *filp, const char __user *ubuf,
- 		      size_t cnt, loff_t *ppos)
- {
- 	unsigned long val;
--	char buf[64];
- 	int ret, cpu;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	/* must have at least 1 entry */
-@@ -4099,19 +4072,10 @@ trace_options_write(struct file *filp, const char __user *ubuf, size_t cnt,
- {
- 	struct trace_option_dentry *topt = filp->private_data;
- 	unsigned long val;
--	char buf[64];
- 	int ret;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	if (val != 0 && val != 1)
-@@ -4159,20 +4123,11 @@ trace_options_core_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 			 loff_t *ppos)
- {
- 	long index = (long)filp->private_data;
--	char buf[64];
- 	unsigned long val;
- 	int ret;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	if (val != 0 && val != 1)
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 686ec39..4d7e149 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -486,20 +486,11 @@ event_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 		   loff_t *ppos)
- {
- 	struct ftrace_event_call *call = filp->private_data;
--	char buf[64];
- 	unsigned long val;
- 	int ret;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	ret = tracing_update_buffers();
-@@ -571,19 +562,10 @@ system_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
- {
- 	const char *system = filp->private_data;
- 	unsigned long val;
--	char buf[64];
- 	ssize_t ret;
- 
--	if (cnt >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, cnt))
--		return -EFAULT;
--
--	buf[cnt] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	ret = tracing_update_buffers();
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index b0b53b8..77575b3 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -156,20 +156,11 @@ stack_max_size_write(struct file *filp, const char __user *ubuf,
- {
- 	long *ptr = filp->private_data;
- 	unsigned long val, flags;
--	char buf[64];
- 	int ret;
- 	int cpu;
- 
--	if (count >= sizeof(buf))
--		return -EINVAL;
--
--	if (copy_from_user(&buf, ubuf, count))
--		return -EFAULT;
--
--	buf[count] = 0;
--
--	ret = strict_strtoul(buf, 10, &val);
--	if (ret < 0)
-+	ret = kstrtoul_from_user(ubuf, count, 10, &val);
-+	if (ret)
- 		return ret;
- 
- 	local_irq_save(flags);
+
 -- 
-1.7.3.4
 
+"The trouble with being punctual is that nobody's there to
+ appreciate it."
+	- Franklin P. Jones
+
+			http://www.jlbec.org/
+			jlbec@evilplan.org
