@@ -1,40 +1,58 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 15 Jun 2011 16:40:16 +0000
-Subject: Re: [patch 2/4] SCSI: target: change lock to unlock
-Message-Id: <1308156016.20109.9.camel@haakon2.linux-iscsi.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 01 Jun 2011 17:10:04 +0000
+Subject: [PATCH 1/10] drivers/char/hw_random/omap-rng.c: add missing clk_put
+Message-Id: <1306948213-20767-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110613200846.GI3583@shale.localdomain>
-In-Reply-To: <20110613200846.GI3583@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: James Bottomley <jbottomley@parallels.com>, Kiran Patil <kiran.patil@intel.com>, Yi Zou <yi.zou@intel.com>, Joe Eykholt <jeykholt@cisco.com>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org, target-devel <target-devel@vger.kernel.org>
+To: Deepak Saxena <dsaxena@plexity.net>
+Cc: kernel-janitors@vger.kernel.org, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.hengli.com.au>, linux-kernel@vger.kernel.org
 
-On Mon, 2011-06-13 at 23:08 +0300, Dan Carpenter wrote:
-> There is a typo here, it should be an unlock instead of a lock.  The
-> original code will deadlock.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Committed as 3370a334b40 with a 'tcm_fc:' prefix for the commit message.
+Convert a return to a jump to an existing label that calls clk_put.
 
-Thanks Dan!
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
---nab
+// <smpl>
+@r exists@
+expression e1,e2;
+statement S;
+@@
 
-> diff --git a/drivers/target/tcm_fc/tfc_sess.c b/drivers/target/tcm_fc/tfc_sess.c
-> index 03744c2..7491e21 100644
-> --- a/drivers/target/tcm_fc/tfc_sess.c
-> +++ b/drivers/target/tcm_fc/tfc_sess.c
-> @@ -332,7 +332,7 @@ void ft_sess_close(struct se_session *se_sess)
->  	lport = sess->tport->lport;
->  	port_id = sess->port_id;
->  	if (port_id = -1) {
-> -		mutex_lock(&ft_lport_lock);
-> +		mutex_unlock(&ft_lport_lock);
->  		return;
->  	}
->  	FT_SESS_DBG("port_id %x\n", port_id);
+e1 = clk_get@p1(...);
+... when != e1 = e2
+    when != clk_put(e1)
+    when any
+if (...) { ... when != clk_put(e1)
+               when != if (...) { ... clk_put(e1) ... }
+* return@p3 ...;
+ } else S
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/char/hw_random/omap-rng.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/hw_random/omap-rng.c b/drivers/char/hw_random/omap-rng.c
+index 2cc755a..b757fac 100644
+--- a/drivers/char/hw_random/omap-rng.c
++++ b/drivers/char/hw_random/omap-rng.c
+@@ -113,8 +113,10 @@ static int __devinit omap_rng_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+-	if (!res)
+-		return -ENOENT;
++	if (!res) {
++		ret = -ENOENT;
++		goto err_region;
++	}
+ 
+ 	if (!request_mem_region(res->start, resource_size(res), pdev->name)) {
+ 		ret = -EBUSY;
 
