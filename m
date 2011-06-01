@@ -1,107 +1,63 @@
-From: matt mooney <mfm@muteddisk.com>
-Date: Fri, 06 May 2011 10:47:49 +0000
-Subject: [PATCH 09/16] staging: usbip: vhci.h: coding style cleanup
-Message-Id: <08a41b8854887b0467c9509d61beb64e615bec3e.1304676742.git.mfm@muteddisk.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 01 Jun 2011 17:10:09 +0000
+Subject: [PATCH 6/10] drivers/char/hw_random/nomadik-rng.c: add missing clk_put
+Message-Id: <1306948213-20767-6-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1304676742.git.mfm@muteddisk.com>
-In-Reply-To: <cover.1304676742.git.mfm@muteddisk.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matt Mackall <mpm@selenic.com>
+Cc: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.hengli.com.au>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 
-Fix a few alignment issues and remove extraneous lines.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: matt mooney <mfm@muteddisk.com>
+Jump to the end of the function for the clk_disable and clk_put rather than
+returning directly.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression e1,e2;
+statement S;
+@@
+
+e1 = clk_get@p1(...);
+... when != e1 = e2
+    when != clk_put(e1)
+    when any
+if (...) { ... when != clk_put(e1)
+               when != if (...) { ... clk_put(e1) ... }
+* return@p3 ...;
+ } else S
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/usbip/vhci.h |   21 +++++++--------------
- 1 files changed, 7 insertions(+), 14 deletions(-)
+ drivers/char/hw_random/nomadik-rng.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/usbip/vhci.h b/drivers/staging/usbip/vhci.h
-index d3f1e5f..6e17a00 100644
---- a/drivers/staging/usbip/vhci.h
-+++ b/drivers/staging/usbip/vhci.h
-@@ -20,7 +20,6 @@
- #include <linux/platform_device.h>
- #include <linux/usb/hcd.h>
+diff --git a/drivers/char/hw_random/nomadik-rng.c b/drivers/char/hw_random/nomadik-rng.c
+index dd1d143..52e08ca 100644
+--- a/drivers/char/hw_random/nomadik-rng.c
++++ b/drivers/char/hw_random/nomadik-rng.c
+@@ -55,7 +55,7 @@ static int nmk_rng_probe(struct amba_device *dev, const struct amba_id *id)
  
--
- struct vhci_device {
- 	struct usb_device *udev;
- 
-@@ -33,12 +32,11 @@ struct vhci_device {
- 	/* speed of a remote device */
- 	enum usb_device_speed speed;
- 
--	/*  vhci root-hub port to which this device is attached  */
-+	/* vhci root-hub port to which this device is attached */
- 	__u32 rhport;
- 
- 	struct usbip_device ud;
- 
--
- 	/* lock for the below link lists */
- 	spinlock_t priv_lock;
- 
-@@ -54,7 +52,6 @@ struct vhci_device {
- 	wait_queue_head_t waitq_tx;
- };
- 
--
- /* urb->hcpriv, use container_of() */
- struct vhci_priv {
- 	unsigned long seqnum;
-@@ -64,7 +61,6 @@ struct vhci_priv {
- 	struct urb *urb;
- };
- 
--
- struct vhci_unlink {
- 	/* seqnum of this request */
- 	unsigned long seqnum;
-@@ -85,12 +81,12 @@ struct vhci_unlink {
- 
- /* for usb_bus.hcpriv */
- struct vhci_hcd {
--	spinlock_t	lock;
-+	spinlock_t lock;
- 
--	u32	port_status[VHCI_NPORTS];
-+	u32 port_status[VHCI_NPORTS];
- 
--	unsigned	resuming:1;
--	unsigned long	re_timeout;
-+	unsigned resuming:1;
-+	unsigned long re_timeout;
- 
- 	atomic_t seqnum;
- 
-@@ -102,11 +98,9 @@ struct vhci_hcd {
- 	struct vhci_device vdev[VHCI_NPORTS];
- };
- 
--
- extern struct vhci_hcd *the_controller;
- extern struct attribute_group dev_attr_group;
- 
--
- /*-------------------------------------------------------------------------*/
- /* prototype declaration */
- 
-@@ -116,10 +110,9 @@ void rh_port_disconnect(int rhport);
- int vhci_rx_loop(void *data);
- int vhci_tx_loop(void *data);
- 
--struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev,
--					    __u32 seqnum);
-+struct urb *pickup_urb_and_free_priv(struct vhci_device *vdev, __u32 seqnum);
- 
--#define hardware		(&the_controller->pdev.dev)
-+#define hardware (&the_controller->pdev.dev)
- 
- static inline struct vhci_device *port_to_vdev(__u32 port)
- {
--- 
-1.7.5.1
+ 	ret = amba_request_regions(dev, dev->dev.init_name);
+ 	if (ret)
+-		return ret;
++		goto out_clk;
+ 	ret = -ENOMEM;
+ 	base = ioremap(dev->res.start, resource_size(&dev->res));
+ 	if (!base)
+@@ -70,6 +70,7 @@ out_unmap:
+ 	iounmap(base);
+ out_release:
+ 	amba_release_regions(dev);
++out_clk:
+ 	clk_disable(rng_clk);
+ 	clk_put(rng_clk);
+ 	return ret;
 
