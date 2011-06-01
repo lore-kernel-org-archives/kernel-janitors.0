@@ -1,25 +1,58 @@
-From: Mattia Dongili <malattia@linux.it>
-Date: Sat, 04 Jun 2011 05:54:28 +0000
-Subject: Re: [PATCH] sony-laptop: remove unused local variables
-Message-Id: <20110604055427.GA2901@kamineko.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 01 Jun 2011 17:10:11 +0000
+Subject: [PATCH 8/10] drivers/video/imxfb.c: add missing clk_put
+Message-Id: <1306948213-20767-8-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1307068040-2918-1-git-send-email-Gregory.Dietsche@cuw.edu>
- <4DE84AE8.60109@cuw.edu>
-In-Reply-To: <4DE84AE8.60109@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Dietsche <gregory.dietsche@cuw.edu>
-Cc: mjg@redhat.com, kernel-janitors@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Jun 02, 2011 at 09:46:00PM -0500, Greg Dietsche wrote:
-> please disregard... i neglected to rebase before sending. this patch
-> no longer applies to the mainline.
+From: Julia Lawall <julia@diku.dk>
 
-the same patch was also already sent by Guenter Roeck a few days ago:
-http://www.spinics.net/lists/platform-driver-x86/msg02018.html
+Reorder the labels at the end of the function to correspond to the order in
+which the resources are allocated.
 
-thanks
--- 
-mattia
-:wq!
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression e1,e2;
+statement S;
+@@
+
+e1 = clk_get@p1(...);
+... when != e1 = e2
+    when != clk_put(e1)
+    when any
+if (...) { ... when != clk_put(e1)
+               when != if (...) { ... clk_put(e1) ... }
+* return@p3 ...;
+ } else S
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/video/imxfb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/imxfb.c b/drivers/video/imxfb.c
+index d2ccfd6..f135dbe 100644
+--- a/drivers/video/imxfb.c
++++ b/drivers/video/imxfb.c
+@@ -856,10 +856,10 @@ failed_platform_init:
+ 		dma_free_writecombine(&pdev->dev,fbi->map_size,fbi->map_cpu,
+ 			fbi->map_dma);
+ failed_map:
+-	clk_put(fbi->clk);
+-failed_getclock:
+ 	iounmap(fbi->regs);
+ failed_ioremap:
++	clk_put(fbi->clk);
++failed_getclock:
+ 	release_mem_region(res->start, resource_size(res));
+ failed_req:
+ 	kfree(info->pseudo_palette);
+
