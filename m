@@ -1,51 +1,101 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 13 Jun 2011 20:07:11 +0000
-Subject: [patch 1/4] SCSI: target: dereferencing ERR_PTRs
-Message-Id: <20110613200711.GH3583@shale.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 01 Jun 2011 17:10:13 +0000
+Subject: [PATCH 10/10] drivers/video/pxa168fb.c: add missing clk_put
+Message-Id: <1306948213-20767-10-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: James Bottomley <jbottomley@parallels.com>, Kiran Patil <kiran.patil@intel.com>, Yi Zou <yi.zou@intel.com>, Joe Eykholt <jeykholt@cisco.com>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-transport_init_session() and core_tmr_alloc_req() never return NULL,
-they only return ERR_PTRs on error.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Add a label for error-handling code in the case where only clk_get has
+succeeded.  Rename the label failed to be consistent with the rest.
 
-diff --git a/drivers/target/tcm_fc/tfc_sess.c b/drivers/target/tcm_fc/tfc_sess.c
-index a3bd57f..03744c2 100644
---- a/drivers/target/tcm_fc/tfc_sess.c
-+++ b/drivers/target/tcm_fc/tfc_sess.c
-@@ -229,7 +229,7 @@ static struct ft_sess *ft_sess_create(struct ft_tport *tport, u32 port_id,
- 		return NULL;
- 
- 	sess->se_sess = transport_init_session();
--	if (!sess->se_sess) {
-+	if (IS_ERR(sess->se_sess)) {
- 		kfree(sess);
- 		return NULL;
+A simplified version of the semantic match that finds the missing clk_put
+is as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression e1,e2;
+statement S;
+@@
+
+e1 = clk_get@p1(...);
+... when != e1 = e2
+    when != clk_put(e1)
+    when any
+if (...) { ... when != clk_put(e1)
+               when != if (...) { ... clk_put(e1) ... }
+* return@p3 ...;
+ } else S
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/video/pxa168fb.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/video/pxa168fb.c b/drivers/video/pxa168fb.c
+index 35f61dd..bb95ec5 100644
+--- a/drivers/video/pxa168fb.c
++++ b/drivers/video/pxa168fb.c
+@@ -623,19 +623,21 @@ static int __devinit pxa168fb_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (res = NULL) {
+ 		dev_err(&pdev->dev, "no IO memory defined\n");
+-		return -ENOENT;
++		ret = -ENOENT;
++		goto failed_put_clk;
  	}
-diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
-index dee2a2c..7329d0e 100644
---- a/drivers/target/loopback/tcm_loop.c
-+++ b/drivers/target/loopback/tcm_loop.c
-@@ -386,7 +386,7 @@ static int tcm_loop_device_reset(struct scsi_cmnd *sc)
- 	 */
- 	se_cmd->se_tmr_req = core_tmr_alloc_req(se_cmd, (void *)tl_tmr,
- 				TMR_LUN_RESET);
--	if (!se_cmd->se_tmr_req)
-+	if (IS_ERR(se_cmd->se_tmr_req))
- 		goto release;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "no IRQ defined\n");
+-		return -ENOENT;
++		ret = -ENOENT;
++		goto failed_put_clk;
+ 	}
+ 
+ 	info = framebuffer_alloc(sizeof(struct pxa168fb_info), &pdev->dev);
+ 	if (info = NULL) {
+-		clk_put(clk);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto failed_put_clk;
+ 	}
+ 
+ 	/* Initialize private data */
+@@ -671,7 +673,7 @@ static int __devinit pxa168fb_probe(struct platform_device *pdev)
+ 	fbi->reg_base = ioremap_nocache(res->start, resource_size(res));
+ 	if (fbi->reg_base = NULL) {
+ 		ret = -ENOMEM;
+-		goto failed;
++		goto failed_free_info;
+ 	}
+ 
  	/*
- 	 * Locate the underlying TCM struct se_lun from sc->device->lun
-@@ -1033,7 +1033,7 @@ static int tcm_loop_make_nexus(
- 	 * Initialize the struct se_session pointer
- 	 */
- 	tl_nexus->se_sess = transport_init_session();
--	if (!tl_nexus->se_sess)
-+	if (IS_ERR(tl_nexus->se_sess))
- 		goto out;
- 	/*
- 	 * Since we are running in 'demo mode' this call with generate a
+@@ -683,7 +685,7 @@ static int __devinit pxa168fb_probe(struct platform_device *pdev)
+ 						&fbi->fb_start_dma, GFP_KERNEL);
+ 	if (info->screen_base = NULL) {
+ 		ret = -ENOMEM;
+-		goto failed;
++		goto failed_free_info;
+ 	}
+ 
+ 	info->fix.smem_start = (unsigned long)fbi->fb_start_dma;
+@@ -772,8 +774,9 @@ failed_free_clk:
+ failed_free_fbmem:
+ 	dma_free_coherent(fbi->dev, info->fix.smem_len,
+ 			info->screen_base, fbi->fb_start_dma);
+-failed:
++failed_free_info:
+ 	kfree(info);
++failed_put_clk:
+ 	clk_put(clk);
+ 
+ 	dev_err(&pdev->dev, "frame buffer device init failed with %d\n", ret);
+
