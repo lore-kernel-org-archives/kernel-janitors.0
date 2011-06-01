@@ -1,33 +1,56 @@
-From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
-Date: Thu, 30 Jun 2011 22:31:48 +0000
-Subject: [PATCH] x86: smpboot: mark array as const
-Message-Id: <1309473108-5337-1-git-send-email-Gregory.Dietsche@cuw.edu>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 01 Jun 2011 17:10:07 +0000
+Subject: [PATCH 4/10] drivers/net/can/flexcan.c: add missing clk_put
+Message-Id: <1306948213-20767-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wolfgang Grandegger <wg@grandegger.com>
+Cc: kernel-janitors@vger.kernel.org, socketcan-core@lists.berlios.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This array is read-only. Make it explicit by marking as const.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+The failed_get label is used after the call to clk_get has succeeded, so it
+should be moved up above the call to clk_put.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression e1,e2;
+statement S;
+@@
+
+e1 = clk_get@p1(...);
+... when != e1 = e2
+    when != clk_put(e1)
+    when any
+if (...) { ... when != clk_put(e1)
+               when != if (...) { ... clk_put(e1) ... }
+* return@p3 ...;
+ } else S
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- arch/x86/kernel/smpboot.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/net/can/flexcan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 9fd3137..4218569 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -438,7 +438,7 @@ static void impress_friends(void)
- void __inquire_remote_apic(int apicid)
- {
- 	unsigned i, regs[] = { APIC_ID >> 4, APIC_LVR >> 4, APIC_SPIV >> 4 };
--	char *names[] = { "ID", "VERSION", "SPIV" };
-+	const char const *names[] = { "ID", "VERSION", "SPIV" };
- 	int timeout;
- 	u32 status;
- 
--- 
-1.7.2.5
+diff --git a/drivers/net/can/flexcan.c b/drivers/net/can/flexcan.c
+index d499056..121739c 100644
+--- a/drivers/net/can/flexcan.c
++++ b/drivers/net/can/flexcan.c
+@@ -978,8 +978,8 @@ static int __devinit flexcan_probe(struct platform_device *pdev)
+  failed_map:
+ 	release_mem_region(mem->start, mem_size);
+  failed_req:
+-	clk_put(clk);
+  failed_get:
++	clk_put(clk);
+  failed_clock:
+ 	return err;
+ }
 
