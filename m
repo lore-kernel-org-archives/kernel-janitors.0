@@ -1,31 +1,77 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Date: Sun, 12 Jun 2011 05:48:51 +0000
-Subject: Re: [patch] netpoll: call dev_put() on error in netpoll_setup()
-Message-Id: <BANLkTin9d0kEzOcNGt-x49caagLz5uRDEg@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 01 Jun 2011 17:10:10 +0000
+Subject: [PATCH 7/10] drivers/net/davinci_emac.c: add missing clk_put
+Message-Id: <1306948213-20767-7-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110611155047.GA3583@shale.localdomain>
-In-Reply-To: <20110611155047.GA3583@shale.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
-Cc: WANG Cong <amwang@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, Cyril Chemparathy <cyril@ti.com>, Sriramakrishnan A G <srk@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Stefan Weil <weil@mail.berlios.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jun 11, 2011 at 11:50 PM, Dan Carpenter <error27@gmail.com> wrote:
-> There is a dev_put(ndev) missing on an error path. =C2=A0This was
-> introduced in 0c1ad04aecb "netpoll: prevent netpoll setup on slave
-> devices".
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> This is a static checker bug, and it's possible I've misunderstood
-> something.
+From: Julia Lawall <julia@diku.dk>
 
-Oops! My bad... you don't miss anything.
+Go to existing error handling code at the end of the function that calls
+clk_put.
 
-Thanks a lot for fixing it!
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+expression e1,e2;
+statement S;
+@@
+
+e1 = clk_get@p1(...);
+... when != e1 = e2
+    when != clk_put(e1)
+    when any
+if (...) { ... when != clk_put(e1)
+               when != if (...) { ... clk_put(e1) ... }
+* return@p3 ...;
+ } else S
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/davinci_emac.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/davinci_emac.c b/drivers/net/davinci_emac.c
+index 29a4f06..dcc4a17 100644
+--- a/drivers/net/davinci_emac.c
++++ b/drivers/net/davinci_emac.c
+@@ -1781,8 +1781,8 @@ static int __devinit davinci_emac_probe(struct platform_device *pdev)
+ 	ndev = alloc_etherdev(sizeof(struct emac_priv));
+ 	if (!ndev) {
+ 		dev_err(&pdev->dev, "error allocating net_device\n");
+-		clk_put(emac_clk);
+-		return -ENOMEM;
++		rc = -ENOMEM;
++		goto free_clk;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, ndev);
+@@ -1796,7 +1796,8 @@ static int __devinit davinci_emac_probe(struct platform_device *pdev)
+ 	pdata = pdev->dev.platform_data;
+ 	if (!pdata) {
+ 		dev_err(&pdev->dev, "no platform data\n");
+-		return -ENODEV;
++		rc = -ENODEV;
++		goto probe_quit;
+ 	}
+ 
+ 	/* MAC addr and PHY mask , RMII enable info from platform_data */
+@@ -1929,8 +1930,9 @@ no_dma:
+ 	iounmap(priv->remap_addr);
+ 
+ probe_quit:
+-	clk_put(emac_clk);
+ 	free_netdev(ndev);
++free_clk:
++	clk_put(emac_clk);
+ 	return rc;
+ }
+ 
