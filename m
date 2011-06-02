@@ -1,21 +1,66 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Wed, 01 Jun 2011 18:21:14 +0000
-Subject: Re: [PATCH 2/10] sound/soc/nuc900/nuc900-ac97.c: add missing clk_put
-Message-Id: <20110601182114.GC16396@opensource.wolfsonmicro.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 02 Jun 2011 08:26:26 +0000
+Subject: [PATCH] drivers/usb/gadget/inode.c: add missing kfree
+Message-Id: <1307003186-23244-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1306948213-20767-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1306948213-20767-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Timur Tabi <timur@freescale.com>, Wan ZongShun <mcuos.com@gmail.com>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Axel Lin <axel.lin@gmail.com>, Liam Girdwood <lrg@ti.com>
+To: David Brownell <dbrownell@users.sourceforge.net>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jun 01, 2011 at 07:10:05PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> This goto is after the call to clk_get, so it should go to the label that
-> includes a call to clk_put.
+From: Julia Lawall <julia@diku.dk>
 
-Applied, thanks.  Please do try to use subject lines for your patches
-consistent with the code you're submitting against.
+The label fail frees dev->buf, but kbuf hasn't yet been stored there at
+this point.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@exists@
+local idexpression x;
+statement S;
+expression E;
+expression *ptr != NULL;
+@@
+
+x = memdup_user(...);
+...
+if (IS_ERR(x)) S
+... when != x
+    when != x = E
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+*return ...;
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+I wonder if it is really correct to free dev->buf at fail in this case.
+Because it is freeing the previously allocated value of dev->buf, not the
+current one as done in subsequent cases.
+
+ drivers/usb/gadget/inode.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/inode.c b/drivers/usb/gadget/inode.c
+index a01383f..316547a 100644
+--- a/drivers/usb/gadget/inode.c
++++ b/drivers/usb/gadget/inode.c
+@@ -1870,8 +1870,10 @@ dev_config (struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
+ 
+ 	spin_lock_irq (&dev->lock);
+ 	value = -EINVAL;
+-	if (dev->buf)
++	if (dev->buf) {
++		kfree(kbuf);
+ 		goto fail;
++	}
+ 	dev->buf = kbuf;
+ 
+ 	/* full or low speed config */
+
