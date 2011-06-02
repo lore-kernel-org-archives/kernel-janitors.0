@@ -1,52 +1,43 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 01 Jun 2011 17:10:12 +0000
-Subject: [PATCH 9/10] arch/arm/mach-omap2/clock.c: add missing clk_put
-Message-Id: <1306948213-20767-9-git-send-email-julia@diku.dk>
+From: Paul Walmsley <paul@pwsan.com>
+Date: Thu, 02 Jun 2011 21:26:39 +0000
+Subject: Re: [PATCH 9/10] arch/arm/mach-omap2/clock.c: add missing clk_put
+Message-Id: <alpine.DEB.2.00.1106021526220.26852@utopia.booyaka.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1306948213-20767-9-git-send-email-julia@diku.dk>
+In-Reply-To: <1306948213-20767-9-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <julia@diku.dk>
+On Wed, 1 Jun 2011, Julia Lawall wrote:
 
-Add missing call to clk_put.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Add missing call to clk_put.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r exists@
+> expression e1,e2;
+> statement S;
+> @@
+> 
+> e1 = clk_get@p1(...);
+> ... when != e1 = e2
+>     when != clk_put(e1)
+>     when any
+> if (...) { ... when != clk_put(e1)
+>                when != if (...) { ... clk_put(e1) ... }
+> * return@p3 ...;
+>  } else S
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Acked-by: Paul Walmsley <paul@pwsan.com>
 
-// <smpl>
-@r exists@
-expression e1,e2;
-statement S;
-@@
 
-e1 = clk_get@p1(...);
-... when != e1 = e2
-    when != clk_put(e1)
-    when any
-if (...) { ... when != clk_put(e1)
-               when != if (...) { ... clk_put(e1) ... }
-* return@p3 ...;
- } else S
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- arch/arm/mach-omap2/clock.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/mach-omap2/clock.c b/arch/arm/mach-omap2/clock.c
-index 180299e..bf9c36c 100644
---- a/arch/arm/mach-omap2/clock.c
-+++ b/arch/arm/mach-omap2/clock.c
-@@ -453,6 +453,7 @@ int __init omap2_clk_switch_mpurate_at_boot(const char *mpurate_ck_name)
- 	if (IS_ERR_VALUE(r)) {
- 		WARN(1, "clock: %s: unable to set MPU rate to %d: %d\n",
- 		     mpurate_ck->name, mpurate, r);
-+		clk_put(mpurate_ck);
- 		return -EINVAL;
- 	}
- 
-
+- Paul
