@@ -1,45 +1,70 @@
-From: Joel Becker <jlbec@evilplan.org>
-Date: Wed, 01 Jun 2011 02:23:41 +0000
-Subject: Re: [patch] ocfs2: checking the wrong variable in
-Message-Id: <20110601022341.GB29741@noexit.corp.google.com>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Fri, 03 Jun 2011 08:12:16 +0000
+Subject: Re: [patch] ALSA: fm801: add error handling if auto-detect fails
+Message-Id: <s5hwrh3xrj3.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110529195631.GC3099@shale.localdomain>
-In-Reply-To: <20110529195631.GC3099@shale.localdomain>
+References: <20110526084735.GC14591@shale.localdomain>
+In-Reply-To: <20110526084735.GC14591@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Dan Carpenter <error27@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Ondrej Zary <linux@rainbow-software.org>
 
-On Sun, May 29, 2011 at 10:56:31PM +0300, Dan Carpenter wrote:
-> "new_phys_cpos" is always a valid pointer here.
-> ocfs2_probe_alloc_group() allocates "*new_phys_cpos".
+At Thu, 26 May 2011 11:47:35 +0300,
+Dan Carpenter wrote:
+> 
+> In the original code if auto detect failed and tea575x_tuner = 4
+> then we copy bogus information to chip->tea.card.  I've changed the
+> autodetect code to cleanup and return -ENODEV on error instead.
+> 
+> I made the previous chunk return on error as well.  Potentially the
+> hardware should limp along without the radio?  I don't know this
+> hardware well enough to say.
 > 
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-This patch is now in the 'fixes' branch of ocfs2.git.
+Looks good to me.  Applied now.
 
-Joel
 
+thanks,
+
+Takashi
+
+
+> ---
+> Compile tested only.
 > 
-> diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-> index 4c54884..f3eb060 100644
-> --- a/fs/ocfs2/move_extents.c
-> +++ b/fs/ocfs2/move_extents.c
-> @@ -747,7 +747,7 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
->  	 */
->  	ocfs2_probe_alloc_group(inode, gd_bh, &goal_bit, len, move_max_hop,
->  				new_phys_cpos);
-> -	if (!new_phys_cpos) {
-> +	if (!*new_phys_cpos) {
->  		ret = -ENOSPC;
->  		goto out_commit;
->  	}
-
--- 
-
-"If the human brain were so simple we could understand it, we would
- be so simple that we could not."
-	- W. A. Clouston
-
-			http://www.jlbec.org/
-			jlbec@evilplan.org
+> diff --git a/sound/pci/fm801.c b/sound/pci/fm801.c
+> index eacd490..a7ec703 100644
+> --- a/sound/pci/fm801.c
+> +++ b/sound/pci/fm801.c
+> @@ -1234,9 +1234,12 @@ static int __devinit snd_fm801_create(struct snd_card *card,
+>  	sprintf(chip->tea.bus_info, "PCI:%s", pci_name(pci));
+>  	if ((tea575x_tuner & TUNER_TYPE_MASK) > 0 &&
+>  	    (tea575x_tuner & TUNER_TYPE_MASK) < 4) {
+> -		if (snd_tea575x_init(&chip->tea))
+> +		if (snd_tea575x_init(&chip->tea)) {
+>  			snd_printk(KERN_ERR "TEA575x radio not found\n");
+> -	} else if ((tea575x_tuner & TUNER_TYPE_MASK) = 0)
+> +			snd_fm801_free(chip);
+> +			return -ENODEV;
+> +		}
+> +	} else if ((tea575x_tuner & TUNER_TYPE_MASK) = 0) {
+>  		/* autodetect tuner connection */
+>  		for (tea575x_tuner = 1; tea575x_tuner <= 3; tea575x_tuner++) {
+>  			chip->tea575x_tuner = tea575x_tuner;
+> @@ -1246,6 +1249,12 @@ static int __devinit snd_fm801_create(struct snd_card *card,
+>  				break;
+>  			}
+>  		}
+> +		if (tea575x_tuner = 4) {
+> +			snd_printk(KERN_ERR "TEA575x radio not found\n");
+> +			snd_fm801_free(chip);
+> +			return -ENODEV;
+> +		}
+> +	}
+>  	strlcpy(chip->tea.card, snd_fm801_tea575x_gpios[(tea575x_tuner & TUNER_TYPE_MASK) - 1].name, sizeof(chip->tea.card));
+>  #endif
+>  
+> 
