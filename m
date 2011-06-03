@@ -1,35 +1,35 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 29 Jun 2011 10:10:25 +0000
-Subject: [patch] usb: remove unneeded NULL check in usb_disconnect()
-Message-Id: <20110629101025.GF14591@shale.localdomain>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Fri, 03 Jun 2011 02:06:07 +0000
+Subject: [PATCH 2/5] iwlegacy: remove unecessary if statement
+Message-Id: <1307066770-27309-2-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
+In-Reply-To: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: sgruszka@redhat.com, linville@tuxdriver.com
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Dietsche <Gregory.Dietsche@cuw.edu>
 
-We dereference "udev" and then immediately check whether it's NULL
-which makes the static checkers complain.  "udev" isn't NULL here so
-the check can be removed.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+the code always returns ret regardless, so if(ret) check is unecessary.
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
 ---
-Alan Stern says it can never be NULL and I double checked as well.
-usb_disconnect() is only called from hub.c and hcd.c.
+ drivers/net/wireless/iwlegacy/iwl-4965.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index a428aa0..99fff6b 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -1636,11 +1636,6 @@ void usb_disconnect(struct usb_device **pdev)
- 	int			i;
- 	struct usb_hcd		*hcd = bus_to_hcd(udev->bus);
+diff --git a/drivers/net/wireless/iwlegacy/iwl-4965.c b/drivers/net/wireless/iwlegacy/iwl-4965.c
+index f5433c7..ffda05c 100644
+--- a/drivers/net/wireless/iwlegacy/iwl-4965.c
++++ b/drivers/net/wireless/iwlegacy/iwl-4965.c
+@@ -1185,8 +1185,6 @@ static int iwl4965_send_rxon_assoc(struct iwl_priv *priv,
  
--	if (!udev) {
--		pr_debug ("%s nodev\n", __func__);
--		return;
--	}
--
- 	/* mark the device as inactive, so any further urb submissions for
- 	 * this device (and any of its children) will fail immediately.
- 	 * this quiesces everything except pending urbs.
+ 	ret = iwl_legacy_send_cmd_pdu_async(priv, REPLY_RXON_ASSOC,
+ 				     sizeof(rxon_assoc), &rxon_assoc, NULL);
+-	if (ret)
+-		return ret;
+ 
+ 	return ret;
+ }
+-- 
+1.7.2.5
+
