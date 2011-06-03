@@ -1,22 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 23 Jun 2011 10:14:53 +0000
-Subject: Re: [patch -next] dcb: use nlmsg_free() instead of kfree()
-Message-Id: <20110623.031453.2027432684696519466.davem@davemloft.net>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Fri, 03 Jun 2011 02:06:09 +0000
+Subject: [PATCH 4/5] iwlegacy: propagate error return value
+Message-Id: <1307066770-27309-4-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110623055802.GN14591@shale.localdomain>
-In-Reply-To: <20110623055802.GN14591@shale.localdomain>
+References: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
+In-Reply-To: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: john.r.fastabend@intel.com, shmulikr@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: sgruszka@redhat.com, linville@tuxdriver.com
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Dietsche <Gregory.Dietsche@cuw.edu>
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 23 Jun 2011 08:58:02 +0300
+propogate the return value from iwl4965_get_tx_atten_grp instead
+of implicitly returning -EINVAL in the error case.
 
-> These sk_buff structs were allocated with nlmsg_new() so they should
-> be freed with nlmsg_free().
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+---
+ drivers/net/wireless/iwlegacy/iwl-4965.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Applied, thanks Dan.
+diff --git a/drivers/net/wireless/iwlegacy/iwl-4965.c b/drivers/net/wireless/iwlegacy/iwl-4965.c
+index 06dcee5..79e7ce6 100644
+--- a/drivers/net/wireless/iwlegacy/iwl-4965.c
++++ b/drivers/net/wireless/iwlegacy/iwl-4965.c
+@@ -915,7 +915,7 @@ static int iwl4965_fill_txpower_tbl(struct iwl_priv *priv, u8 band, u16 channel,
+ 	if (txatten_grp < 0) {
+ 		IWL_ERR(priv, "Can't find txatten group for channel %d.\n",
+ 			  channel);
+-		return -EINVAL;
++		return txatten_grp;
+ 	}
+ 
+ 	IWL_DEBUG_TXPOWER(priv, "channel %d belongs to txatten group %d\n",
+-- 
+1.7.2.5
+
