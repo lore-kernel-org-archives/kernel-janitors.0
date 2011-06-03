@@ -1,70 +1,35 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 03 Jun 2011 08:12:16 +0000
-Subject: Re: [patch] ALSA: fm801: add error handling if auto-detect fails
-Message-Id: <s5hwrh3xrj3.wl%tiwai@suse.de>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Fri, 03 Jun 2011 02:06:08 +0000
+Subject: [PATCH 3/5] iwlegacy: return -EINVAL instead of -1
+Message-Id: <1307066770-27309-3-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110526084735.GC14591@shale.localdomain>
-In-Reply-To: <20110526084735.GC14591@shale.localdomain>
+References: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
+In-Reply-To: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Ondrej Zary <linux@rainbow-software.org>
+To: sgruszka@redhat.com, linville@tuxdriver.com
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Dietsche <Gregory.Dietsche@cuw.edu>
 
-At Thu, 26 May 2011 11:47:35 +0300,
-Dan Carpenter wrote:
-> 
-> In the original code if auto detect failed and tea575x_tuner = 4
-> then we copy bogus information to chip->tea.card.  I've changed the
-> autodetect code to cleanup and return -ENODEV on error instead.
-> 
-> I made the previous chunk return on error as well.  Potentially the
-> hardware should limp along without the radio?  I don't know this
-> hardware well enough to say.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Cleanup the code to return -EINVAL instead of -1
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+---
+ drivers/net/wireless/iwlegacy/iwl-4965.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Looks good to me.  Applied now.
+diff --git a/drivers/net/wireless/iwlegacy/iwl-4965.c b/drivers/net/wireless/iwlegacy/iwl-4965.c
+index ffda05c..06dcee5 100644
+--- a/drivers/net/wireless/iwlegacy/iwl-4965.c
++++ b/drivers/net/wireless/iwlegacy/iwl-4965.c
+@@ -496,7 +496,7 @@ static s32 iwl4965_get_tx_atten_grp(u16 channel)
+ 	    channel <= CALIB_IWL_TX_ATTEN_GR4_LCH)
+ 		return CALIB_CH_GROUP_4;
+ 
+-	return -1;
++	return -EINVAL;
+ }
+ 
+ static u32 iwl4965_get_sub_band(const struct iwl_priv *priv, u32 channel)
+-- 
+1.7.2.5
 
-
-thanks,
-
-Takashi
-
-
-> ---
-> Compile tested only.
-> 
-> diff --git a/sound/pci/fm801.c b/sound/pci/fm801.c
-> index eacd490..a7ec703 100644
-> --- a/sound/pci/fm801.c
-> +++ b/sound/pci/fm801.c
-> @@ -1234,9 +1234,12 @@ static int __devinit snd_fm801_create(struct snd_card *card,
->  	sprintf(chip->tea.bus_info, "PCI:%s", pci_name(pci));
->  	if ((tea575x_tuner & TUNER_TYPE_MASK) > 0 &&
->  	    (tea575x_tuner & TUNER_TYPE_MASK) < 4) {
-> -		if (snd_tea575x_init(&chip->tea))
-> +		if (snd_tea575x_init(&chip->tea)) {
->  			snd_printk(KERN_ERR "TEA575x radio not found\n");
-> -	} else if ((tea575x_tuner & TUNER_TYPE_MASK) = 0)
-> +			snd_fm801_free(chip);
-> +			return -ENODEV;
-> +		}
-> +	} else if ((tea575x_tuner & TUNER_TYPE_MASK) = 0) {
->  		/* autodetect tuner connection */
->  		for (tea575x_tuner = 1; tea575x_tuner <= 3; tea575x_tuner++) {
->  			chip->tea575x_tuner = tea575x_tuner;
-> @@ -1246,6 +1249,12 @@ static int __devinit snd_fm801_create(struct snd_card *card,
->  				break;
->  			}
->  		}
-> +		if (tea575x_tuner = 4) {
-> +			snd_printk(KERN_ERR "TEA575x radio not found\n");
-> +			snd_fm801_free(chip);
-> +			return -ENODEV;
-> +		}
-> +	}
->  	strlcpy(chip->tea.card, snd_fm801_tea575x_gpios[(tea575x_tuner & TUNER_TYPE_MASK) - 1].name, sizeof(chip->tea.card));
->  #endif
->  
-> 
