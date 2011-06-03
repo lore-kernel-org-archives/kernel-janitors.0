@@ -1,26 +1,39 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Mon, 20 Jun 2011 13:29:33 +0000
-Subject: Re: [PATCH 1/2] mfd/ab3550: Use kstrtoul_from_user
-Message-Id: <20110620132933.GK22420@sortiz-mobl>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Fri, 03 Jun 2011 02:27:20 +0000
+Subject: [PATCH] sony-laptop: remove unused local variables
+Message-Id: <1307068040-2918-1-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1307393012-32582-1-git-send-email-peterhuewe@gmx.de>
-In-Reply-To: <1307393012-32582-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: malattia@linux.it
+Cc: mjg@redhat.com, kernel-janitors@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Dietsche <Gregory.Dietsche@cuw.edu>
 
-Hi Peter,
+Removed two unused instances of "handle" local variable.
 
-On Mon, Jun 06, 2011 at 10:43:31PM +0200, Peter Huewe wrote:
-> This patch replaces the code for getting an unsigned long from a
-> userspace buffer by a simple call to kstroul_from_user.
-> This makes it easier to read and less error prone.
-Thanks, both patches applied.
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+---
+ drivers/platform/x86/sony-laptop.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-Cheers,
-Samuel.
-
+diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
+index 6fe8cd6..9a2c319 100644
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -961,7 +961,6 @@ static int sony_backlight_get_brightness(struct backlight_device *bd)
+ static int sony_nc_get_brightness_ng(struct backlight_device *bd)
+ {
+ 	int result;
+-	int *handle = (int *)bl_get_data(bd);
+ 	struct sony_backlight_props *sdev  		(struct sony_backlight_props *)bl_get_data(bd);
+ 
+@@ -973,7 +972,6 @@ static int sony_nc_get_brightness_ng(struct backlight_device *bd)
+ static int sony_nc_update_status_ng(struct backlight_device *bd)
+ {
+ 	int value, result;
+-	int *handle = (int *)bl_get_data(bd);
+ 	struct sony_backlight_props *sdev  		(struct sony_backlight_props *)bl_get_data(bd);
+ 
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+1.7.2.5
+
