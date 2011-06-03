@@ -1,33 +1,94 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 09 Jun 2011 07:58:23 +0000
-Subject: Re: [patch] b43: check for allocation failures
-Message-Id: <20110609075813.GG4069@shale.localdomain>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Fri, 03 Jun 2011 02:06:10 +0000
+Subject: [PATCH 5/5] iwlegacy: add missing null check
+Message-Id: <1307066770-27309-5-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110609070934.GE4069@shale.localdomain>
- <BANLkTim3zJNJfGHcaeY+PQN3wm1m20Qzjw@mail.gmail.com>
-In-Reply-To: <BANLkTim3zJNJfGHcaeY+PQN3wm1m20Qzjw@mail.gmail.com>
+References: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
+In-Reply-To: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Stefano Brivio <stefano.brivio@polimi.it>, kernel-janitors@vger.kernel.org, "open list:B43 WIRELESS DRIVER" <linux-wireless@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: sgruszka@redhat.com, linville@tuxdriver.com
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Dietsche <Gregory.Dietsche@cuw.edu>
 
-On Thu, Jun 09, 2011 at 09:43:44AM +0200, Rafał Miłecki wrote:
-> >        dev = b43_bus_dev_ssb_init(sdev);
-> > +       if (!dev)
-> > +               return -ENOMEM;
-> 
-> I'm not sure if you should be aware of the reason here. What about returning
-> error code by b43_bus_dev..., reporting it here with b43err and returning
-> ENODEV or sth?
+lq_sta has other null checks in this funcion.
+assuming they are correct, this additional null check
+should be added too.
 
-The kmalloc failure prints out a whole lot of crap.  Surely we don't
-need to add more code in every function for an error that is almost
-certainly not going to happen in real life.
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+---
+ drivers/net/wireless/iwlegacy/iwl-4965-rs.c |   66 ++++++++++++++-------------
+ 1 files changed, 34 insertions(+), 32 deletions(-)
 
-If we were really worried about returning the right error code, then
-we'd return an ERR_PTR() from the lower levels etc.  I don't think
-it's worth it though.
+diff --git a/drivers/net/wireless/iwlegacy/iwl-4965-rs.c b/drivers/net/wireless/iwlegacy/iwl-4965-rs.c
+index 24d1499..a475aac 100644
+--- a/drivers/net/wireless/iwlegacy/iwl-4965-rs.c
++++ b/drivers/net/wireless/iwlegacy/iwl-4965-rs.c
+@@ -2275,40 +2275,42 @@ iwl4965_rs_get_rate(void *priv_r, struct ieee80211_sta *sta, void *priv_sta,
+ 	if (rate_control_send_low(sta, priv_sta, txrc))
+ 		return;
+ 
+-	rate_idx  = lq_sta->last_txrate_idx;
+-
+-	if (lq_sta->last_rate_n_flags & RATE_MCS_HT_MSK) {
+-		rate_idx -= IWL_FIRST_OFDM_RATE;
+-		/* 6M and 9M shared same MCS index */
+-		rate_idx = (rate_idx > 0) ? (rate_idx - 1) : 0;
+-		if (iwl4965_rs_extract_rate(lq_sta->last_rate_n_flags) >-			 IWL_RATE_MIMO2_6M_PLCP)
+-			rate_idx = rate_idx + MCS_INDEX_PER_STREAM;
+-		info->control.rates[0].flags = IEEE80211_TX_RC_MCS;
+-		if (lq_sta->last_rate_n_flags & RATE_MCS_SGI_MSK)
+-			info->control.rates[0].flags |-					IEEE80211_TX_RC_SHORT_GI;
+-		if (lq_sta->last_rate_n_flags & RATE_MCS_DUP_MSK)
+-			info->control.rates[0].flags |-					IEEE80211_TX_RC_DUP_DATA;
+-		if (lq_sta->last_rate_n_flags & RATE_MCS_HT40_MSK)
+-			info->control.rates[0].flags |-					IEEE80211_TX_RC_40_MHZ_WIDTH;
+-		if (lq_sta->last_rate_n_flags & RATE_MCS_GF_MSK)
+-			info->control.rates[0].flags |-					IEEE80211_TX_RC_GREEN_FIELD;
+-	} else {
+-		/* Check for invalid rates */
+-		if ((rate_idx < 0) || (rate_idx >= IWL_RATE_COUNT_LEGACY) ||
+-				((sband->band = IEEE80211_BAND_5GHZ) &&
+-				 (rate_idx < IWL_FIRST_OFDM_RATE)))
+-			rate_idx = rate_lowest_index(sband, sta);
+-		/* On valid 5 GHz rate, adjust index */
+-		else if (sband->band = IEEE80211_BAND_5GHZ)
++	if (lq_sta) {
++		rate_idx  = lq_sta->last_txrate_idx;
++
++		if (lq_sta->last_rate_n_flags & RATE_MCS_HT_MSK) {
+ 			rate_idx -= IWL_FIRST_OFDM_RATE;
+-		info->control.rates[0].flags = 0;
++			/* 6M and 9M shared same MCS index */
++			rate_idx = (rate_idx > 0) ? (rate_idx - 1) : 0;
++			if (iwl4965_rs_extract_rate(lq_sta->last_rate_n_flags) >+				 IWL_RATE_MIMO2_6M_PLCP)
++				rate_idx = rate_idx + MCS_INDEX_PER_STREAM;
++			info->control.rates[0].flags = IEEE80211_TX_RC_MCS;
++			if (lq_sta->last_rate_n_flags & RATE_MCS_SGI_MSK)
++				info->control.rates[0].flags |+						IEEE80211_TX_RC_SHORT_GI;
++			if (lq_sta->last_rate_n_flags & RATE_MCS_DUP_MSK)
++				info->control.rates[0].flags |+						IEEE80211_TX_RC_DUP_DATA;
++			if (lq_sta->last_rate_n_flags & RATE_MCS_HT40_MSK)
++				info->control.rates[0].flags |+						IEEE80211_TX_RC_40_MHZ_WIDTH;
++			if (lq_sta->last_rate_n_flags & RATE_MCS_GF_MSK)
++				info->control.rates[0].flags |+						IEEE80211_TX_RC_GREEN_FIELD;
++		} else {
++			/* Check for invalid rates */
++			if ((rate_idx < 0) || (rate_idx >= IWL_RATE_COUNT_LEGACY) ||
++					((sband->band = IEEE80211_BAND_5GHZ) &&
++					 (rate_idx < IWL_FIRST_OFDM_RATE)))
++				rate_idx = rate_lowest_index(sband, sta);
++			/* On valid 5 GHz rate, adjust index */
++			else if (sband->band = IEEE80211_BAND_5GHZ)
++				rate_idx -= IWL_FIRST_OFDM_RATE;
++			info->control.rates[0].flags = 0;
++		}
++		info->control.rates[0].idx = rate_idx;
+ 	}
+-	info->control.rates[0].idx = rate_idx;
+ 
+ }
+ 
+-- 
+1.7.2.5
 
-regards,
-dan carpenter
