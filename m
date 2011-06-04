@@ -1,45 +1,25 @@
-From: Greg Dietsche <gregory.dietsche@cuw.edu>
-Date: Fri, 03 Jun 2011 02:46:00 +0000
+From: Mattia Dongili <malattia@linux.it>
+Date: Sat, 04 Jun 2011 05:54:28 +0000
 Subject: Re: [PATCH] sony-laptop: remove unused local variables
-Message-Id: <4DE84AE8.60109@cuw.edu>
+Message-Id: <20110604055427.GA2901@kamineko.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1307068040-2918-1-git-send-email-Gregory.Dietsche@cuw.edu>
-In-Reply-To: <1307068040-2918-1-git-send-email-Gregory.Dietsche@cuw.edu>
+ <4DE84AE8.60109@cuw.edu>
+In-Reply-To: <4DE84AE8.60109@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Dietsche <Gregory.Dietsche@cuw.edu>
-Cc: malattia@linux.it, mjg@redhat.com, kernel-janitors@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Dietsche <gregory.dietsche@cuw.edu>
+Cc: mjg@redhat.com, kernel-janitors@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 
-please disregard... i neglected to rebase before sending. this patch no 
-longer applies to the mainline.
+On Thu, Jun 02, 2011 at 09:46:00PM -0500, Greg Dietsche wrote:
+> please disregard... i neglected to rebase before sending. this patch
+> no longer applies to the mainline.
 
-Greg
+the same patch was also already sent by Guenter Roeck a few days ago:
+http://www.spinics.net/lists/platform-driver-x86/msg02018.html
 
-On 06/02/2011 09:27 PM, Greg Dietsche wrote:
-> Removed two unused instances of "handle" local variable.
->
-> Signed-off-by: Greg Dietsche<Gregory.Dietsche@cuw.edu>
-> ---
->   drivers/platform/x86/sony-laptop.c |    2 --
->   1 files changed, 0 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
-> index 6fe8cd6..9a2c319 100644
-> --- a/drivers/platform/x86/sony-laptop.c
-> +++ b/drivers/platform/x86/sony-laptop.c
-> @@ -961,7 +961,6 @@ static int sony_backlight_get_brightness(struct backlight_device *bd)
->   static int sony_nc_get_brightness_ng(struct backlight_device *bd)
->   {
->   	int result;
-> -	int *handle = (int *)bl_get_data(bd);
->   	struct sony_backlight_props *sdev >   		(struct sony_backlight_props *)bl_get_data(bd);
->
-> @@ -973,7 +972,6 @@ static int sony_nc_get_brightness_ng(struct backlight_device *bd)
->   static int sony_nc_update_status_ng(struct backlight_device *bd)
->   {
->   	int value, result;
-> -	int *handle = (int *)bl_get_data(bd);
->   	struct sony_backlight_props *sdev >   		(struct sony_backlight_props *)bl_get_data(bd);
->
->    
+thanks
+-- 
+mattia
+:wq!
