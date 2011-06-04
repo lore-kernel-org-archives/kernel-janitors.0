@@ -1,82 +1,94 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Date: Sat, 04 Jun 2011 13:36:49 +0000
+From: walter harms <wharms@bfs.de>
+Date: Sat, 04 Jun 2011 16:52:37 +0000
 Subject: Re: [patch] [media] DVB: dvb_frontend: off by one in dtv_property_dump()
-Message-Id: <4DEA34F1.1020401@infradead.org>
+Message-Id: <4DEA62D5.7030902@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110526084452.GB14591@shale.localdomain> <4DDE36AB.2070202@linuxtv.org>
-In-Reply-To: <4DDE36AB.2070202@linuxtv.org>
+References: <20110526084452.GB14591@shale.localdomain> <4DDE36AB.2070202@linuxtv.org> <4DEA34F1.1020401@infradead.org>
+In-Reply-To: <4DEA34F1.1020401@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Oberritter <obi@linuxtv.org>
-Cc: Dan Carpenter <error27@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Steven Toth <stoth@kernellabs.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Andreas Oberritter <obi@linuxtv.org>, Dan Carpenter <error27@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Steven Toth <stoth@kernellabs.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Em 26-05-2011 08:16, Andreas Oberritter escreveu:
-> Hi Dan,
-> 
-> On 05/26/2011 10:44 AM, Dan Carpenter wrote:
->> If the tvp->cmd = DTV_MAX_COMMAND then we read past the end of the
->> array.
+
+
+Am 04.06.2011 15:36, schrieb Mauro Carvalho Chehab:
+> Em 26-05-2011 08:16, Andreas Oberritter escreveu:
+>> Hi Dan,
 >>
->> Signed-off-by: Dan Carpenter <error27@gmail.com>
+>> On 05/26/2011 10:44 AM, Dan Carpenter wrote:
+>>> If the tvp->cmd = DTV_MAX_COMMAND then we read past the end of the
+>>> array.
+>>>
+>>> Signed-off-by: Dan Carpenter <error27@gmail.com>
+>>>
+>>> diff --git a/drivers/media/dvb/dvb-core/dvb_frontend.c b/drivers/media/dvb/dvb-core/dvb_frontend.c
+>>> index 9827804..607e293 100644
+>>> --- a/drivers/media/dvb/dvb-core/dvb_frontend.c
+>>> +++ b/drivers/media/dvb/dvb-core/dvb_frontend.c
+>>> @@ -981,7 +981,7 @@ static void dtv_property_dump(struct dtv_property *tvp)
+>>>  {
+>>>  	int i;
+>>>  
+>>> -	if (tvp->cmd <= 0 || tvp->cmd > DTV_MAX_COMMAND) {
+>>> +	if (tvp->cmd <= 0 || tvp->cmd >= DTV_MAX_COMMAND) {
+>>>  		printk(KERN_WARNING "%s: tvp.cmd = 0x%08x undefined\n",
+>>>  			__func__, tvp->cmd);
+>>>  		return;
+>>
+>> thanks for spotting this, but this fixes the wrong end. This does not need to
+>> be applied to kernels older than 2.6.40.
+>>
+>> From 6d8588a4546fd4df717ca61450f99fb9c1b13a5f Mon Sep 17 00:00:00 2001
+>> From: Andreas Oberritter <obi@linuxtv.org>
+>> Date: Thu, 26 May 2011 10:54:14 +0000
+>> Subject: [PATCH] DVB: dvb_frontend: fix dtv_property_dump for DTV_DVBT2_PLP_ID
+>>
+>> - Add missing entry to array "dtv_cmds".
+>> - Set array size to DTV_MAX_COMMAND + 1 to avoid future off-by-ones.
+> 
+> Patchwork.kernel.org is not reliable at all. It missed this entire thread.
+> 
+> Andreas patch is the right thing to do.
+> 
+> Thank you both for reporting and fixing this issue. I'm applying the
+> patch right now.
+> 
+>>
+>> Signed-off-by: Andreas Oberritter <obi@linuxtv.org>
+>> ---
+>>  drivers/media/dvb/dvb-core/dvb_frontend.c |    3 ++-
+>>  1 files changed, 2 insertions(+), 1 deletions(-)
 >>
 >> diff --git a/drivers/media/dvb/dvb-core/dvb_frontend.c b/drivers/media/dvb/dvb-core/dvb_frontend.c
->> index 9827804..607e293 100644
+>> index 9827804..bed7bfe 100644
 >> --- a/drivers/media/dvb/dvb-core/dvb_frontend.c
 >> +++ b/drivers/media/dvb/dvb-core/dvb_frontend.c
->> @@ -981,7 +981,7 @@ static void dtv_property_dump(struct dtv_property *tvp)
->>  {
->>  	int i;
+>> @@ -904,7 +904,7 @@ static int dvb_frontend_clear_cache(struct dvb_frontend *fe)
+>>  	.buffer = b \
+>>  }
 >>  
->> -	if (tvp->cmd <= 0 || tvp->cmd > DTV_MAX_COMMAND) {
->> +	if (tvp->cmd <= 0 || tvp->cmd >= DTV_MAX_COMMAND) {
->>  		printk(KERN_WARNING "%s: tvp.cmd = 0x%08x undefined\n",
->>  			__func__, tvp->cmd);
->>  		return;
+>> -static struct dtv_cmds_h dtv_cmds[] = {
+>> +static struct dtv_cmds_h dtv_cmds[DTV_MAX_COMMAND + 1] = {
+>>  	_DTV_CMD(DTV_TUNE, 1, 0),
+>>  	_DTV_CMD(DTV_CLEAR, 1, 0),
+>>  
+>> @@ -966,6 +966,7 @@ static struct dtv_cmds_h dtv_cmds[] = {
+>>  	_DTV_CMD(DTV_ISDBT_LAYERC_TIME_INTERLEAVING, 0, 0),
+>>  
+>>  	_DTV_CMD(DTV_ISDBS_TS_ID, 1, 0),
+>> +	_DTV_CMD(DTV_DVBT2_PLP_ID, 1, 0),
+>>  
+>>  	/* Get */
+>>  	_DTV_CMD(DTV_DISEQC_SLAVE_REPLY, 0, 1),
 > 
-> thanks for spotting this, but this fixes the wrong end. This does not need to
-> be applied to kernels older than 2.6.40.
-> 
-> From 6d8588a4546fd4df717ca61450f99fb9c1b13a5f Mon Sep 17 00:00:00 2001
-> From: Andreas Oberritter <obi@linuxtv.org>
-> Date: Thu, 26 May 2011 10:54:14 +0000
-> Subject: [PATCH] DVB: dvb_frontend: fix dtv_property_dump for DTV_DVBT2_PLP_ID
-> 
-> - Add missing entry to array "dtv_cmds".
-> - Set array size to DTV_MAX_COMMAND + 1 to avoid future off-by-ones.
+>
+Do you really want a fixed size array ?
+perhaps it is better to leave it struct dtv_cmds_h dtv_cmds[]
+and use ARRAY_SIZE(dtv_cmds) instead of DTV_MAX_COMMAND ?
 
-Patchwork.kernel.org is not reliable at all. It missed this entire thread.
+i do not see any use beyond dtv_property_dump().
 
-Andreas patch is the right thing to do.
-
-Thank you both for reporting and fixing this issue. I'm applying the
-patch right now.
-
-> 
-> Signed-off-by: Andreas Oberritter <obi@linuxtv.org>
-> ---
->  drivers/media/dvb/dvb-core/dvb_frontend.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/media/dvb/dvb-core/dvb_frontend.c b/drivers/media/dvb/dvb-core/dvb_frontend.c
-> index 9827804..bed7bfe 100644
-> --- a/drivers/media/dvb/dvb-core/dvb_frontend.c
-> +++ b/drivers/media/dvb/dvb-core/dvb_frontend.c
-> @@ -904,7 +904,7 @@ static int dvb_frontend_clear_cache(struct dvb_frontend *fe)
->  	.buffer = b \
->  }
->  
-> -static struct dtv_cmds_h dtv_cmds[] = {
-> +static struct dtv_cmds_h dtv_cmds[DTV_MAX_COMMAND + 1] = {
->  	_DTV_CMD(DTV_TUNE, 1, 0),
->  	_DTV_CMD(DTV_CLEAR, 1, 0),
->  
-> @@ -966,6 +966,7 @@ static struct dtv_cmds_h dtv_cmds[] = {
->  	_DTV_CMD(DTV_ISDBT_LAYERC_TIME_INTERLEAVING, 0, 0),
->  
->  	_DTV_CMD(DTV_ISDBS_TS_ID, 1, 0),
-> +	_DTV_CMD(DTV_DVBT2_PLP_ID, 1, 0),
->  
->  	/* Get */
->  	_DTV_CMD(DTV_DISEQC_SLAVE_REPLY, 0, 1),
-
+re,
+ wh
