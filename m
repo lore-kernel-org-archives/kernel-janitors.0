@@ -1,41 +1,126 @@
-From: Wayne Boyer <wayneb@linux.vnet.ibm.com>
-Date: Mon, 20 Jun 2011 16:47:24 +0000
-Subject: Re: [PATCH] drivers/scsi/ipr.c: reorder error handling code to include
-Message-Id: <4DFF799C.9000102@linux.vnet.ibm.com>
+From: Peter Huewe <peterhuewe@gmx.de>
+Date: Mon, 06 Jun 2011 20:43:31 +0000
+Subject: [PATCH 1/2] mfd/ab3550: Use kstrtoul_from_user
+Message-Id: <1307393012-32582-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1306851409-14963-1-git-send-email-julia@diku.dk> <4DF0EC00.9020603@linux.vnet.ibm.com> <4DF787BC.8050701@linux.vnet.ibm.com> <Pine.LNX.4.64.1106151050430.10106@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1106151050430.10106@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Brian King <brking@linux.vnet.ibm.com>, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 06/15/2011 01:50 AM, Julia Lawall wrote:
-> On Tue, 14 Jun 2011, Brian King wrote:
-> 
->> On 06/09/2011 10:51 AM, Wayne Boyer wrote:
->>> On 05/31/2011 07:16 AM, Julia Lawall wrote:
->>>> From: Julia Lawall <julia@diku.dk>
->>>>
->>>> The out_msi_disable label should be before cleanup_nomem to additionally
->>>> benefit from the call to iounmap.
->>>
->>> Yes, this is a problem.  I propose the following patch instead.
->>
->> By removing the out_msi_disable label, if you fail initialization later
->> on and goto cleanup_nomem, you will end up leaving MSI enabled when you exit
->> with this patch.
-> 
-> I agree.
-> 
-> julia
-> 
+This patch replaces the code for getting an unsigned long from a
+userspace buffer by a simple call to kstroul_from_user.
+This makes it easier to read and less error prone.
 
-I also agree.  Please disregard my patch.
+Kernel Version: v3.0-rc2
 
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/mfd/ab3550-core.c |   41 +++++++++++------------------------------
+ 1 files changed, 11 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/mfd/ab3550-core.c b/drivers/mfd/ab3550-core.c
+index 3d7dce6..56ba194 100644
+--- a/drivers/mfd/ab3550-core.c
++++ b/drivers/mfd/ab3550-core.c
+@@ -879,20 +879,13 @@ static ssize_t ab3550_bank_write(struct file *file,
+ 	size_t count, loff_t *ppos)
+ {
+ 	struct ab3550 *ab = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+ 	unsigned long user_bank;
+ 	int err;
+ 
+ 	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf) - 1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_bank);
++	err = kstrtoul_from_user(user_buf, count, 0, &user_bank);
+ 	if (err)
+-		return -EINVAL;
++		return err;
+ 
+ 	if (user_bank >= AB3550_NUM_BANKS) {
+ 		dev_err(&ab->i2c_client[0]->dev,
+@@ -902,7 +895,7 @@ static ssize_t ab3550_bank_write(struct file *file,
+ 
+ 	ab->debug_bank = user_bank;
+ 
+-	return buf_size;
++	return count;
+ }
+ 
+ static int ab3550_address_print(struct seq_file *s, void *p)
+@@ -923,27 +916,21 @@ static ssize_t ab3550_address_write(struct file *file,
+ 	size_t count, loff_t *ppos)
+ {
+ 	struct ab3550 *ab = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+ 	unsigned long user_address;
+ 	int err;
+ 
+ 	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf) - 1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_address);
++	err = kstrtoul_from_user(user_buf, count, 0, &user_address);
+ 	if (err)
+-		return -EINVAL;
++		return err;
++
+ 	if (user_address > 0xff) {
+ 		dev_err(&ab->i2c_client[0]->dev,
+ 			"debugfs error input > 0xff\n");
+ 		return -EINVAL;
+ 	}
+ 	ab->debug_address = user_address;
+-	return buf_size;
++	return count;
+ }
+ 
+ static int ab3550_val_print(struct seq_file *s, void *p)
+@@ -971,21 +958,15 @@ static ssize_t ab3550_val_write(struct file *file,
+ 	size_t count, loff_t *ppos)
+ {
+ 	struct ab3550 *ab = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+ 	unsigned long user_val;
+ 	int err;
+ 	u8 regvalue;
+ 
+ 	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf)-1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_val);
++	err = kstrtoul_from_user(user_buf, count, 0, &user_val);
+ 	if (err)
+-		return -EINVAL;
++		return err;
++
+ 	if (user_val > 0xff) {
+ 		dev_err(&ab->i2c_client[0]->dev,
+ 			"debugfs error input > 0xff\n");
+@@ -1002,7 +983,7 @@ static ssize_t ab3550_val_write(struct file *file,
+ 	if (err)
+ 		return -EINVAL;
+ 
+-	return buf_size;
++	return count;
+ }
+ 
+ static const struct file_operations ab3550_bank_fops = {
 -- 
-Wayne Boyer
-IBM - Beaverton, Oregon
-LTC S/W Development
-(503) 578-5236, T/L 775-5236
+1.7.3.4
+
