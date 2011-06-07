@@ -1,151 +1,275 @@
 From: Peter Huewe <peterhuewe@gmx.de>
-Date: Mon, 20 Jun 2011 19:51:03 +0000
-Subject: [PATCH v3] mfd/ab8500: Convert to kstrtou8_from_user
-Message-Id: <1308599463-29001-1-git-send-email-peterhuewe@gmx.de>
+Date: Tue, 07 Jun 2011 19:58:27 +0000
+Subject: [PATCH] kernel/trace: Convert to kstrtoul_from_user
+Message-Id: <1307476707-14762-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1308599189-28555-2-git-send-email-peterhuewe@gmx.de>
-In-Reply-To: <1308599189-28555-2-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>
 
-This patch replaces the code for getting an number from a
-userspace buffer by a simple call to kstrou8_from_user.
+This patch replaces the code for getting an unsigned long from a
+userspace buffer by a simple call to kstroul_from_user.
 This makes it easier to read and less error prone.
 
-This patch replaces the code for getting an number from a
-userspace buffer by a simple call to kstrou8_from_user.
-This makes it easier to read and less error prone.
-
-Since the old buffers held only values up to 255, we don't need
-kstrtoul, but rather kstrtou8.
-
-Kernel Version: v3.0-rc3
-
-Changes in v2:
-- Use kstrtou8 instead of kstrtoul due to small numbers
-- Dropped then unnecessary checks
-(Both remarks from Alexey Dobriyan, Thanks!)
-Changes in v3:
-The local struct dev variable isn't needed anymore
+Kernel Version: v3.0-rc2
 
 Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/mfd/ab8500-debugfs.c |   62 +++++++++++------------------------------
- 1 files changed, 17 insertions(+), 45 deletions(-)
+ kernel/trace/ftrace.c       |   13 +-------
+ kernel/trace/ring_buffer.c  |   13 +-------
+ kernel/trace/trace.c        |   65 ++++++------------------------------------
+ kernel/trace/trace_events.c |   26 ++--------------
+ kernel/trace/trace_stack.c  |   13 +-------
+ 5 files changed, 20 insertions(+), 110 deletions(-)
 
-diff --git a/drivers/mfd/ab8500-debugfs.c b/drivers/mfd/ab8500-debugfs.c
-index 64748e4..bb78f4a 100644
---- a/drivers/mfd/ab8500-debugfs.c
-+++ b/drivers/mfd/ab8500-debugfs.c
-@@ -419,20 +419,13 @@ static ssize_t ab8500_bank_write(struct file *file,
- 	size_t count, loff_t *ppos)
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 1ee417f..508dcb4 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -806,19 +806,10 @@ ftrace_profile_write(struct file *filp, const char __user *ubuf,
+ 		     size_t cnt, loff_t *ppos)
  {
- 	struct device *dev = ((struct seq_file *)(file->private_data))->private;
--	char buf[32];
--	int buf_size;
--	unsigned long user_bank;
-+	u8 user_bank;
- 	int err;
+ 	unsigned long val;
+-	char buf[64];		/* big enough to hold a number */
+ 	int ret;
  
--	/* Get userspace string and assure termination */
--	buf_size = min(count, (sizeof(buf) - 1));
--	if (copy_from_user(buf, user_buf, buf_size))
--		return -EFAULT;
--	buf[buf_size] = 0;
--
--	err = strict_strtoul(buf, 0, &user_bank);
-+	/* Get userspace string and convert to number */
-+	err = kstrtou8_from_user(user_buf, count, 0, &user_bank);
- 	if (err)
+-	if (cnt >= sizeof(buf))
 -		return -EINVAL;
-+		return err;
+-
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
  
- 	if (user_bank >= AB8500_NUM_BANKS) {
- 		dev_err(dev, "debugfs error input > number of banks\n");
-@@ -441,7 +434,7 @@ static ssize_t ab8500_bank_write(struct file *file,
- 
- 	debug_bank = user_bank;
- 
--	return buf_size;
-+	return count;
- }
- 
- static int ab8500_address_print(struct seq_file *s, void *p)
-@@ -458,27 +451,16 @@ static ssize_t ab8500_address_write(struct file *file,
- 	const char __user *user_buf,
- 	size_t count, loff_t *ppos)
+ 	val = !!val;
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index b0c7aa4..6c59dd9 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -3978,20 +3978,11 @@ rb_simple_write(struct file *filp, const char __user *ubuf,
+ 		size_t cnt, loff_t *ppos)
  {
--	struct device *dev = ((struct seq_file *)(file->private_data))->private;
--	char buf[32];
--	int buf_size;
--	unsigned long user_address;
-+	u8 user_address;
- 	int err;
+ 	unsigned long *p = filp->private_data;
+-	char buf[64];
+ 	unsigned long val;
+ 	int ret;
  
--	/* Get userspace string and assure termination */
--	buf_size = min(count, (sizeof(buf) - 1));
--	if (copy_from_user(buf, user_buf, buf_size))
--		return -EFAULT;
--	buf[buf_size] = 0;
+-	if (cnt >= sizeof(buf))
+-		return -EINVAL;
 -
--	err = strict_strtoul(buf, 0, &user_address);
-+	/* Get userspace string and convert to number*/
-+	err = kstrtou8_from_user(user_buf, count, 0, &user_address);
- 	if (err)
--		return -EINVAL;
--	if (user_address > 0xff) {
--		dev_err(dev, "debugfs error input > 0xff\n");
--		return -EINVAL;
--	}
-+		return err;
-+
- 	debug_address = user_address;
--	return buf_size;
-+	return count;
- }
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
  
- static int ab8500_val_print(struct seq_file *s, void *p)
-@@ -509,24 +491,14 @@ static ssize_t ab8500_val_write(struct file *file,
- 	size_t count, loff_t *ppos)
+ 	if (val)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index ee9c921..2bdc019 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2701,20 +2701,11 @@ tracing_ctrl_write(struct file *filp, const char __user *ubuf,
+ 		   size_t cnt, loff_t *ppos)
  {
- 	struct device *dev = ((struct seq_file *)(file->private_data))->private;
--	char buf[32];
--	int buf_size;
--	unsigned long user_val;
-+	u8 user_val;
- 	int err;
+ 	struct trace_array *tr = filp->private_data;
+-	char buf[64];
+ 	unsigned long val;
+ 	int ret;
  
--	/* Get userspace string and assure termination */
--	buf_size = min(count, (sizeof(buf)-1));
--	if (copy_from_user(buf, user_buf, buf_size))
--		return -EFAULT;
--	buf[buf_size] = 0;
+-	if (cnt >= sizeof(buf))
+-		return -EINVAL;
 -
--	err = strict_strtoul(buf, 0, &user_val);
-+	/* Get userspace string and convert to number */
-+	err = kstrtou8_from_user(user_buf, count, 0, &user_val);
- 	if (err)
--		return -EINVAL;
--	if (user_val > 0xff) {
--		dev_err(dev, "debugfs error input > 0xff\n");
--		return -EINVAL;
--	}
-+		return err;
-+
- 	err = abx500_set_register_interruptible(dev,
- 		(u8)debug_bank, debug_address, (u8)user_val);
- 	if (err < 0) {
-@@ -534,7 +506,7 @@ static ssize_t ab8500_val_write(struct file *file,
- 		return -EINVAL;
- 	}
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
  
--	return buf_size;
-+	return count;
- }
+ 	val = !!val;
+@@ -2966,20 +2957,11 @@ tracing_max_lat_write(struct file *filp, const char __user *ubuf,
+ 		      size_t cnt, loff_t *ppos)
+ {
+ 	unsigned long *ptr = filp->private_data;
+-	char buf[64];
+ 	unsigned long val;
+ 	int ret;
  
- static const struct file_operations ab8500_bank_fops = {
+-	if (cnt >= sizeof(buf))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
+ 
+ 	*ptr = val * 1000;
+@@ -3434,19 +3416,10 @@ tracing_entries_write(struct file *filp, const char __user *ubuf,
+ 		      size_t cnt, loff_t *ppos)
+ {
+ 	unsigned long val;
+-	char buf[64];
+ 	int ret, cpu;
+ 
+-	if (cnt >= sizeof(buf))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
+ 
+ 	/* must have at least 1 entry */
+@@ -4099,19 +4072,10 @@ trace_options_write(struct file *filp, const char __user *ubuf, size_t cnt,
+ {
+ 	struct trace_option_dentry *topt = filp->private_data;
+ 	unsigned long val;
+-	char buf[64];
+ 	int ret;
+ 
+-	if (cnt >= sizeof(buf))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
+ 
+ 	if (val != 0 && val != 1)
+@@ -4159,20 +4123,11 @@ trace_options_core_write(struct file *filp, const char __user *ubuf, size_t cnt,
+ 			 loff_t *ppos)
+ {
+ 	long index = (long)filp->private_data;
+-	char buf[64];
+ 	unsigned long val;
+ 	int ret;
+ 
+-	if (cnt >= sizeof(buf))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
+ 
+ 	if (val != 0 && val != 1)
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 686ec39..4d7e149 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -486,20 +486,11 @@ event_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
+ 		   loff_t *ppos)
+ {
+ 	struct ftrace_event_call *call = filp->private_data;
+-	char buf[64];
+ 	unsigned long val;
+ 	int ret;
+ 
+-	if (cnt >= sizeof(buf))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
+ 
+ 	ret = tracing_update_buffers();
+@@ -571,19 +562,10 @@ system_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
+ {
+ 	const char *system = filp->private_data;
+ 	unsigned long val;
+-	char buf[64];
+ 	ssize_t ret;
+ 
+-	if (cnt >= sizeof(buf))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&buf, ubuf, cnt))
+-		return -EFAULT;
+-
+-	buf[cnt] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
++	if (ret)
+ 		return ret;
+ 
+ 	ret = tracing_update_buffers();
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index b0b53b8..77575b3 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -156,20 +156,11 @@ stack_max_size_write(struct file *filp, const char __user *ubuf,
+ {
+ 	long *ptr = filp->private_data;
+ 	unsigned long val, flags;
+-	char buf[64];
+ 	int ret;
+ 	int cpu;
+ 
+-	if (count >= sizeof(buf))
+-		return -EINVAL;
+-
+-	if (copy_from_user(&buf, ubuf, count))
+-		return -EFAULT;
+-
+-	buf[count] = 0;
+-
+-	ret = strict_strtoul(buf, 10, &val);
+-	if (ret < 0)
++	ret = kstrtoul_from_user(ubuf, count, 10, &val);
++	if (ret)
+ 		return ret;
+ 
+ 	local_irq_save(flags);
 -- 
 1.7.3.4
 
