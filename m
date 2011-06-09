@@ -1,40 +1,33 @@
-From: "ATM CARD REMITTANCE DEPT AWARD" <atmcardpayday@hotmail.co.uk>
-Date: Fri, 10 Jun 2011 15:49:35 +0000
-Subject: ATM Card Number;(5951390123652671
-Message-Id: <4df23d0f.344.24e1.1153946011@htc.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 09 Jun 2011 18:07:33 +0000
+Subject: [patch v2] NFS: fix debug message
+Message-Id: <20110609180733.GJ4069@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4E3994E6-9DBF-439B-808E-F134EB5DD923@netapp.com>
+In-Reply-To: <4E3994E6-9DBF-439B-808E-F134EB5DD923@netapp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-OFFICE OF THE SENATE HOUSE
-FEDERAL REPUBLIC OF NIGERIA
-COMMITTEE ON FOREIGN PAYMENT
-(RESOLUTION PANEL ON CONTRACT PAYMENT)
-IKOYI-LAGOS NIGERIA
+"tmp_ds" was intended here instead of "ds".  Also "ds" was already
+freed.
 
-This is to officially inform you that(ATM Card
-Number;(5951390123652671)
-has been accredited in your favor.Your Personal
-Identification Number is
-882.The ATM Card Value is $920 THOUSAND USD.You are advice
-to contact
-Delivery Department via Email(atmcardpayday@hotmail.co.uk)
-with the following
-information's;
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+v1 fixed the user-after-free but left the message incorrect.
 
-Full Name:
-Delivery Address:
-Phone Number:
-Country:
-OCCUPATION:
-SEX:
-Age:
-
-Best Regards,
-Mr. James Idahosa.
-
-Signed By (SEN). David Marks
-The President of the Senate.
-
+diff --git a/fs/nfs/nfs4filelayoutdev.c b/fs/nfs/nfs4filelayoutdev.c
+index 77c171e..ed388aa 100644
+--- a/fs/nfs/nfs4filelayoutdev.c
++++ b/fs/nfs/nfs4filelayoutdev.c
+@@ -365,7 +365,7 @@ nfs4_pnfs_ds_add(struct list_head *dsaddrs, gfp_t gfp_flags)
+ 		kfree(ds);
+ 		atomic_inc(&tmp_ds->ds_count);
+ 		dprintk("%s data server %s found, inc'ed ds_count to %d\n",
+-			__func__, ds->ds_remotestr,
++			__func__, tmp_ds->ds_remotestr,
+ 			atomic_read(&tmp_ds->ds_count));
+ 		ds = tmp_ds;
+ 	}
