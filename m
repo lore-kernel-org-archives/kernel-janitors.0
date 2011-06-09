@@ -1,45 +1,33 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 09 Jun 2011 07:09:34 +0000
-Subject: [patch] b43: check for allocation failures
-Message-Id: <20110609070934.GE4069@shale.localdomain>
+Date: Thu, 09 Jun 2011 07:58:23 +0000
+Subject: Re: [patch] b43: check for allocation failures
+Message-Id: <20110609075813.GG4069@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110609070934.GE4069@shale.localdomain>
+ <BANLkTim3zJNJfGHcaeY+PQN3wm1m20Qzjw@mail.gmail.com>
+In-Reply-To: <BANLkTim3zJNJfGHcaeY+PQN3wm1m20Qzjw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Stefano Brivio <stefano.brivio@polimi.it>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "open list:B43 WIRELESS DRIVER" <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Stefano Brivio <stefano.brivio@polimi.it>, kernel-janitors@vger.kernel.org, "open list:B43 WIRELESS DRIVER" <linux-wireless@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>
 
-Add some error handling if the allocation fails.
+On Thu, Jun 09, 2011 at 09:43:44AM +0200, Rafał Miłecki wrote:
+> >        dev = b43_bus_dev_ssb_init(sdev);
+> > +       if (!dev)
+> > +               return -ENOMEM;
+> 
+> I'm not sure if you should be aware of the reason here. What about returning
+> error code by b43_bus_dev..., reporting it here with b43err and returning
+> ENODEV or sth?
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+The kmalloc failure prints out a whole lot of crap.  Surely we don't
+need to add more code in every function for an error that is almost
+certainly not going to happen in real life.
 
-diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
-index 6c63aec..8a10b82 100644
---- a/drivers/net/wireless/b43/bus.c
-+++ b/drivers/net/wireless/b43/bus.c
-@@ -83,7 +83,11 @@ void b43_bus_ssb_block_write(struct b43_bus_dev *dev, const void *buffer,
- 
- struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev)
- {
--	struct b43_bus_dev *dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+	struct b43_bus_dev *dev;
-+
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+	if (!dev)
-+		return NULL;
- 
- 	dev->bus_type = B43_BUS_SSB;
- 	dev->sdev = sdev;
-diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
-index cae3146..c8131a0 100644
---- a/drivers/net/wireless/b43/main.c
-+++ b/drivers/net/wireless/b43/main.c
-@@ -5025,6 +5025,8 @@ int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
- 	int first = 0;
- 
- 	dev = b43_bus_dev_ssb_init(sdev);
-+	if (!dev)
-+		return -ENOMEM;
- 
- 	wl = ssb_get_devtypedata(sdev);
- 	if (!wl) {
+If we were really worried about returning the right error code, then
+we'd return an ERR_PTR() from the lower levels etc.  I don't think
+it's worth it though.
+
+regards,
+dan carpenter
