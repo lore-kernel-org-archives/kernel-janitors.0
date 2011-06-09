@@ -1,21 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 23 Jun 2011 10:15:55 +0000
-Subject: Re: [patch] net/usb/kalmia: signedness bug in kalmia_bind()
-Message-Id: <20110623.031555.1014071961808473736.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 09 Jun 2011 07:09:34 +0000
+Subject: [patch] b43: check for allocation failures
+Message-Id: <20110609070934.GE4069@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110623055637.GL14591@shale.localdomain>
-In-Reply-To: <20110623055637.GL14591-z0WHZYlhLlzP0Z7Jsv878P8+0UxHXcjY@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: gregkh-l3A5Bk7waGM@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefano Brivio <stefano.brivio@polimi.it>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "open list:B43 WIRELESS DRIVER" <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 23 Jun 2011 08:56:37 +0300
+Add some error handling if the allocation fails.
 
-> "status" should be an int here for the error handling to work.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks.
+diff --git a/drivers/net/wireless/b43/bus.c b/drivers/net/wireless/b43/bus.c
+index 6c63aec..8a10b82 100644
+--- a/drivers/net/wireless/b43/bus.c
++++ b/drivers/net/wireless/b43/bus.c
+@@ -83,7 +83,11 @@ void b43_bus_ssb_block_write(struct b43_bus_dev *dev, const void *buffer,
+ 
+ struct b43_bus_dev *b43_bus_dev_ssb_init(struct ssb_device *sdev)
+ {
+-	struct b43_bus_dev *dev = kzalloc(sizeof(*dev), GFP_KERNEL);
++	struct b43_bus_dev *dev;
++
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
++	if (!dev)
++		return NULL;
+ 
+ 	dev->bus_type = B43_BUS_SSB;
+ 	dev->sdev = sdev;
+diff --git a/drivers/net/wireless/b43/main.c b/drivers/net/wireless/b43/main.c
+index cae3146..c8131a0 100644
+--- a/drivers/net/wireless/b43/main.c
++++ b/drivers/net/wireless/b43/main.c
+@@ -5025,6 +5025,8 @@ int b43_ssb_probe(struct ssb_device *sdev, const struct ssb_device_id *id)
+ 	int first = 0;
+ 
+ 	dev = b43_bus_dev_ssb_init(sdev);
++	if (!dev)
++		return -ENOMEM;
+ 
+ 	wl = ssb_get_devtypedata(sdev);
+ 	if (!wl) {
