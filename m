@@ -1,119 +1,33 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Date: Wed, 01 Jun 2011 21:26:20 +0000
-Subject: Re: [PATCH 5/10] arch/arm/mach-s5pv210/cpufreq.c: add missing clk_put
-Message-Id: <4DE6AE7C.6040404@samsung.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 09 Jun 2011 07:18:23 +0000
+Subject: [patch] Staging: mei: fix debug code
+Message-Id: <20110609071240.GF4069@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1306948213-20767-5-git-send-email-julia@diku.dk>
-In-Reply-To: <1306948213-20767-5-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On 06/01/11 10:10, Julia Lawall wrote:
-> From: Julia Lawall<julia@diku.dk>
->
-> The successive calls to clk_get each call clk_put in the case of failure,
-> but this is not done for subsequent error handling code.  The calls to
-> clk_get are moved to the end of the function, and appropriate gotos are
-> added.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> //<smpl>
-> @r exists@
-> expression e1,e2;
-> statement S;
-> @@
->
-> e1 = clk_get@p1(...);
-> ... when != e1 = e2
->      when != clk_put(e1)
->      when any
-> if (...) { ... when != clk_put(e1)
->                 when != if (...) { ... clk_put(e1) ... }
-> * return@p3 ...;
->   } else S
-> //</smpl>
->
-> Signed-off-by: Julia Lawall<julia@diku.dk>
->
-> ---
->   arch/arm/mach-s5pv210/cpufreq.c |   25 +++++++++++++++++--------
->   1 file changed, 17 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/arch/arm/mach-s5pv210/cpufreq.c
-> index 22046e2..97a29e1 100644
-> --- a/arch/arm/mach-s5pv210/cpufreq.c
-> +++ b/arch/arm/mach-s5pv210/cpufreq.c
-> @@ -414,6 +414,7 @@ static int check_mem_type(void __iomem *dmc_reg)
->   static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
->   {
->   	unsigned long mem_type;
-> +	int ret;
->
->   	cpu_clk = clk_get(NULL, "armclk");
->   	if (IS_ERR(cpu_clk))
-> @@ -421,19 +422,20 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
->
->   	dmc0_clk = clk_get(NULL, "sclk_dmc0");
->   	if (IS_ERR(dmc0_clk)) {
-> -		clk_put(cpu_clk);
-> -		return PTR_ERR(dmc0_clk);
-> +		ret = PTR_ERR(dmc0_clk);
-> +		goto out_dmc0;
->   	}
->
->   	dmc1_clk = clk_get(NULL, "hclk_msys");
->   	if (IS_ERR(dmc1_clk)) {
-> -		clk_put(dmc0_clk);
-> -		clk_put(cpu_clk);
-> -		return PTR_ERR(dmc1_clk);
-> +		ret = PTR_ERR(dmc1_clk);
-> +		goto out_dmc1;
->   	}
->
-> -	if (policy->cpu != 0)
-> -		return -EINVAL;
-> +	if (policy->cpu != 0) {
-> +		ret = -EINVAL;
-> +		goto out_dmc1;
-> +	}
->
->   	/*
->   	 * check_mem_type : This driver only support LPDDR&  LPDDR2.
-> @@ -443,7 +445,8 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
->
->   	if ((mem_type != LPDDR)&&  (mem_type != LPDDR2)) {
->   		printk(KERN_ERR "CPUFreq doesn't support this memory type\n");
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto out_dmc1;
->   	}
->
->   	/* Find current refresh counter and frequency each DMC */
-> @@ -460,6 +463,12 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
->   	policy->cpuinfo.transition_latency = 40000;
->
->   	return cpufreq_frequency_table_cpuinfo(policy, s5pv210_freq_table);
-> +
-> +out_dmc1:
-> +	clk_put(dmc0_clk);
-> +out_dmc0:
-> +	clk_put(cpu_clk);
-> +	return ret;
->   }
->
->   static struct cpufreq_driver s5pv210_driver = {
->
->
 
-Yeah, OK to me, will apply.
-Thanks.
+! has higher precedence than !=.  H_RDY is 8 and since neither 0 nor
+1 are equal to 8 the original condition was always true.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/staging/mei/init.c b/drivers/staging/mei/init.c
+index 2818851..d1ffa32 100644
+--- a/drivers/staging/mei/init.c
++++ b/drivers/staging/mei/init.c
+@@ -205,10 +205,10 @@ int mei_hw_init(struct mei_device *dev)
+ 			"host_hw_state = 0x%08x, me_hw_state = 0x%08x.\n",
+ 			dev->host_hw_state, dev->me_hw_state);
+ 
+-		if (!(dev->host_hw_state & H_RDY) != H_RDY)
++		if (!(dev->host_hw_state & H_RDY))
+ 			dev_dbg(&dev->pdev->dev, "host turn off H_RDY.\n");
+ 
+-		if (!(dev->me_hw_state & ME_RDY_HRA) != ME_RDY_HRA)
++		if (!(dev->me_hw_state & ME_RDY_HRA))
+ 			dev_dbg(&dev->pdev->dev, "ME turn off ME_RDY.\n");
+ 
+ 		printk(KERN_ERR "mei: link layer initialization failed.\n");
