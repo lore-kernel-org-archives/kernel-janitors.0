@@ -1,43 +1,34 @@
-From: Paul Walmsley <paul@pwsan.com>
-Date: Thu, 02 Jun 2011 21:26:39 +0000
-Subject: Re: [PATCH 9/10] arch/arm/mach-omap2/clock.c: add missing clk_put
-Message-Id: <alpine.DEB.2.00.1106021526220.26852@utopia.booyaka.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 11 Jun 2011 15:50:47 +0000
+Subject: [patch] netpoll: call dev_put() on error in netpoll_setup()
+Message-Id: <20110611155047.GA3583@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1306948213-20767-9-git-send-email-julia@diku.dk>
-In-Reply-To: <1306948213-20767-9-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: WANG Cong <amwang@redhat.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 1 Jun 2011, Julia Lawall wrote:
+There is a dev_put(ndev) missing on an error path.  This was
+introduced in 0c1ad04aecb "netpoll: prevent netpoll setup on slave
+devices".
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Add missing call to clk_put.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r exists@
-> expression e1,e2;
-> statement S;
-> @@
-> 
-> e1 = clk_get@p1(...);
-> ... when != e1 = e2
->     when != clk_put(e1)
->     when any
-> if (...) { ... when != clk_put(e1)
->                when != if (...) { ... clk_put(e1) ... }
-> * return@p3 ...;
->  } else S
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+This is a static checker bug, and it's possible I've misunderstood
+something.
 
-Acked-by: Paul Walmsley <paul@pwsan.com>
-
-
-- Paul
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index 42ea4b0..18d9cbd 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -795,7 +795,8 @@ int netpoll_setup(struct netpoll *np)
+ 	if (ndev->master) {
+ 		printk(KERN_ERR "%s: %s is a slave device, aborting.\n",
+ 		       np->name, np->dev_name);
+-		return -EBUSY;
++		err = -EBUSY;
++		goto put;
+ 	}
+ 
+ 	if (!netif_running(ndev)) {
