@@ -1,35 +1,133 @@
-From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
-Date: Fri, 03 Jun 2011 02:06:08 +0000
-Subject: [PATCH 3/5] iwlegacy: return -EINVAL instead of -1
-Message-Id: <1307066770-27309-3-git-send-email-Gregory.Dietsche@cuw.edu>
+From: matt mooney <mfm@muteddisk.com>
+Date: Sun, 12 Jun 2011 18:17:30 +0000
+Subject: [RESEND PATCH 1/2] driver-core: Kconfig grammar corrections in firmware configuration
+Message-Id: <73f74c689c0710f07b8ed91af24bc6ccac286b44.1307901825.git.mfm@muteddisk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
-In-Reply-To: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sgruszka@redhat.com, linville@tuxdriver.com
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Dietsche <Gregory.Dietsche@cuw.edu>
+To: kernel-janitors@vger.kernel.org
 
-Cleanup the code to return -EINVAL instead of -1
-Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Fix some grammatical errors and reword a few sentences.
+
+Signed-off-by: matt mooney <mfm@muteddisk.com>
 ---
- drivers/net/wireless/iwlegacy/iwl-4965.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/base/Kconfig |   59 ++++++++++++++++++++++++-------------------------
+ 1 files changed, 29 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/net/wireless/iwlegacy/iwl-4965.c b/drivers/net/wireless/iwlegacy/iwl-4965.c
-index ffda05c..06dcee5 100644
---- a/drivers/net/wireless/iwlegacy/iwl-4965.c
-+++ b/drivers/net/wireless/iwlegacy/iwl-4965.c
-@@ -496,7 +496,7 @@ static s32 iwl4965_get_tx_atten_grp(u16 channel)
- 	    channel <= CALIB_IWL_TX_ATTEN_GR4_LCH)
- 		return CALIB_CH_GROUP_4;
+diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
+index d57e8d0..5fe7fd2 100644
+--- a/drivers/base/Kconfig
++++ b/drivers/base/Kconfig
+@@ -65,17 +65,17 @@ config PREVENT_FIRMWARE_BUILD
+ 	default y
+ 	help
+ 	  Say yes to avoid building firmware. Firmware is usually shipped
+-	  with the driver, and only when updating the firmware a rebuild
+-	  should be made.
+-	  If unsure say Y here.
++	  with the driver and only when updating the firmware should a
++	  rebuild be made.
++	  If unsure, say Y here.
  
--	return -1;
-+	return -EINVAL;
- }
+ config FW_LOADER
+ 	tristate "Userspace firmware loading support" if EXPERT
+ 	default y
+ 	---help---
+-	  This option is provided for the case where no in-kernel-tree modules
+-	  require userspace firmware loading support, but a module built outside
+-	  the kernel tree does.
++	  This option is provided for the case where none of the in-tree modules
++	  require userspace firmware loading support, but a module built
++	  out-of-tree does.
  
- static u32 iwl4965_get_sub_band(const struct iwl_priv *priv, u32 channel)
+ config FIRMWARE_IN_KERNEL
+ 	bool "Include in-kernel firmware blobs in kernel binary"
+@@ -83,22 +83,22 @@ config FIRMWARE_IN_KERNEL
+ 	default y
+ 	help
+ 	  The kernel source tree includes a number of firmware 'blobs'
+-	  which are used by various drivers. The recommended way to
++	  that are used by various drivers. The recommended way to
+ 	  use these is to run "make firmware_install" and to copy the
+-	  resulting binary files created in usr/lib/firmware directory
+-	  of the kernel tree to the /lib/firmware on your system so
+-	  that they can be loaded by userspace helpers on request.
++	  resulting binary files created in usr/lib/firmware/ of the
++	  kernel tree to /lib/firmware/ on your system so that they can
++	  be loaded by userspace helpers on request.
+ 
+ 	  Enabling this option will build each required firmware blob
+ 	  into the kernel directly, where request_firmware() will find
+ 	  them without having to call out to userspace. This may be
+-	  useful if your root file system requires a device which uses
+-	  such firmware, and do not wish to use an initrd.
++	  useful if your root file system requires a device that uses
++	  such firmware and do not wish to use an initrd.
+ 
+ 	  This single option controls the inclusion of firmware for
+-	  every driver which uses request_firmware() and ships its
+-	  firmware in the kernel source tree, to avoid a proliferation
+-	  of 'Include firmware for xxx device' options.
++	  every driver that uses request_firmware() and ships its
++	  firmware in the kernel source tree, which avoids a
++	  proliferation of 'Include firmware for xxx device' options.
+ 
+ 	  Say 'N' and let firmware be loaded from userspace.
+ 
+@@ -106,27 +106,27 @@ config EXTRA_FIRMWARE
+ 	string "External firmware blobs to build into the kernel binary"
+ 	depends on FW_LOADER
+ 	help
+-	  This option allows firmware to be built into the kernel, for the
+-	  cases where the user either cannot or doesn't want to provide it from
++	  This option allows firmware to be built into the kernel for the case
++	  where the user either cannot or doesn't want to provide it from
+ 	  userspace at runtime (for example, when the firmware in question is
+ 	  required for accessing the boot device, and the user doesn't want to
+ 	  use an initrd).
+ 
+-	  This option is a string, and takes the (space-separated) names of the
+-	  firmware files -- the same names which appear in MODULE_FIRMWARE()
++	  This option is a string and takes the (space-separated) names of the
++	  firmware files -- the same names that appear in MODULE_FIRMWARE()
+ 	  and request_firmware() in the source. These files should exist under
+ 	  the directory specified by the EXTRA_FIRMWARE_DIR option, which is
+-	  by default the firmware/ subdirectory of the kernel source tree.
++	  by default the firmware subdirectory of the kernel source tree.
+ 
+-	  So, for example, you might set CONFIG_EXTRA_FIRMWARE="usb8388.bin",
+-	  copy the usb8388.bin file into the firmware/ directory, and build the
+-	  kernel. Then any request_firmware("usb8388.bin") will be
+-	  satisfied internally without needing to call out to userspace.
++	  For example, you might set CONFIG_EXTRA_FIRMWARE="usb8388.bin", copy
++	  the usb8388.bin file into the firmware directory, and build the kernel.
++	  Then any request_firmware("usb8388.bin") will be satisfied internally
++	  without needing to call out to userspace.
+ 
+ 	  WARNING: If you include additional firmware files into your binary
+-	  kernel image which are not available under the terms of the GPL,
++	  kernel image that are not available under the terms of the GPL,
+ 	  then it may be a violation of the GPL to distribute the resulting
+-	  image -- since it combines both GPL and non-GPL work. You should
++	  image since it combines both GPL and non-GPL work. You should
+ 	  consult a lawyer of your own before distributing such an image.
+ 
+ config EXTRA_FIRMWARE_DIR
+@@ -136,10 +136,9 @@ config EXTRA_FIRMWARE_DIR
+ 	help
+ 	  This option controls the directory in which the kernel build system
+ 	  looks for the firmware files listed in the EXTRA_FIRMWARE option.
+-	  The default is the firmware/ directory in the kernel source tree,
+-	  but by changing this option you can point it elsewhere, such as
+-	  the /lib/firmware/ directory or another separate directory
+-	  containing firmware files.
++	  The default is firmware/ in the kernel source tree, but by changing
++	  this option you can point it elsewhere, such as /lib/firmware/ or
++	  some other directory containing the firmware files.
+ 
+ config DEBUG_DRIVER
+ 	bool "Driver Core verbose debug messages"
 -- 
-1.7.2.5
+1.7.5.2
 
