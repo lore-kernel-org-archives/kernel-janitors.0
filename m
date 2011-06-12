@@ -1,51 +1,51 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Mon, 20 Jun 2011 20:16:19 +0000
-Subject: Re: [PATCH 1/2 v2] mfd/ab3550: Convert to kstrtou8_from_user
-Message-Id: <201106202216.20343.PeterHuewe@gmx.de>
+From: matt mooney <mfmooney@gmail.com>
+Date: Sun, 12 Jun 2011 18:19:34 +0000
+Subject: Re: [PATCH v3] package: Makefile: fix perf target bug
+Message-Id: <BANLkTikvuRwWwb3aux25Ut6ycr0VefrHFQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <BANLkTikKRVP4PW48YtR+mMMNsaxTDxoGtw@mail.gmail.com>
-	<1308599189-28555-1-git-send-email-peterhuewe@gmx.de>
-	<20110620195037.GA2534@p183.telecom.by>
-In-Reply-To: <20110620195037.GA2534@p183.telecom.by>
+References: <4DCD8CE4.4090404@suse.cz>
+	<b07e7ecdce48bc90a2cf83e8867494dae7cd174f.1305329845.git.mfm@muteddisk.com>
+	<20110515154002.GB6274@ghostprotocols.net>
+	<4DD0DE2C.4060806@suse.cz>
+In-Reply-To: <4DD0DE2C.4060806@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
+Cc: Michal Marek <mmarek@suse.cz>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Am Montag 20 Juni 2011, 21:50:38 schrieb Alexey Dobriyan:
-> On Mon, Jun 20, 2011 at 09:46:28PM +0200, Peter Huewe wrote:
-> > -	char buf[32];
-> > -	int buf_size;
-> > -	unsigned long user_address;
-> > +	u8 user_address;
+On Mon, May 16, 2011 at 1:19 AM, Michal Marek <mmarek@suse.cz> wrote:
+> On 15.5.2011 17:40, Arnaldo Carvalho de Melo wrote:
+>>
+>> Em Fri, May 13, 2011 at 04:41:12PM -0700, mfmooney@gmail.com escreveu:
+>>>
+>>> From: matt mooney<mfm@muteddisk.com>
+>>>
+>>> Specify --git-dir when building perf targets to allow out-of-tree
+>>> builds using O=3D<build-dir>.
+>>>
+>>> The shell command in `git archive' had to be modified to allow proper
+>>> file name expansion of the files listed in MANIFEST.
+>>>
+>>> Signed-off-by: matt mooney<mfm@muteddisk.com>
+>>
+>> Michal,
+>>
+>> =A0 =A0 =A0 =A0Can I have your Reviewed-by or Acked-by for this one? Ass=
+uming
+>> all is ok by now :)
+>
+> Reviewed-by: Michal Marek <mmarek@suse.cz>
 
-> > +	/* Get userspace string and convert to number */
-> > +	err = kstrtou8_from_user(user_buf, count, 0, &user_address);
-...
-> > 
-> >  	ab->debug_address = user_address;
-
-> 
-> You don't need temporary variable and should write straight to final
-> location, because kstrto* functions will never write to result unless it
-> was converted successfully.
-
-Alexey thank you very much for your review, hints and most of all patience ;)
-The code really gets cleaner and cleaner.
-
-While changing the code (once again ;) and looking at your remarks I also saw 
-that ab3550->debug_address and ->debug_bank are always casted to u8.
-
-Do you think I could also change the two fields of the struct ab3550 (only 
-used in this file) to u8 in this patch, too?
-This way I could get rid of the u8* cast which is now needed in this case, if 
-I take you last remark into account.
-> err = kstrtou8_from_user(user_buf, count, 0, (u8 *)&ab->debug_address);
-
-And also clean the code from all the other unnecessary u8 casts.
-
-What do you think?
-Or split it up into two seperate patches?
+I do not believe this patch ever got picked up!
 
 Thanks,
-Peter
+matt
+
+--=20
+GPG-Key: 9AFE00EA
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
