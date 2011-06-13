@@ -1,85 +1,51 @@
-From: Ben Skeggs <bskeggs@redhat.com>
-Date: Sat, 25 Jun 2011 12:08:37 +0000
-Subject: Re: [patch] nouveau: error paths leak in
-Message-Id: <1309003720.3557.5.camel@nisroch>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 13 Jun 2011 20:07:11 +0000
+Subject: [patch 1/4] SCSI: target: dereferencing ERR_PTRs
+Message-Id: <20110613200711.GH3583@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110625055446.GT14591@shale.localdomain>
-In-Reply-To: <20110625055446.GT14591@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Velikov <emil.l.velikov@gmail.com>, kernel-janitors@vger.kernel.org, Emil@freedesktop.org, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: James Bottomley <jbottomley@parallels.com>, Kiran Patil <kiran.patil@intel.com>, Yi Zou <yi.zou@intel.com>, Joe Eykholt <jeykholt@cisco.com>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 2011-06-25 at 08:54 +0300, Dan Carpenter wrote:
-> Two of these error paths returned without freeing "ctx".
-Applied to nouveau git, thanks!
+transport_init_session() and core_tmr_alloc_req() never return NULL,
+they only return ERR_PTRs on error.
 
-Ben.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nvc0_graph.c b/drivers/gpu/drm/nouveau/nvc0_graph.c
-> index 39e9208..5aa3f9e 100644
-> --- a/drivers/gpu/drm/nouveau/nvc0_graph.c
-> +++ b/drivers/gpu/drm/nouveau/nvc0_graph.c
-> @@ -106,7 +106,8 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
->  		if (!nv_wait(dev, 0x409800, 0x80000000, 0x80000000)) {
->  			NV_ERROR(dev, "PGRAPH: HUB_SET_CHAN timeout\n");
->  			nvc0_graph_ctxctl_debug(dev);
-> -			return -EBUSY;
-> +			ret = -EBUSY;
-> +			goto err;
->  		}
->  	} else {
->  		nvc0_graph_load_context(chan);
-> @@ -119,10 +120,9 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
->  	}
->  
->  	ret = nvc0_grctx_generate(chan);
-> -	if (ret) {
-> -		kfree(ctx);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto err;
-> +
->  
->  	if (!nouveau_ctxfw) {
->  		nv_wr32(dev, 0x409840, 0x80000000);
-> @@ -131,14 +131,13 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
->  		if (!nv_wait(dev, 0x409800, 0x80000000, 0x80000000)) {
->  			NV_ERROR(dev, "PGRAPH: HUB_CTX_SAVE timeout\n");
->  			nvc0_graph_ctxctl_debug(dev);
-> -			return -EBUSY;
-> +			ret = -EBUSY;
-> +			goto err;
->  		}
->  	} else {
->  		ret = nvc0_graph_unload_context_to(dev, chan->ramin->vinst);
-> -		if (ret) {
-> -			kfree(ctx);
-> -			return ret;
-> -		}
-> +		if (ret)
-> +			goto err;
->  	}
->  
->  	for (i = 0; i < priv->grctx_size; i += 4)
-> @@ -146,6 +145,10 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
->  
->  	priv->grctx_vals = ctx;
->  	return 0;
-> +
-> +err:
-> +	kfree(ctx);
-> +	return ret;
->  }
->  
->  static int
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-
+diff --git a/drivers/target/tcm_fc/tfc_sess.c b/drivers/target/tcm_fc/tfc_sess.c
+index a3bd57f..03744c2 100644
+--- a/drivers/target/tcm_fc/tfc_sess.c
++++ b/drivers/target/tcm_fc/tfc_sess.c
+@@ -229,7 +229,7 @@ static struct ft_sess *ft_sess_create(struct ft_tport *tport, u32 port_id,
+ 		return NULL;
+ 
+ 	sess->se_sess = transport_init_session();
+-	if (!sess->se_sess) {
++	if (IS_ERR(sess->se_sess)) {
+ 		kfree(sess);
+ 		return NULL;
+ 	}
+diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
+index dee2a2c..7329d0e 100644
+--- a/drivers/target/loopback/tcm_loop.c
++++ b/drivers/target/loopback/tcm_loop.c
+@@ -386,7 +386,7 @@ static int tcm_loop_device_reset(struct scsi_cmnd *sc)
+ 	 */
+ 	se_cmd->se_tmr_req = core_tmr_alloc_req(se_cmd, (void *)tl_tmr,
+ 				TMR_LUN_RESET);
+-	if (!se_cmd->se_tmr_req)
++	if (IS_ERR(se_cmd->se_tmr_req))
+ 		goto release;
+ 	/*
+ 	 * Locate the underlying TCM struct se_lun from sc->device->lun
+@@ -1033,7 +1033,7 @@ static int tcm_loop_make_nexus(
+ 	 * Initialize the struct se_session pointer
+ 	 */
+ 	tl_nexus->se_sess = transport_init_session();
+-	if (!tl_nexus->se_sess)
++	if (IS_ERR(tl_nexus->se_sess))
+ 		goto out;
+ 	/*
+ 	 * Since we are running in 'demo mode' this call with generate a
