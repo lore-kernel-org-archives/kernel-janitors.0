@@ -1,48 +1,120 @@
-From: Weston Andros Adamson <dros@netapp.com>
-Date: Wed, 08 Jun 2011 14:30:00 +0000
-Subject: Re: [patch] NFS: using freed variable in debug code
-Message-Id: <4E3994E6-9DBF-439B-808E-F134EB5DD923@netapp.com>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Mon, 13 Jun 2011 18:11:47 +0000
+Subject: [PATCH] staging: remove unnecessary code
+Message-Id: <1307988707-15757-1-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110608064300.GE3846@shale.localdomain>
-In-Reply-To: <20110608064300.GE3846@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Oops, good catch!
+Compile tested.
+remove unnecessary code that matches this coccinelle pattern
+	if (...)
+		return ret;
+	return ret;
 
-Actually, we can leave the kfree() where it is.  Using ds->ds_remotestr in the dprintk is a typo - It should be tmp_ds->ds_remotestr.
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+---
+ drivers/staging/bcm/Misc.c                       |   10 ++--------
+ drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c |    8 +-------
+ drivers/staging/comedi/comedi_fops.c             |    2 +-
+ drivers/staging/comedi/drivers/usbdux.c          |    5 +----
+ drivers/staging/tm6000/tm6000-cards.c            |    6 +-----
+ 5 files changed, 6 insertions(+), 25 deletions(-)
 
--dros
-
-On Jun 8, 2011, at 2:43 AM, Dan Carpenter wrote:
-
-> "ds" gets dereferenced after a kfree in the debug output.  I just
-> moved the free down a line.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/fs/nfs/nfs4filelayoutdev.c b/fs/nfs/nfs4filelayoutdev.c
-> index 77c171e..c63bbce 100644
-> --- a/fs/nfs/nfs4filelayoutdev.c
-> +++ b/fs/nfs/nfs4filelayoutdev.c
-> @@ -362,11 +362,11 @@ nfs4_pnfs_ds_add(struct list_head *dsaddrs, gfp_t gfp_flags)
-> 				__func__, tmp_ds->ds_remotestr, remotestr);
-> 		}
-> 		kfree(remotestr);
-> -		kfree(ds);
-> 		atomic_inc(&tmp_ds->ds_count);
-> 		dprintk("%s data server %s found, inc'ed ds_count to %d\n",
-> 			__func__, ds->ds_remotestr,
-> 			atomic_read(&tmp_ds->ds_count));
-> +		kfree(ds);
-> 		ds = tmp_ds;
-> 	}
-> 	spin_unlock(&nfs4_ds_cache_lock);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/bcm/Misc.c b/drivers/staging/bcm/Misc.c
+index c5003b6..c5b3a36 100644
+--- a/drivers/staging/bcm/Misc.c
++++ b/drivers/staging/bcm/Misc.c
+@@ -1447,16 +1447,10 @@ static void convertEndian(B_UINT8 rwFlag, PUINT puiBuffer, UINT uiByteCount)
+ 
+ int rdm(PMINI_ADAPTER Adapter, UINT uiAddress, PCHAR pucBuff, size_t sSize)
+ {
+-	INT uiRetVal =0;
+-
+-	uiRetVal = Adapter->interface_rdm(Adapter->pvInterfaceAdapter,
++	return Adapter->interface_rdm(Adapter->pvInterfaceAdapter,
+ 			uiAddress, pucBuff, sSize);
+-
+-	if(uiRetVal < 0)
+-		return uiRetVal;
+-
+-	return uiRetVal;
+ }
++
+ int wrm(PMINI_ADAPTER Adapter, UINT uiAddress, PCHAR pucBuff, size_t sSize)
+ {
+ 	int iRetVal;
+diff --git a/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
+index 1827b0b..9e9d152 100644
+--- a/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
++++ b/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
+@@ -4148,13 +4148,7 @@ s32 wl_cfg80211_down(void)
+ 
+ static s32 wl_dongle_probecap(struct wl_priv *wl)
+ {
+-	s32 err = 0;
+-
+-	err = wl_update_wiphybands(wl);
+-	if (unlikely(err))
+-		return err;
+-
+-	return err;
++	return wl_update_wiphybands(wl);
+ }
+ 
+ static void *wl_read_prof(struct wl_priv *wl, s32 item)
+diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
+index e7e72b8..15a209f 100644
+--- a/drivers/staging/comedi/comedi_fops.c
++++ b/drivers/staging/comedi/comedi_fops.c
+@@ -1291,10 +1291,10 @@ static int do_lock_ioctl(struct comedi_device *dev, unsigned int arg,
+ 		s->lock = file;
+ 	spin_unlock_irqrestore(&s->spin_lock, flags);
+ 
++#if 0
+ 	if (ret < 0)
+ 		return ret;
+ 
+-#if 0
+ 	if (s->lock_f)
+ 		ret = s->lock_f(dev, s);
+ #endif
+diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
+index 1d09bfa..6637698 100644
+--- a/drivers/staging/comedi/drivers/usbdux.c
++++ b/drivers/staging/comedi/drivers/usbdux.c
+@@ -1935,11 +1935,8 @@ static int usbdux_pwm_cancel(struct comedi_device *dev,
+ 	dev_dbg(&this_usbduxsub->interface->dev,
+ 		"comedi %d: sending pwm off command to the usb device.\n",
+ 		dev->minor);
+-	res = send_dux_commands(this_usbduxsub, SENDPWMOFF);
+-	if (res < 0)
+-		return res;
+ 
+-	return res;
++	return send_dux_commands(this_usbduxsub, SENDPWMOFF);
+ }
+ 
+ static void usbduxsub_pwm_irq(struct urb *urb)
+diff --git a/drivers/staging/tm6000/tm6000-cards.c b/drivers/staging/tm6000/tm6000-cards.c
+index a69c82e..9c516cd 100644
+--- a/drivers/staging/tm6000/tm6000-cards.c
++++ b/drivers/staging/tm6000/tm6000-cards.c
+@@ -994,11 +994,7 @@ static int fill_board_specific_data(struct tm6000_core *dev)
+ 	if (rc < 0)
+ 		return rc;
+ 
+-	rc = v4l2_device_register(&dev->udev->dev, &dev->v4l2_dev);
+-	if (rc < 0)
+-		return rc;
+-
+-	return rc;
++	return v4l2_device_register(&dev->udev->dev, &dev->v4l2_dev);
+ }
+ 
+ 
+-- 
+1.7.2.5
 
