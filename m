@@ -1,63 +1,35 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 17 Jun 2011 11:28:25 +0000
-Subject: Re: [patch] cifs: update limit for snprintf() in cifs_construct_tcon()
-Message-Id: <4DFB3A59.1020805@bfs.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 13 Jun 2011 20:12:19 +0000
+Subject: [patch 4/4] SCSI: target: off by one in tcm_loop_make_naa_tpg()
+Message-Id: <20110613201219.GK3583@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110617103059.GE2520@shale.localdomain>
-In-Reply-To: <20110617103059.GE2520-z0WHZYlhLlzP0Z7Jsv878P8+0UxHXcjY@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "open list:COMMON INTERNET F..." <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:COMMON INTERNET F..." <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: James Bottomley <jbottomley@parallels.com>, Christoph Hellwig <hch@lst.de>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+There are TL_TPGS_PER_HBA elements in the ->tl_hba_tpgs[] array so
+this test is off by one.  Later when we take the pointer, it would
+be one past the end and we'd crash:
 
+	tl_tpg = &tl_hba->tl_hba_tpgs[tpgt];
+	tl_tpg->tl_hba = tl_hba;
 
-Am 17.06.2011 12:31, schrieb Dan Carpenter:
-> In 34c87901e113 "Shrink stack space usage in cifs_construct_tcon" we
-> change the size of the username name buffer from MAX_USERNAME_SIZE
-> (256) to 28.  This call to snprintf() needs to be updated as well.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> I know that everyone is going to complain about using a literal but
-> it's local to this function and it's commented in the lines above.
-> I'm not opposed to using a define, I suppose, if you give me a good
-> one, but really I'd just as soon leave it as is.  *eye roll in
-> advance*.
-> 
-> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> index 12cf72d..efd1c7a 100644
-> --- a/fs/cifs/connect.c
-> +++ b/fs/cifs/connect.c
-> @@ -3451,7 +3451,7 @@ cifs_construct_tcon(struct cifs_sb_info *cifs_sb, uid_t fsuid)
->  		goto out;
->  	}
->  
-> -	snprintf(username, MAX_USERNAME_SIZE, "krb50x%x", fsuid);
-> +	snprintf(username, 28, "krb50x%x", fsuid);
->  	vol_info->username = username;
->  	vol_info->local_nls = cifs_sb->local_nls;
->  	vol_info->linux_uid = fsuid;
+I think this can only be triggered by root.
 
-perhaps we should restrict it in the format also:
-  "krb50x%22x"
-that would leave the opportunity to have a sane limit,
-instead of just cutting.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-just my 2 cents,
-re,
- wh
-
-just my 2 cents,
-re,
- wh
-
-
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
+diff --git a/drivers/target/loopback/tcm_loop.c b/drivers/target/loopback/tcm_loop.c
+index 7329d0e..4fedb58 100644
+--- a/drivers/target/loopback/tcm_loop.c
++++ b/drivers/target/loopback/tcm_loop.c
+@@ -1227,7 +1227,7 @@ struct se_portal_group *tcm_loop_make_naa_tpg(
+ 	tpgt_str += 5; /* Skip ahead of "tpgt_" */
+ 	tpgt = (unsigned short int) simple_strtoul(tpgt_str, &end_ptr, 0);
+ 
+-	if (tpgt > TL_TPGS_PER_HBA) {
++	if (tpgt >= TL_TPGS_PER_HBA) {
+ 		printk(KERN_ERR "Passed tpgt: %hu exceeds TL_TPGS_PER_HBA:"
+ 				" %u\n", tpgt, TL_TPGS_PER_HBA);
+ 		return ERR_PTR(-EINVAL);
