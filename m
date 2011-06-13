@@ -1,58 +1,29 @@
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-Date: Thu, 09 Jun 2011 08:37:44 +0000
-Subject: RE: [patch] Staging: mei: fix debug code
-Message-Id: <6F5C1D715B2DA5498A628E6B9C124F0401AD270E32@hasmsx504.ger.corp.intel.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 13 Jun 2011 20:08:46 +0000
+Subject: [patch 2/4] SCSI: target: change lock to unlock
+Message-Id: <20110613200846.GI3583@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110609071240.GF4069@shale.localdomain>
-In-Reply-To: <20110609071240.GF4069@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: James Bottomley <jbottomley@parallels.com>, Kiran Patil <kiran.patil@intel.com>, Yi Zou <yi.zou@intel.com>, Joe Eykholt <jeykholt@cisco.com>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+There is a typo here, it should be an unlock instead of a lock.  The
+original code will deadlock.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:error27@gmail.com]
-> Sent: Thursday, June 09, 2011 10:18 AM
-> To: Greg Kroah-Hartman
-> Cc: Winkler, Tomas; Weil, Oren jer; Tzeel-Krupp, Itzhak; open list:STAGING
-> SUBSYSTEM; kernel-janitors@vger.kernel.org
-> Subject: [patch] Staging: mei: fix debug code
-> 
-> 
-> ! has higher precedence than !=.  H_RDY is 8 and since neither 0 nor
-> 1 are equal to 8 the original condition was always true.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Tomas Winkler <tomas.winkler@intel.com>
-
-> 
-> diff --git a/drivers/staging/mei/init.c b/drivers/staging/mei/init.c index
-> 2818851..d1ffa32 100644
-> --- a/drivers/staging/mei/init.c
-> +++ b/drivers/staging/mei/init.c
-> @@ -205,10 +205,10 @@ int mei_hw_init(struct mei_device *dev)
->  			"host_hw_state = 0x%08x, me_hw_state > 0x%08x.\n",
->  			dev->host_hw_state, dev->me_hw_state);
-> 
-> -		if (!(dev->host_hw_state & H_RDY) != H_RDY)
-> +		if (!(dev->host_hw_state & H_RDY))
->  			dev_dbg(&dev->pdev->dev, "host turn off
-> H_RDY.\n");
-> 
-> -		if (!(dev->me_hw_state & ME_RDY_HRA) != ME_RDY_HRA)
-> +		if (!(dev->me_hw_state & ME_RDY_HRA))
->  			dev_dbg(&dev->pdev->dev, "ME turn off
-> ME_RDY.\n");
-> 
->  		printk(KERN_ERR "mei: link layer initialization failed.\n");
----------------------------------------------------------------------
-Intel Israel (74) Limited
-
-This e-mail and any attachments may contain confidential material for
-the sole use of the intended recipient(s). Any review or distribution
-by others is strictly prohibited. If you are not the intended
-recipient, please contact the sender and delete all copies.
-
+diff --git a/drivers/target/tcm_fc/tfc_sess.c b/drivers/target/tcm_fc/tfc_sess.c
+index 03744c2..7491e21 100644
+--- a/drivers/target/tcm_fc/tfc_sess.c
++++ b/drivers/target/tcm_fc/tfc_sess.c
+@@ -332,7 +332,7 @@ void ft_sess_close(struct se_session *se_sess)
+ 	lport = sess->tport->lport;
+ 	port_id = sess->port_id;
+ 	if (port_id = -1) {
+-		mutex_lock(&ft_lport_lock);
++		mutex_unlock(&ft_lport_lock);
+ 		return;
+ 	}
+ 	FT_SESS_DBG("port_id %x\n", port_id);
