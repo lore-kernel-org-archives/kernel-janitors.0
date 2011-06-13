@@ -1,26 +1,33 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Mon, 20 Jun 2011 19:46:15 +0000
-Subject: Re: [PATCH 2/2] mfd/ab8500: Use kstrtoul_from_user
-Message-Id: <201106202146.16585.PeterHuewe@gmx.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 13 Jun 2011 20:10:49 +0000
+Subject: [patch 3/4] SCSI: target: don't return ERR_PTR in
+Message-Id: <20110613201049.GJ3583@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1307393012-32582-1-git-send-email-peterhuewe@gmx.de>
-	<1307393012-32582-2-git-send-email-peterhuewe@gmx.de>
-	<BANLkTikKRVP4PW48YtR+mMMNsaxTDxoGtw@mail.gmail.com>
-In-Reply-To: <BANLkTikKRVP4PW48YtR+mMMNsaxTDxoGtw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Am Montag 20 Juni 2011, 15:45:46 schrieb Alexey Dobriyan:
-> NAK
-> You should use kstrtou8_from_user() and drop 0xff check as well.
-> 
-> Do NOT blindly replace strict_strtoul with kstrtoul.
+In the original code, there were several places inside the
+target_fabric_configfs_init() function that returned NULL on error
+and one place the returned an ERR_PTR.  There are two places that
+call this function and they only check for NULL returns; they don't
+check for ERR_PTRs.  So I've changed the ERR_PTR so now the function
+only returns NULL on error.
 
-Thanks for spotting this - I'll review my other patches as well and redo them.
-Sorry for any inconvenience.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks,
-Peter
-
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+index ee6fad9..b17abd1 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -312,7 +312,7 @@ struct target_fabric_configfs *target_fabric_configfs_init(
+ 
+ 	tf = kzalloc(sizeof(struct target_fabric_configfs), GFP_KERNEL);
+ 	if (!(tf))
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 
+ 	INIT_LIST_HEAD(&tf->tf_list);
+ 	atomic_set(&tf->tf_access_cnt, 0);
