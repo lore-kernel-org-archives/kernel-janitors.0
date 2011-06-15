@@ -1,88 +1,38 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Date: Fri, 03 Jun 2011 18:24:20 +0000
-Subject: Re: [patch] xen: off by one errors in multicalls.c
-Message-Id: <4DE926D4.9010009@goop.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 15 Jun 2011 13:11:42 +0000
+Subject: [patch -next] rtnetlink: unlock on error path in netlink_dump()
+Message-Id: <20110615131142.GE23739@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110603044528.GD3661@shale.localdomain>
-In-Reply-To: <20110603044528.GD3661@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "maintainer:X86 ARCHITECTURE..." <x86@kernel.org>, kernel-janitors@vger.kernel.org, "open list:XEN HYPERVISOR IN..." <virtualization@lists.linux-foundation.org>, "open list:XEN HYPERVISOR IN..." <xen-devel@lists.xensource.com>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+To: Greg Rose <gregory.v.rose@intel.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>, Patrick McHardy <kaber@trash.net>, Chris Wright <chrisw@sous-sol.org>, "David S. Miller" <davem@davemloft.net>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 06/02/2011 09:45 PM, Dan Carpenter wrote:
-> b->args[] has MC_ARGS elements, so the comparison here should be
-> ">=" instead of ">".  Otherwise we read past the end of the array
-> one space.
+In c7ac8679bec939 "rtnetlink: Compute and store minimum ifinfo dump
+size", we moved the allocation under the lock so we need to unlock
+on error path.
 
-Yeah, looks like a correct fix.  Fortunately I don't think anything
-currently hits that path in practice, though there are some pending
-patches which will exercise it more.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks,
-    J
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> This is a static checker patch and I haven't tested it.  Please
-> review carefully.
->
-> diff --git a/arch/x86/xen/multicalls.c b/arch/x86/xen/multicalls.c
-> index 8bff7e7..1b2b73f 100644
-> --- a/arch/x86/xen/multicalls.c
-> +++ b/arch/x86/xen/multicalls.c
-> @@ -189,10 +189,10 @@ struct multicall_space __xen_mc_entry(size_t args)
->  	unsigned argidx = roundup(b->argidx, sizeof(u64));
->  
->  	BUG_ON(preemptible());
-> -	BUG_ON(b->argidx > MC_ARGS);
-> +	BUG_ON(b->argidx >= MC_ARGS);
->  
->  	if (b->mcidx = MC_BATCH ||
-> -	    (argidx + args) > MC_ARGS) {
-> +	    (argidx + args) >= MC_ARGS) {
->  		mc_stats_flush(b->mcidx = MC_BATCH ? FL_SLOTS : FL_ARGS);
->  		xen_mc_flush();
->  		argidx = roundup(b->argidx, sizeof(u64));
-> @@ -206,7 +206,7 @@ struct multicall_space __xen_mc_entry(size_t args)
->  	ret.args = &b->args[argidx];
->  	b->argidx = argidx + args;
->  
-> -	BUG_ON(b->argidx > MC_ARGS);
-> +	BUG_ON(b->argidx >= MC_ARGS);
->  	return ret;
->  }
->  
-> @@ -216,7 +216,7 @@ struct multicall_space xen_mc_extend_args(unsigned long op, size_t size)
->  	struct multicall_space ret = { NULL, NULL };
->  
->  	BUG_ON(preemptible());
-> -	BUG_ON(b->argidx > MC_ARGS);
-> +	BUG_ON(b->argidx >= MC_ARGS);
->  
->  	if (b->mcidx = 0)
->  		return ret;
-> @@ -224,14 +224,14 @@ struct multicall_space xen_mc_extend_args(unsigned long op, size_t size)
->  	if (b->entries[b->mcidx - 1].op != op)
->  		return ret;
->  
-> -	if ((b->argidx + size) > MC_ARGS)
-> +	if ((b->argidx + size) >= MC_ARGS)
->  		return ret;
->  
->  	ret.mc = &b->entries[b->mcidx - 1];
->  	ret.args = &b->args[b->argidx];
->  	b->argidx += size;
->  
-> -	BUG_ON(b->argidx > MC_ARGS);
-> +	BUG_ON(b->argidx >= MC_ARGS);
->  	return ret;
->  }
->  
-> _______________________________________________
-> Virtualization mailing list
-> Virtualization@lists.linux-foundation.org
-> https://lists.linux-foundation.org/mailman/listinfo/virtualization
->
-
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 0b92f7549..ca5276c 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1676,7 +1676,7 @@ static int netlink_dump(struct sock *sk)
+ 
+ 	skb = sock_rmalloc(sk, alloc_size, 0, GFP_KERNEL);
+ 	if (!skb)
+-		goto errout;
++		goto errout_skb;
+ 
+ 	len = cb->dump(skb, cb);
+ 
+@@ -1716,7 +1716,6 @@ static int netlink_dump(struct sock *sk)
+ errout_skb:
+ 	mutex_unlock(nlk->cb_mutex);
+ 	kfree_skb(skb);
+-errout:
+ 	return err;
+ }
+ 
