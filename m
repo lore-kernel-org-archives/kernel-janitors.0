@@ -1,30 +1,42 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 27 Jun 2011 06:50:37 +0000
-Subject: Re: [patch] nouveau: free the memory in nouveau_gart_manager_del()
-Message-Id: <20110627065037.GV14591@shale.localdomain>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Thu, 16 Jun 2011 16:44:20 +0000
+Subject: [PATCH] frv: remove unnecessary code
+Message-Id: <1308242660-29054-1-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110625055324.GS14591@shale.localdomain>
-In-Reply-To: <20110625055324.GS14591@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 27, 2011 at 06:59:54AM +0200, Julia Lawall wrote:
-> On Mon, 27 Jun 2011, walter harms wrote:
-> 
-> > great bug to make sure that mem is never freed :)
-> > 
-> > @julia,
-> > 
-> > can coccinelle find this type  ?
-> 
-> Yes, I looked and didn't find any other than this one.
->
+remove unnecessary code that matches this coccinelle pattern
+	if (...)
+		return ret;
+	return ret;
 
-I've found a hand full of these in the past, but I've fixed them all.
-:P
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+---
+ arch/frv/mm/pgalloc.c |    8 +-------
+ 1 files changed, 1 insertions(+), 7 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/arch/frv/mm/pgalloc.c b/arch/frv/mm/pgalloc.c
+index c42c83d..4fb63a3 100644
+--- a/arch/frv/mm/pgalloc.c
++++ b/arch/frv/mm/pgalloc.c
+@@ -133,13 +133,7 @@ void pgd_dtor(void *pgd)
+ 
+ pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+-	pgd_t *pgd;
+-
+-	pgd = quicklist_alloc(0, GFP_KERNEL, pgd_ctor);
+-	if (!pgd)
+-		return pgd;
+-
+-	return pgd;
++	return quicklist_alloc(0, GFP_KERNEL, pgd_ctor);
+ }
+ 
+ void pgd_free(struct mm_struct *mm, pgd_t *pgd)
+-- 
+1.7.2.5
 
