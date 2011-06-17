@@ -1,44 +1,36 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 15 Jun 2011 16:41:01 +0000
-Subject: Re: [patch 3/4] SCSI: target: don't return ERR_PTR in
-Message-Id: <1308156061.20109.11.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 17 Jun 2011 10:31:01 +0000
+Subject: [patch] cifs: update limit for snprintf() in cifs_construct_tcon()
+Message-Id: <20110617103059.GE2520@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110613201049.GJ3583@shale.localdomain>
-In-Reply-To: <20110613201049.GJ3583@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org, target-devel <target-devel@vger.kernel.org>
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: "open list:COMMON INTERNET F..." <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:COMMON INTERNET F..." <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, 2011-06-13 at 23:10 +0300, Dan Carpenter wrote:
-> In the original code, there were several places inside the
-> target_fabric_configfs_init() function that returned NULL on error
-> and one place the returned an ERR_PTR.  There are two places that
-> call this function and they only check for NULL returns; they don't
-> check for ERR_PTRs.  So I've changed the ERR_PTR so now the function
-> only returns NULL on error.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
+In 34c87901e113 "Shrink stack space usage in cifs_construct_tcon" we
+change the size of the username name buffer from MAX_USERNAME_SIZE
+(256) to 28.  This call to snprintf() needs to be updated as well.
 
-Committed as abf2b523bbe.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+I know that everyone is going to complain about using a literal but
+it's local to this function and it's commented in the lines above.
+I'm not opposed to using a define, I suppose, if you give me a good
+one, but really I'd just as soon leave it as is.  *eye roll in
+advance*.
 
-Thanks!
-
---nab
-
-> diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-> index ee6fad9..b17abd1 100644
-> --- a/drivers/target/target_core_configfs.c
-> +++ b/drivers/target/target_core_configfs.c
-> @@ -312,7 +312,7 @@ struct target_fabric_configfs *target_fabric_configfs_init(
->  
->  	tf = kzalloc(sizeof(struct target_fabric_configfs), GFP_KERNEL);
->  	if (!(tf))
-> -		return ERR_PTR(-ENOMEM);
-> +		return NULL;
->  
->  	INIT_LIST_HEAD(&tf->tf_list);
->  	atomic_set(&tf->tf_access_cnt, 0);
-
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 12cf72d..efd1c7a 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -3451,7 +3451,7 @@ cifs_construct_tcon(struct cifs_sb_info *cifs_sb, uid_t fsuid)
+ 		goto out;
+ 	}
+ 
+-	snprintf(username, MAX_USERNAME_SIZE, "krb50x%x", fsuid);
++	snprintf(username, 28, "krb50x%x", fsuid);
+ 	vol_info->username = username;
+ 	vol_info->local_nls = cifs_sb->local_nls;
+ 	vol_info->linux_uid = fsuid;
