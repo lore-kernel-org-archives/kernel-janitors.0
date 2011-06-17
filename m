@@ -1,23 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 17 Jun 2011 03:51:53 +0000
-Subject: Re: [patch -next] rtnetlink: unlock on error path in netlink_dump()
-Message-Id: <20110616.235153.1947044865028978184.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 17 Jun 2011 10:25:09 +0000
+Subject: [patch] Staging: easycap: use after free in easycap_delete()
+Message-Id: <20110617102508.GD2520@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110615131142.GE23739@shale.localdomain>
-In-Reply-To: <20110615131142.GE23739@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: gregory.v.rose@intel.com, eric.dumazet@gmail.com, kaber@trash.net, chrisw@sous-sol.org, jeffrey.t.kirsher@intel.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 15 Jun 2011 16:11:42 +0300
+The JOM() macro dereferences peasycap, so I moved the free down some
+lines.
 
-> In c7ac8679bec939 "rtnetlink: Compute and store minimum ifinfo dump
-> size", we moved the allocation under the lock so we need to unlock
-> on error path.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied, thanks.
+diff --git a/drivers/staging/easycap/easycap_main.c b/drivers/staging/easycap/easycap_main.c
+index 62e07f6..84d4f77 100644
+--- a/drivers/staging/easycap/easycap_main.c
++++ b/drivers/staging/easycap/easycap_main.c
+@@ -913,8 +913,6 @@ static void easycap_delete(struct kref *pkref)
+ 	allocation_audio_struct = peasycap->allocation_audio_struct;
+ 	registered_audio        = peasycap->registered_audio;
+ 
+-	kfree(peasycap);
+-
+ 	if (0 <= kd && DONGLE_MANY > kd) {
+ 		if (mutex_lock_interruptible(&mutex_dongle)) {
+ 			SAY("ERROR: cannot down mutex_dongle\n");
+@@ -929,6 +927,9 @@ static void easycap_delete(struct kref *pkref)
+ 	} else {
+ 		SAY("ERROR: cannot purge dongle[].peasycap");
+ 	}
++
++	kfree(peasycap);
++
+ /*---------------------------------------------------------------------------*/
+ 	SAY("%8i=video urbs    after all deletions\n", allocation_video_urb);
+ 	SAY("%8i=video pages   after all deletions\n", allocation_video_page);
