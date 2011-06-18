@@ -1,190 +1,37 @@
-From: Peter Huewe <peterhuewe@gmx.de>
-Date: Mon, 20 Jun 2011 21:01:38 +0000
-Subject: [PATCH 2/2 v4] mfd/ab8500: Convert to kstrtou8_from_user
-Message-Id: <1308603698-32166-2-git-send-email-peterhuewe@gmx.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 18 Jun 2011 18:49:21 +0000
+Subject: [patch] thermal: snprintf() limit too high in
+Message-Id: <20110618184921.GC14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110620195037.GA2534@p183.telecom.by>
-In-Reply-To: <20110620195037.GA2534@p183.telecom.by>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-This patch replaces the code for getting an number from a
-userspace buffer by a simple call to kstrou8_from_user.
-This makes it easier to read and less error prone.
+tz->temp_input.name and tz->temp_crit.name are 16 chars, they're not
+THERMAL_NAME_LENGTH (20 chars).
 
-Since the old buffers held only values up to 255, we don't need
-kstrtoul, but rather kstrtou8.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Kernel Version: v3.0-rc3
-
-Changes in v2:
-- Use kstrtou8 instead of kstrtoul due to small numbers
-- Dropped then unnecessary checks
-Changes in v3:
-- The local struct dev variable isn't needed anymore
-Changes in v4:
-- Drop unneccesary now local variables and casts
-- Change the debug_address and debug_bank members to u8 since they hold
-only values up to 255, and also remove the now superfluous u8 casts
-
-(Remarks from Alexey Dobriyan, Thanks!)
-
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
- drivers/mfd/ab8500-debugfs.c |   74 ++++++++++++-----------------------------
- 1 files changed, 22 insertions(+), 52 deletions(-)
-
-diff --git a/drivers/mfd/ab8500-debugfs.c b/drivers/mfd/ab8500-debugfs.c
-index 64748e4..5d3cd35 100644
---- a/drivers/mfd/ab8500-debugfs.c
-+++ b/drivers/mfd/ab8500-debugfs.c
-@@ -14,8 +14,8 @@
- #include <linux/mfd/abx500.h>
- #include <linux/mfd/ab8500.h>
+diff --git a/drivers/thermal/thermal_sys.c b/drivers/thermal/thermal_sys.c
+index 0b1c82a..a07cce4 100644
+--- a/drivers/thermal/thermal_sys.c
++++ b/drivers/thermal/thermal_sys.c
+@@ -505,7 +505,7 @@ thermal_add_hwmon_sysfs(struct thermal_zone_device *tz)
+ 	tz->hwmon = hwmon;
+ 	hwmon->count++;
  
--static u32 debug_bank;
--static u32 debug_address;
-+static u8 debug_bank;
-+static u8 debug_address;
- 
- /**
-  * struct ab8500_reg_range
-@@ -357,7 +357,7 @@ static int ab8500_registers_print(struct seq_file *s, void *p)
- {
- 	struct device *dev = s->private;
- 	unsigned int i;
--	u32 bank = debug_bank;
-+	u8 bank = debug_bank;
- 
- 	seq_printf(s, AB8500_NAME_STRING " register values:\n");
- 
-@@ -372,7 +372,7 @@ static int ab8500_registers_print(struct seq_file *s, void *p)
- 			int err;
- 
- 			err = abx500_get_register_interruptible(dev,
--				(u8)bank, (u8)reg, &value);
-+				bank, (u8)reg, &value);
- 			if (err < 0) {
- 				dev_err(dev, "ab->read fail %d\n", err);
- 				return err;
-@@ -419,20 +419,13 @@ static ssize_t ab8500_bank_write(struct file *file,
- 	size_t count, loff_t *ppos)
- {
- 	struct device *dev = ((struct seq_file *)(file->private_data))->private;
--	char buf[32];
--	int buf_size;
--	unsigned long user_bank;
-+	u8 user_bank;
- 	int err;
- 
--	/* Get userspace string and assure termination */
--	buf_size = min(count, (sizeof(buf) - 1));
--	if (copy_from_user(buf, user_buf, buf_size))
--		return -EFAULT;
--	buf[buf_size] = 0;
--
--	err = strict_strtoul(buf, 0, &user_bank);
-+	/* Get userspace string and convert to number */
-+	err = kstrtou8_from_user(user_buf, count, 0, &user_bank);
- 	if (err)
--		return -EINVAL;
-+		return err;
- 
- 	if (user_bank >= AB8500_NUM_BANKS) {
- 		dev_err(dev, "debugfs error input > number of banks\n");
-@@ -441,7 +434,7 @@ static ssize_t ab8500_bank_write(struct file *file,
- 
- 	debug_bank = user_bank;
- 
--	return buf_size;
-+	return count;
- }
- 
- static int ab8500_address_print(struct seq_file *s, void *p)
-@@ -458,27 +451,14 @@ static ssize_t ab8500_address_write(struct file *file,
- 	const char __user *user_buf,
- 	size_t count, loff_t *ppos)
- {
--	struct device *dev = ((struct seq_file *)(file->private_data))->private;
--	char buf[32];
--	int buf_size;
--	unsigned long user_address;
- 	int err;
- 
--	/* Get userspace string and assure termination */
--	buf_size = min(count, (sizeof(buf) - 1));
--	if (copy_from_user(buf, user_buf, buf_size))
--		return -EFAULT;
--	buf[buf_size] = 0;
--
--	err = strict_strtoul(buf, 0, &user_address);
-+	/* Get userspace string and convert to number*/
-+	err = kstrtou8_from_user(user_buf, count, 0, &debug_address);
- 	if (err)
--		return -EINVAL;
--	if (user_address > 0xff) {
--		dev_err(dev, "debugfs error input > 0xff\n");
--		return -EINVAL;
--	}
--	debug_address = user_address;
--	return buf_size;
-+		return err;
-+
-+	return count;
- }
- 
- static int ab8500_val_print(struct seq_file *s, void *p)
-@@ -488,7 +468,7 @@ static int ab8500_val_print(struct seq_file *s, void *p)
- 	u8 regvalue;
- 
- 	ret = abx500_get_register_interruptible(dev,
--		(u8)debug_bank, (u8)debug_address, &regvalue);
-+		debug_bank, debug_address, &regvalue);
- 	if (ret < 0) {
- 		dev_err(dev, "abx500_get_reg fail %d, %d\n",
- 			ret, __LINE__);
-@@ -509,32 +489,22 @@ static ssize_t ab8500_val_write(struct file *file,
- 	size_t count, loff_t *ppos)
- {
- 	struct device *dev = ((struct seq_file *)(file->private_data))->private;
--	char buf[32];
--	int buf_size;
--	unsigned long user_val;
-+	u8 user_val;
- 	int err;
- 
--	/* Get userspace string and assure termination */
--	buf_size = min(count, (sizeof(buf)-1));
--	if (copy_from_user(buf, user_buf, buf_size))
--		return -EFAULT;
--	buf[buf_size] = 0;
--
--	err = strict_strtoul(buf, 0, &user_val);
-+	/* Get userspace string and convert to number */
-+	err = kstrtou8_from_user(user_buf, count, 0, &user_val);
- 	if (err)
--		return -EINVAL;
--	if (user_val > 0xff) {
--		dev_err(dev, "debugfs error input > 0xff\n");
--		return -EINVAL;
--	}
-+		return err;
-+
- 	err = abx500_set_register_interruptible(dev,
--		(u8)debug_bank, debug_address, (u8)user_val);
-+		debug_bank, debug_address, user_val);
- 	if (err < 0) {
- 		printk(KERN_ERR "abx500_set_reg failed %d, %d", err, __LINE__);
- 		return -EINVAL;
- 	}
- 
--	return buf_size;
-+	return count;
- }
- 
- static const struct file_operations ab8500_bank_fops = {
--- 
-1.7.3.4
-
+-	snprintf(tz->temp_input.name, THERMAL_NAME_LENGTH,
++	snprintf(tz->temp_input.name, sizeof(tz->temp_input.name),
+ 		 "temp%d_input", hwmon->count);
+ 	tz->temp_input.attr.attr.name = tz->temp_input.name;
+ 	tz->temp_input.attr.attr.mode = 0444;
+@@ -518,7 +518,7 @@ thermal_add_hwmon_sysfs(struct thermal_zone_device *tz)
+ 	if (tz->ops->get_crit_temp) {
+ 		unsigned long temperature;
+ 		if (!tz->ops->get_crit_temp(tz, &temperature)) {
+-			snprintf(tz->temp_crit.name, THERMAL_NAME_LENGTH,
++			snprintf(tz->temp_crit.name, sizeof(tz->temp_crit.name),
+ 				"temp%d_crit", hwmon->count);
+ 			tz->temp_crit.attr.attr.name = tz->temp_crit.name;
+ 			tz->temp_crit.attr.attr.mode = 0444;
