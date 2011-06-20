@@ -1,31 +1,32 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Fri, 24 Jun 2011 19:32:36 +0000
-Subject: RE: [patch] mwifiex: restore handling of NULL parameters
-Message-Id: <477F20668A386D41ADCC57781B1F704307FF9744E8@SC-VEXCH1.marvell.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 20 Jun 2011 07:11:25 +0000
+Subject: [patch] ASoC: adau1701: signedness bug in adau1701_write()
+Message-Id: <20110620071125.GG14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110624133335.GP14591@shale.localdomain>
-In-Reply-To: <20110624133335.GP14591@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Amitkumar Karwar <akarwar@marvell.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Yogesh Powar <yogeshp@marvell.com>, Marc Yang <yangyang@marvell.com>, "open list:NETWORKING [WIREL..." <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Cc: "open list:SOUND - SOC LAYER..." <alsa-devel@alsa-project.org>, Lars-Peter Clausen <lars@metafoo.de>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@ti.com>
 
-Hi Dan,
+"ret" is supposed to be signed here.  The current code will only
+return -EIO on error, instead of a more appropriate error code such
+as -EAGAIN etc.
 
-> Prior to a5ffddb70c5cab "mwifiex: remove casts of void pointers" the
-> code assumed that the data_buf parameter could be a NULL pointer.
-> The patch preserved some NULL checks but not consistently, so there
-> was a potential for NULL dereferences and it changed the behavior.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks for the catch!
-
-> This patch restores the original behavior.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-Acked-by: Bing Zhao <bzhao@marvell.com>
-
-Best regards,
-Bing
+diff --git a/sound/soc/codecs/adau1701.c b/sound/soc/codecs/adau1701.c
+index 6c01bb6..2758d5f 100644
+--- a/sound/soc/codecs/adau1701.c
++++ b/sound/soc/codecs/adau1701.c
+@@ -140,9 +140,10 @@ static unsigned int adau1701_register_size(struct snd_soc_codec *codec,
+ static int adau1701_write(struct snd_soc_codec *codec, unsigned int reg,
+ 		unsigned int value)
+ {
+-	unsigned int i, ret;
++	unsigned int i;
+ 	unsigned int size;
+ 	uint8_t buf[4];
++	int ret;
  
+ 	size = adau1701_register_size(codec, reg);
+ 	if (size = 0)
