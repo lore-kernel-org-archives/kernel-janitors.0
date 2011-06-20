@@ -1,36 +1,190 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 16 Jun 2011 19:18:58 +0000
-Subject: Re: [patch] ACPI: use after free in acpi_battery_add()
-Message-Id: <BANLkTinOEVR=8kqpyee2VoKh12tWOhVgaQ@mail.gmail.com>
+From: Peter Huewe <peterhuewe@gmx.de>
+Date: Mon, 20 Jun 2011 21:01:38 +0000
+Subject: [PATCH 2/2 v4] mfd/ab8500: Convert to kstrtou8_from_user
+Message-Id: <1308603698-32166-2-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110329031210.GA9856@bicker>
-In-Reply-To: <20110329031210.GA9856@bicker>
+References: <20110620195037.GA2534@p183.telecom.by>
+In-Reply-To: <20110620195037.GA2534@p183.telecom.by>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org, kyle@redhat.com
+To: linux-arm-kernel@lists.infradead.org
 
-It seems like this patch was missed.
+This patch replaces the code for getting an number from a
+userspace buffer by a simple call to kstrou8_from_user.
+This makes it easier to read and less error prone.
 
-regards,
-dan carpenter
+Since the old buffers held only values up to 255, we don't need
+kstrtoul, but rather kstrtou8.
 
-On 3/29/11, Dan Carpenter <error27@gmail.com> wrote:
-> "battery" was dereferenced on the error path here.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-> index fcc13ac..cfc7a5b 100644
-> --- a/drivers/acpi/battery.c
-> +++ b/drivers/acpi/battery.c
-> @@ -988,6 +988,7 @@ static int acpi_battery_add(struct acpi_device *device)
->  		acpi_battery_remove_fs(device);
->  #endif
->  		kfree(battery);
-> +		return result;
->  	}
->
->  	battery->pm_nb.notifier_call = battery_notify;
->
+Kernel Version: v3.0-rc3
+
+Changes in v2:
+- Use kstrtou8 instead of kstrtoul due to small numbers
+- Dropped then unnecessary checks
+Changes in v3:
+- The local struct dev variable isn't needed anymore
+Changes in v4:
+- Drop unneccesary now local variables and casts
+- Change the debug_address and debug_bank members to u8 since they hold
+only values up to 255, and also remove the now superfluous u8 casts
+
+(Remarks from Alexey Dobriyan, Thanks!)
+
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/mfd/ab8500-debugfs.c |   74 ++++++++++++-----------------------------
+ 1 files changed, 22 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/mfd/ab8500-debugfs.c b/drivers/mfd/ab8500-debugfs.c
+index 64748e4..5d3cd35 100644
+--- a/drivers/mfd/ab8500-debugfs.c
++++ b/drivers/mfd/ab8500-debugfs.c
+@@ -14,8 +14,8 @@
+ #include <linux/mfd/abx500.h>
+ #include <linux/mfd/ab8500.h>
+ 
+-static u32 debug_bank;
+-static u32 debug_address;
++static u8 debug_bank;
++static u8 debug_address;
+ 
+ /**
+  * struct ab8500_reg_range
+@@ -357,7 +357,7 @@ static int ab8500_registers_print(struct seq_file *s, void *p)
+ {
+ 	struct device *dev = s->private;
+ 	unsigned int i;
+-	u32 bank = debug_bank;
++	u8 bank = debug_bank;
+ 
+ 	seq_printf(s, AB8500_NAME_STRING " register values:\n");
+ 
+@@ -372,7 +372,7 @@ static int ab8500_registers_print(struct seq_file *s, void *p)
+ 			int err;
+ 
+ 			err = abx500_get_register_interruptible(dev,
+-				(u8)bank, (u8)reg, &value);
++				bank, (u8)reg, &value);
+ 			if (err < 0) {
+ 				dev_err(dev, "ab->read fail %d\n", err);
+ 				return err;
+@@ -419,20 +419,13 @@ static ssize_t ab8500_bank_write(struct file *file,
+ 	size_t count, loff_t *ppos)
+ {
+ 	struct device *dev = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+-	unsigned long user_bank;
++	u8 user_bank;
+ 	int err;
+ 
+-	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf) - 1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_bank);
++	/* Get userspace string and convert to number */
++	err = kstrtou8_from_user(user_buf, count, 0, &user_bank);
+ 	if (err)
+-		return -EINVAL;
++		return err;
+ 
+ 	if (user_bank >= AB8500_NUM_BANKS) {
+ 		dev_err(dev, "debugfs error input > number of banks\n");
+@@ -441,7 +434,7 @@ static ssize_t ab8500_bank_write(struct file *file,
+ 
+ 	debug_bank = user_bank;
+ 
+-	return buf_size;
++	return count;
+ }
+ 
+ static int ab8500_address_print(struct seq_file *s, void *p)
+@@ -458,27 +451,14 @@ static ssize_t ab8500_address_write(struct file *file,
+ 	const char __user *user_buf,
+ 	size_t count, loff_t *ppos)
+ {
+-	struct device *dev = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+-	unsigned long user_address;
+ 	int err;
+ 
+-	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf) - 1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_address);
++	/* Get userspace string and convert to number*/
++	err = kstrtou8_from_user(user_buf, count, 0, &debug_address);
+ 	if (err)
+-		return -EINVAL;
+-	if (user_address > 0xff) {
+-		dev_err(dev, "debugfs error input > 0xff\n");
+-		return -EINVAL;
+-	}
+-	debug_address = user_address;
+-	return buf_size;
++		return err;
++
++	return count;
+ }
+ 
+ static int ab8500_val_print(struct seq_file *s, void *p)
+@@ -488,7 +468,7 @@ static int ab8500_val_print(struct seq_file *s, void *p)
+ 	u8 regvalue;
+ 
+ 	ret = abx500_get_register_interruptible(dev,
+-		(u8)debug_bank, (u8)debug_address, &regvalue);
++		debug_bank, debug_address, &regvalue);
+ 	if (ret < 0) {
+ 		dev_err(dev, "abx500_get_reg fail %d, %d\n",
+ 			ret, __LINE__);
+@@ -509,32 +489,22 @@ static ssize_t ab8500_val_write(struct file *file,
+ 	size_t count, loff_t *ppos)
+ {
+ 	struct device *dev = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+-	unsigned long user_val;
++	u8 user_val;
+ 	int err;
+ 
+-	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf)-1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_val);
++	/* Get userspace string and convert to number */
++	err = kstrtou8_from_user(user_buf, count, 0, &user_val);
+ 	if (err)
+-		return -EINVAL;
+-	if (user_val > 0xff) {
+-		dev_err(dev, "debugfs error input > 0xff\n");
+-		return -EINVAL;
+-	}
++		return err;
++
+ 	err = abx500_set_register_interruptible(dev,
+-		(u8)debug_bank, debug_address, (u8)user_val);
++		debug_bank, debug_address, user_val);
+ 	if (err < 0) {
+ 		printk(KERN_ERR "abx500_set_reg failed %d, %d", err, __LINE__);
+ 		return -EINVAL;
+ 	}
+ 
+-	return buf_size;
++	return count;
+ }
+ 
+ static const struct file_operations ab8500_bank_fops = {
+-- 
+1.7.3.4
+
