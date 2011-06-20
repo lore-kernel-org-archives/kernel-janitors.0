@@ -1,59 +1,147 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 16 Jun 2011 17:23:25 +0000
-Subject: Re: [PATCH] m68k: remove unnecessary code
-Message-Id: <BANLkTimLFpdy=bOE4wYd0EpORj0O_X4gZQ@mail.gmail.com>
+From: Peter Huewe <peterhuewe@gmx.de>
+Date: Mon, 20 Jun 2011 19:46:28 +0000
+Subject: [PATCH 1/2 v2] mfd/ab3550: Convert to kstrtou8_from_user
+Message-Id: <1308599189-28555-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1308242527-28971-1-git-send-email-Gregory.Dietsche@cuw.edu>
-In-Reply-To: <1308242527-28971-1-git-send-email-Gregory.Dietsche@cuw.edu>
+References: <BANLkTikKRVP4PW48YtR+mMMNsaxTDxoGtw@mail.gmail.com>
+In-Reply-To: <BANLkTikKRVP4PW48YtR+mMMNsaxTDxoGtw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Greg Dietsche <Gregory.Dietsche@cuw.edu>
-Cc: linux-m68k@lists.linux-m68k.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Jun 16, 2011 at 18:42, Greg Dietsche <Gregory.Dietsche@cuw.edu> wrote:
-> remove unnecessary code that matches this coccinelle pattern
->        if (...)
->                return ret;
->        return ret;
->
-> Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+This patch replaces the code for getting an number from a
+userspace buffer by a simple call to kstrou8_from_user.
+This makes it easier to read and less error prone.
 
-Thanks, will queue for 3.1.
+Since the old buffers held only values up to 255, we don't need
+kstrtoul, but rather kstrtou8.
 
-> ---
->  arch/m68k/math-emu/fp_log.c |    3 ---
->  1 files changed, 0 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/m68k/math-emu/fp_log.c b/arch/m68k/math-emu/fp_log.c
-> index 367ecee..3384a52 100644
-> --- a/arch/m68k/math-emu/fp_log.c
-> +++ b/arch/m68k/math-emu/fp_log.c
-> @@ -105,9 +105,6 @@ fp_fetoxm1(struct fp_ext *dest, struct fp_ext *src)
->
->        fp_monadic_check(dest, src);
->
-> -       if (IS_ZERO(dest))
-> -               return dest;
-> -
->        return dest;
->  }
->
-> --
-> 1.7.2.5
->
->
+Kernel Version: v3.0-rc3
 
+Changes in v2:
+- Use kstrtou8 instead of kstrtoul due to small numbers
+- Dropped then unnecessary checks
+(Both remarks from Alexey Dobriyan, Thanks!)
 
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/mfd/ab3550-core.c |   63 ++++++++++++--------------------------------
+ 1 files changed, 17 insertions(+), 46 deletions(-)
 
+diff --git a/drivers/mfd/ab3550-core.c b/drivers/mfd/ab3550-core.c
+index 3d7dce6..a7370ba 100644
+--- a/drivers/mfd/ab3550-core.c
++++ b/drivers/mfd/ab3550-core.c
+@@ -879,20 +879,13 @@ static ssize_t ab3550_bank_write(struct file *file,
+ 	size_t count, loff_t *ppos)
+ {
+ 	struct ab3550 *ab = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+-	unsigned long user_bank;
++	u8 user_bank;
+ 	int err;
+ 
+-	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf) - 1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_bank);
++	/* Get userspace string and convert to number */
++	err = kstrtou8_from_user(user_buf, count, 0, &user_bank);
+ 	if (err)
+-		return -EINVAL;
++		return err;
+ 
+ 	if (user_bank >= AB3550_NUM_BANKS) {
+ 		dev_err(&ab->i2c_client[0]->dev,
+@@ -902,7 +895,7 @@ static ssize_t ab3550_bank_write(struct file *file,
+ 
+ 	ab->debug_bank = user_bank;
+ 
+-	return buf_size;
++	return count;
+ }
+ 
+ static int ab3550_address_print(struct seq_file *s, void *p)
+@@ -923,27 +916,16 @@ static ssize_t ab3550_address_write(struct file *file,
+ 	size_t count, loff_t *ppos)
+ {
+ 	struct ab3550 *ab = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+-	unsigned long user_address;
++	u8 user_address;
+ 	int err;
+ 
+-	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf) - 1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_address);
++	/* Get userspace string and convert to number */
++	err = kstrtou8_from_user(user_buf, count, 0, &user_address);
+ 	if (err)
+-		return -EINVAL;
+-	if (user_address > 0xff) {
+-		dev_err(&ab->i2c_client[0]->dev,
+-			"debugfs error input > 0xff\n");
+-		return -EINVAL;
+-	}
++		return err;
++
+ 	ab->debug_address = user_address;
+-	return buf_size;
++	return count;
+ }
+ 
+ static int ab3550_val_print(struct seq_file *s, void *p)
+@@ -971,26 +953,15 @@ static ssize_t ab3550_val_write(struct file *file,
+ 	size_t count, loff_t *ppos)
+ {
+ 	struct ab3550 *ab = ((struct seq_file *)(file->private_data))->private;
+-	char buf[32];
+-	int buf_size;
+-	unsigned long user_val;
++	u8 user_val;
+ 	int err;
+ 	u8 regvalue;
+ 
+-	/* Get userspace string and assure termination */
+-	buf_size = min(count, (sizeof(buf)-1));
+-	if (copy_from_user(buf, user_buf, buf_size))
+-		return -EFAULT;
+-	buf[buf_size] = 0;
+-
+-	err = strict_strtoul(buf, 0, &user_val);
++	/* Get userspace string and convert to number */
++	err = kstrtou8_from_user(user_buf, count, 0, &user_val);
+ 	if (err)
+-		return -EINVAL;
+-	if (user_val > 0xff) {
+-		dev_err(&ab->i2c_client[0]->dev,
+-			"debugfs error input > 0xff\n");
+-		return -EINVAL;
+-	}
++		return err;
++
+ 	err = mask_and_set_register_interruptible(
+ 		ab, (u8)ab->debug_bank,
+ 		(u8)ab->debug_address, 0xFF, (u8)user_val);
+@@ -1002,7 +973,7 @@ static ssize_t ab3550_val_write(struct file *file,
+ 	if (err)
+ 		return -EINVAL;
+ 
+-	return buf_size;
++	return count;
+ }
+ 
+ static const struct file_operations ab3550_bank_fops = {
 -- 
-Gr{oetje,eeting}s,
+1.7.3.4
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
