@@ -1,42 +1,28 @@
-From: Stanislaw Gruszka <sgruszka@redhat.com>
-Date: Mon, 13 Jun 2011 14:39:23 +0000
-Subject: Re: [PATCH 1/5] iwlegacy: remove unreachable code
-Message-Id: <20110613143922.GA8111@redhat.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 23 Jun 2011 05:56:37 +0000
+Subject: [patch] net/usb/kalmia: signedness bug in kalmia_bind()
+Message-Id: <20110623055637.GL14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
- <4DF61E7E.908@cuw.edu>
-In-Reply-To: <4DF61E7E.908@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Dietsche <gregory.dietsche@cuw.edu>
-Cc: linville@tuxdriver.com, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
+Cc: "open list:USB SUBSYSTEM" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:NETWORKING DRIVERS" <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, Jun 13, 2011 at 09:28:14AM -0500, Greg Dietsche wrote:
-> On 06/02/2011 09:06 PM, Greg Dietsche wrote:
-> >return; at the end of the function is unecessary.
-> >
-> >Signed-off-by: Greg Dietsche<Gregory.Dietsche@cuw.edu>
-> >---
-> >  drivers/net/wireless/iwlegacy/iwl-eeprom.c |    1 -
-> >  1 files changed, 0 insertions(+), 1 deletions(-)
-> >
-> >diff --git a/drivers/net/wireless/iwlegacy/iwl-eeprom.c b/drivers/net/wireless/iwlegacy/iwl-eeprom.c
-> >index cb346d1..5bf3f49 100644
-> >--- a/drivers/net/wireless/iwlegacy/iwl-eeprom.c
-> >+++ b/drivers/net/wireless/iwlegacy/iwl-eeprom.c
-> >@@ -316,7 +316,6 @@ static void iwl_legacy_init_band_reference(const struct iwl_priv *priv,
-> >  		break;
-> >  	default:
-> >  		BUG();
-> >-		return;
-> >  	}
-> >  }
-> >
-> 
-> any comments/reviews/acks on this patch series?
+"status" should be an int here for the error handling to work.
 
-All 5 patches are applied in wireless-testing tree.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Thanks
-Stanislaw
+diff --git a/drivers/net/usb/kalmia.c b/drivers/net/usb/kalmia.c
+index d965fb1..c08fecf 100644
+--- a/drivers/net/usb/kalmia.c
++++ b/drivers/net/usb/kalmia.c
+@@ -127,7 +127,7 @@ kalmia_init_and_get_ethernet_addr(struct usbnet *dev, u8 *ethernet_addr)
+ static int
+ kalmia_bind(struct usbnet *dev, struct usb_interface *intf)
+ {
+-	u8 status;
++	int status;
+ 	u8 ethernet_addr[ETH_ALEN];
+ 
+ 	/* Don't bind to AT command interface */
