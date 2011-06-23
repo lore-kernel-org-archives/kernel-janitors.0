@@ -1,56 +1,38 @@
-From: Peter Huewe <peterhuewe@gmx.de>
-Date: Tue, 07 Jun 2011 20:36:14 +0000
-Subject: [PATCH] net/mac80211/debugfs: Convert to kstrou8_from_user
-Message-Id: <1307478974-32727-1-git-send-email-peterhuewe@gmx.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 23 Jun 2011 05:58:02 +0000
+Subject: [patch -next] dcb: use nlmsg_free() instead of kfree()
+Message-Id: <20110623055802.GN14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>
+To: John Fastabend <john.r.fastabend@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Shmulik Ravid <shmulikr@broadcom.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This patch replaces the code for getting an number from a
-userspace buffer by a simple call to kstrou8_from_user.
-This makes it easier to read and less error prone.
+These sk_buff structs were allocated with nlmsg_new() so they should
+be freed with nlmsg_free().
 
-Since the old buffer was only 10 bytes long and the value is masked by a
-nibble-mask anyway, we don't need to use kstrtoul but rather kstrtou8.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Kernel Version: v3.0-rc2
-
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
----
- net/mac80211/debugfs.c |   14 +++-----------
- 1 files changed, 3 insertions(+), 11 deletions(-)
-
-diff --git a/net/mac80211/debugfs.c b/net/mac80211/debugfs.c
-index 186e02f..267ed45 100644
---- a/net/mac80211/debugfs.c
-+++ b/net/mac80211/debugfs.c
-@@ -195,20 +195,12 @@ static ssize_t uapsd_queues_write(struct file *file,
- 				  size_t count, loff_t *ppos)
- {
- 	struct ieee80211_local *local = file->private_data;
--	unsigned long val;
--	char buf[10];
--	size_t len;
-+	u8 val;
- 	int ret;
+diff --git a/net/dcb/dcbnl.c b/net/dcb/dcbnl.c
+index e954d4c..fc56e85 100644
+--- a/net/dcb/dcbnl.c
++++ b/net/dcb/dcbnl.c
+@@ -1329,7 +1329,7 @@ int dcbnl_notify(struct net_device *dev, int event, int cmd,
  
--	len = min(count, sizeof(buf) - 1);
--	if (copy_from_user(buf, user_buf, len))
--		return -EFAULT;
--	buf[len] = '\0';
--
--	ret = strict_strtoul(buf, 0, &val);
--
-+	ret = kstrtou8_from_user(user_buf, count, 0, &val);
- 	if (ret)
--		return -EINVAL;
-+		return ret;
+ 	nlh = nlmsg_put(skb, pid, 0, event, sizeof(*dcb), 0);
+ 	if (nlh = NULL) {
+-		kfree(skb);
++		nlmsg_free(skb);
+ 		return -EMSGSIZE;
+ 	}
  
- 	if (val & ~IEEE80211_WMM_IE_STA_QOSINFO_AC_MASK)
- 		return -ERANGE;
--- 
-1.7.3.4
-
+@@ -1434,7 +1434,7 @@ static int dcbnl_ieee_get(struct net_device *netdev, struct nlattr **tb,
+ 
+ 	nlh = nlmsg_put(skb, pid, seq, RTM_GETDCB, sizeof(*dcb), flags);
+ 	if (nlh = NULL) {
+-		kfree(skb);
++		nlmsg_free(skb);
+ 		return -EMSGSIZE;
+ 	}
+ 
