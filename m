@@ -1,42 +1,29 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Fri, 24 Jun 2011 13:22:15 +0000
-Subject: Re: [PATCH v3] package: Makefile: fix perf target bug
-Message-Id: <4E048F87.7010109@suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 23 Jun 2011 05:57:15 +0000
+Subject: [patch] regulator/tps65912: storing error codes in u8
+Message-Id: <20110623055715.GM14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4DCD8CE4.4090404@suse.cz>	<b07e7ecdce48bc90a2cf83e8867494dae7cd174f.1305329845.git.mfm@muteddisk.com>	<20110515154002.GB6274@ghostprotocols.net>	<4DD0DE2C.4060806@suse.cz> <BANLkTikvuRwWwb3aux25Ut6ycr0VefrHFQ@mail.gmail.com>
-In-Reply-To: <BANLkTikvuRwWwb3aux25Ut6ycr0VefrHFQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matt mooney <mfmooney@gmail.com>
-Cc: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 12.6.2011 20:19, matt mooney wrote:
-> On Mon, May 16, 2011 at 1:19 AM, Michal Marek<mmarek@suse.cz>  wrote:
->> On 15.5.2011 17:40, Arnaldo Carvalho de Melo wrote:
->>>
->>> Em Fri, May 13, 2011 at 04:41:12PM -0700, mfmooney@gmail.com escreveu:
->>>>
->>>> From: matt mooney<mfm@muteddisk.com>
->>>>
->>>> Specify --git-dir when building perf targets to allow out-of-tree
->>>> builds using O=<build-dir>.
->>>>
->>>> The shell command in `git archive' had to be modified to allow proper
->>>> file name expansion of the files listed in MANIFEST.
->>>>
->>>> Signed-off-by: matt mooney<mfm@muteddisk.com>
->>>
->>> Michal,
->>>
->>>         Can I have your Reviewed-by or Acked-by for this one? Assuming
->>> all is ok by now :)
->>
->> Reviewed-by: Michal Marek<mmarek@suse.cz>
->
-> I do not believe this patch ever got picked up!
+get_ctrl_reg() returns -EINVAL so the error handling won't work here
+if reg is a u8.
 
-I thought that Arnaldo will take it. I pushed it to 
-kbuild-2.6.git#packaging now.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Michal
+diff --git a/drivers/regulator/tps65912-regulator.c b/drivers/regulator/tps65912-regulator.c
+index d2c6542..3a9313e 100644
+--- a/drivers/regulator/tps65912-regulator.c
++++ b/drivers/regulator/tps65912-regulator.c
+@@ -417,7 +417,7 @@ static int tps65912_reg_enable(struct regulator_dev *dev)
+ 	struct tps65912_reg *pmic = rdev_get_drvdata(dev);
+ 	struct tps65912 *mfd = pmic->mfd;
+ 	int id = rdev_get_id(dev);
+-	u8 reg;
++	int reg;
+ 
+ 	if (id < TPS65912_REG_DCDC1 || id > TPS65912_REG_LDO10)
+ 		return -EINVAL;
