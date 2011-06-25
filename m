@@ -1,41 +1,73 @@
-From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
-Date: Fri, 03 Jun 2011 03:24:06 +0000
-Subject: [PATCH 5/5 v2] iwlegacy: add missing null check
-Message-Id: <1307071446-28730-1-git-send-email-Gregory.Dietsche@cuw.edu>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 25 Jun 2011 05:54:46 +0000
+Subject: [patch] nouveau: error paths leak in nvc0_graph_construct_context()
+Message-Id: <20110625055446.GT14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110603030746.GA4834@joana>
-In-Reply-To: <20110603030746.GA4834@joana>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sgruszka@redhat.com, linville@tuxdriver.com
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Dietsche <Gregory.Dietsche@cuw.edu>
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Emil Velikov <emil.l.velikov@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>
 
-lq_sta has other null checks in this function.
-assuming they are correct, this additional null check
-should be added too.
+Two of these error paths returned without freeing "ctx".
 
-Incorporating suggestion from Gustavo Padovan.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
----
- drivers/net/wireless/iwlegacy/iwl-4965-rs.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/wireless/iwlegacy/iwl-4965-rs.c b/drivers/net/wireless/iwlegacy/iwl-4965-rs.c
-index 24d1499..9b65153 100644
---- a/drivers/net/wireless/iwlegacy/iwl-4965-rs.c
-+++ b/drivers/net/wireless/iwlegacy/iwl-4965-rs.c
-@@ -2275,6 +2275,9 @@ iwl4965_rs_get_rate(void *priv_r, struct ieee80211_sta *sta, void *priv_sta,
- 	if (rate_control_send_low(sta, priv_sta, txrc))
- 		return;
+diff --git a/drivers/gpu/drm/nouveau/nvc0_graph.c b/drivers/gpu/drm/nouveau/nvc0_graph.c
+index 39e9208..5aa3f9e 100644
+--- a/drivers/gpu/drm/nouveau/nvc0_graph.c
++++ b/drivers/gpu/drm/nouveau/nvc0_graph.c
+@@ -106,7 +106,8 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
+ 		if (!nv_wait(dev, 0x409800, 0x80000000, 0x80000000)) {
+ 			NV_ERROR(dev, "PGRAPH: HUB_SET_CHAN timeout\n");
+ 			nvc0_graph_ctxctl_debug(dev);
+-			return -EBUSY;
++			ret = -EBUSY;
++			goto err;
+ 		}
+ 	} else {
+ 		nvc0_graph_load_context(chan);
+@@ -119,10 +120,9 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
+ 	}
  
-+	if (!lq_sta)
-+		return;
+ 	ret = nvc0_grctx_generate(chan);
+-	if (ret) {
+-		kfree(ctx);
+-		return ret;
+-	}
++	if (ret)
++		goto err;
 +
- 	rate_idx  = lq_sta->last_txrate_idx;
  
- 	if (lq_sta->last_rate_n_flags & RATE_MCS_HT_MSK) {
--- 
-1.7.2.5
-
+ 	if (!nouveau_ctxfw) {
+ 		nv_wr32(dev, 0x409840, 0x80000000);
+@@ -131,14 +131,13 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
+ 		if (!nv_wait(dev, 0x409800, 0x80000000, 0x80000000)) {
+ 			NV_ERROR(dev, "PGRAPH: HUB_CTX_SAVE timeout\n");
+ 			nvc0_graph_ctxctl_debug(dev);
+-			return -EBUSY;
++			ret = -EBUSY;
++			goto err;
+ 		}
+ 	} else {
+ 		ret = nvc0_graph_unload_context_to(dev, chan->ramin->vinst);
+-		if (ret) {
+-			kfree(ctx);
+-			return ret;
+-		}
++		if (ret)
++			goto err;
+ 	}
+ 
+ 	for (i = 0; i < priv->grctx_size; i += 4)
+@@ -146,6 +145,10 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
+ 
+ 	priv->grctx_vals = ctx;
+ 	return 0;
++
++err:
++	kfree(ctx);
++	return ret;
+ }
+ 
+ static int
