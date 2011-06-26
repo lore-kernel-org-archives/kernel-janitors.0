@@ -1,25 +1,32 @@
-From: Ben Skeggs <bskeggs@redhat.com>
-Date: Sat, 25 Jun 2011 11:59:07 +0000
+From: walter harms <wharms@bfs.de>
+Date: Sun, 26 Jun 2011 22:19:44 +0000
 Subject: Re: [patch] nouveau: free the memory in nouveau_gart_manager_del()
-Message-Id: <1309003308.3557.4.camel@nisroch>
+Message-Id: <4E07B080.2000109@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110625055324.GS14591@shale.localdomain>
 In-Reply-To: <20110625055324.GS14591@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Roy Spliet <r.spliet@student.tudelft.nl>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>
+To: kernel-janitors@vger.kernel.org
 
-On Sat, 2011-06-25 at 08:53 +0300, Dan Carpenter wrote:
+great bug to make sure that mem is never freed :)
+
+@julia,
+
+can coccinelle find this type  ?
+they will never cause an error just a memleack that never
+will be notices before its to late.
+
+re,
+ wh
+
+
+Am 25.06.2011 07:53, schrieb Dan Carpenter:
 > In the original code the kfree() doesn't do anything because
 > "mem->mm_node" has been set to NULL.  This was introduced in
 > d2f96666c56a "drm/nouveau: create temp vmas for both src and dst of
 > bo moves"
-Already fixed in nouveau git, I'll get the fixes to Dave.
-
-Ben.
-
 > 
 > Signed-off-by: Dan Carpenter <error27@gmail.com>
 > 
@@ -37,5 +44,9 @@ Ben.
 >  }
 >  
 >  static int
-
-
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
