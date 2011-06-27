@@ -1,7 +1,7 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 27 Jun 2011 04:59:54 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 27 Jun 2011 06:50:37 +0000
 Subject: Re: [patch] nouveau: free the memory in nouveau_gart_manager_del()
-Message-Id: <Pine.LNX.4.64.1106270659200.3775@ask.diku.dk>
+Message-Id: <20110627065037.GV14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110625055324.GS14591@shale.localdomain>
 In-Reply-To: <20110625055324.GS14591@shale.localdomain>
@@ -10,55 +10,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 27 Jun 2011, walter harms wrote:
-
-> great bug to make sure that mem is never freed :)
+On Mon, Jun 27, 2011 at 06:59:54AM +0200, Julia Lawall wrote:
+> On Mon, 27 Jun 2011, walter harms wrote:
 > 
-> @julia,
-> 
-> can coccinelle find this type  ?
-
-Yes, I looked and didn't find any other than this one.
-
-julia
-
-> they will never cause an error just a memleack that never
-> will be notices before its to late.
-> 
-> re,
->  wh
-> 
-> 
-> Am 25.06.2011 07:53, schrieb Dan Carpenter:
-> > In the original code the kfree() doesn't do anything because
-> > "mem->mm_node" has been set to NULL.  This was introduced in
-> > d2f96666c56a "drm/nouveau: create temp vmas for both src and dst of
-> > bo moves"
+> > great bug to make sure that mem is never freed :)
 > > 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+> > @julia,
 > > 
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_mem.c b/drivers/gpu/drm/nouveau/nouveau_mem.c
-> > index 765f0e5..ab79bf8 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_mem.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_mem.c
-> > @@ -846,8 +846,8 @@ nouveau_gart_manager_del(struct ttm_mem_type_manager *man,
-> >  			 struct ttm_mem_reg *mem)
-> >  {
-> >  	nouveau_mem_node_cleanup(mem->mm_node);
-> > -	mem->mm_node = NULL;
-> >  	kfree(mem->mm_node);
-> > +	mem->mm_node = NULL;
-> >  }
-> >  
-> >  static int
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > can coccinelle find this type  ?
 > 
+> Yes, I looked and didn't find any other than this one.
+>
+
+I've found a hand full of these in the past, but I've fixed them all.
+:P
+
+regards,
+dan carpenter
+
