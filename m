@@ -1,69 +1,31 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 29 Jun 2011 19:50:48 +0000
-Subject: [patch v2] Staging: iio: some uninitialized variable bugs
-Message-Id: <20110629195048.GJ14591@shale.localdomain>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Date: Mon, 27 Jun 2011 09:21:52 +0000
+Subject: Re: [PATCH] ata: sata_dwc_460ex: fix error path
+Message-Id: <4E084BB0.10806@mvista.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110629184053.GI14591@shale.localdomain>
-In-Reply-To: <20110629184053.GI14591@shale.localdomain>
+References: <1284317830-5022-1-git-send-email-segooon@gmail.com> <4D5C1326.2010101@ru.mvista.com> <4D628543.5090700@mvista.com>
+In-Reply-To: <4D628543.5090700@mvista.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, Manuel Stahl <manuel.stahl@iis.fraunhofer.de>, Arnd Bergmann <arnd@arndb.de>, linux-iio@vger.kernel.org, "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>, kernel-janitors@vger.kernel.org
+To: Vasiliy Kulikov <segooon@gmail.com>
+Cc: Jeff Garzik <jgarzik@pobox.com>, kernel-janitors@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Rupjyoti Sarmah <rsarmah@appliedmicro.com>, Prodyut Hazarika <phazarika@appliedmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There were some uninitialized variable warnings in iio.  Two of
-these came from the recent changes to how the private data was
-allocated in 83f0422dc6a16 "staging:iio:accel:sca3000: allocate
-state in iio_dev and use iio_priv to access."
+Hello.
 
-drivers/staging/iio/accel/sca3000_core.c: In function 'sca3000_probe':
-drivers/staging/iio/accel/sca3000_core.c:1137:9: warning: 'st' may be used uninitialized in this function
-drivers/staging/iio/adc/ad7291.c: In function 'ad7291_probe':
-drivers/staging/iio/adc/ad7291.c:805:15: warning: 'chip' may be used uninitialized in this function
-drivers/staging/iio/dac/ad5624r_spi.c: In function 'ad5624r_probe':
-drivers/staging/iio/dac/ad5624r_spi.c:228:24: warning: 'st' may be used uninitialized in this function
+On 21-02-2011 18:31, Sergei Shtylyov wrote:
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-v2:  I added a couple more bug related bug fixes.
+>>> Free all allocated resources on error path.
 
-diff --git a/drivers/staging/iio/accel/sca3000_core.c b/drivers/staging/iio/accel/sca3000_core.c
-index 4313f73..603f5bc 100644
---- a/drivers/staging/iio/accel/sca3000_core.c
-+++ b/drivers/staging/iio/accel/sca3000_core.c
-@@ -1133,6 +1133,7 @@ static int __devinit sca3000_probe(struct spi_device *spi)
- 		goto error_ret;
- 	}
- 
-+	st = iio_priv(indio_dev);
- 	spi_set_drvdata(spi, indio_dev);
- 	st->us = spi;
- 	mutex_init(&st->lock);
-diff --git a/drivers/staging/iio/adc/ad7291.c b/drivers/staging/iio/adc/ad7291.c
-index f024026..96cbb17 100644
---- a/drivers/staging/iio/adc/ad7291.c
-+++ b/drivers/staging/iio/adc/ad7291.c
-@@ -799,6 +799,7 @@ static int __devinit ad7291_probe(struct i2c_client *client,
- 		ret = -ENOMEM;
- 		goto error_ret;
- 	}
-+	chip = iio_priv(indio_dev);
- 	/* this is only used for device removal purposes */
- 	i2c_set_clientdata(client, indio_dev);
- 
-diff --git a/drivers/staging/iio/dac/ad5624r_spi.c b/drivers/staging/iio/dac/ad5624r_spi.c
-index 0175cc0..a5b3776 100644
---- a/drivers/staging/iio/dac/ad5624r_spi.c
-+++ b/drivers/staging/iio/dac/ad5624r_spi.c
-@@ -276,7 +276,7 @@ error_free_dev:
- 	iio_free_device(indio_dev);
- error_disable_reg:
- 	if (!IS_ERR(reg))
--		regulator_disable(st->reg);
-+		regulator_disable(reg);
- error_put_reg:
- 	if (!IS_ERR(reg))
- 		regulator_put(reg);
+>>> Signed-off-by: Vasiliy Kulikov <segooon@gmail.com>
+>>> ---
+>>> I cannot compile this driver at all, so it is not tested.
 
+>> I can at least compile-test the patch...
 
+> No new errors/warnings are added by the patch.
 
+    Vasiliy, could you repost this patch? I'm not sure why Jeff hasn't taken 
+it, maybe he will now...
+
+WBR, Sergei
