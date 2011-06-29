@@ -1,42 +1,29 @@
-From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
-Date: Thu, 16 Jun 2011 16:44:20 +0000
-Subject: [PATCH] frv: remove unnecessary code
-Message-Id: <1308242660-29054-1-git-send-email-Gregory.Dietsche@cuw.edu>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 29 Jun 2011 18:40:53 +0000
+Subject: [patch] Staging: iio: uninitialized variable in sca3000_probe()
+Message-Id: <20110629184053.GI14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Jonathan Cameron <jic23@cam.ac.uk>, Manuel Stahl <manuel.stahl@iis.fraunhofer.de>, Arnd Bergmann <arnd@arndb.de>, linux-iio@vger.kernel.org, "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>, kernel-janitors@vger.kernel.org
 
-remove unnecessary code that matches this coccinelle pattern
-	if (...)
-		return ret;
-	return ret;
+We recently changed how "st" was allocated in 83f0422dc6a16
+"staging:iio:accel:sca3000: allocate state in iio_dev and use
+iio_priv to access."  Unfortunately this assignment was left out.
 
-Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
----
- arch/frv/mm/pgalloc.c |    8 +-------
- 1 files changed, 1 insertions(+), 7 deletions(-)
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/arch/frv/mm/pgalloc.c b/arch/frv/mm/pgalloc.c
-index c42c83d..4fb63a3 100644
---- a/arch/frv/mm/pgalloc.c
-+++ b/arch/frv/mm/pgalloc.c
-@@ -133,13 +133,7 @@ void pgd_dtor(void *pgd)
+diff --git a/drivers/staging/iio/accel/sca3000_core.c b/drivers/staging/iio/accel/sca3000_core.c
+index 4313f73..603f5bc 100644
+--- a/drivers/staging/iio/accel/sca3000_core.c
++++ b/drivers/staging/iio/accel/sca3000_core.c
+@@ -1133,6 +1133,7 @@ static int __devinit sca3000_probe(struct spi_device *spi)
+ 		goto error_ret;
+ 	}
  
- pgd_t *pgd_alloc(struct mm_struct *mm)
- {
--	pgd_t *pgd;
--
--	pgd = quicklist_alloc(0, GFP_KERNEL, pgd_ctor);
--	if (!pgd)
--		return pgd;
--
--	return pgd;
-+	return quicklist_alloc(0, GFP_KERNEL, pgd_ctor);
- }
- 
- void pgd_free(struct mm_struct *mm, pgd_t *pgd)
--- 
-1.7.2.5
-
++	st = iio_priv(indio_dev);
+ 	spi_set_drvdata(spi, indio_dev);
+ 	st->us = spi;
+ 	mutex_init(&st->lock);
