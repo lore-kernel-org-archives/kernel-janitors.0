@@ -1,37 +1,35 @@
-From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
-Date: Fri, 03 Jun 2011 02:06:09 +0000
-Subject: [PATCH 4/5] iwlegacy: propagate error return value
-Message-Id: <1307066770-27309-4-git-send-email-Gregory.Dietsche@cuw.edu>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 29 Jun 2011 10:10:25 +0000
+Subject: [patch] usb: remove unneeded NULL check in usb_disconnect()
+Message-Id: <20110629101025.GF14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
-In-Reply-To: <1307066770-27309-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sgruszka@redhat.com, linville@tuxdriver.com
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Dietsche <Gregory.Dietsche@cuw.edu>
+To: kernel-janitors@vger.kernel.org
 
-propogate the return value from iwl4965_get_tx_atten_grp instead
-of implicitly returning -EINVAL in the error case.
+We dereference "udev" and then immediately check whether it's NULL
+which makes the static checkers complain.  "udev" isn't NULL here so
+the check can be removed.
 
-Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/net/wireless/iwlegacy/iwl-4965.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Alan Stern says it can never be NULL and I double checked as well.
+usb_disconnect() is only called from hub.c and hcd.c.
 
-diff --git a/drivers/net/wireless/iwlegacy/iwl-4965.c b/drivers/net/wireless/iwlegacy/iwl-4965.c
-index 06dcee5..79e7ce6 100644
---- a/drivers/net/wireless/iwlegacy/iwl-4965.c
-+++ b/drivers/net/wireless/iwlegacy/iwl-4965.c
-@@ -915,7 +915,7 @@ static int iwl4965_fill_txpower_tbl(struct iwl_priv *priv, u8 band, u16 channel,
- 	if (txatten_grp < 0) {
- 		IWL_ERR(priv, "Can't find txatten group for channel %d.\n",
- 			  channel);
--		return -EINVAL;
-+		return txatten_grp;
- 	}
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index a428aa0..99fff6b 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -1636,11 +1636,6 @@ void usb_disconnect(struct usb_device **pdev)
+ 	int			i;
+ 	struct usb_hcd		*hcd = bus_to_hcd(udev->bus);
  
- 	IWL_DEBUG_TXPOWER(priv, "channel %d belongs to txatten group %d\n",
--- 
-1.7.2.5
-
+-	if (!udev) {
+-		pr_debug ("%s nodev\n", __func__);
+-		return;
+-	}
+-
+ 	/* mark the device as inactive, so any further urb submissions for
+ 	 * this device (and any of its children) will fail immediately.
+ 	 * this quiesces everything except pending urbs.
