@@ -1,46 +1,31 @@
-From: Peter Huewe <peterhuewe@gmx.de>
-Date: Mon, 06 Jun 2011 21:07:53 +0000
-Subject: [PATCH 1/2] s390/sclp_async: Use kstrtoul_from_user
-Message-Id: <1307394474-747-1-git-send-email-peterhuewe@gmx.de>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 29 Jun 2011 06:29:51 +0000
+Subject: [patch] wanxl: remove a stray irq enable
+Message-Id: <20110629062951.GD14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux390@de.ibm.com
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, Jan Glauber <jang@linux.vnet.ibm.com>, "David S. Miller" <davem@davemloft.net>, Frank Blaschka <frank.blaschka@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Krzysztof Halasa <khc@pm.waw.pl>
+Cc: "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This patch replaces the code for getting an unsigned long from a
-userspace buffer by a simple call to kstroul_from_user.
-This makes it easier to read and less error prone.
+This is error path calls unlock_irq() where we haven't disabled the
+IRQs.  The comment says that this error path can never happen.
 
-Kernel Version: v3.0-rc2
-
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/s390/char/sclp_async.c |   10 ++++------
- 1 files changed, 4 insertions(+), 6 deletions(-)
+This is a static checker fix and I don't have the hardware to test.
 
-diff --git a/drivers/s390/char/sclp_async.c b/drivers/s390/char/sclp_async.c
-index 7ad30e7..012d1a8 100644
---- a/drivers/s390/char/sclp_async.c
-+++ b/drivers/s390/char/sclp_async.c
-@@ -82,12 +82,10 @@ static int proc_handler_callhome(struct ctl_table *ctl, int write,
- 			return -EFAULT;
- 	} else {
- 		len = *count;
--		rc = copy_from_user(buf, buffer, sizeof(buf));
--		if (rc != 0)
--			return -EFAULT;
--		buf[sizeof(buf) - 1] = '\0';
--		if (strict_strtoul(buf, 0, &val) != 0)
--			return -EINVAL;
-+		rc = kstrtoul_from_user(buffer, len, 0, &val);
-+		if (rc)
-+			return rc;
-+
- 		if (val != 0 && val != 1)
- 			return -EINVAL;
- 		callhome_enabled = val;
--- 
-1.7.3.4
-
+diff --git a/drivers/net/wan/wanxl.c b/drivers/net/wan/wanxl.c
+index 8d7aa43..44b7071 100644
+--- a/drivers/net/wan/wanxl.c
++++ b/drivers/net/wan/wanxl.c
+@@ -284,7 +284,7 @@ static netdev_tx_t wanxl_xmit(struct sk_buff *skb, struct net_device *dev)
+                 printk(KERN_DEBUG "%s: transmitter buffer full\n", dev->name);
+ #endif
+ 		netif_stop_queue(dev);
+-		spin_unlock_irq(&port->lock);
++		spin_unlock(&port->lock);
+ 		return NETDEV_TX_BUSY;       /* request packet to be queued */
+ 	}
+ 
