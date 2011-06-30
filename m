@@ -1,73 +1,39 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 25 Jun 2011 05:54:46 +0000
-Subject: [patch] nouveau: error paths leak in nvc0_graph_construct_context()
-Message-Id: <20110625055446.GT14591@shale.localdomain>
+Date: Thu, 30 Jun 2011 09:01:31 +0000
+Subject: [patch] Staging: iio: release locks on error paths
+Message-Id: <20110630090131.GL14591@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, Emil Velikov <emil.l.velikov@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>
+To: kernel-janitors@vger.kernel.org
 
-Two of these error paths returned without freeing "ctx".
+There are a couple places here where we should have called
+mutex_unlock() before returning.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/gpu/drm/nouveau/nvc0_graph.c b/drivers/gpu/drm/nouveau/nvc0_graph.c
-index 39e9208..5aa3f9e 100644
---- a/drivers/gpu/drm/nouveau/nvc0_graph.c
-+++ b/drivers/gpu/drm/nouveau/nvc0_graph.c
-@@ -106,7 +106,8 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
- 		if (!nv_wait(dev, 0x409800, 0x80000000, 0x80000000)) {
- 			NV_ERROR(dev, "PGRAPH: HUB_SET_CHAN timeout\n");
- 			nvc0_graph_ctxctl_debug(dev);
--			return -EBUSY;
-+			ret = -EBUSY;
-+			goto err;
+diff --git a/drivers/staging/iio/accel/adis16201_core.c b/drivers/staging/iio/accel/adis16201_core.c
+index cbc59c5..2fd01ae 100644
+--- a/drivers/staging/iio/accel/adis16201_core.c
++++ b/drivers/staging/iio/accel/adis16201_core.c
+@@ -305,13 +305,17 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16201_addresses[chan->address][0];
+ 		ret = adis16201_spi_read_reg_16(indio_dev, addr, &val16);
+-		if (ret)
++		if (ret) {
++			mutex_unlock(&indio_dev->mlock);
+ 			return ret;
++		}
+ 
+ 		if (val16 & ADIS16201_ERROR_ACTIVE) {
+ 			ret = adis16201_check_status(indio_dev);
+-			if (ret)
++			if (ret) {
++				mutex_unlock(&indio_dev->mlock);
+ 				return ret;
++			}
  		}
- 	} else {
- 		nvc0_graph_load_context(chan);
-@@ -119,10 +120,9 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
- 	}
- 
- 	ret = nvc0_grctx_generate(chan);
--	if (ret) {
--		kfree(ctx);
--		return ret;
--	}
-+	if (ret)
-+		goto err;
-+
- 
- 	if (!nouveau_ctxfw) {
- 		nv_wr32(dev, 0x409840, 0x80000000);
-@@ -131,14 +131,13 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
- 		if (!nv_wait(dev, 0x409800, 0x80000000, 0x80000000)) {
- 			NV_ERROR(dev, "PGRAPH: HUB_CTX_SAVE timeout\n");
- 			nvc0_graph_ctxctl_debug(dev);
--			return -EBUSY;
-+			ret = -EBUSY;
-+			goto err;
- 		}
- 	} else {
- 		ret = nvc0_graph_unload_context_to(dev, chan->ramin->vinst);
--		if (ret) {
--			kfree(ctx);
--			return ret;
--		}
-+		if (ret)
-+			goto err;
- 	}
- 
- 	for (i = 0; i < priv->grctx_size; i += 4)
-@@ -146,6 +145,10 @@ nvc0_graph_construct_context(struct nouveau_channel *chan)
- 
- 	priv->grctx_vals = ctx;
- 	return 0;
-+
-+err:
-+	kfree(ctx);
-+	return ret;
- }
- 
- static int
+ 		val16 = val16 & ((1 << chan->scan_type.realbits) - 1);
+ 		if (chan->scan_type.sign = 's')
