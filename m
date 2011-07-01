@@ -1,56 +1,46 @@
-From: Julie Sullivan <kernelmail.jms@gmail.com>
-Date: Wed, 20 Jul 2011 21:03:52 +0000
-Subject: Re: [patch] skbuff: use kfree_skb() instead of kfree()
-Message-Id: <CAAVPGOMMeMCPdpUJPtWNnqgxSH3oT=8mnyYzio41mVPCFy2QUg@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Date: Fri, 01 Jul 2011 07:15:05 +0000
+Subject: Re: [PATCH 9/10] arch/arm/mach-omap2/clock.c: add missing clk_put
+Message-Id: <20110701071505.GB23145@atomide.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110720072343.GF6445@shale.localdomain>
-	<20110720072549.GG6445@shale.localdomain>
-	<1311147723.3113.116.camel@edumazet-laptop>
-	<20110720080109.GH6445@shale.localdomain>
-	<1311150084.2338.3.camel@edumazet-HP-Compaq-6005-Pro-SFF-PC>
-	<Pine.LNX.4.64.1107201035270.24382@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1107201035270.24382@ask.diku.dk>
+References: <1306948213-20767-9-git-send-email-julia@diku.dk>
+	<alpine.DEB.2.00.1106021526220.26852@utopia.booyaka.com>
+In-Reply-To: <alpine.DEB.2.00.1106021526220.26852@utopia.booyaka.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <julia@diku.dk>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>, Dan Carpenter <error27@gmail.com>, Shirley Ma <xma@us.ibm.com>, "David S. Miller" <davem@davemloft.net>, =?ISO-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
->> > > Also, dont forget to say its a patch for net-next-2.6
->> >
->> > If you're using linux-next, is there a way to tell which tree a
->> > patch came from? =A0Obviously in this case it's core networking, but
->> > in other cases how does that work?
->>
->> In this particular case, David will know for sure since patch is very
->> recent, but I wanted to make a general advice.
->>
->> Keep in mind David has to review dozens of patches _per_ day, so netdev
->> related patches need some extra cooperation from submitters to help the
->> maintainer.
->>
->> This extra cooperation means to test the patch on either net-next-2.6 or
->> net-2.6 tree ;)
->
-> Maybe there is some way to integrate such a suggestion in get_maintainers
-> or checkpatch? =A0Otherwise, those who work on the code in a more breadth
-> first way don't have much chance of knowing or remembering this advice.
->
-> julia
+* Paul Walmsley <paul@pwsan.com> [110602 14:22]:
+> On Wed, 1 Jun 2011, Julia Lawall wrote:
+> 
+> > From: Julia Lawall <julia@diku.dk>
+> > 
+> > Add missing call to clk_put.
+> > 
+> > A simplified version of the semantic match that finds this problem is as
+> > follows: (http://coccinelle.lip6.fr/)
+> > 
+> > // <smpl>
+> > @r exists@
+> > expression e1,e2;
+> > statement S;
+> > @@
+> > 
+> > e1 = clk_get@p1(...);
+> > ... when != e1 = e2
+> >     when != clk_put(e1)
+> >     when any
+> > if (...) { ... when != clk_put(e1)
+> >                when != if (...) { ... clk_put(e1) ... }
+> > * return@p3 ...;
+> >  } else S
+> > // </smpl>
+> > 
+> > Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> Acked-by: Paul Walmsley <paul@pwsan.com>
 
-I think Julia's observation is really on the nail, I wish there were
-some way of doing this? If new or random testers or reviewers out
-there aren't tracking/following a particular tree/project already -
-i.e. if they don't _know_ beforehand, aren't they going to just assume
-using linux-next is correct (at least that's what I do)?
-Knowing what branch to most productively test patches against
-beforehand might encourage more testers and submissions and also could
-make maintainer's jobs a bit easier.
+Adding this into devel-fixes branch.
 
-Cheers
-Julie
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Tony
