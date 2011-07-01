@@ -1,41 +1,33 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Sun, 24 Jul 2011 15:22:39 +0000
-Subject: Re: [patch] [media] pwc: precedence bug in pwc_init_controls()
-Message-Id: <4E2C38BF.80901@redhat.com>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Fri, 01 Jul 2011 01:10:53 +0000
+Subject: [PATCH v2] x86: smpboot: mark array as const
+Message-Id: <1309482653-23648-1-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110723185303.GA3711@shale.localdomain>
-In-Reply-To: <20110723185303.GA3711@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Hans Verkuil <hans.verkuil@cisco.com>, =?ISO-8859-1?Q?Jean-Fran=E7ois_Moine?= <moinejf@free.fr>, "open list:MEDIA INPUT INFRA..." <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi,
+This array is read-only. Make it explicit by marking as const.
 
-Thanks I've added your patch to my gspca/pwc tree and
-send an updated pull request to Mauro including your patch.
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+---
+ arch/x86/kernel/smpboot.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Regards,
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 9fd3137..9f548cb 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -438,7 +438,7 @@ static void impress_friends(void)
+ void __inquire_remote_apic(int apicid)
+ {
+ 	unsigned i, regs[] = { APIC_ID >> 4, APIC_LVR >> 4, APIC_SPIV >> 4 };
+-	char *names[] = { "ID", "VERSION", "SPIV" };
++	const char * const names[] = { "ID", "VERSION", "SPIV" };
+ 	int timeout;
+ 	u32 status;
+ 
+-- 
+1.7.2.5
 
-Hans
-
-
-On 07/23/2011 08:53 PM, Dan Carpenter wrote:
-> '!' has higher precedence than'&' so we need parenthesis here.
->
-> Signed-off-by: Dan Carpenter<error27@gmail.com>
->
-> diff --git a/drivers/media/video/pwc/pwc-v4l.c b/drivers/media/video/pwc/pwc-v4l.c
-> index e9a0e94..8c70e64 100644
-> --- a/drivers/media/video/pwc/pwc-v4l.c
-> +++ b/drivers/media/video/pwc/pwc-v4l.c
-> @@ -338,7 +338,7 @@ int pwc_init_controls(struct pwc_device *pdev)
->   	if (pdev->restore_factory)
->   		pdev->restore_factory->flags = V4L2_CTRL_FLAG_UPDATE;
->
-> -	if (!pdev->features&  FEATURE_MOTOR_PANTILT)
-> +	if (!(pdev->features&  FEATURE_MOTOR_PANTILT))
->   		return hdl->error;
->
->   	/* Motor pan / tilt / reset */
