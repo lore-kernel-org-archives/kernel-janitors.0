@@ -1,59 +1,65 @@
-From: Greg Dietsche <gregory.dietsche@cuw.edu>
-Date: Wed, 20 Jul 2011 02:03:57 +0000
-Subject: Re: [PATCH] frv: remove unnecessary code
-Message-Id: <4E26378D.9090500@cuw.edu>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 04 Jul 2011 14:11:43 +0000
+Subject: [PATCH 3/5] arch/arm/mach-omap2/smartreflex.c: add missing error-handling code
+Message-Id: <1309788705-22278-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1308242660-29054-1-git-send-email-Gregory.Dietsche@cuw.edu>
-In-Reply-To: <1308242660-29054-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 07/09/2011 10:29 AM, Greg Dietsche wrote:
-> On Thu, Jun 16, 2011 at 11:44:20AM -0500, Greg Dietsche wrote:
->    
->> remove unnecessary code that matches this coccinelle pattern
->> 	if (...)
->> 		return ret;
->> 	return ret;
->>
->> Signed-off-by: Greg Dietsche<Gregory.Dietsche@cuw.edu>
->> ---
->>   arch/frv/mm/pgalloc.c |    8 +-------
->>   1 files changed, 1 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/frv/mm/pgalloc.c b/arch/frv/mm/pgalloc.c
->> index c42c83d..4fb63a3 100644
->> --- a/arch/frv/mm/pgalloc.c
->> +++ b/arch/frv/mm/pgalloc.c
->> @@ -133,13 +133,7 @@ void pgd_dtor(void *pgd)
->>
->>   pgd_t *pgd_alloc(struct mm_struct *mm)
->>   {
->> -	pgd_t *pgd;
->> -
->> -	pgd = quicklist_alloc(0, GFP_KERNEL, pgd_ctor);
->> -	if (!pgd)
->> -		return pgd;
->> -
->> -	return pgd;
->> +	return quicklist_alloc(0, GFP_KERNEL, pgd_ctor);
->>   }
->>
->>   void pgd_free(struct mm_struct *mm, pgd_t *pgd)
->> -- 
->> 1.7.2.5
->>
->> --
->>      
-> Any feedback on this patch?
->
-> Thanks!
-> Greg
->
->    
-adding trivial@kernel.org to the cc list since this is trivial and no 
-one has picked up this patch to date.
+From: Julia Lawall <julia@diku.dk>
 
-Greg
+At this point, the ioremap has taken place, so the error handling code at
+the label err_iounmap should be used rather than returning directly.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier x;
+@@
+
+kfree(x)
+
+@@
+identifier r.x;
+expression E1!=0,E2,E3,E4;
+statement S;
+@@
+
+(
+if (<+...x...+>) S
+|
+if (...) { ... when != kfree(x)
+               when != if (...) { ... kfree(x); ... }
+               when != x = E3
+* return E1;
+}
+... when != x = E2
+if (...) { ... when != x = E4
+ kfree(x); ... return ...; }
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/arm/mach-omap2/smartreflex.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-omap2/smartreflex.c b/arch/arm/mach-omap2/smartreflex.c
+index fb7dc52..e8280df 100644
+--- a/arch/arm/mach-omap2/smartreflex.c
++++ b/arch/arm/mach-omap2/smartreflex.c
+@@ -891,7 +891,7 @@ static int __init omap_sr_probe(struct platform_device *pdev)
+ 		ret = sr_late_init(sr_info);
+ 		if (ret) {
+ 			pr_warning("%s: Error in SR late init\n", __func__);
+-			return ret;
++			goto err_iounmap;
+ 		}
+ 	}
+ 
+
