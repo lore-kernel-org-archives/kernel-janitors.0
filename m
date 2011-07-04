@@ -1,39 +1,77 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 27 Jul 2011 09:50:33 +0000
-Subject: [patch] btrfs: unlock on error in btrfs_file_llseek()
-Message-Id: <20110727095033.GI3824@shale.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 04 Jul 2011 14:11:42 +0000
+Subject: [PATCH 2/5] drivers/media/video: add missing kfree
+Message-Id: <1309788705-22278-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Josef Bacik <josef@redhat.com>
-Cc: Chris Mason <chris.mason@oracle.com>, "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There were some unlocks on error missing in a recent patch to
-btrfs_file_llseek().
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Free the recently allocated qcam in each case.
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 59cbdb1..94d8342 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1804,10 +1804,14 @@ static loff_t btrfs_file_llseek(struct file *file, loff_t offset, int origin)
- 		}
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier x;
+@@
+
+kfree(x)
+
+@@
+identifier r.x;
+expression E1!=0,E2,E3,E4;
+statement S;
+@@
+
+(
+if (<+...x...+>) S
+|
+if (...) { ... when != kfree(x)
+               when != if (...) { ... kfree(x); ... }
+               when != x = E3
+* return E1;
+}
+... when != x = E2
+if (...) { ... when != x = E4
+ kfree(x); ... return ...; }
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/media/video/bw-qcam.c |    1 +
+ drivers/media/video/c-qcam.c  |    1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/media/video/bw-qcam.c b/drivers/media/video/bw-qcam.c
+index c119350..0aad9cc 100644
+--- a/drivers/media/video/bw-qcam.c
++++ b/drivers/media/video/bw-qcam.c
+@@ -895,6 +895,7 @@ static struct qcam *qcam_init(struct parport *port)
+ 
+ 	if (v4l2_device_register(NULL, v4l2_dev) < 0) {
+ 		v4l2_err(v4l2_dev, "Could not register v4l2_device\n");
++		kfree(qcam);
+ 		return NULL;
  	}
  
--	if (offset < 0 && !(file->f_mode & FMODE_UNSIGNED_OFFSET))
--		return -EINVAL;
--	if (offset > inode->i_sb->s_maxbytes)
--		return -EINVAL;
-+	if (offset < 0 && !(file->f_mode & FMODE_UNSIGNED_OFFSET)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+	if (offset > inode->i_sb->s_maxbytes) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
+diff --git a/drivers/media/video/c-qcam.c b/drivers/media/video/c-qcam.c
+index 24fc009..351b2db 100644
+--- a/drivers/media/video/c-qcam.c
++++ b/drivers/media/video/c-qcam.c
+@@ -752,6 +752,7 @@ static struct qcam *qcam_init(struct parport *port)
  
- 	/* Special lock needed here? */
- 	if (offset != file->f_pos) {
+ 	if (v4l2_device_register(NULL, v4l2_dev) < 0) {
+ 		v4l2_err(v4l2_dev, "Could not register v4l2_device\n");
++		kfree(qcam);
+ 		return NULL;
+ 	}
+ 
+
