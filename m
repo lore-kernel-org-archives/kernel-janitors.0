@@ -1,34 +1,43 @@
-From: Alan Cox <alan@linux.intel.com>
-Date: Fri, 08 Jul 2011 08:25:13 +0000
-Subject: Re: [PATCH] Staging: gma500: remove unneeded check in
-Message-Id: <20110708092513.5b6c0538@bob.linux.org.uk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 06 Jul 2011 07:40:24 +0000
+Subject: [patch 2/2] [SCSI] bfa: test is always false in bfa_sfp_media_get()
+Message-Id: <20110706074024.GE18655@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110708072355.GU18655@shale.localdomain>
-In-Reply-To: <20110708072355.GU18655@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jing Huang <huangj@brocade.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "open list:BROCADE BFA FC SC..." <linux-scsi@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 8 Jul 2011 10:23:55 +0300
-Dan Carpenter <error27@gmail.com> wrote:
+e10g.r.e10g_unall is only 1 bit so "if (e10g.r.e10g_unall & 0x80)"
+is always false.  e10g is a union between an unsigned char and named
+bitfields.  The intent here was to test the named bitfield by
+itself.
 
-> The list cursor is never NULL in a list_for_each_entry() loop.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/staging/gma500/mdfld_intel_display.c
-> b/drivers/staging/gma500/mdfld_intel_display.c index 1447a5b..fa84990
-> 100644 --- a/drivers/staging/gma500/mdfld_intel_display.c
-> +++ b/drivers/staging/gma500/mdfld_intel_display.c
-> @@ -1093,8 +1093,6 @@ static int mdfld_crtc_mode_set(struct drm_crtc
-> *crtc, memcpy(&psb_intel_crtc->saved_adjusted_mode, adjusted_mode,
-> sizeof(struct drm_display_mode)); 
->  	list_for_each_entry(connector, &mode_config->connector_list,
-> head) {
-> -		if(!connector)
-> -			continue;
->  			
->  		encoder = connector->encoder;
+We can change the previous tests as well.  That improves the
+readability and it looks like it fixes a endian bug as well.
 
-All three added to the my next patch stack
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+I don't understand where __BIGENDIAN is defined.  Only this driver
+references it.  How does that work?
+
+diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
+index 052373b..090a19d 100644
+--- a/drivers/scsi/bfa/bfa_ioc.c
++++ b/drivers/scsi/bfa/bfa_ioc.c
+@@ -3589,11 +3589,11 @@ bfa_sfp_media_get(struct bfa_sfp_s *sfp)
+ 			 (xmtr_tech & SFP_XMTR_TECH_SA))
+ 			*media = BFA_SFP_MEDIA_SW;
+ 		/* Check 10G Ethernet Compilance code */
+-		else if (e10g.b & 0x10)
++		else if (e10g.r.e10g_sr)
+ 			*media = BFA_SFP_MEDIA_SW;
+-		else if (e10g.b & 0x60)
++		else if (e10g.r.e10g_lr && e10g.r.e10g_lrm)
+ 			*media = BFA_SFP_MEDIA_LW;
+-		else if (e10g.r.e10g_unall & 0x80)
++		else if (e10g.r.e10g_unall)
+ 			*media = BFA_SFP_MEDIA_UNKNOWN;
+ 		else
+ 			bfa_trc(sfp, 0);
