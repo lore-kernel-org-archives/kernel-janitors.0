@@ -1,41 +1,31 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Jul 2011 07:28:12 +0000
-Subject: [patch] packet: add an unlock on error in fanout_add()
-Message-Id: <20110708072812.GX18655@shale.localdomain>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Fri, 08 Jul 2011 08:01:22 +0000
+Subject: Re: [patch] packet: add an unlock on error in fanout_add()
+Message-Id: <1310112082.2333.3.camel@edumazet-HP-Compaq-6005-Pro-SFF-PC>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110708072812.GX18655@shale.localdomain>
+In-Reply-To: <20110708072812.GX18655@shale.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>, Changli Gao <xiaosuo@gmail.com>, Ben Greear <greearb@candelatech.com>, Neil Horman <nhorman@tuxdriver.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <error27@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Changli Gao <xiaosuo@gmail.com>, Ben Greear <greearb@candelatech.com>, Neil Horman <nhorman@tuxdriver.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We need to release the "fanout_mutex" here.
+Le vendredi 08 juillet 2011 =C3=A0 10:28 +0300, Dan Carpenter a =C3=A9crit :
+> We need to release the "fanout_mutex" here.
+>=20
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+>=20
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Thanks, was fixed yesterday :
 
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index aec50a1..3cbe950 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -589,8 +589,10 @@ static int fanout_add(struct sock *sk, u16 id, u16 type_flags)
- 			break;
- 		}
- 	}
--	if (match && match->defrag != defrag)
--		return -EINVAL;
-+	if (match && match->defrag != defrag) {
-+		err = -EINVAL;
-+		goto out_unlock;
-+	}
- 	if (!match) {
- 		match = kzalloc(sizeof(*match), GFP_KERNEL);
- 		if (match) {
-@@ -626,6 +628,8 @@ static int fanout_add(struct sock *sk, u16 id, u16 type_flags)
- 			}
- 		}
- 	}
-+
-+out_unlock:
- 	mutex_unlock(&fanout_mutex);
- 	return err;
- }
+http://git.kernel.org/?p=3Dlinux/kernel/git/davem/net-next-2.6.git;a=3Dcomm=
+it;h=AFe62c68cd3562c5f8e3ea293e82906dd5a87936
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
