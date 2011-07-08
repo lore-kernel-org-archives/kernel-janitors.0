@@ -1,76 +1,28 @@
-From: Greg Dietsche <gregory.dietsche@cuw.edu>
-Date: Wed, 20 Jul 2011 02:14:28 +0000
-Subject: Re: [PATCH] ata: remove unnecessary code
-Message-Id: <4E263A04.3030207@cuw.edu>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 08 Jul 2011 07:27:24 +0000
+Subject: [patch] dcbnl: unlock on an error path in dcbnl_cee_fill()
+Message-Id: <20110708072724.GW18655@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1308242361-28859-1-git-send-email-Gregory.Dietsche@cuw.edu> <4E263769.9040500@cuw.edu> <4E2638FB.4080103@pobox.com>
-In-Reply-To: <4E2638FB.4080103@pobox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org, tj@kernel.org
+To: Shmulik Ravid <shmulikr@broadcom.com>
+Cc: "David S. Miller" <davem@davemloft.net>, John Fastabend <john.r.fastabend@intel.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+We need to release "dcb_lock" which we took on the previous line.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-On 07/19/2011 09:10 PM, Jeff Garzik wrote:
-> On 07/19/2011 10:03 PM, Greg Dietsche wrote:
->>
->>
->> On 06/16/2011 11:39 AM, Greg Dietsche wrote:
->>> Compile tested.
->>> remove unnecessary code that matches this coccinelle pattern
->>> if (...)
->>> return ret;
->>> return ret;
->>>
->>> Signed-off-by: Greg Dietsche<Gregory.Dietsche@cuw.edu>
->>
->> Acked-by: Tejun Heo<tj@kernel.org>
->>
->>
->>> ---
->>> drivers/ata/pata_acpi.c | 8 +-------
->>> 1 files changed, 1 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/ata/pata_acpi.c b/drivers/ata/pata_acpi.c
->>> index 91949d9..54145ed 100644
->>> --- a/drivers/ata/pata_acpi.c
->>> +++ b/drivers/ata/pata_acpi.c
->>> @@ -195,8 +195,6 @@ static int pacpi_port_start(struct ata_port *ap)
->>> struct pci_dev *pdev = to_pci_dev(ap->host->dev);
->>> struct pata_acpi *acpi;
->>>
->>> - int ret;
->>> -
->>> if (ap->acpi_handle = NULL)
->>> return -ENODEV;
->>>
->>> @@ -205,11 +203,7 @@ static int pacpi_port_start(struct ata_port *ap)
->>> return -ENOMEM;
->>> acpi->mask[0] = pacpi_discover_modes(ap,&ap->link.device[0]);
->>> acpi->mask[1] = pacpi_discover_modes(ap,&ap->link.device[1]);
->>> - ret = ata_bmdma_port_start(ap);
->>> - if (ret< 0)
->>> - return ret;
->>> -
->>> - return ret;
->>> + return ata_bmdma_port_start(ap);
->>> }
->>>
->>> static struct scsi_host_template pacpi_sht = {
->> This was acked by TJ, but seems to be lost in the shuffle thus far. I'm
->> adding trivial@kernel.org to the cc list since this is trivial and no
->> one has picked up this patch to date.
->
-> It's in libata-dev, so it's been picked up...
->
-> We are in -rc, so it won't show up in a kernel until 3.0 is released, 
-> and the merge window opens again.
->
->     Jeff
->
-ok, sorry about that! I'd been watching the linux-next tree to see which 
-things were picked up so far.
-
-Greg
+diff --git a/net/dcb/dcbnl.c b/net/dcb/dcbnl.c
+index 6a015f2..3cb56af 100644
+--- a/net/dcb/dcbnl.c
++++ b/net/dcb/dcbnl.c
+@@ -1409,7 +1409,7 @@ static int dcbnl_cee_fill(struct sk_buff *skb, struct net_device *netdev)
+ 	spin_lock(&dcb_lock);
+ 	app = nla_nest_start(skb, DCB_ATTR_CEE_APP_TABLE);
+ 	if (!app)
+-		goto nla_put_failure;
++		goto dcb_unlock;
+ 
+ 	list_for_each_entry(itr, &dcb_app_list, list) {
+ 		if (strncmp(itr->name, netdev->name, IFNAMSIZ) = 0) {
