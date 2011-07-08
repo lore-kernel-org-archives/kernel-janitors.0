@@ -1,63 +1,28 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 28 Jul 2011 12:46:03 +0000
-Subject: [PATCH 3/6] drivers/net/niu.c: adjust array index
-Message-Id: <1311857165-14780-4-git-send-email-julia@diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 08 Jul 2011 07:21:15 +0000
+Subject: [patch] NFC: pn533: use after free in pn533_disconnect()
+Message-Id: <20110708072115.GR18655@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1311857165-14780-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1311857165-14780-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Ben Hutchings <bhutchings@solarflare.com>, Stephen Hemminger <shemminger@vyatta.com>, Eric Dumazet <eric.dumazet@gmail.com>, =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Samuel Ortiz <sameo@linux.intel.com>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+We freed "dev" on the line before.
 
-Convert array index from the loop bound to the loop index.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-A simplified version of the semantic patch that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e1,e2,ar;
-@@
-
-for(e1 = 0; e1 < e2; e1++) { <...
-  ar[
-- e2
-+ e1
-  ]
-  ...> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-Not tested.
-
- drivers/net/niu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff -u -p a/drivers/net/niu.c b/drivers/net/niu.c
---- a/drivers/net/niu.c
-+++ b/drivers/net/niu.c
-@@ -9201,7 +9201,7 @@ static int __devinit niu_ldg_init(struct
+diff --git a/drivers/nfc/pn533.c b/drivers/nfc/pn533.c
+index 0372315..c77e054 100644
+--- a/drivers/nfc/pn533.c
++++ b/drivers/nfc/pn533.c
+@@ -1596,7 +1596,7 @@ static void pn533_disconnect(struct usb_interface *interface)
+ 	usb_free_urb(dev->out_urb);
+ 	kfree(dev);
  
- 	first_chan = 0;
- 	for (i = 0; i < port; i++)
--		first_chan += parent->rxchan_per_port[port];
-+		first_chan += parent->rxchan_per_port[i];
- 	num_chan = parent->rxchan_per_port[port];
+-	nfc_dev_info(&dev->interface->dev, "NXP PN533 NFC device disconnected");
++	nfc_dev_info(&interface->dev, "NXP PN533 NFC device disconnected");
+ }
  
- 	for (i = first_chan; i < (first_chan + num_chan); i++) {
-@@ -9217,7 +9217,7 @@ static int __devinit niu_ldg_init(struct
- 
- 	first_chan = 0;
- 	for (i = 0; i < port; i++)
--		first_chan += parent->txchan_per_port[port];
-+		first_chan += parent->txchan_per_port[i];
- 	num_chan = parent->txchan_per_port[port];
- 	for (i = first_chan; i < (first_chan + num_chan); i++) {
- 		err = niu_ldg_assign_ldn(np, parent,
-
+ static struct usb_driver pn533_driver = {
