@@ -1,71 +1,59 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 12 Jul 2011 18:14:00 +0000
-Subject: Re: [patch] cifs: update limit for snprintf() in cifs_construct_tcon()
-Message-Id: <CAH2r5mu6TuWs6P8ZeR1=KCv8BLSu0_Z8b2uoVUqXhw55=39CWg@mail.gmail.com>
+From: Greg Dietsche <greg@gregd.org>
+Date: Sat, 09 Jul 2011 15:21:11 +0000
+Subject: Re: [PATCH] ata: remove unnecessary code
+Message-Id: <20110709152111.GA12581@farmergreg.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110617103059.GE2520@shale.localdomain>
-In-Reply-To: <20110617103059.GE2520-z0WHZYlhLlzP0Z7Jsv878P8+0UxHXcjY@public.gmane.org>
+References: <1308242361-28859-1-git-send-email-Gregory.Dietsche@cuw.edu>
+In-Reply-To: <1308242361-28859-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "open list:COMMON INTERNET F..." <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:COMMON INTERNET F..." <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jgarzik@pobox.com
+Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org, Gregory.Dietsche@cuw.edu
 
-What about the following alternative, so we dont rely on the magic
-number as much.
-
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index dbd669c..ccc1afa 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -3485,7 +3485,7 @@ cifs_construct_tcon(struct cifs_sb_info
-*cifs_sb, uid_t fsuid)
- 		goto out;
- 	}
-
--	snprintf(username, MAX_USERNAME_SIZE, "krb50x%x", fsuid);
-+	snprintf(username, sizeof(username), "krb50x%x", fsuid);
- 	vol_info->username =3D username;
- 	vol_info->local_nls =3D cifs_sb->local_nls;
- 	vol_info->linux_uid =3D fsuid;
-
-On Fri, Jun 17, 2011 at 5:31 AM, Dan Carpenter <error27@gmail.com> wrote:
-> In 34c87901e113 "Shrink stack space usage in cifs_construct_tcon" we
-> change the size of the username name buffer from MAX_USERNAME_SIZE
-> (256) to 28. =A0This call to snprintf() needs to be updated as well.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+On Thu, Jun 16, 2011 at 11:39:21AM -0500, Greg Dietsche wrote:
+> Compile tested.
+> remove unnecessary code that matches this coccinelle pattern
+> 	if (...)
+> 		return ret;
+> 	return ret;
+> 
+> Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
 > ---
-> I know that everyone is going to complain about using a literal but
-> it's local to this function and it's commented in the lines above.
-> I'm not opposed to using a define, I suppose, if you give me a good
-> one, but really I'd just as soon leave it as is. =A0*eye roll in
-> advance*.
->
-> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> index 12cf72d..efd1c7a 100644
-> --- a/fs/cifs/connect.c
-> +++ b/fs/cifs/connect.c
-> @@ -3451,7 +3451,7 @@ cifs_construct_tcon(struct cifs_sb_info *cifs_sb, u=
-id_t fsuid)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto out;
-> =A0 =A0 =A0 =A0}
->
-> - =A0 =A0 =A0 snprintf(username, MAX_USERNAME_SIZE, "krb50x%x", fsuid);
-> + =A0 =A0 =A0 snprintf(username, 28, "krb50x%x", fsuid);
-> =A0 =A0 =A0 =A0vol_info->username =3D username;
-> =A0 =A0 =A0 =A0vol_info->local_nls =3D cifs_sb->local_nls;
-> =A0 =A0 =A0 =A0vol_info->linux_uid =3D fsuid;
->
+>  drivers/ata/pata_acpi.c |    8 +-------
+>  1 files changed, 1 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/ata/pata_acpi.c b/drivers/ata/pata_acpi.c
+> index 91949d9..54145ed 100644
+> --- a/drivers/ata/pata_acpi.c
+> +++ b/drivers/ata/pata_acpi.c
+> @@ -195,8 +195,6 @@ static int pacpi_port_start(struct ata_port *ap)
+>  	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
+>  	struct pata_acpi *acpi;
+>  
+> -	int ret;
+> -
+>  	if (ap->acpi_handle = NULL)
+>  		return -ENODEV;
+>  
+> @@ -205,11 +203,7 @@ static int pacpi_port_start(struct ata_port *ap)
+>  		return -ENOMEM;
+>  	acpi->mask[0] = pacpi_discover_modes(ap, &ap->link.device[0]);
+>  	acpi->mask[1] = pacpi_discover_modes(ap, &ap->link.device[1]);
+> -	ret = ata_bmdma_port_start(ap);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return ret;
+> +	return ata_bmdma_port_start(ap);
+>  }
+>  
+>  static struct scsi_host_template pacpi_sht = {
+> -- 
+> 1.7.2.5
+> 
+any feedback on this patch?
 
+thanks!
+Greg
 
-
---=20
-Thanks,
-
-Steve
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
