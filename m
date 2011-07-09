@@ -1,43 +1,66 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 25 Jul 2011 10:54:29 +0000
-Subject: Re: ac97: quiet make W=1 noise by initializing all fields of snd_ac97_codec_id_vendors and snd_ac97_
-Message-Id: <s5hzkk2y6je.wl%tiwai@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 09 Jul 2011 19:23:26 +0000
+Subject: [PATCH] drivers/staging/hv/blkvsc_drv.c: eliminate NULL pointer dereference
+Message-Id: <1310239406-9592-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <788178.91280.qm@smtp129.mail.ukl.yahoo.com>
-In-Reply-To: <788178.91280.qm@smtp129.mail.ukl.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lionel Debroux <lionel_debroux@yahoo.fr>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Emese Revfy <re.emese@gmail.com>, Kees Cook <kees.cook@canonical.com>
+To: Hank Janssen <hjanssen@microsoft.com>
+Cc: kernel-janitors@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>, Greg Kroah-Hartman <gregkh@suse.de>, "K. Y. Srinivasan" <kys@microsoft.com>, Abhishek Kane <v-abkane@microsoft.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-At Sun, 24 Jul 2011 11:40:56 +0200,
-Lionel Debroux wrote:
-> 
-> make W=1 bitterly complains about missing initializations in
-> snd_ac97_codec_id_vendors and snd_ac97_codec_ids.
-> Initialize the last field, to make the output of make W=1 more readable.
-> 
-> Patch against current Linus tree.
+From: Julia Lawall <julia@diku.dk>
 
-If we change the whole table entries, it'd be better to use C99 style
-init, e.g.
+In this code, blkvsc_req is allocated in the cache blkdev->request_pool,
+but freed in the first case to the cache blkvsc_req->dev->request_pool.
+blkvsc_req->dev is subsequently initialized to blkdev, making these the
+same at the second call to kmem_cache_free.  But at the point of the first
+call, blkvsc_req->dev is NULL.  The second call is changed too, for
+uniformity.
 
-#define _CODEC(_id, _mask, _name) \
-	.id = _id, .mask = _mask, .name = _name
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-static const struct ac97_codec_id snd_ac97_codec_id_vendors[] = {
-{ _CODEC(0x41445300, 0xffffff00, "Analog Devices"),},
-...
+// <smpl>
+@@
+expression x,e,e1,e2,e3;
+@@
 
-static const struct ac97_codec_id snd_ac97_codec_ids[] = {
-{ _CODEC(0x41445303, 0xffffffff, "AD1819"), .patch = patch_ad1819 },
-...
-{ _CODEC(0x53494c20, 0xffffffe0, "Si3036,8"), .patch = mpatch_si3036, \
-  .mpatch = mpatch_si3036, .flags = AC97_MODEM_PATCH },
-...
+x = \(kmem_cache_alloc\|kmem_cache_zalloc\)(e1,e2)
+... when != x = e
+(
+kmem_cache_free(e1,x);
+|
+?-kmem_cache_free(e3,x);
++kmem_cache_free(e1,x);
+)
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-thanks,
+---
+ drivers/staging/hv/blkvsc_drv.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Takashi
+diff -u -p a/drivers/staging/hv/blkvsc_drv.c b/drivers/staging/hv/blkvsc_drv.c
+--- a/drivers/staging/hv/blkvsc_drv.c
++++ b/drivers/staging/hv/blkvsc_drv.c
+@@ -325,7 +325,7 @@ static int blkvsc_do_operation(struct bl
+ 
+ 	page_buf = alloc_page(GFP_KERNEL);
+ 	if (!page_buf) {
+-		kmem_cache_free(blkvsc_req->dev->request_pool, blkvsc_req);
++		kmem_cache_free(blkdev->request_pool, blkvsc_req);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -422,7 +422,7 @@ cleanup:
+ 
+ 	__free_page(page_buf);
+ 
+-	kmem_cache_free(blkvsc_req->dev->request_pool, blkvsc_req);
++	kmem_cache_free(blkdev->request_pool, blkvsc_req);
+ 
+ 	return ret;
+ }
+
