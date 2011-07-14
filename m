@@ -1,25 +1,81 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 12 Jul 2011 18:20:39 +0000
-Subject: Re: [patch] cifs: update limit for snprintf() in
-Message-Id: <20110712182039.GJ18655@shale.localdomain>
+Date: Thu, 14 Jul 2011 09:48:59 +0000
+Subject: [patch 2/2 v2] [SCSI] bfa: fix some endian bugs
+Message-Id: <20110714094859.GV18655@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110617103059.GE2520@shale.localdomain>
- <CAH2r5mu6TuWs6P8ZeR1=KCv8BLSu0_Z8b2uoVUqXhw55=39CWg@mail.gmail.com>
-In-Reply-To: <CAH2r5mu6TuWs6P8ZeR1=KCv8BLSu0_Z8b2uoVUqXhw55=39CWg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+References: <20110706074024.GE18655@shale.localdomain>
+ <E5313AF6F2BFD14293E5FD0F94750F86A82D670214@HQ1-EXCH01.corp.brocade.com>
+In-Reply-To: <E5313AF6F2BFD14293E5FD0F94750F86A82D670214@HQ1-EXCH01.corp.brocade.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "open list:COMMON INTERNET F..." <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:COMMON INTERNET F..." <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jing Huang <huangj@Brocade.COM>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "open list:BROCADE BFA FC SC..." <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Krishna Gudipati <kgudipat@Brocade.com>
 
-On Tue, Jul 12, 2011 at 01:14:00PM -0500, Steve French wrote:
-> What about the following alternative, so we dont rely on the magic
-> number as much.
-> 
+The initial problem that I noticed was that
+"if (e10g.r.e10g_unall & 0x80)" is always false because e10g_unall
+is only one bit wide.
 
-Yeah.  That's better.  Want me to do anything or will you just give
-me the reported-by?
+It should be testing just "if (e10g.r.e10g_unall)" instead, but that
+also has a problem on big endian systems because there was a typo
+where it said __BIGENDIAN and it should have said __BIG_ENDIAN.
 
-regards,
-dan carpenter
+Also I updated the other two tests in the if else block to match as
+well.
 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/net/bna/bfi.h b/drivers/net/bna/bfi.h
+index 6050379..b2611ef 100644
+--- a/drivers/net/bna/bfi.h
++++ b/drivers/net/bna/bfi.h
+@@ -104,7 +104,7 @@ union bfi_addr_u {
+  * Scatter Gather Element
+  */
+ struct bfi_sge {
+-#ifdef __BIGENDIAN
++#ifdef __BIG_ENDIAN
+ 	u32	flags:2,
+ 			rsvd:2,
+ 			sg_len:28;
+diff --git a/drivers/scsi/bfa/bfa_defs.h b/drivers/scsi/bfa/bfa_defs.h
+index ed8d31b..1cefb11 100644
+--- a/drivers/scsi/bfa/bfa_defs.h
++++ b/drivers/scsi/bfa/bfa_defs.h
+@@ -731,7 +731,7 @@ struct sfp_mem_s {
+ union sfp_xcvr_e10g_code_u {
+ 	u8		b;
+ 	struct {
+-#ifdef __BIGENDIAN
++#ifdef __BIG_ENDIAN
+ 		u8	e10g_unall:1;   /* 10G Ethernet compliance */
+ 		u8	e10g_lrm:1;
+ 		u8	e10g_lr:1;
+@@ -811,7 +811,7 @@ union sfp_xcvr_fc2_code_u {
+ union sfp_xcvr_fc3_code_u {
+ 	u8		b;
+ 	struct {
+-#ifdef __BIGENDIAN
++#ifdef __BIG_ENDIAN
+ 		u8	rsv4:1;
+ 		u8	mb800:1;    /* 800 Mbytes/sec */
+ 		u8	mb1600:1;   /* 1600 Mbytes/sec */
+diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
+index d6c2bf3..bc678c7 100644
+--- a/drivers/scsi/bfa/bfa_ioc.c
++++ b/drivers/scsi/bfa/bfa_ioc.c
+@@ -3589,11 +3589,11 @@ bfa_sfp_media_get(struct bfa_sfp_s *sfp)
+ 			 (xmtr_tech & SFP_XMTR_TECH_SA))
+ 			*media = BFA_SFP_MEDIA_SW;
+ 		/* Check 10G Ethernet Compilance code */
+-		else if (e10g.b & 0x10)
++		else if (e10g.r.e10g_sr)
+ 			*media = BFA_SFP_MEDIA_SW;
+-		else if (e10g.b & 0x60)
++		else if (e10g.r.e10g_lr && e10g.r.e10g_lrm)
+ 			*media = BFA_SFP_MEDIA_LW;
+-		else if (e10g.r.e10g_unall & 0x80)
++		else if (e10g.r.e10g_unall)
+ 			*media = BFA_SFP_MEDIA_UNKNOWN;
+ 		else
+ 			bfa_trc(sfp, 0);
