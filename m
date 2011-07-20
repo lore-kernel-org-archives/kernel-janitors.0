@@ -1,41 +1,34 @@
-From: Mathias Krause <minipli@googlemail.com>
-Date: Sat, 30 Jul 2011 12:01:59 +0000
-Subject: [PATCH] tty: clearify structure initializer in notify_write()
-Message-Id: <1312027319-1402-1-git-send-email-minipli@googlemail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 20 Jul 2011 08:51:49 +0000
+Subject: [patch net-next-2.6 v2] skbuff: fix error handling in pskb_copy()
+Message-Id: <20110720085149.GI6445@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110720072343.GF6445@shale.localdomain>
+In-Reply-To: <20110720072343.GF6445@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mathias Krause <minipli@googlemail.com>
+To: Shirley Ma <xma@us.ibm.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Even though this is valid C we should not mix C99 initializers with
-obfuscated ANSI C. Stick to C99 and initialize c by its name.
+There are two problems:
+1) "n" was allocated with alloc_skb() so we should free it with
+   kfree_skb() instead of regular kfree().
+2) We return the freed pointer instead of NULL.
 
-Found by clang:
-drivers/tty/vt/vt.c:262:55: warning: explicitly assigning a variable of
-type 'unsigned int' to itself [-Wself-assign]
-    struct vt_notifier_param param = { .vc = vc, unicode = unicode };
-                                                 ~~~~~~~ ^ ~~~~~~~
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Mathias Krause <minipli@googlemail.com>
----
- drivers/tty/vt/vt.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index b3915b7..e716839 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -259,7 +259,7 @@ EXPORT_SYMBOL_GPL(unregister_vt_notifier);
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index d220119..2beda82 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -799,7 +799,8 @@ struct sk_buff *pskb_copy(struct sk_buff *skb, gfp_t gfp_mask)
  
- static void notify_write(struct vc_data *vc, unsigned int unicode)
- {
--	struct vt_notifier_param param = { .vc = vc, unicode = unicode };
-+	struct vt_notifier_param param = { .vc = vc, .c = unicode };
- 	atomic_notifier_call_chain(&vt_notifier_list, VT_WRITE, &param);
- }
- 
--- 
-1.5.6.5
-
+ 		if (skb_shinfo(skb)->tx_flags & SKBTX_DEV_ZEROCOPY) {
+ 			if (skb_copy_ubufs(skb, gfp_mask)) {
+-				kfree(n);
++				kfree_skb(n);
++				n = NULL;
+ 				goto out;
+ 			}
+ 			skb_shinfo(skb)->tx_flags &= ~SKBTX_DEV_ZEROCOPY;
