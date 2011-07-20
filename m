@@ -1,45 +1,29 @@
-From: Greg Dietsche <greg@farmergreg.com>
-Date: Fri, 01 Jul 2011 01:13:57 +0000
-Subject: Re: [PATCH] x86: smpboot: mark array as const
-Message-Id: <20110701011357.GA18952@farmergreg.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 20 Jul 2011 07:23:43 +0000
+Subject: [patch] skbuff: use kfree_skb() instead of kfree()
+Message-Id: <20110720072343.GF6445@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1309473108-5337-1-git-send-email-Gregory.Dietsche@cuw.edu>
-In-Reply-To: <1309473108-5337-1-git-send-email-Gregory.Dietsche@cuw.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Shirley Ma <xma@us.ibm.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 30, 2011 at 05:23:03PM -0700, H. Peter Anvin wrote:
-> On 06/30/2011 03:31 PM, Greg Dietsche wrote:
-> > This array is read-only. Make it explicit by marking as const.
-> > 
-> > Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
-> > ---
-> >  arch/x86/kernel/smpboot.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> > index 9fd3137..4218569 100644
-> > --- a/arch/x86/kernel/smpboot.c
-> > +++ b/arch/x86/kernel/smpboot.c
-> > @@ -438,7 +438,7 @@ static void impress_friends(void)
-> >  void __inquire_remote_apic(int apicid)
-> >  {
-> >  	unsigned i, regs[] = { APIC_ID >> 4, APIC_LVR >> 4, APIC_SPIV >> 4 };
-> > -	char *names[] = { "ID", "VERSION", "SPIV" };
-> > +	const char const *names[] = { "ID", "VERSION", "SPIV" };
-> >  	int timeout;
-> 
-> Did you mean "const char * const" here?
-doh! Yes, i did! Sorry I missed this email the first time around - my
-procmail rules need a little work....
+"n" was allocated with alloc_skb() so we should free it with
+kfree_skb() instead of regular kfree().
 
-Greg
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> 	-hpa
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index d220119..cc0c6f0 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -799,7 +799,7 @@ struct sk_buff *pskb_copy(struct sk_buff *skb, gfp_t gfp_mask)
+ 
+ 		if (skb_shinfo(skb)->tx_flags & SKBTX_DEV_ZEROCOPY) {
+ 			if (skb_copy_ubufs(skb, gfp_mask)) {
+-				kfree(n);
++				kfree_skb(n);
+ 				goto out;
+ 			}
+ 			skb_shinfo(skb)->tx_flags &= ~SKBTX_DEV_ZEROCOPY;
