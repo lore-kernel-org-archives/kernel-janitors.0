@@ -1,21 +1,26 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 08 Jul 2011 16:02:40 +0000
-Subject: Re: [patch] dcbnl: unlock on an error path in dcbnl_cee_fill()
-Message-Id: <20110708.090240.1560541664509139277.davem@davemloft.net>
+From: Noah Watkins <noahwatkins@gmail.com>
+Date: Fri, 22 Jul 2011 17:03:57 +0000
+Subject: Question about submitting patches
+Message-Id: <CAB2gnbW=umjGrVH6Bi6+hoUN6w1J0ZzefMhSueSicz6NKGE=xQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110708072724.GW18655@shale.localdomain>
-In-Reply-To: <20110708072724.GW18655@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: error27@gmail.com
-Cc: shmulikr@broadcom.com, john.r.fastabend@intel.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 8 Jul 2011 10:27:24 +0300
+Pardon the newbie question here, this email is in reference to two
+additional emails that I just sent to janitors list:
 
-> We need to release "dcb_lock" which we took on the previous line.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+  [PATCH 1/2] zram: make global var "devices" use unique name
+  [PATCH 2/2] zram: make global var "num_devices" use unique name
 
-Applied, thanks!
+Originally I had submitted these patches to Nitin Gupta (zram guy),
+Greg KH, and linux-next
+
+I didn't receive a response, but then realized I didn't actually know
+what to expect. I checked out all the relevant docs on submitting
+patches, but it all seems a bit nebulous still. Does this submission
+look OK?
+
+Thanks,
+Noah
