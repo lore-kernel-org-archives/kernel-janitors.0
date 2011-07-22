@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Fri, 22 Jul 2011 18:14:15 +0000
+From: Noah Watkins <jayhawk@cs.ucsc.edu>
+Date: Fri, 22 Jul 2011 18:20:20 +0000
 Subject: Re: Question about submitting patches
-Message-Id: <20110722111415.3896be5c.rdunlap@xenotime.net>
+Message-Id: <741659E4-AE66-4AA2-84CA-C0133510F15F@cs.ucsc.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAB2gnbW=umjGrVH6Bi6+hoUN6w1J0ZzefMhSueSicz6NKGE=xQ@mail.gmail.com>
 In-Reply-To: <CAB2gnbW=umjGrVH6Bi6+hoUN6w1J0ZzefMhSueSicz6NKGE=xQ@mail.gmail.com>
@@ -10,32 +10,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 22 Jul 2011 11:03:57 -0600 Noah Watkins wrote:
 
-> Pardon the newbie question here, this email is in reference to two
-> additional emails that I just sent to janitors list:
-> 
->   [PATCH 1/2] zram: make global var "devices" use unique name
->   [PATCH 2/2] zram: make global var "num_devices" use unique name
-> 
-> Originally I had submitted these patches to Nitin Gupta (zram guy),
-> Greg KH, and linux-next
-> 
-> I didn't receive a response, but then realized I didn't actually know
-> what to expect. I checked out all the relevant docs on submitting
+On Jul 22, 2011, at 12:14 PM, Randy Dunlap wrote:
 
-Some maintainers reply when they merge a patch and some don't.
-GregKH usually does, but with a time lag of up to roughly 1 week.
+> Do those variable names currently cause a problem?
+> They are not static, but they also are not exported symbols [EXPORT_SYMBOL()].
 
-> patches, but it all seems a bit nebulous still. Does this submission
-> look OK?
+They are not exported and there are not currently warnings, but it struck me
+as inappropriate to have a device specific non-static variable named "devices".
+I guess it really might be better to fix later if an actual conflict arises.
 
-Do those variable names currently cause a problem?
-They are not static, but they also are not exported symbols [EXPORT_SYMBOL()].
+Thanks a lot for the note about maintainer reply behavior, I was a little anxious
+about sending, but now I'll wait to see what happens.
 
-Do these patches fix any reported warnings?  If so, you should include those
-warning messages and what tool reported them.
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Thanks,
+-Noah
