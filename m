@@ -1,28 +1,47 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Jul 2011 07:21:15 +0000
-Subject: [patch] NFC: pn533: use after free in pn533_disconnect()
-Message-Id: <20110708072115.GR18655@shale.localdomain>
+Date: Wed, 27 Jul 2011 09:53:40 +0000
+Subject: [patch] drm/radeon: off by one in check_reg() functions
+Message-Id: <20110727095340.GK3824@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Samuel Ortiz <sameo@linux.intel.com>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>
 
-We freed "dev" on the line before.
+This off by one range check was copy and pasted a couple places.
+It's not really harmful, but we should fix it anyway.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/nfc/pn533.c b/drivers/nfc/pn533.c
-index 0372315..c77e054 100644
---- a/drivers/nfc/pn533.c
-+++ b/drivers/nfc/pn533.c
-@@ -1596,7 +1596,7 @@ static void pn533_disconnect(struct usb_interface *interface)
- 	usb_free_urb(dev->out_urb);
- 	kfree(dev);
+diff --git a/drivers/gpu/drm/radeon/r600_cs.c b/drivers/gpu/drm/radeon/r600_cs.c
+index db8ef19..cf83aa0 100644
+--- a/drivers/gpu/drm/radeon/r600_cs.c
++++ b/drivers/gpu/drm/radeon/r600_cs.c
+@@ -915,12 +915,11 @@ static inline int r600_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u32 idx
+ {
+ 	struct r600_cs_track *track = (struct r600_cs_track *)p->track;
+ 	struct radeon_cs_reloc *reloc;
+-	u32 last_reg = ARRAY_SIZE(r600_reg_safe_bm);
+ 	u32 m, i, tmp, *ib;
+ 	int r;
  
--	nfc_dev_info(&dev->interface->dev, "NXP PN533 NFC device disconnected");
-+	nfc_dev_info(&interface->dev, "NXP PN533 NFC device disconnected");
- }
+ 	i = (reg >> 7);
+-	if (i > last_reg) {
++	if (i >= ARRAY_SIZE(r600_reg_safe_bm)) {
+ 		dev_warn(p->dev, "forbidden register 0x%08x at %d\n", reg, idx);
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c b/drivers/gpu/drm/radeon/evergreen_cs.c
+index 189e865..a134790 100644
+--- a/drivers/gpu/drm/radeon/evergreen_cs.c
++++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+@@ -428,7 +428,7 @@ static inline int evergreen_cs_check_reg(struct radeon_cs_parser *p, u32 reg, u3
+ 		last_reg = ARRAY_SIZE(evergreen_reg_safe_bm);
  
- static struct usb_driver pn533_driver = {
+ 	i = (reg >> 7);
+-	if (i > last_reg) {
++	if (i >= last_reg) {
+ 		dev_warn(p->dev, "forbidden register 0x%08x at %d\n", reg, idx);
+ 		return -EINVAL;
+ 	}
