@@ -1,20 +1,28 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 28 Jul 2011 17:03:33 +0000
-Subject: Re: [PATCH 0/6] adjust array index
-Message-Id: <1311872613.10042.12.camel@Joe-Laptop>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 27 Jul 2011 09:58:17 +0000
+Subject: [patch] iscsi-target: NULL dereference on allocation failure
+Message-Id: <20110727095817.GM3824@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1311857165-14780-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1311857165-14780-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Andy Grover <agrover@redhat.com>, Roland Dreier <roland@kernel.org>, Christoph Hellwig <hch@lst.de>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu, 2011-07-28 at 14:46 +0200, Julia Lawall wrote:
-> These patches fix cases where the upper bound of a loop is used as an array
-> index, while it appears that the loop index should be used as the array
-> index.
+The "goto out" path dereferences "login" which is NULL.
 
-Good one.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/drivers/target/iscsi/iscsi_target_nego.c b/drivers/target/iscsi/iscsi_target_nego.c
+index 713a4d2..4d087ac 100644
+--- a/drivers/target/iscsi/iscsi_target_nego.c
++++ b/drivers/target/iscsi/iscsi_target_nego.c
+@@ -978,7 +978,7 @@ struct iscsi_login *iscsi_target_init_negotiation(
+ 		pr_err("Unable to allocate memory for struct iscsi_login.\n");
+ 		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
+ 				ISCSI_LOGIN_STATUS_NO_RESOURCES);
+-		goto out;
++		return NULL;
+ 	}
+ 
+ 	login->req = kzalloc(ISCSI_HDR_LEN, GFP_KERNEL);
