@@ -1,36 +1,37 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 27 Jul 2011 19:35:14 +0000
-Subject: Re: [patch] iscsi-target: NULL dereference on allocation failure
-Message-Id: <1311795314.6931.7.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 27 Jul 2011 12:02:26 +0000
+Subject: [patch] ALSA: asihpi - off by one in asihpi_hpi_ioctl()
+Message-Id: <20110727120226.GP3824@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110727095817.GM3824@shale.localdomain>
-In-Reply-To: <20110727095817.GM3824@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Andy Grover <agrover@redhat.com>, Roland Dreier <roland@kernel.org>, Christoph Hellwig <hch@lst.de>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org, target-devel <target-devel@vger.kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Eliot Blennerhassett <eblennerhassett@audioscience.com>, Dan Rosenberg <drosenberg@vsecurity.com>, kernel-janitors@vger.kernel.org, "open list:SOUND" <alsa-devel@alsa-project.org>
 
-On Wed, 2011-07-27 at 12:58 +0300, Dan Carpenter wrote:
-> The "goto out" path dereferences "login" which is NULL.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/target/iscsi/iscsi_target_nego.c b/drivers/target/iscsi/iscsi_target_nego.c
-> index 713a4d2..4d087ac 100644
-> --- a/drivers/target/iscsi/iscsi_target_nego.c
-> +++ b/drivers/target/iscsi/iscsi_target_nego.c
-> @@ -978,7 +978,7 @@ struct iscsi_login *iscsi_target_init_negotiation(
->  		pr_err("Unable to allocate memory for struct iscsi_login.\n");
->  		iscsit_tx_login_rsp(conn, ISCSI_STATUS_CLS_TARGET_ERR,
->  				ISCSI_LOGIN_STATUS_NO_RESOURCES);
-> -		goto out;
-> +		return NULL;
->  	}
->  
->  	login->req = kzalloc(ISCSI_HDR_LEN, GFP_KERNEL);
+"adapter" is used as an array index in the adapters[] array so
+the off by one would make us read past the end.
 
-Thanks for catching this Dan!  Committed as b5bddbe9e6
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+1c073b67979 "ALSA: asihpi - Remove spurious adapter index check"
+reverted Dan Rosenburg's check that would have prevented the
+overflow here.
 
---nab
+Also it moved the initialization of "pa" down a couple lines so I'm
+concerned there may be a bogus derereference here when we check
+pa->type.  I don't have the hardware, so I can't test this.
 
+diff --git a/sound/pci/asihpi/hpioctl.c b/sound/pci/asihpi/hpioctl.c
+index 65fcf47..7ba7073 100644
+--- a/sound/pci/asihpi/hpioctl.c
++++ b/sound/pci/asihpi/hpioctl.c
+@@ -183,7 +183,7 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		int wrflag = -1;
+ 		u32 adapter = hm->h.adapter_index;
+ 
+-		if ((adapter > HPI_MAX_ADAPTERS) || (!pa->type)) {
++		if ((adapter >= HPI_MAX_ADAPTERS) || (!pa->type)) {
+ 			hpi_init_response(&hr->r0, HPI_OBJ_ADAPTER,
+ 				HPI_ADAPTER_OPEN,
+ 				HPI_ERROR_BAD_ADAPTER_NUMBER);
