@@ -1,34 +1,39 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 08 Jul 2011 07:25:40 +0000
-Subject: [patch] Staging: tm6000: remove unneeded check in get_next_buf()
-Message-Id: <20110708072540.GV18655@shale.localdomain>
+Date: Wed, 27 Jul 2011 09:50:33 +0000
+Subject: [patch] btrfs: unlock on error in btrfs_file_llseek()
+Message-Id: <20110727095033.GI3824@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Stefan Ringel <stefan.ringel@arcor.de>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, "open list:STAGING - TRIDENT..." <linux-media@vger.kernel.org>, "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>, kernel-janitors@vger.kernel.org
+To: Josef Bacik <josef@redhat.com>
+Cc: Chris Mason <chris.mason@oracle.com>, "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We dereference "buf" on the line before so if it were NULL here we
-would have OOPsed earlier.  Also list_entry() never returns NULL.
-And finally, we handled the situation where the list is empty
-earlier in the function.
-
-So this test isn't needed and I've removed it.
+There were some unlocks on error missing in a recent patch to
+btrfs_file_llseek().
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/tm6000/tm6000-video.c b/drivers/staging/tm6000/tm6000-video.c
-index 3fe6038..8d8b939 100644
---- a/drivers/staging/tm6000/tm6000-video.c
-+++ b/drivers/staging/tm6000/tm6000-video.c
-@@ -179,9 +179,6 @@ static inline void get_next_buf(struct tm6000_dmaqueue *dma_q,
- 	*buf = list_entry(dma_q->active.next,
- 			struct tm6000_buffer, vb.queue);
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 59cbdb1..94d8342 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1804,10 +1804,14 @@ static loff_t btrfs_file_llseek(struct file *file, loff_t offset, int origin)
+ 		}
+ 	}
  
--	if (!buf)
--		return;
--
- 	/* Cleans up buffer - Useful for testing for frame/URB loss */
- 	outp = videobuf_to_vmalloc(&(*buf)->vb);
+-	if (offset < 0 && !(file->f_mode & FMODE_UNSIGNED_OFFSET))
+-		return -EINVAL;
+-	if (offset > inode->i_sb->s_maxbytes)
+-		return -EINVAL;
++	if (offset < 0 && !(file->f_mode & FMODE_UNSIGNED_OFFSET)) {
++		ret = -EINVAL;
++		goto out;
++	}
++	if (offset > inode->i_sb->s_maxbytes) {
++		ret = -EINVAL;
++		goto out;
++	}
  
+ 	/* Special lock needed here? */
+ 	if (offset != file->f_pos) {
