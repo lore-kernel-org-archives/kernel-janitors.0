@@ -1,39 +1,63 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 27 Jul 2011 19:36:15 +0000
-Subject: Re: [patch] target: strlen() doesn't count the terminator
-Message-Id: <1311795375.6931.8.camel@haakon2.linux-iscsi.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 28 Jul 2011 16:30:18 +0000
+Subject: [PATCH 1/2] drivers/misc/cb710/core.c: Add missing pci_dev_put
+Message-Id: <Pine.LNX.4.64.1107281829460.20584@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110727111143.GN3824@shale.localdomain>
-In-Reply-To: <20110727111143.GN3824@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Andy Grover <agrover@redhat.com>, Roland Dreier <roland@kernel.org>, Christoph Hellwig <hch@lst.de>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org, target-devel <target-devel@vger.kernel.org>
+To: mirq-linux@rere.qmqm.pl
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2011-07-27 at 14:11 +0300, Dan Carpenter wrote:
-> This test is off by one because the NUL terminator isn't taken into
-> consideration.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-> index 494bfa4..4793875 100644
-> --- a/drivers/target/iscsi/iscsi_target.c
-> +++ b/drivers/target/iscsi/iscsi_target.c
-> @@ -120,7 +120,7 @@ struct iscsi_tiqn *iscsit_add_tiqn(unsigned char *buf)
->  	struct iscsi_tiqn *tiqn = NULL;
->  	int ret;
->  
-> -	if (strlen(buf) > ISCSI_IQN_LEN) {
-> +	if (strlen(buf) >= ISCSI_IQN_LEN) {
->  		pr_err("Target IQN exceeds %d bytes\n",
->  				ISCSI_IQN_LEN);
->  		return ERR_PTR(-EINVAL);
+From: Julia Lawall <julia@diku.dk>
 
-Committed as e8f4d726c69 into lio-core-2.6.git/master
+Pci_get_slot calls pci_dev_get, so pci_dev_put is needed before leaving the
+function.
 
-Thanks!
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
---nab
+// <smpl>
+@@
+local idexpression x;
+expression e;
+@@
+
+*x = pci_get_slot(...)
+... when != true x = NULL
+    when != pci_dev_put(x)
+    when != e = x
+    when != if (x != NULL) {<+... pci_dev_put(x); ...+>}
+*return ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+Not tested.
+
+ drivers/misc/cb710/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/misc/cb710/core.c b/drivers/misc/cb710/core.c
+index efec413..84983c7 100644
+--- a/drivers/misc/cb710/core.c
++++ b/drivers/misc/cb710/core.c
+@@ -41,7 +41,7 @@ static int __devinit cb710_pci_configure(struct pci_dev *pdev)
+ 
+ 	pci_read_config_dword(pdev, 0x48, &val);
+ 	if (val & 0x80000000)
+-		return 0;
++		goto out;
+ 
+ 	if (!pdev0)
+ 		return -ENODEV;
+@@ -59,6 +59,7 @@ static int __devinit cb710_pci_configure(struct pci_dev *pdev)
+ 	cb710_pci_update_config_reg(pdev0, 0x90,
+ 		~0x00060000, 0x00040000);
+ 
++out:
+ 	pci_dev_put(pdev0);
+ 
+ 	return 0;
 
