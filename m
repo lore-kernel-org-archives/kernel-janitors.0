@@ -1,55 +1,381 @@
-From: Alexander Graf <agraf@suse.de>
-Date: Tue, 26 Jul 2011 17:39:16 +0000
-Subject: Re: [patch v2] x86: kvm: x86: fix information leak to userland
-Message-Id: <9BD442B1-A1A2-4C78-9508-4E7C59C6030D@suse.de>
+From: Javier Martinez Canillas <martinez.javier@gmail.com>
+Date: Thu, 28 Jul 2011 10:27:42 +0000
+Subject: [PATCH 3/3] staging: cyttsp: Add Cypress TTSP G3 SPI Device Driver
+Message-Id: <1311848862-24236-4-git-send-email-martinez.javier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1288447871-7715-1-git-send-email-segooon@gmail.com> <4CCC2D11.7090109@web.de> <20101030153147.GA14169@albatros> <4CCC3DC2.6090505@web.de> <20101030185447.GA7629@albatros> <ABD7343A-6440-4CC0-B8B0-9D27EF0291B0@suse.de> <20110726172809.GA23970@albatros>
-In-Reply-To: <20110726172809.GA23970@albatros>
+References: <1311848862-24236-1-git-send-email-martinez.javier@gmail.com>
+In-Reply-To: <1311848862-24236-1-git-send-email-martinez.javier@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vasiliy Kulikov <segoon@openwall.com>
-Cc: Jan Kiszka <jan.kiszka@web.de>, kernel-janitors@vger.kernel.org, Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kevin McNeely <kev@cypress.com>, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, Steve Kolokowsky <syk@cypress.com>, rydberg@euromail.se, Oleg Drokin <green@linuxhacker.ru>, William Marone <wmarone@gmail.com>, Javier Martinez Canillas <martinez.javier@gmail.com>
 
+Cypress TTSP Gen3 SPI Device Driver.
+Provides spi communications modules for the
+Cypress TTSP Gen3 MTDEV Core Driver.
 
-On 26.07.2011, at 19:28, Vasiliy Kulikov wrote:
+The original author of this driver is: Kevin McNeely <kev@cypress.com>
 
-> Alexander,
-> 
-> On Tue, Jul 26, 2011 at 19:05 +0200, Alexander Graf wrote:
->>> @@ -2623,6 +2626,7 @@ static void kvm_vcpu_ioctl_x86_get_debugregs(struct kvm_vcpu *vcpu,
->>> 	dbgregs->dr6 = vcpu->arch.dr6;
->>> 	dbgregs->dr7 = vcpu->arch.dr7;
->>> 	dbgregs->flags = 0;
->>> +	memset(&dbgregs->reserved, 0, sizeof(dbgregs->reserved));
->>> }
->>> 
->>> static int kvm_vcpu_ioctl_x86_set_debugregs(struct kvm_vcpu *vcpu,
->>> @@ -3106,6 +3110,7 @@ static int kvm_vm_ioctl_get_pit2(struct kvm *kvm, struct kvm_pit_state2 *ps)
->>> 		sizeof(ps->channels));
->>> 	ps->flags = kvm->arch.vpit->pit_state.flags;
->>> 	mutex_unlock(&kvm->arch.vpit->pit_state.lock);
->>> +	memset(&ps->reserved, 0, sizeof(ps->reserved));
->> 
->> struct kvm_pit_state2 {
->>        struct kvm_pit_channel_state channels[3];
->>        __u32 flags;
->>        __u32 reserved[9];
->> };
->> 
->> So memset(&ps->reserved) would give you the a __u32 **, no? Same goes for all the other array sets in here. Or am I understanding some C logic wrong? :)
-> 
-> No, the array name and an address of the array give the same address.  I
-> could use ps->reserved instead of &ps->reserved, but it is a question of
-> coding style.  I got opposite opinions on this question from different
-> maintainers.
-> 
-> Another thing is that sizeof() of the array name and the pointer to the
-> first array element differ.  But I used sizeof(array) here, so it should
-> be correct.
+Signed-off-by: Javier Martinez Canillas <martinez.javier@gmail.com>
+---
+ drivers/staging/cyttsp/Kconfig      |   12 ++
+ drivers/staging/cyttsp/Makefile     |    1 +
+ drivers/staging/cyttsp/cyttsp_spi.c |  318 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 331 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/staging/cyttsp/cyttsp_spi.c
 
-Yup, the sizeof looks fine. I was really only puzzled about the &array part. But if it's standardized to return the same as array, then that's great and I can call myself more educated now :)
-
-
-Alex
+diff --git a/drivers/staging/cyttsp/Kconfig b/drivers/staging/cyttsp/Kconfig
+index b1ffb2a..cb661ca 100644
+--- a/drivers/staging/cyttsp/Kconfig
++++ b/drivers/staging/cyttsp/Kconfig
+@@ -31,3 +31,15 @@ config TOUCHSCREEN_CYTTSP_I2C
+ 
+          To compile this driver as a module, choose M here: the
+          module will be called cyttsp-i2c.
++
++config TOUCHSCREEN_CYTTSP_SPI
++       tristate "Cypress TTSP spi touchscreen"
++       depends on SPI_MASTER && TOUCHSCREEN_CYTTSP_CORE
++       help
++         Say Y here if you have a Cypress TTSP touchscreen
++         connected to your  with an SPI interface.
++
++         If unsure, say N.
++
++         To compile this driver as a module, choose M here: the
++         module will be called cyttsp-spi.
+diff --git a/drivers/staging/cyttsp/Makefile b/drivers/staging/cyttsp/Makefile
+index 9101dc9..687eeaa 100644
+--- a/drivers/staging/cyttsp/Makefile
++++ b/drivers/staging/cyttsp/Makefile
+@@ -1,2 +1,3 @@
+ obj-$(CONFIG_TOUCHSCREEN_CYTTSP_CORE)   += cyttsp_core.o
+ obj-$(CONFIG_TOUCHSCREEN_CYTTSP_I2C)    += cyttsp_i2c.o
++obj-$(CONFIG_TOUCHSCREEN_CYTTSP_SPI)    += cyttsp_spi.o
+diff --git a/drivers/staging/cyttsp/cyttsp_spi.c b/drivers/staging/cyttsp/cyttsp_spi.c
+new file mode 100644
+index 0000000..108c37f
+--- /dev/null
++++ b/drivers/staging/cyttsp/cyttsp_spi.c
+@@ -0,0 +1,318 @@
++/*
++ * Source for:
++ * Cypress TrueTouch(TM) Standard Product (TTSP) SPI touchscreen driver.
++ * For use with Cypress Txx3xx parts.
++ * Supported parts include:
++ * CY8CTST341
++ * CY8CTMA340
++ *
++ * Copyright (C) 2009, 2010, 2011 Cypress Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2, and only version 2, as published by the
++ * Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with this program; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
++ *
++ * Contact Cypress Semiconductor at www.cypress.com <kev@cypress.com>
++ *
++ */
++
++#include "cyttsp_core.h"
++
++#include <linux/spi/spi.h>
++#include <linux/delay.h>
++
++#define CY_SPI_WR_OP      0x00 /* r/~w */
++#define CY_SPI_RD_OP      0x01
++#define CY_SPI_CMD_BYTES  4
++#define CY_SPI_SYNC_BYTE  2
++#define CY_SPI_SYNC_ACK1  0x62 /* from protocol v.2 */
++#define CY_SPI_SYNC_ACK2  0x9D /* from protocol v.2 */
++#define CY_SPI_DATA_SIZE  128
++#define CY_SPI_DATA_BUF_SIZE (CY_SPI_CMD_BYTES + CY_SPI_DATA_SIZE)
++#define CY_SPI_BITS_PER_WORD 8
++
++struct cyttsp_spi {
++	struct cyttsp_bus_ops ops;
++	struct spi_device *spi_client;
++	void *ttsp_client;
++	u8 wr_buf[CY_SPI_DATA_BUF_SIZE];
++	u8 rd_buf[CY_SPI_DATA_BUF_SIZE];
++};
++
++static void spi_complete(void *arg)
++{
++	complete(arg);
++}
++
++static int spi_sync_tmo(struct cyttsp_spi *ts, struct spi_message *message)
++{
++	DECLARE_COMPLETION_ONSTACK(done);
++	int status;
++
++	message->complete = spi_complete;
++	message->context = &done;
++	status = spi_async(ts->spi_client, message);
++	if (status = 0) {
++		int ret = wait_for_completion_interruptible_timeout(&done, HZ);
++		if (!ret) {
++			dev_dbg(ts->ops.dev, "%s: timeout\n", __func__);
++			status = -EIO;
++		} else
++			status = message->status;
++	}
++	message->context = NULL;
++	return status;
++}
++
++static int cyttsp_spi_xfer_(u8 op, struct cyttsp_spi *ts,
++			    u8 reg, u8 *buf, int length)
++{
++	struct spi_message msg;
++	struct spi_transfer xfer[2];
++	u8 *wr_buf = ts->wr_buf;
++	u8 *rd_buf = ts->rd_buf;
++	int retval;
++
++	if (length > CY_SPI_DATA_SIZE) {
++		dev_dbg(ts->ops.dev, "%s: length %d is too big.\n",
++			__func__, length);
++		return -EINVAL;
++	}
++
++	memset(wr_buf, 0, CY_SPI_DATA_BUF_SIZE);
++	memset(rd_buf, 0, CY_SPI_DATA_BUF_SIZE);
++
++	wr_buf[0] = 0x00; /* header byte 0 */
++	wr_buf[1] = 0xFF; /* header byte 1 */
++	wr_buf[2] = reg;  /* reg index */
++	wr_buf[3] = op;   /* r/~w */
++	if (op = CY_SPI_WR_OP)
++		memcpy(wr_buf + CY_SPI_CMD_BYTES, buf, length);
++
++	memset((void *)xfer, 0, sizeof(xfer));
++	spi_message_init(&msg);
++	xfer[0].tx_buf = wr_buf;
++	xfer[0].rx_buf = rd_buf;
++	if (op = CY_SPI_WR_OP) {
++		xfer[0].len = length + CY_SPI_CMD_BYTES;
++		spi_message_add_tail(&xfer[0], &msg);
++	} else if (op = CY_SPI_RD_OP) {
++		xfer[0].len = CY_SPI_CMD_BYTES;
++		spi_message_add_tail(&xfer[0], &msg);
++
++		xfer[1].rx_buf = buf;
++		xfer[1].len = length;
++		spi_message_add_tail(&xfer[1], &msg);
++	}
++
++	retval = spi_sync_tmo(ts, &msg);
++	if (retval < 0) {
++		dev_dbg(ts->ops.dev, "%s: spi sync error %d, len=%d, op=%d\n",
++			__func__, retval, xfer[1].len, op);
++		retval = 0;
++	}
++
++	if (op = CY_SPI_RD_OP) {
++		if ((rd_buf[CY_SPI_SYNC_BYTE] = CY_SPI_SYNC_ACK1) &&
++			(rd_buf[CY_SPI_SYNC_BYTE+1] = CY_SPI_SYNC_ACK2))
++			retval = 0;
++		else {
++			int i;
++			for (i = 0; i < (CY_SPI_CMD_BYTES); i++)
++				dev_dbg(ts->ops.dev,
++					"%s: test rd_buf[%d]:0x%02x\n",
++					__func__, i, rd_buf[i]);
++			for (i = 0; i < (length); i++)
++				dev_dbg(ts->ops.dev,
++					"%s: test buf[%d]:0x%02x\n",
++					__func__, i, buf[i]);
++			retval = 1;
++		}
++	}
++	return retval;
++}
++
++static int cyttsp_spi_xfer(u8 op, struct cyttsp_spi *ts,
++			    u8 reg, u8 *buf, int length)
++{
++	int tries;
++	int retval;
++
++	if (op = CY_SPI_RD_OP) {
++		for (tries = CY_NUM_RETRY; tries; tries--) {
++			retval = cyttsp_spi_xfer_(op, ts, reg, buf, length);
++			if (retval = 0)
++				break;
++			else
++				msleep(20);
++		}
++	} else {
++		retval = cyttsp_spi_xfer_(op, ts, reg, buf, length);
++	}
++
++	return retval;
++}
++
++static s32 ttsp_spi_read_block_data(void *handle, u8 addr,
++				    u8 length, void *data)
++{
++	struct cyttsp_spi *ts = container_of(handle, struct cyttsp_spi, ops);
++	int retval;
++
++	retval = cyttsp_spi_xfer(CY_SPI_RD_OP, ts, addr, data, length);
++	if (retval < 0)
++		dev_dbg(ts->ops.dev,  "%s: ttsp_spi_read_block_data failed\n",
++			__func__);
++
++	/*
++	 * Do not print the above error if the data sync bytes were not found.
++	 * This is a normal condition for the bootloader loader startup and need
++	 * to retry until data sync bytes are found.
++	 */
++	if (retval > 0)
++		retval = -1;	/* now signal fail; so retry can be done */
++
++	return retval;
++}
++
++static s32 ttsp_spi_write_block_data(void *handle, u8 addr,
++				     u8 length, const void *data)
++{
++	struct cyttsp_spi *ts = container_of(handle, struct cyttsp_spi, ops);
++	int retval;
++
++	retval = cyttsp_spi_xfer(CY_SPI_WR_OP, ts, addr, (void *)data, length);
++	if (retval < 0)
++		dev_dbg(ts->ops.dev, "%s: ttsp_spi_write_block_data failed\n",
++			__func__);
++
++	if (retval = -EIO)
++		return 0;
++	else
++		return retval;
++}
++
++static s32 ttsp_spi_tch_ext(void *handle, void *values)
++{
++	struct cyttsp_spi *ts = container_of(handle, struct cyttsp_spi, ops);
++	int retval = 0;
++
++	/*
++	 * TODO: Add custom touch extension handling code here
++	 * set: retval < 0 for any returned system errors,
++	 *	retval = 0 if normal touch handling is required,
++	 *	retval > 0 if normal touch handling is *not* required
++	 */
++
++	if (!ts || !values)
++		retval = -EINVAL;
++
++	return retval;
++}
++
++static int __devinit cyttsp_spi_probe(struct spi_device *spi)
++{
++	struct cyttsp_spi *ts;
++	int retval;
++
++	/* Set up SPI*/
++	spi->bits_per_word = CY_SPI_BITS_PER_WORD;
++	spi->mode = SPI_MODE_0;
++	retval = spi_setup(spi);
++	if (retval < 0) {
++		dev_dbg(&spi->dev, "%s: SPI setup error %d\n",
++			__func__, retval);
++		return retval;
++	}
++
++	ts = kzalloc(sizeof(*ts), GFP_KERNEL);
++	if (!ts) {
++		dev_dbg(&spi->dev, "%s: Error, kzalloc\n", __func__);
++		return -ENOMEM;
++	}
++
++	ts->spi_client = spi;
++	dev_set_drvdata(&spi->dev, ts);
++	ts->ops.write = ttsp_spi_write_block_data;
++	ts->ops.read = ttsp_spi_read_block_data;
++	ts->ops.ext = ttsp_spi_tch_ext;
++	ts->ops.dev = &spi->dev;
++
++	ts->ttsp_client = cyttsp_core_init(&ts->ops, &spi->dev);
++	if (IS_ERR(ts->ttsp_client)) {
++		int retval = PTR_ERR(ts->ttsp_client);
++		kfree(ts);
++		return retval;
++	}
++
++	dev_dbg(ts->ops.dev, "%s: Registration complete\n", __func__);
++
++	return 0;
++}
++
++static int __devexit cyttsp_spi_remove(struct spi_device *spi)
++{
++	struct cyttsp_spi *ts = dev_get_drvdata(&spi->dev);
++
++	cyttsp_core_release(ts->ttsp_client);
++	kfree(ts);
++	return 0;
++}
++
++#ifdef CONFIG_PM
++static int cyttsp_spi_suspend(struct spi_device *spi, pm_message_t message)
++{
++	struct cyttsp_spi *ts = dev_get_drvdata(&spi->dev);
++
++	return cyttsp_suspend(ts->ttsp_client);
++}
++
++static int cyttsp_spi_resume(struct spi_device *spi)
++{
++	struct cyttsp_spi *ts = dev_get_drvdata(&spi->dev);
++
++	return cyttsp_resume(ts->ttsp_client);
++}
++#endif
++
++static struct spi_driver cyttsp_spi_driver = {
++	.driver = {
++		.name = CY_SPI_NAME,
++		.bus = &spi_bus_type,
++		.owner = THIS_MODULE,
++	},
++	.probe = cyttsp_spi_probe,
++	.remove = __devexit_p(cyttsp_spi_remove),
++#ifdef CONFIG_PM
++	.suspend = cyttsp_spi_suspend,
++	.resume = cyttsp_spi_resume,
++#endif
++};
++
++static int __init cyttsp_spi_init(void)
++{
++	return spi_register_driver(&cyttsp_spi_driver);
++}
++module_init(cyttsp_spi_init);
++
++static void __exit cyttsp_spi_exit(void)
++{
++	spi_unregister_driver(&cyttsp_spi_driver);
++}
++module_exit(cyttsp_spi_exit);
++
++MODULE_ALIAS("spi:cyttsp");
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Cypress TrueTouch(R) Standard Product (TTSP) SPI driver");
++MODULE_AUTHOR("Cypress");
++
+-- 
+1.7.4.1
 
