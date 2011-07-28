@@ -1,31 +1,54 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Wed, 06 Jul 2011 19:07:21 +0000
-Subject: Re: [patch] regulator/tps65912: storing error codes in u8
-Message-Id: <20110706190721.GB30759@sortiz-mobl>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 28 Jul 2011 12:46:05 +0000
+Subject: [PATCH 5/6] sound/core/pcm_compat.c: adjust array index
+Message-Id: <1311857165-14780-6-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110623055715.GM14591@shale.localdomain>
- <1309795618.3272.9.camel@odin>
- <20110706183208.GK3021@sortiz-mobl>
- <20110706185718.GJ18655@shale.localdomain>
-In-Reply-To: <20110706185718.GJ18655@shale.localdomain>
+References: <1311857165-14780-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1311857165-14780-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Liam Girdwood <lrg@kernel.org>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Julia Lawall <julia@diku.dk>
 
-On Wed, Jul 06, 2011 at 09:57:18PM +0300, Dan Carpenter wrote:
-> get_ctrl_reg() returns -EINVAL so the error handling won't work here
-> if reg is a u8.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-Thanks, patch applied.
+Convert array index from the loop bound to the loop index.
 
-Cheers,
-Samuel.
+A simplified version of the semantic patch that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+// <smpl>
+@@
+expression e1,e2,ar;
+@@
+
+for(e1 = 0; e1 < e2; e1++) { <...
+  ar[
+- e2
++ e1
+  ]
+  ...> }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+Not tested.
+
+ sound/core/pcm_compat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/sound/core/pcm_compat.c b/sound/core/pcm_compat.c
+--- a/sound/core/pcm_compat.c
++++ b/sound/core/pcm_compat.c
+@@ -342,7 +342,7 @@ static int snd_pcm_ioctl_xfern_compat(st
+ 			kfree(bufs);
+ 			return -EFAULT;
+ 		}
+-		bufs[ch] = compat_ptr(ptr);
++		bufs[i] = compat_ptr(ptr);
+ 		bufptr++;
+ 	}
+ 	if (dir = SNDRV_PCM_STREAM_PLAYBACK)
+
