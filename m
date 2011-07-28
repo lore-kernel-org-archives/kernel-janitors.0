@@ -1,29 +1,55 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 06 Jul 2011 07:36:33 +0000
-Subject: [patch 1/2] [SCSI] bfa: off by one in bfa_ioc_mbox_isr()
-Message-Id: <20110706073633.GD18655@shale.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 28 Jul 2011 16:26:47 +0000
+Subject: [PATCH 2/2] drivers/ide/cy82c693.c: Add missing pci_dev_put
+Message-Id: <1311870407-22461-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jing Huang <huangj@brocade.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "open list:BROCADE BFA FC SC..." <linux-scsi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If mc = BFI_MC_MAX then we're reading past the end of the
-mod->mbhdlr[] array.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Pci_get_slot calls pci_dev_get, so pci_dev_put is needed before leaving the
+function in the case where pci_get_slot is locally used.
 
-diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
-index d6c2bf3..052373b 100644
---- a/drivers/scsi/bfa/bfa_ioc.c
-+++ b/drivers/scsi/bfa/bfa_ioc.c
-@@ -2378,7 +2378,7 @@ bfa_ioc_mbox_isr(struct bfa_ioc_s *ioc)
- 			return;
- 		}
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+local idexpression x;
+expression e;
+@@
+
+*x = pci_get_slot(...)
+... when != true x = NULL
+    when != pci_dev_put(x)
+    when != e = x
+    when != if (x != NULL) {<+... pci_dev_put(x); ...+>}
+*return ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+Not tested.
+
+ drivers/ide/cy82c693.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/ide/cy82c693.c b/drivers/ide/cy82c693.c
+index 3be60da..67cbcfa 100644
+--- a/drivers/ide/cy82c693.c
++++ b/drivers/ide/cy82c693.c
+@@ -141,6 +141,8 @@ static void cy82c693_set_pio_mode(ide_hwif_t *hwif, ide_drive_t *drive)
+ 		pci_write_config_byte(dev, CY82_IDE_SLAVE_IOW, time_16);
+ 		pci_write_config_byte(dev, CY82_IDE_SLAVE_8BIT, time_8);
+ 	}
++	if (hwif->index > 0)
++		pci_dev_put(dev);
+ }
  
--		if ((mc > BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
-+		if ((mc >= BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
- 			return;
- 
- 		mod->mbhdlr[mc].cbfn(mod->mbhdlr[mc].cbarg, &m);
+ static void __devinit init_iops_cy82c693(ide_hwif_t *hwif)
+
