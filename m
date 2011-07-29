@@ -1,37 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 04 Jul 2011 14:20:17 +0000
-Subject: [PATCH] drivers/mtd/lpddr/lpddr_cmds.c: eliminate double free
-Message-Id: <1309789217-22947-1-git-send-email-julia@diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 29 Jul 2011 08:52:18 +0000
+Subject: [patch] cfg80211: off by one in nl80211_trigger_scan()
+Message-Id: <20110729085217.GG3752@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Joakim Tjernlund <joakim.tjernlund@transmode.se>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Stefani Seibold <stefani@seibold.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, Tadashi Abe <tabe@mvista.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, "open list:CFG80211 and NL80211" <linux-wireless@vger.kernel.org>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+The test is off by one so we'd read past the end of the
+wiphy->bands[] array on the next line.
 
-The only call to lpddr_cmdset is in the function defined in lpddr_probe
-drivers/mtd/lpddr/qinfo_probe.c.  If the result of calling lpddr_cmdset is
-NULL, this function frees lpddr.  So lpddr should not be freed in
-lpddr_cmdset.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/mtd/lpddr/lpddr_cmds.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/mtd/lpddr/lpddr_cmds.c b/drivers/mtd/lpddr/lpddr_cmds.c
-index 65655dd..b7f265e 100644
---- a/drivers/mtd/lpddr/lpddr_cmds.c
-+++ b/drivers/mtd/lpddr/lpddr_cmds.c
-@@ -89,7 +89,6 @@ struct mtd_info *lpddr_cmdset(struct map_info *map)
- 	shared = kmalloc(sizeof(struct flchip_shared) * lpddr->numchips,
- 						GFP_KERNEL);
- 	if (!shared) {
--		kfree(lpddr);
- 		kfree(mtd);
- 		return NULL;
- 	}
-
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index 28d2aa1..e83e7fe 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -3464,7 +3464,7 @@ static int nl80211_trigger_scan(struct sk_buff *skb, struct genl_info *info)
+ 				    tmp) {
+ 			enum ieee80211_band band = nla_type(attr);
+ 
+-			if (band < 0 || band > IEEE80211_NUM_BANDS) {
++			if (band < 0 || band >= IEEE80211_NUM_BANDS) {
+ 				err = -EINVAL;
+ 				goto out_free;
+ 			}
