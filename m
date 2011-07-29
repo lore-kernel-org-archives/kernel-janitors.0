@@ -1,32 +1,54 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 30 Jul 2011 08:39:20 +0000
-Subject: [patch] [SCSI] megaraid: remove a spurious IRQ enable
-Message-Id: <20110730083920.GC5575@shale.localdomain>
+Date: Fri, 29 Jul 2011 08:53:06 +0000
+Subject: [patch] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
+Message-Id: <20110729085306.GH3752@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Neela Syam Kolli <megaraidlinux@lsi.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "open list:MEGARAID SCSI DRI..." <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jing Huang <huangj@brocade.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "open list:BROCADE BFA FC SC..." <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This is a static checker fix.  We took this lock with spin_lock()
-so we should unlock it with spin_unlock() instead of
-spin_unlock_irq().
+If bfad_thread_workq(bfad) was not BFA_STATUS_OK then we freed "im"
+and then dereferenced it.
+
+I did a little clean up because it seemed nicer to return directly
+instead of doing a superfluous goto.  I looked at other functions in
+this file and it seems like returning directly is standard.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
----
-Not tested.
 
-diff --git a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
-index ad13363..57782d9 100644
---- a/drivers/scsi/megaraid/megaraid_mbox.c
-+++ b/drivers/scsi/megaraid/megaraid_mbox.c
-@@ -2731,7 +2731,7 @@ megaraid_reset_handler(struct scsi_cmnd *scp)
+diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
+index 0131238..7f7cca0 100644
+--- a/drivers/scsi/bfa/bfad_im.c
++++ b/drivers/scsi/bfa/bfad_im.c
+@@ -685,25 +685,21 @@ bfa_status_t
+ bfad_im_probe(struct bfad_s *bfad)
+ {
+ 	struct bfad_im_s      *im;
+-	bfa_status_t    rc = BFA_STATUS_OK;
+ 
+ 	im = kzalloc(sizeof(struct bfad_im_s), GFP_KERNEL);
+-	if (im = NULL) {
+-		rc = BFA_STATUS_ENOMEM;
+-		goto ext;
+-	}
++	if (im = NULL)
++		return BFA_STATUS_ENOMEM;
+ 
+ 	bfad->im = im;
+ 	im->bfad = bfad;
+ 
+ 	if (bfad_thread_workq(bfad) != BFA_STATUS_OK) {
+ 		kfree(im);
+-		rc = BFA_STATUS_FAILED;
++		return BFA_STATUS_FAILED;
  	}
  
-  out:
--	spin_unlock_irq(&adapter->lock);
-+	spin_unlock(&adapter->lock);
- 	return rval;
+ 	INIT_WORK(&im->aen_im_notify_work, bfad_aen_im_notify_handler);
+-ext:
+-	return rc;
++	return BFA_STATUS_OK;
  }
  
+ void
