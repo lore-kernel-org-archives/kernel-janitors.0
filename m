@@ -1,53 +1,136 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 28 Jul 2011 12:46:01 +0000
-Subject: [PATCH 1/6] net: adjust array index
-Message-Id: <1311857165-14780-2-git-send-email-julia@diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 30 Jul 2011 08:45:09 +0000
+Subject: [patch] Staging: iio: add some unlocks to raw_read() functions
+Message-Id: <20110730084509.GD5575@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1311857165-14780-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1311857165-14780-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, "Pekka Savola (ipv6)" <pekkas@netcore.fi>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Michael Hennerich <michael.hennerich@analog.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Mike Frysinger <vapier@gentoo.org>, "open list:STAGING - INDUSTR..." <linux-iio@vger.kernel.org>, "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+This code was cut and pasted in several places.  It's missing some
+unlocks on error.
 
-Convert array index from the loop bound to the loop index.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-A simplified version of the semantic patch that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e1,e2,ar;
-@@
-
-for(e1 = 0; e1 < e2; e1++) { <...
-  ar[
-- e2
-+ e1
-  ]
-  ...> }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-Not tested.
-
- net/ipv4/igmp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/net/ipv4/igmp.c b/net/ipv4/igmp.c
---- a/net/ipv4/igmp.c
-+++ b/net/ipv4/igmp.c
-@@ -1718,7 +1718,7 @@ static int ip_mc_add_src(struct in_devic
+diff --git a/drivers/staging/iio/accel/adis16203_core.c b/drivers/staging/iio/accel/adis16203_core.c
+index b6e0d84..30be963 100644
+--- a/drivers/staging/iio/accel/adis16203_core.c
++++ b/drivers/staging/iio/accel/adis16203_core.c
+@@ -312,13 +312,17 @@ static int adis16203_read_raw(struct iio_dev *indio_dev,
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16203_addresses[chan->address][0];
+ 		ret = adis16203_spi_read_reg_16(indio_dev, addr, &val16);
+-		if (ret)
++		if (ret) {
++			mutex_unlock(&indio_dev->mlock);
+ 			return ret;
++		}
  
- 		pmc->sfcount[sfmode]--;
- 		for (j=0; j<i; j++)
--			(void) ip_mc_del1_src(pmc, sfmode, &psfsrc[i]);
-+			(void) ip_mc_del1_src(pmc, sfmode, &psfsrc[j]);
- 	} else if (isexclude != (pmc->sfcount[MCAST_EXCLUDE] != 0)) {
- #ifdef CONFIG_IP_MULTICAST
- 		struct ip_sf_list *psf;
+ 		if (val16 & ADIS16203_ERROR_ACTIVE) {
+ 			ret = adis16203_check_status(indio_dev);
+-			if (ret)
++			if (ret) {
++				mutex_unlock(&indio_dev->mlock);
+ 				return ret;
++			}
+ 		}
+ 		val16 = val16 & ((1 << chan->scan_type.realbits) - 1);
+ 		if (chan->scan_type.sign = 's')
+diff --git a/drivers/staging/iio/accel/adis16204_core.c b/drivers/staging/iio/accel/adis16204_core.c
+index 61c2442..eb68367 100644
+--- a/drivers/staging/iio/accel/adis16204_core.c
++++ b/drivers/staging/iio/accel/adis16204_core.c
+@@ -342,13 +342,17 @@ static int adis16204_read_raw(struct iio_dev *indio_dev,
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16204_addresses[chan->address][0];
+ 		ret = adis16204_spi_read_reg_16(indio_dev, addr, &val16);
+-		if (ret)
++		if (ret) {
++			mutex_unlock(&indio_dev->mlock);
+ 			return ret;
++		}
+ 
+ 		if (val16 & ADIS16204_ERROR_ACTIVE) {
+ 			ret = adis16204_check_status(indio_dev);
+-			if (ret)
++			if (ret) {
++				mutex_unlock(&indio_dev->mlock);
+ 				return ret;
++			}
+ 		}
+ 		val16 = val16 & ((1 << chan->scan_type.realbits) - 1);
+ 		if (chan->scan_type.sign = 's')
+diff --git a/drivers/staging/iio/accel/adis16209_core.c b/drivers/staging/iio/accel/adis16209_core.c
+index 238438e..39a6136 100644
+--- a/drivers/staging/iio/accel/adis16209_core.c
++++ b/drivers/staging/iio/accel/adis16209_core.c
+@@ -338,13 +338,17 @@ static int adis16209_read_raw(struct iio_dev *indio_dev,
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16209_addresses[chan->address][0];
+ 		ret = adis16209_spi_read_reg_16(indio_dev, addr, &val16);
+-		if (ret)
++		if (ret) {
++			mutex_unlock(&indio_dev->mlock);
+ 			return ret;
++		}
+ 
+ 		if (val16 & ADIS16209_ERROR_ACTIVE) {
+ 			ret = adis16209_check_status(indio_dev);
+-			if (ret)
++			if (ret) {
++				mutex_unlock(&indio_dev->mlock);
+ 				return ret;
++			}
+ 		}
+ 		val16 = val16 & ((1 << chan->scan_type.realbits) - 1);
+ 		if (chan->scan_type.sign = 's')
+diff --git a/drivers/staging/iio/accel/adis16240_core.c b/drivers/staging/iio/accel/adis16240_core.c
+index 3abac95..d1f5305 100644
+--- a/drivers/staging/iio/accel/adis16240_core.c
++++ b/drivers/staging/iio/accel/adis16240_core.c
+@@ -371,13 +371,17 @@ static int adis16240_read_raw(struct iio_dev *indio_dev,
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16240_addresses[chan->address][0];
+ 		ret = adis16240_spi_read_reg_16(indio_dev, addr, &val16);
+-		if (ret)
++		if (ret) {
++			mutex_unlock(&indio_dev->mlock);
+ 			return ret;
++		}
+ 
+ 		if (val16 & ADIS16240_ERROR_ACTIVE) {
+ 			ret = adis16240_check_status(indio_dev);
+-			if (ret)
++			if (ret) {
++				mutex_unlock(&indio_dev->mlock);
+ 				return ret;
++			}
+ 		}
+ 		val16 = val16 & ((1 << chan->scan_type.realbits) - 1);
+ 		if (chan->scan_type.sign = 's')
+diff --git a/drivers/staging/iio/gyro/adis16260_core.c b/drivers/staging/iio/gyro/adis16260_core.c
+index 02de650..429c252 100644
+--- a/drivers/staging/iio/gyro/adis16260_core.c
++++ b/drivers/staging/iio/gyro/adis16260_core.c
+@@ -447,13 +447,17 @@ static int adis16260_read_raw(struct iio_dev *indio_dev,
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16260_addresses[chan->address][0];
+ 		ret = adis16260_spi_read_reg_16(indio_dev, addr, &val16);
+-		if (ret)
++		if (ret) {
++			mutex_unlock(&indio_dev->mlock);
+ 			return ret;
++		}
+ 
+ 		if (val16 & ADIS16260_ERROR_ACTIVE) {
+ 			ret = adis16260_check_status(indio_dev);
+-			if (ret)
++			if (ret) {
++				mutex_unlock(&indio_dev->mlock);
+ 				return ret;
++			}
+ 		}
+ 		val16 = val16 & ((1 << chan->scan_type.realbits) - 1);
+ 		if (chan->scan_type.sign = 's')
