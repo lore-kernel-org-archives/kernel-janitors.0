@@ -1,33 +1,29 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Fri, 22 Jul 2011 18:21:24 +0000
-Subject: Re: Question about submitting patches
-Message-Id: <20110722112124.12f379d1.rdunlap@xenotime.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 30 Jul 2011 08:25:57 +0000
+Subject: [patch] ext4: add a kfree() on error i add_new_gdb()
+Message-Id: <20110730082557.GB5575@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAB2gnbW=umjGrVH6Bi6+hoUN6w1J0ZzefMhSueSicz6NKGE=xQ@mail.gmail.com>
-In-Reply-To: <CAB2gnbW=umjGrVH6Bi6+hoUN6w1J0ZzefMhSueSicz6NKGE=xQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, "open list:EXT4 FILE SYSTEM" <linux-ext4@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, 22 Jul 2011 12:20:20 -0600 Noah Watkins wrote:
+We added some more error handling in b40971426a "ext4: add error
+checking to calls to ext4_handle_dirty_metadata()".  But we need to
+call kfree() as well to avoid a memory leak.
 
-> 
-> On Jul 22, 2011, at 12:14 PM, Randy Dunlap wrote:
-> 
-> > Do those variable names currently cause a problem?
-> > They are not static, but they also are not exported symbols [EXPORT_SYMBOL()].
-> 
-> They are not exported and there are not currently warnings, but it struck me
-> as inappropriate to have a device specific non-static variable named "devices".
-> I guess it really might be better to fix later if an actual conflict arises.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-In general the patches are good -- the variable names are indeed too generic.
-
-> Thanks a lot for the note about maintainer reply behavior, I was a little anxious
-> about sending, but now I'll wait to see what happens.
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
+index 6e3327d..71085df 100644
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -517,6 +517,7 @@ static int add_new_gdb(handle_t *handle, struct inode *inode,
+ 	return err;
+ 
+ exit_inode:
++	kfree(n_group_desc);
+ 	/* ext4_handle_release_buffer(handle, iloc.bh); */
+ 	brelse(iloc.bh);
+ exit_dindj:
