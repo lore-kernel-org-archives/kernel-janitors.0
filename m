@@ -1,54 +1,50 @@
-From: "Bounine, Alexandre" <Alexandre.Bounine@idt.com>
-Date: Mon, 29 Aug 2011 13:51:53 +0000
-Subject: RE: [patch] rapidio: potential null deref in rio_setup_device()
-Message-Id: <0CE8B6BE3C4AD74AB97D9D29BD24E5520210D5A4@CORPEXCH1.na.ads.idt.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 02 Aug 2011 10:35:04 +0000
+Subject: [PATCH 11/11] arch/tile/mm/init.c: trivial: use BUG_ON
+Message-Id: <1312281304-11847-12-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110827100045.GL3775@shale.localdomain>
-In-Reply-To: <20110827100045.GL3775@shale.localdomain>
+References: <1312281304-11847-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1312281304-11847-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, Matt Porter <mporter@kernel.crashing.org>
-Cc: open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Chris Metcalf <cmetcalf@tilera.com>, trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org
 
-Dan Carpenter <error27@gmail.com> wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> The "goto cleanup" path can dereference "rswitch" which is NULL here.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> ---
-> This is sort of embarrassing, I've patched this function before but
-> missed this.  Hopefully it's right now.
-> 
-> diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
-> index 0914f49..882cef9 100644
-> --- a/drivers/rapidio/rio-scan.c
-> +++ b/drivers/rapidio/rio-scan.c
-> @@ -432,7 +432,7 @@ static struct rio_dev __devinit
-> *rio_setup_device(struct rio_net *net,
->  		/* Assign component tag to device */
->  		if (next_comptag >= 0x10000) {
->  			pr_err("RIO: Component Tag Counter Overflow\n");
-> -			goto cleanup;
-> +			goto out_rdev;
->  		}
->  		rio_mport_write_config_32(port, destid, hopcount,
->  					  RIO_COMPONENT_TAG_CSR,
-next_comptag);
-> @@ -518,7 +518,7 @@ static struct rio_dev __devinit
-> *rio_setup_device(struct rio_net *net,
->  cleanup:
->  	if (rio_is_switch(rdev))
->  		kfree(rswitch->route_table);
+Use BUG_ON(x) rather than if(x) BUG();
 
-Because rswitch is set not-NULL only for switch devices the check below
-can make things simpler: 
-  cleanup:
-	if (rswitch)
-  		kfree(rswitch->route_table);
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> -
-> +out_rdev:
->  	kfree(rdev);
->  	return NULL;
->  }
+// <smpl>
+@@ identifier x; @@
+-if (x) BUG();
++BUG_ON(x);
+
+@@ identifier x; @@
+-if (!x) BUG();
++BUG_ON(!x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/tile/mm/init.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/arch/tile/mm/init.c b/arch/tile/mm/init.c
+--- a/arch/tile/mm/init.c
++++ b/arch/tile/mm/init.c
+@@ -836,8 +836,7 @@ void __init mem_init(void)
+ #endif
+ 
+ #ifdef CONFIG_FLATMEM
+-	if (!mem_map)
+-		BUG();
++	BUG_ON(!mem_map);
+ #endif
+ 
+ #ifdef CONFIG_HIGHMEM
+
