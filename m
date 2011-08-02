@@ -1,41 +1,50 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Thu, 04 Aug 2011 21:46:54 +0000
-Subject: Re: [PATCH 2/2] HID: kfree() NULL pointer cleanup
-Message-Id: <alpine.LNX.2.00.1108042346450.32288@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 02 Aug 2011 10:34:55 +0000
+Subject: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use BUG_ON
+Message-Id: <1312281304-11847-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312490626-14838-1-git-send-email-prtvar.b@gmail.com>
-In-Reply-To: <1312490626-14838-1-git-send-email-prtvar.b@gmail.com>
+References: <1312281304-11847-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1312281304-11847-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bojan Prtvar <prtvar.b@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Eric Moore <Eric.Moore@lsi.com>, trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 4 Aug 2011, Bojan Prtvar wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Checking for NULL pointers before kfree() is redundant.
-> 
-> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
-> ---
->  drivers/hid/hid-zydacron.c |    4 +---
->  1 files changed, 1 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-zydacron.c b/drivers/hid/hid-zydacron.c
-> index e903715..1ad85f2 100644
-> --- a/drivers/hid/hid-zydacron.c
-> +++ b/drivers/hid/hid-zydacron.c
-> @@ -201,9 +201,7 @@ static void zc_remove(struct hid_device *hdev)
->  	struct zc_device *zc = hid_get_drvdata(hdev);
->  
->  	hid_hw_stop(hdev);
-> -
-> -	if (NULL != zc)
-> -		kfree(zc);
-> +	kfree(zc);
->  }
+Use BUG_ON(x) rather than if(x) BUG();
 
-Applied, thanks.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-Jiri Kosina
-SUSE Labs
+// <smpl>
+@@ identifier x; @@
+-if (x) BUG();
++BUG_ON(x);
+
+@@ identifier x; @@
+-if (!x) BUG();
++BUG_ON(!x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/message/fusion/mptsas.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
+--- a/drivers/message/fusion/mptsas.c
++++ b/drivers/message/fusion/mptsas.c
+@@ -3410,8 +3410,7 @@ mptsas_expander_event_add(MPT_ADAPTER *i
+ 	__le64 sas_address;
+ 
+ 	port_info = kzalloc(sizeof(struct mptsas_portinfo), GFP_KERNEL);
+-	if (!port_info)
+-		BUG();
++	BUG_ON(!port_info);
+ 	port_info->num_phys = (expander_data->NumPhys) ?
+ 	    expander_data->NumPhys : 1;
+ 	port_info->phy_info = kcalloc(port_info->num_phys,
+
