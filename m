@@ -1,43 +1,50 @@
-From: Luciano Coelho <coelho@ti.com>
-Date: Wed, 24 Aug 2011 14:18:41 +0000
-Subject: Re: [patch -next] wl12xx: fix recent change to
-Message-Id: <1314195521.2296.204.camel@cumari>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 02 Aug 2011 10:35:00 +0000
+Subject: [PATCH 7/11] arch/m32r/kernel/smp.c: trivial: use BUG_ON
+Message-Id: <1312281304-11847-8-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110824113139.GE5975@shale.localdomain>
-In-Reply-To: <20110824113139.GE5975@shale.localdomain>
+References: <1312281304-11847-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1312281304-11847-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
-Cc: Shahar Levi <shahar_levi@ti.com>, "John W. Linville" <linville@tuxdriver.com>, "open list:WL1271 WIRELESS D..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hirokazu Takata <takata@linux-m32r.org>, trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Chris Metcalf <cmetcalf@tilera.com>, linux-m32r@ml.linux-m32r.org, linux-m32r-ja@ml.linux-m32r.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Julia Lawall <julia@diku.dk>
 
-On Wed, 2011-08-24 at 14:31 +0300, Dan Carpenter wrote:=20
-> bc765bf3b9a "wl12xx: 1281/1283 support - Loading FW & NVS" had two
-> problems.  The condition was written so that it failed if "len" was
-> not equal to sizeof(struct wl1271_nvs_file).  Also we need to release
-> the locks on these new error paths.
->=20
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Use BUG_ON(x) rather than if(x) BUG();
 
-Thanks for your patch.  But we have just removed this function, since
-the implementation was broken and the feature is not really used
-anymore.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-The patch that removes this function entirely is already queued for
-inclusion on the 3.1-rc series:
+// <smpl>
+@@ identifier x; @@
+-if (x) BUG();
++BUG_ON(x);
 
-http://git.kernel.org/?p=3Dlinux/kernel/git/linville/wireless.git;a=3Dcommi=
-t;h=80900d0140a7648587982c8f299830e900e49165
+@@ identifier x; @@
+-if (!x) BUG();
++BUG_ON(!x);
+// </smpl>
 
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
---=20
-Cheers,
-Luca.
+---
+ arch/m32r/kernel/smp.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff -u -p a/arch/m32r/kernel/smp.c b/arch/m32r/kernel/smp.c
+--- a/arch/m32r/kernel/smp.c
++++ b/arch/m32r/kernel/smp.c
+@@ -327,8 +327,7 @@ void smp_flush_tlb_page(struct vm_area_s
+ 	cpumask_clear_cpu(cpu_id, &cpu_mask);
+ 
+ #ifdef DEBUG_SMP
+-	if (!mm)
+-		BUG();
++	BUG_ON(!mm);
+ #endif
+ 
+ 	if (*mmc != NO_CONTEXT) {
+
