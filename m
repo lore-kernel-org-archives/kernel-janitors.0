@@ -1,51 +1,60 @@
-From: Timur Tabi <timur@freescale.com>
-Date: Tue, 23 Aug 2011 19:04:46 +0000
-Subject: Re: [PATCH 8/9] arch/powerpc/sysdev/ehv_pic.c: add missing kfree
-Message-Id: <4E53F9CE.1040106@freescale.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 02 Aug 2011 10:34:54 +0000
+Subject: [PATCH 1/11] kernel/kfifo.c: trivial: use BUG_ON
+Message-Id: <1312281304-11847-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312802283-9107-8-git-send-email-julia@diku.dk>
-	<CAOZdJXX_BS7GMtmyqiS91QByhrjANtKpbqrstR8g-L80r_N8qg@mail.gmail.com>
-In-Reply-To: <CAOZdJXX_BS7GMtmyqiS91QByhrjANtKpbqrstR8g-L80r_N8qg@mail.gmail.com>
+References: <1312281304-11847-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1312281304-11847-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Kumar Gala <galak@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>, linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, Stefani Seibold <stefani@seibold.net>, Andrea Righi <arighi@develer.com>, "Ira W. Snyder" <iws@ovro.caltech.edu>, linux-kernel@vger.kernel.org
 
-Ben, Kumar, can one of you take a look at my question and help me out?
+From: Julia Lawall <julia@diku.dk>
 
- wrote:
-> On Mon, Aug 8, 2011 at 7:18 AM, Julia Lawall <julia@diku.dk> wrote:
-> 
->> diff --git a/arch/powerpc/sysdev/ehv_pic.c b/arch/powerpc/sysdev/ehv_pic.c
->> index af1a5df..b6731e4 100644
->> --- a/arch/powerpc/sysdev/ehv_pic.c
->> +++ b/arch/powerpc/sysdev/ehv_pic.c
->> @@ -280,6 +280,7 @@ void __init ehv_pic_init(void)
->>
->>        if (!ehv_pic->irqhost) {
->>                of_node_put(np);
->> +               kfree(ehv_pic);
->>                return;
->>        }
-> 
-> Although the fix is correct, I think there is another bug in this
-> function.  'np' is not released when the function finishes
-> successfully.   I've looked at other functions that use
-> irq_alloc_host(), and most of them do the same thing: they don't call
-> of_node_put() on the device node pointer.  The only exception I've
-> found is mpc5121_ads_cpld_pic_init().
-> 
-> Ben, Kumar: am I missing something?  irq_alloc_host() calls of_node_get():
-> 
-> 	host->of_node = of_node_get(of_node);
-> 
-> so doesn't that mean that the caller of irq_alloc_host() should
-> release the device node pointer?
-> 
+Use BUG_ON(x) rather than if(x) BUG();
 
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-Timur Tabi
-Linux kernel developer at Freescale
+// <smpl>
+@@ identifier x; @@
+-if (x) BUG();
++BUG_ON(x);
+
+@@ identifier x; @@
+-if (!x) BUG();
++BUG_ON(!x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ kernel/kfifo.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff -u -p a/kernel/kfifo.c b/kernel/kfifo.c
+--- a/kernel/kfifo.c
++++ b/kernel/kfifo.c
+@@ -562,8 +562,7 @@ EXPORT_SYMBOL(__kfifo_to_user_r);
+ unsigned int __kfifo_dma_in_prepare_r(struct __kfifo *fifo,
+ 	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize)
+ {
+-	if (!nents)
+-		BUG();
++	BUG_ON(!nents);
+ 
+ 	len = __kfifo_max_r(len, recsize);
+ 
+@@ -586,8 +585,7 @@ EXPORT_SYMBOL(__kfifo_dma_in_finish_r);
+ unsigned int __kfifo_dma_out_prepare_r(struct __kfifo *fifo,
+ 	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize)
+ {
+-	if (!nents)
+-		BUG();
++	BUG_ON(!nents);
+ 
+ 	len = __kfifo_max_r(len, recsize);
+ 
 
