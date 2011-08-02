@@ -1,26 +1,50 @@
-From: "Rose" <william_rose55@yahoo.com>
-Date: Fri, 12 Aug 2011 18:25:00 +0000
-Subject: =?UTF-8?Q?HELLO=20my=20=20=E4=BD=A0=E5=A5=BD=EF=BC=8C=E6=88=91?=
-Message-Id: <20110812202500.3D7EFB8D@centrum.sk>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 02 Aug 2011 10:34:59 +0000
+Subject: [PATCH 6/11] drivers/iommu/iommu.c: trivial: use BUG_ON
+Message-Id: <1312281304-11847-7-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1312281304-11847-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1312281304-11847-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, Joerg Roedel <joerg.roedel@amd.com>, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-HELLO
-My name is Rose,i and became intrested in you, i will also like to know you=
- more,and i want you to send an email to my email address so i can give you=
- my picture for you to know whom i am. Here is my email address(william_ros=
-e55@yahoo.com)I believe we can move from here!
-I am waiting for your mail to my email address above..
-(Remeber the distance or colour does not matter but love matters alot in li=
-fe)
-Thanks Rose=C2=A0 please contact me now through my email address
-(william_rose55@yahoo.com)
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Use BUG_ON(x) rather than if(x) BUG();
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@ identifier x; @@
+-if (x) BUG();
++BUG_ON(x);
+
+@@ identifier x; @@
+-if (!x) BUG();
++BUG_ON(!x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/iommu/iommu.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -u -p a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -27,8 +27,7 @@ static struct iommu_ops *iommu_ops;
+ 
+ void register_iommu(struct iommu_ops *ops)
+ {
+-	if (iommu_ops)
+-		BUG();
++	BUG_ON(iommu_ops);
+ 
+ 	iommu_ops = ops;
+ }
+
