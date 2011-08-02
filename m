@@ -1,35 +1,49 @@
-From: Bojan Prtvar <prtvar.b@gmail.com>
-Date: Wed, 03 Aug 2011 19:51:19 +0000
-Subject: [PATCH] Fix potential NULL dereference in drivers/gpu/drm/radeon/atom.c
-Message-Id: <1312401079-1775-1-git-send-email-prtvar.b@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 02 Aug 2011 10:34:56 +0000
+Subject: [PATCH 3/11] arch/arm/mach-s3c64xx/dma.c: trivial: use BUG_ON
+Message-Id: <1312281304-11847-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1312281304-11847-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1312281304-11847-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie
-Cc: alexdeucher@gmail.com, airlied@redhat.com, akpm@linux-foundation.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Bojan Prtvar <prtvar.b@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
 
-kzalloc() can return NULL, so I added check for it
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+Use BUG_ON(x) rather than if(x) BUG();
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@ identifier x; @@
+-if (x) BUG();
++BUG_ON(x);
+
+@@ identifier x; @@
+-if (!x) BUG();
++BUG_ON(!x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/gpu/drm/radeon/atom.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+ arch/arm/mach-s3c64xx/dma.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/atom.c b/drivers/gpu/drm/radeon/atom.c
-index ebdb0fd..e88c644 100644
---- a/drivers/gpu/drm/radeon/atom.c
-+++ b/drivers/gpu/drm/radeon/atom.c
-@@ -1245,6 +1245,9 @@ struct atom_context *atom_parse(struct card_info *card, void *bios)
- 	char name[512];
- 	int i;
+diff -u -p a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+--- a/arch/arm/mach-s3c64xx/dma.c
++++ b/arch/arm/mach-s3c64xx/dma.c
+@@ -603,8 +603,7 @@ static irqreturn_t s3c64xx_dma_irq(int i
+ 				&& buff->next != chan->next)
+ 			buff = buff->next;
  
-+	if (!ctx)
-+		return NULL;
-+
- 	ctx->card = card;
- 	ctx->bios = bios;
+-		if (!buff)
+-			BUG();
++		BUG_ON(!buff);
  
--- 
-1.7.1
+ 		if (buff = chan->next)
+ 			buff = chan->end;
 
