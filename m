@@ -1,21 +1,29 @@
-From: Nicolle Smith <nismith@tanner.org>
-Date: Sat, 13 Aug 2011 00:05:33 +0000
-Subject: Let op Let op! Te activeren! Webmail Quota Limiet
-Message-Id: <76A7ECD1A4104A4EB27A334A52BDC3BE01A99D46F6@EX2007MAIL.ths.local>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 03 Aug 2011 14:22:45 +0000
+Subject: [patch] bluetooth: unlock if allocation fails in hci_blacklist_add()
+Message-Id: <20110803142244.GL3839@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Cc: Marcel Holtmann <marcel@holtmann.org>, "open list:BLUETOOTH SUBSYSTEM" <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Uw mailbox heeft overschreden de limiet van 1GB, die zo
-gedefinieerd door de beheerder, bent u draait op 5.9GB, mag u niet
-kunnen verzenden of ontvangen nieuwe berichten totdat u opnieuw valideren van uw
-mailbox. Om revalidates uw mailbox,
-Klik op onderstaande link:
+There was a small typo here so we never actually hit the goto which
+would call hci_dev_unlock_bh().
 
-http://sindicato2.com/form/use/please/form1.html
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-dank U
-Webmail System Administrator
-2011 ITS Help Desk.
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index baaf5eb..56943ad 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -1326,7 +1326,7 @@ int hci_blacklist_add(struct hci_dev *hdev, bdaddr_t *bdaddr)
+ 
+ 	entry = kzalloc(sizeof(struct bdaddr_list), GFP_KERNEL);
+ 	if (!entry) {
+-		return -ENOMEM;
++		err = -ENOMEM;
+ 		goto err;
+ 	}
+ 
