@@ -1,29 +1,35 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 06 Aug 2011 08:00:34 +0000
-Subject: [patch] [media] dib7000p: return error code on allocation failure
-Message-Id: <20110806080033.GA28348@mwanda>
+From: Bojan Prtvar <prtvar.b@gmail.com>
+Date: Wed, 03 Aug 2011 19:51:19 +0000
+Subject: [PATCH] Fix potential NULL dereference in drivers/gpu/drm/radeon/atom.c
+Message-Id: <1312401079-1775-1-git-send-email-prtvar.b@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Patrick Boettcher <patrick.boettcher@dibcom.fr>, Olivier Grenie <olivier.grenie@dibcom.fr>, Devin Heitmueller <dheitmueller@kernellabs.com>, "open list:MEDIA INPUT INFRA..." <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: airlied@linux.ie
+Cc: alexdeucher@gmail.com, airlied@redhat.com, akpm@linux-foundation.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Bojan Prtvar <prtvar.b@gmail.com>
 
-The goto needs to be moved after the assignment.
+kzalloc() can return NULL, so I added check for it
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+---
+ drivers/gpu/drm/radeon/atom.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/media/dvb/frontends/dib7000p.c b/drivers/media/dvb/frontends/dib7000p.c
-index a64a538..9c40267 100644
---- a/drivers/media/dvb/frontends/dib7000p.c
-+++ b/drivers/media/dvb/frontends/dib7000p.c
-@@ -1577,8 +1577,8 @@ int dib7000pc_detection(struct i2c_adapter *i2c_adap)
- 		return -ENOMEM;
- 	rx = kzalloc(2*sizeof(u8), GFP_KERNEL);
- 	if (!rx) {
--		goto rx_memory_error;
- 		ret = -ENOMEM;
-+		goto rx_memory_error;
- 	}
+diff --git a/drivers/gpu/drm/radeon/atom.c b/drivers/gpu/drm/radeon/atom.c
+index ebdb0fd..e88c644 100644
+--- a/drivers/gpu/drm/radeon/atom.c
++++ b/drivers/gpu/drm/radeon/atom.c
+@@ -1245,6 +1245,9 @@ struct atom_context *atom_parse(struct card_info *card, void *bios)
+ 	char name[512];
+ 	int i;
  
- 	msg[0].buf = tx;
++	if (!ctx)
++		return NULL;
++
+ 	ctx->card = card;
+ 	ctx->bios = bios;
+ 
+-- 
+1.7.1
+
