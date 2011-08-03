@@ -1,102 +1,65 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Mon, 08 Aug 2011 21:11:54 +0000
-Subject: Re: [PATCH 7/9] drivers/target/iscsi/iscsi_target_parameters.c:
-Message-Id: <1312837914.12502.92.camel@haakon2.linux-iscsi.org>
+From: Thomas Meyer <thomas@m3y3r.de>
+Date: Wed, 03 Aug 2011 15:54:04 +0000
+Subject: Re: [PATCH 8/20] drivers/parport: Use kzalloc
+Message-Id: <1312386848.2629.21.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312802283-9107-7-git-send-email-julia@diku.dk>
-In-Reply-To: <1312802283-9107-7-git-send-email-julia@diku.dk>
+References: <Pine.LNX.4.64.1005132200410.6282@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.1005132200410.6282@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, Andy Grover <agrover@redhat.com>, Roland Dreier <roland@kernel.org>, Christoph Hellwig <hch@lst.de>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2011-08-08 at 13:18 +0200, Julia Lawall wrote:
+Am Donnerstag, den 13.05.2010, 22:01 +0200 schrieb Julia Lawall:
+
 > From: Julia Lawall <julia@diku.dk>
 > 
-> At this point, the new_param that has just been allocated has not been
-> stored in the list, so it and new_param->name, once it is defined, have to
-> be freed separately.
+> Use kzalloc rather than the combination of kmalloc and memset.
 > 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
 > 
 > // <smpl>
-> @exists@
-> local idexpression x;
-> statement S,S1;
-> expression E;
-> identifier fl;
-> expression *ptr != NULL;
+> @@
+> expression x,size,flags;
+> statement S;
 > @@
 > 
-> x = \(kmalloc\|kzalloc\|kcalloc\)(...);
-> ...
-> if (x = NULL) S
-> <... when != x
->      when != if (...) { <+...kfree(x)...+> }
->      when any
->      when != true x = NULL
-> x->fl
-> ...>
-> (
-> if (x = NULL) S1
-> |
-> if (...) { ... when != x
->                when forall
-> (
->  return \(0\|<+...x...+>\|ptr\);
-> |
-> * return ...;
-> )
-> }
-> )
+> -x = kmalloc(size,flags);
+> +x = kzalloc(size,flags);
+>  if (x = NULL) S
+> -memset(x, 0, size);
 > // </smpl>
 > 
 > Signed-off-by: Julia Lawall <julia@diku.dk>
+
+Reviewed-by: Thomas Meyer <thomas@m3y3r.de>
+
 > 
 > ---
->  drivers/target/iscsi/iscsi_target_parameters.c |    3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/parport/share.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-> index 252e246..b8dbe44 100644
-> --- a/drivers/target/iscsi/iscsi_target_parameters.c
-> +++ b/drivers/target/iscsi/iscsi_target_parameters.c
-> @@ -584,6 +584,7 @@ int iscsi_copy_param_list(
->  		if (!new_param->name) {
->  			pr_err("Unable to allocate memory for"
->  				" parameter name.\n");
-> +			kfree(new_param);
->  			goto err_out;
->  		}
+> diff -u -p a/drivers/parport/share.c b/drivers/parport/share.c
+> --- a/drivers/parport/share.c
+> +++ b/drivers/parport/share.c
+> @@ -282,14 +282,13 @@ struct parport *parport_register_port(un
+>  	int device;
+>  	char *name;
 >  
-> @@ -592,6 +593,8 @@ int iscsi_copy_param_list(
->  		if (!new_param->value) {
->  			pr_err("Unable to allocate memory for"
->  				" parameter value.\n");
-> +			kfree(new_param->name);
-> +			kfree(new_param);
->  			goto err_out;
->  		}
+> -	tmp = kmalloc(sizeof(struct parport), GFP_KERNEL);
+> +	tmp = kzalloc(sizeof(struct parport), GFP_KERNEL);
+>  	if (!tmp) {
+>  		printk(KERN_WARNING "parport: memory squeeze\n");
+>  		return NULL;
+>  	}
 >  
-> 
+>  	/* Init our structure */
+> - 	memset(tmp, 0, sizeof(struct parport));
+>  	tmp->base = base;
+>  	tmp->irq = irq;
+>  	tmp->dma = dma;
 
-Hi Julia,
 
-Jesper and Dan already caught this one last week, and has been resolved
-with the following patch in lio-core-2.6.git:
-
-commit 83f8b803171751082174162cd1fa058c67d579ab
-Author: Jesper Juhl <jj@chaosbits.net>
-Date:   Tue Aug 2 10:26:36 2011 +0200
-
-    iscsi-target: Fix leak on failure in iscsi_copy_param_list()
-
-This one is being queued for the next round of target fixes for
-mainline.
-
-Thanks for reporting!
-
---nab
 
