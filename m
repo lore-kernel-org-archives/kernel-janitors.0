@@ -1,15 +1,29 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 02 Aug 2011 10:34:55 +0000
-Subject: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use BUG_ON
-Message-Id: <1312281304-11847-3-git-send-email-julia@diku.dk>
+From: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
+Date: Thu, 04 Aug 2011 06:54:20 +0000
+Subject: RE: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use
+Message-Id: <A6888A6805518E4EA4AF7072A28264A6042ABC7D09@inbmail02.lsi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1312281304-11847-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1312281304-11847-1-git-send-email-julia@diku.dk>
+ <1312281304-11847-3-git-send-email-julia@diku.dk>
+In-Reply-To: <1312281304-11847-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Moore <Eric.Moore@lsi.com>, trivial@kernel.org
-Cc: kernel-janitors@vger.kernel.org, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, "Moore, Eric" <Eric.Moore@lsi.com>, "trivial@kernel.org" <trivial@kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Support <support@lsi.com>, DL-MPT Fusion Linux <DL-MPTFusionLinux@lsi.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+
+The patch seem to be fine. Please consider this patch as an Acked by me
+
+Regards,
+Nagalakshmi
+
+
+-----Original Message-----
+From: Julia Lawall [mailto:julia@diku.dk] 
+Sent: Tuesday, August 02, 2011 4:05 PM
+To: Moore, Eric; trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org; Support; DL-MPT Fusion Linux; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org
+Subject: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use BUG_ON
 
 From: Julia Lawall <julia@diku.dk>
 
