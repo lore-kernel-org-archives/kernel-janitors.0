@@ -1,24 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 11 Aug 2011 12:53:33 +0000
-Subject: Re: [PATCH] net/bridge/netfilter/ebtables.c: use available error
-Message-Id: <20110811.055333.1199553373699762518.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 04 Aug 2011 10:29:31 +0000
+Subject: [PATCH 1/4] fs/ext3/balloc.c: delete useless initialization
+Message-Id: <1312453774-23333-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1313063978-29400-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1313063978-29400-1-git-send-email-julia@diku.dk>
+References: <1312453774-23333-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1312453774-23333-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: bart.de.schuymer@pandora.be, kernel-janitors@vger.kernel.org, kaber@trash.net, shemminger@linux-foundation.org, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
-Date: Thu, 11 Aug 2011 13:59:38 +0200
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Free the locally allocated table and newinfo as done in adjacent error
-> handling code.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Delete nontrivial initialization that is immediately overwritten by the
+result of an allocation function.
 
-Applied.
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+type T;
+identifier i;
+expression e;
+@@
+
+(
+T i = \(0\|NULL\|ERR_PTR(...)\);
+|
+-T i = e;
++T i;
+)
+... when != i
+i = \(kzalloc\|kcalloc\|kmalloc\)(...);
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ fs/ext3/balloc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/fs/ext3/balloc.c b/fs/ext3/balloc.c
+--- a/fs/ext3/balloc.c
++++ b/fs/ext3/balloc.c
+@@ -427,7 +427,7 @@ static inline int rsv_is_empty(struct ex
+ void ext3_init_block_alloc_info(struct inode *inode)
+ {
+ 	struct ext3_inode_info *ei = EXT3_I(inode);
+-	struct ext3_block_alloc_info *block_i = ei->i_block_alloc_info;
++	struct ext3_block_alloc_info *block_i;
+ 	struct super_block *sb = inode->i_sb;
+ 
+ 	block_i = kmalloc(sizeof(*block_i), GFP_NOFS);
+
