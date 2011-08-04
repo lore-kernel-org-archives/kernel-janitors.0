@@ -1,64 +1,83 @@
-From: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
-Date: Thu, 04 Aug 2011 06:54:20 +0000
-Subject: RE: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use
-Message-Id: <A6888A6805518E4EA4AF7072A28264A6042ABC7D09@inbmail02.lsi.com>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 04 Aug 2011 07:13:21 +0000
+Subject: Re: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use BUG_ON
+Message-Id: <4E3A4691.6060009@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312281304-11847-1-git-send-email-julia@diku.dk>
- <1312281304-11847-3-git-send-email-julia@diku.dk>
+References: <1312281304-11847-3-git-send-email-julia@diku.dk>
 In-Reply-To: <1312281304-11847-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>, "Moore, Eric" <Eric.Moore@lsi.com>, "trivial@kernel.org" <trivial@kernel.org>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Support <support@lsi.com>, DL-MPT Fusion Linux <DL-MPTFusionLinux@lsi.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-
-The patch seem to be fine. Please consider this patch as an Acked by me
-
-Regards,
-Nagalakshmi
+To: kernel-janitors@vger.kernel.org
 
 
------Original Message-----
-From: Julia Lawall [mailto:julia@diku.dk] 
-Sent: Tuesday, August 02, 2011 4:05 PM
-To: Moore, Eric; trivial@kernel.org
-Cc: kernel-janitors@vger.kernel.org; Support; DL-MPT Fusion Linux; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org
-Subject: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use BUG_ON
 
-From: Julia Lawall <julia@diku.dk>
+Am 04.08.2011 08:54, schrieb Nandigama, Nagalakshmi:
+> The patch seem to be fine. Please consider this patch as an Acked by me
+> 
+> Regards,
+> Nagalakshmi
 
-Use BUG_ON(x) rather than if(x) BUG();
+Hi Nagalakshmi,
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+nice try :) when you want to acknowledge a patch you should write:
+Acked-by: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
 
-// <smpl>
-@@ identifier x; @@
--if (x) BUG();
-+BUG_ON(x);
+Otherwise scripts that look for an acknowledge have a hard time.
 
-@@ identifier x; @@
--if (!x) BUG();
-+BUG_ON(!x);
-// </smpl>
+re,
+ wh
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
 
----
- drivers/message/fusion/mptsas.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff -u -p a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
---- a/drivers/message/fusion/mptsas.c
-+++ b/drivers/message/fusion/mptsas.c
-@@ -3410,8 +3410,7 @@ mptsas_expander_event_add(MPT_ADAPTER *i
- 	__le64 sas_address;
- 
- 	port_info = kzalloc(sizeof(struct mptsas_portinfo), GFP_KERNEL);
--	if (!port_info)
--		BUG();
-+	BUG_ON(!port_info);
- 	port_info->num_phys = (expander_data->NumPhys) ?
- 	    expander_data->NumPhys : 1;
- 	port_info->phy_info = kcalloc(port_info->num_phys,
-
+> 
+> 
+> -----Original Message-----
+> From: Julia Lawall [mailto:julia@diku.dk] 
+> Sent: Tuesday, August 02, 2011 4:05 PM
+> To: Moore, Eric; trivial@kernel.org
+> Cc: kernel-janitors@vger.kernel.org; Support; DL-MPT Fusion Linux; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use BUG_ON
+> 
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Use BUG_ON(x) rather than if(x) BUG();
+> 
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@ identifier x; @@
+> -if (x) BUG();
+> +BUG_ON(x);
+> 
+> @@ identifier x; @@
+> -if (!x) BUG();
+> +BUG_ON(!x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  drivers/message/fusion/mptsas.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff -u -p a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
+> --- a/drivers/message/fusion/mptsas.c
+> +++ b/drivers/message/fusion/mptsas.c
+> @@ -3410,8 +3410,7 @@ mptsas_expander_event_add(MPT_ADAPTER *i
+>  	__le64 sas_address;
+>  
+>  	port_info = kzalloc(sizeof(struct mptsas_portinfo), GFP_KERNEL);
+> -	if (!port_info)
+> -		BUG();
+> +	BUG_ON(!port_info);
+>  	port_info->num_phys = (expander_data->NumPhys) ?
+>  	    expander_data->NumPhys : 1;
+>  	port_info->phy_info = kcalloc(port_info->num_phys,
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
