@@ -1,36 +1,41 @@
-From: Bojan Prtvar <prtvar.b@gmail.com>
-Date: Thu, 04 Aug 2011 20:43:46 +0000
-Subject: [PATCH 2/2] HID: kfree() NULL pointer cleanup
-Message-Id: <1312490626-14838-1-git-send-email-prtvar.b@gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Thu, 04 Aug 2011 21:46:54 +0000
+Subject: Re: [PATCH 2/2] HID: kfree() NULL pointer cleanup
+Message-Id: <alpine.LNX.2.00.1108042346450.32288@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1312490626-14838-1-git-send-email-prtvar.b@gmail.com>
+In-Reply-To: <1312490626-14838-1-git-send-email-prtvar.b@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jkosina@suse.cz
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Bojan Prtvar <prtvar.b@gmail.com>
+To: Bojan Prtvar <prtvar.b@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Checking for NULL pointers before kfree() is redundant.
+On Thu, 4 Aug 2011, Bojan Prtvar wrote:
 
-Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
----
- drivers/hid/hid-zydacron.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+> Checking for NULL pointers before kfree() is redundant.
+> 
+> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+> ---
+>  drivers/hid/hid-zydacron.c |    4 +---
+>  1 files changed, 1 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-zydacron.c b/drivers/hid/hid-zydacron.c
+> index e903715..1ad85f2 100644
+> --- a/drivers/hid/hid-zydacron.c
+> +++ b/drivers/hid/hid-zydacron.c
+> @@ -201,9 +201,7 @@ static void zc_remove(struct hid_device *hdev)
+>  	struct zc_device *zc = hid_get_drvdata(hdev);
+>  
+>  	hid_hw_stop(hdev);
+> -
+> -	if (NULL != zc)
+> -		kfree(zc);
+> +	kfree(zc);
+>  }
 
-diff --git a/drivers/hid/hid-zydacron.c b/drivers/hid/hid-zydacron.c
-index e903715..1ad85f2 100644
---- a/drivers/hid/hid-zydacron.c
-+++ b/drivers/hid/hid-zydacron.c
-@@ -201,9 +201,7 @@ static void zc_remove(struct hid_device *hdev)
- 	struct zc_device *zc = hid_get_drvdata(hdev);
- 
- 	hid_hw_stop(hdev);
--
--	if (NULL != zc)
--		kfree(zc);
-+	kfree(zc);
- }
- 
- static const struct hid_device_id zc_devices[] = {
+Applied, thanks.
+
 -- 
-1.7.1
-
+Jiri Kosina
+SUSE Labs
