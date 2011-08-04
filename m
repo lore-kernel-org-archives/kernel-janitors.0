@@ -1,51 +1,51 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Wed, 10 Aug 2011 12:17:28 +0000
-Subject: Re: [patch] USB: serial: remove duplicate returns
-Message-Id: <alpine.LNX.2.00.1108101417150.32288@pobox.suse.cz>
+From: Bojan Prtvar <prtvar.b@gmail.com>
+Date: Thu, 04 Aug 2011 21:46:48 +0000
+Subject: [PATCH 1/2 v2] HID: kfree() NULL pointer cleanup
+Message-Id: <1312494408-15500-1-git-send-email-prtvar.b@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110806143126.GE10373@mwanda>
-In-Reply-To: <20110806143126.GE10373@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jkosina@suse.cz, julia@diku.dk
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Bojan Prtvar <prtvar.b@gmail.com>
 
-On Sat, 6 Aug 2011, Dan Carpenter wrote:
+Checking for NULL pointers before kfree() is redundant.
+v2:
+No need for freeing pm in case when it's not allocated.
 
-> This small untidiness with two returns in a row was copy and pasted
-> into mos7720.c and mos7840.c.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
-> index 40abedb..3524a10 100644
-> --- a/drivers/usb/serial/mos7720.c
-> +++ b/drivers/usb/serial/mos7720.c
-> @@ -2006,7 +2006,6 @@ static int mos7720_ioctl(struct tty_struct *tty,
->  		dbg("%s (%d) TIOCSERGETLSR", __func__,  port->number);
->  		return get_lsr_info(tty, mos7720_port,
->  					(unsigned int __user *)arg);
-> -		return 0;
->  
->  	/* FIXME: These should be using the mode methods */
->  	case TIOCMBIS:
-> diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
-> index 7b50aa1..c72abd5 100644
-> --- a/drivers/usb/serial/mos7840.c
-> +++ b/drivers/usb/serial/mos7840.c
-> @@ -2263,7 +2263,6 @@ static int mos7840_ioctl(struct tty_struct *tty,
->  	case TIOCSERGETLSR:
->  		dbg("%s (%d) TIOCSERGETLSR", __func__, port->number);
->  		return mos7840_get_lsr_info(tty, argp);
-> -		return 0;
->  
->  	case TIOCGSERIAL:
->  		dbg("%s (%d) TIOCGSERIAL", __func__, port->number);
+Reported-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+---
+ drivers/hid/hid-prodikeys.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-Doesn't seem to be in linux-next as of today, so I have picked it up.
-
-Thanks,
-
+diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
+index 158b389..f779009 100644
+--- a/drivers/hid/hid-prodikeys.c
++++ b/drivers/hid/hid-prodikeys.c
+@@ -816,7 +816,7 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	if (pm = NULL) {
+ 		hid_err(hdev, "can't alloc descriptor\n");
+ 		ret = -ENOMEM;
+-		goto err_free;
++		goto err_free_pk;
+ 	}
+ 
+ 	pm->pk = pk;
+@@ -849,10 +849,10 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ err_stop:
+ 	hid_hw_stop(hdev);
+ err_free:
+-	if (pm != NULL)
+-		kfree(pm);
+-
++	kfree(pm);
++err_free_pk:
+ 	kfree(pk);
++
+ 	return ret;
+ }
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+1.7.1
+
