@@ -1,28 +1,48 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 05 Aug 2011 14:19:00 +0000
-Subject: [patch] btrfs: memory leak in btrfs_add_inode_defrag()
-Message-Id: <20110805141900.GL7659@shale.localdomain>
+From: Thomas Meyer <thomas@m3y3r.de>
+Date: Thu, 04 Aug 2011 22:05:58 +0000
+Subject: [PATCH] GFP_KERNEL malloc with lock held in net/wireless/mwifiex
+Message-Id: <1312495562.2629.53.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@oracle.com>
-Cc: "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We don't use the defrag struct on this path.
+From: Thomas Meyer <thomas@m3y3r.de>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+ Find functions that refer to GFP_KERNEL but are called with locks held.
+ The proposed change of converting the GFP_KERNEL is not necessarily the
+ correct one.  It may be desired to unlock the lock, or to not call the
+ function under the lock in the first place.
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 658d669..1102059 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -150,6 +150,8 @@ int btrfs_add_inode_defrag(struct btrfs_trans_handle *trans,
- 	spin_lock(&root->fs_info->defrag_inodes_lock);
- 	if (!BTRFS_I(inode)->in_defrag)
- 		__btrfs_add_inode_defrag(inode, defrag);
-+	else
-+		kfree(defrag);
- 	spin_unlock(&root->fs_info->defrag_inodes_lock);
- 	return 0;
- }
+ The semantic patch that makes this output is available
+ in scripts/coccinelle/locks/call_kern.cocci.
+
+ More information about semantic patching is available at
+ http://coccinelle.lip6.fr/
+
+Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+---
+the function mwifiex_save_curr_bcn() is guarded by:
+
+ spin_lock_irqsave(&priv->curr_bcn_buf_lock, flags);
+ mwifiex_save_curr_bcn(priv);
+ spin_unlock_irqrestore(&priv->curr_bcn_buf_lock, flags);
+
+Is it okay to allocate memory with a spin lock held and interrupts
+disabled in this case?
+
+diff -u -p a/drivers/net/wireless/mwifiex/scan.c b/drivers/net/wireless/mwifiex/scan.c
+--- a/drivers/net/wireless/mwifiex/scan.c 2011-07-26 00:46:08.483511656 +0200
++++ b/drivers/net/wireless/mwifiex/scan.c 2011-08-02 09:36:50.174808818 +0200
+@@ -2998,7 +2998,7 @@ mwifiex_save_curr_bcn(struct mwifiex_pri
+ 
+ 		kfree(priv->curr_bcn_buf);
+ 		priv->curr_bcn_buf = kzalloc(curr_bss->beacon_buf_size,
+-						GFP_KERNEL);
++						GFP_ATOMIC);
+ 		if (!priv->curr_bcn_buf) {
+ 			dev_err(priv->adapter->dev,
+ 					"failed to alloc curr_bcn_buf\n");
+
+
