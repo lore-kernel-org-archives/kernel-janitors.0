@@ -1,32 +1,28 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 06 Aug 2011 14:27:48 +0000
-Subject: [patch] rtl8712: don't just return -EFAULT in wpa_supplicant_ioctl()
-Message-Id: <20110806142748.GC10373@mwanda>
+Date: Fri, 05 Aug 2011 14:19:00 +0000
+Subject: [patch] btrfs: memory leak in btrfs_add_inode_defrag()
+Message-Id: <20110805141900.GL7659@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@oracle.com>
+Cc: "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-There were some curly braces missing so the original code in
-wpa_supplicant_ioctl() pretty much always returned -EFAULT without
-doing anything.
+We don't use the defrag struct on this path.
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-index 40e6b5c..c380a30 100644
---- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-+++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-@@ -2072,9 +2072,10 @@ static int wpa_supplicant_ioctl(struct net_device *dev, struct iw_point *p)
- 	param = (struct ieee_param *)_malloc(p->length);
- 	if (param = NULL)
- 		return -ENOMEM;
--	if (copy_from_user(param, p->pointer, p->length))
-+	if (copy_from_user(param, p->pointer, p->length)) {
- 		kfree((u8 *)param);
- 		return -EFAULT;
-+	}
- 	switch (param->cmd) {
- 	case IEEE_CMD_SET_WPA_PARAM:
- 		ret = wpa_set_param(dev, param->u.wpa_param.name,
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 658d669..1102059 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -150,6 +150,8 @@ int btrfs_add_inode_defrag(struct btrfs_trans_handle *trans,
+ 	spin_lock(&root->fs_info->defrag_inodes_lock);
+ 	if (!BTRFS_I(inode)->in_defrag)
+ 		__btrfs_add_inode_defrag(inode, defrag);
++	else
++		kfree(defrag);
+ 	spin_unlock(&root->fs_info->defrag_inodes_lock);
+ 	return 0;
+ }
