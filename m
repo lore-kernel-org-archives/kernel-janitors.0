@@ -1,37 +1,32 @@
-From: Sifram Rajas <sifram.rajas@gmail.com>
-Date: Wed, 31 Aug 2011 15:54:15 +0000
-Subject: [PATCH 1/1] drivers/acpi/acpi_ipmi.c: Set state to TASK_INTERRUPTIBLE in ipmi_flush_tx_msg
-Message-Id: <1314806007-8181-1-git-send-email-sifram.rajas@gmail.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 06 Aug 2011 14:27:48 +0000
+Subject: [patch] rtl8712: don't just return -EFAULT in wpa_supplicant_ioctl()
+Message-Id: <20110806142748.GC10373@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Sifram Rajas <Sifram Rajas sifram.rajas@gmail.com>
+There were some curly braces missing so the original code in
+wpa_supplicant_ioctl() pretty much always returned -EFAULT without
+doing anything.
 
-The intent of the loop in ipmi_flush_tx_msg seems to be to wait
-for 1 milllisecond for a count of 100. However, if we do not set the
-current task's state to TASK_INTERRUPTIBLE, then this will amount
-to a normal schedule which might not wait for 1 millisecond.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Signed-off-by: Sifram Rajas <Sifram Rajas sifram.rajas@gmail.com>
----
- drivers/acpi/acpi_ipmi.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/acpi/acpi_ipmi.c b/drivers/acpi/acpi_ipmi.c
-index f40acef..74eed35 100644
---- a/drivers/acpi/acpi_ipmi.c
-+++ b/drivers/acpi/acpi_ipmi.c
-@@ -230,6 +230,7 @@ static void ipmi_flush_tx_msg(struct acpi_ipmi_device *ipmi)
- 	while (count--) {
- 		if (list_empty(&ipmi->tx_msg_list))
- 			break;
-+		__set_current_state(TASK_INTERRUPTIBLE);
- 		schedule_timeout(1);
- 	}
- 	if (!list_empty(&ipmi->tx_msg_list))
--- 
-1.7.4.1
-
+diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+index 40e6b5c..c380a30 100644
+--- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
++++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+@@ -2072,9 +2072,10 @@ static int wpa_supplicant_ioctl(struct net_device *dev, struct iw_point *p)
+ 	param = (struct ieee_param *)_malloc(p->length);
+ 	if (param = NULL)
+ 		return -ENOMEM;
+-	if (copy_from_user(param, p->pointer, p->length))
++	if (copy_from_user(param, p->pointer, p->length)) {
+ 		kfree((u8 *)param);
+ 		return -EFAULT;
++	}
+ 	switch (param->cmd) {
+ 	case IEEE_CMD_SET_WPA_PARAM:
+ 		ret = wpa_set_param(dev, param->u.wpa_param.name,
