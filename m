@@ -1,30 +1,27 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 24 Aug 2011 10:17:07 +0000
-Subject: Re: [patch -next] bcma: signedness bug in bcma_get_next_core()
-Message-Id: <20110824101707.GA5975@shale.localdomain>
+Date: Sat, 06 Aug 2011 14:29:38 +0000
+Subject: [patch] iscsi-target: remove duplicate return
+Message-Id: <20110806142938.GD10373@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110818133809.GG4786@shale.localdomain>
- <CACna6rzwxA=OzQQ_VknsSq8BXXoH8U=GpdfkRTBWjFSNSjwsAA@mail.gmail.com>
- <20110823191306.GK12248@shale.localdomain>
- <CACna6rwLrGa4LU2GOQ03w+t5FfrD+c1rdHki_Nu-3oPVninCJg@mail.gmail.com>
-In-Reply-To: <CACna6rwLrGa4LU2GOQ03w+t5FfrD+c1rdHki_Nu-3oPVninCJg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: "open list:BROADCOM SPECIFIC..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Andy Grover <agrover@redhat.com>, Dan Carpenter <error27@gmail.com>, Roland Dreier <roland@kernel.org>, Christoph Hellwig <hch@lst.de>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, "open list:TARGET SUBSYSTEM" <target-devel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Aug 24, 2011 at 12:01:11PM +0200, Rafał Miłecki wrote:
-> Dan, I asked you to use int in both: call and function declaration.
-> I'm the author of that code, and I don't have anything against
-> modifying that :)
-> 
-> I think int is used much more often that s32 for errors.
-> 
+We returned on the line before already.
 
-No problem.  Should I make bcma_erom_get_mst_port() return 0 on
-success while I'm at it?
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
+index c24fb10..6a4ea29 100644
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -2243,7 +2243,6 @@ static int iscsit_handle_snack(
+ 	case 0:
+ 		return iscsit_handle_recovery_datain_or_r2t(conn, buf,
+ 			hdr->itt, hdr->ttt, hdr->begrun, hdr->runlength);
+-		return 0;
+ 	case ISCSI_FLAG_SNACK_TYPE_STATUS:
+ 		return iscsit_handle_status_snack(conn, hdr->itt, hdr->ttt,
+ 			hdr->begrun, hdr->runlength);
