@@ -1,40 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 01 Aug 2011 09:27:52 +0000
-Subject: Re: [PATCH 1/6] net: adjust array index
-Message-Id: <20110801.022752.1007506557598017442.davem@davemloft.net>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 06 Aug 2011 08:01:51 +0000
+Subject: [patch] [media] dib9000: return error code on failure
+Message-Id: <20110806080151.GB28348@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1311857165-14780-1-git-send-email-julia@diku.dk>
-	<1311857165-14780-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1311857165-14780-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: kernel-janitors@vger.kernel.org, kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Patrick Boettcher <patrick.boettcher@dibcom.fr>, Olivier Grenie <olivier.grenie@dibcom.fr>, "open list:MEDIA INPUT INFRA..." <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 28 Jul 2011 14:46:01 +0200
+The ret = -EIO needs to be before the goto.
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Convert array index from the loop bound to the loop index.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e1,e2,ar;
-> @@
-> 
-> for(e1 = 0; e1 < e2; e1++) { <...
->   ar[
-> - e2
-> + e1
->   ]
->   ...> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Applied.
+diff --git a/drivers/media/dvb/frontends/dib9000.c b/drivers/media/dvb/frontends/dib9000.c
+index a085588..01e6b0c 100644
+--- a/drivers/media/dvb/frontends/dib9000.c
++++ b/drivers/media/dvb/frontends/dib9000.c
+@@ -1167,8 +1167,8 @@ static int dib9000_fw_get_channel(struct dvb_frontend *fe, struct dvb_frontend_p
+ 
+ 	DibAcquireLock(&state->platform.risc.mem_mbx_lock);
+ 	if (dib9000_fw_memmbx_sync(state, FE_SYNC_CHANNEL) < 0) {
+-		goto error;
+ 		ret = -EIO;
++		goto error;
+ 	}
+ 
+ 	dib9000_risc_mem_read(state, FE_MM_R_CHANNEL_UNION,
