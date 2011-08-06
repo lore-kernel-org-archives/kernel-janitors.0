@@ -1,75 +1,32 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 22 Aug 2011 14:49:35 +0000
-Subject: Re: [PATCH 2/4] drivers/scsi/fcoe/fcoe.c: add missing test
-Message-Id: <Pine.LNX.4.64.1108221648560.10948@ask.diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 06 Aug 2011 14:32:06 +0000
+Subject: [patch] iscsi-target: forever loop in iscsit_attach_ooo_cmdsn()
+Message-Id: <20110806143206.GF10373@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1314021636-11528-2-git-send-email-julia@diku.dk>
- <alpine.LNX.2.00.1108221632130.9774@swampdragon.chaosbits.net>
-In-Reply-To: <alpine.LNX.2.00.1108221632130.9774@swampdragon.chaosbits.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jesper Juhl <jj@chaosbits.net>
-Cc: Robert Love <robert.w.love@intel.com>, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, devel@open-fcoe.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Andy Grover <agrover@redhat.com>, Roland Dreier <roland@kernel.org>, Christoph Hellwig <hch@lst.de>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, "open list:TARGET SUBSYSTEM" <target-devel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From nobody Mon Aug 22 15:57:42 CEST 2011
-From: Julia Lawall <julia@diku.dk>
-To: Robert Love <robert.w.love@intel.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>,devel@open-fcoe.org,linux-scsi@vger.kernel.org,linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] drivers/scsi/fcoe/fcoe.c: add missing test
+I was looking through the code for something unrelated and noticed
+what looks like a forever loop here.
 
-From: Julia Lawall <julia@diku.dk>
-
-The initializations of both fcoe_nport_scsi_transport and
-fcoe_vport_scsi_transport can fail, so test both of them.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-identifier x,y,f!={PTR_ERR,ERR_PTR,ERR_CAST};
-statement S;
-@@
-
-x = f(...);
-(
-if (\(x = NULL\|IS_ERR(x)\)) S
-|
-*if (\(y = NULL\|IS_ERR(y)\))
- { ... when != x
-   return ...; }
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 ---
- drivers/scsi/fcoe/fcoe.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+I am not familiar with the subsystem and haven't tested this, so
+please review carefully.
 
-diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-index ba710e3..9f2e2f4 100644
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@ -1093,11 +1093,20 @@ static int __init fcoe_if_init(void)
- 	/* attach to scsi transport */
- 	fcoe_nport_scsi_transport  		fc_attach_transport(&fcoe_nport_fc_functions);
-+
-+	if (!fcoe_nport_scsi_transport) {
-+		printk(KERN_ERR
-+		       "fcoe_nport: Failed to attach to the FC transport\n");
-+		return -ENODEV;
-+	}
-+
- 	fcoe_vport_scsi_transport  		fc_attach_transport(&fcoe_vport_fc_functions);
+diff --git a/drivers/target/iscsi/iscsi_target_erl1.c b/drivers/target/iscsi/iscsi_target_erl1.c
+index 9806507..c4c68da 100644
+--- a/drivers/target/iscsi/iscsi_target_erl1.c
++++ b/drivers/target/iscsi/iscsi_target_erl1.c
+@@ -834,7 +834,7 @@ static int iscsit_attach_ooo_cmdsn(
+ 			 */
+ 			list_for_each_entry(ooo_tmp, &sess->sess_ooo_cmdsn_list,
+ 						ooo_list) {
+-				while (ooo_tmp->cmdsn < ooo_cmdsn->cmdsn)
++				if (ooo_tmp->cmdsn < ooo_cmdsn->cmdsn)
+ 					continue;
  
--	if (!fcoe_nport_scsi_transport) {
--		printk(KERN_ERR "fcoe: Failed to attach to the FC transport\n");
-+	if (!fcoe_vport_scsi_transport) {
-+		printk(KERN_ERR
-+		       "fcoe_vport: Failed to attach to the FC transport\n");
-+		fc_release_transport(fcoe_nport_scsi_transport);
- 		return -ENODEV;
- 	}
- 
+ 				list_add(&ooo_cmdsn->ooo_list,
