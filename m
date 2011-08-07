@@ -1,30 +1,28 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 06 Aug 2011 14:26:41 +0000
-Subject: [patch] qla3xxx: remove an extra semi-colon
-Message-Id: <20110806142641.GB10373@mwanda>
+Date: Sun, 07 Aug 2011 18:26:04 +0000
+Subject: [patch] tlb_uv: remove some dead code in parse_tunables_write()
+Message-Id: <20110807182604.GP7659@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ron Mercer <ron.mercer@qlogic.com>
-Cc: "supporter:QLOGIC QLA3XXX NE..." <linux-driver@qlogic.com>, "open list:QLOGIC QLA3XXX NE..." <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The define is only used one place, and it's at the end of a line so
-the semi-colon doesn't affect anything.  But let's clean it up
-anyway.
+This code isn't reachable anymore after f073cc8f39 "x86, UV: Clean up
+uv_tlb.c"
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/net/qla3xxx.c b/drivers/net/qla3xxx.c
-index 2f69140..ccde806 100644
---- a/drivers/net/qla3xxx.c
-+++ b/drivers/net/qla3xxx.c
-@@ -1650,7 +1650,7 @@ static int ql_mii_setup(struct ql3_adapter *qdev)
- 				 SUPPORTED_1000baseT_Half |	\
- 				 SUPPORTED_1000baseT_Full |	\
- 				 SUPPORTED_Autoneg |		\
--				 SUPPORTED_TP);			\
-+				 SUPPORTED_TP)			\
- 
- static u32 ql_supported_modes(struct ql3_adapter *qdev)
- {
+diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
+index 68e467f..30ec45a 100644
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -1310,8 +1310,6 @@ static int parse_tunables_write(struct bau_control *bcp, char *instr,
+ 				*tunables[cnt].tunp = val;
+ 			continue;
+ 		}
+-		if (q = p)
+-			break;
+ 	}
+ 	return 0;
+ }
