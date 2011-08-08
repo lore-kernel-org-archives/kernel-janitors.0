@@ -1,25 +1,18 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 08 Aug 2011 11:17:57 +0000
-Subject: [PATCH 3/9] drivers/ata/sata_dwc_460ex.c: add missing kfree
-Message-Id: <1312802283-9107-3-git-send-email-julia@diku.dk>
+Date: Mon, 08 Aug 2011 11:17:58 +0000
+Subject: [PATCH 4/9] drivers/staging/bcm/nvm.c: add missing kfree
+Message-Id: <1312802283-9107-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Arnd Bergmann <arnd@arndb.de>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Currently, error handling code in this function calls the function
-sata_dwc_port_stop, but this function has essentially no effect if hsdevp
-has not been stored in ap, which is the case throughout this function.  The
-only effect is to print a debugging message including ap->print_id.
-
-The code is rewritten to not call sata_dwc_port_stop, but instead to jump
-to a local label that prints the original error message and the print_id
-information.  In the case where hsdevp has been already allocated (but not
-yet stored in ap), this value is freed as well.
+Buff is only used as a temporary buffer within the function, so it should
+be freed before leaving the function in an error case.
 
 A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
@@ -59,40 +52,59 @@ if (...) { ... when != x
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/ata/sata_dwc_460ex.c |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/staging/bcm/nvm.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
-index 0a9a774..5c42374 100644
---- a/drivers/ata/sata_dwc_460ex.c
-+++ b/drivers/ata/sata_dwc_460ex.c
-@@ -1329,7 +1329,7 @@ static int sata_dwc_port_start(struct ata_port *ap)
- 			dev_err(ap->dev, "%s: dma_alloc_coherent failed\n",
- 				 __func__);
- 			err = -ENOMEM;
--			goto CLEANUP;
-+			goto CLEANUP_ALLOC;
+diff --git a/drivers/staging/bcm/nvm.c b/drivers/staging/bcm/nvm.c
+index 4da5b7b..3de0daf 100644
+--- a/drivers/staging/bcm/nvm.c
++++ b/drivers/staging/bcm/nvm.c
+@@ -4013,7 +4013,8 @@ INT BcmCopyISO(PMINI_ADAPTER Adapter, FLASH2X_COPY_SECTION sCopySectStrut)
+ 		if(uiTotalDataToCopy < ISOLength)
+ 		{
+ 			BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0,"error as Source ISO Section does not have valid signature");
+-			return STATUS_FAILURE;
++			Status = STATUS_FAILURE;
++			goto out;
  		}
+ 
+ 		uiTotalDataToCopy =(Adapter->psFlash2xCSInfo->OffsetISOImage2Part1End) -
+@@ -4026,7 +4027,8 @@ INT BcmCopyISO(PMINI_ADAPTER Adapter, FLASH2X_COPY_SECTION sCopySectStrut)
+ 		if(uiTotalDataToCopy < ISOLength)
+ 		{
+ 			BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0,"error as Dest ISO Section does not have enough section size");
+-			return STATUS_FAILURE;
++			Status = STATUS_FAILURE;
++			goto out;
+ 		}
+ 
+ 		uiTotalDataToCopy = ISOLength;
+@@ -4143,7 +4145,8 @@ INT BcmCopyISO(PMINI_ADAPTER Adapter, FLASH2X_COPY_SECTION sCopySectStrut)
+ 		if(uiTotalDataToCopy < ISOLength)
+ 		{
+ 			BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0,"error as Source ISO Section does not have valid signature");
+-			return STATUS_FAILURE;
++			Status = STATUS_FAILURE;
++			goto out;
+ 		}
+ 
+ 		uiTotalDataToCopy =(Adapter->psFlash2xCSInfo->OffsetISOImage1Part1End) -
+@@ -4156,7 +4159,8 @@ INT BcmCopyISO(PMINI_ADAPTER Adapter, FLASH2X_COPY_SECTION sCopySectStrut)
+ 		if(uiTotalDataToCopy < ISOLength)
+ 		{
+ 			BCM_DEBUG_PRINT(Adapter,DBG_TYPE_PRINTK, 0, 0,"error as Dest ISO Section does not have enough section size");
+-			return STATUS_FAILURE;
++			Status = STATUS_FAILURE;
++			goto out;
+ 		}
+ 
+ 		uiTotalDataToCopy = ISOLength;
+@@ -4257,6 +4261,7 @@ INT BcmCopyISO(PMINI_ADAPTER Adapter, FLASH2X_COPY_SECTION sCopySectStrut)
+ 
  	}
  
-@@ -1349,15 +1349,13 @@ static int sata_dwc_port_start(struct ata_port *ap)
- 	/* Clear any error bits before libata starts issuing commands */
- 	clear_serror();
- 	ap->private_data = hsdevp;
-+	dev_dbg(ap->dev, "%s: done\n", __func__);
-+	return 0;
++out:
+ 	kfree(Buff);
  
-+CLEANUP_ALLOC:
-+	kfree(hsdevp);
- CLEANUP:
--	if (err) {
--		sata_dwc_port_stop(ap);
--		dev_dbg(ap->dev, "%s: fail\n", __func__);
--	} else {
--		dev_dbg(ap->dev, "%s: done\n", __func__);
--	}
--
-+	dev_dbg(ap->dev, "%s: fail. ap->id = %d\n", __func__, ap->print_id);
- 	return err;
- }
- 
+ 	return Status;
+
