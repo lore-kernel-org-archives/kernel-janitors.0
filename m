@@ -1,42 +1,98 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 30 Aug 2011 13:46:40 +0000
-Subject: [patch 2/3 -next] 6LoWPAN: use the _safe version of list_for_each
-Message-Id: <20110830134640.GI3705@shale.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 08 Aug 2011 11:17:57 +0000
+Subject: [PATCH 3/9] drivers/ata/sata_dwc_460ex.c: add missing kfree
+Message-Id: <1312802283-9107-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Sergey Lapin <slapin@ossfans.org>, "David S. Miller" <davem@davemloft.net>, "open list:IEEE 802.15.4 SUB..." <linux-zigbee-devel@lists.sourceforge.net>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-When we kfree(entry) that causes a use-after-free bug so we have to
-use list_for_each_entry_safe() safe here.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+Currently, error handling code in this function calls the function
+sata_dwc_port_stop, but this function has essentially no effect if hsdevp
+has not been stored in ap, which is the case throughout this function.  The
+only effect is to print a debugging message including ap->print_id.
+
+The code is rewritten to not call sata_dwc_port_stop, but instead to jump
+to a local label that prints the original error message and the print_id
+information.  In the case where hsdevp has been already allocated (but not
+yet stored in ap), this value is freed as well.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@exists@
+local idexpression x;
+statement S,S1;
+expression E;
+identifier fl;
+expression *ptr != NULL;
+@@
+
+x = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...kfree(x)...+> }
+     when any
+     when != true x = NULL
+x->fl
+...>
+(
+if (x = NULL) S1
+|
+if (...) { ... when != x
+               when forall
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+* return ...;
+)
+}
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-Curly parens are not needed here, but kernel style is to use them for
-multi-line indent blocks.
+ drivers/ata/sata_dwc_460ex.c |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
-index cf304cc..5dc0489 100644
---- a/net/ieee802154/6lowpan.c
-+++ b/net/ieee802154/6lowpan.c
-@@ -813,15 +813,17 @@ static void lowpan_dellink(struct net_device *dev, struct list_head *head)
- 	struct lowpan_dev_info *lowpan_dev = lowpan_dev_info(dev);
- 	struct net_device *real_dev = lowpan_dev->real_dev;
- 	struct lowpan_dev_record *entry;
-+	struct lowpan_dev_record *tmp;
- 
- 	ASSERT_RTNL();
- 
- 	mutex_lock(&lowpan_dev_info(dev)->dev_list_mtx);
--	list_for_each_entry(entry, &lowpan_devices, list)
-+	list_for_each_entry_safe(entry, tmp, &lowpan_devices, list) {
- 		if (entry->ldev = dev) {
- 			list_del(&entry->list);
- 			kfree(entry);
+diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
+index 0a9a774..5c42374 100644
+--- a/drivers/ata/sata_dwc_460ex.c
++++ b/drivers/ata/sata_dwc_460ex.c
+@@ -1329,7 +1329,7 @@ static int sata_dwc_port_start(struct ata_port *ap)
+ 			dev_err(ap->dev, "%s: dma_alloc_coherent failed\n",
+ 				 __func__);
+ 			err = -ENOMEM;
+-			goto CLEANUP;
++			goto CLEANUP_ALLOC;
  		}
-+	}
- 	mutex_unlock(&lowpan_dev_info(dev)->dev_list_mtx);
+ 	}
  
- 	mutex_destroy(&lowpan_dev_info(dev)->dev_list_mtx);
+@@ -1349,15 +1349,13 @@ static int sata_dwc_port_start(struct ata_port *ap)
+ 	/* Clear any error bits before libata starts issuing commands */
+ 	clear_serror();
+ 	ap->private_data = hsdevp;
++	dev_dbg(ap->dev, "%s: done\n", __func__);
++	return 0;
+ 
++CLEANUP_ALLOC:
++	kfree(hsdevp);
+ CLEANUP:
+-	if (err) {
+-		sata_dwc_port_stop(ap);
+-		dev_dbg(ap->dev, "%s: fail\n", __func__);
+-	} else {
+-		dev_dbg(ap->dev, "%s: done\n", __func__);
+-	}
+-
++	dev_dbg(ap->dev, "%s: fail. ap->id = %d\n", __func__, ap->print_id);
+ 	return err;
+ }
+ 
