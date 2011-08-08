@@ -1,46 +1,71 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 23 Aug 2011 08:46:08 +0000
-Subject: Re: [patch 2/2 -next v2] hid-lg4ff: add a kfree() to an error path
-Message-Id: <alpine.LNX.2.00.1108231046030.13644@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 08 Aug 2011 16:28:50 +0000
+Subject: [PATCH] drivers/net/can/sja1000/plx_pci.c: eliminate double free
+Message-Id: <1312820931-28230-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110818134343.GB21927@shale.localdomain> <4E4D2E4A.3020205@bfs.de> <20110819080055.GH21927@shale.localdomain>
-In-Reply-To: <20110819080055.GH21927@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: walter harms <wharms@bfs.de>, open@bfs.de, list@bfs.de, HID CORE LAYER <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Wolfgang Grandegger <wg@grandegger.com>
+Cc: kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 19 Aug 2011, Dan Carpenter wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> There is a small rare potential memory leak here.  Also Walter Harms
-> points out that we can do a small cleanup as well by using kstrdup().
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/hid/hid-lg4ff.c b/drivers/hid/hid-lg4ff.c
-> index dc38c2d..cbb0089 100644
-> --- a/drivers/hid/hid-lg4ff.c
-> +++ b/drivers/hid/hid-lg4ff.c
-> @@ -435,12 +435,12 @@ int lg4ff_init(struct hid_device *hid)
->  		hid_err(hid, "Cannot add device, insufficient memory.\n");
->  		return -ENOMEM;
->  	}
-> -	entry->device_id = (char *)kzalloc(strlen((&hid->dev)->kobj.name) + 1, GFP_KERNEL);
-> +	entry->device_id = kstrdup((&hid->dev)->kobj.name, GFP_KERNEL);
->  	if (!entry->device_id) {
->  		hid_err(hid, "Cannot set device_id, insufficient memory.\n");
-> +		kfree(entry);
->  		return -ENOMEM;
->  	}
-> -	strcpy(entry->device_id, (&hid->dev)->kobj.name);
->  	entry->min_range = lg4ff_devices[i].min_range;
->  	entry->max_range = lg4ff_devices[i].max_range;
->  	entry->set_range = lg4ff_devices[i].set_range;
-> 
+In this code, the failure_cleanup label calls the function
+plx_pci_del_card, which frees everything in the card->net_dev array.  dev
+is placed in this array immediately after allocation, so the two subsequent
+jumps to failure_cleanup should not also call free_sja1000dev, but the
+second one does.
 
-Applied, thanks.
+If plx_pci_check_sja1000 fails, then free_sja1000dev is also called on
+dev.  Because dev is already in the card->net_dev array, this implies that
+when plx_pci_del_card is later called, it may get freed again.  So that
+entry is reset to NULL after the free.
 
--- 
-Jiri Kosina
-SUSE Labs
+Finally, if there is a problem with one channel, there will be a hole in the
+array.  card->channels counts the number of channels that have succeeded,
+and does not keep track of the index of the largest element in the array
+that is valid.  So the loop in plx_pci_del_card is changed to go up to
+PLX_PCI_MAX_CHAN, which is only 2.
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+Compiled but not tested.  I'm not sure the fix is sufficient to take into
+account possible failures.  In particular, is it safe to call
+unregister_sja1000dev without previously having (successfully) called
+register_sja1000dev?
+
+ drivers/net/can/sja1000/plx_pci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/can/sja1000/plx_pci.c b/drivers/net/can/sja1000/plx_pci.c
+index 231385b..c7f3d4e 100644
+--- a/drivers/net/can/sja1000/plx_pci.c
++++ b/drivers/net/can/sja1000/plx_pci.c
+@@ -408,7 +408,7 @@ static void plx_pci_del_card(struct pci_dev *pdev)
+ 	struct sja1000_priv *priv;
+ 	int i = 0;
+ 
+-	for (i = 0; i < card->channels; i++) {
++	for (i = 0; i < PLX_PCI_MAX_CHAN; i++) {
+ 		dev = card->net_dev[i];
+ 		if (!dev)
+ 			continue;
+@@ -536,7 +536,6 @@ static int __devinit plx_pci_add_card(struct pci_dev *pdev,
+ 			if (err) {
+ 				dev_err(&pdev->dev, "Registering device failed "
+ 					"(err=%d)\n", err);
+-				free_sja1000dev(dev);
+ 				goto failure_cleanup;
+ 			}
+ 
+@@ -549,6 +548,7 @@ static int __devinit plx_pci_add_card(struct pci_dev *pdev,
+ 			dev_err(&pdev->dev, "Channel #%d not detected\n",
+ 				i + 1);
+ 			free_sja1000dev(dev);
++			card->net_dev[i] = NULL;
+ 		}
+ 	}
+ 
+
