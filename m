@@ -1,58 +1,105 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Thu, 04 Aug 2011 21:52:23 +0000
-Subject: Re: [PATCH 1/2 v2] HID: kfree() NULL pointer cleanup
-Message-Id: <alpine.LNX.2.00.1108042352100.32288@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 08 Aug 2011 11:17:56 +0000
+Subject: [PATCH 2/9] drivers/net/wireless/wl12xx: add missing kfree
+Message-Id: <1312802283-9107-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312494408-15500-1-git-send-email-prtvar.b@gmail.com>
-In-Reply-To: <1312494408-15500-1-git-send-email-prtvar.b@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bojan Prtvar <prtvar.b@gmail.com>
-Cc: julia@diku.dk, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Luciano Coelho <coelho@ti.com>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 4 Aug 2011, Bojan Prtvar wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Checking for NULL pointers before kfree() is redundant.
-> v2:
-> No need for freeing pm in case when it's not allocated.
-> 
-> Reported-by: Julia Lawall <julia@diku.dk>
-> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
-> ---
->  drivers/hid/hid-prodikeys.c |    8 ++++----
->  1 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-prodikeys.c b/drivers/hid/hid-prodikeys.c
-> index 158b389..f779009 100644
-> --- a/drivers/hid/hid-prodikeys.c
-> +++ b/drivers/hid/hid-prodikeys.c
-> @@ -816,7 +816,7 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  	if (pm = NULL) {
->  		hid_err(hdev, "can't alloc descriptor\n");
->  		ret = -ENOMEM;
-> -		goto err_free;
-> +		goto err_free_pk;
->  	}
->  
->  	pm->pk = pk;
-> @@ -849,10 +849,10 @@ static int pk_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  err_stop:
->  	hid_hw_stop(hdev);
->  err_free:
-> -	if (pm != NULL)
-> -		kfree(pm);
-> -
-> +	kfree(pm);
-> +err_free_pk:
->  	kfree(pk);
-> +
->  	return ret;
->  }
->  
+In each case, the freed data should be freed in the error handling code as
+well.
 
-Applied, thanks to both.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
--- 
-Jiri Kosina
-SUSE Labs
+// <smpl>
+@exists@
+local idexpression x;
+statement S,S1;
+expression E;
+identifier fl;
+expression *ptr != NULL;
+@@
+
+x = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...kfree(x)...+> }
+     when any
+     when != true x = NULL
+x->fl
+...>
+(
+if (x = NULL) S1
+|
+if (...) { ... when != x
+               when forall
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+* return ...;
+)
+}
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/net/wireless/wl12xx/acx.c      |    6 +-----
+ drivers/net/wireless/wl12xx/testmode.c |    5 ++++-
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/wl12xx/testmode.c b/drivers/net/wireless/wl12xx/testmode.c
+index 5d5e1ef..88add68 100644
+--- a/drivers/net/wireless/wl12xx/testmode.c
++++ b/drivers/net/wireless/wl12xx/testmode.c
+@@ -139,12 +139,15 @@ static int wl1271_tm_cmd_interrogate(struct wl1271 *wl, struct nlattr *tb[])
+ 
+ 	if (ret < 0) {
+ 		wl1271_warning("testmode cmd interrogate failed: %d", ret);
++		kfree(cmd);
+ 		return ret;
+ 	}
+ 
+ 	skb = cfg80211_testmode_alloc_reply_skb(wl->hw->wiphy, sizeof(*cmd));
+-	if (!skb)
++	if (!skb) {
++		kfree(cmd);
+ 		return -ENOMEM;
++	}
+ 
+ 	NLA_PUT(skb, WL1271_TM_ATTR_DATA, sizeof(*cmd), cmd);
+ 
+diff --git a/drivers/net/wireless/wl12xx/acx.c b/drivers/net/wireless/wl12xx/acx.c
+index 7e33f1f..34f6ab5 100644
+--- a/drivers/net/wireless/wl12xx/acx.c
++++ b/drivers/net/wireless/wl12xx/acx.c
+@@ -77,8 +77,6 @@ int wl1271_acx_sleep_auth(struct wl1271 *wl, u8 sleep_auth)
+ 	auth->sleep_auth = sleep_auth;
+ 
+ 	ret = wl1271_cmd_configure(wl, ACX_SLEEP_AUTH, auth, sizeof(*auth));
+-	if (ret < 0)
+-		return ret;
+ 
+ out:
+ 	kfree(auth);
+@@ -624,10 +622,8 @@ int wl1271_acx_cca_threshold(struct wl1271 *wl)
+ 
+ 	ret = wl1271_cmd_configure(wl, ACX_CCA_THRESHOLD,
+ 				   detection, sizeof(*detection));
+-	if (ret < 0) {
++	if (ret < 0)
+ 		wl1271_warning("failed to set cca threshold: %d", ret);
+-		return ret;
+-	}
+ 
+ out:
+ 	kfree(detection);
+
