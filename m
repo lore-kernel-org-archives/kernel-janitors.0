@@ -1,97 +1,92 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 08 Aug 2011 11:18:03 +0000
-Subject: [PATCH 9/9] drivers/net/wireless/wl1251: add missing kfree
-Message-Id: <1312802283-9107-9-git-send-email-julia@diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 09 Aug 2011 15:52:38 +0000
+Subject: [patch] [media] ddbridge: fix ddb_ioctl()
+Message-Id: <20110809155238.GA3830@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Luciano Coelho <coelho@ti.com>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Oliver Endriss <o.endriss@gmx.de>, Ralph Metzler <rmetzler@digitaldevices.de>, "open list:MEDIA INPUT INFRA..." <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+There were a several problems in this function:
 
-In each case, the kfree already at the end of the function is also needed
-in the error case.
+1) Potential integer overflow in the comparison:
+	if (fio.write_len + fio.read_len > 1028) { 
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+2) If the user gave bogus values for write_len and read_len then
+   returning -EINVAL is more appropriate than returning -ENOMEM.
 
-// <smpl>
-@exists@
-local idexpression x;
-statement S,S1;
-expression E;
-identifier fl;
-expression *ptr != NULL;
-@@
+3) wbuf was set to the address of an array and could never be NULL
+   so I removed the pointless NULL check.
 
-x = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...kfree(x)...+> }
-     when any
-     when != true x = NULL
-x->fl
-...>
-(
-if (x = NULL) S1
-|
-if (...) { ... when != x
-               when forall
-(
- return \(0\|<+...x...+>\|ptr\);
-|
-* return ...;
-)
-}
-)
-// </smpl>
+4) The call to vfree(wbuf) was improper.  That array is part of a
+   larger struct and isn't allocated by itself.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+5) flashio() can't actually fail, but we may as well add error
+   handling in case this changes later.
 
----
- drivers/net/wireless/wl1251/acx.c |    6 +-----
- drivers/net/wireless/wl1251/cmd.c |    2 +-
- 2 files changed, 2 insertions(+), 6 deletions(-)
+6) In the default case where an ioctl is not implemented then
+   returning -ENOTTY is more appropriate than returning -EFAULT.
 
-diff --git a/drivers/net/wireless/wl1251/acx.c b/drivers/net/wireless/wl1251/acx.c
-index ef8370e..ad87a1a 100644
---- a/drivers/net/wireless/wl1251/acx.c
-+++ b/drivers/net/wireless/wl1251/acx.c
-@@ -140,8 +140,6 @@ int wl1251_acx_sleep_auth(struct wl1251 *wl, u8 sleep_auth)
- 	auth->sleep_auth = sleep_auth;
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/media/dvb/ddbridge/ddbridge-core.c b/drivers/media/dvb/ddbridge/ddbridge-core.c
+index 573d540..fe56703 100644
+--- a/drivers/media/dvb/ddbridge/ddbridge-core.c
++++ b/drivers/media/dvb/ddbridge/ddbridge-core.c
+@@ -1438,7 +1438,7 @@ static long ddb_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+ 	struct ddb *dev = file->private_data;
+ 	void *parg = (void *)arg;
+-	int res = -EFAULT;
++	int res;
  
- 	ret = wl1251_cmd_configure(wl, ACX_SLEEP_AUTH, auth, sizeof(*auth));
--	if (ret < 0)
--		return ret;
+ 	switch (cmd) {
+ 	case IOCTL_DDB_FLASHIO:
+@@ -1447,29 +1447,29 @@ static long ddb_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		u8 *rbuf, *wbuf;
  
- out:
- 	kfree(auth);
-@@ -681,10 +679,8 @@ int wl1251_acx_cca_threshold(struct wl1251 *wl)
- 
- 	ret = wl1251_cmd_configure(wl, ACX_CCA_THRESHOLD,
- 				   detection, sizeof(*detection));
--	if (ret < 0) {
-+	if (ret < 0)
- 		wl1251_warning("failed to set cca threshold: %d", ret);
--		return ret;
--	}
- 
- out:
- 	kfree(detection);
-diff --git a/drivers/net/wireless/wl1251/cmd.c b/drivers/net/wireless/wl1251/cmd.c
-index 81f164b..d14d69d 100644
---- a/drivers/net/wireless/wl1251/cmd.c
-+++ b/drivers/net/wireless/wl1251/cmd.c
-@@ -241,7 +241,7 @@ int wl1251_cmd_data_path(struct wl1251 *wl, u8 channel, bool enable)
- 	if (ret < 0) {
- 		wl1251_error("tx %s cmd for channel %d failed",
- 			     enable ? "start" : "stop", channel);
--		return ret;
-+		goto out;
+ 		if (copy_from_user(&fio, parg, sizeof(fio)))
+-			break;
+-		if (fio.write_len + fio.read_len > 1028) {
+-			printk(KERN_ERR "IOBUF too small\n");
+-			return -ENOMEM;
+-		}
++			return -EFAULT;
++
++		if (fio.write_len > 1028 || fio.read_len > 1028)
++			return -EINVAL;
++		if (fio.write_len + fio.read_len > 1028)
++			return -EINVAL;
++
+ 		wbuf = &dev->iobuf[0];
+-		if (!wbuf)
+-			return -ENOMEM;
+ 		rbuf = wbuf + fio.write_len;
+-		if (copy_from_user(wbuf, fio.write_buf, fio.write_len)) {
+-			vfree(wbuf);
+-			break;
+-		}
+-		res = flashio(dev, wbuf, fio.write_len,
+-			      rbuf, fio.read_len);
++
++		if (copy_from_user(wbuf, fio.write_buf, fio.write_len))
++			return -EFAULT;
++		res = flashio(dev, wbuf, fio.write_len, rbuf, fio.read_len);
++		if (res)
++			return res;
+ 		if (copy_to_user(fio.read_buf, rbuf, fio.read_len))
+-			res = -EFAULT;
++			return -EFAULT;
+ 		break;
  	}
+ 	default:
+-		break;
++		return -ENOTTY;
+ 	}
+-	return res;
++	return 0;
+ }
  
- 	wl1251_debug(DEBUG_BOOT, "tx %s cmd channel %d",
-
+ static const struct file_operations ddb_fops = {
