@@ -1,48 +1,29 @@
-From: Thomas Meyer <thomas@m3y3r.de>
-Date: Thu, 04 Aug 2011 22:05:58 +0000
-Subject: [PATCH] GFP_KERNEL malloc with lock held in net/wireless/mwifiex
-Message-Id: <1312495562.2629.53.camel@localhost.localdomain>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 09 Aug 2011 18:06:16 +0000
+Subject: [patch] Staging: iio/dac/ad5504: uninitialized variable in error
+Message-Id: <20110809180616.GC3830@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Michael Hennerich <michael.hennerich@analog.com>, "open list:STAGING - INDUSTR..." <linux-iio@vger.kernel.org>, "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>, kernel-janitors@vger.kernel.org
 
-From: Thomas Meyer <thomas@m3y3r.de>
+If we hit the "goto error_disable_reg" then the "st" variable is
+uninitialized.
 
- Find functions that refer to GFP_KERNEL but are called with locks held.
- The proposed change of converting the GFP_KERNEL is not necessarily the
- correct one.  It may be desired to unlock the lock, or to not call the
- function under the lock in the first place.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
- The semantic patch that makes this output is available
- in scripts/coccinelle/locks/call_kern.cocci.
-
- More information about semantic patching is available at
- http://coccinelle.lip6.fr/
-
-Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
----
-the function mwifiex_save_curr_bcn() is guarded by:
-
- spin_lock_irqsave(&priv->curr_bcn_buf_lock, flags);
- mwifiex_save_curr_bcn(priv);
- spin_unlock_irqrestore(&priv->curr_bcn_buf_lock, flags);
-
-Is it okay to allocate memory with a spin lock held and interrupts
-disabled in this case?
-
-diff -u -p a/drivers/net/wireless/mwifiex/scan.c b/drivers/net/wireless/mwifiex/scan.c
---- a/drivers/net/wireless/mwifiex/scan.c 2011-07-26 00:46:08.483511656 +0200
-+++ b/drivers/net/wireless/mwifiex/scan.c 2011-08-02 09:36:50.174808818 +0200
-@@ -2998,7 +2998,7 @@ mwifiex_save_curr_bcn(struct mwifiex_pri
- 
- 		kfree(priv->curr_bcn_buf);
- 		priv->curr_bcn_buf = kzalloc(curr_bss->beacon_buf_size,
--						GFP_KERNEL);
-+						GFP_ATOMIC);
- 		if (!priv->curr_bcn_buf) {
- 			dev_err(priv->adapter->dev,
- 					"failed to alloc curr_bcn_buf\n");
-
-
+diff --git a/drivers/staging/iio/dac/ad5504.c b/drivers/staging/iio/dac/ad5504.c
+index 1915f45..88512dd 100644
+--- a/drivers/staging/iio/dac/ad5504.c
++++ b/drivers/staging/iio/dac/ad5504.c
+@@ -338,7 +338,7 @@ error_free_dev:
+ 	iio_free_device(indio_dev);
+ error_disable_reg:
+ 	if (!IS_ERR(reg))
+-		regulator_disable(st->reg);
++		regulator_disable(reg);
+ error_put_reg:
+ 	if (!IS_ERR(reg))
+ 		regulator_put(reg);
