@@ -1,24 +1,27 @@
-From: Chris Metcalf <cmetcalf@tilera.com>
-Date: Tue, 02 Aug 2011 20:28:39 +0000
-Subject: Re: [PATCH 11/11] arch/tile/mm/init.c: trivial: use BUG_ON
-Message-Id: <4E385DF7.5010206@tilera.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 09 Aug 2011 18:01:33 +0000
+Subject: [patch] Staging: zcache: signedness bug in tmem_get()
+Message-Id: <20110809180133.GB3830@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312281304-11847-1-git-send-email-julia@diku.dk> <1312281304-11847-12-git-send-email-julia@diku.dk>
-In-Reply-To: <1312281304-11847-12-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 8/2/2011 6:35 AM, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
->
-> Use BUG_ON(x) rather than if(x) BUG();
+"ret" needs to be signed for the error handling to work properly.
 
-Thanks, accepted into the tile tree.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-Chris Metcalf, Tilera Corp.
-http://www.tilera.com
-
+diff --git a/drivers/staging/zcache/tmem.c b/drivers/staging/zcache/tmem.c
+index 975e34b..1ca66ea 100644
+--- a/drivers/staging/zcache/tmem.c
++++ b/drivers/staging/zcache/tmem.c
+@@ -604,7 +604,7 @@ int tmem_get(struct tmem_pool *pool, struct tmem_oid *oidp, uint32_t index,
+ 	struct tmem_obj *obj;
+ 	void *pampd;
+ 	bool ephemeral = is_ephemeral(pool);
+-	uint32_t ret = -1;
++	int ret = -1;
+ 	struct tmem_hashbucket *hb;
+ 	bool free = (get_and_free = 1) || ((get_and_free = 0) && ephemeral);
+ 	bool lock_held = false;
