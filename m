@@ -1,43 +1,54 @@
-From: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
-Date: Tue, 30 Aug 2011 10:48:34 +0000
-Subject: RE: [patch] [SCSI] mptfusion: unlock on error in mpt_config()
-Message-Id: <A6888A6805518E4EA4AF7072A28264A6042AD54397@inbmail02.lsi.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 09 Aug 2011 12:19:08 +0000
+Subject: [PATCH] drivers/gpu/vga/vgaarb.c: add missing kfree
+Message-Id: <1312892348-22615-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110827095930.GK3775@shale.localdomain>
-In-Reply-To: <20110827095930.GK3775@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>, "Moore, Eric" <Eric.Moore@lsi.com>, "Desai, Kashyap" <Kashyap.Desai@lsi.com>
-Cc: Support <support@lsi.com>, DL-MPT Fusion Linux <DL-MPTFusionLinux@lsi.com>, "open list:LSILOGIC MPT FUSI..." <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dave Airlie <airlied@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Rakib Mullick <rakib.mullick@gmail.com>, Alex Deucher <alexdeucher@gmail.com>, Daniel J Blueman <daniel.blueman@gmail.com>, linux-kernel@vger.kernel.org
 
-The patch seem to be fine. Please consider this patch as Acked-by: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
+From: Julia Lawall <julia@diku.dk>
 
+kbuf is a buffer that is local to this function, so all of the error paths
+leaving the function should release it.
 
-Regards,
-Nagalakshmi
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ drivers/gpu/vga/vgaarb.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
------Original Message-----
-From: Dan Carpenter [mailto:error27@gmail.com] 
-Sent: Saturday, August 27, 2011 3:30 PM
-To: Moore, Eric; Desai, Kashyap
-Cc: Support; DL-MPT Fusion Linux; open list:LSILOGIC MPT FUSI...; kernel-janitors@vger.kernel.org
-Subject: [patch] [SCSI] mptfusion: unlock on error in mpt_config()
+diff --git a/drivers/gpu/vga/vgaarb.c b/drivers/gpu/vga/vgaarb.c
+index c72f1c0..18376f1 100644
+--- a/drivers/gpu/vga/vgaarb.c
++++ b/drivers/gpu/vga/vgaarb.c
+@@ -993,14 +993,20 @@ static ssize_t vga_arb_write(struct file *file, const char __user * buf,
+ 				uc = &priv->cards[i];
+ 		}
+ 
+-		if (!uc)
+-			return -EINVAL;
++		if (!uc) {
++			ret_val = -EINVAL;
++			goto done;
++		}
+ 
+-		if (io_state & VGA_RSRC_LEGACY_IO && uc->io_cnt = 0)
+-			return -EINVAL;
++		if (io_state & VGA_RSRC_LEGACY_IO && uc->io_cnt = 0) {
++			ret_val = -EINVAL;
++			goto done;
++		}
+ 
+-		if (io_state & VGA_RSRC_LEGACY_MEM && uc->mem_cnt = 0)
+-			return -EINVAL;
++		if (io_state & VGA_RSRC_LEGACY_MEM && uc->mem_cnt = 0) {
++			ret_val = -EINVAL;
++			goto done;
++		}
+ 
+ 		vga_put(pdev, io_state);
+ 
 
-We introduced a new return here and forgot to unlock the mutex.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index e9c6a60..e72320e 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -6482,6 +6482,7 @@ mpt_config(MPT_ADAPTER *ioc, CONFIGPARMS *pCfg)
- 				printk(MYIOC_s_INFO_FMT "%s: host reset in"
- 					" progress mpt_config timed out.!!\n",
- 					__func__, ioc->name);
-+				mutex_unlock(&ioc->mptbase_cmds.mutex);
- 				return -EFAULT;
- 			}
- 			spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
