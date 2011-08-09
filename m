@@ -1,66 +1,32 @@
-From: Jan Kara <jack@suse.cz>
-Date: Thu, 04 Aug 2011 10:39:54 +0000
-Subject: Re: [PATCH 2/4] fs/ext2/balloc.c: delete useless initialization
-Message-Id: <20110804103954.GG17196@quack.suse.cz>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 09 Aug 2011 12:30:07 +0000
+Subject: [patch] target: use after free in error handling
+Message-Id: <20110809123006.GJ7659@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312453774-23333-1-git-send-email-julia@diku.dk>
- <1312453774-23333-3-git-send-email-julia@diku.dk>
-In-Reply-To: <1312453774-23333-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Jan Kara <jack@suse.cz>, kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Andy Grover <agrover@redhat.com>, Roland Dreier <roland@kernel.org>, Christoph Hellwig <hch@lst.de>, "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, "open list:TARGET SUBSYSTEM" <target-devel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Thu 04-08-11 12:29:32, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Delete nontrivial initialization that is immediately overwritten by the
-> result of an allocation function.
-  Thanks. Merged.
+iscsit_release_cmd() frees the memory that "se_cmd" was pointing to
+so this is a use after free bug.  Also "se_cmd" is non-null here so I
+removed the unneeded null check.
 
-								Honza
-> 
-> The semantic match that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> type T;
-> identifier i;
-> expression e;
-> @@
-> 
-> (
-> T i = \(0\|NULL\|ERR_PTR(...)\);
-> |
-> -T i = e;
-> +T i;
-> )
-> ... when != i
-> i = \(kzalloc\|kcalloc\|kmalloc\)(...);
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  fs/ext2/balloc.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/fs/ext2/balloc.c b/fs/ext2/balloc.c
-> --- a/fs/ext2/balloc.c
-> +++ b/fs/ext2/balloc.c
-> @@ -421,7 +421,7 @@ static inline int rsv_is_empty(struct ex
->  void ext2_init_block_alloc_info(struct inode *inode)
->  {
->  	struct ext2_inode_info *ei = EXT2_I(inode);
-> -	struct ext2_block_alloc_info *block_i = ei->i_block_alloc_info;
-> +	struct ext2_block_alloc_info *block_i;
->  	struct super_block *sb = inode->i_sb;
->  
->  	block_i = kmalloc(sizeof(*block_i), GFP_NOFS);
-> 
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/target/iscsi/iscsi_target_util.c b/drivers/target/iscsi/iscsi_target_util.c
+index a1acb01..bea5c29 100644
+--- a/drivers/target/iscsi/iscsi_target_util.c
++++ b/drivers/target/iscsi/iscsi_target_util.c
+@@ -297,9 +297,8 @@ struct iscsi_cmd *iscsit_allocate_se_cmd_for_tmr(
+ 
+ 	return cmd;
+ out:
++	transport_free_se_cmd(se_cmd);
+ 	iscsit_release_cmd(cmd);
+-	if (se_cmd)
+-		transport_free_se_cmd(se_cmd);
+ 	return NULL;
+ }
+ 
