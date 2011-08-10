@@ -1,38 +1,61 @@
-From: Gustavo Padovan <padovan@profusion.mobi>
-Date: Thu, 11 Aug 2011 19:35:34 +0000
-Subject: Re: [patch] bluetooth: unlock if allocation fails in
-Message-Id: <20110811193533.GB19699@joana>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Aug 2011 06:02:14 +0000
+Subject: [PATCH v2] drivers/mtd/nand/bcm_umi_nand.c: add missing kfree/iounmap
+Message-Id: <1312956134-27553-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110803142244.GL3839@shale.localdomain>
-In-Reply-To: <20110803142244.GL3839@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, "open list:BLUETOOTH SUBSYSTEM" <linux-bluetooth@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jiandong Zheng <jdzheng@broadcom.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Scott Branden <sbranden@broadcom.com>
 
-Hi Dan,
+From: Julia Lawall <julia@diku.dk>
 
-* Dan Carpenter <error27@gmail.com> [2011-08-03 17:22:45 +0300]:
+Add kfree and iounmap systematically in all error handling code, including
+under #if.
 
-> There was a small typo here so we never actually hit the goto which
-> would call hci_dev_unlock_bh().
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> index baaf5eb..56943ad 100644
-> --- a/net/bluetooth/hci_core.c
-> +++ b/net/bluetooth/hci_core.c
-> @@ -1326,7 +1326,7 @@ int hci_blacklist_add(struct hci_dev *hdev, bdaddr_t *bdaddr)
->  
->  	entry = kzalloc(sizeof(struct bdaddr_list), GFP_KERNEL);
->  	if (!entry) {
-> -		return -ENOMEM;
-> +		err = -ENOMEM;
->  		goto err;
->  	}
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Patch has been applied, thanks.
+---
+ drivers/mtd/nand/bcm_umi_nand.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-	Gustavo
+diff --git a/drivers/mtd/nand/bcm_umi_nand.c b/drivers/mtd/nand/bcm_umi_nand.c
+index a8ae898..8cb567b 100644
+--- a/drivers/mtd/nand/bcm_umi_nand.c
++++ b/drivers/mtd/nand/bcm_umi_nand.c
+@@ -374,8 +374,10 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
+ 
+ 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+-	if (!r)
++	if (!r) {
++		kfree(board_mtd);
+ 		return -ENXIO;
++	}
+ 
+ 	/* map physical address */
+ 	bcm_umi_io_base = ioremap(r->start, resource_size(r));
+@@ -433,8 +435,11 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
+ 
+ #if USE_DMA
+ 	err = nand_dma_init();
+-	if (err != 0)
++	if (err != 0) {
++		iounmap(bcm_umi_io_base);
++		kfree(board_mtd);
+ 		return err;
++	}
+ #endif
+ 
+ 	/* Figure out the size of the device that we have.
+@@ -466,6 +471,8 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
+ 		{
+ 			printk(KERN_ERR "NAND - Unrecognized pagesize: %d\n",
+ 					 board_mtd->writesize);
++			iounmap(bcm_umi_io_base);
++			kfree(board_mtd);
+ 			return -EINVAL;
+ 		}
+ 	}
+
