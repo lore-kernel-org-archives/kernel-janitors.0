@@ -1,67 +1,70 @@
-From: Jan Kara <jack@suse.cz>
-Date: Thu, 04 Aug 2011 10:40:03 +0000
-Subject: Re: [PATCH 1/4] fs/ext3/balloc.c: delete useless initialization
-Message-Id: <20110804104003.GH17196@quack.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Aug 2011 08:47:16 +0000
+Subject: [PATCH] drivers/mfd/timberdale.c: clean up error handling code
+Message-Id: <1312966036-15896-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312453774-23333-1-git-send-email-julia@diku.dk>
- <1312453774-23333-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1312453774-23333-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Jan Kara <jack@suse.cz>, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu 04-08-11 12:29:31, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Delete nontrivial initialization that is immediately overwritten by the
-> result of an allocation function.
-  Thanks. Merged.
+From: Julia Lawall <julia@diku.dk>
 
-								Honza
+In the first three cases, ioremap has been called, so iounmap is needed.  A
+new label for this is introduced, to differentiate it from err_msix, which
+is the first point at which msix_entries actually needs to be freed.
 
-> 
-> The semantic match that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> type T;
-> identifier i;
-> expression e;
-> @@
-> 
-> (
-> T i = \(0\|NULL\|ERR_PTR(...)\);
-> |
-> -T i = e;
-> +T i;
-> )
-> ... when != i
-> i = \(kzalloc\|kcalloc\|kmalloc\)(...);
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  fs/ext3/balloc.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/fs/ext3/balloc.c b/fs/ext3/balloc.c
-> --- a/fs/ext3/balloc.c
-> +++ b/fs/ext3/balloc.c
-> @@ -427,7 +427,7 @@ static inline int rsv_is_empty(struct ex
->  void ext3_init_block_alloc_info(struct inode *inode)
->  {
->  	struct ext3_inode_info *ei = EXT3_I(inode);
-> -	struct ext3_block_alloc_info *block_i = ei->i_block_alloc_info;
-> +	struct ext3_block_alloc_info *block_i;
->  	struct super_block *sb = inode->i_sb;
->  
->  	block_i = kmalloc(sizeof(*block_i), GFP_NOFS);
-> 
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/mfd/timberdale.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mfd/timberdale.c b/drivers/mfd/timberdale.c
+index 696879e..02d6569 100644
+--- a/drivers/mfd/timberdale.c
++++ b/drivers/mfd/timberdale.c
+@@ -697,7 +697,7 @@ static int __devinit timb_probe(struct pci_dev *dev,
+ 		dev_err(&dev->dev, "The driver supports an older "
+ 			"version of the FPGA, please update the driver to "
+ 			"support %d.%d\n", priv->fw.major, priv->fw.minor);
+-		goto err_ioremap;
++		goto err_config;
+ 	}
+ 	if (priv->fw.major < TIMB_SUPPORTED_MAJOR ||
+ 		priv->fw.minor < TIMB_REQUIRED_MINOR) {
+@@ -705,13 +705,13 @@ static int __devinit timb_probe(struct pci_dev *dev,
+ 			"please upgrade the FPGA to at least: %d.%d\n",
+ 			priv->fw.major, priv->fw.minor,
+ 			TIMB_SUPPORTED_MAJOR, TIMB_REQUIRED_MINOR);
+-		goto err_ioremap;
++		goto err_config;
+ 	}
+ 
+ 	msix_entries = kzalloc(TIMBERDALE_NR_IRQS * sizeof(*msix_entries),
+ 		GFP_KERNEL);
+ 	if (!msix_entries)
+-		goto err_ioremap;
++		goto err_config;
+ 
+ 	for (i = 0; i < TIMBERDALE_NR_IRQS; i++)
+ 		msix_entries[i].entry = i;
+@@ -825,6 +825,8 @@ err_mfd:
+ err_create_file:
+ 	pci_disable_msix(dev);
+ err_msix:
++	kfree(msix_entries);
++err_config:
+ 	iounmap(priv->ctl_membase);
+ err_ioremap:
+ 	release_mem_region(priv->ctl_mapbase, CHIPCTLSIZE);
+@@ -833,7 +835,6 @@ err_request:
+ err_start:
+ 	pci_disable_device(dev);
+ err_enable:
+-	kfree(msix_entries);
+ 	kfree(priv);
+ 	pci_set_drvdata(dev, NULL);
+ 	return -ENODEV;
+
