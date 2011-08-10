@@ -1,68 +1,40 @@
-From: Joel Becker <jlbec@evilplan.org>
-Date: Mon, 22 Aug 2011 04:28:39 +0000
-Subject: Re: [PATCH] fs/ocfs2/dlm/dlmlock.c: free kmem_cache_zalloc'd data
-Message-Id: <20110822042838.GE31134@noexit.corp.google.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Aug 2011 05:42:15 +0000
+Subject: [PATCH] drivers/mtd/nand/bcm_umi_nand.c: add missing kfree/ioremap
+Message-Id: <1312954935-14592-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1310227479-14472-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1310227479-14472-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Mark Fasheh <mfasheh@suse.com>, kernel-janitors@vger.kernel.org, Wengang Wang <wen.gang.wang@oracle.com>, Tao Ma <boyu.mt@taobao.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+To: Jiandong Zheng <jdzheng@broadcom.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Scott Branden <sbranden@broadcom.com>
 
-this patch is now in the fixes branch of ocfs2.git.
+From: Julia Lawall <julia@diku.dk>
 
-On Sat, Jul 09, 2011 at 06:04:39PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Memory allocated using kmem_cache_zalloc should be freed using
-> kmem_cache_free, not kfree.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,e,e1,e2;
-> @@
-> 
-> x = kmem_cache_zalloc(e1,e2)
-> ... when != x = e
-> ?-kfree(x)
-> +kmem_cache_free(e1,x)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  fs/ocfs2/dlm/dlmlock.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/fs/ocfs2/dlm/dlmlock.c b/fs/ocfs2/dlm/dlmlock.c
-> --- a/fs/ocfs2/dlm/dlmlock.c
-> +++ b/fs/ocfs2/dlm/dlmlock.c
-> @@ -440,7 +440,7 @@ struct dlm_lock * dlm_new_lock(int type,
->  		/* zero memory only if kernel-allocated */
->  		lksb = kzalloc(sizeof(*lksb), GFP_NOFS);
->  		if (!lksb) {
-> -			kfree(lock);
-> +			kmem_cache_free(dlm_lock_cache, lock);
->  			return NULL;
->  		}
->  		kernel_allocated = 1;
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+The error handling code under the #if should be the same as elsewhere in
+the function.
 
--- 
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Life's Little Instruction Book #43
+---
+ drivers/mtd/nand/bcm_umi_nand.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-	"Never give up on somebody.  Miracles happen every day."
+diff --git a/drivers/mtd/nand/bcm_umi_nand.c b/drivers/mtd/nand/bcm_umi_nand.c
+index a8ae898..72e8ec2 100644
+--- a/drivers/mtd/nand/bcm_umi_nand.c
++++ b/drivers/mtd/nand/bcm_umi_nand.c
+@@ -433,8 +433,11 @@ static int __devinit bcm_umi_nand_probe(struct platform_device *pdev)
+ 
+ #if USE_DMA
+ 	err = nand_dma_init();
+-	if (err != 0)
++	if (err != 0) {
++		iounmap(bcm_umi_io_base);
++		kfree(board_mtd);
+ 		return err;
++	}
+ #endif
+ 
+ 	/* Figure out the size of the device that we have.
 
-			http://www.jlbec.org/
-			jlbec@evilplan.org
