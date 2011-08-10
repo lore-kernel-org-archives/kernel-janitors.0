@@ -1,20 +1,51 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 11 Aug 2011 11:46:36 +0000
-Subject: Re: [PATCH 1/9] drivers/scsi/atp870u.c: add missing kfree
-Message-Id: <20110811114636.GJ3777@shale.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 10 Aug 2011 09:49:04 +0000
+Subject: [PATCH] sound/pci/azt3328.c: adjust error handling code to include debugging code
+Message-Id: <1312969744-29659-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312802283-9107-1-git-send-email-julia@diku.dk>
- <20110808181238.GB7659@shale.localdomain>
- <Pine.LNX.4.64.1108082036451.12465@ask.diku.dk>
- <Pine.LNX.4.64.1108111335490.18938@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1108111335490.18938@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Mohr <andi@lisas.de>, Lucas De Marchi <lucas.demarchi@profusion.mobi>
 
-Reviewed-by: Dan Carpenter <error27@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-regards,
-dan carpenter
+snd_azf3328_dbgcallenter is called at the very beginning of the function,
+so it could be useful to call snd_azf3328_dbgcallleave at all exit points.
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/pci/azt3328.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/sound/pci/azt3328.c b/sound/pci/azt3328.c
+index e4d76a2..579fc0d 100644
+--- a/sound/pci/azt3328.c
++++ b/sound/pci/azt3328.c
+@@ -2625,16 +2625,19 @@ snd_azf3328_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
+ 	int err;
+ 
+ 	snd_azf3328_dbgcallenter();
+-	if (dev >= SNDRV_CARDS)
+-		return -ENODEV;
++	if (dev >= SNDRV_CARDS) {
++		err = -ENODEV;
++		goto out;
++	}
+ 	if (!enable[dev]) {
+ 		dev++;
+-		return -ENOENT;
++		err = -ENOENT;
++		goto out;
+ 	}
+ 
+ 	err = snd_card_create(index[dev], id[dev], THIS_MODULE, 0, &card);
+ 	if (err < 0)
+-		return err;
++		goto out;
+ 
+ 	strcpy(card->driver, "AZF3328");
+ 	strcpy(card->shortname, "Aztech AZF3328 (PCI168)");
+
