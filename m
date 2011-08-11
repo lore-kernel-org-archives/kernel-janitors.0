@@ -1,36 +1,25 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 11 Aug 2011 09:40:33 +0000
-Subject: [PATCH] net/netlabel/netlabel_kapi.c: add missing cleanup code
-Message-Id: <1313055633-25327-1-git-send-email-julia@diku.dk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 11 Aug 2011 09:44:07 +0000
+Subject: Re: [PATCH] net/netlabel/netlabel_kapi.c: add missing cleanup code
+Message-Id: <20110811094407.GG3777@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1313055633-25327-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1313055633-25327-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paul Moore <paul@paul-moore.com>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Paul Moore <paul@paul-moore.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Thu, Aug 11, 2011 at 11:40:33AM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Use the same cleanup code for the failure of kzalloc as for the failure of
+> kstrdup just below.
+> 
 
-Use the same cleanup code for the failure of kzalloc as for the failure of
-kstrdup just below.
+That doesn't work.  The kfree(entry->domain) would cause an oops.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- net/netlabel/netlabel_kapi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 58107d0..225e12c 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -341,7 +341,7 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
- 
- 	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
- 	if (entry = NULL)
--		return -ENOMEM;
-+		goto cfg_cipsov4_map_add_failure;
- 	if (domain != NULL) {
- 		entry->domain = kstrdup(domain, GFP_ATOMIC);
- 		if (entry->domain = NULL)
+regards,
+dan carpenter
 
