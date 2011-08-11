@@ -1,54 +1,37 @@
-From: Stefani Seibold <stefani@seibold.net>
-Date: Wed, 03 Aug 2011 06:30:40 +0000
-Subject: Re: [PATCH 1/11] kernel/kfifo.c: trivial: use BUG_ON
-Message-Id: <1312353040.30326.0.camel@wall-e>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 11 Aug 2011 11:59:38 +0000
+Subject: [PATCH] net/bridge/netfilter/ebtables.c: use available error handling code
+Message-Id: <1313063978-29400-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312281304-11847-1-git-send-email-julia@diku.dk>
-	 <1312281304-11847-2-git-send-email-julia@diku.dk>
-	 <20110802113335.GA4185@thinkpad>
-	 <Pine.LNX.4.64.1108021349330.24349@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1108021349330.24349@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrea Righi <arighi@develer.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, trivial@kernel.org, kernel-janitors@vger.kernel.org, Stefani Seibold <stefani@seibold.net>, "Ira W. Snyder" <iws@ovro.caltech.edu>, linux-kernel@vger.kernel.org
+To: Bart De Schuymer <bart.de.schuymer@pandora.be>
+Cc: kernel-janitors@vger.kernel.org, Patrick McHardy <kaber@trash.net>, Stephen Hemminger <shemminger@linux-foundation.org>, davem@davemloft.net, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-Allow the function to return 0 when 0 elements are asked for rather than
-crashing the kernel with BUG.
+Free the locally allocated table and newinfo as done in adjacent error
+handling code.
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-Acked-by: Stefano Seibold <stefani@seibold.net>
 
 ---
- var/julia/linuxcopy/kernel/kfifo.c |    6 ------
- 1 file changed, 6 deletions(-)
+ net/bridge/netfilter/ebtables.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff -u -p a/kernel/kfifo.c b/kernel/kfifo.c
-index 01a0700..9f928ef 100644
---- a/var/linuxes/linux-next/kernel/kfifo.c
-+++ b/var/julia/linuxcopy/kernel/kfifo.c
-@@ -562,9 +562,6 @@ EXPORT_SYMBOL(__kfifo_to_user_r);
- unsigned int __kfifo_dma_in_prepare_r(struct __kfifo *fifo,
- 	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize)
- {
--	if (!nents)
--		BUG();
--
- 	len = __kfifo_max_r(len, recsize);
+diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+index 2b5ca1a..5864cc4 100644
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -1198,7 +1198,8 @@ ebt_register_table(struct net *net, const struct ebt_table *input_table)
  
- 	if (len + recsize > kfifo_unused(fifo))
-@@ -586,9 +583,6 @@ EXPORT_SYMBOL(__kfifo_dma_in_finish_r);
- unsigned int __kfifo_dma_out_prepare_r(struct __kfifo *fifo,
- 	struct scatterlist *sgl, int nents, unsigned int len, size_t recsize)
- {
--	if (!nents)
--		BUG();
--
- 	len = __kfifo_max_r(len, recsize);
+ 	if (table->check && table->check(newinfo, table->valid_hooks)) {
+ 		BUGPRINT("The table doesn't like its own initial data, lol\n");
+-		return ERR_PTR(-EINVAL);
++		ret = -EINVAL;
++		goto free_chainstack;
+ 	}
  
- 	if (len + recsize > fifo->in - fifo->out)
-
+ 	table->private = newinfo;
 
