@@ -1,49 +1,36 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 23 Aug 2011 08:43:52 +0000
-Subject: Re: [patch 1/2 -next] hid-lg4ff: silence sparse complaint
-Message-Id: <alpine.LNX.2.00.1108231043470.13644@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 11 Aug 2011 09:40:33 +0000
+Subject: [PATCH] net/netlabel/netlabel_kapi.c: add missing cleanup code
+Message-Id: <1313055633-25327-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110818134226.GA21927@shale.localdomain>
-In-Reply-To: <20110818134226.GA21927@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 18 Aug 2011, Dan Carpenter wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Sparse complains that:
-> drivers/hid/hid-lg4ff.c:288:44: warning: Using plain integer as NULL pointer
-> drivers/hid/hid-lg4ff.c:311:44: warning: Using plain integer as NULL pointer
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/hid/hid-lg4ff.c b/drivers/hid/hid-lg4ff.c
-> index dc38c2d..2d8762d 100644
-> --- a/drivers/hid/hid-lg4ff.c
-> +++ b/drivers/hid/hid-lg4ff.c
-> @@ -285,7 +285,7 @@ static void hid_lg4ff_switch_native(struct hid_device *hid, const struct lg4ff_n
->  /* Read current range and display it in terminal */
->  static ssize_t lg4ff_range_show(struct device *dev, struct device_attribute *attr, char *buf)
->  {
-> -	struct lg4ff_device_entry *entry = 0;
-> +	struct lg4ff_device_entry *uninitialized_var(entry);
->  	struct list_head *h;
->  	struct hid_device *hid = to_hid_device(dev);
->  	size_t count;
-> @@ -308,7 +308,7 @@ static ssize_t lg4ff_range_show(struct device *dev, struct device_attribute *att
->   * according to the type of the wheel */
->  static ssize_t lg4ff_range_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
->  {
-> -	struct lg4ff_device_entry *entry = 0;
-> +	struct lg4ff_device_entry *uninitialized_var(entry);
->  	struct list_head *h;
->  	struct hid_device *hid = to_hid_device(dev);
->  	__u16 range = simple_strtoul(buf, NULL, 10);
+Use the same cleanup code for the failure of kzalloc as for the failure of
+kstrdup just below.
 
-Applied.
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
--- 
-Jiri Kosina
-SUSE Labs
+---
+ net/netlabel/netlabel_kapi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index 58107d0..225e12c 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -341,7 +341,7 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
+ 
+ 	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
+ 	if (entry = NULL)
+-		return -ENOMEM;
++		goto cfg_cipsov4_map_add_failure;
+ 	if (domain != NULL) {
+ 		entry->domain = kstrdup(domain, GFP_ATOMIC);
+ 		if (entry->domain = NULL)
+
