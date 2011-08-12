@@ -1,65 +1,26 @@
-From: Thomas Meyer <thomas@m3y3r.de>
-Date: Wed, 03 Aug 2011 15:54:04 +0000
-Subject: Re: [PATCH 8/20] drivers/parport: Use kzalloc
-Message-Id: <1312386848.2629.21.camel@localhost.localdomain>
+From: "Rose" <william_rose55@yahoo.com>
+Date: Fri, 12 Aug 2011 18:25:00 +0000
+Subject: =?UTF-8?Q?HELLO=20my=20=20=E4=BD=A0=E5=A5=BD=EF=BC=8C=E6=88=91?=
+Message-Id: <20110812202500.3D7EFB8D@centrum.sk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1005132200410.6282@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1005132200410.6282@ask.diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-Am Donnerstag, den 13.05.2010, 22:01 +0200 schrieb Julia Lawall:
-
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kzalloc rather than the combination of kmalloc and memset.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,size,flags;
-> statement S;
-> @@
-> 
-> -x = kmalloc(size,flags);
-> +x = kzalloc(size,flags);
->  if (x = NULL) S
-> -memset(x, 0, size);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-
-Reviewed-by: Thomas Meyer <thomas@m3y3r.de>
-
-> 
-> ---
->  drivers/parport/share.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff -u -p a/drivers/parport/share.c b/drivers/parport/share.c
-> --- a/drivers/parport/share.c
-> +++ b/drivers/parport/share.c
-> @@ -282,14 +282,13 @@ struct parport *parport_register_port(un
->  	int device;
->  	char *name;
->  
-> -	tmp = kmalloc(sizeof(struct parport), GFP_KERNEL);
-> +	tmp = kzalloc(sizeof(struct parport), GFP_KERNEL);
->  	if (!tmp) {
->  		printk(KERN_WARNING "parport: memory squeeze\n");
->  		return NULL;
->  	}
->  
->  	/* Init our structure */
-> - 	memset(tmp, 0, sizeof(struct parport));
->  	tmp->base = base;
->  	tmp->irq = irq;
->  	tmp->dma = dma;
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
 
-
+HELLO
+My name is Rose,i and became intrested in you, i will also like to know you=
+ more,and i want you to send an email to my email address so i can give you=
+ my picture for you to know whom i am. Here is my email address(william_ros=
+e55@yahoo.com)I believe we can move from here!
+I am waiting for your mail to my email address above..
+(Remeber the distance or colour does not matter but love matters alot in li=
+fe)
+Thanks Rose=C2=A0 please contact me now through my email address
+(william_rose55@yahoo.com)
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
