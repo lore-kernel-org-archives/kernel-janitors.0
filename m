@@ -1,105 +1,34 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 08 Aug 2011 11:17:56 +0000
-Subject: [PATCH 2/9] drivers/net/wireless/wl12xx: add missing kfree
-Message-Id: <1312802283-9107-2-git-send-email-julia@diku.dk>
+From: Luciano Coelho <coelho@ti.com>
+Date: Fri, 12 Aug 2011 05:14:01 +0000
+Subject: Re: [PATCH 2/9] drivers/net/wireless/wl12xx: add missing kfree
+Message-Id: <1313126041.2407.911.camel@cumari>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1312802283-9107-2-git-send-email-julia@diku.dk>
+In-Reply-To: <1312802283-9107-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Luciano Coelho <coelho@ti.com>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-From: Julia Lawall <julia@diku.dk>
+On Mon, 2011-08-08 at 13:17 +0200, Julia Lawall wrote: 
+> From: Julia Lawall <julia@diku.dk>
+> 
+> In each case, the freed data should be freed in the error handling code as
+> well.
 
-In each case, the freed data should be freed in the error handling code as
-well.
+[...]
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
 
-// <smpl>
-@exists@
-local idexpression x;
-statement S,S1;
-expression E;
-identifier fl;
-expression *ptr != NULL;
-@@
+John, since you took Julia's patch for wl1251 into 3.1, could you also
+take this patch into it, please?
 
-x = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...kfree(x)...+> }
-     when any
-     when != true x = NULL
-x->fl
-...>
-(
-if (x = NULL) S1
-|
-if (...) { ... when != x
-               when forall
-(
- return \(0\|<+...x...+>\|ptr\);
-|
-* return ...;
-)
-}
-)
-// </smpl>
+Acked-by: Luciano Coelho <coelho@ti.com>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wireless/wl12xx/acx.c      |    6 +-----
- drivers/net/wireless/wl12xx/testmode.c |    5 ++++-
- 2 files changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/wl12xx/testmode.c b/drivers/net/wireless/wl12xx/testmode.c
-index 5d5e1ef..88add68 100644
---- a/drivers/net/wireless/wl12xx/testmode.c
-+++ b/drivers/net/wireless/wl12xx/testmode.c
-@@ -139,12 +139,15 @@ static int wl1271_tm_cmd_interrogate(struct wl1271 *wl, struct nlattr *tb[])
- 
- 	if (ret < 0) {
- 		wl1271_warning("testmode cmd interrogate failed: %d", ret);
-+		kfree(cmd);
- 		return ret;
- 	}
- 
- 	skb = cfg80211_testmode_alloc_reply_skb(wl->hw->wiphy, sizeof(*cmd));
--	if (!skb)
-+	if (!skb) {
-+		kfree(cmd);
- 		return -ENOMEM;
-+	}
- 
- 	NLA_PUT(skb, WL1271_TM_ATTR_DATA, sizeof(*cmd), cmd);
- 
-diff --git a/drivers/net/wireless/wl12xx/acx.c b/drivers/net/wireless/wl12xx/acx.c
-index 7e33f1f..34f6ab5 100644
---- a/drivers/net/wireless/wl12xx/acx.c
-+++ b/drivers/net/wireless/wl12xx/acx.c
-@@ -77,8 +77,6 @@ int wl1271_acx_sleep_auth(struct wl1271 *wl, u8 sleep_auth)
- 	auth->sleep_auth = sleep_auth;
- 
- 	ret = wl1271_cmd_configure(wl, ACX_SLEEP_AUTH, auth, sizeof(*auth));
--	if (ret < 0)
--		return ret;
- 
- out:
- 	kfree(auth);
-@@ -624,10 +622,8 @@ int wl1271_acx_cca_threshold(struct wl1271 *wl)
- 
- 	ret = wl1271_cmd_configure(wl, ACX_CCA_THRESHOLD,
- 				   detection, sizeof(*detection));
--	if (ret < 0) {
-+	if (ret < 0)
- 		wl1271_warning("failed to set cca threshold: %d", ret);
--		return ret;
--	}
- 
- out:
- 	kfree(detection);
+-- 
+Cheers,
+Luca.
 
