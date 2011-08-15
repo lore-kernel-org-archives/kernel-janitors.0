@@ -1,27 +1,33 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Tue, 16 Aug 2011 15:47:45 +0000
-Subject: Re: [PATCH] tty: clearify structure initializer in notify_write()
-Message-Id: <20110816164745.5b38b408@lxorguk.ukuu.org.uk>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 15 Aug 2011 11:25:35 +0000
+Subject: [patch -next] libertas: handle mesh networks in lbs_iface_active()
+Message-Id: <20110815112535.GC10560@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312027319-1402-1-git-send-email-minipli@googlemail.com>
-	<CA+rthh_AW5Yz2ZiOqOTWquXKnsDEd=YcNQ9HiOWu-deSar0eWQ@mail.gmail.com>
-	<20110816150452.GL10560@shale.localdomain>
-In-Reply-To: <20110816150452.GL10560@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Mathias Krause <minipli@googlemail.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Williams <dcbw@redhat.com>, Daniel Drake <dsd@laptop.org>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "open list:MARVELL LIBERTAS..." <libertas-dev@lists.infradead.org>, "open list:NETWORKING [WIREL..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 16 Aug 2011 18:04:52 +0300
-Dan Carpenter <error27@gmail.com> wrote:
+There was an extra semicolon so the if condition wasn't used.  We
+checked "priv->dev" twice instead of "priv->mesh_dev".
 
-> > On Sat, Jul 30, 2011 at 2:01 PM, Mathias Krause <minipli@googlemail.com> wrote:
-> > > Even though this is valid C we should not mix C99 initializers with
-> > > obfuscated ANSI C.
-> 
-> I saw this patch the first time and I couldn't figure out why the
-> original code was written that way.  I'm curious, is there some trick
-> here that I don't see, or is it just a typo that happens to work?
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Compile tested only.
 
-Typo looking at the original commit
+diff --git a/drivers/net/wireless/libertas/dev.h b/drivers/net/wireless/libertas/dev.h
+index 8148389..b9ff0dc 100644
+--- a/drivers/net/wireless/libertas/dev.h
++++ b/drivers/net/wireless/libertas/dev.h
+@@ -190,8 +190,8 @@ static inline int lbs_iface_active(struct lbs_private *priv)
+ 	int r;
+ 
+ 	r = netif_running(priv->dev);
+-	if (priv->mesh_dev);
+-		r |= netif_running(priv->dev);
++	if (priv->mesh_dev)
++		r |= netif_running(priv->mesh_dev);
+ 
+ 	return r;
+ }
