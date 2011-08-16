@@ -1,50 +1,46 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 02 Aug 2011 10:34:58 +0000
-Subject: [PATCH 5/11] kernel/sysctl.c: trivial: use BUG_ON
-Message-Id: <1312281304-11847-6-git-send-email-julia@diku.dk>
+From: Ali Bahar <ali@internetdog.org>
+Date: Tue, 16 Aug 2011 01:42:27 +0000
+Subject: Re: [patch] rtl8712: don't just return -EFAULT in
+Message-Id: <20110816014227.GA28730@internetdog.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312281304-11847-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1312281304-11847-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@elte.hu>, trivial@kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Al Viro <viro@zeniv.linux.org.uk>, Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Sat, Aug 06, 2011 at 07:27:48AM -0700, Dan Carpenter wrote:
+> There were some curly braces missing so the original code in
+> wpa_supplicant_ioctl() pretty much always returned -EFAULT without
+> doing anything.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> 
+> diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+> index 40e6b5c..c380a30 100644
+> --- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+> +++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+> @@ -2072,9 +2072,10 @@ static int wpa_supplicant_ioctl(struct net_device *dev, struct iw_point *p)
+>  	param = (struct ieee_param *)_malloc(p->length);
+>  	if (param = NULL)
+>  		return -ENOMEM;
+> -	if (copy_from_user(param, p->pointer, p->length))
+> +	if (copy_from_user(param, p->pointer, p->length)) {
+>  		kfree((u8 *)param);
+>  		return -EFAULT;
+> +	}
 
-Use BUG_ON(x) rather than if(x) BUG();
+Ouch! (Now emacs would've caught this! ;-))
+My reading of the code suggests that (not surprisingly) this path does
+not get executed. The frequent case is to go thru wext-core's
+"standard" handler, instead of the above. If so, then that'd explain
+why I've not noticed this bug during testing.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Good catch.
 
-// <smpl>
-@@ identifier x; @@
--if (x) BUG();
-+BUG_ON(x);
+thanks,
+ali
 
-@@ identifier x; @@
--if (!x) BUG();
-+BUG_ON(!x);
-// </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- kernel/sysctl.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff -u -p a/kernel/sysctl.c b/kernel/sysctl.c
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1600,8 +1600,7 @@ void sysctl_head_put(struct ctl_table_he
- 
- struct ctl_table_header *sysctl_head_grab(struct ctl_table_header *head)
- {
--	if (!head)
--		BUG();
-+	BUG_ON(!head);
- 	spin_lock(&sysctl_lock);
- 	if (!use_table(head))
- 		head = ERR_PTR(-ENOENT);
-
+>  	switch (param->cmd) {
+>  	case IEEE_CMD_SET_WPA_PARAM:
+>  		ret = wpa_set_param(dev, param->u.wpa_param.name,
