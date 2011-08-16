@@ -1,8 +1,10 @@
 From: Song Li <info@mail.com>
-Date: Tue, 16 Aug 2011 18:44:39 +0000
+Date: Tue, 16 Aug 2011 20:10:21 +0000
 Subject: Re: Transfer Offer
-Message-Id: <20110816170708.9B931139E998@mail.najdschools.edu.sa>
+Message-Id: <20110816155224.A1F93139E48E@mail.najdschools.edu.sa>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110816170708.9B931139E998@mail.najdschools.edu.sa>
+In-Reply-To: <20110816170708.9B931139E998@mail.najdschools.edu.sa>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
