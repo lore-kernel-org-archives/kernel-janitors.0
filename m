@@ -1,93 +1,56 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 22 Aug 2011 12:31:46 +0000
-Subject: Re: [PATCH 2/2] arch/powerpc/platforms/powermac/setup.c: add missing
-Message-Id: <Pine.LNX.4.64.1108221430320.10948@ask.diku.dk>
+From: Mathias Krause <minipli@googlemail.com>
+Date: Tue, 16 Aug 2011 11:03:20 +0000
+Subject: Re: [PATCH] tty: clearify structure initializer in notify_write()
+Message-Id: <CA+rthh_AW5Yz2ZiOqOTWquXKnsDEd=YcNQ9HiOWu-deSar0eWQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1313943001-12884-2-git-send-email-julia@diku.dk>
-	<4E522AD0.7030907@bfs.de>
-In-Reply-To: <4E522AD0.7030907-fPG8STNUNVg@public.gmane.org>
+References: <1312027319-1402-1-git-send-email-minipli@googlemail.com>
+In-Reply-To: <1312027319-1402-1-git-send-email-minipli@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: walter harms <wharms-fPG8STNUNVg@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Mathias Krause <minipli@googlemail.com>
 
-On Mon, 22 Aug 2011, walter harms wrote:
+Ping, Greg?
 
-> 
-> 
-> Am 21.08.2011 18:10, schrieb Julia Lawall:
-> > From: Julia Lawall <julia@diku.dk>
-> > 
-> > np is initialized to the result of calling a function that calls
-> > of_node_get, so of_node_put should be called before the pointer is dropped.
-> > 
-> > The semantic match that finds this problem is as follows:
-> > (http://coccinelle.lip6.fr/)
-> > 
-> > // <smpl>
-> > @@
-> > expression e,e1,e2;
-> > @@
-> > 
-> > * e = \(of_find_node_by_type\|of_find_node_by_name\)(...)
-> >   ... when != of_node_put(e)
-> >       when != true e = NULL
-> >       when != e2 = e
-> >   e = e1
-> > // </smpl>
-> > 
-> > Signed-off-by: Julia Lawall <julia@diku.dk>
-> > 
-> > ---
-> >  arch/powerpc/platforms/powermac/setup.c |    8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/platforms/powermac/setup.c b/arch/powerpc/platforms/powermac/setup.c
-> > index 96580b1..970ea1d 100644
-> > --- a/arch/powerpc/platforms/powermac/setup.c
-> > +++ b/arch/powerpc/platforms/powermac/setup.c
-> > @@ -494,11 +494,15 @@ static int __init pmac_declare_of_platform_devices(void)
-> >  		return -1;
-> >  
-> >  	np = of_find_node_by_name(NULL, "valkyrie");
-> > -	if (np)
-> > +	if (np) {
-> >  		of_platform_device_create(np, "valkyrie", NULL);
-> > +		of_node_put(np);
-> > +	}
-> >  	np = of_find_node_by_name(NULL, "platinum");
-> > -	if (np)
-> > +	if (np) {
-> >  		of_platform_device_create(np, "platinum", NULL);
-> > +		of_node_put(np);
-> > +	}
-> >          np = of_find_node_by_type(NULL, "smu");
-> >          if (np) {
-> >  		of_platform_device_create(np, "smu", NULL);
-> > 
-> 
-> 
-> hi,
-> it seems save to call of_node_put(np) with np=NULL, i assume the same is true
-> for of_platform_device_create().
-> 
-> so the code collapses to:
-> 
-> _test_node(char *name)
-> {
->  struct device_node *np;
->  np = of_find_node_by_name(NULL, name);
->  of_platform_device_create(np, name, NULL);
->  of_node_put(np);
->  return NULL?:0:1;
-> }
-> 
-> maybe there is already something like find_node() ?
-
-of_platform_device_create is not much used, and one might want to use it 
-with other functions than of_find_node_by_name, as indeed is done here.  
-Is the problem just a missing else between the calls?  Is it certain that 
-all of the cases are disjoint?
-
-julia
+On Sat, Jul 30, 2011 at 2:01 PM, Mathias Krause <minipli@googlemail.com> wr=
+ote:
+> Even though this is valid C we should not mix C99 initializers with
+> obfuscated ANSI C. Stick to C99 and initialize c by its name.
+>
+> Found by clang:
+> drivers/tty/vt/vt.c:262:55: warning: explicitly assigning a variable of
+> type 'unsigned int' to itself [-Wself-assign]
+> =A0 =A0struct vt_notifier_param param =3D { .vc =3D vc, unicode =3D unico=
+de };
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 ~~~~~~~ ^ ~~~~~~~
+>
+> Signed-off-by: Mathias Krause <minipli@googlemail.com>
+> ---
+> =A0drivers/tty/vt/vt.c | =A0 =A02 +-
+> =A01 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+> index b3915b7..e716839 100644
+> --- a/drivers/tty/vt/vt.c
+> +++ b/drivers/tty/vt/vt.c
+> @@ -259,7 +259,7 @@ EXPORT_SYMBOL_GPL(unregister_vt_notifier);
+>
+> =A0static void notify_write(struct vc_data *vc, unsigned int unicode)
+> =A0{
+> - =A0 =A0 =A0 struct vt_notifier_param param =3D { .vc =3D vc, unicode =
+=3D unicode };
+> + =A0 =A0 =A0 struct vt_notifier_param param =3D { .vc =3D vc, .c =3D uni=
+code };
+> =A0 =A0 =A0 =A0atomic_notifier_call_chain(&vt_notifier_list, VT_WRITE, &p=
+aram);
+> =A0}
+>
+> --
+> 1.5.6.5
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
