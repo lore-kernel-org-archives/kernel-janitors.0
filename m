@@ -1,76 +1,48 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 20 Aug 2011 07:30:14 +0000
-Subject: Re: [PATCH 4/4] sound/aoa/fabrics/layout.c: remove unneeded kfree
-Message-Id: <s5h62ls8rqx.wl%tiwai@suse.de>
+From: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
+Date: Wed, 17 Aug 2011 18:42:56 +0000
+Subject: Re: [patch] w1: off by one in w1_f29_remove_slave()
+Message-Id: <56274C82-8FCA-45F9-B3DC-9863889694AA@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1313820761-12042-4-git-send-email-julia@diku.dk>
-In-Reply-To: <1313820761-12042-4-git-send-email-julia@diku.dk>
+References: <20110727095557.GL3824@shale.localdomain> <9C2475AA-829E-4BB8-A3D2-2444803A33D3@gmail.com> <4E33C3F5.9000602@bfs.de> <20110730085131.GE5575@shale.localdomain>
+In-Reply-To: <20110730085131.GE5575@shale.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Johannes Berg <johannes@sipsolutions.net>, linuxppc-dev@lists.ozlabs.org
-
-At Sat, 20 Aug 2011 08:12:41 +0200,
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The label outnodev is only used when kzalloc has not yet taken place or has
-> failed, so there is no need for the call for kfree under this label.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier x;
-> expression E1!=0,E2,E3,E4;
-> statement S;
-> iterator I;
-> @@
-> 
-> (
-> if (...) { ... when != kfree(x)
->                when != x = E3
->                when != E3 = x
-> *  return ...;
->  }
-> ... when != x = E2
->     when != I(...,x,...) S
-> if (...) { ... when != x = E4
->  kfree(x); ... return ...; }
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-
-Thanks, applied this one.
-The rest three are left for review by Mark & Liam.
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <error27@gmail.com>
+Cc: walter harms <wharms@bfs.de>, Evgeniy Polyakov <johnpol@2ka.mipt.ru>, Andrew Morton <akpm@linux-foundation.org>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
 
-Takashi
+On Jul 30, 2011, at 4:51, Dan Carpenter wrote:
 
+> On Sat, Jul 30, 2011 at 10:42:29AM +0200, walter harms wrote:
+>> Is there any reason to release the data "backwards" ?
+>> The default way is to go upwards. that looks more readable.
+>=20
+> I considered doing it that way.  It would work.  I throught maybe
+> they were going to add something where it needed to be unwound LIFO
+> order.
+>=20
+> I'll wait for Jean-Fran=E7oisto say which way is prefered.
+>=20
+Sorry for the delay. Sorry also for the trouble this dummy copy/paste mista=
+ke is causing. It's a bit embarrassing even if the intentions are good ;) T=
+his second mistake explains why I wasn't getting ill effects from the remov=
+e.
 
+The sysfs files were removed backwards as a programmer reflex. In this case=
+ it is not really necessary since there are no real dependencies between th=
+e function implementations... but there may be in the future. This is why i=
+t's a safe habit to do it this way.
 
-> ---
->  sound/aoa/fabrics/layout.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/aoa/fabrics/layout.c b/sound/aoa/fabrics/layout.c
-> index 3fd1a7e..552b97a 100644
-> --- a/sound/aoa/fabrics/layout.c
-> +++ b/sound/aoa/fabrics/layout.c
-> @@ -1073,10 +1073,10 @@ static int aoa_fabric_layout_probe(struct soundbus_dev *sdev)
->  	sdev->pcmid = -1;
->  	list_del(&ldev->list);
->  	layouts_list_items--;
-> +	kfree(ldev);
->   outnodev:
->   	of_node_put(sound);
->   	layout_device = NULL;
-> - 	kfree(ldev);
->  	return -ENODEV;
->  }
->  
-> 
+I would keep the removal in reverse order,  so I will ack the the v2 patch
+
+Cheers!
+/jfd
+> regards,
+> dan carpenter
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
