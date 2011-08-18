@@ -1,39 +1,31 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 18 Aug 2011 13:42:26 +0000
-Subject: [patch 1/2 -next] hid-lg4ff: silence sparse complaint
-Message-Id: <20110818134226.GA21927@shale.localdomain>
+Date: Thu, 18 Aug 2011 16:21:44 +0000
+Subject: Re: [patch 1/2 -next] hid-lg4ff: silence sparse complaint
+Message-Id: <20110818162144.GD21927@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110818134226.GA21927@shale.localdomain>
+ <CAMvewQJ=6-3LgDwAEgJ6TaQSBWiSC5ZTb-14V60ZN0Lh2TYbAQ@mail.gmail.com>
+In-Reply-To: <CAMvewQJ=6-3LgDwAEgJ6TaQSBWiSC5ZTb-14V60ZN0Lh2TYbAQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Zic Rim <zicrim@gmail.com>
+Cc: Jiri Kosina <jkosina@suse.cz>, "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Sparse complains that:
-drivers/hid/hid-lg4ff.c:288:44: warning: Using plain integer as NULL pointer
-drivers/hid/hid-lg4ff.c:311:44: warning: Using plain integer as NULL pointer
+On Thu, Aug 18, 2011 at 07:50:45PM +0530, Zic Rim wrote:
+> > device_attribute *attr, char *buf)
+> >  {
+> > -       struct lg4ff_device_entry *entry = 0;
+> > +       struct lg4ff_device_entry *uninitialized_var(entry);
+> >
+> 
+> I think this is better      struct lg4ff_device_entry *entry = NULL ;
+> 
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+We only have the initialization to silence a gcc warning.  My way is
+more explicit.  If we set entry = NULL then other static analysis
+tools complain about a potential NULL dereference.
 
-diff --git a/drivers/hid/hid-lg4ff.c b/drivers/hid/hid-lg4ff.c
-index dc38c2d..2d8762d 100644
---- a/drivers/hid/hid-lg4ff.c
-+++ b/drivers/hid/hid-lg4ff.c
-@@ -285,7 +285,7 @@ static void hid_lg4ff_switch_native(struct hid_device *hid, const struct lg4ff_n
- /* Read current range and display it in terminal */
- static ssize_t lg4ff_range_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	struct lg4ff_device_entry *entry = 0;
-+	struct lg4ff_device_entry *uninitialized_var(entry);
- 	struct list_head *h;
- 	struct hid_device *hid = to_hid_device(dev);
- 	size_t count;
-@@ -308,7 +308,7 @@ static ssize_t lg4ff_range_show(struct device *dev, struct device_attribute *att
-  * according to the type of the wheel */
- static ssize_t lg4ff_range_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
- {
--	struct lg4ff_device_entry *entry = 0;
-+	struct lg4ff_device_entry *uninitialized_var(entry);
- 	struct list_head *h;
- 	struct hid_device *hid = to_hid_device(dev);
- 	__u16 range = simple_strtoul(buf, NULL, 10);
+regards,
+dan carpenter
+
