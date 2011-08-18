@@ -1,28 +1,24 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 18 Aug 2011 13:43:43 +0000
-Subject: [patch 2/2 -next] hid-lg4ff: add a kfree() to an error path
-Message-Id: <20110818134343.GB21927@shale.localdomain>
+Date: Thu, 18 Aug 2011 16:24:47 +0000
+Subject: Re: [patch 2/2 -next] hid-lg4ff: add a kfree() to an error path
+Message-Id: <20110818162447.GE21927@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110818134343.GB21927@shale.localdomain>
+ <CAMvewQJigdY81gPrpndqV=FxN+cEeif4NkzSbBZKCO4z3guQew@mail.gmail.com>
+In-Reply-To: <CAMvewQJigdY81gPrpndqV=FxN+cEeif4NkzSbBZKCO4z3guQew@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Zic Rim <zicrim@gmail.com>
+Cc: Jiri Kosina <jkosina@suse.cz>, "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-There is a small rare potential memory leak here.  But it's easy to
-fix.
+On Thu, Aug 18, 2011 at 07:59:32PM +0530, Zic Rim wrote:
+> There is no leak here. If kzalloc fails , it means memory is not allocated.
+> It is wrong to free something that is not allocated .
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+No.  The entry allocation succeeded and the entry->device_id
+allocation failed.  Look again.
 
-diff --git a/drivers/hid/hid-lg4ff.c b/drivers/hid/hid-lg4ff.c
-index dc38c2d..2b4bbcb 100644
---- a/drivers/hid/hid-lg4ff.c
-+++ b/drivers/hid/hid-lg4ff.c
-@@ -438,6 +438,7 @@ int lg4ff_init(struct hid_device *hid)
- 	entry->device_id = (char *)kzalloc(strlen((&hid->dev)->kobj.name) + 1, GFP_KERNEL);
- 	if (!entry->device_id) {
- 		hid_err(hid, "Cannot set device_id, insufficient memory.\n");
-+		kfree(entry);
- 		return -ENOMEM;
- 	}
- 	strcpy(entry->device_id, (&hid->dev)->kobj.name);
+regards,
+dan carpenter
+
