@@ -1,48 +1,39 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Tue, 16 Aug 2011 11:55:52 +0000
-Subject: Re: [PATCH 3/4] drivers/media/video/hexium_gemini.c: delete useless
-Message-Id: <20110816135552.655ef654@endymion.delvare>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 18 Aug 2011 13:42:26 +0000
+Subject: [patch 1/2 -next] hid-lg4ff: silence sparse complaint
+Message-Id: <20110818134226.GA21927@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312453774-23333-1-git-send-email-julia@diku.dk>
-	<1312453774-23333-4-git-send-email-julia@diku.dk>
-In-Reply-To: <1312453774-23333-4-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+Sparse complains that:
+drivers/hid/hid-lg4ff.c:288:44: warning: Using plain integer as NULL pointer
+drivers/hid/hid-lg4ff.c:311:44: warning: Using plain integer as NULL pointer
 
-On Thu,  4 Aug 2011 12:29:33 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Delete nontrivial initialization that is immediately overwritten by the
-> result of an allocation function.
-> (...)
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/media/video/hexium_gemini.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff -u -p a/drivers/media/video/hexium_gemini.c b/drivers/media/video/hexium_gemini.c
-> --- a/drivers/media/video/hexium_gemini.c
-> +++ b/drivers/media/video/hexium_gemini.c
-> @@ -352,7 +352,7 @@ static struct saa7146_ext_vv vv_data;
->  /* this function only gets called when the probing was successful */
->  static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_data *info)
->  {
-> -	struct hexium *hexium = (struct hexium *) dev->ext_priv;
-> +	struct hexium *hexium;
->  	int ret;
->  
->  	DEB_EE((".\n"));
-> 
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Looks correct.
-
-Acked-by: Jean Delvare <khali@linux-fr.org>
-
--- 
-Jean Delvare
+diff --git a/drivers/hid/hid-lg4ff.c b/drivers/hid/hid-lg4ff.c
+index dc38c2d..2d8762d 100644
+--- a/drivers/hid/hid-lg4ff.c
++++ b/drivers/hid/hid-lg4ff.c
+@@ -285,7 +285,7 @@ static void hid_lg4ff_switch_native(struct hid_device *hid, const struct lg4ff_n
+ /* Read current range and display it in terminal */
+ static ssize_t lg4ff_range_show(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+-	struct lg4ff_device_entry *entry = 0;
++	struct lg4ff_device_entry *uninitialized_var(entry);
+ 	struct list_head *h;
+ 	struct hid_device *hid = to_hid_device(dev);
+ 	size_t count;
+@@ -308,7 +308,7 @@ static ssize_t lg4ff_range_show(struct device *dev, struct device_attribute *att
+  * according to the type of the wheel */
+ static ssize_t lg4ff_range_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+ {
+-	struct lg4ff_device_entry *entry = 0;
++	struct lg4ff_device_entry *uninitialized_var(entry);
+ 	struct list_head *h;
+ 	struct hid_device *hid = to_hid_device(dev);
+ 	__u16 range = simple_strtoul(buf, NULL, 10);
