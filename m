@@ -1,19 +1,29 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 22 Aug 2011 22:29:53 +0000
-Subject: Re: [PATCH 2/4] sound/soc/ep93xx/ep93xx-i2s.c: add missing kfree
-Message-Id: <20110822222953.GC30609@opensource.wolfsonmicro.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Thu, 18 Aug 2011 13:38:09 +0000
+Subject: [patch -next] bcma: signedness bug in bcma_get_next_core()
+Message-Id: <20110818133809.GG4786@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1313820761-12042-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1313820761-12042-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, Ryan Mallon <rmallon@gmail.com>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, H Hartley Sweeten <hsweeten@visionengravers.com>, Alexander Sverdlin <subaparts@yandex.ru>, Liam Girdwood <lrg@ti.com>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: "open list:BROADCOM SPECIFIC..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Aug 20, 2011 at 08:12:39AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Introduce a new label that includes kfree and jump to that one.
+The u32 would never be less than zero so the error handling would
+break.  I changed it to int.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/bcma/scan.c b/drivers/bcma/scan.c
+index 0ea390f..1361d8d 100644
+--- a/drivers/bcma/scan.c
++++ b/drivers/bcma/scan.c
+@@ -281,7 +281,7 @@ static int bcma_get_next_core(struct bcma_bus *bus, u32 __iomem **eromptr,
+ 
+ 	/* get & parse master ports */
+ 	for (i = 0; i < ports[0]; i++) {
+-		u32 mst_port_d = bcma_erom_get_mst_port(bus, eromptr);
++		int mst_port_d = bcma_erom_get_mst_port(bus, eromptr);
+ 		if (mst_port_d < 0)
+ 			return -EILSEQ;
+ 	}
