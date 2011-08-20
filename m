@@ -1,63 +1,76 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 20 Aug 2011 06:12:41 +0000
-Subject: [PATCH 4/4] sound/aoa/fabrics/layout.c: remove unneeded kfree
-Message-Id: <1313820761-12042-4-git-send-email-julia@diku.dk>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Sat, 20 Aug 2011 07:30:14 +0000
+Subject: Re: [PATCH 4/4] sound/aoa/fabrics/layout.c: remove unneeded kfree
+Message-Id: <s5h62ls8rqx.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1313820761-12042-4-git-send-email-julia@diku.dk>
+In-Reply-To: <1313820761-12042-4-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org
+To: Julia Lawall <julia@diku.dk>
+Cc: alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Johannes Berg <johannes@sipsolutions.net>, linuxppc-dev@lists.ozlabs.org
 
-From: Julia Lawall <julia@diku.dk>
+At Sat, 20 Aug 2011 08:12:41 +0200,
+Julia Lawall wrote:
+> 
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The label outnodev is only used when kzalloc has not yet taken place or has
+> failed, so there is no need for the call for kfree under this label.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> identifier x;
+> expression E1!=0,E2,E3,E4;
+> statement S;
+> iterator I;
+> @@
+> 
+> (
+> if (...) { ... when != kfree(x)
+>                when != x = E3
+>                when != E3 = x
+> *  return ...;
+>  }
+> ... when != x = E2
+>     when != I(...,x,...) S
+> if (...) { ... when != x = E4
+>  kfree(x); ... return ...; }
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-The label outnodev is only used when kzalloc has not yet taken place or has
-failed, so there is no need for the call for kfree under this label.
+Thanks, applied this one.
+The rest three are left for review by Mark & Liam.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
 
-// <smpl>
-@@
-identifier x;
-expression E1!=0,E2,E3,E4;
-statement S;
-iterator I;
-@@
+Takashi
 
-(
-if (...) { ... when != kfree(x)
-               when != x = E3
-               when != E3 = x
-*  return ...;
- }
-... when != x = E2
-    when != I(...,x,...) S
-if (...) { ... when != x = E4
- kfree(x); ... return ...; }
-)
-// </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
 
----
- sound/aoa/fabrics/layout.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/aoa/fabrics/layout.c b/sound/aoa/fabrics/layout.c
-index 3fd1a7e..552b97a 100644
---- a/sound/aoa/fabrics/layout.c
-+++ b/sound/aoa/fabrics/layout.c
-@@ -1073,10 +1073,10 @@ static int aoa_fabric_layout_probe(struct soundbus_dev *sdev)
- 	sdev->pcmid = -1;
- 	list_del(&ldev->list);
- 	layouts_list_items--;
-+	kfree(ldev);
-  outnodev:
-  	of_node_put(sound);
-  	layout_device = NULL;
-- 	kfree(ldev);
- 	return -ENODEV;
- }
- 
-
+> ---
+>  sound/aoa/fabrics/layout.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/aoa/fabrics/layout.c b/sound/aoa/fabrics/layout.c
+> index 3fd1a7e..552b97a 100644
+> --- a/sound/aoa/fabrics/layout.c
+> +++ b/sound/aoa/fabrics/layout.c
+> @@ -1073,10 +1073,10 @@ static int aoa_fabric_layout_probe(struct soundbus_dev *sdev)
+>  	sdev->pcmid = -1;
+>  	list_del(&ldev->list);
+>  	layouts_list_items--;
+> +	kfree(ldev);
+>   outnodev:
+>   	of_node_put(sound);
+>   	layout_device = NULL;
+> - 	kfree(ldev);
+>  	return -ENODEV;
+>  }
+>  
+> 
