@@ -1,83 +1,82 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 04 Aug 2011 07:13:21 +0000
-Subject: Re: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use BUG_ON
-Message-Id: <4E3A4691.6060009@bfs.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 20 Aug 2011 06:12:40 +0000
+Subject: [PATCH 3/4] sound/soc/mxs/mxs-saif.c: add missing kfree
+Message-Id: <1313820761-12042-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312281304-11847-3-git-send-email-julia@diku.dk>
-In-Reply-To: <1312281304-11847-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <b29396@freescale.com>
 
+From: Julia Lawall <julia@diku.dk>
 
+The error handling code prior to get_clk also needs to call kfree.  The
+label name is changed to reflect its more general use.
 
-Am 04.08.2011 08:54, schrieb Nandigama, Nagalakshmi:
-> The patch seem to be fine. Please consider this patch as an Acked by me
-> 
-> Regards,
-> Nagalakshmi
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Hi Nagalakshmi,
+// <smpl>
+@@
+identifier x;
+expression E1!=0,E2,E3,E4;
+statement S;
+iterator I;
+@@
 
-nice try :) when you want to acknowledge a patch you should write:
-Acked-by: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
+(
+if (...) { ... when != kfree(x)
+               when != x = E3
+               when != E3 = x
+*  return ...;
+ }
+... when != x = E2
+    when != I(...,x,...) S
+if (...) { ... when != x = E4
+ kfree(x); ... return ...; }
+)
+// </smpl>
 
-Otherwise scripts that look for an acknowledge have a hard time.
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-re,
- wh
+---
+ sound/soc/mxs/mxs-saif.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
+diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
+index 0b3adae..4a17bc8 100644
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@ -523,8 +523,10 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 	if (!saif)
+ 		return -ENOMEM;
+ 
+-	if (pdev->id >= ARRAY_SIZE(mxs_saif))
+-		return -EINVAL;
++	if (pdev->id >= ARRAY_SIZE(mxs_saif)) {
++		ret = -EINVAL;
++		goto failed;
++	}
+ 	mxs_saif[pdev->id] = saif;
+ 
+ 	saif->clk = clk_get(&pdev->dev, NULL);
+@@ -532,7 +534,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 		ret = PTR_ERR(saif->clk);
+ 		dev_err(&pdev->dev, "Cannot get the clock: %d\n",
+ 			ret);
+-		goto failed_clk;
++		goto failed;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -625,7 +627,7 @@ failed_ioremap:
+ 	release_mem_region(res->start, resource_size(res));
+ failed_get_resource:
+ 	clk_put(saif->clk);
+-failed_clk:
++failed:
+ 	kfree(saif);
+ 
+ 	return ret;
 
-> 
-> 
-> -----Original Message-----
-> From: Julia Lawall [mailto:julia@diku.dk] 
-> Sent: Tuesday, August 02, 2011 4:05 PM
-> To: Moore, Eric; trivial@kernel.org
-> Cc: kernel-janitors@vger.kernel.org; Support; DL-MPT Fusion Linux; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH 2/11] drivers/message/fusion/mptsas.c: trivial: use BUG_ON
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use BUG_ON(x) rather than if(x) BUG();
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@ identifier x; @@
-> -if (x) BUG();
-> +BUG_ON(x);
-> 
-> @@ identifier x; @@
-> -if (!x) BUG();
-> +BUG_ON(!x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/message/fusion/mptsas.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff -u -p a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
-> --- a/drivers/message/fusion/mptsas.c
-> +++ b/drivers/message/fusion/mptsas.c
-> @@ -3410,8 +3410,7 @@ mptsas_expander_event_add(MPT_ADAPTER *i
->  	__le64 sas_address;
->  
->  	port_info = kzalloc(sizeof(struct mptsas_portinfo), GFP_KERNEL);
-> -	if (!port_info)
-> -		BUG();
-> +	BUG_ON(!port_info);
->  	port_info->num_phys = (expander_data->NumPhys) ?
->  	    expander_data->NumPhys : 1;
->  	port_info->phy_info = kcalloc(port_info->num_phys,
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
