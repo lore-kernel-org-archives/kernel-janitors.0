@@ -1,42 +1,93 @@
-From: Jonas Bonn <jonas@southpole.se>
-Date: Tue, 02 Aug 2011 13:55:44 +0000
-Subject: Re: [PATCH 10/11] arch/openrisc/mm/init.c: trivial: use BUG_ON
-Message-Id: <1312293344.4723.157.camel@crucifix>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 20 Aug 2011 07:02:01 +0000
+Subject: [PATCH 2/2] sound/soc/fsl/mpc8610_hpcd.c: add missing of_node_put
+Message-Id: <1313823721-16930-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312281304-11847-1-git-send-email-julia@diku.dk>
-	 <1312281304-11847-11-git-send-email-julia@diku.dk>
-In-Reply-To: <1312281304-11847-11-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux@openrisc.net, linux-kernel@vger.kernel.org
+To: Timur Tabi <timur@freescale.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, Liam Girdwood <lrg@ti.com>
 
+From: Julia Lawall <julia@diku.dk>
 
-On Tue, 2011-08-02 at 12:35 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use BUG_ON(x) rather than if(x) BUG();
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@ identifier x; @@
-> -if (x) BUG();
-> +BUG_ON(x);
-> 
-> @@ identifier x; @@
-> -if (!x) BUG();
-> +BUG_ON(!x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
+The first change is to add an of_node_put, since codec_np has previously
+been allocated.  The rest of the patch reorganizes the error handling code
+so the only code executed is that which is needed.
 
-Will apply.  Thanks.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Best regards,
-Jonas
+// <smpl>
+@@
+identifier x;
+expression E1!=0,E2,E3,E4;
+statement S;
+iterator I;
+@@
 
+(
+if (...) { ... when != of_node_put(x)
+               when != x = E3
+               when != E3 = x
+*  return ...;
+ }
+... when != x = E2
+    when != I(...,x,...) S
+if (...) { ... when != x = E4
+ of_node_put(x); ... return ...; }
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/soc/fsl/mpc8610_hpcd.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/sound/soc/fsl/mpc8610_hpcd.c b/sound/soc/fsl/mpc8610_hpcd.c
+index a192979..358f0ba 100644
+--- a/sound/soc/fsl/mpc8610_hpcd.c
++++ b/sound/soc/fsl/mpc8610_hpcd.c
+@@ -345,8 +345,10 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	machine_data = kzalloc(sizeof(struct mpc8610_hpcd_data), GFP_KERNEL);
+-	if (!machine_data)
+-		return -ENOMEM;
++	if (!machine_data) {
++		ret = -ENOMEM;
++		goto error_alloc;
++	}
+ 
+ 	machine_data->dai[0].cpu_dai_name = dev_name(&ssi_pdev->dev);
+ 	machine_data->dai[0].ops = &mpc8610_hpcd_ops;
+@@ -494,7 +496,7 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
+ 	ret = platform_device_add(sound_device);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "platform device add failed\n");
+-		goto error;
++		goto error_sound;
+ 	}
+ 	dev_set_drvdata(&pdev->dev, sound_device);
+ 
+@@ -502,14 +504,12 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++error_sound:
++	platform_device_unregister(sound_device);
+ error:
+-	of_node_put(codec_np);
+-
+-	if (sound_device)
+-		platform_device_unregister(sound_device);
+-
+ 	kfree(machine_data);
+-
++error_alloc:
++	of_node_put(codec_np);
+ 	return ret;
+ }
+ 
 
