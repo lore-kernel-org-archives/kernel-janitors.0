@@ -1,52 +1,63 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Wed, 24 Aug 2011 14:40:11 +0000
-Subject: Re: [patch -next] HID: unlock on error path in hid_device_probe()
-Message-Id: <alpine.LNX.2.00.1108241640010.13644@pobox.suse.cz>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 20 Aug 2011 06:12:41 +0000
+Subject: [PATCH 4/4] sound/aoa/fabrics/layout.c: remove unneeded kfree
+Message-Id: <1313820761-12042-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110824112745.GB5975@shale.localdomain>
-In-Reply-To: <20110824112745.GB5975@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: dh.herrmann@googlemail.com, "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org
 
-On Wed, 24 Aug 2011, Dan Carpenter wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> We recently introduced locking into this function, but we missed an
-> error path which needs an unlock.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 582be00..ed0cd09 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -1643,8 +1643,10 @@ static int hid_device_probe(struct device *dev)
->  
->  	if (!hdev->driver) {
->  		id = hid_match_device(hdev, hdrv);
-> -		if (id = NULL)
-> -			return -ENODEV;
-> +		if (id = NULL) {
-> +			ret = -ENODEV;
-> +			goto unlock;
-> +		}
->  
->  		hdev->driver = hdrv;
->  		if (hdrv->probe) {
-> @@ -1657,7 +1659,7 @@ static int hid_device_probe(struct device *dev)
->  		if (ret)
->  			hdev->driver = NULL;
->  	}
-> -
-> +unlock:
->  	up(&hdev->driver_lock);
->  	return ret;
->  }
+The label outnodev is only used when kzalloc has not yet taken place or has
+failed, so there is no need for the call for kfree under this label.
 
-Good catch Dan, thanks. Applied.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
--- 
-Jiri Kosina
-SUSE Labs
+// <smpl>
+@@
+identifier x;
+expression E1!=0,E2,E3,E4;
+statement S;
+iterator I;
+@@
+
+(
+if (...) { ... when != kfree(x)
+               when != x = E3
+               when != E3 = x
+*  return ...;
+ }
+... when != x = E2
+    when != I(...,x,...) S
+if (...) { ... when != x = E4
+ kfree(x); ... return ...; }
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/aoa/fabrics/layout.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/aoa/fabrics/layout.c b/sound/aoa/fabrics/layout.c
+index 3fd1a7e..552b97a 100644
+--- a/sound/aoa/fabrics/layout.c
++++ b/sound/aoa/fabrics/layout.c
+@@ -1073,10 +1073,10 @@ static int aoa_fabric_layout_probe(struct soundbus_dev *sdev)
+ 	sdev->pcmid = -1;
+ 	list_del(&ldev->list);
+ 	layouts_list_items--;
++	kfree(ldev);
+  outnodev:
+  	of_node_put(sound);
+  	layout_device = NULL;
+- 	kfree(ldev);
+ 	return -ENODEV;
+ }
+ 
+
