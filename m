@@ -1,62 +1,65 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Sat, 20 Aug 2011 13:44:39 +0000
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 20 Aug 2011 15:18:35 +0000
 Subject: Re: [PATCH 3/4] sound/soc/mxs/mxs-saif.c: add missing kfree
-Message-Id: <20110820134439.GA2266@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="LQksG6bCIzRHxTLp"
+Message-Id: <Pine.LNX.4.64.1108201718200.30651@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1313820761-12042-3-git-send-email-julia@diku.dk>
-In-Reply-To: <1313820761-12042-3-git-send-email-julia@diku.dk>
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dong Aisheng <b29396@freescale.com>, Liam Girdwood <lrg@ti.com>
+ <20110820134439.GA2266@pengutronix.de>
+In-Reply-To: <20110820134439.GA2266@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Liam Girdwood <lrg@ti.com>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Dong Aisheng <b29396@freescale.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
---LQksG6bCIzRHxTLp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Move the test on pdev->id before the kzalloc to avoid requiring kfree when
+the test fails.  This fix was suggested by Wolfram Sang.
 
-On Sat, Aug 20, 2011 at 08:12:40AM +0200, Julia Lawall wrote:
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
-> index 0b3adae..4a17bc8 100644
-> --- a/sound/soc/mxs/mxs-saif.c
-> +++ b/sound/soc/mxs/mxs-saif.c
-> @@ -523,8 +523,10 @@ static int mxs_saif_probe(struct platform_device *pd=
-ev)
->  	if (!saif)
->  		return -ENOMEM;
-> =20
-> -	if (pdev->id >=3D ARRAY_SIZE(mxs_saif))
-> -		return -EINVAL;
-> +	if (pdev->id >=3D ARRAY_SIZE(mxs_saif)) {
-> +		ret =3D -EINVAL;
-> +		goto failed;
-> +	}
->  	mxs_saif[pdev->id] =3D saif;
+// <smpl>
+@@
+identifier x;
+expression E1!=0,E2,E3,E4;
+statement S;
+iterator I;
+@@
 
-Thanks, Julia. May I suggest to simple move the id-check before the
-allocation?
+(
+if (...) { ... when != kfree(x)
+               when != x = E3
+               when != E3 = x
+*  return ...;
+ }
+... when != x = E2
+    when != I(...,x,...) S
+if (...) { ... when != x = E4
+ kfree(x); ... return ...; }
+)
+// </smpl>
 
-Regards,
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-   Wolfram
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---LQksG6bCIzRHxTLp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAk5PukcACgkQD27XaX1/VRs7/gCglf5+sIRVoH2jDAqCqjEVVzTh
-UX0AoKRND9QLZLtDrUYLrtJ1bczyZx3y
-=Fu0f
------END PGP SIGNATURE-----
-
---LQksG6bCIzRHxTLp--
+---
+diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
+index 0b3adae..e9a90e4 100644
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@ -519,12 +519,11 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 	struct mxs_saif *saif;
+ 	int ret = 0;
+ 
++	if (pdev->id >= ARRAY_SIZE(mxs_saif))
++		return -EINVAL;
+ 	saif = kzalloc(sizeof(*saif), GFP_KERNEL);
+ 	if (!saif)
+ 		return -ENOMEM;
+-
+-	if (pdev->id >= ARRAY_SIZE(mxs_saif))
+-		return -EINVAL;
+ 	mxs_saif[pdev->id] = saif;
+ 
+ 	saif->clk = clk_get(&pdev->dev, NULL);
