@@ -1,69 +1,75 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Fri, 05 Aug 2011 22:37:40 +0000
-Subject: Re: [PATCH 4/4] drivers/leds/leds-pca9532.c: delete useless
-Message-Id: <20110805223740.GA31186@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="envbJBWh7q8WU6mo"
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 20 Aug 2011 06:12:39 +0000
+Subject: [PATCH 2/4] sound/soc/ep93xx/ep93xx-i2s.c: add missing kfree
+Message-Id: <1313820761-12042-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312453774-23333-1-git-send-email-julia@diku.dk>
- <1312453774-23333-5-git-send-email-julia@diku.dk>
-In-Reply-To: <1312453774-23333-5-git-send-email-julia@diku.dk>
-To: Julia Lawall <julia@diku.dk>
-Cc: Riku Voipio <riku.voipio@iki.fi>, kernel-janitors@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lrg@ti.com>
+Cc: alsa-devel@alsa-project.org, Ryan Mallon <rmallon@gmail.com>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, H Hartley Sweeten <hsweeten@visionengravers.com>, Alexander Sverdlin <subaparts@yandex.ru>
 
+From: Julia Lawall <julia@diku.dk>
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Introduce a new label that includes kfree and jump to that one.
 
-On Thu, Aug 04, 2011 at 12:29:34PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
->=20
-> Delete nontrivial initialization that is immediately overwritten by the
-> result of an allocation function.
->=20
-> The semantic match that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @@
-> type T;
-> identifier i;
-> expression e;
-> @@
->=20
-> (
-> T i =3D \(0\|NULL\|ERR_PTR(...)\);
-> |
-> -T i =3D e;
-> +T i;
-> )
-> ... when !=3D i
-> i =3D \(kzalloc\|kcalloc\|kmalloc\)(...);
->=20
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Acked-by: Wolfram Sang <w.sang@pengutronix.de>
+// <smpl>
+@@
+identifier x;
+expression E1!=0,E2,E3,E4;
+statement S;
+iterator I;
+@@
 
-BTW LED patches seem to go via akpm these days...
+(
+if (...) { ... when != kfree(x)
+               when != x = E3
+               when != E3 = x
+*  return ...;
+ }
+... when != x = E2
+    when != I(...,x,...) S
+if (...) { ... when != x = E4
+ kfree(x); ... return ...; }
+)
+// </smpl>
 
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+---
+ sound/soc/ep93xx/ep93xx-i2s.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+diff --git a/sound/soc/ep93xx/ep93xx-i2s.c b/sound/soc/ep93xx/ep93xx-i2s.c
+index 56efa0c..099614e 100644
+--- a/sound/soc/ep93xx/ep93xx-i2s.c
++++ b/sound/soc/ep93xx/ep93xx-i2s.c
+@@ -385,14 +385,14 @@ static int ep93xx_i2s_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		err = -ENODEV;
+-		goto fail;
++		goto fail_free_info;
+ 	}
+ 
+ 	info->mem = request_mem_region(res->start, resource_size(res),
+ 				       pdev->name);
+ 	if (!info->mem) {
+ 		err = -EBUSY;
+-		goto fail;
++		goto fail_free_info;
+ 	}
+ 
+ 	info->regs = ioremap(info->mem->start, resource_size(info->mem));
+@@ -435,6 +435,7 @@ fail_unmap_mem:
+ 	iounmap(info->regs);
+ fail_release_mem:
+ 	release_mem_region(info->mem->start, resource_size(info->mem));
++fail_free_info:
+ 	kfree(info);
+ fail:
+ 	return err;
 
-iEYEARECAAYFAk48cLQACgkQD27XaX1/VRvo0QCgr9txxteL7yxbL+aVvNVQ/XJv
-GZ8AniX4IXkwQyKyB08Q3qzCZGpPJQEu
-=zTrG
------END PGP SIGNATURE-----
-
---envbJBWh7q8WU6mo--
