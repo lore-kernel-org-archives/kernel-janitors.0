@@ -1,66 +1,71 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Tue, 23 Aug 2011 10:01:26 +0000
-Subject: Re: [PATCH 3/4] drivers/usb/host/ohci-omap3.c: test the
-Message-Id: <20110823100125.GK1341@legolas.emea.dhcp.ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="BOhpupldhMlYbdva"
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Aug 2011 11:18:45 +0000
+Subject: [PATCH] sound/soc/mxs/mxs-saif.c: add missing kfree
+Message-Id: <Pine.LNX.4.64.1108211318060.4072@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1314021636-11528-3-git-send-email-julia@diku.dk>
-In-Reply-To: <1314021636-11528-3-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <1313820761-12042-3-git-send-email-julia@diku.dk>
+	<20110820134439.GA2266@pengutronix.de>
+	<Pine.LNX.4.64.1108201718200.30651@ask.diku.dk>
+	<65EE16ACC360FA4D99C96DC085B3F7722212DF@039-SN1MPN1-001.039d.mgd.msft.net>
+In-Reply-To: <65EE16ACC360FA4D99C96DC085B3F7722212DF@039-SN1MPN1-001.039d.mgd.msft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dong Aisheng-B29396 <B29396@freescale.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Wolfram Sang <w.sang@pengutronix.de>, Liam Girdwood <lrg@ti.com>
 
+From: Julia Lawall <julia@diku.dk>
 
---BOhpupldhMlYbdva
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Move the test on pdev->id before the kzalloc to avoid requiring kfree when
+the test fails.  This fix was suggested by Wolfram Sang.
 
-On Mon, Aug 22, 2011 at 04:00:35PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
->=20
-> Test the just-initialized value rather than some other one.
->=20
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @r@
-> identifier x,y,f!=3D{PTR_ERR,ERR_PTR,ERR_CAST};
-> statement S;
-> @@
->=20
-> x =3D f(...);
-> (
-> if (\(x =3D=3D NULL\|IS_ERR(x)\)) S
-> |
-> *if (\(y =3D=3D NULL\|IS_ERR(y)\))
->  { ... when !=3D x
->    return ...; }
-> )
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-applied, thanks
+// <smpl>
+@@
+identifier x;
+expression E1!=0,E2,E3,E4;
+statement S;
+iterator I;
+@@
 
---=20
-balbi
+(
+if (...) { ... when != kfree(x)
+               when != x = E3
+               when != E3 = x
+*  return ...;
+ }
+... when != x = E2
+    when != I(...,x,...) S
+if (...) { ... when != x = E4
+ kfree(x); ... return ...; }
+)
+// </smpl>
 
---BOhpupldhMlYbdva
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+---
+ sound/soc/mxs/mxs-saif.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-iQEcBAEBAgAGBQJOU3p1AAoJEAv8Txj19kN1n8MH/26i5SzDVWJ+fRyd3U8iH7HB
-E/6GL4MabZyNuhNdgHSCUQrxBSyUQFv3PuI0lj7kvYGDxJrihlSzs/JtHw5MenWe
-dtYWLQ1gmbG8kGaaHKtJNEYkdnyhITLqGYjH4cD9n+KSqcgp/WEzCoiNVD9o2w4+
-s3nn2ALF1lp5k3fdB3yzbIjJhKIZBDFLIz5hLjE6OTTAy/d1vfa/hZbIbNQ6Q/C2
-fR/RW8vBVO79fUpKTNt1UXtvoTjinQWnHDuWz6/caKaJDPubflg4op/NSoH2OGkv
-7DdWNTwFLTp9dAnssg5ARslE1YUp2MNqwo5k3PhNODG6zDmWHz058yKmpYXz93s=
-=1mSl
------END PGP SIGNATURE-----
-
---BOhpupldhMlYbdva--
+diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
+index 0b3adae..ab453ca 100644
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@ -519,12 +519,13 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 	struct mxs_saif *saif;
+ 	int ret = 0;
+ 
++	if (pdev->id >= ARRAY_SIZE(mxs_saif))
++		return -EINVAL;
++
+ 	saif = kzalloc(sizeof(*saif), GFP_KERNEL);
+ 	if (!saif)
+ 		return -ENOMEM;
+ 
+-	if (pdev->id >= ARRAY_SIZE(mxs_saif))
+-		return -EINVAL;
+ 	mxs_saif[pdev->id] = saif;
+ 
+ 	saif->clk = clk_get(&pdev->dev, NULL);
