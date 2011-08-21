@@ -1,29 +1,60 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 29 Jul 2011 08:52:18 +0000
-Subject: [patch] cfg80211: off by one in nl80211_trigger_scan()
-Message-Id: <20110729085217.GG3752@shale.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Aug 2011 16:10:01 +0000
+Subject: [PATCH 2/2] arch/powerpc/platforms/powermac/setup.c: add missing of_node_put
+Message-Id: <1313943001-12884-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, "open list:CFG80211 and NL80211" <linux-wireless@vger.kernel.org>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-The test is off by one so we'd read past the end of the
-wiphy->bands[] array on the next line.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+np is initialized to the result of calling a function that calls
+of_node_get, so of_node_put should be called before the pointer is dropped.
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index 28d2aa1..e83e7fe 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -3464,7 +3464,7 @@ static int nl80211_trigger_scan(struct sk_buff *skb, struct genl_info *info)
- 				    tmp) {
- 			enum ieee80211_band band = nla_type(attr);
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e,e1,e2;
+@@
+
+* e = \(of_find_node_by_type\|of_find_node_by_name\)(...)
+  ... when != of_node_put(e)
+      when != true e = NULL
+      when != e2 = e
+  e = e1
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/powerpc/platforms/powermac/setup.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/platforms/powermac/setup.c b/arch/powerpc/platforms/powermac/setup.c
+index 96580b1..970ea1d 100644
+--- a/arch/powerpc/platforms/powermac/setup.c
++++ b/arch/powerpc/platforms/powermac/setup.c
+@@ -494,11 +494,15 @@ static int __init pmac_declare_of_platform_devices(void)
+ 		return -1;
  
--			if (band < 0 || band > IEEE80211_NUM_BANDS) {
-+			if (band < 0 || band >= IEEE80211_NUM_BANDS) {
- 				err = -EINVAL;
- 				goto out_free;
- 			}
+ 	np = of_find_node_by_name(NULL, "valkyrie");
+-	if (np)
++	if (np) {
+ 		of_platform_device_create(np, "valkyrie", NULL);
++		of_node_put(np);
++	}
+ 	np = of_find_node_by_name(NULL, "platinum");
+-	if (np)
++	if (np) {
+ 		of_platform_device_create(np, "platinum", NULL);
++		of_node_put(np);
++	}
+         np = of_find_node_by_type(NULL, "smu");
+         if (np) {
+ 		of_platform_device_create(np, "smu", NULL);
+
