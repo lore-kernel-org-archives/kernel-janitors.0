@@ -1,22 +1,51 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 22 Aug 2011 22:29:45 +0000
-Subject: Re: [PATCH 1/4] sound/soc/kirkwood/kirkwood-i2s.c: add missing kfree
-Message-Id: <20110822222944.GB30609@opensource.wolfsonmicro.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 21 Aug 2011 16:10:00 +0000
+Subject: [PATCH 1/2] arch/powerpc/platforms/cell/iommu.c: add missing of_node_put
+Message-Id: <1313943001-12884-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1313820761-12042-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1313820761-12042-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Arnaud Patard <arnaud.patard@rtp-net.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, cbe-oss-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-On Sat, Aug 20, 2011 at 08:12:38AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Adjust the goto to jump to the error handling code that includes kfree.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
+From: Julia Lawall <julia@diku.dk>
 
-Applied, thanks.
+np is initialized to the result of calling a function that calls
+of_node_get, so of_node_put should be called before the pointer is dropped.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e,e1,e2;
+@@
+
+* e = \(of_find_node_by_type\|of_find_node_by_name\)(...)
+  ... when != of_node_put(e)
+      when != true e = NULL
+      when != e2 = e
+  e = e1
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/powerpc/platforms/cell/iommu.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platforms/cell/iommu.c
+index 26a0671..d0c5dfd 100644
+--- a/arch/powerpc/platforms/cell/iommu.c
++++ b/arch/powerpc/platforms/cell/iommu.c
+@@ -1038,6 +1038,8 @@ static int __init cell_iommu_fixed_mapping_init(void)
+ 
+ 	/* The fixed mapping is only supported on axon machines */
+ 	np = of_find_node_by_name(NULL, "axon");
++	of_node_put(np);
++
+ 	if (!np) {
+ 		pr_debug("iommu: fixed mapping disabled, no axons found\n");
+ 		return -1;
+
