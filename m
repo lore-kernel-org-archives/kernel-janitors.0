@@ -1,48 +1,43 @@
-From: Jean-Francois Dagenais <jeff.dagenais@gmail.com>
-Date: Wed, 17 Aug 2011 18:42:56 +0000
-Subject: Re: [patch] w1: off by one in w1_f29_remove_slave()
-Message-Id: <56274C82-8FCA-45F9-B3DC-9863889694AA@gmail.com>
+From: Timur Tabi <timur@freescale.com>
+Date: Mon, 22 Aug 2011 14:22:41 +0000
+Subject: [PATCH] [v2] sound/soc/fsl/fsl_dma.c: add missing of_node_put
+Message-Id: <1314022961-27513-1-git-send-email-timur@freescale.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110727095557.GL3824@shale.localdomain> <9C2475AA-829E-4BB8-A3D2-2444803A33D3@gmail.com> <4E33C3F5.9000602@bfs.de> <20110730085131.GE5575@shale.localdomain>
-In-Reply-To: <20110730085131.GE5575@shale.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27@gmail.com>
-Cc: walter harms <wharms@bfs.de>, Evgeniy Polyakov <johnpol@2ka.mipt.ru>, Andrew Morton <akpm@linux-foundation.org>, open list <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org, lrg@ti.com, broonie@opensource.wolfsonmicro.com, perex@perex.cz, tiwai@suse.de, grant.likely@secretlab.ca, alsa-devel@alsa-project.org
+
+of_parse_phandle increments the reference count of np, so this should be
+decremented before trying the next possibility.
+
+Since we don't actually use np, we can decrement the reference count
+immediately.
+
+Reported-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Timur Tabi <timur@freescale.com>
+---
+ sound/soc/fsl/fsl_dma.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/sound/soc/fsl/fsl_dma.c b/sound/soc/fsl/fsl_dma.c
+index 6680c0b..b300f4b 100644
+--- a/sound/soc/fsl/fsl_dma.c
++++ b/sound/soc/fsl/fsl_dma.c
+@@ -877,10 +877,12 @@ static struct device_node *find_ssi_node(struct device_node *dma_channel_np)
+ 		 * assume that device_node pointers are a valid comparison.
+ 		 */
+ 		np = of_parse_phandle(ssi_np, "fsl,playback-dma", 0);
++		of_node_put(np);
+ 		if (np = dma_channel_np)
+ 			return ssi_np;
+ 
+ 		np = of_parse_phandle(ssi_np, "fsl,capture-dma", 0);
++		of_node_put(np);
+ 		if (np = dma_channel_np)
+ 			return ssi_np;
+ 	}
+-- 
+1.7.3.4
 
 
-On Jul 30, 2011, at 4:51, Dan Carpenter wrote:
-
-> On Sat, Jul 30, 2011 at 10:42:29AM +0200, walter harms wrote:
->> Is there any reason to release the data "backwards" ?
->> The default way is to go upwards. that looks more readable.
->=20
-> I considered doing it that way.  It would work.  I throught maybe
-> they were going to add something where it needed to be unwound LIFO
-> order.
->=20
-> I'll wait for Jean-Fran=E7oisto say which way is prefered.
->=20
-Sorry for the delay. Sorry also for the trouble this dummy copy/paste mista=
-ke is causing. It's a bit embarrassing even if the intentions are good ;) T=
-his second mistake explains why I wasn't getting ill effects from the remov=
-e.
-
-The sysfs files were removed backwards as a programmer reflex. In this case=
- it is not really necessary since there are no real dependencies between th=
-e function implementations... but there may be in the future. This is why i=
-t's a safe habit to do it this way.
-
-I would keep the removal in reverse order,  so I will ack the the v2 patch
-
-Cheers!
-/jfd
-> regards,
-> dan carpenter
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
