@@ -1,7 +1,7 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 22 Aug 2011 22:27:20 +0000
+Date: Mon, 22 Aug 2011 22:30:31 +0000
 Subject: Re: [PATCH] [v2] sound/soc/fsl/fsl_dma.c: add missing of_node_put
-Message-Id: <20110822222720.GA29473@opensource.wolfsonmicro.com>
+Message-Id: <20110822223031.GF30609@opensource.wolfsonmicro.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1314022961-27513-1-git-send-email-timur@freescale.com>
 In-Reply-To: <1314022961-27513-1-git-send-email-timur@freescale.com>
