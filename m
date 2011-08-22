@@ -1,29 +1,68 @@
-From: Andreas Mohr <andi@lisas.de>
-Date: Wed, 10 Aug 2011 12:26:51 +0000
-Subject: Re: [PATCH] sound/pci/azt3328.c: adjust error handling code to
-Message-Id: <20110810122651.GA32057@rhlx01.hs-esslingen.de>
+From: Joel Becker <jlbec@evilplan.org>
+Date: Mon, 22 Aug 2011 04:28:39 +0000
+Subject: Re: [PATCH] fs/ocfs2/dlm/dlmlock.c: free kmem_cache_zalloc'd data
+Message-Id: <20110822042838.GE31134@noexit.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312969744-29659-1-git-send-email-julia@diku.dk>
-	<s5hk4albni7.wl%tiwai@suse.de>
-	<20110810111542.GA5881@rhlx01.hs-esslingen.de>
-	<s5h1uwtbj03.wl%tiwai@suse.de>
-In-Reply-To: <s5h1uwtbj03.wl%tiwai@suse.de>
+References: <1310227479-14472-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1310227479-14472-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Mohr <andi@lisas.de>, Julia Lawall <julia@diku.dk>
+To: Julia Lawall <julia@diku.dk>
+Cc: Mark Fasheh <mfasheh@suse.com>, kernel-janitors@vger.kernel.org, Wengang Wang <wen.gang.wang@oracle.com>, Tao Ma <boyu.mt@taobao.com>, ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
 
-Hi,
+this patch is now in the fixes branch of ocfs2.git.
 
-On Wed, Aug 10, 2011 at 01:31:24PM +0200, Takashi Iwai wrote:
-> At Wed, 10 Aug 2011 13:15:42 +0200,
-> Andreas Mohr wrote:
-> > 5 minutes, 4 seconds. Your responsiveness appears to be degrading. I've
-> > seen better ;)
+On Sat, Jul 09, 2011 at 06:04:39PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
 > 
-> Oh, could you bisect a regression? ;)
+> Memory allocated using kmem_cache_zalloc should be freed using
+> kmem_cache_free, not kfree.
+> 
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression x,e,e1,e2;
+> @@
+> 
+> x = kmem_cache_zalloc(e1,e2)
+> ... when != x = e
+> ?-kfree(x)
+> +kmem_cache_free(e1,x)
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+>  fs/ocfs2/dlm/dlmlock.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff -u -p a/fs/ocfs2/dlm/dlmlock.c b/fs/ocfs2/dlm/dlmlock.c
+> --- a/fs/ocfs2/dlm/dlmlock.c
+> +++ b/fs/ocfs2/dlm/dlmlock.c
+> @@ -440,7 +440,7 @@ struct dlm_lock * dlm_new_lock(int type,
+>  		/* zero memory only if kernel-allocated */
+>  		lksb = kzalloc(sizeof(*lksb), GFP_NOFS);
+>  		if (!lksb) {
+> -			kfree(lock);
+> +			kmem_cache_free(dlm_lock_cache, lock);
+>  			return NULL;
+>  		}
+>  		kernel_allocated = 1;
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-I'd probably have to consult Gunther von Hagens :-P
+-- 
 
-Andreas Mohr
+Life's Little Instruction Book #43
+
+	"Never give up on somebody.  Miracles happen every day."
+
+			http://www.jlbec.org/
+			jlbec@evilplan.org
