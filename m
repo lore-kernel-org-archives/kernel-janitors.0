@@ -1,72 +1,54 @@
-From: Guenter Roeck <guenter.roeck@ericsson.com>
-Date: Tue, 09 Aug 2011 18:04:12 +0000
-Subject: Re: [PATCH] drivers/hwmon/ibmaem.c: add missing kfree
-Message-Id: <1312913052.9971.152.camel@groeck-laptop>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 22 Aug 2011 14:00:34 +0000
+Subject: [PATCH 2/4] drivers/scsi/fcoe/fcoe.c: add missing test
+Message-Id: <1314021636-11528-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312902656-21520-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1312902656-21520-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Jean Delvare <khali@linux-fr.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Robert Love <robert.w.love-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-s9riP+hp16TNLxjTenLetw@public.gmane.org, "James E.J. Bottomley" <JBottomley-bzQdu9zFT3WakBO8gow8eQ@public.gmane.org>, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Tue, 2011-08-09 at 11:10 -0400, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> rs_resp is dynamically allocated in this function, so it should be freed
-> before exiting in every case.  This collects the kfree and the return at
-> the end of the function.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-Good catch. Applied.
+From: Julia Lawall <julia@diku.dk>
 
-Thanks,
-Guenter
+The initializations of both fcoe_nport_scsi_transport and
+fcoe_vport_scsi_transport can fail, so test both of them.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> ---
->  drivers/hwmon/ibmaem.c |   15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/hwmon/ibmaem.c b/drivers/hwmon/ibmaem.c
-> index 058e0ae..783d0c1 100644
-> --- a/drivers/hwmon/ibmaem.c
-> +++ b/drivers/hwmon/ibmaem.c
-> @@ -399,13 +399,15 @@ static int aem_read_sensor(struct aem_data *data, u8 elt, u8 reg,
->  	aem_send_message(ipmi);
->  
->  	res = wait_for_completion_timeout(&ipmi->read_complete, IPMI_TIMEOUT);
-> -	if (!res)
-> -		return -ETIMEDOUT;
-> +	if (!res) {
-> +		res = -ETIMEDOUT;
-> +		goto out;
-> +	}
->  
->  	if (ipmi->rx_result || ipmi->rx_msg_len != rs_size ||
->  	    memcmp(&rs_resp->id, &system_x_id, sizeof(system_x_id))) {
-> -		kfree(rs_resp);
-> -		return -ENOENT;
-> +		res = -ENOENT;
-> +		goto out;
->  	}
->  
->  	switch (size) {
-> @@ -430,8 +432,11 @@ static int aem_read_sensor(struct aem_data *data, u8 elt, u8 reg,
->  		break;
->  	}
->  	}
-> +	res = 0;
->  
-> -	return 0;
-> +out:
-> +	kfree(rs_resp);
-> +	return res;
->  }
->  
->  /* Update AEM energy registers */
-> 
+// <smpl>
+@r@
+identifier x,y,f!={PTR_ERR,ERR_PTR,ERR_CAST};
+statement S;
+@@
 
+x = f(...);
+(
+if (\(x = NULL\|IS_ERR(x)\)) S
+|
+*if (\(y = NULL\|IS_ERR(y)\))
+ { ... when != x
+   return ...; }
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/scsi/fcoe/fcoe.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+index ba710e3..921b636 100644
+--- a/drivers/scsi/fcoe/fcoe.c
++++ b/drivers/scsi/fcoe/fcoe.c
+@@ -1096,7 +1096,7 @@ static int __init fcoe_if_init(void)
+ 	fcoe_vport_scsi_transport  		fc_attach_transport(&fcoe_vport_fc_functions);
+ 
+-	if (!fcoe_nport_scsi_transport) {
++	if (!fcoe_nport_scsi_transport || !fcoe_vport_scsi_transport) {
+ 		printk(KERN_ERR "fcoe: Failed to attach to the FC transport\n");
+ 		return -ENODEV;
+ 	}
 
