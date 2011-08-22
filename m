@@ -1,54 +1,24 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 22 Aug 2011 14:00:36 +0000
-Subject: [PATCH 4/4] drivers/net/wireless/mwifiex/scan.c: test the just-initialized value
-Message-Id: <1314021636-11528-4-git-send-email-julia@diku.dk>
+From: Pierre Louis Aublin <pierre-louis.aublin@inria.fr>
+Date: Mon, 22 Aug 2011 14:11:24 +0000
+Subject: Re: [PATCH 4/4] drivers/net/wireless/mwifiex/scan.c: test the just-initialized
+Message-Id: <4E52638C.8080407@inria.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1314021636-11528-4-git-send-email-julia@diku.dk>
+In-Reply-To: <1314021636-11528-4-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bing Zhao <bzhao@marvell.com>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: Bing Zhao <bzhao@marvell.com>, kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+Hello all
 
-Test the just-initialized value rather than some other one.
+On 08/22/2011 04:00 PM, Julia Lawall wrote:
+> -	if (!bss_desc) {
+> +	if (!beacon_ie) {
+>   		dev_err(priv->adapter->dev, " failed to alloc bss_desc\n");
+Shouldn't we also modify the error message, from "failed to alloc 
+bss_desc" to "failed to alloc beacon_ie" ?
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-identifier x,y,f!={PTR_ERR,ERR_PTR,ERR_CAST};
-statement S;
-@@
-
-x = f(...);
-(
-if (\(x = NULL\|IS_ERR(x)\)) S
-|
-*if (\(y = NULL\|IS_ERR(y)\))
- { ... when != x
-   return ...; }
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wireless/mwifiex/scan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/mwifiex/scan.c b/drivers/net/wireless/mwifiex/scan.c
-index b28241c..d3111c9 100644
---- a/drivers/net/wireless/mwifiex/scan.c
-+++ b/drivers/net/wireless/mwifiex/scan.c
-@@ -1480,7 +1480,7 @@ mwifiex_update_curr_bss_params(struct mwifiex_private *priv,
- 		return -ENOMEM;
- 	}
- 	beacon_ie = kzalloc(ie_len, GFP_KERNEL);
--	if (!bss_desc) {
-+	if (!beacon_ie) {
- 		dev_err(priv->adapter->dev, " failed to alloc bss_desc\n");
- 		return -ENOMEM;
- 	}
-
+Sincerely
+Pierre Louis Aublin
