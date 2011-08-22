@@ -1,93 +1,21 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sat, 20 Aug 2011 07:02:01 +0000
-Subject: [PATCH 2/2] sound/soc/fsl/mpc8610_hpcd.c: add missing of_node_put
-Message-Id: <1313823721-16930-2-git-send-email-julia@diku.dk>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Mon, 22 Aug 2011 22:30:16 +0000
+Subject: Re: [PATCH 2/2] sound/soc/fsl/mpc8610_hpcd.c: add missing of_node_put
+Message-Id: <20110822223016.GE30609@opensource.wolfsonmicro.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1313823721-16930-2-git-send-email-julia@diku.dk>
+In-Reply-To: <1313823721-16930-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Timur Tabi <timur@freescale.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, Liam Girdwood <lrg@ti.com>
+To: Julia Lawall <julia@diku.dk>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lrg@ti.com>, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linuxppc-dev@lists.ozlabs.org, Timur Tabi <timur@freescale.com>
 
-From: Julia Lawall <julia@diku.dk>
+On Sat, Aug 20, 2011 at 09:02:01AM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> The first change is to add an of_node_put, since codec_np has previously
+> been allocated.  The rest of the patch reorganizes the error handling code
+> so the only code executed is that which is needed.
 
-The first change is to add an of_node_put, since codec_np has previously
-been allocated.  The rest of the patch reorganizes the error handling code
-so the only code executed is that which is needed.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier x;
-expression E1!=0,E2,E3,E4;
-statement S;
-iterator I;
-@@
-
-(
-if (...) { ... when != of_node_put(x)
-               when != x = E3
-               when != E3 = x
-*  return ...;
- }
-... when != x = E2
-    when != I(...,x,...) S
-if (...) { ... when != x = E4
- of_node_put(x); ... return ...; }
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- sound/soc/fsl/mpc8610_hpcd.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/sound/soc/fsl/mpc8610_hpcd.c b/sound/soc/fsl/mpc8610_hpcd.c
-index a192979..358f0ba 100644
---- a/sound/soc/fsl/mpc8610_hpcd.c
-+++ b/sound/soc/fsl/mpc8610_hpcd.c
-@@ -345,8 +345,10 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
- 	}
- 
- 	machine_data = kzalloc(sizeof(struct mpc8610_hpcd_data), GFP_KERNEL);
--	if (!machine_data)
--		return -ENOMEM;
-+	if (!machine_data) {
-+		ret = -ENOMEM;
-+		goto error_alloc;
-+	}
- 
- 	machine_data->dai[0].cpu_dai_name = dev_name(&ssi_pdev->dev);
- 	machine_data->dai[0].ops = &mpc8610_hpcd_ops;
-@@ -494,7 +496,7 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
- 	ret = platform_device_add(sound_device);
- 	if (ret) {
- 		dev_err(&pdev->dev, "platform device add failed\n");
--		goto error;
-+		goto error_sound;
- 	}
- 	dev_set_drvdata(&pdev->dev, sound_device);
- 
-@@ -502,14 +504,12 @@ static int mpc8610_hpcd_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+error_sound:
-+	platform_device_unregister(sound_device);
- error:
--	of_node_put(codec_np);
--
--	if (sound_device)
--		platform_device_unregister(sound_device);
--
- 	kfree(machine_data);
--
-+error_alloc:
-+	of_node_put(codec_np);
- 	return ret;
- }
- 
-
+Applied, thanks.
