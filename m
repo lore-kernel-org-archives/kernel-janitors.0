@@ -1,54 +1,66 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 22 Aug 2011 14:00:35 +0000
-Subject: [PATCH 3/4] drivers/usb/host/ohci-omap3.c: test the just-initialized value
-Message-Id: <1314021636-11528-3-git-send-email-julia@diku.dk>
+From: Felipe Balbi <balbi@ti.com>
+Date: Tue, 23 Aug 2011 10:01:26 +0000
+Subject: Re: [PATCH 3/4] drivers/usb/host/ohci-omap3.c: test the
+Message-Id: <20110823100125.GK1341@legolas.emea.dhcp.ti.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="BOhpupldhMlYbdva"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: kernel-janitors@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1314021636-11528-3-git-send-email-julia@diku.dk>
+In-Reply-To: <1314021636-11528-3-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
+To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <julia@diku.dk>
 
-Test the just-initialized value rather than some other one.
+--BOhpupldhMlYbdva
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+On Mon, Aug 22, 2011 at 04:00:35PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+>=20
+> Test the just-initialized value rather than some other one.
+>=20
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @r@
+> identifier x,y,f!=3D{PTR_ERR,ERR_PTR,ERR_CAST};
+> statement S;
+> @@
+>=20
+> x =3D f(...);
+> (
+> if (\(x =3D=3D NULL\|IS_ERR(x)\)) S
+> |
+> *if (\(y =3D=3D NULL\|IS_ERR(y)\))
+>  { ... when !=3D x
+>    return ...; }
+> )
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-// <smpl>
-@r@
-identifier x,y,f!={PTR_ERR,ERR_PTR,ERR_CAST};
-statement S;
-@@
+applied, thanks
 
-x = f(...);
-(
-if (\(x = NULL\|IS_ERR(x)\)) S
-|
-*if (\(y = NULL\|IS_ERR(y)\))
- { ... when != x
-   return ...; }
-)
-// </smpl>
+--=20
+balbi
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+--BOhpupldhMlYbdva
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
----
- drivers/usb/host/ohci-omap3.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-diff --git a/drivers/usb/host/ohci-omap3.c b/drivers/usb/host/ohci-omap3.c
-index 6048f2f..853ad8d 100644
---- a/drivers/usb/host/ohci-omap3.c
-+++ b/drivers/usb/host/ohci-omap3.c
-@@ -149,7 +149,7 @@ static int __devinit ohci_hcd_omap3_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource_byname(pdev,
- 				IORESOURCE_MEM, "ohci");
--	if (!ret) {
-+	if (!res) {
- 		dev_err(dev, "UHH OHCI get resource failed\n");
- 		return -ENOMEM;
- 	}
+iQEcBAEBAgAGBQJOU3p1AAoJEAv8Txj19kN1n8MH/26i5SzDVWJ+fRyd3U8iH7HB
+E/6GL4MabZyNuhNdgHSCUQrxBSyUQFv3PuI0lj7kvYGDxJrihlSzs/JtHw5MenWe
+dtYWLQ1gmbG8kGaaHKtJNEYkdnyhITLqGYjH4cD9n+KSqcgp/WEzCoiNVD9o2w4+
+s3nn2ALF1lp5k3fdB3yzbIjJhKIZBDFLIz5hLjE6OTTAy/d1vfa/hZbIbNQ6Q/C2
+fR/RW8vBVO79fUpKTNt1UXtvoTjinQWnHDuWz6/caKaJDPubflg4op/NSoH2OGkv
+7DdWNTwFLTp9dAnssg5ARslE1YUp2MNqwo5k3PhNODG6zDmWHz058yKmpYXz93s=
+=1mSl
+-----END PGP SIGNATURE-----
 
+--BOhpupldhMlYbdva--
