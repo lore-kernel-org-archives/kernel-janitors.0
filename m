@@ -1,39 +1,42 @@
-From: Dan Williams <dcbw@redhat.com>
-Date: Mon, 15 Aug 2011 22:51:54 +0000
-Subject: Re: [patch] libertas: remove some dead code in
-Message-Id: <1313448716.6103.14.camel@dcbw.foobar.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 24 Aug 2011 11:27:46 +0000
+Subject: [patch -next] HID: unlock on error path in hid_device_probe()
+Message-Id: <20110824112745.GB5975@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110806142344.GA10373@mwanda>
-In-Reply-To: <20110806142344.GA10373@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "open list:MARVELL LIBERTAS..." <libertas-dev@lists.infradead.org>, "open list:NETWORKING [WIREL..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>, dh.herrmann@googlemail.com
+Cc: "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 2011-08-06 at 07:23 -0700, Dan Carpenter wrote:
-> We always hit the goto and skip the printk().  The original code does
-> the right thing even though it looks messy.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+We recently introduced locking into this function, but we missed an
+error path which needs an unlock.
 
-Acked-by: Dan Williams <dcbw@redhat.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-> 
-> diff --git a/drivers/net/wireless/libertas/if_spi.c b/drivers/net/wireless/libertas/if_spi.c
-> index e0286cf..622ae6d 100644
-> --- a/drivers/net/wireless/libertas/if_spi.c
-> +++ b/drivers/net/wireless/libertas/if_spi.c
-> @@ -531,10 +531,6 @@ static int if_spi_prog_helper_firmware(struct if_spi_card *card,
->  		goto out;
->  	err = spu_write_u16(card, IF_SPI_CARD_INT_CAUSE_REG,
->  				IF_SPI_CIC_CMD_DOWNLOAD_OVER);
-> -		goto out;
-> -
-> -	lbs_deb_spi("waiting for helper to boot...\n");
-> -
->  out:
->  	if (err)
->  		pr_err("failed to load helper firmware (err=%d)\n", err);
-
-
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 582be00..ed0cd09 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -1643,8 +1643,10 @@ static int hid_device_probe(struct device *dev)
+ 
+ 	if (!hdev->driver) {
+ 		id = hid_match_device(hdev, hdrv);
+-		if (id = NULL)
+-			return -ENODEV;
++		if (id = NULL) {
++			ret = -ENODEV;
++			goto unlock;
++		}
+ 
+ 		hdev->driver = hdrv;
+ 		if (hdrv->probe) {
+@@ -1657,7 +1659,7 @@ static int hid_device_probe(struct device *dev)
+ 		if (ret)
+ 			hdev->driver = NULL;
+ 	}
+-
++unlock:
+ 	up(&hdev->driver_lock);
+ 	return ret;
+ }
