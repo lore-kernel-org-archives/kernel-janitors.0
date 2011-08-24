@@ -1,36 +1,45 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Mon, 08 Aug 2011 20:58:42 +0000
-Subject: Re: [patch] iscsi-target: remove duplicate return
-Message-Id: <1312837122.12502.78.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 24 Aug 2011 11:31:39 +0000
+Subject: [patch -next] wl12xx: fix recent change to wl1271_tm_cmd_nvs_push()
+Message-Id: <20110824113139.GE5975@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110806142938.GD10373@mwanda>
-In-Reply-To: <20110806142938.GD10373@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>, "open list:TARGET SUBSYSTEM" <target-devel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Luciano Coelho <coelho@ti.com>, Shahar Levi <shahar_levi@ti.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "open list:WL1271 WIRELESS D..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, 2011-08-06 at 07:29 -0700, Dan Carpenter wrote:
-> We returned on the line before already.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-> index c24fb10..6a4ea29 100644
-> --- a/drivers/target/iscsi/iscsi_target.c
-> +++ b/drivers/target/iscsi/iscsi_target.c
-> @@ -2243,7 +2243,6 @@ static int iscsit_handle_snack(
->  	case 0:
->  		return iscsit_handle_recovery_datain_or_r2t(conn, buf,
->  			hdr->itt, hdr->ttt, hdr->begrun, hdr->runlength);
-> -		return 0;
->  	case ISCSI_FLAG_SNACK_TYPE_STATUS:
->  		return iscsit_handle_status_snack(conn, hdr->itt, hdr->ttt,
->  			hdr->begrun, hdr->runlength);
-> --
+bc765bf3b9a "wl12xx: 1281/1283 support - Loading FW & NVS" had two
+problems.  The condition was written so that it failed if "len" was
+not equal to sizeof(struct wl1271_nvs_file).  Also we need to release
+the locks on these new error paths.
 
-Thanks Dan, committed as 69b0ec3c38
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
---nab
-
+diff --git a/drivers/net/wireless/wl12xx/testmode.c b/drivers/net/wireless/wl12xx/testmode.c
+index 88add68..10c1762 100644
+--- a/drivers/net/wireless/wl12xx/testmode.c
++++ b/drivers/net/wireless/wl12xx/testmode.c
+@@ -208,11 +208,17 @@ static int wl1271_tm_cmd_nvs_push(struct wl1271 *wl, struct nlattr *tb[])
+ 
+ 	kfree(wl->nvs);
+ 
+-	if ((wl->chip.id = CHIP_ID_1283_PG20) &&
+-	    (len != sizeof(struct wl128x_nvs_file)))
+-		return -EINVAL;
+-	else if (len != sizeof(struct wl1271_nvs_file))
+-		return -EINVAL;
++	if (wl->chip.id = CHIP_ID_1283_PG20) {
++		if (len != sizeof(struct wl128x_nvs_file)) {
++			ret = -EINVAL;
++			goto out;
++		}
++	} else {
++		if (len != sizeof(struct wl1271_nvs_file)) {
++			ret = -EINVAL;
++			goto out;
++		}
++	}
+ 
+ 	wl->nvs = kzalloc(len, GFP_KERNEL);
+ 	if (!wl->nvs) {
