@@ -1,29 +1,29 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Mon, 22 Aug 2011 10:24:02 +0000
-Subject: Re: [PATCH] drivers/mfd/timberdale.c: clean up error handling code
-Message-Id: <20110822102402.GM4607@sortiz-mobl>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 24 Aug 2011 11:30:28 +0000
+Subject: [patch -next] bna: off by one in bfa_msgq_rspq_pi_update()
+Message-Id: <20110824113028.GD5975@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312966036-15896-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1312966036-15896-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rasesh Mody <rmody@brocade.com>
+Cc: Debashis Dutt <ddutt@brocade.com>, "open list:BROCADE BNA 10 GI..." <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hi Julia,
+The rspq->rsphdlr[] array has BFI_MC_MAX elements, so this test was
+off by one.
 
-On Wed, Aug 10, 2011 at 10:47:16AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> In the first three cases, ioremap has been called, so iounmap is needed.  A
-> new label for this is introduced, to differentiate it from err_msix, which
-> is the first point at which msix_entries actually needs to be freed.
-Thanks a lot, patch applied.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+diff --git a/drivers/net/ethernet/brocade/bna/bfa_msgq.c b/drivers/net/ethernet/brocade/bna/bfa_msgq.c
+index ed52187..dd36427 100644
+--- a/drivers/net/ethernet/brocade/bna/bfa_msgq.c
++++ b/drivers/net/ethernet/brocade/bna/bfa_msgq.c
+@@ -483,7 +483,7 @@ bfa_msgq_rspq_pi_update(struct bfa_msgq_rspq *rspq, struct bfi_mbmsg *mb)
+ 		mc = msghdr->msg_class;
+ 		num_entries = ntohs(msghdr->num_entries);
+ 
+-		if ((mc > BFI_MC_MAX) || (rspq->rsphdlr[mc].cbfn = NULL))
++		if ((mc >= BFI_MC_MAX) || (rspq->rsphdlr[mc].cbfn = NULL))
+ 			break;
+ 
+ 		(rspq->rsphdlr[mc].cbfn)(rspq->rsphdlr[mc].cbarg, msghdr);
