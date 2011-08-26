@@ -1,72 +1,65 @@
 From: Dan Carpenter <error27@gmail.com>
-Date: Tue, 30 Aug 2011 19:16:15 +0000
-Subject: [patch -next] mac80211: handle allocation failures in
-Message-Id: <20110830191615.GY3705@shale.localdomain>
+Date: Fri, 26 Aug 2011 09:20:37 +0000
+Subject: [patch 2/2] jbd2: use gfp_t instead of int
+Message-Id: <20110826092036.GN5975@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: javier@cozybit.com
-Cc: Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, "open list:MAC80211" <linux-wireless@vger.kernel.org>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: "open list:JOURNALLING LAYER..." <linux-ext4@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The calls to kzalloc() weren't checked here and it upsets the static
-checkers.  Obviously they're not super likely to fail, but we might
-as well add some error handling.
+This silences some Sparse warnings:
+fs/jbd2/transaction.c:135:69: warning: incorrect type in argument 2 (different base types)
+fs/jbd2/transaction.c:135:69:    expected restricted gfp_t [usertype] flags
+fs/jbd2/transaction.c:135:69:    got int [signed] gfp_mask
 
 Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/net/mac80211/mesh_pathtbl.c b/net/mac80211/mesh_pathtbl.c
-index 1f91bce..96092e8 100644
---- a/net/mac80211/mesh_pathtbl.c
-+++ b/net/mac80211/mesh_pathtbl.c
-@@ -1075,6 +1075,7 @@ static int mesh_path_node_copy(struct hlist_node *p, struct mesh_table *newtbl)
- int mesh_pathtbl_init(void)
+diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+index 38f307b..3dd101e 100644
+--- a/include/linux/jbd2.h
++++ b/include/linux/jbd2.h
+@@ -1106,9 +1106,9 @@ static inline handle_t *journal_current_handle(void)
+  */
+ 
+ extern handle_t *jbd2_journal_start(journal_t *, int nblocks);
+-extern handle_t *jbd2__journal_start(journal_t *, int nblocks, int gfp_mask);
++extern handle_t *jbd2__journal_start(journal_t *, int nblocks, gfp_t gfp_mask);
+ extern int	 jbd2_journal_restart(handle_t *, int nblocks);
+-extern int	 jbd2__journal_restart(handle_t *, int nblocks, int gfp_mask);
++extern int	 jbd2__journal_restart(handle_t *, int nblocks, gfp_t gfp_mask);
+ extern int	 jbd2_journal_extend (handle_t *, int nblocks);
+ extern int	 jbd2_journal_get_write_access(handle_t *, struct buffer_head *);
+ extern int	 jbd2_journal_get_create_access (handle_t *, struct buffer_head *);
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index 8d7013c..9fc049d 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -115,7 +115,7 @@ static inline void update_t_max_wait(transaction_t *transaction,
+  */
+ 
+ static int start_this_handle(journal_t *journal, handle_t *handle,
+-			     int gfp_mask)
++			     gfp_t gfp_mask)
  {
- 	struct mesh_table *tbl_path, *tbl_mpp;
-+	int ret;
- 
- 	tbl_path = mesh_table_alloc(INIT_PATHS_SIZE_ORDER);
- 	if (!tbl_path)
-@@ -1083,19 +1084,27 @@ int mesh_pathtbl_init(void)
- 	tbl_path->copy_node = &mesh_path_node_copy;
- 	tbl_path->mean_chain_len = MEAN_CHAIN_LEN;
- 	tbl_path->known_gates = kzalloc(sizeof(struct hlist_head), GFP_ATOMIC);
-+	if (!tbl_path->known_gates) {
-+		ret = -ENOMEM;
-+		goto free_path;
-+	}
- 	INIT_HLIST_HEAD(tbl_path->known_gates);
- 
- 
- 	tbl_mpp = mesh_table_alloc(INIT_PATHS_SIZE_ORDER);
- 	if (!tbl_mpp) {
--		mesh_table_free(tbl_path, true);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto free_path;
- 	}
- 	tbl_mpp->free_node = &mesh_path_node_free;
- 	tbl_mpp->copy_node = &mesh_path_node_copy;
- 	tbl_mpp->mean_chain_len = MEAN_CHAIN_LEN;
- 	/* XXX: not needed */
- 	tbl_mpp->known_gates = kzalloc(sizeof(struct hlist_head), GFP_ATOMIC);
-+	if (!tbl_mpp->known_gates) {
-+		ret = -ENOMEM;
-+		goto free_mpp;
-+	}
- 	INIT_HLIST_HEAD(tbl_mpp->known_gates);
- 
- 	/* Need no locking since this is during init */
-@@ -1103,6 +1112,12 @@ int mesh_pathtbl_init(void)
- 	RCU_INIT_POINTER(mpp_paths, tbl_mpp);
- 
- 	return 0;
-+
-+free_mpp:
-+	mesh_table_free(tbl_mpp, true);
-+free_path:
-+	mesh_table_free(tbl_path, true);
-+	return ret;
- }
- 
- void mesh_path_expire(struct ieee80211_sub_if_data *sdata)
+ 	transaction_t	*transaction, *new_transaction = NULL;
+ 	tid_t		tid;
+@@ -320,7 +320,7 @@ static handle_t *new_handle(int nblocks)
+  * Return a pointer to a newly allocated handle, or an ERR_PTR() value
+  * on failure.
+  */
+-handle_t *jbd2__journal_start(journal_t *journal, int nblocks, int gfp_mask)
++handle_t *jbd2__journal_start(journal_t *journal, int nblocks, gfp_t gfp_mask)
+ {
+ 	handle_t *handle = journal_current_handle();
+ 	int err;
+@@ -443,7 +443,7 @@ out:
+  * transaction capabable of guaranteeing the requested number of
+  * credits.
+  */
+-int jbd2__journal_restart(handle_t *handle, int nblocks, int gfp_mask)
++int jbd2__journal_restart(handle_t *handle, int nblocks, gfp_t gfp_mask)
+ {
+ 	transaction_t *transaction = handle->h_transaction;
+ 	journal_t *journal = transaction->t_journal;
