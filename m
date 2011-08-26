@@ -1,23 +1,35 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Mon, 22 Aug 2011 12:27:32 +0000
-Subject: Re: [PATCH] arch/s390/kernel/ipl.c: correct error detection check
-Message-Id: <20110822122732.GA9280@osiris.boeblingen.de.ibm.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 26 Aug 2011 09:21:13 +0000
+Subject: [patch] dwc3: add a kfree() on error to dwc3_testmode_open()
+Message-Id: <20110826092113.GO5975@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1314013594-25651-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1314013594-25651-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, kernel-janitors@vger.kernel.org, linux390@de.ibm.com, Michael Holzheu <holzheu@linux.vnet.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, sumsaha@gmail.com
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, "open list:DESIGNWARE USB3 D..." <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:DESIGNWARE USB3 D..." <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, Aug 22, 2011 at 01:46:34PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> reipl_fcp_kset was just initialized, so it appears that it should be tested
-> instead of reipl_kset.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> Reported-by: Suman Saha <sumsaha@gmail.com>
+We may as well fix this potential leak so we don't have to listen to
+the static checkers complain.
 
-Applied. Thanks!
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+Btw.  This function returns -EBUSY on success.  Was that really what
+you want?
+
+diff --git a/drivers/usb/dwc3/debugfs.c b/drivers/usb/dwc3/debugfs.c
+index 432df53..dd861c4 100644
+--- a/drivers/usb/dwc3/debugfs.c
++++ b/drivers/usb/dwc3/debugfs.c
+@@ -445,8 +445,10 @@ static int dwc3_testmode_open(struct inode *inode, struct file *file)
+ 	if (!buf0)
+ 		return -ENOMEM;
+ 	buf1 = kmalloc(BUF_SIZE, GFP_KERNEL);
+-	if (!buf1)
++	if (!buf1) {
++		kfree(buf0);
+ 		return -ENOMEM;
++	}
+ 
+ 	memset(buf0, 0xaa, BUF_SIZE);
+ 	memset(buf1, 0x33, BUF_SIZE);
