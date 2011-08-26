@@ -1,60 +1,37 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Fri, 26 Aug 2011 10:48:59 +0000
-Subject: Re: [patch] dwc3: add a kfree() on error to dwc3_testmode_open()
-Message-Id: <20110826104858.GG22532@legolas.emea.dhcp.ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="NIe73rPL8TFc/U1V"
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 26 Aug 2011 16:57:40 +0000
+Subject: [patch 2/2] 9p: change an int to unsigned int
+Message-Id: <20110826165740.GF3775@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110826092113.GO5975@shale.localdomain>
- <20110826103240.GA6060@linutronix.de>
-In-Reply-To: <20110826103240.GA6060@linutronix.de>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Dan Carpenter <error27@gmail.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@suse.de>, "open list:DESIGNWARE USB3 D..." <linux-usb@vger.kernel.org>, "open list:DESIGNWARE USB3 D..." <linux-omap@vger.kernel.org>, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, "M. Mohan Kumar" <mohan@in.ibm.com>, Stephen Hemminger <shemminger@vyatta.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+The size of things should be unsigned because negative sizes are
+silly.  My concern is the the limit checks don't take negative values
+into consideration in p9_client_create()
+	if (clnt->msize > clnt->trans_mod->maxsize)
+		clnt->msize = clnt->trans_mod->maxsize;
+and in p9_tag_alloc()
+	int alloc_msize = min(c->msize, max_size);
 
---NIe73rPL8TFc/U1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I don't know if this is exported to user space?  Hopefully it's not
+too late to change this.
 
-Hi,
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-On Fri, Aug 26, 2011 at 12:32:40PM +0200, Sebastian Andrzej Siewior wrote:
-> * Dan Carpenter | 2011-08-26 12:21:13 [+0300]:
->=20
-> >Btw.  This function returns -EBUSY on success.  Was that really what
-> >you want?
->=20
-> At that time yes. The idea was to enable the self-test mode of the core
-> and let it do transfers forth and back and see if it works. There is
-> also no off switch. I wasn't aware that this piece of code is going to
-> merged but now I think we need an off switch.
-
-yeah, this is rather useful to test the underlying HW. We had the same
-feature on MUSB and it helped check if EP0 handling and FIFO access was
-working fine.
-
-> Thanks for spotting this.
-
-indeed.
-
---=20
-balbi
-
---NIe73rPL8TFc/U1V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOV3oaAAoJEAv8Txj19kN17yYH/jXcdW3qCOAIIisnlV4+fTMi
-nuccXqIi97XFa01OTmo/tJWNalpAhe7nR+oVmgfhfftgigGzUBvTLXt1FDp99coP
-42E3Si8JSkjDukfIjqQP8uGjEwbTFuPxBjurZCxUbGR6sRzygmvsHJxeeJwcjBtP
-UFt1gc179UCm0bOfyc8RYqwAJAwyY+vAxoshumRJ6R491VQSSZtypgSWvvmO4e0U
-WyS8FjXJcX82yqJ9ERrLO7tJdoaJ+ScrF6wUxHMqlbI1gu6hNfVNTOvsU1mLu+jj
-bJVKnhZWVW5khkzcZgqGf+xRtmNzPmYiOMOrRxsKYDChp6lxjKe1nthafRaEPf4=
-=tCnB
------END PGP SIGNATURE-----
-
---NIe73rPL8TFc/U1V--
+diff --git a/include/net/9p/client.h b/include/net/9p/client.h
+index 55ce72c..d479d7d 100644
+--- a/include/net/9p/client.h
++++ b/include/net/9p/client.h
+@@ -151,7 +151,7 @@ struct p9_req_t {
+ 
+ struct p9_client {
+ 	spinlock_t lock; /* protect client structure */
+-	int msize;
++	unsigned int msize;
+ 	unsigned char proto_version;
+ 	struct p9_trans_module *trans_mod;
+ 	enum p9_trans_status status;
