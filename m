@@ -1,32 +1,27 @@
-From: "Guy, Wey-Yi" <wey-yi.w.guy@intel.com>
-Date: Wed, 31 Aug 2011 09:34:29 +0000
-Subject: Re: [patch -next 1/2] iwlwifi: fix double assign in
-Message-Id: <1314783269.26890.3.camel@wwguy-huron>
+From: Dan Carpenter <error27@gmail.com>
+Date: Sat, 27 Aug 2011 09:59:30 +0000
+Subject: [patch] [SCSI] mptfusion: unlock on error in mpt_config()
+Message-Id: <20110827095930.GK3775@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110831063742.GC3705@shale.localdomain>
-	 (sfid-20110831_084010_132544_82772E48)  <1314772887.4161.17.camel@jlt3.sipsolutions.net>
-In-Reply-To: <1314772887.4161.17.camel@jlt3.sipsolutions.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Dan Carpenter <error27@gmail.com>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, "open list:INTEL WIRELESS WI..." <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Eric Moore <Eric.Moore@lsi.com>, kashyap.desai@lsi.com
+Cc: "supporter:LSILOGIC MPT FUSI..." <support@lsi.com>, "open list:LSILOGIC MPT FUSI..." <DL-MPTFusionLinux@lsi.com>, "open list:LSILOGIC MPT FUSI..." <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Tue, 2011-08-30 at 23:41 -0700, Johannes Berg wrote:
-> On Wed, 2011-08-31 at 09:37 +0300, Dan Carpenter wrote:
-> > "vif" is assigned twice.  We can remove the first one.
-> > 
-> > This silences a Smatch warning that "ctx" could be one step past the
-> > end of the priv->contexts[] array.
-> 
-> Good catch.
-> 
-> Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
-> 
-> > Signed-off-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: Wey-Yi Guy <wey-yi.w.guy@intel.com>
-> > 
+We introduced a new return here and forgot to unlock the mutex.
 
-Thanks
-Wey
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
+diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+index e9c6a60..e72320e 100644
+--- a/drivers/message/fusion/mptbase.c
++++ b/drivers/message/fusion/mptbase.c
+@@ -6482,6 +6482,7 @@ mpt_config(MPT_ADAPTER *ioc, CONFIGPARMS *pCfg)
+ 				printk(MYIOC_s_INFO_FMT "%s: host reset in"
+ 					" progress mpt_config timed out.!!\n",
+ 					__func__, ioc->name);
++				mutex_unlock(&ioc->mptbase_cmds.mutex);
+ 				return -EFAULT;
+ 			}
+ 			spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
