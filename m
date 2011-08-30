@@ -1,47 +1,28 @@
-From: Nicolas Palix <Nicolas.Palix@inria.fr>
-Date: Mon, 22 Aug 2011 14:19:44 +0000
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 30 Aug 2011 19:52:10 +0000
 Subject: Re: Where can i find a task?
-Message-Id: <CAAxaTiMjd317BEOWi3vKPWRKOQuDgo087xOaDRpuWd=LAh+OXA@mail.gmail.com>
+Message-Id: <20110830195210.GZ3705@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4E4EA626.8070204@lxsameer.com>
 In-Reply-To: <4E4EA626.8070204@lxsameer.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On Fri, Aug 19, 2011 at 8:06 PM, Sameer Rahmani <lxsameer@lxsameer.com> wro=
-te:
+On Fri, Aug 19, 2011 at 10:36:30PM +0430, Sameer Rahmani wrote:
 > Hi there.
->
-> I'm new to this ML, i'm looking for some cheap tasks to begin with, where
-> can i find some?
+> 
+> I'm new to this ML, i'm looking for some cheap tasks to begin with,
+> where can i find some?
 
-You can check the TODO list of
-http://kernelnewbies.org/KernelJanitors
+Here is a task:
 
-There is also the reports of various checkers such as smatch, sparse
-or coccinelle
-which report potential errors.
+grep -n -w printk drivers/ -R | egrep 'KERN_\w+ "\\n"' | grep -v CONT 
 
+These should probably all be using KERN_CONT (obviously you should
+check them and look around for other bugs as well).  There are 38
+patches worth of bugs there.
 
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.html
->
-
-
-
---=20
-Nicolas Palix
-http://sardes.inrialpes.fr/~npalix/
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards,
+dan carpenter
