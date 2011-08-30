@@ -1,13 +1,28 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 10 Aug 2011 11:32:13 +0000
-Subject: [PATCH] drivers/scsi/mpt2sas/mpt2sas_transport.c: add missing sas_phy_free
-Message-Id: <1312975933-18277-1-git-send-email-julia@diku.dk>
+From: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
+Date: Tue, 30 Aug 2011 10:54:31 +0000
+Subject: RE: [PATCH] drivers/scsi/mpt2sas/mpt2sas_transport.c: add missing
+Message-Id: <A6888A6805518E4EA4AF7072A28264A6042AD54391@inbmail02.lsi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1312975933-18277-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1312975933-18277-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: kernel-janitors@vger.kernel.org, Kashyap Desai <kashyap.desai@lsi.com>, James Bottomley <James.Bottomley@suse.de>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>, "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Desai, Kashyap" <Kashyap.Desai@lsi.com>, James Bottomley <James.Bottomley@suse.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+
+The patch seem to be fine. Please consider this patch as Acked-by: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
+
+Regards,
+Nagalakshmi
+
+
+-----Original Message-----
+From: Julia Lawall [mailto:julia@diku.dk] 
+Sent: Wednesday, August 10, 2011 5:02 PM
+To: James E.J. Bottomley
+Cc: kernel-janitors@vger.kernel.org; Desai, Kashyap; James Bottomley; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/scsi/mpt2sas/mpt2sas_transport.c: add missing sas_phy_free
 
 From: Julia Lawall <julia@diku.dk>
 
