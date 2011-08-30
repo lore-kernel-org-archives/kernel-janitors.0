@@ -1,13 +1,29 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sat, 27 Aug 2011 09:59:30 +0000
-Subject: [patch] [SCSI] mptfusion: unlock on error in mpt_config()
-Message-Id: <20110827095930.GK3775@shale.localdomain>
+From: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
+Date: Tue, 30 Aug 2011 10:48:34 +0000
+Subject: RE: [patch] [SCSI] mptfusion: unlock on error in mpt_config()
+Message-Id: <A6888A6805518E4EA4AF7072A28264A6042AD54397@inbmail02.lsi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110827095930.GK3775@shale.localdomain>
+In-Reply-To: <20110827095930.GK3775@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Moore <Eric.Moore@lsi.com>, kashyap.desai@lsi.com
-Cc: "supporter:LSILOGIC MPT FUSI..." <support@lsi.com>, "open list:LSILOGIC MPT FUSI..." <DL-MPTFusionLinux@lsi.com>, "open list:LSILOGIC MPT FUSI..." <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <error27@gmail.com>, "Moore, Eric" <Eric.Moore@lsi.com>, "Desai, Kashyap" <Kashyap.Desai@lsi.com>
+Cc: Support <support@lsi.com>, DL-MPT Fusion Linux <DL-MPTFusionLinux@lsi.com>, "open list:LSILOGIC MPT FUSI..." <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+
+The patch seem to be fine. Please consider this patch as Acked-by: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
+
+
+Regards,
+Nagalakshmi
+
+
+-----Original Message-----
+From: Dan Carpenter [mailto:error27@gmail.com] 
+Sent: Saturday, August 27, 2011 3:30 PM
+To: Moore, Eric; Desai, Kashyap
+Cc: Support; DL-MPT Fusion Linux; open list:LSILOGIC MPT FUSI...; kernel-janitors@vger.kernel.org
+Subject: [patch] [SCSI] mptfusion: unlock on error in mpt_config()
 
 We introduced a new return here and forgot to unlock the mutex.
 
