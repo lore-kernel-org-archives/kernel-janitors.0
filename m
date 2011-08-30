@@ -1,27 +1,28 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 19 Aug 2011 12:08:00 +0000
-Subject: Re: [PATCH v3] drivers/mtd/nand/bcm_umi_nand.c: clean up error
-Message-Id: <1313755685.6607.53.camel@sauron>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 30 Aug 2011 13:45:52 +0000
+Subject: [patch 1/3 -next] 6LoWPAN: use kfree_skb() instead of kfree()
+Message-Id: <20110830134552.GH3705@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1312964054-25266-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1312964054-25266-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Scott Branden <sbranden@broadcom.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, Jiandong Zheng <jdzheng@broadcom.com>, David Woodhouse <dwmw2@infradead.org>
+To: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Sergey Lapin <slapin@ossfans.org>, "David S. Miller" <davem@davemloft.net>, "open list:IEEE 802.15.4 SUB..." <linux-zigbee-devel@lists.sourceforge.net>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, 2011-08-10 at 10:14 +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Convert error handling code to use gotos.  At the same time, this adds
-> calls to kfree and iounmap in a few cases where they were overlooked.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk> 
+Use kfree_skb() to free sbk_buffs.
 
-Pushed to l2-mtd-2.6.git, thanks!
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
--- 
-Best Regards,
-Artem Bityutskiy
-
+diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+index cf304cc..8a9dbaa 100644
+--- a/net/ieee802154/6lowpan.c
++++ b/net/ieee802154/6lowpan.c
+@@ -674,7 +674,7 @@ lowpan_process_data(struct sk_buff *skb)
+ 							sizeof(hdr));
+ 	return lowpan_skb_deliver(skb, &hdr);
+ drop:
+-	kfree(skb);
++	kfree_skb(skb);
+ 	return -EINVAL;
+ }
+ 
