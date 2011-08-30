@@ -1,46 +1,36 @@
-From: Ali Bahar <ali@internetdog.org>
-Date: Tue, 16 Aug 2011 01:42:27 +0000
-Subject: Re: [patch] rtl8712: don't just return -EFAULT in
-Message-Id: <20110816014227.GA28730@internetdog.org>
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 30 Aug 2011 13:51:09 +0000
+Subject: [patch 3/3 -next] 6LoWPAN: call dev_put() on error in
+Message-Id: <20110830135109.GJ3705@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Sergey Lapin <slapin@ossfans.org>, "David S. Miller" <davem@davemloft.net>, "open list:IEEE 802.15.4 SUB..." <linux-zigbee-devel@lists.sourceforge.net>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sat, Aug 06, 2011 at 07:27:48AM -0700, Dan Carpenter wrote:
-> There were some curly braces missing so the original code in
-> wpa_supplicant_ioctl() pretty much always returned -EFAULT without
-> doing anything.
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
-> 
-> diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-> index 40e6b5c..c380a30 100644
-> --- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-> +++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
-> @@ -2072,9 +2072,10 @@ static int wpa_supplicant_ioctl(struct net_device *dev, struct iw_point *p)
->  	param = (struct ieee_param *)_malloc(p->length);
->  	if (param = NULL)
->  		return -ENOMEM;
-> -	if (copy_from_user(param, p->pointer, p->length))
-> +	if (copy_from_user(param, p->pointer, p->length)) {
->  		kfree((u8 *)param);
->  		return -EFAULT;
-> +	}
+We should release the dev_hold() on error before returning here.
 
-Ouch! (Now emacs would've caught this! ;-))
-My reading of the code suggests that (not surprisingly) this path does
-not get executed. The frequent case is to go thru wext-core's
-"standard" handler, instead of the above. If so, then that'd explain
-why I've not noticed this bug during testing.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+All three of these patches were compile tested only, but this is the
+one I'm not very certain of.  I've obviously tried to get it right,
+but please review it carefully.
 
-Good catch.
-
-thanks,
-ali
-
-
->  	switch (param->cmd) {
->  	case IEEE_CMD_SET_WPA_PARAM:
->  		ret = wpa_set_param(dev, param->u.wpa_param.name,
+diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+index 5dc0489..f0d1536 100644
+--- a/net/ieee802154/6lowpan.c
++++ b/net/ieee802154/6lowpan.c
+@@ -793,8 +793,11 @@ static int lowpan_newlink(struct net *src_net, struct net_device *dev,
+ 	mutex_init(&lowpan_dev_info(dev)->dev_list_mtx);
+ 
+ 	entry = kzalloc(sizeof(struct lowpan_dev_record), GFP_KERNEL);
+-	if (!entry)
++	if (!entry) {
++		dev_put(real_dev);
++		lowpan_dev_info(dev)->real_dev = NULL;
+ 		return -ENOMEM;
++	}
+ 
+ 	entry->ldev = dev;
+ 
