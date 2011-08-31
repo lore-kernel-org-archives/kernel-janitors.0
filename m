@@ -1,25 +1,31 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 22 Aug 2011 22:35:36 +0000
-Subject: Re: [PATCH] sound/soc/mxs/mxs-saif.c: add missing kfree
-Message-Id: <20110822223535.GD29473@opensource.wolfsonmicro.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 31 Aug 2011 06:37:42 +0000
+Subject: [patch -next 1/2] iwlwifi: fix double assign in
+Message-Id: <20110831063742.GC3705@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1313820761-12042-3-git-send-email-julia@diku.dk>
-	<20110820134439.GA2266@pengutronix.de>
-	<Pine.LNX.4.64.1108201718200.30651@ask.diku.dk>
-	<65EE16ACC360FA4D99C96DC085B3F7722212DF@039-SN1MPN1-001.039d.mgd.msft.net>
-	<Pine.LNX.4.64.1108211318060.4072@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1108211318060.4072@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Wolfram Sang <w.sang@pengutronix.de>, Dong Aisheng-B29396 <B29396@freescale.com>, Liam Girdwood <lrg@ti.com>
+To: emmanuel.grumbach@intel.com
+Cc: Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, "open list:INTEL WIRELESS WI..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Sun, Aug 21, 2011 at 01:18:45PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Move the test on pdev->id before the kzalloc to avoid requiring kfree when
-> the test fails.  This fix was suggested by Wolfram Sang.
-> 
+"vif" is assigned twice.  We can remove the first one.
 
-Applied, thanks.
+This silences a Smatch warning that "ctx" could be one step past the
+end of the priv->contexts[] array.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/net/wireless/iwlwifi/iwl-core.c b/drivers/net/wireless/iwlwifi/iwl-core.c
+index 20dd1a5..72b9203 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-core.c
++++ b/drivers/net/wireless/iwlwifi/iwl-core.c
+@@ -1842,7 +1842,7 @@ void iwl_start_tx_ba_trans_ready(struct iwl_priv *priv,
+ 				 enum iwl_rxon_context_id ctx,
+ 				 u8 sta_id, u8 tid)
+ {
+-	struct ieee80211_vif *vif = priv->contexts[ctx].vif;
++	struct ieee80211_vif *vif;
+ 	u8 *addr = priv->stations[sta_id].sta.sta.addr;
+ 
+ 	if (ctx = NUM_IWL_RXON_CTX)
