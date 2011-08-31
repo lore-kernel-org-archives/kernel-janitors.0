@@ -1,46 +1,32 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 31 Aug 2011 06:41:27 +0000
+From: "Guy, Wey-Yi" <wey-yi.w.guy@intel.com>
+Date: Wed, 31 Aug 2011 09:34:29 +0000
 Subject: Re: [patch -next 1/2] iwlwifi: fix double assign in
-Message-Id: <1314772887.4161.17.camel@jlt3.sipsolutions.net>
+Message-Id: <1314783269.26890.3.camel@wwguy-huron>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110831063742.GC3705@shale.localdomain>
-	 (sfid-20110831_084010_132544_82772E48)
-In-Reply-To: <20110831063742.GC3705@shale.localdomain> (sfid-20110831_084010_132544_82772E48)
+	 (sfid-20110831_084010_132544_82772E48)  <1314772887.4161.17.camel@jlt3.sipsolutions.net>
+In-Reply-To: <1314772887.4161.17.camel@jlt3.sipsolutions.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: emmanuel.grumbach@intel.com, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, "open list:INTEL WIRELESS WI..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Dan Carpenter <error27@gmail.com>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, "open list:INTEL WIRELESS WI..." <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Wed, 2011-08-31 at 09:37 +0300, Dan Carpenter wrote:
-> "vif" is assigned twice.  We can remove the first one.
+On Tue, 2011-08-30 at 23:41 -0700, Johannes Berg wrote:
+> On Wed, 2011-08-31 at 09:37 +0300, Dan Carpenter wrote:
+> > "vif" is assigned twice.  We can remove the first one.
+> > 
+> > This silences a Smatch warning that "ctx" could be one step past the
+> > end of the priv->contexts[] array.
 > 
-> This silences a Smatch warning that "ctx" could be one step past the
-> end of the priv->contexts[] array.
-
-Good catch.
-
-Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
-
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+> Good catch.
 > 
-> diff --git a/drivers/net/wireless/iwlwifi/iwl-core.c b/drivers/net/wireless/iwlwifi/iwl-core.c
-> index 20dd1a5..72b9203 100644
-> --- a/drivers/net/wireless/iwlwifi/iwl-core.c
-> +++ b/drivers/net/wireless/iwlwifi/iwl-core.c
-> @@ -1842,7 +1842,7 @@ void iwl_start_tx_ba_trans_ready(struct iwl_priv *priv,
->  				 enum iwl_rxon_context_id ctx,
->  				 u8 sta_id, u8 tid)
->  {
-> -	struct ieee80211_vif *vif = priv->contexts[ctx].vif;
-> +	struct ieee80211_vif *vif;
->  	u8 *addr = priv->stations[sta_id].sta.sta.addr;
->  
->  	if (ctx = NUM_IWL_RXON_CTX)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
 > 
+> > Signed-off-by: Dan Carpenter <error27@gmail.com>
+Signed-off-by: Wey-Yi Guy <wey-yi.w.guy@intel.com>
+> > 
 
+Thanks
+Wey
 
