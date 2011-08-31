@@ -1,16 +1,28 @@
-From: Song Li <info@mail.com>
-Date: Wed, 17 Aug 2011 22:44:03 +0000
-Subject: Re: Transfer Offer
-Message-Id: <20110817202041.847D51E6734@mail.najdschools.edu.sa>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 31 Aug 2011 06:38:30 +0000
+Subject: [patch -next 2/2] iwlwifi: signedness bug in
+Message-Id: <20110831063830.GD3705@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110816170708.9B931139E998@mail.najdschools.edu.sa>
-In-Reply-To: <20110816170708.9B931139E998@mail.najdschools.edu.sa>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Recipients <info@mail.com>
+To: emmanuel.grumbach@intel.com
+Cc: Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, "open list:INTEL WIRELESS WI..." <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-l am a Staff of Hang Seng Bank HongKong, I do not know if we can work
-together in transferring $19,500,000.USD from my bank to you account.
-Finally if you are interested I shall provide you with more details.
-Email: mr_song150@yahoo.com.hk
+unsigned shorts and unsigned chars are never = -1.
+
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/drivers/net/wireless/iwlwifi/iwl-trans-tx-pcie.c b/drivers/net/wireless/iwlwifi/iwl-trans-tx-pcie.c
+index 5dd6a6d..ea6a0bc 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-trans-tx-pcie.c
++++ b/drivers/net/wireless/iwlwifi/iwl-trans-tx-pcie.c
+@@ -535,7 +535,7 @@ int iwl_trans_pcie_tx_agg_alloc(struct iwl_trans *trans,
+ 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
+ 	struct iwl_tid_data *tid_data;
+ 	unsigned long flags;
+-	u16 txq_id;
++	int txq_id;
+ 	struct iwl_priv *priv = priv(trans);
+ 
+ 	txq_id = iwlagn_txq_ctx_activate_free(trans);
