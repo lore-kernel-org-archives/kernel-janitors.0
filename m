@@ -1,55 +1,60 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Mon, 26 Sep 2011 08:24:37 +0000
-Subject: Re: [patch] wl3501_cs: min_t() cast truncates high bits
-Message-Id: <1317025477.4117.21.camel@jlt3.sipsolutions.net>
+From: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Date: Thu, 01 Sep 2011 11:16:52 +0000
+Subject: [PATCH 1/1 -next] 6LoWPAN: fix skb_copy call
+Message-Id: <1314879675-31989-1-git-send-email-alex.bluesman.smirnov@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110926063040.GE11832@elgon.mountain>
-	 (sfid-20110926_101711_920668_B3BB1CCE)
-In-Reply-To: <20110926063040.GE11832@elgon.mountain> (sfid-20110926_101711_920668_B3BB1CCE)
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
+Cc: eric.dumazet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-zigbee-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 
-On Mon, 2011-09-26 at 09:30 +0300, Dan Carpenter wrote:
-> wrqu->encoding.length comes from the network administrator.  It's
-> size u16.  We want to limit "tocopy" to the smallest value of either
-> "len_keys", "wrqu->encoding.length" or 100.  But because .length
-> gets cast from u16 to u8 we might use a random, smaller value than
-> the was desired.  It's probably not very serious, but we may as well
-> fix it.
+This patch fixes 2 issues in lowpan_skb_deliver function:
+1. Check for return status of skb_copy call;
+2. Use skb_copy with proper GFP flag depending on context.
 
-Nice catch.
+Signed-off-by: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+---
+ net/ieee802154/6lowpan.c |   18 +++++++++++++++---
+ 1 files changed, 15 insertions(+), 3 deletions(-)
 
-> Btw, this is from code auditing and not from testing.  I don't know
-> if this affects anyone in real life.
-
-FWIW, it doesn't, the max key length that makes sense is 32 anyway, and
-since this is on an output path I doubt the min_t() will ever have done
-anything but returned "tocopy" :-)
-
-johannes
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/wl3501_cs.c b/drivers/net/wireless/wl3501_cs.c
-> index 6bc7c92..98fbf54 100644
-> --- a/drivers/net/wireless/wl3501_cs.c
-> +++ b/drivers/net/wireless/wl3501_cs.c
-> @@ -1781,7 +1781,7 @@ static int wl3501_get_encode(struct net_device *dev,
->  				  keys, len_keys);
->  	if (rc)
->  		goto out;
-> -	tocopy = min_t(u8, len_keys, wrqu->encoding.length);
-> +	tocopy = min_t(u16, len_keys, wrqu->encoding.length);
->  	tocopy = min_t(u8, tocopy, 100);
->  	wrqu->encoding.length = tocopy;
->  	memcpy(extra, keys, tocopy);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
+diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+index cf304cc..cac1361 100644
+--- a/net/ieee802154/6lowpan.c
++++ b/net/ieee802154/6lowpan.c
+@@ -477,9 +477,15 @@ static int lowpan_skb_deliver(struct sk_buff *skb, struct ipv6hdr *hdr)
+ 	struct sk_buff *new;
+ 	struct lowpan_dev_record *entry;
+ 	int stat = NET_RX_SUCCESS;
++	gfp_t mask;
+ 
+-	new = skb_copy_expand(skb, sizeof(struct ipv6hdr), skb_tailroom(skb),
+-								GFP_KERNEL);
++	if (in_interrupt())
++		mask = GFP_ATOMIC;
++	else
++		mask = GFP_KERNEL;
++
++	new = skb_copy_expand(skb, sizeof(struct ipv6hdr),
++					skb_tailroom(skb), mask);
+ 	kfree_skb(skb);
+ 
+ 	if (NULL = new)
+@@ -495,7 +501,13 @@ static int lowpan_skb_deliver(struct sk_buff *skb, struct ipv6hdr *hdr)
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(entry, &lowpan_devices, list)
+ 		if (lowpan_dev_info(entry->ldev)->real_dev = new->dev) {
+-			skb = skb_copy(new, GFP_KERNEL);
++			skb = skb_copy(new, mask);
++
++			if (NULL = skb) {
++				kfree_skb(new);
++				return -ENOMEM;
++			}
++
+ 			skb->dev = entry->ldev;
+ 
+ 			if (in_interrupt())
+-- 
+1.7.2.5
 
