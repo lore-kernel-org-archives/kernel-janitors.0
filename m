@@ -1,52 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 26 Sep 2011 06:23:37 +0000
-Subject: [patch] [SCSI] be2iscsi: cleanup a min_t() call
-Message-Id: <20110926062337.GD11832@elgon.mountain>
+From: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Date: Thu, 01 Sep 2011 12:52:19 +0000
+Subject: [PATCH v3 -next] 6LoWPAN: fix skb_copy call
+Message-Id: <1314885315-4033-1-git-send-email-alex.bluesman.smirnov@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1314879675-31989-1-git-send-email-alex.bluesman.smirnov@gmail.com>
+In-Reply-To: <1314879675-31989-1-git-send-email-alex.bluesman.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jayamohan Kallickal <jayamohan.kallickal@emulex.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
+Cc: eric.dumazet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-zigbee-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 
-"sense_len" was declared as int type but actually it only stores a
-u16 value that comes from hardware.  The cast to u16 in min_t()
-confuses static analysis because it truncates the int to u16 so I've
-fixed the declaration to reflect that "sense_len" is just a u16.
+This patch fixes 2 issues in lowpan_skb_deliver function:
+1. Check for return status of skb_copy call;
+2. Use skb_copy with proper GFP flag, drop check for non-interrupt
+context.
 
-Also there was a call to cpu_to_be16() which I've changed to
-be16_to_cpu().  The functions are equivalent, but obviously the
-hardware is big endian and we're doing the min_t() comparison on CPU
-endian values.
-
-This whole patch is just a cleanup and doesn't affect how the code
-works.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
 ---
-Compile tested only.  Sorry.
+ net/ieee802154/6lowpan.c |   17 +++++++++--------
+ 1 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-index 57fea38..344af8d 100644
---- a/drivers/scsi/be2iscsi/be_main.c
-+++ b/drivers/scsi/be2iscsi/be_main.c
-@@ -1104,7 +1104,6 @@ be_complete_io(struct beiscsi_conn *beiscsi_conn,
- 	struct be_status_bhs *sts_bhs  				(struct be_status_bhs *)io_task->cmd_bhs;
- 	struct iscsi_conn *conn = beiscsi_conn->conn;
--	unsigned int sense_len;
- 	unsigned char *sense;
- 	u32 resid = 0, exp_cmdsn, max_cmdsn;
- 	u8 rsp, status, flags;
-@@ -1147,9 +1146,11 @@ be_complete_io(struct beiscsi_conn *beiscsi_conn,
- 	}
+diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+index cf304cc..deb2adf 100644
+--- a/net/ieee802154/6lowpan.c
++++ b/net/ieee802154/6lowpan.c
+@@ -479,10 +479,10 @@ static int lowpan_skb_deliver(struct sk_buff *skb, struct ipv6hdr *hdr)
+ 	int stat = NET_RX_SUCCESS;
  
- 	if (status = SAM_STAT_CHECK_CONDITION) {
-+		u16 sense_len;
- 		unsigned short *slen = (unsigned short *)sts_bhs->sense_info;
-+
- 		sense = sts_bhs->sense_info + sizeof(unsigned short);
--		sense_len =  cpu_to_be16(*slen);
-+		sense_len = be16_to_cpu(*slen);
- 		memcpy(task->sc->sense_buffer, sense,
- 		       min_t(u16, sense_len, SCSI_SENSE_BUFFERSIZE));
- 	}
+ 	new = skb_copy_expand(skb, sizeof(struct ipv6hdr), skb_tailroom(skb),
+-								GFP_KERNEL);
++								GFP_ATOMIC);
+ 	kfree_skb(skb);
+ 
+-	if (NULL = new)
++	if (!new)
+ 		return -ENOMEM;
+ 
+ 	skb_push(new, sizeof(struct ipv6hdr));
+@@ -495,13 +495,14 @@ static int lowpan_skb_deliver(struct sk_buff *skb, struct ipv6hdr *hdr)
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(entry, &lowpan_devices, list)
+ 		if (lowpan_dev_info(entry->ldev)->real_dev = new->dev) {
+-			skb = skb_copy(new, GFP_KERNEL);
+-			skb->dev = entry->ldev;
++			skb = skb_copy(new, GFP_ATOMIC);
++			if (!skb) {
++				stat = -ENOMEM;
++				break;
++			}
+ 
+-			if (in_interrupt())
+-				stat = netif_rx(skb);
+-			else
+-				stat = netif_rx_ni(skb);
++			skb->dev = entry->ldev;
++			stat = netif_rx(skb);
+ 		}
+ 	rcu_read_unlock();
+ 
+-- 
+1.7.2.5
+
