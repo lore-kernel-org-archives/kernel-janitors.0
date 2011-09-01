@@ -1,68 +1,65 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 16 Sep 2011 08:08:37 +0000
-Subject: Re: [PATCH 1/4] drivers/block/xen-blkback/blkback.c: take size  of
-Message-Id: <Pine.LNX.4.64.1109161008210.8543@pc-004.diku.dk>
+From: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Date: Thu, 01 Sep 2011 09:26:02 +0000
+Subject: Re: [patch 1/3 -next] 6LoWPAN: use kfree_skb() instead of kfree()
+Message-Id: <CAJmB2rBid27YYT4f6vMtBf9EMFWZQgT=xO85z4OBz326pUT+4A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1316156255-19509-1-git-send-email-julia@diku.dk>
- <4E7319010200007800056727@nat28.tlf.novell.com>
-In-Reply-To: <4E7319010200007800056727@nat28.tlf.novell.com>
+References: <20110830134552.GH3705@shale.localdomain>
+	<1314715248.2935.25.camel@edumazet-HP-Compaq-6005-Pro-SFF-PC>
+In-Reply-To: <1314715248.2935.25.camel@edumazet-HP-Compaq-6005-Pro-SFF-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jan Beulich <JBeulich@suse.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Ian Campbell <ian.campbell@citrix.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Dan Carpenter <error27@gmail.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Sergey Lapin <slapin@ossfans.org>, "David S. Miller" <davem@davemloft.net>, "open list:IEEE 802.15.4 SUB..." <linux-zigbee-devel@lists.sourceforge.net>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> I think a better fix for this is to use kzalloc() properly here:
+Hi Dan, Eric,
 
-Indeed, it seems like a much better idea :)
+thank you a lot for the finds, that were my faults.
 
-julia
+With best regards,
+Alexander
 
-> Subject: xen-blkback: use kzalloc() in favor of kmalloc()+memset()
-> 
-> This fixes the problem of three of those four memset()-s having
-> improper size arguments passed: Sizeof a pointer-typed expression
-> returns the size of the pointer, not that of the pointed to data.
-> 
-> It also reverts using kmalloc() instead of kzalloc() for the allocation
-> of the pending grant handles array, as that array gets fully
-> initialized in a subsequent loop.
-> 
-> Reported-by: Julia Lawall <julia@diku.dk>
-> Signed-off-by: Jan Beulich <jbeulich@novell.com>
-> 
-> ---
->  drivers/block/xen-blkback/blkback.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> --- 3.1-rc6/drivers/block/xen-blkback/blkback.c
-> +++ 3.1-rc6-xen-blkback-kzalloc/drivers/block/xen-blkback/blkback.c
-> @@ -765,9 +765,9 @@ static int __init xen_blkif_init(void)
->  
->  	mmap_pages = xen_blkif_reqs * BLKIF_MAX_SEGMENTS_PER_REQUEST;
->  
-> -	blkbk->pending_reqs          = kmalloc(sizeof(blkbk->pending_reqs[0]) *
-> +	blkbk->pending_reqs          = kzalloc(sizeof(blkbk->pending_reqs[0]) *
->  					xen_blkif_reqs, GFP_KERNEL);
-> -	blkbk->pending_grant_handles = kzalloc(sizeof(blkbk->pending_grant_handles[0]) *
-> +	blkbk->pending_grant_handles = kmalloc(sizeof(blkbk->pending_grant_handles[0]) *
->  					mmap_pages, GFP_KERNEL);
->  	blkbk->pending_pages         = kzalloc(sizeof(blkbk->pending_pages[0]) *
->  					mmap_pages, GFP_KERNEL);
-> @@ -790,8 +790,6 @@ static int __init xen_blkif_init(void)
->  	if (rc)
->  		goto failed_init;
->  
-> -	memset(blkbk->pending_reqs, 0, sizeof(blkbk->pending_reqs));
-> -
->  	INIT_LIST_HEAD(&blkbk->pending_free);
->  	spin_lock_init(&blkbk->pending_free_lock);
->  	init_waitqueue_head(&blkbk->pending_free_wq);
-> 
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+2011/8/30 Eric Dumazet <eric.dumazet@gmail.com>:
+> Le mardi 30 ao=FBt 2011 =E0 16:45 +0300, Dan Carpenter a =E9crit :
+>> Use kfree_skb() to free sbk_buffs.
+>>
+>> Signed-off-by: Dan Carpenter <error27@gmail.com>
+>>
+>> diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+>> index cf304cc..8a9dbaa 100644
+>> --- a/net/ieee802154/6lowpan.c
+>> +++ b/net/ieee802154/6lowpan.c
+>> @@ -674,7 +674,7 @@ lowpan_process_data(struct sk_buff *skb)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sizeof(hdr));
+>> =A0 =A0 =A0 return lowpan_skb_deliver(skb, &hdr);
+>> =A0drop:
+>> - =A0 =A0 kfree(skb);
+>> + =A0 =A0 kfree_skb(skb);
+>> =A0 =A0 =A0 return -EINVAL;
+>> =A0}
+>>
+>
+> Another bug is the skb_copy() done in lowpan_skb_deliver()
+>
+> 1) No check of skb_copy() return
+>
+> 2.1) Use of GFP_KERNEL : Is it safe at this point ? Aren=92t we in
+> softirq ?
+>
+> 2.2) If GFP_KERNEL is safe, why do we later do :
+>
+> =A0 =A0 =A0 =A0if (in_interrupt())
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0stat =3D netif_rx(skb);
+> =A0 =A0 =A0 =A0else
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0stat =3D netif_rx_ni(skb);
+>
+>
+>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
