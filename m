@@ -1,24 +1,62 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 12 Sep 2011 10:49:51 +0000
-Subject: Re: [PATCH] sound/soc/kirkwood/kirkwood-i2s.c: fix trivial build
-Message-Id: <20110912104951.GC2953@opensource.wolfsonmicro.com>
+From: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Date: Thu, 01 Sep 2011 11:49:39 +0000
+Subject: [PATCH v2 -next] 6LoWPAN: fix skb_copy call
+Message-Id: <1314881653-1104-1-git-send-email-alex.bluesman.smirnov@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1313820761-12042-1-git-send-email-julia@diku.dk>
-	<3099701.CcMbBAJgz4@wuerfel>
-In-Reply-To: <3099701.CcMbBAJgz4@wuerfel>
+References: <1314879675-31989-1-git-send-email-alex.bluesman.smirnov@gmail.com>
+In-Reply-To: <1314879675-31989-1-git-send-email-alex.bluesman.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, Liam Girdwood <lrg@ti.com>, Arnaud Patard <arnaud.patard@rtp-net.org>
+To: davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
+Cc: eric.dumazet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-zigbee-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 
-On Sun, Sep 11, 2011 at 08:07:30PM +0200, Arnd Bergmann wrote:
-> A fix merged in 3.1-rc2 introduced a small regression, this should get it
-> to build again.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+This patch fixes 2 issues in lowpan_skb_deliver function:
+1. Check for return status of skb_copy call;
+2. Use skb_copy with proper GFP flag depending on context.
 
-Applied, thanks.
+Signed-off-by: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+---
+ net/ieee802154/6lowpan.c |   18 +++++++++++++++---
+ 1 files changed, 15 insertions(+), 3 deletions(-)
 
-Please try to make sure that your commit logs match the style of the
-subsystem.
+diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+index cf304cc..16100be 100644
+--- a/net/ieee802154/6lowpan.c
++++ b/net/ieee802154/6lowpan.c
+@@ -477,9 +477,15 @@ static int lowpan_skb_deliver(struct sk_buff *skb, struct ipv6hdr *hdr)
+ 	struct sk_buff *new;
+ 	struct lowpan_dev_record *entry;
+ 	int stat = NET_RX_SUCCESS;
++	gfp_t mask;
+ 
+-	new = skb_copy_expand(skb, sizeof(struct ipv6hdr), skb_tailroom(skb),
+-								GFP_KERNEL);
++	if (in_interrupt())
++		mask = GFP_ATOMIC;
++	else
++		mask = GFP_KERNEL;
++
++	new = skb_copy_expand(skb, sizeof(struct ipv6hdr),
++					skb_tailroom(skb), mask);
+ 	kfree_skb(skb);
+ 
+ 	if (NULL = new)
+@@ -495,7 +501,13 @@ static int lowpan_skb_deliver(struct sk_buff *skb, struct ipv6hdr *hdr)
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(entry, &lowpan_devices, list)
+ 		if (lowpan_dev_info(entry->ldev)->real_dev = new->dev) {
+-			skb = skb_copy(new, GFP_KERNEL);
++			skb = skb_copy(new, mask);
++
++			if (NULL = skb) {
++				stat = -ENOMEM;
++				break;
++			}
++
+ 			skb->dev = entry->ldev;
+ 
+ 			if (in_interrupt())
+-- 
+1.7.2.5
+
