@@ -1,83 +1,29 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 02 Sep 2011 08:07:16 +0000
-Subject: [patch -next] caif: add error handling for allocation
-Message-Id: <20110902080716.GF2430@shale.localdomain>
+From: =?UTF-8?Q?Sjur_Br=C3=A6ndeland?= <sjurbren@gmail.com>
+Date: Fri, 02 Sep 2011 09:40:23 +0000
+Subject: Re: [patch -next] caif: add error handling for allocation
+Message-Id: <CAJK669Yb6V=xr9ZvQGOKGEvmzO1JGhrHD+sR69b04EQxUjOOrQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110902080716.GF2430@shale.localdomain>
+In-Reply-To: <20110902080716.GF2430@shale.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Dan Carpenter <error27@gmail.com>
 Cc: "David S. Miller" <davem@davemloft.net>, "open list:CAIF NETWORK LAYER" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The allocation could fail so we should check, or other errors could
-happen and we should free the "phyinfo" variable.
-
-Signed-off-by: Dan Carpenter <error27@gmail.com>
-
-diff --git a/net/caif/cfcnfg.c b/net/caif/cfcnfg.c
-index f07ab8c..b213b53 100644
---- a/net/caif/cfcnfg.c
-+++ b/net/caif/cfcnfg.c
-@@ -467,7 +467,7 @@ cfcnfg_add_phy_layer(struct cfcnfg *cnfg, enum cfcnfg_phy_type phy_type,
- {
- 	struct cflayer *frml;
- 	struct cflayer *phy_driver = NULL;
--	struct cfcnfg_phyinfo *phyinfo;
-+	struct cfcnfg_phyinfo *phyinfo = NULL;
- 	int i;
- 	u8 phyid;
- 
-@@ -482,23 +482,25 @@ cfcnfg_add_phy_layer(struct cfcnfg *cnfg, enum cfcnfg_phy_type phy_type,
- 			goto got_phyid;
- 	}
- 	pr_warn("Too many CAIF Link Layers (max 6)\n");
--	goto out;
-+	goto out_err;
- 
- got_phyid:
- 	phyinfo = kzalloc(sizeof(struct cfcnfg_phyinfo), GFP_ATOMIC);
-+	if (!phyinfo)
-+		goto out_err;
- 
- 	switch (phy_type) {
- 	case CFPHYTYPE_FRAG:
- 		phy_driver  		    cfserl_create(CFPHYTYPE_FRAG, phyid, stx);
- 		if (!phy_driver)
--			goto out;
-+			goto out_err;
- 		break;
- 	case CFPHYTYPE_CAIF:
- 		phy_driver = NULL;
- 		break;
- 	default:
--		goto out;
-+		goto out_err;
- 	}
- 	phy_layer->id = phyid;
- 	phyinfo->pref = pref;
-@@ -512,10 +514,8 @@ got_phyid:
- 
- 	frml = cffrml_create(phyid, fcs);
- 
--	if (!frml) {
--		kfree(phyinfo);
--		goto out;
--	}
-+	if (!frml)
-+		goto out_err;
- 	phyinfo->frm_layer = frml;
- 	layer_set_up(frml, cnfg->mux);
- 
-@@ -531,7 +531,11 @@ got_phyid:
- 	}
- 
- 	list_add_rcu(&phyinfo->node, &cnfg->phys);
--out:
-+	mutex_unlock(&cnfg->lock);
-+	return;
-+
-+out_err:
-+	kfree(phyinfo);
- 	mutex_unlock(&cnfg->lock);
- }
- EXPORT_SYMBOL(cfcnfg_add_phy_layer);
+SGkgRGFuLAouLi4KPiDCoCDCoCDCoCDCoHN3aXRjaCAocGh5X3R5cGUpIHsKPiDCoCDCoCDCoCDC
+oGNhc2UgQ0ZQSFlUWVBFX0ZSQUc6Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBwaHlfZHJpdmVy
+ID4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBjZnNlcmxfY3JlYXRlKENGUEhZVFlQRV9G
+UkFHLCBwaHlpZCwgc3R4KTsKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGlmICghcGh5X2RyaXZl
+cikKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGdvdG8gb3V0Owo+ICsgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZ290byBvdXRfZXJyOwo+IMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgYnJlYWs7Ci4uLgo+IC1vdXQ6Cj4gKyDCoCDCoCDCoCBtdXRleF91bmxvY2so
+JmNuZmctPmxvY2spOwo+ICsgwqAgwqAgwqAgcmV0dXJuOwo+ICsKPiArb3V0X2VycjoKPiArIMKg
+IMKgIMKgIGtmcmVlKHBoeWluZm8pOwo+IMKgIMKgIMKgIMKgbXV0ZXhfdW5sb2NrKCZjbmZnLT5s
+b2NrKTsKClRoYW5rIHlvdSBmb3IgeW91ciBwYXRjaC4KV2hlbiByZXZpZXdpbmcgdGhpcyBJIGZv
+dW5kIGFub3RoZXIgcG90ZW50aWFsIG1lbW9yeSBsZWFrIGFzIHdlbGwuCklmIGNmZnJtbF9jcmVh
+dGUgZmFpbHMsIHdlIG1pZ2h0IGJlIGxlYWtpbmcgdGhlIHBoeV9kcml2ZXIuClNvIHBlcmhhcHMg
+eW91IGNvdWxkIGRvIGtmcmVlKHBoeV9kcml2ZXIpIGluIG91dF9lcnI6IGFzIHdlbGwsIHdoaWxl
+CnlvdSBhcmUgYXQgaXQ/CgpSZWdhcmRzLApTanVyCv/06Lp7Lm7HK4m3n66JrYYrJYrL/7Hp3bYX
+pYp3/7p7Lm7HK4m3pHq53pf42p4raK7P4p7YXm6HcqH2pnrLGoHraJmo6K3aJqP74Hq/5Hq53pf6
+K4DKK3pmo6K3aJqIp36GrYbbaf//74Hq/5Hq53pf6K4P5mo6K3aJqP4p36P4bQo=
