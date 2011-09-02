@@ -1,28 +1,83 @@
-From: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Date: Fri, 23 Sep 2011 10:38:45 +0000
-Subject: RE: [patch v2] caif: add error handling for allocation
-Message-Id: <81C3A93C17462B4BBD7E272753C105791D2BC1882D@EXDCVYMBSTM005.EQ1STM.local>
+From: Dan Carpenter <error27@gmail.com>
+Date: Fri, 02 Sep 2011 08:07:16 +0000
+Subject: [patch -next] caif: add error handling for allocation
+Message-Id: <20110902080716.GF2430@shale.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAJK669Yb6V=xr9ZvQGOKGEvmzO1JGhrHD+sR69b04EQxUjOOrQ@mail.gmail.com>
- <20110921072159.GJ4999@elgon.mountain>
-In-Reply-To: <20110921072159.GJ4999@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Cc: "David S. Miller" <davem@davemloft.net>, "open list:CAIF NETWORK LAYER" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-[Dan]:=20
-> The allocation of "phyinfo" wasn't checked, and also the allocation
-> wasn't freed on error paths.  Sjur Br=E6ndeland pointed out as well
-> that "phy_driver" should be freed on the error path too.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The allocation could fail so we should check, or other errors could
+happen and we should free the "phyinfo" variable.
 
-Looks good, thank you Dan.
-Acked-by: Sjur Br=E6ndeland <sjur.brandeland@stericsson.com>
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+diff --git a/net/caif/cfcnfg.c b/net/caif/cfcnfg.c
+index f07ab8c..b213b53 100644
+--- a/net/caif/cfcnfg.c
++++ b/net/caif/cfcnfg.c
+@@ -467,7 +467,7 @@ cfcnfg_add_phy_layer(struct cfcnfg *cnfg, enum cfcnfg_phy_type phy_type,
+ {
+ 	struct cflayer *frml;
+ 	struct cflayer *phy_driver = NULL;
+-	struct cfcnfg_phyinfo *phyinfo;
++	struct cfcnfg_phyinfo *phyinfo = NULL;
+ 	int i;
+ 	u8 phyid;
+ 
+@@ -482,23 +482,25 @@ cfcnfg_add_phy_layer(struct cfcnfg *cnfg, enum cfcnfg_phy_type phy_type,
+ 			goto got_phyid;
+ 	}
+ 	pr_warn("Too many CAIF Link Layers (max 6)\n");
+-	goto out;
++	goto out_err;
+ 
+ got_phyid:
+ 	phyinfo = kzalloc(sizeof(struct cfcnfg_phyinfo), GFP_ATOMIC);
++	if (!phyinfo)
++		goto out_err;
+ 
+ 	switch (phy_type) {
+ 	case CFPHYTYPE_FRAG:
+ 		phy_driver  		    cfserl_create(CFPHYTYPE_FRAG, phyid, stx);
+ 		if (!phy_driver)
+-			goto out;
++			goto out_err;
+ 		break;
+ 	case CFPHYTYPE_CAIF:
+ 		phy_driver = NULL;
+ 		break;
+ 	default:
+-		goto out;
++		goto out_err;
+ 	}
+ 	phy_layer->id = phyid;
+ 	phyinfo->pref = pref;
+@@ -512,10 +514,8 @@ got_phyid:
+ 
+ 	frml = cffrml_create(phyid, fcs);
+ 
+-	if (!frml) {
+-		kfree(phyinfo);
+-		goto out;
+-	}
++	if (!frml)
++		goto out_err;
+ 	phyinfo->frm_layer = frml;
+ 	layer_set_up(frml, cnfg->mux);
+ 
+@@ -531,7 +531,11 @@ got_phyid:
+ 	}
+ 
+ 	list_add_rcu(&phyinfo->node, &cnfg->phys);
+-out:
++	mutex_unlock(&cnfg->lock);
++	return;
++
++out_err:
++	kfree(phyinfo);
+ 	mutex_unlock(&cnfg->lock);
+ }
+ EXPORT_SYMBOL(cfcnfg_add_phy_layer);
