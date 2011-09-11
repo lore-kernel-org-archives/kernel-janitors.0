@@ -1,74 +1,40 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Thu, 01 Sep 2011 11:30:15 +0000
-Subject: Re: [PATCH 1/1 -next] 6LoWPAN: fix skb_copy call
-Message-Id: <1314876615.2823.3.camel@edumazet-HP-Compaq-6005-Pro-SFF-PC>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sun, 11 Sep 2011 18:07:30 +0000
+Subject: [PATCH] sound/soc/kirkwood/kirkwood-i2s.c: fix trivial build regression
+Message-Id: <3099701.CcMbBAJgz4@wuerfel>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1314879675-31989-1-git-send-email-alex.bluesman.smirnov@gmail.com>
-In-Reply-To: <1314879675-31989-1-git-send-email-alex.bluesman.smirnov@gmail.com>
+References: <1313820761-12042-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1313820761-12042-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
-Cc: davem@davemloft.net, dbaryshkov@gmail.com, slapin@ossfans.org, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <julia@diku.dk>
+Cc: alsa-devel@alsa-project.org, Greg Kroah-Hartman <gregkh@suse.de>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Arnaud Patard <arnaud.patard@rtp-net.org>
 
-Le jeudi 01 septembre 2011 à 16:21 +0400, Alexander Smirnov a écrit :
-> This patch fixes 2 issues in lowpan_skb_deliver function:
-> 1. Check for return status of skb_copy call;
-> 2. Use skb_copy with proper GFP flag depending on context.
+A fix merged in 3.1-rc2 introduced a small regression, this should get it
+to build again.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+On Saturday 20 August 2011 08:12:38 Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Adjust the goto to jump to the error handling code that includes kfree.
 > 
 
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
+/home/arnd/linux-arm/sound/soc/kirkwood/kirkwood-i2s.c: In function 'kirkwood_i2s_dev_probe':
+/home/arnd/linux-arm/sound/soc/kirkwood/kirkwood-i2s.c:427:3: error: label 'error_alloc' used but not defined
 
-patch adds a new bug, see below
-
-> Signed-off-by: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
-> ---
->  net/ieee802154/6lowpan.c |   18 +++++++++++++++---
->  1 files changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
-> index cf304cc..cac1361 100644
-> --- a/net/ieee802154/6lowpan.c
-> +++ b/net/ieee802154/6lowpan.c
-> @@ -477,9 +477,15 @@ static int lowpan_skb_deliver(struct sk_buff *skb, struct ipv6hdr *hdr)
->  	struct sk_buff *new;
->  	struct lowpan_dev_record *entry;
->  	int stat = NET_RX_SUCCESS;
-> +	gfp_t mask;
->  
-> -	new = skb_copy_expand(skb, sizeof(struct ipv6hdr), skb_tailroom(skb),
-> -								GFP_KERNEL);
-> +	if (in_interrupt())
-> +		mask = GFP_ATOMIC;
-> +	else
-> +		mask = GFP_KERNEL;
-> +
-> +	new = skb_copy_expand(skb, sizeof(struct ipv6hdr),
-> +					skb_tailroom(skb), mask);
->  	kfree_skb(skb);
->  
->  	if (NULL = new)
-> @@ -495,7 +501,13 @@ static int lowpan_skb_deliver(struct sk_buff *skb, struct ipv6hdr *hdr)
->  	rcu_read_lock();
->  	list_for_each_entry_rcu(entry, &lowpan_devices, list)
->  		if (lowpan_dev_info(entry->ldev)->real_dev = new->dev) {
-> -			skb = skb_copy(new, GFP_KERNEL);
-> +			skb = skb_copy(new, mask);
-> +
-> +			if (NULL = skb) {
-> +				kfree_skb(new);
-
-rcu_read_unlock() missing.
-
-	just do : 
-			stat = -ENOMEM;
-			break; (to exit from list_for_each_entry_rcu()) 
-
-> +				return -ENOMEM;
-> +			}
-> +
->  			skb->dev = entry->ldev;
->  
->  			if (in_interrupt())
-
-
+diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
+index 8f16cd3..d0bcf3f 100644
+--- a/sound/soc/kirkwood/kirkwood-i2s.c
++++ b/sound/soc/kirkwood/kirkwood-i2s.c
+@@ -424,7 +424,7 @@ static __devinit int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 	if (!priv->mem) {
+ 		dev_err(&pdev->dev, "request_mem_region failed\n");
+ 		err = -EBUSY;
+-		goto error_alloc;
++		goto err_alloc;
+ 	}
+ 
+ 	priv->io = ioremap(priv->mem->start, SZ_16K);
