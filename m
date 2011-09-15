@@ -1,82 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 23 Sep 2011 06:32:01 +0000
-Subject: Re: [patch 2/2] ALSA: hdspm - cleanup __user tags in ioctl()
-Message-Id: <s5hipojg466.wl%tiwai@suse.de>
+From: Chris Peterson <cpeterso@cpeterso.com>
+Date: Thu, 15 Sep 2011 06:39:19 +0000
+Subject: [PATCH] drivers/staging/comedi/drivers/ni_stc.h: rename prototype parameter from 'register' to 'reg'
+Message-Id: <1316068759-3460-1-git-send-email-cpeterso@cpeterso.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110923062504.GJ4387@elgon.mountain>
-In-Reply-To: <20110923062504.GJ4387@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Adrian Knoth <adi@drcomp.erfurt.thur.de>, Florian Faber <faber@faberman.de>, Fredrik Lingvall <fredrik.lingvall@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-At Fri, 23 Sep 2011 09:25:05 +0300,
-Dan Carpenter wrote:
-> 
-> This makes the code cleaner and silences a Sparse complaint:
-> sound/pci/rme9652/hdspm.c:6341:23: warning: incorrect type in assignment (incompatible argument 4 (different address spaces))
-> sound/pci/rme9652/hdspm.c:6341:23:    expected int ( *ioctl )( ... )
-> sound/pci/rme9652/hdspm.c:6341:23:    got int ( static [toplevel] *<noident> )( ... )
-> sound/pci/rme9652/hdspm.c:6102:44: warning: dereference of noderef expression
-> sound/pci/rme9652/hdspm.c:6225:50: warning: dereference of noderef expression
-> sound/pci/rme9652/hdspm.c:6264:50: warning: dereference of noderef expression
-> sound/pci/rme9652/hdspm.c:6283:50: warning: dereference of noderef expression
-> sound/pci/rme9652/hdspm.c:6289:59: warning: dereference of noderef expression
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+gcc -Wextra warns "‘register’ is not at beginning of declaration" because the
+compiler thinks the parameter has been marked as a 'register' variable, but
+the function prototype intended to name the parameter "register" (which is a
+reserved keyword).
 
-Applied now.  Thanks.
+Signed-off-by: Chris Peterson <cpeterso@cpeterso.com>
+---
+ drivers/staging/comedi/drivers/ni_stc.h |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/staging/comedi/drivers/ni_stc.h b/drivers/staging/comedi/drivers/ni_stc.h
+index 504ea71..7f09388 100644
+--- a/drivers/staging/comedi/drivers/ni_stc.h
++++ b/drivers/staging/comedi/drivers/ni_stc.h
+@@ -1429,10 +1429,10 @@ struct ni_board_struct {
+ #define NUM_GPCT 2
+ 
+ #define NI_PRIVATE_COMMON					\
+-	uint16_t (*stc_readw)(struct comedi_device *dev, int register);	\
+-	uint32_t (*stc_readl)(struct comedi_device *dev, int register);	\
+-	void (*stc_writew)(struct comedi_device *dev, uint16_t value, int register);	\
+-	void (*stc_writel)(struct comedi_device *dev, uint32_t value, int register);	\
++	uint16_t (*stc_readw)(struct comedi_device *dev, int reg);	\
++	uint32_t (*stc_readl)(struct comedi_device *dev, int reg);	\
++	void (*stc_writew)(struct comedi_device *dev, uint16_t value, int reg);	\
++	void (*stc_writel)(struct comedi_device *dev, uint32_t value, int reg);	\
+ 	\
+ 	unsigned short dio_output;				\
+ 	unsigned short dio_control;				\
+-- 
+1.7.4.1
 
-Takashi
-
-
-> diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
-> index bf438d1..6e2f7ef 100644
-> --- a/sound/pci/rme9652/hdspm.c
-> +++ b/sound/pci/rme9652/hdspm.c
-> @@ -6097,7 +6097,7 @@ static inline int copy_u32_le(void __user *dest, void __iomem *src)
->  }
->  
->  static int snd_hdspm_hwdep_ioctl(struct snd_hwdep *hw, struct file *file,
-> -		unsigned int cmd, unsigned long __user arg)
-> +		unsigned int cmd, unsigned long arg)
->  {
->  	void __user *argp = (void __user *)arg;
->  	struct hdspm *hdspm = hw->private_data;
-> @@ -6222,7 +6222,7 @@ static int snd_hdspm_hwdep_ioctl(struct snd_hwdep *hw, struct file *file,
->  		info.line_out = hdspm_line_out(hdspm);
->  		info.passthru = 0;
->  		spin_unlock_irq(&hdspm->lock);
-> -		if (copy_to_user((void __user *) arg, &info, sizeof(info)))
-> +		if (copy_to_user(argp, &info, sizeof(info)))
->  			return -EFAULT;
->  		break;
->  
-> @@ -6261,7 +6261,7 @@ static int snd_hdspm_hwdep_ioctl(struct snd_hwdep *hw, struct file *file,
->  			break;
->  		}
->  
-> -		if (copy_to_user((void __user *) arg, &status, sizeof(status)))
-> +		if (copy_to_user(argp, &status, sizeof(status)))
->  			return -EFAULT;
->  
->  
-> @@ -6280,13 +6280,13 @@ static int snd_hdspm_hwdep_ioctl(struct snd_hwdep *hw, struct file *file,
->  		if (hdspm->tco)
->  			hdspm_version.addons |= HDSPM_ADDON_TCO;
->  
-> -		if (copy_to_user((void __user *) arg, &hdspm_version,
-> +		if (copy_to_user(argp, &hdspm_version,
->  					sizeof(hdspm_version)))
->  			return -EFAULT;
->  		break;
->  
->  	case SNDRV_HDSPM_IOCTL_GET_MIXER:
-> -		if (copy_from_user(&mixer, (void __user *)arg, sizeof(mixer)))
-> +		if (copy_from_user(&mixer, argp, sizeof(mixer)))
->  			return -EFAULT;
->  		if (copy_to_user((void __user *)mixer.mixer, hdspm->mixer,
->  					sizeof(struct hdspm_mixer)))
-> 
