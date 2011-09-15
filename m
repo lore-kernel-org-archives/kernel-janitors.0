@@ -1,31 +1,21 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Thu, 01 Sep 2011 15:06:17 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 15 Sep 2011 19:42:15 +0000
 Subject: Re: [patch 1/3 -next] 6LoWPAN: use kfree_skb() instead of kfree()
-Message-Id: <20110901150617.GL3705@shale.localdomain>
+Message-Id: <20110915.154215.1411618323112273295.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110830134552.GH3705@shale.localdomain>
- <1314715248.2935.25.camel@edumazet-HP-Compaq-6005-Pro-SFF-PC>
- <CAJmB2rBid27YYT4f6vMtBf9EMFWZQgT=xO85z4OBz326pUT+4A@mail.gmail.com>
- <20110901150425.GK3705@shale.localdomain>
-In-Reply-To: <20110901150425.GK3705@shale.localdomain>
+In-Reply-To: <20110830134552.GH3705-z0WHZYlhLlzP0Z7Jsv878P8+0UxHXcjY@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Sergey Lapin <slapin@ossfans.org>, "David S. Miller" <davem@davemloft.net>, "open list:IEEE 802.15.4 SUB..." <linux-zigbee-devel@lists.sourceforge.net>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-zigbee-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 
-On Thu, Sep 01, 2011 at 06:04:25PM +0300, Dan Carpenter wrote:
-> On Thu, Sep 01, 2011 at 01:26:02PM +0400, Alexander Smirnov wrote:
-> > Hi Dan, Eric,
-> > 
-> > thank you a lot for the finds, that were my faults.
-> > 
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 30 Aug 2011 16:45:52 +0300
+
+> Use kfree_skb() to free sbk_buffs.
 > 
-> So uh...  You're going to send a patch to fix the things Eric
-> mentioned, right?
-> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-Ah.  You did already.  I see that now.  Sorry for the noise.
-
-regards,
-dan carpenter
+Applied.
