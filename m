@@ -1,27 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Sep 2011 06:10:06 +0000
-Subject: [patch] [media] dib9000: release a lock on error
-Message-Id: <20110929061006.GB4104@elgon.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 15 Sep 2011 19:42:29 +0000
+Subject: Re: [patch 3/3 -next] 6LoWPAN: call dev_put() on error in
+Message-Id: <20110915.154229.2135105151765674100.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110830135109.GJ3705@shale.localdomain>
+In-Reply-To: <20110830135109.GJ3705-z0WHZYlhLlzP0Z7Jsv878P8+0UxHXcjY@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Patrick Boettcher <Patrick.Boettcher@dibcom.fr>, Olivier Grenie <olivier.grenie@dibcom.fr>, Jesper Juhl <jj@chaosbits.net>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-zigbee-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 
-This lock should be released as well on the error path.
+From: Dan Carpenter <error27@gmail.com>
+Date: Tue, 30 Aug 2011 16:51:09 +0300
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> We should release the dev_hold() on error before returning here.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/media/dvb/frontends/dib9000.c b/drivers/media/dvb/frontends/dib9000.c
-index e276b11..660f806 100644
---- a/drivers/media/dvb/frontends/dib9000.c
-+++ b/drivers/media/dvb/frontends/dib9000.c
-@@ -2169,6 +2169,7 @@ static int dib9000_read_ber(struct dvb_frontend *fe, u32 * ber)
- 	DibAcquireLock(&state->demod_lock);
- 	DibAcquireLock(&state->platform.risc.mem_mbx_lock);
- 	if (dib9000_fw_memmbx_sync(state, FE_SYNC_CHANNEL) < 0) {
-+		DibReleaseLock(&state->platform.risc.mem_mbx_lock);
- 		ret = -EIO;
- 		goto error;
- 	}
+Applied.
