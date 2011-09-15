@@ -1,67 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Sep 2011 06:12:06 +0000
-Subject: [patch] bio: change some signed vars to unsigned
-Message-Id: <20110921061206.GA4999@elgon.mountain>
+From: Chris Peterson <cpeterso@cpeterso.com>
+Date: Thu, 15 Sep 2011 06:43:43 +0000
+Subject: [PATCH] drivers/net/wireless/airo.c: rename prototype parameter from 'register' to 'reg'
+Message-Id: <1316069023-3524-1-git-send-email-cpeterso@cpeterso.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jens Axboe <jaxboe@fusionio.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-This is just a cleanup patch to silence a static checker warning.
+gcc -Wextra warns "‘register’ is not at beginning of declaration" because the
+compiler thinks the parameter has been marked as a 'register' variable, but
+the function prototype intended to name the parameter "register" (which is a
+reserved keyword).
 
-The problem is that we cap "nr_iovecs" so it can't be larger than
-"UIO_MAXIOV" but we don't check for negative values.  It turns out
-this is prevented at other layers, but logically it doesn't make
-sense to have negative nr_iovecs so making it unsigned is nicer.
+Signed-off-by: Chris Peterson <cpeterso@cpeterso.com>
+---
+ drivers/net/wireless/airo.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
+index e1b3e3c..ba266c1 100644
+--- a/drivers/net/wireless/airo.c
++++ b/drivers/net/wireless/airo.c
+@@ -1102,8 +1102,8 @@ static const char version[] = "airo.c 0.6 (Ben Reed & Javier Achirica)";
+ struct airo_info;
+ 
+ static int get_dec_u16( char *buffer, int *start, int limit );
+-static void OUT4500( struct airo_info *, u16 register, u16 value );
+-static unsigned short IN4500( struct airo_info *, u16 register );
++static void OUT4500(struct airo_info *, u16 reg, u16 value);
++static unsigned short IN4500(struct airo_info *, u16 reg);
+ static u16 setup_card(struct airo_info*, u8 *mac, int lock);
+ static int enable_MAC(struct airo_info *ai, int lock);
+ static void disable_MAC(struct airo_info *ai, int lock);
+-- 
+1.7.4.1
 
-diff --git a/fs/bio.c b/fs/bio.c
-index 9bfade8..93e7143 100644
---- a/fs/bio.c
-+++ b/fs/bio.c
-@@ -338,7 +338,7 @@ static void bio_fs_destructor(struct bio *bio)
-  *	RETURNS:
-  *	Pointer to new bio on success, NULL on failure.
-  */
--struct bio *bio_alloc(gfp_t gfp_mask, int nr_iovecs)
-+struct bio *bio_alloc(gfp_t gfp_mask, unsigned int nr_iovecs)
- {
- 	struct bio *bio = bio_alloc_bioset(gfp_mask, nr_iovecs, fs_bio_set);
- 
-@@ -366,7 +366,7 @@ static void bio_kmalloc_destructor(struct bio *bio)
-  *   %__GFP_WAIT, the allocation is guaranteed to succeed.
-  *
-  **/
--struct bio *bio_kmalloc(gfp_t gfp_mask, int nr_iovecs)
-+struct bio *bio_kmalloc(gfp_t gfp_mask, unsigned int nr_iovecs)
- {
- 	struct bio *bio;
- 
-@@ -697,7 +697,8 @@ static void bio_free_map_data(struct bio_map_data *bmd)
- 	kfree(bmd);
- }
- 
--static struct bio_map_data *bio_alloc_map_data(int nr_segs, int iov_count,
-+static struct bio_map_data *bio_alloc_map_data(int nr_segs,
-+					       unsigned int iov_count,
- 					       gfp_t gfp_mask)
- {
- 	struct bio_map_data *bmd;
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index ce33e68..09867ad 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -211,8 +211,8 @@ extern void bio_pair_release(struct bio_pair *dbio);
- extern struct bio_set *bioset_create(unsigned int, unsigned int);
- extern void bioset_free(struct bio_set *);
- 
--extern struct bio *bio_alloc(gfp_t, int);
--extern struct bio *bio_kmalloc(gfp_t, int);
-+extern struct bio *bio_alloc(gfp_t, unsigned int);
-+extern struct bio *bio_kmalloc(gfp_t, unsigned int);
- extern struct bio *bio_alloc_bioset(gfp_t, int, struct bio_set *);
- extern void bio_put(struct bio *);
- extern void bio_free(struct bio *, struct bio_set *);
