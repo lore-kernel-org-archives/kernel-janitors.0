@@ -1,44 +1,36 @@
-From: Venkateswararao Jujjuri <jvrao@linux.vnet.ibm.com>
-Date: Wed, 07 Sep 2011 15:31:16 +0000
-Subject: Re: [patch 1/2] 9p: move dereference after NULL check
-Message-Id: <4E678E44.1020204@linux.vnet.ibm.com>
+From: Chris Peterson <cpeterso@cpeterso.com>
+Date: Thu, 15 Sep 2011 06:36:13 +0000
+Subject: [PATCH] drivers/isdn/hardware/eicon/platform.h: rename prototype parameter from 'register' to 'reg'
+Message-Id: <1316068573-3337-1-git-send-email-cpeterso@cpeterso.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110826165559.GE3775@shale.localdomain>
-In-Reply-To: <20110826165559.GE3775@shale.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, "David S. Miller" <davem@davemloft.net>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, "M. Mohan Kumar" <mohan@in.ibm.com>, "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On 08/26/2011 09:55 AM, Dan Carpenter wrote:
-> We dereferenced "req->tc" and "req->rc" before checking for NULL.
->
-> Signed-off-by: Dan Carpenter<error27@gmail.com>
-Reviewed-by: Venkateswararao Jujjuri <jvrao@linux.vnet.ibm.com>
->
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 3f8c046..b0bcace 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -248,10 +248,8 @@ static struct p9_req_t *p9_tag_alloc(struct p9_client *c, u16 tag, int max_size)
->   		init_waitqueue_head(req->wq);
->   		req->tc = kmalloc(sizeof(struct p9_fcall) + alloc_msize,
->   				  GFP_NOFS);
-> -		req->tc->capacity = alloc_msize;
->   		req->rc = kmalloc(sizeof(struct p9_fcall) + alloc_msize,
->   				  GFP_NOFS);
-> -		req->rc->capacity = alloc_msize;
->   		if ((!req->tc) || (!req->rc)) {
->   			printk(KERN_ERR "Couldn't grow tag array\n");
->   			kfree(req->tc);
-> @@ -261,6 +259,8 @@ static struct p9_req_t *p9_tag_alloc(struct p9_client *c, u16 tag, int max_size)
->   			req->wq = NULL;
->   			return ERR_PTR(-ENOMEM);
->   		}
-> +		req->tc->capacity = alloc_msize;
-> +		req->rc->capacity = alloc_msize;
->   		req->tc->sdata = (char *) req->tc + sizeof(struct p9_fcall);
->   		req->rc->sdata = (char *) req->rc + sizeof(struct p9_fcall);
->   	}
+gcc -Wextra warns "‘register’ is not at beginning of declaration" because the
+compiler thinks the parameter has been marked as a 'register' variable, but
+the function prototype intended to name the parameter "register" (which is a
+reserved keyword).
+
+Signed-off-by: Chris Peterson <cpeterso@cpeterso.com>
+---
+ drivers/isdn/hardware/eicon/platform.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/isdn/hardware/eicon/platform.h b/drivers/isdn/hardware/eicon/platform.h
+index 15d4942..c36fffe 100644
+--- a/drivers/isdn/hardware/eicon/platform.h
++++ b/drivers/isdn/hardware/eicon/platform.h
+@@ -206,7 +206,7 @@ void PCIread (byte bus, byte func, int offset, void* data, int length, void* pci
+ /*
+ **  I/O Port utilities
+ */
+-int diva_os_register_io_port (void *adapter, int register, unsigned long port,
++int diva_os_register_io_port (void *adapter, int on, unsigned long port,
+ 				unsigned long length, const char* name, int id);
+ /*
+ **  I/O port access abstraction
+-- 
+1.7.4.1
 
