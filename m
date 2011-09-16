@@ -1,29 +1,51 @@
-From: Zic Rim <zicrim@gmail.com>
-Date: Sat, 24 Sep 2011 10:12:56 +0000
-Subject: [patch] Add static keyword to drivers/rtc/rtc-pm8xxx.c
-Message-Id: <CAMvewQ+upPy6tPy57G8AqWDmLdtES7uF1knvO5mjgWkEJKj5Vw@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 16 Sep 2011 06:57:35 +0000
+Subject: [PATCH 4/4] arch/xtensa/kernel/process.c: take size of pointed value, not pointer
+Message-Id: <1316156255-19509-4-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Zankel <chris@zankel.net>
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Mike Frysinger <vapier@gentoo.org>, Arun Sharma <asharma@fb.com>, linux-kernel@vger.kernel.org
 
-M it static like all the other drivers do SIMPLE_DEV_PM_OPS
-.pm8xxx_rtc_pm_ops is not used outside this file.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Navin P <zicrim@gmail.com>
+Sizeof a pointer-typed expression returns the size of the pointer, not that
+of the pointed data.
 
-diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-index d420e9d..c9c5ee1 100644
---- a/drivers/rtc/rtc-pm8xxx.c
-+++ b/drivers/rtc/rtc-pm8xxx.c
-@@ -520,7 +520,7 @@ static int pm8xxx_rtc_suspend(struct device *dev)
- }
- #endif
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
--SIMPLE_DEV_PM_OPS(pm8xxx_rtc_pm_ops, pm8xxx_rtc_suspend, pm8xxx_rtc_resume);
-+static SIMPLE_DEV_PM_OPS(pm8xxx_rtc_pm_ops, pm8xxx_rtc_suspend,
-pm8xxx_rtc_resume);
+// <smpl>
+@@
+expression *e;
+type T;
+identifier f;
+@@
 
- static struct platform_driver pm8xxx_rtc_driver = {
-        .probe          = pm8xxx_rtc_probe,
+f(...,(T)e,...,
+-sizeof(e)
++sizeof(*e)
+,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ arch/xtensa/kernel/process.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/arch/xtensa/kernel/process.c b/arch/xtensa/kernel/process.c
+--- a/arch/xtensa/kernel/process.c
++++ b/arch/xtensa/kernel/process.c
+@@ -277,7 +277,7 @@ void xtensa_elf_core_copy_regs (xtensa_g
+ 
+ 	/* Don't leak any random bits. */
+ 
+-	memset(elfregs, 0, sizeof (elfregs));
++	memset(elfregs, 0, sizeof(*elfregs));
+ 
+ 	/* Note:  PS.EXCM is not set while user task is running; its
+ 	 * being set in regs->ps is for exception handling convenience.
+
