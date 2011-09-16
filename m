@@ -1,24 +1,51 @@
-From: "Mr. Urbanski Marek" <urmarek02@gmail.com>
-Date: Wed, 28 Sep 2011 18:55:03 +0000
-Subject: Re: Hello
-Message-Id: <20110928185449.6C8B02C8F1@smtp.ruc.dk>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 16 Sep 2011 06:57:32 +0000
+Subject: [PATCH 1/4] drivers/block/xen-blkback/blkback.c: take size of pointed value, not pointer
+Message-Id: <1316156255-19509-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <78525548330.aj761KKLtwgY78041@vesper8.clergy36hotmail.com>
-In-Reply-To: <78525548330.aj761KKLtwgY78041@vesper8.clergy36hotmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Jan Beulich <jbeulich@novell.com>, linux-kernel@vger.kernel.org
 
-Dear Friend,
+From: Julia Lawall <julia@diku.dk>
 
-I have a  profiling sum in an excess of 30M (Thirty Million Euros) which I seek your partnership in accommodating. The documents of the above funds in question were handed over to me by  my boss  (Andrzej Kremer, Deputy Foreign Minister).Below are sites from BBC and other international reporters as regards my story;
+Sizeof a pointer-typed expression returns the size of the pointer, not that
+of the pointed data.
 
-http://news.bbc.co.uk/1/hi/uk/8613884.stm
-http://www.economist.com/blogs/charlemagne/2010/04/polands_plane_crash
-http://www.timesonline.co.uk/tol/comment/article7094224.ece
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression *e;
+type T;
+identifier f;
+@@
+
+f(...,(T)e,...,
+-sizeof(e)
++sizeof(*e)
+,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/block/xen-blkback/blkback.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -790,7 +790,7 @@ static int __init xen_blkif_init(void)
+ 	if (rc)
+ 		goto failed_init;
  
-Please reply if interested, I will give you more details,  your role, how legal and genuine this transaction is and as we progress you shall see all the legal documents. You will be rewarded with 30% of the total sum for your partnership.
+-	memset(blkbk->pending_reqs, 0, sizeof(blkbk->pending_reqs));
++	memset(blkbk->pending_reqs, 0, sizeof(*blkbk->pending_reqs));
+ 
+ 	INIT_LIST_HEAD(&blkbk->pending_free);
+ 	spin_lock_init(&blkbk->pending_free_lock);
 
-Yours truly,
-Mr. Urbanski Marek
