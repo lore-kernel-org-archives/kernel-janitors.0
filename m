@@ -1,40 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Sep 2011 20:50:30 +0000
-Subject: Re: [patch] bluetooth: hci_ll: clean up types a bit
-Message-Id: <20110929205030.GH10999@longonot.mountain>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 16 Sep 2011 06:57:33 +0000
+Subject: [PATCH 2/4] drivers/staging/mei/interface.c: take size of pointed value, not pointer
+Message-Id: <1316156255-19509-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110926061412.GA11832@elgon.mountain>
- <20110929192847.GD2605@joana>
-In-Reply-To: <20110929192847.GD2605@joana>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>, Oren Weil <oren.jer.weil@intel.com>, Itzhak Tzeel-Krupp <itzhak.tzeel-krupp@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 29, 2011 at 04:28:47PM -0300, Gustavo Padovan wrote:
-> Hi Dan,
-> 
-> * Dan Carpenter <dan.carpenter@oracle.com> [2011-09-26 09:14:12 +0300]:
-> 
-> > I'm doing an audit of places where min_t() casting truncates a
-> > variable such as:
-> > 	len = min_t(unsigned int, ll->rx_count, count);
-> > Here ll->rx_count is unsigned long, but we cast it to unsigned int
-> > and lose the significant bits.
-> > 
-> > Looking at the code ->rx_count is never more than 256 so we could
-> > just make it an int.
-> 
-> Where is this 256 maximum? I'm not seeing it?
-> 
+From: Julia Lawall <julia@diku.dk>
 
-I'm sorry for this, I was wrong.  I'm not sure where I got that...
-I can see at least one place where it goes up to USHRT_MAX in
-the case of HCILL_W4_ACL_HDR.
+Sizeof a pointer-typed expression returns the size of the pointer, not that
+of the pointed data.
 
-I still think the patch is basically correct, but let me take another
-look and resend with an updated commit message.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+expression *e;
+type T;
+identifier f;
+@@
+
+f(...,(T)e,...,
+-sizeof(e)
++sizeof(*e)
+,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/staging/mei/interface.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/staging/mei/interface.c b/drivers/staging/mei/interface.c
+--- a/drivers/staging/mei/interface.c
++++ b/drivers/staging/mei/interface.c
+@@ -332,7 +332,7 @@ int mei_send_flow_control(struct mei_dev
+ 	mei_hdr->reserved = 0;
+ 
+ 	mei_flow_control = (struct hbm_flow_control *) &dev->wr_msg_buf[1];
+-	memset(mei_flow_control, 0, sizeof(mei_flow_control));
++	memset(mei_flow_control, 0, sizeof(*mei_flow_control));
+ 	mei_flow_control->host_addr = cl->host_client_id;
+ 	mei_flow_control->me_addr = cl->me_client_id;
+ 	mei_flow_control->cmd.cmd = MEI_FLOW_CONTROL_CMD;
+@@ -396,7 +396,7 @@ int mei_disconnect(struct mei_device *de
+ 
+ 	mei_cli_disconnect  	    (struct hbm_client_disconnect_request *) &dev->wr_msg_buf[1];
+-	memset(mei_cli_disconnect, 0, sizeof(mei_cli_disconnect));
++	memset(mei_cli_disconnect, 0, sizeof(*mei_cli_disconnect));
+ 	mei_cli_disconnect->host_addr = cl->host_client_id;
+ 	mei_cli_disconnect->me_addr = cl->me_client_id;
+ 	mei_cli_disconnect->cmd.cmd = CLIENT_DISCONNECT_REQ_CMD;
 
