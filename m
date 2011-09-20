@@ -1,54 +1,29 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Wed, 21 Sep 2011 18:05:14 +0000
-Subject: RE: [patch 2/2] mwifiex: remove unneeded NULL check
-Message-Id: <477F20668A386D41ADCC57781B1F704308153E17A1@SC-VEXCH1.marvell.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 20 Sep 2011 07:03:36 +0000
+Subject: [patch] suspend: off by one in pm_suspend()
+Message-Id: <20110920070336.GA19289@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110921071356.GG4999@elgon.mountain>
-In-Reply-To: <20110921071356.GG4999@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+In enter_state() we use "state" as an offset for the pm_states[]
+array.  The pm_states[] array only has PM_SUSPEND_MAX elements so
+this test is off by one.
 
-Thanks for the patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday, September 21, 2011 12:14 AM
-> To: Bing Zhao
-> Cc: John W. Linville; linux-wireless@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch 2/2] mwifiex: remove unneeded NULL check
-> 
-> We dereference "rate" on the lines before so the checks here are too
-> late to help.  This function is only called from
-> mwifiex_dump_station_info() and "rate" is always a non-NULL pointer
-> so the check can be removed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Bing Zhao <bzhao@marvell.com>
-
-Thanks,
-Bing
-
-> 
-> diff --git a/drivers/net/wireless/mwifiex/sta_ioctl.c b/drivers/net/wireless/mwifiex/sta_ioctl.c
-> index 215c65a..1df5ef6 100644
-> --- a/drivers/net/wireless/mwifiex/sta_ioctl.c
-> +++ b/drivers/net/wireless/mwifiex/sta_ioctl.c
-> @@ -868,10 +868,10 @@ int mwifiex_drv_get_data_rate(struct mwifiex_private *priv,
->  	ret = mwifiex_rate_ioctl_cfg(priv, rate);
-> 
->  	if (!ret) {
-> -		if (rate && rate->is_rate_auto)
-> +		if (rate->is_rate_auto)
->  			rate->rate = mwifiex_index_to_data_rate(priv->tx_rate,
->  							priv->tx_htinfo);
-> -		else if (rate)
-> +		else
->  			rate->rate = priv->data_rate;
->  	} else {
->  		ret = -1;
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 1d58583..4953dc0 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -321,7 +321,7 @@ int enter_state(suspend_state_t state)
+ int pm_suspend(suspend_state_t state)
+ {
+ 	int ret;
+-	if (state > PM_SUSPEND_ON && state <= PM_SUSPEND_MAX) {
++	if (state > PM_SUSPEND_ON && state < PM_SUSPEND_MAX) {
+ 		ret = enter_state(state);
+ 		if (ret) {
+ 			suspend_stats.fail++;
