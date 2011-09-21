@@ -1,60 +1,67 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Sep 2011 07:16:24 +0000
-Subject: [patch] smscufx: change edid data to u8 instead of char
-Message-Id: <20110921071623.GH4999@elgon.mountain>
+Date: Wed, 21 Sep 2011 06:12:06 +0000
+Subject: [patch] bio: change some signed vars to unsigned
+Message-Id: <20110921061206.GA4999@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Jens Axboe <jaxboe@fusionio.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Having "edid" as char caused a problem in ufx_read_edid() where we
-compared "edid[i] != 0xFF".  Because of the type difference, the
-condition was never true and the error checking failed.
+This is just a cleanup patch to silence a static checker warning.
 
-Also I added a __user notation to silence a sparse complaint.
+The problem is that we cap "nr_iovecs" so it can't be larger than
+"UIO_MAXIOV" but we don't check for negative values.  It turns out
+this is prevented at other layers, but logically it doesn't make
+sense to have negative nr_iovecs so making it unsigned is nicer.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Compile tested only.  Please test carefully.
+Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-diff --git a/drivers/video/smscufx.c b/drivers/video/smscufx.c
-index 44c8cab..aaccffa 100644
---- a/drivers/video/smscufx.c
-+++ b/drivers/video/smscufx.c
-@@ -103,7 +103,7 @@ struct ufx_data {
- 	struct delayed_work free_framebuffer_work;
- 	atomic_t usb_active; /* 0 = update virtual buffer, but no usb traffic */
- 	atomic_t lost_pixels; /* 1 = a render op failed. Need screen refresh */
--	char *edid; /* null until we read edid from hw or get from sysfs */
-+	u8 *edid; /* null until we read edid from hw or get from sysfs */
- 	size_t edid_size;
- 	u32 pseudo_palette[256];
- };
-@@ -993,7 +993,7 @@ static int ufx_ops_ioctl(struct fb_info *info, unsigned int cmd,
+diff --git a/fs/bio.c b/fs/bio.c
+index 9bfade8..93e7143 100644
+--- a/fs/bio.c
++++ b/fs/bio.c
+@@ -338,7 +338,7 @@ static void bio_fs_destructor(struct bio *bio)
+  *	RETURNS:
+  *	Pointer to new bio on success, NULL on failure.
+  */
+-struct bio *bio_alloc(gfp_t gfp_mask, int nr_iovecs)
++struct bio *bio_alloc(gfp_t gfp_mask, unsigned int nr_iovecs)
+ {
+ 	struct bio *bio = bio_alloc_bioset(gfp_mask, nr_iovecs, fs_bio_set);
  
- 	/* TODO: Update X server to get this from sysfs instead */
- 	if (cmd = UFX_IOCTL_RETURN_EDID) {
--		char *edid = (char *)arg;
-+		u8 __user *edid = (u8 __user *)arg;
- 		if (copy_to_user(edid, dev->edid, dev->edid_size))
- 			return -EFAULT;
- 		return 0;
-@@ -1428,7 +1428,7 @@ static int ufx_i2c_wait_busy(struct ufx_data *dev)
+@@ -366,7 +366,7 @@ static void bio_kmalloc_destructor(struct bio *bio)
+  *   %__GFP_WAIT, the allocation is guaranteed to succeed.
+  *
+  **/
+-struct bio *bio_kmalloc(gfp_t gfp_mask, int nr_iovecs)
++struct bio *bio_kmalloc(gfp_t gfp_mask, unsigned int nr_iovecs)
+ {
+ 	struct bio *bio;
+ 
+@@ -697,7 +697,8 @@ static void bio_free_map_data(struct bio_map_data *bmd)
+ 	kfree(bmd);
  }
  
- /* reads a 128-byte EDID block from the currently selected port and TAR */
--static int ufx_read_edid(struct ufx_data *dev, char *edid, int edid_len)
-+static int ufx_read_edid(struct ufx_data *dev, u8 *edid, int edid_len)
+-static struct bio_map_data *bio_alloc_map_data(int nr_segs, int iov_count,
++static struct bio_map_data *bio_alloc_map_data(int nr_segs,
++					       unsigned int iov_count,
+ 					       gfp_t gfp_mask)
  {
- 	int i, j, status;
- 	u32 *edid_u32 = (u32 *)edid;
-@@ -1491,7 +1491,7 @@ static int ufx_setup_modes(struct ufx_data *dev, struct fb_info *info,
- 	char *default_edid, size_t default_edid_size)
- {
- 	const struct fb_videomode *default_vmode = NULL;
--	char *edid;
-+	u8 *edid;
- 	int i, result = 0, tries = 3;
+ 	struct bio_map_data *bmd;
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index ce33e68..09867ad 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -211,8 +211,8 @@ extern void bio_pair_release(struct bio_pair *dbio);
+ extern struct bio_set *bioset_create(unsigned int, unsigned int);
+ extern void bioset_free(struct bio_set *);
  
- 	if (info->dev) /* only use mutex if info has been registered */
+-extern struct bio *bio_alloc(gfp_t, int);
+-extern struct bio *bio_kmalloc(gfp_t, int);
++extern struct bio *bio_alloc(gfp_t, unsigned int);
++extern struct bio *bio_kmalloc(gfp_t, unsigned int);
+ extern struct bio *bio_alloc_bioset(gfp_t, int, struct bio_set *);
+ extern void bio_put(struct bio *);
+ extern void bio_free(struct bio *, struct bio_set *);
