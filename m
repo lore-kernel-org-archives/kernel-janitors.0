@@ -1,47 +1,39 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Wed, 21 Sep 2011 18:05:14 +0000
-Subject: RE: [patch 1/2] mwifiex: add a kfree() to an error path
-Message-Id: <477F20668A386D41ADCC57781B1F704308153E17A2@SC-VEXCH1.marvell.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Sep 2011 06:19:46 +0000
+Subject: [patch] agp: potential info leak in compat_agpioc_info_wrap()
+Message-Id: <20110923061945.GC4387@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110921071329.GF4999@elgon.mountain>
-In-Reply-To: <20110921071329.GF4999@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: David Airlie <airlied@linux.ie>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Smatch has a new check for Rosenberg type information leaks where
+structs are copied to the user with uninitialized stack data in them.
 
-Thanks for the patch.
+The agp_info32 struct has a 4 byte hole in it so we need to clear
+that before copying it to userspace.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday, September 21, 2011 12:13 AM
-> To: Bing Zhao
-> Cc: John W. Linville; linux-wireless@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch 1/2] mwifiex: add a kfree() to an error path
-> 
-> We're not likely to hit this small memory leak, but lets fix it
-> anyway to keep the static checkers happy.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+struct agp_info32 {
+        struct agp_version         version;              /*     0     0 */
 
-Acked-by: Bing Zhao <bzhao@marvell.com>
+        /* XXX 4 bytes hole, try to pack */
 
-Thanks,
-Bing
+        u32                        bridge_id;            /*     4     4 */
 
-> 
-> diff --git a/drivers/net/wireless/mwifiex/sta_ioctl.c b/drivers/net/wireless/mwifiex/sta_ioctl.c
-> index eb569fa..215c65a 100644
-> --- a/drivers/net/wireless/mwifiex/sta_ioctl.c
-> +++ b/drivers/net/wireless/mwifiex/sta_ioctl.c
-> @@ -203,6 +203,7 @@ int mwifiex_bss_start(struct mwifiex_private *priv, struct cfg80211_bss *bss,
->  		beacon_ie = kmemdup(bss->information_elements,
->  					bss->len_beacon_ies, GFP_KERNEL);
->  		if (!beacon_ie) {
-> +			kfree(bss_desc);
->  			dev_err(priv->adapter->dev, " failed to alloc beacon_ie\n");
->  			return -ENOMEM;
->  		}
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/char/agp/compat_ioctl.c b/drivers/char/agp/compat_ioctl.c
+index a48e05b..0509497 100644
+--- a/drivers/char/agp/compat_ioctl.c
++++ b/drivers/char/agp/compat_ioctl.c
+@@ -42,6 +42,8 @@ static int compat_agpioc_info_wrap(struct agp_file_private *priv, void __user *a
+ 
+ 	agp_copy_info(agp_bridge, &kerninfo);
+ 
++	memset(&userinfo, 0, sizeof(userinfo));
++
+ 	userinfo.version.major = kerninfo.version.major;
+ 	userinfo.version.minor = kerninfo.version.minor;
+ 	userinfo.bridge_id = kerninfo.device->vendor |
