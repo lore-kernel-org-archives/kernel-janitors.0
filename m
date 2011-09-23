@@ -1,44 +1,41 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 29 Sep 2011 06:14:25 +0000
-Subject: Re: [patch] sound: oss: use strlcpy() in sound_timer_init()
-Message-Id: <s5hk48rc1tq.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Sep 2011 06:22:40 +0000
+Subject: [patch] Input: potential info leak in uiput_ff_upload_to_user()
+Message-Id: <20110923062240.GG4387@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110929061048.GC4104@elgon.mountain>
-In-Reply-To: <20110929061048.GC4104@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Henrik Rydberg <rydberg@euromail.se>, Ping Cheng <pingc@wacom.com>, Peter Hutterer <peter.hutterer@who-t.net>, Aristeu Rozanski <aris@ruivo.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 29 Sep 2011 09:10:48 +0300,
-Dan Carpenter wrote:
-> 
-> sound_timer.info.name is a 32 character buffer.  This function only
-> has one caller (in sound/oss/ad1848.c) and it passes as 128 character
-> buffer as "name".  I don't know if this is a problem in real life,
-> and I doubt we're going to add more OSS drivers so it's unlikely to
-> become an issue.  But we may as well take care of it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Smatch has a new check for Rosenberg type information leaks where
+structs are copied to the user with uninitialized stack data in them.
 
-Applied now.  Thanks.
+The issue here is that struct uinput_ff_upload_compat has a hole in
+it.
 
+struct uinput_ff_upload_compat {
+        int                        request_id;           /*     0     4 */
+        int                        retval;               /*     4     4 */
+        struct ff_effect_compat    effect;               /*     8     0 */
 
-Takashi
+        /* XXX 44 bytes hole, try to pack */
 
+        struct ff_effect_compat    old;                  /*    52     0 */
 
-> diff --git a/sound/oss/sound_timer.c b/sound/oss/sound_timer.c
-> index 48cda6c..8021c85 100644
-> --- a/sound/oss/sound_timer.c
-> +++ b/sound/oss/sound_timer.c
-> @@ -320,7 +320,7 @@ void  sound_timer_init(struct sound_lowlev_timer *t, char *name)
->  	n = sound_alloc_timerdev();
->  	if (n = -1)
->  		n = 0;		/* Overwrite the system timer */
-> -	strcpy(sound_timer.info.name, name);
-> +	strlcpy(sound_timer.info.name, name, sizeof(sound_timer.info.name));
->  	sound_timer_devs[n] = &sound_timer;
->  }
->  EXPORT_SYMBOL(sound_timer_init);
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
+index 7360568..40e2ba4 100644
+--- a/drivers/input/misc/uinput.c
++++ b/drivers/input/misc/uinput.c
+@@ -528,6 +528,8 @@ static int uinput_ff_upload_to_user(char __user *buffer,
+ 	if (INPUT_COMPAT_TEST) {
+ 		struct uinput_ff_upload_compat ff_up_compat;
+ 
++		memset(&ff_up_compat, 0, sizeof(ff_up_compat));
++
+ 		ff_up_compat.request_id = ff_up->request_id;
+ 		ff_up_compat.retval = ff_up->retval;
+ 		/*
