@@ -1,30 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Sep 2011 06:20:25 +0000
-Subject: [patch] drm: potential info leak in compat_drm_getclient()
-Message-Id: <20110923062025.GD4387@elgon.mountain>
+From: Zic Rim <zicrim@gmail.com>
+Date: Sat, 24 Sep 2011 10:12:56 +0000
+Subject: [patch] Add static keyword to drivers/rtc/rtc-pm8xxx.c
+Message-Id: <CAMvewQ+upPy6tPy57G8AqWDmLdtES7uF1knvO5mjgWkEJKj5Vw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch has a new check for Rosenberg type information leaks where
-structs are copied to the user with uninitialized stack data in them.
+M it static like all the other drivers do SIMPLE_DEV_PM_OPS
+.pm8xxx_rtc_pm_ops is not used outside this file.
 
-The c32.idx member wasn't initialized.
+Signed-off-by: Navin P <zicrim@gmail.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+index d420e9d..c9c5ee1 100644
+--- a/drivers/rtc/rtc-pm8xxx.c
++++ b/drivers/rtc/rtc-pm8xxx.c
+@@ -520,7 +520,7 @@ static int pm8xxx_rtc_suspend(struct device *dev)
+ }
+ #endif
 
-diff --git a/drivers/gpu/drm/drm_ioc32.c b/drivers/gpu/drm/drm_ioc32.c
-index 4a058c7..050bd49 100644
---- a/drivers/gpu/drm/drm_ioc32.c
-+++ b/drivers/gpu/drm/drm_ioc32.c
-@@ -314,6 +314,7 @@ static int compat_drm_getclient(struct file *file, unsigned int cmd,
- 	if (err)
- 		return err;
- 
-+	c32.idx = idx;
- 	if (__get_user(c32.auth, &client->auth)
- 	    || __get_user(c32.pid, &client->pid)
- 	    || __get_user(c32.uid, &client->uid)
+-SIMPLE_DEV_PM_OPS(pm8xxx_rtc_pm_ops, pm8xxx_rtc_suspend, pm8xxx_rtc_resume);
++static SIMPLE_DEV_PM_OPS(pm8xxx_rtc_pm_ops, pm8xxx_rtc_suspend,
+pm8xxx_rtc_resume);
+
+ static struct platform_driver pm8xxx_rtc_driver = {
+        .probe          = pm8xxx_rtc_probe,
