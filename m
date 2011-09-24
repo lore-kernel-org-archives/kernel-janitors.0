@@ -1,37 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Sep 2011 06:25:48 +0000
-Subject: [patch] paride: potential information leak in pg_read()
-Message-Id: <20110923062548.GK4387@elgon.mountain>
+From: Zic Rim <zicrim@gmail.com>
+Date: Sat, 24 Sep 2011 09:56:45 +0000
+Subject: [patch ] remove redundant const in tc3589x.c
+Message-Id: <CAMvewQJ5yLibiYi3bLXK255b28C6H2o6BMX655K8zdG6uV879w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tim Waugh <tim@cyberelk.net>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch has a new check for Rosenberg type information leaks where
-structs are copied to the user with uninitialized stack data in them.
-i
-In this case, the pg_write_hdr struct has a hole in it.
+SIMPLE_DEV_PM_OPS defins a const struct , no need to prefix with  const.
 
-struct pg_write_hdr {
-        char                       magic;                /*     0     1 */
-        char                       func;                 /*     1     1 */
-        /* XXX 2 bytes hole, try to pack */
-        int                        dlen;                 /*     4     4 */
+Signed-off-by: Navin P <zicrim@gmail.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/block/paride/pg.c b/drivers/block/paride/pg.c
-index 6b9a200..a79fb4f 100644
---- a/drivers/block/paride/pg.c
-+++ b/drivers/block/paride/pg.c
-@@ -630,6 +630,7 @@ static ssize_t pg_read(struct file *filp, char __user *buf, size_t count, loff_t
- 		if (dev->status & 0x10)
- 			return -ETIME;
- 
-+	memset(&hdr, 0, sizeof(hdr));
- 	hdr.magic = PG_MAGIC;
- 	hdr.dlen = dev->dlen;
- 	copy = 0;
+diff --git a/drivers/mfd/tc3589x.c b/drivers/mfd/tc3589x.c
+index c27e515..e87020f 100644
+--- a/drivers/mfd/tc3589x.c
++++ b/drivers/mfd/tc3589x.c
+@@ -385,7 +385,7 @@ static int tc3589x_resume(struct device *dev)
+        return ret;
+ }
 
+-static const SIMPLE_DEV_PM_OPS(tc3589x_dev_pm_ops, tc3589x_suspend,
++static SIMPLE_DEV_PM_OPS(tc3589x_dev_pm_ops, tc3589x_suspend,
+                                                tc3589x_resume);
+
+ static const struct i2c_device_id tc3589x_id[] = {
