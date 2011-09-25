@@ -1,51 +1,35 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 16 Sep 2011 06:57:35 +0000
-Subject: [PATCH 4/4] arch/xtensa/kernel/process.c: take size of pointed value, not pointer
-Message-Id: <1316156255-19509-4-git-send-email-julia@diku.dk>
+From: Navin P <zicrim@gmail.com>
+Date: Sun, 25 Sep 2011 10:44:44 +0000
+Subject: [PATCH] Remove const keyword from matrix_keypad.c
+Message-Id: <4E7F034C.7090609@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Zankel <chris@zankel.net>
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>, Mike Frysinger <vapier@gentoo.org>, Arun Sharma <asharma@fb.com>, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: marek.vasut@gmail.com, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
-
-Sizeof a pointer-typed expression returns the size of the pointer, not that
-of the pointed data.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression *e;
-type T;
-identifier f;
-@@
-
-f(...,(T)e,...,
--sizeof(e)
-+sizeof(*e)
-,...)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+ Remove the const keyword as SIMPLE_DEV_PMS_OPS already defines a const struct.
+ Signed-off-by: Navin P <zicrim@gmail.com>
 
 ---
- arch/xtensa/kernel/process.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/keyboard/matrix_keypad.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff -u -p a/arch/xtensa/kernel/process.c b/arch/xtensa/kernel/process.c
---- a/arch/xtensa/kernel/process.c
-+++ b/arch/xtensa/kernel/process.c
-@@ -277,7 +277,7 @@ void xtensa_elf_core_copy_regs (xtensa_g
+diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
+index b02e426..c127658 100644
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -294,7 +294,7 @@ static int matrix_keypad_resume(struct device *dev)
+ 	return 0;
+ }
  
- 	/* Don't leak any random bits. */
+-static const SIMPLE_DEV_PM_OPS(matrix_keypad_pm_ops,
++static SIMPLE_DEV_PM_OPS(matrix_keypad_pm_ops,
+ 				matrix_keypad_suspend, matrix_keypad_resume);
+ #endif
  
--	memset(elfregs, 0, sizeof (elfregs));
-+	memset(elfregs, 0, sizeof(*elfregs));
- 
- 	/* Note:  PS.EXCM is not set while user task is running; its
- 	 * being set in regs->ps is for exception handling convenience.
+-- 
+1.7.0.4
+
 
