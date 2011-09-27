@@ -1,42 +1,30 @@
-From: Chris Peterson <cpeterso@cpeterso.com>
-Date: Thu, 15 Sep 2011 06:39:19 +0000
-Subject: [PATCH] drivers/staging/comedi/drivers/ni_stc.h: rename prototype parameter from 'register' to 'reg'
-Message-Id: <1316068759-3460-1-git-send-email-cpeterso@cpeterso.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Sep 2011 07:44:07 +0000
+Subject: [patch] ALSA: usb-audio - NULL dereference on probe error
+Message-Id: <20110927074407.GA9346@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Oliver Neukum <oneukum@suse.de>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Thomas Pfaff <tpfaff@gmx.net>, Clemens Ladisch <clemens@ladisch.de>, alsa-devel@alsa-project.org, Daniel Mack <zonque@gmail.com>
 
-gcc -Wextra warns "‘register’ is not at beginning of declaration" because the
-compiler thinks the parameter has been marked as a 'register' variable, but
-the function prototype intended to name the parameter "register" (which is a
-reserved keyword).
+There was a potential NULL dereference introduced in 362e4e49abe
+"ALSA: usb-audio - clear chip->probing on error exit"
 
-Signed-off-by: Chris Peterson <cpeterso@cpeterso.com>
----
- drivers/staging/comedi/drivers/ni_stc.h |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/comedi/drivers/ni_stc.h b/drivers/staging/comedi/drivers/ni_stc.h
-index 504ea71..7f09388 100644
---- a/drivers/staging/comedi/drivers/ni_stc.h
-+++ b/drivers/staging/comedi/drivers/ni_stc.h
-@@ -1429,10 +1429,10 @@ struct ni_board_struct {
- #define NUM_GPCT 2
- 
- #define NI_PRIVATE_COMMON					\
--	uint16_t (*stc_readw)(struct comedi_device *dev, int register);	\
--	uint32_t (*stc_readl)(struct comedi_device *dev, int register);	\
--	void (*stc_writew)(struct comedi_device *dev, uint16_t value, int register);	\
--	void (*stc_writel)(struct comedi_device *dev, uint32_t value, int register);	\
-+	uint16_t (*stc_readw)(struct comedi_device *dev, int reg);	\
-+	uint32_t (*stc_readl)(struct comedi_device *dev, int reg);	\
-+	void (*stc_writew)(struct comedi_device *dev, uint16_t value, int reg);	\
-+	void (*stc_writel)(struct comedi_device *dev, uint32_t value, int reg);	\
- 	\
- 	unsigned short dio_output;				\
- 	unsigned short dio_control;				\
--- 
-1.7.4.1
-
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index cc08588..8db260f 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -532,7 +532,8 @@ snd_usb_audio_probe(struct usb_device *dev,
+  __error:
+ 	if (chip && !chip->num_interfaces)
+ 		snd_card_free(chip->card);
+-	chip->probing = 0;
++	if (chip)
++		chip->probing = 0;
+ 	mutex_unlock(&register_mutex);
+  __err_val:
+ 	return NULL;
