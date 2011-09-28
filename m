@@ -1,48 +1,24 @@
-From: Chris Peterson <cpeterso@cpeterso.com>
-Date: Thu, 15 Sep 2011 06:38:24 +0000
-Subject: Re: [PATCH] drivers: rename some function parameters from 'register'
-Message-Id: <CAL+j+ji1tXkq1biF2d+0RKy1eqcuG_8=HB00eLF8XTTcjK3LQg@mail.gmail.com>
+From: "Mr. Urbanski Marek" <urmarek02@gmail.com>
+Date: Wed, 28 Sep 2011 18:55:03 +0000
+Subject: Re: Hello
+Message-Id: <20110928185449.6C8B02C8F1@smtp.ruc.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1315832341-917-1-git-send-email-cpeterso@cpeterso.com>
-In-Reply-To: <1315832341-917-1-git-send-email-cpeterso@cpeterso.com>
+References: <78525548330.aj761KKLtwgY78041@vesper8.clergy36hotmail.com>
+In-Reply-To: <78525548330.aj761KKLtwgY78041@vesper8.clergy36hotmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Thanks for the feedback, Dan. I will re-submit separate patches.
+Dear Friend,
 
-chris
+I have a  profiling sum in an excess of 30M (Thirty Million Euros) which I seek your partnership in accommodating. The documents of the above funds in question were handed over to me by  my boss  (Andrzej Kremer, Deputy Foreign Minister).Below are sites from BBC and other international reporters as regards my story;
 
+http://news.bbc.co.uk/1/hi/uk/8613884.stm
+http://www.economist.com/blogs/charlemagne/2010/04/polands_plane_crash
+http://www.timesonline.co.uk/tol/comment/article7094224.ece
+ 
+Please reply if interested, I will give you more details,  your role, how legal and genuine this transaction is and as we progress you shall see all the legal documents. You will be rewarded with 30% of the total sum for your partnership.
 
-
-On Wed, Sep 14, 2011 at 2:25 PM, Dan Carpenter <error27@gmail.com> wrote:
-> On Mon, Sep 12, 2011 at 08:59:01AM -0400, Chris Peterson wrote:
->> Some function prototypes declare an 'int register' parameter. gcc -W warns
->> "‘register’ is not at beginning of declaration" because the compiler thinks
->> the parameter has been marked as a 'register' variable but the author
->> just wanted to name the parameter "register" (which is a reserved keyword).
->>
->> Signed-off-by: Chris Peterson <cpeterso@cpeterso.com>
->
-> This needs to be broken up into separate patches by file.  The
-> problem is that you have four maintainers and they each can only
-> take the chunk that affects their subsystem.
->
->> --- a/drivers/isdn/hardware/eicon/platform.h
->> +++ b/drivers/isdn/hardware/eicon/platform.h
->> @@ -206,7 +206,7 @@ void PCIread (byte bus, byte func, int offset, void* data, int length, void* pci
->>  /*
->>  **  I/O Port utilities
->>  */
->> -int diva_os_register_io_port (void *adapter, int register, unsigned long port,
->> +int diva_os_register_io_port (void *adapter, int reg, unsigned long port,
->>                               unsigned long length, const char* name, int id);
->
-> Instead of using "reg" for this one, it probably would be better to
-> use "on".  That's how it's named in the .c file.
->
-> regards,
-> dan carpenter
->
->
+Yours truly,
+Mr. Urbanski Marek
