@@ -1,38 +1,38 @@
-From: Chris Peterson <cpeterso@cpeterso.com>
-Date: Thu, 15 Sep 2011 06:43:43 +0000
-Subject: [PATCH] drivers/net/wireless/airo.c: rename prototype parameter from 'register' to 'reg'
-Message-Id: <1316069023-3524-1-git-send-email-cpeterso@cpeterso.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Sep 2011 06:09:42 +0000
+Subject: [patch] [media] mxl111sf: fix a couple precedence bugs
+Message-Id: <20110929060942.GA4104@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Steven Toth <stoth@kernellabs.com>, Michael Krufky <mkrufky@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-gcc -Wextra warns "‘register’ is not at beginning of declaration" because the
-compiler thinks the parameter has been marked as a 'register' variable, but
-the function prototype intended to name the parameter "register" (which is a
-reserved keyword).
+Negate has higher precedence than bitwise AND.  I2C_M_RD is 0x1 so
+the original code is equivelent to just checking if (!msg->flags).
 
-Signed-off-by: Chris Peterson <cpeterso@cpeterso.com>
----
- drivers/net/wireless/airo.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
-index e1b3e3c..ba266c1 100644
---- a/drivers/net/wireless/airo.c
-+++ b/drivers/net/wireless/airo.c
-@@ -1102,8 +1102,8 @@ static const char version[] = "airo.c 0.6 (Ben Reed & Javier Achirica)";
- struct airo_info;
+diff --git a/drivers/media/dvb/dvb-usb/mxl111sf-i2c.c b/drivers/media/dvb/dvb-usb/mxl111sf-i2c.c
+index a330987..2e8c288 100644
+--- a/drivers/media/dvb/dvb-usb/mxl111sf-i2c.c
++++ b/drivers/media/dvb/dvb-usb/mxl111sf-i2c.c
+@@ -453,7 +453,7 @@ static int mxl111sf_i2c_hw_xfer_msg(struct mxl111sf_state *state,
  
- static int get_dec_u16( char *buffer, int *start, int limit );
--static void OUT4500( struct airo_info *, u16 register, u16 value );
--static unsigned short IN4500( struct airo_info *, u16 register );
-+static void OUT4500(struct airo_info *, u16 reg, u16 value);
-+static unsigned short IN4500(struct airo_info *, u16 reg);
- static u16 setup_card(struct airo_info*, u8 *mac, int lock);
- static int enable_MAC(struct airo_info *ai, int lock);
- static void disable_MAC(struct airo_info *ai, int lock);
--- 
-1.7.4.1
-
+ 	mxl_i2c("addr: 0x%02x, read buff len: %d, write buff len: %d",
+ 		msg->addr, (msg->flags & I2C_M_RD) ? msg->len : 0,
+-		(!msg->flags & I2C_M_RD) ? msg->len : 0);
++		(!(msg->flags & I2C_M_RD)) ? msg->len : 0);
+ 
+ 	for (index = 0; index < 26; index++)
+ 		buf[index] = USB_END_I2C_CMD;
+@@ -489,7 +489,7 @@ static int mxl111sf_i2c_hw_xfer_msg(struct mxl111sf_state *state,
+ 	ret = mxl111sf_i2c_send_data(state, 0, buf);
+ 
+ 	/* write data on I2C bus */
+-	if ((!msg->flags & I2C_M_RD) && (msg->len > 0)) {
++	if (!(msg->flags & I2C_M_RD) && (msg->len > 0)) {
+ 		mxl_i2c("%d\t%02x", msg->len, msg->buf[0]);
+ 
+ 		/* control register on I2C interface to initialize I2C bus */
