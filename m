@@ -1,36 +1,58 @@
-From: Navin P <zicrim@gmail.com>
-Date: Sun, 25 Sep 2011 11:21:22 +0000
-Subject: [PATCH] Remove redundant const in tc3589x.c
-Message-Id: <4E7F0BE2.5070707@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Sep 2011 06:13:18 +0000
+Subject: [patch] Staging: vt6656: potential memory corruption
+Message-Id: <20110929061318.GD4104@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, sameo@linux.intel.com, rabin.vincent@stericsson.com, hanumath.prasad@stericsson.com
+To: kernel-janitors@vger.kernel.org
 
- Remove the redundant const as SIMPLE_DEV_PM_OPS defines const
- struct.
- Signed-off-by: Navin P <zicrim@gmail.com>
+param->u.wpa_key.key_len comes from the user.  If it's too large we
+would write past the end of the array.
 
----
- drivers/mfd/tc3589x.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/mfd/tc3589x.c b/drivers/mfd/tc3589x.c
-index c27e515..e87020f 100644
---- a/drivers/mfd/tc3589x.c
-+++ b/drivers/mfd/tc3589x.c
-@@ -385,7 +385,7 @@ static int tc3589x_resume(struct device *dev)
- 	return ret;
- }
+diff --git a/drivers/staging/vt6656/wpactl.c b/drivers/staging/vt6656/wpactl.c
+index 9216df0..2fa4f84 100644
+--- a/drivers/staging/vt6656/wpactl.c
++++ b/drivers/staging/vt6656/wpactl.c
+@@ -229,6 +229,9 @@ int wpa_set_wpadev(PSDevice pDevice, int val)
+         return ret;
+     }
  
--static const SIMPLE_DEV_PM_OPS(tc3589x_dev_pm_ops, tc3589x_suspend,
-+static SIMPLE_DEV_PM_OPS(tc3589x_dev_pm_ops, tc3589x_suspend,
- 						tc3589x_resume);
++	if (param->u.wpa_key.key && param->u.wpa_key.key_len > sizeof(abyKey))
++		return -EINVAL;
++
+     spin_unlock_irq(&pDevice->lock);
+     if(param->u.wpa_key.key && fcpfkernel) {
+        memcpy(&abyKey[0], param->u.wpa_key.key, param->u.wpa_key.key_len);
+@@ -269,6 +272,10 @@ int wpa_set_wpadev(PSDevice pDevice, int val)
+         return ret;
+ 	}
  
- static const struct i2c_device_id tc3589x_id[] = {
--- 
-1.7.0.4
-
-
++
++	if (param->u.wpa_key.seq && param->u.wpa_key.seq_len > sizeof(abySeq))
++		return -EINVAL;
++
+     spin_unlock_irq(&pDevice->lock);
+         if(param->u.wpa_key.seq && fcpfkernel) {
+            memcpy(&abySeq[0], param->u.wpa_key.seq, param->u.wpa_key.seq_len);
+@@ -772,9 +779,14 @@ static int wpa_set_associate(PSDevice pDevice,
+     DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "wpa_ie_len = %d\n", param->u.wpa_associate.wpa_ie_len);
+     DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "Roaming dBm = %d\n", param->u.wpa_associate.roam_dbm);  //Davidwang
+ 
+-	if (param->u.wpa_associate.wpa_ie &&
+-	    copy_from_user(&abyWPAIE[0], param->u.wpa_associate.wpa_ie, param->u.wpa_associate.wpa_ie_len))
+-	    return -EINVAL;
++	if (param->u.wpa_associate.wpa_ie) {
++		if (param->u.wpa_associate.wpa_ie_len > sizeof(abyWPAIE))
++			return -EINVAL;
++
++		if (copy_from_user(&abyWPAIE[0], param->u.wpa_associate.wpa_ie,
++					param->u.wpa_associate.wpa_ie_len))
++			return -EFAULT;
++	}
+ 
+ 	if (param->u.wpa_associate.mode = 1)
+ 	    pMgmt->eConfigMode = WMAC_CONFIG_IBSS_STA;
