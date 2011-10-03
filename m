@@ -1,108 +1,34 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 15 Oct 2011 14:24:28 +0000
-Subject: Re: [patch v2] Input: force feedback - potential integer wrap in
-Message-Id: <4E99979C.7010305@bfs.de>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 03 Oct 2011 17:46:11 +0000
+Subject: Re: [patch v2] caif: add error handling for allocation
+Message-Id: <20111003.134611.1100932218414818334.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111009162524.GA14049@elgon.mountain> <20111010050852.GA18794@core.coreip.homeip.net> <20111010204830.GV30887@longonot.mountain> <20111011211949.GB30887@longonot.mountain>
-In-Reply-To: <20111011211949.GB30887@longonot.mountain>
+References: <CAJK669Yb6V=xr9ZvQGOKGEvmzO1JGhrHD+sR69b04EQxUjOOrQ@mail.gmail.com>
+	<20110921072159.GJ4999@elgon.mountain>
+	<81C3A93C17462B4BBD7E272753C105791D2BC1882D@EXDCVYMBSTM005.EQ1STM.local>
+In-Reply-To: <81C3A93C17462B4BBD7E272753C105791D2BC1882D@EXDCVYMBSTM005.EQ1STM.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: sjur.brandeland@stericsson.com
+Cc: dan.carpenter@oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
+Date: Fri, 23 Sep 2011 12:38:45 +0200
 
+> [Dan]:=20
+>> The allocation of "phyinfo" wasn't checked, and also the allocation
+>> wasn't freed on error paths.  Sjur Br=E6ndeland pointed out as well
+>> that "phy_driver" should be freed on the error path too.
+>>=20
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> Looks good, thank you Dan.
+> Acked-by: Sjur Br=E6ndeland <sjur.brandeland@stericsson.com>
 
-Am 11.10.2011 23:19, schrieb Dan Carpenter:
-> The problem here is that max_effects can wrap on 32 bits systems.
-> We'd allocate a smaller amount of data than sizeof(struct ff_device).
-> The call to kcalloc() on the next line would fail but it would write
-> the NULL return outside of the memory we just allocated causing data
-> corruption.
-> 
-> The call path is that uinput_setup_device() get ->ff_effects_max from
-> the user and sets the value in the ->private_data struct.  From there
-> it is:
-> -> uinput_ioctl_handler()
->    -> uinput_create_device()
->       -> input_ff_create(dev, udev->ff_effects_max);
-> 
-> I've also changed ff_effects_max so it's an unsigned int instead of
-> a signed int as a cleanup.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> V2: made max_effects unsigned
-> 
-> diff --git a/drivers/input/ff-core.c b/drivers/input/ff-core.c
-> index 3367f76..3051c84 100644
-> --- a/drivers/input/ff-core.c
-> +++ b/drivers/input/ff-core.c
-> @@ -309,7 +309,7 @@ EXPORT_SYMBOL_GPL(input_ff_event);
->   * Once ff device is created you need to setup its upload, erase,
->   * playback and other handlers before registering input device
->   */
-> -int input_ff_create(struct input_dev *dev, int max_effects)
-> +int input_ff_create(struct input_dev *dev, unsigned int max_effects)
->  {
->  	struct ff_device *ff;
->  	int i;
-> @@ -319,6 +319,10 @@ int input_ff_create(struct input_dev *dev, int max_effects)
->  		return -EINVAL;
->  	}
->  
-> +	if (sizeof(struct ff_device) + max_effects * sizeof(struct file *) <
-> +			max_effects)
-> +		return -EINVAL;
-> +
-
-i am not sure if that is the way to go.
-the minimum size you need is sizeof(struct ff_device)+sizeof(struct file *)
-(assuming that  max_effects>=1). If the input can be outside any useful boundaries
-i would go for this:
-	uint64_t tmp= sizeof(struct ff_device) + max_effects * sizeof(struct file *) ;
-
-	if (tmp >= UINT_MAX )
-              ......
-
-Clearly it is better to have max_effects in a proper range.
-
-re,
- wh
-
-
->  	ff = kzalloc(sizeof(struct ff_device) +
->  		     max_effects * sizeof(struct file *), GFP_KERNEL);
->  	if (!ff)
-> diff --git a/include/linux/input.h b/include/linux/input.h
-> index 57add32..6d5eddb 100644
-> --- a/include/linux/input.h
-> +++ b/include/linux/input.h
-> @@ -1610,7 +1610,7 @@ struct ff_device {
->  	struct file *effect_owners[];
->  };
->  
-> -int input_ff_create(struct input_dev *dev, int max_effects);
-> +int input_ff_create(struct input_dev *dev, unsigned int max_effects);
->  void input_ff_destroy(struct input_dev *dev);
->  
->  int input_ff_event(struct input_dev *dev, unsigned int type, unsigned int code, int value);
-> diff --git a/include/linux/uinput.h b/include/linux/uinput.h
-> index d28c726..2aa2881 100644
-> --- a/include/linux/uinput.h
-> +++ b/include/linux/uinput.h
-> @@ -68,7 +68,7 @@ struct uinput_device {
->  	unsigned char		head;
->  	unsigned char		tail;
->  	struct input_event	buff[UINPUT_BUFFER_SIZE];
-> -	int			ff_effects_max;
-> +	unsigned int		ff_effects_max;
->  
->  	struct uinput_request	*requests[UINPUT_NUM_REQUESTS];
->  	wait_queue_head_t	requests_waitq;
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
+Applied, thanks.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
