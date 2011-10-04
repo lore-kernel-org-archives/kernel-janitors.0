@@ -1,42 +1,45 @@
-From: Daniel Mack <zonque@gmail.com>
-Date: Tue, 18 Oct 2011 08:27:42 +0000
-Subject: Re: [patch 1/2 -next] USB: gadget: midi: fix range check in f_midi_out_open()
-Message-Id: <4E9D387E.9090907@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 04 Oct 2011 06:29:39 +0000
+Subject: [patch] ALSA: oss-mixer - use strlcpy() instead strcpy()
+Message-Id: <20111004062939.GA29901@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111018062436.GL27732@elgon.mountain>
-In-Reply-To: <20111018062436.GL27732@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>
 
-On 18.10.11 08:24, Dan Carpenter wrote:
-> ! has higher precedence than>= and since neither 0 nor 1 are greater
-> than 8 the condition is always false.
+This is mostly a static checker fix more than anything else.  We're
+copying from a 64 char buffer into a 44 char buffer.
 
-Sure. The call in question actually not more than a sanity check, as 
-lower layers will never call this function with an invalid substream number.
+The 64 character buffer is str[] in snd_mixer_oss_build_test_all().
+The call tree is:
+	snd_mixer_oss_build_test_all()
+	-> snd_mixer_oss_build_test()
+	   -> snd_mixer_oss_build_test().
 
-Thanks for spotting this.
+We never actually do fill str[] buffer all the way to 64 characters.
+The longest string is:
+	sprintf(str, "%s Playback Switch", ptr->name);
+ptr->name is a 32 character buffer so 32 plus 16 characters for
+" Playback Switch" still puts us over the 44 limit from "id.name".
 
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+Most likely ptr->name never gets filled to the limit, but we can't
+really change the size of that buffer so lets just use strlcpy() here
+and be safe.
 
-Acked-by: Daniel Mack <zonque@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-
->
-> diff --git a/drivers/usb/gadget/f_midi.c b/drivers/usb/gadget/f_midi.c
-> index 44858dc..ef1bc7a 100644
-> --- a/drivers/usb/gadget/f_midi.c
-> +++ b/drivers/usb/gadget/f_midi.c
-> @@ -644,7 +644,7 @@ static int f_midi_out_open(struct snd_rawmidi_substream *substream)
->   {
->   	struct f_midi *midi = substream->rmidi->private_data;
->
-> -	if (!substream->number>= MAX_PORTS)
-> +	if (substream->number>= MAX_PORTS)
->   		return -EINVAL;
->
->   	VDBG(midi, "%s()\n", __func__);
-
+diff --git a/sound/core/oss/mixer_oss.c b/sound/core/oss/mixer_oss.c
+index 27ac611..18297f7 100644
+--- a/sound/core/oss/mixer_oss.c
++++ b/sound/core/oss/mixer_oss.c
+@@ -500,7 +500,7 @@ static struct snd_kcontrol *snd_mixer_oss_test_id(struct snd_mixer_oss *mixer, c
+ 	
+ 	memset(&id, 0, sizeof(id));
+ 	id.iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+-	strcpy(id.name, name);
++	strlcpy(id.name, name, sizeof(id.name));
+ 	id.index = index;
+ 	return snd_ctl_find_id(card, &id);
+ }
