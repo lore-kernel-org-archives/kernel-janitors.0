@@ -1,67 +1,71 @@
-From: "Cisco certification" <cisco@groupstudy.com>
-Date: Tue, 11 Oct 2011 10:52:23 +0000
-Subject: Please confirm (conf#47071cd8126a75d6d36ea5c259fb7eab)
-Message-Id: <201110111052.p9BAqNTk003668@groupstudy.com>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Date: Tue, 04 Oct 2011 20:19:20 +0000
+Subject: Re: [patch] smscufx: change edid data to u8 instead of char
+Message-Id: <4E8B6A48.8060003@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-Hi,
+On 09/21/2011 07:16 AM, Dan Carpenter wrote:
+> Having "edid" as char caused a problem in ufx_read_edid() where we
+> compared "edid[i] != 0xFF".  Because of the type difference, the
+> condition was never true and the error checking failed.
+> 
+> Also I added a __user notation to silence a sparse complaint.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-You have tried to post to a GroupStudy.com certification mailing list. Because
-the server does not recognize you as a confirmed poster, you will be required
-to authenticate that you are using a valid e-mail address and are not a
-spammer. By confirming this e-mail you certify that you are not sending
-Unsolicited Bulk Email (UBE).  
-
-PLEASE DO NOT SEND YOUR ORIGINAL MESSAGE AGAIN!  BY CONFIRMING THIS EMAIL
-YOUR ORIGINAL MESSAGE (WHICH IS NOW QUEUED IN THE SERVER) WILL BE POSTED.
-
-
-By confirming this e-mail you also certify the following:
-
-1. The message does NOT break Cisco's Non-Disclosure requirements.
-
-2. The message is NOT designed to advertise a commercial product.
-
-3. You understand all postings become property of GroupStudy.com
-
-4. You have searched the archives prior to posting.
-
-5. The message is NOT inflammatory.
-
-6. The message is NOT a test message.
-
-To confirm, simply reply to this message.  No editing is necessary.  Once
-confirmed, you will be able to post without additional confirmations.
+Applied.
 
 
-Welcome to GroupStudy.com!
+Thanks,
 
+Florian Tobias Schandinat
 
-First time posters to GroupStudy.com are required to agree to the GroupStudy terms and conditions.
-Replying to this email, certifies you have read and agree to the GroupStudy posting guidelines and terms and conditions.
-
---- Original Message Follows ---
-
-From: kernel-janitors@vger.kernel.org
-To: cisco@groupstudy.com
-Subject: Returned mail: Data format error
-Date: Tue, 11 Oct 2011 16:21:38 +0530
-
-Dear user cisco@groupstudy.com, Mail system administrator of groupstudy.com would like to inform you
-
-We have detected that your e-mail account has been used to send a huge amount of unsolicited email messages during this week.
-Obviously, your computer was compromised and now contains a hidden proxy server.
-
-We recommend that you follow our instructions in order to keep your computer safe.
-
-Sincerely yours,
-The groupstudy.com team.
-
-[GroupStudy removed an attachment of type application/octet-stream which had a name of groupstudy.com]
-
-
+> ---
+> Compile tested only.  Please test carefully.
+> 
+> diff --git a/drivers/video/smscufx.c b/drivers/video/smscufx.c
+> index 44c8cab..aaccffa 100644
+> --- a/drivers/video/smscufx.c
+> +++ b/drivers/video/smscufx.c
+> @@ -103,7 +103,7 @@ struct ufx_data {
+>  	struct delayed_work free_framebuffer_work;
+>  	atomic_t usb_active; /* 0 = update virtual buffer, but no usb traffic */
+>  	atomic_t lost_pixels; /* 1 = a render op failed. Need screen refresh */
+> -	char *edid; /* null until we read edid from hw or get from sysfs */
+> +	u8 *edid; /* null until we read edid from hw or get from sysfs */
+>  	size_t edid_size;
+>  	u32 pseudo_palette[256];
+>  };
+> @@ -993,7 +993,7 @@ static int ufx_ops_ioctl(struct fb_info *info, unsigned int cmd,
+>  
+>  	/* TODO: Update X server to get this from sysfs instead */
+>  	if (cmd = UFX_IOCTL_RETURN_EDID) {
+> -		char *edid = (char *)arg;
+> +		u8 __user *edid = (u8 __user *)arg;
+>  		if (copy_to_user(edid, dev->edid, dev->edid_size))
+>  			return -EFAULT;
+>  		return 0;
+> @@ -1428,7 +1428,7 @@ static int ufx_i2c_wait_busy(struct ufx_data *dev)
+>  }
+>  
+>  /* reads a 128-byte EDID block from the currently selected port and TAR */
+> -static int ufx_read_edid(struct ufx_data *dev, char *edid, int edid_len)
+> +static int ufx_read_edid(struct ufx_data *dev, u8 *edid, int edid_len)
+>  {
+>  	int i, j, status;
+>  	u32 *edid_u32 = (u32 *)edid;
+> @@ -1491,7 +1491,7 @@ static int ufx_setup_modes(struct ufx_data *dev, struct fb_info *info,
+>  	char *default_edid, size_t default_edid_size)
+>  {
+>  	const struct fb_videomode *default_vmode = NULL;
+> -	char *edid;
+> +	u8 *edid;
+>  	int i, result = 0, tries = 3;
+>  
+>  	if (info->dev) /* only use mutex if info has been registered */
+> 
 
