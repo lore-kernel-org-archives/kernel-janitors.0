@@ -1,40 +1,77 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 05 Oct 2011 05:46:37 +0000
-Subject: [patch] ath5k: remove some unneeded error handling code
-Message-Id: <20111005054637.GA32077@elgon.mountain>
+From: Bob Copeland <me@bobcopeland.com>
+Date: Wed, 05 Oct 2011 12:33:24 +0000
+Subject: Re: [patch] ath5k: remove some unneeded error handling code
+Message-Id: <20111005123324.GB3662@hash.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111005054637.GA32077@elgon.mountain>
+In-Reply-To: <20111005054637.GA32077@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jirislaby@gmail.com>
-Cc: Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>, Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jiri Slaby <jirislaby@gmail.com>, Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
-th5k_hw_setup_tx_queue() returns a valid offset into the ah->ah_txq[]
-array.  The ah->ah_txq[] and the ah->txqs[] array are the same size.
-Both have AR5K_NUM_TX_QUEUES elements.  So this error handling code
-will never trigger.
+On Wed, Oct 05, 2011 at 08:46:37AM +0300, Dan Carpenter wrote:
+> th5k_hw_setup_tx_queue() returns a valid offset into the ah->ah_txq[]
 
-Also it's wrong.  The call to ath5k_hw_release_tx_queue() with a qnum
-of AR5K_NUM_TX_QUEUES or more will just trigger a WARN_ON() and
-return.  Or if it missed the WARN_ON(), it would just corrupt some
-memory and return.
+ath5k_....
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> array.  The ah->ah_txq[] and the ah->txqs[] array are the same size.
+> Both have AR5K_NUM_TX_QUEUES elements.  So this error handling code
+> will never trigger.
 
-diff --git a/drivers/net/wireless/ath/ath5k/base.c b/drivers/net/wireless/ath/ath5k/base.c
-index e9ea38d..b346d04 100644
---- a/drivers/net/wireless/ath/ath5k/base.c
-+++ b/drivers/net/wireless/ath/ath5k/base.c
-@@ -921,12 +921,6 @@ ath5k_txq_setup(struct ath5k_hw *ah,
- 		 */
- 		return ERR_PTR(qnum);
- 	}
--	if (qnum >= ARRAY_SIZE(ah->txqs)) {
--		ATH5K_ERR(ah, "hw qnum %u out of range, max %tu!\n",
--			qnum, ARRAY_SIZE(ah->txqs));
--		ath5k_hw_release_tx_queue(ah, qnum);
--		return ERR_PTR(-EINVAL);
--	}
- 	txq = &ah->txqs[qnum];
- 	if (!txq->setup) {
- 		txq->qnum = qnum;
+This originally came from the HAL.  I concur that this code will not
+be executed, since the enum from which ath5k_hw_setup_tx_queue() selects
+qnum has all elements less than AR5K_NUM_TX_QUEUES, which in turn is equal
+to ARRAY_SIZE(ah->txqs).  ath5k_hw_setup_tx_queue() already uses qnum in
+a memset of a same-sized array (ah->txq).
+
+> Also it's wrong.  The call to ath5k_hw_release_tx_queue() with a qnum
+> of AR5K_NUM_TX_QUEUES or more will just trigger a WARN_ON() and
+> return.  Or if it missed the WARN_ON(), it would just corrupt some
+> memory and return.
+
+"corrupt memory and return" sounds undeserving of the adverb 'just' :)
+I guess you are trying to say that it should not have called
+ath5k_hw_release_tx_queue() but I read this comment as saying the
+ATH5K_ERR() was superfluous?
+
+ath5k_hw_release_tx_queue() compares against the queue capabilities
+instead of AR5K_NUM_TX_QUEUES, so there's extra potential for the
+"just corrupt memory and return" case -- but since those are also
+initialized to AR5K_NUM_TX_QUEUES{,_NO_QCU}, that case won't happen
+either.
+
+All that to say the patch is fine, but the patch description didn't
+convince me so I double-checked.  My comments above reflect how I
+might have worded it.
+
+Thanks for the patch!
+
+Reviewed-by: Bob Copeland <me@bobcopeland.com>
+
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/net/wireless/ath/ath5k/base.c b/drivers/net/wireless/ath/ath5k/base.c
+> index e9ea38d..b346d04 100644
+> --- a/drivers/net/wireless/ath/ath5k/base.c
+> +++ b/drivers/net/wireless/ath/ath5k/base.c
+> @@ -921,12 +921,6 @@ ath5k_txq_setup(struct ath5k_hw *ah,
+>  		 */
+>  		return ERR_PTR(qnum);
+>  	}
+> -	if (qnum >= ARRAY_SIZE(ah->txqs)) {
+> -		ATH5K_ERR(ah, "hw qnum %u out of range, max %tu!\n",
+> -			qnum, ARRAY_SIZE(ah->txqs));
+> -		ath5k_hw_release_tx_queue(ah, qnum);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+>  	txq = &ah->txqs[qnum];
+>  	if (!txq->setup) {
+>  		txq->qnum = qnum;
+> 
+
+-- 
+Bob Copeland %% www.bobcopeland.com
+
