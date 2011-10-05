@@ -1,37 +1,44 @@
-From: Vasiliy Kulikov <segoon@openwall.com>
-Date: Tue, 18 Oct 2011 09:30:38 +0000
-Subject: Re: [patch] vmwgfx: information leak in
-Message-Id: <20111018093038.GA23020@albatros>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Oct 2011 05:48:20 +0000
+Subject: [patch] ath9k: remove some bogus error handling code
+Message-Id: <20111005054820.GB32077@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111018061012.GE27732@elgon.mountain>
-In-Reply-To: <20111018061012.GE27732@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>
+To: "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>
+Cc: Jouni Malinen <jouni@qca.qualcomm.com>, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Senthil Balasubramanian <senthilb@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 18, 2011 at 09:10 +0300, Dan Carpenter wrote:
-> If ret is non-zero then we don't initialize the struct which leaks
-> stack information to user space.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If "axq_qnum >= ARRAY_SIZE(sc->tx.txq)", then the call to
+ath9k_hw_releasetxqueue() would read beyond the end of the ah->txq[]
+array and possibly corrupt memory.  Fortunately,
+ath9k_hw_setuptxqueue() doesn't return high values of "axq_qnum" and
+this code can be removed.
 
-Reviewed-by: Vasiliy Kulikov <segoon@openwall.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> index d4a1d8b..28e1c35 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> @@ -1070,6 +1070,8 @@ vmw_execbuf_copy_fence_user(struct vmw_private *dev_priv,
->  	if (user_fence_rep = NULL)
->  		return;
->  
-> +	memset(&fence_rep, 0, sizeof(fence_rep));
-> +
->  	fence_rep.error = ret;
->  	if (ret = 0) {
->  		BUG_ON(fence = NULL);
-
--- 
-Vasiliy
+diff --git a/drivers/net/wireless/ath/ath9k/xmit.c b/drivers/net/wireless/ath/ath9k/xmit.c
+index fa3dcfd..fa1c85d 100644
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -1255,7 +1255,6 @@ static void ath_txq_drain_pending_buffers(struct ath_softc *sc,
+ struct ath_txq *ath_txq_setup(struct ath_softc *sc, int qtype, int subtype)
+ {
+ 	struct ath_hw *ah = sc->sc_ah;
+-	struct ath_common *common = ath9k_hw_common(ah);
+ 	struct ath9k_tx_queue_info qi;
+ 	static const int subtype_txq_to_hwq[] = {
+ 		[WME_AC_BE] = ATH_TXQ_AC_BE,
+@@ -1305,12 +1304,6 @@ struct ath_txq *ath_txq_setup(struct ath_softc *sc, int qtype, int subtype)
+ 		 */
+ 		return NULL;
+ 	}
+-	if (axq_qnum >= ARRAY_SIZE(sc->tx.txq)) {
+-		ath_err(common, "qnum %u out of range, max %zu!\n",
+-			axq_qnum, ARRAY_SIZE(sc->tx.txq));
+-		ath9k_hw_releasetxqueue(ah, axq_qnum);
+-		return NULL;
+-	}
+ 	if (!ATH_TXQ_SETUP(sc, axq_qnum)) {
+ 		struct ath_txq *txq = &sc->tx.txq[axq_qnum];
+ 
