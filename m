@@ -1,72 +1,50 @@
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 18 Oct 2011 15:42:07 +0000
-Subject: Re: [patch v2] CIFS: cleanup min_t() cast in cifs_read()
-Message-Id: <CAH2r5muB5GSs35xUvmeufH2U3XZ8Wz2N34DqDww_j9fnV=GdQQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Oct 2011 05:50:46 +0000
+Subject: [patch] [SCSI] aacraid: use lower snprintf() limit
+Message-Id: <20111005055046.GD32077@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111017073018.GC7812@elgon.mountain>
-	<CAH2r5mufq0=BsZvfGuVdd1BU-gxRpnUmWAm-vzhsOR4KbvGSbg@mail.gmail.com>
-	<20111018094135.GE25814@longonot.mountain>
-In-Reply-To: <20111018094135.GE25814-dZEljifmRObu9KfB+GxooP8+0UxHXcjY@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-merged.
+This is just a cleanup, to silence static checker warnings.  It
+doesn't change how the code works.
 
-On Tue, Oct 18, 2011 at 4:41 AM, Dan Carpenter <dan.carpenter@oracle.com> w=
-rote:
-> Smatch complains that the cast to "int" in min_t() changes very large
-> values of current_read_size into negative values and so min_t()
-> could return the wrong value. =A0I removed the const as well, as that
-> doesn't do anything here.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: =A0use "uint" instead of "u32".
->
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index ab85699..34be15a 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -1900,13 +1900,13 @@ static ssize_t cifs_read(struct file *file, char =
-*read_data, size_t read_size,
-> =A0 =A0 =A0 =A0for (total_read =3D 0, current_offset =3D read_data;
-> =A0 =A0 =A0 =A0 =A0 =A0 read_size > total_read;
-> =A0 =A0 =A0 =A0 =A0 =A0 total_read +=3D bytes_read, current_offset +=3D b=
-ytes_read) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 current_read_size =3D min_t(const int, read=
-_size - total_read,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 current_read_size =3D min_t(uint, read_size=
- - total_read,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0cifs_sb->rsize);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0/* For windows me and 9x we do not want to=
- request more
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0than it negotiated since it will refuse th=
-e read then */
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if ((pTcon->ses) &&
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0!(pTcon->ses->capabilities=
- & CAP_LARGE_FILES)) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 current_read_size =3D min_t=
-(const int, current_read_size,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 current_read_size =3D min_t=
-(uint, current_read_size,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0CIFSMaxBufSize);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0rc =3D -EAGAIN;
->
+buf[] can either be BUF_SIZE if this is called from sysfs, or it can
+be 16 if it's called from aac_get_adapter_info() via
+aac_get_serial_number().  We use the smaller limit here.
 
+sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo) is 12 so there
+is actually no chance of hitting either limit.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---=20
-Thanks,
-
-Steve
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+index 3382475..ea8d96e 100644
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -894,15 +894,20 @@ static ssize_t aac_show_serial_number(struct device *device,
+ 	int len = 0;
+ 
+ 	if (le32_to_cpu(dev->adapter_info.serial[0]) != 0xBAD0)
+-		len = snprintf(buf, PAGE_SIZE, "%06X\n",
++		len = snprintf(buf, 16, "%06X\n",
+ 		  le32_to_cpu(dev->adapter_info.serial[0]));
+ 	if (len &&
+ 	  !memcmp(&dev->supplement_adapter_info.MfgPcbaSerialNo[
+ 	    sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo)-len],
+ 	  buf, len-1))
+-		len = snprintf(buf, PAGE_SIZE, "%.*s\n",
++		len = snprintf(buf, 16, "%.*s\n",
+ 		  (int)sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo),
+ 		  dev->supplement_adapter_info.MfgPcbaSerialNo);
++
++
++	if (len > 16)
++		len = 16;
++
+ 	return len;
+ }
+ 
