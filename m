@@ -1,51 +1,40 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Tue, 18 Oct 2011 17:59:48 +0000
-Subject: RE: [patch 2/4] mwifiex: remove an unneeded NULL check
-Message-Id: <477F20668A386D41ADCC57781B1F70430817F5975B@SC-VEXCH1.marvell.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Oct 2011 05:46:37 +0000
+Subject: [patch] ath5k: remove some unneeded error handling code
+Message-Id: <20111005054637.GA32077@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111018061409.GH27732@elgon.mountain>
-In-Reply-To: <20111018061409.GH27732@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>, Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
+th5k_hw_setup_tx_queue() returns a valid offset into the ah->ah_txq[]
+array.  The ah->ah_txq[] and the ah->txqs[] array are the same size.
+Both have AR5K_NUM_TX_QUEUES elements.  So this error handling code
+will never trigger.
 
+Also it's wrong.  The call to ath5k_hw_release_tx_queue() with a qnum
+of AR5K_NUM_TX_QUEUES or more will just trigger a WARN_ON() and
+return.  Or if it missed the WARN_ON(), it would just corrupt some
+memory and return.
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Monday, October 17, 2011 11:14 PM
-> To: Bing Zhao
-> Cc: John W. Linville; linux-wireless@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch 2/4] mwifiex: remove an unneeded NULL check
-> 
-> We dereference adapter in the error handling code so this needed to
-> be fixed.  This function is always called like:
-> 	adapter->if_ops.host_to_card(adapter, ...);
-> so adapter can never be NULL and I've removed the NULL check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Bing Zhao <bzhao@marvell.com>
-
-Thanks,
-Bing
-
-> 
-> diff --git a/drivers/net/wireless/mwifiex/pcie.c b/drivers/net/wireless/mwifiex/pcie.c
-> index 4466976..d12d440 100644
-> --- a/drivers/net/wireless/mwifiex/pcie.c
-> +++ b/drivers/net/wireless/mwifiex/pcie.c
-> @@ -1671,9 +1671,8 @@ static int mwifiex_pcie_host_to_card(struct mwifiex_adapter *adapter, u8 type,
->  				     struct sk_buff *skb,
->  				     struct mwifiex_tx_param *tx_param)
->  {
-> -	if (!adapter || !skb) {
-> -		dev_err(adapter->dev, "Invalid parameter in %s <%p, %p>\n",
-> -				__func__, adapter, skb);
-> +	if (!skb) {
-> +		dev_err(adapter->dev, "Passed NULL skb to %s\n", __func__);
->  		return -1;
->  	}
-> 
+diff --git a/drivers/net/wireless/ath/ath5k/base.c b/drivers/net/wireless/ath/ath5k/base.c
+index e9ea38d..b346d04 100644
+--- a/drivers/net/wireless/ath/ath5k/base.c
++++ b/drivers/net/wireless/ath/ath5k/base.c
+@@ -921,12 +921,6 @@ ath5k_txq_setup(struct ath5k_hw *ah,
+ 		 */
+ 		return ERR_PTR(qnum);
+ 	}
+-	if (qnum >= ARRAY_SIZE(ah->txqs)) {
+-		ATH5K_ERR(ah, "hw qnum %u out of range, max %tu!\n",
+-			qnum, ARRAY_SIZE(ah->txqs));
+-		ath5k_hw_release_tx_queue(ah, qnum);
+-		return ERR_PTR(-EINVAL);
+-	}
+ 	txq = &ah->txqs[qnum];
+ 	if (!txq->setup) {
+ 		txq->qnum = qnum;
