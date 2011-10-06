@@ -1,25 +1,29 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 03 Oct 2011 08:36:42 +0000
-Subject: Re: [patch] pinctrl: double free on error path in pinctrl_register()
-Message-Id: <CACRpkdZ8qdbTZshFyuYaeDVfUSb2j0AkNid-N=WRVRZpqaRSWg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Oct 2011 06:15:03 +0000
+Subject: [patch 1/2] Staging: iio/light/tsl2563: unlock on an error path
+Message-Id: <20111006061503.GA14701@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111002202255.GA6991@elgon.mountain>
-In-Reply-To: <20111002202255.GA6991@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Axel Lin <axel.lin@gmail.com>
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bryan Freed <bfreed@chromium.org>, Michael Hennerich <Michael.Hennerich@analog.com>, Arnd Bergmann <arnd@arndb.de>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-On Sun, Oct 2, 2011 at 10:22 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+We need to unlock here before returning.
 
-> This is duplicated in the error handling after we go to out_err.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This got fixed by Axel Lin's patch that arrived just a little bit
-before this one,
-but thanks anyway!
-
-Yours,
-Linus Walleij
+diff --git a/drivers/staging/iio/light/tsl2563.c b/drivers/staging/iio/light/tsl2563.c
+index 3707772..8977f58 100644
+--- a/drivers/staging/iio/light/tsl2563.c
++++ b/drivers/staging/iio/light/tsl2563.c
+@@ -518,7 +518,8 @@ static int tsl2563_read_raw(struct iio_dev *indio_dev,
+ 		ret = IIO_VAL_INT;
+ 		break;
+ 	default:
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto error_ret;
+ 	}
+ 
+ error_ret:
