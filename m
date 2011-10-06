@@ -1,56 +1,36 @@
-From: Grant Edwards <grant.edwards@comtrol.com>
-Date: Tue, 04 Oct 2011 17:14:53 +0000
-Subject: Re: FW: puzzle for puzzle lovers
-Message-Id: <20111004171453.GA6163@comtrol.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Oct 2011 06:15:36 +0000
+Subject: [patch 2/2] Staging: iio/light/tsl2563: fix compile warning
+Message-Id: <20111006061536.GB14701@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111004072631.GA18470@longonot.mountain>
-In-Reply-To: <20111004072631.GA18470@longonot.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bryan Freed <bfreed@chromium.org>, Michael Hennerich <Michael.Hennerich@analog.com>, Arnd Bergmann <arnd@arndb.de>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-On Tue, Oct 04, 2011 at 07:55:44PM +0300, Dan Carpenter wrote:
+This fixes a compile warning:
+drivers/staging/iio/light/tsl2563.c:696:2:
+	warning: initialization from incompatible pointer type [enabled by default]
+drivers/staging/iio/light/tsl2563.c:696:2:
+	warning: (near initialization for ‘tsl2563_info.write_event_value’) [enabled by default]
 
-> Wow.  Thanks for your response.
-> 
-> Kernel-janitors is sort of a newbie list, and people email me often
-> ask for something to look at.  As I mentioned in my email, I was
-> pretty sure the code worked.
+The tsl2563_write_thresh() function returns zero on success and error
+codes on failure, so nothing is lost by making the return type int
+instead of ssize_t.
 
-I'm pretty sure it worked at some point in the past. :)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I don't know that any of the kernel maintainers have hardware to test
-with, and we concentrate on our version of the driver that supports a
-wide range of kernel versions.
-
-> But I thought it would make a good code reading exercise for someone.
-
-Parts of that driver are actually based on what was originally a
-library of DOS code from 25 years ago, so some of it is rather oddly
-structured.
-
-> But you _nailed_ it.  You nailed it to a basketball and then slam
-> dunked it!
-> 
-> Btw, I'm sorry if someone forwarded this to you as a support request.
-
-Somebody here just happened to notice it and thought I might find it
-interesting.  I only put that disclaimer on there because I copied the
-mailing list and I assume it would be publically visible.
-
-> I didn't mean to bother the maintainers with this.
-
-I checked our supported driver, and it has the same problem with
-pc104_1[] through pc104_4[] being 8 elements when they need to be 32.
-Depending on what value get's grabbed off the ends of those arrays, I
-think it might potentially cause a problem for 16- and 32-port ISA
-boards.  I'm going to fix that in our driver, though I don't know how
-many ISA boards are still in use out there. :)
-
--- 
-Grant
-
-
-
-
+diff --git a/drivers/staging/iio/light/tsl2563.c b/drivers/staging/iio/light/tsl2563.c
+index 8977f58..a5e08b3 100644
+--- a/drivers/staging/iio/light/tsl2563.c
++++ b/drivers/staging/iio/light/tsl2563.c
+@@ -569,7 +569,7 @@ static int tsl2563_read_thresh(struct iio_dev *indio_dev,
+ 	return 0;
+ }
+ 
+-static ssize_t tsl2563_write_thresh(struct iio_dev *indio_dev,
++static int tsl2563_write_thresh(struct iio_dev *indio_dev,
+ 				  u64 event_code,
+ 				  int val)
+ {
