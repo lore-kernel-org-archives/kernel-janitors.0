@@ -1,32 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Oct 2011 06:23:23 +0000
-Subject: [patch] spi/spidev: handle integer wrap in spidev_message()
-Message-Id: <20111018062323.GK27732@elgon.mountain>
+Date: Thu, 06 Oct 2011 06:17:38 +0000
+Subject: [patch] Staging: dt3155v4l: silence a compiler warning
+Message-Id: <20111006061738.GD14701@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-"k_tmp->len" and "total" are unsigned integers.  The first message
-could be close to "bufsiz" (4096) and then the next message could be
-4GB which would cause an integer overflow.
+The '!' is dead code that was left over from a previous version.
+It causes a compiler warning:
+drivers/staging/dt3155v4l/dt3155v4l.c:335:3: warning: value computed
+	is not used
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I have not tested this.
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 830adbe..aab05e1 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -241,7 +241,7 @@ static int spidev_message(struct spidev_data *spidev,
- 		k_tmp->len = u_tmp->len;
- 
- 		total += k_tmp->len;
--		if (total > bufsiz) {
-+		if (total > bufsiz || total < k_tmp->len) {
- 			status = -EMSGSIZE;
- 			goto done;
- 		}
+diff --git a/drivers/staging/dt3155v4l/dt3155v4l.c b/drivers/staging/dt3155v4l/dt3155v4l.c
+index 7f5ae2d..5a2ec91 100644
+--- a/drivers/staging/dt3155v4l/dt3155v4l.c
++++ b/drivers/staging/dt3155v4l/dt3155v4l.c
+@@ -332,7 +332,7 @@ dt3155_irq_handler_even(int irq, void *dev_id)
+ 		return IRQ_HANDLED; /* start of field irq */
+ 	}
+ 	if ((tmp & FLD_START) && (tmp & FLD_END_ODD))
+-		!ipd->stats.start_before_end++;
++		ipd->stats.start_before_end++;
+ 	/*	check for corrupted fields     */
+ /*	write_i2c_reg(ipd->regs, EVEN_CSR, CSR_ERROR | CSR_DONE);	*/
+ /*	write_i2c_reg(ipd->regs, ODD_CSR, CSR_ERROR | CSR_DONE);	*/
