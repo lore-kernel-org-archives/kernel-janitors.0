@@ -1,83 +1,34 @@
-From: "Achim Leubner" <Achim_Leubner@pmc-sierra.com>
-Date: Wed, 05 Oct 2011 12:19:12 +0000
-Subject: RE: [patch] [SCSI] aacraid: use lower snprintf() limit
-Message-Id: <FD2BDBE06AC58549AE9E16C08B45675D05D8ED9E@BBY1EXM10.pmc_nt.nt.pmc-sierra.bc.ca>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Oct 2011 14:27:58 +0000
+Subject: Re: [patch] [SCSI] aacraid: use lower snprintf() limit
+Message-Id: <20111006142758.GB18470@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111005055046.GD32077@elgon.mountain> <d97a34694e741dc6a2a71fbcd49bab49.squirrel@webmail.sf-mail.de>
+References: <20111005055046.GD32077@elgon.mountain>
+ <d97a34694e741dc6a2a71fbcd49bab49.squirrel@webmail.sf-mail.de>
 In-Reply-To: <d97a34694e741dc6a2a71fbcd49bab49.squirrel@webmail.sf-mail.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rolf Eike Beer <eike-kernel@sf-tec.de>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Rolf Eike Beer <eike-kernel@sf-tec.de>
 Cc: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E.J. Bottomley" <jbottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Looks good so far. But do we really need the last two lines?
-> +	if (len > 16)
-> +		len = 16;
+On Wed, Oct 05, 2011 at 09:35:13AM +0200, Rolf Eike Beer wrote:
+> >  		  dev->supplement_adapter_info.MfgPcbaSerialNo);
+> > +
+> > +
+> 
+> One newline too much.
+> 
 
-Acked-by: Achim Leubner <Achim_Leubner@pmc-sierra.com> 
+True.  I wish checkpatch.pl checked for that...
 
-Thanks,
-Achim
+> > +	if (len > 16)
+> > +		len = 16;
+> 
+> max()?
 
+min() actually.  I don't know that it improves the readability, but
+can do.
 
------Original Message-----
-From: linux-scsi-owner@vger.kernel.org
-[mailto:linux-scsi-owner@vger.kernel.org] On Behalf Of Rolf Eike Beer
-Sent: Mittwoch, 5. Oktober 2011 09:35
-To: Dan Carpenter
-Cc: Adaptec OEM Raid Solutions; James E.J. Bottomley;
-linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org;
-kernel-janitors@vger.kernel.org
-Subject: Re: [patch] [SCSI] aacraid: use lower snprintf() limit
-
-> This is just a cleanup, to silence static checker warnings.  It
-> doesn't change how the code works.
->
-> buf[] can either be BUF_SIZE if this is called from sysfs, or it can
-> be 16 if it's called from aac_get_adapter_info() via
-> aac_get_serial_number().  We use the smaller limit here.
->
-> sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo) is 12 so there
-> is actually no chance of hitting either limit.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/scsi/aacraid/linit.c
-b/drivers/scsi/aacraid/linit.c
-> index 3382475..ea8d96e 100644
-> --- a/drivers/scsi/aacraid/linit.c
-> +++ b/drivers/scsi/aacraid/linit.c
-> @@ -894,15 +894,20 @@ static ssize_t aac_show_serial_number(struct
-device
-> *device,
->  	int len = 0;
->
->  	if (le32_to_cpu(dev->adapter_info.serial[0]) != 0xBAD0)
-> -		len = snprintf(buf, PAGE_SIZE, "%06X\n",
-> +		len = snprintf(buf, 16, "%06X\n",
->  		  le32_to_cpu(dev->adapter_info.serial[0]));
->  	if (len &&
->  	  !memcmp(&dev->supplement_adapter_info.MfgPcbaSerialNo[
->  	    sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo)-len],
->  	  buf, len-1))
-> -		len = snprintf(buf, PAGE_SIZE, "%.*s\n",
-> +		len = snprintf(buf, 16, "%.*s\n",
->
-(int)sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo),
->  		  dev->supplement_adapter_info.MfgPcbaSerialNo);
-> +
-> +
-
-One newline too much.
-
-> +	if (len > 16)
-> +		len = 16;
-
-max()?
-
-Eike
---
-To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards,
+dan carpenter
