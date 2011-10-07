@@ -1,43 +1,83 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Oct 2011 08:55:20 +0000
-Subject: Re: [patch] [ALSA] hwdep: silence integer overflow warning
-Message-Id: <20111028085520.GB14900@longonot.mountain>
+Date: Fri, 07 Oct 2011 13:24:53 +0000
+Subject: [patch] PM / Hibernate: NULL dereferences on error paths
+Message-Id: <20111007132453.GA31424@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111020060910.GA6101@elgon.mountain> <4E9FD02B.6030307@bfs.de>
-	<20111028064525.GA14707@longonot.mountain>
-	<4EAA5AB7.9000903@bfs.de>
-In-Reply-To: <4EAA5AB7.9000903@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 28, 2011 at 09:33:11AM +0200, walter harms wrote:
-> 
-> 
-> Am 28.10.2011 08:45, schrieb Dan Carpenter:
-> > On Thu, Oct 20, 2011 at 09:39:23AM +0200, walter harms wrote:
-> >> I am not sure how SNDRV_MINOR_HWDEPS is used further
-> > 
-> > Either device = SNDRV_MINOR_HWDEPS or device = SNDRV_MINOR_HWDEPS + 1
-> > are fine (equivalent) but it's a fair point.  Your version is nicer.
-> > 
-> > I'll redo the patch.
-> > 
-> 
-> An other question is:
-> Should the user be informed that the device is modified ?
-> The Problem i see is that a user parameter is silently modified
-> and buggy code will come through.
+These lines break if "data" is NULL.
+	if (data[thr].thr)
+		kthread_stop(data[thr].thr);
+I rearranged it so the checks for NULL in the error handling code
+aren't needed anymore.  And anyway both vfree() and free_page()
+handle NULL pointers so the checks were redundant.
 
-That would be an API change.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This is cut and pasted code, and we've had this exact discussion
-before for sound/core/rawmidi.c a year ago.  You were involved in
-the discussion too.  :P
-http://marc.info/?l=kernel-janitors&m8401699203676&w=2
-
-regards,
-dan carpenter
-
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index d692842..32a17e0 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -528,15 +528,14 @@ static int save_image_lzo(struct swap_map_handle *handle,
+ 	page = (void *)__get_free_page(__GFP_WAIT | __GFP_HIGH);
+ 	if (!page) {
+ 		printk(KERN_ERR "PM: Failed to allocate LZO page\n");
+-		ret = -ENOMEM;
+-		goto out_clean;
++		return -ENOMEM;
+ 	}
+ 
+ 	data = vmalloc(sizeof(*data) * nr_threads);
+ 	if (!data) {
+ 		printk(KERN_ERR "PM: Failed to allocate LZO data\n");
+ 		ret = -ENOMEM;
+-		goto out_clean;
++		goto out_page;
+ 	}
+ 	for (thr = 0; thr < nr_threads; thr++)
+ 		memset(&data[thr], 0, offsetof(struct cmp_data, go));
+@@ -664,8 +663,9 @@ out_clean:
+ 		if (data[thr].thr)
+ 			kthread_stop(data[thr].thr);
+ 	}
+-	if (data) vfree(data);
+-	if (page) free_page((unsigned long)page);
++	vfree(data);
++out_page:
++	free_page((unsigned long)page);
+ 
+ 	return ret;
+ }
+@@ -978,15 +978,14 @@ static int load_image_lzo(struct swap_map_handle *handle,
+ 	page = vmalloc(sizeof(*page) * LZO_READ_PAGES);
+ 	if (!page) {
+ 		printk(KERN_ERR "PM: Failed to allocate LZO page\n");
+-		error = -ENOMEM;
+-		goto out_clean;
++		return -ENOMEM;
+ 	}
+ 
+ 	data = vmalloc(sizeof(*data) * nr_threads);
+ 	if (!data) {
+ 		printk(KERN_ERR "PM: Failed to allocate LZO data\n");
+ 		error = -ENOMEM;
+-		goto out_clean;
++		goto out_page;
+ 	}
+ 	for (thr = 0; thr < nr_threads; thr++)
+ 		memset(&data[thr], 0, offsetof(struct dec_data, go));
+@@ -1183,8 +1182,9 @@ out_clean:
+ 		if (data[thr].thr)
+ 			kthread_stop(data[thr].thr);
+ 	}
+-	if (data) vfree(data);
+-	if (page) vfree(page);
++	vfree(data);
++out_page:
++	vfree(page);
+ 
+ 	return error;
+ }
