@@ -1,42 +1,53 @@
-From: Samuel Ortiz <samuel.ortiz@intel.com>
-Date: Wed, 12 Oct 2011 08:26:58 +0000
-Subject: Re: [patch] iwmc3200wifi: add a range check to iwm_cfg80211_get_key()
-Message-Id: <20111012082656.GA13878@sortiz-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Oct 2011 13:27:44 +0000
+Subject: [patch] trace: cleanup: make some types unsigned
+Message-Id: <20111007132744.GC31424@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111012081036.GA32384@elgon.mountain>
-In-Reply-To: <20111012081036.GA32384@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+The problem here is that I'm trying to silence a static checker
+warning.  In replace_preds() we cap n_preds at MAX_FILTER_PRED but
+we don't check for negative values.  It can't actually be negative
+values, but the static checkers get confused.
 
-On Wed, Oct 12, 2011 at 11:10:37AM +0300, Dan Carpenter wrote:
-> Smatch complains that "key_index" is capped at 5 in nl80211_get_key()
-> but iwm->keys[] only has 4 elements.  I don't know if this is really
-> needed, but the other ->get_key() implementations seemed to check
-> for overflows so I've added a check here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Samuel Ortiz <sameo@linux.intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cheers.
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
----------------------------------------------------------------------
-Intel Corporation SAS (French simplified joint stock company)
-Registered headquarters: "Les Montalets"- 2, rue de Paris, 
-92196 Meudon Cedex, France
-Registration Number:  302 456 199 R.C.S. NANTERRE
-Capital: 4,572,000 Euros
-
-This e-mail and any attachments may contain confidential material for
-the sole use of the intended recipient(s). Any review or distribution
-by others is strictly prohibited. If you are not the intended
-recipient, please contact the sender and delete all copies.
-
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 256764e..7f4daff 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -790,7 +790,7 @@ static struct event_filter *__alloc_filter(void)
+ 	return filter;
+ }
+ 
+-static int __alloc_preds(struct event_filter *filter, int n_preds)
++static int __alloc_preds(struct event_filter *filter, unsigned int n_preds)
+ {
+ 	struct filter_pred *pred;
+ 	int i;
+@@ -1361,10 +1361,10 @@ static int check_preds(struct filter_parse_state *ps)
+ 	return 0;
+ }
+ 
+-static int count_preds(struct filter_parse_state *ps)
++static unsigned int count_preds(struct filter_parse_state *ps)
+ {
+ 	struct postfix_elt *elt;
+-	int n_preds = 0;
++	unsigned int n_preds = 0;
+ 
+ 	list_for_each_entry(elt, &ps->postfix, list) {
+ 		if (elt->op = OP_NONE)
+@@ -1601,7 +1601,7 @@ static int replace_preds(struct ftrace_event_call *call,
+ 	struct postfix_elt *elt;
+ 	struct pred_stack stack = { }; /* init to NULL */
+ 	int err;
+-	int n_preds = 0;
++	unsigned int n_preds = 0;
+ 
+ 	n_preds = count_preds(ps);
+ 	if (n_preds >= MAX_FILTER_PRED) {
