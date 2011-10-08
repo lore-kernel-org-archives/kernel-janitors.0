@@ -1,82 +1,53 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Oct 2011 06:41:06 +0000
-Subject: [patch] [media] rc/ir-lirc-codec: cleanup __user tags
-Message-Id: <20111006064106.GB2615@mwanda>
+Date: Sat, 08 Oct 2011 10:45:07 +0000
+Subject: [patch v2] [SCSI] aacraid: use lower snprintf() limit
+Message-Id: <20111008104507.GP30887@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111005055046.GD32077@elgon.mountain>
+ <d97a34694e741dc6a2a71fbcd49bab49.squirrel@webmail.sf-mail.de>
+In-Reply-To: <d97a34694e741dc6a2a71fbcd49bab49.squirrel@webmail.sf-mail.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Jarod Wilson <jarod@redhat.com>, David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, Paul Gortmaker <paul.gortmaker@windriver.com>, "open list:MEDIA INPUT INFRA..." <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Rolf Eike Beer <eike-kernel@sf-tec.de>
+Cc: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, "James E.J. Bottomley" <jbottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The code here treated user pointers correctly, but the __user tags
-weren't used correctly so it caused Sparse warnings:
+This is just a cleanup, to silence static checker warnings.  It
+doesn't change how the code works.
 
-drivers/media/rc/ir-lirc-codec.c:122:29: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/rc/ir-lirc-codec.c:122:29:    expected void const [noderef] <asn:1>*<noident>
-drivers/media/rc/ir-lirc-codec.c:122:29:    got char const *buf
-drivers/media/rc/ir-lirc-codec.c:160:23: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/rc/ir-lirc-codec.c:160:23:    expected void const volatile [noderef] <asn:1>*<noident>
-drivers/media/rc/ir-lirc-codec.c:160:23:    got unsigned int [usertype] *<noident>
-drivers/media/rc/ir-lirc-codec.c:269:23: warning: incorrect type in argument 1 (different address spaces)
-drivers/media/rc/ir-lirc-codec.c:269:23:    expected void const volatile [noderef] <asn:1>*<noident>
-drivers/media/rc/ir-lirc-codec.c:269:23:    got unsigned int [usertype] *<noident>
-drivers/media/rc/ir-lirc-codec.c:286:27: warning: incorrect type in initializer (incompatible argument 2 (different address spaces))
-drivers/media/rc/ir-lirc-codec.c:286:27:    expected long ( *write )( ... )
-drivers/media/rc/ir-lirc-codec.c:286:27:    got long ( static [toplevel] *<noident> )( ... )
-drivers/media/rc/ir-lirc-codec.c:287:27: warning: incorrect type in initializer (incompatible argument 3 (different address spaces))
-drivers/media/rc/ir-lirc-codec.c:287:27:    expected long ( *unlocked_ioctl )( ... )
-drivers/media/rc/ir-lirc-codec.c:287:27:    got long ( static [toplevel] *<noident> )( ... )
-drivers/media/rc/ir-lirc-codec.c:289:27: warning: incorrect type in initializer (incompatible argument 3 (different address spaces))
-drivers/media/rc/ir-lirc-codec.c:289:27:    expected long ( *compat_ioctl )( ... )
-drivers/media/rc/ir-lirc-codec.c:289:27:    got long ( static [toplevel] *<noident> )( ... )
-drivers/media/rc/ir-lirc-codec.c:160:23: warning: dereference of noderef expression
-drivers/media/rc/ir-lirc-codec.c:265:55: warning: dereference of noderef expression
-drivers/media/rc/ir-lirc-codec.c:269:23: warning: dereference of noderef expression
+buf[] can either be BUF_SIZE if this is called from sysfs, or it can
+be 16 if it's called from aac_get_adapter_info() via
+aac_get_serial_number().  We use the smaller limit here.
+
+sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo) is 12 so there
+is actually no chance of hitting either limit.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  fix a whitespace issue, and use the min() macro.
 
-diff --git a/drivers/media/rc/ir-lirc-codec.c b/drivers/media/rc/ir-lirc-codec.c
-index 165ea8f..5faba2a 100644
---- a/drivers/media/rc/ir-lirc-codec.c
-+++ b/drivers/media/rc/ir-lirc-codec.c
-@@ -99,7 +99,7 @@ static int ir_lirc_decode(struct rc_dev *dev, struct ir_raw_event ev)
- 	return 0;
+diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+index 3382475..4aa76d6 100644
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -894,16 +894,17 @@ static ssize_t aac_show_serial_number(struct device *device,
+ 	int len = 0;
+ 
+ 	if (le32_to_cpu(dev->adapter_info.serial[0]) != 0xBAD0)
+-		len = snprintf(buf, PAGE_SIZE, "%06X\n",
++		len = snprintf(buf, 16, "%06X\n",
+ 		  le32_to_cpu(dev->adapter_info.serial[0]));
+ 	if (len &&
+ 	  !memcmp(&dev->supplement_adapter_info.MfgPcbaSerialNo[
+ 	    sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo)-len],
+ 	  buf, len-1))
+-		len = snprintf(buf, PAGE_SIZE, "%.*s\n",
++		len = snprintf(buf, 16, "%.*s\n",
+ 		  (int)sizeof(dev->supplement_adapter_info.MfgPcbaSerialNo),
+ 		  dev->supplement_adapter_info.MfgPcbaSerialNo);
+-	return len;
++
++	return min(len, 16);
  }
  
--static ssize_t ir_lirc_transmit_ir(struct file *file, const char *buf,
-+static ssize_t ir_lirc_transmit_ir(struct file *file, const char __user *buf,
- 				   size_t n, loff_t *ppos)
- {
- 	struct lirc_codec *lirc;
-@@ -141,10 +141,11 @@ out:
- }
- 
- static long ir_lirc_ioctl(struct file *filep, unsigned int cmd,
--			unsigned long __user arg)
-+			unsigned long arg)
- {
- 	struct lirc_codec *lirc;
- 	struct rc_dev *dev;
-+	u32 __user *argp = (u32 __user *)(arg);
- 	int ret = 0;
- 	__u32 val = 0, tmp;
- 
-@@ -157,7 +158,7 @@ static long ir_lirc_ioctl(struct file *filep, unsigned int cmd,
- 		return -EFAULT;
- 
- 	if (_IOC_DIR(cmd) & _IOC_WRITE) {
--		ret = get_user(val, (__u32 *)arg);
-+		ret = get_user(val, argp);
- 		if (ret)
- 			return ret;
- 	}
-@@ -266,7 +267,7 @@ static long ir_lirc_ioctl(struct file *filep, unsigned int cmd,
- 	}
- 
- 	if (_IOC_DIR(cmd) & _IOC_READ)
--		ret = put_user(val, (__u32 *)arg);
-+		ret = put_user(val, argp);
- 
- 	return ret;
- }
+ static ssize_t aac_show_max_channel(struct device *device,
