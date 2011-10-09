@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 09 Oct 2011 14:11:30 +0000
+From: Bojan Smojver <bojan@rexursive.com>
+Date: Sun, 09 Oct 2011 22:26:12 +0000
 Subject: Re: [patch] PM / Hibernate: NULL dereferences on error paths
-Message-Id: <20111009141130.GP18470@longonot.mountain>
+Message-Id: <1318199172.2004.3.camel@shrek.rexursive.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20111007132453.GA31424@elgon.mountain>
 In-Reply-To: <20111007132453.GA31424@elgon.mountain>
@@ -10,16 +10,14 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Oct 09, 2011 at 12:11:23AM +1100, Bojan Smojver wrote:
-> With the introduction of threads, there were so many unwind places,
-> that I thought I may forget something in some of them, therefore
-> causing different bugs. So, I put everything under out_clean, so
-> it's all done in one place. Obviously, everything's a trade-off in
-> life. :-)
+On Sun, 2011-10-09 at 17:11 +0300, Dan Carpenter wrote:
+> In general if you care about total bugs over the entire project then
+> simpler code is less buggy.
 
-In general if you care about total bugs over the entire project then
-simpler code is less buggy.  But I understand that you've eliminated
-a bug class and I can respect that.
+Agreed. And thank you for finding that problem.
 
-regards,
-dan carpenter
+At times, I also complicate things unnecessarily. Ah, well...
+
+-- 
+Bojan
+
