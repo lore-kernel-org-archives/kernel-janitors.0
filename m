@@ -1,25 +1,33 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Wed, 19 Oct 2011 17:34:14 +0000
-Subject: Re: [PATCH 3/3] sound/soc/au1x: keep pointer to resource so it can
-Message-Id: <20111019173413.GF4275@opensource.wolfsonmicro.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Oct 2011 14:34:53 +0000
+Subject: [patch] drm/nva3: checking the wrong variable
+Message-Id: <20111011143453.GA29096@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1318909555-12933-3-git-send-email-julia@diku.dk>
-	<CAOLZvyFoiuHEfpnozWpAM5h92rjay-asqXX0tY1P1ZzO8eTGOQ@mail.gmail.com>
-	<CABS+qY2pBkNjHUKrtD3QttQOQD-LpStHopSGxzeG-iyc7RtVgw@mail.gmail.com>
-	<20111019164836.GC4275@opensource.wolfsonmicro.com>
-	<Pine.LNX.4.64.1110191930450.31584@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.1110191930450.31584@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>, Axel Lin <axel.lin@gmail.com>, "Girdwood, Liam" <lrg@ti.com>
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
 
-On Wed, Oct 19, 2011 at 07:32:10PM +0200, Julia Lawall wrote:
-> I'm not sure how to proceed, since I originally sent 3 patches, all with 
-> the same problem.  I send another single patch that fixed the problems 
-> with nicer names than r and r1.  Should I send another single patch with 
-> Manuel's solution?  Or does Manuel want to do that?
+"id" is unsigned here and it's never less than zero.  I believe the
+intent was to check the return value from nva3_pm_pll_offset().
+Also I've changed it to pass on the -ENOENT error code from the lower
+levels instead of returning -EINVAL.
 
-I dunno, I guess sending Manuel's patch along with your other changes
-might be the way forward?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/nouveau/nva3_pm.c b/drivers/gpu/drm/nouveau/nva3_pm.c
+index e4b2b9e..0be517d 100644
+--- a/drivers/gpu/drm/nouveau/nva3_pm.c
++++ b/drivers/gpu/drm/nouveau/nva3_pm.c
+@@ -112,8 +112,8 @@ nva3_pm_clock_pre(struct drm_device *dev, struct nouveau_pm_level *perflvl,
+ 		return (ret = -ENOENT) ? NULL : ERR_PTR(ret);
+ 
+ 	off = nva3_pm_pll_offset(id);
+-	if (id < 0)
+-		return ERR_PTR(-EINVAL);
++	if (off < 0)
++		return ERR_PTR(off);
+ 
+ 
+ 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
