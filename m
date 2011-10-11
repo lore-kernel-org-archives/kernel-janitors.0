@@ -1,39 +1,44 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Date: Sat, 29 Oct 2011 12:19:00 +0000
-Subject: Re: xfrm: Assign the inner mode output function to the dst
-Message-Id: <20111029121900.GA8707@secunet.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Oct 2011 21:55:49 +0000
+Subject: Re: [patch] cipso: remove an unneeded NULL check in
+Message-Id: <20111011215549.GC30887@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111028151822.GA12707@elgon.mountain>
-In-Reply-To: <20111028151822.GA12707@elgon.mountain>
+References: <20111011132228.GA27127@elgon.mountain>
+ <CAHC9VhRMy-DbbkXSSWQPh8QgHAm5xzZ1qWJaYLiOERPagDfrbQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRMy-DbbkXSSWQPh8QgHAm5xzZ1qWJaYLiOERPagDfrbQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Paul Moore <paul@paul-moore.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, kernel-janitors@vger.kernel.org
 
-Hi.
+On Tue, Oct 11, 2011 at 05:20:11PM -0400, Paul Moore wrote:
+> > - =A0 =A0 =A0 if (doi_def =3D NULL || doi_def->doi =3D CIPSO_V4_DOI_UNK=
+NOWN)
+> > + =A0 =A0 =A0 if (doi_def->doi =3D CIPSO_V4_DOI_UNKNOWN)
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto doi_add_return;
+> > =A0 =A0 =A0 =A0for (iter =3D 0; iter < CIPSO_V4_TAG_MAXCNT; iter++) {
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0switch (doi_def->tags[iter]) {
+>=20
+> I'd prefer to keep the NULL check in there as it does afford a little
+> bit of extra safety and this is management code after all, not
+> per-packet processing code, so the extra check should have no
+> observable performance impact.
 
-On Fri, Oct 28, 2011 at 06:18:24PM +0300, Dan Carpenter wrote:
-> [ Hi.  Smatch is complaining about a really old patch here.  Sorry
->   for that.  I will fix it to detect better which warnings are new
->   but I saw that there was some work done in this function recently
->   so I decided to send this email anyway.  --dan ]
-> 
-> Hello Steffen Klassert,
-> 
-> This is a semi-automatic email about new static checker warnings.
-> 
-> The patch 43a4dea4c9d4: "xfrm: Assign the inner mode output function 
-> to the dst entry" from May 9, 2011, leads to the following Smatch 
-> complaint:
-> 
-> net/ipv6/xfrm6_output.c +154 __xfrm6_output()
-> 	 error: we previously assumed 'x' could be null (see line 149)
-> 
-> net/ipv6/xfrm6_output.c
->    148	
->    149		if ((x && x->props.mode = XFRM_MODE_TUNNEL) &&
->                      ^
+The dereferences on the lines before mean we would Oops before
+reaching the check.  But I guess I can move the check forward.  The
+error handling at goto doi_add_return relies on a non-NULL value for
+doi_def but I could just put a return in front of the dereference.
 
-x can't be null here. It would be a bug if __xfrm6_output() is called without
-a xfrm_state attached to the skb. I think we can just remove this null check.
+	if (!doi_def)
+		return -EINVAL;
 
+I'll send a patch to do this tomorrow.
+
+regards,
+dan carpenter
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
