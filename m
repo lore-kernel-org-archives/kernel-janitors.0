@@ -1,30 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Oct 2011 06:17:38 +0000
-Subject: [patch] Staging: dt3155v4l: silence a compiler warning
-Message-Id: <20111006061738.GD14701@elgon.mountain>
+Date: Tue, 11 Oct 2011 13:49:12 +0000
+Subject: [patch] ext4: error handling fix in ext4_ext_convert_to_initialized()
+Message-Id: <20111011134912.GB27127@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Yongqiang Yang <xiaoqiangnk@gmail.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The '!' is dead code that was left over from a previous version.
-It causes a compiler warning:
-drivers/staging/dt3155v4l/dt3155v4l.c:335:3: warning: value computed
-	is not used
+When allocated is unsiged it breaks the error handling at the end
+of the function when we call:
+	allocated = ext4_split_extent(...);
+	if (allocated < 0)
+		err = allocated;
+
+I've made it a signed int instead of unsigned.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+You guys know I'm not an ext4 expert.  I can't swear that the math
+all works correctly with a signed int.  I'm pretty sure it does, but
+please review this carefully.
 
-diff --git a/drivers/staging/dt3155v4l/dt3155v4l.c b/drivers/staging/dt3155v4l/dt3155v4l.c
-index 7f5ae2d..5a2ec91 100644
---- a/drivers/staging/dt3155v4l/dt3155v4l.c
-+++ b/drivers/staging/dt3155v4l/dt3155v4l.c
-@@ -332,7 +332,7 @@ dt3155_irq_handler_even(int irq, void *dev_id)
- 		return IRQ_HANDLED; /* start of field irq */
- 	}
- 	if ((tmp & FLD_START) && (tmp & FLD_END_ODD))
--		!ipd->stats.start_before_end++;
-+		ipd->stats.start_before_end++;
- 	/*	check for corrupted fields     */
- /*	write_i2c_reg(ipd->regs, EVEN_CSR, CSR_ERROR | CSR_DONE);	*/
- /*	write_i2c_reg(ipd->regs, ODD_CSR, CSR_ERROR | CSR_DONE);	*/
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index 57cf568..d65b268 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -2919,7 +2919,8 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+ 	struct ext4_extent zero_ex;
+ 	struct ext4_extent *ex;
+ 	ext4_lblk_t ee_block, eof_block;
+-	unsigned int allocated, ee_len, depth;
++	unsigned int ee_len, depth;
++	int allocated;
+ 	int err = 0;
+ 	int split_flag = 0;
+ 
