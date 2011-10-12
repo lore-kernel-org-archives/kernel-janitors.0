@@ -1,41 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2011 08:10:37 +0000
-Subject: [patch] iwmc3200wifi: add a range check to iwm_cfg80211_get_key()
-Message-Id: <20111012081036.GA32384@elgon.mountain>
+From: Samuel Ortiz <samuel.ortiz@intel.com>
+Date: Wed, 12 Oct 2011 08:26:58 +0000
+Subject: Re: [patch] iwmc3200wifi: add a range check to iwm_cfg80211_get_key()
+Message-Id: <20111012082656.GA13878@sortiz-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111012081036.GA32384@elgon.mountain>
+In-Reply-To: <20111012081036.GA32384@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <samuel.ortiz@intel.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Smatch complains that "key_index" is capped at 5 in nl80211_get_key()
-but iwm->keys[] only has 4 elements.  I don't know if this is really
-needed, but the other ->get_key() implementations seemed to check
-for overflows so I've added a check here.
+Hi Dan,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Wed, Oct 12, 2011 at 11:10:37AM +0300, Dan Carpenter wrote:
+> Smatch complains that "key_index" is capped at 5 in nl80211_get_key()
+> but iwm->keys[] only has 4 elements.  I don't know if this is really
+> needed, but the other ->get_key() implementations seemed to check
+> for overflows so I've added a check here.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Samuel Ortiz <sameo@linux.intel.com>
 
-diff --git a/drivers/net/wireless/iwmc3200wifi/cfg80211.c b/drivers/net/wireless/iwmc3200wifi/cfg80211.c
-index ed57e44..c42be81 100644
---- a/drivers/net/wireless/iwmc3200wifi/cfg80211.c
-+++ b/drivers/net/wireless/iwmc3200wifi/cfg80211.c
-@@ -187,13 +187,17 @@ static int iwm_cfg80211_get_key(struct wiphy *wiphy, struct net_device *ndev,
- 						 struct key_params*))
- {
- 	struct iwm_priv *iwm = ndev_to_iwm(ndev);
--	struct iwm_key *key = &iwm->keys[key_index];
-+	struct iwm_key *key;
- 	struct key_params params;
- 
- 	IWM_DBG_WEXT(iwm, DBG, "Getting key %d\n", key_index);
- 
-+	if (key_index >= IWM_NUM_KEYS)
-+		return -ENOENT;
-+
- 	memset(&params, 0, sizeof(params));
- 
-+	key = &iwm->keys[key_index];
- 	params.cipher = key->cipher;
- 	params.key_len = key->key_len;
- 	params.seq_len = key->seq_len;
+Cheers.
+Samuel.
+
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
+---------------------------------------------------------------------
+Intel Corporation SAS (French simplified joint stock company)
+Registered headquarters: "Les Montalets"- 2, rue de Paris, 
+92196 Meudon Cedex, France
+Registration Number:  302 456 199 R.C.S. NANTERRE
+Capital: 4,572,000 Euros
+
+This e-mail and any attachments may contain confidential material for
+the sole use of the intended recipient(s). Any review or distribution
+by others is strictly prohibited. If you are not the intended
+recipient, please contact the sender and delete all copies.
+
