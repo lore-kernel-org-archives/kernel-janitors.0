@@ -1,45 +1,32 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Date: Mon, 31 Oct 2011 11:22:52 +0000
-Subject: Re: [patch] Staging: iio/dac/ad5064.c: signedness bug in ad5064_read_raw()
-Message-Id: <4EAE850C.8040103@cam.ac.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Oct 2011 07:28:57 +0000
+Subject: [patch] RDMA/nes: silence compiler warning
+Message-Id: <20111017072857.GB7812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111029072042.GC17780@elgon.mountain> <4EAD2A97.8090103@metafoo.de>
-In-Reply-To: <4EAD2A97.8090103@metafoo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Faisal Latif <faisal.latif-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 10/30/11 10:44, Lars-Peter Clausen wrote:
-> On 10/29/2011 09:20 AM, Dan Carpenter wrote:
->> regulator_get_voltage() returns an int so "scale_uv" should be an
->> int.  Making it unsigned here breaks the error handling.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> uhm, yes...
-> 
-> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Acked-by: Jonathan Cameron <jic23@cam.ac.uk>
-> 
-> Thanks.
-> 
->>
->> diff --git a/drivers/staging/iio/dac/ad5064.c b/drivers/staging/iio/dac/ad5064.c
->> index 24279f2..3b14526 100644
->> --- a/drivers/staging/iio/dac/ad5064.c
->> +++ b/drivers/staging/iio/dac/ad5064.c
->> @@ -280,8 +280,8 @@ static int ad5064_read_raw(struct iio_dev *indio_dev,
->>  			   long m)
->>  {
->>  	struct ad5064_state *st = iio_priv(indio_dev);
->> -	unsigned long scale_uv;
->>  	unsigned int vref;
->> +	int scale_uv;
->>  
->>  	switch (m) {
->>  	case 0:
-> 
-> 
+drivers/infiniband/hw/nes/nes_cm.c:3190:2: warning: format ‘%zu’
+	expects argument of type ‘size_t’, but argument 11 has type
+	‘int’ [-Wformat]
 
+The warning says the type is "int" but actually it's unsigned short.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/infiniband/hw/nes/nes_cm.c b/drivers/infiniband/hw/nes/nes_cm.c
+index 16667c7..b96ec43 100644
+--- a/drivers/infiniband/hw/nes/nes_cm.c
++++ b/drivers/infiniband/hw/nes/nes_cm.c
+@@ -3189,7 +3189,7 @@ int nes_accept(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
+ 
+ 	nes_debug(NES_DBG_CM, "QP%u, Destination IP = 0x%08X:0x%04X, local = "
+ 		  "0x%08X:0x%04X, rcv_nxt=0x%08X, snd_nxt=0x%08X, mpa + "
+-		  "private data length=%zu.\n", nesqp->hwqp.qp_id,
++		  "private data length=%d.\n", nesqp->hwqp.qp_id,
+ 		  ntohl(cm_id->remote_addr.sin_addr.s_addr),
+ 		  ntohs(cm_id->remote_addr.sin_port),
+ 		  ntohl(cm_id->local_addr.sin_addr.s_addr),
