@@ -1,50 +1,42 @@
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Date: Tue, 18 Oct 2011 06:37:53 +0000
-Subject: Re: [patch] vmwgfx: memory leaks caused by double allocation
-Message-Id: <4E9D1EC1.6010305@vmware.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Oct 2011 07:30:18 +0000
+Subject: [patch] CIFS: cleanup min_t() cast in cifs_read()
+Message-Id: <20111017073018.GC7812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111018060945.GD27732@elgon.mountain>
-In-Reply-To: <20111018060945.GD27732@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Rakib Mullick <rakib.mullick@gmail.com>, Dave Airlie <airlied@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 10/18/2011 08:09 AM, Dan Carpenter wrote:
-> These variables get allocated twice so the first allocation is a
-> memory leak.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
->    
+Smatch complains that the cast to "int" in min_t() changes very large
+values of current_read_size into negative values and so min_t()
+could return the wrong value.
 
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+Also casting the "const" here doesn't make sense.
 
+I've changed it to u32 ("unsigned int" take puts us past the 80
+character limit).
 
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-> index c7cff3d..86c5e4c 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
-> @@ -1255,8 +1255,7 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
->   			     struct drm_file *file_priv)
->   {
->   	struct vmw_private *dev_priv = vmw_priv(dev);
-> -	struct vmw_user_surface *user_srf > -	    kmalloc(sizeof(*user_srf), GFP_KERNEL);
-> +	struct vmw_user_surface *user_srf;
->   	struct vmw_surface *srf;
->   	struct vmw_resource *res;
->   	struct vmw_resource *tmp;
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-> index 35d5f61..15fb260 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-> @@ -953,8 +953,7 @@ int vmw_event_fence_action_create(struct drm_file *file_priv,
->   				  uint32_t *tv_usec,
->   				  bool interruptible)
->   {
-> -	struct vmw_event_fence_action *eaction > -		kzalloc(sizeof(*eaction), GFP_KERNEL);
-> +	struct vmw_event_fence_action *eaction;
->   	struct ttm_mem_global *mem_glob >   		vmw_mem_glob(fence->fman->dev_priv);
->   	struct vmw_fence_manager *fman = fence->fman;
->    
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 9f41a10..a61f581 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1861,13 +1861,13 @@ static ssize_t cifs_read(struct file *file, char *read_data, size_t read_size,
+ 	for (total_read = 0, current_offset = read_data;
+ 	     read_size > total_read;
+ 	     total_read += bytes_read, current_offset += bytes_read) {
+-		current_read_size = min_t(const int, read_size - total_read,
++		current_read_size = min_t(u32, read_size - total_read,
+ 					  cifs_sb->rsize);
+ 		/* For windows me and 9x we do not want to request more
+ 		than it negotiated since it will refuse the read then */
+ 		if ((pTcon->ses) &&
+ 			!(pTcon->ses->capabilities & CAP_LARGE_FILES)) {
+-			current_read_size = min_t(const int, current_read_size,
++			current_read_size = min_t(u32, current_read_size,
+ 					pTcon->ses->server->maxBuf - 128);
+ 		}
+ 		rc = -EAGAIN;
