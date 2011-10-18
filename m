@@ -1,30 +1,29 @@
-From: Borislav Petkov <bp@amd64.org>
-Date: Thu, 06 Oct 2011 12:51:08 +0000
-Subject: Re: [patch] edac_amd64: cleanup return type of
-Message-Id: <20111006125108.GB22432@aftab>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 06:26:45 +0000
+Subject: [patch 2/2] gpio-pch: using zero instead of NULL
+Message-Id: <20111018062645.GO27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Oct 06, 2011 at 02:30:25AM -0400, Dan Carpenter wrote:
-> Sparse complains that edac_cap was declared as dev_type and we are
-> returning edac_type.  Historically, edac_type was correct but since
-> then we have changed it to return a bit field.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Sparse gets cross if you use zero instead of NULL.
+drivers/gpio/gpio-pch.c:379:27: warning: Using plain integer as NULL pointer
 
-Applied and pushed out,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-thanks.
-
--- 
-Regards/Gruss,
-Boris.
-
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-GM: Alberto Bozzo
-Reg: Dornach, Landkreis Muenchen
-HRB Nr. 43632 WEEE Registernr: 129 19551
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index 4068084..7ddac42 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -376,7 +376,7 @@ static int __devinit pch_gpio_probe(struct pci_dev *pdev,
+ 	}
+ 
+ 	chip->base = pci_iomap(pdev, 1, 0);
+-	if (chip->base = 0) {
++	if (chip->base = NULL) {
+ 		dev_err(&pdev->dev, "%s : pci_iomap FAILED", __func__);
+ 		ret = -ENOMEM;
+ 		goto err_iomap;
