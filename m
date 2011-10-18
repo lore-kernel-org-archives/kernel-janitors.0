@@ -1,25 +1,30 @@
-From: Ted Ts'o <tytso@mit.edu>
-Date: Mon, 31 Oct 2011 17:53:36 +0000
-Subject: Re: [patch 2/2] jbd2: use gfp_t instead of int
-Message-Id: <20111031175336.GG16825@thunk.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 06:27:25 +0000
+Subject: [patch] Staging: vt6655: memory corruption in check in
+Message-Id: <20111018062725.GP27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110826092036.GN5975@shale.localdomain>
-In-Reply-To: <20110826092036.GN5975@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <error27@gmail.com>
-Cc: "open list:JOURNALLING LAYER..." <linux-ext4@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 26, 2011 at 12:20:37PM +0300, Dan Carpenter wrote:
-> This silences some Sparse warnings:
-> fs/jbd2/transaction.c:135:69: warning: incorrect type in argument 2 (different base types)
-> fs/jbd2/transaction.c:135:69:    expected restricted gfp_t [usertype] flags
-> fs/jbd2/transaction.c:135:69:    got int [signed] gfp_mask
-> 
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+The original code left it up to the user to decide how much data to
+copy, but that doesn't work with a fixed size array.
 
-This has been merged into the ext4 tree (a while ago, actually, but it
-looks like I forgot to send an e-mail ack).
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-					- Ted
+diff --git a/drivers/staging/vt6655/wpactl.c b/drivers/staging/vt6655/wpactl.c
+index a0f994e..732ba88 100644
+--- a/drivers/staging/vt6655/wpactl.c
++++ b/drivers/staging/vt6655/wpactl.c
+@@ -213,7 +213,9 @@ int wpa_set_wpadev(PSDevice pDevice, int val)
+ 	int uu, ii;
+ 
+ 
+-	if (param->u.wpa_key.alg_name > WPA_ALG_CCMP)
++	if (param->u.wpa_key.alg_name > WPA_ALG_CCMP ||
++			param->u.wpa_key.key_len >= MAX_KEY_LEN ||
++			param->u.wpa_key.seq_len >= MAX_KEY_LEN)
+ 		return -EINVAL;
+ 
+     DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "param->u.wpa_key.alg_name = %d \n", param->u.wpa_key.alg_name);
