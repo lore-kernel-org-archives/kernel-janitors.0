@@ -1,34 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Oct 2011 06:14:09 +0000
-Subject: [patch 2/4] mwifiex: remove an unneeded NULL check
-Message-Id: <20111018061409.GH27732@elgon.mountain>
+From: Bing Zhao <bzhao@marvell.com>
+Date: Tue, 18 Oct 2011 17:59:48 +0000
+Subject: RE: [patch 2/4] mwifiex: remove an unneeded NULL check
+Message-Id: <477F20668A386D41ADCC57781B1F70430817F5975B@SC-VEXCH1.marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111018061409.GH27732@elgon.mountain>
+In-Reply-To: <20111018061409.GH27732@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bing Zhao <bzhao@marvell.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We dereference adapter in the error handling code so this needed to
-be fixed.  This function is always called like:
-	adapter->if_ops.host_to_card(adapter, ...);
-so adapter can never be NULL and I've removed the NULL check.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/wireless/mwifiex/pcie.c b/drivers/net/wireless/mwifiex/pcie.c
-index 4466976..d12d440 100644
---- a/drivers/net/wireless/mwifiex/pcie.c
-+++ b/drivers/net/wireless/mwifiex/pcie.c
-@@ -1671,9 +1671,8 @@ static int mwifiex_pcie_host_to_card(struct mwifiex_adapter *adapter, u8 type,
- 				     struct sk_buff *skb,
- 				     struct mwifiex_tx_param *tx_param)
- {
--	if (!adapter || !skb) {
--		dev_err(adapter->dev, "Invalid parameter in %s <%p, %p>\n",
--				__func__, adapter, skb);
-+	if (!skb) {
-+		dev_err(adapter->dev, "Passed NULL skb to %s\n", __func__);
- 		return -1;
- 	}
- 
+> -----Original Message-----
+> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
+> Sent: Monday, October 17, 2011 11:14 PM
+> To: Bing Zhao
+> Cc: John W. Linville; linux-wireless@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Subject: [patch 2/4] mwifiex: remove an unneeded NULL check
+> 
+> We dereference adapter in the error handling code so this needed to
+> be fixed.  This function is always called like:
+> 	adapter->if_ops.host_to_card(adapter, ...);
+> so adapter can never be NULL and I've removed the NULL check.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: Bing Zhao <bzhao@marvell.com>
+
+Thanks,
+Bing
+
+> 
+> diff --git a/drivers/net/wireless/mwifiex/pcie.c b/drivers/net/wireless/mwifiex/pcie.c
+> index 4466976..d12d440 100644
+> --- a/drivers/net/wireless/mwifiex/pcie.c
+> +++ b/drivers/net/wireless/mwifiex/pcie.c
+> @@ -1671,9 +1671,8 @@ static int mwifiex_pcie_host_to_card(struct mwifiex_adapter *adapter, u8 type,
+>  				     struct sk_buff *skb,
+>  				     struct mwifiex_tx_param *tx_param)
+>  {
+> -	if (!adapter || !skb) {
+> -		dev_err(adapter->dev, "Invalid parameter in %s <%p, %p>\n",
+> -				__func__, adapter, skb);
+> +	if (!skb) {
+> +		dev_err(adapter->dev, "Passed NULL skb to %s\n", __func__);
+>  		return -1;
+>  	}
+> 
