@@ -1,26 +1,29 @@
-From: Marcelo Tosatti <mtosatti@redhat.com>
-Date: Wed, 19 Oct 2011 17:26:24 +0000
-Subject: Re: [patch] KVM: make checks stricter in coalesced_mmio_in_range()
-Message-Id: <20111019172624.GB8575@amt.cnet>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 06:10:12 +0000
+Subject: [patch] vmwgfx: information leak in vmw_execbuf_copy_fence_user()
+Message-Id: <20111018061012.GE27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111019061510.GA12399@elgon.mountain>
-In-Reply-To: <20111019061510.GA12399@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Avi Kivity <avi@redhat.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, Vasiliy Kulikov <segooon@gmail.com>, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>
 
-On Wed, Oct 19, 2011 at 09:15:10AM +0300, Dan Carpenter wrote:
-> My testing version of Smatch complains that addr and len come from
-> the user and they can wrap.  The path is:
->   -> kvm_vm_ioctl()
->      -> kvm_vm_ioctl_unregister_coalesced_mmio()
->         -> coalesced_mmio_in_range()
-> 
-> I don't know what the implications are of wrapping here, but we may
-> as well fix it, if only to silence the warning.
+If ret is non-zero then we don't initialize the struct which leaks
+stack information to user space.
 
-There are no negative implications, if variables wrap unregistration 
-fails. Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index d4a1d8b..28e1c35 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -1070,6 +1070,8 @@ vmw_execbuf_copy_fence_user(struct vmw_private *dev_priv,
+ 	if (user_fence_rep = NULL)
+ 		return;
+ 
++	memset(&fence_rep, 0, sizeof(fence_rep));
++
+ 	fence_rep.error = ret;
+ 	if (ret = 0) {
+ 		BUG_ON(fence = NULL);
