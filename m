@@ -1,43 +1,43 @@
-From: Michal Hocko <mhocko@suse.cz>
-Date: Thu, 20 Oct 2011 00:20:28 +0000
-Subject: Re: [patch] memory hotplug: release lock on an error path
-Message-Id: <20111020002027.GB21703@tiehlicka.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 06:12:09 +0000
+Subject: [patch] [media] av7110: wrong limiter in av7110_start_feed()
+Message-Id: <20111018061209.GF27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111005055326.GA32187@elgon.mountain>
- <20111018212931.GB10656@tiehlicka.suse.cz>
- <20111018222805.GB24215@longonot.mountain>
-In-Reply-To: <20111018222805.GB24215@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Nathan Fontenot <nfont@austin.ibm.com>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Derek Kelly <user.vdr@gmail.com>, "Hans J. Koch" <hjk@linutronix.de>, Jiri Kosina <jkosina@suse.cz>, Ben Pfaff <blp@cs.stanford.edu>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed 19-10-11 01:28:05, Dan Carpenter wrote:
-> On Tue, Oct 18, 2011 at 02:29:32PM -0700, Michal Hocko wrote:
-> > On Wed 05-10-11 08:53:26, Dan Carpenter wrote:
-> > > We need to release the mutex here before returning.
-> > 
-> > Which kernel have you used as a base? I do not see any code like that in
-> > the vanilla kernel. And git log doesn't know anything about
-> > check_page_reservations in the file as well...
-> > 
-> 
-> Sorry this was against linux-next.
+Smatch complains that the wrong limiter is used here:
+drivers/media/dvb/ttpci/av7110.c +906 dvb_feed_start_pid(12)
+	error: buffer overflow 'npids' 5 <= 19
 
-Would be good to mention which patch introduces this in the patch
-description.
+Here is the problem code:
+   905          i = dvbdmxfeed->pes_type;
+   906          npids[i] = (pid[i]&0x8000) ? 0 : pid[i];
 
-> 
-> regards,
-> dan carpenter
-> 
+"npids" is a 5 element array declared on the stack.  If
+dvbdmxfeed->pes_type is more than 4 we probably put a (u16)0 past
+the end of the array.
 
-Thanks
--- 
-Michal Hocko
-SUSE Labs
-SUSE LINUX s.r.o.
-Lihovarska 1060/12
-190 00 Praha 9    
-Czech Republic
+If dvbdmxfeed->pes_type is over 4 the rest of the function doesn't
+do anything.  dvbdmxfeed->pes_type is capped at less than
+DMX_TS_PES_OTHER (20) in the caller function, but I changed it to
+less than or equal to DMX_TS_PES_PCR (4).
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/media/dvb/ttpci/av7110.c b/drivers/media/dvb/ttpci/av7110.c
+index 3d20719..abf6b55 100644
+--- a/drivers/media/dvb/ttpci/av7110.c
++++ b/drivers/media/dvb/ttpci/av7110.c
+@@ -991,7 +991,7 @@ static int av7110_start_feed(struct dvb_demux_feed *feed)
+ 
+ 	if (feed->type = DMX_TYPE_TS) {
+ 		if ((feed->ts_type & TS_DECODER) &&
+-		    (feed->pes_type < DMX_TS_PES_OTHER)) {
++		    (feed->pes_type <= DMX_TS_PES_PCR)) {
+ 			switch (demux->dmx.frontend->source) {
+ 			case DMX_MEMORY_FE:
+ 				if (feed->ts_type & TS_DECODER)
