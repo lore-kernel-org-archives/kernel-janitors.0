@@ -1,44 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 05 Oct 2011 05:48:20 +0000
-Subject: [patch] ath9k: remove some bogus error handling code
-Message-Id: <20111005054820.GB32077@elgon.mountain>
+Date: Tue, 18 Oct 2011 06:07:27 +0000
+Subject: [patch] drm/i915: cleanup min_t() casting
+Message-Id: <20111018060727.GA27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>
-Cc: Jouni Malinen <jouni@qca.qualcomm.com>, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Senthil Balasubramanian <senthilb@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
+To: Keith Packard <keithp@keithp.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-If "axq_qnum >= ARRAY_SIZE(sc->tx.txq)", then the call to
-ath9k_hw_releasetxqueue() would read beyond the end of the ah->txq[]
-array and possibly corrupt memory.  Fortunately,
-ath9k_hw_setuptxqueue() doesn't return high values of "axq_qnum" and
-this code can be removed.
+Casting "len" from uin32_t to uint8_t in min_t() truncates the upper
+bits.  It doesn't matter in this case because "len" is never more
+than 0x1f, but Smatch warns about it, so let's change it.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/wireless/ath/ath9k/xmit.c b/drivers/net/wireless/ath/ath9k/xmit.c
-index fa3dcfd..fa1c85d 100644
---- a/drivers/net/wireless/ath/ath9k/xmit.c
-+++ b/drivers/net/wireless/ath/ath9k/xmit.c
-@@ -1255,7 +1255,6 @@ static void ath_txq_drain_pending_buffers(struct ath_softc *sc,
- struct ath_txq *ath_txq_setup(struct ath_softc *sc, int qtype, int subtype)
- {
- 	struct ath_hw *ah = sc->sc_ah;
--	struct ath_common *common = ath9k_hw_common(ah);
- 	struct ath9k_tx_queue_info qi;
- 	static const int subtype_txq_to_hwq[] = {
- 		[WME_AC_BE] = ATH_TXQ_AC_BE,
-@@ -1305,12 +1304,6 @@ struct ath_txq *ath_txq_setup(struct ath_softc *sc, int qtype, int subtype)
- 		 */
- 		return NULL;
- 	}
--	if (axq_qnum >= ARRAY_SIZE(sc->tx.txq)) {
--		ath_err(common, "qnum %u out of range, max %zu!\n",
--			axq_qnum, ARRAY_SIZE(sc->tx.txq));
--		ath9k_hw_releasetxqueue(ah, axq_qnum);
--		return NULL;
--	}
- 	if (!ATH_TXQ_SETUP(sc, axq_qnum)) {
- 		struct ath_txq *txq = &sc->tx.txq[axq_qnum];
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 8230cf5..65897be 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -5702,7 +5702,7 @@ static void g4x_write_eld(struct drm_connector *connector,
+ 	if (!eld[0])
+ 		return;
  
+-	len = min_t(uint8_t, eld[2], len);
++	len = min_t(uint32_t, eld[2], len);
+ 	DRM_DEBUG_DRIVER("ELD size %d\n", len);
+ 	for (i = 0; i < len; i++)
+ 		I915_WRITE(G4X_HDMIW_HDMIEDID, *((uint32_t *)eld + i));
