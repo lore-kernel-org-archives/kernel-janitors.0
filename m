@@ -1,48 +1,43 @@
-From: Samuel Ortiz <samuel.ortiz@intel.com>
-Date: Tue, 18 Oct 2011 08:39:25 +0000
-Subject: Re: [patch] iwmc3200wifi: add some more range checks
-Message-Id: <20111018083924.GA2275@sortiz-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 09:41:35 +0000
+Subject: [patch v2] CIFS: cleanup min_t() cast in cifs_read()
+Message-Id: <20111018094135.GE25814@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111012081036.GA32384@elgon.mountain>
- <20111012082656.GA13878@sortiz-mobl>
- <20111018065043.GB25814@longonot.mountain>
-In-Reply-To: <20111018065043.GB25814@longonot.mountain>
+References: <20111017073018.GC7812@elgon.mountain>
+ <CAH2r5mufq0=BsZvfGuVdd1BU-gxRpnUmWAm-vzhsOR4KbvGSbg@mail.gmail.com>
+In-Reply-To: <CAH2r5mufq0=BsZvfGuVdd1BU-gxRpnUmWAm-vzhsOR4KbvGSbg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Hi Dan,
+Smatch complains that the cast to "int" in min_t() changes very large
+values of current_read_size into negative values and so min_t()
+could return the wrong value.  I removed the const as well, as that
+doesn't do anything here.
 
-On Tue, Oct 18, 2011 at 09:50:43AM +0300, Dan Carpenter wrote:
-> My previous patch added a check to get_key() but missed a couple
-> other places which need range checks.
-> 
-> The problem here is that wifi drivers have different numbers of keys.
-> The lower levels assume that they can have up to 4 default keys and
-> 2 management keys but this driver only has the default keys so we
-> could go past the end of the ->keys[] array.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  use "uint" instead of "u32".
 
-Acked-by: Samuel Ortiz <sameo@linux.intel.com>
-
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
----------------------------------------------------------------------
-Intel Corporation SAS (French simplified joint stock company)
-Registered headquarters: "Les Montalets"- 2, rue de Paris, 
-92196 Meudon Cedex, France
-Registration Number:  302 456 199 R.C.S. NANTERRE
-Capital: 4,572,000 Euros
-
-This e-mail and any attachments may contain confidential material for
-the sole use of the intended recipient(s). Any review or distribution
-by others is strictly prohibited. If you are not the intended
-recipient, please contact the sender and delete all copies.
-
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index ab85699..34be15a 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1900,13 +1900,13 @@ static ssize_t cifs_read(struct file *file, char *read_data, size_t read_size,
+ 	for (total_read = 0, current_offset = read_data;
+ 	     read_size > total_read;
+ 	     total_read += bytes_read, current_offset += bytes_read) {
+-		current_read_size = min_t(const int, read_size - total_read,
++		current_read_size = min_t(uint, read_size - total_read,
+ 					  cifs_sb->rsize);
+ 		/* For windows me and 9x we do not want to request more
+ 		than it negotiated since it will refuse the read then */
+ 		if ((pTcon->ses) &&
+ 			!(pTcon->ses->capabilities & CAP_LARGE_FILES)) {
+-			current_read_size = min_t(const int, current_read_size,
++			current_read_size = min_t(uint, current_read_size,
+ 					CIFSMaxBufSize);
+ 		}
+ 		rc = -EAGAIN;
