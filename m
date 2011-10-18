@@ -1,71 +1,41 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Tue, 04 Oct 2011 20:19:20 +0000
-Subject: Re: [patch] smscufx: change edid data to u8 instead of char
-Message-Id: <4E8B6A48.8060003@gmx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 06:26:21 +0000
+Subject: [patch 1/2] gpio-pch: add an __iomem anotation
+Message-Id: <20111018062621.GN27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 09/21/2011 07:16 AM, Dan Carpenter wrote:
-> Having "edid" as char caused a problem in ufx_read_edid() where we
-> compared "edid[i] != 0xFF".  Because of the type difference, the
-> condition was never true and the error checking failed.
-> 
-> Also I added a __user notation to silence a sparse complaint.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Adding an __iomem anotation here silences some Sparse warnings.
 
-Applied.
+drivers/gpio/gpio-pch.c:246:24: warning: incorrect type in assignment (different address spaces)
+drivers/gpio/gpio-pch.c:246:24:    expected unsigned int [usertype] *im_reg
+drivers/gpio/gpio-pch.c:246:24:    got unsigned int [noderef] <asn:2>*<noident>
+drivers/gpio/gpio-pch.c:249:24: warning: incorrect type in assignment (different address spaces)
+drivers/gpio/gpio-pch.c:249:24:    expected unsigned int [usertype] *im_reg
+drivers/gpio/gpio-pch.c:249:24:    got unsigned int [noderef] <asn:2>*<noident>
+drivers/gpio/gpio-pch.c:282:23: warning: incorrect type in argument 1 (different address spaces)
+drivers/gpio/gpio-pch.c:282:23:    expected void [noderef] <asn:2>*<noident>
+drivers/gpio/gpio-pch.c:282:23:    got unsigned int [usertype] *im_reg
+drivers/gpio/gpio-pch.c:283:47: warning: incorrect type in argument 2 (different address spaces)
+drivers/gpio/gpio-pch.c:283:47:    expected void [noderef] <asn:2>*<noident>
+drivers/gpio/gpio-pch.c:283:47:    got unsigned int [usertype] *im_reg
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-
-Florian Tobias Schandinat
-
-> ---
-> Compile tested only.  Please test carefully.
-> 
-> diff --git a/drivers/video/smscufx.c b/drivers/video/smscufx.c
-> index 44c8cab..aaccffa 100644
-> --- a/drivers/video/smscufx.c
-> +++ b/drivers/video/smscufx.c
-> @@ -103,7 +103,7 @@ struct ufx_data {
->  	struct delayed_work free_framebuffer_work;
->  	atomic_t usb_active; /* 0 = update virtual buffer, but no usb traffic */
->  	atomic_t lost_pixels; /* 1 = a render op failed. Need screen refresh */
-> -	char *edid; /* null until we read edid from hw or get from sysfs */
-> +	u8 *edid; /* null until we read edid from hw or get from sysfs */
->  	size_t edid_size;
->  	u32 pseudo_palette[256];
->  };
-> @@ -993,7 +993,7 @@ static int ufx_ops_ioctl(struct fb_info *info, unsigned int cmd,
->  
->  	/* TODO: Update X server to get this from sysfs instead */
->  	if (cmd = UFX_IOCTL_RETURN_EDID) {
-> -		char *edid = (char *)arg;
-> +		u8 __user *edid = (u8 __user *)arg;
->  		if (copy_to_user(edid, dev->edid, dev->edid_size))
->  			return -EFAULT;
->  		return 0;
-> @@ -1428,7 +1428,7 @@ static int ufx_i2c_wait_busy(struct ufx_data *dev)
->  }
->  
->  /* reads a 128-byte EDID block from the currently selected port and TAR */
-> -static int ufx_read_edid(struct ufx_data *dev, char *edid, int edid_len)
-> +static int ufx_read_edid(struct ufx_data *dev, u8 *edid, int edid_len)
->  {
->  	int i, j, status;
->  	u32 *edid_u32 = (u32 *)edid;
-> @@ -1491,7 +1491,7 @@ static int ufx_setup_modes(struct ufx_data *dev, struct fb_info *info,
->  	char *default_edid, size_t default_edid_size)
->  {
->  	const struct fb_videomode *default_vmode = NULL;
-> -	char *edid;
-> +	u8 *edid;
->  	int i, result = 0, tries = 3;
->  
->  	if (info->dev) /* only use mutex if info has been registered */
-> 
-
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index 596e454..4068084 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -231,7 +231,7 @@ static void pch_gpio_setup(struct pch_gpio *chip)
+ static int pch_irq_type(struct irq_data *d, unsigned int type)
+ {
+ 	u32 im;
+-	u32 *im_reg;
++	u32 __iomem *im_reg;
+ 	u32 ien;
+ 	u32 im_pos;
+ 	int ch;
