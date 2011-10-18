@@ -1,47 +1,59 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Tue, 18 Oct 2011 17:57:50 +0000
-Subject: RE: [patch 1/4] mwifiex: remove unneeded kfree(NULL);
-Message-Id: <477F20668A386D41ADCC57781B1F70430817F59758@SC-VEXCH1.marvell.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 06:47:29 +0000
+Subject: [patch] rndis_wlan: add range check in del_key()
+Message-Id: <20111018064729.GQ27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111018061306.GG27732@elgon.mountain>
-In-Reply-To: <20111018061306.GG27732@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Wifi drivers can have up to 6 keys but the rndis_wlan only has 4 so
+it needs to have its own checks to make sure we don't go out of
+bounds.  The add_key() function already checks but I added some
+checks to del_key() and set_default_key().
 
-Thanks for your patch series.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Monday, October 17, 2011 11:13 PM
-> To: Bing Zhao
-> Cc: John W. Linville; linux-wireless@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch 1/4] mwifiex: remove unneeded kfree(NULL);
-> 
-> The previous if statement means this that pointer is NULL so there
-> is no need to free it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Bing Zhao <bzhao@marvell.com>
-
-Regards,
-Bing
-
-> 
-> diff --git a/drivers/net/wireless/mwifiex/pcie.c b/drivers/net/wireless/mwifiex/pcie.c
-> index d34acf0..4466976 100644
-> --- a/drivers/net/wireless/mwifiex/pcie.c
-> +++ b/drivers/net/wireless/mwifiex/pcie.c
-> @@ -386,7 +386,6 @@ static int mwifiex_pcie_create_txbd_ring(struct mwifiex_adapter *adapter)
->  	card->txbd_ring_vbase = kzalloc(card->txbd_ring_size, GFP_KERNEL);
->  	if (!card->txbd_ring_vbase) {
->  		dev_err(adapter->dev, "Unable to allocate buffer for txbd ring.\n");
-> -		kfree(card->txbd_ring_vbase);
->  		return -1;
->  	}
->  	card->txbd_ring_pbase = virt_to_phys(card->txbd_ring_vbase);
+diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
+index 0c13840..da78369 100644
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -414,6 +414,7 @@ struct ndis_80211_pmkid {
+ #define RNDIS_WLAN_ALG_TKIP	(1<<1)
+ #define RNDIS_WLAN_ALG_CCMP	(1<<2)
+ 
++#define RNDIS_WLAN_NUM_KEYS		4
+ #define RNDIS_WLAN_KEY_MGMT_NONE	0
+ #define RNDIS_WLAN_KEY_MGMT_802_1X	(1<<0)
+ #define RNDIS_WLAN_KEY_MGMT_PSK		(1<<1)
+@@ -516,7 +517,7 @@ struct rndis_wlan_private {
+ 
+ 	/* encryption stuff */
+ 	int  encr_tx_key_index;
+-	struct rndis_wlan_encr_key encr_keys[4];
++	struct rndis_wlan_encr_key encr_keys[RNDIS_WLAN_NUM_KEYS];
+ 	int  wpa_version;
+ 
+ 	u8 command_buffer[COMMAND_BUFFER_SIZE];
+@@ -1535,6 +1536,9 @@ static int remove_key(struct usbnet *usbdev, int index, const u8 *bssid)
+ 	bool is_wpa;
+ 	int ret;
+ 
++	if (index >= RNDIS_WLAN_NUM_KEYS)
++		return -ENOENT;
++
+ 	if (priv->encr_keys[index].len = 0)
+ 		return 0;
+ 
+@@ -2451,6 +2455,9 @@ static int rndis_set_default_key(struct wiphy *wiphy, struct net_device *netdev,
+ 
+ 	netdev_dbg(usbdev->net, "%s(%i)\n", __func__, key_index);
+ 
++	if (key_index >= RNDIS_WLAN_NUM_KEYS)
++		return -ENOENT;
++
+ 	priv->encr_tx_key_index = key_index;
+ 
+ 	if (is_wpa_key(priv, key_index))
