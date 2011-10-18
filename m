@@ -1,51 +1,41 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Date: Mon, 31 Oct 2011 09:22:53 +0000
-Subject: Re: [PATCH 3/5] drivers/hid/hid-roccat.c: eliminate a null
-Message-Id: <4EAE68ED.9070406@broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 06:09:45 +0000
+Subject: [patch] vmwgfx: memory leaks caused by double allocation
+Message-Id: <20111018060945.GD27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1319846297-2985-3-git-send-email-julia@diku.dk>
- <20111029062412.GG14881@longonot.mountain>
- <4EABC937.60600@broadcom.com>
- <CANq1E4QJoM+NYub9hfs3KnL1w212FK0MHo8ez2p1nyGmNVb-=A@mail.gmail.com>
-In-Reply-To: <CANq1E4QJoM+NYub9hfs3KnL1w212FK0MHo8ez2p1nyGmNVb-=A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Herrmann <dh.herrmann@googlemail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Julia Lawall <julia@diku.dk>, Jiri Kosina <jkosina@suse.cz>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: David Airlie <airlied@linux.ie>
+Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Rakib Mullick <rakib.mullick@gmail.com>, Dave Airlie <airlied@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On 10/29/2011 12:53 PM, David Herrmann wrote:
-> On Sat, Oct 29, 2011 at 11:36 AM, Arend van Spriel <arend@broadcom.com> wrote:
->> On 10/29/2011 08:24 AM, Dan Carpenter wrote:
->>> On Sat, Oct 29, 2011 at 01:58:15AM +0200, Julia Lawall wrote:
->>>> diff --git a/drivers/hid/hid-roccat.c b/drivers/hid/hid-roccat.c
->>>> index 2596321..36a28b8 100644
->>>> --- a/drivers/hid/hid-roccat.c
->>>> +++ b/drivers/hid/hid-roccat.c
->>>> @@ -163,14 +163,15 @@ static int roccat_open(struct inode *inode, struct file *file)
->>>>
->>>>      device = devices[minor];
->>>>
->>>> -    mutex_lock(&device->readers_lock);
->>>> -
->>>>      if (!device) {
->>>>              pr_emerg("roccat device with minor %d doesn't exist\n", minor);
->>>> -            error = -ENODEV;
->>>> -            goto exit_err;
->>>> +            kfree(reader);
->>>> +            mutex_lock(&devices_lock);
->>>
->>> Typo.  mutex_unlock() instead of mutex_lock().
->>
->> This is no typo, but simply wrong. Remove the mutex_lock() as we are
->> leaving the function here in error flow.
-> 
-> No, this one is definitely needed. Its devices_lock, not
-> device->readers_lock! And devices_lock is locked before so we need to
-> unlock it if we return in this branch.
+These variables get allocated twice so the first allocation is a
+memory leak.
 
-You are right. I missed that. As usual Dan's eye is sharper ;-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Gr. AvS
-
-
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
+index c7cff3d..86c5e4c 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_resource.c
+@@ -1255,8 +1255,7 @@ int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
+ 			     struct drm_file *file_priv)
+ {
+ 	struct vmw_private *dev_priv = vmw_priv(dev);
+-	struct vmw_user_surface *user_srf -	    kmalloc(sizeof(*user_srf), GFP_KERNEL);
++	struct vmw_user_surface *user_srf;
+ 	struct vmw_surface *srf;
+ 	struct vmw_resource *res;
+ 	struct vmw_resource *tmp;
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+index 35d5f61..15fb260 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+@@ -953,8 +953,7 @@ int vmw_event_fence_action_create(struct drm_file *file_priv,
+ 				  uint32_t *tv_usec,
+ 				  bool interruptible)
+ {
+-	struct vmw_event_fence_action *eaction -		kzalloc(sizeof(*eaction), GFP_KERNEL);
++	struct vmw_event_fence_action *eaction;
+ 	struct ttm_mem_global *mem_glob  		vmw_mem_glob(fence->fman->dev_priv);
+ 	struct vmw_fence_manager *fman = fence->fman;
