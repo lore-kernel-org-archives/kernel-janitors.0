@@ -1,57 +1,76 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 31 Oct 2011 08:55:46 +0000
-Subject: Re: [alsa-devel] [patch v2] [ALSA] hwdep: silence integer overflow	warning
-Message-Id: <s5h7h3la6b1.wl%tiwai@suse.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 18 Oct 2011 03:45:53 +0000
+Subject: [PATCH 1/3] sound/soc/mxs/mxs-saif.c: keep pointer to resource so it can be freed
+Message-Id: <1318909555-12933-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111020060910.GA6101@elgon.mountain> <4E9FD02B.6030307@bfs.de>
-	<20111028064601.GB14707@longonot.mountain>
-In-Reply-To: <20111028064601.GB14707@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
+To: Liam Girdwood <lrg@ti.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Dong Aisheng <b29396@freescale.com>
 
-At Fri, 28 Oct 2011 09:46:01 +0300,
-Dan Carpenter wrote:
-> 
-> Smatch complains that if device is INT_MAX then device + 1 can
-> overflow.  It just means we would have an annoying loop while we
-> check all the devices from -2147483648 to SNDRV_MINOR_HWDEPS.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <julia@diku.dk>
 
-Applied now.  Thanks!
+Add a new variable for storing resources accessed subsequent to the one
+accessed using request_mem_region, so the one accessed using
+request_mem_region can be released if needed.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Takashi
+// <smpl>
+@r@
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
+@@
 
-> ---
-> v2: reshuffled it a bit per Walter Harms's suggestion.
-> 
-> diff --git a/sound/core/hwdep.c b/sound/core/hwdep.c
-> index c7ceb28..75ea16f 100644
-> --- a/sound/core/hwdep.c
-> +++ b/sound/core/hwdep.c
-> @@ -273,7 +273,14 @@ static int snd_hwdep_control_ioctl(struct snd_card *card,
->  			if (get_user(device, (int __user *)arg))
->  				return -EFAULT;
->  			mutex_lock(&register_mutex);
-> -			device = device < 0 ? 0 : device + 1;
-> +
-> +			if (device < 0)
-> +				device = 0;
-> +			else if (device < SNDRV_MINOR_HWDEPS)
-> +				device++;
-> +			else
-> +				device = SNDRV_MINOR_HWDEPS;
-> +
->  			while (device < SNDRV_MINOR_HWDEPS) {
->  				if (snd_hwdep_search(card, device))
->  					break;
-> 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
-> 
+if (E = NULL)
+{
+  ... when != if (E = NULL || ...) S1 else S2
+      when != E = E1
+*E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ sound/soc/mxs/mxs-saif.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
+index 401944c..e12ff78 100644
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@ -617,7 +617,7 @@ static irqreturn_t mxs_saif_irq(int irq, void *dev_id)
+ 
+ static int mxs_saif_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
++	struct resource *res, *res1;
+ 	struct mxs_saif *saif;
+ 	struct mxs_saif_platform_data *pdata;
+ 	int ret = 0;
+@@ -676,14 +676,14 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 		goto failed_ioremap;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-	if (!res) {
++	res1 = platform_get_resource(pdev, IORESOURCE_DMA, 0);
++	if (!res1) {
+ 		ret = -ENODEV;
+ 		dev_err(&pdev->dev, "failed to get dma resource: %d\n",
+ 			ret);
+ 		goto failed_ioremap;
+ 	}
+-	saif->dma_param.chan_num = res->start;
++	saif->dma_param.chan_num = res1->start;
+ 
+ 	saif->irq = platform_get_irq(pdev, 0);
+ 	if (saif->irq < 0) {
+
