@@ -1,76 +1,41 @@
-From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Date: Tue, 18 Oct 2011 07:07:17 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 07:22:01 +0000
 Subject: Re: [patch] rndis_wlan: add range check in del_key()
-Message-Id: <20111018100717.94287ia4tuafwk8w@www.81.fi>
+Message-Id: <20111018072201.GC25814@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20111018064729.GQ27732@elgon.mountain>
-In-Reply-To: <20111018064729.GQ27732@elgon.mountain>
+ <1318920887.3958.0.camel@jlt3.sipsolutions.net>
+In-Reply-To: <1318920887.3958.0.camel@jlt3.sipsolutions.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter <dan.carpenter@oracle.com>:
+On Tue, Oct 18, 2011 at 08:54:47AM +0200, Johannes Berg wrote:
+> On Tue, 2011-10-18 at 09:47 +0300, Dan Carpenter wrote:
+> > Wifi drivers can have up to 6 keys but the rndis_wlan only has 4 so
+> > it needs to have its own checks to make sure we don't go out of
+> > bounds.  The add_key() function already checks but I added some
+> > checks to del_key() and set_default_key().
+> 
+> Semantically, that shouldn't be possible unless it advertises support
+> for WLAN_CIPHER_SUITE_AES_CMAC. Is there a bug in those checks?
+> 
 
-> Wifi drivers can have up to 6 keys but the rndis_wlan only has 4 so
-> it needs to have its own checks to make sure we don't go out of
-> bounds.  The add_key() function already checks but I added some
-> checks to del_key() and set_default_key().
+You know I'm a newbie at this networking...  I obviously had no idea
+about WLAN_CIPHER_SUITE_AES_CMAC until you mentioned it.  I just
+looked at the other implementations of del_key() etc and they checked
+it.  Monkey see, monkey do.
 
-Looks ok, thanks.
+My concern when I wrote this patch was places like __cfg80211_clear_ibss()
+which just do:
 
-Acked-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+	for (i = 0; i < 6; i++)
+		rdev->ops->del_key(wdev->wiphy, dev, i, false, NULL);
 
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/net/wireless/rndis_wlan.c  
-> b/drivers/net/wireless/rndis_wlan.c
-> index 0c13840..da78369 100644
-> --- a/drivers/net/wireless/rndis_wlan.c
-> +++ b/drivers/net/wireless/rndis_wlan.c
-> @@ -414,6 +414,7 @@ struct ndis_80211_pmkid {
->  #define RNDIS_WLAN_ALG_TKIP	(1<<1)
->  #define RNDIS_WLAN_ALG_CCMP	(1<<2)
->
-> +#define RNDIS_WLAN_NUM_KEYS		4
->  #define RNDIS_WLAN_KEY_MGMT_NONE	0
->  #define RNDIS_WLAN_KEY_MGMT_802_1X	(1<<0)
->  #define RNDIS_WLAN_KEY_MGMT_PSK		(1<<1)
-> @@ -516,7 +517,7 @@ struct rndis_wlan_private {
->
->  	/* encryption stuff */
->  	int  encr_tx_key_index;
-> -	struct rndis_wlan_encr_key encr_keys[4];
-> +	struct rndis_wlan_encr_key encr_keys[RNDIS_WLAN_NUM_KEYS];
->  	int  wpa_version;
->
->  	u8 command_buffer[COMMAND_BUFFER_SIZE];
-> @@ -1535,6 +1536,9 @@ static int remove_key(struct usbnet *usbdev,  
-> int index, const u8 *bssid)
->  	bool is_wpa;
->  	int ret;
->
-> +	if (index >= RNDIS_WLAN_NUM_KEYS)
-> +		return -ENOENT;
-> +
->  	if (priv->encr_keys[index].len = 0)
->  		return 0;
->
-> @@ -2451,6 +2455,9 @@ static int rndis_set_default_key(struct wiphy  
-> *wiphy, struct net_device *netdev,
->
->  	netdev_dbg(usbdev->net, "%s(%i)\n", __func__, key_index);
->
-> +	if (key_index >= RNDIS_WLAN_NUM_KEYS)
-> +		return -ENOENT;
-> +
->  	priv->encr_tx_key_index = key_index;
->
->  	if (is_wpa_key(priv, key_index))
->
->
+That's what triggers the Smatch warning as well.  But as I said, I'm
+quite a newbie at this code.
 
-
-
+regards,
+dan carpenter
