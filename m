@@ -1,49 +1,34 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Tue, 18 Oct 2011 07:33:00 +0000
-Subject: Re: [patch] rndis_wlan: add range check in del_key()
-Message-Id: <1318923180.3958.2.camel@jlt3.sipsolutions.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Oct 2011 06:15:14 +0000
+Subject: [patch 3/4] mwifiex: prevent corruption instead of just warning
+Message-Id: <20111018061514.GI27732@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111018064729.GQ27732@elgon.mountain>
-	 <1318920887.3958.0.camel@jlt3.sipsolutions.net>
-	 <20111018072201.GC25814@longonot.mountain>
-In-Reply-To: <20111018072201.GC25814@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bing Zhao <bzhao@marvell.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2011-10-18 at 10:22 +0300, Dan Carpenter wrote:
-> On Tue, Oct 18, 2011 at 08:54:47AM +0200, Johannes Berg wrote:
-> > On Tue, 2011-10-18 at 09:47 +0300, Dan Carpenter wrote:
-> > > Wifi drivers can have up to 6 keys but the rndis_wlan only has 4 so
-> > > it needs to have its own checks to make sure we don't go out of
-> > > bounds.  The add_key() function already checks but I added some
-> > > checks to del_key() and set_default_key().
-> > 
-> > Semantically, that shouldn't be possible unless it advertises support
-> > for WLAN_CIPHER_SUITE_AES_CMAC. Is there a bug in those checks?
-> > 
-> 
-> You know I'm a newbie at this networking...  I obviously had no idea
-> about WLAN_CIPHER_SUITE_AES_CMAC until you mentioned it.  I just
-> looked at the other implementations of del_key() etc and they checked
-> it.  Monkey see, monkey do.
-> 
-> My concern when I wrote this patch was places like __cfg80211_clear_ibss()
-> which just do:
-> 
-> 	for (i = 0; i < 6; i++)
-> 		rdev->ops->del_key(wdev->wiphy, dev, i, false, NULL);
-> 
-> That's what triggers the Smatch warning as well.  But as I said, I'm
-> quite a newbie at this code.
+We may as well put a return here instead of just printing a warning
+message and then corrupting memory.  The caller doesn't check the
+return code.
 
-Ah ok, I didn't know they didn't check. That's reasonable, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I was just thinking that we wouldn't have keys 4/5 w/o CMAC to start
-with, but it makes some sense that the code would just try to clear all
-keys.
-
-johannes
-
+diff --git a/drivers/net/wireless/mwifiex/pcie.c b/drivers/net/wireless/mwifiex/pcie.c
+index d12d440..40b154d 100644
+--- a/drivers/net/wireless/mwifiex/pcie.c
++++ b/drivers/net/wireless/mwifiex/pcie.c
+@@ -1228,9 +1228,11 @@ static int mwifiex_pcie_event_complete(struct mwifiex_adapter *adapter,
+ 	if (!skb)
+ 		return 0;
+ 
+-	if (rdptr >= MWIFIEX_MAX_EVT_BD)
++	if (rdptr >= MWIFIEX_MAX_EVT_BD) {
+ 		dev_err(adapter->dev, "event_complete: Invalid rdptr 0x%x\n",
+ 					rdptr);
++		return -EINVAL;
++	}
+ 
+ 	/* Read the event ring write pointer set by firmware */
+ 	if (mwifiex_read_reg(adapter, REG_EVTBD_WRPTR, &wrptr)) {
