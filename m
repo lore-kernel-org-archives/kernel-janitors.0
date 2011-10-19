@@ -1,34 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 03 Oct 2011 17:46:11 +0000
-Subject: Re: [patch v2] caif: add error handling for allocation
-Message-Id: <20111003.134611.1100932218414818334.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Oct 2011 06:15:10 +0000
+Subject: [patch] KVM: make checks stricter in coalesced_mmio_in_range()
+Message-Id: <20111019061510.GA12399@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAJK669Yb6V=xr9ZvQGOKGEvmzO1JGhrHD+sR69b04EQxUjOOrQ@mail.gmail.com>
-	<20110921072159.GJ4999@elgon.mountain>
-	<81C3A93C17462B4BBD7E272753C105791D2BC1882D@EXDCVYMBSTM005.EQ1STM.local>
-In-Reply-To: <81C3A93C17462B4BBD7E272753C105791D2BC1882D@EXDCVYMBSTM005.EQ1STM.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: sjur.brandeland@stericsson.com
-Cc: dan.carpenter@oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Avi Kivity <avi@redhat.com>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Date: Fri, 23 Sep 2011 12:38:45 +0200
+My testing version of Smatch complains that addr and len come from
+the user and they can wrap.  The path is:
+  -> kvm_vm_ioctl()
+     -> kvm_vm_ioctl_unregister_coalesced_mmio()
+        -> coalesced_mmio_in_range()
 
-> [Dan]:=20
->> The allocation of "phyinfo" wasn't checked, and also the allocation
->> wasn't freed on error paths.  Sjur Br=E6ndeland pointed out as well
->> that "phy_driver" should be freed on the error path too.
->>=20
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> Looks good, thank you Dan.
-> Acked-by: Sjur Br=E6ndeland <sjur.brandeland@stericsson.com>
+I don't know what the implications are of wrapping here, but we may
+as well fix it, if only to silence the warning.
 
-Applied, thanks.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
+index a6ec206..88b2fe3 100644
+--- a/virt/kvm/coalesced_mmio.c
++++ b/virt/kvm/coalesced_mmio.c
+@@ -28,9 +28,15 @@ static int coalesced_mmio_in_range(struct kvm_coalesced_mmio_dev *dev,
+ 	 * (addr,len) is fully included in
+ 	 * (zone->addr, zone->size)
+ 	 */
+-
+-	return (dev->zone.addr <= addr &&
+-		addr + len <= dev->zone.addr + dev->zone.size);
++	if (len < 0)
++		return 0;
++	if (addr + len < addr)
++		return 0;
++	if (addr < dev->zone.addr)
++		return 0;
++	if (addr + len > dev->zone.addr + dev->zone.size)
++		return 0;
++	return 1;
+ }
+ 
+ static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
