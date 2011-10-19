@@ -1,149 +1,103 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 18 Oct 2011 03:45:55 +0000
-Subject: [PATCH 3/3] sound/soc/au1x: keep pointer to resource so it can be freed
-Message-Id: <1318909555-12933-3-git-send-email-julia@diku.dk>
+From: Manuel Lauss <manuel.lauss@googlemail.com>
+Date: Wed, 19 Oct 2011 14:50:08 +0000
+Subject: Re: [PATCH 3/3] sound/soc/au1x: keep pointer to resource so it can be freed
+Message-Id: <CAOLZvyFoiuHEfpnozWpAM5h92rjay-asqXX0tY1P1ZzO8eTGOQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1318909555-12933-3-git-send-email-julia@diku.dk>
+In-Reply-To: <1318909555-12933-3-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>, Axel Lin <axel.lin@gmail.com>
+To: Julia Lawall <julia@diku.dk>
+Cc: Liam Girdwood <lrg@ti.com>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Axel Lin <axel.lin@gmail.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Tue, Oct 18, 2011 at 5:45 AM, Julia Lawall <julia@diku.dk> wrote:
+> From: Julia Lawall <julia@diku.dk>
+>
+> Add a new variable for storing resources accessed subsequent to the one
+> accessed using request_mem_region, so the one accessed using
+> request_mem_region can be released if needed.
+>
+> This code is also missing some calls to iounmap.
 
-Add a new variable for storing resources accessed subsequent to the one
-accessed using request_mem_region, so the one accessed using
-request_mem_region can be released if needed.
+How about something much simpler, like this:
 
-This code is also missing some calls to iounmap.
+From 940e38b3f0beff6fcd8f62f627dce622e9ca0e54 Mon Sep 17 00:00:00 2001
+From: Manuel Lauss <manuel.lauss@googlemail.com>
+Date: Wed, 19 Oct 2011 16:45:12 +0200
+Subject: [PATCH] ASoC: au1x: fix error paths in ac97c/i2cs probe callbacks.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+add iounmap() and release the correct mem resource.
 
-// <smpl>
-@r@
-expression E, E1;
-identifier f;
-statement S1,S2,S3;
-@@
-
-if (E = NULL)
-{
-  ... when != if (E = NULL || ...) S1 else S2
-      when != E = E1
-*E->f
-  ... when any
-  return ...;
-}
-else S3
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Manuel Lauss <manuel.lauss@googlemail.com>
 ---
- sound/soc/au1x/ac97c.c |   22 ++++++++++++----------
- sound/soc/au1x/i2sc.c  |   22 ++++++++++++----------
- 2 files changed, 24 insertions(+), 20 deletions(-)
+ sound/soc/au1x/ac97c.c |    7 +++++--
+ sound/soc/au1x/i2sc.c  |    7 +++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/sound/soc/au1x/ac97c.c b/sound/soc/au1x/ac97c.c
-index 13802ff..0188643 100644
+index 13802ff..4ec39aa 100644
 --- a/sound/soc/au1x/ac97c.c
 +++ b/sound/soc/au1x/ac97c.c
-@@ -226,7 +226,7 @@ static struct snd_soc_dai_driver au1xac97c_dai_driver = {
- static int __devinit au1xac97c_drvprobe(struct platform_device *pdev)
- {
- 	int ret;
--	struct resource *r;
-+	struct resource *r, *r1;
- 	struct au1xpsc_audio_data *ctx;
- 
- 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-@@ -249,15 +249,15 @@ static int __devinit au1xac97c_drvprobe(struct platform_device *pdev)
- 	if (!ctx->mmio)
- 		goto out1;
- 
--	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
--	if (!r)
+@@ -251,12 +251,12 @@ static int __devinit au1xac97c_drvprobe(struct
+platform_device *pdev)
+
+ 	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+ 	if (!r)
 -		goto out1;
--	ctx->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = r->start;
-+	r1 = platform_get_resource(pdev, IORESOURCE_DMA, 0);
-+	if (!r1)
 +		goto out2;
-+	ctx->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = r1->start;
- 
--	r = platform_get_resource(pdev, IORESOURCE_DMA, 1);
--	if (!r)
+ 	ctx->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = r->start;
+
+ 	r = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+ 	if (!r)
 -		goto out1;
--	ctx->dmaids[SNDRV_PCM_STREAM_CAPTURE] = r->start;
-+	r1 = platform_get_resource(pdev, IORESOURCE_DMA, 1);
-+	if (!r1)
 +		goto out2;
-+	ctx->dmaids[SNDRV_PCM_STREAM_CAPTURE] = r1->start;
- 
+ 	ctx->dmaids[SNDRV_PCM_STREAM_CAPTURE] = r->start;
+
  	/* switch it on */
- 	WR(ctx, AC97_ENABLE, EN_D | EN_CE);
-@@ -270,11 +270,13 @@ static int __devinit au1xac97c_drvprobe(struct platform_device *pdev)
- 
- 	ret = snd_soc_register_dai(&pdev->dev, &au1xac97c_dai_driver);
- 	if (ret)
--		goto out1;
-+		goto out2;
- 
+@@ -275,7 +275,10 @@ static int __devinit au1xac97c_drvprobe(struct
+platform_device *pdev)
  	ac97c_workdata = ctx;
  	return 0;
- 
+
 +out2:
 +	iounmap(ctx->mmio);
  out1:
++	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
  	release_mem_region(r->start, resource_size(r));
  out0:
+ 	kfree(ctx);
 diff --git a/sound/soc/au1x/i2sc.c b/sound/soc/au1x/i2sc.c
-index 19e0d2a..3725c77 100644
+index 19e0d2a..59fb31a 100644
 --- a/sound/soc/au1x/i2sc.c
 +++ b/sound/soc/au1x/i2sc.c
-@@ -228,7 +228,7 @@ static struct snd_soc_dai_driver au1xi2s_dai_driver = {
- static int __devinit au1xi2s_drvprobe(struct platform_device *pdev)
- {
- 	int ret;
--	struct resource *r;
-+	struct resource *r, *r1;
- 	struct au1xpsc_audio_data *ctx;
- 
- 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-@@ -249,24 +249,26 @@ static int __devinit au1xi2s_drvprobe(struct platform_device *pdev)
- 	if (!ctx->mmio)
- 		goto out1;
- 
--	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
--	if (!r)
+@@ -251,12 +251,12 @@ static int __devinit au1xi2s_drvprobe(struct
+platform_device *pdev)
+
+ 	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+ 	if (!r)
 -		goto out1;
--	ctx->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = r->start;
-+	r1 = platform_get_resource(pdev, IORESOURCE_DMA, 0);
-+	if (!r1)
 +		goto out2;
-+	ctx->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = r1->start;
- 
--	r = platform_get_resource(pdev, IORESOURCE_DMA, 1);
--	if (!r)
+ 	ctx->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = r->start;
+
+ 	r = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+ 	if (!r)
 -		goto out1;
--	ctx->dmaids[SNDRV_PCM_STREAM_CAPTURE] = r->start;
-+	r1 = platform_get_resource(pdev, IORESOURCE_DMA, 1);
-+	if (!r1)
 +		goto out2;
-+	ctx->dmaids[SNDRV_PCM_STREAM_CAPTURE] = r1->start;
- 
+ 	ctx->dmaids[SNDRV_PCM_STREAM_CAPTURE] = r->start;
+
  	platform_set_drvdata(pdev, ctx);
- 
- 	ret = snd_soc_register_dai(&pdev->dev, &au1xi2s_dai_driver);
- 	if (ret)
--		goto out1;
-+		goto out2;
- 
+@@ -267,7 +267,10 @@ static int __devinit au1xi2s_drvprobe(struct
+platform_device *pdev)
+
  	return 0;
- 
+
 +out2:
 +	iounmap(ctx->mmio);
  out1:
++	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
  	release_mem_region(r->start, resource_size(r));
  out0:
-
+ 	kfree(ctx);
+-- 
+1.7.7
