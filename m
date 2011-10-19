@@ -1,29 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 19 Oct 2011 23:36:05 +0000
-Subject: Re: [patch] filter: use unsigned int to silence static checker
-Message-Id: <20111019.193605.621716042975197432.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Oct 2011 07:32:28 +0000
+Subject: [patch 3/4 v2] mwifiex: prevent corruption instead of just warning
+Message-Id: <20111019073228.GS30887@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111018070420.GR27732@elgon.mountain>
-In-Reply-To: <20111018070420.GR27732@elgon.mountain>
+References: <20111018061514.GI27732@elgon.mountain>
+ <477F20668A386D41ADCC57781B1F70430817F59764@SC-VEXCH1.marvell.com>
+In-Reply-To: <477F20668A386D41ADCC57781B1F70430817F59764@SC-VEXCH1.marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: netdev@vger.kernel.org, eric.dumazet@gmail.com, xiaosuo@gmail.com, kernel-janitors@vger.kernel.org
+To: Bing Zhao <bzhao@marvell.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Oct 2011 10:04:20 +0300
+Probably we never hit this condition, but in case we do, we may as
+well put a return here instead of just printing a warning message and
+then corrupting memory.  The caller doesn't check the return code.
 
-> This is just a cleanup.
-> 
-> My testing version of Smatch warns about this:
-> net/core/filter.c +380 check_load_and_stores(6)
-> 	warn: check 'flen' for negative values
-> 
-> flen comes from the user.  We try to clamp the values here between 1
-> and BPF_MAXINSNS but the clamp doesn't work because it could be
-> negative.  This is a bug, but it's not exploitable.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Use the error handling code to free the skb before returning.
 
-Applied to net-next, thanks Dan.
+diff --git a/drivers/net/wireless/mwifiex/pcie.c b/drivers/net/wireless/mwifiex/pcie.c
+index d12d440..a2f3200 100644
+--- a/drivers/net/wireless/mwifiex/pcie.c
++++ b/drivers/net/wireless/mwifiex/pcie.c
+@@ -1228,9 +1228,12 @@ static int mwifiex_pcie_event_complete(struct mwifiex_adapter *adapter,
+ 	if (!skb)
+ 		return 0;
+ 
+-	if (rdptr >= MWIFIEX_MAX_EVT_BD)
++	if (rdptr >= MWIFIEX_MAX_EVT_BD) {
+ 		dev_err(adapter->dev, "event_complete: Invalid rdptr 0x%x\n",
+ 					rdptr);
++		ret = -EINVAL;
++		goto done;
++	}
+ 
+ 	/* Read the event ring write pointer set by firmware */
+ 	if (mwifiex_read_reg(adapter, REG_EVTBD_WRPTR, &wrptr)) {
