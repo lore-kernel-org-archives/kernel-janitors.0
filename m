@@ -1,41 +1,37 @@
-From: "Latif, Faisal" <faisal.latif@intel.com>
-Date: Tue, 18 Oct 2011 18:32:21 +0000
-Subject: RE: [patch] RDMA/nes: silence compiler warning
-Message-Id: <2EFBCAEF10980645BBCFB605689E08E904F02360A8@azsmsx506.amr.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 20 Oct 2011 06:09:10 +0000
+Subject: [patch] [ALSA] hwdep: silence integer overflow warning
+Message-Id: <20111020060910.GA6101@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111017072857.GB7812@elgon.mountain>
- <CAL1RGDVe7OKL35G9hdzYNWGZkC+g_HXXXrkRgw2ueTk__vMNPg@mail.gmail.com>
- <2EFBCAEF10980645BBCFB605689E08E904EC56F5E0@azsmsx506.amr.corp.intel.com>
- <CAL1RGDX5EGxqatX-RFLKqZcJ+pYDHhie3G04rD=BedA9uBvA6A@mail.gmail.com>
-In-Reply-To: <CAL1RGDX5EGxqatX-RFLKqZcJ+pYDHhie3G04rD=BedA9uBvA6A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
+Smatch complains that if device is INT_MAX then device + 1 can
+overflow.  It just means we would have an annoying loop while we
+check all the devices from -2147483648 to SNDRV_MINOR_HWDEPS.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> -----Original Message-----
-> From: roland@purestorage.com [mailto:roland@purestorage.com] On Behalf
-> Of Roland Dreier
-> Sent: Tuesday, October 18, 2011 12:11 PM
-> To: Latif, Faisal
-> Cc: Dan Carpenter; Hefty, Sean; Hal Rosenstock; linux-
-> rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: Re: [patch] RDMA/nes: silence compiler warning
-> 
-> On Mon, Oct 17, 2011 at 11:28 AM, Latif, Faisal
-> <faisal.latif@intel.com> wrote:
-> > Yes, We should have used %pI4 for this also.
-> 
-> Any chance of you guys going through and converting IP printing to
-> %pI4 in the whole driver?
-> 
->  - R.
-
-I will get patch out to you to convert the IP printing. Thanks for pointing it out.
-
-
-Faisal
-
+diff --git a/sound/core/hwdep.c b/sound/core/hwdep.c
+index c7ceb28..edfdf6d 100644
+--- a/sound/core/hwdep.c
++++ b/sound/core/hwdep.c
+@@ -273,7 +273,14 @@ static int snd_hwdep_control_ioctl(struct snd_card *card,
+ 			if (get_user(device, (int __user *)arg))
+ 				return -EFAULT;
+ 			mutex_lock(&register_mutex);
+-			device = device < 0 ? 0 : device + 1;
++
++			if (device < 0)
++				device = 0;
++			else if (device > SNDRV_MINOR_HWDEPS)
++				device = SNDRV_MINOR_HWDEPS;
++			else
++				device++;
++
+ 			while (device < SNDRV_MINOR_HWDEPS) {
+ 				if (snd_hwdep_search(card, device))
+ 					break;
