@@ -1,35 +1,43 @@
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 12 Oct 2011 21:28:08 +0000
-Subject: Re: [patch] cipso: remove an unneeded NULL check in cipso_v4_doi_add()
-Message-Id: <1993964.1HBym86W0O@sifl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Oct 2011 06:46:01 +0000
+Subject: [patch v2] [ALSA] hwdep: silence integer overflow warning
+Message-Id: <20111028064601.GB14707@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111011132228.GA27127@elgon.mountain> <CAHC9VhRMy-DbbkXSSWQPh8QgHAm5xzZ1qWJaYLiOERPagDfrbQ@mail.gmail.com> <20111011215549.GC30887@longonot.mountain>
-In-Reply-To: <20111011215549.GC30887@longonot.mountain>
+References: <20111020060910.GA6101@elgon.mountain>
+ <4E9FD02B.6030307@bfs.de>
+In-Reply-To: <4E9FD02B.6030307@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, kernel-janitors@vger.kernel.org
+To: walter harms <wharms@bfs.de>
+Cc: Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Wednesday, October 12, 2011 12:55:49 AM Dan Carpenter wrote:
-> On Tue, Oct 11, 2011 at 05:20:11PM -0400, Paul Moore wrote:
-> > > -       if (doi_def = NULL || doi_def->doi = CIPSO_V4_DOI_UNKNOWN)
-> > > +       if (doi_def->doi = CIPSO_V4_DOI_UNKNOWN)
-> > >                goto doi_add_return;
-> > >        for (iter = 0; iter < CIPSO_V4_TAG_MAXCNT; iter++) {
-> > >                switch (doi_def->tags[iter]) {
-> > 
-> > I'd prefer to keep the NULL check in there as it does afford a little
-> > bit of extra safety and this is management code after all, not
-> > per-packet processing code, so the extra check should have no
-> > observable performance impact.
-> 
-> The dereferences on the lines before mean we would Oops before
-> reaching the check ...
+Smatch complains that if device is INT_MAX then device + 1 can
+overflow.  It just means we would have an annoying loop while we
+check all the devices from -2147483648 to SNDRV_MINOR_HWDEPS.
 
-Thanks for pointing that out, I missed that when looking at your patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: reshuffled it a bit per Walter Harms's suggestion.
 
--- 
-paul moore
-www.paul-moore.com
+diff --git a/sound/core/hwdep.c b/sound/core/hwdep.c
+index c7ceb28..75ea16f 100644
+--- a/sound/core/hwdep.c
++++ b/sound/core/hwdep.c
+@@ -273,7 +273,14 @@ static int snd_hwdep_control_ioctl(struct snd_card *card,
+ 			if (get_user(device, (int __user *)arg))
+ 				return -EFAULT;
+ 			mutex_lock(&register_mutex);
+-			device = device < 0 ? 0 : device + 1;
++
++			if (device < 0)
++				device = 0;
++			else if (device < SNDRV_MINOR_HWDEPS)
++				device++;
++			else
++				device = SNDRV_MINOR_HWDEPS;
++
+ 			while (device < SNDRV_MINOR_HWDEPS) {
+ 				if (snd_hwdep_search(card, device))
+ 					break;
 
