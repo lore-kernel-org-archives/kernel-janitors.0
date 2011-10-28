@@ -1,23 +1,29 @@
-From: Bojan Smojver <bojan@rexursive.com>
-Date: Sun, 09 Oct 2011 22:26:12 +0000
-Subject: Re: [patch] PM / Hibernate: NULL dereferences on error paths
-Message-Id: <1318199172.2004.3.camel@shrek.rexursive.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Oct 2011 11:42:41 +0000
+Subject: [patch] drm/i915: fix if statement (bogus semi-colon)
+Message-Id: <20111028114241.GA13603@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111007132453.GA31424@elgon.mountain>
-In-Reply-To: <20111007132453.GA31424@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2011-10-09 at 17:11 +0300, Dan Carpenter wrote:
-> In general if you care about total bugs over the entire project then
-> simpler code is less buggy.
+The semi-colon is a typo here and it makes the if statement
+unconditional.
 
-Agreed. And thank you for finding that problem.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-At times, I also complicate things unnecessarily. Ah, well...
-
--- 
-Bojan
-
+diff --git a/drivers/char/agp/intel-gtt.c b/drivers/char/agp/intel-gtt.c
+index 66cd0b8..3a8d448 100644
+--- a/drivers/char/agp/intel-gtt.c
++++ b/drivers/char/agp/intel-gtt.c
+@@ -1236,7 +1236,7 @@ static int i9xx_setup(void)
+ 		intel_private.gtt_bus_addr = reg_addr + gtt_offset;
+ 	}
+ 
+-	if (needs_idle_maps());
++	if (needs_idle_maps())
+ 		intel_private.base.do_idle_maps = 1;
+ 
+ 	intel_i9xx_setup_flush();
