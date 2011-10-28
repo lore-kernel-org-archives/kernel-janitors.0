@@ -1,43 +1,69 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Date: Mon, 31 Oct 2011 11:22:31 +0000
-Subject: Re: [patch] Staging: iio/dac/ad5360.c: signedness bug in ad5360_read_raw()
-Message-Id: <4EAE84F7.5080207@cam.ac.uk>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 28 Oct 2011 23:58:15 +0000
+Subject: [PATCH 3/5] drivers/hid/hid-roccat.c: eliminate a null pointer dereference
+Message-Id: <1319846297-2985-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111029072106.GD17780@elgon.mountain> <4EAD2AB4.1010009@metafoo.de>
-In-Reply-To: <4EAD2AB4.1010009@metafoo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@suse.de>, Michael Hennerich <michael.hennerich@analog.com>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/30/11 10:45, Lars-Peter Clausen wrote:
-> On 10/29/2011 09:21 AM, Dan Carpenter wrote:
->> ad5360_get_channel_vref() returns an int and scale_uv should be the
->> same.  Making it unsigned here breaks the error handling.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
-> 
-> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Acked-by: Jonathan Cameron <jic23cam.ac.uk>
-> 
-> Thanks.
-> 
->> diff --git a/drivers/staging/iio/dac/ad5360.c b/drivers/staging/iio/dac/ad5360.c
->> index 72d0f3f..cfeea72 100644
->> --- a/drivers/staging/iio/dac/ad5360.c
->> +++ b/drivers/staging/iio/dac/ad5360.c
->> @@ -371,8 +371,8 @@ static int ad5360_read_raw(struct iio_dev *indio_dev,
->>  			   long m)
->>  {
->>  	struct ad5360_state *st = iio_priv(indio_dev);
->> -	unsigned long scale_uv;
->>  	unsigned int ofs_index;
->> +	int scale_uv;
->>  	int ret;
->>  
->>  	switch (m) {
-> 
-> 
+From: Julia Lawall <julia@diku.dk>
+
+It is not possible to take the lock in device if device is NULL.
+The mutex_lock is thus moved after the NULL test, and the relevant part of
+the shared error handling code is moved up.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
+@@
+
+if (E = NULL)
+{
+  ... when != if (E = NULL || ...) S1 else S2
+      when != E = E1
+*E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/hid/hid-roccat.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/hid/hid-roccat.c b/drivers/hid/hid-roccat.c
+index 2596321..36a28b8 100644
+--- a/drivers/hid/hid-roccat.c
++++ b/drivers/hid/hid-roccat.c
+@@ -163,14 +163,15 @@ static int roccat_open(struct inode *inode, struct file *file)
+ 
+ 	device = devices[minor];
+ 
+-	mutex_lock(&device->readers_lock);
+-
+ 	if (!device) {
+ 		pr_emerg("roccat device with minor %d doesn't exist\n", minor);
+-		error = -ENODEV;
+-		goto exit_err;
++		kfree(reader);
++		mutex_lock(&devices_lock);
++		return -ENODEV;
+ 	}
+ 
++	mutex_lock(&device->readers_lock);
++
+ 	if (!device->open++) {
+ 		/* power on device on adding first reader */
+ 		error = hid_hw_power(device->hid, PM_HINT_FULLON);
 
