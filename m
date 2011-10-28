@@ -1,77 +1,46 @@
-From: Bob Copeland <me@bobcopeland.com>
-Date: Wed, 05 Oct 2011 12:33:24 +0000
-Subject: Re: [patch] ath5k: remove some unneeded error handling code
-Message-Id: <20111005123324.GB3662@hash.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Oct 2011 15:18:24 +0000
+Subject: re: xfrm: Assign the inner mode output function to the dst
+Message-Id: <20111028151822.GA12707@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111005054637.GA32077@elgon.mountain>
-In-Reply-To: <20111005054637.GA32077@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jiri Slaby <jirislaby@gmail.com>, Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 05, 2011 at 08:46:37AM +0300, Dan Carpenter wrote:
-> th5k_hw_setup_tx_queue() returns a valid offset into the ah->ah_txq[]
+[ Hi.  Smatch is complaining about a really old patch here.  Sorry
+  for that.  I will fix it to detect better which warnings are new
+  but I saw that there was some work done in this function recently
+  so I decided to send this email anyway.  --dan ]
 
-ath5k_....
+Hello Steffen Klassert,
 
-> array.  The ah->ah_txq[] and the ah->txqs[] array are the same size.
-> Both have AR5K_NUM_TX_QUEUES elements.  So this error handling code
-> will never trigger.
+This is a semi-automatic email about new static checker warnings.
 
-This originally came from the HAL.  I concur that this code will not
-be executed, since the enum from which ath5k_hw_setup_tx_queue() selects
-qnum has all elements less than AR5K_NUM_TX_QUEUES, which in turn is equal
-to ARRAY_SIZE(ah->txqs).  ath5k_hw_setup_tx_queue() already uses qnum in
-a memset of a same-sized array (ah->txq).
+The patch 43a4dea4c9d4: "xfrm: Assign the inner mode output function 
+to the dst entry" from May 9, 2011, leads to the following Smatch 
+complaint:
 
-> Also it's wrong.  The call to ath5k_hw_release_tx_queue() with a qnum
-> of AR5K_NUM_TX_QUEUES or more will just trigger a WARN_ON() and
-> return.  Or if it missed the WARN_ON(), it would just corrupt some
-> memory and return.
+net/ipv6/xfrm6_output.c +154 __xfrm6_output()
+	 error: we previously assumed 'x' could be null (see line 149)
 
-"corrupt memory and return" sounds undeserving of the adverb 'just' :)
-I guess you are trying to say that it should not have called
-ath5k_hw_release_tx_queue() but I read this comment as saying the
-ATH5K_ERR() was superfluous?
+net/ipv6/xfrm6_output.c
+   148	
+   149		if ((x && x->props.mode = XFRM_MODE_TUNNEL) &&
+                     ^
+Check.
 
-ath5k_hw_release_tx_queue() compares against the queue capabilities
-instead of AR5K_NUM_TX_QUEUES, so there's extra potential for the
-"just corrupt memory and return" case -- but since those are also
-initialized to AR5K_NUM_TX_QUEUES{,_NO_QCU}, that case won't happen
-either.
+   150		    ((skb->len > mtu && !skb_is_gso(skb)) ||
+   151			dst_allfrag(skb_dst(skb)))) {
+   152				return ip6_fragment(skb, x->outer_mode->afinfo->output_finish);
+   153		}
+   154		return x->outer_mode->afinfo->output_finish(skb);
+                       ^^^
+New dereference.
 
-All that to say the patch is fine, but the patch description didn't
-convince me so I double-checked.  My comments above reflect how I
-might have worded it.
+   155	}
+   156	
 
-Thanks for the patch!
-
-Reviewed-by: Bob Copeland <me@bobcopeland.com>
-
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/ath/ath5k/base.c b/drivers/net/wireless/ath/ath5k/base.c
-> index e9ea38d..b346d04 100644
-> --- a/drivers/net/wireless/ath/ath5k/base.c
-> +++ b/drivers/net/wireless/ath/ath5k/base.c
-> @@ -921,12 +921,6 @@ ath5k_txq_setup(struct ath5k_hw *ah,
->  		 */
->  		return ERR_PTR(qnum);
->  	}
-> -	if (qnum >= ARRAY_SIZE(ah->txqs)) {
-> -		ATH5K_ERR(ah, "hw qnum %u out of range, max %tu!\n",
-> -			qnum, ARRAY_SIZE(ah->txqs));
-> -		ath5k_hw_release_tx_queue(ah, qnum);
-> -		return ERR_PTR(-EINVAL);
-> -	}
->  	txq = &ah->txqs[qnum];
->  	if (!txq->setup) {
->  		txq->qnum = qnum;
-> 
-
--- 
-Bob Copeland %% www.bobcopeland.com
+regards,
+dan carpenter
 
