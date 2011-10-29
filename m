@@ -1,28 +1,75 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Date: Fri, 28 Oct 2011 17:20:20 +0000
-Subject: Re: [patch] drm/i915: fix if statement (bogus semi-colon)
-Message-Id: <f80fcd$2bbqtl@fmsmga001.fm.intel.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sat, 29 Oct 2011 12:11:47 +0000
+Subject: Re: [PATCH 3/5 v2] drivers/hid/hid-roccat.c: eliminate a null pointer
+Message-Id: <Pine.LNX.4.64.1110291411150.17700@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111028114241.GA13603@elgon.mountain> <yund3dh9h4t.fsf@aiko.keithp.com>
-In-Reply-To: <yund3dh9h4t.fsf@aiko.keithp.com>
+References: <1319846297-2985-3-git-send-email-julia@diku.dk>
+ <20111029062412.GG14881@longonot.mountain> <4EABC937.60600@broadcom.com>
+ <CANq1E4QJoM+NYub9hfs3KnL1w212FK0MHo8ez2p1nyGmNVb-=A@mail.gmail.com>
+In-Reply-To: <CANq1E4QJoM+NYub9hfs3KnL1w212FK0MHo8ez2p1nyGmNVb-=A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Keith Packard <keithp@keithp.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Herrmann <dh.herrmann@googlemail.com>
+Cc: Arend van Spriel <arend@broadcom.com>, Dan Carpenter <dan.carpenter@oracle.com>, Jiri Kosina <jkosina@suse.cz>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, 28 Oct 2011 10:10:26 -0700, Keith Packard <keithp@keithp.com> wrote:
-> On Fri, 28 Oct 2011 14:42:41 +0300, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > -	if (needs_idle_maps());
-> > +	if (needs_idle_maps())
-> 
-> how embarrassing is that?
+From: Julia Lawall <julia@diku.dk>
 
-Actually it served an ulterior purpose and by exercising the workaround
-showed us that it contained a more subtle bug. I believe therefore Ben
-did it deliberately ;-)
--Chris
+It is not possible to take the lock in device if device is NULL.
+The mutex_lock is thus moved after the NULL test, and the relevant part of
+the shared error handling code is moved up.
 
--- 
-Chris Wilson, Intel Open Source Technology Centre
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+expression E, E1;
+identifier f;
+statement S1,S2,S3;
+@@
+
+if (E = NULL)
+{
+  ... when != if (E = NULL || ...) S1 else S2
+      when != E = E1
+*E->f
+  ... when any
+  return ...;
+}
+else S3
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+mutex_lock changed to mutex_unlock in error handling code
+
+ drivers/hid/hid-roccat.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/hid/hid-roccat.c b/drivers/hid/hid-roccat.c
+index 2596321..36a28b8 100644
+--- a/drivers/hid/hid-roccat.c
++++ b/drivers/hid/hid-roccat.c
+@@ -163,14 +163,15 @@ static int roccat_open(struct inode *inode, struct file *file)
+ 
+ 	device = devices[minor];
+ 
+-	mutex_lock(&device->readers_lock);
+-
+ 	if (!device) {
+ 		pr_emerg("roccat device with minor %d doesn't exist\n", minor);
+-		error = -ENODEV;
+-		goto exit_err;
++		kfree(reader);
++		mutex_unlock(&devices_lock);
++		return -ENODEV;
+ 	}
+ 
++	mutex_lock(&device->readers_lock);
++
+ 	if (!device->open++) {
+ 		/* power on device on adding first reader */
+ 		error = hid_hw_power(device->hid, PM_HINT_FULLON);
+
