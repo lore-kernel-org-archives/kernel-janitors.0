@@ -1,36 +1,35 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Date: Thu, 06 Oct 2011 11:24:20 +0000
-Subject: Re: [patch 1/2] Staging: iio/light/tsl2563: unlock on an error path
-Message-Id: <4E8D8FE4.9080907@cam.ac.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 29 Oct 2011 07:18:54 +0000
+Subject: [patch] CIFS: double unlock in cifs_lock_add_if()
+Message-Id: <20111029071854.GA17780@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111006061503.GA14701@elgon.mountain>
-In-Reply-To: <20111006061503.GA14701@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Bryan Freed <bfreed@chromium.org>, Michael Hennerich <Michael.Hennerich@analog.com>, Arnd Bergmann <arnd@arndb.de>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Pavel Shilovsky <piastry-7qunaywFIewox3rIn2DAYQ@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 10/06/11 07:15, Dan Carpenter wrote:
-> We need to unlock here before returning.
-Thanks
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Jonathan Cameron <jic23@cam.ac.uk>
-> 
-> diff --git a/drivers/staging/iio/light/tsl2563.c b/drivers/staging/iio/light/tsl2563.c
-> index 3707772..8977f58 100644
-> --- a/drivers/staging/iio/light/tsl2563.c
-> +++ b/drivers/staging/iio/light/tsl2563.c
-> @@ -518,7 +518,8 @@ static int tsl2563_read_raw(struct iio_dev *indio_dev,
->  		ret = IIO_VAL_INT;
->  		break;
->  	default:
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto error_ret;
->  	}
->  
->  error_ret:
-> 
+We unlocked "cinode->lock_mutex" twice so I've removed the first
+unlock.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index ea096ce..b8dbab8 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -775,11 +775,9 @@ try_again:
+ 					(lock->blist.next = &lock->blist));
+ 		if (!rc)
+ 			goto try_again;
+-		else {
+-			mutex_lock(&cinode->lock_mutex);
+-			list_del_init(&lock->blist);
+-			mutex_unlock(&cinode->lock_mutex);
+-		}
++
++		mutex_lock(&cinode->lock_mutex);
++		list_del_init(&lock->blist);
+ 	}
+ 
+ 	kfree(lock);
