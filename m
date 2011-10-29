@@ -1,37 +1,30 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Mon, 17 Oct 2011 12:35:46 +0000
-Subject: Re: [patch] nfsd4: typo logical vs bitwise negate
-Message-Id: <20111017123546.GA9809@fieldses.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 29 Oct 2011 07:21:06 +0000
+Subject: [patch] Staging: iio/dac/ad5360.c: signedness bug in
+Message-Id: <20111029072106.GD17780@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111017074117.GA11912@elgon.mountain>
-In-Reply-To: <20111017074117.GA11912@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Neil Brown <neilb@suse.de>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <michael.hennerich@analog.com>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-On Mon, Oct 17, 2011 at 10:41:17AM +0300, Dan Carpenter wrote:
-> This should be a bitwise negate here.  It silences a Sparse warning:
-> fs/nfsd/nfs4xdr.c:693:16: warning: dubious: x & !y
+ad5360_get_channel_vref() returns an int and scale_uv should be the
+same.  Making it unsigned here breaks the error handling.
 
-Whoops, thanks for catching that!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applying for 3.2.--b.
-
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> index 2cab33c..645a0a9 100644
-> --- a/fs/nfsd/nfs4xdr.c
-> +++ b/fs/nfsd/nfs4xdr.c
-> @@ -690,7 +690,7 @@ static __be32 nfsd4_decode_share_deny(struct nfsd4_compoundargs *argp, u32 *x)
->  	READ_BUF(4);
->  	READ32(*x);
->  	/* Note: unlinke access bits, deny bits may be zero. */
-> -	if (*x & !NFS4_SHARE_DENY_BOTH)
-> +	if (*x & ~NFS4_SHARE_DENY_BOTH)
->  		return nfserr_bad_xdr;
->  	return nfs_ok;
->  xdr_error:
+diff --git a/drivers/staging/iio/dac/ad5360.c b/drivers/staging/iio/dac/ad5360.c
+index 72d0f3f..cfeea72 100644
+--- a/drivers/staging/iio/dac/ad5360.c
++++ b/drivers/staging/iio/dac/ad5360.c
+@@ -371,8 +371,8 @@ static int ad5360_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
+ {
+ 	struct ad5360_state *st = iio_priv(indio_dev);
+-	unsigned long scale_uv;
+ 	unsigned int ofs_index;
++	int scale_uv;
+ 	int ret;
+ 
+ 	switch (m) {
