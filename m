@@ -1,20 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Oct 2011 08:29:51 +0000
-Subject: Re: [patch] Staging: cx25821: off by on in cx25821_vidioc_s_input()
-Message-Id: <20111012082951.GF18470@longonot.mountain>
+Date: Sat, 29 Oct 2011 07:20:42 +0000
+Subject: [patch] Staging: iio/dac/ad5064.c: signedness bug in
+Message-Id: <20111029072042.GC17780@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111007132643.GB31424@elgon.mountain>
- <4E94AE2D.4050408@redhat.com>
- <20111012081412.GE18470@longonot.mountain>
-In-Reply-To: <20111012081412.GE18470@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, "Leonid V. Fedorenchik" <leonidsbox@gmail.com>, Hans Verkuil <hverkuil@xs4all.nl>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-Never mind.  I figured out what you meant.  I've fixed my patch and
-I will send v2 this evening.
+regulator_get_voltage() returns an int so "scale_uv" should be an
+int.  Making it unsigned here breaks the error handling.
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/iio/dac/ad5064.c b/drivers/staging/iio/dac/ad5064.c
+index 24279f2..3b14526 100644
+--- a/drivers/staging/iio/dac/ad5064.c
++++ b/drivers/staging/iio/dac/ad5064.c
+@@ -280,8 +280,8 @@ static int ad5064_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
+ {
+ 	struct ad5064_state *st = iio_priv(indio_dev);
+-	unsigned long scale_uv;
+ 	unsigned int vref;
++	int scale_uv;
+ 
+ 	switch (m) {
+ 	case 0:
