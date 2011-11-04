@@ -1,74 +1,54 @@
-From: Jimmy Pan <dspjm1@gmail.com>
-Date: Fri, 04 Nov 2011 15:27:44 +0000
-Subject: How to refer to the unamed structure in page struct
-Message-Id: <CAAgJb5utHS9f_SyfH7vp2x+S68REyePVsjBO2SqfMBo4gmFczQ@mail.gmail.com>
+From: Dave Hylands <dhylands@gmail.com>
+Date: Fri, 04 Nov 2011 16:00:42 +0000
+Subject: Re: How to refer to the unamed structure in page struct
+Message-Id: <CABi1daFTGm=47Kwt_oevENR4eTYs4Ffvx1yiyscUJ91epO4Wyw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAAgJb5utHS9f_SyfH7vp2x+S68REyePVsjBO2SqfMBo4gmFczQ@mail.gmail.com>
+In-Reply-To: <CAAgJb5utHS9f_SyfH7vp2x+S68REyePVsjBO2SqfMBo4gmFczQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernelnewbies@lists.kernelnewbies.org
 
-truct page {
-        unsigned long flags;            /* Atomic flags, some possibly
-                                         * updated asynchronously */
-        atomic_t _count;                /* Usage count, see below. */
-        union {
-                atomic_t _mapcount;     /* Count of ptes mapped in mms,
-                                         * to show when page is mapped
-                                         * & limit reverse map searches.
-                                         */
-                struct {                /* SLUB */
-                        u16 inuse;
-                        u16 objects;
-                };
-        };
-        union {
-            struct {
-                unsigned long private;          /* Mapping-private opaque d=
-ata:
-                                                 * usually used for buffer_=
-heads
-                                                 * if PagePrivate set; used=
- for
-                                                 * swp_entry_t if PageSwapC=
-ache;
-                                                 * indicates order in the b=
-uddy
-                                                 * system if PG_buddy is se=
-t.
-                                                 */
-                struct address_space *mapping;  /* If low bit clear, points=
- to
-                                                 * inode address_space, or =
-NULL.
-                                                 * If page mapped as anonym=
-ous
-                                                 * memory, low bit is set, =
-and
-                                                 * it points to anon_vma ob=
-ject:
-                                                 * see PAGE_MAPPING_ANON be=
-low.
-                                                 */
-            };
-#if USE_SPLIT_PTLOCKS
-            spinlock_t ptl;
-#endif
-            struct kmem_cache *slab;    /* SLUB: Pointer to slab */
-            struct page *first_page;    /* Compound tail pages */
-        };
-
-
-
--------------------------------------------------------------------------
-As you can see in the code=EF=BC=8C the union in the page structure doesn't
-have a name, so does
-the structure in the union, how to refer to those two?
-
-Thanks in advance,
-Jimmy
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgSmltbXksCgpPbiBGcmksIE5vdiA0LCAyMDExIGF0IDg6MjcgQU0sIEppbW15IFBhbiA8ZHNw
+am0xQGdtYWlsLmNvbT4gd3JvdGU6Cj4gdHJ1Y3QgcGFnZSB7Cj4goCCgIKAgoHVuc2lnbmVkIGxv
+bmcgZmxhZ3M7IKAgoCCgIKAgoCCgLyogQXRvbWljIGZsYWdzLCBzb21lIHBvc3NpYmx5Cj4goCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgICogdXBkYXRlZCBhc3luY2hyb25v
+dXNseSAqLwo+IKAgoCCgIKBhdG9taWNfdCBfY291bnQ7IKAgoCCgIKAgoCCgIKAgoC8qIFVzYWdl
+IGNvdW50LCBzZWUgYmVsb3cuICovCj4goCCgIKAgoHVuaW9uIHsKPiCgIKAgoCCgIKAgoCCgIKBh
+dG9taWNfdCBfbWFwY291bnQ7IKAgoCAvKiBDb3VudCBvZiBwdGVzIG1hcHBlZCBpbiBtbXMsCj4g
+oCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgICogdG8gc2hvdyB3aGVuIHBh
+Z2UgaXMgbWFwcGVkCj4goCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgICog
+JiBsaW1pdCByZXZlcnNlIG1hcCBzZWFyY2hlcy4KPiCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCg
+IKAgoCCgIKAgoCCgIKAgKi8KPiCgIKAgoCCgIKAgoCCgIKBzdHJ1Y3QgeyCgIKAgoCCgIKAgoCCg
+IKAvKiBTTFVCICovCj4goCCgIKAgoCCgIKAgoCCgIKAgoCCgIKB1MTYgaW51c2U7Cj4goCCgIKAg
+oCCgIKAgoCCgIKAgoCCgIKB1MTYgb2JqZWN0czsKPiCgIKAgoCCgIKAgoCCgIKB9Owo+IKAgoCCg
+IKB9Owo+IKAgoCCgIKB1bmlvbiB7Cj4goCCgIKAgoCCgIKBzdHJ1Y3Qgewo+IKAgoCCgIKAgoCCg
+IKAgoHVuc2lnbmVkIGxvbmcgcHJpdmF0ZTsgoCCgIKAgoCCgLyogTWFwcGluZy1wcml2YXRlIG9w
+YXF1ZSBkYXRhOgo+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAg
+oCCgICogdXN1YWxseSB1c2VkIGZvciBidWZmZXJfaGVhZHMKPiCgIKAgoCCgIKAgoCCgIKAgoCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCAqIGlmIFBhZ2VQcml2YXRlIHNldDsgdXNlZCBm
+b3IKPiCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCAqIHN3
+cF9lbnRyeV90IGlmIFBhZ2VTd2FwQ2FjaGU7Cj4goCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgKiBpbmRpY2F0ZXMgb3JkZXIgaW4gdGhlIGJ1ZGR5Cj4goCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgKiBzeXN0ZW0gaWYg
+UEdfYnVkZHkgaXMgc2V0Lgo+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAg
+oCCgIKAgoCCgICovCj4goCCgIKAgoCCgIKAgoCCgc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBp
+bmc7IKAvKiBJZiBsb3cgYml0IGNsZWFyLCBwb2ludHMgdG8KPiCgIKAgoCCgIKAgoCCgIKAgoCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCAqIGlub2RlIGFkZHJlc3Nfc3BhY2UsIG9yIE5V
+TEwuCj4goCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgKiBJ
+ZiBwYWdlIG1hcHBlZCBhcyBhbm9ueW1vdXMKPiCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAg
+oCCgIKAgoCCgIKAgoCCgIKAgoCAqIG1lbW9yeSwgbG93IGJpdCBpcyBzZXQsIGFuZAo+IKAgoCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgICogaXQgcG9pbnRzIHRv
+IGFub25fdm1hIG9iamVjdDoKPiCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCg
+IKAgoCCgIKAgoCAqIHNlZSBQQUdFX01BUFBJTkdfQU5PTiBiZWxvdy4KPiCgIKAgoCCgIKAgoCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCAqLwo+IKAgoCCgIKAgoCCgfTsKPiAj
+aWYgVVNFX1NQTElUX1BUTE9DS1MKPiCgIKAgoCCgIKAgoHNwaW5sb2NrX3QgcHRsOwo+ICNlbmRp
+Zgo+IKAgoCCgIKAgoCCgc3RydWN0IGttZW1fY2FjaGUgKnNsYWI7IKAgoC8qIFNMVUI6IFBvaW50
+ZXIgdG8gc2xhYiAqLwo+IKAgoCCgIKAgoCCgc3RydWN0IHBhZ2UgKmZpcnN0X3BhZ2U7IKAgoC8q
+IENvbXBvdW5kIHRhaWwgcGFnZXMgKi8KPiCgIKAgoCCgfTsKCllvdSBqdXN0IHJlZmVyZW5jZSB0
+aGUgdmFyaWFibGUgYXMgaWYgdGhlIHVubmFtZWQgdW5pb24gd2VyZW4ndCB0aGVyZQooaS5lLiBq
+dXN0IGxpa2UgdW5uYW1lZCB1bmlvbnMgaW4gQysrKS4KCkhlcmUncyBhbiBleGFtcGxlIGZyb20g
+dGhlIGtlcm5lbCBzb3VyY2UgdHJlZToKaHR0cDovL2x4ci5saW51eC5uby9saW51eCt2My4xL2lu
+Y2x1ZGUvbGludXgvbW0uaCNMNDE5CgotLSAKRGF2ZSBIeWxhbmRzClNodXN3YXAsIEJDLCBDYW5h
+ZGEKaHR0cDovL3d3dy5kYXZlaHlsYW5kcy5jb20K
