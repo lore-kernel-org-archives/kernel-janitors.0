@@ -1,103 +1,45 @@
-From: Marcos Souza <marcos.mage@gmail.com>
-Date: Fri, 04 Nov 2011 10:11:28 +0000
-Subject: Fwd: [PATCH 4/4] drivers/staging/vt6656/rf.h: Remove ttype.h and some
-Message-Id: <CAGkUK2vaCWbH=S_RzKPvLz6iKE=rwV-Bxj7vC88ddZHZPDo24w@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Nov 2011 11:19:34 +0000
+Subject: Re: Fwd: [PATCH 4/4] drivers/staging/vt6656/rf.h: Remove ttype.h and
+Message-Id: <20111104111934.GP4682@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="pvq4FPIYehQuVelz"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+References: <CAGkUK2vaCWbH=S_RzKPvLz6iKE=rwV-Bxj7vC88ddZHZPDo24w@mail.gmail.com>
+In-Reply-To: <CAGkUK2vaCWbH=S_RzKPvLz6iKE=rwV-Bxj7vC88ddZHZPDo24w@mail.gmail.com>
 To: kernel-janitors@vger.kernel.org
 
-I forgot to sent these patches, so I'm sending now
 
-Removed ttype.h for the TODO file, and some dead comments.
+--pvq4FPIYehQuVelz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Marcos Paulo de Souza <marcos.mage@gmail.com>
----
- drivers/staging/vt6656/rf.h |   38 +++++++++++---------------------------
- 1 files changed, 11 insertions(+), 27 deletions(-)
+This one has the same BOOL to int transitions I mentioned before.
 
-diff --git a/drivers/staging/vt6656/rf.h b/drivers/staging/vt6656/rf.h
-index f5ba8fd..b7c6c19 100644
---- a/drivers/staging/vt6656/rf.h
-+++ b/drivers/staging/vt6656/rf.h
-@@ -30,13 +30,10 @@
- #ifndef __RF_H__
- #define __RF_H__
-
--#include "ttype.h"
- #include "device.h"
-
--/*---------------------  Export Definitions -------------------------*/
--//
--// Baseband RF pair definition in eeprom (Bits 6..0)
--//
-+/* Baseband RF pair definition in eeprom (Bits 6..0) */
-+
- #define RF_RFMD2959         0x01
- #define RF_MAXIMAG          0x02
- #define RF_AL2230           0x03
-@@ -48,37 +45,24 @@
- #define RF_VT3226           0x09
- #define RF_AIROHA7230       0x0a
- #define RF_UW2453           0x0b
--#define RF_VT3226D0         0x0c //RobertYu:20051114
--#define RF_VT3342A0         0x0d //RobertYu:20060609
-+#define RF_VT3226D0         0x0c
-+#define RF_VT3342A0         0x0d
- #define RF_AL2230S          0x0e
-
- #define RF_EMU              0x80
- #define RF_MASK             0x7F
-
-+extern const unsigned char RFaby11aChannelIndex[200];
-
-+int IFRFbWriteEmbeded(PSDevice pDevice, unsigned long dwData);
-+int RFbSetPower(PSDevice pDevice, unsigned int uRATE, unsigned int uCH);
-
--/*---------------------  Export Classes  ----------------------------*/
--
--/*---------------------  Export Variables  --------------------------*/
--extern const BYTE RFaby11aChannelIndex[200];
--/*---------------------  Export Functions  --------------------------*/
--
--BOOL IFRFbWriteEmbeded(PSDevice pDevice, DWORD dwData);
--BOOL RFbSetPower(PSDevice pDevice, unsigned int uRATE, unsigned int uCH);
--
--BOOL RFbRawSetPower(
--      PSDevice  pDevice,
--      BYTE      byPwr,
--      unsigned int      uRATE
--    );
-+int RFbRawSetPower(PSDevice pDevice, unsigned char byPwr, unsigned int uRA=
-TE);
-
--void RFvRSSITodBm(PSDevice pDevice, BYTE byCurrRSSI, long *pldBm);
-+void RFvRSSITodBm(PSDevice pDevice, unsigned char byCurrRSSI, long *pldBm);
- void RFbRFTableDownload(PSDevice pDevice);
-
--BOOL s_bVT3226D0_11bLoCurrentAdjust(
--      PSDevice    pDevice,
--      BYTE        byChannel,
--      BOOL        b11bMode
--    );
-+int s_bVT3226D0_11bLoCurrentAdjust(PSDevice pDevice, unsigned char byChann=
-el,
-+				   int b11bMode);
-
- #endif /* __RF_H__ */
---=20
-1.7.4.4
+regards,
+dan carpenter
 
 
+--pvq4FPIYehQuVelz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
---=20
-Marcos Paulo de Souza
+iQIcBAEBAgAGBQJOs8pGAAoJEOnZkXI/YHqR4hYP/2IzRyNdz9R5AjW6o91BlrFt
+0tvbyIgG1ZAPF46Z/xEusTWzSSNtKIYywV+HEzLZRRpxpvxUAwO3Dfe0s7awRLqz
+IHgxxxR82TEnrGJC69njRf5IKJQmxpOMamk+OTQC/ZmyC30SCB0T83PGVw+OWp+7
+9h8KdgZHhdA1phwpDlJXOeAv1hudnXJJauA8nJsnYDLjYkbbJATgA3g4Eno0sCGm
+yRZs5NiBr1pXubmNqJH2zrhC+9Fx2n9lwyLXFNCA1bY7BDHuZ3hGMvo67Qy2PIXT
+jZuf0xWigq1LdYNKsW2vwMpXKbHqW9Dibtg/rXvA35J9ZqFZP3uyee7+0kw1Lu9w
+E62zJojZgS4JNbCGpJtbFEmy2VpVgZt6F6/RL+Pxxk+y6chJZwtRE4YVni+Hteos
+2qF1k3fyyc1K5aurAqPf3mu7v2AVQohAHTIOKfGqXwBBbwImeL5Zj4hkyEDCSYj9
+TrP2eVI8Fy+hag5FIwOiK00oy22T2Va6/dLcZcmySNQbXpVDmMBk7aQjWmanXIC1
+5jlUL0CJO+RGVO+s7OG2ql8eoE3MX/rJTnl53dyHDBKy7qpz12gkJTBDrrYe79VX
+oMNRbEnP+O3QJ6NDN3QOO8oLKeoaZxhQerRoLZ9ybW+U+wyjfFClk1AEsmkud1ar
+bDMZybTav20e89jGeB32
+=bsKr
+-----END PGP SIGNATURE-----
 
-*Porque uma vida sem desafios =E9 uma vida sem raz=E3o.*
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--pvq4FPIYehQuVelz--
