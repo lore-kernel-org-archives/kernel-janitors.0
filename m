@@ -1,132 +1,52 @@
-From: Marcos Souza <marcos.mage@gmail.com>
-Date: Fri, 04 Nov 2011 10:09:55 +0000
-Subject: Fwd: [PATCH 2/4] drivers/staging/vt6656/upc.h: Remove ttype.h and
-Message-Id: <CAGkUK2vW+MJmfisno1m8jpUvfMX3uFrgDy-hKXSHVJW6gatdsw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Nov 2011 11:14:15 +0000
+Subject: Re: Fwd: [PATCH 2/4] drivers/staging/vt6656/upc.h: Remove ttype.h
+Message-Id: <20111104111415.GO4682@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="qjSZefE6w0iW6XmQ"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+References: <CAGkUK2vW+MJmfisno1m8jpUvfMX3uFrgDy-hKXSHVJW6gatdsw@mail.gmail.com>
+In-Reply-To: <CAGkUK2vW+MJmfisno1m8jpUvfMX3uFrgDy-hKXSHVJW6gatdsw@mail.gmail.com>
 To: kernel-janitors@vger.kernel.org
 
-I forgot to sent these patches to the janitors...
 
-Removed ttype.h for TODO file, and removed some odd comments
+--qjSZefE6w0iW6XmQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Marcos Paulo de Souza <marcos.mage@gmail.com>
----
- drivers/staging/vt6656/upc.h |   38 ++++++++++----------------------------
- 1 files changed, 10 insertions(+), 28 deletions(-)
+This doesn't apply to my copy of linux-next.  But that could be my
+fault.  I'm not at my normal network right now, and my copy of
+linux-next is two weeks old on this computer.  All patches should be
+written against linux-next.
 
-diff --git a/drivers/staging/vt6656/upc.h b/drivers/staging/vt6656/upc.h
-index b33aba4..67eaf13 100644
---- a/drivers/staging/vt6656/upc.h
-+++ b/drivers/staging/vt6656/upc.h
-@@ -30,14 +30,8 @@
- #define __UPC_H__
+http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=summary
 
- #include "device.h"
--#include "ttype.h"
+If you already wrote it against the latest linux-next then ignore me
+and keep up the good work etc.  :)
 
--/*---------------------  Export Definitions -------------------------*/
--
--
--//
--//  For IO mapped
--//
-+/*  For IO mapped */
+regards,
+dan carpenter
 
- #ifdef IO_MAP
+--qjSZefE6w0iW6XmQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-@@ -70,13 +64,10 @@
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
- #else
+iQIcBAEBAgAGBQJOs8kGAAoJEOnZkXI/YHqRK2oP/2BTxIZexh4OoPhMmHd9hxRX
+F09rc3OBeHooOFy29CC4+H24okZudJ1E/xiJnQ1teB0yBLhwM2pc931NYhxodIyK
+8yojFB5jK7yQBY8KCJx++RBeF2fA0ZdFUH3ctRsCxNqt9xaWB/5/mSYZfC/zsSdL
+vnFhxdqa9XooYvI70BWneiOtx807qgRDG+Lp2ndQiFQuXsdza0cEgRUFcg3eWGz3
+zElvgfxfD7FDY5swXHReV/89q5dclpKnVsKprx6RYLi3QyeZNkFmxpifs8KEBV9p
+rhdc62NwVGwwP1y6V6b/UYD7P7DzzQsqalA07bhvC1EMHCZGK8NKssXjNBzPy4MI
+zRf388ZgxBPEtcZ/9XbExSln7hGPH2EZjDDTMwZKbI/T7UDQwDB2NLJ0TnLVIYgQ
+S+StrY4RjMXUR6GFovvqgU4quzH8mwHibBF16rwOIc2mKHgll9LP+K2BIuUrD4xl
+dLsL2YKtG/WuqWRrKU9Pn9h4JHDGH0HauKr5Uagwj3+aJhx2UBk/gY/Mf3MJPJUl
+euWUb3HGO+1LcMuas9Wln0H4ZuexENbIsRwu52rCvbFo3/WhhahMWNpeTwsMMhNZ
+QHkMktfG35rDUN/o6UYaC1Ocp6xtoDB9eeP2xV4aqEFmL7pudTAOfC2nW8fb96Hv
+Kx5rElFA8V5OO/gTkBHG
+=QCrB
+-----END PGP SIGNATURE-----
 
--//
--//  For memory mapped IO
--//
--
-+/* For memory mapped IO */
-
- #define VNSvInPortB(dwIOAddress, pbyData) {                     \
--	volatile BYTE* pbyAddr =3D ((PBYTE)(dwIOAddress));            \
-+	volatile unsigned char* pbyAddr =3D ((unsigned char *)(dwIOAddress)); \
- 	*(pbyData) =3D readb(pbyAddr);                           \
- }
-
-@@ -87,14 +78,14 @@
- }
-
- #define VNSvInPortD(dwIOAddress, pdwData) {                     \
--	volatile DWORD* pdwAddr =3D ((PDWORD)(dwIOAddress));          \
-+	volatile unsigned long* pdwAddr =3D ((unsigned long *)(dwIOAddress));    =
-      \
- 	*(pdwData) =3D readl(pdwAddr);                           \
- }
-
-
- #define VNSvOutPortB(dwIOAddress, byData) {                     \
--    volatile BYTE* pbyAddr =3D ((PBYTE)(dwIOAddress));            \
--    writeb((BYTE)byData, pbyAddr);							\
-+	volatile unsigned char* pbyAddr =3D ((unsigned char *)(dwIOAddress));
-          \
-+	writeb((unsigned char)byData, pbyAddr);							\
- }
-
-
-@@ -104,16 +95,14 @@
- }
-
- #define VNSvOutPortD(dwIOAddress, dwData) {                     \
--    volatile DWORD* pdwAddr =3D ((PDWORD)(dwIOAddress));          \
--    writel((DWORD)dwData, pdwAddr);					    \
-+	volatile unsigned long* pdwAddr =3D ((unsigned long *)(dwIOAddress));    =
-      \
-+	writel((unsigned long)dwData, pdwAddr);					    \
- }
-
- #endif
-
-+/*ALWAYS IO-Mapped IO when in 16-bit/32-bit environment */
-
--//
--// ALWAYS IO-Mapped IO when in 16-bit/32-bit environment
--//
- #define PCBvInPortB(dwIOAddress, pbyData) {     \
- 	    *(pbyData) =3D inb(dwIOAddress);          \
- }
-@@ -140,7 +129,7 @@
-
-
- #define PCAvDelayByIO(uDelayUnit) {             \
--    BYTE    byData;                             \
-+	unsigned char    byData;                             \
-     unsigned long   ii;                                 \
-                                                 \
-     if (uDelayUnit <=3D 50) {                     \
-@@ -152,11 +141,4 @@
-     }                                           \
- }
-
--
--/*---------------------  Export Classes  ----------------------------*/
--
--/*---------------------  Export Variables  --------------------------*/
--
--/*---------------------  Export Functions  --------------------------*/
--
- #endif /* __UPC_H__ */
---=20
-1.7.4.4
-
-
-
-
---=20
-Marcos Paulo de Souza
-
-*Porque uma vida sem desafios =E9 uma vida sem raz=E3o.*
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--qjSZefE6w0iW6XmQ--
