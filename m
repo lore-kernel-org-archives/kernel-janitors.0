@@ -1,55 +1,32 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Date: Fri, 25 Nov 2011 17:50:38 +0000
-Subject: Re: [patch] [media] saa7164: fix endian conversion in saa7164_bus_set()
-Message-Id: <4ECFD56E.3040200@infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Nov 2011 18:24:08 +0000
+Subject: [patch 1/2] xen-gntalloc: integer overflow in gntalloc_ioctl_alloc()
+Message-Id: <20111104182408.GD5796@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111123070911.GA8561@elgon.mountain>
-In-Reply-To: <20111123070911.GA8561@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Steven Toth <stoth@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+Cc: kernel-janitors@vger.kernel.org, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-Em 23-11-2011 05:09, Dan Carpenter escreveu:
-> The msg->command field is 32 bits, and we should fill it with a call
-> to cpu_to_le32().  The current code is broken on big endian systems,
-> and on little endian systems it just truncates the 32 bit value to
-> 16 bits.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is a static checker bug.  I haven't tested it.
-> 
-> diff --git a/drivers/media/video/saa7164/saa7164-bus.c b/drivers/media/video/saa7164/saa7164-bus.c
-> index 466e1b0..8f853d1 100644
-> --- a/drivers/media/video/saa7164/saa7164-bus.c
-> +++ b/drivers/media/video/saa7164/saa7164-bus.c
-> @@ -149,7 +149,7 @@ int saa7164_bus_set(struct saa7164_dev *dev, struct tmComResInfo* msg,
->  	saa7164_bus_verify(dev);
->  
->  	msg->size = cpu_to_le16(msg->size);
-> -	msg->command = cpu_to_le16(msg->command);
-> +	msg->command = cpu_to_le32(msg->command);
->  	msg->controlselector = cpu_to_le16(msg->controlselector);
->  
->  	if (msg->size > dev->bus.m_wMaxReqSize) {
+On 32 bit systems a high value of op.count could lead to an integer
+overflow in the kzalloc() and gref_ids would be smaller than
+expected.  If the you triggered another integer overflow in
+"if (gref_size + op.count > limit)" then you'd probably get memory
+corruption inside add_grefs().
 
-Hmm... I don't have this hardware, but:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-peekout:
-        msg->size = le16_to_cpu(msg->size);
-        msg->command = le16_to_cpu(msg->command);
-        msg->controlselector = le16_to_cpu(msg->controlselector);
-        ret = SAA_OK;
-out:
-        mutex_unlock(&bus->lock);
-        saa7164_bus_verify(dev);
-        return ret;
-}
-
-le16_to_cpu() is used for command. If one place needs fix, so the other one also
-requires it.
-
-Regards,
-Mauro
+diff --git a/drivers/xen/gntalloc.c b/drivers/xen/gntalloc.c
+index f6832f4..23c60cf 100644
+--- a/drivers/xen/gntalloc.c
++++ b/drivers/xen/gntalloc.c
+@@ -280,7 +280,7 @@ static long gntalloc_ioctl_alloc(struct gntalloc_file_private_data *priv,
+ 		goto out;
+ 	}
+ 
+-	gref_ids = kzalloc(sizeof(gref_ids[0]) * op.count, GFP_TEMPORARY);
++	gref_ids = kcalloc(op.count, sizeof(gref_ids[0]), GFP_TEMPORARY);
+ 	if (!gref_ids) {
+ 		rc = -ENOMEM;
+ 		goto out;
