@@ -1,97 +1,64 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Date: Fri, 04 Nov 2011 20:35:20 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Nov 2011 20:53:51 +0000
 Subject: Re: [patch] bonding: comparing a u8 with -1 is always false
-Message-Id: <1320438920.2753.16.camel@bwh-desktop>
+Message-Id: <20111104205351.GQ4682@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="E50aLcSU4JxQSj/B"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111104182138.GB5796@elgon.mountain>  <10444.1320436921@death>
+References: <20111104182138.GB5796@elgon.mountain>
+ <10444.1320436921@death>
 In-Reply-To: <10444.1320436921@death>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Jay Vosburgh <fubar@us.ibm.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Weiping Pan <wpan@redhat.com>, Andy Gospodarek <andy@greyhouse.net>, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
+Cc: Weiping Pan <wpan@redhat.com>, Andy Gospodarek <andy@greyhouse.net>, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>
 
-On Fri, 2011-11-04 at 13:02 -0700, Jay Vosburgh wrote:
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >slave->duplex is a u8 type so the in bond_info_show_slave() when we
-> >check "if (slave->duplex = -1)", it's always false.
-> >
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> >diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> >index b2b9109..b0c5772 100644
-> >--- a/drivers/net/bonding/bond_main.c
-> >+++ b/drivers/net/bonding/bond_main.c
-> >@@ -560,8 +560,8 @@ static int bond_update_speed_duplex(struct slave *slave)
-> > 	u32 slave_speed;
-> > 	int res;
-> >
-> >-	slave->speed = -1;
-> >-	slave->duplex = -1;
-> >+	slave->speed = SPEED_UNKNOWN;
-> >+	slave->duplex = DUPLEX_UNKNOWN;
-> >
-> > 	res = __ethtool_get_settings(slave_dev, &ecmd);
-> > 	if (res < 0)
-> >diff --git a/drivers/net/bonding/bond_procfs.c b/drivers/net/bonding/bond_procfs.c
-> >index 2acf0b0..ad284ba 100644
-> >--- a/drivers/net/bonding/bond_procfs.c
-> >+++ b/drivers/net/bonding/bond_procfs.c
-> >@@ -158,12 +158,12 @@ static void bond_info_show_slave(struct seq_file *seq,
-> > 	seq_printf(seq, "\nSlave Interface: %s\n", slave->dev->name);
-> > 	seq_printf(seq, "MII Status: %s\n",
-> > 		   (slave->link = BOND_LINK_UP) ?  "up" : "down");
-> >-	if (slave->speed = -1)
-> >+	if (slave->speed = SPEED_UNKNOWN)
-> > 		seq_printf(seq, "Speed: %s\n", "Unknown");
-> > 	else
-> > 		seq_printf(seq, "Speed: %d Mbps\n", slave->speed);
-> 
+
+--E50aLcSU4JxQSj/B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 04, 2011 at 01:02:01PM -0700, Jay Vosburgh wrote:
+>=20
 > 	Since you #define SPEED_UNKNOWN to -1 (below), how does this
 > actually change anything?  Did you mean 0xffff (because struct
 > ethtool_cmd's speed is a u16)?
+>=20
 
-The speed in ethtool_cmd is 32 bits divided between two fields.
+Sorry I could have explained this better in the changelog.  The
+slave->speed is stored in a u32 and the -1 works fine as is.
+Obviously, as you point out the define doesn't change anything.  I
+just changed it so it would look symetric with DUPLEX_UNKNOWN.
 
-> 	Running on a moderately recent net-next (without the very recent
-> change to bond_update_speed_duplex), I see that bonding indeed doesn't
-> get the speed or duplex correct after a cable pull:
-> 
-> Slave Interface: eth2
-> MII Status: down
-> Speed: 100 Mbps
-> Duplex: full
-> 
-> 	so perhaps a rational (unsigned-friendly) SPEED_UNKNOWN and
-> DUPLEX_UNKNOWN are needed, but I'm not sure how this #define actually
-> would change any behavior in the bonding case.
+But I think you missed that I defined #define DUPLEX_UNKNOWN 0xff.
+Before it we used a -1 for both and that didn't work.
 
-Agree that they should be defined somewhere.  The ethtool utility
-recognises speed values of 0, (u16)(-1) and (u32)(-1) as 'unknown'.
-Personally I think 0 makes more sense than (u32)(-1) but it doesn't
-matter much.
+I can resend this with a note about the SPEED_UNKNOWN cleanup if
+you'd like.  I'll do that tomorrow or Sunday.
 
-> >-	if (slave->duplex = -1)
-> >+	if (slave->duplex = DUPLEX_UNKNOWN)
-> > 		seq_printf(seq, "Duplex: %s\n", "Unknown");
-> > 	else
-> > 		seq_printf(seq, "Duplex: %s\n", slave->duplex ? "full" : "half");
-> 
-> 	This one might "work," but it seems to depend on the fact that
-> the integral conversion of -1 to an 8 bit unsigned type will be 255
-> (0xff).  I believe that's true (according to the ISO C copy I have
-> handy), but I'm not sure that kind of implicit assumption should be
-> built into the code.  At least not without some explanation.
-[...]
+regards,
+dan carpenter
 
-It's true and does not need explanation.  Quite why anyone expected a
-negative value to survive conversion to u8 and back to int, now that
-deserves explanation...
 
-Ben.
+--E50aLcSU4JxQSj/B
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-Ben Hutchings, Staff Engineer, Solarflare
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
+iQIcBAEBAgAGBQJOtFDfAAoJEOnZkXI/YHqRmPYP/35o3YOc3OojI1Cc+VirkM6o
+RCfJzvGPdD0CqcUmvh9DzdOReITHCsn1GsgM65Y84bytThbnmyCuJzAVO87nYvIR
+w5RqUhDfnnzWk86FSbZX5J7oAgriRWBIRX8piNNHOJwulNKFOKCBMPyWjzBdJ5Y2
++MV8JXfwyMdpQOVvqO4QaqaspH61C2T0E3aIHTjJWwfZqWReVy4DksQF0E5RpmXi
+3zn/DxTV+j1l2RZv00kWpsG3rqwNAfxSSHSnqiqW3A2bINPMrHEMsDFiNlqne1hN
+MG6b1Sre13xQIii8304JeSHK+1ICi/oH2ZJW7BVEB+/dV8FsdQoJ53pojO62Ayzq
+JutTf1PJeLK0WXnSFpC7p1/wvAjKeSE7Os31a+oAyJZv08Dh95A3F3uDULHZ7a6e
+EEWy29n5XioXi6CppXtjAtAijq1n+8qURwCmr5qYw8kld6aLFioo/jkO9rIFiyC3
+95/11UhuBqgBO4QhVlx6WNDGPmHtfJfftp3kSm6eLt5ZCs62q1WHOKyquy5fo4oi
++mIyakbhsuy1EXCueVNJu7D5ibFVVfkCuuNUkcXyVGUC2nvlxGYe2+tRtJJpdRfP
+39hL/yOn6K+hzVafKAsvCRrna865lmFP0ldKAIJ5plGL/o/8ilfHvJ2twKVRELOX
+okaNeMMpkNweAipNUblr
+=BjYY
+-----END PGP SIGNATURE-----
+
+--E50aLcSU4JxQSj/B--
