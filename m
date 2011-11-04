@@ -1,39 +1,77 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 04 Nov 2011 22:37:38 +0000
-Subject: Re: [patch] bonding: comparing a u8 with -1 is always false
-Message-Id: <20111104.183738.2111276141585306607.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Nov 2011 18:28:30 +0000
+Subject: [patch 3/3] ib_srpt: propagate return value from kstrtoul()
+Message-Id: <20111104182830.GI5796@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111104182138.GB5796@elgon.mountain>
-	<10444.1320436921@death>
-	<20111104205351.GQ4682@mwanda>
-In-Reply-To: <20111104205351.GQ4682@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: fubar@us.ibm.com, wpan@redhat.com, andy@greyhouse.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, bhutchings@solarflare.com
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Nicholas A. Bellinger" <nab-4mckEHfoRW3KI0RCH6AXYZqQE7yCjDx5@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 4 Nov 2011 23:53:51 +0300
+These days we've renamed strict_strtoul() to kstrtoul().  It has a
+couple different error codes it could return.  Smatch complains if
+we return -EINVAL instead of using the return value that kstrtoul()
+gave us.
 
-> On Fri, Nov 04, 2011 at 01:02:01PM -0700, Jay Vosburgh wrote:
->> 
->> 	Since you #define SPEED_UNKNOWN to -1 (below), how does this
->> actually change anything?  Did you mean 0xffff (because struct
->> ethtool_cmd's speed is a u16)?
->> 
-> 
-> Sorry I could have explained this better in the changelog.  The
-> slave->speed is stored in a u32 and the -1 works fine as is.
-> Obviously, as you point out the define doesn't change anything.  I
-> just changed it so it would look symetric with DUPLEX_UNKNOWN.
-> 
-> But I think you missed that I defined #define DUPLEX_UNKNOWN 0xff.
-> Before it we used a -1 for both and that didn't work.
-> 
-> I can resend this with a note about the SPEED_UNKNOWN cleanup if
-> you'd like.  I'll do that tomorrow or Sunday.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-That won't be necessary, I'll apply your patch as-is.
-
-Thanks Dan.
+diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+index f27b8da..04ccc04 100644
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -3704,10 +3704,10 @@ static ssize_t srpt_tpg_attrib_store_srp_max_rdma_size(
+ 	unsigned long val;
+ 	int ret;
+ 
+-	ret = strict_strtoul(page, 0, &val);
++	ret = kstrtoul(page, 0, &val);
+ 	if (ret < 0) {
+-		pr_err("strict_strtoul() failed with ret: %d\n", ret);
+-		return -EINVAL;
++		pr_err("kstrtoul() failed with ret: %d\n", ret);
++		return ret;
+ 	}
+ 	if (val > MAX_SRPT_RDMA_SIZE) {
+ 		pr_err("val: %lu exceeds MAX_SRPT_RDMA_SIZE: %d\n", val,
+@@ -3744,10 +3744,10 @@ static ssize_t srpt_tpg_attrib_store_srp_max_rsp_size(
+ 	unsigned long val;
+ 	int ret;
+ 
+-	ret = strict_strtoul(page, 0, &val);
++	ret = kstrtoul(page, 0, &val);
+ 	if (ret < 0) {
+-		pr_err("strict_strtoul() failed with ret: %d\n", ret);
+-		return -EINVAL;
++		pr_err("kstrtoul() failed with ret: %d\n", ret);
++		return ret;
+ 	}
+ 	if (val > MAX_SRPT_RSP_SIZE) {
+ 		pr_err("val: %lu exceeds MAX_SRPT_RSP_SIZE: %d\n", val,
+@@ -3784,10 +3784,10 @@ static ssize_t srpt_tpg_attrib_store_srp_sq_size(
+ 	unsigned long val;
+ 	int ret;
+ 
+-	ret = strict_strtoul(page, 0, &val);
++	ret = kstrtoul(page, 0, &val);
+ 	if (ret < 0) {
+-		pr_err("strict_strtoul() failed with ret: %d\n", ret);
+-		return -EINVAL;
++		pr_err("kstrtoul() failed with ret: %d\n", ret);
++		return ret;
+ 	}
+ 	if (val > MAX_SRPT_SRQ_SIZE) {
+ 		pr_err("val: %lu exceeds MAX_SRPT_SRQ_SIZE: %d\n", val,
+@@ -3831,10 +3831,10 @@ static ssize_t srpt_tpg_store_enable(
+ 	unsigned long tmp;
+         int ret;
+ 
+-	ret = strict_strtoul(page, 0, &tmp);
++	ret = kstrtoul(page, 0, &tmp);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "Unable to extract srpt_tpg_store_enable\n");
+-		return -EINVAL;
++		return ret;
+ 	}
+ 
+ 	if ((tmp != 0) && (tmp != 1)) {
