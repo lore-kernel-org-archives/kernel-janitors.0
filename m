@@ -1,68 +1,104 @@
-From: Jimmy Pan <dspjm1@gmail.com>
-Date: Fri, 04 Nov 2011 16:28:29 +0000
+From: Dave Hylands <dhylands@gmail.com>
+Date: Fri, 04 Nov 2011 19:01:49 +0000
 Subject: Re: How to refer to the unamed structure in page struct
-Message-Id: <CAAgJb5tuCPX0S=2Eb1pARqhhcOMtATPR4nRHb6mkYRSShPGLEw@mail.gmail.com>
+Message-Id: <CABi1daFJ6e6igT18FQNhBCGmvsi9r=w9GYuK53DxOegnuS=78g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAAgJb5utHS9f_SyfH7vp2x+S68REyePVsjBO2SqfMBo4gmFczQ@mail.gmail.com>
 	<CABi1daFTGm=47Kwt_oevENR4eTYs4Ffvx1yiyscUJ91epO4Wyw@mail.gmail.com>
-In-Reply-To: <CABi1daFTGm=47Kwt_oevENR4eTYs4Ffvx1yiyscUJ91epO4Wyw@mail.gmail.com>
+	<CAAgJb5tuCPX0S=2Eb1pARqhhcOMtATPR4nRHb6mkYRSShPGLEw@mail.gmail.com>
+In-Reply-To: <CAAgJb5tuCPX0S=2Eb1pARqhhcOMtATPR4nRHb6mkYRSShPGLEw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernelnewbies@lists.kernelnewbies.org
 
-T24gU2F0LCBOb3YgNSwgMjAxMSBhdCAxMjowMCBBTSwgRGF2ZSBIeWxhbmRzIDxkaHlsYW5kc0Bn
-bWFpbC5jb20+IHdyb3RlOgo+IEhpIEppbW15LAo+Cj4gT24gRnJpLCBOb3YgNCwgMjAxMSBhdCA4
-OjI3IEFNLCBKaW1teSBQYW4gPGRzcGptMUBnbWFpbC5jb20+IHdyb3RlOgo+PiB0cnVjdCBwYWdl
-IHsKPj4gwqAgwqAgwqAgwqB1bnNpZ25lZCBsb25nIGZsYWdzOyDCoCDCoCDCoCDCoCDCoCDCoC8q
-IEF0b21pYyBmbGFncywgc29tZSBwb3NzaWJseQo+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAqIHVwZGF0ZWQgYXN5bmNocm9ub3Vz
-bHkgKi8KPj4gwqAgwqAgwqAgwqBhdG9taWNfdCBfY291bnQ7IMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgLyogVXNhZ2UgY291bnQsIHNlZSBiZWxvdy4gKi8KPj4gwqAgwqAgwqAgwqB1bmlvbiB7Cj4+
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgYXRvbWljX3QgX21hcGNvdW50OyDCoCDCoCAvKiBDb3Vu
-dCBvZiBwdGVzIG1hcHBlZCBpbiBtbXMsCj4+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICogdG8gc2hvdyB3aGVuIHBhZ2UgaXMgbWFw
-cGVkCj4+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgICogJiBsaW1pdCByZXZlcnNlIG1hcCBzZWFyY2hlcy4KPj4gwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgKi8KPj4gwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqBzdHJ1Y3QgeyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC8qIFNM
-VUIgKi8KPj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqB1MTYgaW51c2U7Cj4+
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgdTE2IG9iamVjdHM7Cj4+IMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgfTsKPj4gwqAgwqAgwqAgwqB9Owo+PiDCoCDCoCDCoCDCoHVuaW9u
-IHsKPj4gwqAgwqAgwqAgwqAgwqAgwqBzdHJ1Y3Qgewo+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oHVuc2lnbmVkIGxvbmcgcHJpdmF0ZTsgwqAgwqAgwqAgwqAgwqAvKiBNYXBwaW5nLXByaXZhdGUg
-b3BhcXVlIGRhdGE6Cj4+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICogdXN1YWxseSB1c2VkIGZvciBidWZmZXJf
-aGVhZHMKPj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgKiBpZiBQYWdlUHJpdmF0ZSBzZXQ7IHVzZWQgZm9yCj4+
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgICogc3dwX2VudHJ5X3QgaWYgUGFnZVN3YXBDYWNoZTsKPj4gwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgKiBpbmRpY2F0ZXMgb3JkZXIgaW4gdGhlIGJ1ZGR5Cj4+IMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-ICogc3lzdGVtIGlmIFBHX2J1ZGR5IGlzIHNldC4KPj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgKi8KPj4gwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqBzdHJ1Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGluZzsgwqAvKiBJ
-ZiBsb3cgYml0IGNsZWFyLCBwb2ludHMgdG8KPj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgKiBpbm9kZSBhZGRy
-ZXNzX3NwYWNlLCBvciBOVUxMLgo+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAqIElmIHBhZ2UgbWFwcGVkIGFz
-IGFub255bW91cwo+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAqIG1lbW9yeSwgbG93IGJpdCBpcyBzZXQsIGFu
-ZAo+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCAqIGl0IHBvaW50cyB0byBhbm9uX3ZtYSBvYmplY3Q6Cj4+IMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgICogc2VlIFBBR0VfTUFQUElOR19BTk9OIGJlbG93Lgo+PiDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCAqLwo+PiDCoCDCoCDCoCDCoCDCoCDCoH07Cj4+ICNpZiBVU0VfU1BMSVRfUFRMT0NLUwo+
-PiDCoCDCoCDCoCDCoCDCoCDCoHNwaW5sb2NrX3QgcHRsOwo+PiAjZW5kaWYKPj4gwqAgwqAgwqAg
-wqAgwqAgwqBzdHJ1Y3Qga21lbV9jYWNoZSAqc2xhYjsgwqAgwqAvKiBTTFVCOiBQb2ludGVyIHRv
-IHNsYWIgKi8KPj4gwqAgwqAgwqAgwqAgwqAgwqBzdHJ1Y3QgcGFnZSAqZmlyc3RfcGFnZTsgwqAg
-wqAvKiBDb21wb3VuZCB0YWlsIHBhZ2VzICovCj4+IMKgIMKgIMKgIMKgfTsKPgo+IFlvdSBqdXN0
-IHJlZmVyZW5jZSB0aGUgdmFyaWFibGUgYXMgaWYgdGhlIHVubmFtZWQgdW5pb24gd2VyZW4ndCB0
-aGVyZQo+IChpLmUuIGp1c3QgbGlrZSB1bm5hbWVkIHVuaW9ucyBpbiBDKyspLgo+Cj4gSGVyZSdz
-IGFuIGV4YW1wbGUgZnJvbSB0aGUga2VybmVsIHNvdXJjZSB0cmVlOgo+IGh0dHA6Ly9seHIubGlu
-dXgubm8vbGludXgrdjMuMS9pbmNsdWRlL2xpbnV4L21tLmgjTDQxOQo+Cj4gLS0KPiBEYXZlIEh5
-bGFuZHMKPiBTaHVzd2FwLCBCQywgQ2FuYWRhCj4gaHR0cDovL3d3dy5kYXZlaHlsYW5kcy5jb20K
-PgoKV2VsbCwgSSBzZWUsIGJ1dCB3aGF0IGlzIHRoZSB1c2Ugb2YgdGhlIHVuaW9uIGFuZCBzdHJ1
-Y3R1cmU/Cg=
+Hi Jimmy,
+
+On Fri, Nov 4, 2011 at 9:28 AM, Jimmy Pan <dspjm1@gmail.com> wrote:
+> On Sat, Nov 5, 2011 at 12:00 AM, Dave Hylands <dhylands@gmail.com> wrote:
+>> Hi Jimmy,
+>>
+>> On Fri, Nov 4, 2011 at 8:27 AM, Jimmy Pan <dspjm1@gmail.com> wrote:
+>>> truct page {
+>>> =A0 =A0 =A0 =A0unsigned long flags; =A0 =A0 =A0 =A0 =A0 =A0/* Atomic fl=
+ags, some possibly
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 * updated asynchronously */
+>>> =A0 =A0 =A0 =A0atomic_t _count; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0/* Usage=
+ count, see below. */
+>>> =A0 =A0 =A0 =A0union {
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0atomic_t _mapcount; =A0 =A0 /* Count of =
+ptes mapped in mms,
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 * to show when page is mapped
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 * & limit reverse map searches.
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 */
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct { =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+/* SLUB */
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0u16 inuse;
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0u16 objects;
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0};
+>>> =A0 =A0 =A0 =A0};
+>>> =A0 =A0 =A0 =A0union {
+>>> =A0 =A0 =A0 =A0 =A0 =A0struct {
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0unsigned long private; =A0 =A0 =A0 =A0 =
+=A0/* Mapping-private opaque data:
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * usually used for buffer_heads
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * if PagePrivate set; used for
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * swp_entry_t if PageSwapCache;
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * indicates order in the buddy
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * system if PG_buddy is set.
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 */
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct address_space *mapping; =A0/* If =
+low bit clear, points to
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * inode address_space, or NULL.
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * If page mapped as anonymous
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * memory, low bit is set, and
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * it points to anon_vma object:
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 * see PAGE_MAPPING_ANON below.
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 */
+>>> =A0 =A0 =A0 =A0 =A0 =A0};
+>>> #if USE_SPLIT_PTLOCKS
+>>> =A0 =A0 =A0 =A0 =A0 =A0spinlock_t ptl;
+>>> #endif
+>>> =A0 =A0 =A0 =A0 =A0 =A0struct kmem_cache *slab; =A0 =A0/* SLUB: Pointer=
+ to slab */
+>>> =A0 =A0 =A0 =A0 =A0 =A0struct page *first_page; =A0 =A0/* Compound tail=
+ pages */
+>>> =A0 =A0 =A0 =A0};
+>>
+>> You just reference the variable as if the unnamed union weren't there
+>> (i.e. just like unnamed unions in C++).
+>>
+>> Here's an example from the kernel source tree:
+>> http://lxr.linux.no/linux+v3.1/include/linux/mm.h#L419
+
+> Well, I see, but what is the use of the union and structure?
+
+Unions and structures are basic elements of the C language.
+http://en.wikipedia.org/wiki/Union_(computer_science)
+http://publications.gbdirect.co.uk/c_book/chapter6/unions.html
+
+--=20
+Dave Hylands
+Shuswap, BC, Canada
+http://www.davehylands.com
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
