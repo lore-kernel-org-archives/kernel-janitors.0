@@ -1,44 +1,34 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 21 Nov 2011 11:39:53 +0000
-Subject: Re: [patch] ALSA: cs5535 - Fix an endianness conversion
-Message-Id: <s5hpqglk8l2.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Nov 2011 18:25:01 +0000
+Subject: [patch] [SCSI] mpt2sas: add missing allocation.
+Message-Id: <20111104182501.GF5796@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111120205748.GA7354@elgon.mountain>
-In-Reply-To: <20111120205748.GA7354@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Jaya Kumar <jayakumar.alsa@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: Kashyap Desai <kashyap.desai@lsi.com>, James Bottomley <James.Bottomley@suse.de>, Nagalakshmi Nandigama <nagalakshmi.nandigama@lsi.com>, Eric Moore <eric.moore@lsi.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Sun, 20 Nov 2011 23:57:49 +0300,
-Dan Carpenter wrote:
-> 
-> desc->size is supposed to be a le16 type.  On a big endian system the
-> current code will set ->size to zero.  We fixed a similar bug
-> on the next line but missed this one.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is a static checker bug.  I haven't tested it.
+There was supposed to be a kzalloc() here and the compiler complained
+about it.
+mpt2sas_scsih.c: In function ‘mpt2sas_scsih_reset_handler’:
+mpt2sas_scsih.c:2807:21: warning: ‘fw_event’ may be used uninitialized in this function [-Wuninitialized]
 
-Obviously correct, so I applied it now.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-thanks,
-
-Takashi
-
-> diff --git a/sound/pci/cs5535audio/cs5535audio_pcm.c b/sound/pci/cs5535audio/cs5535audio_pcm.c
-> index e083122..dbf94b1 100644
-> --- a/sound/pci/cs5535audio/cs5535audio_pcm.c
-> +++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
-> @@ -148,7 +148,7 @@ static int cs5535audio_build_dma_packets(struct cs5535audio *cs5535au,
->  		struct cs5535audio_dma_desc *desc >  			&((struct cs5535audio_dma_desc *) dma->desc_buf.area)[i];
->  		desc->addr = cpu_to_le32(addr);
-> -		desc->size = cpu_to_le32(period_bytes);
-> +		desc->size = cpu_to_le16(period_bytes);
->  		desc->ctlreserved = cpu_to_le16(PRD_EOP);
->  		desc_addr += sizeof(struct cs5535audio_dma_desc);
->  		addr += period_bytes;
-> 
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+index 8889b1b..4e041f6 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+@@ -2802,6 +2802,11 @@ _scsih_error_recovery_delete_devices(struct MPT2SAS_ADAPTER *ioc)
+ 
+ 	if (ioc->is_driver_loading)
+ 		return;
++
++	fw_event = kzalloc(sizeof(struct fw_event_work), GFP_ATOMIC);
++	if (!fw_event)
++		return;
++
+ 	fw_event->event = MPT2SAS_REMOVE_UNRESPONDING_DEVICES;
+ 	fw_event->ioc = ioc;
+ 	_scsih_fw_event_add(ioc, fw_event);
