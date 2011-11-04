@@ -1,81 +1,36 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 06 Nov 2011 13:26:46 +0000
-Subject: [PATCH 1/5] net/batman-adv: use kstrtoul, etc
-Message-Id: <1320586010-21931-2-git-send-email-julia@diku.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Nov 2011 18:20:43 +0000
+Subject: [patch] Staging: comedi: integer overflow in do_insnlist_ioctl()
+Message-Id: <20111104182043.GA5796@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1320586010-21931-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1320586010-21931-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marek Lindner <lindner_marek@yahoo.de>
-Cc: kernel-janitors@vger.kernel.org, Simon Wunderlich <siwu@hrz.tu-chemnitz.de>, "David S. Miller" <davem@davemloft.net>, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+There is an integer overflow here that could cause memory corruption
+on 32 bit systems.
 
-Use kstrtoul, etc instead of the now deprecated strict_strtoul, etc.
+insnlist.n_insns could be a very high value size calculation for
+kmalloc() could overflow resulting in a smaller "insns" than
+expected.  In the for (i = 0; i < insnlist.n_insns; i++) {... loop
+we would read past the end of the buffer, possibly corrupting memory
+as well.
 
-A semantic patch rule for the kstrtoul case is as follows:
-(http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-expression a,b;
-{int,long} *c;
-@@
-
--strict_strtoul
-+kstrtoul
- (a,b,c)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- net/batman-adv/bat_sysfs.c      |    4 ++--
- net/batman-adv/gateway_common.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff -u -p a/net/batman-adv/bat_sysfs.c b/net/batman-adv/bat_sysfs.c
---- a/net/batman-adv/bat_sysfs.c
-+++ b/net/batman-adv/bat_sysfs.c
-@@ -174,7 +174,7 @@ static int store_uint_attr(const char *b
- 	unsigned long uint_val;
- 	int ret;
- 
--	ret = strict_strtoul(buff, 10, &uint_val);
-+	ret = kstrtoul(buff, 10, &uint_val);
- 	if (ret) {
- 		bat_info(net_dev,
- 			 "%s: Invalid parameter received: %s\n",
-@@ -239,7 +239,7 @@ static ssize_t store_vis_mode(struct kob
- 	unsigned long val;
- 	int ret, vis_mode_tmp = -1;
- 
--	ret = strict_strtoul(buff, 10, &val);
-+	ret = kstrtoul(buff, 10, &val);
- 
- 	if (((count = 2) && (!ret) && (val = VIS_TYPE_CLIENT_UPDATE)) ||
- 	    (strncmp(buff, "client", 6) = 0) ||
-diff -u -p a/net/batman-adv/gateway_common.c b/net/batman-adv/gateway_common.c
---- a/net/batman-adv/gateway_common.c
-+++ b/net/batman-adv/gateway_common.c
-@@ -97,7 +97,7 @@ static bool parse_gw_bandwidth(struct ne
- 			*tmp_ptr = '\0';
+diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
+index 21d8c1c..3b4017f 100644
+--- a/drivers/staging/comedi/comedi_fops.c
++++ b/drivers/staging/comedi/comedi_fops.c
+@@ -670,6 +670,11 @@ static int do_insnlist_ioctl(struct comedi_device *dev,
+ 		goto error;
  	}
  
--	ret = strict_strtol(buff, 10, &ldown);
-+	ret = kstrtol(buff, 10, &ldown);
- 	if (ret) {
- 		bat_err(net_dev,
- 			"Download speed of gateway mode invalid: %s\n",
-@@ -122,7 +122,7 @@ static bool parse_gw_bandwidth(struct ne
- 				*tmp_ptr = '\0';
- 		}
- 
--		ret = strict_strtol(slash_ptr + 1, 10, &lup);
-+		ret = kstrtol(slash_ptr + 1, 10, &lup);
- 		if (ret) {
- 			bat_err(net_dev,
- 				"Upload speed of gateway mode invalid: "
-
++	if (sizeof(struct comedi_insn) * insnlist.n_insns < insnlist.n_insns) {
++		ret = -EINVAL;
++		goto error;
++	}
++
+ 	insns  	    kmalloc(sizeof(struct comedi_insn) * insnlist.n_insns, GFP_KERNEL);
+ 	if (!insns) {
