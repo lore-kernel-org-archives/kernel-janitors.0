@@ -1,28 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 23 Nov 2011 06:45:40 +0000
-Subject: [patch] [media] radio: NUL terminate a user string
-Message-Id: <20111123064539.GC6871@elgon.mountain>
+Date: Fri, 04 Nov 2011 18:24:36 +0000
+Subject: [patch 2/2] xen-gntalloc: signedness bug in add_grefs()
+Message-Id: <20111104182436.GE5796@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Hans de Goede <hdegoede@redhat.com>, Manjunatha Halli <manjunatha_halli@ti.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+Cc: kernel-janitors@vger.kernel.org, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-We pass this to fm_tx_set_radio_text() which expects a NUL terminated
-string.
+gref->gref_id is unsigned so the error handling didn't work.
+gnttab_grant_foreign_access() returns an int type, so we can add a
+cast here, and it doesn't cause any problems.
+gnttab_grant_foreign_access() can return a variety of errors
+including -ENOSPC, -ENOSYS and -ENOMEM.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/radio/wl128x/fmdrv_v4l2.c b/drivers/media/radio/wl128x/fmdrv_v4l2.c
-index 4f5c43d..077d369 100644
---- a/drivers/media/radio/wl128x/fmdrv_v4l2.c
-+++ b/drivers/media/radio/wl128x/fmdrv_v4l2.c
-@@ -84,6 +84,7 @@ static ssize_t fm_v4l2_fops_write(struct file *file, const char __user * buf,
- 	struct fmdev *fmdev;
- 
- 	ret = copy_from_user(&rds, buf, sizeof(rds));
-+	rds.text[sizeof(rds.text) - 1] = '\0';
- 	fmdbg("(%d)type: %d, text %s, af %d\n",
- 		   ret, rds.text_type, rds.text, rds.af_freq);
- 	if (ret)
+diff --git a/drivers/xen/gntalloc.c b/drivers/xen/gntalloc.c
+index 23c60cf..e1c4c6e 100644
+--- a/drivers/xen/gntalloc.c
++++ b/drivers/xen/gntalloc.c
+@@ -135,7 +135,7 @@ static int add_grefs(struct ioctl_gntalloc_alloc_gref *op,
+ 		/* Grant foreign access to the page. */
+ 		gref->gref_id = gnttab_grant_foreign_access(op->domid,
+ 			pfn_to_mfn(page_to_pfn(gref->page)), readonly);
+-		if (gref->gref_id < 0) {
++		if ((int)gref->gref_id < 0) {
+ 			rc = gref->gref_id;
+ 			goto undo;
+ 		}
