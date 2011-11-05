@@ -1,156 +1,99 @@
-From: Joel Becker <jlbec@evilplan.org>
-Date: Thu, 17 Nov 2011 08:43:38 +0000
-Subject: Re: [Ocfs2-devel] [PATCH 1/2] fs/ocfs2/dlm: Eliminate update of
-Message-Id: <20111117084338.GB7319@noexit.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 05 Nov 2011 20:21:16 +0000
+Subject: Re: Doubt about some kernel definitions..
+Message-Id: <20111105202116.GS4682@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="K5roPakIqCb4O6y8"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1008071108540.5821@ask.diku.dk>
- <20100812000355.GA7195@mail.oracle.com>
- <20111102073928.GA23750@mwanda>
- <4EB1784C.4090903@oracle.com>
-In-Reply-To: <4EB1784C.4090903@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Sunil Mushran <sunil.mushran@oracle.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Mark Fasheh <mfasheh@suse.com>, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>, linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 02, 2011 at 10:05:16AM -0700, Sunil Mushran wrote:
-> I think it got lost in the shuffle. We had decided to use the list_for_each().
-> The code is simpler to understand than the other proposed fix.
-> 
-> Joel, do you want me to send a patch?
 
-Please do.
+--K5roPakIqCb4O6y8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> On 11/02/2011 12:39 AM, Dan Carpenter wrote:
-> > What ever happened with this?  The bug is still there in the latest
-> > kernel.
-> >
-> > I think from previous discussion about this that we only ever have
-> > one lock so lock->ml.cookie is always equal to ml->cookie and we
-> > never set lock to NULL.  So we never actually hit the NULL deref.
-> > But it should probably still be cleaned up.
-> >
-> > regards,
-> > dan carpenter
-> >
-> > On Wed, Aug 11, 2010 at 05:03:56PM -0700, Joel Becker wrote:
-> >> On Sat, Aug 07, 2010 at 11:09:13AM +0200, Julia Lawall wrote:
-> >>> From: Julia Lawall<julia@diku.dk>
-> >>>
-> >>> list_for_each_entry uses its first argument to move from one element to the
-> >>> next, so modifying it can break the iteration.
-> >> 	Thanks for catching the bug.  It was introduced by 800deef3
-> >> [ocfs2: use list_for_each_entry where benefical].  I blame Christoph.
-> >>
-> >>> diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
-> >>> index 9dfaac7..7084a11 100644
-> >>> --- a/fs/ocfs2/dlm/dlmrecovery.c
-> >>> +++ b/fs/ocfs2/dlm/dlmrecovery.c
-> >>> @@ -1792,10 +1792,10 @@ static int dlm_process_recovery_data(struct dlm_ctxt *dlm,
-> >>>   			for (j = DLM_GRANTED_LIST; j<= DLM_BLOCKED_LIST; j++) {
-> >>>   				tmpq = dlm_list_idx_to_ptr(res, j);
-> >>>   				list_for_each_entry(lock, tmpq, list) {
-> >>> -					if (lock->ml.cookie != ml->cookie)
-> >>> +					if (lock->ml.cookie != ml->cookie) {
-> >>>   						lock = NULL;
-> >>> -					else
-> >>>   						break;
-> >>> +					}
-> >>>   				}
-> >>>   				if (lock)
-> >>>   					break;
-> >> 	However, this is not the correct solution.  The goal of the
-> >> original code, which used to use list_for_each(), was to leave lock
-> >> non-NULL if the cookie was found.  Your version merely exits the loop on
-> >> the first non-matching entry, always leaving lock=NULL if there is a
-> >> non-matching entry.
-> >> 	One possible solution is to return the original code:
-> >>
-> >> --8<-----------------------------------------------------------------
-> >> @@ -1747,7 +1747,7 @@ static int dlm_process_recovery_data(struct dlm_ctxt *dlm,
-> >>   				     struct dlm_migratable_lockres *mres)
-> >>   {
-> >>   	struct dlm_migratable_lock *ml;
-> >> -	struct list_head *queue;
-> >> +	struct list_head *queue, *iter;
-> >>   	struct list_head *tmpq = NULL;
-> >>   	struct dlm_lock *newlock = NULL;
-> >>   	struct dlm_lockstatus *lksb = NULL;
-> >> @@ -1791,11 +1791,12 @@ static int dlm_process_recovery_data(struct dlm_ctxt *dlm,
-> >>   			spin_lock(&res->spinlock);
-> >>   			for (j = DLM_GRANTED_LIST; j<= DLM_BLOCKED_LIST; j++) {
-> >>   				tmpq = dlm_list_idx_to_ptr(res, j);
-> >> -				list_for_each_entry(lock, tmpq, list) {
-> >> -					if (lock->ml.cookie != ml->cookie)
-> >> -						lock = NULL;
-> >> -					else
-> >> +				list_for_each(iter, tmpq) {
-> >> +					lock = list_entry(iter, struct dlm_lock, list);
-> >> +
-> >> +					if (lock->ml.cookie = ml->cookie)
-> >>   						break;
-> >> +					lock = NULL;
-> >>   				}
-> >>   				if (lock)
-> >>   					break;
-> >> -->8-----------------------------------------------------------------
-> >>
-> >> 	Another approach would be to keep list_for_each_entry() around,
-> >> but use a better check for entry existence:
-> >>
-> >> --8<-----------------------------------------------------------------
-> >> @@ -1792,13 +1792,12 @@ static int dlm_process_recovery_data(struct dlm_ctxt *dlm,
-> >>   			for (j = DLM_GRANTED_LIST; j<= DLM_BLOCKED_LIST; j++) {
-> >>   				tmpq = dlm_list_idx_to_ptr(res, j);
-> >>   				list_for_each_entry(lock, tmpq, list) {
-> >> -					if (lock->ml.cookie != ml->cookie)
-> >> -						lock = NULL;
-> >> -					else
-> >> +					if (lock->ml.cookie = ml->cookie)
-> >>   						break;
-> >>   				}
-> >> -				if (lock)
-> >> +				if (&lock->list != tmpq)
-> >>   					break;
-> >> +				lock = NULL;
-> >>   			}
-> >>
-> >>   			/* lock is always created locally first, and
-> >> -->8-----------------------------------------------------------------
-> >>
-> >> 	I think I like the second one better.  Sunil, what do you think?
-> >>
-> >> Joel
-> >>
-> >> -- 
-> >>
-> >> Life's Little Instruction Book #335
-> >>
-> >> 	"Every so often, push your luck."
-> >>
-> >> Joel Becker
-> >> Consulting Software Developer
-> >> Oracle
-> >> E-mail: joel.becker@oracle.com
-> >> Phone: (650) 506-8127
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> _______________________________________________
-> Ocfs2-devel mailing list
-> Ocfs2-devel@oss.oracle.com
-> http://oss.oracle.com/mailman/listinfo/ocfs2-devel
+Hi Marcos,
 
--- 
+I've added the kernel-janitors and driver-devel to the CC list.  Btw,
+in particular for patches, you should always CC at least one email
+list.
 
-Life's Little Instruction Book #43
+The stuff in ttypes.h is messed up in a couple ways.
 
-	"Never give up on somebody.  Miracles happen every day."
+typedef int             BOOL;
 
-			http://www.jlbec.org/
-			jlbec@evilplan.org
+BOOL should be bool, but int is 32 bits and bool is 1 bit so this is
+not a white space change.  You need to check every place that uses
+BOOL to make sure changing it does not introduce a bug.
+
+typedef unsigned char   BYTE;           //  8-bit
+
+This one is simple.  Change all these places to u8.
+
+typedef unsigned short  WORD;           // 16-bit
+
+This is weird because you'd normally think of a word as an int.
+Changing all of these to u16 won't introduce any bugs, but you should
+check all the places to make sure there isn't a bug already there.
+
+typedef unsigned long   DWORD;          // 32-bit
+
+unsigned long is 32bit on 32 bit systems and 64 bit on 64 bit systems
+so you'd need to look at each place this is used and see what is
+correct.  It could be u32, int, unsigned long, etc.
+
+typedef unsigned long   ULONG_PTR;      // 32-bit
+
+I looked at how ULONG_PTR was used and it's normally something like
+this:
+
+        unsigned int uLen = pRSNWPA->len + 2;
+
+        if (uLen <= (uIELength -
+                     (unsigned int) (ULONG_PTR) ((PBYTE) pRSNWPA - pbyIEs))) {
+                pBSSList->wWPALen = uLen;
+                memcpy(pBSSList->byWPAIE, pRSNWPA, uLen);
+                WPA_ParseRSN(pBSSList, pRSNWPA);
+        }
+
+This looks wrong to me.
+1) It's doing pointer math and pointers are 64 bit on x86_64 systems.
+Then it's truncating the upper bits away.  Not a big deal in this
+case, but it's ugly.
+
+2) uIELength is unsigned so a negative value for the subtraction gets
+turned into a large positive value and the test becomes meaningless.
+Possibly leading to memory corruption.  This particular code is
+parsing data from over the network so it could be a remote security
+problem.
+
+Basically when you're doing this kind of work keep your eyes open for
+any other bugs you can spot.  It's not just a matter of running sed
+over the driver.
+
+regards,
+dan carpenter
+
+--K5roPakIqCb4O6y8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOtZq8AAoJEOnZkXI/YHqRIdsQAJD0/CqIHuvWvZTYu9hJTmBy
+T9Ajk3c45iDVEAd8QCCiQ/svETHIfgUPNaAF21ywDa5vWMJ2+IqR9siP3QPRRMP+
+eeocNIaSqJuuQAkGFvWWEoT8l2QjuZ2hoRv76VkvGXeSxiJfHmyq2NelgG6Jx/kl
+pgEh30T8SHOFelbaedXU+187YT0jqqwtUVH7JW42yhEtUU+gJnHmR1p0Qg8EmYZd
+xoH+GJj2Olv/L6kZ+YcAbjYxbqEJ56/YFXJ2V1h3TYIEzUFWNj1L1v4mIMdnDaH1
+pQ98CJf2+TwHv3JNpbMrjPlublC8zWiR48IW4oxVK83fId09zewRrP366CeGDt4t
+RVohrtbGROHeZcedVATd7PyD4v1zcYuSAXWDButULOCqjXaSTMA0OQLWHLaUuslt
+3b7u7+JNUNVYjGno9y7Pwz6yRRaJMxAXSPBSCNu1lDVoAFxKRnjWhuXX2qWeEFSA
+9HbHaP/nnirrZLGp+ZbO1/SZcWAbv1DiFM0RrYrdk00W1J5kS9SVetUB29B9B2lo
+VKYUX/I0UHgndmk7NJYcDGuin+T8jqCM32b9Ru08CQUiGFwYqI8fDsK8WlbNNTVd
+Vrl3LnZSCpJL0kUleEQXsco4ri6ZN3IyEU4x7vOZPVlAXVXTfmI2T0be4mibui2g
+iuQ64QqvTgadXVSfCNr8
+=bGH3
+-----END PGP SIGNATURE-----
+
+--K5roPakIqCb4O6y8--
