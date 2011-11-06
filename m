@@ -1,35 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Nov 2011 07:22:08 +0000
-Subject: [patch] debugfs: remove unneeded cast in debugfs_print_regs32()
-Message-Id: <20111124072207.GD14122@elgon.mountain>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 06 Nov 2011 13:26:50 +0000
+Subject: [PATCH 5/5] net/dns_resolver/dns_key.c: use kstrtoul, etc
+Message-Id: <1320586010-21931-6-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1320586010-21931-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1320586010-21931-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>, Alessandro Rubini <rubini@gnudd.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The cast here causes a Sparse warning:
-fs/debugfs/file.c:561:42: warning: cast removes address space of expression
-fs/debugfs/file.c:561:42: warning: incorrect type in argument 1 (different address spaces)
-fs/debugfs/file.c:561:42:    expected void const volatile [noderef] <asn:2>*addr
-fs/debugfs/file.c:561:42:    got void *<noident>
+From: Julia Lawall <julia@diku.dk>
 
-It's redundant to cast it to a (void *) anyway when it is already a
-(void __iomem *).
+Use kstrtoul, etc instead of the now deprecated strict_strtoul, etc.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A semantic patch rule for the kstrtoul case is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index e0a3a59..989f07f 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -558,7 +558,7 @@ int debugfs_print_regs32(struct seq_file *s, const struct debugfs_reg32 *regs,
- 		if (prefix)
- 			ret += seq_printf(s, "%s", prefix);
- 		ret += seq_printf(s, "%s = 0x%08x\n", regs->name,
--				  readl((void *)(base + regs->offset)));
-+				  readl(base + regs->offset));
- 	}
- 	return ret;
- }
+// <smpl>
+@@
+expression a,b;
+{int,long} *c;
+@@
+
+-strict_strtoul
++kstrtoul
+ (a,b,c)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/dns_resolver/dns_key.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
+--- a/net/dns_resolver/dns_key.c
++++ b/net/dns_resolver/dns_key.c
+@@ -118,7 +118,7 @@ dns_resolver_instantiate(struct key *key
+ 				if (opt_vlen <= 0)
+ 					goto bad_option_value;
+ 
+-				ret = strict_strtoul(eq, 10, &derrno);
++				ret = kstrtoul(eq, 10, &derrno);
+ 				if (ret < 0)
+ 					goto bad_option_value;
+ 
+
