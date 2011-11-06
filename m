@@ -1,38 +1,94 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Date: Fri, 04 Nov 2011 18:35:54 +0000
-Subject: Re: [patch 1/2] xen-gntalloc: integer overflow in
-Message-Id: <20111104183554.GA1616@phenom.dumpdata.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 06 Nov 2011 13:26:47 +0000
+Subject: [PATCH 2/5] net/sunrpc: use kstrtoul, etc
+Message-Id: <1320586010-21931-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111104182408.GD5796@elgon.mountain>
-In-Reply-To: <20111104182408.GD5796@elgon.mountain>
+References: <1320586010-21931-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1320586010-21931-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, kernel-janitors@vger.kernel.org, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: kernel-janitors@vger.kernel.org, Neil Brown <neilb@suse.de>, Trond Myklebust <Trond.Myklebust@netapp.com>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 04, 2011 at 09:24:08PM +0300, Dan Carpenter wrote:
-> On 32 bit systems a high value of op.count could lead to an integer
-> overflow in the kzalloc() and gref_ids would be smaller than
-> expected.  If the you triggered another integer overflow in
-> "if (gref_size + op.count > limit)" then you'd probably get memory
-> corruption inside add_grefs().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <julia@diku.dk>
 
-Great! Keep them coming!  Will push for stable and 3.2.
+Use kstrtoul, etc instead of the now deprecated strict_strtoul, etc.
 
-> 
-> diff --git a/drivers/xen/gntalloc.c b/drivers/xen/gntalloc.c
-> index f6832f4..23c60cf 100644
-> --- a/drivers/xen/gntalloc.c
-> +++ b/drivers/xen/gntalloc.c
-> @@ -280,7 +280,7 @@ static long gntalloc_ioctl_alloc(struct gntalloc_file_private_data *priv,
->  		goto out;
->  	}
->  
-> -	gref_ids = kzalloc(sizeof(gref_ids[0]) * op.count, GFP_TEMPORARY);
-> +	gref_ids = kcalloc(op.count, sizeof(gref_ids[0]), GFP_TEMPORARY);
->  	if (!gref_ids) {
->  		rc = -ENOMEM;
->  		goto out;
+A semantic patch rule for the kstrtoul case is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression a,b;
+{int,long} *c;
+@@
+
+-strict_strtoul
++kstrtoul
+ (a,b,c)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ net/sunrpc/addr.c     |    6 +++---
+ net/sunrpc/auth.c     |    2 +-
+ net/sunrpc/xprtsock.c |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff -u -p a/net/sunrpc/addr.c b/net/sunrpc/addr.c
+--- a/net/sunrpc/addr.c
++++ b/net/sunrpc/addr.c
+@@ -182,7 +182,7 @@ static int rpc_parse_scope_id(const char
+ 			scope_id = dev->ifindex;
+ 			dev_put(dev);
+ 		} else {
+-			if (strict_strtoul(p, 10, &scope_id) = 0) {
++			if (kstrtoul(p, 10, &scope_id) = 0) {
+ 				kfree(p);
+ 				return 0;
+ 			}
+@@ -322,7 +322,7 @@ size_t rpc_uaddr2sockaddr(const char *ua
+ 	c = strrchr(buf, '.');
+ 	if (unlikely(c = NULL))
+ 		return 0;
+-	if (unlikely(strict_strtoul(c + 1, 10, &portlo) != 0))
++	if (unlikely(kstrtoul(c + 1, 10, &portlo) != 0))
+ 		return 0;
+ 	if (unlikely(portlo > 255))
+ 		return 0;
+@@ -331,7 +331,7 @@ size_t rpc_uaddr2sockaddr(const char *ua
+ 	c = strrchr(buf, '.');
+ 	if (unlikely(c = NULL))
+ 		return 0;
+-	if (unlikely(strict_strtoul(c + 1, 10, &porthi) != 0))
++	if (unlikely(kstrtoul(c + 1, 10, &porthi) != 0))
+ 		return 0;
+ 	if (unlikely(porthi > 255))
+ 		return 0;
+diff -u -p a/net/sunrpc/auth.c b/net/sunrpc/auth.c
+--- a/net/sunrpc/auth.c
++++ b/net/sunrpc/auth.c
+@@ -47,7 +47,7 @@ static int param_set_hashtbl_sz(const ch
+ 
+ 	if (!val)
+ 		goto out_inval;
+-	ret = strict_strtoul(val, 0, &num);
++	ret = kstrtoul(val, 0, &num);
+ 	if (ret = -EINVAL)
+ 		goto out_inval;
+ 	nbits = fls(num);
+diff -u -p a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -2925,7 +2925,7 @@ static int param_set_uint_minmax(const c
+ 
+ 	if (!val)
+ 		return -EINVAL;
+-	ret = strict_strtoul(val, 0, &num);
++	ret = kstrtoul(val, 0, &num);
+ 	if (ret = -EINVAL || num < min || num > max)
+ 		return -EINVAL;
+ 	*((unsigned int *)kp->arg) = num;
+
