@@ -1,70 +1,59 @@
-From: "Hennerich, Michael" <Michael.Hennerich@analog.com>
-Date: Tue, 22 Nov 2011 09:27:50 +0000
-Subject: RE: [patch] Staging: iio: fix endian conversion in
-Message-Id: <544AC56F16B56944AEC3BD4E3D5917714872FF3686@LIMKCMBX1.ad.analog.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 06 Nov 2011 13:26:49 +0000
+Subject: [PATCH 4/5] net/rfkill/core.c: use kstrtoul, etc
+Message-Id: <1320586010-21931-5-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111122073915.GB25051@elgon.mountain>
-In-Reply-To: <20111122073915.GB25051@elgon.mountain>
+References: <1320586010-21931-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1320586010-21931-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jonathan Cameron <jic23@cam.ac.uk>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dan Carpenter wrote on 2011-11-22:
-> "tmp" is used to store the output from cpu_to_be16() so it should be
-> a __be16 bit type.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <julia@diku.dk>
 
-Good catch - Thanks!
+Use kstrtoul, etc instead of the now deprecated strict_strtoul, etc.
 
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+A semantic patch rule for the kstrtoul case is as follows:
+(http://coccinelle.lip6.fr/)
 
-> ---
-> Static checker patch.  Untested.
->
-> diff --git a/drivers/staging/iio/adc/ad7298_core.c
-> b/drivers/staging/iio/adc/ad7298_core.c index a799bd1..3e804e2 100644
-> --- a/drivers/staging/iio/adc/ad7298_core.c +++
-> b/drivers/staging/iio/adc/ad7298_core.c @@ -69,27 +69,28 @@ static int
-> ad7298_scan_direct(struct ad7298_state *st, unsigned ch)
->  static int ad7298_scan_temp(struct ad7298_state *st, int *val) {     int
->  tmp, ret;
-> +     __be16 buf;
->
-> -     tmp = cpu_to_be16(AD7298_WRITE | AD7298_TSENSE |
-> +     buf = cpu_to_be16(AD7298_WRITE | AD7298_TSENSE |
->                         AD7298_TAVG | st->ext_ref);
-> -     ret = spi_write(st->spi, (u8 *)&tmp, 2);
-> +     ret = spi_write(st->spi, (u8 *)&buf, 2);
->       if (ret)
->               return ret;
-> -     tmp = 0;
-> +     buf = cpu_to_be16(0);
->
-> -     ret = spi_write(st->spi, (u8 *)&tmp, 2);
-> +     ret = spi_write(st->spi, (u8 *)&buf, 2);
->       if (ret)
->               return ret;
->
->       usleep_range(101, 1000); /* sleep > 100us */
-> -     ret = spi_read(st->spi, (u8 *)&tmp, 2);
-> +     ret = spi_read(st->spi, (u8 *)&buf, 2);
->       if (ret)
->               return ret;
-> -     tmp = be16_to_cpu(tmp) & RES_MASK(AD7298_BITS);
-> +     tmp = be16_to_cpu(buf) & RES_MASK(AD7298_BITS);
->
->       /*
->        * One LSB of the ADC corresponds to 0.25 deg C.
+// <smpl>
+@@
+expression a,b;
+{int,long} *c;
+@@
 
-Greetings,
-Michael
+-strict_strtoul
++kstrtoul
+ (a,b,c)
+// </smpl>
 
---
-Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
-Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
-Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin, Margaret Seif
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
+---
+ net/rfkill/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/net/rfkill/core.c b/net/rfkill/core.c
+--- a/net/rfkill/core.c
++++ b/net/rfkill/core.c
+@@ -644,7 +644,7 @@ static ssize_t rfkill_soft_store(struct
+ 	if (!capable(CAP_NET_ADMIN))
+ 		return -EPERM;
+ 
+-	err = strict_strtoul(buf, 0, &state);
++	err = kstrtoul(buf, 0, &state);
+ 	if (err)
+ 		return err;
+ 
+@@ -688,7 +688,7 @@ static ssize_t rfkill_state_store(struct
+ 	if (!capable(CAP_NET_ADMIN))
+ 		return -EPERM;
+ 
+-	err = strict_strtoul(buf, 0, &state);
++	err = kstrtoul(buf, 0, &state);
+ 	if (err)
+ 		return err;
+ 
 
