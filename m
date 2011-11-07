@@ -1,50 +1,32 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 06 Nov 2011 13:26:50 +0000
-Subject: [PATCH 5/5] net/dns_resolver/dns_key.c: use kstrtoul, etc
-Message-Id: <1320586010-21931-6-git-send-email-julia@diku.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 07 Nov 2011 18:44:12 +0000
+Subject: [patch] [media] V4L: mt9t112: use after free in mt9t112_probe()
+Message-Id: <20111107184412.GA9207@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1320586010-21931-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1320586010-21931-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Paul Mundt <lethal@linux-sh.org>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+priv gets dereferenced in mt9t112_set_params() so we should return
+before calling that.
 
-Use kstrtoul, etc instead of the now deprecated strict_strtoul, etc.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A semantic patch rule for the kstrtoul case is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression a,b;
-{int,long} *c;
-@@
-
--strict_strtoul
-+kstrtoul
- (a,b,c)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- net/dns_resolver/dns_key.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -118,7 +118,7 @@ dns_resolver_instantiate(struct key *key
- 				if (opt_vlen <= 0)
- 					goto bad_option_value;
+diff --git a/drivers/media/video/mt9t112.c b/drivers/media/video/mt9t112.c
+index 32114a3..7b34b11 100644
+--- a/drivers/media/video/mt9t112.c
++++ b/drivers/media/video/mt9t112.c
+@@ -1083,8 +1083,10 @@ static int mt9t112_probe(struct i2c_client *client,
+ 	v4l2_i2c_subdev_init(&priv->subdev, client, &mt9t112_subdev_ops);
  
--				ret = strict_strtoul(eq, 10, &derrno);
-+				ret = kstrtoul(eq, 10, &derrno);
- 				if (ret < 0)
- 					goto bad_option_value;
+ 	ret = mt9t112_camera_probe(client);
+-	if (ret)
++	if (ret) {
+ 		kfree(priv);
++		return ret;
++	}
  
-
+ 	/* Cannot fail: using the default supported pixel code */
+ 	mt9t112_set_params(priv, &rect, V4L2_MBUS_FMT_UYVY8_2X8);
