@@ -1,34 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Nov 2011 18:25:01 +0000
-Subject: [patch] [SCSI] mpt2sas: add missing allocation.
-Message-Id: <20111104182501.GF5796@elgon.mountain>
+From: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
+Date: Tue, 08 Nov 2011 08:37:51 +0000
+Subject: RE: [patch] [SCSI] mpt2sas: add missing allocation.
+Message-Id: <A6888A6805518E4EA4AF7072A28264A6047262C39E@inbmail02.lsi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111104182501.GF5796@elgon.mountain>
+In-Reply-To: <20111104182501.GF5796@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: Kashyap Desai <kashyap.desai@lsi.com>, James Bottomley <James.Bottomley@suse.de>, Nagalakshmi Nandigama <nagalakshmi.nandigama@lsi.com>, Eric Moore <eric.moore@lsi.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: "Desai, Kashyap" <Kashyap.Desai@lsi.com>, James Bottomley <James.Bottomley@suse.de>, "Moore, Eric" <Eric.Moore@lsi.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-There was supposed to be a kzalloc() here and the compiler complained
-about it.
-mpt2sas_scsih.c: In function ‘mpt2sas_scsih_reset_handler’:
-mpt2sas_scsih.c:2807:21: warning: ‘fw_event’ may be used uninitialized in this function [-Wuninitialized]
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-index 8889b1b..4e041f6 100644
---- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-+++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-@@ -2802,6 +2802,11 @@ _scsih_error_recovery_delete_devices(struct MPT2SAS_ADAPTER *ioc)
- 
- 	if (ioc->is_driver_loading)
- 		return;
-+
-+	fw_event = kzalloc(sizeof(struct fw_event_work), GFP_ATOMIC);
-+	if (!fw_event)
-+		return;
-+
- 	fw_event->event = MPT2SAS_REMOVE_UNRESPONDING_DEVICES;
- 	fw_event->ioc = ioc;
- 	_scsih_fw_event_add(ioc, fw_event);
+VGhlIHBhdGNoIHNlZW0gdG8gYmUgZmluZS4gUGxlYXNlIGNvbnNpZGVyIHRoaXMgcGF0Y2ggYXMg
+YW4gQWNrZWQgYnkgbWUNCg0KUmVnYXJkcywNCk5hZ2FsYWtzaG1pDQoNCg0KLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCkZyb206IERhbiBDYXJwZW50ZXIgW21haWx0bzpkYW4uY2FycGVudGVy
+QG9yYWNsZS5jb21dIA0KU2VudDogRnJpZGF5LCBOb3ZlbWJlciAwNCwgMjAxMSAxMTo1NSBQTQ0K
+VG86IEphbWVzIEUuSi4gQm90dG9tbGV5DQpDYzogRGVzYWksIEthc2h5YXA7IEphbWVzIEJvdHRv
+bWxleTsgTmFuZGlnYW1hLCBOYWdhbGFrc2htaTsgTW9vcmUsIEVyaWM7IGxpbnV4LXNjc2lAdmdl
+ci5rZXJuZWwub3JnOyBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBb
+cGF0Y2hdIFtTQ1NJXSBtcHQyc2FzOiBhZGQgbWlzc2luZyBhbGxvY2F0aW9uLg0KDQpUaGVyZSB3
+YXMgc3VwcG9zZWQgdG8gYmUgYSBremFsbG9jKCkgaGVyZSBhbmQgdGhlIGNvbXBpbGVyIGNvbXBs
+YWluZWQNCmFib3V0IGl0Lg0KbXB0MnNhc19zY3NpaC5jOiBJbiBmdW5jdGlvbiDigJhtcHQyc2Fz
+X3Njc2loX3Jlc2V0X2hhbmRsZXLigJk6DQptcHQyc2FzX3Njc2loLmM6MjgwNzoyMTogd2Fybmlu
+Zzog4oCYZndfZXZlbnTigJkgbWF5IGJlIHVzZWQgdW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0
+aW9uIFstV3VuaW5pdGlhbGl6ZWRdDQoNClNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRh
+bi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvc2NzaS9tcHQy
+c2FzL21wdDJzYXNfc2NzaWguYyBiL2RyaXZlcnMvc2NzaS9tcHQyc2FzL21wdDJzYXNfc2NzaWgu
+Yw0KaW5kZXggODg4OWIxYi4uNGUwNDFmNiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvc2NzaS9tcHQy
+c2FzL21wdDJzYXNfc2NzaWguYw0KKysrIGIvZHJpdmVycy9zY3NpL21wdDJzYXMvbXB0MnNhc19z
+Y3NpaC5jDQpAQCAtMjgwMiw2ICsyODAyLDExIEBAIF9zY3NpaF9lcnJvcl9yZWNvdmVyeV9kZWxl
+dGVfZGV2aWNlcyhzdHJ1Y3QgTVBUMlNBU19BREFQVEVSICppb2MpDQogDQogCWlmIChpb2MtPmlz
+X2RyaXZlcl9sb2FkaW5nKQ0KIAkJcmV0dXJuOw0KKw0KKwlmd19ldmVudCA9IGt6YWxsb2Moc2l6
+ZW9mKHN0cnVjdCBmd19ldmVudF93b3JrKSwgR0ZQX0FUT01JQyk7DQorCWlmICghZndfZXZlbnQp
+DQorCQlyZXR1cm47DQorDQogCWZ3X2V2ZW50LT5ldmVudCA9IE1QVDJTQVNfUkVNT1ZFX1VOUkVT
+UE9ORElOR19ERVZJQ0VTOw0KIAlmd19ldmVudC0+aW9jID0gaW9jOw0KIAlfc2NzaWhfZndfZXZl
+bnRfYWRkKGlvYywgZndfZXZlbnQpOw0K
