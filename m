@@ -1,56 +1,82 @@
-From: "Nicholas A. Bellinger" <nab@risingtidesystems.com>
-Date: Fri, 04 Nov 2011 21:52:24 +0000
-Subject: Re: [patch 1/3] ib_srpt: fixup error handling in
-Message-Id: <1320443544.5859.168.camel@haakon2.linux-iscsi.org>
+From: Marcos Paulo de Souza <marcos.mage@gmail.com>
+Date: Wed, 09 Nov 2011 20:38:57 +0000
+Subject: [PATCH 2/2] drivers/staging/vt6656/iwctl.c: Remove unnecessary function
+Message-Id: <1320871137-2782-1-git-send-email-marcos.mage@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111104182701.GG5796@elgon.mountain>
-In-Reply-To: <20111104182701.GG5796@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, target-devel <target-devel@vger.kernel.org>, Bart Van Assche <bart.vanassche@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2011-11-04 at 21:27 +0300, Dan Carpenter wrote:
-> We returned a freed value instead of NULL on certain error paths.
-> Complicated error handling generally more error prone, so I've tried
-> to simplify it a little by removing some gotos.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+Removed the function iwctl_giwnwid, that was used once. Removed too a
+switch/case statement that was ambiguous.
 
-Looks like a reasonable cleanup.  Thanks Dan!
+Signed-off-by: Marcos Paulo de Souza <marcos.mage@gmail.com>
+---
+ drivers/staging/vt6656/iwctl.c    |   11 -----------
+ drivers/staging/vt6656/iwctl.h    |    5 -----
+ drivers/staging/vt6656/main_usb.c |    9 +--------
+ 3 files changed, 1 insertions(+), 24 deletions(-)
 
---nab
-
-> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> index 1c29679..937b4bc 100644
-> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> @@ -680,21 +680,20 @@ static struct srpt_ioctx **srpt_alloc_ioctx_ring(struct srpt_device *sdev,
->  
->  	ring = kmalloc(ring_size * sizeof(ring[0]), GFP_KERNEL);
->  	if (!ring)
-> -		goto out;
-> +		return NULL;
->  	for (i = 0; i < ring_size; ++i) {
->  		ring[i] = srpt_alloc_ioctx(sdev, ioctx_size, dma_size, dir);
->  		if (!ring[i])
->  			goto err;
->  		ring[i]->index = i;
->  	}
-> -	goto out;
-> +	return ring;
->  
->  err:
->  	while (--i >= 0)
->  		srpt_free_ioctx(sdev, ring[i], dma_size, dir);
->  	kfree(ring);
-> -out:
-> -	return ring;
-> +	return NULL;
->  }
->  
->  /**
-
+diff --git a/drivers/staging/vt6656/iwctl.c b/drivers/staging/vt6656/iwctl.c
+index 8c1ca49..a9110bf 100644
+--- a/drivers/staging/vt6656/iwctl.c
++++ b/drivers/staging/vt6656/iwctl.c
+@@ -127,17 +127,6 @@ int iwctl_giwname(struct net_device *dev,
+ 	return 0;
+ }
+ 
+-int iwctl_giwnwid(struct net_device *dev,
+-             struct iw_request_info *info,
+-			 struct iw_param *wrq,
+-                   char *extra)
+-{
+- 	//wrq->value = 0x100;
+-	//wrq->disabled = 0;
+-	//wrq->fixed = 1;
+-	//return 0;
+-  return -EOPNOTSUPP;
+-}
+ /*
+  * Wireless Handler : set scan
+  */
+diff --git a/drivers/staging/vt6656/iwctl.h b/drivers/staging/vt6656/iwctl.h
+index cc48954..10a240e 100644
+--- a/drivers/staging/vt6656/iwctl.h
++++ b/drivers/staging/vt6656/iwctl.h
+@@ -77,11 +77,6 @@ int iwctl_giwname(struct net_device *dev,
+ 			 char *wrq,
+ 			 char *extra);
+ 
+-int iwctl_giwnwid(struct net_device *dev,
+-             struct iw_request_info *info,
+-			 struct iw_param *wrq,
+-                   char *extra) ;
+-
+ int iwctl_giwsens(struct net_device *dev,
+ 			 struct iw_request_info *info,
+ 			 struct iw_param *wrq,
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index 27521b6..6f9930a 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -1618,15 +1618,8 @@ static int  device_ioctl(struct net_device *dev, struct ifreq *rq, int cmd) {
+ 		break;
+ 
+ 	case SIOCSIWNWID:
+-        rc = -EOPNOTSUPP;
+-		break;
+-
+ 	case SIOCGIWNWID:     //0x8b03  support
+-	#ifdef  WPA_SUPPLICANT_DRIVER_WEXT_SUPPORT
+-          rc = iwctl_giwnwid(dev, NULL, &(wrq->u.nwid), NULL);
+-	#else
+-        rc = -EOPNOTSUPP;
+-	#endif
++		rc = -EOPNOTSUPP;
+ 		break;
+ 
+ 		// Set frequency/channel
+-- 
+1.7.4.4
 
