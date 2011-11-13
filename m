@@ -1,29 +1,64 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Nov 2011 11:47:34 +0000
-Subject: [patch] dmatest: store correct thread count in dmatest_add_channel()
-Message-Id: <20111124114734.GB32522@elgon.mountain>
+Date: Sun, 13 Nov 2011 15:09:47 +0000
+Subject: [patch] [media] pwc: unlock on error in pwc_ioctl()
+Message-Id: <20111113150946.GA10072@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The original code added 1 to the thread_count, but the intent was to
-add += cnt.
+In 82dfdada40 "pwc: rework locking" we changed the locking so that
+we handle it ourselves instead of doing it at the vl42 layer.  There
+were a couple ioctls, VIDIOCPWCSLED and VIDIOCPWCGLED, where we
+didn't unlock on the error path.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
-index 2b8661b..24225f0 100644
---- a/drivers/dma/dmatest.c
-+++ b/drivers/dma/dmatest.c
-@@ -599,7 +599,7 @@ static int dmatest_add_channel(struct dma_chan *chan)
- 	}
- 	if (dma_has_cap(DMA_PQ, dma_dev->cap_mask)) {
- 		cnt = dmatest_add_threads(dtc, DMA_PQ);
--		thread_count += cnt > 0 ?: 0;
-+		thread_count += cnt > 0 ? cnt : 0;
- 	}
+diff --git a/drivers/media/video/pwc/pwc-ctrl.c b/drivers/media/video/pwc/pwc-ctrl.c
+index ad77b23..ea17230 100644
+--- a/drivers/media/video/pwc/pwc-ctrl.c
++++ b/drivers/media/video/pwc/pwc-ctrl.c
+@@ -840,13 +840,15 @@ long pwc_ioctl(struct pwc_device *pdev, unsigned int cmd, void *arg)
  
- 	pr_info("dmatest: Started %u threads using %s\n",
+ 		mutex_lock(&pdev->udevlock);
+ 		if (!pdev->udev) {
++			mutex_unlock(&pdev->udevlock);
+ 			ret = -ENODEV;
+-			goto leave;
++			break;
+ 		}
+ 
+ 		if (pdev->iso_init) {
++			mutex_unlock(&pdev->udevlock);
+ 			ret = -EBUSY;
+-			goto leave;
++			break;
+ 		}
+ 
+ 		ARG_IN(qual)
+@@ -854,7 +856,6 @@ long pwc_ioctl(struct pwc_device *pdev, unsigned int cmd, void *arg)
+ 			ret = -EINVAL;
+ 		else
+ 			ret = pwc_set_video_mode(pdev, pdev->view.x, pdev->view.y, pdev->vframes, ARGR(qual), pdev->vsnapshot);
+-leave:
+ 		mutex_unlock(&pdev->udevlock);
+ 		break;
+ 	}
+@@ -978,6 +979,7 @@ leave:
+ 
+ 		mutex_lock(&pdev->udevlock);
+ 		if (!pdev->udev) {
++			mutex_unlock(&pdev->udevlock);
+ 			ret = -ENODEV;
+ 			break;
+ 		}
+@@ -996,6 +998,7 @@ leave:
+ 
+ 		mutex_lock(&pdev->udevlock);
+ 		if (!pdev->udev) {
++			mutex_unlock(&pdev->udevlock);
+ 			ret = -ENODEV;
+ 			break;
+ 		}
