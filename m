@@ -1,49 +1,64 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 21 Nov 2011 17:00:35 +0000
-Subject: Re: [patch] mpi/mpi-mpow: NULL dereference on allocation failure
-Message-Id: <4ECA83B3.6040000@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Nov 2011 08:36:43 +0000
+Subject: [patch -next v2] 6LoWPAN: double free in lowpan_fragment_xmit()
+Message-Id: <20111116083643.GA25612@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="17pEHd4RhPHOinZp"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111121145056.GB19092@elgon.mountain>
-In-Reply-To: <20111121145056.GB19092@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20111116083254.GB4349@mwanda>
+In-Reply-To: <20111116083254.GB4349@mwanda>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Cc: Sergey Lapin <slapin@ossfans.org>, "David S. Miller" <davem@davemloft.net>, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
+--17pEHd4RhPHOinZp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Am 21.11.2011 15:50, schrieb Dan Carpenter:
-> We can't call mpi_free() on the elements if the first kzalloc() fails.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/lib/mpi/mpi-mpow.c b/lib/mpi/mpi-mpow.c
-> index 4cc7593..7328d0d 100644
-> --- a/lib/mpi/mpi-mpow.c
-> +++ b/lib/mpi/mpi-mpow.c
-> @@ -73,7 +73,7 @@ int mpi_mulpowm(MPI res, MPI *basearray, MPI *exparray, MPI m)
->  
->  	G = kzalloc((1 << k) * sizeof *G, GFP_KERNEL);
->  	if (!G)
-> -		goto nomem;
-> +		goto err_out;
->  
->  	/* and calculate */
->  	tmp = mpi_alloc(mpi_get_nlimbs(m) + 1);
-> @@ -129,5 +129,6 @@ nomem:
->  	for (i = 0; i < (1 << k); i++)
->  		mpi_free(G[i]);
->  	kfree(G);
-> +err_out:
->  	return rc;
->  }
+dev_queue_xmit() consumes its own skb, so the call to dev_kfree_skb()
+in lowpan_fragment_xmit() is a double free.
 
-the patch is ok
-but is there any reason *not* to use a more nice name that 'G'
-something more descriptive perhaps ?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: fixed commit message.
 
-re,
- wh
+diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+index 602f318..e4ecc1e 100644
+--- a/net/ieee802154/6lowpan.c
++++ b/net/ieee802154/6lowpan.c
+@@ -980,9 +980,6 @@ lowpan_fragment_xmit(struct sk_buff *skb, u8 *head,
+=20
+ 	ret =3D dev_queue_xmit(frag);
+=20
+-	if (ret < 0)
+-		dev_kfree_skb(frag);
+-
+ 	return ret;
+ }
+=20
 
 
+--17pEHd4RhPHOinZp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOw3YbAAoJEOnZkXI/YHqR9h8P/1SXx1YrEaJPWnwsscee1q+q
+l0lArnYFrxXH8FCelU9+5cqxBYVdatnCSHF/YYtLsSdZu8vEPwJAKLbYbthmZlSl
+duZeR8HFcBPxf2gkuRMJEE4Ywk6VmCugraS/WmWFJzuZ/pwWUvh8s0L3LWZFNEgo
+YXLRDhRP1k2IDG4iNRhuKvXwPtarYCyNY7mOlwfJ+TPWPUjC/dlggnp1BgHjCvgY
+xqSeia/TVGHv5iRHovt4m3Og9/vXCt9e17Pvdv1m7KwwBxUd1HdEfhljAem0lfCV
+wuwV1XZl0tyV2/awfjayI/G96/ojGLzddo5VTO610iTDiQQWu6BLgQ+t/8ICat89
+qDWFk0az5ZTkE7bhE900o5o6RSUsJT/shgFu9UiJDaeFf9qST/J90j6EZZEobm6X
+KvZkFskdvT1HZYaiHVufIAY7aIc9lSaVI8Y9ZtXb4BUjMXSTgUeq97C5a4fQKeJw
+7KrmCaYqj+DyHqmADhSs/b7CH5VOPLKiV52YqpMl4qrgbEFXthtifGtfuJ6FL6LM
+lzxFQOqATHTXQQnxuV/MeQdqkxt/Vl/KeD/uApz8OZ8Rb+/TiZjCZKqQhVieRqLK
+zEybWg+u3/c2XboaQxmTlXjofqNORgTiAYKTdyLCUZTnRI6hQ4B9YlvMVbZKke6n
+jG4QbzFU++qCldh7SlGe
+=bbxK
+-----END PGP SIGNATURE-----
+
+--17pEHd4RhPHOinZp--
