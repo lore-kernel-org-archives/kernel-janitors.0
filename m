@@ -1,25 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 29 Nov 2011 23:40:06 +0000
-Subject: Re: [patch v2] isdn: avoid copying too long drvid
-Message-Id: <20111129.184006.1024419970584749707.davem@davemloft.net>
-List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111123064345.GB6871@elgon.mountain>
-	<20111124124209.GI3195@mwanda>
-In-Reply-To: <20111124124209.GI3195@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: isdn@linux-pingi.de, lucas.demarchi@profusion.mobi, nhorman@tuxdriver.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Nov 2011 15:42:09 +0300
+Date: Wed, 16 Nov 2011 08:25:24 +0000
+Subject: [patch -next] [media] Staging: as102: pass device to dev_err()
+Message-Id: <20111116082524.GC10264@elgon.mountain>
+List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-> "cfg->drvid" comes from the user so there is a possibility they
-> didn't NUL terminate it properly.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: use strnlen() instead of strlen().
+We'd oops if we hit this dev_err() and also gcc complains:
 
-Applied.
+drivers/staging/media/as102/as102_drv.c: In function ‘as102_dvb_register’:
+drivers/staging/media/as102/as102_drv.c:223:3:
+	warning: passing argument 1 of ‘dev_err’ from incompatible pointer type [enabled by default]
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/media/as102/as102_drv.c b/drivers/staging/media/as102/as102_drv.c
+index b8adfd2..beacb2c 100644
+--- a/drivers/staging/media/as102/as102_drv.c
++++ b/drivers/staging/media/as102/as102_drv.c
+@@ -220,7 +220,7 @@ int as102_dvb_register(struct as102_dev_t *as102_dev)
+ 
+ 	ret = dvb_dmx_init(&as102_dev->dvb_dmx);
+ 	if (ret < 0) {
+-		dev_err("%s: dvb_dmx_init() failed: %d\n", __func__, ret);
++		dev_err(dev, "%s: dvb_dmx_init() failed: %d\n", __func__, ret);
+ 		goto edmxinit;
+ 	}
+ 
