@@ -1,44 +1,31 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Date: Wed, 16 Nov 2011 19:22:24 +0000
-Subject: Re: [patch -next] [media] Staging: as102: pass device to dev_err()
-Message-Id: <4EC40D70.2040701@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Nov 2011 08:28:01 +0000
+Subject: [patch] btrfs scrub: handle -ENOMEM from init_ipath()
+Message-Id: <20111116082801.GE10264@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111116082524.GC10264@elgon.mountain>
-In-Reply-To: <20111116082524.GC10264@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <chris.mason@oracle.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+init_ipath() can return an ERR_PTR(-ENOMEM).
 
-On 11/16/2011 09:25 AM, Dan Carpenter wrote:
-> We'd oops if we hit this dev_err() and also gcc complains:
-> 
-> drivers/staging/media/as102/as102_drv.c: In function ‘as102_dvb_register’:
-> drivers/staging/media/as102/as102_drv.c:223:3:
-> 	warning: passing argument 1 of ‘dev_err’ from incompatible pointer type [enabled by default]
-> 
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/media/as102/as102_drv.c b/drivers/staging/media/as102/as102_drv.c
-> index b8adfd2..beacb2c 100644
-> --- a/drivers/staging/media/as102/as102_drv.c
-> +++ b/drivers/staging/media/as102/as102_drv.c
-> @@ -220,7 +220,7 @@ int as102_dvb_register(struct as102_dev_t *as102_dev)
-> 
->   	ret = dvb_dmx_init(&as102_dev->dvb_dmx);
->   	if (ret<  0) {
-> -		dev_err("%s: dvb_dmx_init() failed: %d\n", __func__, ret);
-> +		dev_err(dev, "%s: dvb_dmx_init() failed: %d\n", __func__, ret);
->   		goto edmxinit;
->   	}
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks for the patch. However I have addressed the issue already and similar patch
-is sitting in the patchwork system, waiting for merging. Please see
-http://patchwork.linuxtv.org/patch/8355/
-
-
--- 
-Regards,
-Sylwester
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index ed11d38..b72ee47 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -256,6 +256,11 @@ static int scrub_print_warning_inode(u64 inum, u64 offset, u64 root, void *ctx)
+ 	btrfs_release_path(swarn->path);
+ 
+ 	ipath = init_ipath(4096, local_root, swarn->path);
++	if (IS_ERR(ipath)) {
++		ret = PTR_ERR(ipath);
++		ipath = NULL;
++		goto err;
++	}
+ 	ret = paths_from_inode(inum, ipath);
+ 
+ 	if (ret < 0)
