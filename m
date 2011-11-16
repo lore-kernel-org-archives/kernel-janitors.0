@@ -1,39 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 21 Nov 2011 21:46:43 +0000
-Subject: Re: [patch v2] caif: fix endian conversion in cffrml_transmit()
-Message-Id: <20111121.164643.58544532996822474.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Nov 2011 08:21:38 +0000
+Subject: [patch -next] 6LoWPAN: double free in lowpan_fragment_xmit()
+Message-Id: <20111116082138.GA10264@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111121063356.GH2203@ZenIV.linux.org.uk>
-	<20111121195056.GM29436@mwanda>
-	<CAJK669bL51Ct-Q9LxXwFdiaQAnfkx2Um1k0Cutci2z6mdd2THw@mail.gmail.com>
-In-Reply-To: <CAJK669bL51Ct-Q9LxXwFdiaQAnfkx2Um1k0Cutci2z6mdd2THw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: sjurbren@gmail.com
-Cc: dan.carpenter@oracle.com, viro@zeniv.linux.org.uk, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Cc: Sergey Lapin <slapin@ossfans.org>, "David S. Miller" <davem@davemloft.net>, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Sjur Br=E6ndeland <sjurbren@gmail.com>
-Date: Mon, 21 Nov 2011 22:20:09 +0100
+dev_queue_xmit() consumes its own skb, so the call to dev_kfree_skb()
+ieee802154/6lowpan.clowpan_fragment_xmits a double free.
 
->> The "tmp" variable here is used to store the result of cpu_to_le16()
->> so it should be an __le16 instead of an int. =A0We want the high bits
->> set and the current code works on little endian systems but not on
->> big endian systems.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> v2: =A0In v1 I used a u16 instead of an __le16. =A0Also I've changed the
->> name to "data" instead of "tmp".
->=20
-> Thanks Dan, good catch - this would have failed badly on a b_e architectu=
-re.
->=20
-> Acked-by: Sjur Br=E6ndeland <sjur.brandeland@stericsson.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks guys.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+index 602f318..e4ecc1e 100644
+--- a/net/ieee802154/6lowpan.c
++++ b/net/ieee802154/6lowpan.c
+@@ -980,9 +980,6 @@ lowpan_fragment_xmit(struct sk_buff *skb, u8 *head,
+ 
+ 	ret = dev_queue_xmit(frag);
+ 
+-	if (ret < 0)
+-		dev_kfree_skb(frag);
+-
+ 	return ret;
+ }
+ 
