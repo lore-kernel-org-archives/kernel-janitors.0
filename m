@@ -1,107 +1,58 @@
-From: Marcos Paulo de Souza <marcos.mage@gmail.com>
-Date: Thu, 17 Nov 2011 20:41:50 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Nov 2011 21:22:30 +0000
 Subject: Re: [PATCH 2/2] drivers/staging/vt6656/iwctl.c: Remove unnecessary
-Message-Id: <alpine.LNX.2.00.1111171840360.2090@darkstar.example.net>
+Message-Id: <20111117212230.GH29436@mwanda>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323328-740037292-1321562522=:2090"
+Content-Type: multipart/mixed; boundary="6cMF9JLEeZkfJjkP"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1320871137-2782-1-git-send-email-marcos.mage@gmail.com>
 In-Reply-To: <1320871137-2782-1-git-send-email-marcos.mage@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-740037292-1321562522=:2090
-Content-Type: TEXT/PLAIN; format="flowed"; charset="iso-8859-15"
+--6cMF9JLEeZkfJjkP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi to all,
+On Thu, Nov 17, 2011 at 06:41:50PM -0200, Marcos Paulo de Souza wrote:
+> Hi to all,
+>=20
+> There is any suggestion about patch?
+>=20
 
-There is any suggestion about patch?
+You didn't CC the driver devel list devel@driverdev.osuosl.org so the
+patch was ignored probably.
 
-Thanks for your time.
+But even there it often takes a couple weeks to hear back about a
+patch and this one was only sent on the 17th so it's too early to be
+asking about it.  There is still a long time left until the 3.3 merge
+window opens up so it's not a rush.
 
-* Uma vida sem desafios =E9 uma vida sem raz=E3o *
-* A life without challanges is a non reason life *
+regards,
+dan carpenter
 
-On Wed, 9 Nov 2011, Marcos Paulo de Souza wrote:
 
-> Removed the function iwctl_giwnwid, that was used once. Removed too a
-> switch/case statement that was ambiguous.
->
-> Signed-off-by: Marcos Paulo de Souza <marcos.mage@gmail.com>
-> ---
-> drivers/staging/vt6656/iwctl.c    |   11 -----------
-> drivers/staging/vt6656/iwctl.h    |    5 -----
-> drivers/staging/vt6656/main_usb.c |    9 +--------
-> 3 files changed, 1 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/staging/vt6656/iwctl.c b/drivers/staging/vt6656/iwct=
-l.c
-> index 8c1ca49..a9110bf 100644
-> --- a/drivers/staging/vt6656/iwctl.c
-> +++ b/drivers/staging/vt6656/iwctl.c
-> @@ -127,17 +127,6 @@ int iwctl_giwname(struct net_device *dev,
-> 	return 0;
-> }
->
-> -int iwctl_giwnwid(struct net_device *dev,
-> -             struct iw_request_info *info,
-> -			 struct iw_param *wrq,
-> -                   char *extra)
-> -{
-> - 	//wrq->value =3D 0x100;
-> -	//wrq->disabled =3D 0;
-> -	//wrq->fixed =3D 1;
-> -	//return 0;
-> -  return -EOPNOTSUPP;
-> -}
-> /*
->  * Wireless Handler : set scan
->  */
-> diff --git a/drivers/staging/vt6656/iwctl.h b/drivers/staging/vt6656/iwct=
-l.h
-> index cc48954..10a240e 100644
-> --- a/drivers/staging/vt6656/iwctl.h
-> +++ b/drivers/staging/vt6656/iwctl.h
-> @@ -77,11 +77,6 @@ int iwctl_giwname(struct net_device *dev,
-> 			 char *wrq,
-> 			 char *extra);
->
-> -int iwctl_giwnwid(struct net_device *dev,
-> -             struct iw_request_info *info,
-> -			 struct iw_param *wrq,
-> -                   char *extra) ;
-> -
-> int iwctl_giwsens(struct net_device *dev,
-> 			 struct iw_request_info *info,
-> 			 struct iw_param *wrq,
-> diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/m=
-ain_usb.c
-> index 27521b6..6f9930a 100644
-> --- a/drivers/staging/vt6656/main_usb.c
-> +++ b/drivers/staging/vt6656/main_usb.c
-> @@ -1618,15 +1618,8 @@ static int  device_ioctl(struct net_device *dev, s=
-truct ifreq *rq, int cmd) {
-> 		break;
->
-> 	case SIOCSIWNWID:
-> -        rc =3D -EOPNOTSUPP;
-> -		break;
-> -
-> 	case SIOCGIWNWID:     //0x8b03  support
-> -	#ifdef  WPA_SUPPLICANT_DRIVER_WEXT_SUPPORT
-> -          rc =3D iwctl_giwnwid(dev, NULL, &(wrq->u.nwid), NULL);
-> -	#else
-> -        rc =3D -EOPNOTSUPP;
-> -	#endif
-> +		rc =3D -EOPNOTSUPP;
-> 		break;
->
-> 		// Set frequency/channel
-> --=20
-> 1.7.4.4
->
->
---8323328-740037292-1321562522=:2090--
+--6cMF9JLEeZkfJjkP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOxXsVAAoJEOnZkXI/YHqR2ocP/0PFVMGZfKUaAn65w0oNasDA
+KyYbVACYxYXEPG9jVyhKn4TEZ7flccrYSwqOhHllp6fmvkhulkWLzILXBFp4WmkY
+JIqE3z8EqdrBmmro1+BMLH2FqjB1idPtxAznBAbWnnA0tk7qeFd+C+AwrQ31o2Fb
+8An6bj2Lf4hS3yNxPqqL+NGZGpz6k8BJnZIAlMSkDWExl7Y0Bxr+xk1wD9itM+KC
+gtxB2qPOwGeVqgXsVjLrLaPAtC+rU4/HekS6K2Mkj3XIWTYBR02cydZUEcVL3wtA
+JY2x2yCqaFl19Jns/m2YFW5Xnff6KJOYXqn2ZL2l0OSUPrm6n8O1e6PmKC0i8ln5
+kiotsNH6/UuSvqsfgdpHr+0EkSpaniR7+SBCiidt1+C0mISCdZLjDMIlNDS9e+w+
+W8H7sWzvUs/1cvfpNpVCApzZM7ln8eRy0Zav83iUSolhVosemXESGUr9cw3sdBzy
+Q+OSvcsH4TwTe0j5xrn985U9UdtwACj2Q87mdkW1mtgEOEmJ8f9eDVtvARYoi5U/
+uByr9MY78zs+NOCB9RkUeGI/5brOkV9Qf0iMYAmFwyuB74f5csTIL0y8kdglMl8T
+nrCh+1c7UB3npZRtb6n3dYCdMZUqb2mJOuR2NIBvkcc/4NZgbYNemeHlmxFyQEAr
+X6v6ebYqVxjRTOIgoP6Q
+=Pzc9
+-----END PGP SIGNATURE-----
+
+--6cMF9JLEeZkfJjkP--
