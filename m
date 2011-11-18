@@ -1,64 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 18 Nov 2011 14:00:31 +0000
+From: Mike Christie <michaelc@cs.wisc.edu>
+Date: Fri, 18 Nov 2011 19:28:02 +0000
 Subject: Re: [patch] [SCSI] be2iscsi: cleanup a min_t() call
-Message-Id: <20111118140031.GG4349@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="O8XZ+2Hy8Kj8wLPZ"
+Message-Id: <4EC6B1C2.108@cs.wisc.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110926062337.GD11832@elgon.mountain>
 In-Reply-To: <20110926062337.GD11832@elgon.mountain>
-To: Jayamohan Kallickal <jayamohan.kallickal@emulex.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jayamohan Kallickal <jayamohan.kallickal@emulex.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
---O8XZ+2Hy8Kj8wLPZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 26, 2011 at 09:23:37AM +0300, Dan Carpenter wrote:
+On 09/26/2011 01:23 AM, Dan Carpenter wrote:
 > "sense_len" was declared as int type but actually it only stores a
 > u16 value that comes from hardware.  The cast to u16 in min_t()
 > confuses static analysis because it truncates the int to u16 so I've
 > fixed the declaration to reflect that "sense_len" is just a u16.
->=20
+> 
 > Also there was a call to cpu_to_be16() which I've changed to
 > be16_to_cpu().  The functions are equivalent, but obviously the
 > hardware is big endian and we're doing the min_t() comparison on CPU
 > endian values.
->=20
+> 
 > This whole patch is just a cleanup and doesn't affect how the code
 > works.
->=20
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
+> Compile tested only.  Sorry.
+> 
+> diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
+> index 57fea38..344af8d 100644
+> --- a/drivers/scsi/be2iscsi/be_main.c
+> +++ b/drivers/scsi/be2iscsi/be_main.c
+> @@ -1104,7 +1104,6 @@ be_complete_io(struct beiscsi_conn *beiscsi_conn,
+>  	struct be_status_bhs *sts_bhs >  				(struct be_status_bhs *)io_task->cmd_bhs;
+>  	struct iscsi_conn *conn = beiscsi_conn->conn;
+> -	unsigned int sense_len;
+>  	unsigned char *sense;
+>  	u32 resid = 0, exp_cmdsn, max_cmdsn;
+>  	u8 rsp, status, flags;
+> @@ -1147,9 +1146,11 @@ be_complete_io(struct beiscsi_conn *beiscsi_conn,
+>  	}
+>  
+>  	if (status = SAM_STAT_CHECK_CONDITION) {
+> +		u16 sense_len;
+>  		unsigned short *slen = (unsigned short *)sts_bhs->sense_info;
+> +
+>  		sense = sts_bhs->sense_info + sizeof(unsigned short);
+> -		sense_len =  cpu_to_be16(*slen);
+> +		sense_len = be16_to_cpu(*slen);
+>  		memcpy(task->sc->sense_buffer, sense,
+>  		       min_t(u16, sense_len, SCSI_SENSE_BUFFERSIZE));
 
-Ping.
+Looks ok to me.
 
-regards,
-dan carpenter
+Reviewed-by: Mike Christie <michaelc@cs.wisc.edu>
 
-
---O8XZ+2Hy8Kj8wLPZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJOxmT/AAoJEOnZkXI/YHqRhL0P/iakUVR6g8SLZdjATvTKdexr
-oWl4jyWDnq935BkNcOjDzkM80m6maFWmArnz8fkZoq7JhTQRYtHJhONi2tzCbVHO
-jwolktbGQAc0TsgAbUnqIhlsZ83+F1UMNuhyag96CvNVpVB+ntfxdgvgVjkvu5eH
-PZmP/6ORX4F8q0fQn6iYQ4j9lf2vJmr1CoI0sjbfEtN/tpB6v2r8I7P02HOeAF4B
-TgA2pCcGmu14eye4bTv2CsePBEH5HYfZpJUuwCvu9V118pZ/WYXoKmU5fUfiqSyz
-gGG9OAqiqm1/UznpUE1HNkM3c/QRCaC7/Q1ijScQg/YXMltPwfoF/JF83/0rKlEV
-avywkxTiVkQSFi7A7/74oNfZaTR0EoJD89sZnDVKgv5Us6bxoeNerOI636VxJ2if
-wlgyJqQXRZLNm1UrDKQa2eXrdAt2au6csXmlMc6tfjxb7ZplvtVmeIdIJwNK+2d4
-/5RGjGo5B/wMIkSKomX82nFpG3EvwTbt06uRCrzl8L+WrG2Wq7lNCdnmwsjpj7Wx
-FlHu8bfM/QkDGZ28rCtUHJPlK7ZhcFYIgPBMETUTevZCPJ5mrvuAkv/cVDp3VclO
-yvB84afWO89BIgO/V5AWqsd83hHdGXFcI6if8tgJegcTJdL1nLMTlDK+Est9E1bC
-P8UScMQ1ibgd2czLXZ9q
-=szsT
------END PGP SIGNATURE-----
-
---O8XZ+2Hy8Kj8wLPZ--
