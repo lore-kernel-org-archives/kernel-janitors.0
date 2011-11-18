@@ -1,64 +1,57 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 13 Nov 2011 15:09:47 +0000
-Subject: [patch] [media] pwc: unlock on error in pwc_ioctl()
-Message-Id: <20111113150946.GA10072@elgon.mountain>
+Date: Fri, 18 Nov 2011 13:55:29 +0000
+Subject: Re: [patch] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
+Message-Id: <20111118135528.GI29436@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="l0l+eSofNeLXHSnY"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20110729085306.GH3752@shale.localdomain>
+In-Reply-To: <20110729085306.GH3752@shale.localdomain>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Jing Huang <huangj@brocade.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, "open list:BROCADE BFA FC SC..." <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-In 82dfdada40 "pwc: rework locking" we changed the locking so that
-we handle it ourselves instead of doing it at the vl42 layer.  There
-were a couple ioctls, VIDIOCPWCSLED and VIDIOCPWCGLED, where we
-didn't unlock on the error path.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--l0l+eSofNeLXHSnY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/video/pwc/pwc-ctrl.c b/drivers/media/video/pwc/pwc-ctrl.c
-index ad77b23..ea17230 100644
---- a/drivers/media/video/pwc/pwc-ctrl.c
-+++ b/drivers/media/video/pwc/pwc-ctrl.c
-@@ -840,13 +840,15 @@ long pwc_ioctl(struct pwc_device *pdev, unsigned int cmd, void *arg)
- 
- 		mutex_lock(&pdev->udevlock);
- 		if (!pdev->udev) {
-+			mutex_unlock(&pdev->udevlock);
- 			ret = -ENODEV;
--			goto leave;
-+			break;
- 		}
- 
- 		if (pdev->iso_init) {
-+			mutex_unlock(&pdev->udevlock);
- 			ret = -EBUSY;
--			goto leave;
-+			break;
- 		}
- 
- 		ARG_IN(qual)
-@@ -854,7 +856,6 @@ long pwc_ioctl(struct pwc_device *pdev, unsigned int cmd, void *arg)
- 			ret = -EINVAL;
- 		else
- 			ret = pwc_set_video_mode(pdev, pdev->view.x, pdev->view.y, pdev->vframes, ARGR(qual), pdev->vsnapshot);
--leave:
- 		mutex_unlock(&pdev->udevlock);
- 		break;
- 	}
-@@ -978,6 +979,7 @@ leave:
- 
- 		mutex_lock(&pdev->udevlock);
- 		if (!pdev->udev) {
-+			mutex_unlock(&pdev->udevlock);
- 			ret = -ENODEV;
- 			break;
- 		}
-@@ -996,6 +998,7 @@ leave:
- 
- 		mutex_lock(&pdev->udevlock);
- 		if (!pdev->udev) {
-+			mutex_unlock(&pdev->udevlock);
- 			ret = -ENODEV;
- 			break;
- 		}
+On Fri, Jul 29, 2011 at 11:53:06AM +0300, Dan Carpenter wrote:
+> If bfad_thread_workq(bfad) was not BFA_STATUS_OK then we freed "im"
+> and then dereferenced it.
+>=20
+> I did a little clean up because it seemed nicer to return directly
+> instead of doing a superfluous goto.  I looked at other functions in
+> this file and it seems like returning directly is standard.
+>=20
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
+
+Ping.
+
+regards,
+dan carpenter
+
+
+--l0l+eSofNeLXHSnY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOxmPQAAoJEOnZkXI/YHqR5CIP/29HsqK/v5RoS+9SDfXCR8Vv
+A2TdX3bhNGXrjAv8zhm0nFAGaez5QHd5DkCCb6ep0MJtZx/qHym7CN24iLI8tSwA
+dLB81fSTpXLb9vHrftpN4g3bANFGN3z36v93JHt8IBZOjQ0WOHjfijAfzJlaZ2bd
+Hr+UvezKhBJit3hnDqa+6OjAOv5vTWGDQadcSbXfcp9oeGnFRo481ADHJQQosIiC
++Q7SyaMmykeLjDOmXaOe/8IMlrsCCyYIBkMrg5uMoPHtMysStVV6AjxcU3eT48tv
+dgiWTYT6FsMN/vIbENhp5xs0toT8/foDjpaao4vLvr2r4oMgZ8JS00SP3oUTzQb+
+sTJDV8PXW/LPJM2VRVPX1yZIqadnLU+DopFJSiHJE1/Pdhs+jqPYwJX7NrWWpuBb
+ncc1PfsL1JyTUGkf3CHClgGgkMES/KuP6RRUJVC9ikrDlr+eu0VgHZJVOoMEAw7E
+/Vjd5O3ci8IIsslWm92fTuiDe7hciB4I00zsXtS8e3LFJSkGb9v3Dz+80oCwrvEn
+0dfzzdHQFq9I9qBnN6XSEVJwGs1t0LNkltlHpjKdP/t0E6XGF/8ZLlXbUoF7TlGw
+UqMBbuCcYgBPd3gDx7mfYzCvKQKp2YQnGh898HsRbo4qTUxC0dCM5s0v2AKIlZBI
+FPGS2CKZYOKrdfJVIGt8
+=dBUm
+-----END PGP SIGNATURE-----
+
+--l0l+eSofNeLXHSnY--
