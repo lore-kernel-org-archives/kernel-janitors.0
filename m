@@ -1,24 +1,40 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 24 Nov 2011 11:59:38 +0000
-Subject: Re: [patch] mtip32xx: uninitialized variable in mtip_quiesce_io()
-Message-Id: <4ECE31AA.3020007@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Nov 2011 14:09:06 +0000
+Subject: [patch] ath6kl: use a larger buffer for debug output
+Message-Id: <20111118140906.GA9685@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111124114702.GA32522@elgon.mountain>
-In-Reply-To: <20111124114702.GA32522@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Asai Thambi S P <asamymuthupa@micron.com>, Sam Bradshaw <sbradshaw@micron.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2011-11-24 12:47, Dan Carpenter wrote:
-> We recently introduce new continue in the loop which make gcc complain.
-> In theory if MTIP_FLAG_SVC_THD_ACTIVE_BIT is set, we could hit continue
-> over and over until eventually we time out of the loop.  In that case
-> "active" should be set as true, but right now it's uninitialized.
+This function makes the static checkers grumble.  The return value of
+snprintf() is the number of bytes which would have been copied if
+there was enough space.  In theory, a %u can take take 10 digits so
+len could be larger than 16 and it would be a small information
+leak.
 
-Thanks Dan, applied.
+We may as well make the buffer larger as well since that is very
+easy to do.
 
--- 
-Jens Axboe
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless/ath/ath6kl/debug.c
+index 9eff0d0..e632008 100644
+--- a/drivers/net/wireless/ath/ath6kl/debug.c
++++ b/drivers/net/wireless/ath/ath6kl/debug.c
+@@ -1551,11 +1551,12 @@ static ssize_t ath6kl_listen_int_read(struct file *file,
+ 						size_t count, loff_t *ppos)
+ {
+ 	struct ath6kl *ar = file->private_data;
+-	char buf[16];
++	char buf[32];
+ 	int len;
+ 
+ 	len = snprintf(buf, sizeof(buf), "%u %u\n", ar->listen_intvl_t,
+ 					ar->listen_intvl_b);
++	len = min(sizeof(buf), len);
+ 
+ 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
+ }
