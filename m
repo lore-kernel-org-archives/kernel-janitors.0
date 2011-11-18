@@ -1,42 +1,64 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
-Date: Wed, 30 Nov 2011 16:36:07 +0000
-Subject: Re: [patch -next] ipc/mqueue: lock() => unlock() typo
-Message-Id: <20111130163607.GA32365@hallyn.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Nov 2011 14:00:31 +0000
+Subject: Re: [patch] [SCSI] be2iscsi: cleanup a min_t() call
+Message-Id: <20111118140031.GG4349@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="O8XZ+2Hy8Kj8wLPZ"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111130135604.GA2803@elgon.mountain>
-In-Reply-To: <20111130135604.GA2803@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Doug Ledford <dledford@redhat.com>, Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Davidlohr Bueso <dave@gnu.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20110926062337.GD11832@elgon.mountain>
+In-Reply-To: <20110926062337.GD11832@elgon.mountain>
+To: Jayamohan Kallickal <jayamohan.kallickal@emulex.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (dan.carpenter@oracle.com):
-> There was a double lock typo introduced in b085f4bd6b21 "user namespace:
-> make signal.c respect user namespaces"
-> 
+
+--O8XZ+2Hy8Kj8wLPZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 26, 2011 at 09:23:37AM +0300, Dan Carpenter wrote:
+> "sense_len" was declared as int type but actually it only stores a
+> u16 value that comes from hardware.  The cast to u16 in min_t()
+> confuses static analysis because it truncates the int to u16 so I've
+> fixed the declaration to reflect that "sense_len" is just a u16.
+>=20
+> Also there was a call to cpu_to_be16() which I've changed to
+> be16_to_cpu().  The functions are equivalent, but obviously the
+> hardware is big endian and we're doing the min_t() comparison on CPU
+> endian values.
+>=20
+> This whole patch is just a cleanup and doesn't affect how the code
+> works.
+>=20
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Jinkeys!
-
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
-thanks very much, Dan.
--serge
-
 > ---
-> I think this patch is only needed in the -mm tree.
-> 
-> diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-> index 691cfee..c246c83 100644
-> --- a/ipc/mqueue.c
-> +++ b/ipc/mqueue.c
-> @@ -558,7 +558,7 @@ static void __do_notify(struct mqueue_inode_info *info)
->  						ns_of_pid(info->notify_owner));
->  			sig_i.si_uid = user_ns_map_uid(info->user->user_ns,
->  						current_cred(), current_uid());
-> -			rcu_read_lock();
-> +			rcu_read_unlock();
->  
->  			kill_pid_info(info->notify.sigev_signo,
->  				      &sig_i, info->notify_owner);
+
+Ping.
+
+regards,
+dan carpenter
+
+
+--O8XZ+2Hy8Kj8wLPZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOxmT/AAoJEOnZkXI/YHqRhL0P/iakUVR6g8SLZdjATvTKdexr
+oWl4jyWDnq935BkNcOjDzkM80m6maFWmArnz8fkZoq7JhTQRYtHJhONi2tzCbVHO
+jwolktbGQAc0TsgAbUnqIhlsZ83+F1UMNuhyag96CvNVpVB+ntfxdgvgVjkvu5eH
+PZmP/6ORX4F8q0fQn6iYQ4j9lf2vJmr1CoI0sjbfEtN/tpB6v2r8I7P02HOeAF4B
+TgA2pCcGmu14eye4bTv2CsePBEH5HYfZpJUuwCvu9V118pZ/WYXoKmU5fUfiqSyz
+gGG9OAqiqm1/UznpUE1HNkM3c/QRCaC7/Q1ijScQg/YXMltPwfoF/JF83/0rKlEV
+avywkxTiVkQSFi7A7/74oNfZaTR0EoJD89sZnDVKgv5Us6bxoeNerOI636VxJ2if
+wlgyJqQXRZLNm1UrDKQa2eXrdAt2au6csXmlMc6tfjxb7ZplvtVmeIdIJwNK+2d4
+/5RGjGo5B/wMIkSKomX82nFpG3EvwTbt06uRCrzl8L+WrG2Wq7lNCdnmwsjpj7Wx
+FlHu8bfM/QkDGZ28rCtUHJPlK7ZhcFYIgPBMETUTevZCPJ5mrvuAkv/cVDp3VclO
+yvB84afWO89BIgO/V5AWqsd83hHdGXFcI6if8tgJegcTJdL1nLMTlDK+Est9E1bC
+P8UScMQ1ibgd2czLXZ9q
+=szsT
+-----END PGP SIGNATURE-----
+
+--O8XZ+2Hy8Kj8wLPZ--
