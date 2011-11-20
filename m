@@ -1,59 +1,31 @@
-From: "Nicholas A. Bellinger" <nab@risingtidesystems.com>
-Date: Fri, 04 Nov 2011 21:54:57 +0000
-Subject: Re: [patch 2/3] ib_srpt: checking NULL instead of ERR_PTR
-Message-Id: <1320443697.5859.171.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 20 Nov 2011 20:57:49 +0000
+Subject: [patch] ALSA: cs5535 - Fix an endianness conversion
+Message-Id: <20111120205748.GA7354@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111104182732.GH5796@elgon.mountain>
-In-Reply-To: <20111104182732.GH5796-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel <target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bart Van Assche <bart.vanassche-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Jaya Kumar <jayakumar.alsa@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Fri, 2011-11-04 at 21:27 +0300, Dan Carpenter wrote:
-> transport_init_session() and target_fabric_configfs_init() don't
-> return NULL pointers, they only return ERR_PTRs or valid pointers.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+desc->size is supposed to be a le16 type.  On a big endian system the
+current code will set ->size to zero.  We fixed a similar bug
+on the next line but missed this one.
 
-Thanks for catching this breakage.  It appears that are a few other
-locations outside of ib_srpt where return checking for these two
-functions needs to be fixed as well.  I'll fix this up shortly.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker bug.  I haven't tested it.
 
-Thanks for the review!
-
---nab
-
-> 
-> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> index 937b4bc..f27b8da 100644
-> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> @@ -2602,10 +2602,10 @@ static int srpt_cm_req_recv(struct ib_cm_id *cm_id,
->  	}
->  
->  	ch->sess = transport_init_session();
-> -	if (!ch->sess) {
-> +	if (IS_ERR(ch->sess)) {
->  		rej->reason = __constant_cpu_to_be32(
->  				SRP_LOGIN_REJ_INSUFFICIENT_RESOURCES);
->  		pr_debug("Failed to create session\n");
->  		goto deregister_session;
->  	}
->  	ch->sess->se_node_acl = &nacl->nacl;
-> @@ -4019,10 +4020,10 @@ static int __init srpt_init_module(void)
->  	spin_lock_init(&srpt_dev_lock);
->  	INIT_LIST_HEAD(&srpt_dev_list);
->  
-> -	ret = -ENODEV;
->  	srpt_target = target_fabric_configfs_init(THIS_MODULE, "srpt");
-> -	if (!srpt_target) {
-> +	if (IS_ERR(srpt_target)) {
->  		printk(KERN_ERR "couldn't register\n");
-> +		ret = PTR_ERR(srpt_target);
->  		goto out;
->  	}
->  
-
-
+diff --git a/sound/pci/cs5535audio/cs5535audio_pcm.c b/sound/pci/cs5535audio/cs5535audio_pcm.c
+index e083122..dbf94b1 100644
+--- a/sound/pci/cs5535audio/cs5535audio_pcm.c
++++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
+@@ -148,7 +148,7 @@ static int cs5535audio_build_dma_packets(struct cs5535audio *cs5535au,
+ 		struct cs5535audio_dma_desc *desc  			&((struct cs5535audio_dma_desc *) dma->desc_buf.area)[i];
+ 		desc->addr = cpu_to_le32(addr);
+-		desc->size = cpu_to_le32(period_bytes);
++		desc->size = cpu_to_le16(period_bytes);
+ 		desc->ctlreserved = cpu_to_le16(PRD_EOP);
+ 		desc_addr += sizeof(struct cs5535audio_dma_desc);
+ 		addr += period_bytes;
