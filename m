@@ -1,36 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Nov 2011 18:20:43 +0000
-Subject: [patch] Staging: comedi: integer overflow in do_insnlist_ioctl()
-Message-Id: <20111104182043.GA5796@elgon.mountain>
+Date: Sun, 20 Nov 2011 21:06:05 +0000
+Subject: [patch] mmc: ushc: fix an endianness conversion in ushc_request()
+Message-Id: <20111120210605.GC7354@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Jesper Juhl <jj@chaosbits.net>, linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is an integer overflow here that could cause memory corruption
-on 32 bit systems.
-
-insnlist.n_insns could be a very high value size calculation for
-kmalloc() could overflow resulting in a smaller "insns" than
-expected.  In the for (i = 0; i < insnlist.n_insns; i++) {... loop
-we would read past the end of the buffer, possibly corrupting memory
-as well.
+The ->cmd_idx field is 8 bits, not 16 so the call to cpu_to_le16()
+will probably set cmd_idx to zero here on big endian systems.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker bug.  Untested.
 
-diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-index 21d8c1c..3b4017f 100644
---- a/drivers/staging/comedi/comedi_fops.c
-+++ b/drivers/staging/comedi/comedi_fops.c
-@@ -670,6 +670,11 @@ static int do_insnlist_ioctl(struct comedi_device *dev,
- 		goto error;
- 	}
+diff --git a/drivers/mmc/host/ushc.c b/drivers/mmc/host/ushc.c
+index f08f944..8b7367a 100644
+--- a/drivers/mmc/host/ushc.c
++++ b/drivers/mmc/host/ushc.c
+@@ -278,7 +278,7 @@ static void ushc_request(struct mmc_host *mmc, struct mmc_request *req)
+ 	ushc->current_req = req;
  
-+	if (sizeof(struct comedi_insn) * insnlist.n_insns < insnlist.n_insns) {
-+		ret = -EINVAL;
-+		goto error;
-+	}
-+
- 	insns  	    kmalloc(sizeof(struct comedi_insn) * insnlist.n_insns, GFP_KERNEL);
- 	if (!insns) {
+ 	/* Start cmd with CBW. */
+-	ushc->cbw->cmd_idx = cpu_to_le16(req->cmd->opcode);
++	ushc->cbw->cmd_idx = req->cmd->opcode;
+ 	if (req->data)
+ 		ushc->cbw->block_size = cpu_to_le16(req->data->blksz);
+ 	else
