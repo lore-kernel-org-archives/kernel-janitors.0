@@ -1,41 +1,38 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 24 Nov 2011 12:08:07 +0000
-Subject: Re: [patch] ALSA: hda - cut and paste typo in cs420x_models[]
-Message-Id: <s5hty5tena0.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 21 Nov 2011 06:17:22 +0000
+Subject: [patch] caif: fix endian conversion in cffrml_transmit()
+Message-Id: <20111121061722.GD7354@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111124114824.GC32522@elgon.mountain>
-In-Reply-To: <20111124114824.GC32522@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, kernel-janitors@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, David Henningsson <david.henningsson@canonical.com>, Tim Howe <tim.howe@cirrus.com>
+To: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 24 Nov 2011 14:48:24 +0300,
-Dan Carpenter wrote:
-> 
-> The CS420X_IMAC27 was copied from the line before but CS420X_APPLE
-> was clearly intented.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The "tmp" variable here is used to store the result of cpu_to_le16()
+so it should be a u16 instead of an int.  We want the high bits set
+and the current code works on little endian systems but not on big
+endian systems.
 
-Applied now.  Thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker thing.  I haven't tested it.  Please review
+carefully.
 
-
-Takashi
-
-> 
-> diff --git a/sound/pci/hda/patch_cirrus.c b/sound/pci/hda/patch_cirrus.c
-> index 7bd2a52..70a7abd 100644
-> --- a/sound/pci/hda/patch_cirrus.c
-> +++ b/sound/pci/hda/patch_cirrus.c
-> @@ -1278,7 +1278,7 @@ static const char * const cs420x_models[CS420X_MODELS] = {
->  	[CS420X_MBP53] = "mbp53",
->  	[CS420X_MBP55] = "mbp55",
->  	[CS420X_IMAC27] = "imac27",
-> -	[CS420X_IMAC27] = "apple",
-> +	[CS420X_APPLE] = "apple",
->  	[CS420X_AUTO] = "auto",
->  };
->  
-> 
+diff --git a/net/caif/cffrml.c b/net/caif/cffrml.c
+index f399211..2b46c48 100644
+--- a/net/caif/cffrml.c
++++ b/net/caif/cffrml.c
+@@ -136,10 +136,11 @@ static int cffrml_receive(struct cflayer *layr, struct cfpkt *pkt)
+ 
+ static int cffrml_transmit(struct cflayer *layr, struct cfpkt *pkt)
+ {
+-	int tmp;
++	u16 tmp;
+ 	u16 chks;
+ 	u16 len;
+ 	struct cffrml *this = container_obj(layr);
++
+ 	if (this->dofcs) {
+ 		chks = cfpkt_iterate(pkt, cffrml_checksum, 0xffff);
+ 		tmp = cpu_to_le16(chks);
