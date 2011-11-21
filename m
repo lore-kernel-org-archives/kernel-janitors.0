@@ -1,48 +1,61 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Date: Mon, 21 Nov 2011 16:55:11 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 21 Nov 2011 19:58:23 +0000
 Subject: Re: [patch] ath6kl: use a larger buffer for debug output
-Message-Id: <4ECA826F.8010605@qca.qualcomm.com>
+Message-Id: <20111121195823.GN29436@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="iwjEIfU64POCkTAH"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111118140906.GA9685@elgon.mountain>	 (sfid-20111118_150942_354029_4789F63D) <1321625461.10266.57.camel@jlt3.sipsolutions.net>
-In-Reply-To: <1321625461.10266.57.camel@jlt3.sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20111118140906.GA9685@elgon.mountain>
+ <1321625461.10266.57.camel@jlt3.sipsolutions.net>
+ <4ECA826F.8010605@qca.qualcomm.com>
+In-Reply-To: <4ECA826F.8010605@qca.qualcomm.com>
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/18/2011 04:11 PM, Johannes Berg wrote:
-> On Fri, 2011-11-18 at 17:09 +0300, Dan Carpenter wrote:
->> This function makes the static checkers grumble.  The return value of
->> snprintf() is the number of bytes which would have been copied if
->> there was enough space.  In theory, a %u can take take 10 digits so
->> len could be larger than 16 and it would be a small information
->> leak.
->>
->> We may as well make the buffer larger as well since that is very
->> easy to do.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless/ath/ath6kl/debug.c
->> index 9eff0d0..e632008 100644
->> --- a/drivers/net/wireless/ath/ath6kl/debug.c
->> +++ b/drivers/net/wireless/ath/ath6kl/debug.c
->> @@ -1551,11 +1551,12 @@ static ssize_t ath6kl_listen_int_read(struct file *file,
->>  						size_t count, loff_t *ppos)
->>  {
->>  	struct ath6kl *ar = file->private_data;
->> -	char buf[16];
->> +	char buf[32];
->>  	int len;
->>  
->>  	len = snprintf(buf, sizeof(buf), "%u %u\n", ar->listen_intvl_t,
->>  					ar->listen_intvl_b);
->> +	len = min(sizeof(buf), len);
-> 
-> Maybe that should be scnprintf instead then?
 
-Yeah, I agree. And most likely debug.c has even more cases where
-scnprintf() is needed.
+--iwjEIfU64POCkTAH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Kalle
+On Mon, Nov 21, 2011 at 06:55:11PM +0200, Kalle Valo wrote:
+> >>  	len =3D snprintf(buf, sizeof(buf), "%u %u\n", ar->listen_intvl_t,
+> >>  					ar->listen_intvl_b);
+> >> +	len =3D min(sizeof(buf), len);
+> >=20
+> > Maybe that should be scnprintf instead then?
+>=20
+> Yeah, I agree. And most likely debug.c has even more cases where
+> scnprintf() is needed.
+>=20
+
+Yes yes.  Obviously.  I sent the patch at 5 pm on Friday and lost
+track of it for a bit.  I'll send a fixed version tomorrow morning.
+
+regards,
+dan carpenter
+
+
+--iwjEIfU64POCkTAH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOyq1eAAoJEOnZkXI/YHqRWr4QAILJWyuKGnhNL7DilqvGYNHS
+r+hDsdrNdQ/q+4Ln2/rFaH58ebWLHMExFglRj4to374Ok6TdndYOS4EUcbobuzZw
+LaCxzbl58aPX66Po1fvCQizxOKsNC5t70eiFCPzJS15U1iTirHOq5X0NagRvgSqo
+EjUpo/QeGYIavGAH2Ej2TuCJA7p959lrbQ5g8PpO8dpsB0nayNJNhQ8fTWBnlDvE
+eushXUtXc/4Woq28whbb0hKk/r5tWrwxV4E4860xmT79YTNdAwKnJi3vqCqvnJBi
+BdoYneWMczmtgIMZygYdonHkp/364LxyMBj4lanvadBlfU3UoHccLwZsYEvQ1vmK
+dnEvbZ1X+zuKLJNZJE2ojRY/RV/PoJusXAxQucZCk81+xKFUiTIGnVDiQ/DtCpoL
+vN0b04lh0UHAWyadAOcSzaonJnZ4ZZHzAqcSuAvnHXI5BIrxc3xGqINYPRzGqYLv
+4NbQ7BiwXP3a+it4LWVCHkeQYFlNXZ77XBCtGd6QUJxB1weXYEsF/wMOVHjHOi2t
+iHUWaPTdngmJmhGtCJhjCUqPkRxB7rzPl8cdS2xgcG1OqbQHUv7PfwSjvQnzPcMe
+e4PqQCxE9ROC113h0isQuH5cSBau3hfrmzwPhIqlcLEjVI1Ivv++KJEXB/ysP/3E
+JJXQeAQdgrdCtBI8G9Hx
+=gUDp
+-----END PGP SIGNATURE-----
+
+--iwjEIfU64POCkTAH--
