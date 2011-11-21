@@ -1,31 +1,39 @@
-From: =?UTF-8?Q?Sjur_Br=C3=A6ndeland?= <sjurbren@gmail.com>
-Date: Mon, 21 Nov 2011 21:20:09 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 21 Nov 2011 21:46:43 +0000
 Subject: Re: [patch v2] caif: fix endian conversion in cffrml_transmit()
-Message-Id: <CAJK669bL51Ct-Q9LxXwFdiaQAnfkx2Um1k0Cutci2z6mdd2THw@mail.gmail.com>
+Message-Id: <20111121.164643.58544532996822474.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111121061722.GD7354@elgon.mountain>
-	<20111121063356.GH2203@ZenIV.linux.org.uk>
+References: <20111121063356.GH2203@ZenIV.linux.org.uk>
 	<20111121195056.GM29436@mwanda>
-In-Reply-To: <20111121195056.GM29436@mwanda>
+	<CAJK669bL51Ct-Q9LxXwFdiaQAnfkx2Um1k0Cutci2z6mdd2THw@mail.gmail.com>
+In-Reply-To: <CAJK669bL51Ct-Q9LxXwFdiaQAnfkx2Um1k0Cutci2z6mdd2THw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: sjurbren@gmail.com
+Cc: dan.carpenter@oracle.com, viro@zeniv.linux.org.uk, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> The "tmp" variable here is used to store the result of cpu_to_le16()
-> so it should be an __le16 instead of an int.  We want the high bits
-> set and the current code works on little endian systems but not on
-> big endian systems.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  In v1 I used a u16 instead of an __le16.  Also I've changed the
-> name to "data" instead of "tmp".
+From: Sjur Br=E6ndeland <sjurbren@gmail.com>
+Date: Mon, 21 Nov 2011 22:20:09 +0100
 
-Thanks Dan, good catch - this would have failed badly on a b_e architecture.
+>> The "tmp" variable here is used to store the result of cpu_to_le16()
+>> so it should be an __le16 instead of an int. =A0We want the high bits
+>> set and the current code works on little endian systems but not on
+>> big endian systems.
+>>
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> ---
+>> v2: =A0In v1 I used a u16 instead of an __le16. =A0Also I've changed the
+>> name to "data" instead of "tmp".
+>=20
+> Thanks Dan, good catch - this would have failed badly on a b_e architectu=
+re.
+>=20
+> Acked-by: Sjur Br=E6ndeland <sjur.brandeland@stericsson.com>
 
-Acked-by: Sjur Brændeland <sjur.brandeland@stericsson.com>
-
-Regards,
-Sjur
+Applied, thanks guys.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
