@@ -1,32 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Nov 2011 09:06:48 +0000
-Subject: [patch 2/2] staging/media: lirc_imon: remove unused definitions
-Message-Id: <20111124090648.GB22994@elgon.mountain>
+Date: Mon, 21 Nov 2011 14:47:13 +0000
+Subject: [patch] prism54: potential memory corruption in prism54_get_essid()
+Message-Id: <20111121144713.GA19092@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Jarod Wilson <jarod@redhat.com>, Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-media@vger.kernel.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We don't have these functions any more now we have module_usb_driver().
+"dwrq->length" is the capped version of "essid->length".
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I don't know if this goes in through USB or the media tree.
 
-diff --git a/drivers/staging/media/lirc/lirc_imon.c b/drivers/staging/media/lirc/lirc_imon.c
-index f682180..c3eae4d 100644
---- a/drivers/staging/media/lirc/lirc_imon.c
-+++ b/drivers/staging/media/lirc/lirc_imon.c
-@@ -70,10 +70,6 @@ static ssize_t vfd_write(struct file *file, const char *buf,
- static int ir_open(void *data);
- static void ir_close(void *data);
- 
--/* Driver init/exit prototypes */
--static int __init imon_init(void);
--static void __exit imon_exit(void);
--
- /*** G L O B A L S ***/
- #define IMON_DATA_BUF_SZ	35
+diff --git a/drivers/net/wireless/prism54/isl_ioctl.c b/drivers/net/wireless/prism54/isl_ioctl.c
+index d97a2ca..bc2ba80 100644
+--- a/drivers/net/wireless/prism54/isl_ioctl.c
++++ b/drivers/net/wireless/prism54/isl_ioctl.c
+@@ -778,7 +778,7 @@ prism54_get_essid(struct net_device *ndev, struct iw_request_info *info,
+ 		dwrq->flags = 0;
+ 		dwrq->length = 0;
+ 	}
+-	essid->octets[essid->length] = '\0';
++	essid->octets[dwrq->length] = '\0';
+ 	memcpy(extra, essid->octets, dwrq->length);
+ 	kfree(essid);
  
