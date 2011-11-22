@@ -1,35 +1,57 @@
-From: Christoph Fritz <chf.fritz@googlemail.com>
-Date: Tue, 29 Nov 2011 18:38:38 +0000
-Subject: [PATCH] mfd: tc6393xb - add depend on HAVE_CLK
-Message-Id: <1322591918.2182.35.camel@mars>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Nov 2011 07:39:15 +0000
+Subject: [patch] Staging: iio: fix endian conversion in ad7298_scan_direct()
+Message-Id: <20111122073915.GB25051@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <sameo@linux.intel.com>, Dmitry Baryshkov <dbaryshkov@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Michael Hennerich <michael.hennerich@analog.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-This patch adds HAVE_CLK to the required dependencies of tc6393xb.
+"tmp" is used to store the output from cpu_to_be16() so it should be
+a __be16 bit type.
 
-Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/mfd/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Static checker patch.  Untested.
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f1391c2..833ed2c 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -311,7 +311,7 @@ config MFD_TC6387XB
+diff --git a/drivers/staging/iio/adc/ad7298_core.c b/drivers/staging/iio/adc/ad7298_core.c
+index a799bd1..3e804e2 100644
+--- a/drivers/staging/iio/adc/ad7298_core.c
++++ b/drivers/staging/iio/adc/ad7298_core.c
+@@ -69,27 +69,28 @@ static int ad7298_scan_direct(struct ad7298_state *st, unsigned ch)
+ static int ad7298_scan_temp(struct ad7298_state *st, int *val)
+ {
+ 	int tmp, ret;
++	__be16 buf;
  
- config MFD_TC6393XB
- 	bool "Support Toshiba TC6393XB"
--	depends on GPIOLIB && ARM
-+	depends on GPIOLIB && ARM && HAVE_CLK
- 	select MFD_CORE
- 	select MFD_TMIO
- 	help
--- 
-1.7.2.5
-
-
-
+-	tmp = cpu_to_be16(AD7298_WRITE | AD7298_TSENSE |
++	buf = cpu_to_be16(AD7298_WRITE | AD7298_TSENSE |
+ 			  AD7298_TAVG | st->ext_ref);
+ 
+-	ret = spi_write(st->spi, (u8 *)&tmp, 2);
++	ret = spi_write(st->spi, (u8 *)&buf, 2);
+ 	if (ret)
+ 		return ret;
+ 
+-	tmp = 0;
++	buf = cpu_to_be16(0);
+ 
+-	ret = spi_write(st->spi, (u8 *)&tmp, 2);
++	ret = spi_write(st->spi, (u8 *)&buf, 2);
+ 	if (ret)
+ 		return ret;
+ 
+ 	usleep_range(101, 1000); /* sleep > 100us */
+ 
+-	ret = spi_read(st->spi, (u8 *)&tmp, 2);
++	ret = spi_read(st->spi, (u8 *)&buf, 2);
+ 	if (ret)
+ 		return ret;
+ 
+-	tmp = be16_to_cpu(tmp) & RES_MASK(AD7298_BITS);
++	tmp = be16_to_cpu(buf) & RES_MASK(AD7298_BITS);
+ 
+ 	/*
+ 	 * One LSB of the ADC corresponds to 0.25 deg C.
