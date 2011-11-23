@@ -1,35 +1,74 @@
-From: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Date: Mon, 21 Nov 2011 14:36:02 +0000
-Subject: RE: [patch] caif: fix endian conversion in cffrml_transmit()
-Message-Id: <81C3A93C17462B4BBD7E272753C105791FB0A91AF2@EXDCVYMBSTM005.EQ1STM.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Nov 2011 06:34:50 +0000
+Subject: [patch v2] ath6kl: use a larger buffer for debug output
+Message-Id: <20111123063450.GA3363@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="/04w6evG8XlLl3ft"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111121061722.GD7354@elgon.mountain>
-In-Reply-To: <20111121061722.GD7354@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+References: <20111118140906.GA9685@elgon.mountain>
+ <1321625461.10266.57.camel@jlt3.sipsolutions.net>
+In-Reply-To: <1321625461.10266.57.camel@jlt3.sipsolutions.net>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Hi Dan,
+The return value of snprintf() is the number of bytes which would
+have been copied if there was enough space, but we want the number of
+bytes actually copied.  The scnprintf() function does this.
+
+Also in theory, a %u can take take 10 digits so we may as well make
+the buffer larger as well.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  I didn't know about the scnprintf() function before.  Thanks
+Johannes.
+
+diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless=
+/ath/ath6kl/debug.c
+index 9eff0d0..eb808b4 100644
+--- a/drivers/net/wireless/ath/ath6kl/debug.c
++++ b/drivers/net/wireless/ath/ath6kl/debug.c
+@@ -1551,10 +1551,10 @@ static ssize_t ath6kl_listen_int_read(struct file *=
+file,
+ 						size_t count, loff_t *ppos)
+ {
+ 	struct ath6kl *ar =3D file->private_data;
+-	char buf[16];
++	char buf[32];
+ 	int len;
 =20
-> The "tmp" variable here is used to store the result of cpu_to_le16()
-> so it should be a u16 instead of an int.  We want the high bits set
-> and the current code works on little endian systems but not on big
-> endian systems.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+-	len =3D snprintf(buf, sizeof(buf), "%u %u\n", ar->listen_intvl_t,
++	len =3D scnprintf(buf, sizeof(buf), "%u %u\n", ar->listen_intvl_t,
+ 					ar->listen_intvl_b);
+=20
+ 	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
 
-Looks OK by me, unless you want to make sparse with __CHECK_ENDIAN__=20
-shut up, then you should use __le16 ;-)
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Acked-by: Sjur Br=E6ndeland <sjur.brandeland@stericsson.com>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Regards,
-Sjur
+iQIcBAEBAgAGBQJOzJQJAAoJEOnZkXI/YHqRgj4QAIcJRbrQqwFGjVk8nFfadHRZ
+NEn/ahbcspLv09hJlMMq65kgGXO32afxuUU9hZronwc0H5M17w8YvWdJXwcyJWA1
+4dnb0ucXf1xhvYk5UP/aBJVRtA2A6/WW4rsfTI3JY+B6Ymndccp4ok5rfdkc6v2G
+h+pzoULmou01WVKZWtdOECUPIkANYDOE4TJbd0TpzFmxFPXTTPbwUVVyCWtMg/I0
+iG6EKLE+kYsqEUCdVrPU1+xki2wqs6On67Zrhc4Q8TlOAPG8XKpHI992UPI6R0Ku
+3d4w0pzxVddHJy7P6wEJGG87MXZWzSrD7wg+V57Gtk8RX6NOowBNdAta60l3jai/
+dizMG58Bs9YAbK1fDdwBfHMJSEMTiiCNaxU+Q3vhsBLxDwCnVjwg5rz+bovaHAqf
+KzFjHBoy9ROZ9gx3WDhL955Z6u52OajMCCFabHjfiPesg7RK/82FZ0vGrAx4/BtJ
+EFl8MelpGfqzHR80+RGGLlI+baRAEeP4S9gnm1jE67OxKWZmLMPPsZugTEY6JRNW
+XSWbRoI5n6+hSDObvWnrIDZZM9RuLss7ZqeiY4dsnf+wrLq6j6GjEYxwn4bznxq2
+LT1enw9se54L8fXvRbCaGaGm+74yiWPGcserDItKvW+poTqcGwqqNKmC9IJePbXH
+5FK4RGbIa3NjjbuiPrdq
+=jOmf
+-----END PGP SIGNATURE-----
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--/04w6evG8XlLl3ft--
