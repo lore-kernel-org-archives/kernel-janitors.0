@@ -1,23 +1,28 @@
-From: Arik Nemtsov <arik@wizery.com>
-Date: Tue, 15 Nov 2011 06:38:26 +0000
-Subject: Re: [patch] mac80211: use kfree_skb() instead of kfree()
-Message-Id: <CA+XVXfcegKfEqkyMFeWa7gW_bi+GJvUmNvOkpY5ryrAAsSM5pw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Nov 2011 06:52:40 +0000
+Subject: [patch] netrom: check that user string is terminated
+Message-Id: <20111123065240.GD6871@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111115063309.GB30827@elgon.mountain>
-In-Reply-To: <20111115063309.GB30827@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Nov 15, 2011 at 08:33, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> sk_buff structs should be freed using kfree_skb().
->
-> This was introduced recently in 029458212 "mac80211: Save probe
-> response data for bss".
->
+We do an strcpy() of mnemonic in nr_add_node().
 
-Thanks for this one. I'm getting careless lately.. :)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Arik
+diff --git a/net/netrom/nr_route.c b/net/netrom/nr_route.c
+index 915a87b..e126c48 100644
+--- a/net/netrom/nr_route.c
++++ b/net/netrom/nr_route.c
+@@ -670,6 +670,8 @@ int nr_rt_ioctl(unsigned int cmd, void __user *arg)
+ 	case SIOCADDRT:
+ 		if (copy_from_user(&nr_route, arg, sizeof(struct nr_route_struct)))
+ 			return -EFAULT;
++		if (strlen(nr_route.mnemonic) >= sizeof(nr_route.mnemonic))
++			return -EINVAL;
+ 		if ((dev = nr_ax25_dev_get(nr_route.device)) = NULL)
+ 			return -EINVAL;
+ 		if (nr_route.ndigis < 0 || nr_route.ndigis > AX25_MAX_DIGIS) {
