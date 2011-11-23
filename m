@@ -1,64 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 23 Nov 2011 07:16:20 +0000
+From: walter harms <wharms@bfs.de>
+Date: Wed, 23 Nov 2011 08:25:56 +0000
 Subject: Re: [patch] isdn: make sure strings are null terminated
-Message-Id: <20111123071619.GB3363@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="1UWUbFP1cBYEclgG"
+Message-Id: <4ECCAE14.3070008@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20111123064204.GA6871@elgon.mountain>
- <1322031811.1298.38.camel@edumazet-laptop>
-In-Reply-To: <1322031811.1298.38.camel@edumazet-laptop>
-To: Eric Dumazet <eric.dumazet@gmail.com>
+In-Reply-To: <20111123064204.GA6871@elgon.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
---1UWUbFP1cBYEclgG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 23, 2011 at 08:03:31AM +0100, Eric Dumazet wrote:
-> > +			if (strlen(dioctl.cf_ctrl.msn) >=3D sizeof(dioctl.cf_ctrl.msn))
-> > +				return -EINVAL;
->=20
-> This looks buggy.
->=20
-> If string is not null terminated, how strlen() will stop you from going
-> out of bounds, and trigger some run time checker ?
->=20
-> strnlen() would be more effective...
->=20
+Am 23.11.2011 07:42, schrieb Dan Carpenter:
+> These strings come from the user.  We strcpy() them inside
+> cf_command() so we should check that they are NULL terminated and
+> return an error if not.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/isdn/divert/divert_procfs.c b/drivers/isdn/divert/divert_procfs.c
+> index 33ec9e4..0c16687 100644
+> --- a/drivers/isdn/divert/divert_procfs.c
+> +++ b/drivers/isdn/divert/divert_procfs.c
+> @@ -242,6 +242,10 @@ static int isdn_divert_ioctl_unlocked(struct file *file, uint cmd, ulong arg)
+>  		case IIOCDOCFINT:
+>  			if (!divert_if.drv_to_name(dioctl.cf_ctrl.drvid))
+>  				return (-EINVAL);	/* invalid driver */
+> +			if (strlen(dioctl.cf_ctrl.msn) >= sizeof(dioctl.cf_ctrl.msn))
+> +				return -EINVAL;
+> +			if (strlen(dioctl.cf_ctrl.fwd_nr) >= sizeof(dioctl.cf_ctrl.fwd_nr))
+> +				return -EINVAL;
 
-Aw crap.  My first version used strnlen() and I redid it to be
-simpler.  I just figured that it doesn't take long to hit a zeroed
-u8.
+forcing the last field to be zero seems more easy.
+dioctl.cf_ctrl.fwd_nr[sizeof(dioctl.cf_ctrl.fwd_nr))-1]=0;
 
-I'll resend all three strlen() patches to use strnlen().
+re,
+ wh
 
-regards,
-dan carpenter
-
-
---1UWUbFP1cBYEclgG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJOzJ3DAAoJEOnZkXI/YHqR6dAP/3oUPQNgtLSihDzgS0bB6Ug/
-F6h7+Y9oQ/JHS98066M7QkxGXfzYr5AX6Y7e96uSO1ucr6NjRTju02wd3MhvVMdn
-qLF/8R+n/uh59SPxjqdn0ry0YbEzJlPMh7te6OaQxvzv77IEtacu3UvfEF3twA1Z
-0vrVB1ZxxisjSL9XUyXcl7byzdx3fB0cseZZg1mpfsblTuhnF34mZr0eroVgrmrk
-171AP/27fsETMrdAqKU49xu2la9eJbGcUHlQMQAWTmxrsiGBq+RAOpi172XpdaZ4
-G5m5P6AfKe01WwSYXsGvfzOFQZNTS6zmAd0LopYlkT0pHOf8aT3o7ulvCLDpzuoy
-HheoWEjLqFfCjZU9v8LRDhoX6g+ToWjtCN4H05oo7jg9dG614js4XSrgvPK0SStt
-/4H3IdE3HJEIn3OatgDlWL3LQUsYPiS4A1DDCv1Pb8NS6OcY7cmJJ+f7cffJ0drb
-AoA9Rf5IpIK0NxEbv3tmBTE3l96sCRUu2/u1FU0BzyHx4RcZgFdkS19zqwheI73N
-469FZrhyd1DOFeOlAaurZ87Xx3JRwdno2KLgrh6Jn9m1CvO8V5yqT56vVV8vb2Oc
-mbe3YlGjaRivguOiAVn/MjVuB2S0z2DkX6eTxU5D670tsTGARI4uW/YDxj9slIfj
-zrmDmX4Nx/GTi1bBOrQL
-=mdph
------END PGP SIGNATURE-----
-
---1UWUbFP1cBYEclgG--
+>  			if ((i = cf_command(dioctl.cf_ctrl.drvid,
+>  					    (cmd = IIOCDOCFACT) ? 1 : (cmd = IIOCDOCFDIS) ? 0 : 2,
+>  					    dioctl.cf_ctrl.cfproc,
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
