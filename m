@@ -1,60 +1,44 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 23 Nov 2011 08:22:16 +0000
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Wed, 23 Nov 2011 19:12:49 +0000
 Subject: Re: [patch] netrom: check that user string is terminated
-Message-Id: <4ECCAD38.9090309@bfs.de>
+Message-Id: <20111123191249.GB7260@linux-mips.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20111123065240.GD6871@elgon.mountain>
-In-Reply-To: <20111123065240.GD6871@elgon.mountain>
+ <4ECCAD38.9090309@bfs.de>
+In-Reply-To: <4ECCAD38.9090309@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: walter harms <wharms@bfs.de>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+On Wed, Nov 23, 2011 at 09:22:16AM +0100, walter harms wrote:
 
+> I am not sure that it does what you intends.
+> mnemonic is an array and a  malicious use may fill it upto the last char
+> causing strlen go beyond. perhaps this may help:
 
-Am 23.11.2011 07:52, schrieb Dan Carpenter:
-> We do an strcpy() of mnemonic in nr_add_node().
+Correct, it makes thigs worse.  I'm going to reply in detail later tonight,
+have to bail out now.
+
+> >  		if ((dev = nr_ax25_dev_get(nr_route.device)) = NULL)
+> >  			return -EINVAL;
+> while you are here:
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 	dev = nr_ax25_dev_get(nr_route.device);
+> 	if ( dev = NULL )
+> 		return -EINVAL;
 > 
-> diff --git a/net/netrom/nr_route.c b/net/netrom/nr_route.c
-> index 915a87b..e126c48 100644
-> --- a/net/netrom/nr_route.c
-> +++ b/net/netrom/nr_route.c
-> @@ -670,6 +670,8 @@ int nr_rt_ioctl(unsigned int cmd, void __user *arg)
->  	case SIOCADDRT:
->  		if (copy_from_user(&nr_route, arg, sizeof(struct nr_route_struct)))
->  			return -EFAULT;
-> +		if (strlen(nr_route.mnemonic) >= sizeof(nr_route.mnemonic))
-> +			return -EINVAL;
-
-
-I am not sure that it does what you intends.
-mnemonic is an array and a  malicious use may fill it upto the last char
-causing strlen go beyond. perhaps this may help:
-	nr_route.mnemonic[sizeof(nr_route.mnemonic)-1]=0;
-this of cause makes the if() redundant.
-
-
-
->  		if ((dev = nr_ax25_dev_get(nr_route.device)) = NULL)
->  			return -EINVAL;
-while you are here:
-
-	dev = nr_ax25_dev_get(nr_route.device);
-	if ( dev = NULL )
-		return -EINVAL;
-
->  		if (nr_route.ndigis < 0 || nr_route.ndigis > AX25_MAX_DIGIS) {
-
-if guess "nr_route.ndigis >= AX25_MAX_DIGIS" is intended ?
-
-hope that helps,
- wh
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >  		if (nr_route.ndigis < 0 || nr_route.ndigis > AX25_MAX_DIGIS) {
 > 
+> if guess "nr_route.ndigis >= AX25_MAX_DIGIS" is intended ?
+
+No, values of 0 .. AX25_MAX_DIGIS are permitted with zero meaning no
+digipeater at all.
+
+The actual bug if you want to call it that in this line is cosmetic -
+nr_route.ndigis is an unsigned int so nr_route.ndigis < 0 will never become
+true.  There are other simplifications possible to the error checking
+here.  I've whipped a cleanup patch for this part of the code.
+
+  Ralf
