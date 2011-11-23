@@ -1,44 +1,62 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Wed, 23 Nov 2011 19:12:49 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Nov 2011 19:54:22 +0000
 Subject: Re: [patch] netrom: check that user string is terminated
-Message-Id: <20111123191249.GB7260@linux-mips.org>
+Message-Id: <20111123195421.GB3258@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Pd0ReVV5GZGQvF3a"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20111123065240.GD6871@elgon.mountain>
  <4ECCAD38.9090309@bfs.de>
-In-Reply-To: <4ECCAD38.9090309@bfs.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+ <20111123191249.GB7260@linux-mips.org>
+In-Reply-To: <20111123191249.GB7260@linux-mips.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: walter harms <wharms@bfs.de>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Nov 23, 2011 at 09:22:16AM +0100, walter harms wrote:
 
-> I am not sure that it does what you intends.
-> mnemonic is an array and a  malicious use may fill it upto the last char
-> causing strlen go beyond. perhaps this may help:
+--Pd0ReVV5GZGQvF3a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Correct, it makes thigs worse.  I'm going to reply in detail later tonight,
-have to bail out now.
+On Wed, Nov 23, 2011 at 07:12:49PM +0000, Ralf Baechle wrote:
+> On Wed, Nov 23, 2011 at 09:22:16AM +0100, walter harms wrote:
+>=20
+> > I am not sure that it does what you intends.
+> > mnemonic is an array and a  malicious use may fill it upto the last char
+> > causing strlen go beyond. perhaps this may help:
+>=20
+> Correct, it makes thigs worse.  I'm going to reply in detail later tonigh=
+t,
+> have to bail out now.
+>=20
 
-> >  		if ((dev = nr_ax25_dev_get(nr_route.device)) = NULL)
-> >  			return -EINVAL;
-> while you are here:
-> 
-> 	dev = nr_ax25_dev_get(nr_route.device);
-> 	if ( dev = NULL )
-> 		return -EINVAL;
-> 
-> >  		if (nr_route.ndigis < 0 || nr_route.ndigis > AX25_MAX_DIGIS) {
-> 
-> if guess "nr_route.ndigis >= AX25_MAX_DIGIS" is intended ?
+Ok.  I said in a different thread that I was going to redo these
+using strnlen() but I'll wait to read your comments.
 
-No, values of 0 .. AX25_MAX_DIGIS are permitted with zero meaning no
-digipeater at all.
+regards,
+dan carpenter
 
-The actual bug if you want to call it that in this line is cosmetic -
-nr_route.ndigis is an unsigned int so nr_route.ndigis < 0 will never become
-true.  There are other simplifications possible to the error checking
-here.  I've whipped a cleanup patch for this part of the code.
 
-  Ralf
+--Pd0ReVV5GZGQvF3a
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOzU9tAAoJEOnZkXI/YHqRsQgQAJgUTFnGqYHKmqJPECSmReCx
+b9pTH2l1c2LTIC+9BXLmXbN8LRBomZMOjadtsmeBoIkSPkGYYhrApHPRTJuFCUwI
+WF8XXchnBLJUCFf+Suje4bVVtbr2qxSBW0OMte48piEpm1031KyvEsIOshCQRhli
+sdrnhEx/Ed2drdcEtFiGArejtKri0mpnTaWrC3GVDNSL0V5nOP8lsqmLCFuhFl1P
+6qC8Kltdm7WHEMW/bWEwZ5dZpNkdt3mWQ+xNlCJd4OfuqeaN6THS+ee99Fpt6sIh
+bG9qE7j5vQVMDZaSlrMxevFtna1hlMVmL/RKFGovshT9zIf+gAxUC3K+BAVd4tbc
+CZmBrJgrxAwU5/jvYnybFJuUFofjxRoef+AR0NgbkXSyBy1mijnx0pPTia4IaBH4
+HQwJVEeaauG/spElLjse4PZ2doZa6p+0I//n9ZjsPefxMmgTcstPY5p2Z/lxsocn
+WgQ1GXpGMN5fmBqMAPFcyfjpJsrBJg1RJJdRgJALB1SSZ603ofzhdOXiJiviMOgJ
+8dP0ckugZ40C3r2OjXV4mtxF753uG03/amq51oPFzMx8SvOrGxwCHthcPUzyIAjk
+tPH8oHIuYPaGuiDe9llcfinJnyl7TWUuZkO28gUoKDhUeHuq9GfrPgtddcgSNpza
+4As3Z6w+br4eCP+qluMj
+=JhGF
+-----END PGP SIGNATURE-----
+
+--Pd0ReVV5GZGQvF3a--
