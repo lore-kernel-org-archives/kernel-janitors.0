@@ -1,23 +1,29 @@
-From: Marek Lindner <lindner_marek@yahoo.de>
-Date: Sun, 06 Nov 2011 14:16:46 +0000
-Subject: Re: [B.A.T.M.A.N.] [PATCH 1/5] net/batman-adv: use kstrtoul, etc
-Message-Id: <201111062216.46584.lindner_marek@yahoo.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Nov 2011 06:43:46 +0000
+Subject: [patch] isdn: avoid copying too long drvid
+Message-Id: <20111123064345.GB6871@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1320586010-21931-1-git-send-email-julia@diku.dk> <1320586010-21931-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1320586010-21931-2-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: b.a.t.m.a.n@lists.open-mesh.org
-Cc: Julia Lawall <julia@diku.dk>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Wunderlich <siwu@hrz.tu-chemnitz.de>, "David S. Miller" <davem@davemloft.net>
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Neil Horman <nhorman@tuxdriver.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sunday, November 06, 2011 21:26:46 Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Use kstrtoul, etc instead of the now deprecated strict_strtoul, etc.
+"cfg->drvid" comes from the user so there is a possibility they
+didn't NUL terminate properly.
 
-Thanks for the patch but we already have a patch lined up to address the 
-issue. It will be submitted to net-next in the next week or so.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Marek
+diff --git a/drivers/isdn/i4l/isdn_net.c b/drivers/isdn/i4l/isdn_net.c
+index 1f73d7f..487d214 100644
+--- a/drivers/isdn/i4l/isdn_net.c
++++ b/drivers/isdn/i4l/isdn_net.c
+@@ -2756,6 +2756,8 @@ isdn_net_setcfg(isdn_net_ioctl_cfg * cfg)
+ 			char *c,
+ 			*e;
+ 
++			if (strlen(cfg->drvid) >= sizeof(drvid))
++				return -EINVAL;
+ 			drvidx = -1;
+ 			chidx = -1;
+ 			strcpy(drvid, cfg->drvid);
