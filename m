@@ -1,61 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Nov 2011 19:58:23 +0000
-Subject: Re: [patch] ath6kl: use a larger buffer for debug output
-Message-Id: <20111121195823.GN29436@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="iwjEIfU64POCkTAH"
+Date: Wed, 23 Nov 2011 07:09:12 +0000
+Subject: [patch] [media] saa7164: fix endian conversion in saa7164_bus_set()
+Message-Id: <20111123070911.GA8561@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111118140906.GA9685@elgon.mountain>
- <1321625461.10266.57.camel@jlt3.sipsolutions.net>
- <4ECA826F.8010605@qca.qualcomm.com>
-In-Reply-To: <4ECA826F.8010605@qca.qualcomm.com>
-To: Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Steven Toth <stoth@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The msg->command field is 32 bits, and we should fill it with a call
+to cpu_to_le32().  The current code is broken on big endian systems,
+and on little endian systems it just truncates the 32 bit value to
+16 bits.
 
---iwjEIfU64POCkTAH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker bug.  I haven't tested it.
 
-On Mon, Nov 21, 2011 at 06:55:11PM +0200, Kalle Valo wrote:
-> >>  	len =3D snprintf(buf, sizeof(buf), "%u %u\n", ar->listen_intvl_t,
-> >>  					ar->listen_intvl_b);
-> >> +	len =3D min(sizeof(buf), len);
-> >=20
-> > Maybe that should be scnprintf instead then?
->=20
-> Yeah, I agree. And most likely debug.c has even more cases where
-> scnprintf() is needed.
->=20
-
-Yes yes.  Obviously.  I sent the patch at 5 pm on Friday and lost
-track of it for a bit.  I'll send a fixed version tomorrow morning.
-
-regards,
-dan carpenter
-
-
---iwjEIfU64POCkTAH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJOyq1eAAoJEOnZkXI/YHqRWr4QAILJWyuKGnhNL7DilqvGYNHS
-r+hDsdrNdQ/q+4Ln2/rFaH58ebWLHMExFglRj4to374Ok6TdndYOS4EUcbobuzZw
-LaCxzbl58aPX66Po1fvCQizxOKsNC5t70eiFCPzJS15U1iTirHOq5X0NagRvgSqo
-EjUpo/QeGYIavGAH2Ej2TuCJA7p959lrbQ5g8PpO8dpsB0nayNJNhQ8fTWBnlDvE
-eushXUtXc/4Woq28whbb0hKk/r5tWrwxV4E4860xmT79YTNdAwKnJi3vqCqvnJBi
-BdoYneWMczmtgIMZygYdonHkp/364LxyMBj4lanvadBlfU3UoHccLwZsYEvQ1vmK
-dnEvbZ1X+zuKLJNZJE2ojRY/RV/PoJusXAxQucZCk81+xKFUiTIGnVDiQ/DtCpoL
-vN0b04lh0UHAWyadAOcSzaonJnZ4ZZHzAqcSuAvnHXI5BIrxc3xGqINYPRzGqYLv
-4NbQ7BiwXP3a+it4LWVCHkeQYFlNXZ77XBCtGd6QUJxB1weXYEsF/wMOVHjHOi2t
-iHUWaPTdngmJmhGtCJhjCUqPkRxB7rzPl8cdS2xgcG1OqbQHUv7PfwSjvQnzPcMe
-e4PqQCxE9ROC113h0isQuH5cSBau3hfrmzwPhIqlcLEjVI1Ivv++KJEXB/ysP/3E
-JJXQeAQdgrdCtBI8G9Hx
-=gUDp
------END PGP SIGNATURE-----
-
---iwjEIfU64POCkTAH--
+diff --git a/drivers/media/video/saa7164/saa7164-bus.c b/drivers/media/video/saa7164/saa7164-bus.c
+index 466e1b0..8f853d1 100644
+--- a/drivers/media/video/saa7164/saa7164-bus.c
++++ b/drivers/media/video/saa7164/saa7164-bus.c
+@@ -149,7 +149,7 @@ int saa7164_bus_set(struct saa7164_dev *dev, struct tmComResInfo* msg,
+ 	saa7164_bus_verify(dev);
+ 
+ 	msg->size = cpu_to_le16(msg->size);
+-	msg->command = cpu_to_le16(msg->command);
++	msg->command = cpu_to_le32(msg->command);
+ 	msg->controlselector = cpu_to_le16(msg->controlselector);
+ 
+ 	if (msg->size > dev->bus.m_wMaxReqSize) {
