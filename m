@@ -1,22 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 25 Nov 2011 06:42:36 +0000
-Subject: Re: [patch] net/netlabel: copy and paste bug in
-Message-Id: <20111125.014236.1962174838825919249.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2011 11:47:02 +0000
+Subject: [patch] mtip32xx: uninitialized variable in mtip_quiesce_io()
+Message-Id: <20111124114702.GA32522@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111124071820.GB14122@elgon.mountain>
-In-Reply-To: <20111124071820.GB14122@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: paul@paul-moore.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Asai Thambi S P <asamymuthupa@micron.com>, Sam Bradshaw <sbradshaw@micron.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Nov 2011 10:18:20 +0300
+We recently introduce new continue in the loop which make gcc complain.
+In theory if MTIP_FLAG_SVC_THD_ACTIVE_BIT is set, we could hit continue
+over and over until eventually we time out of the loop.  In that case
+"active" should be set as true, but right now it's uninitialized.
 
-> This was copy and pasted from the IPv4 code.  We're calling the
-> ip4 version of that function and map4 is NULL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index b5d843a..9bc10e3 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -1026,7 +1026,8 @@ static void mtip_issue_non_ncq_command(struct mtip_port *port, int tag)
+ static int mtip_quiesce_io(struct mtip_port *port, unsigned long timeout)
+ {
+ 	unsigned long to;
+-	unsigned int n, active;
++	unsigned int n;
++	unsigned int active = 1;
+ 
+ 	to = jiffies + msecs_to_jiffies(timeout);
+ 	do {
