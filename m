@@ -1,31 +1,67 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Date: Thu, 24 Nov 2011 12:29:45 +0000
-Subject: Re: [patch v2] ath6kl: use a larger buffer for debug output
-Message-Id: <4ECE38B9.4080902@qca.qualcomm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2011 12:41:49 +0000
+Subject: [patch v2] isdn: make sure strings are null terminated
+Message-Id: <20111124124149.GH3195@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="YrlhzR9YrZtruaFS"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111118140906.GA9685@elgon.mountain> <1321625461.10266.57.camel@jlt3.sipsolutions.net> <20111123063450.GA3363@mwanda>
-In-Reply-To: <20111123063450.GA3363@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20111123064204.GA6871@elgon.mountain>
+ <1322031811.1298.38.camel@edumazet-laptop>
+In-Reply-To: <1322031811.1298.38.camel@edumazet-laptop>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/23/2011 08:34 AM, Dan Carpenter wrote:
-> The return value of snprintf() is the number of bytes which would
-> have been copied if there was enough space, but we want the number of
-> bytes actually copied.  The scnprintf() function does this.
-> 
-> Also in theory, a %u can take take 10 digits so we may as well make
-> the buffer larger as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks, applied.
+--YrlhzR9YrZtruaFS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> v2:  I didn't know about the scnprintf() function before.  Thanks
-> Johannes.
+These strings come from the user.  We strcpy() them inside
+cf_command() so we should check that they are NULL terminated and
+return an error if not.
 
-Me neither, so thank you from me as well :)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: use strnlen() instead of strlen().
 
-Kalle
+diff --git a/drivers/isdn/divert/divert_procfs.c b/drivers/isdn/divert/divert_procfs.c
+index 33ec9e4..9021182 100644
+--- a/drivers/isdn/divert/divert_procfs.c
++++ b/drivers/isdn/divert/divert_procfs.c
+@@ -242,6 +242,12 @@ static int isdn_divert_ioctl_unlocked(struct file *file, uint cmd, ulong arg)
+ 		case IIOCDOCFINT:
+ 			if (!divert_if.drv_to_name(dioctl.cf_ctrl.drvid))
+ 				return (-EINVAL);	/* invalid driver */
++			if (strnlen(dioctl.cf_ctrl.msn, sizeof(dioctl.cf_ctrl.msn)) ==
++					sizeof(dioctl.cf_ctrl.msn))
++				return -EINVAL;
++			if (strnlen(dioctl.cf_ctrl.fwd_nr, sizeof(dioctl.cf_ctrl.fwd_nr)) ==
++					sizeof(dioctl.cf_ctrl.fwd_nr))
++				return -EINVAL;
+ 			if ((i = cf_command(dioctl.cf_ctrl.drvid,
+ 					    (cmd == IIOCDOCFACT) ? 1 : (cmd == IIOCDOCFDIS) ? 0 : 2,
+ 					    dioctl.cf_ctrl.cfproc,
+
+--YrlhzR9YrZtruaFS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOzjuNAAoJEOnZkXI/YHqRFV0P/0Ewj3jHxmf+e8sRKFh5pF75
+zQob7D9LSwKvzhmXMirmKOS8ocFOd4Gy0l3oPRir6LNJQjkqH+VGxc4L9eVrRUNw
+voJV7Y9+yXU2Y1vnZtgu46ViHydZSgD2fMdLOgPDshiLNqoxdFkLQDTZsduAwdhc
+4bPcZ1E1g0FuNZI6M5v6ypFJvg/DQPiJ+4gOrSfodO8eb6kPICzbB00aS4c5CSFr
+orvtGcsF78TfV7QcDuqjNaH31AlAXJx3ByxTNocgVn6JaC4V9AVGRaxRgc8knE3I
+bD1pYV/TlBW7Az+dFoblhGgtVQqb+dcDvNsz0nGMP2Ykaps+ths1U5ydKIlMap18
+TXtFZKa5M8ETxGQ2xffGqT359++aNrkT6OBhm1KGuHazQGVSWB3c59Yih6qQyoJq
+lomCv85cecFj7JGW1Wt9W2dE07NLD8LHrX+Y0tfFJNgsn9Hn2cn/eS1XIL9xwFR9
+XDDoMojXgBJew+AnhE0PkmBxvlVG19K53Yf0ztmq+DMSN7u0Kutymm2o5KuK+NoS
+zu2r5hbX39I7VMiZF/NNRtVdn08AVOc0n7uMXLPfJGBf/Y6s3Vfdmx/RxWke+qDl
+WsApyEoe/Uh3CSTKPm3a5Lnvc8uFyWrO6A1N8itcCdqbgumKmC5aliaWjg63yG4u
+UkV42M0sbj1ZCdgyOkoc
+=2h7E
+-----END PGP SIGNATURE-----
+
+--YrlhzR9YrZtruaFS--
