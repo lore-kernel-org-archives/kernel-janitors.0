@@ -1,59 +1,37 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 06 Nov 2011 13:26:49 +0000
-Subject: [PATCH 4/5] net/rfkill/core.c: use kstrtoul, etc
-Message-Id: <1320586010-21931-5-git-send-email-julia@diku.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2011 07:22:48 +0000
+Subject: [patch] orinoco: remove an unused variable
+Message-Id: <20111124072247.GE14122@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1320586010-21931-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1320586010-21931-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Jiri Pirko <jpirko@redhat.com>, Greg Kroah-Hartman <gregkh@suse.de>, Pavel Roskin <proski@gnu.org>, linux-wireless@vger.kernel.org, linux-usb@vger.kernel.org, orinoco-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+The "version" isn't used anymore now that this is a module_usb_driver().
 
-Use kstrtoul, etc instead of the now deprecated strict_strtoul, etc.
-
-A semantic patch rule for the kstrtoul case is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression a,b;
-{int,long} *c;
-@@
-
--strict_strtoul
-+kstrtoul
- (a,b,c)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- net/rfkill/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I wrote this patch against linux-next.
 
-diff -u -p a/net/rfkill/core.c b/net/rfkill/core.c
---- a/net/rfkill/core.c
-+++ b/net/rfkill/core.c
-@@ -644,7 +644,7 @@ static ssize_t rfkill_soft_store(struct
- 	if (!capable(CAP_NET_ADMIN))
- 		return -EPERM;
- 
--	err = strict_strtoul(buf, 0, &state);
-+	err = kstrtoul(buf, 0, &state);
- 	if (err)
- 		return err;
- 
-@@ -688,7 +688,7 @@ static ssize_t rfkill_state_store(struct
- 	if (!capable(CAP_NET_ADMIN))
- 		return -EPERM;
- 
--	err = strict_strtoul(buf, 0, &state);
-+	err = kstrtoul(buf, 0, &state);
- 	if (err)
- 		return err;
- 
+This is a fallout from d632eb1bf22 "USB: convert drivers/net/* to use
+module_usb_driver()" so I'm not sure if this patch should go through
+the USB tree or the wireless tree.
 
+diff --git a/drivers/net/wireless/orinoco/orinoco_usb.c b/drivers/net/wireless/orinoco/orinoco_usb.c
+index ae8ce56..f634d45 100644
+--- a/drivers/net/wireless/orinoco/orinoco_usb.c
++++ b/drivers/net/wireless/orinoco/orinoco_usb.c
+@@ -1754,11 +1754,6 @@ static struct usb_driver orinoco_driver = {
+ 	.id_table = ezusb_table,
+ };
+ 
+-/* Can't be declared "const" or the whole __initdata section will
+- * become const */
+-static char version[] __initdata = DRIVER_NAME " " DRIVER_VERSION
+-	" (Manuel Estrada Sainz)";
+-
+ module_usb_driver(orinoco_driver);
+ 
+ MODULE_AUTHOR("Manuel Estrada Sainz");
