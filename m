@@ -1,46 +1,70 @@
-From: Marcos Souza <marcos.mage@gmail.com>
-Date: Mon, 07 Nov 2011 11:52:55 +0000
-Subject: Re: [PATCH] drivers/staging/vt6656/iwctl.c: Remove PRINT_K macro
-Message-Id: <CAGkUK2vmtqrBv00juL8aNrFCiuNkTEfCOFrtrT+3YLC0LYn_Hw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2011 07:21:18 +0000
+Subject: [patch] mtd/docg3: fix error handling in docg3_probe()
+Message-Id: <20111124072117.GC14122@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1320634885-5845-1-git-send-email-marcos.mage@gmail.com>
-In-Reply-To: <1320634885-5845-1-git-send-email-marcos.mage@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>
 
-2011/11/7, Dan Carpenter <dan.carpenter@oracle.com>:
-> On Mon, Nov 07, 2011 at 07:27:52AM -0300, Marcos Souza wrote:
->> 2011/11/7, Dan Carpenter <dan.carpenter@oracle.com>:
->> > Hi Marcos,
->> >
->> > This should be sent to devel@driverdev.osuosl.org as well.
->> On copy this time
->> > DBG_PRT() is just as bad as PRINT_K().  The first example in
->> > iwctl_siwscan() should be either pr_debug() or dev_dbg().  Also the
->> > message itself is wrong.
->> So, I'll send patches to change all these print_k and dbg_prt to dev_dbg
->
-> It's not as simple as doing a sed over the driver.  You have to look
-> at each one and decide what it should be.  I only looked at the first
-> PRINT_K() and said specific one should be a pr_debug() not that all
-> of them should.
-Sorry, I think I was not so clear as I wanted. I'll analyse all the
-uses of dbg_prt and print_k, and change these as they can be assigned
-to pr_debug and dev_dbg.
-> regards,
-> dan carpenter
->
->
+There was a kfree(docg3_floors); missing from the error handling
+here.  Also we set docg3_floors[floor] = mtd; when mtd was an ERR_PTR
+and then we call doc_release_device() on it.
 
+I reworked it a bit, so hopefully the code is more clear now.
 
---=20
-Marcos Paulo de Souza
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-*Porque uma vida sem desafios =E9 uma vida sem raz=E3o.*
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+index 27c4fea..bfc1ea1 100644
+--- a/drivers/mtd/devices/docg3.c
++++ b/drivers/mtd/devices/docg3.c
+@@ -1110,21 +1110,24 @@ static int __init docg3_probe(struct platform_device *pdev)
+ 	if (!docg3_floors)
+ 		goto nomem;
+ 
+-	ret = 0;
+ 	for (floor = 0; floor < DOC_MAX_NBFLOORS; floor++) {
+ 		mtd = doc_probe_device(base, floor, dev);
+-		if (floor = 0 && !mtd)
+-			goto notfound;
+-		if (!IS_ERR_OR_NULL(mtd))
+-			ret = mtd_device_parse_register(mtd, part_probes,
+-							NULL, NULL, 0);
+-		else
++		if (IS_ERR(mtd)) {
+ 			ret = PTR_ERR(mtd);
++			goto err_probe;
++		}
++		if (!mtd) {
++			if (floor = 0)
++				goto notfound;
++			else
++				continue;
++		}
+ 		docg3_floors[floor] = mtd;
++		ret = mtd_device_parse_register(mtd, part_probes, NULL, NULL,
++						0);
+ 		if (ret)
+ 			goto err_probe;
+-		if (mtd)
+-			found++;
++		found++;
+ 	}
+ 
+ 	if (!found)
+@@ -1138,9 +1141,11 @@ notfound:
+ 	ret = -ENODEV;
+ 	dev_info(dev, "No supported DiskOnChip found\n");
+ err_probe:
+-	for (floor = 0; floor < DOC_MAX_NBFLOORS; floor++)
++	for (floor = 0; floor < DOC_MAX_NBFLOORS; floor++) {
+ 		if (docg3_floors[floor])
+ 			doc_release_device(docg3_floors[floor]);
++	}
++	kfree(docg3_floors);
+ nomem:
+ 	iounmap(base);
+ noress:
