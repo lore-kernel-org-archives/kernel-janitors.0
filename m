@@ -1,42 +1,31 @@
-From: Jan Schmidt <list.btrfs@jan-o-sch.net>
-Date: Wed, 16 Nov 2011 16:56:29 +0000
-Subject: Re: [patch] btrfs scrub: handle -ENOMEM from init_ipath()
-Message-Id: <4EC3EB3D.4030601@jan-o-sch.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2011 07:18:20 +0000
+Subject: [patch] net/netlabel: copy and paste bug in
+Message-Id: <20111124071820.GB14122@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111116082801.GE10264@elgon.mountain>
-In-Reply-To: <20111116082801.GE10264@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-btrfs <linux-btrfs@vger.kernel.org>, Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 16.11.2011 09:28, Dan Carpenter wrote:
-> init_ipath() can return an ERR_PTR(-ENOMEM).
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jan Schmidt <list.btrfs@jan-o-sch.net>
+This was copy and pasted from the IPv4 code.  We're calling the
+ip4 version of that function and map4 is NULL.
 
-Thanks,
--Jan
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-> index ed11d38..b72ee47 100644
-> --- a/fs/btrfs/scrub.c
-> +++ b/fs/btrfs/scrub.c
-> @@ -256,6 +256,11 @@ static int scrub_print_warning_inode(u64 inum, u64 offset, u64 root, void *ctx)
->  	btrfs_release_path(swarn->path);
->  
->  	ipath = init_ipath(4096, local_root, swarn->path);
-> +	if (IS_ERR(ipath)) {
-> +		ret = PTR_ERR(ipath);
-> +		ipath = NULL;
-> +		goto err;
-> +	}
->  	ret = paths_from_inode(inum, ipath);
->  
->  	if (ret < 0)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-btrfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index 8ed67dcc..3735297 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -162,8 +162,8 @@ int netlbl_cfg_unlbl_map_add(const char *domain,
+ 			map6->list.addr.s6_addr32[3] &= mask6->s6_addr32[3];
+ 			map6->list.mask = *mask6;
+ 			map6->list.valid = 1;
+-			ret_val = netlbl_af4list_add(&map4->list,
+-						     &addrmap->list4);
++			ret_val = netlbl_af6list_add(&map6->list,
++						     &addrmap->list6);
+ 			if (ret_val != 0)
+ 				goto cfg_unlbl_map_add_failure;
+ 			break;
