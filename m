@@ -1,69 +1,63 @@
-From: Karsten Keil <kkeil@linux-pingi.de>
-Date: Thu, 24 Nov 2011 13:17:20 +0000
-Subject: Re: [patch] isdn: make sure strings are null terminated
-Message-Id: <20111124131720.GA16966@gw.linux-pingi.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Nov 2011 12:42:09 +0000
+Subject: [patch v2] isdn: avoid copying too long drvid
+Message-Id: <20111124124209.GI3195@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="ijf6z65S790CMqo8"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111123064204.GA6871@elgon.mountain>
- <4ECCAE14.3070008@bfs.de>
- <20111124113456.GI3258@mwanda>
- <4ECE36D6.7060503@bfs.de>
-In-Reply-To: <4ECE36D6.7060503@bfs.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20111123064345.GB6871@elgon.mountain>
+In-Reply-To: <20111123064345.GB6871@elgon.mountain>
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Neil Horman <nhorman@tuxdriver.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 24, 2011 at 01:21:42PM +0100, walter harms wrote:
-> 
-> 
-> Am 24.11.2011 12:34, schrieb Dan Carpenter:
-> > On Wed, Nov 23, 2011 at 09:25:56AM +0100, walter harms wrote:
-> >>
-> >>
-> >> Am 23.11.2011 07:42, schrieb Dan Carpenter:
-> >>> These strings come from the user.  We strcpy() them inside
-> >>> cf_command() so we should check that they are NULL terminated and
-> >>> return an error if not.
-> >>>
-> >>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >>>
-> >>> diff --git a/drivers/isdn/divert/divert_procfs.c b/drivers/isdn/divert/divert_procfs.c
-> >>> index 33ec9e4..0c16687 100644
-> >>> --- a/drivers/isdn/divert/divert_procfs.c
-> >>> +++ b/drivers/isdn/divert/divert_procfs.c
-> >>> @@ -242,6 +242,10 @@ static int isdn_divert_ioctl_unlocked(struct file *file, uint cmd, ulong arg)
-> >>>  		case IIOCDOCFINT:
-> >>>  			if (!divert_if.drv_to_name(dioctl.cf_ctrl.drvid))
-> >>>  				return (-EINVAL);	/* invalid driver */
-> >>> +			if (strlen(dioctl.cf_ctrl.msn) >= sizeof(dioctl.cf_ctrl.msn))
-> >>> +				return -EINVAL;
-> >>> +			if (strlen(dioctl.cf_ctrl.fwd_nr) >= sizeof(dioctl.cf_ctrl.fwd_nr))
-> >>> +				return -EINVAL;
-> >>
-> >> forcing the last field to be zero seems more easy.
-> >> dioctl.cf_ctrl.fwd_nr[sizeof(dioctl.cf_ctrl.fwd_nr))-1]=0;
-> >>
-> > 
-> > That's a valid option to use, but I'd prefer to return an error code
-> > here because that's what we do on the line before.  Passing a too
-> > long string is clearly invalid.
-> > 
-> 
-> the line before has the same problem, of cause.
-> 
-> So far i see you do not get a string, you get a structure. An it will hard
-> to validate the element is a useful string. I thing my (sledgehammer) method
-> is ok here because you make sure that all later calls (strcmp,strcpy) will succeed.
-> If someone supplies a bad string the later calls will catch by failing to identify
-> and return a proper code from there (at least i hope so).
-> 
 
-Since the proper userspace programs should use the correct size, these valid
-fixes (Thanks !) will prevent bad programs to use this for some bad purpose.
-I think both methods are OK, I tend to the sledgehammer, because it is the
-lowest CPU consuming method - but on the other side the valid length is
-small enough.
+--ijf6z65S790CMqo8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
-Karsten
+"cfg->drvid" comes from the user so there is a possibility they
+didn't NUL terminate it properly.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: use strnlen() instead of strlen().
+
+diff --git a/drivers/isdn/i4l/isdn_net.c b/drivers/isdn/i4l/isdn_net.c
+index 1f73d7f..2339d73 100644
+--- a/drivers/isdn/i4l/isdn_net.c
++++ b/drivers/isdn/i4l/isdn_net.c
+@@ -2756,6 +2756,9 @@ isdn_net_setcfg(isdn_net_ioctl_cfg * cfg)
+ 			char *c,
+ 			*e;
+=20
++			if (strnlen(cfg->drvid, sizeof(cfg->drvid)) =3D=3D
++					sizeof(cfg->drvid))
++				return -EINVAL;
+ 			drvidx =3D -1;
+ 			chidx =3D -1;
+ 			strcpy(drvid, cfg->drvid);
+
+--ijf6z65S790CMqo8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOzjugAAoJEOnZkXI/YHqRjeUP/AnvYbN+KlkcVRTMi5K6SAPX
+3EObvfrczzX6QQTyq0KvC1+f/ZMj6SB5VGyOYDKPgP24xBKn4mWfvt0uDG350dd9
+ZXjEEpMByz3iqGYrx2zeVfF8JTFnLJVSj/n4oCGDKb16w8Gf+UPeeEFxFHu8Z4wd
+YE1lR0pbuAoPzo9Q0r+f/3D5Pps4O4roRPfmBUTEJK75OCh9JgHKFPSVZR5fpM43
+zL42JcDoBhGl2YK695iie4eWPe2zVEGIY4L55PuTpWPmh3ywrojJtVtxSQwrw4XO
+SBtTbjdFSivEkYYcgiDo7+CmzFjpRKoLLWW+CO8B+xleeSt/qTvgAaczKwTcY32V
+Jl1F5wlE3fHVyCd3hRgeRa1zGKDgKnBJwzjj/uxCahZVv4qzFkVdgmXtglu7OsSF
+oEGizytwfba+l41X7ZdratpLaWavFy3MJZhqRbMMjOckQfqOdAyD9YOICdNYLUZt
+4uXSPIDzBOE95DxPxsXt4EIwjlkrac2RR9gXU2aXNf3W+8O33QEMmUcnNjWRpZDy
+NU5oCPDYLeeUwfoWYzHSsqx3mVZWjm0OxqoOrh1v/qgJA4bw3RPrEsglzQU5jSh5
+Ts/ZosdOHbeOvggYBjmsoWwLonHIJrVoty+qcuUK4RqZKCXaWXzznKTNZrM65RJt
+SYLm2/uTZgxGjHo21kmV
+=rVVV
+-----END PGP SIGNATURE-----
+
+--ijf6z65S790CMqo8--
