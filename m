@@ -1,45 +1,71 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Nov 2011 11:19:34 +0000
-Subject: Re: Fwd: [PATCH 4/4] drivers/staging/vt6656/rf.h: Remove ttype.h and
-Message-Id: <20111104111934.GP4682@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="pvq4FPIYehQuVelz"
+From: walter harms <wharms@bfs.de>
+Date: Fri, 25 Nov 2011 12:12:25 +0000
+Subject: Re: [PATCH 3/4] NET: NETROM: Cleanup argument SIOCADDRT ioctl argument
+Message-Id: <4ECF8629.7000301@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAGkUK2vaCWbH=S_RzKPvLz6iKE=rwV-Bxj7vC88ddZHZPDo24w@mail.gmail.com>
-In-Reply-To: <CAGkUK2vaCWbH=S_RzKPvLz6iKE=rwV-Bxj7vC88ddZHZPDo24w@mail.gmail.com>
-To: kernel-janitors@vger.kernel.org
+References: <cover.1322214950.git.ralf@linux-mips.org> <9f87aed932fc551c6f5c474b39d01fb337237a7e.1322214950.git.ralf@linux-mips.org> <4ECF7A76.3090305@bfs.de>
+In-Reply-To: <4ECF7A76.3090305@bfs.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Cc: Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-hams@vger.kernel.org, Thomas Osterried <thomas@osterried.de>, Kernel Janitors List <kernel-janitors@vger.kernel.org>
+
+hi,
+according to LXR there are several places where the check is >AX25_MAX_DIGIS instead of >=.
+
+any takers ?
+
+re,
+ wh
 
 
---pvq4FPIYehQuVelz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-This one has the same BOOL to int transitions I mentioned before.
-
-regards,
-dan carpenter
-
-
---pvq4FPIYehQuVelz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJOs8pGAAoJEOnZkXI/YHqR4hYP/2IzRyNdz9R5AjW6o91BlrFt
-0tvbyIgG1ZAPF46Z/xEusTWzSSNtKIYywV+HEzLZRRpxpvxUAwO3Dfe0s7awRLqz
-IHgxxxR82TEnrGJC69njRf5IKJQmxpOMamk+OTQC/ZmyC30SCB0T83PGVw+OWp+7
-9h8KdgZHhdA1phwpDlJXOeAv1hudnXJJauA8nJsnYDLjYkbbJATgA3g4Eno0sCGm
-yRZs5NiBr1pXubmNqJH2zrhC+9Fx2n9lwyLXFNCA1bY7BDHuZ3hGMvo67Qy2PIXT
-jZuf0xWigq1LdYNKsW2vwMpXKbHqW9Dibtg/rXvA35J9ZqFZP3uyee7+0kw1Lu9w
-E62zJojZgS4JNbCGpJtbFEmy2VpVgZt6F6/RL+Pxxk+y6chJZwtRE4YVni+Hteos
-2qF1k3fyyc1K5aurAqPf3mu7v2AVQohAHTIOKfGqXwBBbwImeL5Zj4hkyEDCSYj9
-TrP2eVI8Fy+hag5FIwOiK00oy22T2Va6/dLcZcmySNQbXpVDmMBk7aQjWmanXIC1
-5jlUL0CJO+RGVO+s7OG2ql8eoE3MX/rJTnl53dyHDBKy7qpz12gkJTBDrrYe79VX
-oMNRbEnP+O3QJ6NDN3QOO8oLKeoaZxhQerRoLZ9ybW+U+wyjfFClk1AEsmkud1ar
-bDMZybTav20e89jGeB32
-=bsKr
------END PGP SIGNATURE-----
-
---pvq4FPIYehQuVelz--
+Am 25.11.2011 12:22, schrieb walter harms:
+> 
+> 
+> Am 25.11.2011 10:09, schrieb Ralf Baechle:
+>> nr_route.ndigis is unsigned int so the nr_route.ndigis < 0 expression is
+>> never true and can be dropped.  Doing the nr_ax25_dev_get call later
+>> allows the nr_route.ndigis test to bail out without having to dev_put.
+>>
+>> Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+>> Cc: Thomas Osterried <thomas@osterried.de>
+>> ---
+>>  net/netrom/nr_route.c |    6 ++----
+>>  1 files changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/net/netrom/nr_route.c b/net/netrom/nr_route.c
+>> index 8d7716c..2cf3301 100644
+>> --- a/net/netrom/nr_route.c
+>> +++ b/net/netrom/nr_route.c
+>> @@ -670,12 +670,10 @@ int nr_rt_ioctl(unsigned int cmd, void __user *arg)
+>>  	case SIOCADDRT:
+>>  		if (copy_from_user(&nr_route, arg, sizeof(struct nr_route_struct)))
+>>  			return -EFAULT;
+>> -		if ((dev = nr_ax25_dev_get(nr_route.device)) = NULL)
+>> +		if (nr_route.ndigis > AX25_MAX_DIGIS)
+>>  			return -EINVAL;
+>> -		if (nr_route.ndigis < 0 || nr_route.ndigis > AX25_MAX_DIGIS) {
+>> -			dev_put(dev);
+>> +		if ((dev = nr_ax25_dev_get(nr_route.device)) = NULL)
+>>  			return -EINVAL;
+>> -		}
+>>  		switch (nr_route.type) {
+>>  		case NETROM_NODE:
+>>  			if (strnlen(nr_route.mnemonic, 7) = 7) {
+> 
+> I realy do not know if that matters but some use AX25_MAX_DIGIS as array
+> and therefore it should be >=AX25_MAX_DIGIS.
+> 
+> struct rose_route_struct {
+>          rose_address    address;
+>         unsigned short  mask;
+>         ax25_address    neighbour;
+>         char            device[16];
+>          unsigned char   ndigis;
+>          ax25_address    digipeaters[AX25_MAX_DIGIS];
+>   };
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-hams" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
