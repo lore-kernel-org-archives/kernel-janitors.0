@@ -1,88 +1,93 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Nov 2011 17:37:23 +0000
-Subject: Re: Fwd: [PATCH 2/4] drivers/staging/vt6656/upc.h: Remove ttype.h
-Message-Id: <20111104173723.GI4751@mwanda>
+Date: Mon, 28 Nov 2011 13:53:13 +0000
+Subject: [patch v2] mtd/docg3: dereferencing an ERR_PTR() in docg3_probe()
+Message-Id: <20111128134947.GK21128@mwanda>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="16qp2B0xu0fRvRD7"
+Content-Type: multipart/mixed; boundary="I4VOKWutKNZEOIPu"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAGkUK2vW+MJmfisno1m8jpUvfMX3uFrgDy-hKXSHVJW6gatdsw@mail.gmail.com>
-In-Reply-To: <CAGkUK2vW+MJmfisno1m8jpUvfMX3uFrgDy-hKXSHVJW6gatdsw@mail.gmail.com>
-To: kernel-janitors@vger.kernel.org
+References: <20111124072117.GC14122@elgon.mountain> <87pqghygbv.fsf@free.fr>
+ <20111124103147.GF3195@mwanda> <87r50vi20u.fsf@free.fr>
+In-Reply-To: <87r50vi20u.fsf@free.fr>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
 
 
---16qp2B0xu0fRvRD7
+--I4VOKWutKNZEOIPu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 04, 2011 at 08:40:30AM -0300, Marcos Souza wrote:
-> 2011/11/4, Dan Carpenter <dan.carpenter@oracle.com>:
-> > This doesn't apply to my copy of linux-next.  But that could be my
-> > fault.  I'm not at my normal network right now, and my copy of
-> > linux-next is two weeks old on this computer.  All patches should be
-> > written against linux-next.
-> >
-> > http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3Dsum=
-mary
-> >
-> > If you already wrote it against the latest linux-next then ignore me
-> > and keep up the good work etc.  :)
-> Once, I cloned the linux-next tree. But after one day, my git pull
-                                                            ^^^^^^^^
-> gives a lot of errors(on that time I don't knew half that I know now
-> about the kernel...).
->=20
+If doc_probe_device() returned an ERR_PTR, then we accidentally saved
+that to docg3_floors[floor] =3D mtd; which gets derefenced in the error
+handling when we call doc_release_device().
 
-Don't do a git pull of linux-next.  A git pull is short for:
-git fetch git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-git merge FETCH_HEAD
+I've reworked the error handling to take care of that and hopefully
+make it a little simpler.
 
-The way to use linux-next is first do a fetch then a checkout:
-git fetch git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-git checkout FETCH_HEAD
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Version 1 conflicted with another patch in stream.
 
-Longer explanation:
+diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+index d7df311..f7490a014 100644
+--- a/drivers/mtd/devices/docg3.c
++++ b/drivers/mtd/devices/docg3.c
+@@ -2027,21 +2027,24 @@ static int __init docg3_probe(struct platform_devic=
+e *pdev)
+ 	if (!docg3_bch)
+ 		goto nomem2;
+=20
+-	ret =3D 0;
+ 	for (floor =3D 0; floor < DOC_MAX_NBFLOORS; floor++) {
+ 		mtd =3D doc_probe_device(base, floor, dev);
+-		if (floor =3D=3D 0 && !mtd)
+-			goto notfound;
+-		if (!IS_ERR_OR_NULL(mtd))
+-			ret =3D mtd_device_parse_register(mtd, part_probes,
+-							NULL, NULL, 0);
+-		else
++		if (IS_ERR(mtd)) {
+ 			ret =3D PTR_ERR(mtd);
++			goto err_probe;
++		}
++		if (!mtd) {
++			if (floor =3D=3D 0)
++				goto notfound;
++			else
++				continue;
++		}
+ 		docg3_floors[floor] =3D mtd;
++		ret =3D mtd_device_parse_register(mtd, part_probes, NULL, NULL,
++						0);
+ 		if (ret)
+ 			goto err_probe;
+-		if (mtd)
+-			found++;
++		found++;
+ 	}
+=20
+ 	ret =3D doc_register_sysfs(pdev, docg3_floors);
 
-Normally in version control the whole point is to keep the history,
-but for linux-next we redo it every day.  So you can't merge today's
-history with yesterdays history.  You just take whatever is in
-linux-next for today.
-
-So let's say you are Linus and you apply a patch that later on turns
-out to be a mistake.  The only thing he can do is apply another
-patch on top of the first patch to fix the problem.  Maintainer trees
-are more flexible if they find a mistake then they just edit the git
-history so it looks like that patch was never applied.  We rebuild
-linux next from scratch using the maintainer trees every day and
-everyone is happy.  But once the patch hit Linus's tree it's set in
-stone and you can't edit the git history anymore.
-
-It's because we edit the history in linux-next that your pull failed.
-
-regards,
-dan carpenter
-
-
---16qp2B0xu0fRvRD7
+--I4VOKWutKNZEOIPu
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJOtCLTAAoJEOnZkXI/YHqRTY8P/2LNKbqy91raJAWyzOoVs5px
-8SRWaRAa6w1HKagtNq3cDWA23GWFUL+RARmyNDARwgu0bTsnVj/VJnZ7hqil93wZ
-izDlRuAV7sxUhsEQaHg410J/gA282P7LBtGP3bDu42jTUY627sxXci4RVQ06CzZl
-cnIdPTAyp35IeTs5dSGb6sAGQK3kgA0zTJniSKM2VpIwWiYIl0JRHFSTe5IWx7RF
-Kq74pt9gsdI9/VhA7t1JXeMLZ7AOHjnPFJLrAhhJuLmyhba9j74n40YMP26sHjFw
-RLx88FCLKajIWnJazPEesi9WbOIy30MILjGMGW1EYvDiD6d7hrzaa2UeW/x59f0R
-clG6Q5CerFRVBeZankei2EyUFDhlq1MUf0/mBQTEW9lId+WgFmAWfMqo0Bf1wZ6z
-tRHSsTR8lqBXKx/OX23/PrebEhc5Z9FpY/dY8fKuzBW6ZG7Wenl69RmJtpo6MStQ
-raexLxGfHtzYWqNc+NxtWnsca2X2XYJ12ORl7qwcQ3pse+f/QfLRXC3RY6VO4njK
-/Ru8RvfIhmxjB7mJ/WKGa7tbcehpgWpOqQRBTLJh3zz7WM0rFAuEI4lRX6Lv+NZe
-7itoOnw/gFwGUCuwftQBVf0pyckOlNpA/OaZDWT5dkvEcyRBGnrq9pU1lb8ujDrV
-L5DD+78QikTDSYFN4snF
-=uOSu
+iQIcBAEBAgAGBQJO05JIAAoJEOnZkXI/YHqRFtMP/RTI1AgISLf/Q6JvZMMPJq7A
+qWaS/gjQlERylrVZ4HYGgP4207fSBc5wHTjMUV6wY71X/4ceyKWiXcEmkE6RxJGe
+mqyMlYvKH3LtMDVK2GBDSxGaDrQjHrKHLXdsqMiyD2nxOLxNu/kObz7kucEXAWM9
+qtZLNfYng1ReVHsJSLkC+bdkHv/DJ2kQZ3J7nMHjpScpjn5+ju0thbDUyD6cbp4f
+M5AnH+2yjr3bwuAVxqZ7dxYMZb15v//lfXA6tVHTb7I/0NwqWMdptNtMSQxDpT5/
+pdAdlDI4AiMFYX7GtNo2Jyssm5fzmo3qbx7XJfvKnk7q3j2cZQeaRZX7JEJRW5S/
+qoYARkfiOOaK9F0VI4n/HDaIRwWKfF6eNo1BFU47Z50q7b+KwAEq3wzFvFiKuLKd
+rXIYbFitTa62CLovMsc0Kxsrx36FIRb1aMF8Ho6IJelxO/lfxDoG/cKw/ppRBlZK
+4/cLx1OgdeshiGhLDFRKZ8wLBk7oPmYqQJqdYbuSikeQCi4/jryKip5VaryqELvo
+DozFR1yKQMGJE+96RQweVtx7A4i4h8TKHRhoEksyS6uQqcDBofmGk9eBFJSHlBTM
+d/o/s5zbT0r/H2wQxBgJndJfTouO+NDemx3R93Scc84Mn/0iIUD3BW+kOgOIcgPc
+M10TzJvVKj4CX7Oahc/2
+=OzXn
 -----END PGP SIGNATURE-----
 
---16qp2B0xu0fRvRD7--
+--I4VOKWutKNZEOIPu--
