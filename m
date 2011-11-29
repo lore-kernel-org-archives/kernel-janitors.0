@@ -1,41 +1,36 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Tue, 22 Nov 2011 00:57:23 +0000
-Subject: Re: [patch] exofs: fix endian conversion in exofs_sync_fs()
-Message-Id: <4ECAF373.1060708@panasas.com>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Date: Tue, 29 Nov 2011 21:00:16 +0000
+Subject: [PATCH] usb: gadget: f_mass_storage: common->curlun could be NULL
+Message-Id: <1322600416.2182.48.camel@mars>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111121144311.GA19025@elgon.mountain>
-In-Reply-To: <20111121144311.GA19025@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 11/21/2011 06:43 AM, Dan Carpenter wrote:
-> fscb->s_numfiles is an __le64 field so we need to use cpu_to_le64()
-> to get a little endian 64 bit on big endian systems.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is a static checker fix.  Untested.
-> 
+This patch adds a NULL check for common->curlun in case of an unknown_cmnd
+in do_scsi_command(). 
 
-Will apply. s_numfiles is never used but should be loaded
-correctly regardless.
+Signed-off-by: Christoph Fritz <chf.fritz@googlemail.com>
+---
+ drivers/usb/gadget/f_mass_storage.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-Thanks
-Boaz
+diff --git a/drivers/usb/gadget/f_mass_storage.c b/drivers/usb/gadget/f_mass_storage.c
+index c39d588..0e42027 100644
+--- a/drivers/usb/gadget/f_mass_storage.c
++++ b/drivers/usb/gadget/f_mass_storage.c
+@@ -2184,7 +2184,8 @@ unknown_cmnd:
+ 		reply = check_command(common, common->cmnd_size,
+ 				      DATA_DIR_UNKNOWN, 0xff, 0, unknown);
+ 		if (reply = 0) {
+-			common->curlun->sense_data = SS_INVALID_COMMAND;
++			if (common->curlun)
++				common->curlun->sense_data = SS_INVALID_COMMAND;
+ 			reply = -EINVAL;
+ 		}
+ 		break;
+-- 
+1.7.2.5
 
-> diff --git a/fs/exofs/super.c b/fs/exofs/super.c
-> index e6085ec..53b55a3 100644
-> --- a/fs/exofs/super.c
-> +++ b/fs/exofs/super.c
-> @@ -390,7 +390,7 @@ static int exofs_sync_fs(struct super_block *sb, int wait)
->  	ios->length = offsetof(struct exofs_fscb, s_dev_table_oid);
->  	memset(fscb, 0, ios->length);
->  	fscb->s_nextid = cpu_to_le64(sbi->s_nextid);
-> -	fscb->s_numfiles = cpu_to_le32(sbi->s_numfiles);
-> +	fscb->s_numfiles = cpu_to_le64(sbi->s_numfiles);
->  	fscb->s_magic = cpu_to_le16(sb->s_magic);
->  	fscb->s_newfs = 0;
->  	fscb->s_version = EXOFS_FSCB_VER;
 
