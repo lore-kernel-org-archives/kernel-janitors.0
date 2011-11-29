@@ -1,15 +1,30 @@
-From: Mike Christie <michaelc@cs.wisc.edu>
-Date: Fri, 18 Nov 2011 19:28:02 +0000
-Subject: Re: [patch] [SCSI] be2iscsi: cleanup a min_t() call
-Message-Id: <4EC6B1C2.108@cs.wisc.edu>
+From: <Jayamohan.Kallickal@Emulex.Com>
+Date: Tue, 29 Nov 2011 20:55:13 +0000
+Subject: RE: [patch] [SCSI] be2iscsi: cleanup a min_t() call
+Message-Id: <50725EF61B96174EB1803401F1A2E3733CD830D13F@EXMAIL.ad.emulex.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20110926062337.GD11832@elgon.mountain>
-In-Reply-To: <20110926062337.GD11832@elgon.mountain>
+ <4EC6B1C2.108@cs.wisc.edu>
+In-Reply-To: <4EC6B1C2.108@cs.wisc.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jayamohan Kallickal <jayamohan.kallickal@emulex.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: michaelc@cs.wisc.edu, dan.carpenter@oracle.com
+Cc: JBottomley@parallels.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+Looks good.
+
+Acked-by: Jayamohan Kallickal <Jayamohan.kallickal@emulex.com>
+
+Thanks
+Jay
+
+-----Original Message-----
+From: Mike Christie [mailto:michaelc@cs.wisc.edu] 
+Sent: Friday, November 18, 2011 11:28 AM
+To: Dan Carpenter
+Cc: Kallickal, Jayamohan; James E.J. Bottomley; linux-scsi@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: Re: [patch] [SCSI] be2iscsi: cleanup a min_t() call
 
 On 09/26/2011 01:23 AM, Dan Carpenter wrote:
 > "sense_len" was declared as int type but actually it only stores a
