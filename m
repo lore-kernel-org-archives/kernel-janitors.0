@@ -1,89 +1,59 @@
-From: "Nicholas A. Bellinger" <nab@risingtidesystems.com>
-Date: Fri, 04 Nov 2011 21:56:39 +0000
-Subject: Re: [patch 3/3] ib_srpt: propagate return value from kstrtoul()
-Message-Id: <1320443799.5859.173.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Nov 2011 08:47:42 +0000
+Subject: [patch] hwmon: (pmbus/adm1275) fix memory leak on error
+Message-Id: <20111130084742.GG6268@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111104182830.GI5796@elgon.mountain>
-In-Reply-To: <20111104182830.GI5796@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, target-devel <target-devel@vger.kernel.org>, Bart Van Assche <bart.vanassche@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2011-11-04 at 21:28 +0300, Dan Carpenter wrote:
-> These days we've renamed strict_strtoul() to kstrtoul().  It has a
-> couple different error codes it could return.  Smatch complains if
-> we return -EINVAL instead of using the return value that kstrtoul()
-> gave us.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We added a bunch of new validation checks after an allocation without
+adding the necessary calls to kfree().  Really they should have gone
+before the allocation anyway.
 
-Looks fine to me, and will get this series queued up for -rc2.
+I've shifted the allocation closer to the place where it is first
+needed.
 
-Thanks Dan!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---nab
-
-> 
-> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> index f27b8da..04ccc04 100644
-> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> @@ -3704,10 +3704,10 @@ static ssize_t srpt_tpg_attrib_store_srp_max_rdma_size(
->  	unsigned long val;
->  	int ret;
->  
-> -	ret = strict_strtoul(page, 0, &val);
-> +	ret = kstrtoul(page, 0, &val);
->  	if (ret < 0) {
-> -		pr_err("strict_strtoul() failed with ret: %d\n", ret);
-> -		return -EINVAL;
-> +		pr_err("kstrtoul() failed with ret: %d\n", ret);
-> +		return ret;
->  	}
->  	if (val > MAX_SRPT_RDMA_SIZE) {
->  		pr_err("val: %lu exceeds MAX_SRPT_RDMA_SIZE: %d\n", val,
-> @@ -3744,10 +3744,10 @@ static ssize_t srpt_tpg_attrib_store_srp_max_rsp_size(
->  	unsigned long val;
->  	int ret;
->  
-> -	ret = strict_strtoul(page, 0, &val);
-> +	ret = kstrtoul(page, 0, &val);
->  	if (ret < 0) {
-> -		pr_err("strict_strtoul() failed with ret: %d\n", ret);
-> -		return -EINVAL;
-> +		pr_err("kstrtoul() failed with ret: %d\n", ret);
-> +		return ret;
->  	}
->  	if (val > MAX_SRPT_RSP_SIZE) {
->  		pr_err("val: %lu exceeds MAX_SRPT_RSP_SIZE: %d\n", val,
-> @@ -3784,10 +3784,10 @@ static ssize_t srpt_tpg_attrib_store_srp_sq_size(
->  	unsigned long val;
->  	int ret;
->  
-> -	ret = strict_strtoul(page, 0, &val);
-> +	ret = kstrtoul(page, 0, &val);
->  	if (ret < 0) {
-> -		pr_err("strict_strtoul() failed with ret: %d\n", ret);
-> -		return -EINVAL;
-> +		pr_err("kstrtoul() failed with ret: %d\n", ret);
-> +		return ret;
->  	}
->  	if (val > MAX_SRPT_SRQ_SIZE) {
->  		pr_err("val: %lu exceeds MAX_SRPT_SRQ_SIZE: %d\n", val,
-> @@ -3831,10 +3831,10 @@ static ssize_t srpt_tpg_store_enable(
->  	unsigned long tmp;
->          int ret;
->  
-> -	ret = strict_strtoul(page, 0, &tmp);
-> +	ret = kstrtoul(page, 0, &tmp);
->  	if (ret < 0) {
->  		printk(KERN_ERR "Unable to extract srpt_tpg_store_enable\n");
-> -		return -EINVAL;
-> +		return ret;
->  	}
->  
->  	if ((tmp != 0) && (tmp != 1)) {
-
-
+diff --git a/drivers/hwmon/pmbus/adm1275.c b/drivers/hwmon/pmbus/adm1275.c
+index 6349404..81c7c2e 100644
+--- a/drivers/hwmon/pmbus/adm1275.c
++++ b/drivers/hwmon/pmbus/adm1275.c
+@@ -192,10 +192,6 @@ static int adm1275_probe(struct i2c_client *client,
+ 				     | I2C_FUNC_SMBUS_BLOCK_DATA))
+ 		return -ENODEV;
+ 
+-	data = kzalloc(sizeof(struct adm1275_data), GFP_KERNEL);
+-	if (!data)
+-		return -ENOMEM;
+-
+ 	ret = i2c_smbus_read_block_data(client, PMBUS_MFR_ID, block_buffer);
+ 	if (ret < 0) {
+ 		dev_err(&client->dev, "Failed to read Manufacturer ID\n");
+@@ -226,16 +222,16 @@ static int adm1275_probe(struct i2c_client *client,
+ 			   id->name, mid->name);
+ 
+ 	config = i2c_smbus_read_byte_data(client, ADM1275_PMON_CONFIG);
+-	if (config < 0) {
+-		ret = config;
+-		goto err_mem;
+-	}
++	if (config < 0)
++		return config;
+ 
+ 	device_config = i2c_smbus_read_byte_data(client, ADM1275_DEVICE_CONFIG);
+-	if (device_config < 0) {
+-		ret = device_config;
+-		goto err_mem;
+-	}
++	if (device_config < 0)
++		return device_config;
++
++	data = kzalloc(sizeof(struct adm1275_data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
+ 
+ 	data->id = mid->driver_data;
+ 
