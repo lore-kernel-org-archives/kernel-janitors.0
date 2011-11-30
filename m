@@ -1,27 +1,32 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 09 Nov 2011 06:15:32 +0000
-Subject: Re: [PATCH 2/5] net/sunrpc: use kstrtoul, etc
-Message-Id: <alpine.DEB.2.02.1111090710000.1899@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Nov 2011 08:49:38 +0000
+Subject: [patch] brcm80211: fmac: small memory leak on error
+Message-Id: <20111130084937.GI6268@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1320586010-21931-1-git-send-email-julia@diku.dk> <1320586010-21931-3-git-send-email-julia@diku.dk> <20111108193817.GA3453@p183.telecom.by> <alpine.DEB.2.02.1111082113380.1880@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1111082113380.1880@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, kernel-janitors@vger.kernel.org, Neil Brown <neilb@suse.de>, Trond Myklebust <Trond.Myklebust@netapp.com>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Franky Lin <frankyl@broadcom.com>, Arend van Spriel <arend@broadcom.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Alwin Beukers <alwin@broadcom.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In looking through some examples, I see, e.g.:
+We should free "bus_if" here, it's a small leak but it makes the static
+checkers happy.
 
- 	if (strict_strtoul(buf, 10, &val) < 0)
-  		return -EINVAL;
- 	if (val < 1 || val > 2)
-  		return -EINVAL;
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-In this case the only valid values are 1 and 2, which are much smaller 
-than the u8 range.  Is it useful to use kstrtou8 anyway?  I see that 
-kstrtou8 returns -ERANGE not -EINVAL when the value is out of bounds.  If 
-kstrtou8 is to be used, should the subsequent if (val < 1 || val > 2) now 
-return -ERANGE to be consistent?
-
-julia
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh_sdmmc.c b/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh_sdmmc.c
+index 77f84f8..b416e27 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh_sdmmc.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh_sdmmc.c
+@@ -477,8 +477,10 @@ static int brcmf_ops_sdio_probe(struct sdio_func *func,
+ 		if (!bus_if)
+ 			return -ENOMEM;
+ 		sdiodev = kzalloc(sizeof(struct brcmf_sdio_dev), GFP_KERNEL);
+-		if (!sdiodev)
++		if (!sdiodev) {
++			kfree(bus_if);
+ 			return -ENOMEM;
++		}
+ 		sdiodev->dev = &func->card->dev;
+ 		sdiodev->func[0] = func->card->sdio_func[0];
+ 		sdiodev->func[1] = func;
