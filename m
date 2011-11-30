@@ -1,32 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Nov 2011 08:23:10 +0000
-Subject: [patch -next] intel_idle: silence a sparse warning
-Message-Id: <20111116082309.GB10264@elgon.mountain>
+Date: Wed, 30 Nov 2011 08:48:47 +0000
+Subject: [patch] [media] xc5000: unlock on error in
+Message-Id: <20111130084847.GH6268@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Eddi De Pieri <eddi@depieri.net>, "Igor M. Liplianin" <liplianin@netup.ru>, "Beholder Intl. Ltd. Dmitry Belimov" <d.belimov@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Sparse complains when you cast ints to a 64 bit pointer so I've made
-this function return a long instead of an int.  Here is the Sparse
-warning:
-
-drivers/idle/intel_idle.c: In function ‘intel_idle_cpuidle_devices_init’:
-drivers/idle/intel_idle.c:525:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+We recently added locking to this function, but we missed an error path
+which needs an unlock.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-index 38da9f8..2f38391 100644
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -197,7 +197,7 @@ static struct cpuidle_state atom_cstates[MWAIT_MAX_NUM_CSTATES] = {
- 		.enter = &intel_idle },
- };
+diff --git a/drivers/media/common/tuners/xc5000.c b/drivers/media/common/tuners/xc5000.c
+index 048f489..a3fcc59 100644
+--- a/drivers/media/common/tuners/xc5000.c
++++ b/drivers/media/common/tuners/xc5000.c
+@@ -1009,7 +1009,7 @@ static int xc_load_fw_and_init_tuner(struct dvb_frontend *fe)
+ 	if (xc5000_is_firmware_loaded(fe) != XC_RESULT_SUCCESS) {
+ 		ret = xc5000_fwupload(fe);
+ 		if (ret != XC_RESULT_SUCCESS)
+-			return ret;
++			goto out;
+ 	}
  
--static int get_driver_data(int cstate)
-+static long get_driver_data(int cstate)
- {
- 	int driver_data;
- 	switch (cstate) {
+ 	/* Start the tuner self-calibration process */
+@@ -1025,6 +1025,7 @@ static int xc_load_fw_and_init_tuner(struct dvb_frontend *fe)
+ 	/* Default to "CABLE" mode */
+ 	ret |= xc_write_reg(priv, XREG_SIGNALSOURCE, XC_RF_MODE_CABLE);
+ 
++out:
+ 	mutex_unlock(&xc5000_list_mutex);
+ 
+ 	return ret;
