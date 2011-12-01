@@ -1,67 +1,45 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 23 Dec 2011 17:39:29 +0000
-Subject: [PATCH 4/9] drivers/xen/gntalloc.c: introduce missing kfree
-Message-Id: <1324661974-17281-4-git-send-email-julia@diku.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 01 Dec 2011 11:37:59 +0000
+Subject: [patch] RDMA/uverbs: potential integer overflow
+Message-Id: <20111201113758.GA5206@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Error handling code following a kmalloc should free the allocated data.
-Out_unlock is used on both success and failure, so free vm_priv before
-jumping to that label.
+This is a static checker fix, and I'm not super familiar with this code.
 
-A simplified version of the semantic match that finds the problem is as
-follows: (http://coccinelle.lip6.fr)
+My checker complains that user_wr->num_sge + sg_ind can have an integer
+overflow and wrap.  That's is true, but I don't know the code well
+enough to say if it's a problem or not.
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-identifier f1;
-position p1,p2;
-expression *ptr != NULL;
-@@
+Can someone take a look at this?
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f1
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/xen/gntalloc.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/xen/gntalloc.c b/drivers/xen/gntalloc.c
-index e2400c8..934985d 100644
---- a/drivers/xen/gntalloc.c
-+++ b/drivers/xen/gntalloc.c
-@@ -525,6 +525,7 @@ static int gntalloc_mmap(struct file *filp, struct vm_area_struct *vma)
- 		rv = -ENOENT;
- 		pr_debug("%s: Could not find grant reference",
- 				__func__);
-+		kfree(vm_priv);
- 		goto out_unlock;
- 	}
+diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
+index 254f164..e57b6d7 100644
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -1939,7 +1939,8 @@ ssize_t ib_uverbs_post_send(struct ib_uverbs_file *file,
+ 			goto out_put;
+ 		}
  
-
+-		if (user_wr->num_sge + sg_ind > cmd.sge_count) {
++		if (user_wr->num_sge > cmd.sge_count ||
++				user_wr->num_sge + sg_ind > cmd.sge_count) {
+ 			ret = -EINVAL;
+ 			goto out_put;
+ 		}
+@@ -2085,7 +2086,8 @@ static struct ib_recv_wr *ib_uverbs_unmarshall_recv(const char __user *buf,
+ 			goto err;
+ 		}
+ 
+-		if (user_wr->num_sge + sg_ind > sge_count) {
++		if (user_wr->num_sge > sge_count ||
++				user_wr->num_sge + sg_ind > sge_count) {
+ 			ret = -EINVAL;
+ 			goto err;
+ 		}
