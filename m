@@ -1,26 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 06 Dec 2011 17:59:09 +0000
-Subject: Re: [patch] openvswitch: small potential memory leak in
-Message-Id: <20111206.125909.79679060316604834.davem@davemloft.net>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Thu, 01 Dec 2011 08:02:56 +0000
+Subject: Re: [patch v2] mtd/docg3: dereferencing an ERR_PTR() in
+Message-Id: <1322726578.2332.7.camel@koala>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111206062707.GA8433@elgon.mountain>
-	<CAEP_g=_McLiPzKMM-9PGqddsYe7q6jYkCyAJcE1MU=Q4_Fou4g@mail.gmail.com>
-In-Reply-To: <CAEP_g=_McLiPzKMM-9PGqddsYe7q6jYkCyAJcE1MU=Q4_Fou4g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+References: <20111124072117.GC14122@elgon.mountain> <87pqghygbv.fsf@free.fr>
+ <20111124103147.GF3195@mwanda> <87r50vi20u.fsf@free.fr>
+ <20111128134947.GK21128@mwanda>
+In-Reply-To: <20111128134947.GK21128@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jesse-l0M0P4e3n4LQT0dZR+AlfA@public.gmane.org
-Cc: dev-yBygre7rU0TnMu66kgdUjQ@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, David Woodhouse <dwmw2@infradead.org>
 
-From: Jesse Gross <jesse@nicira.com>
-Date: Tue, 6 Dec 2011 09:32:13 -0800
-
-> On Mon, Dec 5, 2011 at 10:27 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> We're unlikely to hit this leak, but the static checkers complain if we
->> don't take care of it.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Mon, 2011-11-28 at 16:53 +0300, Dan Carpenter wrote:
+> If doc_probe_device() returned an ERR_PTR, then we accidentally saved
+> that to docg3_floors[floor] = mtd; which gets derefenced in the error
+> handling when we call doc_release_device().
 > 
-> Acked-by: Jesse Gross <jesse@nicira.com>
+> I've reworked the error handling to take care of that and hopefully
+> make it a little simpler.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+Pushed to l2-mtd-2.6.git, thanks!
+
+Artem.
+
