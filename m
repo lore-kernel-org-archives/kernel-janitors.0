@@ -1,50 +1,31 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 27 Dec 2011 08:36:04 +0000
-Subject: Re: [PATCH 2/2] drivers/mtd/maps/lantiq-flash.c: drop iounmap for
-Message-Id: <alpine.DEB.2.02.1112270935410.1838@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Dec 2011 06:38:49 +0000
+Subject: [patch -next] x86: dubious one-bit signed bitfields
+Message-Id: <20111207063848.GA14507@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1324921081-13161-2-git-send-email-julia@diku.dk>
- <1324974236.1165.43.camel@sauron.fi.intel.com>
-In-Reply-To: <1324974236.1165.43.camel@sauron.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 27 Dec 2011, Artem Bityutskiy wrote:
+It doesn't cause any runtime problems in this case, but bitfields should
+be unsigned.  This file gets included a lot so it generates thousands of
+Sparse warnings about dubious one-bit signed bitfields.
 
-> On Mon, 2011-12-26 at 18:38 +0100, Julia Lawall wrote:
->> From: Julia Lawall <julia@diku.dk>
->>
->> Data allocated with devm_ioremap or devm_ioremap_nocache should not be
->> freed using iounmap, because doing so causes a dangling pointer, and a
->> subsequent double free.
->>
->> The semantic match that finds this problem is as follows:
->> (http://coccinelle.lip6.fr/)
->>
->> // <smpl>
->> @r@
->> expression x;
->> @@
->> (
->>  x = devm_ioremap(...)
->> |
->>  x = devm_ioremap_nocache(...)
->> )
->>
->> @@
->> expression r.x;
->> @@
->> * iounmap(x)
->> // </smpl>
->
-> Thanks Julia,
->
-> surely this semantic patch script is worth adding to scripts/coccinelle?
-> Are you going to take care of this?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-OK, I will do that.
-
-julia
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 0ecd1a9..114dca1 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -40,8 +40,8 @@ struct thread_info {
+ 						*/
+ 	__u8			supervisor_stack[0];
+ #endif
+-	int			sig_on_uaccess_error:1;
+-	int			uaccess_err:1;	/* uaccess failed */
++	unsigned int		sig_on_uaccess_error:1;
++	unsigned int		uaccess_err:1;	/* uaccess failed */
+ };
+ 
+ #define INIT_THREAD_INFO(tsk)			\
