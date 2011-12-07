@@ -1,31 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 07 Dec 2011 06:38:49 +0000
-Subject: [patch -next] x86: dubious one-bit signed bitfields
-Message-Id: <20111207063848.GA14507@elgon.mountain>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Date: Wed, 07 Dec 2011 07:39:31 +0000
+Subject: Re: [patch -next] x86: dubious one-bit signed bitfields
+Message-Id: <4EDF1833.5050107@zytor.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111207063848.GA14507@elgon.mountain>
+In-Reply-To: <20111207063848.GA14507@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-It doesn't cause any runtime problems in this case, but bitfields should
-be unsigned.  This file gets included a lot so it generates thousands of
-Sparse warnings about dubious one-bit signed bitfields.
+On 12/06/2011 10:38 PM, Dan Carpenter wrote:
+> It doesn't cause any runtime problems in this case, but bitfields should
+> be unsigned.  This file gets included a lot so it generates thousands of
+> Sparse warnings about dubious one-bit signed bitfields.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+> index 0ecd1a9..114dca1 100644
+> --- a/arch/x86/include/asm/thread_info.h
+> +++ b/arch/x86/include/asm/thread_info.h
+> @@ -40,8 +40,8 @@ struct thread_info {
+>  						*/
+>  	__u8			supervisor_stack[0];
+>  #endif
+> -	int			sig_on_uaccess_error:1;
+> -	int			uaccess_err:1;	/* uaccess failed */
+> +	unsigned int		sig_on_uaccess_error:1;
+> +	unsigned int		uaccess_err:1;	/* uaccess failed */
+>  };
+>  
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Can bitfields legally be declared "bool"?  If so it's probably the right
+thing, really...
 
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 0ecd1a9..114dca1 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -40,8 +40,8 @@ struct thread_info {
- 						*/
- 	__u8			supervisor_stack[0];
- #endif
--	int			sig_on_uaccess_error:1;
--	int			uaccess_err:1;	/* uaccess failed */
-+	unsigned int		sig_on_uaccess_error:1;
-+	unsigned int		uaccess_err:1;	/* uaccess failed */
- };
- 
- #define INIT_THREAD_INFO(tsk)			\
+	-hpa
+-- 
+H. Peter Anvin, Intel Open Source Technology Center
+I work for Intel.  I don't speak on their behalf.
+
