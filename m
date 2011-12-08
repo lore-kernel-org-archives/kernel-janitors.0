@@ -1,55 +1,47 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Thu, 15 Dec 2011 11:46:13 +0000
-Subject: Re: [patch] usb: renesas_usbhs: silence a gcc warning
-Message-Id: <20111215114612.GK19539@legolas.emea.dhcp.ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="x1F0m3RQhDZyj8sd"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Dec 2011 19:24:41 +0000
+Subject: [smatch stuff] xshm: release misc device on error
+Message-Id: <20111208192441.GB8810@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111215113137.GA4013@elgon.mountain>
-In-Reply-To: <20111215113137.GA4013@elgon.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi Sjur,
 
---x1F0m3RQhDZyj8sd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Smatch complains that we don't release the misc device on error.
 
-On Thu, Dec 15, 2011 at 02:31:37PM +0300, Dan Carpenter wrote:
-> Gcc complains about this printk:
-> drivers/usb/renesas_usbhs/mod_gadget.c:188:3: warning: format =E2=80=98%x=
-=E2=80=99
-> 	expects argument of type =E2=80=98unsigned int=E2=80=99, but argument 3 =
-has type
-> 	=E2=80=98dma_addr_t=E2=80=99 [-Wformat]
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/xshm/xshm_chr.c +1057 cfshm_probe(75)
+	warn: '&dev->misc' was not released on error
 
-applied, thanks
+  1043          /* Register the device. */
+  1044          dev->misc.parent = &xshm->pdev.dev;
+  1045          result = misc_register(&dev->misc);
+  1046  
+  1047          /* Lock in order to try to stop someone from opening the device
+  1048           * too early. The misc device has its own lock. We cannot take our
+  1049           * lock until misc_register() is finished, because in open() the
+  1050           * locks are taken in this order (misc first and then dev).
+  1051           * So anyone managing to open the device between the misc_register
+  1052           * and the mutex_lock will get a "device not found" error. Don't
+  1053           * think it can be avoided.
+  1054           */
+  1055          if (mutex_lock_interruptible(&dev->mutex)) {
+  1056                  xdev_dbg(dev, "mutex_lock_interruptible got signalled\n");
 
---=20
-balbi
+-> if result is 0 here we should release it.  Should we call
+xshmchr_put() or misc_deregister()?
 
---x1F0m3RQhDZyj8sd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  1057                  return -ERESTARTSYS;
+  1058          }
+  1059  
+  1060          if (result < 0) {
+  1061                  pr_warn("XSHMCHR: chnl_chr: error - %d, can't register misc.\n",
+  1062                                result);
+  1063                  mutex_unlock(&dev->mutex);
+  1064                  goto err_failed;
+  1065          }
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJO6d4EAAoJEIaOsuA1yqREZykQALKOYqXtbCJuGVD9zZRkaa+5
-muJBOROjLav5Q5F1yuILrx21yLrA+QopDk0qowF+PwuCH8YWyAsFdiNQ8f3Q7q5u
-+A/I3z3LSZiVKB3wHxkpTSwgS1UO8m6TZbgjVDkmalR9wKWEPzQ/GN1EAG7S6Lle
-I32AxELZgEy+ui55UfOb/ABVxPAIYIprc7W0CegakFPXEQ+1R9o7mf3qzcgIhiQH
-zHK5npTczesmTbuVNwhDZ8dy0PQOj4oDFFIxRW1nKYmwOZdtvUMJ6pOZDJj4/7Rs
-kdHMZjLxoIb6/3TroeUq9At+sZ0SMJc5mYnNHlwC1MLl6A0JOPvht8FD3rVdvgps
-BX9Pr7GJErbzvo5eUM3O2p7IAqFlGZPlyC4jPssDjhPBnO3zGE+YCpZncSOf23eK
-A61i313IwD7yKfr/qFOGQADoggwACftMc+xVbKJkoA2MxH6t+kUvtkRa2fPwf+3z
-XOAsxasrGLdgDFIzL6Vzf6gIlFPkGfBKfMS99qRfEFNN4Ko7BsntWlBeZ8lGHFq1
-6xBJ8iCRTnt32QfEiq/yHox9KaiIcaTLr1cN5ykVOa2/15Gn19BGZQJV7Uy2v5jX
-sbDf2njyEeD4Zh+hNuoq+N7jgn4wF3CaEXHBFX3lQ5+Xdbo0DOc77XfwnJk5bJq+
-ppRB2ycOj0lWRamLC8DI
-=Qcv3
------END PGP SIGNATURE-----
-
---x1F0m3RQhDZyj8sd--
+regards,
+dan carpenter
