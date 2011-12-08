@@ -1,39 +1,37 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Thu, 08 Dec 2011 08:16:05 +0000
-Subject: Re: [patch] mac80211: unlock on error path in ieee80211_ibss_join()
-Message-Id: <1323332165.3332.0.camel@jlt3.sipsolutions.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Dec 2011 19:24:02 +0000
+Subject: [patch -next] xshm: calling unlock improperly in xshmchr_chrpoll()
+Message-Id: <20111208192402.GA8810@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111208064903.GA16735@elgon.mountain>
-In-Reply-To: <20111208064903.GA16735@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexander Simon <an.alexsimon@googlemail.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sjur =?utf-8?B?QnLvv71uZGVsYW5k?= <sjur.brandeland@stericsson.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2011-12-08 at 09:49 +0300, Dan Carpenter wrote:
-> We recently introduced a new return here but it needs an unlock first.
+We got interrupted before we could take the lock here, and so we
+shouldn't call unlock.
 
-Thanks Dan! Bad Alex :-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/net/mac80211/ibss.c b/net/mac80211/ibss.c
-> index 3f830ac..0fc9752 100644
-> --- a/net/mac80211/ibss.c
-> +++ b/net/mac80211/ibss.c
-> @@ -993,8 +993,10 @@ int ieee80211_ibss_join(struct ieee80211_sub_if_data *sdata,
->  	if (params->channel_fixed) {
->  		sdata->local->oper_channel = params->channel;
->  		if (!ieee80211_set_channel_type(sdata->local, sdata,
-> -					       params->channel_type))
-> +					       params->channel_type)) {
-> +			mutex_unlock(&sdata->u.ibss.mtx);
->  			return -EINVAL;
-> +		}
->  	}
->  
->  	if (params->ie) {
-> 
-
-
+diff --git a/drivers/xshm/xshm_chr.c b/drivers/xshm/xshm_chr.c
+index 8593367..4df1287 100644
+--- a/drivers/xshm/xshm_chr.c
++++ b/drivers/xshm/xshm_chr.c
+@@ -620,7 +620,7 @@ static unsigned int xshmchr_chrpoll(struct file *filp, poll_table *waittab)
+ 	if (mutex_lock_interruptible(&dev->mutex)) {
+ 		xdev_dbg(dev, "mutex_lock_interruptible got signalled\n");
+ 		mask |= POLLERR;
+-		goto out;
++		goto out_unlocked;
+ 	}
+ 	xshmchr_get(dev);
+ 
+@@ -644,6 +644,7 @@ static unsigned int xshmchr_chrpoll(struct file *filp, poll_table *waittab)
+ 
+ out:
+ 	mutex_unlock(&dev->mutex);
++out_unlocked:
+ 	xdev_devl(dev, "poll return mask=0x%04x\n", mask);
+ 	xshmchr_put(dev);
+ 	return mask;
