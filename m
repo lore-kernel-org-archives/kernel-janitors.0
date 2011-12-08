@@ -1,23 +1,18 @@
-From: Robin Holt <holt@sgi.com>
-Date: Fri, 16 Dec 2011 11:55:00 +0000
-Subject: Re: [patch] sgi-xp: nested calls to spin_lock_irqsave()
-Message-Id: <20111216115500.GD2547@sgi.com>
+From: rajaneesh acharya <rajaneeshacharya@indiatimes.com>
+Date: Thu, 08 Dec 2011 04:35:38 +0000
+Subject: Is there concept of EOL and LTS in linux kernel
+Message-Id: <1238080865.4631101323318218585.JavaMail.root@tilmb16.indiatimes.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111215064805.GA2776@elgon.mountain>
-In-Reply-To: <20111215064805.GA2776@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Robin Holt <holt@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Dec 15, 2011 at 09:48:05AM +0300, Dan Carpenter wrote:
-> The code here has a nested spin_lock_irqsave().  It's not needed since
-> IRQs are already disabled and it causes a problem because it means that
-> IRQs won't be enabled again at the end.  The second call to
-> spin_lock_irqsave() will overwrite the value of irq_flags and we can't
-> restore the proper settings.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hello All...
 
-Acked-by: Robin Holt <holt@sgi.com>
+  I was referring to an article regaring few of linux distributions, where they were referring to Long Term Support or End of Life of a particular distribution..
+
+  With regards to Linux Kernel, is the same concept (of EOL/LTS) applicable? With Linux kernel being at version 3.1.4, does this mean 2.6.* would meet end of life soon or would be considered for LTS?
+
+Regards
+Rajaneesh
