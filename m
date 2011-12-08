@@ -1,22 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 23 Dec 2011 21:52:32 +0000
-Subject: Re: [patch] usb: pegasus: cleanup a couple conditions
-Message-Id: <20111223.165232.1727326086882956386.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Dec 2011 06:49:38 +0000
+Subject: [patch] sock_diag: off by one checks
+Message-Id: <20111208064938.GB16735@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111223104436.GA8592@elgon.mountain>
-In-Reply-To: <20111223104436.GA8592@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: petkan@users.sourceforge.net, gregkh@suse.de, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Pavel Emelyanov <xemul@parallels.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Dec 2011 13:44:36 +0300
+These tests are off by one because sock_diag_handlers[] only has AF_MAX
+elements.
 
-> We recently made loopback a bool type instead of an int, so the bitwise
-> AND is redundent.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/net/core/sock_diag.c b/net/core/sock_diag.c
+index fbaf01c..9c27bcd 100644
+--- a/net/core/sock_diag.c
++++ b/net/core/sock_diag.c
+@@ -32,7 +32,7 @@ int sock_diag_register(struct sock_diag_handler *hndl)
+ {
+ 	int err = 0;
+ 
+-	if (hndl->family > AF_MAX)
++	if (hndl->family >= AF_MAX)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&sock_diag_table_mutex);
+@@ -50,7 +50,7 @@ void sock_diag_unregister(struct sock_diag_handler *hnld)
+ {
+ 	int family = hnld->family;
+ 
+-	if (family > AF_MAX)
++	if (family >= AF_MAX)
+ 		return;
+ 
+ 	mutex_lock(&sock_diag_table_mutex);
