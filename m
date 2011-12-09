@@ -1,114 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 29 Dec 2011 16:51:26 +0000
-Subject: [PATCH 4/10] sound/soc/au1x/i2sc.c: use devm_ functions
-Message-Id: <1325177489-13815-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 Dec 2011 06:35:39 +0000
+Subject: [patch] nfc: signedness bug in __nci_request()
+Message-Id: <20111209063539.GA20287@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
+Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Ilan Elias <ilane@ti.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia.lawall@lip6.fr>
+wait_for_completion_interruptible_timeout() returns -ERESTARTSYS if
+interrupted so completion_rc needs to be signed.  The current code
+probably returns -ETIMEDOUT if we hit this situation, but after this
+patch is applied it will return -ERESTARTSYS.
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
-devm_ioremap for data that is allocated in the probe function of a platform
-device and is only freed in the remove function.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
-
----
- sound/soc/au1x/i2sc.c |   45 +++++++++++++--------------------------------
- 1 file changed, 13 insertions(+), 32 deletions(-)
-
-diff --git a/sound/soc/au1x/i2sc.c b/sound/soc/au1x/i2sc.c
-index cb53ad8..d4b9e36 100644
---- a/sound/soc/au1x/i2sc.c
-+++ b/sound/soc/au1x/i2sc.c
-@@ -227,69 +227,50 @@ static struct snd_soc_dai_driver au1xi2s_dai_driver = {
- 
- static int __devinit au1xi2s_drvprobe(struct platform_device *pdev)
+diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+index 37de28e..c55f233 100644
+--- a/net/nfc/nci/core.c
++++ b/net/nfc/nci/core.c
+@@ -71,7 +71,7 @@ static int __nci_request(struct nci_dev *ndev,
+ 	__u32 timeout)
  {
--	int ret;
- 	struct resource *iores, *dmares;
- 	struct au1xpsc_audio_data *ctx;
+ 	int rc = 0;
+-	unsigned long completion_rc;
++	long completion_rc;
  
--	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
+ 	ndev->req_status = NCI_REQ_PEND;
  
- 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!iores) {
--		ret = -ENODEV;
--		goto out0;
--	}
-+	if (!iores)
-+		return -ENODEV;
- 
--	ret = -EBUSY;
--	if (!request_mem_region(iores->start, resource_size(iores),
--				pdev->name))
--		goto out0;
-+	if (!devm_request_mem_region(&pdev->dev, iores->start,
-+				     resource_size(iores),
-+				     pdev->name))
-+		return -EBUSY;
- 
--	ctx->mmio = ioremap_nocache(iores->start, resource_size(iores));
-+	ctx->mmio = devm_ioremap_nocache(&pdev->dev, iores->start,
-+					 resource_size(iores));
- 	if (!ctx->mmio)
--		goto out1;
-+		return -EBUSY;
- 
- 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
- 	if (!dmares)
--		goto out2;
-+		return -EBUSY;
- 	ctx->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = dmares->start;
- 
- 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 1);
- 	if (!dmares)
--		goto out2;
-+		return -EBUSY;
- 	ctx->dmaids[SNDRV_PCM_STREAM_CAPTURE] = dmares->start;
- 
- 	platform_set_drvdata(pdev, ctx);
- 
--	ret = snd_soc_register_dai(&pdev->dev, &au1xi2s_dai_driver);
--	if (ret)
--		goto out2;
--
--	return 0;
--
--out2:
--	iounmap(ctx->mmio);
--out1:
--	release_mem_region(iores->start, resource_size(iores));
--out0:
--	kfree(ctx);
--	return ret;
-+	return snd_soc_register_dai(&pdev->dev, &au1xi2s_dai_driver);
- }
- 
- static int __devexit au1xi2s_drvremove(struct platform_device *pdev)
- {
- 	struct au1xpsc_audio_data *ctx = platform_get_drvdata(pdev);
--	struct resource *r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
- 	snd_soc_unregister_dai(&pdev->dev);
- 
- 	WR(ctx, I2S_ENABLE, EN_D);	/* clock off, disable */
- 
--	iounmap(ctx->mmio);
--	release_mem_region(r->start, resource_size(r));
--	kfree(ctx);
--
- 	return 0;
- }
- 
-
