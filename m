@@ -1,47 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 08 Dec 2011 19:24:41 +0000
-Subject: [smatch stuff] xshm: release misc device on error
-Message-Id: <20111208192441.GB8810@elgon.mountain>
+From: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
+Date: Fri, 09 Dec 2011 12:39:46 +0000
+Subject: RE: [smatch stuff] xshm: release misc device on error
+Message-Id: <81C3A93C17462B4BBD7E272753C105791FB0D6B443@EXDCVYMBSTM005.EQ1STM.local>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111208192441.GB8810@elgon.mountain>
+In-Reply-To: <20111208192441.GB8810@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Sjur,
+Hi Dan,
 
-Smatch complains that we don't release the misc device on error.
+>Smatch complains that we don't release the misc device on error.
+>  1055          if (mutex_lock_interruptible(&dev->mutex)) {
+>  1056                  xdev_dbg(dev, "mutex_lock_interruptible got signalled\n");
+>
+>-> if result is 0 here we should release it.  Should we call
+>xshmchr_put() or misc_deregister()?
+>
+>  1057                  return -ERESTARTSYS;
+>  1058          }
 
-drivers/xshm/xshm_chr.c +1057 cfshm_probe(75)
-	warn: '&dev->misc' was not released on error
+Thank you for spotting this!
 
-  1043          /* Register the device. */
-  1044          dev->misc.parent = &xshm->pdev.dev;
-  1045          result = misc_register(&dev->misc);
-  1046  
-  1047          /* Lock in order to try to stop someone from opening the device
-  1048           * too early. The misc device has its own lock. We cannot take our
-  1049           * lock until misc_register() is finished, because in open() the
-  1050           * locks are taken in this order (misc first and then dev).
-  1051           * So anyone managing to open the device between the misc_register
-  1052           * and the mutex_lock will get a "device not found" error. Don't
-  1053           * think it can be avoided.
-  1054           */
-  1055          if (mutex_lock_interruptible(&dev->mutex)) {
-  1056                  xdev_dbg(dev, "mutex_lock_interruptible got signalled\n");
+If we take the mutex before registering the misc device it's
+impossible for anyone else to take the mutex. 
+So I think I will simply call mutex_lock() before misc_register().
 
--> if result is 0 here we should release it.  Should we call
-xshmchr_put() or misc_deregister()?
+I will fix this in my next patch-set,
 
-  1057                  return -ERESTARTSYS;
-  1058          }
-  1059  
-  1060          if (result < 0) {
-  1061                  pr_warn("XSHMCHR: chnl_chr: error - %d, can't register misc.\n",
-  1062                                result);
-  1063                  mutex_unlock(&dev->mutex);
-  1064                  goto err_failed;
-  1065          }
+Thanks,
+Sjur
 
-regards,
-dan carpenter
