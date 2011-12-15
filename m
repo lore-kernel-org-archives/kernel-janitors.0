@@ -1,29 +1,46 @@
-From: Oliver Neukum <oliver@neukum.org>
-Date: Tue, 27 Dec 2011 21:56:39 +0000
-Subject: Re: [PATCH] drivers/usb/class/cdc-acm.c: clear dangling pointer
-Message-Id: <201112272256.39617.oliver@neukum.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Dec 2011 06:34:45 +0000
+Subject: [patch -longterm] V4L/DVB: v4l2-ioctl: integer overflow in
+Message-Id: <20111215063445.GA2424@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1324645375-3535-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1324645375-3535-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: Oliver Neukum <oliver@neukum.name>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, stable@vger.kernel.org
 
-Am Freitag, 23. Dezember 2011, 14:02:55 schrieb Julia Lawall:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> On some failures, the country_code field of an acm structure is freed
-> without freeing the acm structure itself.  Elsewhere, operations including
-> memcpy and kfree are performed on the country_code field.  The patch sets
-> the country_code field to NULL when it is freed, and likewise sets the
-> country_code_size field to 0.
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-Acked-by: Oliver NEukum <oneukum@suse.de>
+On a 32bit system the multiplication here could overflow.  p->count is
+used in some of the V4L drivers.
 
-This is in principle oopsable and should go into stable.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a patch against the 2.6.32-longterm kernel.  In the stock
+kernel, this code was totally rewritten and fixed in 2010 by d14e6d76ebf
+"[media] v4l: Add multi-planar ioctl handling code".
 
-	Regards
-		Oliver
+Hopefully, someone can Ack this and we merge it into the stable tree.
+
+diff --git a/drivers/media/video/v4l2-ioctl.c b/drivers/media/video/v4l2-ioctl.c
+index 265bfb5..7196303 100644
+--- a/drivers/media/video/v4l2-ioctl.c
++++ b/drivers/media/video/v4l2-ioctl.c
+@@ -414,6 +414,9 @@ video_usercopy(struct file *file, unsigned int cmd, unsigned long arg,
+ 		p->error_idx = p->count;
+ 		user_ptr = (void __user *)p->controls;
+ 		if (p->count) {
++			err = -EINVAL;
++			if (p->count > ULONG_MAX / sizeof(struct v4l2_ext_control))
++				goto out_ext_ctrl;
+ 			ctrls_size = sizeof(struct v4l2_ext_control) * p->count;
+ 			/* Note: v4l2_ext_controls fits in sbuf[] so mbuf is still NULL. */
+ 			mbuf = kmalloc(ctrls_size, GFP_KERNEL);
+@@ -1912,6 +1915,9 @@ long video_ioctl2(struct file *file,
+ 		p->error_idx = p->count;
+ 		user_ptr = (void __user *)p->controls;
+ 		if (p->count) {
++			err = -EINVAL;
++			if (p->count > ULONG_MAX / sizeof(struct v4l2_ext_control))
++				goto out_ext_ctrl;
+ 			ctrls_size = sizeof(struct v4l2_ext_control) * p->count;
+ 			/* Note: v4l2_ext_controls fits in sbuf[] so mbuf is still NULL. */
+ 			mbuf = kmalloc(ctrls_size, GFP_KERNEL);
