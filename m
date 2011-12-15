@@ -1,69 +1,31 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 23 Dec 2011 17:39:28 +0000
-Subject: [PATCH 3/9] drivers/usb/dwc3/dwc3-pci.c: introduce missing kfree
-Message-Id: <1324661974-17281-3-git-send-email-julia@diku.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Dec 2011 11:23:32 +0000
+Subject: [patch] brcm80211: smac: precendence bug in wlc_phy_attach()
+Message-Id: <20111215112332.GA3906@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brett Rudley <brudley@broadcom.com>
+Cc: Henry Ptasinski <henryp@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Glue needs to be freed on exiting the function in an error case.
-Furthermore, pci, which is the first argument to the probe function should
-not be freed before leaveing the function, as it is reused at the call
-site.  So the free of pci is changed to free glue instead.
+Negate has higher precendence than compare and since neither zero nor
+one are equal to four or eight the original condition is always false.
 
-A simplified version of the semantic match that finds the problem is as
-follows: (http://coccinelle.lip6.fr)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-identifier f1;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f1
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/usb/dwc3/dwc3-pci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-index cd1429f..64e1f7c 100644
---- a/drivers/usb/dwc3/dwc3-pci.c
-+++ b/drivers/usb/dwc3/dwc3-pci.c
-@@ -134,7 +134,7 @@ err2:
- 	pci_disable_device(pci);
+diff --git a/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c b/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
+index 5b57caa..264f8c4 100644
+--- a/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
++++ b/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
+@@ -482,8 +482,8 @@ wlc_phy_attach(struct shared_phy *sh, struct bcma_device *d11core,
+ 	pi->pubpi.phy_corenum = PHY_CORE_NUM_2;
+ 	pi->pubpi.ana_rev = (phyversion & PV_AV_MASK) >> PV_AV_SHIFT;
  
- err1:
--	kfree(pci);
-+	kfree(glue);
+-	if (!pi->pubpi.phy_type = PHY_TYPE_N &&
+-	    !pi->pubpi.phy_type = PHY_TYPE_LCN)
++	if (pi->pubpi.phy_type != PHY_TYPE_N &&
++	    pi->pubpi.phy_type != PHY_TYPE_LCN)
+ 		goto err;
  
- err0:
- 	return ret;
-
+ 	if (bandtype = BRCM_BAND_5G) {
