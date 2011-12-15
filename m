@@ -1,69 +1,24 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 23 Dec 2011 17:39:32 +0000
-Subject: [PATCH 7/9] drivers/media/video/davinci/vpbe.c: introduce missing kfree
-Message-Id: <1324661974-17281-7-git-send-email-julia@diku.dk>
+From: "Arend van Spriel" <arend@broadcom.com>
+Date: Thu, 15 Dec 2011 11:49:52 +0000
+Subject: Re: [patch] brcm80211: smac: precendence bug in
+Message-Id: <4EE9DEE0.9050703@broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111215112332.GA3906@elgon.mountain>
+In-Reply-To: <20111215112332.GA3906@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Brett Rudley <brudley@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-vpbe_dev needs to be freed before leaving the function in an error case.
+On 12/15/2011 12:23 PM, Dan Carpenter wrote:
+> Negate has higher precendence than compare and since neither zero nor
+> one are equal to four or eight the original condition is always false.
+> 
 
-A simplified version of the semantic match that finds the problem is as
-follows: (http://coccinelle.lip6.fr)
+Acked-by: Arend van Spriel <arend@broadcom.com>
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-identifier f1;
-position p1,p2;
-expression *ptr != NULL;
-@@
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f1
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/media/video/davinci/vpbe.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/video/davinci/vpbe.c b/drivers/media/video/davinci/vpbe.c
-index d773d30..99658ba 100644
---- a/drivers/media/video/davinci/vpbe.c
-+++ b/drivers/media/video/davinci/vpbe.c
-@@ -811,8 +811,10 @@ static __devinit int vpbe_probe(struct platform_device *pdev)
- 
- 	if (cfg->outputs->num_modes > 0)
- 		vpbe_dev->current_timings = vpbe_dev->cfg->outputs[0].modes[0];
--	else
-+	else {
-+		kfree(vpbe_dev);
- 		return -ENODEV;
-+	}
- 
- 	/* set the driver data in platform device */
- 	platform_set_drvdata(pdev, vpbe_dev);
+Gr. AvS
 
