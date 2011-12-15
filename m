@@ -1,100 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 27 Dec 2011 17:28:51 +0000
-Subject: [PATCH 2/2] scripts/coccinelle: semantic patches related to devm_ functions
-Message-Id: <1325006931-608-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Dec 2011 11:31:37 +0000
+Subject: [patch] usb: renesas_usbhs: silence a gcc warning
+Message-Id: <20111215113137.GA4013@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1325003407-28033-2-git-send-email-julia.lawall@lip6.fr>
-In-Reply-To: <1325003407-28033-2-git-send-email-julia.lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org, mmarek@suse.cz
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-devm_ functions allocate memory that is to remain allocated until the
-device is detached.  This patch checks for freeing of such memory using
-standard memory freeing functions.
+Gcc complains about this printk:
+drivers/usb/renesas_usbhs/mod_gadget.c:188:3: warning: format ‘%x’
+	expects argument of type ‘unsigned int’, but argument 3 has type
+	‘dma_addr_t’ [-Wformat]
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
-resend to fix email address
-
-diff --git a/scripts/coccinelle/free/devm_free.cocci b/scripts/coccinelle/free/devm_free.cocci
-new file mode 100644
-index 0000000..c0cd3e2
---- /dev/null
-+++ b/scripts/coccinelle/free/devm_free.cocci
-@@ -0,0 +1,71 @@
-+/// Find uses of standard freeing functons on values allocated using devm_
-+/// functions.  Values allocated using the devm_functions are freed when
-+/// the device is detached, and thus the use of the standard freeing
-+/// function would cause a double free.
-+/// See Documentation/driver-model/devres.txt for more information.
-+///
-+/// A difficulty of detecting this problem is that the standard freeing
-+/// function might be called from a different function than the one
-+/// containing the allocation function.  It is thus necessary to make the
-+/// connection between the allocation function and the freeing function.
-+/// Here this is done using the specific argument text, which is prone to
-+/// false positives.  There is no rule for the request_region and
-+/// request_mem_region variants because this heuristic seems to be a bit
-+/// less reliable in these cases.
-+///
-+// Confidence: Moderate
-+// Copyright: (C) 2011 Julia Lawall, INRIA/LIP6.  GPLv2.
-+// Copyright: (C) 2011 Gilles Muller, INRIA/LiP6.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Comments:
-+// Options: -no_includes -include_headers
-+
-+virtual org
-+virtual report
-+virtual context
-+
-+@r depends on context || org || report@
-+expression x;
-+@@
-+
-+(
-+ x = devm_kzalloc(...)
-+|
-+ x = devm_request_irq(...)
-+|
-+ x = devm_ioremap(...)
-+|
-+ x = devm_ioremap_nocache(...)
-+|
-+ x = devm_ioport_map(...)
-+)
-+
-+@pb@
-+expression r.x;
-+position p;
-+@@
-+
-+(
-+* kfree@p(x)
-+|
-+* free_irq@p(x)
-+|
-+* iounmap@p(x)
-+|
-+* ioport_unmap@p(x)
-+)
-+
-+@script:python depends on org@
-+p << pb.p;
-+@@
-+
-+msg="WARNING: invalid free of devm_ allocated data"
-+coccilib.org.print_todo(p[0], msg)
-+
-+@script:python depends on report@
-+p << pb.p;
-+@@
-+
-+msg="WARNING: invalid free of devm_ allocated data"
-+coccilib.report.print_report(p[0], msg)
-+
-
+diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
+index db2a1c6..528691d5f 100644
+--- a/drivers/usb/renesas_usbhs/mod_gadget.c
++++ b/drivers/usb/renesas_usbhs/mod_gadget.c
+@@ -185,7 +185,7 @@ static int usbhsg_dma_map(struct device *dev,
+ 	}
+ 
+ 	if (dma_mapping_error(dev, pkt->dma)) {
+-		dev_err(dev, "dma mapping error %x\n", pkt->dma);
++		dev_err(dev, "dma mapping error %llx\n", (u64)pkt->dma);
+ 		return -EIO;
+ 	}
+ 
