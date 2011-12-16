@@ -1,57 +1,41 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 26 Dec 2011 17:38:00 +0000
-Subject: [PATCH 1/2] drivers/watchdog/lantiq_wdt.c: drop iounmap for devm_ allocated data
-Message-Id: <1324921081-13161-1-git-send-email-julia@diku.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Dec 2011 12:48:33 +0000
+Subject: re: driver-core: implement 'sysdev' functionality for regular
+Message-Id: <20111216124833.GA9100@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-Data allocated with devm_ioremap or devm_ioremap_nocache should not be
-freed using iounmap, because doing so causes a dangling pointer, and a
-subsequent double free.
+Hello Kay Sievers,
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+This is a semi-automatic email about new static checker warnings.
 
-// <smpl>
-@r@
-expression x;
-@@
-(
- x = devm_ioremap(...)
-|
- x = devm_ioremap_nocache(...)
-)
+The patch ca22e56debc5: "driver-core: implement 'sysdev' 
+functionality for regular devices and buses" from Dec 14, 2011, leads 
+to the following Smatch complaint:
 
-@@
-expression r.x;
-@@
-* iounmap(x)
-// </smpl>
+drivers/base/bus.c +1200 subsys_interface_unregister()
+	 warn: variable dereferenced before check 'sif' (see line 1196)
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+drivers/base/bus.c
+  1195	{
+  1196		struct bus_type *subsys = sif->subsys;
+                                          ^^^^^^^^^^^
+New dereference.
 
----
- drivers/watchdog/lantiq_wdt.c |    3 ---
- 1 file changed, 3 deletions(-)
+  1197		struct subsys_dev_iter iter;
+  1198		struct device *dev;
+  1199	
+  1200		if (!sif)
+                    ^^^^
+New check.
 
-diff --git a/drivers/watchdog/lantiq_wdt.c b/drivers/watchdog/lantiq_wdt.c
-index 102aed0..d3a63be 100644
---- a/drivers/watchdog/lantiq_wdt.c
-+++ b/drivers/watchdog/lantiq_wdt.c
-@@ -222,9 +222,6 @@ ltq_wdt_remove(struct platform_device *pdev)
- {
- 	misc_deregister(&ltq_wdt_miscdev);
- 
--	if (ltq_wdt_membase)
--		iounmap(ltq_wdt_membase);
--
- 	return 0;
- }
- 
+  1201			return;
+  1202	
+
+regards,
+dan carpenter
 
