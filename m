@@ -1,30 +1,47 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Sun, 18 Dec 2011 20:43:35 +0000
-Subject: Re: [patch 2/2] NFC: use kfree_skb() for sk_buffs
-Message-Id: <20111218204335.GR11800@sortiz-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Dec 2011 10:22:42 +0000
+Subject: [patch] wimax/i2400m: remove an unused variable
+Message-Id: <20111216102242.GC4287@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111216202600.GB18570@elgon.mountain>
-In-Reply-To: <20111216202600.GB18570@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+Cc: linux-wimax@intel.com, wimax@linuxwimax.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+"result" isn't used.  We ignore errors here because there is not much we
+can do about them.
 
-On Fri, Dec 16, 2011 at 11:26:00PM +0300, Dan Carpenter wrote:
-> This is a struct sk_buff pointer and it should be freed with kfree_skb()
-> instead of kfree().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Samuel Ortiz <sameo@linux.intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
-
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+diff --git a/drivers/net/wimax/i2400m/usb-tx.c b/drivers/net/wimax/i2400m/usb-tx.c
+index ac357ac..99ef81b 100644
+--- a/drivers/net/wimax/i2400m/usb-tx.c
++++ b/drivers/net/wimax/i2400m/usb-tx.c
+@@ -177,7 +177,6 @@ retry:
+ static
+ int i2400mu_txd(void *_i2400mu)
+ {
+-	int result = 0;
+ 	struct i2400mu *i2400mu = _i2400mu;
+ 	struct i2400m *i2400m = &i2400mu->i2400m;
+ 	struct device *dev = &i2400mu->usb_iface->dev;
+@@ -208,16 +207,14 @@ int i2400mu_txd(void *_i2400mu)
+ 		/* Yeah, we ignore errors ... not much we can do */
+ 		i2400mu_tx(i2400mu, tx_msg, tx_msg_size);
+ 		i2400m_tx_msg_sent(i2400m);	/* ack it, advance the FIFO */
+-		if (result < 0)
+-			break;
+ 	}
+ 
+ 	spin_lock_irqsave(&i2400m->tx_lock, flags);
+ 	i2400mu->tx_kthread = NULL;
+ 	spin_unlock_irqrestore(&i2400m->tx_lock, flags);
+ 
+-	d_fnend(4, dev, "(i2400mu %p) = %d\n", i2400mu, result);
+-	return result;
++	d_fnend(4, dev, "(i2400mu %p)\n", i2400mu);
++	return 0;
+ }
+ 
+ 
