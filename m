@@ -1,39 +1,33 @@
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Date: Thu, 01 Dec 2011 20:21:31 +0000
-Subject: Re: [PATCH] lttng: cleanup one-bit signed bitfields
-Message-Id: <20111201202131.GC26359@Krystal>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Dec 2011 20:25:29 +0000
+Subject: [patch 1/2] NFC: double unlock in nfc_llcp_recv_connect()
+Message-Id: <20111216202529.GA18570@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111201143118.GB18951@Krystal>
-In-Reply-To: <20111201143118.GB18951@Krystal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
+Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-* Greg KH (greg@kroah.com) wrote:
-> On Thu, Dec 01, 2011 at 09:31:18AM -0500, Mathieu Desnoyers wrote:
-> > commit 93db362daaaef88fed672256fa2948cf0efc11fb
-> > Author: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Date:   Thu Dec 1 09:25:40 2011 -0500
-> > 
-> >     lttng: cleanup one-bit signed bitfields
-> 
-> Ick, I can edit this up, but please, make it in a format that I can
-> apply it in (i.e. git send-mail output).
+We unlock inside the if block on the other side of this if else
+statement.  It could result in calling mutex_unlock() twice.
 
-OK, will do next time, sorry,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks!
-
-Mathieu
-
-> 
-> thanks,
-> 
-> greg k-h
-
--- 
-Mathieu Desnoyers
-Operating System Efficiency R&D Consultant
-EfficiOS Inc.
-http://www.efficios.com
+diff --git a/net/nfc/llcp/llcp.c b/net/nfc/llcp/llcp.c
+index 67756b2..f99d6b4 100644
+--- a/net/nfc/llcp/llcp.c
++++ b/net/nfc/llcp/llcp.c
+@@ -554,11 +554,9 @@ static void nfc_llcp_recv_connect(struct nfc_llcp_local *local,
+ 				goto enqueue;
+ 			}
+ 		}
+-
++		mutex_unlock(&local->socket_lock);
+ 	}
+ 
+-	mutex_unlock(&local->socket_lock);
+-
+ 	reason = LLCP_DM_NOBOUND;
+ 	goto fail;
+ 
