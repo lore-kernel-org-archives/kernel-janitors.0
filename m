@@ -1,45 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 01 Dec 2011 11:37:59 +0000
-Subject: [patch] RDMA/uverbs: potential integer overflow
-Message-Id: <20111201113758.GA5206@elgon.mountain>
+Date: Fri, 16 Dec 2011 10:21:37 +0000
+Subject: [patch 2/2] [SCSI] pmcraid: cpu_to_le32() => cpu_to_le64()
+Message-Id: <20111216102137.GB4287@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anil Ravindranath <anil_ravindranath@pmc-sierra.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is a static checker fix, and I'm not super familiar with this code.
-
-My checker complains that user_wr->num_sge + sg_ind can have an integer
-overflow and wrap.  That's is true, but I don't know the code well
-enough to say if it's a problem or not.
-
-Can someone take a look at this?
+The cpu_to_le32() truncates the address to 32 bits.  All the other
+places that set .address use cpu_to_le64().
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+What about if dma_addr_t is 32 bits on a big endian system?  Can that
+happen?
 
-diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
-index 254f164..e57b6d7 100644
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -1939,7 +1939,8 @@ ssize_t ib_uverbs_post_send(struct ib_uverbs_file *file,
- 			goto out_put;
- 		}
+diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+index d6bc4e6..8a239ea 100644
+--- a/drivers/scsi/pmcraid.c
++++ b/drivers/scsi/pmcraid.c
+@@ -1242,7 +1242,7 @@ static struct pmcraid_cmd *pmcraid_init_hcam
  
--		if (user_wr->num_sge + sg_ind > cmd.sge_count) {
-+		if (user_wr->num_sge > cmd.sge_count ||
-+				user_wr->num_sge + sg_ind > cmd.sge_count) {
- 			ret = -EINVAL;
- 			goto out_put;
- 		}
-@@ -2085,7 +2086,8 @@ static struct ib_recv_wr *ib_uverbs_unmarshall_recv(const char __user *buf,
- 			goto err;
- 		}
+ 	ioadl[0].flags |= IOADL_FLAGS_READ_LAST;
+ 	ioadl[0].data_len = cpu_to_le32(rcb_size);
+-	ioadl[0].address = cpu_to_le32(dma);
++	ioadl[0].address = cpu_to_le64(dma);
  
--		if (user_wr->num_sge + sg_ind > sge_count) {
-+		if (user_wr->num_sge > sge_count ||
-+				user_wr->num_sge + sg_ind > sge_count) {
- 			ret = -EINVAL;
- 			goto err;
- 		}
+ 	cmd->cmd_done = cmd_done;
+ 	return cmd;
