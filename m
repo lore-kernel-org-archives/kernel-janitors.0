@@ -1,29 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Dec 2011 20:26:00 +0000
-Subject: [patch 2/2] NFC: use kfree_skb() for sk_buffs
-Message-Id: <20111216202600.GB18570@elgon.mountain>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Sun, 18 Dec 2011 20:43:35 +0000
+Subject: Re: [patch 2/2] NFC: use kfree_skb() for sk_buffs
+Message-Id: <20111218204335.GR11800@sortiz-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111216202600.GB18570@elgon.mountain>
+In-Reply-To: <20111216202600.GB18570@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
-Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is a struct sk_buff pointer and it should be freed with kfree_skb()
-instead of kfree().
+Hi Dan,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, Dec 16, 2011 at 11:26:00PM +0300, Dan Carpenter wrote:
+> This is a struct sk_buff pointer and it should be freed with kfree_skb()
+> instead of kfree().
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Samuel Ortiz <sameo@linux.intel.com>
 
-diff --git a/net/nfc/llcp/llcp.c b/net/nfc/llcp/llcp.c
-index f99d6b4..1d32680 100644
---- a/net/nfc/llcp/llcp.c
-+++ b/net/nfc/llcp/llcp.c
-@@ -954,7 +954,7 @@ void nfc_llcp_unregister_device(struct nfc_dev *dev)
- 	skb_queue_purge(&local->tx_queue);
- 	destroy_workqueue(local->tx_wq);
- 	destroy_workqueue(local->rx_wq);
--	kfree(local->rx_pending);
-+	kfree_skb(local->rx_pending);
- 	kfree(local);
- }
- 
+Thanks.
+
+Cheers,
+Samuel.
+
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
