@@ -1,50 +1,65 @@
-From: David Airlie <airlied@redhat.com>
-Date: Thu, 08 Dec 2011 16:58:37 +0000
-Subject: Re: [patch] drm/ttm: fix condition (and vs or)
-Message-Id: <12fafb70-a5c5-4a5e-b543-78d06c4cb33d@zmail16.collab.prod.int.phx2.redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Dec 2011 06:29:07 +0000
+Subject: [patch 1/2] [media] Staging: dt3155v4l: update to newer API
+Message-Id: <20111222062907.GA19975@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111208165334.GB21823@phenom.dumpdata.com>
-In-Reply-To: <20111208165334.GB21823@phenom.dumpdata.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, H Hartley Sweeten <hsweeten@visionengravers.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+I changed the function definitions for dt3155_queue_setup() to match the
+newer API.  The dt3155_start_streaming() function didn't do anything so
+I just removed it.
 
+This silences the following gcc warnings:
+drivers/staging/media/dt3155v4l/dt3155v4l.c:307:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/staging/media/dt3155v4l/dt3155v4l.c:307:2: warning: (near initialization for ‘q_ops.queue_setup’) [enabled by default]
+drivers/staging/media/dt3155v4l/dt3155v4l.c:311:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/staging/media/dt3155v4l/dt3155v4l.c:311:2: warning: (near initialization for ‘q_ops.start_streaming’) [enabled by default]
 
------ Original Message -----
-> From: "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>
-> To: "Jerome Glisse" <j.glisse@gmail.com>
-> Cc: dri-devel@lists.freedesktop.org, "Jerome Glisse" <jglisse@redhat.com>, kernel-janitors@vger.kernel.org, "Thomas
-> Hellstrom" <thellstrom@vmware.com>, "Dan Carpenter" <dan.carpenter@oracle.com>
-> Sent: Thursday, 8 December, 2011 4:53:34 PM
-> Subject: Re: [patch] drm/ttm: fix condition (and vs or)
-> 
-> On Thu, Dec 08, 2011 at 10:34:00AM -0500, Jerome Glisse wrote:
-> > On Thu, Dec 08, 2011 at 09:50:54AM +0300, Dan Carpenter wrote:
-> > > The "if (!p && !p->dev)" condition isn't right because || was
-> > > intended
-> > > instead of &&.  But actually, "p" is the list cursor and so it's
-> > > always
-> 
-> Duh!
-> > > non-NULL and we can just remove that bit.  We can remove the
-> > > another
-> > > similar check as well.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Reviewed-by: Jerome Glisse <jglisse@redhat.com>
-> 
-> And Acked-by me.
-> 
-> Jerome, since you have the patches (And are thinking to send a GIT
-> PULL
-> to Dave) in your tree, could you include this patch in your queue?
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Please double check that this is sufficient.  I'm not very familiar with
+this code.
 
-I've taken the TTM changes into drm-next already, just reviewing the radeon stuff.
-
-But if that appeared on top in Jerome's tree I can steal it.
-
-Dave.
+diff --git a/drivers/staging/media/dt3155v4l/dt3155v4l.c b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+index 04e93c4..25c6025 100644
+--- a/drivers/staging/media/dt3155v4l/dt3155v4l.c
++++ b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+@@ -218,9 +218,10 @@ dt3155_start_acq(struct dt3155_priv *pd)
+  *	driver-specific callbacks (vb2_ops)
+  */
+ static int
+-dt3155_queue_setup(struct vb2_queue *q, unsigned int *num_buffers,
+-			unsigned int *num_planes, unsigned long sizes[],
+-						void *alloc_ctxs[])
++dt3155_queue_setup(struct vb2_queue *q, const struct v4l2_format *fmt,
++		unsigned int *num_buffers, unsigned int *num_planes,
++		unsigned int sizes[], void *alloc_ctxs[])
++
+ {
+ 	struct dt3155_priv *pd = vb2_get_drv_priv(q);
+ 	void *ret;
+@@ -262,12 +263,6 @@ dt3155_buf_prepare(struct vb2_buffer *vb)
+ }
+ 
+ static int
+-dt3155_start_streaming(struct vb2_queue *q)
+-{
+-	return 0;
+-}
+-
+-static int
+ dt3155_stop_streaming(struct vb2_queue *q)
+ {
+ 	struct dt3155_priv *pd = vb2_get_drv_priv(q);
+@@ -308,7 +303,6 @@ const struct vb2_ops q_ops = {
+ 	.wait_prepare = dt3155_wait_prepare,
+ 	.wait_finish = dt3155_wait_finish,
+ 	.buf_prepare = dt3155_buf_prepare,
+-	.start_streaming = dt3155_start_streaming,
+ 	.stop_streaming = dt3155_stop_streaming,
+ 	.buf_queue = dt3155_buf_queue,
+ };
