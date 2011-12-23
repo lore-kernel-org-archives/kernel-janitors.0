@@ -1,29 +1,51 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 26 Dec 2011 12:20:11 +0000
-Subject: Re: [PATCH 1/9] drivers/mfd/88pm860x-i2c.c: introduce missing kfree
-Message-Id: <20111226122011.GG8722@opensource.wolfsonmicro.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 23 Dec 2011 13:02:55 +0000
+Subject: [PATCH] drivers/usb/class/cdc-acm.c: clear dangling pointer
+Message-Id: <1324645375-3535-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1324661974-17281-1-git-send-email-julia@diku.dk>
- <20111226120855.GB17760@sirena.org.uk>
- <alpine.DEB.2.02.1112261318050.1873@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1112261318050.1873@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Oliver Neukum <oliver@neukum.name>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Dec 26, 2011 at 01:18:54PM +0100, Julia Lawall wrote:
-> On Mon, 26 Dec 2011, Mark Brown wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> >With this and probably a bunch of the other corrections in this series a
-> >conversion to devm_kazlloc() would be a more complete fix as it prevents
-> >people introducing similar missing cleanup paths in future.  Not sure if
-> >spatch can generate that automatically though...
+On some failures, the country_code field of an acm structure is freed
+without freeing the acm structure itself.  Elsewhere, operations including
+memcpy and kfree are performed on the country_code field.  The patch sets
+the country_code field to NULL when it is freed, and likewise sets the
+country_code_size field to 0.
 
-> I saw a patch for that recently, and looked into it a little bit,
-> but I wasn't sure what should be done.  What are the criteria for
-> using devm_kzalloc?
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-It's good for any allocation that lasts for the lifetime of the device -
-most driver data allocated in probe() fits well, for example.
+---
+Only compile tested.  The second goto skip_countries serves no purpose, but
+is perhaps useful from a readability point of view.
+
+ drivers/usb/class/cdc-acm.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index f30fbff..9543b19 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1230,6 +1230,8 @@ made_compressed_probe:
+ 		i = device_create_file(&intf->dev, &dev_attr_wCountryCodes);
+ 		if (i < 0) {
+ 			kfree(acm->country_codes);
++			acm->country_codes = NULL;
++			acm->country_code_size = 0;
+ 			goto skip_countries;
+ 		}
+ 
+@@ -1238,6 +1240,8 @@ made_compressed_probe:
+ 		if (i < 0) {
+ 			device_remove_file(&intf->dev, &dev_attr_wCountryCodes);
+ 			kfree(acm->country_codes);
++			acm->country_codes = NULL;
++			acm->country_code_size = 0;
+ 			goto skip_countries;
+ 		}
+ 	}
+
