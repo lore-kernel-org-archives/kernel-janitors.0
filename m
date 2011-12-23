@@ -1,67 +1,65 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 29 Dec 2011 16:51:20 +0000
-Subject: [PATCH 10/10] sound/soc/davinci/davinci-vcif.c: use devm_ functions
-Message-Id: <1325177489-13815-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 23 Dec 2011 17:39:33 +0000
+Subject: [PATCH 8/9] arch/powerpc/sysdev/fsl_rmu.c: introduce missing kfree
+Message-Id: <1324661974-17281-8-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-From: Julia Lawall <julia.lawall@lip6.fr>
+rmu needs to be freed before leaving the function in an error case.
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
-devm_ioremap for data that is allocated in the probe function of a platform
-device and is only freed in the remove function.
+A simplified version of the semantic match that finds the problem is as
+follows: (http://coccinelle.lip6.fr)
 
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+identifier f1;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f1
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- sound/soc/davinci/davinci-vcif.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ arch/powerpc/sysdev/fsl_rmu.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/davinci/davinci-vcif.c b/sound/soc/davinci/davinci-vcif.c
-index 70ce10c..da030ff 100644
---- a/sound/soc/davinci/davinci-vcif.c
-+++ b/sound/soc/davinci/davinci-vcif.c
-@@ -210,7 +210,9 @@ static int davinci_vcif_probe(struct platform_device *pdev)
- 	struct davinci_vcif_dev *davinci_vcif_dev;
- 	int ret;
- 
--	davinci_vcif_dev = kzalloc(sizeof(struct davinci_vcif_dev), GFP_KERNEL);
-+	davinci_vcif_dev = devm_kzalloc(&pdev->dev,
-+					sizeof(struct davinci_vcif_dev),
-+					GFP_KERNEL);
- 	if (!davinci_vcif_dev) {
- 		dev_dbg(&pdev->dev,
- 			"could not allocate memory for private data\n");
-@@ -235,23 +237,15 @@ static int davinci_vcif_probe(struct platform_device *pdev)
- 	ret = snd_soc_register_dai(&pdev->dev, &davinci_vcif_dai);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "could not register dai\n");
--		goto fail;
-+		return ret;
+diff --git a/arch/powerpc/sysdev/fsl_rmu.c b/arch/powerpc/sysdev/fsl_rmu.c
+index 02445a5..1548578 100644
+--- a/arch/powerpc/sysdev/fsl_rmu.c
++++ b/arch/powerpc/sysdev/fsl_rmu.c
+@@ -1081,6 +1081,7 @@ int fsl_rio_setup_rmu(struct rio_mport *mport, struct device_node *node)
+ 	if (!msg_addr) {
+ 		pr_err("%s: unable to find 'reg' property of message-unit\n",
+ 			node->full_name);
++		kfree(rmu);
+ 		return -ENOMEM;
  	}
- 
- 	return 0;
--
--fail:
--	kfree(davinci_vcif_dev);
--
--	return ret;
- }
- 
- static int davinci_vcif_remove(struct platform_device *pdev)
- {
--	struct davinci_vcif_dev *davinci_vcif_dev = dev_get_drvdata(&pdev->dev);
--
- 	snd_soc_unregister_dai(&pdev->dev);
--	kfree(davinci_vcif_dev);
- 
- 	return 0;
- }
+ 	msg_start = of_read_number(msg_addr, aw);
 
