@@ -1,114 +1,69 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 29 Dec 2011 16:51:24 +0000
-Subject: [PATCH 6/10] sound/soc/au1x/psc-i2s.c: use devm_ functions
-Message-Id: <1325177489-13815-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 23 Dec 2011 17:39:28 +0000
+Subject: [PATCH 3/9] drivers/usb/dwc3/dwc3-pci.c: introduce missing kfree
+Message-Id: <1324661974-17281-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Felipe Balbi <balbi@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia.lawall@lip6.fr>
+Glue needs to be freed on exiting the function in an error case.
+Furthermore, pci, which is the first argument to the probe function should
+not be freed before leaveing the function, as it is reused at the call
+site.  So the free of pci is changed to free glue instead.
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
-devm_ioremap for data that is allocated in the probe function of a platform
-device and is only freed in the remove function.
+A simplified version of the semantic match that finds the problem is as
+follows: (http://coccinelle.lip6.fr)
 
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+// <smpl>
+@r exists@
+local idexpression x;
+statement S;
+identifier f1;
+position p1,p2;
+expression *ptr != NULL;
+@@
+
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f1
+...>
+(
+ return \(0\|<+...x...+>\|ptr\);
+|
+ return@p2 ...;
+)
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- sound/soc/au1x/psc-i2s.c |   42 ++++++++++++++----------------------------
- 1 file changed, 14 insertions(+), 28 deletions(-)
+ drivers/usb/dwc3/dwc3-pci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/au1x/psc-i2s.c b/sound/soc/au1x/psc-i2s.c
-index 5c1dc8a..0607ba3 100644
---- a/sound/soc/au1x/psc-i2s.c
-+++ b/sound/soc/au1x/psc-i2s.c
-@@ -295,33 +295,34 @@ static int __devinit au1xpsc_i2s_drvprobe(struct platform_device *pdev)
- 	int ret;
- 	struct au1xpsc_audio_data *wd;
+diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
+index cd1429f..64e1f7c 100644
+--- a/drivers/usb/dwc3/dwc3-pci.c
++++ b/drivers/usb/dwc3/dwc3-pci.c
+@@ -134,7 +134,7 @@ err2:
+ 	pci_disable_device(pci);
  
--	wd = kzalloc(sizeof(struct au1xpsc_audio_data), GFP_KERNEL);
-+	wd = devm_kzalloc(&pdev->dev, sizeof(struct au1xpsc_audio_data),
-+			  GFP_KERNEL);
- 	if (!wd)
- 		return -ENOMEM;
+ err1:
+-	kfree(pci);
++	kfree(glue);
  
- 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!iores) {
--		ret = -ENODEV;
--		goto out0;
--	}
-+	if (!iores)
-+		return -ENODEV;
- 
- 	ret = -EBUSY;
--	if (!request_mem_region(iores->start, resource_size(iores),
--				pdev->name))
--		goto out0;
-+	if (!devm_request_mem_region(&pdev->dev, iores->start,
-+				     resource_size(iores),
-+				     pdev->name))
-+		return -EBUSY;
- 
--	wd->mmio = ioremap(iores->start, resource_size(iores));
-+	wd->mmio = devm_ioremap(&pdev->dev, iores->start,
-+				resource_size(iores));
- 	if (!wd->mmio)
--		goto out1;
-+		return -EBUSY;
- 
- 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
- 	if (!dmares)
--		goto out2;
-+		return -EBUSY;
- 	wd->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = dmares->start;
- 
- 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 1);
- 	if (!dmares)
--		goto out2;
-+		return -EBUSY;
- 	wd->dmaids[SNDRV_PCM_STREAM_CAPTURE] = dmares->start;
- 
- 	/* preserve PSC clock source set up by platform (dev.platform_data
-@@ -349,23 +350,12 @@ static int __devinit au1xpsc_i2s_drvprobe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, wd);
- 
--	ret = snd_soc_register_dai(&pdev->dev, &wd->dai_drv);
--	if (!ret)
--		return 0;
--
--out2:
--	iounmap(wd->mmio);
--out1:
--	release_mem_region(iores->start, resource_size(iores));
--out0:
--	kfree(wd);
--	return ret;
-+	return snd_soc_register_dai(&pdev->dev, &wd->dai_drv);
- }
- 
- static int __devexit au1xpsc_i2s_drvremove(struct platform_device *pdev)
- {
- 	struct au1xpsc_audio_data *wd = platform_get_drvdata(pdev);
--	struct resource *r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
- 	snd_soc_unregister_dai(&pdev->dev);
- 
-@@ -374,10 +364,6 @@ static int __devexit au1xpsc_i2s_drvremove(struct platform_device *pdev)
- 	au_writel(PSC_CTRL_DISABLE, PSC_CTRL(wd));
- 	au_sync();
- 
--	iounmap(wd->mmio);
--	release_mem_region(r->start, resource_size(r));
--	kfree(wd);
--
- 	return 0;
- }
- 
+ err0:
+ 	return ret;
 
