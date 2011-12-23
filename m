@@ -1,78 +1,64 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 27 Dec 2011 14:01:26 +0000
-Subject: [PATCH 1/6] drivers/gpio/gpio-tegra.c: use devm_request_and_ioremap
-Message-Id: <1324994491-21828-2-git-send-email-julia@diku.dk>
+Date: Fri, 23 Dec 2011 17:39:31 +0000
+Subject: [PATCH 6/9] arch/arm/mach-omap2/devices.c: introduce missing kfree
+Message-Id: <1324661974-17281-6-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1324994491-21828-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1324994491-21828-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: kernel-janitors@vger.kernel.org, Linus Walleij <linus.walleij@stericsson.com>, Rob Herring <rob.herring@calxeda.com>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <julia@diku.dk>
+pdata needs to be freed before leaving the function in an error case.
 
-Reimplement a call to devm_request_mem_region followed by a call to ioremap
-or ioremap_nocache by a call to devm_request_and_ioremap.
-
-The semantic patch that makes this transformation is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds the problem is as
+follows: (http://coccinelle.lip6.fr)
 
 // <smpl>
-@nm@
-expression myname;
-identifier i;
+@r exists@
+local idexpression x;
+statement S;
+identifier f1;
+position p1,p2;
+expression *ptr != NULL;
 @@
 
-struct platform_driver i = { .driver = { .name = myname } };
-
-@@
-expression dev,res,size;
-expression nm.myname;
-@@
-
--if (!devm_request_mem_region(dev, res->start, size,
--                              \(res->name\|dev_name(dev)\|myname\))) {
--   ...
--   return ...;
--}
-... when != res->start
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f1
+...>
 (
--devm_ioremap(dev,res->start,size)
-+devm_request_and_ioremap(dev,res)
+ return \(0\|<+...x...+>\|ptr\);
 |
--devm_ioremap_nocache(dev,res->start,size)
-+devm_request_and_ioremap(dev,res)
+ return@p2 ...;
 )
-... when any
-    when != res->start
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/gpio/gpio-tegra.c |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ arch/arm/mach-omap2/devices.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 61044c8..bdc2937 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -361,14 +361,7 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
- 		return -ENODEV;
+diff --git a/arch/arm/mach-omap2/devices.c b/arch/arm/mach-omap2/devices.c
+index 46dfd1a..3334a47 100644
+--- a/arch/arm/mach-omap2/devices.c
++++ b/arch/arm/mach-omap2/devices.c
+@@ -393,6 +393,7 @@ static int omap_mcspi_init(struct omap_hwmod *oh, void *unused)
+ 			break;
+ 	default:
+ 			pr_err("Invalid McSPI Revision value\n");
++			kfree(pdata);
+ 			return -EINVAL;
  	}
  
--	if (!devm_request_mem_region(&pdev->dev, res->start,
--				     resource_size(res),
--				     dev_name(&pdev->dev))) {
--		dev_err(&pdev->dev, "Couldn't request MEM resource\n");
--		return -ENODEV;
--	}
--
--	regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-+	regs = devm_request_and_ioremap(&pdev->dev, res);
- 	if (!regs) {
- 		dev_err(&pdev->dev, "Couldn't ioremap regs\n");
- 		return -ENODEV;
 
