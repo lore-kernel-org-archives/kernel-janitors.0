@@ -1,75 +1,69 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 27 Dec 2011 14:01:29 +0000
-Subject: [PATCH 4/6] drivers/watchdog/dw_wdt.c: use devm_request_and_ioremap
-Message-Id: <1324994491-21828-5-git-send-email-julia@diku.dk>
+Date: Fri, 23 Dec 2011 17:39:32 +0000
+Subject: [PATCH 7/9] drivers/media/video/davinci/vpbe.c: introduce missing kfree
+Message-Id: <1324661974-17281-7-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1324994491-21828-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1324994491-21828-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+vpbe_dev needs to be freed before leaving the function in an error case.
 
-Reimplement a call to devm_request_mem_region followed by a call to ioremap
-or ioremap_nocache by a call to devm_request_and_ioremap.
-
-The semantic patch that makes this transformation is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds the problem is as
+follows: (http://coccinelle.lip6.fr)
 
 // <smpl>
-@nm@
-expression myname;
-identifier i;
+@r exists@
+local idexpression x;
+statement S;
+identifier f1;
+position p1,p2;
+expression *ptr != NULL;
 @@
 
-struct platform_driver i = { .driver = { .name = myname } };
-
-@@
-expression dev,res,size;
-expression nm.myname;
-@@
-
--if (!devm_request_mem_region(dev, res->start, size,
--                              \(res->name\|dev_name(dev)\|myname\))) {
--   ...
--   return ...;
--}
-... when != res->start
+x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
+...
+if (x = NULL) S
+<... when != x
+     when != if (...) { <+...x...+> }
+x->f1
+...>
 (
--devm_ioremap(dev,res->start,size)
-+devm_request_and_ioremap(dev,res)
+ return \(0\|<+...x...+>\|ptr\);
 |
--devm_ioremap_nocache(dev,res->start,size)
-+devm_request_and_ioremap(dev,res)
+ return@p2 ...;
 )
-... when any
-    when != res->start
+
+@script:python@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/watchdog/dw_wdt.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/media/video/davinci/vpbe.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
-index 1b0e3dd..63d7b58 100644
---- a/drivers/watchdog/dw_wdt.c
-+++ b/drivers/watchdog/dw_wdt.c
-@@ -300,11 +300,7 @@ static int __devinit dw_wdt_drv_probe(struct platform_device *pdev)
- 	if (!mem)
- 		return -EINVAL;
+diff --git a/drivers/media/video/davinci/vpbe.c b/drivers/media/video/davinci/vpbe.c
+index d773d30..99658ba 100644
+--- a/drivers/media/video/davinci/vpbe.c
++++ b/drivers/media/video/davinci/vpbe.c
+@@ -811,8 +811,10 @@ static __devinit int vpbe_probe(struct platform_device *pdev)
  
--	if (!devm_request_mem_region(&pdev->dev, mem->start, resource_size(mem),
--				     "dw_wdt"))
--		return -ENOMEM;
--
--	dw_wdt.regs = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
-+	dw_wdt.regs = devm_request_and_ioremap(&pdev->dev, mem);
- 	if (!dw_wdt.regs)
- 		return -ENOMEM;
+ 	if (cfg->outputs->num_modes > 0)
+ 		vpbe_dev->current_timings = vpbe_dev->cfg->outputs[0].modes[0];
+-	else
++	else {
++		kfree(vpbe_dev);
+ 		return -ENODEV;
++	}
  
+ 	/* set the driver data in platform device */
+ 	platform_set_drvdata(pdev, vpbe_dev);
 
