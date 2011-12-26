@@ -1,25 +1,57 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Mon, 19 Dec 2011 10:57:14 +0000
-Subject: Re: [PATCH] mfd: tc6393xb - add depend on HAVE_CLK
-Message-Id: <20111219105714.GY11800@sortiz-mobl>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 26 Dec 2011 17:38:00 +0000
+Subject: [PATCH 1/2] drivers/watchdog/lantiq_wdt.c: drop iounmap for devm_ allocated data
+Message-Id: <1324921081-13161-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1322591918.2182.35.camel@mars>
-In-Reply-To: <1322591918.2182.35.camel@mars>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Fritz <chf.fritz@googlemail.com>
-Cc: Dmitry Baryshkov <dbaryshkov@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Chrisptoph,
+From: Julia Lawall <julia@diku.dk>
 
-On Tue, Nov 29, 2011 at 07:38:38PM +0100, Christoph Fritz wrote:
-> This patch adds HAVE_CLK to the required dependencies of tc6393xb.
-Thanks, patch applied.
+Data allocated with devm_ioremap or devm_ioremap_nocache should not be
+freed using iounmap, because doing so causes a dangling pointer, and a
+subsequent double free.
 
-Cheers,
-Samuel.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+// <smpl>
+@r@
+expression x;
+@@
+(
+ x = devm_ioremap(...)
+|
+ x = devm_ioremap_nocache(...)
+)
+
+@@
+expression r.x;
+@@
+* iounmap(x)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/watchdog/lantiq_wdt.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/watchdog/lantiq_wdt.c b/drivers/watchdog/lantiq_wdt.c
+index 102aed0..d3a63be 100644
+--- a/drivers/watchdog/lantiq_wdt.c
++++ b/drivers/watchdog/lantiq_wdt.c
+@@ -222,9 +222,6 @@ ltq_wdt_remove(struct platform_device *pdev)
+ {
+ 	misc_deregister(&ltq_wdt_miscdev);
+ 
+-	if (ltq_wdt_membase)
+-		iounmap(ltq_wdt_membase);
+-
+ 	return 0;
+ }
+ 
+
