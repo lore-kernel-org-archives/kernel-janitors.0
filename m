@@ -1,35 +1,82 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Dec 2011 10:15:54 +0000
-Subject: [patch 1/2] [SCSI] pmcraid: remove unneeded check
-Message-Id: <20111216101553.GA4287@elgon.mountain>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 27 Dec 2011 14:01:27 +0000
+Subject: [PATCH 2/6] drivers/i2c/busses/i2c-mxs.c: use devm_request_and_ioremap
+Message-Id: <1324994491-21828-3-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Ravindranath <anil_ravindranath@pmc-sierra.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, Dan Rosenberg <drosenberg@vsecurity.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-request_size is zero here so this condition is always false.  Also we
-already handled negative values some lines earlier so it's not negative
-for that reason as well.
+From: Julia Lawall <julia@diku.dk>
 
-It looks like Dan Rosenberg's fix was applied twice by mistake:
-b5b515445f4 "[SCSI] pmcraid: reject negative request size"
-5f6279da376 "[SCSI] pmcraid: reject negative request size"
+Reimplement a call to devm_request_mem_region followed by a call to ioremap
+or ioremap_nocache by a call to devm_request_and_ioremap.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The variable res_size is then no longer needed.
 
-diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-index 5163edb..d6bc4e6 100644
---- a/drivers/scsi/pmcraid.c
-+++ b/drivers/scsi/pmcraid.c
-@@ -3870,9 +3870,6 @@ static long pmcraid_ioctl_passthrough(
- 			pmcraid_err("couldn't build passthrough ioadls\n");
- 			goto out_free_buffer;
- 		}
--	} else if (request_size < 0) {
--		rc = -EINVAL;
--		goto out_free_buffer;
- 	}
+The semantic patch that makes this transformation is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@nm@
+expression myname;
+identifier i;
+@@
+
+struct platform_driver i = { .driver = { .name = myname } };
+
+@@
+expression dev,res,size;
+expression nm.myname;
+@@
+
+-if (!devm_request_mem_region(dev, res->start, size,
+-                              \(res->name\|dev_name(dev)\|myname\))) {
+-   ...
+-   return ...;
+-}
+... when != res->start
+(
+-devm_ioremap(dev,res->start,size)
++devm_request_and_ioremap(dev,res)
+|
+-devm_ioremap_nocache(dev,res->start,size)
++devm_request_and_ioremap(dev,res)
+)
+... when any
+    when != res->start
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/i2c/busses/i2c-mxs.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-mxs.c b/drivers/i2c/busses/i2c-mxs.c
+index 7e78f7c..6f24d00 100644
+--- a/drivers/i2c/busses/i2c-mxs.c
++++ b/drivers/i2c/busses/i2c-mxs.c
+@@ -317,7 +317,6 @@ static int __devinit mxs_i2c_probe(struct platform_device *pdev)
+ 	struct mxs_i2c_dev *i2c;
+ 	struct i2c_adapter *adap;
+ 	struct resource *res;
+-	resource_size_t res_size;
+ 	int err, irq;
  
- 	/* If data is being written into the device, copy the data from user
+ 	i2c = devm_kzalloc(dev, sizeof(struct mxs_i2c_dev), GFP_KERNEL);
+@@ -328,11 +327,7 @@ static int __devinit mxs_i2c_probe(struct platform_device *pdev)
+ 	if (!res)
+ 		return -ENOENT;
+ 
+-	res_size = resource_size(res);
+-	if (!devm_request_mem_region(dev, res->start, res_size, res->name))
+-		return -EBUSY;
+-
+-	i2c->regs = devm_ioremap_nocache(dev, res->start, res_size);
++	i2c->regs = devm_request_and_ioremap(dev, res);
+ 	if (!i2c->regs)
+ 		return -EBUSY;
+ 
+
