@@ -1,23 +1,28 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 27 Dec 2011 16:30:06 +0000
+Date: Tue, 27 Dec 2011 16:41:31 +0000
 Subject: [PATCH 1/2] scripts/coccinelle: semantic patches related to devm_ functions
-Message-Id: <1325003407-28033-1-git-send-email-julia.lawall@lip6.fr>
+Message-Id: <1325004092-28162-1-git-send-email-julia.lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1325003407-28033-1-git-send-email-julia.lawall@lip6.fr>
+In-Reply-To: <1325003407-28033-1-git-send-email-julia.lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org, mmarek@suse.cz
 
-From: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
 devm_ functions allocate memory that is to remain allocated until the
 device is detached.  This patch checks for opportunities for using the
 function devm_request_and_ioremap.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
+resend to fix email address
 
 diff --git a/scripts/coccinelle/api/devm_request_and_ioremap.cocci b/scripts/coccinelle/api/devm_request_and_ioremap.cocci
 new file mode 100644
