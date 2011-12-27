@@ -1,99 +1,50 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Tue, 27 Dec 2011 08:23:56 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Tue, 27 Dec 2011 08:36:04 +0000
 Subject: Re: [PATCH 2/2] drivers/mtd/maps/lantiq-flash.c: drop iounmap for
-Message-Id: <1324974236.1165.43.camel@sauron.fi.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-2TZQfsQjRjvrGma/qK/z"
+Message-Id: <alpine.DEB.2.02.1112270935410.1838@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1324921081-13161-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1324921081-13161-2-git-send-email-julia@diku.dk>
-To: Julia Lawall <julia@diku.dk>
+ <1324974236.1165.43.camel@sauron.fi.intel.com>
+In-Reply-To: <1324974236.1165.43.camel@sauron.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Artem Bityutskiy <dedekind1@gmail.com>
 Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
 
+On Tue, 27 Dec 2011, Artem Bityutskiy wrote:
 
---=-2TZQfsQjRjvrGma/qK/z
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> On Mon, 2011-12-26 at 18:38 +0100, Julia Lawall wrote:
+>> From: Julia Lawall <julia@diku.dk>
+>>
+>> Data allocated with devm_ioremap or devm_ioremap_nocache should not be
+>> freed using iounmap, because doing so causes a dangling pointer, and a
+>> subsequent double free.
+>>
+>> The semantic match that finds this problem is as follows:
+>> (http://coccinelle.lip6.fr/)
+>>
+>> // <smpl>
+>> @r@
+>> expression x;
+>> @@
+>> (
+>>  x = devm_ioremap(...)
+>> |
+>>  x = devm_ioremap_nocache(...)
+>> )
+>>
+>> @@
+>> expression r.x;
+>> @@
+>> * iounmap(x)
+>> // </smpl>
+>
+> Thanks Julia,
+>
+> surely this semantic patch script is worth adding to scripts/coccinelle?
+> Are you going to take care of this?
 
-On Mon, 2011-12-26 at 18:38 +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
->=20
-> Data allocated with devm_ioremap or devm_ioremap_nocache should not be
-> freed using iounmap, because doing so causes a dangling pointer, and a
-> subsequent double free.
->=20
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @r@
-> expression x;
-> @@
-> (
->  x =3D devm_ioremap(...)
-> |
->  x =3D devm_ioremap_nocache(...)
-> )
->=20
-> @@
-> expression r.x;
-> @@
-> * iounmap(x)
-> // </smpl>
+OK, I will do that.
 
-Thanks Julia,
-
-surely this semantic patch script is worth adding to scripts/coccinelle?
-Are you going to take care of this?
-
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
->=20
-> ---
->  drivers/mtd/maps/lantiq-flash.c |    6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->=20
-> diff --git a/drivers/mtd/maps/lantiq-flash.c b/drivers/mtd/maps/lantiq-fl=
-ash.c
-> index 4f10e27..7b889de 100644
-> --- a/drivers/mtd/maps/lantiq-flash.c
-> +++ b/drivers/mtd/maps/lantiq-flash.c
-> @@ -159,7 +159,7 @@ ltq_mtd_probe(struct platform_device *pdev)
->  	if (!ltq_mtd->mtd) {
->  		dev_err(&pdev->dev, "probing failed\n");
->  		err =3D -ENXIO;
-> -		goto err_unmap;
-> +		goto err_free;
->  	}
-
-Pushed to l2-mtd-2.6.git, thanks!
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-2TZQfsQjRjvrGma/qK/z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAABAgAGBQJO+YCdAAoJECmIfjd9wqK0G7YP+gI+o6z25nl4ROlhH4+KkQXx
-6LamIGEq+TWAjsTIZb/kAjaNtI7ZxQ5EnmTrdn4RjWw4YvrUXPadG4DYZ521lMLY
-6dgStsekEKV3Q5Bs4cXFfWPDouAoJdkhjSsFr5sH0VxtEXr/YppWQdPpujpxJlG0
-K8ywEQfbQLhWYWHf8OYi9O4+YKo+Ur9tSqMPc+0AXTtu0aAnHwNJFZ6AUF338+uc
-TUZ98RDp1HyCVNBIhOinGXeFjHqOZRaNSRRt8v65P+LeNKn+nKf7AZaHXsTTwBC4
-OkwSvZtM9qYKwYribDZpbBVTgNA2PRrxSL7Q3Iiahjib7ck29GPuQTkEdWwBkZc+
-Djy9dCD1ZDG25VlF77BwKkSBx1jiRvEeL5wsT4M+Z7HFItgf1m5Vmdxxf4BzClPa
-V94MLUIUYZizuU1FtPM0rhMLUgLJX5+Uvvbh3SclD5trw+5WpBDOtamsjN8iJhIW
-fswXdRvpPsAZt67sZXOT8bt3CH7G0ZmfW1yxF7e/hthcno0jGcSSaaX2BKcwvShs
-1N4faVREhQTy1+dptRVpm1npGomBS55UUqQnx0fzzLcDKVNvohuDeA5v0TdrnDC1
-yeWjvZKAjcs8l0m+yuxUAPQ9urNKfFtR1DDzy7OrXahwYz8bpvp6rtxx9uwlHatt
-700zv6DShlZ5cokBcJQ3
-=13wt
------END PGP SIGNATURE-----
-
---=-2TZQfsQjRjvrGma/qK/z--
-
+julia
