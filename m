@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 27 Dec 2011 16:41:32 +0000
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 27 Dec 2011 17:28:51 +0000
 Subject: [PATCH 2/2] scripts/coccinelle: semantic patches related to devm_ functions
-Message-Id: <1325004092-28162-2-git-send-email-julia.lawall@lip6.fr>
+Message-Id: <1325006931-608-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1325003407-28033-2-git-send-email-julia.lawall@lip6.fr>
 In-Reply-To: <1325003407-28033-2-git-send-email-julia.lawall@lip6.fr>
@@ -10,10 +10,6 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org, mmarek@suse.cz
-
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
 devm_ functions allocate memory that is to remain allocated until the
 device is detached.  This patch checks for freeing of such memory using
