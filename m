@@ -1,21 +1,99 @@
-From: Joe Perches <joe@perches.com>
-Date: Thu, 01 Dec 2011 18:50:23 +0000
-Subject: Re: [patch] Staging: lttng: dubious one-bit signed bitfields
-Message-Id: <1322765423.30801.11.camel@joe2Laptop>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Tue, 27 Dec 2011 16:30:07 +0000
+Subject: [PATCH 2/2] scripts/coccinelle: semantic patches related to devm_ functions
+Message-Id: <1325003407-28033-2-git-send-email-julia.lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111201093746.GA1250@elgon.mountain>
-In-Reply-To: <20111201093746.GA1250@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org, mmarek@suse.cz
 
-On Thu, 2011-12-01 at 10:56 +0100, walter harms wrote:
-> hi,
-> This patch looks ok to me but this design is ugly by itself.
-> It should be replaced by an uchar uint whatever or use a
-> real bool (obviously not preferred by this programmes).
+From: Julia Lawall <julia@diku.dk>
 
-bool:1 should work as well.
-I doubt the space savings is worth much though.
+devm_ functions allocate memory that is to remain allocated until the
+device is detached.  This patch checks for freeing of such memory using
+standard memory freeing functions.
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+
+diff --git a/scripts/coccinelle/free/devm_free.cocci b/scripts/coccinelle/free/devm_free.cocci
+new file mode 100644
+index 0000000..c0cd3e2
+--- /dev/null
++++ b/scripts/coccinelle/free/devm_free.cocci
+@@ -0,0 +1,71 @@
++/// Find uses of standard freeing functons on values allocated using devm_
++/// functions.  Values allocated using the devm_functions are freed when
++/// the device is detached, and thus the use of the standard freeing
++/// function would cause a double free.
++/// See Documentation/driver-model/devres.txt for more information.
++///
++/// A difficulty of detecting this problem is that the standard freeing
++/// function might be called from a different function than the one
++/// containing the allocation function.  It is thus necessary to make the
++/// connection between the allocation function and the freeing function.
++/// Here this is done using the specific argument text, which is prone to
++/// false positives.  There is no rule for the request_region and
++/// request_mem_region variants because this heuristic seems to be a bit
++/// less reliable in these cases.
++///
++// Confidence: Moderate
++// Copyright: (C) 2011 Julia Lawall, INRIA/LIP6.  GPLv2.
++// Copyright: (C) 2011 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: -no_includes -include_headers
++
++virtual org
++virtual report
++virtual context
++
++@r depends on context || org || report@
++expression x;
++@@
++
++(
++ x = devm_kzalloc(...)
++|
++ x = devm_request_irq(...)
++|
++ x = devm_ioremap(...)
++|
++ x = devm_ioremap_nocache(...)
++|
++ x = devm_ioport_map(...)
++)
++
++@pb@
++expression r.x;
++position p;
++@@
++
++(
++* kfree@p(x)
++|
++* free_irq@p(x)
++|
++* iounmap@p(x)
++|
++* ioport_unmap@p(x)
++)
++
++@script:python depends on org@
++p << pb.p;
++@@
++
++msg="WARNING: invalid free of devm_ allocated data"
++coccilib.org.print_todo(p[0], msg)
++
++@script:python depends on report@
++p << pb.p;
++@@
++
++msg="WARNING: invalid free of devm_ allocated data"
++coccilib.report.print_report(p[0], msg)
++
 
