@@ -1,24 +1,78 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Date: Thu, 15 Dec 2011 11:49:52 +0000
-Subject: Re: [patch] brcm80211: smac: precendence bug in
-Message-Id: <4EE9DEE0.9050703@broadcom.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 27 Dec 2011 14:01:26 +0000
+Subject: [PATCH 1/6] drivers/gpio/gpio-tegra.c: use devm_request_and_ioremap
+Message-Id: <1324994491-21828-2-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111215112332.GA3906@elgon.mountain>
-In-Reply-To: <20111215112332.GA3906@elgon.mountain>
+References: <1324994491-21828-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1324994491-21828-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Brett Rudley <brudley@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: kernel-janitors@vger.kernel.org, Linus Walleij <linus.walleij@stericsson.com>, Rob Herring <rob.herring@calxeda.com>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-On 12/15/2011 12:23 PM, Dan Carpenter wrote:
-> Negate has higher precendence than compare and since neither zero nor
-> one are equal to four or eight the original condition is always false.
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Acked-by: Arend van Spriel <arend@broadcom.com>
+Reimplement a call to devm_request_mem_region followed by a call to ioremap
+or ioremap_nocache by a call to devm_request_and_ioremap.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch that makes this transformation is as follows:
+(http://coccinelle.lip6.fr/)
 
-Gr. AvS
+// <smpl>
+@nm@
+expression myname;
+identifier i;
+@@
+
+struct platform_driver i = { .driver = { .name = myname } };
+
+@@
+expression dev,res,size;
+expression nm.myname;
+@@
+
+-if (!devm_request_mem_region(dev, res->start, size,
+-                              \(res->name\|dev_name(dev)\|myname\))) {
+-   ...
+-   return ...;
+-}
+... when != res->start
+(
+-devm_ioremap(dev,res->start,size)
++devm_request_and_ioremap(dev,res)
+|
+-devm_ioremap_nocache(dev,res->start,size)
++devm_request_and_ioremap(dev,res)
+)
+... when any
+    when != res->start
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/gpio/gpio-tegra.c |    9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 61044c8..bdc2937 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -361,14 +361,7 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	if (!devm_request_mem_region(&pdev->dev, res->start,
+-				     resource_size(res),
+-				     dev_name(&pdev->dev))) {
+-		dev_err(&pdev->dev, "Couldn't request MEM resource\n");
+-		return -ENODEV;
+-	}
+-
+-	regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	regs = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (!regs) {
+ 		dev_err(&pdev->dev, "Couldn't ioremap regs\n");
+ 		return -ENODEV;
 
