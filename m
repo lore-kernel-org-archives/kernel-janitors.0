@@ -1,24 +1,35 @@
-From: Joseph Evans <josephconsultancy1@gmail.com>
-Date: Mon, 12 Dec 2011 13:11:35 +0000
-Subject: Xmas Lening Aanbieding
-Message-Id: <CA+B1JgGv2ZQug+HZaDGkRhptRHqbK5bPRhr0X4wnkZnTv8PKgw@mail.gmail.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Tue, 27 Dec 2011 16:39:25 +0000
+Subject: [PATCH] MAINTAINERS: update email
+Message-Id: <1325003965-28112-1-git-send-email-julia.lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>
 
-Wir sind auf dem XAMS Kredit Angebot mit so viel Bonus, bitte
-kontaktieren Sie mich, wenn Sie tun m=FCssen, jede Form von Darlehen von
-unserer Firma.
-Gr=FC=DFe
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Update email
 
-We are on our xams loan special offer with so much bonus, please do
-contact me if you do need any form of loan from our firm.
-Regards
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ MAINTAINERS |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c016d6a..793b059 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1846,7 +1846,7 @@ S:	Supported
+ F:	drivers/platform/x86/classmate-laptop.c
+ 
+ COCCINELLE/Semantic Patches (SmPL)
+-M:	Julia Lawall <julia@diku.dk>
++M:	Julia Lawall <Julia.Lawall@lip6.fr>
+ M:	Gilles Muller <Gilles.Muller@lip6.fr>
+ M:	Nicolas Palix <npalix.work@gmail.com>
+ L:	cocci@diku.dk (moderated for non-subscribers)
+
