@@ -1,31 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 15 Dec 2011 11:23:32 +0000
-Subject: [patch] brcm80211: smac: precendence bug in wlc_phy_attach()
-Message-Id: <20111215112332.GA3906@elgon.mountain>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 27 Dec 2011 14:01:25 +0000
+Subject: [PATCH 0/6] use devm_request_and_ioremap
+Message-Id: <1324994491-21828-1-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>
-Cc: Henry Ptasinski <henryp@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Negate has higher precendence than compare and since neither zero nor
-one are equal to four or eight the original condition is always false.
+Commit 72f8c0bfa0de64c68ee59f40eb9b2683bffffbb0 added the function
+devm_request_and_ioremap that combines devm_request_mem_region and
+devm_ioremap or devm_ioremap_nocache.  Even if devm_request_and_ioremap
+does not add functionality, except for the implicit choice between
+devm_ioremap and devm_ioremap_nocache, it is much more concise than the
+code it replaces.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There are a few more obvious opportunities for using
+devm_request_and_ioremap if one is not picky about the name argument.
 
-diff --git a/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c b/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
-index 5b57caa..264f8c4 100644
---- a/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
-+++ b/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
-@@ -482,8 +482,8 @@ wlc_phy_attach(struct shared_phy *sh, struct bcma_device *d11core,
- 	pi->pubpi.phy_corenum = PHY_CORE_NUM_2;
- 	pi->pubpi.ana_rev = (phyversion & PV_AV_MASK) >> PV_AV_SHIFT;
- 
--	if (!pi->pubpi.phy_type = PHY_TYPE_N &&
--	    !pi->pubpi.phy_type = PHY_TYPE_LCN)
-+	if (pi->pubpi.phy_type != PHY_TYPE_N &&
-+	    pi->pubpi.phy_type != PHY_TYPE_LCN)
- 		goto err;
- 
- 	if (bandtype = BRCM_BAND_5G) {
