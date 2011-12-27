@@ -1,32 +1,75 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Dec 2011 10:21:37 +0000
-Subject: [patch 2/2] [SCSI] pmcraid: cpu_to_le32() => cpu_to_le64()
-Message-Id: <20111216102137.GB4287@elgon.mountain>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 27 Dec 2011 14:01:29 +0000
+Subject: [PATCH 4/6] drivers/watchdog/dw_wdt.c: use devm_request_and_ioremap
+Message-Id: <1324994491-21828-5-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1324994491-21828-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1324994491-21828-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Ravindranath <anil_ravindranath@pmc-sierra.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The cpu_to_le32() truncates the address to 32 bits.  All the other
-places that set .address use cpu_to_le64().
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reimplement a call to devm_request_mem_region followed by a call to ioremap
+or ioremap_nocache by a call to devm_request_and_ioremap.
+
+The semantic patch that makes this transformation is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@nm@
+expression myname;
+identifier i;
+@@
+
+struct platform_driver i = { .driver = { .name = myname } };
+
+@@
+expression dev,res,size;
+expression nm.myname;
+@@
+
+-if (!devm_request_mem_region(dev, res->start, size,
+-                              \(res->name\|dev_name(dev)\|myname\))) {
+-   ...
+-   return ...;
+-}
+... when != res->start
+(
+-devm_ioremap(dev,res->start,size)
++devm_request_and_ioremap(dev,res)
+|
+-devm_ioremap_nocache(dev,res->start,size)
++devm_request_and_ioremap(dev,res)
+)
+... when any
+    when != res->start
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
-What about if dma_addr_t is 32 bits on a big endian system?  Can that
-happen?
+ drivers/watchdog/dw_wdt.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-index d6bc4e6..8a239ea 100644
---- a/drivers/scsi/pmcraid.c
-+++ b/drivers/scsi/pmcraid.c
-@@ -1242,7 +1242,7 @@ static struct pmcraid_cmd *pmcraid_init_hcam
+diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
+index 1b0e3dd..63d7b58 100644
+--- a/drivers/watchdog/dw_wdt.c
++++ b/drivers/watchdog/dw_wdt.c
+@@ -300,11 +300,7 @@ static int __devinit dw_wdt_drv_probe(struct platform_device *pdev)
+ 	if (!mem)
+ 		return -EINVAL;
  
- 	ioadl[0].flags |= IOADL_FLAGS_READ_LAST;
- 	ioadl[0].data_len = cpu_to_le32(rcb_size);
--	ioadl[0].address = cpu_to_le32(dma);
-+	ioadl[0].address = cpu_to_le64(dma);
+-	if (!devm_request_mem_region(&pdev->dev, mem->start, resource_size(mem),
+-				     "dw_wdt"))
+-		return -ENOMEM;
+-
+-	dw_wdt.regs = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
++	dw_wdt.regs = devm_request_and_ioremap(&pdev->dev, mem);
+ 	if (!dw_wdt.regs)
+ 		return -ENOMEM;
  
- 	cmd->cmd_done = cmd_done;
- 	return cmd;
+
