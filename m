@@ -1,61 +1,74 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 29 Dec 2011 16:51:27 +0000
-Subject: [PATCH 3/10] sound/soc/au1x/dma.c: use devm_ functions
-Message-Id: <1325177489-13815-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 27 Dec 2011 14:01:30 +0000
+Subject: [PATCH 5/6] drivers/char/hw_random/tx4939-rng.c: use devm_request_and_ioremap
+Message-Id: <1324994491-21828-6-git-send-email-julia@diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1324994491-21828-1-git-send-email-julia@diku.dk>
+In-Reply-To: <1324994491-21828-1-git-send-email-julia@diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Matt Mackall <mpm@selenic.com>
+Cc: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.hengli.com.au>, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia.lawall@lip6.fr>
+From: Julia Lawall <julia@diku.dk>
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
-devm_ioremap for data that is allocated in the probe function of a platform
-device and is only freed in the remove function.
+Reimplement a call to devm_request_mem_region followed by a call to ioremap
+or ioremap_nocache by a call to devm_request_and_ioremap.
 
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+The semantic patch that makes this transformation is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@nm@
+expression myname;
+identifier i;
+@@
+
+struct platform_driver i = { .driver = { .name = myname } };
+
+@@
+expression dev,res,size;
+expression nm.myname;
+@@
+
+-if (!devm_request_mem_region(dev, res->start, size,
+-                              \(res->name\|dev_name(dev)\|myname\))) {
+-   ...
+-   return ...;
+-}
+... when != res->start
+(
+-devm_ioremap(dev,res->start,size)
++devm_request_and_ioremap(dev,res)
+|
+-devm_ioremap_nocache(dev,res->start,size)
++devm_request_and_ioremap(dev,res)
+)
+... when any
+    when != res->start
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- sound/soc/au1x/dma.c |   12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ drivers/char/hw_random/tx4939-rng.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/sound/soc/au1x/dma.c b/sound/soc/au1x/dma.c
-index c4017bd..0a91b18 100644
---- a/sound/soc/au1x/dma.c
-+++ b/sound/soc/au1x/dma.c
-@@ -325,27 +325,19 @@ static struct snd_soc_platform_driver alchemy_pcm_soc_platform = {
- static int __devinit alchemy_pcm_drvprobe(struct platform_device *pdev)
- {
- 	struct alchemy_pcm_ctx *ctx;
--	int ret;
- 
--	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
+diff --git a/drivers/char/hw_random/tx4939-rng.c b/drivers/char/hw_random/tx4939-rng.c
+index 0bc0cb7..de473ef 100644
+--- a/drivers/char/hw_random/tx4939-rng.c
++++ b/drivers/char/hw_random/tx4939-rng.c
+@@ -115,10 +115,7 @@ static int __init tx4939_rng_probe(struct platform_device *dev)
+ 	rngdev = devm_kzalloc(&dev->dev, sizeof(*rngdev), GFP_KERNEL);
+ 	if (!rngdev)
  		return -ENOMEM;
+-	if (!devm_request_mem_region(&dev->dev, r->start, resource_size(r),
+-				     dev_name(&dev->dev)))
+-		return -EBUSY;
+-	rngdev->base = devm_ioremap(&dev->dev, r->start, resource_size(r));
++	rngdev->base = devm_request_and_ioremap(&dev->dev, r);
+ 	if (!rngdev->base)
+ 		return -EBUSY;
  
- 	platform_set_drvdata(pdev, ctx);
- 
--	ret = snd_soc_register_platform(&pdev->dev, &alchemy_pcm_soc_platform);
--	if (ret)
--		kfree(ctx);
--
--	return ret;
-+	return snd_soc_register_platform(&pdev->dev, &alchemy_pcm_soc_platform);
- }
- 
- static int __devexit alchemy_pcm_drvremove(struct platform_device *pdev)
- {
--	struct alchemy_pcm_ctx *ctx = platform_get_drvdata(pdev);
--
- 	snd_soc_unregister_platform(&pdev->dev);
--	kfree(ctx);
- 
- 	return 0;
- }
 
