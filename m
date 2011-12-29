@@ -1,64 +1,345 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 23 Dec 2011 17:39:31 +0000
-Subject: [PATCH 6/9] arch/arm/mach-omap2/devices.c: introduce missing kfree
-Message-Id: <1324661974-17281-6-git-send-email-julia@diku.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 29 Dec 2011 16:51:19 +0000
+Subject: [PATCH 0/10] use devm_ functions
+Message-Id: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-pdata needs to be freed before leaving the function in an error case.
+The following is a semantic patch (http://coccinelle.lip6.fr/) that
+introduces uses of various devm_ functions.  The main strategy is
+illustrated by the rules prb, rem, bad and modif.  prb finds a probe
+function that contains an allocation and possibly some frees of the
+allocated data.  rem finds the corresponding remove function and checks
+that it frees the allocated data.  bad checks whether the allocated data is
+freed elsewhere.  When prb and rem are satisfied, ie data is allocated in
+the probe function and freed in the remove function, and bad is not
+satisfied, ie the data is not freed elsewhere, then modif renames the
+allocation function and removes the freeing functions.
 
-A simplified version of the semantic match that finds the problem is as
-follows: (http://coccinelle.lip6.fr)
+The remaining rules consider different variations on how the allocated data
+may be referred to and do some cleanup.  Some cleanup must typically be
+done by hand, such as removing empty labels and converting gotos to returns
+when there is nothing to jump to.  The semantic patch also tries to clean
+up unneeded calls to platform_set_drvdata, but the detection of
+unneededness is not very sophisticated, and so it may delete calls that are
+actually needed.  This cleanup could perhaps be better done by hand.
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-identifier f1;
-position p1,p2;
-expression *ptr != NULL;
+// requires the -in_place option
+virtual after_start
+virtual returned
+virtual arg
+virtual get
+
+// ---------------------------------------------------------------------
+// find functions
+
+@plat depends on !after_start@
+identifier i,pfn,rfn;
+position p;
 @@
 
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f1
+struct platform_driver i@p = {
+  .probe = pfn,
+  .remove = (<+...rfn...+>),
+};
+
+// ---------------------------------------------------------------------
+// set up iteration
+
+@initialize:ocaml@
+
+type ret = UseReturned | UseArg | UseGet
+
+let add pfn rfn alloc free devm_alloc file rule    let it = new iteration() in
+   it#set_files [file];
+   it#add_virtual_rule After_start;
+   (match rule with
+      UseReturned -> it#add_virtual_rule Returned
+    | UseArg -> it#add_virtual_rule Arg
+    | UseGet -> it#add_virtual_rule Get);
+   it#add_virtual_identifier Pfn pfn;
+   it#add_virtual_identifier Rfn rfn;
+   it#add_virtual_identifier Alloc alloc;
+   it#add_virtual_identifier Free free;
+   it#add_virtual_identifier Devm_alloc devm_alloc;
+   it#register()
+
+@script:ocaml@
+pfn << plat.pfn;
+rfn << plat.rfn;
+p << plat.p;
+@@
+
+let file = (List.hd p).file in
+add pfn rfn "kmalloc" "kfree" "devm_kzalloc" file UseReturned;
+add pfn rfn "kzalloc" "kfree" "devm_kzalloc" file UseReturned;
+add pfn rfn "ioremap" "iounmap" "devm_ioremap" file UseReturned;
+add pfn rfn "ioremap_nocache" "iounmap" "devm_ioremap_nocache" file
+   UseReturned;
+add pfn rfn "request_irq" "free_irq" "devm_request_irq" file UseArg;
+add pfn rfn "request_threaded_irq" "free_irq" "devm_request_threaded_irq" file
+  UseArg;
+add pfn rfn "request_region" "release_region" "devm_request_region" file
+  UseGet;
+add pfn rfn "request_mem_region" "release_mem_region"
+  "devm_request_mem_region" file UseGet;
+add pfn rfn "ioport_map" "ioport_unmap" "devm_ioport_map" file UseReturned
+
+// ---------------------------------------------------------------------
+// transform functions where free uses the result
+
+@prb depends on returned@
+identifier virtual.pfn,pdev,virtual.alloc,virtual.free;
+expression x;
+expression list args;
+position p1,p2;
+@@
+
+pfn(struct platform_device *pdev) { ... when any
+x = alloc@p1(args)
+<... when strict
+     when any
+free@p2(x,...)
 ...>
+}
+
+@rem@
+identifier virtual.rfn,virtual.free;
+expression prb.x;
+position p3;
+@@
+
+rfn(...) {
+<+... when strict
+free@p3(x,...)
+...+>
+}
+
+@bad@
+identifier virtual.free;
+expression prb.x;
+position p != {prb.p2,rem.p3};
+@@
+
+free@p(x,...)
+
+@modif depends on rem && !bad@
+expression x;
+identifier prb.pdev,virtual.alloc,virtual.free,virtual.devm_alloc;
+expression list args;
+position prb.p1,prb.p2,rem.p3;
+@@
+
 (
- return \(0\|<+...x...+>\|ptr\);
+- free@p2(...);
 |
- return@p2 ...;
+- free@p3(...);
+|
+  x - alloc@p1(
++ devm_alloc(&pdev->dev,
+    args)
 )
 
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
+// ---------------------------------------------------------------------
+// transform functions where free uses the first argument
+
+@prbx depends on arg@
+identifier virtual.pfn,pdev,virtual.alloc,virtual.free;
+expression x;
+expression list args;
+position p1,p2;
 @@
 
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
+pfn(struct platform_device *pdev) { ... when any
+alloc@p1(x,args)
+<... when strict
+     when any
+free@p2(x,...)
+...>
+}
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+@remx@
+identifier virtual.rfn, virtual.free;
+expression prbx.x;
+position p3;
+@@
 
----
- arch/arm/mach-omap2/devices.c |    1 +
- 1 file changed, 1 insertion(+)
+rfn(...) {
+<+... when strict
+free@p3(x,...)
+...+>
+}
 
-diff --git a/arch/arm/mach-omap2/devices.c b/arch/arm/mach-omap2/devices.c
-index 46dfd1a..3334a47 100644
---- a/arch/arm/mach-omap2/devices.c
-+++ b/arch/arm/mach-omap2/devices.c
-@@ -393,6 +393,7 @@ static int omap_mcspi_init(struct omap_hwmod *oh, void *unused)
- 			break;
- 	default:
- 			pr_err("Invalid McSPI Revision value\n");
-+			kfree(pdata);
- 			return -EINVAL;
- 	}
- 
+@badx@
+identifier virtual.free;
+expression prbx.x;
+position p != {prbx.p2,remx.p3};
+@@
+
+free@p(x,...)
+
+@modifx depends on remx && !badx@
+expression x;
+identifier prbx.pdev,virtual.alloc,virtual.free,virtual.devm_alloc;
+expression list args;
+position prbx.p1,prbx.p2,remx.p3;
+@@
+
+(
+- free@p2(...);
+|
+- free@p3(...);
+|
+- alloc@p1(
++ devm_alloc(&pdev->dev,
+   x,args)
+)
+
+// ---------------------------------------------------------------------
+// transform functions where free uses the result of platform_get_resource
+
+@prbg depends on get@
+identifier virtual.pfn,pdev,virtual.alloc,virtual.free;
+expression x;
+expression list args;
+position p1,p2;
+@@
+
+pfn(struct platform_device *pdev) { ... when any
+alloc@p1(x,args)
+<... when strict
+     when any
+free@p2(x,...)
+...>
+}
+
+@remg@
+identifier virtual.rfn, virtual.free;
+identifier y;
+identifier pdev;
+position p3;
+@@
+
+rfn(struct platform_device *pdev) {
+<+... when strict
+y = platform_get_resource(pdev, IORESOURCE_MEM, 0)
+... when strict
+free@p3(y->start,...)
+...+>
+}
+
+@badg@
+identifier virtual.free;
+position p != {prbg.p2,remg.p3};
+@@
+
+free@p(...)
+
+@modifg depends on remg && !badg@
+expression x;
+identifier prbg.pdev,virtual.alloc,virtual.free,virtual.devm_alloc;
+expression list args;
+position prbg.p1,prbg.p2,remg.p3;
+@@
+
+(
+- free@p2(...);
+|
+- free@p3(...);
+|
+- alloc@p1(
++ devm_alloc(&pdev->dev,
+   x,args)
+)
+
+// ---------------------------------------------------------------------
+// cleanup, if the drvdata was only used to enable the free
+// probably only relevant for kmalloc/kzalloc
+
+@dclean depends on modif || modifx || modifg@
+identifier virtual.rfn, pdev, i;
+type T;
+@@
+
+rfn(struct platform_device *pdev) { ...
+(
+- T i = platform_get_drvdata(pdev);
+|
+- T i;
+  ... when != i
+- i = platform_get_drvdata(pdev);
+)
+... when != i
+}
+
+@useful depends on dclean@
+@@
+
+platform_get_drvdata(...)
+
+@depends on dclean && !useful@
+@@
+
+- platform_set_drvdata(...);
+
+@rclean depends on modif || modifx || modifg@
+identifier virtual.rfn, pdev, i;
+type T;
+@@
+
+rfn(struct platform_device *pdev) { ...
+(
+- T i = platform_get_resource(pdev,...);
+|
+- T i;
+  ... when != i
+- i = platform_get_resource(pdev,...);
+)
+... when != i
+}
+
+// ---------------------------------------------------------------------
+// cleanup empty ifs, etc
+
+@depends on modif || modifx || modifg@
+identifier virtual.pfn;
+@@
+
+pfn(...) { <...
+- if (...) {}
+...> }
+
+@depends on modif || modifx || modifg@
+identifier virtual.rfn;
+@@
+
+rfn(...) { <...
+- if (...) {}
+...> }
+
+@depends on modif || modifx || modifg@
+identifier virtual.pfn;
+expression ret,e;
+@@
+
+pfn(...) { <...
++ return
+- ret  e;
+- return ret;
+...> }
+
+@depends on modif || modifx || modifg@
+identifier virtual.rfn;
+expression ret,e;
+@@
+
+rfn(...) { <...
++ return
+- ret  e;
+- return ret;
+...> }
 
