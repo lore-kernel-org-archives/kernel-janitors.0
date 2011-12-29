@@ -1,36 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Dec 2011 06:17:36 +0000
-Subject: [patch] [media] tm6000: using an uninitialized variable in debug code
-Message-Id: <20111214061736.GA7499@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 29 Dec 2011 16:51:27 +0000
+Subject: [PATCH 3/10] sound/soc/au1x/dma.c: use devm_ functions
+Message-Id: <1325177489-13815-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, Jarod Wilson <jarod@redhat.com>, Thierry Reding <thierry.reding@avionic-design.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-dprintk() dereferences "ir".  I'm not sure why gcc doesn't complain
-about this.
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
+devm_ioremap for data that is allocated in the probe function of a platform
+device and is only freed in the remove function.
 
-diff --git a/drivers/media/video/tm6000/tm6000-input.c b/drivers/media/video/tm6000/tm6000-input.c
-index 8d92527..7844607 100644
---- a/drivers/media/video/tm6000/tm6000-input.c
-+++ b/drivers/media/video/tm6000/tm6000-input.c
-@@ -408,13 +408,13 @@ int tm6000_ir_init(struct tm6000_core *dev)
- 	if (!dev->ir_codes)
- 		return 0;
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+
+---
+ sound/soc/au1x/dma.c |   12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/sound/soc/au1x/dma.c b/sound/soc/au1x/dma.c
+index c4017bd..0a91b18 100644
+--- a/sound/soc/au1x/dma.c
++++ b/sound/soc/au1x/dma.c
+@@ -325,27 +325,19 @@ static struct snd_soc_platform_driver alchemy_pcm_soc_platform = {
+ static int __devinit alchemy_pcm_drvprobe(struct platform_device *pdev)
+ {
+ 	struct alchemy_pcm_ctx *ctx;
+-	int ret;
  
--	dprintk(2, "%s\n",__func__);
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, ctx);
+ 
+-	ret = snd_soc_register_platform(&pdev->dev, &alchemy_pcm_soc_platform);
+-	if (ret)
+-		kfree(ctx);
 -
- 	ir = kzalloc(sizeof(*ir), GFP_ATOMIC);
- 	rc = rc_allocate_device();
- 	if (!ir || !rc)
- 		goto out;
+-	return ret;
++	return snd_soc_register_platform(&pdev->dev, &alchemy_pcm_soc_platform);
+ }
  
-+	dprintk(2, "%s\n", __func__);
-+
- 	/* record handles to ourself */
- 	ir->dev = dev;
- 	dev->ir = ir;
+ static int __devexit alchemy_pcm_drvremove(struct platform_device *pdev)
+ {
+-	struct alchemy_pcm_ctx *ctx = platform_get_drvdata(pdev);
+-
+ 	snd_soc_unregister_platform(&pdev->dev);
+-	kfree(ctx);
+ 
+ 	return 0;
+ }
+
