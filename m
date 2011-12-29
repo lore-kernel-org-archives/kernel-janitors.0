@@ -1,117 +1,63 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 27 Dec 2011 06:10:42 +0000
-Subject: Re: devm_kfree
-Message-Id: <alpine.DEB.2.00.1112270710300.7818@pl-59034.rocq.inria.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-1025713729-1324966246=:7818"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 29 Dec 2011 16:51:28 +0000
+Subject: [PATCH 2/10] sound/soc/au1x/dbdma2.c: use devm_ functions
+Message-Id: <1325177489-13815-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1324661974-17281-1-git-send-email-julia@diku.dk> <20111226120855.GB17760@sirena.org.uk> <alpine.DEB.2.02.1112261440450.1873@localhost6.localdomain6> <CALK_+D35jwxsABqfQ7o0CEF+aDaDcccp8-q7RDEO_t4Pm_gNWg@mail.gmail.com>
-In-Reply-To: <CALK_+D35jwxsABqfQ7o0CEF+aDaDcccp8-q7RDEO_t4Pm_gNWg@mail.gmail.com>
-To: Adam Jiang <jiang.adam@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Julia Lawall <julia.lawall@lip6.fr>
 
---8323329-1025713729-1324966246=:7818
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"; format="flowed"
-Content-Transfer-Encoding: quoted-printable
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
+devm_ioremap for data that is allocated in the probe function of a platform
+device and is only freed in the remove function.
 
-On Tue, 27 Dec 2011, Adam Jiang wrote:
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
 
-> 2011/12/26 Julia Lawall <julia.lawall@lip6.fr>:
->> Is it reasonable to use devm_kfree in a probe function that fails or a
->> remove function that succeeds?
->
-> I cannot catch your question. If the memory is allocated by
-> devm_kzalloc(), it is not necessary to release with devm_kfree() at
-> all. It would be release once the driver was detached or destroyed.
+---
+ sound/soc/au1x/dbdma2.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-Perhaps it is undesirable to keep it around until then, as in my last
-example below where the probe function seems to want to go with a
-different solution in some cases?
+diff --git a/sound/soc/au1x/dbdma2.c b/sound/soc/au1x/dbdma2.c
+index 92bc1b0..8372cd3 100644
+--- a/sound/soc/au1x/dbdma2.c
++++ b/sound/soc/au1x/dbdma2.c
+@@ -350,27 +350,21 @@ static struct snd_soc_platform_driver au1xpsc_soc_platform = {
+ static int __devinit au1xpsc_pcm_drvprobe(struct platform_device *pdev)
+ {
+ 	struct au1xpsc_audio_dmadata *dmadata;
+-	int ret;
+ 
+-	dmadata = kzalloc(2 * sizeof(struct au1xpsc_audio_dmadata), GFP_KERNEL);
++	dmadata = devm_kzalloc(&pdev->dev,
++			       2 * sizeof(struct au1xpsc_audio_dmadata),
++			       GFP_KERNEL);
+ 	if (!dmadata)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, dmadata);
+ 
+-	ret = snd_soc_register_platform(&pdev->dev, &au1xpsc_soc_platform);
+-	if (ret)
+-		kfree(dmadata);
+-
+-	return ret;
++	return snd_soc_register_platform(&pdev->dev, &au1xpsc_soc_platform);
+ }
+ 
+ static int __devexit au1xpsc_pcm_drvremove(struct platform_device *pdev)
+ {
+-	struct au1xpsc_audio_dmadata *dmadata = platform_get_drvdata(pdev);
+-
+ 	snd_soc_unregister_platform(&pdev->dev);
+-	kfree(dmadata);
+ 
+ 	return 0;
+ }
 
-I was also worried that one call could make some information required by
-another one unavailable.  For example in the following case:
-
-drivers/dma/mpc512x_dma.c
-
-         devm_free_irq(dev, mdma->irq, mdma);
-         irq_dispose_mapping(mdma->irq);
-
-Is it OK to call irq_dispose_mapping and then let devm_free_irq be called
-implicitly afterwards?
-
-julia
-
-
-
->
->>
->> Examples from drivers/watchdog/shwdt.c:
->>
->> sh_wdt_probe:
->>
->> =A0 =A0 =A0 =A0...
->> =A0out_unreg:
->> =A0 =A0 =A0 =A0unregister_reboot_notifier(&sh_wdt_notifier);
->> =A0out_unmap:
->> - =A0 =A0 =A0 devm_iounmap(&pdev->dev, wdt->base);
->> =A0out_err:
->> - =A0 =A0 =A0 devm_kfree(&pdev->dev, wdt);
->
-> It is necessary?
->
->> =A0out_release:
->> - =A0 =A0 =A0 devm_release_mem_region(&pdev->dev, res->start, resource_s=
-ize(res));
->
-> It is necessary?
->
->>
->> =A0 =A0 =A0 =A0return rc;
->> =A0}
->>
->>
->> sh_wdt_remove:
->>
->> =A0 =A0 =A0 =A0...
->> =A0 =A0 =A0 =A0unregister_reboot_notifier(&sh_wdt_notifier);
->> =A0 =A0 =A0 =A0devm_release_mem_region(&pdev->dev, res->start, resource_=
-size(res));
->> =A0 =A0 =A0 =A0devm_iounmap(&pdev->dev, wdt->base);
->> =A0 =A0 =A0 =A0devm_kfree(&pdev->dev, wdt);
->
-> These lines should be deleted if the driver has detached.
->
->>
->> =A0 =A0 =A0 =A0return 0;
->> }
->>
->>
->> On the other hand, perhaps devm_kfree is needed in probe function that
->> succeeds, eg in drivers/input/keyboard/samsung-keypad.c:
->>
->> =A0 =A0 =A0 =A0if (pdev->dev.of_node) {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0devm_kfree(&pdev->dev, (void *)pdata->key=
-map_data->keymap);
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0devm_kfree(&pdev->dev, (void *)pdata->key=
-map_data);
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0devm_kfree(&pdev->dev, (void *)pdata);
->> =A0 =A0 =A0 =A0}
->> =A0 =A0 =A0 =A0return 0;
->>
->> julia
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" =
-in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at =A0http://www.tux.org/lkml/
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
-" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
---8323329-1025713729-1324966246=:7818--
