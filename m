@@ -1,89 +1,114 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 27 Dec 2011 14:01:28 +0000
-Subject: [PATCH 3/6] drivers/watchdog/imx2_wdt.c: use devm_request_and_ioremap
-Message-Id: <1324994491-21828-4-git-send-email-julia@diku.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 29 Dec 2011 16:51:26 +0000
+Subject: [PATCH 4/10] sound/soc/au1x/i2sc.c: use devm_ functions
+Message-Id: <1325177489-13815-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1324994491-21828-1-git-send-email-julia@diku.dk>
-In-Reply-To: <1324994491-21828-1-git-send-email-julia@diku.dk>
+References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: kernel-janitors@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-Reimplement a call to devm_request_mem_region followed by a call to ioremap
-or ioremap_nocache by a call to devm_request_and_ioremap.
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
+devm_ioremap for data that is allocated in the probe function of a platform
+device and is only freed in the remove function.
 
-The variable res_size is then no longer needed.
-
-The semantic patch that makes this transformation is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@nm@
-expression myname;
-identifier i;
-@@
-
-struct platform_driver i = { .driver = { .name = myname } };
-
-@@
-expression dev,res,size;
-expression nm.myname;
-@@
-
--if (!devm_request_mem_region(dev, res->start, size,
--                              \(res->name\|dev_name(dev)\|myname\))) {
--   ...
--   return ...;
--}
-... when != res->start
-(
--devm_ioremap(dev,res->start,size)
-+devm_request_and_ioremap(dev,res)
-|
--devm_ioremap_nocache(dev,res->start,size)
-+devm_request_and_ioremap(dev,res)
-)
-... when any
-    when != res->start
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
 
 ---
- drivers/watchdog/imx2_wdt.c |   11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ sound/soc/au1x/i2sc.c |   45 +++++++++++++--------------------------------
+ 1 file changed, 13 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/watchdog/imx2_wdt.c b/drivers/watchdog/imx2_wdt.c
-index b8ef2c6..c44c333 100644
---- a/drivers/watchdog/imx2_wdt.c
-+++ b/drivers/watchdog/imx2_wdt.c
-@@ -247,7 +247,6 @@ static struct miscdevice imx2_wdt_miscdev = {
- static int __init imx2_wdt_probe(struct platform_device *pdev)
+diff --git a/sound/soc/au1x/i2sc.c b/sound/soc/au1x/i2sc.c
+index cb53ad8..d4b9e36 100644
+--- a/sound/soc/au1x/i2sc.c
++++ b/sound/soc/au1x/i2sc.c
+@@ -227,69 +227,50 @@ static struct snd_soc_dai_driver au1xi2s_dai_driver = {
+ 
+ static int __devinit au1xi2s_drvprobe(struct platform_device *pdev)
  {
- 	int ret;
--	int res_size;
- 	struct resource *res;
+-	int ret;
+ 	struct resource *iores, *dmares;
+ 	struct au1xpsc_audio_data *ctx;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -256,15 +255,7 @@ static int __init imx2_wdt_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	res_size = resource_size(res);
--	if (!devm_request_mem_region(&pdev->dev, res->start, res_size,
--		res->name)) {
--		dev_err(&pdev->dev, "can't allocate %d bytes at %d address\n",
--			res_size, res->start);
--		return -ENOMEM;
--	}
--
--	imx2_wdt.base = devm_ioremap_nocache(&pdev->dev, res->start, res_size);
-+	imx2_wdt.base = devm_request_and_ioremap(&pdev->dev, res);
- 	if (!imx2_wdt.base) {
- 		dev_err(&pdev->dev, "ioremap failed\n");
+-	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
  		return -ENOMEM;
+ 
+ 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!iores) {
+-		ret = -ENODEV;
+-		goto out0;
+-	}
++	if (!iores)
++		return -ENODEV;
+ 
+-	ret = -EBUSY;
+-	if (!request_mem_region(iores->start, resource_size(iores),
+-				pdev->name))
+-		goto out0;
++	if (!devm_request_mem_region(&pdev->dev, iores->start,
++				     resource_size(iores),
++				     pdev->name))
++		return -EBUSY;
+ 
+-	ctx->mmio = ioremap_nocache(iores->start, resource_size(iores));
++	ctx->mmio = devm_ioremap_nocache(&pdev->dev, iores->start,
++					 resource_size(iores));
+ 	if (!ctx->mmio)
+-		goto out1;
++		return -EBUSY;
+ 
+ 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+ 	if (!dmares)
+-		goto out2;
++		return -EBUSY;
+ 	ctx->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = dmares->start;
+ 
+ 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+ 	if (!dmares)
+-		goto out2;
++		return -EBUSY;
+ 	ctx->dmaids[SNDRV_PCM_STREAM_CAPTURE] = dmares->start;
+ 
+ 	platform_set_drvdata(pdev, ctx);
+ 
+-	ret = snd_soc_register_dai(&pdev->dev, &au1xi2s_dai_driver);
+-	if (ret)
+-		goto out2;
+-
+-	return 0;
+-
+-out2:
+-	iounmap(ctx->mmio);
+-out1:
+-	release_mem_region(iores->start, resource_size(iores));
+-out0:
+-	kfree(ctx);
+-	return ret;
++	return snd_soc_register_dai(&pdev->dev, &au1xi2s_dai_driver);
+ }
+ 
+ static int __devexit au1xi2s_drvremove(struct platform_device *pdev)
+ {
+ 	struct au1xpsc_audio_data *ctx = platform_get_drvdata(pdev);
+-	struct resource *r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	snd_soc_unregister_dai(&pdev->dev);
+ 
+ 	WR(ctx, I2S_ENABLE, EN_D);	/* clock off, disable */
+ 
+-	iounmap(ctx->mmio);
+-	release_mem_region(r->start, resource_size(r));
+-	kfree(ctx);
+-
+ 	return 0;
+ }
+ 
 
