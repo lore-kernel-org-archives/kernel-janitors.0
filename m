@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 29 Dec 2011 16:51:25 +0000
-Subject: [PATCH 5/10] sound/soc/au1x/psc-ac97.c: use devm_ functions
-Message-Id: <1325177489-13815-7-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 29 Dec 2011 16:51:22 +0000
+Subject: [PATCH 8/10] sound/soc/davinci/davinci-i2s.c: use devm_ functions
+Message-Id: <1325177489-13815-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -18,100 +18,115 @@ detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
 devm_ioremap for data that is allocated in the probe function of a platform
 device and is only freed in the remove function.
 
+In this case, the original code did not contain a call to iounmap, nor does
+one appear anywhere else in the file.  I have assumed that it is safe to
+use devm_ioremap for the allocation in any case.
+
 Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
 
 ---
- sound/soc/au1x/psc-ac97.c |   41 ++++++++++++++---------------------------
- 1 file changed, 14 insertions(+), 27 deletions(-)
+ sound/soc/davinci/davinci-i2s.c |   39 +++++++++++++--------------------------
+ 1 file changed, 13 insertions(+), 26 deletions(-)
 
-diff --git a/sound/soc/au1x/psc-ac97.c b/sound/soc/au1x/psc-ac97.c
-index 87daf45..476b79a 100644
---- a/sound/soc/au1x/psc-ac97.c
-+++ b/sound/soc/au1x/psc-ac97.c
-@@ -368,35 +368,35 @@ static int __devinit au1xpsc_ac97_drvprobe(struct platform_device *pdev)
- 	unsigned long sel;
- 	struct au1xpsc_audio_data *wd;
+diff --git a/sound/soc/davinci/davinci-i2s.c b/sound/soc/davinci/davinci-i2s.c
+index ec18710..0a74b95 100644
+--- a/sound/soc/davinci/davinci-i2s.c
++++ b/sound/soc/davinci/davinci-i2s.c
+@@ -661,18 +661,18 @@ static int davinci_i2s_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
--	wd = kzalloc(sizeof(struct au1xpsc_audio_data), GFP_KERNEL);
-+	wd = devm_kzalloc(&pdev->dev, sizeof(struct au1xpsc_audio_data),
-+			  GFP_KERNEL);
- 	if (!wd)
- 		return -ENOMEM;
+-	ioarea = request_mem_region(mem->start, resource_size(mem),
+-				    pdev->name);
++	ioarea = devm_request_mem_region(&pdev->dev, mem->start,
++					 resource_size(mem),
++					 pdev->name);
+ 	if (!ioarea) {
+ 		dev_err(&pdev->dev, "McBSP region already claimed\n");
+ 		return -EBUSY;
+ 	}
  
- 	mutex_init(&wd->lock);
- 
- 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!iores) {
--		ret = -ENODEV;
--		goto out0;
+-	dev = kzalloc(sizeof(struct davinci_mcbsp_dev), GFP_KERNEL);
+-	if (!dev) {
+-		ret = -ENOMEM;
+-		goto err_release_region;
 -	}
-+	if (!iores)
++	dev = devm_kzalloc(&pdev->dev, sizeof(struct davinci_mcbsp_dev),
++			   GFP_KERNEL);
++	if (!dev)
++		return -ENOMEM;
+ 	if (pdata) {
+ 		dev->enable_channel_combine = pdata->enable_channel_combine;
+ 		dev->dma_params[SNDRV_PCM_STREAM_PLAYBACK].sram_size @@ -691,13 +691,11 @@ static int davinci_i2s_probe(struct platform_device *pdev)
+ 	dev->dma_params[SNDRV_PCM_STREAM_CAPTURE].ram_chan_q	= ram_chan_q;
+ 
+ 	dev->clk = clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(dev->clk)) {
+-		ret = -ENODEV;
+-		goto err_free_mem;
+-	}
++	if (IS_ERR(dev->clk))
 +		return -ENODEV;
+ 	clk_enable(dev->clk);
  
--	ret = -EBUSY;
--	if (!request_mem_region(iores->start, resource_size(iores),
--				pdev->name))
--		goto out0;
-+	if (!devm_request_mem_region(&pdev->dev, iores->start,
-+				     resource_size(iores),
-+				     pdev->name))
-+		return -EBUSY;
+-	dev->base = ioremap(mem->start, resource_size(mem));
++	dev->base = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
+ 	if (!dev->base) {
+ 		dev_err(&pdev->dev, "ioremap failed\n");
+ 		ret = -ENOMEM;
+@@ -715,7 +713,7 @@ static int davinci_i2s_probe(struct platform_device *pdev)
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "no DMA resource\n");
+ 		ret = -ENXIO;
+-		goto err_iounmap;
++		goto err_release_clk;
+ 	}
+ 	dev->dma_params[SNDRV_PCM_STREAM_PLAYBACK].channel = res->start;
  
--	wd->mmio = ioremap(iores->start, resource_size(iores));
-+	wd->mmio = devm_ioremap(&pdev->dev, iores->start,
-+				resource_size(iores));
- 	if (!wd->mmio)
--		goto out1;
-+		return -EBUSY;
+@@ -723,7 +721,7 @@ static int davinci_i2s_probe(struct platform_device *pdev)
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "no DMA resource\n");
+ 		ret = -ENXIO;
+-		goto err_iounmap;
++		goto err_release_clk;
+ 	}
+ 	dev->dma_params[SNDRV_PCM_STREAM_CAPTURE].channel = res->start;
+ 	dev->dev = &pdev->dev;
+@@ -732,35 +730,24 @@ static int davinci_i2s_probe(struct platform_device *pdev)
  
- 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
- 	if (!dmares)
--		goto out2;
-+		return -EBUSY;
- 	wd->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = dmares->start;
+ 	ret = snd_soc_register_dai(&pdev->dev, &davinci_i2s_dai);
+ 	if (ret != 0)
+-		goto err_iounmap;
++		goto err_release_clk;
  
- 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 1);
- 	if (!dmares)
--		goto out2;
-+		return -EBUSY;
- 	wd->dmaids[SNDRV_PCM_STREAM_CAPTURE] = dmares->start;
- 
- 	/* configuration: max dma trigger threshold, enable ac97 */
-@@ -421,24 +421,15 @@ static int __devinit au1xpsc_ac97_drvprobe(struct platform_device *pdev)
- 
- 	ret = snd_soc_register_dai(&pdev->dev, &wd->dai_drv);
- 	if (ret)
--		goto out2;
-+		return ret;
- 
- 	au1xpsc_ac97_workdata = wd;
  	return 0;
+ 
+-err_iounmap:
+-	iounmap(dev->base);
+ err_release_clk:
+ 	clk_disable(dev->clk);
+ 	clk_put(dev->clk);
+-err_free_mem:
+-	kfree(dev);
+-err_release_region:
+-	release_mem_region(mem->start, resource_size(mem));
 -
--out2:
--	iounmap(wd->mmio);
--out1:
--	release_mem_region(iores->start, resource_size(iores));
--out0:
--	kfree(wd);
--	return ret;
+ 	return ret;
  }
  
- static int __devexit au1xpsc_ac97_drvremove(struct platform_device *pdev)
+ static int davinci_i2s_remove(struct platform_device *pdev)
  {
- 	struct au1xpsc_audio_data *wd = platform_get_drvdata(pdev);
--	struct resource *r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	struct davinci_mcbsp_dev *dev = dev_get_drvdata(&pdev->dev);
+-	struct resource *mem;
  
  	snd_soc_unregister_dai(&pdev->dev);
- 
-@@ -448,10 +439,6 @@ static int __devexit au1xpsc_ac97_drvremove(struct platform_device *pdev)
- 	au_writel(PSC_CTRL_DISABLE, PSC_CTRL(wd));
- 	au_sync();
- 
--	iounmap(wd->mmio);
--	release_mem_region(r->start, resource_size(r));
--	kfree(wd);
--
- 	au1xpsc_ac97_workdata = NULL;	/* MDEV */
+ 	clk_disable(dev->clk);
+ 	clk_put(dev->clk);
+ 	dev->clk = NULL;
+-	kfree(dev);
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	release_mem_region(mem->start, resource_size(mem));
  
  	return 0;
+ }
 
