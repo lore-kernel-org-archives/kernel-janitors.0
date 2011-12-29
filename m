@@ -1,34 +1,105 @@
-From: Simon Wunderlich <simon.wunderlich@s2003.tu-chemnitz.de>
-Date: Wed, 14 Dec 2011 12:33:30 +0000
-Subject: [PATCH] mac80211: free skb on error path of ieee80211_ibss_join()
-Message-Id: <1323866010-10079-1-git-send-email-siwu@hrz.tu-chemnitz.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 29 Dec 2011 16:51:23 +0000
+Subject: [PATCH 7/10] sound/soc/codecs/jz4740.c: use devm_ functions
+Message-Id: <1325177489-13815-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Simon <an.alexsimon@googlemail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Our new return also created a memleak. The skb should be freed before
-returning an error.
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-Signed-off-by: Simon Wunderlich <siwu@hrz.tu-chemnitz.de>
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
+devm_ioremap for data that is allocated in the probe function of a platform
+device and is only freed in the remove function.
+
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+
 ---
- net/mac80211/ibss.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ sound/soc/codecs/jz4740.c |   36 ++++++++++--------------------------
+ 1 file changed, 10 insertions(+), 26 deletions(-)
 
-diff --git a/net/mac80211/ibss.c b/net/mac80211/ibss.c
-index 0fc9752..fe0e91e 100644
---- a/net/mac80211/ibss.c
-+++ b/net/mac80211/ibss.c
-@@ -995,6 +995,7 @@ int ieee80211_ibss_join(struct ieee80211_sub_if_data *sdata,
- 		if (!ieee80211_set_channel_type(sdata->local, sdata,
- 					       params->channel_type)) {
- 			mutex_unlock(&sdata->u.ibss.mtx);
-+			kfree_skb(skb);
- 			return -EINVAL;
- 		}
+diff --git a/sound/soc/codecs/jz4740.c b/sound/soc/codecs/jz4740.c
+index d73d283..ccbf0ac 100644
+--- a/sound/soc/codecs/jz4740.c
++++ b/sound/soc/codecs/jz4740.c
+@@ -353,29 +353,29 @@ static int __devinit jz4740_codec_probe(struct platform_device *pdev)
+ 	struct jz4740_codec *jz4740_codec;
+ 	struct resource *mem;
+ 
+-	jz4740_codec = kzalloc(sizeof(*jz4740_codec), GFP_KERNEL);
++	jz4740_codec = devm_kzalloc(&pdev->dev, sizeof(*jz4740_codec),
++				    GFP_KERNEL);
+ 	if (!jz4740_codec)
+ 		return -ENOMEM;
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!mem) {
+ 		dev_err(&pdev->dev, "Failed to get mmio memory resource\n");
+-		ret = -ENOENT;
+-		goto err_free_codec;
++		return -ENOENT;
  	}
--- 
-1.7.7.3
+ 
+-	mem = request_mem_region(mem->start, resource_size(mem), pdev->name);
++	mem = devm_request_mem_region(&pdev->dev, mem->start,
++				      resource_size(mem), pdev->name);
+ 	if (!mem) {
+ 		dev_err(&pdev->dev, "Failed to request mmio memory region\n");
+-		ret = -EBUSY;
+-		goto err_free_codec;
++		return -EBUSY;
+ 	}
+ 
+-	jz4740_codec->base = ioremap(mem->start, resource_size(mem));
++	jz4740_codec->base = devm_ioremap(&pdev->dev, mem->start,
++					  resource_size(mem));
+ 	if (!jz4740_codec->base) {
+ 		dev_err(&pdev->dev, "Failed to ioremap mmio memory\n");
+-		ret = -EBUSY;
+-		goto err_release_mem_region;
++		return -EBUSY;
+ 	}
+ 	jz4740_codec->mem = mem;
+ 
+@@ -385,33 +385,17 @@ static int __devinit jz4740_codec_probe(struct platform_device *pdev)
+ 			&soc_codec_dev_jz4740_codec, &jz4740_codec_dai, 1);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register codec\n");
+-		goto err_iounmap;
++		return ret;
+ 	}
+ 
+ 	return 0;
+-
+-err_iounmap:
+-	iounmap(jz4740_codec->base);
+-err_release_mem_region:
+-	release_mem_region(mem->start, resource_size(mem));
+-err_free_codec:
+-	kfree(jz4740_codec);
+-
+-	return ret;
+ }
+ 
+ static int __devexit jz4740_codec_remove(struct platform_device *pdev)
+ {
+-	struct jz4740_codec *jz4740_codec = platform_get_drvdata(pdev);
+-	struct resource *mem = jz4740_codec->mem;
+-
+ 	snd_soc_unregister_codec(&pdev->dev);
+ 
+-	iounmap(jz4740_codec->base);
+-	release_mem_region(mem->start, resource_size(mem));
+-
+ 	platform_set_drvdata(pdev, NULL);
+-	kfree(jz4740_codec);
+ 
+ 	return 0;
+ }
 
