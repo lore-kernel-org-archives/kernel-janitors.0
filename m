@@ -1,88 +1,67 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 23 Dec 2011 17:39:30 +0000
-Subject: [PATCH 5/9] drivers/usb/host/isp1760-if.c: introduce missing kfree
-Message-Id: <1324661974-17281-5-git-send-email-julia@diku.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 29 Dec 2011 16:51:20 +0000
+Subject: [PATCH 10/10] sound/soc/davinci/davinci-vcif.c: use devm_ functions
+Message-Id: <1325177489-13815-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-drvdata needds to be freed before leaving the function in an error case.
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-A simplified version of the semantic match that finds the problem is as
-follows: (http://coccinelle.lip6.fr)
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
+devm_ioremap for data that is allocated in the probe function of a platform
+device and is only freed in the remove function.
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-identifier f1;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f1
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
 
 ---
- drivers/usb/host/isp1760-if.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ sound/soc/davinci/davinci-vcif.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/usb/host/isp1760-if.c b/drivers/usb/host/isp1760-if.c
-index b605224..61de62c 100644
---- a/drivers/usb/host/isp1760-if.c
-+++ b/drivers/usb/host/isp1760-if.c
-@@ -56,14 +56,18 @@ static int of_isp1760_probe(struct platform_device *dev)
- 		return -ENOMEM;
+diff --git a/sound/soc/davinci/davinci-vcif.c b/sound/soc/davinci/davinci-vcif.c
+index 70ce10c..da030ff 100644
+--- a/sound/soc/davinci/davinci-vcif.c
++++ b/sound/soc/davinci/davinci-vcif.c
+@@ -210,7 +210,9 @@ static int davinci_vcif_probe(struct platform_device *pdev)
+ 	struct davinci_vcif_dev *davinci_vcif_dev;
+ 	int ret;
  
- 	ret = of_address_to_resource(dp, 0, &memory);
--	if (ret)
--		return -ENXIO;
-+	if (ret) {
-+		ret = -ENXIO;
-+		goto free_data;
-+	}
+-	davinci_vcif_dev = kzalloc(sizeof(struct davinci_vcif_dev), GFP_KERNEL);
++	davinci_vcif_dev = devm_kzalloc(&pdev->dev,
++					sizeof(struct davinci_vcif_dev),
++					GFP_KERNEL);
+ 	if (!davinci_vcif_dev) {
+ 		dev_dbg(&pdev->dev,
+ 			"could not allocate memory for private data\n");
+@@ -235,23 +237,15 @@ static int davinci_vcif_probe(struct platform_device *pdev)
+ 	ret = snd_soc_register_dai(&pdev->dev, &davinci_vcif_dai);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "could not register dai\n");
+-		goto fail;
++		return ret;
+ 	}
  
- 	res_len = resource_size(&memory);
+ 	return 0;
+-
+-fail:
+-	kfree(davinci_vcif_dev);
+-
+-	return ret;
+ }
  
- 	res = request_mem_region(memory.start, res_len, dev_name(&dev->dev));
--	if (!res)
--		return -EBUSY;
-+	if (!res) {
-+		ret = -EBUSY;
-+		goto free_data;
-+	}
+ static int davinci_vcif_remove(struct platform_device *pdev)
+ {
+-	struct davinci_vcif_dev *davinci_vcif_dev = dev_get_drvdata(&pdev->dev);
+-
+ 	snd_soc_unregister_dai(&pdev->dev);
+-	kfree(davinci_vcif_dev);
  
- 	if (of_irq_map_one(dp, 0, &oirq)) {
- 		ret = -ENODEV;
-@@ -125,6 +129,7 @@ free_gpio:
- 		gpio_free(drvdata->rst_gpio);
- release_reg:
- 	release_mem_region(memory.start, res_len);
-+free_data:
- 	kfree(drvdata);
- 	return ret;
+ 	return 0;
  }
 
