@@ -1,85 +1,114 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 23 Dec 2011 17:39:34 +0000
-Subject: [PATCH 9/9] drivers/staging/media/as102/as102_usb_drv.c: shift position of allocation code
-Message-Id: <1324661974-17281-9-git-send-email-julia@diku.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 29 Dec 2011 16:51:24 +0000
+Subject: [PATCH 6/10] sound/soc/au1x/psc-i2s.c: use devm_ functions
+Message-Id: <1325177489-13815-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The conditional after the kzalloc says that the tested expression should
-never be true, but if it were, the allocated data would have to be freed.
-This change just moves the allocation below the test, to avoid any
-possibility of the problem.
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-A simplified version of the semantic match that finds the problem is as
-follows: (http://coccinelle.lip6.fr)
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses devm_kzalloc, devm_request_mem_region and
+devm_ioremap for data that is allocated in the probe function of a platform
+device and is only freed in the remove function.
 
-// <smpl>
-@r exists@
-local idexpression x;
-statement S;
-identifier f1;
-position p1,p2;
-expression *ptr != NULL;
-@@
-
-x@p1 = \(kmalloc\|kzalloc\|kcalloc\)(...);
-...
-if (x = NULL) S
-<... when != x
-     when != if (...) { <+...x...+> }
-x->f1
-...>
-(
- return \(0\|<+...x...+>\|ptr\);
-|
- return@p2 ...;
-)
-
-@script:python@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-print "* file: %s kmalloc %s return %s" % (p1[0].file,p1[0].line,p2[0].line)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
 
 ---
- drivers/staging/media/as102/as102_usb_drv.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ sound/soc/au1x/psc-i2s.c |   42 ++++++++++++++----------------------------
+ 1 file changed, 14 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/staging/media/as102/as102_usb_drv.c b/drivers/staging/media/as102/as102_usb_drv.c
-index 7bcb28c..d775be0 100644
---- a/drivers/staging/media/as102/as102_usb_drv.c
-+++ b/drivers/staging/media/as102/as102_usb_drv.c
-@@ -353,12 +353,6 @@ static int as102_usb_probe(struct usb_interface *intf,
+diff --git a/sound/soc/au1x/psc-i2s.c b/sound/soc/au1x/psc-i2s.c
+index 5c1dc8a..0607ba3 100644
+--- a/sound/soc/au1x/psc-i2s.c
++++ b/sound/soc/au1x/psc-i2s.c
+@@ -295,33 +295,34 @@ static int __devinit au1xpsc_i2s_drvprobe(struct platform_device *pdev)
+ 	int ret;
+ 	struct au1xpsc_audio_data *wd;
  
- 	ENTER();
+-	wd = kzalloc(sizeof(struct au1xpsc_audio_data), GFP_KERNEL);
++	wd = devm_kzalloc(&pdev->dev, sizeof(struct au1xpsc_audio_data),
++			  GFP_KERNEL);
+ 	if (!wd)
+ 		return -ENOMEM;
  
--	as102_dev = kzalloc(sizeof(struct as102_dev_t), GFP_KERNEL);
--	if (as102_dev = NULL) {
--		err("%s: kzalloc failed", __func__);
--		return -ENOMEM;
+ 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!iores) {
+-		ret = -ENODEV;
+-		goto out0;
 -	}
--
- 	/* This should never actually happen */
- 	if ((sizeof(as102_usb_id_table) / sizeof(struct usb_device_id)) ! 	    (sizeof(as102_device_names) / sizeof(const char *))) {
-@@ -366,6 +360,12 @@ static int as102_usb_probe(struct usb_interface *intf,
- 		return -EINVAL;
- 	}
++	if (!iores)
++		return -ENODEV;
  
-+	as102_dev = kzalloc(sizeof(struct as102_dev_t), GFP_KERNEL);
-+	if (as102_dev = NULL) {
-+		err("%s: kzalloc failed", __func__);
-+		return -ENOMEM;
-+	}
-+
- 	/* Assign the user-friendly device name */
- 	for (i = 0; i < (sizeof(as102_usb_id_table) /
- 			 sizeof(struct usb_device_id)); i++) {
+ 	ret = -EBUSY;
+-	if (!request_mem_region(iores->start, resource_size(iores),
+-				pdev->name))
+-		goto out0;
++	if (!devm_request_mem_region(&pdev->dev, iores->start,
++				     resource_size(iores),
++				     pdev->name))
++		return -EBUSY;
+ 
+-	wd->mmio = ioremap(iores->start, resource_size(iores));
++	wd->mmio = devm_ioremap(&pdev->dev, iores->start,
++				resource_size(iores));
+ 	if (!wd->mmio)
+-		goto out1;
++		return -EBUSY;
+ 
+ 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+ 	if (!dmares)
+-		goto out2;
++		return -EBUSY;
+ 	wd->dmaids[SNDRV_PCM_STREAM_PLAYBACK] = dmares->start;
+ 
+ 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 1);
+ 	if (!dmares)
+-		goto out2;
++		return -EBUSY;
+ 	wd->dmaids[SNDRV_PCM_STREAM_CAPTURE] = dmares->start;
+ 
+ 	/* preserve PSC clock source set up by platform (dev.platform_data
+@@ -349,23 +350,12 @@ static int __devinit au1xpsc_i2s_drvprobe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, wd);
+ 
+-	ret = snd_soc_register_dai(&pdev->dev, &wd->dai_drv);
+-	if (!ret)
+-		return 0;
+-
+-out2:
+-	iounmap(wd->mmio);
+-out1:
+-	release_mem_region(iores->start, resource_size(iores));
+-out0:
+-	kfree(wd);
+-	return ret;
++	return snd_soc_register_dai(&pdev->dev, &wd->dai_drv);
+ }
+ 
+ static int __devexit au1xpsc_i2s_drvremove(struct platform_device *pdev)
+ {
+ 	struct au1xpsc_audio_data *wd = platform_get_drvdata(pdev);
+-	struct resource *r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	snd_soc_unregister_dai(&pdev->dev);
+ 
+@@ -374,10 +364,6 @@ static int __devexit au1xpsc_i2s_drvremove(struct platform_device *pdev)
+ 	au_writel(PSC_CTRL_DISABLE, PSC_CTRL(wd));
+ 	au_sync();
+ 
+-	iounmap(wd->mmio);
+-	release_mem_region(r->start, resource_size(r));
+-	kfree(wd);
+-
+ 	return 0;
+ }
+ 
 
