@@ -1,46 +1,18 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:44 +0000
-Subject: [PATCH v2 09/17] Staging: quickstart: Use switch-case in quickstart_acpi_notify
-Message-Id: <1326320574-11220-10-git-send-email-szymon@janc.net.pl>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Mon, 02 Jan 2012 12:29:57 +0000
+Subject: Re: [PATCH 0/10] use devm_ functions
+Message-Id: <20120102122957.GL2899@opensource.wolfsonmicro.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |   10 +++++++---
- 1 files changed, 7 insertions(+), 3 deletions(-)
+On Thu, Dec 29, 2011 at 05:51:19PM +0100, Julia Lawall wrote:
+> The following is a semantic patch (http://coccinelle.lip6.fr/) that
+> introduces uses of various devm_ functions.  The main strategy is
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index b183d21..17e57c0 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -180,15 +180,19 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
- 	if (!quickstart)
- 		return;
- 
--	if (event = QUICKSTART_EVENT_WAKE)
-+	switch (event) {
-+	case QUICKSTART_EVENT_WAKE:
- 		quickstart_data.pressed = quickstart->btn;
--	else if (event = QUICKSTART_EVENT_RUNTIME) {
-+		break;
-+	case QUICKSTART_EVENT_RUNTIME:
- 		input_report_key(quickstart_input, quickstart->btn->id, 1);
- 		input_sync(quickstart_input);
- 		input_report_key(quickstart_input, quickstart->btn->id, 0);
- 		input_sync(quickstart_input);
-+		break;
-+	default:
-+		break;
- 	}
--	return;
- }
- 
- static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
--- 
-1.7.8.3
-
-
+Applied all except the jz4740 patch which Axel already did, thanks.
