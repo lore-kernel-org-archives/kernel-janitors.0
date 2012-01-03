@@ -1,65 +1,38 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:27 +0000
-Subject: [PATCH 08/16] Staging: quickstart: Cleanup quickstart_acpi_config
-Message-Id: <1326147815-11451-9-git-send-email-szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Jan 2012 13:17:48 +0000
+Subject: [patch] TPM: handle errors from probe_itpm()
+Message-Id: <20120103131748.GA11575@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <87ehw6sesk.fsf@rustcorp.com.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Debora Velarde <debora@linux.vnet.ibm.com>
+Cc: Rajiv Andrade <srajiv@linux.vnet.ibm.com>, Marcel Selhorst <m.selhorst@sirrix.com>, Rusty Russell <rusty@rustcorp.com.au>, tpmdd-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |   21 ++++++++++++---------
- 1 files changed, 12 insertions(+), 9 deletions(-)
+We recently made itpm a bool in linux-next and it broke the error
+handling here.  This patch also preserves the return codes from
+probe_itpm() instead of always returning -ENODEV.
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 97e62e9..b183d21 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -240,21 +240,24 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 	return ret;
- }
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index a174862..08c6a07 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -538,11 +538,11 @@ static int tpm_tis_init(struct device *dev, resource_size_t start,
+ 		 vendor >> 16, ioread8(chip->vendor.iobase + TPM_RID(0)));
  
--static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
-+static int quickstart_acpi_config(struct quickstart_acpi *quickstart)
- {
--	int len = strlen(bid);
-+	char *bid = acpi_device_bid(quickstart->device);
-+	char *name;
- 	int ret;
- 
-+	name = kmalloc(strlen(bid) + 1, GFP_KERNEL);
-+	if (!name)
-+		return -ENOMEM;
-+
- 	/* Add button to list */
- 	ret = quickstart_btnlst_add(&quickstart->btn);
--	if (ret)
-+	if (ret < 0) {
-+		kfree(name);
- 		return ret;
--
--	quickstart->btn->name = kzalloc(len + 1, GFP_KERNEL);
--	if (!quickstart->btn->name) {
--		quickstart_btnlst_free();
--		return -ENOMEM;
+ 	if (!itpm) {
+-		itpm = probe_itpm(chip);
+-		if (itpm < 0) {
+-			rc = -ENODEV;
++		rc = probe_itpm(chip);
++		if (rc < 0)
+ 			goto out_err;
+-		}
++		itpm = rc;
++		rc = 0;
  	}
-+
-+	quickstart->btn->name = name;
- 	strcpy(quickstart->btn->name, bid);
  
- 	return 0;
-@@ -280,7 +283,7 @@ static int quickstart_acpi_add(struct acpi_device *device)
- 	device->driver_data = quickstart;
- 
- 	/* Add button to list and initialize some stuff */
--	ret = quickstart_acpi_config(quickstart, acpi_device_bid(device));
-+	ret = quickstart_acpi_config(quickstart);
- 	if (ret < 0)
- 		goto fail_config;
- 
--- 
-1.7.8.2
-
-
+ 	if (itpm)
