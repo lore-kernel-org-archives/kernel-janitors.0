@@ -1,62 +1,44 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Wed, 25 Jan 2012 08:30:03 +0000
-Subject: Re: [PATCH] drivers/video/omap2/dss: use devm_ functions
-Message-Id: <1327480203.1858.18.camel@deskari>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-Tqhkox6DqtMuBk8x6OLS"
+From: Greg KH <greg@kroah.com>
+Date: Tue, 03 Jan 2012 20:55:39 +0000
+Subject: Re: [patch -longterm] V4L/DVB: v4l2-ioctl: integer overflow in
+Message-Id: <20120103205539.GC17131@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1327410045-3906-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1327410045-3906-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1327410045-3906-2-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20111215063445.GA2424@elgon.mountain>
+ <4EE9BC25.7020303@infradead.org>
+ <201112151033.35153.hverkuil@xs4all.nl>
+ <4EE9C2E6.1060304@infradead.org>
+In-Reply-To: <4EE9C2E6.1060304@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, stable@vger.kernel.org
 
+On Thu, Dec 15, 2011 at 07:50:30AM -0200, Mauro Carvalho Chehab wrote:
+> On 15-12-2011 07:33, Hans Verkuil wrote:
+> > On Thursday, December 15, 2011 10:21:41 Mauro Carvalho Chehab wrote:
+> >> On 15-12-2011 04:34, Dan Carpenter wrote:
+> >>> On a 32bit system the multiplication here could overflow.  p->count is
+> >>> used in some of the V4L drivers.
+> >>
+> >> ULONG_MAX / sizeof(v4l2_ext_control) is too much. This ioctl is used on things
+> >> like setting MPEG paramenters, where several parameters need adjustments at
+> >> the same time. I risk to say that 64 is probably a reasonably safe upper limit.
+> > 
+> > Let's make it 1024. That gives more than enough room for expansion without taking
+> > too much memory.
+> >
+> > Especially for video encoders a lot of controls are needed, and sensor drivers
+> > are also getting more complex, so 64 is a bit too low for my taste.
+> > 
+> > I agree that limiting this to some sensible value is a good idea.
+> 
+> I'm fine with 1024. Yet, this could easily be changed to whatever upper value needed,
+> and still be backward compatible.
 
---=-Tqhkox6DqtMuBk8x6OLS
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Ok, can someone please send me the "accepted" version of this patch for
+inclusion in the 2.6.32-stable tree?
 
-Hi,
+thanks,
 
-On Tue, 2012-01-24 at 14:00 +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> The various devm_ functions allocate memory that is released when a
-> driver
-> detaches.  This patch uses these functions for data that is allocated
-> in
-> the probe function of a platform device and is only freed in the
-> remove
-> function.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Thanks, this looks very good. I'll apply to omapdss tree.
-
- Tomi
-
-
---=-Tqhkox6DqtMuBk8x6OLS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAABAgAGBQJPH72KAAoJEPo9qoy8lh71CwIP/2OmQyhyKDQ7vMn5l3r36opX
-C1nC0BNVL8Ng5ZinwJAJKyAFx7ZMS4hmn0XQLetaqElFHlZjJ3T0BrshQasmOro+
-KVKW01Y8VmurASfUK0muvZqf1XTutS0WgkFZzNgYiqApJpzY5i3LTMaDHo7Xoyru
-8s7gVEMYs5+hggAWDjsOqCKrmquoxN7dDgxOCxrRtuKSbxZyTfE0CzBpkksn0nyq
-NpAPj4/WOPDa9JRTm39gYiLSMxlQqgAvw0IcI/TxYv6Gzbc9xNYgrja1kyRbkrSV
-8d6Y+/+zA2JY460cxuAHyEu29LgaqWiYmANv1HKXWZi9Mdh9+gALAxkEeta4htH0
-BfkjB3i3qjgx/2ccJ788UloHFpjh8BcwuZKBiz5RPrGkBeN0cKAFj0M4aCuAAhHW
-5sYe01NzEMNsuBDbwjNnQiEE3jGLpP2KzgkcM21iefxIPLw1wmpzfOn5zGRfInAv
-IWbpxti2pLKPhfmAhaY2S89QNZg0/eayJSDq7fYNx5sxUdHWDCy3jRBG0EdQoOzc
-vADRgoOic2duGHNkBBgRD0zhJJSFLRBSksSCdaZbgMKsK6S55V7zBbYAzY1rJVsB
-Y1yZ/1rngY9ca9fblsImbb+SUMOaEb9oWmQn1502pD7mZ3VIxAse7PKKKAC8cTqm
-bCPjh/pShN6UU12AS97r
-=eYcY
------END PGP SIGNATURE-----
-
---=-Tqhkox6DqtMuBk8x6OLS--
-
+greg k-h
