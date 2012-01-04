@@ -1,31 +1,43 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Sat, 14 Jan 2012 21:45:05 +0000
-Subject: Re: [PATCH 1/2] scripts/coccinelle: semantic patches related to devm_ functions
-Message-Id: <4F11F761.70406@suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jan 2012 07:26:10 +0000
+Subject: [patch] gma500: silence gcc warnings in mid_get_vbt_data()
+Message-Id: <20120104072610.GH30978@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1325004092-28162-1-git-send-email-julia.lawall@lip6.fr>
-In-Reply-To: <1325004092-28162-1-git-send-email-julia.lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Dave Airlie <airlied@redhat.com>, Alan Cox <alan@linux.intel.com>
 
-On 27.12.2011 17:41, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> devm_ functions allocate memory that is to remain allocated until the
-> device is detached.  This patch checks for opportunities for using the
-> function devm_request_and_ioremap.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Add a cast here to silence a Gcc warning.
+drivers/gpu/drm/gma500/mid_bios.c:214:28: warning:
+  cast from pointer to integer of different size [-Wpointer-to-int-cast]
 
-Applied both patches to kbuild.git#misc. BTW, Please use different
-subject lines for different patches next time, so that patches can be
-referred to by their subject. I changed these two to "coccinelle:
-semantic patches related to devm_ functions (part 1)" and "... (part 2)"
-due to lack of better ideas.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Compile tested only.
 
-Michal
+diff --git a/drivers/gpu/drm/gma500/mid_bios.c b/drivers/gpu/drm/gma500/mid_bios.c
+index 55fee10..5eee9ad 100644
+--- a/drivers/gpu/drm/gma500/mid_bios.c
++++ b/drivers/gpu/drm/gma500/mid_bios.c
+@@ -202,7 +202,7 @@ static void mid_get_vbt_data(struct drm_psb_private *dev_priv)
+ 		/*so, some values have changed location*/
+ 		new_size = vbt->checksum; /*checksum contains lo size byte*/
+ 		/*LSB of oaktrail_gct contains hi size byte*/
+-		new_size |= ((0xff & (unsigned int)vbt->oaktrail_gct)) << 8;
++		new_size |= ((0xff & (unsigned int)(long)vbt->oaktrail_gct)) << 8;
+ 
+ 		vbt->checksum = vbt->size; /*size contains the checksum*/
+ 		if (new_size > 0xff)
+@@ -211,8 +211,8 @@ static void mid_get_vbt_data(struct drm_psb_private *dev_priv)
+ 			vbt->size = new_size;
+ 
+ 		/* number of descriptors defined in the GCT */
+-		number_desc = ((0xff00 & (unsigned int)vbt->oaktrail_gct)) >> 8;
+-		bpi = ((0xff0000 & (unsigned int)vbt->oaktrail_gct)) >> 16;
++		number_desc = ((0xff00 & (unsigned int)(long)vbt->oaktrail_gct)) >> 8;
++		bpi = ((0xff0000 & (unsigned int)(long)vbt->oaktrail_gct)) >> 16;
+ 		vbt->oaktrail_gct = ioremap(addr + GCT_R10_HEADER_SIZE,
+ 				GCT_R10_DISPLAY_DESC_SIZE * number_desc);
+ 		pGCT = vbt->oaktrail_gct;
