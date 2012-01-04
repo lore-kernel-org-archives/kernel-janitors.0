@@ -1,55 +1,32 @@
-From: Swapnil Pimpale <swapnil.pict@gmail.com>
-Date: Sun, 22 Jan 2012 13:36:27 +0000
-Subject: Re: Problem with 3.3.0-rc1+: Target filesystem cannot find /sbin/init
-Message-Id: <CAGZys+QghV8xBygpy--kJytt-ZK6Mt_3SO7zNw4n-EN68EB95Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jan 2012 07:25:22 +0000
+Subject: [patch] procfs: update proc_show_options() to new API
+Message-Id: <20120104072522.GG30978@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAGZys+Q_A0H36+e45f6jTr7VQB=bn3pq1+pCvt=MHumiQP-=QQ@mail.gmail.com>
-	<CAG1y0sfVYTyhvmqe8XmC13zi8qZgOeBsFjqHjc1ox8Y81LvKXg@mail.gmail.com>
-In-Reply-To: <CAG1y0sfVYTyhvmqe8XmC13zi8qZgOeBsFjqHjc1ox8Y81LvKXg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: "Fajar A. Nugraha" <list@fajar.net>
-Cc: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The problem is solved.
-Turns out btrfs is disabled by default.
+This needs to be updated to take a dentry pointer after 79744e695a "vfs:
+switch ->show_options() to struct dentry *"
 
-On Sun, Jan 22, 2012 at 5:59 PM, Fajar A. Nugraha <list@fajar.net> wrote:
-> On Sun, Jan 22, 2012 at 7:21 PM, Swapnil Pimpale <swapnil.pict@gmail.com>=
- wrote:
->> I can successfully boot into Ubuntu 11.10 (3.0.0-14-generic-pae) with
->> a btrfs root filesystem and an ext2 /boot partition.
->> But when I installed the latest vanilla (3.3.0-rc1+) and booted into
->
-> where did you get the kernel from? kernel.org snapshot? git? third
-> party package?
->
->> it, the first time the system froze.
->> Next time onwards, I get the following error every time:
->>
->> [ =A0 0.427443] [drm:i915_init] =A0*ERROR* drm/i915 cannot work without
->> intel_agp module!
->> mount: mounting udev on /dev failed: No such device
->> W: devtmpfs not available, falling back to tmpfs for /dev
->> mount: mounting /dev/disk/by-uuid/f43fdd7a-8ad7-4e96-ab1c-14ba82a4324d
->> on /root failed: No such device
->
-> Do you know how to use your own costom kernel? That error is common
-> when a driver is missing (i.e. not built-in, and not included in
-> initrd). The easiest way to test that is to look at what's in
-> /proc/partitions and /dev/disk/by-id during normal system boot (I
-> assume you still have the old, working Ubuntu kernel?) and during
-> failed boot when you're dropped to busybox. If your root device
-> (sda8?) is not on /proc/partitions, then it's definitely block device
-> driver problem.
->
-> --
-> Fajar
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---Swapnil
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index e80cb5a..d839bfd 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -106,9 +106,9 @@ void __init proc_init_inodecache(void)
+ 					     init_once);
+ }
+ 
+-static int proc_show_options(struct seq_file *seq, struct vfsmount *vfs)
++static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ {
+-	struct super_block *sb = vfs->mnt_sb;
++	struct super_block *sb = root->d_sb;
+ 	struct pid_namespace *pid = sb->s_fs_info;
+ 
+ 	if (pid->pid_gid)
