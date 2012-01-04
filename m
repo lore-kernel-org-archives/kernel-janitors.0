@@ -1,43 +1,32 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Mon, 30 Jan 2012 16:20:37 +0000
-Subject: Re: [patch] exofs: add a cap on the memcpy() size
-Message-Id: <4F26C355.7030004@panasas.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Jan 2012 07:19:31 +0000
+Subject: [patch] gfs2: make some sizes unsigned in set_recover_size()
+Message-Id: <20120104071931.GC30978@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120130075949.GA22364@elgon.mountain>
-In-Reply-To: <20120130075949.GA22364@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steven Whitehouse <swhiteho@redhat.com>, David Teigland <teigland@redhat.com>
+Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 01/30/2012 04:01 PM, Dan Carpenter wrote:
-> On Mon, Jan 30, 2012 at 03:50:05PM +0200, Boaz Harrosh wrote:
->> On 01/30/2012 03:44 PM, Dan Carpenter wrote:
->>> On Mon, Jan 30, 2012 at 03:37:29PM +0200, Boaz Harrosh wrote:
->>>> I think I'd like something like:
->>>> -  	memcpy(odi->systemid, dt_dev->systemid, odi->systemid_len);
->>>> +	if (likely(odi->systemid_len))
->>>> + 		memcpy(odi->systemid, dt_dev->systemid, OSD_SYSTEMID_LEN);
->>>>
->>>> Which should also make the static checkers happy. What do you think?
->>>>
->>>
->>> Sounds good to me.
->>>
->>> regards,
->>> dan carpenter
->>>
->>
->> OK I'll make a patch. Please send your review-by
-> 
-> Could you give me a Reported-by cookie instead?  No one pays any
-> special attention to Reviewed-by tags when they come from newbies
-> like me...  :P
-> 
-> regards,
-> dan carpenter
-> 
+ls->ls_recover_size is uint32_t so old_size and new_size should be
+unsigned as well.  Otherwise a large value could count as a negative
+and we could get past the "if (old_size >= max_jid + 1)" check by
+mistake.
 
-Sure, yes
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Boaz
+diff --git a/fs/gfs2/lock_dlm.c b/fs/gfs2/lock_dlm.c
+index 82c82d0..400d041 100644
+--- a/fs/gfs2/lock_dlm.c
++++ b/fs/gfs2/lock_dlm.c
+@@ -886,7 +886,8 @@ static int set_recover_size(struct gfs2_sbd *sdp, struct dlm_slot *slots,
+ 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
+ 	uint32_t *submit = NULL;
+ 	uint32_t *result = NULL;
+-	int i, max_jid, old_size, new_size;
++	uint32_t old_size, new_size;
++	int i, max_jid;
+ 
+ 	max_jid = 0;
+ 	for (i = 0; i < num_slots; i++) {
