@@ -1,59 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 12 Jan 2012 09:55:12 +0000
-Subject: [PATCH 10/15] arch/arm/mach-imx/mach-mx53_ard.c: add missing iounmap
-Message-Id: <1326362117-29371-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Jan 2012 06:24:00 +0000
+Subject: [patch] [media] saa7134: use correct array offset
+Message-Id: <20120105062400.GB25744@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Smatch complains that i can be one passed the end of the array if we
+don't hit the break statement.  We should be using the "audio" here like
+we do in the other places.
 
-Add missing iounmap in error handling code, in a case where the function
-already preforms iounmap on some other execution path.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e;
-statement S,S1;
-int ret;
-@@
-e = \(ioremap\|ioremap_nocache\)(...)
-... when != iounmap(e)
-if (<+...e...+>) S
-... when any
-    when != iounmap(e)
-*if (...)
-   { ... when != iounmap(e)
-     return ...; }
-... when any
-iounmap(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- arch/arm/mach-imx/mach-mx53_ard.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Compile tested only.  Please review carefully.
 
-diff --git a/arch/arm/mach-imx/mach-mx53_ard.c b/arch/arm/mach-imx/mach-mx53_ard.c
-index 08dfb76..753f4fc 100644
---- a/arch/arm/mach-imx/mach-mx53_ard.c
-+++ b/arch/arm/mach-imx/mach-mx53_ard.c
-@@ -188,8 +188,10 @@ static int weim_cs_config(void)
- 		return -ENOMEM;
- 
- 	iomuxc_base = ioremap(MX53_IOMUXC_BASE_ADDR, SZ_4K);
--	if (!iomuxc_base)
-+	if (!iomuxc_base) {
-+		iounmap(weim_base);
- 		return -ENOMEM;
-+	}
- 
- 	/* CS1 timings for LAN9220 */
- 	writel(0x20001, (weim_base + 0x18));
-
+diff --git a/drivers/media/video/saa7134/saa7134-tvaudio.c b/drivers/media/video/saa7134/saa7134-tvaudio.c
+index ec1df6f..b7a99be 100644
+--- a/drivers/media/video/saa7134/saa7134-tvaudio.c
++++ b/drivers/media/video/saa7134/saa7134-tvaudio.c
+@@ -605,7 +605,7 @@ static int tvaudio_thread(void *data)
+ 			if (kthread_should_stop())
+ 				break;
+ 			if (UNSET = dev->thread.mode) {
+-				rx = tvaudio_getstereo(dev,&tvaudio[i]);
++				rx = tvaudio_getstereo(dev, &tvaudio[audio]);
+ 				mode = saa7134_tvaudio_rx2mode(rx);
+ 			} else {
+ 				mode = dev->thread.mode;
