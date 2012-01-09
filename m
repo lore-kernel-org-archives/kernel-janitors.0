@@ -1,7 +1,7 @@
 From: Szymon Janc <szymon@janc.net.pl>
-Date: Sun, 22 Jan 2012 18:50:13 +0000
-Subject: [PATCH v3 15/17] Staging: quickstart: Use pr_err and pr_info for logs
-Message-Id: <1327258213-15142-1-git-send-email-szymon@janc.net.pl>
+Date: Mon, 09 Jan 2012 22:23:27 +0000
+Subject: [PATCH 08/16] Staging: quickstart: Cleanup quickstart_acpi_config
+Message-Id: <1326147815-11451-9-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,79 +10,56 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: Szymon Janc <szymon@janc.net.pl>
 ---
- drivers/staging/quickstart/quickstart.c |   16 ++++++++--------
- 1 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/staging/quickstart/quickstart.c |   21 ++++++++++++---------
+ 1 files changed, 12 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index a67b03a..88f8ff3 100644
+index 97e62e9..b183d21 100644
 --- a/drivers/staging/quickstart/quickstart.c
 +++ b/drivers/staging/quickstart/quickstart.c
-@@ -25,6 +25,8 @@
- 
- #define QUICKSTART_VERSION "1.03"
- 
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/init.h>
-@@ -166,6 +168,7 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
- 		input_sync(quickstart_input);
- 		break;
- 	default:
-+		pr_err("Unexpected ACPI event notify (%u)\n", event);
- 		break;
- 	}
+@@ -240,21 +240,24 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
+ 	return ret;
  }
-@@ -183,8 +186,7 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 	status = acpi_evaluate_object(quickstart->device->handle, "GHID", NULL,
- 								&buffer);
- 	if (ACPI_FAILURE(status)) {
--		printk(KERN_ERR "quickstart: %s GHID method failed.\n",
--						quickstart->button->name);
-+		pr_err("%s GHID method failed\n", quickstart->button->name);
- 		return -EINVAL;
+ 
+-static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
++static int quickstart_acpi_config(struct quickstart_acpi *quickstart)
+ {
+-	int len = strlen(bid);
++	char *bid = acpi_device_bid(quickstart->device);
++	char *name;
+ 	int ret;
+ 
++	name = kmalloc(strlen(bid) + 1, GFP_KERNEL);
++	if (!name)
++		return -ENOMEM;
++
+ 	/* Add button to list */
+ 	ret = quickstart_btnlst_add(&quickstart->btn);
+-	if (ret)
++	if (ret < 0) {
++		kfree(name);
+ 		return ret;
+-
+-	quickstart->btn->name = kzalloc(len + 1, GFP_KERNEL);
+-	if (!quickstart->btn->name) {
+-		quickstart_btnlst_free();
+-		return -ENOMEM;
  	}
- 
-@@ -207,8 +209,7 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 		quickstart->button->id = *(uint64_t *)buffer.pointer;
- 		break;
- 	default:
--		printk(KERN_ERR "quickstart: %s GHID method returned buffer "
--				"of unexpected length %u\n",
-+		pr_err("%s GHID method returned buffer of unexpected length %u\n",
- 				quickstart->button->name, buffer.length);
- 		ret = -EINVAL;
- 		break;
-@@ -269,7 +270,7 @@ static int quickstart_acpi_add(struct acpi_device *device)
- 						quickstart_acpi_notify,
- 						quickstart);
- 	if (ACPI_FAILURE(status)) {
--		printk(KERN_ERR "quickstart: Notify handler install error\n");
-+		pr_err("Notify handler install error\n");
- 		ret = -ENODEV;
- 		goto fail_installnotify;
- 	}
-@@ -309,7 +310,7 @@ static int quickstart_acpi_remove(struct acpi_device *device, int type)
- 	status = acpi_remove_notify_handler(device->handle, ACPI_ALL_NOTIFY,
- 						quickstart_acpi_notify);
- 	if (ACPI_FAILURE(status))
--		printk(KERN_ERR "quickstart: Error removing notify handler\n");
-+		pr_err("Error removing notify handler\n");
- 
- 	kfree(quickstart);
- 
-@@ -435,8 +436,7 @@ static int __init quickstart_init(void)
- 	if (ret)
- 		goto fail_input;
- 
--	printk(KERN_INFO "quickstart: ACPI Direct App Launch ver %s\n",
--							QUICKSTART_VERSION);
-+	pr_info("ACPI Direct App Launch ver %s\n", QUICKSTART_VERSION);
++
++	quickstart->btn->name = name;
+ 	strcpy(quickstart->btn->name, bid);
  
  	return 0;
- fail_input:
+@@ -280,7 +283,7 @@ static int quickstart_acpi_add(struct acpi_device *device)
+ 	device->driver_data = quickstart;
+ 
+ 	/* Add button to list and initialize some stuff */
+-	ret = quickstart_acpi_config(quickstart, acpi_device_bid(device));
++	ret = quickstart_acpi_config(quickstart);
+ 	if (ret < 0)
+ 		goto fail_config;
+ 
 -- 
-1.7.8.3
+1.7.8.2
 
 
