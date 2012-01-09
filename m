@@ -1,38 +1,41 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Date: Sat, 28 Jan 2012 11:00:36 +0000
-Subject: Re: [patch] x86, dumpstack: removed unneeded check in dump_trace()
-Message-Id: <20120128110034.GD3391@somewhere>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 09 Jan 2012 09:40:49 +0000
+Subject: [PATCH 3/4] drivers/crypto/ixp4xx_crypto.c: convert GFP_KERNEL to GFP_ATOMIC
+Message-Id: <1326102050-30265-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120128105246.GA25092@elgon.mountain>
-In-Reply-To: <20120128105246.GA25092@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Namhyung Kim <namhyung@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Clemens Ladisch <clemens@ladisch.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, Jan 28, 2012 at 01:52:46PM +0300, Dan Carpenter wrote:
-> Smatch complains that we have some inconsistent NULL checking.  If
-> "task" were NULL then it would lead to a NULL dereference later.  We
-> can remove this test because earlier on in the function we have:
-> 	if (!task)
-> 		task = current;
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-Acked-by: Frederic Weisbecker <fweisbec@gmail.com>
+The function is called with locks held and thus should not use GFP_KERNEL.
 
-> 
-> diff --git a/arch/x86/kernel/dumpstack_64.c b/arch/x86/kernel/dumpstack_64.c
-> index 6d728d9..af7785f 100644
-> --- a/arch/x86/kernel/dumpstack_64.c
-> +++ b/arch/x86/kernel/dumpstack_64.c
-> @@ -129,7 +129,7 @@ void dump_trace(struct task_struct *task, struct pt_regs *regs,
->  	if (!stack) {
->  		if (regs)
->  			stack = (unsigned long *)regs->sp;
-> -		else if (task && task != current)
-> +		else if (task != current)
->  			stack = (unsigned long *)task->thread.sp;
->  		else
->  			stack = &dummy;
+The semantic patch that makes this report is available
+in scripts/coccinelle/locks/call_kern.cocci.
+
+More information about semantic patching is available at
+http://coccinelle.lip6.fr/
+
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+
+---
+ drivers/crypto/ixp4xx_crypto.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/ixp4xx_crypto.c b/drivers/crypto/ixp4xx_crypto.c
+index 4c20c5b..bc349cc 100644
+--- a/drivers/crypto/ixp4xx_crypto.c
++++ b/drivers/crypto/ixp4xx_crypto.c
+@@ -265,7 +265,7 @@ static int setup_crypt_desc(void)
+ 	BUILD_BUG_ON(sizeof(struct crypt_ctl) != 64);
+ 	crypt_virt = dma_alloc_coherent(dev,
+ 			NPE_QLEN * sizeof(struct crypt_ctl),
+-			&crypt_phys, GFP_KERNEL);
++			&crypt_phys, GFP_ATOMIC);
+ 	if (!crypt_virt)
+ 		return -ENOMEM;
+ 	memset(crypt_virt, 0, NPE_QLEN * sizeof(struct crypt_ctl));
+
