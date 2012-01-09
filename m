@@ -1,29 +1,48 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Thu, 26 Jan 2012 20:23:47 +0000
-Subject: Re: [patch] nfc: NULL vs zero in nci_activate_target()
-Message-Id: <20120126202347.GA2305@sortiz-mobl>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Mon, 09 Jan 2012 22:23:19 +0000
+Subject: [PATCH 00/16] Some work on quickstart driver in staging
+Message-Id: <1326147815-11451-1-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120126061330.GA15856@elgon.mountain>
-In-Reply-To: <20120126061330.GA15856@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, "David S. Miller" <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>, Ilan Elias <ilane@ti.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Hi,
 
-On Thu, Jan 26, 2012 at 09:13:31AM +0300, Dan Carpenter wrote:
-> This is a pointer so it should be NULL instead of zero.  Sparse
-> complains about this stuff:
-> net/nfc/nci/core.c:447:37: warning: Using plain integer as NULL pointer
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Samuel Ortiz <sameo@linux.intel.com>
+While investigating an issue (for which I'll send a separate email) with
+quickstart on my laptop I tried to make driver a little bit closer to
+migration from staging to mainline. So, patches below fix some small issues
+with whitespace, memleak, use of standard kernel API etc.
 
-Cheers,
-Samuel.
+I know that some of those patches are probably a matter of taste so please
+comment.
+
+BR
+
+Szymon Janc (16):
+  Staging: quickstart: Some style, whitespaces and typos fixes
+  Staging: quickstart: Prefix remaining functions names with
+    quickstart_
+  Staging: quickstart: Move some code to avoid forward declarations
+  Staging: quickstart: Make quickstart_input static
+  Staging: quickstart: Cleanup quickstart_acpi_ghid
+  Staging: quickstart: Cleanup quickstart_acpi_remove
+  Staging: quickstart: Cleanup quickstart_acpi_add
+  Staging: quickstart: Cleanup quickstart_acpi_config
+  Staging: quickstart: Use switch-case in quickstart_acpi_notify
+  Staging: quickstart: Remove unused defines
+  Staging: quickstart: Get rid of quickstart_data struct
+  Staging: quickstart: Use list.h API for buttons list
+  Staging: quickstart: Use %u for printing button id
+  Staging: quickstart: Rename quickstart_btn to quickstart_button
+  Staging: quickstart: Add QS_INFO and QS_ERR macros for logs
+  Staging: quickstart: Bump driver version to 1.04
+
+ drivers/staging/quickstart/quickstart.c |  366 +++++++++++++++----------------
+ 1 files changed, 175 insertions(+), 191 deletions(-)
 
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+1.7.8.2
+
+
