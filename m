@@ -1,29 +1,78 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 10 Jan 2012 07:53:11 +0000
-Subject: Re: [patch] dmatest: store correct thread count in dmatest_add_channel()
-Message-Id: <CABE8wwuGk=Nf1YTPjM6yXgigoRhXPX1a1K7ZySREQoUyC4F8xg@mail.gmail.com>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Mon, 09 Jan 2012 22:23:26 +0000
+Subject: [PATCH 07/16] Staging: quickstart: Cleanup quickstart_acpi_add
+Message-Id: <1326147815-11451-8-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111124114734.GB32522@elgon.mountain>
-	<20120109111702.GE3644@mwanda>
-In-Reply-To: <20120109111702.GE3644@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 9, 2012 at 3:17 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Ping?
->
-> regards,
-> dan carpenter
+Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+---
+ drivers/staging/quickstart/quickstart.c |   22 ++++++++++++++--------
+ 1 files changed, 14 insertions(+), 8 deletions(-)
 
-Just a comedy of delay, on my part, in getting this patch merged.  In
-fact there is this fix that pre-dates yours:
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index de98e18..97e62e9 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -262,29 +262,29 @@ static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
+ 
+ static int quickstart_acpi_add(struct acpi_device *device)
+ {
+-	int ret = 0;
+-	acpi_status status = AE_OK;
+-	struct quickstart_acpi *quickstart = NULL;
++	int ret;
++	acpi_status status;
++	struct quickstart_acpi *quickstart;
+ 
+ 	if (!device)
+ 		return -EINVAL;
+ 
+-	quickstart = kzalloc(sizeof(struct quickstart_acpi), GFP_KERNEL);
++	quickstart = kzalloc(sizeof(*quickstart), GFP_KERNEL);
+ 	if (!quickstart)
+ 		return -ENOMEM;
+ 
+ 	quickstart->device = device;
++
+ 	strcpy(acpi_device_name(device), QUICKSTART_ACPI_DEVICE_NAME);
+ 	strcpy(acpi_device_class(device), QUICKSTART_ACPI_CLASS);
+ 	device->driver_data = quickstart;
+ 
+ 	/* Add button to list and initialize some stuff */
+ 	ret = quickstart_acpi_config(quickstart, acpi_device_bid(device));
+-	if (ret)
++	if (ret < 0)
+ 		goto fail_config;
+ 
+-	status = acpi_install_notify_handler(device->handle,
+-						ACPI_ALL_NOTIFY,
++	status = acpi_install_notify_handler(device->handle, ACPI_ALL_NOTIFY,
+ 						quickstart_acpi_notify,
+ 						quickstart);
+ 	if (ACPI_FAILURE(status)) {
+@@ -293,10 +293,16 @@ static int quickstart_acpi_add(struct acpi_device *device)
+ 		goto fail_installnotify;
+ 	}
+ 
+-	quickstart_acpi_ghid(quickstart);
++	ret = quickstart_acpi_ghid(quickstart);
++	if (ret < 0)
++		goto fail_ghid;
+ 
+ 	return 0;
+ 
++fail_ghid:
++	acpi_remove_notify_handler(device->handle, ACPI_ALL_NOTIFY,
++						quickstart_acpi_notify);
++
+ fail_installnotify:
+ 	quickstart_btnlst_del(quickstart->btn);
+ 
+-- 
+1.7.8.2
 
-  http://marc.info/?l=linux-kernel&m1388785009475&w=2
 
-I'll push this along.
-
-Thanks for the nudge,
-Dan
