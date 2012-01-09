@@ -1,27 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Jan 2012 07:31:52 +0000
-Subject: [patch] Staging: sbe-2t3e3: logical || vs bitwise |
-Message-Id: <20120117073142.GD11358@elgon.mountain>
+Date: Mon, 09 Jan 2012 10:54:54 +0000
+Subject: [patch] cpuidle: checking the wrong variable in
+Message-Id: <20120109105454.GA6940@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Len Brown <len.brown@intel.com>, Kay Sievers <kay.sievers@vrfy.org>
+Cc: Kevin Hilman <khilman@ti.com>, Trinabh Gupta <g.trinabh@gmail.com>, Arjan van de Ven <arjan@linux.intel.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Bitwise OR was clearly intended here.
+We updated this in 8a25a2fd12 "cpu: convert 'cpu' and 'machinecheck'
+sysdev_class to a regular subsystem" but it should be checking "cpu_dev"
+here not "dev".  The "dev" variable was dereferenced already.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/sbe-2t3e3/intr.c b/drivers/staging/sbe-2t3e3/intr.c
-index 7ad1a83..1336aab 100644
---- a/drivers/staging/sbe-2t3e3/intr.c
-+++ b/drivers/staging/sbe-2t3e3/intr.c
-@@ -188,7 +188,7 @@ void dc_intr_rx(struct channel *sc)
- 			}
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 59f4261..7771810 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -294,7 +294,7 @@ static int __cpuidle_register_device(struct cpuidle_device *dev)
+ 	struct device *cpu_dev = get_cpu_device((unsigned long)dev->cpu);
+ 	struct cpuidle_driver *cpuidle_driver = cpuidle_get_driver();
  
- 			if (sc->s.LOS) {
--				error_mask &= ~(SBE_2T3E3_RX_DESC_DRIBBLING_BIT ||
-+				error_mask &= ~(SBE_2T3E3_RX_DESC_DRIBBLING_BIT |
- 						SBE_2T3E3_RX_DESC_MII_ERROR);
- 			}
- 
+-	if (!dev)
++	if (!cpu_dev)
+ 		return -EINVAL;
+ 	if (!try_module_get(cpuidle_driver->owner))
+ 		return -EINVAL;
