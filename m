@@ -1,29 +1,28 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:27:33 +0000
-Subject: Re: [PATCH v2 00/17] Some work on quickstart driver in staging
-Message-Id: <201201112327.33112.szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jan 2012 12:45:41 +0000
+Subject: [patch 2/2] drm/radeon: double lock typo in radeon_vm_bo_rmv()
+Message-Id: <20120109124541.GB29606@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326320574-11220-1-git-send-email-szymon@janc.net.pl>
-In-Reply-To: <1326320574-11220-1-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
 
-On Wednesday 11 January 2012 23:22:35 Szymon Janc wrote:
-> Changes since v1:
->  - use pr_{err,info} instead of custom macros for logs
->  - fixed quickstart_buttons_show issue pointed out by Dan
->  - Use scnprintf in quickstart_pressed_button_show
-> 
-> Thx for comments.
+The second lock should be an unlock or it causes a deadlock.
 
-Opps.  Please ignore
-[PATCH 15/16] Staging: quickstart: Add QS_INFO and QS_ERR macros for logs
-[PATCH 16/16] Staging: quickstart: Bump driver version to 1.04
-in this series...
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Szymon K. Janc
-szymon@janc.net.pl
-
+diff --git a/drivers/gpu/drm/radeon/radeon_gart.c b/drivers/gpu/drm/radeon/radeon_gart.c
+index 2944c78..4a9f797 100644
+--- a/drivers/gpu/drm/radeon/radeon_gart.c
++++ b/drivers/gpu/drm/radeon/radeon_gart.c
+@@ -595,7 +595,7 @@ int radeon_vm_bo_rmv(struct radeon_device *rdev,
+ 	radeon_vm_bo_update_pte(rdev, vm, bo, NULL);
+ 	radeon_mutex_unlock(&rdev->cs_mutex);
+ 	list_del(&bo_va->vm_list);
+-	mutex_lock(&vm->mutex);
++	mutex_unlock(&vm->mutex);
+ 
+ 	kfree(bo_va);
+ 	return 0;
