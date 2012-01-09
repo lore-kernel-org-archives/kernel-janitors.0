@@ -1,91 +1,45 @@
 From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:24 +0000
-Subject: [PATCH 05/16] Staging: quickstart: Cleanup quickstart_acpi_ghid
-Message-Id: <1326147815-11451-6-git-send-email-szymon@janc.net.pl>
+Date: Mon, 09 Jan 2012 22:23:28 +0000
+Subject: [PATCH 09/16] Staging: quickstart: Use switch-case in quickstart_acpi_notify
+Message-Id: <1326147815-11451-10-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Also fix memory leak (buffer.pointer) when returned buffer of length
-less than 8.
-
 Signed-off-by: Szymon Janc <szymon@janc.net.pl>
 ---
- drivers/staging/quickstart/quickstart.c |   38 +++++++++++++++++++++---------
- 1 files changed, 26 insertions(+), 12 deletions(-)
+ drivers/staging/quickstart/quickstart.c |   10 +++++++---
+ 1 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 7b0deb6..3bae5e7 100644
+index b183d21..17e57c0 100644
 --- a/drivers/staging/quickstart/quickstart.c
 +++ b/drivers/staging/quickstart/quickstart.c
-@@ -191,14 +191,11 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
- 	return;
- }
+@@ -180,15 +180,19 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
+ 	if (!quickstart)
+ 		return;
  
--static void quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
-+static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- {
- 	acpi_status status;
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
--	uint32_t usageid = 0;
--
--	if (!quickstart)
--		return;
-+	int ret = 0;
- 
- 	/*
- 	 * This returns a buffer telling the button usage ID,
-@@ -206,24 +203,41 @@ static void quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 	 */
- 	status = acpi_evaluate_object(quickstart->device->handle, "GHID", NULL,
- 								&buffer);
--	if (ACPI_FAILURE(status) || !buffer.pointer) {
-+	if (ACPI_FAILURE(status)) {
- 		printk(KERN_ERR "quickstart: %s GHID method failed.\n",
- 						quickstart->btn->name);
--		return;
-+		return -EINVAL;
- 	}
- 
--	if (buffer.length < 8)
--		return;
--
- 	/*
- 	 * <<The GHID method can return a BYTE, WORD, or DWORD.
- 	 * The value must be encoded in little-endian byte
- 	 * order (least significant byte first).>>
- 	 */
--	usageid = *((uint32_t *)(buffer.pointer + (buffer.length - 8)));
--	quickstart->btn->id = usageid;
-+	switch (buffer.length) {
-+	case 1:
-+		quickstart->btn->id = *(uint8_t *)buffer.pointer;
+-	if (event = QUICKSTART_EVENT_WAKE)
++	switch (event) {
++	case QUICKSTART_EVENT_WAKE:
+ 		quickstart_data.pressed = quickstart->btn;
+-	else if (event = QUICKSTART_EVENT_RUNTIME) {
 +		break;
-+	case 2:
-+		quickstart->btn->id = *(uint16_t *)buffer.pointer;
-+		break;
-+	case 4:
-+		quickstart->btn->id = *(uint32_t *)buffer.pointer;
-+		break;
-+	case 8:
-+		quickstart->btn->id = *(uint64_t *)buffer.pointer;
++	case QUICKSTART_EVENT_RUNTIME:
+ 		input_report_key(quickstart_input, quickstart->btn->id, 1);
+ 		input_sync(quickstart_input);
+ 		input_report_key(quickstart_input, quickstart->btn->id, 0);
+ 		input_sync(quickstart_input);
 +		break;
 +	default:
-+		printk(KERN_ERR "quickstart: %s GHID method returned buffer "
-+				"of unexpected length %u\n",
-+				quickstart->btn->name, buffer.length);
-+		ret = -EINVAL;
 +		break;
-+	}
- 
- 	kfree(buffer.pointer);
-+
-+	return ret;
+ 	}
+-	return;
  }
  
- static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
+ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
 -- 
 1.7.8.2
 
