@@ -1,35 +1,41 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 17:47:50 +0000
-Subject: Re: [PATCH 12/16] Staging: quickstart: Use list.h API for buttons list
-Message-Id: <201201111847.50660.szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 09 Jan 2012 09:40:48 +0000
+Subject: [PATCH 2/4] drivers/scsi/lpfc/lpfc_sli.c: convert GFP_KERNEL to GFP_ATOMIC
+Message-Id: <1326102050-30265-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326147815-11451-13-git-send-email-szymon@janc.net.pl>
-In-Reply-To: <1326147815-11451-13-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@emulex.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Hi,
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-> > +	list_for_each_entry(b, &buttons, list) {
-> > +		count += snprintf(buf + count, PAGE_SIZE - count, "%d\t%s\n",
-> > +							b->id, b->name);
-> > +
-> > +		if (count = PAGE_SIZE)
-> 
-> snprintf() returns the number of bytes which would have been used if
-> there were space so this test should be >= instead of =.
-> 
-> > +			break;
-> > 
-> >  	}
+The function is called with locks held and thus should not use GFP_KERNEL.
 
-Yes, I'll fix that. 
+The semantic patch that makes this report is available
+in scripts/coccinelle/locks/call_kern.cocci.
 
-Thx
+More information about semantic patching is available at
+http://coccinelle.lip6.fr/
 
--- 
-Szymon K. Janc
-szymon@janc.net.pl
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+
+---
+ drivers/scsi/lpfc/lpfc_sli.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 23a2759..622d24f 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -601,7 +601,7 @@ __lpfc_set_rrq_active(struct lpfc_hba *phba, struct lpfc_nodelist *ndlp,
+ 	if (test_and_set_bit(xritag, ndlp->active_rrqs.xri_bitmap))
+ 		goto out;
+ 
+-	rrq = mempool_alloc(phba->rrq_pool, GFP_KERNEL);
++	rrq = mempool_alloc(phba->rrq_pool, GFP_ATOMIC);
+ 	if (rrq) {
+ 		rrq->send_rrq = send_rrq;
+ 		rrq->xritag = xritag;
 
