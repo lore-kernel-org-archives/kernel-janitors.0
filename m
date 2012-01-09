@@ -1,29 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 15 Jan 2012 11:27:42 +0000
-Subject: [patch] gma500: change logical negate to bitwise
-Message-Id: <20120115112742.GB20463@elgon.mountain>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Mon, 09 Jan 2012 22:23:25 +0000
+Subject: [PATCH 06/16] Staging: quickstart: Cleanup quickstart_acpi_remove
+Message-Id: <1326147815-11451-7-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>, Alan Cox <alan@linux.intel.com>
+To: kernel-janitors@vger.kernel.org
 
-Logical negate is always false here.  This was found by Sparse:
-drivers/gpu/drm/gma500/psb_irq.c:407:17: warning: dubious: x & !y
+Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+---
+ drivers/staging/quickstart/quickstart.c |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/gpu/drm/gma500/psb_irq.c b/drivers/gpu/drm/gma500/psb_irq.c
-index 7be802b..4ce680f 100644
---- a/drivers/gpu/drm/gma500/psb_irq.c
-+++ b/drivers/gpu/drm/gma500/psb_irq.c
-@@ -404,7 +404,7 @@ void psb_irq_turn_off_dpst(struct drm_device *dev)
- 		psb_disable_pipestat(dev_priv, 0, PIPE_DPST_EVENT_ENABLE);
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index 3bae5e7..de98e18 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -309,13 +309,15 @@ fail_config:
  
- 		pwm_reg = PSB_RVDC32(PWM_CONTROL_LOGIC);
--		PSB_WVDC32(pwm_reg & !(PWM_PHASEIN_INT_ENABLE),
-+		PSB_WVDC32(pwm_reg & ~PWM_PHASEIN_INT_ENABLE,
- 							PWM_CONTROL_LOGIC);
- 		pwm_reg = PSB_RVDC32(PWM_CONTROL_LOGIC);
+ static int quickstart_acpi_remove(struct acpi_device *device, int type)
+ {
+-	acpi_status status = 0;
+-	struct quickstart_acpi *quickstart = NULL;
++	acpi_status status;
++	struct quickstart_acpi *quickstart;
  
+-	if (!device || !acpi_driver_data(device))
++	if (!device)
+ 		return -EINVAL;
+ 
+ 	quickstart = acpi_driver_data(device);
++	if (!quickstart)
++		return -EINVAL;
+ 
+ 	status = acpi_remove_notify_handler(device->handle, ACPI_ALL_NOTIFY,
+ 						quickstart_acpi_notify);
+-- 
+1.7.8.2
+
+
