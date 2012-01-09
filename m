@@ -1,55 +1,31 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Fri, 27 Jan 2012 17:30:10 +0000
-Subject: Re: [PATCH 14/15] drivers/pci/hotplug/ibmphp_ebda.c: add missing iounmap
-Message-Id: <20120127093010.0e5ed4e0@jbarnes-desktop>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/BBce8C/O+yAOE0dS2NNbLY0"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jan 2012 12:44:50 +0000
+Subject: [patch 1/2] drm/radeon: use after free in radeon_vm_bo_add()
+Message-Id: <20120109124450.GA29606@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326362117-29371-14-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1326362117-29371-14-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
 
---Sig_/BBce8C/O+yAOE0dS2NNbLY0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+"bo_va" is dereferenced in the error message.
 
-On Thu, 12 Jan 2012 10:55:16 +0100
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Add missing iounmap in error handling code, in a case where the function
-> already preforms iounmap on some other execution path.
->=20
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-
-Applied to my -next branch, thanks.
-
---=20
-Jesse Barnes, Intel Open Source Technology Center
-
---Sig_/BBce8C/O+yAOE0dS2NNbLY0
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPIt8iAAoJEIEoDkX4Qk9hqHoP/2v/TQk+Q4xj8Mb0sSwFKpHE
-Ta2JgqnZZ08sp6bftqo/KCmsh4PfwMlvM0rmj7VETqT76dfj5BTY1dvh/xc8g4//
-GUS7nsN0U4u9eL7lU+PNo5j+yoi+V6tfcvJPWcUCu0mpzkSKa9/VrtUOIXBqzO+9
-KMpMkdocbOPXjGl7GohjBE8JKFunGUD5eYUx9nfsAIojoopqYYIqVriLwIIsBNSS
-Dq/aejBnDOsl5nCw8R8zfnXA/LET8Do8q8bD2v4HREXDJ3xMpAXqpOF8vI/1mIFs
-tdfkE213cP3BKIPUE4PP9GYixif7zgE7ddM3Oqyh7KwBuJDgPAFiYGG6u2jl+rsb
-t55jV+AL5A8xI9N8xa3gdD2NY/tSDw9+I/e10xLul/U9xHLQKk4GKuBcjiuQMx/T
-nFeum6uLrzJEpUz7VAjn5D+oaAIjfzXC/LvbUW3hXmkMlM+NEWMGOtCNF/33oiQ+
-b88HQ8OFA54Akik7g6BfpsaIkDB/I9ZKIxBI+oDwNdHiiMxxtH6Tfh0MtZBDOIrE
-Cfp3phNdCN5aGmI3WOBmVanZvKvRZY2L0OLmFuY75r/4om080Xvxe7LjMkLMIFFy
-zhwu+ZvuDPpv20fmXGBV8GeBbVV1aP+apfiFXZMuzgh9Jh11VBa3PmofGyD4xMir
-ejqGf75x9ELQV3QgtEzv
-=FmcO
------END PGP SIGNATURE-----
-
---Sig_/BBce8C/O+yAOE0dS2NNbLY0--
+diff --git a/drivers/gpu/drm/radeon/radeon_gart.c b/drivers/gpu/drm/radeon/radeon_gart.c
+index 3ef58ca..2944c78 100644
+--- a/drivers/gpu/drm/radeon/radeon_gart.c
++++ b/drivers/gpu/drm/radeon/radeon_gart.c
+@@ -486,10 +486,10 @@ int radeon_vm_bo_add(struct radeon_device *rdev,
+ 		}
+ 		if (bo_va->soffset >= tmp->soffset && bo_va->soffset < tmp->eoffset) {
+ 			/* bo and tmp overlap, invalid offset */
+-			kfree(bo_va);
+ 			dev_err(rdev->dev, "bo %p va 0x%08X conflict with (bo %p 0x%08X 0x%08X)\n",
+ 				bo, (unsigned)bo_va->soffset, tmp->bo,
+ 				(unsigned)tmp->soffset, (unsigned)tmp->eoffset);
++			kfree(bo_va);
+ 			mutex_unlock(&vm->mutex);
+ 			return -EINVAL;
+ 		}
