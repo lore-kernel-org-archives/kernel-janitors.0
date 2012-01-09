@@ -1,56 +1,54 @@
-From: Antti Palosaari <crope@iki.fi>
-Date: Mon, 09 Jan 2012 17:40:49 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jan 2012 17:48:17 +0000
 Subject: Re: [patch] [media] af9013: change & to &&
-Message-Id: <4F0B26A1.2020402@iki.fi>
+Message-Id: <20120109174817.GH3731@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="G44BJl3Aq1QbV/QL"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120105062328.GA25744@elgon.mountain>
-In-Reply-To: <20120105062328.GA25744@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+ <4F0B26A1.2020402@iki.fi>
+In-Reply-To: <4F0B26A1.2020402@iki.fi>
+To: Antti Palosaari <crope@iki.fi>
 Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Clear bug, I will test it later when applied to master if not already. 
-Thanks!
 
-Acked-by: Antti Palosaari <crope@iki.fi>
+--G44BJl3Aq1QbV/QL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Mon, Jan 09, 2012 at 07:40:49PM +0200, Antti Palosaari wrote:
+> Clear bug, I will test it later when applied to master if not
+> already. Thanks!
 
-On 01/05/2012 08:23 AM, Dan Carpenter wrote:
-> This is just a cleanup, it doesn't change how the code works.  These
-> are compound conditions and not bitwise operations so it should be&&
-> and not&.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
->
-> diff --git a/drivers/media/dvb/frontends/af9013.c b/drivers/media/dvb/frontends/af9013.c
-> index e6ba3e0..1413c51 100644
-> --- a/drivers/media/dvb/frontends/af9013.c
-> +++ b/drivers/media/dvb/frontends/af9013.c
-> @@ -120,8 +120,8 @@ static int af9013_wr_regs(struct af9013_state *priv, u16 reg, const u8 *val,
->   	int ret, i;
->   	u8 mbox = (0<<  7)|(0<<  6)|(1<<  1)|(1<<  0);
->
-> -	if ((priv->config.ts_mode = AF9013_TS_USB)&
-> -		((reg&  0xff00) != 0xff00)&  ((reg&  0xff00) != 0xae00)) {
-> +	if ((priv->config.ts_mode = AF9013_TS_USB)&&
-> +		((reg&  0xff00) != 0xff00)&&  ((reg&  0xff00) != 0xae00)) {
->   		mbox |= ((len - 1)<<  2);
->   		ret = af9013_wr_regs_i2c(priv, mbox, reg, val, len);
->   	} else {
-> @@ -142,8 +142,8 @@ static int af9013_rd_regs(struct af9013_state *priv, u16 reg, u8 *val, int len)
->   	int ret, i;
->   	u8 mbox = (0<<  7)|(0<<  6)|(1<<  1)|(0<<  0);
->
-> -	if ((priv->config.ts_mode = AF9013_TS_USB)&
-> -		((reg&  0xff00) != 0xff00)&  ((reg&  0xff00) != 0xae00)) {
-> +	if ((priv->config.ts_mode = AF9013_TS_USB)&&
-> +		((reg&  0xff00) != 0xff00)&&  ((reg&  0xff00) != 0xae00)) {
->   		mbox |= ((len - 1)<<  2);
->   		ret = af9013_rd_regs_i2c(priv, mbox, reg, val, len);
->   	} else {
+You're welcome, but it's not a bug because (1 & 1 & 0) is the same
+as (1 && 1 && 0) but if one of them wasn't a bool it would be a
+problem.  The other difference between & and && is that && has
+orderring guarantees but that's also not a factor here.
+
+regards,
+dan carpenter
 
 
--- 
-http://palosaari.fi/
+--G44BJl3Aq1QbV/QL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPCyhhAAoJEOnZkXI/YHqR76oQAJW+H/Xl5GrYaKIXxJ7EQM3G
+OJrpcv2Dru+LZ+CA5MybNZKji9J6nVj1CE9W31DY/jo3uUPzqTBuCPLQcEOqff/O
+sHP69JFD8C+lTUJCVV2aHhpoF3IHFl87cEa1T+lsQjwQjgoUWyR5xeM2nd8qze/v
+OVaLGvnVQRwX6TjZoy1Uiz9yGxy+dvJ69C+ps74q5qtvU4A0viMT/X8CMJ35Qf8s
+v3Mcm7NNYW8zaX5JY6FI7lx4apfF90OmUiNL46+kBuUhcFIS9brko6QYo3xWR81p
+Mf1TAzKV8eOcAqHV8TXaJd9y8CR95RQZD7sSxk0vXKx6hJ9pRYFScw4Q+aOC9TsV
+O64lozP70WrMBcFb6oR/u9Yz9rra3w+eOPxsfBoUGPJUf3Fv6SXT8zOdnFUohW3g
+jYfaoRuvTymGJ6brgy4QWGO3g0pcgXFMhWftlZL9Ri03pBUV+t4QfZr+HIoDeC6Y
+e9oRpc5wbtNlmDdpOS0V0/h55TWW1Th8/Hr3dcpLwglP+L6px+PRBd0Fmh4napm8
+ED52+HeGexzYFk+jMYa+OMDG3QYg4UePT49F9E1txGp+Gwsf+OZcBp0P7MMscOK5
+Wst1XPGAlZxFpe8vi7pFyHNCaz8NbU5cL34py23BJ0Sn4Z+w5f8o9pQs13u/W16B
+EwP+8dQ2+/kRBNHVCxSA
+=TqZL
+-----END PGP SIGNATURE-----
+
+--G44BJl3Aq1QbV/QL--
