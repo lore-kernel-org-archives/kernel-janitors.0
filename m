@@ -1,174 +1,71 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:33 +0000
-Subject: [PATCH 14/16] Staging: quickstart: Rename quickstart_btn to quickstart_button
-Message-Id: <1326147815-11451-15-git-send-email-szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jan 2012 11:17:02 +0000
+Subject: Re: [patch] dmatest: store correct thread count in
+Message-Id: <20120109111702.GE3644@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="gMR3gsNFwZpnI/Ts"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |   46 +++++++++++++++---------------
- 1 files changed, 23 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index f830360..51a6d0c 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -52,7 +52,7 @@ MODULE_LICENSE("GPL");
- #define QUICKSTART_EVENT_WAKE		0x02
- #define QUICKSTART_EVENT_RUNTIME	0x80
- 
--struct quickstart_btn {
-+struct quickstart_button {
- 	char *name;
- 	unsigned int id;
- 	struct list_head list;
-@@ -60,11 +60,11 @@ struct quickstart_btn {
- 
- struct quickstart_acpi {
- 	struct acpi_device *device;
--	struct quickstart_btn *btn;
-+	struct quickstart_button *button;
- };
- 
- static LIST_HEAD(buttons);
--static struct quickstart_btn *pressed;
-+static struct quickstart_button *pressed;
- 
- static struct input_dev *quickstart_input;
- 
-@@ -74,7 +74,7 @@ static ssize_t quickstart_buttons_show(struct device *dev,
- 					char *buf)
- {
- 	int count = 0;
--	struct quickstart_btn *b;
-+	struct quickstart_button *b;
- 
- 	if (list_empty(&buttons))
- 		return snprintf(buf, PAGE_SIZE, "none");
-@@ -114,9 +114,9 @@ static ssize_t quickstart_pressed_button_store(struct device *dev,
- }
- 
- /* Helper functions */
--static struct quickstart_btn *quickstart_buttons_add(void)
-+static struct quickstart_button *quickstart_buttons_add(void)
- {
--	struct quickstart_btn *b;
-+	struct quickstart_button *b;
- 
- 	b = kzalloc(sizeof(*b), GFP_KERNEL);
- 	if (!b)
-@@ -127,7 +127,7 @@ static struct quickstart_btn *quickstart_buttons_add(void)
- 	return b;
- }
- 
--static void quickstart_button_del(struct quickstart_btn *data)
-+static void quickstart_button_del(struct quickstart_button *data)
- {
- 	if (!data)
- 		return;
-@@ -139,7 +139,7 @@ static void quickstart_button_del(struct quickstart_btn *data)
- 
- static void quickstart_buttons_free(void)
- {
--	struct quickstart_btn *b, *n;
-+	struct quickstart_button *b, *n;
- 
- 	list_for_each_entry_safe(b, n, &buttons, list)
- 		quickstart_button_del(b);
-@@ -155,12 +155,12 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
- 
- 	switch (event) {
- 	case QUICKSTART_EVENT_WAKE:
--		pressed = quickstart->btn;
-+		pressed = quickstart->button;
- 		break;
- 	case QUICKSTART_EVENT_RUNTIME:
--		input_report_key(quickstart_input, quickstart->btn->id, 1);
-+		input_report_key(quickstart_input, quickstart->button->id, 1);
- 		input_sync(quickstart_input);
--		input_report_key(quickstart_input, quickstart->btn->id, 0);
-+		input_report_key(quickstart_input, quickstart->button->id, 0);
- 		input_sync(quickstart_input);
- 		break;
- 	default:
-@@ -182,7 +182,7 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 								&buffer);
- 	if (ACPI_FAILURE(status)) {
- 		printk(KERN_ERR "quickstart: %s GHID method failed.\n",
--						quickstart->btn->name);
-+						quickstart->button->name);
- 		return -EINVAL;
- 	}
- 
-@@ -193,21 +193,21 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 	 */
- 	switch (buffer.length) {
- 	case 1:
--		quickstart->btn->id = *(uint8_t *)buffer.pointer;
-+		quickstart->button->id = *(uint8_t *)buffer.pointer;
- 		break;
- 	case 2:
--		quickstart->btn->id = *(uint16_t *)buffer.pointer;
-+		quickstart->button->id = *(uint16_t *)buffer.pointer;
- 		break;
- 	case 4:
--		quickstart->btn->id = *(uint32_t *)buffer.pointer;
-+		quickstart->button->id = *(uint32_t *)buffer.pointer;
- 		break;
- 	case 8:
--		quickstart->btn->id = *(uint64_t *)buffer.pointer;
-+		quickstart->button->id = *(uint64_t *)buffer.pointer;
- 		break;
- 	default:
- 		printk(KERN_ERR "quickstart: %s GHID method returned buffer "
- 				"of unexpected length %u\n",
--				quickstart->btn->name, buffer.length);
-+				quickstart->button->name, buffer.length);
- 		ret = -EINVAL;
- 		break;
- 	}
-@@ -227,14 +227,14 @@ static int quickstart_acpi_config(struct quickstart_acpi *quickstart)
- 		return -ENOMEM;
- 
- 	/* Add new button to list */
--	quickstart->btn = quickstart_buttons_add();
--	if (!quickstart->btn) {
-+	quickstart->button = quickstart_buttons_add();
-+	if (!quickstart->button) {
- 		kfree(name);
- 		return -ENOMEM;
- 	}
- 
--	quickstart->btn->name = name;
--	strcpy(quickstart->btn->name, bid);
-+	quickstart->button->name = name;
-+	strcpy(quickstart->button->name, bid);
- 
- 	return 0;
- }
-@@ -283,7 +283,7 @@ fail_ghid:
- 						quickstart_acpi_notify);
- 
- fail_installnotify:
--	quickstart_button_del(quickstart->btn);
-+	quickstart_button_del(quickstart->button);
- 
- fail_config:
- 
-@@ -360,7 +360,7 @@ static void quickstart_exit(void)
- 
- static int __init quickstart_init_input(void)
- {
--	struct quickstart_btn *b;
-+	struct quickstart_button *b;
- 	int ret;
- 
- 	quickstart_input = input_allocate_device();
--- 
-1.7.8.2
+References: <20111124114734.GB32522@elgon.mountain>
+In-Reply-To: <20111124114734.GB32522@elgon.mountain>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
+--gMR3gsNFwZpnI/Ts
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Ping?
+
+regards,
+dan carpenter
+
+On Thu, Nov 24, 2011 at 02:47:34PM +0300, Dan Carpenter wrote:
+> The original code added 1 to the thread_count, but the intent was to
+> add +=3D cnt.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+> index 2b8661b..24225f0 100644
+> --- a/drivers/dma/dmatest.c
+> +++ b/drivers/dma/dmatest.c
+> @@ -599,7 +599,7 @@ static int dmatest_add_channel(struct dma_chan *chan)
+>  	}
+>  	if (dma_has_cap(DMA_PQ, dma_dev->cap_mask)) {
+>  		cnt =3D dmatest_add_threads(dtc, DMA_PQ);
+> -		thread_count +=3D cnt > 0 ?: 0;
+> +		thread_count +=3D cnt > 0 ? cnt : 0;
+>  	}
+> =20
+>  	pr_info("dmatest: Started %u threads using %s\n",
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
+" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--gMR3gsNFwZpnI/Ts
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPCsytAAoJEOnZkXI/YHqRKugP/jBHw0rfew+3hp8d2culuGtU
++DGsCGwDOHimEk/BtnNGciqJZ7XUC4qI0X/ZZz1RUvJsfb842t2oUsj+ROV8/uI6
+RgdcSe57fmvPmEL3qig8i7olqXACxFwlnt+bz2P/epsQQtwD390QnREvgG9tbJ0h
+Twnn8kQFTebsF6eGCXZtpWU6N4p6iB/lNAB16LuuUkypDc731EQhegyarmsWv6ZE
+8N3JiHhAkx+jLhQTJeE/PJZSEQc7sMx6QZj+q0DhSlFtcEQ1B8fMCmS+D4tvU6RZ
+7bedCh2SKN15Xn9DdnCEh27cUgJwcpHZULginADErZ7MZOgRCN0YcRXcR30oTT8L
+bFiIIy2KTsVDY5yYJ4vFpz9HWxFCxQCTCzW/bvmi2InT2jf88Mup/eg38eSy5xst
+pObOyV9Ih+m3/Vd8FbEATcUsZHmJ5r7dLNJ54XaZJx2odYgvfBB6kP691jRf4tVD
+NVSnqOB3K85JZZym2KTn7GHA3JWysysSNv0fCcpjt/nwjP6lnu8FtOwluGd2WgcU
+hpjaC52FIfZFSkvt1XxcFEup3dm1MFpjKjv9mxQUnLwjsFhBxPYEG/8lodIWg7vL
+Z2krnpTWjEI9h6reeZW8RFFtc/CHLh6fVgbAtp/LxfFKo7k/K6yIy31uekN2YcwN
+pkQR8BTqYzSAL2AZLPm1
+=l3ss
+-----END PGP SIGNATURE-----
+
+--gMR3gsNFwZpnI/Ts--
