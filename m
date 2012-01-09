@@ -1,65 +1,46 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:43 +0000
-Subject: [PATCH v2 08/17] Staging: quickstart: Cleanup quickstart_acpi_config
-Message-Id: <1326320574-11220-9-git-send-email-szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 09 Jan 2012 07:51:03 +0000
+Subject: [PATCH] drivers/staging/omapdrm/omap_fbdev.c: move free after uses
+Message-Id: <1326095463-8545-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+From: Julia Lawall <julia@diku.dk>
+
+Move the free after the final uses.
+
+The semantic patch that makes this report is available
+in scripts/coccinelle/free/kfree.cocci.
+
+More information about semantic patching is available at
+http://coccinelle.lip6.fr/
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/staging/quickstart/quickstart.c |   21 ++++++++++++---------
- 1 files changed, 12 insertions(+), 9 deletions(-)
+ drivers/staging/omapdrm/omap_fbdev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 97e62e9..b183d21 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -240,21 +240,24 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 	return ret;
- }
+diff --git a/drivers/staging/omapdrm/omap_fbdev.c b/drivers/staging/omapdrm/omap_fbdev.c
+index 093ae2f..c64b87c 100644
+--- a/drivers/staging/omapdrm/omap_fbdev.c
++++ b/drivers/staging/omapdrm/omap_fbdev.c
+@@ -362,11 +362,11 @@ void omap_fbdev_free(struct drm_device *dev)
  
--static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
-+static int quickstart_acpi_config(struct quickstart_acpi *quickstart)
- {
--	int len = strlen(bid);
-+	char *bid = acpi_device_bid(quickstart->device);
-+	char *name;
- 	int ret;
+ 	fbdev = to_omap_fbdev(priv->fbdev);
  
-+	name = kmalloc(strlen(bid) + 1, GFP_KERNEL);
-+	if (!name)
-+		return -ENOMEM;
-+
- 	/* Add button to list */
- 	ret = quickstart_btnlst_add(&quickstart->btn);
--	if (ret)
-+	if (ret < 0) {
-+		kfree(name);
- 		return ret;
+-	kfree(fbdev);
 -
--	quickstart->btn->name = kzalloc(len + 1, GFP_KERNEL);
--	if (!quickstart->btn->name) {
--		quickstart_btnlst_free();
--		return -ENOMEM;
- 	}
+ 	/* this will free the backing object */
+ 	if (fbdev->fb)
+ 		fbdev->fb->funcs->destroy(fbdev->fb);
+ 
++	kfree(fbdev);
 +
-+	quickstart->btn->name = name;
- 	strcpy(quickstart->btn->name, bid);
- 
- 	return 0;
-@@ -280,7 +283,7 @@ static int quickstart_acpi_add(struct acpi_device *device)
- 	device->driver_data = quickstart;
- 
- 	/* Add button to list and initialize some stuff */
--	ret = quickstart_acpi_config(quickstart, acpi_device_bid(device));
-+	ret = quickstart_acpi_config(quickstart);
- 	if (ret < 0)
- 		goto fail_config;
- 
--- 
-1.7.8.3
-
+ 	priv->fbdev = NULL;
+ }
 
