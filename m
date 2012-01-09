@@ -1,30 +1,92 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Jan 2012 07:33:31 +0000
-Subject: [patch] mwl8k: fix condition in mwl8k_cmd_encryption_remove_key()
-Message-Id: <20120117073322.GE11358@elgon.mountain>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Mon, 09 Jan 2012 22:23:24 +0000
+Subject: [PATCH 05/16] Staging: quickstart: Cleanup quickstart_acpi_ghid
+Message-Id: <1326147815-11451-6-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lennert Buytenhek <buytenh@wantstofly.org>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Nishant Sarmukadam <nishants@marvell.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The intent here was to check whether key->cipher was WEP40 or WEP104.
-We do a similar check correctly in several other places in this file.
-The current condition is always true.
+Also fix memory leak (buffer.pointer) when returned buffer of length
+less than 8.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+---
+ drivers/staging/quickstart/quickstart.c |   38 +++++++++++++++++++++---------
+ 1 files changed, 26 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/wireless/mwl8k.c b/drivers/net/wireless/mwl8k.c
-index 7becea3..d187ea2 100644
---- a/drivers/net/wireless/mwl8k.c
-+++ b/drivers/net/wireless/mwl8k.c
-@@ -4066,7 +4066,7 @@ static int mwl8k_cmd_encryption_remove_key(struct ieee80211_hw *hw,
- 		goto done;
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index 7b0deb6..3bae5e7 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -191,14 +191,11 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
+ 	return;
+ }
  
- 	if (key->cipher = WLAN_CIPHER_SUITE_WEP40 ||
--			WLAN_CIPHER_SUITE_WEP104)
-+			key->cipher = WLAN_CIPHER_SUITE_WEP104)
- 		mwl8k_vif->wep_key_conf[key->keyidx].enabled = 0;
+-static void quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
++static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
+ {
+ 	acpi_status status;
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+-	uint32_t usageid = 0;
+-
+-	if (!quickstart)
+-		return;
++	int ret = 0;
  
- 	cmd->action = cpu_to_le32(MWL8K_ENCR_REMOVE_KEY);
+ 	/*
+ 	 * This returns a buffer telling the button usage ID,
+@@ -206,24 +203,41 @@ static void quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
+ 	 */
+ 	status = acpi_evaluate_object(quickstart->device->handle, "GHID", NULL,
+ 								&buffer);
+-	if (ACPI_FAILURE(status) || !buffer.pointer) {
++	if (ACPI_FAILURE(status)) {
+ 		printk(KERN_ERR "quickstart: %s GHID method failed.\n",
+ 						quickstart->btn->name);
+-		return;
++		return -EINVAL;
+ 	}
+ 
+-	if (buffer.length < 8)
+-		return;
+-
+ 	/*
+ 	 * <<The GHID method can return a BYTE, WORD, or DWORD.
+ 	 * The value must be encoded in little-endian byte
+ 	 * order (least significant byte first).>>
+ 	 */
+-	usageid = *((uint32_t *)(buffer.pointer + (buffer.length - 8)));
+-	quickstart->btn->id = usageid;
++	switch (buffer.length) {
++	case 1:
++		quickstart->btn->id = *(uint8_t *)buffer.pointer;
++		break;
++	case 2:
++		quickstart->btn->id = *(uint16_t *)buffer.pointer;
++		break;
++	case 4:
++		quickstart->btn->id = *(uint32_t *)buffer.pointer;
++		break;
++	case 8:
++		quickstart->btn->id = *(uint64_t *)buffer.pointer;
++		break;
++	default:
++		printk(KERN_ERR "quickstart: %s GHID method returned buffer "
++				"of unexpected length %u\n",
++				quickstart->btn->name, buffer.length);
++		ret = -EINVAL;
++		break;
++	}
+ 
+ 	kfree(buffer.pointer);
++
++	return ret;
+ }
+ 
+ static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
+-- 
+1.7.8.2
+
+
