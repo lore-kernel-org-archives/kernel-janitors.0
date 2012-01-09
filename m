@@ -1,7 +1,7 @@
 From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:29 +0000
-Subject: [PATCH 10/16] Staging: quickstart: Remove unused defines
-Message-Id: <1326147815-11451-11-git-send-email-szymon@janc.net.pl>
+Date: Mon, 09 Jan 2012 22:23:21 +0000
+Subject: [PATCH 02/16] Staging: quickstart: Prefix remaining functions names with quickstart_
+Message-Id: <1326147815-11451-3-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,23 +10,66 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: Szymon Janc <szymon@janc.net.pl>
 ---
- drivers/staging/quickstart/quickstart.c |    3 ---
- 1 files changed, 0 insertions(+), 3 deletions(-)
+ drivers/staging/quickstart/quickstart.c |   18 +++++++++---------
+ 1 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 17e57c0..9d827f2 100644
+index d03b89d..adce56b 100644
 --- a/drivers/staging/quickstart/quickstart.c
 +++ b/drivers/staging/quickstart/quickstart.c
-@@ -43,9 +43,6 @@ MODULE_LICENSE("GPL");
+@@ -92,19 +92,19 @@ static struct acpi_driver quickstart_acpi_driver = {
+ struct input_dev *quickstart_input;
  
- #define QUICKSTART_PF_DRIVER_NAME	"quickstart"
- #define QUICKSTART_PF_DEVICE_NAME	"quickstart"
--#define QUICKSTART_PF_DEVATTR_NAME	"pressed_button"
--
--#define QUICKSTART_MAX_BTN_NAME_LEN	16
+ /* Platform driver structs */
+-static ssize_t buttons_show(struct device *dev,
++static ssize_t quickstart_buttons_show(struct device *dev,
+ 					struct device_attribute *attr,
+ 					char *buf);
+-static ssize_t pressed_button_show(struct device *dev,
++static ssize_t quickstart_pressed_button_show(struct device *dev,
+ 					struct device_attribute *attr,
+ 					char *buf);
+-static ssize_t pressed_button_store(struct device *dev,
++static ssize_t quickstart_pressed_button_store(struct device *dev,
+ 					struct device_attribute *attr,
+ 					 const char *buf,
+ 					 size_t count);
+-static DEVICE_ATTR(pressed_button, 0666, pressed_button_show,
+-					 pressed_button_store);
+-static DEVICE_ATTR(buttons, 0444, buttons_show, NULL);
++static DEVICE_ATTR(pressed_button, 0666, quickstart_pressed_button_show,
++					 quickstart_pressed_button_store);
++static DEVICE_ATTR(buttons, 0444, quickstart_buttons_show, NULL);
+ static struct platform_device *pf_device;
+ static struct platform_driver pf_driver = {
+ 	.driver = {
+@@ -114,7 +114,7 @@ static struct platform_driver pf_driver = {
+ };
  
- /*
-  * There will be two events:
+ /* Platform driver functions */
+-static ssize_t buttons_show(struct device *dev,
++static ssize_t quickstart_buttons_show(struct device *dev,
+ 					struct device_attribute *attr,
+ 					char *buf)
+ {
+@@ -136,7 +136,7 @@ static ssize_t buttons_show(struct device *dev,
+ 	return count;
+ }
+ 
+-static ssize_t pressed_button_show(struct device *dev,
++static ssize_t quickstart_pressed_button_show(struct device *dev,
+ 						struct device_attribute *attr,
+ 						char *buf)
+ {
+@@ -146,7 +146,7 @@ static ssize_t pressed_button_show(struct device *dev,
+ }
+ 
+ 
+-static ssize_t pressed_button_store(struct device *dev,
++static ssize_t quickstart_pressed_button_store(struct device *dev,
+ 						struct device_attribute *attr,
+ 						const char *buf, size_t count)
+ {
 -- 
 1.7.8.2
 
