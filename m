@@ -1,48 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Jan 2012 11:05:55 +0000
-Subject: [PATCH] drivers/gpu/drm/drm_ioc32.c: initialize all fields
-Message-Id: <1327921555-7862-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Mon, 09 Jan 2012 22:23:32 +0000
+Subject: [PATCH 13/16] Staging: quickstart: Use %u for printing button id
+Message-Id: <1326147815-11451-14-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1327921555-7862-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1327921555-7862-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Button id is of unsigned int type.
 
-The c32 structure is allocated on the stack and its idx field is not
-initialized before copying it to user level.  This patch takes the value
-from the result of the ioctl, as done for the other fields.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Szymon Janc <szymon@janc.net.pl>
 ---
-An alternative would be to change the earlier code
+ drivers/staging/quickstart/quickstart.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-        if (get_user(idx, &argp->idx))
-                return -EFAULT;
-
-to write into the c32 structure, rather than into the local idx variable.
-This would be more similar to what is done in compat_drm_version.
-
- drivers/gpu/drm/drm_ioc32.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/drm_ioc32.c b/drivers/gpu/drm/drm_ioc32.c
-index ddd70db..637fcc3 100644
---- a/drivers/gpu/drm/drm_ioc32.c
-+++ b/drivers/gpu/drm/drm_ioc32.c
-@@ -315,7 +315,8 @@ static int compat_drm_getclient(struct file *file, unsigned int cmd,
- 	if (err)
- 		return err;
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index 486b973..f830360 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -80,7 +80,7 @@ static ssize_t quickstart_buttons_show(struct device *dev,
+ 		return snprintf(buf, PAGE_SIZE, "none");
  
--	if (__get_user(c32.auth, &client->auth)
-+	if (__get_user(c32.idx, &client->idx)
-+	    || __get_user(c32.auth, &client->auth)
- 	    || __get_user(c32.pid, &client->pid)
- 	    || __get_user(c32.uid, &client->uid)
- 	    || __get_user(c32.magic, &client->magic)
+ 	list_for_each_entry(b, &buttons, list) {
+-		count += snprintf(buf + count, PAGE_SIZE - count, "%d\t%s\n",
++		count += snprintf(buf + count, PAGE_SIZE - count, "%u\t%s\n",
+ 							b->id, b->name);
+ 
+ 		if (count = PAGE_SIZE)
+-- 
+1.7.8.2
+
 
