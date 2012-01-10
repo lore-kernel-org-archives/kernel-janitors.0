@@ -1,38 +1,29 @@
-From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Date: Mon, 09 Jan 2012 13:12:55 +0000
-Subject: Re: [patch] cpuidle: checking the wrong variable in __cpuidle_register_device()
-Message-Id: <4F0AE507.8020200@linux.vnet.ibm.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 10 Jan 2012 07:53:11 +0000
+Subject: Re: [patch] dmatest: store correct thread count in dmatest_add_channel()
+Message-Id: <CABE8wwuGk=Nf1YTPjM6yXgigoRhXPX1a1K7ZySREQoUyC4F8xg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120109105454.GA6940@elgon.mountain>
-In-Reply-To: <20120109105454.GA6940@elgon.mountain>
+References: <20111124114734.GB32522@elgon.mountain>
+	<20120109111702.GE3644@mwanda>
+In-Reply-To: <20120109111702.GE3644@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Len Brown <len.brown@intel.com>, Kay Sievers <kay.sievers@vrfy.org>, Kevin Hilman <khilman@ti.com>, Trinabh Gupta <g.trinabh@gmail.com>, Arjan van de Ven <arjan@linux.intel.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux PM mailing list <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 01/09/2012 04:24 PM, Dan Carpenter wrote:
+On Mon, Jan 9, 2012 at 3:17 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> Ping?
+>
+> regards,
+> dan carpenter
 
-> We updated this in 8a25a2fd12 "cpu: convert 'cpu' and 'machinecheck'
-> sysdev_class to a regular subsystem" but it should be checking "cpu_dev"
-> here not "dev".  The "dev" variable was dereferenced already.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-> index 59f4261..7771810 100644
-> --- a/drivers/cpuidle/cpuidle.c
-> +++ b/drivers/cpuidle/cpuidle.c
-> @@ -294,7 +294,7 @@ static int __cpuidle_register_device(struct cpuidle_device *dev)
->  	struct device *cpu_dev = get_cpu_device((unsigned long)dev->cpu);
->  	struct cpuidle_driver *cpuidle_driver = cpuidle_get_driver();
-> 
-> -	if (!dev)
-> +	if (!cpu_dev)
->  		return -EINVAL;
->  	if (!try_module_get(cpuidle_driver->owner))
->  		return -EINVAL;
+Just a comedy of delay, on my part, in getting this patch merged.  In
+fact there is this fix that pre-dates yours:
 
+  http://marc.info/?l=linux-kernel&m1388785009475&w=2
 
-Reviewed-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+I'll push this along.
 
+Thanks for the nudge,
+Dan
