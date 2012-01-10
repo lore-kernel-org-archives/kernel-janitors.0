@@ -1,83 +1,107 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Jan 2012 05:39:19 +0000
+From: Martin Peres <martin.peres@ensi-bourges.fr>
+Date: Tue, 10 Jan 2012 08:05:10 +0000
 Subject: Re: [patch] drm/nv50/pm: signedness bug in nv50_pm_clocks_pre()
-Message-Id: <20120110053918.GB16258@mwanda>
+Message-Id: <4F0BF136.9070406@ensi-bourges.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="3uo+9/B/ebqu+fSQ"
+Content-Type: multipart/mixed; boundary="------------010709090008070107000009"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120104072047.GE30978@elgon.mountain>
-	<4F0B780D.1080804@ensi-bourges.fr>
-In-Reply-To: <4F0B780D.1080804@ensi-bourges.fr>
-To: Martin Peres <martin.peres@ensi-bourges.fr>
+	<4F0B780D.1080804@ensi-bourges.fr> <20120110053918.GB16258@mwanda>
+In-Reply-To: <20120110053918.GB16258@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: kernel-janitors@vger.kernel.org, Emil Velikov <emil.l.velikov@gmail.com>, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
 
-
---3uo+9/B/ebqu+fSQ
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------010709090008070107000009
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 10, 2012 at 12:28:13AM +0100, Martin Peres wrote:
-> Le 04/01/2012 08:20, Dan Carpenter a =E9crit :
-> >calc_mclk() returns zero on success and negative on failure but clk is
-> >a u32.
-> >
-> >Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
-> >
-> >diff --git a/drivers/gpu/drm/nouveau/nv50_pm.c b/drivers/gpu/drm/nouveau=
-/nv50_pm.c
-> >index 0393721..3508de9 100644
-> >--- a/drivers/gpu/drm/nouveau/nv50_pm.c
-> >+++ b/drivers/gpu/drm/nouveau/nv50_pm.c
-> >@@ -540,7 +540,7 @@ nv50_pm_clocks_pre(struct drm_device *dev, struct no=
-uveau_pm_level *perflvl)
-> >  	info->mclk_hwsq.len =3D 0;
-> >  	if (perflvl->memory) {
-> >  		clk =3D calc_mclk(dev, perflvl->memory,&info->mclk_hwsq);
-> >-		if (clk<  0) {
-> >+		if ((int)clk<  0) {
-> >  			ret =3D clk;
-> >  			goto error;
-> >  		}
-> Well spotted Dan!
->=20
-> Sorry for the late answer, was busy reworking this file for safe reclocki=
-ng.
->=20
-> I have a slightly different fix for that. Please tell me if It suits
-> you: https://gitorious.org/linux-nouveau-pm/linux-nouveau-pm/commit/c1b80=
-360ezd1aa7dd780ac383aae9437c66ef3b89
+Le 10/01/2012 06:39, Dan Carpenter a =E9crit :
+> On Tue, Jan 10, 2012 at 12:28:13AM +0100, Martin Peres wrote:
+>> Le 04/01/2012 08:20, Dan Carpenter a =E9crit :
+>>> calc_mclk() returns zero on success and negative on failure but clk is
+>>> a u32.
+>>>
+>>> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+>>>
+>>> diff --git a/drivers/gpu/drm/nouveau/nv50_pm.c b/drivers/gpu/drm/nouvea=
+u/nv50_pm.c
+>>> index 0393721..3508de9 100644
+>>> --- a/drivers/gpu/drm/nouveau/nv50_pm.c
+>>> +++ b/drivers/gpu/drm/nouveau/nv50_pm.c
+>>> @@ -540,7 +540,7 @@ nv50_pm_clocks_pre(struct drm_device *dev, struct n=
+ouveau_pm_level *perflvl)
+>>>   	info->mclk_hwsq.len =3D 0;
+>>>   	if (perflvl->memory) {
+>>>   		clk =3D calc_mclk(dev, perflvl->memory,&info->mclk_hwsq);
+>>> -		if (clk<   0) {
+>>> +		if ((int)clk<   0) {
+>>>   			ret =3D clk;
+>>>   			goto error;
+>>>   		}
+>> Well spotted Dan!
+>>
+>> Sorry for the late answer, was busy reworking this file for safe reclock=
+ing.
+>>
+>> I have a slightly different fix for that. Please tell me if It suits
+>> you: https://gitorious.org/linux-nouveau-pm/linux-nouveau-pm/commit/c1b8=
+0360ezd1aa7dd780ac383aae9437c66ef3b89
+> That link redirects to
+> https://gitorious.org/linux-nouveau-pm/linux-nouveau-pm/commits/master
+> and it doesn't show the patch.
+>
+> But I wasn't a huge fan of adding the cast very much either so I'm
+> sure your patch is good.
+>
+> regards,
+> dan carpenter
+Sorry, here is the patch attached.
 
-That link redirects to
-https://gitorious.org/linux-nouveau-pm/linux-nouveau-pm/commits/master
-and it doesn't show the patch.
+--------------010709090008070107000009
+Content-Type: text/x-patch;
+ name="0005-drm-nv50-pm-signedness-bug-in-nv50_pm_clocks_pre.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0005-drm-nv50-pm-signedness-bug-in-nv50_pm_clocks_pre.patch"
 
-But I wasn't a huge fan of adding the cast very much either so I'm
-sure your patch is good.
+From c1b80360ed1aa7dd780ac383aae9437c66ef3b89 Mon Sep 17 00:00:00 2001
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 4 Jan 2012 10:20:47 +0300
+Subject: [PATCH 5/7] drm/nv50/pm: signedness bug in nv50_pm_clocks_pre()
 
-regards,
-dan carpenter
+calc_mclk() returns zero on success and negative on failure but clk is
+a u32.
 
---3uo+9/B/ebqu+fSQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+v2: Martin Peres:
+- clk should be an int, not a u32
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Signed-off-by: Martin Peres <martin.peres@labri.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/nouveau/nv50_pm.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-iQIcBAEBAgAGBQJPC88GAAoJEOnZkXI/YHqR8nsP/2E8L7Gdas9ozlMzjXzguxaP
-8ROcwhXJTd10/I6FCyBw1SzBlQkYfZwdd+XqG0PXAf1QRBtbNaIcFO/wMAVajzS4
-ZMAkq9MELNikQsB8FYAkErNQ2F0+ZjktVjdWxvx0oDcQHMGYj5JwFYGxCSy9ZgR3
-r06aSaWjcfRHYsGRRsaGswqFoeOudPPRHt+xCDw1pKEjHwZ/p3yre1ahvxeW2hzX
-H4dU17PrBgHO3LUzma45vBrMvh0RhNLgB50ckFZ87rmg81KyE+zb5wFr1x0+cKcY
-faSzQKNrGmU1rBCQlS21PSV3kCJ7k+IHmpC/8wEsIAeQLYWevVUIm//Up7BGk7TQ
-CifjzupkfSO+1j3sPHI2HX1aQaqw5NRjMN3spJEXMbi+2xmlZ6Iec0dS2j+ZGoMm
-EJOdIZYIPU8iql3mhf2dsITQCxG/QacYo+f2M4vHQDrj4uyM7SFJMRMb2AmWw57E
-L/8KkEpXDJOHUOIe29Bvuw4Rwz9/4WRSG4m8J6gSf4zqzCAQ4p6xt5u6yKDGukWW
-GlHD/+lYB6IlhOzvd/Pt2Vlw0UcyooX4Q//7ss/DJ5+CZZB1AUMSx1KDeovsr6ks
-NzGqJSiMQwFVbb+87ZF5Oqq8fbFn0BmUt6ZgrXhHDDSz32RitASQiA/afFy4jegi
-HxLtYH9PnV/1k1UHdal1
-=T3ub
------END PGP SIGNATURE-----
+diff --git a/drivers/gpu/drm/nouveau/nv50_pm.c b/drivers/gpu/drm/nouveau/nv50_pm.c
+index 983b432..4be2e20 100644
+--- a/drivers/gpu/drm/nouveau/nv50_pm.c
++++ b/drivers/gpu/drm/nouveau/nv50_pm.c
+@@ -659,11 +659,11 @@ nv50_pm_clocks_pre(struct drm_device *dev, struct nouveau_pm_level *perflvl)
+ 	struct nv50_pm_state *info;
+ 	struct hwsq_ucode *hwsq;
+ 	struct pll_lims pll;
+-	int ret = -EINVAL;
++	int clk, ret = -EINVAL;
+ 	int N, M, P1, P2;
+ 	u32 mast = nv_rd32(dev, 0x00c040);
+ 	u32 divs = read_div(dev);
+-	u32 ctrl, clk, out;
++	u32 ctrl, out;
+ 
+ 	if (dev_priv->chipset == 0xaa ||
+ 	    dev_priv->chipset == 0xac)
+-- 
+1.7.8.1
 
---3uo+9/B/ebqu+fSQ--
+
+--------------010709090008070107000009--
