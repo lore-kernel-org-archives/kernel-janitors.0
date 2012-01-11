@@ -1,36 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 15 Jan 2012 11:28:20 +0000
-Subject: [patch] toshiba_acpi: make one-bit bitfields unsigned
-Message-Id: <20120115112819.GC20463@elgon.mountain>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Wed, 11 Jan 2012 22:22:53 +0000
+Subject: [PATCH v2 16/17] Staging: quickstart: Use scnprintf in quickstart_pressed_button_show
+Message-Id: <1326320574-11220-19-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Garrett <mjg@redhat.com>
-Cc: platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This doesn't change how the code works, but it silences a Sparse
-complaint:
-drivers/platform/x86/toshiba_acpi.c:121:37: error: dubious one-bit signed bitfield
+Use scnprintf instead of snprintf in quickstart_pressed_button_show as
+suggested in Documentation/filesystems/sysfs.txt.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+---
+ drivers/staging/quickstart/quickstart.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/platform/x86/toshiba_acpi.c b/drivers/platform/x86/toshiba_acpi.c
-index dcdc1f4..eab5e11 100644
---- a/drivers/platform/x86/toshiba_acpi.c
-+++ b/drivers/platform/x86/toshiba_acpi.c
-@@ -118,10 +118,10 @@ struct toshiba_acpi_dev {
- 	int last_key_event;
- 	int key_event_valid;
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index 2843cf7..b5ce1cc 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -98,7 +98,7 @@ static ssize_t quickstart_pressed_button_show(struct device *dev,
+ 						struct device_attribute *attr,
+ 						char *buf)
+ {
+-	return snprintf(buf, PAGE_SIZE, "%s\n",
++	return scnprintf(buf, PAGE_SIZE, "%s\n",
+ 					(pressed ? pressed->name : "none"));
+ }
  
--	int illumination_supported:1;
--	int video_supported:1;
--	int fan_supported:1;
--	int system_event_supported:1;
-+	unsigned int illumination_supported:1;
-+	unsigned int video_supported:1;
-+	unsigned int fan_supported:1;
-+	unsigned int system_event_supported:1;
- 
- 	struct mutex mutex;
- };
+-- 
+1.7.8.3
+
+
