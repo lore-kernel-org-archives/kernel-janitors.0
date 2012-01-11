@@ -1,7 +1,7 @@
 From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:46 +0000
-Subject: [PATCH v2 11/17] Staging: quickstart: Get rid of quickstart_data struct
-Message-Id: <1326320574-11220-12-git-send-email-szymon@janc.net.pl>
+Date: Wed, 11 Jan 2012 22:22:41 +0000
+Subject: [PATCH v2 06/17] Staging: quickstart: Cleanup quickstart_acpi_remove
+Message-Id: <1326320574-11220-7-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,107 +10,32 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: Szymon Janc <szymon@janc.net.pl>
 ---
- drivers/staging/quickstart/quickstart.c |   25 +++++++++++--------------
- 1 files changed, 11 insertions(+), 14 deletions(-)
+ drivers/staging/quickstart/quickstart.c |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 9d827f2..03cb675 100644
+index 3bae5e7..de98e18 100644
 --- a/drivers/staging/quickstart/quickstart.c
 +++ b/drivers/staging/quickstart/quickstart.c
-@@ -63,10 +63,8 @@ struct quickstart_acpi {
- 	struct quickstart_btn *btn;
- };
+@@ -309,13 +309,15 @@ fail_config:
  
--static struct quickstart_driver_data {
--	struct quickstart_btn *btn_lst;
--	struct quickstart_btn *pressed;
--} quickstart_data;
-+static struct quickstart_btn *btn_list;
-+static struct quickstart_btn *pressed;
- 
- static struct input_dev *quickstart_input;
- 
-@@ -76,7 +74,7 @@ static ssize_t quickstart_buttons_show(struct device *dev,
- 					char *buf)
+ static int quickstart_acpi_remove(struct acpi_device *device, int type)
  {
- 	int count = 0;
--	struct quickstart_btn *ptr = quickstart_data.btn_lst;
-+	struct quickstart_btn *ptr = btn_list;
+-	acpi_status status = 0;
+-	struct quickstart_acpi *quickstart = NULL;
++	acpi_status status;
++	struct quickstart_acpi *quickstart;
  
- 	if (!ptr)
- 		return snprintf(buf, PAGE_SIZE, "none");
-@@ -98,8 +96,7 @@ static ssize_t quickstart_pressed_button_show(struct device *dev,
- 						char *buf)
- {
- 	return snprintf(buf, PAGE_SIZE, "%s\n",
--			(quickstart_data.pressed ?
--			 quickstart_data.pressed->name : "none"));
-+					(pressed ? pressed->name : "none"));
- }
- 
- 
-@@ -113,14 +110,14 @@ static ssize_t quickstart_pressed_button_store(struct device *dev,
- 	if (strncasecmp(buf, "none", 4) != 0)
+-	if (!device || !acpi_driver_data(device))
++	if (!device)
  		return -EINVAL;
  
--	quickstart_data.pressed = NULL;
-+	pressed = NULL;
- 	return count;
- }
+ 	quickstart = acpi_driver_data(device);
++	if (!quickstart)
++		return -EINVAL;
  
- /* Helper functions */
- static int quickstart_btnlst_add(struct quickstart_btn **data)
- {
--	struct quickstart_btn **ptr = &quickstart_data.btn_lst;
-+	struct quickstart_btn **ptr = &btn_list;
- 
- 	while (*ptr)
- 		ptr = &((*ptr)->next);
-@@ -137,7 +134,7 @@ static int quickstart_btnlst_add(struct quickstart_btn **data)
- 
- static void quickstart_btnlst_del(struct quickstart_btn *data)
- {
--	struct quickstart_btn **ptr = &quickstart_data.btn_lst;
-+	struct quickstart_btn **ptr = &btn_list;
- 
- 	if (!data)
- 		return;
-@@ -156,7 +153,7 @@ static void quickstart_btnlst_del(struct quickstart_btn *data)
- 
- static void quickstart_btnlst_free(void)
- {
--	struct quickstart_btn *ptr = quickstart_data.btn_lst;
-+	struct quickstart_btn *ptr = btn_list;
- 	struct quickstart_btn *lptr = NULL;
- 
- 	while (ptr) {
-@@ -179,7 +176,7 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
- 
- 	switch (event) {
- 	case QUICKSTART_EVENT_WAKE:
--		quickstart_data.pressed = quickstart->btn;
-+		pressed = quickstart->btn;
- 		break;
- 	case QUICKSTART_EVENT_RUNTIME:
- 		input_report_key(quickstart_input, quickstart->btn->id, 1);
-@@ -385,7 +382,7 @@ static void quickstart_exit(void)
- 
- static int __init quickstart_init_input(void)
- {
--	struct quickstart_btn **ptr = &quickstart_data.btn_lst;
-+	struct quickstart_btn **ptr = &btn_list;
- 	int count;
- 	int ret;
- 
-@@ -427,7 +424,7 @@ static int __init quickstart_init(void)
- 		return ret;
- 
- 	/* If existing bus with no devices */
--	if (!quickstart_data.btn_lst) {
-+	if (!btn_list) {
- 		ret = -ENODEV;
- 		goto fail_pfdrv_reg;
- 	}
+ 	status = acpi_remove_notify_handler(device->handle, ACPI_ALL_NOTIFY,
+ 						quickstart_acpi_notify);
 -- 
 1.7.8.3
 
