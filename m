@@ -1,35 +1,92 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jan 2012 07:06:05 +0000
-Subject: [patch] NFS: add an endian notation
-Message-Id: <20120112070605.GA2975@elgon.mountain>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Wed, 11 Jan 2012 22:22:40 +0000
+Subject: [PATCH v2 05/17] Staging: quickstart: Cleanup quickstart_acpi_ghid
+Message-Id: <1326320574-11220-6-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This function returns a big endian value.  The implementation in
-fs/nfs/callback_proc.c is declared with "__be32" but the .h file uses
-"unsigned" instead.  It makes sparse complain:
+Also fix memory leak (buffer.pointer) when returned buffer of length
+less than 8.
 
-fs/nfs/callback_proc.c:232:8: error:
-	symbol 'nfs4_callback_layoutrecall' redeclared with different
-	type (originally declared at fs/nfs/callback.h:165) - different
-	base types
+Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+---
+ drivers/staging/quickstart/quickstart.c |   38 +++++++++++++++++++++---------
+ 1 files changed, 26 insertions(+), 12 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/fs/nfs/callback.h b/fs/nfs/callback.h
-index 07df5f1..c89d3b9 100644
---- a/fs/nfs/callback.h
-+++ b/fs/nfs/callback.h
-@@ -162,7 +162,7 @@ struct cb_layoutrecallargs {
- 	};
- };
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index 7b0deb6..3bae5e7 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -191,14 +191,11 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
+ 	return;
+ }
  
--extern unsigned nfs4_callback_layoutrecall(
-+extern __be32 nfs4_callback_layoutrecall(
- 	struct cb_layoutrecallargs *args,
- 	void *dummy, struct cb_process_state *cps);
+-static void quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
++static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
+ {
+ 	acpi_status status;
+ 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+-	uint32_t usageid = 0;
+-
+-	if (!quickstart)
+-		return;
++	int ret = 0;
  
+ 	/*
+ 	 * This returns a buffer telling the button usage ID,
+@@ -206,24 +203,41 @@ static void quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
+ 	 */
+ 	status = acpi_evaluate_object(quickstart->device->handle, "GHID", NULL,
+ 								&buffer);
+-	if (ACPI_FAILURE(status) || !buffer.pointer) {
++	if (ACPI_FAILURE(status)) {
+ 		printk(KERN_ERR "quickstart: %s GHID method failed.\n",
+ 						quickstart->btn->name);
+-		return;
++		return -EINVAL;
+ 	}
+ 
+-	if (buffer.length < 8)
+-		return;
+-
+ 	/*
+ 	 * <<The GHID method can return a BYTE, WORD, or DWORD.
+ 	 * The value must be encoded in little-endian byte
+ 	 * order (least significant byte first).>>
+ 	 */
+-	usageid = *((uint32_t *)(buffer.pointer + (buffer.length - 8)));
+-	quickstart->btn->id = usageid;
++	switch (buffer.length) {
++	case 1:
++		quickstart->btn->id = *(uint8_t *)buffer.pointer;
++		break;
++	case 2:
++		quickstart->btn->id = *(uint16_t *)buffer.pointer;
++		break;
++	case 4:
++		quickstart->btn->id = *(uint32_t *)buffer.pointer;
++		break;
++	case 8:
++		quickstart->btn->id = *(uint64_t *)buffer.pointer;
++		break;
++	default:
++		printk(KERN_ERR "quickstart: %s GHID method returned buffer "
++				"of unexpected length %u\n",
++				quickstart->btn->name, buffer.length);
++		ret = -EINVAL;
++		break;
++	}
+ 
+ 	kfree(buffer.pointer);
++
++	return ret;
+ }
+ 
+ static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
+-- 
+1.7.8.3
+
+
