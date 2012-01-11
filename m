@@ -1,44 +1,29 @@
 From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:35 +0000
-Subject: [PATCH v2 00/17] Some work on quickstart driver in staging
-Message-Id: <1326320574-11220-1-git-send-email-szymon@janc.net.pl>
+Date: Wed, 11 Jan 2012 22:27:33 +0000
+Subject: Re: [PATCH v2 00/17] Some work on quickstart driver in staging
+Message-Id: <201201112327.33112.szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1326320574-11220-1-git-send-email-szymon@janc.net.pl>
+In-Reply-To: <1326320574-11220-1-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Changes since v1:
- - use pr_{err,info} instead of custom macros for logs
- - fixed quickstart_buttons_show issue pointed out by Dan
- - Use scnprintf in quickstart_pressed_button_show
+On Wednesday 11 January 2012 23:22:35 Szymon Janc wrote:
+> Changes since v1:
+>  - use pr_{err,info} instead of custom macros for logs
+>  - fixed quickstart_buttons_show issue pointed out by Dan
+>  - Use scnprintf in quickstart_pressed_button_show
+> 
+> Thx for comments.
 
-Thx for comments.
-
-Szymon Janc (17):
-  Staging: quickstart: Some style, whitespaces and typos fixes
-  Staging: quickstart: Prefix remaining functions names with
-    quickstart_
-  Staging: quickstart: Move some code to avoid forward declarations
-  Staging: quickstart: Make quickstart_input static
-  Staging: quickstart: Cleanup quickstart_acpi_ghid
-  Staging: quickstart: Cleanup quickstart_acpi_remove
-  Staging: quickstart: Cleanup quickstart_acpi_add
-  Staging: quickstart: Cleanup quickstart_acpi_config
-  Staging: quickstart: Use switch-case in quickstart_acpi_notify
-  Staging: quickstart: Remove unused defines
-  Staging: quickstart: Get rid of quickstart_data struct
-  Staging: quickstart: Use list.h API for buttons list
-  Staging: quickstart: Use %u for printing button id
-  Staging: quickstart: Rename quickstart_btn to quickstart_button
-  Staging: quickstart: Use pr_err and pr_info for logs
-  Staging: quickstart: Use scnprintf in quickstart_pressed_button_show
-  Staging: quickstart: Bump driver version to 1.04
-
- drivers/staging/quickstart/quickstart.c |  369 +++++++++++++++----------------
- 1 files changed, 177 insertions(+), 192 deletions(-)
+Opps.  Please ignore
+[PATCH 15/16] Staging: quickstart: Add QS_INFO and QS_ERR macros for logs
+[PATCH 16/16] Staging: quickstart: Bump driver version to 1.04
+in this series...
 
 -- 
-1.7.8.3
-
+Szymon K. Janc
+szymon@janc.net.pl
 
