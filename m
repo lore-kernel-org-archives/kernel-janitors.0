@@ -1,17 +1,44 @@
-From: Anca Emanuel <anca.emanuel@gmail.com>
-Date: Fri, 13 Jan 2012 15:25:50 +0000
-Subject: Re: [patch -next] autofs4: double lock typo in autofs4_write()
-Message-Id: <CAJL_dMvBycLdpbvOowcLjcjM3CZp=j+i6_mvLzZiTTGONuD_pA@mail.gmail.com>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Wed, 11 Jan 2012 22:22:35 +0000
+Subject: [PATCH v2 00/17] Some work on quickstart driver in staging
+Message-Id: <1326320574-11220-1-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120113144113.GA25667@elgon.mountain>
-In-Reply-To: <20120113144113.GA25667@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>, autofs@linux.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi, this is already reported:
-https://lkml.org/lkml/2012/1/13/104
+Changes since v1:
+ - use pr_{err,info} instead of custom macros for logs
+ - fixed quickstart_buttons_show issue pointed out by Dan
+ - Use scnprintf in quickstart_pressed_button_show
 
-and tested by Dave.
+Thx for comments.
+
+Szymon Janc (17):
+  Staging: quickstart: Some style, whitespaces and typos fixes
+  Staging: quickstart: Prefix remaining functions names with
+    quickstart_
+  Staging: quickstart: Move some code to avoid forward declarations
+  Staging: quickstart: Make quickstart_input static
+  Staging: quickstart: Cleanup quickstart_acpi_ghid
+  Staging: quickstart: Cleanup quickstart_acpi_remove
+  Staging: quickstart: Cleanup quickstart_acpi_add
+  Staging: quickstart: Cleanup quickstart_acpi_config
+  Staging: quickstart: Use switch-case in quickstart_acpi_notify
+  Staging: quickstart: Remove unused defines
+  Staging: quickstart: Get rid of quickstart_data struct
+  Staging: quickstart: Use list.h API for buttons list
+  Staging: quickstart: Use %u for printing button id
+  Staging: quickstart: Rename quickstart_btn to quickstart_button
+  Staging: quickstart: Use pr_err and pr_info for logs
+  Staging: quickstart: Use scnprintf in quickstart_pressed_button_show
+  Staging: quickstart: Bump driver version to 1.04
+
+ drivers/staging/quickstart/quickstart.c |  369 +++++++++++++++----------------
+ 1 files changed, 177 insertions(+), 192 deletions(-)
+
+-- 
+1.7.8.3
+
+
