@@ -1,8 +1,10 @@
 From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:35 +0000
+Date: Wed, 11 Jan 2012 22:22:52 +0000
 Subject: [PATCH 16/16] Staging: quickstart: Bump driver version to 1.04
-Message-Id: <1326147815-11451-17-git-send-email-szymon@janc.net.pl>
+Message-Id: <1326320574-11220-18-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1326147815-11451-17-git-send-email-szymon@janc.net.pl>
+In-Reply-To: <1326147815-11451-17-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
