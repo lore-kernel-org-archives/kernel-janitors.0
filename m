@@ -1,55 +1,76 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 21 Jan 2012 15:58:48 +0000
-Subject: Re: [patch 2/2] [media] ds3000: off by one in ds3000_read_snr()
-Message-Id: <20120121155848.GR3356@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="xSu31lw3TgkWXnjh"
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Wed, 11 Jan 2012 22:22:37 +0000
+Subject: [PATCH v2 02/17] Staging: quickstart: Prefix remaining functions names with quickstart_
+Message-Id: <1326320574-11220-3-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120117073021.GB11358@elgon.mountain>
- <4F16FC26.80306@bfs.de>
- <20120119093327.GI3356@mwanda>
- <4F17EFE1.3060804@bfs.de>
- <20120119122202.GJ3294@mwanda>
-In-Reply-To: <20120119122202.GJ3294@mwanda>
-To: walter harms <wharms@bfs.de>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "Igor M. Liplianin" <liplianin@me.by>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+
+Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+---
+ drivers/staging/quickstart/quickstart.c |   18 +++++++++---------
+ 1 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index d03b89d..adce56b 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -92,19 +92,19 @@ static struct acpi_driver quickstart_acpi_driver = {
+ struct input_dev *quickstart_input;
+ 
+ /* Platform driver structs */
+-static ssize_t buttons_show(struct device *dev,
++static ssize_t quickstart_buttons_show(struct device *dev,
+ 					struct device_attribute *attr,
+ 					char *buf);
+-static ssize_t pressed_button_show(struct device *dev,
++static ssize_t quickstart_pressed_button_show(struct device *dev,
+ 					struct device_attribute *attr,
+ 					char *buf);
+-static ssize_t pressed_button_store(struct device *dev,
++static ssize_t quickstart_pressed_button_store(struct device *dev,
+ 					struct device_attribute *attr,
+ 					 const char *buf,
+ 					 size_t count);
+-static DEVICE_ATTR(pressed_button, 0666, pressed_button_show,
+-					 pressed_button_store);
+-static DEVICE_ATTR(buttons, 0444, buttons_show, NULL);
++static DEVICE_ATTR(pressed_button, 0666, quickstart_pressed_button_show,
++					 quickstart_pressed_button_store);
++static DEVICE_ATTR(buttons, 0444, quickstart_buttons_show, NULL);
+ static struct platform_device *pf_device;
+ static struct platform_driver pf_driver = {
+ 	.driver = {
+@@ -114,7 +114,7 @@ static struct platform_driver pf_driver = {
+ };
+ 
+ /* Platform driver functions */
+-static ssize_t buttons_show(struct device *dev,
++static ssize_t quickstart_buttons_show(struct device *dev,
+ 					struct device_attribute *attr,
+ 					char *buf)
+ {
+@@ -136,7 +136,7 @@ static ssize_t buttons_show(struct device *dev,
+ 	return count;
+ }
+ 
+-static ssize_t pressed_button_show(struct device *dev,
++static ssize_t quickstart_pressed_button_show(struct device *dev,
+ 						struct device_attribute *attr,
+ 						char *buf)
+ {
+@@ -146,7 +146,7 @@ static ssize_t pressed_button_show(struct device *dev,
+ }
+ 
+ 
+-static ssize_t pressed_button_store(struct device *dev,
++static ssize_t quickstart_pressed_button_store(struct device *dev,
+ 						struct device_attribute *attr,
+ 						const char *buf, size_t count)
+ {
+-- 
+1.7.8.3
 
 
---xSu31lw3TgkWXnjh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Jan 19, 2012 at 03:22:02PM +0300, Dan Carpenter wrote:
-> It's a good point.  I will redo the patch.
-
-Sorry, I've decided to bail on this.  The original code is buggy but
-I don't know what's going on well enough to fix it with any
-confidence.
-
-regards,
-dan carpenter
-
-
---xSu31lw3TgkWXnjh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPGuC3AAoJEOnZkXI/YHqRs24QALB8tg1uafSQZlErsvpJRqgP
-9O7zFTdLafnCGQWk82SYRfDl2y2n7DZmrx7RiWUtKPk+d/jJb7onqpo97FEDYR49
-LYnz3HLWuZhVNqo+Mna8D0dLPtUXZS589lzLBkRgvCRCd1bZ9Wh/Ib13aHcKq2y9
-PcIbO9sydIe5kfx+1m9muHXurPPokLBlMmCw3fRc1u7X/wwYJw9xz85wqz4FOXvF
-30fbGQMuWy5a8vaCWAgfgbwj35kUqaRl0XNkBS/8dLuWzqyeBHZPFPf7j1PIFGeK
-kaMrZJH0WKQVllCCXO0zhEe301237AgSqfVg/HPxNiAgL9vrihWiBOphUFd6VAYB
-SVW2fDhpSc9M3iJmm9r0rjSy+1MS5oIn8IIO6OepLKDwJFXEhDgv4lWnna8cgV2d
-RBvtSgalYmLkV4NLJMDufQ+FnfzvvSrtvSacYc2tjnA91CNxdW5Y4hA+/YJHkYRY
-KnGwW1+hDRRpTmM+ph60m1aXMxK34R6z1cayjwIhmNsM49PnvGfrTEu1YCfmDZBu
-nFoXxuN5K/0lVuDnMjiEvZkzfWSC12jv/PI8O/XBbRSmCAxfsxxtRyNKvDh3rX3r
-lDBHHGUHoqdM82F6WzOpl5WNA1tNwV4ApeHMfDfT7zHGyPdv+Ub5aBfZEBLhLGEQ
-z6/zJuPy8WOHl7pVPitj
-=2qph
------END PGP SIGNATURE-----
-
---xSu31lw3TgkWXnjh--
