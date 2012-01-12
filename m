@@ -1,55 +1,53 @@
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Fri, 20 Jan 2012 16:00:50 +0000
-Subject: Re: [patch] Btrfs: fix bitwise vs logical condition
-Message-Id: <20120120160050.GA25145@zambezi.lan>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 21:33:08 +0000
+Subject: [PATCH 4/4] drivers/media/video/s5p-mfc/s5p_mfc.c: adjust double test
+Message-Id: <1326403988-872-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120120075454.GA2295@elgon.mountain>
- <20120120142437.GA2499@zambezi.lan>
- <20120120152129.GO3356@mwanda>
-In-Reply-To: <20120120152129.GO3356@mwanda>
+References: <1326403988-872-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1326403988-872-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Mason <chris.mason@oracle.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Jan 20, 2012 at 06:21:29PM +0300, Dan Carpenter wrote:
-> On Fri, Jan 20, 2012 at 04:24:37PM +0200, Ilya Dryomov wrote:
-> > --- a/fs/btrfs/volumes.c
-> > +++ b/fs/btrfs/volumes.c
-> > @@ -2375,12 +2375,11 @@ static int should_balance_chunk(struct btrfs_root *root,
-> >  	struct btrfs_balance_control *bctl = root->fs_info->balance_ctl;
-> >  	struct btrfs_balance_args *bargs = NULL;
-> >  	u64 chunk_type = btrfs_chunk_type(leaf, chunk);
-> > +	u64 mask = chunk_type & BTRFS_BLOCK_GROUP_TYPE_MASK;
-> >  
-> >  	/* type filter */
-> > -	if (!((chunk_type & BTRFS_BLOCK_GROUP_TYPE_MASK) &
-> > -	      (bctl->flags & BTRFS_BALANCE_TYPE_MASK))) {
-> > +	if (((bctl->flags & BTRFS_BALANCE_TYPE_MASK) & mask) != mask)
-> 
-> I don't know if it matters, but semantically this is not
-> equivalent to the original.  If mask has no flags set then this will
-> pass.  This says that every flag in mask but has to be set in
-> ->flags but in the original code, only one needed to be.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yeah, that's why I said "we can strengthen that check".
+Rewrite a duplicated test to test the correct value
 
-> 
-> The original code was equivalent to:
-> 	if (!(chunk_type & bctl->flags & BTRFS_BLOCK_GROUP_TYPE_MASK &
-> 	      BTRFS_BALANCE_TYPE_MASK)) {...
-> 
-> It's weird that we have BTRFS_BLOCK_GROUP_TYPE_MASK and
-> BTRFS_BALANCE_TYPE_MASK which are the same except that the bitfields
-> have been renamed.  Can't we just reuse the first definition?
-> 
-> But really, if this isn't a bug, then I don't care.  The original is
-> fine, or whatever you choose.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-This is not a bug.
+// <smpl>
+@@
+expression E;
+@@
 
-Thanks,
+(
+* E
+  || ... || E
+|
+* E
+  && ... && E
+)
+// </smpl>
 
-		Ilya
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/video/s5p-mfc/s5p_mfc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/video/s5p-mfc/s5p_mfc.c b/drivers/media/video/s5p-mfc/s5p_mfc.c
+index 8be8b54..53126f2 100644
+--- a/drivers/media/video/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/video/s5p-mfc/s5p_mfc.c
+@@ -475,7 +475,7 @@ static void s5p_mfc_handle_seq_done(struct s5p_mfc_ctx *ctx,
+ 			ctx->mv_size = 0;
+ 		}
+ 		ctx->dpb_count = s5p_mfc_get_dpb_count();
+-		if (ctx->img_width = 0 || ctx->img_width = 0)
++		if (ctx->img_width = 0 || ctx->img_height = 0)
+ 			ctx->state = MFCINST_ERROR;
+ 		else
+ 			ctx->state = MFCINST_HEAD_PARSED;
 
