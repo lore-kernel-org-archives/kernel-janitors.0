@@ -1,85 +1,57 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Mon, 02 Jan 2012 08:44:39 +0000
-Subject: Re: [PATCH 1/6] drivers/gpio/gpio-tegra.c: use
-Message-Id: <20120102084439.GI18381@ponder.secretlab.ca>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 09:55:10 +0000
+Subject: [PATCH 8/15] drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c: add missing iounmap
+Message-Id: <1326362117-29371-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1324994491-21828-1-git-send-email-julia@diku.dk>
- <1324994491-21828-2-git-send-email-julia@diku.dk>
-In-Reply-To: <1324994491-21828-2-git-send-email-julia-dAYI7NvHqcQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Dec 27, 2011 at 03:01:26PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Merged, thanks.
+Add missing iounmap in error handling code, in a case where the function
+already preforms iounmap on some other execution path.
 
-g.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> 
-> Reimplement a call to devm_request_mem_region followed by a call to ioremap
-> or ioremap_nocache by a call to devm_request_and_ioremap.
-> 
-> The semantic patch that makes this transformation is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @nm@
-> expression myname;
-> identifier i;
-> @@
-> 
-> struct platform_driver i = { .driver = { .name = myname } };
-> 
-> @@
-> expression dev,res,size;
-> expression nm.myname;
-> @@
-> 
-> -if (!devm_request_mem_region(dev, res->start, size,
-> -                              \(res->name\|dev_name(dev)\|myname\))) {
-> -   ...
-> -   return ...;
-> -}
-> ... when != res->start
-> (
-> -devm_ioremap(dev,res->start,size)
-> +devm_request_and_ioremap(dev,res)
-> |
-> -devm_ioremap_nocache(dev,res->start,size)
-> +devm_request_and_ioremap(dev,res)
-> )
-> ... when any
->     when != res->start
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> 
-> ---
->  drivers/gpio/gpio-tegra.c |    9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index 61044c8..bdc2937 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -361,14 +361,7 @@ static int __devinit tegra_gpio_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  	}
->  
-> -	if (!devm_request_mem_region(&pdev->dev, res->start,
-> -				     resource_size(res),
-> -				     dev_name(&pdev->dev))) {
-> -		dev_err(&pdev->dev, "Couldn't request MEM resource\n");
-> -		return -ENODEV;
-> -	}
-> -
-> -	regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-> +	regs = devm_request_and_ioremap(&pdev->dev, res);
->  	if (!regs) {
->  		dev_err(&pdev->dev, "Couldn't ioremap regs\n");
->  		return -ENODEV;
-> 
+// <smpl>
+@@
+expression e;
+statement S,S1;
+int ret;
+@@
+e = \(ioremap\|ioremap_nocache\)(...)
+... when != iounmap(e)
+if (<+...e...+>) S
+... when any
+    when != iounmap(e)
+*if (...)
+   { ... when != iounmap(e)
+     return ...; }
+... when any
+iounmap(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 7b1594f..1ac8324 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -62,7 +62,7 @@ static int stmmac_pltfr_probe(struct platform_device *pdev)
+ 	priv = stmmac_dvr_probe(&(pdev->dev), plat_dat);
+ 	if (!priv) {
+ 		pr_err("%s: main drivr probe failed", __func__);
+-		goto out_release_region;
++		goto out_unmap;
+ 	}
+ 
+ 	priv->ioaddr = addr;
+
