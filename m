@@ -1,55 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Jan 2012 06:28:34 +0000
-Subject: [patch] [media] mb86a20s: fix off by one checks
-Message-Id: <20120113062834.GA23737@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 09:55:11 +0000
+Subject: [PATCH 9/15] drivers/acpi/apei/erst.c: add missing iounmap
+Message-Id: <1326362117-29371-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Clearly ">=" was intended here instead of ">".
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add missing iounmap in error handling code, in a case where the function
+already preforms iounmap on some other execution path.
 
-diff --git a/drivers/media/dvb/frontends/mb86a20s.c b/drivers/media/dvb/frontends/mb86a20s.c
-index 38778a8..4e6f836 100644
---- a/drivers/media/dvb/frontends/mb86a20s.c
-+++ b/drivers/media/dvb/frontends/mb86a20s.c
-@@ -535,7 +535,7 @@ static int mb86a20s_get_modulation(struct mb86a20s_state *state,
- 		[2] = 0x8e,	/* Layer C */
- 	};
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+statement S,S1;
+int ret;
+@@
+e = \(ioremap\|ioremap_nocache\)(...)
+... when != iounmap(e)
+if (<+...e...+>) S
+... when any
+    when != iounmap(e)
+*if (...)
+   { ... when != iounmap(e)
+     return ...; }
+... when any
+iounmap(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/acpi/apei/erst.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/acpi/apei/erst.c b/drivers/acpi/apei/erst.c
+index 6a9e3ba..cd260f7 100644
+--- a/drivers/acpi/apei/erst.c
++++ b/drivers/acpi/apei/erst.c
+@@ -284,15 +284,18 @@ static int erst_exec_move_data(struct apei_exec_context *ctx,
+ 	if (!src)
+ 		return -ENOMEM;
+ 	dst = ioremap(ctx->dst_base + offset, ctx->var2);
+-	if (!dst)
+-		return -ENOMEM;
++	if (!dst) {
++		rc = -ENOMEM;
++		goto out;
++	}
  
--	if (layer > ARRAY_SIZE(reg))
-+	if (layer >= ARRAY_SIZE(reg))
- 		return -EINVAL;
- 	rc = mb86a20s_writereg(state, 0x6d, reg[layer]);
- 	if (rc < 0)
-@@ -568,7 +568,7 @@ static int mb86a20s_get_fec(struct mb86a20s_state *state,
- 		[2] = 0x8f,	/* Layer C */
- 	};
+ 	memmove(dst, src, ctx->var2);
  
--	if (layer > ARRAY_SIZE(reg))
-+	if (layer >= ARRAY_SIZE(reg))
- 		return -EINVAL;
- 	rc = mb86a20s_writereg(state, 0x6d, reg[layer]);
- 	if (rc < 0)
-@@ -603,7 +603,7 @@ static int mb86a20s_get_interleaving(struct mb86a20s_state *state,
- 		[2] = 0x90,	/* Layer C */
- 	};
+-	iounmap(src);
+ 	iounmap(dst);
++out:
++	iounmap(src);
  
--	if (layer > ARRAY_SIZE(reg))
-+	if (layer >= ARRAY_SIZE(reg))
- 		return -EINVAL;
- 	rc = mb86a20s_writereg(state, 0x6d, reg[layer]);
- 	if (rc < 0)
-@@ -627,7 +627,7 @@ static int mb86a20s_get_segment_count(struct mb86a20s_state *state,
- 		[2] = 0x91,	/* Layer C */
- 	};
+-	return 0;
++	return rc;
+ }
  
--	if (layer > ARRAY_SIZE(reg))
-+	if (layer >= ARRAY_SIZE(reg))
- 		return -EINVAL;
- 	rc = mb86a20s_writereg(state, 0x6d, reg[layer]);
- 	if (rc < 0)
+ static struct apei_exec_ins_type erst_ins_type[] = {
