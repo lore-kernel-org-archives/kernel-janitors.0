@@ -1,65 +1,38 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Fri, 27 Jan 2012 00:37:05 +0000
-Subject: Re: [PATCH 15/15] arch/arm/mach-omap2/smartreflex.c: add missing iounmap
-Message-Id: <20120127003704.GH29812@atomide.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Jan 2012 06:47:22 +0000
+Subject: [patch] svcrdma: endian bug in send_write_chunks()
+Message-Id: <20120112064722.GB2408@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326362117-29371-15-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1326362117-29371-15-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-* Julia Lawall <Julia.Lawall@lip6.fr> [120112 01:23]:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Add missing iounmap in error handling code, in a case where the function
-> already preforms iounmap on some other execution path.
+Sparse complains because arg_ch->rs_length is declared as network
+endian but we're treating it as CPU endian.
 
-Thanks I'll apply this into omap fixes branch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-
-Tony
+diff --git a/net/sunrpc/xprtrdma/svc_rdma_sendto.c b/net/sunrpc/xprtrdma/svc_rdma_sendto.c
+index 249a835..30fda86 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma_sendto.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_sendto.c
+@@ -409,7 +409,7 @@ static int send_write_chunks(struct svcxprt_rdma *xprt,
+ 		u64 rs_offset;
  
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e;
-> statement S,S1;
-> int ret;
-> @@
-> e = \(ioremap\|ioremap_nocache\)(...)
-> ... when != iounmap(e)
-> if (<+...e...+>) S
-> ... when any
->     when != iounmap(e)
-> *if (...)
->    { ... when != iounmap(e)
->      return ...; }
-> ... when any
-> iounmap(e);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  arch/arm/mach-omap2/smartreflex.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-omap2/smartreflex.c b/arch/arm/mach-omap2/smartreflex.c
-> index 9dd9345..7e755bb 100644
-> --- a/arch/arm/mach-omap2/smartreflex.c
-> +++ b/arch/arm/mach-omap2/smartreflex.c
-> @@ -897,7 +897,7 @@ static int __init omap_sr_probe(struct platform_device *pdev)
->  		ret = sr_late_init(sr_info);
->  		if (ret) {
->  			pr_warning("%s: Error in SR late init\n", __func__);
-> -			return ret;
-> +			goto err_iounmap;
->  		}
->  	}
->  
-> 
+ 		arg_ch = &arg_ary->wc_array[chunk_no].wc_target;
+-		write_len = min(xfer_len, arg_ch->rs_length);
++		write_len = min(xfer_len, ntohl(arg_ch->rs_length));
+ 
+ 		/* Prepare the response chunk given the length actually
+ 		 * written */
+@@ -481,7 +481,7 @@ static int send_reply_chunks(struct svcxprt_rdma *xprt,
+ 	     chunk_no++) {
+ 		u64 rs_offset;
+ 		ch = &arg_ary->wc_array[chunk_no].wc_target;
+-		write_len = min(xfer_len, ch->rs_length);
++		write_len = min(xfer_len, ntohl(ch->rs_length));
+ 
+ 		/* Prepare the reply chunk given the length actually
+ 		 * written */
