@@ -1,78 +1,56 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:26 +0000
-Subject: [PATCH 07/16] Staging: quickstart: Cleanup quickstart_acpi_add
-Message-Id: <1326147815-11451-8-git-send-email-szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 21:49:30 +0000
+Subject: [PATCH 4/5] drivers/media/video/s5p-mfc/s5p_mfc.c: adjust double test
+Message-Id: <1326404970-1084-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1326404970-1084-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1326404970-1084-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Rewrite a duplicated test to test the correct value
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression E;
+@@
+
+(
+* E
+  || ... || E
+|
+* E
+  && ... && E
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/quickstart/quickstart.c |   22 ++++++++++++++--------
- 1 files changed, 14 insertions(+), 8 deletions(-)
+There is an img_height field, so it is my guess that that should be tested
+instead of testing the img_width field again.
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index de98e18..97e62e9 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -262,29 +262,29 @@ static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
- 
- static int quickstart_acpi_add(struct acpi_device *device)
- {
--	int ret = 0;
--	acpi_status status = AE_OK;
--	struct quickstart_acpi *quickstart = NULL;
-+	int ret;
-+	acpi_status status;
-+	struct quickstart_acpi *quickstart;
- 
- 	if (!device)
- 		return -EINVAL;
- 
--	quickstart = kzalloc(sizeof(struct quickstart_acpi), GFP_KERNEL);
-+	quickstart = kzalloc(sizeof(*quickstart), GFP_KERNEL);
- 	if (!quickstart)
- 		return -ENOMEM;
- 
- 	quickstart->device = device;
-+
- 	strcpy(acpi_device_name(device), QUICKSTART_ACPI_DEVICE_NAME);
- 	strcpy(acpi_device_class(device), QUICKSTART_ACPI_CLASS);
- 	device->driver_data = quickstart;
- 
- 	/* Add button to list and initialize some stuff */
- 	ret = quickstart_acpi_config(quickstart, acpi_device_bid(device));
--	if (ret)
-+	if (ret < 0)
- 		goto fail_config;
- 
--	status = acpi_install_notify_handler(device->handle,
--						ACPI_ALL_NOTIFY,
-+	status = acpi_install_notify_handler(device->handle, ACPI_ALL_NOTIFY,
- 						quickstart_acpi_notify,
- 						quickstart);
- 	if (ACPI_FAILURE(status)) {
-@@ -293,10 +293,16 @@ static int quickstart_acpi_add(struct acpi_device *device)
- 		goto fail_installnotify;
- 	}
- 
--	quickstart_acpi_ghid(quickstart);
-+	ret = quickstart_acpi_ghid(quickstart);
-+	if (ret < 0)
-+		goto fail_ghid;
- 
- 	return 0;
- 
-+fail_ghid:
-+	acpi_remove_notify_handler(device->handle, ACPI_ALL_NOTIFY,
-+						quickstart_acpi_notify);
-+
- fail_installnotify:
- 	quickstart_btnlst_del(quickstart->btn);
- 
--- 
-1.7.8.2
+ drivers/media/video/s5p-mfc/s5p_mfc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/video/s5p-mfc/s5p_mfc.c b/drivers/media/video/s5p-mfc/s5p_mfc.c
+index 8be8b54..53126f2 100644
+--- a/drivers/media/video/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/video/s5p-mfc/s5p_mfc.c
+@@ -475,7 +475,7 @@ static void s5p_mfc_handle_seq_done(struct s5p_mfc_ctx *ctx,
+ 			ctx->mv_size = 0;
+ 		}
+ 		ctx->dpb_count = s5p_mfc_get_dpb_count();
+-		if (ctx->img_width = 0 || ctx->img_width = 0)
++		if (ctx->img_width = 0 || ctx->img_height = 0)
+ 			ctx->state = MFCINST_ERROR;
+ 		else
+ 			ctx->state = MFCINST_HEAD_PARSED;
 
