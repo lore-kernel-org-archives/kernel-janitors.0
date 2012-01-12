@@ -1,45 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Jan 2012 09:04:39 +0000
-Subject: [patch] [media] cx23885: handle errors from
-Message-Id: <20120110090439.GA15570@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 09:55:04 +0000
+Subject: [PATCH 2/15] drivers/net/ethernet/tundra/tsi108_eth.c: add missing iounmap
+Message-Id: <1326362117-29371-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Steven Toth <stoth@kernellabs.com>, Mijhail Moreyra <mijhail.moreyra@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The error handling in the original code wasn't complete so static
-checkers complained about a potential NULL deference.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add missing iounmap in error handling code, in a case where the function
+already preforms iounmap on some other execution path.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+statement S,S1;
+int ret;
+@@
+e = \(ioremap\|ioremap_nocache\)(...)
+... when != iounmap(e)
+if (<+...e...+>) S
+... when any
+    when != iounmap(e)
+*if (...)
+   { ... when != iounmap(e)
+     return ...; }
+... when any
+iounmap(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Compile tested only.  I don't think there is anything else that needs to
-be done before returning, but it would be great if someone could look it
-over.
+ drivers/net/ethernet/tundra/tsi108_eth.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/video/cx23885/cx23885-video.c b/drivers/media/video/cx23885/cx23885-video.c
-index a01cd11..7ad7b4f 100644
---- a/drivers/media/video/cx23885/cx23885-video.c
-+++ b/drivers/media/video/cx23885/cx23885-video.c
-@@ -1541,7 +1541,6 @@ static int cx23885_set_freq_via_ops(struct cx23885_dev *dev,
- 	struct v4l2_control ctrl;
- 	struct videobuf_dvb_frontend *vfe;
- 	struct dvb_frontend *fe;
--	int err = 0;
+diff --git a/drivers/net/ethernet/tundra/tsi108_eth.c b/drivers/net/ethernet/tundra/tsi108_eth.c
+index a9ce01b..164fb77 100644
+--- a/drivers/net/ethernet/tundra/tsi108_eth.c
++++ b/drivers/net/ethernet/tundra/tsi108_eth.c
+@@ -1604,7 +1604,7 @@ tsi108_init_one(struct platform_device *pdev)
+ 	data->phyregs = ioremap(einfo->phyregs, 0x400);
+ 	if (NULL = data->phyregs) {
+ 		err = -ENOMEM;
+-		goto regs_fail;
++		goto phyregs_fail;
+ 	}
+ /* MII setup */
+ 	data->mii_if.dev = dev;
+@@ -1663,9 +1663,11 @@ tsi108_init_one(struct platform_device *pdev)
+ 	return 0;
  
- 	struct analog_parameters params = {
- 		.mode      = V4L2_TUNER_ANALOG_TV,
-@@ -1563,8 +1562,10 @@ static int cx23885_set_freq_via_ops(struct cx23885_dev *dev,
- 		params.frequency, f->tuner, params.std);
+ register_fail:
+-	iounmap(data->regs);
+ 	iounmap(data->phyregs);
  
- 	vfe = videobuf_dvb_get_frontend(&dev->ts2.frontends, 1);
--	if (!vfe)
--		err = -EINVAL;
-+	if (!vfe) {
-+		mutex_unlock(&dev->lock);
-+		return -EINVAL;
-+	}
- 
- 	fe = vfe->dvb.frontend;
- 
++phyregs_fail:
++	iounmap(data->regs);
++
+ regs_fail:
+ 	free_netdev(dev);
+ 	return err;
+
