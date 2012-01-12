@@ -1,42 +1,86 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:25 +0000
-Subject: [PATCH 06/16] Staging: quickstart: Cleanup quickstart_acpi_remove
-Message-Id: <1326147815-11451-7-git-send-email-szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 09:55:09 +0000
+Subject: [PATCH 7/15] drivers/scsi/mvsas/mv_init.c: add missing iounmap
+Message-Id: <1326362117-29371-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Add missing iounmap in error handling code, in a case where the function
+already preforms iounmap on some other execution path.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+statement S,S1;
+int ret;
+@@
+e = \(ioremap\|ioremap_nocache\)(...)
+... when != iounmap(e)
+if (<+...e...+>) S
+... when any
+    when != iounmap(e)
+*if (...)
+   { ... when != iounmap(e)
+     return ...; }
+... when any
+iounmap(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/quickstart/quickstart.c |    8 +++++---
- 1 files changed, 5 insertions(+), 3 deletions(-)
+This changes the semantics at the point of the first change, as it
+introduces the setting of mvi->regs_ex to NULL.  I do not know if this is
+correct.
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 3bae5e7..de98e18 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -309,13 +309,15 @@ fail_config:
- 
- static int quickstart_acpi_remove(struct acpi_device *device, int type)
- {
--	acpi_status status = 0;
--	struct quickstart_acpi *quickstart = NULL;
-+	acpi_status status;
-+	struct quickstart_acpi *quickstart;
- 
--	if (!device || !acpi_driver_data(device))
-+	if (!device)
- 		return -EINVAL;
- 
- 	quickstart = acpi_driver_data(device);
-+	if (!quickstart)
-+		return -EINVAL;
- 
- 	status = acpi_remove_notify_handler(device->handle, ACPI_ALL_NOTIFY,
- 						quickstart_acpi_notify);
--- 
-1.7.8.2
+It also assumes that if mvi->regs_ex is non-null, then bar_ex != -1.
+This seems to be already assumed in the second block of error handling code.
 
+ drivers/scsi/mvsas/mv_init.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
+index 6f58919..adfd11f 100644
+--- a/drivers/scsi/mvsas/mv_init.c
++++ b/drivers/scsi/mvsas/mv_init.c
+@@ -350,7 +350,7 @@ int mvs_ioremap(struct mvs_info *mvi, int bar, int bar_ex)
+ 	res_start = pci_resource_start(pdev, bar);
+ 	res_len = pci_resource_len(pdev, bar);
+ 	if (!res_start || !res_len)
+-		goto err_out;
++		goto err_unmap;
+ 
+ 	res_flag = pci_resource_flags(pdev, bar);
+ 	if (res_flag & IORESOURCE_CACHEABLE)
+@@ -358,14 +358,15 @@ int mvs_ioremap(struct mvs_info *mvi, int bar, int bar_ex)
+ 	else
+ 		mvi->regs = ioremap_nocache(res_start, res_len);
+ 
+-	if (!mvi->regs) {
+-		if (mvi->regs_ex && (res_flag_ex & IORESOURCE_MEM))
+-			iounmap(mvi->regs_ex);
+-		mvi->regs_ex = NULL;
+-		goto err_out;
+-	}
++	if (!mvi->regs)
++		goto err_unmap;
+ 
+ 	return 0;
++err_unmap:
++	if (mvi->regs_ex && (res_flag_ex & IORESOURCE_MEM))
++		iounmap(mvi->regs_ex);
++	mvi->regs_ex = NULL;
++
+ err_out:
+ 	return -1;
+ }
 
