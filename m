@@ -1,43 +1,71 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Jan 2012 07:44:18 +0000
-Subject: [patch] [SCSI] isci: add a couple __iomem annotations
-Message-Id: <20120118074418.GA3582@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 21:33:06 +0000
+Subject: [PATCH 2/4] drivers/media/video/s5p-fimc/fimc-capture.c: adjust double test
+Message-Id: <1326403988-872-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1326403988-872-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1326403988-872-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Intel SCU Linux support <intel-linux-scu@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ed Nadolski <edmund.nadolski@intel.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-These are __iomem.  Sparse complains if we don't have that.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-drivers/scsi/isci/phy.c +149 70: warning:
-	incorrect type in initializer (different address spaces)
+Rewrite a duplicated test to test the correct value
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/scsi/isci/phy.c b/drivers/scsi/isci/phy.c
-index fe18acf..05fd511 100644
---- a/drivers/scsi/isci/phy.c
-+++ b/drivers/scsi/isci/phy.c
-@@ -146,7 +146,7 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
- 	phy_cap.gen1_no_ssc = 1;
- 	if (ihost->oem_parameters.controller.do_enable_ssc) {
- 		struct scu_afe_registers __iomem *afe = &ihost->scu_registers->afe;
--		struct scu_afe_transceiver *xcvr = &afe->scu_afe_xcvr[phy_idx];
-+		struct scu_afe_transceiver __iomem *xcvr = &afe->scu_afe_xcvr[phy_idx];
- 		struct isci_pci_info *pci_info = to_pci_info(ihost->pdev);
- 		bool en_sas = false;
- 		bool en_sata = false;
-diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
-index 1a65d65..0db7572 100644
---- a/drivers/scsi/isci/host.c
-+++ b/drivers/scsi/isci/host.c
-@@ -2113,7 +2113,7 @@ static void sci_controller_afe_initialization(struct isci_host *ihost)
+// <smpl>
+@@
+expression E;
+@@
+
+(
+* E
+  || ... || E
+|
+* E
+  && ... && E
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/video/s5p-fimc/fimc-capture.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index 2cc3b91..eb38ae5 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -689,7 +689,7 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+ 			mf->code = 0;
+ 			continue;
+ 		}
+-		if (mf->width != tfmt->width || mf->width != tfmt->width) {
++		if (mf->width != tfmt->width || mf->height != tfmt->height) {
+ 			u32 fcc = ffmt->fourcc;
+ 			tfmt->width  = mf->width;
+ 			tfmt->height = mf->height;
+@@ -698,7 +698,7 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+ 					       NULL, &fcc, FIMC_SD_PAD_SOURCE);
+ 			if (ffmt && ffmt->mbus_code)
+ 				mf->code = ffmt->mbus_code;
+-			if (mf->width != tfmt->width || mf->width != tfmt->width)
++			if (mf->width != tfmt->width || mf->height != tfmt->height)
+ 				continue;
+ 			tfmt->code = mf->code;
+ 		}
+@@ -706,7 +706,7 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+ 			ret = v4l2_subdev_call(csis, pad, set_fmt, NULL, &sfmt);
+ 
+ 		if (mf->code = tfmt->code &&
+-		    mf->width = tfmt->width && mf->width = tfmt->width)
++		    mf->width = tfmt->width && mf->height = tfmt->height)
+ 			break;
  	}
  
- 	for (phy_id = 0; phy_id < SCI_MAX_PHYS; phy_id++) {
--		struct scu_afe_transceiver *xcvr = &afe->scu_afe_xcvr[phy_id];
-+		struct scu_afe_transceiver __iomem *xcvr = &afe->scu_afe_xcvr[phy_id];
- 		const struct sci_phy_oem_params *oem_phy = &oem->phys[phy_id];
- 		int cable_length_long  			is_long_cable(phy_id, cable_selection_mask);
+
