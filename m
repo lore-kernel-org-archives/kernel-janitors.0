@@ -1,92 +1,64 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:40 +0000
-Subject: [PATCH v2 05/17] Staging: quickstart: Cleanup quickstart_acpi_ghid
-Message-Id: <1326320574-11220-6-git-send-email-szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 09:55:07 +0000
+Subject: [PATCH 5/15] drivers/dio/dio.c: add missing iounmap
+Message-Id: <1326362117-29371-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Also fix memory leak (buffer.pointer) when returned buffer of length
-less than 8.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+Add missing iounmap in error handling code, in a case where the function
+already preforms iounmap on some other execution path.
+
+Additionally return an error code on failure of kzalloc.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+statement S,S1;
+int ret;
+@@
+e = \(ioremap\|ioremap_nocache\)(...)
+... when != iounmap(e)
+if (<+...e...+>) S
+... when any
+    when != iounmap(e)
+*if (...)
+   { ... when != iounmap(e)
+     return ...; }
+... when any
+iounmap(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/quickstart/quickstart.c |   38 +++++++++++++++++++++---------
- 1 files changed, 26 insertions(+), 12 deletions(-)
+ drivers/dio/dio.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 7b0deb6..3bae5e7 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -191,14 +191,11 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
- 	return;
- }
+diff --git a/drivers/dio/dio.c b/drivers/dio/dio.c
+index 55dd88d..b37dcc9 100644
+--- a/drivers/dio/dio.c
++++ b/drivers/dio/dio.c
+@@ -228,8 +228,11 @@ static int __init dio_init(void)
  
--static void quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
-+static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- {
- 	acpi_status status;
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
--	uint32_t usageid = 0;
--
--	if (!quickstart)
--		return;
-+	int ret = 0;
+                 /* Found a board, allocate it an entry in the list */
+ 		dev = kzalloc(sizeof(struct dio_dev), GFP_KERNEL);
+-		if (!dev)
+-			return 0;
++		if (!dev) {
++			if (scode >= DIOII_SCBASE)
++				iounmap(va);
++			return -ENOMEM;
++		}
  
- 	/*
- 	 * This returns a buffer telling the button usage ID,
-@@ -206,24 +203,41 @@ static void quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 	 */
- 	status = acpi_evaluate_object(quickstart->device->handle, "GHID", NULL,
- 								&buffer);
--	if (ACPI_FAILURE(status) || !buffer.pointer) {
-+	if (ACPI_FAILURE(status)) {
- 		printk(KERN_ERR "quickstart: %s GHID method failed.\n",
- 						quickstart->btn->name);
--		return;
-+		return -EINVAL;
- 	}
- 
--	if (buffer.length < 8)
--		return;
--
- 	/*
- 	 * <<The GHID method can return a BYTE, WORD, or DWORD.
- 	 * The value must be encoded in little-endian byte
- 	 * order (least significant byte first).>>
- 	 */
--	usageid = *((uint32_t *)(buffer.pointer + (buffer.length - 8)));
--	quickstart->btn->id = usageid;
-+	switch (buffer.length) {
-+	case 1:
-+		quickstart->btn->id = *(uint8_t *)buffer.pointer;
-+		break;
-+	case 2:
-+		quickstart->btn->id = *(uint16_t *)buffer.pointer;
-+		break;
-+	case 4:
-+		quickstart->btn->id = *(uint32_t *)buffer.pointer;
-+		break;
-+	case 8:
-+		quickstart->btn->id = *(uint64_t *)buffer.pointer;
-+		break;
-+	default:
-+		printk(KERN_ERR "quickstart: %s GHID method returned buffer "
-+				"of unexpected length %u\n",
-+				quickstart->btn->name, buffer.length);
-+		ret = -EINVAL;
-+		break;
-+	}
- 
- 	kfree(buffer.pointer);
-+
-+	return ret;
- }
- 
- static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
--- 
-1.7.8.3
-
+ 		dev->bus = &dio_bus;
+ 		dev->dev.parent = &dio_bus.dev;
 
