@@ -1,38 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 15 Jan 2012 11:25:57 +0000
-Subject: [patch] [media] saa7164: remove duplicate initialization
-Message-Id: <20120115112557.GA20463@elgon.mountain>
+Date: Thu, 12 Jan 2012 07:16:14 +0000
+Subject: [patch] nfs: check for integer overflow in decode_devicenotify_args()
+Message-Id: <20120112071614.GC2975@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Tony Jago <tony@hammertelecom.com.au>, Steven Toth <stoth@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These were initialized twice by mistake.  They were defined the same way
-both times so this doesn't change how the code works.
+On 32 bit, if n is too large then "n * sizeof(*args->devs)" could
+overflow and args->devs would be smaller than expected.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker fix.  I haven't tested this.  Sorry for that.
 
-diff --git a/drivers/media/video/saa7164/saa7164-cards.c b/drivers/media/video/saa7164/saa7164-cards.c
-index 971591d..5b72da5 100644
---- a/drivers/media/video/saa7164/saa7164-cards.c
-+++ b/drivers/media/video/saa7164/saa7164-cards.c
-@@ -269,8 +269,6 @@ struct saa7164_board saa7164_boards[] = {
- 		.portb		= SAA7164_MPEG_DVB,
- 		.portc		= SAA7164_MPEG_ENCODER,
- 		.portd		= SAA7164_MPEG_ENCODER,
--		.portc		= SAA7164_MPEG_ENCODER,
--		.portd		= SAA7164_MPEG_ENCODER,
- 		.porte		= SAA7164_MPEG_VBI,
- 		.portf		= SAA7164_MPEG_VBI,
- 		.chiprev	= SAA7164_CHIP_REV3,
-@@ -333,8 +331,6 @@ struct saa7164_board saa7164_boards[] = {
- 		.portd		= SAA7164_MPEG_ENCODER,
- 		.porte		= SAA7164_MPEG_VBI,
- 		.portf		= SAA7164_MPEG_VBI,
--		.porte		= SAA7164_MPEG_VBI,
--		.portf		= SAA7164_MPEG_VBI,
- 		.chiprev	= SAA7164_CHIP_REV3,
- 		.unit		= {{
- 			.id		= 0x28,
+diff --git a/fs/nfs/callback_xdr.c b/fs/nfs/callback_xdr.c
+index 726e59a..d50b274 100644
+--- a/fs/nfs/callback_xdr.c
++++ b/fs/nfs/callback_xdr.c
+@@ -305,6 +305,10 @@ __be32 decode_devicenotify_args(struct svc_rqst *rqstp,
+ 	n = ntohl(*p++);
+ 	if (n <= 0)
+ 		goto out;
++	if (n > ULONG_MAX / sizeof(*args->devs)) {
++		status = htonl(NFS4ERR_BADXDR);
++		goto out;
++	}
+ 
+ 	args->devs = kmalloc(n * sizeof(*args->devs), GFP_KERNEL);
+ 	if (!args->devs) {
