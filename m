@@ -1,32 +1,35 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:39 +0000
-Subject: [PATCH v2 04/17] Staging: quickstart: Make quickstart_input static
-Message-Id: <1326320574-11220-5-git-send-email-szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Jan 2012 07:06:05 +0000
+Subject: [patch] NFS: add an endian notation
+Message-Id: <20120112070605.GA2975@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+This function returns a big endian value.  The implementation in
+fs/nfs/callback_proc.c is declared with "__be32" but the .h file uses
+"unsigned" instead.  It makes sparse complain:
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 6617761..7b0deb6 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -71,7 +71,7 @@ static struct quickstart_driver_data {
- 	struct quickstart_btn *pressed;
- } quickstart_data;
+fs/nfs/callback_proc.c:232:8: error:
+	symbol 'nfs4_callback_layoutrecall' redeclared with different
+	type (originally declared at fs/nfs/callback.h:165) - different
+	base types
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/nfs/callback.h b/fs/nfs/callback.h
+index 07df5f1..c89d3b9 100644
+--- a/fs/nfs/callback.h
++++ b/fs/nfs/callback.h
+@@ -162,7 +162,7 @@ struct cb_layoutrecallargs {
+ 	};
+ };
  
--struct input_dev *quickstart_input;
-+static struct input_dev *quickstart_input;
+-extern unsigned nfs4_callback_layoutrecall(
++extern __be32 nfs4_callback_layoutrecall(
+ 	struct cb_layoutrecallargs *args,
+ 	void *dummy, struct cb_process_state *cps);
  
- /* Platform driver functions */
- static ssize_t quickstart_buttons_show(struct device *dev,
--- 
-1.7.8.3
-
-
