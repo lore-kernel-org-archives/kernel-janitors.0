@@ -1,70 +1,75 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 12 Jan 2012 09:55:11 +0000
-Subject: [PATCH 9/15] drivers/acpi/apei/erst.c: add missing iounmap
-Message-Id: <1326362117-29371-9-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 21:49:28 +0000
+Subject: [PATCH v2 2/5] drivers/media/video/s5p-fimc/fimc-capture.c: adjust double test
+Message-Id: <1326404970-1084-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1326404970-1084-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1326404970-1084-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <lenb@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Add missing iounmap in error handling code, in a case where the function
-already preforms iounmap on some other execution path.
+Rewrite a duplicated test to test the correct value
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression e;
-statement S,S1;
-int ret;
+expression E;
 @@
-e = \(ioremap\|ioremap_nocache\)(...)
-... when != iounmap(e)
-if (<+...e...+>) S
-... when any
-    when != iounmap(e)
-*if (...)
-   { ... when != iounmap(e)
-     return ...; }
-... when any
-iounmap(e);
+
+(
+* E
+  || ... || E
+|
+* E
+  && ... && E
+)
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/acpi/apei/erst.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+There is a height field, so it is my guess that that should be tested
+instead of testing the width field again.
 
-diff --git a/drivers/acpi/apei/erst.c b/drivers/acpi/apei/erst.c
-index 6a9e3ba..cd260f7 100644
---- a/drivers/acpi/apei/erst.c
-+++ b/drivers/acpi/apei/erst.c
-@@ -284,15 +284,18 @@ static int erst_exec_move_data(struct apei_exec_context *ctx,
- 	if (!src)
- 		return -ENOMEM;
- 	dst = ioremap(ctx->dst_base + offset, ctx->var2);
--	if (!dst)
--		return -ENOMEM;
-+	if (!dst) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
+ drivers/media/video/s5p-fimc/fimc-capture.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index 2cc3b91..13dd598 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -689,7 +689,7 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+ 			mf->code = 0;
+ 			continue;
+ 		}
+-		if (mf->width != tfmt->width || mf->width != tfmt->width) {
++		if (mf->width != tfmt->width || mf->height != tfmt->height) {
+ 			u32 fcc = ffmt->fourcc;
+ 			tfmt->width  = mf->width;
+ 			tfmt->height = mf->height;
+@@ -698,7 +698,8 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+ 					       NULL, &fcc, FIMC_SD_PAD_SOURCE);
+ 			if (ffmt && ffmt->mbus_code)
+ 				mf->code = ffmt->mbus_code;
+-			if (mf->width != tfmt->width || mf->width != tfmt->width)
++			if (mf->width != tfmt->width ||
++			    mf->height != tfmt->height)
+ 				continue;
+ 			tfmt->code = mf->code;
+ 		}
+@@ -706,7 +707,7 @@ static int fimc_pipeline_try_format(struct fimc_ctx *ctx,
+ 			ret = v4l2_subdev_call(csis, pad, set_fmt, NULL, &sfmt);
  
- 	memmove(dst, src, ctx->var2);
+ 		if (mf->code = tfmt->code &&
+-		    mf->width = tfmt->width && mf->width = tfmt->width)
++		    mf->width = tfmt->width && mf->height = tfmt->height)
+ 			break;
+ 	}
  
--	iounmap(src);
- 	iounmap(dst);
-+out:
-+	iounmap(src);
- 
--	return 0;
-+	return rc;
- }
- 
- static struct apei_exec_ins_type erst_ins_type[] = {
+
