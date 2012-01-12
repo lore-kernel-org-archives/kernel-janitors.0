@@ -1,54 +1,102 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 09 Jan 2012 17:48:17 +0000
-Subject: Re: [patch] [media] af9013: change & to &&
-Message-Id: <20120109174817.GH3731@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="G44BJl3Aq1QbV/QL"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 09:55:06 +0000
+Subject: [PATCH 4/15] drivers/dma/pl330.c: add missing iounmap
+Message-Id: <1326362117-29371-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120105062328.GA25744@elgon.mountain>
- <4F0B26A1.2020402@iki.fi>
-In-Reply-To: <4F0B26A1.2020402@iki.fi>
-To: Antti Palosaari <crope@iki.fi>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---G44BJl3Aq1QbV/QL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Add missing iounmap in error handling code, in a case where the function
+already preforms iounmap on some other execution path.
 
-On Mon, Jan 09, 2012 at 07:40:49PM +0200, Antti Palosaari wrote:
-> Clear bug, I will test it later when applied to master if not
-> already. Thanks!
+This patch additionally adds calls to clk_disable and clk_put.
 
-You're welcome, but it's not a bug because (1 & 1 & 0) is the same
-as (1 && 1 && 0) but if one of them wasn't a bool it would be a
-problem.  The other difference between & and && is that && has
-orderring guarantees but that's also not a factor here.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+expression e;
+statement S,S1;
+int ret;
+@@
+e = \(ioremap\|ioremap_nocache\)(...)
+... when != iounmap(e)
+if (<+...e...+>) S
+... when any
+    when != iounmap(e)
+*if (...)
+   { ... when != iounmap(e)
+     return ...; }
+... when any
+iounmap(e);
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---G44BJl3Aq1QbV/QL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+---
+Perhaps clk_put is not needed?  It is not present in the remove function.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+ drivers/dma/pl330.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-iQIcBAEBAgAGBQJPCyhhAAoJEOnZkXI/YHqR76oQAJW+H/Xl5GrYaKIXxJ7EQM3G
-OJrpcv2Dru+LZ+CA5MybNZKji9J6nVj1CE9W31DY/jo3uUPzqTBuCPLQcEOqff/O
-sHP69JFD8C+lTUJCVV2aHhpoF3IHFl87cEa1T+lsQjwQjgoUWyR5xeM2nd8qze/v
-OVaLGvnVQRwX6TjZoy1Uiz9yGxy+dvJ69C+ps74q5qtvU4A0viMT/X8CMJ35Qf8s
-v3Mcm7NNYW8zaX5JY6FI7lx4apfF90OmUiNL46+kBuUhcFIS9brko6QYo3xWR81p
-Mf1TAzKV8eOcAqHV8TXaJd9y8CR95RQZD7sSxk0vXKx6hJ9pRYFScw4Q+aOC9TsV
-O64lozP70WrMBcFb6oR/u9Yz9rra3w+eOPxsfBoUGPJUf3Fv6SXT8zOdnFUohW3g
-jYfaoRuvTymGJ6brgy4QWGO3g0pcgXFMhWftlZL9Ri03pBUV+t4QfZr+HIoDeC6Y
-e9oRpc5wbtNlmDdpOS0V0/h55TWW1Th8/Hr3dcpLwglP+L6px+PRBd0Fmh4napm8
-ED52+HeGexzYFk+jMYa+OMDG3QYg4UePT49F9E1txGp+Gwsf+OZcBp0P7MMscOK5
-Wst1XPGAlZxFpe8vi7pFyHNCaz8NbU5cL34py23BJ0Sn4Z+w5f8o9pQs13u/W16B
-EwP+8dQ2+/kRBNHVCxSA
-=TqZL
------END PGP SIGNATURE-----
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 2b3aab3..2f83094 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -2690,7 +2690,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	if (IS_ERR(pdmac->clk)) {
+ 		dev_err(&adev->dev, "Cannot get operation clock.\n");
+ 		ret = -EINVAL;
+-		goto probe_err1;
++		goto probe_err2;
+ 	}
+ 
+ 	amba_set_drvdata(adev, pdmac);
+@@ -2704,11 +2704,11 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	ret = request_irq(irq, pl330_irq_handler, 0,
+ 			dev_name(&adev->dev), pi);
+ 	if (ret)
+-		goto probe_err2;
++		goto probe_err3;
+ 
+ 	ret = pl330_add(pi);
+ 	if (ret)
+-		goto probe_err3;
++		goto probe_err4;
+ 
+ 	INIT_LIST_HEAD(&pdmac->desc_pool);
+ 	spin_lock_init(&pdmac->pool_lock);
+@@ -2765,7 +2765,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	ret = dma_async_device_register(pd);
+ 	if (ret) {
+ 		dev_err(&adev->dev, "unable to register DMAC\n");
+-		goto probe_err4;
++		goto probe_err5;
+ 	}
+ 
+ 	dev_info(&adev->dev,
+@@ -2778,10 +2778,15 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	return 0;
+ 
+-probe_err4:
++probe_err5:
+ 	pl330_del(pi);
+-probe_err3:
++probe_err4:
+ 	free_irq(irq, pi);
++probe_err3:
++#ifndef CONFIG_PM_RUNTIME
++	clk_disable(pdmac->clk);
++#endif
++	clk_put(pdmac->clk);
+ probe_err2:
+ 	iounmap(pi->base);
+ probe_err1:
 
---G44BJl3Aq1QbV/QL--
