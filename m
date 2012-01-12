@@ -1,78 +1,59 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:42 +0000
-Subject: [PATCH v2 07/17] Staging: quickstart: Cleanup quickstart_acpi_add
-Message-Id: <1326320574-11220-8-git-send-email-szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 09:55:12 +0000
+Subject: [PATCH 10/15] arch/arm/mach-imx/mach-mx53_ard.c: add missing iounmap
+Message-Id: <1326362117-29371-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Add missing iounmap in error handling code, in a case where the function
+already preforms iounmap on some other execution path.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+statement S,S1;
+int ret;
+@@
+e = \(ioremap\|ioremap_nocache\)(...)
+... when != iounmap(e)
+if (<+...e...+>) S
+... when any
+    when != iounmap(e)
+*if (...)
+   { ... when != iounmap(e)
+     return ...; }
+... when any
+iounmap(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/quickstart/quickstart.c |   22 ++++++++++++++--------
- 1 files changed, 14 insertions(+), 8 deletions(-)
+ arch/arm/mach-imx/mach-mx53_ard.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index de98e18..97e62e9 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -262,29 +262,29 @@ static int quickstart_acpi_config(struct quickstart_acpi *quickstart, char *bid)
- 
- static int quickstart_acpi_add(struct acpi_device *device)
- {
--	int ret = 0;
--	acpi_status status = AE_OK;
--	struct quickstart_acpi *quickstart = NULL;
-+	int ret;
-+	acpi_status status;
-+	struct quickstart_acpi *quickstart;
- 
- 	if (!device)
- 		return -EINVAL;
- 
--	quickstart = kzalloc(sizeof(struct quickstart_acpi), GFP_KERNEL);
-+	quickstart = kzalloc(sizeof(*quickstart), GFP_KERNEL);
- 	if (!quickstart)
+diff --git a/arch/arm/mach-imx/mach-mx53_ard.c b/arch/arm/mach-imx/mach-mx53_ard.c
+index 08dfb76..753f4fc 100644
+--- a/arch/arm/mach-imx/mach-mx53_ard.c
++++ b/arch/arm/mach-imx/mach-mx53_ard.c
+@@ -188,8 +188,10 @@ static int weim_cs_config(void)
  		return -ENOMEM;
  
- 	quickstart->device = device;
-+
- 	strcpy(acpi_device_name(device), QUICKSTART_ACPI_DEVICE_NAME);
- 	strcpy(acpi_device_class(device), QUICKSTART_ACPI_CLASS);
- 	device->driver_data = quickstart;
+ 	iomuxc_base = ioremap(MX53_IOMUXC_BASE_ADDR, SZ_4K);
+-	if (!iomuxc_base)
++	if (!iomuxc_base) {
++		iounmap(weim_base);
+ 		return -ENOMEM;
++	}
  
- 	/* Add button to list and initialize some stuff */
- 	ret = quickstart_acpi_config(quickstart, acpi_device_bid(device));
--	if (ret)
-+	if (ret < 0)
- 		goto fail_config;
- 
--	status = acpi_install_notify_handler(device->handle,
--						ACPI_ALL_NOTIFY,
-+	status = acpi_install_notify_handler(device->handle, ACPI_ALL_NOTIFY,
- 						quickstart_acpi_notify,
- 						quickstart);
- 	if (ACPI_FAILURE(status)) {
-@@ -293,10 +293,16 @@ static int quickstart_acpi_add(struct acpi_device *device)
- 		goto fail_installnotify;
- 	}
- 
--	quickstart_acpi_ghid(quickstart);
-+	ret = quickstart_acpi_ghid(quickstart);
-+	if (ret < 0)
-+		goto fail_ghid;
- 
- 	return 0;
- 
-+fail_ghid:
-+	acpi_remove_notify_handler(device->handle, ACPI_ALL_NOTIFY,
-+						quickstart_acpi_notify);
-+
- fail_installnotify:
- 	quickstart_btnlst_del(quickstart->btn);
- 
--- 
-1.7.8.3
-
+ 	/* CS1 timings for LAN9220 */
+ 	writel(0x20001, (weim_base + 0x18));
 
