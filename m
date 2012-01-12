@@ -1,51 +1,61 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Tue, 31 Jan 2012 17:45:30 +0000
-Subject: Re: [patch] mtd: nand: fix printk() warnings
-Message-Id: <4F28359A.3010200@xenotime.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 12 Jan 2012 09:55:16 +0000
+Subject: [PATCH 14/15] drivers/pci/hotplug/ibmphp_ebda.c: add missing iounmap
+Message-Id: <1326362117-29371-14-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120131085405.GD22039@elgon.mountain>
-In-Reply-To: <20120131085405.GD22039@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Mike Dunn <mikedunn@newsguy.com>, Robert Jarzmik <robert.jarzmik@free.fr>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01/31/2012 12:54 AM, Dan Carpenter wrote:
-> Gcc complains here:
-> drivers/mtd/nand/docg4.c: In function ‘probe_docg4’:
-> drivers/mtd/nand/docg4.c:1277:4: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 3 has type ‘resource_size_t’ [-Wformat]
-> drivers/mtd/nand/docg4.c:1277:4: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 4 has type ‘resource_size_t’ [-Wformat]
-> 
-> We have a standard way of printing these using a format string
-> extension.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yes, this is preferable over my patch yesterday.
-Thanks.
+Add missing iounmap in error handling code, in a case where the function
+already preforms iounmap on some other execution path.
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> 
-> diff --git a/drivers/mtd/nand/docg4.c b/drivers/mtd/nand/docg4.c
-> index 3ec1d10..8a0d7f6 100644
-> --- a/drivers/mtd/nand/docg4.c
-> +++ b/drivers/mtd/nand/docg4.c
-> @@ -1272,9 +1272,7 @@ static int __init probe_docg4(struct platform_device *pdev)
->  
->  	virtadr = ioremap(r->start, resource_size(r));
->  	if (!virtadr) {
-> -		dev_err(dev, "Diskonchip ioremap failed: "
-> -			"0x%x bytes at 0x%x\n",
-> -			resource_size(r), r->start);
-> +		dev_err(dev, "Diskonchip ioremap failed: %pR\n", r);
->  		return -EIO;
->  	}
->  
-> --
+// <smpl>
+@@
+expression e;
+statement S,S1;
+int ret;
+@@
+e = \(ioremap\|ioremap_nocache\)(...)
+... when != iounmap(e)
+if (<+...e...+>) S
+... when any
+    when != iounmap(e)
+*if (...)
+   { ... when != iounmap(e)
+     return ...; }
+... when any
+iounmap(e);
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+---
+ drivers/pci/hotplug/ibmphp_ebda.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/hotplug/ibmphp_ebda.c b/drivers/pci/hotplug/ibmphp_ebda.c
+index 2850e64..714ca5c 100644
+--- a/drivers/pci/hotplug/ibmphp_ebda.c
++++ b/drivers/pci/hotplug/ibmphp_ebda.c
+@@ -368,8 +368,10 @@ int __init ibmphp_access_ebda (void)
+ 			debug ("rio blk id: %x\n", blk_id);
+ 
+ 			rio_table_ptr = kzalloc(sizeof(struct rio_table_hdr), GFP_KERNEL);
+-			if (!rio_table_ptr)
+-				return -ENOMEM; 
++			if (!rio_table_ptr) {
++				rc = -ENOMEM;
++				goto out;
++			}
+ 			rio_table_ptr->ver_num = readb (io_mem + offset);
+ 			rio_table_ptr->scal_count = readb (io_mem + offset + 1);
+ 			rio_table_ptr->riodev_count = readb (io_mem + offset + 2);
+
