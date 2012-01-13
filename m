@@ -1,30 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 15 Jan 2012 11:29:39 +0000
-Subject: [patch] staging: precedence bug in crystalhd_stop_tx_dma_engine()
-Message-Id: <20120115112939.GD20463@elgon.mountain>
+Date: Fri, 13 Jan 2012 06:34:00 +0000
+Subject: [patch] [media] cx231xx: dereferencing NULL after allocation failure
+Message-Id: <20120113063400.GC23737@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Devin Heitmueller <dheitmueller@kernellabs.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, =?iso-8859-1?Q?M=E1rcio?= A Alves <froooozen@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The intent here is to see if we have cleared the DMA_START_BIT flag.  We
-clear it a couple lines later.  The current code has a precedence bug so
-it is equivalent to "if (!dma_cntrl) { ...".
+"dev" is NULL here so we should use "nr" instead of "dev->devno".
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/crystalhd/crystalhd_hw.c b/drivers/staging/crystalhd/crystalhd_hw.c
-index 5acf39e..eeddee9 100644
---- a/drivers/staging/crystalhd/crystalhd_hw.c
-+++ b/drivers/staging/crystalhd/crystalhd_hw.c
-@@ -868,8 +868,7 @@ static enum BC_STATUS crystalhd_stop_tx_dma_engine(struct crystalhd_hw *hw)
- 
- 	BCMLOG(BCMLOG_DBG, "Stopping TX DMA Engine..\n");
- 
--	/* FIXME: jarod: invert dma_ctrl and check bit? or are there missing parens? */
--	if (!dma_cntrl & DMA_START_BIT) {
-+	if (!(dma_cntrl & DMA_START_BIT)) {
- 		BCMLOG(BCMLOG_DBG, "Already Stopped\n");
- 		return BC_STS_SUCCESS;
+diff --git a/drivers/media/video/cx231xx/cx231xx-cards.c b/drivers/media/video/cx231xx/cx231xx-cards.c
+index 919ed77..875a7ce 100644
+--- a/drivers/media/video/cx231xx/cx231xx-cards.c
++++ b/drivers/media/video/cx231xx/cx231xx-cards.c
+@@ -1052,7 +1052,7 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (dev = NULL) {
+ 		cx231xx_err(DRIVER_NAME ": out of memory!\n");
+-		clear_bit(dev->devno, &cx231xx_devused);
++		clear_bit(nr, &cx231xx_devused);
+ 		return -ENOMEM;
  	}
+ 
