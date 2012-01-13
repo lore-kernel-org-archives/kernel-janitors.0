@@ -1,46 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jan 2012 06:34:50 +0000
-Subject: [patch] ipw2x00: signedness bug handling frame length
-Message-Id: <20120112063449.GA2408@elgon.mountain>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
+Date: Fri, 13 Jan 2012 10:29:09 +0000
+Subject: Re: [patch] ipw2x00: signedness bug handling frame length
+Message-Id: <20120113102908.GB2214@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120112063449.GA2408@elgon.mountain>
+In-Reply-To: <20120112063449.GA2408@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Johannes Berg <johannes.berg@intel.com>, Stanislaw Gruszka <sgruszka@redhat.com>, Jiri Kosina <jkosina@suse.cz>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes.berg@intel.com>, Jiri Kosina <jkosina@suse.cz>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is basically just a cleanup.  Large positive numbers get counted as
-negative but then get implicitly cast to positive again for the checks
-that matter.
+On Thu, Jan 12, 2012 at 09:34:50AM +0300, Dan Carpenter wrote:
+> This is basically just a cleanup.  Large positive numbers get counted as
+> negative but then get implicitly cast to positive again for the checks
+> that matter.
+> 
+> This does make a small difference in ipw_handle_promiscuous_rx() when we
+> test "if (unlikely((len + IPW_RX_FRAME_SIZE) > skb_tailroom(rxb->skb)))"
+> It should return there, but we don't return until a couple lines later
+> when we test "if (len > IPW_RX_BUF_SIZE - sizeof(struct ipw_rt_hdr)) {".
+> The difference is that in the second test the sizeof() means that there
+> is an implied cast to unsigned.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This does make a small difference in ipw_handle_promiscuous_rx() when we
-test "if (unlikely((len + IPW_RX_FRAME_SIZE) > skb_tailroom(rxb->skb)))"
-It should return there, but we don't return until a couple lines later
-when we test "if (len > IPW_RX_BUF_SIZE - sizeof(struct ipw_rt_hdr)) {".
-The difference is that in the second test the sizeof() means that there
-is an implied cast to unsigned.
+Not sure if making it "unsinged int" would be better, but this change is
+fine to me as is too.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/net/wireless/ipw2x00/ipw2200.c b/drivers/net/wireless/ipw2x00/ipw2200.c
-index 018a8de..4fcdac6 100644
---- a/drivers/net/wireless/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/ipw2x00/ipw2200.c
-@@ -7848,7 +7848,7 @@ static void ipw_handle_data_packet_monitor(struct ipw_priv *priv,
- 	 * more efficiently than we can parse it. ORDER MATTERS HERE */
- 	struct ipw_rt_hdr *ipw_rt;
- 
--	short len = le16_to_cpu(pkt->u.frame.length);
-+	unsigned short len = le16_to_cpu(pkt->u.frame.length);
- 
- 	/* We received data from the HW, so stop the watchdog */
- 	dev->trans_start = jiffies;
-@@ -8023,7 +8023,7 @@ static void ipw_handle_promiscuous_rx(struct ipw_priv *priv,
- 	s8 signal = frame->rssi_dbm - IPW_RSSI_TO_DBM;
- 	s8 noise = (s8) le16_to_cpu(frame->noise);
- 	u8 rate = frame->rate;
--	short len = le16_to_cpu(pkt->u.frame.length);
-+	unsigned short len = le16_to_cpu(pkt->u.frame.length);
- 	struct sk_buff *skb;
- 	int hdr_only = 0;
- 	u16 filter = priv->prom_priv->filter;
+Reviewed-by: Stanislaw Gruszka <sgruszka@redhat.com>
