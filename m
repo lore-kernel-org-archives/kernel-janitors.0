@@ -1,57 +1,55 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 12 Jan 2012 09:55:10 +0000
-Subject: [PATCH 8/15] drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c: add missing iounmap
-Message-Id: <1326362117-29371-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Jan 2012 06:28:34 +0000
+Subject: [patch] [media] mb86a20s: fix off by one checks
+Message-Id: <20120113062834.GA23737@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Clearly ">=" was intended here instead of ">".
 
-Add missing iounmap in error handling code, in a case where the function
-already preforms iounmap on some other execution path.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e;
-statement S,S1;
-int ret;
-@@
-e = \(ioremap\|ioremap_nocache\)(...)
-... when != iounmap(e)
-if (<+...e...+>) S
-... when any
-    when != iounmap(e)
-*if (...)
-   { ... when != iounmap(e)
-     return ...; }
-... when any
-iounmap(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 7b1594f..1ac8324 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -62,7 +62,7 @@ static int stmmac_pltfr_probe(struct platform_device *pdev)
- 	priv = stmmac_dvr_probe(&(pdev->dev), plat_dat);
- 	if (!priv) {
- 		pr_err("%s: main drivr probe failed", __func__);
--		goto out_release_region;
-+		goto out_unmap;
- 	}
+diff --git a/drivers/media/dvb/frontends/mb86a20s.c b/drivers/media/dvb/frontends/mb86a20s.c
+index 38778a8..4e6f836 100644
+--- a/drivers/media/dvb/frontends/mb86a20s.c
++++ b/drivers/media/dvb/frontends/mb86a20s.c
+@@ -535,7 +535,7 @@ static int mb86a20s_get_modulation(struct mb86a20s_state *state,
+ 		[2] = 0x8e,	/* Layer C */
+ 	};
  
- 	priv->ioaddr = addr;
-
+-	if (layer > ARRAY_SIZE(reg))
++	if (layer >= ARRAY_SIZE(reg))
+ 		return -EINVAL;
+ 	rc = mb86a20s_writereg(state, 0x6d, reg[layer]);
+ 	if (rc < 0)
+@@ -568,7 +568,7 @@ static int mb86a20s_get_fec(struct mb86a20s_state *state,
+ 		[2] = 0x8f,	/* Layer C */
+ 	};
+ 
+-	if (layer > ARRAY_SIZE(reg))
++	if (layer >= ARRAY_SIZE(reg))
+ 		return -EINVAL;
+ 	rc = mb86a20s_writereg(state, 0x6d, reg[layer]);
+ 	if (rc < 0)
+@@ -603,7 +603,7 @@ static int mb86a20s_get_interleaving(struct mb86a20s_state *state,
+ 		[2] = 0x90,	/* Layer C */
+ 	};
+ 
+-	if (layer > ARRAY_SIZE(reg))
++	if (layer >= ARRAY_SIZE(reg))
+ 		return -EINVAL;
+ 	rc = mb86a20s_writereg(state, 0x6d, reg[layer]);
+ 	if (rc < 0)
+@@ -627,7 +627,7 @@ static int mb86a20s_get_segment_count(struct mb86a20s_state *state,
+ 		[2] = 0x91,	/* Layer C */
+ 	};
+ 
+-	if (layer > ARRAY_SIZE(reg))
++	if (layer >= ARRAY_SIZE(reg))
+ 		return -EINVAL;
+ 	rc = mb86a20s_writereg(state, 0x6d, reg[layer]);
+ 	if (rc < 0)
