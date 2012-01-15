@@ -1,64 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 12 Jan 2012 09:55:07 +0000
-Subject: [PATCH 5/15] drivers/dio/dio.c: add missing iounmap
-Message-Id: <1326362117-29371-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Greg Dietsche <Gregory.Dietsche@cuw.edu>
+Date: Sun, 15 Jan 2012 20:44:34 +0000
+Subject: [PATCH] staging: android: ram_console use kmemdup instead of kmalloc
+Message-Id: <1326660274-32259-1-git-send-email-Gregory.Dietsche@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Replace kmalloc + memcpy will kmemdup in ram_console_late_init
 
-Add missing iounmap in error handling code, in a case where the function
-already preforms iounmap on some other execution path.
-
-Additionally return an error code on failure of kzalloc.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e;
-statement S,S1;
-int ret;
-@@
-e = \(ioremap\|ioremap_nocache\)(...)
-... when != iounmap(e)
-if (<+...e...+>) S
-... when any
-    when != iounmap(e)
-*if (...)
-   { ... when != iounmap(e)
-     return ...; }
-... when any
-iounmap(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Greg Dietsche <Gregory.Dietsche@cuw.edu>
 ---
- drivers/dio/dio.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/staging/android/ram_console.c |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dio/dio.c b/drivers/dio/dio.c
-index 55dd88d..b37dcc9 100644
---- a/drivers/dio/dio.c
-+++ b/drivers/dio/dio.c
-@@ -228,8 +228,11 @@ static int __init dio_init(void)
- 
-                 /* Found a board, allocate it an entry in the list */
- 		dev = kzalloc(sizeof(struct dio_dev), GFP_KERNEL);
--		if (!dev)
--			return 0;
-+		if (!dev) {
-+			if (scode >= DIOII_SCBASE)
-+				iounmap(va);
-+			return -ENOMEM;
-+		}
- 
- 		dev->bus = &dio_bus;
- 		dev->dev.parent = &dio_bus.dev;
+diff --git a/drivers/staging/android/ram_console.c b/drivers/staging/android/ram_console.c
+index 6d4d679..0cb3f3c 100644
+--- a/drivers/staging/android/ram_console.c
++++ b/drivers/staging/android/ram_console.c
+@@ -411,15 +411,14 @@ static int __init ram_console_late_init(void)
+ 	if (ram_console_old_log = NULL)
+ 		return 0;
+ #ifdef CONFIG_ANDROID_RAM_CONSOLE_EARLY_INIT
+-	ram_console_old_log = kmalloc(ram_console_old_log_size, GFP_KERNEL);
++	ram_console_old_log = kmemdup(ram_console_old_log_init_buffer,
++					ram_console_old_log_size, GFP_KERNEL);
+ 	if (ram_console_old_log = NULL) {
+ 		printk(KERN_ERR
+ 		       "ram_console: failed to allocate buffer for old log\n");
+ 		ram_console_old_log_size = 0;
+ 		return 0;
+ 	}
+-	memcpy(ram_console_old_log,
+-	       ram_console_old_log_init_buffer, ram_console_old_log_size);
+ #endif
+ 	entry = create_proc_entry("last_kmsg", S_IFREG | S_IRUGO, NULL);
+ 	if (!entry) {
+-- 
+1.7.6.4
 
