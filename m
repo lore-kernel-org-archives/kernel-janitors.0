@@ -1,30 +1,38 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Jan 2012 08:01:38 +0000
-Subject: [patch] [media] az6007: precedence bug in az6007_i2c_xfer()
-Message-Id: <20120125080138.GB20199@elgon.mountain>
+Date: Sun, 15 Jan 2012 11:25:57 +0000
+Subject: [patch] [media] saa7164: remove duplicate initialization
+Message-Id: <20120115112557.GA20463@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Tony Jago <tony@hammertelecom.com.au>, Steven Toth <stoth@kernellabs.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The intent here was to test that the flag was clear but the '!' has
-higher precedence than the '&'.  I2C_M_RD is 0x1 so the current code is
-equivalent to "&& (!sgs[i].flags) ..."
+These were initialized twice by mistake.  They were defined the same way
+both times so this doesn't change how the code works.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/dvb/dvb-usb/az6007.c b/drivers/media/dvb/dvb-usb/az6007.c
-index 02efd94..e693913 100644
---- a/drivers/media/dvb/dvb-usb/az6007.c
-+++ b/drivers/media/dvb/dvb-usb/az6007.c
-@@ -343,7 +343,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 		addr = msgs[i].addr << 1;
- 		if (((i + 1) < num)
- 		    && (msgs[i].len = 1)
--		    && (!msgs[i].flags & I2C_M_RD)
-+		    && (!(msgs[i].flags & I2C_M_RD))
- 		    && (msgs[i + 1].flags & I2C_M_RD)
- 		    && (msgs[i].addr = msgs[i + 1].addr)) {
- 			/*
+diff --git a/drivers/media/video/saa7164/saa7164-cards.c b/drivers/media/video/saa7164/saa7164-cards.c
+index 971591d..5b72da5 100644
+--- a/drivers/media/video/saa7164/saa7164-cards.c
++++ b/drivers/media/video/saa7164/saa7164-cards.c
+@@ -269,8 +269,6 @@ struct saa7164_board saa7164_boards[] = {
+ 		.portb		= SAA7164_MPEG_DVB,
+ 		.portc		= SAA7164_MPEG_ENCODER,
+ 		.portd		= SAA7164_MPEG_ENCODER,
+-		.portc		= SAA7164_MPEG_ENCODER,
+-		.portd		= SAA7164_MPEG_ENCODER,
+ 		.porte		= SAA7164_MPEG_VBI,
+ 		.portf		= SAA7164_MPEG_VBI,
+ 		.chiprev	= SAA7164_CHIP_REV3,
+@@ -333,8 +331,6 @@ struct saa7164_board saa7164_boards[] = {
+ 		.portd		= SAA7164_MPEG_ENCODER,
+ 		.porte		= SAA7164_MPEG_VBI,
+ 		.portf		= SAA7164_MPEG_VBI,
+-		.porte		= SAA7164_MPEG_VBI,
+-		.portf		= SAA7164_MPEG_VBI,
+ 		.chiprev	= SAA7164_CHIP_REV3,
+ 		.unit		= {{
+ 			.id		= 0x28,
