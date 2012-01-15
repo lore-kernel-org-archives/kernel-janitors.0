@@ -1,71 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 09 Jan 2012 11:17:02 +0000
-Subject: Re: [patch] dmatest: store correct thread count in
-Message-Id: <20120109111702.GE3644@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="gMR3gsNFwZpnI/Ts"
+Date: Sun, 15 Jan 2012 11:31:05 +0000
+Subject: [patch] drm/nouveau/dp: nouveau_dp_link_train() returns bool
+Message-Id: <20120115113105.GF20463@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111124114734.GB32522@elgon.mountain>
-In-Reply-To: <20111124114734.GB32522@elgon.mountain>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
 
+The caller doesn't check the return value, but this function returns a
+bool so static checkers complain when we return a negative error code.
 
---gMR3gsNFwZpnI/Ts
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Ping?
-
-regards,
-dan carpenter
-
-On Thu, Nov 24, 2011 at 02:47:34PM +0300, Dan Carpenter wrote:
-> The original code added 1 to the thread_count, but the intent was to
-> add +=3D cnt.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
-> index 2b8661b..24225f0 100644
-> --- a/drivers/dma/dmatest.c
-> +++ b/drivers/dma/dmatest.c
-> @@ -599,7 +599,7 @@ static int dmatest_add_channel(struct dma_chan *chan)
->  	}
->  	if (dma_has_cap(DMA_PQ, dma_dev->cap_mask)) {
->  		cnt =3D dmatest_add_threads(dtc, DMA_PQ);
-> -		thread_count +=3D cnt > 0 ?: 0;
-> +		thread_count +=3D cnt > 0 ? cnt : 0;
->  	}
-> =20
->  	pr_info("dmatest: Started %u threads using %s\n",
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
-" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---gMR3gsNFwZpnI/Ts
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPCsytAAoJEOnZkXI/YHqRKugP/jBHw0rfew+3hp8d2culuGtU
-+DGsCGwDOHimEk/BtnNGciqJZ7XUC4qI0X/ZZz1RUvJsfb842t2oUsj+ROV8/uI6
-RgdcSe57fmvPmEL3qig8i7olqXACxFwlnt+bz2P/epsQQtwD390QnREvgG9tbJ0h
-Twnn8kQFTebsF6eGCXZtpWU6N4p6iB/lNAB16LuuUkypDc731EQhegyarmsWv6ZE
-8N3JiHhAkx+jLhQTJeE/PJZSEQc7sMx6QZj+q0DhSlFtcEQ1B8fMCmS+D4tvU6RZ
-7bedCh2SKN15Xn9DdnCEh27cUgJwcpHZULginADErZ7MZOgRCN0YcRXcR30oTT8L
-bFiIIy2KTsVDY5yYJ4vFpz9HWxFCxQCTCzW/bvmi2InT2jf88Mup/eg38eSy5xst
-pObOyV9Ih+m3/Vd8FbEATcUsZHmJ5r7dLNJ54XaZJx2odYgvfBB6kP691jRf4tVD
-NVSnqOB3K85JZZym2KTn7GHA3JWysysSNv0fCcpjt/nwjP6lnu8FtOwluGd2WgcU
-hpjaC52FIfZFSkvt1XxcFEup3dm1MFpjKjv9mxQUnLwjsFhBxPYEG/8lodIWg7vL
-Z2krnpTWjEI9h6reeZW8RFFtc/CHLh6fVgbAtp/LxfFKo7k/K6yIy31uekN2YcwN
-pkQR8BTqYzSAL2AZLPm1
-=l3ss
------END PGP SIGNATURE-----
-
---gMR3gsNFwZpnI/Ts--
+diff --git a/drivers/gpu/drm/nouveau/nouveau_dp.c b/drivers/gpu/drm/nouveau/nouveau_dp.c
+index 9b93b70..dcffd13 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_dp.c
++++ b/drivers/gpu/drm/nouveau/nouveau_dp.c
+@@ -573,7 +573,7 @@ nouveau_dp_link_train(struct drm_encoder *encoder, u32 datarate)
+ 
+ 	dp.table = nouveau_dp_bios_data(dev, nv_encoder->dcb, &dp.entry);
+ 	if (!dp.table)
+-		return -EINVAL;
++		return false;
+ 
+ 	dp.dcb = nv_encoder->dcb;
+ 	dp.crtc = nv_crtc->index;
