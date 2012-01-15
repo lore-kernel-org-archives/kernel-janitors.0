@@ -1,29 +1,41 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jan 2012 07:07:35 +0000
-Subject: [patch] NFS: cleanup endian type in decode_ds_addr()
-Message-Id: <20120112070735.GB2975@elgon.mountain>
+Date: Sun, 15 Jan 2012 11:32:19 +0000
+Subject: [patch] [media] tlg2300: fix up check_firmware() return
+Message-Id: <20120115113219.GG20463@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Huang Shijie <shijie8@gmail.com>
+Cc: Kang Yong <kangyong@telegent.com>, Zhang Xiaobing <xbzhang@telegent.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-port is supposed to be a __be16 here.  The existing code should work
-fine, but this is a cleanup.
+The caller doesn't check the return value of check_firmware() but static
+checkers complain.  It currently returns negative error codes, or zero
+or greater on success but since the return type is boolean the values
+are truncated to one or zero.  I've changed it to return an int,
+negative on error and zero on success.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/fs/nfs/nfs4filelayoutdev.c b/fs/nfs/nfs4filelayoutdev.c
-index ed388aa..8ae9190 100644
---- a/fs/nfs/nfs4filelayoutdev.c
-+++ b/fs/nfs/nfs4filelayoutdev.c
-@@ -382,7 +382,7 @@ decode_ds_addr(struct xdr_stream *streamp, gfp_t gfp_flags)
+diff --git a/drivers/media/video/tlg2300/pd-main.c b/drivers/media/video/tlg2300/pd-main.c
+index 129f135..c096b3f 100644
+--- a/drivers/media/video/tlg2300/pd-main.c
++++ b/drivers/media/video/tlg2300/pd-main.c
+@@ -374,7 +374,7 @@ static inline void set_map_flags(struct poseidon *pd, struct usb_device *udev)
+ }
+ #endif
+ 
+-static bool check_firmware(struct usb_device *udev, int *down_firmware)
++static int check_firmware(struct usb_device *udev, int *down_firmware)
  {
- 	struct nfs4_pnfs_ds_addr *da = NULL;
- 	char *buf, *portstr;
--	u32 port;
-+	__be16 port;
- 	int nlen, rlen;
- 	int tmp[2];
- 	__be32 *p;
+ 	void *buf;
+ 	int ret;
+@@ -398,7 +398,7 @@ static bool check_firmware(struct usb_device *udev, int *down_firmware)
+ 		*down_firmware = 1;
+ 		return firmware_download(udev);
+ 	}
+-	return ret;
++	return 0;
+ }
+ 
+ static int poseidon_probe(struct usb_interface *interface,
