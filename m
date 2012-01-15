@@ -1,28 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Jan 2012 07:55:30 +0000
-Subject: [patch] NVMe: handle allocation failure in nvme_map_user_pages()
-Message-Id: <20120120075529.GB2295@elgon.mountain>
+Date: Sun, 15 Jan 2012 11:29:39 +0000
+Subject: [patch] staging: precedence bug in crystalhd_stop_tx_dma_engine()
+Message-Id: <20120115112939.GD20463@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew.r.wilcox@intel.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We should return here and avoid a NULL dereference.
+The intent here is to see if we have cleared the DMA_START_BIT flag.  We
+clear it a couple lines later.  The current code has a precedence bug so
+it is equivalent to "if (!dma_cntrl) { ...".
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/block/nvme.c b/drivers/block/nvme.c
-index f4996b0..d826726 100644
---- a/drivers/block/nvme.c
-+++ b/drivers/block/nvme.c
-@@ -1042,6 +1042,8 @@ static struct nvme_iod *nvme_map_user_pages(struct nvme_dev *dev, int write,
- 	offset = offset_in_page(addr);
- 	count = DIV_ROUND_UP(offset + length, PAGE_SIZE);
- 	pages = kcalloc(count, sizeof(*pages), GFP_KERNEL);
-+	if (!pages)
-+		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/staging/crystalhd/crystalhd_hw.c b/drivers/staging/crystalhd/crystalhd_hw.c
+index 5acf39e..eeddee9 100644
+--- a/drivers/staging/crystalhd/crystalhd_hw.c
++++ b/drivers/staging/crystalhd/crystalhd_hw.c
+@@ -868,8 +868,7 @@ static enum BC_STATUS crystalhd_stop_tx_dma_engine(struct crystalhd_hw *hw)
  
- 	err = get_user_pages_fast(addr, count, 1, pages);
- 	if (err < count) {
+ 	BCMLOG(BCMLOG_DBG, "Stopping TX DMA Engine..\n");
+ 
+-	/* FIXME: jarod: invert dma_ctrl and check bit? or are there missing parens? */
+-	if (!dma_cntrl & DMA_START_BIT) {
++	if (!(dma_cntrl & DMA_START_BIT)) {
+ 		BCMLOG(BCMLOG_DBG, "Already Stopped\n");
+ 		return BC_STS_SUCCESS;
+ 	}
