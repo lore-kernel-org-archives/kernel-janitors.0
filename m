@@ -1,32 +1,29 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:23 +0000
-Subject: [PATCH 04/16] Staging: quickstart: Make quickstart_input static
-Message-Id: <1326147815-11451-5-git-send-email-szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 15 Jan 2012 11:27:42 +0000
+Subject: [patch] gma500: change logical negate to bitwise
+Message-Id: <20120115112742.GB20463@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>, Alan Cox <alan@linux.intel.com>
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Logical negate is always false here.  This was found by Sparse:
+drivers/gpu/drm/gma500/psb_irq.c:407:17: warning: dubious: x & !y
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 6617761..7b0deb6 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -71,7 +71,7 @@ static struct quickstart_driver_data {
- 	struct quickstart_btn *pressed;
- } quickstart_data;
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/gma500/psb_irq.c b/drivers/gpu/drm/gma500/psb_irq.c
+index 7be802b..4ce680f 100644
+--- a/drivers/gpu/drm/gma500/psb_irq.c
++++ b/drivers/gpu/drm/gma500/psb_irq.c
+@@ -404,7 +404,7 @@ void psb_irq_turn_off_dpst(struct drm_device *dev)
+ 		psb_disable_pipestat(dev_priv, 0, PIPE_DPST_EVENT_ENABLE);
  
--struct input_dev *quickstart_input;
-+static struct input_dev *quickstart_input;
+ 		pwm_reg = PSB_RVDC32(PWM_CONTROL_LOGIC);
+-		PSB_WVDC32(pwm_reg & !(PWM_PHASEIN_INT_ENABLE),
++		PSB_WVDC32(pwm_reg & ~PWM_PHASEIN_INT_ENABLE,
+ 							PWM_CONTROL_LOGIC);
+ 		pwm_reg = PSB_RVDC32(PWM_CONTROL_LOGIC);
  
- /* Platform driver functions */
- static ssize_t quickstart_buttons_show(struct device *dev,
--- 
-1.7.8.2
-
-
