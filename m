@@ -1,29 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 15 Jan 2012 11:31:05 +0000
-Subject: [patch] drm/nouveau/dp: nouveau_dp_link_train() returns bool
-Message-Id: <20120115113105.GF20463@elgon.mountain>
+Date: Tue, 17 Jan 2012 07:28:51 +0000
+Subject: [patch 1/2] [media] ds3000: using logical && instead of bitwise &
+Message-Id: <20120117072851.GA11358@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: "Igor M. Liplianin" <liplianin@me.by>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The caller doesn't check the return value, but this function returns a
-bool so static checkers complain when we return a negative error code.
+The intent here was to test if the FE_HAS_LOCK was set.  The current
+test is equivalent to "if (status) { ..."
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_dp.c b/drivers/gpu/drm/nouveau/nouveau_dp.c
-index 9b93b70..dcffd13 100644
---- a/drivers/gpu/drm/nouveau/nouveau_dp.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_dp.c
-@@ -573,7 +573,7 @@ nouveau_dp_link_train(struct drm_encoder *encoder, u32 datarate)
+diff --git a/drivers/media/dvb/frontends/ds3000.c b/drivers/media/dvb/frontends/ds3000.c
+index 9387770..af65d01 100644
+--- a/drivers/media/dvb/frontends/ds3000.c
++++ b/drivers/media/dvb/frontends/ds3000.c
+@@ -1195,7 +1195,7 @@ static int ds3000_set_frontend(struct dvb_frontend *fe)
  
- 	dp.table = nouveau_dp_bios_data(dev, nv_encoder->dcb, &dp.entry);
- 	if (!dp.table)
--		return -EINVAL;
-+		return false;
+ 	for (i = 0; i < 30 ; i++) {
+ 		ds3000_read_status(fe, &status);
+-		if (status && FE_HAS_LOCK)
++		if (status & FE_HAS_LOCK)
+ 			break;
  
- 	dp.dcb = nv_encoder->dcb;
- 	dp.crtc = nv_crtc->index;
+ 		msleep(10);
