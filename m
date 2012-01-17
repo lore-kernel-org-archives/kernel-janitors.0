@@ -1,29 +1,27 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Jan 2012 07:28:51 +0000
-Subject: [patch 1/2] [media] ds3000: using logical && instead of bitwise &
-Message-Id: <20120117072851.GA11358@elgon.mountain>
+Date: Tue, 17 Jan 2012 07:31:52 +0000
+Subject: [patch] Staging: sbe-2t3e3: logical || vs bitwise |
+Message-Id: <20120117073142.GD11358@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: "Igor M. Liplianin" <liplianin@me.by>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The intent here was to test if the FE_HAS_LOCK was set.  The current
-test is equivalent to "if (status) { ..."
+Bitwise OR was clearly intended here.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/dvb/frontends/ds3000.c b/drivers/media/dvb/frontends/ds3000.c
-index 9387770..af65d01 100644
---- a/drivers/media/dvb/frontends/ds3000.c
-+++ b/drivers/media/dvb/frontends/ds3000.c
-@@ -1195,7 +1195,7 @@ static int ds3000_set_frontend(struct dvb_frontend *fe)
+diff --git a/drivers/staging/sbe-2t3e3/intr.c b/drivers/staging/sbe-2t3e3/intr.c
+index 7ad1a83..1336aab 100644
+--- a/drivers/staging/sbe-2t3e3/intr.c
++++ b/drivers/staging/sbe-2t3e3/intr.c
+@@ -188,7 +188,7 @@ void dc_intr_rx(struct channel *sc)
+ 			}
  
- 	for (i = 0; i < 30 ; i++) {
- 		ds3000_read_status(fe, &status);
--		if (status && FE_HAS_LOCK)
-+		if (status & FE_HAS_LOCK)
- 			break;
+ 			if (sc->s.LOS) {
+-				error_mask &= ~(SBE_2T3E3_RX_DESC_DRIBBLING_BIT ||
++				error_mask &= ~(SBE_2T3E3_RX_DESC_DRIBBLING_BIT |
+ 						SBE_2T3E3_RX_DESC_MII_ERROR);
+ 			}
  
- 		msleep(10);
