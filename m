@@ -1,54 +1,53 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Jan 2012 07:37:30 +0000
+Date: Wed, 18 Jan 2012 07:39:22 +0000
 Subject: Re: busy loops in kernel
-Message-Id: <20120118073730.GG3294@mwanda>
+Message-Id: <20120118073922.GH3294@mwanda>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="t4apE7yKrX2dGgJC"
+Content-Type: multipart/mixed; boundary="PW0Eas8rCkcu1VkF"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
 In-Reply-To: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
 To: kernel-janitors@vger.kernel.org
 
 
---t4apE7yKrX2dGgJC
+--PW0Eas8rCkcu1VkF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Interesting stuff.  You guys are doing static analysis on the .o
-files?  I'm looking at the first line.
+On Wed, Jan 18, 2012 at 10:37:30AM +0300, Dan Carpenter wrote:
+> Interesting stuff.  You guys are doing static analysis on the .o
+> files?  I'm looking at the first line.
+>=20
+> ticks 25 What does the ticks count mean?
 
-ticks 25 What does the ticks count mean?
-
-Infinite Loop:142  Ok.  I see this on drivers/atm/zatm.c line 142.
-It's a real infinite loop (if you're zatm hardware is broken).
-
-Dynamic array:393  What's this?  I don't see any dynamic arrays in
-this driver.
+I figured it out.  Ticks is the number of infinite loops found in
+the .o file.
 
 regards,
 dan carpenter
 
 
---t4apE7yKrX2dGgJC
+--PW0Eas8rCkcu1VkF
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPFna5AAoJEOnZkXI/YHqR/KYP/0kdl3P+cH5N/eoyciO9z3l4
-rfyATnMQr5qrkZ6g3nkuain4OtaBQJAZ8LduiJ0DJbMOqNzkiS+L9yzqSbRrpr0O
-HRbdXRiTZ4KxY6813mgq1ghF82qowREjE+pBJcN09d7HSGL7BmVzNx7kkDEo1yyD
-YRdcTrtqG58xi/Ea9Vg4Bja3dwdJhXyuPNIKx7IFM+wMUoO9kCmPDPvZQfhKfdAW
-XHR5IjQdd7OK5EDtPTMlfnjgVI97/rA55WdAUugOY/vFMgmoHhSWVMENfLjbJfxB
-ktzQtdCIVsLsaqg0y6lJDzYeXFUQ9Peqffb0D+vPv4R/jYpLhiHC0GZiWR3lJyPN
-5CYVGs76pTBZI5iP42ly/qvkPOQQYTo99m6pwG/4f24ejc3eNgDXOmMXkxt0xfzz
-2o0TEhw0LqTQzQaTL1ktkhQLFaEfRbSNCR9em/Ys6VoRZdTu7TFVgsGz1/ZUxsYb
-FrSDuUSh+sSM0tEI3EDN3CwvtgZbdaUUg75aPFaBJjZP0sNk7ZzzfBzGG6sSjP6z
-/scTu5NJmK3XkDRvEwvzzCgpHw6V48M05BFPUxVzJ4CKX2oJFKyNt0ASCDoeJ3n5
-T5M4D6Ec5wopz3MAmrkEsedyxjUKR/eV08RT4XtKraYjvkT/vLvn3LTPnfhthMGH
-peMgaV0IgoV4mn+WKt9K
-=vWOA
+iQIcBAEBAgAGBQJPFncpAAoJEOnZkXI/YHqRszwP/25H6lAda3KrOcGryYvxoQn2
+zHPLpu81wTHXK7FYmRhZSP8dlffPQJI/pndBGWu0n3Ai5BRU/aUMYsaiMTHWHUt+
+VwaZCbKGkk6TdDBm5aIgJT3X4GkoSthSYNYY6h3hKIZRXwLhTMMa3/sNRiMhR698
+I3VlkouLDFgEPvWhs2CdnSy/nmB3wcNYPnJSfhK1fMNLbTzL3nZ3EFilLnbRTOYa
+WWknU1L5kiug6zrbljyGKteeD/yLFnOLEDQbmJNBMwRt0IAqxyNHVFvfWgTRxte8
+6UVQbK2FZrWGL7eCyi8nihZG8VbZtf3qFyC0sH6q7saC0xRhliok6x+WkC6/zvwc
+VDI9N3/ql9sJYrWJY0UV9t3L3BWMZe2Ll7/1ysQm6Y/ZLAoz1WA45mMmBkfpqSZn
+g9D+U5sQ8hB7ULHRzoamnONQQsbU/vOvG0+hf1D/WyXpgip3cvgFlJxHV89Iw/MY
+d24N1WIUejX2KtMw4i7EQyHYzQFSsMAxM+G0HHBGc8m/zB+8o/PEBrLiqYVI85WT
+02lUPrNwOvUPeUYX7+/3i5jgbKcNSAh/vIt3hx01qczNTv9d1HJvGB3sEhUodYyX
+H0IjHTRu3YaHrlV+b80t2qXjtsuATV3nXThKx9D5NMgD2jUTBxc97czY2cGk+NrR
+NGU26LxsJMqSuHO8JCok
+=fZdJ
 -----END PGP SIGNATURE-----
 
---t4apE7yKrX2dGgJC--
+--PW0Eas8rCkcu1VkF--
