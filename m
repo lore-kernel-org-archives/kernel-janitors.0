@@ -1,32 +1,27 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 23 Jan 2012 17:44:53 +0000
-Subject: Re: [PATCH v2 15/17] Staging: quickstart: Use pr_err and pr_info for logs
-Message-Id: <1327340693.1704.6.camel@joe2Laptop>
+From: Asim <linkasim@gmail.com>
+Date: Wed, 18 Jan 2012 04:15:05 +0000
+Subject: busy loops in kernel
+Message-Id: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326320574-11220-17-git-send-email-szymon@janc.net.pl>
-In-Reply-To: <1326320574-11220-17-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 2012-01-23 at 14:13 -0200, Jorgyano Bruno wrote:
-> (an html formatted reply)
+Hi,
 
-html emails are rejected by kernel.org lists,
-please use text-only.
+I was just wanted to send a message to janitors -
 
-> On Wed, Jan 11, 2012 at 9:58 PM, Joe Perches <joe@perches.com> wrote:
->         It's OK to have the line with the format exceed 80 chars.
-> What about the 80-columns rule?
-> is the strings an exception to the rule?
-> when we should not to break the strings over 80 columns?
+We've identified a set of busy loops, waiting on hardware in the Linux
+kernel. These are perhaps not the best way to wait for a device to
+become ready and can occasionally freeze the system. These need to be
+fixed by adding timeouts (for example by using rdtscll to wait for 2
+clock cycles).
 
-Formats should be unbroken where possible.
-80 column wrapping should be ignored for format strings.
-An exception might be a multi-line format (with multiple newlines)
+The list is here => http://pages.cs.wisc.edu/~kadav/busy_waits.txt  I
+have added some caveats to be on the safe side. I will also add/update
+this list as time passes by and as these are fixed (or as I identify
+more).
 
-	printk(KERN_LEVEL "long line 1\n"
-	       "long line 2\n");
-
-
+Thanks,
+Asim
