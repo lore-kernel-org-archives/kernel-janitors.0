@@ -1,62 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Jan 2012 07:18:00 +0000
-Subject: [patch] fsnotify: remove unused parameter from send_to_group()
-Message-Id: <20120104071800.GA30978@elgon.mountain>
+Date: Wed, 18 Jan 2012 07:44:18 +0000
+Subject: [patch] [SCSI] isci: add a couple __iomem annotations
+Message-Id: <20120118074418.GA3582@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nick Piggin <npiggin@kernel.dk>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Intel SCU Linux support <intel-linux-scu@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ed Nadolski <edmund.nadolski@intel.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We don't use "mnt" anymore in send_to_group() after 1968f5eed5
-"fanotify: use both marks when possible" was applied.
+These are __iomem.  Sparse complains if we don't have that.
+
+drivers/scsi/isci/phy.c +149 70: warning:
+	incorrect type in initializer (different address spaces)
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index ccb14d3..b39c5c1 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -123,7 +123,7 @@ int __fsnotify_parent(struct path *path, struct dentry *dentry, __u32 mask)
- }
- EXPORT_SYMBOL_GPL(__fsnotify_parent);
- 
--static int send_to_group(struct inode *to_tell, struct vfsmount *mnt,
-+static int send_to_group(struct inode *to_tell,
- 			 struct fsnotify_mark *inode_mark,
- 			 struct fsnotify_mark *vfsmount_mark,
- 			 __u32 mask, void *data,
-@@ -168,10 +168,10 @@ static int send_to_group(struct inode *to_tell, struct vfsmount *mnt,
- 			vfsmount_test_mask &= ~inode_mark->ignored_mask;
+diff --git a/drivers/scsi/isci/phy.c b/drivers/scsi/isci/phy.c
+index fe18acf..05fd511 100644
+--- a/drivers/scsi/isci/phy.c
++++ b/drivers/scsi/isci/phy.c
+@@ -146,7 +146,7 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
+ 	phy_cap.gen1_no_ssc = 1;
+ 	if (ihost->oem_parameters.controller.do_enable_ssc) {
+ 		struct scu_afe_registers __iomem *afe = &ihost->scu_registers->afe;
+-		struct scu_afe_transceiver *xcvr = &afe->scu_afe_xcvr[phy_idx];
++		struct scu_afe_transceiver __iomem *xcvr = &afe->scu_afe_xcvr[phy_idx];
+ 		struct isci_pci_info *pci_info = to_pci_info(ihost->pdev);
+ 		bool en_sas = false;
+ 		bool en_sata = false;
+diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
+index 1a65d65..0db7572 100644
+--- a/drivers/scsi/isci/host.c
++++ b/drivers/scsi/isci/host.c
+@@ -2113,7 +2113,7 @@ static void sci_controller_afe_initialization(struct isci_host *ihost)
  	}
  
--	pr_debug("%s: group=%p to_tell=%p mnt=%p mask=%x inode_mark=%p"
-+	pr_debug("%s: group=%p to_tell=%p mask=%x inode_mark=%p"
- 		 " inode_test_mask=%x vfsmount_mark=%p vfsmount_test_mask=%x"
- 		 " data=%p data_is=%d cookie=%d event=%p\n",
--		 __func__, group, to_tell, mnt, mask, inode_mark,
-+		 __func__, group, to_tell, mask, inode_mark,
- 		 inode_test_mask, vfsmount_mark, vfsmount_test_mask, data,
- 		 data_is, cookie, *event);
- 
-@@ -258,16 +258,16 @@ int fsnotify(struct inode *to_tell, __u32 mask, void *data, int data_is,
- 
- 		if (inode_group > vfsmount_group) {
- 			/* handle inode */
--			ret = send_to_group(to_tell, NULL, inode_mark, NULL, mask, data,
-+			ret = send_to_group(to_tell, inode_mark, NULL, mask, data,
- 					    data_is, cookie, file_name, &event);
- 			/* we didn't use the vfsmount_mark */
- 			vfsmount_group = NULL;
- 		} else if (vfsmount_group > inode_group) {
--			ret = send_to_group(to_tell, &mnt->mnt, NULL, vfsmount_mark, mask, data,
-+			ret = send_to_group(to_tell, NULL, vfsmount_mark, mask, data,
- 					    data_is, cookie, file_name, &event);
- 			inode_group = NULL;
- 		} else {
--			ret = send_to_group(to_tell, &mnt->mnt, inode_mark, vfsmount_mark,
-+			ret = send_to_group(to_tell, inode_mark, vfsmount_mark,
- 					    mask, data, data_is, cookie, file_name,
- 					    &event);
- 		}
+ 	for (phy_id = 0; phy_id < SCI_MAX_PHYS; phy_id++) {
+-		struct scu_afe_transceiver *xcvr = &afe->scu_afe_xcvr[phy_id];
++		struct scu_afe_transceiver __iomem *xcvr = &afe->scu_afe_xcvr[phy_id];
+ 		const struct sci_phy_oem_params *oem_phy = &oem->phys[phy_id];
+ 		int cable_length_long  			is_long_cable(phy_id, cable_selection_mask);
