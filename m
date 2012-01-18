@@ -1,27 +1,22 @@
-From: Asim <linkasim@gmail.com>
-Date: Wed, 18 Jan 2012 04:15:05 +0000
-Subject: busy loops in kernel
-Message-Id: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
+From: Greg Dietsche <gregory.dietsche@cuw.edu>
+Date: Wed, 18 Jan 2012 04:55:28 +0000
+Subject: Re: busy loops in kernel
+Message-Id: <4F1650C0.10202@cuw.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
+In-Reply-To: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-
-I was just wanted to send a message to janitors -
-
-We've identified a set of busy loops, waiting on hardware in the Linux
-kernel. These are perhaps not the best way to wait for a device to
-become ready and can occasionally freeze the system. These need to be
-fixed by adding timeouts (for example by using rdtscll to wait for 2
-clock cycles).
-
-The list is here => http://pages.cs.wisc.edu/~kadav/busy_waits.txt  I
-have added some caveats to be on the safe side. I will also add/update
-this list as time passes by and as these are fixed (or as I identify
-more).
+On 1/17/2012 10:15 PM, Asim wrote:
+> The list is here => http://pages.cs.wisc.edu/~kadav/busy_waits.txt  I
+> have added some caveats to be on the safe side. I will also add/update
+> this list as time passes by and as these are fixed (or as I identify
+> more).
+Hi Asim,
+What version of the kernel source was used to generate this list?
 
 Thanks,
-Asim
+Greg
