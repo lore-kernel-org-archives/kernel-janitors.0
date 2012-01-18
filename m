@@ -1,53 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Jan 2012 07:39:22 +0000
+From: Asim <linkasim@gmail.com>
+Date: Wed, 18 Jan 2012 17:45:08 +0000
 Subject: Re: busy loops in kernel
-Message-Id: <20120118073922.GH3294@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PW0Eas8rCkcu1VkF"
+Message-Id: <CAFTXMEJ0R+3r7SR54xuosjFyG8dLPR0Qy=1w3k-+Vx906MMVUw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
 In-Reply-To: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
+Hi Greg,
 
---PW0Eas8rCkcu1VkF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a 6 month old kernel. 2.6.38. I am now working to get the
+results in 3.2.1 kernel. I cross checked and most drivers still have
+these problems even though in some cases the line numbers have changed
+by an offset.
+I will send the 3.2.1 results as soon as I can to this list. I am
+mostly facing issues with macros like DEFINE_TIMER which just breaks
+all over analyses and have surprising spread all over the drivers
+directory.
 
-On Wed, Jan 18, 2012 at 10:37:30AM +0300, Dan Carpenter wrote:
-> Interesting stuff.  You guys are doing static analysis on the .o
-> files?  I'm looking at the first line.
->=20
-> ticks 25 What does the ticks count mean?
+But as I said earlier, most of the problems still  remain, in many
+cases with the same line numbers..
 
-I figured it out.  Ticks is the number of infinite loops found in
-the .o file.
+Thanks,
+Asim
 
-regards,
-dan carpenter
-
-
---PW0Eas8rCkcu1VkF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPFncpAAoJEOnZkXI/YHqRszwP/25H6lAda3KrOcGryYvxoQn2
-zHPLpu81wTHXK7FYmRhZSP8dlffPQJI/pndBGWu0n3Ai5BRU/aUMYsaiMTHWHUt+
-VwaZCbKGkk6TdDBm5aIgJT3X4GkoSthSYNYY6h3hKIZRXwLhTMMa3/sNRiMhR698
-I3VlkouLDFgEPvWhs2CdnSy/nmB3wcNYPnJSfhK1fMNLbTzL3nZ3EFilLnbRTOYa
-WWknU1L5kiug6zrbljyGKteeD/yLFnOLEDQbmJNBMwRt0IAqxyNHVFvfWgTRxte8
-6UVQbK2FZrWGL7eCyi8nihZG8VbZtf3qFyC0sH6q7saC0xRhliok6x+WkC6/zvwc
-VDI9N3/ql9sJYrWJY0UV9t3L3BWMZe2Ll7/1ysQm6Y/ZLAoz1WA45mMmBkfpqSZn
-g9D+U5sQ8hB7ULHRzoamnONQQsbU/vOvG0+hf1D/WyXpgip3cvgFlJxHV89Iw/MY
-d24N1WIUejX2KtMw4i7EQyHYzQFSsMAxM+G0HHBGc8m/zB+8o/PEBrLiqYVI85WT
-02lUPrNwOvUPeUYX7+/3i5jgbKcNSAh/vIt3hx01qczNTv9d1HJvGB3sEhUodYyX
-H0IjHTRu3YaHrlV+b80t2qXjtsuATV3nXThKx9D5NMgD2jUTBxc97czY2cGk+NrR
-NGU26LxsJMqSuHO8JCok
-=fZdJ
------END PGP SIGNATURE-----
-
---PW0Eas8rCkcu1VkF--
+On Tue, Jan 17, 2012 at 8:55 PM, Greg Dietsche <gregory.dietsche@cuw.edu> w=
+rote:
+> On 1/17/2012 10:15 PM, Asim wrote:
+>> The list is here =3D> http://pages.cs.wisc.edu/~kadav/busy_waits.txt =A0I
+>> have added some caveats to be on the safe side. I will also add/update
+>> this list as time passes by and as these are fixed (or as I identify
+>> more).
+> Hi Asim,
+> What version of the kernel source was used to generate this list?
+>
+> Thanks,
+> Greg
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
