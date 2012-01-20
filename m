@@ -1,64 +1,72 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Thu, 12 Jan 2012 16:02:59 +0000
-Subject: Re: [PATCH 11/15] drivers/usb/host/ehci-fsl.c: add missing iounmap
-Message-Id: <Pine.LNX.4.44L0.1201121102470.1384-100000@iolanthe.rowland.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 20 Jan 2012 21:25:32 +0000
+Subject: [PATCH 4/4] drivers/video/backlight/adp5520_bl.c: use devm_ functions
+Message-Id: <1327094732-9050-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1326362117-29371-11-git-send-email-Julia.Lawall@lip6.fr>
-References: <1326362117-29371-11-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1326362117-29371-11-git-send-email-Julia.Lawall@lip6.fr>
+References: <1327094732-9050-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1327094732-9050-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michael Hennerich <michael.hennerich@analog.com>
+Cc: kernel-janitors@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, device-drivers-devel@blackfin.uclinux.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 12 Jan 2012, Julia Lawall wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Add missing iounmap in error handling code, in a case where the function
-> already preforms iounmap on some other execution path.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e;
-> statement S,S1;
-> int ret;
-> @@
-> e = \(ioremap\|ioremap_nocache\)(...)
-> ... when != iounmap(e)
-> if (<+...e...+>) S
-> ... when any
->     when != iounmap(e)
-> *if (...)
->    { ... when != iounmap(e)
->      return ...; }
-> ... when any
-> iounmap(e);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/usb/host/ehci-fsl.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
-> index e90344a..b556a72 100644
-> --- a/drivers/usb/host/ehci-fsl.c
-> +++ b/drivers/usb/host/ehci-fsl.c
-> @@ -125,7 +125,7 @@ static int usb_hcd_fsl_probe(const struct hc_driver *driver,
->  	 */
->  	if (pdata->init && pdata->init(pdev)) {
->  		retval = -ENODEV;
-> -		goto err3;
-> +		goto err4;
->  	}
->  
->  	/* Enable USB controller, 83xx or 8536 */
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/video/backlight/adp5520_bl.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/video/backlight/adp5520_bl.c b/drivers/video/backlight/adp5520_bl.c
+index 2e630bf..4911ea7 100644
+--- a/drivers/video/backlight/adp5520_bl.c
++++ b/drivers/video/backlight/adp5520_bl.c
+@@ -289,7 +289,7 @@ static int __devinit adp5520_bl_probe(struct platform_device *pdev)
+ 	struct adp5520_bl *data;
+ 	int ret = 0;
+ 
+-	data = kzalloc(sizeof(*data), GFP_KERNEL);
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+ 	if (data = NULL)
+ 		return -ENOMEM;
+ 
+@@ -298,7 +298,6 @@ static int __devinit adp5520_bl_probe(struct platform_device *pdev)
+ 
+ 	if (data->pdata  = NULL) {
+ 		dev_err(&pdev->dev, "missing platform data\n");
+-		kfree(data);
+ 		return -ENODEV;
+ 	}
+ 
+@@ -314,7 +313,6 @@ static int __devinit adp5520_bl_probe(struct platform_device *pdev)
+ 				       &adp5520_bl_ops, &props);
+ 	if (IS_ERR(bl)) {
+ 		dev_err(&pdev->dev, "failed to register backlight\n");
+-		kfree(data);
+ 		return PTR_ERR(bl);
+ 	}
+ 
+@@ -326,7 +324,6 @@ static int __devinit adp5520_bl_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register sysfs\n");
+ 		backlight_device_unregister(bl);
+-		kfree(data);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, bl);
+@@ -348,7 +345,6 @@ static int __devexit adp5520_bl_remove(struct platform_device *pdev)
+ 				&adp5520_bl_attr_group);
+ 
+ 	backlight_device_unregister(bl);
+-	kfree(data);
+ 
+ 	return 0;
+ }
 
