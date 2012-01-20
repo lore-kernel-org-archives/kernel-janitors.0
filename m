@@ -1,56 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 12 Jan 2012 21:49:30 +0000
-Subject: [PATCH 4/5] drivers/media/video/s5p-mfc/s5p_mfc.c: adjust double test
-Message-Id: <1326404970-1084-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Jan 2012 07:56:43 +0000
+Subject: [patch] Btrfs: use gfp_t to silence a sparse warning
+Message-Id: <20120120075643.GC2295@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326404970-1084-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1326404970-1084-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Chris Mason <chris.mason@oracle.com>, Arne Jansen <sensille@gmx.net>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+These should be gfp_t or Sparse complains:
+fs/btrfs/ulist.c:100:55: warning:
+	incorrect type in argument 2 (different base types)
 
-Rewrite a duplicated test to test the correct value
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression E;
-@@
-
-(
-* E
-  || ... || E
-|
-* E
-  && ... && E
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-There is an img_height field, so it is my guess that that should be tested
-instead of testing the img_width field again.
-
- drivers/media/video/s5p-mfc/s5p_mfc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/video/s5p-mfc/s5p_mfc.c b/drivers/media/video/s5p-mfc/s5p_mfc.c
-index 8be8b54..53126f2 100644
---- a/drivers/media/video/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/video/s5p-mfc/s5p_mfc.c
-@@ -475,7 +475,7 @@ static void s5p_mfc_handle_seq_done(struct s5p_mfc_ctx *ctx,
- 			ctx->mv_size = 0;
- 		}
- 		ctx->dpb_count = s5p_mfc_get_dpb_count();
--		if (ctx->img_width = 0 || ctx->img_width = 0)
-+		if (ctx->img_width = 0 || ctx->img_height = 0)
- 			ctx->state = MFCINST_ERROR;
- 		else
- 			ctx->state = MFCINST_HEAD_PARSED;
-
+diff --git a/fs/btrfs/ulist.c b/fs/btrfs/ulist.c
+index 12f5147..5d1b047 100644
+--- a/fs/btrfs/ulist.c
++++ b/fs/btrfs/ulist.c
+@@ -95,7 +95,7 @@ EXPORT_SYMBOL(ulist_reinit);
+  *
+  * The allocated ulist will be returned in an initialized state.
+  */
+-struct ulist *ulist_alloc(unsigned long gfp_mask)
++struct ulist *ulist_alloc(gfp_t gfp_mask)
+ {
+ 	struct ulist *ulist = kmalloc(sizeof(*ulist), gfp_mask);
+ 
+@@ -143,8 +143,7 @@ EXPORT_SYMBOL(ulist_free);
+  * In case of allocation failure -ENOMEM is returned and the ulist stays
+  * unaltered.
+  */
+-int ulist_add(struct ulist *ulist, u64 val, unsigned long aux,
+-	      unsigned long gfp_mask)
++int ulist_add(struct ulist *ulist, u64 val, unsigned long aux, gfp_t gfp_mask)
+ {
+ 	int i;
+ 
