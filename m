@@ -1,40 +1,35 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Sat, 14 Jan 2012 23:07:03 +0000
-Subject: Re: [PATCH v2] scripts/coccinelle: improve the coverage of some semantic patches
-Message-Id: <4F120A97.6050209@suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Jan 2012 07:54:55 +0000
+Subject: [patch] Btrfs: fix bitwise vs logical condition
+Message-Id: <20120120075454.GA2295@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326580914-20464-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1326580914-20464-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org, Artem@mgw2.diku.dk, Bityutskiy@suse.de
+To: Chris Mason <chris.mason@oracle.com>, Ilya Dryomov <idryomov@gmail.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 14.1.2012 23:41, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> This patch ensures that all semantic patches in the scripts/coccinelle
-> directory provide the report option.  Report messages that include line
-> numbers now have the line number preceded by "line" for easier subsequent
-> processing.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  scripts/coccinelle/api/kstrdup.cocci      |   75 ++++++++++++++++++++++++++++--
->  scripts/coccinelle/api/memdup.cocci       |   34 ++++++++++++-
->  scripts/coccinelle/api/memdup_user.cocci  |   39 ++++++++++++---
->  scripts/coccinelle/free/kfree.cocci       |   14 +++--
->  scripts/coccinelle/iterators/fen.cocci    |   73 ++++++++++++++++++++++++++---
->  scripts/coccinelle/iterators/itnull.cocci |   54 ++++++++++++++++++---
->  scripts/coccinelle/locks/call_kern.cocci  |   67 +++++++++++++++++++-------
->  scripts/coccinelle/locks/flags.cocci      |   12 ++--
->  scripts/coccinelle/locks/mini_lock.cocci  |   15 +++---
->  scripts/coccinelle/misc/doubleinit.cocci  |    8 +--
->  scripts/coccinelle/null/eno.cocci         |   36 ++++++++++++--
->  11 files changed, 351 insertions(+), 76 deletions(-)
+The intent here was to do a logical && instead of a bitwise &.  The
+original condition tests whether they have the some of same bits set.
+I have fixed that and rewritten it to be more clear.
 
-This looks much better, thanks. Applied to kbuild.git#misc.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Warning:  This is a static analysis bug and I'm not very familiar with
+the code.  Please review carefully.
 
-Michal
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 0b4e2af..0c54027 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -2376,8 +2376,8 @@ static int should_balance_chunk(struct btrfs_root *root,
+ 	u64 chunk_type = btrfs_chunk_type(leaf, chunk);
+ 
+ 	/* type filter */
+-	if (!((chunk_type & BTRFS_BLOCK_GROUP_TYPE_MASK) &
+-	      (bctl->flags & BTRFS_BALANCE_TYPE_MASK))) {
++	if (!(chunk_type & BTRFS_BLOCK_GROUP_TYPE_MASK) ||
++	    !(bctl->flags & BTRFS_BALANCE_TYPE_MASK)) {
+ 		return 0;
+ 	}
+ 
