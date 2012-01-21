@@ -1,64 +1,55 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 19 Jan 2012 12:22:02 +0000
+Date: Sat, 21 Jan 2012 15:58:48 +0000
 Subject: Re: [patch 2/2] [media] ds3000: off by one in ds3000_read_snr()
-Message-Id: <20120119122202.GJ3294@mwanda>
+Message-Id: <20120121155848.GR3356@mwanda>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="UlxN1C6awaFNesUv"
+Content-Type: multipart/mixed; boundary="xSu31lw3TgkWXnjh"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120117073021.GB11358@elgon.mountain>
  <4F16FC26.80306@bfs.de>
  <20120119093327.GI3356@mwanda>
  <4F17EFE1.3060804@bfs.de>
-In-Reply-To: <4F17EFE1.3060804@bfs.de>
+ <20120119122202.GJ3294@mwanda>
+In-Reply-To: <20120119122202.GJ3294@mwanda>
 To: walter harms <wharms@bfs.de>
 Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, "Igor M. Liplianin" <liplianin@me.by>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
---UlxN1C6awaFNesUv
+--xSu31lw3TgkWXnjh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 19, 2012 at 11:26:41AM +0100, walter harms wrote:
-> >> perhaps it is more useful to do it in the check above ?
-> >=20
-> > It looks like the check is correct but we need to shift all the
-> > values by one.  Again, I don't have this hardware, I'm just going by
-> > the context.
-> >=20
-> I do not have the hardware either so this is pure theoretical.
->=20
-> Access to the data field depends on the value of dvbs2_noise_reading/tmp
-> even when the data are reasonable like 50/100 snr_reading would become 0
-> and the index suddenly is -1.
->=20
+On Thu, Jan 19, 2012 at 03:22:02PM +0300, Dan Carpenter wrote:
+> It's a good point.  I will redo the patch.
 
-It's a good point.  I will redo the patch.
+Sorry, I've decided to bail on this.  The original code is buggy but
+I don't know what's going on well enough to fix it with any
+confidence.
 
 regards,
 dan carpenter
 
 
---UlxN1C6awaFNesUv
+--xSu31lw3TgkWXnjh
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPGArpAAoJEOnZkXI/YHqRwskP/j9aQf1pbxNH68xqOf+Cm1ze
-gBOj1sjE8ErJ5eS5+OmL0NrN6+Brc8Hm32/Lq77yM0KrjrBnYtI5XeFKqppEKZUp
-BJ9b8XypMNGGsv/Q83v/c/Fl2Bl0vnMxmelzvzZzMitcjfWuxUQLyJA6+kTlzMz/
-Cdg9LreevLRRt+g0efGRrvdUqxUmtwgJEl8VXCsoVY1gAIl8yl4GY+RVPUYVHLbn
-je9lTJKi1SjNhSY2v5bPptqkT777LAF4Wxpy0qw20ZJbuTMejrTN67F83nxWl45G
-+rgUo59THtYlaZrgx0NFXq3YCPfu2TEM2IX1zz/3rwTJgI82Imyk2vJI+H5xmbmd
-+w3SM29/wN4EPHk4eJ4CTDiv3Qq1+5+UdNpst38X4646H/PG9nQeMgzmgnVgo2Vn
-AouSq8YFVVQpgLqFFBa3UgTIf7OfkQIf3W4vhEwNCrx4LzIpIHsLX0Qt6/0NJNtD
-srNjoKir3XzXA6Q5OhdcMJmh26n3mRzrPnvRSGHQLCn26rR05EGmxxFyT5U75JV6
-FyLnOxfps05KzAwllffrSXeAi+E3aKETI7ZlKLiBbNxGuszbi2qiu/Wh/sOPFM2I
-0Fj7fQPdDIUtQHzJ0c5H+5v472Cl5Gy/IqrT6OCu7z7mzDllBfWYzwIe1U6+hKbd
-SiJs0ZAA1RxMSuIr/Y+p
-=QBye
+iQIcBAEBAgAGBQJPGuC3AAoJEOnZkXI/YHqRs24QALB8tg1uafSQZlErsvpJRqgP
+9O7zFTdLafnCGQWk82SYRfDl2y2n7DZmrx7RiWUtKPk+d/jJb7onqpo97FEDYR49
+LYnz3HLWuZhVNqo+Mna8D0dLPtUXZS589lzLBkRgvCRCd1bZ9Wh/Ib13aHcKq2y9
+PcIbO9sydIe5kfx+1m9muHXurPPokLBlMmCw3fRc1u7X/wwYJw9xz85wqz4FOXvF
+30fbGQMuWy5a8vaCWAgfgbwj35kUqaRl0XNkBS/8dLuWzqyeBHZPFPf7j1PIFGeK
+kaMrZJH0WKQVllCCXO0zhEe301237AgSqfVg/HPxNiAgL9vrihWiBOphUFd6VAYB
+SVW2fDhpSc9M3iJmm9r0rjSy+1MS5oIn8IIO6OepLKDwJFXEhDgv4lWnna8cgV2d
+RBvtSgalYmLkV4NLJMDufQ+FnfzvvSrtvSacYc2tjnA91CNxdW5Y4hA+/YJHkYRY
+KnGwW1+hDRRpTmM+ph60m1aXMxK34R6z1cayjwIhmNsM49PnvGfrTEu1YCfmDZBu
+nFoXxuN5K/0lVuDnMjiEvZkzfWSC12jv/PI8O/XBbRSmCAxfsxxtRyNKvDh3rX3r
+lDBHHGUHoqdM82F6WzOpl5WNA1tNwV4ApeHMfDfT7zHGyPdv+Ub5aBfZEBLhLGEQ
+z6/zJuPy8WOHl7pVPitj
+=2qph
 -----END PGP SIGNATURE-----
 
---UlxN1C6awaFNesUv--
+--xSu31lw3TgkWXnjh--
