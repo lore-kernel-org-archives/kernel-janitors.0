@@ -1,7 +1,7 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Sun, 22 Jan 2012 18:52:42 +0000
+From: Joe Perches <joe@perches.com>
+Date: Mon, 23 Jan 2012 17:44:53 +0000
 Subject: Re: [PATCH v2 15/17] Staging: quickstart: Use pr_err and pr_info for logs
-Message-Id: <201201221952.42591.szymon@janc.net.pl>
+Message-Id: <1327340693.1704.6.camel@joe2Laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1326320574-11220-17-git-send-email-szymon@janc.net.pl>
 In-Reply-To: <1326320574-11220-17-git-send-email-szymon@janc.net.pl>
@@ -10,24 +10,23 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+On Mon, 2012-01-23 at 14:13 -0200, Jorgyano Bruno wrote:
+> (an html formatted reply)
 
-> Add a space please between KBUILD_MODNAME and the quoted string.
-> #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+html emails are rejected by kernel.org lists,
+please use text-only.
 
-> 
-> Please try not to break format strings into multiple bits.
-> It's very error prone and can make it harder to grep.
-> It's OK to have the line with the format exceed 80 chars.
-> 
-> 		pr_err("%s GHID method returned buffer of unexpected length %u\n",
-> 		       quickstart->button->name, buffer.length);
+> On Wed, Jan 11, 2012 at 9:58 PM, Joe Perches <joe@perches.com> wrote:
+>         It's OK to have the line with the format exceed 80 chars.
+> What about the 80-columns rule?
+> is the strings an exception to the rule?
+> when we should not to break the strings over 80 columns?
 
-Both issues fixed in V3.
-Since there were no other comments for V2 patches I'm sending V3 for this 
-patch only.
+Formats should be unbroken where possible.
+80 column wrapping should be ignored for format strings.
+An exception might be a multi-line format (with multiple newlines)
 
--- 
-Szymon K. Janc
-szymon@janc.net.pl
+	printk(KERN_LEVEL "long line 1\n"
+	       "long line 2\n");
+
 
