@@ -1,38 +1,32 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 28 Jan 2012 10:31:07 +0000
-Subject: Re: boolean result from a test for a bit
-Message-Id: <4F23CE6B.6070102@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Jan 2012 08:39:22 +0000
+Subject: [patch] cifs: NULL dereference on allocation failure
+Message-Id: <20120124083922.GA29097@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <804857E1F29AAC47BF68C404FC60A1842485E4@ORSMSX102.amr.corp.intel.com>
-In-Reply-To: <804857E1F29AAC47BF68C404FC60A1842485E4@ORSMSX102.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+We should just return directly here, the goto causes a NULL dereference.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am 27.01.2012 21:29, schrieb Allan, Bruce W:
-> For a simple boolean test of whether, for example, bit 5 is set in the variable 'flags', which of the following methods is preferred over the other?
-> 
-> bool result = (flags & (1 << 5)) ? true : false;
-> 
-> or
-> 
-> bool result = !!(flags & (1 << 5));
-> 
-> I've seen examples of both in the Linux kernel.
-> 
-> Thanks,
-> Bruce.
-> --
-
-hi Bruce,
-i think this is a matter of taste, but i would say
-personaly i would go for option one since since !! can
-easely be overlooked.
-
-personaly i do not like bool.
-
-re,
- wh
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 986709a..026d646 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -3857,10 +3857,8 @@ cifs_construct_tcon(struct cifs_sb_info *cifs_sb, uid_t fsuid)
+ 	struct smb_vol *vol_info;
+ 
+ 	vol_info = kzalloc(sizeof(*vol_info), GFP_KERNEL);
+-	if (vol_info = NULL) {
+-		tcon = ERR_PTR(-ENOMEM);
+-		goto out;
+-	}
++	if (vol_info = NULL)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	vol_info->local_nls = cifs_sb->local_nls;
+ 	vol_info->linux_uid = fsuid;
