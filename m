@@ -1,42 +1,38 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Mon, 30 Jan 2012 05:25:04 +0000
-Subject: Re: [patch v2] intelfb: remove some dead code
-Message-Id: <4F2629B0.1020904@gmx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Jan 2012 08:40:36 +0000
+Subject: [patch] target: handle empty string writes in sysfs
+Message-Id: <20120124084036.GB29097@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120127125833.GD3356@mwanda>
-In-Reply-To: <20120127125833.GD3356@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 01/27/2012 12:58 PM, Dan Carpenter wrote:
-> The goto on the line before means the return is unreachable.  The goto
-> also returns -ENODEV so no changes are needed there.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+These are root only and we're not likely to hit the problem in practise,
+but it makes a the static checkers happy.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Thanks,
-
-Florian Tobias Schandinat
-
-> ---
-> v2: fixed a typo in the commit message
-> 
-> diff --git a/drivers/video/intelfb/intelfbdrv.c b/drivers/video/intelfb/intelfbdrv.c
-> index c6afa33..02fd226 100644
-> --- a/drivers/video/intelfb/intelfbdrv.c
-> +++ b/drivers/video/intelfb/intelfbdrv.c
-> @@ -529,7 +529,6 @@ static int __devinit intelfb_pci_register(struct pci_dev *pdev,
->  	if (fb_alloc_cmap(&info->cmap, 256, 1) < 0) {
->  		ERR_MSG("Could not allocate cmap for intelfb_info.\n");
->  		goto err_out_cmap;
-> -		return -ENODEV;
->  	}
->  
->  	dinfo = info->par;
-> 
-
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+index 0955bb8..9b86330 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -1707,6 +1707,8 @@ static ssize_t target_core_store_dev_alias(
+ 	se_dev->su_dev_flags |= SDF_USING_ALIAS;
+ 	read_bytes = snprintf(&se_dev->se_dev_alias[0], SE_DEV_ALIAS_LEN,
+ 			"%s", page);
++	if (read_bytes = 0)
++		return -EINVAL;
+ 
+ 	if (se_dev->se_dev_alias[read_bytes - 1] = '\n')
+ 		se_dev->se_dev_alias[read_bytes - 1] = '\0';
+@@ -1756,6 +1758,8 @@ static ssize_t target_core_store_dev_udev_path(
+ 	se_dev->su_dev_flags |= SDF_USING_UDEV_PATH;
+ 	read_bytes = snprintf(&se_dev->se_dev_udev_path[0], SE_UDEV_PATH_LEN,
+ 			"%s", page);
++	if (read_bytes = 0)
++		return -EINVAL;
+ 
+ 	if (se_dev->se_dev_udev_path[read_bytes - 1] = '\n')
+ 		se_dev->se_dev_udev_path[read_bytes - 1] = '\0';
