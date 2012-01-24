@@ -1,66 +1,51 @@
-From: Jeff Layton <jlayton@redhat.com>
-Date: Tue, 24 Jan 2012 12:43:49 +0000
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 24 Jan 2012 16:37:43 +0000
 Subject: Re: [patch] cifs: NULL dereference on allocation failure
-Message-Id: <20120124074349.065af6be@tlielax.poochiereds.net>
+Message-Id: <CAH2r5msPnEzmOZNr-PBU3y40uJ+9FeZzbUGVxmMnc2bKeRurew@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120124083922.GA29097@elgon.mountain>
-	<20120124074104.095f8755@tlielax.poochiereds.net>
-In-Reply-To: <20120124074104.095f8755-9yPaYZwiELC+kQycOl6kW4xkIHaj4LzF@public.gmane.org>
+In-Reply-To: <20120124083922.GA29097@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jeff Layton <jlayton-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
-Cc: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org, samba-technical@lists.samba.org
 
-On Tue, 24 Jan 2012 07:41:04 -0500
-Jeff Layton <jlayton@samba.org> wrote:
+Merged into cifs-2.6.git
 
-> On Tue, 24 Jan 2012 11:39:22 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > We should just return directly here, the goto causes a NULL dereference.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> > index 986709a..026d646 100644
-> > --- a/fs/cifs/connect.c
-> > +++ b/fs/cifs/connect.c
-> > @@ -3857,10 +3857,8 @@ cifs_construct_tcon(struct cifs_sb_info *cifs_sb, uid_t fsuid)
-> >  	struct smb_vol *vol_info;
-> >  
-> >  	vol_info = kzalloc(sizeof(*vol_info), GFP_KERNEL);
-> > -	if (vol_info = NULL) {
-> > -		tcon = ERR_PTR(-ENOMEM);
-> > -		goto out;
-> > -	}
-> > +	if (vol_info = NULL)
-> > +		return ERR_PTR(-ENOMEM);
-> >  
-> >  	vol_info->local_nls = cifs_sb->local_nls;
-> >  	vol_info->linux_uid = fsuid;
-> 
-> Huh? How so? Here's what "out:" looks like in my tree:
-> 
-> ---------------[snip]----------------
-> out:
->         kfree(vol_info);
-> 
->         return tcon;
-> ---------------[snip]----------------
-> 
-> vol_info is NULL, so the kfree is safe. This patch shouldn't break
-> anything, but I don't think it's strictly necessary.
-> 
+On Tue, Jan 24, 2012 at 2:39 AM, Dan Carpenter <dan.carpenter@oracle.com> w=
+rote:
+> We should just return directly here, the goto causes a NULL dereference.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+> index 986709a..026d646 100644
+> --- a/fs/cifs/connect.c
+> +++ b/fs/cifs/connect.c
+> @@ -3857,10 +3857,8 @@ cifs_construct_tcon(struct cifs_sb_info *cifs_sb, =
+uid_t fsuid)
+> =A0 =A0 =A0 =A0struct smb_vol *vol_info;
+>
+> =A0 =A0 =A0 =A0vol_info =3D kzalloc(sizeof(*vol_info), GFP_KERNEL);
+> - =A0 =A0 =A0 if (vol_info =3D NULL) {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon =3D ERR_PTR(-ENOMEM);
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out;
+> - =A0 =A0 =A0 }
+> + =A0 =A0 =A0 if (vol_info =3D NULL)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return ERR_PTR(-ENOMEM);
+>
+> =A0 =A0 =A0 =A0vol_info->local_nls =3D cifs_sb->local_nls;
+> =A0 =A0 =A0 =A0vol_info->linux_uid =3D fsuid;
 
-Sorry, I was looking at the wrong branch. The patch is correct and
-necessary. With the most recent changes, here's what "out:" looks like:
 
----------------[snip]----------------
-out:
-        kfree(vol_info->username);
-        kfree(vol_info->password);
-        kfree(vol_info);
----------------[snip]----------------
 
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
+--=20
+Thanks,
+
+Steve
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
