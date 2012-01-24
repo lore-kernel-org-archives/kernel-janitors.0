@@ -1,93 +1,281 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 18 Jan 2012 17:18:00 +0000
-Subject: Re: [PATCH 1/4] drivers/staging: adjust double test
-Message-Id: <4F16FEC8.1080901@bfs.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 24 Jan 2012 13:00:45 +0000
+Subject: [PATCH] drivers/video/omap2/dss: use devm_ functions
+Message-Id: <1327410045-3906-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326403988-872-1-git-send-email-Julia.Lawall@lip6.fr> <1326403988-872-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1326403988-872-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1327410045-3906-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1327410045-3906-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-Am 12.01.2012 22:33, schrieb Julia Lawall:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Rewrite a duplicated test to test the correct value
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression E;
-> @@
-> 
-> (
-> * E
->   || ... || E
-> |
-> * E
->   && ... && E
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/staging/gma500/mdfld_dsi_pkg_sender.c |    6 ++----
->  drivers/staging/rtl8192e/rtllib_rx.c          |    2 +-
->  2 files changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-> index 6c5061f..13979b5 100644
-> --- a/drivers/staging/rtl8192e/rtllib_rx.c
-> +++ b/drivers/staging/rtl8192e/rtllib_rx.c
-> @@ -2453,7 +2453,7 @@ static inline void update_network(struct rtllib_network *dst,
->  	if (src->wmm_param[0].ac_aci_acm_aifsn ||
->  	   src->wmm_param[1].ac_aci_acm_aifsn ||
->  	   src->wmm_param[2].ac_aci_acm_aifsn ||
-> -	   src->wmm_param[1].ac_aci_acm_aifsn)
-> +	   src->wmm_param[3].ac_aci_acm_aifsn)
->  		memcpy(dst->wmm_param, src->wmm_param, WME_AC_PRAM_LEN);
->  
->  	dst->SignalStrength = src->SignalStrength;
-> diff --git a/drivers/staging/gma500/mdfld_dsi_pkg_sender.c b/drivers/staging/gma500/mdfld_dsi_pkg_sender.c
-> index 9b96a5c..3a9f44f 100644
-> --- a/drivers/staging/gma500/mdfld_dsi_pkg_sender.c
-> +++ b/drivers/staging/gma500/mdfld_dsi_pkg_sender.c
-> @@ -1249,8 +1249,7 @@ int mdfld_dsi_read_gen_hs(struct mdfld_dsi_pkg_sender *sender,
->  			u32 *data,
->  			u16 len)
->  {
-> -	if (!sender || !data || param_num < 0 || param_num > 2
-> -		|| !data || !len) {
-> +	if (!sender || param_num < 0 || param_num > 2 || !data || !len) {
->  		DRM_ERROR("Invalid parameters\n");
->  		return -EINVAL;
->  	}
-> @@ -1267,8 +1266,7 @@ int mdfld_dsi_read_gen_lp(struct mdfld_dsi_pkg_sender *sender,
->  			u32 *data,
->  			u16 len)
->  {
-> -	if (!sender || !data || param_num < 0 || param_num > 2
-> -		|| !data || !len) {
-> +	if (!sender || param_num < 0 || param_num > 2 || !data || !len) {
->  		DRM_ERROR("Invalid parameters\n");
->  		return -EINVAL;
->  	}
-> 
-> --
-Hi,
-this is obviously correct but what is about readability ?
-would it be an option to break it into two line (or two if) like:
-  if (!sender || !data || !len)
-	if ( param_num < 0 || param_num > 2 )
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-re,
- wh
+---
+ drivers/video/omap2/dss/dispc.c |   16 ++++++----------
+ drivers/video/omap2/dss/dsi.c   |   28 +++++++++-------------------
+ drivers/video/omap2/dss/dss.c   |    9 +++------
+ drivers/video/omap2/dss/rfbi.c  |    5 ++---
+ drivers/video/omap2/dss/venc.c  |    8 +++-----
+ 5 files changed, 23 insertions(+), 43 deletions(-)
 
+diff --git a/drivers/video/omap2/dss/dispc.c b/drivers/video/omap2/dss/dispc.c
+index a5ec7f3..6fa866a 100644
+--- a/drivers/video/omap2/dss/dispc.c
++++ b/drivers/video/omap2/dss/dispc.c
+@@ -3322,7 +3322,8 @@ static int omap_dispchw_probe(struct platform_device *pdev)
+ 		r = -EINVAL;
+ 		goto err_ioremap;
+ 	}
+-	dispc.base = ioremap(dispc_mem->start, resource_size(dispc_mem));
++	dispc.base = devm_ioremap(&pdev->dev, dispc_mem->start,
++				  resource_size(dispc_mem));
+ 	if (!dispc.base) {
+ 		DSSERR("can't ioremap DISPC\n");
+ 		r = -ENOMEM;
+@@ -3332,14 +3333,14 @@ static int omap_dispchw_probe(struct platform_device *pdev)
+ 	if (dispc.irq < 0) {
+ 		DSSERR("platform_get_irq failed\n");
+ 		r = -ENODEV;
+-		goto err_irq;
++		goto err_ioremap;
+ 	}
+ 
+-	r = request_irq(dispc.irq, omap_dispc_irq_handler, IRQF_SHARED,
+-		"OMAP DISPC", dispc.pdev);
++	r = devm_request_irq(&pdev->dev, dispc.irq, omap_dispc_irq_handler,
++			     IRQF_SHARED, "OMAP DISPC", dispc.pdev);
+ 	if (r < 0) {
+ 		DSSERR("request_irq failed\n");
+-		goto err_irq;
++		goto err_ioremap;
+ 	}
+ 
+ 	pm_runtime_enable(&pdev->dev);
+@@ -3362,9 +3363,6 @@ static int omap_dispchw_probe(struct platform_device *pdev)
+ 
+ err_runtime_get:
+ 	pm_runtime_disable(&pdev->dev);
+-	free_irq(dispc.irq, dispc.pdev);
+-err_irq:
+-	iounmap(dispc.base);
+ err_ioremap:
+ 	clk_put(dispc.dss_clk);
+ err_get_clk:
+@@ -3377,8 +3375,6 @@ static int omap_dispchw_remove(struct platform_device *pdev)
+ 
+ 	clk_put(dispc.dss_clk);
+ 
+-	free_irq(dispc.irq, dispc.pdev);
+-	iounmap(dispc.base);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/video/omap2/dss/dsi.c b/drivers/video/omap2/dss/dsi.c
+index d4d676c..52b9359 100644
+--- a/drivers/video/omap2/dss/dsi.c
++++ b/drivers/video/omap2/dss/dsi.c
+@@ -4695,7 +4695,7 @@ static int omap_dsihw_probe(struct platform_device *dsidev)
+ 	struct resource *dsi_mem;
+ 	struct dsi_data *dsi;
+ 
+-	dsi = kzalloc(sizeof(*dsi), GFP_KERNEL);
++	dsi = devm_kzalloc(&dsidev->dev, sizeof(*dsi), GFP_KERNEL);
+ 	if (!dsi) {
+ 		r = -ENOMEM;
+ 		goto err_alloc;
+@@ -4724,7 +4724,7 @@ static int omap_dsihw_probe(struct platform_device *dsidev)
+ 
+ 	r = dsi_get_clocks(dsidev);
+ 	if (r)
+-		goto err_get_clk;
++		goto err_alloc;
+ 
+ 	pm_runtime_enable(&dsidev->dev);
+ 
+@@ -4742,7 +4742,8 @@ static int omap_dsihw_probe(struct platform_device *dsidev)
+ 		r = -EINVAL;
+ 		goto err_ioremap;
+ 	}
+-	dsi->base = ioremap(dsi_mem->start, resource_size(dsi_mem));
++	dsi->base = devm_ioremap(&dsidev->dev, dsi_mem->start,
++				 resource_size(dsi_mem));
+ 	if (!dsi->base) {
+ 		DSSERR("can't ioremap DSI\n");
+ 		r = -ENOMEM;
+@@ -4752,14 +4753,14 @@ static int omap_dsihw_probe(struct platform_device *dsidev)
+ 	if (dsi->irq < 0) {
+ 		DSSERR("platform_get_irq failed\n");
+ 		r = -ENODEV;
+-		goto err_get_irq;
++		goto err_ioremap;
+ 	}
+ 
+-	r = request_irq(dsi->irq, omap_dsi_irq_handler, IRQF_SHARED,
+-		dev_name(&dsidev->dev), dsi->pdev);
++	r = devm_request_irq(&dsidev->dev, dsi->irq, omap_dsi_irq_handler,
++			     IRQF_SHARED, dev_name(&dsidev->dev), dsi->pdev);
+ 	if (r < 0) {
+ 		DSSERR("request_irq failed\n");
+-		goto err_get_irq;
++		goto err_ioremap;
+ 	}
+ 
+ 	/* DSI VCs initialization */
+@@ -4773,7 +4774,7 @@ static int omap_dsihw_probe(struct platform_device *dsidev)
+ 
+ 	r = dsi_runtime_get(dsidev);
+ 	if (r)
+-		goto err_get_dsi;
++		goto err_ioremap;
+ 
+ 	rev = dsi_read_reg(dsidev, DSI_REVISION);
+ 	dev_dbg(&dsidev->dev, "OMAP DSI rev %d.%d\n",
+@@ -4791,14 +4792,8 @@ static int omap_dsihw_probe(struct platform_device *dsidev)
+ 
+ 	return 0;
+ 
+-err_get_dsi:
+-	free_irq(dsi->irq, dsi->pdev);
+-err_get_irq:
+-	iounmap(dsi->base);
+ err_ioremap:
+ 	pm_runtime_disable(&dsidev->dev);
+-err_get_clk:
+-	kfree(dsi);
+ err_alloc:
+ 	return r;
+ }
+@@ -4823,11 +4818,6 @@ static int omap_dsihw_remove(struct platform_device *dsidev)
+ 		dsi->vdds_dsi_reg = NULL;
+ 	}
+ 
+-	free_irq(dsi->irq, dsi->pdev);
+-	iounmap(dsi->base);
+-
+-	kfree(dsi);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/video/omap2/dss/dss.c b/drivers/video/omap2/dss/dss.c
+index 1703345..e75f837 100644
+--- a/drivers/video/omap2/dss/dss.c
++++ b/drivers/video/omap2/dss/dss.c
+@@ -751,7 +751,8 @@ static int omap_dsshw_probe(struct platform_device *pdev)
+ 		r = -EINVAL;
+ 		goto err_ioremap;
+ 	}
+-	dss.base = ioremap(dss_mem->start, resource_size(dss_mem));
++	dss.base = devm_ioremap(&pdev->dev, dss_mem->start,
++				resource_size(dss_mem));
+ 	if (!dss.base) {
+ 		DSSERR("can't ioremap DSS\n");
+ 		r = -ENOMEM;
+@@ -760,7 +761,7 @@ static int omap_dsshw_probe(struct platform_device *pdev)
+ 
+ 	r = dss_get_clocks();
+ 	if (r)
+-		goto err_clocks;
++		goto err_ioremap;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
+@@ -808,8 +809,6 @@ err_dpi:
+ err_runtime_get:
+ 	pm_runtime_disable(&pdev->dev);
+ 	dss_put_clocks();
+-err_clocks:
+-	iounmap(dss.base);
+ err_ioremap:
+ 	return r;
+ }
+@@ -819,8 +818,6 @@ static int omap_dsshw_remove(struct platform_device *pdev)
+ 	dpi_exit();
+ 	sdi_exit();
+ 
+-	iounmap(dss.base);
+-
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	dss_put_clocks();
+diff --git a/drivers/video/omap2/dss/rfbi.c b/drivers/video/omap2/dss/rfbi.c
+index 814bb95..159e914 100644
+--- a/drivers/video/omap2/dss/rfbi.c
++++ b/drivers/video/omap2/dss/rfbi.c
+@@ -925,7 +925,8 @@ static int omap_rfbihw_probe(struct platform_device *pdev)
+ 		r = -EINVAL;
+ 		goto err_ioremap;
+ 	}
+-	rfbi.base = ioremap(rfbi_mem->start, resource_size(rfbi_mem));
++	rfbi.base = devm_ioremap(&pdev->dev, rfbi_mem->start,
++				 resource_size(rfbi_mem));
+ 	if (!rfbi.base) {
+ 		DSSERR("can't ioremap RFBI\n");
+ 		r = -ENOMEM;
+@@ -963,7 +964,6 @@ err_get_ick:
+ 	rfbi_runtime_put();
+ err_get_rfbi:
+ 	pm_runtime_disable(&pdev->dev);
+-	iounmap(rfbi.base);
+ err_ioremap:
+ 	return r;
+ }
+@@ -971,7 +971,6 @@ err_ioremap:
+ static int omap_rfbihw_remove(struct platform_device *pdev)
+ {
+ 	pm_runtime_disable(&pdev->dev);
+-	iounmap(rfbi.base);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/video/omap2/dss/venc.c b/drivers/video/omap2/dss/venc.c
+index b3e9f90..1dfdde1 100644
+--- a/drivers/video/omap2/dss/venc.c
++++ b/drivers/video/omap2/dss/venc.c
+@@ -793,7 +793,8 @@ static int omap_venchw_probe(struct platform_device *pdev)
+ 		r = -EINVAL;
+ 		goto err_ioremap;
+ 	}
+-	venc.base = ioremap(venc_mem->start, resource_size(venc_mem));
++	venc.base = devm_ioremap(&pdev->dev, venc_mem->start,
++				 resource_size(venc_mem));
+ 	if (!venc.base) {
+ 		DSSERR("can't ioremap VENC\n");
+ 		r = -ENOMEM;
+@@ -802,7 +803,7 @@ static int omap_venchw_probe(struct platform_device *pdev)
+ 
+ 	r = venc_get_clocks(pdev);
+ 	if (r)
+-		goto err_get_clk;
++		goto err_ioremap;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
+@@ -820,8 +821,6 @@ static int omap_venchw_probe(struct platform_device *pdev)
+ err_get_venc:
+ 	pm_runtime_disable(&pdev->dev);
+ 	venc_put_clocks();
+-err_get_clk:
+-	iounmap(venc.base);
+ err_ioremap:
+ 	return r;
+ }
+@@ -837,7 +836,6 @@ static int omap_venchw_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	venc_put_clocks();
+ 
+-	iounmap(venc.base);
+ 	return 0;
+ }
+ 
 
