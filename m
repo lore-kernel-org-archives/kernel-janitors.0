@@ -1,84 +1,164 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 13 Jan 2012 06:32:12 +0000
+Date: Tue, 24 Jan 2012 17:29:13 +0000
 Subject: RE: [PATCH 1/15] sound/soc/mxs/mxs-saif.c: add missing iounmap
-Message-Id: <alpine.DEB.2.00.1201130731470.16047@pl-59034.rocq.inria.fr>
+Message-Id: <alpine.DEB.2.02.1201241828480.1779@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326362117-29371-1-git-send-email-Julia.Lawall@lip6.fr> <7FE21149F4667147B645348EC605788508FBDB@039-SN2MPN1-013.039d.mgd.msft.net>
+References: <1326362117-29371-1-git-send-email-Julia.Lawall@lip6.fr>
+	<7FE21149F4667147B645348EC605788508FBDB@039-SN2MPN1-013.039d.mgd.msft.net>
 In-Reply-To: <7FE21149F4667147B645348EC605788508FBDB@039-SN2MPN1-013.039d.mgd.msft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dong Aisheng-B29396 <B29396@freescale.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Liam Girdwood <lrg@ti.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Julia Lawall <Julia.Lawall@lip6.fr>, Liam Girdwood <lrg@ti.com>
 
-On Fri, 13 Jan 2012, Dong Aisheng-B29396 wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
->> -----Original Message-----
->> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
->> owner@vger.kernel.org] On Behalf Of Julia Lawall
->> Sent: Thursday, January 12, 2012 5:55 PM
->> To: Liam Girdwood
->> Cc: kernel-janitors@vger.kernel.org; Mark Brown; Jaroslav Kysela; Takashi Iwai;
->> alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org
->> Subject: [PATCH 1/15] sound/soc/mxs/mxs-saif.c: add missing iounmap
->>
->> From: Julia Lawall <Julia.Lawall@lip6.fr>
->>
->> Add missing iounmap in error handling code, in a case where the function already
->> preforms iounmap on some other execution path.
->>
->> A simplified version of the semantic match that finds this problem is as
->> follows: (http://coccinelle.lip6.fr/)
->>
->> // <smpl>
->> @@
->> expression e;
->> statement S,S1;
->> int ret;
->> @@
->> e = \(ioremap\|ioremap_nocache\)(...)
->> ... when != iounmap(e)
->> if (<+...e...+>) S
->> ... when any
->>     when != iounmap(e)
->> *if (...)
->>    { ... when != iounmap(e)
->>      return ...; }
->> ... when any
->> iounmap(e);
->> // </smpl>
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>
->> ---
->>  sound/soc/mxs/mxs-saif.c |    3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c index
->> 049e543..5ee0adb 100644
->> --- a/sound/soc/mxs/mxs-saif.c
->> +++ b/sound/soc/mxs/mxs-saif.c
->> @@ -680,7 +680,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
->>  		ret = -ENODEV;
->>  		dev_err(&pdev->dev, "failed to get dma resource: %d\n",
->>  			ret);
->> -		goto failed_ioremap;
->> +		goto failed_get_resource;
->>  	}
->>  	saif->dma_param.chan_num = dmares->start;
->>
->> @@ -739,6 +739,7 @@ failed_register:
->>  failed_get_irq2:
->>  	free_irq(saif->irq, saif);
->>  failed_get_irq1:
->> +failed_get_resource:
-> There's already a 'failed_get_resource' there, wouldn't your change break
-> The original code?
->
-> BTW, I guess a better way is that you can submit a patch to change the driver
-> To use devm_alloc_* and it's friend routines, then we do not need to fix
-> Such things any more.
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-Thanks for the suggestions.  I will fix it up with the devm_ solution.
+By removing the need for iounmap, this also eliminates a missing iounmap
+problem, in the the original error handling code following a successful
+call to ioremap.
 
-julia
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+  sound/soc/mxs/mxs-saif.c |   44 ++++++++++++++------------------------------
+  1 file changed, 14 insertions(+), 30 deletions(-)
+
+diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
+index f204dba..6a72ad9 100644
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@ -630,7 +630,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+  	if (pdev->id >= ARRAY_SIZE(mxs_saif))
+  		return -EINVAL;
+
+-	saif = kzalloc(sizeof(*saif), GFP_KERNEL);
++	saif = devm_kzalloc(&pdev->dev, sizeof(*saif), GFP_KERNEL);
+  	if (!saif)
+  		return -ENOMEM;
+
+@@ -652,10 +652,9 @@ static int mxs_saif_probe(struct platform_device *pdev)
+
+  	saif->clk = clk_get(&pdev->dev, NULL);
+  	if (IS_ERR(saif->clk)) {
+-		ret = PTR_ERR(saif->clk);
+  		dev_err(&pdev->dev, "Cannot get the clock: %d\n",
+  			ret);
+-		goto failed_clk;
++		return PTR_ERR(saif->clk);
+  	}
+
+  	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -666,18 +665,19 @@ static int mxs_saif_probe(struct platform_device *pdev)
+  		goto failed_get_resource;
+  	}
+
+-	if (!request_mem_region(iores->start, resource_size(iores),
+-				"mxs-saif")) {
++	if (!devm_request_mem_region(&pdev->dev, iores->start,
++				     resource_size(iores), "mxs-saif")) {
+  		dev_err(&pdev->dev, "request_mem_region failed\n");
+  		ret = -EBUSY;
+  		goto failed_get_resource;
+  	}
+
+-	saif->base = ioremap(iores->start, resource_size(iores));
++	saif->base = devm_ioremap(&pdev->dev, iores->start,
++				  resource_size(iores));
+  	if (!saif->base) {
+  		dev_err(&pdev->dev, "ioremap failed\n");
+  		ret = -ENODEV;
+-		goto failed_ioremap;
++		goto failed_get_resource;
+  	}
+
+  	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+@@ -685,7 +685,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+  		ret = -ENODEV;
+  		dev_err(&pdev->dev, "failed to get dma resource: %d\n",
+  			ret);
+-		goto failed_ioremap;
++		goto failed_get_resource;
+  	}
+  	saif->dma_param.chan_num = dmares->start;
+
+@@ -694,14 +694,15 @@ static int mxs_saif_probe(struct platform_device *pdev)
+  		ret = saif->irq;
+  		dev_err(&pdev->dev, "failed to get irq resource: %d\n",
+  			ret);
+-		goto failed_get_irq1;
++		goto failed_get_resource;
+  	}
+
+  	saif->dev = &pdev->dev;
+-	ret = request_irq(saif->irq, mxs_saif_irq, 0, "mxs-saif", saif);
++	ret = devm_request_irq(&pdev->dev, saif->irq, mxs_saif_irq, 0,
++			       "mxs-saif", saif);
+  	if (ret) {
+  		dev_err(&pdev->dev, "failed to request irq\n");
+-		goto failed_get_irq1;
++		goto failed_get_resource;
+  	}
+
+  	saif->dma_param.chan_irq = platform_get_irq(pdev, 1);
+@@ -709,7 +710,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+  		ret = saif->dma_param.chan_irq;
+  		dev_err(&pdev->dev, "failed to get dma irq resource: %d\n",
+  			ret);
+-		goto failed_get_irq2;
++		goto failed_get_resource;
+  	}
+
+  	platform_set_drvdata(pdev, saif);
+@@ -717,7 +718,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+  	ret = snd_soc_register_dai(&pdev->dev, &mxs_saif_dai);
+  	if (ret) {
+  		dev_err(&pdev->dev, "register DAI failed\n");
+-		goto failed_register;
++		goto failed_get_resource;
+  	}
+
+  	saif->soc_platform_pdev = platform_device_alloc(
+@@ -740,36 +741,19 @@ failed_pdev_add:
+  	platform_device_put(saif->soc_platform_pdev);
+  failed_pdev_alloc:
+  	snd_soc_unregister_dai(&pdev->dev);
+-failed_register:
+-failed_get_irq2:
+-	free_irq(saif->irq, saif);
+-failed_get_irq1:
+-	iounmap(saif->base);
+-failed_ioremap:
+-	release_mem_region(iores->start, resource_size(iores));
+  failed_get_resource:
+  	clk_put(saif->clk);
+-failed_clk:
+-	kfree(saif);
+
+  	return ret;
+  }
+
+  static int __devexit mxs_saif_remove(struct platform_device *pdev)
+  {
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+  	struct mxs_saif *saif = platform_get_drvdata(pdev);
+
+  	platform_device_unregister(saif->soc_platform_pdev);
+-
+  	snd_soc_unregister_dai(&pdev->dev);
+-
+-	iounmap(saif->base);
+-	release_mem_region(res->start, resource_size(res));
+-	free_irq(saif->irq, saif);
+-
+  	clk_put(saif->clk);
+-	kfree(saif);
+
+  	return 0;
+  }
+
