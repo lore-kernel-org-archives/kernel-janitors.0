@@ -1,70 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 12 Jan 2012 09:55:04 +0000
-Subject: [PATCH 2/15] drivers/net/ethernet/tundra/tsi108_eth.c: add missing iounmap
-Message-Id: <1326362117-29371-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Jan 2012 08:41:09 +0000
+Subject: [patch] ext4: remove an unneeded NULL check
+Message-Id: <20120124084109.GC29097@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+We dereference "bh" unconditionally a couple lines down to find
+"by->b_size".  This function is never called with a NULL "bh" so I have
+removed the check.
 
-Add missing iounmap in error handling code, in a case where the function
-already preforms iounmap on some other execution path.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e;
-statement S,S1;
-int ret;
-@@
-e = \(ioremap\|ioremap_nocache\)(...)
-... when != iounmap(e)
-if (<+...e...+>) S
-... when any
-    when != iounmap(e)
-*if (...)
-   { ... when != iounmap(e)
-     return ...; }
-... when any
-iounmap(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/ethernet/tundra/tsi108_eth.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/tundra/tsi108_eth.c b/drivers/net/ethernet/tundra/tsi108_eth.c
-index a9ce01b..164fb77 100644
---- a/drivers/net/ethernet/tundra/tsi108_eth.c
-+++ b/drivers/net/ethernet/tundra/tsi108_eth.c
-@@ -1604,7 +1604,7 @@ tsi108_init_one(struct platform_device *pdev)
- 	data->phyregs = ioremap(einfo->phyregs, 0x400);
- 	if (NULL = data->phyregs) {
- 		err = -ENOMEM;
--		goto regs_fail;
-+		goto phyregs_fail;
- 	}
- /* MII setup */
- 	data->mii_if.dev = dev;
-@@ -1663,9 +1663,11 @@ tsi108_init_one(struct platform_device *pdev)
- 	return 0;
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index 164c560..a4a0234 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -91,17 +91,17 @@ int __ext4_check_dir_entry(const char *function, unsigned int line,
+ 		return 0;
  
- register_fail:
--	iounmap(data->regs);
- 	iounmap(data->phyregs);
+ 	if (filp)
+-		ext4_error_file(filp, function, line, bh ? bh->b_blocknr : 0,
++		ext4_error_file(filp, function, line, bh->b_blocknr,
+ 				"bad entry in directory: %s - offset=%u(%u), "
+ 				"inode=%u, rec_len=%d, name_len=%d",
+-				error_msg, (unsigned) (offset%bh->b_size),
++				error_msg, (unsigned) (offset % bh->b_size),
+ 				offset, le32_to_cpu(de->inode),
+ 				rlen, de->name_len);
+ 	else
+-		ext4_error_inode(dir, function, line, bh ? bh->b_blocknr : 0,
++		ext4_error_inode(dir, function, line, bh->b_blocknr,
+ 				"bad entry in directory: %s - offset=%u(%u), "
+ 				"inode=%u, rec_len=%d, name_len=%d",
+-				error_msg, (unsigned) (offset%bh->b_size),
++				error_msg, (unsigned) (offset % bh->b_size),
+ 				offset, le32_to_cpu(de->inode),
+ 				rlen, de->name_len);
  
-+phyregs_fail:
-+	iounmap(data->regs);
-+
- regs_fail:
- 	free_netdev(dev);
- 	return err;
-
