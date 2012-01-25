@@ -1,91 +1,27 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:50 +0000
-Subject: [PATCH 15/16] Staging: quickstart: Add QS_INFO and QS_ERR macros for logs
-Message-Id: <1326320574-11220-16-git-send-email-szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Jan 2012 07:59:31 +0000
+Subject: [patch -next] bnx2x: unlock before returning an error
+Message-Id: <20120125075931.GA20199@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326147815-11451-16-git-send-email-szymon@janc.net.pl>
-In-Reply-To: <1326147815-11451-16-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eilon Greenstein <eilong@broadcom.com>, Yuval Mintz <yuvalmin@broadcom.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |   17 +++++++++--------
- 1 files changed, 9 insertions(+), 8 deletions(-)
+We introduced a new return here but forgot to drop the lock.
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 51a6d0c..c757ef6 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -44,6 +44,9 @@ MODULE_LICENSE("GPL");
- #define QUICKSTART_PF_DRIVER_NAME	"quickstart"
- #define QUICKSTART_PF_DEVICE_NAME	"quickstart"
- 
-+#define QS_INFO(fmt, arg...)	printk(KERN_INFO "quickstart: " fmt "\n", ##arg)
-+#define QS_ERR(fmt, arg...)	printk(KERN_ERR "quickstart: " fmt "\n", ##arg)
-+
- /*
-  * There will be two events:
-  * 0x02 - A hot button was pressed while device was off/sleeping.
-@@ -164,6 +167,7 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
- 		input_sync(quickstart_input);
- 		break;
- 	default:
-+		QS_ERR("Unexpected ACPI event notify (%u)", event);
- 		break;
- 	}
- }
-@@ -181,8 +185,7 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 	status = acpi_evaluate_object(quickstart->device->handle, "GHID", NULL,
- 								&buffer);
- 	if (ACPI_FAILURE(status)) {
--		printk(KERN_ERR "quickstart: %s GHID method failed.\n",
--						quickstart->button->name);
-+		QS_ERR("%s GHID method failed", quickstart->button->name);
- 		return -EINVAL;
- 	}
- 
-@@ -205,8 +208,7 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 		quickstart->button->id = *(uint64_t *)buffer.pointer;
- 		break;
- 	default:
--		printk(KERN_ERR "quickstart: %s GHID method returned buffer "
--				"of unexpected length %u\n",
-+		QS_ERR("%s GHID method returned buffer of unexpected length %u",
- 				quickstart->button->name, buffer.length);
- 		ret = -EINVAL;
- 		break;
-@@ -267,7 +269,7 @@ static int quickstart_acpi_add(struct acpi_device *device)
- 						quickstart_acpi_notify,
- 						quickstart);
- 	if (ACPI_FAILURE(status)) {
--		printk(KERN_ERR "quickstart: Notify handler install error\n");
-+		QS_ERR("Notify handler install error");
- 		ret = -ENODEV;
- 		goto fail_installnotify;
- 	}
-@@ -307,7 +309,7 @@ static int quickstart_acpi_remove(struct acpi_device *device, int type)
- 	status = acpi_remove_notify_handler(device->handle, ACPI_ALL_NOTIFY,
- 						quickstart_acpi_notify);
- 	if (ACPI_FAILURE(status))
--		printk(KERN_ERR "quickstart: Error removing notify handler\n");
-+		QS_ERR("Error removing notify handler");
- 
- 	kfree(quickstart);
- 
-@@ -433,8 +435,7 @@ static int __init quickstart_init(void)
- 	if (ret)
- 		goto fail_input;
- 
--	printk(KERN_INFO "quickstart: ACPI Direct App Launch ver %s\n",
--							QUICKSTART_VERSION);
-+	QS_INFO("ACPI Direct App Launch ver %s", QUICKSTART_VERSION);
- 
- 	return 0;
- fail_input:
--- 
-1.7.8.2
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
+index cb6339c..69465c3 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
+@@ -1836,6 +1836,7 @@ static int bnx2x_vlan_mac_del_all(struct bnx2x *bp,
+ 			rc = exeq->remove(bp, exeq->owner, exeq_pos);
+ 			if (rc) {
+ 				BNX2X_ERR("Failed to remove command\n");
++				spin_unlock_bh(&exeq->lock);
+ 				return rc;
+ 			}
+ 			list_del(&exeq_pos->link);
