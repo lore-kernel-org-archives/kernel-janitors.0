@@ -1,30 +1,28 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Tue, 17 Jan 2012 10:41:09 +0000
-Subject: Re: [patch] Staging: comedi: logical || vs bitwise |
-Message-Id: <4F155045.8080005@mev.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Jan 2012 06:15:29 +0000
+Subject: [patch] infiniband: calling PTR_ERR() on wrong variable in create_file()
+Message-Id: <20120126061529.GC15856@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120117073112.GC11358@elgon.mountain>
-In-Reply-To: <20120117073112.GC11358@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mike Marciniszyn <infinipath-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 2012-01-17 07:31, Dan Carpenter wrote:
-> These are bitfields and the intend was to OR them together.  A logical
-> OR here is simply 1.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+"dentry" is a valid pointer.  "*dentry" was intended.
 
-You have my ack.  I'll just add that since the driver is incomplete, the 
-buggy code is not currently reached.  (In fact, as the AI and AO 
-subdevices have neither a range_table nor a range_table_list, the comedi 
-core's COMEDI_INSN/COMEDI_INSNLIST ioctl handlers will return an error 
-for these subdevices before it even calls the driver's insn handlers for 
-these subdevices!)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Ian Abbott <abbotti@mev.co.uk>
-
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
--=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
+diff --git a/drivers/infiniband/hw/ipath/ipath_fs.c b/drivers/infiniband/hw/ipath/ipath_fs.c
+index b7d4216..a4de9d5 100644
+--- a/drivers/infiniband/hw/ipath/ipath_fs.c
++++ b/drivers/infiniband/hw/ipath/ipath_fs.c
+@@ -89,7 +89,7 @@ static int create_file(const char *name, umode_t mode,
+ 		error = ipathfs_mknod(parent->d_inode, *dentry,
+ 				      mode, fops, data);
+ 	else
+-		error = PTR_ERR(dentry);
++		error = PTR_ERR(*dentry);
+ 	mutex_unlock(&parent->d_inode->i_mutex);
+ 
+ 	return error;
