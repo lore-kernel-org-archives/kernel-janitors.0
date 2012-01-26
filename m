@@ -1,30 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Jan 2012 06:13:31 +0000
-Subject: [patch] nfc: NULL vs zero in nci_activate_target()
-Message-Id: <20120126061330.GA15856@elgon.mountain>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Date: Thu, 26 Jan 2012 20:23:47 +0000
+Subject: Re: [patch] nfc: NULL vs zero in nci_activate_target()
+Message-Id: <20120126202347.GA2305@sortiz-mobl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120126061330.GA15856@elgon.mountain>
+In-Reply-To: <20120126061330.GA15856@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
-Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>, Ilan Elias <ilane@ti.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, "David S. Miller" <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>, Ilan Elias <ilane@ti.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is a pointer so it should be NULL instead of zero.  Sparse
-complains about this stuff:
-net/nfc/nci/core.c:447:37: warning: Using plain integer as NULL pointer
+Hi Dan,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Thu, Jan 26, 2012 at 09:13:31AM +0300, Dan Carpenter wrote:
+> This is a pointer so it should be NULL instead of zero.  Sparse
+> complains about this stuff:
+> net/nfc/nci/core.c:447:37: warning: Using plain integer as NULL pointer
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Samuel Ortiz <sameo@linux.intel.com>
 
-diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-index 12d1d4d..a47e90c 100644
---- a/net/nfc/nci/core.c
-+++ b/net/nfc/nci/core.c
-@@ -444,7 +444,7 @@ static int nci_activate_target(struct nfc_dev *nfc_dev, __u32 target_idx,
- {
- 	struct nci_dev *ndev = nfc_get_drvdata(nfc_dev);
- 	struct nci_rf_discover_select_param param;
--	struct nfc_target *target = 0;
-+	struct nfc_target *target = NULL;
- 	int i;
- 	int rc = 0;
- 
+Cheers,
+Samuel.
+
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
