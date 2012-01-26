@@ -1,18 +1,28 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 02 Jan 2012 12:29:57 +0000
-Subject: Re: [PATCH 0/10] use devm_ functions
-Message-Id: <20120102122957.GL2899@opensource.wolfsonmicro.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Jan 2012 06:14:06 +0000
+Subject: [patch] ext4: using PTR_ERR() on the wrong variable in ext4_ext_migrate()
+Message-Id: <20120126061406.GB15856@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1325177489-13815-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Dec 29, 2011 at 05:51:19PM +0100, Julia Lawall wrote:
-> The following is a semantic patch (http://coccinelle.lip6.fr/) that
-> introduces uses of various devm_ functions.  The main strategy is
+"inode" is a valid pointer here.  "tmp_inode" was intended.
 
-Applied all except the jz4740 patch which Axel already did, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
+index e7d6bb0..f39f80f 100644
+--- a/fs/ext4/migrate.c
++++ b/fs/ext4/migrate.c
+@@ -471,7 +471,7 @@ int ext4_ext_migrate(struct inode *inode)
+ 	tmp_inode = ext4_new_inode(handle, inode->i_sb->s_root->d_inode,
+ 				   S_IFREG, NULL, goal, owner);
+ 	if (IS_ERR(tmp_inode)) {
+-		retval = PTR_ERR(inode);
++		retval = PTR_ERR(tmp_inode);
+ 		ext4_journal_stop(handle);
+ 		return retval;
+ 	}
