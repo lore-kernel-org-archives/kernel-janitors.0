@@ -1,36 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 24 Jan 2012 13:31:36 +0000
-Subject: [PATCH] arch/hexagon/kernel/dma.c: make function static
-Message-Id: <1327411896-4532-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Richard Kuo <rkuo@codeaurora.org>
+Date: Thu, 26 Jan 2012 22:52:22 +0000
+Subject: Re: [PATCH] arch/hexagon/kernel/dma.c: make function static
+Message-Id: <20120126225222.GA11120@codeaurora.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1327411896-4532-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1327411896-4532-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Kuo <rkuo@codeaurora.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Tue, Jan 24, 2012 at 02:31:36PM +0100, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> This function is only used in the same file, and the other similar
+> functions in this file are also static.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  arch/hexagon/kernel/dma.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/hexagon/kernel/dma.c b/arch/hexagon/kernel/dma.c
+> index 54891e1..0b49a0a 100644
+> --- a/arch/hexagon/kernel/dma.c
+> +++ b/arch/hexagon/kernel/dma.c
+> @@ -54,7 +54,7 @@ static struct gen_pool *coherent_pool;
+>  
+>  /* Allocates from a pool of uncached memory that was reserved at boot time */
+>  
+> -void *hexagon_dma_alloc_coherent(struct device *dev, size_t size,
+> +static void *hexagon_dma_alloc_coherent(struct device *dev, size_t size,
+>  				 dma_addr_t *dma_addr, gfp_t flag)
+>  {
+>  	void *ret;
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-hexagon" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-This function is only used in the same file, and the other similar
-functions in this file are also static.
+Thanks!
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Richard Kuo <rkuo@codeaurora.org>
 
----
- arch/hexagon/kernel/dma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/hexagon/kernel/dma.c b/arch/hexagon/kernel/dma.c
-index 54891e1..0b49a0a 100644
---- a/arch/hexagon/kernel/dma.c
-+++ b/arch/hexagon/kernel/dma.c
-@@ -54,7 +54,7 @@ static struct gen_pool *coherent_pool;
- 
- /* Allocates from a pool of uncached memory that was reserved at boot time */
- 
--void *hexagon_dma_alloc_coherent(struct device *dev, size_t size,
-+static void *hexagon_dma_alloc_coherent(struct device *dev, size_t size,
- 				 dma_addr_t *dma_addr, gfp_t flag)
- {
- 	void *ret;
+-- 
 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
