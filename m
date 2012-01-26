@@ -1,168 +1,55 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 24 Jan 2012 20:45:26 +0000
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Thu, 26 Jan 2012 10:53:32 +0000
 Subject: Re: [PATCH 1/15] sound/soc/mxs/mxs-saif.c: add missing iounmap
-Message-Id: <alpine.DEB.2.02.1201242144580.1998@hadrien>
+Message-Id: <20120126105331.GA8041@opensource.wolfsonmicro.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="ew6BAiZeqk4r7MaW"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1326362117-29371-1-git-send-email-Julia.Lawall@lip6.fr>
 	<7FE21149F4667147B645348EC605788508FBDB@039-SN2MPN1-013.039d.mgd.msft.net>
 	<alpine.DEB.2.02.1201241828480.1779@localhost6.localdomain6>
 	<20120124202203.GD1135@opensource.wolfsonmicro.com>
-In-Reply-To: <20120124202203.GD1135@opensource.wolfsonmicro.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+	<alpine.DEB.2.02.1201242144580.1998@hadrien>
+In-Reply-To: <alpine.DEB.2.02.1201242144580.1998@hadrien>
+To: Julia Lawall <julia.lawall@lip6.fr>
 Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng-B29396 <B29396@freescale.com>, Liam Girdwood <lrg@ti.com>
 
-From nobody Tue Jan 24 18:26:10 CET 2012
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Liam Girdwood <lrg@ti.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>,Jaroslav Kysela <perex@perex.cz>,Takashi Iwai <tiwai@suse.de>,alsa-devel@alsa-project.org,linux-kernel@vger.kernel.org
-Subject: [PATCH] sound/soc/mxs/mxs-saif.c: use devm_ functions
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+--ew6BAiZeqk4r7MaW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses these functions for data that is allocated in
-the probe function of a platform device and is only freed in the remove
-function.
+On Tue, Jan 24, 2012 at 09:45:26PM +0100, Julia Lawall wrote:
 
-By removing the need for iounmap, this also eliminates a missing iounmap
-problem, in the the original error handling code following a successful
-call to ioremap.
+> The various devm_ functions allocate memory that is released when a driver
+> detaches.  This patch uses these functions for data that is allocated in
+> the probe function of a platform device and is only freed in the remove
+> function.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This is a really nice cleanup - I tried to apply it but unfortunately it
+needs a rebase due to the change to use clk_prepare()/clk_unprepare()
+which went in recently.  Could you rebase against current -next please?
 
----
-  sound/soc/mxs/mxs-saif.c |   43 ++++++++++++++-----------------------------
-  1 file changed, 14 insertions(+), 29 deletions(-)
+--ew6BAiZeqk4r7MaW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
-index f204dba..7d755e0 100644
---- a/sound/soc/mxs/mxs-saif.c
-+++ b/sound/soc/mxs/mxs-saif.c
-@@ -630,7 +630,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
-  	if (pdev->id >= ARRAY_SIZE(mxs_saif))
-  		return -EINVAL;
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
--	saif = kzalloc(sizeof(*saif), GFP_KERNEL);
-+	saif = devm_kzalloc(&pdev->dev, sizeof(*saif), GFP_KERNEL);
-  	if (!saif)
-  		return -ENOMEM;
+iQIcBAEBAgAGBQJPITCgAAoJEBus8iNuMP3dwdsQAJ56S/crd3AxbmMkzZ3Mw98q
+hnczJz2G63Ox7lPwugL9sj1fqFmQjZYuJfwrgqntrSkPuJ5iOVFQrmOAlJS8Oi7X
+W2tJUtzZWZKI0B90SglcMkULpG+qkCaQ3CMXHxdkFqEFQ7MJzd609kugWkCJS5ou
+gOGLXt0FyE6iwlZmn9nRqrNDjLeECKMfF5BMlAJ72EARWOSMBwsyKvxfUpCwoTKQ
+OToQxW2uljtrKu8w907MubWZAWXhSZ7nVVUNd2rC4K9Ri1ssdNKLL04TTxNdGHop
+FmLoSb9sKZp2j0op32bwnrZlKxIa7isTocBepW7LZLMMI8iIISt1cYqw/Rmv9G14
+EIPiiANQIyZrrkwMRZO8UNlmM+6pxiQg62Ns53UY2vsVJI99DiMcyYXrPUfDvXt0
+qILSCMs8xkqSJDxrPcZJyTFP+StuHSs5s5woh4MohUn2Lc18izmayaudT9ni8eL1
+S5ngXgV8xzuiGeHCRDz4nzkk3JlRKwlhiWL7oV1Cu40mrthvROPEVaxlJwEfhGeC
+cvIdfPYhu9gM9RqCK9UsKVTHEG2MkEkM6p0BTcazEWSUkZ8YsXDo5m6iWU20URXK
+CW47OINCBV2PpTZEfO+mTQoQCVXVwAVZPR5GZmRhEzpOwSHinnd5Ce+UOli2rLYI
+Teuo5tyqs3JDa+VlO7uO
+=yVEa
+-----END PGP SIGNATURE-----
 
-@@ -655,7 +655,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
-  		ret = PTR_ERR(saif->clk);
-  		dev_err(&pdev->dev, "Cannot get the clock: %d\n",
-  			ret);
--		goto failed_clk;
-+		return ret;
-  	}
-
-  	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -666,18 +666,19 @@ static int mxs_saif_probe(struct platform_device *pdev)
-  		goto failed_get_resource;
-  	}
-
--	if (!request_mem_region(iores->start, resource_size(iores),
--				"mxs-saif")) {
-+	if (!devm_request_mem_region(&pdev->dev, iores->start,
-+				     resource_size(iores), "mxs-saif")) {
-  		dev_err(&pdev->dev, "request_mem_region failed\n");
-  		ret = -EBUSY;
-  		goto failed_get_resource;
-  	}
-
--	saif->base = ioremap(iores->start, resource_size(iores));
-+	saif->base = devm_ioremap(&pdev->dev, iores->start,
-+				  resource_size(iores));
-  	if (!saif->base) {
-  		dev_err(&pdev->dev, "ioremap failed\n");
-  		ret = -ENODEV;
--		goto failed_ioremap;
-+		goto failed_get_resource;
-  	}
-
-  	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
-@@ -685,7 +686,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
-  		ret = -ENODEV;
-  		dev_err(&pdev->dev, "failed to get dma resource: %d\n",
-  			ret);
--		goto failed_ioremap;
-+		goto failed_get_resource;
-  	}
-  	saif->dma_param.chan_num = dmares->start;
-
-@@ -694,14 +695,15 @@ static int mxs_saif_probe(struct platform_device *pdev)
-  		ret = saif->irq;
-  		dev_err(&pdev->dev, "failed to get irq resource: %d\n",
-  			ret);
--		goto failed_get_irq1;
-+		goto failed_get_resource;
-  	}
-
-  	saif->dev = &pdev->dev;
--	ret = request_irq(saif->irq, mxs_saif_irq, 0, "mxs-saif", saif);
-+	ret = devm_request_irq(&pdev->dev, saif->irq, mxs_saif_irq, 0,
-+			       "mxs-saif", saif);
-  	if (ret) {
-  		dev_err(&pdev->dev, "failed to request irq\n");
--		goto failed_get_irq1;
-+		goto failed_get_resource;
-  	}
-
-  	saif->dma_param.chan_irq = platform_get_irq(pdev, 1);
-@@ -709,7 +711,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
-  		ret = saif->dma_param.chan_irq;
-  		dev_err(&pdev->dev, "failed to get dma irq resource: %d\n",
-  			ret);
--		goto failed_get_irq2;
-+		goto failed_get_resource;
-  	}
-
-  	platform_set_drvdata(pdev, saif);
-@@ -717,7 +719,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
-  	ret = snd_soc_register_dai(&pdev->dev, &mxs_saif_dai);
-  	if (ret) {
-  		dev_err(&pdev->dev, "register DAI failed\n");
--		goto failed_register;
-+		goto failed_get_resource;
-  	}
-
-  	saif->soc_platform_pdev = platform_device_alloc(
-@@ -740,36 +742,19 @@ failed_pdev_add:
-  	platform_device_put(saif->soc_platform_pdev);
-  failed_pdev_alloc:
-  	snd_soc_unregister_dai(&pdev->dev);
--failed_register:
--failed_get_irq2:
--	free_irq(saif->irq, saif);
--failed_get_irq1:
--	iounmap(saif->base);
--failed_ioremap:
--	release_mem_region(iores->start, resource_size(iores));
-  failed_get_resource:
-  	clk_put(saif->clk);
--failed_clk:
--	kfree(saif);
-
-  	return ret;
-  }
-
-  static int __devexit mxs_saif_remove(struct platform_device *pdev)
-  {
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-  	struct mxs_saif *saif = platform_get_drvdata(pdev);
-
-  	platform_device_unregister(saif->soc_platform_pdev);
--
-  	snd_soc_unregister_dai(&pdev->dev);
--
--	iounmap(saif->base);
--	release_mem_region(res->start, resource_size(res));
--	free_irq(saif->irq, saif);
--
-  	clk_put(saif->clk);
--	kfree(saif);
-
-  	return 0;
-  }
+--ew6BAiZeqk4r7MaW--
