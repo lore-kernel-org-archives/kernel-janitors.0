@@ -1,62 +1,61 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 30 Jan 2012 13:58:58 +0000
-Subject: Re: [patch] exofs: fix endian conversion in exofs_sync_fs()
-Message-Id: <20120130135858.GH3356@mwanda>
+Date: Fri, 27 Jan 2012 12:58:33 +0000
+Subject: [patch v2] intelfb: remove some dead code
+Message-Id: <20120127125833.GD3356@mwanda>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="4N29bJelYIMOTi0e"
+Content-Type: multipart/mixed; boundary="Mjcb6KWfk+dITC8b"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111121144311.GA19025@elgon.mountain>
-In-Reply-To: <20111121144311.GA19025@elgon.mountain>
-To: kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
 
---4N29bJelYIMOTi0e
+--Mjcb6KWfk+dITC8b
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 30, 2012 at 03:45:07PM +0200, Boaz Harrosh wrote:
-> Do you mean this code:
-> 	struct __alloc_ore_devs_and_exofs_devs {
-> 		/* Twice bigger table: See exofs_init_comps() and comment at
-> 		 * exofs_read_lookup_dev_table()
-> 		 */
-> =3D>		struct ore_dev *oreds[numdevs * 2 - 1];
-> =3D>		struct exofs_dev eds[numdevs];
-> 	} *aoded;
->=20
->=20
-> If so than Sparse should be fixed. It is plain wrong. This complete
-> structure is kmalloc(ed) two lines below.
->=20
+The goto on the line before means the return is unreachable.  The goto
+also returns -ENODEV so no changes are needed there.
 
-Oh yeah.  You are right.  I misread how that worked.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: fixed a typo in the commit message
 
-regards,
-dan carpenter
+diff --git a/drivers/video/intelfb/intelfbdrv.c b/drivers/video/intelfb/int=
+elfbdrv.c
+index c6afa33..02fd226 100644
+--- a/drivers/video/intelfb/intelfbdrv.c
++++ b/drivers/video/intelfb/intelfbdrv.c
+@@ -529,7 +529,6 @@ static int __devinit intelfb_pci_register(struct pci_de=
+v *pdev,
+ 	if (fb_alloc_cmap(&info->cmap, 256, 1) < 0) {
+ 		ERR_MSG("Could not allocate cmap for intelfb_info.\n");
+ 		goto err_out_cmap;
+-		return -ENODEV;
+ 	}
+=20
+ 	dinfo =3D info->par;
 
 
-
---4N29bJelYIMOTi0e
+--Mjcb6KWfk+dITC8b
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPJqIiAAoJEOnZkXI/YHqRZnkP/0NUKhkXB2cizs/j7aLAalC4
-L3of55ElwO6eLeyBFhgPzVGLCYIrhQgbqS+GyDP6WrVTEedqtSC/mEaVX1I8BUAM
-gjGchI0x+MvGSfobivwcXEH0mklzTQ8CPbFo7ii52/sQfv5/U97Oclm8NgA+qGN6
-ylZLUzoJX7mGCY4cmj3DYQyrhagVa/9V+xkT4rYcICYPURNfzlmou485KlPjZYyz
-j0ArudoemtzcVW7jMtXj/tZ5Tr6Wc2Hoh+hv/ZnonLQZ09bHHoFYDl2iH/UGDb8T
-0HNiFn2s3mYiReUfCzJh31XR+yWwVniJ4zVhviS+GPYVN6gTWUsc5N9aBUtUBWLi
-FcLwZxIndEoMyo0AfQQV12CF4BHhkM40JkPUhPkiPCLUFu6x3MIc1/7aPnpGmug8
-1VD5lVckrJezIQ/jrYFcN+zrFSTH5moaKaJx9RjDe43IQ7CCaoT3+0P5RrOhs9eK
-6Yu0rnxempRSW1UYfGECzFPHJ1NN7Q+zzGASFazm+Ep9FUM+2P9TumiO3woOAXMn
-8RRKB/PsFNm+myjcvQhgAUzxuPFsUkrDdpXkMVa8nzCvbN0tfvzXj3s29snmmjix
-odP8wzl+47hKukd1hZrqlci1TU53w/cEbh23bRWr2i9bYemLKKA/gbWSrAlttMYN
-HXTrYC1lbmF4FKVyo7IW
-=lZCE
+iQIcBAEBAgAGBQJPIp94AAoJEOnZkXI/YHqR1M0QAJOkKtcwcn6asAnKBIUyol6R
+TgHRjCVxacOybtyt5xJus7ODsAZxxnsF3PN4T7ratyljVIRXTcc+8R2AD8jsWKBb
+hFN0Iq1qWYY+sieB0R/ZdrqnDtAUpM78PYcSA8O4iIO5pT3WZPPYsNFb4sb4OIcJ
+zwy0Bybcqo/gb1akcetKm3yaz3lUpKiHv+6pSCQmkjrbYOTHqv1yrWIpp25rwmao
+JtEdHTGEW1K+Xl6O/blKw3mZO5gKB8WNZFjgeXuP1BC3shXDZGhJCiiltfmeBOHj
+MJMRTnHpoSp7TcFsOFJ8WAT1q7fDCfkbOglNDKJF+LeBXnLXyQJaewY3Zl2fh1cb
+jdSvLyhAQ3dI4zgG8eAgCThH9YWxdqmKoQfkW77x6QNNMSJgwVjgGuda35EGDx/o
+n55C6d1E4ZBTv2uOhO0KEDslDBcp6+AYbHhANRiykuWg/Ydvls1xoTdSKDEW4XWF
+N3dY1CmcOtlUwvtAdkqbFGgQFS+uGBvwTWLeMlASKbfLJ+jnlcmLJVyXzRbOzfFP
+OXyLbu9P3HFgjOBvesO1J1uUuBBC+Sv0vJ/jzg7Ce+Rn+dKoGst9t5ABCDQy8k79
+9tXxNSTmABf5cYIvF4WuJrHicyjs66IRuvDLwMzq601ZPTmvbFHpN9U4nYMAzIR5
+GnY6pglXO2xrC/N9y9HD
+=+OBg
 -----END PGP SIGNATURE-----
 
---4N29bJelYIMOTi0e--
+--Mjcb6KWfk+dITC8b--
