@@ -1,67 +1,74 @@
-From: Ryan Mallon <rmallon@gmail.com>
-Date: Fri, 27 Jan 2012 22:27:55 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 27 Jan 2012 22:46:11 +0000
 Subject: Re: [PATCH next V2] drivers: Use NULL not zero pointer assignments
-Message-Id: <4F2324EB.1030109@gmail.com>
+Message-Id: <alpine.DEB.2.02.1201272337580.1993@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120126061330.GA15856@elgon.mountain>	 <1327559803.28707.6.camel@joe2Laptop> <1327642391.4846.36.camel@joe2Laptop>	 <4F22421A.5020501@gmail.com> <1327649890.12089.20.camel@joe2Laptop>
-In-Reply-To: <1327649890.12089.20.camel@joe2Laptop>
+References: <20120126061330.GA15856@elgon.mountain>  <1327559803.28707.6.camel@joe2Laptop> <1327642391.4846.36.camel@joe2Laptop>  <4F22421A.5020501@gmail.com> <1327649890.12089.20.camel@joe2Laptop> <4F2324EB.1030109@gmail.com>
+In-Reply-To: <4F2324EB.1030109@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jiri Kosina <trivial@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ryan Mallon <rmallon@gmail.com>
+Cc: Joe Perches <joe@perches.com>, Dan Carpenter <dan.carpenter@oracle.com>, Jiri Kosina <trivial@kernel.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 27/01/12 18:38, Joe Perches wrote:
-> On Fri, 2012-01-27 at 17:20 +1100, Ryan Mallon wrote:
->> On 27/01/12 16:33, Joe Perches wrote:
->>> Using NULL pointer assignments is more kernel-style standard.
->>> Uncompiled, untested.
->>> Done via cocinelle script:
->>> @@
->>> type T;
->>> T *pointer;
->>> @@
->>> -pointer = 0
->>> +pointer = NULL
->> Hi Joe,
-> Hi Ryan.
+On Sat, 28 Jan 2012, Ryan Mallon wrote:
+
+> On 27/01/12 18:38, Joe Perches wrote:
+>> On Fri, 2012-01-27 at 17:20 +1100, Ryan Mallon wrote:
+>>> On 27/01/12 16:33, Joe Perches wrote:
+>>>> Using NULL pointer assignments is more kernel-style standard.
+>>>> Uncompiled, untested.
+>>>> Done via cocinelle script:
+>>>> @@
+>>>> type T;
+>>>> T *pointer;
+>>>> @@
+>>>> -pointer = 0
+>>>> +pointer = NULL
+>>> Hi Joe,
+>> Hi Ryan.
+>>
+>>> I think you can drop a lot of the initialisations completely rather than
+>>> convert them. I've pointed some out below. I'm just scanning through for
+>>> likely candidates and I didn't bother looking at the staging drivers, so
+>>> this list is not comprehensive.
+>> I'll try a more generic solution.
+>> Here's a possible cocci script that looks for declarations with
+>> initializations that are later overwritten.
 >
->> I think you can drop a lot of the initialisations completely rather than
->> convert them. I've pointed some out below. I'm just scanning through for
->> likely candidates and I didn't bother looking at the staging drivers, so
->> this list is not comprehensive.
-> I'll try a more generic solution.
-> Here's a possible cocci script that looks for declarations with
-> initializations that are later overwritten.
+> I think you need to be careful with this. I don't know enough about 
+> Coccinelle, but in general control flow makes this a difficult problem. 
+> This are also the cases where a variable is assigned on all control 
+> paths before being used, but also has an (seemingly useless) initialiser 
+> because gcc occasionally cannot determine that the variable is always 
+> initialised (because in general it is undecidable) and so the 
+> initialisation is there to prevent a compiler warning.
 
-I think you need to be careful with this. I don't know enough about Coccinelle, but in general control flow makes this a difficult problem. This are also the cases where a variable is assigned on all control paths before being used, but also has an (seemingly useless) initialiser because gcc occasionally cannot determine that the variable is always initialised (because in general it is undecidable) and so the initialisation is there to prevent a compiler warning.
+Coccinelle follows control-flow paths.  But it is not likely to be more 
+clever about this than gcc.  It is unaware of the value of anything, so it 
+does not realize that some control-flow paths are impossible.  So I don't 
+think there would be big problems here.
 
-There were also a couple of cases I pointed out where the assignment of zero to a pointer variable was actually masking some other bug, and so replacing the assignment with NULL, or removing the initialisation is not necessarily the correct fix.
+> There were also a couple of cases I pointed out where the assignment of 
+> zero to a pointer variable was actually masking some other bug, and so 
+> replacing the assignment with NULL, or removing the initialisation is 
+> not necessarily the correct fix.
 
-A script might be useful for identifying potential cases, but I think it is worth looking at each one individually to determine what the correct fix is.
+But in this case it doesn't seem like it would hurt?  Having 0 or NULL 
+would probably not make someone more or less likely to think about the 
+function as a whole?
 
-~Ryan
+For example, in the container_of case, having NULL is probably better than 
+0, because someone else is more likely to look for container_of's of NULL 
+than container_of's of 0.
 
-> $ cat multi_set.cocci
-> @@
-> type T;
-> identifier x;
-> expression y;
-> expression z;
-> @@
-> -T x = y;
-> +T x;
-> ...
-> x = z
-> $
->
-> This script has a defect because expression z may
-> use identifier x.
->
-> Anyway, if the script can be tweaked appropriately,
-> it might be useful to remove these unnecessary
-> initializations.
->
-> cheers, Joe
->
+On the other hand, converting the 0 to NULL in the handle/*handle case 
+might indeed hurt subsequent debuggability.
 
+> A script might be useful for identifying potential cases, but I think it 
+> is worth looking at each one individually to determine what the correct 
+> fix is.
+
+100% agreed on this point :)
+
+julia
