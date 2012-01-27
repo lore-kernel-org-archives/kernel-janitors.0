@@ -1,24 +1,22 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Wed, 04 Jan 2012 15:38:43 +0000
-Subject: Re: [patch] cgroup: move assignement out of condition in
-Message-Id: <20120104153843.GM31746@google.com>
+From: "Allan, Bruce W" <bruce.w.allan@intel.com>
+Date: Fri, 27 Jan 2012 20:29:13 +0000
+Subject: boolean result from a test for a bit
+Message-Id: <804857E1F29AAC47BF68C404FC60A1842485E4@ORSMSX102.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120104072429.GF30978@elgon.mountain>
-In-Reply-To: <20120104072429.GF30978@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Jan 04, 2012 at 10:24:29AM +0300, Dan Carpenter wrote:
-> Gcc complains about this: "kernel/cgroup.c:2179:4: warning: suggest
-> parentheses around assignment used as truth value [-Wparentheses]"
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+For a simple boolean test of whether, for example, bit 5 is set in the variable 'flags', which of the following methods is preferred over the other?
 
-Applied to cgroup/for-3.3.  Li, applied w/o your ack as it's trivial.
+bool result = (flags & (1 << 5)) ? true : false;
 
-Thanks.
+or
 
--- 
-tejun
+bool result = !!(flags & (1 << 5));
+
+I've seen examples of both in the Linux kernel.
+
+Thanks,
+Bruce.
