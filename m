@@ -1,32 +1,33 @@
-From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Date: Sun, 22 Jan 2012 12:17:08 +0000
-Subject: Re: busy loops in kernel
-Message-Id: <1327234629.10566.82.camel@thorin>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 28 Jan 2012 10:55:01 +0000
+Subject: [patch] xfs: remove an unneeded NULL check
+Message-Id: <20120128105501.GB25092@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
-In-Reply-To: <CAFTXME+fNAqqZjO4oRmbwt2cFbaDgbLW9gg94tzJvF4bwy7DtQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ben Myers <bpm@sgi.com>
+Cc: xfs-masters@oss.sgi.com, Alex Elder <elder@kernel.org>, kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
 
-Hi!
+Smatch complains because we check "commit_lsn" for NULL inconsistently.
+fs/xfs/xfs_log_cil.c +705 xfs_log_commit_cil(43) error: we previously
+	assumed 'commit_lsn' could be null (see line 688)
+xfs_log_commit_cil() is only called from one place, and "commit_lsn" is
+a valid pointer, so I've removed the NULL check.
 
-On Mit, 2012-01-18 at 09:48 -0800, Asim wrote:
-[....]
-> is actually: count, line numbers and C file. In some cases, when
-> driver comprises of multiple files, line numbers may be shifted (since
-> all files are merged together for analysis).
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-It's somewhat off-topic, but people are probably more motivated if they
-get correct filenames+line numbers of the original source.
-Other source munging tools like yacc/bison or lex/flex use "#line" to
-get the C compiler to report in errors and warnings the correct
-reference to the source.
-
-Kind regards,
-	Bernd
--- 
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-                     LUGA : http://www.luga.at
-
+diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+index d4fadbe..d9c4652 100644
+--- a/fs/xfs/xfs_log_cil.c
++++ b/fs/xfs/xfs_log_cil.c
+@@ -685,8 +685,7 @@ xfs_log_commit_cil(
+ 
+ 	/* lock out background commit */
+ 	down_read(&log->l_cilp->xc_ctx_lock);
+-	if (commit_lsn)
+-		*commit_lsn = log->l_cilp->xc_ctx->sequence;
++	*commit_lsn = log->l_cilp->xc_ctx->sequence;
+ 
+ 	xlog_cil_insert_items(log, log_vector, tp->t_ticket);
+ 
