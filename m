@@ -1,51 +1,59 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Tue, 24 Jan 2012 09:36:01 +0000
-Subject: Re: [patch] usb: gadget: mv_udc: remove unneeded NULL check
-Message-Id: <20120124093559.GO27414@legolas.emea.dhcp.ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 29 Jan 2012 14:25:33 +0000
+Subject: Re: [patch] exofs: fix endian conversion in exofs_sync_fs()
+Message-Id: <20120129142533.GE3356@mwanda>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="jx/LfW4V5TfZLeq7"
+Content-Type: multipart/mixed; boundary="IRIOLc8eTv1AOxGv"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120104072009.GD30978@elgon.mountain>
-In-Reply-To: <20120104072009.GD30978@elgon.mountain>
+References: <20111121144311.GA19025@elgon.mountain>
+In-Reply-To: <20111121144311.GA19025@elgon.mountain>
 To: kernel-janitors@vger.kernel.org
 
 
---jx/LfW4V5TfZLeq7
+--IRIOLc8eTv1AOxGv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 04, 2012 at 10:20:09AM +0300, Dan Carpenter wrote:
-> We've dereferenced req already, and we checked for bogus parameters at
-> the start of the function.
+On Mon, Nov 21, 2011 at 04:57:23PM -0800, Boaz Harrosh wrote:
+> On 11/21/2011 06:43 AM, Dan Carpenter wrote:
+> > fscb->s_numfiles is an __le64 field so we need to use cpu_to_le64()
+> > to get a little endian 64 bit on big endian systems.
+> >=20
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > This is a static checker fix.  Untested.
+> >=20
 >=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Will apply. s_numfiles is never used but should be loaded
+> correctly regardless.
+>=20
 
-applied, thanks
+This is still the same in linux-next.
 
---=20
-balbi
+regards,
+dan carpenter
 
---jx/LfW4V5TfZLeq7
+--IRIOLc8eTv1AOxGv
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPHnt/AAoJEIaOsuA1yqREeggQAK8JLoVTy+/iea32IZqWxFus
-ryOgowYJRi8Bi1CaqOn4iREZYxeXVXC8dAWdjPGnCbFRGd8FUx8T3g9xJ3KEkxOX
-wN/TAGi9nj5WvV57LBk9OZFBMQJ8jvO20G6sK9WwQ9nwtXdIAMVQyvVtsGFfNuqR
-JigOrbPNVvRRFOU19gasSwoyHVthACyLIyHYJpOE1vspe3qJikUSdjYuHLZViZOg
-FxcRSWi5esx5DaQ5b2lcAN5RyXX9oK0Uqi5OvAPV4vbDCSi+pzQ3Wyf+PoFbV1sp
-3xYEKccKBKHrW+28QFTBIRXZ3GbM3h9ybkM36N/5NPlVDJDRbGJ4Nf2UCati40iI
-CQi3viVqTQcSOCpY4/2ftguIZKA9loqTL6JA3jCOnKu5yKKpCu8vtz02UTWUYx6b
-8I2OVzfaW+ZnDiwfODFr5Ym8h4hfCvdR+mJM+tfPT0GpooVILxNh+SamOt8DkL6f
-Nr7L+fUuzbCDiWEkC3DvG4oeu+tn8WIrPLHMYxRsglclCv3Qz+V2VIOP4lmMpo5Q
-22WvROeDlLpwcvSfeEAtIs8rNPKmU3EtzbC/dghVbhq6EIkPbOMSoT8fiZxssJTx
-ym1MNOfeHgoFnFscRxOjBX8himjqDTEWohagD2717lUk5fJWo7hbG9L/b7ndHask
-fAv0BR9A3Fz7ilAshFp/
-=BNLl
+iQIcBAEBAgAGBQJPJVbcAAoJEOnZkXI/YHqRgUgQAJUWsMoz3KXwfDZATkGCKiCn
+AtiBme94mjgWCX6WztEoBp2A4pyjWuustwBArTdayr99W5JS5Yz2qk8VjHLy9KIP
+eiAQzZPiSjsIgMRWx4sEzkvWFKAYz6pAUoOAL+4SgvfHNtJtBbGP+9xvEI9eVTxk
+vZSryLw4tI4dTLnjolPWZd/A+Q0qX9P04mCT7ilKPy/4YMLUPjw0sZ1er1cEh1Lj
+W6Bv8F+afz1s/PMTfel3z03NT11dsOAJC87rUeCYuXhhREXA1O8FHJJSMBRG9rqj
+O1xJo4rdB3iKNFls7WCXOImmuenxuZjifALThoJNo06crnz0EEGVu7s6j9bUmWpD
+eGDGCUkL/j0o/xE8oShwiE0EBGfUWxYy5RGmtO/q1hlcO72gRwsWPByi+6DnbclE
+RzIvuhxaSt0ot7dAYKQK6KkVK1EsOV/vLHZbKDaq+U+K3x794CiTsUyh7rG37SxT
+tdp/kkWnhfEQi5Z7yUoXshLa7P2Rh8CvQhy+XsEfRWx913cs7lH/68X15xtrgwBD
+Pcmw0aRDzi2EjjZMrUTFdGqhGwAEID3tyysvH4VDVPA5D4InjIKOmBw+z9DA6T8r
+ZnDLKMaQgCOuhZbxlvUdlC9UJTIGYklb9uVg0TcGHrSyo72ub62N8aV3+TNhC/+P
+La5rThTSP6Mhy70tdz8B
+=tSNj
 -----END PGP SIGNATURE-----
 
---jx/LfW4V5TfZLeq7--
+--IRIOLc8eTv1AOxGv--
