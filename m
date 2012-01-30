@@ -1,51 +1,55 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Mon, 30 Jan 2012 13:37:29 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 30 Jan 2012 13:44:14 +0000
 Subject: Re: [patch] exofs: add a cap on the memcpy() size
-Message-Id: <4F269D19.5030200@panasas.com>
+Message-Id: <20120130134414.GV3294@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="TG7lY2/6mW/akb80"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120130075949.GA22364@elgon.mountain>
 In-Reply-To: <20120130075949.GA22364@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 01/30/2012 09:59 AM, Dan Carpenter wrote:
-> This data comes from the device, so probably it's fairly trustworthy but
-> it makes the static checkers happy if we check it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/exofs/super.c b/fs/exofs/super.c
-> index d22cd16..755812a 100644
-> --- a/fs/exofs/super.c
-> +++ b/fs/exofs/super.c
-> @@ -529,6 +529,8 @@ static int exofs_devs_2_odi(struct exofs_dt_device_info *dt_dev,
->  			     struct osd_dev_info *odi)
->  {
->  	odi->systemid_len = le32_to_cpu(dt_dev->systemid_len);
-> +	if (odi->systemid_len > OSD_SYSTEMID_LEN)
-> +		return -EINVAL;
->  	memcpy(odi->systemid, dt_dev->systemid, odi->systemid_len);
->  
->  	odi->osdname_len = le32_to_cpu(dt_dev->osdname_len);
 
-Hi Dan
+--TG7lY2/6mW/akb80
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I was going over this code and for the life of me I can't remember
-why I have dt_dev->systemid_len at all. The ->systemid field
-is just a constant 20 bytes buffer that is always there. at all
-ends of the spectrum. (Including user-mode mkfs.exofs)
+On Mon, Jan 30, 2012 at 03:37:29PM +0200, Boaz Harrosh wrote:
+> I think I'd like something like:
+> -  	memcpy(odi->systemid, dt_dev->systemid, odi->systemid_len);
+> +	if (likely(odi->systemid_len))
+> + 		memcpy(odi->systemid, dt_dev->systemid, OSD_SYSTEMID_LEN);
+>=20
+> Which should also make the static checkers happy. What do you think?
+>=20
 
-I think my thought was that dt_dev->systemid_len could be
-either 20 or zero, for ignoring it.
+Sounds good to me.
 
-I think I'd like something like:
--  	memcpy(odi->systemid, dt_dev->systemid, odi->systemid_len);
-+	if (likely(odi->systemid_len))
-+ 		memcpy(odi->systemid, dt_dev->systemid, OSD_SYSTEMID_LEN);
+regards,
+dan carpenter
 
-Which should also make the static checkers happy. What do you think?
 
-Thanks
-Boaz
+--TG7lY2/6mW/akb80
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPJp6uAAoJEOnZkXI/YHqRYLkP/0TKM2AH2PpInx4YqujCsZat
+FUoaY0UA9tREW1Yid2GnFHnN/nz2RxYyizCMA1EyExfA/JGdOpiu341sudf5lews
+Bi+4kAKi3S/5KlAqzpkYFyOjUpLVD9w9SALi1p1vRqa+xHjd0Iv2ulVSD/kyzpoz
+/eW+MxHYN0+b4xs+ewIX5U702jTIgOdXMOsB4OLEgoVI9wYO0g3uPRck7BgbZaVZ
+q2QBM5GFQhRg4Ac4z8O7UH3x36wHfHWzUESYYzdD7m8QDlwRkbZzhoyvZtDhItK0
+hHsp4W/hQ/q+0qLiu6Nw4PYfKMVqUeWWzjLX4RnsBGZFpKTyTPxMX2tghEjQY62E
+s2av73x2Rm44LLrkEtlFbOymxoysh186LOI5sdDOLA94w1L2IHsf43NT9xMU5CaZ
+0ZU5UGnRhH1vspid7P2pa/CgjRiomG6Trdt+T3C/S3J/S8MEWT7v8eQ4QjH+a9di
+U9gIj4VzJIuoT4uHN+ENsU+cQFySK4mTi1bfSXvA6/UNgfoePZUOconGwNRI9Ach
+SDzxiN99b9Wo+dTSPzU3zneGpa7GwBVlfPQqe4BjZ10CipEFo20Ukh2mcvM+MK6H
+GV7E6UmRwX/Xd7Y0n3Kt+gvP4NqVORhid51WHbbskGPEpAYhDZD33N518Y1N4vGB
+3eDlEDadssxaAOnXEFql
+=sYba
+-----END PGP SIGNATURE-----
+
+--TG7lY2/6mW/akb80--
