@@ -1,41 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 15 Jan 2012 11:32:19 +0000
-Subject: [patch] [media] tlg2300: fix up check_firmware() return
-Message-Id: <20120115113219.GG20463@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Jan 2012 11:05:55 +0000
+Subject: [PATCH] drivers/gpu/drm/drm_ioc32.c: initialize all fields
+Message-Id: <1327921555-7862-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1327921555-7862-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1327921555-7862-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Huang Shijie <shijie8@gmail.com>
-Cc: Kang Yong <kangyong@telegent.com>, Zhang Xiaobing <xbzhang@telegent.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-The caller doesn't check the return value of check_firmware() but static
-checkers complain.  It currently returns negative error codes, or zero
-or greater on success but since the return type is boolean the values
-are truncated to one or zero.  I've changed it to return an int,
-negative on error and zero on success.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The c32 structure is allocated on the stack and its idx field is not
+initialized before copying it to user level.  This patch takes the value
+from the result of the ioctl, as done for the other fields.
 
-diff --git a/drivers/media/video/tlg2300/pd-main.c b/drivers/media/video/tlg2300/pd-main.c
-index 129f135..c096b3f 100644
---- a/drivers/media/video/tlg2300/pd-main.c
-+++ b/drivers/media/video/tlg2300/pd-main.c
-@@ -374,7 +374,7 @@ static inline void set_map_flags(struct poseidon *pd, struct usb_device *udev)
- }
- #endif
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+An alternative would be to change the earlier code
+
+        if (get_user(idx, &argp->idx))
+                return -EFAULT;
+
+to write into the c32 structure, rather than into the local idx variable.
+This would be more similar to what is done in compat_drm_version.
+
+ drivers/gpu/drm/drm_ioc32.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_ioc32.c b/drivers/gpu/drm/drm_ioc32.c
+index ddd70db..637fcc3 100644
+--- a/drivers/gpu/drm/drm_ioc32.c
++++ b/drivers/gpu/drm/drm_ioc32.c
+@@ -315,7 +315,8 @@ static int compat_drm_getclient(struct file *file, unsigned int cmd,
+ 	if (err)
+ 		return err;
  
--static bool check_firmware(struct usb_device *udev, int *down_firmware)
-+static int check_firmware(struct usb_device *udev, int *down_firmware)
- {
- 	void *buf;
- 	int ret;
-@@ -398,7 +398,7 @@ static bool check_firmware(struct usb_device *udev, int *down_firmware)
- 		*down_firmware = 1;
- 		return firmware_download(udev);
- 	}
--	return ret;
-+	return 0;
- }
- 
- static int poseidon_probe(struct usb_interface *interface,
+-	if (__get_user(c32.auth, &client->auth)
++	if (__get_user(c32.idx, &client->idx)
++	    || __get_user(c32.auth, &client->auth)
+ 	    || __get_user(c32.pid, &client->pid)
+ 	    || __get_user(c32.uid, &client->uid)
+ 	    || __get_user(c32.magic, &client->magic)
+
