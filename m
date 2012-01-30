@@ -1,43 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 24 Jan 2012 08:41:09 +0000
-Subject: [patch] ext4: remove an unneeded NULL check
-Message-Id: <20120124084109.GC29097@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Jan 2012 11:05:54 +0000
+Subject: [PATCH] initialize all fields
+Message-Id: <1327921555-7862-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-We dereference "bh" unconditionally a couple lines down to find
-"by->b_size".  This function is never called with a NULL "bh" so I have
-removed the check.
+This patch fixes a case where a structure field is not initialized before
+the structureis copied to user level.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr/).  It uses other references to the same
+structure in the current file to find the set of fields that should be
+initialized.
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index 164c560..a4a0234 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -91,17 +91,17 @@ int __ext4_check_dir_entry(const char *function, unsigned int line,
- 		return 0;
- 
- 	if (filp)
--		ext4_error_file(filp, function, line, bh ? bh->b_blocknr : 0,
-+		ext4_error_file(filp, function, line, bh->b_blocknr,
- 				"bad entry in directory: %s - offset=%u(%u), "
- 				"inode=%u, rec_len=%d, name_len=%d",
--				error_msg, (unsigned) (offset%bh->b_size),
-+				error_msg, (unsigned) (offset % bh->b_size),
- 				offset, le32_to_cpu(de->inode),
- 				rlen, de->name_len);
- 	else
--		ext4_error_inode(dir, function, line, bh ? bh->b_blocknr : 0,
-+		ext4_error_inode(dir, function, line, bh->b_blocknr,
- 				"bad entry in directory: %s - offset=%u(%u), "
- 				"inode=%u, rec_len=%d, name_len=%d",
--				error_msg, (unsigned) (offset%bh->b_size),
-+				error_msg, (unsigned) (offset % bh->b_size),
- 				offset, le32_to_cpu(de->inode),
- 				rlen, de->name_len);
- 
+@a disable decl_init@
+identifier x,x1;
+type T,T1;
+expression e,sz;
+@@
+
+T x;
+... when any
+copy_to_user(e,&x,sz)
+
+@r@
+a.T y;
+identifier f,f1,f2;
+@@
+
+(
+y.f1[...]
+|
+y.f1.f2
+|
+y.f
+)
+
+@b@
+identifier a.x,r.f;
+type a.T;
+expression e,e1,sz;
+position p,p0;
+@@
+
+T x@p0;
+... when != x.f = e1
+    when != &x
+    when != &(x.f)
+    when != get_user(x.f,...)
+    when != __get_user(x.f,...)
+    when != x = e1
+copy_to_user@p(e,&x,sz)
+
+@script:ocaml@
+t << a.T;
+x << a.x;
+f << r.f;
+p << b.p;
+@@
+
+Printf.printf "%s:%d: %s %s missing %s\n" (List.hd p).file (List.hd p).line
+   t x f
+
