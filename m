@@ -1,63 +1,62 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Date: Mon, 30 Jan 2012 13:45:07 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 30 Jan 2012 13:58:58 +0000
 Subject: Re: [patch] exofs: fix endian conversion in exofs_sync_fs()
-Message-Id: <4F269EE3.9070605@panasas.com>
+Message-Id: <20120130135858.GH3356@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="4N29bJelYIMOTi0e"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20111121144311.GA19025@elgon.mountain>
 In-Reply-To: <20111121144311.GA19025@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 01/29/2012 04:29 PM, Dan Carpenter wrote:
-> On Sun, Jan 29, 2012 at 05:25:33PM +0300, Dan Carpenter wrote:
->> On Mon, Nov 21, 2011 at 04:57:23PM -0800, Boaz Harrosh wrote:
->>> On 11/21/2011 06:43 AM, Dan Carpenter wrote:
->>>> fscb->s_numfiles is an __le64 field so we need to use cpu_to_le64()
->>>> to get a little endian 64 bit on big endian systems.
->>>>
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>> ---
->>>> This is a static checker fix.  Untested.
->>>>
->>>
->>> Will apply. s_numfiles is never used but should be loaded
->>> correctly regardless.
->>>
->>
->> This is still the same in linux-next.
-> 
 
-Sorry will fix.
+--4N29bJelYIMOTi0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Also Sparse warns about the following potential stack overflows.
-> The kernel has an 8k stack and the upper limit on these array sizes
-> are not capped.
-> 
-> fs/exofs/super.c:562:51: error: bad constant expression
-> fs/exofs/super.c:563:38: error: bad constant expression
-> 
+On Mon, Jan 30, 2012 at 03:45:07PM +0200, Boaz Harrosh wrote:
+> Do you mean this code:
+> 	struct __alloc_ore_devs_and_exofs_devs {
+> 		/* Twice bigger table: See exofs_init_comps() and comment at
+> 		 * exofs_read_lookup_dev_table()
+> 		 */
+> =3D>		struct ore_dev *oreds[numdevs * 2 - 1];
+> =3D>		struct exofs_dev eds[numdevs];
+> 	} *aoded;
+>=20
+>=20
+> If so than Sparse should be fixed. It is plain wrong. This complete
+> structure is kmalloc(ed) two lines below.
+>=20
 
-Do you mean this code:
-	struct __alloc_ore_devs_and_exofs_devs {
-		/* Twice bigger table: See exofs_init_comps() and comment at
-		 * exofs_read_lookup_dev_table()
-		 */
-=>		struct ore_dev *oreds[numdevs * 2 - 1];
-=>		struct exofs_dev eds[numdevs];
-	} *aoded;
+Oh yeah.  You are right.  I misread how that worked.
+
+regards,
+dan carpenter
 
 
-If so than Sparse should be fixed. It is plain wrong. This complete
-structure is kmalloc(ed) two lines below.
 
-The only limit is, perhaps, the entire struct should not be bigger than
-PAGE_SIZE but kmalloc would fail and we will not mount. That code is
-fine
+--4N29bJelYIMOTi0e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> regards,
-> dan carpenter
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Cheers
-Boaz
+iQIcBAEBAgAGBQJPJqIiAAoJEOnZkXI/YHqRZnkP/0NUKhkXB2cizs/j7aLAalC4
+L3of55ElwO6eLeyBFhgPzVGLCYIrhQgbqS+GyDP6WrVTEedqtSC/mEaVX1I8BUAM
+gjGchI0x+MvGSfobivwcXEH0mklzTQ8CPbFo7ii52/sQfv5/U97Oclm8NgA+qGN6
+ylZLUzoJX7mGCY4cmj3DYQyrhagVa/9V+xkT4rYcICYPURNfzlmou485KlPjZYyz
+j0ArudoemtzcVW7jMtXj/tZ5Tr6Wc2Hoh+hv/ZnonLQZ09bHHoFYDl2iH/UGDb8T
+0HNiFn2s3mYiReUfCzJh31XR+yWwVniJ4zVhviS+GPYVN6gTWUsc5N9aBUtUBWLi
+FcLwZxIndEoMyo0AfQQV12CF4BHhkM40JkPUhPkiPCLUFu6x3MIc1/7aPnpGmug8
+1VD5lVckrJezIQ/jrYFcN+zrFSTH5moaKaJx9RjDe43IQ7CCaoT3+0P5RrOhs9eK
+6Yu0rnxempRSW1UYfGECzFPHJ1NN7Q+zzGASFazm+Ep9FUM+2P9TumiO3woOAXMn
+8RRKB/PsFNm+myjcvQhgAUzxuPFsUkrDdpXkMVa8nzCvbN0tfvzXj3s29snmmjix
+odP8wzl+47hKukd1hZrqlci1TU53w/cEbh23bRWr2i9bYemLKKA/gbWSrAlttMYN
+HXTrYC1lbmF4FKVyo7IW
+=lZCE
+-----END PGP SIGNATURE-----
+
+--4N29bJelYIMOTi0e--
