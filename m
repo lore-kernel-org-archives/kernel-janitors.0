@@ -1,46 +1,46 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Mon, 09 Jan 2012 22:23:28 +0000
-Subject: [PATCH 09/16] Staging: quickstart: Use switch-case in quickstart_acpi_notify
-Message-Id: <1326147815-11451-10-git-send-email-szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 31 Jan 2012 08:53:17 +0000
+Subject: [patch] HPFS: remove PRINTK() macro
+Message-Id: <20120131085313.GC22039@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |   10 +++++++---
- 1 files changed, 7 insertions(+), 3 deletions(-)
+The PRINTK() macro isn't really used.  Let's just remove it because it
+is ugly and out of date.
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index b183d21..17e57c0 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -180,15 +180,19 @@ static void quickstart_acpi_notify(acpi_handle handle, u32 event, void *data)
- 	if (!quickstart)
- 		return;
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/hpfs/buffer.c b/fs/hpfs/buffer.c
+index 9ecde27..f49d149 100644
+--- a/fs/hpfs/buffer.c
++++ b/fs/hpfs/buffer.c
+@@ -156,7 +156,6 @@ void hpfs_brelse4(struct quad_buffer_head *qbh)
  
--	if (event = QUICKSTART_EVENT_WAKE)
-+	switch (event) {
-+	case QUICKSTART_EVENT_WAKE:
- 		quickstart_data.pressed = quickstart->btn;
--	else if (event = QUICKSTART_EVENT_RUNTIME) {
-+		break;
-+	case QUICKSTART_EVENT_RUNTIME:
- 		input_report_key(quickstart_input, quickstart->btn->id, 1);
- 		input_sync(quickstart_input);
- 		input_report_key(quickstart_input, quickstart->btn->id, 0);
- 		input_sync(quickstart_input);
-+		break;
-+	default:
-+		break;
- 	}
--	return;
- }
+ void hpfs_mark_4buffers_dirty(struct quad_buffer_head *qbh)
+ {
+-	PRINTK(("hpfs_mark_4buffers_dirty\n"));
+ 	memcpy(qbh->bh[0]->b_data, qbh->data, 512);
+ 	memcpy(qbh->bh[1]->b_data, qbh->data + 512, 512);
+ 	memcpy(qbh->bh[2]->b_data, qbh->data + 2 * 512, 512);
+diff --git a/fs/hpfs/hpfs_fn.h b/fs/hpfs/hpfs_fn.h
+index de94617..6d2d500 100644
+--- a/fs/hpfs/hpfs_fn.h
++++ b/fs/hpfs/hpfs_fn.h
+@@ -35,13 +35,6 @@
  
- static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
--- 
-1.7.8.2
-
-
+ #define CHKCOND(x,y) if (!(x)) printk y
+ 
+-#ifdef DBG
+-#define PRINTK(x) printk x
+-#else
+-#undef PRINTK
+-#define PRINTK(x)
+-#endif
+-
+ struct hpfs_inode_info {
+ 	loff_t mmu_private;
+ 	ino_t i_parent_dir;	/* (directories) gives fnode of parent dir */
