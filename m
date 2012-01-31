@@ -1,18 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 12 Jan 2012 21:49:26 +0000
-Subject: [PATCH 0/4] adjust double test
-Message-Id: <1326404970-1084-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 31 Jan 2012 08:52:01 +0000
+Subject: [patch] cifs: check offset in decode_ntlmssp_challenge()
+Message-Id: <20120131085201.GB22039@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326403988-872-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1326403988-872-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-These patches fix cases where there are two tests of the same expression.
+We should check that we're not copying memory from beyond the end of the
+blob.
 
-Please ignore the previous versions of these patches, which were sent by
-accident.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/fs/cifs/sess.c b/fs/cifs/sess.c
+index d85efad..eb76741 100644
+--- a/fs/cifs/sess.c
++++ b/fs/cifs/sess.c
+@@ -395,6 +395,10 @@ static int decode_ntlmssp_challenge(char *bcc_ptr, int blob_len,
+ 	ses->ntlmssp->server_flags = le32_to_cpu(pblob->NegotiateFlags);
+ 	tioffset = le32_to_cpu(pblob->TargetInfoArray.BufferOffset);
+ 	tilen = le16_to_cpu(pblob->TargetInfoArray.Length);
++	if (tioffset > blob_len || tioffset + tilen > blob_len) {
++		cERROR(1, "tioffset + tilen too high %u + %u", tioffset, tilen);
++		return -EINVAL;
++	}
+ 	if (tilen) {
+ 		ses->auth_key.response = kmalloc(tilen, GFP_KERNEL);
+ 		if (!ses->auth_key.response) {
