@@ -1,76 +1,36 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Wed, 11 Jan 2012 22:22:37 +0000
-Subject: [PATCH v2 02/17] Staging: quickstart: Prefix remaining functions names with quickstart_
-Message-Id: <1326320574-11220-3-git-send-email-szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 31 Jan 2012 08:54:06 +0000
+Subject: [patch] mtd: nand: fix printk() warnings
+Message-Id: <20120131085405.GD22039@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, kernel-janitors@vger.kernel.org, Mike Dunn <mikedunn@newsguy.com>, linux-mtd@lists.infradead.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |   18 +++++++++---------
- 1 files changed, 9 insertions(+), 9 deletions(-)
+Gcc complains here:
+drivers/mtd/nand/docg4.c: In function ‘probe_docg4’:
+drivers/mtd/nand/docg4.c:1277:4: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 3 has type ‘resource_size_t’ [-Wformat]
+drivers/mtd/nand/docg4.c:1277:4: warning: format ‘%x’ expects argument of type ‘unsigned int’, but argument 4 has type ‘resource_size_t’ [-Wformat]
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index d03b89d..adce56b 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -92,19 +92,19 @@ static struct acpi_driver quickstart_acpi_driver = {
- struct input_dev *quickstart_input;
- 
- /* Platform driver structs */
--static ssize_t buttons_show(struct device *dev,
-+static ssize_t quickstart_buttons_show(struct device *dev,
- 					struct device_attribute *attr,
- 					char *buf);
--static ssize_t pressed_button_show(struct device *dev,
-+static ssize_t quickstart_pressed_button_show(struct device *dev,
- 					struct device_attribute *attr,
- 					char *buf);
--static ssize_t pressed_button_store(struct device *dev,
-+static ssize_t quickstart_pressed_button_store(struct device *dev,
- 					struct device_attribute *attr,
- 					 const char *buf,
- 					 size_t count);
--static DEVICE_ATTR(pressed_button, 0666, pressed_button_show,
--					 pressed_button_store);
--static DEVICE_ATTR(buttons, 0444, buttons_show, NULL);
-+static DEVICE_ATTR(pressed_button, 0666, quickstart_pressed_button_show,
-+					 quickstart_pressed_button_store);
-+static DEVICE_ATTR(buttons, 0444, quickstart_buttons_show, NULL);
- static struct platform_device *pf_device;
- static struct platform_driver pf_driver = {
- 	.driver = {
-@@ -114,7 +114,7 @@ static struct platform_driver pf_driver = {
- };
- 
- /* Platform driver functions */
--static ssize_t buttons_show(struct device *dev,
-+static ssize_t quickstart_buttons_show(struct device *dev,
- 					struct device_attribute *attr,
- 					char *buf)
- {
-@@ -136,7 +136,7 @@ static ssize_t buttons_show(struct device *dev,
- 	return count;
- }
- 
--static ssize_t pressed_button_show(struct device *dev,
-+static ssize_t quickstart_pressed_button_show(struct device *dev,
- 						struct device_attribute *attr,
- 						char *buf)
- {
-@@ -146,7 +146,7 @@ static ssize_t pressed_button_show(struct device *dev,
- }
- 
- 
--static ssize_t pressed_button_store(struct device *dev,
-+static ssize_t quickstart_pressed_button_store(struct device *dev,
- 						struct device_attribute *attr,
- 						const char *buf, size_t count)
- {
--- 
-1.7.8.3
+We have a standard way of printing these using a format string
+extension.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/mtd/nand/docg4.c b/drivers/mtd/nand/docg4.c
+index 3ec1d10..8a0d7f6 100644
+--- a/drivers/mtd/nand/docg4.c
++++ b/drivers/mtd/nand/docg4.c
+@@ -1272,9 +1272,7 @@ static int __init probe_docg4(struct platform_device *pdev)
+ 
+ 	virtadr = ioremap(r->start, resource_size(r));
+ 	if (!virtadr) {
+-		dev_err(dev, "Diskonchip ioremap failed: "
+-			"0x%x bytes at 0x%x\n",
+-			resource_size(r), r->start);
++		dev_err(dev, "Diskonchip ioremap failed: %pR\n", r);
+ 		return -EIO;
+ 	}
+ 
