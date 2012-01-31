@@ -1,84 +1,55 @@
-From: Jeff Layton <jlayton@redhat.com>
-Date: Tue, 31 Jan 2012 11:50:07 +0000
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 31 Jan 2012 13:43:10 +0000
 Subject: Re: [patch] cifs: check offset in decode_ntlmssp_challenge()
-Message-Id: <20120131065007.48437316@tlielax.poochiereds.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/O1TZwJsEylf__pXK+z5XObZ"
+Message-Id: <CAH2r5ms5mt9=pzOhKKpJ16wqnu_A-aRy2oJm4HVCrwUH1aBfvA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120131085201.GB22039@elgon.mountain>
-	<20120131054937.3e7ccf89@tlielax.poochiereds.net>
-	<20120131112508.GE3294@mwanda>
-In-Reply-To: <20120131112508.GE3294@mwanda>
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-
---Sig_/O1TZwJsEylf__pXK+z5XObZ
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20120131085201.GB22039@elgon.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+Cc: linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org, samba-technical@lists.samba.org
 
-On Tue, 31 Jan 2012 14:25:08 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+merged to cifs-2.6.git
 
-> On Tue, Jan 31, 2012 at 05:49:37AM -0500, Jeff Layton wrote:
-> > On Tue, 31 Jan 2012 11:52:01 +0300
-> > Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >=20
-> > > We should check that we're not copying memory from beyond the end of =
-the
-> > > blob.
-> > >=20
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > >=20
-> > > diff --git a/fs/cifs/sess.c b/fs/cifs/sess.c
-> > > index d85efad..eb76741 100644
-> > > --- a/fs/cifs/sess.c
-> > > +++ b/fs/cifs/sess.c
-> > > @@ -395,6 +395,10 @@ static int decode_ntlmssp_challenge(char *bcc_pt=
-r, int blob_len,
-> > >  	ses->ntlmssp->server_flags =3D le32_to_cpu(pblob->NegotiateFlags);
-> > >  	tioffset =3D le32_to_cpu(pblob->TargetInfoArray.BufferOffset);
-> > >  	tilen =3D le16_to_cpu(pblob->TargetInfoArray.Length);
-> > > +	if (tioffset > blob_len || tioffset + tilen > blob_len) {
-> > > +		cERROR(1, "tioffset + tilen too high %u + %u", tioffset, tilen);
-> > > +		return -EINVAL;
-> > > +	}
-> >=20
-> > Good catch.
-> >=20
-> > Do we really need a || here though? Would it not be sufficient to check
-> > if tioffset + tilen > blob_len? Or are you concerned about that value
-> > wrapping?
->=20
-> Yep.  I was concerned about value wrapping.
->=20
-> regards,
-> dan carpenter
->=20
+On Tue, Jan 31, 2012 at 2:52 AM, Dan Carpenter <dan.carpenter@oracle.com> w=
+rote:
+>
+> We should check that we're not copying memory from beyond the end of the
+> blob.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/fs/cifs/sess.c b/fs/cifs/sess.c
+> index d85efad..eb76741 100644
+> --- a/fs/cifs/sess.c
+> +++ b/fs/cifs/sess.c
+> @@ -395,6 +395,10 @@ static int decode_ntlmssp_challenge(char *bcc_ptr, i=
+nt blob_len,
+> =A0 =A0 =A0 =A0ses->ntlmssp->server_flags =3D le32_to_cpu(pblob->Negotiat=
+eFlags);
+> =A0 =A0 =A0 =A0tioffset =3D le32_to_cpu(pblob->TargetInfoArray.BufferOffs=
+et);
+> =A0 =A0 =A0 =A0tilen =3D le16_to_cpu(pblob->TargetInfoArray.Length);
+> + =A0 =A0 =A0 if (tioffset > blob_len || tioffset + tilen > blob_len) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 cERROR(1, "tioffset + tilen too high %u + %=
+u", tioffset, tilen);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
+> + =A0 =A0 =A0 }
+> =A0 =A0 =A0 =A0if (tilen) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ses->auth_key.response =3D kmalloc(tilen, =
+GFP_KERNEL);
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (!ses->auth_key.response) {
 
-Seems reasonable then. Thanks...
 
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
 
---Sig_/O1TZwJsEylf__pXK+z5XObZ
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.18 (GNU/Linux)
+--
+Thanks,
 
-iQIcBAEBAgAGBQJPJ9VwAAoJEAAOaEEZVoIVaK8QAJJ6BGwtw/SprlIBAXXqq6bZ
-M6hwHbdlsKGegrF1We7OAaCQdQKSHz0/4YjNOOy97qdfDwIUR/acMcaX09HuYYn6
-gMU5qKLFXGJKrfdZN5W27gYSeCXUDS1Z4TXKa68dAqDQgA/e45P1o78F0PnJmkRm
-ak6dbI7d7aY0J3dZRJmzgFYw6+KeWNDAPTjzYLrVV0wFxU9kjRZwsCY/Gh3eq7ob
-WD+V8poP/J5KaXdzYmwqElCVKSPnRlEk7W7gKQCqSAljC2iVprWOzRz8IgMdcUyW
-ZRrNe26k7yOxD19qbbNfKlpfBWuDl+801ERNcsd3Kw9L22HoyIIdp1EpgUpBcUTg
-CjZ1rm6KI6lPB0qYUG4Gcv9C+UKBtqmCrjnj67rw0tjTi5XgOTZJFLHzBMzAkNq/
-Lk7XQasL+tfZzGZWgEdk8/Ccdl1ZOSTWRk/kmRzXBp1ABBGWVksmtD3y6kw+IOOl
-Llp/Vza97E0KKpSENz6CsN04v71joMmCjwZbBJmqqYyA5VB8UZTtZPUvuwPc/xU5
-fkJJIjxwj7u6EHZCHjwO9pMxUFv+JbJ/ZQL+PdjWtLxv+tmuOsSl6sVxbKmK7S7h
-51G528Bzb1o7M6nGeJiuh0hl+r0aH9LDtGRBi7GxTHs05+Vo4UogrW5iO15nhBEN
-kSzYBSDkhOjOngEk7k3N
-=D38r
------END PGP SIGNATURE-----
-
---Sig_/O1TZwJsEylf__pXK+z5XObZ--
+Steve
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
