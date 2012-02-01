@@ -1,44 +1,41 @@
-From: Nikola Pajkovsky <n.pajkovsky@gmail.com>
-Date: Sun, 19 Feb 2012 20:28:02 +0000
-Subject: Re: [PATCH] b44: fix section mismatch warnings in b44.c
-Message-Id: <m5sji6zhyl.fsf@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 01 Feb 2012 07:45:26 +0000
+Subject: [patch] xfrm6: remove unneeded NULL check in __xfrm6_output()
+Message-Id: <20120201074526.GC22179@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c8f624fdb13dcf32d82b1abb70a423abc4a2359a.1329662367.git.n.pajkovsky@gmail.com>
-	<20120219201332.GF2855@mwanda>
-In-Reply-To: <20120219201332.GF2855@mwanda> (Dan Carpenter's message of "Sun,
-	19 Feb 2012 23:13:32 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Gary Zambrano <zambrano@broadcom.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Nikola Pajkovsky <n.pajkovsky@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>, steffen.klassert@secunet.com
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+We don't check for NULL consistently in __xfrm6_output().  If "x" were
+NULL here it would lead to an OOPs later.  I asked Steffen Klassert
+about this and he suggested that we remove the NULL check.
 
-> On Sun, Feb 19, 2012 at 03:45:54PM +0100, Nikola Pajkovsky wrote:
->> From: Nikola Pajkovsky <n.pajkovsky@gmail.com>
->> 
+On 10/29/11, Steffen Klassert <steffen.klassert@secunet.com> wrote:
+>> net/ipv6/xfrm6_output.c
+>>    148	
+>>    149		if ((x && x->props.mode = XFRM_MODE_TUNNEL) &&
+>>                           ^
 >
-> This changelog is not really helpful.
->
-> Why did you remove an __exit anotation instead changing the callers?
-> Obviously I looked at the code, so I can answer that question, but I
-> shouldn't have to.  It should be explained in the changelog.
+> x can't be null here. It would be a bug if __xfrm6_output() is called
+> without a xfrm_state attached to the skb. I think we can just remove
+> this null check.
 
-I will rephrase comment
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> Sometimes I add in information about when the error message was
-> introduced.
->
-> It might also be nice to mention what the bad effects of this
-> problem are.
->
->> Signed-off-by: Nikola Pajkovsky <n.pajkovsky@gmail.com>
->                                    ^^^^^^^^^^^^^^^^^^^^^
-> You're sending the patch from your redhat address; it's best to sign
-> it with the redhat address as well.
-
-oops, it should be from gmail
-
--- 
-Nikola
+diff --git a/net/ipv6/xfrm6_output.c b/net/ipv6/xfrm6_output.c
+index 4eeff89..8755a30 100644
+--- a/net/ipv6/xfrm6_output.c
++++ b/net/ipv6/xfrm6_output.c
+@@ -146,7 +146,7 @@ static int __xfrm6_output(struct sk_buff *skb)
+ 		return -EMSGSIZE;
+ 	}
+ 
+-	if ((x && x->props.mode = XFRM_MODE_TUNNEL) &&
++	if (x->props.mode = XFRM_MODE_TUNNEL &&
+ 	    ((skb->len > mtu && !skb_is_gso(skb)) ||
+ 		dst_allfrag(skb_dst(skb)))) {
+ 			return ip6_fragment(skb, x->outer_mode->afinfo->output_finish);
