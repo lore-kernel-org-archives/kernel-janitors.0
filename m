@@ -1,23 +1,42 @@
-From: Ted Ts'o <tytso@mit.edu>
-Date: Mon, 13 Feb 2012 23:39:17 +0000
-Subject: Re: [patch] ext4: remove an unneeded NULL check
-Message-Id: <20120213233917.GI21641@thunk.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 01 Feb 2012 07:42:11 +0000
+Subject: [patch -next] mac80211: off by one in mcs mask handling
+Message-Id: <20120201074210.GA22179@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120124084109.GC29097@elgon.mountain>
-In-Reply-To: <20120124084109.GC29097@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Simon Wunderlich <simon.wunderlich@s2003.tu-chemnitz.de>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 24, 2012 at 11:41:09AM +0300, Dan Carpenter wrote:
-> We dereference "bh" unconditionally a couple lines down to find
-> "by->b_size".  This function is never called with a NULL "bh" so I have
-> removed the check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"ridx" is used as an index into the mcs_mask[] array which has
+IEEE80211_HT_MCS_MASK_LEN elements.
 
-Thanks, applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-					- Ted
+diff --git a/net/mac80211/rate.c b/net/mac80211/rate.c
+index 3fef26d..22fc28e 100644
+--- a/net/mac80211/rate.c
++++ b/net/mac80211/rate.c
+@@ -324,7 +324,7 @@ static bool rate_idx_match_mcs_mask(struct ieee80211_tx_rate *rate,
+ 	rbit = rate->idx % 8;
+ 
+ 	/* sanity check */
+-	if (ridx < 0 || ridx > IEEE80211_HT_MCS_MASK_LEN)
++	if (ridx < 0 || ridx >= IEEE80211_HT_MCS_MASK_LEN)
+ 		return false;
+ 
+ 	/* See whether the selected rate or anything below it is allowed. */
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index c910b07..7db14b4 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -5408,7 +5408,7 @@ static bool ht_rateset_to_mask(struct ieee80211_supported_band *sband,
+ 		rbit = BIT(rates[i] % 8);
+ 
+ 		/* check validity */
+-		if ((ridx < 0) || (ridx > IEEE80211_HT_MCS_MASK_LEN))
++		if ((ridx < 0) || (ridx >= IEEE80211_HT_MCS_MASK_LEN))
+ 			return false;
+ 
+ 		/* check availability */
