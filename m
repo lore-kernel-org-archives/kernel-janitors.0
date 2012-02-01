@@ -1,97 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 18 Feb 2012 20:13:39 +0000
-Subject: [PATCH] drivers/mmc/host/sdhci-s3c.c: use devm_ functions
-Message-Id: <1329596019-19822-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 01 Feb 2012 14:42:31 +0000
+Subject: [patch] hwmon: (mc13xxx-adc) make name buffer larger
+Message-Id: <20120201144231.GB5397@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: kernel-janitors@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Guenter Roeck <guenter.roeck@ericsson.com>, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This is doesn't change how the code works, it's just a thing to make the
+static checkers happy.  We transfer a 12 character string from a 20
+character buffer to a 10 character buffer using snprintf().  The static
+checkers complain that that lops off the last couple characters.
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses these functions for data that is allocated in
-the probe function of a platform device and is only freed in the remove
-function.
+The static checkers are right, but it turns out we don't care because
+later on we truncate the name at the '-' character.  Oh well, let's
+change it so they don't complain.
 
-By using devm_ioremap, it also removes a potential memory leak, because
-there was no call to iounmap in the probe function.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The call to platform_get_resource was moved just to make it closer to the
-place where its result it used.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/mmc/host/sdhci-s3c.c |   26 +++-----------------------
- 1 file changed, 3 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index b19e7d4..10ec7c6 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -402,12 +402,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 		return irq;
- 	}
+diff --git a/drivers/hwmon/mc13783-adc.c b/drivers/hwmon/mc13783-adc.c
+index e9a7659d..282aaf5 100644
+--- a/drivers/hwmon/mc13783-adc.c
++++ b/drivers/hwmon/mc13783-adc.c
+@@ -37,7 +37,7 @@
+ struct mc13783_adc_priv {
+ 	struct mc13xxx *mc13xxx;
+ 	struct device *hwmon_dev;
+-	char name[10];
++	char name[PLATFORM_NAME_SIZE];
+ };
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(dev, "no memory specified\n");
--		return -ENOENT;
--	}
--
- 	host = sdhci_alloc_host(dev, sizeof(struct sdhci_s3c));
- 	if (IS_ERR(host)) {
- 		dev_err(dev, "sdhci_alloc_host() failed\n");
-@@ -464,15 +458,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 		goto err_no_busclks;
- 	}
- 
--	sc->ioarea = request_mem_region(res->start, resource_size(res),
--					mmc_hostname(host->mmc));
--	if (!sc->ioarea) {
--		dev_err(dev, "failed to reserve register area\n");
--		ret = -ENXIO;
--		goto err_req_regs;
--	}
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
--	host->ioaddr = ioremap_nocache(res->start, resource_size(res));
-+	host->ioaddr = devm_request_and_ioremap(&pdev->dev, res);
- 	if (!host->ioaddr) {
- 		dev_err(dev, "failed to map registers\n");
- 		ret = -ENXIO;
-@@ -547,7 +535,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	ret = sdhci_add_host(host);
- 	if (ret) {
- 		dev_err(dev, "sdhci_add_host() failed\n");
--		goto err_add_host;
-+		goto err_req_regs;
- 	}
- 
- 	/* The following two methods of card detection might call
-@@ -561,10 +549,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-- err_add_host:
--	release_resource(sc->ioarea);
--	kfree(sc->ioarea);
--
-  err_req_regs:
- 	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
- 		if (sc->clk_bus[ptr]) {
-@@ -610,10 +594,6 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
- 	clk_disable(sc->clk_io);
- 	clk_put(sc->clk_io);
- 
--	iounmap(host->ioaddr);
--	release_resource(sc->ioarea);
--	kfree(sc->ioarea);
--
- 	sdhci_free_host(host);
- 	platform_set_drvdata(pdev, NULL);
- 
-
+ static ssize_t mc13783_adc_show_name(struct device *dev, struct device_attribute
