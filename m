@@ -1,21 +1,65 @@
-From: Ted Ts'o <tytso@mit.edu>
-Date: Mon, 13 Feb 2012 23:41:47 +0000
-Subject: Re: [patch] ext4: using PTR_ERR() on the wrong variable in ext4_ext_migrate()
-Message-Id: <20120213234147.GJ21641@thunk.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 01 Feb 2012 14:40:19 +0000
+Subject: [patch] drivers/leds/leds-lp5521.c: fix lp5521_read() error handling
+Message-Id: <20120201144019.GB5359@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120126061406.GB15856@elgon.mountain>
-In-Reply-To: <20120126061406.GB15856@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Richard Purdie <rpurdie@rpsys.net>, Kim@elgon.mountain, Milo <Milo.Kim@ti.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 26, 2012 at 09:14:06AM +0300, Dan Carpenter wrote:
-> "inode" is a valid pointer here.  "tmp_inode" was intended.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Gcc 4.6.2 complains that:
+drivers/leds/leds-lp5521.c: In function ‘lp5521_load_program’:
+drivers/leds/leds-lp5521.c:214:21: warning: ‘mode’ may be used uninitialized in this function [-Wuninitialized]
+drivers/leds/leds-lp5521.c: In function ‘lp5521_probe’:
+drivers/leds/leds-lp5521.c:788:5: warning: ‘buf’ may be used uninitialized in this function [-Wuninitialized]
+drivers/leds/leds-lp5521.c:740:6: warning: ‘ret’ may be used uninitialized in this function [-Wuninitialized]
 
-Thanks, applied.
+These are real problems if lp5521_read() returns an error.  When that
+happens we should handle it, instead of ignoring it or doing a bitwise
+OR with all the other error codes and continuing.
 
-					- Ted
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index de7b8fe..2381562 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -193,9 +193,14 @@ static int lp5521_load_program(struct lp5521_engine *eng, const u8 *pattern)
+ 
+ 	/* move current engine to direct mode and remember the state */
+ 	ret = lp5521_set_engine_mode(eng, LP5521_CMD_DIRECT);
++	if (ret)
++		return ret;
++
+ 	/* Mode change requires min 500 us delay. 1 - 2 ms  with margin */
+ 	usleep_range(1000, 2000);
+-	ret |= lp5521_read(client, LP5521_REG_OP_MODE, &mode);
++	ret = lp5521_read(client, LP5521_REG_OP_MODE, &mode);
++	if (ret)
++		return ret;
+ 
+ 	/* For loading, all the engines to load mode */
+ 	lp5521_write(client, LP5521_REG_OP_MODE, LP5521_CMD_DIRECT);
+@@ -211,8 +216,7 @@ static int lp5521_load_program(struct lp5521_engine *eng, const u8 *pattern)
+ 				LP5521_PROG_MEM_SIZE,
+ 				pattern);
+ 
+-	ret |= lp5521_write(client, LP5521_REG_OP_MODE, mode);
+-	return ret;
++	return lp5521_write(client, LP5521_REG_OP_MODE, mode);
+ }
+ 
+ static int lp5521_set_led_current(struct lp5521_chip *chip, int led, u8 curr)
+@@ -784,8 +788,8 @@ static int __devinit lp5521_probe(struct i2c_client *client,
+ 	 * otherwise further access to the R G B channels in the
+ 	 * LP5521_REG_ENABLE register will not have any effect - strange!
+ 	 */
+-	lp5521_read(client, LP5521_REG_R_CURRENT, &buf);
+-	if (buf != LP5521_REG_R_CURR_DEFAULT) {
++	ret = lp5521_read(client, LP5521_REG_R_CURRENT, &buf);
++	if (ret || buf != LP5521_REG_R_CURR_DEFAULT) {
+ 		dev_err(&client->dev, "error in resetting chip\n");
+ 		goto fail2;
+ 	}
