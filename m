@@ -1,51 +1,64 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Fri, 10 Feb 2012 20:21:13 +0000
-Subject: Re: [PATCH] sound/soc/mxs/mxs-saif.c: use devm_ functions
-Message-Id: <20120210202112.GA12644@opensource.wolfsonmicro.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="pf9I7BMVVzbSWLtt"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 02 Feb 2012 14:53:02 +0000
+Subject: [PATCH 3/3 v2] kernel/rcutorture.c: Move call to PTR_ERR after reassignment
+Message-Id: <1328194382-32465-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328861821-3380-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1328861821-3380-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>
+References: <1328194382-32465-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1328194382-32465-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Josh Triplett <josh@freedesktop.org>
+Cc: kernel-janitors@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+PTR_ERR should be called before its argument is cleared.
 
-On Fri, Feb 10, 2012 at 09:17:01AM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied, thanks for your persistence!
+// <smpl>
+@@
+expression e,e1;
+constant c;
+@@
 
---pf9I7BMVVzbSWLtt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+*e = c
+... when != e = e1
+    when != &e
+    when != true IS_ERR(e)
+*PTR_ERR(e)
+// </smpl>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reported-by: Josh Triplett <josh@joshtriplett.org>
 
-iQIcBAEBAgAGBQJPNXwtAAoJEBus8iNuMP3dLF0P/0rPStcBUNZBPaxXPKytGpeM
-DnNu/g1j0gp2xsFk5BpK97CeXTBBRLXwvC7z2Rej9d3UKK/GthkkDwg/KmusAtkJ
-qcgbSjziv7HF7beTHh+QaAHrriCgM8IZjA2K+GrFhngY8j6ep/pINqOvvvGadDy6
-4VM5mgNqv71cBDSUuXhTgO1ufhvrqSs9XWWi6jLZsSw4lhU8JUbyxKGm7o+Y25XL
-MkgkWGKeVHnl0X1OqeGMuW5IgNN7AI5PEc3Wfq2vZUsIndEnelLW64F82kcO0NeE
-NgeeZnO/hPzEnuwr5o8RynlRjZ1xfakEB2I57p+zEmL8wmNVAnl16JHrOM+QqWg8
-TjMb1nd62u1Z+xTCNDXUde1+/zRlxvT2ELTGLlxWwPClC9ZaRddDKkMgJPF6bxk4
-GWt86bzRZHoo8pRFokC08GHlMz+RA7sXm4VFhBZt03/MCPvdS/MzK/rNzo4GNNrK
-RuSJlSn/ofWZTc+/egx/urb4bgRAX7VAz/e3xdTVHU65TSs5om9LzAqtPRDVINt7
-SLImbAMtgIhZj3x32Map7UxAnxYb1qi2UGPbMZcTAKDAfrlbUVNOeYC6okE7KW/O
-fZjeFruuJBICMbqS8u/9XRJLWcj8nThEAfdYuwTxkvndBFLdqcV+wBxZtp0uqNDO
-yZngN9EPFWc2g1ucSyY8
-=waBX
------END PGP SIGNATURE-----
+---
+v2: correct commit message.
 
---pf9I7BMVVzbSWLtt--
+ kernel/rcutorture.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/rcutorture.c b/kernel/rcutorture.c
+index a58ac28..4b3cd87 100644
+--- a/kernel/rcutorture.c
++++ b/kernel/rcutorture.c
+@@ -1450,12 +1450,15 @@ rcu_torture_onoff(void *arg)
+ static int __cpuinit
+ rcu_torture_onoff_init(void)
+ {
++	int ret;
++
+ 	if (onoff_interval <= 0)
+ 		return 0;
+ 	onoff_task = kthread_run(rcu_torture_onoff, NULL, "rcu_torture_onoff");
+ 	if (IS_ERR(onoff_task)) {
++		ret = PTR_ERR(onoff_task);
+ 		onoff_task = NULL;
+-		return PTR_ERR(onoff_task);
++		return ret;
+ 	}
+ 	return 0;
+ }
+
