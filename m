@@ -1,59 +1,58 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Wed, 29 Feb 2012 12:59:33 +0000
-Subject: [resend] [patch] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
-Message-Id: <20120229125933.GA23250@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 02 Feb 2012 14:00:45 +0000
+Subject: [PATCH 1/3] drivers/power/pda_power.c: Move call to PTR_ERR after reassignment
+Message-Id: <1328191247-23792-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110729085306.GH3752@shale.localdomain>
-In-Reply-To: <20110729085306.GH3752@shale.localdomain>
+References: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jing Huang <huangj@brocade.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "open list:BROCADE BFA FC SC..." <linux-scsi@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, josh@joshtriplett.org
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-If bfad_thread_workq(bfad) was not BFA_STATUS_OK then we freed "im"
-and then dereferenced it.
+From: Julia Lawall <julia@diku.dk>
 
-I did a little clean up because it seemed nicer to return directly
-instead of doing a superfluous goto.  I looked at other functions in
-this file and it seems like returning directly is standard.
+Delete successive assignments to the same location.
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e,e1;
+constant c;
+@@
+
+*e = c
+... when != e = e1
+    when != &e
+    when != true IS_ERR(e)
+*PTR_ERR(e)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+Reported-by: Josh Triplett <josh@joshtriplett.org>
+
 ---
-I sent this last July and asked about it again in November but I never
-heard back.  It still applies fine with 2 lines of fuzz.
+This patch probably only half way solves the problem with this code.  It would
+seem that it should have a goto at the end, but I am not sure to where.
 
-diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
-index 0131238..7f7cca0 100644
---- a/drivers/scsi/bfa/bfad_im.c
-+++ b/drivers/scsi/bfa/bfad_im.c
-@@ -685,25 +685,21 @@ bfa_status_t
- bfad_im_probe(struct bfad_s *bfad)
- {
- 	struct bfad_im_s      *im;
--	bfa_status_t    rc = BFA_STATUS_OK;
- 
- 	im = kzalloc(sizeof(struct bfad_im_s), GFP_KERNEL);
--	if (im = NULL) {
--		rc = BFA_STATUS_ENOMEM;
--		goto ext;
--	}
-+	if (im = NULL)
-+		return BFA_STATUS_ENOMEM;
- 
- 	bfad->im = im;
- 	im->bfad = bfad;
- 
- 	if (bfad_thread_workq(bfad) != BFA_STATUS_OK) {
- 		kfree(im);
--		rc = BFA_STATUS_FAILED;
-+		return BFA_STATUS_FAILED;
+ drivers/power/pda_power.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/pda_power.c b/drivers/power/pda_power.c
+index fd49689..16611c3 100644
+--- a/drivers/power/pda_power.c
++++ b/drivers/power/pda_power.c
+@@ -316,8 +316,8 @@ static int pda_power_probe(struct platform_device *pdev)
+ 	ac_draw = regulator_get(dev, "ac_draw");
+ 	if (IS_ERR(ac_draw)) {
+ 		dev_dbg(dev, "couldn't get ac_draw regulator\n");
+-		ac_draw = NULL;
+ 		ret = PTR_ERR(ac_draw);
++		ac_draw = NULL;
  	}
  
- 	INIT_WORK(&im->aen_im_notify_work, bfad_aen_im_notify_handler);
--ext:
--	return rc;
-+	return BFA_STATUS_OK;
- }
- 
- void
+ #ifdef CONFIG_USB_OTG_UTILS
+
