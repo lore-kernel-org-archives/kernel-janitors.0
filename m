@@ -1,35 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 01 Feb 2012 14:42:31 +0000
-Subject: [patch] hwmon: (mc13xxx-adc) make name buffer larger
-Message-Id: <20120201144231.GB5397@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 02 Feb 2012 14:00:46 +0000
+Subject: [PATCH 2/3] drivers/net/ethernet/ti/davinci_xxx.c: Move call to PTR_ERR after reassignment
+Message-Id: <1328191247-23792-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Guenter Roeck <guenter.roeck@ericsson.com>, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, josh@joshtriplett.org, Julia Lawall <julia@diku.dk>
 
-This is doesn't change how the code works, it's just a thing to make the
-static checkers happy.  We transfer a 12 character string from a 20
-character buffer to a 10 character buffer using snprintf().  The static
-checkers complain that that lops off the last couple characters.
+From: Julia Lawall <julia@diku.dk>
 
-The static checkers are right, but it turns out we don't care because
-later on we truncate the name at the '-' character.  Oh well, let's
-change it so they don't complain.
+Delete successive assignments to the same location.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/hwmon/mc13783-adc.c b/drivers/hwmon/mc13783-adc.c
-index e9a7659d..282aaf5 100644
---- a/drivers/hwmon/mc13783-adc.c
-+++ b/drivers/hwmon/mc13783-adc.c
-@@ -37,7 +37,7 @@
- struct mc13783_adc_priv {
- 	struct mc13xxx *mc13xxx;
- 	struct device *hwmon_dev;
--	char name[10];
-+	char name[PLATFORM_NAME_SIZE];
- };
+// <smpl>
+@@
+expression e,e1;
+constant c;
+@@
+
+*e = c
+... when != e = e1
+    when != &e
+    when != true IS_ERR(e)
+*PTR_ERR(e)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+Reported-by: Josh Triplett <josh@joshtriplett.org>
+
+---
+ drivers/net/ethernet/ti/davinci_emac.c |    3 ++-
+ drivers/net/ethernet/ti/davinci_mdio.c |    2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index efd4f3e..922a937 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -1600,8 +1600,9 @@ static int emac_dev_open(struct net_device *ndev)
+ 		if (IS_ERR(priv->phydev)) {
+ 			dev_err(emac_dev, "could not connect to phy %s\n",
+ 				priv->phy_id);
++			ret = PTR_ERR(priv->phydev);
+ 			priv->phydev = NULL;
+-			return PTR_ERR(priv->phydev);
++			return ret;
+ 		}
  
- static ssize_t mc13783_adc_show_name(struct device *dev, struct device_attribute
+ 		priv->link = 0;
+diff --git a/drivers/net/ethernet/ti/davinci_mdio.c b/drivers/net/ethernet/ti/davinci_mdio.c
+index ef7c9c1..af8b8fc 100644
+--- a/drivers/net/ethernet/ti/davinci_mdio.c
++++ b/drivers/net/ethernet/ti/davinci_mdio.c
+@@ -318,9 +318,9 @@ static int __devinit davinci_mdio_probe(struct platform_device *pdev)
+ 
+ 	data->clk = clk_get(dev, NULL);
+ 	if (IS_ERR(data->clk)) {
+-		data->clk = NULL;
+ 		dev_err(dev, "failed to get device clock\n");
+ 		ret = PTR_ERR(data->clk);
++		data->clk = NULL;
+ 		goto bail_out;
+ 	}
+ 
+
