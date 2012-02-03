@@ -1,31 +1,30 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Fri, 03 Feb 2012 13:01:49 +0000
+From: Roland Dreier <roland@kernel.org>
+Date: Fri, 03 Feb 2012 17:08:57 +0000
 Subject: Re: [patch 2/3] ib_srpt: checking NULL instead of ERR_PTR
-Message-Id: <CA+_b7DK-=ORJQ20aHE_aVgEud4vAPQG_sskOeMqftabzun0h+A@mail.gmail.com>
+Message-Id: <CAL1RGDU0HkrS_ME12H6j43e=Fkn=C9Ms64mXNjxf4_dS_PV7EQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111104182732.GH5796@elgon.mountain>
-	<1320443697.5859.171.camel@haakon2.linux-iscsi.org>
-In-Reply-To: <1320443697.5859.171.camel@haakon2.linux-iscsi.org>
+References: <20111104182732.GH5796@elgon.mountain> <1320443697.5859.171.camel@haakon2.linux-iscsi.org>
+ <CA+_b7DK-=ORJQ20aHE_aVgEud4vAPQG_sskOeMqftabzun0h+A@mail.gmail.com>
+In-Reply-To: <CA+_b7DK-=ORJQ20aHE_aVgEud4vAPQG_sskOeMqftabzun0h+A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: nab@risingtidesystems.com
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, target-devel <target-devel@vger.kernel.org>, Bart Van Assche <bart.vanassche@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: nab-4mckEHfoRW3KI0RCH6AXYZqQE7yCjDx5@public.gmane.org, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel <target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bart Van Assche <bart.vanassche-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-On 11/5/11, Nicholas A. Bellinger <nab@risingtidesystems.com> wrote:
-> On Fri, 2011-11-04 at 21:27 +0300, Dan Carpenter wrote:
->> transport_init_session() and target_fabric_configfs_init() don't
->> return NULL pointers, they only return ERR_PTRs or valid pointers.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Thanks for catching this breakage.  It appears that are a few other
-> locations outside of ib_srpt where return checking for these two
-> functions needs to be fixed as well.  I'll fix this up shortly.
->
+On Fri, Feb 3, 2012 at 5:01 AM, Dan Carpenter <error27@gmail.com> wrote:
+> All the others seem to fixed up. =A0It's just these two place which need
+> to be fixed still. =A0My patch still applies fine with a little fuzz. =A0=
+;)
 
-All the others seem to fixed up.  It's just these two place which need
-to be fixed still.  My patch still applies fine with a little fuzz.  ;)
+I have a few pending srpt patches, coincidentally including one that hits
+very near yours leading to a trivial conflict.  So I just merged yours into
+your tree as well and I guess I'll send to Linus shortly.
 
-regards,
-dan carpenter
+Thanks,
+  Roland
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
