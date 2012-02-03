@@ -1,44 +1,64 @@
-From: =?UTF-8?B?w4JuZ2Vsbw==?= Arrifano (miknix) <miknix@gentoo.org>
-Date: Sat, 11 Feb 2012 01:21:25 +0000
-Subject: Re: [PATCH v2 02/17] Staging: quickstart: Prefix remaining functions names with quickstart_
-Message-Id: <20120211022125.00817241@blau64.ninho.local>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Fri, 03 Feb 2012 09:16:59 +0000
+Subject: Re: [patch] mtd: nand: fix printk() warnings
+Message-Id: <1328260619.13362.0.camel@sauron.fi.intel.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-/E15FAOOz6gZebtRJiDY"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1326320574-11220-3-git-send-email-szymon@janc.net.pl>
-In-Reply-To: <1326320574-11220-3-git-send-email-szymon@janc.net.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+References: <20120131085405.GD22039@elgon.mountain>
+In-Reply-To: <20120131085405.GD22039@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, kernel-janitors@vger.kernel.org, Mike Dunn <mikedunn@newsguy.com>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+
+
+--=-/E15FAOOz6gZebtRJiDY
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 2012-01-31 at 11:54 +0300, Dan Carpenter wrote:
+> Gcc complains here:
+> drivers/mtd/nand/docg4.c: In function =E2=80=98probe_docg4=E2=80=99:
+> drivers/mtd/nand/docg4.c:1277:4: warning: format =E2=80=98%x=E2=80=99 exp=
+ects argument of type =E2=80=98unsigned int=E2=80=99, but argument 3 has ty=
+pe =E2=80=98resource_size_t=E2=80=99 [-Wformat]
+> drivers/mtd/nand/docg4.c:1277:4: warning: format =E2=80=98%x=E2=80=99 exp=
+ects argument of type =E2=80=98unsigned int=E2=80=99, but argument 4 has ty=
+pe =E2=80=98resource_size_t=E2=80=99 [-Wformat]
+>=20
+> We have a standard way of printing these using a format string
+> extension.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Pushed to l2-mtd-2.6.git, thanks!
+
+--=20
+Best Regards,
+Artem Bityutskiy
+
+
+--=-/E15FAOOz6gZebtRJiDY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
 
-On Fri, 10 Feb 2012 19:58:23 +0100
-Szymon Janc <szymon@janc.net.pl> wrote:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-> Hi,
-> 
-> > > I'll take this, but you do know there is no reason for this, as these
-> > > are static functions.  I'd recommend keeping them as short as possible,
-> > > but hey, it's not my code...
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > I agree with Greg on this one. At the time I didn't prefix these
-> > functions with the module name because I wanted to make them clear they
-> > were different. The difference lies in the fact that those functions
-> > are only used to implement the sysfs interface.
-> 
-> Yeah, maybe you are right. I thought it was just an oversight. I can send a 
-> patch that will get orig names back if you prefer.
+iQIcBAABAgAGBQJPK6YLAAoJECmIfjd9wqK0r08P/AjJBLWi3HrJWM31V7yBTKTa
+GCWcyrPYrIw7fu9st+34aILyf1PFOa/yEcd6hNd9ieKwoZRhrnbWy9PwK8fvnQ5w
+bcZEClM9hBf91UKXJPIneEiKON/n5lJtplEdd64eLOdzc/rzhCnJCJN4FX8r99Zu
+YtkNScDviPj5ytIcj8Y8hWfPZXy9jiBaz4NBlu/DhU/BcjLegeZ6cfrB45toZOPo
+KMIWMGM/PsSCzeRuqg6YJj4vnzFPp9wSZz9U2xfu0Lerd9E2EOTcgtCqVuOHkU9+
+em4wnrDRK1UweDVIpdsFTqzMkMPj40Nu7cj/won1nP3ika/vXk5kI1ZktysaHSj0
+YaVwxPk85e31zaYEQ3O+vI/nfdRG4pckojBpoQ/ped7jRoOHpL11UqYc5C0s2kQO
+gaHSpVS5i+v4dP0YU1byX3R1HJ0PI+0+7ktYkKe7FNe14bJ4o0HGy8o8+1Vr1Wvg
+fltkyI4MaQyzz1i0QKZ95Ey6mVWYEcxrVuyP5OSVJzi0GKDjK+WH9K0YIu3ANYYM
+x27N32ruO85q2OjQkysMZH12jJtpdWUnHoAKEbmm/XmR78ATuVB4rdAHD3AnCnzO
+8luaCHmvE4ChsWfAOd4wt46i3qqgNodFBIzBml48DyRVef1abAIgjXpZR2u82el0
+s+3CbXPheC+MAWm9Li5z
+=KwqD
+-----END PGP SIGNATURE-----
 
-Well, if the patch is already applied, then no need to revert, as Greg said
-the relevant functions are static, so the patch ends up being just cosmetic. :)
+--=-/E15FAOOz6gZebtRJiDY--
 
-Thanks for pushing this out of staging.
-- Angelo
-> 
-> 
-> -- 
-> Szymon K. Janc
-> szymon@janc.net.pl
-> 
