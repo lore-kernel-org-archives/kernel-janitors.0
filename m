@@ -1,16 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 02 Feb 2012 14:52:59 +0000
-Subject: [PATCH 0/3] Move call to PTR_ERR after reassignment
-Message-Id: <1328194382-32465-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 04 Feb 2012 13:37:14 +0000
+Subject: [patch] usb: dwc3: make dwc3_get_device_id() return the id
+Message-Id: <20120204133714.GA4413@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-These patches fix cases where a location is reset to NULL before being
-passed to PTR_ERR.
+We always return zero instead of the id we found.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't have this hardware so it's not tested.
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 7c9df63..73df745 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -86,7 +86,7 @@ again:
+ 		id = -ENOMEM;
+ 	}
+ 
+-	return 0;
++	return id;
+ }
+ EXPORT_SYMBOL_GPL(dwc3_get_device_id);
+ 
