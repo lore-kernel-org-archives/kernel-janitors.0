@@ -1,30 +1,57 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 04 Feb 2012 13:37:14 +0000
-Subject: [patch] usb: dwc3: make dwc3_get_device_id() return the id
-Message-Id: <20120204133714.GA4413@elgon.mountain>
+From: Felipe Balbi <balbi@ti.com>
+Date: Mon, 06 Feb 2012 06:44:38 +0000
+Subject: Re: [patch] usb: dwc3: make dwc3_get_device_id() return the id
+Message-Id: <20120206064437.GC15652@legolas.emea.dhcp.ti.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="zCKi3GIZzVBPywwA"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <20120204133714.GA4413@elgon.mountain>
+In-Reply-To: <20120204133714.GA4413@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We always return zero instead of the id we found.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I don't have this hardware so it's not tested.
+--zCKi3GIZzVBPywwA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 7c9df63..73df745 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -86,7 +86,7 @@ again:
- 		id = -ENOMEM;
- 	}
- 
--	return 0;
-+	return id;
- }
- EXPORT_SYMBOL_GPL(dwc3_get_device_id);
- 
+On Sat, Feb 04, 2012 at 04:37:14PM +0300, Dan Carpenter wrote:
+> We always return zero instead of the id we found.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Applied, thanks
+
+> ---
+> I don't have this hardware so it's not tested.
+
+This one is so obvious that I can't even believe we haven't seen that
+before, thanks ;-)
+
+--=20
+balbi
+
+--zCKi3GIZzVBPywwA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPL3bUAAoJEIaOsuA1yqREaaYP/Rsyh2nvqBTB1Lm+F/aBiJlF
+TqgpbmKPiobsOGX39zG870X/iwx/R2lcOfwxKImnbJa2BTXXC5Amx/vudmhRn04h
+4C4vkM6eBByPSOQbAfDDEzy6/KvjbbD6w1CEU19hAQZ8N69zWNbyjan/52qVLtcs
+BN++hb/SMBgccgIw83chPugGYLat/4K0qPKwtmidygn/59K2jcRNAPGo/27NQMLI
+lp0TASYW/T2mzy9ad8+eETmbvs6JvWjkgnvGuvqDf2F67AlNnF1wISJMDlxSt/hz
+g2hHC8v64S+06g6EKgMNHmSkSbMapnknZxPIdJaptOvV62E/WWSLkIFI2OBobEXx
+sZ8oWTLKG3TXEVzPt1WfvmggmxCbI9j2DRgn6Xl6RDIIaDpM3iyhv0KARLHc5p8E
+4mqrR0U8xAWDy2JTbaC2iAYFezoVFpjZDK+7fG7JK++UdskqAVlPislMlOsQmoXM
+JjLdQ3cTewimg3Ir7+z1geKMb3hRjjAAn7mEHK/wQSwiXsqExT6xxaQGp65VV29K
+73KBPTvBopGkcbCQb56fXwLhLaobqbCFjMrdEi909DVTNGjPEqEkGzXttN/2r5F/
+TyQIP5ye+SuLFfhTjAhNqjDTd4b/WdiLhgvqGy1++hDGqmUx0Atb+fBAlF8DErKS
+90EkSBXIjqfbfdM+8lJY
+=1Pxj
+-----END PGP SIGNATURE-----
+
+--zCKi3GIZzVBPywwA--
