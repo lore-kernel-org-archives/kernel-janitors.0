@@ -1,23 +1,26 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 19 Feb 2012 23:58:11 +0000
-Subject: Re: [PATCH] b44: remove __exit from b44_pci_exit()
-Message-Id: <20120219.185811.1602965172431248468.davem@davemloft.net>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Mon, 06 Feb 2012 18:21:51 +0000
+Subject: Re: [PATCH v2 00/17] Some work on quickstart driver in staging
+Message-Id: <201202061921.52111.szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <74eccdc061524ad9ab6aae1ca0dd7a020921b1fe.1329684207.git.n.pajkovsky@gmail.com>
-In-Reply-To: <74eccdc061524ad9ab6aae1ca0dd7a020921b1fe.1329684207.git.n.pajkovsky@gmail.com>
+References: <1326320574-11220-1-git-send-email-szymon@janc.net.pl>
+In-Reply-To: <1326320574-11220-1-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: n.pajkovsky@gmail.com
-Cc: zambrano@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Nikola Pajkovsky <n.pajkovsky@gmail.com>
-Date: Sun, 19 Feb 2012 21:47:43 +0100
+Hi Greg,
 
-> WARNING: drivers/net/ethernet/broadcom/built-in.o(.init.text+0x5d): Section mismatch in reference from the function b44_init() to the function .exit.text:b44_pci_exit()
-> 
-> module exits with b44_cleanup()
-> 
-> Signed-off-by: Nikola Pajkovsky <n.pajkovsky@gmail.com>
+> Changes since v1:
+>  - use pr_{err,info} instead of custom macros for logs
+>  - fixed quickstart_buttons_show issue pointed out by Dan
+>  - Use scnprintf in quickstart_pressed_button_show
 
-Applied.
+Should I resent those patches to your new email address?
+Or they are just waiting in queue?
+
+-- 
+Szymon K. Janc
+szymon@janc.net.pl
+
