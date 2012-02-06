@@ -1,48 +1,37 @@
-From: Borislav Petkov <bp@amd64.org>
-Date: Mon, 27 Feb 2012 09:28:38 +0000
-Subject: Re: [PATCH linux-next] edac: move const pci_device_id tables from __devinitdata to __devinitconst.
-Message-Id: <20120227092838.GB3970@aftab>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 Feb 2012 07:52:18 +0000
+Subject: [patch] ALSA: hda/realtek - cleanup a condition
+Message-Id: <20120206075218.GA14304@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <83869.69195.bm@smtp156.mail.ukl.yahoo.com>
-In-Reply-To: <83869.69195.bm@smtp156.mail.ukl.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lionel Debroux <lionel_debroux@yahoo.fr>
-Cc: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, David Henningsson <david.henningsson@canonical.com>
 
-On Mon, Feb 27, 2012 at 08:05:30AM +0100, Lionel Debroux wrote:
-> Based on PaX and earlier work by Andi Kleen.
-> 
-> Patch against linux-next (20120224).
-> 
-> ---
-> 
-> From e4ed493cf2241f6ba880459e48674de0b2a394a3 Mon Sep 17 00:00:00 2001
-> From: Lionel Debroux <lionel_debroux@yahoo.fr>
-> Date: Mon, 27 Feb 2012 07:41:47 +0100
-> Subject: edac: move const pci_device_id tables from __devinitdata to
->  __devinitconst.
-> 
-> These const tables are currently marked __devinitdata, but Documentation/PCI/pci.txt says:
-> "
-> o The ID table array should be marked __devinitconst; this is done
->   automatically if the table is declared with DEFINE_PCI_DEVICE_TABLE().
-> "
-> So use DEFINE_PCI_DEVICE_TABLE(x).
-> 
-> Based on PaX and earlier work by Andi Kleen.
-> 
-> Signed-off-by: Lionel Debroux <lionel_debroux@yahoo.fr>
+Sparse complains that "spec->multiout.dac_nids" is a pointer.
 
-Applied [with minor commit msg formatting changes], thanks.
+sound/pci/hda/patch_realtek.c:2321:37: error: incompatible types for operation (>)
+sound/pci/hda/patch_realtek.c:2321:37:    left side has type unsigned short const [usertype] *dac_nids
+sound/pci/hda/patch_realtek.c:2321:37:    right side has type int
 
--- 
-Regards/Gruss,
-Boris.
+I think the intent here was just to check if it was non-NULL, but please
+double check.
 
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-GM: Alberto Bozzo
-Reg: Dornach, Landkreis Muenchen
-HRB Nr. 43632 WEEE Registernr: 129 19551
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't have this hardware.
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index a8e82be..7da4fd7 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -2318,7 +2318,7 @@ static int alc_build_pcms(struct hda_codec *codec)
+ 		 "%s Analog", codec->chip_name);
+ 	info->name = spec->stream_name_analog;
+ 
+-	if (spec->multiout.dac_nids > 0) {
++	if (spec->multiout.dac_nids) {
+ 		p = spec->stream_analog_playback;
+ 		if (!p)
+ 			p = &alc_pcm_analog_playback;
