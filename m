@@ -1,37 +1,35 @@
-From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-Date: Mon, 27 Feb 2012 10:17:50 +0000
-Subject: [PATCH 1/2 v2] Staging:android: Change type for binder_debug_no_lock switch to bool
-Message-Id: <1330337871-27830-1-git-send-email-ruan.zhengwang@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2012 07:20:15 +0000
+Subject: [patch] caif: remove duplicate initialization
+Message-Id: <20120207072015.GB21047@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sjur Braendeland <sjur.brandeland@stericsson.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-GCC warns that module_param_named() indirectly returns a bool type value
-which is different from 'int' type binder_debug_no_lock declared. Change
-it to bool because it is a internal switch for debugging.
+"priv" is initialized twice.  I kept the second one, because it is next
+to the check for NULL.
 
-Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
----
-v2: added a subsystem prefix to the subject
----
- drivers/staging/android/binder.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
-index f0b7e66..4350425 100644
---- a/drivers/staging/android/binder.c
-+++ b/drivers/staging/android/binder.c
-@@ -103,7 +103,7 @@ static uint32_t binder_debug_mask = BINDER_DEBUG_USER_ERROR |
- 	BINDER_DEBUG_FAILED_TRANSACTION | BINDER_DEBUG_DEAD_TRANSACTION;
- module_param_named(debug_mask, binder_debug_mask, uint, S_IWUSR | S_IRUGO);
+diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
+index a751d9b..e866234 100644
+--- a/net/caif/chnl_net.c
++++ b/net/caif/chnl_net.c
+@@ -72,13 +72,12 @@ static void robust_list_del(struct list_head *delete_node)
+ static int chnl_recv_cb(struct cflayer *layr, struct cfpkt *pkt)
+ {
+ 	struct sk_buff *skb;
+-	struct chnl_net *priv  = container_of(layr, struct chnl_net, chnl);
++	struct chnl_net *priv;
+ 	int pktlen;
+ 	const u8 *ip_version;
+ 	u8 buf;
  
--static int binder_debug_no_lock;
-+static bool binder_debug_no_lock;
- module_param_named(proc_no_lock, binder_debug_no_lock, bool, S_IWUSR | S_IRUGO);
+ 	priv = container_of(layr, struct chnl_net, chnl);
+-
+ 	if (!priv)
+ 		return -EINVAL;
  
- static DECLARE_WAIT_QUEUE_HEAD(binder_user_error_wait);
--- 
-1.6.0.4
-
