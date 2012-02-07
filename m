@@ -1,19 +1,58 @@
-From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-Date: Fri, 24 Feb 2012 10:20:24 +0000
-Subject: Re: Please ignore! Test email only
-Message-Id: <4F476468.3000404@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 07 Feb 2012 07:19:32 +0000
+Subject: [patch] ALSA: hda ca0132 - remove unused error handling code
+Message-Id: <20120207071932.GA21047@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4F4762EF.5000307@gmail.com>
-In-Reply-To: <4F4762EF.5000307@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Ian Minett <ian_minett@creativelabs.com>
 
-CgoKLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLQpGcm9tOiBaaGVuZ3dhbmcgUnVh
-bgpTZW50OiAyMDEyxOowMtTCMjTI1SDQx8bazuUgMTjKsTE0t9YwN8PrClRvOiBrZXJuZWwtamFu
-aXRvcnMKU3ViamVjdDogUGxlYXNlIGlnbm9yZSEgVGVzdCBlbWFpbCBvbmx5Cj4gISBUZXN0Cgot
-LQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3Jp
-YmUga2VybmVsLWphbml0b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
-QHZnZXIua2VybmVsLm9yZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJu
-ZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWw=
+We never save the return value from chipio_write() so "err" is always
+zero here, not less than zero.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The other option would be to save the return value.  I don't have the
+hardware and I worried that there was a reason we don't save it.  The
+current code is misleading because it looks like it's checked until
+you notice that the "err = " bit is missing.
+
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 35abe3c..92f1f0c 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -733,8 +733,6 @@ static int ca0132_hp_switch_put(struct snd_kcontrol *kcontrol,
+ 	/* *valp 0 is mute, 1 is unmute */
+ 	data = (data & 0x7f) | (*valp ? 0 : 0x80);
+ 	chipio_write(codec, REG_CODEC_MUTE, data);
+-	if (err < 0)
+-		return err;
+ 
+ 	spec->curr_hp_switch = *valp;
+ 
+@@ -775,8 +773,6 @@ static int ca0132_speaker_switch_put(struct snd_kcontrol *kcontrol,
+ 	/* *valp 0 is mute, 1 is unmute */
+ 	data = (data & 0xef) | (*valp ? 0 : 0x10);
+ 	chipio_write(codec, REG_CODEC_MUTE, data);
+-	if (err < 0)
+-		return err;
+ 
+ 	spec->curr_speaker_switch = *valp;
+ 
+@@ -824,14 +820,10 @@ static int ca0132_hp_volume_put(struct snd_kcontrol *kcontrol,
+ 	val = 31 - left_vol;
+ 	data = (data & 0xe0) | val;
+ 	chipio_write(codec, REG_CODEC_HP_VOL_L, data);
+-	if (err < 0)
+-		return err;
+ 
+ 	val = 31 - right_vol;
+ 	data = (data & 0xe0) | val;
+ 	chipio_write(codec, REG_CODEC_HP_VOL_R, data);
+-	if (err < 0)
+-		return err;
+ 
+ 	spec->curr_hp_volume[0] = left_vol;
+ 	spec->curr_hp_volume[1] = right_vol;
