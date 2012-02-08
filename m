@@ -1,62 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 02 Feb 2012 14:00:47 +0000
-Subject: [PATCH 3/3] kernel/rcutorture.c: Move call to PTR_ERR after reassignment
-Message-Id: <1328191247-23792-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Feb 2012 09:25:04 +0000
+Subject: [patch] pps: checking for NULL instead of IS_ERR()
+Message-Id: <20120208092504.GD6554@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Josh Triplett <josh@freedesktop.org>
-Cc: kernel-janitors@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Rodolfo Giometti <giometti@enneenne.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+class_create() never returns NULLs only ERR_PTRs.
 
-Delete successive assignments to the same location.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e,e1;
-constant c;
-@@
-
-*e = c
-... when != e = e1
-    when != &e
-    when != true IS_ERR(e)
-*PTR_ERR(e)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-Reported-by: Josh Triplett <josh@joshtriplett.org>
-
----
- kernel/rcutorture.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/rcutorture.c b/kernel/rcutorture.c
-index a58ac28..4b3cd87 100644
---- a/kernel/rcutorture.c
-+++ b/kernel/rcutorture.c
-@@ -1450,12 +1450,15 @@ rcu_torture_onoff(void *arg)
- static int __cpuinit
- rcu_torture_onoff_init(void)
- {
-+	int ret;
-+
- 	if (onoff_interval <= 0)
- 		return 0;
- 	onoff_task = kthread_run(rcu_torture_onoff, NULL, "rcu_torture_onoff");
- 	if (IS_ERR(onoff_task)) {
-+		ret = PTR_ERR(onoff_task);
- 		onoff_task = NULL;
--		return PTR_ERR(onoff_task);
-+		return ret;
+diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+index 2baadd2..98fbe62 100644
+--- a/drivers/pps/pps.c
++++ b/drivers/pps/pps.c
+@@ -369,9 +369,9 @@ static int __init pps_init(void)
+ 	int err;
+ 
+ 	pps_class = class_create(THIS_MODULE, "pps");
+-	if (!pps_class) {
++	if (IS_ERR(pps_class)) {
+ 		pr_err("failed to allocate class\n");
+-		return -ENOMEM;
++		return PTR_ERR(pps_class);
  	}
- 	return 0;
- }
-
+ 	pps_class->dev_attrs = pps_attrs;
+ 
