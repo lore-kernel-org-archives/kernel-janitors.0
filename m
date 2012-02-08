@@ -1,37 +1,30 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 06 Feb 2012 09:09:51 +0000
-Subject: Re: [alsa-devel] [patch] ALSA: hda/realtek - cleanup a condition
-Message-Id: <s5hty34qqe8.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 08 Feb 2012 09:20:04 +0000
+Subject: [patch] wl12xx: remove some dead code in wl1271_plt_init()
+Message-Id: <20120208092004.GB6554@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120206075218.GA14304@elgon.mountain>
-	<4F2F89F3.4060301@canonical.com>
-In-Reply-To: <4F2F89F3.4060301@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Henningsson <david.henningsson@canonical.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+To: Luciano Coelho <coelho@ti.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Shahar Levi <shahar_levi@ti.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Mon, 06 Feb 2012 09:06:11 +0100,
-David Henningsson wrote:
-> 
-> On 02/06/2012 08:52 AM, Dan Carpenter wrote:
-> > Sparse complains that "spec->multiout.dac_nids" is a pointer.
-> >
-> > sound/pci/hda/patch_realtek.c:2321:37: error: incompatible types for operation (>)
-> > sound/pci/hda/patch_realtek.c:2321:37:    left side has type unsigned short const [usertype] *dac_nids
-> > sound/pci/hda/patch_realtek.c:2321:37:    right side has type int
-> >
-> > I think the intent here was just to check if it was non-NULL, but please
-> > double check.
-> 
-> It could also have meant to be "if (spec->multiout.num_dacs > 0)", but 
-> either way, it seems very unlikely that the condition is false.
+"ret" has already been checked at this point, and we don't need to check
+it again.  This was left around from a previous patch 49d750ca14
+"wl12xx: 1281/1283 support - New radio structs and functions".
 
-Yeah, I think so.  Looks like David can read my old mind better than
-me through his crystal ball.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I'll fix it up.  Thanks.
-
-
-Takashi
+diff --git a/drivers/net/wireless/wl12xx/main.c b/drivers/net/wireless/wl12xx/main.c
+index f8748ce..96d90e7 100644
+--- a/drivers/net/wireless/wl12xx/main.c
++++ b/drivers/net/wireless/wl12xx/main.c
+@@ -672,8 +672,6 @@ static int wl1271_plt_init(struct wl1271 *wl)
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+-	if (ret < 0)
+-		return ret;
+ 
+ 	/* Chip-specific initializations */
+ 	ret = wl1271_chip_specific_init(wl);
