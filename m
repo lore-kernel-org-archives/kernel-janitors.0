@@ -1,61 +1,156 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 18 Feb 2012 16:52:05 +0000
-Subject: Re: newbie question
-Message-Id: <20120218165205.GE2912@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="MZf7D3rAEoQgPanC"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 08 Feb 2012 17:14:22 +0000
+Subject: [PATCH] sound/soc/mxs/mxs-saif.c: use devm_ functions
+Message-Id: <1328721262-20993-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAOD=uF4kGtMrHi4NOm=kntUzZWuoEOvHV+bB3RWuyDfkx46iZw@mail.gmail.com>
-In-Reply-To: <CAOD=uF4kGtMrHi4NOm=kntUzZWuoEOvHV+bB3RWuyDfkx46iZw@mail.gmail.com>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, B29396@freescale.com
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---MZf7D3rAEoQgPanC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-On Sat, Feb 18, 2012 at 09:13:39PM +0530, santosh prasad nayak wrote:
-> Thanks Dan for your quick response.
->=20
-> Where to submit the changes ?  linux-kernel mailing thread ? or
-> kernel-janitors mailing thread ?
->=20
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Use the ./scripts/get_maintainer.pl script.  Mostly we don't CC lkml
-unless there is no other devel list for the driver.
+---
+patch against git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
 
-You may want to CC the first patch to kernel janitor list.
-Everyone's first patch is always rejected and the kernel janitor
-list is newbie friendly place to find out what you did wrong.  ;)
+ sound/soc/mxs/mxs-saif.c |   51 ++++++++++-------------------------------------
+ 1 file changed, 11 insertions(+), 40 deletions(-)
 
-Btw.  Always CC the list.  I've added it back since there was
-nothing private in this email.
+diff --git a/sound/soc/mxs/mxs-saif.c b/sound/soc/mxs/mxs-saif.c
+index 76dc74d..63b0a81 100644
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@ -632,7 +632,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 			return ret;
+ 	}
+ 
+-	saif = kzalloc(sizeof(*saif), GFP_KERNEL);
++	saif = devm_kzalloc(&pdev->dev, sizeof(*saif), GFP_KERNEL);
+ 	if (!saif)
+ 		return -ENOMEM;
+ 
+@@ -652,29 +652,16 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 		ret = PTR_ERR(saif->clk);
+ 		dev_err(&pdev->dev, "Cannot get the clock: %d\n",
+ 			ret);
+-		goto failed_clk;
++		return ret;
+ 	}
+ 
+ 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!iores) {
+-		ret = -ENODEV;
+-		dev_err(&pdev->dev, "failed to get io resource: %d\n",
+-			ret);
+-		goto failed_get_resource;
+-	}
+ 
+-	if (!request_mem_region(iores->start, resource_size(iores),
+-				"mxs-saif")) {
+-		dev_err(&pdev->dev, "request_mem_region failed\n");
+-		ret = -EBUSY;
+-		goto failed_get_resource;
+-	}
+-
+-	saif->base = ioremap(iores->start, resource_size(iores));
++	saif->base = devm_request_and_ioremap(&pdev->dev, iores);
+ 	if (!saif->base) {
+ 		dev_err(&pdev->dev, "ioremap failed\n");
+ 		ret = -ENODEV;
+-		goto failed_ioremap;
++		goto failed_get_resource;
+ 	}
+ 
+ 	dmares = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+@@ -682,7 +669,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 		ret = -ENODEV;
+ 		dev_err(&pdev->dev, "failed to get dma resource: %d\n",
+ 			ret);
+-		goto failed_ioremap;
++		goto failed_get_resource;
+ 	}
+ 	saif->dma_param.chan_num = dmares->start;
+ 
+@@ -691,14 +678,15 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 		ret = saif->irq;
+ 		dev_err(&pdev->dev, "failed to get irq resource: %d\n",
+ 			ret);
+-		goto failed_get_irq1;
++		goto failed_get_resource;
+ 	}
+ 
+ 	saif->dev = &pdev->dev;
+-	ret = request_irq(saif->irq, mxs_saif_irq, 0, "mxs-saif", saif);
++	ret = devm_request_irq(&pdev->dev, saif->irq, mxs_saif_irq, 0,
++			       "mxs-saif", saif);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to request irq\n");
+-		goto failed_get_irq1;
++		goto failed_get_resource;
+ 	}
+ 
+ 	saif->dma_param.chan_irq = platform_get_irq(pdev, 1);
+@@ -706,7 +694,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 		ret = saif->dma_param.chan_irq;
+ 		dev_err(&pdev->dev, "failed to get dma irq resource: %d\n",
+ 			ret);
+-		goto failed_get_irq2;
++		goto failed_get_resource;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, saif);
+@@ -714,7 +702,7 @@ static int mxs_saif_probe(struct platform_device *pdev)
+ 	ret = snd_soc_register_dai(&pdev->dev, &mxs_saif_dai);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "register DAI failed\n");
+-		goto failed_register;
++		goto failed_get_resource;
+ 	}
+ 
+ 	saif->soc_platform_pdev = platform_device_alloc(
+@@ -737,36 +725,19 @@ failed_pdev_add:
+ 	platform_device_put(saif->soc_platform_pdev);
+ failed_pdev_alloc:
+ 	snd_soc_unregister_dai(&pdev->dev);
+-failed_register:
+-failed_get_irq2:
+-	free_irq(saif->irq, saif);
+-failed_get_irq1:
+-	iounmap(saif->base);
+-failed_ioremap:
+-	release_mem_region(iores->start, resource_size(iores));
+ failed_get_resource:
+ 	clk_put(saif->clk);
+-failed_clk:
+-	kfree(saif);
+ 
+ 	return ret;
+ }
+ 
+ static int __devexit mxs_saif_remove(struct platform_device *pdev)
+ {
+-	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	struct mxs_saif *saif = platform_get_drvdata(pdev);
+ 
+ 	platform_device_unregister(saif->soc_platform_pdev);
+-
+ 	snd_soc_unregister_dai(&pdev->dev);
+-
+-	iounmap(saif->base);
+-	release_mem_region(res->start, resource_size(res));
+-	free_irq(saif->irq, saif);
+-
+ 	clk_put(saif->clk);
+-	kfree(saif);
+ 
+ 	return 0;
+ }
 
-regards,
-dan carpenter
-
-
---MZf7D3rAEoQgPanC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPP9c1AAoJEOnZkXI/YHqRAXoQAKB8etW8rKK8cEFhjUxjh7Wa
-c2oeIbcUG0bVFMKpaKROvyqrR0zt59+vm68QdOwvPurUgilI0MCbHm95s/AU4w7V
-R5UcIZ2mx31mphq+MUvTkefRuMm1BSQVJ2p09aWfbTN0UPutQWYO1KM//JYz7T39
-LnrLqn+thRYIMpeatbX+XwTVscaxJTB/6EDf0c+sNhFLAouaDw94ffBi+h/zJwmN
-FlyiiuNwSzvU9mis4ix6obizurvULZyzUrhx7BYBqMTKUsTSibn1+7zzhXIYnSgg
-Thq9ft655YOd+tAyYFg9tMxoo51iYRf8516qCImODkmiYnOppjhxShN7ZAsuTngb
-52VjtTVDWKpxu2ZbFg0wtTxnW63j7FlE1vrAXRo8voX1FUTQgkRNvNPjgEeGGMXf
-CSjjUOCi7lrntjGXmfuGcFV26fcS2X2gmWMFxyfKPaA95GVs22t5e7N4YRA2Tpe5
-MsgYtD/BEd3k1A2bNSBqZSrAoFL5kEUUM15WR2N1j87wqjxxp+ylgw/jP31meHXe
-toPVgrLvlMs2gEvWPLCDb2e0nFrYeuGbTAwCPKzfZMsViMeTGz+7lDAqFBr1Vovy
-ILA57g2uOa9Bkhblr5Tyy5111WqocYfne86pfpFxDJrIrA/h4WpS5ZnAue85OAlT
-n0fe6Rfq5SKoy55BkzPQ
-=vTIk
------END PGP SIGNATURE-----
-
---MZf7D3rAEoQgPanC--
