@@ -1,61 +1,59 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 09 Feb 2012 11:55:52 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Feb 2012 12:36:17 +0000
 Subject: Re: [patch] relay: prevent integer overflow in relay_open()
-Message-Id: <4F33B448.1040207@bfs.de>
+Message-Id: <20120209123617.GC4141@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="adJ1OR3c6QgCpb/j"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120209104433.GA5540@elgon.mountain>
-In-Reply-To: <20120209104433.GA5540@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+ <4F33B448.1040207@bfs.de>
+In-Reply-To: <4F33B448.1040207@bfs.de>
+To: walter harms <wharms@bfs.de>
 Cc: Jens Axboe <axboe@kernel.dk>, Paul Gortmaker <paul.gortmaker@windriver.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
+--adJ1OR3c6QgCpb/j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Am 09.02.2012 11:44, schrieb Dan Carpenter:
-> "subbuf_size" and "n_subbufs" come from the user and they need to be
-> capped to prevent an integer overflow.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/kernel/relay.c b/kernel/relay.c
-> index 4335e1d..ab56a17 100644
-> --- a/kernel/relay.c
-> +++ b/kernel/relay.c
-> @@ -164,10 +164,14 @@ depopulate:
->   */
->  static struct rchan_buf *relay_create_buf(struct rchan *chan)
->  {
-> -	struct rchan_buf *buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
-> -	if (!buf)
-> +	struct rchan_buf *buf;
-> +
-> +	if (chan->n_subbufs > UINT_MAX / sizeof(size_t *))
->  		return NULL;
->  
-> +	buf = kzalloc(sizeof(struct rchan_buf), GFP_KERNEL);
-> +	if (!buf)
-> +		return NULL;
->  	buf->padding = kmalloc(chan->n_subbufs * sizeof(size_t *), GFP_KERNEL);
->  	if (!buf->padding)
->  		goto free_buf;
-> @@ -574,6 +578,8 @@ struct rchan *relay_open(const char *base_filename,
->  
->  	if (!(subbuf_size && n_subbufs))
->  		return NULL;
-> +	if (subbuf_size > UINT_MAX / n_subbufs)
-> +		return NULL;
->  
->  	chan = kzalloc(sizeof(struct rchan), GFP_KERNEL);
->  	if (!chan)
-> --
+On Thu, Feb 09, 2012 at 12:55:52PM +0100, walter harms wrote:
+> numerical this is ok, but ...
+> maybe it is better to cap the chan->n_subbufs at a useful number ?
+
+We considered this question already earlier in the thread.
+
+> The user can still allocate an insane number of bytes.
+> Restricting subbuf_size*n_subbufs seems more logical (otherwise is this a=
+ real problem ?)
+>=20
+
+Yes.  It is a real problem.
+
+regards,
+dan carpenter
 
 
-numerical this is ok, but ...
-maybe it is better to cap the chan->n_subbufs at a useful number ?
-The user can still allocate an insane number of bytes.
-Restricting subbuf_size*n_subbufs seems more logical (otherwise is this a real problem ?)
+--adJ1OR3c6QgCpb/j
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-re,
- wh
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPM73BAAoJEOnZkXI/YHqR2K0QAKZYavGkdsfIyee+J8QyZGG2
+PCAwQN1MzKTKZvFHJruAUrOctRh36E6eeuu6fzUhdmDnrpOgws6vifZlBQSDWh2l
+zC+aV6gRWPY05qTYDpPl8HvHC2u7BdT3/l8RtcKP089HqhRtGH9ukYvzbomKByPy
+qTp/ipJrHdI6UfKOLBOg/6FR1YjLyKZg42/Q0vDiLk+A234/Ped01UsdKBKUcBWV
+l0SYweTh1OMnYOFXGM79pgh7ViXtkPjwo4iykz9ejORfpHHE7XJ94+FcfsuM0fuo
+JF8qLlrzIOSuGCnrOSxdXcdnmqzRgWdG/gu0AM4XLpcyV//wT3Sb+0GI93E4NXJ3
+zSSXOqQmGWLV5D6fFcEz4stZdMpxDPwNXot1N9fmWGyxrrTFi7gTXOmo3C5ywltp
+NbzdYQeZL6bx+amhdWNRg0c7/0fvcJiuPwHVkFJvWWQh3ezJMeT9loI5/TfT0KPm
+jx1tHwHYEbPTivmet3qy8D29Bj1vPkd+zrbyceJ/gFkgnjq5Xh/RLXiO9sTOjQLJ
+kcp6jmwdS6s7CPpdKeeHzEMcw3rgWRtA+iXdlahNT0cZld/G8iXyrkJA8EgMZIzY
+OED3fxm5U03Wp1YtTI6SHIzXY3Q7oqCB78+S/bf7MVtwCPuW977rkBUjI4fcNrQt
+AJIHcgv6CXwXDFinN6GE
+=A+ft
+-----END PGP SIGNATURE-----
+
+--adJ1OR3c6QgCpb/j--
