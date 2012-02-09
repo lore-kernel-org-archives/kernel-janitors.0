@@ -1,151 +1,68 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 07 Feb 2012 10:15:13 +0000
-Subject: Re: [patch] ALSA: hda ca0132 - remove unused error handling code
-Message-Id: <s5hfwenospa.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Feb 2012 10:49:34 +0000
+Subject: [patch] bna: fix error handling of bnad_get_flash_partition_by_offset()
+Message-Id: <20120209104934.GC5540@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120207071932.GA21047@elgon.mountain>
-	<s5hobtbotez.wl%tiwai@suse.de>
-In-Reply-To: <s5hobtbotez.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, Ian Minett <ian_minett@creativelabs.com>, kernel-janitors@vger.kernel.org
+To: Rasesh Mody <rmody@brocade.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Tue, 07 Feb 2012 10:59:48 +0100,
-Takashi Iwai wrote:
-> 
-> At Tue, 7 Feb 2012 10:19:32 +0300,
-> Dan Carpenter wrote:
-> > 
-> > We never save the return value from chipio_write() so "err" is always
-> > zero here, not less than zero.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > The other option would be to save the return value. 
-> 
-> Yes, this should be a better option.  chipio_write() may fail indeed.
-> 
-> But then your report spotted another bug.  It doesn't handle
-> snd_hda_power_up|down() correctly in the error path.  It must be fixed
-> as well.
-> 
-> I'll fix these all up.
+The current error handling doesn't work because we flash_part is a u32
+so the checks for negative error codes don't work.  I considered making
+things signed but I don't know the hardware enough to say if that's a
+problem.  Really, we don't use the error codes so just returning zero
+for all problems is fine.
 
-FWIW, below is the fix patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
----
-From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH] ALSA: hda - Fix error handling in patch_ca0132.c
-
-In patch_ca0132.c, the error returned from chipio_write() isn't checked
-always.  Also, the power-up/down sequence isn't tracked properly in some
-error paths.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- sound/pci/hda/patch_ca0132.c |   33 +++++++++++++++++++--------------
- 1 files changed, 19 insertions(+), 14 deletions(-)
-
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 35abe3c..21d91d5 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -728,18 +728,19 @@ static int ca0132_hp_switch_put(struct snd_kcontrol *kcontrol,
+diff --git a/drivers/net/ethernet/brocade/bna/bnad_ethtool.c b/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
+index a27c601..ab753d7 100644
+--- a/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
++++ b/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
+@@ -946,7 +946,7 @@ bnad_get_flash_partition_by_offset(struct bnad *bnad, u32 offset,
  
- 	err = chipio_read(codec, REG_CODEC_MUTE, &data);
- 	if (err < 0)
--		return err;
-+		goto exit;
+ 	flash_attr = kzalloc(sizeof(struct bfa_flash_attr), GFP_KERNEL);
+ 	if (!flash_attr)
+-		return -ENOMEM;
++		return 0;
  
- 	/* *valp 0 is mute, 1 is unmute */
- 	data = (data & 0x7f) | (*valp ? 0 : 0x80);
--	chipio_write(codec, REG_CODEC_MUTE, data);
-+	err = chipio_write(codec, REG_CODEC_MUTE, data);
- 	if (err < 0)
--		return err;
-+		goto exit;
- 
- 	spec->curr_hp_switch = *valp;
- 
-+ exit:
- 	snd_hda_power_down(codec);
--	return 1;
-+	return err < 0 ? err : 1;
- }
- 
- static int ca0132_speaker_switch_get(struct snd_kcontrol *kcontrol,
-@@ -770,18 +771,19 @@ static int ca0132_speaker_switch_put(struct snd_kcontrol *kcontrol,
- 
- 	err = chipio_read(codec, REG_CODEC_MUTE, &data);
- 	if (err < 0)
--		return err;
-+		goto exit;
- 
- 	/* *valp 0 is mute, 1 is unmute */
- 	data = (data & 0xef) | (*valp ? 0 : 0x10);
--	chipio_write(codec, REG_CODEC_MUTE, data);
-+	err = chipio_write(codec, REG_CODEC_MUTE, data);
- 	if (err < 0)
--		return err;
-+		goto exit;
- 
- 	spec->curr_speaker_switch = *valp;
- 
-+ exit:
- 	snd_hda_power_down(codec);
--	return 1;
-+	return err < 0 ? err : 1;
- }
- 
- static int ca0132_hp_volume_get(struct snd_kcontrol *kcontrol,
-@@ -819,25 +821,26 @@ static int ca0132_hp_volume_put(struct snd_kcontrol *kcontrol,
- 
- 	err = chipio_read(codec, REG_CODEC_HP_VOL_L, &data);
- 	if (err < 0)
--		return err;
-+		goto exit;
- 
- 	val = 31 - left_vol;
- 	data = (data & 0xe0) | val;
--	chipio_write(codec, REG_CODEC_HP_VOL_L, data);
-+	err = chipio_write(codec, REG_CODEC_HP_VOL_L, data);
- 	if (err < 0)
--		return err;
-+		goto exit;
- 
- 	val = 31 - right_vol;
- 	data = (data & 0xe0) | val;
--	chipio_write(codec, REG_CODEC_HP_VOL_R, data);
-+	err = chipio_write(codec, REG_CODEC_HP_VOL_R, data);
- 	if (err < 0)
--		return err;
-+		goto exit;
- 
- 	spec->curr_hp_volume[0] = left_vol;
- 	spec->curr_hp_volume[1] = right_vol;
- 
-+ exit:
- 	snd_hda_power_down(codec);
--	return 1;
-+	return err < 0 ? err : 1;
- }
- 
- static int add_hp_switch(struct hda_codec *codec, hda_nid_t nid)
-@@ -936,6 +939,8 @@ static int ca0132_build_controls(struct hda_codec *codec)
- 		if (err < 0)
- 			return err;
- 		err = add_in_volume(codec, spec->dig_in, "IEC958");
-+		if (err < 0)
-+			return err;
+ 	fcomp.bnad = bnad;
+ 	fcomp.comp_status = 0;
+@@ -958,7 +958,7 @@ bnad_get_flash_partition_by_offset(struct bnad *bnad, u32 offset,
+ 	if (ret != BFA_STATUS_OK) {
+ 		spin_unlock_irqrestore(&bnad->bna_lock, flags);
+ 		kfree(flash_attr);
+-		goto out_err;
++		return 0;
  	}
- 	return 0;
+ 	spin_unlock_irqrestore(&bnad->bna_lock, flags);
+ 	wait_for_completion(&fcomp.comp);
+@@ -978,8 +978,6 @@ bnad_get_flash_partition_by_offset(struct bnad *bnad, u32 offset,
+ 	}
+ 	kfree(flash_attr);
+ 	return flash_part;
+-out_err:
+-	return -EINVAL;
  }
--- 
-1.7.9.rc2
-
+ 
+ static int
+@@ -1006,7 +1004,7 @@ bnad_get_eeprom(struct net_device *netdev, struct ethtool_eeprom *eeprom,
+ 	/* Query the flash partition based on the offset */
+ 	flash_part = bnad_get_flash_partition_by_offset(bnad,
+ 				eeprom->offset, &base_offset);
+-	if (flash_part <= 0)
++	if (flash_part = 0)
+ 		return -EFAULT;
+ 
+ 	fcomp.bnad = bnad;
+@@ -1048,7 +1046,7 @@ bnad_set_eeprom(struct net_device *netdev, struct ethtool_eeprom *eeprom,
+ 	/* Query the flash partition based on the offset */
+ 	flash_part = bnad_get_flash_partition_by_offset(bnad,
+ 				eeprom->offset, &base_offset);
+-	if (flash_part <= 0)
++	if (flash_part = 0)
+ 		return -EFAULT;
+ 
+ 	fcomp.bnad = bnad;
