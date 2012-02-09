@@ -1,26 +1,33 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 10 Feb 2012 20:19:53 +0000
-Subject: Re: [Cocci] [PATCH] scripts/coccinelle/misc/boolinit.cocci: semantic patch for bool issues
-Message-Id: <alpine.DEB.2.02.1202102119400.1967@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Feb 2012 10:46:47 +0000
+Subject: [patch] isdn: type bug in isdn_net_header()
+Message-Id: <20120209104647.GB5540@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328893887-28932-1-git-send-email-Julia.Lawall@lip6.fr> <1328900668.22240.100.camel@sauron.fi.intel.com>
-In-Reply-To: <1328900668.22240.100.camel@sauron.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Julia Lawall <julia@diku.dk>, Michal Marek <mmarek@suse.cz>, Gilles Muller <Gilles.Muller@lip6.fr>, bruce.w.allan@intel.com, rusty@rustcorp.com.au, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@diku.dk, joe@perches.com
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Neil Horman <nhorman@tuxdriver.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We use len to store the return value from eth_header().  eth_header()
+can return -ETH_HLEN (-14).  We want to pass this back instead of
+truncating it to 65522 and returning that.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+WARNING: Compile tested only.  I don't have this hardware.  Please check
+that I am on the right track.
 
-On Fri, 10 Feb 2012, Artem Bityutskiy wrote:
-
-> On Fri, 2012-02-10 at 18:11 +0100, Julia Lawall wrote:
->> +coccilib.report.print_report(p[0],"ERROR: Comparison of bool to 0/1")
->
-> All of these look more like style/taste/hygiene suggestions, and I think
-> they should be tagged as "WARNING", not "ERROR".
-
-OK, I'll fix that.
-
-julia
+diff --git a/drivers/isdn/i4l/isdn_net.c b/drivers/isdn/i4l/isdn_net.c
+index 2339d73..802ab87 100644
+--- a/drivers/isdn/i4l/isdn_net.c
++++ b/drivers/isdn/i4l/isdn_net.c
+@@ -1901,7 +1901,7 @@ static int isdn_net_header(struct sk_buff *skb, struct net_device *dev,
+ {
+ 	isdn_net_local *lp = netdev_priv(dev);
+ 	unsigned char *p;
+-	ushort len = 0;
++	int len = 0;
+ 
+ 	switch (lp->p_encap) {
+ 		case ISDN_NET_ENCAP_ETHER:
