@@ -1,30 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Feb 2012 09:23:36 +0000
-Subject: [patch] netxen_nic: signedness bug in netxen_md_entry_err_chk()
-Message-Id: <20120208092335.GC6554@elgon.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 09 Feb 2012 01:28:35 +0000
+Subject: Re: [patch] netxen_nic: signedness bug in netxen_md_entry_err_chk()
+Message-Id: <20120208.202835.161468483687895578.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120208092335.GC6554@elgon.mountain>
+In-Reply-To: <20120208092335.GC6554@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sony Chacko <sony.chacko@qlogic.com>
-Cc: Rajesh Borundia <rajesh.borundia@qlogic.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: sony.chacko@qlogic.com, rajesh.borundia@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"esize" should be signed because it can be negative here.  For example,
-when we call it in netxen_parse_md_template(), it could be -1 from the
-return value of netxen_md_L2Cache().
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 8 Feb 2012 12:23:36 +0300
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> "esize" should be signed because it can be negative here.  For example,
+> when we call it in netxen_parse_md_template(), it could be -1 from the
+> return value of netxen_md_L2Cache().
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-index 0a81228..6f37470 100644
---- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-+++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-@@ -2354,7 +2354,7 @@ netxen_md_rdqueue(struct netxen_adapter *adapter,
- */
- 
- static int netxen_md_entry_err_chk(struct netxen_adapter *adapter,
--				struct netxen_minidump_entry *entry, u32 esize)
-+				struct netxen_minidump_entry *entry, int esize)
- {
- 	if (esize < 0) {
- 		entry->hdr.driver_flags |= NX_DUMP_SKIP;
+Applied.
