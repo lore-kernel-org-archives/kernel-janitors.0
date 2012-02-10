@@ -1,44 +1,202 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Fri, 10 Feb 2012 20:05:43 +0000
-Subject: [PATCH 2/3] Staging: quickstart: Fix compilation warning on 64 bit arch
-Message-Id: <1328904344-22847-2-git-send-email-szymon@janc.net.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 10 Feb 2012 17:11:27 +0000
+Subject: [PATCH] scripts/coccinelle/misc/boolinit.cocci: semantic patch for bool issues
+Message-Id: <1328893887-28932-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328904014-22710-2-git-send-email-szymon@janc.net.pl>
-In-Reply-To: <1328904014-22710-2-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <julia@diku.dk>
+Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org, Michal Marek <mmarek@suse.cz>, bruce.w.allan@intel.com, joe@perches.com, rusty@rustcorp.com.au
 
-acpi_size is u32 or u64 depending on architecture. Cast it to
-unsigned long and use %lu for printing.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This fix following build warning:
-drivers/staging/quickstart/quickstart.c: In function ‘quickstart_acpi_ghid’:
-drivers/staging/quickstart/quickstart.c:212:5: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 3 has type ‘acpi_size’ [-Wformat]
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
 ---
- drivers/staging/quickstart/quickstart.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+ scripts/coccinelle/misc/boolinit.cocci |  178 +++++++++++++++++++++++++++++++++
+ 1 file changed, 178 insertions(+)
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index f6ec8f2..2c8c12b 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -209,8 +209,9 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
- 		quickstart->button->id = *(uint64_t *)buffer.pointer;
- 		break;
- 	default:
--		pr_err("%s GHID method returned buffer of unexpected length %u\n",
--				quickstart->button->name, buffer.length);
-+		pr_err("%s GHID method returned buffer of unexpected length %lu\n",
-+				quickstart->button->name,
-+				(unsigned long)buffer.length);
- 		ret = -EINVAL;
- 		break;
- 	}
--- 
-1.7.9
-
+diff --git a/scripts/coccinelle/misc/boolinit.cocci b/scripts/coccinelle/misc/boolinit.cocci
+new file mode 100644
+index 0000000..b7edfdb
+--- /dev/null
++++ b/scripts/coccinelle/misc/boolinit.cocci
+@@ -0,0 +1,178 @@
++/// Bool initializations should use true and false.  Bool tests don't need
++/// comparisons.  Based on contributions from Joe Perches, Rusty Russell
++/// and Bruce W Allan.
++///
++// Confidence: High
++// Copyright: (C) 2012 Julia Lawall, INRIA/LIP6.  GPLv2.
++// Copyright: (C) 2012 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: -include_headers
++
++virtual patch
++virtual context
++virtual org
++virtual report
++
++@depends on patch@
++bool t;
++symbol true;
++symbol false;
++@@
++
++(
++- t = true
+++ t
++|
++- true = t
+++ t
++|
++- t != true
+++ !t
++|
++- true != t
+++ !t
++|
++- t = false
+++ !t
++|
++- false = t
+++ !t
++|
++- t != false
+++ t
++|
++- false != t
+++ t
++)
++
++@depends on patch disable is_zero, isnt_zero@
++bool t;
++@@
++
++(
++- t = 1
+++ t
++|
++- t != 1
+++ !t
++|
++- t = 0
+++ !t
++|
++- t != 0
+++ t
++)
++
++@depends on patch@
++bool b;
++@@
++(
++ b +- 0
+++ false
++|
++ b +- 1
+++ true
++)
++
++// ---------------------------------------------------------------------
++
++@r1 depends on !patch@
++bool t;
++position p;
++@@
++
++(
++* t@p = true
++|
++* true = t@p
++|
++* t@p != true
++|
++* true != t@p
++|
++* t@p = false
++|
++* false = t@p
++|
++* t@p != false
++|
++* false != t@p
++)
++
++@r2 depends on !patch disable is_zero, isnt_zero@
++bool t;
++position p;
++@@
++
++(
++* t@p = 1
++|
++* t@p != 1
++|
++* t@p = 0
++|
++* t@p != 0
++)
++
++@r3 depends on !patch@
++bool b;
++position p1,p2;
++constant c;
++@@
++(
++*b@p1 = 0
++|
++*b@p1 = 1
++|
++*b@p2 = c
++)
++
++@script:python depends on org@
++p << r1.p;
++@@
++
++cocci.print_main("WARNING: Comparison to bool",p)
++
++@script:python depends on org@
++p << r2.p;
++@@
++
++cocci.print_main("ERROR: Comparison of bool to 0/1",p)
++
++@script:python depends on org@
++p1 << r3.p1;
++@@
++
++cocci.print_main("ERROR: Assignment of bool to 0/1",p1)
++
++@script:python depends on org@
++p2 << r3.p2;
++@@
++
++cocci.print_main("ERROR: Assignment of bool to non-0/1 constant",p2)
++
++@script:python depends on report@
++p << r1.p;
++@@
++
++coccilib.report.print_report(p[0],"WARNING: Comparison to bool")
++
++@script:python depends on report@
++p << r2.p;
++@@
++
++coccilib.report.print_report(p[0],"ERROR: Comparison of bool to 0/1")
++
++@script:python depends on report@
++p1 << r3.p1;
++@@
++
++coccilib.report.print_report(p1[0],"ERROR: Assignment of bool to 0/1")
++
++@script:python depends on report@
++p2 << r3.p2;
++@@
++
++coccilib.report.print_report(p2[0],"ERROR: Assignment of bool to non-0/1 constant")
 
