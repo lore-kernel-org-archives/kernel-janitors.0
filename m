@@ -1,33 +1,42 @@
-From: Sunil Mushran <sunil.mushran@oracle.com>
-Date: Mon, 13 Feb 2012 20:41:33 +0000
-Subject: Re: [patch] ocfs2: cleanup error handling in o2hb_alloc_hb_set()
-Message-Id: <4F39757D.4030101@oracle.com>
+From: Szymon Janc <szymon@janc.net.pl>
+Date: Fri, 10 Feb 2012 20:00:13 +0000
+Subject: [PATCH 2/3] Staging: quickstart: Fix compilation warning on 64 bit arch
+Message-Id: <1328904014-22710-2-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120213135047.GA10683@elgon.mountain>
-	<20120213200408.GA22314@dhcp-172-17-9-228.mtv.corp.google.com>
-	<20120213202923.GL4141@mwanda>
-In-Reply-To: <20120213202923.GL4141@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-On 02/13/2012 12:29 PM, Dan Carpenter wrote:
-> On Mon, Feb 13, 2012 at 12:04:09PM -0800, Joel Becker wrote:
->> On Mon, Feb 13, 2012 at 04:50:47PM +0300, Dan Carpenter wrote:
->>> If "ret" is NULL, then "hs" is also NULL, so there is no need to free
->>> it.  config_group_init_type_name() can't fail if the name ("heartbeat"
->>> in this case) is less than CONFIGFS_ITEM_NAME_LEN (20) characters long
->>> so we can just remove this error handling code.
->>
->> 	Is there a problem we're fixing here?  We can make all sorts of
->> arguments about single-exit functions vs immediate returns, but if there
->> isn't a problem, I'm not sure what we gain by code churn.
->
-> It's a static checker thing.  It's either an unneeded NULL check or
-> a check on the wrong variable depending on how you look at it.
-> Recently, I've been sending a lot of patches to remove unneeded NULL
-> checks for static checkers.  I try to fix the mistakes that are
-> harmless so that the real bugs aren't drowned out in noise.
+acpi_size is u32 or u64 depending on architecture. Cast it to
+unsigned long and use %lu for printing.
 
-In that case, ACK.
+This fix following build warning:
+drivers/staging/quickstart/quickstart.c: In function ‘quickstart_acpi_ghid’:
+drivers/staging/quickstart/quickstart.c:212:5: warning: format ‘%u’ expects argument of type ‘unsigned int’, but argument 3 has type ‘acpi_size’ [-Wformat]
+
+Signed-off-by: Szymon Janc <szymon@janc.net.pl>
+---
+ drivers/staging/quickstart/quickstart.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
+index f6ec8f2..2c8c12b 100644
+--- a/drivers/staging/quickstart/quickstart.c
++++ b/drivers/staging/quickstart/quickstart.c
+@@ -209,8 +209,9 @@ static int quickstart_acpi_ghid(struct quickstart_acpi *quickstart)
+ 		quickstart->button->id = *(uint64_t *)buffer.pointer;
+ 		break;
+ 	default:
+-		pr_err("%s GHID method returned buffer of unexpected length %u\n",
+-				quickstart->button->name, buffer.length);
++		pr_err("%s GHID method returned buffer of unexpected length %lu\n",
++				quickstart->button->name,
++				(unsigned long)buffer.length);
+ 		ret = -EINVAL;
+ 		break;
+ 	}
+-- 
+1.7.9
+
+
