@@ -1,8 +1,10 @@
 From: Szymon Janc <szymon@janc.net.pl>
-Date: Fri, 10 Feb 2012 20:00:13 +0000
+Date: Fri, 10 Feb 2012 20:05:43 +0000
 Subject: [PATCH 2/3] Staging: quickstart: Fix compilation warning on 64 bit arch
-Message-Id: <1328904014-22710-2-git-send-email-szymon@janc.net.pl>
+Message-Id: <1328904344-22847-2-git-send-email-szymon@janc.net.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1328904014-22710-2-git-send-email-szymon@janc.net.pl>
+In-Reply-To: <1328904014-22710-2-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
