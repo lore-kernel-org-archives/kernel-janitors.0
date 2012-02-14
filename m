@@ -1,42 +1,102 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 01 Feb 2012 07:42:11 +0000
-Subject: [patch -next] mac80211: off by one in mcs mask handling
-Message-Id: <20120201074210.GA22179@elgon.mountain>
+Date: Tue, 14 Feb 2012 09:29:31 +0000
+Subject: [patch] acpi: check for allocation errors in dock_link_device()
+Message-Id: <20120214092931.GA18662@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Simon Wunderlich <simon.wunderlich@s2003.tu-chemnitz.de>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Shaohua Li <shaohua.li@intel.com>, Matthew Garrett <mjg@redhat.com>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"ridx" is used as an index into the mcs_mask[] array which has
-IEEE80211_HT_MCS_MASK_LEN elements.
+This is error checking pedantry to keep the static checkers happy.  In
+the original code the kmalloc() wasn't checked for allocation failures.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/net/mac80211/rate.c b/net/mac80211/rate.c
-index 3fef26d..22fc28e 100644
---- a/net/mac80211/rate.c
-+++ b/net/mac80211/rate.c
-@@ -324,7 +324,7 @@ static bool rate_idx_match_mcs_mask(struct ieee80211_tx_rate *rate,
- 	rbit = rate->idx % 8;
+diff --git a/drivers/acpi/dock.c b/drivers/acpi/dock.c
+index b5e4142..38e8212 100644
+--- a/drivers/acpi/dock.c
++++ b/drivers/acpi/dock.c
+@@ -281,21 +281,22 @@ EXPORT_SYMBOL_GPL(is_dock_device);
+  */
+ struct device **dock_link_device(acpi_handle handle)
+ {
+-	struct device *dev = acpi_get_physical_device(handle);
++	struct device *dev;
+ 	struct dock_station *dock_station;
+ 	int ret, dock = 0;
+ 	struct device **devices;
  
- 	/* sanity check */
--	if (ridx < 0 || ridx > IEEE80211_HT_MCS_MASK_LEN)
-+	if (ridx < 0 || ridx >= IEEE80211_HT_MCS_MASK_LEN)
- 		return false;
+-	devices = kmalloc(dock_station_count * sizeof(struct device *),
+-			  GFP_KERNEL);
+-
++	dev = acpi_get_physical_device(handle);
+ 	if (!dev)
+ 		return NULL;
++	if (is_dock(handle))
++		goto out_put;
++
++	devices = kmalloc(dock_station_count * sizeof(struct device *),
++			  GFP_KERNEL);
++	if (!devices)
++		goto out_put;
  
- 	/* See whether the selected rate or anything below it is allowed. */
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index c910b07..7db14b4 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -5408,7 +5408,7 @@ static bool ht_rateset_to_mask(struct ieee80211_supported_band *sband,
- 		rbit = BIT(rates[i] % 8);
+-	if (is_dock(handle)) {
+-		put_device(dev);
+-		return NULL;
+-	}
  
- 		/* check validity */
--		if ((ridx < 0) || (ridx > IEEE80211_HT_MCS_MASK_LEN))
-+		if ((ridx < 0) || (ridx >= IEEE80211_HT_MCS_MASK_LEN))
- 			return false;
+ 	list_for_each_entry(dock_station, &dock_stations, sibling) {
+ 		if (find_dock_dependent_device(dock_station, handle)) {
+@@ -311,6 +312,10 @@ struct device **dock_link_device(acpi_handle handle)
  
- 		/* check availability */
+ 	devices[dock] = NULL;
+ 	return devices;
++
++out_put:
++	put_device(dev);
++	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(dock_link_device);
+ 
+@@ -320,20 +325,21 @@ EXPORT_SYMBOL_GPL(dock_link_device);
+  */
+ struct device **dock_unlink_device(acpi_handle handle)
+ {
+-	struct device *dev = acpi_get_physical_device(handle);
++	struct device *dev;
+ 	struct dock_station *dock_station;
+ 	int dock = 0;
+-	struct device **devices -		kmalloc(dock_station_count * sizeof(struct device *),
+-			GFP_KERNEL);
++	struct device **devices;
+ 
++	dev = acpi_get_physical_device(handle);
+ 	if (!dev)
+ 		return NULL;
++	if (is_dock(handle))
++		goto out_put;
+ 
+-	if (is_dock(handle)) {
+-		put_device(dev);
+-		return NULL;
+-	}
++	devices = kmalloc(dock_station_count * sizeof(struct device *),
++			GFP_KERNEL);
++	if (!devices)
++		goto out_put;
+ 
+ 	list_for_each_entry(dock_station, &dock_stations, sibling) {
+ 		if (find_dock_dependent_device(dock_station, handle)) {
+@@ -350,6 +356,10 @@ struct device **dock_unlink_device(acpi_handle handle)
+ 	put_device(dev);
+ 	devices[dock] = NULL;
+ 	return devices;
++
++out_put:
++	put_device(dev);
++	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(dock_unlink_device);
+ 
