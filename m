@@ -1,34 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 01 Feb 2012 07:53:10 +0000
-Subject: Re: [patch] xfrm6: remove unneeded NULL check in __xfrm6_output()
-Message-Id: <20120201.025310.1777485011852016937.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Feb 2012 06:44:33 +0000
+Subject: [patch] net/ethernet: ks8851_mll: signedness bug in ks8851_probe()
+Message-Id: <20120217064433.GC3666@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120201074526.GC22179@elgon.mountain>
-In-Reply-To: <20120201074526.GC22179@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: steffen.klassert@secunet.com, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jan Weitzel <j.weitzel@phytec.de>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" <davem@davemloft.net>, Paul Gortmaker <paul.gortmaker@windriver.com>, Thomas Meyer <thomas@m3y3r.de>, Danny Kukawka <danny.kukawka@bisect.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 1 Feb 2012 10:45:26 +0300
+netdev->irq is unsigned, so it's never less than zero.
 
-> We don't check for NULL consistently in __xfrm6_output().  If "x" were
-> NULL here it would lead to an OOPs later.  I asked Steffen Klassert
-> about this and he suggested that we remove the NULL check.
-> 
-> On 10/29/11, Steffen Klassert <steffen.klassert@secunet.com> wrote:
->>> net/ipv6/xfrm6_output.c
->>>    148	
->>>    149		if ((x && x->props.mode = XFRM_MODE_TUNNEL) &&
->>>                           ^
->>
->> x can't be null here. It would be a bug if __xfrm6_output() is called
->> without a xfrm_state attached to the skb. I think we can just remove
->> this null check.
-> 
-> Cc: Steffen Klassert <steffen.klassert@secunet.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
+index 10d5798..b8104d9 100644
+--- a/drivers/net/ethernet/micrel/ks8851_mll.c
++++ b/drivers/net/ethernet/micrel/ks8851_mll.c
+@@ -1544,7 +1544,7 @@ static int __devinit ks8851_probe(struct platform_device *pdev)
+ 
+ 	netdev->irq = platform_get_irq(pdev, 0);
+ 
+-	if (netdev->irq < 0) {
++	if ((int)netdev->irq < 0) {
+ 		err = netdev->irq;
+ 		goto err_get_irq;
+ 	}
