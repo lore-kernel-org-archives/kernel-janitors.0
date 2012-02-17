@@ -1,58 +1,48 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 02 Feb 2012 14:00:45 +0000
-Subject: [PATCH 1/3] drivers/power/pda_power.c: Move call to PTR_ERR after reassignment
-Message-Id: <1328191247-23792-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Jan Weitzel <J.Weitzel@phytec.de>
+Date: Fri, 17 Feb 2012 08:00:51 +0000
+Subject: Antwort: [patch] net/ethernet: ks8851_mll: signedness bug in ks8851_probe()
+Message-Id: <OF305A41EA.D95E3D10-ONC12579A7.002BCB7F-C12579A7.002C05CA@phytec.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20120217064433.GC3666@elgon.mountain>
+In-Reply-To: <20120217064433.GC3666@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, josh@joshtriplett.org
-Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, Danny Kukawka <danny.kukawka@bisect.de>, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Thomas Meyer <thomas@m3y3r.de>
 
-From: Julia Lawall <julia@diku.dk>
+Dan Carpenter <dan.carpenter@oracle.com> schrieb am 17.02.2012 07:44:33:
 
-Delete successive assignments to the same location.
+> Von: Dan Carpenter <dan.carpenter@oracle.com>
+> An: Jan Weitzel <j.weitzel@phytec.de>
+> Kopie: Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" 
+> <davem@davemloft.net>, Paul Gortmaker 
+> <paul.gortmaker@windriver.com>, Thomas Meyer <thomas@m3y3r.de>, 
+> Danny Kukawka <danny.kukawka@bisect.de>, netdev@vger.kernel.org, 
+> kernel-janitors@vger.kernel.org
+> Datum: 17.02.2012 07:45
+> Betreff: [patch] net/ethernet: ks8851_mll: signedness bug in 
+ks8851_probe()
+> 
+> netdev->irq is unsigned, so it's never less than zero.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Tested-by: Jan Weitzel <j.weitzel@phytec.de>
 
-// <smpl>
-@@
-expression e,e1;
-constant c;
-@@
-
-*e = c
-... when != e = e1
-    when != &e
-    when != true IS_ERR(e)
-*PTR_ERR(e)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-Reported-by: Josh Triplett <josh@joshtriplett.org>
-
----
-This patch probably only half way solves the problem with this code.  It would
-seem that it should have a goto at the end, but I am not sure to where.
-
- drivers/power/pda_power.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/power/pda_power.c b/drivers/power/pda_power.c
-index fd49689..16611c3 100644
---- a/drivers/power/pda_power.c
-+++ b/drivers/power/pda_power.c
-@@ -316,8 +316,8 @@ static int pda_power_probe(struct platform_device *pdev)
- 	ac_draw = regulator_get(dev, "ac_draw");
- 	if (IS_ERR(ac_draw)) {
- 		dev_dbg(dev, "couldn't get ac_draw regulator\n");
--		ac_draw = NULL;
- 		ret = PTR_ERR(ac_draw);
-+		ac_draw = NULL;
- 	}
- 
- #ifdef CONFIG_USB_OTG_UTILS
+> diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/
+> ethernet/micrel/ks8851_mll.c
+> index 10d5798..b8104d9 100644
+> --- a/drivers/net/ethernet/micrel/ks8851_mll.c
+> +++ b/drivers/net/ethernet/micrel/ks8851_mll.c
+> @@ -1544,7 +1544,7 @@ static int __devinit ks8851_probe(struct 
+> platform_device *pdev)
+> 
+>     netdev->irq = platform_get_irq(pdev, 0);
+> 
+> -   if (netdev->irq < 0) {
+> +   if ((int)netdev->irq < 0) {
+>        err = netdev->irq;
+>        goto err_get_irq;
+>     }
 
