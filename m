@@ -1,41 +1,99 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Tue, 28 Feb 2012 16:20:30 +0000
-Subject: Re: [patch] Bluetooth: change min_t() cast in hci_reassembly()
-Message-Id: <1330446030.3392.80.camel@aeonflux>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Feb 2012 06:44:10 +0000
+Subject: [patch 2/2] [media] s2255drv: fix some endian bugs
+Message-Id: <20120217064410.GB3666@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120228065759.GD20506@elgon.mountain>
-In-Reply-To: <20120228065759.GD20506@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Gustavo F. Padovan" <padovan@profusion.mobi>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Dean Anderson <linux-dev@sensoray.com>, Hans Verkuil <hans.verkuil@cisco.com>, Pete Eberlein <pete@sensoray.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+I don't have this hardware and I don't know the subsystem very well.  So
+please review this patch carefully.  The original code definitely looks
+buggy though.
 
-> "count" is type int so the cast to __u16 truncates the high bits away
-> and triggers a Smatch static checker warning.  It looks like a high
-> value of count could cause a forever loop, but I didn't follow it
-> through to see if count is capped somewhere.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> index e6cbb8a..db484a8 100644
-> --- a/net/bluetooth/hci_core.c
-> +++ b/net/bluetooth/hci_core.c
-> @@ -1966,7 +1966,7 @@ static int hci_reassembly(struct hci_dev *hdev, int type, void *data,
->  
->  	while (count) {
->  		scb = (void *) skb->cb;
-> -		len = min_t(__u16, scb->expect, count);
+Sparse complains about some endian bugs where little endian bugs are
+treated as cpu endian.
 
-this is a good idea since essentially packets are max u16.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
 
-Acked-by: Marcel Holtmann <marcel@holtmann.org>
-
-Regards
-
-Marcel
-
-
+diff --git a/drivers/media/video/s2255drv.c b/drivers/media/video/s2255drv.c
+index 3505242..4894cbb 100644
+--- a/drivers/media/video/s2255drv.c
++++ b/drivers/media/video/s2255drv.c
+@@ -134,7 +134,7 @@
+ 
+ /* usb config commands */
+ #define IN_DATA_TOKEN	cpu_to_le32(0x2255c0de)
+-#define CMD_2255	cpu_to_le32(0xc2255000)
++#define CMD_2255	0xc2255000
+ #define CMD_SET_MODE	cpu_to_le32((CMD_2255 | 0x10))
+ #define CMD_START	cpu_to_le32((CMD_2255 | 0x20))
+ #define CMD_STOP	cpu_to_le32((CMD_2255 | 0x30))
+@@ -2025,7 +2025,7 @@ static int save_frame(struct s2255_dev *dev, struct s2255_pipeinfo *pipe_info)
+ 					pdata[1]);
+ 				offset = jj + PREFIX_SIZE;
+ 				bframe = 1;
+-				cc = pdword[1];
++				cc = le32_to_cpu(pdword[1]);
+ 				if (cc >= MAX_CHANNELS) {
+ 					printk(KERN_ERR
+ 					       "bad channel\n");
+@@ -2034,22 +2034,22 @@ static int save_frame(struct s2255_dev *dev, struct s2255_pipeinfo *pipe_info)
+ 				/* reverse it */
+ 				dev->cc = G_chnmap[cc];
+ 				channel = &dev->channel[dev->cc];
+-				payload =  pdword[3];
++				payload =  le32_to_cpu(pdword[3]);
+ 				if (payload > channel->req_image_size) {
+ 					channel->bad_payload++;
+ 					/* discard the bad frame */
+ 					return -EINVAL;
+ 				}
+ 				channel->pkt_size = payload;
+-				channel->jpg_size = pdword[4];
++				channel->jpg_size = le32_to_cpu(pdword[4]);
+ 				break;
+ 			case S2255_MARKER_RESPONSE:
+ 
+ 				pdata += DEF_USB_BLOCK;
+ 				jj += DEF_USB_BLOCK;
+-				if (pdword[1] >= MAX_CHANNELS)
++				if (le32_to_cpu(pdword[1]) >= MAX_CHANNELS)
+ 					break;
+-				cc = G_chnmap[pdword[1]];
++				cc = G_chnmap[le32_to_cpu(pdword[1])];
+ 				if (cc >= MAX_CHANNELS)
+ 					break;
+ 				channel = &dev->channel[cc];
+@@ -2072,11 +2072,11 @@ static int save_frame(struct s2255_dev *dev, struct s2255_pipeinfo *pipe_info)
+ 					wake_up(&dev->fw_data->wait_fw);
+ 					break;
+ 				case S2255_RESPONSE_STATUS:
+-					channel->vidstatus = pdword[3];
++					channel->vidstatus = le32_to_cpu(pdword[3]);
+ 					channel->vidstatus_ready = 1;
+ 					wake_up(&channel->wait_vidstatus);
+ 					dprintk(5, "got vidstatus %x chan %d\n",
+-						pdword[3], cc);
++						le32_to_cpu(pdword[3]), cc);
+ 					break;
+ 				default:
+ 					printk(KERN_INFO "s2255 unknown resp\n");
+@@ -2603,10 +2603,11 @@ static int s2255_probe(struct usb_interface *interface,
+ 		__le32 *pRel;
+ 		pRel = (__le32 *) &dev->fw_data->fw->data[fw_size - 4];
+ 		printk(KERN_INFO "s2255 dsp fw version %x\n", *pRel);
+-		dev->dsp_fw_ver = *pRel;
+-		if (*pRel < S2255_CUR_DSP_FWVER)
++		dev->dsp_fw_ver = le32_to_cpu(*pRel);
++		if (dev->dsp_fw_ver < S2255_CUR_DSP_FWVER)
+ 			printk(KERN_INFO "s2255: f2255usb.bin out of date.\n");
+-		if (dev->pid = 0x2257 && *pRel < S2255_MIN_DSP_COLORFILTER)
++		if (dev->pid = 0x2257 &&
++				dev->dsp_fw_ver < S2255_MIN_DSP_COLORFILTER)
+ 			printk(KERN_WARNING "s2255: 2257 requires firmware %d"
+ 			       " or above.\n", S2255_MIN_DSP_COLORFILTER);
+ 	}
