@@ -1,28 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 02 Feb 2012 19:37:49 +0000
-Subject: Re: [PATCH 2/3 v2] drivers/net/ethernet/ti: Move call to PTR_ERR after reassignment
-Message-Id: <20120202.143749.209790216360616297.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 Feb 2012 06:45:01 +0000
+Subject: [patch] viafb: NULL dereference on allocation failure in query_edid()
+Message-Id: <20120217064501.GD3666@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328194382-32465-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1328194382-32465-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1328194382-32465-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu,  2 Feb 2012 15:53:01 +0100
+We should handle the allocation here, if only to keep the static
+checkers happy.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> PTR_ERR should be called before its argument is cleared.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> Reported-by: Josh Triplett <josh@joshtriplett.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/video/via/via_aux_edid.c b/drivers/video/via/via_aux_edid.c
+index 03f7a41..754d450 100644
+--- a/drivers/video/via/via_aux_edid.c
++++ b/drivers/video/via/via_aux_edid.c
+@@ -36,10 +36,13 @@ static void query_edid(struct via_aux_drv *drv)
+ 	unsigned char edid[EDID_LENGTH];
+ 	bool valid = false;
+ 
+-	if (spec)
++	if (spec) {
+ 		fb_destroy_modedb(spec->modedb);
+-	else
++	} else {
+ 		spec = kmalloc(sizeof(*spec), GFP_KERNEL);
++		if (!spec)
++			return;
++	}
+ 
+ 	spec->version = spec->revision = 0;
+ 	if (via_aux_read(drv, 0x00, edid, EDID_LENGTH)) {
