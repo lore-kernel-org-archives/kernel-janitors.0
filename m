@@ -1,41 +1,97 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Feb 2012 06:36:57 +0000
-Subject: [patch 3/4] rndis_wlan: make some variables unsigned
-Message-Id: <20120229063657.GE18031@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 18 Feb 2012 20:13:39 +0000
+Subject: [PATCH] drivers/mmc/host/sdhci-s3c.c: use devm_ functions
+Message-Id: <1329596019-19822-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: kernel-janitors@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These variables can never be less than zero because we cap them in
-get_device_pmkids().  Let's make them unsigned here because it's simpler
-to not have to worry about negative numbers when we read the code.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
-index a93cfe2..74e2d1b 100644
---- a/drivers/net/wireless/rndis_wlan.c
-+++ b/drivers/net/wireless/rndis_wlan.c
-@@ -1790,7 +1790,8 @@ static struct ndis_80211_pmkid *remove_pmkid(struct usbnet *usbdev,
- 						struct cfg80211_pmksa *pmksa,
- 						int max_pmkids)
- {
--	int i, count, newlen, err;
-+	int i, newlen, err;
-+	unsigned int count;
+By using devm_ioremap, it also removes a potential memory leak, because
+there was no call to iounmap in the probe function.
+
+The call to platform_get_resource was moved just to make it closer to the
+place where its result it used.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/sdhci-s3c.c |   26 +++-----------------------
+ 1 file changed, 3 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index b19e7d4..10ec7c6 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -402,12 +402,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 		return irq;
+ 	}
  
- 	count = le32_to_cpu(pmkids->bssid_info_count);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "no memory specified\n");
+-		return -ENOENT;
+-	}
+-
+ 	host = sdhci_alloc_host(dev, sizeof(struct sdhci_s3c));
+ 	if (IS_ERR(host)) {
+ 		dev_err(dev, "sdhci_alloc_host() failed\n");
+@@ -464,15 +458,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 		goto err_no_busclks;
+ 	}
  
-@@ -1830,7 +1831,8 @@ static struct ndis_80211_pmkid *update_pmkid(struct usbnet *usbdev,
- 						struct cfg80211_pmksa *pmksa,
- 						int max_pmkids)
- {
--	int i, err, count, newlen;
-+	int i, err, newlen;
-+	unsigned int count;
+-	sc->ioarea = request_mem_region(res->start, resource_size(res),
+-					mmc_hostname(host->mmc));
+-	if (!sc->ioarea) {
+-		dev_err(dev, "failed to reserve register area\n");
+-		ret = -ENXIO;
+-		goto err_req_regs;
+-	}
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
  
- 	count = le32_to_cpu(pmkids->bssid_info_count);
+-	host->ioaddr = ioremap_nocache(res->start, resource_size(res));
++	host->ioaddr = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (!host->ioaddr) {
+ 		dev_err(dev, "failed to map registers\n");
+ 		ret = -ENXIO;
+@@ -547,7 +535,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 	ret = sdhci_add_host(host);
+ 	if (ret) {
+ 		dev_err(dev, "sdhci_add_host() failed\n");
+-		goto err_add_host;
++		goto err_req_regs;
+ 	}
  
+ 	/* The following two methods of card detection might call
+@@ -561,10 +549,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+- err_add_host:
+-	release_resource(sc->ioarea);
+-	kfree(sc->ioarea);
+-
+  err_req_regs:
+ 	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
+ 		if (sc->clk_bus[ptr]) {
+@@ -610,10 +594,6 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
+ 	clk_disable(sc->clk_io);
+ 	clk_put(sc->clk_io);
+ 
+-	iounmap(host->ioaddr);
+-	release_resource(sc->ioarea);
+-	kfree(sc->ioarea);
+-
+ 	sdhci_free_host(host);
+ 	platform_set_drvdata(pdev, NULL);
+ 
+
