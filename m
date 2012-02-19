@@ -1,49 +1,60 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Fri, 17 Feb 2012 07:30:07 +0000
-Subject: Re: [patch] viafb: NULL dereference on allocation failure in query_edid()
-Message-Id: <4F3E01FF.4040003@gmx.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Feb 2012 19:43:32 +0000
+Subject: [PATCH] drivers/atm/solos-pci.c: exchange pci_iounmaps
+Message-Id: <1329680612-28055-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120217064501.GD3666@elgon.mountain>
-In-Reply-To: <20120217064501.GD3666@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Chas Williams <chas@cmf.nrl.navy.mil>
+Cc: kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02/17/2012 06:45 AM, Dan Carpenter wrote:
-> We should handle the allocation here, if only to keep the static
-> checkers happy.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Ah, thanks for noticing it and sorry that I introduced it in the first place.
-Applied.
+The calls to pci_iounmap are in the wrong order, as compared to the
+associated calls to pci_iomap.
 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Thanks,
+// <smpl>
+@@
+expression e,x;
+statement S,S1;
+int ret;
+@@
+e = pci_iomap(x,...)
+... when != pci_iounmap(x,e)
+if (<+...e...+>) S
+... when any
+    when != pci_iounmap(x,e)
+*if (...)
+   { ... when != pci_iounmap(x,e)
+     return ...; }
+... when any
+pci_iounmap(x,e);
+// </smpl>
 
-Florian Tobias Schandinat
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> 
-> diff --git a/drivers/video/via/via_aux_edid.c b/drivers/video/via/via_aux_edid.c
-> index 03f7a41..754d450 100644
-> --- a/drivers/video/via/via_aux_edid.c
-> +++ b/drivers/video/via/via_aux_edid.c
-> @@ -36,10 +36,13 @@ static void query_edid(struct via_aux_drv *drv)
->  	unsigned char edid[EDID_LENGTH];
->  	bool valid = false;
->  
-> -	if (spec)
-> +	if (spec) {
->  		fb_destroy_modedb(spec->modedb);
-> -	else
-> +	} else {
->  		spec = kmalloc(sizeof(*spec), GFP_KERNEL);
-> +		if (!spec)
-> +			return;
-> +	}
->  
->  	spec->version = spec->revision = 0;
->  	if (via_aux_read(drv, 0x00, edid, EDID_LENGTH)) {
-> 
+---
+ drivers/atm/solos-pci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/atm/solos-pci.c b/drivers/atm/solos-pci.c
+index 5d1d076..e8cd652 100644
+--- a/drivers/atm/solos-pci.c
++++ b/drivers/atm/solos-pci.c
+@@ -1206,9 +1206,9 @@ static int fpga_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	
+  out_unmap_both:
+ 	pci_set_drvdata(dev, NULL);
+-	pci_iounmap(dev, card->config_regs);
+- out_unmap_config:
+ 	pci_iounmap(dev, card->buffers);
++ out_unmap_config:
++	pci_iounmap(dev, card->config_regs);
+  out_release_regions:
+ 	pci_release_regions(dev);
+  out:
 
