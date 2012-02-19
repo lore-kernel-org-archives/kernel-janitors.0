@@ -1,30 +1,51 @@
-From: "Kim, Milo" <Milo.Kim@ti.com>
-Date: Thu, 02 Feb 2012 01:21:42 +0000
-Subject: RE: [patch] backlight: lp855x_bl: silence a compiler warning
-Message-Id: <B567DBAB974C0544994013492B949F8E3812DED50B@EXMAIL03.scwf.nsc.com>
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Sun, 19 Feb 2012 12:30:39 +0000
+Subject: [PATCH] Staging: driver usbip: Code cleanup
+Message-Id: <CAOD=uF4st80fB0+uwXNNbHtN4YpoFWwu4EUhwmVi+v=0euu=sQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120201143910.GA5359@elgon.mountain>
-In-Reply-To: <20120201143910.GA5359@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: mfm@muteddisk.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IERhbiBDYXJwZW50ZXIgW21h
-aWx0bzpkYW4uY2FycGVudGVyQG9yYWNsZS5jb21dDQo+IFNlbnQ6IFdlZG5lc2RheSwgRmVicnVh
-cnkgMDEsIDIwMTIgMTE6MzkgUE0NCj4gVG86IFJpY2hhcmQgUHVyZGllOyBLaW1AZWxnb24ubW91
-bnRhaW47IEtpbSwgTWlsbw0KPiBDYzogRmxvcmlhbiBUb2JpYXMgU2NoYW5kaW5hdDsgbGludXgt
-ZmJkZXZAdmdlci5rZXJuZWwub3JnOyBrZXJuZWwtDQo+IGphbml0b3JzQHZnZXIua2VybmVsLm9y
-Zw0KPiBTdWJqZWN0OiBbcGF0Y2hdIGJhY2tsaWdodDogbHA4NTV4X2JsOiBzaWxlbmNlIGEgY29t
-cGlsZXIgd2FybmluZw0KPiANCj4gR2NjIDQuNi4yIGNvbXBsYWlucyB0aGF0ICJlbmQiIGNhbiBi
-ZSB1c2VkIHdpdGhvdXQgYmVpbmcgaW5pdGlhbGl6ZWQ6DQo+IA0KPiBkcml2ZXJzL3ZpZGVvL2Jh
-Y2tsaWdodC9scDg1NXhfYmwuYzogSW4gZnVuY3Rpb24NCj4g4oCYbHA4NTV4X2luaXRfcmVnaXN0
-ZXJz4oCZOg0KPiBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9scDg1NXhfYmwuYzo3ODozMjogd2Fy
-bmluZzog4oCYZW5k4oCZIG1heSBiZSB1c2VkDQo+IHVuaW5pdGlhbGl6ZWQgaW4gdGhpcyBmdW5j
-dGlvbiBbLVd1bmluaXRpYWxpemVkXQ0KPiBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9scDg1NXhf
-YmwuYzo2NzoxMjogbm90ZTog4oCYZW5k4oCZIHdhcyBkZWNsYXJlZA0KPiBoZXJlDQo+IA0KPiBJ
-J3ZlIG1vZGlmaWVkIHRoZSBmdW5jdGlvbiB0byByZXR1cm4gaW52YWxpZCBpZiB3ZSBkb24ndCBy
-ZWNvZ25pemUgdGhlDQo+IGlkIHN0cmluZy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJw
-ZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KQWNrZWQtYnk6IE1pbG8oV29vZ3lv
-bSkgS2ltIDxtaWxvLmtpbUB0aS5jb20+DQoNClRoYW5rcyAhDQoNCkJlc3QgUmVnYXJkcywNCk1p
-bG8gLQ0KIA0KDQo
+ Code cleanup: removed commented code of old style lock initilization
+
+Signed-off-by: Santosh <santoshprasadnayak@gmail.com>
+---
+ drivers/staging/usbip/stub_dev.c |    2 --
+ drivers/staging/usbip/vhci_hcd.c |    2 --
+ 2 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
+index 03420e2..fa870e3 100644
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@ -297,7 +297,6 @@ static struct stub_device
+*stub_device_alloc(struct usb_device *udev,
+        sdev->devid             = (busnum << 16) | devnum;
+        sdev->ud.side           = USBIP_STUB;
+        sdev->ud.status         = SDEV_ST_AVAILABLE;
+-       /* sdev->ud.lock = SPIN_LOCK_UNLOCKED; */
+        spin_lock_init(&sdev->ud.lock);
+        sdev->ud.tcp_socket     = NULL;
+
+@@ -306,7 +305,6 @@ static struct stub_device
+*stub_device_alloc(struct usb_device *udev,
+        INIT_LIST_HEAD(&sdev->priv_free);
+        INIT_LIST_HEAD(&sdev->unlink_free);
+        INIT_LIST_HEAD(&sdev->unlink_tx);
+-       /* sdev->priv_lock = SPIN_LOCK_UNLOCKED; */
+        spin_lock_init(&sdev->priv_lock);
+
+        init_waitqueue_head(&sdev->tx_waitq);
+diff --git a/drivers/staging/usbip/vhci_hcd.c b/drivers/staging/usbip/vhci_hcd.c
+index 8d96ab0..dca9bf1 100644
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -895,14 +895,12 @@ static void vhci_device_init(struct vhci_device *vdev)
+
+        vdev->ud.side   = USBIP_VHCI;
+        vdev->ud.status = VDEV_ST_NULL;
+-       /* vdev->ud.lock   = SPIN_LOCK_UNLOCKED; */
+        spin_lock_init(&vdev->ud.lock);
