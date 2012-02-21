@@ -1,102 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Feb 2012 09:29:31 +0000
-Subject: [patch] acpi: check for allocation errors in dock_link_device()
-Message-Id: <20120214092931.GA18662@elgon.mountain>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Tue, 21 Feb 2012 10:25:31 +0000
+Subject: [PATCH 2/2] Driver: video: Use the macro DMA_BIT_MASK().
+Message-Id: <1329819211-8359-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shaohua Li <shaohua.li@intel.com>, Matthew Garrett <mjg@redhat.com>
-Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: awalls@md.metrocast.net
+Cc: mchehab@infradead.org, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-This is error checking pedantry to keep the static checkers happy.  In
-the original code the kmalloc() wasn't checked for allocation failures.
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Use the macro DMA_BIT_MASK instead of the constant  0xffffffff.
 
-diff --git a/drivers/acpi/dock.c b/drivers/acpi/dock.c
-index b5e4142..38e8212 100644
---- a/drivers/acpi/dock.c
-+++ b/drivers/acpi/dock.c
-@@ -281,21 +281,22 @@ EXPORT_SYMBOL_GPL(is_dock_device);
-  */
- struct device **dock_link_device(acpi_handle handle)
- {
--	struct device *dev = acpi_get_physical_device(handle);
-+	struct device *dev;
- 	struct dock_station *dock_station;
- 	int ret, dock = 0;
- 	struct device **devices;
- 
--	devices = kmalloc(dock_station_count * sizeof(struct device *),
--			  GFP_KERNEL);
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/media/video/cx18/cx18-driver.c |    4 ++--
+ drivers/media/video/ivtv/ivtv-driver.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/video/cx18/cx18-driver.c b/drivers/media/video/cx18/cx18-driver.c
+index 349bd9c..08118e5 100644
+--- a/drivers/media/video/cx18/cx18-driver.c
++++ b/drivers/media/video/cx18/cx18-driver.c
+@@ -38,7 +38,7 @@
+ #include "cx18-ioctl.h"
+ #include "cx18-controls.h"
+ #include "tuner-xc2028.h"
 -
-+	dev = acpi_get_physical_device(handle);
- 	if (!dev)
- 		return NULL;
-+	if (is_dock(handle))
-+		goto out_put;
-+
-+	devices = kmalloc(dock_station_count * sizeof(struct device *),
-+			  GFP_KERNEL);
-+	if (!devices)
-+		goto out_put;
++#include <linux/dma-mapping.h>
+ #include <media/tveeprom.h>
  
--	if (is_dock(handle)) {
--		put_device(dev);
--		return NULL;
--	}
- 
- 	list_for_each_entry(dock_station, &dock_stations, sibling) {
- 		if (find_dock_dependent_device(dock_station, handle)) {
-@@ -311,6 +312,10 @@ struct device **dock_link_device(acpi_handle handle)
- 
- 	devices[dock] = NULL;
- 	return devices;
-+
-+out_put:
-+	put_device(dev);
-+	return NULL;
- }
- EXPORT_SYMBOL_GPL(dock_link_device);
- 
-@@ -320,20 +325,21 @@ EXPORT_SYMBOL_GPL(dock_link_device);
-  */
- struct device **dock_unlink_device(acpi_handle handle)
- {
--	struct device *dev = acpi_get_physical_device(handle);
-+	struct device *dev;
- 	struct dock_station *dock_station;
- 	int dock = 0;
--	struct device **devices -		kmalloc(dock_station_count * sizeof(struct device *),
--			GFP_KERNEL);
-+	struct device **devices;
- 
-+	dev = acpi_get_physical_device(handle);
- 	if (!dev)
- 		return NULL;
-+	if (is_dock(handle))
-+		goto out_put;
- 
--	if (is_dock(handle)) {
--		put_device(dev);
--		return NULL;
--	}
-+	devices = kmalloc(dock_station_count * sizeof(struct device *),
-+			GFP_KERNEL);
-+	if (!devices)
-+		goto out_put;
- 
- 	list_for_each_entry(dock_station, &dock_stations, sibling) {
- 		if (find_dock_dependent_device(dock_station, handle)) {
-@@ -350,6 +356,10 @@ struct device **dock_unlink_device(acpi_handle handle)
- 	put_device(dev);
- 	devices[dock] = NULL;
- 	return devices;
-+
-+out_put:
-+	put_device(dev);
-+	return NULL;
- }
- EXPORT_SYMBOL_GPL(dock_unlink_device);
- 
+ /* If you have already X v4l cards, then set this to X. This way
+@@ -812,7 +812,7 @@ static int cx18_setup_pci(struct cx18 *cx, struct pci_dev *pci_dev,
+ 		CX18_ERR("Can't enable device %d!\n", cx->instance);
+ 		return -EIO;
+ 	}
+-	if (pci_set_dma_mask(pci_dev, 0xffffffff)) {
++	if (pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32))) {
+ 		CX18_ERR("No suitable DMA available, card %d\n", cx->instance);
+ 		return -EIO;
+ 	}
+diff --git a/drivers/media/video/ivtv/ivtv-driver.c b/drivers/media/video/ivtv/ivtv-driver.c
+index 107e9e6..d84e5df 100644
+--- a/drivers/media/video/ivtv/ivtv-driver.c
++++ b/drivers/media/video/ivtv/ivtv-driver.c
+@@ -55,7 +55,7 @@
+ #include "ivtv-routing.h"
+ #include "ivtv-controls.h"
+ #include "ivtv-gpio.h"
+-
++#include <linux/dma-mapping.h>
+ #include <media/tveeprom.h>
+ #include <media/saa7115.h>
+ #include <media/v4l2-chip-ident.h>
+@@ -813,7 +813,7 @@ static int ivtv_setup_pci(struct ivtv *itv, struct pci_dev *pdev,
+ 		IVTV_ERR("Can't enable device!\n");
+ 		return -EIO;
+ 	}
+-	if (pci_set_dma_mask(pdev, 0xffffffff)) {
++	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32))) {
+ 		IVTV_ERR("No suitable DMA available.\n");
+ 		return -EIO;
+ 	}
+-- 
+1.7.4.4
+
