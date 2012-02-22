@@ -1,44 +1,29 @@
-From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-Date: Mon, 27 Feb 2012 10:22:01 +0000
-Subject: Re: [PATCH] Initialise buffer and buffer_size before used
-Message-Id: <4F4B5949.8000306@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 22 Feb 2012 07:30:55 +0000
+Subject: [patch] Btrfs: silence a compiler warning
+Message-Id: <20120222073055.GB7389@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330331985-20767-2-git-send-email-ruan.zhengwang@gmail.com>
-In-Reply-To: <1330331985-20767-2-git-send-email-ruan.zhengwang@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Chris Mason <chris.mason@oracle.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-CgoKLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLQpGcm9tOiBEYW4gQ2FycGVudGVy
-ClNlbnQ6IDIwMTLE6jAy1MIyN8jVINDHxtrSuyAxMsqxNTW31jU4w+sKVG86IFpoZW5nd2FuZyBS
-dWFuClN1YmplY3Q6IFJlOiBbUEFUQ0hdIEluaXRpYWxpc2UgYnVmZmVyIGFuZCBidWZmZXJfc2l6
-ZSBiZWZvcmUgdXNlZAo+IE9uIE1vbiwgRmViIDI3LCAyMDEyIGF0IDA0OjM5OjQ1UE0gKzA4MDAs
-IFpoZW5nd2FuZyBSdWFuIHdyb3RlOgo+PiBHQ0Mgd2FybnMgJ2J1ZmZlcicgYW5kICdidWZmZXJf
-c2l6ZScgYXJlIHVzZWQgd2l0aCBiZWluZyB1bmluaXRpYWxpemVkLCBhbmQKPj4gJ2J1ZmZlcicg
-aXMgdXNlZCBhcyByZXR1cm5lZCB2YWx1ZSwgYW5kICdidWZmZXJfc2l6ZScgaXMgaW5pdGlhbGl6
-ZWQgdXNpbmcKPj4gdW5pbml0aWFsaXplZF92YXIgdG8gY2xlYXIgd2FybmluZy4KPj4KPiBJZiB5
-b3Ugd2FudGVkIHRvIHVzZSB0aGUgdW5pbml0aWFsaXplZF92YXIoKSBtYWNybyBmb3IgYSBwb2lu
-dGVyLAo+IHRoZSB0cmljayBpczoKPgo+IAlzdHJ1Y3QgYmluZGVyX2J1ZmZlciAqdW5pbml0aWFs
-aXplZF92YXIoYnVmZmVyKTsKPgo+IEJ1dCB0aGlzIGlzIGZpbmUgYXMgaXMuCj4KPiBUaGUgc3Vi
-amVjdCBzaG91bGQgaGF2ZSBhIHN1YnN5c3RlbSBwcmVmaXguICBZb3UnbGwgbmVlZCB0byByZXNl
-bmQKPiBib3RoIHBhdGNoZXMgZm9yIHRoYXQgcmVhc29uLiAgKFlvdSBoYWQgdGhlbSBjb3JyZWN0
-IGluIHRoZSBvcmlnaW5hbAo+IHZlcnNpb24geW91IHNlbnQgdG8ga2opLiAgVGhlIHN1YmplY3Rz
-IGNvdWxkIGFsc28gc2F5IFtwYXRjaCAxLzJdCj4gYW5kIFtwYXRjaCAyLzJdIGJ1dCBpdCBkb2Vz
-bid0IG1hdHRlciBzaW5jZSB0aGUgbGluZSBudW1iZXJzIGRpZG4ndAo+IGNoYW5nZSBhbmQgdGhl
-eSBjYW4gYmUgYXBwbGllZCBpbiBhbnkgb3JkZXIuCj4KPiBEb24ndCBmb3JnZXQgdG8gQ0MgR3Jl
-Zy4gIEhlIHJlYWRzIHRoZSBsaXN0IGFzIHdlbGwsIGJ1dCB5b3Ugc2hvdWxkCj4gYWx3YXlzIEND
-IGEgbWFpbnRhaW5lciBhbmQgYSBsaXN0IGZvciBlYWNoIHBhdGNoLgo+Cj4gQW55d2F5LCBpdCBs
-b29rcyBnb29kLiAgSnVzdCBmaXggdGhlIHN1YmplY3RzIGFuZCByZXNlbmQuICBXaGVuIHlvdQo+
-IHJlc2VuZCBhIHBhdGNoIGl0IHNob3VsZCBzYXkgW3BhdGNoIDEvMiB2Ml0gaW4gdGhlIHN1Ympl
-Y3QgYW5kIGJlbG93Cj4gdGhlIHNpZ25lZCBvZmYgYnkgbGluZSBwdXQ6Cj4gLS0tCj4gdjI6IGFk
-ZGVkIGEgc3Vic3lzdGVtIHByZWZpeCB0byB0aGUgc3ViamVjdAo+Cj4gU29ycnkgdGhhdCBpdCdz
-IGEgbG90IG9mIG5pdCBwaWNreSB3b3JrLiAgV2UgaGF2ZSB0byBwdXNoIGFzIG11Y2gKPiB3b3Jr
-IGFzIHdlIGNhbiBvbiB0byBwYXRjaCBzdWJtaXR0ZXJzIHNvIHRoYXQgbWFpbnRhaW5lcnMgY2Fu
-IGFwcGx5Cj4gdGhpbmdzIHdpdGggYSBjbGljayBvZiB0aGUgbW91c2UuICBBZnRlciBhIHdoaWxl
-IHlvdSdsbCBsZWFybiBhbGwKPiB0aGUgcnVsZXMuICA6KQo+CgpUaGFuayB5b3UgYW5kIHJlc2Vu
-ZCBpdCBhZ2FpbiEgOi0pCgpCcnMsCi1aaGVuZ3dhbmcKPiByZWdhcmRzLAo+IGRhbiBjYXJwZW50
-ZXIKPgoKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVu
-c3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1h
-am9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3Zn
-ZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+Gcc warns that "ret" can be used uninitialized.  It can't actually be
+used uninitialized because btrfs_num_copies() always returns 1 or more.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
+index 064b29b..c053e90 100644
+--- a/fs/btrfs/check-integrity.c
++++ b/fs/btrfs/check-integrity.c
+@@ -643,7 +643,7 @@ static struct btrfsic_dev_state *btrfsic_dev_state_hashtable_lookup(
+ static int btrfsic_process_superblock(struct btrfsic_state *state,
+ 				      struct btrfs_fs_devices *fs_devices)
+ {
+-	int ret;
++	int ret = 0;
+ 	struct btrfs_super_block *selected_super;
+ 	struct list_head *dev_head = &fs_devices->devices;
+ 	struct btrfs_device *device;
