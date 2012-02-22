@@ -1,34 +1,30 @@
-From: Szymon Janc <szymon@janc.net.pl>
-Date: Fri, 10 Feb 2012 20:05:44 +0000
-Subject: [PATCH 3/3] Staging: quickstart: Bump driver version to 1.04
-Message-Id: <1328904344-22847-3-git-send-email-szymon@janc.net.pl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 22 Feb 2012 07:30:25 +0000
+Subject: [patch] hso: memsetting wrong data in hso_get_count()
+Message-Id: <20120222073024.GA7389@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328904014-22710-3-git-send-email-szymon@janc.net.pl>
-In-Reply-To: <1328904014-22710-3-git-send-email-szymon@janc.net.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jan Dumon <j.dumon@option.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
 
-Signed-off-by: Szymon Janc <szymon@janc.net.pl>
----
- drivers/staging/quickstart/quickstart.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+The intent was to clear out the icount struct here, but we accidentally
+clear stack memory instead.  It probably will lead to a NULL dereference
+right away.
 
-diff --git a/drivers/staging/quickstart/quickstart.c b/drivers/staging/quickstart/quickstart.c
-index 2c8c12b..cac3207 100644
---- a/drivers/staging/quickstart/quickstart.c
-+++ b/drivers/staging/quickstart/quickstart.c
-@@ -23,7 +23,7 @@
-  *
-  */
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
+index 304fe78..e1324b4 100644
+--- a/drivers/net/usb/hso.c
++++ b/drivers/net/usb/hso.c
+@@ -1632,7 +1632,7 @@ static int hso_get_count(struct tty_struct *tty,
+ 	struct hso_serial *serial = get_serial_by_tty(tty);
+ 	struct hso_tiocmget  *tiocmget = serial->tiocmget;
  
--#define QUICKSTART_VERSION "1.03"
-+#define QUICKSTART_VERSION "1.04"
+-	memset(&icount, 0, sizeof(struct serial_icounter_struct));
++	memset(icount, 0, sizeof(struct serial_icounter_struct));
  
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
--- 
-1.7.9
-
-
+ 	if (!tiocmget)
+ 		 return -ENOENT;
