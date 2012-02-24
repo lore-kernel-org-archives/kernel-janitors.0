@@ -1,55 +1,44 @@
-From: Vikas Chaudhary <vikas.chaudhary@qlogic.com>
-Date: Tue, 21 Feb 2012 13:24:57 +0000
-Subject: Re: [patch] [SCSI] qla4xxx: silence a Sparse warning
-Message-Id: <CB69987C.CCEC%vikas.chaudhary@qlogic.com>
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Fri, 24 Feb 2012 11:52:00 +0000
+Subject: [PATCH] Staging:android: Silence some compiler warnings
+Message-Id: <1330084320-15557-1-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120221073011.GC6896@elgon.mountain>
-In-Reply-To: <20120221073011.GC6896@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ravi Anand <ravi.anand@qlogic.com>
-Cc: Dept-Eng iSCSI Driver <Dept-iSCSIDriver@qlogic.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, scsi <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
------Original Message-----
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 20 Feb 2012 23:30:12 -0800
-To: Ravi Anand <ravi.anand@qlogic.com>
-Cc: Vikas Chaudhary <vikas.chaudhary@qlogic.com>, Dept-Eng iSCSI Driver
-<Dept-iSCSIDriver@qlogic.com>, "James E.J. Bottomley"
-<JBottomley@parallels.com>, scsi <linux-scsi@vger.kernel.org>,
-"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: [patch] [SCSI] qla4xxx: silence a Sparse warning
+There are some compiler warnings, this is to silence them.
 
->Sparse complains that the definition of this funciton doesn't match the
->implementation.  The "uint32_t aen_code" should be an enum.
->
->drivers/scsi/qla4xxx/ql4_os.c:2966:5: error: symbol
->       'qla4xxx_post_aen_work' redeclared with different type
->       (originally declared at drivers/scsi/qla4xxx/ql4_glbl.h:184)
->       - incompatible argument 2 (different signedness)
->
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->diff --git a/drivers/scsi/qla4xxx/ql4_glbl.h
->b/drivers/scsi/qla4xxx/ql4_glbl.h
->index 954ba91..71bbc07 100644
->--- a/drivers/scsi/qla4xxx/ql4_glbl.h
->+++ b/drivers/scsi/qla4xxx/ql4_glbl.h
->@@ -181,7 +181,8 @@ int qla4xxx_flash_ddb_change(struct scsi_qla_host
->*ha, uint32_t fw_ddb_index,
-> int qla4xxx_ddb_change(struct scsi_qla_host *ha, uint32_t fw_ddb_index,
->                      struct ddb_entry *ddb_entry, uint32_t state);
-> void qla4xxx_build_ddb_list(struct scsi_qla_host *ha, int is_reset);
->-int qla4xxx_post_aen_work(struct scsi_qla_host *ha, uint32_t aen_code,
->+int qla4xxx_post_aen_work(struct scsi_qla_host *ha,
->+                        enum iscsi_host_event_code aen_code,
->                         uint32_t data_size, uint8_t *data);
-> int qla4xxx_ping_iocb(struct scsi_qla_host *ha, uint32_t options,
->                     uint32_t payload_size, uint32_t pid, uint8_t *ipaddr);
+Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+---
+ drivers/staging/android/binder.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: Vikas Chaudhary <vikas.chaudhary@qlogic.com>
-
-
-This message and any attached documents contain information from QLogic Corporation or its wholly-owned subsidiaries that may be confidential. If you are not the intended recipient, you may not read, copy, distribute, or use this information. If you have received this transmission in error, please notify the sender immediately by reply e-mail and then delete this message.
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index f0b7e66..c4e616c 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -104,7 +104,7 @@ static uint32_t binder_debug_mask = BINDER_DEBUG_USER_ERROR |
+ module_param_named(debug_mask, binder_debug_mask, uint, S_IWUSR | S_IRUGO);
+ 
+ static int binder_debug_no_lock;
+-module_param_named(proc_no_lock, binder_debug_no_lock, bool, S_IWUSR | S_IRUGO);
++module_param_named(proc_no_lock, binder_debug_no_lock, int, S_IWUSR | S_IRUGO);
+ 
+ static DECLARE_WAIT_QUEUE_HEAD(binder_user_error_wait);
+ static int binder_stop_on_user_error;
+@@ -716,8 +716,8 @@ static struct binder_buffer *binder_alloc_buf(struct binder_proc *proc,
+ 					      size_t offsets_size, int is_async)
+ {
+ 	struct rb_node *n = proc->free_buffers.rb_node;
+-	struct binder_buffer *buffer;
+-	size_t buffer_size;
++	struct binder_buffer *buffer = NULL;
++	size_t buffer_size = 0;
+ 	struct rb_node *best_fit = NULL;
+ 	void *has_page_addr;
+ 	void *end_page_addr;
+-- 
+1.6.0.4
 
