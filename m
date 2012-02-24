@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 24 Feb 2012 17:27:51 +0000
+From: Ben Hutchings <bhutchings@solarflare.com>
+Date: Fri, 24 Feb 2012 19:10:50 +0000
 Subject: Re: [PATCH 2/2] enic: Silence Sparse Warning: "dubious: x | !y"
-Message-Id: <4F47C897.8020505@bfs.de>
+Message-Id: <1330110650.2397.8.camel@bwh-desktop>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1330102654-2474-1-git-send-email-santoshprasadnayak@gmail.com>
 In-Reply-To: <1330102654-2474-1-git-send-email-santoshprasadnayak@gmail.com>
@@ -11,9 +11,7 @@ Content-Transfer-Encoding: 7bit
 To: santosh nayak <santoshprasadnayak@gmail.com>
 Cc: benve@cisco.com, roprabhu@cisco.com, neepatel@cisco.com, nistrive@cisco.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-Am 24.02.2012 17:57, schrieb santosh nayak:
+On Fri, 2012-02-24 at 22:27 +0530, santosh nayak wrote:
 > From: Santosh Nayak <santoshprasadnayak@gmail.com>
 > 
 > Sparse is giving the following warning:
@@ -22,7 +20,15 @@ Am 24.02.2012 17:57, schrieb santosh nayak:
 > "enic_are_pp_different" is static and expected to return true or false.
 > Logical or is indended here. With logical or, in best case, execution will be
 > faster because if leftmost operand is true then no need to check other operands.
-> 
+
+The shortcut behaviour of logical-or means more conditional jumps to be
+predicted and more potential for pipeline stalls.  So bitwise-or can in
+some cases be more efficient.  But this function appears to be
+control-path code where micro-optimisation just doesn't matter.  Use of
+logical-or can be justified purely on the grounds of clarity.
+
+Ben.
+
 > Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
 > ---
 >  drivers/net/ethernet/cisco/enic/enic_pp.c |    8 ++++----
@@ -36,24 +42,20 @@ Am 24.02.2012 17:57, schrieb santosh nayak:
 >  static int enic_are_pp_different(struct enic_port_profile *pp1,
 >  		struct enic_port_profile *pp2)
 >  {
-> -	return strcmp(pp1->name, pp2->name) | 
-                !!memcmp(pp1->instance_uuid,pp2->instance_uuid, PORT_UUID_MAX) |
+> -	return strcmp(pp1->name, pp2->name) | !!memcmp(pp1->instance_uuid,
+> -		pp2->instance_uuid, PORT_UUID_MAX) |
 > -		!!memcmp(pp1->host_uuid, pp2->host_uuid, PORT_UUID_MAX) |
 > -		!!memcmp(pp1->mac_addr, pp2->mac_addr, ETH_ALEN);
-> +	return  strcmp(pp1->name, pp2->name) || 
-	        !!memcmp(pp1->instance_uuid,pp2->instance_uuid, PORT_UUID_MAX) ||
+> +	return strcmp(pp1->name, pp2->name) || !!memcmp(pp1->instance_uuid,
+> +		pp2->instance_uuid, PORT_UUID_MAX) ||
 > +		!!memcmp(pp1->host_uuid, pp2->host_uuid, PORT_UUID_MAX) ||
 > +		!!memcmp(pp1->mac_addr, pp2->mac_addr, ETH_ALEN);
 >  }
 >  
-
-to be fair, this is next to unreadable (not your fault of cause).
-Instead of squeezing this into a one statement i would suggest more statements.
-
-just my 2 cents,
-re,
- wh
-
-
-
 >  static int enic_pp_preassociate(struct enic *enic, int vf,
+
+-- 
+Ben Hutchings, Staff Engineer, Solarflare
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
+
