@@ -1,26 +1,48 @@
-From: Luciano Coelho <coelho@ti.com>
-Date: Wed, 15 Feb 2012 10:29:42 +0000
-Subject: Re: [patch] wl12xx: remove some dead code in wl1271_plt_init()
-Message-Id: <1329301782.19569.49.camel@cumari>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 24 Feb 2012 07:20:42 +0000
+Subject: [PATCH] xfs: Use memset to initialize structure member.
+Message-Id: <1330067322-17011-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120208092004.GB6554@elgon.mountain>
-In-Reply-To: <20120208092004.GB6554@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Shahar Levi <shahar_levi@ti.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: bpm@sgi.com
+Cc: Santosh Nayak <santoshprasadnayak@gmail.com>, elder@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, xfs-masters@oss.sgi.com
 
-On Wed, 2012-02-08 at 12:20 +0300, Dan Carpenter wrote: 
-> "ret" has already been checked at this point, and we don't need to check
-> it again.  This was left around from a previous patch 49d750ca14
-> "wl12xx: 1281/1283 support - New radio structs and functions".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Applied.  Thanks, Dan!
+Sparse is giving following warning:
+fs/xfs/xfs_bmap.c:4826:41: warning: Using plain integer as NULL pointer.
 
+To avoid this warning, use memset to initialize the structure member.
+
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ fs/xfs/xfs_bmap.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/fs/xfs/xfs_bmap.c b/fs/xfs/xfs_bmap.c
+index 188ef2f..030e93f 100644
+--- a/fs/xfs/xfs_bmap.c
++++ b/fs/xfs/xfs_bmap.c
+@@ -4823,7 +4823,7 @@ xfs_bmapi_write(
+ {
+ 	struct xfs_mount	*mp = ip->i_mount;
+ 	struct xfs_ifork	*ifp;
+-	struct xfs_bmalloca	bma = { 0 };	/* args for xfs_bmap_alloc */
++	struct xfs_bmalloca	bma;		/* args for xfs_bmap_alloc */
+ 	xfs_fileoff_t		end;		/* end of mapped file region */
+ 	int			eof;		/* after the end of extents */
+ 	int			error;		/* error return */
+@@ -4852,6 +4852,8 @@ xfs_bmapi_write(
+ 	ASSERT(!(flags & XFS_BMAPI_IGSTATE));
+ 	ASSERT(tp != NULL);
+ 	ASSERT(len > 0);
++
++	memset(&bma, 0, sizeof(bma));
+ 
+ 	whichfork = (flags & XFS_BMAPI_ATTRFORK) ?
+ 		XFS_ATTR_FORK : XFS_DATA_FORK;
 -- 
-Cheers,
-Luca.
+1.7.4.4
 
