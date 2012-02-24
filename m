@@ -1,110 +1,50 @@
-From: dean anderson <linux-dev@sensoray.com>
-Date: Thu, 23 Feb 2012 00:37:38 +0000
-Subject: Re: [patch 2/2] [media] s2255drv: fix some endian bugs
-Message-Id: <4F458A52.1000302@sensoray.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 24 Feb 2012 16:57:58 +0000
+Subject: [PATCH 1/2] enic: Fix endianness bug.
+Message-Id: <1330102599-1245-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120217064410.GB3666@elgon.mountain>
-In-Reply-To: <20120217064410.GB3666@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Dean Anderson <linux-dev@sensoray.com>, Hans Verkuil <hans.verkuil@cisco.com>, Pete Eberlein <pete@sensoray.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: benve@cisco.com
+Cc: roprabhu@cisco.com, neepatel@cisco.com, nistrive@cisco.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Hi Dan,
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-The original code has an issue on big endian hardware.  The patch looks ok.
+Sparse complaints the endian bug.
 
-Signed-off-by: Dean Anderson <linux-dev@sensoray.com>
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/net/ethernet/cisco/enic/cq_enet_desc.h |    2 +-
+ drivers/net/ethernet/cisco/enic/enic_pp.c      |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On 2/16/2012 10:44 PM, Dan Carpenter wrote:
-> I don't have this hardware and I don't know the subsystem very well.  So
-> please review this patch carefully.  The original code definitely looks
-> buggy though.
->
-> Sparse complains about some endian bugs where little endian bugs are
-> treated as cpu endian.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
-> ---
->
-> diff --git a/drivers/media/video/s2255drv.c b/drivers/media/video/s2255drv.c
-> index 3505242..4894cbb 100644
-> --- a/drivers/media/video/s2255drv.c
-> +++ b/drivers/media/video/s2255drv.c
-> @@ -134,7 +134,7 @@
->
->   /* usb config commands */
->   #define IN_DATA_TOKEN	cpu_to_le32(0x2255c0de)
-> -#define CMD_2255	cpu_to_le32(0xc2255000)
-> +#define CMD_2255	0xc2255000
->   #define CMD_SET_MODE	cpu_to_le32((CMD_2255 | 0x10))
->   #define CMD_START	cpu_to_le32((CMD_2255 | 0x20))
->   #define CMD_STOP	cpu_to_le32((CMD_2255 | 0x30))
-> @@ -2025,7 +2025,7 @@ static int save_frame(struct s2255_dev *dev, struct s2255_pipeinfo *pipe_info)
->   					pdata[1]);
->   				offset = jj + PREFIX_SIZE;
->   				bframe = 1;
-> -				cc = pdword[1];
-> +				cc = le32_to_cpu(pdword[1]);
->   				if (cc>= MAX_CHANNELS) {
->   					printk(KERN_ERR
->   					       "bad channel\n");
-> @@ -2034,22 +2034,22 @@ static int save_frame(struct s2255_dev *dev, struct s2255_pipeinfo *pipe_info)
->   				/* reverse it */
->   				dev->cc = G_chnmap[cc];
->   				channel =&dev->channel[dev->cc];
-> -				payload =  pdword[3];
-> +				payload =  le32_to_cpu(pdword[3]);
->   				if (payload>  channel->req_image_size) {
->   					channel->bad_payload++;
->   					/* discard the bad frame */
->   					return -EINVAL;
->   				}
->   				channel->pkt_size = payload;
-> -				channel->jpg_size = pdword[4];
-> +				channel->jpg_size = le32_to_cpu(pdword[4]);
->   				break;
->   			case S2255_MARKER_RESPONSE:
->
->   				pdata += DEF_USB_BLOCK;
->   				jj += DEF_USB_BLOCK;
-> -				if (pdword[1]>= MAX_CHANNELS)
-> +				if (le32_to_cpu(pdword[1])>= MAX_CHANNELS)
->   					break;
-> -				cc = G_chnmap[pdword[1]];
-> +				cc = G_chnmap[le32_to_cpu(pdword[1])];
->   				if (cc>= MAX_CHANNELS)
->   					break;
->   				channel =&dev->channel[cc];
-> @@ -2072,11 +2072,11 @@ static int save_frame(struct s2255_dev *dev, struct s2255_pipeinfo *pipe_info)
->   					wake_up(&dev->fw_data->wait_fw);
->   					break;
->   				case S2255_RESPONSE_STATUS:
-> -					channel->vidstatus = pdword[3];
-> +					channel->vidstatus = le32_to_cpu(pdword[3]);
->   					channel->vidstatus_ready = 1;
->   					wake_up(&channel->wait_vidstatus);
->   					dprintk(5, "got vidstatus %x chan %d\n",
-> -						pdword[3], cc);
-> +						le32_to_cpu(pdword[3]), cc);
->   					break;
->   				default:
->   					printk(KERN_INFO "s2255 unknown resp\n");
-> @@ -2603,10 +2603,11 @@ static int s2255_probe(struct usb_interface *interface,
->   		__le32 *pRel;
->   		pRel = (__le32 *)&dev->fw_data->fw->data[fw_size - 4];
->   		printk(KERN_INFO "s2255 dsp fw version %x\n", *pRel);
-> -		dev->dsp_fw_ver = *pRel;
-> -		if (*pRel<  S2255_CUR_DSP_FWVER)
-> +		dev->dsp_fw_ver = le32_to_cpu(*pRel);
-> +		if (dev->dsp_fw_ver<  S2255_CUR_DSP_FWVER)
->   			printk(KERN_INFO "s2255: f2255usb.bin out of date.\n");
-> -		if (dev->pid = 0x2257&&  *pRel<  S2255_MIN_DSP_COLORFILTER)
-> +		if (dev->pid = 0x2257&&
-> +				dev->dsp_fw_ver<  S2255_MIN_DSP_COLORFILTER)
->   			printk(KERN_WARNING "s2255: 2257 requires firmware %d"
->   			       " or above.\n", S2255_MIN_DSP_COLORFILTER);
->   	}
->
+diff --git a/drivers/net/ethernet/cisco/enic/cq_enet_desc.h b/drivers/net/ethernet/cisco/enic/cq_enet_desc.h
+index c2c0680..ac37cac 100644
+--- a/drivers/net/ethernet/cisco/enic/cq_enet_desc.h
++++ b/drivers/net/ethernet/cisco/enic/cq_enet_desc.h
+@@ -157,7 +157,7 @@ static inline void cq_enet_rq_desc_dec(struct cq_enet_rq_desc *desc,
+ 			CQ_ENET_RQ_DESC_FCOE_FC_CRC_OK) ? 1 : 0;
+ 		*fcoe_enc_error = (desc->flags &
+ 			CQ_ENET_RQ_DESC_FCOE_ENC_ERROR) ? 1 : 0;
+-		*fcoe_eof = (u8)((desc->checksum_fcoe >>
++		*fcoe_eof = (u8)((le16_to_cpu(desc->checksum_fcoe) >>
+ 			CQ_ENET_RQ_DESC_FCOE_EOF_SHIFT) &
+ 			CQ_ENET_RQ_DESC_FCOE_EOF_MASK);
+ 		*checksum = 0;
+diff --git a/drivers/net/ethernet/cisco/enic/enic_pp.c b/drivers/net/ethernet/cisco/enic/enic_pp.c
+index c758674..dafea1e 100644
+--- a/drivers/net/ethernet/cisco/enic/enic_pp.c
++++ b/drivers/net/ethernet/cisco/enic/enic_pp.c
+@@ -72,7 +72,7 @@ static int enic_set_port_profile(struct enic *enic, int vf)
+ 	struct enic_port_profile *pp;
+ 	struct vic_provinfo *vp;
+ 	const u8 oui[3] = VIC_PROVINFO_CISCO_OUI;
+-	const u16 os_type = htons(VIC_GENERIC_PROV_OS_TYPE_LINUX);
++	const __be16 os_type = htons(VIC_GENERIC_PROV_OS_TYPE_LINUX);
+ 	char uuid_str[38];
+ 	char client_mac_str[18];
+ 	u8 *client_mac;
+-- 
+1.7.4.4
 
