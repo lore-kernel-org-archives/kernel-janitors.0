@@ -1,108 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 24 Feb 2012 12:46:55 +0000
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Sat, 25 Feb 2012 04:03:56 +0000
 Subject: Re: [PATCH] Staging:android: Silence some compiler warnings
-Message-Id: <20120224124655.GB3649@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="yNb1oOkm5a9FJOVX"
+Message-Id: <4F485DAC.2040006@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1330084320-15557-1-git-send-email-ruan.zhengwang@gmail.com>
 In-Reply-To: <1330084320-15557-1-git-send-email-ruan.zhengwang@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-
---yNb1oOkm5a9FJOVX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Not bad.
-
-On Fri, Feb 24, 2012 at 07:52:00PM +0800, Zhengwang Ruan wrote:
-> There are some compiler warnings, this is to silence them.
-
-When there are compiler warnings, cut and paste the compiler
-warnings into the message here.
-
->=20
-> Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-> ---
->  drivers/staging/android/binder.c |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/b=
-inder.c
-> index f0b7e66..c4e616c 100644
-> --- a/drivers/staging/android/binder.c
-> +++ b/drivers/staging/android/binder.c
-> @@ -104,7 +104,7 @@ static uint32_t binder_debug_mask =3D BINDER_DEBUG_US=
-ER_ERROR |
->  module_param_named(debug_mask, binder_debug_mask, uint, S_IWUSR | S_IRUG=
-O);
-> =20
->  static int binder_debug_no_lock;
-> -module_param_named(proc_no_lock, binder_debug_no_lock, bool, S_IWUSR | S=
-_IRUGO);
-> +module_param_named(proc_no_lock, binder_debug_no_lock, int, S_IWUSR | S_=
-IRUGO);
-
-Instead of doing this, it would be better to change the line before
-and declare binder_debug_no_lock as a bool.
-
-> =20
->  static DECLARE_WAIT_QUEUE_HEAD(binder_user_error_wait);
->  static int binder_stop_on_user_error;
-> @@ -716,8 +716,8 @@ static struct binder_buffer *binder_alloc_buf(struct =
-binder_proc *proc,
->  					      size_t offsets_size, int is_async)
->  {
->  	struct rb_node *n =3D proc->free_buffers.rb_node;
-> -	struct binder_buffer *buffer;
-> -	size_t buffer_size;
-> +	struct binder_buffer *buffer =3D NULL;
-> +	size_t buffer_size =3D 0;
-
-The other option would be to use the uninitialized_var() macro.  On
-fast paths we would probably insist on that, but for this probably
-no one cares.
-
-When you fix uninitialized variable warnings, please comment in the
-changelog whether the variable can ever be used uninitialized in
-real life.  (Is GCC correct?).
-
-This should probably be split into two patches.  One for the type
-change and one for the uninitialized variables.  We could probably
-merge it as is, but definitely no one will complain if you split it
-apart.
-
-Use the ./scripts/get_maintainer.pl to find where to resend this
-patch.  Every kernel patch has to be CC'd to a mailing list.  I
-wouldn't CC lkml for this.  They don't care about trivial patches
-to staging.  Just devel@driverdev.osuosl.org is fine.
-
-regards,
-dan carpenter
-
-
---yNb1oOkm5a9FJOVX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPR4a+AAoJEOnZkXI/YHqRYwAP/R/t7DFY4noyMoislraOUO/2
-Kmk2gvUShstsorlq7CyKszKRCsmuxw724190DQBqsUpXl1KLQzf7FZFvWrPZKYr5
-dB5VZh/j0pvqa4QwY1KzLLwvGoIICCNDPv1fWYmnyGMKCqDmc786v8QnPXjeXEyb
-PKIhIaZ4X9viXx47uIh6yZAxN9I6XtDOHAIpkZoaTYmYM+6CYXJfcukR1xqZg303
-5PJox2ExPO212l7fZqpWRWC2BahDKDYyrke8ozrzHJM0D6ng+Jgl4T4t2Ep3fcQ6
-GLQ1PfA7ePVauGqR145W4Ucj/Gpm7fFcw+C3Xn8QYeUeNuRjasGs2vxfaJZirb3m
-5p2DPgjVnazj5KIL2d+oG6RLmALki3ZtSgnV+kV+yVGTWSKTMxFSuFGfK+eCZh1d
-CKPqCQNymHB/Obon0hbiLxmV6ezqRB+fAbu4aiLjr6mFYi3JbIENk5qVNknFMR0S
-i+qSI5pThcwd6PEgdp0EbdSJbsi+85mizWpVeDafbpujkuPC6Qa5iD7Ou7hptYd+
-xyo9FrbVFL6exbXt6Mw3OoBtx81N3C9U/TdIqOMEPHoZJxhFzixiVD/QgBNyRPju
-H5GH0guJwUM2NYbSVcEIc/kWzYF8iUmDCka37rAsAfbHvmOyumRJGCnzPEZTLA8V
-lBw7wkmoEh1ZDEAdD95d
-=nI5w
------END PGP SIGNATURE-----
-
---yNb1oOkm5a9FJOVX--
+CgoKLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLQpGcm9tOiBEYW4gQ2FycGVudGVy
+ClNlbnQ6IDIwMTLE6jAy1MIyNMjVINDHxtrO5SAxNcqxNDa31jU1w+sKVG86IFpoZW5nd2FuZyBS
+dWFuClN1YmplY3Q6IFJlOiBbUEFUQ0hdIFN0YWdpbmc6YW5kcm9pZDogU2lsZW5jZSBzb21lIGNv
+bXBpbGVyIHdhcm5pbmdzCj4gTm90IGJhZC4KPgo+IE9uIEZyaSwgRmViIDI0LCAyMDEyIGF0IDA3
+OjUyOjAwUE0gKzA4MDAsIFpoZW5nd2FuZyBSdWFuIHdyb3RlOgo+PiBUaGVyZSBhcmUgc29tZSBj
+b21waWxlciB3YXJuaW5ncywgdGhpcyBpcyB0byBzaWxlbmNlIHRoZW0uCj4gV2hlbiB0aGVyZSBh
+cmUgY29tcGlsZXIgd2FybmluZ3MsIGN1dCBhbmQgcGFzdGUgdGhlIGNvbXBpbGVyCj4gd2Fybmlu
+Z3MgaW50byB0aGUgbWVzc2FnZSBoZXJlLgo+Cj4+IFNpZ25lZC1vZmYtYnk6IFpoZW5nd2FuZyBS
+dWFuIDxydWFuLnpoZW5nd2FuZ0BnbWFpbC5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9zdGFnaW5n
+L2FuZHJvaWQvYmluZGVyLmMgfCAgICA2ICsrKy0tLQo+PiAgMSBmaWxlcyBjaGFuZ2VkLCAzIGlu
+c2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0
+YWdpbmcvYW5kcm9pZC9iaW5kZXIuYyBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2JpbmRlci5j
+Cj4+IGluZGV4IGYwYjdlNjYuLmM0ZTYxNmMgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2lu
+Zy9hbmRyb2lkL2JpbmRlci5jCj4+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2JpbmRl
+ci5jCj4+IEBAIC0xMDQsNyArMTA0LDcgQEAgc3RhdGljIHVpbnQzMl90IGJpbmRlcl9kZWJ1Z19t
+YXNrID0gQklOREVSX0RFQlVHX1VTRVJfRVJST1IgfAo+PiAgbW9kdWxlX3BhcmFtX25hbWVkKGRl
+YnVnX21hc2ssIGJpbmRlcl9kZWJ1Z19tYXNrLCB1aW50LCBTX0lXVVNSIHwgU19JUlVHTyk7Cj4+
+ICAKPj4gIHN0YXRpYyBpbnQgYmluZGVyX2RlYnVnX25vX2xvY2s7Cj4+IC1tb2R1bGVfcGFyYW1f
+bmFtZWQocHJvY19ub19sb2NrLCBiaW5kZXJfZGVidWdfbm9fbG9jaywgYm9vbCwgU19JV1VTUiB8
+IFNfSVJVR08pOwo+PiArbW9kdWxlX3BhcmFtX25hbWVkKHByb2Nfbm9fbG9jaywgYmluZGVyX2Rl
+YnVnX25vX2xvY2ssIGludCwgU19JV1VTUiB8IFNfSVJVR08pOwo+IEluc3RlYWQgb2YgZG9pbmcg
+dGhpcywgaXQgd291bGQgYmUgYmV0dGVyIHRvIGNoYW5nZSB0aGUgbGluZSBiZWZvcmUKPiBhbmQg
+ZGVjbGFyZSBiaW5kZXJfZGVidWdfbm9fbG9jayBhcyBhIGJvb2wuCj4KCkFjdHVhbGx5LCBJIGRp
+ZCBjaGFuZ2UgdGhlIHR5cGUgZm9yIGJpbmRlcl9kZWJ1Z19ub19sb2NrIGFzIGEgYm9vbCB1bnRp
+bApJIG5vdGljZWQgYmluZGVyX2RlYnVnX25vX2xvY2sgaXMgdG8gYmUgYXNzaWduZWQgdmFsdWUg
+dG8gaW50IHZhcmlhYmxlcwppbiB0aGUgZm9sbG93aW5nIGNvbnRleHQuIEkgdGhpbmsgdGhpcyBj
+aGFuZ2UgbWF5IGJlIGhlbHBmdWwgdG8ga2VlcApjb25zaXN0ZW5jZSB3aXRoIHRoZSBmb2xsb3dp
+bmcgY29udGV4dCBhbmQgcmVkdWNlIGNvbmZ1c2lvbiBmcm9tIGEgdmlldwp0byByZWFkIGNvZGUu
+Cgo+PiAgCj4+ICBzdGF0aWMgREVDTEFSRV9XQUlUX1FVRVVFX0hFQUQoYmluZGVyX3VzZXJfZXJy
+b3Jfd2FpdCk7Cj4+ICBzdGF0aWMgaW50IGJpbmRlcl9zdG9wX29uX3VzZXJfZXJyb3I7Cj4+IEBA
+IC03MTYsOCArNzE2LDggQEAgc3RhdGljIHN0cnVjdCBiaW5kZXJfYnVmZmVyICpiaW5kZXJfYWxs
+b2NfYnVmKHN0cnVjdCBiaW5kZXJfcHJvYyAqcHJvYywKPj4gIAkJCQkJICAgICAgc2l6ZV90IG9m
+ZnNldHNfc2l6ZSwgaW50IGlzX2FzeW5jKQo+PiAgewo+PiAgCXN0cnVjdCByYl9ub2RlICpuID0g
+cHJvYy0+ZnJlZV9idWZmZXJzLnJiX25vZGU7Cj4+IC0Jc3RydWN0IGJpbmRlcl9idWZmZXIgKmJ1
+ZmZlcjsKPj4gLQlzaXplX3QgYnVmZmVyX3NpemU7Cj4+ICsJc3RydWN0IGJpbmRlcl9idWZmZXIg
+KmJ1ZmZlciA9IE5VTEw7Cj4+ICsJc2l6ZV90IGJ1ZmZlcl9zaXplID0gMDsKPiBUaGUgb3RoZXIg
+b3B0aW9uIHdvdWxkIGJlIHRvIHVzZSB0aGUgdW5pbml0aWFsaXplZF92YXIoKSBtYWNyby4gIE9u
+Cj4gZmFzdCBwYXRocyB3ZSB3b3VsZCBwcm9iYWJseSBpbnNpc3Qgb24gdGhhdCwgYnV0IGZvciB0
+aGlzIHByb2JhYmx5Cj4gbm8gb25lIGNhcmVzLgo+CgpHb29kLCBJIHdpbGwgY2hhbmdlIGl0IHdp
+dGggdXNpbmcgdW5pbml0aWFsaXplZF92YXIoKS4KCj4gV2hlbiB5b3UgZml4IHVuaW5pdGlhbGl6
+ZWQgdmFyaWFibGUgd2FybmluZ3MsIHBsZWFzZSBjb21tZW50IGluIHRoZQo+IGNoYW5nZWxvZyB3
+aGV0aGVyIHRoZSB2YXJpYWJsZSBjYW4gZXZlciBiZSB1c2VkIHVuaW5pdGlhbGl6ZWQgaW4KPiBy
+ZWFsIGxpZmUuICAoSXMgR0NDIGNvcnJlY3Q/KS4KPgo+IFRoaXMgc2hvdWxkIHByb2JhYmx5IGJl
+IHNwbGl0IGludG8gdHdvIHBhdGNoZXMuICBPbmUgZm9yIHRoZSB0eXBlCj4gY2hhbmdlIGFuZCBv
+bmUgZm9yIHRoZSB1bmluaXRpYWxpemVkIHZhcmlhYmxlcy4gIFdlIGNvdWxkIHByb2JhYmx5Cj4g
+bWVyZ2UgaXQgYXMgaXMsIGJ1dCBkZWZpbml0ZWx5IG5vIG9uZSB3aWxsIGNvbXBsYWluIGlmIHlv
+dSBzcGxpdCBpdAo+IGFwYXJ0LgoKT2ssIEkgd2lsbCBzcGxpdCB0aGlzIHBhdGNoIGludG8gdHdv
+IHBhcnRzLCBhbmQgY29tbWVudCB0aGUgY2hhbmdlbG9nCnJlc3BlY3RpdmVseSBmb3IgZWFjaC4K
+Cj4gVXNlIHRoZSAuL3NjcmlwdHMvZ2V0X21haW50YWluZXIucGwgdG8gZmluZCB3aGVyZSB0byBy
+ZXNlbmQgdGhpcwoKSXMgaXQgYSBjb21tb24gdG9vbCBmb3IgY29tbXVuaXR5LCBob3cgY291bGQg
+SSBnZXQgaXQ/CgpUaGFua3MsCi1aaGVuZ3dhbmcKCj4gcGF0Y2guICBFdmVyeSBrZXJuZWwgcGF0
+Y2ggaGFzIHRvIGJlIENDJ2QgdG8gYSBtYWlsaW5nIGxpc3QuICBJCj4gd291bGRuJ3QgQ0MgbGtt
+bCBmb3IgdGhpcy4gIFRoZXkgZG9uJ3QgY2FyZSBhYm91dCB0cml2aWFsIHBhdGNoZXMKPiB0byBz
+dGFnaW5nLiAgSnVzdCBkZXZlbEBkcml2ZXJkZXYub3N1b3NsLm9yZyBpcyBmaW5lLgo+Cj4gcmVn
+YXJkcywKPiBkYW4gY2FycGVudGVyCj4KCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
+OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5
+IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21v
+IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
