@@ -1,383 +1,291 @@
-From: "Jack Wang" <jack_wang@usish.com>
-Date: Mon, 27 Feb 2012 04:51:08 +0000
-Subject: Re: [PATCH] [SCSI] pm8001: fix endian issue with code optimization.
-Message-Id: <4AB8AEEB15F74D15A87019F5663EA805@usish.com.cn>
+From: Lionel Debroux <lionel_debroux@yahoo.fr>
+Date: Sun, 26 Feb 2012 20:15:29 +0000
+Subject: [PATCH] edac: move const pci_device_id tables from __devinitdata to __devinitconst.
+Message-Id: <791782.71473.bm@smtp128.mail.ukl.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4f4a4580.aa3a440a.34c7.2776@mx.google.com>
-In-Reply-To: <4f4a4580.aa3a440a.34c7.2776@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: santoshprasadnayak@gmail.com
-Cc: lindar_liu@usish.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Thanks for fix.
-Acked-by: Jack Wang <jack_wang@usish.com>
-> 
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> 1. Fix endian issue.
-> 2. Fix the following warning :
->     " drivers/scsi/pm8001/pm8001_hwi.c:2932:32: warning: comparison
->       between 'enum sas_device_type' and 'enum sas_dev_type'".
-> 3. Few code optimization.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
->  drivers/scsi/pm8001/pm8001_chips.h |    4 +-
->  drivers/scsi/pm8001/pm8001_hwi.c   |   89
-> ++++++++++++++++++-----------------
->  drivers/scsi/pm8001/pm8001_hwi.h   |    2 +-
->  3 files changed, 49 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/scsi/pm8001/pm8001_chips.h
-> b/drivers/scsi/pm8001/pm8001_chips.h
-> index 4efa4d0..9241c78 100644
-> --- a/drivers/scsi/pm8001/pm8001_chips.h
-> +++ b/drivers/scsi/pm8001/pm8001_chips.h
-> @@ -46,9 +46,9 @@ static inline u32 pm8001_read_32(void *virt_addr)
->  	return *((u32 *)virt_addr);
->  }
-> 
-> -static inline void pm8001_write_32(void *addr, u32 offset, u32 val)
-> +static inline void pm8001_write_32(void *addr, u32 offset, __le32 val)
->  {
-> -	*((u32 *)(addr + offset)) = val;
-> +	*((__le32 *)(addr + offset)) = val;
->  }
-> 
->  static inline u32 pm8001_cr32(struct pm8001_hba_info *pm8001_ha, u32 bar,
-> diff --git a/drivers/scsi/pm8001/pm8001_hwi.c
-> b/drivers/scsi/pm8001/pm8001_hwi.c
-> index e12c4f6..ce9a524 100644
-> --- a/drivers/scsi/pm8001/pm8001_hwi.c
-> +++ b/drivers/scsi/pm8001/pm8001_hwi.c
-> @@ -1212,7 +1212,7 @@ static int mpi_msg_free_get(struct
-inbound_queue_table
-> *circularQ,
->  	consumer_index = pm8001_read_32(circularQ->ci_virt);
->  	circularQ->consumer_index = cpu_to_le32(consumer_index);
->  	if (((circularQ->producer_idx + bcCount) % 256) > -		circularQ->consumer_index) {
-> +		le32_to_cpu(circularQ->consumer_index)) {
->  		*messagePtr = NULL;
->  		return -1;
->  	}
-> @@ -1321,7 +1321,8 @@ static u32 mpi_msg_consume(struct pm8001_hba_info
-> *pm8001_ha,
->  	u32 header_tmp;
->  	do {
->  		/* If there are not-yet-delivered messages ... */
-> -		if (circularQ->producer_index != circularQ->consumer_idx) {
-> +		if (le32_to_cpu(circularQ->producer_index)
-> +			!= circularQ->consumer_idx) {
->  			/*Get the pointer to the circular queue buffer
-element*/
->  			msgHeader = (struct mpi_msg_hdr *)
->  				(circularQ->base_virt +
-> @@ -1329,14 +1330,14 @@ static u32 mpi_msg_consume(struct pm8001_hba_info
-> *pm8001_ha,
->  			/* read header */
->  			header_tmp = pm8001_read_32(msgHeader);
->  			msgHeader_tmp = cpu_to_le32(header_tmp);
-> -			if (0 != (msgHeader_tmp & 0x80000000)) {
-> +			if (0 != (le32_to_cpu(msgHeader_tmp) & 0x80000000))
-{
->  				if (OPC_OUB_SKIP_ENTRY !
-> -					(msgHeader_tmp & 0xfff)) {
-> +					(le32_to_cpu(msgHeader_tmp) &
-0xfff)) {
->  					*messagePtr1
->  						((u8 *)msgHeader) +
->  						sizeof(struct mpi_msg_hdr);
-> -					*pBC = (u8)((msgHeader_tmp >> 24) &
-> -						0x1f);
-> +					*pBC (u8)((le32_to_cpu(msgHeader_tmp)
-> +						>> 24) & 0x1f);
->  					PM8001_IO_DBG(pm8001_ha,
->  						pm8001_printk(": CI=%d PI=%d
+Based on PaX and earlier work by Andi Kleen.
+
+Patch against current Linus tree.
+
+---
+
+From c31cbee0b0287c3b57bfc33f07d25459c020cefc Mon Sep 17 00:00:00 2001
+From: Lionel Debroux <lionel_debroux@yahoo.fr>
+Date: Sun, 26 Feb 2012 20:07:30 +0100
+Subject: edac: move const pci_device_id tables from __devinitdata to
+ __devinitconst.
+
+These const tables are currently marked __devinitdata, but Documentation/PCI/pci.txt says:
 "
->  						"msgHeader=%x\n",
-> @@ -1347,8 +1348,8 @@ static u32 mpi_msg_consume(struct pm8001_hba_info
-> *pm8001_ha,
->  				} else {
->  					circularQ->consumer_idx
->  						(circularQ->consumer_idx +
-> -						((msgHeader_tmp >> 24) &
-0x1f))
-> -						% 256;
-> +						((le32_to_cpu(msgHeader_tmp)
-> +						>> 24) & 0x1f)) % 256;
->  					msgHeader_tmp = 0;
->  					pm8001_write_32(msgHeader, 0, 0);
->  					/* update the CI of outbound queue
-*/
-> @@ -1360,7 +1361,8 @@ static u32 mpi_msg_consume(struct pm8001_hba_info
-> *pm8001_ha,
->  			} else {
->  				circularQ->consumer_idx
->  					(circularQ->consumer_idx +
-> -					((msgHeader_tmp >> 24) & 0x1f)) %
-256;
-> +					((le32_to_cpu(msgHeader_tmp) >> 24)
-&
-> +					0x1f)) % 256;
->  				msgHeader_tmp = 0;
->  				pm8001_write_32(msgHeader, 0, 0);
->  				/* update the CI of outbound queue */
-> @@ -1376,7 +1378,8 @@ static u32 mpi_msg_consume(struct pm8001_hba_info
-> *pm8001_ha,
->  			producer_index = pm8001_read_32(pi_virt);
->  			circularQ->producer_index cpu_to_le32(producer_index);
->  		}
-> -	} while (circularQ->producer_index != circularQ->consumer_idx);
-> +	} while (le32_to_cpu(circularQ->producer_index) !
-> +		circularQ->consumer_idx);
->  	/* while we don't have any more not-yet-delivered message */
->  	/* report empty */
->  	return MPI_IO_STATUS_BUSY;
-> @@ -2857,7 +2860,7 @@ static void pm8001_hw_event_ack_req(struct
-> pm8001_hba_info *pm8001_ha,
-> 
->  	memset((u8 *)&payload, 0, sizeof(payload));
->  	circularQ = &pm8001_ha->inbnd_q_tbl[Qnum];
-> -	payload.tag = 1;
-> +	payload.tag = cpu_to_le32(1);
->  	payload.sea_phyid_portid = cpu_to_le32(((SEA & 0xFFFF) << 8) |
->  		((phyId & 0x0F) << 4) | (port_id & 0x0F));
->  	payload.param0 = cpu_to_le32(param0);
-> @@ -2929,9 +2932,9 @@ hw_event_sas_phy_up(struct pm8001_hba_info
-*pm8001_ha,
-> void *piomb)
->  	phy->phy_type |= PORT_TYPE_SAS;
->  	phy->identify.device_type = deviceType;
->  	phy->phy_attached = 1;
-> -	if (phy->identify.device_type = SAS_END_DEV)
-> +	if (phy->identify.device_type = SAS_END_DEVICE)
->  		phy->identify.target_port_protocols = SAS_PROTOCOL_SSP;
-> -	else if (phy->identify.device_type != NO_DEVICE)
-> +	else if (phy->identify.device_type != SAS_PHY_UNUSED)
->  		phy->identify.target_port_protocols = SAS_PROTOCOL_SMP;
->  	phy->sas_phy.oob_mode = SAS_OOB_MODE;
->  	sas_ha->notify_phy_event(&phy->sas_phy, PHYE_OOB_DONE);
-> @@ -3075,7 +3078,7 @@ static int mpi_reg_resp(struct pm8001_hba_info
-> *pm8001_ha, void *piomb)
->  		(struct dev_reg_resp *)(piomb + 4);
-> 
->  	htag = le32_to_cpu(registerRespPayload->tag);
-> -	ccb = &pm8001_ha->ccb_info[registerRespPayload->tag];
-> +	ccb = &pm8001_ha->ccb_info[htag];
->  	pm8001_dev = ccb->device;
->  	status = le32_to_cpu(registerRespPayload->status);
->  	device_id = le32_to_cpu(registerRespPayload->device_id);
-> @@ -3149,7 +3152,7 @@ mpi_fw_flash_update_resp(struct pm8001_hba_info
-> *pm8001_ha, void *piomb)
->  	struct fw_control_ex	fw_control_context;
->  	struct fw_flash_Update_resp *ppayload
->  		(struct fw_flash_Update_resp *)(piomb + 4);
-> -	u32 tag = le32_to_cpu(ppayload->tag);
-> +	u32 tag = ppayload->tag;
->  	struct pm8001_ccb_info *ccb = &pm8001_ha->ccb_info[tag];
->  	status = le32_to_cpu(ppayload->status);
->  	memcpy(&fw_control_context,
-> @@ -3238,13 +3241,12 @@ mpi_task_abort_resp(struct pm8001_hba_info
-*pm8001_ha,
-> void *piomb)
-> 
->  	struct task_abort_resp *pPayload
->  		(struct task_abort_resp *)(piomb + 4);
-> -	ccb = &pm8001_ha->ccb_info[pPayload->tag];
-> -	t = ccb->task;
-> -
-> 
->  	status = le32_to_cpu(pPayload->status);
->  	tag = le32_to_cpu(pPayload->tag);
->  	scp = le32_to_cpu(pPayload->scp);
-> +	ccb = &pm8001_ha->ccb_info[tag];
-> +	t = ccb->task;
->  	PM8001_IO_DBG(pm8001_ha,
->  		pm8001_printk(" status = 0x%x\n", status));
->  	if (t = NULL)
-> @@ -3270,7 +3272,7 @@ mpi_task_abort_resp(struct pm8001_hba_info
-*pm8001_ha,
-> void *piomb)
->  	t->task_state_flags &= ~SAS_TASK_AT_INITIATOR;
->  	t->task_state_flags |= SAS_TASK_STATE_DONE;
->  	spin_unlock_irqrestore(&t->task_state_lock, flags);
-> -	pm8001_ccb_task_free(pm8001_ha, t, ccb, pPayload->tag);
-> +	pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
->  	mb();
->  	t->task_done(t);
->  	return 0;
-> @@ -3497,7 +3499,7 @@ static int mpi_hw_event(struct pm8001_hba_info
-> *pm8001_ha, void* piomb)
->  static void process_one_iomb(struct pm8001_hba_info *pm8001_ha, void
-*piomb)
->  {
->  	u32 pHeader = (u32)*(u32 *)piomb;
-> -	u8 opc = (u8)((le32_to_cpu(pHeader)) & 0xFFF);
-> +	u8 opc = (u8)(pHeader & 0xFFF);
-> 
->  	PM8001_MSG_DBG(pm8001_ha, pm8001_printk("process_one_iomb:"));
-> 
-> @@ -3664,7 +3666,7 @@ static int process_oq(struct pm8001_hba_info
-*pm8001_ha)
->  {
->  	struct outbound_queue_table *circularQ;
->  	void *pMsg1 = NULL;
-> -	u8 bc = 0;
-> +	u8 uninitialized_var(bc);
->  	u32 ret = MPI_IO_STATUS_FAIL;
-> 
->  	circularQ = &pm8001_ha->outbnd_q_tbl[0];
-> @@ -3677,11 +3679,10 @@ static int process_oq(struct pm8001_hba_info
-> *pm8001_ha)
->  			mpi_msg_free_set(pm8001_ha, pMsg1, circularQ, bc);
->  		}
->  		if (MPI_IO_STATUS_BUSY = ret) {
-> -			u32 producer_idx;
->  			/* Update the producer index from SPC */
-> -			producer_idx = pm8001_read_32(circularQ->pi_virt);
-> -			circularQ->producer_index cpu_to_le32(producer_idx);
-> -			if (circularQ->producer_index > +			circularQ->producer_index
-> +
-cpu_to_le32(pm8001_read_32(circularQ->pi_virt));
-> +			if (le32_to_cpu(circularQ->producer_index) >  				circularQ->consumer_idx)
->  				/* OQ is empty */
->  				break;
-> @@ -3712,9 +3713,9 @@ pm8001_chip_make_sg(struct scatterlist *scatter, int
-nr,
-> void *prd)
->  	}
->  }
-> 
-> -static void build_smp_cmd(u32 deviceID, u32 hTag, struct smp_req
-*psmp_cmd)
-> +static void build_smp_cmd(u32 deviceID, __le32 hTag, struct smp_req
-> *psmp_cmd)
->  {
-> -	psmp_cmd->tag = cpu_to_le32(hTag);
-> +	psmp_cmd->tag = hTag;
->  	psmp_cmd->device_id = cpu_to_le32(deviceID);
->  	psmp_cmd->len_ip_ir = cpu_to_le32(1|(1 << 1));
->  }
-> @@ -3798,7 +3799,7 @@ static int pm8001_chip_ssp_io_req(struct
-> pm8001_hba_info *pm8001_ha,
->  	struct ssp_ini_io_start_req ssp_cmd;
->  	u32 tag = ccb->ccb_tag;
->  	int ret;
-> -	__le64 phys_addr;
-> +	u64 phys_addr;
->  	struct inbound_queue_table *circularQ;
->  	u32 opc = OPC_INB_SSPINIIOSTART;
->  	memset(&ssp_cmd, 0, sizeof(ssp_cmd));
-> @@ -3819,15 +3820,15 @@ static int pm8001_chip_ssp_io_req(struct
-> pm8001_hba_info *pm8001_ha,
->  	/* fill in PRD (scatter/gather) table, if any */
->  	if (task->num_scatter > 1) {
->  		pm8001_chip_make_sg(task->scatter, ccb->n_elem,
-ccb->buf_prd);
-> -		phys_addr = cpu_to_le64(ccb->ccb_dma_handle +
-> -				offsetof(struct pm8001_ccb_info,
-buf_prd[0]));
-> -		ssp_cmd.addr_low = lower_32_bits(phys_addr);
-> -		ssp_cmd.addr_high = upper_32_bits(phys_addr);
-> +		phys_addr = ccb->ccb_dma_handle +
-> +				offsetof(struct pm8001_ccb_info,
-buf_prd[0]);
-> +		ssp_cmd.addr_low = cpu_to_le32(lower_32_bits(phys_addr));
-> +		ssp_cmd.addr_high = cpu_to_le32(upper_32_bits(phys_addr));
->  		ssp_cmd.esgl = cpu_to_le32(1<<31);
->  	} else if (task->num_scatter = 1) {
-> -		__le64 dma_addr cpu_to_le64(sg_dma_address(task->scatter));
-> -		ssp_cmd.addr_low = lower_32_bits(dma_addr);
-> -		ssp_cmd.addr_high = upper_32_bits(dma_addr);
-> +		u64 dma_addr = sg_dma_address(task->scatter);
-> +		ssp_cmd.addr_low = cpu_to_le32(lower_32_bits(dma_addr));
-> +		ssp_cmd.addr_high = cpu_to_le32(upper_32_bits(dma_addr));
->  		ssp_cmd.len = cpu_to_le32(task->total_xfer_len);
->  		ssp_cmd.esgl = 0;
->  	} else if (task->num_scatter = 0) {
-> @@ -3850,7 +3851,7 @@ static int pm8001_chip_sata_req(struct
-pm8001_hba_info
-> *pm8001_ha,
->  	int ret;
->  	struct sata_start_req sata_cmd;
->  	u32 hdr_tag, ncg_tag = 0;
-> -	__le64 phys_addr;
-> +	u64 phys_addr;
->  	u32 ATAP = 0x0;
->  	u32 dir;
->  	struct inbound_queue_table *circularQ;
-> @@ -3889,13 +3890,13 @@ static int pm8001_chip_sata_req(struct
-> pm8001_hba_info *pm8001_ha,
->  	/* fill in PRD (scatter/gather) table, if any */
->  	if (task->num_scatter > 1) {
->  		pm8001_chip_make_sg(task->scatter, ccb->n_elem,
-ccb->buf_prd);
-> -		phys_addr = cpu_to_le64(ccb->ccb_dma_handle +
-> -				offsetof(struct pm8001_ccb_info,
-buf_prd[0]));
-> +		phys_addr = ccb->ccb_dma_handle +
-> +				offsetof(struct pm8001_ccb_info,
-buf_prd[0]);
->  		sata_cmd.addr_low = lower_32_bits(phys_addr);
->  		sata_cmd.addr_high = upper_32_bits(phys_addr);
->  		sata_cmd.esgl = cpu_to_le32(1 << 31);
->  	} else if (task->num_scatter = 1) {
-> -		__le64 dma_addr cpu_to_le64(sg_dma_address(task->scatter));
-> +		u64 dma_addr = sg_dma_address(task->scatter);
->  		sata_cmd.addr_low = lower_32_bits(dma_addr);
->  		sata_cmd.addr_high = upper_32_bits(dma_addr);
->  		sata_cmd.len = cpu_to_le32(task->total_xfer_len);
-> @@ -4039,7 +4040,7 @@ static int pm8001_chip_dereg_dev_req(struct
-> pm8001_hba_info *pm8001_ha,
-> 
->  	circularQ = &pm8001_ha->inbnd_q_tbl[0];
->  	memset(&payload, 0, sizeof(payload));
-> -	payload.tag = 1;
-> +	payload.tag = cpu_to_le32(1);
->  	payload.device_id = cpu_to_le32(device_id);
->  	PM8001_MSG_DBG(pm8001_ha,
->  		pm8001_printk("unregister device device_id = %d\n",
-device_id));
-> @@ -4063,7 +4064,7 @@ static int pm8001_chip_phy_ctl_req(struct
-> pm8001_hba_info *pm8001_ha,
->  	u32 opc = OPC_INB_LOCAL_PHY_CONTROL;
->  	memset(&payload, 0, sizeof(payload));
->  	circularQ = &pm8001_ha->inbnd_q_tbl[0];
-> -	payload.tag = 1;
-> +	payload.tag = cpu_to_le32(1);
->  	payload.phyop_phyid
->  		cpu_to_le32(((phy_op & 0xff) << 8) | (phyId & 0x0F));
->  	ret = mpi_build_cmd(pm8001_ha, circularQ, opc, &payload);
-> @@ -4360,8 +4361,10 @@ pm8001_chip_fw_flash_update_build(struct
-> pm8001_hba_info *pm8001_ha,
->  	payload.cur_image_offset = cpu_to_le32(info->cur_image_offset);
->  	payload.total_image_len = cpu_to_le32(info->total_image_len);
->  	payload.len = info->sgl.im_len.len ;
-> -	payload.sgl_addr_lo = lower_32_bits(info->sgl.addr);
-> -	payload.sgl_addr_hi = upper_32_bits(info->sgl.addr);
-> +	payload.sgl_addr_lo
-> +		cpu_to_le32(lower_32_bits(le64_to_cpu(info->sgl.addr)));
-> +	payload.sgl_addr_hi
-> +		cpu_to_le32(upper_32_bits(le64_to_cpu(info->sgl.addr)));
->  	ret = mpi_build_cmd(pm8001_ha, circularQ, opc, &payload);
->  	return ret;
->  }
-> diff --git a/drivers/scsi/pm8001/pm8001_hwi.h
-> b/drivers/scsi/pm8001/pm8001_hwi.h
-> index 9091320..1a4611e 100644
-> --- a/drivers/scsi/pm8001/pm8001_hwi.h
-> +++ b/drivers/scsi/pm8001/pm8001_hwi.h
-> @@ -625,7 +625,7 @@ struct set_nvm_data_req {
->  	__le32	tag;
->  	__le32	len_ir_vpdd;
->  	__le32	vpd_offset;
-> -	u32	reserved[8];
-> +	__le32	reserved[8];
->  	__le32	resp_addr_lo;
->  	__le32	resp_addr_hi;
->  	__le32	resp_len;
-> --
-> 1.7.4.4
+o The ID table array should be marked __devinitconst; this is done
+  automatically if the table is declared with DEFINE_PCI_DEVICE_TABLE().
+"
+So use DEFINE_PCI_DEVICE_TABLE(x).
+
+Based on PaX and earlier work by Andi Kleen.
+
+Signed-off-by: Lionel Debroux <lionel_debroux@yahoo.fr>
+---
+ drivers/edac/amd64_edac.c      |    2 +-
+ drivers/edac/amd76x_edac.c     |    2 +-
+ drivers/edac/e752x_edac.c      |    2 +-
+ drivers/edac/e7xxx_edac.c      |    2 +-
+ drivers/edac/i3000_edac.c      |    2 +-
+ drivers/edac/i3200_edac.c      |    2 +-
+ drivers/edac/i5000_edac.c      |    2 +-
+ drivers/edac/i5100_edac.c      |    2 +-
+ drivers/edac/i5400_edac.c      |    2 +-
+ drivers/edac/i7300_edac.c      |    2 +-
+ drivers/edac/i7core_edac.c     |    2 +-
+ drivers/edac/i82443bxgx_edac.c |    2 +-
+ drivers/edac/i82860_edac.c     |    2 +-
+ drivers/edac/i82875p_edac.c    |    2 +-
+ drivers/edac/i82975x_edac.c    |    2 +-
+ drivers/edac/r82600_edac.c     |    2 +-
+ drivers/edac/sb_edac.c         |    2 +-
+ drivers/edac/x38_edac.c        |    2 +-
+ 18 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index c9eee6d..2dedba4 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -2685,7 +2685,7 @@ static void __devexit amd64_remove_one_instance(struct pci_dev *pdev)
+  * PCI core identifies what devices are on a system during boot, and then
+  * inquiry this table to see if this driver is for a given device found.
+  */
+-static const struct pci_device_id amd64_pci_table[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(amd64_pci_table) = {
+ 	{
+ 		.vendor		= PCI_VENDOR_ID_AMD,
+ 		.device		= PCI_DEVICE_ID_AMD_K8_NB_MEMCTL,
+diff --git a/drivers/edac/amd76x_edac.c b/drivers/edac/amd76x_edac.c
+index e47e73b..f8fd3c8 100644
+--- a/drivers/edac/amd76x_edac.c
++++ b/drivers/edac/amd76x_edac.c
+@@ -321,7 +321,7 @@ static void __devexit amd76x_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id amd76x_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(amd76x_pci_tbl) = {
+ 	{
+ 	 PCI_VEND_DEV(AMD, FE_GATE_700C), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	 AMD762},
+diff --git a/drivers/edac/e752x_edac.c b/drivers/edac/e752x_edac.c
+index 1af531a..4122326 100644
+--- a/drivers/edac/e752x_edac.c
++++ b/drivers/edac/e752x_edac.c
+@@ -1380,7 +1380,7 @@ static void __devexit e752x_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id e752x_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(e752x_pci_tbl) = {
+ 	{
+ 	 PCI_VEND_DEV(INTEL, 7520_0), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	 E7520},
+diff --git a/drivers/edac/e7xxx_edac.c b/drivers/edac/e7xxx_edac.c
+index 6ffb6d2..68dea87 100644
+--- a/drivers/edac/e7xxx_edac.c
++++ b/drivers/edac/e7xxx_edac.c
+@@ -525,7 +525,7 @@ static void __devexit e7xxx_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id e7xxx_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(e7xxx_pci_tbl) = {
+ 	{
+ 	 PCI_VEND_DEV(INTEL, 7205_0), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	 E7205},
+diff --git a/drivers/edac/i3000_edac.c b/drivers/edac/i3000_edac.c
+index c0510b3..277689a 100644
+--- a/drivers/edac/i3000_edac.c
++++ b/drivers/edac/i3000_edac.c
+@@ -470,7 +470,7 @@ static void __devexit i3000_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id i3000_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i3000_pci_tbl) = {
+ 	{
+ 	 PCI_VEND_DEV(INTEL, 3000_HB), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	 I3000},
+diff --git a/drivers/edac/i3200_edac.c b/drivers/edac/i3200_edac.c
+index 73f55e200..046808c 100644
+--- a/drivers/edac/i3200_edac.c
++++ b/drivers/edac/i3200_edac.c
+@@ -445,7 +445,7 @@ static void __devexit i3200_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id i3200_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i3200_pci_tbl) = {
+ 	{
+ 		PCI_VEND_DEV(INTEL, 3200_HB), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 		I3200},
+diff --git a/drivers/edac/i5000_edac.c b/drivers/edac/i5000_edac.c
+index 4dc3ac2..a2680d8 100644
+--- a/drivers/edac/i5000_edac.c
++++ b/drivers/edac/i5000_edac.c
+@@ -1516,7 +1516,7 @@ static void __devexit i5000_remove_one(struct pci_dev *pdev)
+  *
+  *	The "E500P" device is the first device supported.
+  */
+-static const struct pci_device_id i5000_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i5000_pci_tbl) = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_I5000_DEV16),
+ 	 .driver_data = I5000P},
+ 
+diff --git a/drivers/edac/i5100_edac.c b/drivers/edac/i5100_edac.c
+index bcbdeec..2e23547 100644
+--- a/drivers/edac/i5100_edac.c
++++ b/drivers/edac/i5100_edac.c
+@@ -1051,7 +1051,7 @@ static void __devexit i5100_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id i5100_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i5100_pci_tbl) = {
+ 	/* Device 16, Function 0, Channel 0 Memory Map, Error Flag/Mask, ... */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_5100_16) },
+ 	{ 0, }
+diff --git a/drivers/edac/i5400_edac.c b/drivers/edac/i5400_edac.c
+index 74d6ec34..67ec962 100644
+--- a/drivers/edac/i5400_edac.c
++++ b/drivers/edac/i5400_edac.c
+@@ -1383,7 +1383,7 @@ static void __devexit i5400_remove_one(struct pci_dev *pdev)
+  *
+  *	The "E500P" device is the first device supported.
+  */
+-static const struct pci_device_id i5400_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i5400_pci_tbl) = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_5400_ERR)},
+ 	{0,}			/* 0 terminated list. */
+ };
+diff --git a/drivers/edac/i7300_edac.c b/drivers/edac/i7300_edac.c
+index 6104dba..3bafa3b 100644
+--- a/drivers/edac/i7300_edac.c
++++ b/drivers/edac/i7300_edac.c
+@@ -1192,7 +1192,7 @@ static void __devexit i7300_remove_one(struct pci_dev *pdev)
+  *
+  * Has only 8086:360c PCI ID
+  */
+-static const struct pci_device_id i7300_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i7300_pci_tbl) = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_I7300_MCH_ERR)},
+ 	{0,}			/* 0 terminated list. */
+ };
+diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
+index 8568d9b..85226cc 100644
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -391,7 +391,7 @@ static const struct pci_id_table pci_dev_table[] = {
+ /*
+  *	pci_device_id	table for which devices we are looking for
+  */
+-static const struct pci_device_id i7core_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i7core_pci_tbl) = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_X58_HUB_MGMT)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_LYNNFIELD_QPI_LINK0)},
+ 	{0,}			/* 0 terminated list. */
+diff --git a/drivers/edac/i82443bxgx_edac.c b/drivers/edac/i82443bxgx_edac.c
+index 4329d39..3bf2b2f 100644
+--- a/drivers/edac/i82443bxgx_edac.c
++++ b/drivers/edac/i82443bxgx_edac.c
+@@ -380,7 +380,7 @@ static void __devexit i82443bxgx_edacmc_remove_one(struct pci_dev *pdev)
+ 
+ EXPORT_SYMBOL_GPL(i82443bxgx_edacmc_remove_one);
+ 
+-static const struct pci_device_id i82443bxgx_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i82443bxgx_pci_tbl) = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82443BX_0)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82443BX_2)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82443GX_0)},
+diff --git a/drivers/edac/i82860_edac.c b/drivers/edac/i82860_edac.c
+index 931a057..c779092 100644
+--- a/drivers/edac/i82860_edac.c
++++ b/drivers/edac/i82860_edac.c
+@@ -270,7 +270,7 @@ static void __devexit i82860_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id i82860_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i82860_pci_tbl) = {
+ 	{
+ 	 PCI_VEND_DEV(INTEL, 82860_0), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	 I82860},
+diff --git a/drivers/edac/i82875p_edac.c b/drivers/edac/i82875p_edac.c
+index 33864c6..10f15d8 100644
+--- a/drivers/edac/i82875p_edac.c
++++ b/drivers/edac/i82875p_edac.c
+@@ -511,7 +511,7 @@ static void __devexit i82875p_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id i82875p_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i82875p_pci_tbl) = {
+ 	{
+ 	 PCI_VEND_DEV(INTEL, 82875_0), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	 I82875P},
+diff --git a/drivers/edac/i82975x_edac.c b/drivers/edac/i82975x_edac.c
+index 4184e01..0cd8368 100644
+--- a/drivers/edac/i82975x_edac.c
++++ b/drivers/edac/i82975x_edac.c
+@@ -612,7 +612,7 @@ static void __devexit i82975x_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id i82975x_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(i82975x_pci_tbl) = {
+ 	{
+ 		PCI_VEND_DEV(INTEL, 82975_0), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 		I82975X
+diff --git a/drivers/edac/r82600_edac.c b/drivers/edac/r82600_edac.c
+index e294e1b..6d908ad 100644
+--- a/drivers/edac/r82600_edac.c
++++ b/drivers/edac/r82600_edac.c
+@@ -373,7 +373,7 @@ static void __devexit r82600_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id r82600_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(r82600_pci_tbl) = {
+ 	{
+ 	 PCI_DEVICE(PCI_VENDOR_ID_RADISYS, R82600_BRIDGE_ID)
+ 	 },
+diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
+index 1dc118d..3a605f7 100644
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -367,7 +367,7 @@ static const struct pci_id_table pci_dev_descr_sbridge_table[] = {
+ /*
+  *	pci_device_id	table for which devices we are looking for
+  */
+-static const struct pci_device_id sbridge_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(sbridge_pci_tbl) = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_SBRIDGE_IMC_TA)},
+ 	{0,}			/* 0 terminated list. */
+ };
+diff --git a/drivers/edac/x38_edac.c b/drivers/edac/x38_edac.c
+index b6f47de..a438297 100644
+--- a/drivers/edac/x38_edac.c
++++ b/drivers/edac/x38_edac.c
+@@ -440,7 +440,7 @@ static void __devexit x38_remove_one(struct pci_dev *pdev)
+ 	edac_mc_free(mci);
+ }
+ 
+-static const struct pci_device_id x38_pci_tbl[] __devinitdata = {
++static DEFINE_PCI_DEVICE_TABLE(x38_pci_tbl) = {
+ 	{
+ 	 PCI_VEND_DEV(INTEL, X38_HB), PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 	 X38},
+-- 
+1.7.9.2.262.gba998
 
