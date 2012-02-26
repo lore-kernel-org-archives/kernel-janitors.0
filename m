@@ -1,31 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Feb 2012 09:25:04 +0000
-Subject: [patch] pps: checking for NULL instead of IS_ERR()
-Message-Id: <20120208092504.GD6554@elgon.mountain>
+From: "BILLY KEMP" <2577206@f92ag1gfz90c.biz.tc>
+Date: Sun, 26 Feb 2012 04:27:10 +0000
+Subject: Find horny singles searching for casual one night affairs. No cost to join.
+Message-Id: <20120225232710.31437@web003.nyc1.bluetie.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rodolfo Giometti <giometti@enneenne.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-class_create() never returns NULLs only ERR_PTRs.
+Find horny singles searching for casual one night affairs. No cost to join.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+http://brain.so/zdx-w
 
-diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
-index 2baadd2..98fbe62 100644
---- a/drivers/pps/pps.c
-+++ b/drivers/pps/pps.c
-@@ -369,9 +369,9 @@ static int __init pps_init(void)
- 	int err;
- 
- 	pps_class = class_create(THIS_MODULE, "pps");
--	if (!pps_class) {
-+	if (IS_ERR(pps_class)) {
- 		pr_err("failed to allocate class\n");
--		return -ENOMEM;
-+		return PTR_ERR(pps_class);
- 	}
- 	pps_class->dev_attrs = pps_attrs;
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----
+If you would like to not be contacted from us in the future please press on the link below:
+http://brain.so/tyog3
+
+Or write to:
+P.O. Box 16, 52 Street, Vancouver, Canada
