@@ -1,45 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Feb 2012 06:36:28 +0000
-Subject: [patch 2/4] rndis_wlan: remove unneeded variables
-Message-Id: <20120229063628.GD18031@elgon.mountain>
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Mon, 27 Feb 2012 08:39:44 +0000
+Subject: [PATCH] Change type for binder_debug_no_lock switch to bool
+Message-Id: <1330331985-20767-1-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We never use the "len" variable.
+GCC warns that module_param_named() indirectly returns a bool type value
+which is different from 'int' type binder_debug_no_lock declared. Change
+it to bool because it is a internal switch for debugging.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+---
+ drivers/staging/android/binder.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
-index 6d8a986..99fab7d 100644
---- a/drivers/net/wireless/rndis_wlan.c
-+++ b/drivers/net/wireless/rndis_wlan.c
-@@ -1790,9 +1790,8 @@ static struct ndis_80211_pmkid *remove_pmkid(struct usbnet *usbdev,
- 						struct cfg80211_pmksa *pmksa,
- 						int max_pmkids)
- {
--	int i, len, count, newlen, err;
-+	int i, count, newlen, err;
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index f0b7e66..4350425 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -103,7 +103,7 @@ static uint32_t binder_debug_mask = BINDER_DEBUG_USER_ERROR |
+ 	BINDER_DEBUG_FAILED_TRANSACTION | BINDER_DEBUG_DEAD_TRANSACTION;
+ module_param_named(debug_mask, binder_debug_mask, uint, S_IWUSR | S_IRUGO);
  
--	len = le32_to_cpu(pmkids->length);
- 	count = le32_to_cpu(pmkids->bssid_info_count);
+-static int binder_debug_no_lock;
++static bool binder_debug_no_lock;
+ module_param_named(proc_no_lock, binder_debug_no_lock, bool, S_IWUSR | S_IRUGO);
  
- 	if (count > max_pmkids)
-diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
-index 99fab7d..a93cfe2 100644
---- a/drivers/net/wireless/rndis_wlan.c
-+++ b/drivers/net/wireless/rndis_wlan.c
-@@ -1830,9 +1830,8 @@ static struct ndis_80211_pmkid *update_pmkid(struct usbnet *usbdev,
- 						struct cfg80211_pmksa *pmksa,
- 						int max_pmkids)
- {
--	int i, err, len, count, newlen;
-+	int i, err, count, newlen;
- 
--	len = le32_to_cpu(pmkids->length);
- 	count = le32_to_cpu(pmkids->bssid_info_count);
- 
- 	if (count > max_pmkids)
+ static DECLARE_WAIT_QUEUE_HEAD(binder_user_error_wait);
+-- 
+1.6.0.4
+
