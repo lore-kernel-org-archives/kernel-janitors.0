@@ -1,30 +1,37 @@
-From: Roland Dreier <roland@kernel.org>
-Date: Fri, 03 Feb 2012 17:08:57 +0000
-Subject: Re: [patch 2/3] ib_srpt: checking NULL instead of ERR_PTR
-Message-Id: <CAL1RGDU0HkrS_ME12H6j43e=Fkn=C9Ms64mXNjxf4_dS_PV7EQ@mail.gmail.com>
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Mon, 27 Feb 2012 10:17:50 +0000
+Subject: [PATCH 1/2 v2] Staging:android: Change type for binder_debug_no_lock switch to bool
+Message-Id: <1330337871-27830-1-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20111104182732.GH5796@elgon.mountain> <1320443697.5859.171.camel@haakon2.linux-iscsi.org>
- <CA+_b7DK-=ORJQ20aHE_aVgEud4vAPQG_sskOeMqftabzun0h+A@mail.gmail.com>
-In-Reply-To: <CA+_b7DK-=ORJQ20aHE_aVgEud4vAPQG_sskOeMqftabzun0h+A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <error27-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: nab-4mckEHfoRW3KI0RCH6AXYZqQE7yCjDx5@public.gmane.org, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, target-devel <target-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bart Van Assche <bart.vanassche-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 3, 2012 at 5:01 AM, Dan Carpenter <error27@gmail.com> wrote:
-> All the others seem to fixed up. =A0It's just these two place which need
-> to be fixed still. =A0My patch still applies fine with a little fuzz. =A0=
-;)
+GCC warns that module_param_named() indirectly returns a bool type value
+which is different from 'int' type binder_debug_no_lock declared. Change
+it to bool because it is a internal switch for debugging.
 
-I have a few pending srpt patches, coincidentally including one that hits
-very near yours leading to a trivial conflict.  So I just merged yours into
-your tree as well and I guess I'll send to Linus shortly.
+Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+---
+v2: added a subsystem prefix to the subject
+---
+ drivers/staging/android/binder.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Thanks,
-  Roland
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index f0b7e66..4350425 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -103,7 +103,7 @@ static uint32_t binder_debug_mask = BINDER_DEBUG_USER_ERROR |
+ 	BINDER_DEBUG_FAILED_TRANSACTION | BINDER_DEBUG_DEAD_TRANSACTION;
+ module_param_named(debug_mask, binder_debug_mask, uint, S_IWUSR | S_IRUGO);
+ 
+-static int binder_debug_no_lock;
++static bool binder_debug_no_lock;
+ module_param_named(proc_no_lock, binder_debug_no_lock, bool, S_IWUSR | S_IRUGO);
+ 
+ static DECLARE_WAIT_QUEUE_HEAD(binder_user_error_wait);
+-- 
+1.6.0.4
+
