@@ -1,41 +1,37 @@
-From: Vincenzo Frascino <vincenzo.frascino@st.com>
-Date: Wed, 29 Feb 2012 09:02:15 +0000
-Subject: Re: [patch] thermal: spear13xx: checking for NULL instead of IS_ERR()
-Message-Id: <4F4DE997.4050900@st.com>
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Mon, 27 Feb 2012 08:39:45 +0000
+Subject: [PATCH] Initialise buffer and buffer_size before used
+Message-Id: <1330331985-20767-2-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120229063151.GA18031@elgon.mountain>
-In-Reply-To: <20120229063151.GA18031@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Viresh KUMAR <viresh.kumar@st.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-Thanks Dan.
+GCC warns 'buffer' and 'buffer_size' are used with being uninitialized, and
+'buffer' is used as returned value, and 'buffer_size' is initialized using
+uninitialized_var to clear warning.
 
-Il 29/02/2012 07:31, Dan Carpenter ha scritto:
-> thermal_zone_device_register() never returns NULL, on error it returns
-> and ERR_PTR().
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/thermal/spear_thermal.c b/drivers/thermal/spear_thermal.c
-> index 880bf28..7352cf8 100644
-> --- a/drivers/thermal/spear_thermal.c
-> +++ b/drivers/thermal/spear_thermal.c
-> @@ -149,9 +149,9 @@ static int spear_thermal_probe(struct platform_device *pdev)
->  
->  	spear_thermal = thermal_zone_device_register("spear_thermal", 0,
->  				stdev, &ops, 0, 0, 0, 0);
-> -	if (!spear_thermal) {
-> +	if (IS_ERR(spear_thermal)) {
->  		dev_err(&pdev->dev, "thermal zone device is NULL\n");
-> -		ret = -EINVAL;
-> +		ret = PTR_ERR(spear_thermal);
->  		goto disable_clk;
->  	}
->  
+Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+---
+ drivers/staging/android/binder.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@st.com>
-
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index 4350425..6caebeb 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -716,8 +716,8 @@ static struct binder_buffer *binder_alloc_buf(struct binder_proc *proc,
+ 					      size_t offsets_size, int is_async)
+ {
+ 	struct rb_node *n = proc->free_buffers.rb_node;
+-	struct binder_buffer *buffer;
+-	size_t buffer_size;
++	struct binder_buffer *buffer = NULL;
++	size_t uninitialized_var(buffer_size);
+ 	struct rb_node *best_fit = NULL;
+ 	void *has_page_addr;
+ 	void *end_page_addr;
+-- 
+1.6.0.4
 
