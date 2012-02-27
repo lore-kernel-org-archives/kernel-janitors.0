@@ -1,64 +1,39 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 03 Feb 2012 09:16:59 +0000
-Subject: Re: [patch] mtd: nand: fix printk() warnings
-Message-Id: <1328260619.13362.0.camel@sauron.fi.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-/E15FAOOz6gZebtRJiDY"
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Mon, 27 Feb 2012 10:17:51 +0000
+Subject: [PATCH 2/2 v2] Staging:android: Initialise buffer and buffer_size before used
+Message-Id: <1330337871-27830-2-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120131085405.GD22039@elgon.mountain>
-In-Reply-To: <20120131085405.GD22039@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>, kernel-janitors@vger.kernel.org, Mike Dunn <mikedunn@newsguy.com>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
-
-
---=-/E15FAOOz6gZebtRJiDY
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 2012-01-31 at 11:54 +0300, Dan Carpenter wrote:
-> Gcc complains here:
-> drivers/mtd/nand/docg4.c: In function =E2=80=98probe_docg4=E2=80=99:
-> drivers/mtd/nand/docg4.c:1277:4: warning: format =E2=80=98%x=E2=80=99 exp=
-ects argument of type =E2=80=98unsigned int=E2=80=99, but argument 3 has ty=
-pe =E2=80=98resource_size_t=E2=80=99 [-Wformat]
-> drivers/mtd/nand/docg4.c:1277:4: warning: format =E2=80=98%x=E2=80=99 exp=
-ects argument of type =E2=80=98unsigned int=E2=80=99, but argument 4 has ty=
-pe =E2=80=98resource_size_t=E2=80=99 [-Wformat]
->=20
-> We have a standard way of printing these using a format string
-> extension.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Pushed to l2-mtd-2.6.git, thanks!
-
---=20
-Best Regards,
-Artem Bityutskiy
-
-
---=-/E15FAOOz6gZebtRJiDY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+GCC warns 'buffer' and 'buffer_size' are used with being uninitialized, and
+'buffer' is used as returned value, and 'buffer_size' is initialized using
+uninitialized_var to clear warning.
 
-iQIcBAABAgAGBQJPK6YLAAoJECmIfjd9wqK0r08P/AjJBLWi3HrJWM31V7yBTKTa
-GCWcyrPYrIw7fu9st+34aILyf1PFOa/yEcd6hNd9ieKwoZRhrnbWy9PwK8fvnQ5w
-bcZEClM9hBf91UKXJPIneEiKON/n5lJtplEdd64eLOdzc/rzhCnJCJN4FX8r99Zu
-YtkNScDviPj5ytIcj8Y8hWfPZXy9jiBaz4NBlu/DhU/BcjLegeZ6cfrB45toZOPo
-KMIWMGM/PsSCzeRuqg6YJj4vnzFPp9wSZz9U2xfu0Lerd9E2EOTcgtCqVuOHkU9+
-em4wnrDRK1UweDVIpdsFTqzMkMPj40Nu7cj/won1nP3ika/vXk5kI1ZktysaHSj0
-YaVwxPk85e31zaYEQ3O+vI/nfdRG4pckojBpoQ/ped7jRoOHpL11UqYc5C0s2kQO
-gaHSpVS5i+v4dP0YU1byX3R1HJ0PI+0+7ktYkKe7FNe14bJ4o0HGy8o8+1Vr1Wvg
-fltkyI4MaQyzz1i0QKZ95Ey6mVWYEcxrVuyP5OSVJzi0GKDjK+WH9K0YIu3ANYYM
-x27N32ruO85q2OjQkysMZH12jJtpdWUnHoAKEbmm/XmR78ATuVB4rdAHD3AnCnzO
-8luaCHmvE4ChsWfAOd4wt46i3qqgNodFBIzBml48DyRVef1abAIgjXpZR2u82el0
-s+3CbXPheC+MAWm9Li5z
-=KwqD
------END PGP SIGNATURE-----
+Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+---
+v2: added a subsystem prefix to the subject
+---
+ drivers/staging/android/binder.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
---=-/E15FAOOz6gZebtRJiDY--
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index 4350425..6caebeb 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -716,8 +716,8 @@ static struct binder_buffer *binder_alloc_buf(struct binder_proc *proc,
+ 					      size_t offsets_size, int is_async)
+ {
+ 	struct rb_node *n = proc->free_buffers.rb_node;
+-	struct binder_buffer *buffer;
+-	size_t buffer_size;
++	struct binder_buffer *buffer = NULL;
++	size_t uninitialized_var(buffer_size);
+ 	struct rb_node *best_fit = NULL;
+ 	void *has_page_addr;
+ 	void *end_page_addr;
+-- 
+1.6.0.4
 
