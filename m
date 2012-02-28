@@ -1,70 +1,35 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 10 Feb 2012 19:03:05 +0000
-Subject: Re: [Cocci] Re: [PATCH] scripts/coccinelle/misc/boolinit.cocci: semantic patch for bool issues
-Message-Id: <1328900585.22240.98.camel@sauron.fi.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-Y2nL2cu/dsGvS5adkfda"
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Tue, 28 Feb 2012 09:09:34 +0000
+Subject: [PATCH] Trace: initialize variable to clear warning
+Message-Id: <1330420174-20537-1-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328893887-28932-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1328895943.14197.1.camel@joe2Laptop>
-	 <1328899454.22240.91.camel@sauron.fi.intel.com>
-	 <1328899861.14197.7.camel@joe2Laptop>
-	 <1328900144.22240.94.camel@sauron.fi.intel.com>
-In-Reply-To: <1328900144.22240.94.camel@sauron.fi.intel.com>
-To: Joe Perches <joe@perches.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Michal Marek <mmarek@suse.cz>, Gilles Muller <Gilles.Muller@lip6.fr>, bruce.w.allan@intel.com, rusty@rustcorp.com.au, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@diku.dk, Julia Lawall <julia@diku.dk>
-
-
---=-Y2nL2cu/dsGvS5adkfda
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 2012-02-10 at 20:55 +0200, Artem Bityutskiy wrote:
-> On Fri, 2012-02-10 at 10:51 -0800, Joe Perches wrote:
-> > On Fri, 2012-02-10 at 20:44 +0200, Artem Bityutskiy wrote:
-> > > On Fri, 2012-02-10 at 09:45 -0800, Joe Perches wrote:
-> > > > On Fri, 2012-02-10 at 18:11 +0100, Julia Lawall wrote:
-> > > > > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> > > > Thanks Julia.  It seems to work well.
-> > > I wonder though, why would we want to change if (a =3D=3D true) with =
-if (a)
-> > > etc? Julia did not provide the explanation in the commit message but
-> > > referred to you and Rusty in the semantic patch.
-> >=20
-> > Testing booleans against specific values is poor form.
-> > booleans should be tested or !tested.
->=20
-> OK, so this is about taste, I thought there is a more serious reason.
-
-But let me be clear - I am all for having this spatch in the kernel tree
-- it is good for code hygiene.
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-Y2nL2cu/dsGvS5adkfda
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: rostedt@goodmis.org, fweisbec@gmail.com, mingo@redhat.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+GCC warns that 'page2' is used without being initialized previously before
+being used, this is to clear it.
 
-iQIcBAABAgAGBQJPNWnpAAoJECmIfjd9wqK0bcwQAMoYpXEBdM+Ji/Cq0WkC2Uwq
-6/7UG+jogP/xDiVT6uc2hZHsyp6bTnPKTxAiarvs1C+SSk9O8tIwzzL3as3AIcm1
-5eXruN1FXH9IlQG2SPr+X2H8AIM2I1KeGvSZERIgWod0/pwNGU1zFGSK7B012FG2
-meFWp/LlKWa4Bz9EJy2CFddrrFTpSCM8y/V8VThjIKUG91eJIqveoFBjDzbZGKBR
-ObkHeU4A/shpsiuVfC0dahafBDwEnfqPjqNttnf3miotXjcdNj7F+xOs7HMshv6m
-MqHsriycf6bcVdPwFggCGeeZfAUN4LUPTbpxUAYuq6C01em736RTwlbIaSLY/KcA
-1KTBWd2H8cXuG1qDKwByHkKw/z2gTnpFZn/lbA1m1x7nHyIYo7Zl7PlTWSiCgErw
-PGiHcH2P+XnyeGelvkMsGrxEYByLAXJ7JCDHcfpU0PK7JgRWHG2s42VsB5J25Km4
-IgeL/5RUcUOaI1oI35IjzSdKMnIfXdys/lASHQmdqozD7++x2+tdfp6aTvfF9TXV
-d/n4uryCTR36mb/Z86zS6P9nP2MXQAi6E4Jd/F1j9/bmK4xIDsh4wZMNLPOcQvJ4
-nZrTX0Fr5r9sUDr6Da2XRd5PR8OK4Gx8xB/N04tw7p/Aa5wxzLpwbIEuCzpghxEh
-aguZkcywtTYjemdBm1uI
-=G/Se
------END PGP SIGNATURE-----
+Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+---
+ kernel/trace/trace.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---=-Y2nL2cu/dsGvS5adkfda--
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index a3f1bc5..47376ba 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3694,7 +3694,7 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
+ 	int nr_pages = 1;
+ 	ssize_t written;
+ 	void *page1;
+-	void *page2;
++	void *uninitialized_var(page2);
+ 	int offset;
+ 	int size;
+ 	int len;
+-- 
+1.6.0.4
 
