@@ -1,31 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 28 Feb 2012 06:57:59 +0000
-Subject: [patch] Bluetooth: change min_t() cast in hci_reassembly()
-Message-Id: <20120228065759.GD20506@elgon.mountain>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Tue, 28 Feb 2012 16:20:30 +0000
+Subject: Re: [patch] Bluetooth: change min_t() cast in hci_reassembly()
+Message-Id: <1330446030.3392.80.camel@aeonflux>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120228065759.GD20506@elgon.mountain>
+In-Reply-To: <20120228065759.GD20506@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: "Gustavo F. Padovan" <padovan@profusion.mobi>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"count" is type int so the cast to __u16 truncates the high bits away
-and triggers a Smatch static checker warning.  It looks like a high
-value of count could cause a forever loop, but I didn't follow it
-through to see if count is capped somewhere.
+Hi Dan,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> "count" is type int so the cast to __u16 truncates the high bits away
+> and triggers a Smatch static checker warning.  It looks like a high
+> value of count could cause a forever loop, but I didn't follow it
+> through to see if count is capped somewhere.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> index e6cbb8a..db484a8 100644
+> --- a/net/bluetooth/hci_core.c
+> +++ b/net/bluetooth/hci_core.c
+> @@ -1966,7 +1966,7 @@ static int hci_reassembly(struct hci_dev *hdev, int type, void *data,
+>  
+>  	while (count) {
+>  		scb = (void *) skb->cb;
+> -		len = min_t(__u16, scb->expect, count);
 
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index e6cbb8a..db484a8 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -1966,7 +1966,7 @@ static int hci_reassembly(struct hci_dev *hdev, int type, void *data,
- 
- 	while (count) {
- 		scb = (void *) skb->cb;
--		len = min_t(__u16, scb->expect, count);
-+		len = min_t(uint, scb->expect, count);
- 
- 		memcpy(skb_put(skb, len), data, len);
- 
+this is a good idea since essentially packets are max u16.
+
+Acked-by: Marcel Holtmann <marcel@holtmann.org>
+
+Regards
+
+Marcel
+
+
