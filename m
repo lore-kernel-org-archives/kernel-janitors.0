@@ -1,25 +1,28 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Date: Fri, 24 Feb 2012 11:15:01 +0000
-Subject: Re: [patch] brcm80211: fmac: fix a couple checking after dereference bugs
-Message-Id: <4F477135.2030804@broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 28 Feb 2012 06:52:46 +0000
+Subject: [patch] Bluetooth: use kfree_skb() instead of kfree()
+Message-Id: <20120228065246.GC20506@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120224062226.GA27261@elgon.mountain>
-In-Reply-To: <20120224062226.GA27261@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Brett Rudley <brudley@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: "Gustavo F. Padovan" <padovan@profusion.mobi>, Andrei Emeltchenko <andrei.emeltchenko@intel.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 02/24/2012 07:22 AM, Dan Carpenter wrote:
-> There were two dereferencing before checking for NULL static checker
-> complaints in this new file.  The list cursor is never NULL so that
-> check can be removed.  I moved the other dereference after the check.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+sk_buffs should be freed using kfree_skb().
 
-Acked-by: Arend van Spriel <arend@broadcom.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Gr. AvS
-
-
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index bdcfbf0..df3be69 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -4284,7 +4284,7 @@ static inline int l2cap_data_channel(struct l2cap_conn *conn, u16 cid, struct sk
+ 	if (!chan) {
+ 		BT_DBG("unknown cid 0x%4.4x", cid);
+ 		/* Drop packet and return */
+-		kfree(skb);
++		kfree_skb(skb);
+ 		return 0;
+ 	}
+ 
