@@ -1,86 +1,31 @@
-From: Andrei Emeltchenko <andrei.emeltchenko.news@gmail.com>
-Date: Wed, 29 Feb 2012 20:45:49 +0000
-Subject: Re: [PATCH] Bluetooth: Silence static checker warning.
-Message-Id: <CAMXE1-oXtheVHDuU3w52mXqmuY8AK4kk+tuvJpVRDq2=+qEnsQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 28 Feb 2012 06:57:59 +0000
+Subject: [patch] Bluetooth: change min_t() cast in hci_reassembly()
+Message-Id: <20120228065759.GD20506@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330535217-26785-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330535217-26785-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: marcel@holtmann.org, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: "Gustavo F. Padovan" <padovan@profusion.mobi>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Santosh,
+"count" is type int so the cast to __u16 truncates the high bits away
+and triggers a Smatch static checker warning.  It looks like a high
+value of count could cause a forever loop, but I didn't follow it
+through to see if count is capped somewhere.
 
-On Wed, Feb 29, 2012 at 7:06 PM, santosh nayak
-<santoshprasadnayak@gmail.com> wrote:
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
->
-> Silencing Static checker warning.
-> 1. Endian warning
-> 2. variable dereferenced before check 'sk' .
->
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
-> =A0net/bluetooth/l2cap_sock.c | =A0 =A09 ++++++---
-> =A01 files changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-> index 401d942..d206321 100644
-> --- a/net/bluetooth/l2cap_sock.c
-> +++ b/net/bluetooth/l2cap_sock.c
-> @@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock, struct =
-sockaddr *addr, int alen)
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0if (la.l2_cid)
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D l2cap_add_scid(chan, la.l2_cid);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D l2cap_add_scid(chan, __le16_to_cpu(=
-la.l2_cid));
-> =A0 =A0 =A0 =A0else
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D l2cap_add_psm(chan, &la.l2_bdaddr,=
- la.l2_psm);
->
-> @@ -123,7 +123,8 @@ static int l2cap_sock_connect(struct socket *sock, st=
-ruct sockaddr *addr, int al
-> =A0 =A0 =A0 =A0if (la.l2_cid && la.l2_psm)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -EINVAL;
->
-> - =A0 =A0 =A0 err =3D l2cap_chan_connect(chan, la.l2_psm, la.l2_cid, &la.=
-l2_bdaddr);
-> + =A0 =A0 =A0 err =3D l2cap_chan_connect(chan, la.l2_psm, __le16_to_cpu(l=
-a.l2_cid),
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &la.l2_bdad=
-dr);
-> =A0 =A0 =A0 =A0if (err)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto done;
->
-> @@ -795,7 +796,7 @@ static void l2cap_sock_kill(struct sock *sk)
-> =A0static int l2cap_sock_shutdown(struct socket *sock, int how)
-> =A0{
-> =A0 =A0 =A0 =A0struct sock *sk =3D sock->sk;
-> - =A0 =A0 =A0 struct l2cap_chan *chan =3D l2cap_pi(sk)->chan;
-> + =A0 =A0 =A0 struct l2cap_chan *chan;
-> =A0 =A0 =A0 =A0int err =3D 0;
->
-> =A0 =A0 =A0 =A0BT_DBG("sock %p, sk %p", sock, sk);
-> @@ -803,6 +804,8 @@ static int l2cap_sock_shutdown(struct socket *sock, i=
-nt how)
-> =A0 =A0 =A0 =A0if (!sk)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return 0;
->
-> + =A0 =A0 =A0 chan =3D l2cap_pi(sk)->chan;
-> +
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Didn't I fix this bug already?
-
-http://permalink.gmane.org/gmane.linux.bluez.kernel/21537
-
-Regards,
-Andrei
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index e6cbb8a..db484a8 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -1966,7 +1966,7 @@ static int hci_reassembly(struct hci_dev *hdev, int type, void *data,
+ 
+ 	while (count) {
+ 		scb = (void *) skb->cb;
+-		len = min_t(__u16, scb->expect, count);
++		len = min_t(uint, scb->expect, count);
+ 
+ 		memcpy(skb_put(skb, len), data, len);
+ 
