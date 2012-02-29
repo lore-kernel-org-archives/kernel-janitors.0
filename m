@@ -1,44 +1,32 @@
-From: Jason Baron <jbaron@redhat.com>
-Date: Fri, 24 Feb 2012 14:53:24 +0000
-Subject: Re: [patch] epoll: remove unneeded variable in reverse_path_check()
-Message-Id: <20120224145323.GA2395@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Feb 2012 06:31:51 +0000
+Subject: [patch] thermal: spear13xx: checking for NULL instead of IS_ERR()
+Message-Id: <20120229063151.GA18031@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120224113158.GA17641@elgon.mountain>
-In-Reply-To: <20120224113158.GA17641@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org
+To: Vincenzo Frascino <vincenzo.frascino@st.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Viresh Kumar <viresh.kumar@st.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Feb 24, 2012 at 02:31:58PM +0300, Dan Carpenter wrote:
-> We never use the length variable.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index c636fc8..997a6d2 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -1042,13 +1042,11 @@ static int reverse_path_check_proc(void *priv, void *cookie, int call_nests)
->   */
->  static int reverse_path_check(void)
->  {
-> -	int length = 0;
->  	int error = 0;
->  	struct file *current_file;
->  
->  	/* let's call this for all tfiles */
->  	list_for_each_entry(current_file, &tfile_check_list, f_tfile_llink) {
-> -		length++;
->  		path_count_init();
->  		error = ep_call_nested(&poll_loop_ncalls, EP_MAX_NESTS,
->  					reverse_path_check_proc, current_file,
+thermal_zone_device_register() never returns NULL, on error it returns
+and ERR_PTR().
 
-Yes, I had that in there while testing, and should have removed it.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Jason Baron <jbaron@redhat.com>
-
-Thanks,
-
--Jason
+diff --git a/drivers/thermal/spear_thermal.c b/drivers/thermal/spear_thermal.c
+index 880bf28..7352cf8 100644
+--- a/drivers/thermal/spear_thermal.c
++++ b/drivers/thermal/spear_thermal.c
+@@ -149,9 +149,9 @@ static int spear_thermal_probe(struct platform_device *pdev)
+ 
+ 	spear_thermal = thermal_zone_device_register("spear_thermal", 0,
+ 				stdev, &ops, 0, 0, 0, 0);
+-	if (!spear_thermal) {
++	if (IS_ERR(spear_thermal)) {
+ 		dev_err(&pdev->dev, "thermal zone device is NULL\n");
+-		ret = -EINVAL;
++		ret = PTR_ERR(spear_thermal);
+ 		goto disable_clk;
+ 	}
+ 
