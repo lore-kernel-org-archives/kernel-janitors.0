@@ -1,31 +1,45 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Feb 2012 09:26:41 +0000
-Subject: [patch] c2port: class_create() returns an ERR_PTR
-Message-Id: <20120208092640.GE6554@elgon.mountain>
+Date: Wed, 29 Feb 2012 06:36:28 +0000
+Subject: [patch 2/4] rndis_wlan: remove unneeded variables
+Message-Id: <20120229063628.GD18031@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, Rodolfo Giometti <giometti@linux.it>
-Cc: kernel-janitors@vger.kernel.org
+To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-class_create() doesn't return a NULL, it only returns ERR_PTRs.
+We never use the "len" variable.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/misc/c2port/core.c b/drivers/misc/c2port/core.c
-index 19fc7c1..f428d86 100644
---- a/drivers/misc/c2port/core.c
-+++ b/drivers/misc/c2port/core.c
-@@ -984,9 +984,9 @@ static int __init c2port_init(void)
- 		" - (C) 2007 Rodolfo Giometti\n");
+diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
+index 6d8a986..99fab7d 100644
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -1790,9 +1790,8 @@ static struct ndis_80211_pmkid *remove_pmkid(struct usbnet *usbdev,
+ 						struct cfg80211_pmksa *pmksa,
+ 						int max_pmkids)
+ {
+-	int i, len, count, newlen, err;
++	int i, count, newlen, err;
  
- 	c2port_class = class_create(THIS_MODULE, "c2port");
--	if (!c2port_class) {
-+	if (IS_ERR(c2port_class)) {
- 		printk(KERN_ERR "c2port: failed to allocate class\n");
--		return -ENOMEM;
-+		return PTR_ERR(c2port_class);
- 	}
- 	c2port_class->dev_attrs = c2port_attrs;
+-	len = le32_to_cpu(pmkids->length);
+ 	count = le32_to_cpu(pmkids->bssid_info_count);
  
+ 	if (count > max_pmkids)
+diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
+index 99fab7d..a93cfe2 100644
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -1830,9 +1830,8 @@ static struct ndis_80211_pmkid *update_pmkid(struct usbnet *usbdev,
+ 						struct cfg80211_pmksa *pmksa,
+ 						int max_pmkids)
+ {
+-	int i, err, len, count, newlen;
++	int i, err, count, newlen;
+ 
+-	len = le32_to_cpu(pmkids->length);
+ 	count = le32_to_cpu(pmkids->bssid_info_count);
+ 
+ 	if (count > max_pmkids)
