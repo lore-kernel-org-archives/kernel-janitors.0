@@ -1,55 +1,41 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 28 Feb 2012 06:36:40 +0000
-Subject: re: staging: ozwpan: Added basic L2 protocol support
-Message-Id: <20120228063640.GA20506@elgon.mountain>
+Date: Wed, 29 Feb 2012 06:36:57 +0000
+Subject: [patch 3/4] rndis_wlan: make some variables unsigned
+Message-Id: <20120229063657.GE18031@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Chris Kelly,
+These variables can never be less than zero because we cap them in
+get_device_pmkids().  Let's make them unsigned here because it's simpler
+to not have to worry about negative numbers when we read the code.
 
-This is a semi-automatic email about new static checker warnings.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The patch 1619cb6f2dd9: "staging: ozwpan: Added basic L2 protocol 
-support" from Feb 20, 2012, leads to the following Smatch complaint:
-
-drivers/staging/ozwpan/ozproto.c:919 oz_protocol_init()
-	 error: we previously assumed 'devs' could be null (see line 915)
-
-drivers/staging/ozwpan/ozproto.c
-   914		skb_queue_head_init(&g_rx_queue);
-   915		if (devs && (devs[0] = '*')) {
-                    ^^^^
-Checked.
-
-   916			oz_binding_add(0);
-   917		} else {
-   918			char d[32];
-   919			while (*devs) {
-                               ^^^^^
-Dereferenced without checking.
-
-   920				devs = oz_get_next_device_name(devs, d, sizeof(d));
-   921				if (d[0])
-
-Actually there are a bunch of Smatch warnings for this driver if someone
-wanted something to cleanup.
-
-drivers/staging/ozwpan/ozusbsvc.c:71 oz_usb_start() warn: returning -1 instead of -ENOMEM is sloppy
-drivers/staging/ozwpan/ozhcd.c:283 oz_free_urb_link() info: redundant null check on urbl calling kfree()
-drivers/staging/ozwpan/ozhcd.c:1733 oz_hcd_urb_enqueue() info: why not propagate 'port_ix' from oz_get_port_from_addr() instead of -32?
-drivers/staging/ozwpan/ozpd.c:180 oz_pd_alloc() error: potential null derefence 'pd'.
-drivers/staging/ozwpan/ozpd.c:392 oz_tx_frame_free() warn: 'f' was already freed.
-drivers/staging/ozwpan/ozpd.c:393 oz_tx_frame_free() info: redundant null check on f calling kfree()
-drivers/staging/ozwpan/ozpd.c:654 oz_isoc_stream_create() warn: returning -1 instead of -ENOMEM is sloppy
-drivers/staging/ozwpan/ozpd.c:664 oz_isoc_stream_create() info: redundant null check on st calling kfree()
-drivers/staging/ozwpan/ozproto.c:560 oz_protocol_timer() info: redundant null check on t calling kfree()
-drivers/staging/ozwpan/ozproto.c:919 oz_protocol_init() error: we previously assumed 'devs' could be null (see line 915)
-drivers/staging/ozwpan/ozcdev.c:406 oz_cdev_start() warn: returning -1 instead of -ENOMEM is sloppy
-drivers/staging/ozwpan/ozeltbuf.c:138 oz_elt_stream_create() warn: returning -1 instead of -ENOMEM is sloppy
-
-regards,
-dan carpenter
-
+diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
+index a93cfe2..74e2d1b 100644
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -1790,7 +1790,8 @@ static struct ndis_80211_pmkid *remove_pmkid(struct usbnet *usbdev,
+ 						struct cfg80211_pmksa *pmksa,
+ 						int max_pmkids)
+ {
+-	int i, count, newlen, err;
++	int i, newlen, err;
++	unsigned int count;
+ 
+ 	count = le32_to_cpu(pmkids->bssid_info_count);
+ 
+@@ -1830,7 +1831,8 @@ static struct ndis_80211_pmkid *update_pmkid(struct usbnet *usbdev,
+ 						struct cfg80211_pmksa *pmksa,
+ 						int max_pmkids)
+ {
+-	int i, err, count, newlen;
++	int i, err, newlen;
++	unsigned int count;
+ 
+ 	count = le32_to_cpu(pmkids->bssid_info_count);
+ 
