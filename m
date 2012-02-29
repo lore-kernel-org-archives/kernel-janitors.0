@@ -1,72 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 02 Feb 2012 14:00:46 +0000
-Subject: [PATCH 2/3] drivers/net/ethernet/ti/davinci_xxx.c: Move call to PTR_ERR after reassignment
-Message-Id: <1328191247-23792-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Feb 2012 06:37:53 +0000
+Subject: [patch 4/4] rndis_wlan: prevent integer overflow in indication()
+Message-Id: <20120229063753.GF18031@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1328191247-23792-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, josh@joshtriplett.org, Julia Lawall <julia@diku.dk>
+To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+If we pick a high value for "offset" then it could lead to an integer
+overflow and we would get past the check for:
+	if (offset + len > buflen) { ...
 
-Delete successive assignments to the same location.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e,e1;
-constant c;
-@@
-
-*e = c
-... when != e = e1
-    when != &e
-    when != true IS_ERR(e)
-*PTR_ERR(e)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-Reported-by: Josh Triplett <josh@joshtriplett.org>
-
----
- drivers/net/ethernet/ti/davinci_emac.c |    3 ++-
- drivers/net/ethernet/ti/davinci_mdio.c |    2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-index efd4f3e..922a937 100644
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1600,8 +1600,9 @@ static int emac_dev_open(struct net_device *ndev)
- 		if (IS_ERR(priv->phydev)) {
- 			dev_err(emac_dev, "could not connect to phy %s\n",
- 				priv->phy_id);
-+			ret = PTR_ERR(priv->phydev);
- 			priv->phydev = NULL;
--			return PTR_ERR(priv->phydev);
-+			return ret;
- 		}
+diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
+index 74e2d1b..dfd76e3 100644
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -3043,7 +3043,7 @@ static void rndis_wlan_media_specific_indication(struct usbnet *usbdev,
+ 			struct rndis_indicate *msg, int buflen)
+ {
+ 	struct ndis_80211_status_indication *indication;
+-	int len, offset;
++	unsigned int len, offset;
  
- 		priv->link = 0;
-diff --git a/drivers/net/ethernet/ti/davinci_mdio.c b/drivers/net/ethernet/ti/davinci_mdio.c
-index ef7c9c1..af8b8fc 100644
---- a/drivers/net/ethernet/ti/davinci_mdio.c
-+++ b/drivers/net/ethernet/ti/davinci_mdio.c
-@@ -318,9 +318,9 @@ static int __devinit davinci_mdio_probe(struct platform_device *pdev)
- 
- 	data->clk = clk_get(dev, NULL);
- 	if (IS_ERR(data->clk)) {
--		data->clk = NULL;
- 		dev_err(dev, "failed to get device clock\n");
- 		ret = PTR_ERR(data->clk);
-+		data->clk = NULL;
- 		goto bail_out;
+ 	offset = offsetof(struct rndis_indicate, status) +
+ 			le32_to_cpu(msg->offset);
+@@ -3055,7 +3055,7 @@ static void rndis_wlan_media_specific_indication(struct usbnet *usbdev,
+ 		return;
  	}
  
-
+-	if (offset + len > buflen) {
++	if (len > buflen || offset > buflen || offset + len > buflen) {
+ 		netdev_info(usbdev->net, "media specific indication, too large to fit to buffer (%i > %i)\n",
+ 			    offset + len, buflen);
+ 		return;
