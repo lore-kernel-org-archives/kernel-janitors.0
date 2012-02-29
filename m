@@ -1,33 +1,59 @@
-From: Ben Myers <bpm@sgi.com>
-Date: Fri, 24 Feb 2012 16:01:47 +0000
-Subject: 
-Message-Id: <20120224160147.GD28391@sgi.com>
+From: Dan Carpenter <error27@gmail.com>
+Date: Wed, 29 Feb 2012 12:59:33 +0000
+Subject: [resend] [patch] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
+Message-Id: <20120229125933.GA23250@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20110729085306.GH3752@shale.localdomain>
+In-Reply-To: <20110729085306.GH3752@shale.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: elder@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, xfs-masters@oss.sgi.com, Dan Carpenter <dan.carpenter@oracle.com>
+To: Jing Huang <huangj@brocade.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "open list:BROCADE BFA FC SC..." <linux-scsi@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Bcc: 
-Subject: Re: [PATCH] xfs: Use memset to initialize structure member.
-Reply-To: 
-In-Reply-To: <20120224075354.GA3649@mwanda>
+If bfad_thread_workq(bfad) was not BFA_STATUS_OK then we freed "im"
+and then dereferenced it.
 
-On Fri, Feb 24, 2012 at 10:53:54AM +0300, Dan Carpenter wrote:
-> On Fri, Feb 24, 2012 at 12:38:42PM +0530, santosh nayak wrote:
-> > From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> > 
-> > Sparse is giving following warning:
-> > fs/xfs/xfs_bmap.c:4826:41: warning: Using plain integer as NULL pointer.
-> > 
-> 
-> You could just do:
-> 	struct xfs_bmalloca     bma = {};
+I did a little clean up because it seemed nicer to return directly
+instead of doing a superfluous goto.  I looked at other functions in
+this file and it seems like returning directly is standard.
 
-Santosh, this aggregate initializer seems cleaner than memset.  Do you
-mind resending the patch with Dan's suggestion?
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+I sent this last July and asked about it again in November but I never
+heard back.  It still applies fine with 2 lines of fuzz.
 
-Thanks for your contribution.  ;)
-
--Ben
+diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
+index 0131238..7f7cca0 100644
+--- a/drivers/scsi/bfa/bfad_im.c
++++ b/drivers/scsi/bfa/bfad_im.c
+@@ -685,25 +685,21 @@ bfa_status_t
+ bfad_im_probe(struct bfad_s *bfad)
+ {
+ 	struct bfad_im_s      *im;
+-	bfa_status_t    rc = BFA_STATUS_OK;
+ 
+ 	im = kzalloc(sizeof(struct bfad_im_s), GFP_KERNEL);
+-	if (im = NULL) {
+-		rc = BFA_STATUS_ENOMEM;
+-		goto ext;
+-	}
++	if (im = NULL)
++		return BFA_STATUS_ENOMEM;
+ 
+ 	bfad->im = im;
+ 	im->bfad = bfad;
+ 
+ 	if (bfad_thread_workq(bfad) != BFA_STATUS_OK) {
+ 		kfree(im);
+-		rc = BFA_STATUS_FAILED;
++		return BFA_STATUS_FAILED;
+ 	}
+ 
+ 	INIT_WORK(&im->aen_im_notify_work, bfad_aen_im_notify_handler);
+-ext:
+-	return rc;
++	return BFA_STATUS_OK;
+ }
+ 
+ void
