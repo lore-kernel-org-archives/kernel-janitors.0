@@ -1,59 +1,66 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Feb 2012 12:36:17 +0000
-Subject: Re: [patch] relay: prevent integer overflow in relay_open()
-Message-Id: <20120209123617.GC4141@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="adJ1OR3c6QgCpb/j"
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Wed, 29 Feb 2012 17:18:57 +0000
+Subject: [PATCH] Bluetooth: Silence static checker warning.
+Message-Id: <1330535217-26785-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120209104433.GA5540@elgon.mountain>
- <4F33B448.1040207@bfs.de>
-In-Reply-To: <4F33B448.1040207@bfs.de>
-To: walter harms <wharms@bfs.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Paul Gortmaker <paul.gortmaker@windriver.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: marcel@holtmann.org
+Cc: padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
---adJ1OR3c6QgCpb/j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Silencing Static checker warning.
+1. Endian warning
+2. variable dereferenced before check 'sk' .
 
-On Thu, Feb 09, 2012 at 12:55:52PM +0100, walter harms wrote:
-> numerical this is ok, but ...
-> maybe it is better to cap the chan->n_subbufs at a useful number ?
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ net/bluetooth/l2cap_sock.c |    9 ++++++---
+ 1 files changed, 6 insertions(+), 3 deletions(-)
 
-We considered this question already earlier in the thread.
+diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+index 401d942..d206321 100644
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock, struct sockaddr *addr, int alen)
+ 	}
+ 
+ 	if (la.l2_cid)
+-		err = l2cap_add_scid(chan, la.l2_cid);
++		err = l2cap_add_scid(chan, __le16_to_cpu(la.l2_cid));
+ 	else
+ 		err = l2cap_add_psm(chan, &la.l2_bdaddr, la.l2_psm);
+ 
+@@ -123,7 +123,8 @@ static int l2cap_sock_connect(struct socket *sock, struct sockaddr *addr, int al
+ 	if (la.l2_cid && la.l2_psm)
+ 		return -EINVAL;
+ 
+-	err = l2cap_chan_connect(chan, la.l2_psm, la.l2_cid, &la.l2_bdaddr);
++	err = l2cap_chan_connect(chan, la.l2_psm, __le16_to_cpu(la.l2_cid),
++				&la.l2_bdaddr);
+ 	if (err)
+ 		goto done;
+ 
+@@ -795,7 +796,7 @@ static void l2cap_sock_kill(struct sock *sk)
+ static int l2cap_sock_shutdown(struct socket *sock, int how)
+ {
+ 	struct sock *sk = sock->sk;
+-	struct l2cap_chan *chan = l2cap_pi(sk)->chan;
++	struct l2cap_chan *chan;
+ 	int err = 0;
+ 
+ 	BT_DBG("sock %p, sk %p", sock, sk);
+@@ -803,6 +804,8 @@ static int l2cap_sock_shutdown(struct socket *sock, int how)
+ 	if (!sk)
+ 		return 0;
+ 
++	chan = l2cap_pi(sk)->chan;
++
+ 	lock_sock(sk);
+ 	if (!sk->sk_shutdown) {
+ 		if (chan->mode = L2CAP_MODE_ERTM)
+-- 
+1.7.4.4
 
-> The user can still allocate an insane number of bytes.
-> Restricting subbuf_size*n_subbufs seems more logical (otherwise is this a=
- real problem ?)
->=20
-
-Yes.  It is a real problem.
-
-regards,
-dan carpenter
-
-
---adJ1OR3c6QgCpb/j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPM73BAAoJEOnZkXI/YHqR2K0QAKZYavGkdsfIyee+J8QyZGG2
-PCAwQN1MzKTKZvFHJruAUrOctRh36E6eeuu6fzUhdmDnrpOgws6vifZlBQSDWh2l
-zC+aV6gRWPY05qTYDpPl8HvHC2u7BdT3/l8RtcKP089HqhRtGH9ukYvzbomKByPy
-qTp/ipJrHdI6UfKOLBOg/6FR1YjLyKZg42/Q0vDiLk+A234/Ped01UsdKBKUcBWV
-l0SYweTh1OMnYOFXGM79pgh7ViXtkPjwo4iykz9ejORfpHHE7XJ94+FcfsuM0fuo
-JF8qLlrzIOSuGCnrOSxdXcdnmqzRgWdG/gu0AM4XLpcyV//wT3Sb+0GI93E4NXJ3
-zSSXOqQmGWLV5D6fFcEz4stZdMpxDPwNXot1N9fmWGyxrrTFi7gTXOmo3C5ywltp
-NbzdYQeZL6bx+amhdWNRg0c7/0fvcJiuPwHVkFJvWWQh3ezJMeT9loI5/TfT0KPm
-jx1tHwHYEbPTivmet3qy8D29Bj1vPkd+zrbyceJ/gFkgnjq5Xh/RLXiO9sTOjQLJ
-kcp6jmwdS6s7CPpdKeeHzEMcw3rgWRtA+iXdlahNT0cZld/G8iXyrkJA8EgMZIzY
-OED3fxm5U03Wp1YtTI6SHIzXY3Q7oqCB78+S/bf7MVtwCPuW977rkBUjI4fcNrQt
-AJIHcgv6CXwXDFinN6GE
-=A+ft
------END PGP SIGNATURE-----
-
---adJ1OR3c6QgCpb/j--
