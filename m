@@ -1,41 +1,51 @@
-From: Stanislav Kinsbursky <skinsbursky@parallels.com>
-Date: Tue, 13 Mar 2012 17:25:56 +0000
-Subject: Re: [patch] NFS: null dereference in dev_remove()
-Message-Id: <4F5F8324.30608@parallels.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Thu, 01 Mar 2012 09:29:14 +0000
+Subject: [PATCH 2/3] netfilter: potential null derefence.
+Message-Id: <1330593434-19275-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120313171848.GA31808@elgon.mountain>
-In-Reply-To: <20120313171848.GA31808@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, Benny Halevy <bhalevy@panasas.com>, Weston Andros Adamson <dros@netapp.com>, Peng Tao <peng_tao@emc.com>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: bart.de.schuymer@pandora.be
+Cc: pablo@netfilter.org, kaber@trash.net, shemminger@vyatta.com, davem@davemloft.net, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-13.03.2012 21:18, Dan Carpenter пишет:
-> In commit 5ffaf85541 "NFS: replace global bl_wq with per-net one" we
-> made "msg" a pointer instead of a struct stored in stack memory.  But we
-> forgot to change the memset() here so we're still clearing stack memory
-> instead clearing the struct like we intended.  It will lead to a kernel
-> crash.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
->
-> diff --git a/fs/nfs/blocklayout/blocklayoutdm.c b/fs/nfs/blocklayout/blocklayoutdm.c
-> index 30fc22a..737d839 100644
-> --- a/fs/nfs/blocklayout/blocklayoutdm.c
-> +++ b/fs/nfs/blocklayout/blocklayoutdm.c
-> @@ -54,7 +54,7 @@ static void dev_remove(struct net *net, dev_t dev)
->   	dprintk("Entering %s\n", __func__);
->
->   	bl_pipe_msg.bl_wq =&nn->bl_wq;
-> -	memset(&msg, 0, sizeof(*msg));
-> +	memset(msg, 0, sizeof(*msg));
->   	msg->data = kzalloc(1 + sizeof(bl_umount_request), GFP_NOFS);
->   	if (!msg->data)
->   		goto out;
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Thanks, Dan!
+I am getting following error.
+" net/bridge/netfilter/ebtables.c:269 ebt_do_table()
+  error: potential null derefence 'cs'"
 
+    i = cs[sp].n;  // If cs = Null then this will cause problem.
+
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ net/bridge/netfilter/ebtables.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+index f3fcbd9..9c0f177 100644
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -209,8 +209,10 @@ unsigned int ebt_do_table (unsigned int hook, struct sk_buff *skb,
+ 	   smp_processor_id());
+ 	if (private->chainstack)
+ 		cs = private->chainstack[smp_processor_id()];
+-	else
++	else {
+ 		cs = NULL;
++		goto out;
++	}
+ 	chaininfo = private->hook_entry[hook];
+ 	nentries = private->hook_entry[hook]->nentries;
+ 	point = (struct ebt_entry *)(private->hook_entry[hook]->data);
+@@ -313,6 +315,7 @@ letscontinue:
+ 		read_unlock_bh(&table->lock);
+ 		return NF_ACCEPT;
+ 	}
++out:
+ 	read_unlock_bh(&table->lock);
+ 	return NF_DROP;
+ }
 -- 
-Best regards,
-Stanislav Kinsbursky
+1.7.4.4
+
