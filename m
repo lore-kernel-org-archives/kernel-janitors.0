@@ -1,55 +1,30 @@
-From: Oliver Neukum <oliver@neukum.org>
-Date: Sat, 17 Mar 2012 16:20:16 +0000
-Subject: Re: [PATCH] [media] staging: Return -EINTR in s2250_probe() if fails to get lock.
-Message-Id: <201203171720.16945.oliver@neukum.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 01 Mar 2012 07:06:52 +0000
+Subject: [patch] cifs: writing past end of struct in cifs_convert_address()
+Message-Id: <20120301070652.GA6959@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331915038-11231-1-git-send-email-santoshprasadnayak@gmail.com> <201203161859.35104.oliver@neukum.org> <CAOD=uF6wD1sx2=Rk3ZaxtykBR32_GMsHmiuXuAQP2U_=c-Ytbw@mail.gmail.com>
-In-Reply-To: <CAOD=uF6wD1sx2=Rk3ZaxtykBR32_GMsHmiuXuAQP2U_=c-Ytbw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: santosh prasad nayak <santoshprasadnayak@gmail.com>
-Cc: mchehab@infradead.org, gregkh@linuxfoundation.org, khoroshilov@ispras.ru, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steve French <sfrench@samba.org>, Jeff Layton <jlayton@redhat.com>
+Cc: linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org, samba-technical@lists.samba.org
 
-Am Samstag, 17. M=E4rz 2012, 17:00:36 schrieb santosh prasad nayak:
-> Oliver,
->=20
-> The following changes are for review only  not a formal patch.
->=20
-> -------------------------------------------------------------------------=
-------------------------------------
-> -       if (mutex_lock_interruptible(&usb->i2c_lock) =3D 0) {
-> +       mutex_lock(&usb->i2c_lock);
->                 data =3D kzalloc(16, GFP_KERNEL);
-> -               if (data !=3D NULL) {
-> +               if(data =3D NULL) {
-> +                       i2c_unregister_device(audio);
-> +                       kfree(state);
-> +                       return -ENOMEM;
-> +               } else {
->                         int rc;
->                         rc =3D go7007_usb_vendor_request(go, 0x41, 0, 0,
->                                                        data, 16, 1);
-> @@ -657,7 +661,7 @@ static int s2250_probe(struct i2c_client *client,
->                         kfree(data);
->                 }
->                 mutex_unlock(&usb->i2c_lock);
-> -       }
-> +
->=20
-> ----------------------------------------------------------------------
->=20
->=20
-> Is it ok ?
+"s6->sin6_scope_id" is an int bits but strict_strtoul() writes a long
+so this can corrupt memory on 64 bit systems.
 
-Hi,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-well done. That's correct.
-
-	Regards
-		Oliver
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
+index 73e47e8..cab99b5 100644
+--- a/fs/cifs/netmisc.c
++++ b/fs/cifs/netmisc.c
+@@ -197,8 +197,7 @@ cifs_convert_address(struct sockaddr *dst, const char *src, int len)
+ 		memcpy(scope_id, pct + 1, slen);
+ 		scope_id[slen] = '\0';
+ 
+-		rc = strict_strtoul(scope_id, 0,
+-					(unsigned long *)&s6->sin6_scope_id);
++		rc = kstrtouint(scope_id, 0, &s6->sin6_scope_id);
+ 		rc = (rc = 0) ? 1 : 0;
+ 	}
+ 
