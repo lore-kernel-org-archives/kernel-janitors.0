@@ -1,42 +1,61 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Thu, 15 Mar 2012 23:13:05 +0000
-Subject: Re: [patch] tcm_qla2xxx: checking for NULL instead of IS_ERR()
-Message-Id: <1331853185.10203.129.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 01 Mar 2012 07:22:30 +0000
+Subject: [patch] mwifiex: endian bug in mwifiex_drv_change_adhoc_chan()
+Message-Id: <20120301072230.GC7152@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120313172119.GE31808@elgon.mountain>
-In-Reply-To: <20120313172119.GE31808@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Vasquez <andrew.vasquez@qlogic.com>, linux-driver@qlogic.com, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Bing Zhao <bzhao@marvell.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2012-03-13 at 20:21 +0300, Dan Carpenter wrote:
-> target_fabric_configfs_init() never returns NULLs, only ERR_PTRs.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-> index dcbcedc..08cf507 100644
-> --- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-> +++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-> @@ -1885,9 +1885,9 @@ static int tcm_qla2xxx_register_configfs(void)
->  	 * Register the top level struct config_item_type for NPIV with TCM core
->  	 */
->  	npiv_fabric = target_fabric_configfs_init(THIS_MODULE, "qla2xxx_npiv");
-> -	if (!npiv_fabric) {
-> +	if (IS_ERR(npiv_fabric)) {
->  		pr_err("target_fabric_configfs_init() failed\n");
-> -		ret = -ENOMEM;
-> +		ret = PTR_ERR(npiv_fabric);
->  		goto out_fabric;
->  	}
->  	/*
+In mwifiex_drv_change_adhoc_chan() we pass channel to
+mwifiex_bss_ioctl_ibss_channel() which sets the high 16 bits.  This
+works on little endian systems but not on big endian ones.  I've changed
+mwifiex_drv_change_adhoc_chan() to use a 16 bit variable.  This matches
+the other functions in the file.
 
-Doh, missed this fix for the qla2xxx_npiv fabric_ops allocation..
-Applied to lio-core and will get fixed up for-next-merge.
+I considered changing mwifiex_change_adhoc_chan() as well but it turns
+out that the function isn't implemented so I just removed the
+definition.
 
-Thanks Dan!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---nab
-
+diff --git a/drivers/net/wireless/mwifiex/main.h b/drivers/net/wireless/mwifiex/main.h
+index 52810b1..60a6919 100644
+--- a/drivers/net/wireless/mwifiex/main.h
++++ b/drivers/net/wireless/mwifiex/main.h
+@@ -909,10 +909,9 @@ int mwifiex_request_scan(struct mwifiex_private *priv,
+ 			 struct mwifiex_802_11_ssid *req_ssid);
+ int mwifiex_set_user_scan_ioctl(struct mwifiex_private *priv,
+ 				struct mwifiex_user_scan_cfg *scan_req);
+-int mwifiex_change_adhoc_chan(struct mwifiex_private *priv, int channel);
+ int mwifiex_set_radio(struct mwifiex_private *priv, u8 option);
+ 
+-int mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, int channel);
++int mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, u16 channel);
+ 
+ int mwifiex_set_encode(struct mwifiex_private *priv, const u8 *key,
+ 		       int key_len, u8 key_index, int disable);
+diff --git a/drivers/net/wireless/mwifiex/sta_ioctl.c b/drivers/net/wireless/mwifiex/sta_ioctl.c
+index b0fbf5d..652d299 100644
+--- a/drivers/net/wireless/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/mwifiex/sta_ioctl.c
+@@ -599,7 +599,7 @@ static int mwifiex_bss_ioctl_ibss_channel(struct mwifiex_private *priv,
+  *          - Start/Join the IBSS
+  */
+ int
+-mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, int channel)
++mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, u16 channel)
+ {
+ 	int ret;
+ 	struct mwifiex_bss_info bss_info;
+@@ -636,7 +636,7 @@ mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, int channel)
+ 	ret = mwifiex_deauthenticate(priv, ssid_bssid.bssid);
+ 
+ 	ret = mwifiex_bss_ioctl_ibss_channel(priv, HostCmd_ACT_GEN_SET,
+-					     (u16 *) &channel);
++					     &channel);
+ 
+ 	/* Do specific SSID scanning */
+ 	if (mwifiex_request_scan(priv, &bss_info.ssid)) {
