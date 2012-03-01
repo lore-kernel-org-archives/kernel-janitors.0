@@ -1,60 +1,103 @@
-From: KY Srinivasan <kys@microsoft.com>
-Date: Wed, 28 Mar 2012 18:48:28 +0000
-Subject: RE: [patch] hv: fix return type of hv_post_message()
-Message-Id: <6E21E5352C11B742B20C142EB499E0481B777024@TK5EX14MBXC124.redmond.corp.microsoft.com>
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Thu, 01 Mar 2012 05:49:14 +0000
+Subject: Re: [PATCH] Bluetooth: Silence static checker warning.
+Message-Id: <CAOD=uF5Ux0w=EPbX0V3qOy1VnZQr6Q35uUxrF9Qv1hZ4MjYJOA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120328065807.GB9113@elgon.mountain>
-In-Reply-To: <20120328065807.GB9113@elgon.mountain>
+References: <1330535217-26785-1-git-send-email-santoshprasadnayak@gmail.com>
+	<CAMXE1-oXtheVHDuU3w52mXqmuY8AK4kk+tuvJpVRDq2=+qEnsQ@mail.gmail.com>
+In-Reply-To: <CAMXE1-oXtheVHDuU3w52mXqmuY8AK4kk+tuvJpVRDq2=+qEnsQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Andrei Emeltchenko <andrei.emeltchenko.news@gmail.com>
+Cc: marcel@holtmann.org, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+@Dan,
+           In future patches I will take care of it. Is it ok ? If
+required I can resend the patch with required changes on subject line.
 
+@Andrei
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Wednesday, March 28, 2012 2:58 AM
-> To: KY Srinivasan
-> Cc: Haiyang Zhang; devel@linuxdriverproject.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [patch] hv: fix return type of hv_post_message()
-> 
-> This function returns negative error codes, but because the type is u16
-> they get truncated into positive numbers.  It doesn't look like the
-> callers care, but we should fix it anyway as a cleanup.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In my local clone your changes are  not visible.
 
-Thanks Dan.
+What is the schedule of linux-next ?
+Is it updated every week or bi-weekly or monthly ?
 
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-> 
-> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-> index 699f0d8..b9426a6 100644
-> --- a/drivers/hv/hyperv_vmbus.h
-> +++ b/drivers/hv/hyperv_vmbus.h
-> @@ -495,7 +495,7 @@ extern int hv_init(void);
-> 
->  extern void hv_cleanup(void);
-> 
-> -extern u16 hv_post_message(union hv_connection_id connection_id,
-> +extern int hv_post_message(union hv_connection_id connection_id,
->  			 enum hv_message_type message_type,
->  			 void *payload, size_t payload_size);
-> 
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index 15956bd..86f8885 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -252,7 +252,7 @@ void hv_cleanup(void)
->   *
->   * This involves a hypercall.
->   */
-> -u16 hv_post_message(union hv_connection_id connection_id,
-> +int hv_post_message(union hv_connection_id connection_id,
->  		  enum hv_message_type message_type,
->  		  void *payload, size_t payload_size)
->  {
+Regards
+Santosh
 
-
+On Thu, Mar 1, 2012 at 2:15 AM, Andrei Emeltchenko
+<andrei.emeltchenko.news@gmail.com> wrote:
+> Hi Santosh,
+>
+> On Wed, Feb 29, 2012 at 7:06 PM, santosh nayak
+> <santoshprasadnayak@gmail.com> wrote:
+>> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+>>
+>> Silencing Static checker warning.
+>> 1. Endian warning
+>> 2. variable dereferenced before check 'sk' .
+>>
+>> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+>> ---
+>> =A0net/bluetooth/l2cap_sock.c | =A0 =A09 ++++++---
+>> =A01 files changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+>> index 401d942..d206321 100644
+>> --- a/net/bluetooth/l2cap_sock.c
+>> +++ b/net/bluetooth/l2cap_sock.c
+>> @@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock, struct=
+ sockaddr *addr, int alen)
+>> =A0 =A0 =A0 =A0}
+>>
+>> =A0 =A0 =A0 =A0if (la.l2_cid)
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D l2cap_add_scid(chan, la.l2_cid);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D l2cap_add_scid(chan, __le16_to_cpu=
+(la.l2_cid));
+>> =A0 =A0 =A0 =A0else
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D l2cap_add_psm(chan, &la.l2_bdaddr=
+, la.l2_psm);
+>>
+>> @@ -123,7 +123,8 @@ static int l2cap_sock_connect(struct socket *sock, s=
+truct sockaddr *addr, int al
+>> =A0 =A0 =A0 =A0if (la.l2_cid && la.l2_psm)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -EINVAL;
+>>
+>> - =A0 =A0 =A0 err =3D l2cap_chan_connect(chan, la.l2_psm, la.l2_cid, &la=
+.l2_bdaddr);
+>> + =A0 =A0 =A0 err =3D l2cap_chan_connect(chan, la.l2_psm, __le16_to_cpu(=
+la.l2_cid),
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &la.l2_bda=
+ddr);
+>> =A0 =A0 =A0 =A0if (err)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto done;
+>>
+>> @@ -795,7 +796,7 @@ static void l2cap_sock_kill(struct sock *sk)
+>> =A0static int l2cap_sock_shutdown(struct socket *sock, int how)
+>> =A0{
+>> =A0 =A0 =A0 =A0struct sock *sk =3D sock->sk;
+>> - =A0 =A0 =A0 struct l2cap_chan *chan =3D l2cap_pi(sk)->chan;
+>> + =A0 =A0 =A0 struct l2cap_chan *chan;
+>> =A0 =A0 =A0 =A0int err =3D 0;
+>>
+>> =A0 =A0 =A0 =A0BT_DBG("sock %p, sk %p", sock, sk);
+>> @@ -803,6 +804,8 @@ static int l2cap_sock_shutdown(struct socket *sock, =
+int how)
+>> =A0 =A0 =A0 =A0if (!sk)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return 0;
+>>
+>> + =A0 =A0 =A0 chan =3D l2cap_pi(sk)->chan;
+>> +
+>
+> Didn't I fix this bug already?
+>
+> http://permalink.gmane.org/gmane.linux.bluez.kernel/21537
+>
+> Regards,
+> Andrei
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
