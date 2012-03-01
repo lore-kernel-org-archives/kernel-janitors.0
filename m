@@ -1,62 +1,61 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Fri, 02 Mar 2012 01:22:08 +0000
-Subject: Re: [PATCH 2/3] netfilter: potential null derefence.
-Message-Id: <20120302012208.GA10185@1984>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 01 Mar 2012 06:58:07 +0000
+Subject: Re: [patch 1/4] rndis_wlan: integer overflows in rndis_wlan_do_link_up_work()
+Message-Id: <20120301065807.GG1003@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="lQSB8Tqijvu1+4Ba"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330593434-19275-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330593434-19275-1-git-send-email-santoshprasadnayak@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: bart.de.schuymer@pandora.be, kaber@trash.net, shemminger@vyatta.com, davem@davemloft.net, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20120229063555.GC18031@elgon.mountain>
+ <4F4DE009.7010808@bfs.de>
+In-Reply-To: <4F4DE009.7010808@bfs.de>
+To: walter harms <wharms@bfs.de>
+Cc: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 01, 2012 at 02:47:14PM +0530, santosh nayak wrote:
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> I am getting following error.
-> " net/bridge/netfilter/ebtables.c:269 ebt_do_table()
->   error: potential null derefence 'cs'"
-> 
->     i = cs[sp].n;  // If cs = Null then this will cause problem.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
->  net/bridge/netfilter/ebtables.c |    5 ++++-
->  1 files changed, 4 insertions(+), 1 deletions(-)
-> 
-> diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-> index f3fcbd9..9c0f177 100644
-> --- a/net/bridge/netfilter/ebtables.c
-> +++ b/net/bridge/netfilter/ebtables.c
-> @@ -209,8 +209,10 @@ unsigned int ebt_do_table (unsigned int hook, struct sk_buff *skb,
->  	   smp_processor_id());
->  	if (private->chainstack)
->  		cs = private->chainstack[smp_processor_id()];
-> -	else
-> +	else {
->  		cs = NULL;
 
-I just noticed we can remove this cs = NULL. No need to resend, I'll
-mangle it myself.
+--lQSB8Tqijvu1+4Ba
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +		goto out;
-> +	}
->  	chaininfo = private->hook_entry[hook];
->  	nentries = private->hook_entry[hook]->nentries;
->  	point = (struct ebt_entry *)(private->hook_entry[hook]->data);
-> @@ -313,6 +315,7 @@ letscontinue:
->  		read_unlock_bh(&table->lock);
->  		return NF_ACCEPT;
->  	}
-> +out:
->  	read_unlock_bh(&table->lock);
->  	return NF_DROP;
->  }
-> -- 
-> 1.7.4.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe netfilter" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Wed, Feb 29, 2012 at 09:21:29AM +0100, walter harms wrote:
+> >  			resp_ie_len =3D le32_to_cpu(info->resp_ie_length);
+> > +			if (resp_ie_len > CONTROL_BUFFER_SIZE)
+> > +				resp_ie_len =3D CONTROL_BUFFER_SIZE;
+> >  			if (resp_ie_len > 0) {
+> >  				offset =3D le32_to_cpu(info->offset_resp_ies);
+> >=20
+>=20
+>=20
+> hi dan,
+> the check below  "if (resp_ie_len > 0)" looks strange for an unsigned.
+>=20
+
+Good point.  I'll resend.
+
+regards,
+dan carpenter
+
+
+--lQSB8Tqijvu1+4Ba
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPTx3/AAoJEOnZkXI/YHqRY3IP/jmxr/N3sG3RVdQAY0cMD7xu
+H6WmC4LZKxqF29I2lILe42g4MdmTsLasTnyS/qdsp+Na3YyUnMOPHMWSrqI83z4d
+LTfxINxLnV2wkvN6gtTHzRIWnVtfzqUWkqxhPcSfU9ppF+uls3CcsAaROlELUm1V
+RZ/CEl5YLhhgpA2KvO6+vjKmX5vYmh/Ihw1FYBEjy5wslt4Kl47TM01krBAKieaJ
+MOip/dwiPN59LLk5OyEMnriCEKUksPpJp82aqdFN/+nKcVRTs97nrqt/J9WymJ4/
+XKx+YM/Ijv9NBnLLbGloIdyOW4CxxnIPw3k3yMSTx+8tdz3nvip+97MNyRiizYku
+YQ/kO2EHj+Edo0WjydNFAP4dLJIf+wEDu2G3r3BsBZSHAQ8v1eQF2aNZbtus4Av+
+PY+jxjWXyP2MmQaWfmTmSYsS1Jgn0WskFfWlncCt132dvcM40qovBJbn7cNVPass
+PJEwMJ1Ayly1LGFoCg2EmUKqtwhazYtLs4YY9ylZ6C5W7ppPnr68e4PMJbM/91uD
+cmM1F3FeP1CgXEADpgxTeDyNWdfakrorW1Br97qv9xOkjer9U3c9PhPjf7noQdDy
+mrKh84EBtUPnhtXP9EJZRkb5Hwq0sUC6D9GSbwjxMMxZFgYr5GwUEHw220ipDdJL
+FXq8d+qrQL9e7TKO8z64
+=3Wok
+-----END PGP SIGNATURE-----
+
+--lQSB8Tqijvu1+4Ba--
