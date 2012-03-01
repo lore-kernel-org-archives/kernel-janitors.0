@@ -1,33 +1,53 @@
-From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-Date: Thu, 01 Mar 2012 02:08:56 +0000
+From: Valdis.Kletnieks@vt.edu
+Date: Thu, 01 Mar 2012 02:23:17 +0000
 Subject: Re: [PATCH] Trace: initialize variable to clear warning
-Message-Id: <4F4EDA38.2070803@gmail.com>
+Message-Id: <3661.1330568597@turing-police.cc.vt.edu>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="==_Exmh_1330568597_2887P"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330420174-20537-1-git-send-email-ruan.zhengwang@gmail.com>	 <1330438591.25686.214.camel@gandalf.stny.rr.com>	 <48875.1330555230@turing-police.cc.vt.edu> <1330564158.25686.230.camel@gandalf.stny.rr.com>
-In-Reply-To: <1330564158.25686.230.camel@gandalf.stny.rr.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Valdis.Kletnieks@vt.edu, fweisbec@gmail.com, mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1330420174-20537-1-git-send-email-ruan.zhengwang@gmail.com> <1330438591.25686.214.camel@gandalf.stny.rr.com> <48875.1330555230@turing-police.cc.vt.edu> <1330564158.25686.230.camel@gandalf.stny.rr.com>
+            <4F4EDA38.2070803@gmail.com>
+In-Reply-To: Your message of "Thu, 01 Mar 2012 10:08:56 +0800."
+             <4F4EDA38.2070803@gmail.com>
+To: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, fweisbec@gmail.com, mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-CgoKLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLQpGcm9tOiBTdGV2ZW4gUm9zdGVk
-dApTZW50OiAyMDEyxOowMtTCMjnI1SDQx8bayP0gMjDKsTA5t9YxOMPrClRvOiBWYWxkaXMuS2xl
-dG5pZWtzClN1YmplY3Q6IFJlOiBbUEFUQ0hdIFRyYWNlOiBpbml0aWFsaXplIHZhcmlhYmxlIHRv
-IGNsZWFyIHdhcm5pbmcKPiBPbiBXZWQsIDIwMTItMDItMjkgYXQgMTc6NDAgLTA1MDAsIFZhbGRp
-cy5LbGV0bmlla3NAdnQuZWR1IHdyb3RlOgo+PiBPbiBUdWUsIDI4IEZlYiAyMDEyIDA5OjE2OjMx
-IEVTVCwgU3RldmVuIFJvc3RlZHQgc2FpZDoKPj4KPj4+IFRoaXMgaXMgYSBidWcgaW4gZ2NjIHRo
-YXQncyBmaXhlZCBpbiA0LjYgYW5kIGJleW9uZC4gSSBkb24ndCB3YW50IHRvCj4+PiByZW1vdmUg
-dGhpcyB3YXJuaW5nIGJlY2F1c2UgaXQgd2lsbCBoaWRlIGEgcmVhbCBidWcgaWYgcGFnZTIgcmVh
-bGx5IGRvZXMKPj4+IGJlY29tZSB1bmluaXRpYWxpemVkLiBJZiA0LjYgZ2l2ZXMgYSB3YXJuaW5n
-IGhlcmUsIHRoZW4gSSdsbCBmaXggaXQuCj4+Pj4gLQl2b2lkICpwYWdlMjsKPj4+PiArCXZvaWQg
-KnVuaW5pdGlhbGl6ZWRfdmFyKHBhZ2UyKTsKPj4gSG93IHdvdWxkIHlvdSBmZWVsIGFib3V0IHRo
-aXM/Cj4+Cj4+IC0Jdm9pZCAqcGFnZTI7Cj4+ICsJdm9pZCAqcGFnZTI7IC8qIGdjYyA0LjUgYnVn
-IGNhdXNlcyBpbmNvcnJlY3QgInVuaW5pdGlhbGl6ZWQiIHdhcm5pbmcgKi8KPj4KPj4gb3Igc29t
-ZXRoaW5nIHNpbWlsYXI/Cj4gLyogaWYgeW91IGdldCBhIHdhcm5pbmcgaGVyZSwgdXBncmFkZSB5
-b3VyIGdjYyB0byA0LjYgKi8KPgoKT0ssIEkgd2lsbCByZXNlbmQgdGhpcyBwYXRjaC4KClRoYW5r
-cywKLVpoZW5nd2FuZwoKPiAtLSBTdGV2ZQo+Cj4KPgo+CgotLQpUbyB1bnN1YnNjcmliZSBmcm9t
-IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWphbml0b3JzIiBp
-bgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwpNb3Jl
-IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
-Lmh0bWw=
+--==_Exmh_1330568597_2887P
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 01 Mar 2012 10:08:56 +0800, Zhengwang Ruan said:
+
+> > /* if you get a warning here, upgrade your gcc to 4.6 */
+> >
+>=20
+> OK, I will resend this patch.
+
+For the version with Steven's suggested comment:
+
+Acked-By: Valdis Kletnieks <valdis.kletnieks=40vt.edu>
+
+--==_Exmh_1330568597_2887P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iQIVAwUBT07dlQdmEQWDXROgAQIG5Q/+OEVFdJu9lDsV95hagzYlgJSSEqJfNSaF
+tfZ/GK9rpilHnIU3JBGf6UDx/Y3jwhX6NBoWMEQ3v9NTbklwmmfGUg2+J0jjTzF4
+FUsjbb8lY+YN0wMuyQCFnCe8qZC1vyYavNwZC29iCpnyZqARp+GjQN56U9gTZYt+
+BP/fy2pLh/TkEkPvUS6CtE6edhZzPaEWI3IaGyyerEZ0YEl+okV2h1sgH2WC/Vzo
+loHCMcvp9iNw4+e1PtLZT+m5slctj9BAEyR8GCoT+kqrR0eb1nclhftCOfX8EgLV
+U8ELBaodLPbsokaLBR4jGRNLwh2biu98UJRHSrfQqFIIATosDQa3w9Ezey9QB2Z9
+4gq3UJxen//VGc8Uk66XhZ5x8yd0jS9CLHlW/v56WaVwFZwINBZDnyt5F7Rmw9PG
+cKzwwaWiL09O+kDbie2Tz66JXt8LaligOL2Wv22p67T6WQO0cQbpPODUPv/RdLab
+h8eymmevZ7hbgfvWCf5WAi6VtZUNcgJSRypKhwQkv/QQ286F0yLdBgHMCHsPwly0
+kv5LWiugp1raNqy4Vi4ddNYECD0Ffeaz7rEFo9yXaqFHp35JP1yVdDAIr0C014od
+1qQQORs3Duy6EJPJ24o6gOP2F67Nrr6rCZ9TYgviKd402Kw1/LNA7o/wkLGHyzIo
+Ma5qC7K5y8M=
+=NfvD
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1330568597_2887P--
+
