@@ -1,39 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 02 Mar 2012 06:57:42 +0000
-Subject: [patch] [SCSI] megaraid: cleanup type issue in mega_build_cmd()
-Message-Id: <20120302065741.GD24508@elgon.mountain>
+From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Date: Thu, 01 Mar 2012 10:19:53 +0000
+Subject: Re: [patch 4/4] rndis_wlan: prevent integer overflow in indication()
+Message-Id: <20120301121953.81953z1rxd2ocpq8@www.81.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120229063753.GF18031@elgon.mountain>
+In-Reply-To: <20120229063753.GF18031@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Neela Syam Kolli <megaraidlinux@lsi.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 64 bit systems the current code sets 32 bits of "seg" and leaves the
-other 32 uninitialized.  It doesn't matter since the variable is never
-used.  But it's still messy and we should fix it.
+Quoting Dan Carpenter <dan.carpenter@oracle.com>:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> If we pick a high value for "offset" then it could lead to an integer
+> overflow and we would get past the check for:
+> 	if (offset + len > buflen) { ...
 
-diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
-index 4d39a9f..97825f1 100644
---- a/drivers/scsi/megaraid.c
-+++ b/drivers/scsi/megaraid.c
-@@ -524,7 +524,7 @@ mega_build_cmd(adapter_t *adapter, Scsi_Cmnd *cmd, int *busy)
- 	mega_passthru	*pthru;
- 	scb_t	*scb;
- 	mbox_t	*mbox;
--	long	seg;
-+	u32	seg;
- 	char	islogical;
- 	int	max_ldrv_num;
- 	int	channel = 0;
-@@ -858,7 +858,7 @@ mega_build_cmd(adapter_t *adapter, Scsi_Cmnd *cmd, int *busy)
- 
- 			/* Calculate Scatter-Gather info */
- 			mbox->m_out.numsgelements = mega_build_sglist(adapter, scb,
--					(u32 *)&mbox->m_out.xferaddr, (u32 *)&seg);
-+					(u32 *)&mbox->m_out.xferaddr, &seg);
- 
- 			return scb;
- 
+Acked-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/net/wireless/rndis_wlan.c  
+> b/drivers/net/wireless/rndis_wlan.c
+> index 74e2d1b..dfd76e3 100644
+> --- a/drivers/net/wireless/rndis_wlan.c
+> +++ b/drivers/net/wireless/rndis_wlan.c
+> @@ -3043,7 +3043,7 @@ static void  
+> rndis_wlan_media_specific_indication(struct usbnet *usbdev,
+>  			struct rndis_indicate *msg, int buflen)
+>  {
+>  	struct ndis_80211_status_indication *indication;
+> -	int len, offset;
+> +	unsigned int len, offset;
+>
+>  	offset = offsetof(struct rndis_indicate, status) +
+>  			le32_to_cpu(msg->offset);
+> @@ -3055,7 +3055,7 @@ static void  
+> rndis_wlan_media_specific_indication(struct usbnet *usbdev,
+>  		return;
+>  	}
+>
+> -	if (offset + len > buflen) {
+> +	if (len > buflen || offset > buflen || offset + len > buflen) {
+>  		netdev_info(usbdev->net, "media specific indication, too large to  
+> fit to buffer (%i > %i)\n",
+>  			    offset + len, buflen);
+>  		return;
+>
+>
+
+
+
