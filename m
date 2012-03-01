@@ -1,12 +1,56 @@
-From: ashwaq rahil <c23hiepthanh.baclieu@moet.edu.vn>
-Date: Mon, 26 Mar 2012 15:09:13 +0000
-Subject: 
-Message-Id: <CAMvLrUv5cT+Dh6ncAPDqE2ADhKK8tigAXBbix8vyHGfvMcHOaA@mail.gmail.com>
+From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Date: Thu, 01 Mar 2012 10:19:48 +0000
+Subject: Re: [patch 3/4] rndis_wlan: make some variables unsigned
+Message-Id: <20120301121948.27450js7jyojb134@www.81.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120229063657.GE18031@elgon.mountain>
+In-Reply-To: <20120229063657.GE18031@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Am in urgent need of your assistance.Please contact me via email  (
-ashwaqrahil@yahoo.com.hk ).
+Quoting Dan Carpenter <dan.carpenter@oracle.com>:
+
+> These variables can never be less than zero because we cap them in
+> get_device_pmkids().  Let's make them unsigned here because it's simpler
+> to not have to worry about negative numbers when we read the code.
+
+Acked-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/net/wireless/rndis_wlan.c  
+> b/drivers/net/wireless/rndis_wlan.c
+> index a93cfe2..74e2d1b 100644
+> --- a/drivers/net/wireless/rndis_wlan.c
+> +++ b/drivers/net/wireless/rndis_wlan.c
+> @@ -1790,7 +1790,8 @@ static struct ndis_80211_pmkid  
+> *remove_pmkid(struct usbnet *usbdev,
+>  						struct cfg80211_pmksa *pmksa,
+>  						int max_pmkids)
+>  {
+> -	int i, count, newlen, err;
+> +	int i, newlen, err;
+> +	unsigned int count;
+>
+>  	count = le32_to_cpu(pmkids->bssid_info_count);
+>
+> @@ -1830,7 +1831,8 @@ static struct ndis_80211_pmkid  
+> *update_pmkid(struct usbnet *usbdev,
+>  						struct cfg80211_pmksa *pmksa,
+>  						int max_pmkids)
+>  {
+> -	int i, err, count, newlen;
+> +	int i, err, newlen;
+> +	unsigned int count;
+>
+>  	count = le32_to_cpu(pmkids->bssid_info_count);
+>
+>
+>
+
+
+
