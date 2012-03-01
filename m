@@ -1,27 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 Mar 2012 23:30:50 +0000
-Subject: Re: [patch] netlabel: use GFP flags from caller instead of GFP_ATOMIC
-Message-Id: <20120322.193050.528451453813300397.davem@davemloft.net>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Thu, 01 Mar 2012 09:28:30 +0000
+Subject: [PATCH 1/3] netfilter: Fix copy_to_user too small size parametre.
+Message-Id: <1330593390-19233-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120322064101.GD7369@elgon.mountain>
-In-Reply-To: <20120322064101.GD7369@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: paul@paul-moore.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: bart.de.schuymer@pandora.be
+Cc: pablo@netfilter.org, kaber@trash.net, shemminger@vyatta.com, davem@davemloft.net, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Mar 2012 09:41:01 +0300
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-> This function takes a GFP flags as a parameter, but they are never used.
-> We don't take a lock in this function so there is no reason to prefer
-> GFP_ATOMIC over the caller's GFP flags.
-> 
-> There is only one caller, cipso_v4_map_cat_rng_ntoh(), and it passes
-> GFP_ATOMIC as the GFP flags so this doesn't change how the code works.
-> It's just a cleanup.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+While copying to userspace, the size of source is 29byte where as
+size parametre is 32 byte.  Its leaking extra-information from
+kernel space to user space.
+Replace EBT_FUNCTION_MAXNAMELEN by XT_EXTENSION_MAXNAMELEN.
 
-Applied.
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ net/bridge/netfilter/ebtables.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+index 5864cc4..f3fcbd9 100644
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -1335,7 +1335,7 @@ static inline int ebt_make_matchname(const struct ebt_entry_match *m,
+     const char *base, char __user *ubase)
+ {
+ 	char __user *hlp = ubase + ((char *)m - base);
+-	if (copy_to_user(hlp, m->u.match->name, EBT_FUNCTION_MAXNAMELEN))
++	if (copy_to_user(hlp, m->u.match->name, XT_EXTENSION_MAXNAMELEN))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -1344,7 +1344,7 @@ static inline int ebt_make_watchername(const struct ebt_entry_watcher *w,
+     const char *base, char __user *ubase)
+ {
+ 	char __user *hlp = ubase + ((char *)w - base);
+-	if (copy_to_user(hlp , w->u.watcher->name, EBT_FUNCTION_MAXNAMELEN))
++	if (copy_to_user(hlp , w->u.watcher->name, XT_EXTENSION_MAXNAMELEN))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -1368,7 +1368,7 @@ ebt_make_names(struct ebt_entry *e, const char *base, char __user *ubase)
+ 	ret = EBT_WATCHER_ITERATE(e, ebt_make_watchername, base, ubase);
+ 	if (ret != 0)
+ 		return ret;
+-	if (copy_to_user(hlp, t->u.target->name, EBT_FUNCTION_MAXNAMELEN))
++	if (copy_to_user(hlp, t->u.target->name, XT_EXTENSION_MAXNAMELEN))
+ 		return -EFAULT;
+ 	return 0;
+ }
+-- 
+1.7.4.4
+
