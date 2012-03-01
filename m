@@ -1,75 +1,105 @@
-From: Andrei Emeltchenko <andrei.emeltchenko.news@gmail.com>
-Date: Thu, 01 Mar 2012 12:35:42 +0000
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Thu, 01 Mar 2012 14:16:58 +0000
 Subject: Re: Resend: [PATCH] Bluetooth: Fix Endian Bug.
-Message-Id: <20120301123540.GE25627@aemeltch-MOBL1>
+Message-Id: <CAOD=uF4LSS8nuKMNHGEH2JsVZHU0rntSxZjvNaa4oZrey1macw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1330599561-20392-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330599561-20392-1-git-send-email-santoshprasadnayak@gmail.com>
+	<20120301123540.GE25627@aemeltch-MOBL1>
+In-Reply-To: <20120301123540.GE25627@aemeltch-MOBL1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: marcel@holtmann.org, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Andrei Emeltchenko <andrei.emeltchenko.news@gmail.com>, santosh nayak <santoshprasadnayak@gmail.com>, marcel@holtmann.org, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Santosh,
+Andrei,
 
-On Thu, Mar 01, 2012 at 04:29:21PM +0530, santosh nayak wrote:
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> Fix for endian bug.
-> 
-> Fix for null dereferenced removed as it is already
-> submitted by Andrei.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
->  net/bluetooth/l2cap_sock.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
+I could not get you.
 
-We prefer following commit log (this is the example)
-
-<------8<----------------------------------------------------------
-|  From: Santosh Nayak <santoshprasadnayak@gmail.com>
-|
-|  Fix network to host endian conversion for L2CAP chan id.
-|
-|  Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-|
-|  ---
-|          * v2 Fix for null dereferenced removed as it is already
-|          submitted by Andrei.
-|
-|    net/bluetooth/l2cap_sock.c |    5 +++--
-|    1 files changed, 3 insertions(+), 2 deletions(-)
-|
-<------8<----------------------------------------------------------
+Do you want me to resend the patch with subject,
+  "[PATCH] Bluetooth: Fix network to host endian conversion for L2CAP
+chan id."  ?
 
 
-> 
-> diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-> index 401d942..86d5067 100644
-> --- a/net/bluetooth/l2cap_sock.c
-> +++ b/net/bluetooth/l2cap_sock.c
-> @@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock, struct sockaddr *addr, int alen)
->  	}
->  
->  	if (la.l2_cid)
-> -		err = l2cap_add_scid(chan, la.l2_cid);
-> +		err = l2cap_add_scid(chan, __le16_to_cpu(la.l2_cid));
->  	else
->  		err = l2cap_add_psm(chan, &la.l2_bdaddr, la.l2_psm);
->  
-> @@ -123,7 +123,8 @@ static int l2cap_sock_connect(struct socket *sock, struct sockaddr *addr, int al
->  	if (la.l2_cid && la.l2_psm)
->  		return -EINVAL;
->  
-> -	err = l2cap_chan_connect(chan, la.l2_psm, la.l2_cid, &la.l2_bdaddr);
-> +	err = l2cap_chan_connect(chan, la.l2_psm, __le16_to_cpu(la.l2_cid),
-> +				&la.l2_bdaddr);
 
-I live this to Marcel to decide should we reindent our code otherwise this
-one looks odd.
+regards
+santosh
 
-Best regards 
-Andrei Emeltchenko 
 
+
+
+On Thu, Mar 1, 2012 at 6:05 PM, Andrei Emeltchenko
+<andrei.emeltchenko.news@gmail.com> wrote:
+> Hi Santosh,
+>
+> On Thu, Mar 01, 2012 at 04:29:21PM +0530, santosh nayak wrote:
+>> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+>>
+>> Fix for endian bug.
+>>
+>> Fix for null dereferenced removed as it is already
+>> submitted by Andrei.
+>>
+>> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+>> ---
+>> =A0net/bluetooth/l2cap_sock.c | =A0 =A05 +++--
+>> =A01 files changed, 3 insertions(+), 2 deletions(-)
+>
+> We prefer following commit log (this is the example)
+>
+> <------8<----------------------------------------------------------
+> | =A0From: Santosh Nayak <santoshprasadnayak@gmail.com>
+> |
+> | =A0Fix network to host endian conversion for L2CAP chan id.
+> |
+> | =A0Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+> |
+> | =A0---
+> | =A0 =A0 =A0 =A0 =A0* v2 Fix for null dereferenced removed as it is alre=
+ady
+> | =A0 =A0 =A0 =A0 =A0submitted by Andrei.
+> |
+> | =A0 =A0net/bluetooth/l2cap_sock.c | =A0 =A05 +++--
+> | =A0 =A01 files changed, 3 insertions(+), 2 deletions(-)
+> |
+> <------8<----------------------------------------------------------
+>
+>
+>>
+>> diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+>> index 401d942..86d5067 100644
+>> --- a/net/bluetooth/l2cap_sock.c
+>> +++ b/net/bluetooth/l2cap_sock.c
+>> @@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock, struct=
+ sockaddr *addr, int alen)
+>> =A0 =A0 =A0 }
+>>
+>> =A0 =A0 =A0 if (la.l2_cid)
+>> - =A0 =A0 =A0 =A0 =A0 =A0 err =3D l2cap_add_scid(chan, la.l2_cid);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D l2cap_add_scid(chan, __le16_to_cpu(la.=
+l2_cid));
+>> =A0 =A0 =A0 else
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D l2cap_add_psm(chan, &la.l2_bdaddr, l=
+a.l2_psm);
+>>
+>> @@ -123,7 +123,8 @@ static int l2cap_sock_connect(struct socket *sock, s=
+truct sockaddr *addr, int al
+>> =A0 =A0 =A0 if (la.l2_cid && la.l2_psm)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
+>>
+>> - =A0 =A0 err =3D l2cap_chan_connect(chan, la.l2_psm, la.l2_cid, &la.l2_=
+bdaddr);
+>> + =A0 =A0 err =3D l2cap_chan_connect(chan, la.l2_psm, __le16_to_cpu(la.l=
+2_cid),
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &la.l2_bdaddr);
+>
+> I live this to Marcel to decide should we reindent our code otherwise this
+> one looks odd.
+>
+> Best regards
+> Andrei Emeltchenko
+>
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
