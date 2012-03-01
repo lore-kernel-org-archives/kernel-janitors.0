@@ -1,87 +1,39 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Thu, 01 Mar 2012 19:45:32 +0000
-Subject: RE: [patch] mwifiex: endian bug in mwifiex_drv_change_adhoc_chan()
-Message-Id: <477F20668A386D41ADCC57781B1F70430836762FFC@SC-VEXCH1.marvell.com>
+From: Johan Hedberg <johan.hedberg@gmail.com>
+Date: Thu, 01 Mar 2012 01:40:33 +0000
+Subject: Re: [patch] Bluetooth: change min_t() cast in hci_reassembly()
+Message-Id: <20120301014033.GC26492@x220>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120301072230.GC7152@elgon.mountain>
-In-Reply-To: <20120301072230.GC7152@elgon.mountain>
+References: <20120228065759.GD20506@elgon.mountain>
+In-Reply-To: <20120228065759.GD20506@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "John W. Linville" <linville@tuxdriver.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Hi Dan,
 
-Thanks for your patch.
-It looks correct.
-
-
-Hi John,
-
-There is a conflict between this patch and a patch I submitted previously.
-
-mwifiex: remove unnecessary struct mwifiex_802_11_ssid
-
-If you are going to take my patch series (except for the one 6/6, NACKed by Johannes), either Dan or myself can rebase this patch.
-
-I have ACKed Dan's patch under the s-o-b line below, in case you want to merge his patch first.
-
-Thanks,
-Bing
-
-> Subject: [patch] mwifiex: endian bug in mwifiex_drv_change_adhoc_chan()
-> 
-> In mwifiex_drv_change_adhoc_chan() we pass channel to
-> mwifiex_bss_ioctl_ibss_channel() which sets the high 16 bits.  This
-> works on little endian systems but not on big endian ones.  I've changed
-> mwifiex_drv_change_adhoc_chan() to use a 16 bit variable.  This matches
-> the other functions in the file.
-> 
-> I considered changing mwifiex_change_adhoc_chan() as well but it turns
-> out that the function isn't implemented so I just removed the
-> definition.
+On Tue, Feb 28, 2012, Dan Carpenter wrote:
+> "count" is type int so the cast to __u16 truncates the high bits away
+> and triggers a Smatch static checker warning.  It looks like a high
+> value of count could cause a forever loop, but I didn't follow it
+> through to see if count is capped somewhere.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> index e6cbb8a..db484a8 100644
+> --- a/net/bluetooth/hci_core.c
+> +++ b/net/bluetooth/hci_core.c
+> @@ -1966,7 +1966,7 @@ static int hci_reassembly(struct hci_dev *hdev, int type, void *data,
+>  
+>  	while (count) {
+>  		scb = (void *) skb->cb;
+> -		len = min_t(__u16, scb->expect, count);
+> +		len = min_t(uint, scb->expect, count);
+>  
+>  		memcpy(skb_put(skb, len), data, len);
 
-Acked-by: Bing Zhao <bzhao@marvell.com>
+Applied to my bluetooth-next tree. Thanks.
 
-> 
-> diff --git a/drivers/net/wireless/mwifiex/main.h b/drivers/net/wireless/mwifiex/main.h
-> index 52810b1..60a6919 100644
-> --- a/drivers/net/wireless/mwifiex/main.h
-> +++ b/drivers/net/wireless/mwifiex/main.h
-> @@ -909,10 +909,9 @@ int mwifiex_request_scan(struct mwifiex_private *priv,
->  			 struct mwifiex_802_11_ssid *req_ssid);
->  int mwifiex_set_user_scan_ioctl(struct mwifiex_private *priv,
->  				struct mwifiex_user_scan_cfg *scan_req);
-> -int mwifiex_change_adhoc_chan(struct mwifiex_private *priv, int channel);
->  int mwifiex_set_radio(struct mwifiex_private *priv, u8 option);
-> 
-> -int mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, int channel);
-> +int mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, u16 channel);
-> 
->  int mwifiex_set_encode(struct mwifiex_private *priv, const u8 *key,
->  		       int key_len, u8 key_index, int disable);
-> diff --git a/drivers/net/wireless/mwifiex/sta_ioctl.c b/drivers/net/wireless/mwifiex/sta_ioctl.c
-> index b0fbf5d..652d299 100644
-> --- a/drivers/net/wireless/mwifiex/sta_ioctl.c
-> +++ b/drivers/net/wireless/mwifiex/sta_ioctl.c
-> @@ -599,7 +599,7 @@ static int mwifiex_bss_ioctl_ibss_channel(struct mwifiex_private *priv,
->   *          - Start/Join the IBSS
->   */
->  int
-> -mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, int channel)
-> +mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, u16 channel)
->  {
->  	int ret;
->  	struct mwifiex_bss_info bss_info;
-> @@ -636,7 +636,7 @@ mwifiex_drv_change_adhoc_chan(struct mwifiex_private *priv, int channel)
->  	ret = mwifiex_deauthenticate(priv, ssid_bssid.bssid);
-> 
->  	ret = mwifiex_bss_ioctl_ibss_channel(priv, HostCmd_ACT_GEN_SET,
-> -					     (u16 *) &channel);
-> +					     &channel);
-> 
->  	/* Do specific SSID scanning */
->  	if (mwifiex_request_scan(priv, &bss_info.ssid)) {
+Johan
