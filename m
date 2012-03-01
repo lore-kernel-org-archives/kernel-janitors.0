@@ -1,39 +1,33 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Thu, 01 Mar 2012 01:09:18 +0000
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Thu, 01 Mar 2012 02:08:56 +0000
 Subject: Re: [PATCH] Trace: initialize variable to clear warning
-Message-Id: <1330564158.25686.230.camel@gandalf.stny.rr.com>
+Message-Id: <4F4EDA38.2070803@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330420174-20537-1-git-send-email-ruan.zhengwang@gmail.com>
-	 <1330438591.25686.214.camel@gandalf.stny.rr.com>
-	 <48875.1330555230@turing-police.cc.vt.edu>
-In-Reply-To: <48875.1330555230@turing-police.cc.vt.edu>
+References: <1330420174-20537-1-git-send-email-ruan.zhengwang@gmail.com>	 <1330438591.25686.214.camel@gandalf.stny.rr.com>	 <48875.1330555230@turing-police.cc.vt.edu> <1330564158.25686.230.camel@gandalf.stny.rr.com>
+In-Reply-To: <1330564158.25686.230.camel@gandalf.stny.rr.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Valdis.Kletnieks@vt.edu
-Cc: Zhengwang Ruan <ruan.zhengwang@gmail.com>, fweisbec@gmail.com, mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Valdis.Kletnieks@vt.edu, fweisbec@gmail.com, mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2012-02-29 at 17:40 -0500, Valdis.Kletnieks@vt.edu wrote:
-> On Tue, 28 Feb 2012 09:16:31 EST, Steven Rostedt said:
-> 
-> > This is a bug in gcc that's fixed in 4.6 and beyond. I don't want to
-> > remove this warning because it will hide a real bug if page2 really does
-> > become uninitialized. If 4.6 gives a warning here, then I'll fix it.
-> 
-> > > -	void *page2;
-> > > +	void *uninitialized_var(page2);
-> 
-> How would you feel about this?
-> 
-> -	void *page2;
-> +	void *page2; /* gcc 4.5 bug causes incorrect "uninitialized" warning */
-> 
-> or something similar?
-
-/* if you get a warning here, upgrade your gcc to 4.6 */
-
-
--- Steve
-
-
-
+CgoKLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLQpGcm9tOiBTdGV2ZW4gUm9zdGVk
+dApTZW50OiAyMDEyxOowMtTCMjnI1SDQx8bayP0gMjDKsTA5t9YxOMPrClRvOiBWYWxkaXMuS2xl
+dG5pZWtzClN1YmplY3Q6IFJlOiBbUEFUQ0hdIFRyYWNlOiBpbml0aWFsaXplIHZhcmlhYmxlIHRv
+IGNsZWFyIHdhcm5pbmcKPiBPbiBXZWQsIDIwMTItMDItMjkgYXQgMTc6NDAgLTA1MDAsIFZhbGRp
+cy5LbGV0bmlla3NAdnQuZWR1IHdyb3RlOgo+PiBPbiBUdWUsIDI4IEZlYiAyMDEyIDA5OjE2OjMx
+IEVTVCwgU3RldmVuIFJvc3RlZHQgc2FpZDoKPj4KPj4+IFRoaXMgaXMgYSBidWcgaW4gZ2NjIHRo
+YXQncyBmaXhlZCBpbiA0LjYgYW5kIGJleW9uZC4gSSBkb24ndCB3YW50IHRvCj4+PiByZW1vdmUg
+dGhpcyB3YXJuaW5nIGJlY2F1c2UgaXQgd2lsbCBoaWRlIGEgcmVhbCBidWcgaWYgcGFnZTIgcmVh
+bGx5IGRvZXMKPj4+IGJlY29tZSB1bmluaXRpYWxpemVkLiBJZiA0LjYgZ2l2ZXMgYSB3YXJuaW5n
+IGhlcmUsIHRoZW4gSSdsbCBmaXggaXQuCj4+Pj4gLQl2b2lkICpwYWdlMjsKPj4+PiArCXZvaWQg
+KnVuaW5pdGlhbGl6ZWRfdmFyKHBhZ2UyKTsKPj4gSG93IHdvdWxkIHlvdSBmZWVsIGFib3V0IHRo
+aXM/Cj4+Cj4+IC0Jdm9pZCAqcGFnZTI7Cj4+ICsJdm9pZCAqcGFnZTI7IC8qIGdjYyA0LjUgYnVn
+IGNhdXNlcyBpbmNvcnJlY3QgInVuaW5pdGlhbGl6ZWQiIHdhcm5pbmcgKi8KPj4KPj4gb3Igc29t
+ZXRoaW5nIHNpbWlsYXI/Cj4gLyogaWYgeW91IGdldCBhIHdhcm5pbmcgaGVyZSwgdXBncmFkZSB5
+b3VyIGdjYyB0byA0LjYgKi8KPgoKT0ssIEkgd2lsbCByZXNlbmQgdGhpcyBwYXRjaC4KClRoYW5r
+cywKLVpoZW5nd2FuZwoKPiAtLSBTdGV2ZQo+Cj4KPgo+CgotLQpUbyB1bnN1YnNjcmliZSBmcm9t
+IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWphbml0b3JzIiBp
+bgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwpNb3Jl
+IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
+Lmh0bWw=
