@@ -1,61 +1,74 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 01 Mar 2012 06:58:07 +0000
+From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Date: Thu, 01 Mar 2012 10:19:01 +0000
 Subject: Re: [patch 1/4] rndis_wlan: integer overflows in rndis_wlan_do_link_up_work()
-Message-Id: <20120301065807.GG1003@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="lQSB8Tqijvu1+4Ba"
+Message-Id: <20120301121901.363327qut940t1lw@www.81.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120229063555.GC18031@elgon.mountain>
- <4F4DE009.7010808@bfs.de>
-In-Reply-To: <4F4DE009.7010808@bfs.de>
-To: walter harms <wharms@bfs.de>
-Cc: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20120229063555.GC18031@elgon.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+Quoting Dan Carpenter <dan.carpenter@oracle.com>:
+
+> If "offset" is negative then we can get past this check:
+> 	if (offset > CONTROL_BUFFER_SIZE)
+> Or if we pick a very high "req_ie_len" then we can get around the check:
+> 	if (offset + req_ie_len > CONTROL_BUFFER_SIZE)
+>
+> I made "resp_ie_len" and "req_ie_len" unsigned.  I don't know if it was
+> intentional that they were signed in the original.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/net/wireless/rndis_wlan.c  
+> b/drivers/net/wireless/rndis_wlan.c
+> index a330c69..6d8a986 100644
+> --- a/drivers/net/wireless/rndis_wlan.c
+> +++ b/drivers/net/wireless/rndis_wlan.c
+> @@ -2755,9 +2755,10 @@ static void rndis_wlan_do_link_up_work(struct  
+> usbnet *usbdev)
+>  	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
+>  	struct ndis_80211_assoc_info *info = NULL;
+>  	u8 bssid[ETH_ALEN];
+> -	int resp_ie_len, req_ie_len;
+> +	unsigned int resp_ie_len, req_ie_len;
+> +	unsigned int offset;
+>  	u8 *req_ie, *resp_ie;
+> -	int ret, offset;
+> +	int ret;
+>  	bool roamed = false;
+>  	bool match_bss;
+>
+> @@ -2785,6 +2786,8 @@ static void rndis_wlan_do_link_up_work(struct  
+> usbnet *usbdev)
+>  		ret = get_association_info(usbdev, info, CONTROL_BUFFER_SIZE);
+>  		if (!ret) {
+>  			req_ie_len = le32_to_cpu(info->req_ie_length);
+> +			if (req_ie_len > CONTROL_BUFFER_SIZE)
+> +				req_ie_len = CONTROL_BUFFER_SIZE;
+>  			if (req_ie_len > 0) {
+>  				offset = le32_to_cpu(info->offset_req_ies);
+>
+> @@ -2799,6 +2802,8 @@ static void rndis_wlan_do_link_up_work(struct  
+> usbnet *usbdev)
+>  			}
+>
+>  			resp_ie_len = le32_to_cpu(info->resp_ie_length);
+> +			if (resp_ie_len > CONTROL_BUFFER_SIZE)
+> +				resp_ie_len = CONTROL_BUFFER_SIZE;
+>  			if (resp_ie_len > 0) {
+
+(resp_ie_len > 0), (resp_ie_len != 0), (resp_ie_len) .. all fine by me,
+
+Acked-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+
+>  				offset = le32_to_cpu(info->offset_resp_ies);
+>
+>
+>
 
 
---lQSB8Tqijvu1+4Ba
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 29, 2012 at 09:21:29AM +0100, walter harms wrote:
-> >  			resp_ie_len =3D le32_to_cpu(info->resp_ie_length);
-> > +			if (resp_ie_len > CONTROL_BUFFER_SIZE)
-> > +				resp_ie_len =3D CONTROL_BUFFER_SIZE;
-> >  			if (resp_ie_len > 0) {
-> >  				offset =3D le32_to_cpu(info->offset_resp_ies);
-> >=20
->=20
->=20
-> hi dan,
-> the check below  "if (resp_ie_len > 0)" looks strange for an unsigned.
->=20
-
-Good point.  I'll resend.
-
-regards,
-dan carpenter
-
-
---lQSB8Tqijvu1+4Ba
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPTx3/AAoJEOnZkXI/YHqRY3IP/jmxr/N3sG3RVdQAY0cMD7xu
-H6WmC4LZKxqF29I2lILe42g4MdmTsLasTnyS/qdsp+Na3YyUnMOPHMWSrqI83z4d
-LTfxINxLnV2wkvN6gtTHzRIWnVtfzqUWkqxhPcSfU9ppF+uls3CcsAaROlELUm1V
-RZ/CEl5YLhhgpA2KvO6+vjKmX5vYmh/Ihw1FYBEjy5wslt4Kl47TM01krBAKieaJ
-MOip/dwiPN59LLk5OyEMnriCEKUksPpJp82aqdFN/+nKcVRTs97nrqt/J9WymJ4/
-XKx+YM/Ijv9NBnLLbGloIdyOW4CxxnIPw3k3yMSTx+8tdz3nvip+97MNyRiizYku
-YQ/kO2EHj+Edo0WjydNFAP4dLJIf+wEDu2G3r3BsBZSHAQ8v1eQF2aNZbtus4Av+
-PY+jxjWXyP2MmQaWfmTmSYsS1Jgn0WskFfWlncCt132dvcM40qovBJbn7cNVPass
-PJEwMJ1Ayly1LGFoCg2EmUKqtwhazYtLs4YY9ylZ6C5W7ppPnr68e4PMJbM/91uD
-cmM1F3FeP1CgXEADpgxTeDyNWdfakrorW1Br97qv9xOkjer9U3c9PhPjf7noQdDy
-mrKh84EBtUPnhtXP9EJZRkb5Hwq0sUC6D9GSbwjxMMxZFgYr5GwUEHw220ipDdJL
-FXq8d+qrQL9e7TKO8z64
-=3Wok
------END PGP SIGNATURE-----
-
---lQSB8Tqijvu1+4Ba--
