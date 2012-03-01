@@ -1,55 +1,74 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 02 Mar 2012 19:20:59 +0000
-Subject: Re: [patch] edac i5000: fix pointer math in i5000_get_mc_regs()
-Message-Id: <4F511D9B.10401@bfs.de>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Thu, 01 Mar 2012 17:21:03 +0000
+Subject: Resend [PATCH] netfilter: Fix copy_to_user too small size parametre.
+Message-Id: <1330621743-12883-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120302065441.GB24508@elgon.mountain> <4F508C16.30900@bfs.de> <20120302190932.GI22598@mwanda>
-In-Reply-To: <20120302190932.GI22598@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: bart.de.schuymer@pandora.be
+Cc: pablo@netfilter.org, kaber@trash.net, shemminger@vyatta.com, davem@davemloft.net, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
+user-space ebtables expects 32 bytes-long names, but xt_match uses
+29 bytes. Fill the remaining bytes with zeroes.
 
-Am 02.03.2012 20:09, schrieb Dan Carpenter:
-> On Fri, Mar 02, 2012 at 10:00:06AM +0100, walter harms wrote:
->>> diff --git a/drivers/edac/i5000_edac.c b/drivers/edac/i5000_edac.c
->>> index 4dc3ac2..fcdc4ab 100644
->>> --- a/drivers/edac/i5000_edac.c
->>> +++ b/drivers/edac/i5000_edac.c
->>> @@ -1130,7 +1130,7 @@ static void i5000_get_mc_regs(struct mem_ctl_info *mci)
->>>  	pci_read_config_dword(pvt->system_address, AMBASE,
->>>  			(u32 *) & pvt->ambase);
->>>  	pci_read_config_dword(pvt->system_address, AMBASE + sizeof(u32),
->>> -			((u32 *) & pvt->ambase) + sizeof(u32));
->>> +			(u32 *)((char *) &pvt->ambase + sizeof(u32)));
->>>  
->>>  	maxdimmperch = pvt->maxdimmperch;
->>>  	maxch = pvt->maxch;
->>
->> i think this is hard to understand. personally i would prefer a union or other
->> more obvious solutions. my suggestion would be to get rid of this.
->>
->> u32 bottom,top;
->>  	pci_read_config_dword(pvt->system_address, AMBASE,
->>   			&bottom);
->> 	pci_read_config_dword(pvt->system_address, AMBASE+ sizeof(u32),
->>   			&top);
->> 	maxdimmperch=(u64)top<<32|bottom;
->> 	
->> you can find this pattern in other parts of the kernel also.
->>
-> 
-> Sure.  I want to do this again anyway because I see I've missed some
-> other parts which have the same bug.  I'll resend a patch later.
-> 
-> regards,
-> dan carpenter
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ net/bridge/netfilter/ebtables.c |   14 +++++++++++---
+ 1 files changed, 11 insertions(+), 3 deletions(-)
 
-I have no idea how ofter a64bit value is need but perhaps is pci_read_config_qword()
-an option ?
+diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+index 5864cc4..21f337a 100644
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -1335,7 +1335,10 @@ static inline int ebt_make_matchname(const struct ebt_entry_match *m,
+     const char *base, char __user *ubase)
+ {
+ 	char __user *hlp = ubase + ((char *)m - base);
+-	if (copy_to_user(hlp, m->u.match->name, EBT_FUNCTION_MAXNAMELEN))
++	char name[EBT_FUNCTION_MAXNAMELEN] = {};
++
++	strncpy(name, m->u.match->name, sizeof(name));
++	if (copy_to_user(hlp, name, EBT_FUNCTION_MAXNAMELEN))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -1344,7 +1347,10 @@ static inline int ebt_make_watchername(const struct ebt_entry_watcher *w,
+     const char *base, char __user *ubase)
+ {
+ 	char __user *hlp = ubase + ((char *)w - base);
+-	if (copy_to_user(hlp , w->u.watcher->name, EBT_FUNCTION_MAXNAMELEN))
++	char name[EBT_FUNCTION_MAXNAMELEN] = {};
++
++	strncpy(name, w->u.watcher->name, sizeof(name));
++	if (copy_to_user(hlp , name, EBT_FUNCTION_MAXNAMELEN))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -1355,10 +1361,12 @@ ebt_make_names(struct ebt_entry *e, const char *base, char __user *ubase)
+ 	int ret;
+ 	char __user *hlp;
+ 	const struct ebt_entry_target *t;
++	char name[EBT_FUNCTION_MAXNAMELEN] = {};
+ 
+ 	if (e->bitmask = 0)
+ 		return 0;
+ 
++	strncpy(name, t->u.target->name, sizeof(name));
+ 	hlp = ubase + (((char *)e + e->target_offset) - base);
+ 	t = (struct ebt_entry_target *)(((char *)e) + e->target_offset);
+ 
+@@ -1368,7 +1376,7 @@ ebt_make_names(struct ebt_entry *e, const char *base, char __user *ubase)
+ 	ret = EBT_WATCHER_ITERATE(e, ebt_make_watchername, base, ubase);
+ 	if (ret != 0)
+ 		return ret;
+-	if (copy_to_user(hlp, t->u.target->name, EBT_FUNCTION_MAXNAMELEN))
++	if (copy_to_user(hlp, name, EBT_FUNCTION_MAXNAMELEN))
+ 		return -EFAULT;
+ 	return 0;
+ }
+-- 
+1.7.4.4
 
-re,
- wh
