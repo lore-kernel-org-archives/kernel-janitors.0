@@ -1,42 +1,30 @@
-From: <ruan.zhengwang@gmail.com>
-Date: Wed, 07 Mar 2012 02:49:09 +0000
-Subject: [PATCH 1/2 v2] Staging:android: Change type for binder_debug_no_lock switch to bool
-Message-Id: <1331088550-15632-1-git-send-email-ruan.zhengwang@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 19:01:28 +0000
+Subject: [patch] x86, efi: fix pointer math issue in handle_ramdisks()
+Message-Id: <20120302190128.GC3951@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330337871-27830-1-git-send-email-ruan.zhengwang@gmail.com>
-In-Reply-To: <1330337871-27830-1-git-send-email-ruan.zhengwang@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, arve@android.com, chris+android@zenthought.org
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Matt Fleming <matt.fleming@intel.com>, Maarten Lankhorst <m.b.lankhorst@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+"filename" is a efi_char16_t string so this check for reaching the end
+of the array doesn't work.  We need to cast it to char pointer before
+doing the math.
 
-GCC warns that module_param_named() indirectly returns a bool type value
-which is different from 'int' type binder_debug_no_lock declared. Change
-it to bool because it is a internal switch for debugging.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
----
-v2: added a subsystem prefix to the subject
----
- drivers/staging/android/binder.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
-index f0b7e66..4350425 100644
---- a/drivers/staging/android/binder.c
-+++ b/drivers/staging/android/binder.c
-@@ -103,7 +103,7 @@ static uint32_t binder_debug_mask = BINDER_DEBUG_USER_ERROR |
- 	BINDER_DEBUG_FAILED_TRANSACTION | BINDER_DEBUG_DEAD_TRANSACTION;
- module_param_named(debug_mask, binder_debug_mask, uint, S_IWUSR | S_IRUGO);
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index fec216f..cf4cdb7 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -559,7 +559,7 @@ static efi_status_t handle_ramdisks(efi_loaded_image_t *image,
+ 			str++;
  
--static int binder_debug_no_lock;
-+static bool binder_debug_no_lock;
- module_param_named(proc_no_lock, binder_debug_no_lock, bool, S_IWUSR | S_IRUGO);
+ 		while (*str && *str != ' ' && *str != '\n') {
+-			if (p >= filename + sizeof(filename))
++			if ((char *)p >= (char *)filename + sizeof(filename))
+ 				break;
  
- static DECLARE_WAIT_QUEUE_HEAD(binder_user_error_wait);
--- 
-1.6.0.4
-
+ 			*p++ = *str++;
