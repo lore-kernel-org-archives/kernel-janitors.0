@@ -1,29 +1,28 @@
-From: Gustavo Padovan <padovan@profusion.mobi>
-Date: Fri, 09 Mar 2012 12:45:19 +0000
-Subject: Re: Resend: [PATCH] Bluetooth: Fix Endian Bug.
-Message-Id: <20120309124512.GF16366@joana>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 06:59:55 +0000
+Subject: [patch] Staging: ozwpan: prevent bogus dereference
+Message-Id: <20120302065955.GG24508@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: marcel@holtmann.org, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Andrei,
+app_id comes from the network and can't be trusted.  If it's zero then
+it will lead to a kernel crash.
 
-* santosh nayak <santoshprasadnayak@gmail.com> [2012-03-01 22:46:36 +0530]:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> Fix network to host endian conversion for L2CAP chan id.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
->  net/bluetooth/l2cap_sock.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
-
-Applied, thanks.
-
-	Gustavo
+diff --git a/drivers/staging/ozwpan/ozpd.c b/drivers/staging/ozwpan/ozpd.c
+index 8c460f0..e3381ad 100644
+--- a/drivers/staging/ozwpan/ozpd.c
++++ b/drivers/staging/ozwpan/ozpd.c
+@@ -806,7 +806,7 @@ void oz_apps_term(void)
+ void oz_handle_app_elt(struct oz_pd *pd, u8 app_id, struct oz_elt *elt)
+ {
+ 	struct oz_app_if *ai;
+-	if (app_id > OZ_APPID_MAX)
++	if (app_id = 0 || app_id > OZ_APPID_MAX)
+ 		return;
+ 	ai = &g_app_if[app_id-1];
+ 	ai->rx(pd, elt);
