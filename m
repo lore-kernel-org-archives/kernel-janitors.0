@@ -1,7 +1,7 @@
 From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Thu, 01 Mar 2012 12:30:04 +0000
+Date: Fri, 02 Mar 2012 01:22:08 +0000
 Subject: Re: [PATCH 2/3] netfilter: potential null derefence.
-Message-Id: <20120301123004.GA7250@1984>
+Message-Id: <20120302012208.GA10185@1984>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1330593434-19275-1-git-send-email-santoshprasadnayak@gmail.com>
 In-Reply-To: <1330593434-19275-1-git-send-email-santoshprasadnayak@gmail.com>
@@ -19,10 +19,44 @@ On Thu, Mar 01, 2012 at 02:47:14PM +0530, santosh nayak wrote:
 >   error: potential null derefence 'cs'"
 > 
 >     i = cs[sp].n;  // If cs = Null then this will cause problem.
+> 
+> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+> ---
+>  net/bridge/netfilter/ebtables.c |    5 ++++-
+>  1 files changed, 4 insertions(+), 1 deletions(-)
+> 
+> diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+> index f3fcbd9..9c0f177 100644
+> --- a/net/bridge/netfilter/ebtables.c
+> +++ b/net/bridge/netfilter/ebtables.c
+> @@ -209,8 +209,10 @@ unsigned int ebt_do_table (unsigned int hook, struct sk_buff *skb,
+>  	   smp_processor_id());
+>  	if (private->chainstack)
+>  		cs = private->chainstack[smp_processor_id()];
+> -	else
+> +	else {
+>  		cs = NULL;
 
-Very sorry, I didn't see the out label.
+I just noticed we can remove this cs = NULL. No need to resend, I'll
+mangle it myself.
 
-I'll apply this to my nf [1] once David takes my previous request for
-pulling.
-
-[1] http://1984.lsi.us.es/git/net
+> +		goto out;
+> +	}
+>  	chaininfo = private->hook_entry[hook];
+>  	nentries = private->hook_entry[hook]->nentries;
+>  	point = (struct ebt_entry *)(private->hook_entry[hook]->data);
+> @@ -313,6 +315,7 @@ letscontinue:
+>  		read_unlock_bh(&table->lock);
+>  		return NF_ACCEPT;
+>  	}
+> +out:
+>  	read_unlock_bh(&table->lock);
+>  	return NF_DROP;
+>  }
+> -- 
+> 1.7.4.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe netfilter" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
