@@ -1,71 +1,38 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Sun, 18 Mar 2012 20:58:19 +0000
-Subject: Re: [PATCH] drivers/ata/pata_mpc52xx.c: drop unneeded devm cleanup functions
-Message-Id: <20120318205820.013643E07BF@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 06:49:09 +0000
+Subject: [patch] tty: cyclades: clean up a type issue
+Message-Id: <20120302064908.GA24508@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331415352-10260-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1331415352-10260-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, w.sang@pengutronix.de
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 10 Mar 2012 22:35:52 +0100, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> There is no need to call the devm cleanup functions on failure of a probe
-> or remove function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> Acked-by: Wolfram Sang <w.sang@pengutronix.de>
+Instead of casting value to unsigned long when we use it, we can just
+declare it that way at the start.
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> ---
-> Changed subject.  Included Wolfram's ACK.
-> 
->  drivers/ata/pata_mpc52xx.c |   11 -----------
->  1 file changed, 11 deletions(-)
-> 
-> diff --git a/drivers/ata/pata_mpc52xx.c b/drivers/ata/pata_mpc52xx.c
-> index 00748ae..1f02008 100644
-> --- a/drivers/ata/pata_mpc52xx.c
-> +++ b/drivers/ata/pata_mpc52xx.c
-> @@ -806,17 +806,12 @@ mpc52xx_ata_probe(struct platform_device *op)
->  	return 0;
->  
->   err:
-> -	devm_release_mem_region(&op->dev, res_mem.start, sizeof(*ata_regs));
->  	if (ata_irq)
->  		irq_dispose_mapping(ata_irq);
->  	if (task_irq)
->  		irq_dispose_mapping(task_irq);
->  	if (dmatsk)
->  		bcom_ata_release(dmatsk);
-> -	if (ata_regs)
-> -		devm_iounmap(&op->dev, ata_regs);
-> -	if (priv)
-> -		devm_kfree(&op->dev, priv);
->  	return rv;
->  }
->  
-> @@ -835,12 +830,6 @@ mpc52xx_ata_remove(struct platform_device *op)
->  	bcom_ata_release(priv->dmatsk);
->  	irq_dispose_mapping(priv->ata_irq);
->  
-> -	/* Clear up IO allocations */
-> -	devm_iounmap(&op->dev, priv->ata_regs);
-> -	devm_release_mem_region(&op->dev, priv->ata_regs_pa,
-> -				sizeof(*priv->ata_regs));
-> -	devm_kfree(&op->dev, priv);
-> -
->  	return 0;
->  }
->  
-> 
-
--- 
-Grant Likely, B.Sc, P.Eng.
-Secret Lab Technologies,Ltd.
+diff --git a/drivers/tty/cyclades.c b/drivers/tty/cyclades.c
+index c9bf779..fbca4ee 100644
+--- a/drivers/tty/cyclades.c
++++ b/drivers/tty/cyclades.c
+@@ -2397,7 +2397,7 @@ check_and_exit:
+  *	    transmit holding register is empty.  This functionality
+  *	    allows an RS485 driver to be written in user space.
+  */
+-static int get_lsr_info(struct cyclades_port *info, unsigned int __user *value)
++static int get_lsr_info(struct cyclades_port *info, unsigned long __user *value)
+ {
+ 	struct cyclades_card *card = info->card;
+ 	unsigned int result;
+@@ -2413,7 +2413,7 @@ static int get_lsr_info(struct cyclades_port *info, unsigned int __user *value)
+ 		/* Not supported yet */
+ 		return -EINVAL;
+ 	}
+-	return put_user(result, (unsigned long __user *)value);
++	return put_user(result, value);
+ }
+ 
+ static int cy_tiocmget(struct tty_struct *tty)
