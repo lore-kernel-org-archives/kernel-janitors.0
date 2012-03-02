@@ -1,45 +1,29 @@
-From: Chris Bagwell <chris@cnpbagwell.com>
-Date: Tue, 27 Mar 2012 20:39:10 +0000
-Subject: Re: [patch] Input: wacom - check for allocation failure in probe()
-Message-Id: <CAGzDe_a+RWkXz5UA39Bv51sm+Gb=0_5ZnmJMd_CJDmr2jRhtdg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 19:00:43 +0000
+Subject: [patch] block, sx8: fix pointer math issue getting fw version
+Message-Id: <20120302190042.GB3951@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120327201511.GA9197@elgon.mountain>
-In-Reply-To: <20120327201511.GA9197@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ping Cheng <pingc@wacom.com>, Eduard Hasenleithner <eduard@hasenleithner.at>, Jason Gerecke <killertofu@gmail.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks for catch.
+"mem" is type u8.  We need parenthesis here or it screws up the pointer
+math probably leading to an oops.
 
-Reviewed-by: Chris Bagwell <chris@cnpbagwell.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Tue, Mar 27, 2012 at 3:15 PM, Dan Carpenter <dan.carpenter@oracle.com> w=
-rote:
-> We accidentally removed the check for NULL in 3aac0ef10b "Input: wacom -
-> isolate input registration".
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/input/tablet/wacom_sys.c b/drivers/input/tablet/waco=
-m_sys.c
-> index 19ba586..0d26921 100644
-> --- a/drivers/input/tablet/wacom_sys.c
-> +++ b/drivers/input/tablet/wacom_sys.c
-> @@ -1002,6 +1002,8 @@ static int wacom_probe(struct usb_interface *intf, =
-const struct usb_device_id *i
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -EINVAL;
->
-> =A0 =A0 =A0 =A0wacom =3D kzalloc(sizeof(struct wacom), GFP_KERNEL);
-> + =A0 =A0 =A0 if (!wacom)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENOMEM;
->
-> =A0 =A0 =A0 =A0wacom_wac =3D &wacom->wacom_wac;
-> =A0 =A0 =A0 =A0wacom_wac->features =3D *((struct wacom_features *)id->dri=
-ver_info);
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/block/sx8.c b/drivers/block/sx8.c
+index e7472f5..3fb6ab4 100644
+--- a/drivers/block/sx8.c
++++ b/drivers/block/sx8.c
+@@ -1120,7 +1120,7 @@ static inline void carm_handle_resp(struct carm_host *host,
+ 			break;
+ 		case MISC_GET_FW_VER: {
+ 			struct carm_fw_ver *ver = (struct carm_fw_ver *)
+-				mem + sizeof(struct carm_msg_get_fw_ver);
++				(mem + sizeof(struct carm_msg_get_fw_ver));
+ 			if (!error) {
+ 				host->fw_ver = le32_to_cpu(ver->version);
+ 				host->flags |= (ver->features & FL_FW_VER_MASK);
