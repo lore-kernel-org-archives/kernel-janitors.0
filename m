@@ -1,60 +1,60 @@
-From: "David Laight" <David.Laight@ACULAB.COM>
-Date: Fri, 02 Mar 2012 09:15:37 +0000
-Subject: RE: [PATCH] Bluetooth: Silence static checker warning.
-Message-Id: <AE90C24D6B3A694183C094C60CF0A2F6026B6E88@saturn3.aculab.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 11:04:20 +0000
+Subject: Re: [PATCH] Bluetooth: Silence static checker warning.
+Message-Id: <20120302110420.GH22598@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="cfJ13FhsvNR/yOpm"
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1330537602.3392.101.camel@aeonflux>
-References: <1330535217-26785-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330535217-26785-1-git-send-email-santoshprasadnayak@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>, santosh nayak <santoshprasadnayak@gmail.com>
-Cc: padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
- 
-> > > diff --git a/net/bluetooth/l2cap_sock.c
-b/net/bluetooth/l2cap_sock.c
-> > > index 401d942..d206321 100644
-> > > --- a/net/bluetooth/l2cap_sock.c
-> > > +++ b/net/bluetooth/l2cap_sock.c
-> > > @@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock,
-struct sockaddr *addr, int alen)
-> > >  	}
-> > >  
-> > >  	if (la.l2_cid)
-> > > -		err = l2cap_add_scid(chan, la.l2_cid);
-> > > +		err = l2cap_add_scid(chan, __le16_to_cpu(la.l2_cid));
-> > >  	else
-> > >  		err = l2cap_add_psm(chan, &la.l2_bdaddr, la.l2_psm);
-> > >  
-> > > @@ -123,7 +123,8 @@ static int l2cap_sock_connect(struct socket
-*sock, struct sockaddr *addr, int al
-> > >  	if (la.l2_cid && la.l2_psm)
-> > >  		return -EINVAL;
-> > >  
-> > > -	err = l2cap_chan_connect(chan, la.l2_psm, la.l2_cid,
-&la.l2_bdaddr);
-> > > +	err = l2cap_chan_connect(chan, la.l2_psm,
-__le16_to_cpu(la.l2_cid),
-> > > +				&la.l2_bdaddr);
-> > >  	if (err)
-> > >  		goto done;
-> > 
-> > I am not sure about this one. Need to go back and read through the
-> > source code. The value provided from userspace is already in the
-right
-> > host endian. Could be that we mess up our internal classification.
-And
-> > instead of adding __le16_to_cpu we should fix its classification.
-> 
-> I confused myself here, so the provided PSM and CID values coming from
-> userspace are little endian. Patch is correct.
-
-How long has this code been in tree?
-It isn't obvious to me that this change won't break code on BE systems
-where the application code is already fixing the endianness.
-
-	David
+References: <1330537602.3392.101.camel@aeonflux>
+ <AE90C24D6B3A694183C094C60CF0A2F6026B6E88@saturn3.aculab.com>
+In-Reply-To: <AE90C24D6B3A694183C094C60CF0A2F6026B6E88@saturn3.aculab.com>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: Marcel Holtmann <marcel@holtmann.org>, santosh nayak <santoshprasadnayak@gmail.com>, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ville Tervo <ville.tervo@nokia.com>
 
 
+--cfJ13FhsvNR/yOpm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Mar 02, 2012 at 09:15:37AM -0000, David Laight wrote:
+> How long has this code been in tree?
+> It isn't obvious to me that this change won't break code on BE systems
+> where the application code is already fixing the endianness.
+>=20
+
+It looks like we've had an endian bug since last February.
+
+b62f328b8f20a "Bluetooth: Add server socket support for LE
+connection"
+
++               l2cap_pi(sk)->scid =3D la.l2_cid;
+
+->scid was cpu endian.
+
+regards,
+dan carpenter
+
+--cfJ13FhsvNR/yOpm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPUKkzAAoJEOnZkXI/YHqRADkP/217s0ztGrn66LSv/c5F1A4k
+6cBasjmCmLkN/AE/BMwu6lQoSh/U+flf2SIgxT1ULuyni/FpJ+bVwn6flrOPaRzB
+D+JPi5T3vEMnM6s8P2C6gVrwvCEPvzUhvgaCXgh6rmQO/OKq5H49RjyRuhWUb/jG
+puXy4pFxr4AfLYuSS4I5xNfSPAec9dSX2q8a1PZnvlOkc/zj2uLeJh5dyFwDQWIc
+RA31sMNUF6x1nLJ91HYfXuu9kJynQQeX8HCtxBU1Vn7Inc1EQ4HrqPkOgTaFBbo9
+tL0i9uGcWGbzZYbZp5K6yPZyaY4M+fxjQNGMO+P14AKIZwJWNKkIiusNEasC18ea
+gnm/SO+VNl8xLsAjJDcgyFmudGvFMgqkxY+vDK8Q2MP2qymJLigLzNkEUTq1c4Wx
+X47Pob9mFSLZARCKE+FEIOInLcJjTnJzTNBYcS1s35wWJ7a8IZ94JheT6gEL+0xP
+tmz3jdvOBHPzG+wkID31/JyTjRqERb749i9aiGF1Wy2pXSvwa8uKE47nDDw7zt4r
+hjbsft9ubm+W0lt3ofw0TkL97A1wBLebTV/ZT/FDtBflyNYFmjXq/oEyqyF+vH1i
+USciqxB3mp9znqp13k9ADR4OKzqJ15uk9LgT/jjHmXFgnOC7/3iALpSXfTHCqupA
+woGcH+1N1MOFEKlxdzPP
+=nrfy
+-----END PGP SIGNATURE-----
+
+--cfJ13FhsvNR/yOpm--
