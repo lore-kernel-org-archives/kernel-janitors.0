@@ -1,50 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 02 Mar 2012 07:44:15 +0000
+From: Andrei Emeltchenko <andrei.emeltchenko.news@gmail.com>
+Date: Fri, 02 Mar 2012 12:32:15 +0000
 Subject: Re: Resend: [PATCH] Bluetooth: Fix Endian Bug.
-Message-Id: <20120302074414.GG22598@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6BvahUXLYAruDZOj"
+Message-Id: <20120302123210.GA4741@aemeltch-MOBL1>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
-To: santosh nayak <santoshprasadnayak@gmail.com>
+References: <1330599561-20392-1-git-send-email-santoshprasadnayak@gmail.com>
+ <20120301123540.GE25627@aemeltch-MOBL1>
+ <CAOD=uF4LSS8nuKMNHGEH2JsVZHU0rntSxZjvNaa4oZrey1macw@mail.gmail.com>
+In-Reply-To: <CAOD=uF4LSS8nuKMNHGEH2JsVZHU0rntSxZjvNaa4oZrey1macw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: santosh prasad nayak <santoshprasadnayak@gmail.com>
 Cc: marcel@holtmann.org, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Hi Santosh,
 
---6BvahUXLYAruDZOj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, Mar 01, 2012 at 07:34:58PM +0530, santosh prasad nayak wrote:
+> Andrei,
+>=20
+> I could not get you.
+>=20
+> Do you want me to resend the patch with subject,
+>   "[PATCH] Bluetooth: Fix network to host endian conversion for L2CAP
+> chan id."  ?
 
-When you put "Resend:" in the subject it breaks git am.  Git am is
-supposed to strip out the [PATCH] but the Resend confuses it.
+No, the main concern was your commit message which is changelog and should
+come after "---" as it is shown in the example below.
 
-Put the subject as:
-[PATCH v3] Bluetooth: Fix Endian Bug.
+> > On Thu, Mar 01, 2012 at 04:29:21PM +0530, santosh nayak wrote:
+> >> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+> >>
+> >> Fix for endian bug.
+> >>
+> >> Fix for null dereferenced removed as it is already
+> >> submitted by Andrei.
+> >>
+> >> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+> >> ---
+> >> =A0net/bluetooth/l2cap_sock.c | =A0 =A05 +++--
+> >> =A01 files changed, 3 insertions(+), 2 deletions(-)
+> >
+> > We prefer following commit log (this is the example)
+> >
+> > <------8<----------------------------------------------------------
+> > | =A0From: Santosh Nayak <santoshprasadnayak@gmail.com>
+> > |
+> > | =A0Fix network to host endian conversion for L2CAP chan id.
+> > |
+> > | =A0Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+> > |
+> > | =A0---
+> > | =A0 =A0 =A0 =A0 =A0* v2 Fix for null dereferenced removed as it is al=
+ready
+> > | =A0 =A0 =A0 =A0 =A0submitted by Andrei.
+> > |
+> > | =A0 =A0net/bluetooth/l2cap_sock.c | =A0 =A05 +++--
+> > | =A0 =A01 files changed, 3 insertions(+), 2 deletions(-)
+> > |
+> > <------8<----------------------------------------------------------
 
-regards,
-dan carpenter
-
-
---6BvahUXLYAruDZOj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPUHpOAAoJEOnZkXI/YHqRHeIP/jxrFMsvkRKXf/nG60GkpcyU
-06kc4HL6Q8ga6KH6LNU9jPXSYEQ60m/a//aWrSQbbDBoErxDnDHrskQGxIX5beMv
-wPzCTW36kquiuVhQ6Gpsa825aKhZl2Wl87R91PCieN8lZFnpCyYC/qZmVCc3M1hu
-Dfd/ca7dBhQNrjHMrv2aLSUL3VkXwwyPcrGc0OAzVrPaHBSyMXR2tzi0WyR5aKdb
-0ebvJAqAEduI/xPa57VMnnAzIt2JPo6byt2B6HNn8rhL9QFEreB0i49HJMVSZzGj
-Bwh71j6IejcC+FQW0apRdjAGktgBd48rdVu3HE8kxlWdyidNcfXMGG5rgIHYPuPs
-yyBsRmNjUZyWPCn7ANiGUfBFM+T9IlAycy0++IxTDgNozwHWrioP51hxIIPinyVS
-3orJFq4cB5OHJNQ3e9Q7+r58Kt6+b/S7+Xw4fStYyEArKCTuLgCZs4CgJf4/hanY
-n2YxhFaVFkj2Pnc49v6rWlg1zPV0/knFDkCEpEtcQjHBZ8SdBaJWHmlmLDtQ/mEV
-88WkGJQVsXJ/vWDw7PQFpN5ZR4y5QT5YVAF8ZHLAiiAfiA7r017VMg5EANGmVJBz
-M4dW66Eh5C0lZCjOmNe9P+QGtL0+xl49Zu8UpGdMxA6i1mJbr4PVoHNHO3dxk+t8
-MG/aytQAWw2w8mm5vlfN
-=B2LU
------END PGP SIGNATURE-----
-
---6BvahUXLYAruDZOj--
+Best regards=20
+Andrei Emeltchenko=20
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
