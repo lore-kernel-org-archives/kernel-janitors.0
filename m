@@ -1,65 +1,31 @@
-From: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
-Date: Fri, 02 Mar 2012 18:51:42 +0000
-Subject: RE: [PATCH 1/3] qla3xxx: ethernet: Fix bogus interrupt state flag.
-Message-Id: <5E4F49720D0BAD499EE1F01232234BA8743804E40F@AVEXMB1.qlogic.org>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 02 Mar 2012 21:13:32 +0000
+Subject: Re: [PATCH 1/3] qla3xxx: ethernet: Fix bogus interrupt state flag.
+Message-Id: <20120302.161332.2236794166581618113.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1330700945-18195-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330700945-18195-1-git-send-email-santoshprasadnayak@gmail.com>
+	<1330702146.2611.1.camel@bwh-desktop>
+	<CAOD=uF5ebyA-yd8T8nXd9vYRw1yvFKVQd9TmcBwMnxFs6enKvA@mail.gmail.com>
+In-Reply-To: <CAOD=uF5ebyA-yd8T8nXd9vYRw1yvFKVQd9TmcBwMnxFs6enKvA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: Ron Mercer <ron.mercer@qlogic.com>, Dept-Eng Linux Driver <Linux-Driver@qlogic.com>, netdev <netdev@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: santoshprasadnayak@gmail.com
+Cc: bhutchings@solarflare.com, jitendra.kalsaria@qlogic.com, ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We will review your patch and get back to you.
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 2 Mar 2012 21:24:29 +0530
 
------Original Message-----
-From: santosh nayak [mailto:santoshprasadnayak@gmail.com] 
-Sent: Friday, March 02, 2012 7:09 AM
-To: Jitendra Kalsaria
-Cc: Ron Mercer; Dept-Eng Linux Driver; netdev; linux-kernel; kernel-janitors@vger.kernel.org; Santosh Nayak
-Subject: [PATCH 1/3] qla3xxx: ethernet: Fix bogus interrupt state flag.
+> In "ql_adapter_initialize", first unlock is done by
+> "spin_unlock_irqrestore(&qdev->hw_lock, hw_flags)"
+> with "hw_flags = 0"   ("hw_flags" is local variable and initialized to
+> zero.),   which is as good as
+> spin_unlock_irq.
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+You must never pass to irqrestore anything other than a hw_flags
+value given by irqsave or similar.
 
-In 'ql_adapter_initialize'
-the first call for 'spin_unlock_irqrestore()' is with hw_flags = 0,
-which is as good as 'spin_unlock_irq()' (unconditional interrupt
-enabling). If this is intended, then for better performance
-'spin_unlock_irqrestore()' can be replaced with 'spin_unlock_irq()'
-and 'spin_lock_irqsave()' can be replaced by 'spin_lock_irq()
-
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- drivers/net/ethernet/qlogic/qla3xxx.c |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qla3xxx.c b/drivers/net/ethernet/qlogic/qla3xxx.c
-index d49f6da..8da3e41 100644
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -3017,7 +3017,6 @@ static int ql_adapter_initialize(struct ql3_adapter *qdev)
- 		(void __iomem *)port_regs;
- 	u32 delay = 10;
- 	int status = 0;
--	unsigned long hw_flags = 0;
- 
- 	if (ql_mii_setup(qdev))
- 		return -1;
-@@ -3228,9 +3227,9 @@ static int ql_adapter_initialize(struct ql3_adapter *qdev)
- 		value = ql_read_page0_reg(qdev, &port_regs->portStatus);
- 		if (value & PORT_STATUS_IC)
- 			break;
--		spin_unlock_irqrestore(&qdev->hw_lock, hw_flags);
-+		spin_unlock_irq(&qdev->hw_lock);
- 		msleep(500);
--		spin_lock_irqsave(&qdev->hw_lock, hw_flags);
-+		spin_lock_irq(&qdev->hw_lock);
- 	} while (--delay);
- 
- 	if (delay = 0) {
--- 
-1.7.4.4
-
-
-
+You may not assume anything about what values hw_flags takes on nor
+what those values might mean, they are architecture specific so
+you may not just set it to zero and assume that does anything in
+particular.
