@@ -1,28 +1,58 @@
-From: James Morris <jmorris@namei.org>
-Date: Wed, 07 Mar 2012 00:13:45 +0000
-Subject: Re: [Keyrings] [PATCH] KEYS: testing wrong bit for KEY_FLAG_REVOKED
-Message-Id: <alpine.LRH.2.02.1203071113170.24515@tundra.namei.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 06:59:19 +0000
+Subject: [patch] iommu/amd: fix type bug in flush code
+Message-Id: <20120302065919.GF24508@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 6 Mar 2012, David Howells wrote:
+write_file_bool() modifies 32 bits of data, so "amd_iommu_unmap_flush"
+needs to be 32 bits as well or we'll corrupt memory.  Fortunately it
+looks like the data is aligned with a gap after the declaration so this
+is harmless in production.
 
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> The test for "if (cred->request_key_auth->flags & KEY_FLAG_REVOKED) {"
-> should actually testing that the (1 << KEY_FLAG_REVOKED) bit is set.
-> The current code actually checks for KEY_FLAG_DEAD.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+diff --git a/drivers/iommu/amd_iommu_types.h b/drivers/iommu/amd_iommu_types.h
+index 2452f3b..f0469e0 100644
+--- a/drivers/iommu/amd_iommu_types.h
++++ b/drivers/iommu/amd_iommu_types.h
+@@ -649,7 +649,7 @@ extern unsigned long *amd_iommu_pd_alloc_bitmap;
+  * If true, the addresses will be flushed on unmap time, not when
+  * they are reused
+  */
+-extern bool amd_iommu_unmap_flush;
++extern u32 amd_iommu_unmap_flush;
+ 
+ /* Smallest number of PASIDs supported by any IOMMU in the system */
+ extern u32 amd_iommu_max_pasids;
 
-
--- 
-James Morris
-<jmorris@namei.org>
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index daa333f..f5fbce2 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -402,7 +402,7 @@ static void amd_iommu_stats_init(void)
+ 		return;
+ 
+ 	de_fflush  = debugfs_create_bool("fullflush", 0444, stats_dir,
+-					 (u32 *)&amd_iommu_unmap_flush);
++					 &amd_iommu_unmap_flush);
+ 
+ 	amd_iommu_stats_add(&compl_wait);
+ 	amd_iommu_stats_add(&cnt_map_single);
+diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+index bdea288..7d159fc 100644
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -129,7 +129,7 @@ u16 amd_iommu_last_bdf;			/* largest PCI device id we have
+ 					   to handle */
+ LIST_HEAD(amd_iommu_unity_map);		/* a list of required unity mappings
+ 					   we find in ACPI */
+-bool amd_iommu_unmap_flush;		/* if true, flush on every unmap */
++u32 amd_iommu_unmap_flush;		/* if true, flush on every unmap */
+ 
+ LIST_HEAD(amd_iommu_list);		/* list of all AMD IOMMUs in the
+ 					   system */
