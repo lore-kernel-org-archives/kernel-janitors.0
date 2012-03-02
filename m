@@ -1,74 +1,33 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Thu, 01 Mar 2012 17:21:03 +0000
-Subject: Resend [PATCH] netfilter: Fix copy_to_user too small size parametre.
-Message-Id: <1330621743-12883-1-git-send-email-santoshprasadnayak@gmail.com>
+From: "David Laight" <David.Laight@ACULAB.COM>
+Date: Fri, 02 Mar 2012 09:05:10 +0000
+Subject: RE: Resend [PATCH] netfilter: Fix copy_to_user too small size parametre.
+Message-Id: <AE90C24D6B3A694183C094C60CF0A2F6026B6E87@saturn3.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <1330621743-12883-1-git-send-email-santoshprasadnayak@gmail.com>
+References: <1330621743-12883-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1330621743-12883-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bart.de.schuymer@pandora.be
-Cc: pablo@netfilter.org, kaber@trash.net, shemminger@vyatta.com, davem@davemloft.net, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: santosh nayak <santoshprasadnayak@gmail.com>, bart.de.schuymer@pandora.be
+Cc: pablo@netfilter.org, kaber@trash.net, shemminger@vyatta.com, davem@davemloft.net, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
-
-user-space ebtables expects 32 bytes-long names, but xt_match uses
-29 bytes. Fill the remaining bytes with zeroes.
-
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- net/bridge/netfilter/ebtables.c |   14 +++++++++++---
- 1 files changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 5864cc4..21f337a 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1335,7 +1335,10 @@ static inline int ebt_make_matchname(const struct ebt_entry_match *m,
-     const char *base, char __user *ubase)
- {
- 	char __user *hlp = ubase + ((char *)m - base);
--	if (copy_to_user(hlp, m->u.match->name, EBT_FUNCTION_MAXNAMELEN))
-+	char name[EBT_FUNCTION_MAXNAMELEN] = {};
-+
-+	strncpy(name, m->u.match->name, sizeof(name));
-+	if (copy_to_user(hlp, name, EBT_FUNCTION_MAXNAMELEN))
- 		return -EFAULT;
- 	return 0;
- }
-@@ -1344,7 +1347,10 @@ static inline int ebt_make_watchername(const struct ebt_entry_watcher *w,
-     const char *base, char __user *ubase)
- {
- 	char __user *hlp = ubase + ((char *)w - base);
--	if (copy_to_user(hlp , w->u.watcher->name, EBT_FUNCTION_MAXNAMELEN))
-+	char name[EBT_FUNCTION_MAXNAMELEN] = {};
-+
-+	strncpy(name, w->u.watcher->name, sizeof(name));
-+	if (copy_to_user(hlp , name, EBT_FUNCTION_MAXNAMELEN))
- 		return -EFAULT;
- 	return 0;
- }
-@@ -1355,10 +1361,12 @@ ebt_make_names(struct ebt_entry *e, const char *base, char __user *ubase)
- 	int ret;
- 	char __user *hlp;
- 	const struct ebt_entry_target *t;
-+	char name[EBT_FUNCTION_MAXNAMELEN] = {};
  
- 	if (e->bitmask = 0)
- 		return 0;
- 
-+	strncpy(name, t->u.target->name, sizeof(name));
- 	hlp = ubase + (((char *)e + e->target_offset) - base);
- 	t = (struct ebt_entry_target *)(((char *)e) + e->target_offset);
- 
-@@ -1368,7 +1376,7 @@ ebt_make_names(struct ebt_entry *e, const char *base, char __user *ubase)
- 	ret = EBT_WATCHER_ITERATE(e, ebt_make_watchername, base, ubase);
- 	if (ret != 0)
- 		return ret;
--	if (copy_to_user(hlp, t->u.target->name, EBT_FUNCTION_MAXNAMELEN))
-+	if (copy_to_user(hlp, name, EBT_FUNCTION_MAXNAMELEN))
- 		return -EFAULT;
- 	return 0;
- }
--- 
-1.7.4.4
+> -	if (copy_to_user(hlp, m->u.match->name, 
+> EBT_FUNCTION_MAXNAMELEN))
+> +	char name[EBT_FUNCTION_MAXNAMELEN] = {};
+> +
+> +	strncpy(name, m->u.match->name, sizeof(name));
+> +	if (copy_to_user(hlp, name, EBT_FUNCTION_MAXNAMELEN))
+>  		return -EFAULT;
+
+strncpy() is very rarely the function you are looking for.
+In this case it MIGHT be right (since you do a fixed size
+copy_to_user).
+OTOH there is no need to also initialise name[].
+And it isn't entirely clear whether the application
+is allowed to be given a non-terminated string.
+
+	David
+
 
