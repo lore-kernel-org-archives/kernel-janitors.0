@@ -1,35 +1,28 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sat, 31 Mar 2012 23:59:10 +0000
-Subject: [PATCH] x86, vsyscall: Fix sparse warning: Using plain integer as NULL
-Message-Id: <1333238350-6798-1-git-send-email-emilgoode@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 08:08:14 +0000
+Subject: [patch] usb: otg: make probe() work again
+Message-Id: <20120302080813.GA15608@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This patch silences the following sparse warning:
-arch/x86/kernel/vsyscall_64.c:250:34:
-       warning: Using plain integer as NULL pointer
+The probe() function will always fail because we're testing the wrong
+variable.
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
- arch/x86/kernel/vsyscall_64.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/arch/x86/kernel/vsyscall_64.c b/arch/x86/kernel/vsyscall_64.c
-index f386dc4..6170ff9 100644
---- a/arch/x86/kernel/vsyscall_64.c
-+++ b/arch/x86/kernel/vsyscall_64.c
-@@ -247,7 +247,7 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+diff --git a/drivers/usb/otg/ab8500-usb.c b/drivers/usb/otg/ab8500-usb.c
+index e6371ff..a84af67 100644
+--- a/drivers/usb/otg/ab8500-usb.c
++++ b/drivers/usb/otg/ab8500-usb.c
+@@ -489,7 +489,7 @@ static int __devinit ab8500_usb_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- 		ret = sys_getcpu((unsigned __user *)regs->di,
- 				 (unsigned __user *)regs->si,
--				 0);
-+				 NULL);
- 		break;
+ 	otg = kzalloc(sizeof *otg, GFP_KERNEL);
+-	if (!ab->phy.otg) {
++	if (!otg) {
+ 		kfree(ab);
+ 		return -ENOMEM;
  	}
- 
--- 
-1.7.9.1
-
