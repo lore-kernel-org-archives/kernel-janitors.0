@@ -1,23 +1,37 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Thu, 08 Mar 2012 16:08:18 +0000
-Subject: Re: [patch] tty: moxa: fix bit test in moxa_start()
-Message-Id: <20120308160818.6411c83e@pyramind.ukuu.org.uk>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 02 Mar 2012 15:21:39 +0000
+Subject: [PATCH 2/3] qla3xxx: ethernet: Silence static checker warning.
+Message-Id: <1330700979-18231-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120307100500.GD25452@elgon.mountain>
-In-Reply-To: <20120307100500.GD25452@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jitendra.kalsaria@qlogic.com
+Cc: ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-On Wed, 7 Mar 2012 13:05:00 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-> This is supposed to be doing a shift before the comparison instead of
-> just doing a bitwise AND directly.  The current code means the start()
-> just returns without doing anything.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Silence the following warning:
+"warn: returning -1 instead of -ENOMEM is sloppy".
 
-Acked-by: Alan Cox <alan@linux.intel.com>
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/net/ethernet/qlogic/qla3xxx.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qla3xxx.c b/drivers/net/ethernet/qlogic/qla3xxx.c
+index 8da3e41..df09b1c 100644
+--- a/drivers/net/ethernet/qlogic/qla3xxx.c
++++ b/drivers/net/ethernet/qlogic/qla3xxx.c
+@@ -2836,7 +2836,7 @@ static int ql_create_send_free_list(struct ql3_adapter *qdev)
+ 		req_q_curr++;
+ 		tx_cb->oal = kmalloc(512, GFP_KERNEL);
+ 		if (tx_cb->oal = NULL)
+-			return -1;
++			return -ENOMEM;
+ 	}
+ 	return 0;
+ }
+-- 
+1.7.4.4
+
