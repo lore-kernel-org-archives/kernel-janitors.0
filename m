@@ -1,20 +1,27 @@
-From: joydabah2@yahoo.com
-Date: Mon, 05 Mar 2012 22:43:13 +0000
-Subject: Hello?
-Message-Id: <4f554181.21c.2fe4.23460@econetmobile.co.zw>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 18:51:00 +0000
+Subject: [patch] usb: gadget: dummy_hcd: signedness bug in transfer()
+Message-Id: <20120302185051.GA3951@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hello?
-I hope you are fine. I am pleased to recognize you. My name
-is Joy dabah from sudan. Interested me to be a relationship
-of friendship and true, The most important thing is honesty,
-sincerity and seriousness in the relationship. I am a girl
-believe in freedom. And enjoy life and I love all people . I
-am honest with myself and others. And I hate lying, fraud
-and tampering with and manipulating the feelings of others .
-I like intellectual debate with others and benefit from
-their knowledge, I wait your reply soon.
-love from joy.
+"len" is unsigned so it's never less than zero.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/usb/gadget/dummy_hcd.c b/drivers/usb/gadget/dummy_hcd.c
+index 8cc1a88..e1cd56c 100644
+--- a/drivers/usb/gadget/dummy_hcd.c
++++ b/drivers/usb/gadget/dummy_hcd.c
+@@ -1352,7 +1352,7 @@ top:
+ 			len = dummy_perform_transfer(urb, req, len);
+ 
+ 			ep->last_io = jiffies;
+-			if (len < 0) {
++			if ((int)len < 0) {
+ 				req->req.status = len;
+ 			} else {
+ 				limit -= len;
