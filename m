@@ -1,40 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 02 Mar 2012 06:58:32 +0000
-Subject: [patch] dma-debug: debugfs_create_bool() takes a u32 pointer
-Message-Id: <20120302065832.GE24508@elgon.mountain>
+From: Neil Horman <nhorman@tuxdriver.com>
+Date: Fri, 02 Mar 2012 11:22:03 +0000
+Subject: Re: [patch] dma-debug: debugfs_create_bool() takes a u32 pointer
+Message-Id: <20120302112203.GA14827@hmsreliant.think-freely.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120302065832.GE24508@elgon.mountain>
+In-Reply-To: <20120302065832.GE24508@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joerg Roedel <joerg.roedel@amd.com>
-Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Neil Horman <nhorman@tuxdriver.com>, Alan Stern <stern@rowland.harvard.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Joerg Roedel <joerg.roedel@amd.com>, Stanislaw Gruszka <sgruszka@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Alan Stern <stern@rowland.harvard.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Even though it has "bool" in the name, you have pass a u32 pointer to
-debugfs_create_bool().  Otherwise you get memory corruption in
-write_file_bool().  Fortunately in this case the corruption happens in
-an alignment hole between variables so it doesn't cause any problems.
+On Fri, Mar 02, 2012 at 09:58:32AM +0300, Dan Carpenter wrote:
+> Even though it has "bool" in the name, you have pass a u32 pointer to
+> debugfs_create_bool().  Otherwise you get memory corruption in
+> write_file_bool().  Fortunately in this case the corruption happens in
+> an alignment hole between variables so it doesn't cause any problems.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/lib/dma-debug.c b/lib/dma-debug.c
+> index 13ef233..08cd5a6 100644
+> --- a/lib/dma-debug.c
+> +++ b/lib/dma-debug.c
+> @@ -78,7 +78,7 @@ static LIST_HEAD(free_entries);
+>  static DEFINE_SPINLOCK(free_entries_lock);
+>  
+>  /* Global disable flag - will be set in case of an error */
+> -static bool global_disable __read_mostly;
+> +static u32 global_disable __read_mostly;
+>  
+>  /* Global error count */
+>  static u32 error_count;
+> @@ -657,7 +657,7 @@ static int dma_debug_fs_init(void)
+>  
+>  	global_disable_dent = debugfs_create_bool("disabled", 0444,
+>  			dma_debug_dent,
+> -			(u32 *)&global_disable);
+> +			&global_disable);
+>  	if (!global_disable_dent)
+>  		goto out_err;
+>  
+> 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-index 13ef233..08cd5a6 100644
---- a/lib/dma-debug.c
-+++ b/lib/dma-debug.c
-@@ -78,7 +78,7 @@ static LIST_HEAD(free_entries);
- static DEFINE_SPINLOCK(free_entries_lock);
- 
- /* Global disable flag - will be set in case of an error */
--static bool global_disable __read_mostly;
-+static u32 global_disable __read_mostly;
- 
- /* Global error count */
- static u32 error_count;
-@@ -657,7 +657,7 @@ static int dma_debug_fs_init(void)
- 
- 	global_disable_dent = debugfs_create_bool("disabled", 0444,
- 			dma_debug_dent,
--			(u32 *)&global_disable);
-+			&global_disable);
- 	if (!global_disable_dent)
- 		goto out_err;
- 
+This certainly works, but a quick search of call sites shows this isn't the only
+place someone passes a bool to debugfs_create_bool. I think the better solution
+would be to change debugfs_create_bool and its corresponding read/write methods
+to actually work with a bool type, and then clean all the call sites to pass in
+a bool properly, instead of a u32.
+
+Thanks
+Neil
+
