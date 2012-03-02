@@ -1,24 +1,40 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Thu, 29 Mar 2012 18:57:31 +0000
-Subject: Re: [patch] blkcg: change a spin_lock() to spin_lock_irq()
-Message-Id: <4F74B09B.3070100@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 06:58:32 +0000
+Subject: [patch] dma-debug: debugfs_create_bool() takes a u32 pointer
+Message-Id: <20120302065832.GE24508@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120329185119.GA21812@elgon.mountain>
-In-Reply-To: <20120329185119.GA21812@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: Stanislaw Gruszka <sgruszka@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Neil Horman <nhorman@tuxdriver.com>, Alan Stern <stern@rowland.harvard.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2012-03-29 20:51, Dan Carpenter wrote:
-> Smatch complains that we re-enable IRQs twice.  It looks like we forgot
-> to disable them here on the spin_trylock() failure path.  This was added
-> in 9f13ef678e "blkcg: use double locking instead of RCU for blkg
-> synchronization".
+Even though it has "bool" in the name, you have pass a u32 pointer to
+debugfs_create_bool().  Otherwise you get memory corruption in
+write_file_bool().  Fortunately in this case the corruption happens in
+an alignment hole between variables so it doesn't cause any problems.
 
-Thanks, that is indeed a screwup. Fix applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Jens Axboe
-
+diff --git a/lib/dma-debug.c b/lib/dma-debug.c
+index 13ef233..08cd5a6 100644
+--- a/lib/dma-debug.c
++++ b/lib/dma-debug.c
+@@ -78,7 +78,7 @@ static LIST_HEAD(free_entries);
+ static DEFINE_SPINLOCK(free_entries_lock);
+ 
+ /* Global disable flag - will be set in case of an error */
+-static bool global_disable __read_mostly;
++static u32 global_disable __read_mostly;
+ 
+ /* Global error count */
+ static u32 error_count;
+@@ -657,7 +657,7 @@ static int dma_debug_fs_init(void)
+ 
+ 	global_disable_dent = debugfs_create_bool("disabled", 0444,
+ 			dma_debug_dent,
+-			(u32 *)&global_disable);
++			&global_disable);
+ 	if (!global_disable_dent)
+ 		goto out_err;
+ 
