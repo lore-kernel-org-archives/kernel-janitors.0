@@ -1,48 +1,67 @@
-From: Corentin Chary <corentin.chary@gmail.com>
-Date: Thu, 15 Mar 2012 08:14:42 +0000
-Subject: Re: [patch] samsung-laptop: cleanup return type: mode_t vs umode_t
-Message-Id: <CAHR064i9nWy+qagj9bcAR8h_HUTcVWBMWavWaz0BCmha=XzqTg@mail.gmail.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 02 Mar 2012 06:29:26 +0000
+Subject: [PATCH] cifs: possible memory leak in xattr.
+Message-Id: <1330669046-13738-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120315071020.GA3567@elgon.mountain>
-In-Reply-To: <20120315071020.GA3567@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Santosh Nayak <santoshprasadnayak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-On Thu, Mar 15, 2012 at 8:10 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> This function returns a umode_t (unsigned short) instead of mode_t which
-> is an unsigned int on some architectures.  Cleaning this up silences a
-> compile warning:
->
-> drivers/platform/x86/samsung-laptop.c:1108:2: warning: initialization
->        from incompatible pointer type [enabled by default]
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/platform/x86/samsung-laptop.c b/drivers/platform/x86/samsung-laptop.c
-> index 7d7109f..0550bc5 100644
-> --- a/drivers/platform/x86/samsung-laptop.c
-> +++ b/drivers/platform/x86/samsung-laptop.c
-> @@ -1086,7 +1086,7 @@ static int __init samsung_backlight_init(struct samsung_laptop *samsung)
->        return 0;
->  }
->
-> -static mode_t samsung_sysfs_is_visible(struct kobject *kobj,
-> +static umode_t samsung_sysfs_is_visible(struct kobject *kobj,
->                                       struct attribute *attr, int idx)
->  {
->        struct device *dev = container_of(kobj, struct device, kobj);
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Thanks for the patch.
+Memory is allocated irrespective of whether CIFS_ACL is configured
+or not. But free is happenning only if CIFS_ACL is set. This is a
+possible memory leak scenario.
 
-Acked-by: Corentin Chary <corentincj@iksaif.net>
+Fix is:
+Allocate and free memory only if CIFS_ACL is configured.
 
-Matthew, could you grab that one too ?
-Thanks,
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ fs/cifs/xattr.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-
+diff --git a/fs/cifs/xattr.c b/fs/cifs/xattr.c
+index 45f07c4..10d92cf 100644
+--- a/fs/cifs/xattr.c
++++ b/fs/cifs/xattr.c
+@@ -105,7 +105,6 @@ int cifs_setxattr(struct dentry *direntry, const char *ea_name,
+ 	struct cifs_tcon *pTcon;
+ 	struct super_block *sb;
+ 	char *full_path;
+-	struct cifs_ntsd *pacl;
+ 
+ 	if (direntry = NULL)
+ 		return -EIO;
+@@ -164,23 +163,24 @@ int cifs_setxattr(struct dentry *direntry, const char *ea_name,
+ 			cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MAP_SPECIAL_CHR);
+ 	} else if (strncmp(ea_name, CIFS_XATTR_CIFS_ACL,
+ 			strlen(CIFS_XATTR_CIFS_ACL)) = 0) {
++#ifdef CONFIG_CIFS_ACL
++		struct cifs_ntsd *pacl;
+ 		pacl = kmalloc(value_size, GFP_KERNEL);
+ 		if (!pacl) {
+ 			cFYI(1, "%s: Can't allocate memory for ACL",
+ 					__func__);
+ 			rc = -ENOMEM;
+ 		} else {
+-#ifdef CONFIG_CIFS_ACL
+ 			memcpy(pacl, ea_value, value_size);
+ 			rc = set_cifs_acl(pacl, value_size,
+ 				direntry->d_inode, full_path, CIFS_ACL_DACL);
+ 			if (rc = 0) /* force revalidate of the inode */
+ 				CIFS_I(direntry->d_inode)->time = 0;
+ 			kfree(pacl);
++		}
+ #else
+ 			cFYI(1, "Set CIFS ACL not supported yet");
+ #endif /* CONFIG_CIFS_ACL */
+-		}
+ 	} else {
+ 		int temp;
+ 		temp = strncmp(ea_name, POSIX_ACL_XATTR_ACCESS,
 -- 
-Corentin Chary
-http://xf.iksaif.net
+1.7.4.4
+
