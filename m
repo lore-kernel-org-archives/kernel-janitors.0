@@ -1,48 +1,50 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Thu, 01 Mar 2012 17:28:36 +0000
-Subject: Resend: [PATCH] Bluetooth: Fix Endian Bug.
-Message-Id: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 07:44:15 +0000
+Subject: Re: Resend: [PATCH] Bluetooth: Fix Endian Bug.
+Message-Id: <20120302074414.GG22598@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="6BvahUXLYAruDZOj"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330599561-20392-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330599561-20392-1-git-send-email-santoshprasadnayak@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: marcel@holtmann.org
-Cc: padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+References: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
+To: santosh nayak <santoshprasadnayak@gmail.com>
+Cc: marcel@holtmann.org, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Fix network to host endian conversion for L2CAP chan id.
+--6BvahUXLYAruDZOj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- net/bluetooth/l2cap_sock.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+When you put "Resend:" in the subject it breaks git am.  Git am is
+supposed to strip out the [PATCH] but the Resend confuses it.
 
-diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-index 401d942..86d5067 100644
---- a/net/bluetooth/l2cap_sock.c
-+++ b/net/bluetooth/l2cap_sock.c
-@@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock, struct sockaddr *addr, int alen)
- 	}
- 
- 	if (la.l2_cid)
--		err = l2cap_add_scid(chan, la.l2_cid);
-+		err = l2cap_add_scid(chan, __le16_to_cpu(la.l2_cid));
- 	else
- 		err = l2cap_add_psm(chan, &la.l2_bdaddr, la.l2_psm);
- 
-@@ -123,7 +123,8 @@ static int l2cap_sock_connect(struct socket *sock, struct sockaddr *addr, int al
- 	if (la.l2_cid && la.l2_psm)
- 		return -EINVAL;
- 
--	err = l2cap_chan_connect(chan, la.l2_psm, la.l2_cid, &la.l2_bdaddr);
-+	err = l2cap_chan_connect(chan, la.l2_psm, __le16_to_cpu(la.l2_cid),
-+				&la.l2_bdaddr);
- 	if (err)
- 		goto done;
- 
--- 
-1.7.4.4
+Put the subject as:
+[PATCH v3] Bluetooth: Fix Endian Bug.
 
+regards,
+dan carpenter
+
+
+--6BvahUXLYAruDZOj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPUHpOAAoJEOnZkXI/YHqRHeIP/jxrFMsvkRKXf/nG60GkpcyU
+06kc4HL6Q8ga6KH6LNU9jPXSYEQ60m/a//aWrSQbbDBoErxDnDHrskQGxIX5beMv
+wPzCTW36kquiuVhQ6Gpsa825aKhZl2Wl87R91PCieN8lZFnpCyYC/qZmVCc3M1hu
+Dfd/ca7dBhQNrjHMrv2aLSUL3VkXwwyPcrGc0OAzVrPaHBSyMXR2tzi0WyR5aKdb
+0ebvJAqAEduI/xPa57VMnnAzIt2JPo6byt2B6HNn8rhL9QFEreB0i49HJMVSZzGj
+Bwh71j6IejcC+FQW0apRdjAGktgBd48rdVu3HE8kxlWdyidNcfXMGG5rgIHYPuPs
+yyBsRmNjUZyWPCn7ANiGUfBFM+T9IlAycy0++IxTDgNozwHWrioP51hxIIPinyVS
+3orJFq4cB5OHJNQ3e9Q7+r58Kt6+b/S7+Xw4fStYyEArKCTuLgCZs4CgJf4/hanY
+n2YxhFaVFkj2Pnc49v6rWlg1zPV0/knFDkCEpEtcQjHBZ8SdBaJWHmlmLDtQ/mEV
+88WkGJQVsXJ/vWDw7PQFpN5ZR4y5QT5YVAF8ZHLAiiAfiA7r017VMg5EANGmVJBz
+M4dW66Eh5C0lZCjOmNe9P+QGtL0+xl49Zu8UpGdMxA6i1mJbr4PVoHNHO3dxk+t8
+MG/aytQAWw2w8mm5vlfN
+=B2LU
+-----END PGP SIGNATURE-----
+
+--6BvahUXLYAruDZOj--
