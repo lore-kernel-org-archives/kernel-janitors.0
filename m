@@ -1,63 +1,69 @@
-From: "Christian Benvenuti (benve)" <benve@cisco.com>
-Date: Fri, 02 Mar 2012 01:23:45 +0000
-Subject: RE: [patch] enic: fix an endian bug in enic_probe()
-Message-Id: <184D23435BECB444AB6B9D4630C8EC8303853051@XMB-RCD-303.cisco.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Mar 2012 06:06:53 +0000
+Subject: Re: [patch] enic: fix an endian bug in enic_probe()
+Message-Id: <20120302060653.GU1003@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="f6M9UaX53EEZorp0"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120301071954.GA7152@elgon.mountain> <20120301.172408.1182768164929080163.davem@davemloft.net>
-In-Reply-To: <20120301.172408.1182768164929080163.davem@davemloft.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>, dan.carpenter@oracle.com
-Cc: "Roopa Prabhu (roprabhu)" <roprabhu@cisco.com>, "Neel Patel (neepatel)" <neepatel@cisco.com>, "Nishank Trivedi (nistrive)" <nistrive@cisco.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-Thanks Dan, David.
-
-Just one quick comment...
-pci_enable_sriov's 2nd input is declared as type int and we
-were using u32 instead (for a non negative 16bit value).
-With a quick check I noticed that other pci_enable_sriov callers
-do something similar and may need to be taken care too:
-
-driver    |  type used
-----------+--------------
-mlx4      | int
-chelsio   | unsigned int
-igb       | unsigned int   
-igbxe     | unsigned int
-emulex    | u32
-vxge      | u32
+References: <20120301071954.GA7152@elgon.mountain>
+ <20120301.172408.1182768164929080163.davem@davemloft.net>
+ <184D23435BECB444AB6B9D4630C8EC8303853051@XMB-RCD-303.cisco.com>
+In-Reply-To: <184D23435BECB444AB6B9D4630C8EC8303853051@XMB-RCD-303.cisco.com>
+To: "Christian Benvenuti (benve)" <benve@cisco.com>
+Cc: David Miller <davem@davemloft.net>, "Roopa Prabhu (roprabhu)" <roprabhu@cisco.com>, "Neel Patel (neepatel)" <neepatel@cisco.com>, "Nishank Trivedi (nistrive)" <nistrive@cisco.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
-Another option would have been to make all drivers use int
-to match pci_enable_sriov (pci_enable_sriov->sriov_enable checks
-against negative values).
+--f6M9UaX53EEZorp0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-(BTW, why is pci_enable_sriov prototype using int?)
+On Thu, Mar 01, 2012 at 07:23:45PM -0600, Christian Benvenuti (benve) wrote:
+> Thanks Dan, David.
+>=20
+> Just one quick comment...
+> pci_enable_sriov's 2nd input is declared as type int and we
+> were using u32 instead (for a non negative 16bit value).
+> With a quick check I noticed that other pci_enable_sriov callers
+> do something similar and may need to be taken care too:
+>=20
 
-Thanks
-/Chris
+The problem was calling pci_read_config_word() not
+pci_enable_sriov().  I did consider passing a temporary variable to
+pci_read_config_word() and then storing that in num_vfs but it
+seemed more complicated.
 
-> -----Original Message-----
-> From: David Miller [mailto:davem@davemloft.net]
-> Sent: Thursday, March 01, 2012 2:24 PM
-> To: dan.carpenter@oracle.com
-> Cc: Roopa Prabhu (roprabhu); Christian Benvenuti (benve); Neel Patel
-> (neepatel); Nishank Trivedi (nistrive); netdev@vger.kernel.org;
-kernel-
-> janitors@vger.kernel.org
-> Subject: Re: [patch] enic: fix an endian bug in enic_probe()
-> 
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Thu, 1 Mar 2012 10:19:54 +0300
-> 
-> > "num_vfs" is a u32 but we only use the high 16 bits and the low
-> 16bits
-> > are left as zero.  That isn't a problem for little endian systems
-but
-> it
-> > will break on big endian ones.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Applied.
+Looking at the other drivers now, I see that's how some of them do
+it.  But it makes sense for them because they have the num_vfs which
+the user can configure and the number from the hardware which is the
+max that are supported.
+
+Either way would fix it, but I feel that my fix is not terribly
+ugly.
+
+regards,
+dan carpenter
+
+--f6M9UaX53EEZorp0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPUGN9AAoJEOnZkXI/YHqRSkoP/3AFsh36V6JIOrJdUdgD7jP5
+s3GKeRNIwaVlTzHBv2o1eC8GP3zCYIp0kf295oZFqgw7bOAPU2aTMzFLQ7rTTJQl
+zfGWQTlr20fgRn4U5DwM43jN/4Y7NPzeqcTjw7oqhqus1ZwVyE+2rqsMYzuR7prT
+YziULMVPY9Ed+TUG06E9j888iEGkk08WgZsrYSeRlJxYDfOlbIQgVfoTMtqiQr67
+jiR2+LGnWIWZ8O3atzKWuxpgTQ2knHim1/J1aZZzXwkIsryKv/W6gtNDgLEHMOWW
+PnN/hgEt6AedK4cCYVA/RE596ei/mC5pmG44y/CVjczDrq9r2r5zIng6auyr1bWO
+PEvPFXtD53bVziQGKnQWs+XOMIWmPwZe1Ywals5N7H1lxomqfKS1Mzm6gEOcH2DR
+HwvznZTwWS2ZFIXxQWkUsCc0rxLWi7lOcNKhQ+LnIk8xWsCQDJtSvSkCQ37kGzH6
+wI1pZGY5EspBwVhV5COfcF+VOAS6hS4ijSjD+iANWdPz48r01eU/TNEWMKzoGUsh
+qhMmzGUXKvBPSSelXcCxbrWEwMWRW8QE7ThJe/dPAYynxOZldeNGmrayHF1VBTwZ
+TsSTVN+vE1Xy7iLKEyltUNtiI8F3kS/F5O2E/dBuKyJzXLmCdyNI+ArZoS+mLkMl
+r8N9UyCzTwQdnB/dWOru
+=crUR
+-----END PGP SIGNATURE-----
+
+--f6M9UaX53EEZorp0--
