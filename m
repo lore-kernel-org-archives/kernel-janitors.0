@@ -1,43 +1,60 @@
-From: Andrei Emeltchenko <andrei.emeltchenko.news@gmail.com>
-Date: Thu, 01 Mar 2012 07:43:56 +0000
-Subject: Re: [PATCH] Bluetooth: Silence static checker warning.
-Message-Id: <20120301074354.GA25627@aemeltch-MOBL1>
+From: "David Laight" <David.Laight@ACULAB.COM>
+Date: Fri, 02 Mar 2012 09:15:37 +0000
+Subject: RE: [PATCH] Bluetooth: Silence static checker warning.
+Message-Id: <AE90C24D6B3A694183C094C60CF0A2F6026B6E88@saturn3.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <1330537602.3392.101.camel@aeonflux>
 References: <1330535217-26785-1-git-send-email-santoshprasadnayak@gmail.com>
- <CAMXE1-oXtheVHDuU3w52mXqmuY8AK4kk+tuvJpVRDq2=+qEnsQ@mail.gmail.com>
- <CAOD=uF5Ux0w=EPbX0V3qOy1VnZQr6Q35uUxrF9Qv1hZ4MjYJOA@mail.gmail.com>
-In-Reply-To: <CAOD=uF5Ux0w=EPbX0V3qOy1VnZQr6Q35uUxrF9Qv1hZ4MjYJOA@mail.gmail.com>
+In-Reply-To: <1330535217-26785-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: santosh prasad nayak <santoshprasadnayak@gmail.com>
-Cc: marcel@holtmann.org, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>, santosh nayak <santoshprasadnayak@gmail.com>
+Cc: padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Santosh,
-
-On Thu, Mar 01, 2012 at 11:07:14AM +0530, santosh prasad nayak wrote:
-> @Dan,
->            In future patches I will take care of it. Is it ok ? If
-> required I can resend the patch with required changes on subject line.
+ 
+> > > diff --git a/net/bluetooth/l2cap_sock.c
+b/net/bluetooth/l2cap_sock.c
+> > > index 401d942..d206321 100644
+> > > --- a/net/bluetooth/l2cap_sock.c
+> > > +++ b/net/bluetooth/l2cap_sock.c
+> > > @@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock,
+struct sockaddr *addr, int alen)
+> > >  	}
+> > >  
+> > >  	if (la.l2_cid)
+> > > -		err = l2cap_add_scid(chan, la.l2_cid);
+> > > +		err = l2cap_add_scid(chan, __le16_to_cpu(la.l2_cid));
+> > >  	else
+> > >  		err = l2cap_add_psm(chan, &la.l2_bdaddr, la.l2_psm);
+> > >  
+> > > @@ -123,7 +123,8 @@ static int l2cap_sock_connect(struct socket
+*sock, struct sockaddr *addr, int al
+> > >  	if (la.l2_cid && la.l2_psm)
+> > >  		return -EINVAL;
+> > >  
+> > > -	err = l2cap_chan_connect(chan, la.l2_psm, la.l2_cid,
+&la.l2_bdaddr);
+> > > +	err = l2cap_chan_connect(chan, la.l2_psm,
+__le16_to_cpu(la.l2_cid),
+> > > +				&la.l2_bdaddr);
+> > >  	if (err)
+> > >  		goto done;
+> > 
+> > I am not sure about this one. Need to go back and read through the
+> > source code. The value provided from userspace is already in the
+right
+> > host endian. Could be that we mess up our internal classification.
+And
+> > instead of adding __le16_to_cpu we should fix its classification.
 > 
-> @Andrei
-> 
-> In my local clone your changes are  not visible.
-> 
-> What is the schedule of linux-next ?
-> Is it updated every week or bi-weekly or monthly ?
+> I confused myself here, so the provided PSM and CID values coming from
+> userspace are little endian. Patch is correct.
 
-We use Johan's tree so far:
-git://git.kernel.org/pub/scm/linux/kernel/git/jh/bluetooth-next.git
+How long has this code been in tree?
+It isn't obvious to me that this change won't break code on BE systems
+where the application code is already fixing the endianness.
 
-I think the tree we use shall be published on bluez.org website.
-
-The change seems to be included to:
-"pull request: bluetooth-next 2012-02-24"
-
-http://www.spinics.net/lists/linux-wireless/msg85442.html
-
-Best regards 
-Andrei Emeltchenko 
+	David
 
 
