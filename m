@@ -1,45 +1,53 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Fri, 02 Mar 2012 17:57:06 +0000
-Subject: Re: [PATCH] Bluetooth: Silence static checker warning.
-Message-Id: <1330711026.3392.126.camel@aeonflux>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Sat, 03 Mar 2012 17:13:27 +0000
+Subject: [PATCH] netxen: memory corruption by netxen_p3_get_mac_addr.
+Message-Id: <1330794087-19248-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330537602.3392.101.camel@aeonflux>
-	 <AE90C24D6B3A694183C094C60CF0A2F6026B6E88@saturn3.aculab.com>
-	 <20120302110420.GH22598@mwanda>
-In-Reply-To: <20120302110420.GH22598@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Laight <David.Laight@ACULAB.COM>, santosh nayak <santoshprasadnayak@gmail.com>, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ville Tervo <ville.tervo@nokia.com>
+To: sony.chacko@qlogic.com
+Cc: rajesh.borundia@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Hi Dan,
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-> > How long has this code been in tree?
-> > It isn't obvious to me that this change won't break code on BE systems
-> > where the application code is already fixing the endianness.
-> > 
-> 
-> It looks like we've had an endian bug since last February.
-> 
-> b62f328b8f20a "Bluetooth: Add server socket support for LE
-> connection"
-> 
-> +               l2cap_pi(sk)->scid = la.l2_cid;
-> 
-> ->scid was cpu endian.
+'mac_hi' and 'mac_lo' are 32 bit unsinged int but we are modifing
+64 bit of memory during mac calculation. To fix this issue define
+a local variable of 64 bit and do mac calculation.
 
-this is a bug. No questions asked.
+Remove 'le64_to_cpu' to fix endian issue.
 
-However you can only exercise this code if you work with Bluetooth Low
-Energy and that is not enabled by default since it is not fully finished
-yet. CID is only used by Low Energy.
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
 
-Bluetooth BR/EDR only uses PSM part of the socket address and that has
-been endian safe.
-
-Regards
-
-Marcel
-
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+index 0f81287..7ea930b 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+@@ -1069,7 +1069,8 @@ int netxen_get_flash_mac_addr(struct netxen_adapter *adapter, u64 *mac)
+ 
+ int netxen_p3_get_mac_addr(struct netxen_adapter *adapter, u64 *mac)
+ {
+-	uint32_t crbaddr, mac_hi, mac_lo;
++	uint32_t crbaddr;
++	u64 mac_hi, mac_lo;
+ 	int pci_func = adapter->ahw.pci_func;
+ 
+ 	crbaddr = CRB_MAC_BLOCK_START +
+@@ -1079,9 +1080,9 @@ int netxen_p3_get_mac_addr(struct netxen_adapter *adapter, u64 *mac)
+ 	mac_hi = NXRD32(adapter, crbaddr+4);
+ 
+ 	if (pci_func & 1)
+-		*mac = le64_to_cpu((mac_lo >> 16) | ((u64)mac_hi << 16));
++		*mac = (mac_lo >> 16) | (mac_hi << 16);
+ 	else
+-		*mac = le64_to_cpu((u64)mac_lo | ((u64)mac_hi << 32));
++		*mac = mac_lo | (mac_hi << 32);
+ 
+ 	return 0;
+ }
+-- 
+1.7.4.4
 
