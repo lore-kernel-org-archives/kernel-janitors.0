@@ -1,65 +1,40 @@
-From: santosh prasad nayak <santoshprasadnayak@gmail.com>
-Date: Sat, 03 Mar 2012 09:16:43 +0000
-Subject: Re: [Bridge] [PATCH 2/3] netfilter: potential null derefence.
-Message-Id: <CAOD=uF4qvMZ3aa+x_aXS+SvxYQ46HnQEjkvO7Mwh=sHdhoHM1A@mail.gmail.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 03 Mar 2012 16:12:08 +0000
+Subject: [PATCH] kprobes/x86: remove extern from function definition
+Message-Id: <1330791128-3293-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330593434-19275-1-git-send-email-santoshprasadnayak@gmail.com>
-	<20120301123004.GA7250@1984>
-	<4F513C2B.6030604@pandora.be>
-In-Reply-To: <4F513C2B.6030604@pandora.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Bart De Schuymer <bdschuym@pandora.be>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, netfilter@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org, davem@davemloft.net, bart.de.schuymer@pandora.be, netfilter-devel@vger.kernel.org, shemminger@vyatta.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hi Bart,
-         Its good to do the testing before rolling up the patch
-but code analysis shows there is a potential bug.
+Functions with definition should not be declared extern.
 
-For cs=3DNULL the following statement will cause crash.
-       i =3D cs[sp].n
+sparse warns:
+arch/x86/kernel/kprobes.c:1489:13: warning:
+     function 'arch_unoptimize_kprobes' with external linkage
+     has definition
 
-The aim of this patch is to avoid possible null dereference.
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ arch/x86/kernel/kprobes.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/kernel/kprobes.c b/arch/x86/kernel/kprobes.c
+index 7da647d..f55c28e 100644
+--- a/arch/x86/kernel/kprobes.c
++++ b/arch/x86/kernel/kprobes.c
+@@ -1486,8 +1486,8 @@ static void __kprobes setup_unoptimize_kprobe(struct text_poke_param *tprm,
+  * Recover original instructions and breakpoints from relative jumps.
+  * Caller must call with locking kprobe_mutex.
+  */
+-extern void arch_unoptimize_kprobes(struct list_head *oplist,
+-				    struct list_head *done_list)
++void arch_unoptimize_kprobes(struct list_head *oplist,
++			     struct list_head *done_list)
+ {
+ 	struct optimized_kprobe *op, *tmp;
+ 	int c = 0;
+-- 
+1.7.9.1
 
-Regards
-Santosh
-
-On Sat, Mar 3, 2012 at 3:01 AM, Bart De Schuymer <bdschuym@pandora.be> wrot=
-e:
-> Op 1/03/2012 13:30, Pablo Neira Ayuso schreef:
->
->> On Thu, Mar 01, 2012 at 02:47:14PM +0530, santosh nayak wrote:
->>>
->>> From: Santosh Nayak<santoshprasadnayak@gmail.com>
->>>
->>> I am getting following error.
->>> " net/bridge/netfilter/ebtables.c:269 ebt_do_table()
->>> =A0 error: potential null derefence 'cs'"
->>>
->>> =A0 =A0 i =3D cs[sp].n; =A0// If cs =3D Null then this will cause probl=
-em.
->>
->>
->> Very sorry, I didn't see the out label.
->>
->> I'll apply this to my nf [1] once David takes my previous request for
->> pulling.
->>
->
-> Hi,
->
-> Has this patch been tested? Really, that code in the core firewall functi=
-on
-> is there for a reason, wouldn't you think?
-> The chainstack is only allocated when user-defined chains are used (see
-> translate_table).
-> Never blindly trust a tool.
->
-> Bart
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
