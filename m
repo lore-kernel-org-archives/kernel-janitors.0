@@ -1,67 +1,88 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Sun, 04 Mar 2012 12:18:41 +0000
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Sun, 04 Mar 2012 12:51:08 +0000
 Subject: Re: Resend [PATCH] netfilter: Fix copy_to_user too small size parametre.
-Message-Id: <20120304121841.GA23277@1984>
+Message-Id: <CAOD=uF6UvL2oEmJmgak4X5L0PR+qQi2=Vr22AUsAxLLOfi44rw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1330621743-12883-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330621743-12883-1-git-send-email-santoshprasadnayak@gmail.com>
+	<20120304121841.GA23277@1984>
+In-Reply-To: <20120304121841.GA23277@1984>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: santosh nayak <santoshprasadnayak@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Pablo Neira Ayuso <pablo@netfilter.org>
 Cc: bart.de.schuymer@pandora.be, kaber@trash.net, shemminger@vyatta.com, davem@davemloft.net, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Mar 01, 2012 at 10:39:03PM +0530, santosh nayak wrote:
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> user-space ebtables expects 32 bytes-long names, but xt_match uses
-> 29 bytes. Fill the remaining bytes with zeroes.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
->  net/bridge/netfilter/ebtables.c |   14 +++++++++++---
->  1 files changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-> index 5864cc4..21f337a 100644
-> --- a/net/bridge/netfilter/ebtables.c
-> +++ b/net/bridge/netfilter/ebtables.c
-> @@ -1335,7 +1335,10 @@ static inline int ebt_make_matchname(const struct ebt_entry_match *m,
->      const char *base, char __user *ubase)
->  {
->  	char __user *hlp = ubase + ((char *)m - base);
-> -	if (copy_to_user(hlp, m->u.match->name, EBT_FUNCTION_MAXNAMELEN))
-> +	char name[EBT_FUNCTION_MAXNAMELEN] = {};
-> +
-> +	strncpy(name, m->u.match->name, sizeof(name));
-> +	if (copy_to_user(hlp, name, EBT_FUNCTION_MAXNAMELEN))
->  		return -EFAULT;
->  	return 0;
->  }
-> @@ -1344,7 +1347,10 @@ static inline int ebt_make_watchername(const struct ebt_entry_watcher *w,
->      const char *base, char __user *ubase)
->  {
->  	char __user *hlp = ubase + ((char *)w - base);
-> -	if (copy_to_user(hlp , w->u.watcher->name, EBT_FUNCTION_MAXNAMELEN))
-> +	char name[EBT_FUNCTION_MAXNAMELEN] = {};
-> +
-> +	strncpy(name, w->u.watcher->name, sizeof(name));
-> +	if (copy_to_user(hlp , name, EBT_FUNCTION_MAXNAMELEN))
->  		return -EFAULT;
->  	return 0;
->  }
-> @@ -1355,10 +1361,12 @@ ebt_make_names(struct ebt_entry *e, const char *base, char __user *ubase)
->  	int ret;
->  	char __user *hlp;
->  	const struct ebt_entry_target *t;
-> +	char name[EBT_FUNCTION_MAXNAMELEN] = {};
->  
->  	if (e->bitmask = 0)
->  		return 0;
->  
-> +	strncpy(name, t->u.target->name, sizeof(name));
->  	hlp = ubase + (((char *)e + e->target_offset) - base);
->  	t = (struct ebt_entry_target *)(((char *)e) + e->target_offset);
+where is it broken ?
+Can you please explain ?
 
-This is broken, t dereference is incorrect. Unfortunately I've applied
-your patch. I'll apply a patch to fix this upon it.
+Regards
+Santosh
+
+On Sun, Mar 4, 2012 at 5:48 PM, Pablo Neira Ayuso <pablo@netfilter.org> wro=
+te:
+> On Thu, Mar 01, 2012 at 10:39:03PM +0530, santosh nayak wrote:
+>> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+>>
+>> user-space ebtables expects 32 bytes-long names, but xt_match uses
+>> 29 bytes. Fill the remaining bytes with zeroes.
+>>
+>> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+>> ---
+>> =A0net/bridge/netfilter/ebtables.c | =A0 14 +++++++++++---
+>> =A01 files changed, 11 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebta=
+bles.c
+>> index 5864cc4..21f337a 100644
+>> --- a/net/bridge/netfilter/ebtables.c
+>> +++ b/net/bridge/netfilter/ebtables.c
+>> @@ -1335,7 +1335,10 @@ static inline int ebt_make_matchname(const struct=
+ ebt_entry_match *m,
+>> =A0 =A0 =A0const char *base, char __user *ubase)
+>> =A0{
+>> =A0 =A0 =A0 char __user *hlp =3D ubase + ((char *)m - base);
+>> - =A0 =A0 if (copy_to_user(hlp, m->u.match->name, EBT_FUNCTION_MAXNAMELE=
+N))
+>> + =A0 =A0 char name[EBT_FUNCTION_MAXNAMELEN] =3D {};
+>> +
+>> + =A0 =A0 strncpy(name, m->u.match->name, sizeof(name));
+>> + =A0 =A0 if (copy_to_user(hlp, name, EBT_FUNCTION_MAXNAMELEN))
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EFAULT;
+>> =A0 =A0 =A0 return 0;
+>> =A0}
+>> @@ -1344,7 +1347,10 @@ static inline int ebt_make_watchername(const stru=
+ct ebt_entry_watcher *w,
+>> =A0 =A0 =A0const char *base, char __user *ubase)
+>> =A0{
+>> =A0 =A0 =A0 char __user *hlp =3D ubase + ((char *)w - base);
+>> - =A0 =A0 if (copy_to_user(hlp , w->u.watcher->name, EBT_FUNCTION_MAXNAM=
+ELEN))
+>> + =A0 =A0 char name[EBT_FUNCTION_MAXNAMELEN] =3D {};
+>> +
+>> + =A0 =A0 strncpy(name, w->u.watcher->name, sizeof(name));
+>> + =A0 =A0 if (copy_to_user(hlp , name, EBT_FUNCTION_MAXNAMELEN))
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EFAULT;
+>> =A0 =A0 =A0 return 0;
+>> =A0}
+>> @@ -1355,10 +1361,12 @@ ebt_make_names(struct ebt_entry *e, const char *=
+base, char __user *ubase)
+>> =A0 =A0 =A0 int ret;
+>> =A0 =A0 =A0 char __user *hlp;
+>> =A0 =A0 =A0 const struct ebt_entry_target *t;
+>> + =A0 =A0 char name[EBT_FUNCTION_MAXNAMELEN] =3D {};
+>>
+>> =A0 =A0 =A0 if (e->bitmask =3D 0)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+>>
+>> + =A0 =A0 strncpy(name, t->u.target->name, sizeof(name));
+>> =A0 =A0 =A0 hlp =3D ubase + (((char *)e + e->target_offset) - base);
+>> =A0 =A0 =A0 t =3D (struct ebt_entry_target *)(((char *)e) + e->target_of=
+fset);
+>
+> This is broken, t dereference is incorrect. Unfortunately I've applied
+> your patch. I'll apply a patch to fix this upon it.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
