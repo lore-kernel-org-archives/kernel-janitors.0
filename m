@@ -1,43 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Mar 2012 06:43:54 +0000
-Subject: [patch] Staging: vt6655-6: check keysize before memcpy()
-Message-Id: <20120329064354.GA17647@elgon.mountain>
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Sun, 04 Mar 2012 13:53:30 +0000
+Subject: [media] dvb: Buffer Overfolow in cx24110_set_fec
+Message-Id: <CAOD=uF4+UZ7Lr=RkvV-zpy4wOSCCM+RXDBHeqUf60fOzYH9EFw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mchehab@infradead.org
+Cc: lucas.demarchi@profusion.mobi, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We need to check the we don't copy too much memory.  This comes from a
-copy_from_user() in the ioctl.
+Hi,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I am getting following error:
 
-diff --git a/drivers/staging/vt6656/key.c b/drivers/staging/vt6656/key.c
-index 27bb523..ee62a06 100644
---- a/drivers/staging/vt6656/key.c
-+++ b/drivers/staging/vt6656/key.c
-@@ -684,6 +684,9 @@ BOOL KeybSetDefaultKey(
-         return (FALSE);
-     }
- 
-+    if (uKeyLength > MAX_KEY_LEN)
-+	    return false;
-+
-     pTable->KeyTable[MAX_KEY_TABLE-1].bInUse = TRUE;
-     for (ii = 0; ii < ETH_ALEN; ii++)
-         pTable->KeyTable[MAX_KEY_TABLE-1].abyBSSID[ii] = 0xFF;
-diff --git a/drivers/staging/vt6655/key.c b/drivers/staging/vt6655/key.c
-index 0ff8d7b..774b0d4 100644
---- a/drivers/staging/vt6655/key.c
-+++ b/drivers/staging/vt6655/key.c
-@@ -655,6 +655,9 @@ bool KeybSetDefaultKey (
-         return (false);
-     }
- 
-+    if (uKeyLength > MAX_KEY_LEN)
-+	    return false;
-+
-     pTable->KeyTable[MAX_KEY_TABLE-1].bInUse = true;
-     for(ii=0;ii<ETH_ALEN;ii++)
-         pTable->KeyTable[MAX_KEY_TABLE-1].abyBSSID[ii] = 0xFF;
+"drivers/media/dvb/frontends/cx24110.c:210 cx24110_set_fec() error:
+buffer overflow 'rate' 7 <= 8"
+
+ In cx24110_set_fec, arrays " rate[] , g1[], g2[]"  have only 7 values.
+
+
+typedef enum fe_code_rate {
+        ........
+        FEC_6_7,   // index 7
+        FEC_7_8,   // index 8
+        FEC_8_9,
+        FEC_AUTO,
+         .....
+          ....
+} fe_code_rate_t;
+
+
+For     "FEC_6_7 <  fec  <  FEC_AUTO"  , rate[fec]. g1[fec], g2[fec]
+values are not defined initially.
+Is it expected or bug ?
+
+
+regards
+Santosh
