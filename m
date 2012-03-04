@@ -1,38 +1,140 @@
-From: Jeff Layton <jlayton@redhat.com>
-Date: Thu, 29 Mar 2012 19:57:57 +0000
-Subject: Re: [patch] cifs: writing past end of struct in cifs_convert_address()
-Message-Id: <20120329155757.4f44a3ad@corrin.poochiereds.net>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sun, 04 Mar 2012 22:09:59 +0000
+Subject: Re: [PATCH] edac: move const pci_device_id tables from __devinitdata to __devinitconst.
+Message-Id: <alpine.DEB.2.02.1203042256550.2919@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120301070652.GA6959@elgon.mountain>
-In-Reply-To: <20120301070652.GA6959-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
+References: <791782.71473.bm@smtp128.mail.ukl.yahoo.com> <20120227061300.GC4763@mwanda>
+In-Reply-To: <20120227061300.GC4763@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Lionel Debroux <lionel_debroux@yahoo.fr>, linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 1 Mar 2012 10:06:52 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Mon, 27 Feb 2012, Dan Carpenter wrote:
 
-> "s6->sin6_scope_id" is an int bits but strict_strtoul() writes a long
-> so this can corrupt memory on 64 bit systems.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
-> index 73e47e8..cab99b5 100644
-> --- a/fs/cifs/netmisc.c
-> +++ b/fs/cifs/netmisc.c
-> @@ -197,8 +197,7 @@ cifs_convert_address(struct sockaddr *dst, const char *src, int len)
->  		memcpy(scope_id, pct + 1, slen);
->  		scope_id[slen] = '\0';
->  
-> -		rc = strict_strtoul(scope_id, 0,
-> -					(unsigned long *)&s6->sin6_scope_id);
-> +		rc = kstrtouint(scope_id, 0, &s6->sin6_scope_id);
->  		rc = (rc = 0) ? 1 : 0;
->  	}
->  
+> On Sun, Feb 26, 2012 at 09:15:29PM +0100, Lionel Debroux wrote:
+>> Based on PaX and earlier work by Andi Kleen.
+>>
+>> Patch against current Linus tree.
+>>
+>
+> Always write patches against linux-next.  We can't apply this.
+>
+> I wonder if we could make a coccinelle script for this.
 
+I made two semantic patches for this.  Coccinelle can't match things like 
+__devinitdata, so the first one is completely unsafe:
 
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
+@@
+identifier id;
+declarer name DEFINE_PCI_DEVICE_TABLE;
+@@
+
+-const struct pci_device_id id[] +DEFINE_PCI_DEVICE_TABLE(id)    { ... };
+
+In the second version, I try to figure out whether __devinitdata could be 
+there, whether it is or not.  This only allows the array to appear as the 
+argument of MODULE_DEVICE_TABLE or in the id_table of a static pci_driver 
+structure.  This structure, which I call pcidr, can furthermore only be 
+used in function calls of the form f(&pcidr) in the module_init and 
+module_exit.  I could have specified the function to be 
+pci_register_driver or pci_unregister_driver, but I saw one example that 
+had something else in the register case, so I decided to be more general.
+
+The simple semantic patch above affects 168 files, and the safer one below 
+affects 145.  On the other hand, the latter is missing some cases where 
+the structure is annotated __devinitdata, so my safe strategy is too 
+conservative.
+
+In any case, one would have to check the results carefully.
+
+Unfortunately, both semantic patches only work with the soon to be 
+released version 1.0.0-rc12.
+
+I don't have time now to check the results and submit patches, but if 
+someone else wants to, I could provide the actual results.
+
+julia
+
+-----
+
+The safe(r) semantic patch:
+
+@r@
+identifier id;
+@@
+
+const struct pci_device_id id[] = { ... };
+
+@one@
+expression pci;
+identifier r.id;
+position p1;
+declarer name MODULE_DEVICE_TABLE;
+@@
+
+MODULE_DEVICE_TABLE(pci, id@p1);
+
+@str@
+identifier pcidr;
+identifier r.id;
+position pstr;
+@@
+
+static struct pci_driver pcidr = {
+         .id_table       = id@pstr,
+};
+
+@ini@
+identifier init;
+declarer name module_init;
+@@
+
+module_init(init);
+
+@two@
+identifier ini.init;
+identifier reg;
+identifier str.pcidr;
+position p2;
+@@
+
+init(...) { <... reg(&pcidr@p2) ...> }
+
+@ex@
+identifier exit;
+declarer name module_exit;
+@@
+
+module_exit(exit);
+
+@three@
+identifier ex.exit;
+identifier unreg;
+identifier str.pcidr;
+position p3;
+@@
+
+exit(...) { <... unreg(&pcidr@p3) ...> }
+
+@badstr expression@
+identifier str.pcidr;
+position p != {two.p2,three.p3};
+@@
+
+pcidr@p
+
+@badid expression@
+identifier r.id;
+position p != {one.p1,str.pstr};
+@@
+
+id@p
+
+@depends on !badstr && !badid@
+identifier r.id;
+declarer name DEFINE_PCI_DEVICE_TABLE;
+@@
+
+-const struct pci_device_id id[] +DEFINE_PCI_DEVICE_TABLE(id)   { ... };
