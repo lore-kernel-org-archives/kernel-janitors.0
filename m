@@ -1,27 +1,57 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sun, 11 Mar 2012 23:06:26 +0000
-Subject: Re: [PATCH 6/7] drivers/input/touchscreen/hp680_ts_input.c: ensure arguments to request_irq and free
-Message-Id: <20120311230626.GA5584@core.coreip.homeip.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 05 Mar 2012 08:29:03 +0000
+Subject: [patch] KEYS: testing wrong bit for KEY_FLAG_REVOKED
+Message-Id: <20120305082902.GA10894@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
- <1331494587-12196-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1331494587-12196-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Mar 11, 2012 at 08:36:26PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Change 0 to NULL in the last argument of request_irq, since the argument
-> should have pointer type and so that the last argument of request_irq
-> syntactically matches the second argument of the later call to free_irq.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The test for "if (cred->request_key_auth->flags & KEY_FLAG_REVOKED) {"
+should actually be "if (test_bit(KEY_FLAG_REVOKED, &req_key->flags)) {".
+The current code actually checks for KEY_FLAG_DEAD.
 
-Applied, thanks Julia.
+The patch is really a one liner but I introduced a new variable so that
+I don't go over the 80 character limit.
 
--- 
-Dmitry
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index 1068cb1..3185ec3 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -537,6 +537,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
+ {
+ 	struct request_key_auth *rka;
+ 	const struct cred *cred;
++	struct key *req_key;
+ 	struct key *key;
+ 	key_ref_t key_ref, skey_ref;
+ 	int ret;
+@@ -653,19 +654,20 @@ try_again:
+ 		break;
+ 
+ 	case KEY_SPEC_REQUESTOR_KEYRING:
+-		if (!cred->request_key_auth)
++		req_key = cred->request_key_auth;
++		if (!req_key)
+ 			goto error;
+ 
+-		down_read(&cred->request_key_auth->sem);
+-		if (cred->request_key_auth->flags & KEY_FLAG_REVOKED) {
++		down_read(&req_key->sem);
++		if (test_bit(KEY_FLAG_REVOKED, &req_key->flags)) {
+ 			key_ref = ERR_PTR(-EKEYREVOKED);
+ 			key = NULL;
+ 		} else {
+-			rka = cred->request_key_auth->payload.data;
++			rka = req_key->payload.data;
+ 			key = rka->dest_keyring;
+ 			atomic_inc(&key->usage);
+ 		}
+-		up_read(&cred->request_key_auth->sem);
++		up_read(&req_key->sem);
+ 		if (!key)
+ 			goto error;
+ 		key_ref = make_key_ref(key, 1);
