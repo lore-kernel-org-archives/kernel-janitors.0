@@ -1,77 +1,65 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 17 Mar 2012 15:38:11 +0000
-Subject: [PATCH] drivers/acpi/processor_driver.c: add missing kfree
-Message-Id: <1331998691-29679-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 05 Mar 2012 18:06:14 +0000
+Subject: [patch v2] x86, efi: fix pointer math issue in handle_ramdisks()
+Message-Id: <20120305180614.GA26880@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331399145-6508-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1331399145-6508-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <20120303075443.GC16816@elte.hu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <lenb@kernel.org>, srivatsa.bhat@linux.vnet.ibm.com, deepthi@linux.vnet.ibm.com, venki@google.com, trenn@suse.de, bhelgaas@google.com
-Cc: kernel-janitors@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Matt Fleming <matt.fleming@intel.com>, Maarten Lankhorst <m.b.lankhorst@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+"filename" is a efi_char16_t string so this check for reaching the end
+of the array doesn't work.  We need to cast the pointer to (u8 *) before
+doing the math.
 
-The function acpi_processor_add is stored in the ops.add field of a
-acpi_driver structure.  This function is then called in
-acpi_bus_driver_init.  On failure, this function clears the field
-device->driver_data, but does not free its contents.  Thus the free has to
-be done by the add function.  In acpi_processor_add, the corresponding
-value is pr.  This value is currently freed on failure before storing it in
-device->driver_data, but not after.  This free is added in the error
-handling code at the end of the function.  The per_cpu variable
-processors is also cleared so that it does not refer to a dangling pointer.
+This patch changes the "filename" to "filename_16" to avoid confusion in
+the future.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Reviewed-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
-Acked-by: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v3: Added reviews and acks
+v2: Rename "filename" to "filename_16"
+    Also changed cast from (char *) to (u8 *) because it's not a C
+    character string.  Ingo suggested (void *) but that's a GCCism
+    I think.
 
- drivers/acpi/processor_driver.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
-index 2801b41..c5ce91c 100644
---- a/drivers/acpi/processor_driver.c
-+++ b/drivers/acpi/processor_driver.c
-@@ -536,8 +536,8 @@ static int __cpuinit acpi_processor_add(struct acpi_device *device)
- 		return -ENOMEM;
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index fec216f..0cdfc0d 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -539,7 +539,7 @@ static efi_status_t handle_ramdisks(efi_loaded_image_t *image,
+ 		struct initrd *initrd;
+ 		efi_file_handle_t *h;
+ 		efi_file_info_t *info;
+-		efi_char16_t filename[256];
++		efi_char16_t filename_16[256];
+ 		unsigned long info_sz;
+ 		efi_guid_t info_guid = EFI_FILE_INFO_ID;
+ 		efi_char16_t *p;
+@@ -552,14 +552,14 @@ static efi_status_t handle_ramdisks(efi_loaded_image_t *image,
+ 		str += 7;
  
- 	if (!zalloc_cpumask_var(&pr->throttling.shared_cpu_map, GFP_KERNEL)) {
--		kfree(pr);
--		return -ENOMEM;
-+		result = -ENOMEM;
-+		goto err_free_pr;
- 	}
+ 		initrd = &initrds[i];
+-		p = filename;
++		p = filename_16;
  
- 	pr->handle = device->handle;
-@@ -577,7 +577,7 @@ static int __cpuinit acpi_processor_add(struct acpi_device *device)
- 	dev = get_cpu_device(pr->id);
- 	if (sysfs_create_link(&device->dev.kobj, &dev->kobj, "sysdev")) {
- 		result = -EFAULT;
--		goto err_free_cpumask;
-+		goto err_clear_processor;
- 	}
+ 		/* Skip any leading slashes */
+ 		while (*str = '/' || *str = '\\')
+ 			str++;
  
- 	/*
-@@ -595,9 +595,16 @@ static int __cpuinit acpi_processor_add(struct acpi_device *device)
+ 		while (*str && *str != ' ' && *str != '\n') {
+-			if (p >= filename + sizeof(filename))
++			if ((u8 *)p >= (u8 *)filename_16 + sizeof(filename_16))
+ 				break;
  
- err_remove_sysfs:
- 	sysfs_remove_link(&device->dev.kobj, "sysdev");
-+err_clear_processor:
-+	/*
-+	 * processor_device_array is not cleared to allow checks for buggy
-+	 *  BIOSes
-+	 */
-+	per_cpu(processors, pr->id) = NULL;
- err_free_cpumask:
- 	free_cpumask_var(pr->throttling.shared_cpu_map);
--
-+err_free_pr:
-+	kfree(pr);
- 	return result;
- }
+ 			*p++ = *str++;
+@@ -583,7 +583,7 @@ static efi_status_t handle_ramdisks(efi_loaded_image_t *image,
+ 				goto free_initrds;
+ 		}
  
+-		status = efi_call_phys5(fh->open, fh, &h, filename,
++		status = efi_call_phys5(fh->open, fh, &h, filename_16,
+ 					EFI_FILE_MODE_READ, (u64)0);
+ 		if (status != EFI_SUCCESS)
+ 			goto close_handles;
