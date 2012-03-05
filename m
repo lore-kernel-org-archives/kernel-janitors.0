@@ -1,67 +1,35 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Fri, 02 Mar 2012 06:29:26 +0000
-Subject: [PATCH] cifs: possible memory leak in xattr.
-Message-Id: <1330669046-13738-1-git-send-email-santoshprasadnayak@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 05 Mar 2012 18:10:07 +0000
+Subject: [patch] airo: fix test for FLAG_RADIO_DOWN
+Message-Id: <20120305181007.GC26880@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org
-Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Santosh Nayak <santoshprasadnayak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+We should be doing a shift (1 << FLAG_RADIO_DOWN) here before testing
+the flag.  As luck would have it, this test works almost correctly.
+The current code tests for FLAG_RADIO_OFF instead of FLAG_RADIO_DOWN.
 
-Memory is allocated irrespective of whether CIFS_ACL is configured
-or not. But free is happenning only if CIFS_ACL is set. This is a
-possible memory leak scenario.
+#define FLAG_RADIO_OFF  0       /* User disabling of MAC */
+#define FLAG_RADIO_DOWN 1       /* ifup/ifdown disabling of MAC */
 
-Fix is:
-Allocate and free memory only if CIFS_ACL is configured.
-
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- fs/cifs/xattr.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+I don't have this hardware.  Please review carefully.
 
-diff --git a/fs/cifs/xattr.c b/fs/cifs/xattr.c
-index 45f07c4..10d92cf 100644
---- a/fs/cifs/xattr.c
-+++ b/fs/cifs/xattr.c
-@@ -105,7 +105,6 @@ int cifs_setxattr(struct dentry *direntry, const char *ea_name,
- 	struct cifs_tcon *pTcon;
- 	struct super_block *sb;
- 	char *full_path;
--	struct cifs_ntsd *pacl;
+diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
+index 1c008c6..ddc061d 100644
+--- a/drivers/net/wireless/airo.c
++++ b/drivers/net/wireless/airo.c
+@@ -1869,7 +1869,7 @@ static int readStatsRid(struct airo_info*ai, StatsRid *sr, int rid, int lock)
  
- 	if (direntry = NULL)
- 		return -EIO;
-@@ -164,23 +163,24 @@ int cifs_setxattr(struct dentry *direntry, const char *ea_name,
- 			cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MAP_SPECIAL_CHR);
- 	} else if (strncmp(ea_name, CIFS_XATTR_CIFS_ACL,
- 			strlen(CIFS_XATTR_CIFS_ACL)) = 0) {
-+#ifdef CONFIG_CIFS_ACL
-+		struct cifs_ntsd *pacl;
- 		pacl = kmalloc(value_size, GFP_KERNEL);
- 		if (!pacl) {
- 			cFYI(1, "%s: Can't allocate memory for ACL",
- 					__func__);
- 			rc = -ENOMEM;
- 		} else {
--#ifdef CONFIG_CIFS_ACL
- 			memcpy(pacl, ea_value, value_size);
- 			rc = set_cifs_acl(pacl, value_size,
- 				direntry->d_inode, full_path, CIFS_ACL_DACL);
- 			if (rc = 0) /* force revalidate of the inode */
- 				CIFS_I(direntry->d_inode)->time = 0;
- 			kfree(pacl);
-+		}
- #else
- 			cFYI(1, "Set CIFS ACL not supported yet");
- #endif /* CONFIG_CIFS_ACL */
--		}
- 	} else {
- 		int temp;
- 		temp = strncmp(ea_name, POSIX_ACL_XATTR_ACCESS,
--- 
-1.7.4.4
-
+ static void try_auto_wep(struct airo_info *ai)
+ {
+-	if (auto_wep && !(ai->flags & FLAG_RADIO_DOWN)) {
++	if (auto_wep && !test_bit(FLAG_RADIO_DOWN, &ai->flags)) {
+ 		ai->expires = RUN_AT(3*HZ);
+ 		wake_up_interruptible(&ai->thr_wait);
+ 	}
