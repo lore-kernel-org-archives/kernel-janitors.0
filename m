@@ -1,37 +1,24 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Fri, 02 Mar 2012 15:21:39 +0000
-Subject: [PATCH 2/3] qla3xxx: ethernet: Silence static checker warning.
-Message-Id: <1330700979-18231-1-git-send-email-santoshprasadnayak@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 05 Mar 2012 21:53:58 +0000
+Subject: Re: [PATCH 2/3] qla3xxx: ethernet: Silence static checker warning.
+Message-Id: <20120305.165358.1299012386498157182.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1330700979-18231-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1330700979-18231-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jitendra.kalsaria@qlogic.com
-Cc: ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: santoshprasadnayak@gmail.com
+Cc: jitendra.kalsaria@qlogic.com, ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri,  2 Mar 2012 20:39:39 +0530
 
-Silence the following warning:
-"warn: returning -1 instead of -ENOMEM is sloppy".
+> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+> 
+> Silence the following warning:
+> "warn: returning -1 instead of -ENOMEM is sloppy".
+> 
+> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- drivers/net/ethernet/qlogic/qla3xxx.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qla3xxx.c b/drivers/net/ethernet/qlogic/qla3xxx.c
-index 8da3e41..df09b1c 100644
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -2836,7 +2836,7 @@ static int ql_create_send_free_list(struct ql3_adapter *qdev)
- 		req_q_curr++;
- 		tx_cb->oal = kmalloc(512, GFP_KERNEL);
- 		if (tx_cb->oal = NULL)
--			return -1;
-+			return -ENOMEM;
- 	}
- 	return 0;
- }
--- 
-1.7.4.4
-
+Applied.
