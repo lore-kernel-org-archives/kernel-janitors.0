@@ -1,29 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Mar 2012 08:35:33 +0000
-Subject: [patch] [media] mxl111sf: remove an unused variable
-Message-Id: <20120323083532.GB18239@elgon.mountain>
+From: David Howells <dhowells@redhat.com>
+Date: Tue, 06 Mar 2012 13:32:16 +0000
+Subject: [PATCH] KEYS: testing wrong bit for KEY_FLAG_REVOKED
+Message-Id: <20120306133215.17909.87599.stgit@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>, Michael Krufky <mkrufky@linuxtv.org>
-Cc: Steven Toth <stoth@kernellabs.com>, Antti Palosaari <crope@iki.fi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We don't use this any more after 3be5bb71fb "[media] mxl111sf: fix error
-on stream stop in mxl111sf_ep6_streaming_ctrl()" and it makes GCC
-complain.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+
+The test for "if (cred->request_key_auth->flags & KEY_FLAG_REVOKED) {"
+should actually testing that the (1 << KEY_FLAG_REVOKED) bit is set.
+The current code actually checks for KEY_FLAG_DEAD.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-diff --git a/drivers/media/dvb/dvb-usb/mxl111sf.c b/drivers/media/dvb/dvb-usb/mxl111sf.c
-index 81305de..91834c5 100644
---- a/drivers/media/dvb/dvb-usb/mxl111sf.c
-+++ b/drivers/media/dvb/dvb-usb/mxl111sf.c
-@@ -340,7 +340,6 @@ static int mxl111sf_ep6_streaming_ctrl(struct dvb_usb_adapter *adap, int onoff)
- 	struct mxl111sf_state *state = d->priv;
- 	struct mxl111sf_adap_state *adap_state = adap->fe_adap[adap->active_fe].priv;
- 	int ret = 0;
--	u8 tmp;
+ security/keys/process_keys.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index b1cdb56..e137fcd 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -657,7 +657,8 @@ try_again:
+ 			goto error;
  
- 	deb_info("%s(%d)\n", __func__, onoff);
- 
+ 		down_read(&cred->request_key_auth->sem);
+-		if (cred->request_key_auth->flags & KEY_FLAG_REVOKED) {
++		if (test_bit(KEY_FLAG_REVOKED,
++			     &cred->request_key_auth->flags)) {
+ 			key_ref = ERR_PTR(-EKEYREVOKED);
+ 			key = NULL;
+ 		} else {
+
