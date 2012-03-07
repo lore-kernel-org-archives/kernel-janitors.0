@@ -1,37 +1,46 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Wed, 28 Mar 2012 14:19:14 +0000
-Subject: Re: [patch] nfsd4: memory corruption in numeric_name_to_id()
-Message-Id: <20120328141914.GB7779@fieldses.org>
+From: Mark Salyzyn <mark_salyzyn@xyratex.com>
+Date: Wed, 07 Mar 2012 14:58:44 +0000
+Subject: Re: [PATCH] [SCSI] pm8001: fix endian issue with code optimization.
+Message-Id: <D65B94D9-B33A-436F-9BCE-A500B35652D2@xyratex.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120328104459.GA29022@elgon.mountain>
-In-Reply-To: <20120328104459.GA29022@elgon.mountain>
+References: <4f4a4580.aa3a440a.34c7.2776@mx.google.com> <4AB8AEEB15F74D15A87019F5663EA805@usish.com.cn>
+In-Reply-To: <4AB8AEEB15F74D15A87019F5663EA805@usish.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: santoshprasadnayak@gmail.com
+Cc: Mark Salyzyn <mark_salyzyn@xyratex.com>, lindar_liu <lindar_liu@usish.com>, James Bottomley <JBottomley@parallels.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jack Wang <jack_wang@usish.com>
 
-On Wed, Mar 28, 2012 at 01:44:59PM +0300, Dan Carpenter wrote:
-> "id" is type is a uid_t (32 bits) but on 64 bit systems strict_strtoul()
-> modifies 64 bits of data.  We should use kstrtouint() instead.
+NAK on one point.
 
-Whoops--thanks, applied!
+The fw_flash_Update_resp structure erroneously defines tag as a dma_addr_t, when in fact it should be an __le32, as the response hTag is reported in this field. The removal of the le32_to_cpu(ppayload->tag) was done to remove a warning, but is incorrect. The warning should have been solved by correctly defining the tag element in the structure.
 
---b.
+Sincerely -- Mark Salyzyn
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/nfsd/nfs4idmap.c b/fs/nfsd/nfs4idmap.c
-> index 69ca9c5..322d11c 100644
-> --- a/fs/nfsd/nfs4idmap.c
-> +++ b/fs/nfsd/nfs4idmap.c
-> @@ -581,7 +581,7 @@ numeric_name_to_id(struct svc_rqst *rqstp, int type, const char *name, u32 namel
->  	/* Just to make sure it's null-terminated: */
->  	memcpy(buf, name, namelen);
->  	buf[namelen] = '\0';
-> -	ret = strict_strtoul(name, 10, (unsigned long *)id);
-> +	ret = kstrtouint(name, 10, id);
->  	return ret = 0;
->  }
->  
+On Feb 26, 2012, at 11:51 PM, Jack Wang wrote:
+
+> Thanks for fix.
+> Acked-by: Jack Wang <jack_wang@usish.com>
+>> 
+>> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+>> 
+>> 1. Fix endian issue.
+>> 2. Fix the following warning :
+>>    " drivers/scsi/pm8001/pm8001_hwi.c:2932:32: warning: comparison
+>>      between 'enum sas_device_type' and 'enum sas_dev_type'".
+>> 3. Few code optimization.
+>> 
+>> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+>> ---
+>> . . .
+>> @@ -3149,7 +3152,7 @@ mpi_fw_flash_update_resp(struct pm8001_hba_info
+>> *pm8001_ha, void *piomb)
+>> 	struct fw_control_ex	fw_control_context;
+>> 	struct fw_flash_Update_resp *ppayload
+>> 		(struct fw_flash_Update_resp *)(piomb + 4);
+>> -	u32 tag = le32_to_cpu(ppayload->tag);
+>> +	u32 tag = ppayload->tag;
+>> 	struct pm8001_ccb_info *ccb = &pm8001_ha->ccb_info[tag];
+>> 	status = le32_to_cpu(ppayload->status);
+>> 	memcpy(&fw_control_context,
+
