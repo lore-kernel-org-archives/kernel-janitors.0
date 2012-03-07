@@ -1,52 +1,42 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Date: Mon, 05 Mar 2012 02:55:33 +0000
-Subject: Re: [PATCH] kprobes/x86: remove extern from function definition
-Message-Id: <4F542B25.6090901@hitachi.com>
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+Date: Wed, 07 Mar 2012 02:36:58 +0000
+Subject: [PATCH 2/2 v2] Staging:android: Initialise buffer and buffer_size before used
+Message-Id: <1331087818-9942-2-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330791128-3293-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1330791128-3293-1-git-send-email-emilgoode@gmail.com>
+References: <1331087818-9942-1-git-send-email-ruan.zhengwang@gmail.com>
+In-Reply-To: <1331087818-9942-1-git-send-email-ruan.zhengwang@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, arve@android.com, chris+android@zenthought.org
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-(2012/03/04 1:12), Emil Goode wrote:
-> Functions with definition should not be declared extern.
-> 
-> sparse warns:
-> arch/x86/kernel/kprobes.c:1489:13: warning:
->      function 'arch_unoptimize_kprobes' with external linkage
->      has definition
-> 
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+GCC warns 'buffer' and 'buffer_size' are used with being uninitialized, and
+'buffer' is used as returned value, and 'buffer_size' is initialized using
+uninitialized_var to clear warning.
 
-Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
+---
+v2: added a subsystem prefix to the subject
+---
+ drivers/staging/android/binder.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Thank you!
-
-> ---
->  arch/x86/kernel/kprobes.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kprobes.c b/arch/x86/kernel/kprobes.c
-> index 7da647d..f55c28e 100644
-> --- a/arch/x86/kernel/kprobes.c
-> +++ b/arch/x86/kernel/kprobes.c
-> @@ -1486,8 +1486,8 @@ static void __kprobes setup_unoptimize_kprobe(struct text_poke_param *tprm,
->   * Recover original instructions and breakpoints from relative jumps.
->   * Caller must call with locking kprobe_mutex.
->   */
-> -extern void arch_unoptimize_kprobes(struct list_head *oplist,
-> -				    struct list_head *done_list)
-> +void arch_unoptimize_kprobes(struct list_head *oplist,
-> +			     struct list_head *done_list)
->  {
->  	struct optimized_kprobe *op, *tmp;
->  	int c = 0;
-
-
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index 4350425..6caebeb 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -716,8 +716,8 @@ static struct binder_buffer *binder_alloc_buf(struct binder_proc *proc,
+ 					      size_t offsets_size, int is_async)
+ {
+ 	struct rb_node *n = proc->free_buffers.rb_node;
+-	struct binder_buffer *buffer;
+-	size_t buffer_size;
++	struct binder_buffer *buffer = NULL;
++	size_t uninitialized_var(buffer_size);
+ 	struct rb_node *best_fit = NULL;
+ 	void *has_page_addr;
+ 	void *end_page_addr;
 -- 
-Masami HIRAMATSU
-Software Platform Research Dept. Linux Technology Center
-Hitachi, Ltd., Yokohama Research Laboratory
-E-mail: masami.hiramatsu.pt@hitachi.com
+1.6.0.4
+
