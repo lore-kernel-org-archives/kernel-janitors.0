@@ -1,15 +1,17 @@
-From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-Date: Wed, 07 Mar 2012 02:36:58 +0000
+From: <ruan.zhengwang@gmail.com>
+Date: Wed, 07 Mar 2012 02:49:10 +0000
 Subject: [PATCH 2/2 v2] Staging:android: Initialise buffer and buffer_size before used
-Message-Id: <1331087818-9942-2-git-send-email-ruan.zhengwang@gmail.com>
+Message-Id: <1331088550-15632-2-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331087818-9942-1-git-send-email-ruan.zhengwang@gmail.com>
-In-Reply-To: <1331087818-9942-1-git-send-email-ruan.zhengwang@gmail.com>
+References: <1331088550-15632-1-git-send-email-ruan.zhengwang@gmail.com>
+In-Reply-To: <1331088550-15632-1-git-send-email-ruan.zhengwang@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: gregkh@linuxfoundation.org, arve@android.com, chris+android@zenthought.org
 Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
 
 GCC warns 'buffer' and 'buffer_size' are used with being uninitialized, and
 'buffer' is used as returned value, and 'buffer_size' is initialized using
