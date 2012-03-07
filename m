@@ -1,7 +1,7 @@
-From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-Date: Wed, 07 Mar 2012 02:36:57 +0000
+From: <ruan.zhengwang@gmail.com>
+Date: Wed, 07 Mar 2012 02:49:09 +0000
 Subject: [PATCH 1/2 v2] Staging:android: Change type for binder_debug_no_lock switch to bool
-Message-Id: <1331087818-9942-1-git-send-email-ruan.zhengwang@gmail.com>
+Message-Id: <1331088550-15632-1-git-send-email-ruan.zhengwang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1330337871-27830-1-git-send-email-ruan.zhengwang@gmail.com>
 In-Reply-To: <1330337871-27830-1-git-send-email-ruan.zhengwang@gmail.com>
@@ -10,6 +10,8 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: gregkh@linuxfoundation.org, arve@android.com, chris+android@zenthought.org
 Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
 
 GCC warns that module_param_named() indirectly returns a bool type value
 which is different from 'int' type binder_debug_no_lock declared. Change
