@@ -1,34 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Mar 2012 20:22:13 +0000
-Subject: [patch] isp1704_charger: use after free on probe error
-Message-Id: <20120327202212.GB9197@elgon.mountain>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Wed, 07 Mar 2012 17:52:37 +0000
+Subject: [PATCH v2] [SCSI] pm8001: fix endian issue.
+Message-Id: <1331142037-26296-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anton Vorontsov <anton.vorontsov@linaro.org>, Felipe Contreras <felipe.contreras@gmail.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Felipe Balbi <balbi@ti.com>, Marek Vasut <marek.vasut@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mark_salyzyn@xyratex.com
+Cc: jack_wang@usish.com, lindar_liu@usish.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-We can't use "isp" after freeing it.
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Data type of the 'tag' field of 'fw_flash_Update_resp' should be
+__le32.
 
-diff --git a/drivers/power/isp1704_charger.c b/drivers/power/isp1704_charger.c
-index 39eb50f..e5ccd29 100644
---- a/drivers/power/isp1704_charger.c
-+++ b/drivers/power/isp1704_charger.c
-@@ -474,13 +474,13 @@ static int __devinit isp1704_charger_probe(struct platform_device *pdev)
- fail2:
- 	power_supply_unregister(&isp->psy);
- fail1:
-+	isp1704_charger_set_power(isp, 0);
- 	usb_put_transceiver(isp->phy);
- fail0:
- 	kfree(isp);
+Data type of  'pHeader' should be __le32.
+
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/scsi/pm8001/pm8001_hwi.c |    6 +++---
+ drivers/scsi/pm8001/pm8001_hwi.h |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
+index 597593b..3976fab 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.c
++++ b/drivers/scsi/pm8001/pm8001_hwi.c
+@@ -3150,7 +3150,7 @@ mpi_fw_flash_update_resp(struct pm8001_hba_info *pm8001_ha, void *piomb)
+ 	struct fw_control_ex	fw_control_context;
+ 	struct fw_flash_Update_resp *ppayload  		(struct fw_flash_Update_resp *)(piomb + 4);
+-	u32 tag = ppayload->tag;
++	u32 tag = le32_to_cpu(ppayload->tag);
+ 	struct pm8001_ccb_info *ccb = &pm8001_ha->ccb_info[tag];
+ 	status = le32_to_cpu(ppayload->status);
+ 	memcpy(&fw_control_context,
+@@ -3496,8 +3496,8 @@ static int mpi_hw_event(struct pm8001_hba_info *pm8001_ha, void* piomb)
+  */
+ static void process_one_iomb(struct pm8001_hba_info *pm8001_ha, void *piomb)
+ {
+-	u32 pHeader = (u32)*(u32 *)piomb;
+-	u8 opc = (u8)(pHeader & 0xFFF);
++	__le32 pHeader = (__le32)*(__le32 *)piomb;
++	u8 opc = (u8)((le32_to_cpu(pHeader)) & 0xFFF);
  
- 	dev_err(&pdev->dev, "failed to register isp1704 with error %d\n", ret);
+ 	PM8001_MSG_DBG(pm8001_ha, pm8001_printk("process_one_iomb:"));
  
--	isp1704_charger_set_power(isp, 0);
- 	return ret;
- }
- 
+diff --git a/drivers/scsi/pm8001/pm8001_hwi.h b/drivers/scsi/pm8001/pm8001_hwi.h
+index 1a4611e..d437309 100644
+--- a/drivers/scsi/pm8001/pm8001_hwi.h
++++ b/drivers/scsi/pm8001/pm8001_hwi.h
+@@ -599,7 +599,7 @@ struct fw_flash_Update_req {
+  *
+  */
+ struct fw_flash_Update_resp {
+-	dma_addr_t	tag;
++	__le32	tag;
+ 	__le32	status;
+ 	u32	reserved[13];
+ } __attribute__((packed, aligned(4)));
+-- 
+1.7.4.4
+
