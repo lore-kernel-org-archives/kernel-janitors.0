@@ -1,71 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Mar 2012 19:36:22 +0000
-Subject: [PATCH 2/7] drivers/scsi/arm/{cumana_2,eesox,powertec}.c: ensure arguments to request_irq and free_i
-Message-Id: <1331494587-12196-3-git-send-email-Julia.Lawall@lip6.fr>
+From: James Morris <jmorris@namei.org>
+Date: Wed, 07 Mar 2012 00:13:45 +0000
+Subject: Re: [Keyrings] [PATCH] KEYS: testing wrong bit for KEY_FLAG_REVOKED
+Message-Id: <alpine.LRH.2.02.1203071113170.24515@tundra.namei.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Tue, 6 Mar 2012, David Howells wrote:
 
-Convert calls to free_irq so that the second argument is the same as the
-last argument of the corresponding call to request_irq.  Without this
-property, free_irq does nothing.
+> From: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> The test for "if (cred->request_key_auth->flags & KEY_FLAG_REVOKED) {"
+> should actually testing that the (1 << KEY_FLAG_REVOKED) bit is set.
+> The current code actually checks for KEY_FLAG_DEAD.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-In each case, the problem is only in the probe function.  The corresponding
-call in the remove function already has the correct second argument.
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
-Not tested.
-
- drivers/scsi/arm/cumana_2.c |    2 +-
- drivers/scsi/arm/eesox.c    |    2 +-
- drivers/scsi/arm/powertec.c |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/arm/cumana_2.c b/drivers/scsi/arm/cumana_2.c
-index 547987b..693d383 100644
---- a/drivers/scsi/arm/cumana_2.c
-+++ b/drivers/scsi/arm/cumana_2.c
-@@ -480,7 +480,7 @@ cumanascsi2_probe(struct expansion_card *ec, const struct ecard_id *id)
- 
- 	if (info->info.scsi.dma != NO_DMA)
- 		free_dma(info->info.scsi.dma);
--	free_irq(ec->irq, host);
-+	free_irq(ec->irq, info);
- 
-  out_release:
- 	fas216_release(host);
-diff --git a/drivers/scsi/arm/eesox.c b/drivers/scsi/arm/eesox.c
-index edfd12b..48c1a14 100644
---- a/drivers/scsi/arm/eesox.c
-+++ b/drivers/scsi/arm/eesox.c
-@@ -601,7 +601,7 @@ eesoxscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
- 
- 	if (info->info.scsi.dma != NO_DMA)
- 		free_dma(info->info.scsi.dma);
--	free_irq(ec->irq, host);
-+	free_irq(ec->irq, info);
- 
-  out_remove:
- 	fas216_remove(host);
-diff --git a/drivers/scsi/arm/powertec.c b/drivers/scsi/arm/powertec.c
-index 9274c06..c9d6e8b 100644
---- a/drivers/scsi/arm/powertec.c
-+++ b/drivers/scsi/arm/powertec.c
-@@ -393,7 +393,7 @@ powertecscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
- 
- 	if (info->info.scsi.dma != NO_DMA)
- 		free_dma(info->info.scsi.dma);
--	free_irq(ec->irq, host);
-+	free_irq(ec->irq, info);
- 
-  out_release:
- 	fas216_release(host);
-
+-- 
+James Morris
+<jmorris@namei.org>
