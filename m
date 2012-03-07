@@ -1,25 +1,29 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Date: Thu, 15 Mar 2012 06:14:50 +0000
-Subject: Re: [PATCH 4/7] arch/sh/drivers/dma/{dma-g2,dmabrg}.c: ensure arguments to request_irq and free_irq
-Message-Id: <20120315061450.GC10046@linux-sh.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Mar 2012 10:02:04 +0000
+Subject: [patch] atl1c: set ATL1C_WORK_EVENT_RESET bit correctly
+Message-Id: <20120307100204.GB25452@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr> <1331494587-12196-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1331494587-12196-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jay Cliburn <jcliburn@gmail.com>
+Cc: Chris Snook <chris.snook@gmail.com>, "David S. Miller" <davem@davemloft.net>, Ian Campbell <ian.campbell@citrix.com>, Eric Dumazet <eric.dumazet@gmail.com>, Jiri Pirko <jpirko@redhat.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Mar 11, 2012 at 08:36:24PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Convert calls to free_irq so that the second argument is the same as the
-> last argument of the corresponding call to request_irq.  Without this
-> property, free_irq does nothing.
-> 
-> In the case of dmabrg.c the change is merely cosmetic - changing 0 to NULL.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-Applied, thanks.
+ATL1C_WORK_EVENT_RESET is zero so the original code here is a nop.  The
+intent was to set the zero bit.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+index 0f21a9b..1ef0c92 100644
+--- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
++++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
+@@ -1711,7 +1711,7 @@ static irqreturn_t atl1c_intr(int irq, void *data)
+ 					"atl1c hardware error (status = 0x%x)\n",
+ 					status & ISR_ERROR);
+ 			/* reset MAC */
+-			adapter->work_event |= ATL1C_WORK_EVENT_RESET;
++			set_bit(ATL1C_WORK_EVENT_RESET, &adapter->work_event);
+ 			schedule_work(&adapter->common_task);
+ 			return IRQ_HANDLED;
+ 		}
