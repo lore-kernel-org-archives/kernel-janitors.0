@@ -1,36 +1,24 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Wed, 07 Mar 2012 14:53:35 +0000
-Subject: [PATCH] [SCSI] sd: set BIO_MAPPED_INTEGRITY bit correctly in sd_dif_prepare().
-Message-Id: <1331131295-3707-1-git-send-email-santoshprasadnayak@gmail.com>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Wed, 07 Mar 2012 15:44:36 +0000
+Subject: Re: [PATCH] [SCSI] sd: set BIO_MAPPED_INTEGRITY bit correctly in sd_dif_prepare().
+Message-Id: <20120307154436.GB19570@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1331131295-3707-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1331131295-3707-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: JBottomley@parallels.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: santosh nayak <santoshprasadnayak@gmail.com>
+Cc: JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+On Wed, Mar 07, 2012 at 08:11:35PM +0530, santosh nayak wrote:
+> -		bio->bi_flags |= BIO_MAPPED_INTEGRITY;
+> +		set_bit(BIO_MAPPED_INTEGRITY, &bio->bi_flags);
 
-Value of BIO_MAPPED_INTEGRITY is 11. Intention was to set the 11th bit.
+This uses an atomic operation; you should rather use __set_bit instead.
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- drivers/scsi/sd_dif.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/scsi/sd_dif.c b/drivers/scsi/sd_dif.c
-index e981d97..8ccaf53 100644
---- a/drivers/scsi/sd_dif.c
-+++ b/drivers/scsi/sd_dif.c
-@@ -408,7 +408,7 @@ int sd_dif_prepare(struct request *rq, sector_t hw_sector, unsigned int sector_s
- 			kunmap_atomic(sdt);
- 		}
- 
--		bio->bi_flags |= BIO_MAPPED_INTEGRITY;
-+		set_bit(BIO_MAPPED_INTEGRITY, &bio->bi_flags);
- 	}
- 
- 	return 0;
 -- 
-1.7.4.4
-
+Matthew Wilcox				Intel Open Source Technology Centre
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
