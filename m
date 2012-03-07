@@ -1,47 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 17 Mar 2012 17:57:02 +0000
-Subject: [PATCH] drivers/gpu/drm/savage/savage_state.c: add missing kfree
-Message-Id: <1332007022-28014-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 07 Mar 2012 10:03:01 +0000
+Subject: [patch] drbd: fix resync_dump_detail() output
+Message-Id: <20120307100301.GC25452@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The tests here aren't correct.  It should be doing a shift before doing
+the bitwise AND.  (bme->flags & BME_NO_WRITES) is always false and
+(bme->flags & BME_LOCKED) checks for BME_NO_WRITES instead of checking
+for locked.
 
-Most of the error handling code in this function frees the buffers
-kcmd_addr, kvb_addr, and kbox_addr allocated at the beginning of this
-function.  These two branches are changed to do the same.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/gpu/drm/savage/savage_state.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/savage/savage_state.c b/drivers/gpu/drm/savage/savage_state.c
-index 8a3e315..031aaaf 100644
---- a/drivers/gpu/drm/savage/savage_state.c
-+++ b/drivers/gpu/drm/savage/savage_state.c
-@@ -1057,7 +1057,8 @@ int savage_bci_cmdbuf(struct drm_device *dev, void *data, struct drm_file *file_
- 				DRM_ERROR("indexed drawing command extends "
- 					  "beyond end of command buffer\n");
- 				DMA_FLUSH();
--				return -EINVAL;
-+				ret = -EINVAL;
-+				goto done;
- 			}
- 			/* fall through */
- 		case SAVAGE_CMD_DMA_PRIM:
-@@ -1076,7 +1077,7 @@ int savage_bci_cmdbuf(struct drm_device *dev, void *data, struct drm_file *file_
- 				      cmdbuf->vb_stride,
- 				      cmdbuf->nbox, cmdbuf->box_addr);
- 				if (ret != 0)
--					return ret;
-+					goto done;
- 				first_draw_cmd = NULL;
- 			}
- 		}
-
+diff --git a/drivers/block/drbd/drbd_proc.c b/drivers/block/drbd/drbd_proc.c
+index 2959cdf..ffe1ee4 100644
+--- a/drivers/block/drbd/drbd_proc.c
++++ b/drivers/block/drbd/drbd_proc.c
+@@ -187,8 +187,10 @@ static void resync_dump_detail(struct seq_file *seq, struct lc_element *e)
+ 	struct bm_extent *bme = lc_entry(e, struct bm_extent, lce);
+ 
+ 	seq_printf(seq, "%5d %s %s\n", bme->rs_left,
+-		   bme->flags & BME_NO_WRITES ? "NO_WRITES" : "---------",
+-		   bme->flags & BME_LOCKED ? "LOCKED" : "------"
++		   test_bit(BME_NO_WRITES, &bme->flags) ?
++			"NO_WRITES" : "---------",
++		   test_bit(BME_LOCKED, &bme->flags) ?
++			"LOCKED" : "------"
+ 		   );
+ }
+ 
