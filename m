@@ -1,68 +1,41 @@
-From: Andrei Emeltchenko <andrei.emeltchenko.news@gmail.com>
-Date: Fri, 02 Mar 2012 12:32:15 +0000
+From: Gustavo Padovan <padovan@profusion.mobi>
+Date: Thu, 08 Mar 2012 05:33:21 +0000
 Subject: Re: Resend: [PATCH] Bluetooth: Fix Endian Bug.
-Message-Id: <20120302123210.GA4741@aemeltch-MOBL1>
+Message-Id: <20120308053320.GD3998@joana>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330599561-20392-1-git-send-email-santoshprasadnayak@gmail.com>
- <20120301123540.GE25627@aemeltch-MOBL1>
- <CAOD=uF4LSS8nuKMNHGEH2JsVZHU0rntSxZjvNaa4oZrey1macw@mail.gmail.com>
-In-Reply-To: <CAOD=uF4LSS8nuKMNHGEH2JsVZHU0rntSxZjvNaa4oZrey1macw@mail.gmail.com>
+References: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1330622196-12967-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: santosh prasad nayak <santoshprasadnayak@gmail.com>
-Cc: marcel@holtmann.org, padovan@profusion.mobi, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: santosh nayak <santoshprasadnayak@gmail.com>
+Cc: marcel@holtmann.org, davem@davemloft.net, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Hi Santosh,
 
-On Thu, Mar 01, 2012 at 07:34:58PM +0530, santosh prasad nayak wrote:
-> Andrei,
->=20
-> I could not get you.
->=20
-> Do you want me to resend the patch with subject,
->   "[PATCH] Bluetooth: Fix network to host endian conversion for L2CAP
-> chan id."  ?
+* santosh nayak <santoshprasadnayak@gmail.com> [2012-03-01 22:46:36 +0530]:
 
-No, the main concern was your commit message which is changelog and should
-come after "---" as it is shown in the example below.
+> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+> 
+> Fix network to host endian conversion for L2CAP chan id.
+> 
+> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+> ---
+>  net/bluetooth/l2cap_sock.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+> index 401d942..86d5067 100644
+> --- a/net/bluetooth/l2cap_sock.c
+> +++ b/net/bluetooth/l2cap_sock.c
+> @@ -82,7 +82,7 @@ static int l2cap_sock_bind(struct socket *sock, struct sockaddr *addr, int alen)
+>  	}
+>  
+>  	if (la.l2_cid)
+> -		err = l2cap_add_scid(chan, la.l2_cid);
+> +		err = l2cap_add_scid(chan, __le16_to_cpu(la.l2_cid));
 
-> > On Thu, Mar 01, 2012 at 04:29:21PM +0530, santosh nayak wrote:
-> >> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> >>
-> >> Fix for endian bug.
-> >>
-> >> Fix for null dereferenced removed as it is already
-> >> submitted by Andrei.
-> >>
-> >> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> >> ---
-> >> =A0net/bluetooth/l2cap_sock.c | =A0 =A05 +++--
-> >> =A01 files changed, 3 insertions(+), 2 deletions(-)
-> >
-> > We prefer following commit log (this is the example)
-> >
-> > <------8<----------------------------------------------------------
-> > | =A0From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> > |
-> > | =A0Fix network to host endian conversion for L2CAP chan id.
-> > |
-> > | =A0Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> > |
-> > | =A0---
-> > | =A0 =A0 =A0 =A0 =A0* v2 Fix for null dereferenced removed as it is al=
-ready
-> > | =A0 =A0 =A0 =A0 =A0submitted by Andrei.
-> > |
-> > | =A0 =A0net/bluetooth/l2cap_sock.c | =A0 =A05 +++--
-> > | =A0 =A01 files changed, 3 insertions(+), 2 deletions(-)
-> > |
-> > <------8<----------------------------------------------------------
+This is kind weird, la.l2_cid comes from the user, so it is already in host
+endian. No need for convertions here.
 
-Best regards=20
-Andrei Emeltchenko=20
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Gustavo
