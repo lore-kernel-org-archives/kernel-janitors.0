@@ -1,60 +1,29 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 01 Mar 2012 15:00:03 +0000
-Subject: Re: [PATCH 1/3] netfilter: Fix copy_to_user too small size parametre.
-Message-Id: <4F4F8EF3.3040102@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Mar 2012 07:25:51 +0000
+Subject: [patch] qnx6fs: silence a Sparse warning
+Message-Id: <20120308072551.GA27713@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330593390-19233-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330593390-19233-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kai Bankett <chaosman@ontika.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Add a  __force to silence a sparse warning:
+	fs/qnx6/inode.c:88:22: warning: cast to restricted __fs32
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am 01.03.2012 14:03, schrieb Pablo Neira Ayuso:
-> On Thu, Mar 01, 2012 at 04:15:05PM +0530, santosh prasad nayak wrote:
->> Hi Pablo.
->>
->> copy_to_user( dest, source, length)
->>
->> Normally,  'length'  is equal to  'sizeof (source) '.
->>
->> In this case "length"   =   32
->>        "sizeof(source)"  =   29.
->>
->> Is it intentional ?
-> 
-> ebtables expects 32 bytes names.
-> 
->> Won't it copy extra 3 bytes of kernel data to userspace ?
-> 
-> You're right. We have to copy 29 bytes but we have to fill the
-> remaining bytes with zeroes. I think something like:
-> 
-> char name[EBT_FUNCTION_MAXNAMELEN] = {};
-> 
-> /* user-space ebtables expects 32 bytes-long names, but xt_match uses
->  * 29 bytes for that. */
-> sprintf(name, "%s", m->u.match->name);
-> if (copy_to_user(hlp, name, EBT_FUNCTION_MAXNAMELEN))
-> ...
-> 
-
-it may be better to use kstrncpy() here. kstrncpy will fill remaining
-space with 0. now you are using char name[EBT_FUNCTION_MAXNAMELEN] later
-this may change, better safe than sorry.
-
-re,
- wh
-
-
-> will resolve this issue.
-> 
-> Would you resend a new patch?
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
+diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
+index e44012d..acf9241 100644
+--- a/fs/qnx6/inode.c
++++ b/fs/qnx6/inode.c
+@@ -85,7 +85,7 @@ static int qnx6_get_block(struct inode *inode, sector_t iblock,
+ 
+ static int qnx6_check_blockptr(__fs32 ptr)
+ {
+-	if (ptr = ~(__fs32)0) {
++	if (ptr = ~(__force __fs32)0) {
+ 		printk(KERN_ERR "qnx6: hit unused blockpointer.\n");
+ 		return 0;
+ 	}
