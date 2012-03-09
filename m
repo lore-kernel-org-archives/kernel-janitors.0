@@ -1,63 +1,38 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Wed, 07 Mar 2012 17:52:37 +0000
-Subject: [PATCH v2] [SCSI] pm8001: fix endian issue.
-Message-Id: <1331142037-26296-1-git-send-email-santoshprasadnayak@gmail.com>
+From: Chris Ball <cjb@laptop.org>
+Date: Fri, 09 Mar 2012 04:27:41 +0000
+Subject: Re: [PATCH] drivers/mmc/host/sdhci-s3c.c: use devm_ functions
+Message-Id: <m2k42uqtz6.fsf@bob.laptop.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1329596019-19822-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1329596019-19822-1-git-send-email-Julia.Lawall@lip6.fr> (Julia
+	Lawall's message of "Sat, 18 Feb 2012 21:13:39 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mark_salyzyn@xyratex.com
-Cc: jack_wang@usish.com, lindar_liu@usish.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Ben Dooks <ben-linux@fluff.org>, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+Hi Julia,
 
-Data type of the 'tag' field of 'fw_flash_Update_resp' should be
-__le32.
+On Sat, Feb 18 2012, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> The various devm_ functions allocate memory that is released when a driver
+> detaches.  This patch uses these functions for data that is allocated in
+> the probe function of a platform device and is only freed in the remove
+> function.
+>
+> By using devm_ioremap, it also removes a potential memory leak, because
+> there was no call to iounmap in the probe function.
+>
+> The call to platform_get_resource was moved just to make it closer to the
+> place where its result it used.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Data type of  'pHeader' should be __le32.
+Thanks very much, pushed to mmc-next for 3.4.
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- drivers/scsi/pm8001/pm8001_hwi.c |    6 +++---
- drivers/scsi/pm8001/pm8001_hwi.h |    2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
-index 597593b..3976fab 100644
---- a/drivers/scsi/pm8001/pm8001_hwi.c
-+++ b/drivers/scsi/pm8001/pm8001_hwi.c
-@@ -3150,7 +3150,7 @@ mpi_fw_flash_update_resp(struct pm8001_hba_info *pm8001_ha, void *piomb)
- 	struct fw_control_ex	fw_control_context;
- 	struct fw_flash_Update_resp *ppayload  		(struct fw_flash_Update_resp *)(piomb + 4);
--	u32 tag = ppayload->tag;
-+	u32 tag = le32_to_cpu(ppayload->tag);
- 	struct pm8001_ccb_info *ccb = &pm8001_ha->ccb_info[tag];
- 	status = le32_to_cpu(ppayload->status);
- 	memcpy(&fw_control_context,
-@@ -3496,8 +3496,8 @@ static int mpi_hw_event(struct pm8001_hba_info *pm8001_ha, void* piomb)
-  */
- static void process_one_iomb(struct pm8001_hba_info *pm8001_ha, void *piomb)
- {
--	u32 pHeader = (u32)*(u32 *)piomb;
--	u8 opc = (u8)(pHeader & 0xFFF);
-+	__le32 pHeader = (__le32)*(__le32 *)piomb;
-+	u8 opc = (u8)((le32_to_cpu(pHeader)) & 0xFFF);
- 
- 	PM8001_MSG_DBG(pm8001_ha, pm8001_printk("process_one_iomb:"));
- 
-diff --git a/drivers/scsi/pm8001/pm8001_hwi.h b/drivers/scsi/pm8001/pm8001_hwi.h
-index 1a4611e..d437309 100644
---- a/drivers/scsi/pm8001/pm8001_hwi.h
-+++ b/drivers/scsi/pm8001/pm8001_hwi.h
-@@ -599,7 +599,7 @@ struct fw_flash_Update_req {
-  *
-  */
- struct fw_flash_Update_resp {
--	dma_addr_t	tag;
-+	__le32	tag;
- 	__le32	status;
- 	u32	reserved[13];
- } __attribute__((packed, aligned(4)));
+- Chris.
 -- 
-1.7.4.4
-
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
