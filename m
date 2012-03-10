@@ -1,99 +1,47 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 06 Mar 2012 08:50:12 +0000
-Subject: Re: [patch v3] edac i5000, i5400: fix pointer math in i5000_get_mc_regs()
-Message-Id: <4F55CFC4.3020100@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Mar 2012 08:49:21 +0000
+Subject: [patch] e1000e, igbvf: fix default message level
+Message-Id: <20120310084921.GA4647@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120306063859.GA3324@elgon.mountain>
-In-Reply-To: <20120306063859.GA3324@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eric Wollesen <ericw@xmtp.net>, Doug Thompson <dougthompson@xmission.com>, list-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, John Ronciak <john.ronciak@intel.com>, "David S. Miller" <davem@davemloft.net>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The intent here was to enable both NETIF_MSG_DRV and NETIF_MSG_PROBE
+messages, but in the original code only the NETIF_MSG_DRV bit was set.
 
+NETIF_MSG_DRV and NETIF_MSG_PROBE are bits 0 and 1, they are not
+supposed to be used to do a shift.  I think the confusion is because
+the msg_enable can also be controlled through ethtool which passes a bit
+number that is used to do a bit shift.
 
-Am 06.03.2012 07:38, schrieb Dan Carpenter:
-> "pvt->ambase" is a u64 datatype.  The intent here is to fill the first
-> half in the first call to pci_read_config_dword() and the other half in
-> the second.  Unfortunately the pointer math is wrong so we set the wrong
-> data.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Redid it as with a union as Walter Harms suggested.
->     Fixed the same bug in i5400_edac.c as well.
-> v3: Make the struct __packed just in case.
-> 
-> I don't have this hardware, so please review carefully.
-> 
-> diff --git a/drivers/edac/i5400_edac.c b/drivers/edac/i5400_edac.c
-> index 74d6ec34..083e80a 100644
-> --- a/drivers/edac/i5400_edac.c
-> +++ b/drivers/edac/i5400_edac.c
-> @@ -343,7 +343,13 @@ struct i5400_pvt {
->  	struct pci_dev *branch_1;		/* 22.0 */
->  
->  	u16 tolm;				/* top of low memory */
-> -	u64 ambase;				/* AMB BAR */
-> +	union {
-> +		u64 ambase;				/* AMB BAR */
-> +		struct {
-> +			u32 ambase_bottom;
-> +			u32 ambase_top;
-> +		} u __packed;
-> +	};
->  
->  	u16 mir0, mir1;
->  
-> @@ -1024,9 +1030,9 @@ static void i5400_get_mc_regs(struct mem_ctl_info *mci)
->  	pvt = mci->pvt_info;
->  
->  	pci_read_config_dword(pvt->system_address, AMBASE,
-> -			(u32 *) &pvt->ambase);
-> +			&pvt->u.ambase_bottom);
->  	pci_read_config_dword(pvt->system_address, AMBASE + sizeof(u32),
-> -			((u32 *) &pvt->ambase) + sizeof(u32));
-> +			&pvt->u.ambase_top);
->  
->  	maxdimmperch = pvt->maxdimmperch;
->  	maxch = pvt->maxch;
-> diff --git a/drivers/edac/i5000_edac.c b/drivers/edac/i5000_edac.c
-> index 4dc3ac2..ecc2401 100644
-> --- a/drivers/edac/i5000_edac.c
-> +++ b/drivers/edac/i5000_edac.c
-> @@ -343,7 +343,13 @@ struct i5000_pvt {
->  	struct pci_dev *branch_1;	/* 22.0 */
->  
->  	u16 tolm;		/* top of low memory */
-> -	u64 ambase;		/* AMB BAR */
-> +	union {
-> +		u64 ambase;		/* AMB BAR */
-> +		struct {
-> +			u32 ambase_bottom;
-> +			u32 ambase_top;
-> +		} u __packed;
-> +	};
->  
->  	u16 mir0, mir1, mir2;
->  
-> @@ -1128,9 +1134,9 @@ static void i5000_get_mc_regs(struct mem_ctl_info *mci)
->  	pvt = mci->pvt_info;
->  
->  	pci_read_config_dword(pvt->system_address, AMBASE,
-> -			(u32 *) & pvt->ambase);
-> +			&pvt->u.ambase_bottom);
->  	pci_read_config_dword(pvt->system_address, AMBASE + sizeof(u32),
-> -			((u32 *) & pvt->ambase) + sizeof(u32));
-> +			&pvt->u.ambase_top);
->  
->  	maxdimmperch = pvt->maxdimmperch;
->  	maxch = pvt->maxch;
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-nice work dan,
-i can not find anything to worry about.
-
-
-Acked-by: walter harms <wharms@bfs.de>
-
+diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
+index 217c143..e50c2ec 100644
+--- a/drivers/net/ethernet/intel/igbvf/netdev.c
++++ b/drivers/net/ethernet/intel/igbvf/netdev.c
+@@ -2649,7 +2649,7 @@ static int __devinit igbvf_probe(struct pci_dev *pdev,
+ 	adapter->flags = ei->flags;
+ 	adapter->hw.back = adapter;
+ 	adapter->hw.mac.type = ei->mac;
+-	adapter->msg_enable = (1 << NETIF_MSG_DRV | NETIF_MSG_PROBE) - 1;
++	adapter->msg_enable = NETIF_MSG_DRV | NETIF_MSG_PROBE;
+ 
+ 	/* PCI config space info */
+ 
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index 7152eb1..0e2de0b 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -6172,7 +6172,7 @@ static int __devinit e1000_probe(struct pci_dev *pdev,
+ 	adapter->hw.adapter = adapter;
+ 	adapter->hw.mac.type = ei->mac;
+ 	adapter->max_hw_frame_size = ei->max_hw_frame_size;
+-	adapter->msg_enable = (1 << NETIF_MSG_DRV | NETIF_MSG_PROBE) - 1;
++	adapter->msg_enable = NETIF_MSG_DRV | NETIF_MSG_PROBE;
+ 
+ 	mmio_start = pci_resource_start(pdev, 0);
+ 	mmio_len = pci_resource_len(pdev, 0);
