@@ -1,37 +1,27 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 18 Mar 2012 14:33:57 +0000
-Subject: Re: [patch v2] x86, efi: fix pointer math issue in handle_ramdisks()
-Message-Id: <4F65F255.5070504@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Mar 2012 08:57:29 +0000
+Subject: [patch] spi: release lock on error path in spi_pump_messages()
+Message-Id: <20120310085729.GB4647@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120305180614.GA26880@elgon.mountain> <4F550917.9020508@bfs.de> <4F551504.5010401@zytor.com> <4F55CE54.4000300@bfs.de> <4F639AB0.7010208@zytor.com>
-In-Reply-To: <4F639AB0.7010208@zytor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Matt Fleming <matt.fleming@intel.com>, Maarten Lankhorst <m.b.lankhorst@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+We should release the lock here and enable IRQs before returning.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am 16.03.2012 20:55, schrieb H. Peter Anvin:
-> On 03/06/2012 12:44 AM, walter harms wrote:
->>>
->> hi,
->>
->> yep, but i was asking about efi. The basic idea is of cause to map efi_char16_t -> wchar_t
->> and back and make this a prototype for every driver that needs a special charset.
->> That would make it possible to recycle the wcs* interface of libc.
->> IMHO it seems more reasonable than adding one for each (upcoming) type.
->>
-> 
-> Actually libc and the C standard is going the opposite ways, adding new
-> interfaces for UTF-16 and UTF-32.  The wchar_t interface just doesn't
-> work very well.
-> 
-
-I admit i do not have the problem yet and i do not like the idea adding even more types.
-Oh well may i should be happy that someone is actually thinking about this here and not
-simply add yet on other hot fix.
-
-re,
- wh
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 5ae1e84..ab1bdce 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -535,6 +535,7 @@ static void spi_pump_messages(struct kthread_work *work)
+ 			if (ret) {
+ 				dev_err(&master->dev,
+ 					"failed to unprepare transfer hardware\n");
++				spin_unlock_irqrestore(&master->queue_lock, flags);
+ 				return;
+ 			}
+ 		}
