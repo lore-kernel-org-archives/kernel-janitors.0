@@ -1,56 +1,35 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Date: Sat, 10 Mar 2012 09:02:15 +0000
+From: Ben Hutchings <bhutchings@solarflare.com>
+Date: Sat, 10 Mar 2012 23:06:29 +0000
 Subject: Re: [patch] e1000e, igbvf: fix default message level
-Message-Id: <1331370135.27038.0.camel@jtkirshe-mobl>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-mq93A5xiD+QxCVWGHWVc"
+Message-Id: <1331420789.3022.100.camel@deadeye>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120310084921.GA4647@elgon.mountain>
 In-Reply-To: <20120310084921.GA4647@elgon.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, John Ronciak <john.ronciak@intel.com>, "David S. Miller" <davem@davemloft.net>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-
---=-mq93A5xiD+QxCVWGHWVc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, John Ronciak <john.ronciak@intel.com>, "David S. Miller" <davem@davemloft.net>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 On Sat, 2012-03-10 at 11:49 +0300, Dan Carpenter wrote:
 > The intent here was to enable both NETIF_MSG_DRV and NETIF_MSG_PROBE
 > messages, but in the original code only the NETIF_MSG_DRV bit was set.
->=20
+> 
 > NETIF_MSG_DRV and NETIF_MSG_PROBE are bits 0 and 1, they are not
 > supposed to be used to do a shift.  I think the confusion is because
-> the msg_enable can also be controlled through ethtool which passes a
-> bit
+> the msg_enable can also be controlled through ethtool which passes a bit
 > number that is used to do a bit shift.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>=20
+[...]
 
-Thanks Dan!  I will add the patch to my queue.
+No, the ethtool interface also uses a mask.
 
---=-mq93A5xiD+QxCVWGHWVc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+However netif_msg_init() is commonly used to initialise the msg_enable
+mask based on a module parameter that's a bit number.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Ben.
 
-iQIcBAABCgAGBQJPWxiXAAoJEOVv75VaS+3O0NQP/jHa4lgbviikdJFI6hL68Oi6
-qjWZyXZh4vTuz5sOaveK957lSOa0ECy0RqaTW2UpmZHdhKvYC/CqFP85feihINCe
-5DNCs9HGDKYd7g34bcb0ImPH9XRUvc08kyrCUiHz8WL1f0HAJjcomyXDWvYs//V4
-R3W9iArLDJM+P2ECeU/3cWOg+vEzbZqVUNaUyOv4whTsh+ZQhNcva9tuYlbTo3N6
-N6/myMvJkupTOU72j7aFHiHXwIHnVBzwp7YKYwzx0daLh0Li1LbhFpc3q9n1WJFU
-IgWwbeOZGwvPgvlnhEMo2UBZ3KKps0uf1FVGV8BgBMRBMD3zCw31YG7fXnThxfyl
-Wuzd8cvjiInITY0jGB5yW6+vwuzoofvYrS9jWOsoCEI6Mj6Vz7V3ViuAjXsHrK8P
-lFV30Tj0wdT0No4Ykkp2FmBZ8YQo8E+sYISeH+yLsDSPkj9MhPngLrFmrKI5rotz
-38oyGfqQ6e+xcVnY9H6QPSBlVe/esSHermxOXQIPwLz5a4qGU6stV7C5v+dyo0pD
-xyc7Gw+2AAwTQuXblUp7J3PURdSl764EYoXF54ZTk/NDu25uOr3HPNeeSc9gcy0Z
-U2mTDfAiZsRVz3Y+pS8nlAxSgpDqOWHcTDlVrjeYCJ6a2jkOOWQmndnkWCERLxvS
-vXgWxRydJAuRJPMOPkSX
-=x47f
------END PGP SIGNATURE-----
-
---=-mq93A5xiD+QxCVWGHWVc--
+-- 
+Ben Hutchings, Staff Engineer, Solarflare
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
 
