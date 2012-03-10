@@ -1,37 +1,31 @@
-From: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-Date: Thu, 01 Mar 2012 02:41:17 +0000
-Subject: [PATCH v2] Trace: Add comment to notify a warning caused by a gcc bug
-Message-Id: <1330569677-11984-1-git-send-email-ruan.zhengwang@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Mar 2012 09:00:05 +0000
+Subject: [patch] sata_mv: silence an uninitialized variable warning
+Message-Id: <20120310090005.GE4647@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rostedt@goodmis.org, fweisbec@gmail.com, mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeff Garzik <jgarzik@pobox.com>, Michael Walle <michael@walle.cc>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-GCC (version < 4.6) warns 'page2' is uninitialized, but this is helpful
-to track a real potential bug, simply add comment to note this.
+Gcc version 4.6.2-12 complains that if we can't find the "nr-ports"
+property in of_property_read_u32_array() then "n_ports" is used
+uninitialized.  Let's set it to zero in that case.
 
-Signed-off-by: Zhengwang Ruan <ruan.zhengwang@gmail.com>
----
-v2: Change fix to add a comment.
----
- kernel/trace/trace.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index a3f1bc5..ef332e6 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3694,7 +3694,7 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
- 	int nr_pages = 1;
- 	ssize_t written;
- 	void *page1;
--	void *page2;
-+	void *page2;	/* if you get a warning here, upgrade your gcc to 4.6 */
- 	int offset;
- 	int size;
- 	int len;
--- 
-1.6.0.4
-
+diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
+index ebd0d24..3d8d5c6 100644
+--- a/drivers/ata/sata_mv.c
++++ b/drivers/ata/sata_mv.c
+@@ -4026,7 +4026,8 @@ static int mv_platform_probe(struct platform_device *pdev)
+ 	struct ata_host *host;
+ 	struct mv_host_priv *hpriv;
+ 	struct resource *res;
+-	int n_ports, rc;
++	int n_ports = 0;
++	int rc;
+ 
+ 	ata_print_version_once(&pdev->dev, DRV_VERSION);
+ 
