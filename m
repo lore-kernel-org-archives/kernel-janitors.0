@@ -1,67 +1,74 @@
-From: Dirk Brandewie <dirk.brandewie@gmail.com>
-Date: Thu, 15 Mar 2012 17:20:34 +0000
-Subject: Re: [patch] max17042_battery: fix a couple buffer overflows
-Message-Id: <4F6224E2.5060006@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 10 Mar 2012 17:05:45 +0000
+Subject: [PATCH] drivers/acpi/processor_driver.c: add missing kfree
+Message-Id: <1331399145-6508-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120315113732.GA364@elgon.mountain>
-In-Reply-To: <20120315113732.GA364@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Dirk Brandewie <dirk.brandewie@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <anton.vorontsov@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philip Rakity <prakity@marvell.com>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-On 03/15/2012 04:37 AM, Dan Carpenter wrote:
-> There are a couple issues here caused by confusion between sizeof()
-> and ARRAY_SIZE().  "table_size" should be the number of elements, but we
-> should allocate it with kcalloc() so that we allocate the correct number
-> of bytes.
->
-> In max17042_init_model() we don't allocate enough space so we go past
-> the end of the array in max17042_read_model_data() and
-> max17042_model_data_compare().
->
-> In max17042_verify_model_lock() we allocate the right amount of space
-> but we call max17042_read_model_data() with the wrong number of elements
-> and also in the for loop we go past the end of the array.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
-Acked-by: Dirk Brandewie <dirk.brandewie@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
-Typo in first ack :-(
-> ---
-> I don't have this hardware.  The original code is clearly buggy, but I
-> can't test that my fix is correct.  Please review carefully.
->
-> diff --git a/drivers/power/max17042_battery.c b/drivers/power/max17042_battery.c
-> index e36763a..f8cd48c 100644
-> --- a/drivers/power/max17042_battery.c
-> +++ b/drivers/power/max17042_battery.c
-> @@ -328,11 +328,10 @@ static inline int max17042_model_data_compare(struct max17042_chip *chip,
->   static int max17042_init_model(struct max17042_chip *chip)
->   {
->   	int ret;
-> -	int table_size > -		sizeof(chip->pdata->config_data->cell_char_tbl)/sizeof(u16);
-> +	int table_size = ARRAY_SIZE(chip->pdata->config_data->cell_char_tbl);
->   	u16 *temp_data;
->
-> -	temp_data = kzalloc(table_size, GFP_KERNEL);
-> +	temp_data = kcalloc(table_size, sizeof(*temp_data), GFP_KERNEL);
->   	if (!temp_data)
->   		return -ENOMEM;
->
-> @@ -357,12 +356,11 @@ static int max17042_init_model(struct max17042_chip *chip)
->   static int max17042_verify_model_lock(struct max17042_chip *chip)
->   {
->   	int i;
-> -	int table_size > -		sizeof(chip->pdata->config_data->cell_char_tbl);
-> +	int table_size = ARRAY_SIZE(chip->pdata->config_data->cell_char_tbl);
->   	u16 *temp_data;
->   	int ret = 0;
->
-> -	temp_data = kzalloc(table_size, GFP_KERNEL);
-> +	temp_data = kcalloc(table_size, sizeof(*temp_data), GFP_KERNEL);
->   	if (!temp_data)
->   		return -ENOMEM;
->
+The function acpi_processor_add is stored in the ops.add field of a
+acpi_driver structure.  This function is then called in
+acpi_bus_driver_init.  On failure, this function clears the field
+device->driver_data, but does not free its contents.  Thus the free has to
+be done by the add function.  In acpi_processor_add, the corresponding
+value is pr.  This value is currently freed on failure before storing it in
+device->driver_data, but not after.  This free is added in the error
+handling code at the end of the function.  The static global variable
+processors is also cleared so that it does not refer to a dangling pointer.
+processor_device_array is cleared as well.
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+This is only compile tested.  In particular, I don't know if it is correct
+to add per_cpu(processor_device_array, pr->id) = NULL;.  It has nothing to
+do with pr, but it looks like stale information in the case of a failure.
+
+ drivers/acpi/processor_driver.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
+index 2801b41..9bb0017 100644
+--- a/drivers/acpi/processor_driver.c
++++ b/drivers/acpi/processor_driver.c
+@@ -536,8 +536,8 @@ static int __cpuinit acpi_processor_add(struct acpi_device *device)
+ 		return -ENOMEM;
+ 
+ 	if (!zalloc_cpumask_var(&pr->throttling.shared_cpu_map, GFP_KERNEL)) {
+-		kfree(pr);
+-		return -ENOMEM;
++		result = -ENOMEM;
++		goto err_free_pr;
+ 	}
+ 
+ 	pr->handle = device->handle;
+@@ -577,7 +577,7 @@ static int __cpuinit acpi_processor_add(struct acpi_device *device)
+ 	dev = get_cpu_device(pr->id);
+ 	if (sysfs_create_link(&device->dev.kobj, &dev->kobj, "sysdev")) {
+ 		result = -EFAULT;
+-		goto err_free_cpumask;
++		goto err_clear_processors;
+ 	}
+ 
+ 	/*
+@@ -595,9 +595,13 @@ static int __cpuinit acpi_processor_add(struct acpi_device *device)
+ 
+ err_remove_sysfs:
+ 	sysfs_remove_link(&device->dev.kobj, "sysdev");
++err_clear_processors:
++	per_cpu(processors, pr->id) = NULL;
++	per_cpu(processor_device_array, pr->id) = NULL;
+ err_free_cpumask:
+ 	free_cpumask_var(pr->throttling.shared_cpu_map);
+-
++err_free_pr:
++	kfree(pr);
+ 	return result;
+ }
+ 
 
