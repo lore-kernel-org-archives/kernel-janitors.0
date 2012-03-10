@@ -1,31 +1,28 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Date: Fri, 02 Mar 2012 19:21:17 +0000
-Subject: Re: [patch] tty: cyclades: clean up a type issue
-Message-Id: <4F511DAD.1060108@suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Mar 2012 08:59:23 +0000
+Subject: [patch] vt: NULL dereference in vt_do_kdsk_ioctl()
+Message-Id: <20120310085923.GD4647@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120302064908.GA24508@elgon.mountain>
-In-Reply-To: <20120302064908.GA24508@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@linux.intel.com>
+Cc: Jovi Zhang <bookjovi@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 03/02/2012 07:49 AM, Dan Carpenter wrote:
-> --- a/drivers/tty/cyclades.c
-> +++ b/drivers/tty/cyclades.c
-...
-> @@ -2413,7 +2413,7 @@ static int get_lsr_info(struct cyclades_port *info, unsigned int __user *value)
->  		/* Not supported yet */
->  		return -EINVAL;
->  	}
-> -	return put_user(result, (unsigned long __user *)value);
-> +	return put_user(result, value);
+We forgot to set the "key_map" variable here, so it's still NULL.  This
+was introduced recently in 079c9534a9 "vt:tackle kbd_table".
 
-This was and is wrong BTW. TIOCSERGETLSR should store to uint. Could you
-fix that by removing the cast instead, please?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-thanks,
--- 
-js
-suse labs
+diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
+index 70d0593..86dd1e3 100644
+--- a/drivers/tty/vt/keyboard.c
++++ b/drivers/tty/vt/keyboard.c
+@@ -1863,6 +1863,7 @@ int vt_do_kdsk_ioctl(int cmd, struct kbentry __user *user_kbe, int perm,
+ 				return -EPERM;
+ 			}
+ 			key_maps[s] = new_map;
++			key_map = new_map;
+ 			key_map[0] = U(K_ALLOCATED);
+ 			for (j = 1; j < NR_KEYS; j++)
+ 				key_map[j] = U(K_HOLE);
