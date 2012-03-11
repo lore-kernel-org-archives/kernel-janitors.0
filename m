@@ -1,36 +1,71 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 25 Mar 2012 19:08:32 +0000
-Subject: [PATCH] drivers/usb/misc/usbtest.c: add kfrees
-Message-Id: <1332702512-20440-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 11 Mar 2012 19:36:22 +0000
+Subject: [PATCH 2/7] drivers/scsi/arm/{cumana_2,eesox,powertec}.c: ensure arguments to request_irq and free_i
+Message-Id: <1331494587-12196-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Free the two previously allocated buffers before exiting the function in an
-error case.
+Convert calls to free_irq so that the second argument is the same as the
+last argument of the corresponding call to request_irq.  Without this
+property, free_irq does nothing.
+
+In each case, the problem is only in the probe function.  The corresponding
+call in the remove function already has the correct second argument.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/usb/misc/usbtest.c |    2 ++
- 1 file changed, 2 insertions(+)
+Not tested.
 
-diff --git a/drivers/usb/misc/usbtest.c b/drivers/usb/misc/usbtest.c
-index 959145b..7bd0bfc 100644
---- a/drivers/usb/misc/usbtest.c
-+++ b/drivers/usb/misc/usbtest.c
-@@ -2276,6 +2276,8 @@ usbtest_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 			if (status < 0) {
- 				WARNING(dev, "couldn't get endpoints, %d\n",
- 						status);
-+				kfree(dev->buf);
-+				kfree(dev);
- 				return status;
- 			}
- 			/* may find bulk or ISO pipes */
+ drivers/scsi/arm/cumana_2.c |    2 +-
+ drivers/scsi/arm/eesox.c    |    2 +-
+ drivers/scsi/arm/powertec.c |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/arm/cumana_2.c b/drivers/scsi/arm/cumana_2.c
+index 547987b..693d383 100644
+--- a/drivers/scsi/arm/cumana_2.c
++++ b/drivers/scsi/arm/cumana_2.c
+@@ -480,7 +480,7 @@ cumanascsi2_probe(struct expansion_card *ec, const struct ecard_id *id)
+ 
+ 	if (info->info.scsi.dma != NO_DMA)
+ 		free_dma(info->info.scsi.dma);
+-	free_irq(ec->irq, host);
++	free_irq(ec->irq, info);
+ 
+  out_release:
+ 	fas216_release(host);
+diff --git a/drivers/scsi/arm/eesox.c b/drivers/scsi/arm/eesox.c
+index edfd12b..48c1a14 100644
+--- a/drivers/scsi/arm/eesox.c
++++ b/drivers/scsi/arm/eesox.c
+@@ -601,7 +601,7 @@ eesoxscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
+ 
+ 	if (info->info.scsi.dma != NO_DMA)
+ 		free_dma(info->info.scsi.dma);
+-	free_irq(ec->irq, host);
++	free_irq(ec->irq, info);
+ 
+  out_remove:
+ 	fas216_remove(host);
+diff --git a/drivers/scsi/arm/powertec.c b/drivers/scsi/arm/powertec.c
+index 9274c06..c9d6e8b 100644
+--- a/drivers/scsi/arm/powertec.c
++++ b/drivers/scsi/arm/powertec.c
+@@ -393,7 +393,7 @@ powertecscsi_probe(struct expansion_card *ec, const struct ecard_id *id)
+ 
+ 	if (info->info.scsi.dma != NO_DMA)
+ 		free_dma(info->info.scsi.dma);
+-	free_irq(ec->irq, host);
++	free_irq(ec->irq, info);
+ 
+  out_release:
+ 	fas216_release(host);
 
