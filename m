@@ -1,23 +1,65 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 28 Mar 2012 02:42:43 +0000
-Subject: Re: [patch] mISDN: array underflow in open_bchannel()
-Message-Id: <20120327.224243.1717299402560241334.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Mar 2012 19:36:24 +0000
+Subject: [PATCH 4/7] arch/sh/drivers/dma/{dma-g2,dmabrg}.c: ensure arguments to request_irq and free_irq are
+Message-Id: <1331494587-12196-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120327072048.GC19008@elgon.mountain>
-In-Reply-To: <20120327072048.GC19008@elgon.mountain>
+References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: isdn@linux-pingi.de, adobriyan@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: kernel-janitors@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Mar 2012 10:20:48 +0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> There are two channels here.  User space starts counting channels at one
-> but in the kernel we start at zero.  If the user passes in a zero
-> channel that's invalid and could lead to memory corruption.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Convert calls to free_irq so that the second argument is the same as the
+last argument of the corresponding call to request_irq.  Without this
+property, free_irq does nothing.
 
-Applied, thanks Dan.
+In the case of dmabrg.c the change is merely cosmetic - changing 0 to NULL.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/sh/drivers/dma/dma-g2.c |    4 ++--
+ arch/sh/drivers/dma/dmabrg.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/sh/drivers/dma/dma-g2.c b/arch/sh/drivers/dma/dma-g2.c
+index be9ca7c..e1ab6eb 100644
+--- a/arch/sh/drivers/dma/dma-g2.c
++++ b/arch/sh/drivers/dma/dma-g2.c
+@@ -181,14 +181,14 @@ static int __init g2_dma_init(void)
+ 
+ 	ret = register_dmac(&g2_dma_info);
+ 	if (unlikely(ret != 0))
+-		free_irq(HW_EVENT_G2_DMA, 0);
++		free_irq(HW_EVENT_G2_DMA, &g2_dma_info);
+ 
+ 	return ret;
+ }
+ 
+ static void __exit g2_dma_exit(void)
+ {
+-	free_irq(HW_EVENT_G2_DMA, 0);
++	free_irq(HW_EVENT_G2_DMA, &g2_dma_info);
+ 	unregister_dmac(&g2_dma_info);
+ }
+ 
+diff --git a/arch/sh/drivers/dma/dmabrg.c b/arch/sh/drivers/dma/dmabrg.c
+index 3d66a32..c0dd904 100644
+--- a/arch/sh/drivers/dma/dmabrg.c
++++ b/arch/sh/drivers/dma/dmabrg.c
+@@ -189,8 +189,8 @@ static int __init dmabrg_init(void)
+ 	if (ret = 0)
+ 		return ret;
+ 
+-	free_irq(DMABRGI1, 0);
+-out1:	free_irq(DMABRGI0, 0);
++	free_irq(DMABRGI1, NULL);
++out1:	free_irq(DMABRGI0, NULL);
+ out0:	kfree(dmabrg_handlers);
+ 	return ret;
+ }
+
