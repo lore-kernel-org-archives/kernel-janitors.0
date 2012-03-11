@@ -1,109 +1,114 @@
-From: Mark Salyzyn <mark_salyzyn@xyratex.com>
-Date: Fri, 09 Mar 2012 12:59:33 +0000
-Subject: Re: [PATCH] [SCSI] pm8001: Use spin_lock_irqsave() for task_state.
-Message-Id: <3AC0015A-DFF5-4D08-A535-1FC6F2094B31@xyratex.com>
+From: jack_wang <jack_wang@usish.com>
+Date: Sun, 11 Mar 2012 07:09:41 +0000
+Subject: Re: Re: [PATCH] [SCSI] pm8001: Use spin_lock_irqsave() for task_state.
+Message-Id: <201203111509407962111@usish.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331280818-14042-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1331280818-14042-1-git-send-email-santoshprasadnayak@gmail.com>
+References: <1331280818-14042-1-git-send-email-santoshprasadnayak@gmail.com>,
+	<3AC0015A-DFF5-4D08-A535-1FC6F2094B31@xyratex.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: Mark Salyzyn <mark_salyzyn@xyratex.com>, jack_wang@usish.com, lindar_liu@usish.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Mark Salyzyn <mark_salyzyn@xyratex.com>, lindar_liu <lindar_liu@usish.com>, James Bottomley <JBottomley@parallels.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-ACK
-
-On Mar 9, 2012, at 3:13 AM, santosh nayak wrote:
-
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> Use spin_lock_irqsave() for task_state.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
-> drivers/scsi/pm8001/pm8001_hwi.c |   18 ++++++++++--------
-> 1 files changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/scsi/pm8001/pm8001_hwi.c b/drivers/scsi/pm8001/pm8001_hwi.c
-> index 3619f6e..9d82ee5 100644
-> --- a/drivers/scsi/pm8001/pm8001_hwi.c
-> +++ b/drivers/scsi/pm8001/pm8001_hwi.c
-> @@ -2093,6 +2093,7 @@ mpi_sata_completion(struct pm8001_hba_info *pm8001_ha, void *piomb)
-> 	struct ata_task_resp *resp ;
-> 	u32 *sata_resp;
-> 	struct pm8001_device *pm8001_dev;
-> +	unsigned long flags;
-> 
-> 	psataPayload = (struct sata_completion_resp *)(piomb + 4);
-> 	status = le32_to_cpu(psataPayload->status);
-> @@ -2382,26 +2383,26 @@ mpi_sata_completion(struct pm8001_hba_info *pm8001_ha, void *piomb)
-> 		ts->stat = SAS_DEV_NO_RESPONSE;
-> 		break;
-> 	}
-> -	spin_lock_irq(&t->task_state_lock);
-> +	spin_lock_irqsave(&t->task_state_lock, flags);
-> 	t->task_state_flags &= ~SAS_TASK_STATE_PENDING;
-> 	t->task_state_flags &= ~SAS_TASK_AT_INITIATOR;
-> 	t->task_state_flags |= SAS_TASK_STATE_DONE;
-> 	if (unlikely((t->task_state_flags & SAS_TASK_STATE_ABORTED))) {
-> -		spin_unlock_irq(&t->task_state_lock);
-> +		spin_unlock_irqrestore(&t->task_state_lock, flags);
-> 		PM8001_FAIL_DBG(pm8001_ha,
-> 			pm8001_printk("task 0x%p done with io_status 0x%x"
-> 			" resp 0x%x stat 0x%x but aborted by upper layer!\n",
-> 			t, status, ts->resp, ts->stat));
-> 		pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
-> 	} else if (t->uldd_task) {
-> -		spin_unlock_irq(&t->task_state_lock);
-> +		spin_unlock_irqrestore(&t->task_state_lock, flags);
-> 		pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
-> 		mb();/* ditto */
-> 		spin_unlock_irq(&pm8001_ha->lock);
-> 		t->task_done(t);
-> 		spin_lock_irq(&pm8001_ha->lock);
-> 	} else if (!t->uldd_task) {
-> -		spin_unlock_irq(&t->task_state_lock);
-> +		spin_unlock_irqrestore(&t->task_state_lock, flags);
-> 		pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
-> 		mb();/*ditto*/
-> 		spin_unlock_irq(&pm8001_ha->lock);
-> @@ -2423,6 +2424,7 @@ static void mpi_sata_event(struct pm8001_hba_info *pm8001_ha , void *piomb)
-> 	u32 tag = le32_to_cpu(psataPayload->tag);
-> 	u32 port_id = le32_to_cpu(psataPayload->port_id);
-> 	u32 dev_id = le32_to_cpu(psataPayload->device_id);
-> +	unsigned long flags;
-> 
-> 	ccb = &pm8001_ha->ccb_info[tag];
-> 	t = ccb->task;
-> @@ -2593,26 +2595,26 @@ static void mpi_sata_event(struct pm8001_hba_info *pm8001_ha , void *piomb)
-> 		ts->stat = SAS_OPEN_TO;
-> 		break;
-> 	}
-> -	spin_lock_irq(&t->task_state_lock);
-> +	spin_lock_irqsave(&t->task_state_lock, flags);
-> 	t->task_state_flags &= ~SAS_TASK_STATE_PENDING;
-> 	t->task_state_flags &= ~SAS_TASK_AT_INITIATOR;
-> 	t->task_state_flags |= SAS_TASK_STATE_DONE;
-> 	if (unlikely((t->task_state_flags & SAS_TASK_STATE_ABORTED))) {
-> -		spin_unlock_irq(&t->task_state_lock);
-> +		spin_unlock_irqrestore(&t->task_state_lock, flags);
-> 		PM8001_FAIL_DBG(pm8001_ha,
-> 			pm8001_printk("task 0x%p done with io_status 0x%x"
-> 			" resp 0x%x stat 0x%x but aborted by upper layer!\n",
-> 			t, event, ts->resp, ts->stat));
-> 		pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
-> 	} else if (t->uldd_task) {
-> -		spin_unlock_irq(&t->task_state_lock);
-> +		spin_unlock_irqrestore(&t->task_state_lock, flags);
-> 		pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
-> 		mb();/* ditto */
-> 		spin_unlock_irq(&pm8001_ha->lock);
-> 		t->task_done(t);
-> 		spin_lock_irq(&pm8001_ha->lock);
-> 	} else if (!t->uldd_task) {
-> -		spin_unlock_irq(&t->task_state_lock);
-> +		spin_unlock_irqrestore(&t->task_state_lock, flags);
-> 		pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
-> 		mb();/*ditto*/
-> 		spin_unlock_irq(&pm8001_ha->lock);
+TG9va3MgT0sgdG8gbWUuDQpUaGFua3MuDQpBY2tlZC1ieTogSmFjayBXYW5nIDxqYWNrX3dhbmdA
+dXNpc2guY29tPg0KDQoNCi0tLS0tLS0tLS0tLS0tDQpqYWNrX3dhbmcNCj5BQ0sNCj4NCj5PbiBN
+YXIgOSwgMjAxMiwgYXQgMzoxMyBBTSwgc2FudG9zaCBuYXlhayB3cm90ZToNCj4NCj4+IEZyb206
+IFNhbnRvc2ggTmF5YWsgPHNhbnRvc2hwcmFzYWRuYXlha0BnbWFpbC5jb20+DQo+PiANCj4+IFVz
+ZSBzcGluX2xvY2tfaXJxc2F2ZSgpIGZvciB0YXNrX3N0YXRlLg0KPj4gDQo+PiBTaWduZWQtb2Zm
+LWJ5OiBTYW50b3NoIE5heWFrIDxzYW50b3NocHJhc2FkbmF5YWtAZ21haWwuY29tPg0KPj4gLS0t
+DQo+PiBkcml2ZXJzL3Njc2kvcG04MDAxL3BtODAwMV9od2kuYyB8ICAgMTggKysrKysrKysrKy0t
+LS0tLS0tDQo+PiAxIGZpbGVzIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDggZGVsZXRpb25z
+KC0pDQo+PiANCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvcG04MDAxL3BtODAwMV9od2ku
+YyBiL2RyaXZlcnMvc2NzaS9wbTgwMDEvcG04MDAxX2h3aS5jDQo+PiBpbmRleCAzNjE5ZjZlLi45
+ZDgyZWU1IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9zY3NpL3BtODAwMS9wbTgwMDFfaHdpLmMN
+Cj4+ICsrKyBiL2RyaXZlcnMvc2NzaS9wbTgwMDEvcG04MDAxX2h3aS5jDQo+PiBAQCAtMjA5Myw2
+ICsyMDkzLDcgQEAgbXBpX3NhdGFfY29tcGxldGlvbihzdHJ1Y3QgcG04MDAxX2hiYV9pbmZvICpw
+bTgwMDFfaGEsIHZvaWQgKnBpb21iKQ0KPj4gCXN0cnVjdCBhdGFfdGFza19yZXNwICpyZXNwIDsN
+Cj4+IAl1MzIgKnNhdGFfcmVzcDsNCj4+IAlzdHJ1Y3QgcG04MDAxX2RldmljZSAqcG04MDAxX2Rl
+djsNCj4+ICsJdW5zaWduZWQgbG9uZyBmbGFnczsNCj4+IA0KPj4gCXBzYXRhUGF5bG9hZCA9IChz
+dHJ1Y3Qgc2F0YV9jb21wbGV0aW9uX3Jlc3AgKikocGlvbWIgKyA0KTsNCj4+IAlzdGF0dXMgPSBs
+ZTMyX3RvX2NwdShwc2F0YVBheWxvYWQtPnN0YXR1cyk7DQo+PiBAQCAtMjM4MiwyNiArMjM4Mywy
+NiBAQCBtcGlfc2F0YV9jb21wbGV0aW9uKHN0cnVjdCBwbTgwMDFfaGJhX2luZm8gKnBtODAwMV9o
+YSwgdm9pZCAqcGlvbWIpDQo+PiAJCXRzLT5zdGF0ID0gU0FTX0RFVl9OT19SRVNQT05TRTsNCj4+
+IAkJYnJlYWs7DQo+PiAJfQ0KPj4gLQlzcGluX2xvY2tfaXJxKCZ0LT50YXNrX3N0YXRlX2xvY2sp
+Ow0KPj4gKwlzcGluX2xvY2tfaXJxc2F2ZSgmdC0+dGFza19zdGF0ZV9sb2NrLCBmbGFncyk7DQo+
+PiAJdC0+dGFza19zdGF0ZV9mbGFncyAmPSB+U0FTX1RBU0tfU1RBVEVfUEVORElORzsNCj4+IAl0
+LT50YXNrX3N0YXRlX2ZsYWdzICY9IH5TQVNfVEFTS19BVF9JTklUSUFUT1I7DQo+PiAJdC0+dGFz
+a19zdGF0ZV9mbGFncyB8PSBTQVNfVEFTS19TVEFURV9ET05FOw0KPj4gCWlmICh1bmxpa2VseSgo
+dC0+dGFza19zdGF0ZV9mbGFncyAmIFNBU19UQVNLX1NUQVRFX0FCT1JURUQpKSkgew0KPj4gLQkJ
+c3Bpbl91bmxvY2tfaXJxKCZ0LT50YXNrX3N0YXRlX2xvY2spOw0KPj4gKwkJc3Bpbl91bmxvY2tf
+aXJxcmVzdG9yZSgmdC0+dGFza19zdGF0ZV9sb2NrLCBmbGFncyk7DQo+PiAJCVBNODAwMV9GQUlM
+X0RCRyhwbTgwMDFfaGEsDQo+PiAJCQlwbTgwMDFfcHJpbnRrKCJ0YXNrIDB4JXAgZG9uZSB3aXRo
+IGlvX3N0YXR1cyAweCV4Ig0KPj4gCQkJIiByZXNwIDB4JXggc3RhdCAweCV4IGJ1dCBhYm9ydGVk
+IGJ5IHVwcGVyIGxheWVyIVxuIiwNCj4+IAkJCXQsIHN0YXR1cywgdHMtPnJlc3AsIHRzLT5zdGF0
+KSk7DQo+PiAJCXBtODAwMV9jY2JfdGFza19mcmVlKHBtODAwMV9oYSwgdCwgY2NiLCB0YWcpOw0K
+Pj4gCX0gZWxzZSBpZiAodC0+dWxkZF90YXNrKSB7DQo+PiAtCQlzcGluX3VubG9ja19pcnEoJnQt
+PnRhc2tfc3RhdGVfbG9jayk7DQo+PiArCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZ0LT50YXNr
+X3N0YXRlX2xvY2ssIGZsYWdzKTsNCj4+IAkJcG04MDAxX2NjYl90YXNrX2ZyZWUocG04MDAxX2hh
+LCB0LCBjY2IsIHRhZyk7DQo+PiAJCW1iKCk7LyogZGl0dG8gKi8NCj4+IAkJc3Bpbl91bmxvY2tf
+aXJxKCZwbTgwMDFfaGEtPmxvY2spOw0KPj4gCQl0LT50YXNrX2RvbmUodCk7DQo+PiAJCXNwaW5f
+bG9ja19pcnEoJnBtODAwMV9oYS0+bG9jayk7DQo+PiAJfSBlbHNlIGlmICghdC0+dWxkZF90YXNr
+KSB7DQo+PiAtCQlzcGluX3VubG9ja19pcnEoJnQtPnRhc2tfc3RhdGVfbG9jayk7DQo+PiArCQlz
+cGluX3VubG9ja19pcnFyZXN0b3JlKCZ0LT50YXNrX3N0YXRlX2xvY2ssIGZsYWdzKTsNCj4+IAkJ
+cG04MDAxX2NjYl90YXNrX2ZyZWUocG04MDAxX2hhLCB0LCBjY2IsIHRhZyk7DQo+PiAJCW1iKCk7
+LypkaXR0byovDQo+PiAJCXNwaW5fdW5sb2NrX2lycSgmcG04MDAxX2hhLT5sb2NrKTsNCj4+IEBA
+IC0yNDIzLDYgKzI0MjQsNyBAQCBzdGF0aWMgdm9pZCBtcGlfc2F0YV9ldmVudChzdHJ1Y3QgcG04
+MDAxX2hiYV9pbmZvICpwbTgwMDFfaGEgLCB2b2lkICpwaW9tYikNCj4+IAl1MzIgdGFnID0gbGUz
+Ml90b19jcHUocHNhdGFQYXlsb2FkLT50YWcpOw0KPj4gCXUzMiBwb3J0X2lkID0gbGUzMl90b19j
+cHUocHNhdGFQYXlsb2FkLT5wb3J0X2lkKTsNCj4+IAl1MzIgZGV2X2lkID0gbGUzMl90b19jcHUo
+cHNhdGFQYXlsb2FkLT5kZXZpY2VfaWQpOw0KPj4gKwl1bnNpZ25lZCBsb25nIGZsYWdzOw0KPj4g
+DQo+PiAJY2NiID0gJnBtODAwMV9oYS0+Y2NiX2luZm9bdGFnXTsNCj4+IAl0ID0gY2NiLT50YXNr
+Ow0KPj4gQEAgLTI1OTMsMjYgKzI1OTUsMjYgQEAgc3RhdGljIHZvaWQgbXBpX3NhdGFfZXZlbnQo
+c3RydWN0IHBtODAwMV9oYmFfaW5mbyAqcG04MDAxX2hhICwgdm9pZCAqcGlvbWIpDQo+PiAJCXRz
+LT5zdGF0ID0gU0FTX09QRU5fVE87DQo+PiAJCWJyZWFrOw0KPj4gCX0NCj4+IC0Jc3Bpbl9sb2Nr
+X2lycSgmdC0+dGFza19zdGF0ZV9sb2NrKTsNCj4+ICsJc3Bpbl9sb2NrX2lycXNhdmUoJnQtPnRh
+c2tfc3RhdGVfbG9jaywgZmxhZ3MpOw0KPj4gCXQtPnRhc2tfc3RhdGVfZmxhZ3MgJj0gflNBU19U
+QVNLX1NUQVRFX1BFTkRJTkc7DQo+PiAJdC0+dGFza19zdGF0ZV9mbGFncyAmPSB+U0FTX1RBU0tf
+QVRfSU5JVElBVE9SOw0KPj4gCXQtPnRhc2tfc3RhdGVfZmxhZ3MgfD0gU0FTX1RBU0tfU1RBVEVf
+RE9ORTsNCj4+IAlpZiAodW5saWtlbHkoKHQtPnRhc2tfc3RhdGVfZmxhZ3MgJiBTQVNfVEFTS19T
+VEFURV9BQk9SVEVEKSkpIHsNCj4+IC0JCXNwaW5fdW5sb2NrX2lycSgmdC0+dGFza19zdGF0ZV9s
+b2NrKTsNCj4+ICsJCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJnQtPnRhc2tfc3RhdGVfbG9jaywg
+ZmxhZ3MpOw0KPj4gCQlQTTgwMDFfRkFJTF9EQkcocG04MDAxX2hhLA0KPj4gCQkJcG04MDAxX3By
+aW50aygidGFzayAweCVwIGRvbmUgd2l0aCBpb19zdGF0dXMgMHgleCINCj4+IAkJCSIgcmVzcCAw
+eCV4IHN0YXQgMHgleCBidXQgYWJvcnRlZCBieSB1cHBlciBsYXllciFcbiIsDQo+PiAJCQl0LCBl
+dmVudCwgdHMtPnJlc3AsIHRzLT5zdGF0KSk7DQo+PiAJCXBtODAwMV9jY2JfdGFza19mcmVlKHBt
+ODAwMV9oYSwgdCwgY2NiLCB0YWcpOw0KPj4gCX0gZWxzZSBpZiAodC0+dWxkZF90YXNrKSB7DQo+
+PiAtCQlzcGluX3VubG9ja19pcnEoJnQtPnRhc2tfc3RhdGVfbG9jayk7DQo+PiArCQlzcGluX3Vu
+bG9ja19pcnFyZXN0b3JlKCZ0LT50YXNrX3N0YXRlX2xvY2ssIGZsYWdzKTsNCj4+IAkJcG04MDAx
+X2NjYl90YXNrX2ZyZWUocG04MDAxX2hhLCB0LCBjY2IsIHRhZyk7DQo+PiAJCW1iKCk7LyogZGl0
+dG8gKi8NCj4+IAkJc3Bpbl91bmxvY2tfaXJxKCZwbTgwMDFfaGEtPmxvY2spOw0KPj4gCQl0LT50
+YXNrX2RvbmUodCk7DQo+PiAJCXNwaW5fbG9ja19pcnEoJnBtODAwMV9oYS0+bG9jayk7DQo+PiAJ
+fSBlbHNlIGlmICghdC0+dWxkZF90YXNrKSB7DQo+PiAtCQlzcGluX3VubG9ja19pcnEoJnQtPnRh
+c2tfc3RhdGVfbG9jayk7DQo+PiArCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZ0LT50YXNrX3N0
+YXRlX2xvY2ssIGZsYWdzKTsNCj4+IAkJcG04MDAxX2NjYl90YXNrX2ZyZWUocG04MDAxX2hhLCB0
+LCBjY2IsIHRhZyk7DQo+PiAJCW1iKCk7LypkaXR0byovDQo+PiAJCXNwaW5fdW5sb2NrX2lycSgm
+cG04MDAxX2hhLT5sb2NrKTsNCj4NCj5fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+VGhpcyBlbWFpbCBtYXkgY29u
+dGFpbiBwcml2aWxlZ2VkIG9yIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiwgd2hpY2ggc2hvdWxk
+IG9ubHkgYmUgdXNlZCBmb3IgdGhlIHB1cnBvc2UgZm9yIHdoaWNoIGl0IHdhcyBzZW50IGJ5IFh5
+cmF0ZXguIE5vIGZ1cnRoZXIgcmlnaHRzIG9yIGxpY2Vuc2VzIGFyZSBncmFudGVkIHRvIHVzZSBz
+dWNoIGluZm9ybWF0aW9uLiBJZiB5b3UgYXJlIG5vdCB0aGUgaW50ZW5kZWQgcmVjaXBpZW50IG9m
+IHRoaXMgbWVzc2FnZSwgcGxlYXNlIG5vdGlmeSB0aGUgc2VuZGVyIGJ5IHJldHVybiBhbmQgZGVs
+ZXRlIGl0LiBZb3UgbWF5IG5vdCB1c2UsIGNvcHksIGRpc2Nsb3NlIG9yIHJlbHkgb24gdGhlIGlu
+Zm9ybWF0aW9uIGNvbnRhaW5lZCBpbiBpdC4NCj4gDQo+SW50ZXJuZXQgZW1haWwgaXMgc3VzY2Vw
+dGlibGUgdG8gZGF0YSBjb3JydXB0aW9uLCBpbnRlcmNlcHRpb24gYW5kIHVuYXV0aG9yaXNlZCBh
+bWVuZG1lbnQgZm9yIHdoaWNoIFh5cmF0ZXggZG9lcyBub3QgYWNjZXB0IGxpYWJpbGl0eS4gV2hp
+bGUgd2UgaGF2ZSB0YWtlbiByZWFzb25hYmxlIHByZWNhdXRpb25zIHRvIGVuc3VyZSB0aGF0IHRo
+aXMgZW1haWwgaXMgZnJlZSBvZiB2aXJ1c2VzLCBYeXJhdGV4IGRvZXMgbm90IGFjY2VwdCBsaWFi
+aWxpdHkgZm9yIHRoZSBwcmVzZW5jZSBvZiBhbnkgY29tcHV0ZXIgdmlydXNlcyBpbiB0aGlzIGVt
+YWlsLCBub3IgZm9yIGFueSBsb3NzZXMgY2F1c2VkIGFzIGEgcmVzdWx0IG9mIHZpcnVzZXMuDQo+
+IA0KPlh5cmF0ZXggVGVjaG5vbG9neSBMaW1pdGVkICgwMzEzNDkxMiksIFJlZ2lzdGVyZWQgaW4g
+RW5nbGFuZCAmIFdhbGVzLCBSZWdpc3RlcmVkIE9mZmljZSwgTGFuZ3N0b25lIFJvYWQsIEhhdmFu
+dCwgSGFtcHNoaXJlLCBQTzkgMVNBLg0KPiANCj5UaGUgWHlyYXRleCBncm91cCBvZiBjb21wYW5p
+ZXMgYWxzbyBpbmNsdWRlcywgWHlyYXRleCBMdGQsIHJlZ2lzdGVyZWQgaW4gQmVybXVkYSwgWHly
+YXRleCBJbnRlcm5hdGlvbmFsIEluYywgcmVnaXN0ZXJlZCBpbiBDYWxpZm9ybmlhLCBYeXJhdGV4
+IChNYWxheXNpYSkgU2RuIEJoZCByZWdpc3RlcmVkIGluIE1hbGF5c2lhLCBYeXJhdGV4IFRlY2hu
+b2xvZ3kgKFd1eGkpIENvIEx0ZCByZWdpc3RlcmVkIGluIFRoZSBQZW9wbGUncyBSZXB1YmxpYyBv
+ZiBDaGluYSBhbmQgWHlyYXRleCBKYXBhbiBMaW1pdGVkIHJlZ2lzdGVyZWQgaW4gSmFwYW4uDQo+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXw0KPiANCj4NCj4NCj5fX19fX19fX19fIEluZm9ybWF0aW9uIGZyb20gRVNF
+VCBOT0QzMiBBbnRpdmlydXMsIHZlcnNpb24gb2YgdmlydXMgc2lnbmF0dXJlIGRhdGFiYXNlIDU2
+NTkgKDIwMTAxMTI5KSBfX19fX19fX19fDQo+DQo+VGhlIG1lc3NhZ2Ugd2FzIGNoZWNrZWQgYnkg
+RVNFVCBOT0QzMiBBbnRpdmlydXMuDQo+DQo+aHR0cDovL3d3dy5lc2V0LmNvbQ0KPg0KPg0KPg=
 
