@@ -1,34 +1,50 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Sun, 11 Mar 2012 13:02:40 +0000
-Subject: Re: [patch] spi: release lock on error path in spi_pump_messages()
-Message-Id: <20120311130240.2DB083E0892@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Mar 2012 19:36:21 +0000
+Subject: [PATCH 1/7] drivers/video/pvr2fb.c: ensure arguments to request_irq and free_irq are compatible
+Message-Id: <1331494587-12196-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120310085729.GB4647@elgon.mountain> <4F5B2113.3060103@bfs.de>
-	<20120311024307.AA5E33E0950@localhost>
-	<20120311062059.GB3337@mwanda>
-In-Reply-To: <20120311062059.GB3337@mwanda>
+References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wharms-fPG8STNUNVg@public.gmane.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 11 Mar 2012 09:20:59 +0300, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Sat, Mar 10, 2012 at 07:43:07PM -0700, Grant Likely wrote:
-> > On Sat, 10 Mar 2012 10:38:27 +0100, walter harms <wharms@bfs.de> wrote:
-> > > hi Dan,
-> > > do you want to protect dev_err() by a spn_lock ?
-> > 
-> > Applied, after moving unlock above the dev_err.
-> > 
-> 
-> Thanks.
-> 
-> I was going to resend this with Walter's change btw.  I wasn't going
-> to ignore his review comments.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I assumed you would.  It was just simpler for me to pick it up with the
-trivial change.
+Convert calls to free_irq so that the second argument is the same as the
+last argument of the corresponding call to request_irq.  Without this
+property, free_irq does nothing.
 
-g.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ drivers/video/pvr2fb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/pvr2fb.c b/drivers/video/pvr2fb.c
+index 3a3fdc6..bcd44c3 100644
+--- a/drivers/video/pvr2fb.c
++++ b/drivers/video/pvr2fb.c
+@@ -895,7 +895,7 @@ static int __init pvr2fb_dc_init(void)
+ 
+ #ifdef CONFIG_PVR2_DMA
+ 	if (request_dma(pvr2dma, "pvr2") != 0) {
+-		free_irq(HW_EVENT_VSYNC, 0);
++		free_irq(HW_EVENT_VSYNC, fb_info);
+ 		return -EBUSY;
+ 	}
+ #endif
+@@ -914,7 +914,7 @@ static void __exit pvr2fb_dc_exit(void)
+ 		currentpar->mmio_base = 0;
+ 	}
+ 
+-	free_irq(HW_EVENT_VSYNC, 0);
++	free_irq(HW_EVENT_VSYNC, fb_info);
+ #ifdef CONFIG_PVR2_DMA
+ 	free_dma(pvr2dma);
+ #endif
 
