@@ -1,22 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 08 Mar 2012 08:29:03 +0000
-Subject: Re: [patch] atl1c: set ATL1C_WORK_EVENT_RESET bit correctly
-Message-Id: <20120308.002903.2204810112948469308.davem@davemloft.net>
+From: richard -rw- weinberger <richard.weinberger@gmail.com>
+Date: Sun, 11 Mar 2012 13:22:57 +0000
+Subject: Re: [PATCH] Video : Amba: Use in_interrupt() in clcdfb_sleep().
+Message-Id: <CAFLxGvygW=DeSQbRq8Wbcdy5E3e4vYcN666_9oWgnuwzT1WKqw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120307100204.GB25452@elgon.mountain>
-In-Reply-To: <20120307100204.GB25452@elgon.mountain>
+References: <1331471665-22226-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1331471665-22226-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, ian.campbell@citrix.com, eric.dumazet@gmail.com, jpirko@redhat.com, mirq-linux@rere.qmqm.pl, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: santosh nayak <santoshprasadnayak@gmail.com>
+Cc: linux@arm.linux.org.uk, FlorianSchandinat@gmx.de, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 7 Mar 2012 13:02:04 +0300
+On Sun, Mar 11, 2012 at 2:14 PM, santosh nayak
+<santoshprasadnayak@gmail.com> wrote:
+> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+>
+> Instead of "in_atomic()", we can use in_interrupt() to check whether
+> its an interrupt context.
 
-> ATL1C_WORK_EVENT_RESET is zero so the original code here is a nop.  The
-> intent was to set the zero bit.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+What is the benefit?
 
-Applied.
+Your change turns clcdfb_sleep() into a ticking bomb.
+If clcdfb_sleep() is called from an atomic section (e.g. under a
+spinlock) it will call msleep()
+and the whole thing explodes...
+
+-- 
+Thanks,
+//richard
