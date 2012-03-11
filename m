@@ -1,35 +1,101 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Mon, 26 Mar 2012 20:51:10 +0000
-Subject: Re: [PATCH] scripts/coccinelle/api/simple_open.cocci: semantic patch for simple_open()
-Message-Id: <4F70D6BE.6000202@suse.cz>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Mar 2012 19:36:23 +0000
+Subject: [PATCH 3/7] drivers/net/irda/{ali-ircc,via-ircc,w83977af-ir}.c: ensure arguments to request_irq and
+Message-Id: <1331494587-12196-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331657917-4552-1-git-send-email-Julia.Lawall@lip6.fr> <20120326204407.GC10259@sepie.suse.cz> <20120326134821.fb74a5b4.akpm@linux-foundation.org>
-In-Reply-To: <20120326134821.fb74a5b4.akpm@linux-foundation.org>
+References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, sboyd@codeaurora.org, kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Samuel Ortiz <samuel@sortiz.org>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dne 26.3.2012 22:48, Andrew Morton napsal(a):
-> On Mon, 26 Mar 2012 22:44:07 +0200
-> Michal Marek <mmarek@suse.cz> wrote:
-> 
->> On Tue, Mar 13, 2012 at 05:58:37PM +0100, Julia Lawall wrote:
->>> From: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> Find instances of an open-coded simple_open() and replace them
->>> with calls to simple_open().
->>>
->>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>> Reported-by: Stephen Boyd <sboyd@codeaurora.org>
->>
->> Thanks, applied to kbuild.git#misc now.
->>
-> 
-> That's a bit premature, as simple_open() isn't upstream yet.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Oops, sorry. I haven't pushed the branch yet, so I will remove the patch
-again.
+Convert calls to free_irq so that the second argument is the same as the
+last argument of the corresponding call to request_irq.  Without this
+property, free_irq does nothing.
 
-Michal
+In each case, there is one call to free_irq with self as the second
+argument and one with dev as the second argument.  Even though dev was also
+the last argument of request_irq, I have changed all of the calls to use
+self, as it fits better with the first argument to each function.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.  I don't know if I have made the right choice.
+
+ drivers/net/irda/ali-ircc.c    |    4 ++--
+ drivers/net/irda/via-ircc.c    |    4 ++--
+ drivers/net/irda/w83977af_ir.c |    4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/irda/ali-ircc.c b/drivers/net/irda/ali-ircc.c
+index 963067d..7e732d7 100644
+--- a/drivers/net/irda/ali-ircc.c
++++ b/drivers/net/irda/ali-ircc.c
+@@ -1352,7 +1352,7 @@ static int ali_ircc_net_open(struct net_device *dev)
+ 	iobase = self->io.fir_base;
+ 	
+ 	/* Request IRQ and install Interrupt Handler */
+-	if (request_irq(self->io.irq, ali_ircc_interrupt, 0, dev->name, dev)) 
++	if (request_irq(self->io.irq, ali_ircc_interrupt, 0, dev->name, self))
+ 	{
+ 		IRDA_WARNING("%s, unable to allocate irq=%d\n",
+ 			     ALI_IRCC_DRIVER_NAME,
+@@ -1424,7 +1424,7 @@ static int ali_ircc_net_close(struct net_device *dev)
+ 	/* Disable interrupts */
+ 	SetCOMInterrupts(self, FALSE);
+ 	       
+-	free_irq(self->io.irq, dev);
++	free_irq(self->io.irq, self);
+ 	free_dma(self->io.dma);
+ 
+ 	IRDA_DEBUG(2, "%s(), ----------------- End ------------------\n", __func__ );
+diff --git a/drivers/net/irda/via-ircc.c b/drivers/net/irda/via-ircc.c
+index 2d456dd..c0678be 100644
+--- a/drivers/net/irda/via-ircc.c
++++ b/drivers/net/irda/via-ircc.c
+@@ -1483,7 +1483,7 @@ static int via_ircc_net_open(struct net_device *dev)
+ 	dev->stats.rx_packets = 0;
+ 	IRDA_ASSERT(self != NULL, return 0;);
+ 	iobase = self->io.fir_base;
+-	if (request_irq(self->io.irq, via_ircc_interrupt, 0, dev->name, dev)) {
++	if (request_irq(self->io.irq, via_ircc_interrupt, 0, dev->name, self)) {
+ 		IRDA_WARNING("%s, unable to allocate irq=%d\n", driver_name,
+ 			     self->io.irq);
+ 		return -EAGAIN;
+@@ -1562,7 +1562,7 @@ static int via_ircc_net_close(struct net_device *dev)
+ 
+ 	/* Disable interrupts */
+ 	EnAllInt(iobase, OFF);
+-	free_irq(self->io.irq, dev);
++	free_irq(self->io.irq, self);
+ 	free_dma(self->io.dma);
+ 	if (self->io.dma2 != self->io.dma)
+ 		free_dma(self->io.dma2);
+diff --git a/drivers/net/irda/w83977af_ir.c b/drivers/net/irda/w83977af_ir.c
+index 7d43506..c0c430c 100644
+--- a/drivers/net/irda/w83977af_ir.c
++++ b/drivers/net/irda/w83977af_ir.c
+@@ -1164,7 +1164,7 @@ static int w83977af_net_open(struct net_device *dev)
+ 	iobase = self->io.fir_base;
+ 
+ 	if (request_irq(self->io.irq, w83977af_interrupt, 0, dev->name, 
+-			(void *) dev)) {
++			self)) {
+ 		return -EAGAIN;
+ 	}
+ 	/*
+@@ -1244,7 +1244,7 @@ static int w83977af_net_close(struct net_device *dev)
+ 	switch_bank(iobase, SET0);
+ 	outb(0, iobase+ICR); 
+ 
+-	free_irq(self->io.irq, dev);
++	free_irq(self->io.irq, self);
+ 	free_dma(self->io.dma);
+ 
+ 	/* Restore bank register */
+
