@@ -1,30 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 07 Mar 2012 10:00:20 +0000
-Subject: [patch] AFS: checking wrong bit in afs_readpages()
-Message-Id: <20120307100020.GA25452@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Mar 2012 19:36:20 +0000
+Subject: [PATCH 0/7] ensure arguments to request_irq and free_irq are compatible
+Message-Id: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Howells <dhowells@redhat.com>
-Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-We should be testing "if (vnode->flags & (1 << 4))" instead of
-"if (vnode->flags & 4) {".  The current test checks if the data was
-modified instead of deleted.
+As far as I can see, free_irq does nothing if its second argument is not
+the same as the last argument of the corresponding call to request_irq.
+These were found using the semantic match below (http://coccinelle.lip6.fr/).
+This semantic match finds a number of other cases, but they are mostly in
+platform driver probe functions, so the functions should be just converted
+to use devm functions, eliminating the need to call free_irq at all.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@r exists@
+expression e,e1,e2,e3,e4,e5;
+type T;
+position p1,p2;
+@@
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 14d89fa..8f6e923 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -251,7 +251,7 @@ static int afs_readpages(struct file *file, struct address_space *mapping,
- 	ASSERT(key != NULL);
- 
- 	vnode = AFS_FS_I(mapping->host);
--	if (vnode->flags & AFS_VNODE_DELETED) {
-+	if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
- 		_leave(" = -ESTALE");
- 		return -ESTALE;
- 	}
+request_irq@p1(e1,e2,e3,e4,e5)
+...
+(
+ free_irq(e1,(T)e5);
+|
+free_irq@p2(e1,e);
+)
+
+@bad1 exists@
+position r.p1,r.p2;
+expression e1,e2,e3,e4,e5;
+@@
+
+request_irq@p1(e1,e2,e3,e4,(void *)e5)
+...
+free_irq@p2(e1,e5);
+
+@bad2 exists@
+position r.p1,r.p2;
+statement S;
+@@
+
+if (request_irq@p1(...)) S else { <+... free_irq@p2(...); ...+> }
+
+@script:python depends on !bad1 && !bad2@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+// </smpl>
+
