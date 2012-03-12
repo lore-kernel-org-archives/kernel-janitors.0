@@ -1,39 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Feb 2012 06:37:53 +0000
-Subject: [patch 4/4] rndis_wlan: prevent integer overflow in indication()
-Message-Id: <20120229063753.GF18031@elgon.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 12 Mar 2012 06:48:08 +0000
+Subject: Re: [PATCH 3/3 v2] netxen: qlogic ethernet : Fix endian bug.
+Message-Id: <20120311.234808.1919218898572322534.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1331534303-4093-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1331534303-4093-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: santoshprasadnayak@gmail.com
+Cc: sony.chacko@qlogic.com, rajesh.borundia@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If we pick a high value for "offset" then it could lead to an integer
-overflow and we would get past the check for:
-	if (offset + len > buflen) { ...
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Mon, 12 Mar 2012 12:08:23 +0530
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+> 
+> Fix endian bug.
+> 
+> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis_wlan.c
-index 74e2d1b..dfd76e3 100644
---- a/drivers/net/wireless/rndis_wlan.c
-+++ b/drivers/net/wireless/rndis_wlan.c
-@@ -3043,7 +3043,7 @@ static void rndis_wlan_media_specific_indication(struct usbnet *usbdev,
- 			struct rndis_indicate *msg, int buflen)
- {
- 	struct ndis_80211_status_indication *indication;
--	int len, offset;
-+	unsigned int len, offset;
- 
- 	offset = offsetof(struct rndis_indicate, status) +
- 			le32_to_cpu(msg->offset);
-@@ -3055,7 +3055,7 @@ static void rndis_wlan_media_specific_indication(struct usbnet *usbdev,
- 		return;
- 	}
- 
--	if (offset + len > buflen) {
-+	if (len > buflen || offset > buflen || offset + len > buflen) {
- 		netdev_info(usbdev->net, "media specific indication, too large to fit to buffer (%i > %i)\n",
- 			    offset + len, buflen);
- 		return;
+This is a very non-trivial patch, therefore the terse commit
+message and the lack of any comments in this code is unacceptable.
+
+This commit message is not only terse, it's wrong.  You're not
+fixing an endian bug, you're fixing several of them.
+
+Explain everything in your commit message.
+
+>  	req.words[0] = cpu_to_le64(cmd);
+> -	req.words[1] = cpu_to_le64(ip);
+> +	memcpy(&req.words[1], &ip, sizeof(u32));
+
+Nobody is going to read that and have any idea why it's correct unless
+they happen to be able to discover the long thread you guys had this
+past week working out how to do this change correctly.
+
+Putting a comment here for the rest of us mere mortals is therefore
+absolutely required.
