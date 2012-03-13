@@ -1,32 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 13 Mar 2012 17:18:48 +0000
-Subject: [patch] NFS: null dereference in dev_remove()
-Message-Id: <20120313171848.GA31808@elgon.mountain>
+From: Stanislav Kinsbursky <skinsbursky@parallels.com>
+Date: Tue, 13 Mar 2012 17:25:56 +0000
+Subject: Re: [patch] NFS: null dereference in dev_remove()
+Message-Id: <4F5F8324.30608@parallels.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120313171848.GA31808@elgon.mountain>
+In-Reply-To: <20120313171848.GA31808@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: Stanislav Kinsbursky <skinsbursky@parallels.com>, Benny Halevy <bhalevy@panasas.com>, Weston Andros Adamson <dros@netapp.com>, Peng Tao <peng_tao@emc.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, Benny Halevy <bhalevy@panasas.com>, Weston Andros Adamson <dros@netapp.com>, Peng Tao <peng_tao@emc.com>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-In commit 5ffaf85541 "NFS: replace global bl_wq with per-net one" we
-made "msg" a pointer instead of a struct stored in stack memory.  But we
-forgot to change the memset() here so we're still clearing stack memory
-instead clearing the struct like we intended.  It will lead to a kernel
-crash.
+13.03.2012 21:18, Dan Carpenter пишет:
+> In commit 5ffaf85541 "NFS: replace global bl_wq with per-net one" we
+> made "msg" a pointer instead of a struct stored in stack memory.  But we
+> forgot to change the memset() here so we're still clearing stack memory
+> instead clearing the struct like we intended.  It will lead to a kernel
+> crash.
+>
+> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+>
+> diff --git a/fs/nfs/blocklayout/blocklayoutdm.c b/fs/nfs/blocklayout/blocklayoutdm.c
+> index 30fc22a..737d839 100644
+> --- a/fs/nfs/blocklayout/blocklayoutdm.c
+> +++ b/fs/nfs/blocklayout/blocklayoutdm.c
+> @@ -54,7 +54,7 @@ static void dev_remove(struct net *net, dev_t dev)
+>   	dprintk("Entering %s\n", __func__);
+>
+>   	bl_pipe_msg.bl_wq =&nn->bl_wq;
+> -	memset(&msg, 0, sizeof(*msg));
+> +	memset(msg, 0, sizeof(*msg));
+>   	msg->data = kzalloc(1 + sizeof(bl_umount_request), GFP_NOFS);
+>   	if (!msg->data)
+>   		goto out;
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks, Dan!
 
-diff --git a/fs/nfs/blocklayout/blocklayoutdm.c b/fs/nfs/blocklayout/blocklayoutdm.c
-index 30fc22a..737d839 100644
---- a/fs/nfs/blocklayout/blocklayoutdm.c
-+++ b/fs/nfs/blocklayout/blocklayoutdm.c
-@@ -54,7 +54,7 @@ static void dev_remove(struct net *net, dev_t dev)
- 	dprintk("Entering %s\n", __func__);
- 
- 	bl_pipe_msg.bl_wq = &nn->bl_wq;
--	memset(&msg, 0, sizeof(*msg));
-+	memset(msg, 0, sizeof(*msg));
- 	msg->data = kzalloc(1 + sizeof(bl_umount_request), GFP_NOFS);
- 	if (!msg->data)
- 		goto out;
+-- 
+Best regards,
+Stanislav Kinsbursky
