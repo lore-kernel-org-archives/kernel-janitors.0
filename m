@@ -1,53 +1,32 @@
-From: Valdis.Kletnieks@vt.edu
-Date: Thu, 01 Mar 2012 02:23:17 +0000
-Subject: Re: [PATCH] Trace: initialize variable to clear warning
-Message-Id: <3661.1330568597@turing-police.cc.vt.edu>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="==_Exmh_1330568597_2887P"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Mar 2012 17:18:48 +0000
+Subject: [patch] NFS: null dereference in dev_remove()
+Message-Id: <20120313171848.GA31808@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330420174-20537-1-git-send-email-ruan.zhengwang@gmail.com> <1330438591.25686.214.camel@gandalf.stny.rr.com> <48875.1330555230@turing-police.cc.vt.edu> <1330564158.25686.230.camel@gandalf.stny.rr.com>
-            <4F4EDA38.2070803@gmail.com>
-In-Reply-To: Your message of "Thu, 01 Mar 2012 10:08:56 +0800."
-             <4F4EDA38.2070803@gmail.com>
-To: Zhengwang Ruan <ruan.zhengwang@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, fweisbec@gmail.com, mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: Stanislav Kinsbursky <skinsbursky@parallels.com>, Benny Halevy <bhalevy@panasas.com>, Weston Andros Adamson <dros@netapp.com>, Peng Tao <peng_tao@emc.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---==_Exmh_1330568597_2887P
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+In commit 5ffaf85541 "NFS: replace global bl_wq with per-net one" we
+made "msg" a pointer instead of a struct stored in stack memory.  But we
+forgot to change the memset() here so we're still clearing stack memory
+instead clearing the struct like we intended.  It will lead to a kernel
+crash.
 
-On Thu, 01 Mar 2012 10:08:56 +0800, Zhengwang Ruan said:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> > /* if you get a warning here, upgrade your gcc to 4.6 */
-> >
->=20
-> OK, I will resend this patch.
-
-For the version with Steven's suggested comment:
-
-Acked-By: Valdis Kletnieks <valdis.kletnieks=40vt.edu>
-
---==_Exmh_1330568597_2887P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
-
-iQIVAwUBT07dlQdmEQWDXROgAQIG5Q/+OEVFdJu9lDsV95hagzYlgJSSEqJfNSaF
-tfZ/GK9rpilHnIU3JBGf6UDx/Y3jwhX6NBoWMEQ3v9NTbklwmmfGUg2+J0jjTzF4
-FUsjbb8lY+YN0wMuyQCFnCe8qZC1vyYavNwZC29iCpnyZqARp+GjQN56U9gTZYt+
-BP/fy2pLh/TkEkPvUS6CtE6edhZzPaEWI3IaGyyerEZ0YEl+okV2h1sgH2WC/Vzo
-loHCMcvp9iNw4+e1PtLZT+m5slctj9BAEyR8GCoT+kqrR0eb1nclhftCOfX8EgLV
-U8ELBaodLPbsokaLBR4jGRNLwh2biu98UJRHSrfQqFIIATosDQa3w9Ezey9QB2Z9
-4gq3UJxen//VGc8Uk66XhZ5x8yd0jS9CLHlW/v56WaVwFZwINBZDnyt5F7Rmw9PG
-cKzwwaWiL09O+kDbie2Tz66JXt8LaligOL2Wv22p67T6WQO0cQbpPODUPv/RdLab
-h8eymmevZ7hbgfvWCf5WAi6VtZUNcgJSRypKhwQkv/QQ286F0yLdBgHMCHsPwly0
-kv5LWiugp1raNqy4Vi4ddNYECD0Ffeaz7rEFo9yXaqFHp35JP1yVdDAIr0C014od
-1qQQORs3Duy6EJPJ24o6gOP2F67Nrr6rCZ9TYgviKd402Kw1/LNA7o/wkLGHyzIo
-Ma5qC7K5y8M=
-=NfvD
------END PGP SIGNATURE-----
-
---==_Exmh_1330568597_2887P--
-
+diff --git a/fs/nfs/blocklayout/blocklayoutdm.c b/fs/nfs/blocklayout/blocklayoutdm.c
+index 30fc22a..737d839 100644
+--- a/fs/nfs/blocklayout/blocklayoutdm.c
++++ b/fs/nfs/blocklayout/blocklayoutdm.c
+@@ -54,7 +54,7 @@ static void dev_remove(struct net *net, dev_t dev)
+ 	dprintk("Entering %s\n", __func__);
+ 
+ 	bl_pipe_msg.bl_wq = &nn->bl_wq;
+-	memset(&msg, 0, sizeof(*msg));
++	memset(msg, 0, sizeof(*msg));
+ 	msg->data = kzalloc(1 + sizeof(bl_umount_request), GFP_NOFS);
+ 	if (!msg->data)
+ 		goto out;
