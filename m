@@ -1,44 +1,48 @@
-From: Guan Xuetao <gxt@mprc.pku.edu.cn>
-Date: Wed, 14 Mar 2012 08:42:55 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Wed, 14 Mar 2012 09:23:47 +0000
 Subject: Re: [PATCH 7/7] arch/unicore32/kernel/dma.c: ensure arguments to request_irq and free_irq are compat
-Message-Id: <1331714575.2389.47.camel@epip-laptop>
+Message-Id: <alpine.DEB.2.02.1203140957020.2146@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1331494587-12196-8-git-send-email-Julia.Lawall@lip6.fr>
-	 <1331513926.2048.58.camel@epip-laptop>
-	 <alpine.DEB.2.02.1203120625570.2066@localhost6.localdomain6>
-	 <1331622633.2048.87.camel@epip-laptop>
-	 <alpine.DEB.2.02.1203130921250.1974@localhost6.localdomain6>
-	 <1331712444.2389.36.camel@epip-laptop> <20120314081910.GC3163@mwanda>
-In-Reply-To: <20120314081910.GC3163@mwanda>
+References: <1331494587-12196-1-git-send-email-Julia.Lawall@lip6.fr>  <1331494587-12196-8-git-send-email-Julia.Lawall@lip6.fr>  <1331513926.2048.58.camel@epip-laptop>  <alpine.DEB.2.02.1203120625570.2066@localhost6.localdomain6>  <1331622633.2048.87.camel@epip-laptop>
+  <alpine.DEB.2.02.1203130921250.1974@localhost6.localdomain6>  <1331712444.2389.36.camel@epip-laptop> <20120314081910.GC3163@mwanda> <1331714575.2389.47.camel@epip-laptop>
+In-Reply-To: <1331714575.2389.47.camel@epip-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-
-On Wed, 2012-03-14 at 11:19 +0300, Dan Carpenter wrote:
-> On Wed, Mar 14, 2012 at 04:07:24PM +0800, Guan Xuetao wrote:
-> > puv3_init_dma() is called ONCE when initializing.
-> > In logical, if request_irq(IRQ_DMAERR, *) failed, free_irq(IRQ_DMA, *)
-> > is unnecessary, and dma device/driver can keep on working.
-> > The patch could be:
-> >   	ret = request_irq(IRQ_DMAERR, dma_err_handler, 0, "DMAERR", NULL);
-> >   	if (ret) {
-> >   		printk(KERN_CRIT "Can't register IRQ for DMAERR\n");
-> >  -		free_irq(IRQ_DMA, "DMA");
-> >   		return ret;
-> >   	}
-> 
-> It seems like you should remove the error return as well?
-> 
-> regards,
-> dan carpenter
-> 
-The error return value will only generate an extra warning message, and
-have no side-effect.
-
-Thanks and Regards,
-Guan Xuetao
+To: Guan Xuetao <gxt@mprc.pku.edu.cn>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+
+On Wed, 14 Mar 2012, Guan Xuetao wrote:
+
+> On Wed, 2012-03-14 at 11:19 +0300, Dan Carpenter wrote:
+>> On Wed, Mar 14, 2012 at 04:07:24PM +0800, Guan Xuetao wrote:
+>>> puv3_init_dma() is called ONCE when initializing.
+>>> In logical, if request_irq(IRQ_DMAERR, *) failed, free_irq(IRQ_DMA, *)
+>>> is unnecessary, and dma device/driver can keep on working.
+>>> The patch could be:
+>>>   	ret = request_irq(IRQ_DMAERR, dma_err_handler, 0, "DMAERR", NULL);
+>>>   	if (ret) {
+>>>   		printk(KERN_CRIT "Can't register IRQ for DMAERR\n");
+>>>  -		free_irq(IRQ_DMA, "DMA");
+>>>   		return ret;
+>>>   	}
+>>
+>> It seems like you should remove the error return as well?
+>>
+>> regards,
+>> dan carpenter
+>>
+> The error return value will only generate an extra warning message, and
+> have no side-effect.
+
+The whole thing seems a little strange.  I guess your point is that the 
+call site never looks at the return value?  Wouldn't it be better to make 
+there be no return value in that case?  If there is a return value, some 
+calling context in the future might take that into account and then the 
+lack of a free_irq would be a memory leak.  Also if the first request_irq 
+can never fail, perhaps that should be made explicit by not testing the 
+return value?
+
+julia
