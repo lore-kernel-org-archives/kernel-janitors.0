@@ -1,7 +1,7 @@
 From: Dirk Brandewie <dirk.brandewie@gmail.com>
-Date: Thu, 15 Mar 2012 16:57:43 +0000
+Date: Thu, 15 Mar 2012 17:20:34 +0000
 Subject: Re: [patch] max17042_battery: fix a couple buffer overflows
-Message-Id: <4F621F87.3040408@gmail.com>
+Message-Id: <4F6224E2.5060006@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120315113732.GA364@elgon.mountain>
 In-Reply-To: <20120315113732.GA364@elgon.mountain>
@@ -26,9 +26,9 @@ On 03/15/2012 04:37 AM, Dan Carpenter wrote:
 > and also in the for loop we go past the end of the array.
 >
 > Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+Acked-by: Dirk Brandewie <dirk.brandewie@gmail.com>
 
-Acked-by: Dirk Brandewie <dirk.brandewie@intel.com>
-
+Typo in first ack :-(
 > ---
 > I don't have this hardware.  The original code is clearly buggy, but I
 > can't test that my fix is correct.  Please review carefully.
