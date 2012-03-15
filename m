@@ -1,78 +1,60 @@
-From: "Jack Wang" <jack_wang@usish.com>
-Date: Tue, 20 Mar 2012 06:41:29 +0000
-Subject: Re [PATCH v3] [SCSI] pm8001: fix endian issue with code optimization.
-Message-Id: <857EB40E526B4CC2A2D9140110216FE2@usish.com.cn>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Mar 2012 11:37:32 +0000
+Subject: [patch] max17042_battery: fix a couple buffer overflows
+Message-Id: <20120315113732.GA364@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1332172587-11805-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1332172587-11805-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'santosh nayak' <santoshprasadnayak@gmail.com>, mark_salyzyn@xyratex.com
-Cc: lindar_liu@usish.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
+To: Grant Likely <grant.likely@secretlab.ca>, Dirk Brandewie <dirk.brandewie@gmail.com>
+Cc: Rob Herring <rob.herring@calxeda.com>, Anton Vorontsov <anton.vorontsov@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philip Rakity <prakity@marvell.com>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Jack Wang <jack_wang@usish.com>
+There are a couple issues here caused by confusion between sizeof()
+and ARRAY_SIZE().  "table_size" should be the number of elements, but we
+should allocate it with kcalloc() so that we allocate the correct number
+of bytes.
 
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> Data type of the 'tag' field of 'fw_flash_Update_resp' should be
-> __le32.
-> 
-> Data type of  'pHeader' should be __le32.
-> Remove 2nd cast to 'piomb'.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
->  drivers/scsi/pm8001/pm8001_hwi.c |    6 +++---
->  drivers/scsi/pm8001/pm8001_hwi.h |    2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/scsi/pm8001/pm8001_hwi.c
-> b/drivers/scsi/pm8001/pm8001_hwi.c
-> index 3619f6e..6d83236 100644
-> --- a/drivers/scsi/pm8001/pm8001_hwi.c
-> +++ b/drivers/scsi/pm8001/pm8001_hwi.c
-> @@ -3355,7 +3355,7 @@ mpi_fw_flash_update_resp(struct pm8001_hba_info
-> *pm8001_ha, void *piomb)
->  	struct fw_control_ex	fw_control_context;
->  	struct fw_flash_Update_resp *ppayload >  		(struct fw_flash_Update_resp *)(piomb + 4);
-> -	u32 tag = ppayload->tag;
-> +	u32 tag = le32_to_cpu(ppayload->tag);
->  	struct pm8001_ccb_info *ccb = &pm8001_ha->ccb_info[tag];
->  	status = le32_to_cpu(ppayload->status);
->  	memcpy(&fw_control_context,
-> @@ -3701,8 +3701,8 @@ static int mpi_hw_event(struct pm8001_hba_info
-> *pm8001_ha, void* piomb)
->   */
->  static void process_one_iomb(struct pm8001_hba_info *pm8001_ha, void
-*piomb)
->  {
-> -	u32 pHeader = (u32)*(u32 *)piomb;
-> -	u8 opc = (u8)(pHeader & 0xFFF);
-> +	__le32 pHeader = *(__le32 *)piomb;
-> +	u8 opc = (u8)((le32_to_cpu(pHeader)) & 0xFFF);
-> 
->  	PM8001_MSG_DBG(pm8001_ha, pm8001_printk("process_one_iomb:"));
-> 
-> diff --git a/drivers/scsi/pm8001/pm8001_hwi.h
-> b/drivers/scsi/pm8001/pm8001_hwi.h
-> index 1a4611e..d437309 100644
-> --- a/drivers/scsi/pm8001/pm8001_hwi.h
-> +++ b/drivers/scsi/pm8001/pm8001_hwi.h
-> @@ -599,7 +599,7 @@ struct fw_flash_Update_req {
->   *
->   */
->  struct fw_flash_Update_resp {
-> -	dma_addr_t	tag;
-> +	__le32	tag;
->  	__le32	status;
->  	u32	reserved[13];
->  } __attribute__((packed, aligned(4)));
-> --
-> 1.7.4.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+In max17042_init_model() we don't allocate enough space so we go past
+the end of the array in max17042_read_model_data() and
+max17042_model_data_compare().
 
+In max17042_verify_model_lock() we allocate the right amount of space
+but we call max17042_read_model_data() with the wrong number of elements
+and also in the for loop we go past the end of the array.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't have this hardware.  The original code is clearly buggy, but I
+can't test that my fix is correct.  Please review carefully.
+
+diff --git a/drivers/power/max17042_battery.c b/drivers/power/max17042_battery.c
+index e36763a..f8cd48c 100644
+--- a/drivers/power/max17042_battery.c
++++ b/drivers/power/max17042_battery.c
+@@ -328,11 +328,10 @@ static inline int max17042_model_data_compare(struct max17042_chip *chip,
+ static int max17042_init_model(struct max17042_chip *chip)
+ {
+ 	int ret;
+-	int table_size -		sizeof(chip->pdata->config_data->cell_char_tbl)/sizeof(u16);
++	int table_size = ARRAY_SIZE(chip->pdata->config_data->cell_char_tbl);
+ 	u16 *temp_data;
+ 
+-	temp_data = kzalloc(table_size, GFP_KERNEL);
++	temp_data = kcalloc(table_size, sizeof(*temp_data), GFP_KERNEL);
+ 	if (!temp_data)
+ 		return -ENOMEM;
+ 
+@@ -357,12 +356,11 @@ static int max17042_init_model(struct max17042_chip *chip)
+ static int max17042_verify_model_lock(struct max17042_chip *chip)
+ {
+ 	int i;
+-	int table_size -		sizeof(chip->pdata->config_data->cell_char_tbl);
++	int table_size = ARRAY_SIZE(chip->pdata->config_data->cell_char_tbl);
+ 	u16 *temp_data;
+ 	int ret = 0;
+ 
+-	temp_data = kzalloc(table_size, GFP_KERNEL);
++	temp_data = kcalloc(table_size, sizeof(*temp_data), GFP_KERNEL);
+ 	if (!temp_data)
+ 		return -ENOMEM;
+ 
