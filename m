@@ -1,33 +1,33 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Sun, 04 Mar 2012 17:03:57 +0000
-Subject: Re: Resend [PATCH] netfilter: Fix copy_to_user too small size parametre.
-Message-Id: <20120304170357.GA24080@1984>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Mar 2012 07:10:20 +0000
+Subject: [patch] samsung-laptop: cleanup return type: mode_t vs umode_t
+Message-Id: <20120315071020.GA3567@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330621743-12883-1-git-send-email-santoshprasadnayak@gmail.com>
- <20120304121841.GA23277@1984>
- <CAOD=uF6UvL2oEmJmgak4X5L0PR+qQi2=Vr22AUsAxLLOfi44rw@mail.gmail.com>
-In-Reply-To: <CAOD=uF6UvL2oEmJmgak4X5L0PR+qQi2=Vr22AUsAxLLOfi44rw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: santosh prasad nayak <santoshprasadnayak@gmail.com>
-Cc: bart.de.schuymer@pandora.be, kaber@trash.net, shemminger@vyatta.com, davem@davemloft.net, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Corentin Chary <corentincj@iksaif.net>
+Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Mar 04, 2012 at 06:09:08PM +0530, santosh prasad nayak wrote:
-> where is it broken ?
-> Can you please explain ?
+This function returns a umode_t (unsigned short) instead of mode_t which
+is an unsigned int on some architectures.  Cleaning this up silences a
+compile warning:
 
-> >> + =A0 =A0 strncpy(name, t->u.target->name, sizeof(name));
-> >> =A0 =A0 =A0 hlp =3D ubase + (((char *)e + e->target_offset) - base);
-> >> =A0 =A0 =A0 t =3D (struct ebt_entry_target *)(((char *)e) + e->target_=
-offset);
+drivers/platform/x86/samsung-laptop.c:1108:2: warning: initialization
+	from incompatible pointer type [enabled by default]
 
-In ebt_make_names, you dereference t but it is not initialized.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Note that strncpy refers to t->u.target->name which is initialized a
-couple of lines after it.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/platform/x86/samsung-laptop.c b/drivers/platform/x86/samsung-laptop.c
+index 7d7109f..0550bc5 100644
+--- a/drivers/platform/x86/samsung-laptop.c
++++ b/drivers/platform/x86/samsung-laptop.c
+@@ -1086,7 +1086,7 @@ static int __init samsung_backlight_init(struct samsung_laptop *samsung)
+ 	return 0;
+ }
+ 
+-static mode_t samsung_sysfs_is_visible(struct kobject *kobj,
++static umode_t samsung_sysfs_is_visible(struct kobject *kobj,
+ 				       struct attribute *attr, int idx)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
