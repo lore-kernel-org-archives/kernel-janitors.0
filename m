@@ -1,36 +1,41 @@
-From: Johan Hedberg <johan.hedberg@gmail.com>
-Date: Thu, 01 Mar 2012 01:39:49 +0000
-Subject: Re: [patch] Bluetooth: use kfree_skb() instead of kfree()
-Message-Id: <20120301013949.GB26492@x220>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 16 Mar 2012 13:22:13 +0000
+Subject: [PATCH] isdn: Return -EINTR in gigaset_start() if locking attempts fails.
+Message-Id: <1331903413-11426-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120228065246.GC20506@elgon.mountain>
-In-Reply-To: <20120228065246.GC20506@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, Andrei Emeltchenko <andrei.emeltchenko@intel.com>, linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hjlipp@web.de
+Cc: tilman@imap.cc, isdn@linux-pingi.de, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Hi Dan,
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-On Tue, Feb 28, 2012, Dan Carpenter wrote:
-> sk_buffs should be freed using kfree_skb().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-> index bdcfbf0..df3be69 100644
-> --- a/net/bluetooth/l2cap_core.c
-> +++ b/net/bluetooth/l2cap_core.c
-> @@ -4284,7 +4284,7 @@ static inline int l2cap_data_channel(struct l2cap_conn *conn, u16 cid, struct sk
->  	if (!chan) {
->  		BT_DBG("unknown cid 0x%4.4x", cid);
->  		/* Drop packet and return */
-> -		kfree(skb);
-> +		kfree_skb(skb);
->  		return 0;
->  	}
+If locking attempt was interrupted by a signal then we should
+return -EINTR so that caller can take appropriate action.
 
-Applied to my bluetooth-next tree. Thanks.
+We have 3 callers: gigaset_probe(), gigaset_tty_open() and
+gigaset_probe(). Each caller tries to free allocated memory
+if lock fails. This is possible if we returns -EINTR.
 
-Johan
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/isdn/gigaset/common.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
+index 7679270..2d10f3a 100644
+--- a/drivers/isdn/gigaset/common.c
++++ b/drivers/isdn/gigaset/common.c
+@@ -903,7 +903,7 @@ int gigaset_start(struct cardstate *cs)
+ 	unsigned long flags;
+ 
+ 	if (mutex_lock_interruptible(&cs->mutex))
+-		return 0;
++		return -EINTR;
+ 
+ 	spin_lock_irqsave(&cs->lock, flags);
+ 	cs->connected = 1;
+-- 
+1.7.4.4
+
