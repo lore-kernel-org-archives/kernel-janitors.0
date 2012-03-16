@@ -1,35 +1,88 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Date: Sat, 10 Mar 2012 23:06:29 +0000
-Subject: Re: [patch] e1000e, igbvf: fix default message level
-Message-Id: <1331420789.3022.100.camel@deadeye>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 16 Mar 2012 10:27:06 +0000
+Subject: [PATCH] drivers/edac/amd8131_edac.c: add missing pci_dev_put
+Message-Id: <1331893626-5368-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120310084921.GA4647@elgon.mountain>
-In-Reply-To: <20120310084921.GA4647@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, John Ronciak <john.ronciak@intel.com>, "David S. Miller" <davem@davemloft.net>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Sat, 2012-03-10 at 11:49 +0300, Dan Carpenter wrote:
-> The intent here was to enable both NETIF_MSG_DRV and NETIF_MSG_PROBE
-> messages, but in the original code only the NETIF_MSG_DRV bit was set.
-> 
-> NETIF_MSG_DRV and NETIF_MSG_PROBE are bits 0 and 1, they are not
-> supposed to be used to do a shift.  I think the confusion is because
-> the msg_enable can also be controlled through ethtool which passes a bit
-> number that is used to do a bit shift.
-[...]
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-No, the ethtool interface also uses a mask.
+Add a call to pci_dev_put in each error case.  This is motivated by the
+associated remove function, which always calls pci_dev_put.
 
-However netif_msg_init() is commonly used to initialise the msg_enable
-mask based on a module parameter that's a bit number.
+Shift the error-handling code to the end of the function.
 
-Ben.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-Ben Hutchings, Staff Engineer, Solarflare
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+---
+ drivers/edac/amd8131_edac.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/edac/amd8131_edac.c b/drivers/edac/amd8131_edac.c
+index a5c6805..dcfd53b 100644
+--- a/drivers/edac/amd8131_edac.c
++++ b/drivers/edac/amd8131_edac.c
+@@ -249,6 +249,7 @@ static struct amd8131_info amd8131_chipset = {
+ static int amd8131_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ {
+ 	struct amd8131_dev_info *dev_info;
++	int ret;
+ 
+ 	for (dev_info = amd8131_chipset.devices; dev_info->inst != NO_BRIDGE;
+ 		dev_info++)
+@@ -265,12 +266,12 @@ static int amd8131_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	dev_info->dev = pci_dev_get(dev);
+ 
+ 	if (pci_enable_device(dev_info->dev)) {
+-		pci_dev_put(dev_info->dev);
+ 		printk(KERN_ERR "failed to enable:"
+ 			"vendor %x, device %x, devfn %x, name %s\n",
+ 			PCI_VENDOR_ID_AMD, amd8131_chipset.err_dev,
+ 			dev_info->devfn, dev_info->ctl_name);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto error;
+ 	}
+ 
+ 	/*
+@@ -280,8 +281,10 @@ static int amd8131_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	 */
+ 	dev_info->edac_idx = edac_pci_alloc_index();
+ 	dev_info->edac_dev = edac_pci_alloc_ctl_info(0, dev_info->ctl_name);
+-	if (!dev_info->edac_dev)
+-		return -ENOMEM;
++	if (!dev_info->edac_dev) {
++		ret = -ENOMEM;
++		goto error;
++	}
+ 
+ 	dev_info->edac_dev->pvt_info = dev_info;
+ 	dev_info->edac_dev->dev = &dev_info->dev->dev;
+@@ -298,8 +301,8 @@ static int amd8131_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	if (edac_pci_add_device(dev_info->edac_dev, dev_info->edac_idx) > 0) {
+ 		printk(KERN_ERR "failed edac_pci_add_device() for %s\n",
+ 			dev_info->ctl_name);
+-		edac_pci_free_ctl_info(dev_info->edac_dev);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto error_info;
+ 	}
+ 
+ 	printk(KERN_INFO "added one device on AMD8131 "
+@@ -308,6 +311,11 @@ static int amd8131_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 		dev_info->devfn, dev_info->ctl_name);
+ 
+ 	return 0;
++error_info:
++	edac_pci_free_ctl_info(dev_info->edac_dev);
++error:
++	pci_dev_put(dev_info->dev);
++	return ret;
+ }
+ 
+ static void amd8131_remove(struct pci_dev *dev)
 
