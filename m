@@ -1,56 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 02 Mar 2012 12:55:02 +0000
-Subject: Re: [patch] dma-debug: debugfs_create_bool() takes a u32 pointer
-Message-Id: <20120302125502.GW1003@mwanda>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="c7rykKtsZvepKFKR"
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 16 Mar 2012 18:57:27 +0000
+Subject: [PATCH] TOMOYO: Return error if fails to delete a domain.
+Message-Id: <1331924100-26033-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120302065832.GE24508@elgon.mountain>
- <20120302112203.GA14827@hmsreliant.think-freely.org>
-In-Reply-To: <20120302112203.GA14827@hmsreliant.think-freely.org>
-To: Neil Horman <nhorman@tuxdriver.com>
-Cc: Joerg Roedel <joerg.roedel@amd.com>, Stanislaw Gruszka <sgruszka@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Alan Stern <stern@rowland.harvard.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: takedakn@nttdata.co.jp
+Cc: penguin-kernel@I-love.SAKURA.ne.jp, james.l.morris@oracle.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
---c7rykKtsZvepKFKR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Call sequence:
+tomoyo_write_domain() --> tomoyo_delete_domain()
 
-On Fri, Mar 02, 2012 at 06:22:03AM -0500, Neil Horman wrote:
-> This certainly works, but a quick search of call sites shows this isn't the only
-> place someone passes a bool to debugfs_create_bool. I think the better solution
-> would be to change debugfs_create_bool and its corresponding read/write methods
-> to actually work with a bool type, and then clean all the call sites to pass in
-> a bool properly, instead of a u32.
+In 'tomoyo_delete_domain',  return  -EINTR if locking attempt is
+interrupted by signal.
 
-There is only one other call site which gets this wrong, and I sent
-a fix for that today as well.  But yes, you're probably right that
-would be cleaner.
+At present it returns success to its caller 'tomoyo_write_domain()'
+even though domain is not deleted. 'tomoyo_write_domain()' assumes
+domain is deleted and returns success to its caller. This is
+wrong behaviour.
 
-regards,
-dan carpenter
+'tomoyo_write_domain' should return error '-EAGAIN' to its caller if
+tomoyo_delete_domain() returns -EINTR.
 
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ security/tomoyo/common.c |   12 ++++++++----
+ 1 files changed, 8 insertions(+), 4 deletions(-)
 
---c7rykKtsZvepKFKR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index c47d3ce..3ee1c3a 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -1081,7 +1081,7 @@ static int tomoyo_delete_domain(char *domainname)
+ 	name.name = domainname;
+ 	tomoyo_fill_path_info(&name);
+ 	if (mutex_lock_interruptible(&tomoyo_policy_lock))
+-		return 0;
++		return -EINTR;
+ 	/* Is there an active domain? */
+ 	list_for_each_entry_rcu(domain, &tomoyo_domain_list, list) {
+ 		/* Never delete tomoyo_kernel_domain */
+@@ -1163,16 +1163,20 @@ static int tomoyo_write_domain(struct tomoyo_io_buffer *head)
+ 	const bool is_delete = head->w.is_delete;
+ 	bool is_select = !is_delete && tomoyo_str_starts(&data, "select ");
+ 	unsigned int profile;
++	int ret = 0;
+ 	if (*data = '<') {
+ 		domain = NULL;
+-		if (is_delete)
+-			tomoyo_delete_domain(data);
++		if (is_delete) {
++			ret = tomoyo_delete_domain(data);
++			if (ret)
++				return -EAGAIN;
++		}
+ 		else if (is_select)
+ 			domain = tomoyo_find_domain(data);
+ 		else
+ 			domain = tomoyo_assign_domain(data, false);
+ 		head->w.domain = domain;
+-		return 0;
++		return ret;
+ 	}
+ 	if (!domain)
+ 		return -EINVAL;
+-- 
+1.7.4.4
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPUMMmAAoJEOnZkXI/YHqRpDMP/36dETq3d6BwrI4I9RE3fStJ
-7mqSDha/OAyR2KQ9Com1wAMtHIhkbpp2NSxr5ighxV4Iv2inSj1v2cJM0xatssvl
-OseuhWWFxB/KMcBbixznBbcjT6sT5F6UCzG+es7VHgHsmYY+qyQfM6slbLKnBofK
-g477Ta8Aj7qNvHt+m7RG6Xg1cAUR6GKMBsp+z1xD7zWLPaI/2a4jsHBxA3QwOwzD
-gE1PVTypNNkVlFokFk2XSOQKUKEIjnA7+p4yEe9ri4cs4mZwvIcioNqIUI5Ch8j2
-dTMcGNtjt3KyGVAXGDANZTT2XfDmbEgjZ0yz3yH2x4I5FW01MbgO34O6lTgi2FbJ
-1NyBXfKUYuE7kcn3bRrBJfCUKQKFTrctn333Hp/XEq1AZQXMFDtrqE2pHrdpUj0n
-cKpSZhDLL08TjAkI1Xh8rdN6IwQ/AF4azAqOSqszEG0sHAm62lGe84vRrKEeNGoU
-M4/iLOkkzkmJ0q/WVpj27d/3ZdPNF1f/NVAKjdqOPY1CBlaoGiFNHElxN+cpfJPs
-eWQMTIJsoQMTNSnPs837krMW+j71aUprrjB3AIhdKkKNC5bQ6QAR2VjVgdQYSfyK
-d4YNcD2J8Ycm86uCx7WaD5nZVuLegXU5eBSEbDAC8M/bE4mxh4m7EE4vynzqWsP5
-2ogX+tTT8ZAe5n3Zye+s
-=hmC7
------END PGP SIGNATURE-----
-
---c7rykKtsZvepKFKR--
