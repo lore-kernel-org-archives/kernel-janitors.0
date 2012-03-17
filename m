@@ -1,27 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Mar 2012 08:34:28 +0000
-Subject: [patch] usb: gadgetfs: remove an unused label
-Message-Id: <20120323083426.GA18239@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 17 Mar 2012 17:57:02 +0000
+Subject: [PATCH] drivers/gpu/drm/savage/savage_state.c: add missing kfree
+Message-Id: <1332007022-28014-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-This label isn't used any more after 104bb37d3e "gadgetfs:
-list_for_each_safe() misuse".
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Most of the error handling code in this function frees the buffers
+kcmd_addr, kvb_addr, and kbox_addr allocated at the beginning of this
+function.  These two branches are changed to do the same.
 
-diff --git a/drivers/usb/gadget/inode.c b/drivers/usb/gadget/inode.c
-index 8793f32..e58b164 100644
---- a/drivers/usb/gadget/inode.c
-+++ b/drivers/usb/gadget/inode.c
-@@ -1574,7 +1574,6 @@ static void destroy_ep_files (struct dev_data *dev)
- 	DBG (dev, "%s %d\n", __func__, dev->state);
- 
- 	/* dev->state must prevent interference */
--restart:
- 	spin_lock_irq (&dev->lock);
- 	while (!list_empty(&dev->epfiles)) {
- 		struct ep_data	*ep;
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/savage/savage_state.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/savage/savage_state.c b/drivers/gpu/drm/savage/savage_state.c
+index 8a3e315..031aaaf 100644
+--- a/drivers/gpu/drm/savage/savage_state.c
++++ b/drivers/gpu/drm/savage/savage_state.c
+@@ -1057,7 +1057,8 @@ int savage_bci_cmdbuf(struct drm_device *dev, void *data, struct drm_file *file_
+ 				DRM_ERROR("indexed drawing command extends "
+ 					  "beyond end of command buffer\n");
+ 				DMA_FLUSH();
+-				return -EINVAL;
++				ret = -EINVAL;
++				goto done;
+ 			}
+ 			/* fall through */
+ 		case SAVAGE_CMD_DMA_PRIM:
+@@ -1076,7 +1077,7 @@ int savage_bci_cmdbuf(struct drm_device *dev, void *data, struct drm_file *file_
+ 				      cmdbuf->vb_stride,
+ 				      cmdbuf->nbox, cmdbuf->box_addr);
+ 				if (ret != 0)
+-					return ret;
++					goto done;
+ 				first_draw_cmd = NULL;
+ 			}
+ 		}
+
