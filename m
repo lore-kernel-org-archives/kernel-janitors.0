@@ -1,41 +1,23 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Fri, 16 Mar 2012 13:22:13 +0000
-Subject: [PATCH] isdn: Return -EINTR in gigaset_start() if locking attempts fails.
-Message-Id: <1331903413-11426-1-git-send-email-santoshprasadnayak@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 17 Mar 2012 06:18:56 +0000
+Subject: Re: [PATCH] isdn: Return -EINTR in gigaset_start() if locking attempts fails.
+Message-Id: <20120316.231856.1071253468993560433.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1331903413-11426-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1331903413-11426-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hjlipp@web.de
-Cc: tilman@imap.cc, isdn@linux-pingi.de, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: santoshprasadnayak@gmail.com
+Cc: hjlipp@web.de, tilman@imap.cc, isdn@linux-pingi.de, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 16 Mar 2012 18:40:13 +0530
 
-If locking attempt was interrupted by a signal then we should
-return -EINTR so that caller can take appropriate action.
+> We have 3 callers: gigaset_probe(), gigaset_tty_open() and
+> gigaset_probe(). Each caller tries to free allocated memory
+> if lock fails. This is possible if we returns -EINTR.
 
-We have 3 callers: gigaset_probe(), gigaset_tty_open() and
-gigaset_probe(). Each caller tries to free allocated memory
-if lock fails. This is possible if we returns -EINTR.
+Look again at the callers.
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- drivers/isdn/gigaset/common.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
-index 7679270..2d10f3a 100644
---- a/drivers/isdn/gigaset/common.c
-+++ b/drivers/isdn/gigaset/common.c
-@@ -903,7 +903,7 @@ int gigaset_start(struct cardstate *cs)
- 	unsigned long flags;
- 
- 	if (mutex_lock_interruptible(&cs->mutex))
--		return 0;
-+		return -EINTR;
- 
- 	spin_lock_irqsave(&cs->lock, flags);
- 	cs->connected = 1;
--- 
-1.7.4.4
-
+They interpret "0" as an error, so your patch would break the driver.
