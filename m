@@ -1,32 +1,95 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Mar 2012 12:20:16 +0000
-Subject: Re: [PATCH] Drivers: hv: Fix return type of hv_post_message().
-Message-Id: <20120330122016.GG3289@mwanda>
+Date: Sat, 17 Mar 2012 13:11:52 +0000
+Subject: [patch] target: remove improper externs
+Message-Id: <20120317131152.GA23316@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1333107513-10434-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1333107513-10434-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Christoph Hellwig <hch@lst.de>, Andy Grover <agrover@redhat.com>, Joern Engel <joern@logfs.org>, Roland Dreier <roland@kernel.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 30, 2012 at 02:53:13PM +0300, Dan Carpenter wrote:
-> On Fri, Mar 30, 2012 at 05:08:33PM +0530, santosh nayak wrote:
-> > From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> > 
-> > On failed memory allocation 'hv_post_message()' returns -ENOMEM.
-> > As return type of this function is 'u16', -ENOMEM becomes 65524.
-> > Change the return type from 'u16' to 'int'.
-> > 
-> > Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> Too late.  :P  I just fixed this one two days ago...
-> 
+These externs aren't needed and Sparse complains about them.
 
-Btw, for a while a bunch of us were sending duplicate patches.  So
-that's why part of the reason why we CC kernel-janitors.   Also I do
-appreciate Walter's reviews as well.
+drivers/target/iscsi/iscsi_target_nodeattrib.c:52:12: warning:
+	function 'iscsit_na_dataout_timeout' with external linkage has
+	definition
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/target/iscsi/iscsi_target_nodeattrib.c b/drivers/target/iscsi/iscsi_target_nodeattrib.c
+index b3c699c..11dc293 100644
+--- a/drivers/target/iscsi/iscsi_target_nodeattrib.c
++++ b/drivers/target/iscsi/iscsi_target_nodeattrib.c
+@@ -49,7 +49,7 @@ void iscsit_set_default_node_attribues(
+ 	a->default_erl = NA_DEFAULT_ERL;
+ }
+ 
+-extern int iscsit_na_dataout_timeout(
++int iscsit_na_dataout_timeout(
+ 	struct iscsi_node_acl *acl,
+ 	u32 dataout_timeout)
+ {
+@@ -74,7 +74,7 @@ extern int iscsit_na_dataout_timeout(
+ 	return 0;
+ }
+ 
+-extern int iscsit_na_dataout_timeout_retries(
++int iscsit_na_dataout_timeout_retries(
+ 	struct iscsi_node_acl *acl,
+ 	u32 dataout_timeout_retries)
+ {
+@@ -100,7 +100,7 @@ extern int iscsit_na_dataout_timeout_retries(
+ 	return 0;
+ }
+ 
+-extern int iscsit_na_nopin_timeout(
++int iscsit_na_nopin_timeout(
+ 	struct iscsi_node_acl *acl,
+ 	u32 nopin_timeout)
+ {
+@@ -155,7 +155,7 @@ extern int iscsit_na_nopin_timeout(
+ 	return 0;
+ }
+ 
+-extern int iscsit_na_nopin_response_timeout(
++int iscsit_na_nopin_response_timeout(
+ 	struct iscsi_node_acl *acl,
+ 	u32 nopin_response_timeout)
+ {
+@@ -181,7 +181,7 @@ extern int iscsit_na_nopin_response_timeout(
+ 	return 0;
+ }
+ 
+-extern int iscsit_na_random_datain_pdu_offsets(
++int iscsit_na_random_datain_pdu_offsets(
+ 	struct iscsi_node_acl *acl,
+ 	u32 random_datain_pdu_offsets)
+ {
+@@ -201,7 +201,7 @@ extern int iscsit_na_random_datain_pdu_offsets(
+ 	return 0;
+ }
+ 
+-extern int iscsit_na_random_datain_seq_offsets(
++int iscsit_na_random_datain_seq_offsets(
+ 	struct iscsi_node_acl *acl,
+ 	u32 random_datain_seq_offsets)
+ {
+@@ -221,7 +221,7 @@ extern int iscsit_na_random_datain_seq_offsets(
+ 	return 0;
+ }
+ 
+-extern int iscsit_na_random_r2t_offsets(
++int iscsit_na_random_r2t_offsets(
+ 	struct iscsi_node_acl *acl,
+ 	u32 random_r2t_offsets)
+ {
+@@ -241,7 +241,7 @@ extern int iscsit_na_random_r2t_offsets(
+ 	return 0;
+ }
+ 
+-extern int iscsit_na_default_erl(
++int iscsit_na_default_erl(
+ 	struct iscsi_node_acl *acl,
+ 	u32 default_erl)
+ {
