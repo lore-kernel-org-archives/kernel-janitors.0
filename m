@@ -1,57 +1,41 @@
-From: Tilman Schmidt <tilman@imap.cc>
-Date: Sat, 17 Mar 2012 10:31:55 +0000
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Sat, 17 Mar 2012 15:57:25 +0000
 Subject: Re: [PATCH] isdn: Return -EINTR in gigaset_start() if locking attempts fails.
-Message-Id: <4F64681B.8030406@imap.cc>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------enig4DE7A07E51A22DB415AFD90E"
+Message-Id: <CAOD=uF6JJiiGjQwybzwdU3Zw9pC8YbDPxm_Pg9E9WNAXbfTiUQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1331903413-11426-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1331903413-11426-1-git-send-email-santoshprasadnayak@gmail.com>
-To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: hjlipp@web.de, isdn@linux-pingi.de, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+	<20120316.231856.1071253468993560433.davem@davemloft.net>
+In-Reply-To: <20120316.231856.1071253468993560433.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Miller <davem@davemloft.net>
+Cc: hjlipp@web.de, tilman@imap.cc, isdn@linux-pingi.de, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig4DE7A07E51A22DB415AFD90E
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: quoted-printable
+Yes. You are right.
 
-Am 16.03.2012 14:10, schrieb santosh nayak:
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
->=20
-> If locking attempt was interrupted by a signal then we should
-> return -EINTR so that caller can take appropriate action.
+Caller is interpreting 0 in opposite way of normal sequence.
+Thats why I misunderstood it.
 
-NACK.
-
-The return value of gigaset_start(), as documented in its
-header comment, is:
- *	1 - success, 0 - error
-Its callers rely on this. If you want to change it, you must
-also change the documentation and the callers accordingly.
-In its current form the patch would just break the driver.
-
-Thanks,
-Tilman
-
---=20
-Tilman Schmidt                    E-Mail: tilman@imap.cc
-Bonn, Germany
-Diese Nachricht besteht zu 100% aus wiederverwerteten Bits.
-Unge=F6ffnet mindestens haltbar bis: (siehe R=FCckseite)
+In general, 0 means success and on error we return -ve.
+Here its opposite.
 
 
---------------enig4DE7A07E51A22DB415AFD90E
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
 
-iEYEARECAAYFAk9kaBwACgkQQ3+did9BuFsK7ACfbFVdNyHEQHIdPQBwdFoaOBRL
-zvwAn2VU1GEKbCVw67P6G5UQPKEWyXOM
-=c+S5
------END PGP SIGNATURE-----
+regards
+Santosh
 
---------------enig4DE7A07E51A22DB415AFD90E--
+
+
+On Sat, Mar 17, 2012 at 11:48 AM, David Miller <davem@davemloft.net> wrote:
+> From: santosh nayak <santoshprasadnayak@gmail.com>
+> Date: Fri, 16 Mar 2012 18:40:13 +0530
+>
+>> We have 3 callers: gigaset_probe(), gigaset_tty_open() and
+>> gigaset_probe(). Each caller tries to free allocated memory
+>> if lock fails. This is possible if we returns -EINTR.
+>
+> Look again at the callers.
+>
+> They interpret "0" as an error, so your patch would break the driver.
