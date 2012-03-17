@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 16 Mar 2012 10:02:16 +0000
+Date: Sat, 17 Mar 2012 15:38:11 +0000
 Subject: [PATCH] drivers/acpi/processor_driver.c: add missing kfree
-Message-Id: <1331892136-4790-1-git-send-email-Julia.Lawall@lip6.fr>
+Message-Id: <1331998691-29679-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1331399145-6508-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1331399145-6508-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -24,9 +24,11 @@ handling code at the end of the function.  The per_cpu variable
 processors is also cleared so that it does not refer to a dangling pointer.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+Acked-by: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
 
 ---
-v2: Adjusted the comment format
+v3: Added reviews and acks
 
  drivers/acpi/processor_driver.c |   15 +++++++++++----
  1 file changed, 11 insertions(+), 4 deletions(-)
