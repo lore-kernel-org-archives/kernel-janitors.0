@@ -1,41 +1,28 @@
-From: santosh prasad nayak <santoshprasadnayak@gmail.com>
-Date: Sat, 17 Mar 2012 15:57:25 +0000
+From: David Miller <davem@davemloft.net>
+Date: Sat, 17 Mar 2012 20:58:54 +0000
 Subject: Re: [PATCH] isdn: Return -EINTR in gigaset_start() if locking attempts fails.
-Message-Id: <CAOD=uF6JJiiGjQwybzwdU3Zw9pC8YbDPxm_Pg9E9WNAXbfTiUQ@mail.gmail.com>
+Message-Id: <20120317.135854.570143927282385505.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1331903413-11426-1-git-send-email-santoshprasadnayak@gmail.com>
 	<20120316.231856.1071253468993560433.davem@davemloft.net>
-In-Reply-To: <20120316.231856.1071253468993560433.davem@davemloft.net>
+	<CAOD=uF6JJiiGjQwybzwdU3Zw9pC8YbDPxm_Pg9E9WNAXbfTiUQ@mail.gmail.com>
+In-Reply-To: <CAOD=uF6JJiiGjQwybzwdU3Zw9pC8YbDPxm_Pg9E9WNAXbfTiUQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
+To: santoshprasadnayak@gmail.com
 Cc: hjlipp@web.de, tilman@imap.cc, isdn@linux-pingi.de, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Yes. You are right.
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Sat, 17 Mar 2012 21:26:14 +0530
 
-Caller is interpreting 0 in opposite way of normal sequence.
-Thats why I misunderstood it.
+> Caller is interpreting 0 in opposite way of normal sequence.
+> Thats why I misunderstood it.
 
-In general, 0 means success and on error we return -ve.
-Here its opposite.
+The simple fact is that you didn't even look at the code at the call
+sites when you wrote this patch, and that's the first thing anyone is
+going to do when reviewing it.
 
-
-
-
-regards
-Santosh
-
-
-
-On Sat, Mar 17, 2012 at 11:48 AM, David Miller <davem@davemloft.net> wrote:
-> From: santosh nayak <santoshprasadnayak@gmail.com>
-> Date: Fri, 16 Mar 2012 18:40:13 +0530
->
->> We have 3 callers: gigaset_probe(), gigaset_tty_open() and
->> gigaset_probe(). Each caller tries to free allocated memory
->> if lock fails. This is possible if we returns -EINTR.
->
-> Look again at the callers.
->
-> They interpret "0" as an error, so your patch would break the driver.
+Therefore your laziness results in more useless work for other people.
+I just wanted to point out how selfish and anti-social this kind of
+behavior is.
