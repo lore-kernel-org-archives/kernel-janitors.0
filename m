@@ -1,95 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 17 Mar 2012 13:11:52 +0000
-Subject: [patch] target: remove improper externs
-Message-Id: <20120317131152.GA23316@elgon.mountain>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Date: Sun, 18 Mar 2012 00:59:24 +0000
+Subject: Re: [patch] target: remove improper externs
+Message-Id: <1332032364.10203.289.camel@haakon2.linux-iscsi.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120317131152.GA23316@elgon.mountain>
+In-Reply-To: <20120317131152.GA23316@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Christoph Hellwig <hch@lst.de>, Andy Grover <agrover@redhat.com>, Joern Engel <joern@logfs.org>, Roland Dreier <roland@kernel.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These externs aren't needed and Sparse complains about them.
+On Sat, 2012-03-17 at 16:11 +0300, Dan Carpenter wrote:
+> These externs aren't needed and Sparse complains about them.
+> 
+> drivers/target/iscsi/iscsi_target_nodeattrib.c:52:12: warning:
+> 	function 'iscsit_na_dataout_timeout' with external linkage has
+> 	definition
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
 
-drivers/target/iscsi/iscsi_target_nodeattrib.c:52:12: warning:
-	function 'iscsit_na_dataout_timeout' with external linkage has
-	definition
+Applied.  Thanks Dan!
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--nab
 
-diff --git a/drivers/target/iscsi/iscsi_target_nodeattrib.c b/drivers/target/iscsi/iscsi_target_nodeattrib.c
-index b3c699c..11dc293 100644
---- a/drivers/target/iscsi/iscsi_target_nodeattrib.c
-+++ b/drivers/target/iscsi/iscsi_target_nodeattrib.c
-@@ -49,7 +49,7 @@ void iscsit_set_default_node_attribues(
- 	a->default_erl = NA_DEFAULT_ERL;
- }
- 
--extern int iscsit_na_dataout_timeout(
-+int iscsit_na_dataout_timeout(
- 	struct iscsi_node_acl *acl,
- 	u32 dataout_timeout)
- {
-@@ -74,7 +74,7 @@ extern int iscsit_na_dataout_timeout(
- 	return 0;
- }
- 
--extern int iscsit_na_dataout_timeout_retries(
-+int iscsit_na_dataout_timeout_retries(
- 	struct iscsi_node_acl *acl,
- 	u32 dataout_timeout_retries)
- {
-@@ -100,7 +100,7 @@ extern int iscsit_na_dataout_timeout_retries(
- 	return 0;
- }
- 
--extern int iscsit_na_nopin_timeout(
-+int iscsit_na_nopin_timeout(
- 	struct iscsi_node_acl *acl,
- 	u32 nopin_timeout)
- {
-@@ -155,7 +155,7 @@ extern int iscsit_na_nopin_timeout(
- 	return 0;
- }
- 
--extern int iscsit_na_nopin_response_timeout(
-+int iscsit_na_nopin_response_timeout(
- 	struct iscsi_node_acl *acl,
- 	u32 nopin_response_timeout)
- {
-@@ -181,7 +181,7 @@ extern int iscsit_na_nopin_response_timeout(
- 	return 0;
- }
- 
--extern int iscsit_na_random_datain_pdu_offsets(
-+int iscsit_na_random_datain_pdu_offsets(
- 	struct iscsi_node_acl *acl,
- 	u32 random_datain_pdu_offsets)
- {
-@@ -201,7 +201,7 @@ extern int iscsit_na_random_datain_pdu_offsets(
- 	return 0;
- }
- 
--extern int iscsit_na_random_datain_seq_offsets(
-+int iscsit_na_random_datain_seq_offsets(
- 	struct iscsi_node_acl *acl,
- 	u32 random_datain_seq_offsets)
- {
-@@ -221,7 +221,7 @@ extern int iscsit_na_random_datain_seq_offsets(
- 	return 0;
- }
- 
--extern int iscsit_na_random_r2t_offsets(
-+int iscsit_na_random_r2t_offsets(
- 	struct iscsi_node_acl *acl,
- 	u32 random_r2t_offsets)
- {
-@@ -241,7 +241,7 @@ extern int iscsit_na_random_r2t_offsets(
- 	return 0;
- }
- 
--extern int iscsit_na_default_erl(
-+int iscsit_na_default_erl(
- 	struct iscsi_node_acl *acl,
- 	u32 default_erl)
- {
