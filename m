@@ -1,35 +1,38 @@
-From: santosh prasad nayak <santoshprasadnayak@gmail.com>
-Date: Thu, 01 Mar 2012 09:41:29 +0000
-Subject: Latest Kernel source Fail to Build
-Message-Id: <CAOD=uF71cTJkKsEk4pyuN+JuP5Fw=_xDn0A5c_yob4paC6CJAA@mail.gmail.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Wed, 21 Mar 2012 17:41:44 +0000
+Subject: [PATCH] [SCSI] megaraid: add error handling for failed kmalloc() in mega_internal_command().
+Message-Id: <1332350984-7280-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: megaraidlinux@lsi.com
+Cc: JBottomley@parallels.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Hi all,
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-I am getting following error while building latest kernel source;
+Add error handling after kzalloc() call to avoid null dereference.
 
-----------------------------------------------------------------------------------------
-  OBJCOPY arch/x86/boot/vmlinux.bin
-  HOSTCC  arch/x86/boot/tools/build
-  BUILD   arch/x86/boot/bzImage
-Setup is 14560 bytes (padded to 14848 bytes).
-System is 3733 kB
-CRC e5cc211e
-Kernel: arch/x86/boot/bzImage is ready  (#1)
-  Building modules, stage 2.
-  MODPOST 2253 modules
-ERROR: "__udivdi3" [drivers/media/dvb/frontends/rtl2830.ko] undefined!
-make[1]: *** [__modpost] Error 1
-make: *** [modules] Error 2
-[root@localhost linux-next]#
------------------------------------------------------------------------------------------------
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/scsi/megaraid.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-I have downloaded the latest linux-next from kernel.org
+diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
+index 4d39a9f..41e7b42 100644
+--- a/drivers/scsi/megaraid.c
++++ b/drivers/scsi/megaraid.c
+@@ -4438,6 +4438,10 @@ mega_internal_command(adapter_t *adapter, megacmd_t *mc, mega_passthru *pthru)
+ 	memset(scb, 0, sizeof(scb_t));
+ 
+ 	sdev = kzalloc(sizeof(struct scsi_device), GFP_KERNEL);
++	if (unlikely(!sdev)) {
++		printk(KERN_ERR "%s: failed to alloc memory\n", __func__);
++		return -ENOMEM;
++	}
+ 	scmd->device = sdev;
+ 
+ 	memset(adapter->int_cdb, 0, sizeof(adapter->int_cdb));
+-- 
+1.7.4.4
 
-
-regards
-santosh
