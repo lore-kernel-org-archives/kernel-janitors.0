@@ -1,49 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 07 Mar 2012 11:57:36 +0000
-Subject: [patch] acpi throttling: fix endian bug in acpi_read_throttling_status()
-Message-Id: <20120307115736.GB13204@elgon.mountain>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 23 Mar 2012 15:56:02 +0000
+Subject: [PATCH v2] staging: wlags49_h2: Replace kmalloc+memset by kzalloc and add error handling.
+Message-Id: <1332517442-29575-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Using a u64 here creates an endian bug.  We store a u32 number in the
-top byte which is a larger number than intended on big endian systems.
-There is no reason to use a 64 bit data type here, I guess it was just
-an oversight.
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-I removed the initialization to zero as well.  It's needed with a u64
-but with a u32, the variable gets initialized properly inside the call
-to acpi_os_read_port().
+Replace kmalloc+memset pair by kzalloc() in 'wl_wds_device_alloc()'.
+Add error handling to avoid null derefernce.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/staging/wlags49_h2/wl_netdev.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index 605a295..1d02b7b 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -769,7 +769,7 @@ static int acpi_read_throttling_status(struct acpi_processor *pr,
- 					u64 *value)
- {
- 	u32 bit_width, bit_offset;
--	u64 ptc_value;
-+	u32 ptc_value;
- 	u64 ptc_mask;
- 	struct acpi_processor_throttling *throttling;
- 	int ret = -1;
-@@ -777,12 +777,11 @@ static int acpi_read_throttling_status(struct acpi_processor *pr,
- 	throttling = &pr->throttling;
- 	switch (throttling->status_register.space_id) {
- 	case ACPI_ADR_SPACE_SYSTEM_IO:
--		ptc_value = 0;
- 		bit_width = throttling->status_register.bit_width;
- 		bit_offset = throttling->status_register.bit_offset;
+diff --git a/drivers/staging/wlags49_h2/wl_netdev.c b/drivers/staging/wlags49_h2/wl_netdev.c
+index 9c16f54..b41b572 100644
+--- a/drivers/staging/wlags49_h2/wl_netdev.c
++++ b/drivers/staging/wlags49_h2/wl_netdev.c
+@@ -1511,8 +1511,11 @@ void wl_wds_device_alloc( struct wl_private *lp )
+     for( count = 0; count < NUM_WDS_PORTS; count++ ) {
+         struct net_device *dev_wds = NULL;
  
- 		acpi_os_read_port((acpi_io_address) throttling->status_register.
--				  address, (u32 *) &ptc_value,
-+				  address, &ptc_value,
- 				  (u32) (bit_width + bit_offset));
- 		ptc_mask = (1 << bit_width) - 1;
- 		*value = (u64) ((ptc_value >> bit_offset) & ptc_mask);
+-        dev_wds = kmalloc( sizeof( struct net_device ), GFP_KERNEL );
+-        memset( dev_wds, 0, sizeof( struct net_device ));
++	dev_wds = kzalloc(sizeof(struct net_device), GFP_KERNEL);
++	if (!dev_wds) {
++		DBG_LEAVE(DbgInfo);
++		return;
++	}
+ 
+         ether_setup( dev_wds );
+ 
+-- 
+1.7.4.4
+
