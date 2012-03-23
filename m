@@ -1,44 +1,48 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Fri, 23 Mar 2012 09:53:45 +0000
-Subject: [PATCH] staging: wlags49_h2: Replace kmalloc+memset by kzalloc and add error handling.
-Message-Id: <1332495705-31337-1-git-send-email-santoshprasadnayak@gmail.com>
+From: santosh prasad nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 23 Mar 2012 09:58:18 +0000
+Subject: Re: [PATCH] staging: wlags49_h2: Replace kmalloc+memset by kzalloc and add error handling.
+Message-Id: <CAOD=uF5VerJPXXVnLBK0DEtXAVfcNwx172NmPFsFx4PVSWaN-Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120323095158.GB3181@mwanda>
 In-Reply-To: <20120323095158.GB3181@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+On Fri, Mar 23, 2012 at 3:21 PM, Dan Carpenter <dan.carpenter@oracle.com> w=
+rote:
+> On Fri, Mar 23, 2012 at 03:11:45PM +0530, santosh nayak wrote:
+>> - =A0 =A0 =A0 =A0dev_wds =3D kmalloc( sizeof( struct net_device ), GFP_K=
+ERNEL );
+>> - =A0 =A0 =A0 =A0memset( dev_wds, 0, sizeof( struct net_device ));
+>> + =A0 =A0 dev_wds =3D kzalloc(sizeof(struct net_device), GFP_KERNEL);
+>> + =A0 =A0 if (unlikely(!dev_wds)) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "%s: failed to alloc memory\n"=
+, __func__);
+>
+> Don't resend, but kmalloc() already prints out way more extensive
+> and useful error messages than this. =A0No need to print an error
+> message yourself normally.
+>
 
-Replace kmalloc+memset pair by kzalloc() in 'wl_wds_device_alloc()'.
-Add error handling to avoid null derefernce.
+Do you mean in the following format ?
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- drivers/staging/wlags49_h2/wl_netdev.c |    8 ++++++--
- 1 files changed, 6 insertions(+), 2 deletions(-)
++       if (unlikely(!dev_wds)) {
++               DBG_LEAVE(DbgInfo);
++               return;
++       }
 
-diff --git a/drivers/staging/wlags49_h2/wl_netdev.c b/drivers/staging/wlags49_h2/wl_netdev.c
-index 9c16f54..426ba04 100644
---- a/drivers/staging/wlags49_h2/wl_netdev.c
-+++ b/drivers/staging/wlags49_h2/wl_netdev.c
-@@ -1511,8 +1511,12 @@ void wl_wds_device_alloc( struct wl_private *lp )
-     for( count = 0; count < NUM_WDS_PORTS; count++ ) {
-         struct net_device *dev_wds = NULL;
- 
--        dev_wds = kmalloc( sizeof( struct net_device ), GFP_KERNEL );
--        memset( dev_wds, 0, sizeof( struct net_device ));
-+	dev_wds = kzalloc(sizeof(struct net_device), GFP_KERNEL);
-+	if (unlikely(!dev_wds)) {
-+		printk(KERN_ERR "%s: failed to alloc memory\n", __func__);
-+		DBG_LEAVE(DbgInfo);
-+		return;
-+	}
- 
-         ether_setup( dev_wds );
- 
--- 
-1.7.4.4
 
+
+regards
+Santosh
+> regards,
+> dan carpenter
+>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
