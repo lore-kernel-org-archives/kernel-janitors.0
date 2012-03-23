@@ -1,47 +1,30 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Wed, 21 Mar 2012 10:43:51 +0000
-Subject: Re: [patch] [media] uvcvideo: remove unneeded access_ok() check
-Message-Id: <3912096.1JJ7uXGCOH@avalon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Mar 2012 08:36:25 +0000
+Subject: [patch] block: use caller's GFP flags instead of GFP_KERNEL
+Message-Id: <20120323083624.GC18239@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120321063523.GA20062@elgon.mountain>
-In-Reply-To: <20120321063523.GA20062@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+We should use the GFP flags that the caller specified instead of picking
+our own.  All the callers specify GFP_KERNEL so this doesn't make a
+difference to how the kernel runs, it's just a cleanup.
 
-Thank you for the patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Wednesday 21 March 2012 09:35:23 Dan Carpenter wrote:
-> copy_in_user() already checks for write permission, so we don't need to
-> do it here.  This was added in 1a5e4c867c "[media] uvcvideo: Implement
-> compat_ioctl32 for custom ioctls".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-And applied to my tree.
-
-> diff --git a/drivers/media/video/uvc/uvc_v4l2.c
-> b/drivers/media/video/uvc/uvc_v4l2.c index ff2cddd..111bfff 100644
-> --- a/drivers/media/video/uvc/uvc_v4l2.c
-> +++ b/drivers/media/video/uvc/uvc_v4l2.c
-> @@ -1105,8 +1105,6 @@ static int uvc_v4l2_put_xu_mapping(const struct
-> uvc_xu_control_mapping *kp, if (get_user(p, &up->menu_info))
->  		return -EFAULT;
->  	umenus = compat_ptr(p);
-> -	if (!access_ok(VERIFY_WRITE, umenus, kp->menu_count * sizeof(*umenus)))
-> -		return -EFAULT;
-> 
->  	if (copy_in_user(umenus, kmenus, kp->menu_count * sizeof(*umenus)))
->  		return -EFAULT;
-
--- 
-Regards,
-
-Laurent Pinchart
-
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 3a78b00..414e822 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -483,7 +483,7 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id)
+ 	if (!q)
+ 		return NULL;
+ 
+-	q->id = ida_simple_get(&blk_queue_ida, 0, 0, GFP_KERNEL);
++	q->id = ida_simple_get(&blk_queue_ida, 0, 0, gfp_mask);
+ 	if (q->id < 0)
+ 		goto fail_q;
+ 
