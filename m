@@ -1,7 +1,7 @@
 From: Greg KH <gregkh@linuxfoundation.org>
-Date: Fri, 23 Mar 2012 14:56:13 +0000
+Date: Fri, 23 Mar 2012 15:41:07 +0000
 Subject: Re: [PATCH] staging: wlags49_h2: Replace kmalloc+memset by kzalloc and add error handling.
-Message-Id: <20120323145613.GB11617@kroah.com>
+Message-Id: <20120323154107.GA15516@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120323095158.GB3181@mwanda>
 In-Reply-To: <20120323095158.GB3181@mwanda>
@@ -10,34 +10,15 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 23, 2012 at 03:11:45PM +0530, santosh nayak wrote:
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> Replace kmalloc+memset pair by kzalloc() in 'wl_wds_device_alloc()'.
-> Add error handling to avoid null derefernce.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
->  drivers/staging/wlags49_h2/wl_netdev.c |    8 ++++++--
->  1 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/wlags49_h2/wl_netdev.c b/drivers/staging/wlags49_h2/wl_netdev.c
-> index 9c16f54..426ba04 100644
-> --- a/drivers/staging/wlags49_h2/wl_netdev.c
-> +++ b/drivers/staging/wlags49_h2/wl_netdev.c
-> @@ -1511,8 +1511,12 @@ void wl_wds_device_alloc( struct wl_private *lp )
->      for( count = 0; count < NUM_WDS_PORTS; count++ ) {
->          struct net_device *dev_wds = NULL;
->  
-> -        dev_wds = kmalloc( sizeof( struct net_device ), GFP_KERNEL );
-> -        memset( dev_wds, 0, sizeof( struct net_device ));
-> +	dev_wds = kzalloc(sizeof(struct net_device), GFP_KERNEL);
-> +	if (unlikely(!dev_wds)) {
+On Fri, Mar 23, 2012 at 09:00:19PM +0530, santosh prasad nayak wrote:
+> Can you please explain whats the disadvantage of having 'unlikely()' here ?
+> I have seen it at several places in driver side.
 
-NEVER use unlikely unless you are working on scheduler code, or
-something else equally time critical.  So, take this into consideration,
-and Dan's comments, and please redo this, I can't take it as-is.
+And I bet they are used wrong there.  Again, unless you are in some very
+performance critical section of code, don't use unlikely().
 
-thanks,
+The big thing is that it just is not needed at all.  Don't try to be
+smarter than the compiler if you don't need it, _AND_ you haven't
+actually measured it.
 
 greg k-h
