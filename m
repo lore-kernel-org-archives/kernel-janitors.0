@@ -1,101 +1,98 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 30 Mar 2012 14:25:43 +0000
-Subject: Re: [PATCH] ALSA: asihpi - fix return value of hpios_locked_mem_alloc()
-Message-Id: <s5hy5qiqi6w.wl%tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 25 Mar 2012 18:12:59 +0000
+Subject: [PATCH v2] scripts/coccinelle/api/ptr_ret.cocci: semantic patch for ptr_err
+Message-Id: <1332699179-18934-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <s5hk424t1h9.wl%tiwai@suse.de>
-	<1333054345-1416-1-git-send-email-linux@audioscience.com>
-In-Reply-To: <1333054345-1416-1-git-send-email-linux@audioscience.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux@audioscience.com
-Cc: Eliot Blennerhassett <eblennerhassett@audioscience.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
+To: Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org, mmarek@suse.cz, imirkin@alum.mit.edu
+Cc: kernel-janitors@vger.kernel.org
 
-At Fri, 30 Mar 2012 09:52:25 +1300,
-linux@audioscience.com wrote:
-> 
-> From: Eliot Blennerhassett <eblennerhassett@audioscience.com>
-> 
-> Make this function consistent with others in this module by
-> returning 1 for error, instead of -ENOMEM
-> (reverts function signature change from a938fb1e)
-> 
-> Signed-off-by: Eliot Blennerhassett <eblennerhassett@audioscience.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Hm, u16 is not ideal, but OK if it's needed for easier maintenance.
-Applied now.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+Fixed warning messages to refer to the right function.
 
-thanks,
+ scripts/coccinelle/api/ptr_ret.cocci |   70 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-Takashi
+diff --git a/scripts/coccinelle/api/ptr_ret.cocci b/scripts/coccinelle/api/ptr_ret.cocci
+new file mode 100644
+index 0000000..085120f
+--- /dev/null
++++ b/scripts/coccinelle/api/ptr_ret.cocci
+@@ -0,0 +1,70 @@
++///
++/// Use PTR_RET rather than if(IS_ERR(...)) + PTR_ERR
++///
++// Confidence: High
++// Copyright: (C) 2012 Julia Lawall, INRIA/LIP6.  GPLv2.
++// Copyright: (C) 2012 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Options: -no_includes -include_headers
++//
++// Keywords: ERR_PTR, PTR_ERR, PTR_RET
++// Version min: 2.6.39
++//
++
++virtual context
++virtual patch
++virtual org
++virtual report
++
++@depends on patch@
++expression ptr;
++@@
++
++- if (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
+++ return PTR_RET(ptr);
++
++@depends on patch@
++expression ptr;
++@@
++
++- if (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
+++ return PTR_RET(ptr);
++
++@r1 depends on !patch@
++expression ptr;
++position p1;
++@@
++
++* if@p1 (IS_ERR(ptr)) return PTR_ERR(ptr); else return 0;
++
++@r2 depends on !patch@
++expression ptr;
++position p2;
++@@
++
++* if@p2 (IS_ERR(ptr)) return PTR_ERR(ptr); return 0;
++
++@script:python depends on org@
++p << r1.p1;
++@@
++
++coccilib.org.print_todo(p[0], "WARNING: PTR_RET can be used")
++
++
++@script:python depends on org@
++p << r2.p2;
++@@
++
++coccilib.org.print_todo(p[0], "WARNING: PTR_RET can be used")
++
++@script:python depends on report@
++p << r1.p1;
++@@
++
++coccilib.report.print_report(p[0], "WARNING: PTR_RET can be used")
++
++@script:python depends on report@
++p << r2.p2;
++@@
++
++coccilib.report.print_report(p[0], "WARNING: PTR_RET can be used")
 
-
-> ---
->  sound/pci/asihpi/hpi_internal.h |    4 ++--
->  sound/pci/asihpi/hpios.c        |   10 +++++-----
->  2 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/sound/pci/asihpi/hpi_internal.h b/sound/pci/asihpi/hpi_internal.h
-> index 8c63200..bc86cb7 100644
-> --- a/sound/pci/asihpi/hpi_internal.h
-> +++ b/sound/pci/asihpi/hpi_internal.h
-> @@ -1,7 +1,7 @@
->  /******************************************************************************
->  
->      AudioScience HPI driver
-> -    Copyright (C) 1997-2011  AudioScience Inc. <support@audioscience.com>
-> +    Copyright (C) 1997-2012  AudioScience Inc. <support@audioscience.com>
->  
->      This program is free software; you can redistribute it and/or modify
->      it under the terms of version 2 of the GNU General Public License as
-> @@ -42,7 +42,7 @@ On error *pLockedMemHandle marked invalid, non-zero returned.
->  If this function succeeds, then HpiOs_LockedMem_GetVirtAddr() and
->  HpiOs_LockedMem_GetPyhsAddr() will always succed on the returned handle.
->  */
-> -int hpios_locked_mem_alloc(struct consistent_dma_area *p_locked_mem_handle,
-> +u16 hpios_locked_mem_alloc(struct consistent_dma_area *p_locked_mem_handle,
->  							   /**< memory handle */
->  	u32 size, /**< Size in bytes to allocate */
->  	struct pci_dev *p_os_reference
-> diff --git a/sound/pci/asihpi/hpios.c b/sound/pci/asihpi/hpios.c
-> index 87f4385..5ef4fe9 100644
-> --- a/sound/pci/asihpi/hpios.c
-> +++ b/sound/pci/asihpi/hpios.c
-> @@ -1,7 +1,7 @@
->  /******************************************************************************
->  
->      AudioScience HPI driver
-> -    Copyright (C) 1997-2011  AudioScience Inc. <support@audioscience.com>
-> +    Copyright (C) 1997-2012  AudioScience Inc. <support@audioscience.com>
->  
->      This program is free software; you can redistribute it and/or modify
->      it under the terms of version 2 of the GNU General Public License as
-> @@ -39,11 +39,11 @@ void hpios_delay_micro_seconds(u32 num_micro_sec)
->  
->  }
->  
-> -/** Allocated an area of locked memory for bus master DMA operations.
-> +/** Allocate an area of locked memory for bus master DMA operations.
->  
-> -On error, return -ENOMEM, and *pMemArea.size = 0
-> +If allocation fails, return 1, and *pMemArea.size = 0
->  */
-> -int hpios_locked_mem_alloc(struct consistent_dma_area *p_mem_area, u32 size,
-> +u16 hpios_locked_mem_alloc(struct consistent_dma_area *p_mem_area, u32 size,
->  	struct pci_dev *pdev)
->  {
->  	/*?? any benefit in using managed dmam_alloc_coherent? */
-> @@ -62,7 +62,7 @@ int hpios_locked_mem_alloc(struct consistent_dma_area *p_mem_area, u32 size,
->  		HPI_DEBUG_LOG(WARNING,
->  			"failed to allocate %d bytes locked memory\n", size);
->  		p_mem_area->size = 0;
-> -		return -ENOMEM;
-> +		return 1;
->  	}
->  }
->  
-> -- 
-> 1.7.0.4
-> 
