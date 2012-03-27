@@ -1,50 +1,30 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Thu, 22 Mar 2012 07:24:41 +0000
-Subject: [PATCH 3/3] net: orinoco: add error handling for failed kmalloc().
-Message-Id: <1332400361-11176-1-git-send-email-santoshprasadnayak@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Mar 2012 07:16:14 +0000
+Subject: [patch] isci: make function declaration match implementation
+Message-Id: <20120327071614.GB19008@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linville@tuxdriver.com
-Cc: davem@davemloft.net, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: Intel SCU Linux support <intel-linux-scu@intel.com>, Jeff Skirvin <jeffrey.d.skirvin@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ed Nadolski <edmund.nadolski@intel.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+Sparse complains that we redeclare this with a different type, because
+in the .c file we use an enum and in the .h file we declare the
+parameter as a u32.  Probably it's best to use an enum in both places.
 
-With flag 'GFP_ATOMIC', probability of allocation failure is more.
-Add error handling after kmalloc() call to avoid null dereference.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- drivers/net/wireless/orinoco/main.c |    8 ++++++++
- 1 files changed, 8 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/wireless/orinoco/main.c b/drivers/net/wireless/orinoco/main.c
-index dd6c64a..24a768b 100644
---- a/drivers/net/wireless/orinoco/main.c
-+++ b/drivers/net/wireless/orinoco/main.c
-@@ -1336,6 +1336,10 @@ static void qbuf_scan(struct orinoco_private *priv, void *buf,
- 	unsigned long flags;
- 
- 	sd = kmalloc(sizeof(*sd), GFP_ATOMIC);
-+	if (!sd) {
-+		printk(KERN_ERR "%s: failed to alloc memory\n", __func__);
-+		return;
-+	}
- 	sd->buf = buf;
- 	sd->len = len;
- 	sd->type = type;
-@@ -1353,6 +1357,10 @@ static void qabort_scan(struct orinoco_private *priv)
- 	unsigned long flags;
- 
- 	sd = kmalloc(sizeof(*sd), GFP_ATOMIC);
-+	if (!sd) {
-+		printk(KERN_ERR "%s: failed to alloc memory\n", __func__);
-+		return;
-+	}
- 	sd->len = -1; /* Abort */
- 
- 	spin_lock_irqsave(&priv->scan_lock, flags);
--- 
-1.7.4.4
-
+diff --git a/drivers/scsi/isci/remote_node_context.h b/drivers/scsi/isci/remote_node_context.h
+index a703b9c..1177204 100644
+--- a/drivers/scsi/isci/remote_node_context.h
++++ b/drivers/scsi/isci/remote_node_context.h
+@@ -212,7 +212,7 @@ enum sci_status sci_remote_node_context_destruct(struct sci_remote_node_context
+ 						      scics_sds_remote_node_context_callback callback,
+ 						      void *callback_parameter);
+ enum sci_status sci_remote_node_context_suspend(struct sci_remote_node_context *sci_rnc,
+-						     u32 suspend_type,
++						     enum sci_remote_node_suspension_reasons reason,
+ 						     u32 suspension_code);
+ enum sci_status sci_remote_node_context_resume(struct sci_remote_node_context *sci_rnc,
+ 						    scics_sds_remote_node_context_callback cb_fn,
