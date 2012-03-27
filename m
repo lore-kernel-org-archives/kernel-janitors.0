@@ -1,30 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Mar 2012 07:16:14 +0000
-Subject: [patch] isci: make function declaration match implementation
-Message-Id: <20120327071614.GB19008@elgon.mountain>
+Date: Tue, 27 Mar 2012 20:22:13 +0000
+Subject: [patch] isp1704_charger: use after free on probe error
+Message-Id: <20120327202212.GB9197@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Intel SCU Linux support <intel-linux-scu@intel.com>, Jeff Skirvin <jeffrey.d.skirvin@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ed Nadolski <edmund.nadolski@intel.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anton Vorontsov <anton.vorontsov@linaro.org>, Felipe Contreras <felipe.contreras@gmail.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Felipe Balbi <balbi@ti.com>, Marek Vasut <marek.vasut@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Sparse complains that we redeclare this with a different type, because
-in the .c file we use an enum and in the .h file we declare the
-parameter as a u32.  Probably it's best to use an enum in both places.
+We can't use "isp" after freeing it.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/scsi/isci/remote_node_context.h b/drivers/scsi/isci/remote_node_context.h
-index a703b9c..1177204 100644
---- a/drivers/scsi/isci/remote_node_context.h
-+++ b/drivers/scsi/isci/remote_node_context.h
-@@ -212,7 +212,7 @@ enum sci_status sci_remote_node_context_destruct(struct sci_remote_node_context
- 						      scics_sds_remote_node_context_callback callback,
- 						      void *callback_parameter);
- enum sci_status sci_remote_node_context_suspend(struct sci_remote_node_context *sci_rnc,
--						     u32 suspend_type,
-+						     enum sci_remote_node_suspension_reasons reason,
- 						     u32 suspension_code);
- enum sci_status sci_remote_node_context_resume(struct sci_remote_node_context *sci_rnc,
- 						    scics_sds_remote_node_context_callback cb_fn,
+diff --git a/drivers/power/isp1704_charger.c b/drivers/power/isp1704_charger.c
+index 39eb50f..e5ccd29 100644
+--- a/drivers/power/isp1704_charger.c
++++ b/drivers/power/isp1704_charger.c
+@@ -474,13 +474,13 @@ static int __devinit isp1704_charger_probe(struct platform_device *pdev)
+ fail2:
+ 	power_supply_unregister(&isp->psy);
+ fail1:
++	isp1704_charger_set_power(isp, 0);
+ 	usb_put_transceiver(isp->phy);
+ fail0:
+ 	kfree(isp);
+ 
+ 	dev_err(&pdev->dev, "failed to register isp1704 with error %d\n", ret);
+ 
+-	isp1704_charger_set_power(isp, 0);
+ 	return ret;
+ }
+ 
