@@ -1,74 +1,108 @@
-From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Date: Thu, 01 Mar 2012 10:19:01 +0000
-Subject: Re: [patch 1/4] rndis_wlan: integer overflows in rndis_wlan_do_link_up_work()
-Message-Id: <20120301121901.363327qut940t1lw@www.81.fi>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Mar 2012 07:20:48 +0000
+Subject: [patch] mISDN: array underflow in open_bchannel()
+Message-Id: <20120327072048.GC19008@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120229063555.GC18031@elgon.mountain>
-In-Reply-To: <20120229063555.GC18031@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Alexey Dobriyan <adobriyan@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter <dan.carpenter@oracle.com>:
+There are two channels here.  User space starts counting channels at one
+but in the kernel we start at zero.  If the user passes in a zero
+channel that's invalid and could lead to memory corruption.
 
-> If "offset" is negative then we can get past this check:
-> 	if (offset > CONTROL_BUFFER_SIZE)
-> Or if we pick a very high "req_ie_len" then we can get around the check:
-> 	if (offset + req_ie_len > CONTROL_BUFFER_SIZE)
->
-> I made "resp_ie_len" and "req_ie_len" unsigned.  I don't know if it was
-> intentional that they were signed in the original.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/net/wireless/rndis_wlan.c  
-> b/drivers/net/wireless/rndis_wlan.c
-> index a330c69..6d8a986 100644
-> --- a/drivers/net/wireless/rndis_wlan.c
-> +++ b/drivers/net/wireless/rndis_wlan.c
-> @@ -2755,9 +2755,10 @@ static void rndis_wlan_do_link_up_work(struct  
-> usbnet *usbdev)
->  	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
->  	struct ndis_80211_assoc_info *info = NULL;
->  	u8 bssid[ETH_ALEN];
-> -	int resp_ie_len, req_ie_len;
-> +	unsigned int resp_ie_len, req_ie_len;
-> +	unsigned int offset;
->  	u8 *req_ie, *resp_ie;
-> -	int ret, offset;
-> +	int ret;
->  	bool roamed = false;
->  	bool match_bss;
->
-> @@ -2785,6 +2786,8 @@ static void rndis_wlan_do_link_up_work(struct  
-> usbnet *usbdev)
->  		ret = get_association_info(usbdev, info, CONTROL_BUFFER_SIZE);
->  		if (!ret) {
->  			req_ie_len = le32_to_cpu(info->req_ie_length);
-> +			if (req_ie_len > CONTROL_BUFFER_SIZE)
-> +				req_ie_len = CONTROL_BUFFER_SIZE;
->  			if (req_ie_len > 0) {
->  				offset = le32_to_cpu(info->offset_req_ies);
->
-> @@ -2799,6 +2802,8 @@ static void rndis_wlan_do_link_up_work(struct  
-> usbnet *usbdev)
->  			}
->
->  			resp_ie_len = le32_to_cpu(info->resp_ie_length);
-> +			if (resp_ie_len > CONTROL_BUFFER_SIZE)
-> +				resp_ie_len = CONTROL_BUFFER_SIZE;
->  			if (resp_ie_len > 0) {
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-(resp_ie_len > 0), (resp_ie_len != 0), (resp_ie_len) .. all fine by me,
-
-Acked-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-
->  				offset = le32_to_cpu(info->offset_resp_ies);
->
->
->
-
-
-
+diff --git a/drivers/isdn/hardware/mISDN/hfcpci.c b/drivers/isdn/hardware/mISDN/hfcpci.c
+index d055ae7..e2c83a2 100644
+--- a/drivers/isdn/hardware/mISDN/hfcpci.c
++++ b/drivers/isdn/hardware/mISDN/hfcpci.c
+@@ -1962,7 +1962,7 @@ open_bchannel(struct hfc_pci *hc, struct channel_req *rq)
+ {
+ 	struct bchannel		*bch;
+ 
+-	if (rq->adr.channel > 2)
++	if (rq->adr.channel = 0 || rq->adr.channel > 2)
+ 		return -EINVAL;
+ 	if (rq->protocol = ISDN_P_NONE)
+ 		return -EINVAL;
+diff --git a/drivers/isdn/hardware/mISDN/w6692.c b/drivers/isdn/hardware/mISDN/w6692.c
+index 7f1e7ba..2183357 100644
+--- a/drivers/isdn/hardware/mISDN/w6692.c
++++ b/drivers/isdn/hardware/mISDN/w6692.c
+@@ -1015,7 +1015,7 @@ open_bchannel(struct w6692_hw *card, struct channel_req *rq)
+ {
+ 	struct bchannel *bch;
+ 
+-	if (rq->adr.channel > 2)
++	if (rq->adr.channel = 0 || rq->adr.channel > 2)
+ 		return -EINVAL;
+ 	if (rq->protocol = ISDN_P_NONE)
+ 		return -EINVAL;
+diff --git a/drivers/isdn/hardware/mISDN/mISDNisar.c b/drivers/isdn/hardware/mISDN/mISDNisar.c
+index 10446ab..9a6da6e 100644
+--- a/drivers/isdn/hardware/mISDN/mISDNisar.c
++++ b/drivers/isdn/hardware/mISDN/mISDNisar.c
+@@ -1670,7 +1670,7 @@ isar_open(struct isar_hw *isar, struct channel_req *rq)
+ {
+ 	struct bchannel		*bch;
+ 
+-	if (rq->adr.channel > 2)
++	if (rq->adr.channel = 0 || rq->adr.channel > 2)
+ 		return -EINVAL;
+ 	if (rq->protocol = ISDN_P_NONE)
+ 		return -EINVAL;
+diff --git a/drivers/isdn/hardware/mISDN/netjet.c b/drivers/isdn/hardware/mISDN/netjet.c
+index dd6de9f..c726e09 100644
+--- a/drivers/isdn/hardware/mISDN/netjet.c
++++ b/drivers/isdn/hardware/mISDN/netjet.c
+@@ -860,7 +860,7 @@ open_bchannel(struct tiger_hw *card, struct channel_req *rq)
+ {
+ 	struct bchannel *bch;
+ 
+-	if (rq->adr.channel > 2)
++	if (rq->adr.channel = 0 || rq->adr.channel > 2)
+ 		return -EINVAL;
+ 	if (rq->protocol = ISDN_P_NONE)
+ 		return -EINVAL;
+diff --git a/drivers/isdn/hardware/mISDN/avmfritz.c b/drivers/isdn/hardware/mISDN/avmfritz.c
+index 05ed4d0c..c0b8c96 100644
+--- a/drivers/isdn/hardware/mISDN/avmfritz.c
++++ b/drivers/isdn/hardware/mISDN/avmfritz.c
+@@ -891,7 +891,7 @@ open_bchannel(struct fritzcard *fc, struct channel_req *rq)
+ {
+ 	struct bchannel		*bch;
+ 
+-	if (rq->adr.channel > 2)
++	if (rq->adr.channel = 0 || rq->adr.channel > 2)
+ 		return -EINVAL;
+ 	if (rq->protocol = ISDN_P_NONE)
+ 		return -EINVAL;
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+index 6023387..8cde2a0 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.c
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
+@@ -486,7 +486,7 @@ open_bchannel(struct hfcsusb *hw, struct channel_req *rq)
+ {
+ 	struct bchannel		*bch;
+ 
+-	if (rq->adr.channel > 2)
++	if (rq->adr.channel = 0 || rq->adr.channel > 2)
+ 		return -EINVAL;
+ 	if (rq->protocol = ISDN_P_NONE)
+ 		return -EINVAL;
+diff --git a/drivers/isdn/hardware/mISDN/mISDNipac.c b/drivers/isdn/hardware/mISDN/mISDNipac.c
+index b47e9be..884369f 100644
+--- a/drivers/isdn/hardware/mISDN/mISDNipac.c
++++ b/drivers/isdn/hardware/mISDN/mISDNipac.c
+@@ -1506,7 +1506,7 @@ open_bchannel(struct ipac_hw *ipac, struct channel_req *rq)
+ {
+ 	struct bchannel		*bch;
+ 
+-	if (rq->adr.channel > 2)
++	if (rq->adr.channel = 0 || rq->adr.channel > 2)
+ 		return -EINVAL;
+ 	if (rq->protocol = ISDN_P_NONE)
+ 		return -EINVAL;
