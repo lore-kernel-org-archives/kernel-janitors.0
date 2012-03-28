@@ -1,30 +1,23 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 27 Mar 2012 07:44:42 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 28 Mar 2012 02:42:43 +0000
 Subject: Re: [patch] mISDN: array underflow in open_bchannel()
-Message-Id: <4F716FEA.4000307@bfs.de>
+Message-Id: <20120327.224243.1717299402560241334.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120327072048.GC19008@elgon.mountain>
 In-Reply-To: <20120327072048.GC19008@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: isdn@linux-pingi.de, adobriyan@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Mar 2012 10:20:48 +0300
 
-
-Am 27.03.2012 09:39, schrieb Dan Carpenter:
-> On Tue, Mar 27, 2012 at 09:31:45AM +0200, walter harms wrote:
->>
->> hi dan,
->> short question: is is possible to make rq->adr.channel unsigned ?
->>
+> There are two channels here.  User space starts counting channels at one
+> but in the kernel we start at zero.  If the user passes in a zero
+> channel that's invalid and could lead to memory corruption.
 > 
-> It is unsigned.  It's a u8.
-> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-i am still sleeping ... i did not see that you are checking x = 0 i was seeing x<0
-sorry for the noise.
-
-re,
- wh
+Applied, thanks Dan.
