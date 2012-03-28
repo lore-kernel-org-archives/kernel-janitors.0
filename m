@@ -1,45 +1,29 @@
-From: =?ISO-8859-1?Q?Ezequiel_Garc=EDa?= <elezegarcia@gmail.com>
-Date: Tue, 27 Mar 2012 20:53:31 +0000
-Subject: Re: [PATCH] staging: wlags49_h2: Replace kmalloc+memset by kzalloc and add error handling.
-Message-Id: <CALF0-+XzWXfFrHw-3xkRcgZXd2drM=udzCys2vLsHCV7ixGqgA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Mar 2012 10:44:59 +0000
+Subject: [patch] nfsd4: memory corruption in numeric_name_to_id()
+Message-Id: <20120328104459.GA29022@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120323095158.GB3181@mwanda>
-In-Reply-To: <20120323095158.GB3181@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+"id" is type is a uid_t (32 bits) but on 64 bit systems strict_strtoul()
+modifies 64 bits of data.  We should use kstrtouint() instead.
 
-On Fri, Mar 23, 2012 at 12:41 PM, Greg KH <gregkh@linuxfoundation.org> wrot=
-e:
->
-> And I bet they are used wrong there. =A0Again, unless you are in some very
-> performance critical section of code, don't use unlikely().
->
-> The big thing is that it just is not needed at all. =A0Don't try to be
-> smarter than the compiler if you don't need it, _AND_ you haven't
-> actually measured it.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Nice answer. I did a quick grep and I found this scary result:
-
-~/devel/v4l-dvb $ grep -r -n "unlikely(" drivers/ | wc -l
-5018
-
-I wonder perhaps we could add a check for unlikely in checkpatch script?
-Something like: "are you sure about this"?
-
-Also, perhaps this quote from [1] should be somewhere in Documentation:
-
-"How should I use it ?
-You should use it only in cases when the likeliest branch is very very
-very likely, or when the unlikeliest branch is very very very
-unlikely."
-
-[1] http://kernelnewbies.org/FAQ/LikelyUnlikely
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/nfsd/nfs4idmap.c b/fs/nfsd/nfs4idmap.c
+index 69ca9c5..322d11c 100644
+--- a/fs/nfsd/nfs4idmap.c
++++ b/fs/nfsd/nfs4idmap.c
+@@ -581,7 +581,7 @@ numeric_name_to_id(struct svc_rqst *rqstp, int type, const char *name, u32 namel
+ 	/* Just to make sure it's null-terminated: */
+ 	memcpy(buf, name, namelen);
+ 	buf[namelen] = '\0';
+-	ret = strict_strtoul(name, 10, (unsigned long *)id);
++	ret = kstrtouint(name, 10, id);
+ 	return ret = 0;
+ }
+ 
