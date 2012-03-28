@@ -1,37 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Mar 2012 06:33:09 +0000
-Subject: [patch] rbd: use gfp_flags parameter in rbd_header_from_disk()
-Message-Id: <20120322063309.GC7369@elgon.mountain>
+Date: Wed, 28 Mar 2012 10:46:09 +0000
+Subject: [patch] cpuset: remove an unused variable
+Message-Id: <20120328104608.GD29022@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yehuda Sadeh <yehuda@hq.newdream.net>
-Cc: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Paul Menage <paul@paulmenage.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
 
-We should use the gfp_flags that the caller specified instead of
-GFP_KERNEL here.
-
-There is only one caller and it uses GFP_KERNEL, so this change is just
-a cleanup and doesn't change how the code works.
+We don't use "cpu" any more after 2baab4e904 "sched: Fix
+select_fallback_rq() vs cpu_active/cpu_online".
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index a6278e7..fc9341f 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -474,11 +474,11 @@ static int rbd_header_from_disk(struct rbd_image_header *header,
- 		return -ENOMEM;
- 	if (snap_count) {
- 		header->snap_names = kmalloc(header->snap_names_len,
--					     GFP_KERNEL);
-+					     gfp_flags);
- 		if (!header->snap_names)
- 			goto err_snapc;
- 		header->snap_sizes = kmalloc(snap_count * sizeof(u64),
--					     GFP_KERNEL);
-+					     gfp_flags);
- 		if (!header->snap_sizes)
- 			goto err_names;
- 	} else {
+diff --git a/kernel/cpuset.c b/kernel/cpuset.c
+index dfceaca..14f7070 100644
+--- a/kernel/cpuset.c
++++ b/kernel/cpuset.c
+@@ -2165,7 +2165,6 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
+ void cpuset_cpus_allowed_fallback(struct task_struct *tsk)
+ {
+ 	const struct cpuset *cs;
+-	int cpu;
+ 
+ 	rcu_read_lock();
+ 	cs = task_cs(tsk);
