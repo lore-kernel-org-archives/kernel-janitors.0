@@ -1,28 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 05 Mar 2012 21:51:05 +0000
-Subject: Re: [PATCH 1/3] qla3xxx: ethernet: Fix bogus interrupt state flag.
-Message-Id: <20120305.165105.1278606832898736557.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 Mar 2012 06:58:07 +0000
+Subject: [patch] hv: fix return type of hv_post_message()
+Message-Id: <20120328065807.GB9113@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1330700945-18195-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1330700945-18195-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: santoshprasadnayak@gmail.com
-Cc: jitendra.kalsaria@qlogic.com, ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Fri,  2 Mar 2012 20:39:05 +0530
+This function returns negative error codes, but because the type is u16
+they get truncated into positive numbers.  It doesn't look like the
+callers care, but we should fix it anyway as a cleanup.
 
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> In 'ql_adapter_initialize'
-> the first call for 'spin_unlock_irqrestore()' is with hw_flags = 0,
-> which is as good as 'spin_unlock_irq()' (unconditional interrupt
-> enabling). If this is intended, then for better performance
-> 'spin_unlock_irqrestore()' can be replaced with 'spin_unlock_irq()'
-> and 'spin_lock_irqsave()' can be replaced by 'spin_lock_irq()
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This change is definitely correct, applied, thanks.
+diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+index 699f0d8..b9426a6 100644
+--- a/drivers/hv/hyperv_vmbus.h
++++ b/drivers/hv/hyperv_vmbus.h
+@@ -495,7 +495,7 @@ extern int hv_init(void);
+ 
+ extern void hv_cleanup(void);
+ 
+-extern u16 hv_post_message(union hv_connection_id connection_id,
++extern int hv_post_message(union hv_connection_id connection_id,
+ 			 enum hv_message_type message_type,
+ 			 void *payload, size_t payload_size);
+ 
+diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+index 15956bd..86f8885 100644
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -252,7 +252,7 @@ void hv_cleanup(void)
+  *
+  * This involves a hypercall.
+  */
+-u16 hv_post_message(union hv_connection_id connection_id,
++int hv_post_message(union hv_connection_id connection_id,
+ 		  enum hv_message_type message_type,
+ 		  void *payload, size_t payload_size)
+ {
