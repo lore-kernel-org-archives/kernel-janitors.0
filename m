@@ -1,38 +1,33 @@
-From: Chris Ball <cjb@laptop.org>
-Date: Fri, 09 Mar 2012 04:27:41 +0000
-Subject: Re: [PATCH] drivers/mmc/host/sdhci-s3c.c: use devm_ functions
-Message-Id: <m2k42uqtz6.fsf@bob.laptop.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Mar 2012 18:52:57 +0000
+Subject: [patch] Staging: rts_pstor: off by one in for loop
+Message-Id: <20120329185257.GC21812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1329596019-19822-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1329596019-19822-1-git-send-email-Julia.Lawall@lip6.fr> (Julia
-	Lawall's message of "Sat, 18 Feb 2012 21:13:39 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Ben Dooks <ben-linux@fluff.org>, kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Julia,
+I already fixed the other similar for loop in this file.  I'm not sure
+how I missed this one.  We use seg_no+1 inside the loop so we can't go
+right up to the end of the loop.
 
-On Sat, Feb 18 2012, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
->
-> By using devm_ioremap, it also removes a potential memory leak, because
-> there was no call to iounmap in the probe function.
->
-> The call to platform_get_resource was moved just to make it closer to the
-> place where its result it used.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Also if we don't break out of the loop then we end up past the end of
+the array, but with this fix we end up on the last element.
 
-Thanks very much, pushed to mmc-next for 3.4.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+diff --git a/drivers/staging/rts_pstor/ms.c b/drivers/staging/rts_pstor/ms.c
+index 66341df..f9a4498 100644
+--- a/drivers/staging/rts_pstor/ms.c
++++ b/drivers/staging/rts_pstor/ms.c
+@@ -3498,7 +3498,8 @@ static int ms_rw_multi_sector(struct scsi_cmnd *srb, struct rtsx_chip *chip, u32
+ 
+ 		log_blk++;
+ 
+-		for (seg_no = 0; seg_no < sizeof(ms_start_idx)/2; seg_no++) {
++		for (seg_no = 0; seg_no < ARRAY_SIZE(ms_start_idx) - 1;
++				seg_no++) {
+ 			if (log_blk < ms_start_idx[seg_no+1])
+ 				break;
+ 		}
