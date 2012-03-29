@@ -1,33 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Mar 2012 18:53:26 +0000
-Subject: [patch] [SCSI] fcoe: remove a stray unlock
-Message-Id: <20120329185326.GD21812@elgon.mountain>
+Date: Thu, 29 Mar 2012 06:43:54 +0000
+Subject: [patch] Staging: vt6655-6: check keysize before memcpy()
+Message-Id: <20120329064354.GA17647@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robert Love <robert.w.love@intel.com>, Neil Horman <nhorman@tuxdriver.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, devel@open-fcoe.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Vasu Dev <vasu.dev@intel.com>
+To: kernel-janitors@vger.kernel.org
 
-We moved the locking in dd060e74fb "[SCSI] fcoe: remove frame dropping
-code from fcoe_percpu_clean" but this unlock was missed.
+We need to check the we don't copy too much memory.  This comes from a
+copy_from_user() in the ioctl.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-index 335e851..c2d8a8c 100644
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@ -2274,10 +2274,9 @@ static void fcoe_percpu_clean(struct fc_lport *lport)
- 			continue;
+diff --git a/drivers/staging/vt6656/key.c b/drivers/staging/vt6656/key.c
+index 27bb523..ee62a06 100644
+--- a/drivers/staging/vt6656/key.c
++++ b/drivers/staging/vt6656/key.c
+@@ -684,6 +684,9 @@ BOOL KeybSetDefaultKey(
+         return (FALSE);
+     }
  
- 		skb = dev_alloc_skb(0);
--		if (!skb) {
--			spin_unlock_bh(&pp->fcoe_rx_list.lock);
-+		if (!skb)
- 			continue;
--		}
++    if (uKeyLength > MAX_KEY_LEN)
++	    return false;
 +
- 		skb->destructor = fcoe_percpu_flush_done;
+     pTable->KeyTable[MAX_KEY_TABLE-1].bInUse = TRUE;
+     for (ii = 0; ii < ETH_ALEN; ii++)
+         pTable->KeyTable[MAX_KEY_TABLE-1].abyBSSID[ii] = 0xFF;
+diff --git a/drivers/staging/vt6655/key.c b/drivers/staging/vt6655/key.c
+index 0ff8d7b..774b0d4 100644
+--- a/drivers/staging/vt6655/key.c
++++ b/drivers/staging/vt6655/key.c
+@@ -655,6 +655,9 @@ bool KeybSetDefaultKey (
+         return (false);
+     }
  
- 		spin_lock_bh(&pp->fcoe_rx_list.lock);
++    if (uKeyLength > MAX_KEY_LEN)
++	    return false;
++
+     pTable->KeyTable[MAX_KEY_TABLE-1].bInUse = true;
+     for(ii=0;ii<ETH_ALEN;ii++)
+         pTable->KeyTable[MAX_KEY_TABLE-1].abyBSSID[ii] = 0xFF;
