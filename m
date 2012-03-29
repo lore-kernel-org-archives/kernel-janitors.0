@@ -1,7 +1,7 @@
 From: Jeff Layton <jlayton@redhat.com>
-Date: Thu, 01 Mar 2012 11:47:32 +0000
+Date: Thu, 29 Mar 2012 19:57:57 +0000
 Subject: Re: [patch] cifs: writing past end of struct in cifs_convert_address()
-Message-Id: <20120301064732.135a5383@tlielax.poochiereds.net>
+Message-Id: <20120329155757.4f44a3ad@corrin.poochiereds.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120301070652.GA6959@elgon.mountain>
 In-Reply-To: <20120301070652.GA6959-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org
 
 On Thu, 1 Mar 2012 10:06:52 +0300
 Dan Carpenter <dan.carpenter@oracle.com> wrote:
@@ -33,5 +33,6 @@ Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >  		rc = (rc = 0) ? 1 : 0;
 >  	}
 >  
+
 
 Reviewed-by: Jeff Layton <jlayton@redhat.com>
