@@ -1,29 +1,31 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Wed, 28 Mar 2012 11:18:21 +0000
-Subject: Re: [patch] drm/i915/bios: cleanup return type of intel_parse_bios()
-Message-Id: <20120328111821.GA27581@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Mar 2012 18:51:19 +0000
+Subject: [patch] blkcg: change a spin_lock() to spin_lock_irq()
+Message-Id: <20120329185119.GA21812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120328065942.GC9113@elgon.mountain>
-In-Reply-To: <20120328065942.GC9113@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Mar 28, 2012 at 09:59:42AM +0300, Dan Carpenter wrote:
-> These are unintuitive.  These are type bool and return -1 casted to true
-> on failure.  Let's just make it return an int.  The callers don't care,
-> but let's change this as a cleanup.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Smatch complains that we re-enable IRQs twice.  It looks like we forgot
+to disable them here on the spin_trylock() failure path.  This was added
+in 9f13ef678e "blkcg: use double locking instead of RCU for blkg
+synchronization".
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-... or split it up into psb and i915 so I can merge it through
-drm-intel-next.
--Daniel
--- 
-Daniel Vetter
-Mail: daniel@ffwll.ch
-Mobile: +41 (0)79 365 57 48
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 74a76a8..bf4b76e 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -1598,7 +1598,7 @@ static int blkiocg_pre_destroy(struct cgroup *cgroup)
+ 		} else {
+ 			spin_unlock_irq(&blkcg->lock);
+ 			cpu_relax();
+-			spin_lock(&blkcg->lock);
++			spin_lock_irq(&blkcg->lock);
+ 		}
+ 	}
+ 
