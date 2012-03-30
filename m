@@ -1,53 +1,51 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Tue, 13 Mar 2012 20:45:14 +0000
-Subject: Re: [PATCH v3] drivers/ata/pata_mpc52xx.c: clean up error handling code
-Message-Id: <4F5FB1DA.6070009@pobox.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Fri, 30 Mar 2012 11:50:33 +0000
+Subject: [PATCH] Drivers: hv: Fix return type of hv_post_message().
+Message-Id: <1333107513-10434-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1331496729-12850-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1331496729-12850-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wharms-fPG8STNUNVg@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-On 03/11/2012 04:12 PM, Julia Lawall wrote:
-> From: Julia Lawall<Julia.Lawall@lip6.fr>
->
-> This patch makes a number of changes with respect to the error-handling
-> code:
->
-> * Remove cleanup calls for the devm functions in both the error handling
->    code and the remove function.  This cleanup is done automatically.
->
-> * The previous change simplifies the cleanup code at the end of the
->    function such that there is nothing to do on the failure of the call to
->    devm_ioremap.  So it is changed to just return directly.
->
-> * There is no need for the ifs in the cleanup code at the end of the
->    function, because in each case the cleanup needed is statically
->    known.  Drop the ifs, add new err labels, and drop the initializations of
->    the tested variables to NULL.
->
-> * Change the call to request_irq to a call to devm_request_irq, so that it
->    is cleaned up on exit.
->
-> * Cause the return value of devm_request_irq to go into the returned
->    variable rv rather than the unused variable ret.  Drop ret.
->
-> Signed-off-by: Julia Lawall<Julia.Lawall@lip6.fr>
->
-> ---
-> This subsumes the previous patch that only removed the calls to the devm
-> cleanup functions.  It is not tested.  I am not sure about the correctness
-> of the use of devm_request_irq, since there were no calls to free_irq
-> before.  I also don't know if there was a reason for not returning the
-> return value of request_irq previously.
->
->   drivers/ata/pata_mpc52xx.c |   44 +++++++++++++++-----------------------------
->   1 file changed, 15 insertions(+), 29 deletions(-)
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-applied
+On failed memory allocation 'hv_post_message()' returns -ENOMEM.
+As return type of this function is 'u16', -ENOMEM becomes 65524.
+Change the return type from 'u16' to 'int'.
 
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/hv/hv.c           |    2 +-
+ drivers/hv/hyperv_vmbus.h |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+index 15956bd..86f8885 100644
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -252,7 +252,7 @@ void hv_cleanup(void)
+  *
+  * This involves a hypercall.
+  */
+-u16 hv_post_message(union hv_connection_id connection_id,
++int hv_post_message(union hv_connection_id connection_id,
+ 		  enum hv_message_type message_type,
+ 		  void *payload, size_t payload_size)
+ {
+diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+index 699f0d8..b9426a6 100644
+--- a/drivers/hv/hyperv_vmbus.h
++++ b/drivers/hv/hyperv_vmbus.h
+@@ -495,7 +495,7 @@ extern int hv_init(void);
+ 
+ extern void hv_cleanup(void);
+ 
+-extern u16 hv_post_message(union hv_connection_id connection_id,
++extern int hv_post_message(union hv_connection_id connection_id,
+ 			 enum hv_message_type message_type,
+ 			 void *payload, size_t payload_size);
+ 
+-- 
+1.7.4.4
 
