@@ -1,29 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Mar 2012 06:30:56 +0000
-Subject: [patch] drm/udl: unlock before returning in udl_gem_mmap()
-Message-Id: <20120322063056.GB7369@elgon.mountain>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 31 Mar 2012 23:59:10 +0000
+Subject: [PATCH] x86, vsyscall: Fix sparse warning: Using plain integer as NULL
+Message-Id: <1333238350-6798-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Dave Airlie <airlied@redhat.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-If we hit an error here, then we should unlock and unreference obj
-before returning.
+This patch silences the following sparse warning:
+arch/x86/kernel/vsyscall_64.c:250:34:
+       warning: Using plain integer as NULL pointer
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ arch/x86/kernel/vsyscall_64.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/gpu/drm/udl/udl_gem.c b/drivers/gpu/drm/udl/udl_gem.c
-index 852642d..6de6130 100644
---- a/drivers/gpu/drm/udl/udl_gem.c
-+++ b/drivers/gpu/drm/udl/udl_gem.c
-@@ -210,7 +210,7 @@ int udl_gem_mmap(struct drm_file *file, struct drm_device *dev,
+diff --git a/arch/x86/kernel/vsyscall_64.c b/arch/x86/kernel/vsyscall_64.c
+index f386dc4..6170ff9 100644
+--- a/arch/x86/kernel/vsyscall_64.c
++++ b/arch/x86/kernel/vsyscall_64.c
+@@ -247,7 +247,7 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
  
- 	ret = udl_gem_get_pages(gobj, GFP_KERNEL);
- 	if (ret)
--		return ret;
-+		goto out;
- 	if (!gobj->base.map_list.map) {
- 		ret = drm_gem_create_mmap_offset(obj);
- 		if (ret)
+ 		ret = sys_getcpu((unsigned __user *)regs->di,
+ 				 (unsigned __user *)regs->si,
+-				 0);
++				 NULL);
+ 		break;
+ 	}
+ 
+-- 
+1.7.9.1
+
