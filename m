@@ -1,51 +1,51 @@
-From: Dan Williams <dcbw@redhat.com>
-Date: Mon, 16 Apr 2012 16:20:20 +0000
-Subject: Re: [PATCH] drivers/net/wireless/libertas/if_usb.c: add missing debugging code
-Message-Id: <1334593220.10194.30.camel@dcbw.foobar.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sun, 01 Apr 2012 18:48:04 +0000
+Subject: [PATCH v2] x86, vsyscall: Fix sparse warning: Using plain integer as NULL
+Message-Id: <1333306084-3776-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334591040-29298-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1334591040-29298-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 2012-04-16 at 17:44 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Add a corresponding leave call on error failure.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Decided to change the comment instead as well.
 
-Acked-by: Dan Williams <dcbw@redhat.com>
+This patch silences the following sparse warning:
+arch/x86/kernel/vsyscall_64.c:250:34:
+       warning: Using plain integer as NULL pointer
 
-> 
-> ---
->  drivers/net/wireless/libertas/if_usb.c |    6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/libertas/if_usb.c b/drivers/net/wireless/libertas/if_usb.c
-> index 74da5f1..ce4938d 100644
-> --- a/drivers/net/wireless/libertas/if_usb.c
-> +++ b/drivers/net/wireless/libertas/if_usb.c
-> @@ -1128,8 +1128,10 @@ static int if_usb_suspend(struct usb_interface *intf, pm_message_t message)
->  
->  	lbs_deb_enter(LBS_DEB_USB);
->  
-> -	if (priv->psstate != PS_STATE_FULL_POWER)
-> -		return -1;
-> +	if (priv->psstate != PS_STATE_FULL_POWER) {
-> +		ret = -1;
-> +		goto out;
-> +	}
->  
->  #ifdef CONFIG_OLPC
->  	if (machine_is_olpc()) {
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+v2: Changed comment to "NULL" instead of "0"
 
+ arch/x86/kernel/vsyscall_64.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/vsyscall_64.c b/arch/x86/kernel/vsyscall_64.c
+index f386dc4..7515cf0 100644
+--- a/arch/x86/kernel/vsyscall_64.c
++++ b/arch/x86/kernel/vsyscall_64.c
+@@ -216,9 +216,9 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+ 	current_thread_info()->sig_on_uaccess_error = 1;
+ 
+ 	/*
+-	 * 0 is a valid user pointer (in the access_ok sense) on 32-bit and
++	 * NULL is a valid user pointer (in the access_ok sense) on 32-bit and
+ 	 * 64-bit, so we don't need to special-case it here.  For all the
+-	 * vsyscalls, 0 means "don't write anything" not "write it at
++	 * vsyscalls, NULL means "don't write anything" not "write it at
+ 	 * address 0".
+ 	 */
+ 	ret = -EFAULT;
+@@ -247,7 +247,7 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+ 
+ 		ret = sys_getcpu((unsigned __user *)regs->di,
+ 				 (unsigned __user *)regs->si,
+-				 0);
++				 NULL);
+ 		break;
+ 	}
+ 
+-- 
+1.7.9.1
 
