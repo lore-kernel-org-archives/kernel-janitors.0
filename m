@@ -1,46 +1,41 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Sun, 15 Apr 2012 09:47:21 +0000
-Subject: Re: [patch] ASoC: dapm: release lock on error paths
-Message-Id: <20120415094721.GA3806@opensource.wolfsonmicro.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ZGiS0Q5IWpPtfppv"
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sun, 01 Apr 2012 14:18:11 +0000
+Subject: Disregard my patch: x86, vsyscall: Fix sparse warning: Using plain integer as NULL
+Message-Id: <1333289891.2531.5.camel@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120413192543.GC18505@elgon.mountain>
-In-Reply-To: <20120413192543.GC18505@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+
+Please disregard my previous patch. 
+I missed the comment saying "0 is a valid user pointer".
+
+Best regards,
+Emil Goode
+
+On Sun, 2012-04-01 at 01:59 +0200, Emil Goode wrote:
+> This patch silences the following sparse warning:
+> arch/x86/kernel/vsyscall_64.c:250:34:
+>        warning: Using plain integer as NULL pointer
+> 
+> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+> ---
+>  arch/x86/kernel/vsyscall_64.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/vsyscall_64.c b/arch/x86/kernel/vsyscall_64.c
+> index f386dc4..6170ff9 100644
+> --- a/arch/x86/kernel/vsyscall_64.c
+> +++ b/arch/x86/kernel/vsyscall_64.c
+> @@ -247,7 +247,7 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned long address)
+>  
+>  		ret = sys_getcpu((unsigned __user *)regs->di,
+>  				 (unsigned __user *)regs->si,
+> -				 0);
+> +				 NULL);
+>  		break;
+>  	}
+>  
 
 
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Apr 13, 2012 at 10:25:43PM +0300, Dan Carpenter wrote:
-> We added locking here but there were a couple error paths where we
-> forgot to drop the lock before returning.
-
-Applied, thanks.
-
---ZGiS0Q5IWpPtfppv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPipkQAAoJEBus8iNuMP3dkrcP/RUNludJq6NZ+TcVi7YLG75R
-9AlBDoOE48ZSRSf2AsYqFjr1/o4w3iKwvCiBa/+MLzUeRA/Sx9NAbWennRVGBs3b
-2IC4rnAz3g6+ozpTzexPzPxJwlCsqKdefs9A5CWNELmVcWV+tuMkIK9zIDZqVpcK
-YsMt4NX10ZTYE3/laM/CRO0Fe0lOX06TtMlfi7Q1Q9JrcBCCyQnN/1Lao3P+ZXfv
-bNZvKAuFrGSQgNZO/wiXD8wRsyOaj7FzTKvNtLJwiZUsUglpg4hMQlhkF5zlBKQL
-e8AtbQbgPooWDMYG0za8qI0YDnCqtbICfVMXrPVVIBGsGHlasFZi+gM4uiSVEkOT
-DLBKxB0HFMC4fNLM5+XtAyc7k/JBae4gn9TNjoxeSjdNuMNlkiDCplov8SQ0ho2V
-C+VYkWRyf8b/FtCLOoxGLUe96EBIhIKlyCYKD0ArMJkCmSWep3rKNSJ0lm8fkAIC
-tpJ5VsBZibq32xfz/CGcpbY3JM0ECtulPtgiIKD0jRRFXK/XjvVvL+jN7ry5RJZO
-vEpE3eqhhWiPTwX69/hHapsvDnOraoNUHDlA51/xQYHfN5CfWP73h9HLqgEZFFDC
-wrBx7XnOdv7eTRVcQ5osjJPdyBtAekGdr+0onc3dkwePMHSV6unOnrUdNhCGuF+E
-UjPiPJxaM8M+Fe3LzG9K
-=TMHC
------END PGP SIGNATURE-----
-
---ZGiS0Q5IWpPtfppv--
