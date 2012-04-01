@@ -1,49 +1,31 @@
-From: Ian Kent <raven@themaw.net>
-Date: Mon, 16 Apr 2012 01:19:59 +0000
-Subject: Re: [PATCH] fs/autofs4/dev-ioctl.c: add missing free_dev_ioctl
-Message-Id: <1334539199.2250.1.camel@perseus.themaw.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 01 Apr 2012 15:57:59 +0000
+Subject: [patch] UBIFS: remove douple initialization in change_category()
+Message-Id: <20120401155759.GA21238@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334396928-17537-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1334396928-17537-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, autofs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@intel.com>
 
-On Sat, 2012-04-14 at 11:48 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Free param as done in the other error-handling code.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+"heap" is initialized twice.  I removed the first one, because it makes
+Smatch complain that we use "new_cat" as an offset before checking it.
 
-Oops!
-Acked-by: Ian Kent <raven@themaw.net>
+This doesn't change how the code works, it's just a cleanup.
 
-> 
-> ---
->  fs/autofs4/dev-ioctl.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
-> index 9dacb85..f99c2ce 100644
-> --- a/fs/autofs4/dev-ioctl.c
-> +++ b/fs/autofs4/dev-ioctl.c
-> @@ -651,7 +651,8 @@ static int _autofs_dev_ioctl(unsigned int command, struct autofs_dev_ioctl __use
->  	fn = lookup_dev_ioctl(cmd);
->  	if (!fn) {
->  		AUTOFS_WARN("unknown command 0x%08x", command);
-> -		return -ENOTTY;
-> +		err = -ENOTTY;
-> +		goto out;
->  	}
->  
->  	fp = NULL;
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe autofs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
+diff --git a/fs/ubifs/lprops.c b/fs/ubifs/lprops.c
+index f8a181e..b5c95a6 100644
+--- a/fs/ubifs/lprops.c
++++ b/fs/ubifs/lprops.c
+@@ -447,7 +447,7 @@ static void change_category(struct ubifs_info *c, struct ubifs_lprops *lprops)
+ 	int new_cat = ubifs_categorize_lprops(c, lprops);
+ 
+ 	if (old_cat = new_cat) {
+-		struct ubifs_lpt_heap *heap = &c->lpt_heap[new_cat - 1];
++		struct ubifs_lpt_heap *heap;
+ 
+ 		/* lprops on a heap now must be moved up or down */
+ 		if (new_cat < 1 || new_cat > LPROPS_HEAP_CNT)
