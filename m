@@ -1,98 +1,66 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 15 Apr 2012 10:27:33 +0000
-Subject: [PATCH] drivers/watchdog/ar7_wdt.c: use devm_request_and_ioremap
-Message-Id: <1334485653-13860-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Apr 2012 11:22:40 +0000
+Subject: [patch] leds: lm3556: fix fallout from checkpatch fixes
+Message-Id: <20120404112240.GC23719@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Patch 476b78f277 "leds-add-led-driver-for-lm3556-chip-checkpatch-fixes"
+introduces a bug where we use "after" without initializing it.
 
-Combine request_region and ioremap into devm_request_and_ioremap.  This has
-the effect of fixing a missing iounmap on the failure of clk_get.
+In the original code, "count" and "after" were used to tell if
+simple_strtoul() found a valid number.  Now that we've changed it to
+kstrtoul(), we can just get rid of both variables.  It makes the whole
+function simpler.
 
-This also introduces a call to clk_put and clears the vbus_clk variable in
-the case of failure or device removal.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Perhaps the call to clk_put is not necessary.  If it is not wanted, I can
-remove it.
-
- drivers/watchdog/ar7_wdt.c |   35 +++++++++--------------------------
- 1 file changed, 9 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/watchdog/ar7_wdt.c b/drivers/watchdog/ar7_wdt.c
-index 639ae9a..425c403 100644
---- a/drivers/watchdog/ar7_wdt.c
-+++ b/drivers/watchdog/ar7_wdt.c
-@@ -280,31 +280,17 @@ static int __devinit ar7_wdt_probe(struct platform_device *pdev)
- 
- 	ar7_regs_wdt  		platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
--	if (!ar7_regs_wdt) {
--		pr_err("could not get registers resource\n");
--		rc = -ENODEV;
--		goto out;
--	}
--
--	if (!request_mem_region(ar7_regs_wdt->start,
--				resource_size(ar7_regs_wdt), LONGNAME)) {
--		pr_warn("watchdog I/O region busy\n");
--		rc = -EBUSY;
--		goto out;
--	}
- 
--	ar7_wdt = ioremap(ar7_regs_wdt->start, resource_size(ar7_regs_wdt));
-+	ar7_wdt = devm_request_and_ioremap(&pdev->dev, ar7_regs_wdt);
- 	if (!ar7_wdt) {
- 		pr_err("could not ioremap registers\n");
--		rc = -ENXIO;
--		goto out_mem_region;
-+		return -ENXIO;
- 	}
- 
- 	vbus_clk = clk_get(NULL, "vbus");
- 	if (IS_ERR(vbus_clk)) {
- 		pr_err("could not get vbus clock\n");
--		rc = PTR_ERR(vbus_clk);
--		goto out_mem_region;
-+		return PTR_ERR(vbus_clk);
- 	}
- 
- 	ar7_wdt_disable_wdt();
-@@ -314,24 +300,21 @@ static int __devinit ar7_wdt_probe(struct platform_device *pdev)
- 	rc = misc_register(&ar7_wdt_miscdev);
- 	if (rc) {
- 		pr_err("unable to register misc device\n");
--		goto out_alloc;
-+		goto out;
- 	}
--	goto out;
-+	return 0;
- 
--out_alloc:
--	iounmap(ar7_wdt);
--out_mem_region:
--	release_mem_region(ar7_regs_wdt->start, resource_size(ar7_regs_wdt));
- out:
-+	clk_put(vbus_clk);
-+	vbus_clk = NULL;
- 	return rc;
- }
- 
- static int __devexit ar7_wdt_remove(struct platform_device *pdev)
+diff --git a/drivers/leds/leds-lm3556.c b/drivers/leds/leds-lm3556.c
+index 64e751c..886a5d3 100644
+--- a/drivers/leds/leds-lm3556.c
++++ b/drivers/leds/leds-lm3556.c
+@@ -316,31 +316,23 @@ static ssize_t lm3556_indicator_pattern_store(struct device *dev,
+ 					      struct device_attribute *devAttr,
+ 					      const char *buf, size_t size)
  {
- 	misc_deregister(&ar7_wdt_miscdev);
--	iounmap(ar7_wdt);
--	release_mem_region(ar7_regs_wdt->start, resource_size(ar7_regs_wdt));
+-	char *after;
+-	ssize_t ret;
+ 	struct i2c_client *client = container_of(dev->parent,
+ 						 struct i2c_client, dev);
+ 	unsigned long state;
+-	size_t count = after - buf;
++	int ret;
+ 
+ 	ret = kstrtoul(buf, 10, &state);
+ 	if (ret)
+ 		goto out;
+-	if (isspace(*after))
+-		count++;
 -
-+	clk_put(vbus_clk);
-+	vbus_clk = NULL;
- 	return 0;
+-	if (count = size) {
+-		ret = count;
+-
+-		if (state > INDIC_PATTERN_SIZE - 1)
+-			state = INDIC_PATTERN_SIZE - 1;
+-		lm3556_write_reg(client, REG_INDIC_BLINK,
+-				 indicator_pattern[state].blinking);
+-		lm3556_write_reg(client, REG_INDIC_PERIOD,
+-				 indicator_pattern[state].period_cnt);
+-	}
++
++	if (state > INDIC_PATTERN_SIZE - 1)
++		state = INDIC_PATTERN_SIZE - 1;
++	lm3556_write_reg(client, REG_INDIC_BLINK,
++			 indicator_pattern[state].blinking);
++	lm3556_write_reg(client, REG_INDIC_PERIOD,
++			 indicator_pattern[state].period_cnt);
+ out:
+-	return ret;
++	return size;
  }
  
-
+ static DEVICE_ATTR(pattern, 0644, NULL, lm3556_indicator_pattern_store);
