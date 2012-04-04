@@ -1,56 +1,53 @@
-From: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Date: Thu, 01 Mar 2012 10:19:48 +0000
-Subject: Re: [patch 3/4] rndis_wlan: make some variables unsigned
-Message-Id: <20120301121948.27450js7jyojb134@www.81.fi>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Apr 2012 11:19:16 +0000
+Subject: [patch] ACPI video: use after input_unregister_device()
+Message-Id: <20120404111916.GA23719@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120229063657.GE18031@elgon.mountain>
-In-Reply-To: <20120229063657.GE18031@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, Dmitry Torokhov <dtor@mail.ru>, kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter <dan.carpenter@oracle.com>:
+We can't use "input" anymore after calling input_unregister_device().
+The call to input_free_device() is a double free.  The normal way to
+deal with this is to make input_register_device() the last function
+called in the function.
 
-> These variables can never be less than zero because we cap them in
-> get_device_pmkids().  Let's make them unsigned here because it's simpler
-> to not have to worry about negative numbers when we read the code.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/net/wireless/rndis_wlan.c  
-> b/drivers/net/wireless/rndis_wlan.c
-> index a93cfe2..74e2d1b 100644
-> --- a/drivers/net/wireless/rndis_wlan.c
-> +++ b/drivers/net/wireless/rndis_wlan.c
-> @@ -1790,7 +1790,8 @@ static struct ndis_80211_pmkid  
-> *remove_pmkid(struct usbnet *usbdev,
->  						struct cfg80211_pmksa *pmksa,
->  						int max_pmkids)
->  {
-> -	int i, count, newlen, err;
-> +	int i, newlen, err;
-> +	unsigned int count;
->
->  	count = le32_to_cpu(pmkids->bssid_info_count);
->
-> @@ -1830,7 +1831,8 @@ static struct ndis_80211_pmkid  
-> *update_pmkid(struct usbnet *usbdev,
->  						struct cfg80211_pmksa *pmksa,
->  						int max_pmkids)
->  {
-> -	int i, err, count, newlen;
-> +	int i, err, newlen;
-> +	unsigned int count;
->
->  	count = le32_to_cpu(pmkids->bssid_info_count);
->
->
->
-
-
-
+diff --git a/drivers/acpi/video.c b/drivers/acpi/video.c
+index 9577b6f..51aba50a 100644
+--- a/drivers/acpi/video.c
++++ b/drivers/acpi/video.c
+@@ -1687,10 +1687,6 @@ static int acpi_video_bus_add(struct acpi_device *device)
+ 	set_bit(KEY_BRIGHTNESS_ZERO, input->keybit);
+ 	set_bit(KEY_DISPLAY_OFF, input->keybit);
+ 
+-	error = input_register_device(input);
+-	if (error)
+-		goto err_stop_video;
+-
+ 	printk(KERN_INFO PREFIX "%s [%s] (multi-head: %s  rom: %s  post: %s)\n",
+ 	       ACPI_VIDEO_DEVICE_NAME, acpi_device_bid(device),
+ 	       video->flags.multihead ? "yes" : "no",
+@@ -1701,12 +1697,16 @@ static int acpi_video_bus_add(struct acpi_device *device)
+ 	video->pm_nb.priority = 0;
+ 	error = register_pm_notifier(&video->pm_nb);
+ 	if (error)
+-		goto err_unregister_input_dev;
++		goto err_stop_video;
++
++	error = input_register_device(input);
++	if (error)
++		goto err_unregister_pm_notifier;
+ 
+ 	return 0;
+ 
+- err_unregister_input_dev:
+-	input_unregister_device(input);
++ err_unregister_pm_notifier:
++	unregister_pm_notifier(&video->pm_nb);
+  err_stop_video:
+ 	acpi_video_bus_stop_devices(video);
+  err_free_input_dev:
