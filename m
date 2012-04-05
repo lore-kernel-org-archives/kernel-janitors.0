@@ -1,82 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 22 Apr 2012 11:54:42 +0000
-Subject: [PATCH] drivers/media/video/au0828/au0828-video.c: add missing video_device_release
-Message-Id: <1335095682-16530-1-git-send-email-Julia.Lawall@lip6.fr>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Thu, 05 Apr 2012 06:13:44 +0000
+Subject: [PATCH 2/2] Agp: Use u32 __iomem  annotation to silence sparse warning.
+Message-Id: <1333605704-18658-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: airlied@linux.ie
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-At the point of the call to video_register_device, both dev->vbi_dev and
-dev->vdev have been allocated, and so should be freed on failure.  The
-error-handling code is moved to the end of the function, to avoid code
-duplication.
+Replace "void *" by "u32 __iomem *" to silence sparse warning.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
 ---
- drivers/media/video/au0828/au0828-video.c |   21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ drivers/char/agp/generic.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/media/video/au0828/au0828-video.c b/drivers/media/video/au0828/au0828-video.c
-index 0b3e481..141f9c2 100644
---- a/drivers/media/video/au0828/au0828-video.c
-+++ b/drivers/media/video/au0828/au0828-video.c
-@@ -1881,7 +1881,7 @@ int au0828_analog_register(struct au0828_dev *dev,
- 	int retval = -ENOMEM;
- 	struct usb_host_interface *iface_desc;
- 	struct usb_endpoint_descriptor *endpoint;
--	int i;
-+	int i, ret;
+diff --git a/drivers/char/agp/generic.c b/drivers/char/agp/generic.c
+index 38022ea..a0df182 100644
+--- a/drivers/char/agp/generic.c
++++ b/drivers/char/agp/generic.c
+@@ -958,7 +958,7 @@ int agp_generic_create_gatt_table(struct agp_bridge_data *bridge)
+ 	if (set_memory_uc((unsigned long)table, 1 << page_order))
+ 		printk(KERN_WARNING "Could not set GATT table memory to UC!\n");
  
- 	dprintk(1, "au0828_analog_register called!\n");
- 
-@@ -1951,8 +1951,8 @@ int au0828_analog_register(struct au0828_dev *dev,
- 	dev->vbi_dev = video_device_alloc();
- 	if (NULL = dev->vbi_dev) {
- 		dprintk(1, "Can't allocate vbi_device.\n");
--		kfree(dev->vdev);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto err_vdev;
- 	}
- 
- 	/* Fill the video capture device struct */
-@@ -1971,8 +1971,8 @@ int au0828_analog_register(struct au0828_dev *dev,
- 	if (retval != 0) {
- 		dprintk(1, "unable to register video device (error = %d).\n",
- 			retval);
--		video_device_release(dev->vdev);
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_vbi_dev;
- 	}
- 
- 	/* Register the vbi device */
-@@ -1981,13 +1981,18 @@ int au0828_analog_register(struct au0828_dev *dev,
- 	if (retval != 0) {
- 		dprintk(1, "unable to register vbi device (error = %d).\n",
- 			retval);
--		video_device_release(dev->vbi_dev);
--		video_device_release(dev->vdev);
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_vbi_dev;
- 	}
- 
- 	dprintk(1, "%s completed!\n", __func__);
- 
- 	return 0;
-+
-+err_vbi_dev:
-+	video_device_release(dev->vbi_dev);
-+err_vdev:
-+	video_device_release(dev->vdev);
-+	return ret;
- }
- 
+-	bridge->gatt_table = (void *)table;
++	bridge->gatt_table = (u32 __iomem *)table;
+ #else
+ 	bridge->gatt_table = ioremap_nocache(virt_to_phys(table),
+ 					(PAGE_SIZE * (1 << page_order)));
+-- 
+1.7.4.4
 
