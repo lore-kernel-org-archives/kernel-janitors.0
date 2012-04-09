@@ -1,46 +1,39 @@
-From: Peter Huewe <peterhuewe@gmx.de>
-Date: Sat, 14 Apr 2012 23:42:59 +0000
-Subject: [PATCH] isdn/hysdn:  Convert to kstrtoul_from_user
-Message-Id: <1334446979-1177-1-git-send-email-peterhuewe@gmx.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 09 Apr 2012 09:01:09 +0000
+Subject: [PATCH] net/wireless/wext-core.c: add missing kfree
+Message-Id: <1333962069-20801-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <isdn@linux-pingi.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch replaces the code for getting an number from a
-userspace buffer by a simple call to kstroul_from_user.
-This makes it easier to read and less error prone.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+Free extra as done in the error-handling code just above.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/isdn/hysdn/hysdn_proclog.c |   10 +---------
- 1 files changed, 1 insertions(+), 9 deletions(-)
+ net/wireless/wext-core.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/isdn/hysdn/hysdn_proclog.c b/drivers/isdn/hysdn/hysdn_proclog.c
-index ba91333..88e4f0e 100644
---- a/drivers/isdn/hysdn/hysdn_proclog.c
-+++ b/drivers/isdn/hysdn/hysdn_proclog.c
-@@ -156,17 +156,9 @@ static ssize_t
- hysdn_log_write(struct file *file, const char __user *buf, size_t count, loff_t *off)
- {
- 	int rc;
--	unsigned char valbuf[128];
- 	hysdn_card *card = file->private_data;
+diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
+index 9f544c9..22adfeb 100644
+--- a/net/wireless/wext-core.c
++++ b/net/wireless/wext-core.c
+@@ -781,8 +781,10 @@ static int ioctl_standard_iw_point(struct iw_point *iwp, unsigned int cmd,
+ 		if (cmd = SIOCSIWENCODEEXT) {
+ 			struct iw_encode_ext *ee = (void *) extra;
  
--	if (count > (sizeof(valbuf) - 1))
--		count = sizeof(valbuf) - 1;	/* limit length */
--	if (copy_from_user(valbuf, buf, count))
--		return (-EFAULT);	/* copy failed */
--
--	valbuf[count] = 0;	/* terminating 0 */
--
--	rc = kstrtoul(valbuf, 0, &card->debug_flags);
-+	rc = kstrtoul_from_user(buf, count, 0, &card->debug_flags);
- 	if (rc < 0)
- 		return rc;
- 	hysdn_addlog(card, "debug set to 0x%lx", card->debug_flags);
--- 
-1.7.3.4
+-			if (iwp->length < sizeof(*ee) + ee->key_len)
+-				return -EFAULT;
++			if (iwp->length < sizeof(*ee) + ee->key_len) {
++				err = -EFAULT;
++				goto out;
++			}
+ 		}
+ 	}
+ 
 
