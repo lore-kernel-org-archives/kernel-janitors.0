@@ -1,39 +1,43 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 04 Apr 2012 16:20:03 +0000
-Subject: Re: [patch] Input: wacom: NULL dereference on allocation failure
-Message-Id: <20120404162003.GB9229@core.coreip.homeip.net>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Mon, 09 Apr 2012 06:11:47 +0000
+Subject: [PATCH 1/2] qlcnic: Add default swtich case in 'qlcnic_can_start_firmware()'
+Message-Id: <1333951187-4395-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120404111938.GB23719@elgon.mountain>
-In-Reply-To: <20120404111938.GB23719@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Tatsunosuke Tobita <tobita.tatsunosuke@wacom.co.jp>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: anirban.chakraborty@qlogic.com, rajesh.borundia@qlogic.com
+Cc: sony.chacko@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-On Wed, Apr 04, 2012 at 02:19:38PM +0300, Dan Carpenter wrote:
-> If the "wac_i2c" alloction fails, then it leads to a NULL dereference.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Doh! I'll fold it up into original...
+QLCRD32() may return bad state.
+Its good to have default switch case:
+	1. to avoid unexpected system behaviour.
+	2. to avoid extra computation thats happening
+	   after switch case.
 
-Thanks Dan!
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-> 
-> diff --git a/drivers/input/touchscreen/wacom_i2c.c b/drivers/input/touchscreen/wacom_i2c.c
-> index b29f064..b8ca4a6 100644
-> --- a/drivers/input/touchscreen/wacom_i2c.c
-> +++ b/drivers/input/touchscreen/wacom_i2c.c
-> @@ -252,7 +252,7 @@ static int __devinit wacom_i2c_probe(struct i2c_client *client,
->  err_free_irq:
->  	free_irq(client->irq, wac_i2c);
->  err_free_mem:
-> -	input_free_device(wac_i2c->input);
-> +	input_free_device(input);
->  	kfree(wac_i2c);
->  
->  	return error;
-
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+index 75c32e8..d30b9b8 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+@@ -2787,6 +2787,11 @@ qlcnic_can_start_firmware(struct qlcnic_adapter *adapter)
+ 	case QLCNIC_DEV_INITIALIZING:
+ 	case QLCNIC_DEV_QUISCENT:
+ 		break;
++
++	default:
++		dev_err(&adapter->pdev->dev, "Invalid state\n");
++		qlcnic_api_unlock(adapter);
++		return -EINVAL;
+ 	}
+ 
+ 	qlcnic_api_unlock(adapter);
 -- 
-Dmitry
+1.7.4.4
+
