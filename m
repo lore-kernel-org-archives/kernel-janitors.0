@@ -1,43 +1,62 @@
-From: =?UTF-8?Q?Marcin_=C5=9Alusarz?= <marcin.slusarz@gmail.com>
-Date: Mon, 16 Apr 2012 23:13:07 +0000
-Subject: Re: [Q] warning BUG() related fixing and janitors question
-Message-Id: <CA+GA0_u0D+vxfyTQAn9_R9yF-hLGUpEvARVmVUNFD_yxd4Lg+A@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 09 Apr 2012 08:16:32 +0000
+Subject: [PATCH] sound/oss/msnd_pinnacle.c: add vfrees
+Message-Id: <1333959392-18933-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CALF0-+VyPmN03xhkQ_aQf_Zdc+J=DT1_MvKzQCVri4Fwbi83RQ@mail.gmail.com>
-In-Reply-To: <CALF0-+VyPmN03xhkQ_aQf_Zdc+J=DT1_MvKzQCVri4Fwbi83RQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Veliath <andrewtv@usa.net>
+Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-2012/4/17 Ezequiel García <elezegarcia@gmail.com>:
-> On Mon, Apr 16, 2012 at 7:16 PM, Marcin Ślusarz
-> <marcin.slusarz@gmail.com> wrote:
->>
->> It's better to replace it with:
->> static inline int flat_set_persistent(unsigned long relval,
->>                                                        unsigned long *persistent)
->> {
->>        return 0;
->> }
->>
->> No warnings, same generated code, type safety.
->> Look around the code. It's a very common pattern.
->>
->
-> Yes, I guess you're right.
-> Plus it's even easier to understand than that #define in arch/sh.
->
-> Are these changes suitable, or am I being too picky?
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Well, it depends. If you see warnings from the code, go for it.
-If there's none and code is trivial or in little used module, don't bother.
-In other cases, it depends on the maintainer of changed code - some
-maintainers apply cleanups eagerly, others... ignore them. You will soon
-learn which subsystems to avoid :(
+At the point of this error-handling code, HAVE_DSPCODEH may be undefined,
+so free INITCODE and PERMCODE as done elsewhere.  A jump and label are
+introduced to avoid code duplication.
 
-Little advice: You will learn more if you concentrate on improving
-one subsystem. Find something that interest you and dive into the code.
-Small cleanups are easy, but they should only be a warm up.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Marcin
+---
+ sound/oss/msnd_pinnacle.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/sound/oss/msnd_pinnacle.c b/sound/oss/msnd_pinnacle.c
+index 2c79d60..536c4c0 100644
+--- a/sound/oss/msnd_pinnacle.c
++++ b/sound/oss/msnd_pinnacle.c
+@@ -1294,6 +1294,8 @@ static int __init calibrate_adc(WORD srate)
+ 
+ static int upload_dsp_code(void)
+ {
++	int ret = 0;
++
+ 	msnd_outb(HPBLKSEL_0, dev.io + HP_BLKS);
+ #ifndef HAVE_DSPCODEH
+ 	INITCODESIZE = mod_firmware_load(INITCODEFILE, &INITCODE);
+@@ -1312,7 +1314,8 @@ static int upload_dsp_code(void)
+ 	memcpy_toio(dev.base, PERMCODE, PERMCODESIZE);
+ 	if (msnd_upload_host(&dev, INITCODE, INITCODESIZE) < 0) {
+ 		printk(KERN_WARNING LOGNAME ": Error uploading to DSP\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out;
+ 	}
+ #ifdef HAVE_DSPCODEH
+ 	printk(KERN_INFO LOGNAME ": DSP firmware uploaded (resident)\n");
+@@ -1320,12 +1323,13 @@ static int upload_dsp_code(void)
+ 	printk(KERN_INFO LOGNAME ": DSP firmware uploaded\n");
+ #endif
+ 
++out:
+ #ifndef HAVE_DSPCODEH
+ 	vfree(INITCODE);
+ 	vfree(PERMCODE);
+ #endif
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ #ifdef MSND_CLASSIC
+
