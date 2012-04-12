@@ -1,43 +1,20 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Mon, 09 Apr 2012 06:11:47 +0000
-Subject: [PATCH 1/2] qlcnic: Add default swtich case in 'qlcnic_can_start_firmware()'
-Message-Id: <1333951187-4395-1-git-send-email-santoshprasadnayak@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 12 Apr 2012 20:02:56 +0000
+Subject: Re: [PATCH 1/2] qlcnic: Add default swtich case in 'qlcnic_can_start_firmware()'
+Message-Id: <20120412.160256.1197230282268778456.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1333951187-4395-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1333951187-4395-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: anirban.chakraborty@qlogic.com, rajesh.borundia@qlogic.com
-Cc: sony.chacko@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: santoshprasadnayak@gmail.com
+Cc: anirban.chakraborty@qlogic.com, rajesh.borundia@qlogic.com, sony.chacko@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-QLCRD32() may return bad state.
-Its good to have default switch case:
-	1. to avoid unexpected system behaviour.
-	2. to avoid extra computation thats happening
-	   after switch case.
+You haven't told me what tree these two patches should be applied to,
+so I am dropping them both.
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+Resubmit with a proper destination tree indication.
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-index 75c32e8..d30b9b8 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-@@ -2787,6 +2787,11 @@ qlcnic_can_start_firmware(struct qlcnic_adapter *adapter)
- 	case QLCNIC_DEV_INITIALIZING:
- 	case QLCNIC_DEV_QUISCENT:
- 		break;
-+
-+	default:
-+		dev_err(&adapter->pdev->dev, "Invalid state\n");
-+		qlcnic_api_unlock(adapter);
-+		return -EINVAL;
- 	}
- 
- 	qlcnic_api_unlock(adapter);
--- 
-1.7.4.4
-
+Thanks.
