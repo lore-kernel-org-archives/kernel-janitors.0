@@ -1,49 +1,31 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Thu, 26 Apr 2012 21:30:38 +0000
-Subject: Re: [PATCH] GFS2: Return -ENOMEM only if kmalloc fails
-Message-Id: <1335475838.3035.4.camel@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Apr 2012 13:39:06 +0000
+Subject: [patch] w1: w1_ds28e04: unlock on error path in w1_f1C_write_pio()
+Message-Id: <20120413133906.GB26645@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1335474778-6252-1-git-send-email-emilgoode@gmail.com>
-	 <201204262314.02683.oliver@neukum.org>
-In-Reply-To: <201204262314.02683.oliver@neukum.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oliver Neukum <oliver@neukum.org>
-Cc: swhiteho@redhat.com, cluster-devel@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Evgeniy Polyakov <zbr@ioremap.net>
+Cc: Markus Franke <franm@hrz.tu-chemnitz.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I forgot the braces, embarrassing!
-I see your point, thanks.
+We should unlock here before returning.
 
-Best regards, Emil
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Thu, 2012-04-26 at 23:14 +0200, Oliver Neukum wrote:
-> Am Donnerstag, 26. April 2012, 23:12:58 schrieb Emil Goode:
-> > The error variable should be assigned the value of -ENOMEM
-> > after the NULL check and not before.
-> > 
-> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> > ---
-> >  fs/gfs2/acl.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/gfs2/acl.c b/fs/gfs2/acl.c
-> > index 230eb0f..90f6328 100644
-> > --- a/fs/gfs2/acl.c
-> > +++ b/fs/gfs2/acl.c
-> > @@ -174,8 +174,8 @@ int gfs2_acl_chmod(struct gfs2_inode *ip, struct iattr *attr)
-> >  
-> >  	len = posix_acl_to_xattr(acl, NULL, 0);
-> >  	data = kmalloc(len, GFP_NOFS);
-> > -	error = -ENOMEM;
-> >  	if (data = NULL)
-> > +		error = -ENOMEM;
-> >  		goto out;
-> 
-> Hint: read about the syntax of the if statement.
-> Secondly, consider how the compiler can optimize the original.
-> 
-> 	Regards
-> 		Oliver
-
-
+diff --git a/drivers/w1/slaves/w1_ds28e04.c b/drivers/w1/slaves/w1_ds28e04.c
+index f652db3..4aa1aa9 100644
+--- a/drivers/w1/slaves/w1_ds28e04.c
++++ b/drivers/w1/slaves/w1_ds28e04.c
+@@ -309,8 +309,10 @@ static ssize_t w1_f1C_write_pio(struct file *filp, struct kobject *kobj,
+ 	mutex_lock(&sl->master->mutex);
+ 
+ 	/* Write the PIO data */
+-	if (w1_reset_select_slave(sl))
++	if (w1_reset_select_slave(sl)) {
++		mutex_unlock(&sl->master->mutex);
+ 		return -1;
++	}
+ 
+ 	/* set bit 7..2 to value '1' */
+ 	*buf = *buf | 0xFC;
