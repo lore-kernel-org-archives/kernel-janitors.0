@@ -1,66 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 04 Apr 2012 11:22:40 +0000
-Subject: [patch] leds: lm3556: fix fallout from checkpatch fixes
-Message-Id: <20120404112240.GC23719@elgon.mountain>
+Date: Fri, 13 Apr 2012 13:37:51 +0000
+Subject: [patch] c/r: ipc: uninitialized variable in compat_do_msg_fill()
+Message-Id: <20120413133751.GA26645@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Purdie <rpurdie@rpsys.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Stanislav Kinsbursky <skinsbursky@parallels.com>
+Cc: Chris Metcalf <cmetcalf@tilera.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Patch 476b78f277 "leds-add-led-driver-for-lm3556-chip-checkpatch-fixes"
-introduces a bug where we use "after" without initializing it.
-
-In the original code, "count" and "after" were used to tell if
-simple_strtoul() found a valid number.  Now that we've changed it to
-kstrtoul(), we can just get rid of both variables.  It makes the whole
-function simpler.
+We never initialize "msgp".  It's unfortunate that GCC doesn't warn
+about this.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/leds/leds-lm3556.c b/drivers/leds/leds-lm3556.c
-index 64e751c..886a5d3 100644
---- a/drivers/leds/leds-lm3556.c
-+++ b/drivers/leds/leds-lm3556.c
-@@ -316,31 +316,23 @@ static ssize_t lm3556_indicator_pattern_store(struct device *dev,
- 					      struct device_attribute *devAttr,
- 					      const char *buf, size_t size)
+diff --git a/ipc/compat.c b/ipc/compat.c
+index 6da376b..0c2ebd0 100644
+--- a/ipc/compat.c
++++ b/ipc/compat.c
+@@ -363,7 +363,7 @@ static long compat_do_msg_steal(void __user *dest, struct msg_msg *msg, size_t b
+ 
+ long compat_do_msg_fill(void __user *dest, struct msg_msg *msg, size_t bufsz)
  {
--	char *after;
--	ssize_t ret;
- 	struct i2c_client *client = container_of(dev->parent,
- 						 struct i2c_client, dev);
- 	unsigned long state;
--	size_t count = after - buf;
-+	int ret;
+-	struct compat_msgbuf __user *msgp;
++	struct compat_msgbuf __user *msgp = dest;
+ 	size_t msgsz;
  
- 	ret = kstrtoul(buf, 10, &state);
- 	if (ret)
- 		goto out;
--	if (isspace(*after))
--		count++;
--
--	if (count = size) {
--		ret = count;
--
--		if (state > INDIC_PATTERN_SIZE - 1)
--			state = INDIC_PATTERN_SIZE - 1;
--		lm3556_write_reg(client, REG_INDIC_BLINK,
--				 indicator_pattern[state].blinking);
--		lm3556_write_reg(client, REG_INDIC_PERIOD,
--				 indicator_pattern[state].period_cnt);
--	}
-+
-+	if (state > INDIC_PATTERN_SIZE - 1)
-+		state = INDIC_PATTERN_SIZE - 1;
-+	lm3556_write_reg(client, REG_INDIC_BLINK,
-+			 indicator_pattern[state].blinking);
-+	lm3556_write_reg(client, REG_INDIC_PERIOD,
-+			 indicator_pattern[state].period_cnt);
- out:
--	return ret;
-+	return size;
- }
- 
- static DEVICE_ATTR(pattern, 0644, NULL, lm3556_indicator_pattern_store);
+ 	if (put_user(msg->m_type, &msgp->mtype))
