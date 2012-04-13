@@ -1,36 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 09 Apr 2012 08:41:10 +0000
-Subject: [PATCH] net/key/af_key.c: add missing kfree_skb
-Message-Id: <1333960870-19735-1-git-send-email-Julia.Lawall@lip6.fr>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 13 Apr 2012 15:05:38 +0000
+Subject: Re: [PATCH] net/key/af_key.c: add missing kfree_skb
+Message-Id: <20120413.110538.449625213257927113.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1333960870-19735-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1333960870-19735-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
+To: Julia.Lawall@lip6.fr
 Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon,  9 Apr 2012 10:41:10 +0200
 
-At the point of this error-handling code, alloc_skb has succeded, so free
-the resulting skb by jumping to the err label.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> At the point of this error-handling code, alloc_skb has succeded, so free
+> the resulting skb by jumping to the err label.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- net/key/af_key.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 11dbb22..7e5d927 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -3480,7 +3480,7 @@ static int pfkey_send_migrate(const struct xfrm_selector *sel, u8 dir, u8 type,
- 
- 	/* Addresses to be used by KM for negotiation, if ext is available */
- 	if (k != NULL && (set_sadb_kmaddress(skb, k) < 0))
--		return -EINVAL;
-+		goto err;
- 
- 	/* selector src */
- 	set_sadb_address(skb, sasize_sel, SADB_EXT_ADDRESS_SRC, sel);
-
+Applied.
