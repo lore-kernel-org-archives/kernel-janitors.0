@@ -1,34 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 29 Apr 2012 13:46:51 +0000
-Subject: Re: [patch] [media] ngene: remove an unneeded condition
-Message-Id: <20120429134651.GC13883@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Apr 2012 09:48:48 +0000
+Subject: [PATCH] fs/autofs4/dev-ioctl.c: add missing free_dev_ioctl
+Message-Id: <1334396928-17537-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120420131502.GB26339@elgon.mountain>
-In-Reply-To: <20120420131502.GB26339@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ian Kent <raven@themaw.net>
+Cc: kernel-janitors@vger.kernel.org, autofs@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2012 at 06:23:58PM +0200, walter harms wrote:
-> i agree but in this special case it looks strange. Would that more
-> readable ?
-> 
-> if (stat < 0)
-> {
-> <errorhandling here>	
->  return stat;	
-> }
-> 	
-> return 0:
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-No.  Gotos are perfectly fine for unwinding in the error handling
-code.  In this case there are several in a row.  Copy and pasting
-the error handling leads to forgot to add a kfree() bugs.
+Free param as done in the other error-handling code.
 
-It doesn't look weird at all, it looks like the most normal kind of
-error handling there is in the kernel.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-regards,
-dan carpenter
+---
+ fs/autofs4/dev-ioctl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
+index 9dacb85..f99c2ce 100644
+--- a/fs/autofs4/dev-ioctl.c
++++ b/fs/autofs4/dev-ioctl.c
+@@ -651,7 +651,8 @@ static int _autofs_dev_ioctl(unsigned int command, struct autofs_dev_ioctl __use
+ 	fn = lookup_dev_ioctl(cmd);
+ 	if (!fn) {
+ 		AUTOFS_WARN("unknown command 0x%08x", command);
+-		return -ENOTTY;
++		err = -ENOTTY;
++		goto out;
+ 	}
+ 
+ 	fp = NULL;
+
