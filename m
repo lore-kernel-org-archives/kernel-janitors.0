@@ -1,37 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Apr 2012 20:14:44 +0000
-Subject: [PATCH] drivers/scsi/scsi_debug.c: add missing vfrees
-Message-Id: <1335730484-21083-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Huewe <peterhuewe@gmx.de>
+Date: Sat, 14 Apr 2012 23:42:59 +0000
+Subject: [PATCH] isdn/hysdn:  Convert to kstrtoul_from_user
+Message-Id: <1334446979-1177-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This patch replaces the code for getting an number from a
+userspace buffer by a simple call to kstroul_from_user.
+This makes it easier to read and less error prone.
 
-Free dif_storep and fake_storep on failure as done in nearby error-handling
-code.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 ---
- drivers/scsi/scsi_debug.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/isdn/hysdn/hysdn_proclog.c |   10 +---------
+ 1 files changed, 1 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 182d5a5..16e44f8 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -3393,7 +3393,8 @@ static int __init scsi_debug_init(void)
- 			printk(KERN_ERR
- 			       "%s: ERR: unmap_granularity < unmap_alignment\n",
- 			       __func__);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto free_vm;
- 		}
+diff --git a/drivers/isdn/hysdn/hysdn_proclog.c b/drivers/isdn/hysdn/hysdn_proclog.c
+index ba91333..88e4f0e 100644
+--- a/drivers/isdn/hysdn/hysdn_proclog.c
++++ b/drivers/isdn/hysdn/hysdn_proclog.c
+@@ -156,17 +156,9 @@ static ssize_t
+ hysdn_log_write(struct file *file, const char __user *buf, size_t count, loff_t *off)
+ {
+ 	int rc;
+-	unsigned char valbuf[128];
+ 	hysdn_card *card = file->private_data;
  
- 		map_size = (sdebug_store_sectors / scsi_debug_unmap_granularity);
+-	if (count > (sizeof(valbuf) - 1))
+-		count = sizeof(valbuf) - 1;	/* limit length */
+-	if (copy_from_user(valbuf, buf, count))
+-		return (-EFAULT);	/* copy failed */
+-
+-	valbuf[count] = 0;	/* terminating 0 */
+-
+-	rc = kstrtoul(valbuf, 0, &card->debug_flags);
++	rc = kstrtoul_from_user(buf, count, 0, &card->debug_flags);
+ 	if (rc < 0)
+ 		return rc;
+ 	hysdn_addlog(card, "debug set to 0x%lx", card->debug_flags);
+-- 
+1.7.3.4
 
