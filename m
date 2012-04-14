@@ -1,30 +1,73 @@
-From: Rasesh Mody <rmody@brocade.com>
-Date: Mon, 16 Apr 2012 22:45:17 +0000
-Subject: RE: [PATCH] bna: 2:nd argument of function prototype should be an enum
-Message-Id: <E5313AF6F2BFD14293E5FD0F94750F86B3A75C1811@HQ1-EXCH01.corp.brocade.com>
+From: Peter Huewe <peterhuewe@gmx.de>
+Date: Sat, 14 Apr 2012 23:24:46 +0000
+Subject: [PATCH] video/via: Convert to kstrtou8_from_user
+Message-Id: <1334445886-32448-1-git-send-email-peterhuewe@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334613847-4341-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1334613847-4341-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>
 
->From: Emil Goode [mailto:emilgoode@gmail.com]
->Sent: Monday, April 16, 2012 3:04 PM
->
->The second argument of the function bfa_ioc_boot is an enum and
->its function prototype should have arguments of the same type.
->
->This patch fixes the following sparse error:
->drivers/net/ethernet/brocade/bna/bfa_ioc.c:1962:1: error:
->        symbol 'bfa_ioc_boot' redeclared with different type
->        (originally declared at
->drivers/net/ethernet/brocade/bna/bfa_ioc.c:83)
->        - incompatible argument 2 (different signedness)
->
->Signed-off-by: Emil Goode <emilgoode@gmail.com>
+This patch replaces the code for getting an number from a
+userspace buffer by a simple call to kstrou8_from_user.
+This makes it easier to read and less error prone.
 
-Thanks Emil!
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+ drivers/video/via/viafbdev.c |   26 ++++++++++----------------
+ 1 files changed, 10 insertions(+), 16 deletions(-)
 
-Acked-by: Rasesh Mody <rmody@brocade.com>
+diff --git a/drivers/video/via/viafbdev.c b/drivers/video/via/viafbdev.c
+index 0c88375..5b0d524 100644
+--- a/drivers/video/via/viafbdev.c
++++ b/drivers/video/via/viafbdev.c
+@@ -1276,17 +1276,14 @@ static int viafb_dfph_proc_open(struct inode *inode, struct file *file)
+ static ssize_t viafb_dfph_proc_write(struct file *file,
+ 	const char __user *buffer, size_t count, loff_t *pos)
+ {
+-	char buf[20];
++	int err;
+ 	u8 reg_val = 0;
+-	unsigned long length;
+ 	if (count < 1)
+ 		return -EINVAL;
+-	length = count > 20 ? 20 : count;
+-	if (copy_from_user(&buf[0], buffer, length))
+-		return -EFAULT;
+-	buf[length - 1] = '\0';	/*Ensure end string */
+-	if (kstrtou8(buf, 0, &reg_val) < 0)
+-		return -EINVAL;
++	err = kstrtou8_from_user(buffer, count, 0, &reg_val);
++	if (err)
++		return err;
++
+ 	viafb_write_reg_mask(CR97, VIACR, reg_val, 0x0f);
+ 	return count;
+ }
+@@ -1316,17 +1313,14 @@ static int viafb_dfpl_proc_open(struct inode *inode, struct file *file)
+ static ssize_t viafb_dfpl_proc_write(struct file *file,
+ 	const char __user *buffer, size_t count, loff_t *pos)
+ {
+-	char buf[20];
++	int err;
+ 	u8 reg_val = 0;
+-	unsigned long length;
+ 	if (count < 1)
+ 		return -EINVAL;
+-	length = count > 20 ? 20 : count;
+-	if (copy_from_user(&buf[0], buffer, length))
+-		return -EFAULT;
+-	buf[length - 1] = '\0';	/*Ensure end string */
+-	if (kstrtou8(buf, 0, &reg_val) < 0)
+-		return -EINVAL;
++	err = kstrtou8_from_user(buffer, count, 0, &reg_val);
++	if (err)
++		return err;
++
+ 	viafb_write_reg_mask(CR99, VIACR, reg_val, 0x0f);
+ 	return count;
+ }
+-- 
+1.7.3.4
+
