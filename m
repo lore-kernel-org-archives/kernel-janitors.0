@@ -1,35 +1,66 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Apr 2012 06:48:59 +0000
-Subject: [patch] Staging: wlan-ng: off by one in prism2mgmt_scan_results()
-Message-Id: <20120418064859.GB12831@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 15 Apr 2012 09:27:12 +0000
+Subject: [PATCH] drivers/xen/grant-table.c: add error-handling code on failure of gnttab_resume
+Message-Id: <1334482032-12339-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 
-Count is used to cap "req->bssindex.data" which is used as an offset
-into the hw->scanresults->info.hscanresult.result[] array.  The array
-has only HFA384x_SCANRESULT_MAX (31) elements so the 32 is off by one.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Jump to the label ini_nomem as done on the failure of the page allocations
+above.
+
+The code at ini_nomem is modified to accommodate different return values.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Of course, it could be that we should make the array larger.  I'm not
-sure.  But this patch is an improvement over the existing code even if
-it's not a complete fix.
+ drivers/xen/grant-table.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/wlan-ng/prism2mgmt.c b/drivers/staging/wlan-ng/prism2mgmt.c
-index c3bb05d..4efa9bc 100644
---- a/drivers/staging/wlan-ng/prism2mgmt.c
-+++ b/drivers/staging/wlan-ng/prism2mgmt.c
-@@ -380,8 +380,8 @@ int prism2mgmt_scan_results(wlandevice_t *wlandev, void *msgp)
+diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
+index b4d4eac..f100ce2 100644
+--- a/drivers/xen/grant-table.c
++++ b/drivers/xen/grant-table.c
+@@ -1029,6 +1029,7 @@ int gnttab_init(void)
+ 	int i;
+ 	unsigned int max_nr_glist_frames, nr_glist_frames;
+ 	unsigned int nr_init_grefs;
++	int ret;
+ 
+ 	nr_grant_frames = 1;
+ 	boot_max_nr_grant_frames = __max_nr_grant_frames();
+@@ -1047,12 +1048,16 @@ int gnttab_init(void)
+ 	nr_glist_frames = (nr_grant_frames * GREFS_PER_GRANT_FRAME + RPP - 1) / RPP;
+ 	for (i = 0; i < nr_glist_frames; i++) {
+ 		gnttab_list[i] = (grant_ref_t *)__get_free_page(GFP_KERNEL);
+-		if (gnttab_list[i] = NULL)
++		if (gnttab_list[i] = NULL) {
++			ret = -ENOMEM;
+ 			goto ini_nomem;
++		}
  	}
  
- 	count = (hw->scanresults->framelen - 3) / 32;
--	if (count > 32)
--		count = 32;
-+	if (count > HFA384x_SCANRESULT_MAX)
-+		count = HFA384x_SCANRESULT_MAX;
+-	if (gnttab_resume() < 0)
+-		return -ENODEV;
++	if (gnttab_resume() < 0) {
++		ret = -ENODEV;
++		goto ini_nomem;
++	}
  
- 	if (req->bssindex.data >= count) {
- 		pr_debug("requested index (%d) out of range (%d)\n",
+ 	nr_init_grefs = nr_grant_frames * GREFS_PER_GRANT_FRAME;
+ 
+@@ -1070,7 +1075,7 @@ int gnttab_init(void)
+ 	for (i--; i >= 0; i--)
+ 		free_page((unsigned long)gnttab_list[i]);
+ 	kfree(gnttab_list);
+-	return -ENOMEM;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(gnttab_init);
+ 
+
