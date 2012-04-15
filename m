@@ -1,42 +1,23 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 19 Apr 2012 16:55:53 +0000
-Subject: [PATCH] drivers/video/intelfb/intelfbdrv.c: add missing agp_backend_release
-Message-Id: <1334854553-30067-1-git-send-email-Julia.Lawall@lip6.fr>
+From: David Miller <davem@davemloft.net>
+Date: Sun, 15 Apr 2012 04:21:25 +0000
+Subject: Re: [PATCH] isdn/hysdn: Convert to kstrtoul_from_user
+Message-Id: <20120415.002125.1245643666941498950.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1334446979-1177-1-git-send-email-peterhuewe@gmx.de>
+In-Reply-To: <1334446979-1177-1-git-send-email-peterhuewe@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maik Broemme <mbroemme@plusserver.de>
-Cc: kernel-janitors@vger.kernel.org, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: peterhuewe@gmx.de
+Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Peter Huewe <peterhuewe@gmx.de>
+Date: Sun, 15 Apr 2012 01:42:59 +0200
 
-Release bridge, as done on all other paths out of the function.
+> This patch replaces the code for getting an number from a
+> userspace buffer by a simple call to kstroul_from_user.
+> This makes it easier to read and less error prone.
+> 
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/video/intelfb/intelfbdrv.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/video/intelfb/intelfbdrv.c b/drivers/video/intelfb/intelfbdrv.c
-index 02fd226..bdcbfba 100644
---- a/drivers/video/intelfb/intelfbdrv.c
-+++ b/drivers/video/intelfb/intelfbdrv.c
-@@ -680,6 +680,7 @@ static int __devinit intelfb_pci_register(struct pci_dev *pdev,
- 		 + dinfo->fb.size);
- 	if (!dinfo->aperture.virtual) {
- 		ERR_MSG("Cannot remap FB region.\n");
-+		agp_backend_release(bridge);
- 		cleanup(dinfo);
- 		return -ENODEV;
- 	}
-@@ -689,6 +690,7 @@ static int __devinit intelfb_pci_register(struct pci_dev *pdev,
- 					      INTEL_REG_SIZE);
- 	if (!dinfo->mmio_base) {
- 		ERR_MSG("Cannot remap MMIO region.\n");
-+		agp_backend_release(bridge);
- 		cleanup(dinfo);
- 		return -ENODEV;
- 	}
-
+Applied to net-next, thanks a lot.
