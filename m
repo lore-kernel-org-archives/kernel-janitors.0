@@ -1,49 +1,37 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Date: Thu, 19 Apr 2012 20:19:20 +0000
-Subject: Re: [PATCH] drivers/tty/amiserial.c: add missing tty_unlock
-Message-Id: <4F907348.9060201@suse.cz>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 16 Apr 2012 20:44:52 +0000
+Subject: [PATCH] drivers/input/tablet/aiptek.c: adjust error-handling code label
+Message-Id: <1334609092-15338-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334851960-29409-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1334851960-29409-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/19/2012 06:12 PM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> tty_unlock is used on all other exits from the function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Jiri Slaby <jslaby@suse.cz>
+At the point of this error-handling code, aiptek->urb has been allocated,
+and it does not appear to be less necessary to free it here than in the
+error-handling code just below.
 
-This is broken since 2008 BTW.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> ---
->  drivers/tty/amiserial.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/amiserial.c b/drivers/tty/amiserial.c
-> index 24145c3..6cc4358 100644
-> --- a/drivers/tty/amiserial.c
-> +++ b/drivers/tty/amiserial.c
-> @@ -1073,8 +1073,10 @@ static int set_serial_info(struct tty_struct *tty, struct serial_state *state,
->  		    (new_serial.close_delay != port->close_delay) ||
->  		    (new_serial.xmit_fifo_size != state->xmit_fifo_size) ||
->  		    ((new_serial.flags & ~ASYNC_USR_MASK) !> -		     (port->flags & ~ASYNC_USR_MASK)))
-> +		     (port->flags & ~ASYNC_USR_MASK))) {
-> +			tty_unlock();
->  			return -EPERM;
-> +		}
->  		port->flags = ((port->flags & ~ASYNC_USR_MASK) |
->  			       (new_serial.flags & ASYNC_USR_MASK));
->  		state->custom_divisor = new_serial.custom_divisor;
+---
+ drivers/input/tablet/aiptek.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
--- 
-js
-suse labs
+diff --git a/drivers/input/tablet/aiptek.c b/drivers/input/tablet/aiptek.c
+index 205d16a..a33d347 100644
+--- a/drivers/input/tablet/aiptek.c
++++ b/drivers/input/tablet/aiptek.c
+@@ -1856,7 +1856,7 @@ aiptek_probe(struct usb_interface *intf, const struct usb_device_id *id)
+ 	if (i = ARRAY_SIZE(speeds)) {
+ 		dev_info(&intf->dev,
+ 			 "Aiptek tried all speeds, no sane response\n");
+-		goto fail2;
++		goto fail3;
+ 	}
+ 
+ 	/* Associate this driver's struct with the usb interface.
 
