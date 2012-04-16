@@ -1,33 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 19 Apr 2012 19:23:15 +0000
-Subject: Re: [patch] bnx2x: off by one in bnx2x_ets_e3b0_sp_pri_to_cos_set()
-Message-Id: <20120419.152315.1499384529431466518.davem@davemloft.net>
+From: =?ISO-8859-1?Q?Ezequiel_Garc=EDa?= <elezegarcia@gmail.com>
+Date: Mon, 16 Apr 2012 19:03:28 +0000
+Subject: [Q] warning BUG() related fixing and janitors question
+Message-Id: <CALF0-+VyPmN03xhkQ_aQf_Zdc+J=DT1_MvKzQCVri4Fwbi83RQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120418065342.GC12831@elgon.mountain>
-	<1334741227.12363.5.camel@lb-tlvb-eilong.il.broadcom.com>
-In-Reply-To: <1334741227.12363.5.camel@lb-tlvb-eilong.il.broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: eilong@broadcom.com
-Cc: dan.carpenter@oracle.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-From: "Eilon Greenstein" <eilong@broadcom.com>
-Date: Wed, 18 Apr 2012 12:27:07 +0300
+Hi Dan,
 
-> On Wed, 2012-04-18 at 09:53 +0300, Dan Carpenter wrote:
->> The sp_pri_to_cos[] array size depends on the config but lets say it is
->> BX_E3B0_MAX_NUM_COS_PORT0 and max_num_of_cos is also
->> DCBX_E3B0_MAX_NUM_COS_PORT0.  In the original code
->> "pri = max_num_of_cos" was accepted but it is one past the end of the
->> array.
->> 
->> Also we used "pri" before capping it.  It's a harmless read past the end
->> of the array, but it would affect which error message gets printed.
->> 
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> 
-> 
-> Acked-by: Eilon Greenstein <eilong@broadcom.com>
+I would like to know better about the janitors list, and what kind of
+patches are handled here.
+I've found a number of warnings in my building and I'm not sure where to
+send patches and
+what git tree should I take, since the warnings appear in a wide number of
+subsystems.
 
-Applied, thanks everyone.
+1.
+For instance, in kernel/sched/core.c
+
+static inline struct task_struct *
+pick_next_task(struct rq *rq)
+{
+=A0 =A0 /* snip */
+=A0 =A0 BUG(); /* the idle class will always have a runnable task */
+}
+
+You can see that after BUG there is no return statement, which will produce
+a compilation
+warning you disable BUG() and it gets defined to nothing.
+
+There are several of these warnings here and there, I guess as a consequence
+of BUG() macro.
+
+---
+2.
+Another one is flat_set_persistent() which is only IMO properly defined in
+arch/sh/. The current
+definition produces a warning in other architectures if binary flat format
+is used.
+
+So, I guess I should send a patch to each arch-specific list, right? using
+arch-specific git trees?
+I would like to have just one git tree, and not ten :)
+
+Thanks for your time,
+Ezequiel.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
