@@ -1,27 +1,44 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Date: Thu, 19 Apr 2012 21:03:17 +0000
-Subject: Re: [patch] USB: bcma: suspend() only takes one argument now
-Message-Id: <4F907D95.4020909@hauke-m.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 16 Apr 2012 15:03:10 +0000
+Subject: [PATCH] drivers/usb/musb/davinci.c: add missing unregister
+Message-Id: <1334588590-23891-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120419104608.GA30011@elgon.mountain>
-In-Reply-To: <20120419104608.GA30011@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Felipe Balbi <balbi@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/19/2012 12:46 PM, Dan Carpenter wrote:
-> We changed the API here a couple months ago.  It suspend() only takes
-> one argument now.  GCC complains about this:
-> 
->     drivers/usb/host/bcma-hcd.c:320:2: warning: initialization from
->         incompatible pointer type [enabled by default]
->     drivers/usb/host/bcma-hcd.c:320:2: warning: (near initialization
->         for ‘bcma_hcd_driver.suspend’) [enabled by default]
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks for the patch.
+usb_nop_xceiv_unregister is needed on failure of usb_get_transceiver, as
+done in other error-handling code in the same function.
 
-Hauke
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/usb/musb/davinci.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/musb/davinci.c b/drivers/usb/musb/davinci.c
+index 97ab975..768b4b5 100644
+--- a/drivers/usb/musb/davinci.c
++++ b/drivers/usb/musb/davinci.c
+@@ -386,7 +386,7 @@ static int davinci_musb_init(struct musb *musb)
+ 	usb_nop_xceiv_register();
+ 	musb->xceiv = usb_get_transceiver();
+ 	if (!musb->xceiv)
+-		return -ENODEV;
++		goto unregister;
+ 
+ 	musb->mregs += DAVINCI_BASE_OFFSET;
+ 
+@@ -444,6 +444,7 @@ static int davinci_musb_init(struct musb *musb)
+ 
+ fail:
+ 	usb_put_transceiver(musb->xceiv);
++unregister:
+ 	usb_nop_xceiv_unregister();
+ 	return -ENODEV;
+ }
+
