@@ -1,24 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 18 Apr 2012 02:33:07 +0000
-Subject: Re: [PATCH] drivers/net/wan/farsync.c: add missing iounmap
-Message-Id: <20120417.223307.693772402010148380.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Apr 2012 06:32:15 +0000
+Subject: [patch 2/2] target: usb-gadget: cleanup duplicate initialization
+Message-Id: <20120417063215.GE26756@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334589732-25876-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1334589732-25876-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kevin.curtis@farsite.co.uk, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 16 Apr 2012 17:22:12 +0200
+Sparse points out that we initialize .bAlternateSetting twice.  But
+fortunately USB_G_ALT_INT_BBB is zero so we initialize it to the same
+value both times.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Free card->mem in the error-handling code since it was successfully
-> allocated just above.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Julia.
+diff --git a/drivers/target/usb-gadget/usb_gadget.c b/drivers/target/usb-gadget/usb_gadget.c
+index ba62bef..78aa37e 100644
+--- a/drivers/target/usb-gadget/usb_gadget.c
++++ b/drivers/target/usb-gadget/usb_gadget.c
+@@ -1977,7 +1977,6 @@ static void usbg_deregister_configfs(void)
+ static struct usb_interface_descriptor bot_intf_desc = {
+ 	.bLength =              sizeof(bot_intf_desc),
+ 	.bDescriptorType =      USB_DT_INTERFACE,
+-	.bAlternateSetting =	0,
+ 	.bNumEndpoints =        2,
+ 	.bAlternateSetting =	USB_G_ALT_INT_BBB,
+ 	.bInterfaceClass =      USB_CLASS_MASS_STORAGE,
