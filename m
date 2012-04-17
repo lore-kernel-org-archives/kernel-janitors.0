@@ -1,63 +1,56 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 04 Apr 2012 16:19:30 +0000
-Subject: Re: [patch] ACPI video: use after input_unregister_device()
-Message-Id: <20120404161930.GA9229@core.coreip.homeip.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Apr 2012 06:45:42 +0000
+Subject: [patch] Staging: rtl8192u: fix some memory corruption
+Message-Id: <20120417064542.GG26756@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120404111916.GA23719@elgon.mountain>
-In-Reply-To: <20120404111916.GA23719@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Apr 04, 2012 at 02:19:16PM +0300, Dan Carpenter wrote:
-> We can't use "input" anymore after calling input_unregister_device().
-> The call to input_free_device() is a double free.  The normal way to
-> deal with this is to make input_register_device() the last function
-> called in the function.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+When we recieved a command we incremented a stat counter depending on
+the type of message.  The problem is there were 8 types of commands but
+there were only 4 counters allocated so it corrupted memory past the
+end of the rxcmdpkt[] array.
 
-Acked-by: Dmitry Torokhov <dtor@mail.ru>
+The fix is just to remove the counters because they aren't used.
 
-> 
-> diff --git a/drivers/acpi/video.c b/drivers/acpi/video.c
-> index 9577b6f..51aba50a 100644
-> --- a/drivers/acpi/video.c
-> +++ b/drivers/acpi/video.c
-> @@ -1687,10 +1687,6 @@ static int acpi_video_bus_add(struct acpi_device *device)
->  	set_bit(KEY_BRIGHTNESS_ZERO, input->keybit);
->  	set_bit(KEY_DISPLAY_OFF, input->keybit);
->  
-> -	error = input_register_device(input);
-> -	if (error)
-> -		goto err_stop_video;
-> -
->  	printk(KERN_INFO PREFIX "%s [%s] (multi-head: %s  rom: %s  post: %s)\n",
->  	       ACPI_VIDEO_DEVICE_NAME, acpi_device_bid(device),
->  	       video->flags.multihead ? "yes" : "no",
-> @@ -1701,12 +1697,16 @@ static int acpi_video_bus_add(struct acpi_device *device)
->  	video->pm_nb.priority = 0;
->  	error = register_pm_notifier(&video->pm_nb);
->  	if (error)
-> -		goto err_unregister_input_dev;
-> +		goto err_stop_video;
-> +
-> +	error = input_register_device(input);
-> +	if (error)
-> +		goto err_unregister_pm_notifier;
->  
->  	return 0;
->  
-> - err_unregister_input_dev:
-> -	input_unregister_device(input);
-> + err_unregister_pm_notifier:
-> +	unregister_pm_notifier(&video->pm_nb);
->   err_stop_video:
->  	acpi_video_bus_stop_devices(video);
->   err_free_input_dev:
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't think the layout of the stats struct matters, but I don't have
+the hardware to test this.
 
--- 
-Dmitry
+diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
+index 9b81f26..43d459d 100644
+--- a/drivers/staging/rtl8192u/r8192U.h
++++ b/drivers/staging/rtl8192u/r8192U.h
+@@ -610,7 +610,6 @@ typedef struct Stats
+ //	unsigned long rxnopointer;
+ 	unsigned long rxok;
+ 	unsigned long rxframgment;
+-	unsigned long rxcmdpkt[4];		//08/05/08 amy rx cmd element txfeedback/bcn report/cfg set/query
+ 	unsigned long rxurberr;
+ 	unsigned long rxstaterr;
+ 	unsigned long received_rate_histogram[4][32];	//0: Total, 1:OK, 2:CRC, 3:ICV, 2007 07 03 cosa
+diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+index 0cb28c7..9348f42 100644
+--- a/drivers/staging/rtl8192u/r819xU_cmdpkt.c
++++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+@@ -697,7 +697,6 @@ cmpk_message_handle_rx(
+ 	struct ieee80211_rx_stats *pstats)
+ {
+ //	u32			debug_level = DBG_LOUD;
+-	struct r8192_priv *priv = ieee80211_priv(dev);
+ 	int			total_length;
+ 	u8			cmd_length, exe_cnt = 0;
+ 	u8			element_id;
+@@ -779,9 +778,6 @@ cmpk_message_handle_rx(
+ 		// 2007/01/22 MH Add to display tx statistic.
+ 		//cmpk_DisplayTxStatistic(pAdapter);
+ 
+-		/* 2007/03/09 MH Collect sidderent cmd element pkt num. */
+-		priv->stats.rxcmdpkt[element_id]++;
+-
+ 		total_length -= cmd_length;
+ 		pcmd_buff    += cmd_length;
+ 	}	/* while (total_length > 0) */
